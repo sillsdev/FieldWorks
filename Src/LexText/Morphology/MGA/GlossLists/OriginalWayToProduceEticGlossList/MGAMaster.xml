@@ -1,0 +1,2909 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <!DOCTYPE glossList SYSTEM "MGAMaster.dtd"> -->
+<glossList>
+	<item type="fsType">
+		<abbrev ws="en">adjectival</abbrev>
+		<term ws="en">adjective-related</term>
+		<def ws="en">Morphosyntactic features that are generally associated with adjectives and adjective phrases.</def>
+		<item type="feature">
+			<abbrev ws="en">degree</abbrev>
+			<term ws="en">degree</term>
+			<def ws="en"/>
+			<item type="value">
+				<term ws="en">positive</term>
+				<def ws="en"/>
+				<fs type="Adjectival">
+					<f name="Degree">
+						<sym value="Positive"/>
+					</f>
+				</fs>
+			</item>
+			<item type="value">
+				<term ws="en">comparative</term>
+				<def ws="en"/>
+				<fs type="Adjectival">
+					<f name="Degree">
+						<sym value="Comparative"/>
+					</f>
+				</fs>
+			</item>
+			<item type="value">
+				<term ws="en">superlative</term>
+				<def ws="en"/>
+				<fs type="Adjectival">
+					<f name="Degree">
+						<sym value="Superlative"/>
+					</f>
+				</fs>
+			</item>
+		</item>
+		<item type="complexN">
+			<abbrev ws="en">noun-like</abbrev>
+			<term ws="en">noun-like properties</term>
+			<def ws="en"/>
+		</item>
+		<item type="complexV">
+			<abbrev ws="en">verb-like</abbrev>
+			<term ws="en">verb-like properties</term>
+			<def ws="en"/>
+		</item>
+	</item>
+	<item type="fsType">
+		<abbrev ws="en">nominal</abbrev>
+		<term ws="en">noun-related</term>
+		<def ws="en">Morphosyntactic features that are generally associated with nouns and noun phrases.</def>
+		<item type="feature">
+			<abbrev ws="en">case</abbrev>
+			<term ws="en">case</term>
+			<def ws="en">Case is a grammatical category determined by the syntactic or semantic function of a noun or pronoun.</def>
+			<cellar name="case" id="18803600CB21C61"/>
+			<citation>Pei and Gaynor 1954:35</citation>
+			<citation>Crystal 1980:53-54</citation>
+			<citation>Anderson, Stephen 1985:179-180</citation>
+			<citation>Andrews, Avery 1985:71-72</citation>
+			<citation>Mish et al. 1990:211</citation>
+			<citation>Kuno 1973:4-5</citation>
+			<item>
+				<term ws="en">abessive case</term>
+				<def ws="en">Abessive case is a case that expresses the lack or absence of the referent of the noun it marks. It has the meaning of the English preposition without.</def>
+				<cellar name="abessive case" id="18800880CB21C16"/>
+				<citation>Pei and Gaynor 1954:3,35</citation>
+				<citation>Gove, et al. 1966:3</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value=""/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">ablative case</term>
+				<def ws="en">Ablative case is a case that expresses a variety of meanings including instrument, cause, location, source, and time.</def>
+				<cellar name="ablative case" id="18800910CB21C19"/>
+				<citation>Crystal 1980:7</citation>
+				<citation>Hartmann and Stork 1972:1</citation>
+				<citation>Pei and Gaynor 1954:3</citation>
+				<citation>Lyons 1968:299</citation>
+				<citation>Mish et al.</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="ablative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">absolutive case</term>
+				<def ws="en">Absolutive case is the case of nouns in ergative-absolutive languages that would generally be the subjects of intransitive verbs or the objects of transitive verbs in the translational equivalents of nominative-accusative languages such as English.</def>
+				<cellar name="absolutive case" id="18800BA0CB21C1E"/>
+				<citation>Anderson, Stephen 1985:181</citation>
+				<citation>Crystal 1985:1</citation>
+				<citation>Andrews, Avery 1985:138</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="absolutive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">accusative case</term>
+				<def ws="en">Accusative case is the case in nominative-accusative languages that marks certain syntactic functions, usually direct objects.</def>
+				<cellar name="accusative case" id="18800DD0CB21C21"/>
+				<citation>Hartmann and Stork 1972:3,156</citation>
+				<citation>Crystal 1980:11,246</citation>
+				<citation>Andrews, Avery 1985:75</citation>
+				<citation>Anderson, Stephen 1985:181</citation>
+				<citation>Mish et al. 1990:50</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="accusative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">allative case</term>
+				<def ws="en">Allative case is a case that expresses motion to or toward the referent of the noun it marks.</def>
+				<cellar name="allative case" id="18801AA0CB21C35"/>
+				<citation>Pei and Gaynor 1954:6,9,216</citation>
+				<citation>Lyons 1968:299</citation>
+				<citation>Crystal 1985:12-13</citation>
+				<citation>Gove, et al. 1966:55,2359</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="allative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">benefactive case</term>
+				<def ws="en">Benefactive case is a case that expresses that the referent of the noun it marks receives the benefit of the situation expressed by the clause.</def>
+				<cellar name="benefactive case" id="18802FB0CB21C57"/>
+				<citation>Crystal 1980:43</citation>
+				<citation>Gove, et al. 1966:203</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="benefactive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">causative case</term>
+				<def ws="en">Causative case is a case which expresses that the referent of the noun it marks is the cause of the situation expressed by the clause.</def>
+				<cellar name="causative case" id="188038B0CB21C65"/>
+				<citation>Pei and Gaynor 1954:36</citation>
+				<citation>Andrews, Avery 1985:95</citation>
+				<citation>Gove, et al. 1966:356</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="causative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">comitative case</term>
+				<def ws="en">Comitative case is a case expressing accompaniment. It carries the meaning "with" or "accompanied by."</def>
+				<cellar name="comitative case" id="18804250CB21C87"/>
+				<citation>Anderson, Stephen 1985:186</citation>
+				<citation>Pei and Gaynor 1954:42</citation>
+				<citation>Dixon, R. 1972:12</citation>
+				<citation>Gove, et al. 1966:455</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="comitative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">dative case</term>
+				<def ws="en">Dative case is a case that marks any of the following: (1) Indirect objects (for languages in which they are held to exist); (2) Nouns having the role of (a) recipient (as of things given), (b) beneficiary of an action, or (c) possessor of an item.</def>
+				<cellar name="dative case" id="18806100CB21CB9"/>
+				<citation>Crystal 1980:102</citation>
+				<citation>Gove, et al. 1966:577</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="dative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">delative case</term>
+				<def ws="en">Delative case is a case which expresses motion downward from the referent of the noun it marks.</def>
+				<cellar name="delative case" id="18806810CB21CC4"/>
+				<citation>Pei and Gaynor 1954:53</citation>
+				<citation>Gove, et al. 1966:595</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="delative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">elative case</term>
+				<def ws="en">Elative case is a case expressing motion out of or away from the referent of the noun it marks.</def>
+				<cellar name="elative case" id="18807B10CB21CE5"/>
+				<citation>Lyons 1968:299</citation>
+				<citation>Pei and Gaynor 1954:64</citation>
+				<citation>Crystal 1985:106</citation>
+				<citation>Gove, et al. 1966:730</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="elative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">equative case</term>
+				<def ws="en">Equative case is a case that expresses likeness or identity to the referent of the noun it marks. It can have meaning, such as English "as," "like," and "in the capacity of."</def>
+				<cellar name="equative case" id="18808680CB21CF7"/>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="equative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">ergative case</term>
+				<def ws="en">Ergative case is the case of nouns in ergative-absolutive languages that would generally be the subjects of transitive verbs in the translation equivalents of nominative-accusative languages such as English.</def>
+				<cellar name="ergative case" id="188088A0CB21CFB"/>
+				<citation>Crystal 1980:134</citation>
+				<citation>Hartmann and Stork 1972:78</citation>
+				<citation>Pei and Gaynor 1954:67</citation>
+				<citation>Andrews, Avery 1985:138</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="ergative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">essive case</term>
+				<def ws="en">Essive case is a case that expresses the temporary state of the referent specified by a noun. The case has the meaning of (1) while, and (2) in the capacity of.</def>
+				<cellar name="essive case" id="18808930CB21CFC"/>
+				<citation>Lyons 1968:299,301</citation>
+				<citation>Gove, et al. 1966:778</citation>
+				<citation>Crystal 1985:112</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="essive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">genitive case</term>
+				<def ws="en">Genitive case is a case in which the referent of the marked noun is the possessor of the referent of another noun.</def>
+				<cellar name="genitive case" id="1880A550CB21D2A"/>
+				<citation>Crystal 1980:161</citation>
+				<citation>Hartmann and Stork 1972:94-95,180</citation>
+				<citation>Pei and Gaynor 1954:82,172</citation>
+				<citation>Anderson, Stephen 1985:185</citation>
+				<citation>Mish et al. 1990:511</citation>
+				<citation>Fleming 1988:10</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="genitive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">illative case</term>
+				<def ws="en">Illative case is a case that expresses motion into or direction toward the referent of the noun it marks.</def>
+				<cellar name="illative case" id="1880B450CB21D44"/>
+				<citation>Lyons 1968:299</citation>
+				<citation>Gove, et al. 1966:1126</citation>
+				<citation>Crystal 1985:152</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="illative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">inessive case</term>
+				<def ws="en">Inessive case is a case that expresses a location within the referent of the noun it marks.</def>
+				<cellar name="inessive case" id="1880C960CB21D6A"/>
+				<citation>Lyons 1968:299</citation>
+				<citation>Gove, et al. 1966:1156</citation>
+				<citation>Crystal 1985:156</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="inessive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">instrumental case</term>
+				<def ws="en">Instrumental case is a case indicating that the referent of the noun it marks is the means of the accomplishment of the action expressed by the clause.</def>
+				<cellar name="instrumental case" id="1880D1E0CB21D78"/>
+				<citation>Crystal 1980:187</citation>
+				<citation>Hartmann and Stork 1972:114</citation>
+				<citation>Mish et al. 1990:627</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="instrumental"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">lative case</term>
+				<def ws="en">Lative case is a case that expresses motion (1) up to the location of, or (2) as far as the referent of the noun it marks.</def>
+				<cellar name="lative case" id="1880DD80CB21D8C"/>
+				<citation>Pei and Gaynor 1954:121, Gove, et al. 1966:1277</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="lative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">locative case</term>
+				<def ws="en">Locative case is a case that expresses location at the referent of the noun it marks.</def>
+				<cellar name="locative case" id="1880E010CB21D90"/>
+				<citation>Crystal 1980:214-215</citation>
+				<citation>Mish et al. 1990:701</citation>
+				<citation>Lyons 1968:299</citation>
+				<citation>Crystal 1985:7</citation>
+				<citation>Gove, et al. 1966:25</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="locative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">nominative case</term>
+				<def ws="en">Nominative case is the case that identifies clause subjects in nominative-accusative languages. Nouns used in isolation have this case.</def>
+				<cellar name="nominative case" id="18810060CB21DC3"/>
+				<citation>Crystal 1980:242</citation>
+				<citation>Pei and Gaynor 1954:147</citation>
+				<citation>Mish et al. 1990:801</citation>
+				<citation>Hartmann and Stork 1972:224</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="nominative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">partitive case</term>
+				<def ws="en">Partitive case is a case that expresses the partial nature of the referent of the noun it marks, as opposed to expressing the whole unit or class of which the referent is a part.  This case may be found in items such as the following: (1) Existential clauses, (2) Nouns that are accompanied by numerals or units of measure, or (3) Predications of material from which something is made.  It often has a meaning similar to the English word "some."</def>
+				<cellar name="partitive case" id="18811D90CB21DF2"/>
+				<citation>Pei and Gaynor 1954:161</citation>
+				<citation>Richards, Platt, and Weber 1985:208</citation>
+				<citation>Quirk, et al. 1985:249</citation>
+				<citation>Gove, et al. 1966:1648</citation>
+				<citation>Sebeok 1946:12-14</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="partitive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">prolative case</term>
+				<def ws="en">Prolative case is a case that expresses motion along or by the referent of the noun it marks.</def>
+				<cellar name="prolative case" id="18815080CB21E45"/>
+				<citation>Pei and Gaynor 1954:176-177</citation>
+				<citation>Sebeok 1946:7,14</citation>
+				<citation>Merlan 1982:57-59,79</citation>
+				<citation>Andrews, Avery 1985:92-93</citation>
+				<citation>Gove, et al. 1966:1683</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="prolative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">superessive case</term>
+				<def ws="en">Superessive case is a case that expresses location on the referent of the noun it marks. It has the meaning of "on" or "upon."</def>
+				<cellar name="superessive case" id="18819690CB21EBF"/>
+				<citation>Pei and Gaynor 1954:207</citation>
+				<citation>Gove, et al. 1966:2293</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="superessive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">translative case</term>
+				<def ws="en">Translative case is a case indicating that the referent of the noun, or the quality of the adjective, that it marks is the result of a process of change.</def>
+				<cellar name="translative case" id="1881A5F0CB21EDB"/>
+				<citation>Lyons 1968:299-301</citation>
+				<citation>Gove, et al. 1966:813,2429</citation>
+				<citation>Sebeok 1946:17</citation>
+				<citation>Hakulinen 1961:70</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="translative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">vocative case</term>
+				<def ws="en">Vocative case is a case that marks a noun whose referent is being addressed.</def>
+				<cellar name="vocative case" id="1881B270CB21EF2"/>
+				<citation>Crystal 1980:377</citation>
+				<citation>Hartmann and Stork 1972:251</citation>
+				<citation>Pei and Gaynor 1954:228</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="vocative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">accessory case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="accessory"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">adelative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="adelative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">aditive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="aditive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">admonitive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="admonitive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">agentive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="agentive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">andative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="andative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">associative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="associative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">aversive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="aversive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">destinative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="destinative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">direct case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="direct"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">egressive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="egressive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">mediative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="mediative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">motivative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="motivative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">oblique case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="oblique"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">perlative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="perlative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">postelative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="postelative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">postessive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="postessive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">preclusive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="preclusive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">privative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="privative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">purposive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="purposive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">referentive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="referentive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">subelative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="subelative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">subessive case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="subessive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">sublative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="sublative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">superlative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="superlative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">superelative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="superelative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">transformative case</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="transformative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">adessive case</term>
+				<def ws="en">A term used in grammatical description to refer to a type of inflection which expresses the meaning of presence 'at' or 'near' a place. </def>
+				<citation>Crystal 1997:8</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="adessive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">adversative case</term>
+				<def ws="en">In grammar and semantics, a form or conctruction which expresses an antithetical circumstance. Adversative meaning can be expressed in several grammatical ways, such as through a conjunction (but), adverbial (however, nevertheless, yet, in spite of that, on the other hand), or preposition (despite, except, apart from, notwithstanding). </def>
+				<citation>Crystal 1997:11</citation>
+				<fs type="Agr">
+					<f name="Case">
+						<sym value="adversative"/>
+					</f>
+				</fs>
+			</item>
+		</item>
+		<item>
+			<term ws="en">definiteness</term>
+			<def ws="en">Definiteness is a category concerned with the grammaticalization of identifiability and nonidentifiability of referents on the part of a speaker or addressee.</def>
+			<cellar name="definiteness" id="18806620CB21CC1"/>
+			<item>
+				<term ws="en">definite identifiability</term>
+				<def ws="en">Definite identifiability is a kind of definiteness which indicates that an expression's referent(s) is in some way identifiable to both speaker and addressee.The referent is identifiable because of a shared knowledge or situation, including a previous mention of the referent.</def>
+				<cellar name="definite identifiability" id="18806500CB21CBF"/>
+				<citation>Pei and Gaynor 1954:53</citation>
+				<citation>Anderson, Stephen 1985:179</citation>
+				<citation>Lyons 1968:276</citation>
+				<citation>Mish et al. 1990:334</citation>
+				<citation>Hawkins 1978:202</citation>
+				<fs type="Type">
+					<f name="Definiteness">
+						<sym value="Definite"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">generic term</term>
+				<def ws="en">A generic term is a noun or noun phrase that refers to (1) a whole class, or (2) any member of a class as a representative of its class.</def>
+				<cellar name="generic term" id="1880A460CB21D29"/>
+				<citation>Crystal 1985:136</citation>
+				<citation>Mish et al. 1990:510</citation>
+				<citation>Hawkins 1978:214-215</citation>
+				<fs type="Type">
+					<f name="Definiteness">
+						<sym value="Generic"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">indefiniteness</term>
+				<def ws="en">Indefiniteness is a kind of definiteness indicating that the referent(s) of an expression are not presumed to be identifiable. The referent is not identifiable because of a lack of shared knowledge or situation, including no previous mention of the referent.</def>
+				<cellar name="indefiniteness" id="1880C500CB21D63"/>
+				<citation>Pei and Gaynor 1954:98</citation>
+				<citation>Crystal 1980:263</citation>
+				<citation>Lyons 1968:276</citation>
+				<citation>Mish et al. 1990:612</citation>
+				<citation>Hawkins 1978:202</citation>
+				<fs type="Type">
+					<f name="Definiteness">
+						<sym value="Indefinite"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">nonspecificity</term>
+				<def ws="en">Nonspecificity is a kind of definiteness, expressed by an interpretation of or grammatical marking on a noun or noun phrase, indicating that the speaker presumably does not know the identity of the referent(s).</def>
+				<cellar name="nonspecificity" id="18810590CB21DCC"/>
+				<citation>Anderson, Stephen 1985:179</citation>
+				<citation>Hawkins 1978:203-204</citation>
+				<fs type="Type">
+					<f name="Definiteness">
+						<sym value="Nonspecific"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">specificity</term>
+				<def ws="en">Specificity is a kind of definiteness, expressed by the interpretation of or grammatical marking on a noun or noun phrase, indicating that the speaker presumably knows the identity of the referent(s).</def>
+				<cellar name="specificity" id="18818700CB21EA2"/>
+				<citation>Anderson, Stephen 1985:179</citation>
+				<citation>Hawkins 1978:203-204</citation>
+				<fs type="Type">
+					<f name="Definiteness">
+						<sym value="Specific"/>
+					</f>
+				</fs>
+			</item>
+		</item>
+		<item>
+			<term ws="en">noun class</term>
+			<def ws="en">A noun class system is a grammatical system that some languages use to overtly categorize nouns. Noun classes (1) are often based, at least in part, on characteristics (such as gender, animacy, shape) of the referents of some of the nouns in each class, and (2) are distinguished (a) by an affix on the noun or by a clitic or word in the noun phrase, and (b) by agreement affixes on noun phrase constituents and on the verb.</def>
+			<cellar name="noun class" id="18810850CB21DD0"/>
+			<citation>Dixon, R. 1968:105</citation>
+			<citation>Dixon, R. 1986:105-111</citation>
+			<item>
+				<term ws="en">animate class</term>
+				<def ws="en">An animate class is a category of nouns having human or animal referents.</def>
+				<cellar name="animate class" id="18801F90CB21C3D"/>
+				<fs type="Agr">
+					<f name="Animate">
+						<plus/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">gender</term>
+				<def ws="en">Grammatical gender is a noun class system, composed of two or three classes, whose nouns that have human male and female referents tend to be in separate classes.  Other nouns that are classified in the same way in the language may not be classed by any correlation with natural sex distinctions.</def>
+				<cellar name="gender" id="1880A920CB21D30"/>
+				<citation>Hartmann and Stork 1972:93</citation>
+				<citation>Foley and Van Valin 1984:325</citation>
+				<citation>Mish et al. 1990:510</citation>
+				<citation>Crystal 1985:133</citation>
+				<citation>Dixon, R. 1968:105</citation>
+				<citation>Quirk, et al. 1985:314</citation>
+				<fs type="Agr">
+					<f name="Gender">
+						<any/>
+					</f>
+				</fs>
+				<item>
+					<term ws="en">feminine gender</term>
+					<def ws="en">Feminine gender is a grammatical gender that (1) marks nouns that have human or animal female referents, and (2) often marks nouns that have referents that do not carry distinctions of sex.</def>
+					<cellar name="feminine gender" id="188097E0CB21D14"/>
+					<citation>Hartmann and Stork 1972:93</citation>
+					<citation>Mish et al. 1990:456</citation>
+					<fs type="Agr">
+						<f name="Gender">
+							<sym value="Feminine"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">masculine gender</term>
+					<def ws="en">Masculine gender is a grammatical gender that (1) marks nouns having human or animal male referents, and (2) often marks nouns having referents that do not have distinctions of sex.</def>
+					<cellar name="masculine gender" id="1880E510CB21D98"/>
+					<citation>Hartmann and Stork 1972:93</citation>
+					<citation>Mish et al. 1990:730</citation>
+					<fs type="Agr">
+						<f name="Gender">
+							<sym value="Masculine"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">neuter gender</term>
+					<def ws="en">Neuter gender is a grammatical gender that (1) includes those nouns having referents which do not have distinctions of sex, and (2) often includes some which do have a natural sex distinction.</def>
+					<cellar name="neuter gender" id="1880FB20CB21DBA"/>
+					<citation>Hartmann and Stork 1972:93</citation>
+					<citation>Mish et al. 1990:795</citation>
+					<fs type="Agr">
+						<f name="Gender">
+							<sym value="Neuter"/>
+						</f>
+					</fs>
+				</item>
+			</item>
+			<item>
+				<term ws="en">human class</term>
+				<def ws="en">A human class is a noun class that has human referents.</def>
+				<cellar name="human class" id="1880B0A0CB21D3D"/>
+				<citation>Lyons 1968:286-288</citation>
+				<citation>Andrews, Avery 1985:77</citation>
+				<citation>Bolinger 1968:114-115</citation>
+				<fs type="Agr">
+					<f name="Human">
+						<plus/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">inanimate class</term>
+				<def ws="en">An inanimate class is a category of nouns that do not have human or animal referents.</def>
+				<cellar name="inanimate class" id="1880C2D0CB21D5F"/>
+				<fs type="Agr">
+					<f name="Animate">
+						<minus/>
+					</f>
+				</fs>
+			</item>
+		</item>
+		<item>
+			<term ws="en">number</term>
+			<def ws="en">Number is a grammatical category of nouns, pronouns, and verb agreement that expresses count distinctions (such as "one" or "more than one"). The count distinctions typically, but not always, correspond to the actual count of the referents of the marked noun or pronoun.</def>
+			<cellar name="number" id="18810990CB21DD2"/>
+			<citation>Crystal 1980:245</citation>
+			<citation>Hartmann and Stork 1972:155</citation>
+			<citation>Mish et al. 1990:811</citation>
+			<fs type="Agr">
+				<f name="Number">
+					<any/>
+				</f>
+			</fs>
+			<item>
+				<term ws="en">dual number</term>
+				<def ws="en">Dual number is number which refers to two members of the class identified by the noun.</def>
+				<cellar name="dual number" id="18807810CB21CE0"/>
+				<fs type="Agr">
+					<f name="Number">
+						<sym value="Dual"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">plural number</term>
+				<def ws="en">Plural number is number that expresses reference to a quantity greater than that expressed by the largest specific number category in a language, such as "more than one" in English, and "more than two" in some other languages.</def>
+				<cellar name="plural number" id="18813020CB21E0F"/>
+				<citation>Crystal 1980:245</citation>
+				<citation>Hartmann and Stork 1972:178</citation>
+				<citation>Crystal 1987:428</citation>
+				<citation>Mish et al. 1990:906</citation>
+				<fs type="Agr">
+					<f name="Number">
+						<sym value="Plural"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">singular number</term>
+				<def ws="en">Singular number is number that refers to one member of a designated class.</def>
+				<cellar name="singular number" id="18818150CB21E97"/>
+				<citation>Crystal 1980:245</citation>
+				<citation>Hartmann and Stork 1972:210</citation>
+				<fs type="Agr">
+					<f name="Number">
+						<sym value="Singular"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">trial number</term>
+				<def ws="en">A trial number is a number that refers to three members of the designated class.</def>
+				<cellar name="trial number" id="1881A740CB21EDD"/>
+				<citation>Pei and Gaynor 1954:220</citation>
+				<citation>Gove, et al. 1966:2439</citation>
+				<fs type="Agr">
+					<f name="Number">
+						<sym value="Trial"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">paucal number</term>
+				<def ws="en">few</def>
+				<citation>Crystal 1997:265</citation>
+				<fs type="Agr">
+					<f name="Number">
+						<sym value="Paucal"/>
+					</f>
+				</fs>
+			</item>
+		</item>
+		<item>
+			<term ws="en">person</term>
+			<def ws="en">Person deixis is deictic reference to the participant role of a referent, such as the speaker, the addressee, and referents which are neither speaker nor addressee.</def>
+			<cellar name="person deixis" id="18812C60CB21E09"/>
+			<citation>Levinson 1983:62</citation>
+			<citation>Crystal 1980:263</citation>
+			<citation>Hartmann and Stork 1972:168</citation>
+			<citation>Mish et al. 1990:877</citation>
+			<fs type="Agr">
+				<f name="Person">
+					<any/>
+				</f>
+			</fs>
+			<item>
+				<term ws="en">first person deixis</term>
+				<def ws="en">First person deixis is deictic reference that refers to the speaker, or both the speaker and referents grouped with the speaker.</def>
+				<cellar name="first person deixis" id="18809AD0CB21D19"/>
+				<citation>Crystal 1980:263</citation>
+				<citation>Hartmann and Stork 1972:168</citation>
+				<citation>Mish et al. 1990:466</citation>
+				<citation>Levinson 1983:62</citation>
+				<citation>Fleming 1988:322</citation>
+				<fs type="Agr" id="fsFirstPerson">
+					<f name="Person">
+						<sym value="First"/>
+					</f>
+				</fs>
+				<item>
+					<term ws="en">exclusive first person deixis</term>
+					<def ws="en">Exclusive first person deixis is deixis that refers to a group not including the addressee(s).</def>
+					<cellar name="exclusive first person deixis" id="18808D80CB21D03"/>
+					<citation>Crystal 1980:182</citation>
+					<citation>Pei and Gaynor 1954:69</citation>
+					<fs type="Agr" inherit="fsFirstPerson" placeAt="fsFirstPerson">
+						<f name="Inclusive">
+							<minus/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">inclusive first person deixis</term>
+					<def ws="en">Inclusive first person deixis is deixis that refers to a group including the addressee(s).</def>
+					<cellar name="inclusive first person deixis" id="1880C3F0CB21D61"/>
+					<citation>Crystal 1980:182</citation>
+					<citation>Pei and Gaynor 1954:98</citation>
+					<fs type="Agr" inherit="fsFirstPerson" placeAt="fsFirstPerson">
+						<f name="Inclusive">
+							<plus/>
+						</f>
+					</fs>
+				</item>
+			</item>
+			<item>
+				<term ws="en">second person deixis</term>
+				<def ws="en">Second person deixis is deictic reference to a person or persons identified as addressee.</def>
+				<cellar name="second person deixis" id="18817740CB21E86"/>
+				<citation>Crystal 1980:263</citation>
+				<citation>Hartmann and Stork 1972:168</citation>
+				<citation>Mish et al. 1990:1060</citation>
+				<citation>Levinson 1983:62</citation>
+				<citation>Fleming 1988:322</citation>
+				<fs type="Agr">
+					<f name="Person">
+						<sym value="Second"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">third person deixis</term>
+				<def ws="en">Third person deixis is deictic reference to a referent(s) not identified as the speaker or addressee.</def>
+				<cellar name="third person deixis" id="1881A0E0CB21ED2"/>
+				<citation>Crystal 1980:263</citation>
+				<citation>Hartmann and Stork 1972:168</citation>
+				<citation>Mish et al. 1990:1227</citation>
+				<citation>Levinson 1983:62</citation>
+				<citation>Anderson and Keenan 1985:261-262</citation>
+				<citation>Fleming 1988:322</citation>
+				<fs type="Agr" id="fsThirdPerson">
+					<f name="Person">
+						<sym value="Third"/>
+					</f>
+				</fs>
+				<item>
+					<term ws="en">obviative person deixis</term>
+					<def ws="en">Obviative person deixis is third person deixis that distinguishes a less important  referent in the present stage of the discourse from a referent that is more important.</def>
+					<cellar name="obviative person deixis" id="18810D70CB21DD9"/>
+					<fs type="Agr" inherit="fsThirdPerson" placeAt="fsThirdPerson">
+						<f name="Obviate">
+							<plus/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">proximate person deixis</term>
+					<def ws="en">Proximate person deixis is a third person deixis that distinguishes a referent that is more important at the present stage of the discourse from a referent that is less important.</def>
+					<cellar name="proximate person deixis" id="18815740CB21E51"/>
+					<fs type="Agr" inherit="fsThirdPerson" placeAt="fsThirdPerson">
+						<f name="Obviate">
+							<minus/>
+						</f>
+					</fs>
+				</item>
+			</item>
+		</item>
+		<item>
+			<term ws="en">semantic role</term>
+			<def ws="en">A semantic role is the underlying relationship that a participant has with the main verb in a clause.</def>
+			<cellar name="semantic role" id="18801150CB28312"/>
+			<fs type="Type">
+				<f name="SemanticRole">
+					<any/>
+				</f>
+			</fs>
+			<item>
+				<term ws="en">accompaniment</term>
+				<def ws="en">Accompaniment is the semantic role of a thing  that participates in close association with an agent, causer, or affected in an event.</def>
+				<cellar name="accompaniment" id="18800CA0CB21C1F"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Accompaniment"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">agent</term>
+				<def ws="en">Agent is the semantic role of a person or thing who is the doer of an event.</def>
+				<cellar name="agent" id="188018D0CB21C32"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Agent"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">beneficiary</term>
+				<def ws="en">A beneficiary is the semantic role of a referent which is advantaged or disadvantaged by an event.</def>
+				<cellar name="beneficiary" id="18803020CB21C57"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Beneficiary"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">causer</term>
+				<def ws="en">Causer is the semantic role of the referent which instigates an event rather than actually doing it.</def>
+				<cellar name="causer" id="18803930CB21C66"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Causer"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">counter-agent</term>
+				<def ws="en">A counteragent is the semantic role of a force or resistance against which an action is carried out.</def>
+				<cellar name="counter-agent" id="18805ED0CB21CB5"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="CounterAgent"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">dative</term>
+				<def ws="en">Dative is the semantic role of a referent that is conscious of being affected by the state or action identified by the verb.Also known as:  Recipient</def>
+				<cellar name="dative" id="18806190CB21CBA"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Dative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">experiencer</term>
+				<def ws="en">Experiencer is the semantic role of an entity (or referent) which the effect of an action.</def>
+				<cellar name="experiencer" id="188091D0CB21D09"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Experiencer"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">factitive</term>
+				<def ws="en">Factitive is the semantic role of an referent that results from the action or state identified by a verb.</def>
+				<cellar name="factitive" id="18809650CB21D11"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Factitive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">goal</term>
+				<def ws="en">Goal is the semantic role of</def>
+				<cellar name="goal" id="1880A7E0CB21D2E"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Goal"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">instrument</term>
+				<def ws="en">Instrument is the semantic role of an inanimate thing that an agent uses to implement an event. It is the stimulus or immediate physical cause of an event.</def>
+				<cellar name="instrument" id="1880D140CB21D77"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Instrument"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">locative</term>
+				<def ws="en">Locative is a semantic role which identifies the location or spatial orientation of a state or action. A locative semantic role does not imply motion to, from, or across the location.</def>
+				<cellar name="locative" id="1880E0C0CB21D91"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Locative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">manner</term>
+				<def ws="en">Manner is a semantic role that notes how the action, experience, or process of an event is carried out.</def>
+				<cellar name="manner" id="1880E270CB21D93"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Manner"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">measure</term>
+				<def ws="en">Measure is a semantic role which notes the quantification of an event.</def>
+				<cellar name="measure" id="1880E880CB21D9D"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Measure"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">path</term>
+				<def ws="en">Path is the semantic role describing the locale(s) transversed in motion or propulsion predications.</def>
+				<cellar name="path" id="188121E0CB21DF9"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Path"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">patient</term>
+				<def ws="en">Patient is a semantic role that is usually the surface object of the verb in a sentence.</def>
+				<cellar name="patient" id="18812370CB21DFB"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Patient"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">range</term>
+				<def ws="en">Range is the semantic role of the entity that completes, is a product of, or further specifies an event.</def>
+				<cellar name="range" id="18815C50CB21E59"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Range"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">result</term>
+				<def ws="en">A result is a semantic role that refers to that which is produced by an event. This role is usually encoded as the surface object of a sentence.</def>
+				<cellar name="result" id="18817260CB21E7D"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Result"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">source</term>
+				<def ws="en">Source is the semantic role of the following referents:</def>
+				<cellar name="source" id="188184F0CB21E9E"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Source"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">time</term>
+				<def ws="en">Time is the semantic role of the temporal placement of an event.</def>
+				<cellar name="time" id="1881A260CB21ED5"/>
+				<fs type="Type">
+					<f name="SemanticRole">
+						<sym value="Time"/>
+					</f>
+				</fs>
+			</item>
+		</item>
+	</item>
+	<item type="fsType">
+		<abbrev ws="en">verbal</abbrev>
+		<term ws="en">verb-related</term>
+		<def ws="en">Morphosyntactic features that are generally associated with verbs and verb phrases.</def>
+		<item>
+			<term ws="en">aspect</term>
+			<def ws="en">Aspect is a grammatical category associated with verbs that expresses a temporal view of the event or state expressed by the verb.</def>
+			<cellar name="aspect" id="18802700CB21C49"/>
+			<citation>Lyons 1977b:705</citation>
+			<citation>Chung and Timberlake 1985:213</citation>
+			<citation>Talmy 1985:77</citation>
+			<citation>Elson and Pickett 1988:26-27</citation>
+			<citation>Comrie 1976a:3</citation>
+			<citation>Quirk, et al. 1985:188</citation>
+			<citation>Hartmann and Stork 1972:20</citation>
+			<citation>Crystal 1987:415</citation>
+			<citation>Mish et al. 1990:108</citation>
+			<item id="iImperfectiveAspect">
+				<term ws="en">imperfective aspect</term>
+				<def ws="en">Imperfective aspect is an aspect that expresses an event or state, with respect to its internal structure, instead of expressing it as a simple whole.</def>
+				<cellar name="imperfective aspect" id="1880BD40CB21D54"/>
+				<citation>Ducrot and Todorov 1979:307</citation>
+				<citation>Pei and Gaynor 1954:97</citation>
+				<citation>Comrie 1976a:24-25,41-42</citation>
+				<citation>Crystal 1985:153</citation>
+				<citation>Mish et al. 1990:604</citation>
+				<fs id="fsImperfectiveAspect" type="Infl">
+					<f name="Aspect">
+						<fs id="fsImperfectiveAspectValues">
+							<f name="Imperfective">
+								<plus/>
+							</f>
+						</fs>
+					</f>
+				</fs>
+				<item id="iContinuousAspect">
+					<term ws="en">continuous aspect</term>
+					<def ws="en">Continuous aspect is an imperfective aspect that expresses an ongoing, but not habitual, occurrence of the state or event expressed by the verb.</def>
+					<cellar name="continuous aspect" id="188053D0CB21CA2"/>
+					<citation>Comrie 1976a:12,26</citation>
+					<citation>Dahl 1985:94</citation>
+					<citation>Bills, Vallejo, and Troike 1969:21</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<fs>
+								<f name="Continuous">
+									<fs id="fsContinuousAspect"/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+					<item>
+						<term ws="en">progressive aspect</term>
+						<def ws="en">Progressive aspect is a continuous aspect that expresses processes, not states.</def>
+						<cellar name="progressive aspect" id="18814ED0CB21E43"/>
+						<citation>Richards, Platt, and Weber 1985:231</citation>
+						<citation>Chung and Timberlake 1985:215</citation>
+						<citation>Comrie 1976a:12,33-36</citation>
+						<citation>Crystal 1987:428</citation>
+						<citation>Mish et al. 1990:940</citation>
+						<fs inherit="fsContinuousAspect" placeAt="fsContinuousAspect">
+							<f name="Progressive">
+								<plus/>
+							</f>
+						</fs>
+					</item>
+				</item>
+				<item>
+					<term ws="en">durative aspect</term>
+					<def ws="en">Used in grammatical analysis of aspect, to refer to an event involving a period of time (cf. 'continuous', 'progressive'); it contrasts with 'non-durative' or 'punctual'.</def>
+					<citation>Crystal 1997:128</citation>
+					<xref see="iContinuousAspect"/>
+				</item>
+				<item>
+					<term ws="en">frequentative aspect</term>
+					<def ws="en">Used in the grammatical classification of verbs to refer to the expression of repeated action. In some languages (e.g. Russian) the class may be marked morphologically, but in English the meaning is normally expressed through adverbials of frequency, e.g. again, regularly, often.</def>
+					<citation>Crystal 1997:159</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<sym value="Frequentative"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">habitual aspect</term>
+					<def ws="en">Habitual aspect is an imperfective aspect that expresses the occurrence of an event or state as characteristic of a period of time.</def>
+					<cellar name="habitual aspect" id="1880AA50CB21D32"/>
+					<citation>Comrie 1976a:27-28</citation>
+					<citation>Dahl 1985:97</citation>
+					<citation>Hartmann and Stork 1972:21</citation>
+					<citation>Crystal 1987:422</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<sym value="Habitual"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">iterative aspect</term>
+					<def ws="en">Iterative aspect is an aspect that expresses the repetition of an event or state.</def>
+					<cellar name="iterative aspect" id="1880DA60CB21D86"/>
+					<citation>Comrie 1985a:343</citation>
+					<citation>Mish et al. 1990:643</citation>
+					<citation>Crystal 1985:167</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="Iterative">
+							<fs id="fsIterativeAspect"/>
+						</f>
+					</fs>
+					<item>
+						<term ws="en">distributive aspect</term>
+						<def ws="en">Distributive aspect is an iterative aspect which expresses that an event is applied to members of a group one after another. These members are typically the referents named by (1) the subject of an intransitive verb, or (2) the object of a transitive verb.</def>
+						<cellar name="distributive aspect" id="18807590CB21CDC"/>
+						<citation>Pei and Gaynor 1954:59</citation>
+						<citation>Comrie 1985a:344</citation>
+						<fs inherit="fsIterativeAspect" placeAt="fsIterativeAspect">
+							<f name="Distributive">
+								<plus/>
+							</f>
+						</fs>
+					</item>
+				</item>
+				<item>
+					<term ws="en">cessative aspect</term>
+					<def ws="en">Cessative aspect is aspect that expresses the cessation of an event or state.</def>
+					<cellar name="cessative aspect" id="18803B10CB21C6A"/>
+					<citation>Pei and Gaynor 1954:37</citation>
+					<citation>Nida 1949:168</citation>
+					<citation>Elson and Pickett 1988:28</citation>
+					<citation>Anderson, Judi Lynn 1989:12</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<fs>
+								<f name="Inchoative">
+									<minus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+				</item>
+				<item id="iInchoativeAspect">
+					<term ws="en">inchoative aspect</term>
+					<def ws="en">Inchoative aspect is an aspect that expresses the beginning of an event or state.</def>
+					<cellar name="inchoative aspect" id="1880C350CB21D60"/>
+					<citation>Crystal 1980:34,181</citation>
+					<citation>Pei and Gaynor 1954:98</citation>
+					<citation>Nida 1949:168</citation>
+					<citation>Bybee 1985:147-148</citation>
+					<citation>Mish et al. 1990:608-609</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<fs>
+								<f name="Inchoative">
+									<plus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">inceptive aspect</term>
+					<def ws="en">Used to refer to a type of aspectual relationship in which the beginning of an action is specified. Same as 'inchoative'.</def>
+					<citation>Crystal 1997:192</citation>
+					<xref see="iInchoativeAspect"/>
+				</item>
+				<item id="iAtelicAspect">
+					<term ws="en">atelic aspect</term>
+					<def ws="en">A term used in the grammatical analysis of aspect, to refer to an event where the activity has no clear terminal point. They contrast with telic verbs.</def>
+					<citation>Crystal 1997:33</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<fs>
+								<f name="Telic">
+									<minus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">noncompletive aspect</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<xref see="iAtelicAspect"/>
+				</item>
+				<item id="iTelicAspect">
+					<term ws="en">telic aspect</term>
+					<def ws="en">A term used in grammatical analysis of aspect, to refer to an event where the activity has a clear terminal point. These verbs contrast with atelic verbs. </def>
+					<citation>Crystal 1997:348</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<fs>
+								<f name="Telic">
+									<plus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">completive aspect</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<xref see="iTelicAspect"/>
+				</item>
+				<item>
+					<term ws="en">experiential aspect</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<sym value="Experiential"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">prospective aspect</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<sym value="Prospective"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">resultative aspect</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<sym value="Resultative"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">attenuative aspect</term>
+					<def ws="en">A term sometimes used in grammar and semantics, referring to a reduced quality or quantity of the state or activity expressed by the verb ('a little', 'less'). In some languages (e.g., Hungarian) the contrast is a formal part of the aspect system.</def>
+					<citation>Crystal 1997:33</citation>
+					<fs inherit="fsImperfectiveAspect" placeAt="fsImperfectiveAspectValues">
+						<f name="SubValue">
+							<sym value="Attenuative"/>
+						</f>
+					</fs>
+				</item>
+			</item>
+			<item>
+				<term ws="en">dynamic aspect</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<xref see="iImperfectiveAspect"/>
+			</item>
+			<item id="iPerfectiveAspect">
+				<term ws="en">perfective aspect</term>
+				<def ws="en">Perfective aspect is an aspect that expresses a temporal view of an event or state as a simple whole, apart from the consideration of the internal structure of the time in which it occurs.</def>
+				<cellar name="perfective aspect" id="188126A0CB21E00"/>
+				<citation>Comrie 1976a:12,18-19</citation>
+				<citation>Ducrot and Todorov 1979:307</citation>
+				<citation>Pei and Gaynor 1954:164</citation>
+				<citation>Hartmann and Stork 1972:20</citation>
+				<citation>Bybee 1985:142</citation>
+				<citation>Elson and Pickett 1988:28</citation>
+				<citation>Crystal 1985:224</citation>
+				<citation>Mish et al. 1990:872</citation>
+				<fs type="Infl">
+					<f name="Aspect">
+						<fs>
+							<f name="Imperfective">
+								<minus/>
+							</f>
+						</fs>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">aorist aspect</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<xref see="iPerfectiveAspect"/>
+			</item>
+			<item>
+				<term ws="en">punctual aspect</term>
+				<def ws="en">Used in analysis of aspect to refer to a momentary event, thought of as having no temporal duration; it thus contrasts with durative or continuous events, where a period of time is involved.</def>
+				<citation>Crystal 1997:316</citation>
+				<xref see="iPerfectiveAspect"/>
+			</item>
+			<item>
+				<term ws="en">stative</term>
+				<def ws="en"/>
+				<citation>Crystal 1997:361-2</citation>
+				<xref see="iPerfectiveAspect"/>
+			</item>
+		</item>
+		<item>
+			<term ws="en">mood and modality</term>
+			<def ws="en">Mood is one of a set of distinctive forms that are used to signal modality. Modality is a facet of illocutionary force, signaled by grammatical devices (that is, moods), that expresses (1) the illocutionary point or general intent of a speaker, or (2) a speaker's degree of commitment to the expressed proposition's believability, obligatoriness, desirability, or reality.</def>
+			<cellar name="mood and modality" id="1880F4B0CB21DB0"/>
+			<citation>Chung and Timberlake 1985:241</citation>
+			<citation>Givón 1984:272</citation>
+			<citation>Palmer 1986:14-15,26</citation>
+			<citation>Bybee 1985:169</citation>
+			<citation>Quirk, et al. 1985:219</citation>
+			<citation>Crystal 1985:198</citation>
+			<citation>Hartmann and Stork 1972:142,144</citation>
+			<citation>Richards, Platt, and Weber 1985:183</citation>
+			<citation>Mish et al. 1990:762,770</citation>
+			<fs type="Infl">
+				<f name="Mood">
+					<any/>
+				</f>
+			</fs>
+			<item>
+				<term ws="en">irrealis modality</term>
+				<def ws="en">Irrealis modality is a modality that connotes that the proposition with which it is associated is nonactual or nonfactual.</def>
+				<cellar name="irrealis modality" id="1880D940CB21D84"/>
+				<citation>Noonan 1985:96</citation>
+				<citation>Chung and Timberlake 1985:241</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Irrealis"/>
+					</f>
+				</fs>
+				<item>
+					<term ws="en">subjunctive mood</term>
+					<def ws="en">mood is a mood that typically signals irrealis meanings, such as (1) potentiality, (2) uncertainty, (3) prediction, (4) obligation, and (5) desire. It most typically occurs in a subordinate clause, but may occur outside of one.</def>
+					<cellar name="subjunctive mood" id="18819090CB21EB5"/>
+					<citation>Nida 1949:169</citation>
+					<citation>Pei and Gaynor 1954:205</citation>
+					<citation>Bybee 1985:186</citation>
+					<citation>Crystal 1980:338</citation>
+					<citation>Hartmann and Stork 1972:224</citation>
+					<citation>Lyons 1977b:817,848</citation>
+					<citation>Mish et al. 1990:1174</citation>
+					<fs type="Infl">
+						<f name="Subjunctive">
+							<plus/>
+						</f>
+					</fs>
+				</item>
+			</item>
+			<item>
+				<term ws="en">necessity</term>
+				<def ws="en">Necessity is a degree of contingency in modality that (1) in alethic modality connotes logical requirement, (2) in deontic modality connotes obligation, and (3) in epistemic modality connotes certainty.</def>
+				<cellar name="necessity" id="1880F940CB21DB7"/>
+				<citation>Chung and Timberlake 1985:242,246</citation>
+				<citation>Lyons 1977b:791</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Necessity"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">possibility</term>
+				<def ws="en">Possibility is a degree of contingency in modality that (1) in alethic modality connotes logical possibility, (2) in deontic modality connotes permission, and (3) in epistemic modality connotes uncertainty or speculation.</def>
+				<cellar name="possibility" id="18813420CB21E15"/>
+				<citation>Chung and Timberlake 1985:242,246</citation>
+				<citation>Lyons 1977b:791</citation>
+				<citation>Crystal 1985:12</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Possibility"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">realis modality</term>
+				<def ws="en">Realis modality is a modality that connotes the factuality of a proposition.</def>
+				<cellar name="realis modality" id="18815D40CB21E5A"/>
+				<citation>Noonan 1985:96</citation>
+				<citation>Chung and Timberlake 1985:241</citation>
+				<citation>Pei and Gaynor 1954:99</citation>
+				<citation>Crystal 1980:183</citation>
+				<citation>Mish et al. 1990:613</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Realis"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">alethic modality</term>
+				<def ws="en">Alethic modality is modality that connotes the speaker's estimation of the logical necessity or possibility of the proposition expressed by his utterance.</def>
+				<cellar name="alethic modality" id="18801970CB21C33"/>
+				<citation>Crystal 1985:12</citation>
+				<citation>Palmer 1986:10-11</citation>
+				<citation>Lyons 1977b:788-791</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Alethic"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">deontic modality</term>
+				<def ws="en">Deontic modality is modality that connotes the speaker's (1) degree of requirement of, (2) desire for, or (3) commitment to the realization of the proposition expressed by the utterance.</def>
+				<cellar name="deontic modality" id="18806AB0CB21CC8"/>
+				<citation>Crystal 1985:88</citation>
+				<citation>Chung and Timberlake 1985:246-247</citation>
+				<citation>Palmer 1986:10-11,15,96-97,115</citation>
+				<fs type="Infl" id="fsDeonticMood">
+					<f name="Mood">
+						<sym value="Deontic"/>
+					</f>
+				</fs>
+				<item>
+					<term ws="en">commissive modality</term>
+					<def ws="en">Commissive modality is a deontic modality that connotes the speaker's expressed commitment, as a promise or threat, to bring about the proposition expressed by the utterance.</def>
+					<cellar name="commissive modality" id="18804480CB21C8A"/>
+					<fs inherit="fsDeonticMood" placeAt="fsDeonticMood">
+						<f name="SubType">
+							<sym value="Commissive"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">directive modality</term>
+					<def ws="en">Directive modality is a deontic modality that connotes the speaker's degree of requirement of conformity to the proposition expressed by an utterance.</def>
+					<cellar name="directive modality" id="18807180CB21CD3"/>
+					<citation>Palmer 1986:97-98</citation>
+					<citation>Crystal 1980:95</citation>
+					<citation>Quirk, et al. 1985:78</citation>
+					<fs inherit="fsDeonticMood" placeAt="fsDeonticMood" id="fsDirectiveMood">
+						<f name="SubType">
+							<sym value="Directive"/>
+						</f>
+					</fs>
+					<item>
+						<term ws="en">deliberative mood</term>
+						<def ws="en">Deliberative mood is a directive mood which signals the speaker's request for instruction from the addressee as to whether to do the proposition expressed in the utterance.</def>
+						<cellar name="deliberative mood" id="18806960CB21CC6"/>
+						<citation>Palmer 1986:107-108</citation>
+						<citation>Bliese 1981:146</citation>
+						<fs inherit="fsDirectiveMood" placeAt="fsDirectiveMood">
+							<f name="SubType">
+								<sym value="Deliberative"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">imperative mood</term>
+						<def ws="en">Imperative mood is mood that signals directive modality, especially in commands. Its use may be extended to signal permission.</def>
+						<cellar name="imperative mood" id="1880BC40CB21D53"/>
+						<citation>Hartmann and Stork 1972:108</citation>
+						<citation>Chung and Timberlake 1985:247</citation>
+						<citation>Bybee 1985:171</citation>
+						<citation>Palmer 1986:29,97,108,111</citation>
+						<citation>Mish et al. 1990:603</citation>
+						<citation>Crystal 1980:153</citation>
+						<citation>Quirk, et al. 1985:78,803</citation>
+						<fs inherit="fsDirectiveMood" placeAt="fsDirectiveMood" id="fsImperativeMood">
+							<f name="SubType">
+								<sym value="Imperative"/>
+							</f>
+						</fs>
+						<item>
+							<term ws="en">immediate imperative mood</term>
+							<def ws="en">Immediate imperative mood is an imperative mood that signals that the command or request is to be carried out right away.</def>
+							<cellar name="immediate imperative mood" id="1880BB70CB21D51"/>
+							<citation>Sadock and Zwicky 1985:178</citation>
+							<citation>Schachter and Otanes 1972:403</citation>
+							<fs inherit="fsImperativeMood" placeAt="fsImperativeMood">
+								<f name="SubType">
+									<sym value="ImmediateImperative"/>
+								</f>
+							</fs>
+						</item>
+					</item>
+					<item>
+						<term ws="en">jussive mood</term>
+						<def ws="en">Jussive mood is a directive mood that signals a speaker's (1) command, (2) permission, or (3) agreement that the proposition expressed by his or her utterance be brought about.</def>
+						<cellar name="jussive mood" id="1880DB90CB21D88"/>
+						<citation>Chung and Timberlake 1985:247</citation>
+						<citation>Mish et al. 1990:655</citation>
+						<citation>Pei and Gaynor 1954:110</citation>
+						<citation>Palmer 1986:10,24,39-40,96,110,113</citation>
+						<fs inherit="fsDirectiveMood" placeAt="fsDirectiveMood">
+							<f name="SubType">
+								<sym value="Jussive"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">obligative mood</term>
+						<def ws="en">Obligative mood is a directive mood that signals the speaker's estimation of the necessity that the proposition expressed in his or her utterance be brought about.</def>
+						<cellar name="obligative mood" id="18810BD0CB21DD6"/>
+						<citation>Nida 1949:169</citation>
+						<citation>Chung and Timberlake 1985:247</citation>
+						<citation>Palmer 1986:98</citation>
+						<citation>Sharma 1982:189-190</citation>
+						<fs inherit="fsDirectiveMood" placeAt="fsDirectiveMood">
+							<f name="SubType">
+								<sym value="Obligative"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">permissive mood</term>
+						<def ws="en">Permissive mood is a directive mood that signals the speaker's act of giving permission.</def>
+						<cellar name="permissive mood" id="18812BD0CB21E08"/>
+						<citation>Pei and Gaynor 1954:165</citation>
+						<citation>Chung and Timberlake 1985:247</citation>
+						<fs inherit="fsDirectiveMood" placeAt="fsDirectiveMood">
+							<f name="SubType">
+								<sym value="Permissive"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">precative mood</term>
+						<def ws="en">Precative mood is a directive mood that signals that the utterance is a request.</def>
+						<cellar name="precative mood" id="18813A30CB21E22"/>
+						<citation>Pei and Gaynor 1954:173</citation>
+						<citation>Palmer 1986:10</citation>
+						<fs inherit="fsDirectiveMood" placeAt="fsDirectiveMood">
+							<f name="SubType">
+								<sym value="Precative"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">prohibitive mood</term>
+						<def ws="en">Prohibitive mood is a directive mood that signals a prohibition. It is distinguished by (1) the use of a negated imperative sentence that employs a negative marker distinct from that used in declarative sentences, or (2) a verb form different from that of the imperative. </def>
+						<cellar name="prohibitive mood" id="18814FB0CB21E44"/>
+						<citation>Pei and Gaynor 1954:176,228</citation>
+						<citation>Bybee 1985:173</citation>
+						<citation>Hartmann and Stork 1972:185</citation>
+						<citation>Sadock and Zwicky 1985:175-176</citation>
+						<fs inherit="fsDirectiveMood" placeAt="fsDirectiveMood">
+							<f name="SubType">
+								<sym value="Prohibitive"/>
+							</f>
+						</fs>
+					</item>
+				</item>
+				<item>
+					<term ws="en">volitive modality</term>
+					<def ws="en">Volitive modality is a deontic modality that expresses the speaker's attitude of hope, wish, or fear concerning the proposition expressed by the utterance.</def>
+					<cellar name="volitive modality" id="1881B420CB21EF4"/>
+					<citation>Pei and Gaynor 1954:229</citation>
+					<citation>Palmer 1986:116-117</citation>
+					<fs inherit="fsDeonticMood" placeAt="fsDeonticMood" id="fsVolitiveMood">
+						<f name="SubType">
+							<sym value="Volitive"/>
+						</f>
+					</fs>
+					<item>
+						<term ws="en">imprecative mood</term>
+						<def ws="en">Imprecative mood is a volitive mood that signals the speaker's wish that an unfavorable proposition will come about.</def>
+						<cellar name="imprecative mood" id="1880C160CB21D5B"/>
+						<citation>Lewis, G.L. 1967:115, cited by Sadock and Zwicky 1985:163</citation>
+						<fs inherit="fsVolitiveMood" placeAt="fsVolitiveMood">
+							<f name="SubType">
+								<sym value="Imprecative"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">optative mood</term>
+						<def ws="en">Optative mood is a volitive mood that signals wishing or hoping.</def>
+						<cellar name="optative mood" id="188110F0CB21DDE"/>
+						<citation>Chung and Timberlake 1985:247</citation>
+						<citation>Nida 1949:168</citation>
+						<citation>Pei and Gaynor 1954:54,154-155</citation>
+						<citation>Bybee 1985:166</citation>
+						<citation>Mish et al. 1990:828</citation>
+						<citation>Quirk, et al. 1985:839</citation>
+						<citation>Palmer 1986:116-118</citation>
+						<citation>Crystal 1985:90</citation>
+						<fs inherit="fsVolitiveMood" placeAt="fsVolitiveMood">
+							<f name="SubType">
+								<sym value="Optative"/>
+							</f>
+						</fs>
+					</item>
+				</item>
+			</item>
+			<item>
+				<term ws="en">epistemic modality</term>
+				<def ws="en">Epistemic modality is a modality that connotes how much certainty or evidence a speaker has for the proposition expressed by his or her utterance.</def>
+				<cellar name="epistemic modality" id="18808540CB21CF5"/>
+				<citation>Crystal 1985:110</citation>
+				<citation>Chung and Timberlake 1985:242</citation>
+				<citation>Bybee 1985:165-166</citation>
+				<citation>Palmer 1986:10-11,5</citation>
+				<fs type="Infl" id="fsEpistemicMood">
+					<f name="Mood">
+						<sym value="Epistemic"/>
+					</f>
+				</fs>
+				<item>
+					<term ws="en">evidentiality</term>
+					<def ws="en">Evidentiality is an epistemic modality that connotes the speaker's assessment of the evidence for his or her statement. An evidential is a form, such as a verbal affix, that is a grammatical expression of evidentiality.</def>
+					<cellar name="evidentiality" id="18808BA0CB21D00"/>
+					<citation>Bybee 1985:184</citation>
+					<citation>Palmer 1986:66-67</citation>
+					<citation>Givón 1984:307-308</citation>
+					<fs inherit="fsEpistemicMood" placeAt="fsEpistemicMood" id="fsEvidentiality">
+						<f name="SubType">
+							<sym value="Evidentiality"/>
+						</f>
+					</fs>
+					<item>
+						<term ws="en">quotative evidential</term>
+						<def ws="en">A quotative evidential is an evidential that signals that someone else is the source of the statement made.</def>
+						<cellar name="quotative evidential" id="18815B70CB21E58"/>
+						<citation>Chung and Timberlake 1985:244</citation>
+						<citation>Nida 1949:169</citation>
+						<citation>Palmer 1986:7,71</citation>
+						<citation>Dahl 1985:150-151</citation>
+						<citation>Faust 1973</citation>
+						<fs inherit="fsEvidentiality" placeAt="fsEvidentiality">
+							<f name="SubType">
+								<sym value="Quotative"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">sensory evidential</term>
+						<def ws="en">A sensory evidential is an evidential signaling that the speaker's evidence for the truth of his or her statement is derived from the speaker's own sensory experience.</def>
+						<cellar name="sensory evidential" id="188179D0CB21E8A"/>
+						<fs inherit="fsEvidentiality" placeAt="fsEvidentiality" id="fsSensory">
+							<f name="SubType">
+								<sym value="Sensory"/>
+							</f>
+						</fs>
+						<item>
+							<term ws="en">nonvisual evidential</term>
+							<def ws="en">A nonvisual evidential is a sensory evidential that signals that the speaker's evidence for the truth of his or her statement is derived from a sense other than sight.</def>
+							<cellar name="nonvisual evidential" id="18810630CB21DCD"/>
+							<fs inherit="fsSensory" placeAt="fsSensory" id="fsNonVisual">
+								<f name="SubType">
+									<sym value="NonVisual"/>
+								</f>
+							</fs>
+							<item>
+								<term ws="en">auditory evidential</term>
+								<def ws="en">An auditory evidential is a nonvisual evidential that signals that the speaker's evidence for the truth of his statement is based on what he has heard.</def>
+								<cellar name="auditory evidential" id="18802AE0CB21C4F"/>
+								<fs inherit="fsNonVisual" placeAt="fsNonVisual">
+									<f name="SubType">
+										<sym value="Auditory"/>
+									</f>
+								</fs>
+							</item>
+						</item>
+						<item>
+							<term ws="en">visual evidential</term>
+							<def ws="en">A visual evidential is a sensory evidential signaling that the speaker's evidence for the truth of his or her statement is derived from the speaker's own sight.</def>
+							<cellar name="visual evidential" id="1881B210CB21EF1"/>
+							<fs inherit="fsSensory" placeAt="fsSensory">
+								<f name="SubType">
+									<sym value="Visual"/>
+								</f>
+							</fs>
+						</item>
+					</item>
+				</item>
+				<item>
+					<term ws="en">judgment modality</term>
+					<def ws="en">Judgment modality is an epistemic modality that connotes the speaker's (1) strength of inference, or (2) degree of confidence in the reality of the proposition expressed by his or her utterance.</def>
+					<cellar name="judgment modality" id="1880DB10CB21D88"/>
+					<fs inherit="fsEpistemicMood" placeAt="fsEpistemicMood" id="fsJudgmentModality">
+						<f name="SubType">
+							<sym value="Judgement"/>
+						</f>
+					</fs>
+					<item>
+						<term ws="en">assumptive mood</term>
+						<def ws="en">Assumptive mood is an epistemic mode that signals the speaker's belief that his statement is based on facts about what is usually the case in such circumstances.</def>
+						<cellar name="assumptive mood" id="18802870CB21C4B"/>
+						<fs inherit="fsJudgmentModality" placeAt="fsJudgmentModality">
+							<f name="SubType">
+								<sym value="Assumptive"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">declarative mood</term>
+						<def ws="en">Declarative mood is an epistemic mood that signals that the proposition expressed by a speaker's utterance is offered as an unqualified statement of fact.</def>
+						<cellar name="declarative mood" id="18806290CB21CBB"/>
+						<citation>Palmer 1986:26-27</citation>
+						<citation>Sadock and Zwicky 1985:165-166</citation>
+						<citation>Hartmann and Stork 1972:144</citation>
+						<citation>Crystal 1980:85</citation>
+						<citation>Palmer 1986:70,83</citation>
+						<citation>Pei and Gaynor 1954:99</citation>
+						<citation>Crystal 1980:183</citation>
+						<citation>Mish et al. 1990:613</citation>
+						<fs inherit="fsJudgmentModality" placeAt="fsJudgmentModality">
+							<f name="SubType">
+								<sym value="Declarative"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">deductive mood</term>
+						<def ws="en">Deductive mood is an epistemic mood that signals that the speaker judges from other facts that the proposition expressed by his utterance is probably true.</def>
+						<cellar name="deductive mood" id="18806370CB21CBD"/>
+						<fs inherit="fsJudgmentModality" placeAt="fsJudgmentModality">
+							<f name="SubType">
+								<sym value="Deductive"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">dubitative mood</term>
+						<def ws="en">Dubitative mood is an epistemic mood which signals a speaker's reservation about the accuracy of his or her statement.</def>
+						<cellar name="dubitative mood" id="18807890CB21CE1"/>
+						<citation>Nida 1949:169</citation>
+						<citation>Bybee 1985:179</citation>
+						<fs inherit="fsJudgmentModality" placeAt="fsJudgmentModality">
+							<f name="SubType">
+								<sym value="Dubitative"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">hypothetical mood</term>
+						<def ws="en">Hypothetical mood is an epistemic mood that signals that the speaker evaluates a proposition as counterfactual, but otherwise possible.</def>
+						<cellar name="hypothetical mood" id="1880B1C0CB21D3F"/>
+						<citation>Noonan 1985:95</citation>
+						<citation>Chung and Timberlake 1985:243</citation>
+						<citation>Boas and Deloria 1941:112</citation>
+						<fs inherit="fsJudgmentModality" placeAt="fsJudgmentModality">
+							<f name="SubType">
+								<sym value="Hypothetical"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">interrogative mood</term>
+						<def ws="en">An interrogative mood is an epistemic mood that signals that the speaker wishes to elicit information concerning the content of his or her utterance from the addressee.</def>
+						<cellar name="interrogative mood" id="1880D6F0CB21D80"/>
+						<citation>Nida 1949:168</citation>
+						<citation>Palmer 1986:30-31</citation>
+						<fs inherit="fsJudgmentModality" placeAt="fsJudgmentModality">
+							<f name="SubType">
+								<sym value="Interrogative"/>
+							</f>
+						</fs>
+					</item>
+					<item>
+						<term ws="en">speculative mood</term>
+						<def ws="en">Speculative mood is an epistemic mood that signals that the speaker judges from certain facts that the proposition expressed by his or her utterance is possibly true.</def>
+						<cellar name="speculative mood" id="18818860CB21EA4"/>
+						<fs inherit="fsJudgmentModality" placeAt="fsJudgmentModality">
+							<f name="SubType">
+								<sym value="Speculative"/>
+							</f>
+						</fs>
+					</item>
+				</item>
+			</item>
+			<item>
+				<term ws="en">assertive mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Assertive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">conative mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Conative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">concessive mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Concessive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">conditional mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Conditional"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">formal mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Formal"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">hortative mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Hortative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">inconsequential mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Inconsequential"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">indicative mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Indicative"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">inferential mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Inferential"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">injunctive mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Injunctive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">nonvolitional mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Nonvolitional"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">potential mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Potential"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">volitional mood</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Mood">
+						<sym value="Volitional"/>
+					</f>
+				</fs>
+			</item>
+		</item>
+		<item type="vGroup">
+			<term ws="en">polarity</term>
+			<def ws="en">Polarity is a grammatical category that distinguishes affirmative and negative.</def>
+			<cellar name="polarity" id="188130D0CB21E10"/>
+			<citation>Schachter 1985:10</citation>
+			<citation>Talmy 1985:131</citation>
+			<item type="value">
+				<term ws="en">affirmative</term>
+				<def ws="en"/>
+				<fs type="Infl">
+					<f name="Polarity">
+						<plus/>
+					</f>
+				</fs>
+			</item>
+			<item type="value">
+				<term ws="en">negative</term>
+				<def ws="en"/>
+				<fs type="Infl">
+					<f name="Polarity">
+						<minus/>
+					</f>
+				</fs>
+			</item>
+		</item>
+		<item>
+			<term ws="en">switch reference</term>
+			<def ws="en">Switch reference is a grammatical category with the following features: It signals the identity or nonidentity of the referent of an argument of one clause, usually its subject, with an argument of another clause, which is likewise usually the subject.  Switch reference functions to avoid ambiguity of reference; for example, it may distinguish between two referents that are third person and that, thus, may not be otherwise distinguished on the verb.  It relates clauses, usually adjacent, that may be subordinate or coordinate to one another.  It is expressed: (1) usually by inflectional affixes on the verb, (2) sometimes by the same affixes that express subject-verb agreement within the clause, and (3) rarely by a morpheme independent of the verb.</def>
+			<cellar name="switch reference" id="18819820CB21EC2"/>
+			<citation>Haiman and Munro 1983:ix-xiii</citation>
+			<item>
+				<term ws="en">different subject marker</term>
+				<def ws="en">A different subject marker is a marker in the verb morphology of a clause which indicates that the subject of the clause is not the same as the subject of some other clause. The other clause is maybe a following clause, the final clause in a clause chain, or the main clause in a sentence.</def>
+				<cellar name="different subject marker" id="18806E50CB21CCE"/>
+				<citation>Thompson and Longacre 1985:187,201</citation>
+				<citation>Longacre 1985:264</citation>
+				<fs type="Infl">
+					<f name="SwitchReference">
+						<sym value="DifferentSubject"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">same subject marker</term>
+				<def ws="en">A same subject marker is a distinction in the verb morphology of a clause that indicates that the subject is identical to the subject of another clause, such as one of the following: A following clause, the final clause in a clause  chain, or the main clause in a sentence.</def>
+				<cellar name="same subject marker" id="18817550CB21E82"/>
+				<citation>Thompson and Longacre 1985:187,201</citation>
+				<citation>Longacre 1985:254</citation>
+				<fs type="Infl">
+					<f name="SwitchReference">
+						<sym value="SameSubject"/>
+					</f>
+				</fs>
+			</item>
+		</item>
+		<item type="feature">
+			<abbrev ws="en">tense</abbrev>
+			<term ws="en">tense</term>
+			<def ws="en">Tense is a grammatical category, typically marked on the verb, that deictically refers to the time of the event or state denoted by the verb in relation to some other temporal reference point.</def>
+			<cellar name="tense" id="18819EF0CB21ECF"/>
+			<citation>Crystal 1980:352-353</citation>
+			<citation>Givón 1984:272</citation>
+			<citation>Hartmann and Stork 1972:235</citation>
+			<citation>Nida 1949:167</citation>
+			<citation>Comrie 1985b:9</citation>
+			<citation>Mish et al. 1990:1216</citation>
+			<item type="vGroup">
+				<term ws="en">absolute tense</term>
+				<def ws="en">Absolute tense is a tense that refers to a time in relation to the moment of utterance.</def>
+				<cellar name="absolute tense" id="18800AE0CB21C1C"/>
+				<item type="value">
+					<term ws="en">future tense</term>
+					<def ws="en">Future tense is an absolute tense that refers to a time after the moment of utterance.</def>
+					<cellar name="future tense" id="1880A130CB21D23"/>
+					<citation>Hartmann and Stork 1972:92</citation>
+					<citation>Mish et al. 1990:500</citation>
+					<fs type="Infl" id="fsFutureTense">
+						<f name="AbsoluteTense">
+							<fs id="fsFutureTenseValues">
+								<f name="Future">
+									<plus/>
+								</f>
+								<f name="Past">
+									<minus/>
+								</f>
+								<f name="Present">
+									<minus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+					<item type="value">
+						<term ws="en">close future tense</term>
+						<def ws="en">Close future tense is a tense that refers to a time shortly after the moment of utterance.</def>
+						<cellar name="close future tense" id="18804080CB21C84"/>
+						<citation>Dahl 1985:121</citation>
+						<citation>Comrie 1985b:94</citation>
+						<fs inherit="fsFutureTense" placeAt="fsFutureTenseValues">
+							<f name="relativeTime">
+								<sym value="Close"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">hodiernal future tense</term>
+						<def ws="en">Hodiernal future tense is a future tense that refers to a time that is located after the moment of utterance within the span culturally defined as "today."</def>
+						<cellar name="hodiernal future tense" id="1880AD20CB21D37"/>
+						<fs inherit="fsFutureTense" placeAt="fsFutureTenseValues">
+							<f name="relativeTime">
+								<sym value="Hodiernal"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">post-hodiernal future tense</term>
+						<def ws="en">Post-hodiernal future tense is a future tense that refers to a time, in relation to the moment of utterance, after the span that is culturally defined as "today."</def>
+						<cellar name="post-hodiernal future tense" id="188134A0CB21E16"/>
+						<fs inherit="fsFutureTense" placeAt="fsFutureTenseValues">
+							<f name="relativeTime">
+								<sym value="Post-hodiernal"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">predictive future tense</term>
+						<def ws="en">Predictive future tense is a future tense, used in predictions, that does not express intention.</def>
+						<cellar name="predictive future tense" id="18813E80CB21E29"/>
+						<fs inherit="fsFutureTense" placeAt="fsFutureTenseValues">
+							<f name="relativeTime">
+								<sym value="Predictive"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">remote future tense</term>
+						<def ws="en">Remote future is a future tense that refers to a time that is considered relatively distant. It is characteristically after the span of time culturally defined as "tomorrow."</def>
+						<cellar name="remote future tense" id="18816EC0CB21E77"/>
+						<citation>Dahl 1985:121</citation>
+						<citation>Comrie 1985b:94</citation>
+						<fs inherit="fsFutureTense" placeAt="fsFutureTenseValues">
+							<f name="relativeTime">
+								<sym value="Remote"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">immediate future tense</term>
+						<def ws="en"/>
+						<citation>DOBES Section VIII</citation>
+						<fs inherit="fsFutureTense" placeAt="fsFutureTenseValues">
+							<f name="relativeTime">
+								<sym value="Immediate"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">near future tense</term>
+						<def ws="en"/>
+						<citation>DOBES Section VIII</citation>
+						<fs inherit="fsFutureTense" placeAt="fsFutureTenseValues">
+							<f name="relativeTime">
+								<sym value="Near"/>
+							</f>
+						</fs>
+					</item>
+				</item>
+				<item type="value">
+					<term ws="en">nonfuture tense</term>
+					<def ws="en">Nonfuture tense is an absolute tense that (1) refers to a time at or before the moment of utterance, and (2) contrasts with a future tense.</def>
+					<cellar name="nonfuture tense" id="18810380CB21DC8"/>
+					<fs type="Infl" id="fsNonFutureTense">
+						<f name="AbsoluteTense">
+							<fs>
+								<f name="Future">
+									<minus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">nonpast tense</term>
+					<def ws="en">Nonpast tense is an absolute tense that (1) refers to a time at or after the moment of utterance, and (2) contrasts with a past tense.</def>
+					<cellar name="nonpast tense" id="188103E0CB21DC9"/>
+					<citation>Hartmann and Stork 1972:153</citation>
+					<citation>Comrie 1985b:48-49</citation>
+					<fs type="Infl" id="fsNonPastTense">
+						<f name="AbsoluteTense">
+							<fs>
+								<f name="Past">
+									<minus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">not-yet tense</term>
+					<def ws="en">Not-yet tense is an absolute tense that refers to times at and before the moment of  utterance in asserting the present and past nonoccurrence of an event or state. It tends to imply that the event or state is expected to occur in the future. This tense corresponds to the meaning of the English not yet.</def>
+					<cellar name="not-yet tense" id="18810690CB21DCD"/>
+					<fs type="Infl" id="fsNotYetTense">
+						<f name="AbsoluteTense">
+							<fs>
+								<f name="NotYet">
+									<plus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">past tense</term>
+					<def ws="en">Past tense is an absolute tense that refers to a time before the moment of utterance.</def>
+					<cellar name="past tense" id="18812160CB21DF8"/>
+					<citation>Hartmann and Stork 1972:166</citation>
+					<citation>Pei and Gaynor 1954:162</citation>
+					<citation>Mish et al. 1990:861</citation>
+					<fs type="Infl" id="fsPastTense">
+						<f name="AbsoluteTense">
+							<fs id="fsPastTenseValues">
+								<f name="Future">
+									<minus/>
+								</f>
+								<f name="Past">
+									<plus/>
+								</f>
+								<f name="Present">
+									<minus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+					<item type="value">
+						<term ws="en">hesternal past tense</term>
+						<def ws="en">Hesternal past tense is a past tense that refers to a time that is located somewhere in the span beginning with the period defined culturally as "yesterday" and extends back through some period that is considered nonremote.</def>
+						<cellar name="hesternal past tense" id="1880ACB0CB21D36"/>
+						<citation>Comrie 1985b:87-88</citation>
+						<citation>Dahl 1985:126</citation>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Hesternal"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">hodiernal past tense</term>
+						<def ws="en">Hodiernal past tense is a past tense that refers to a time as located before the moment of utterance within the span culturally defined as "today."</def>
+						<cellar name="hodiernal past tense" id="1880AD80CB21D38"/>
+						<citation>Comrie 1985b:87</citation>
+						<citation>Dahl 1985:125-126</citation>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Hodiernal"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">immediate past tense</term>
+						<def ws="en">Immediate past tense is past tense that refers to a time considered very recent in relation to the moment of utterance.</def>
+						<cellar name="immediate past tense" id="1880BBE0CB21D52"/>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Immediate"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">nonrecent past tense</term>
+						<def ws="en">Nonrecent past tense is a past tense that refers to a time before the range of a contrasting recent past tense.</def>
+						<cellar name="nonrecent past tense" id="18810450CB21DC9"/>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Nonrecent"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">nonremote past tense</term>
+						<def ws="en">Nonremote past tense is a past tense that refers to a time considered not more than a few days ago, in contrast to a remote past tense.</def>
+						<cellar name="nonremote past tense" id="188104B0CB21DCA"/>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Nonremote"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">prehesternal past tense</term>
+						<def ws="en">Prehesternal past tense is a past tense that refers to a time in some span before that of an opposing hesternal past tense.</def>
+						<cellar name="prehesternal past tense" id="18814070CB21E2C"/>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Prehesternal"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">prehodiernal past tense</term>
+						<def ws="en">Prehodiernal past tense is a past tense that refers to a time in some span before that of a contrasting hodiernal past tense.</def>
+						<cellar name="prehodiernal past tense" id="188140D0CB21E2D"/>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Prehodiernal"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">preterit</term>
+						<def ws="en">A preterit, in traditional terminology, is a simple past tense not marked for aspect or modality.</def>
+						<cellar name="preterit" id="18814A10CB21E3B"/>
+						<citation>Hartmann and Stork 1972:184</citation>
+						<citation>Crystal 1987:428</citation>
+						<citation>Mish et al. 1990:932</citation>
+						<citation>Richards, Platt, and Weber 1985:209</citation>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Preterit"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">recent past tense</term>
+						<def ws="en">Recent past tense is a past tense that refers to a time, culturally and situationally defined, within the span ranging from yesterday to a week or a few months previous.</def>
+						<cellar name="recent past tense" id="18815F30CB21E5E"/>
+						<citation>Comrie 1985b:87</citation>
+						<citation>Dahl 1985:121-122</citation>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Recent"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">remote past tense</term>
+						<def ws="en">Remote past tense is a past tense that refers to a time considered more than a few days ago.</def>
+						<cellar name="remote past tense" id="18816F30CB21E78"/>
+						<citation>Dahl 1985:121</citation>
+						<citation>Comrie 1985b:88</citation>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Remote"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">near past tense</term>
+						<def ws="en"/>
+						<citation>DOBES Section VIII</citation>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Near"/>
+							</f>
+						</fs>
+					</item>
+					<item id="iHistoricPastTense" type="value">
+						<term ws="en">historic past tense</term>
+						<def ws="en">Past tense used to refer to a completed action; also called past definite.</def>
+						<citation>Crystal 1997:281</citation>
+						<fs inherit="fsPastTense" placeAt="fsPastTenseValues">
+							<f name="relativeTime">
+								<sym value="Historic"/>
+							</f>
+						</fs>
+					</item>
+					<item type="value">
+						<term ws="en">past definite tense</term>
+						<def ws="en">Past tense used to refer to a completed action; also called past historic. </def>
+						<citation>Crystal 1997:281</citation>
+						<xref see="iHistoricPastTense"/>
+					</item>
+				</item>
+				<item type="value">
+					<term ws="en">present tense</term>
+					<def ws="en">Present tense is an absolute tense that refers to the moment of utterance. It often refers to events or states that do not merely coincide with the moment of utterance, such as those that are (1) continuous, (2) habitual, or (3) lawlike.</def>
+					<cellar name="present tense" id="18814510CB21E33"/>
+					<citation>Hartmann and Stork 1972:183</citation>
+					<citation>Comrie 1985b:36-40</citation>
+					<citation>Mish et al. 1990:930</citation>
+					<fs type="Infl" id="fsPresentTense">
+						<f name="AbsoluteTense">
+							<fs>
+								<f name="Future">
+									<minus/>
+								</f>
+								<f name="Past">
+									<minus/>
+								</f>
+								<f name="Present">
+									<plus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">still tense</term>
+					<def ws="en">Still tense is an absolute tense carrying the presupposition that an event or state held before the moment of utterance.In positive declarative clauses, still tense asserts that the event or state holds at the moment of utterance.</def>
+					<cellar name="still tense" id="18818B80CB21EAD"/>
+					<fs type="Infl" id="fsStillTense">
+						<f name="AbsoluteTense">
+							<fs>
+								<f name="NotYet">
+									<minus/>
+								</f>
+							</fs>
+						</f>
+					</fs>
+				</item>
+			</item>
+			<item type="vGroup">
+				<term ws="en">absolute-relative tense</term>
+				<def ws="en">Absolute-relative tense is a tense (1) that refers to a time in relation to a temporal reference point that, in turn, is referred to in relation to the moment of utterance, (2) in which the time and the reference point are not identical, and (3) the reference point and the moment of utterance are not identical. </def>
+				<cellar name="absolute-relative tense" id="18800B40CB21C1D"/>
+				<item type="value">
+					<term ws="en">future perfect tense</term>
+					<def ws="en">Future perfect tense is an absolute-relative tense that refers to a time located before a contextually determined temporal reference point that must be located in the future relative to the moment of utterance.</def>
+					<cellar name="future perfect tense" id="1880A0A0CB21D23"/>
+					<citation>Comrie 1985b:69-71</citation>
+					<citation>Mish et al. 1990:501</citation>
+					<fs type="Infl">
+						<f name="AbsoluteRelativeTense">
+							<sym value="FuturePerfect"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">future-in-future tense</term>
+					<def ws="en">Future-in-future tense is an absolute-relative tense that refers to a time located in the future, relative to a temporal reference point that itself is located in the future relative to the moment of utterance.</def>
+					<cellar name="future-in-future tense" id="1880A1A0CB21D24"/>
+					<fs type="Infl">
+						<f name="AbsoluteRelativeTense">
+							<sym value="FutureInFuture"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">future-in-past tense</term>
+					<def ws="en">Future-in-past tense is an absolute-relative tense that refers to a time located in the future, relative to a contextually determined temporal reference point that itself must be located in the past relative to the moment of utterance.</def>
+					<cellar name="future-in-past tense" id="1880A230CB21D25"/>
+					<fs type="Infl">
+						<f name="AbsoluteRelativeTense">
+							<sym value="FutureInPast"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">future-perfect-in-past tense</term>
+					<def ws="en">Future-perfect-in-past tense is an absolute-relative tense that involves three points in time in the past. The tense refers to a time that is in the future, relative to another point in the past, but is in the past relative to a point in its future. All these points in time are in the past relative to the moment of utterance.</def>
+					<cellar name="future-perfect-in-past tense" id="1880A2C0CB21D26"/>
+					<fs type="Infl">
+						<f name="AbsoluteRelativeTense">
+							<sym value="FuturePerfectInPast"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">past perfect tense</term>
+					<def ws="en">Past perfect tense is an absolute-relative tense that refers to a time in the past relative to a reference point, which itself is in the past relative to the moment of utterance.</def>
+					<cellar name="past perfect tense" id="188120C0CB21DF7"/>
+					<citation>Pei and Gaynor 1954:162,170</citation>
+					<citation>Mish et al. 1990:861</citation>
+					<citation>Comrie 1985b:65-66</citation>
+					<fs type="Infl">
+						<f name="AbsoluteRelativeTense">
+							<sym value="PastPerfect"/>
+						</f>
+					</fs>
+				</item>
+			</item>
+			<item type="vGroup">
+				<term ws="en">relative tense</term>
+				<def ws="en">Relative tense is a tense that refers to a time in relation to a contextually determined temporal reference point, regardless of the latter's temporal relation to the moment of utterance.</def>
+				<cellar name="relative tense" id="18816C90CB21E73"/>
+				<item type="value">
+					<term ws="en">relative future tense</term>
+					<def ws="en">Relative future tense is a relative tense that refers to a time located after a contextually determined temporal reference point, regardless of the latter's relation to the moment of utterance.</def>
+					<cellar name="relative future tense" id="18816980CB21E6E"/>
+					<fs type="Infl">
+						<f name="RelativeTense">
+							<sym value="RelativeFuture"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">relative nonfuture tense</term>
+					<def ws="en">Relative nonfuture tense is a relative tense that refers to a time simultaneous to, or before, a contextually determined temporal reference point, regardless of the latter's relation to the moment of utterance.</def>
+					<cellar name="relative nonfuture tense" id="18816A10CB21E6F"/>
+					<fs type="Infl">
+						<f name="RelativeTense">
+							<sym value="RelativeNonFuture"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">relative nonpast tense</term>
+					<def ws="en">Relative nonpast tense is a relative tense that refers to a time simultaneous to, or after, a contextually determined temporal reference point, regardless of the latter's relation to the moment of utterance.</def>
+					<cellar name="relative nonpast tense" id="18816A90CB21E70"/>
+					<fs type="Infl">
+						<f name="RelativeTense">
+							<sym value="RelativeNonPast"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">relative past tense</term>
+					<def ws="en">Relative past tense is a relative tense that refers to a time located before that of a contextually determined temporal reference point.</def>
+					<cellar name="relative past tense" id="18816AF0CB21E70"/>
+					<fs type="Infl">
+						<f name="RelativeTense">
+							<sym value="RelativePast"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">relative present tense</term>
+					<def ws="en">Relative present tense is a relative tense that refers to a time that is simultaneous with some contextually determined temporal reference point.</def>
+					<cellar name="relative present tense" id="18816B70CB21E71"/>
+					<fs type="Infl">
+						<f name="RelativeTense">
+							<sym value="RelativePresent"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">anterior tense</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs type="Infl">
+						<f name="RelativeTense">
+							<sym value="Anterior"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">posterior tense</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs type="Infl">
+						<f name="RelativeTense">
+							<sym value="Posterior"/>
+						</f>
+					</fs>
+				</item>
+			</item>
+			<item type="vGroup">
+				<term ws="en">other, not-yet-classified tense</term>
+				<def ws="en">Tenses yet to be classified.</def>
+				<item type="value">
+					<term ws="en">crastinal tense</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs type="Infl">
+						<f name="UnclassifiedTense">
+							<sym value="Crastinal"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">imperfect tense</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs type="Infl">
+						<f name="UnclassifiedTense">
+							<sym value="Imperfect"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">narrative tense</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs type="Infl">
+						<f name="UnclassifiedTense">
+							<sym value="Narrative"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">perfect tense</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs type="Infl">
+						<f name="UnclassifiedTense">
+							<sym value="Perfect"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">pluperfect tense</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs type="Infl">
+						<f name="UnclassifiedTense">
+							<sym value="Pluperfect"/>
+						</f>
+					</fs>
+				</item>
+				<item type="value">
+					<term ws="en">procrastinal tense</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs type="Infl">
+						<f name="UnclassifiedTense">
+							<sym value="Procrastinal"/>
+						</f>
+					</fs>
+				</item>
+			</item>
+		</item>
+		<item>
+			<term ws="en">transitivity</term>
+			<def ws="en">Transitivity is the number of objects a verb requires or takes in a given instance.</def>
+			<cellar name="transitivity" id="1881A560CB21EDA"/>
+			<item>
+				<term ws="en">ditransitivity</term>
+				<def ws="en">Ditransitivity is a term which describes a verb or clause which takes two objects.</def>
+				<cellar name="ditransitivity" id="18807690CB21CDD"/>
+				<fs type="Type">
+					<f name="Transitivity">
+						<sym value="Ditransitive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">intransitivity</term>
+				<def ws="en">Intransitivity is a term that describes a verb or clause that is unable to take a direct object.</def>
+				<cellar name="intransitivity" id="1880D840CB21D83"/>
+				<fs type="Type">
+					<f name="Transitivity">
+						<sym value="Intransitive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">transitive verb</term>
+				<def ws="en">A transitive verb is a verb that takes a direct object.</def>
+				<cellar name="transitive verb" id="1881A4D0CB21ED9"/>
+				<fs type="Type">
+					<f name="Transitivity">
+						<sym value="Transitive"/>
+					</f>
+				</fs>
+			</item>
+		</item>
+		<item>
+			<term ws="en">voice</term>
+			<def ws="en">Voice is a grammatical category that expresses the semantic functions attributed to the referents of a clause. It indicates whether the subject is an (1) actor, (2) patient, or (3) recipient. </def>
+			<cellar name="voice" id="1881B320CB21EF3"/>
+			<citation>Pei and Gaynor 1954:228-229</citation>
+			<citation>Hartmann and Stork 1972:251-252</citation>
+			<citation>Nida 1949:168</citation>
+			<citation>Elson and Pickett 1988:31</citation>
+			<citation>Bybee 1985:20-21</citation>
+			<citation>Quirk, et al. 1985:159</citation>
+			<citation>Crystal 1985:329</citation>
+			<citation>Mish et al. 1990:1320</citation>
+			<fs type="Infl">
+				<f name="Voice">
+					<any/>
+				</f>
+			</fs>
+			<item>
+				<term ws="en">active voice</term>
+				<def ws="en">Active voice is a voice that indicates a subject has the semantic function of actor.</def>
+				<cellar name="active voice" id="18800E70CB21C22"/>
+				<citation>Crystal 1980:12</citation>
+				<citation/>
+				<citation>Hartmann and Stork 1972:251-252</citation>
+				<citation>Nida 1949:168</citation>
+				<citation>Mish et al. 1990:54</citation>
+				<fs type="Infl">
+					<f name="Voice">
+						<sym value="Active"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">antipassive voice</term>
+				<def ws="en">Antipassive voice is a voice in an ergative-absolutive language in which (1) a noun phrase that normally has ergative case instead has absolutive case, (2) a noun phrase that normally has absolutive case is marked as an oblique or an indirect object, and (3) the salience of the normally absolutive noun phrase is, according to some analysts, decreased.</def>
+				<cellar name="antipassive voice" id="18802270CB21C41"/>
+				<fs type="Infl">
+					<f name="Voice">
+						<sym value="Anitpassive"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">middle voice</term>
+				<def ws="en">Middle voice is a voice that indicates that the subject is the actor and acts (1) upon himself or herself reflexively, or (2) for his or her own benefit. In the case of plural subjects, the actors may, perhaps, act upon each other.</def>
+				<cellar name="middle voice" id="1880EE90CB21DA7"/>
+				<citation>Elson and Pickett 1988:31</citation>
+				<citation>Bybee 1985:20-21</citation>
+				<citation>Pei and Gaynor 1954:137</citation>
+				<citation>Hartmann and Stork 1972:252</citation>
+				<citation>Nida 1949:168</citation>
+				<citation>Mish et al. 1990:752</citation>
+				<fs type="Infl">
+					<f name="Voice">
+						<sym value="Middle"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">passive voice</term>
+				<def ws="en">Passive voice is a voice that indicates that the subject is the patient or recipient of the action denoted by the verb.</def>
+				<cellar name="passive voice" id="18811FF0CB21DF6"/>
+				<citation>Crystal 1980:259</citation>
+				<citation>Pei and Gaynor 1954:161</citation>
+				<citation>Hartmann and Stork 1972:252</citation>
+				<citation>Nida 1949:1689</citation>
+				<citation>Mish et al. 1990:860</citation>
+				<citation>Crystal 1985:222</citation>
+				<fs type="Infl" id="fsPassiveVoice">
+					<f name="Voice">
+						<sym value="Passive"/>
+					</f>
+				</fs>
+				<item>
+					<term ws="en">mediopassive voice</term>
+					<def ws="en">Mediopassive voice is a passive voice in which (1) the verb has stative meaning, and (2) the actor is not expressed.</def>
+					<cellar name="mediopassive voice" id="1880E980CB21D9F"/>
+					<fs inherit="fsPassiveVoice" placeAt="fsPassiveVoice">
+						<f name="SubType">
+							<sym value="Mediopassive"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">impersonal passive</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs inherit="fsPassiveVoice" placeAt="fsPassiveVoice">
+						<f name="SubType">
+							<sym value="ImpersonalPassive"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">personal passive</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs inherit="fsPassiveVoice" placeAt="fsPassiveVoice">
+						<f name="SubType">
+							<sym value="PersonalPassive"/>
+						</f>
+					</fs>
+				</item>
+				<item>
+					<term ws="en">synthetic passive voice</term>
+					<def ws="en"/>
+					<citation>DOBES Section VIII</citation>
+					<fs inherit="fsPassiveVoice" placeAt="fsPassiveVoice">
+						<f name="SubType">
+							<sym value="SyntheticPassive"/>
+						</f>
+					</fs>
+				</item>
+			</item>
+			<item>
+				<term ws="en">reciprocal voice</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Voice">
+						<sym value="Reciprocal"/>
+					</f>
+				</fs>
+			</item>
+			<item>
+				<term ws="en">reflexive voice</term>
+				<def ws="en"/>
+				<citation>DOBES Section VIII</citation>
+				<fs type="Infl">
+					<f name="Voice">
+						<sym value="Reflexive"/>
+					</f>
+				</fs>
+			</item>
+		</item>
+	</item>
+</glossList>

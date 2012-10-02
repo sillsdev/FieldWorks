@@ -1,0 +1,23 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 2002 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: CmnFwDlgsPs.idl
+Responsibility: Randy Regnier
+Last reviewed:
+
+	Defines Common Dialog Interfaces for proxy / stub generation.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+import "oaidl.idl";
+import "ocidl.idl";
+
+import "FwKernelPs.idl";
+import "ViewsPs.idl";
+
+#include "Common.idh"
+
+#define NO_COCLASSES 1
+
+#include "CmnFwDlgs.idh"

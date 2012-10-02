@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<document role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.MultiPane/">
+
+  <texts role="pane" path="9:CSC.SplitContainer.One/9:XCore.PaneBarContainer.First/">
+	<var id="titleList" set="9:textsChooser/9:textsChooser/$nl"/>
+	<label name="Texts" path="9:XCore.PaneBar/9:Texts"/>
+	<col path="$titleList">
+	   <changer path="[3]/43:NAMELESS"/>
+	   <header path="/9:HeaderListView/33:HeaderListView/$NL;25:"/>
+	   <filter path="/9:FilterBar/9:FwComboBox"> <!-- index -->
+		 <text path="20:RootSite/$Text"/>
+		 <drop path="$NL;43:NAMELESS"/>
+	   </filter>
+	</col>
+	<record path="$titleList;/20:RootSite/24:Table">
+	   <col path="$Col"/> <!-- index -->
+	</record>
+	<scroll path="$titleList;[2]/">
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </texts>
+
+  <text role="pane" path="9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/">
+	<label name="Text" path="9:XCore.PaneBar/9:Text"/>
+
+	<var id="LINE" set="9:ITextContent/20:RootSite/20:Div/"/>
+
+	<title path="$LINE;42:Paragraph"/> <!-- index for different language titles -->
+
+	<labels path="$LINE;20:Div"> <!-- index for an interlinear line -->
+	  <label path="/42:Paragraph/20:InnerPile"> <!-- index for a pile, 1 is for labels -->
+		 <heading path="/42:Paragraph"/> <!-- index for a heading -->
+	  </label>
+	</labels>
+
+	<line path="$LINE;20:Div"> <!-- index for an interlinear line -->
+	  <pile path="/42:Paragraph/20:InnerPile"> <!-- index for a pile, 2 + is for data -->
+		 <word path="/42:Paragraph"/> <!-- index 1 for the word -->
+		 <lex-data path="/42:Paragraph[2]"> <!-- index 2 for lex data -->
+			<morpheme path="/20:InnerPile"/> <!-- index for a morpheme of this word -->
+			<field path="/42:Paragraph"/> <!-- index for specific lex data field -->
+		 </lex-data>
+		 <gloss path="/42:Paragraph[3]"/> <!-- index 3 for word gloss -->
+		 <category path="/42:Paragraph[4]"/> <!-- index 4 for a word category -->
+	  </pile>
+	  <trans-note path="/42:Paragraph[2]/"> <!-- index 2 +  for free translation, literal trans and notes -->
+		<label name="Free:" path="42:String"/>
+		<text path="42:String[2]"/>
+	  </trans-note>
+	</line>
+
+
+  </text>
+</document>

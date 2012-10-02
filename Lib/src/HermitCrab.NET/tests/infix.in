@@ -1,0 +1,115 @@
+;A file of simple infix rules
+(load_nat_class message <nat_class name cons features (cons +)>)
+(load_nat_class message <nat_class name voiceless_stop features (vd - cont -)>)
+(load_nat_class message <nat_class name unasp features (asp -)>)
+
+;Load some mrules (msg 6505):
+;Based on Arabic, using some data from Spencer "Morphological Theory" pg. 134f
+; (examples 5.1 and 5.2; the patterns in 5.4 would take us into reduplication)
+; with triliteral roots.  Note that the imperfective rules are at the same time
+; prefixes and infixes.
+; Perfective active: CaCaC
+(load_morpher_rule message
+  <mrule  nm perf_act
+		  str morphophonemic
+		  r_pos (V)
+		  hf (aspect (perf) mood (active))
+		  gl PER.ACT
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class cons>)
+									  (<simp_cntxt class cons>)
+									  (<simp_cntxt class cons>)
+									 )
+						 >
+					  out <m_rhs p_out (1 (a table3) 2 (a table3) 3)>
+					>
+				   )
+	>
+)
+;Perfective passive: CuCiC
+(load_morpher_rule message
+  <mrule  nm perf_pass
+		  str morphophonemic
+		  r_pos (V)
+		  hf (aspect (perf) mood (passive))
+		  gl PER.PSV
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class cons>)
+									  (<simp_cntxt class cons>)
+									  (<simp_cntxt class cons>)
+									 )
+						 >
+					  out <m_rhs p_out (1 (u table3) 2 (i table3) 3)>
+					>
+				   )
+	>
+)
+;Imperfective active: aCCuC
+(load_morpher_rule message
+  <mrule  nm imperf_act
+		  str morphophonemic
+		  r_pos (V)
+		  hf (aspect (impf) mood (active))
+		  gl IMPF.ACT
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class cons><simp_cntxt class cons>)
+									  (<simp_cntxt class cons>)
+									 )
+						 >
+					  out <m_rhs p_out ((a table3) 1 (u table3) 2)>
+					>
+				   )
+	>
+)
+;Imperfective passive: uCCaC
+; We arbitrarily leave the first two pieces of the input "unbundled", for testing.
+(load_morpher_rule message
+  <mrule  nm imperf_pass
+		  str morphophonemic
+		  r_pos (V)
+		  hf (aspect (impf) mood (passive))
+		  gl IMPF.PSV
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class cons>)
+									  (<simp_cntxt class cons>)
+									  (<simp_cntxt class cons>)
+									 )
+						 >
+					  out <m_rhs p_out ((u table3) 1 2 (a table3) 3)>
+					>
+				   )
+  >
+)
+;...And a phonological rule, to ensure that /ptk/ become unambiguously xlatable:
+; /p t k/ -> [p t k]
+; (note: no environ, just a feature filling rule)
+(load_morpher_rule message
+  <prule  nm aspiration
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class voiceless_stop>)
+		  subrules (<psub out_pseq (<simp_cntxt class unasp>)>)
+  >
+)
+;We'll trace the mrules, to watch their application (msg 6535, 4x):
+(trace_morpher_rule message (true true perf_act))
+(trace_morpher_rule message (true true perf_pass))
+(trace_morpher_rule message (true true imperf_act))
+(trace_morpher_rule message (true true imperf_pass))
+;Also trace lex lookup:
+(trace_lexical_lookup message true)
+;Now we morph a few words; each should be unambiguous:
+(morph_and_lookup_word pretty_print katab)
+(morph_and_lookup_word pretty_print kutib)
+(morph_and_lookup_word pretty_print aktub)
+(morph_and_lookup_word pretty_print uktab)
+
+;Now we'll remove those rules (msg 6506):
+(remove_morpher_rule message perf_act)
+(remove_morpher_rule message perf_pass)
+(remove_morpher_rule message imperf_act)
+(remove_morpher_rule message imperf_pass)
+(remove_morpher_rule message aspiration)
+;And the natural classes (msg 6542):
+(remove_nat_class message cons)
+(remove_nat_class message voiceless_stop)
+(remove_nat_class message unasp)

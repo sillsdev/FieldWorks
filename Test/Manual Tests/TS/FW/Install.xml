@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="install" num="0.0.0" abbr="inst" file="FW\Install.xml">
+<title tag="install">Installation Program Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>All of the official FieldWorks applications are installed by this Installer from a CD. Little of the processing is shown to the user but a few dialogs check licensing and request preferences. Some of the test cases require inspection of files generated during installation or of other side effect objects, such as icons and program groups.</p>
+<p>See the requirements for <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Installation/Installation.html" type="doc">Installation</link>.</p>
+</introduction>
+<context>
+<p>Relatively few setting combinations are possible. Even so, testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the word "Installation".</p>
+<p>After the old installation, if any, has been completely removed from the system, procede with these tests.</p>
+</context>
+
+<case id="instAuto" num="0" order="any">
+<title tag="instAuto">Exercise Installation Autorun</title>
+<context>
+<p>When all other windows are closed</p>
+</context>
+
+<step name="0.0" link="Bug">Insert the FieldWorks Installation CD into the CD drive.
+   <r>
+<ul>
+<li>The autorun dialog displays within a few seconds.</li>
+<li>It has a ReadMe, Exit, Service Pack and Run Setup button on the whirled FW logo.</li>
+</ul>
+</r>
+<p name="bug">Installation autorun fails</p>
+<p name="bug">Installation autorun is lacking a button</p>
+</step>
+<step name="0.1" link="Bug">In the autorun dialog, click ReadMe.
+   <r>
+<ul>
+<li>The readme.htm file is displayed in the user's preferred HTML browser.</li>
+<li>The Install dialog does not disappear.</li>
+</ul>
+</r>
+<p name="bug">Installation Autorun Readme fails to display</p>
+<p name="bug">Installation Autorun launches wrong browser</p>
+<p name="bug">Installation Autorun dialog disappears during Readme</p>
+</step>
+<step name="0.2" link="Bug">In the autorun dialog, click Exit.
+   <r>
+<ul>
+<li>The autorun Install dialog disappears</li>
+<li>Nothing is installed or changed on the user's system</li>
+</ul>
+</r>
+<p name="bug">Installation Autorun dialog remains after exit action</p>
+<p name="bug">Installation alters user's system dispite exit</p>
+</step>
+<step name="0.3" link="Bug">In the autorun dialog, click Service Pack.
+   <r>
+<ul>
+<li>TBD</li>
+</ul>
+</r>
+<p name="bug">Installation Program Autorun TBD</p>
+</step>
+<step name="0.4" link="Bug">In the autorun dialog, click Run Setup.
+   <r>
+<ul>
+<li>A blue window announces, "Initializing Wise Installation Wizard"</li>
+<li>the screen turns blue with a frame indicating that it is searching for previously installed components</li>
+<li>A Welcome dialog is displayed</li>
+</ul>
+</r>
+<p name="bug">Installation Autorun Run Setup fails</p>
+<p name="bug">Installation Run Setup does not indicate the wizard is running</p>
+<p name="bug">Installation Wizard search frame missing</p>
+<p name="bug">Installation Welcome dialog fails to appear</p>
+</step>
+</case>
+
+<case id="instWc" num="1" order="any">
+<title tag="instWc">Exercise Welcome dialog</title>
+<context>
+<p>When the Welcome dialog is displayed</p>
+</context>
+
+<step name="1.1" link="Bug">Click Cancel.
+   <r>
+<ul>
+<li>The Welcome dialog remains.</li>
+<li>The "are you sure you want to quit" dialog (see below) is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation Welcome dialog disappears immediately after Cancel</p>
+<p name="bug">Installation Welcome does not launch quit dialog</p>
+</step>
+<step name="1.2" link="Bug">Click Next.
+   <r>
+<ul>
+<li>The Welcome dialog disappears.</li>
+<li>The Choose Destination Location dialog is displayed.</li>
+<li>The default destination folder is c:\Program Files\FieldWorks on a pristine machine</li>
+<li>Otherwise, the default destination folder is wherever FieldWorks was last installed.</li>
+</ul>
+</r>
+<p name="bug">Installation Welcome dialog remains</p>
+<p name="bug">Installation Welcome Next fails to open CDL dialog</p>
+<p name="bug">Installation Destination default is not right first time</p>
+<p name="bug">Installation Destination default is not right for nth install</p>
+</step>
+
+</case>
+
+<case id="instDst" num="2" order="any">
+<title tag="instDst">Exercise the Choose Destination Location dialog</title>
+<context>
+<p>When the the Choose Destination Location dialog is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Click Cancel.
+   <r>
+<ul>
+<li>The Choose Destination Location dialog remains.</li>
+<li>The "are you sure you want to quit" dialog (see below) is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation Destination dialog disappears immediately after Cancel</p>
+<p name="bug">Installation Destination dialog does not launch quit dialog</p>
+</step>
+<step name="2.2" link="Bug">Click Browse.
+   <r>
+<ul>
+<li>The Choose Destination Location dialog remains.</li>
+<li>The Select Destination Directory dialog (see below) is displayed with the default app path.</li>
+</ul>
+</r>
+<p name="bug">Installation Destination dialog disappears immediately after Cancel</p>
+<p name="bug">Installation Destination dialog does not launch the select dialog</p>
+<p name="bug">Installation Select dialog does not have the right default path</p>
+</step>
+<step name="2.3" link="Bug">Click Next.
+   <r>
+<ul>
+<li>The Choose Destination Location dialog disappears.</li>
+<li>if MSDE has previously been installed, the Select Program Manager Group dialog is displayed.</li>
+<li>Otherwise, the Choose MSDE Destination Location dialog is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation Destination dialog remains after Next</p>
+<p name="bug">Installation Destination Next fails to open Program Group dialog</p>
+<p name="bug">Installation Destination Next fails to open MSDE dialog</p>
+</step>
+<step name="2.4" link="Bug">Click Back.
+   <r>
+<ul>
+<li>The Choose Destination Location dialog disappears.</li>
+<li>The Welcome dialog is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation Destination dialog remains</p>
+<p name="bug">Installation Destination Back fails to open Welcome dialog</p>
+</step>
+
+</case>
+
+<case id="instDd" num="3" order="any">
+<title tag="instDd">Exercise Select Destination Directory dialog</title>
+<context>
+<p>When the Directory dialog is displayed</p>
+</context>
+
+<step name="3.1" link="Bug">Click Cancel.
+   <r>
+<ul>
+<li>This dialog disappears</li>
+<li>Control returns to the Choose Destination Location or Choose MSDE Destination Location dialog it came from</li>
+<li>The directory path is unchanged</li>
+</ul>
+</r>
+<p name="bug">Installation Selection dialog remains after Cancel</p>
+<p name="bug">Installation Selection dialog Cancel does not return control properly</p>
+<p name="bug">Installation Selection dialog Cancel affects path</p>
+</step>
+<step name="3.2" link="Bug">Click OK
+   <r>
+<ul>
+<li>This dialog disappears</li>
+<li>The directory path is changed</li>
+<li>Control returns to the Choose Destination Location or Choose MSDE Destination Location dialog it came from</li>
+</ul>
+</r>
+<p name="bug">Installation Selection dialog remains after OK</p>
+<p name="bug">Installation Selection dialog OK does not return control properly</p>
+<p name="bug">Installation Selection dialog OK does not affect path</p>
+</step>
+<step name="3.3" link="Bug">Select a new drive from the drivebox control.
+   <r>
+<ul>
+<li>The drive letter in the textbox changes to reflect the selection</li>
+<li>If a folder was selected on this drive previously, it is displayed</li>
+<li>Otherwise, the default path is appended to the drive letter</li>
+</ul>
+</r>
+<p name="bug">Installation Selection of drive not shown in textbox</p>
+<p name="bug">Installation Selection of drive shows wrong folder</p>
+<p name="bug">Installation Selection of drive should show default path</p>
+</step>
+<step name="3.4" link="Bug">Select a new folder from the folder control by double clicking the item.
+   <r>
+<ul>
+<li>The drive letter remains the same</li>
+<li>The path changes to the selection with "\FieldWorks" (or the app folder) appended</li>
+<li>The selected folder appears "open" and as the only child of its parent and its children are displayed below it.</li>
+</ul>
+</r>
+<p name="bug">Installation Selection dialog drive letter changes on folder select</p>
+<p name="bug">Installation Selection dialog path appendage is wrong</p>
+<p name="bug">Installation Selection dialog folder not expanded</p>
+</step>
+
+</case>
+
+<case id="instMl" num="4" order="any">
+<title tag="instMl">Exercise Choose MSDE Destination Location dialog</title>
+<context>
+<p>When the Choose MSDE Destination Location dialog is displayed</p>
+</context>
+
+<step name="4.1" link="Bug">Click Cancel.
+   <r>
+<ul>
+<li>The Choose MSDE Destination Location dialog remains.</li>
+<li>The "are you sure you want to quit" dialog (see below) is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation MSDE Location dialog disappears immediately after Cancel</p>
+<p name="bug">Installation MSDE Location dialog does not launch quit dialog</p>
+</step>
+<step name="4.2" link="Bug">Click Browse.
+   <r>
+<ul>
+<li>The Choose MSDE Destination Location dialog remains.</li>
+<li>The Select Destination Directory dialog (see below) is displayed with the default app path.</li>
+</ul>
+</r>
+<p name="bug">Installation MSDE Location dialog disappears immediately after Cancel</p>
+<p name="bug">Installation MSDE Location dialog does not launch the select dialog</p>
+<p name="bug">Installation Select dialog does not have the right default path</p>
+</step>
+<step name="4.3" link="Bug">Click Next.
+   <r>
+<ul>
+<li>The Choose MSDE Destination Location dialog disappears.</li>
+<li>The Select Program Manager Group dialog is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation MSDE Location dialog remains after Next</p>
+<p name="bug">Installation MSDE Location Next fails to open Program Group dialog</p>
+</step>
+<step name="4.4" link="Bug">Click Back.
+   <r>
+<ul>
+<li>The Choose MSDE Destination Location dialog disappears.</li>
+<li>The Select Destination Directory dialog is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation MSDE Location dialog remains</p>
+<p name="bug">Installation MSDE Location Back fails to open Select dialog</p>
+</step>
+
+</case>
+
+<case id="instPm" num="5" order="any">
+<title tag="instPm">Exercise Select Program Manager Group dialog</title>
+<context>
+<p>When the Select Program Manager Group dialog is displayed</p>
+</context>
+
+<step name="5.1" link="Bug">Click Cancel.
+   <r>
+<ul>
+<li>The Select Program Manager Group dialog remains.</li>
+<li>The "are you sure you want to quit" dialog (see below) is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation Group dialog disappears immediately after Cancel</p>
+<p name="bug">Installation Group dialog does not launch quit dialog</p>
+</step>
+<step name="5.2" link="Bug">Click Next.
+   <r>
+<ul>
+<li>The Program Manager Group dialog disappears.</li>
+<li>The Start Installation dialog is displayed</li>
+</ul>
+</r>
+<p name="bug">Installation Group dialog remains after Next</p>
+<p name="bug">Installation Group Next fails to open Program Group dialog</p>
+</step>
+<step name="5.3" link="Bug">Click Back.
+   <r>
+<ul>
+<li>The Program Manager Group dialog disappears.</li>
+<li>The Choose Destination Location or the Choose MSDE Destination Location dialog is displayed - which ever launched this one</li>
+</ul>
+</r>
+<p name="bug">Installation Group dialog remains after Back</p>
+<p name="bug">Installation Group dialog does not go back to correct dialog</p>
+</step>
+<step name="5.4" link="Bug">Click on an existing program manager group.
+   <r>
+<ul>
+<li>The name appears in the textbox</li>
+<li>It remains until changed or the installation is exited</li>
+<li>When you get back to this dialog by way of Back and Next buttons, the name does not change</li>
+</ul>
+</r>
+<p name="bug">Installation Group selection fails to appear in combo box</p>
+<p name="bug">Installation Group choice does not persist during install</p>
+</step>
+<step name="5.5" link="Bug">Highlight the current text and type a new group name in the textbox.
+   <r>
+<ul>
+<li>The name replaces its predecessor in the textbox</li>
+<li>It remains until changed or the installation is exited</li>
+</ul>
+</r>
+<p name="bug">Installation Group entry fails to appear in combo box</p>
+<p name="bug">Installation Group entry fails to replace last one in combo box</p>
+<p name="bug">Installation Group entry does not persist during install</p>
+</step>
+<step name="5.6" link="Bug">Make sure the current text is not highlighted and type a new group name in the textbox.
+   <r>
+<ul>
+<li>The name is inserted at the cursor into its predecessor in the textbox</li>
+<li>It remains until changed or the installation is exited</li>
+</ul>
+</r>
+<p name="bug">Installation Group entry fails to insert properly in combo box</p>
+<p name="bug">Installation Group insert does not persist during install</p>
+</step>
+
+</case>
+
+<case id="instDiac" num="6" order="any">
+<title tag="instDiac">Exercise Start Installation dialog</title>
+<context>
+<p>When the Start Installation dialog is displayed</p>
+</context>
+
+<step name="6.1" link="Bug">Click Cancel.
+   <r>
+<ul>
+<li>The Start Installation dialog remains.</li>
+<li>The "are you sure you want to quit" dialog (see below) is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation Start dialog disappears immediately after Cancel</p>
+<p name="bug">Installation Start dialog does not launch quit dialog</p>
+</step>
+<step name="6.2" link="Bug">Click Next.
+   <r>
+<ul>
+<li>The Start Installation dialog disappears.</li>
+<li>The Installing banner frame is displayed with meters.</li>
+<li>At completion, the MSDE Install dialog is displayed, unless MSDE has already been installed.</li>
+<li>The Installation Complete dialog is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation Start dialog remains after Next</p>
+<p name="bug">Installation Start Next fails to open Installing banner</p>
+<p name="bug">Installation Start Next fails to open MSDE Install dialog</p>
+<p name="bug">Installation Start Next opens MSDE Install dialog unnecessarily</p>
+<p name="bug">Installation Start Next fails to open Complete dialog</p>
+</step>
+<step name="6.3" link="Bug">Click Back.
+   <r>
+<ul>
+<li>The Start Installation dialog disappears.</li>
+<li>The Select Program Manager Group dialog is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation Start dialog remains after Back</p>
+<p name="bug">Installation Start dialog does not go back to correct dialog</p>
+</step>
+
+</case>
+
+<case id="instDiac" num="7" order="any">
+<title tag="instDiac">Exercise MSDE Install dialog</title>
+<context>
+<p>When the MSDE Install dialog is displayed</p>
+</context>
+<p name="todo">Check how to to specify a destination directory for MSDE.</p>
+<step name="7.1" link="Bug">Click X.
+   <r>
+<ul>
+<li>The MSDE Install dialog remains.</li>
+<li>The "are you sure you want to quit" dialog (see below) is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation MSDE Install dialog disappears immediately after X</p>
+<p name="bug">Installation MSDE Install dialog does not launch quit dialog</p>
+</step>
+<step name="7.2" link="Bug">Click OK.
+   <r>
+<ul>
+<li>The Unpacking MSDEx86_ meter is displayed</li>
+<li>The meter disappears for a while but the drive light flickers</li>
+<li>At completion, the Installation Complete dialog is displayed.</li>
+</ul>
+</r>
+<p name="bug">Installation MSDE Install progress meter fails to appear</p>
+<p name="bug">Installation MSDE Install fails to launch complete dialog</p>
+</step>
+
+</case>
+
+<case id="instDiac" num="8" order="any">
+<title tag="instDiac">Exercise "are you sure you want to quit" dialog</title>
+<context>
+<p>When the "are you sure you want to quit" dialog is displayed</p>
+</context>
+
+<step name="8.1" link="Bug">Click Exit Setup.
+   <r>
+<ul>
+<li>The "are you sure you want to quit" dialog is closed</li>
+<li>The setup program and its windows are closed</li>
+</ul>
+</r>
+<p name="bug">Installation Quit dialog remains after Exit Setup</p>
+<p name="bug">Installation windows not closed after Exit Setup</p>
+</step>
+<step name="8.2" link="Bug">Click Resume
+   <r>
+<ul>
+<li>The "are you sure you want to quit" dialog is closed</li>
+<li>Control returns to the last focused setup window</li>
+</ul>
+</r>
+<p name="bug">Installation Quit dialog remains after Resume</p>
+<p name="bug">Installation Resume returns control to wrong window </p>
+</step>
+
+</case>
+
+<case id="instDiac" num="9" order="any">
+<title tag="instDiac">Check Installation</title>
+<context>
+<p>When the installation is complete</p>
+</context>
+
+<step name="9.1" link="Bug">Click Start-Programs.
+   <r>
+<ul>
+<li>Verify that the Research Notebook, FieldWorks [i.e. Explorer], FieldWorks Help, View ReadMe File, and Uninstall FieldWorks items are placed in a program group</li>
+<li>FieldWorks is the default program group</li>
+</ul>
+</r>
+<p name="bug">Installation program group is not the expected one</p>
+<p name="bug">Installation program group is incomplete</p>
+<p name="bug">Installation program group FieldWorks is not the default</p>
+</step>
+<step name="9.2" link="Bug">Click Start-Programs-FieldWorks (or which ever one they're in), then click each item.
+   <r>Each menu item launches its corresponding program or document.</r>
+<p name="bug">Installation start menu &lt;item&gt; fails to launch</p>
+</step>
+<step name="9.3" link="Bug">Right click the sql7 control center on the task tray.
+   <r>
+<ul>
+<li>It exists</li>
+<li>It has a selection "Current service on &lt;your computer network id&gt; _".</li>
+</ul>
+</r>
+<p name="bug">Installation sql7 not on task tray</p>
+<p name="bug">Installation sql7 Current service selection missing</p>
+</step>
+<step name="9.4" link="Bug">Select Current service on &lt;your computer network id&gt; _
+   <r>The MS SQL server item is checked</r>
+<p name="bug">Installation </p>
+</step>
+<step name="9.5" link="Bug">Look for a FieldWorks item on the desktop and double-click it.
+   <r>
+<ul>
+<li>It exists.</li>
+<li>It starts the FW Application.</li>
+<li>If it does not start the FW Application, right-click it to get properties. Check the command path and start-up path.</li>
+</ul>
+</r>
+<p name="bug">Installation desktop shortcut not created</p>
+<p name="bug">Installation desktop shortcut has wrong path</p>
+<p name="bug">Installation desktop shortcut fails</p>
+</step>
+
+</case>
+
+<case id="instDiac" num="10" order="any">
+<title tag="instDiac">Exercise Uninstall</title>
+<context>
+<p>When all application windows are closed</p>
+</context>
+
+<step name="10.1" link="Bug">Select Uninstall FieldWorks from the Start-Programs group.
+   <r>
+<ul>
+<li>The full-screen Uninstall FieldWorks backdrop appears</li>
+<li>A Select Uninstall Method dialog pops up.</li>
+</ul>
+</r>
+<p name="bug">Uninstall backdrop is wrong</p>
+<p name="bug">Uninstall Method dialog fails to appear</p>
+</step>
+<step name="10.2" link="Bug">On the Select Uninstall Method dialog, select Automatic and press Next.
+   <r>The Uninstall wizard proceeds to the Perform Uninstall dialog.</r>
+<p name="bug">Uninstall Automatic fails</p>
+</step>
+<step name="10.3" link="Bug">On the Select Uninstall Method dialog, select Custom and press Next.
+   <r>
+<ul>
+<li>The Uninstall wizard presents a few frames of choices to remove or revert options to their previous state</li>
+<li>After making selections on these you reach the Perform Uninstall dialog.</li>
+</ul>
+</r>
+<p name="bug">Uninstall Custom options controls fail</p>
+<p name="bug">Uninstall Perform Uninstall dialog fails to appear</p>
+</step>
+<step name="10.4" link="Bug">On the Perform Uninstall dialog, press Finish.
+   <r>
+<ul>
+<li>The uninstallation proceeds without errors</li>
+<li>Eventually, the progress bar dialog disappears</li>
+<li>A message tells you that the uninstall completed successfully</li>
+</ul>
+</r>
+<p name="bug">Uninstall fails with errors</p>
+<p name="bug">Uninstall progress bar remains at completion</p>
+<p name="bug">Uninstall Completed message never appears</p>
+</step>
+<step name="10.5" link="Bug">When uninstall is finished, check for the FieldWorks directories, Start Program group, registry keys, etc.
+   <r>
+<ul>
+<li>They're all gone (except for any that you specified not to be deleted via Custom)</li>
+<li>Check that any modified INI files or reg keys have been restored to previous state.</li>
+</ul>
+</r>
+<p name="bug">Uninstall leaves FW directories</p>
+<p name="bug">Uninstall leaves FW program group</p>
+<p name="bug">Uninstall leaves FW reg keys</p>
+<p name="bug">Uninstall leaves FW dlls</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Oct-02-01" author="MikeL">Put guts in from Word test</update>
+
+</test>

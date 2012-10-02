@@ -1,0 +1,38 @@
+/*-----------------------------------------------------------------------------------*//*:Ignore
+Copyright 1999, SIL International. All rights reserved.
+
+File: SimpleDll.idh
+Responsibility: John Thomson
+Last reviewed: never
+
+Description:
+	This library defines a single, simple interface for demonstration purposes.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+/***********************************************************************************************
+	Interface ISampleInterface
+	A simple interface for demonstration purposes only.
+
+	@h3{When to implement}
+	Just when learning about COM and FieldWorks.
+
+	@h3{When to use}
+	Only from the SampleClient demo application
+
+	@h3{How to obtain an instance}
+	Use CreateInstance(CLSID_SampleInterface) on a suitable smart pointer
+
+	@h3{Hungarian: si}
+***********************************************************************************************/
+DeclareInterface(SampleInterface, Unknown, F8BEF6A2-7DCA-4994-ACAC-6F04F5CAF70E)
+{
+	[propget] HRESULT HelloWorldString(
+		[out, retval] BSTR * pbstr);
+};
+
+#ifndef NO_COCLASSES
+DeclareCoClass(SampleInterface, 013E27CD-23C1-465f-8028-B77AB816A8FE)
+{
+	interface ISampleInterface;
+};
+#endif // !NO_COCLASSES

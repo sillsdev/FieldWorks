@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<CellarModule id="Cellar" num="0" ver="1" verBack="1">
+<class num="0" mod="Cellar" id="CmObject" abbr="cmo" abstract="true" base="CmObject" depth="0" />
+<class num="7" mod="Cellar" id="SomeClass" abbr="obj" abstract="false" base="CmObject" depth="1" >
+</class>
+</CellarModule>

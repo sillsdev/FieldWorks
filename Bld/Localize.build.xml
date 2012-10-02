@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Included projects for Translation Editor -->
+<project name="Localize FieldWorks" default="localize" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<target name="localize"
+		description="Localize all resx files"
+		depends="copyLocalizedLists, processLanguages"/>
+
+	<target name="copyResxFiles"
+		description="Copy resx files from Src to localize/lang">
+		<copy todir="${dir.fwoutput}/resx">
+			<fileset basedir="${fwroot}/Src">
+				<include name = "**/*.resx"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copyLocalizedLists"
+		description="Copy LocalizedList-*.xml files from Localizations to distfiles">
+		<copy todir="${fwroot}/DistFiles/Templates">
+			<fileset basedir="${fwroot}/Localizations">
+				<include name = "LocalizedLists-*.xml"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="processLanguages" description="Main target for processing all .po files">
+		<tstamp/>
+		<exec program="ProcessLanguagesBld.exe"
+			commandline='${fwroot} ${dir.fwoutput}'
+			failonerror="true" verbose="${verbose}"/>
+		<tstamp/>
+	</target>
+
+	<target name="buildLocalizedDlls"
+		description="Executes all of the command files built for a language">
+		<mkdir dir="${dir.outputBase}/${language}"/>
+		<!-- ensure any prior localization include files are wiped out -->
+		<delete failonerror="false">
+			<fileset>
+				<include name="${dir.outputBase}/${language}/**/*.include"/>
+			</fileset>
+		</delete>
+		<!-- Loop over all folders in src directory that contain .resx files -->
+		<foreach item="Folder" property="folder">
+			<in>
+				<items>
+					<include name="${fwroot}/Src/**"/>
+					<exclude name="${fwroot}/Src/**/*Tests/"/>
+					<exclude name="${fwroot}/Src/**/SidebarLibrary/"/>
+				</items>
+			</in>
+			<do>
+				<resourcefileset id="ResxFiles">
+					<include name="${folder}/*.resx"/>
+				</resourcefileset>
+				<if test="${fileset::has-files('ResxFiles')}">
+					<echo message="Processing ${folder}"/>
+					<!-- Find the .csproj file -->
+					<fileset id="CsProjFiles">
+						<include name="${folder}/*.csproj"/>
+					</fileset>
+					<property name="csproj" value="${fileset::to-string('CsProjFiles', ', ')}"/>
+					<if test="${fileset::get-file-count('CsProjFiles') &gt; 1}">
+						<fail message="More than one .csproj file in directory ${folder} (${csproj})"/>
+					</if>
+					<property name="isSubdir" value="false"/>
+					<if test="${fileset::get-file-count('CsProjFiles') &lt; 1}">
+						<fileset id="CsProjFiles">
+							<include name="${folder}/../*.csproj"/>
+						</fileset>
+						<property name="csproj" value="${fileset::to-string('CsProjFiles', ', ')}"/>
+						<if test="${fileset::get-file-count('CsProjFiles') &gt; 1}">
+							<fail message="More than one .csproj file in directory ${folder}/.. (${csproj})"/>
+						</if>
+						<if test="${fileset::get-file-count('CsProjFiles') &lt; 1}">
+							<echo message="No .csproj file in directory ${folder} and parent directory."/>
+						</if>
+						<property name="isSubdir" value="true"/>
+						<regex pattern="^.*Src\\.+\\(?'subFolder'[^/]+)$" input="${folder}"/>
+					</if>
+					<if test="${fileset::get-file-count('CsProjFiles') &gt; 0}">
+						<regex pattern="^.*Src\\(?'projDir'.+)\\(?'projName'[^/]+)\.[Cc][Ss][Pp][Rr][Oo][Jj]$" input="${csproj}" />
+						<!-- Need to get assembly name and root name space from .csproj file -->
+						<xmlpeek file="${csproj}" property="AssemblyName" nodeindex="0"
+								 xpath="ms:Project/ms:PropertyGroup/ms:AssemblyName">
+							<namespaces>
+								<namespace prefix="ms" uri="http://schemas.microsoft.com/developer/msbuild/2003" />
+							</namespaces>
+						</xmlpeek>
+						<xmlpeek file="${csproj}" property="RootNamespace" nodeindex="0"
+								 xpath="ms:Project/ms:PropertyGroup/ms:RootNamespace">
+							<namespaces>
+								<namespace prefix="ms" uri="http://schemas.microsoft.com/developer/msbuild/2003" />
+							</namespaces>
+						</xmlpeek>
+
+						<!-- get version info from AssemblyInfo.cs/ GeneratedAssemblyInfo.cs -->
+						<property name="tempfile" value="${path::get-temp-file-name()}"/>
+						<grep output="${tempfile}" verbose="${verbose}" failonerror="false"
+							  pattern='\[assembly: Assembly(?&lt;Type&gt;FileVersion|InformationalVersion|Version)(Attribute)?\("(?&lt;Version&gt;[0-9.*]+)'>
+							<fileset basedir="${folder}">
+								<include name="GeneratedAssemblyInfo.cs"/>
+								<include name="Properties/GeneratedAssemblyInfo.cs"/>
+								<include name="AssemblyInfo.cs"
+									unless="${file::exists(folder + '/GeneratedAssemblyInfo.cs') or file::exists(folder + '/Properties/GeneratedAssemblyInfo.cs')}"/>
+								<include name="Properties/AssemblyInfo.cs"
+									unless="${file::exists(folder + '/GeneratedAssemblyInfo.cs') or file::exists(folder + '/Properties/GeneratedAssemblyInfo.cs')}"/>
+							</fileset>
+						</grep>
+						<xmlpeek file="${tempfile}" property="FileVersion" nodeindex="0" verbose="${verbose}" failonerror="false"
+								 xpath="Matches/Match[Type='FileVersion']/Version"/>
+						<property name="FileVersion" value="0.0.0.0" unless="${property::exists('FileVersion')}"/>
+						<xmlpeek file="${tempfile}" property="InformationalVersion" nodeindex="0" verbose="${verbose}" failonerror="false"
+								 xpath="Matches/Match[Type='InformationalVersion']/Version"/>
+						<property name="InformationalVersion" value="${FileVersion}" unless="${property::exists('InformationalVersion')}"/>
+						<xmlpeek file="${tempfile}" property="Version" nodeindex="0" verbose="${verbose}" failonerror="false"
+								 xpath="Matches/Match[Type='Version']/Version"/>
+						<property name="Version" value="${FileVersion}" unless="${property::exists('Version')}"/>
+						<delete file="${tempfile}" failonerror="false" verbose="${verbose}"/>
+
+						<!-- create and compile resx files -->
+						<foreach item="File" property="resxFile">
+							<in>
+								<items refid="ResxFiles"/>
+							</in>
+							<do>
+								<echo message="Creating ${language} version of ${resxFile}" if="${verbose}"/>
+								<regex pattern="^.*Src\\(?'partialDir'.+)\\(?'fileName'[^/]+)\.[rR][eE][sS][xX]$" input="${resxFile}" />
+								<!-- Couldn't get the style task to work, the validating XML reader it uses rejects the .resx file -->
+								<property name="resBaseName" value="${RootNamespace}.${fileName}.${language}"/>
+								<property name="resBaseName" value="${RootNamespace}.${subFolder}.${fileName}.${language}" if="${bool::parse(isSubdir)==true}"/>
+								<exec program="java.exe"
+									  commandline="-Xmx128m -jar ${fwroot}/Bin/saxon/saxon.jar -o ${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resx ${resxFile} LocalizeResx.xsl lang=${language}"/>
+								<echo file="${dir.fwoutput}/${language}/${projDir}/${projName}.include" append="true">${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resources
+								</echo>
+							</do>
+						</foreach>
+
+						<cd dir="${folder}"/>
+						<resgenex todir="${dir.fwoutput}/${language}/${partialDir}" verbose="${verbose}"
+								basedir="${folder}">
+							<resources basedir="${dir.fwoutput}/${language}/${partialDir}">
+								<include name="*.resx"/>
+							</resources>
+							<assemblies>
+								<include name="${framework::get-framework-directory(nant.settings.currentframework)}/System.Drawing.dll"/>
+								<include name="${framework::get-framework-directory(nant.settings.currentframework)}/System.Windows.Forms.dll"/>
+							</assemblies>
+						</resgenex>
+
+						<if test="${bool::parse(isSubdir) == false}">
+							<!-- build dll -->
+							<alex output="${dir.outputBase}/${language}/${AssemblyName}.resources.dll"
+								target="lib" culture="${language}" verbose="${verbose}"
+								fileversion="${FileVersion}" productversion="${InformationalVersion}"
+								version="${Version}">
+								<sources basedir="${folder}">
+									<includesfile name="${dir.fwoutput}/${language}/${partialDir}/${projName}.include"/>
+								</sources>
+							</alex>
+						</if>
+					</if>
+				</if>
+			</do>
+		</foreach>
+	</target>
+</project>

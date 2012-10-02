@@ -1,0 +1,118 @@
+/* XLingPap1.css
+   Cascading Style Sheet used with the XLingPap1.xsl XSLT template.
+   It includes some items used with the SampleXLingPap.xml file.
+
+   The user should modify the classes to be formatted per their preference.
+ */
+
+/**************************
+ language formatting
+ **************************/
+.carolinian {
+  font-weight: bold;
+  color: blue;
+}
+
+.nahuatl {
+  color: #446688;
+}
+
+.english {
+  color: maroon;
+}
+
+.spanish {
+ color: purple;
+}
+
+.setepehuan {
+ color: steelblue;
+}
+
+/**************************
+ class element formatting
+ **************************/
+SPAN.attribute {
+  font-family: fixed;
+  color: purple;
+}
+
+.element {
+  font-family: fixed;
+  color: maroon;
+}
+
+.sub {
+  vertical-align: sub;
+  font-size: 65%;
+}
+
+span.super {
+  vertical-align: super;
+  font-size: 65%;
+}
+
+span.XLingPap {
+  font-family: fixed;
+  color: maroon;
+  font-weight: bold;
+}
+
+/**************************
+ special formatting for a particular chart in a particular paper
+ **************************/
+TD.CarolinianVowelChartCol {
+text-align: center;
+
+}
+
+.elementExample {
+  background-color:wheat;
+  font-family: fixed;
+  color: black;
+}
+
+.htmloutput {
+	background-color:linen;
+	margin-left:10pt;
+	margin-right:5pt;
+	margin-top:5pt;
+	margin-bottom:5pt;
+	padding-left:10pt;
+	padding-right:10pt;
+	padding-top:10pt;
+	padding-bottom:10pt;
+	border-left-width:1pt;
+	border-right-width:1pt;
+	border-top-width:1pt;
+	border-bottom-width:1pt;
+	border-right-style:dashed;
+	border-left-style:dashed;
+	border-top-style:dashed;
+	border-bottom-style:dashed;
+}
+
+.keyTerm {
+  font-family: fixed;
+  font-weight: bold;
+}
+
+.citationLabel {
+  font-family: fixed;
+  font-weight: bold;
+}
+
+.attrValue {
+  font-family: fixed;
+  font-style: italic;
+  color: steelblue;
+}
+
+.inTextExample {
+  font-family: fixed;
+  font-weight: bold;
+}
+
+.tableCSS {
+   margin-left: .5in;
+}

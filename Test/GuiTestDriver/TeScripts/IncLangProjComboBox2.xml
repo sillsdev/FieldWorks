@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+
+	<!-- Glimpse list item #1 -->
+	<glimpse id="LP_found_it21" path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="skip"/>
+	<!--If highlighting the right list item, do nothing, otherwise continue searching down the list.-->
+	<if>
+		<condition of="$LP_found_it21" is="false"/>
+		<then>
+			<insert>{DOWN}</insert>
+			<!-- Glimpse list item #2 -->
+			<glimpse id="LP_found_it22" path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="skip"/>
+			<if>
+				<condition of="$LP_found_it22" is="false"/>
+				<then>
+					<insert>{DOWN}</insert>
+					<!-- Glimpse list item #3 -->
+					<glimpse id="LP_found_it23" path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="skip"/>
+					<if>
+						<condition of="$LP_found_it23" is="false"/>
+						<then>
+							<insert>{DOWN}</insert>
+							<!-- Glimpse list item #4 -->
+							<glimpse id="LP_found_it24" path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="skip"/>
+							<if>
+								<condition of="$LP_found_it24" is="false"/>
+								<then>
+									<insert>{DOWN}</insert>
+									<!-- Glimpse list item #5 -->
+									<glimpse id="LP_found_it25" path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="skip"/>
+									<if>
+										<condition of="$LP_found_it25" is="false"/>
+										<then>
+											<insert>{DOWN}</insert>
+											<!-- Glimpse list item #6 -->
+											<glimpse id="LP_found_it26" path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="skip"/>
+											<if>
+												<condition of="$LP_found_it26" is="false"/>
+												<then>
+													<insert>{DOWN}</insert>
+													<!-- Glimpse list item #7 -->
+													<glimpse id="LP_found_it27" path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="skip"/>
+													<if>
+														<condition of="$LP_found_it27" is="false"/>
+														<then>
+															<insert>{DOWN}</insert>
+															<!-- Glimpse list item #8 -->
+															<glimpse id="LP_found_it28" path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="skip"/>
+															<if>
+																<condition of="$LP_found_it28" is="false"/>
+																<then>
+																	<insert>{DOWN}</insert>
+																	<!-- Glimpse list item #9 -->
+																	<glimpse path="$CheckPath" prop="value" expect="$ExpectedValue" on-fail="assert"/>
+																</then>
+															</if>
+														</then>
+													</if>
+												</then>
+											</if>
+										</then>
+									</if>
+								</then>
+							</if>
+						</then>
+					</if>
+				</then>
+			</if>
+		</then>
+	</if>
+
+</include>

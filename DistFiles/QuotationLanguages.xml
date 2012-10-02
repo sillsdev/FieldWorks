@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AvailableQuotationLanguages>
+	<Lang LocaleId="af" FirstOpen="„" FirstClose="”" SecondOpen="‚" SecondClose="’" />
+	<Lang LocaleId="sq" FirstOpen="«" FirstClose="»" SecondOpen="‹" SecondClose="›" />
+	<Lang LocaleId="sq" FirstOpen="“" FirstClose="„" SecondOpen="‘" SecondClose="‚" Alternate="1"/>
+	<Lang LocaleId="be" FirstOpen="«" FirstClose="»" />
+	<Lang LocaleId="be" FirstOpen="„" FirstClose="“" Alternate="1"/>
+	<Lang LocaleId="bg" FirstOpen="„" FirstClose="“" />
+	<Lang LocaleId="bg" FirstOpen="«" FirstClose="»" Alternate="1"/>
+	<Lang LocaleId="ca" FirstOpen="«" FirstClose="»" SecondOpen="“" SecondClose="”" />
+	<Lang LocaleId="ca" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="zh" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’"/>
+	<Lang LocaleId="zh" FirstOpen="&#x300C;" FirstClose="&#x300D;" SecondOpen="&#x300E;" SecondClose="&#x300F;" Alternate="1"/>
+	<Lang LocaleId="zh" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="2"/>
+	<Lang LocaleId="hr" FirstOpen="„" FirstClose="“" SecondOpen="‘" SecondClose="’" />
+	<Lang LocaleId="hr" FirstOpen="»" FirstClose="«" SecondOpen="‘" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="cs" FirstOpen="„" FirstClose="“" SecondOpen="‚" SecondClose="‘" />
+	<Lang LocaleId="cs" FirstOpen="»" FirstClose="«" SecondOpen="›" SecondClose="‹" Alternate="1"/>
+	<Lang LocaleId="da" FirstOpen="»" FirstClose="«" SecondOpen="›" SecondClose="‹" />
+	<Lang LocaleId="da" FirstOpen="„" FirstClose="“" SecondOpen="‚" SecondClose="‘" Alternate="1"/>
+	<Lang LocaleId="da" FirstOpen="”" FirstClose="”" SecondOpen="‚" SecondClose="‘" Alternate="2"/>
+	<Lang LocaleId="nl" FirstOpen="„" FirstClose="”" SecondOpen="‚" SecondClose="’" />
+	<Lang LocaleId="nl" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="en" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" />
+	<Lang LocaleId="et" FirstOpen="„" FirstClose="“" />
+	<Lang LocaleId="et" FirstOpen="«" FirstClose="»" Alternate="1"/>
+	<Lang LocaleId="fi" FirstOpen="”" FirstClose="”" SecondOpen="’" SecondClose="’" />
+	<Lang LocaleId="fi" FirstOpen="»" FirstClose="»" SecondOpen="’" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="fr" FirstOpen="«" FirstClose="»" SecondOpen="“" SecondClose="”" />
+	<Lang LocaleId="fr" FirstOpen="«" FirstClose="»" SecondOpen="«" SecondClose="»" Alternate="1"/>
+	<Lang LocaleId="fr" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="2"/>
+	<Lang LocaleId="fr_CH" FirstOpen="«" FirstClose="»" SecondOpen="‹" SecondClose="›" />
+	<Lang LocaleId="de" FirstOpen="„" FirstClose="“" SecondOpen="‚" SecondClose="‘" />
+	<Lang LocaleId="de" FirstOpen="»" FirstClose="«" SecondOpen="›" SecondClose="‹" Alternate="1"/>
+	<Lang LocaleId="de_CH" FirstOpen="«" FirstClose="»" SecondOpen="‹" SecondClose="›" />
+	<Lang LocaleId="el" FirstOpen="«" FirstClose="»" />
+	<Lang LocaleId="el" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="he" FirstOpen="“" FirstClose="”" />
+	<Lang LocaleId="he" FirstOpen="“" FirstClose="„" Alternate="1"/>
+	<Lang LocaleId="hu" FirstOpen="„" FirstClose="”" SecondOpen="»" SecondClose="«" />
+	<Lang LocaleId="is" FirstOpen="„" FirstClose="“" SecondOpen="‚" SecondClose="‘" />
+	<Lang LocaleId="id" FirstOpen="”" FirstClose="”" SecondOpen="’" SecondClose="’" />
+	<Lang LocaleId="id" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="it" FirstOpen="«" FirstClose="»" />
+	<Lang LocaleId="it" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="it_CH" FirstOpen="«" FirstClose="»" SecondOpen="‹" SecondClose="›" />
+	<Lang LocaleId="ja" FirstOpen="&#x300C;" FirstClose="&#x300D;" SecondOpen="&#x300E;" SecondClose="&#x300F;" />
+	<Lang LocaleId="ko" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" />
+	<Lang LocaleId="ko" FirstOpen="&#x300E;" FirstClose="&#x300F;" SecondOpen="&#x300C;" SecondClose="&#x300D;" Alternate="1"/>
+	<Lang LocaleId="lv" FirstOpen="«" FirstClose="»" SecondOpen="„" SecondClose="”" />
+	<Lang LocaleId="lt" FirstOpen="„" FirstClose="“" SecondOpen="‚" SecondClose="‘" />
+	<Lang LocaleId="lt" FirstOpen="«" FirstClose="»" SecondOpen="‹" SecondClose="›" Alternate="1"/>
+	<Lang LocaleId="mk" FirstOpen="„" FirstClose="“" />
+	<Lang LocaleId="nb" FirstOpen="«" FirstClose="»" SecondOpen="’" SecondClose="’" />
+	<Lang LocaleId="nb" FirstOpen="„" FirstClose="”" SecondOpen="’" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="pl" FirstOpen="„" FirstClose="”" SecondOpen="«" SecondClose="»" />
+	<Lang LocaleId="pl" FirstOpen="«" FirstClose="»" Alternate="1"/>
+	<Lang LocaleId="pt_BR" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" />
+	<Lang LocaleId="pt_PT" FirstOpen="«" FirstClose="»" SecondOpen="“" SecondClose="”" />
+	<Lang LocaleId="ro" FirstOpen="„" FirstClose="“" SecondOpen="«" SecondClose="»" />
+	<Lang LocaleId="ro" FirstOpen="«" FirstClose="»" SecondOpen="„" SecondClose="“" Alternate="1"/>
+	<Lang LocaleId="ru" FirstOpen="«" FirstClose="»" SecondOpen="„" SecondClose="“" />
+	<Lang LocaleId="sr" FirstOpen="„" FirstClose="“" SecondOpen="’" SecondClose="’" />
+	<Lang LocaleId="sr" FirstOpen="„" FirstClose="”" Alternate="1"/>
+	<Lang LocaleId="sr" FirstOpen="»" FirstClose="«" Alternate="2"/>
+	<Lang LocaleId="sk" FirstOpen="„" FirstClose="“" SecondOpen="‚" SecondClose="‘" />
+	<Lang LocaleId="sk" FirstOpen="»" FirstClose="«" SecondOpen="›" SecondClose="‹" Alternate="1"/>
+	<Lang LocaleId="sl" FirstOpen="„" FirstClose="“" SecondOpen="‚" SecondClose="‘" />
+	<Lang LocaleId="sl" FirstOpen="»" FirstClose="«" SecondOpen="›" SecondClose="‹" Alternate="1"/>
+	<Lang LocaleId="es" FirstOpen="«" FirstClose="»" SecondOpen="“" SecondClose="”" />
+	<Lang LocaleId="es" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="es" FirstOpen="«" FirstClose="»" SecondOpen="“" SecondClose="”" ThirdOpen="‘" ThirdClose="’" Alternate="2"/>
+	<Lang LocaleId="sv" FirstOpen="”" FirstClose="”" SecondOpen="’" SecondClose="’" />
+	<Lang LocaleId="sv" FirstOpen="»" FirstClose="«" SecondOpen="›" SecondClose="‹" Alternate="1"/>
+	<Lang LocaleId="th" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" />
+	<Lang LocaleId="tr" FirstOpen="«" FirstClose="»" SecondOpen="‹" SecondClose="›" />
+	<Lang LocaleId="tr" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="1"/>
+	<Lang LocaleId="uk" FirstOpen="«" FirstClose="»" />
+	<Lang LocaleId="uk" FirstOpen="„" FirstClose="“" Alternate="1"/>
+	<Lang LocaleId="cy" FirstOpen="‘" FirstClose="’" SecondOpen="“" SecondClose="”" />
+	<Lang LocaleId="cy" FirstOpen="“" FirstClose="”" SecondOpen="‘" SecondClose="’" Alternate="1"/>
+</AvailableQuotationLanguages>

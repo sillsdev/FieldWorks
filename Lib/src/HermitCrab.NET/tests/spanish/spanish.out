@@ -1,0 +1,102 @@
+(message (
+ <hc6508 fname C:\DATA\HC\MORPHER\TESTS\SPANISH\SPANISH.IN > ) )
+;Test case for Spanish
+((
+ <hc6510 lname Spanish > ) )
+;--------------------------------Feature system
+((
+ <hc6502 var_name '*pfeatures*' > ) )
+;--------------------------------Char def table
+;The modifications to the standard Spanish orthography consist of the following:
+; Omission of "h" (as a separate letter; it appears in "ch")
+; Omission of accent marks
+; Use of "b" for both "b" and "v"
+; Use of "y" for both "y" and "ll"
+; Does not distinguish "gu" from "g", using the latter for all voiced velar stops
+; Use of "j" for all voiceless velar fricatives
+; Use of "k" instead of "qu" and hard "c"
+; Use of "s" for "s", "z" and soft "c"
+((
+ <hc6501 table_name 'Modified Orthographic' > ) )
+;--------------------------------Strata
+((
+ <hc6502 var_name '*strata*' > ) )
+((
+ <hc6550 sname 'Morphophonemic' ctable_name 'Modified Orthographic' > ) )
+((
+ <hc6550 sname '*surface*' ctable_name 'Modified Orthographic' > ) )
+((
+ <hc6552 sname 'Morphophonemic' > ) )
+((
+ <hc6555 sname 'Morphophonemic' > ) )
+;--------------------------------Dictionary file:
+(message (
+ <hc6515 n 3 fname c:\data\hc\morpher\tests\spanish\spanish.dic > ) )
+;--------------------------------Natural Classes
+((
+ <hc6541 nat_class_name null > ) )
+((
+ <hc6541 nat_class_name 'Consonant' > ) )
+((
+ <hc6541 nat_class_name 'Vowel' > ) )
+;Rule Features
+;(rule_features
+;  (<rf nm 'AR'>
+;   <rf nm 'ER'>
+;   <rf nm 'IR'>
+;  )
+;)
+;Morphosyntactic Features
+;(morpher_set
+;  (*mfeatures* nm 'Morphosyntactic Feature System'
+;              ('mood' ('subjunctive' 'indicative' 'imperative' )
+;               'tense' ('past' 'present' 'future' )
+;               'person' ('1' '2' '3' )
+;               'number' ('sg' 'pl' )
+;)))
+;--------------------------------MORPHOLOGICAL RULES
+((
+ <hc6505 rname '1sg. Pres Indic' > ) )
+;Not accounted for in the ff. is the fact that the theme vowel for -ir verbs is "e" when unaccented,
+; and "i" when accented:
+((
+ <hc6505 rname 'THEME' > ) )
+((
+ <hc6505 rname '-mos 1' > ) )
+((
+ <hc6505 rname '-n 1' > ) )
+((
+ <hc6505 rname '-s 1' > ) )
+((
+ <hc6505 rname '-ndo 1' > ) )
+;Affix templates
+((
+ <hc6565 sname 'Morphophonemic' > ) )
+;Don't let errors stop us:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Tracing:
+;(trace_morpher_rule message (true true 'THEME'))
+;(trace_morpher_rule message (true true '-s 1'))
+;(trace_morpher_rule message (true true '1sg. Pres Indic'))
+;-----------------------TEST ITEMS----------------------------------
+(message (word_analysis
+ <lex id 1EE037710871320 sh ablo gl ? ? ? pos verb mrs ('THEME' '1sg. Pres Indic' ) str '*surface*' rf ('AR' ) hf (mood (indicative ) tense (present ) person ('1' ) number (sg ) ) > ) )
+(message (word_analysis
+ <lex id 1EE037710871320 sh ablas gl ? ? ? pos verb mrs ('THEME' '-s 1' ) str '*surface*' rf ('AR' ) hf (mood (indicative ) person ('2' ) number (sg ) ) > ) )
+(message (word_analysis
+ <lex id 1EE037710871320 sh abla gl ? ? pos verb mrs ('THEME' ) str '*surface*' rf ('AR' ) hf (mood (indicative ) ) > ) )
+(message (word_analysis
+ <lex id 1EE037710871320 sh ablamos gl ? ? ? pos verb mrs ('THEME' '-mos 1' ) str '*surface*' rf ('AR' ) hf (mood (indicative ) person ('1' ) number (pl ) ) > ) )
+(message (word_analysis
+ <lex id 1EE037710871320 sh ablan gl ? ? ? pos verb mrs ('THEME' '-n 1' ) str '*surface*' rf ('AR' ) hf (mood (indicative ) number (pl ) ) > ) )
+(message (word_analysis
+ <lex id 1EE037710871321 sh bendo gl ? ? ? pos verb mrs ('THEME' '1sg. Pres Indic' ) str '*surface*' rf ('ER' ) hf (mood (indicative ) tense (present ) person ('1' ) number (sg ) ) > ) )
+(message (word_analysis
+ <lex id 1EE037710871321 sh bendes gl ? ? ? pos verb mrs ('THEME' '-s 1' ) str '*surface*' rf ('ER' ) hf (mood (indicative ) person ('2' ) number (sg ) ) > ) )
+(message (
+ <hc6521 fname C:\DATA\HC\MORPHER\TESTS\SPANISH\SPANISH.IN > ) )
+(message (
+ <hc6508 fname stdin > ) )
+(message (
+ <hc6522 fname standard out > ) )

@@ -1,0 +1,801 @@
+c TransRoman2 to Annapurna Reversable Changes Table, Trm2AnnR.CCT
+c                 (Formerly NAG2ROM.CCT)
+c          Bob Eaton, 22-Nov-99 based on...
+c          Austin Hale, 2 February 1991, correction, 10 April 1991
+c
+c o 18-Sep-2000
+c   Added support for retroflex flap 'l' (newly placed at d66 in Annapurna)
+c
+c WARNING: there are many 'if' tests in this table that are used
+c to check flags. If you add nested 'ifs' to existing 'if' statements,
+c you must use "begin...end" syntax around them or it won't work and
+c it also won't tell you anything is wrong (took me 3 days to figure
+c this one out :-)
+c
+c o The most important thing to get out of this table is how
+c   it determines which annapurna character to output from the
+c   roman text input. For:
+c
+c   half/full consonants: If the roman form (e.g. 'k') comes
+c   before a 'vowel-like' thing (see the 'V' store below; which
+c   includes true vowels, punctuation marks, diacritics, the halant,
+c   and even 'r' which usually means the LowR following a full
+c   consonant), then we use the full consonant form of the consonant.
+c   Otherwise, we use the half-consonant form and continue looking
+c   for a following full form.
+c
+c   diacritics: Annapurna has 'sets' of diacritics which go with
+c   different characters. As each character is found in a search
+c   statement, the 'replace' portion will set flags to indicate if
+c   that particular character uses the 'centered', 'right', or 'stack'
+c   forms of the/any diacritics. Then, when the diacritics are output,
+c   the indications (flags) will be checked to know which to use (this
+c   is basically what DevRom.kmn is doing as well). If you want a
+c   particular roman form to use a particular diacritic (ie. if
+c   something isn't working), then check the search statement for the
+c   character and make sure to set the appropriate flag.
+c
+c o This table, like the inverse table Ann2TrmR.cct, tries to work
+c   for both stand-alone files and from within Shoebox. Consequently,
+c   it will look for standard format markers which it will either
+c   1) pass thru unconverted, 2) convert to annapurna, or 3) "eat" (in
+c   case you want a particular field *not* to pass thru or be converted.
+c   Search for "PassThruWithoutProcessing" below in group(1) to see how
+c   this is done.
+c
+c o Added support for Annapurna d215 (the length character) which
+c   maps to the IPA length symbol d211
+c
+c   This completes the revision comments for the Trm2AnnR version.
+c   Below are the comments from another table from which this table
+c   is based (though the comments that follow may no longer be true).
+c
+c ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿     ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+c ³  GROUP(1)           ³     ³  GROUP(2)                       ³
+c ³     \codes          ³     ³     FULL VOWELS                 ³
+c ³     error msg       ³     ³     out(len, nsl, reph) use(1)  ³
+c ³     numbers         ³     ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+c ³     punctuation     ³
+c ³                     ³     ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+c ³     FULL VOWELS     ³     ³  GROUP(3)                       ³
+c ³       set(4) use(6) ³     ³     append(halfC2) set(2) use(6) ³
+c ³                     ³     ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+c ³     store(reph)     ³
+c ³     append(halfC1)   ³     ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+c ³       set(1) use(6) ³     ³  GROUP(4) Cr handler            ³
+c ³                     ³     ³     store(compC) set(5) use(6)  ³
+c ³     FULL CONSONANT  ³     ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+c ³       set(3) use(6) ³
+c ³                     ³     ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+c ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ     ³  GROUP(5)  DEPENDENT VOWELS     ³
+c                             ³     store(vowel)  set(7) use(6) ³
+c                             ³     store(Ivowel) set(7) use(6) ³
+c                             ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+c
+c       ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+c       ³   GROUP(6) SERIES GENERATING ELEMENTS     ³
+c       ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+c
+c       ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+c       ³    GROUP(7) TRAFFIC MANAGEMENT            ³
+c       ³            Output stored segments         ³
+c       ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+begin >
+		c punctuation to trigger syllable output
+		store(Punctuation)
+			d9 nl " " "|" d33 d37 d40 d41 d42 d44 d45 d46 d63 d58 d59 d95 d133 d145 d146 d147 d148 d150 d151 d164
+		endstore
+
+		c diacritics trigger the end of the consonant cluster used in 'V' below.
+		store(Diacritics)
+			d228 d229 d230 d231 d246
+		endstore
+
+		c need the 'r' in a container.
+		store(letterR) "r" endstore
+
+		c the 'V' store is used to tell when we should use the full form
+		c of a consonant. (white space and punctuation also).
+		store(V)
+			d195            c akar
+			d192            c aakar
+			d140            c ikar
+			"i"             c iikar
+			d156            c ukar
+			"u"             c uukar
+			"e"             c ekar
+			d193            c aikar
+			"o"             c okar
+			d198            c aukar
+			outs(Punctuation)
+			outs(Diacritics)
+			outs(letterR)   c LowR (and rikar)
+			"y"             c from completer-y (which we want to follow full forms)
+			d227            c halant
+		endstore
+
+		c the 'C' store has all the possible consonant forms (so we can do fol(C))
+		store(C)
+			"kgcjztdnpfbmylwsh"
+			d202 d204 d205 d206 d208 d207
+		endstore
+
+c ----------------------------------------
+define(OutputSyl) > c OUTPUT STORED SEGMENTS
+
+	if(1) clear(1) use(3)  c (1) set by half C1 look for
+	endif                  c halfC2 in group(3)
+	if(2) clear(2) use(1)  c (2) set by half C2 look for
+	endif                  c anything in group(1)
+	if(3) clear(3) use(4)  c (3) set by full C look for
+	endif                  c completer C in group(4)
+	if(4) clear(4) do(OutputFullVowel)  c (4) set by full vowels, go
+	endif                  c get nsl, len output in (2)
+	if(5) clear(5) use(5)  c (5) set by completer C, look
+	endif                  c for vowels in set(5)
+	if(7) clear(7)         c (7) set by dependent vowel,
+						   c nsl, len... triggers out
+	  begin
+		out(Ivowel)
+		out(halfC1)
+		out(halfC2)
+		out(fullC, LowDot, LowR)
+		out(compC, vowel, nsl, len)
+
+		c there are two reph symbols in the font, the one we use
+		c depends on the symbol it is above, so we have to
+		c wait for output time to specify which reph we use.
+		if(reph_f)
+			begin
+				if(cd)
+					store(reph) d230 endstore
+				else
+					store(reph) d229 endstore
+				endif
+				out(reph)
+			end
+		endif
+
+		store(Ivowel)
+		store(halfC1)
+		store(halfC2)
+		store(fullC, LowDot, LowR)
+		store(compC, vowel, nsl, len, reph)
+		endstore
+		clear(cd,extii,exti,stack,tentr,reph_f)
+
+		use(1)
+	  end
+	endif
+
+c ----------------------------------------
+
+define(OutputFullVowel) > c OUTPUT FULL VOWELS WITH DIACRITICS
+
+	out(nsl, len)
+
+	c the reph depends on the symbol it is above, so we have to
+	c wait for output time to specify which reph we use.
+	if(reph_f)
+		begin
+			if(cd)
+				store(reph) d230 endstore
+			else
+				store(reph) d229 endstore
+			endif
+			out(reph)
+			clear(reph_f)
+		end
+	endif
+
+	store(nsl, len, reph) endstore use(1)
+
+c ----------------------------------------
+
+group(1)
+
+c these fields pass unconverted.
+"\u "   >   next
+"\lc "  >   next
+"\ae "  >   next
+"\mn "  >   next
+"\ge "  >   next
+"\c "   >   next
+"\o "   >   next
+"\aType "   >   next
+"\nt"   >   next
+"\dc "  >   next
+"\dt "  >   next
+"\lgs " >   next
+"\in "  >   next
+"\mcc " >   next
+"\mp "  >   next
+"\id"   >   next
+"\name" >   next
+"\d"    >   next
+"\ri"   >   next
+"\ref"  >   next
+"\f "   >   next
+"\cmt " >   next
+"\_"    >   dup use(PassThruWithoutProcessing)
+
+c these fields are processed (converted) until nl
+"\h "   >   next
+"\t "   >   next
+"\fn "  >   next
+"\sq "  >   next
+"\sr "  >   next
+"\r "   >   next
+"\lx "  >   next
+"\a "   >   next
+"\s "   >   dup
+
+c eat these fields
+"\name" >   use(EatWithoutProcessing)
+
+c eat these field markers (i.e. just the markers;
+c the marker's data is unaffected by this replace statement)
+c "\t "   >   next
+c "\fn "  >   next
+c "\sq "  >   next
+c "\sr "  >   next
+c "\s "   >   ''
+
+			   c PUNCTUATION
+
+c most punctuation passes thru without problems (except period and ellipse).
+"."                 > "|"       c period
+d133                > "..."     c ellipse
+c "_"                 > " "       c Join Comp underscore is really a space.
+
+c footnotes are keyed by * followed by 1-9
+d252    > d42 "1"   c fn #1
+d253    > d42 "2"   c fn #2
+d254    > d42 "3"   c fn #3
+d255    > d42 "4"   c fn #4
+d177    > d42 "5"   c fn #5
+d178    > d42 "6"   c fn #6
+d179    > d42 "7"   c fn #7
+d180    > d42 "8"   c fn #8
+d181    > d42 "9"   c fn #9
+
+any(Punctuation)    > dup
+
+			   c SYLLABLE-INITIAL VOWELS
+
+d195        > d65           set(4) use(6)   c akar
+d192        > d65 d231      set(4) use(6)   c aakar
+d140        > d67           set(4) use(6)   c ikar
+"i"         > d68           set(4) use(6)   c iikar
+d156        > d69           set(4) use(6)   c ukar
+"u"         > d70           set(4) use(6)   c uukar
+"r" d249    > d71           set(4) use(6)   c rikar
+"e"         > d72           set(4) use(6)   c ekar
+d193        > d73           set(4) use(6)   c aikar
+"o"         > d74           set(4) use(6)   c okar
+d198        > d75           set(4) use(6)   c aukar
+
+			   c STORE REPH
+
+c for now, just set a flag indicating that reph must
+c be determined (later during output)
+"r" fol(letterR)    >   next
+"r" fol(C)          >   set(reph_f)
+
+			   c C1 HALF CONSONANTS
+c half-consonants that are 'stack-like'
+c   use these lines if you want to allow alternate spelling of the following
+c   characters. Then they should have been disambiguated in Ann2TrmR.cct with the
+c   stack character (d226) so that they can be reconstructed here (otherwise, both
+c   these and the 'aberrant' spelling versions (e.g. half-k + full-sH) will be
+c   romanized the same and can't be distinguisted). If you switch to using the other
+c   lines, be sure to change Ann2TrmR.cct to generate the other forms also.
+"k" d226 d208 fol(C)    > append(halfC1) d82 endstore  set(1) use(6) c ksHa- (standard cct)
+"g" d226 "y" fol(C)     > append(halfC1) d88 endstore  set(1) use(6) c gy- (standard cct)
+c   use these lines if you want to 'correct the spelling' (i.e. both spelling forms
+c   generate ksH and this table always converts it to the standard spelling versions.
+c "k" d208 fol(C)         > append(halfC1) d82         endstore  set(1) use(6) c ksHa-
+c "gy" fol(C)             > append(halfC1) d88         endstore  set(1) use(6) c gy-
+
+c half-consonants that are not stacks
+"k" fol(C)          > append(halfC1) d77         endstore  set(1) use(6) c k-
+"k" d210 fol(C)     > append(halfC1) d84         endstore  set(1) use(6) c kh-
+"g" fol(C)          > append(halfC1) d86         endstore  set(1) use(6) c g-
+"g" d210 fol(C)     > append(halfC1) d90         endstore  set(1) use(6) c gh-
+"c" fol(C)          > append(halfC1) d104        endstore  set(1) use(6) c c-
+"j" fol(C)          > append(halfC1) d108        endstore  set(1) use(6) c j-
+"z" fol(C)          > append(halfC1) d108 d219   endstore  set(1) use(6) c z-
+"j" d210 fol(C)     > append(halfC1) d113        endstore  set(1) use(6) c jh-
+d203 fol(C)         > append(halfC1) d115        endstore  set(1) use(6) c nja
+d206 fol(C)         > append(halfC1) d130        endstore  set(1) use(6) c Na
+"t" fol(C)          > append(halfC1) d132        endstore  set(1) use(6) c t-
+"t" d210 fol(C)     > append(halfC1) d137        endstore  set(1) use(6) c th-
+"d" fol(C)          > append(halfC1) d138 d254   endstore  set(1) use(6) c d-
+"d" d210 fol(C)     > append(halfC1) d149        endstore  set(1) use(6) c dh-
+"n" fol(C)          > append(halfC1) d153        endstore  set(1) use(6) c n-
+"p" fol(C)          > append(halfC1) d156        endstore  set(1) use(6) c p-
+"p" d210 fol(C)     > append(halfC1) d159        endstore  set(1) use(6) c ph-
+"f" fol(C)          > append(halfC1) d159 d219   endstore  set(1) use(6) c f-
+"b" fol(C)          > append(halfC1) d163        endstore  set(1) use(6) c b-
+"b" d210 fol(C)     > append(halfC1) d166        endstore  set(1) use(6) c bh-
+"m" fol(C)          > append(halfC1) d168        endstore  set(1) use(6) c m-
+"y" fol(C)          > append(halfC1) d171        endstore  set(1) use(6) c y-
+"l" fol(C)          > append(halfC1) d181        endstore  set(1) set(exti) use(6) c l-
+"w" fol(C)          > append(halfC1) d186        endstore  set(1) use(6) c w-
+d208 fol(C)         > append(halfC1) d192        endstore  set(1) use(6) c sHa-
+d207 fol(C)         > append(halfC1) d197        endstore  set(1) use(6) c SHa-
+"s" fol(C)          > append(halfC1) d201        endstore  set(1) use(6) c s-
+"h" d227            > append(halfC1) d204 d254   endstore  set(1) use(6) c h + halant
+
+			   c COMBINED FULL-CONSONANT + VOWEL
+
+"r" d156    > append(fullC) d178         endstore set(7) use(6) c must come before "r" fol(V)
+"ru"        > append(fullC) d179         endstore set(7) use(6) c must come before "r" fol(V)
+"hr" d249   > append(fullC) d211         endstore set(7) use(6)
+
+			   c FULL CONSONANTS
+
+c full-consonants that are two-character stacks (these must all have d226
+c to separate the stack parts)
+"k" d226 "k" fol(V)             > append(fullC) d78  endstore set(3) set(extii) set(stack) use(6)    c kka (stack)
+d202 d226 "k" fol(V)            > append(fullC) d97  endstore set(3) set(stack) use(6)               c nGka (stack)
+d202 d226 "k" d210 fol(V)       > append(fullC) d98  endstore set(3) set(stack) use(6)               c nGkha (stack)
+d202 d226 "g" fol(V)            > append(fullC) d99  endstore set(3) set(stack) use(6)               c nGga (stack)
+d202 d226 "g" d210 fol(V)       > append(fullC) d100 endstore set(3) set(stack) use(6)               c nGgha (stack)
+d202 d226 d202 fol(V)           > append(fullC) d101 endstore set(3) set(stack) use(6)               c nGnGa (stack)
+d202 d226 "h" fol(V)            > append(fullC) d102 endstore set(3) set(stack) use(6)               c nGha (stack)
+"c" d226 "c" fol(V)             > append(fullC) d105 endstore set(3) set(stack) use(6)               c cca (stack)
+d204 d226 d204 fol(V)           > append(fullC) d117 endstore set(3) set(stack) use(6)               c TTa
+d204 d226 d204 d210 fol(V)      > append(fullC) d118 endstore set(3) set(stack) use(6)               c TTha
+d204 d210 d226 d204 d210 fol(V) > append(fullC) d120 endstore set(3) set(stack) use(6)               c ThTha
+d205 d226 d205 fol(V)           > append(fullC) d122 endstore set(3) set(stack) use(6)               c DDa
+"n" d226 "n" fol(V)             > append(fullC) d154 endstore set(3) use(6)                          c nna
+"p" d226 "t" fol(V)             > append(fullC) d157 endstore set(3) use(6)                          c pta
+"m" d226 "l" fol(V)             > append(fullC) d169 endstore set(3) set(stack) use(6)               c mla (stack)
+"l" d226 "l" fol(V)             > append(fullC) d184 endstore set(3) set(stack) use(6)               c lla (stack)
+d208 d226 "c" fol(V)            > append(fullC) d193 endstore set(3) use(6)                          c sHca (stack)
+d207 d226 d204 fol(V)           > append(fullC) d198 endstore set(3) set(stack) set(tentr) use(6)    c SHTa
+d207 d226 d204 d210 fol(V)      > append(fullC) d199 endstore set(3) set(stack) set(tentr) use(6)    c SHTha
+"s" d226 "n" fol(V)             > append(fullC) d202 endstore set(3) use(6)                          c sna
+"s" d226 "r" fol(V)             > append(fullC) d203 endstore set(3) use(6)                          c sra
+
+c full-consonants that are indivisible character combinations (stack-like), but which
+c in Hindi have a standardized form.
+c   use these lines if you want to allow alternate (non-standard) spelling of the
+c   following characters. Then they will be disambiguated in Ann2TrmR.cct with the
+c   stack character (d226) so that they can be reconstructed here to the original
+c   form (otherwise, both these and the 'aberrant' spelling versions
+c   (e.g. half-k + full-t) will be romanized the same and can't be distinguisted).
+c   If you switch to using the other lines, be sure to change Ann2TrmR.cct to
+c   generate the other forms also.
+c "k" d226 "t" fol(V)         > append(fullC) d79  endstore set(3) set(cd) set(extii) use(6) c kta
+c "k" d226 "r" fol(V)         > append(fullC) d80  endstore set(3) set(cd) set(extii) use(6) c kra
+"k" d226 d208 fol(V)        > append(fullC) d81  endstore set(3) set(exti) use(6)                c ksHa
+"g" d226 "y" fol(V)         > append(fullC) d87  endstore set(3) use(6)                    c gya
+c "t" d226 "t" fol(V)         > append(fullC) d134 endstore set(3) use(6) c tta
+c "t" d226 "r" fol(V)         > append(fullC) d135 endstore set(3) use(6) c tra
+c "d" d226 "d" fol(V)         > append(fullC) d139 endstore set(3) use(6) c dda
+c "d" d226 "d" d210 fol(V)    > append(fullC) d140 endstore set(3) use(6) c ddha
+c "d" d226 "m" fol(V)         > append(fullC) d141 endstore set(3) use(6)                          c dma (stack)
+c "d" d226 "y" fol(V)         > append(fullC) d142 endstore set(3) use(6) c dya
+"d" d226 "w" fol(V)         > append(fullC) d143 endstore set(3) use(6) c dwa
+c d208 d226 "r" fol(V)        > append(fullC) d194 endstore set(3) use(6) c sHra
+d208 d226 "w" fol(V)        > append(fullC) d195 endstore set(3) use(6)                          c sHwa
+c "h" d226 "n" fol(V)         > append(fullC) d205 endstore set(3) use(6)                          c hna
+c "h" d226 "m" fol(V)         > append(fullC) d206 endstore set(3) use(6)                          c hma
+"h" d226 "y" fol(V)         > append(fullC) d207 endstore set(3) use(6)                          c hya
+"h" d226 "r" fol(V)         > append(fullC) d208 endstore set(3) use(6)                          c hra
+"h" d226 "l" fol(V)         > append(fullC) d209 endstore set(3) use(6)                          c hla
+"h" d226 "w" fol(V)         > append(fullC) d210 endstore set(3) use(6)                          c hwa
+c   use these lines if you want to 'correct the spelling' (i.e. both spelling forms
+c   generate 'kta' and this table always converts that to the standard spelling versions.
+"kt" fol(V)         > append(fullC) d79  endstore set(3) set(cd) set(extii) use(6) c kta
+"kr" fol(V)         > append(fullC) d80  endstore set(3) set(cd) set(extii) use(6) c kra
+c "k" d208 fol(V)     > append(fullC) d81  endstore set(3) set(exti) use(6)          c ksHa
+c "gy" fol(V)         > append(fullC) d87  endstore set(3) use(6)                    c gya
+"tt" fol(V)         > append(fullC) d134 endstore set(3) use(6)                    c tta
+"tr" fol(V)         > append(fullC) d135 endstore set(3) use(6)                    c tra
+"dd" fol(V)         > append(fullC) d139 endstore set(3) use(6)                    c dda
+"dd" d210 fol(V)    > append(fullC) d140 endstore set(3) use(6)                    c ddha
+"dm" fol(V)         > append(fullC) d141 endstore set(3) set(stack) use(6)         c dma (stack)
+"dy" fol(V)         > append(fullC) d142 endstore set(3) use(6)                    c dya
+c "dw" fol(V)         > append(fullC) d143 endstore set(3) use(6)                    c dwa
+d208 "r" fol(V)     > append(fullC) d194 endstore set(3) use(6)                    c sHra
+c d208 "w" fol(V)     > append(fullC) d195 endstore set(3) use(6)                    c sHwa
+"hn" fol(V)         > append(fullC) d205 endstore set(3) use(6)                    c hna
+"hm" fol(V)         > append(fullC) d206 endstore set(3) use(6)                    c hma
+c "hy" fol(V)         > append(fullC) d207 endstore set(3) use(6)                    c hya
+c "hr" fol(V)         > append(fullC) d208 endstore set(3) use(6)                    c hra
+c "hl" fol(V)         > append(fullC) d209 endstore set(3) use(6)                    c hla
+c "hw" fol(V)         > append(fullC) d210 endstore set(3) use(6)                    c hwa
+
+c full-consonants that aren't stack (-like)
+"k" fol(V)          > append(fullC) d76  endstore set(3) set(cd) set(extii) use(6)   c ka
+"k" d210 fol(V)     > append(fullC) d83  endstore set(3) set(exti) use(6)            c kha
+"g" fol(V)          > append(fullC) d85  endstore set(3) set(exti) use(6)            c ga
+"g" d210 fol(V)     > append(fullC) d89  endstore set(3) set(exti) use(6)            c gha
+d202 fol(V)         > append(fullC) d96  endstore set(3) set(tentr) use(6)           c nGa
+
+"c" fol(V)          > append(fullC) d103 endstore set(3) set(exti) use(6)            c ca
+"c" d210 fol(V)     > append(fullC) d106 endstore set(3) set(exti) set(tentr) use(6) c cha
+"j" fol(V)          > append(fullC) d107 endstore set(3) set(exti) use(6)            c ja
+"z" fol(V)          > append(fullC) d109 endstore set(3) use(6)                      c za
+"j" d210 fol(V)     > append(fullC) d111 endstore set(3) use(6)                      c jha
+d203 fol(V)         > append(fullC) d114 endstore set(3) use(6)                      c nja
+
+d204 fol(V)         > append(fullC) d116 endstore set(3) set(tentr) use(6)           c Ta
+d204 d210 fol(V)    > append(fullC) d119 endstore set(3) set(tentr) use(6)           c Tha
+d205 fol(V)         > append(fullC) d121 endstore set(3) set(tentr) use(6)           c Da
+d205 d210 fol(V)    > append(fullC) d128 endstore set(3) set(tentr) use(6)           c Dha
+d206 fol(V)         > append(fullC) d129 endstore set(3) set(exti) use(6)            c Na
+
+"t" fol(V)          > append(fullC) d131 endstore set(3) use(6)                      c ta
+"t" d210 fol(V)     > append(fullC) d136 endstore set(3) set(exti) use(6)            c tha
+"d" fol(V)          > append(fullC) d138 endstore set(3) use(6)                      c da
+"d" d210 fol(V)     > append(fullC) d144 endstore set(3) set(exti) use(6)            c dha
+"n" fol(V)          > append(fullC) d152 endstore set(3) use(6)                      c na
+
+"p" fol(V)          > append(fullC) d155 endstore set(3) use(6)                      c pa
+"p" d210 fol(V)     > append(fullC) d158 endstore set(3) set(cd) set(extii) use(6)   c pha
+"f" fol(V)          > append(fullC) d161 endstore set(3) set(cd) set(extii) use(6)   c fa
+"b" fol(V)          > append(fullC) d162 endstore set(3) use(6)                      c ba
+"b" d210 fol(V)     > append(fullC) d165 endstore set(3) use(6)                      c bha
+"m" fol(V)          > append(fullC) d167 endstore set(3) use(6)                      c ma
+
+"y" fol(V)          > append(fullC) d170 endstore set(3) use(6)                      c ya
+"r" fol(V)          > append(fullC) d175 endstore set(3) use(6)                      c must come after ru & rU
+"l" fol(V)          > append(fullC) d180 endstore set(3) set(exti) use(6)            c la
+"l" d246 fol(V)     > append(fullC) d66  endstore set(3) set(exti) use(6)            c la + LowDot
+"w" fol(V)          > append(fullC) d185 endstore set(3) use(6)                      c wa
+"w" d246 fol(V)     > append(fullC) d187 endstore set(3) use(6)                      c wa + LowDot
+
+d208 fol(V)         > append(fullC) d191 endstore set(3) set(exti) use(6)            c sHa
+d207 fol(V)         > append(fullC) d196 endstore set(3) use(6)                      c SHa
+"s" fol(V)          > append(fullC) d200 endstore set(3) set(exti) use(6)            c sa
+"h" fol(V)          > append(fullC) d204 endstore set(3) use(6)                      c ha
+"h" d211 fol(V)     > append(fullC) d216 endstore set(3) use(6)                      c visgara (h + length)
+
+c ----------------------------------------
+
+group(3)    c C2 2nd HALF CONSONANTS
+
+c half-consonants that are 'stack-like'
+c   use these lines if you want to allow alternate spelling of the following
+c   characters. Then they should have been disambiguated in Ann2TrmR.cct with the
+c   stack character (d226) so that they can be reconstructed here (otherwise, both
+c   these and the 'aberrant' spelling versions (e.g. half-k + full-sH) will be
+c   romanized the same and can't be distinguisted). If you switch to using the other
+c   lines, be sure to change Ann2TrmR.cct to generate the other forms also.
+"k" d226 d208 fol(C)    > append(halfC2) d82 endstore  set(1) use(6) c ksHa- (standard cct)
+"g" d226 "y" fol(C)     > append(halfC2) d88 endstore  set(1) use(6) c gy- (standard cct)
+c   use these lines if you want to 'correct the spelling' (i.e. both spelling forms
+c   generate ksH and this table always converts it to the standard spelling versions.
+c "k" d208 fol(C)         > append(halfC2) d82         endstore  set(1) use(6) c ksHa-
+c "gy" fol(C)             > append(halfC2) d88         endstore  set(1) use(6) c gy-
+
+c but if the '2nd-half' is itself a stack...
+"kr"                > next
+"tt"                > next
+"tr"                > next
+"dd"                > next
+"dy"                > next
+"hn"                > dup back(2) set(2) use(6)
+
+c half-consonants that are not stacks
+"k" fol(C)          > append(halfC2) d77         endstore  set(2) use(6) c k-
+"k" d210 fol(C)     > append(halfC2) d84         endstore  set(2) use(6) c kh-
+"g" fol(C)          > append(halfC2) d86         endstore  set(2) use(6) c g-
+"g" d210 fol(C)     > append(halfC2) d90         endstore  set(2) use(6) c gh-
+"c" fol(C)          > append(halfC2) d104        endstore  set(2) use(6) c c-
+"j" fol(C)          > append(halfC2) d108        endstore  set(2) use(6) c j-
+"z" fol(C)          > append(halfC2) d108 d219   endstore  set(2) use(6) c z-
+"j" d210 fol(C)     > append(halfC2) d113        endstore  set(2) use(6) c jh-
+d203 fol(C)         > append(halfC2) d115        endstore  set(2) use(6) c nja
+d206 fol(C)         > append(halfC2) d130        endstore  set(2) use(6) c Na
+"t" fol(C)          > append(halfC2) d132        endstore  set(2) use(6) c t-
+"t" d210 fol(C)     > append(halfC2) d137        endstore  set(2) use(6) c th-
+"d" d210 fol(C)     > append(halfC2) d149        endstore  set(2) use(6) c dh-
+"n" fol(C)          > append(halfC2) d153        endstore  set(2) use(6) c n-
+"p" fol(C)          > append(halfC2) d156        endstore  set(2) use(6) c p-
+"p" d210 fol(C)     > append(halfC2) d159        endstore  set(2) use(6) c ph-
+"f" fol(C)          > append(halfC2) d159 d219   endstore  set(2) use(6) c f-
+"b" fol(C)          > append(halfC2) d163        endstore  set(2) use(6) c b-
+"b" d210 fol(C)     > append(halfC2) d166        endstore  set(2) use(6) c bh-
+"m" fol(C)          > append(halfC2) d168        endstore  set(2) use(6) c m-
+"y" fol(C)          > append(halfC2) d171        endstore  set(2) use(6) c y-
+"l" fol(C)          > append(halfC2) d181        endstore  set(2) set(exti) use(6) c l-
+"w" fol(C)          > append(halfC2) d186        endstore  set(2) use(6) c w-
+d208 fol(C)         > append(halfC2) d192        endstore  set(2) use(6) c sHa-
+d207 fol(C)         > append(halfC2) d197        endstore  set(2) use(6) c SHa-
+"s" fol(C)          > append(halfC2) d201        endstore  set(2) use(6) c s-
+
+c when all else fails...
+""                  > set(2)  use(6)
+
+c -----------------------------------------------
+
+group(4) c consonant + R cluster, completer-y and word-final halants
+
+c deal with post-consonantal 'r' (there are 3 kinds of LowR)
+"r" > begin
+		if(tentr)
+			store(LowR) d228 endstore
+		else
+			begin
+				if(cd)
+					store(LowR) d227 endstore
+				else
+					store(LowR) d226 endstore
+				endif
+			end
+		endif
+	  end
+
+c deal with rikar (really a vowel but always post-consonantal)
+"r" d249 > begin                                 c rikar
+			if(cd)
+				store(vowel)  d247     endstore
+			else
+				store(vowel)  d246     endstore
+			endif
+			set(7) use(6)
+		  end
+
+c completer-ya
+"y"    > store(compC) d173 endstore
+
+c halant with full-r (we have to handle this one specially
+c because otherwise, we get 'LowR')
+c d227 "r" > begin
+c            if(cd)
+c                append(fullC)   d255 endstore
+c            else
+c                append(fullC)   d254 endstore
+c            endif
+c            append(fullC) d175 endstore
+c           end
+
+c halant
+d227    > begin
+			if(cd)
+				append(fullC)   d255 endstore
+			else
+				append(fullC)   d254 endstore
+			endif
+
+			c go back to 1 and find out what's next
+			use(1)
+		  end
+
+c but if the halant is word-final, then just stuff it and print out.
+d227 fol(Punctuation)   > begin
+							if(cd)
+								append(fullC)   d255 endstore
+							else
+								append(fullC)   d254 endstore
+							endif
+							set(7) do(OutputSyl)
+						  end
+
+""  > set(5) use(6)
+
+c -----------------------------------------------
+c Most vowels have 'centered' and 'right' versions depending on which
+c consonant it is with, so the consonants/vowels set various flags to
+c indicate which to use and here we'll check to output the correct one.
+c This should follow *exactly* the output of Keyman (with DevRom.kmn).
+
+group(5) c DEPENDENT VOWELS
+
+						c Non-permuting vowels
+
+d195    >   store(vowel)  ""      endstore      c akar
+			set(7) use(6)
+
+d192    >   store(vowel)  d231    endstore      c aakar
+			clear(cd)
+			set(7) use(6)
+
+"i"     > begin                                 c iikar
+			if(extii)
+				clear(extii)
+				store(vowel)  d235     endstore
+			else
+				store(vowel)  d234     endstore
+			endif
+			clear(cd)   c make it stick out.
+			set(7) use(6)
+		  end
+
+d156    > begin                                 c ukar
+			if(stack)
+				clear(stack)
+				store(vowel)  d238     endstore
+			else
+				begin
+					if(cd)
+						store(vowel)  d237     endstore
+					else
+						store(vowel)  d236     endstore
+					endif
+				end
+			endif
+			set(7) use(6)
+		  end
+
+"u"     > begin                                 c uukar
+			if(stack)
+				clear(stack)
+				store(vowel)  d243     endstore
+			else
+				begin
+					if(cd)
+						store(vowel)  d242     endstore
+					else
+						store(vowel)  d241     endstore
+					endif
+				end
+			endif
+			set(7) use(6)
+		  end
+
+"e"     > begin                                c ekar
+			if(cd)
+				store(vowel)  d249     endstore
+			else
+				store(vowel)  d248     endstore
+			endif
+			set(7) use(6)
+		  end
+
+c e followed by chandra bindu is a special glyph
+"e" d230    > begin                             c ekar + chandra bindu
+				if(cd)
+					clear(cd)
+					store(vowel)  d214     endstore
+				else
+					store(vowel)  d213     endstore
+				endif
+				set(7) use(6)
+			  end
+
+d193    > begin                                 c aikar
+			if(cd)
+				store(vowel)  d251     endstore
+			else
+				store(vowel)  d250     endstore
+			endif
+			set(7) use(6)
+		  end
+
+"o"     >   store(vowel)  d252   endstore       c okar
+			clear(cd)   c make it stick out.
+			set(7) use(6)
+
+d198    >   store(vowel)  d253   endstore       c aukar
+			clear(cd)   c make it stick out.
+			set(7) use(6)
+
+""      > set(7) use(6)
+
+						c Permuting I-vowel
+
+c there's a bit of a glitch with ikar coming before consonant
+c clusters. The version of ikar will always correspond to the first
+c consonant of the cluster (when typed in by Keyman) even though in
+c roman form (which is what this cc table deals with) ikar comes
+c after the 2nd consonant. eg pencil is ... ikar + half-n + s (so keyman
+c will determine which ikar to use based on the 'na'. But in roman form
+c it is: ...nsI... (so the 's' would determine which form). Therefore
+c we have to check *here* what the 1st half character is to pick the
+c correct form.
+d140    > begin                                  c ikar
+			if(exti)
+				begin
+					c if we don't have a half-n already here (which always gives nonext).
+					ifneq(halfC1) d153
+						store(Ivowel)  d233     endstore
+					else
+						store(Ivowel)  d232     endstore
+					endif
+					clear(exti)
+				end
+			else
+				store(Ivowel)  d233     endstore
+			endif
+			set(7) use(6)
+		  end
+
+c ---------------------------------------------------
+c As with the vowels, most diacritics have 'centered' and 'right'
+c versions depending on which consonant/vowel it is on, so the
+c consonants/vowels set various flags to indicate which to use.
+c This should follow *exactly* the output of Keyman (with DevRom.kmn).
+group(6)    c SERIES GENERATORS
+
+d229        > next                    c anusvara
+d228        > if(cd)
+				store(nsl) d225 endstore
+			  else
+				store(nsl) d224 endstore
+			  endif
+
+d231        > next                    c chandra bindu
+d230        > if(cd)
+				store(nsl) d223 endstore
+			  else
+				store(nsl) d222 endstore
+			  endif
+
+d243        > store(nsl) d221 endstore c chandra symbol (without bindu)
+
+d246        > if(cd)                  c low dot
+				store(LowDot) d220 endstore
+			  else
+				store(LowDot) d219 endstore
+			  endif
+
+c handle the special case of LowDot followed by ukar or uukar.
+d246 d156   > begin
+				if(cd)
+					store(vowel)  d240     endstore
+				else
+					store(vowel)  d239     endstore
+				endif
+				set(7)
+			  end
+
+d246 "u"    > begin
+				if(cd)
+					store(vowel)  d245     endstore
+				else
+					store(vowel)  d244     endstore
+				endif
+				set(7)
+			  end
+
+c handle the special case of a LowDot followed by ukar or uukar
+c (but which has an intervening LowR)
+d246 "r" d156 > begin
+					if(cd)
+						store(vowel)  d240  endstore
+					else
+						store(vowel)  d239  endstore
+					endif
+
+					c now put the 'r' back into the stream and have group 4 handle it.
+					"r" back(1) use(4)
+				end
+
+d246 "ru"     > begin
+					if(cd)
+						store(vowel)  d245  endstore
+					else
+						store(vowel)  d244  endstore
+					endif
+
+					c now put the 'r' back into the stream and have group 4 handle it.
+					"r" back(1) use(4)
+				end
+
+c Sanskrit length symbol (Annapurna d215 - TR2 d211)
+d211        > append(len) d215 endstore
+
+
+c CODES THAT TRIGGER OUTPUT OF STORED SYLLABLES
+
+fol(Punctuation)    > set(7) do(OutputSyl)
+nl                  > set(7) do(OutputSyl) dup
+""                  > do(OutputSyl)
+
+c for letting the \id line through unchanged
+group(PassThruWithoutProcessing)
+
+"\"     > dup back(1) use(1)
+nl      > set(7) do(OutputSyl) dup
+
+c for letting the \id line through unchanged
+group(EatWithoutProcessing)
+
+"\"     > dup back(1) use(1)

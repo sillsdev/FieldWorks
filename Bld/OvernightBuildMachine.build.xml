@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+
+<!-- Top-level NAnt build file for FieldWorks. -->
+<project name="OvernightBuild" default="overnight" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+<!-- *********************************** -->
+	<target name="overnight-init">
+		<tstamp property="build.date" pattern="yyyy-MM-dd" verbose="${verbose}"/>
+		<property name="dir.build.date" value="D:/FWBuilds/FW_7.2_${build.date}"/>
+		<!-- Reset 'dir.safecopy' to what we need here. -->
+		<property name="dir.safecopy" value="${dir.fwoutput}/SampleData"/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="overnight" description="Main target to do overnight builds.">
+		<!-- -->
+		<call target="overnight-remove-old-output" cascade="false"/>
+<!--		<call target="overnight-debug-build" cascade="false"/>
+		<call target="overnight-DBs" cascade="false"/>
+		<call target="overnight-debug-tests" cascade="false"/>
+-->		<call target="overnight-release-build-tests" cascade="false"/>
+		<call target="overnight-copy" cascade="false"/>
+		<call target="release" cascade="true"/>
+		<call target="Installers" cascade="false"/>
+		<call target="CopyInstallersAfterBuild" cascade="false"/>
+		<!-- Disabled until the ObjectWeb target is fixed. It has been failing since the switch to VS2005.
+			call target="ObjectWeb" cascade="false"/-->
+		<!-- TODO: Run acceptance tests, and any other automated tests, if there are any. -->
+		<!-- -->
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Everything Built Correctly."/>
+		<echo message="******************************************************************"/>
+	</target>
+
+	<target name="testProblem" description="Main target to do overnight builds.">
+		<!-- -->
+		<call target="overnight-remove-old-output" cascade="false"/>
+		<call target="overnight-debug-build" cascade="false"/>
+		<call target="overnight-DBs" cascade="false"/>
+		<call target="overnight-debug-tests" cascade="false"/>
+	</target>
+
+
+<!-- *********************************** -->
+	<target name="fullBuildWithoutCopy" description="Main target to do overnight builds.">
+		<!-- -->
+		<call target="overnight-remove-old-output" cascade="false"/>
+		<call target="overnight-debug-build" cascade="false"/>
+		<call target="overnight-DBs" cascade="false"/>
+		<call target="overnight-debug-tests" cascade="false"/>
+		<call target="overnight-release-build-tests" cascade="false"/>
+		<!--call target="Installers"/-->
+		<!-- TODO: Run acceptance tests, and any other automated tests, if there are any. -->
+		<!-- -->
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Everything Built Correctly."/>
+		<echo message="******************************************************************"/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="CopyInstallersAfterBuild" description="Complete essential build after debug/release builds have completed."
+			depends="overnight-init">
+		<call target="copyInstallersToBerea2" cascade="false"/>
+		<call target="copyInstallersToCana" cascade="false"/>
+.		<call target="copyInstallersToJAARS" cascade="false"/>
+		<!--call target="copyModelDocumentation" cascade="false"/-->
+	</target>
+
+<!-- *********************************** -->
+	<target name="RebuildAfterRelease" description="Complete essential build after debug/release builds have completed."
+			depends="overnight-init">
+		<call target="overnight-copy" cascade="false"/>
+		<call target="release" cascade="true"/>
+		<call target="Installers" cascade="false"/>
+		<call target="CopyInstallersAfterBuild" cascade="false"/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="BuildAndCopyInstallers" description="Complete essential build after debug/release builds have completed." depends="overnight-init">
+		<call target="release" cascade="true"/>
+		<call target="Installers"/>
+		<call target="CopyInstallersAfterBuild"/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="overnight-remove-old-output" description="" depends="overnight-init">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Removing old output."/>
+		<echo message="******************************************************************"/>
+		<call target="blow-away-output" failonerror="false" cascade="false"/>
+		<delete dir="${dir.build.date}" failonerror="false" />
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished removing old output."/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="overnight-debug-build" description="Debug build without tests.">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Start compiling Debug build."/>
+		<echo message="******************************************************************"/>
+		<!-- NB: We fail the whole overnight build, if the debug build doesn't compile. -->
+		<property name="passbyref" value="fw-build-error"/>
+		<nantex
+			target="debug buildtest cc register mkall-localize"
+			buildfile="${project::get-buildfile-path()}"
+			passbyref="${passbyref}"
+			failonerror="true"/>
+		<if test="${property::exists('fw-build-error')}">
+			<fail message="Debug build failed."/>
+		</if>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished compiling Debug build."/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="overnight-DBs" description="Debug build without tests.">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Building databases..."/>
+		<echo message="******************************************************************"/>
+		<!-- First should not use -nodep so it makes sure ICU files are available -->
+		<call target="TestLangProj" cascade="false"/>
+		<call target="LelaTeli2-nodep" cascade="false"/>
+		<call target="LelaTeli3-nodep" cascade="false"/>
+		<call target="Ethnologue-nodep" cascade="false"/>
+		<call target="BlankLP-nodep" cascade="false"/>
+		<!-- -->
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished building databases..."/>
+		<echo message="Copying databases to Output\SampleData."/>
+		<echo message="******************************************************************"/>
+		<!-- -->
+		<call target="copy-sampleDatabases" cascade="false"/>
+		<!-- BlankLangProj is not attached at this point, so just copy it from where it now is. -->
+		<property name="databaseName" value="BlankLangProj"/>
+		<property name="temp" value="${dir.sqlserverSILFWdata}"/>
+		<property name="dir.sqlserverSILFWdata" value="${fwroot}\DistFiles\Templates"/>
+		<call target="safecopyDB-basic" cascade="false"/>
+		<property name="dir.sqlserverSILFWdata" value="${temp}"/>
+	</target>
+<!-- *********************************** -->
+	<target name="copy-sampleDatabases">
+		<!-- -->
+		<property name="databaseName" value="TestLangProj"/>
+		<call target="safecopyDB"/>
+		<!-- -->
+		<property name="databaseName" value="Lela-Teli 2"/>
+		<call target="safecopyDB"/>
+		<!-- -->
+		<property name="databaseName" value="Lela-Teli 3"/>
+		<call target="safecopyDB"/>
+		<!-- -->
+		<property name="databaseName" value="Ethnologue"/>
+		<call target="safecopyDB"/>
+	</target>
+<!-- *********************************** -->
+	<target name="overnight-debug-tests" description="Run debug tests.">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Starting Debug tests."/>
+		<echo message="******************************************************************"/>
+		<property name="passbyref" value="fw-test-error"/>
+		<nantex
+			target="debug test mkall-localize"
+			buildfile="${project::get-buildfile-path()}"
+			passbyref="${passbyref}"/>
+		<if test="${property::exists('fw-test-error')}">
+			<property name="debug-test-error" value="${fw-test-error}"/>
+			<propertydelete name="fw-test-error"/>
+		</if>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished Debug tests!!!!!"/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="overnight-release-build-tests" description="Release build and tests.">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Starting compiling Release build."/>
+		<echo message="******************************************************************"/>
+		<!-- Need to clear SQL Server's grasp on ICU before running release tests -->
+		<call target="IcuData" cascade="false"/>
+		<!-- For now, blow away the references.xml file, etc. left over from the debug build.
+			It has some erroneous duplicate copy commands for TeDialogs, DiffView, and ScrImportComponents
+			that copy Debug files into the release directory. -->
+		<delete dir="${dir.fwobj}/NAntBuild" failonerror="false"/>
+		<property name="passbyref" value="fw-build-error"/>
+		<nantex
+			target="release buildtest register mkall-localize-errorhandling"
+			buildfile="${project::get-buildfile-path()}"
+			passbyref="${passbyref}"/>
+		<if test="${property::exists('fw-build-error')}">
+			<property name="release-build-error" value="${fw-build-error}"/>
+		</if>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished compiling Release build."/>
+		<echo message="Starting Release tests.	"/>
+		<echo message="******************************************************************"/>
+		<property name="passbyref" value="fw-test-error"/>
+		<nantex
+			target="release test mkall-localize"
+			buildfile="${project::get-buildfile-path()}"
+			passbyref="${passbyref}"/>
+		<if test="${property::exists('fw-test-error')}">
+			<property name="release-test-error" value="${fw-test-error}"/>
+			<propertydelete name="fw-test-error"/>
+		</if>
+		<!--call target="restoreTLP" cascade="false"/-->
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished Release tests!!!!!."/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="overnight-copy" description="Copy all kinds of stuff, except installers."
+			depends="overnight-init">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Copying selected build output."/>
+		<echo message="Copying source code."/>
+		<echo message="******************************************************************"/>
+		<!-- Copy sources. -->
+		<copy todir="${dir.build.date}/Code">
+			<fileset basedir="${fwroot}/Src">
+				<include name="**"/><!-- NB: There is no period between the two asterisks, and one should not be added.-->
+			</fileset>
+		</copy>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying source code."/>
+		<echo message="Copying DistFiles/Templates."/>
+		<echo message="******************************************************************"/>
+		<copy todir="${dir.build.date}/Templates">
+			<fileset basedir="${fwroot}/DistFiles/Templates">
+				<include name="**"/><!-- NB: There is no period between the two asterisks, and one should not be added.-->
+			</fileset>
+		</copy>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying DistFiles/Templates."/>
+		<echo message="Copying Output (including DBs, which are in Output/SampleData)."/>
+		<echo message="******************************************************************"/>
+		<copy todir="${dir.build.date}">
+			<fileset basedir="${dir.fwoutput}">
+				<include name="**"/><!-- NB: There is no period between the two asterisks, and one should not be added.-->
+			</fileset>
+		</copy>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying Output (including DBs, which are in Output/SampleData)."/>
+		<echo message="Copying Lib.."/>
+		<echo message="******************************************************************"/>
+		<copy todir="${dir.build.date}">
+			<fileset basedir="${fwroot}">
+				<include name="Lib/**"/><!-- NB: There is no period between the two asterisks, and one should not be added.-->
+			</fileset>
+		</copy>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying Lib."/>
+		<copy todir="${dir.build.date}/Installer">
+			<fileset basedir="${fwroot}/Installer">
+				<include name="ProcessedAutoFiles.wxs"/>
+				<include name="FileLibraryAddenda.xml"/>
+				<include name="RegLibraryAddenda.xml"/>
+			</fileset>
+		</copy>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying source code."/>
+		<echo message="Finished copying selected build output."/>
+	</target>
+
+<!-- <target name="Installers" description="Moved to file Installer.build.xml." /> -->
+
+<!-- *********************************** -->
+	<target name="copyInstallersToBerea2" depends="overnight-init">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Start copying Release installer and essential installer data to Berea2..."/>
+		<echo message="******************************************************************"/>
+		<copy file="${fwroot}/Installer/SetupFW.msi" todir="\\berea2/FwBuilds/FW_7.2_${build.date}/FieldWorks/Release"/>
+		<copy file="${fwroot}/Installer/ProcessedAutoFiles.wxs" todir="\\berea2/FwBuilds/FW_7.2_${build.date}/FieldWorks/Release" failonerror="false"/>
+		<copy file="${fwroot}/Installer/FileLibraryAddenda.xml" todir="\\berea2/FwBuilds/FW_7.2_${build.date}/FieldWorks/Release" failonerror="false"/>
+		<copy file="${fwroot}/Installer/RegLibraryAddenda.xml" todir="\\berea2/FwBuilds/FW_7.2_${build.date}/FieldWorks/Release" failonerror="false"/>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying Release installer to Berea2."/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="copyInstallersToJAARS">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Start copying Release installers to JAARS..."/>
+		<echo message=" \\172.22.0.28\SILLangSoft   xxx Y: = \\Jar-file.waxhaw.jaars.org\SILLangSoft"/>
+		<echo message="******************************************************************"/>
+		<exec program="${fwroot}\bin\bcopy" commandline="${fwroot}\Installer\SetupFW.msi \\172.22.0.28\SILLangSoft\FW_7_2_0\FieldWorks\SetupFW.msi /b:500 /r:40 /f" workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline="${fwroot}\Installer\Flex_M.cab \\172.22.0.28\SILLangSoft\FW_7_2_0\FieldWorks\Flex_M.cab /b:500 /r:40 /f" workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline="${fwroot}\Installer\MD5SUM.md5 \\172.22.0.28\SILLangSoft\FW_7_2_0\FieldWorks\MD5SUM.md5 /b:500 /r:40 /f" workingdir="${fwroot}\bin"/>
+
+		<!--		<echo message="Copying Encoding Converters installer to JAARS..."/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC.msi "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC.msi" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\MD5SUM_EC.md5 "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\MD5SUM.md5" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC1.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC1.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC2.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC2.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC3.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC3.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC4.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC4.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC5.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC5.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC6.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC6.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC7.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC7.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC8.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC8.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC9.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC9.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC10.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC10.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC11.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC11.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC12.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC12.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC13.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC13.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC14.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC14.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC15.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC15.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC16.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC16.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC17.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC17.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC18.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC18.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC19.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC19.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC20.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC20.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC21.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC21.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC22.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC22.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\SetupEC23.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\SetupEC23.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>
+		<exec program="${fwroot}\bin\bcopy" commandline='${fwroot}\Installer\m24.cab "\\jar-file\sillangsoft\NightlyBuild\Encoding Converters\m24.cab" /b:500 /r:40 /f"' workingdir="${fwroot}\bin"/>-->
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying Release installers to JAARS."/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="copyInstallersToCana" description="Copy for unsecure accesss">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+<!--		<echo message="Not copying Release installers to Cana..."/>-->
+		<echo message="Start copying Release installers to Cana..."/>
+		<echo message="******************************************************************"/>
+		<copy file="${fwroot}\Installer\SetupFW.msi" tofile="\\Cana\lsdev\Installers\FW7.2.0\BTE\FieldWorks\SetupFW.msi" />
+		<copy file="${fwroot}\Installer\Flex_M.cab" tofile="\\Cana\lsdev\Installers\FW7.2.0\BTE\FieldWorks\Flex_M.cab" />
+		<copy file="${fwroot}\Installer\MD5SUM.md5" tofile="\\Cana\lsdev\Installers\FW7.2.0\BTE\FieldWorks\MD5SUM.md5" />
+
+		<echo message="Copying Encoding Converters installer to Cana..."/>
+		<copy file="${fwroot}\Installer\SetupEC.msi" tofile="\\Cana\lsdev\Installers\FW7.2.0\SEC4.0\SIL Converters\SetupEC.msi" failonerror="false"/>
+		<copy file="${fwroot}\Installer\MD5SUM_EC.md5" tofile="\\Cana\lsdev\Installers\FW7.2.0\SEC4.0\SIL Converters\MD5SUM_EC.md5" failonerror="false"/>
+
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying Release installers to Cana."/>
+		<echo message="Not copying Release installer without TE to Cana."/>
+		<echo message="Start copying Release installer without TE to Cana..."/>
+		<echo message="******************************************************************"/>
+		<copy file="${fwroot}\Installer\SetupFW_SE.msi" tofile="\\Cana\lsdev\Installers\FW7.2.0\SE\FieldWorks\SetupFW_SE.msi" failonerror="false"/>
+		<copy file="${fwroot}\Installer\Flex_MSE.cab" tofile="\\Cana\lsdev\Installers\FW7.2.0\SE\FieldWorks\Flex_MSE.cab" failonerror="false"/>
+		<copy file="${fwroot}\Installer\MD5SUM_SE.md5" tofile="\\Cana\lsdev\Installers\FW7.2.0\SE\FieldWorks\MD5SUM_SE.md5" failonerror="false"/>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying Release installer without TE to Cana."/>
+	</target>
+
+<!-- *********************************** -->
+	<target name="copyModelDocumentation">
+<!--		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Start copying model documentation to fieldworks.sil.org..."/>
+		<echo message="******************************************************************"/>
+		<copy file="${fwroot}/Doc/Database/ModelDocumentation.chm" todir="\\172.21.1.118/ModelDoc"/>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished copying model documentation to Elmer."/>-->
+	</target>
+
+<!-- *********************************** -->
+	<target name="ObjectWeb" description="Handle everything related to the ObjectWeb">
+	</target>
+
+<!-- *********************************** -->
+	<target name="preprocessIDHFiles" description="Preprocess all IDH files, so the surveyor program can work with them.">
+		<mkdir dir="${fwroot}/Src/interfaces"/>
+		<foreach item="File" property="filename">
+			<in>
+				<items>
+					<include name="${fwroot}/Src/**/*.idh" />
+				</items>
+			</in>
+			<do>
+				<script language="C#">
+					<code><![CDATA[
+public static void ScriptMain(Project project)
+{
+	Regex reGet = new Regex("\\[propget\\] HRESULT ");
+	Regex rePut = new Regex("\\[propput\\] HRESULT ");
+	Regex rePutref = new Regex("\\[propputref\\] HRESULT ");
+	// Match a "Declare Interface" declaration.
+	// $1 is the declared name,
+	// $2 is the interface it inherits from.
+	Regex reDeclareIntf = new Regex("DeclareInterface\\((\\w+), *(\\w+),.+\\)");
+	// Match DeclareDualInterface{2}. $1 is "2" or nothing, $2 is the interface name.
+	Regex reDeclareDual = new Regex("DeclareDualInterface(2?)\\((\\w+),.+\\)");
+	// Match "Interface ISomeInterface" on a line by itself (typically comment block header)
+	Regex reInterface = new Regex("^\\s*Interface I\\w+\\s*$");
+	// Match any argument specifier
+	Regex reInOut = new Regex("\\[.*\\]");
+
+	StreamReader sr = null;
+	StreamWriter sw = null;
+	try
+	{
+		string srcIDH = project.Properties["filename"];
+		FileInfo fi = new FileInfo(srcIDH);
+		string newIDH = project.Properties["fwroot"] + "/Src/interfaces/" + fi.Name + "_";
+		sr = new StreamReader(srcIDH);
+		sw = new StreamWriter(newIDH);
+		String line;
+		String outLine = "";
+		String[] tokens;
+		// Read and display lines from the file until the end of
+		// the file is reached.
+		while ((line = sr.ReadLine()) != null)
+		{
+			// Look for DeclareInterface type strings.
+			// If one of these matches, since it can't be immediately followed by another,
+			// we can just continue the loop.
+			if (reDeclareIntf.IsMatch(line))
+			{
+				tokens = reDeclareIntf.Split(line);
+				outLine = tokens[0] + "class I" + tokens[1] + ": public I" + tokens[2];
+				sw.WriteLine(outLine);
+				sw.WriteLine(sr.ReadLine()); // typically the opening brace
+				sw.WriteLine("/tpublic:");
+				continue;
+			}
+			if (reDeclareDual.IsMatch(line))
+			{
+				tokens = reDeclareDual.Split(line);
+				String prefix = "I";
+				if (tokens[1] != "2")
+					prefix = "DI";
+				outLine = tokens[0] + "class " + prefix + tokens[2] + ": public IDispatch";
+				sw.WriteLine(outLine);
+				sw.WriteLine(sr.ReadLine()); // typically the opening brace
+				sw.WriteLine("/tpublic:");
+				continue;
+			}
+			// Our block comments for DeclareInterface usually start "Interface IX" but we don't
+			// want this in the input to Surveyor which makes its own overall header.
+			if (reInterface.IsMatch(line))
+				continue;
+
+			// Change "[propget] HRESULT MyFunc" to "HRESULT get_MyFunc", etc.
+			line= reGet.Replace(line, "HRESULT get_");
+			line= rePut.Replace(line, "HRESULT put_");
+			line= rePutref.Replace(line, "HRESULT putref_");
+			line= reInOut.Replace(line, "");
+			sw.WriteLine(line);
+		}
+	}
+	catch
+	{}
+	finally
+	{
+		if (sr != null)
+			sr.Close();
+		if (sw != null)
+			sw.Close();
+	}
+}
+					]]></code>
+				</script>
+			</do>
+		</foreach>
+	</target>
+
+<!-- *********************************** -->
+</project>

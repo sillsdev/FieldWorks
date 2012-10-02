@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- Tests Bulk Edit Entries change Entry Type -->
+<!--  Assumes original Kalaba database-->
+
+<accil on-fail="assert">
+   <goal>Exercises Lexicon Bulk Edit Entries list choice</goal>
+   <bug id="FWR-425" desc="Crash on Bulk Edit Entries tab apply"/>
+   <bug id="FWR-306" desc="flid is not defined for this class"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+<!-- Go to Lexicon/Bulk Edit Entries-->
+  <click select="menubar/view/lexicon/bulk-edit-entries"/>
+
+<model select="bulk-edit-entries[@role='view']">
+
+<!--assumes Morph Type is 3rd column and list choice tab is clicked-->
+	<click select="list-choice/tab"/>
+	<click select="list-choice/target-field/open"/>
+	<insert>m~</insert> <!-- Morph Type -->
+	<click select="list-choice/change-to/none/open" />
+	<insert>c~</insert> <!-- circumfix -->
+<!--filter for Morph Type "suffix"-->
+	<var id="col" set="3"/>
+	<click select="entries/col/filter/open"/>
+	<insert>f~</insert>
+   <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	  <insert>suffix</insert>
+	  <click path="$ok"/>
+   </on-dialog>
+
+<!--Apply-->
+   <click select="list-choice/apply"/>
+
+<!--Change back to suffix -->
+	<click select="list-choice/change-to/open" />
+	<insert pause="50">sss~</insert>
+
+<!--Apply-->
+   <click select="list-choice/apply"/>
+
+<!--show all-->
+	<click id="reset" select="entries/col/filter/text"/>
+   <insert>s~</insert>
+
+<!--change to Delete tab-->
+   <click select="delete/tab"/>
+
+<!--get value of 12th lexeme form-->
+	<var id="row" set="12"/>
+	<var id="col" set="2"/>
+  <glimpse id="first" select="entries/record/col" prop="value" on-fail="skip" on-pass="skip"/>
+
+<!--uncheck all, check top checkbox-->
+   <click select="entries/col/checks"/>
+   <insert>{DOWN 2}</insert>
+   <insert>~</insert>
+
+<!--check the 12th record gel -->
+   <click select="entries/record/check"/>
+
+<!--delete checked Lexeme Form value-->
+   <click select="delete/apply"/>
+   <insert>~</insert>
+
+<!--get value of new first lexeme form-->
+  <glimpse id="replace"  select="entries/record/col-empty" prop="value" />
+
+<!--undo-->
+  <insert>^z</insert>
+  <glimpse id="undelete"  select="entries/record/col" prop="value" expect="$first.value" />
+
+<!--can't test process because no processes to select-->
+
+</model>
+
+ </on-application>
+</accil>

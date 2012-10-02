@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- This script requires the Doulos SIL IPA font and Keyman keyboard IME -->
+<accil on-fail="assert">
+
+	<bug id="LT-8085" desc="Crash creating new project"/>
+
+	<var id="projectName" set="Kalaba"/>
+	<var id="OpenProject" set="English IPA"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+  <on-application run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+  <!-- Delete this project if it is already created -->
+	<click  select="menubar/file/project-management/delete"/>
+	<on-dialog title="Delete Fieldworks Project">
+	  <glimpse id="LmExists" path="$NL;item:$OpenProject" on-fail="skip"/>
+	  <if><condition of="$LmExists" is="true"/>
+		<then>
+		  <click path="$NL;item:$OpenProject"/>
+		  <click path="$delete"/>
+		  <on-dialog title="Delete Fieldworks Project">
+			<click path="$yes"/>
+		  </on-dialog>
+		</then>
+	  </if>
+	  <click path="$close"/>
+	</on-dialog>
+
+  <!--  1.	Create English IPA project  -->
+  <click select="menubar/file/new-fieldworks-project"/>
+  <on-dialog title="New FieldWorks Project">
+	<insert wait="1000">$OpenProject</insert>
+  <!--  a.	Define new vernacular language  -->
+	<click path="9:Define New.../43:Define New..."/>
+
+	<var id="isNew" set="true"/>
+	<on-dialog title="Writing System Wizard">
+  <!--  i.	Chosen name: English; Next  -->
+	<insert wait="1000">English</insert>
+	<insert wait="100">{ENTER}</insert>
+	<click path="$next"/>
+
+  <!--  ii.	Abbreviation: IPA  -->
+	<insert wait="1000">+{END}IPA</insert>
+  <!--  iii.	Check box This writing system uses the IPA; Next  -->
+	<click path="$nl;[2]/60:NAMELESS/9:Pg. 2/9:This writing system uses the International Phonetic Alphabet (IPA)./44:This writing system uses the International Phonetic Alphabet (IPA)."/>
+
+  <!--  iv.	Next  -->
+	<click path="$next"/>
+
+	<on-dialog wait="2000" until="5000" title="Writing System Already Exists" on-fail="skip">
+	   <var id="isNew" set="false"/>
+	   <click path="$yes"/>
+	</on-dialog>
+
+	<if><condition of="$isNew" is="true"/>
+	<then>
+	  <click path="$next"/>
+	  <!--  v.	Under Keyman keyboard, use IPA Unicode 1.0.5; Finish  -->
+	  <insert wait="1000">{TAB}</insert>
+	  <insert wait="200">{RIGHT}</insert>
+	  <click  path="9:Finish/43:Finish"/>
+	</then>
+	</if>
+	</on-dialog>
+
+  <!--  b.	Analysis language is English  -->
+  <!--  c.	Click OK  -->
+	<click path="$ok"/>
+  </on-dialog>
+
+  <on-dialog until="9999999" title="Choose a List of Anthropology Categories">
+  <!--  d.	Choose last button on antro categories; OK  -->
+	<click path="9:Create my own set of anthropology categories (start with a blank list)/45:Create my own set of anthropology categories (start with a blank list)"/>
+	<click path="$ok"/>
+  </on-dialog>
+
+  <var id="FlexSig" set=" - FieldWorks Language Explorer"/>
+
+ <do-once until="999999999" waiting-for="$OpenProject;$FlexSig">
+	  <on-dialog until="1000" title="Twiddle Thumbs" on-fail="skip">
+		  <insert wait="300">~</insert> <!-- you never know -->
+	  </on-dialog>
+ </do-once>
+
+  <click wait="3000" path="1:NAMELESS"/><!-- the Kalaba titlebar -->
+  <click path="43:Close"/><!-- X widget close Kalaba -->
+
+  <!--insert wait="5000">%{F}</insert>
+  <insert wait="100">x</insert--> <!-- close Kalaba -->
+
+</on-application>
+
+<on-application args="-db $OpenProject" run="ok" close="no" on-fail="assert">
+
+	<if><condition of="$isNew" is="false"/>
+	<then>
+	  <click select="menubar/format/setup-writing-systems"/>
+	  <model select="fw-project-properties[@role='dialog']">
+		 <on-dialog title="FieldWorks Project Properties">
+			<click select="writing-systems/vernacular-ws/modify"/>
+			<on-dialog title="Writing System Properties">
+			  <var id="fld" set="English (IPA)"/>
+			  <model select="//writing-system-properties[@role='dialog']">
+				  <click select="keyboard/tab"/>
+				  <click select="keyboard/keyman/drop"/>
+				  <insert wait="500">i~</insert>
+				  <click  select="ok"/>
+			  </model>
+			</on-dialog>
+			<click select="ok"/>
+		 </on-dialog>
+	  </model>
+	</then>
+	</if>
+
+  <insert wait="1000">%{F}</insert>
+  <insert wait="100">x</insert> <!-- close English IPA -->
+
+</on-application>
+</accil>

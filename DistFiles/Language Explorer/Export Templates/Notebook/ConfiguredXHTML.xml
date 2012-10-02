@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="xhtml" type="configured" datatype="html" xslt="ConfiguredXHTML.xsl">
+	<FxtDocumentDescription dataLabel="Configured XHTML Notebook" formatLabel="XHTML" defaultExtension="xhtml" filter="XHTML files (*.xhtml)|*.xhtml|All files (*.*)|*.*">Export to XHTML following the configuration of the document view, and any current filters and sorts.</FxtDocumentDescription>
+</template>

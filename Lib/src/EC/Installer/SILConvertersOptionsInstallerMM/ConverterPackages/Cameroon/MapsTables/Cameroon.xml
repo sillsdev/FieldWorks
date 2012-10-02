@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+	<MapsTables>
+		<MapTable description="Cameroon TECkit table converter between CamCam and Unicode (2007)">
+			<scriptInstall filename="MapsTables\Cameroon2Unicode.tec.vbs" mappingName="Cameroon&lt;&gt;UNICODE" converterSpec="MapsTables\Cameroon2Unicode2007.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" ></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\Cameroon2Unicode2007.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\Cameroon2Unicode2007.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+	</MapsTables>
+</SILConvertersInstallerDetails>

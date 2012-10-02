@@ -1,0 +1,35 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: ViewsTlb.idl
+Responsibility: John Thomson
+Last reviewed:
+
+	Defines Views Type Library.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+// This file will be processed by the MIDL tool to
+// produce the type library (Views.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "objidl.idl";
+
+#include "common.idh" // DeclareInterface and similar
+
+DeclareLibrary(Views, 1.0, "Views 1.0 Type Library",
+	f6d10640-c00c-11d2-8078-0000c0fb81b5)
+{
+	// for definition of ITsString.
+	importlib("FwKernelTlb.tlb");	// Includes DbAccess, DbServices, and Language as well.
+
+	#include "Views.idh"
+
+//	// Include WorldPad WPX load+save interfaces for Linux builds
+//	#if !WIN32
+//	#include "WorldPad.idh"
+//	#endif // !WIN32
+
+};

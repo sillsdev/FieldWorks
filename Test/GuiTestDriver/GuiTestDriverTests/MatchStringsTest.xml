@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for MatchString instruction.
+-->
+
+<accil on-fail="assert">
+ <on-application on-fail="assert">
+  <click path="sidebar:Views" />
+  <click path="sidebar:Draft" />
+  <select-text id="snip" path="view:Draft" loc="b:1/s:5/p:1" at="36" run="21"/>
+  <select-text id="snap" path="view:Draft" loc="b:1/s:4/p:0" at="6" run="11"/>
+  <match-strings id="snip-snap" of="snip" get="text" to="snap" with="text" expect='&lt;xmldiff>&lt;node match="1">&lt;node match="1">&lt;change match="1">Christians&lt;/change>&lt;/node>&lt;remove match="2-3" />&lt;/node>&lt;/xmldiff>' on-fail="assert">
+   Match-strings found these differences from what was expected: <data get="diffs"/>
+  </match-strings>
+  <match-strings id="snip-snop" of="snip" get="text" to="snap" with="text" on-pass="assert">
+   Match-strings found these different texts to be the same: <data of="snip" get="text"/> and <data of="snap" get="text"/>
+  </match-strings>
+ </on-application>
+</accil>

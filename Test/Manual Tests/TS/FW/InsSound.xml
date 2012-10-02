@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="inssnd" num="2.5.6" abbr="insnd" file="FW\InsSound.xml" ready="V2">
+<title tag="inssnd">Insert-Sound Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Inserts a sound byte into the current text cursor position. This menu item brings up a dialog which offers choices between inserting a new sound file or making use of an existing sound file. It also makes it possible to just reference a portion of the sound file as opposed to the entire file.</p>
+<p name="Specification">See the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/InsertMenu.html#Insert-Sound" type="doc">Insert-Sound menu item</link>
+	and the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/Sound/InsertSound.html" type="doc">Insert Sound dialog</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Insert-Sound"</p>
+</context>
+<case id="insndAct" num="0" order="any">
+<title tag="insndAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Insert-Sound. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/Sound/InsertSound.html" type="doc">Insert-Sound specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound dialog fails to open</p>
+<p name="bug">Insert-Sound dialog layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>The Insert... From Language Project Sound Corpus is dotted.</li>
+<li>The the Language Project Sound Corpus folders and sound files are displayed.</li>
+</ul>
+</r>
+<p name="bug">Insert-SoundInsert-Sound Insert... From Language Project Sound Corpus is dotted failed</p>
+<p name="bug">Insert-SoundInsert-Sound the Language Project Sound Corpus folders and sound files are displayed failed</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OK, the dialog disappears.</li>
+<li>The sound icon appears at the insertion point in the text.</li>
+<li>Report any failures as suggested using "Insert-Sound" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound dialog remains after OK</p>
+<p name="bug">Insert-Sound sound icon appears at the insertion point in the text failed</p>
+</step>
+</case>
+<case id="insndcorpus" num="1" order="any">
+<title tag="insndcorpus">From Language Project Sound Corpus Radio Button</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="1.1" link="Bug">
+	Use the <link uri="../StdCtrls/radiobtn.xml">Radio Button Tests</link> to test the From Language Project Sound Corpus radio button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound From Language Project Sound Corpus".</li>
+</ul>
+</r>
+</step>
+<step name="1.2" link="Bug">When dotted:
+  <r>From File is undotted.</r>
+<p name="bug">Insert-Sound  From Language Project Sound Corpus not in sync with From File</p>
+</step>
+</case>
+<case id="insndfile" num="2" order="any">
+<title tag="insndfile">From File Radio Button</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/radiobtn.xml">Radio Button Tests</link> to test the From File radio button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound From File".</li>
+</ul>
+</r>
+</step>
+<step name="2.2" link="Bug">When dotted:
+  <r>From Language Project Sound Corpus is undotted.</r>
+<p name="bug">Insert-Sound  From File not in sync with From Language Project Sound Corpus</p>
+</step>
+</case>
+<case id="insndfname" num="3" order="any">
+<title tag="insndfname">Filename Text Box</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the Filename text box.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound Filename".</li>
+</ul>
+</r>
+</step>
+<step name="3.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is empty.</li>
+	<li>The value is a file name.</li>
+	<li>The value is editable text that persists.</li>
+   </ul>
+</r>
+<p name="bug">Insert-Sound default vaule is not empty</p>
+	<p name="bug">Insert-SoundFilename value is not a file name</p>
+	<p name="bug">Insert-SoundFilename value is not editable text that persists</p>
+   </step>
+</case>
+<case id="insndbrow" num="4" order="any">
+<title tag="insndbrow">Browse Button</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="4.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Browse button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound Browse".</li>
+</ul>
+</r>
+</step>
+<step name="4.2" link="Bug">
+	Click the Browse button to test its action.
+	<r>
+<ul>
+<li>Brings up the system file browser dialog.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound fails to brings up the system file browser dialog</p>
+</step>
+</case>
+<case id="insndtsw" num="5" order="any">
+<title tag="insndtsw">Time Series Window Pallet</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="5.1" link="Bug">
+	Exercise the Time Series Window pallet.<r>
+<ul>
+</ul>
+</r>
+</step>
+<step name="5.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is &lt;the time series&gt;.</li>
+</ul>
+</r>
+<p name="bug">Insert-SoundTime Series Window default vaule is not &lt;the time series&gt;</p>
+</step>
+<step name="5.3" link="Bug">When a sound is selected:
+  <r>The time series matches the selected (sound)..</r>
+<p name="bug">Insert-Sound  Time Series Window not in sync with sound</p>
+</step>
+<step name="5.4" link="Bug">When the blue cursors are dragged by mouse:
+  <r>Only the section between them can play.</r>
+<p name="bug">Insert-Sound  Time Series Window not in sync with play</p>
+</step>
+</case>
+<case id="insndplay" num="6" order="any">
+<title tag="insndplay">Play Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="6.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Play button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound Play".</li>
+</ul>
+</r>
+</step>
+<step name="6.2" link="Bug">
+	Click the Play button to test its action.
+	<r>
+<ul>
+<li>Plays the sound within the blue cursors.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound fails to plays the sound within the blue cursors</p>
+</step>
+</case>
+<case id="insndback" num="7" order="any">
+<title tag="insndback">Back Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="7.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Back button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound Back".</li>
+</ul>
+</r>
+</step>
+<step name="7.2" link="Bug">
+	Click the Back button to test its action.
+	<r>
+<ul>
+<li>Moves the left blue cursor to the beginning of the sound.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound fails to moves the left blue cursor to the beginning of the sound</p>
+</step>
+</case>
+<case id="insndrwd" num="8" order="any">
+<title tag="insndrwd">Rwd Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="8.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Rwd button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound Rwd".</li>
+</ul>
+</r>
+</step>
+<step name="8.2" link="Bug">
+	Click the Rwd button to test its action.
+	<r>
+<ul>
+<li>Moves the left blue cursor left 10% of the sound.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound fails to moves the left blue cursor left 10% of the sound</p>
+</step>
+</case>
+<case id="insndfwd" num="9" order="any">
+<title tag="insndfwd">Fwd Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="9.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Fwd button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound Fwd".</li>
+</ul>
+</r>
+</step>
+<step name="9.2" link="Bug">
+	Click the Fwd button to test its action.
+	<r>
+<ul>
+<li>Moves the right blue cursor right 10% of the sound.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound fails to moves the right blue cursor right 10% of the sound</p>
+</step>
+</case>
+<case id="insndend" num="10" order="any">
+<title tag="insndend">End Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="10.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the End button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound End".</li>
+</ul>
+</r>
+</step>
+<step name="10.2" link="Bug">
+	Click the End button to test its action.
+	<r>
+<ul>
+<li>Moves the right blue cursor to the end of the sound.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound fails to moves the right blue cursor to the end of the sound</p>
+</step>
+</case>
+<case id="insndin" num="11" order="any">
+<title tag="insndin">In Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="11.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the In button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound In".</li>
+</ul>
+</r>
+</step>
+<step name="11.2" link="Bug">
+	Click the In button to test its action.
+	<r>
+<ul>
+<li>Zoom in 50%.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound fails to Zoom in 50%</p>
+</step>
+</case>
+<case id="insndout" num="12" order="any">
+<title tag="insndout">Out Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="12.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Out button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound Out".</li>
+</ul>
+</r>
+</step>
+<step name="12.2" link="Bug">
+	Click the Out button to test its action.
+	<r>
+<ul>
+<li>Zooms out 50%.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound fails to Zooms out 50%</p>
+</step>
+</case>
+<case id="insndfull" num="13" order="any">
+<title tag="insndfull">Full Button</title>
+<context>
+<p>When the  interior  is displayed</p>
+</context>
+<step name="13.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Full button.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound Full".</li>
+</ul>
+</r>
+</step>
+<step name="13.2" link="Bug">
+	Click the Full button to test its action.
+	<r>
+<ul>
+<li>Zooms out to make the entire sound visible without need for scrolling.</li>
+</ul>
+</r>
+<p name="bug">Insert-Sound fails to Zooms out to make the entire sound visible without need for scrolling</p>
+</step>
+</case>
+<case id="insnddesc" num="14" order="any">
+<title tag="insnddesc">Name Or Description Text Box</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="14.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the name or description text box.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Sound name or description".</li>
+</ul>
+</r>
+</step>
+<step name="14.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is empty.</li>
+	<li>The value is a short name or description of the sound.</li>
+	<li>The value is editable text that persists.</li>
+   </ul>
+</r>
+<p name="bug">Insert-Sound default vaule is not empty</p>
+	<p name="bug">Insert-Soundname or description value is not a short name or description of the sound</p>
+	<p name="bug">Insert-Soundname or description value is not editable text that persists</p>
+   </step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="Apr-19-02" author="JanetW">Corrected duplicate step numbers.</update>
+
+</test>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000021">
+	<!-- {0}-{1}-{2} {3}:{4}:{5}.{6} Year, Month, Day, Hour, Minute, Second, Millisecond-->
+	<rt class="LangProject" guid="c1ecd171-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+	</rt>
+	<rt class="CmPossibilityList" guid="c1ecd172-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+	</rt>
+	<rt class="CmPossibility" guid="c1ecd173-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+	</rt>
+	<rt class="PartOfSpeech" guid="c1ecd174-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+	</rt>
+	<rt class="CmBaseAnnotation" guid="c1ecd175-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+	</rt>
+	<rt class="ScrScriptureNote" guid="c1ecd176-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+		<DateResolved val="2010-02-01 23:59:59.000" />
+	</rt>
+	<rt class="StJournalText" guid="c1ecd177-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+	</rt>
+	<rt class="LexEntry" guid="c1ecd178-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+	</rt>
+	<rt class="RnGenericRec" guid="c1ecd179-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-1-1 23:59:59.000" />
+	</rt>
+	<rt class="ScrDraft" guid="c1ecd17a-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+	</rt>
+	<rt class="ScrCheckRun" guid="c1ecd17b-e382-11de-8a39-0800200c9a66">
+		<RunDate val="2009-12-31 23:59:59.000" />
+	</rt>
+</languageproject>

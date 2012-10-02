@@ -1,0 +1,5 @@
+DevLys 010
+DevLys 010
+Devlys.map
+DELIMITER=" "
+ALLOWED_PUNCTUATION_MARKS = ! ' ( ) / : ;

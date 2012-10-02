@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>template<typename E> class  unitpp::exception_test</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2>template&lt;typename E&gt; class  <A HREF="#DOC.DOCU">unitpp::exception_test</A></H2></H2><BLOCKQUOTE> A wrapper class for the testcase class that succedes if the correct exception is generated</BLOCKQUOTE>
+<HR>
+
+<H2>Inheritance:</H2>
+<APPLET CODE="ClassGraph.class" WIDTH=600 HEIGHT=65>
+<param name=classes value="Ctest,Mtest.html,Cexception_test,Mexception_test.html">
+<param name=before value="M,M">
+<param name=after value="Md_,M">
+<param name=indent value="0,1">
+<param name=arrowdir value="down">
+</APPLET>
+<HR>
+
+<DL>
+<P><DL>
+<DT><H3>Public Methods</H3><DD><DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif> <B><A HREF="#DOC.1.4.1">exception_test</A></B>(const <!1><A HREF="testcase.html">testcase</A>&amp; tc)
+<DD><I> The constructor needs a testcase to wrap.</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.4.2">operator()</A></B>()
+<DD><I>Runs the wrapped test, and fails unless the correct exception is thrown</I>
+</DL></P>
+
+</DL>
+<HR><H3>Inherited from <A HREF="test.html">test</A>:</H3>
+<DL>
+<P><DL>
+<DT><H3>Public Methods</H3><DD><DT>
+<IMG ALT="o" SRC=icon2.gif>virtual   void <B>Setup</B>()
+<DT>
+<IMG ALT="o" SRC=icon2.gif>virtual   void <B>Teardown</B>()
+</DL></P>
+
+</DL>
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+A wrapper class for the testcase class that succedes if the correct
+exception is generated</BLOCKQUOTE>
+<DL>
+
+<A NAME="exception_test"></A>
+<A NAME="DOC.1.4.1"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B> exception_test(const <!1><A HREF="testcase.html">testcase</A>&amp; tc)</B></TT>
+<DD>
+The constructor needs a testcase to wrap. This exception_test will
+fail unless the wrapped testcase generates the exception.
+
+<P>The name of the exception_test is copied from the wrapped test.
+<DL><DT><DD></DL><P>
+<A NAME="operator()"></A>
+<A NAME="DOC.1.4.2"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void operator()()</B></TT>
+<DD>Runs the wrapped test, and fails unless the correct exception is thrown
+<DL><DT><DD></DL><P></DL>
+
+<HR><DL><DT><B>This class has no child classes.</B></DL>
+
+<DL><DT><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

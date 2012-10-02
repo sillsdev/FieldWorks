@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ButtonDropDownArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/ButtonDropDownArrow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FwCopyRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/FwCopyRight.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kstidValidCharsNumbersHdg" xml:space="preserve">
+	<value>&amp;Numbers</value>
+	<comment>Heading for the valid characters list on the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidValidCharsOtherHdg" xml:space="preserve">
+	<value>&amp;Punctuation, Symbols &amp;&amp; Spaces</value>
+	<comment>Heading for the valid characters list on the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidValidCharsWordFormingHdg" xml:space="preserve">
+	<value>&amp;Word Forming</value>
+	<comment>Heading for the valid characters list on the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidRemoveValidChar" xml:space="preserve">
+	<value>&amp;Remove</value>
+	<comment>Context menu item for the valid characters grid on the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidTreatAsPunct" xml:space="preserve">
+	<value>&amp;Treat as Punctuation</value>
+	<comment>Context menu item for the valid characters grid on the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidTreatAsSymbol" xml:space="preserve">
+	<value>&amp;Treat as Symbol</value>
+	<comment>Context menu item for the valid characters grid on the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidTreatAsWrdForming" xml:space="preserve">
+	<value>&amp;Treat as Word-Forming</value>
+	<comment>Context menu item for the valid characters grid on the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidNoTokenOccurrencesCount" xml:space="preserve">
+	<value>N/A</value>
+	<comment>Text displayed in the count column of the punctuation patterns grid on the Punctuation dialog when there are patterns to display, but a data source hasn't been read.</comment>
+  </data>
+  <data name="kstidUnicodePointFormat" xml:space="preserve">
+	<value>U+{0:X4}</value>
+	<comment>Used to format strings that display Unicode codepoints (e.g. Punctuation dialog box.</comment>
+  </data>
+  <data name="kstidIsolated" xml:space="preserve">
+	<value>Isolated</value>
+	<comment>Displays in Context column of Valid Patterns tab in Punctuation dialog box</comment>
+  </data>
+  <data name="kstidWordFinal" xml:space="preserve">
+	<value>Word Final</value>
+	<comment>Displays in Context column of Valid Patterns tab in Punctuation dialog box</comment>
+  </data>
+  <data name="kstidWordInitial" xml:space="preserve">
+	<value>Word Initial</value>
+	<comment>Displays in Context column of Valid Patterns tab in Punctuation dialog box</comment>
+  </data>
+  <data name="kstidWordMedial" xml:space="preserve">
+	<value>Word Medial</value>
+	<comment>Displays in Context column of Valid Patterns tab in Punctuation dialog box</comment>
+  </data>
+  <data name="kstidCustomQuotationMarksName" xml:space="preserve">
+	<value>Custom</value>
+	<comment>Name of the custom entry in the list of quotation mark languages.</comment>
+  </data>
+  <data name="kstidQuotationPairFormat" xml:space="preserve">
+	<value>{0}…{1}</value>
+	<comment>Format string of a pair of opening and closing quotation marks.</comment>
+  </data>
+  <data name="kstidQuotationSetFormat" xml:space="preserve">
+	<value>{0}  {1}</value>
+	<comment>Format string for showing two pairs of quotation marks, the primary pair and the secondary pair.</comment>
+  </data>
+  <data name="kstidQuotationLangAltNameFmt" xml:space="preserve">
+	<value>{0}  (alternate {1})</value>
+	<comment>Format string for language names that have alternate quotation systems. These names are displayed in the drop-down of the quotations tab on the punctuation dialog.</comment>
+  </data>
+  <data name="kstidMatchingPairsErrorCaption" xml:space="preserve">
+	<value>Invalid Matching Pair Entry</value>
+	<comment>Caption for message box that is displayed when user enters an incomplete matching pair.</comment>
+  </data>
+  <data name="kstidMatchingPairsErrorMessage" xml:space="preserve">
+	<value>Both the Open and Close values for a matching pair must be specified.</value>
+	<comment>Message for message box that is displayed when user enters an incomplete matching pair.</comment>
+  </data>
+  <data name="kstidWordBreaking" xml:space="preserve">
+	<value>Word Breaking</value>
+	<comment>Displays in Context column of Valid Patterns tab in Punctuation dialog box</comment>
+  </data>
+  <data name="kstidPuncPatternTipSpaceReplacment" xml:space="preserve">
+	<value>[Space]</value>
+	<comment>Text displayed in a tooltip for the punctuation patterns tab on the punctuation dialog. When the tooltip is showing the Unicode values for a punctuation pattern, this replaces any Unicode values for space.</comment>
+  </data>
+  <data name="kstidQuotationMarksErrorCaption" xml:space="preserve">
+	<value>Invalid Quotation Mark Entry</value>
+	<comment>Caption for message box that is displayed when user enters an incomplete pair of quotation marks.</comment>
+  </data>
+  <data name="kstidQuotationMarksGapMsg" xml:space="preserve">
+	<value>Level {0} is empty and may not be followed by a level that is not.</value>
+	<comment>Message for message box that is displayed when user enters an incomplete pair of quotation marks.</comment>
+  </data>
+  <data name="kstidQuotationMarksIncompleteMsg" xml:space="preserve">
+	<value>Both the Opening and Closing quotation marks must be specified for level {0}.</value>
+	<comment>Message for message box that is displayed when user enters an incomplete pair of quotation marks.</comment>
+  </data>
+  <data name="kstidMissingNonSpaceQuotationMarkMsg" xml:space="preserve">
+	<value>Quotation marks must contain at least one non space character.</value>
+	<comment>Message displayed when quotation marks were entered that contain all spaces.</comment>
+  </data>
+  <data name="kstidQuotationMarkOpenerIsCloserInOtherLevelMsg" xml:space="preserve">
+	<value>Cannot use the same quotation mark as the opening in level {0} and the closing in level {1}
+Quotation mark: {2}</value>
+	<comment>Message for message box that is displayed when user enters some invalid quotation marks.</comment>
+  </data>
+  <data name="DownArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/DownArrow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UpArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/UpArrow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kstidTreatAsOther" xml:space="preserve">
+	<value>&amp;Treat as not Word Forming</value>
+	<comment>Context menu item for the valid characters grid on the valid characters dialog box.</comment>
+  </data>
+  <data name="kstidNoPossibilitySelectedText" xml:space="preserve">
+	<value>None</value>
+	<comment>Displays in the label associated with the ChooserTreeView</comment>
+  </data>
+  <data name="kstidMultiUserCantEditWs" xml:space="preserve">
+	<value>You will not be able to change properties in writing system {0} because the active project is not on your local computer ({1}).
+To make changes, open project {2} on computer {3}.</value>
+	<comment>Message for message box that is displayed when user tries to access the writing system properties dialog while connected to a project not on this computer.</comment>
+  </data>
+  <data name="kstidPageTooSmall" xml:space="preserve">
+	<value>The selected page size is too small to print the report. Please choose a larger size.</value>
+	<comment>Message displayed when printing a report from one of these dialog boxes:
+Problems with Footnotes or Pictures
+Customized Styles not Updated
+(very unlikely the user will ever see this).</comment>
+  </data>
+  <data name="Warning" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/Warning.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Bullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/Bullet.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="kstidNoProjectBackupsFound" xml:space="preserve">
+	<value>No project backups found.</value>
+	<comment>Displays in Restore a Project dialog box if no project backup files are found in the default backup folder (this is an unusual scenario).</comment>
+  </data>
+  <data name="arrowup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../../FwResources/Images/arrowup.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrowdown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../../FwResources/Images/arrowdown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wait22trans" type="System.Resources.ResXFileRef, System.Windows.Forms">
+	<value>../Resources/wait22trans.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+</root>

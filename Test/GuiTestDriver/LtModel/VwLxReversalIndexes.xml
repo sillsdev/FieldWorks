@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<reversal-indexes role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.MultiPane/">
+
+  <!-- How to know its empty: this is the default -->
+  <empty path="9:StatusBar/41:No Records"/>
+
+  <!-- the browse pane -->
+  <entries role="pane" path="9:CSC.SplitContainer.One/9:XCore.PaneBarContainer.First/">
+	<title path="9:XCore.PaneBar/9:Reversal Index"/>
+	<record default="empty" path="9:Reversal/20:Root/20:Div[">
+	   <col path="$Text" max="1"/>
+	   <insert ref="menubar/insert/reversal-entry"/>
+	</record>
+  </entries>
+
+  <!-- the edit pane -->
+  <reversal-entry role="pane" path="9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/">
+	<var id="header" set="9:XCore.PaneBar/9:Reversal Entry"/>
+	<title path="$header"/>
+	<show-hidden-fields path="$header;/9:Show Hidden Fields">
+	  <check-box path="/$NL;44:NAMELESS"/>
+	</show-hidden-fields>
+
+	<slice path="9:RecordEditView/9:RecordEditView.DataTree/">
+	   <var id="LABEL" set="9:SplitContainer/9:Panel1/"/>
+	   <var id="DATA" set="9:SplitContainer/9:Panel2/"/>
+	   <form path="9:customwithparams[*]/">
+		 <label path="$LABEL;9:Form"/>
+		 <data path="$DATA;20:Form/$Text"/>
+	   </form>
+	   <category path="9:atomicreferencepos[*]/">
+		 <label path="$LABEL;9:Category"/>
+		 <data path="$DATA;9:Category/20:RootSite/$Text"/>
+		 <drop path="$DATA;9:Category/$NL;/43:NAMELESS"/>
+	   </category>
+	   <senses path="9:custom[*]">
+		 <label path="$LABEL;9:Senses"/>
+		 <data path="$DATA;9:Senses/20:Root/$Text"/>
+		 <button path="$DATA;9:Senses/9:.../$NL;/43:NAMELESS">
+		   <dialog title="Identify sense"/>
+		 </button>
+	   </senses>
+
+	   <subentries path="9:summary[*]/$DATA;9:Slice_unknown/20:Root/$Text;/value:Subentries">
+		  <right-click>
+			 <insert-subentry insert="{DOWN}~"/>
+		  </right-click>
+	   </subentries>
+
+	   <scroll>
+		  <down path="43:Page down"/>
+		  <up path="43:Page up"/>
+	   </scroll>
+	</slice>
+
+  </reversal-entry>
+</reversal-indexes>

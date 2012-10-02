@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+================================================================
+FXT to generate output for M3 Parser (for Stage 1)
+================================================================
+Revision History is at the end of this file.
+-->
+<M3Dump><PartsOfSpeech><PartOfSpeech Id='257' DefaultInflectionClass='0'><Name>Adverb</Name><Abbreviation>Adv</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='258' DefaultInflectionClass='0'><Name>Noun</Name><Abbreviation>N</Abbreviation><AffixSlots><MoInflAffixSlot Id='14672' Optional="false"><Name>Possessor</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='14673' Optional="true"><Name>Plural</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='15062' Optional="false"><Name>Case</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='15129' Optional="false"><Name>Gender</Name><Description></Description></MoInflAffixSlot></AffixSlots><AffixTemplates><MoInflAffixTemplate Id='14671' Final="true"><Name>Nominal possession</Name><Description></Description><PrefixSlots dst='14672' ord ='0'/>
+<SuffixSlots dst='14673' ord ='0'/>
+</MoInflAffixTemplate><MoInflAffixTemplate Id='15061' Final="true"><Name>Latin Case</Name><Description></Description><SuffixSlots dst='15062' ord ='0'/>
+</MoInflAffixTemplate><MoInflAffixTemplate Id='15128' Final="true"><Name>Spanish gender</Name><Description></Description><SuffixSlots dst='15129' ord ='0'/>
+</MoInflAffixTemplate></AffixTemplates><InflectionClasses><MoInflClass Id='15033'><Name>Latin class I</Name><Abbreviation>lcI</Abbreviation><Description></Description></MoInflClass><MoInflClass Id='15034'><Name>Latin class II</Name><Abbreviation>lcII</Abbreviation><Description></Description></MoInflClass><MoInflClass Id='15035'><Name>Latin class III</Name><Abbreviation>lcIII</Abbreviation><Description></Description></MoInflClass><MoInflClass Id='15036'><Name>Latin class IV</Name><Abbreviation>lcIV</Abbreviation><Description></Description></MoInflClass><MoInflClass Id='15037'><Name>Latin class V</Name><Abbreviation>lcV</Abbreviation><Description></Description></MoInflClass></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='259' DefaultInflectionClass='0'><Name>Pronoun</Name><Abbreviation>Pro</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='260' DefaultInflectionClass='0'><Name>Verb</Name><Abbreviation>V</Abbreviation><AffixSlots><MoInflAffixSlot Id='14811' Optional="true"><Name>PlSubject</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='14812' Optional="false"><Name>Number</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='14846' Optional="true"><Name>SgSubject</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='14925' Optional="false"><Name>Subject</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='14926' Optional="false"><Name>Future</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='14927' Optional="false"><Name>Future</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='14928' Optional="false"><Name>Object</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='14968' Optional="false"><Name>Aspect</Name><Description></Description></MoInflAffixSlot></AffixSlots><AffixTemplates><MoInflAffixTemplate Id='14924' Final="true"><Name></Name><Description></Description><PrefixSlots dst='14925' ord ='0'/>
+<PrefixSlots dst='14926' ord ='1'/>
+<SuffixSlots dst='14927' ord ='0'/>
+<SuffixSlots dst='14928' ord ='1'/>
+</MoInflAffixTemplate><MoInflAffixTemplate Id='14967' Final="true"><Name>Zap verb</Name><Description></Description><PrefixSlots dst='14968' ord ='0'/>
+</MoInflAffixTemplate></AffixTemplates><InflectionClasses><MoInflClass Id='14965'><Name>Zap verb 1</Name><Abbreviation>zv1</Abbreviation><Description></Description></MoInflClass><MoInflClass Id='14966'><Name>Zap verb 2</Name><Abbreviation>zv2</Abbreviation><Description></Description></MoInflClass></InflectionClasses><BearableFeatures/>
+<SubPossibilities dst='14788' ord ='0'/>
+<SubPossibilities dst='14789' ord ='1'/>
+</PartOfSpeech><PartOfSpeech Id='14788' DefaultInflectionClass='0'><Name>Intransitive verb</Name><Abbreviation>Vi</Abbreviation><AffixSlots></AffixSlots><AffixTemplates><MoInflAffixTemplate Id='14810' Final="true"><Name>Intransitive verb, plural subject</Name><Description></Description><PrefixSlots dst='14811' ord ='0'/>
+<SuffixSlots dst='14812' ord ='0'/>
+</MoInflAffixTemplate><MoInflAffixTemplate Id='14845' Final="true"><Name>Intransitive verb, singular subject</Name><Description></Description><PrefixSlots dst='14846' ord ='0'/>
+</MoInflAffixTemplate></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='14789' DefaultInflectionClass='0'><Name>Transitive verb</Name><Abbreviation>Vt</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15226' DefaultInflectionClass='0'><Name>Adjective</Name><Abbreviation>Adj</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15290' DefaultInflectionClass='0'><Name>Verb English</Name><Abbreviation>VEng</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15525' DefaultInflectionClass='0'><Name>Noun English</Name><Abbreviation>NEng</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15679' DefaultInflectionClass='0'><Name>Verb Turkish</Name><Abbreviation>VTur</Abbreviation><AffixSlots><MoInflAffixSlot Id='15726' Optional="true"><Name>Aspect</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='15727' Optional="true"><Name>Tense</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='15728' Optional="true"><Name>Subject</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='15733' Optional="true"><Name>Negation</Name><Description></Description></MoInflAffixSlot></AffixSlots><AffixTemplates><MoInflAffixTemplate Id='15725' Final="true"><Name></Name><Description></Description><SuffixSlots dst='15726' ord ='0'/>
+<SuffixSlots dst='15727' ord ='1'/>
+<SuffixSlots dst='15728' ord ='2'/>
+<SuffixSlots dst='15733' ord ='3'/>
+</MoInflAffixTemplate></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+<SubPossibilities dst='15680' ord ='0'/>
+<SubPossibilities dst='15681' ord ='1'/>
+</PartOfSpeech><PartOfSpeech Id='15680' DefaultInflectionClass='0'><Name>Intransitive Verb Turkish</Name><Abbreviation>VITur</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15681' DefaultInflectionClass='0'><Name>Verb Transitive Turkish</Name><Abbreviation>VTTur</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15833' DefaultInflectionClass='0'><Name>Verb Popoloca</Name><Abbreviation>VPop</Abbreviation><AffixSlots><MoInflAffixSlot Id='15835' Optional="false"><Name>Tense</Name><Description></Description></MoInflAffixSlot></AffixSlots><AffixTemplates><MoInflAffixTemplate Id='15834' Final="true"><Name></Name><Description></Description><PrefixSlots dst='15835' ord ='0'/>
+</MoInflAffixTemplate></AffixTemplates><InflectionClasses><MoInflClass Id='15841'><Name>Pop v 1</Name><Abbreviation>pv1</Abbreviation><Description></Description></MoInflClass><MoInflClass Id='15842'><Name>Pop v 2</Name><Abbreviation>pv1</Abbreviation><Description></Description></MoInflClass></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15902' DefaultInflectionClass='0'><Name>Verb Spanish</Name><Abbreviation>VSpa</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15903' DefaultInflectionClass='0'><Name>Noun Spanish</Name><Abbreviation>NSpa</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15908' DefaultInflectionClass='0'><Name>Infinitive</Name><Abbreviation>Inf</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15955' DefaultInflectionClass='0'><Name>Verb Quechua</Name><Abbreviation>VQue</Abbreviation><AffixSlots><MoInflAffixSlot Id='15957' Optional="false"><Name>Aspect</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='15962' Optional="false"><Name>Object</Name><Description></Description></MoInflAffixSlot></AffixSlots><AffixTemplates><MoInflAffixTemplate Id='15956' Final="false"><Name></Name><Description></Description><SuffixSlots dst='15957' ord ='0'/>
+<SuffixSlots dst='15962' ord ='1'/>
+</MoInflAffixTemplate></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='15967' DefaultInflectionClass='0'><Name>Noun Quechua</Name><Abbreviation>NQue</Abbreviation><AffixSlots><MoInflAffixSlot Id='15969' Optional="true"><Name>Poss</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='15970' Optional="false"><Name>Case</Name><Description></Description></MoInflAffixSlot></AffixSlots><AffixTemplates><MoInflAffixTemplate Id='15968' Final="true"><Name></Name><Description></Description><SuffixSlots dst='15969' ord ='0'/>
+<SuffixSlots dst='15970' ord ='1'/>
+</MoInflAffixTemplate></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='16009' DefaultInflectionClass='0'><Name>Verb Nahuatl</Name><Abbreviation>VNah</Abbreviation><AffixSlots><MoInflAffixSlot Id='16553' Optional="false"><Name>Subject</Name><Description></Description></MoInflAffixSlot><MoInflAffixSlot Id='16558' Optional="false"><Name>Object</Name><Description></Description></MoInflAffixSlot></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+<SubPossibilities dst='16551' ord ='0'/>
+<SubPossibilities dst='16556' ord ='1'/>
+</PartOfSpeech><PartOfSpeech Id='16551' DefaultInflectionClass='0'><Name>Intransitive verb Nahuatl</Name><Abbreviation>VINah</Abbreviation><AffixSlots></AffixSlots><AffixTemplates><MoInflAffixTemplate Id='16552' Final="true"><Name></Name><Description></Description><PrefixSlots dst='16553' ord ='0'/>
+</MoInflAffixTemplate></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='16556' DefaultInflectionClass='0'><Name>Transitive Verb Nahuatl</Name><Abbreviation>VTNah</Abbreviation><AffixSlots></AffixSlots><AffixTemplates><MoInflAffixTemplate Id='16557' Final="true"><Name></Name><Description></Description><PrefixSlots dst='16553' ord ='0'/>
+<PrefixSlots dst='16558' ord ='1'/>
+</MoInflAffixTemplate></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech><PartOfSpeech Id='16010' DefaultInflectionClass='0'><Name>Noun Nahuatl</Name><Abbreviation>NNah</Abbreviation><AffixSlots></AffixSlots><AffixTemplates></AffixTemplates><InflectionClasses></InflectionClasses><BearableFeatures/>
+</PartOfSpeech></PartsOfSpeech>
+<PhPhonData Id='452'><Environments><PhEnvironment Id='14896' StringRepresentation='/ [V] _' LeftContext='0' RightContext='0'><Name>After vowel</Name></PhEnvironment><PhEnvironment Id='15216' StringRepresentation='/ _ [C]' LeftContext='0' RightContext='0'><Name></Name></PhEnvironment><PhEnvironment Id='15221' StringRepresentation='/ _ [V]' LeftContext='0' RightContext='0'><Name></Name></PhEnvironment><PhEnvironment Id='15236' StringRepresentation='/_#' LeftContext='0' RightContext='0'><Name></Name></PhEnvironment><PhEnvironment Id='16393' StringRepresentation='/ l _' LeftContext='0' RightContext='0'><Name></Name></PhEnvironment><PhEnvironment Id='16576' StringRepresentation='/[C] _' LeftContext='0' RightContext='0'><Name></Name></PhEnvironment></Environments>
+<NaturalClasses><PhNCSegments Id='14900'><Abbreviation>V</Abbreviation><Segments dst='456'/>
+<Segments dst='458'/>
+<Segments dst='460'/>
+<Segments dst='462'/>
+<Segments dst='464'/>
+</PhNCSegments><PhNCSegments Id='15220'><Abbreviation>C</Abbreviation><Segments dst='466'/>
+<Segments dst='468'/>
+<Segments dst='470'/>
+<Segments dst='472'/>
+<Segments dst='474'/>
+<Segments dst='476'/>
+<Segments dst='478'/>
+<Segments dst='480'/>
+<Segments dst='482'/>
+<Segments dst='484'/>
+<Segments dst='486'/>
+<Segments dst='488'/>
+<Segments dst='490'/>
+<Segments dst='492'/>
+<Segments dst='494'/>
+<Segments dst='496'/>
+<Segments dst='498'/>
+<Segments dst='500'/>
+<Segments dst='16577'/>
+</PhNCSegments></NaturalClasses>
+<Contexts/>
+<PhonemeSets><PhPhonemeSet Id='453'><Name>Main phoneme set</Name><Phonemes><PhPhoneme Id='456'><Codes><PhCode Id='457'><Representation>i</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='458'><Codes><PhCode Id='459'><Representation>e</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='460'><Codes><PhCode Id='461'><Representation>a</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='462'><Codes><PhCode Id='463'><Representation>o</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='464'><Codes><PhCode Id='465'><Representation>u</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='466'><Codes><PhCode Id='467'><Representation>p</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='468'><Codes><PhCode Id='469'><Representation>b</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='470'><Codes><PhCode Id='471'><Representation>t</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='472'><Codes><PhCode Id='473'><Representation>d</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='474'><Codes><PhCode Id='475'><Representation>k</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='476'><Codes><PhCode Id='477'><Representation>g</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='478'><Codes><PhCode Id='479'><Representation>f</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='480'><Codes><PhCode Id='481'><Representation>v</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='482'><Codes><PhCode Id='483'><Representation>s</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='484'><Codes><PhCode Id='485'><Representation>z</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='486'><Codes><PhCode Id='487'><Representation>x</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='488'><Codes><PhCode Id='489'><Representation>m</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='490'><Codes><PhCode Id='491'><Representation>n</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='492'><Codes><PhCode Id='493'><Representation>ŋ</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='494'><Codes><PhCode Id='495'><Representation>l</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='496'><Codes><PhCode Id='497'><Representation>r</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='498'><Codes><PhCode Id='499'><Representation>w</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='500'><Codes><PhCode Id='501'><Representation>y</Representation></PhCode></Codes>
+</PhPhoneme><PhPhoneme Id='16577'><Codes><PhCode Id='16578'><Representation>h</Representation></PhCode></Codes>
+</PhPhoneme></Phonemes>
+<BoundaryMarkers><PhBdryMarker Id='454'><Name>#</Name><Codes><PhCode Id='455'><Representation>#</Representation></PhCode></Codes>
+</PhBdryMarker></BoundaryMarkers>
+</PhPhonemeSet></PhonemeSets>
+<PhIters/>
+<PhIters/>
+<PhIters/>
+<PhIters/>
+<PhIters/>
+<PhIters/>
+</PhPhonData><ParserParameters>
+  <XAmple>
+	<MaxNulls>1</MaxNulls>
+	<MaxPrefixes>5</MaxPrefixes>
+	<MaxInfixes>1</MaxInfixes>
+	<MaxSuffixes>6</MaxSuffixes>
+	<MaxInterfixes>0</MaxInterfixes>
+	<MaxAnalysesToReturn>10</MaxAnalysesToReturn>
+  </XAmple>
+</ParserParameters><CompoundRules><MoEndoCompound Id='16043' HeadLast='1'><Name>Nahuatl noun incorporation</Name><Description></Description><LeftMsa dst='16044'></LeftMsa><RightMsa dst='16045'></RightMsa><OverridingMsa dst='16046'></OverridingMsa></MoEndoCompound><MoEndoCompound Id='16402' HeadLast='1'><Name>nahuatl adj-noun</Name><Description></Description><LeftMsa dst='16403'></LeftMsa><RightMsa dst='16404'></RightMsa><OverridingMsa dst='16405'></OverridingMsa></MoEndoCompound><MoEndoCompound Id='16406' HeadLast='0'><Name>Nahuatl noun adj</Name><Description></Description><LeftMsa dst='16407'></LeftMsa><RightMsa dst='16408'></RightMsa><OverridingMsa dst='16409'></OverridingMsa></MoEndoCompound><MoEndoCompound Id='16533' HeadLast='0'><Name>Zapotec averb incorporation</Name><Description></Description><LeftMsa dst='16534'></LeftMsa><RightMsa dst='16535'></RightMsa><OverridingMsa dst='16536'></OverridingMsa></MoEndoCompound><MoExoCompound Id='16677'><Name>Wanca Quechua distribution</Name><Description></Description><LeftMsa dst='16678'></LeftMsa><RightMsa dst='16679'></RightMsa><ToMsa dst='16680'></ToMsa></MoExoCompound></CompoundRules>
+<AdhocCoProhibitions/>
+<ProdRestrict><CmPossibility Id='16066'><Name>Takes -tl Abs derivational suffix</Name></CmPossibility></ProdRestrict>
+<MoMorphTypes><MoMorphType Id='103' Guid='56db04bf-3d58-44cc-b292-4c8aa68538f4'><Name>particle</Name></MoMorphType><MoMorphType Id='104' Guid='d7f713da-e8cf-11d3-9764-00c04f186933'><Name>infix</Name></MoMorphType><MoMorphType Id='105' Guid='d7f713db-e8cf-11d3-9764-00c04f186933'><Name>prefix</Name></MoMorphType><MoMorphType Id='106' Guid='d7f713dc-e8cf-11d3-9764-00c04f186933'><Name>simulfix</Name></MoMorphType><MoMorphType Id='107' Guid='d7f713dd-e8cf-11d3-9764-00c04f186933'><Name>suffix</Name></MoMorphType><MoMorphType Id='108' Guid='d7f713de-e8cf-11d3-9764-00c04f186933'><Name>suprafix</Name></MoMorphType><MoMorphType Id='109' Guid='d7f713df-e8cf-11d3-9764-00c04f186933'><Name>circumfix</Name></MoMorphType><MoMorphType Id='110' Guid='d7f713e1-e8cf-11d3-9764-00c04f186933'><Name>enclitic</Name></MoMorphType><MoMorphType Id='111' Guid='d7f713e2-e8cf-11d3-9764-00c04f186933'><Name>proclitic</Name></MoMorphType><MoMorphType Id='112' Guid='d7f713e4-e8cf-11d3-9764-00c04f186933'><Name>bound root</Name></MoMorphType><MoMorphType Id='113' Guid='d7f713e5-e8cf-11d3-9764-00c04f186933'><Name>root</Name></MoMorphType><MoMorphType Id='114' Guid='d7f713e7-e8cf-11d3-9764-00c04f186933'><Name>bound stem</Name></MoMorphType><MoMorphType Id='115' Guid='d7f713e8-e8cf-11d3-9764-00c04f186933'><Name>stem</Name></MoMorphType><MoMorphType Id='116' Guid='18d9b1c3-b5b6-4c07-b92c-2fe1d2281bd4'><Name>infixing interfix</Name></MoMorphType><MoMorphType Id='117' Guid='af6537b0-7175-4387-ba6a-36547d37fb13'><Name>prefixing interfix</Name></MoMorphType><MoMorphType Id='118' Guid='3433683d-08a9-4bae-ae53-2a7798f64068'><Name>suffixing interfix</Name></MoMorphType><MoMorphType Id='119' Guid='a23b6faa-1052-4f4d-984b-4b338bdaf95f'><Name>phrase</Name></MoMorphType><MoMorphType Id='120' Guid='0cc8c35a-cee9-434d-be58-5d29130fba5b'><Name>discontiguous phrase</Name></MoMorphType></MoMorphTypes>
+<Lexicon><Entries><LexEntry Id='14639'><LexemeForm dst='14642' MorphType='113'></LexemeForm><Sense dst='14640' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14641'/>
+</LexEntry><LexEntry Id='14643'><LexemeForm dst='14646' MorphType='105'></LexemeForm><Sense dst='14644' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14645'/>
+</LexEntry><LexEntry Id='14647'><LexemeForm dst='14650' MorphType='105'></LexemeForm><Sense dst='14648' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14649'/>
+</LexEntry><LexEntry Id='14651'><LexemeForm dst='14654' MorphType='105'></LexemeForm><Sense dst='14652' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14653'/>
+</LexEntry><LexEntry Id='14655'><LexemeForm dst='14658' MorphType='105'></LexemeForm><Sense dst='14656' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14657'/>
+</LexEntry><LexEntry Id='14659'><LexemeForm dst='14662' MorphType='105'></LexemeForm><Sense dst='14660' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14661'/>
+</LexEntry><LexEntry Id='14663'><LexemeForm dst='14666' MorphType='105'></LexemeForm><Sense dst='14664' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14665'/>
+</LexEntry><LexEntry Id='14667'><LexemeForm dst='14670' MorphType='107'></LexemeForm><Sense dst='14668' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14669'/>
+</LexEntry><LexEntry Id='14784'><LexemeForm dst='14787' MorphType='105'></LexemeForm><Sense dst='14785' ord ='0'/>
+<Sense dst='16555' ord ='1'/>
+<MorphoSyntaxAnalysis dst='14786'/>
+<MorphoSyntaxAnalysis dst='16554'/>
+</LexEntry><LexEntry Id='14790'><LexemeForm dst='14793' MorphType='105'></LexemeForm><Sense dst='14791' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14792'/>
+</LexEntry><LexEntry Id='14794'><LexemeForm dst='14797' MorphType='105'></LexemeForm><Sense dst='14795' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14796'/>
+</LexEntry><LexEntry Id='14798'><LexemeForm dst='14801' MorphType='105'></LexemeForm><Sense dst='14799' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14800'/>
+</LexEntry><LexEntry Id='14802'><LexemeForm dst='14805' MorphType='107'></LexemeForm><Sense dst='14803' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14804'/>
+</LexEntry><LexEntry Id='14806'><LexemeForm dst='14809' MorphType='115'></LexemeForm><Sense dst='14807' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14808'/>
+</LexEntry><LexEntry Id='14862'><LexemeForm dst='14865' MorphType='105'></LexemeForm><Sense dst='14863' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14864'/>
+</LexEntry><LexEntry Id='14866'><LexemeForm dst='14869' MorphType='105'></LexemeForm><Sense dst='14867' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14868'/>
+</LexEntry><LexEntry Id='14875'><LexemeForm dst='14878' MorphType='115'></LexemeForm><Sense dst='14876' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14877'/>
+</LexEntry><LexEntry Id='14879'><AlternateForms dst='14901' ord ='0'/>
+<LexemeForm dst='14882' MorphType='107'></LexemeForm><Sense dst='14880' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14929'/>
+</LexEntry><LexEntry Id='14883'><LexemeForm dst='14886' MorphType='107'></LexemeForm><Sense dst='14884' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14930'/>
+</LexEntry><LexEntry Id='14887'><AlternateForms dst='14895' ord ='0'/>
+<LexemeForm dst='14890' MorphType='107'></LexemeForm><Sense dst='14888' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14889'/>
+</LexEntry><LexEntry Id='14891'><LexemeForm dst='14894' MorphType='107'></LexemeForm><Sense dst='14892' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14893'/>
+</LexEntry><LexEntry Id='14942'><AlternateForms dst='14969' ord ='0'/>
+<AlternateForms dst='15820' ord ='1'/>
+<LexemeForm dst='14945' MorphType='105'></LexemeForm><Sense dst='14943' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14944'/>
+</LexEntry><LexEntry Id='14946'><LexemeForm dst='14949' MorphType='115'></LexemeForm><Sense dst='14947' ord ='0'/>
+<Sense dst='14962' ord ='1'/>
+<MorphoSyntaxAnalysis dst='14963'/>
+<MorphoSyntaxAnalysis dst='14964'/>
+</LexEntry><LexEntry Id='14950'><LexemeForm dst='14953' MorphType='110'></LexemeForm><Sense dst='14951' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14952'/>
+</LexEntry><LexEntry Id='14958'><LexemeForm dst='14961' MorphType='115'></LexemeForm><Sense dst='14959' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14960'/>
+</LexEntry><LexEntry Id='14970'><LexemeForm dst='14973' MorphType='115'></LexemeForm><Sense dst='14971' ord ='0'/>
+<MorphoSyntaxAnalysis dst='14972'/>
+</LexEntry><LexEntry Id='15029'><LexemeForm dst='15032' MorphType='115'></LexemeForm><Sense dst='15030' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15031'/>
+</LexEntry><LexEntry Id='15038'><LexemeForm dst='15041' MorphType='115'></LexemeForm><Sense dst='15039' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15040'/>
+</LexEntry><LexEntry Id='15042'><LexemeForm dst='15045' MorphType='115'></LexemeForm><Sense dst='15043' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15044'/>
+</LexEntry><LexEntry Id='15046'><LexemeForm dst='15049' MorphType='115'></LexemeForm><Sense dst='15047' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15048'/>
+</LexEntry><LexEntry Id='15050'><LexemeForm dst='15053' MorphType='115'></LexemeForm><Sense dst='15051' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15052'/>
+</LexEntry><LexEntry Id='15054'><AlternateForms dst='15058' ord ='0'/>
+<AlternateForms dst='15059' ord ='1'/>
+<LexemeForm dst='15057' MorphType='107'></LexemeForm><Sense dst='15055' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15056'/>
+</LexEntry><LexEntry Id='15102'><LexemeForm dst='15105' MorphType='115'></LexemeForm><Sense dst='15103' ord ='0'/>
+<Sense dst='15110' ord ='1'/>
+<MorphoSyntaxAnalysis dst='15104'/>
+<MorphoSyntaxAnalysis dst='15111'/>
+</LexEntry><LexEntry Id='15116'><LexemeForm dst='15119' MorphType='107'></LexemeForm><Sense dst='15117' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15118'/>
+</LexEntry><LexEntry Id='15120'><LexemeForm dst='15123' MorphType='107'></LexemeForm><Sense dst='15121' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15122'/>
+</LexEntry><LexEntry Id='15124'><LexemeForm dst='15127' MorphType='107'></LexemeForm><Sense dst='15125' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15126'/>
+</LexEntry><LexEntry Id='15211'><AlternateForms dst='15215' ord ='0'/>
+<LexemeForm dst='15214' MorphType='115'></LexemeForm><Sense dst='15212' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15317'/>
+</LexEntry><LexEntry Id='15222'><LexemeForm dst='15225' MorphType='107'></LexemeForm><Sense dst='15223' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15526'/>
+</LexEntry><LexEntry Id='15227'><LexemeForm dst='15230' MorphType='107'></LexemeForm><Sense dst='15228' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15534'/>
+</LexEntry><LexEntry Id='15231'><AlternateForms dst='15235' ord ='0'/>
+<LexemeForm dst='15234' MorphType='107'></LexemeForm><Sense dst='15232' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15293'/>
+</LexEntry><LexEntry Id='15237'><LexemeForm dst='15240' MorphType='107'></LexemeForm><Sense dst='15238' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15653'/>
+</LexEntry><LexEntry Id='15241'><LexemeForm dst='15244' MorphType='107'></LexemeForm><Sense dst='15242' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15243'/>
+</LexEntry><LexEntry Id='15687'><LexemeForm dst='15690' MorphType='115'></LexemeForm><Sense dst='15688' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15689'/>
+</LexEntry><LexEntry Id='15691'><AlternateForms dst='15695' ord ='0'/>
+<LexemeForm dst='15694' MorphType='115'></LexemeForm><Sense dst='15692' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15693'/>
+</LexEntry><LexEntry Id='15696'><LexemeForm dst='15699' MorphType='115'></LexemeForm><Sense dst='15697' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15698'/>
+</LexEntry><LexEntry Id='15700'><LexemeForm dst='15703' MorphType='107'></LexemeForm><Sense dst='15701' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15702'/>
+</LexEntry><LexEntry Id='15712'><AlternateForms dst='15716' ord ='0'/>
+<LexemeForm dst='15715' MorphType='107'></LexemeForm><Sense dst='15713' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15714'/>
+</LexEntry><LexEntry Id='15717'><AlternateForms dst='15762' ord ='0'/>
+<LexemeForm dst='15720' MorphType='107'></LexemeForm><Sense dst='15718' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15719'/>
+</LexEntry><LexEntry Id='15721'><LexemeForm dst='15724' MorphType='107'></LexemeForm><Sense dst='15722' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15723'/>
+</LexEntry><LexEntry Id='15729'><LexemeForm dst='15732' MorphType='107'></LexemeForm><Sense dst='15730' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15731'/>
+</LexEntry><LexEntry Id='15778'><LexemeForm dst='15781' MorphType='115'></LexemeForm><Sense dst='15779' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15780'/>
+</LexEntry><LexEntry Id='15782'><LexemeForm dst='15785' MorphType='105'></LexemeForm><Sense dst='15783' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15784'/>
+</LexEntry><LexEntry Id='15786'><LexemeForm dst='15789' MorphType='115'></LexemeForm><Sense dst='15787' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15788'/>
+</LexEntry><LexEntry Id='15836'><AlternateForms dst='15840' ord ='0'/>
+<LexemeForm dst='15839' MorphType='105'></LexemeForm><Sense dst='15837' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15838'/>
+</LexEntry><LexEntry Id='15847'><AlternateForms dst='15851' ord ='0'/>
+<LexemeForm dst='15850' MorphType='115'></LexemeForm><Sense dst='15848' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15849'/>
+</LexEntry><LexEntry Id='15852'><LexemeForm dst='15855' MorphType='110'></LexemeForm><Sense dst='15853' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15854'/>
+</LexEntry><LexEntry Id='15856'><AlternateForms dst='15865' ord ='0'/>
+<LexemeForm dst='15859' MorphType='107'></LexemeForm><Sense dst='15857' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15858'/>
+</LexEntry><LexEntry Id='15860'><AlternateForms dst='15864' ord ='0'/>
+<LexemeForm dst='15863' MorphType='115'></LexemeForm><Sense dst='15861' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15862'/>
+</LexEntry><LexEntry Id='15904'><LexemeForm dst='15907' MorphType='115'></LexemeForm><Sense dst='15905' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15906'/>
+</LexEntry><LexEntry Id='15909'><LexemeForm dst='15912' MorphType='107'></LexemeForm><Sense dst='15910' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15911'/>
+</LexEntry><LexEntry Id='15913'><LexemeForm dst='15916' MorphType='107'></LexemeForm><Sense dst='15914' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15915'/>
+</LexEntry><LexEntry Id='15921'><LexemeForm dst='15924' MorphType='115'></LexemeForm><Sense dst='15922' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15923'/>
+</LexEntry><LexEntry Id='15958'><LexemeForm dst='15961' MorphType='107'></LexemeForm><Sense dst='15959' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15960'/>
+</LexEntry><LexEntry Id='15963'><LexemeForm dst='15966' MorphType='107'></LexemeForm><Sense dst='15964' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15965'/>
+</LexEntry><LexEntry Id='15971'><LexemeForm dst='15974' MorphType='107'></LexemeForm><Sense dst='15972' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15973'/>
+</LexEntry><LexEntry Id='15975'><LexemeForm dst='15978' MorphType='107'></LexemeForm><Sense dst='15976' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15977'/>
+</LexEntry><LexEntry Id='15979'><LexemeForm dst='15982' MorphType='115'></LexemeForm><Sense dst='15980' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15981'/>
+</LexEntry><LexEntry Id='15983'><LexemeForm dst='15986' MorphType='107'></LexemeForm><Sense dst='15984' ord ='0'/>
+<MorphoSyntaxAnalysis dst='15985'/>
+</LexEntry><LexEntry Id='16012'><LexemeForm dst='16015' MorphType='115'></LexemeForm><Sense dst='16013' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16014'/>
+</LexEntry><LexEntry Id='16016'><LexemeForm dst='16019' MorphType='115'></LexemeForm><Sense dst='16017' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16018'/>
+</LexEntry><LexEntry Id='16020'><LexemeForm dst='16023' MorphType='105'></LexemeForm><Sense dst='16021' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16022'/>
+</LexEntry><LexEntry Id='16024'><LexemeForm dst='16027' MorphType='115'></LexemeForm><Sense dst='16025' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16026'/>
+</LexEntry><LexEntry Id='16028'><AlternateForms dst='16053' ord ='0'/>
+<AlternateForms dst='16392' ord ='1'/>
+<AlternateForms dst='16575' ord ='2'/>
+<LexemeForm dst='16031' MorphType='107'></LexemeForm><Sense dst='16029' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16030'/>
+<MorphoSyntaxAnalysis dst='16052'/>
+</LexEntry><LexEntry Id='16054'><LexemeForm dst='16057' MorphType='115'></LexemeForm><Sense dst='16055' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16056'/>
+</LexEntry><LexEntry Id='16067'><LexemeForm dst='16070' MorphType='115'></LexemeForm><Sense dst='16068' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16069'/>
+</LexEntry><LexEntry Id='16368'><LexemeForm dst='16371' MorphType='115'></LexemeForm><Sense dst='16369' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16370'/>
+</LexEntry><LexEntry Id='16372'><LexemeForm dst='16375' MorphType='115'></LexemeForm><Sense dst='16373' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16374'/>
+</LexEntry><LexEntry Id='16376'><LexemeForm dst='16379' MorphType='115'></LexemeForm><Sense dst='16377' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16378'/>
+</LexEntry><LexEntry Id='16384'><LexemeForm dst='16387' MorphType='115'></LexemeForm><Sense dst='16385' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16386'/>
+</LexEntry><LexEntry Id='16388'><LexemeForm dst='16391' MorphType='115'></LexemeForm><Sense dst='16389' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16390'/>
+</LexEntry><LexEntry Id='16457'><LexemeForm dst='16460' MorphType='105'></LexemeForm><Sense dst='16458' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16459'/>
+</LexEntry><LexEntry Id='16461'><LexemeForm dst='16464' MorphType='105'></LexemeForm><Sense dst='16462' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16463'/>
+</LexEntry><LexEntry Id='16465'><LexemeForm dst='16468' MorphType='115'></LexemeForm><Sense dst='16466' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16467'/>
+</LexEntry><LexEntry Id='16469'><LexemeForm dst='16472' MorphType='115'></LexemeForm><Sense dst='16470' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16471'/>
+</LexEntry><LexEntry Id='16473'><LexemeForm dst='16476' MorphType='110'></LexemeForm><Sense dst='16474' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16475'/>
+</LexEntry><LexEntry Id='16477'><LexemeForm dst='16480' MorphType='110'></LexemeForm><Sense dst='16478' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16479'/>
+</LexEntry><LexEntry Id='16481'><LexemeForm dst='16531' MorphType='113'></LexemeForm><Sense dst='16482' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16532'/>
+</LexEntry><LexEntry Id='16485'><LexemeForm dst='16528' MorphType='113'></LexemeForm><Sense dst='16486' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16529'/>
+</LexEntry><LexEntry Id='16559'><LexemeForm dst='16562' MorphType='105'></LexemeForm><Sense dst='16560' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16561'/>
+</LexEntry><LexEntry Id='16563'><LexemeForm dst='16566' MorphType='115'></LexemeForm><Sense dst='16564' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16565'/>
+</LexEntry><LexEntry Id='16567'><LexemeForm dst='16570' MorphType='115'></LexemeForm><Sense dst='16568' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16569'/>
+</LexEntry><LexEntry Id='16579'><LexemeForm dst='16582' MorphType='115'></LexemeForm><Sense dst='16580' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16581'/>
+</LexEntry><LexEntry Id='16583'><LexemeForm dst='16586' MorphType='115'></LexemeForm><Sense dst='16584' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16585'/>
+</LexEntry><LexEntry Id='16669'><LexemeForm dst='16672' MorphType='115'></LexemeForm><Sense dst='16670' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16671'/>
+</LexEntry><LexEntry Id='16673'><LexemeForm dst='16676' MorphType='118'></LexemeForm><Sense dst='16674' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16691'/>
+</LexEntry><LexEntry Id='16686'><LexemeForm dst='16689' MorphType='110'></LexemeForm><Sense dst='16687' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16688'/>
+</LexEntry><LexEntry Id='16704'><LexemeForm dst='16707' MorphType='117'></LexemeForm><Sense dst='16705' ord ='0'/>
+<MorphoSyntaxAnalysis dst='16706'/>
+</LexEntry></Entries>
+<MorphoSyntaxAnalyses><MoStemMsa Id='14641' PartOfSpeech='258' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15854' PartOfSpeech='0' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15862' PartOfSpeech='15833' InflectionClass='15842'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15906' PartOfSpeech='15902' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15923' PartOfSpeech='15902' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15981' PartOfSpeech='15955' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16014' PartOfSpeech='16010' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16018' PartOfSpeech='16009' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16056' PartOfSpeech='16010' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16069' PartOfSpeech='16009' InflectionClass='0'><InflectionFeatures/>
+<ProdRestrict dst='16066'/>
+</MoStemMsa><MoStemMsa Id='16370' PartOfSpeech='15226' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16374' PartOfSpeech='16010' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16378' PartOfSpeech='15226' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16386' PartOfSpeech='16010' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16390' PartOfSpeech='15226' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16403' PartOfSpeech='15226' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16404' PartOfSpeech='16010' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16405' PartOfSpeech='0' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16407' PartOfSpeech='16010' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16408' PartOfSpeech='15226' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16409' PartOfSpeech='0' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16467' PartOfSpeech='260' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16471' PartOfSpeech='260' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16475' PartOfSpeech='0' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16479' PartOfSpeech='0' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16529' PartOfSpeech='257' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16532' PartOfSpeech='257' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16534' PartOfSpeech='260' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16535' PartOfSpeech='257' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16536' PartOfSpeech='0' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16565' PartOfSpeech='16010' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16569' PartOfSpeech='16556' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16581' PartOfSpeech='16010' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16585' PartOfSpeech='16556' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16671' PartOfSpeech='15967' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16678' PartOfSpeech='15967' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16679' PartOfSpeech='15967' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16680' PartOfSpeech='257' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16688' PartOfSpeech='0' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16044' PartOfSpeech='16010' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16045' PartOfSpeech='16556' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16046' PartOfSpeech='16551' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='16026' PartOfSpeech='16009' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='14808' PartOfSpeech='14788' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='14952' PartOfSpeech='0' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='14960' PartOfSpeech='260' InflectionClass='14965'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='14963' PartOfSpeech='14788' InflectionClass='14966'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='14964' PartOfSpeech='14789' InflectionClass='14965'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='14972' PartOfSpeech='260' InflectionClass='14966'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15031' PartOfSpeech='258' InflectionClass='15033'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15040' PartOfSpeech='258' InflectionClass='15034'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15044' PartOfSpeech='258' InflectionClass='15035'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15048' PartOfSpeech='258' InflectionClass='15036'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15052' PartOfSpeech='258' InflectionClass='15037'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='14877' PartOfSpeech='260' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15104' PartOfSpeech='258' InflectionClass='0'><InflectionFeatures><FsFeatStruc Id='15106' Type='15093'><FsComplexValue Id='15107' Feature='15095'><FsFeatStruc Id='15108' Type='15094'><FsClosedValue Id='15109' Value='15097' Feature='15096'></FsClosedValue></FsFeatStruc></FsComplexValue></FsFeatStruc></InflectionFeatures>
+</MoStemMsa><MoStemMsa Id='15111' PartOfSpeech='258' InflectionClass='0'><InflectionFeatures><FsFeatStruc Id='15112' Type='15093'><FsComplexValue Id='15113' Feature='15095'><FsFeatStruc Id='15114' Type='15094'><FsClosedValue Id='15115' Value='15098' Feature='15096'></FsClosedValue></FsFeatStruc></FsComplexValue></FsFeatStruc></InflectionFeatures>
+</MoStemMsa><MoStemMsa Id='15317' PartOfSpeech='15290' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15689' PartOfSpeech='15681' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15693' PartOfSpeech='15681' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15698' PartOfSpeech='15681' InflectionClass='0'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15780' PartOfSpeech='260' InflectionClass='14966'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15788' PartOfSpeech='260' InflectionClass='14965'><InflectionFeatures/>
+</MoStemMsa><MoStemMsa Id='15849' PartOfSpeech='15833' InflectionClass='15841'><InflectionFeatures/>
+</MoStemMsa><MoDerivAffMsa Id='15784' FromPartOfSpeech='260' ToPartOfSpeech='260' FromInflectionClass='0' ToInflectionClass='14965'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15126' FromPartOfSpeech='258' ToPartOfSpeech='258' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15243' FromPartOfSpeech='15226' ToPartOfSpeech='257' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15293' FromPartOfSpeech='15226' ToPartOfSpeech='15290' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15714' FromPartOfSpeech='15681' ToPartOfSpeech='15680' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15526' FromPartOfSpeech='15290' ToPartOfSpeech='15525' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15534' FromPartOfSpeech='15525' ToPartOfSpeech='15226' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15653' FromPartOfSpeech='15290' ToPartOfSpeech='15525' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='14929' FromPartOfSpeech='260' ToPartOfSpeech='260' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='14930' FromPartOfSpeech='260' ToPartOfSpeech='260' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='16030' FromPartOfSpeech='16009' ToPartOfSpeech='16010' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+<FromProdRestrict dst='16066'/>
+</MoDerivAffMsa><MoDerivAffMsa Id='16691' FromPartOfSpeech='15967' ToPartOfSpeech='15967' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='16022' FromPartOfSpeech='16009' ToPartOfSpeech='16009' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15985' FromPartOfSpeech='15955' ToPartOfSpeech='15967' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15911' FromPartOfSpeech='15902' ToPartOfSpeech='15908' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoDerivAffMsa Id='15915' FromPartOfSpeech='15902' ToPartOfSpeech='15903' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures><FsFeatStruc Id='15917' Type='15093'><FsComplexValue Id='15918' Feature='15095'><FsFeatStruc Id='15919' Type='15094'><FsClosedValue Id='15920' Value='15097' Feature='15096'></FsClosedValue></FsFeatStruc></FsComplexValue></FsFeatStruc></ToMsFeatures>
+</MoDerivAffMsa><MoDerivAffMsa Id='15858' FromPartOfSpeech='15833' ToPartOfSpeech='15833' FromInflectionClass='0' ToInflectionClass='0'><FromMsFeatures/>
+<ToMsFeatures/>
+</MoDerivAffMsa><MoInflAffMsa PartOfSpeech='258' Id='14645'><Slots dst='14672'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='15955' Id='15960'><Slots dst='15957'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='15955' Id='15965'><Slots dst='15962'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='15967' Id='15973'><Slots dst='15969'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='15967' Id='15977'><Slots dst='15970'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='16009' Id='16554'><Slots dst='16553'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='16009' Id='16561'><Slots dst='16558'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='16459'><Slots dst='14968'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='16463'><Slots dst='14968'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='258' Id='14649'><Slots dst='14672'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='258' Id='14653'><Slots dst='14672'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='258' Id='14657'><Slots dst='14672'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='258' Id='14661'><Slots dst='14672'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='258' Id='14665'><Slots dst='14672'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='258' Id='14669'><Slots dst='14673'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14786'><Slots dst='14846'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14792'><Slots dst='14846'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14796'><Slots dst='14811'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14800'><Slots dst='14811'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14804'><Slots dst='14812'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14864'><Slots dst='14925'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14868'><Slots dst='14926'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='16010' Id='16052'><InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='258' Id='15056'><Slots dst='15062'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14944'><Slots dst='14968'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14889'><Slots dst='14927'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='260' Id='14893'><Slots dst='14928'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='258' Id='15118'><Slots dst='15129'/>
+<InflectionFeatures><FsFeatStruc Id='15189' Type='15093'><FsComplexValue Id='15190' Feature='15095'><FsFeatStruc Id='15191' Type='15094'><FsClosedValue Id='15192' Value='15098' Feature='15096'></FsClosedValue></FsFeatStruc></FsComplexValue></FsFeatStruc></InflectionFeatures>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='258' Id='15122'><Slots dst='15129'/>
+<InflectionFeatures><FsFeatStruc Id='15185' Type='15093'><FsComplexValue Id='15186' Feature='15095'><FsFeatStruc Id='15187' Type='15094'><FsClosedValue Id='15188' Value='15097' Feature='15096'></FsClosedValue></FsFeatStruc></FsComplexValue></FsFeatStruc></InflectionFeatures>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='15679' Id='15702'><Slots dst='15727'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='15679' Id='15719'><Slots dst='15726'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='15679' Id='15723'><Slots dst='15733'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='15679' Id='15731'><Slots dst='15728'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoInflAffMsa PartOfSpeech='15833' Id='15838'><Slots dst='15835'/>
+<InflectionFeatures/>
+</MoInflAffMsa><MoUnclassifiedAffixMsa Id='16706' PartOfSpeech='0'></MoUnclassifiedAffixMsa></MorphoSyntaxAnalyses>
+<Senses><LexSense Id='14640'><Gloss>house</Gloss></LexSense><LexSense Id='14644'><Gloss>1SgPoss</Gloss></LexSense><LexSense Id='15853'><Gloss>1aSgSubjAct</Gloss></LexSense><LexSense Id='15857'><Gloss>Apl</Gloss></LexSense><LexSense Id='15861'><Gloss>get angry</Gloss></LexSense><LexSense Id='15905'><Gloss>press</Gloss></LexSense><LexSense Id='15910'><Gloss>Inf</Gloss></LexSense><LexSense Id='15914'><Gloss>Nom</Gloss></LexSense><LexSense Id='15922'><Gloss>shear</Gloss></LexSense><LexSense Id='15959'><Gloss>Imp</Gloss></LexSense><LexSense Id='15964'><Gloss>1Obj</Gloss></LexSense><LexSense Id='15972'><Gloss>2Pos</Gloss></LexSense><LexSense Id='15976'><Gloss>Pur</Gloss></LexSense><LexSense Id='15980'><Gloss>see</Gloss></LexSense><LexSense Id='15984'><Gloss>Nom</Gloss></LexSense><LexSense Id='16013'><Gloss>jug</Gloss></LexSense><LexSense Id='16017'><Gloss>drink</Gloss></LexSense><LexSense Id='16021'><Gloss>Intensifier</Gloss></LexSense><LexSense Id='16025'><Gloss>leave</Gloss></LexSense><LexSense Id='16029'><Gloss>Abs</Gloss></LexSense><LexSense Id='16055'><Gloss>peanut</Gloss></LexSense><LexSense Id='16068'><Gloss>rain</Gloss></LexSense><LexSense Id='16369'><Gloss>black</Gloss></LexSense><LexSense Id='16373'><Gloss>snake</Gloss></LexSense><LexSense Id='16377'><Gloss>big</Gloss></LexSense><LexSense Id='16385'><Gloss>tortilla</Gloss></LexSense><LexSense Id='16389'><Gloss>old</Gloss></LexSense><LexSense Id='16458'><Gloss>S</Gloss></LexSense><LexSense Id='16462'><Gloss>Pres</Gloss></LexSense><LexSense Id='16466'><Gloss>go</Gloss></LexSense><LexSense Id='16470'><Gloss>bite</Gloss></LexSense><LexSense Id='16474'><Gloss>3fam</Gloss></LexSense><LexSense Id='16478'><Gloss>3resp</Gloss></LexSense><LexSense Id='16482'><Gloss>rapidly</Gloss></LexSense><LexSense Id='16486'><Gloss>repeatedly</Gloss></LexSense><LexSense Id='16555'><Gloss>1SgSubj</Gloss></LexSense><LexSense Id='16560'><Gloss>3Obj</Gloss></LexSense><LexSense Id='16564'><Gloss>medicine</Gloss></LexSense><LexSense Id='16568'><Gloss>swallow</Gloss></LexSense><LexSense Id='16580'><Gloss>meat</Gloss></LexSense><LexSense Id='16584'><Gloss>eat</Gloss></LexSense><LexSense Id='16670'><Gloss>house</Gloss></LexSense><LexSense Id='16674'><Gloss>3P</Gloss></LexSense><LexSense Id='16687'><Gloss>Ind</Gloss></LexSense><LexSense Id='16705'><Gloss>Delme</Gloss></LexSense><LexSense Id='14648'><Gloss>2SgdPoss</Gloss></LexSense><LexSense Id='14652'><Gloss>3SgPoss</Gloss></LexSense><LexSense Id='14656'><Gloss>1PlPoss</Gloss></LexSense><LexSense Id='14660'><Gloss>2PlPoss</Gloss></LexSense><LexSense Id='14664'><Gloss>3PlPoss</Gloss></LexSense><LexSense Id='14668'><Gloss>PossPl</Gloss></LexSense><LexSense Id='14785'><Gloss>1SgSubj</Gloss></LexSense><LexSense Id='14791'><Gloss>2SgSubj</Gloss></LexSense><LexSense Id='14795'><Gloss>1PlSubj</Gloss></LexSense><LexSense Id='14799'><Gloss>2PlSubj</Gloss></LexSense><LexSense Id='14803'><Gloss>Pl</Gloss></LexSense><LexSense Id='14807'><Gloss>die</Gloss></LexSense><LexSense Id='14863'><Gloss>3M</Gloss></LexSense><LexSense Id='14867'><Gloss>FUT</Gloss></LexSense><LexSense Id='14876'><Gloss>tell</Gloss></LexSense><LexSense Id='14880'><Gloss>DAT</Gloss></LexSense><LexSense Id='14884'><Gloss>PAS</Gloss></LexSense><LexSense Id='14888'><Gloss>F</Gloss></LexSense><LexSense Id='14892'><Gloss>3FO</Gloss></LexSense><LexSense Id='14943'><Gloss>Fut</Gloss></LexSense><LexSense Id='14947'><Gloss>pass.trans</Gloss></LexSense><LexSense Id='14951'><Gloss>1PlIncl</Gloss></LexSense><LexSense Id='14959'><Gloss>limp</Gloss></LexSense><LexSense Id='14962'><Gloss>pass.intrans</Gloss></LexSense><LexSense Id='14971'><Gloss>encourage</Gloss></LexSense><LexSense Id='15030'><Gloss>reason</Gloss></LexSense><LexSense Id='15039'><Gloss>year</Gloss></LexSense><LexSense Id='15043'><Gloss>citizen</Gloss></LexSense><LexSense Id='15047'><Gloss>hand</Gloss></LexSense><LexSense Id='15051'><Gloss>day</Gloss></LexSense><LexSense Id='15055'><Gloss>DatPl</Gloss></LexSense><LexSense Id='15103'><Gloss>case</Gloss></LexSense><LexSense Id='15110'><Gloss>house</Gloss></LexSense><LexSense Id='15117'><Gloss>Fem</Gloss></LexSense><LexSense Id='15121'><Gloss>Masc</Gloss></LexSense><LexSense Id='15125'><Gloss>Dim</Gloss></LexSense><LexSense Id='15212'><Gloss>institute</Gloss></LexSense><LexSense Id='15223'><Gloss>nomlzr</Gloss></LexSense><LexSense Id='15228'><Gloss>adjzer</Gloss></LexSense><LexSense Id='15232'><Gloss>verbzer</Gloss></LexSense><LexSense Id='15238'><Gloss>nom2</Gloss></LexSense><LexSense Id='15242'><Gloss>advbzer</Gloss></LexSense><LexSense Id='15688'><Gloss>wash</Gloss></LexSense><LexSense Id='15692'><Gloss>begin</Gloss></LexSense><LexSense Id='15697'><Gloss>smoke</Gloss></LexSense><LexSense Id='15701'><Gloss>Past</Gloss></LexSense><LexSense Id='15713'><Gloss>Pass</Gloss></LexSense><LexSense Id='15718'><Gloss>Prog</Gloss></LexSense><LexSense Id='15722'><Gloss>Neg</Gloss></LexSense><LexSense Id='15730'><Gloss>3pl</Gloss></LexSense><LexSense Id='15779'><Gloss>drag</Gloss></LexSense><LexSense Id='15783'><Gloss>Rep</Gloss></LexSense><LexSense Id='15787'><Gloss>laugh</Gloss></LexSense><LexSense Id='15837'><Gloss>Pres</Gloss></LexSense><LexSense Id='15848'><Gloss>ask</Gloss></LexSense></Senses>
+<Allomorphs><MoAffixAllomorph Id='14646' MorphType='105' IsAbstract='0'><Form>no</Form></MoAffixAllomorph><MoAffixAllomorph Id='15724' MorphType='107' IsAbstract='0'><Form>mez</Form></MoAffixAllomorph><MoAffixAllomorph Id='15732' MorphType='107' IsAbstract='0'><Form>lar</Form></MoAffixAllomorph><MoAffixAllomorph Id='15762' MorphType='107' IsAbstract='0'><Form>ıyor</Form></MoAffixAllomorph><MoAffixAllomorph Id='15820' MorphType='105' IsAbstract='0'><Form>w</Form><PhoneEnv dst='15221'/>
+<InflectionClasses dst='14965'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15839' MorphType='105' IsAbstract='0'><Form>t</Form><InflectionClasses dst='15841'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15840' MorphType='105' IsAbstract='0'><Form>^0</Form><InflectionClasses dst='15842'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15785' MorphType='105' IsAbstract='0'><Form>a</Form></MoAffixAllomorph><MoAffixAllomorph Id='15859' MorphType='107' IsAbstract='0'><Form>h</Form></MoAffixAllomorph><MoAffixAllomorph Id='15865' MorphType='107' IsAbstract='0'><Form>hen</Form></MoAffixAllomorph><MoAffixAllomorph Id='15912' MorphType='107' IsAbstract='0'><Form>ar</Form></MoAffixAllomorph><MoAffixAllomorph Id='15916' MorphType='107' IsAbstract='0'><Form>ón</Form></MoAffixAllomorph><MoAffixAllomorph Id='15961' MorphType='107' IsAbstract='0'><Form>ykaa</Form></MoAffixAllomorph><MoAffixAllomorph Id='15966' MorphType='107' IsAbstract='0'><Form>maa</Form></MoAffixAllomorph><MoAffixAllomorph Id='15974' MorphType='107' IsAbstract='0'><Form>yki</Form></MoAffixAllomorph><MoAffixAllomorph Id='15978' MorphType='107' IsAbstract='0'><Form>paq</Form></MoAffixAllomorph><MoAffixAllomorph Id='15986' MorphType='107' IsAbstract='0'><Form>na</Form></MoAffixAllomorph><MoAffixAllomorph Id='16023' MorphType='105' IsAbstract='0'><Form>ka</Form></MoAffixAllomorph><MoAffixAllomorph Id='16031' MorphType='107' IsAbstract='0'><Form>tl</Form></MoAffixAllomorph><MoAffixAllomorph Id='16053' MorphType='107' IsAbstract='0'><Form>itl</Form></MoAffixAllomorph><MoAffixAllomorph Id='16392' MorphType='107' IsAbstract='0'><Form>li</Form><PhoneEnv dst='16393'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='16460' MorphType='105' IsAbstract='0'><Form>s</Form></MoAffixAllomorph><MoAffixAllomorph Id='16464' MorphType='105' IsAbstract='0'><Form>ch</Form></MoAffixAllomorph><MoAffixAllomorph Id='16575' MorphType='107' IsAbstract='0'><Form>tli</Form><PhoneEnv dst='16576'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='16562' MorphType='105' IsAbstract='0'><Form>k</Form></MoAffixAllomorph><MoAffixAllomorph Id='16676' MorphType='118' IsAbstract='0'><Form>n</Form></MoAffixAllomorph><MoAffixAllomorph Id='16707' MorphType='117' IsAbstract='0'><Form>po</Form></MoAffixAllomorph><MoAffixAllomorph Id='14650' MorphType='105' IsAbstract='0'><Form>mo</Form></MoAffixAllomorph><MoAffixAllomorph Id='14654' MorphType='105' IsAbstract='0'><Form>i</Form></MoAffixAllomorph><MoAffixAllomorph Id='14658' MorphType='105' IsAbstract='0'><Form>to</Form></MoAffixAllomorph><MoAffixAllomorph Id='14662' MorphType='105' IsAbstract='0'><Form>amo</Form></MoAffixAllomorph><MoAffixAllomorph Id='14666' MorphType='105' IsAbstract='0'><Form>in</Form></MoAffixAllomorph><MoAffixAllomorph Id='14670' MorphType='107' IsAbstract='0'><Form>van</Form></MoAffixAllomorph><MoAffixAllomorph Id='14787' MorphType='105' IsAbstract='0'><Form>ni</Form></MoAffixAllomorph><MoAffixAllomorph Id='14793' MorphType='105' IsAbstract='0'><Form>ti</Form></MoAffixAllomorph><MoAffixAllomorph Id='14797' MorphType='105' IsAbstract='0'><Form>ti</Form></MoAffixAllomorph><MoAffixAllomorph Id='14801' MorphType='105' IsAbstract='0'><Form>an</Form></MoAffixAllomorph><MoAffixAllomorph Id='14805' MorphType='107' IsAbstract='0'><Form>h</Form></MoAffixAllomorph><MoAffixAllomorph Id='14882' MorphType='107' IsAbstract='0'><Form>ako</Form></MoAffixAllomorph><MoAffixAllomorph Id='14886' MorphType='107' IsAbstract='0'><Form>hi</Form></MoAffixAllomorph><MoAffixAllomorph Id='14890' MorphType='107' IsAbstract='0'><Form>e</Form></MoAffixAllomorph><MoAffixAllomorph Id='14894' MorphType='107' IsAbstract='0'><Form>ro</Form></MoAffixAllomorph><MoAffixAllomorph Id='14895' MorphType='107' IsAbstract='0'><Form>te</Form><PhoneEnv dst='14896'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='14901' MorphType='107' IsAbstract='0'><Form>tako</Form><PhoneEnv dst='14896'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='14945' MorphType='105' IsAbstract='0'><Form>u</Form><InflectionClasses dst='14965'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='14969' MorphType='105' IsAbstract='0'><Form>q</Form><InflectionClasses dst='14966'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15057' MorphType='107' IsAbstract='0'><Form>is</Form><InflectionClasses dst='15033'/>
+<InflectionClasses dst='15034'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15058' MorphType='107' IsAbstract='0'><Form>ibus</Form><InflectionClasses dst='15035'/>
+<InflectionClasses dst='15036'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15059' MorphType='107' IsAbstract='0'><Form>ebus</Form><InflectionClasses dst='15037'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15225' MorphType='107' IsAbstract='0'><Form>ion</Form></MoAffixAllomorph><MoAffixAllomorph Id='15230' MorphType='107' IsAbstract='0'><Form>al</Form></MoAffixAllomorph><MoAffixAllomorph Id='15234' MorphType='107' IsAbstract='0'><Form>ize</Form><PhoneEnv dst='15236'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15235' MorphType='107' IsAbstract='0'><Form>iz</Form><PhoneEnv dst='15221'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15240' MorphType='107' IsAbstract='0'><Form>ation</Form></MoAffixAllomorph><MoAffixAllomorph Id='15244' MorphType='107' IsAbstract='0'><Form>ly</Form></MoAffixAllomorph><MoAffixAllomorph Id='15119' MorphType='107' IsAbstract='0'><Form>a</Form></MoAffixAllomorph><MoAffixAllomorph Id='15123' MorphType='107' IsAbstract='0'><Form>o</Form></MoAffixAllomorph><MoAffixAllomorph Id='15127' MorphType='107' IsAbstract='0'><Form>it</Form></MoAffixAllomorph><MoAffixAllomorph Id='15703' MorphType='107' IsAbstract='0'><Form>dı</Form></MoAffixAllomorph><MoAffixAllomorph Id='15715' MorphType='107' IsAbstract='0'><Form>il</Form></MoAffixAllomorph><MoAffixAllomorph Id='15716' MorphType='107' IsAbstract='0'><Form>n</Form><PhoneEnv dst='14896'/>
+</MoAffixAllomorph><MoAffixAllomorph Id='15720' MorphType='107' IsAbstract='0'><Form>iyor</Form></MoAffixAllomorph><MoAffixAllomorph Id='14865' MorphType='105' IsAbstract='0'><Form>i</Form></MoAffixAllomorph><MoAffixAllomorph Id='14869' MorphType='105' IsAbstract='0'><Form>n</Form></MoAffixAllomorph><MoStemAllomorph Id='14878' MorphType='115' IsAbstract='0'><Form>tsave</Form></MoStemAllomorph><MoStemAllomorph Id='14642' MorphType='113' IsAbstract='0'><Form>kal</Form></MoStemAllomorph><MoStemAllomorph Id='15214' MorphType='115' IsAbstract='0'><Form>institute</Form></MoStemAllomorph><MoStemAllomorph Id='15215' MorphType='115' IsAbstract='0'><Form>institut</Form><PhoneEnv dst='15221'/>
+</MoStemAllomorph><MoStemAllomorph Id='15690' MorphType='115' IsAbstract='0'><Form>yıka</Form></MoStemAllomorph><MoStemAllomorph Id='15694' MorphType='115' IsAbstract='0'><Form>başla</Form></MoStemAllomorph><MoStemAllomorph Id='15695' MorphType='115' IsAbstract='0'><Form>başl</Form></MoStemAllomorph><MoStemAllomorph Id='15699' MorphType='115' IsAbstract='0'><Form>iç</Form></MoStemAllomorph><MoStemAllomorph Id='15105' MorphType='115' IsAbstract='0'><Form>cas</Form></MoStemAllomorph><MoStemAllomorph Id='14973' MorphType='115' IsAbstract='0'><Form>tiqpla'qch</Form></MoStemAllomorph><MoStemAllomorph Id='15032' MorphType='115' IsAbstract='0'><Form>caus</Form></MoStemAllomorph><MoStemAllomorph Id='15041' MorphType='115' IsAbstract='0'><Form>ann</Form></MoStemAllomorph><MoStemAllomorph Id='15045' MorphType='115' IsAbstract='0'><Form>civ</Form></MoStemAllomorph><MoStemAllomorph Id='15049' MorphType='115' IsAbstract='0'><Form>man</Form></MoStemAllomorph><MoStemAllomorph Id='15053' MorphType='115' IsAbstract='0'><Form>di</Form></MoStemAllomorph><MoStemAllomorph Id='14949' MorphType='115' IsAbstract='0'><Form>te</Form></MoStemAllomorph><MoStemAllomorph Id='14953' MorphType='110' IsAbstract='0'><Form>cho</Form></MoStemAllomorph><MoStemAllomorph Id='14961' MorphType='115' IsAbstract='0'><Form>qke'nia'</Form></MoStemAllomorph><MoStemAllomorph Id='14809' MorphType='115' IsAbstract='0'><Form>miki</Form></MoStemAllomorph><MoStemAllomorph Id='16689' MorphType='110' IsAbstract='0'><Form>ra</Form></MoStemAllomorph><MoStemAllomorph Id='16566' MorphType='115' IsAbstract='0'><Form>pah</Form></MoStemAllomorph><MoStemAllomorph Id='16570' MorphType='115' IsAbstract='0'><Form>tolova</Form></MoStemAllomorph><MoStemAllomorph Id='16582' MorphType='115' IsAbstract='0'><Form>naka</Form></MoStemAllomorph><MoStemAllomorph Id='16586' MorphType='115' IsAbstract='0'><Form>kua</Form></MoStemAllomorph><MoStemAllomorph Id='16672' MorphType='115' IsAbstract='0'><Form>wasi</Form></MoStemAllomorph><MoStemAllomorph Id='16468' MorphType='115' IsAbstract='0'><Form>ej</Form></MoStemAllomorph><MoStemAllomorph Id='16472' MorphType='115' IsAbstract='0'><Form>pip</Form></MoStemAllomorph><MoStemAllomorph Id='16476' MorphType='110' IsAbstract='0'><Form>pe'</Form></MoStemAllomorph><MoStemAllomorph Id='16480' MorphType='110' IsAbstract='0'><Form>e'</Form></MoStemAllomorph><MoStemAllomorph Id='16528' MorphType='113' IsAbstract='0'><Form>qchaqch</Form></MoStemAllomorph><MoStemAllomorph Id='16531' MorphType='113' IsAbstract='0'><Form>to</Form></MoStemAllomorph><MoStemAllomorph Id='16057' MorphType='115' IsAbstract='0'><Form>kakava</Form></MoStemAllomorph><MoStemAllomorph Id='16070' MorphType='115' IsAbstract='0'><Form>kiavi</Form></MoStemAllomorph><MoStemAllomorph Id='16371' MorphType='115' IsAbstract='0'><Form>tlil</Form></MoStemAllomorph><MoStemAllomorph Id='16375' MorphType='115' IsAbstract='0'><Form>kowa</Form></MoStemAllomorph><MoStemAllomorph Id='16379' MorphType='115' IsAbstract='0'><Form>wey</Form></MoStemAllomorph><MoStemAllomorph Id='16387' MorphType='115' IsAbstract='0'><Form>tlaxkal</Form></MoStemAllomorph><MoStemAllomorph Id='16391' MorphType='115' IsAbstract='0'><Form>sol</Form></MoStemAllomorph><MoStemAllomorph Id='16027' MorphType='115' IsAbstract='0'><Form>kava</Form></MoStemAllomorph><MoStemAllomorph Id='16015' MorphType='115' IsAbstract='0'><Form>kom</Form></MoStemAllomorph><MoStemAllomorph Id='16019' MorphType='115' IsAbstract='0'><Form>i</Form></MoStemAllomorph><MoStemAllomorph Id='15982' MorphType='115' IsAbstract='0'><Form>rika</Form></MoStemAllomorph><MoStemAllomorph Id='15924' MorphType='115' IsAbstract='0'><Form>trasquil</Form></MoStemAllomorph><MoStemAllomorph Id='15907' MorphType='115' IsAbstract='0'><Form>apret</Form></MoStemAllomorph><MoStemAllomorph Id='15863' MorphType='115' IsAbstract='0'><Form>ninkaon</Form></MoStemAllomorph><MoStemAllomorph Id='15864' MorphType='115' IsAbstract='0'><Form>ninkakon</Form></MoStemAllomorph><MoStemAllomorph Id='15789' MorphType='115' IsAbstract='0'><Form>chiqch</Form></MoStemAllomorph><MoStemAllomorph Id='15850' MorphType='115' IsAbstract='0'><Form>janchi</Form></MoStemAllomorph><MoStemAllomorph Id='15851' MorphType='115' IsAbstract='0'><Form>jancha</Form></MoStemAllomorph><MoStemAllomorph Id='15855' MorphType='110' IsAbstract='0'><Form>a</Form></MoStemAllomorph><MoStemAllomorph Id='15781' MorphType='115' IsAbstract='0'><Form>xop</Form></MoStemAllomorph></Allomorphs>
+</Lexicon>
+<FeatureSystem><Types><FsFeatStrucType Id='15093'><Name>Infl</Name><Features><Feature dst='15095' ord ='0'/>
+</Features>
+</FsFeatStrucType><FsFeatStrucType Id='15094'><Name>Agr</Name><Features><Feature dst='15096' ord ='0'/>
+<Feature dst='15099' ord ='1'/>
+</Features>
+</FsFeatStrucType></Types>
+<Features><FsComplexFeature Id='15095'><Name>noun agreement</Name><Type dst='15094'/></FsComplexFeature><FsClosedFeature Id='15096'><Name>gender</Name><Values><FsSymFeatVal Id='15097'><Name>masculine gender</Name></FsSymFeatVal><FsSymFeatVal Id='15098'><Name>feminine gender</Name></FsSymFeatVal></Values>
+</FsClosedFeature><FsClosedFeature Id='15099'><Name>number</Name><Values><FsSymFeatVal Id='15100'><Name>singular number</Name></FsSymFeatVal><FsSymFeatVal Id='15101'><Name>plural number</Name></FsSymFeatVal></Values>
+</FsClosedFeature></Features>
+</FeatureSystem>
+</M3Dump>

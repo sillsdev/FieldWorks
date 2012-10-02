@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="datorg" num="2.4.7" abbr="datorg" file="FW\DatOrgFav.xml" ready="V2">
+<title tag="datorg">Data-Organize Favorites Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Brings up a dialog by which the user can organize the list of favorites that appears in the Favorites submenu. The dialog shows a list of the current favorites in a tree control. The user can drag and drop to rearrange items in the various folders. Thus he can set the order within a menu, and the cascading submenu hierarchy.</p>
+<p name="Specification">See the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-Favorites" type="doc">Data-Favorites menu item</link>
+	and the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-OrganizeFavorites" type="doc">Data-Organize Favorites menu item</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Data-Organize Favorites"</p>
+</context>
+<case id="datorgAct" num="0" order="any">
+<title tag="datorgAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Data-Organize Favorites. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-OrganizeFavorites" type="doc">Data-Organize Favorites specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Data-Organize Favorites dialog fails to open</p>
+<p name="bug">Data-Organize Favorites dialog layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>The the user's favorite folders and topics are displayed.</li>
+</ul>
+</r>
+<p name="bug">Data-Organize FavoritesData-Organize Favorites the user's favorite folders and topics are displayed failed</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>There is no OK button on this dialog.</li>
+<li>Report any failures as suggested using "Data-Organize Favorites" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Data-Organize Favorites has OK button</p>
+</step>
+</case>
+<case id="datorgtree" num="1" order="any">
+<title tag="datorgtree">Favorite Tree Tree Control</title>
+<context>
+<p>When the Organize Favorites dialog  is displayed</p>
+</context>
+<step name="1.1" link="Bug">
+	Use the <link uri="../StdCtrls/tree.xml">Tree Control Tests</link> to test the Favorite tree tree control.<r>
+<ul>
+<li>There is a list below the text box.</li>
+<li>The default is "&lt;favorite folders and topics&gt;".</li>
+<li>Report any failures using the first words, "Data-Organize Favorites Favorite tree".</li>
+</ul>
+</r>
+<p name="bug">Data-Organize Favorites Favorite tree has list problems</p>
+<p name="bug">Data-Organize Favorites Favorite tree default is not "&lt;favorite folders and topics&gt;"</p>
+</step>
+<step name="1.2" link="Bug">Check the list entries.<r>
+<ul>
+<li>The cursor highlights each item.</li>
+	<li>The list contains the user's favorite folders and topics arranged as desired.</li>
+   </ul>
+</r>
+<p name="bug">Data-Organize FavoritesFavorite tree list items not highlighted</p>
+	<p name="bug">Data-Organize FavoritesFavorite tree drop list missing &lt;the user's favorite folders and topics arranged as desired&gt;</p>
+   </step>
+</case>
+<case id="datorgadf" num="2" order="any">
+<title tag="datorgadf">Add To Favorites Button</title>
+<context>
+<p>When the Organize Favorites dialog  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Add to Favorites button.<r>
+<ul>
+<li>Report any failures using the first words, "Data-Organize Favorites Add to Favorites".</li>
+</ul>
+</r>
+</step>
+<step name="2.2" link="Bug">
+	Click the Add to Favorites button to test its action.
+	<r>
+<ul>
+<li>Adds the current record to the list of favorites. (appends it to the bottom)</li>
+</ul>
+</r>
+<p name="bug">Data-Organize FavoritesOrganize Favorites fails to adds the current record to the list of favorites</p>
+</step>
+</case>
+<case id="datorgcrf" num="3" order="any">
+<title tag="datorgcrf">Create Folder Button</title>
+<context>
+<p>When the Organize Favorites dialog  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Create Folder button.<r>
+<ul>
+<li>Report any failures using the first words, "Data-Organize Favorites Create Folder".</li>
+</ul>
+</r>
+</step>
+<step name="3.2" link="Bug">
+	Click the Create Folder button to test its action.
+	<r>
+<ul>
+<li>Adds a folder to the tree.</li>
+<li>It is titled "New Folder".</li>
+<li>Its edit box is opened. (so that the user can give it a meaningful name)</li>
+</ul>
+</r>
+<p name="bug">Data-Organize FavoritesOrganize Favorites fails to adds a folder to the tree</p>
+<p name="bug">Data-Organize FavoritesOrganize Favorites fails to it is titled "New Folder"</p>
+<p name="bug">Data-Organize FavoritesOrganize Favorites fails to its edit box is opened</p>
+</step>
+</case>
+<case id="datorgren" num="4" order="any">
+<title tag="datorgren">Rename Button</title>
+<context>
+<p>When the Organize Favorites dialog  is displayed</p>
+</context>
+<step name="4.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Rename button.<r>
+<ul>
+<li>Report any failures using the first words, "Data-Organize Favorites Rename".</li>
+</ul>
+</r>
+</step>
+<step name="4.2" link="Bug">
+	Click the Rename button to test its action.
+	<r>
+<ul>
+<li>Opens an edit box around the selected item, so it can be renamed.</li>
+</ul>
+</r>
+<p name="bug">Data-Organize FavoritesOrganize Favorites fails to opens an edit box around the selected item, so it can be renamed</p>
+</step>
+</case>
+<case id="datorgdel" num="5" order="any">
+<title tag="datorgdel">Delete Button</title>
+<context>
+<p>When the Organize Favorites dialog  is displayed</p>
+</context>
+<step name="5.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the Delete button.<r>
+<ul>
+<li>Report any failures using the first words, "Data-Organize Favorites Delete".</li>
+</ul>
+</r>
+</step>
+<step name="5.2" link="Bug">
+	Click the Delete button to test its action.
+	<r>
+<ul>
+<li>Deletes the selected item.</li>
+</ul>
+</r>
+<p name="bug">Data-Organize FavoritesOrganize Favorites fails to deletes the selected item</p>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+
+</test>

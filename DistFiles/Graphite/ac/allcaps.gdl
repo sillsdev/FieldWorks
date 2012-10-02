@@ -1,0 +1,25 @@
+
+/*********************************************************************************
+	File: allcaps.gdl
+
+	Sample GDL file for creating small caps.
+
+	Compile with Std SILDoulos (stddr.ttf).
+*********************************************************************************/
+
+#include "stddef.gdh"
+
+Bidi = false;
+
+table(glyph)
+
+	clsUpperCase = codepoint("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	clsLowerCase = codepoint("abcdefghijklmnopqrstuvwxyz");
+
+endtable;	// glyph
+
+table(sub)
+
+	clsLowerCase > clsUpperCase;
+
+endtable;

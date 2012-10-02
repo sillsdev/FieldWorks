@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE PublicationDefaultsForNewProject SYSTEM "TePublications.dtd">
+<PublicationDefaultsForNewProject date="2007-09-05" DTDver="61A20AFA-56A9-4717-9014-0CBF99C9F368"
+								  label="Scripture" version="9EBF37B6-A0BC-4d54-A572-5B7BC836C38A">
+	<Publications>
+		<Publication id="Default_Scripture"
+			Name="Scripture Draft"
+			Description="Basic Scripture Print Layout"
+			MeasurementUnits="inch"
+			IsLandscape="false"
+			PageSize="full"
+			GutterMargin="0" GutterLocation="left"
+			BaseCharSize="12" BaseLineSize="14"
+			SheetLayout="duplex">
+			<SupportedPublicationSizes>
+				<PublicationPageSize id="full">
+					<Name wsId="en">Full Page</Name>
+				</PublicationPageSize>
+				<PublicationPageSize id="IPUBLargerBible" Height="8.7" Width="5.8">
+					<Name wsId="en">5.8 x 8.7in</Name>
+				</PublicationPageSize>
+				<PublicationPageSize id="IPUBSmallerBible" Height="8.25" Width="5.25">
+					<Name wsId="en">5.25 x 8.25in</Name>
+				</PublicationPageSize>
+			</SupportedPublicationSizes>
+			<Divisions>
+				<Division id="Scripture" StartAt="newPage" HeaderFooterSetRef="HFDefaultScripture">
+					<PageLayout OriginalPageLayoutName="Default Scripture"
+						MarginTop="1" MarginBottom="1" MarginInside="1" MarginOutside="1"
+						PositionHeader="0.75" PositionFooter="0.75"/>
+			</Division>
+			</Divisions>
+		</Publication>
+		<Publication id="Trial_Publication"
+			Name="Trial Publication"
+			Description="Trial Publication"
+			MeasurementUnits="inch"
+			IsLandscape="false"
+			PageSize="IPUBLargerBible"
+			GutterMargin="0" GutterLocation="left"
+			SheetLayout="duplex">
+			<SupportedPublicationSizes>
+				<PublicationPageSize id="IPUBLargerBible" Height="8.7" Width="5.8">
+					<Name wsId="en">5.8 x 8.7in</Name>
+				</PublicationPageSize>
+				<PublicationPageSize id="IPUBSmallerBible" Height="8.25" Width="5.25">
+					<Name wsId="en">5.25 x 8.25in</Name>
+				</PublicationPageSize>
+			</SupportedPublicationSizes>
+			<Divisions>
+				<Division id="Scripture" StartAt="newPage" NumberOfColumns="2"
+						  HeaderFooterSetRef="HFDefaultScripture">
+					<PageLayout OriginalPageLayoutName="Default Scripture"
+						MarginTop="0.68" MarginBottom="0.51" MarginInside="0.5" MarginOutside="0.5"
+						PositionHeader="0.35" PositionFooter="0.35"/>
+				</Division>
+			</Divisions>
+		</Publication>
+		<Publication id="Correction"
+			Name="Correction Layout"
+			Description="Correction Draft for reviewing and editing Scripture"
+			MeasurementUnits="inch"
+			IsLandscape="false"
+			PageSize="full"
+			GutterMargin="0" GutterLocation="left"
+			BaseCharSize="12" BaseLineSize="36"
+			SheetLayout="simplex">
+			<SupportedPublicationSizes>
+				<PublicationPageSize id="full">
+					<Name wsId="en">Full Page</Name>
+				</PublicationPageSize>
+			</SupportedPublicationSizes>
+			<Divisions>
+				<Division id="Scripture" StartAt="newPage" HeaderFooterSetRef="HFCorrectionPrintout">"
+					<PageLayout OriginalPageLayoutName="Default Scripture"
+						MarginTop="1" MarginBottom="1" MarginInside="1" MarginOutside="2.3"
+						PositionHeader="0.75" PositionFooter="0.75"/>
+				</Division>
+			</Divisions>
+		</Publication>
+		<Publication id="Scripture_Back_Translation"
+			Name="Back Translation"
+			Description="Back Translation for checking purposes"
+			MeasurementUnits="inch"
+			IsLandscape="false"
+			PageSize="full"
+			GutterMargin="0" GutterLocation="left"
+			BaseCharSize="12" BaseLineSize="14"
+			SheetLayout="simplex">
+			<SupportedPublicationSizes>
+				<PublicationPageSize id="full">
+					<Name wsId="en">Full Page</Name>
+				</PublicationPageSize>
+			</SupportedPublicationSizes>
+			<Divisions>
+				<Division id="BackTranslation" StartAt="newPage" HeaderFooterSetRef="HFDefaultBT">
+					<PageLayout OriginalPageLayoutName="Default Back Translation"
+						MarginTop="1" MarginBottom="1" MarginInside="1" MarginOutside="2.5"
+						PositionHeader="0.75" PositionFooter="0.75"/>
+				</Division>
+			</Divisions>
+		</Publication>
+		<Publication id="Scripture_SbS_Back_Translation"
+			Name="Back Translation Side-by-Side"
+			Description="Back Translation with front and back translation for checking purposes"
+			MeasurementUnits="inch"
+			IsLandscape="false"
+			PageSize="full"
+			GutterMargin="0" GutterLocation="left"
+			BaseCharSize="12" BaseLineSize="14"
+			SheetLayout="simplex">
+			<SupportedPublicationSizes>
+				<PublicationPageSize id="full">
+					<Name wsId="en">Full Page</Name>
+				</PublicationPageSize>
+			</SupportedPublicationSizes>
+			<Divisions>
+				<Division id="BackTranslationSideBySide" StartAt="newPage"
+						  HeaderFooterSetRef="HFDefaultBT">
+					<PageLayout OriginalPageLayoutName="Default Back Translation"
+						MarginTop="1" MarginBottom="1" MarginInside="1" MarginOutside="2.5"
+						PositionHeader="0.75" PositionFooter="0.75"/>
+				</Division>
+			</Divisions>
+		</Publication>
+	</Publications>
+	<HeaderFooterSets>
+		<HeaderFooterSet id="HFDefaultScripture" Name="Default Scripture"
+						 Description="Default headers and footers with page numbers and references useful for published Scriptures">
+			<DefaultHeader>
+				<Center>
+					<Element type="LastReference"/>
+				</Center>
+				<Outside>
+					<Element type="PageNumber"/>
+				</Outside>
+			</DefaultHeader>
+			<FirstHeader>
+			</FirstHeader>
+			<FirstFooter>
+				<Center>
+					<Element type="PageNumber"/>
+				</Center>
+			</FirstFooter>
+			<EvenHeader>
+				<Center>
+					<Element type="FirstReference"/>
+				</Center>
+				<Outside>
+					<Element type="PageNumber"/>
+				</Outside>-
+			</EvenHeader>
+		</HeaderFooterSet>
+		<HeaderFooterSet id="HFDefaultBT" Name="Default Back Translation"
+						 Description="Default headers and footers for one-sided printing of back translations">
+			<DefaultHeader>
+				<Outside>
+					<Element type="PageReference"/>
+				</Outside>
+			</DefaultHeader>
+			<DefaultFooter>
+				<Inside>
+					<Element type="PrintDate"/>
+				</Inside>
+				<Center>
+					<Element type="ProjectName"/>
+				</Center>
+				<Outside>
+					<Element type="PageNumber"/>
+				</Outside>
+			</DefaultFooter>
+		</HeaderFooterSet>
+		<HeaderFooterSet id="HFCorrectionPrintout" Name="Default Correction Printout"
+						 Description="Default headers and footers for a one-sided printout for editing or checking the Scripture text">
+			<DefaultHeader>
+				<Outside>
+					<Element type="PageReference"/>
+				</Outside>
+			</DefaultHeader>
+			<DefaultFooter>
+				<Inside>
+					<Element type="PrintDate"/>
+				</Inside>
+				<Center>
+					<Element type="ProjectName"/>
+				</Center>
+				<Outside>
+					<Element type="PageNumber"/>
+				</Outside>
+			</DefaultFooter>
+		</HeaderFooterSet>
+	</HeaderFooterSets>
+</PublicationDefaultsForNewProject>

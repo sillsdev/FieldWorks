@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.ascc.net/xml/schematron" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ascc.net/xml/schematron schematron1-5.xsd">
+<!--
+ Schematron validity file for checking the validity of the MasterGlossList.xml file.
+
+ The numbers refer to the constraints in the GlossList.htm file ("Building the etic gloss list," G. Simons, 25 September 2002), section 5
+
+  -->
+<!-- 1 -->
+  <pattern name="1. A top-level item may be any type but value">
+	<rule context="/masterGlossList/*">
+	  <assert test="not(@type='value')">Top level element &lt;<name/>&gt; with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" has a type of value</assert>
+	</rule>
+  </pattern>
+<!-- 2 -->
+  <pattern name="2. An fsType item may not embed value or deriv items">
+	<rule context="//item[@type='fsType']">
+	  <assert test="not(item[@type='value' or @type='deriv'])">The fsType item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" has an embedded type with 'value' or 'deriv'</assert>
+	</rule>
+  </pattern>
+<!-- 3 -->
+  <pattern name="3. A complex item may not embed any items.">
+	<rule context="//item[@type='complex']">
+	  <assert test="not(item)">The complex item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" has an embedded item</assert>
+	</rule>
+  </pattern>
+<!-- 4 -->
+  <pattern name="4. A feature item may not embed fsType, complex, or feature items (it may, however, embed a feature type if it also has an append attr)">
+	<rule context="//item[@type='feature']">
+	  <assert test="not(item[@type='fsType' or @type='complex' or @type='feature' and not(@append)])">The feature item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" has an embedded item with type of fsType, complex, or feature.</assert>
+	</rule>
+  </pattern>
+<!-- 5 -->
+  <pattern name="5. A value item may embed only value and xref items ">
+	<rule context="//item[@type='value' and item]">
+	  <assert test="item[@type='value' or @type='xref']">The value item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" has an embedded item with a type that is not value or xref</assert>
+	</rule>
+  </pattern>
+<!-- 6 -->
+  <pattern name="6. An xref item may not embed any items.">
+	<rule context="//item[@type='xref']">
+	  <assert test="not(item)">The xref item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" has an embedded item</assert>
+	</rule>
+  </pattern>
+<!-- 7a -->
+  <pattern name="7a. An xref item must specify a value for target">
+	<rule context="//item[@type='xref']">
+	  <assert test="@target and @target!=''">The xref item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" does not have a target attr or it is empty</assert>
+	</rule>
+  </pattern>
+<!-- 7b -->
+  <pattern name="7b. Only an xref item may have a target attribute">
+	<rule context="//item[@type!='xref']">
+	  <assert test="not(@target)">The item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" cannot have a target attr</assert>
+	</rule>
+  </pattern>
+<!-- 8a1 -->
+  <pattern name="8a1. A complex item must specify a value for embed and carry">
+	<rule context="//item[@type='complex']">
+	  <assert test="@embed and @embed!=''">The complex item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" does not have an embed attr or it is empty</assert>
+	</rule>
+  </pattern>
+<!-- 8a2 -->
+  <pattern name="8a2. A complex item must specify a value for embed and carry">
+	<rule context="//item[@type='complex']">
+	  <assert test="@carry and @carry!=''">The complex item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" does not have a carry attr or it is empty</assert>
+	</rule>
+  </pattern>
+<!-- 8b1 -->
+  <pattern name="8b1. Only a complex item may have an embed attribute">
+	<rule context="//item[@type!='complex']">
+	  <assert test="not(@embed)">The item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" cannot have an embed attr</assert>
+	</rule>
+  </pattern>
+<!-- 8b2 -->
+  <pattern name="8b2. Only a complex item may have a carry attribute">
+	<rule context="//item[@type!='complex']">
+	  <assert test="not(@carry)">The item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" cannot have a carry attr</assert>
+	</rule>
+  </pattern>
+<!-- 9 -->
+  <pattern name="9. All types but group and xref must specify a value for abbrev">
+	<rule context="//item[@type!='group' and @type!='xref']">
+	  <assert test="abbrev and abbrev!=''">The item with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" must have an non-empty abbrev attr</assert>
+	</rule>
+  </pattern>
+<!-- 10a -->
+  <pattern name="10a. Every top-level item must specify a value for status">
+	<rule context="/masterGlossList/*">
+	  <assert test="@status">Top level element &lt;<name/>&gt; with abbrev="<value-of select="abbrev"/>" and  term = "<value-of select="term"/>" does not have a status attr</assert>
+	</rule>
+  </pattern>
+<!-- 10b -->
+  <pattern name="10b. No embedded item may specify a value for status ">
+	<rule context="//item[name(..)!='masterGlossList']">
+	  <assert test="not(@status)">Embedded element &lt;<name/>&gt; with abbrev="<value-of select="abbrev"/>" and  term="<value-of select="term"/>" has a status attr.</assert>
+	</rule>
+  </pattern>
+</schema>

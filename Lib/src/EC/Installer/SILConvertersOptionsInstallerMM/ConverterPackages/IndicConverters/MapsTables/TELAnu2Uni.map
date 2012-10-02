@@ -1,0 +1,593 @@
+﻿; This file was created by <author> using TECkitMappingEditorU.exe v3.1.0.0 on 25/01/2011.
+;   Conversion Type = Legacy_to_from_Unicode
+;   Left-hand side font = AnupamaMedium;26.25
+;   Right-hand side font = Gautami;15.75
+;   Main Window Position = 0,0,657,708
+;   Left-hand side Character Map Window Position = 657,1,623,537
+;   Right-hand side Character Map Window Position = 691,234,589,506
+
+;   Telugu Legacy encoding (Anu Fonts) to Unicode
+
+EncodingName            "Telegu Anu"
+DescriptiveName         "Legacy Anu encoding to Unicode converter"
+Version                 "1.00"
+Contact                 "mark_penny@sil.org"
+RegistrationAuthority   "SIL International"
+RegistrationName        "TelAnu2Uni"
+Copyright               "© 2011 SIL International. All rights reserved."
+LHSFlags                ()
+RHSFlags                ()
+
+; This TECkit map is dedicated to the people who have lost loved ones during the
+; earthquakes that struck New Zealand in February, and later Japan in March 2011.
+; For some strange reason these struck on the 2 days that I worked on this mapping! :(
+
+pass(Byte)
+
+; normalize 'a' vowel matra (tick mark)
+155 > 146
+161 > 146
+172 > 146
+174 > 146
+199 > 146
+200 > 146
+206 > 146
+215 > 146
+
+; normalize 'aa' vowel matra
+144 > 140
+165 > 140
+167 > 140
+168 > 140
+234 > 140
+236 > 140
+
+; normalize 'i' vowel matra
+178 > 141
+247 > 141
+
+; normalize 'ii' vowel matra
+169 > 153
+212 > 153
+
+; normalize 'u' vowel matra
+181 > 176
+195 > 176
+; 244 > 176 ; keep the low-u (244) as it helps us to differentiate between mu pu and vu later
+
+; normalize 'uu' vowel matra
+180 > 175
+182 > 175
+; 238 > 175 ; keep the low-uu (238) as it helps us to differentiate between muu puu and vuu later
+
+; normalize 'e' vowel matra
+204 > 179
+220 > 179
+239 > 179
+255 > 179
+
+; normalize 'ee' vowel matra
+205 > 192
+232 > 192
+245 > 192
+246 > 192
+
+; normalize (bottom part of) 'ai' vowel matra
+225 > 216
+229 > 216
+
+; normalize 'o' vowel matra
+218 > 184
+231 > 184
+249 > 184
+
+; normalize 'oo' vowel matra
+213 > 203
+217 > 203
+233 > 203
+
+; normalize 'au' vowel matra
+191 > 186
+207 > 186
+210 > 186
+241 > 186
+
+; normalize 'virama' mark
+159 > 152
+163 > 152
+177 > 152
+183 > 152
+185 > 152
+
+; normalize 'low-aspiration' mark
+166 > 143
+
+; normalize others:
+133 > 129 ; la
+92  >  62 ; tta
+64  >  62 ; tta
+131 > 124 ; ba
+; 135 > 132 ; tall pa  > short pa  ; these have been moved further down so that
+; 170 > 139 ; tall sa  > short sa  ; they don't interfere with the vowel re-positioning
+; 145 >  43 ; tall sha > short sha ; on these three letters!
+189         >  72 176
+228  58 189 >  72 146 176 ; special ku
+228  58 172 >  72 146 175 ; special kuu
+228 155 189 > 228 146 189 ; protect this combo for later: telugu_letter_ka telugu_vowel_sign_u
+228 155 128 > 228 146 128 ; protect this combo for later: telugu_letter_ka telugu_vowel_sign_uu
+ 72  58     >  72         ; I'm not sure why we're getting this 58 after a 'k' - as 58 = colon!
+228         >             ; this space character needs to be trashed in Anupama (but may need to be kept for Priyanka)
+;228         >  72         ; spacing modifier in Anupama but ka in Priyanka!
+
+pass(Byte)
+
+; This first rule is to block legitimate sequences of preCons + preMatra + exceptionCons from
+; moving to the right (in the next set of rules). By simply picking them up here (and
+; doing NO REARRANGING with them) these combinations are kept intact (and we prevent
+; the next set of rules operating on them :)
+; TO DO: **** Add other consonants to the list of preCons below !!!!!!!!!!!!!!
+ByteClass [preCons] = (42 60 62 72 75 95) ; any consonants which are not in the list of the [exceptionCons] class below
+ByteClass [preMatras] = (141 153 179 192 152) ; i ii e ee virama
+ByteClass [exceptionCons] = (72 81 126 132 139 43 130)  ; ka ga ra-etc pa sa sha ha
+ByteClass [midOptional] = (143 140)           ; aspirated dot for pha, and aa matra for h
+
+[preCons]=PC [preMatras]=PM [exceptionCons]=EC <> @PC @PM @EC
+
+; Some consonants have SOME of the vowels appearing BEFORE the consonant itself, so re-arrange
+[preMatras]=PM [exceptionCons]=EC [midOptional]?=MID <> @EC @MID @PM
+
+; moved here (from above)
+135 > 132 ; tall pa  > short pa
+170 > 139 ; tall sa  > short sa
+145 >  43 ; tall sha > short sha
+
+; also move two parts of 'ai' so that they come together
+ByteClass [aiPart1] = (179 239)
+ByteClass [aiPart2] = (216 225)
+ByteClass [aiCons] = (126)
+;[aiPart1]=AA [aiCons]=AICONS [aiPart2]=BB <> @AICONS @AA @BB   ; why doesn't this rule work?
+;179 126 225 <> 126 179 225
+;temp fix for 'rai'
+239 126 225 <> 126 179 216
+
+; manually re-arrange tough ones:
+204 130 225 236 > 130 140 179 216 ; hai
+
+146 67 > 176 230 ; tick mark followed by virama-form pa + u combination (needs to be split and re-ordered)
+67  > 176 230    ; pa + u combination (needs to be split and re-ordered)
+
+61 176 > 61 181       ; change the 'u' so that we don't get 'mu' muddled up with 'pu'
+61 242 > 61 181 176   ; mu (m is now 61 181)
+
+; ==========================================================================================
+pass(Byte_Unicode)
+
+; control characters
+
+ByteClass[CTL] = ( 0 .. 31 )
+UniClass[CTL]  = ( 0 .. 31 )
+[CTL] <> [CTL]
+
+; basic characters
+
+39	 <>    U+2018
+39 39	 <>    U+201C
+209	 <>    U+2019 ; apostrophe
+209 209 <>    U+201D
+
+32	<>	space
+33	<>	exclamation_mark
+;35	<>	number_sign
+;36	<>	dollar_sign
+37	<>	percent_sign
+;38	<>	ampersand
+40	<>	left_parenthesis
+41	<>	right_parenthesis
+;42	<>	asterisk
+;43	<>	plus_sign
+44	<>	comma
+45	<>	hyphen_minus
+46	<>	full_stop
+47	<>	solidus
+48	<>	digit_zero
+49	<>	digit_one
+50	<>	digit_two
+51	<>	digit_three
+52	<>	digit_four
+53	<>	digit_five
+54	<>	digit_six
+55	<>	digit_seven
+56	<>	digit_eight
+57	<>	digit_nine
+58	<>	colon
+;59	<>	semicolon
+;60	<>	less_than_sign
+;61	<>	equals_sign
+;62	<>	greater_than_sign
+63	<>	question_mark
+;91	<>	left_square_bracket
+;92	<>	reverse_solidus
+;93	<>	right_square_bracket
+;94	<>	circumflex_accent
+;95	<>	low_line
+
+73     <>     devanagari_danda
+123	<>	plus_sign
+160	<>	semicolon
+171	<>	equals_sign
+208    <>     en_dash
+211    <>     division_sign
+216	<>	low_line
+254    <>     multiplication_sign
+
+; composite glyphs (1 legacy codepoint to multiple unicode characters)
+228 146 189 <>  telugu_letter_ka telugu_vowel_sign_u
+228 146 128 <>  telugu_letter_ka telugu_vowel_sign_uu
+65          <>  telugu_letter_ja telugu_vowel_sign_u
+69          <>  telugu_letter_ja telugu_vowel_sign_uu
+71          <>  telugu_letter_sa telugu_sign_virama telugu_letter_ta telugu_sign_virama telugu_letter_ra
+78          <>  telugu_letter_sha telugu_sign_virama telugu_letter_ra telugu_vowel_sign_ii
+82          <>  telugu_letter_ssa telugu_sign_virama telugu_letter_tta telugu_sign_virama telugu_letter_ra
+
+; composite i and ii matra glyphs
+ 97      <>  telugu_letter_ba  telugu_vowel_sign_i
+ 97 143  <>  telugu_letter_bha telugu_vowel_sign_i
+ 98      <>  telugu_letter_la  telugu_vowel_sign_ii
+ 99      <>  telugu_letter_ba  telugu_vowel_sign_ii
+ 99 143  <>  telugu_letter_ba  telugu_vowel_sign_ii
+100      <>  telugu_letter_kha telugu_vowel_sign_i
+101      <>  telugu_letter_la  telugu_vowel_sign_i
+102      <>  telugu_letter_ta  telugu_vowel_sign_ii
+103      <>  telugu_letter_va  telugu_vowel_sign_ii
+104      <>  telugu_letter_na  telugu_vowel_sign_ii
+105      <>  telugu_letter_ra  telugu_vowel_sign_i
+105 148  <>  telugu_letter_ttha telugu_vowel_sign_i
+106      <>  telugu_letter_sha telugu_vowel_sign_ii
+107      <>  telugu_letter_da  telugu_vowel_sign_i
+107 143  <>  telugu_letter_dha telugu_vowel_sign_i
+108      <>  telugu_letter_ja  telugu_vowel_sign_i
+109      <>  telugu_letter_lla telugu_vowel_sign_ii
+110      <>  telugu_letter_da  telugu_vowel_sign_ii
+110 143  <>  telugu_letter_dha telugu_vowel_sign_ii
+111      <>  telugu_letter_lla telugu_vowel_sign_i
+112      <>  telugu_letter_ca  telugu_vowel_sign_ii
+112 143  <>  telugu_letter_cha telugu_vowel_sign_ii
+113      <>  telugu_letter_va  telugu_vowel_sign_i
+114      <>  telugu_letter_ja  telugu_vowel_sign_ii
+115      <>  telugu_letter_ra  telugu_vowel_sign_ii
+115 148  <>  telugu_letter_ttha telugu_vowel_sign_ii
+116      <>  telugu_letter_sha telugu_vowel_sign_i
+117      <>  telugu_letter_ta  telugu_vowel_sign_i
+118      <>  telugu_letter_kha telugu_vowel_sign_ii
+119      <>  telugu_letter_ga  telugu_vowel_sign_ii
+120      <>  telugu_letter_na  telugu_vowel_sign_i
+121      <>  telugu_letter_ga  telugu_vowel_sign_i
+122      <>  telugu_letter_ca  telugu_vowel_sign_i
+122 143  <>  telugu_letter_cha telugu_vowel_sign_i
+
+; Complex or non-standard letters:
+103 176 <> telugu_letter_ma telugu_vowel_sign_ii ; mii
+113 176 <> telugu_letter_ma telugu_vowel_sign_i  ; mi
+
+; brute force conversion fixes for all the wierd and wonderful combinations: gh jh m y h
+
+132 143 146 176     <> telugu_letter_gha
+132 143 146 175     <> telugu_letter_gha telugu_vowel_sign_aa
+132 143 141 176     <> telugu_letter_gha telugu_vowel_sign_i
+132 143 153 176     <> telugu_letter_gha telugu_vowel_sign_ii
+132 143 146 242     <> telugu_letter_gha telugu_vowel_sign_u
+132 143 146 252     <> telugu_letter_gha telugu_vowel_sign_uu
+;                   <> telugu_letter_gha telugu_vowel_sign_vocalic_r
+;                   <> telugu_letter_gha telugu_vowel_sign_vocalic_rr
+179 132 143 176     <> telugu_letter_gha telugu_vowel_sign_e
+192 132 143 176     <> telugu_letter_gha telugu_vowel_sign_ee
+;179 132 143 176 216 <> telugu_letter_gha telugu_vowel_sign_ai
+132 143 179 176 216 <> telugu_letter_gha telugu_vowel_sign_ai  ; because the e part of the ai matra got moved to after the cons and low-dot, we have to re-arrange the pieces here!
+132 143 146 176     <> telugu_letter_gha telugu_vowel_sign_o
+132 143 146 176 203 <> telugu_letter_gha telugu_vowel_sign_oo
+;                   <> telugu_letter_gha telugu_vowel_sign_au
+132 143 152 176     <> telugu_letter_gha telugu_sign_virama
+
+;               <> telugu_letter_jha
+;               <> telugu_letter_jha telugu_vowel_sign_aa
+105 173         <> telugu_letter_jha telugu_vowel_sign_i
+115 173         <> telugu_letter_jha telugu_vowel_sign_ii
+;               <> telugu_letter_jha telugu_vowel_sign_u
+;               <> telugu_letter_jha telugu_vowel_sign_uu
+;               <> telugu_letter_jha telugu_vowel_sign_vocalic_r
+;               <> telugu_letter_jha telugu_vowel_sign_vocalic_rr
+126 179 173     <> telugu_letter_jha telugu_vowel_sign_e
+126 192 173     <> telugu_letter_jha telugu_vowel_sign_ee
+126 179 173 216 <> telugu_letter_jha telugu_vowel_sign_ai
+126 179 173 176 <> telugu_letter_jha telugu_vowel_sign_o
+126 179 173 140 <> telugu_letter_jha telugu_vowel_sign_oo
+;               <> telugu_letter_jha telugu_vowel_sign_au
+126 152 173     <> telugu_letter_jha telugu_sign_virama
+
+;               <> telugu_letter_ma
+ 61 175         <> telugu_letter_ma telugu_vowel_sign_aa
+;               <> telugu_letter_ma telugu_vowel_sign_i
+;               <> telugu_letter_ma telugu_vowel_sign_ii
+;               <> telugu_letter_ma telugu_vowel_sign_u
+ 61 252         <> telugu_letter_ma telugu_vowel_sign_uu
+;               <> telugu_letter_ma telugu_vowel_sign_vocalic_r
+;               <> telugu_letter_ma telugu_vowel_sign_vocalic_rr
+ 34 179 176     <> telugu_letter_ma telugu_vowel_sign_e
+ 34 192 176     <> telugu_letter_ma telugu_vowel_sign_ee
+ 34 179 176 216 <> telugu_letter_ma telugu_vowel_sign_ai
+ 34 179 242     <> telugu_letter_ma telugu_vowel_sign_o
+ 34 179 175     <> telugu_letter_ma telugu_vowel_sign_oo
+;               <> telugu_letter_ma telugu_vowel_sign_au
+ 34 152 176     <> telugu_letter_ma telugu_sign_virama
+
+; I'm not sure WHAT is going on here, but 32 seems to work instead of 134 (is this a codepage thing?)
+; *** WHY does this work at all? decimal 32 = SPACE for goodness sake! ***
+;32 146 176     <> telugu_letter_ya
+134 146 176     <> telugu_letter_ya
+;32 146 175     <> telugu_letter_ya telugu_vowel_sign_aa
+134 146 175     <> telugu_letter_ya telugu_vowel_sign_aa
+126 242         <> telugu_letter_ya telugu_vowel_sign_i
+126 252         <> telugu_letter_ya telugu_vowel_sign_ii
+;32 146 242     <> telugu_letter_ya telugu_vowel_sign_u
+134 146 242     <> telugu_letter_ya telugu_vowel_sign_u
+;32 146 252     <> telugu_letter_ya telugu_vowel_sign_uu
+134 146 252     <> telugu_letter_ya telugu_vowel_sign_uu
+;               <> telugu_letter_ya telugu_vowel_sign_vocalic_r
+;               <> telugu_letter_ya telugu_vowel_sign_vocalic_rr
+;32 179 176     <> telugu_letter_ya telugu_vowel_sign_e
+134 179 176     <> telugu_letter_ya telugu_vowel_sign_e
+;32 192 176     <> telugu_letter_ya telugu_vowel_sign_ee
+134 192 176     <> telugu_letter_ya telugu_vowel_sign_ee
+;32 179 216 176 <> telugu_letter_ya telugu_vowel_sign_ai
+134 179 216 176 <> telugu_letter_ya telugu_vowel_sign_ai
+;32 179 242     <> telugu_letter_ya telugu_vowel_sign_o
+134 179 242     <> telugu_letter_ya telugu_vowel_sign_o
+;32 179 175     <> telugu_letter_ya telugu_vowel_sign_oo
+134 179 175     <> telugu_letter_ya telugu_vowel_sign_oo
+;               <> telugu_letter_ya telugu_vowel_sign_au
+;32 120 176     <> telugu_letter_ya telugu_sign_virama
+134 152 176     <> telugu_letter_ya telugu_sign_virama
+
+130 146 140     <> telugu_letter_ha
+130 146 240     <> telugu_letter_ha telugu_vowel_sign_aa
+130 141 140     <> telugu_letter_ha telugu_vowel_sign_i
+130 153 140     <> telugu_letter_ha telugu_vowel_sign_ii
+130 146  34     <> telugu_letter_ha telugu_vowel_sign_u    ; why is this one needed (is it a codepage thing again)?
+130 146 149     <> telugu_letter_ha telugu_vowel_sign_u
+130 146 250     <> telugu_letter_ha telugu_vowel_sign_uu
+;               <> telugu_letter_ha telugu_vowel_sign_vocalic_r
+;               <> telugu_letter_ha telugu_vowel_sign_vocalic_rr
+179 130 140     <> telugu_letter_ha telugu_vowel_sign_e
+192 130 140     <> telugu_letter_ha telugu_vowel_sign_ee
+179 130 216 140  <> telugu_letter_ha telugu_vowel_sign_ai
+130 179 216 140  <> telugu_letter_ha telugu_vowel_sign_ai
+;               <> telugu_letter_ha telugu_vowel_sign_o
+;               <> telugu_letter_ha telugu_vowel_sign_oo
+;               <> telugu_letter_ha telugu_vowel_sign_au
+130 152 140     <> telugu_letter_ha telugu_sign_virama
+
+
+130 146 140     <> telugu_letter_ha
+130 146 240     <> telugu_letter_ha telugu_vowel_sign_aa
+130 141 140     <> telugu_letter_ha telugu_vowel_sign_i
+130 153 140     <> telugu_letter_ha telugu_vowel_sign_ii
+130 146  34     <> telugu_letter_ha telugu_vowel_sign_u    ; why is this one needed (is it a codepage thing again)?
+130 146 149     <> telugu_letter_ha telugu_vowel_sign_u
+130 146 250     <> telugu_letter_ha telugu_vowel_sign_uu
+;               <> telugu_letter_ha telugu_vowel_sign_vocalic_r
+;               <> telugu_letter_ha telugu_vowel_sign_vocalic_rr
+179 130 140     <> telugu_letter_ha telugu_vowel_sign_e
+192 130 140     <> telugu_letter_ha telugu_vowel_sign_ee
+179 130 216 140  <> telugu_letter_ha telugu_vowel_sign_ai
+;               <> telugu_letter_ha telugu_vowel_sign_o
+;               <> telugu_letter_ha telugu_vowel_sign_oo
+;               <> telugu_letter_ha telugu_vowel_sign_au
+130 152 140     <> telugu_letter_ha telugu_sign_virama
+
+
+
+UniClass [matraVowels] = ( telugu_vowel_sign_aa telugu_vowel_sign_i telugu_vowel_sign_ii \
+						   telugu_vowel_sign_u telugu_vowel_sign_uu telugu_vowel_sign_e \
+						   telugu_vowel_sign_ee telugu_vowel_sign_ai telugu_vowel_sign_o \
+						   telugu_vowel_sign_oo telugu_vowel_sign_au telugu_sign_anusvara)
+
+72      146 <> telugu_letter_ka / _^ [matraVowels]
+89      146 <> telugu_letter_kha / _^ [matraVowels]
+81      146 <> telugu_letter_ga / _^ [matraVowels]
+30  143 146 <> telugu_letter_gha / _^ [matraVowels]
+86      146 <> telugu_letter_nga / _^ [matraVowels]
+75      146 <> telugu_letter_ca / _^ [matraVowels]
+75  143 146 <> telugu_letter_cha / _^ [matraVowels]
+42      146 <> telugu_letter_ja / _^ [matraVowels]
+91      146 <> telugu_letter_ja / _^ [matraVowels]
+126 146 173 <> telugu_letter_jha / _^ [matraVowels]
+38      146 <> telugu_letter_nya / _^ [matraVowels]
+62      146 <> telugu_letter_tta / _^ [matraVowels]
+79  148 146 <> telugu_letter_ttha / _^ [matraVowels]
+126 148 146 <> telugu_letter_ttha / _^ [matraVowels]
+95      146 <> telugu_letter_dda / _^ [matraVowels]
+95  143 146 <> telugu_letter_ddha / _^ [matraVowels]
+125     146 <> telugu_letter_nna / _^ [matraVowels]
+96      146 <> telugu_letter_ta / _^ [matraVowels]
+94  138 146 <> telugu_letter_tha / _^ [matraVowels]
+94      146 <> telugu_letter_da / _^ [matraVowels]
+94  143 146 <> telugu_letter_dha / _^ [matraVowels]
+60      146 <> telugu_letter_na / _^ [matraVowels]
+
+132     146 <> telugu_letter_pa / _^ [matraVowels]
+132 143 146 <> telugu_letter_pha / _^ [matraVowels]
+124     146 <> telugu_letter_ba / _^ [matraVowels]
+124 143 146 <> telugu_letter_bha / _^ [matraVowels]
+61  181 146 <> telugu_letter_ma / _^ [matraVowels]
+134 146 176 146 <> telugu_letter_ya / _^ [matraVowels]
+126     146 <> telugu_letter_ra / _^ [matraVowels]        ; check that this is the right one (may need to use 126 instead)
+142     146 <> telugu_letter_rra / _^ [matraVowels]
+129     146 <> telugu_letter_la / _^ [matraVowels]
+136     146 <> telugu_letter_lla / _^ [matraVowels]
+
+34      146 <> telugu_letter_va / _^ [matraVowels]
+61      146 <> telugu_letter_va / _^ [matraVowels]
+137     146 <> telugu_letter_sha / _^ [matraVowels]
+43      146 <> telugu_letter_ssa / _^ [matraVowels] ;
+145     146 <> telugu_letter_ssa / _^ [matraVowels] ;
+139     146 <> telugu_letter_sa / _^ [matraVowels]
+130 140 146 <> telugu_letter_ha / _^ [matraVowels]
+
+; =================================================================
+
+72      <> telugu_letter_ka
+89      <> telugu_letter_kha
+81      <> telugu_letter_ga
+30  143 <> telugu_letter_gha
+86      <> telugu_letter_nga
+75      <> telugu_letter_ca
+75  143 <> telugu_letter_cha
+42      <> telugu_letter_ja  ; which one of these is the right one for 'ja'?
+91      <> telugu_letter_ja  ; which one of these is the right one for 'ja'?
+;       <> telugu_letter_jha
+38      <> telugu_letter_nya
+62      <> telugu_letter_tta
+79  148 <> telugu_letter_ttha
+126 148 <> telugu_letter_ttha
+95      <> telugu_letter_dda
+95  143 <> telugu_letter_ddha
+125     <> telugu_letter_nna
+96      <> telugu_letter_ta
+94  148 <> telugu_letter_tha
+94      <> telugu_letter_da
+94  143 <> telugu_letter_dha
+35      <> telugu_letter_na
+60      <> telugu_letter_na
+
+132     <> telugu_letter_pa
+132 143 <> telugu_letter_pha
+124     <> telugu_letter_ba
+124 143 <> telugu_letter_bha
+ 77 140 <> telugu_letter_bha telugu_vowel_sign_aa
+61  181 <> telugu_letter_ma
+134 146 176  <> telugu_letter_ya
+126     <> telugu_letter_ra
+142     <> telugu_letter_rra
+129     <> telugu_letter_la
+136     <> telugu_letter_lla
+
+34      <> telugu_letter_va
+61      <> telugu_letter_va
+137     <> telugu_letter_sha
+43      <> telugu_letter_ssa ;
+145     <> telugu_letter_ssa ;
+139     <> telugu_letter_sa
+130 140 <> telugu_letter_ha
+
+
+79       <>  telugu_sign_anusvara
+74       <>  telugu_letter_a
+80       <>  telugu_letter_aa
+87       <>  telugu_letter_i
+68       <>  telugu_letter_ii
+76       <>  telugu_letter_u
+84       <>  telugu_letter_uu
+124 76 76 <>  telugu_letter_vocalic_r
+;???     <>  telugu_letter_vocalic_l  ; doesn't seem to be in the Anupam font
+90       <>  telugu_letter_e
+85       <>  telugu_letter_ee
+83       <>  telugu_letter_ai
+88       <>  telugu_letter_o
+70       <>  telugu_letter_oo
+66       <>  telugu_letter_au
+
+146       >
+152      <>  telugu_sign_virama
+140      <>  telugu_vowel_sign_aa
+141      <>  telugu_vowel_sign_i
+153      <>  telugu_vowel_sign_ii
+176      <>  telugu_vowel_sign_u
+244      <>  telugu_vowel_sign_u   ; alternate low-u form
+175      <>  telugu_vowel_sign_uu
+238      <>  telugu_vowel_sign_uu  ; low-uu form
+36       <>  telugu_vowel_sign_vocalic_r
+36  140  <>  telugu_vowel_sign_vocalic_rr
+179      <>  telugu_vowel_sign_e
+192      <>  telugu_vowel_sign_ee
+179 216  <>  telugu_vowel_sign_ai
+184      <>  telugu_vowel_sign_o
+203      <>  telugu_vowel_sign_oo
+186      <>  telugu_vowel_sign_au
+146 79   <>  telugu_sign_anusvara ; should this be 79 or 126 ? do I need the 146 as well or not ?
+
+; sub-forms of consonants
+
+93       <>  telugu_sign_virama telugu_letter_rra
+59       <>  telugu_sign_virama telugu_letter_ssa telugu_sign_virama telugu_letter_ma
+
+; 67 - what to do with this one?
+147      <>  telugu_sign_virama telugu_letter_tta
+154      <>  telugu_sign_virama telugu_letter_kha
+156      <>  telugu_sign_virama telugu_letter_dha
+158      <>  telugu_sign_virama telugu_letter_sa
+162      <>  telugu_sign_virama telugu_letter_ra
+164      <>  telugu_sign_virama telugu_letter_lla
+187      <>  telugu_sign_virama telugu_letter_ttha
+188      <>  telugu_sign_virama telugu_letter_ya
+190      <>  telugu_sign_virama telugu_letter_ga
+193      <>  telugu_sign_virama telugu_letter_la
+194      <>  telugu_sign_virama telugu_letter_ssa
+196      <>  telugu_sign_virama telugu_letter_ba
+196 157  <>  telugu_sign_virama telugu_letter_bha
+197      <>  telugu_sign_virama telugu_letter_sha
+198      <>  telugu_sign_virama telugu_letter_ssa
+201      <>  telugu_sign_virama telugu_letter_gha
+214      <>  telugu_sign_virama telugu_letter_tha
+219      <>  telugu_sign_virama telugu_letter_dda
+221      <>  telugu_sign_virama telugu_letter_ha
+222      <>  telugu_sign_virama telugu_letter_va
+223      <>  telugu_sign_virama telugu_letter_na
+224      <>  telugu_sign_virama telugu_letter_ma
+; 225    <>
+226      <>  telugu_sign_virama telugu_letter_nna
+227      <>  telugu_sign_virama telugu_letter_ra
+230      <>  telugu_sign_virama telugu_letter_pa
+230 157  <>  telugu_sign_virama telugu_letter_pha
+235      <>  telugu_sign_virama telugu_letter_ta
+
+237      <>  telugu_sign_virama telugu_letter_da
+243      <>  telugu_sign_virama telugu_letter_ca
+248      <>  telugu_sign_virama telugu_letter_ka
+251      <>  telugu_sign_virama telugu_letter_ja
+253      <>  telugu_sign_virama telugu_letter_nya
+
+pass(Unicode)
+
+; Shift the half-consonants closer to the root Consonant (ie. swap places with dependent vowel)
+UniClass [vowelMatras] = ( telugu_vowel_sign_aa telugu_vowel_sign_i telugu_vowel_sign_ii \
+						   telugu_vowel_sign_u telugu_vowel_sign_uu telugu_vowel_sign_e \
+						   telugu_vowel_sign_ee telugu_vowel_sign_ai telugu_vowel_sign_o \
+						   telugu_vowel_sign_oo telugu_vowel_sign_au telugu_sign_anusvara)
+UniClass [virama] = (telugu_sign_virama)
+UniClass [viramaCons] = (telugu_letter_rra telugu_letter_tta telugu_letter_kha telugu_letter_dha \
+						 telugu_letter_sa telugu_letter_lla telugu_letter_ttha \
+						 telugu_letter_ya telugu_letter_ra telugu_letter_ga telugu_letter_la telugu_letter_ssa \
+						 telugu_letter_ba telugu_letter_bha telugu_letter_sha telugu_letter_sha \
+						 telugu_letter_gha telugu_letter_tha telugu_letter_dda telugu_letter_ha \
+						 telugu_letter_va telugu_letter_na telugu_letter_ma telugu_letter_nna \
+						 telugu_letter_ra telugu_letter_pa telugu_letter_pha telugu_letter_ta telugu_letter_da \
+						 telugu_letter_ca telugu_letter_ka telugu_letter_ja telugu_letter_nya)
+
+[vowelMatras]=VM [virama]=V [viramaCons]=VC <> @V @VC @VM
+[virama]=V1 [virama]=V2 [viramaCons]=VC <> @V1 @VC @V2
+
+; Also move conjunt ra to attach to the following consonant
+UniClass [allCons] = (telugu_letter_ka telugu_letter_kha telugu_letter_ga telugu_letter_gha \
+					  telugu_letter_nga telugu_letter_ca telugu_letter_cha telugu_letter_ja \
+					  telugu_letter_jha telugu_letter_nya telugu_letter_tta telugu_letter_ttha \
+					  telugu_letter_dda telugu_letter_ddha telugu_letter_nna telugu_letter_ta \
+					  telugu_letter_tha telugu_letter_da telugu_letter_dha telugu_letter_na \
+					  telugu_letter_pa telugu_letter_pha telugu_letter_ba telugu_letter_bha \
+					  telugu_letter_ma telugu_letter_ya telugu_letter_ra telugu_letter_rra \
+					  telugu_letter_la telugu_letter_lla telugu_letter_va telugu_letter_sha \
+					  telugu_letter_ssa telugu_letter_sa telugu_letter_ha)
+
+UniClass [letterRa] = (telugu_letter_ra)
+UniClass [sunna] = (telugu_sign_anusvara telugu_sign_candrabindu telugu_sign_visarga)
+
+[sunna]?=OTH [virama]=V [letterRa]=RA [allCons]=CONS <> @OTH @CONS @V @RA

@@ -1,0 +1,1102 @@
+﻿"DeployProject"
+{
+"VSVersion" = "3:800"
+"ProjectType" = "8:{06A35CCD-C46D-44D5-987B-CF40FF872267}"
+"IsWebType" = "8:FALSE"
+"ProjectName" = "8:SCOffice10MM"
+"LanguageId" = "3:1033"
+"CodePage" = "3:1252"
+"UILanguageId" = "3:1033"
+"SccProjectName" = "8:"
+"SccLocalPath" = "8:"
+"SccAuxPath" = "8:"
+"SccProvider" = "8:"
+	"Hierarchy"
+	{
+		"Entry"
+		{
+		"MsmKey" = "8:_03436B0521A049DAA319EC20A10191CD"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_0827F07959C54866B7D305D6AF8697CD"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_0DF2F3D17545B38F84B3C746A7CF3576"
+		"OwnerKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_0DF2F3D17545B38F84B3C746A7CF3576"
+		"OwnerKey" = "8:_1020D75A362DCC8603A929BC60B76EB8"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_1020D75A362DCC8603A929BC60B76EB8"
+		"OwnerKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_63A7E69F59BDF9FCEBE48CA13D5D9827"
+		"OwnerKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_8BA75A269D187FB4CC68EEE0B58B8A57"
+		"OwnerKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_8BA75A269D187FB4CC68EEE0B58B8A57"
+		"OwnerKey" = "8:_C1975A3662C700DE919F0628BECB1793"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_8CA793FF13049D35A330F5D485DDDEA1"
+		"OwnerKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_A45BE89587A8491395B638BCD6F24B68"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_C1975A3662C700DE919F0628BECB1793"
+		"OwnerKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"OwnerKey" = "8:_UNDEFINED"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_E60CF2C74E193ABDEB5FE2A808B40250"
+		"OwnerKey" = "8:_8BA75A269D187FB4CC68EEE0B58B8A57"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_E852E2C695AE45ABCCA65B6C0BB6D31D"
+		"OwnerKey" = "8:_8CA793FF13049D35A330F5D485DDDEA1"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_E852E2C695AE45ABCCA65B6C0BB6D31D"
+		"OwnerKey" = "8:_63A7E69F59BDF9FCEBE48CA13D5D9827"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_E852E2C695AE45ABCCA65B6C0BB6D31D"
+		"OwnerKey" = "8:_ED6D74E4B5A6DEA03BB5A48C3A1CC3F0"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_E852E2C695AE45ABCCA65B6C0BB6D31D"
+		"OwnerKey" = "8:_1020D75A362DCC8603A929BC60B76EB8"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_E852E2C695AE45ABCCA65B6C0BB6D31D"
+		"OwnerKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_ED6D74E4B5A6DEA03BB5A48C3A1CC3F0"
+		"OwnerKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_F5826299C822B5080B6A94DE37A97095"
+		"OwnerKey" = "8:_C1975A3662C700DE919F0628BECB1793"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_ED6D74E4B5A6DEA03BB5A48C3A1CC3F0"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_E852E2C695AE45ABCCA65B6C0BB6D31D"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_C1975A3662C700DE919F0628BECB1793"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_8BA75A269D187FB4CC68EEE0B58B8A57"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_A45BE89587A8491395B638BCD6F24B68"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_8CA793FF13049D35A330F5D485DDDEA1"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_63A7E69F59BDF9FCEBE48CA13D5D9827"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_1020D75A362DCC8603A929BC60B76EB8"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+		"Entry"
+		{
+		"MsmKey" = "8:_UNDEFINED"
+		"OwnerKey" = "8:_0DF2F3D17545B38F84B3C746A7CF3576"
+		"MsmSig" = "8:_UNDEFINED"
+		}
+	}
+	"Configurations"
+	{
+		"Debug"
+		{
+		"DisplayName" = "8:Debug"
+		"IsDebugOnly" = "11:TRUE"
+		"IsReleaseOnly" = "11:FALSE"
+		"OutputFilename" = "8:Debug\\SCOffice10MM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+		"Release"
+		{
+		"DisplayName" = "8:Release"
+		"IsDebugOnly" = "11:FALSE"
+		"IsReleaseOnly" = "11:TRUE"
+		"OutputFilename" = "8:..\\..\\..\\..\\..\\Installer\\ExternalEncodingConverters\\SCOffice10MM.msm"
+		"PackageFilesAs" = "3:2"
+		"PackageFileSize" = "3:-2147483648"
+		"CabType" = "3:1"
+		"Compression" = "3:2"
+		"SignOutput" = "11:FALSE"
+		"CertificateFile" = "8:"
+		"PrivateKeyFile" = "8:"
+		"TimeStampServer" = "8:"
+		"InstallerBootstrapper" = "3:1"
+			"BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+			{
+			"Enabled" = "11:FALSE"
+			"PromptEnabled" = "11:TRUE"
+			"PrerequisitesLocation" = "2:1"
+			"Url" = "8:"
+			"ComponentsUrl" = "8:"
+				"Items"
+				{
+				}
+			}
+		}
+	}
+	"Deployable"
+	{
+		"CustomAction"
+		{
+			"{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_3E7371254AAB4D6F92A900BE9A777C15"
+			{
+			"Name" = "8:SILConvertersOffice10.dll"
+			"Condition" = "8:"
+			"Object" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+			"FileType" = "3:1"
+			"InstallAction" = "3:3"
+			"Arguments" = "8:"
+			"EntryPoint" = "8:Rollback"
+			"Sequence" = "3:1"
+			"Identifier" = "8:_CE882923_A858_4A6D_BE0F_C0FC9B008F79"
+			"InstallerClass" = "11:TRUE"
+			"CustomActionData" = "8:"
+			}
+			"{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_D522AB4A3EC14945A09881667189433A"
+			{
+			"Name" = "8:SILConvertersOffice10.dll"
+			"Condition" = "8:"
+			"Object" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+			"FileType" = "3:1"
+			"InstallAction" = "3:1"
+			"Arguments" = "8:"
+			"EntryPoint" = "8:Install"
+			"Sequence" = "3:1"
+			"Identifier" = "8:_B1884CA9_6D33_4CF4_AA9C_DADC363AFAB5"
+			"InstallerClass" = "11:TRUE"
+			"CustomActionData" = "8:"
+			}
+			"{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_D548C5162424489F88D1D997C96F00AA"
+			{
+			"Name" = "8:SILConvertersOffice10.dll"
+			"Condition" = "8:"
+			"Object" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+			"FileType" = "3:1"
+			"InstallAction" = "3:4"
+			"Arguments" = "8:"
+			"EntryPoint" = "8:Uninstall"
+			"Sequence" = "3:1"
+			"Identifier" = "8:_1D6A9D0A_E53A_4404_BDB4_AB248D0F7CF7"
+			"InstallerClass" = "11:TRUE"
+			"CustomActionData" = "8:"
+			}
+			"{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_E06754132B344817BD42582E874F6594"
+			{
+			"Name" = "8:SILConvertersOffice10.dll"
+			"Condition" = "8:"
+			"Object" = "8:_E0D9D53777C5410A8F8456915C9438F9"
+			"FileType" = "3:1"
+			"InstallAction" = "3:2"
+			"Arguments" = "8:"
+			"EntryPoint" = "8:Commit"
+			"Sequence" = "3:1"
+			"Identifier" = "8:_9D294DDE_425B_4F0B_B41B_2490668C0870"
+			"InstallerClass" = "11:TRUE"
+			"CustomActionData" = "8:"
+			}
+		}
+		"DefaultFeature"
+		{
+		"Name" = "8:DefaultFeature"
+		"Title" = "8:"
+		"Description" = "8:"
+		}
+		"File"
+		{
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_03436B0521A049DAA319EC20A10191CD"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SILConvertersOffice10Shim.dll"
+			"TargetName" = "8:SILConvertersOffice10Shim.dll"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0827F07959C54866B7D305D6AF8697CD"
+			{
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SILConvertersOffice10.tlb"
+			"TargetName" = "8:SILConvertersOffice10.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0DF2F3D17545B38F84B3C746A7CF3576"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:Microsoft.Office.Interop.Access.Dao, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_0DF2F3D17545B38F84B3C746A7CF3576"
+					{
+					"Name" = "8:Microsoft.Office.Interop.Access.Dao.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:Microsoft.Office.Interop.Access.Dao.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1020D75A362DCC8603A929BC60B76EB8"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:Microsoft.Office.Interop.Access, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_1020D75A362DCC8603A929BC60B76EB8"
+					{
+					"Name" = "8:Microsoft.Office.Interop.Access.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:Microsoft.Office.Interop.Access.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_63A7E69F59BDF9FCEBE48CA13D5D9827"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:Microsoft.Office.Interop.Publisher, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_63A7E69F59BDF9FCEBE48CA13D5D9827"
+					{
+					"Name" = "8:Microsoft.Office.Interop.Publisher.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:Microsoft.Office.Interop.Publisher.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8BA75A269D187FB4CC68EEE0B58B8A57"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:ECInterfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_8BA75A269D187FB4CC68EEE0B58B8A57"
+					{
+					"Name" = "8:ECInterfaces.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:ECInterfaces.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8CA793FF13049D35A330F5D485DDDEA1"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_8CA793FF13049D35A330F5D485DDDEA1"
+					{
+					"Name" = "8:Microsoft.Office.Interop.Word.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:Microsoft.Office.Interop.Word.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A45BE89587A8491395B638BCD6F24B68"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:Extensibility, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+				"ScatterAssemblies"
+				{
+					"_A45BE89587A8491395B638BCD6F24B68"
+					{
+					"Name" = "8:extensibility.dll"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:extensibility.dll"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C1975A3662C700DE919F0628BECB1793"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_C1975A3662C700DE919F0628BECB1793"
+					{
+					"Name" = "8:SilEncConverters40.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:SilEncConverters40.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E0D9D53777C5410A8F8456915C9438F9"
+			{
+			"AssemblyRegister" = "3:2"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:SILConvertersOffice10, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86"
+				"ScatterAssemblies"
+				{
+					"_E0D9D53777C5410A8F8456915C9438F9"
+					{
+					"Name" = "8:SILConvertersOffice10.dll"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:..\\..\\..\\..\\release\\SILConvertersOffice10.dll"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:FALSE"
+			"IsDependency" = "11:FALSE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E60CF2C74E193ABDEB5FE2A808B40250"
+			{
+			"SourcePath" = "8:ECInterfaces.tlb"
+			"TargetName" = "8:ECInterfaces.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E852E2C695AE45ABCCA65B6C0BB6D31D"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_E852E2C695AE45ABCCA65B6C0BB6D31D"
+					{
+					"Name" = "8:office.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:office.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_ED6D74E4B5A6DEA03BB5A48C3A1CC3F0"
+			{
+			"AssemblyRegister" = "3:1"
+			"AssemblyIsInGAC" = "11:FALSE"
+			"AssemblyAsmDisplayName" = "8:Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL"
+				"ScatterAssemblies"
+				{
+					"_ED6D74E4B5A6DEA03BB5A48C3A1CC3F0"
+					{
+					"Name" = "8:Microsoft.Office.Interop.Excel.DLL"
+					"Attributes" = "3:512"
+					}
+				}
+			"SourcePath" = "8:Microsoft.Office.Interop.Excel.DLL"
+			"TargetName" = "8:"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:1"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+			"{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F5826299C822B5080B6A94DE37A97095"
+			{
+			"SourcePath" = "8:SilEncConverters40.tlb"
+			"TargetName" = "8:SilEncConverters40.tlb"
+			"Tag" = "8:"
+			"Folder" = "8:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Vital" = "11:TRUE"
+			"ReadOnly" = "11:FALSE"
+			"Hidden" = "11:FALSE"
+			"System" = "11:FALSE"
+			"Permanent" = "11:FALSE"
+			"SharedLegacy" = "11:FALSE"
+			"PackageAs" = "3:1"
+			"Register" = "3:2"
+			"Exclude" = "11:TRUE"
+			"IsDependency" = "11:TRUE"
+			"IsolateTo" = "8:"
+			}
+		}
+		"FileType"
+		{
+		}
+		"Folder"
+		{
+			"{F4FE1E22-A4D2-4EE8-9259-29A1CE8BB2FF}:_FEDF9BC4750F4E59A4F2AFD97A880DE7"
+			{
+			"DefaultLocation" = "8:[ProgramFilesFolder]SIL\\SILConverters"
+			"DisplayName" = "8:Module Retargetable Folder"
+			"Description" = "8:"
+			"Name" = "8:Module Retargetable Folder"
+			"AlwaysCreate" = "11:FALSE"
+			"Condition" = "8:"
+			"Transitive" = "11:FALSE"
+			"Property" = "8:NEWRETARGETABLEPROPERTY1"
+				"Folders"
+				{
+				}
+			}
+		}
+		"Sequences"
+		{
+		}
+		"MergeModule"
+		{
+		}
+		"Module"
+		{
+		"ModuleSignature" = "8:SCOffice10MergeModule.685FD9415E504B7E9B1F6C05F70DDC58"
+		"Version" = "8:4.0.0.0"
+		"Title" = "8:SCOffice10MM"
+		"Subject" = "8:Setup for the SILConverters for Office 2010 application"
+		"Author" = "8:SIL"
+		"Keywords" = "8:SIL Encoding Converters; Microsoft Office"
+		"Comments" = "8:Merge Module for the SILConverters for Office 2010 application"
+		"SearchPath" = "8:"
+		"UseSystemSearchPath" = "11:TRUE"
+		"TargetPlatform" = "3:0"
+		"PreBuildEvent" = "8:"
+		"PostBuildEvent" = "8:cscript.exe \"$(ProjectDir)NoImpersonate.js\" \"$(BuiltOuputPath)\""
+		"RunPostBuildEvent" = "3:0"
+		}
+		"ProjectOutput"
+		{
+		}
+		"Registry"
+		{
+			"HKLM"
+			{
+				"Keys"
+				{
+					"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_71553CE5850A49758395CA685E9E7AC2"
+					{
+					"Name" = "8:Software"
+					"Condition" = "8:"
+					"AlwaysCreate" = "11:FALSE"
+					"DeleteAtUninstall" = "11:FALSE"
+					"Transitive" = "11:FALSE"
+						"Keys"
+						{
+							"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_39AC67D1F4D14B79BCFFED9A2962CCFB"
+							{
+							"Name" = "8:Microsoft"
+							"Condition" = "8:"
+							"AlwaysCreate" = "11:FALSE"
+							"DeleteAtUninstall" = "11:FALSE"
+							"Transitive" = "11:FALSE"
+								"Keys"
+								{
+									"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_799D652B46704A1F98A8E8659D09BBA8"
+									{
+									"Name" = "8:Office"
+									"Condition" = "8:"
+									"AlwaysCreate" = "11:FALSE"
+									"DeleteAtUninstall" = "11:FALSE"
+									"Transitive" = "11:FALSE"
+										"Keys"
+										{
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_3ADE3A876DDB4F009CA3BDD666528F9A"
+											{
+											"Name" = "8:Access"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_3985BEBC14E047A5BC4D693BF331F3BC"
+													{
+													"Name" = "8:Addins"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+															"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D1E12FA15AF54213BA4FE2A81361E5CA"
+															{
+															"Name" = "8:SILConvertersOffice10Shim.Connect"
+															"Condition" = "8:"
+															"AlwaysCreate" = "11:TRUE"
+															"DeleteAtUninstall" = "11:TRUE"
+															"Transitive" = "11:FALSE"
+																"Keys"
+																{
+																}
+																"Values"
+																{
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_7472AAC134884D55A2D89949026EC146"
+																	{
+																	"Name" = "8:FriendlyName"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:SILConverters for Microsoft Office 2010"
+																	}
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_9AE26BC0A83D4D9E91527101B8DA1C2F"
+																	{
+																	"Name" = "8:Description"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:Providing access to SILConverters from Office 2010 applications"
+																	}
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_A62EF46F68C84C70ABB16A55575C0159"
+																	{
+																	"Name" = "8:LoadBehavior"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:3"
+																	"Value" = "3:3"
+																	}
+																}
+															}
+														}
+														"Values"
+														{
+														}
+													}
+												}
+												"Values"
+												{
+												}
+											}
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_5041BE7387694BB9ACC542872A6BD0D3"
+											{
+											"Name" = "8:Word"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_20BBB828D3624499A8A734B6DE56A099"
+													{
+													"Name" = "8:Addins"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+															"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_B260B2D4CD994FDD99100088FF0F17FF"
+															{
+															"Name" = "8:SILConvertersOffice10Shim.Connect"
+															"Condition" = "8:"
+															"AlwaysCreate" = "11:TRUE"
+															"DeleteAtUninstall" = "11:TRUE"
+															"Transitive" = "11:FALSE"
+																"Keys"
+																{
+																}
+																"Values"
+																{
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_0FA46E0DBFF04A169B367A5C7271CF36"
+																	{
+																	"Name" = "8:FriendlyName"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:SILConverters for Microsoft Office 2010"
+																	}
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_5C20BFFAEC9A48B2B29715B63998E7C9"
+																	{
+																	"Name" = "8:Description"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:Providing access to SILConverters from Office 2010 applications"
+																	}
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_77DA09658E02403DAC30D44266BE5F35"
+																	{
+																	"Name" = "8:LoadBehavior"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:3"
+																	"Value" = "3:3"
+																	}
+																}
+															}
+														}
+														"Values"
+														{
+														}
+													}
+												}
+												"Values"
+												{
+												}
+											}
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_64192D9FD62F41AFAAACA0360F224E4A"
+											{
+											"Name" = "8:Excel"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_7D0C7BEF949B4914B6595351A6075DEF"
+													{
+													"Name" = "8:Addins"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+															"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_56B2050864874B22A26A4C347CE45004"
+															{
+															"Name" = "8:SILConvertersOffice10Shim.Connect"
+															"Condition" = "8:"
+															"AlwaysCreate" = "11:TRUE"
+															"DeleteAtUninstall" = "11:TRUE"
+															"Transitive" = "11:FALSE"
+																"Keys"
+																{
+																}
+																"Values"
+																{
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_59F8AA927D8244C9A6B5DC6C72A4F242"
+																	{
+																	"Name" = "8:FriendlyName"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:SILConverters for Microsoft Office 2010"
+																	}
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_A2A9746F6B774F148A4C45F02FF75BE6"
+																	{
+																	"Name" = "8:Description"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:Providing access to SILConverters from Office 2010 applications"
+																	}
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_CF976F1EDC074F158C375134A45EB94C"
+																	{
+																	"Name" = "8:LoadBehavior"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:3"
+																	"Value" = "3:3"
+																	}
+																}
+															}
+														}
+														"Values"
+														{
+														}
+													}
+												}
+												"Values"
+												{
+												}
+											}
+											"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_A1FCE6CD4F8F4D2197CC1F7508C90616"
+											{
+											"Name" = "8:Publisher"
+											"Condition" = "8:"
+											"AlwaysCreate" = "11:FALSE"
+											"DeleteAtUninstall" = "11:FALSE"
+											"Transitive" = "11:FALSE"
+												"Keys"
+												{
+													"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_D043790C13D8444ABC4690A11444F3E7"
+													{
+													"Name" = "8:Addins"
+													"Condition" = "8:"
+													"AlwaysCreate" = "11:FALSE"
+													"DeleteAtUninstall" = "11:FALSE"
+													"Transitive" = "11:FALSE"
+														"Keys"
+														{
+															"{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_F073FAB9B935467AB38000BF08941469"
+															{
+															"Name" = "8:SILConvertersOffice10Shim.Connect"
+															"Condition" = "8:"
+															"AlwaysCreate" = "11:TRUE"
+															"DeleteAtUninstall" = "11:TRUE"
+															"Transitive" = "11:FALSE"
+																"Keys"
+																{
+																}
+																"Values"
+																{
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_5EBA357C98F146EF90A331490C8ACF00"
+																	{
+																	"Name" = "8:FriendlyName"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:SILConverters for Microsoft Office 2010"
+																	}
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_BA3740DAD100410B95AAA9EF14584CF2"
+																	{
+																	"Name" = "8:Description"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:1"
+																	"Value" = "8:Providing access to SILConverters from Office 2010 applications"
+																	}
+																	"{ADCFDA98-8FDD-45E4-90BC-E3D20B029870}:_C1C30CC5A6FE49E6829FE057575A5006"
+																	{
+																	"Name" = "8:LoadBehavior"
+																	"Condition" = "8:"
+																	"Transitive" = "11:FALSE"
+																	"ValueTypes" = "3:3"
+																	"Value" = "3:3"
+																	}
+																}
+															}
+														}
+														"Values"
+														{
+														}
+													}
+												}
+												"Values"
+												{
+												}
+											}
+										}
+										"Values"
+										{
+										}
+									}
+								}
+								"Values"
+								{
+								}
+							}
+						}
+						"Values"
+						{
+						}
+					}
+				}
+			}
+			"HKCU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKCR"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKU"
+			{
+				"Keys"
+				{
+				}
+			}
+			"HKPU"
+			{
+				"Keys"
+				{
+				}
+			}
+		}
+		"Shortcut"
+		{
+		}
+	}
+}

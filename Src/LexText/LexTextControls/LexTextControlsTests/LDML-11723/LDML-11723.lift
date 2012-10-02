@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->
+<lift producer="SIL.FLEx 7.1.0.40765" version="0.13">
+<header>
+<ranges>
+<range id="dialect" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="etymology" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="grammatical-info" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="lexical-relation" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="note-type" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="paradigm" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="reversal-type" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="semantic-domain-ddp4" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="status" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="users" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="location" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<!-- The following ranges are produced by FieldWorks Language Explorer, and are not part of the LIFT standard. -->
+<range id="anthro-code" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="translation-type" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<!-- The parts of speech are duplicated in another range because derivational affixes require a "From" PartOfSpeech as well as a "To" PartOfSpeech. -->
+<range id="from-part-of-speech" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="morph-type" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="exception-feature" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="inflection-feature" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="inflection-feature-type" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="publishin" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+<range id="domain-type" href="file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LDML-11723/LDML-11723.lift-ranges"/>
+</ranges>
+<fields>
+<field tag="cv-pattern">
+<form lang="en"><text>This records the syllable pattern for a LexPronunciation in FieldWorks.</text></form>
+</field>
+<field tag="tone">
+<form lang="en"><text>This records the tone information for a LexPronunciation in FieldWorks.</text></form>
+</field>
+<field tag="comment">
+<form lang="en"><text>This records a comment (note) in a LexEtymology in FieldWorks.</text></form>
+</field>
+<field tag="import-residue">
+<form lang="en"><text>This records residue left over from importing a standard format file into FieldWorks (or LinguaLinks).</text></form>
+</field>
+<field tag="literal-meaning">
+<form lang="en"><text>This field is used to store a literal meaning of the entry.  Typically, this field is necessary only for a compound or an idiom where the meaning of the whole is different from the sum of its parts.</text></form>
+</field>
+<field tag="summary-definition">
+<form lang="en"><text>A summary definition (located at the entry level in the Entry pane) is a general definition summarizing all the senses of a primary entry. It has no theoretical value; its use is solely pragmatic.</text></form>
+</field>
+<field tag="scientific-name">
+<form lang="en"><text>This field stores the scientific name pertinent to the current sense.</text></form>
+</field>
+</fields>
+</header>
+<entry dateCreated="2011-08-02T13:06:10Z" dateModified="2011-08-02T13:23:54Z" id="Kalabaentry_a9628929-4561-4afc-b097-88c9bb6df5e9" guid="a9628929-4561-4afc-b097-88c9bb6df5e9">
+<lexical-unit>
+<form lang="x-kal"><text>Kalabaentry</text></form>
+</lexical-unit>
+<trait  name="morph-type" value="stem"/>
+<sense id="eae1c45d-bd73-4a53-a75a-033960132292">
+<gloss lang="en"><text>englishGloss</text></gloss>
+<definition>
+<form lang="en"><text>Definition with<span lang="x-kal"> Kalaba insterted</span> in it.</text></form>
+<form lang="x-kal"><text>Here is Kalaba in a definition <span lang="en">with English</span> in it.</text></form>
+<form lang="es"><text>Spanish in Definition</text></form>
+</definition>
+<trait  name="domain-type" value="Kalaba anatomy"/>
+<trait  name="domain-type" value="Kalabaphonetics"/>
+</sense>
+</entry>
+<entry dateCreated="2011-08-10T15:50:27Z" dateModified="2011-08-10T15:50:27Z" id="Kalaba_fa6a7bf7-1007-4e33-95b5-663335a12a98" guid="fa6a7bf7-1007-4e33-95b5-663335a12a98">
+<lexical-unit>
+<form lang="x-kal"><text>Kalaba</text></form>
+<form lang="qaa-fonipa-x-kal"><text>KalabaIPA</text></form>
+</lexical-unit>
+<trait  name="morph-type" value="stem"/>
+<sense id="a781e430-3595-4e4e-9f6e-4e97ae3011fc">
+<gloss lang="x-kal"><text>KalabaGloss</text></gloss>
+<gloss lang="en"><text>EnglishGLoss</text></gloss>
+<gloss lang="es"><text>SpanishGloss</text></gloss>
+  <definition>
+	<form lang="x-kal">
+	  <text>
+		Kalaba with <span lang="qaa-fonipa-x-kal">KalabaIPAspan</span> and <span lang="en">EnglishSpan</span> <span lang="es">SpanishSpan</span> insterted, oh ya and <span lang="qaa-fonipa-x-kal-emic">KalabaPhonemic</span> <span lang="Lomwe">Lomwe Span</span> <span lang="AveryLongWSName">AveryLongWSName span</span>  too.
+	  </text>
+	</form>
+  </definition>
+</sense>
+</entry>
+</lift>

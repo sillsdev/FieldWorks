@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<!--
+  Balloon help is the same as the accessible name of each toolbar icon.
+  So verifying the names (done below) is the same as checking balloon help.
+-->
+
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+  <!-- Check all menu items with hot keys -->
+  <glimpse select="//toolbar[@id='Format']/*" prop="name" on-fail="assert">
+   Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+  </glimpse>
+ </on-application>
+</accil>

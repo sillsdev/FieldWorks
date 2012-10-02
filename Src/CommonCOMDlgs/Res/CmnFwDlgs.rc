@@ -1,0 +1,300 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "OpenProjDlgRes.h"
+#include "AfExportRes.h"
+#include "LangProjPropDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+#include "TeStylesDlg.rc"
+#include "TeFmtGenDlg.rc"
+#include "..\..\AppCore\Res\AfStylesDlg.rc"
+#include "..\..\AppCore\Res\FmtGenDlg.rc"
+#include "..\..\AppCore\Res\FmtFntDlg.rc"
+#include "..\..\AppCore\Res\FmtParaDlg.rc"
+#include "..\..\AppCore\Res\FmtBulNumDlg.rc"
+#include "..\..\AppCore\Res\FmtBdrDlg.rc"
+#include "..\..\AppCore\Res\AfApp.rc"
+#include "..\..\AppCore\Res\AfProgressDlg.rc"
+#include "AfExport.rc"
+#include "RnAnthroList.rc"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// TYPELIB
+//
+
+1                       TYPELIB                 "..\\..\\output\\Common\\CmnFwDlgsTlb.tlb"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+	"OpenProjDlgRes.h\0"
+	"AfExportRes.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"#include ""TeStylesDlgRes.h""\r\n"
+	"#include ""TeFmtGenDlgRes.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfStylesDlgRes.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\FmtGenDlgRes.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\FmtFntDlgRes.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\FmtParaDlgRes.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\FmtBulNumDlgRes.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\FmtBdrDlgRes.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfProgressDlg.rc""\r\n""
+	"#include ""AfExport.rc""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+	//"#include ""..\\..\\appcore\\Res\\AfApp.rc""\r\n"
+	"#include ""..\\..\\Widgets\\Res\\NetworkTreeView.rc""\r\n"
+	"#include ""..\\..\\Generic\\Generic.rc""\r\n"
+	"#ifdef _WIN32\r\n"
+	"LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US\r\n"
+	"#pragma code_page(1252)\r\n"
+	"#endif //_WIN32\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+// It doesn't matter which toolbar we use (as long its id is kridTBarStd), we just need one to
+// initialize AfMenuMgr properly.
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+kridTBarStd           BITMAP  DISCARDABLE     "..\\..\\appcore\\Res\\ToolbarRecStandard.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+kridTBarStd TOOLBAR MOVEABLE PURE  16, 15
+BEGIN
+	BUTTON      kcidFileOpen
+	BUTTON      kcidFileSave
+	BUTTON      kcidFilePrint
+	SEPARATOR
+	BUTTON      kcidEditCut
+	BUTTON      kcidEditCopy
+	BUTTON      kcidEditPaste
+	SEPARATOR
+	BUTTON      kcidEditUndo
+	BUTTON      kcidEditRedo
+	SEPARATOR
+	BUTTON      kcidHelpWhatsThis
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridOpenProjDlg DIALOGEX 0, 0, 338, 160
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE |
+	WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Open Project"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "&Look in:",IDC_STATIC,8,8,110,9
+	CONTROL         "Tree",kctidOpenProjChooseComputer,"SysTreeView32",
+					TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT |
+					TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | WS_BORDER |
+					WS_TABSTOP,8,21,110,130
+	LTEXT           "&Choose a Project:",IDC_STATIC,122,8,130,9
+	CONTROL         "Tree",kctidOpenProjChooseProject,"SysTreeView32",
+					TVS_HASBUTTONS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS |
+					WS_BORDER | WS_TABSTOP,122,21,150,130
+	PUSHBUTTON      "Open",kctidOk,280,18,50,16
+	PUSHBUTTON      "Cancel",kctidCancel,280,36,50,16
+	PUSHBUTTON      "Help...",kctidHelp,280,54,50,16
+END
+
+kridOpenProjSubitemDlg DIALOGEX 0, 0, 428, 160
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE |
+	WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Open Subitem"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "&Look in:",IDC_STATIC,8,8,110,9
+	CONTROL         "Tree",kctidOpenProjChooseComputer,"SysTreeView32",
+					TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT |
+					TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | WS_BORDER |
+					WS_TABSTOP,8,21,110,130
+	LTEXT           "&Choose a Project:",IDC_STATIC,122,8,120,9
+	CONTROL         "Tree",kctidOpenProjChooseProject,"SysTreeView32",
+					TVS_HASBUTTONS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS |
+					WS_BORDER | WS_TABSTOP,122,21,120,130
+	LTEXT           "Choose a &Subitem:",kcidOpenProjChooseSubitemText,246,8,
+					120,9
+	CONTROL         "Tree",kctidOpenProjChooseSubitem,"SysTreeView32",
+					TVS_HASBUTTONS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS |
+					WS_BORDER | WS_TABSTOP,246,21,120,130
+	PUSHBUTTON      "Open",kctidOk,370,18,50,16
+	PUSHBUTTON      "Cancel",kctidCancel,370,36,50,16
+	PUSHBUTTON      "Help...",kctidHelp,370,54,50,16
+END
+
+kridOpenProjDeleteDlg DIALOGEX 0, 0, 320, 82
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE |
+	WS_CAPTION | WS_SYSMENU
+CAPTION "Remove Project Warning"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	ICON            "",kridOpenProjDeleteIcon,10,5,25,25
+	LTEXT           "You are about to remove the %<0>s Project from your computer.  This action cannot be undone.  We strongly recommend that you first backup this project (using File - Backup/Restore) before continuing.",
+					kcidOpenProjDeleteMsg,40,5,270,27
+	LTEXT           "If you are sure you want to remove the %<0>s Project from your computer, click Remove, otherwise click Cancel.",
+					kcidOpenProjConfirmMsg,40,35,270,18
+	PUSHBUTTON      "Remove",kctidOk,156,60,50,16
+	DEFPUSHBUTTON   "Cancel",kctidCancel,210,60,50,16
+	PUSHBUTTON      "Help...",kctidHelp,264,60,50,16
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AVI
+//
+
+kridOpenProjAviSearching AVI                     "../../AppCore/Res/Search.avi"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+kridOpenProjPopup MENU
+BEGIN
+	POPUP "ProjPopup"
+	BEGIN
+		MENUITEM "Remove this Project...",      kcidOpenProjDelete
+	END
+END
+
+kridOpenProjSubitemPopup MENU
+BEGIN
+	POPUP "ProjListPopup"
+	BEGIN
+		MENUITEM "Delete this Topics List...",  kcidCleDeleteList
+	END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+	kctidOpenProjChooseProject
+							"Shows FieldWorks projects available on the selected computer so you can choose one to open."
+	kctidOpenProjChooseComputer
+							"Displays an outline of connected computers so you can select one."
+	kstidOpenProjStatusSearching "Searching..."
+	kstidOpenProjServerNotRunningFmt "%<0>s has no projects."
+	kstidOpenProjNoItemsInTheList "There are no items to show in this list."
+	kstidCleNotDeleteList   "Cannot Delete"
+	kstidCleNotDeleteListMsg
+							"The list cannot be deleted because it is being used by the %<0>s custom field. \nYou need to delete the custom field before you can delete this list."
+END
+
+STRINGTABLE
+BEGIN
+	kstidOpenProjChooseSubitemText "Choose a &Topics List:"
+	kctidOpenProjChooseSubitem
+							"Displays the topics lists defined for the selected project so you can choose the one you want to open."
+	kstidOpenProjSubitemRemoveMsgTitle "Delete %<0>s Warning"
+END
+
+STRINGTABLE
+BEGIN
+	kstidOpenProjDeleteMsgFmt
+							"You are about to remove the %<0>s Project from your computer.  This action cannot be undone.  We strongly recommend that you first backup this project (using File - Backup/Restore) before continuing."
+	kstidOpenProjConfirmMsgFmt
+							"If you are sure you want to remove the %<0>s Project from your computer, click Remove, otherwise click Cancel."
+	kstidOpenProjRemoveMsgTitle "Remove Project Warning"
+	kstidOpenProjCannotRemove
+							"Cannot remove the database because it is currently in use."
+END
+
+STRINGTABLE
+BEGIN
+	kstidOpenProjSubitemCannotRemove
+							"Cannot delete the %<0>s because it is currently in use."
+	kstidOpenProjSubitemName "Topics List"
+	kstidOpenProjDefaultSubitemName "Subitem"
+	kstidOpenProjSubitemCaption "Open Topics List"
+	kstidOpenProjSubitemDeleteMsgFmt
+							"You are about to delete the %<0>s %<1>s from the %<2>s project.  This action cannot be undone."
+	kstidOpenProjSubitemConfirmMsgFmt
+							"If you are sure you want to delete the %<0>s %<1>s, click Delete, otherwise click Cancel."
+	kstidOpenProjSubitemNameSm "topics list"
+END
+
+STRINGTABLE
+BEGIN
+	kstidMergeWrtSys    "Merge language writing system %<0>s into %<1>s"
+	kstidLogMergeWrtSys "Changed Language Writing system from %<0>S to %<1>S in %<2>S (%<3>S)%n"
+	kstidLngPrjChgEncPhaseOne     "Phase One: update multilingual strings"
+	kstidLngPrjChgEncPhaseTwo     "Phase Two: update monolingual strings"
+	kstidLngPrjChgEncPhaseThree   "Phase Three: update style rules"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+//#include "..\..\appcore\Res\AfApp.rc"
+#include "..\..\Widgets\Res\NetworkTreeView.rc"
+#include "..\..\Generic\Generic.rc"
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

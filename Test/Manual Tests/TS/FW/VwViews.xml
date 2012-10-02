@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="vwviews" num="2.3.1" abbr="vws" file="FW\VwViews.xml">
+ <title tag="vwviews">View-Views Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The View-Views menu item brings up a list of the views defined in the application, for which the data can be displayed. This will typically include a data entry view, a browse view, and various other types of views, depending on the data. Individual applications will define these views, and users will be able to customize and add their own (e.g., an application may ship with one Data Entry view set to see all fields, and the user elect to may define a new Data Entry view that just shows a subset of fields.)</p>
+   <p>For an overview, see discussion at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-ListOfViews" type="module">FW View-Views</link>
+</p>
+   <p>(Dynamic menu simply means that the contents of the menu change to reflect the current state of the program, e.g. as more views are added to the Tools Options View tab, those new views should also appear in the View bar and in the View-Views cascading menu (making this menu a dynamic one).</p>
+  </introduction>
+
+ <case id="vwsBsc" num="0" order="any">
+  <title tag="vwsBsc">Basic Tests</title>
+  <context>
+<p>When the application is running</p>
+</context>
+
+  <step name="0.1" link="Bug">
+   Under the View menu select the Views item. Compare this list with the Views tab of the View Bar to the left side of the window.
+   <r>
+<ul>
+<li>Shows a list of all of the Views that have been defined via Tools-Options (Views Tab).</li>
+	<li>This list should match what is found in the Views tab of the View Bar.</li>
+</ul>
+</r>
+   <p name="bug">List does not appear</p>
+   <p name="bug">Incorrect list items</p>
+  </step>
+  <step name="0.2" link="Bug">
+   Select items from the list to check or uncheck them.
+   <r>
+<ul>
+<li>If an item is checked, the user's data is presented in that view.</li>
+	<li>Only one item can be checked at a time since the data can only be presented in one format at a time.</li>
+</ul>
+</r>
+   <p name="bug">View does not switch</p>
+  </step>
+  <step name="0.3" link="Bug">
+   Select Configure from the list.
+   <r>Brings up the Tools-Options dialog, displaying the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheViewstab" type="module">Views Tab</link>, so that Views can be configured.</r>
+   <p name="bug">Options dlg does not appear</p>
+   <p name="bug">Views tab not displayed on Options dlg</p>
+  </step>
+ </case>
+
+<update date="May-10-01" author="JanetW">Test converted to XML.</update>
+<update date="May-24-02" author="JoelC">Checked up to spec</update>
+
+</test>

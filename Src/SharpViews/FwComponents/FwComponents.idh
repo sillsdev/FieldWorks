@@ -1,0 +1,14 @@
+/*--------------------------------------------------------------------*//*:Ignore this sentence.
+Copyright (C) 1999, 2002 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: FwComponents.idh
+Responsibility: John Thomson
+Last reviewed:
+
+	Includes a subset of FieldWorks COM interfaces used in SharpViewsLight
+	This file will be processed by the MIDL tool to
+	produce the type library (FwComponentsTlb.tlb), C++ headers (FwComponentsTlb.h) and marshalling code.
+-------------------------------------------------------------------------------*//*:End Ignore*/

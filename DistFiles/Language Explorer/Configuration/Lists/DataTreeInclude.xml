@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+	<!--<include path="../CommonDataTreeInclude.xml"/>-->
+	<!--
+  ===========================================================
+  Commands
+  ===========================================================
+  -->
+	<commands>
+		<!--
+	CmDomainQ
+	-->
+		<command id="CmdDataTree-Insert-Question" label="Insert Question" message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="Questions" className="CmDomainQ"/>
+		</command>
+		<command id="CmdDataTree-Delete-Question" label="Delete Question" message="DataTreeDelete" icon="Delete">
+			<parameters field="Questions" className="CmDomainQ"/>
+		</command>
+		<!--
+	CmPossibility
+	-->
+		<command id="CmdDataTree-Insert-Possibility" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="SubPossibilities" className="CmPossibility"/>
+		</command>
+		<command id="CmdDataTree-Delete-Possibility" label="Delete subitem and its subitems" message="DataTreeDelete" icon="Delete">
+			<parameters field="SubPossibilities" className="CmPossibility"/>
+		</command>
+		<command id="CmdDataTree-Insert-CustomItem" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="SubPossibilities" className="CmCustomItem"/>
+		</command>
+		<command id="CmdDataTree-Delete-CustomItem" label="Delete subitem and its subitems" message="DataTreeDelete" icon="Delete">
+			<parameters field="SubPossibilities" className="CmCustomItem"/>
+		</command>
+		<command id="CmdDataTree-Insert-SemanticDomain" label="Insert subdomain" message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="SubPossibilities" className="CmSemanticDomain"/>
+		</command>
+		<command id="CmdDataTree-Insert-AnnotationDefn" label="Insert Annotation Definition" message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="SubPossibilities" className="CmAnnotationDefn"/>
+		</command>
+		<command id="CmdDataTree-Insert-MorphType" label="Insert Morpheme Type" message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="SubPossibilities" className="MoMorphType"/>
+		</command>
+		<command id="CmdDataTree-Insert-LexEntryType" label="Insert Subtype" message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="SubPossibilities" className="LexEntryType"/>
+		</command>
+		<command id="CmdDataTree-Insert-AnthroCategory" label="Insert subcategory" message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="SubPossibilities" className="CmAnthroItem"/>
+		</command>
+		<command id="CmdDataTree-Insert-Location" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
+			<parameters field="SubPossibilities" className="CmLocation"/>
+		</command>
+		<!-- Reversal POS -->
+		<command id="CmdDataTree-Insert-ReversalSubPOS" label="Insert Reversal Subcategory" message="DataTreeInsert">
+			<parameters field="SubPossibilities" className="PartOfSpeech"/>
+		</command>
+		<command id="CmdDataTree-Move-MoveReversalPOS" label="Move Category..." message="MoveReversalPOS">
+			<!--<parameters field="SubPossibilities" className="PartOfSpeech"/>-->
+		</command>
+		<command id="CmdDataTree-Promote-ProReversalSubPOS" label="Promote" message="PromoteReversalSubPOS" icon="MoveLeft">
+			<parameters field="SubPossibilities" className="PartOfSpeech"/>
+		</command>
+		<command id="CmdDataTree-Delete-ReversalSubPOS" label="Delete this Category and any Subcategories" message="DataTreeDelete" icon="Delete">
+			<parameters field="SubPossibilities" className="PartOfSpeech"/>
+		</command>
+		<command id="CmdDataTree-Merge-MergeReversalPOS" label="Merge Category into..." message="MergeReversalPOS">
+			<!--<parameters field="SubPossibilities" className="PartOfSpeech"/>-->
+		</command>
+	</commands>
+	<!--
+  ===========================================================
+  Context Menus
+  ===========================================================
+  -->
+	<contextMenus>
+		<menu id="mnuDataTree-InsertQuestion">
+			<item command="CmdDataTree-Insert-Question"/>
+		</menu>
+		<menu id="mnuDataTree-DeleteQuestion">
+			<item command="CmdDataTree-Delete-Question"/>
+		</menu>
+		<menu id="mnuDataTree-SubPossibilities">
+			<item command="CmdDataTree-Insert-Possibility"/>
+		</menu>
+		<menu id="mnuDataTree-SubSemanticDomain">
+			<item command="CmdDataTree-Insert-SemanticDomain"/>
+		</menu>
+		<menu id="mnuDataTree-SubCustomItem">
+			<item command="CmdDataTree-Insert-CustomItem"/>
+		</menu>
+		<menu id="mnuDataTree-SubAnnotationDefn">
+			<item command="CmdDataTree-Insert-AnnotationDefn"/>
+		</menu>
+		<menu id="mnuDataTree-SubMorphType">
+			<item command="CmdDataTree-Insert-MorphType"/>
+		</menu>
+		<menu id="mnuDataTree-SubComplexEntryType">
+			<item command="CmdDataTree-Insert-LexEntryType"/>
+		</menu>
+		<menu id="mnuDataTree-SubVariantEntryType">
+			<item command="CmdDataTree-Insert-LexEntryType"/>
+		</menu>
+		<menu id="mnuDataTree-SubAnthroCategory">
+			<item command="CmdDataTree-Insert-AnthroCategory"/>
+		</menu>
+		<menu id="mnuDataTree-DeletePossibility">
+			<item command="CmdDataTree-Delete-Possibility"/>
+		</menu>
+		<menu id="mnuDataTree-DeleteCustomItem">
+			<item command="CmdDataTree-Delete-CustomItem"/>
+		</menu>
+		<menu id="mnuDataTree-SubLocation">
+			<item command="CmdDataTree-Insert-Location"/>
+		</menu>
+		<menu id="mnuDataTree-MoveMainReversalPOS">
+			<item command="CmdDataTree-Move-MoveReversalPOS"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Merge-MergeReversalPOS"/>
+			<item command="CmdDataTree-Delete-ReversalSubPOS"/>
+		</menu>
+		<menu id="mnuDataTree-MoveReversalPOS">
+			<item command="CmdDataTree-Move-MoveReversalPOS"/>
+			<item command="CmdDataTree-Promote-ProReversalSubPOS"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Merge-MergeReversalPOS"/>
+			<item command="CmdDataTree-Delete-ReversalSubPOS"/>
+		</menu>
+	</contextMenus>
+</window>

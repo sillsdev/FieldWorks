@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>-->
+
+<accil on-fail="assert">
+
+	<!-- Close TE -->
+	<on-application gui="TE"  run="no" args="-db $projectName" close="yes" on-fail="skip"/>
+
+</accil>

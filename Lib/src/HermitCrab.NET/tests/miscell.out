@@ -1,0 +1,104 @@
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\miscell.in > ) )
+;A listing of top level commands to test the file MISCELL.ARI.  This file
+; is intended to be called by DOS redirection; remaining files will be called
+; by the command morpher_input_from_file.
+;Test multiple languages.
+;Check initial setting of *cur_lang*, should be '*unknown*':
+(message (
+ <hc6503 var_name '*cur_lang*' var_value *unknown* > ) )
+;Open a new language for testing purposes (msg 6510):
+(message (
+ <hc6510 lname Phonology Test Language > ) )
+;Don't let abort make us quit:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Create some sample data:
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Open a second language (msg 6510):
+(message (
+ <hc6510 lname NonEnglish > ) )
+;Don't let abort make us quit:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Some more sample data:
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Show the features, should see "nonengfeat":
+(pretty_print (
+ <hc6503 var_name '*pfeatures*' var_value (nonengfeat (+ - ) ) > ) )
+;Following test is commented out, because it aborts and causes the tester to
+; quit.  Note that the status of *quit_on_error* in some language SHOULD be
+; irrelevant if we (or someone else) accidently tries to re-open that
+; language, so it SHOULD abort.
+;Try opening a language that is already open (error msg 6045):
+;(open_language message Phonology Test Language)
+;Current language should still be "NonEnglish":
+(message (
+ <hc6503 var_name '*cur_lang*' var_value NonEnglish > ) )
+;Switch back to "Phonology Test Language":
+(message (
+ <hc6502 var_name '*cur_lang*' > ) )
+;Show the features, should see "engvoc":
+(pretty_print (
+ <hc6503 var_name '*pfeatures*' var_value (engvoc (+ - ) ) > ) )
+;Switch back to "NonEnglish":
+(message (
+ <hc6502 var_name '*cur_lang*' > ) )
+;Delete this language; (msg 6511, current lang should be '*unknown*'):
+(message (
+ <hc6511 lname NonEnglish cur_lname *unknown* > ) )
+;And switch back to "Phonology Test Language":
+(message (
+ <hc6502 var_name '*cur_lang*' > ) )
+;Try to switch back to "NonEnglish"; should get error msg 6023:
+ERROR:hc6023 --- <hc6023 lname NonEnglish >
+;Language should still be Phonology Test Language:
+(message (
+ <hc6503 var_name '*cur_lang*' var_value Phonology Test Language > ) )
+;Try to close "NonEnglish" again, error msg 6023:
+ERROR:hc6023 --- <hc6023 lname NonEnglish >
+;Language should still be Phonology Test Language:
+(message (
+ <hc6503 var_name '*cur_lang*' var_value Phonology Test Language > ) )
+;Now try redirecting of input:
+;Recursively call a couple files for input.  Before termination, you should
+; see a comment line that says ";Next cmd should stop the morpher:".
+;First we open TESTS\MISCELL1.IN for input; should get msg m6508:
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\miscell1.in > ) )
+;This is file MISCELL1.IN.  From here, we'll recursively call the file
+; MISCELL2.IN.  Before termination, you should see the msg
+; "End of file MISCELL1.IN.".
+;About to open TESTS\MISCELL2.IN as input; should see msg m6508.
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\MISCELL2.IN > ) )
+;This is file MISCELL2.IN.  Before termination, you should see the comment
+; "This is the end of MISCELL2.IN."
+;From within MISCELL2.IN, we'll try to open a nonexistent file.
+; Should get error msg m6302:
+ERROR:hc6302 --- <hc6302 fname foobar.xxx >
+;This is the end of MISCELL2.IN; should see msg m6521.
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\MISCELL2.IN > ) )
+;Ensure that we can't open for writing a file that is already open:
+; (error msg 6031):
+ERROR:hc6031 --- <hc6031 fname c:\data\hc\morpher\tests\MISCELL.OUT >
+;End of file MISCELL1.IN; should see msg m6521:
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\miscell1.in > ) )
+;Read in a file with an internal error:
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\miscerr.in > ) )
+;This file has an incomplete command.  We should get err hc6311:
+ERROR:hc6311 --- <hc6311  >
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\miscerr.in > ) )
+;Now we'll try redirecting output.  We'll redirect it twice to the same file,
+; to ensure that we're appending (not overwriting) output.  First we delete
+; that test file, so any previous results don't obscure these:
+(Prolog command finished )
+;Now open the file for output. Should get msg m6522:
+(message (
+ <hc6522 fname c:\data\hc\morpher\tests\miscell1.out > ) )

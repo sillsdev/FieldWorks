@@ -1,0 +1,30 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\xtestcase.xml">
+ <title tag="wrttc">Rendering a test case in XML</title>
+ <index>
+  <li>XML: test case</li>
+ </index>
+ <prerequisites>
+  <p>Before starting an XML test script, you should:</p>
+  <ul>
+   <li>Know how to write a test script.</li>
+   <li>Set up the <link uri="tools.xml" type="module">XML authoring tools</link>.</li>
+   <li>Review the structure of a <link uri="..\TCL\TestCase.xml" type="module">test case</link>.</li>
+   <li>Review our <link uri="..\XML\overview.xml" type="module">general description of XML</link>.</li>
+  </ul>
+ </prerequisites>
+ <guidelines>
+  <p>Here are some guidelines for creating a test case in a test script in XML:</p>
+  <ul>
+   <li>Open the *.xml file that contains the test script and edit/create the following tags with your own information:
+	<ul>
+	 <li>case - set id(entifyer) using the test script abbreviation as a prefix. Use the sequence number of this test case as its number. For order, use 'any' for executing in any order, or '123' for sequential execution.</li>
+	 <li>title - The tag attribute is set to the same value as case@id ( case - id(entifyer) ). The full name of this test case is the content of the title tag.</li>
+	 <li>context - This contains a paragraph (p) that indicates when the test case is applicable.</li>
+	 <li>steps - For each step the name is the step number. link is "Bug" if you created a bug pattern for it otherwise, it is omitted. Bug patterns are used to make reporting bugs easier and in a consistent format. If a link is specified, then uri is the name of the PatList.htm file (use this filename unless we specify differently). The anchor name is the case id followed by the step number. For example: PatList.htm#fmpaSe5.2. Type is 'doc'.</li>
+	</ul>
+   </li>
+   <li>Add <link uri="xteststep.xml" type="module">test steps</link> (This link gives more details on test steps).</li>
+  </ul>
+ </guidelines>
+</task>

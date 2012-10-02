@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:addon
+location="CategoryCatalog-1.4.1-xxe-4.0.0.zip"
+xmlns="http://www.w3.org/1999/xhtml"
+xmlns:html="http://www.w3.org/1999/xhtml"
+xmlns:a="http://www.xmlmind.com/xmleditor/schema/addon"
+><a:category
+><a:configuration
+></a:configuration
+></a:category
+><a:name
+>Category Catalog for SIL FieldWorks Language Explorer</a:name
+><a:version
+>1.4.1</a:version
+><a:author
+>H. Andrew Black</a:author
+><a:date
+>2010-05-08</a:date
+><a:abstract
+>Provides an easy way to customize the Category Catalog included with the SIL FieldWorks Language Explorer. It also allows one to create an initial set of categories which will be included in all subsequent newly created Language Explorer projects.</a:abstract
+><a:documentation
+><hr
+></hr
+><p
+><b
+>Revision History:</b
+> </p
+><ul
+><li
+>1.4.1 8-May-2010 Some Russian improvements.</li
+><li
+>1.4.0 12-Apr-2010 New POS.xml output format for FW 7.0</li
+><li
+>1.3.0 29-Mar-2010 Added more French and Russian</li
+><li
+>1.2.0 06-Mar-2010 Added Chinese, Korean and more French</li
+><li
+>1.1.1 03-Oct-2007 A few more refinements for the Leipzig Glossing Rules (by John Roberts)</li
+><li
+>1.1.0 30-Aug-2007 Revisions based on the abbreviation conventions of the Leipzig Glossing Rules <a
+href="http://www.eva.mpg.de/lingua/files/morpheme.html"
+>(http://www.eva.mpg.de/lingua/files/morpheme.html</a
+>).</li
+></ul
+></a:documentation
+><a:xxeVersion
+>4.0+</a:xxeVersion
+></a:addon
+>

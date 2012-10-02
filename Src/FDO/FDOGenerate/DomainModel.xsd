@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="EntireModel">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" name="CellarModule">
+					<xs:complexType>
+						<xs:sequence minOccurs="0">
+							<xs:element maxOccurs="unbounded" name="class">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="props">
+											<xs:complexType>
+												<xs:sequence minOccurs="0">
+													<xs:choice maxOccurs="unbounded">
+														<xs:element name="rel">
+															<xs:complexType>
+																<xs:attribute name="num" type="xs:unsignedShort" use="required" />
+																<xs:attribute name="id" type="xs:string" use="required" />
+																<xs:attribute name="card" type="xs:string" use="required" />
+																<xs:attribute name="sig" type="xs:string" use="required" />
+																<xs:attribute name="readonly" type="xs:boolean" use="required" />
+																<xs:attribute name="serializable" type="xs:boolean" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element name="owning">
+															<xs:complexType>
+																<xs:attribute name="num" type="xs:unsignedShort" use="required" />
+																<xs:attribute name="id" type="xs:string" use="required" />
+																<xs:attribute name="card" type="xs:string" use="required" />
+																<xs:attribute name="sig" type="xs:string" use="required" />
+																<xs:attribute name="readonly" type="xs:boolean" use="required" />
+																<xs:attribute name="serializable" type="xs:boolean" use="required" />
+															</xs:complexType>
+														</xs:element>
+														<xs:element maxOccurs="unbounded" name="basic">
+															<xs:complexType>
+																<xs:attribute name="num" type="xs:unsignedShort" use="required" />
+																<xs:attribute name="id" type="xs:string" use="required" />
+																<xs:attribute name="sig" type="xs:string" use="required" />
+																<xs:attribute name="min" type="xs:unsignedByte" use="optional" />
+																<xs:attribute name="max" type="xs:unsignedInt" use="optional" />
+																<xs:attribute name="big" type="xs:boolean" use="optional" />
+																<xs:attribute name="readonly" type="xs:boolean" use="required" />
+																<xs:attribute name="serializable" type="xs:boolean" use="required" />
+															</xs:complexType>
+														</xs:element>
+													</xs:choice>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="num" type="xs:unsignedShort" use="required" />
+									<xs:attribute name="id" type="xs:string" use="required" />
+									<xs:attribute name="abstract" type="xs:boolean" use="required" />
+									<xs:attribute name="abbr" type="xs:string" use="required" />
+									<xs:attribute name="base" type="xs:string" use="optional" />
+									<xs:attribute name="depth" type="xs:unsignedByte" use="optional" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="id" type="xs:string" use="required" />
+						<xs:attribute name="num" type="xs:unsignedByte" use="required" />
+						<xs:attribute name="ver" type="xs:unsignedByte" use="required" />
+						<xs:attribute name="verBack" type="xs:unsignedByte" use="required" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

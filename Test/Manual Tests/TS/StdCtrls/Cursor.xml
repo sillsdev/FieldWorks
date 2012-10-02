@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="cursor" num="0.21" abbr="cur" file="StdCtrls\Cursor.xml">
+ <title tag="cursor">Standard Cursor Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>Most GUI <i>gestures</i> involve the cursor (i.e., pointer) and pressing its buttons. While interface objects that are activated using such gestures are tested in separate documents, this one documents tests that involve gestures and objects that have no functionality of themselves, such as text. They are <i>selectable</i> objects.</p>
+<p>To select text, move the cursor to the start of the text you want to select. Hold down the left mouse button and drag across the text or down across lines of text. When you let the button up, highlighting indicates what text was selected. Selection is part of the copy and cut gestures.</p>
+  </introduction>
+  <context>
+<p>Because of the structure of selectable objects, gestures like copying, cutting and pasting can be complex and have different results even depending on the order in which the operations are applied. Testing does not require exhaustive combinations of these gestures, but should identify critical ones and seek reasonable coverage. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Cursor gesture".</p>
+  </context>
+
+ <case id="curcut" num="1" order="any">
+  <title tag="curcut">Cutting</title>
+  <context>
+<p>When the application is running and there is selectable text displayed in an active window</p>
+</context>
+  <p name="Specifications">See <link uri="http://intranet.sil.org/softwaredev/SantaFe/FW/App/Commands/EditMenu/EditMenu.html#Edit-Cut" type="doc">Edit-Cut</link> and <link uri="http://intranet.sil.org/softwaredev/SantaFe/FW/App/Commands/EditMenu/CutCopyAndPasteBehavior.html" type="doc">Cut, Copy and Paste behavior</link>.</p>
+  <step name="1.1" link="Bug">With no text selected, inspect the Cut item on the Edit menu and on the Standard toolbar.
+   <r>The Cut item is disabled when no text is selected.</r>
+   <p name="bug">Edit-Cut item not disabled when no text is selected</p>
+   <p name="bug">Standard toolbar cut icon not disabled when no text is selected</p>
+  </step>
+  <step name="1.2" link="Bug">Select some text and inspect the Cut item on the Edit menu and on the Standard toolbar.
+   <r>The Cut items become enabled.</r>
+   <p name="bug">Edit-Cut item remains disabled when text is selected</p>
+   <p name="bug">Standard toolbar cut icon remains disabled when text is selected</p>
+  </step>
+  <step name="1.3" link="Bug">While some text is selected, press &lt;Ctrl&gt;&lt;X&gt;. Try this with words, sentences, paragraphs and parts thereof.
+   <r>The selected text disappears.</r>
+   <p name="bug">Cursor gesture cut fails</p>
+  </step>
+  <step name="1.4" link="Bug">After cutting some text, use an external program, such as the <link uri="C:/WINDOWS/CLIPBRD.EXE" type="doc">ClipBoard Viewer</link> (maybe under Start - Programs - Accessories) to view the clipboard.
+   <r>The text that was cut appears in the clipboard. Any objects, such as pictures, that were cut appear as "[OBJ]".</r>
+   <p name="bug">Cursor gesture cut object not on clipboard</p>
+  </step>
+  <step name="1.5" link="Bug">Select a non-selectable object. Attempt to cut it.
+   <r>Cut is disabled for non-selectable items.</r>
+   <p name="bug">Cursor gesture cut works for non-selectable objects</p>
+  </step>
+ </case>
+
+ <case id="curcopy" num="2" order="any">
+  <title tag="curcopy">Copying</title>
+  <context>
+<p>When the application is running and there is selectable text displayed in an active window</p>
+</context>
+  <p name="Specifications">See <link uri="http://intranet.sil.org/softwaredev/SantaFe/FW/App/Commands/EditMenu/EditMenu.html#Edit-Copy" type="doc">Edit-Copy</link> and <link uri="http://intranet.sil.org/softwaredev/SantaFe/FW/App/Commands/EditMenu/CutCopyAndPasteBehavior.html" type="doc">Cut, Copy and Paste behavior</link>.</p>
+  <step name="2.1" link="Bug">With no text selected, inspect the Copy item on the Edit menu and on the Standard toolbar.
+   <r>The Copy item is disabled when no text is selected.</r>
+   <p name="bug">Edit-Copy item not disabled when no text is selected</p>
+   <p name="bug">Standard toolbar copy icon not disabled when no text is selected</p>
+  </step>
+  <step name="2.2" link="Bug">Select some text and inspect the Copy item on the Edit menu and on the Standard toolbar.
+   <r>The Copy items become enabled.</r>
+   <p name="bug">Cursor gesture</p>
+  </step>
+  <step name="2.3" link="Bug">While some text is selected, press &lt;Ctrl&gt;&lt;C&gt;. Try this with words, sentences, paragraphs and parts thereof.
+   <r>Nothing obvious happens (in particular, the selected text does not disappear or change).</r>
+   <p name="bug">Cursor gesture copy affects selection</p>
+  </step>
+  <step name="2.4" link="Bug">After cutting some text, use an external program, such as the <link uri="C:/WINDOWS/CLIPBRD.EXE" type="doc">ClipBoard Viewer</link> (maybe under Start - Programs - Accessories) to view the clipboard.
+   <r>The text that was copied appears in the clipboard. Any objects, such as pictures, that were cut appear as "[OBJ]".</r>
+   <p name="bug">Cursor gesture copy object not on clipboard</p>
+  </step>
+ </case>
+
+ <case id="curpst" num="3" order="any">
+  <title tag="curpst">Paste</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <p name="Specifications">See <link uri="http://intranet.sil.org/softwaredev/SantaFe/FW/App/Commands/EditMenu/EditMenu.html#Edit-Paste" type="doc">Edit-Paste</link> and <link uri="http://intranet.sil.org/softwaredev/SantaFe/FW/App/Commands/EditMenu/CutCopyAndPasteBehavior.html" type="doc">Cut, Copy and Paste behavior</link>.</p>
+  <p name="Variation">Try mixing non-structured view text, structured text, different views, external text and non-selectable text (to make sure it doesn't copy or change) as source and destination of cut/copy-paste operations.</p>
+  <step name="3.1" link="Bug">While the clipboard is empty (i.e. before any Cut or Copy has occurred; or you can explicitly empty the clipboard using <link uri="C:/WINDOWS/CLIPBRD.EXE" type="doc">ClipBoard Viewer</link>, via Edit - Delete), inspect the Paste menu item and toolbar button.
+   <r>The Paste item is disabled when no text is selected.</r>
+   <p name="bug">Edit-Paste item not disabled when no text is selected</p>
+   <p name="bug">Standard toolbar Paste icon not disabled when no text is selected</p>
+  </step>
+  <step name="3.2" link="Bug">When there are objects on the clipboard (from cut and/or copy operations in this application and others), place the cursor to insert into selectable text. Paste via &lt;Ctrl&gt;&lt;V&gt;.
+   <r>
+<ul>
+	<li>The text from the clipboard is inserted at the cursor.</li>
+	<li>The inserted text retains the direct formatting of the original (but not formatting due to field style settings).</li>
+	<li>Paragraph formatting will only transfer into a FieldWorks structured text field.</li>
+   </ul>
+</r>
+   <p name="bug">Cursor gesture paste fails to insert text properly</p>
+  </step>
+  <step name="3.3" link="Bug">While there is something on the clipboard, select some text. Paste via &lt;Ctrl&gt;&lt;V&gt;.
+   <r>The selected text is replaced by the contents of the clipboard.</r>
+   <p name="bug">Cursor gesture paste fails to replace selection</p>
+  </step>
+ </case>
+
+ <update date="Apr-02-01" author="MikeL">File created.</update>
+
+</test>

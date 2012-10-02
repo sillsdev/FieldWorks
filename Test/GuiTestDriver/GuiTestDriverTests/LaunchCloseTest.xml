@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for launching, on-application and closing instructions.
+	 The Desktop class is also tested since it forms the default context.
+	 The launch id is set and retrieved from the TestState class.
+
+	 They work together in the following way:
+	 launch precedes the on-application context and is tied to it by its id.
+	 close must be inside the application context as the last element.
+-->
+
+<accil on-fail="assert">
+ <on-application run="yes" close="yes" on-fail="assert"/>
+</accil>

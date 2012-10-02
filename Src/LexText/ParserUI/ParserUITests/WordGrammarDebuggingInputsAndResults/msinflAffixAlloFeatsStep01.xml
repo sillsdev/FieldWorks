@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>msinfl</form>
+  <resultSoFar>
+	<stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+	  <fs id="14988">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>m</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <morph alloid="14989" morphname="14988" type="root" wordType="root">
+		<shortName>ms (masc.sing): ms</shortName>
+		<alloform>ms</alloform>
+		<gloss>masc.sing</gloss>
+		<citationForm>ms</citationForm>
+		<stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+		  <fs id="14988">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</stemMsa>
+	  </morph>
+	</stem>
+	<morph alloid="14993" morphname="14992" type="sfx" wordType="15005">
+	  <shortName>-infl (INFL): infl</shortName>
+	  <alloform>-infl</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15045">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>pl</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <fs id="15039">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>INFL</gloss>
+	  <citationForm>infl</citationForm>
+	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+	</morph>
+  </resultSoFar>
+  <seq step="Try to build a Full analysis node on an uninflected Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-">
+	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		<fs id="14988">
+		  <feature>
+			<name>nagr</name>
+			<value>
+			  <fs id="0">
+				<feature>
+				  <name>gen</name>
+				  <value>m</value>
+				</feature>
+				<feature>
+				  <name>num</name>
+				  <value>sg</value>
+				</feature>
+			  </fs>
+			</value>
+		  </feature>
+		</fs>
+		<morph alloid="14989" morphname="14988" type="root" wordType="root">
+		  <shortName>ms (masc.sing): ms</shortName>
+		  <alloform>ms</alloform>
+		  <gloss>masc.sing</gloss>
+		  <citationForm>ms</citationForm>
+		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			<fs id="14988">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>m</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </stemMsa>
+		</morph>
+	  </stem>
+	</full>
+	<morph alloid="14993" morphname="14992" type="sfx" wordType="15005">
+	  <shortName>-infl (INFL): infl</shortName>
+	  <alloform>-infl</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15045">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>pl</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <fs id="15039">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>INFL</gloss>
+	  <citationForm>infl</citationForm>
+	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'template for test'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>While the inflectional affix allomorph '-infl (INFL): infl' is not conditioned to occur when the inflected form it attaches to has certain features, there are other allomorphs in the entry that are so conditioned.  Thus, the inflected form must not be inflected for certain features, but it is.  The features the affix must not be inflected for are: [nagr:[gen:m&#x20;num:pl]] and also [nagr:[gen:m&#x20;num:sg]].  The inflected features for this inflected form are: [nagr:[gen:m&#x20;num:sg]].</failure>
+	  <fs id="UnificationOf(14988andUnificationOf(14988andEmpty))">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs>
+			  <feature>
+				<name>gen</name>
+				<value>m</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs><stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+"><fs id="14988"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>m</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs><morph alloid="14989" morphname="14988" type="root" wordType="root"><shortName>ms (masc.sing): ms</shortName><alloform>ms</alloform><gloss>masc.sing</gloss><citationForm>ms</citationForm><stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+"><fs id="14988"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>m</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs></stemMsa></morph></stem><morph alloid="14993" morphname="14992" type="sfx" wordType="15005"><shortName>-infl (INFL): infl</shortName><alloform>-infl</alloform><affixAlloFeats><not><fs id="15045"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>m</value></feature><feature><name>num</name><value>pl</value></feature></fs></value></feature></fs><fs id="15039"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>m</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs></not></affixAlloFeats><gloss>INFL</gloss><citationForm>infl</citationForm><inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" /></morph></full>
+  </seq>
+  <seq step="Try to apply inflectional template 'possessed'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <fs id="UnificationOf(14988andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>m</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <failure>The inflectional template named 'possessed' for category 'Noun' failed because the required prefix slot 'Possessor' was not found.</failure>
+	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		<fs id="14988">
+		  <feature>
+			<name>nagr</name>
+			<value>
+			  <fs id="0">
+				<feature>
+				  <name>gen</name>
+				  <value>m</value>
+				</feature>
+				<feature>
+				  <name>num</name>
+				  <value>sg</value>
+				</feature>
+			  </fs>
+			</value>
+		  </feature>
+		</fs>
+		<morph alloid="14989" morphname="14988" type="root" wordType="root">
+		  <shortName>ms (masc.sing): ms</shortName>
+		  <alloform>ms</alloform>
+		  <gloss>masc.sing</gloss>
+		  <citationForm>ms</citationForm>
+		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			<fs id="14988">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>m</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </stemMsa>
+		</morph>
+	  </stem></full>
+	<morph alloid="14993" morphname="14992" type="sfx" wordType="15005">
+	  <shortName>-infl (INFL): infl</shortName>
+	  <alloform>-infl</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15045">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>pl</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <fs id="15039">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>INFL</gloss>
+	  <citationForm>infl</citationForm>
+	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Tense/Aspect'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="259" syncatAbbr="n" requiresInfl="-" inflected="+">
+	  <failure>The  category (v) of the inflectional template "Tense/Aspect" is incompatible with the category (n) of the stem.</failure>
+	  <fs id="UnificationOf(14988andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>m</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs>
+	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+		<fs id="14988">
+		  <feature>
+			<name>nagr</name>
+			<value>
+			  <fs id="0">
+				<feature>
+				  <name>gen</name>
+				  <value>m</value>
+				</feature>
+				<feature>
+				  <name>num</name>
+				  <value>sg</value>
+				</feature>
+			  </fs>
+			</value>
+		  </feature>
+		</fs>
+		<morph alloid="14989" morphname="14988" type="root" wordType="root">
+		  <shortName>ms (masc.sing): ms</shortName>
+		  <alloform>ms</alloform>
+		  <gloss>masc.sing</gloss>
+		  <citationForm>ms</citationForm>
+		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+			<fs id="14988">
+			  <feature>
+				<name>nagr</name>
+				<value>
+				  <fs id="0">
+					<feature>
+					  <name>gen</name>
+					  <value>m</value>
+					</feature>
+					<feature>
+					  <name>num</name>
+					  <value>sg</value>
+					</feature>
+				  </fs>
+				</value>
+			  </feature>
+			</fs>
+		  </stemMsa>
+		</morph>
+	  </stem>
+	</full>
+	<morph alloid="14993" morphname="14992" type="sfx" wordType="15005">
+	  <shortName>-infl (INFL): infl</shortName>
+	  <alloform>-infl</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15045">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>pl</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <fs id="15039">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>INFL</gloss>
+	  <citationForm>infl</citationForm>
+	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final'.  The result will be a Stem analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<stem syncat="259" syncatAbbr="n" requiresInfl="+" inflected="-" blocksInflection="+">
+	  <failure>The  category (v) of the inflectional template "Non-final" is incompatible with the category (n) of the stem.</failure>
+	  <fs id="UnificationOf(14988andEmpty)">
+		<feature>
+		  <name>nagr</name>
+		  <value>
+			<fs id="0">
+			  <feature>
+				<name>gen</name>
+				<value>m</value>
+			  </feature>
+			  <feature>
+				<name>num</name>
+				<value>sg</value>
+			  </feature>
+			</fs>
+		  </value>
+		</feature>
+	  </fs><stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+"><fs id="14988"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>m</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs><morph alloid="14989" morphname="14988" type="root" wordType="root"><shortName>ms (masc.sing): ms</shortName><alloform>ms</alloform><gloss>masc.sing</gloss><citationForm>ms</citationForm><stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+"><fs id="14988"><feature><name>nagr</name><value><fs id="0"><feature><name>gen</name><value>m</value></feature><feature><name>num</name><value>sg</value></feature></fs></value></feature></fs></stemMsa></morph></stem><failure>The inflectional template named 'Non-final' for category 'Verb' failed because the required suffix slot 'Object' was not found.</failure></stem>
+	<morph alloid="14993" morphname="14992" type="sfx" wordType="15005">
+	  <shortName>-infl (INFL): infl</shortName>
+	  <alloform>-infl</alloform>
+	  <affixAlloFeats>
+		<not>
+		  <fs id="15045">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>pl</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		  <fs id="15039">
+			<feature>
+			  <name>nagr</name>
+			  <value>
+				<fs id="0">
+				  <feature>
+					<name>gen</name>
+					<value>m</value>
+				  </feature>
+				  <feature>
+					<name>num</name>
+					<value>sg</value>
+				  </feature>
+				</fs>
+			  </value>
+			</feature>
+		  </fs>
+		</not>
+	  </affixAlloFeats>
+	  <gloss>INFL</gloss>
+	  <citationForm>infl</citationForm>
+	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+	</morph>
+  </seq>
+</word>

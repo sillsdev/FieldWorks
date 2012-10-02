@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2011-07-18T19:50:37" />
+		<language
+			type="qaa" />
+		<variant
+			type="x-sta" />
+	</identity>
+	<collations />
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Sta" />
+		<palaso:defaultFontFamily
+			value="Doulos SIL" />
+		<palaso:defaultKeyboard
+			value="Stacking Diacritics Demo" />
+		<palaso:languageName
+			value="Stacked Diacritics" />
+		<palaso:spellCheckingId
+			value="xsta" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:defaultFontFeatures
+			value="100=1" />
+		<fw:graphiteEnabled
+			value="True" />
+		<fw:windowsLCID
+			value="1033" />
+	</special>
+</ldml>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="button" num="0.3" abbr="btn" file="StdCtrls\Button.xml">
+ <title tag="button">Button Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A button is a simple stateless control with immediate side-effects called "actions". The actions may be dependent on other control settings or may be exactly the same actions each time the button is pressed. A push button does not "lock" in a depressed state, but only depresses for a moment. Those that do "lock" are called "toggles". See <link uri="toggle.xml" type="module">toggles</link>.</p>
+  </introduction>
+  <context>
+<p>Each button may require the setting of other controls to thoroughly test its action. Testing does not require exhaustive combinations of such settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If a step fails, it may have triggered a delayed side-effect of one of the other control settings. The bug should be reported for that control, not this button. The first words of a bug report title for this button should be a noun phrase containing the name of the button.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, each button is described in a specification.</p>
+  </warning>
+ <case id="btnInsp" num="1" order="any">
+  <title tag="btnInsp">Button Inspection</title>
+  <context>
+<p>When the application GUI, dialog or frame containing the button is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A button has a name or picture on it and is usually a 3-D rectangle. It may be "grayed out" (disabled).</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the button.
+   <r>The button and its name must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Button has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the location of the button and its name relative to other visible controls.
+   <r>The button and its name should be close to the position indicated in the specification.</r>
+   <p name="bug">Button has incorrect location</p>
+  </step>
+  <step name="1.3" link="Bug">If on a toolbar, hover the cursor over the button.
+   <r>A help bubble displays a short help message.</r>
+   <p name="bug">Tool bar button doesn't have hover help</p>
+  </step>
+
+ </case>
+ <case id="btnOp" num="2" order="any">
+  <title tag="btnOp">Button Operation</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+
+   <p name="Principle">The button is depressed by left clicking with a pointer device (usually a mouse) and often by a "short-cut" key sequence. Actions may include changes in a preview window on the control frame, launching another display component or changes in another view.</p>
+
+  <step name="2.1" link="Bug">Left click the button.
+   <r>The button depresses momentarily and side-effects match the description in the specification.</r>
+   <p name="bug">Button does not depress</p>
+   <p name="bug">Button remains depressed</p>
+   <p name="bug">Button side-effect incorrect</p>
+  </step>
+  <step name="2.2" link="Bug">Press the short-cut &lt;alt&gt;&lt;alpha&gt;.
+   <r>The button depresses momentarily and side-effects match the description in the specification.</r>
+   <p name="bug">Shorted button does not depress</p>
+   <p name="bug">Shorted button remains depressed</p>
+   <p name="bug">Shorted button side-effect incorrect</p>
+  </step>
+  <step name="2.3" link="Bug">When operating the button, do side-effects obscure or disable other functionality in the control frame or in an affected view?
+   <r>There should be no undesirable effects from the user's point of view.</r>
+   <p name="Notes">This test is subjective. Infelicities resulting from this step will likely be "issues" rather than "bugs".</p>
+   <p name="bug">Button operation hampers user ability to ..</p>
+  </step>
+
+ </case>
+ <update date="Dec-12-00" author="MikeL">Test created.</update>
+
+</test>

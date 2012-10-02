@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="bkuprest" num="2.1.12a" abbr="br" file="FW\BackupRestore.xml">
+
+ <title tag="bkuprest">File-Backup/Restore Tests</title>
+
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The <i>Backup</i> feature is intended to (1) to help people keep regular backups of their data, and (2) to provide a means of transferring data from one computer to another.</p>
+   <p>Specifications: <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Features/Backup/BackupFeature.html">
+<i>Fieldworks Explorer</i> Backup Feature</link>
+</p>
+   <p>Related test scripts:
+	<ul>
+<li>
+<link uri="./BackupRestoreDlg.xml">Backup and Restore Dialog Tests</link> (tests Backup/Restore <i>dialog</i> behavior - distinct from this script, which tests more general Backup and Restore functionality)</li>
+	<li>
+<link uri="./BackupReminderDlg.xml">Backup Reminder Dialog Tests</link>
+</li>
+	<li>
+<link uri="./BackupScheduleDlg.xml">Backup Schedule Dialog Tests</link>
+</li>
+	<li>
+<link uri="./BackupPasswordDlg.xml">Backup Password Dialog Tests</link>
+</li>
+</ul>
+</p>
+  </introduction>
+
+
+
+<!--================Case 1: Backing up to hard disk (manually)================-->
+
+ <case id="brBU" num="1" order="123">
+  <title tag="brBU">Backing up to hard disk (manually)</title>
+  <context>
+<p>When the Backup tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="1.1" link="Bug">
+   Check one of the projects listed in the <i>Projects to back up</i> list box.
+   Select a destination folder that already exists.
+   Check the <i>Include a human readable (XML) backup</i> checkbox. Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>Windows Explorer shows a new .zip file in the destination folder you selected. The filename
+	indicates the project name, and the date and time it was backed up.</li>
+	<li>When you unzip the file, it yields a .bak file and an .xml file.</li>
+</ul>
+</r>
+<p name="bug">Backup progress dialog does not appear</p>
+<p name="bug">No new .zip file is created</p>
+<p name="bug">The .zip file does not contain the right files in it</p>
+  </step>
+
+  <step name="1.2" link="Bug">
+   Check one of the projects listed in the <i>Projects to back up</i> list box.
+   Select a <i>different</i> destination folder that already exists.
+   <i>Uncheck</i> the <i>Include a human readable (XML) backup</i> checkbox. Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>Windows Explorer shows a new .zip file in the destination folder you selected. The filename
+	indicates the project name, and the date and time it was backed up.</li>
+	<li>When you unzip the file, it yields a .bak file <i>but no .xml file</i>.</li>
+</ul>
+</r>
+<p name="bug">Backup progress dialog does not appear</p>
+<p name="bug">No new .zip file is created</p>
+<p name="bug">The .zip file does not contain the right files in it</p>
+  </step>
+
+  <step name="1.3" link="Bug">
+   Check one of the projects listed in the <i>Projects to back up</i> list box.
+   Type in a destination folder that does not exist. Click Start.
+   <r>
+<ul>
+<li>A question dialog appears, asking, "The selected folder: xyz does not exist.
+	Would you like to create it now?"</li>
+	<li>The dialog has Yes, No and Help Buttons.</li>
+	<li>Default is yes.</li>
+</ul>
+</r>
+<p name="bug">Question dialog does not appear</p>
+<p name="bug">Question dialog appearance is wrong</p>
+  </step>
+
+  <step name="1.4" link="Bug">
+   Click No on the dialog asking whether you want to create the new folder.
+   <r>
+<ul>
+<li>You are back at the Backup tab of the Backup/Restore dialog.</li>
+	<li>The cursor is in the destination combo box.</li>
+</ul>
+</r>
+<p name="bug">You are not returned to the Backup tab of the Backup/Restore dialog</p>
+<p name="bug">Cursor not in the destination combo box</p>
+  </step>
+
+  <step name="1.5" link="Bug">
+   Repeat step 1.3, and click Yes on the dialog asking whether you want to create the new folder.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>Windows Explorer shows a new .zip file in the destination folder you typed in. The filename
+	indicates the project name, and the date and time it was backed up.</li>
+	<li>When you unzip the file, it yields a .bak file (and an .xml file if you checked the "human readable" checkbox).</li>
+</ul>
+</r>
+<p name="bug">Backup progress dialog does not appear</p>
+<p name="bug">No new .zip file is created</p>
+<p name="bug">The .zip file does not contain the right files in it</p>
+  </step>
+
+  <step name="1.6" link="Bug">
+   Repeat step 1.3 again, and click Yes on the dialog asking whether you want to create the new folder.
+   This time, click Abort on the Backup progress dialog before it disappears.
+   <r>
+<ul>
+<li>A confirmation dialog appears, asking whether you really want to abort the backup.</li>
+	<li>If you click yes, the Backup process is aborted, and the Backup progress dialog closes.</li>
+	<li>Windows Explorer shows no new .zip file in the destination folder you typed in. The filename
+	indicates the project name, and the date and time it was backed up.</li>
+	<li>If you click no, the Backup process continues normally.</li>
+	<li>Windows Explorer shows a new .zip file in the destination folder you typed in.</li>
+	<li>When you unzip the file, it yields a .bak file (and an .xml file if you checked the "human readable" checkbox).</li>
+</ul>
+</r>
+<p name="bug">Backup progress dialog does not appear</p>
+<p name="bug">No new .zip file is created</p>
+<p name="bug">The .zip file does not contain the right files in it</p>
+<p name="bug">Backup progress does not abort properly</p>
+  </step>
+ </case>
+
+<!--================Case 2: Restoring to hard disk================-->
+
+ <case id="brRes" num="2" order="123">
+  <title tag="brRes">Restoring to hard disk</title>
+  <context>
+<p>When you have backed up one or more projects</p>
+</context>
+  <step name="2.1" link="Bug">
+   Make a change to the project data (and remember what it is!)
+   Invoke the Backup and Restore dialog, and click on the Restore tab.
+   Select or browse to a folder where there is a backup file from a project currently on the computer you are using for this test.
+   Select that project from the Project drop-down box.
+   Choose any version in the Version list box.
+   <i>Uncheck</i> the <i>Restore from the XML file, if available</i> checkbox.
+   Click the <i>Restore</i> button.
+   <r>
+<ul>
+<li>A confirmation dialog appears.</li>
+	<li>It matches the spec at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/AlreadyExists/AlreadyExistsDlgs.html">
+		<i>Already exists</i> dialog</link>.</li>
+</ul>
+</r>
+<p name="bug">Confirmation dialog does not appear.</p>
+<p name="bug">Confirmation dialog does not match spec.</p>
+  </step>
+
+  <step name="2.2" link="Bug">
+   On the confirmation dialog (step 2.1), click <i>Cancel</i>.
+   <r>
+<ul>
+<li>The confirmation dialog closes without initiating a Restore operation.</li>
+	<li>The change you made to the data in step 2.1 is undisturbed.</li>
+</ul>
+</r>
+<p name="bug">Restore commences.</p>
+  </step>
+
+  <step name="2.3" link="Bug">
+   On the confirmation dialog (step 2.1), select "Restore as a different project"
+   (which should be the default). For the <i>New name</i>, give the project the same name
+   as the original project, active in the database now.
+   Check the <i>Overwrite if this name exists</i> checkbox.
+   Click <i>Restore</i>.
+   <r>
+<ul>
+<li>The <i>Restore - Final Warning</i> dialog appears.</li>
+	<li>It matches the spec at the <i>bottom</i> of the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/AlreadyExists/AlreadyExistsDlgs.html">
+		<i>Already exists</i> dialog</link> page.</li>
+</ul>
+</r>
+<p name="bug">Restore - Final Warning dialog does not appear.</p>
+<p name="bug">Restore - Final Warning dialog does not match spec.</p>
+  </step>
+
+  <step name="2.4" link="Bug">
+   On the confirmation dialog (step 2.1), select "Replace the current version with the selected backup version."
+   Click the <i>Restore</i> button.
+   <r>
+<ul>
+<li>The <i>New name</i> edit box is grayed out.</li>
+	<li>The <i>Overwrite if this name exists</i> checkbox is grayed out.</li>
+</ul>
+</r>
+<p name="bug">New name edit box is not grayed out</p>
+<p name="bug">Overwrite if this name exists checkbox is not grayed out</p>
+  </step>
+
+  <step name="2.4" link="Bug">
+   On the confirmation dialog (step 2.1), select "Restore as a different project."
+   <r>
+<ul>
+<li>The <i>New name</i> edit box becomes enabled.</li>
+	<li>The <i>Overwrite if this name exists</i> checkbox becomes enabled.</li>
+</ul>
+</r>
+<p name="bug">New name edit box is still grayed out</p>
+<p name="bug">Overwrite if this name exists checkbox is still grayed out</p>
+  </step>
+
+  <step name="2.5" link="Bug">
+   On the confirmation dialog (step 2.1), select "Replace the current version with the selected backup version."
+   Click <i>Restore</i>.
+   <r>
+<ul>
+<li>The <i>Restore - Final Warning</i> dialog appears.</li>
+	<li>It matches the spec at the <i>bottom</i> of the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/AlreadyExists/AlreadyExistsDlgs.html">
+		<i>Already exists</i> dialog</link> page.</li>
+</ul>
+</r>
+<p name="bug">Restore - Final Warning dialog does not appear.</p>
+<p name="bug">Restore - Final Warning dialog does not match spec.</p>
+  </step>
+
+  <step name="2.6" link="Bug">
+   On the confirmation dialog (step 2.1), select <i>Replace the current version...</i>.
+   Click <i>Restore</i>.
+   <r>
+<ul>
+<li>The <i>Restore - Final Warning</i> dialog appears.</li>
+	<li>It matches the spec at the <i>bottom</i> of the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/AlreadyExists/AlreadyExistsDlgs.html">
+		<i>Already exists</i> dialog</link> page.</li>
+</ul>
+</r>
+<p name="bug">Restore - Final Warning dialog does not appear.</p>
+<p name="bug">Restore - Final Warning dialog does not match spec.</p>
+  </step>
+
+  <step name="2.7" link="Bug">
+   On the confirmation dialog (step 2.1), click <i>Cancel</i>.
+   <r>
+<ul>
+<li>The confirmation dialog closes without initiating a Restore operation.</li>
+	<li>The change you made to the data in step 2.1 is undisturbed.</li>
+</ul>
+</r>
+<p name="bug">Restore commences.</p>
+  </step>
+
+  <step name="2.8" link="Bug">
+   On the confirmation dialog (step 2.1), click <i>Restore</i>.
+   <r>
+<ul>
+<li>The confirmation dialog closes and the Restore operation begins.</li>
+	<li>The change you made to the data in step 2.1 is undisturbed.</li>
+</ul>
+</r>
+<p name="bug">Restore commences.</p>
+  </step>
+ </case>
+
+<!--================Case 3: Backing up to floppy disks================-->
+
+ <case id="brFloppyB" num="3" order="any">
+  <title tag="brFloppyB">Backing up to floppy disks</title>
+  <context>
+<p>When the Backup tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="3.1" link="Bug">
+   Select the 3.5" floppy (A:) drive as the destination.
+   Leave it set at the root directory.
+   Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>As each floppy fills up, you are prompted for floppy #<i>n + 1</i>.</li>
+	<li>When backup is finished, Windows Explorer shows a new .zip file on the first floppy.
+	The filename indicates the project name, and the date and time it was backed up.</li>
+	<li>All the other floppies have files with some other kind of name indicating that they are part of the file span.</li>
+</ul>
+</r>
+<p name="bug">Backup progress dialog does not appear</p>
+<p name="bug">New .zip file not created on 1st floppy</p>
+<p name="bug">Succeeding floppies do not contain the right files</p>
+  </step>
+
+  <step name="3.2" link="Bug">
+   Select the 3.5" floppy (A:) drive as the destination.
+   Type in a new directory name (using the Browse button if you like).
+   Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>As each floppy fills up, you are prompted for floppy #<i>n + 1</i>.</li>
+	<li>When backup is finished, Windows Explorer shows a new .zip file on the first floppy, in the directory you created.
+	The filename indicates the project name, and the date and time it was backed up.</li>
+	<li>All the other floppies have the appropriate files, also in the directory you created.</li>
+</ul>
+</r>
+<p name="bug">Backup files not in new directory</p>
+  </step>
+ </case>
+
+<!--================Case 4: Restoring from floppy disks================-->
+
+ <case id="brFloppyR" num="4" order="any">
+  <title tag="brFloppyR">Restoring from floppy disks</title>
+  <context>
+<p>When the Restore tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="4.1" link="Bug">
+   Remove any floppy disk from the A: drive.
+   Select the 3.5" floppy (A:) drive as the destination.
+   <r>
+<ul>
+<li>A message appears in the Project combo box, indicating that there are no backup files on the device.</li>
+	<li>The Start button is disabled.</li>
+</ul>
+</r>
+<p name="bug">Message does not appear</p>
+  </step>
+
+  <step name="4.2" link="Bug">
+   Insert a floppy disk without any backup files on it into the A: drive.
+   Select the 3.5" floppy (A:) drive as the destination.
+   <r>
+<ul>
+<li>A message appears in the Project combo box, indicating that there are no backup files on the device.</li>
+	<li>The Start button is disabled.</li>
+</ul>
+</r>
+<p name="bug">Message does not appear</p>
+  </step>
+
+  <step name="4.3" link="Bug">
+   Insert a floppy disk with a backup file on it <i>which is not the first in the series</i> into the A: drive.
+   Select the 3.5" floppy (A:) drive as the destination.
+   <r>
+<ul>
+<li>A message appears in the Project combo box, indicating that there are no backup files on the device.</li>
+	<li>The Start button is disabled.</li>
+</ul>
+</r>
+<p name="bug">Message does not appear</p>
+  </step>
+
+  <step name="4.4" link="Bug">
+   Insert the first floppy disk in the series you used to make a backup of your FW database.
+   Select the 3.5" floppy (A:) drive as the destination.
+   Browse, if needed, to the directory in which the backup file is located.
+   Click Start.
+   <r>
+<ul>
+<li>Restore commences, with all the bells and whistles tested in test case #2.</li>
+	<li>As each diskette is finished, you are prompted for floppy #<i>n + 1</i>.</li>
+	<li>If you put in the wrong floppy, it is not accepted.</li>
+</ul>
+</r>
+<p name="bug">Restore does not commence</p>
+<p name="bug">Bells and whistles missing when restoring from a: (only if the same problems don't exist otherwise)</p>
+<p name="bug">Restore does not properly prompt for next diskette</p>
+  </step>
+ </case>
+
+<!--================Case 5: Backing up to LS-120 disks================-->
+
+ <case id="brLS120B" num="5" order="any">
+  <title tag="brLS120B">Backing up to LS-120 disks</title>
+  <context>
+<p>When the Backup tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="5.1" link="Bug">
+   Select the LS-120 drive as the destination.
+   Leave it set at the root directory.
+   Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>When backup is finished, Windows Explorer shows a new .zip file on the LS-120 diskette.
+	The filename indicates the project name, and the date and time it was backed up.</li>
+</ul>
+</r>
+<p name="bug">Backup progress dialog does not appear</p>
+<p name="bug">New .zip file not created on LS-120 diskette</p>
+  </step>
+
+  <step name="5.2" link="Bug">
+   Select the LS-120 drive as the destination.
+   Type in a new directory name (using the Browse button if you like).
+   Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>When backup is finished, Windows Explorer shows a new .zip file on the LS-120 diskette, in the directory you created.
+	The filename indicates the project name, and the date and time it was backed up.</li>
+</ul>
+</r>
+<p name="bug">Backup files not in new directory</p>
+  </step>
+ </case>
+
+<!--================Case 6: Restoring from LS-120 disks================-->
+
+ <case id="brLS120R" num="6" order="any">
+  <title tag="brLS120R">Restoring from LS-120 disks</title>
+  <context>
+<p>When the Restore tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="6.1" link="Bug">
+   Remove any LS-120 disk from the LS-120 disk drive.
+   Select the LS-120 drive as the destination.
+   <r>
+<ul>
+<li>A message appears in the Project combo box, indicating that there are no backup files on the device.</li>
+	<li>The Start button is disabled.</li>
+</ul>
+</r>
+<p name="bug">Message does not appear</p>
+  </step>
+
+  <step name="6.2" link="Bug">
+   Insert a LS-120 disk without any backup files on it into the LS-120 drive.
+   Select the LS-120 drive as the destination.
+   <r>
+<ul>
+<li>A message appears in the Project combo box, indicating that there are no backup files on the device.</li>
+	<li>The Start button is disabled.</li>
+</ul>
+</r>
+<p name="bug">Message does not appear</p>
+  </step>
+
+  <step name="6.3" link="Bug">
+   Insert the LS-120 disk you used to make a backup of your FW database.
+   Select the LS-120 drive as the destination.
+   Browse, if needed, to the directory in which the backup file is located.
+   Click Start.
+   <r>Restore commences, with all the bells and whistles tested in test case #2.</r>
+<p name="bug">Restore does not commence</p>
+<p name="bug">Bells and whistles missing when restoring from LS-120 (only if the same problems don't exist otherwise)</p>
+  </step>
+ </case>
+
+<!--================Case 7: Backing up to Zip disks================-->
+
+ <case id="brZipB" num="7" order="any">
+  <title tag="brZipB">Backing up to Zip disks</title>
+  <context>
+<p>When the Backup tab of the Backup and Restore Dialog is displayed.</p>
+</context>
+  <step name="7.1" link="Bug">
+   Select the Zip drive as the destination.
+   Leave it set at the root directory.
+   Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>When backup is finished, Windows Explorer shows a new .zip file on the Zip disk.
+	The filename indicates the project name, and the date and time it was backed up.</li>
+</ul>
+</r>
+<p name="bug">Backup progress dialog does not appear</p>
+<p name="bug">New .zip file not created on Zip disk</p>
+  </step>
+
+  <step name="7.2" link="Bug">
+   Select the Zip drive as the destination.
+   Type in a new directory name (using the Browse button if you like).
+   Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>When backup is finished, Windows Explorer shows a new .zip file on the Zip disk, in the directory you created.
+	The filename indicates the project name, and the date and time it was backed up.</li>
+</ul>
+</r>
+<p name="bug">Backup files not in new directory</p>
+  </step>
+
+  <step name="7.3" link="Bug">
+   Repeat above tests with a 100Mb or 250Mb Zip drive, whichever you did not use the first time.
+   <r>Same as above.</r>
+<p name="bug">Backup files not in new directory</p>
+  </step>
+ </case>
+
+<!--================Case 8: Restoring from Zip disks================-->
+
+ <case id="brZipR" num="8" order="any">
+  <title tag="brZipR">Restoring from Zip disks</title>
+  <context>
+<p>When the Restore tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="8.1" link="Bug">
+   Remove any Zip disk from the Zip disk drive.
+   Select the Zip drive as the destination.
+   <r>
+<ul>
+<li>A message appears in the Project combo box, indicating that there are no backup files on the device.</li>
+	<li>The Start button is disabled.</li>
+</ul>
+</r>
+<p name="bug">Message does not appear</p>
+  </step>
+
+  <step name="8.2" link="Bug">
+   Insert a Zip disk without any backup files on it into the Zip drive.
+   Select the Zip drive as the destination.
+   <r>
+<ul>
+<li>A message appears in the Project combo box, indicating that there are no backup files on the device.</li>
+	<li>The Start button is disabled.</li>
+</ul>
+</r>
+<p name="bug">Message does not appear</p>
+  </step>
+
+  <step name="8.3" link="Bug">
+   Insert the Zip disk you used to make a backup of your FW database.
+   Select the Zip drive as the destination.
+   Browse, if needed, to the directory in which the backup file is located.
+   Click Start.
+   <r>Restore commences, with all the bells and whistles tested in test case #2.</r>
+<p name="bug">Restore does not commence</p>
+<p name="bug">Bells and whistles missing when restoring from Zip (only if the same problems don't exist otherwise)</p>
+  </step>
+
+  <step name="8.4" link="Bug">
+   Repeat above tests with a 100Mb or 250Mb Zip drive, whichever you did not use the first time.
+   <r>Same as above.</r>
+<p name="bug">Restore does not commence</p>
+<p name="bug">Bells and whistles missing when restoring from Zip (only if the same problems don't exist otherwise)</p>
+  </step>
+ </case>
+
+<!--================Case 9: Backing up to CD-R and CD-RW================-->
+
+ <case id="brCDB" num="9" order="any">
+  <title tag="brCDB">Backing up to CD-R and CD-RW</title>
+  <context>
+<p>When the Backup tab of the Backup and Restore Dialog is displayed.</p>
+<p>
+<b> Note:</b> Before beginning this test case, you must have a CD burner attached to your computer,
+   and you must have a CD-R or CD-RW that has been set up by the Direct CD software to be used with Direct CD.
+   Take care of this before you start.
+</p>
+</context>
+
+  <step name="9.1" link="Bug">
+   Select the CD burner as the destination.
+   Leave it set at the root directory.
+   Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>When backup is finished, Windows Explorer shows a new .zip file on the CD.
+	The filename indicates the project name, and the date and time it was backed up.</li>
+</ul>
+</r>
+<p name="bug">Backup progress dialog does not appear</p>
+<p name="bug">New .zip file not created on CD</p>
+  </step>
+
+  <step name="9.2" link="Bug">
+   Select the CD burner as the destination.
+   Type in a new directory name (using the Browse button if you like).
+   Click Start.
+   <r>
+<ul>
+<li>Backup commences, indicated by a dialog box that disappears when backup is finished.</li>
+	<li>When backup is finished, Windows Explorer shows a new .zip file on the CD, in the directory you created.
+	The filename indicates the project name, and the date and time it was backed up.</li>
+</ul>
+</r>
+<p name="bug">Backup files not in new directory</p>
+  </step>
+
+  <step name="9.3" link="Bug">
+   Repeat above tests with a CD-R or CD-RW, whichever you did not use the first time.
+   <r>Same as above.</r>
+<p name="bug">Backup files not in new directory</p>
+  </step>
+ </case>
+
+<!--================Case 10: Restoring from CD-R and CD-RW================-->
+
+ <case id="brCDR" num="10" order="any">
+  <title tag="brCDR">Restoring from CD-R and CD-RW</title>
+  <context>
+<p>When the Restore tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="10.1" link="Bug">
+   Remove any CD from the CD burner or CD-ROM drive.
+   Select the CD burner or CD-ROM drive as the destination.
+   <r>
+<ul>
+<li>A message appears in the Project combo box, indicating that there are no backup files on the device.</li>
+	<li>The Start button is disabled.</li>
+</ul>
+</r>
+<p name="bug">Message does not appear</p>
+  </step>
+
+  <step name="10.2" link="Bug">
+   Insert a CD without any backup files on it into the CD burner or CD-ROM drive .
+   Select the CD burner or CD-ROM drive as the destination.
+   <r>
+<ul>
+<li>A message appears in the Project combo box, indicating that there are no backup files on the device.</li>
+	<li>The Start button is disabled.</li>
+</ul>
+</r>
+<p name="bug">Message does not appear</p>
+  </step>
+
+  <step name="10.3" link="Bug">
+   Insert the CD you used to make a backup of your FW database.
+   Select the CD burner or CD-ROM drive as the destination.
+   Browse, if needed, to the directory in which the backup file is located.
+   Click Start.
+   <r>Restore commences, with all the bells and whistles tested in test case #2.</r>
+<p name="bug">Restore does not commence</p>
+<p name="bug">Bells and whistles missing when restoring from CD (only if the same problems don't exist otherwise)</p>
+  </step>
+
+  <step name="10.4" link="Bug">
+   Repeat above tests with a CD-R or CD-RW, whichever you did not use the first time.
+   <r>Same as above.</r>
+<p name="bug">Restore does not commence</p>
+<p name="bug">Bells and whistles missing when restoring from CD (only if the same problems don't exist otherwise)</p>
+  </step>
+
+  <step name="10.5" link="Bug">
+   Repeat above tests with a CD burner or CD-ROM drive, whichever you did not use the first time.
+   <r>Same as above.</r>
+<p name="bug">Restore does not commence</p>
+<p name="bug">Bells and whistles missing when restoring from CD (only if the same problems don't exist otherwise)</p>
+  </step>
+ </case>
+
+<!--================xml comment================-->
+ <update date="Mar-15-02" author="JanetW">General Backup/Restore functionality test cases "imported" from BackupRestoreDlg.xml to test cases 1 and 2.</update>
+ <update date="Mar-21-02" author="JanetW">Added test case 3 and started 4. Need more on various media options.</update>
+ <update date="Mar-26-02" author="JanetW">Added test cases 5 through 8. Need to finish 9 + 10 after finding out how seamless the interface with Direct CD software is.</update>
+ <update date="Apr-11-02" author="JanetW">Finished test cases 9 + 10 (CD-R and CD-RW via Direct CD).</update>
+
+</test>

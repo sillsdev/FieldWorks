@@ -1,0 +1,8 @@
+LIBRARY TESTHARNESS
+
+EXPORTS
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE
+	DllCanUnloadNow     PRIVATE
+	DllInstall			PRIVATE

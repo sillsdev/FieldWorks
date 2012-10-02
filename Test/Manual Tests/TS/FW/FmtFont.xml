@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fmtfont" num="2.6.1" abbr="fmft" file="FW\FmtFont.xml">
+ <title tag="fmtfont">Format-Font Dialog Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The Format Font dialog allows the user to change the font characteristics of selected text.</p>
+  </introduction>
+  <context>
+<p>Many font setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Format Font".</p>
+  </context>
+ <case id="fmftAct" num="0" order="any">
+  <title tag="fmftAct">Activation</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <step name="0.0" link="Bug">While in Data Entry view, with cursor in structured text, try to invoke the Format-Font menu item. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html" type="doc">Definition of Format Menu.</link>
+   <r>Format-Font menu item should be enabled; selecting it should bring up the Format Font dialog.</r>
+   <p name="bug">Format Menu Font item not working</p>
+  </step>
+  <step name="0.1" link="Bug">While in any other view, or with the cursor elsewhere, select the Format menu.
+   <r>Format-Font menu item should not be disabled if the cursor is in a field that can be edited in Data Entry.</r>
+   <p name="bug">Format Font Format Menu Font item not enabled for editable data</p>
+   <p name="bug">Format Font Format Menu Font item enabled for non-editable data</p>
+  </step>
+  <step name="0.2" link="Bug">While in any other view, place the cursor in data of a field that can be edited in Data Entry. Invoke the Format-Font dialog, change controls and click OK.
+   <r>The changes should be made in the text selected or when typing in new text. The changes should persist in other views of the same data.</r>
+   <p name="bug">Format Font changes not applied</p>
+   <p name="bug">Format Font changes not saved</p>
+  </step>
+
+ </case>
+ <case id="fmftDiab" num="1" order="any">
+  <title tag="fmftDiab">Exercise simple dialog controls</title>
+  <context>
+<p>When the Format-Font Dialog is displayed</p>
+</context>
+  <step name="1.1" link="Bug">
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/Font/FormatFont.html" type="doc">Format-Font Dialog specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons. The preview window should be pretty close.</r>
+   <p name="bug">Format Font dialog layout incorrect</p>
+  </step>
+  <step name="1.2" link="Bug">
+<link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>Triggering via "OK" applies font changes to selected text or to the character style being editted.</li>
+<li>Report any failures as suggested using "Format Font" as the name of the dialog.</li>
+</ul>
+</r>
+  <p name="bug">Format Font changes are not applied</p>
+  </step>
+  <step name="1.3" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;b&gt; to test the Bold check box.
+   <r>
+<ul>
+<li>When triggered and checked, the selected text or character style becomes heavier or darker.</li>
+<li>Report any failures as suggested using "Format Font bold check box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font Bold change is not applied</p>
+  </step>
+  <step name="1.4" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;i&gt; to test the Italic check box.
+   <r>
+<ul>
+<li>When triggered and checked, the selected text or character style becomes slanted with character tops pointing to the right.</li>
+<li>Report any failures as suggested using "Format Font italic check box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font Italic change is not applied</p>
+  </step>
+  <step name="1.5" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;e&gt; to test the Superscript check box.
+   <r>
+<ul>
+<li>When triggered and checked, the selected text or character style is raised by a standard amount (4 pts) and adjusted by the amount in the Position/By control.</li>
+<li>When triggered and checked, the text size is also decreased.</li>
+<li>When one of the Superscript or Subscript check boxes is checked, the other is automatically unchecked.</li>
+<li>Report any failures as suggested using "Format Font superscript check box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font superscript is not raised</p>
+  <p name="bug">Format Font superscript text size does not change</p>
+  <p name="bug">Format Font superscript check box not coordinated with subscript</p>
+  </step>
+  <step name="1.6" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;t&gt; to test the Subscript check box.
+   <r>
+<ul>
+<li>When triggered and checked, the selected text or character style is lowered by a standard amount (4 pts) and adjusted by the amount in the Position/By control.</li>
+<li>When triggered and checked, the text size is also decreased.</li>
+<li>When one of the Superscript or Subscript check boxes is checked, the other is automatically unchecked.</li>
+<li>Report any failures as suggested using "Format Font subscript check box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font subscript is not lowered</p>
+  <p name="bug">Format Font subscript text size does not change</p>
+  <p name="bug">Format Font subscript check box not coordinated with superscript</p>
+  </step>
+
+ </case>
+ <case id="fmftcmb" num="2" order="any">
+  <title tag="fmftcmb">Exercise combo box controls</title>
+  <context>
+<p>When the Format-Font dialog is visible</p>
+</context>
+  <step name="2.1" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List Box / Combo Box Tests</link> and shortcut &lt;Alt&gt;&lt;F&gt; to test the dialog or toolbar font combo box.
+   <r>
+<ul>
+<li>When triggered (OK or &lt;Enter&gt;), the selected text or character style takes on the font seleted.</li>
+<li>Report any failures as suggested using "Format Font (or Toolbar) combo box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font (or Toolbar) font change not applied</p>
+  </step>
+  <step name="2.2" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List Box / Combo Box Tests</link> and shortcut &lt;Alt&gt;&lt;z&gt; to test the dialog or toolbar font size combo box.
+   <r>
+<ul>
+<li>When triggered (OK or &lt;Enter&gt;), the selected text or character style takes on the size seleted.</li>
+<li>Report any failures as suggested using "Format Font (or Toolbar) Size combo box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font (or Toolbar) font size not applied</p>
+  </step>
+  <step name="2.3" link="Bug">Use the <link uri="../StdCtrls/ColorPal.xml">Color Pallet Tests</link> and shortcut &lt;Alt&gt;&lt;n&gt; to test the Font Color combo box dialog or toolbar control.
+   <r>
+<ul>
+<li>When triggered (OK or &lt;Enter&gt;), the selected text or character style takes on the color seleted.</li>
+<li>Report any failures as suggested using "Format Font (or Toolbar) text color combo box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font (or Toolbar) text color not applied</p>
+  </step>
+  <step name="2.4" link="Bug">Use the <link uri="../StdCtrls/ColorPal.xml">Color Pallet Tests</link> and use the shortcut &lt;Alt&gt;&lt;k&gt; to test the Background Color combo box dialog or toolbar control.
+   <r>
+<ul>
+<li>When triggered (OK or &lt;Enter&gt;), the selected text or character style background takes on the color seleted.</li>
+<li>Report any failures as suggested using "Format Font (or Toolbar) background color combo box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font (or Toolbar) background text color not applied</p>
+  </step>
+  <step name="2.5" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List Box / Combo Box Tests</link> and shortcut &lt;Alt&gt;&lt;U&gt; to test the dialog or toolbar underline combo box.
+   <r>
+<ul>
+<li>When triggered (OK or &lt;Enter&gt;), the selected text or character style takes on the underline seleted.</li>
+<li>Report any failures as suggested using "Format Font (or Toolbar) Underline combo box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font (or Toolbar) underline change not applied</p>
+  </step>
+  <step name="2.6" link="Bug">Use the <link uri="../StdCtrls/ColorPal.xml">List Box / Combo Box Tests</link> and shortcut &lt;Alt&gt;&lt;l&gt; to test the dialog or toolbar font underline color combo box.
+   <r>
+<ul>
+<li>When triggered (OK or &lt;Enter&gt;), the selected text or character style takes on the underline color seleted.</li>
+<li>Report any failures as suggested using "Format Font (or Toolbar) underline color combo box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font (or Toolbar) underline color not applied</p>
+  </step>
+  <step name="2.7" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List Box / Combo Box Tests</link> and shortcut &lt;Alt&gt;&lt;o&gt; to test the dialog or toolbar font position combo box.
+   <r>
+<ul>
+<li>When triggered (OK or &lt;Enter&gt;), the selected text or character style takes on the position seleted.</li>
+<li>Report any failures as suggested using "Format Font (or Toolbar) Font Position combo box" as the name of the control.</li>
+</ul>
+</r>
+  <p name="bug">Format Font (or Toolbar) position not applied</p>
+  </step>
+  <step name="2.8" link="Bug">Use the <link uri="../StdCtrls/SpinCtrl.xml">Spin Control Tests</link> and shortcut &lt;Alt&gt;&lt;y&gt; to test the dialog or toolbar font position by spin control.
+   <r>
+<ul>
+<li>When triggered (OK or &lt;Enter&gt;), the selected text or character style takes on the position spun.</li>
+<li>Report any failures as suggested using "Format Font Position By spin control" as the name of the control.</li>
+</ul>
+</r>
+   <p name="Notes">When the position by value is zero (0) the Position combo box is changed to "Normal". When normal position is selected, the by value is set to zero. When the spin control passes from a Raised value down through zero and back into positive values, the position changes from Raised to Normal to Lowered. The opposite happens when spinning up from a Lowered position by value.</p>
+  <p name="bug">Format Font (or Toolbar) position by spin not applied</p>
+  </step>
+
+ </case>
+ <case id="fmftPrw" num="3" order="any">
+  <title tag="fmftPrw">Preview window</title>
+  <context>
+<p>With some text selected as indicated below, and with the Format Font dialog visible</p>
+</context>
+
+   <p name="Notes">There is currently no spec for how the preview should work. This needs to be filled out ... depending on how the programmer implements it? and in comparison with MS Word.</p>
+
+  <step name="3.1" link="Bug">With some "plain" text selected, try various combinations of all the controls.
+   <r>The preview should show (the first part of) the selected text, in the format indicated by the current state of the dialog controls.</r>
+   <p name="bug">Format Font Preview displays &lt;attribute&gt; incorrectly</p>
+  </step>
+  <step name="3.2" link="Bug">With some uniformly formatted (e.g. all italic) text selected, try various combinations of all the controls.
+   <r>The preview should show [(the first part of) the selected text or] the font name, in the format indicated by the current state of the dialog controls. Any attributes common to all of the selected text should be reflected in the preview, e.g. if all the selected text was already italic, the preview should be too.</r>
+   <p name="bug">Format Font Preview displays &lt;attribute&gt; incorrectly</p>
+  </step>
+  <step name="3.3" link="Bug">With some heterogeneously formatted (e.g. partly italic, mixed fonts and sizes) text selected, try various combinations of all the controls.
+   <r>The preview should show [(the first part of) the selected text or] the font name, in the format indicated by the current state of the dialog controls. Any attributes common to all of the selected text should be reflected in the preview.</r>
+   <p name="bug">Format Font Preview displays &lt;attribute&gt; incorrectly</p>
+  </step>
+  <step name="3.4" link="Bug">With no text selected, try various combinations of all the controls.
+   <r>The preview should show some sample text with the selected formatting, e.g. the name of the current font, in the format indicated by the current state of the dialog controls.</r>
+   <p name="bug">Format Font Preview displays &lt;attribute&gt; incorrectly</p>
+  </step>
+
+ </case>
+
+
+
+ <case id="fmftSe" num="7" order="any">
+  <title tag="fmftSe">Format Font side effects</title>
+  <context>
+<p>When the Format Font Dialog is displayed</p>
+</context>
+  <step name="7.1" link="Bug">Exercise all the controls on selected text with different settings. Click OK and then verify that the settings persist by bringing up the dialog again.
+   <r>Selected text should be affected accordingly, resembling the form of the preview. Note the underline color does not display if the Underline Style is None.</r>
+   <p name="bug">Format Font control sequence causes problem</p>
+  </step>
+  <step name="7.2" link="Bug">Exercise all the controls on selected text with different settings. Exit the application, restart it and verify that the settings persist by bringing up the Format Font dialog again.
+   <r>Selected text is affected accordingly. The settings persist after leaving and re-entering the application.</r>
+   <p name="bug">Format Font &lt;attribute&gt; does not persist</p>
+  </step>
+
+ </case>
+ <update date="Jan-03-01" author="MikeL">First test script to reference "primitive" tests.</update>
+ <update date="Sep-09-01" author="MikeL">Tweaked, added to and rearranged some steps.</update>
+
+</test>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2011-07-28T15:51:53" />
+		<language
+			type="qaa" />
+		<variant
+			type="x-kal" />
+	</identity>
+	<collations>
+		<collation>
+			<rules>
+				<reset>
+					<last_primary_ignorable />
+				</reset>
+				<tc>0123456789 </tc>
+				<reset>
+					<last_tertiary_ignorable />
+				</reset>
+				<ic> '</ic>
+			</rules>
+			<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+				<palaso:sortRulesType
+					value="CustomICU" />
+			</special>
+		</collation>
+	</collations>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Kal" />
+		<palaso:defaultFontFamily
+			value="Charis SIL" />
+		<palaso:languageName
+			value="Kalaba" />
+		<palaso:spellCheckingId
+			value="x_kal" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:defaultFontFeatures
+			value="1030=0" />
+		<fw:graphiteEnabled
+			value="True" />
+		<fw:validChars
+			value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt; &lt;ValidCharacters&gt;   &lt;WordForming&gt;'￼-￼a￼A￼b￼B￼c￼C￼d￼D￼e￼E￼f￼F￼g￼G￼h￼H￼i￼I￼j￼J￼k￼K￼l￼L￼m￼M￼n￼N￼o￼O￼p￼P￼q￼Q￼r￼R￼s￼S￼t￼T￼u￼U￼v￼V￼w￼W￼x￼X￼y￼Y￼z￼Z&lt;/WordForming&gt;   &lt;Numeric /&gt;0￼1￼2￼3￼4￼5￼6￼7￼8￼9   &lt;Other&gt;U+0020￼!￼&quot;￼&amp;amp;￼(￼)￼,￼.￼/￼:￼;￼?￼[￼]￼{￼}&lt;/Other&gt; &lt;/ValidCharacters&gt;" />
+		<fw:windowsLCID
+			value="1033" />
+	</special>
+</ldml>

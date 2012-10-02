@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" id="document">
+  <xs:element name="document">
+	<xs:complexType>
+	  <xs:sequence>
+		<xs:element name="interlinear-text" minOccurs="1" maxOccurs="unbounded">
+		  <xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			  <xs:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+			  <xs:element name="paragraphs" minOccurs="1" maxOccurs="1">
+				<xs:complexType>
+				  <xs:sequence minOccurs="1" maxOccurs="1">
+					<xs:element name="paragraph" minOccurs="0" maxOccurs="unbounded">
+					  <xs:complexType>
+						<xs:all>
+						  <xs:element name="phrases" minOccurs="1" maxOccurs="1">
+							<xs:complexType>
+							  <xs:sequence>
+								<xs:element name="phrase" minOccurs="0" maxOccurs="unbounded">
+								  <xs:complexType>
+									<xs:sequence>
+									  <xs:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+									  <xs:element name="words" minOccurs="1" maxOccurs="1">
+										<xs:complexType>
+										  <xs:sequence>
+											<xs:element name="scrMilestone" minOccurs="0" maxOccurs="unbounded">
+											  <xs:complexType>
+												<xs:attribute name="chapter" type="xs:integer" use="required" />
+												<xs:attribute name="verse" type="xs:integer" use="required" />
+											  </xs:complexType>
+											</xs:element>
+											<xs:element name="word" minOccurs="0" maxOccurs="unbounded">
+											  <xs:complexType>
+												<xs:choice minOccurs="0" maxOccurs="unbounded">
+												  <xs:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+												  <xs:element name="morphemes" minOccurs="0" maxOccurs="1">
+													<xs:complexType>
+													  <xs:sequence>
+														<xs:element name="morph" minOccurs="0" maxOccurs="unbounded">
+														  <xs:complexType>
+															<xs:sequence>
+															<xs:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+															</xs:sequence>
+															<xs:attribute name="type" type="morphTypes"/>
+															<xs:attribute name="guid" type="xs:string"/>
+														  </xs:complexType>
+														</xs:element>
+													  </xs:sequence>
+													  <xs:attribute name="analysisStatus" type="analysisStatusTypes" use="optional"/>
+													</xs:complexType>
+												  </xs:element>
+												</xs:choice>
+												<xs:attribute name="guid" type="xs:string"/>
+												<xs:attribute name="type" type="xs:string" fixed="phrase" use="optional" />
+											  </xs:complexType>
+											</xs:element> <!-- word -->
+										  </xs:sequence>
+										</xs:complexType>
+									  </xs:element> <!-- words -->
+									  <xs:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+									</xs:sequence>
+									<!-- media-file should match a guid of one of the media elements for the enclosing text -->
+									<xs:attribute name="media-file" type="xs:string" use="optional"/>
+									<xs:attribute name="begin-time-offset" type="xs:string" use="optional"/>
+									<xs:attribute name="end-time-offset" type="xs:string" use="optional"/>
+									<xs:attribute name="guid" type="xs:string"/>
+									<xs:attribute name="speaker" type="xs:string" use="optional"/>
+								  </xs:complexType>
+								</xs:element> <!-- phrase -->
+							  </xs:sequence>
+							</xs:complexType>
+						  </xs:element> <!-- phrases -->
+						</xs:all>
+						<xs:attribute name="guid" type="xs:string"/>
+					  </xs:complexType>
+					</xs:element> <!-- paragraph -->
+				  </xs:sequence>
+				</xs:complexType>
+			  </xs:element> <!-- paragraphs -->
+			  <xs:element name="languages" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+				  <xs:sequence>
+					<xs:element name="language" minOccurs="0" maxOccurs="unbounded">
+					  <xs:complexType>
+						<xs:attribute name="lang" type="xs:string" use="required"/>
+						<xs:attribute name="encoding" type="xs:string" use="optional"/>
+						<xs:attribute name="font" type="xs:string"/>
+						<xs:attribute name="vernacular" type="xs:boolean"/>
+					  </xs:complexType>
+					</xs:element>
+				  </xs:sequence>
+				</xs:complexType>
+				<xs:key name="langId">
+				  <xs:selector xpath="language"/>
+				  <xs:field xpath="@lang"/>
+				</xs:key>
+			  </xs:element>
+			  <xs:element name="media-files" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+				  <xs:sequence>
+					<xs:element name="media" minOccurs="0" maxOccurs="unbounded">
+					  <xs:complexType>
+						<xs:attribute name="guid" type="xs:string" use="required"/>
+						<!-- location should follow the media fragment specification -->
+						<xs:attribute name="location" type="xs:anyURI" use="required"/>
+					  </xs:complexType>
+					</xs:element>
+				  </xs:sequence>
+				  <xs:attribute name="offset-type" type="xs:string"/>
+				</xs:complexType>
+			  </xs:element>
+			</xs:sequence>
+			<xs:attribute name="guid" type="xs:string" use="optional"/>
+			<xs:attribute name="scrSectionType" type="scrSectionTypes" use="optional"/>
+			<xs:attribute name="scrBook" type="xs:string" use="optional"/>
+		  </xs:complexType>
+		</xs:element> <!-- interlinear-text -->
+	  </xs:sequence>
+	  <xs:attribute name="exportSource" type="xs:string" use="optional"/>
+	  <xs:attribute name="exportTarget" type="xs:string" use="optional"/>
+	  <xs:attribute name="version" type="xs:string"/>
+	</xs:complexType>
+  </xs:element> <!-- document -->
+  <xs:element name="item" nillable="true">
+	<xs:complexType>
+	  <xs:simpleContent>
+		<xs:extension base="xs:string">
+		  <xs:attribute name="type" type="itemTypes" use="required"/>
+		  <xs:attribute name="lang" type="xs:string" use="required"/>
+		  <xs:attribute name="analysisStatus" type="analysisStatusTypes" use="optional"/>
+		</xs:extension>
+	  </xs:simpleContent>
+	</xs:complexType>
+  </xs:element>
+	<xs:simpleType name="knownItemTypes">
+	<xs:restriction base="xs:string">
+	  <xs:enumeration value="txt"/>
+	  <xs:enumeration value="cf"/>
+	  <xs:enumeration value="hn"/>
+	  <xs:enumeration value="variantTypes"/>
+	  <xs:enumeration value="gls"/>
+	  <xs:enumeration value="msa"/>
+	  <xs:enumeration value="pos"/>
+	  <xs:enumeration value="title"/>
+	  <xs:enumeration value="title-abbreviation"/>
+	  <xs:enumeration value="source"/>
+	  <xs:enumeration value="comment"/>
+	  <xs:enumeration value="text-is-translation"/>
+	  <xs:enumeration value="description"/>
+	  <xs:enumeration value="punct"/>
+	</xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="itemTypes">
+	<xs:union memberTypes="knownItemTypes xs:string"/>
+  </xs:simpleType>
+  <xs:simpleType name="morphTypes">
+	<xs:restriction base="xs:string">
+	  <xs:enumeration value="particle"/>
+	  <xs:enumeration value="infix"/>
+	  <xs:enumeration value="prefix"/>
+	  <xs:enumeration value="simulfix"/>
+	  <xs:enumeration value="suffix"/>
+	  <xs:enumeration value="suprafix"/>
+	  <xs:enumeration value="circumfix"/>
+	  <xs:enumeration value="clitic"/>
+	  <xs:enumeration value="enclitic"/>
+	  <xs:enumeration value="proclitic"/>
+	  <xs:enumeration value="bound root"/>
+	  <xs:enumeration value="root"/>
+	  <xs:enumeration value="bound stem"/>
+	  <xs:enumeration value="stem"/>
+	  <xs:enumeration value="infixing interfix"/>
+	  <xs:enumeration value="prefixing interfix"/>
+	  <xs:enumeration value="suffixing interfix"/>
+	  <xs:enumeration value="phrase"/>
+	  <xs:enumeration value="discontiguous phrase"/>
+	</xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="scrSectionTypes">
+	<xs:restriction base="xs:string">
+	  <xs:enumeration value="title"/>
+	  <xs:enumeration value="heading"/>
+	  <xs:enumeration value="verseText"/>
+	</xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="analysisStatusTypes">
+	<xs:restriction base="xs:string">
+	  <xs:enumeration value="humanApproved"/>
+	  <xs:enumeration value="guess"/>
+	  <xs:enumeration value="guessByHumanApproved"/>
+	  <xs:enumeration value="guessByStatisticalAnalysis"/>
+	</xs:restriction>
+  </xs:simpleType>
+</xs:schema>

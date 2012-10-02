@@ -1,0 +1,94 @@
+// SILGraphiteControl.idl : type library source for ActiveX Control project.
+
+// This file will be processed by the MIDL compiler tool to
+// produce the type library (SILGraphiteControl.tlb) that will become a resource in
+// SILGraphiteControl.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(DBA69D4C-A68F-4156-A411-47911CEA6275), version(1.0),
+  helpfile("SILGraphiteControl.hlp"),
+  helpstring("SILGraphiteControl ActiveX Control module"),
+  control ]
+library SILGraphiteControlLib
+{
+	importlib(STDOLE_TLB);
+
+	//  Primary dispatch interface for CSILGraphiteControlCtrl
+
+	[ uuid(CFFFE4B0-0E6E-4D86-82C5-10FBD2CA6F16),
+	  helpstring("Dispatch interface for SILGraphiteControl Control")]
+	dispinterface _DSILGraphiteControl
+	{
+		// TODO: fix to use property mechanism instead of declaring everything as methods,
+		// for the following properties: Text, Multiline, AllowFormatDlg, DefaultFont,
+		// DefaultFontSize, VerticalScroll, HorizontalScroll
+
+		properties:
+			[id(1), helpstring("property Text")] BSTR Text;
+			[id(12), helpstring("property multiline")] VARIANT_BOOL multiline;
+			[id(47), helpstring("property AllowFormatDlg")] VARIANT_BOOL AllowFormatDlg;
+		methods:
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+			[id(2), helpstring("method SetSelectionFont")] void SetSelectionFont([in]BSTR fontName);
+			[id(3), helpstring("method GetSelectionFont")] void GetSelectionFont([out] BSTR* fontName);
+			[id(7), helpstring("method Cut")] void Cut(void);
+			[id(8), helpstring("method Copy")] void Copy(void);
+			[id(9), helpstring("method Paste")] void Paste(void);
+			[id(10),helpstring("method SetText")] void SetText([in]LPCTSTR newVal);
+			[id(11),helpstring("method GetText")] BSTR GetText();
+			[id(13),helpstring("method SetMultiline")] void SetMultiline([in]VARIANT_BOOL);
+			[id(14),helpstring("method GetMultiline")] VARIANT_BOOL GetMultiline();
+			[id(15), helpstring("method SetVerticalScroll")] void SetVerticalScroll([in]VARIANT_BOOL scrollFlag);
+			[id(16), helpstring("method SetSelectionFontSize")] void SetSelectionFontSize([in]int fontSize);
+			[id(17), helpstring("method GetSelectionFontSize")] int GetSelectionFontSize(void);
+			[id(18), helpstring("method ResizeWindow")] void ResizeWindow([in]LONG x, [in]LONG y);
+			[id(19), helpstring("method GetSizeX")] LONG GetSizeX(void);
+			[id(20), helpstring("method GetSizeY")] LONG GetSizeY(void);
+			[id(21), helpstring("method New")] void New(void);
+			[id(22), helpstring("method Open")] void Open([in]BSTR pVar, [in]LONG flags, [in]LONG CodePage);
+			[id(23), helpstring("method Save")] void Save([in]BSTR pVar, [in] LONG flags, [in] LONG CodePage);
+			[id(28), helpstring("method MoveRight")] void MoveRight([in]VARIANT_BOOL ShiftState);
+			[id(29), helpstring("method MoveLeft")] void MoveLeft([in]VARIANT_BOOL ShiftState);
+			[id(38), helpstring("method Undo")] void Undo(/*[in]LONG Count*/);
+			[id(39), helpstring("method Redo")] void Redo(/*[in]LONG Count*/);
+			[id(40), helpstring("method TextColor")] void TextColor([in]BYTE r,[in] BYTE g, [in]BYTE b);
+			[id(41), helpstring("method PutHtmlText")] void PutHtmlText([in]BSTR text);
+			[id(42), helpstring("method GetHtmlText")] void GetHtmlText([out]BSTR* text);
+			[id(43), helpstring("method MoveUp")] void MoveUp([in]VARIANT_BOOL ShiftState);
+			[id(44), helpstring("method MoveDown")] void MoveDown([in]VARIANT_BOOL ShiftState);
+			[id(45), helpstring("method HorizontalScroll")] void HorizontalScroll([in]VARIANT_BOOL horz);
+			[id(46), helpstring("method BeepIt")] void BeepIt([in]VARIANT_BOOL beepy);
+			[id(48), helpstring("method GetFontName")] BSTR GetFontName(void);
+			[id(49), helpstring("method GetHtml")] BSTR GetHtml(void);
+			[id(50), helpstring("method SetDefaultFont")] void SetDefaultFont([in]BSTR fontName);
+			[id(51), helpstring("method SetDefaultFontSize")] void SetDefaultFontSize([in]int fontSize);
+			[id(52), helpstring("method GetAllowFormatDlg")] VARIANT_BOOL GetAllowFormatDlg(void);
+			[id(53), helpstring("method SetAllowFormatDlg")] void SetAllowFormatDlg([in]VARIANT_BOOL newVal);
+  };
+
+	//  Event dispatch interface for CSILGraphiteControlCtrl
+
+	[ uuid(F6C724C7-CC62-46DC-AB50-1E8802ABD0D4),
+	  helpstring("Event interface for SILGraphiteControl Control") ]
+	dispinterface _DSILGraphiteControlEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			[id(DISPID_KEYDOWN)] void KeyDown(SHORT* KeyCode, SHORT Shift);
+			[id(DISPID_CLICK)] void Click(void);
+	};
+
+	//  Class information for CSILGraphiteControlCtrl
+	[ uuid(62631FFE-1185-44CC-8AD2-602A05D1D071), licensed,
+	  helpstring("SILGraphiteControl Control"), control ]
+	coclass SILGraphiteControl
+	{
+
+		[default] dispinterface _DSILGraphiteControl;
+		[default, source] dispinterface _DSILGraphiteControlEvents;
+	};
+};

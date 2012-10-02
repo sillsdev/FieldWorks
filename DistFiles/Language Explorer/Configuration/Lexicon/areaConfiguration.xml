@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- ********************************************************** -->
+	<!-- ************************ commands ******************** -->
+	<!-- ********************************************************** -->
+	<commands>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>
+		<include path="DataTreeInclude.xml" query="window/commands/*"/>
+		<command id="CmdGoToEntry" label="_Find lexical entry..." message="GotoLexEntry" icon="goToEntry" shortcut="Ctrl+F">
+			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
+		</command>
+		<command id="CmdInsertLexEntry" label="_Entry..." message="InsertItemInVector" shortcut="Ctrl+E" icon="majorEntry">
+			<parameters className="LexEntry"/>
+		</command>
+		<command id="CmdShowAllPublications" label="All Entries" message="ShowAllEntries"/>
+		<command id="CmdMergeEntry" label="_Merge with entry..." message="MergeEntry">
+			<parameters title="Merge Entry" formlabel="_Find:" okbuttonlabel="_Merge"/>
+		</command>
+		<command id="CmdInsertSense" label="_Sense" message="DataTreeInsert">
+			<parameters field="Senses" className="LexSense" ownerClass="LexEntry" recomputeVirtual="LexSense.LexSenseOutline"/>
+		</command>
+		<command id="CmdInsertSubsense" label="Subsense (in sense)" message="DataTreeInsert">
+			<parameters field="Senses" className="LexSense" ownerClass="LexSense" recomputeVirtual="LexSense.LexSenseOutline"/>
+		</command>
+		<command id="CmdInsertPicture" label="_Picture" message="InsertPicture">
+			<parameters field="Pictures" className="LexSense"/>
+		</command>
+		<command id="CmdInsertMediaFile" label="_Sound or Movie" message="InsertMediaFile">
+			<parameters field="MediaFiles" className="LexPronunciation"/>
+		</command>
+		<command id="CmdDeleteMediaFile" label="Delete this Media Link" message="DeleteMediaFile" icon="Delete">
+			<parameters className="CmMedia"/>
+		</command>
+		<command id="CmdInsertVariant" label="_Variant" message="InsertItemViaBackrefVector">
+			<parameters className="LexEntry" fieldName="VariantFormEntryBackRefs" restrictToTool="lexiconEdit"/>
+		</command>
+		<command id="CmdChangeToComplexForm" label="Lexeme Form has components" message="ConvertEntryIntoComplexForm">
+			<parameters className="LexEntry" restrictToTool="lexiconEdit"/>
+		</command>
+		<command id="CmdChangeToVariant" label="Lexeme Form is a variant" message="ConvertEntryIntoVariant">
+			<parameters className="LexEntry" restrictToTool="lexiconEdit"/>
+		</command>
+		<command id="CmdInsertReversalIndex" label="Reversal Index" message="InsertReversalIndex">
+			<parameters className="ReversalIndex"/>
+		</command>
+		<command id="CmdDeleteReversalIndex" label="Delete Reversal Index" message="DeleteReversalIndex" icon="Delete">
+			<parameters className="ReversalIndex"/>
+		</command>
+		<command id="CmdInsertReversalEntry" label="Reversal Entry" message="InsertItemInVector" icon="reversalEntry">
+			<parameters className="ReversalIndexEntry"/>
+		</command>
+		<command id="CmdGoToReversalEntry" label="_Find reversal entry..." message="GotoReversalEntry" icon="gotoReversalEntry" shortcut="Ctrl+F">
+			<parameters title="Go To Entry" formlabel="Go _To..." okbuttonlabel="_Go"/>
+		</command>
+		<command id="CmdConfigureXmlDocView" label="{0}" message="ConfigureXmlDocView"/>
+		<command id="CmdConfigureDictionary" label="Configure {0}" message="ConfigureXmlDocView"/>
+	</commands>
+	<!-- ********************************************************** -->
+	<!-- ************************ lists *********************** -->
+	<!-- ********************************************************** -->
+	<lists>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
+		<list id="LexicalToolsList"/>
+	</lists>
+	<!-- ********************************************************** -->
+	<!-- ******** controls (dialog or embedded browse view) ******* -->
+	<!-- ********************************************************** -->
+	<controls>
+		<parameters id="guicontrols">
+			<guicontrol id="findExampleSentences">
+				<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.FindExampleSentenceDlg"/>
+				<parameters id="senseConcordanceControls">
+					<control id="ConcOccurrenceList">
+						<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ConcOccurrenceBrowseView"/>
+						<parameters id="ConcOccurrenceList" selectColumn="true" defaultChecked="false" forceReloadListOnInitOrChangeRoot="true" editable="false" clerk="OccurrencesOfSense" filterBar="true" ShowOwnerShortname="true">
+							<include path="../Words/reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+						</parameters>
+					</control>
+					<control id="SegmentPreviewControl">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordDocXmlView"/>
+						<parameters id="SegmentPreviewControl" clerk="OccurrencesOfSense" treeBarAvailability="NotMyBusiness" layout="publicationNew" editable="false"/>
+					</control>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="matchingEntries">
+				<parameters id="lexentryMatchList" listItemsClass="LexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="LexEntry-Plural" editable="false">
+					<columns>
+						<column label="Headword" sortmethod="FullSortKey" ws="$ws=vernacular" editable="false" width="96000" layout="EntryHeadwordForFindEntry"/>
+						<column label="Lexeme Form" visibility="menu" common="true" sortmethod="MorphSortKey" ws="$ws=vernacular" editable="false" layout="LexemeFormForFindEntry"/>
+						<column label="Citation Form" visibility="menu" sortmethod="CitationFormSortKey" ws="$ws=vernacular" editable="false" layout="CitationFormForFindEntry"/>
+						<column label="Allomorphs" editable="false" width="96000" ws="$ws=vernacular" layout="AllomorphsForFindEntry"/>
+						<column label="Morph Type" visibility="menu" editable="false" field="LexEntry.LexemeForm" subfield="MoForm.MorphType" list="LexDb.MorphTypes" layout="MorphTypeofEntry"/>
+						<column label="Glosses" editable="false" width="96000" ws="$ws=analysis" layout="GlossesForFindEntry"/>
+						<column headerlabel="Grammatical Info." label="Grammatical Info. (Full)" visibility="menu" multipara="true" layout="MsasOfSenses" chooserFilter="external" editable="false">
+							<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.EntryPosFilter"/>
+						</column>
+						<column headerlabel="Grammatical Info." label="Grammatical Info. (Abbr.)" visibility="menu" multipara="true" layout="MsasOfSensesAbbr" chooserFilter="external" editable="false">
+							<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.EntryPosFilter"/>
+						</column>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="MergeAllomorphList">
+				<parameters id="mergeAllomorphList" listItemsClass="MoForm" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+							hscroll="true" editable="false" selectColumn="false">
+					<columns>
+						<column label="Form" width="80%" layout="Allomorph" ws="$ws=vernacular"/>
+						<column label="Type" width="20%" layout="MorphTypeName"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="MergeSenseList">
+				<parameters id="mergeSenseList" listItemsClass="LexSense" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+							hscroll="true" editable="false" selectColumn="false">
+					<columns>
+						<column label="Gloss" width="50%" layout="Gloss" ws="$ws=best analysis"/>
+						<column label="Grammatical Info." width="50%" multipara="true" layout="GrammaticalInfoAbbrForSense"/>
+						<column label="Definition" width="100%" layout="Definition" ws="$ws=analysis" visibility="menu"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="MergeReversalEntryList">
+				<parameters id="mergeReversalEntryList" listItemsClass="ReversalIndexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+							hscroll="true" editable="false" selectColumn="false">
+					<columns>
+						<column label="Entry" width="100%" layout="ReversalForm" ws="$ws=reversal"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="matchingReversalEntries">
+				<parameters id="reventryMatchList" listItemsClass="ReversalIndexEntry" filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true" altTitleId="ReversalIndexEntry-Plural" editable="false" disableConfigButton="true">
+					<columns>
+						<column label="Form" sortmethod="FullSortKey" ws="$ws=reversal" editable="false" width="96000">
+							<span>
+								<properties>
+									<editable value="false"/>
+								</properties>
+								<string field="ReversalForm" ws="reversal"/>
+							</span>
+						</column>
+						<column label="Category" width="96000">
+							<span>
+								<properties>
+									<editable value="false"/>
+								</properties>
+								<obj field="PartOfSpeech" layout="empty">
+									<span>
+										<properties>
+											<editable value="false"/>
+										</properties>
+										<string field="Name" ws="best analysis"/>
+									</span>
+								</obj>
+							</span>
+						</column>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/guicontrol/*"/>
+			<clerks>
+				<clerk id="OccurrencesOfSense" shouldHandleDeletion="false">
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcRecordClerk"/>
+					<recordList class="LexSense" field="Occurrences">
+						<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+					</recordList>
+					<filters/>
+					<sortMethods/>
+				</clerk>
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
+			</clerks>
+		</parameters>
+	</controls>
+	<!-- ******************************************************** -->
+	<!-- ************************ menus *********************** -->
+	<!-- ******************************************************** -->
+	<menubar>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
+	</menubar>
+	<!-- ********************************************************** -->
+	<!-- ************************ menuAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<menuAddOn>
+		<menu id="Insert">
+			<item command="CmdInsertLexEntry" defaultVisible="false"/>
+			<item command="CmdInsertSense" defaultVisible="false"/>
+			<item command="CmdInsertVariant" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-AlternateForm" label="A_llomorph" defaultVisible="false"/>
+			<item command="CmdInsertReversalIndex" defaultVisible="false"/>
+			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
+			<item command="CmdDataTree-Insert-Pronunciation" defaultVisible="false"/>
+			<item command="CmdInsertMediaFile" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdInsertSubsense" defaultVisible="false"/>
+			<item command="CmdInsertPicture" defaultVisible="false"/>
+		</menu>
+		<menu id="Edit">
+			<item command="CmdGoToReversalEntry" defaultVisible="false"/>
+			<item command="CmdDeleteReversalIndex" defaultVisible="false"/>
+		</menu>
+		<menu id="View">
+			<item label="Show _Dictionary Preview" boolProperty="Show_DictionaryPubPreview" defaultVisible="false"/>
+			<item label="_Show Hidden Fields" boolProperty="ShowHiddenFields" defaultVisible="false"/>
+		</menu>
+		<!-- This is really the Tools-Configure submenu.-->
+		<menu id="Configure">
+			<item label="{0}" command="CmdConfigureXmlDocView" defaultVisible="false"/>
+		</menu>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
+	</menuAddOn>
+	<!-- ********************************************************** -->
+	<!-- ************************ contextMenus *********************** -->
+	<!-- ********************************************************** -->
+	<contextMenus>
+		<menu id="PaneBar-LexicalDetail" label="">
+			<menu id="LexEntryPaneMenu" icon="MenuWidget">
+				<item label="Show Dictionary Preview" boolProperty="Show_DictionaryPubPreview"/>
+				<item label="-" translate="do not translate"/>
+				<item label="Insert _Sense" command="CmdInsertSense"/>
+				<item label="Insert Subsense (in sense)" command="CmdInsertSubsense"/>
+				<item label="Insert _Variant" command="CmdInsertVariant"/>
+				<item label="Insert A_llomorph" command="CmdDataTree-Insert-AlternateForm"/>
+				<item label="Insert _Pronunciation" command="CmdDataTree-Insert-Pronunciation"/>
+				<item label="Insert Sound or Movie _File" command="CmdInsertMediaFile"/>
+				<item label="-" translate="do not translate"/>
+				<item command="CmdChangeToComplexForm"/>
+				<item command="CmdChangeToVariant"/>
+				<item command="CmdMergeEntry" defaultVisible="false"/>
+				<item label="-" translate="do not translate"/>
+				<item command="CmdRootEntryJumpToConcordance"/>
+			</menu>
+			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-lexiconEdit" defaultVisible="true" settingsGroup="local"/>
+		</menu>
+		<menu id="PaneBar-Dictionary" label="">
+		<!-- *** Put any alignment="right" menus in first. *** -->
+			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="right">
+				<menu list="Layouts" inline="true" emptyAllowed="true"
+					  behavior="singlePropertyAtomicValue" property="DictionaryPublicationLayout"/>
+				<item label="-" translate="do not translate"/>
+				<item command="CmdConfigureDictionary"/>
+			</menu>
+			<menu id="LexEntryPaneMenu" icon="MenuWidget" alignment="left">
+				<menu list="Publications" inline="true" emptyAllowed="true"
+					  behavior="singlePropertyAtomicValue" property="SelectedPublication"/>
+				<item command="CmdShowAllPublications"/>
+			</menu>
+		</menu>
+		<menu id="PaneBar-ReversalEntryDetail" label="">
+			<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-reversalToolEditComplete" defaultVisible="true" settingsGroup="local"/>
+		</menu>
+		<menu id="PaneBar-ShowFailingItems-Classified" label="">
+			<item label="Show Unused Items" boolProperty="ShowFailingItems-lexiconClassifiedDictionary" defaultVisible="true" settingsGroup="local"/>
+		</menu>
+		<include path="DataTreeInclude.xml" query="window/contextMenus/*"/>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
+	</contextMenus>
+	<!-- ********************************************************** -->
+	<!-- ************************ sidebar *********************** -->
+	<!-- ********************************************************** -->
+	<sidebar>
+		<tab label="Lexical Tools" list="LexicalToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
+	</sidebar>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbars *********************** -->
+	<!-- ********************************************************** -->
+	<toolbars/>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbarsAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<toolbarsAddOn>
+		<!--	Brings out bug where showing a list forces the list to set a current value which then propogates messages to a world that is not ready for them!
+
+		<toolbar id="BarViews" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl"/> -->
+		<!--    <include query="window/toolbars/*"/> -->
+		<toolbar id="Insert">
+			<item command="CmdInsertLexEntry" defaultVisible="false"/>
+			<item command="CmdGoToEntry" defaultVisible="false"/>
+			<item command="CmdInsertReversalEntry" defaultVisible="false"/>
+			<item command="CmdGoToReversalEntry" defaultVisible="false"/>
+		</toolbar>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
+	</toolbarsAddOn>
+	<!-- ********************************************************** -->
+	<!-- ************************ resources ********************* -->
+	<!-- ********************************************************** -->
+	<resources>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
+	</resources>
+	<!-- ********************************************************** -->
+	<!-- ************************ listeners *********************** -->
+	<!-- ********************************************************** -->
+	<listeners>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
+		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.InsertEntryDlgListener"/>
+		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.GoLinkEntryDlgListener"/>
+		<listener assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.MergeEntryDlgListener"/>
+		<listener assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalListener">
+			<parameters clerk="AllReversalEntries"/>
+		</listener>
+	</listeners>
+	<!-- ********************************************************** -->
+	<!-- ************************ defaultProperties ********************* -->
+	<!-- ********************************************************** -->
+	<defaultProperties>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
+		<property name="ToolForAreaNamed_lexicon" value="lexiconEdit" settingsGroup="local"/>
+		<property name="Show_DictionaryPubPreview" bool="true" persist="true" settingsGroup="local"/>
+		<property name="Show_reversalIndexEntryList" bool="true" persist="false" settingsGroup="local"/>
+		<property name="ShowHiddenFields" bool="false" persist="false" settingsGroup="local"/>
+		<property name="SelectedPublication" value="Main Dictionary" settingsGroup="local"/>
+	</defaultProperties>
+	<!-- ********************************************************** -->
+	<!-- ************************ Area Item *********************** -->
+	<!-- ********************************************************** -->
+	<item label="Lexicon" value="lexicon" icon="folder-lexicon">
+		<parameters id="lexicon">
+			<panels>
+				<listPanel label="Lexical Tools" listId="LexicalToolsList"/>
+			</panels>
+			<clerks>
+				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
+				<clerk id="entries">
+					<recordList owner="LexDb" property="Entries"/>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+						<sortMethod label="Primary Gloss" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="PrimaryGloss"/>
+					</sortMethods>
+				</clerk>
+				<clerk id="AllReversalEntries">
+					<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.ReversalEntryClerk"/>
+					<recordList owner="ReversalIndex" property="AllEntries">
+						<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList"/>
+					</recordList>
+					<filters/>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+					<!--<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>-->
+				</clerk>
+				<clerk id="entriesOrChildren">
+					<recordList owner="LexDb" property="Entries"> <!-- by default load for Entries but can be for AllSenses too -->
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.EntriesOrChildClassesRecordList"/>
+						<PartOwnershipTree>
+							<!-- the ClassOwnershipTree describes the relative relationship between the target classes in the possible source properties
+								 loaded by this list. This especially helps in maintaining the CurrentIndex when switching from on property to the next. -->
+							<ClassOwnershipTree>
+								<LexEntry sourceField="Entries">
+									<LexEntryRef sourceField="AllEntryRefs" altSourceField="ComplexEntryTypes:AllComplexEntryRefPropertyTargets;VariantEntryTypes:AllVariantEntryRefPropertyTargets"/>
+									<LexPronunciation sourceField="AllPossiblePronunciations"/>
+									<MoForm sourceField="AllPossibleAllomorphs"/>
+									<LexSense sourceField="AllSenses">
+										<LexExampleSentence sourceField="AllExampleSentenceTargets">
+											<CmTranslation sourceField="AllExampleTranslationTargets"/>
+										</LexExampleSentence>
+									</LexSense>
+								</LexEntry>
+							</ClassOwnershipTree>
+							<ParentClassPathsToChildren>
+								<!-- ClassOwnershipPaths describes how to get from the parent ListItemsClass to the destinationClass objects
+									 of the list properties -->
+								<part id="LexEntry-Jt-AllPossiblePronunciations" type="jtview">
+									<seq class="LexEntry" field="Pronunciations" firstOnly="true" layout="empty">
+										<int class="LexPronunciation" field="Self"/>
+									</seq>
+									<!-- NOTE: AllPossiblePronunciations can also have LexEntry items, since it is a ghost field -->
+								</part>
+								<part id="LexEntry-Jt-AllComplexEntryRefPropertyTargets" type="jtview">
+									<seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">
+										<int class="LexEntryRef" field="Self"/>
+									</seq>
+									<!-- NOTE: AllComplexEntryRefPropertyTargets can also have LexEntry items, since it is a ghost field -->
+								</part>
+								<part id="LexEntry-Jt-AllVariantEntryRefPropertyTargets" type="jtview">
+									<seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">
+										<int class="LexEntryRef" field="Self"/>
+									</seq>
+									<!-- NOTE: AllVariantEntryRefPropertyTargets can also have LexEntry items, since it is a ghost field -->
+								</part>
+								<part id="LexEntry-Jt-AllPossibleAllomorphs" type="jtview">
+									<seq class="LexEntry" field="AlternateForms" firstOnly="true" layout="empty">
+										<int class="MoForm" field="Self"/>
+									</seq>
+									<!-- NOTE: AllPossibleAllomorphs can also have LexEntry items, since it is a ghost field -->
+								</part>
+								<part id="LexEntry-Jt-AllEntryRefs" type="jtview">
+									<seq class="LexEntry" field="EntryRefs" firstOnly="true" layout="empty">
+										<int class="LexEntryRef" field="Self"/>
+									</seq>
+								</part>
+								<part id="LexEntry-Jt-AllSenses" type="jtview">
+									<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+										<int class="LexSense" field="Self"/>
+									</seq>
+								</part>
+								<!-- the next item is needed to prevent a crash -->
+								<part id="LexSense-Jt-AllSenses" type="jtview">
+									<obj class="LexSense" field="Self" firstOnly="true" layout="empty"/>
+								</part>
+								<part id="LexEntry-Jt-AllExampleSentenceTargets" type="jtview">
+									<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+										<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
+											<int class="LexExampleSentence" field="Self"/>
+										</seq>
+									</seq>
+								</part>
+								<part id="LexSense-Jt-AllExampleSentenceTargets" type="jtview">
+									<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
+										<int class="LexExampleSentence" field="Self"/>
+									</seq>
+								</part>
+								<part id="LexEntry-Jt-AllExampleTranslationTargets" type="jtview">
+									<seq class="LexEntry" field="AllSenses" firstOnly="true" layout="empty">
+										<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
+											<seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
+												<int class="CmTranslation" field="Self"/>
+											</seq>
+										</seq>
+									</seq>
+								</part>
+								<part id="LexSense-Jt-AllExampleTranslationTargets" type="jtview">
+									<seq class="LexSense" field="Examples" firstOnly="true" layout="empty">
+										<seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
+											<int class="CmTranslation" field="Self"/>
+										</seq>
+									</seq>
+								</part>
+								<part id="LexExampleSentence-Jt-AllExampleTranslationTargets" type="jtview">
+									<seq class="LexExampleSentence" field="Translations" firstOnly="true" layout="empty">
+										<int class="CmTranslation" field="Self"/>
+									</seq>
+								</part>
+							</ParentClassPathsToChildren>
+						</PartOwnershipTree>
+					</recordList>
+					<filters/>
+					<!-- only the default sortMethod is needed -->
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+						<sortMethod label="Primary Gloss" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="PrimaryGloss"/>
+					</sortMethods>
+				</clerk>
+				<include path="Edit/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="Browse/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="Dictionary/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="RDE/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="ReversalIndices/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="ReversalEntriesBulkEdit/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/clerks/*"/>
+			</clerks>
+			<tools>
+				<include path="Edit/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="Browse/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="Dictionary/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="RDE/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="ReversalIndices/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="ReversalEntriesBulkEdit/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/tools/*"/>
+			</tools>
+		</parameters>
+	</item>
+</root>

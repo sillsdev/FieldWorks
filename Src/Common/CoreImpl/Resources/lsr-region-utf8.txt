@@ -1,0 +1,299 @@
+# List of all regions in the IANA language subtag registry as of 2010-03-25
+# Obtained from langtag.net
+
+AA	2005-10-16	Private use
+AC	2009-07-29	Ascension Island
+AD	2005-10-16	Andorra
+AE	2005-10-16	United Arab Emirates
+AF	2005-10-16	Afghanistan
+AG	2005-10-16	Antigua and Barbuda
+AI	2005-10-16	Anguilla
+AL	2005-10-16	Albania
+AM	2005-10-16	Armenia
+AN	2005-10-16	Netherlands Antilles
+AO	2005-10-16	Angola
+AQ	2005-10-16	Antarctica
+AR	2005-10-16	Argentina
+AS	2005-10-16	American Samoa
+AT	2005-10-16	Austria
+AU	2005-10-16	Australia
+AW	2005-10-16	Aruba
+AX	2005-10-16	Åland Islands
+AZ	2005-10-16	Azerbaijan
+BA	2005-10-16	Bosnia and Herzegovina
+BB	2005-10-16	Barbados
+BD	2005-10-16	Bangladesh
+BE	2005-10-16	Belgium
+BF	2005-10-16	Burkina Faso
+BG	2005-10-16	Bulgaria
+BH	2005-10-16	Bahrain
+BI	2005-10-16	Burundi
+BJ	2005-10-16	Benin
+BL	2007-11-02	Saint Barthélemy
+BM	2005-10-16	Bermuda
+BN	2005-10-16	Brunei Darussalam
+BO	2005-10-16	Bolivia
+BR	2005-10-16	Brazil
+BS	2005-10-16	Bahamas
+BT	2005-10-16	Bhutan
+BU	2005-10-16	Burma
+BV	2005-10-16	Bouvet Island
+BW	2005-10-16	Botswana
+BY	2005-10-16	Belarus
+BZ	2005-10-16	Belize
+CA	2005-10-16	Canada
+CC	2005-10-16	Cocos (Keeling) Islands
+CD	2005-10-16	The Democratic Republic of the Congo
+CF	2005-10-16	Central African Republic
+CG	2005-10-16	Congo
+CH	2005-10-16	Switzerland
+CI	2005-10-16	Côte d'Ivoire
+CK	2005-10-16	Cook Islands
+CL	2005-10-16	Chile
+CM	2005-10-16	Cameroon
+CN	2005-10-16	China
+CO	2005-10-16	Colombia
+CP	2009-07-29	Clipperton Island
+CR	2005-10-16	Costa Rica
+CS	2005-10-16	Serbia and Montenegro
+CU	2005-10-16	Cuba
+CV	2005-10-16	Cape Verde
+CX	2005-10-16	Christmas Island
+CY	2005-10-16	Cyprus
+CZ	2005-10-16	Czech Republic
+DD	2005-10-16	German Democratic Republic
+DE	2005-10-16	Germany
+DG	2009-07-29	Diego Garcia
+DJ	2005-10-16	Djibouti
+DK	2005-10-16	Denmark
+DM	2005-10-16	Dominica
+DO	2005-10-16	Dominican Republic
+DZ	2005-10-16	Algeria
+EA	2009-07-29	Ceuta, Melilla
+EC	2005-10-16	Ecuador
+EE	2005-10-16	Estonia
+EG	2005-10-16	Egypt
+EH	2005-10-16	Western Sahara
+ER	2005-10-16	Eritrea
+ES	2005-10-16	Spain
+ET	2005-10-16	Ethiopia
+EU	2009-07-29	European Union
+FI	2005-10-16	Finland
+FJ	2005-10-16	Fiji
+FK	2005-10-16	Falkland Islands (Malvinas)
+FM	2005-10-16	Federated States of Micronesia
+FO	2005-10-16	Faroe Islands
+FR	2005-10-16	France
+FX	2005-10-16	Metropolitan France
+GA	2005-10-16	Gabon
+GB	2005-10-16	United Kingdom
+GD	2005-10-16	Grenada
+GE	2005-10-16	Georgia
+GF	2005-10-16	French Guiana
+GG	2006-03-29	Guernsey
+GH	2005-10-16	Ghana
+GI	2005-10-16	Gibraltar
+GL	2005-10-16	Greenland
+GM	2005-10-16	Gambia
+GN	2005-10-16	Guinea
+GP	2005-10-16	Guadeloupe
+GQ	2005-10-16	Equatorial Guinea
+GR	2005-10-16	Greece
+GS	2005-10-16	South Georgia and the South Sandwich Islands
+GT	2005-10-16	Guatemala
+GU	2005-10-16	Guam
+GW	2005-10-16	Guinea-Bissau
+GY	2005-10-16	Guyana
+HK	2005-10-16	Hong Kong
+HM	2005-10-16	Heard Island and McDonald Islands
+HN	2005-10-16	Honduras
+HR	2005-10-16	Croatia
+HT	2005-10-16	Haiti
+HU	2005-10-16	Hungary
+IC	2009-07-29	Canary Islands
+ID	2005-10-16	Indonesia
+IE	2005-10-16	Ireland
+IL	2005-10-16	Israel
+IM	2006-03-29	Isle of Man
+IN	2005-10-16	India
+IO	2005-10-16	British Indian Ocean Territory
+IQ	2005-10-16	Iraq
+IR	2005-10-16	Islamic Republic of Iran
+IS	2005-10-16	Iceland
+IT	2005-10-16	Italy
+JE	2006-03-29	Jersey
+JM	2005-10-16	Jamaica
+JO	2005-10-16	Jordan
+JP	2005-10-16	Japan
+KE	2005-10-16	Kenya
+KG	2005-10-16	Kyrgyzstan
+KH	2005-10-16	Cambodia
+KI	2005-10-16	Kiribati
+KM	2005-10-16	Comoros
+KN	2005-10-16	Saint Kitts and Nevis
+KP	2005-10-16	Democratic People's Republic of Korea
+KR	2005-10-16	Republic of Korea
+KW	2005-10-16	Kuwait
+KY	2005-10-16	Cayman Islands
+KZ	2005-10-16	Kazakhstan
+LA	2005-10-16	Lao People's Democratic Republic
+LB	2005-10-16	Lebanon
+LC	2005-10-16	Saint Lucia
+LI	2005-10-16	Liechtenstein
+LK	2005-10-16	Sri Lanka
+LR	2005-10-16	Liberia
+LS	2005-10-16	Lesotho
+LT	2005-10-16	Lithuania
+LU	2005-10-16	Luxembourg
+LV	2005-10-16	Latvia
+LY	2005-10-16	Libyan Arab Jamahiriya
+MA	2005-10-16	Morocco
+MC	2005-10-16	Monaco
+MD	2005-10-16	Moldova
+ME	2006-10-05	Montenegro
+MF	2007-11-02	Saint Martin
+MG	2005-10-16	Madagascar
+MH	2005-10-16	Marshall Islands
+MK	2005-10-16	The Former Yugoslav Republic of Macedonia
+ML	2005-10-16	Mali
+MM	2005-10-16	Myanmar
+MN	2005-10-16	Mongolia
+MO	2005-10-16	Macao
+MP	2005-10-16	Northern Mariana Islands
+MQ	2005-10-16	Martinique
+MR	2005-10-16	Mauritania
+MS	2005-10-16	Montserrat
+MT	2005-10-16	Malta
+MU	2005-10-16	Mauritius
+MV	2005-10-16	Maldives
+MW	2005-10-16	Malawi
+MX	2005-10-16	Mexico
+MY	2005-10-16	Malaysia
+MZ	2005-10-16	Mozambique
+NA	2005-10-16	Namibia
+NC	2005-10-16	New Caledonia
+NE	2005-10-16	Niger
+NF	2005-10-16	Norfolk Island
+NG	2005-10-16	Nigeria
+NI	2005-10-16	Nicaragua
+NL	2005-10-16	Netherlands
+NO	2005-10-16	Norway
+NP	2005-10-16	Nepal
+NR	2005-10-16	Nauru
+NT	2005-10-16	Neutral Zone
+NU	2005-10-16	Niue
+NZ	2005-10-16	New Zealand
+OM	2005-10-16	Oman
+PA	2005-10-16	Panama
+PE	2005-10-16	Peru
+PF	2005-10-16	French Polynesia
+PG	2005-10-16	Papua New Guinea
+PH	2005-10-16	Philippines
+PK	2005-10-16	Pakistan
+PL	2005-10-16	Poland
+PM	2005-10-16	Saint Pierre and Miquelon
+PN	2005-10-16	Pitcairn
+PR	2005-10-16	Puerto Rico
+PS	2005-10-16	Occupied Palestinian Territory
+PT	2005-10-16	Portugal
+PW	2005-10-16	Palau
+PY	2005-10-16	Paraguay
+QA	2005-10-16	Qatar
+QM..QZ	2005-10-16	Private use
+RE	2005-10-16	Réunion
+RO	2005-10-16	Romania
+RS	2006-10-05	Serbia
+RU	2005-10-16	Russian Federation
+RW	2005-10-16	Rwanda
+SA	2005-10-16	Saudi Arabia
+SB	2005-10-16	Solomon Islands
+SC	2005-10-16	Seychelles
+SD	2005-10-16	Sudan
+SE	2005-10-16	Sweden
+SG	2005-10-16	Singapore
+SH	2005-10-16	Saint Helena, Ascension and Tristan da Cunha
+SI	2005-10-16	Slovenia
+SJ	2005-10-16	Svalbard and Jan Mayen
+SK	2005-10-16	Slovakia
+SL	2005-10-16	Sierra Leone
+SM	2005-10-16	San Marino
+SN	2005-10-16	Senegal
+SO	2005-10-16	Somalia
+SR	2005-10-16	Suriname
+ST	2005-10-16	Sao Tome and Principe
+SU	2005-10-16	Union of Soviet Socialist Republics
+SV	2005-10-16	El Salvador
+SY	2005-10-16	Syrian Arab Republic
+SZ	2005-10-16	Swaziland
+TA	2009-07-29	Tristan da Cunha
+TC	2005-10-16	Turks and Caicos Islands
+TD	2005-10-16	Chad
+TF	2005-10-16	French Southern Territories
+TG	2005-10-16	Togo
+TH	2005-10-16	Thailand
+TJ	2005-10-16	Tajikistan
+TK	2005-10-16	Tokelau
+TL	2005-10-16	Timor-Leste
+TM	2005-10-16	Turkmenistan
+TN	2005-10-16	Tunisia
+TO	2005-10-16	Tonga
+TP	2005-10-16	East Timor
+TR	2005-10-16	Turkey
+TT	2005-10-16	Trinidad and Tobago
+TV	2005-10-16	Tuvalu
+TW	2005-10-16	Taiwan, Province of China
+TZ	2005-10-16	United Republic of Tanzania
+UA	2005-10-16	Ukraine
+UG	2005-10-16	Uganda
+UM	2005-10-16	United States Minor Outlying Islands
+US	2005-10-16	United States
+UY	2005-10-16	Uruguay
+UZ	2005-10-16	Uzbekistan
+VA	2005-10-16	Holy See (Vatican City State)
+VC	2005-10-16	Saint Vincent and the Grenadines
+VE	2005-10-16	Venezuela
+VG	2005-10-16	British Virgin Islands
+VI	2005-10-16	U.S. Virgin Islands
+VN	2005-10-16	Viet Nam
+VU	2005-10-16	Vanuatu
+WF	2005-10-16	Wallis and Futuna
+WS	2005-10-16	Samoa
+XA..XZ	2005-10-16	Private use
+YD	2005-10-16	Democratic Yemen
+YE	2005-10-16	Yemen
+YT	2005-10-16	Mayotte
+YU	2005-10-16	Yugoslavia
+ZA	2005-10-16	South Africa
+ZM	2005-10-16	Zambia
+ZR	2005-10-16	Zaire
+ZW	2005-10-16	Zimbabwe
+ZZ	2005-10-16	Private use
+001	2005-10-16	World
+002	2005-10-16	Africa
+005	2005-10-16	South America
+009	2005-10-16	Oceania
+011	2005-10-16	Western Africa
+013	2005-10-16	Central America
+014	2005-10-16	Eastern Africa
+015	2005-10-16	Northern Africa
+017	2005-10-16	Middle Africa
+018	2005-10-16	Southern Africa
+019	2005-10-16	Americas
+021	2005-10-16	Northern America
+029	2005-10-16	Caribbean
+030	2005-10-16	Eastern Asia
+034	2005-10-16	Southern Asia
+035	2005-10-16	South-Eastern Asia
+039	2005-10-16	Southern Europe
+053	2005-10-16	Australia and New Zealand
+054	2005-10-16	Melanesia
+057	2005-10-16	Micronesia
+061	2005-10-16	Polynesia
+142	2005-10-16	Asia
+143	2005-10-16	Central Asia
+145	2005-10-16	Western Asia
+150	2005-10-16	Europe
+151	2005-10-16	Eastern Europe
+154	2005-10-16	Northern Europe
+155	2005-10-16	Western Europe
+419	2005-10-16	Latin America and the Caribbean

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<!--
+	 Acceptance Test for on-application and closing instructions.
+	 The Desktop class is also tested since it forms the default context.
+	 Since there is no launch instruction, the application context must find the application that is running.
+
+	 close must be inside the application context as the last element.
+
+	 The Translation Editor application must be running before this test can succeed.
+-->
+
+<accil on-fail="assert">
+ <on-application run="no" close="yes" on-fail="assert"/>
+</accil>

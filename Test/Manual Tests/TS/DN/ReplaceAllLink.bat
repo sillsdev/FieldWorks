@@ -1,0 +1,10 @@
+call ReplaceLinksGen DataNotebook.xml
+call ReplaceLinksGen FilePropsDN.xml
+call ReplaceLinksGen InsertAnalysis.xml
+call ReplaceLinksGen InsertEvent.xml
+call ReplaceLinksGen InsertSubentry.xml
+call ReplaceLinksGen OptOverlays.xml
+call ReplaceLinksGen OptVwBrowse.xml
+call ReplaceLinksGen OptVwDE.xml
+call ReplaceLinksGen OptVwDoc.xml
+call ReplaceLinksGen TbInsertDN.xml

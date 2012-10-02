@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT ROOT (LanguageProject)>
+<!ELEMENT LanguageProject (PartOfSpeech+, MorphData, PhoneData, LexicalDataBase, MsFeatureSystem)>
+<!-- the FsFeatureStructure is for inherent feature values -->
+<!ELEMENT PartOfSpeech (MoInflAffixSlot*, MoInflAffixTemplate*,
+						FsFeatureStructure?,
+			MoInflectionClass*,  PartOfSpeech*)>
+<!ATTLIST PartOfSpeech
+  id ID #REQUIRED
+  name CDATA #REQUIRED
+  abbr CDATA #IMPLIED
+  description CDATA #IMPLIED
+  defaultInflClass IDREF #IMPLIED
+>
+<!ELEMENT MoInflAffixSlot EMPTY>
+<!ATTLIST MoInflAffixSlot
+  id ID #REQUIRED
+  name CDATA #IMPLIED
+  description CDATA #IMPLIED
+  affixes IDREFS #IMPLIED
+  optional (true | false) "false"
+>
+<!ELEMENT MoInflAffixTemplate EMPTY>
+<!ATTLIST MoInflAffixTemplate
+  id ID #REQUIRED
+  name CDATA #IMPLIED
+  description CDATA #IMPLIED
+  slots IDREFS #IMPLIED
+  prefixSlots IDREFS #IMPLIED
+  suffixSlots IDREFS #IMPLIED
+  stratum IDREF #IMPLIED
+>
+<!ELEMENT MoInflectionClass (MoInflectionClass*)>
+<!ATTLIST MoInflectionClass
+  id ID #REQUIRED
+  name CDATA #IMPLIED
+  abbr CDATA #IMPLIED
+  description CDATA #IMPLIED
+>
+<!ELEMENT MorphData (MoStratum*, MoCompoundRule*, MoAllomorphAdhocCoProhibition*, MoMorphemeAdhocCoProhibition*)>
+<!ELEMENT MoStratum EMPTY>
+<!ATTLIST MoStratum
+  id ID #REQUIRED
+>
+<!ELEMENT MoCompoundRule EMPTY>
+<!ATTLIST MoCompoundRule
+  id ID #REQUIRED
+  name CDATA #IMPLIED
+  description CDATA #IMPLIED
+  leftPos IDREF #REQUIRED
+  rightPos IDREF #REQUIRED
+  stratum IDREF #IMPLIED
+  linker IDREF #IMPLIED
+  toPos IDREF #IMPLIED
+  headLast (true | false | unknown) "unknown"
+>
+<!ELEMENT MoAllomorphAdhocCoProhibition EMPTY>
+<!ATTLIST MoAllomorphAdhocCoProhibition
+  id ID #REQUIRED
+  adjacency (anywhere | somewhereToLeft | somewhereToRight | adjacentToLeft | adjacentToRight) "anywhere"
+  allomorphs IDREFS #REQUIRED
+>
+<!ELEMENT MoMorphemeAdhocCoProhibition EMPTY>
+<!ATTLIST MoMorphemeAdhocCoProhibition
+  id ID #REQUIRED
+  morphemes IDREFS #REQUIRED
+>
+<!ELEMENT PhoneData (PhPhonemeSet*, PhNaturalClass*, PhEnvironment*, (PhIterationContext | PhSequenceContext | PhSimpleContextNC | PhSimpleContextSeg | PhSimpleContextBdry)*, PhIters*)>
+<!ELEMENT PhPhonemeSet (PhPhoneme*, PhBdryMarker*)>
+<!ATTLIST PhPhonemeSet
+  id ID #REQUIRED
+  name CDATA #IMPLIED
+  description CDATA #IMPLIED
+>
+<!ELEMENT PhPhoneme EMPTY>
+<!ATTLIST PhPhoneme
+  id ID #REQUIRED
+  name CDATA #IMPLIED
+  description CDATA #IMPLIED
+  codes CDATA #REQUIRED
+>
+<!ELEMENT PhBdryMarker EMPTY>
+<!ATTLIST PhBdryMarker
+  id ID #REQUIRED
+  name CDATA #IMPLIED
+  description CDATA #IMPLIED
+  codes CDATA #REQUIRED
+>
+<!ELEMENT PhEnvironment EMPTY>
+<!ATTLIST PhEnvironment
+  id ID #REQUIRED
+  name CDATA #IMPLIED
+  description CDATA #IMPLIED
+  leftContext IDREFS #IMPLIED
+  rightContext IDREFS #IMPLIED
+>
+<!ELEMENT PhNaturalClass EMPTY>
+<!ATTLIST PhNaturalClass
+  id ID #REQUIRED
+  name CDATA #REQUIRED
+  description CDATA #IMPLIED
+  segments IDREFS #REQUIRED
+>
+<!ELEMENT PhIterationContext EMPTY>
+<!ATTLIST PhIterationContext
+  id ID #REQUIRED
+  member IDREF #REQUIRED
+  minimum CDATA #REQUIRED
+  maximum CDATA #REQUIRED
+>
+<!ELEMENT PhSequenceContext (PhPhonologicalContextReference+)>
+<!ATTLIST PhSequenceContext
+  id ID #REQUIRED
+>
+<!ELEMENT PhPhonologicalContextReference EMPTY>
+<!ATTLIST PhPhonologicalContextReference
+  ref IDREF #REQUIRED
+>
+<!ELEMENT PhSimpleContextNC EMPTY>
+<!ATTLIST PhSimpleContextNC
+  id ID #REQUIRED
+  fs IDREF #REQUIRED
+>
+<!ELEMENT PhSimpleContextBdry EMPTY>
+<!ATTLIST PhSimpleContextBdry
+  id ID #REQUIRED
+  fs IDREF #REQUIRED
+>
+<!ELEMENT PhSimpleContextSeg EMPTY>
+<!ATTLIST PhSimpleContextSeg
+  id ID #REQUIRED
+  fs IDREFS #REQUIRED
+>
+<!-- PhIters used to keep count while processing PhIterationContext.  It is only needed by the M3SQLXMLtoXAmpleLex.xsl XSLT.-->
+<!ELEMENT PhIters EMPTY>
+<!ELEMENT LexicalDataBase (MoMorphType+, LexMajorEntry+)>
+<!ELEMENT MoMorphType EMPTY>
+<!ATTLIST MoMorphType
+  id ID #REQUIRED
+  name CDATA #IMPLIED
+  abbr CDATA #IMPLIED
+  description CDATA #IMPLIED
+>
+<!ELEMENT LexMajorEntry (LexEntry_CitationForm?, (MoStemMsi | MoDerivationalAffixMsi | MoInflectionalAffixMsi), MoForm+)>
+<!ATTLIST LexMajorEntry
+  id ID #REQUIRED
+>
+<!ELEMENT LexEntry_CitationForm EMPTY>
+<!ATTLIST LexEntry_CitationForm
+  txt CDATA #REQUIRED
+>
+<!ELEMENT MoStemMsi (FsFeatureStructure?)>
+<!ATTLIST MoStemMsi
+  id ID #REQUIRED
+  pos IDREF #IMPLIED
+  components IDREFS #IMPLIED
+  inflClass IDREF #IMPLIED
+>
+<!ELEMENT MoDerivationalAffixMsi EMPTY>
+<!ATTLIST MoDerivationalAffixMsi
+  id ID #REQUIRED
+  fromPos IDREF #IMPLIED
+  toPos IDREF #IMPLIED
+  fromInflClass IDREF #IMPLIED
+  toInflClass IDREF #IMPLIED
+  affixCat IDREF #IMPLIED
+  orderClass CDATA #IMPLIED
+>
+<!ELEMENT MoInflectionalAffixMsi EMPTY>
+<!ATTLIST MoInflectionalAffixMsi
+  id ID #REQUIRED
+  affixCat IDREF #IMPLIED
+  orderClass CDATA #IMPLIED
+>
+<!ELEMENT MoForm (FsFeatureStructure?)>
+<!ATTLIST MoForm
+  id ID #REQUIRED
+  form CDATA #REQUIRED
+  morphType IDREF #REQUIRED
+  inflClasses IDREFS #IMPLIED
+  phoneEnviron IDREFS #IMPLIED
+  msEnvPos IDREF #IMPLIED
+>
+<!ELEMENT MsFeatureSystem (FsFeatureStructureType*)>
+<!ELEMENT FsFeatureStructureType (FsClosedFeature | FsOpenFeature | FsComplexFeature)*>
+<!ATTLIST FsFeatureStructureType
+  id ID #REQUIRED
+  name CDATA #REQUIRED
+  abbr CDATA #IMPLIED
+  description CDATA #IMPLIED
+>
+<!-- FsFeatureSpecification is default -->
+<!ELEMENT FsClosedFeature (FsFeatureSpecification?, FsSymbolicFeatureValue*)>
+<!ATTLIST FsClosedFeature
+  id ID #REQUIRED
+  name CDATA #REQUIRED
+  abbr CDATA #IMPLIED
+  description CDATA #IMPLIED
+>
+<!ELEMENT FsSymbolicFeatureValue EMPTY>
+<!ATTLIST FsSymbolicFeatureValue
+  id ID #REQUIRED
+  name CDATA #REQUIRED
+  abbr CDATA #IMPLIED
+  description CDATA #IMPLIED
+>
+<!-- FsFeatureSpecification is the value -->
+<!ELEMENT FsOpenFeature (FsFeatureSpecification?)>
+<!ATTLIST FsOpenFeature
+  id ID #REQUIRED
+  name CDATA #REQUIRED
+  abbr CDATA #IMPLIED
+  description CDATA #IMPLIED
+  encoding CDATA #IMPLIED
+>
+<!-- FsFeatureSpecification is the value -->
+<!-- type is to FsFeatureStructureType -->
+<!ELEMENT FsComplexFeature (FsFeatureSpecification?)>
+<!ATTLIST FsComplexFeature
+  id ID #REQUIRED
+  name CDATA #REQUIRED
+  abbr CDATA #IMPLIED
+  description CDATA #IMPLIED
+  type IDREF #REQUIRED
+>
+<!ELEMENT FsFeatureSpecification (FsFeatureStructure|FsFeatureStructureDisjunction)?>
+<!ATTLIST FsFeatureSpecification
+  id ID #IMPLIED
+  feature IDREF #REQUIRED
+  refNumber CDATA #IMPLIED
+  valueState (known|unknown|any|none) "known"
+  valueType (closed|open|complex|negated|disjunctive|shared|unknown) "unknown"
+  open CDATA #IMPLIED
+  closed IDREF #IMPLIED
+  negated IDREF #IMPLIED
+  disjunct IDREFS #IMPLIED
+  shared IDREF #IMPLIED
+>
+<!ELEMENT FsFeatureStructureDisjunction (FsFeatureStructure*)>
+<!ELEMENT FsFeatureStructure (FsFeatureStructureDisjunction*, FsFeatureSpecification*)>
+<!ATTLIST FsFeatureStructure
+  type IDREF #REQUIRED
+>

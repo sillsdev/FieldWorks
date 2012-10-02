@@ -1,0 +1,148 @@
+#line 1 "C:\\fw\\Src\\NoteBk\\NotebkTlb.idl"
+
+
+
+
+
+
+
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+import "objidl.idl";
+
+#line 1 "C:\\fw\\Src\\Generic\\Common.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+
+
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+
+
+#line 15 "C:\\fw\\Src\\NoteBk\\NotebkTlb.idl"
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("6B94B3E1-4DD4-11d4-8078-0000C0FB81B5") cpp_quote(",") cpp_quote("NoteBkLib") cpp_quote(");") [ uuid(6B94B3E1-4DD4-11d4-8078-0000C0FB81B5), version(1.0), helpstring("Research Notebook") ] library NoteBkLib
+{
+	importlib("FwKernelTlb.tlb");
+
+	#line 1 "c:\\fw\\src\\notebk\\NoteBk.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("39886581-4DD5-11d4-8078-0000C0FB81B5") cpp_quote(",") cpp_quote("ResearchNotebook") cpp_quote(");") [ uuid(39886581-4DD5-11d4-8078-0000C0FB81B5) ] coclass ResearchNotebook
+{
+	interface IFwTool;
+};
+
+#line 19 "c:\\fw\\src\\notebk\\NoteBk.idh"
+
+#line 21 "C:\\fw\\Src\\NoteBk\\NotebkTlb.idl"
+};

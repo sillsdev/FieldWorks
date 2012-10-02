@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+	<MapsTables>
+		<MapTable description="Modifies Unicode Hebrew from 4.0 to 5.0">
+			<autoInstall mappingName="Hebrew Unicode 4.0&lt;&gt;Hebrew Unicode 5.0" converterSpec="MapsTables\EzraSIL20to25.tec" IsConverterSpecAFile="true" implementType="SIL.tec" conversionType="UnicodeToFromUnicode" leftEncoding="UNICODE" rightEncoding="UNICODE" processType="DontKnow"></autoInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\EzraSIL20to25.tec"></FileToInstall>
+				<FileToInstall filename="MapsTables\EzraSIL20to25.map"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+		<MapTable description="Converts SIL Ezra data to Unicode Hebrew encoding (including the byte reversal)">
+			<scriptInstall filename="MapsTables\SIL Ezra.vbs" mappingName="SIL Ezra&lt;&gt;UNICODE" conversionType="LegacyToFromUnicode" implementType="SIL.comp" ></scriptInstall>
+			<FilesToInstall>
+				<FileToInstall filename="MapsTables\r2l_2004.cct"></FileToInstall>
+				<FileToInstall filename="MapsTables\SILEzratoUni50.map"></FileToInstall>
+				<FileToInstall filename="MapsTables\SILEzratoUni50.tec"></FileToInstall>
+			</FilesToInstall>
+		</MapTable>
+	</MapsTables>
+</SILConvertersInstallerDetails>

@@ -1,0 +1,458 @@
+;$Id: hebrew.in 1.20 1997/11/24 17:16:16 Mike_Maxwell Exp $
+;  modified from PC-KIMMO file HEBREW.RUL by Mike Maxwell
+
+; Data from Generative Phonology, by Kenstowicz and Kisseberth,
+; Academic Press, 1979, pp. 134-135.
+; Hebrew Itpa'el pattern. Assume that all verb roots have lexical
+; forms according to the patterns CVCeC or CVCCeC.
+
+; $ = alveopalatal sibilant (s-wedge)
+; x = velar fricative
+; ? = glottal stop
+; q = pharyngeal stop (backwards question mark)
+; H = pharyngeal fricative (h with a dot under it)
+
+(open_language message Hebrew)
+
+(morpher_set message
+  (*pfeatures*
+	(voc      (+ -)
+	 cons     (+ -)
+	 sonorant (+ -)
+	 high     (+ -)
+	 low      (+ -)
+	 back     (+ -)
+	 round    (+ -)
+	 vd       (+ -)
+	 nasal    (+ -)
+	 ant      (+ -)
+	 cor      (+ -)
+	 del_rel  (+ -)
+	 strident (+ -)
+	 cont     (+ -)
+	)
+  )
+)
+
+;Ff from Hyman "Phonology: Theory and Analysis", Holt, Rinehart and Winston, pg. 241-244
+;bilabial =     [-back -high -low +ant -cor]
+;alveolar =     [-back -high -low +ant +cor]
+;alveopalatal = [-back +high -low -ant +cor]
+;velar =        [+back +high -low -ant -cor]
+;pharyngeal =   [+back -high +low -ant -cor]
+;glottal =      [-back -high +low -ant -cor]
+
+;Note that the Cs have to be specified for all the features used with alpha variables
+(load_char_def_table message
+  <char_table
+  name table1
+  encoding Hebrew
+  seg_defs
+	(
+	  (i   (cons - voc + sonorant + high + low - back - round - vd + cont +))
+	  (e   (cons - voc + sonorant + high - low - back - round - vd + cont +))
+	  (a   (cons - voc + sonorant + high - low + back + round - vd + cont +))
+	  (o   (cons - voc + sonorant + high - low - back + round + vd + cont +))
+	  (u   (cons - voc + sonorant + high + low - back + round + vd + cont +))
+
+	  (p   (cons + voc - sonorant - back - high - low - ant + cor - vd - del_rel - nasal - strident - cont -))
+	  (t   (cons + voc - sonorant - back - high - low - ant + cor + vd - del_rel - nasal - strident - cont -))
+	  (k   (cons + voc - sonorant - back + high + low - ant - cor - vd - del_rel - nasal - strident - cont -))
+	  (q   (cons + voc - sonorant - back + high - low + ant - cor - vd - del_rel - nasal - strident - cont -))
+	  (?   (cons + voc - sonorant - back - high - low + ant - cor - vd - del_rel - nasal - strident - cont -))
+
+	  (b   (cons + voc - sonorant - back - high - low - ant + cor - vd + del_rel - nasal - strident - cont -))
+	  (d   (cons + voc - sonorant - back - high - low - ant + cor + vd + del_rel - nasal - strident - cont -))
+	  (g   (cons + voc - sonorant - back + high + low - ant - cor - vd + del_rel - nasal - strident - cont -))
+
+	  (s   (cons + voc - sonorant - back - high - low - ant + cor + vd - del_rel - nasal - strident + cont +))
+	  (z   (cons + voc - sonorant - back - high - low - ant + cor + vd + del_rel - nasal - strident + cont +))
+	  (c   (cons + voc - sonorant - back - high - low - ant + cor + vd - del_rel + nasal - strident + cont -))
+	  ($   (cons + voc - sonorant - back - high + low - ant - cor + vd - del_rel - nasal - strident + cont +))
+	  (x   (cons + voc - sonorant - back + high + low - ant - cor - vd - del_rel - nasal - strident - cont +))
+	  (H   (cons + voc - sonorant - back + high - low + ant - cor - vd - del_rel - nasal - strident - cont +))
+
+	  (m   (cons + voc - sonorant + back - high - low - ant + cor - vd + del_rel - nasal + strident - cont -))
+	  (n   (cons + voc - sonorant + back - high - low - ant + cor + vd + del_rel - nasal + strident - cont -))
+
+	  (l   (cons + voc - sonorant + back - high - low - ant + cor + vd + del_rel - nasal - strident - cont -))
+	  (r   (cons + voc - sonorant + back - high - low - ant + cor + vd + del_rel - nasal - strident - cont +))
+	)
+	bdry_defs (+)
+  >
+)
+
+
+
+;Now set the strata (just one):
+(morpher_set message
+  (*strata* (morphophonemic)))
+;...and set their ctables (msg 6550):
+(set_stratum message <stratum_setting nm morphophonemic type ctable value table1>)
+(set_stratum message <stratum_setting nm *surface* type ctable value table1>)
+;...and the cyclicity of the morphophonemic stratum (msg 6552):
+(set_stratum message <stratum_setting nm morphophonemic type cyclicity value noncyclic>)
+;...and the order of the prules and mrules:
+(set_stratum message <stratum_setting nm morphophonemic type prule value linear>)
+(set_stratum message <stratum_setting nm morphophonemic type mrule value linear>)
+
+
+
+(merge_in_dictionary_file message hebrew.dic)
+
+
+;Load the natural classes:
+(load_nat_class message <nat_class name null        features ()>)
+(load_nat_class message <nat_class name cons        features (cons + voc -)>)
+(load_nat_class message <nat_class name vowel       features (cons - voc +)>)
+
+(load_nat_class message <nat_class name voiced      features (vd +)>)
+(load_nat_class message <nat_class name voiceless   features (vd -)>)
+(load_nat_class message <nat_class name nonson_vd   features (sonorant - vd +)>)
+(load_nat_class message <nat_class name strident_cons features (cons + strident +)>)
+
+(load_nat_class message <nat_class name bp          features (cons + sonorant - cont - ant + cor -)>)
+(load_nat_class message <nat_class name dt          features (cons + voc - sonorant - cont - strident - cor +)>)
+(load_nat_class message <nat_class name t           features (cons + cont - cor + vd - strident -)>)
+(load_nat_class message <nat_class name Q           features (cons + low + cont -)>)
+(load_nat_class message <nat_class name pharyngeal  features (cons + back + high -)>)
+
+(load_nat_class message <nat_class name i           features (voc + high + back -)>)
+(load_nat_class message <nat_class name e           features (voc + cons - high - round - back -)>)
+(load_nat_class message <nat_class name a           features (voc + cons - high - low + back + round -)>)
+
+(load_nat_class message <nat_class name low_back    features (low + back +)>)
+
+;-----------------------------PHONOLOGICAL RULES
+
+; glottal/pharyngeal stop Deletion
+; LR: it+male?+ti  it+male?
+; SR: it0male00ti  it0male0
+;Must be ordered before lowering (qv)
+;RULE "14 Q:0 correspondences" (doesn't correspond to anything in HC)
+; Q = ? q
+;RULE "15 Deletion 2, Q:0 <=> ___[C|#]" 3 6
+; The HC anal is a little different: they delete before /t/ (note phonetic similarity, and allophonic
+; variation in English between these two) and __#:
+; {q ?} --> 0 / V __ {t #}
+(load_morpher_rule message
+  <prule  nm Q_deletion
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class Q>)
+		  subrules (<psub out_pseq ()
+						  left_environ <ptemp pseq (<simp_cntxt class vowel>)>
+						  right_environ <ptemp pseq (<simp_cntxt class t>)>
+					>
+					<psub out_pseq ()
+						  left_environ <ptemp pseq (<simp_cntxt class vowel>)>
+						  right_environ <ptemp fin true pseq ()>
+					>
+				   )
+  >
+)
+
+; Lowering
+; LR: it+parnes+ti  it+motet+ti
+; SR: it0parnas0ti  it0mota00ti
+; IAW PC-KIMMO file, "doesn't occur before ?:0"; we handle it by ordering this rule after Q-delete
+; (see K&K first three words under (d) on pg. 135).  (Note that the CC is obligatory.)
+; Ordered before D_deletion, which counterbleeds this rule.
+;RULE "3 Lowering, e:a <= ___CC(+:0)i#"
+;RULE "4 Lowering, e:a => ___CC(+:0)i#"
+(load_morpher_rule message
+  <prule  nm lowering
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class e>)
+		  subrules (<psub out_pseq (<simp_cntxt class low_back>)
+						  right_environ <ptemp pseq (<simp_cntxt class cons>
+													 <simp_cntxt class cons>
+													 <simp_cntxt class i>)>
+					>
+				   )
+  >
+)
+
+
+; Deletion 1
+; LR: it+motet+ti  it+boded+ti
+; SR: it0mota00ti  id0boda00ti
+;RULE "8 Deletion 1, D:0 <=> ___(+:0)t" 3 6
+; {d t} -> 0 / __ + t
+; Bleeds syncope and degemination.  Ordered after lowering, which it counterbleeds.
+(load_morpher_rule message
+  <prule  nm D_deletion
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class dt>)
+		  subrules (<psub out_pseq ()
+						  right_environ <ptemp pseq (<bdry rep + ctable table1>
+													 <simp_cntxt class t>)>
+					>
+				   )
+  >
+)
+
+; Syncope
+; In analysis used in PC-KIMMO, occurs only between non-identical consonants; I have reanalyzed it
+; to be deletion between any two Cs, followed by epenthesis between two identical Cs.
+; LR: it+Hamek+u  it+xamem+u
+; SR: it0Ham0k0u  it0xamem0u
+;RULE "9 Syncope, e:0 => VC___C(+:0)V#"
+;RULE "10 Syncope, e:0 <= VC___C(+:0)V#"
+;Order: syncope before degemination before before voicing 2
+(load_morpher_rule message
+  <prule  nm syncope
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class e>)
+		  subrules (<psub out_pseq ()
+						  left_environ <ptemp pseq (<simp_cntxt class vowel>
+													<simp_cntxt class cons>)>
+						  right_environ <ptemp fin true pseq (<simp_cntxt class cons>
+															  <simp_cntxt class vowel>)>
+					>
+				   )
+  >
+)
+(load_morpher_rule message
+  <prule  nm degemination
+		  str (morphophonemic)
+		  var_fs (a vd b nasal c ant d cor e del_rel f back g high h low i strident j cont k sonorant)
+		  in_pseq ()
+		  subrules (<psub out_pseq (<simp_cntxt class e>)
+						  left_environ <ptemp pseq (<simp_cntxt class vowel>
+													<simp_cntxt class cons
+																alpha_vars (a + b + c + d + e + f + g + h + i + j + k +)
+													>
+												   )
+									   >
+						  right_environ <ptemp fin true pseq (<simp_cntxt class cons
+																		  alpha_vars (a + b + c + d + e + f + g + h + i + j + k +)>
+															  <simp_cntxt class vowel>
+															 )
+										>
+					>
+				   )
+  >
+)
+
+
+; Voicing 1
+; LR: it+balbel
+; SR: id0balbel
+; B = b g z  (there are no ex's of /t/ before d, so I have assumed it works there too--MM)
+;RULE "5 Voicing 1, t:d <=> ___(+:0)B" 3 5
+(load_morpher_rule message
+  <prule  nm voicing1
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class t>)
+		  subrules (<psub out_pseq (<simp_cntxt class voiced>)
+						  right_environ <ptemp pseq (<simp_cntxt class nonson_vd>)>
+					>
+				   )
+  >
+)
+
+; Voicing 2
+; LR: it+labe$+u
+; SR: it0lap0$0u
+;RULE "6 Voicing 2, b:p <=> ___V:0$"
+; I have reanalyzed this as b -> p / __[-vd], which is ordered after syncope and degemination
+(load_morpher_rule message
+  <prule  nm voicing2
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class bp>)
+		  subrules (<psub out_pseq (<simp_cntxt class voiceless>)
+						  right_environ <ptemp pseq (<simp_cntxt class voiceless>)>
+					>
+				   )
+  >
+)
+
+
+
+; Metathesis
+; LR: it+saper  it+zaken
+; SR: is0taper  iz0daken
+;RULE "11 Metathesis, t:{s,z,$,c} <= ___(+:0){s,z,$,c}:t"
+;Since HC has no direct framework for metathesis, we analyze as two rules.  Allows /d/ to methathesize
+; also (see 'age' and 'hurry' in K&K p.135)
+; 0 --> {t d} / {t d} [C +strident] __
+; {t d} --> 0 / __ [C +strident] {t d}
+; in that order
+(load_morpher_rule message
+  <prule  nm metathesis1
+		  str (morphophonemic)
+		  var_fs (a vd)
+		  in_pseq ()
+		  subrules (<psub out_pseq (<simp_cntxt class dt alpha_vars (a +)>)
+						  left_environ <ptemp pseq (<simp_cntxt class dt alpha_vars (a +)>
+													   <simp_cntxt class strident_cons>)
+										  >
+					>
+				   )
+  >
+)
+(load_morpher_rule message
+  <prule  nm metathesis2
+		  str (morphophonemic)
+		  var_fs (a vd)
+		  in_pseq (<simp_cntxt class dt alpha_vars (a +)>)
+		  subrules (<psub out_pseq ()
+						  right_environ <ptemp pseq (<simp_cntxt class strident_cons>
+													 <simp_cntxt class dt alpha_vars (a +)>)
+										>
+					>
+				   )
+  >
+)
+
+
+
+; Devoicing
+; LR: it+zarez+ti
+; SR: iz0daras0ti
+;RULE "13 Devoicing, z:s <=> ___(+:0)t" 3 5
+(load_morpher_rule message
+  <prule  nm devoicing
+		  str (morphophonemic)
+		  in_pseq (<simp_cntxt class strident_cons>)
+		  subrules (<psub out_pseq (<simp_cntxt class voiceless>)
+						  right_environ <ptemp pseq (<simp_cntxt class t>)>
+					>
+				   )
+  >
+)
+
+
+
+; Epenthesis
+; LR: it+pate0H
+; SR: it0pateaH
+; This epenthetic a is the so-called "furtive patah".
+;RULE "16 Epenthesis, 0:a <=> e___P:#" (where P = pharyngeal)
+(load_morpher_rule message
+  <prule  nm epenthesis
+		  str (morphophonemic)
+		  in_pseq ()
+		  subrules (<psub out_pseq (<simp_cntxt class a>)
+						  left_environ <ptemp pseq (<simp_cntxt class e>)>
+						  right_environ <ptemp fin true pseq (<simp_cntxt class pharyngeal>)>
+					>
+				   )
+  >
+)
+
+
+;--------------------------------MORPHOLOGICAL RULES
+(load_morpher_rule message
+  <mrule  nm first_sg
+		  str morphophonemic
+		  r_pos (V)
+		  pos V
+		  gl -1SG
+		  side r
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out (1 (+ti table1))>
+					>)
+  >
+)
+(load_morpher_rule message
+  <mrule  nm third_sgf
+		  str morphophonemic
+		  r_pos (V)
+		  pos V
+		  gl -3SGF
+		  side r
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out (1 (+u table1))>
+					>)
+  >
+)
+(load_morpher_rule message
+  <mrule  nm it_prefix
+		  str morphophonemic
+		  r_pos (V)
+		  pos V
+		  gl IT-
+		  side l
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 0 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out ((it+ table1) 1)>
+					>)
+  >
+)
+
+
+
+;(trace_morpher_rule message (true true first_sg))
+;(trace_morpher_rule message (true true third_sgf))
+;(trace_morpher_rule message (true true it_prefix))
+;(trace_lexical_lookup true)
+
+;Don't let errors stop us:
+(morpher_set message (*quit_on_error* false))
+
+;-----------------------TEST ITEMS
+
+(morph_and_lookup_word message istaparti)
+(morph_and_lookup_word message itparnasti)
+(morph_and_lookup_word message itparnes)
+(morph_and_lookup_word message itparnesu)
+(morph_and_lookup_word message itparsamti)
+(morph_and_lookup_word message itparsem)
+(morph_and_lookup_word message itparsemu)
+(morph_and_lookup_word message idbalbalti)
+(morph_and_lookup_word message idbalbel)
+(morph_and_lookup_word message idbalbelu)
+(morph_and_lookup_word message idgalgalti)
+(morph_and_lookup_word message idgalgel)
+(morph_and_lookup_word message idgalgelu)
+(morph_and_lookup_word message itHamakti)
+(morph_and_lookup_word message itHamek)
+(morph_and_lookup_word message itHamku)
+(morph_and_lookup_word message itlaba$ti)
+(morph_and_lookup_word message itlabe$)
+(morph_and_lookup_word message itlap$u)
+(morph_and_lookup_word message idbadarti)
+(morph_and_lookup_word message idbader)
+(morph_and_lookup_word message idbadru)
+(morph_and_lookup_word message idgara$ti)
+(morph_and_lookup_word message idgare$)
+(morph_and_lookup_word message idgar$u)
+(morph_and_lookup_word message itpalalti)
+(morph_and_lookup_word message itpalel)
+(morph_and_lookup_word message itpalelu)
+(morph_and_lookup_word message itxamamti)
+(morph_and_lookup_word message itxamem)
+(morph_and_lookup_word message itxamemu)
+(morph_and_lookup_word message itmotati)
+(morph_and_lookup_word message itmotet)
+(morph_and_lookup_word message itmotetu)
+(morph_and_lookup_word message it?o$a$ti)
+(morph_and_lookup_word message it?o$e$)
+(morph_and_lookup_word message it?o$e$u)
+(morph_and_lookup_word message idbodati)
+(morph_and_lookup_word message idboded)
+(morph_and_lookup_word message idbodedu)
+(morph_and_lookup_word message istaparti)
+(morph_and_lookup_word message istaper)
+(morph_and_lookup_word message istapru)
+(morph_and_lookup_word message istarakti)
+(morph_and_lookup_word message istarek)
+(morph_and_lookup_word message istarku)
+(morph_and_lookup_word message i$taparti)
+(morph_and_lookup_word message i$taper)
+(morph_and_lookup_word message i$tapru)
+(morph_and_lookup_word message ictalamti)
+(morph_and_lookup_word message ictalem)
+(morph_and_lookup_word message ictalmu)
+(morph_and_lookup_word message izdakanti)
+(morph_and_lookup_word message izdaken)
+(morph_and_lookup_word message izdaknu)
+(morph_and_lookup_word message izdarasti)
+(morph_and_lookup_word message izdarez)
+(morph_and_lookup_word message izdarzu)
+(morph_and_lookup_word message itamamti)
+(morph_and_lookup_word message itamem)
+(morph_and_lookup_word message itamemu)

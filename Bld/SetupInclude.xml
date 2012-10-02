@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Include file for all NAnt build files. Sets different settings. -->
+<!-- NOTE: While slash usually work as directory separator even on Windows, NMake has
+	problems since it passes the paths to the command shell which treats slash as
+	parameter separator. This means all properties that are passed to NMake as
+	directory specs needs to use backslash on Windows. -->
+<project name="FieldWorksSetup" default="all" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<sysinfo failonerror="false"/>
+	<if test="${not property::exists('BUILD_LEVEL')}">
+		<if test="${property::exists('sys.env.BUILD_LEVEL')}">
+			<property name="BUILD_LEVEL" value="${sys.env.BUILD_LEVEL}"/>
+		</if>
+		<if test="${not property::exists('sys.env.BUILD_LEVEL')}">
+			<property name="BUILD_LEVEL" value="9"/>
+		</if>
+	</if>
+	<if test="${not property::exists('fwversion')}">
+		<property name="fwversion" value="7"/>
+	</if>
+	<if test="${not property::exists('arch')}">
+		<property name="arch" value="${fw::architecture()}"/>
+	</if>
+	<if test="${not property::exists('debug')}">
+		<property name="debug" value="true"/>
+	</if>
+	<if test="${not property::exists('config')}">
+		<property name="config" value="Debug"/> <!-- Debug/Release/Bounds -->
+	</if>
+	<if test="${not property::exists('dir.fwobj')}">
+		<property name="dir.fwobj" value="${fwroot}/Obj_${arch}" if="${platform::is-unix()}"/>
+		<property name="dir.fwobj" value="${fwroot}\Obj" unless="${platform::is-unix()}"/>
+	</if>
+	<if test="${not property::exists('dir.fwoutput')}">
+		<property name="dir.fwoutput" value="${fwroot}/Output_${arch}" if="${platform::is-unix()}"/>
+		<property name="dir.fwoutput" value="${fwroot}\Output" unless="${platform::is-unix()}"/>
+	</if>
+	<if test="${not property::exists('dir.outputBase')}">
+		<property name="dir.outputBase" value="${path::combine(dir.fwoutput, config)}"/>
+	</if>
+	<if test="${not property::exists('dir.fwoutputCommon')}">
+		<property name="dir.fwoutputCommon" value="${path::combine(dir.fwoutput, 'Common')}"/>
+	</if>
+	<if test="${not property::exists('dir.buildOutputInterop')}">
+		<property name="dir.buildOutputInterop" value="${dir.outputBase}"/>
+	</if>
+	<if test="${not property::exists('dir.fwoutputlib')}">
+		<property name="dir.fwoutputlib" value="${path::combine(fwroot, 'Lib')}"/>
+	</if>
+	<if test="${not property::exists('dir.fwoutputlibBase')}">
+		<property name="dir.fwoutputlibBase" value="${path::combine(dir.fwoutputlib, config)}"/>
+	</if>
+	<if test="${not property::exists('dir.fwinstall')}">
+		<property name="dir.fwinstall" value="${path::combine(dir.fwoutput, 'install')}"/>
+	</if>
+	<if test="${not property::exists('dir.fwdistfiles')}">
+		<property name="dir.fwdistfiles" value="${path::combine(fwroot, 'DistFiles')}"/>
+	</if>
+	<if test="${not property::exists('dir.fwdistfiles.data')}">
+		<property name="dir.fwdistfiles.data" value="${path::combine(dir.fwdistfiles, 'Projects')}"/>
+	</if>
+	<if test="${not property::exists('dir.icu')}">
+		<property name="dir.icu" value="${path::combine(dir.fwdistfiles, 'Icu40')}"/>
+	</if>
+	<if test="${not property::exists('dir.icuData')}">
+		<property name="dir.icuData" value="${path::combine(dir.icu, 'icudt40l')}"/>
+	</if>
+	<if test="${not property::exists('dir.buildarchive')}">
+		<property name="dir.buildarchive" value="${path::combine(fwroot, 'buildarchive')}"/>
+	</if>
+	<if test="${not property::exists('VSConvertBuildFile')}">
+		<property name="VSConvertBuildFile" value="${fwroot}/Bld/VSConvert.build.xml" />
+	</if>
+	<if test="${not property::exists('dir.nantbuild')}">
+		<property name="dir.nantbuild" value="${path::combine(dir.fwobj, 'NAntBuild')}"/>
+	</if>
+	<if test="${not property::exists('target')}">
+		<property name="target" value="all" /> <!-- default target -->
+	</if>
+	<if test="${not property::exists('build-type')}">		<!-- for C++ .bat files -->
+		<property name="build-type" value="d"/> <!-- b (bounds), d (for debug), r (for release), p (profile) -->
+	</if>
+	<if test="${not property::exists('build-action')}">	<!-- for C++ .bat files -->
+		<property name="build-action" value="i"/> <!-- e (for erase), c (for clean), i (for incremental), ec (for erase complete), cc (for clean complete) -->
+	</if>
+	<if test="${not property::exists('bld-debug')}">
+		<property name="bld-debug" value="true"/>
+	</if>
+	<if test="${not property::exists('bld-bounds')}">
+		<property name="bld-bounds" value="false"/>
+	</if>
+	<if test="${not property::exists('bld-release')}">
+		<property name="bld-release" value="false"/>
+	</if>
+	<if test="${not property::exists('platform')}">
+		<property name="platform" value="UNIX" if="${platform::is-unix()}"/>
+		<property name="platform" value="WIN32" unless="${platform::is-unix()}"/>
+	</if>
+	<if test="${not property::exists('XmlInclude')}">
+		<property name="XmlInclude" value="${fwroot}/Bld/GlobalInclude.xml"/>
+	</if>
+	<if test="${not property::exists('UseVsPath')}">
+		<property name="UseVsPath" value=""/>
+	</if>
+	<if test="${not property::exists('forcetests')}">
+		<property name="forcetests" value="false"/>
+	</if>
+	<if test="${not property::exists('showTargetsRunInReport')}">
+		<property name="showTargetsRunInReport" value="false"/>
+	</if>
+	<if test="${not property::exists('clean')}">
+		<property name="clean" value="false"/>
+	</if>
+	<if test="${not property::exists('deleteOutput')}">
+		<property name="deleteOutput" value="true"/>
+	</if>
+	<if test="${not property::exists('nobuild')}">
+		<property name="nobuild" value="false"/>
+	</if>
+	<if test="${not property::exists('registerCom')}">
+		<property name="registerCom" value="false"/>
+	</if>
+	<if test="${not property::exists('cpp-extra-params')}">
+		<property name="cpp-extra-params" value=""/>
+	</if>
+	<if test="${not property::exists('dir.xmiOutput')}"> <!-- For XMI file transformations. -->
+		<property name="dir.xmiOutput" value="${path::combine(dir.fwoutput, 'XMI')}"/>
+	</if>
+	<if test="${not property::exists('output-is-lib')}">
+		<property name="output-is-lib" value="false"/>
+	</if>
+	<if test="${not property::exists('verbose')}">
+		<property name="verbose" value="false"/>
+	</if>
+	<if test="${not property::exists('cl.compiler')}">
+		<property name="cl.compiler" value="cl"/>
+	</if>
+	<if test="${not property::exists('link.linker')}">
+		<property name="link.linker" value="link"/>
+	</if>
+	<if test="${not property::exists('cl.xtraopts')}">
+		<property name="cl.xtraopts" value=""/>
+	</if>
+	<if test="${not property::exists('link.xtraopts')}">
+		<property name="link.xtraopts" value=""/>
+	</if>
+	<if test="${not property::exists('doLelaDBs')}">
+		<property name="doLelaDBs" value="true"/>
+	</if>
+	<if test="${not property::exists('doTest')}">
+		<property name="doTest" value="true"/>
+	</if>
+	<if test="${not property::exists('dir.SampleData')}">
+		<property name="dir.SampleData" value="${path::combine(dir.fwoutput, 'SampleData')}"/>
+	</if>
+	<if test="${not property::exists('computername')}">
+		<property name="computername" value="${sys.env.COMPUTERNAME}" if="${property::exists('sys.env.COMPUTERNAME')}"/>
+		<property name="computername" value="." unless="${property::exists('sys.env.COMPUTERNAME')}"/>
+	</if>
+	<if test="${not property::exists('haveTEAdapterLibrary')}">
+		<property name="haveTEAdapterLibrary" value="${file::exists(path::combine(dir.fwdistfiles, 'TeUIAdapters.dll'))}" unless="${platform::is-unix()}"/>
+		<property name="haveTEAdapterLibrary" value="false" if="${platform::is-unix()}"/>
+	</if>
+	<if test="${not property::exists('dir.wwoutput')}">
+		<property name="dir.wwoutput" value="${path::combine(dir.fwoutput, 'WWData')}"/>
+	</if>
+	<if test="${not property::exists('dir.safecopy')}" unless="${platform::is-unix()}">
+		<property name="dir.safecopy" value="${dir.SampleData}"/>
+	</if>
+	<if test="${not property::exists('com_dir')}">
+		<!-- where to find the COM library on Linux -->
+		<property name="com_dir" value="${fwroot}/../COM" if="${platform::is-unix()}"/>
+		<property name="com_dir" value="" unless="${platform::is-unix()}"/>
+	</if>
+	<if test="${not property::exists('com_lib')}">
+		<!-- where to find the COM library on Linux -->
+		<property name="com_lib" value="${com_dir}/build${arch}/src/.libs" if="${platform::is-unix()}"/>
+		<property name="com_lib" value="" unless="${platform::is-unix()}"/>
+	</if>
+	<if test="${not property::exists('icu_lib')}">
+		<!-- where to find the ICU library -->
+		<property name="icu_lib" value="${fwroot}/Lib/src/icu/install${arch}/lib" if="${platform::is-unix()}"/>
+		<property name="icu_lib" value="" unless="${platform::is-unix()}"/>
+	</if>
+	<if test="${not property::exists('remake-failonerror')}">
+		<property name="remake-failonerror" value="true"/>
+	</if>
+	<if test="${not property::exists('buildtlb')}">
+		<property name="buildtlb" value="false"/>
+	</if>
+	<if test="${not property::exists('build4ux')}">
+		<property name="build4ux" value=""/>
+	</if>
+	<if test="${not property::exists('dir.nunitreport')}">
+		<property name="dir.nunitreport" value="${nant::get-base-directory()}/extensions/common/neutral/FwTasks/NUnit.Report"/>
+	</if>
+
+	<if test="${not platform::is-unix()}">
+		<!-- replace c:\fw\DistFiles in the current path with the right fwroot directory -->
+		<!-- We have to use the original value from the registry, so that we get the path that
+		was not modified in a batch file that calls this build, and it also doesn't include
+		the user part of the path -->
+		<readregistry property="environment-path" key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment\Path"
+			hive="LocalMachine"/>
+		<regex pattern="(?'start'.*;|^)(?'fwpath'.*)\\[Dd][Ii][Ss][Tt][Ff][Ii][Ll][Ee][Ss](?'end'.*)"
+			input="${environment-path}" failonerror="false"/>
+		<if test="${not property::exists('fwpath')}">
+			<property name="start" value="${environment-path};"/>
+			<property name="end" value=""/>
+		</if>
+		<property name="newpath" value="${start}${fwroot}\DistFiles${end}"/>
+		<setenv name="Path" value="${newpath}" global="true"
+				unless="${environment-path == newpath}"/>
+	</if>
+	<!-- Add path for right version of Visual Studio if environment variable VSVERSION is set.
+	The path can be set in the include file pathinclude.(VSVERSION).xml -->
+	<if test="${property::exists('sys.env.VSVERSION')}">
+		<include buildfile="${fwroot}/Bld/pathinclude.${sys.env.VSVERSION}.xml"/>
+	</if>
+	<!-- Determine if we are in the same Perforce branch or if we have changed branches -->
+	<property name="samebranch"
+		value="${property::get-value('fwroot') == property::get-value('fwpath')}"
+		if="${property::exists('fwpath')}"/>
+</project>

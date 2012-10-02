@@ -1,0 +1,12 @@
+This distribution contains software written by
+Malcolm Crowe at the University of Paisley.
+(malcolm.crowe@paisley.ac.uk)
+The tools and component(s) may be freely used as is,
+copied and redistributed.
+
+The source files may also be freely used, copied or redistributed,
+provided this notice or an equivalent statement is distributed with it.
+The source code may be modified and/or included in other
+software or products, but in that case, due reference
+should be made to Malcolm Crowe at the University of Paisley
+in any list of authors of the software or product.

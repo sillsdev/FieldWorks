@@ -1,0 +1,52 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "FWGlobal"=.\FWGlobal\FWGlobal.dsp - Package Owner=<11>
+
+Package=<5>
+{{{
+	begin source code control
+	FWGlobal
+	.\fwglobal
+	end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "fwvtDataNotebook"=.\DN\fwvtDataNotebook.dsp - Package Owner=<11>
+
+Package=<5>
+{{{
+	begin source code control
+	fwvtDataNotebook
+	.\dn
+	end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+	begin source code control
+	fwVT
+	.
+	end source code control
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################

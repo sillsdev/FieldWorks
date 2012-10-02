@@ -1,0 +1,5879 @@
+
+\lx 13169
+\g ABS
+\c W/W
+\o NaN NaN
+\wc 13150
+\fd InflectionFS13170
+\a itl {13349} / xiv _  | / xiv _
+		 / chikiv _  | / chikiv _
+		 / molkax _  | / molkax _
+		 / kuaw _  | / kuaw _
+		 / kom _  | / kom _
+		 / kuav _  | / kuav _
+
+\a li {13346} / l _  | / l _
+
+
+ ~/ xiv _  | ~/ xiv _
+
+
+ ~/ chikiv _  | ~/ chikiv _
+
+
+ ~/ molkax _  | ~/ molkax _
+
+
+ ~/ kuaw _  | ~/ kuaw _
+
+
+ ~/ kom _  | ~/ kom _
+
+
+ ~/ kuav _  | ~/ kuav _
+
+\a tli {13348} / [13145]_  | / [C] _
+
+
+ ~/ xiv _  | ~/ xiv _
+
+
+ ~/ chikiv _  | ~/ chikiv _
+
+
+ ~/ molkax _  | ~/ molkax _
+
+
+ ~/ kuaw _  | ~/ kuaw _
+
+
+ ~/ kom _  | ~/ kom _
+
+
+ ~/ kuav _  | ~/ kuav _
+
+
+ ~/ l _  | ~/ l _
+
+\a tl {13171}
+
+ ~/ xiv _  | ~/ xiv _
+
+
+ ~/ chikiv _  | ~/ chikiv _
+
+
+ ~/ molkax _  | ~/ molkax _
+
+
+ ~/ kuaw _  | ~/ kuaw _
+
+
+ ~/ kom _  | ~/ kom _
+
+
+ ~/ kuav _  | ~/ kuav _
+
+
+ ~/ l _  | ~/ l _
+
+
+ ~/ [13145]_  | ~/ [C] _
+
+\eType suffix
+
+\lx 23525
+\g ABS
+\c W/W
+\o 1
+\wc derivSfx
+\a itl {13349} / xiv _  | / xiv _
+		 / chikiv _  | / chikiv _
+		 / molkax _  | / molkax _
+		 / kuaw _  | / kuaw _
+		 / kom _  | / kom _
+		 / kuav _  | / kuav _
+
+\a li {13346} / l _  | / l _
+
+
+ ~/ xiv _  | ~/ xiv _
+
+
+ ~/ chikiv _  | ~/ chikiv _
+
+
+ ~/ molkax _  | ~/ molkax _
+
+
+ ~/ kuaw _  | ~/ kuaw _
+
+
+ ~/ kom _  | ~/ kom _
+
+
+ ~/ kuav _  | ~/ kuav _
+
+\a tli {13348} / [13145]_  | / [C] _
+
+
+ ~/ xiv _  | ~/ xiv _
+
+
+ ~/ chikiv _  | ~/ chikiv _
+
+
+ ~/ molkax _  | ~/ molkax _
+
+
+ ~/ kuaw _  | ~/ kuaw _
+
+
+ ~/ kom _  | ~/ kom _
+
+
+ ~/ kuav _  | ~/ kuav _
+
+
+ ~/ l _  | ~/ l _
+
+\a tl {13171}
+
+ ~/ xiv _  | ~/ xiv _
+
+
+ ~/ chikiv _  | ~/ chikiv _
+
+
+ ~/ molkax _  | ~/ molkax _
+
+
+ ~/ kuaw _  | ~/ kuaw _
+
+
+ ~/ kom _  | ~/ kom _
+
+
+ ~/ kuav _  | ~/ kuav _
+
+
+ ~/ l _  | ~/ l _
+
+
+ ~/ [13145]_  | ~/ [C] _
+
+\eType suffix
+\fd FromPOS258
+\fd ToPOS256
+\fd FromMSFS31480
+\fd ToMSFS31481
+\mp FromExcpFeat31278Plus
+\mcc 23525 +/ {ExcpFeat31278Plus} ... _ +/ {ToExcpFeat31278Plus} ... _
+
+\lx 13208
+\g POSS:1SG
+\c W/W
+\o -NaN -NaN
+\wc 13205
+\fd InflectionFS13209
+\a n {13273} / _ [13144]  | / _ [V]
+
+\a no {13210}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 22998
+\g POSS:1SG
+\c W/W
+\o -NaN -NaN
+\wc 22966
+\fd InflectionFS22999
+\a n {13273} / _ [13144]  | / _ [V]
+
+\a no {13210}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 13220
+\g PL.POSS
+\c W/W
+\o NaN NaN
+\wc 13196
+\fd InflectionFS13221
+\a van {13222}
+\eType suffix
+
+\lx 13228
+\g POSS:1PL
+\c W/W
+\o -NaN -NaN
+\wc 13205
+\fd InflectionFS13229
+\a t {13275} / _ [13144]  | / _ [V]
+
+\a to {13230}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 23004
+\g POSS:1PL
+\c W/W
+\o -NaN -NaN
+\wc 22966
+\fd InflectionFS23005
+\a t {13275} / _ [13144]  | / _ [V]
+
+\a to {13230}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 13237
+\g POSS:2SG
+\c W/W
+\o -NaN -NaN
+\wc 13205
+\fd InflectionFS13238
+\a m {13276} / _ [13144]  | / _ [V]
+
+\a mo {13239}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 22991
+\g POSS:2SG
+\c W/W
+\o -NaN -NaN
+\wc 22966
+\fd InflectionFS22992
+\a m {13276} / _ [13144]  | / _ [V]
+
+\a mo {13239}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 13247
+\g POSS:2PL
+\c W/W
+\o -NaN -NaN
+\wc 13205
+\fd InflectionFS13248
+\a amo {13249}
+\eType prefix
+
+\lx 22968
+\g POSS:2PL
+\c W/W
+\o -NaN -NaN
+\wc 22966
+\fd InflectionFS22969
+\a amo {13249}
+\eType prefix
+
+\lx 13256
+\g POSS:3SG
+\c W/W
+\o -NaN -NaN
+\wc 13205
+\fd InflectionFS13257
+\a i {13258}
+\eType prefix
+
+\lx 22976
+\g POSS:3SG
+\c W/W
+\o -NaN -NaN
+\wc 22966
+\fd InflectionFS22977
+\a i {13258}
+\eType prefix
+
+\lx 13266
+\g POSS:3PL
+\c W/W
+\o -NaN -NaN
+\wc 13205
+\fd InflectionFS13267
+\a im {13369} / _ p  | / _ p
+		 / _ i  | / _ i
+
+\a in {13268}
+
+ ~/ _ p  | ~/ _ p
+
+
+ ~/ _ i  | ~/ _ i
+
+\eType prefix
+
+\lx 22985
+\g POSS:3PL
+\c W/W
+\o -NaN -NaN
+\wc 22966
+\fd InflectionFS22986
+\a im {13369} / _ p  | / _ p
+		 / _ i  | / _ i
+
+\a in {13268}
+
+ ~/ _ p  | ~/ _ p
+
+
+ ~/ _ i  | ~/ _ i
+
+\eType prefix
+
+\lx 13313
+\g PL.DIM
+\c W/W
+\o NaN NaN
+\wc 13341
+\fd InflectionFS13314
+\a tzitzin {13315}
+\eType suffix
+
+\lx 16255
+\g PL.DIM
+\c W/W
+\o NaN NaN
+\wc 13150
+\fd InflectionFS16256
+\a tzitzin {13315}
+\eType suffix
+
+\lx 13332
+\g POSS:Unspec
+\c W/W
+\o -NaN -NaN
+\wc 13205
+\fd InflectionFS13333
+\a tee {13334}
+\eType prefix
+
+\lx 20169
+\g POSS:Unspec
+\c W/W
+\o -NaN -NaN
+\wc 17007
+\fd InflectionFS20170
+\a tee {13334}
+\eType prefix
+
+\lx 22944
+\g POSS:Unspec
+\c W/W
+\o -NaN -NaN
+\wc 22936
+\fd InflectionFS22945
+\a tee {13334}
+\eType prefix
+
+\lx 23011
+\g POSS:Unspec
+\c W/W
+\o -NaN -NaN
+\wc 22966
+\fd InflectionFS23012
+\a tee {13334}
+\eType prefix
+
+\lx 13375
+\g mortar
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15409
+\fd MSFS13376
+\a molkax {13377}
+
+\lx 13380
+\g crate
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13381
+\a chikim {13383} / _ m  | / _ m
+
+\a chikiv {13382}
+
+ ~/ _ m  | ~/ _ m
+
+
+\lx 13387
+\g jug
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13388
+\a kon {13666} / _ #  | / _ #
+
+\a kov {13667} / _ v  | / _ v
+
+
+ ~/ _ #  | ~/ _ #
+
+\a kom {13389}
+
+ ~/ _ #  | ~/ _ #
+
+
+ ~/ _ v  | ~/ _ v
+
+
+\lx 13392
+\g leaf
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13393
+\a xih {13398} / _ m  | / _ m
+
+\a xiv {13394}
+
+ ~/ _ m  | ~/ _ m
+
+
+\lx 13401
+\g tree
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13402
+\a kuam {13405} / _ m  | / _ m
+
+\a kuah {13663} / _ #  | / _ #
+
+
+ ~/ _ m  | ~/ _ m
+
+\a kuav {13665} / _ v  | / _ v
+
+
+ ~/ _ m  | ~/ _ m
+
+
+ ~/ _ #  | ~/ _ #
+
+\a kuaw {13403}
+
+ ~/ _ m  | ~/ _ m
+
+
+ ~/ _ #  | ~/ _ #
+
+
+ ~/ _ v  | ~/ _ v
+
+
+\lx 13408
+\g bean
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13409
+\a e {13410}
+
+\lx 13413
+\g sleeping mat
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13414
+\a petl {13674} / _ #  | / _ #
+
+\a petla {13415}
+
+ ~/ _ #  | ~/ _ #
+
+
+\lx 13418
+\g leather sandal
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13419
+\a tekak {13420}
+
+\lx 13423
+\g tuna
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13424
+\a noch {13425}
+
+\lx 13428
+\g corn plant
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13429
+\a mil {13430}
+
+\lx 13433
+\g day
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15409
+\fd MSFS13434
+\a tonal {13435}
+
+\lx 13439
+\g joy
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13440
+\a pakilis {13441}
+
+\lx 13444
+\g bat (animal)
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS13445
+\a tzinaka {13446}
+
+\lx 13449
+\g turkey
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS13450
+\a totol {24333}
+\a totolih {13451}
+
+\lx 13454
+\g fish
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS13455
+\a michih {13456}
+
+\lx 13462
+\g armadillo
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS13463
+\a tochih {13461}
+
+\lx 13466
+\g machete
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15409
+\fd MSFS13467
+\a machitih {13468}
+
+\lx 13471
+\g refreshment
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15409
+\fd MSFS13472
+\a refreskoh {13473}
+
+\lx 13476
+\g governor
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS13477
+\a gobernador {13478}
+
+\lx 13481
+\g coffee
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS13482
+\a kahven {13483}
+
+\lx 13486
+\g horse
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15409
+\fd MSFS13487
+\a kavayoh {13488}
+
+\lx 13491
+\g automobile
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS13492
+\a koch {23614}
+\a kochih {13493}
+
+\lx 13496
+\g rice
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS13497
+\a aros {13498}
+
+\lx 13501
+\g father
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS13502
+\a papav {13632}
+\a papan {13503}
+
+\lx 13506
+\g grass
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13507
+\a saka {13508}
+
+\lx 13511
+\g peanut
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13512
+\a kakava {13513}
+
+\lx 13516
+\g mole (Mexican dish)
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13517
+\a mol {13518}
+
+\lx 13521
+\g tomatillo
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13522
+\a xitoma {13523}
+
+\lx 13526
+\g turkey
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13527
+\a wehxolo {13528}
+
+\lx 13531
+\g chili
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13532
+\a chil {13533}
+
+\lx 13536
+\g house
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13537
+\a kal {13538}
+
+\lx 13541
+\g woman
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\mp ExcpFeat31275Plus
+\a siva {13543}
+
+\lx 13546
+\g dog
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15409
+\fd MSFS13547
+\a itzkuin {13548}
+
+\lx 13551
+\g prickly pear
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15409
+\fd MSFS13552
+\a ohpal {13553}
+
+\lx 13556
+\g church
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13557
+\a tiopam {15387} / _ m  | / _ m
+
+\a tiopan {13558}
+
+ ~/ _ m  | ~/ _ m
+
+
+\lx 13565
+\g cow
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15409
+\fd MSFS13566
+\a vakah {13567}
+
+\lx 13570
+\g man
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15410
+\mp ExcpFeat31275Plus
+\a tlaka {13572}
+
+\lx 13575
+\g baby
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15410
+\mp ExcpFeat31275Plus
+\a kookone {13784} / _ h #  | / _ h #
+
+\a kone {13577}
+
+ ~/ _ h #  | ~/ _ h #
+
+
+\lx 13580
+\g tortilla
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13581
+\a tlaxkal {13582}
+
+\lx 13585
+\g month
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13586
+\a metz {13587}
+
+\lx 13591
+\g rock
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13592
+\a te {13593}
+
+\lx 13686
+\g ten
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS13687
+\a mahtlaktli {13599}
+
+\lx 13684
+\g three
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS13685
+\a ex {23364} / _ pa #  | / _ pa #
+
+\a eyi {13604}
+
+ ~/ _ pa #  | ~/ _ pa #
+
+
+\lx 13608
+\g all
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS13609
+\a nochi {13610}
+
+\lx 13613
+\g many
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS13614
+\a miek {13615}
+
+\lx 13618
+\g land
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13619
+\a tlal {13620}
+
+\lx 13623
+\g eye
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS13624
+\a ixtololoh {13625}
+
+\lx 13628
+\g shoulder
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS13629
+\a ahkol {13630}
+
+\lx 13643
+\g hand
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS13644
+\a ma {13645}
+
+\lx 13648
+\g grandfather
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS13649
+\a koltzin {13650}
+
+\lx 13653
+\g foot
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS13654
+\a kxi {13655}
+
+\lx 13658
+\g sibling
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS13659
+\a ikni {13661} / tee _  | / tee _
+
+\a kni {13660}
+
+ ~/ tee _  | ~/ tee _
+
+
+\lx 13670
+\g metate
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13671
+\a metl {13673} / _ #  | / _ #
+
+\a metla {13672}
+
+ ~/ _ #  | ~/ _ #
+
+
+\lx 13688
+\g Peter
+\c W
+\wc root
+\mp RootPOS13681
+\mp InflClass15408
+\fd MSFS13689
+\a Pedro {13680}
+
+\lx 13699
+\g the
+\c W
+\wc root
+\mp RootPOS13698
+\fd MSFS13700
+\a n {13695}
+
+\lx 13703
+\g a
+\c W
+\wc root
+\mp RootPOS13697
+\fd MSFS13704
+\a sen {23352} / # seh _ #  | / # seh _ #
+
+\a sap {23360} / _ pa #  | / _ pa #
+
+
+ ~/ # seh _ #  | ~/ # seh _ #
+
+\a se {13705}
+
+ ~/ # seh _ #  | ~/ # seh _ #
+
+
+ ~/ _ pa #  | ~/ _ pa #
+
+
+\lx 13707
+\g a
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS13708
+\a sen {23352} / # seh _ #  | / # seh _ #
+
+\a sap {23360} / _ pa #  | / _ pa #
+
+
+ ~/ # seh _ #  | ~/ # seh _ #
+
+\a se {13705}
+
+ ~/ # seh _ #  | ~/ # seh _ #
+
+
+ ~/ _ pa #  | ~/ _ pa #
+
+
+\lx 13711
+\g some
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS13712
+\a seki {13713}
+
+\lx 13716
+\g girl
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13717
+\a tako {13718}
+
+\lx 13721
+\g father
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13722
+\a tah {13723}
+
+\lx 13726
+\g mother
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13727
+\a nan {13728}
+
+\lx 16361
+\g elder
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS16362
+\a wewen {13733}
+
+\lx 13736
+\g 2Sg
+\c W
+\wc root
+\mp RootPOS257
+\fd MSFS13737
+\a teh {13738}
+
+\lx 13741
+\g 2Sg respect
+\c W
+\wc root
+\mp RootPOS257
+\fd MSFS13742
+\a tehwatzin {13743}
+
+\lx 13767
+\g until
+\c W
+\wc root
+\mp RootPOS13766
+\fd MSFS13768
+\a asta {13749}
+
+\lx 13752
+\g tomorrow
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS13753
+\a mostla {13754}
+
+\lx 13757
+\g mouth
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS13758
+\a kamak {13759}
+
+\lx 13762
+\g road
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13763
+\a ohvi {13796}
+\a oh {13764}
+
+\lx 13771
+\g a little
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS13772
+\a sekitzin {13773}
+
+\lx 13776
+\g thing
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13777
+\a tlaman {13778}
+
+\lx 13781
+\g fire
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13782
+\a tli {13783}
+
+\lx 13788
+\g vase
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS13789
+\a xaloh {13790}
+
+\lx 13793
+\g ear
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS13794
+\a nakas {13795}
+
+\lx 13799
+\g toy
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13800
+\a awil {13801}
+
+\lx 13804
+\g orange (fruit)
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS13805
+\a arankas {13806}
+
+\lx 13809
+\g water
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS13810
+\a a {13811}
+
+\lx 13814
+\g juice
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS13815
+\a ayo {13816}
+
+\lx 15419
+\g PL
+\c W/W
+\o NaN NaN
+\wc 13150
+\fd InflectionFS15420
+\a tih {15425} ICA15409 +/ {InflClass15409} ... _ +/ {ToInflClass15409} ... _
+\a h {15426} ICA15410 +/ {InflClass15410} ... _ +/ {ToInflClass15410} ... _
+\a s {15427} ICA15411 +/ {InflClass15411} ... _ +/ {ToInflClass15411} ... _
+\a meh {15421} ICA15408 +/ {InflClass15408} ... _ +/ {ToInflClass15408} ... _
+\eType suffix
+
+\lx 15428
+\g PL
+\c W/W
+\o NaN NaN
+\wc 13279
+\a tih {15425} ICA15409 +/ {InflClass15409} ... _ +/ {ToInflClass15409} ... _
+\a h {15426} ICA15410 +/ {InflClass15410} ... _ +/ {ToInflClass15410} ... _
+\a s {15427} ICA15411 +/ {InflClass15411} ... _ +/ {ToInflClass15411} ... _
+\a meh {15421} ICA15408 +/ {InflClass15408} ... _ +/ {ToInflClass15408} ... _
+\eType suffix
+
+\lx 16337
+\g DIM;RESP
+\c W/W
+\o NaN NaN
+\wc 13303
+\fd InflectionFS16338
+\a tzin {16339}
+\eType suffix
+
+\lx 16344
+\g DIM;RESP
+\c W/W
+\o NaN NaN
+\wc 13150
+\fd InflectionFS16345
+\a tzin {16339}
+\eType suffix
+
+\lx 16348
+\g PL.DIM.POSS
+\c W/W
+\o NaN NaN
+\wc 13196
+\fd InflectionFS16349
+\a tzitzivvan {16350}
+\eType suffix
+
+\lx 16523
+\g RESP
+\c W/W
+\o 1
+\wc derivSfx
+\a tzin {16526}
+\eType suffix
+\fd FromPOS13339
+\fd ToPOS13146
+\fd FromMSFS16524
+\fd ToMSFS16525
+
+\lx 16953
+\g IMPFV.SUBJ:PL
+\c W/W
+\o NaN NaN
+\wc 16933
+\fd InflectionFS16954
+\a veh {24733} / [13145]_  | / [C] _
+
+\a h {16955}
+
+ ~/ [13145]_  | ~/ [C] _
+
+\eType suffix
+\mp StemNameAffix66696
+
+\lx 16971
+\g SUBJ:1.SG
+\c W/W
+\o -NaN -NaN
+\wc 16932
+\fd InflectionFS16972
+\a n {17934} / _ [13144]  | / _ [V]
+
+\a ni {16973}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 17107
+\g SUBJ:1.SG
+\c W/W
+\o -NaN -NaN
+\wc 17102
+\fd InflectionFS17108
+\mp FromExcpFeat31275Plus
+\mcc 17107 +/ _ ... {ExcpFeat31275Plus} +/ _ ... {ToExcpFeat31275Plus}
+\a n {17934} / _ [13144]  | / _ [V]
+
+\a ni {16973}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 17123
+\g SUBJ:1.SG
+\c W/W
+\o -NaN -NaN
+\wc 17122
+\fd InflectionFS17124
+\a n {17934} / _ [13144]  | / _ [V]
+
+\a ni {16973}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 16980
+\g SUBJ:2.SG
+\c W/W
+\o -NaN -NaN
+\wc 16932
+\fd InflectionFS16981
+\a t {17935} / _ [13144]  | / _ [V]
+
+\a ti {16982}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 17111
+\g SUBJ:2.SG
+\c W/W
+\o -NaN -NaN
+\wc 17102
+\fd InflectionFS17112
+\mp FromExcpFeat31275Plus
+\mcc 17111 +/ _ ... {ExcpFeat31275Plus} +/ _ ... {ToExcpFeat31275Plus}
+\a t {17935} / _ [13144]  | / _ [V]
+
+\a ti {16982}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 16989
+\g SUBJ:2.PL
+\c W/W
+\o -NaN -NaN
+\wc 16932
+\fd InflectionFS16990
+\a am {16996} / _ p  | / _ p
+
+\a an {16991}
+
+ ~/ _ p  | ~/ _ p
+
+\eType prefix
+
+\lx 17113
+\g SUBJ:2.PL
+\c W/W
+\o -NaN -NaN
+\wc 17102
+\fd InflectionFS17114
+\mp FromExcpFeat31275Plus
+\mcc 17113 +/ _ ... {ExcpFeat31275Plus} +/ _ ... {ToExcpFeat31275Plus}
+\a am {16996} / _ p  | / _ p
+
+\a an {16991}
+
+ ~/ _ p  | ~/ _ p
+
+\eType prefix
+
+\lx 16999
+\g SUBJ:1.PL
+\c W/W
+\o -NaN -NaN
+\wc 16932
+\fd InflectionFS17000
+\a t {17936} / _ [13144]  | / _ [V]
+
+\a ti {17001}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 17109
+\g SUBJ:1.PL
+\c W/W
+\o -NaN -NaN
+\wc 17102
+\fd InflectionFS17110
+\mp FromExcpFeat31275Plus
+\mcc 17109 +/ _ ... {ExcpFeat31275Plus} +/ _ ... {ToExcpFeat31275Plus}
+\a t {17936} / _ [13144]  | / _ [V]
+
+\a ti {17001}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 17127
+\g SUBJ:1.PL
+\c W/W
+\o -NaN -NaN
+\wc 17122
+\fd InflectionFS17128
+\a t {17936} / _ [13144]  | / _ [V]
+
+\a ti {17001}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+\eType prefix
+
+\lx 17010
+\g OBJ:1.SG
+\c W/W
+\o -NaN -NaN
+\wc 17007
+\fd InflectionFS17011
+\a nech {17012}
+\eType prefix
+
+\lx 17020
+\g OBJ:1.PL
+\c W/W
+\o -NaN -NaN
+\wc 17007
+\fd InflectionFS17021
+\a tech {17022}
+\eType prefix
+
+\lx 17029
+\g OBJ:2.SG
+\c W/W
+\o -NaN -NaN
+\wc 17007
+\fd InflectionFS17030
+\a mitz {17031}
+\eType prefix
+
+\lx 17038
+\g OBJ:2.PL
+\c W/W
+\o -NaN -NaN
+\wc 17007
+\fd InflectionFS17039
+\a amech {17040}
+\eType prefix
+
+\lx 17047
+\g OBJ:3
+\c W/W
+\o -NaN -NaN
+\wc 17007
+\fd InflectionFS17048
+\a ki {18183}
+\a k {17049} / _ [13144]  | / _ [V]
+		 / i _  | / i _
+
+\eType prefix
+
+\lx 17056
+\g OBJ:3.PL
+\c W/W
+\o -NaN -NaN
+\wc 17053
+\fd InflectionFS17057
+\a im {17059} / _ [13144]  | / _ [V]
+		 / _ p  | / _ p
+
+\a in {17058}
+
+ ~/ _ [13144]  | ~/ _ [V]
+
+
+ ~/ _ p  | ~/ _ p
+
+\eType prefix
+
+\lx 17064
+\g SUBJ:2.SG;OBJ:1.SG
+\c W/W
+\o -NaN -NaN
+\wc 17061
+\fd InflectionFS17065
+\a tech {17066}
+\eType prefix
+
+\lx 17077
+\g SUBJ:2.PL;OBJ:1.SG
+\c W/W
+\o -NaN -NaN
+\wc 17061
+\fd InflectionFS17078
+\a antech {17079}
+\eType prefix
+
+\lx 17090
+\g SUBJ:2.PL;OBJ:1.SG
+\c W/W
+\o -NaN -NaN
+\wc 17061
+\fd InflectionFS17091
+\a tech {17092}
+\eType prefix
+
+\lx 17131
+\g SUBJ:2.IMPV
+\c W/W
+\o -NaN -NaN
+\wc 17164
+\fd InflectionFS17132
+\a xi {17133}
+\eType prefix
+
+\lx 17173
+\g SUBJ:PL.SUBJNCT
+\c W/W
+\o NaN NaN
+\wc 17142
+\fd InflectionFS17174
+\a n {24031} / via _  | / via _
+
+\a kan {17175}
+
+ ~/ via _  | ~/ via _
+
+\eType suffix
+
+\lx 17181
+\g SUBJ:PL.SUBJNCT
+\c W/W
+\o NaN NaN
+\wc 17165
+\fd InflectionFS17182
+\a n {24031} / via _  | / via _
+
+\a kan {17175}
+
+ ~/ via _  | ~/ via _
+
+\eType suffix
+
+\lx 17786
+\g to die
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS17787
+\a mik {20956}
+\a miki {17788}
+
+\lx 24551
+\g to die
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS24552
+\a mik {20956}
+\a miki {17788}
+
+\lx 17797
+\g to appear
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS17798
+\a nes {20957}
+\a nex {24091} / _ ti  | / _ ti
+
+\a nesi {17799}
+
+ ~/ _ ti  | ~/ _ ti
+
+
+\lx 17808
+\g to arrive
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\a ahsi {17810}
+
+\lx 17819
+\g to fall
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\a wetzi {17821}
+
+\lx 17830
+\g to smile
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS17831
+\a wetzka {17832}
+
+\lx 17841
+\g to skip, run
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS17842
+\a tzikuini {17843}
+
+\lx 17986
+\g to take
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS17987
+\a ana {17988} Bound
+
+\lx 18144
+\g to see
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS18145
+\a tti {24093} Bound / _ ti  | / _ ti
+
+\a itta {57553} Bound / [13145]_  | / [C] _
+		 / tee _  | / tee _
+
+
+ ~/ _ ti  | ~/ _ ti
+
+\a itti {57554} Bound / [13145]_ ti  | / [C] _ ti
+
+
+ ~/ _ ti  | ~/ _ ti
+
+
+ ~/ [13145]_  | ~/ [C] _
+
+
+ ~/ tee _  | ~/ tee _
+
+\a tta {18146} Bound
+
+ ~/ _ ti  | ~/ _ ti
+
+
+ ~/ [13145]_  | ~/ [C] _
+
+
+ ~/ tee _  | ~/ tee _
+
+
+ ~/ [13145]_ ti  | ~/ [C] _ ti
+
+
+\lx 18161
+\g to want
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS18162
+\a nek {22695} Bound
+\a neki {18163} Bound
+
+\lx 18173
+\g to buy
+\c W
+\wc root
+\mp RootPOS22932
+\mp InflClass17761
+\fd MSFS18174
+\a koh {22694} Bound
+\a kovi {24148} Bound / _ li  | / _ li
+
+\a kova {18175} Bound
+
+ ~/ _ li  | ~/ _ li
+
+
+\lx 18243
+\g to cut
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS18244
+\a teki {18245} Bound
+
+\lx 18255
+\g to change
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS18256
+\a patla {18257} Bound
+
+\lx 18274
+\g to tell
+\c W
+\wc root
+\mp RootPOS22932
+\mp InflClass17765
+\a lli {20994} Bound NotStemName66696 / [13144]_  | / [V] _
+
+\a illia {62897} Bound StemName66696 +/ _ ... {StemNameAffix66696} +/ {StemNameAffix66696} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _ / [13145]_  | / [C] _
+
+\a llia {18276} Bound StemName66696 +/ _ ... {StemNameAffix66696} +/ {StemNameAffix66696} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
+
+ ~/ [13145]_  | ~/ [C] _
+
+
+\lx 18286
+\g to hear
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\a kak {22716} Bound
+\a kaki {18288} Bound
+
+\lx 18298
+\g to give
+\c W
+\wc root
+\mp RootPOS22932
+\fd MSFS18299
+\a maka {18300} Bound
+
+\lx 18310
+\g to happen to someone
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS18311
+\a pasarova {18312} Bound
+
+\lx 18325
+\g to break
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS18326
+\a tlapani {18327}
+
+\lx 18496
+\g to break
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS18497
+\a tlapani {18327}
+
+\lx 18336
+\g to break
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS18337
+\a tlapana {18338} Bound
+
+\lx 18348
+\g to become clean
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS18349
+\a chipavi {18350}
+
+\lx 18362
+\g to clean
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS18363
+\a chipava {18364} Bound
+
+\lx 18374
+\g to be open
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS18375
+\a tlapovi {18376}
+
+\lx 18385
+\g to open
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS18386
+\a tlapova {18387} Bound
+
+\lx 18397
+\g REFL
+\c W/W
+\o -NaN -NaN
+\wc 17007
+\a mo {18399}
+\eType prefix
+
+\lx 18444
+\g to glean in a cornfield
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS18445
+\a tihtixia {18446} Bound
+
+\lx 18456
+\g to get married
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS18457
+\a sivatia {18458} Bound
+
+\lx 18504
+\g to place, put
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\a tlali {22717} Bound
+\a tlalia {18506} Bound
+
+\lx 63031
+\g to place, put
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\a tlali {22717} Bound
+\a tlalia {18506} Bound
+
+\lx 18527
+\g to make
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\a chih {20959} Bound
+\a chivi {24133} Bound / _ li  | / _ li
+
+\a chiva {18529} Bound
+
+ ~/ _ li  | ~/ _ li
+
+
+\lx 63066
+\g to make
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\a chih {20959} Bound
+\a chivi {24133} Bound / _ li  | / _ li
+
+\a chiva {18529} Bound
+
+ ~/ _ li  | ~/ _ li
+
+
+\lx 18547
+\g to eat
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17766
+\mp ExcpFeat57399Plus
+\a kua {18549} Bound
+
+\lx 18566
+\g OBJ:3UNSPEC
+\c W/W
+\o -NaN -NaN
+\wc 17007
+\fd InflectionFS18567
+\mp FromExcpFeat57399Plus
+\mcc 18566 +/ _ ... {ExcpFeat57399Plus} +/ _ ... {ToExcpFeat57399Plus}
+\a tla {18568}
+\eType prefix
+
+\lx 23019
+\g OBJ:3UNSPEC
+\c W/W
+\o -NaN -NaN
+\wc 22936
+\mp FromExcpFeat57399Plus
+\mcc 23019 +/ _ ... {ExcpFeat57399Plus} +/ _ ... {ToExcpFeat57399Plus}
+\a tla {18568}
+\eType prefix
+
+\lx 23021
+\g OBJ:3UNSPEC
+\c W/W
+\o -NaN -NaN
+\wc 22966
+\a tla {18568}
+\eType prefix
+
+\lx 19890
+\g to know
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\mp ExcpFeat57399Plus
+\a mat {20955} Bound StemName66683 +/ _ ... {StemNameAffix66683} +/ {StemNameAffix66683} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
+\a mach {24092} Bound NotStemName66683 / _ ti  | / _ ti
+
+\a mati {19892} Bound NotStemName66683
+
+ ~/ _ ti  | ~/ _ ti
+
+
+\lx 19895
+\g to grind
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS19896
+\a payana {19897} Bound
+
+\lx 19900
+\g to visit
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS19901
+\a tlahpalova {19902} Bound
+
+\lx 19905
+\g to grind nixtamal
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS19906
+\a tlapayana {19907}
+
+\lx 19910
+\g to hope for
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS19911
+\a chix {20980}
+\a chia {19912}
+
+\lx 19931
+\g to rain
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\a kiavi {19933}
+
+\lx 19936
+\g to get dark
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS19937
+\a tlayowa {19938}
+
+\lx 19941
+\g to make warm
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS19942
+\a tlimiktia {19943} Bound
+
+\lx 19947
+\g big
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23234
+\fd MSFS19948
+\a wey {24355}
+\a weyi {19949}
+
+\lx 19952
+\g to look
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17765
+\fd MSFS19953
+\a tlachix {22718}
+\a tlachia {19954}
+
+\lx 19957
+\g to say
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\mp ExcpFeat57429Plus
+\a ihto {20993} Bound NotStemName66696
+\a ihtova {19959} Bound StemName66696 +/ _ ... {StemNameAffix66696} +/ {StemNameAffix66696} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
+
+\lx 19962
+\g to sleep
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS19963
+\a koch {20958}
+\a kochi {19964}
+
+\lx 19967
+\g to have
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS19968
+\a pix {20979} Bound
+\a pia {19969} Bound
+
+\lx 19972
+\g to walk
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS19973
+\a nen {22714}
+\a nemi {19974}
+
+\lx 19978
+\g to walk
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS19979
+\a nehnen {22715}
+\a nehnemi {19980}
+
+\lx 20233
+\g to accuse
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS20234
+\a tiillia {20235} Bound
+
+\lx 20384
+\g to store
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\a ahsi {20386} Bound
+
+\lx 20769
+\g PAST
+\c W/W
+\o -NaN -NaN
+\wc 20766
+\fd InflectionFS20770
+\a 0 {20776} / # _ amech  | / # _ amech
+		 / # _ an  | / # _ an
+		 / # y _ an  | / # y _ an
+		 / # y _ amech  | / # y _ amech
+
+\a o {20771}
+
+ ~/ # _ amech  | ~/ # _ amech
+
+
+ ~/ # _ an  | ~/ # _ an
+
+
+ ~/ # y _ an  | ~/ # y _ an
+
+
+ ~/ # y _ amech  | ~/ # y _ amech
+
+\eType prefix
+\mp StemNameAffix66683
+
+\lx 20781
+\g already
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS20782
+\a yi {20783}
+
+\lx 20781
+\g already
+\c W/W
+\wc proclitic
+\eType prefix
+\o -32000
+\a y {20784} / # _ amech  | / # _ amech
+		 / # _ an  | / # _ an
+		 / # _ o  | / # _ o
+
+\mp Proclitic
+\fd MSFS20782
+
+\lx 20781
+\g already
+\c Prt
+\wc clitic
+\a y {20784} / # _ amech  | / # _ amech
+		 / # _ an  | / # _ an
+		 / # _ o  | / # _ o
+
+\fd CliticPOS255
+\fd MSFS20782
+
+\lx 20788
+\g PERFV.SUBJ:SG
+\c W/W
+\o NaN NaN
+\wc 22008
+\fd InflectionFS20789
+\a 0 {56158} / s _ #  | / s _ #
+
+\a 0 {20887} ICA17761 +/ {InflClass17761} ... _ +/ {ToInflClass17761} ... _ / _ #  | / _ #
+
+\a ki {20888} ICA17761 +/ {InflClass17761} ... _ +/ {ToInflClass17761} ... _ / _ #  | / _ #
+
+\a h {20936} ICA17765ICA17766 +/ {InflClass17765} ... _ +/ {ToInflClass17765} ... _ +/ {InflClass17766} ... _ +/ {ToInflClass17766} ... _ / _ #  | / _ #
+
+\a k {20790} ICA17760 +/ {InflClass17760} ... _ +/ {ToInflClass17760} ... _ / _ #  | / _ #
+
+\eType suffix
+\mp StemNameAffix66683
+
+\lx 20797
+\g PERFV.SUBJ:PL
+\c W/W
+\o NaN NaN
+\wc 22008
+\fd InflectionFS20798
+\a h {55545} / ko _ #  | / ko _ #
+		 / to _ #  | / to _ #
+
+\a hkeh {20937} ICA17765ICA17766 +/ {InflClass17765} ... _ +/ {ToInflClass17765} ... _ +/ {InflClass17766} ... _ +/ {ToInflClass17766} ... _ / _ #  | / _ #
+
+\a keh {20799} ICA17760ICA17761 +/ {InflClass17760} ... _ +/ {ToInflClass17760} ... _ +/ {InflClass17761} ... _ +/ {ToInflClass17761} ... _ / _ #  | / _ #
+
+\eType suffix
+\mp StemNameAffix66683
+
+\lx 20942
+\g to follow
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS20943
+\a toka {20944} Bound
+
+\lx 20947
+\g to burn
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS20948
+\a xotla {20949}
+
+\lx 20952
+\g to become old
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS20953
+\a solavi {20954}
+
+\lx 20962
+\g to become cold
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS20963
+\a seses {20965}
+\a seseya {20964}
+
+\lx 20968
+\g to be made new
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS20969
+\a yankuix {20971}
+\a yankuiya {20970}
+
+\lx 20974
+\g to be finished
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS20975
+\a tlah {20977} / _ #  | / _ #
+
+\a tlan {20978}
+
+ ~/ _ #  | ~/ _ #
+
+\a tlami {20976}
+
+ ~/ _ #  | ~/ _ #
+
+
+\lx 20983
+\g to thunder
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS20984
+\a topon {20986}
+\a toponi {20985}
+
+\lx 20989
+\g to thresh
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS20990
+\a ox {20992} Bound
+\a oya {20991} Bound
+
+\lx 20997
+\g to carry on the back
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17766
+\fd MSFS20998
+\a mama {20999} Bound
+
+\lx 22646
+\g to clean
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS22647
+\a paka {22648} Bound
+
+\lx 22651
+\g to throw down
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\a teki {24141} Bound / _ li  | / _ li
+
+\a teka {22653} Bound
+
+ ~/ _ li  | ~/ _ li
+
+
+\lx 22657
+\g to go to bed
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS22658
+\a moteka {22659}
+
+\lx 22662
+\g to plant
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS22663
+\a tooka {22664} Bound
+
+\lx 22667
+\g to drink
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS22668
+\a koni {22669}
+
+\lx 22672
+\g to leave
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS22673
+\a kah {22675} Bound
+\a kavi {24134} Bound / _ li  | / _ li
+
+\a kava {22674} Bound
+
+ ~/ _ li  | ~/ _ li
+
+
+\lx 22678
+\g to remain
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS22679
+\a mokah {22681}
+\a mokava {22680}
+
+\lx 22684
+\g to erect
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS22685
+\a ketz {22687} Bound
+\a ketza {22686} Bound
+
+\lx 22690
+\g to leave
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS22691
+\a kis {22693}
+\a kix {24090} / _ ti  | / _ ti
+
+\a kisa {22692}
+
+ ~/ _ ti  | ~/ _ ti
+
+
+\lx 22698
+\g to rejoice
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS22699
+\a pak {22701}
+\a paki {22700}
+
+\lx 22704
+\g to hurt
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS22705
+\a kokoh {22707} Bound
+\a koko {23567} Bound
+\a kokova {22706} Bound
+
+\lx 22710
+\g to learn
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS22711
+\a tzikoh {22713} Bound
+\a tziko {22746} Bound / _ s  | / _ s
+
+\a tzikova {22712} Bound
+
+ ~/ _ s  | ~/ _ s
+
+
+\lx 22723
+\g Fut
+\c W/W
+\o NaN NaN
+\wc 22720
+\fd InflectionFS22724
+\a s {22725}
+\eType suffix
+
+\lx 22734
+\g IMPF
+\c W/W
+\o NaN NaN
+\wc 22731
+\fd InflectionFS22735
+\a aya {22740} ICA17760ICA17761 +/ {InflClass17760} ... _ +/ {ToInflClass17760} ... _ +/ {InflClass17761} ... _ +/ {ToInflClass17761} ... _ / i _  | / i _
+
+\a a {22741} / i _  | / i _
+
+\a ya {22736}
+
+ ~/ i _  | ~/ i _
+
+
+ ~/ i _  | ~/ i _
+
+\eType suffix
+\mp StemNameAffix66683
+\mp StemNameAffix66696
+
+\lx 22757
+\g subjunctive
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS22758
+\a ma {22759}
+
+\lx 22766
+\g home
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS22767
+\a chan {22768}
+
+\lx 22777
+\g corn on the cob
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS22778
+\a elo {22779}
+
+\lx 22782
+\g stick
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS22783
+\a kuav {22784}
+
+\lx 22788
+\g everyday
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS22789
+\a moomostla {22790}
+
+\lx 22793
+\g here
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS22794
+\a nikan {22795}
+
+\lx 22798
+\g flower
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS22799
+\a xochi {22800}
+
+\lx 22803
+\g no, not
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS22804
+\a amo {22805}
+
+\lx 22808
+\g no
+\c W
+\wc root
+\mp RootPOS22754
+\fd MSFS22809
+\a mach {22810}
+
+\lx 22813
+\g to fit
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS22814
+\a ak {22816}
+\a aki {22815}
+
+\lx 22819
+\g to enter
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\a alak {22822} Bound
+\a alaki {22821} Bound
+
+\lx 22825
+\g to relate
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS22826
+\a poh {22828} Bound
+\a pova {22827} Bound
+
+\lx 22831
+\g to speak
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS22832
+\a tlapoh {22834}
+\a tlapova {22833}
+
+\lx 22837
+\g to belong
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS22838
+\a pova {22839}
+
+\lx 22843
+\g again
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS22844
+\a oksappa {22845}
+
+\lx 22848
+\g there
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS22849
+\a ompa {22850}
+
+\lx 22853
+\g no more, only
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS22854
+\a sa {22855}
+
+\lx 22858
+\g to work
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS22859
+\a tekiti {22860}
+
+\lx 22863
+\g then
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS22864
+\a tos {22865}
+
+\lx 22868
+\g to bring
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS22869
+\a valika {22870} Bound
+
+\lx 22873
+\g to carry
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS22874
+\a vika {22875} Bound
+
+\lx 22878
+\g to be able
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\a welit {22881}
+\a weliti {22880}
+
+\lx 22884
+\g yesterday
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS22885
+\a yalla {22886}
+
+\lx 22889
+\g REDUP
+\c W/W
+\o -1
+\wc derivPfx
+\a [13145^1][13144^1]  {22901} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13145^1][13144^1]h  {22903} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13144^1]  {22904} / _ [13144^1]  | / _ [V^1]
+
+\a [13145^1][13144^1][13144^1]  {22906} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13144^1][13144^1]  {22907} / _ [13144^1]  | / _ [V^1]
+
+\eType prefix
+\fd FromPOS258
+\fd FromMSFS22890
+\fd ToMSFS22891
+
+\lx 22898
+\g REDUP
+\c W/W
+\o -1
+\wc derivPfx
+\a [13145^1][13144^1]  {22901} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13145^1][13144^1]h  {22903} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13144^1]  {22904} / _ [13144^1]  | / _ [V^1]
+
+\a [13145^1][13144^1][13144^1]  {22906} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13144^1][13144^1]  {22907} / _ [13144^1]  | / _ [V^1]
+
+\eType prefix
+\fd FromPOS256
+\fd FromMSFS22899
+\fd ToMSFS22900
+
+\lx 23220
+\g REDUP
+\c W/W
+\o -NaN -NaN
+\wc 23222
+\fd InflectionFS23221
+\a [13145^1][13144^1]  {22901} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13145^1][13144^1]h  {22903} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13144^1]  {22904} / _ [13144^1]  | / _ [V^1]
+
+\a [13145^1][13144^1][13144^1]  {22906} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13144^1][13144^1]  {22907} / _ [13144^1]  | / _ [V^1]
+
+\eType prefix
+
+\lx 23349
+\g REDUP
+\c W/W
+\o -1
+\wc derivPfx
+\a [13145^1][13144^1]  {22901} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13145^1][13144^1]h  {22903} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13144^1]  {22904} / _ [13144^1]  | / _ [V^1]
+
+\a [13145^1][13144^1][13144^1]  {22906} / _ [13145^1][13144^1]  | / _ [C^1][V^1]
+
+\a [13144^1][13144^1]  {22907} / _ [13144^1]  | / _ [V^1]
+
+\eType prefix
+\fd FromPOS13683
+\fd FromMSFS23350
+\fd ToMSFS23351
+
+\lx 22911
+\g toy
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS22912
+\a ahawil {22913}
+
+\lx 22916
+\g to cough
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS22917
+\a tlatlasi {22918}
+
+\lx 22921
+\g to dream
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS22922
+\a teemiki {22923}
+
+\lx 22925
+\g to dream
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS22926
+\a teemiki {22923}
+
+\lx 22929
+\g to become clear
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS22930
+\a tlachipavi {22931}
+
+\lx 23025
+\g with
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23026
+\a van {23027}
+
+\lx 23030
+\g near
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23031
+\a navak {23032}
+
+\lx 23035
+\g in, over
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23036
+\a pa {23038}
+\a pah {23039}
+\a pan {23037}
+
+\lx 23042
+\g in, next to
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23043
+\a tech {23044}
+
+\lx 23047
+\g between
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23048
+\a tzallan {23049}
+
+\lx 23056
+\g of
+\c Prt
+\wc root
+\mp RootPOS23053
+\fd MSFS23057
+\a de {23058}
+
+\lx 23061
+\g for
+\c Prt
+\wc root
+\mp RootPOS23053
+\fd MSFS23062
+\a para {23063}
+
+\lx 23066
+\g by
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23067
+\a k {23068}
+
+\lx 23075
+\g by means of
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23076
+\a ka {23077}
+
+\lx 23081
+\g table
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS23082
+\a mesah {23083}
+
+\lx 23086
+\g to make dance
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS23087
+\a ihtotih {23089}
+\a ihtotia {23088}
+
+\lx 23092
+\g inside of
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23093
+\a htik {23094}
+
+\lx 23097
+\g on top of
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23098
+\a kuapak {23099}
+
+\lx 23102
+\g behind
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23103
+\a kuitlapa {23104}
+
+\lx 23107
+\g at the feet of
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23108
+\a kxipan {23109}
+
+\lx 23112
+\g in the hand of
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23113
+\a mapan {23114}
+
+\lx 23117
+\g around
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23118
+\a tenko {23119}
+
+\lx 23122
+\g in front of
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23123
+\a xpan {23125} / i _  | / i _
+
+\a ixpan {23124}
+
+ ~/ i _  | ~/ i _
+
+
+\lx 23128
+\g where
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23129
+\a kkan {23130}
+
+\lx 23133
+\g on top of
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS23134
+\a kpak {23135}
+
+\lx 23139
+\g stomach
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS23140
+\a hti {23141} Bound
+
+\lx 23144
+\g above
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23145
+\a tlakpak {23146}
+
+\lx 23149
+\g manure
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS23150
+\a kuitla {23151}
+
+\lx 23154
+\g base
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS23155
+\a tzinko {23156}
+
+\lx 23159
+\g down
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23160
+\a tlatzintla {23161}
+
+\lx 23165
+\g hard
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23234
+\fd MSFS23166
+\a tetik {23167}
+
+\lx 23170
+\g heavy
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS23171
+\a etik {23172}
+
+\lx 23517
+\g heavy
+\c W
+\wc root
+\mp RootPOS256
+\mp InflClass15408
+\fd MSFS23518
+\a etik {23172}
+
+\lx 23175
+\g black
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS23176
+\a tlil {24349}
+\a tliltik {23177}
+
+\lx 23180
+\g red
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS23181
+\a chichiltik {23182}
+
+\lx 23185
+\g salt
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS23186
+\a ista {23187}
+
+\lx 23190
+\g white
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS23191
+\a istak {23192}
+
+\lx 23195
+\g good
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23234
+\fd MSFS23196
+\a kualli {23198} / _ #  | / _ #
+
+\a kual {23197}
+
+ ~/ _ #  | ~/ _ #
+
+
+\lx 23773
+\g good
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23774
+\a kualli {23198} / _ #  | / _ #
+
+\a kual {23197}
+
+ ~/ _ #  | ~/ _ #
+
+
+\lx 23201
+\g ADJVZR-tik
+\c W/W
+\o 1
+\wc derivSfx
+\a tik {23204}
+\eType suffix
+\fd FromPOS258
+\fd ToPOS19944
+\fd FromMSFS23202
+\fd ToMSFS23203
+
+\lx 23207
+\g to revolve
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS23208
+\a nel {23210} Bound
+\a nelova {23209} Bound
+
+\lx 23213
+\g ADJVZR-ki
+\c W/W
+\o 1
+\wc derivSfx
+\a ka {24529}
+
+ ~/ _ eh #  | ~/ _ eh #
+
+
+ ~/ [13144]_ #  | ~/ [V] _ #
+
+\eType suffix nterfix
+\fd FromPOS258
+\fd ToPOS19944
+\fd FromInflClass17761
+\fd FromMSFS23214
+\fd ToMSFS23215
+
+\lx 23520
+\g ADJVZR-ki
+\c W/W
+\o 1
+\wc derivSfx
+\a ka {24529}
+
+ ~/ _ eh #  | ~/ _ eh #
+
+
+ ~/ [13144]_ #  | ~/ [V] _ #
+
+\eType suffix nterfix
+\fd FromPOS258
+\fd ToPOS13339
+\fd FromMSFS23521
+\fd ToMSFS23522
+
+\lx 23226
+\g AdjAgr:Pl
+\c W/W
+\o NaN NaN
+\wc 23223
+\fd InflectionFS23227
+\a eh {23228}
+\eType suffix
+
+\lx 23240
+\g to close
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS23241
+\a tzak {23243}
+\a tzakua {23242}
+
+\lx 23246
+\g lid
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS23247
+\a tzakka {23248}
+
+\lx 23251
+\g priest
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS23252
+\a tiopixki {23253}
+
+\lx 23256
+\g a little of
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS37704
+\a achitzin {23258}
+
+\lx 23262
+\g some
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS23263
+\a sekimeh {23264}
+
+\lx 23267
+\g other
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS23268
+\a okse {23269}
+
+\lx 23272
+\g others
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS23273
+\a okseki {23274}
+
+\lx 23277
+\g others
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS23278
+\a miekeh {23279}
+
+\lx 23282
+\g all
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS23283
+\a nochtin {23284}
+
+\lx 23287
+\g a little of
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS23288
+\a pichintzin {23289}
+
+\lx 23292
+\g two
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23293
+\a ome {23362}
+\a op {23363} / _ pa #  | / _ pa #
+
+\a omeh {23294}
+
+ ~/ _ pa #  | ~/ _ pa #
+
+
+\lx 23297
+\g four
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23298
+\a nah {23365} / _ pa #  | / _ pa #
+
+\a navi {23299}
+
+ ~/ _ pa #  | ~/ _ pa #
+
+
+\lx 23302
+\g five
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23303
+\a makuil {23366}
+\a makuilli {23304}
+
+\lx 23307
+\g six
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23308
+\a chikuasen {23309}
+
+\lx 23312
+\g seven
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23313
+\a chikome {23314}
+
+\lx 23378
+\g seven
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS23379
+\a chikome {23314}
+
+\lx 23317
+\g eight
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23318
+\a chikueyi {23319}
+
+\lx 23322
+\g nine
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23323
+\a chiknavi {23324}
+
+\lx 23327
+\g fifteen
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23328
+\a kaxtolli {23329}
+
+\lx 23381
+\g fifteen
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS23382
+\a kaxtolli {23329}
+
+\lx 23332
+\g twenty
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23333
+\a sempoalli {23334}
+
+\lx 23337
+\g a few
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS23338
+\a keeski {23339}
+
+\lx 23343
+\g a few
+\c W
+\wc root
+\mp RootPOS23342
+\fd MSFS23344
+\a keeski {23339}
+
+\lx 23346
+\g a few
+\c W
+\wc root
+\mp RootPOS23345
+\fd MSFS23347
+\a keeski {23339}
+
+\lx 23356
+\g TIMES
+\c W/W
+\o 1
+\wc derivSfx
+\a pa {23359}
+\eType suffix
+\fd FromPOS13683
+\fd FromMSFS23357
+\fd ToMSFS23358
+
+\lx 23369
+\g sometimes
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS23370
+\a miekpa {23371}
+
+\lx 23374
+\g always
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS23375
+\a nochipa {23376}
+
+\lx 23385
+\g today
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS23386
+\a axan {23387}
+
+\lx 23854
+\g today
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23855
+\a axan {23387}
+
+\lx 23392
+\g this
+\c Prt
+\wc root
+\mp RootPOS23389
+\fd MSFS23393
+\a ini {23395}
+\a ninin {23396}
+\a nin {23397}
+\a inin {23394}
+
+\lx 23400
+\g that
+\c Prt
+\wc root
+\mp RootPOS23389
+\fd MSFS23401
+\a inon {23402}
+
+\lx 23405
+\g that
+\c Prt
+\wc root
+\mp RootPOS23389
+\fd MSFS23406
+\a nekan {23407}
+
+\lx 23410
+\g thoses
+\c Prt
+\wc root
+\mp RootPOS23389
+\fd MSFS23411
+\a nekaten {23413}
+\a nekateh {23412}
+
+\lx 23416
+\g this
+\c Prt
+\wc root
+\mp RootPOS23389
+\fd MSFS23417
+\a yon {23418}
+
+\lx 23424
+\g that
+\c Prt
+\wc root
+\mp RootPOS23342
+\fd MSFS23425
+\a tlen {23426}
+
+\lx 23933
+\g that
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23934
+\a tlen {23426}
+
+\lx 23429
+\g who
+\c Prt
+\wc root
+\mp RootPOS23342
+\fd MSFS23430
+\a akin {23431}
+
+\lx 23504
+\g who
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23505
+\a akin {23431}
+
+\lx 23437
+\g peso
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS23438
+\a pesoh {23439}
+
+\lx 23442
+\g hundred
+\c W
+\wc root
+\mp RootPOS13683
+\fd MSFS23443
+\a sehsientoh {23444}
+
+\lx 23447
+\g I
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23448
+\a neh {23449}
+
+\lx 23452
+\g we
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23453
+\a tehvan {23454}
+
+\lx 23457
+\g you (sg)
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23458
+\a teh {23459}
+
+\lx 23462
+\g you
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23463
+\a amehvan {23464}
+
+\lx 23467
+\g he
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23468
+\a yeh {23469}
+
+\lx 23474
+\g they
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23475
+\a yehvan {23476}
+
+\lx 23479
+\g you (sg. hon)
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23480
+\a tehvatzin {23481}
+
+\lx 23484
+\g he (hon)
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23485
+\a yehvatzin {23486}
+
+\lx 23490
+\g you (hon)
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23491
+\a amehvantzitzin {23492}
+
+\lx 23495
+\g they (hon)
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23496
+\a yehvantzitzin {23497}
+
+\lx 23500
+\g someone
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23501
+\a ikah {23502}
+
+\lx 23508
+\g something
+\c Prt
+\wc root
+\mp RootPOS257
+\fd MSFS23509
+\a itlah {23510}
+
+\lx 23513
+\g it is he
+\c Prt
+\wc root
+\mp RootPOS20335
+\fd MSFS23514
+\a yen {23515}
+
+\lx 23532
+\g PARTICIPANT
+\c W/W
+\o 1
+\wc derivSfx
+\a l {23535}
+\eType suffix
+\fd FromPOS258
+\fd ToPOS13146
+\mp FromExcpFeat57429Plus
+\mcc 23532 +/ {ExcpFeat57429Plus} ... _ +/ {ToExcpFeat57429Plus} ... _
+
+\lx 23538
+\g NOMLZR
+\c W/W
+\o 1
+\wc derivSfx
+\a lis {23541}
+\eType suffix
+\fd FromPOS258
+\fd ToPOS13146
+\fd FromMSFS23539
+\fd ToMSFS23540
+
+\lx 23548
+\g to sing
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\a tlakuika {23550}
+
+\lx 23553
+\g to blow (wind)
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS23554
+\a eheka {23555}
+
+\lx 23558
+\g to send
+\c W
+\wc root
+\mp RootPOS22932
+\mp InflClass17761
+\a titlan {23561}
+\a titlani {23560}
+
+\lx 23564
+\g to sneeze
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS23565
+\a ekxova {23566}
+
+\lx 23570
+\g to love
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS23571
+\a tlasohtla {23572}
+
+\lx 23576
+\g love
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS23577
+\a tlasohtilis {23578}
+
+\lx 23581
+\g ONE WHO HAS
+\c W/W
+\o 1
+\wc derivSfx
+\a eh {23584}
+\eType suffix
+\fd FromPOS256
+\fd ToPOS13339
+\fd FromMSFS23582
+\fd ToMSFS23583
+
+\lx 23587
+\g moustache
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS23588
+\a tentzon {23589}
+
+\lx 23592
+\g HAVER
+\c W/W
+\o 1
+\wc derivSfx
+\a choh {23596} / ch _  | / ch _
+
+\a xoh {23601} / x _  | / x _
+
+
+ ~/ ch _  | ~/ ch _
+
+\a oh {23603} / [13144]_  | / [V] _
+
+
+ ~/ ch _  | ~/ ch _
+
+
+ ~/ x _  | ~/ x _
+
+\a loh {23604} / l _  | / l _
+
+
+ ~/ ch _  | ~/ ch _
+
+
+ ~/ x _  | ~/ x _
+
+
+ ~/ [13144]_  | ~/ [V] _
+
+\a yoh {23595}
+
+ ~/ ch _  | ~/ ch _
+
+
+ ~/ x _  | ~/ x _
+
+
+ ~/ [13144]_  | ~/ [V] _
+
+
+ ~/ l _  | ~/ l _
+
+\eType suffix
+\fd FromPOS256
+\fd ToPOS13339
+\fd FromMSFS23593
+\fd ToMSFS23594
+
+\lx 23607
+\g OWN
+\c W/W
+\o 1
+\wc derivSfx
+\a so {23611} / s _  | / s _
+
+\a o {23613} / [13144]_  | / [V] _
+
+
+ ~/ s _  | ~/ s _
+
+\a yo {23610}
+
+ ~/ s _  | ~/ s _
+
+
+ ~/ [13144]_  | ~/ [V] _
+
+\eType suffix
+\fd FromPOS256
+\fd ToPOS13147
+\fd FromMSFS23608
+\fd ToMSFS23609
+
+\lx 23617
+\g ear of corn
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS23618
+\a sin {23619}
+
+\lx 23622
+\g sparrowhawk
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS23623
+\a kuixi {23624}
+
+\lx 23627
+\g money
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS23628
+\a kuixxoh {23629}
+
+\lx 23632
+\g bone
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS23633
+\a omi {23634}
+
+\lx 23637
+\g arch
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS23638
+\a arkoh {23639}
+
+\lx 23642
+\g blood
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS23643
+\a es {23644}
+
+\lx 23647
+\g money
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS23648
+\a tomin {23649}
+
+\lx 23652
+\g cork
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS23653
+\a korchoh {23654}
+
+\lx 23657
+\g cold
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS23658
+\a sesek {23659}
+
+\lx 23662
+\g river
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS23663
+\a weya {23664}
+
+\lx 23667
+\g still no, not
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23668
+\a machchi {23669}
+
+\lx 23672
+\g still no, not
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23673
+\a ayemo {23674}
+
+\lx 23677
+\g no longer
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23678
+\a machok {23679}
+
+\lx 23682
+\g no longer
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23683
+\a ayekmo {23684}
+
+\lx 23687
+\g no one
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23688
+\a machikah {23689}
+
+\lx 23692
+\g no one
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23693
+\a amikah {23694}
+
+\lx 23697
+\g nothing
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23698
+\a machitlah {23699}
+
+\lx 23702
+\g nothing
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23703
+\a amitlah {23704}
+
+\lx 23707
+\g that no
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23708
+\a makamo {23709}
+
+\lx 23712
+\g that still not
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23713
+\a makayemo {23714}
+
+\lx 23717
+\g that no one
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23718
+\a makamikah {23719}
+
+\lx 23722
+\g that no longer
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23723
+\a makayekmo {23724}
+
+\lx 23727
+\g never
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23728
+\a ayik {23729}
+
+\lx 23732
+\g that never
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23733
+\a mahkayik {23734}
+
+\lx 23737
+\g yes
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS23738
+\a tlamo {23739}
+
+\lx 23742
+\g over there
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23743
+\a nepa {23744}
+
+\lx 23747
+\g still, yet
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23748
+\a ok {23749}
+
+\lx 23752
+\g strongly
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23753
+\a chikavi {24208}
+\a chikawak {23754}
+
+\lx 24206
+\g strongly
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24207
+\a chikavi {24208}
+\a chikawak {23754}
+
+\lx 23757
+\g like this
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23758
+\a ihkíh {23760}
+\a ihkín {23759}
+
+\lx 23763
+\g like that
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23764
+\a ihkóh {23766}
+\a ihkón {23765}
+
+\lx 23769
+\g truly
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23770
+\a nelli {23771}
+
+\lx 23777
+\g apparently
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23778
+\a nes {23779}
+
+\lx 23782
+\g possibly
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23783
+\a wel {23784}
+
+\lx 23787
+\g first
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23788
+\a achtoh {23789}
+
+\lx 23792
+\g in first place
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23793
+\a okachtoh {23794}
+
+\lx 23797
+\g also
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23798
+\a no {23799}
+
+\lx 23802
+\g then
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23803
+\a noso {23804}
+
+\lx 23807
+\g more
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23808
+\a okachi {23809}
+
+\lx 23812
+\g too much
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23813
+\a iksemi {23814}
+
+\lx 23817
+\g very
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23818
+\a interoh {23819}
+
+\lx 23822
+\g only
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23823
+\a sa {23825}
+\a san {23824}
+
+\lx 23828
+\g a little
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23829
+\a tepitzin {23830}
+
+\lx 23833
+\g like
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23834
+\a kanah {23835}
+
+\lx 23838
+\g immediately
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23839
+\a niman {23841}
+\a nimah {23840}
+
+\lx 23844
+\g then
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23845
+\a ihkuakóh {23847}
+\a ihkuakón {23846}
+
+\lx 23850
+\g someday
+\c Prt
+\wc root
+\mp RootPOS255
+\fd MSFS23851
+\a keman {23852}
+
+\lx 23858
+\g day before yesterday
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS23859
+\a viptla {23860}
+
+\lx 23863
+\g once
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23864
+\a semi {23865}
+
+\lx 23868
+\g again
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23869
+\a oksemi {23870}
+
+\lx 23873
+\g all at once
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23874
+\a sappa {23875}
+
+\lx 23878
+\g sometimes
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23879
+\a valeva {23880}
+
+\lx 23883
+\g secretly
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23884
+\a ichtakatzin {23885}
+
+\lx 23888
+\g too much
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS23889
+\a sokpanova {23890}
+
+\lx 23893
+\g when
+\c Prt
+\wc root
+\mp RootPOS13766
+\fd MSFS23894
+\a ihkuak {23895}
+
+\lx 23898
+\g where
+\c Prt
+\wc root
+\mp RootPOS13766
+\fd MSFS23899
+\a kanin {23901}
+\a kan {23900}
+
+\lx 23951
+\g where
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23952
+\a kanin {23901}
+\a kan {23900}
+
+\lx 23904
+\g how
+\c Prt
+\wc root
+\mp RootPOS13766
+\fd MSFS23905
+\a keenin {23986}
+\a keenik {23987}
+\a keen {23906}
+
+\lx 23984
+\g how
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23985
+\a keenin {23986}
+\a keenik {23987}
+\a keen {23906}
+
+\lx 23909
+\g whether
+\c Prt
+\wc root
+\mp RootPOS13766
+\fd MSFS23910
+\a kox {23911}
+
+\lx 23999
+\g whether
+\c Prt
+\wc root
+\mp RootPOS22754
+\fd MSFS24000
+\a kox {23911}
+
+\lx 23914
+\g although
+\c Prt
+\wc root
+\mp RootPOS13766
+\fd MSFS23915
+\a maske {23916}
+
+\lx 23919
+\g because
+\c Prt
+\wc root
+\mp RootPOS13766
+\fd MSFS23920
+\a porke {23921}
+
+\lx 23924
+\g for
+\c Prt
+\wc root
+\mp RootPOS13766
+\fd MSFS23925
+\a maske {23926}
+
+\lx 23929
+\g if
+\c Prt
+\wc root
+\mp RootPOS13766
+\fd MSFS23930
+\a tla {23931}
+
+\lx 23937
+\g what is this?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23938
+\a tlenin {23939}
+
+\lx 23942
+\g what is that?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23943
+\a telnon {23944}
+
+\lx 23947
+\g why?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23948
+\a tlekan {23949}
+
+\lx 23955
+\g where?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23956
+\a kanik {23957}
+
+\lx 23960
+\g when?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23961
+\a keeman {23962}
+
+\lx 23965
+\g since when?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23966
+\a keemanoni {23967}
+
+\lx 23970
+\g how many?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23971
+\a keeski {23972}
+
+\lx 23975
+\g how much?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23976
+\a keech {23977}
+
+\lx 23980
+\g how much for each one?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23981
+\a kikeech {23982}
+
+\lx 23990
+\g how is it?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23991
+\a keenintik {23992}
+
+\lx 23995
+\g why not?
+\c Prt
+\wc root
+\mp RootPOS23345
+\fd MSFS23996
+\a keenamo {23997}
+
+\lx 24003
+\g for
+\c Prt
+\wc root
+\mp RootPOS13766
+\fd MSFS24004
+\a por {24005}
+
+\lx 24008
+\g two
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS24009
+\a dos {24010}
+
+\lx 24013
+\g hour
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15411
+\fd MSFS24014
+\a ora {24015}
+
+\lx 24018
+\g to go
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS55525
+\a avi {55518} / i _  | / i _
+
+\a ah {55519} / i _ #  | / i _ #
+
+
+ ~/ i _  | ~/ i _
+
+\a a {55520} / i _ s  | / i _ s
+		 / i _ ya  | / i _ ya
+
+
+ ~/ i _  | ~/ i _
+
+
+ ~/ i _ #  | ~/ i _ #
+
+\a ya {55521} / _ s  | / _ s
+		 / _ ya  | / _ ya
+
+
+ ~/ i _  | ~/ i _
+
+
+ ~/ i _ #  | ~/ i _ #
+
+
+ ~/ i _ s  | ~/ i _ s
+
+
+ ~/ i _ ya  | ~/ i _ ya
+
+\a yah {55522}
+
+ ~/ i _  | ~/ i _
+
+
+ ~/ i _ #  | ~/ i _ #
+
+
+ ~/ i _ s  | ~/ i _ s
+
+
+ ~/ i _ ya  | ~/ i _ ya
+
+
+ ~/ _ s  | ~/ _ s
+
+
+ ~/ _ ya  | ~/ _ ya
+
+\a via {55523}
+
+ ~/ i _  | ~/ i _
+
+
+ ~/ i _ #  | ~/ i _ #
+
+
+ ~/ i _ s  | ~/ i _ s
+
+
+ ~/ i _ ya  | ~/ i _ ya
+
+
+ ~/ _ s  | ~/ _ s
+
+
+ ~/ _ ya  | ~/ _ ya
+
+\a yavi {24020}
+
+ ~/ i _  | ~/ i _
+
+
+ ~/ i _ #  | ~/ i _ #
+
+
+ ~/ i _ s  | ~/ i _ s
+
+
+ ~/ i _ ya  | ~/ i _ ya
+
+
+ ~/ _ s  | ~/ _ s
+
+
+ ~/ _ ya  | ~/ _ ya
+
+
+\lx 24035
+\g to come
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS24036
+\a vallah {24038}
+\a valla {24041}
+\a viki {24042}
+\a vitze {24043}
+\a vitz {24037}
+
+\lx 24046
+\g to be
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS24047
+\a kahki {24049}
+\a kate {24050}
+\a eto {24051}
+\a yeto {24052}
+\a yeski {24053}
+\a e {24054} / i _ to  | / i _ to
+
+\a ye {24055} / _ s  | / _ s
+
+
+ ~/ i _ to  | ~/ i _ to
+
+\a yeski {24056}
+
+ ~/ i _ to  | ~/ i _ to
+
+
+ ~/ _ s  | ~/ _ s
+
+\a katka {24057}
+
+ ~/ i _ to  | ~/ i _ to
+
+
+ ~/ _ s  | ~/ _ s
+
+\a kah {24048}
+
+ ~/ i _ to  | ~/ i _ to
+
+
+ ~/ _ s  | ~/ _ s
+
+
+\lx 24060
+\g CAUS-tia
+\c W/W
+\o 1
+\wc derivSfx
+\a ti {24113}
+\a tia {24063}
+\eType suffix
+\fd FromPOS16929
+\fd ToPOS16930
+\mp ToInflClass17765
+\fd FromMSFS39949
+\fd ToMSFS39950
+
+\lx 24065
+\g CAUS-tia
+\c W/W
+\o 1
+\wc derivSfx
+\a ti {24113}
+\a tia {24063}
+\eType suffix
+\fd FromPOS16930
+\fd ToPOS22932
+\mp ToInflClass17765
+\fd FromMSFS39951
+\fd ToMSFS39952
+\mp FromExcpFeat39930Plus
+\mcc 24065 +/ {ExcpFeat39930Plus} ... _ +/ {ToExcpFeat39930Plus} ... _
+
+\lx 24150
+\g CAUS-tia
+\c W/W
+\o 1
+\wc derivSfx
+\a ti {24113}
+\a tia {24063}
+\eType suffix
+\fd FromPOS256
+\fd ToPOS16930
+\mp ToInflClass17765
+\fd FromMSFS39953
+\fd ToMSFS39954
+
+\lx 24166
+\g CAUS-tia
+\c W/W
+\o 1
+\wc derivSfx
+\a ti {24113}
+\a tia {24063}
+\eType suffix
+\fd FromPOS19944
+\fd ToPOS16930
+\mp ToInflClass17765
+\fd FromMSFS39955
+\fd ToMSFS39956
+
+\lx 39933
+\g CAUS-tia
+\c W/W
+\o 1
+\wc derivSfx
+\a ti {24113}
+\a tia {24063}
+\eType suffix
+\fd FromPOS16930
+\fd ToPOS22932
+\mp ToInflClass17765
+\fd FromMSFS39957
+\fd ToMSFS39958
+\mp FromExcpFeat39936Plus
+\mcc 39933 +/ {ExcpFeat39936Plus} ... _ +/ {ToExcpFeat39936Plus} ... _
+
+\lx 24070
+\g CAUS-ltia
+\c W/W
+\o 1
+\wc derivSfx
+\a ltia {24073}
+\eType suffix
+\fd FromPOS16930
+\fd ToPOS22932
+\mp ToInflClass17765
+
+\lx 24075
+\g CAUS-ltia
+\c W/W
+\o 1
+\wc derivSfx
+\a ltia {24073}
+\eType suffix
+\fd FromPOS16929
+\fd ToPOS16930
+\mp ToInflClass17765
+\mp FromExcpFeat39915Plus
+\mcc 24075 +/ {ExcpFeat39915Plus} ... _ +/ {ToExcpFeat39915Plus} ... _
+
+\lx 24158
+\g CAUS-ltia
+\c W/W
+\o 1
+\wc derivSfx
+\a ltia {24073}
+\eType suffix
+\fd FromPOS256
+\fd ToPOS16930
+\mp ToInflClass17765
+
+\lx 39921
+\g CAUS-ltia
+\c W/W
+\o 1
+\wc derivSfx
+\a ltia {24073}
+\eType suffix
+\fd FromPOS16930
+\fd ToPOS22932
+\mp ToInflClass17765
+\mp FromExcpFeat39918Plus
+\mcc 39921 +/ {ExcpFeat39918Plus} ... _ +/ {ToExcpFeat39918Plus} ... _
+
+\lx 24080
+\g CAUS-a
+\c W/W
+\o 1
+\wc derivSfx
+\a a {24083}
+\eType suffix
+\fd FromPOS16929
+\fd ToPOS16930
+\fd FromMSFS42098
+\fd ToMSFS42099
+\mp FromExcpFeat39912Plus
+\mcc 24080 +/ {ExcpFeat39912Plus} ... _ +/ {ToExcpFeat39912Plus} ... _
+
+\lx 24086
+\g to enter
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS24087
+\a kalak {24089}
+\a kalaki {24088}
+
+\lx 24096
+\g to forget
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS24097
+\a ilkava {24098} Bound
+
+\lx 24102
+\g to rot
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS24103
+\a palana {24105} / _ lti  | / _ lti
+
+\a palani {24104}
+
+ ~/ _ lti  | ~/ _ lti
+
+
+\lx 24108
+\g to make sleepy
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS24109
+\a kochtia {24110}
+
+\lx 24116
+\g APPLC-lia
+\c W/W
+\o 1
+\wc derivSfx
+\a li {58090} / _ h  | / _ h
+
+\a lia {24119}
+
+ ~/ _ h  | ~/ _ h
+
+\eType suffix
+\fd FromPOS16929
+\fd ToPOS16930
+\mp ToInflClass17765
+\fd FromMSFS24117
+\fd ToMSFS24118
+
+\lx 24121
+\g APPLC-lia
+\c W/W
+\o 1
+\wc derivSfx
+\a li {58090} / _ h  | / _ h
+
+\a lia {24119}
+
+ ~/ _ h  | ~/ _ h
+
+\eType suffix
+\fd FromPOS16930
+\fd ToPOS22932
+\mp ToInflClass17765
+\fd FromMSFS24122
+\fd ToMSFS24123
+
+\lx 24154
+\g APPLC-lia
+\c W/W
+\o 1
+\wc derivSfx
+\a li {58090} / _ h  | / _ h
+
+\a lia {24119}
+
+ ~/ _ h  | ~/ _ h
+
+\eType suffix
+\fd FromPOS256
+\fd ToPOS16930
+\mp ToInflClass17765
+\fd FromMSFS24155
+\fd ToMSFS24156
+
+\lx 24162
+\g APPLC-lia
+\c W/W
+\o 1
+\wc derivSfx
+\a li {58090} / _ h  | / _ h
+
+\a lia {24119}
+
+ ~/ _ h  | ~/ _ h
+
+\eType suffix
+\fd FromPOS19944
+\fd ToPOS16930
+\mp ToInflClass17765
+\fd FromMSFS24163
+\fd ToMSFS24164
+
+\lx 24128
+\g to cry
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS24129
+\a choki {24131} / _ li  | / _ li
+
+\a choka {24130}
+
+ ~/ _ li  | ~/ _ li
+
+
+\lx 24137
+\g to take out
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS24138
+\a kixyi {24140} Bound / _ li  | / _ li
+
+\a kixtia {24139} Bound
+
+ ~/ _ li  | ~/ _ li
+
+
+\lx 24144
+\g to look for
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS24145
+\a temo {24147} Bound / _ li  | / _ li
+
+\a temova {24146} Bound
+
+ ~/ _ li  | ~/ _ li
+
+
+\lx 24171
+\g pants
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS24172
+\a pantalon {24174}
+\a pantalo {24173}
+
+\lx 24177
+\g paper
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24178
+\a ama {24179}
+
+\lx 24182
+\g point
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS24183
+\a yak {24184}
+
+\lx 24187
+\g party
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24188
+\a ilvi {24189}
+
+\lx 24192
+\g mass
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS24193
+\a misah {24194}
+
+\lx 24197
+\g medicine
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24198
+\a pah {24199}
+
+\lx 24202
+\g spouse
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS24203
+\a namik {24204}
+
+\lx 24211
+\g dirty
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24212
+\a pitzotik {24213}
+
+\lx 24216
+\g pig
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24217
+\a pitzo {24218}
+
+\lx 24221
+\g price
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS24222
+\a pati {24223}
+
+\lx 24226
+\g apart
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24227
+\a ixkoyan {24228}
+
+\lx 24231
+\g to present
+\c W
+\wc root
+\mp RootPOS22932
+\fd MSFS24232
+\a ixpantilia {24233} Bound
+
+\lx 24239
+\g NativizerVt
+\c W/W
+\o 1
+\wc derivSfx
+\a oh {24244}
+\a ova {24242}
+\eType suffix
+\fd FromPOS24236
+\fd ToPOS16930
+\mp ToInflClass17765
+\fd FromMSFS24240
+\fd ToMSFS24241
+
+\lx 24246
+\g NativizerVt
+\c W/W
+\o 1
+\wc derivSfx
+\a oh {24244}
+\a ova {24242}
+\eType suffix
+\fd FromPOS24235
+\fd ToPOS16929
+\mp ToInflClass17765
+\fd FromMSFS24247
+\fd ToMSFS24248
+
+\lx 24251
+\g to inform
+\c W
+\wc root
+\mp RootPOS24236
+\mp InflClass15408
+\fd MSFS24252
+\a avisar {24253}
+
+\lx 24256
+\g to think
+\c W
+\wc root
+\mp RootPOS24236
+\mp InflClass15408
+\fd MSFS24257
+\a pensar {24258}
+
+\lx 24261
+\g to castrate
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS24262
+\a kapaloh {24264}
+\a kapalova {24263}
+
+\lx 24267
+\g to battle
+\c W
+\wc root
+\mp RootPOS24236
+\mp InflClass15408
+\a vatayar {24269}
+
+\lx 24272
+\g to transfer
+\c W
+\wc root
+\mp RootPOS24236
+\mp InflClass15408
+\fd MSFS24273
+\a pasar {24274}
+
+\lx 24276
+\g to transfer
+\c W
+\wc root
+\mp RootPOS24235
+\mp InflClass15408
+\fd MSFS24277
+\a pasar {24274}
+
+\lx 24280
+\g nose
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS24281
+\a yekak {24657}
+\a yekatzol {24282}
+
+\lx 24285
+\g plank
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\a tlapech {24287}
+
+\lx 24295
+\g metal
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24296
+\a tepos {24297}
+
+\lx 24300
+\g mountain
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24301
+\a tepe {24302}
+
+\lx 24305
+\g animal
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24306
+\a yolka {24307}
+
+\lx 24310
+\g lip
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS24311
+\a ten {24312}
+
+\lx 24315
+\g hair
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS24316
+\a tzon {24317}
+
+\lx 24320
+\g nape
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS24321
+\a kechtla {24322}
+
+\lx 24325
+\g meat
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24326
+\a naka {24327}
+
+\lx 24330
+\g tamale
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24331
+\a tamal {24332}
+
+\lx 24336
+\g rope
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24337
+\a meka {24338}
+
+\lx 24341
+\g cat
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS24342
+\a miston {24343}
+
+\lx 24346
+\g burro
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS24347
+\a burroh {24348}
+
+\lx 24352
+\g snake
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24353
+\a kowa {24354}
+
+\lx 24358
+\g left
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24359
+\a opoch {24360}
+
+\lx 24368
+\g right
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24369
+\a yek {24370}
+
+\lx 24611
+\g right
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS24612
+\a yek {24370}
+
+\lx 24385
+\g to take
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS24386
+\a tolova {24387} Bound
+
+\lx 24390
+\g beer
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\fd MSFS24391
+\a servesah {24392}
+
+\lx 24395
+\g to drink
+\c W
+\wc root
+\mp RootPOS16930
+\fd MSFS24396
+\a i {24398}
+\a oni {24397}
+
+\lx 24445
+\g to grasp
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS24446
+\a kitzkia {24447} Bound
+
+\lx 24450
+\g to grasp
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS24451
+\a kui {24452} Bound
+
+\lx 24455
+\g to pull
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS24456
+\a tilana {24457} Bound
+
+\lx 24460
+\g to heat
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS24461
+\a tootonia {24462} Bound
+
+\lx 24465
+\g to be surprised
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS24466
+\a ixtlapovi {24467}
+
+\lx 24470
+\g to roll
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS24471
+\a ololova {24472} Bound
+
+\lx 24475
+\g to burn
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS24476
+\a tlatla {24477}
+
+\lx 24480
+\g to be twisted
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS24481
+\a patilawi {24482}
+
+\lx 24485
+\g to twist
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS24486
+\a patilova {24487} Bound
+
+\lx 24490
+\g to fall
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS24491
+\a tepevi {24492}
+
+\lx 24495
+\g to pass
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17765
+\fd MSFS24496
+\a panova {24497}
+
+\lx 24500
+\g to ascend
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS24501
+\a tlehko {24502}
+
+\lx 24510
+\g to help
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS24511
+\a palevia {24512} Bound
+
+\lx 24515
+\g to pull
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS24516
+\a wilana {24517} Bound
+
+\lx 24525
+\g to be angry
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS24526
+\a kualan {24528}
+\a kualani {24527}
+
+\lx 24532
+\g truth
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24533
+\a nel {24534}
+
+\lx 24537
+\g hunger
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24538
+\a apis {24539}
+
+\lx 24542
+\g anger
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24543
+\a tlawel {24544}
+
+\lx 24547
+\g to press
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17760
+\fd MSFS24548
+\a patzka {24549} Bound
+
+\lx 24555
+\g to be sick
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS24556
+\a kokox {24557}
+
+\lx 24560
+\g old man
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS24561
+\a tetah {24562}
+
+\lx 24565
+\g spherical
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24566
+\a tolon {24568}
+\a tolontik {24567}
+
+\lx 24581
+\g above
+\c W
+\wc root
+\mp RootPOS22964
+\fd MSFS24582
+\a ahko {24584}
+\a ahkopa {24583}
+
+\lx 24587
+\g to cover
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\a pacho {66729} NotStemName66696
+\a pachova {24589} StemName66696 +/ _ ... {StemNameAffix66696} +/ {StemNameAffix66696} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
+
+\lx 24592
+\g thorn
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24593
+\a vitz {24594}
+
+\lx 24597
+\g stake
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24598
+\a vitzok {24599}
+
+\lx 24602
+\g sharp
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24603
+\a vitzotik {24604}
+
+\lx 24607
+\g back
+\c W
+\wc root
+\mp RootPOS13147
+\mp InflClass15408
+\fd MSFS24608
+\a kuitlapan {24609}
+
+\lx 24620
+\g hurriedly
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS24621
+\a neem {24623} / _ [24624]  | / _ [LAB]
+
+\a neen {24622}
+
+ ~/ _ [24624]  | ~/ _ [LAB]
+
+
+\lx 24628
+\g strongly
+\c W
+\wc root
+\mp RootPOS255
+\fd MSFS24629
+\a tlatz {24630}
+
+\lx 24633
+\g to be cold
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17760
+\fd MSFS24634
+\a sewa {24635}
+
+\lx 24638
+\g to fall
+\c W
+\wc root
+\mp RootPOS16929
+\fd MSFS24639
+\a kapani {24640}
+
+\lx 24643
+\g to begin
+\c W
+\wc root
+\mp RootPOS16929
+\mp InflClass17761
+\fd MSFS24644
+\a peva {24645}
+
+\lx 24648
+\g to mention
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS24649
+\a teneva {24650}
+
+\lx 24653
+\g DIMIN
+\c W/W
+\o -1
+\wc derivPfx
+\a ix {24656}
+\eType prefix
+\fd FromPOS19944
+\fd FromMSFS24654
+\fd ToMSFS24655
+
+\lx 24660
+\g gray
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24661
+\a nextik {24662}
+
+\lx 24665
+\g gray
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24666
+\a tenextik {24667}
+
+\lx 24670
+\g green
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24671
+\a xoxovik {24672}
+
+\lx 24675
+\g inexperienced
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24676
+\a kuaxoxovik {24677}
+
+\lx 24680
+\g sharp
+\c W
+\wc root
+\mp RootPOS19944
+\mp InflClass23233
+\fd MSFS24681
+\a yekavitzoktik {24682}
+
+\lx 24685
+\g DES
+\c W/W
+\o 1
+\wc derivSfx
+\a sneki {24688}
+\eType suffix
+\fd FromPOS258
+\fd FromMSFS24686
+\fd ToMSFS24687
+
+\lx 24692
+\g DIST
+\c W/W
+\o -NaN -NaN
+\wc 24689
+\a om {66660} / _ p  | / _ p
+
+\a on {24694}
+
+ ~/ _ p  | ~/ _ p
+
+\eType prefix
+
+\lx 24697
+\g PROX
+\c W/W
+\o -NaN -NaN
+\wc 24689
+\fd InflectionFS24698
+\a val {24699}
+\eType prefix
+
+\lx 24702
+\g to scratch
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17765
+\fd MSFS24703
+\a momotzova {24704}
+
+\lx 24707
+\g drink
+\c W
+\wc root
+\mp RootPOS13146
+\mp InflClass15408
+\fd MSFS24708
+\a tlail {24709}
+
+\lx 24752
+\g GO.TO.DO
+\c W/W
+\o 1
+\wc derivSfx
+\a tim {24730}
+\a tiv {24731} / _ veh  | / _ veh
+
+\a tin {24715}
+
+ ~/ _ veh  | ~/ _ veh
+
+\eType suffix
+\fd FromPOS258
+\mp ToInflClass17761
+
+\lx 24755
+\g WENT.TO.DO
+\c W/W
+\o 1
+\wc derivSfx
+\a to {24721}
+\eType suffix
+\fd FromPOS258
+\mp ToInflClass17761
+
+\lx 24746
+\g COME.TO.DO
+\c W/W
+\o 1
+\wc derivSfx
+\a kim {24739} / _ veh  | / _ veh
+
+\a kiv {24740} / _ veh  | / _ veh
+
+\a kin {24738}
+
+ ~/ _ veh  | ~/ _ veh
+
+
+ ~/ _ veh  | ~/ _ veh
+
+\eType suffix
+\fd FromPOS258
+\fd FromMSFS24747
+\fd ToMSFS24748
+
+\lx 24749
+\g CAME.TO.DO
+\c W/W
+\o 1
+\wc derivSfx
+\a ko {24745}
+\eType suffix
+\fd FromPOS258
+\fd FromMSFS24750
+\fd ToMSFS24751
+
+\lx 24760
+\g GO.AROUND
+\c W/W
+\o 1
+\wc derivSfx
+\a tinemi {24763}
+\eType suffix
+\fd FromPOS258
+\fd FromMSFS24761
+\fd ToMSFS24762
+
+\lx 24766
+\g COME.DOING
+\c W/W
+\o 1
+\wc derivSfx
+\a tivitz {24769}
+\eType suffix
+\fd FromPOS258
+\fd FromMSFS24767
+\fd ToMSFS24768
+
+\lx 24772
+\g GO.DOING
+\c W/W
+\o 1
+\wc derivSfx
+\a tiyavi {24775}
+\eType suffix
+\fd FromPOS258
+\fd FromMSFS24773
+\fd ToMSFS24774
+
+\lx 24778
+\g DO.SUDDENLY
+\c W/W
+\o 1
+\wc derivSfx
+\a teeva {24781}
+\eType suffix
+\fd FromPOS258
+\fd FromMSFS24779
+\fd ToMSFS24780
+
+\lx 58173
+\g DUR
+\c W/W
+\o 1
+\wc derivSfx
+\a tok {24785}
+\eType suffix
+\fd FromPOS258
+\fd ToMSFS58175
+
+\lx 58168
+\g PLUPER
+\c W/W
+\o NaN NaN
+\wc 58165
+\fd InflectionFS66722
+\a ka {24789}
+\eType suffix
+\mp StemNameAffix66683
+\mp StemNameAffix66698
+
+\lx 58166
+\g COND
+\c W/W
+\o NaN NaN
+\wc 58165
+\fd InflectionFS58167
+\a skia {24793}
+\eType suffix
+\mp StemNameAffix66696
+
+\lx 37707
+\g a little of
+\c W
+\wc root
+\mp RootPOS13605
+\fd MSFS37709
+\a achintzin {37708}
+
+\lx 55483
+\g to understand
+\c W
+\wc root
+\mp RootPOS16930
+\mp InflClass17761
+\fd MSFS55515
+\a ahsikamati {55484}
+
+\lx 55510
+\g Orisaba
+\c W
+\wc root
+\mp RootPOS13339
+\mp InflClass15408
+\fd MSFS55516
+\a Orisava {55511}
+
+\lx 55534
+\g to sell
+\c W
+\wc root
+\mp RootPOS22932
+\mp InflClass17760
+\mp ExcpFeat57399Plus
+\a nemaki {55549} / _ to  | / _ to
+
+\a nemaka {55535}
+
+ ~/ _ to  | ~/ _ to
+
+
+\lx 55570
+\g Good morning
+\c W
+\wc root
+\mp RootPOS22754
+\fd MSFS55580
+\a chantzinko {55571}
+
+\lx 55581
+\g Good morning
+\c W
+\wc root
+\mp RootPOS22754
+\fd MSFS55582
+\a chantzinko {55571}
+
+\lx 55587
+\g Victor
+\c W
+\wc root
+\mp RootPOS13681
+\mp InflClass15408
+\a Viktor {55588}
+
+\lx 56163
+\g IMPFV.SUBJ:SG
+\c W/W
+\o NaN NaN
+\wc 16933
+\fd InflectionFS56164
+\a 0 {56162} / _ #  | / _ #
+
+\eType suffix
+\mp StemNameAffix66696
+
+\lx 56592
+\g SUBJNCT.SUBJ:SG
+\c W/W
+\o NaN NaN
+\wc 17142
+\fd InflectionFS56594
+\a 0 {56593} / _ #  | / _ #
+
+\eType suffix
+
+\lx 57697
+\g Rafael
+\c W
+\wc root
+\mp RootPOS13681
+\mp InflClass15408
+\a Rafael {57698}
+
+\lx 57710
+\g Delgado
+\c W
+\wc root
+\mp RootPOS13681
+\mp InflClass15408
+\a Delgado {57711}
+
+\lx 58010
+\g thirty
+\c W
+\wc root
+\mp RootPOS13683
+\a treinta {58011}
+
+\lx 58018
+\g and
+\c Prt
+\wc root
+\mp RootPOS22754
+\a y {58019}
+
+\lx 58025
+\g one
+\c Prt
+\wc root
+\mp RootPOS13683
+\a uno {58026}
+
+\lx 58032
+\g October
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\a oktubre {58033}
+
+\lx 65519
+\g day
+\c W
+\wc root
+\mp RootPOS13148
+\mp InflClass15408
+\a dia {65520}

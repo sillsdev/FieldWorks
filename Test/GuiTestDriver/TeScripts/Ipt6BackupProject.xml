@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 6 RESTORE TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!--Wait an additional few secs for the menus to load-->
+		<!--<on-dialog title="Bogus Dialog" until="2000" on-fail="skip"/>-->
+
+		<!-- ========================================================================== -->
+
+		<!-- Backup Project -->
+		<click select="menubar/file/project-management/backup-and-restore"/>
+
+		<on-dialog title="Backup and Restore" until="60000">
+			<click path="9:Reminders.../43:Reminders..."/>
+			<on-dialog title="Backup Reminders" until="10000">
+				 <!-- Always uncheck the Backup Reminder checkbox -->
+				<var id="GuiChkBox1" set="9:Let me know if I haven't backed up for more than/44:Let me know if I haven't backed up for more than"/>
+				<glimpse id="ChkBoxState1" path="$GuiChkBox1" prop="checked" on-fail="skip"/>
+				<var id="ActualState" set="$ChkBoxState1"/>
+				<var id="DesiredState" set="FALSE"/>
+				<include from="IncCheckBox.xml"/>
+
+				<click path="$OK"/>
+			</on-dialog>
+
+			<!-- Always uncheck the Sena 3 project -->
+			<!--<click path="9:Projects to back up:[2]/44:Sena 3"/>-->
+			<click path="9:Projects to back up:[2]/44:MALAY PARATEXT 6 RESTORE TEST"/>
+			<click path="9:Projects to back up:[2]/44:MALAY PARATEXT 6 RESTORE TEST"/>
+
+			<insert>{TAB}</insert>
+			<insert>C:\GuiTestResults\BackupRestoreUsingUI\</insert>
+
+			<click path="9:Start Backup/43:Start Backup"/>
+		</on-dialog>
+
+		<!--This delay is for copying the project file during backup.-->
+		<on-dialog title="Bogus Dialog" until="30000" on-fail="skip">
+			<click path="9:Nothing/43:Nothing"/>
+		</on-dialog>
+
+	</on-application>
+
+</accil>

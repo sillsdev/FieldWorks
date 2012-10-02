@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?-->
+
+<new-entry role="dialog" title="New Entry" root="yes">
+
+  <lexeme-form role="text" name="Lexeme Form:" ak="f" path="9:$name">
+	<label name="Lexeme Form:" path="/41:$name;"/>
+	<data path="/20:RootSite/$Text" />
+  </lexeme-form>
+
+  <morpheme-type role="comboBox" name="Morpheme Type:" ak="m" path="9:$name;">
+	<label name="Morpheme Type:" path="/41:$name"/>
+	<data path="[2]/41:Morpheme Type:" />
+	<drop name="Open" path="[2]/43:$name"/>
+  </morpheme-type>
+
+  <gloss role="text" ak="g" name="Gloss:" path="9:$name">
+	<label name="Gloss:" path="/41:$name"/>
+	<data path="[2]/20:RootSite/42:Paragraph"/>
+	<assistant name="Assistant" ak="a" path="9:Assistant/43:Assistant" root="yes"/>
+  </gloss>
+
+  <category-info role="frame" name="Category Info." path="$NL;$name;/20:$name">
+	<var id="preCat" set="9:Category:"/>
+	<category role="comboBox" ak="y" name="Category:">
+	  <label name="Category:" path="/$preCat;/41:$name"/>
+	  <data path="/9:$value;/20:RootSite/$Text"/>  <!-- value of the combo box -->
+	  <drop name="Open" path="/9:$value;/$NL;/43:NAMELESS"/>  <!-- value of the combo box -->
+	</category>
+
+	<var id="preAfixType" set="9:Affix Type:"/>
+	<affix-type type="comboBox" ak="t" name="Affix Type:">
+	  <label name="Affix Type:" path="/$preAfixType;/41:$name"/>
+	  <data path="/9:$value;/20:RootSite/$Text"/>  <!-- value of the combo box -->
+	  <drop name="Open" path="/9:$value;/$NL;/43:NAMELESS"/>  <!-- value of the combo box -->
+	</affix-type>
+
+	<var id="preAtc" set="9:Attaches to Category:"/>
+	<attaches-to role="comboBox" ak="y" name="Attaches to Category:">
+	  <label name="Attaches to Category:" path="/$preAtc;/41:$name"/>
+	  <data path="/9:$value;/20:RootSite/$Text"/>  <!-- value of the combo box -->
+	  <drop name="Open" path="/9:$value;/$NL;/43:NAMELESS"/>  <!-- value of the combo box -->
+	</attaches-to>
+
+	<fills-slot role="comboBox" ak="f" name="Fills Slot:" path="9:$name">
+	  <label name="Fills Slot:" path="/41:$name"/>
+	  <data path="[2]/20:RootSite/$Text"/>
+	  <drop name="Open" path="[2]/$NL;/43:NAMELESS"/>
+	</fills-slot>
+
+	<var id="preChng" set="9:Changes to Category:"/>
+	<changes-to role="comboBox" ak="h" name="Changes to Category:">
+	  <label name="Changes to Category:" path="/$preChng;/41:$name"/>
+	  <data path="/$preChng;[2]/20:RootSite/$Text"/>
+	  <drop name="Open" path="/9:$value;/$NL;/43:NAMELESS"/>  <!-- value of the combo box -->
+	</changes-to>
+
+  </category-info>
+
+  <similar-entries name="Similar Entries" path="9:$name;/20:$name">
+	<list path="9:MatchingEntries/9:XCoreUserControl/9:NAMELESS/20:RootSite"/>
+  </similar-entries>
+
+  <create name="Create" ak="c" path="9:$name;/43:$name"/>
+  <cancel name="Cancel" path="9:$name;/43:$name"/>
+  <help name="Help" ak="h" path="9:$name;/43:$name"/>
+
+</new-entry>

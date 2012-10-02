@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="VwStbr" num="2.3.7" abbr="VwStbr" file="FW\VwStatusbar.xml">
+ <title tag="VwStbr">View-Status bar Tests</title>
+ <index>
+<li>Statusbar</li>
+		<li>View: Statusbar</li>
+ </index>
+
+ <introduction>
+<p>Toggles whether or not the Status Bar is displayed. A check appears beside the menu item if the view bar is currently displayed. More extensive tests of the status bar are found in <link uri="BarStatus.xml">Status Bar Tests</link>. Use the initial words "View-Statusbar" in bug reports.</p>
+ </introduction>
+ <context>
+<p>See specs at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ViewMenu/ViewMenu.html#View-StatusBar" type="doc">View: Status Toolbar</link> and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/StatusBar/StatusBar.html" type="doc">Status Toolbar</link>
+</p>
+ </context>
+
+ <case id="VwStbrTst" num="1.0" order="any">
+  <title tag="VwStbrTst">View Status bar</title>
+  <context>
+<p>When the FW application main window is open</p>
+</context>
+
+  <step name="1.0" link="Bug">While the status bar is visible at the bottom of the FW application window, click the View menu.
+	<r>The Status Bar item on the View menu is enabled and has a check mark beside it.</r>
+	<p name="bug">View-Status bar item not enabled though the bar is active</p>
+  </step>
+  <step name="1.1" link="Bug">While the status bar is visible at the bottom of the FW application window, click View-Status Bar.
+	<r>
+<ul>
+<li>The Status Bar disappears.</li>
+<li>The main application window expands to fill the space vacated by the Status Bar.</li>
+</ul>
+</r>
+	<p name="bug">View-Status bar does not disappear on command</p>
+	<p name="bug">View-Status bar area not taken over by main window</p>
+  </step>
+  <step name="1.2" link="Bug">While the status bar is not visible, click the View menu.
+	<r>The Status Bar item on the View menu is not checked, but is enabled (not grayed out).</r>
+	<p name="bug">View-Status bar item enabled though the bar is inactive</p>
+  </step>
+  <step name="1.3" link="Bug">While the status bar is not visible, click View-Status Bar.
+	<r>
+<ul>
+<li>The Status bar appears at the bottom of the main application window.</li>
+<li>The main application window shrinks to accommodate the status bar.</li>
+</ul>
+</r>
+	<p name="bug">View-Status bar does not appear on command</p>
+	<p name="bug">View-Status bar area not relinquished by main window</p>
+  </step>
+
+<step name="1.4" link="Bug">Quit and restart application.
+<r>
+Last setting to show/hide Status Bar is remembered.
+</r>
+<p name="bug">View-Status Bar settings not remembered on re-launching application</p>
+</step>
+
+ </case>
+ <update date="Apr-19-01" author="RickM">Put into XML format</update>
+ <update date="Sep-21-01" author="MikeL">Fixed links, deleted one, added one, added bugs and revised</update>
+ <update date="May-24-02" author="JoelC">Added step 1.4</update>
+
+</test>

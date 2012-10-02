@@ -1,0 +1,14 @@
+FieldWorks check-in process, and also to record a history of the changes made to the project.
+
+Please read CheckIn_Process.txt for details on how to check changes in to Perforce.
+
+Older changes can be found in Ancient_CheckIn_History.txt.
+
+NB: Multiple check-outs of this file are not allowed! It is also forbidden to keep it checked
+out for an extended time. It should be checked out only when you have finished a unit of work
+and are ready to integrate your work and check it in.
+
+Here begins the recent check-in history - please add your notes at the end:
+------------------------------------------------------------------------------------------------
+KenZ, 10 Nov 2011. Created FW_7.2 branch and integrated from WW.
+KenZ, 3 Jan 2011. Integrated WW to 7.2 using auto resolve from other.

@@ -1,0 +1,2081 @@
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\prules.in > ) )
+;Test morpher rules.
+; Most of the tests are contained in separate files, which are loaded individually.
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\startup.in > ) )
+;Generic startup file for morpher tests.
+;Open a new language for testing purposes (msg 6510):
+(message (
+ <hc6510 lname Phonology Test Language > ) )
+;First a morpher_set command, which should result in msg 6502:
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Then we run three load_char_def_table commands, each of
+; which should result in a msg 6501:
+(message (
+ <hc6501 table_name table1 > ) )
+(message (
+ <hc6501 table_name table2 > ) )
+(message (
+ <hc6501 table_name table3 > ) )
+;Now load the strata (msg 6502):
+(message (
+ <hc6502 var_name '*strata*' > ) )
+;...and set their ctables (msg 6550):
+(message (
+ <hc6550 sname morphophonemic ctable_name table3 > ) )
+(message (
+ <hc6550 sname allophonic ctable_name table1 > ) )
+(message (
+ <hc6550 sname '*surface*' ctable_name table1 > ) )
+;...their cyclicity (msg 6552):
+(message (
+ <hc6552 sname morphophonemic > ) )
+(message (
+ <hc6552 sname allophonic > ) )
+;...the order of their prules (msg 6555):
+(message (
+ <hc6555 sname morphophonemic > ) )
+(message (
+ <hc6555 sname allophonic > ) )
+;...and the order of the mrules (msg 6556):
+(message (
+ <hc6556 sname morphophonemic > ) )
+(message (
+ <hc6556 sname allophonic > ) )
+;Load in a dictionary file.  Two lex entries are purposely incorrect, and
+; will result in error msgs 6024 and 6009:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+ERROR:hc6024 --- <hc6024 lex_id 3 stratum nonesuch >
+ERROR:hc6009 --- <hc6009 char h string pHhut item 4 ctable_name table1 >
+(message (
+ <hc6515 n 58 fname c:\data\hc\morpher\tests\diction.txt > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\startup.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\prule1.in > ) )
+;A file of simple prules
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name asp > ) )
+(message (
+ <hc6541 nat_class_name non_cons > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Load two prules (msg 6505, twice):
+; t -> th / V_
+(message (
+ <hc6505 rname rule1 > ) )
+; p -> ph / _V
+(message (
+ <hc6505 rname rule2 > ) )
+;Now we morph a few words
+;First one should be 2x ambiguous:
+(pretty_print (word_analysis
+ <lex id 1 sh pHitH pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
+ <lex id 2 sh pHitH pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
+;Next one should be 2x ambiguous:
+(pretty_print (word_analysis
+ <lex id 8 sh datH pos 'N' str '*surface*' >
+ <lex id 9 sh datH pos 'V' str '*surface*' > ) )
+;Third one should be 2x ambiguous:
+(pretty_print (word_analysis
+ <lex id 11 sh gab pos 'A' str '*surface*' >
+ <lex id 12 sh gab pos 'N' str '*surface*' > ) )
+;Now we'll trace the rules, to watch their application (msg 6535, 2x):
+(message (
+ <hc6535 rname rule1 > ) )
+(message (
+ <hc6535 rname rule2 > ) )
+(pretty_print
+ <trace sh pHitH
+  cont (
+   <pua nm rule2
+	in  <lex sh pHitH str allophonic >
+	out <lex sh ppHitH str allophonic >>
+   <pua nm rule1
+	in  <lex sh ppHitH str allophonic >
+	out <lex sh ppHittH str allophonic >>
+   <pa nm rule1
+	in  <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
+	out <lex id 1 sh pHitH pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
+   <pa nm rule2
+	in  <lex id 1 sh pHitH pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
+	out <lex id 1 sh pHitH pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
+   <pa nm rule1
+	in  <lex id 2 sh pit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
+	out <lex id 2 sh pitH pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
+   <pa nm rule2
+	in  <lex id 2 sh pitH pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
+	out <lex id 2 sh pHitH pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
+   <pua nm rule2
+	in  <lex sh pit str morphophonemic >
+	out <lex sh pit str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 1 sh pHitH pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
+ <lex id 2 sh pHitH pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Now we'll remove those rules (msg 6506):
+(message (
+ <hc6506 rname rule1 > ) )
+(message (
+ <hc6506 rname rule2 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name asp > ) )
+(message (
+ <hc6542 nat_class_name non_cons > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\prule1.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\prule2.in > ) )
+;"Long distance" rules
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name cons > ) )
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name back_rnd > ) )
+(message (
+ <hc6541 nat_class_name rnd_v > ) )
+(message (
+ <hc6541 nat_class_name low_v > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Load a rule (m6505):
+; {i, umlauted u, barred i} -> u / {u, o}CaC_
+(message (
+ <hc6505 rname rule3 > ) )
+;Trace it (msg 6535):
+(message (
+ <hc6535 rname rule3 > ) )
+;Now morph; should be 2x ambig:
+(pretty_print
+ <trace sh bubabu
+  cont (
+   <pua nm rule3
+	in  <lex sh bubabu str allophonic >
+	out <lex sh bubabiuuû str allophonic >>
+   <pa nm rule3
+	in  <lex id 13 sh bubabu pos 'N' str allophonic >
+	out <lex id 13 sh bubabu pos 'N' str allophonic >>
+   <pa nm rule3
+	in  <lex id 14 sh bubabi pos 'N' str allophonic >
+	out <lex id 14 sh bubabu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 13 sh bubabu pos 'N' str '*surface*' >
+ <lex id 14 sh bubabu pos 'N' str '*surface*' > ) )
+;
+;Replace the rule with its mirror image (msg 6504):
+; {i, umlauted u, barred i} -> u / _CaC{u, o}
+(message (
+ <hc6504 rname rule3 > ) )
+;Parse; 2x ambig:
+(pretty_print
+ <trace sh bubabu
+  cont (
+   <pua nm rule3
+	in  <lex sh bubabu str allophonic >
+	out <lex sh biuuûbabu str allophonic >>
+   <pa nm rule3
+	in  <lex id 13 sh bubabu pos 'N' str allophonic >
+	out <lex id 13 sh bubabu pos 'N' str allophonic >>
+   <pa nm rule3
+	in  <lex id 15 sh bbabu pos 'N' str allophonic >
+	out <lex id 15 sh bubabu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 13 sh bubabu pos 'N' str '*surface*' >
+ <lex id 15 sh bubabu pos 'N' str '*surface*' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Now remove the rule (msg 6506):
+(message (
+ <hc6506 rname rule3 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name cons > ) )
+(message (
+ <hc6542 nat_class_name high_v > ) )
+(message (
+ <hc6542 nat_class_name back_rnd > ) )
+(message (
+ <hc6542 nat_class_name rnd_v > ) )
+(message (
+ <hc6542 nat_class_name low_v > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\prule2.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\prule3.in > ) )
+;Test rules which apply at word boundaries
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name cons > ) )
+(message (
+ <hc6541 nat_class_name vowel > ) )
+(message (
+ <hc6541 nat_class_name vl_unasp > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Load the first rule (msg 6505):
+; C -> [-vd -asp] / _#
+(message (
+ <hc6505 rname rule3 > ) )
+;Trace it (msg 6535):
+(message (
+ <hc6535 rname rule3 > ) )
+;We'll trace lex lookup, too:
+(message (
+ <hc6527  > ) )
+;And morph, should be 3x ambig:
+(pretty_print
+ <trace sh gap
+  cont (
+   <ll v <lex sh gap str '*surface*' >
+	cont (
+	)
+   >
+   <pua nm rule3
+	in  <lex sh gap str allophonic >
+	out <lex sh gappHb str allophonic >>
+   <ll v <lex sh gappHb str allophonic >
+	cont (
+	)
+   >
+   <ll v <lex sh gaa·pb str morphophonemic >
+	cont (
+	 <sll real <lex id 10 sh ga·p pos 'V' str morphophonemic > rf ( )
+	  cont (
+	   <pa nm rule3
+		in  <lex id 10 sh gappH pos 'V' str allophonic >
+		out <lex id 10 sh gap pos 'V' str allophonic >>
+	  )
+	 >
+	 <sll real <lex id 11 sh gab pos 'A' str morphophonemic > rf ( )
+	  cont (
+	   <pa nm rule3
+		in  <lex id 11 sh gab pos 'A' str allophonic >
+		out <lex id 11 sh gap pos 'A' str allophonic >>
+	  )
+	 >
+	 <sll real <lex id 12 sh ga+b pos 'N' str morphophonemic > rf ( )
+	  cont (
+	   <pa nm rule3
+		in  <lex id 12 sh gab pos 'N' str allophonic >
+		out <lex id 12 sh gap pos 'N' str allophonic >>
+	  )
+	 >
+	)
+   >
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 10 sh gap pos 'V' str '*surface*' >
+ <lex id 11 sh gap pos 'A' str '*surface*' >
+ <lex id 12 sh gap pos 'N' str '*surface*' > ) )
+;Now turn lex lookup tracing back off:
+(message (
+ <hc6528  > ) )
+;And change the rule of devoicing again:
+; C -> [-vd -asp] / _VC#
+(message (
+ <hc6504 rname rule3 > ) )
+;Parse, expect 2x ambiguity:
+(pretty_print
+ <trace sh kab
+  cont (
+   <pua nm rule3
+	in  <lex sh kab str allophonic >
+	out <lex sh kkHgab str allophonic >>
+   <pa nm rule3
+	in  <lex id 11 sh gab pos 'A' str allophonic >
+	out <lex id 11 sh kab pos 'A' str allophonic >>
+   <pa nm rule3
+	in  <lex id 12 sh gab pos 'N' str allophonic >
+	out <lex id 12 sh kab pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 11 sh kab pos 'A' str '*surface*' >
+ <lex id 12 sh kab pos 'N' str '*surface*' > ) )
+;And change thr rule of devoicing again:
+; C -> [-vd -asp] / #_
+(message (
+ <hc6504 rname rule3 > ) )
+;Parse, expect 2x ambiguity:
+(pretty_print
+ <trace sh kab
+  cont (
+   <pua nm rule3
+	in  <lex sh kab str allophonic >
+	out <lex sh kkHgab str allophonic >>
+   <pa nm rule3
+	in  <lex id 11 sh gab pos 'A' str allophonic >
+	out <lex id 11 sh kab pos 'A' str allophonic >>
+   <pa nm rule3
+	in  <lex id 12 sh gab pos 'N' str allophonic >
+	out <lex id 12 sh kab pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 11 sh kab pos 'A' str '*surface*' >
+ <lex id 12 sh kab pos 'N' str '*surface*' > ) )
+;And change the rule of devoicing again:
+; C -> [-vd -asp] / #CV_
+(message (
+ <hc6504 rname rule3 > ) )
+;Parse, expect 3x ambiguity:
+(pretty_print
+ <trace sh gap
+  cont (
+   <pua nm rule3
+	in  <lex sh gap str allophonic >
+	out <lex sh gappHb str allophonic >>
+   <pa nm rule3
+	in  <lex id 10 sh gappH pos 'V' str allophonic >
+	out <lex id 10 sh gap pos 'V' str allophonic >>
+   <pa nm rule3
+	in  <lex id 11 sh gab pos 'A' str allophonic >
+	out <lex id 11 sh gap pos 'A' str allophonic >>
+   <pa nm rule3
+	in  <lex id 12 sh gab pos 'N' str allophonic >
+	out <lex id 12 sh gap pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 10 sh gap pos 'V' str '*surface*' >
+ <lex id 11 sh gap pos 'A' str '*surface*' >
+ <lex id 12 sh gap pos 'N' str '*surface*' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Now remove the rule (msg 6506):
+(message (
+ <hc6506 rname rule3 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name cons > ) )
+(message (
+ <hc6542 nat_class_name vowel > ) )
+(message (
+ <hc6542 nat_class_name vl_unasp > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\prule3.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\prule4.in > ) )
+;Test optional sequences in prules
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name low_v > ) )
+(message (
+ <hc6541 nat_class_name rnd_v > ) )
+(message (
+ <hc6541 nat_class_name back_rnd > ) )
+(message (
+ <hc6541 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6541 nat_class_name cons > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Loading two rules (msg 6505)
+; (first is already traced):
+; i -> u /  __ Ca(Ca)C{u o}
+(message (
+ <hc6505 rname rule3 > ) )
+; i -> u / {u o}(Ca)CaC __
+(message (
+ <hc6505 rname rule4 > ) )
+;Tracing the rules (msg 6535):
+(message (
+ <hc6535 rname rule3 > ) )
+(message (
+ <hc6535 rname rule4 > ) )
+;Morph.  Neither rule should apply to first (because opt seq has MIN of 1), 1x ambig:
+(pretty_print
+ <trace sh bubu
+  cont (
+   <pua nm rule4
+	in  <lex sh bubu str allophonic >
+	out <lex sh bubu str allophonic >>
+   <pua nm rule3
+	in  <lex sh bubu str allophonic >
+	out <lex sh bubu str allophonic >>
+   <pa nm rule3
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 19 sh bubu pos 'N' str '*surface*' > ) )
+;Both rules should apply to next, 3x ambig (one anal will be ruled out on
+; synth because rules are mutually counterfeeding):
+(pretty_print
+ <trace sh bubabu
+  cont (
+   <pua nm rule4
+	in  <lex sh bubabu str allophonic >
+	out <lex sh bubabiuuû str allophonic >>
+   <pua nm rule3
+	in  <lex sh bubabiuuû str allophonic >
+	out <lex sh biuuûbabiuuû str allophonic >>
+   <pa nm rule3
+	in  <lex id 13 sh bubabu pos 'N' str allophonic >
+	out <lex id 13 sh bubabu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 13 sh bubabu pos 'N' str allophonic >
+	out <lex id 13 sh bubabu pos 'N' str allophonic >>
+   <pa nm rule3
+	in  <lex id 14 sh bubabi pos 'N' str allophonic >
+	out <lex id 14 sh bubabi pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 14 sh bubabi pos 'N' str allophonic >
+	out <lex id 14 sh bubabu pos 'N' str allophonic >>
+   <pa nm rule3
+	in  <lex id 15 sh bbabu pos 'N' str allophonic >
+	out <lex id 15 sh bubabu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 15 sh bubabu pos 'N' str allophonic >
+	out <lex id 15 sh bubabu pos 'N' str allophonic >>
+   <pa nm rule3
+	in  <lex id 16 sh bibabi pos 'N' str allophonic >
+	out <lex id 16 sh bibabi pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 16 sh bibabi pos 'N' str allophonic >
+	out <lex id 16 sh bibabi pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 13 sh bubabu pos 'N' str '*surface*' >
+ <lex id 14 sh bubabu pos 'N' str '*surface*' >
+ <lex id 15 sh bubabu pos 'N' str '*surface*' > ) )
+;Both rules should apply to next, 2x ambig:
+(pretty_print
+ <trace sh bubababu
+  cont (
+   <pua nm rule4
+	in  <lex sh bubababu str allophonic >
+	out <lex sh bubababiuuû str allophonic >>
+   <pua nm rule3
+	in  <lex sh bubababiuuû str allophonic >
+	out <lex sh biuuûbababiuuû str allophonic >>
+   <pa nm rule3
+	in  <lex id 20 sh bubababi pos 'N' str allophonic >
+	out <lex id 20 sh bubababi pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 20 sh bubababi pos 'N' str allophonic >
+	out <lex id 20 sh bubababu pos 'N' str allophonic >>
+   <pa nm rule3
+	in  <lex id 21 sh bibababu pos 'N' str allophonic >
+	out <lex id 21 sh bubababu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 21 sh bubababu pos 'N' str allophonic >
+	out <lex id 21 sh bubababu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 20 sh bubababu pos 'N' str '*surface*' >
+ <lex id 21 sh bubababu pos 'N' str '*surface*' > ) )
+;Neither rule should apply to next (because opt seq has MAX of 2):
+(pretty_print
+ <trace sh bubabababu
+  cont (
+   <pua nm rule4
+	in  <lex sh bubabababu str allophonic >
+	out <lex sh bubabababu str allophonic >>
+   <pua nm rule3
+	in  <lex sh bubabababu str allophonic >
+	out <lex sh bubabababu str allophonic >>
+  )
+ >
+)
+ERROR:hc6006 --- <hc6006 print_form bubabababu >
+;Finally, remove the rules (msg 6506):
+(message (
+ <hc6506 rname rule3 > ) )
+(message (
+ <hc6506 rname rule4 > ) )
+;And try a different optional sequence (msg 6505):
+; i -> u / u ({u i}) __
+(message (
+ <hc6505 rname rule1 > ) )
+;Trace it
+(message (
+ <hc6535 rname rule1 > ) )
+;1x ambiguous:
+(pretty_print
+ <trace sh buuubuuu
+  cont (
+   <pua nm rule1
+	in  <lex sh buuubuuu str allophonic >
+	out <lex sh buiuuûiuuûbuiuuûiuuû str allophonic >>
+   <pa nm rule1
+	in  <lex id 27 sh buiibuii pos 'N' str allophonic >
+	out <lex id 27 sh buuubuuu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 27 sh buuubuuu pos 'N' str '*surface*' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;And remove the rule:
+(message (
+ <hc6506 rname rule1 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name high_v > ) )
+(message (
+ <hc6542 nat_class_name low_v > ) )
+(message (
+ <hc6542 nat_class_name rnd_v > ) )
+(message (
+ <hc6542 nat_class_name back_rnd > ) )
+(message (
+ <hc6542 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6542 nat_class_name cons > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\prule4.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\prule5.in > ) )
+;Test prules that affect more than one segment.
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name back_rnd > ) )
+(message (
+ <hc6541 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6541 nat_class_name t > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Try a prule that affects two segments at a time (msg 6505):
+; ii -> uu / u __
+(message (
+ <hc6505 rname rule1 > ) )
+;Trace it
+(message (
+ <hc6535 rname rule1 > ) )
+;Now we morph a word (1x ambiguous):
+(pretty_print
+ <trace sh buuubuuu
+  cont (
+   <pua nm rule1
+	in  <lex sh buuubuuu str allophonic >
+	out <lex sh buiuuûiuuûbuiuuûiuuû str allophonic >>
+   <pa nm rule1
+	in  <lex id 27 sh buiibuii pos 'N' str allophonic >
+	out <lex id 27 sh buuubuuu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 27 sh buuubuuu pos 'N' str '*surface*' > ) )
+;Now we add another rule: t --> 0 / u__u.  The purpose is to ensure we
+; correctly treat the target of rule1 when there's an "optional" segment
+; in between
+(message (
+ <hc6505 rname rule2 > ) )
+(pretty_print
+ <trace sh buuubuuu
+  cont (
+   <pua nm rule1
+	in  <lex sh bututubututu str allophonic >
+	out <lex sh butiuuûtiuuûbutiuuûtiuuû str allophonic >>
+   <pa nm rule1
+	in  <lex id 27 sh buiibuii pos 'N' str allophonic >
+	out <lex id 27 sh buuubuuu pos 'N' str allophonic >>
+   <pa nm rule1
+	in  <lex id 28 sh buitibuiti pos 'N' str allophonic >
+	out <lex id 28 sh buitibuiti pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 27 sh buuubuuu pos 'N' str '*surface*' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+(message (
+ <hc6506 rname rule1 > ) )
+(message (
+ <hc6506 rname rule2 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name high_v > ) )
+(message (
+ <hc6542 nat_class_name back_rnd > ) )
+(message (
+ <hc6542 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6542 nat_class_name t > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\prule5.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\prule6.in > ) )
+;Test interaction with boundary markers and morphosyntactic info.
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name vowel > ) )
+(message (
+ <hc6541 nat_class_name cons > ) )
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name back_v > ) )
+(message (
+ <hc6541 nat_class_name unrnd_v > ) )
+(message (
+ <hc6541 nat_class_name low_unrnd > ) )
+(message (
+ <hc6541 nat_class_name back_rnd > ) )
+(message (
+ <hc6541 nat_class_name unback_unrnd > ) )
+(message (
+ <hc6541 nat_class_name low_back > ) )
+(message (
+ <hc6541 nat_class_name unvd_unasp > ) )
+(message (
+ <hc6541 nat_class_name asp > ) )
+(message (
+ <hc6541 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6541 nat_class_name unback_unrnd_v > ) )
+(message (
+ <hc6541 nat_class_name bilab_cons > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;First test rules that require boundary markers.
+; i -> u / u + __
+(message (
+ <hc6505 rname rule1 > ) )
+;Trace it
+(message (
+ <hc6535 rname rule1 > ) )
+;Now we morph a word (1x ambiguous, but we should find two underlying forms during anal):
+(pretty_print
+ <trace sh buub
+  cont (
+   <pua nm rule1
+	in  <lex sh buub str morphophonemic >
+	out <lex sh buiuuûb str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 30 sh bu+ib pos 'N' str morphophonemic >
+	out <lex id 30 sh bu+ub pos 'N' str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 31 sh buib pos 'N' str morphophonemic >
+	out <lex id 31 sh buib pos 'N' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 30 sh buub pos 'N' str '*surface*' > ) )
+;Mirror image rule (except the Vs are reversed, so we use same lex entry):
+; u -> i / __ + i
+(message (
+ <hc6504 rname rule1 > ) )
+;Should be unambiguous:
+(pretty_print
+ <trace sh biib
+  cont (
+   <pua nm rule1
+	in  <lex sh biib str morphophonemic >
+	out <lex sh biuuûib str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 30 sh bu+ib pos 'N' str morphophonemic >
+	out <lex id 30 sh bi+ib pos 'N' str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 31 sh buib pos 'N' str morphophonemic >
+	out <lex id 31 sh buib pos 'N' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 30 sh biib pos 'N' str '*surface*' > ) )
+;Now test rules that don't refer to bdry markers, to ensure they will work despite
+; bdry markers in lex entries:
+; i -> u / u __
+(message (
+ <hc6504 rname rule1 > ) )
+;Should be 2x ambiguous:
+(pretty_print
+ <trace sh buub
+  cont (
+   <pua nm rule1
+	in  <lex sh buub str morphophonemic >
+	out <lex sh buiuuûb str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 30 sh bu+ib pos 'N' str morphophonemic >
+	out <lex id 30 sh bu+ub pos 'N' str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 31 sh buib pos 'N' str morphophonemic >
+	out <lex id 31 sh buub pos 'N' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 30 sh buub pos 'N' str '*surface*' >
+ <lex id 31 sh buub pos 'N' str '*surface*' > ) )
+;Mirror image again:
+; u -> i / __ i
+(message (
+ <hc6504 rname rule1 > ) )
+;Should be 2x ambiguous:
+(pretty_print
+ <trace sh biib
+  cont (
+   <pua nm rule1
+	in  <lex sh biib str morphophonemic >
+	out <lex sh biuuûib str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 30 sh bu+ib pos 'N' str morphophonemic >
+	out <lex id 30 sh bi+ib pos 'N' str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 31 sh buib pos 'N' str morphophonemic >
+	out <lex id 31 sh biib pos 'N' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 30 sh biib pos 'N' str '*surface*' >
+ <lex id 31 sh biib pos 'N' str '*surface*' > ) )
+;Make sure deletion rules don't rm bdry markers:
+; i -> 0 / __ b
+(message (
+ <hc6504 rname rule1 > ) )
+; u -> a / __ + b  (note feeding by rule1)
+(message (
+ <hc6505 rname rule2 > ) )
+(message (
+ <hc6535 rname rule2 > ) )
+;Should be 1x ambiguous:
+(pretty_print
+ <trace sh bab
+  cont (
+   <pua nm rule2
+	in  <lex sh baa·b str morphophonemic >
+	out <lex sh baa·uob str morphophonemic >>
+   <pua nm rule1
+	in  <lex sh baa·uob str morphophonemic >
+	out <lex sh ibaa·uoib str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 30 sh bu+ib pos 'N' str morphophonemic >
+	out <lex id 30 sh bu+b pos 'N' str morphophonemic >>
+   <pa nm rule2
+	in  <lex id 30 sh bu+b pos 'N' str morphophonemic >
+	out <lex id 30 sh ba+b pos 'N' str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 31 sh buib pos 'N' str morphophonemic >
+	out <lex id 31 sh bub pos 'N' str morphophonemic >>
+   <pa nm rule2
+	in  <lex id 31 sh bub pos 'N' str morphophonemic >
+	out <lex id 31 sh bub pos 'N' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 30 sh bab pos 'N' str '*surface*' > ) )
+;Mirror image:
+; u -> 0 / b __
+(message (
+ <hc6504 rname rule1 > ) )
+; i -> a / b + __  (note feeding by rule1)
+(message (
+ <hc6504 rname rule2 > ) )
+;Should be 1x ambiguous:
+(pretty_print
+ <trace sh bab
+  cont (
+   <pua nm rule2
+	in  <lex sh baa·b str morphophonemic >
+	out <lex sh baa·ib str morphophonemic >>
+   <pua nm rule1
+	in  <lex sh baa·ib str morphophonemic >
+	out <lex sh buaa·ibu str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 30 sh bu+ib pos 'N' str morphophonemic >
+	out <lex id 30 sh b+ib pos 'N' str morphophonemic >>
+   <pa nm rule2
+	in  <lex id 30 sh b+ib pos 'N' str morphophonemic >
+	out <lex id 30 sh b+aa·b pos 'N' str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 31 sh buib pos 'N' str morphophonemic >
+	out <lex id 31 sh bib pos 'N' str morphophonemic >>
+   <pa nm rule2
+	in  <lex id 31 sh bib pos 'N' str morphophonemic >
+	out <lex id 31 sh bib pos 'N' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 30 sh bab pos 'N' str '*surface*' > ) )
+(message (
+ <hc6506 rname rule2 > ) )
+;Now test cases where the bdry marker is inside the target.  First load a rule which specifically
+; requires the bdry:
+; b+b -> p+p / V__V
+(message (
+ <hc6504 rname rule1 > ) )
+;Should find two lex entries, $ab+ba$ and $abba$, but only the former survives synthesis:
+(pretty_print
+ <trace sh appa
+  cont (
+   <pua nm rule1
+	in  <lex sh aa·ppaa· str morphophonemic >
+	out <lex sh aa·pbpbaa· str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 39 sh ab+ba pos 'V' str morphophonemic >
+	out <lex id 39 sh ap+pa pos 'V' str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 40 sh abba pos 'V' str morphophonemic >
+	out <lex id 40 sh abba pos 'V' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 39 sh appa pos 'V' str '*surface*' > ) )
+;Now modify the rule so it does NOT apply across "+":
+; bb -> pp / V__V
+(message (
+ <hc6504 rname rule1 > ) )
+;Trace it
+((
+ <hc6535 rname rule1 > ) )
+;Again, find same two lex entries, but this time only the latter survives synthesis:
+(pretty_print
+ <trace sh appa
+  cont (
+   <pua nm rule1
+	in  <lex sh aa·ppaa· str morphophonemic >
+	out <lex sh aa·pbpbaa· str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 39 sh ab+ba pos 'V' str morphophonemic >
+	out <lex id 39 sh ab+ba pos 'V' str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 40 sh abba pos 'V' str morphophonemic >
+	out <lex id 40 sh appa pos 'V' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 40 sh appa pos 'V' str '*surface*' > ) )
+;Try a rule that calls for a morpheme bdry that doesn't exist in
+; the rule's stratum (we do this by specifying the wrong ctable for
+; the stratum; this test was added because I thought I got just such an error):
+(message (
+ <hc6504 rname rule1 > ) )
+;Try it; the rule should unapply during analysis, but not apply
+; during synthesis:
+(pretty_print
+ <trace sh pHipH
+  cont (
+   <pua nm rule1
+	in  <lex sh pHipH str allophonic >
+	out <lex sh ppHippH str allophonic >>
+   <pa nm rule1
+	in  <lex id 41 sh pip pos 'V' str allophonic >
+	out <lex id 41 sh pip pos 'V' str allophonic >>
+  )
+ >
+)
+ERROR:hc6006 --- <hc6006 print_form pHipH >
+;Now test for prule application limited to a particular POS (like Axininca Campa).
+; 0 --> ta / #_CV#, where word is a noun
+(message (
+ <hc6504 rname rule1 > ) )
+;Test it.  First one should give noun:
+(pretty_print
+ <trace sh taba
+  cont (
+   <pua nm rule1
+	in  <lex sh taba str allophonic >
+	out <lex sh taba str allophonic >>
+   <pa nm rule1
+	in  <lex id pos1 sh ba pos 'V' str allophonic rf (latinate ) >
+	out <lex id pos1 sh ba pos 'V' str allophonic rf (latinate ) >>
+   <pa nm rule1
+	in  <lex id pos2 sh ba pos 'N' str allophonic rf (germanic ) >
+	out <lex id pos2 sh taba pos 'N' str allophonic rf (germanic ) >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id pos2 sh taba pos 'N' str '*surface*' rf (germanic ) > ) )
+;...and second should give verb:
+(pretty_print
+ <trace sh ba
+  cont (
+   <pua nm rule1
+	in  <lex sh ba str allophonic >
+	out <lex sh ba str allophonic >>
+   <pa nm rule1
+	in  <lex id pos1 sh ba pos 'V' str allophonic rf (latinate ) >
+	out <lex id pos1 sh ba pos 'V' str allophonic rf (latinate ) >>
+   <pa nm rule1
+	in  <lex id pos2 sh ba pos 'N' str allophonic rf (germanic ) >
+	out <lex id pos2 sh taba pos 'N' str allophonic rf (germanic ) >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id pos1 sh ba pos 'V' str '*surface*' rf (latinate ) > ) )
+;Now test for prule application requiring a particular rule feature:
+; 0 --> ta / #_CV#, where word has RF 'latinate'
+(message (
+ <hc6504 rname rule1 > ) )
+;Test it.  Should get just the one with ID= pos1:
+(pretty_print
+ <trace sh taba
+  cont (
+   <pua nm rule1
+	in  <lex sh taba str allophonic >
+	out <lex sh taba str allophonic >>
+   <pa nm rule1
+	in  <lex id pos1 sh ba pos 'V' str allophonic rf (latinate ) >
+	out <lex id pos1 sh taba pos 'V' str allophonic rf (latinate ) >>
+   <pa nm rule1
+	in  <lex id pos2 sh ba pos 'N' str allophonic rf (germanic ) >
+	out <lex id pos2 sh ba pos 'N' str allophonic rf (germanic ) >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id pos1 sh taba pos 'V' str '*surface*' rf (latinate ) > ) )
+;...and for prule application prohibiting a particular rule feature:
+; 0 --> ta / #_CV#, where word does NOT have RF 'latinate'
+(message (
+ <hc6504 rname rule1 > ) )
+;Test it.  Should get just the one with ID= pos2:
+(pretty_print
+ <trace sh taba
+  cont (
+   <pua nm rule1
+	in  <lex sh taba str allophonic >
+	out <lex sh taba str allophonic >>
+   <pa nm rule1
+	in  <lex id pos1 sh ba pos 'V' str allophonic rf (latinate ) >
+	out <lex id pos1 sh ba pos 'V' str allophonic rf (latinate ) >>
+   <pa nm rule1
+	in  <lex id pos2 sh ba pos 'N' str allophonic rf (germanic ) >
+	out <lex id pos2 sh taba pos 'N' str allophonic rf (germanic ) >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id pos2 sh taba pos 'N' str '*surface*' rf (germanic ) > ) )
+;Done, clear the rules:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+(message (
+ <hc6506 rname rule1 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name vowel > ) )
+(message (
+ <hc6542 nat_class_name cons > ) )
+(message (
+ <hc6542 nat_class_name high_v > ) )
+(message (
+ <hc6542 nat_class_name back_v > ) )
+(message (
+ <hc6542 nat_class_name unrnd_v > ) )
+(message (
+ <hc6542 nat_class_name low_unrnd > ) )
+(message (
+ <hc6542 nat_class_name back_rnd > ) )
+(message (
+ <hc6542 nat_class_name unback_unrnd > ) )
+(message (
+ <hc6542 nat_class_name low_back > ) )
+(message (
+ <hc6542 nat_class_name unvd_unasp > ) )
+(message (
+ <hc6542 nat_class_name asp > ) )
+(message (
+ <hc6542 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6542 nat_class_name unback_unrnd_v > ) )
+(message (
+ <hc6542 nat_class_name bilab_cons > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\prule6.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\prule7.in > ) )
+;Rules that have a feature (not necessarily with same value) in common between their LHS and RHS
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name vowel > ) )
+(message (
+ <hc6541 nat_class_name vd_lab_fric > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;ff rule is based loosely on Finnish weakening:
+; p --> v / V __ V (but /b/ doesn't change)
+(message (
+ <hc6505 rname rule1 > ) )
+;Trace it (msg m6535):
+(message (
+ <hc6535 rname rule1 > ) )
+(pretty_print
+ <trace sh buvu
+  cont (
+   <pua nm rule1
+	in  <lex sh buvu str allophonic >
+	out <lex sh bupbmfvu str allophonic >>
+   <pa nm rule1
+	in  <lex id 46 sh bupu pos 'N' str allophonic >
+	out <lex id 46 sh buvu pos 'N' str allophonic >>
+   <pa nm rule1
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 46 sh buvu pos 'N' str '*surface*' > ) )
+;Same rule, but use a "seg" on RHS, instead of a natural class:
+(message (
+ <hc6504 rname rule1 > ) )
+(pretty_print
+ <trace sh buvu
+  cont (
+   <pua nm rule1
+	in  <lex sh buvu str allophonic >
+	out <lex sh bupbmfvu str allophonic >>
+   <pa nm rule1
+	in  <lex id 46 sh bupu pos 'N' str allophonic >
+	out <lex id 46 sh buvu pos 'N' str allophonic >>
+   <pa nm rule1
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 46 sh buvu pos 'N' str '*surface*' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+(message (
+ <hc6506 rname rule1 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name vowel > ) )
+(message (
+ <hc6542 nat_class_name vd_lab_fric > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\prule7.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\vrule1.in > ) )
+;A file of rules using alpha variables
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name cons > ) )
+(message (
+ <hc6541 nat_class_name nasal_cons > ) )
+(message (
+ <hc6541 nat_class_name null > ) )
+(message (
+ <hc6541 nat_class_name voiceless_stop > ) )
+(message (
+ <hc6541 nat_class_name k > ) )
+(message (
+ <hc6541 nat_class_name g > ) )
+(message (
+ <hc6541 nat_class_name asp > ) )
+(message (
+ <hc6541 nat_class_name unasp > ) )
+(message (
+ <hc6541 nat_class_name 'V' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+; [V +high] -> [alpha back beta round] / [V alpha back beta round] C __
+(message (
+ <hc6505 rname var_rule1 > ) )
+(message (
+ <hc6535 rname var_rule1 > ) )
+;First one should be 2x ambiguous:
+(pretty_print
+ <trace sh bububu
+  cont (
+   <pua nm var_rule1
+	in  <lex sh bububu str morphophonemic >
+	out <lex sh bubiuuûbiuuû str morphophonemic >>
+   <pa nm var_rule1
+	in  <lex id 42 sh bubibi pos 'V' str morphophonemic >
+	out <lex id 42 sh bububu pos 'V' str morphophonemic >>
+   <pa nm var_rule1
+	in  <lex id 43 sh bubibu pos 'V' str morphophonemic >
+	out <lex id 43 sh bububu pos 'V' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 42 sh bububu pos 'V' str '*surface*' >
+ <lex id 43 sh bububu pos 'V' str '*surface*' > ) )
+; [C +nasal] -> [alpha poa] / __ [C alpha poa]
+(message (
+ <hc6504 rname var_rule1 > ) )
+(pretty_print
+ <trace sh mbindiêg
+  cont (
+   <pua nm var_rule1
+	in  <lex sh mbindiêg str morphophonemic >
+	out <lex sh mnêbimnêdimnêg str morphophonemic >>
+   <pa nm var_rule1
+	in  <lex id 45 sh nbinding pos 'V' str morphophonemic >
+	out <lex id 45 sh mbindiêg pos 'V' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 45 sh mbindiêg pos 'V' str '*surface*' > ) )
+;Now test alpha vars in LHS:
+; [C -vd -cont alpha poa] --> [+asp] / [C -vd -cont alpha poa] V __
+;       --> [-asp] /
+;(Nobody said these rules have to be linguistically plausible!)
+(message (
+ <hc6504 rname var_rule1 > ) )
+(pretty_print
+ <trace sh pipH
+  cont (
+   <pua nm var_rule1
+	in  <lex sh pipH str allophonic >
+	out <lex sh ppHippH str allophonic >>
+   <pa nm var_rule1
+	in  <lex id 41 sh pip pos 'V' str allophonic >
+	out <lex id 41 sh pipH pos 'V' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 41 sh pipH pos 'V' str '*surface*' > ) )
+;Test alpha vars in environ only (not in LHS or RHS):
+; 0 --> f / [V a high b back c round] __ [V a high b back c round]
+(message (
+ <hc6504 rname var_rule1 > ) )
+;Expect no ambiguity:
+(pretty_print
+ <trace sh buifibuifi
+  cont (
+   <pua nm var_rule1
+	in  <lex sh buifibuifi str allophonic >
+	out <lex sh buifibuifi str allophonic >>
+   <pa nm var_rule1
+	in  <lex id 27 sh buiibuii pos 'N' str allophonic >
+	out <lex id 27 sh buifibuifi pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 27 sh buifibuifi pos 'N' str '*surface*' > ) )
+;Exercise error msg 6053.  We "cheat" here by asking the rule to do s.t.
+; that it can't do: enforce agreement in aspiration between an epenthesized
+; stop and a neighbor that isn't specified for the feature [aspirated].
+; When it comes time for outputting the result, this *should* result in
+; an error msg that the epenthesized stop isn't specified for this feature.
+; 0 --> [voiceless velar stop a asp] / [g a asp] __ #
+(message (
+ <hc6504 rname var_rule1 > ) )
+;Expect error msg 6053:
+(pretty_print
+ <trace sh sagk
+  cont (
+   <pua nm var_rule1
+	in  <lex sh saa·gk str morphophonemic >
+	out <lex sh saa·gk str morphophonemic >>
+   <pa nm var_rule1
+	in  <lex id 32 sh sag gl sag pos 'V' str morphophonemic >
+ERROR:hc6053 --- <hc6053 rname var_rule1 fname asp >
+	out <lex id 32 sh sag gl sag pos 'V' str morphophonemic >>
+  )
+ >
+)
+ERROR:hc6006 --- <hc6006 print_form sagk >
+((
+ <hc6545  > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+(message (
+ <hc6506 rname var_rule1 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name high_v > ) )
+(message (
+ <hc6542 nat_class_name cons > ) )
+(message (
+ <hc6542 nat_class_name voiceless_stop > ) )
+(message (
+ <hc6542 nat_class_name nasal_cons > ) )
+(message (
+ <hc6542 nat_class_name null > ) )
+(message (
+ <hc6542 nat_class_name asp > ) )
+(message (
+ <hc6542 nat_class_name unasp > ) )
+(message (
+ <hc6542 nat_class_name k > ) )
+(message (
+ <hc6542 nat_class_name g > ) )
+(message (
+ <hc6542 nat_class_name 'V' > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\vrule1.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\epenth.in > ) )
+;Test rules of epenthesis
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name high_front_unrnd_v > ) )
+(message (
+ <hc6541 nat_class_name high_back_rnd_v > ) )
+(message (
+ <hc6541 nat_class_name high_back_rnd > ) )
+(message (
+ <hc6541 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6541 nat_class_name 'C' > ) )
+(message (
+ <hc6541 nat_class_name 'V' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Load first rule (msg 6505)
+;0 -> i / {i, u}_
+(message (
+ <hc6505 rname rule4 > ) )
+;And trace it (msg 6535):
+(message (
+ <hc6535 rname rule4 > ) )
+;First one should be unambiguous:
+(pretty_print
+ <trace sh buibui
+  cont (
+   <pua nm rule4
+	in  <lex sh buibui str allophonic >
+	out <lex sh buibui str allophonic >>
+   <pa nm rule4
+	in  <lex id 24 sh bubui pos 'N' str allophonic >
+	out <lex id 24 sh buibuiii pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 25 sh buibu pos 'N' str allophonic >
+	out <lex id 25 sh buiiibui pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 26 sh buibui pos 'N' str allophonic >
+	out <lex id 26 sh buiiibuiii pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh buibui pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 19 sh buibui pos 'N' str '*surface*' > ) )
+;Try mirror image of this rule (we also do it with the seg "i", rather than with
+; the class high_front_unrnd_v, just to ensure that works OK):
+;0 -> i / _{i u}
+(message (
+ <hc6504 rname rule4 > ) )
+(pretty_print
+ <trace sh biubiu
+  cont (
+   <pua nm rule4
+	in  <lex sh biubiu str allophonic >
+	out <lex sh biubiu str allophonic >>
+   <pa nm rule4
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh biubiu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 19 sh biubiu pos 'N' str '*surface*' > ) )
+;Try epenthesis at beginning of word
+;0 -> i /#_C
+(message (
+ <hc6504 rname rule4 > ) )
+(pretty_print
+ <trace sh ipHit
+  cont (
+   <pua nm rule4
+	in  <lex sh ipHit str allophonic >
+	out <lex sh ipHit str allophonic >>
+   <pa nm rule4
+	in  <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
+	out <lex id 1 sh ipHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 1 sh ipHit pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
+;And mirror image (epenthesis at end of word):
+;0 -> i / C_#
+(message (
+ <hc6504 rname rule4 > ) )
+(pretty_print
+ <trace sh pHiti
+  cont (
+   <pua nm rule4
+	in  <lex sh pHiti str allophonic >
+	out <lex sh pHiti str allophonic >>
+   <pa nm rule4
+	in  <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >
+	out <lex id 1 sh pHiti pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 1 sh pHiti pos 'N' str '*surface*' hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > ) )
+;And with an environ both left and right:
+;0 -> i / C _ u
+(message (
+ <hc6504 rname rule4 > ) )
+(pretty_print
+ <trace sh biubiu
+  cont (
+   <pua nm rule4
+	in  <lex sh biubiu str morphophonemic >
+	out <lex sh biubiu str morphophonemic >>
+   <pa nm rule4
+	in  <lex id 19 sh b+ubu pos 'N' str morphophonemic >
+	out <lex id 19 sh b+iubiu pos 'N' str morphophonemic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 19 sh biubiu pos 'N' str '*surface*' > ) )
+;Try epenthesis with alpha variables:
+;0 -> i / i __
+;     u / u __
+(message (
+ <hc6504 rname rule4 > ) )
+;Should be unambiguous:
+(pretty_print
+ <trace sh biibuu
+  cont (
+   <pua nm rule4
+	in  <lex sh biibuu str allophonic >
+	out <lex sh biibuu str allophonic >>
+   <pa nm rule4
+	in  <lex id 18 sh bibu pos 'N' str allophonic >
+	out <lex id 18 sh biibuu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 18 sh biibuu pos 'N' str '*surface*' > ) )
+;Now try epenthesizing more than one seg at a time:
+;0 -> ii / {i, u}_
+(message (
+ <hc6504 rname rule4 > ) )
+;First one should be unambiguous:
+(pretty_print
+ <trace sh biiibuii
+  cont (
+   <pua nm rule4
+	in  <lex sh biiibuii str allophonic >
+	out <lex sh biiibuii str allophonic >>
+   <pa nm rule4
+	in  <lex id 18 sh bibu pos 'N' str allophonic >
+	out <lex id 18 sh biiibuii pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 18 sh biiibuii pos 'N' str '*surface*' > ) )
+;Now test error msg 6309 (rule trying to epenthesize too many segs). The rule:
+;0 --> i / # __
+(message (
+ <hc6504 rname rule4 > ) )
+;Turn off tracing (lest we be overwhelmed):
+(message (
+ <hc6532 rname rule4 > ) )
+;Parse, expect msg 6309:
+ERROR:hc6309 --- <hc6309 rname rule4 pshape iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiipHit max_num 256 >
+ERROR:hc6006 --- <hc6006 print_form ipHit >
+;Remove the rule (msg 6506):
+(message (
+ <hc6506 rname rule4 > ) )
+;Finally, test the morpher's treatment of "optional" segs.  There are two rules, in counterbleeding order.
+;The first assimilates a vowel to an immediately preceding /u/:
+; V -> [+high +back +round] / [V +high +back +round] __
+(message (
+ <hc6505 rname rule1 > ) )
+;The second (ordered after the first) epenthesizes a /t/ between two adjacent vowels:
+;0 -> t / V _ V
+(message (
+ <hc6505 rname rule2 > ) )
+(message (
+ <hc6535 rname rule1 > ) )
+((
+ <hc6535 rname rule2 > ) )
+;Morph, should get lex entry "buibu":
+(pretty_print
+ <trace sh butubu
+  cont (
+   <pua nm rule2
+	in  <lex sh butubu str allophonic >
+	out <lex sh butubu str allophonic >>
+   <pua nm rule1
+	in  <lex sh butubu str allophonic >
+	out <lex sh butiuouûbu str allophonic >>
+   <pa nm rule1
+	in  <lex id 25 sh buibu pos 'N' str allophonic >
+	out <lex id 25 sh buubu pos 'N' str allophonic >>
+   <pa nm rule2
+	in  <lex id 25 sh buubu pos 'N' str allophonic >
+	out <lex id 25 sh butubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 25 sh butubu pos 'N' str '*surface*' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Remove the rules (msg 6506):
+(message (
+ <hc6506 rname rule1 > ) )
+(message (
+ <hc6506 rname rule2 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name high_v > ) )
+(message (
+ <hc6542 nat_class_name high_front_unrnd_v > ) )
+(message (
+ <hc6542 nat_class_name high_back_rnd_v > ) )
+(message (
+ <hc6542 nat_class_name high_back_rnd > ) )
+(message (
+ <hc6542 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6542 nat_class_name 'C' > ) )
+(message (
+ <hc6542 nat_class_name 'V' > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\epenth.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\delet.in > ) )
+;Test rules of deletion
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name high_front_unrnd_v > ) )
+(message (
+ <hc6541 nat_class_name high_back_rnd_v > ) )
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name 'C' > ) )
+(message (
+ <hc6541 nat_class_name 'V' > ) )
+(message (
+ <hc6541 nat_class_name asp > ) )
+(message (
+ <hc6541 nat_class_name voiced > ) )
+(message (
+ <hc6541 nat_class_name non_cons > ) )
+;Don't quit on errors:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Load first rule (msg 6505)
+;i -> 0 / {i, u} __
+(message (
+ <hc6505 rname rule4 > ) )
+;And trace it (msg 6535):
+(message (
+ <hc6535 rname rule4 > ) )
+;And test (4x ambig):
+(pretty_print
+ <trace sh bubu
+  cont (
+   <pua nm rule4
+	in  <lex sh bubu str allophonic >
+	out <lex sh buibui str allophonic >>
+   <pa nm rule4
+	in  <lex id 24 sh bubui pos 'N' str allophonic >
+	out <lex id 24 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 25 sh buibu pos 'N' str allophonic >
+	out <lex id 25 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 26 sh buibui pos 'N' str allophonic >
+	out <lex id 26 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 24 sh bubu pos 'N' str '*surface*' >
+ <lex id 25 sh bubu pos 'N' str '*surface*' >
+ <lex id 26 sh bubu pos 'N' str '*surface*' >
+ <lex id 19 sh bubu pos 'N' str '*surface*' > ) )
+;Set *del_re_apps* to 1 and morph again; should be 5x ambiguous:
+(message (
+ <hc6502 var_name '*del_re_apps*' > ) )
+(pretty_print
+ <trace sh bubu
+  cont (
+   <pua nm rule4
+	in  <lex sh bubu str allophonic >
+	out <lex sh buiiibuiii str allophonic >>
+   <pa nm rule4
+	in  <lex id 24 sh bubui pos 'N' str allophonic >
+	out <lex id 24 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 25 sh buibu pos 'N' str allophonic >
+	out <lex id 25 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 26 sh buibui pos 'N' str allophonic >
+	out <lex id 26 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 27 sh buiibuii pos 'N' str allophonic >
+	out <lex id 27 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 24 sh bubu pos 'N' str '*surface*' >
+ <lex id 25 sh bubu pos 'N' str '*surface*' >
+ <lex id 26 sh bubu pos 'N' str '*surface*' >
+ <lex id 27 sh bubu pos 'N' str '*surface*' >
+ <lex id 19 sh bubu pos 'N' str '*surface*' > ) )
+;Revise the rule
+;i -> 0 / __ C
+(message (
+ <hc6504 rname rule4 > ) )
+;Test (2x ambiguity):
+(pretty_print
+ <trace sh bubu
+  cont (
+   <pua nm rule4
+	in  <lex sh bubu str allophonic >
+	out <lex sh iibuiibu str allophonic >>
+   <pa nm rule4
+	in  <lex id 25 sh buibu pos 'N' str allophonic >
+	out <lex id 25 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 29 sh iibubu pos 'N' str allophonic >
+	out <lex id 29 sh ibubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 25 sh bubu pos 'N' str '*surface*' >
+ <lex id 19 sh bubu pos 'N' str '*surface*' > ) )
+;Revise to delete two segs at once, but first set *del_re_apps* back to 0:
+(message (
+ <hc6502 var_name '*del_re_apps*' > ) )
+;ii -> 0 / __ C
+(message (
+ <hc6504 rname rule4 > ) )
+;Test (2x ambiguity):
+(pretty_print
+ <trace sh bubu
+  cont (
+   <pua nm rule4
+	in  <lex sh bubu str allophonic >
+	out <lex sh iibuiibu str allophonic >>
+   <pa nm rule4
+	in  <lex id 25 sh buibu pos 'N' str allophonic >
+	out <lex id 25 sh buibu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 29 sh iibubu pos 'N' str allophonic >
+	out <lex id 29 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 29 sh bubu pos 'N' str '*surface*' >
+ <lex id 19 sh bubu pos 'N' str '*surface*' > ) )
+;Revise the rule again, to see how it behaves in a different place in the word:
+;ii -> 0 / u __
+(message (
+ <hc6504 rname rule4 > ) )
+;Test (2x ambiguity):
+(pretty_print
+ <trace sh bubu
+  cont (
+   <pua nm rule4
+	in  <lex sh bubu str allophonic >
+	out <lex sh buiibuii str allophonic >>
+   <pa nm rule4
+	in  <lex id 24 sh bubui pos 'N' str allophonic >
+	out <lex id 24 sh bubui pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 25 sh buibu pos 'N' str allophonic >
+	out <lex id 25 sh buibu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 26 sh buibui pos 'N' str allophonic >
+	out <lex id 26 sh buibui pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 27 sh buiibuii pos 'N' str allophonic >
+	out <lex id 27 sh bubu pos 'N' str allophonic >>
+   <pa nm rule4
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 27 sh bubu pos 'N' str '*surface*' >
+ <lex id 19 sh bubu pos 'N' str '*surface*' > ) )
+;The ff. two unnatural rules will test err msg 6052 by deleting all segs:
+; b --> 0 / # __ +
+; (Note that this rule also tests the use of "seg"s as opposed to nat classes
+; in the LHS or deletion rules.)
+(message (
+ <hc6504 rname rule4 > ) )
+; ubu --> 0 / + __ #
+(message (
+ <hc6505 rname rule5 > ) )
+;While we're at it, we want to test that a prule won't run into some problem
+; if it tries to apply to a pshape which consists of only a bdry marker
+; (Note that the bdry marker won't be erased from the pshape until the end of
+; the stratum, after the prule has had a chance to apply.)
+; t --> [+asp] / [-cons] __
+(message (
+ <hc6505 rname rule1 > ) )
+(message (
+ <hc6539  > ) )
+;Test, expect err msg 6052:
+(pretty_print
+ <trace sh b
+  cont (
+   <pua nm rule1
+	in  <lex sh b str morphophonemic >
+	out <lex sh b str morphophonemic >>
+   <pua nm rule5
+	in  <lex sh b str morphophonemic >
+	out <lex sh bubu str morphophonemic >>
+   <pua nm rule4
+	in  <lex sh bubu str morphophonemic >
+	out <lex sh bbubu str morphophonemic >>
+   <pa nm rule4
+	in  <lex id 19 sh b+ubu pos 'N' str morphophonemic >
+	out <lex id 19 sh +ubu pos 'N' str morphophonemic >>
+   <pa nm rule5
+	in  <lex id 19 sh +ubu pos 'N' str morphophonemic >
+	out <lex id 19 sh + pos 'N' str morphophonemic >>
+   <pa nm rule1
+	in  <lex id 19 sh + pos 'N' str morphophonemic >
+	out <lex id 19 sh + pos 'N' str morphophonemic >>
+ERROR:hc6052 --- <hc6052  >
+  )
+ >
+)
+ERROR:hc6006 --- <hc6006 print_form b >
+;Now modify the mrules so they don't depend on the bdry marker:
+; b --> 0 / # __
+(message (
+ <hc6504 rname rule4 > ) )
+; ubu --> 0 / __ #
+(message (
+ <hc6504 rname rule5 > ) )
+(message (
+ <hc6504 rname rule1 > ) )
+;Test, expect err msg 6051:
+(pretty_print
+ <trace sh b
+  cont (
+   <pua nm rule1
+	in  <lex sh b str allophonic >
+	out <lex sh b str allophonic >>
+   <pua nm rule5
+	in  <lex sh b str allophonic >
+	out <lex sh bubi str allophonic >>
+   <pua nm rule4
+	in  <lex sh bubi str allophonic >
+	out <lex sh bbubi str allophonic >>
+   <pa nm rule4
+	in  <lex id 17 sh bubi pos 'N' str allophonic >
+	out <lex id 17 sh ubi pos 'N' str allophonic >>
+   <pa nm rule5
+	in  <lex id 17 sh ubi pos 'N' str allophonic >
+ERROR:hc6051 --- <hc6051 rname rule5 >
+  >
+ )
+>
+)
+ERROR:hc6006 --- <hc6006 print_form b >
+;Remove one of the rules:
+(message (
+ <hc6506 rname rule1 > ) )
+;Test deletion rule that uses alpha variables.  We first load a rule that
+; will uninstantiate one of the features that the next rule will look to
+; for agreement:
+; C --> [+vd] / V __ V
+(message (
+ <hc6504 rname rule4 > ) )
+;And now the alpha var deletion rule (a degemination rule):
+; [C a poa b vd c cont d nasal] --> 0 / __ [C a poa b vd c cont d nasal]
+(message (
+ <hc6504 rname rule5 > ) )
+;Morph, expect 2x ambiguity:
+(pretty_print
+ <trace sh aba
+  cont (
+   <pua nm rule4
+	in  <lex sh aba str allophonic >
+	out <lex sh appHba str allophonic >>
+   <pua nm rule5
+	in  <lex sh aa·pbaa· str morphophonemic >
+	out <lex sh aa·pbpbaa· str morphophonemic >>
+   <pa nm rule5
+	in  <lex id 39 sh ab+ba pos 'V' str morphophonemic >
+	out <lex id 39 sh a+ba pos 'V' str morphophonemic >>
+   <pa nm rule4
+	in  <lex id 39 sh aba pos 'V' str allophonic >
+	out <lex id 39 sh aba pos 'V' str allophonic >>
+   <pa nm rule5
+	in  <lex id 40 sh abba pos 'V' str morphophonemic >
+	out <lex id 40 sh aba pos 'V' str morphophonemic >>
+   <pa nm rule4
+	in  <lex id 40 sh aba pos 'V' str allophonic >
+	out <lex id 40 sh aba pos 'V' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 39 sh aba pos 'V' str '*surface*' >
+ <lex id 40 sh aba pos 'V' str '*surface*' > ) )
+;Remove the remaining rules:
+(message (
+ <hc6506 rname rule4 > ) )
+(message (
+ <hc6506 rname rule5 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name high_front_unrnd_v > ) )
+(message (
+ <hc6542 nat_class_name high_back_rnd_v > ) )
+(message (
+ <hc6542 nat_class_name high_v > ) )
+(message (
+ <hc6542 nat_class_name 'C' > ) )
+(message (
+ <hc6542 nat_class_name 'V' > ) )
+(message (
+ <hc6542 nat_class_name asp > ) )
+(message (
+ <hc6542 nat_class_name voiced > ) )
+(message (
+ <hc6542 nat_class_name non_cons > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\delet.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\disjunc.in > ) )
+;Tests of simple disjunctive rules
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name stop > ) )
+(message (
+ <hc6541 nat_class_name asp > ) )
+(message (
+ <hc6541 nat_class_name unasp > ) )
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name high_front_v > ) )
+(message (
+ <hc6541 nat_class_name back_rnd > ) )
+(message (
+ <hc6541 nat_class_name back_unrnd > ) )
+(message (
+ <hc6541 nat_class_name front_rnd > ) )
+(message (
+ <hc6541 nat_class_name front_unrnd > ) )
+(message (
+ <hc6541 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6541 nat_class_name back_unrnd_v > ) )
+(message (
+ <hc6541 nat_class_name front_rnd_v > ) )
+(message (
+ <hc6541 nat_class_name front_unrnd_v > ) )
+(message (
+ <hc6541 nat_class_name 'C' > ) )
+(message (
+ <hc6541 nat_class_name 'V' > ) )
+(message (
+ <hc6541 nat_class_name vd > ) )
+(message (
+ <hc6541 nat_class_name p > ) )
+(message (
+ <hc6541 nat_class_name voiceless_stop > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Load a simple rule:
+; p -> ph /#_
+;   -> p /
+(message (
+ <hc6505 rname disrule1 > ) )
+;Trace it:
+(message (
+ <hc6535 rname disrule1 > ) )
+;Morph; one analysis:
+(pretty_print
+ <trace sh pHip
+  cont (
+   <pua nm disrule1
+	in  <lex sh pHip str allophonic >
+	out <lex sh ppHippH str allophonic >>
+   <pa nm disrule1
+	in  <lex id 41 sh pip pos 'V' str allophonic >
+	out <lex id 41 sh pHip pos 'V' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 41 sh pHip pos 'V' str '*surface*' > ) )
+;A vowel harmony rule, with no real elsewhere case, but we can construct a simplified rule for anal:
+;[V +high] -> [+round +back] / [V +round +back] (C [V +high -back])* C __
+;    -> [+round -back] / [V +round -back] (C [V +high -back])* C __
+;    -> [-round +back] / [V -round +back] (C [V +high -back])* C __
+;    -> [-round -back] / [V -round -back] (C [V +high -back])* C __
+(message (
+ <hc6504 rname disrule1 > ) )
+;Morph; should have two analyses:
+(pretty_print
+ <trace sh bububu
+  cont (
+   <pua nm disrule1
+	in  <lex sh bububu str allophonic >
+	out <lex sh bubiuuûbiuuû str allophonic >>
+   <pa nm disrule1
+	in  <lex id 42 sh bubibi pos 'V' str allophonic >
+	out <lex id 42 sh bububu pos 'V' str allophonic >>
+   <pa nm disrule1
+	in  <lex id 43 sh bubibu pos 'V' str allophonic >
+	out <lex id 43 sh bububu pos 'V' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 42 sh bububu pos 'V' str '*surface*' >
+ <lex id 43 sh bububu pos 'V' str '*surface*' > ) )
+;Now we load a rule for which we can't build a simple rule for anal (because
+; it relies on differing word bdry conditions):
+; {p t k} -> {ph th kh} /#_
+;   -> {p t k} / _#
+(message (
+ <hc6504 rname disrule1 > ) )
+;Morph; unambiguous:
+(pretty_print
+ <trace sh pHip
+  cont (
+   <pua nm disrule1
+	in  <lex sh pHip str allophonic >
+	out <lex sh ppHippH str allophonic >>
+   <pa nm disrule1
+	in  <lex id 41 sh pip pos 'V' str allophonic >
+	out <lex id 41 sh pHip pos 'V' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 41 sh pHip pos 'V' str '*surface*' > ) )
+;Now we load a rule whose features on the LHS and RHS are not disjoint
+; p -> b / V__
+;   -> ph / #__
+(message (
+ <hc6504 rname disrule1 > ) )
+(message (
+ <hc6535 rname disrule1 > ) )
+;Ambiguity 2x (because there's a "bubu" in the lexicon, as well as a "bupu"):
+(pretty_print
+ <trace sh bubu
+  cont (
+   <pua nm disrule1
+	in  <lex sh bubu str allophonic >
+	out <lex sh buppHbu str allophonic >>
+   <pa nm disrule1
+	in  <lex id 46 sh bupu pos 'N' str allophonic >
+	out <lex id 46 sh bubu pos 'N' str allophonic >>
+   <pa nm disrule1
+	in  <lex id 19 sh bubu pos 'N' str allophonic >
+	out <lex id 19 sh bubu pos 'N' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 46 sh bubu pos 'N' str '*surface*' >
+ <lex id 19 sh bubu pos 'N' str '*surface*' > ) )
+;Now test a rule that applies left-to-right, and where the second clause
+; applies to a seg to the left of a seg that the first clause applies to.
+; (Want to ensure that both clauses apply to their individual segs, and
+; that one doesn't pre-empt the other.)
+; [C -vd] --> [+asp] / [C -vd] __
+;       [-asp] /
+(message (
+ <hc6504 rname disrule1 > ) )
+(pretty_print
+ <trace sh ktHb
+  cont (
+   <pua nm disrule1
+	in  <lex sh ktHb str allophonic >
+	out <lex sh kkHttHb str allophonic >>
+   <pa nm disrule1
+	in  <lex id 49 sh kkHttHb gl write pos 'V' str allophonic >
+	out <lex id 49 sh ktHb gl write pos 'V' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 49 sh ktHb gl write pos 'V' str '*surface*' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Now remove rule1:
+(message (
+ <hc6506 rname disrule1 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name stop > ) )
+(message (
+ <hc6542 nat_class_name asp > ) )
+(message (
+ <hc6542 nat_class_name unasp > ) )
+(message (
+ <hc6542 nat_class_name high_v > ) )
+(message (
+ <hc6542 nat_class_name high_front_v > ) )
+(message (
+ <hc6542 nat_class_name back_rnd > ) )
+(message (
+ <hc6542 nat_class_name back_unrnd > ) )
+(message (
+ <hc6542 nat_class_name front_rnd > ) )
+(message (
+ <hc6542 nat_class_name front_unrnd > ) )
+(message (
+ <hc6542 nat_class_name back_rnd_v > ) )
+(message (
+ <hc6542 nat_class_name back_unrnd_v > ) )
+(message (
+ <hc6542 nat_class_name front_rnd_v > ) )
+(message (
+ <hc6542 nat_class_name front_unrnd_v > ) )
+(message (
+ <hc6542 nat_class_name 'C' > ) )
+(message (
+ <hc6542 nat_class_name 'V' > ) )
+(message (
+ <hc6542 nat_class_name vd > ) )
+(message (
+ <hc6542 nat_class_name p > ) )
+(message (
+ <hc6542 nat_class_name voiceless_stop > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\disjunc.in > ) )
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\multapp.in > ) )
+;Test simultaneous vs. multiple application.
+;First load the nat classes (msg 6541):
+(message (
+ <hc6541 nat_class_name high_v > ) )
+(message (
+ <hc6541 nat_class_name back_rnd > ) )
+(message (
+ <hc6541 nat_class_name i > ) )
+(message (
+ <hc6541 nat_class_name 'C' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;First we load a rule as simultaneous app:
+; i --> u / iC__
+(message (
+ <hc6505 rname rule1 > ) )
+;Trace it:
+(message (
+ <hc6535 rname rule1 > ) )
+;And test it:
+(pretty_print
+ <trace sh gigugu
+  cont (
+   <pua nm rule1
+	in  <lex sh gigugu str allophonic >
+	out <lex sh gigiuuûgiuuû str allophonic >>
+   <pa nm rule1
+	in  <lex id 44 sh gigigi pos 'V' str allophonic >
+	out <lex id 44 sh gigugu pos 'V' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 44 sh gigugu pos 'V' str '*surface*' > ) )
+;Now we reload the same rule, but lr_iterative:
+(message (
+ <hc6504 rname rule1 > ) )
+;And test it:
+(pretty_print
+ <trace sh gigugi
+  cont (
+   <pua nm rule1
+	in  <lex sh gigugi str allophonic >
+	out <lex sh gigiuuûgi str allophonic >>
+   <pa nm rule1
+	in  <lex id 44 sh gigigi pos 'V' str allophonic >
+	out <lex id 44 sh gigugi pos 'V' str allophonic >>
+  )
+ >
+)
+(pretty_print (word_analysis
+ <lex id 44 sh gigugi pos 'V' str '*surface*' > ) )
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;Remove the rule:
+(message (
+ <hc6506 rname rule1 > ) )
+;...and the natural classes:
+(message (
+ <hc6542 nat_class_name high_v > ) )
+(message (
+ <hc6542 nat_class_name back_rnd > ) )
+(message (
+ <hc6542 nat_class_name i > ) )
+(message (
+ <hc6542 nat_class_name 'C' > ) )
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\multapp.in > ) )
+;Done; morpher will now terminate
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\prules.in > ) )

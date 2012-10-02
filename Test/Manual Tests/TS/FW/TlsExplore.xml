@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlsexpl" num="2.7.7" abbr="tlexp" file="FW\TlsExplore.xml" ready="V2">
+<title tag="tlsexpl">Tools-FieldWorks Explorer Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Brings up the FieldWorks Explorer application. If the Explorer had not already been launched, then it is started in the Folders view, with the folders expanded to show the application's object.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-FieldWorks Explorer" type="doc">Tools-FieldWorks Explorer</link>
+</p>
+<p name="todo">This test script requires editing to fit the specifications listed above. This is just a template to start out with.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-FieldWorks Explorer"</p>
+</context>
+
+<case id="tlexpAct" num="0" order="any">
+<title tag="tlexpAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.0" link="Bug">Invoke Tools-FieldWorks Explorer. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-FieldWorks Explorer" type="doc">Definition of Tools-FieldWorks Explorer.</link>
+<r>Expected result.</r>
+<p name="bug">Tools-FieldWorks Explorer not working</p>
+</step>
+<step name="0.1" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-FieldWorks Explorer ..</p>
+</step>
+
+</case>
+
+<case id="tlexpDiac" num="1" order="any">
+<title tag="tlexpDiac">Exercise dialog controls</title>
+<context>
+<p>When the Tools-FieldWorks Explorer is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Tools-FieldWorks Explorer. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-FieldWorks Explorer" type="doc">Tools-FieldWorks Explorer specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">Tools-FieldWorks Explorer layout incorrect</p>
+</step>
+<step name="1.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Tools-FieldWorks Explorer" as the name of the dialog.</r>
+</step>
+<step name="1.3" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-FieldWorks Explorer ..</p>
+</step>
+
+</case>
+
+<case id="tlexp??" num="2" order="any">
+<title tag="tlexp??">Other controls</title>
+<context>
+<p>When the Tools-FieldWorks Explorer is displayed:</p>
+</context>
+
+<step name="2.1">
+<link uri="../StdCtrls/??.xml" type="module">?? control</link> and use the shortcut &lt;Alt&gt;&lt;?&gt; to test the ?? control.
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Report any failures as suggested using "Tools-FieldWorks Explorer ??" as the name of the control.</li>
+</ul>
+</r>
+</step>
+<step name="2.2" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-FieldWorks Explorer ..</p>
+</step>
+
+</case>
+
+<case id="tlexpSe" num="3" order="any">
+<title tag="tlexpSe">Side effects</title>
+<context>
+<p>When the Tools-FieldWorks Explorer is displayed:</p>
+</context>
+
+<step name="3.1">Exercise the Tools-FieldWorks Explorer on selected paragraphs with different settings. Click OK and then verify that the settings persist by bringing up the dialog again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly, resembling the form of the preview.</li>
+<li>
+</li>
+</ul>
+</r>
+<p name="bug">Tools-FieldWorks Explorer control sequence causes problem</p>
+</step>
+<step name="3.2" link="Bug">Exercise the Tools-FieldWorks Explorer on selected paragraphs with different settings. Exit the application, restart it and verify that the settings persist by bringing up the Tools-FieldWorks Explorer again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly.</li>
+<li>The settings persist after leaving and re-entering the application.</li>
+</ul>
+</r>
+<p name="bug">Tools-FieldWorks Explorer &lt;attribute&gt; does not persist</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+
+</test>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<accil on-fail="assert">
+ <on-application run="ok" db="Lela-Teli 2" on-fail="assert">
+
+  <!--click wait="2000" path="menu:mnuFile/menu:mnuOpen"/>
+  <on-dialog title="Open Project">
+   <click wait="1000" path="window:Choose a Project:[2]/outline:Choose a Project:/olitem:Tok Pisin (TokPisin)"/>
+   <click path="button:Open"/>
+  </on-dialog-->
+
+ <!--on-application run="no" title="Tok Pisin (TokPisin) - Translation Editor" on-fail="assert"-->
+
+  <click wait="1000" path="menu:mnuEdit/menu:mnuFind" />
+
+ <!--/on-application-->
+
+ </on-application>
+</accil>

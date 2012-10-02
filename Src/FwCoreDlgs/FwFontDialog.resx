@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="lblFontName.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblFontName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblFontName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lblFontName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 8</value>
+  </data>
+  <data name="lblFontName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>31, 13</value>
+  </data>
+  <data name="lblFontName.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblFontName.Text" xml:space="preserve">
+	<value>&amp;Font:</value>
+  </data>
+  <data name="&gt;&gt;lblFontName.Name" xml:space="preserve">
+	<value>lblFontName</value>
+  </data>
+  <data name="&gt;&gt;lblFontName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblFontName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblFontName.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <metadata name="lblFontSize.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblFontSize.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblFontSize.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblFontSize.Location" type="System.Drawing.Point, System.Drawing">
+	<value>312, 9</value>
+  </data>
+  <data name="lblFontSize.Size" type="System.Drawing.Size, System.Drawing">
+	<value>30, 13</value>
+  </data>
+  <data name="lblFontSize.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="lblFontSize.Text" xml:space="preserve">
+	<value>S&amp;ize:</value>
+  </data>
+  <data name="&gt;&gt;lblFontSize.Name" xml:space="preserve">
+	<value>lblFontSize</value>
+  </data>
+  <data name="&gt;&gt;lblFontSize.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblFontSize.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblFontSize.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <metadata name="gbAttributes.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_FontAttributes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 19</value>
+  </data>
+  <data name="m_FontAttributes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>360, 134</value>
+  </data>
+  <data name="m_FontAttributes.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="&gt;&gt;m_FontAttributes.Name" xml:space="preserve">
+	<value>m_FontAttributes</value>
+  </data>
+  <data name="&gt;&gt;m_FontAttributes.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.FwCoreDlgControls.FwFontAttributes, FwCoreDlgControls, Version=6.1.1.30438, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_FontAttributes.Parent" xml:space="preserve">
+	<value>gbAttributes</value>
+  </data>
+  <data name="&gt;&gt;m_FontAttributes.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="gbAttributes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 166</value>
+  </data>
+  <data name="gbAttributes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>370, 160</value>
+  </data>
+  <data name="gbAttributes.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="gbAttributes.Text" xml:space="preserve">
+	<value>Attributes</value>
+  </data>
+  <data name="&gt;&gt;gbAttributes.Name" xml:space="preserve">
+	<value>gbAttributes</value>
+  </data>
+  <data name="&gt;&gt;gbAttributes.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbAttributes.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbAttributes.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <metadata name="btnOk.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="btnOk.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnOk.Location" type="System.Drawing.Point, System.Drawing">
+	<value>137, 443</value>
+  </data>
+  <data name="btnOk.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnOk.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="btnOk.Text" xml:space="preserve">
+	<value>OK</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Name" xml:space="preserve">
+	<value>btnOk</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnOk.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <metadata name="btnCancel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>219, 443</value>
+  </data>
+  <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Name" xml:space="preserve">
+	<value>btnCancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <metadata name="btnHelp.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>301, 443</value>
+  </data>
+  <data name="btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="btnHelp.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Name" xml:space="preserve">
+	<value>btnHelp</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="gbPreview.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="m_preview.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Fill</value>
+  </data>
+  <data name="m_preview.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 18</value>
+  </data>
+  <data name="m_preview.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>1, 2, 1, 1</value>
+  </data>
+  <data name="m_preview.Size" type="System.Drawing.Size, System.Drawing">
+	<value>360, 82</value>
+  </data>
+  <data name="m_preview.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_preview.Name" xml:space="preserve">
+	<value>m_preview</value>
+  </data>
+  <data name="&gt;&gt;m_preview.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.FwLabel, Widgets, Version=6.1.1.30434, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_preview.Parent" xml:space="preserve">
+	<value>gbPreview</value>
+  </data>
+  <data name="&gt;&gt;m_preview.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="gbPreview.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 332</value>
+  </data>
+  <data name="gbPreview.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>5, 5, 5, 5</value>
+  </data>
+  <data name="gbPreview.Size" type="System.Drawing.Size, System.Drawing">
+	<value>370, 105</value>
+  </data>
+  <data name="gbPreview.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="gbPreview.Text" xml:space="preserve">
+	<value>Preview</value>
+  </data>
+  <data name="&gt;&gt;gbPreview.Name" xml:space="preserve">
+	<value>gbPreview</value>
+  </data>
+  <data name="&gt;&gt;gbPreview.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbPreview.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;gbPreview.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_tbFontName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 25</value>
+  </data>
+  <data name="m_tbFontName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>303, 20</value>
+  </data>
+  <data name="m_tbFontName.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_tbFontName.Name" xml:space="preserve">
+	<value>m_tbFontName</value>
+  </data>
+  <data name="&gt;&gt;m_tbFontName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbFontName.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbFontName.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_lbFontNames.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 52</value>
+  </data>
+  <data name="m_lbFontNames.Size" type="System.Drawing.Size, System.Drawing">
+	<value>303, 108</value>
+  </data>
+  <data name="m_lbFontNames.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_lbFontNames.Name" xml:space="preserve">
+	<value>m_lbFontNames</value>
+  </data>
+  <data name="&gt;&gt;m_lbFontNames.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lbFontNames.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lbFontNames.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_tbFontSize.Location" type="System.Drawing.Point, System.Drawing">
+	<value>316, 25</value>
+  </data>
+  <data name="m_tbFontSize.Size" type="System.Drawing.Size, System.Drawing">
+	<value>56, 20</value>
+  </data>
+  <data name="m_tbFontSize.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="&gt;&gt;m_tbFontSize.Name" xml:space="preserve">
+	<value>m_tbFontSize</value>
+  </data>
+  <data name="&gt;&gt;m_tbFontSize.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tbFontSize.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_tbFontSize.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_lbFontSizes.Items" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <data name="m_lbFontSizes.Items1" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="m_lbFontSizes.Items2" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="m_lbFontSizes.Items3" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <data name="m_lbFontSizes.Items4" xml:space="preserve">
+	<value>12</value>
+  </data>
+  <data name="m_lbFontSizes.Items5" xml:space="preserve">
+	<value>14</value>
+  </data>
+  <data name="m_lbFontSizes.Items6" xml:space="preserve">
+	<value>16</value>
+  </data>
+  <data name="m_lbFontSizes.Items7" xml:space="preserve">
+	<value>18</value>
+  </data>
+  <data name="m_lbFontSizes.Items8" xml:space="preserve">
+	<value>20</value>
+  </data>
+  <data name="m_lbFontSizes.Items9" xml:space="preserve">
+	<value>22</value>
+  </data>
+  <data name="m_lbFontSizes.Items10" xml:space="preserve">
+	<value>24</value>
+  </data>
+  <data name="m_lbFontSizes.Items11" xml:space="preserve">
+	<value>26</value>
+  </data>
+  <data name="m_lbFontSizes.Items12" xml:space="preserve">
+	<value>28</value>
+  </data>
+  <data name="m_lbFontSizes.Items13" xml:space="preserve">
+	<value>36</value>
+  </data>
+  <data name="m_lbFontSizes.Items14" xml:space="preserve">
+	<value>48</value>
+  </data>
+  <data name="m_lbFontSizes.Items15" xml:space="preserve">
+	<value>72</value>
+  </data>
+  <data name="m_lbFontSizes.Location" type="System.Drawing.Point, System.Drawing">
+	<value>316, 52</value>
+  </data>
+  <data name="m_lbFontSizes.Size" type="System.Drawing.Size, System.Drawing">
+	<value>56, 108</value>
+  </data>
+  <data name="m_lbFontSizes.TabIndex" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="&gt;&gt;m_lbFontSizes.Name" xml:space="preserve">
+	<value>m_lbFontSizes</value>
+  </data>
+  <data name="&gt;&gt;m_lbFontSizes.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lbFontSizes.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_lbFontSizes.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.AccessibleName" xml:space="preserve">
+	<value>FwFontDialog</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>385, 472</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+	<value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>Font</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>FwFontDialog</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

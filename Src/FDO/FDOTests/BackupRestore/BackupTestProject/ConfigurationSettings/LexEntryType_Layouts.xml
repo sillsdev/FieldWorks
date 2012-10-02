@@ -1,0 +1,86 @@
+﻿<LayoutInventory>
+  <layout class="LexEntryType" type="jtview" name="publishStemVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishStemEntryType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishStemSenseVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishStemSenseComplexFormType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishStemComplexFormType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishStemMinorVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishStemMinorEntryType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishStemMinorSenseVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishStemMinorSenseComplexFormType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishStemMinorComplexFormType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootSenseVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootSenseComplexFormType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootSubEntryType" version="9">
+	<part ref="ReverseAbbrPub" label="Abbreviation" before="(" after=")" visibility="ifdata" ws="analysis" wsType="analysis" css="entry-type-abbr-sub" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootSubVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootSubSenseVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootSubSenseComplexFormType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootMinorVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootMinorSenseVariantType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootMinorSenseComplexFormType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="LexEntryType" type="jtview" name="publishRootMinorComplexFormType" version="9">
+	<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+</LayoutInventory>

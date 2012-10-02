@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="vwsidebar" num="2.3.6" abbr="vwsd" file="FW\VwSideBar.xml">
+<title tag="vwsidebar">View-Side Bar Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Toggles whether or not the Side Bar is displayed. A check appears beside the menu item if the Side Bar is currently displayed. The application defaults to displaying the Side Bar, but remembers the user's desire regarding this setting in the registry when the application window closes, so that when the new one is launched the display is according to the user's desire. Not all applications make use of the Side Bar. The decision depends upon whether or not the individual application has more than one or two views.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/VIEWMENU/VIEWMENU.HTML#View-SideBar" type="doc">View-Side Bar</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/SideBar/SideBar.html" type="doc">Side Bar and Information Bar</link>
+</p>
+</introduction>
+<context>
+<p>Tests for the side bar are found in <link uri="BarSide.xml">Side Bar Tests</link>.The first words of the bug report title should be a noun phrase containing the words "View Side Bar"</p>
+</context>
+
+<case id="vwsdDiac" num="1" order="any">
+<title tag="vwsdDiac">Visual Inspection</title>
+<context>
+<p>When the application is running:</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke the View-Side Bar menu item. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/VIEWMENU/VIEWMENU.HTML#View-SideBar" type="doc">View-Side Bar</link> to visually inspect the View-Side Bar check box menu item.
+   <r>Up to approximate size and position the two should be the same - especially the text.</r>
+<p name="bug">View-Side Bar layout incorrect</p>
+</step>
+<step name="1.2" link="Bug">When the Side Bar is displayed, invoke the View-Side Bar menu item.
+   <r>The Side Bar check box is checked.</r>
+<p name="bug">View-Side Bar check box is not checked when Side Bar is active</p>
+</step>
+<step name="1.3" link="Bug">When the Side Bar is NOT displayed, invoke the View-Side Bar menu item.
+   <r>The Side Bar check box is NOT checked.</r>
+<p name="bug">View-Side Bar check box is checked when Side Bar is NOT active</p>
+</step>
+
+</case>
+
+<case id="vwsdAct" num="2" order="any">
+<title tag="vwsdAct">Activate Side Bar</title>
+<context>
+<p>When the application is running:</p>
+</context>
+
+<step name="2.1" link="Bug">When the Side Bar is displayed, uncheck the View-Side Bar menu item.
+   <r>
+<ul>
+<li>The Side Bar disappears.</li>
+<li>The main window content shifts over to the left to fill the evacuated space.</li>
+<li>The menu closes.</li>
+</ul>
+</r>
+<p name="bug">View-Side Bar check box remains after Side Bar action</p>
+<p name="bug">View-Side Bar fails to close the side bar</p>
+<p name="bug">View-Side Bar closes but the main window doesn't shift left</p>
+</step>
+<step name="2.2" link="Bug">When the Side Bar is NOT displayed, check the View-Side Bar menu item.
+   <r>
+<ul>
+<li>The Side Bar is displayed.</li>
+<li>The main window content shifts over to the right.</li>
+<li>The menu closes.</li>
+</ul>
+</r>
+<p name="bug">View-Side Bar check box remains after Side Bar action</p>
+<p name="bug">View-Side Bar fails to bring up side bar</p>
+<p name="bug">View-Side Bar collides with main window content</p>
+</step>
+
+<step name="2.3" link="Bug">Quit and restart application.
+<r>
+Last setting to show/hide Side Bar is remembered.
+</r>
+<p name="bug">View-Side Bar settings not remembered on re-launching application</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Aug-27-01" author="RickM">Updated the test, most of it became 4.1 Side Bar Tests</update>
+<update date="Sep-25-01" author="MikeL">Added a case to check the check boxes.</update>
+<update date="May-24-02" author="JoelC">Added step 2.3</update>
+
+</test>

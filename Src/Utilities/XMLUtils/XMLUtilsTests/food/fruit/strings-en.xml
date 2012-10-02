@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<strings>
+	<string id="passion fruit" txt="pssnfrt"/>
+	<string id="papaya" txt="ppy"/>
+	<!-- this one demonstrates that omiting the txt attribute just means that we should return the id value -->
+	<string id="Banana"/>
+	<group id="InPng">
+		<group id="InMyYard">
+			<string id="MyPapaya" txt="ppy"/>
+			<string id="MyPineapple" txt="pnppl"/>
+		</group>
+	</group>
+</strings>

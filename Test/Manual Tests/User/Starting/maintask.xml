@@ -1,0 +1,20 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Starting\maintask.xml">
+ <title tag="stt">Getting started</title>
+ <index>
+  <li>starting to test</li>
+  <li>info for new testers</li>
+ </index>
+ <prerequisites>
+  <p>Unless you received this manual on a CD with the application to test, you will need to:</p>
+  <ul>
+   <li>Connect to the SIL Intranet <link uri="Connect.xml" type="module">Details</link></li>
+  </ul>
+ </prerequisites>
+ <thingsToDo>
+  <p>Here are some things to do before you begin testing:</p>
+  <step link="Details" uri="dldApp.xml">Download the FieldWorks application you want to test.</step>
+  <step link="Details" uri="InstallApp.xml">Install the FieldWorks application.</step>
+  <step link="Details" uri="dldTestMan.xml">Download the most recent version of this manual.</step>
+ </thingsToDo>
+</task>

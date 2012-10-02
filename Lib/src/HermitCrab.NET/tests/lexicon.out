@@ -1,0 +1,100 @@
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\lexicon.in > ) )
+;Test loading of lexical entries
+;Open a new language for testing purposes (msg 6510):
+(message (
+ <hc6510 lname Phonology Test Language > ) )
+;Don't let abort make us quit:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;First a morpher_set command, which should result in msg 6502:
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Then we run three load_char_def_table commands, each of
+; which should result in a msg 6501:
+(message (
+ <hc6501 table_name table1 > ) )
+(message (
+ <hc6501 table_name table2 > ) )
+(message (
+ <hc6501 table_name table3 > ) )
+;Exercise err msg 6027 (can't load lex entries before setting *strata*):
+ERROR:hc6027 --- <hc6027  >
+;Likewise, err msg 6028 (can't reset lexicon before setting *strata*):
+ERROR:hc6028 --- <hc6028  >
+;Now load the strata (msg 6502):
+(message (
+ <hc6502 var_name '*strata*' > ) )
+;Exercise err msg 6033 (can't load a lex entry before its stratum has ctable):
+ERROR:hc6033 --- <hc6033 sname morphophonemic >
+;...and set their char def tables (msg m6550):
+(message (
+ <hc6550 sname morphophonemic ctable_name table3 > ) )
+(message (
+ <hc6550 sname allophonic ctable_name table1 > ) )
+(message (
+ <hc6550 sname '*surface*' ctable_name table1 > ) )
+;Exercise error msg 6029 (no lex id):
+ERROR:hc6029 --- <hc6029 pform pat >
+;And error msg 6057, for no stratum:
+ERROR:hc6057 --- <hc6057 fieldname 'Stratum' lexid 1 >
+;...and for no pshape (err msg 6057):
+ERROR:hc6057 --- <hc6057 fieldname 'Phonetic shape' lexid 1 >
+;...and for no POS (err msg 6057):
+ERROR:hc6057 --- <hc6057 fieldname 'Part of speech' lexid 1 >
+;Preliminaries over, we'll load a couple lex entries.  The first has only
+; obligatory fields (msg m6512):
+(message (
+ <hc6512 lex_id 1 > ) )
+;The second has all the optional fields (msg m6512):
+(message (
+ <hc6512 lex_id ok2 > ) )
+;The third is one that we're going to delete in a moment (msg 6512):
+(message (
+ <hc6512 lex_id ok3 > ) )
+;Next, we'll try show_lexical_entry on that last entry:
+(pretty_print
+ <lex id ok3 sh bad pos 'A' str morphophonemic > )
+;Remove it (msg 6513):
+((
+ <hc6513 lex_id ok3 > ) )
+;--and try to show it again (error msg 6013):
+ERROR:hc6013 --- <hc6013 lex_id ok3 >
+;Change the pshape of the first entry, and see if it changes (msg 6523):
+(message (
+ <hc6523 lex_id 1 > ) )
+;Check:
+(pretty_print
+ <lex id 1 sh patpat pos 'N' str morphophonemic > )
+;Now we'll load in a dictionary file (msgs m6515 and m6700).  Two of the
+; lex entries in the file are purposely erroneous.  The first should give
+; an error msg of 6024, and the second an error msg of 6009; the remaining
+; lex entries should load OK:
+ERROR:hc6024 --- <hc6024 lex_id 3 stratum nonesuch >
+ERROR:hc6009 --- <hc6009 char h string pHhut item 4 ctable_name table1 >
+ERROR:hc6009 --- <hc6009 char n string nbinding item 45 ctable_name table3 >
+(message (
+ <hc6515 n 55 fname c:\data\hc\morpher\tests\diction.txt > ) )
+;Show_lexical_entry for the first le in the file (which should have replaced
+; the le of same lex id we loaded earlier):
+(pretty_print
+ <lex id 1 sh pHit pos 'N' str allophonic hf (foo (+ ) baz (- ) ) ff (fum (- ) bar (+ ) ) > )
+;Then remove it (msg 6513):
+(message (
+ <hc6513 lex_id 1 > ) )
+;And try to show it (err msg 6013):
+ERROR:hc6013 --- <hc6013 lex_id 1 >
+;Now replace a lex entry from the file with one loaded from the cmd line (6523):
+(message (
+ <hc6523 lex_id 2 > ) )
+;And show it:
+(pretty_print
+ <lex id 2 sh patpat pos 'N' str morphophonemic > )
+;See what happens if we're asked to open a nonexistent dict file (err msg 6302):
+ERROR:hc6302 --- <hc6302 fname c:\data\hc\morpher\tests\foobar.txt >
+;Reset the lexicon to null (msg 6516):
+(message (
+ <hc6516  > ) )
+;Now quit:
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\lexicon.in > ) )

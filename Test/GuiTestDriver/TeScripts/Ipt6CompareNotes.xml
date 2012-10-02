@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALAY PARATEXT 6 IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- set case specific variables -->
+		<var id="TestPlan" select="tests/test[1]/@Test-Plan"/>
+		<var id="MfrNotes" select="tests/test[@case='$TestCase;']/@mfr-notes"/>
+
+		<if>
+			<condition of="$TestPlan" is="ImportPt6"/>
+			<then>
+				<file-comp lookAt="files"
+					of="C:\GuiTestResults\ImportParatext6\Test Case $TestCase; Notes.sf"
+					to="$TestBranchDir;\Test\GuiTestDriver\TeExpectedTestResults\ImportParatext6\$MfrNotes"/>
+			</then>
+			<else>
+				<!-- TestPlan is ImportPt6BT -->
+				<file-comp lookAt="files"
+					of="C:\GuiTestResults\ImportParatext6BT\Test Case $TestCase; Notes.sf"
+					to="$TestBranchDir;\Test\GuiTestDriver\TeExpectedTestResults\ImportParatext6\$MfrNotes"/>
+			</else>
+		</if>
+
+	</on-application>
+
+</accil>

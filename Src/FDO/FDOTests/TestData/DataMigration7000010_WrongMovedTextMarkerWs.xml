@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+	<!-- Adjust pointers!!! -->
+	<rt class="CmIndirectAnnotation" guid="c1ecaa68-e382-11de-8a39-0800200c9a66">
+		<!-- Single AppliesTo that is a CmIndirectAnnotation of type CCA -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<!-- Comment is normally in "en" ws, but this one is in "de" (German). -->
+				<!-- This caused the crash. -->
+				<AStr ws="de">
+					<Run ws="de">&lt;&lt;</Run>
+				</AStr>
+			</Comment>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- References the normal CCA -->
+				<objsur t="r" guid="0a4f954a-e954-4977-aad6-83b58b2a3725" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+
+	<!-- Borrowed from DataMigration7000010_DiscoursePunct.xml and adjusted as necessary. -->
+
+	<rt class="StText" guid="b36366be-2d4d-4779-8e21-ff0bbee16a81" ownerguid="B63F0702-32F7-4ABB-B005-C1D2265636AD">
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="025a8737-c9ac-4453-9afd-178cf90d231d" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<!-- Need 4 different glosses for the one segment. -->
+	<rt class="WfiGloss" guid="79041d50-092a-4a4f-aae1-fc99815e23e5" ownerguid="b1806a8e-01fa-4daf-9c73-95cbe6127f33" >
+		<!-- short -->
+		<CmObject />
+		<WfiGloss />
+	</rt>
+	<rt class="WfiGloss" guid="96cc7e7b-b13e-4d3b-9d8d-712a25b89ca8" ownerguid="2faf8b99-eddc-4ca8-b582-df3868630162" >
+		<!-- paragraph -->
+		<CmObject />
+		<WfiGloss />
+	</rt>
+	<rt class="WfiGloss" guid="c9d335d9-d0bd-49c8-b4be-8ba8ea32e2f8" ownerguid="62a0b5c5-8f02-4f65-9abf-eeed2db105ab" >
+		<!-- with -->
+		<CmObject />
+		<WfiGloss />
+	</rt>
+	<rt class="WfiGloss" guid="d0c52468-ceb3-4860-8cbf-2e68ac5b68ad" ownerguid="ee0ef59e-864e-4113-b3b8-27c5ebe59a38" >
+		<!-- everything -->
+		<CmObject />
+		<WfiGloss />
+	</rt>
+	<!-- 1st Segment in Paragraph -->
+	<rt class="CmBaseAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be1b">
+		<CmObject/>
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r"/>
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0"/>
+			<EndOffset val="44"/>
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="025a8737-c9ac-4453-9afd-178cf90d231d" t="r"/>
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- First twfic in first old segment: Short -->
+	<rt class="CmBaseAnnotation" guid="22f4ba54-4b6b-4aca-85ba-21b7db47299c">
+		<CmObject/>
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r"/>
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="79041d50-092a-4a4f-aae1-fc99815e23e5"/>
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0"/>
+			<EndOffset val="5"/>
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="025a8737-c9ac-4453-9afd-178cf90d231d" t="r"/>
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Second twfic in first old segment: paragraph -->
+	<rt class="CmBaseAnnotation" guid="5E0A263b-7449-4839-91da-788c6a685900">
+		<CmObject/>
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r"/>
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="96cc7e7b-b13e-4d3b-9d8d-712a25b89ca8"/>
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="6"/>
+			<EndOffset val="15"/>
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="025a8737-c9ac-4453-9afd-178cf90d231d" t="r"/>
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Third twfic in first old segment: paragraph (2nd instance) -->
+	<rt class="CmBaseAnnotation" guid="DC36CA9D-fb87-41b9-9b85-f396608b8feb">
+		<CmObject/>
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r"/>
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="96cc7e7b-b13e-4d3b-9d8d-712a25b89ca8"/>
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="17"/>
+			<EndOffset val="26"/>
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="025a8737-c9ac-4453-9afd-178cf90d231d" t="r"/>
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Fourth twfic in first old segment: with -->
+	<rt class="CmBaseAnnotation" guid="18645576-965F-438b-8036-b44e3e52bad4">
+		<CmObject/>
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r"/>
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="c9d335d9-d0bd-49c8-b4be-8ba8ea32e2f8"/>
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="27"/>
+			<EndOffset val="31"/>
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="025a8737-c9ac-4453-9afd-178cf90d231d" t="r"/>
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Fifth twfic in first old segment: everything -->
+	<rt class="CmBaseAnnotation" guid="7F35B6D9-c6ea-4b69-b527-d1b6dd696ed0">
+		<CmObject/>
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r"/>
+			</AnnotationType>
+			<InstanceOf>
+				<objsur t="r" guid="d0c52468-ceb3-4860-8cbf-2e68ac5b68ad"/>
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="32"/>
+			<EndOffset val="42"/>
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="025a8737-c9ac-4453-9afd-178cf90d231d" t="r"/>
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+
+	<rt class="StTxtPara" guid="025a8737-c9ac-4453-9afd-178cf90d231d" ownerguid="b36366be-2d4d-4779-8e21-ff0bbee16a81">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<!--         0         1         2 -->
+					<!--         01234567890123456789012345 -->
+					<Run ws="en">Short paragraph, paragraph with everything. Second sentence.</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+
+	<!-- Need one chart and one CCR and one normal CCA to test the migration. -->
+	<rt class="DsDiscourseData" guid="370a5c56-382e-496c-b794-47e402dde08e" ownerguid="E4952BB2-3663-4F8C-A754-947F1DDDD0BE" >
+		<CmObject>
+		</CmObject>
+		<DsDiscourseData>
+			<Charts>
+				<objsur t="o" guid="9924abeb-0f02-44c6-9dd8-2fa6382ad3dc" />
+			</Charts>
+		</DsDiscourseData>
+	</rt>
+	<rt class="DsConstChart" guid="9924abeb-0f02-44c6-9dd8-2fa6382ad3dc" ownerguid="370a5c56-382e-496c-b794-47e402dde08e" >
+		<CmObject>
+		</CmObject>
+		<CmMajorObject />
+		<DsChart />
+		<DsConstChart>
+			<Rows>
+				<objsur t="r" guid="0b7038e9-3396-4f8f-9fbb-a3283ac6582e" />
+			</Rows>
+		</DsConstChart>
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="0b7038e9-3396-4f8f-9fbb-a3283ac6582e" >
+		<!-- No notes. No CompDetails. -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">NoNotesOrCompDetails</Run>
+				</AStr>
+			</Comment>
+			<AnnotationType>
+				<!-- CCR type -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- Normal CCA -->
+				<objsur t="r" guid="0a4f954a-e954-4977-aad6-83b58b2a3725" />
+				<!-- Moved text marker with german ws -->
+				<objsur t="r" guid="c1ecaa68-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="0a4f954a-e954-4977-aad6-83b58b2a3725" >
+		<!-- (Sequence in AppliesTo that are CmBaseAnnotations of type twfic) -->
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- twfic: Short -->
+				<objsur t="r" guid="22f4ba54-4b6b-4aca-85ba-21b7db47299c" />
+				<!-- twfic: paragraph -->
+				<objsur t="r" guid="5e0a263b-7449-4839-91da-788c6a685900" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+</languageproject>

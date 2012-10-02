@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="sfm" xslt="FullNotebookSfm.xsl">
+	<FxtDocumentDescription dataLabel="Full Notebook" formatLabel="SFM" defaultExtension="db" filter="SFM files (*.db)|*.db|All files (*.*)|*.*">Export to Standard Format. This is similar to what Toolbox uses.</FxtDocumentDescription>
+</template>

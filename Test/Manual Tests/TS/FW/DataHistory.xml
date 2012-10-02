@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="dthist" num="2.4.5" abbr="dh" file="FW\DataHistory.xml" ready="V2">
+<title tag="dthist">Data-History Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>This menu item invokes a cascading sub-menu, listing the titles of the dozen most-recently-edited (modified) records in the record set. This sub-menu is constantly updated as records are edited, and displays these dozen entries in order of most recently edited; .</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-History" type="doc">Data-History</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>The first words of the bug report title should be a noun phrase containing the words "Data-History"</p>
+</context>
+<case id="dhAct" num="0" order="any">
+<title tag="dhAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Data-History. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/DataMenu/DataMenu.html#Data-History" type="doc">Data-History specification</link> to visually inspect the layout of the cascade sub-menu.
+   <r>
+<ul>
+<li>The cascade sub-menu opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+</ul>
+</r>
+<p name="bug">Data-History cascade sub-menu fails to open</p>
+<p name="bug">Data-History cascade sub-menu layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the cascade sub-menu comes up, verify that:
+	<r>
+<ul>
+<li>The the last edited entry appears at the top of the menu.</li>
+</ul>
+</r>
+<p name="bug">Data-HistoryData-History the last edited entry appears at the top of the menu failed</p>
+</step>
+<step name="0.3">Use <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Tests</link> to test this cascade sub-menu's basic functionality.
+   <r>Report any failures as suggested using "Data-History" as the name of the cascade sub-menu.</r>
+</step>
+</case>
+<case id="dhEff" num="1" order="any">
+<title tag="dhEff">Side Effects</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="1.1" link="Bug">Select an item.<r>The cascading menu disappears.</r>
+<p name="bug">Data-History Select  failed</p>
+</step>
+<step name="1.2" link="Bug">From the History sub-menu, select an item.<r>The application displays that record.</r>
+<p name="bug">Data-History select From the History sub-menu failed</p>
+</step>
+<step name="1.3" link="Bug">In Data Entry view:
+  <r>The record displays in the DE view by itself..</r>
+<p name="bug">Data-History Data-History  not in sync with DE view</p>
+</step>
+<step name="1.4" link="Bug">In multi-record views:
+  <r>The view scrolls to that record with the insertion point at its beginning..</r>
+<p name="bug">Data-History Data-History  not in sync with view</p>
+</step>
+<step name="1.5" link="Bug">When the record matches the current filter:
+  <r>The matching filter is left on..</r>
+<p name="bug">Data-History Data-History  not in sync with matching filter</p>
+</step>
+<step name="1.6" link="Bug">When the record does not match the current filter:
+  <r>The mismatching filter is turned off..</r>
+<p name="bug">Data-History Data-History  not in sync with mismatching filter</p>
+</step>
+<step name="1.7" link="Bug">When the window is split:
+  <r>Scrolls the pane which has the text insertion point in it..</r>
+<p name="bug">Data-History Data-History  not in sync with pane</p>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="Apr-19-02" author="JanetW">Corrected duplicate step numbers.</update>
+
+</test>

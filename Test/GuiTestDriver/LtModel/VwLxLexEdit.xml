@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<lexicon-edit role="view" root="yes" default="view" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.MultiPane/">
+
+  <!-- the browse pane -->
+  <entries role="pane" path="9:CSC.SplitContainer.One/9:XCore.PaneBarContainer.First/">
+	<var id="lexentryList" set="9:lexentryList/9:lexentryList/$nl"/>
+	<title path="9:XCore.PaneBar/9:Entries"/>
+	<col path="$lexentryList">
+	   <changer path="[3]/43:NAMELESS"/>
+	   <header path="/9:HeaderListView/33:HeaderListView/$NL;25:"/>  <!-- add path="Name" or Description, etc.. -->
+	   <filter path="/9:FilterBar/9:FwComboBox[$col;]/" >
+		 <text path="20:RootSite/$Text"/>
+		 <drop path="$NL;43:NAMELESS"/>
+	   </filter>
+	</col>
+	<record path="$lexentryList;/20:RootSite/24:Table[$row;]/"> <!-- record index -->
+	   <col path="$Col;[$col;]/$Text"><pane ref="entry"/></col>
+	</record>
+	<scroll path="$lexentryList;[2]/">
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </entries>
+
+  <!-- the edit pane -->
+  <entry role="pane" path="9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/">
+	<var id="header" set="9:XCore.PaneBar/9:Entry"/>
+	<title path="$header"/>
+	<show-hidden-fields path="$header;/9:Show Hidden Fields">
+	  <check-box path="/$NL;44:NAMELESS"/>
+	</show-hidden-fields>
+	<dictionary-preview path="9:CollapsingSplitContainer/9:CSC.SplitContainer.One/9:DictionaryPubPreview/20:Root/20:Div/$Text"/>
+	<slice path="9:CollapsingSplitContainer/9:CSC.SplitContainer.Two/9:normalEdit/9:RecordEditView.DataTree/">
+<!-- 10:RecordEditView.DataTree/-->
+	   <var id="LABEL" set="9:SplitContainer/9:Panel1/"/>
+	   <var id="DATA" set="9:SplitContainer/9:Panel2/"/>
+	   <lexeme-form path="9:multistring[$ind;]/"><!-- index, usually 1 for lex form -->
+		 <label path="$LABEL;9:Lexeme Form"/>
+		 <ws path="$DATA;20:Lexeme Form/$Text"/>
+		 <data path="$DATA;20:Lexeme Form/24:Table/$Col;[2]/$Text"/>
+	   </lexeme-form>
+
+	   <morph-type name="Morph Type" path="9:morphtypeatomicreference/">
+		 <label path="$LABEL;9:Morph Type"/>
+		 <data path="$DATA;9:Morph Type/20:Root/$Text"/>
+	   </morph-type>
+
+	   <sense1 path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/20:Div/$Text;/value:Sense 1"/>
+
+	   <gloss path="9:multistring[$ind;]/"><!-- index, usually 5 in Sense 1 -->
+		 <label path="$LABEL;9:Gloss"/>
+		 <ws path="$DATA;20:Gloss/$Text"/>
+		 <data path="$DATA;20:Gloss/24:Table/$Col;[2]/$Text"/>
+	   </gloss>
+
+	   <gram-info path="9:msareferencecombobox/">
+		 <label path="$LABEL;9:Grammatical Info."/>
+		 <data path="$DATA;9:Grammatical Info./20:RootSite/$Text"/>
+		 <open path="$DATA;9:Grammatical Info./$NL;43:NAMELESS"/>
+	   </gram-info>
+
+	   <example path="9:multistring[$ind;]/$DATA;20:Example/24:Table/$Col;[2]/$Text"/>
+	   <example-ws path="9:multistring[$ind;]/$DATA;20:Example/24:Table/$Col;/$Text"/>
+	   <example-label path="9:multistring[$ind;]/$LABEL;9:Example"/>
+
+	   <translation path="9:multistring[$ind;]/$DATA;20:Translation/24:Table/28:Row[$row;]/29:Cell[2]/$Text"/>
+	   <translation-label path="9:multistring[$ind;]/$LABEL;9:Translation"/>
+
+	   <reference path="9:string[$ind;]/$DATA;20:Reference/$Text"/>
+
+	   <alternate-forms path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/$Text;/value:Alternate Forms"/>
+
+	   <environments path="9:phoneenvreference/">
+		 <label path="$LABEL;9:Environments"/>
+		 <text path="$DATA;9:Environments/20:Root/$Text"/>
+	   </environments>
+
+	   <string-field path="9:multistring[$ind;]/"> <!-- [*ind] finds the index; get the label then use $ind to get the data -->
+		 <label path="$LABEL;9:"/> <!-- add field name via @path -->
+		 <lang path="$DATA;20:$fld;/24:Table[$row;]/$Col;$Text"/>
+		 <text path="$DATA;20:$fld;/24:Table[$row;]/$Col;[2]/$Text"/>
+	   </string-field>
+
+	   <str-field path="9:string[$ind;]/"> <!-- [*ind] finds the index; get the label then use $ind to get the data -->
+		 <label path="$LABEL;9:"/> <!-- add field name via @path -->
+		 <text path="$DATA;20:$fld;/$Text"/>
+	   </str-field>
+
+	   <def-vect-ref path="9:defaultvectorreference[$ind;]/"> <!-- [*ind] finds the index; get the label then use $ind to get the data -->
+		 <label path="$LABEL;9:"/> <!-- add field name via @path -->
+		 <empty path="$DATA;9:$fld;/20:Root"/>
+		 <text path="$DATA;9:$fld;/20:Root/$Text"/> <!-- path="/42:String[2]" to get one from the list -->
+		 <open path="$DATA;9:$fld;/9:.../$NL;43:NAMELESS"/>
+	   </def-vect-ref>
+
+	   <scroll>
+		  <down path="43:Page down"/>
+		  <up path="43:Page up"/>
+	   </scroll>
+	</slice>
+  </entry>
+</lexicon-edit>

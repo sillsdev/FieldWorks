@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<food>
+  <fruit id="InPng">
+	<name txt="papaya"/>
+	<name txt="banana"/>
+  </fruit>
+	<include path='food\veggiesInclude.xml' query='food/veggies'/>
+	<meats id="InEn">
+		<name txt="pork" brand="PilgrimsPride"/>
+		<name txt="beef" brand="PilgrimsPride"/>
+		<name txt="chicken" brand="PilgrimsPride">
+			<portions>
+				<name txt="leg"/>
+				<name txt="thigh"/>
+			</portions>
+		</name>
+	</meats>
+</food>

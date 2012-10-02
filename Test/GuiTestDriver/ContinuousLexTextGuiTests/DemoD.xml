@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+
+<!-- Andy Black's demo sections D and E -->
+
+ <on-application args="-db Kalaba" title="Kalaba - FieldWorks Harvest" run="ok" on-fail="assert">
+ <!-- 1.	Note the types and their counts. There is no instance of a bound stem. So we'll make one.-->
+  <var id="gramView" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:SIL.FieldWorks.XWorks.FxtViewer"/>
+  <var id="generate" set="$gramView;/window:panelTop[1]/button:btnGenerate"/>
+  <var id="gramChek" set="$gramView;/window:panelBottom/window:HtmlControl/window:SHDocVw.WebBrowser_V1"/>
+  <var id="menu" set="window:ParentOfMenuBar[1]/window:MenuBar"/>
+  <var id="gramSket" set="$menu;/menu:View /menu:Grammar/menu:Grammar Sketch"/>
+  <var id="lex" set="$menu;/menu:View /menu:Lexicon/menu:Lexicon Edit"/>
+ <!-- 2.	Go to Lexicon / Lexicon Edit.-->
+  <click wait ="1000" path="$lex"/>
+
+ <!-- 3.	Navigate to the "palti" record (can click on "palti" in the Record List view ; use the "Go to lexical entry" toolbar button; or "Data / Go to entry" menu item).-->
+  <!--click path="window:xWindow.mainPanel/window:xWindow.leftPanel/window:xWindow.treeVew/outline:xWindow.treeVew/olitem:palti"/-->
+  <click path="window:ParentOfMenuBar[1]/window:Insert/toolbar:Insert/button:Find lexical entry..."/>
+  <on-dialog wait="30000" title="Find Lexical Entry">
+   <insert>palti</insert>
+   <!--click path="window:Find Matches"/-->
+   <click path="item:palti"/>
+   <click path="button:Go To"/>
+  </on-dialog>
+
+ <!-- 4.	In the MorphType slice, click on the chooser button.-->
+  <var id="MorphType" set="window:The Window/window:xWindow.mainPanel/window:xWindow.contentPanel/window:LexItemsAndDetailMultiPane/window:TestEditMulti/window:normalEdit/window:RecordEditView.DataTree/window:Morph Type"/>
+  <click path="$MorphType"/>
+  <click path="$MorphType;/window:.../button:..."/>
+
+ <!-- 5.	Select "bound stem" in the chooser and click OK (or double click on "bound stem").-->
+  <on-dialog wait="30000" title="Choose Morpheme Type">
+   <click path="olitem:bound stem"/>
+   <click path="button:OK"/>
+  </on-dialog>
+
+ <!-- 6.	Go to Grammar / Grammar Sketch and re-generate.-->
+  <click wait="1000" path="$gramSket" />
+  <click path="$generate;" />
+
+ <!-- 7.	Go to the Morpheme Types section and note that "bound stem" is now listed.-->
+  <click wait="3000" path="$gramChek" />
+  <insert wait="1000">{PGDN 2}</insert>
+  <insert wait="1000">{DOWN 4}</insert>
+
+ <!-- E.	Word categories. -->
+
+ <!-- 1.	Note the counts and how they are listed. -->
+ <!-- 2.	No instances of an article, so we'll add one. -->
+ <!-- 3.	Go to Lexicon / Lexicon Edit -->
+  <click path="$lex"/>
+
+ <!-- 4.	Click on the Insert Major Entry button. -->
+  <click wait="3000" path="window:Insert[1]/toolbar:Insert/button:Entry..."/>
+
+ <!-- 5.	Type "in" in the Form field. -->
+  <on-dialog wait="30000" title="New Entry">
+   <insert>in</insert>
+
+ <!-- 6.	Change the type to "Particle" -->
+   <insert>{TAB}{HOME}</insert>
+
+ <!-- 7.	Type "the" for the gloss. -->
+   <insert>{TAB}the</insert>
+
+ <!-- 8.	Click on the Category chooser button. -->
+   <click path="window:NAMELESS/window:Grammatical Function/window:Category:[2]/button:NAMELESS"/>
+
+ <!-- 9.	Open up the "article" node in the chooser. -->
+   <!--on-dialog title="PopupTreeTree"-->
+	<!--click wait="1000" path="outline:PopupTreeTree/olitem:article"/-->
+	<insert>{HOME}</insert> <!-- set the selection to the first in the list -->
+	<insert>{DOWN}</insert>
+	<insert>{RIGHT}</insert> <!-- open the sublist -->
+
+ <!-- 10.	Select "definite article" and click OK (or double click on "definite article"). -->
+	<insert>{DOWN}~</insert>
+   <!--/on-dialog-->
+
+ <!-- 11.	Click on the Create button. -->
+   <click path="window:Create/button:Create"/>
+  </on-dialog>
+
+ <!-- 12.	Go to Grammar / Grammar Sketch and re-generate. -->
+  <click wait="1000" path="$gramSket" />
+  <click path="$generate;" />
+
+ <!-- 13.	Note the addition of the definite article. -->
+  <click wait="3000" path="$gramChek" />
+  <insert wait="1000">{PGDN 2}</insert>
+  <insert wait="1000">{DOWN 4}</insert>
+
+ </on-application>
+</accil>

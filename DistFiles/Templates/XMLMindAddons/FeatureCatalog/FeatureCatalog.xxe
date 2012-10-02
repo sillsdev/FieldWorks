@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<configuration name="Feature Catalog" xmlns="http://www.xmlmind.com/xmleditor/schema/configuration" xmlns:cfg="http://www.xmlmind.com/xmleditor/schema/configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xmlmind.com/xmleditor/schema/configuration
+				../../../../addon/config/configuration/xsd/configuration.xsd">
+<!-- XMLMind XML Editor configuration file for Feature Catalog -->
+	<detect>
+		<dtdPublicId>-//XMLmind//DTD FeatureCatalog//EN</dtdPublicId>
+	</detect>
+	<css name="Style sheet" location="FeatureCatalog.css"/>
+	<template name="Template" location="FeatureCatalogTemplate.xml"/>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="i"/>
+		<command name="insertNewLanguage"/>
+	</binding>
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="r"/>
+		<command name="removeLanguage"/>
+	</binding>
+<!--
+Trying to do this is too complicated and doesn't do everything we'd want
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="s"/>
+		<command name="createInitialSetOfItems"/>
+	</binding>
+-->
+	<binding>
+		<keyPressed code="ESCAPE"/>
+		<charTyped char="c"/>
+		<command name="createFeatureCatalog"/>
+	</binding>
+	<menu label="_Feature Catalog">
+		<item label="_Insert New Language    ESC+i" icon="xxe-config:common/icons/RowInsertAfter16.gif" command="insertNewLanguage"/>
+		<item label="_Remove Language    ESC+r" icon="xxe-config:common/icons/RowDelete16.gif" command="removeLanguage"/>
+		<separator/>
+<!--
+Trying to do this is too complicated and doesn't do everything we'd want
+		<item label="Create Initial _Set of Items    ESC+s" icon="xxe-config:common/icons2/itemizedlist.gif" command="createInitialSetOfItems"/>
+-->
+		<item label="_Create Feature Catalog (aka EticGlossList.xml)    ESC+c" icon="xxe-config:common/icons2/table.gif" command="createFeatureCatalog"/>
+	</menu>
+	<command name="insertNewLanguage">
+		<macro>
+			<sequence>
+				<command name="prompt" parameter='LangCode "Enter code of new language:"'/>
+				<command name="insertNewLanguageTransform" parameter="%_"/>
+				<command name="XXE.open" parameter="%D"/>
+			</sequence>
+		</macro>
+	</command>
+	<command name="insertNewLanguageTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform stylesheet="InsertNewLanguage.xsl" cacheStylesheet="true" file="in.xml" to="%D">
+				<parameter name="sLangCode">%0</parameter>
+			</transform>
+		</process>
+	</command>
+	<command name="removeLanguage">
+		<macro>
+			<sequence>
+				<command name="prompt" parameter='LangCode "Enter code of language to remove:"'/>
+				<set variable="lc" expression="%_" plainString="true"/>
+				<command name="prompt" parameter='LangCode "Are you sure you want to remove this language from *every* item?"'/>
+				<get expression="$lc"/>
+				<command name="removeLanguageTransform" parameter="%_"/>
+				<command name="XXE.open" parameter="%D"/>
+			</sequence>
+		</macro>
+	</command>
+	<command name="removeLanguageTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform stylesheet="RemoveLanguage.xsl" cacheStylesheet="true" file="in.xml" to="%D">
+				<parameter name="sLangCode">%0</parameter>
+			</transform>
+		</process>
+	</command>
+<!--
+Trying to do this is too complicated and doesn't do everything we'd want
+	<command name="createInitialSetOfItems">
+		<macro>
+			<sequence>
+				<command name="createInitialSetOfItemsTransform"/>
+				<command name="XXE.open" parameter="%{P}/%{R}Initial.%E"/>
+			</sequence>
+		</macro>
+	</command>
+	<command name="createInitialSetOfItemsTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform stylesheet="CreateInitialSetOfItems.xsl" cacheStylesheet="true" file="in.xml" to="%{P}/%{R}Initial.%E"/>
+		</process>
+	</command>
+-->
+	<command name="createFeatureCatalog">
+		<macro>
+			<sequence>
+				<command name="createFeatureCatalogTransform"/>
+<!--
+No, do not load it - it requires the dtd which the user probably won't have.
+Besides what are they going to do with it once they see it?
+				<command name="XXE.open" parameter="%{P}/EticGlossList.xml"/>
+-->
+			<command name="alert" parameter="File %{P}\EticGlossList.xml has just been created.  You can copy it to FieldWorksInstallDirectory\Language Explorer\MGA\GlossLists"/>
+			</sequence>
+		</macro>
+	</command>
+	<command name="createFeatureCatalogTransform">
+		<process>
+			<copyDocument to="in.xml"/>
+			<transform stylesheet="CreateFeatureCatalog.xsl" cacheStylesheet="true" file="in.xml" to="%{P}/EticGlossList.xml"/>
+		</process>
+	</command>
+
+<!--
+Element Templates
+-->
+
+  <elementTemplate xmlns="" name="itemCore" selectable="false">
+	  <Languages>
+	  <Language>
+		  <LangCode>en</LangCode>
+		  <Name/>
+		  <Abbreviation/>
+		  <Description/>
+		  <Citations/>
+	  </Language>
+	  </Languages>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="complex">
+	<item id="c" type="complex" use4newLangProjects="yes">
+	  <Languages cfg:template="itemCore"/>
+	</item>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="feature">
+	<item id="f" type="feature" use4newLangProjects="yes">
+	  <Languages cfg:template="itemCore"/>
+	</item>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="fsType">
+	<item id="t" type="fsType" use4newLangProjects="yes">
+	  <Languages cfg:template="itemCore"/>
+	</item>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="group">
+	<item id="g" type="group" use4newLangProjects="yes">
+	  <Languages cfg:template="itemCore"/>
+	</item>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="value">
+	<item id="v" type="value" use4newLangProjects="yes">
+	  <Languages cfg:template="itemCore"/>
+	</item>
+  </elementTemplate>
+
+  <elementTemplate xmlns="" name="xref">
+	<item id="x" type="xref" use4newLangProjects="yes">
+	  <Languages cfg:template="itemCore"/>
+	</item>
+  </elementTemplate>
+
+</configuration>

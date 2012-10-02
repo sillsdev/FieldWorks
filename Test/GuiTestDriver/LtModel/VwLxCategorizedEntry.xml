@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<categorized-entry role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/">
+
+  <popup title="Information" role="dialog">
+	<ok role="button" path="$ok" close="yes"/>
+  </popup>
+
+  <tree role="pane" path="9:CSC.SplitContainer.One/9:XCore.RecordBar/$NL;36:">
+	<ex ins="var" id="foodRec" select="categorized-entry/tree" add="5.2 - Food" />
+  </tree>
+  <domain role="pane" path="9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer/">
+	 <title path="9:XCore.PaneBar/9:Semantic Domain"/>
+	 <var id="dom" set="9:CollapsingSplitContainer/9:CSC.SplitContainer.One/9:SemanticDomainList/9:RecordEditView.DataTree/9:string[*]/9:SplitContainer/9:Panel2/20:"/>
+	 <analysis path="$dom;Analysis/20:Div/$Text"/>
+	 <vernacular path="$dom;Vernacular/$Text"/>
+	 <description path="$dom;Description/20:Div/$Text"/>
+	 <question path="$dom;Question[*]/20:Div/$Text"/>
+	 <example-words path="$dom;Example Words[*]/20:Div/$Text"/>
+	 <example-sentences path="$dom;Example Sentences[*]/20:Div/$Text"/>
+  </domain>
+  <list role="pane" path="9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer/9:CollapsingSplitContainer/9:CSC.SplitContainer.Two/9:wordList/9:wordList/$NL">
+	<heading path="9:HeaderListView/33:HeaderListView/$NL;25:">
+	   <word path="Word"/>
+	   <definition path="Definition"/>
+	</heading>
+	<record path="20:RootSite/24:Table[$row;]"><!-- record 1 is at table[2] -->
+	   <col path="28:Row/29:Cell[$col;]" max="2"/>
+	   <word path="28:Row/29:Cell"/>
+	   <definition path="28:Row/29:Cell[2]"/>
+	</record>
+  </list>
+
+</categorized-entry>

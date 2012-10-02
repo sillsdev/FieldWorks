@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>class  unitpp::visitor</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2>class  <A HREF="#DOC.DOCU">unitpp::visitor</A></H2></H2><BLOCKQUOTE> The visitor class is a base class for classes that wants to participate in the visitor pattern with the test hierarchi.</BLOCKQUOTE>
+<HR>
+
+<H2>Inheritance:</H2>
+<APPLET CODE="ClassGraph.class" WIDTH=600 HEIGHT=65>
+<param name=classes value="Cvisitor,Mvisitor.html,Ctester,Mtester.html">
+<param name=before value="M,M^_">
+<param name=after value="M,M">
+<param name=indent value="0,0">
+<param name=arrowdir value="down">
+</APPLET>
+<HR>
+
+<DL>
+<P><DL>
+<DT><H3>Public Methods</H3><DD><DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.8.1">visit</A></B>(<!1><A HREF="test.html">test</A>&amp;) = 0
+<DD><I>Visit a test case, that is not a suite</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.8.2">visit</A></B>(<!1><A HREF="suite.html">suite</A>&amp;)
+<DD><I>Visit a suite node before the children are visited</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.8.3">visit</A></B>(<!1><A HREF="suite.html">suite</A>&amp;, int dummy) = 0
+<DD><I> Visit a suite after the children are visited</I>
+</DL></P>
+
+</DL>
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+The visitor class is a base class for classes that wants to participate in
+the visitor pattern with the test hierarchi.
+
+<P>This is a slightly extended visitor pattern implementation, intended for
+collaboration with the Composite pattern. The aggregate node (here the
+suite node) is visited twice, before and after the children are visited.
+This allows different algorithms to be implemented.</BLOCKQUOTE>
+<DL>
+
+<A NAME="visit"></A>
+<A NAME="DOC.1.8.1"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void visit(<!1><A HREF="test.html">test</A>&amp;) = 0</B></TT>
+<DD>Visit a test case, that is not a suite
+<DL><DT><DD></DL><P>
+<A NAME="visit"></A>
+<A NAME="DOC.1.8.2"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void visit(<!1><A HREF="suite.html">suite</A>&amp;)</B></TT>
+<DD>Visit a suite node before the children are visited
+<DL><DT><DD></DL><P>
+<A NAME="visit"></A>
+<A NAME="DOC.1.8.3"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void visit(<!1><A HREF="suite.html">suite</A>&amp;, int dummy) = 0</B></TT>
+<DD>
+Visit a suite after the children are visited
+<DL><DT><DD></DL><P></DL>
+<HR>
+<DL><DT><B>Direct child classes:
+</B><DD><A HREF="tester.html">tester</A><BR>
+</DL>
+
+<DL><DT><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

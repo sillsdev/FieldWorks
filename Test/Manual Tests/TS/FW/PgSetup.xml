@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="pgsetup" num="2.1.5" abbr="psu" file="FW\PgSetup.xml">
+
+ <title tag="pgsetup">File-Page Setup Dialog Tests</title>
+
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>Allows the user to determine various settings for how a page is to be printed. These are generally one-time settings that will not be changed frequently from session to session (whereas File-Print will usually have more volatile settings.)</p>
+   <p>Specificatoins: <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/FileMenu.html#File-PageSetup">File-Page Setup</link>,
+	<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/PageSetup/PageSetup.html">Page Setup Dialog</link>
+</p>
+  </introduction>
+
+
+<!--================Case 0: Invoking the Page Setup Dialog================-->
+
+ <case id="psuInvoke" num="0" order="any">
+  <title tag="psuInvoke">Invoking the Page Setup Dialog</title>
+  <context>
+<p>When the main DN window is active</p>
+</context>
+
+  <step name="0.1" link="Bug">
+   In a new project, select File - Page Setup from the menu.
+   <r>
+<ul>
+<li>The Page Setup dialog appears.</li>
+	<li>Its appearance agrees with the spec (<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FileMenu/PageSetup/PageSetup.html">Page Setup Dialog</link>).</li>
+	<li>The first time it is opened on a new project, the default values (excluding the contents of the Header and Footer fields) are the same as those given in the spec.</li>
+</ul>
+</r>
+   <p name="bug">Page Setup Dialog does not appear</p>
+   <p name="bug">Page Setup Dialog appearance wrong</p>
+   <p name="bug">Page Setup Incorrect default values</p>
+  </step>
+ </case>
+
+<!--================Case 1: Exercise dialog controls================-->
+
+ <case id="psuDiab" num="1" order="any">
+  <title tag="psuDiab">Exercise dialog controls</title>
+  <context>
+<p>When the Page Setup Dialog is displayed</p>
+</context>
+  <step name="1.1">
+<link uri="../StdCtrls/Dialog.xml">
+   Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Format-Font" as the name of the dialog.</r>
+  </step>
+
+  <step name="1.2" link="Bug">
+<link uri="../StdCtrls/SpinCtrl.xml">Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;l&gt; to test the Margins-Left spin control.
+   <r>
+<ul>
+<li>The default is 1.25" or 3.18 cm. </li>
+	<li>The minimum value is 0.1"; the maximum is 3.0".</li>
+	<li>The value in the box is incremented or decremented by 0.1" or 0.1 cm.</li>
+</ul>Report any failures as suggested using "Page Setup Margins-Left" as the name of the control.</r>
+<p name="bug">Page Setup Margins-Left default wrong</p>
+<p name="bug">Page Setup Margins-Left minimum wrong</p>
+<p name="bug">Page Setup Margins-Left maximum wrong</p>
+<p name="bug">Page Setup Margins-Left increment wrong</p>
+  </step>
+
+  <step name="1.3" link="Bug">
+<link uri="../StdCtrls/SpinCtrl.xml">
+   Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;r&gt; to test the Margins-Right spin control.
+   <r>
+<ul>
+<li>The default is 1.25" or 3.18 cm. </li>
+	<li>The minimum value is 0.1"; the maximum is 3.0".</li>
+	<li>The value in the box is incremented or decremented by 0.1" or 0.1 cm.</li>
+</ul>
+	Report any failures as suggested using "Page Setup Margins-Right" as the name of the control.</r>
+<p name="bug">Page Setup Margins-Right default wrong</p>
+<p name="bug">Page Setup Margins-Right minimum wrong</p>
+<p name="bug">Page Setup Margins-Right maximum wrong</p>
+<p name="bug">Page Setup Margins-Right increment wrong</p>
+  </step>
+
+  <step name="1.4" link="Bug">
+<link uri="../StdCtrls/SpinCtrl.xml">
+   Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;t&gt; to test the Margins-Top spin control.
+   <r>
+<ul>
+<li>The default is 1.0" or 3.18 cm. </li>
+	<li>The minimum value is 0.1"; the maximum is 3.0".</li>
+	<li>The value in the box is incremented or decremented by 0.1" or 0.1 cm.</li>
+</ul>
+	Report any failures as suggested using "Page Setup Margins-Top" as the name of the control.</r>
+<p name="bug">Page Setup Margins-Top default wrong</p>
+<p name="bug">Page Setup Margins-Top minimum wrong</p>
+<p name="bug">Page Setup Margins-Top maximum wrong</p>
+<p name="bug">Page Setup Margins-Top increment wrong</p>
+  </step>
+
+  <step name="1.5" link="Bug">
+<link uri="../StdCtrls/SpinCtrl.xml">
+   Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;b&gt; to test the Margins-Bottom spin control.
+   <r>
+<ul>
+<li>The default is 1.0" or 3.18 cm. </li>
+	<li>The minimum value is 0.1"; the maximum is 3.0".</li>
+	<li>The value in the box is incremented or decremented by 0.1" or 0.1 cm.</li>
+</ul>
+	Report any failures as suggested using "Page Setup Margins-Bottom" as the name of the control.</r>
+<p name="bug">Page Setup Margins-Bottom default wrong</p>
+<p name="bug">Page Setup Margins-Bottom minimum wrong</p>
+<p name="bug">Page Setup Margins-Bottom maximum wrong</p>
+<p name="bug">Page Setup Margins-Bottom increment wrong</p>
+  </step>
+
+  <step name="1.6" link="Bug">
+<link uri="../StdCtrls/SpinCtrl.xml">
+   Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;e&gt; to test the Margins-From edge-Header spin control.
+   <r>
+<ul>
+<li>The default is 0.5" or 1.27 cm. </li>
+	<li>The minimum value is 0.1"; the maximum is 3.0".</li>
+	<li>The value in the box is incremented or decremented by 0.1" or 0.1 cm.</li>
+</ul>
+	Report any failures as suggested using "Page Setup Margins-From edge-Header" as the name of the control.</r>
+<p name="bug">Page Setup Margins-From edge-Header default wrong</p>
+<p name="bug">Page Setup Margins-From edge-Header minimum wrong</p>
+<p name="bug">Page Setup Margins-From edge-Header maximum wrong</p>
+<p name="bug">Page Setup Margins-From edge-Header increment wrong</p>
+  </step>
+
+  <step name="1.7" link="Bug">
+<link uri="../StdCtrls/SpinCtrl.xml">
+   Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;f&gt; to test the Margins-From edge-Footer spin control.
+   <r>
+<ul>
+<li>The default is 0.5" or 1.27 cm. </li>
+	<li>The minimum value is 0.1"; the maximum is 3.0".</li>
+	<li>The value in the box is incremented or decremented by 0.1" or 0.1 cm.</li>
+</ul>
+	Report any failures as suggested using "Page Setup Margins-From edge-Footer" as the name of the control.</r>
+<p name="bug">Page Setup Margins-From edge-Footer default wrong</p>
+<p name="bug">Page Setup Margins-From edge-Footer minimum wrong</p>
+<p name="bug">Page Setup Margins-From edge-Footer maximum wrong</p>
+<p name="bug">Page Setup Margins-From edge-Footer increment wrong</p>
+  </step>
+
+  <step name="1.8" link="Bug">
+<link uri="../StdCtrls/ListBox.xml">
+   List Box/Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;z&gt; to test the Paper-Size list box.
+   <r>
+<ul>
+<li>The default is Letter 8 1/2 x 11 in. </li>
+	<li>Possibilities are Letter 8 1/2 x 11 in, Legal 8 1/2 x 14 in, A4 210 x 297 mm, Custom size</li>
+</ul>
+	Report any failures as suggested using "Page Setup Paper-Size list box" as the name of the control.</r>
+<p name="bug">Page Setup Paper-Size default wrong</p>
+<p name="bug">Page Setup Paper-Size values wrong</p>
+  </step>
+
+  <step name="1.9" link="Bug">
+<link uri="../StdCtrls/SpinCtrl.xml">
+   Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;w&gt; to test the Paper-Width spin control.
+   <r>
+<ul>
+<li>For Letter paper, the default is 8.5" (21.59 cm).</li>
+	<li>For Legal paper, the default is 8.5" (21.59 cm).</li>
+	<li>For A4 paper, the default is 8.27" (21.0 cm).</li>
+	<li>For Custom size paper, the default is the last value shown.</li>
+	<li>The minimum value is 3"; the maximum is 34".</li>
+	<li>The value in the box is incremented or decremented by 0.1" or 0.1 cm.</li>
+</ul>
+	Report any failures as suggested using "Page Setup Paper-Width spin control" as the name of the control.</r>
+<p name="bug">Page Setup Paper-Width default wrong</p>
+<p name="bug">Page Setup Paper-Width minimum wrong</p>
+<p name="bug">Page Setup Paper-Width maximum wrong</p>
+<p name="bug">Page Setup Paper-Width increment wrong</p>
+  </step>
+
+  <step name="1.10" link="Bug">
+<link uri="../StdCtrls/SpinCtrl.xml">
+   Spin Control Tests</link> and use the shortcut &lt;Alt&gt;&lt;g&gt; to test the Paper-Height spin control.
+   <r>
+<ul>
+<li>For Letter paper, the default is 11.0" (27.94 cm).</li>
+	<li>For Legal paper, the default is 14.0" (35.56 cm).</li>
+	<li>For A4 paper, the default is 11.69" (29.7 cm).</li>
+	<li>For Custom size paper, the default is the last value shown.</li>
+	<li>The minimum value is 3"; the maximum is 34".</li>
+	<li>The value in the box is incremented or decremented by 0.1" or 0.1 cm.</li>
+</ul>
+	Report any failures as suggested using "Page Setup Paper-Height spin control" as the name of the control.</r>
+<p name="bug">Page Setup Paper-Height default wrong</p>
+<p name="bug">Page Setup Paper-Height minimum wrong</p>
+<p name="bug">Page Setup Paper-Height maximum wrong</p>
+<p name="bug">Page Setup Paper-Height increment wrong</p>
+  </step>
+
+  <step name="1.11">
+<link uri="../StdCtrls/RadioBtn.xml">
+   Radio Button Tests</link> and use the shortcuts &lt;Alt&gt;&lt;p&gt; and &lt;Alt&gt;&lt;a&gt; to test the Portrait/Landscape radio buttons.
+   <r>Report any failures as suggested using "Page Setup Paper-Portrait/Landscape radio buttons" as the name of the control.</r>
+  </step>
+
+  <step name="1.12">
+<link uri="../FW/FmtFont.xml">
+   Format Font Tests</link> to test the Font button.
+   <r>Report any failures as suggested using "Page Setup Font button" as the name of the control.</r>
+  </step>
+<step name="1.13" link="Bug">Change the paper Width and Height.
+   <r>The paper size is automatically changed to "Custom size"</r>
+<p name="bug">Page Setup Paper-Custom paper size not automatically selected</p>
+</step>
+ </case>
+
+<!--================Case 2: Header Defaults================-->
+
+ <case id="psuHeadDef" num="2" order="any">
+  <title tag="psuHeadDef">Header Defaults</title>
+  <context>
+<p>Open another language project other than the default, e.g. Lela-Teli. (Currently this is done via the Debug menu - Open project). When the File-Page Setup dialog is displayed</p>
+</context>
+
+  <step name="2.1" link="Bug">
+   Inspect the contents of the Header field.
+   <r>Content defaults to the title of the object (e.g., <i>Lela-Teli - Data Notebook</i>), using the current user interface encoding.</r>
+   <p name="bug">Page Setup: Wrong Header field content</p>
+  </step>
+
+  <step name="2.2" link="Bug">
+   Without having altered the original contents of the Header edit box, go and *change the name of the Data Notebook. Then open the File - Page Setup dialog and inspect the Header field.
+   <r>The default contents of the Header field should change to reflect the new name of the CmMajorObject, e.g. <i>Lela-Teli Sample Notebook</i>.</r>
+   <p name="Definition">
+<i>Data Notebook</i> refers to the database you keep in the Data Notebook Editor for <i>one particular</i> language project.</p>
+   <p name="Note">*<i>As far as I know, there is currently no way to change the name of a Data Notebook.</i>
+</p>
+   <p name="bug">Page Setup: Header keeps old name</p>
+  </step>
+
+  <step name="2.3" link="Bug">
+   Alter the contents of the Header edit box, then press OK and exit the Data Notebook Editor, so that the changes are saved. Then go and *change the name of the Data Notebook. Then open the File - Page Setup dialog and inspect the Header field.
+   <r>The contents of the Header edit box should remain whatever you had set them to, regardless of the name of the Data Notebook.</r>
+   <p name="bug">Page Setup: Header changes to new name</p>
+  </step>
+ </case>
+
+<!--================Case 3: Footer Defaults================-->
+
+ <case id="psuFootDef" num="3" order="any">
+  <title tag="psuFootDef">Footer Defaults</title>
+  <context>
+<p>When the File-Page Setup dialog is displayed</p>
+</context>
+
+  <step name="3.1" link="Bug">
+   Without having altered the original contents of the Footer edit box, inspect the contents of the Footer field.
+   <r>Content defaults to <i>"&amp;[page],print date (&amp;[date])"</i>.</r>
+   <p name="bug">Page Setup: Wrong Footer field content</p>
+  </step>
+ </case>
+
+<!--================Case 4: Header & Footer Editing================-->
+
+ <case id="psuHF" num="4" order="any">
+  <title tag="psuHF">Header &amp; Footer Editing</title>
+  <context>
+<p>When the File-Page Setup dialog is displayed</p>
+</context>
+
+  <step name="4.1" link="Bug">
+   <b>(Not implemented for Milestone 3)</b> Select some text in the header or footer edit boxes. Click on the "A" font button.
+   <r>Brings up the <i>Format-Font</i> dialog. Only the selected text is affected.</r>
+   <p name="bug">Page Setup: Format-Font dialog does not appear</p>
+  </step>
+
+  <step name="4.2" link="Bug">
+   Move the insertion point in the header or footer edit box. Click on the page number button.
+   <r>Inserts the phrase <i>&amp;[page]</i> in the system encoding at the text insertion point.</r>
+   <p name="bug">Page Setup:
+<i>&amp;[page]</i> not inserted</p>
+  </step>
+
+  <step name="4.3" link="Bug">
+   Move the insertion point in the header or footer edit box. Click on the number of pages button.
+   <r>Inserts the phrase <i>&amp;[pages]</i> in the system encoding at the text insertion point.</r>
+   <p name="bug">Page Setup:
+<i>&amp;[pages]</i> not inserted</p>
+  </step>
+
+  <step name="4.4" link="Bug">
+   Move the insertion point in the header or footer edit box. Click on the date button.
+   <r>Inserts the phrase <i>&amp;[date]</i> in the system encoding at the text insertion point.</r>
+   <p name="bug">Page Setup:
+<i>&amp;[date]</i> not inserted</p>
+  </step>
+
+  <step name="4.5" link="Bug">
+   Move the insertion point in the header or footer edit box. Click on the time button.
+   <r>Inserts the phrase <i>&amp;[time]</i> in the system encoding at the text insertion point.</r>
+   <p name="bug">Page Setup:
+<i>&amp;[time]</i> not inserted</p>
+  </step>
+
+  <step name="4.6" link="Bug">
+   Move the insertion point in the header or footer edit box. Click on the title button.
+   <r>The title of the object is inserted at the text insertion point, using the current user interface encoding (e.g. <i>FRN-French - Data Notebook</i>).</r>
+   <p name="bug">Page Setup: Title not inserted</p>
+  </step>
+
+  <step name="4.7" link="Bug">
+   Enter values in the header and footer fields with no commas. Print something.
+   <r>The text is centered across the page.</r>
+   <p name="bug">Page Setup: Text not centered</p>
+  </step>
+
+  <step name="4.8" link="Bug">
+   Enter multiple values in the header and footer fields with one comma in the middle. Print something.
+   <r>The text to the left of the comma is left-justified on the page; the text to the right is right-justified.</r>
+   <p name="bug">Page Setup: Text not left- and right-justified</p>
+  </step>
+
+  <step name="4.9" link="Bug">
+   Enter multiple values in the header and footer fields separated by two commas. Print something.
+   <r>
+<ul>
+<li>Text to the <i>left</i> of the commas is <i>left-justified</i>.</li>
+	<li>Text <i>between</i> the commas is <i>centered</i>.</li>
+	<li>Text to the <i>right</i> of the commas is <i>right-justified</i>.</li>
+</ul>
+</r>
+   <p name="bug">Page Setup: Text improperly justified</p>
+  </step>
+
+  <step name="4.10" link="Bug">
+   Enter multiple values in the header and footer fields with three or more commas. Print something.
+   <r>
+<ul>
+<li>There is text which is left-justified, centered, and right-justified, as in step 4.9.</li>
+	<li>Any commas after the second one are reproduced in the right-justified section.</li>
+</ul>
+</r>
+   <p name="bug">Page Setup: Text improperly justified</p>
+  </step>
+ <step name="4.11" link="Bug">
+   Use the <link uri="../StdCtrls/Checkbox.xml">Check Box Tests</link> and the shortcut &lt;Alt&gt;&lt;S&gt; to test the <i>Show header on first page</i> check box.
+   <r>
+<ul>
+<li>When selected, a printed document shows the header on all pages.</li>
+	<li>When not selected, a printed document show the header on all pages except the first page.</li>
+</ul>
+</r>
+   <p name="bug">Page Setup: Header printed on wrong page</p>
+  </step>
+
+  </case>
+
+
+
+<!--================Case 5: Test for invalid combinations================-->
+
+ <case id="psuInval" num="5" order="any">
+  <title tag="psuInval">Test for invalid combinations</title>
+  <context>
+<p>When the File-Page Setup dialog is displayed, for each of the above problematic combinations of values, an error dialog with the appropriate message appears; when it is dismissed, focus is set to one of the offending controls. The Page Setup dialog does not exit via "OK" until the offending values are rectified</p>
+</context>
+
+  <step name="5.1" link="Bug">
+   Set Left and Right margins and paper Width, so that Left + Right + 2" &gt; Width". Then press OK. E.g. left = 3", right = 3", width = 7".
+   <r>Error message: <i>The Left and Right Margin values are too high; there is not sufficient room for text to print. Please adjust the values to allow at least two inches of width for the text.</i>
+</r>
+   <p name="bug">Page Setup:
+</p>
+  </step>
+
+  <step name="5.2" link="Bug">
+   Set Top and Bottom margins and paper Height, so that Top + Bottom + 2" &gt; Height. Then press OK.
+   <r>Error message: <i>The Top and Bottom Margin values are too high; there is not sufficient room for text to print. Please adjust the values to allow at least two inches of height for the text.</i>
+</r>
+   <p name="bug">Page Setup:
+</p>
+  </step>
+
+  <step name="5.3" link="Bug">
+   Set Header distance and Top margin, so that Header + 0.1" &gt; Top. Then press OK.
+   <r>Error message: <i>The header will not fit in the space allowed. Either increase the top margin, decrease the From Edge distance, or decrease the size of the font.</i>
+</r>
+   <p name="bug">Page Setup:
+</p>
+  </step>
+
+  <step name="5.4" link="Bug">
+   Set Footer distance and Bottom margin, so that Footer + 0.1" &gt; Bottom. Then press OK.
+   <r>Error message: <i>The Footer will not fit in the space allowed. Either increase the Bottom margin, decrease the From Edge distance, or decrease the size of the font.</i>
+</r>
+   <p name="bug">Page Setup:
+</p>
+  </step>
+ </case>
+
+<!--================Case 6: Units conversion================-->
+
+ <case id="psuUnits" num="6" order="any">
+  <title tag="psuUnits">Units conversion</title>
+  <context>
+<p>When the File-Page Setup dialog is displayed</p>
+</context>
+
+  <step name="6.1" link="Bug">
+   In some of the controls that take measurements, enter a value with different units than the one currently in use.  E.g. if all fields display inches, enter a value of 3cm. Tab off the field.
+   <r>The value in the field is correctly converted to whatever units are currently standard (set via Tool - Options - General - Measurement units*).  Verify that the numbers are accurate: 1" = 2.54cm = 25.4 mm.
+</r>
+   <p name="bug">Page Setup: Incorrect unit conversion</p>
+  </step>
+ </case>
+
+<!--================Case 7: Units conversion================-->
+
+ <case id="psuPrint" num="7" order="any">
+  <title tag="psuPrint">Printing</title>
+  <context>
+<p>When the File-Page Setup dialog is displayed</p>
+</context>
+
+  <step name="7.1" link="Bug">
+   Try setting various combinations of values for the various fields, pressing OK, then actually printing something.
+   <r>The margins, headers and footers, etc. come out correctly on paper - including the values of variables such as &amp;[pages].</r>
+   <p name="bug">Page Setup: Incorrect unit conversion</p>
+  </step>
+ </case>
+
+<!--================xml comment================-->
+ <update date="Apr-04-01" author="Lars">Test created.</update>
+ <update date="May-08-01" author="JanetW">Test converted to XML.</update>
+ <update date="Dec-05-01" author="MikeL">Added some bug patterns.</update>
+ <update date="Jan-29-02" author="MikeL">Tweeks to keep current.</update>
+ <update date="Jun-12-02" author="JoelC">Updated and added 4.11.</update>
+ <update date="Jun-14-02" author="JoelC">Updated and added 1.13.</update>
+</test>

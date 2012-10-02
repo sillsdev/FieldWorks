@@ -1,0 +1,189 @@
+;Test rules of epenthesis
+;First load the nat classes (msg 6541):
+(load_nat_class message <nat_class name high_v  features (cons - voc + high +)>)
+(load_nat_class message <nat_class name high_front_unrnd_v  features (cons - voc + high + back - round -)>)
+(load_nat_class message <nat_class name high_back_rnd_v     features (cons - voc + high + back + round +)>)
+(load_nat_class message <nat_class name high_back_rnd       features (high + back + round +)>)
+(load_nat_class message <nat_class name back_rnd_v    features (cons - voc + back + round +)>)
+(load_nat_class message <nat_class name C    features (cons + voc -)>)
+(load_nat_class message <nat_class name V    features (cons - voc +)>)
+(morpher_set message (*quit_on_error* false))
+
+;Load first rule (msg 6505)
+;0 -> i / {i, u}_
+(load_morpher_rule message
+  <prule  nm rule4
+		  str (allophonic)
+		  mult_applic simultaneous
+		  in_pseq ()
+		  subrules (<psub out_pseq (<simp_cntxt class high_front_unrnd_v>)
+						 left_environ <ptemp pseq (<simp_cntxt class high_v>)>
+					>
+				   )
+  >
+)
+;And trace it (msg 6535):
+(trace_morpher_rule message (true true rule4))
+;First one should be unambiguous:
+(morph_and_lookup_word pretty_print buibui)
+
+;Try mirror image of this rule (we also do it with the seg "i", rather than with
+; the class high_front_unrnd_v, just to ensure that works OK):
+;0 -> i / _{i u}
+(load_morpher_rule message
+  <prule  nm rule4
+		  str (allophonic)
+		  mult_applic simultaneous
+		  in_pseq ()
+		  subrules (<psub out_pseq (<seg rep i ctable table1>)
+						  right_environ <ptemp pseq (<simp_cntxt class high_v>)>
+					>
+				   )
+  >
+)
+(morph_and_lookup_word pretty_print biubiu)
+
+;Try epenthesis at beginning of word
+;0 -> i /#_C
+(load_morpher_rule message
+  <prule  nm rule4
+	str (allophonic)
+	in_pseq ()
+	subrules (<psub out_pseq (<simp_cntxt class high_front_unrnd_v>)
+					left_environ <ptemp init true pseq ()>
+					right_environ <ptemp pseq (<simp_cntxt class C>)>
+			  >
+			 )
+  >
+)
+(morph_and_lookup_word pretty_print ipHit)
+
+;And mirror image (epenthesis at end of word):
+;0 -> i / C_#
+(load_morpher_rule message
+  <prule  nm rule4
+	str (allophonic)
+	in_pseq ()
+	subrules (<psub out_pseq (<simp_cntxt class high_front_unrnd_v>)
+					left_environ <ptemp pseq (<simp_cntxt class C>)>
+					right_environ <ptemp fin true pseq ()>
+			  >
+			 )
+  >
+)
+(morph_and_lookup_word pretty_print pHiti)
+
+;And with an environ both left and right:
+;0 -> i / C _ u
+(load_morpher_rule message
+  <prule  nm rule4
+	str (morphophonemic)
+	in_pseq ()
+	subrules (<psub out_pseq (<simp_cntxt class high_front_unrnd_v>)
+					left_environ <ptemp pseq (<simp_cntxt class C>)>
+					right_environ <ptemp pseq (<simp_cntxt class high_back_rnd_v>)>
+			  >
+			 )
+  >
+)
+(morph_and_lookup_word pretty_print biubiu)
+
+;Try epenthesis with alpha variables:
+;0 -> i / i __
+;     u / u __
+(load_morpher_rule message
+  <prule  nm rule4
+	str (allophonic)
+	var_fs (a back b round)
+	mult_applic simultaneous
+	in_pseq ()
+	subrules (<psub out_pseq (<simp_cntxt class high_v alpha_vars (a + b +)>)
+					left_environ <ptemp pseq (<simp_cntxt class high_v alpha_vars (a + b +)>)>
+			  >
+			 )
+  >
+)
+;Should be unambiguous:
+(morph_and_lookup_word pretty_print biibuu)
+
+;Now try epenthesizing more than one seg at a time:
+;0 -> ii / {i, u}_
+(load_morpher_rule message
+  <prule  nm rule4
+	str (allophonic)
+	mult_applic simultaneous
+	in_pseq ()
+	subrules (<psub out_pseq (<simp_cntxt class high_front_unrnd_v>
+							  <simp_cntxt class high_front_unrnd_v>)
+					left_environ <ptemp pseq (<simp_cntxt class high_v>)>
+			  >
+			 )
+  >
+)
+;First one should be unambiguous:
+(morph_and_lookup_word pretty_print biiibuii)
+
+;Now test error msg 6309 (rule trying to epenthesize too many segs). The rule:
+;0 --> i / # __
+(load_morpher_rule message
+  <prule  nm rule4
+	str (allophonic)
+	mult_applic rl_iterative
+	in_pseq ()
+	subrules (<psub out_pseq (<simp_cntxt class high_front_unrnd_v>)
+					left_environ <ptemp init true pseq ()>
+			  >
+			 )
+  >
+)
+;Turn off tracing (lest we be overwhelmed):
+(trace_morpher_rule message (false false rule4))
+;Parse, expect msg 6309:
+(morph_and_lookup_word pretty_print ipHit)
+
+;Remove the rule (msg 6506):
+(remove_morpher_rule message rule4)
+;Finally, test the morpher's treatment of "optional" segs.  There are two rules, in counterbleeding order.
+;The first assimilates a vowel to an immediately preceding /u/:
+; V -> [+high +back +round] / [V +high +back +round] __
+(load_morpher_rule message
+  <prule  nm rule1
+	str (allophonic)
+	in_pseq (<simp_cntxt class V>)
+	subrules (<psub out_pseq (<simp_cntxt class high_back_rnd>)
+					left_environ <ptemp pseq (<simp_cntxt class high_back_rnd_v>)>
+			  >
+			 )
+  >
+)
+;The second (ordered after the first) epenthesizes a /t/ between two adjacent vowels:
+;0 -> t / V _ V
+(load_morpher_rule message
+  <prule  nm rule2
+	str (allophonic)
+	in_pseq ()
+	subrules (<psub out_pseq (<seg rep t ctable table1>)
+					left_environ <ptemp pseq (<simp_cntxt class V>)>
+					right_environ <ptemp pseq (<simp_cntxt class V>)>
+			  >
+			 )
+  >
+)
+(trace_morpher_rule message (true true rule1))
+(trace_morpher_rule (true true rule2))
+;Morph, should get lex entry "buibu":
+(morph_and_lookup_word pretty_print butubu)
+
+(morpher_set message (*quit_on_error* true))
+
+;Remove the rules (msg 6506):
+(remove_morpher_rule message rule1)
+(remove_morpher_rule message rule2)
+;...and the natural classes:
+(remove_nat_class message high_v)
+(remove_nat_class message high_front_unrnd_v)
+(remove_nat_class message high_back_rnd_v)
+(remove_nat_class message high_back_rnd)
+(remove_nat_class message back_rnd_v)
+(remove_nat_class message C)
+(remove_nat_class message V)

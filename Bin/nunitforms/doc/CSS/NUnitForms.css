@@ -1,0 +1,28 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+td {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+th {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.example {
+	font-family: "Courier New", Courier, mono;
+	background-color: #CC99FF;
+	text-align: left;
+	white-space: normal;
+	border: 1px solid #000000;
+	font-size: smaller;
+	margin: 12px;
+	padding: 8px 0px 8px 18px;
+}
+.csharpkeyword {
+	color: #0000FF;
+}
+.csharpcomment {
+	color: #009900;
+}

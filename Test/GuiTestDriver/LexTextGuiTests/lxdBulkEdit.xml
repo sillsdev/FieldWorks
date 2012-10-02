@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- This test expects 3 intransitive verbs -->
+<!-- In Bulk Edit Entries the column headers should be: Headword, Grammatical Category, others can follow -->
+
+<accil on-fail="assert">
+   <goal>Exercises Lexicon Bulk Edit list choice</goal>
+
+   <bug id="FWR-1094" desc="Crash changing to bulk edit entries twice" />
+   <bug id="FWR-308" desc="Bulk Edit Apply doesn't work!" />
+   <bug id="LT-9034" desc="Bulk Edit target field crash" />
+   <bug id="LT-8986" desc="Bulk Edit target changes checked cols" />
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+	<!-- Note the 3 intransitive verbs -->
+	<var id="itv1" set="kala"/>
+	<var id="itv2" set="nadra"/>
+	<var id="itv3" set="ponesa"/>
+	 <var id="GramFilt" set="6"/>
+
+ <on-application args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' run="ok" on-fail="assert">
+
+  <!-- Go to Lexicon / Bulk-Edit Entries -->
+	 <click select="menubar/view/lexicon/bulk-edit-entries"/>
+
+<model select="bulk-edit-entries[@role='view']">
+
+ <!-- Change the Grammatical Info. (Part of Speech) -->
+
+  <!-- 3. Entries pane, do one or more of the following to display and then select the entries you will change -->
+	<!-- * Sort the Entries on Headword (in ascending Order) -->
+
+	<!-- * Filter the Entries pane data to display only applicable entries -->
+ <!--  Make sure we do not have any 'auxiliary verb' entries -->
+	 <var id="col" set="$GramFilt"/>
+	 <click select="entries/col/filter/text" />
+	 <insert wait="1000">f</insert>   <!-- Find... -->
+	 <insert wait="500">~</insert>
+	 <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	   <!--click path="20:RootSite/$Text"/>
+	   <insert wait="1000">{END}+{HOME}</insert-->
+	   <insert wait="200">auxiliary verb</insert>
+	   <click path="$ok"/>
+	</on-dialog>
+	<glimpse id="beBogus1" select="entries/record/col" row="1" col="2" prop="absent" />
+  <!-- we should not have any entries -->
+
+ <!--  Find 'intransitive verbs' -->
+	 <click select="entries/col/filter/text" col="$GramFilt" />
+	 <insert wait="1000">f</insert>   <!-- Find... -->
+	 <insert wait="500">~</insert>
+	 <on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	   <insert wait="1000">intransitive verb</insert>
+	   <click path="$ok"/>
+	</on-dialog>
+
+	<glimpse id="kala" select="entries/record/col" row="1" col="2" prop="value" expect="$itv1"/>
+	<glimpse id="nadra" select="entries/record/col" row="2" col="3" prop="value" expect="$itv2"/>
+	<glimpse id="ponesa" select="entries/record/col" row="3" prop="value" expect="$itv3"/>
+	<!-- we should only have three entries in this filter -->
+	<click select="entries/record/col"/>
+	<glimpse id="beBogus2" select="//toolbar/standard/last" prop="unavailable"/>
+
+	<!-- * Select Check All. -->
+	<click select="entries/col/checks"/>
+	<insert wait="100">c</insert>
+
+	<!-- * Select Uncheck All. -->
+	<click select="entries/col/checks"/>
+	<insert wait="100">u</insert>
+
+	<!-- 4. In the Bulk Edit Operation pane, do the following: -->
+	<!-- * In the Target Field box, select PartOfSpeech -->
+	<click select="list-choice/target-field/open"/>
+	<insert>g</insert>
+	<insert wait="100">~</insert>
+
+	 <!-- * In the Change To box, select the grammatical Info. ... -->
+	<click select="list-choice/change-to/none/open"/>
+	<insert wait="1000">v</insert>   <!-- verb -->
+	<insert wait="200">{RIGHT}</insert>    <!-- expand -->
+	<insert wait="200">a</insert>   <!-- auxiliary verb -->
+	<insert wait="200">~</insert>
+
+	<!-- Select first item ("$itv1") by clicking its checkbox -->
+	<click select="entries/record/check" row="1"/>
+
+  <!-- 5. Click Preview, and then examine the Category column to see the changes that will occur. -->
+	<click select="list-choice/preview"/>
+
+  <!-- 7. Click Apply. -->
+	<click select="list-choice/apply"/>
+
+ <!-- VERIFY Results -->
+	<var id="col" set="$GramFilt" add="1"/>
+	<glimpse id="auxiliary" select="entries/record/col" row="1" prop="value" expect="auxiliary verb"/>
+	<glimpse id="intransitive" select="entries/record/col" row="2" prop="value" expect="intransitive verb"/>
+	<glimpse id="intransitive2" select="entries/record/col" row="3" prop="value" expect="intransitive verb"/>
+
+</model>
+
+  <!-- Go to Lexicon / Lexicon Edit view  lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll -->
+	 <click select="menubar/view/lexicon/lexicon-edit"/>
+
+<model select="lexicon-edit[@role='view']">
+
+	<!-- 1) Verify unchanged entry -->
+	  <!-- * Filter Gram. Func.  for 'intransitive verb'-->
+		<!--  Click Find in the dropdown -->
+	 <click select="entries/col/filter/text" col="4" />
+	 <insert wait="1000">f</insert>   <!-- Find... -->
+	 <insert wait="1000">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	   <!--click path="20:RootSite/$Text"/-->
+	   <insert wait="1000">intransitive verb</insert>
+	   <click path="$ok"/>
+	</on-dialog>
+
+	<!-- Check Expected value itv3 and 2 -->
+	 <glimpse id="bvEntry1" select="entries/record/col" row="1" col="1" prop="value" expect="$itv2"/>
+	 <glimpse id="bvEntry1b" select="entries/record/col" row="2" prop="value" expect="$itv3"/>
+	 <glimpse id="hvEntry4" select="entries/record/col" row="3" prop="absent"/>
+	<!-- we should only have 2 intransitive verbs in this filter -->
+
+	   <!--  Clear Filter -->
+	 <click select="entries/col/filter/text" col="4" />
+	 <insert wait="1000">s</insert>   <!-- Show All -->
+	 <insert wait="1000">~</insert>
+
+	<!-- 2) Verify changed entries -->
+	  <!-- * Filter on Headword -->
+	<!--  Click Find in the dropdown at the top of the Headword column (1) -->
+	 <click select="entries/col/filter/text" col="1"/>
+	 <insert wait="1000">f</insert>   <!-- Find... -->
+	 <insert wait="100">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	   <!--click path="20:RootSite/$Text"/-->
+	   <insert wait="1000">$itv2</insert><!-- nadra -->
+	   <click path="$ok"/>
+	</on-dialog>
+
+	<!-- Check Expected value  -->
+	 <glimpse wait="3000" id="bvEntry2" select="entries/record/col" row="1" col="4" prop="value" expect="intransitive verb  (1) "/>
+
+	 <click select="//toolbar/view/no-filters"/>
+
+	  <!-- * Filter on Lexeme Form -->
+ <!--  Click Find in the dropdown at the top of the Lexeme Form column (2) -->
+	 <click select="entries/col/filter/text" col="2" />
+	 <insert wait="1000">f</insert>   <!-- Find... -->
+	 <insert wait="1000">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	   <insert wait="1000">pon</insert><!-- ponesa -->
+	   <click path="$ok"/>
+	</on-dialog>
+
+	<!-- Check Expected value  -->
+	 <glimpse wait="3000" id="bvEntry3" select="entries/record/col" row="1" col="4" prop="value" expect="intransitive verb  (2) "/>
+
+	   <!--  Clear Filter -->
+	 <click select="entries/col/filter/text" col="2" />
+	 <insert wait="1000">s</insert>   <!-- Show All -->
+	 <insert wait="500">~</insert>
+
+</model>
+
+ <!-- UNDO Changes -->
+  <!-- Go to Lexicon / Bulk-Edit  -->
+	 <click select="menubar/view/lexicon/bulk-edit-entries"/>
+
+<model select="bulk-edit-entries[@role='view']">
+
+ <!--  Find our 'auxiliary verb' entry -->
+	 <var id="col" set="$GramFilt"/>
+	 <click wait="10000" select="entries/col/filter/text" />
+	 <insert wait="1000">f</insert>   <!-- Find... -->
+	 <insert wait="500">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	   <insert wait="1000">auxiliary verb</insert>
+	   <click path="$ok"/>
+	</on-dialog>
+
+	<!-- * Select Check All. -->
+	<click select="entries/col/checks"/>
+	<insert wait="1000">c</insert>
+
+	 <!-- Restore 'auxiliary verb' entry to 'intransitive' state -->
+
+	 <!--var id="fld" set="auxiliary verb"/-->
+	 <click select="list-choice/change-to/open"/>
+	 <insert wait="1000">v</insert>   <!-- verb -->
+	 <insert wait="500">{RIGHT}</insert>    <!-- expand -->
+	 <insert wait="500">ii</insert>   <!-- intransitive -->
+	 <insert wait="500">~</insert>
+
+	 <!-- Click Apply. -->
+	<click select="list-choice/apply"/>
+
+	 <!-- clear Filter -->
+	 <click select="entries/col/filter/text" col="$GramFilt"/>
+	 <insert wait="1000">s</insert>   <!-- Show All -->
+	 <insert wait="1000">~</insert>
+
+   <!-- clear change To -->
+
+	 <click select="list-choice/change-to/open" fld="intransitive verb"/>
+	 <insert wait="1000">{LEFT}</insert>    <!-- up to 'verb' -->
+	 <insert wait="500">{LEFT}</insert>    <!-- collapse 'verb' subcategories -->
+	 <insert wait="500">&lt;</insert> <!-- reset to <Not Sure> -->
+	 <insert wait="500">~</insert>
+
+</model>
+
+	 <click select="toolbar/view/no-filters"/>
+
+ </on-application>
+</accil>

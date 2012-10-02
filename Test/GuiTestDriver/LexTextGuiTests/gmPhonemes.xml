@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+  <!-- LT-2602 -->
+<accil on-fail="assert">
+   <goal>Exercises Grammar Phonemes</goal>
+
+	<bug id="FWR-1487" desc="Yellow Error window viewing grammar/phonemes in Kalaba"/>
+
+<!--test Grammar Phonemes insert, edit and deletes-->
+<!--assumes original Kalaba database-->
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+  <!--Go to Lists/Feature Types-->
+  <click select="menubar/view/grammar/phonemes"/>
+
+<model select="phonemes[@role='view']">
+
+  <!-- Make sure the Names are sorted in ascending order -->
+  <glimpse id="order" select="browse/record/col" row="*" col="1"  prop="value" expect="a  " on-fail="skip"/>
+  <if><condition of="$order" is="false"/>
+  <then><click select="browse/col/header" path="Refer to as"/></then>
+  </if>
+  <glimpse id="NotOrdered" select="browse/record/col" prop="value" expect="a  "/>
+
+  <!--insert new phoneme-->
+  <click select="//toolbar/insert/new-phoneme"/>
+
+  <click select="edit/slice/name/data" ind="*"/>
+  <insert>c~</insert>
+  <click select="edit/slice/representation/data" ind="*"/>
+  <insert>represent~</insert>
+
+<!--edit-->
+  <click select="browse/col/header" path="Refer to as"/><!-- click 2x to sort to 3rd record -->
+  <click select="browse/col/header" path="Refer to as"/>
+  <click select="browse/record/col" row="3"/>
+  <glimpse id="checkrow" select="edit/slice/name/data" ind="*" row="1" prop="value" expect="c"/>
+  <click select="edit/slice/description/data" ind="*"/>
+  <insert wait="1000">{HOME}</insert>
+  <insert wait="100">+{END}</insert>
+  <insert wait="100">errr...c is a letter~</insert>
+
+<!--check edit-->
+  <click select="edit/slice/name/data" ind="*"/>
+  <insert wait="1000">{HOME}</insert>
+  <glimpse id="checkedit" select="browse/record/col" row="3" col="2" prop="value" expect="errr...c is a letter"/>
+  <click select="browse/col/header" path="Refer to as"/>
+
+<!--delete record-->
+  <click select="//toolbar/standard/delete"/>
+  <insert wait="500">d</insert>
+<!-- don't end up with the cursor on the toolbar the next test won't run -->
+  <click select="edit/slice/name/data" ind="*" row="1"/>
+
+<!--check delete-->
+  <glimpse id="checkdelete" select="browse/record/col" row="3" col="1" prop="value" expect="c" on-pass="assert"/>
+
+</model>
+
+  </on-application>
+</accil>

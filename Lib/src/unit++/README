@@ -1,0 +1,22 @@
+This is unit++ (http://sourceforge.net/projects/unitpp/) with the addition of
+Setup/Teardown on test, suite and global level.
+
+To install it:
+
+on Linux:
+	autoreconf -isf .
+	./configure
+	make install
+
+or:
+	mkdir build$(uname -m)
+	cd build$(uname -m)
+	autoreconf -isf ..
+	../configure
+	make install
+
+on Windows:
+	open the project VS2008/unit++.vcproj in Visual Studio 2008 and compile
+
+Running unit++'s unit tests on Linux:
+	./unit++

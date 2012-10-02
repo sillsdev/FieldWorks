@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui">
+  <ribbon>
+	<tabs>
+	  <tab id="SILConvertersAddInAccess" label="SIL Converters">
+		<group id="SILConvertersAddInAccessGroup" label="SIL Converters">
+		  <button id="SILConvertersOffice10.AccessApp.ConvertTableFieldDialog_Click" label="Convert a field in a table"
+			size="large" onAction="Button_Clicked" description="Click this item to convert a field in a table with a converter from the system repository" />
+		</group>
+	  </tab>
+	</tabs>
+  </ribbon>
+</customUI>

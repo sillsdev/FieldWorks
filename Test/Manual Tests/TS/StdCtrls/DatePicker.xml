@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="datepicker" num="6.5" abbr="dtp" file="StdCtrls\DatePicker.xml">
+<title tag="datepicker">Date Picker Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Date fields in the FieldWorks data entry view allows a person to enter a date. The user can type a date directly, or click on a button to bring up a date picker dialog to choose a date. The Date Picker dialog allows extra settings for a date which are not part of a standard date.</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/DatePicker/DatePicker.html" type="doc">Date Picker</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Date Picker"</p>
+</context>
+<case id="dtpAct" num="0" order="any">
+<title tag="dtpAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Date Picker. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/DatePicker/DatePicker.html" type="doc">Date Picker specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Date Picker dialog fails to open</p>
+<p name="bug">Date Picker dialog layout incorrect</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>There is no Help button on this dialog.</li>
+<li>There is no What's This help widget on this dialog.</li>
+<li>On OK, the dialog disappears.</li>
+<li>The entered date is formatted into the field.</li>
+<li>Report any failures as suggested using "Date Picker" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Date Picker has Help button</p>
+<p name="bug">Date Picker has What's This help widget</p>
+<p name="bug">Date Picker dialog remains after OK</p>
+<p name="bug">Date Picker entered date is formatted into the field failed</p>
+</step>
+</case>
+<case id="dtppc" num="1" order="any">
+<title tag="dtppc">Precision Combo Box</title>
+<context>
+<p>When the Date Picker dialog  is displayed</p>
+</context>
+<step name="1.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> to test the Precision combo box.<r>
+<ul>
+<li>There is a drop-down list widget to the side of the textbox.</li>
+<li>The default is "On".</li>
+<li>Report any failures using the first words, "Date Picker Precision".</li>
+</ul>
+</r>
+<p name="bug">Date Picker Precision missing drop-down</p>
+<p name="bug">Date Picker Precision default is not "On"</p>
+</step>
+<step name="1.2" link="Bug">Click the drop-down widget.<r>
+<ul>
+<li>The list appears.</li>
+	<li>The list contains <i>Around</i>.</li>
+	<li>The list contains <i>Before</i>.</li>
+	<li>The list contains <i>After</i>.</li>
+	<li>The list contains <i>On</i>.</li>
+	<li>The list contains <i>No Date</i>.</li>
+   </ul>
+</r>
+<p name="bug">Date PickerPrecision drop-down not showing</p>
+	<p name="bug">Date PickerPrecision drop list missing &lt;Around&gt;</p>
+	<p name="bug">Date PickerPrecision drop list missing &lt;Before&gt;</p>
+	<p name="bug">Date PickerPrecision drop list missing &lt;After&gt;</p>
+	<p name="bug">Date PickerPrecision drop list missing &lt;On&gt;</p>
+	<p name="bug">Date PickerPrecision drop list missing &lt;No Date&gt;</p>
+   </step>
+</case>
+<case id="dtpmon" num="2" order="any">
+<title tag="dtpmon">Month Combo Box</title>
+<context>
+<p>When the Date Picker dialog  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> to test the Month combo box.<r>
+<ul>
+<li>There is a drop-down list widget to the side of the textbox.</li>
+<li>The default is "&lt;the current month&gt;".</li>
+<li>Report any failures using the first words, "Date Picker Month".</li>
+</ul>
+</r>
+<p name="bug">Date Picker Month missing drop-down</p>
+<p name="bug">Date Picker Month default is not "&lt;the current month&gt;"</p>
+</step>
+<step name="2.2" link="Bug">Click the drop-down widget.<r>
+<ul>
+<li>The list appears.</li>
+	<li>The list contains three-letter abbreviations.</li>
+	<li>The list contains <i>Unknown</i>.</li>
+   </ul>
+</r>
+<p name="bug">Date PickerMonth drop-down not showing</p>
+	<p name="bug">Date PickerMonth drop list missing &lt;three-letter abbreviations&gt;</p>
+	<p name="bug">Date PickerMonth drop list missing &lt;Unknown&gt;</p>
+   </step>
+<step name="0.1" link="Bug">As the month changes:
+  <r>The IE calendar control changes to that month. (the year stays the same, the calendar jumps around month to month)</r>
+<p name="bug">Date Picker Date Picker Month not in sync with IE calendar</p>
+</step>
+</case>
+<case id="dtpday" num="3" order="any">
+<title tag="dtpday">Date Combo Box</title>
+<context>
+<p>When the Date Picker dialog  is displayed</p>
+</context>
+<step name="3.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> to test the Date combo box.<r>
+<ul>
+<li>There is a drop-down list widget to the side of the textbox.</li>
+<li>The default is "&lt;the current day&gt;".</li>
+<li>Report any failures using the first words, "Date Picker Date".</li>
+</ul>
+</r>
+<p name="bug">Date Picker Date missing drop-down</p>
+<p name="bug">Date Picker Date default is not "&lt;the current day&gt;"</p>
+</step>
+<step name="3.2" link="Bug">Click the drop-down widget.<r>
+<ul>
+<li>The list appears.</li>
+	<li>The list contains numbers for the month.</li>
+	<li>The list contains <i>Unknown</i>.</li>
+	<li>The list is sorted so 2 comes after 1, rather than 10 after 1.</li>
+   </ul>
+</r>
+<p name="bug">Date PickerDate drop-down not showing</p>
+	<p name="bug">Date PickerDate drop list missing &lt;numbers for the month&gt;</p>
+	<p name="bug">Date PickerDate drop list missing &lt;Unknown&gt;</p>
+	<p name="bug">Date PickerDate drop list not sorted right</p>
+   </step>
+<step name="0.1" link="Bug">As the month changes:
+  <r>The numbers are limited by the month.. For example, if 'Feb' is selected, then the list shows '28' or '29'.</r>
+<p name="bug">Date Picker Date Picker Date not in sync with month</p>
+</step>
+<step name="0.2" link="Bug">As the year changes:
+  <r>The numbers are limited by the year.. For example, if 'Feb' is selected, then the list shows '29' when the year is a leap year.</r>
+<p name="bug">Date Picker Date Picker Date not in sync with year</p>
+</step>
+<step name="0.3" link="Bug">As the date changes:
+  <r>The IE calendar control changes its date as well..</r>
+<p name="bug">Date Picker Date Picker Date not in sync with IE calendar</p>
+</step>
+</case>
+<case id="dtpyear" num="4" order="any">
+<title tag="dtpyear">Year Spin Control</title>
+<context>
+<p>When the Date Picker dialog  is displayed</p>
+</context>
+<step name="4.1" link="Bug">
+	Use the <link uri="../StdCtrls/SpinCtrl.xml">Spin Control Tests</link> to test the Year spin control.<r>
+<ul>
+<li>The minimum value is 6000 BC.</li>
+<li>The maximum value is same as IE Calendar common control.</li>
+<li>Report any failures using the first words, "Date Picker Year".</li>
+</ul>
+</r>
+<p name="bug">Date Picker Year min not 6000 BC</p>
+<p name="bug">Date Picker Year max not same as IE Calendar common control</p>
+</step>
+<step name="4.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is &lt;the current year&gt;.</li>
+	<li>The spin widget increments <i>one-year</i> per click.</li>
+	<li>When the left mouse button is depressed over two seconds then it <i>increases increment speed</i>.</li>
+	<li>The value <i>0</i> is invalid. (The year following 1 BC is 1 AD)</li>
+   </ul>
+</r>
+<p name="bug">Date PickerYear default vaule is not &lt;the current year&gt;</p>
+	<p name="bug">Date PickerYear spinner increment not one-year</p>
+	<p name="bug">Date PickerYear mouse-down does not increases increment speed</p>
+	<p name="bug">Date PickerYear invalid value 0 allowed</p>
+   </step>
+<step name="0.1" link="Bug">As the year changes:
+  <r>The IE Calendar control changes..</r>
+<p name="bug">Date Picker Date Picker Year not in sync with IE Calendar</p>
+</step>
+<step name="0.2" link="Bug">When a leap year is displayed:
+  <r>The possibilities for the date combo update to reflect the leap year..</r>
+<p name="bug">Date Picker Date Picker Year not in sync with date combo</p>
+</step>
+</case>
+<case id="dtpcal" num="5" order="any">
+<title tag="dtpcal">Calendar Pallet</title>
+<context>
+<p>When the Date Picker dialog  is displayed</p>
+</context>
+<step name="5.1" link="Bug">
+	Exercise the Calendar pallet.<r>
+<ul>
+<li>It is enabled when dates entered in the combo boxes are in range for this control.</li>
+</ul>
+</r>
+<p name="bug">Date Picker Calendar disabled when dates entered in the combo boxes are in range for this control</p>
+</step>
+<step name="5.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is &lt;the current date&gt;.</li>
+</ul>
+</r>
+<p name="bug">Date PickerCalendar default vaule is not &lt;the current date&gt;</p>
+</step>
+<step name="0.1" link="Bug">When the date on the calendar changes:
+  <r>The three controls (month, day, year) match the date on the calendar..</r>
+<p name="bug">Date Picker Date Picker Calendar not in sync with month, day, year</p>
+</step>
+</case>
+<case id="dtpleftarrow" num="6" order="any">
+<title tag="dtpleftarrow">"&lt;" Button</title>
+<context>
+<p>When the Calendar interior  is displayed</p>
+</context>
+<step name="6.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the "&lt;" button.<r>
+<ul>
+<li>Report any failures using the first words, "Date Picker "&lt;"".</li>
+</ul>
+</r>
+</step>
+<step name="6.2" link="Bug">
+	Click the "&lt;" button to test its action.
+	<r>
+<ul>
+<li>Calendar flips to the previous month.</li>
+<li>The number of the previously selected date becomes selected in the previous month. For example, if March 8 is selected, then February 8 becomes selected. If March 31 is selected, then the new selected date is February 28 (or 29 if it's a leap year)..</li>
+<li>The heading area of the calendar becomes colored.</li>
+<li>Fields at the top of the dialog change to match the selected date.</li>
+</ul>
+</r>
+<p name="bug">Date PickerCalendar fails to calendar flips to the previous month</p>
+<p name="bug">Date PickerCalendar fails to the number of the previously selected date becomes selected in the previous month</p>
+<p name="bug">Date PickerCalendar fails to the heading area of the calendar becomes colored</p>
+<p name="bug">Date PickerCalendar fails to fields at the top of the dialog change to match the selected date</p>
+</step>
+</case>
+<case id="dtprightarrow" num="7" order="any">
+<title tag="dtprightarrow">"&gt;" Button</title>
+<context>
+<p>When the Calendar interior  is displayed</p>
+</context>
+<step name="7.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the "&gt;" button.<r>
+<ul>
+<li>Report any failures using the first words, "Date Picker "&gt;"".</li>
+</ul>
+</r>
+</step>
+<step name="7.2" link="Bug">
+	Click the "&gt;" button to test its action.
+	<r>
+<ul>
+<li>Calendar flips to the next month.</li>
+<li>The number of the previously selected date becomes selected in the next month. For example, if January 8 is selected, then February 8 becomes selected. If January 31 is selected, then the new selected date is February 28 (or 29 if it's a leap year)..</li>
+<li>The heading area of the calendar becomes colored.</li>
+<li>Fields at the top of the dialog change to match the selected date.</li>
+</ul>
+</r>
+<p name="bug">Date PickerCalendar fails to calendar flips to the next month</p>
+<p name="bug">Date PickerCalendar fails to the number of the previously selected date becomes selected in the next month</p>
+<p name="bug">Date PickerCalendar fails to the heading area of the calendar becomes colored</p>
+<p name="bug">Date PickerCalendar fails to fields at the top of the dialog change to match the selected date</p>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+
+</test>

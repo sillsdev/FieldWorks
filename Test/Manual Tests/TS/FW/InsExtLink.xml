@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="insextl" num="2.5.6" abbr="insextl" file="FW\InsExtLink.xml">
+<title tag="insextlink">Insert-External Link Tests</title>
+<index>
+<li>test</li>
+</index>
+
+<introduction>
+<p>Inserts an extranal link to a file that is external to the FieldWorks project. </p>
+<p name="Specification">See the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/InsertMenu/InsertMenu.html#InsertExternalLink" type="doc">Insert-External Link menu item</link>
+	and the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ExternalLinks/ExternalLinks.html" type="doc">Insert External Link</link> specs.</p>
+<p name="todo">Include test cases for backup of external data.</p>
+<p name="todo">Include test cases for links over a network.</p>
+</introduction>
+
+<context>
+<p>If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Insert-External Link"</p>
+</context>
+
+<case id="insextlAct" num="0" order="any">
+<title tag="invidAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">While in a non-structured text field, try to invoke Insert-External Link through the menu options or the External Link button on the Insert toolbar.
+ <r>The menu option and the button both gray when not in a structured text field.</r>
+<p name="bug">Insert-External Link menu option not gray</p>
+<p name="bug">Insert-External Link button not gray</p>
+</step>
+<step name="0.2" link="Bug">While in a structured text field, invoke Insert-External Link through the menu options or the External Link button on the Insert toolbar.
+	<r>A Windows File-Open dialog appears</r>
+<p name="bug">Insert-External Link File-Open dialog does not appear</p>
+</step>
+<step name="0.3">Use <link uri="../StdCtrls/dialog.xml">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OPEN, the dialog disappears. Results in the text will be covered in tests below.</li>
+<li>On CANCEL, the dialog disappears and the text remains unchanged.</li>
+</ul>
+</r>
+</step>
+</case>
+
+<case id="insextlEff" num="1" order="any">
+<title tag="insextlEff">Effects of Insertion on External Link</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="1.1" link="Bug">Select some text (not across paragraph boundary) and insert an external link.
+ <r>
+<ul>
+  <li>The selected text is formatted with the External Link character style.</li>
+  <li>The selected text becomes a Hot Link Action text, where the mouse cursor changes to a hand for a single-click launch of the external link.</li>
+ </ul>
+</r>
+<p name="bug">Insert - External Link text is not formatted with External Link character style</p>
+<p name="bug">Insert - External Link text does not become Hot Link Action text</p>
+<p name="todo">Need spec for case where user tries to link text with a paragraph break</p>
+</step>
+<step name="1.2" link="Bug">Place cursor in a structured text field and insert an external link.
+ <r>
+<ul>
+  <li>The path and filename of the external file is inserted at the insertion point and is formatted with the External Link character style.</li>
+  <li>The External Link style is applied on top of any overlays or other attributes.</li>
+  <li>The text becomes a Hot Link Action text, where the mouse cursor changes to a hand for a single-click launch of the external link.</li>
+ </ul>
+</r>
+<p name="bug">Insert - External Link path and filename of external file not inserted</p>
+<p name="bug">Insert - External Link text is not formatted with External Link character style</p>
+<p name="bug">Insert - External Link text character style not applied on top of overlays or other attributes</p>
+<p name="bug">Insert - External Link text does not become Hot Link Action text</p>
+</step>
+</case>
+
+<case id="insextlEdt" num="2" order="any">
+<title tag="insextlEdt">Editing External Links</title>
+<context>
+<p>When there is an external link in a structured text field.</p>
+</context>
+<step name="2.1" link="Bug">Select text that overlaps the link or place the cursor within the link (by using the arrow keys) and insert an external link.
+ <r>The entire existing link is selected and the File-Open dialog on the file that is specified in the link is launched. Selecting a different file and clicking OK will change the link to point to the new file.</r>
+<p name="bug">Insert - External Link existing link not selected.</p>
+<p name="bug">Insert - External Link File-Open dialog not launched on file that was specified in link.</p>
+<p name="bug">Insert - External Link existing link not updated with new file.</p>
+</step>
+<step name="2.2" link="Bug">Place cursor within external link and modify text.
+ <r>
+<ul>
+  <li>The text is modified without changing the file the link points to.</li>
+  <li>Pressing &lt;Enter&gt; results in a "bing" and no change to the text.</li>
+  <li>Pasting works, but if there is an &lt;Enter&gt; character, there is a "bing" and only text that is before the first &lt;Enter&gt; is pasted.</li>
+ </ul>
+</r>
+<p name="bug">Insert - External Link &lt;Enter&gt; breaks the link into two parts</p>
+</step>
+<step name="2.3" link="Bug">Copy text containing an external link and paste it in a structured text field.
+ <r>The link should be pasted as it was and should retain the hyperlink characteristics.</r>
+<p name="bug">Insert - External Link does not retain hyperlink characteristics across copy and paste</p>
+</step>
+</case>
+
+
+<case id="insextlRtClkMenu" num="3" order="any">
+<title tag="insextlRtClkMenu">Right-Click Menu Options for External Links</title>
+<context>
+<p>When there is an external link in a structured text field.</p>
+</context>
+<step name="3.1" link="Bug">Right-click on External Link.
+ <r>
+<ul>
+  <li>Open launches the link.</li>
+  <li>Open With launches with user selected application.</li>
+  <li>External Link opens the File-Open dialog for changing the link target.</li>
+  <li>Remove Link selected the entire link and asks the user for confirmation through a dialog. If Yes (default) is selected, hidden link information is removed, the External Link character style is removed from the text which remains as plain text.</li>
+ </ul>
+</r>
+ <p name="bug">Insert - External Link right click open does not launch link</p>
+ <p name="bug">Insert - External Link right click open with does not allow user to choose application</p>
+ <p name="bug">Insert - External Link right click external link does not launch File-Open dialog</p>
+ <p name="bug">Insert - External Link right click remove link does not remove link information</p>
+ <p name="bug">Insert - External Link right click remove link does not remove external link character style</p>
+ <p name="bug">Insert - External Link right click remove link does not leave text as plain text</p>
+ </step>
+</case>
+
+<case id="insextlBrkLinks" num="4" order="any">
+<title tag="insextlBrkLinks">Broken External Link Dialog</title>
+<context>
+<p>When the Broken External Link Dialog is displayed (through clicking on a broken external link).</p>
+</context>
+<step name="4.1" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic Dialog Tests</link> to test this dialog's basic functionality.
+ <r>
+<ul>
+  <li>Static file field gives the simple filename.</li>
+  <li>Static folder field gives the folder where ther link expected to find the file. Can wrap up to 3 lines; if too long, truncates the beginning and replace with elipsis (...).</li>
+  <li>"Yes" button closes the dialog and launches the File-Open dialog as best it can on the pathname.
+   <ul>
+	<li>"OK" from the File-Open dialog fixes the link and launches the application.</li>
+	<li>"Cancel" from the File-Open dialog returns to the Broken Exteral Link dialog.</li>
+   </ul>
+  </li>
+  <li>"No" button leaves link as it is and aborts the launch.</li>
+ </ul>
+</r>
+<p name="bug">Insert-External Links broken links dialog fields giving wrong info</p>
+<p name="bug">Insert-External Links "Yes" button does not launch File-Open dialog</p>
+<p name="bug">Insert-External Links opening file using File-Open dialog does not fix link</p>
+</step>
+</case>
+
+<update date="May-28-02" author="JoelC">Test created.</update>
+
+</test>

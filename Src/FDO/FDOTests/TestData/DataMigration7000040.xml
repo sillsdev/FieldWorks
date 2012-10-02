@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000021">
+	<rt class="LexEntry" guid="6704EB7A-EFEA-42E4-BFAA-9B99B1D45D6F">
+	</rt>
+	<rt class="LexEntry" guid="BFC76313-B9E4-4A31-8408-F854D7709E68">
+	</rt>
+
+	<!-- One with nothing at all.-->
+	<rt class="LexEntryRef" guid="82CB0EC6-B542-4FB8-B5B6-41398790DDF9">
+	</rt>
+
+	<!-- One with a complex ref, but no primary lexemes.-->
+	<rt class="LexEntryRef" guid="c1ecaa73-e382-11de-8a39-0800200c9a66">
+		<ComponentLexemes>
+			<objsur guid="6704EB7A-EFEA-42E4-BFAA-9B99B1D45D6F" t="r" />
+		</ComponentLexemes>
+	</rt>
+
+	<!-- One with two complex refs, only one copied.-->
+	<rt class="LexEntryRef" guid="BF274D15-406E-4816-A81F-9B8C70AEF8E5">
+		<ComponentLexemes>
+			<objsur guid="6704EB7A-EFEA-42E4-BFAA-9B99B1D45D6F" t="r" />
+			<objsur guid="BFC76313-B9E4-4A31-8408-F854D7709E68" t="r" />
+		</ComponentLexemes>
+		<PrimaryLexemes>
+			<objsur guid="BFC76313-B9E4-4A31-8408-F854D7709E68" t="r" />
+		</PrimaryLexemes>
+	</rt>
+	<!-- One with two complex refs, both copied.-->
+	<rt class="LexEntryRef" guid="B854113C-4B99-46FF-A9F6-ED3F0245E259">
+		<ComponentLexemes>
+			<objsur guid="6704EB7A-EFEA-42E4-BFAA-9B99B1D45D6F" t="r" />
+			<objsur guid="BFC76313-B9E4-4A31-8408-F854D7709E68" t="r" />
+		</ComponentLexemes>
+		<PrimaryLexemes>
+			<objsur guid="6704EB7A-EFEA-42E4-BFAA-9B99B1D45D6F" t="r" />
+			<objsur guid="BFC76313-B9E4-4A31-8408-F854D7709E68" t="r" />
+		</PrimaryLexemes>
+	</rt>
+</languageproject>

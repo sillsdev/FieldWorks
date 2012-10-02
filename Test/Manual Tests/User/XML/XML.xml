@@ -1,0 +1,21 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="XML\XML.xml">
+ <title tag="xmlXml">What is XML?</title>
+ <index>
+  <li>XML</li>
+ </index>
+ <definition>
+  <p>XML is a slang acronym for <i>Extensible Mark-up Language</i>. Like HTML, it is text-based and makes extensive use of tags and attributes to mark parts of the text in an organized way. Unlike HTML, you define the tags and attributes for your type of document. You can even define the structure of your document type formally so that a program can check to see that all documents of that type adhere to your tags and attributes in the correct way. This is called, "validation".</p>
+<p>Here are some reasons XML is used for our documentation:</p>
+  <ul>
+   <li>Using XSL, all documents can be transformed for use by other media, the web, HTML Help, Word file format; it can even be executed as a program if it makes sense to do so. It is the ultimate archive form.</li>
+   <li>It is free and there are many free tools to use with it.</li>
+   <li>It is readable by a simple text editor.</li>
+   <li>All documents in our libraries can be validated.</li>
+  </ul>
+ </definition>
+ <seeAlso>
+  <li><link uri="http://www.w3.org/XML/" type="doc">The w3 XML website</link></li>
+  <li><link uri="XSL.xml" type="module">What is XSL?</link></li>
+ </seeAlso>
+</concept>

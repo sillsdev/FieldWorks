@@ -1,0 +1,136 @@
+(message (
+ <hc6508 fname c:\data\hc\morpher\tests\pshape.in > ) )
+;Test translation between strings and pshapes
+;NOTE: because we call a lot of Prolog stuff in here, and because the Prolog
+; calls will not always succeed, we make no attempt to do garbage collection.
+; So running this file with testing of memory leaks turned on will result in
+; lots of apparent leaks.  Hakuna matata...
+;Open a new language for testing purposes (msg 6510):
+(message (
+ <hc6510 lname Phonology Test Language > ) )
+;Don't let abort make us quit:
+(message (
+ <hc6502 var_name '*quit_on_error*' > ) )
+;First a morpher_set command, which should result in msg 6502:
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Then we run three load_char_def_table commands, each of
+; which should result in a msg 6501:
+(message (
+ <hc6501 table_name table1 > ) )
+(message (
+ <hc6501 table_name table2 > ) )
+(message (
+ <hc6501 table_name table3 > ) )
+;Test first in ANALYSIS mode:
+;First we test string_to_pshape on an input str with an undef'd char (h);
+; error msg 6009
+ERROR:hc6009 --- <hc6009 char h string pha item foobar ctable_name table2 >
+;Now test string_to_pshape and pshape_to_regexpr:
+[Output = ,ts"ubadphatshikh]
+CORRECT
+(Prolog command finished )
+;This time we'll use table1 for string_to_pshape, and
+; table2 for pshape_to_regexpr.  What was a "ph" on input should correspond
+; to a "p" on output (since "p" in table2 is unmarked for aspiration).
+[Output = ,patsik]
+CORRECT
+(Prolog command finished )
+;Next we'll try string_to_pshape and pshape_to_regexpr with ambiguous exprs.
+;First one should fail pshape_to_regexpr of ambiguity flag ('f'); msg 6035:
+ERROR:hc6035 --- <hc6035 features (voc - cons + vd - poa bilabial ) table_name table1 ambiguous_xltn pphabad >
+;Test again, but allow ambiguity ('1' flag):
+; What was a "p" on input should be ambiguous between "p" and "ph" on output:
+[Output = ,pphatstshikkh]
+CORRECT
+(Prolog command finished )
+;Now try a word with some boundary markers:
+[Output 1 = ,#bab+pap#]
+CORRECT
+(Prolog command finished )
+;Test again, using a "-i".  Since this appears in table1 but not in table2,
+; we should get error 6011 when we try to xlate it into a regexpr:
+ERROR:hc6011 --- <hc6011 features (voc + cons - high + low - back + round - vd + ) table_name table2 >
+;Similarly, we'll use a bdry marker from table2 in input, and xlate it back
+; with table1 (which doesn't have bdry markers); error 6050:
+ERROR:hc6050 --- <hc6050 table_name table1 >
+;And test a bdry marker from table2 that doesn't exist in table3:
+ERROR:hc6050 --- <hc6050 table_name table3 >
+;Now test in SYNTHESIS mode:
+;First we test string_to_pshape on an input str with an undef'd char (h);
+; We use the id '*NA*' here, which should give us error 6016, rather than 6009.
+ERROR:hc6016 --- <hc6016 char h word pha ctable_name table2 >
+;Now test string_to_pshape and pshape_to_regexpr:
+[Output = ,ts"ubadphatshikh]
+CORRECT
+(Prolog command finished )
+;This time we'll use table1 for string_to_pshape, and
+; table2 for pshape_to_regexpr.  What was a "ph" on input should correspond
+; to a "p" on output (since "p" in table2 is unmarked for aspiration).
+[Output = ,patsik]
+CORRECT
+(Prolog command finished )
+;Next we'll try string_to_pshape and pshape_to_regexpr with ambiguous exprs.
+;First one should fail pshape_to_regexpr of ambiguity flag ('f'); msg 6035:
+ERROR:hc6035 --- <hc6035 features (voc - cons + vd - poa bilabial ) table_name table1 ambiguous_xltn pphabad >
+;Test again, but allow ambiguity ('1' flag):
+; What was a "p" on input should be ambiguous between "p" and "ph" on output:
+[Output = ,pphatstshikkh]
+CORRECT
+(Prolog command finished )
+;Now try a word with some boundary markers:
+[Output 1 = ,#bab+pap#]
+CORRECT
+(Prolog command finished )
+;Some tests with erasure of boundary markers:
+TEST OF LEADING BDRY MARKER OK
+(Prolog command finished )
+TEST OF MEDIAL BDRY MARKER OK
+(Prolog command finished )
+TEST OF TRAILING BDRY MARKER OK
+(Prolog command finished )
+TEST OF MULTIPLE BDRY MARKERS OK
+(Prolog command finished )
+;Test again, using a "-i".  Since this appears in table1 but not in table2,
+; we should get error 6011 when we try to xlate it into a regexpr:
+ERROR:hc6011 --- <hc6011 features (voc + cons - high + low - back + round - vd + ) table_name table2 >
+;Similarly, we'll use a bdry marker from table2 in input, and xlate it back
+; with table1 (which doesn't have bdry markers); error 6050:
+ERROR:hc6050 --- <hc6050 table_name table1 >
+;And test a bdry marker from table2 that doesn't exist in table3:
+ERROR:hc6050 --- <hc6050 table_name table3 >
+;Next, we'll load in a very large char def table and see how it behaves.
+;First remove the char def tables that refer to the old *pfeatures*
+; (msg 6501, 3x):
+((
+ <hc6509 table_name table1 > ) )
+((
+ <hc6509 table_name table2 > ) )
+((
+ <hc6509 table_name table3 > ) )
+;Now we set a new *pfeatures*, giving msg 6502:
+(message (
+ <hc6502 var_name '*pfeatures*' > ) )
+;Then we load the table, giving msg 6501.
+;In the ff char def table, "b" differs from "a" only in f6263,
+; and "c" is ambiguous between the two (it has no value for f6263).
+; "d", "e" and "f" differ from a-c in f01, and from each other in
+; f3031 (again, "f" is ambiguous between "d" and "e").  Finally, g-i
+; differ from a-c in f01 and from d-f in f02, and among each other in f3233.
+; And lastly, "j" is distinct from all the above.
+(message (
+ <hc6501 table_name large_table > ) )
+;Now we'll test the table.  Reading in "abcdefghi", we should get
+; out "acbcabcdfefdefgihighi":
+[Output = ,acbcabcdfefdefgihighi]
+CORRECT
+(Prolog command finished )
+;Now we'll try reading in a word that has too many segments.  (256 is the
+; limit.)  We should get error msg 6301:
+ERROR:hc6301 --- <hc6301 string aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa max_num 256 >
+;Make sure we can read in and xlate a word with the max num of segs, too:
+CORRECT
+(Prolog command finished )
+;Done; morpher will now terminate
+(message (
+ <hc6521 fname c:\data\hc\morpher\tests\pshape.in > ) )

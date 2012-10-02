@@ -1,0 +1,14 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Building\Dir.xml">
+ <title tag="blddir">Set up directory structures</title>
+ <index>
+  <li>manual files: folders</li>
+ </index>
+ <steps>
+  <p>If you didn't copy the directory structure along with the files, start over! Here are the steps for copying the directory structure.</p>
+  <step>Launch <link uri="..\Source\DocControl.xml">Perforce</link>.</step>
+  <step>Open the source tree under "//depot+Test+Manual Tests"</step>
+  <step>Right click on the Manual Tests folder and select "Sync-Sync to Head Revision".</step>
+  <step>Let it create all the directory structure.</step>
+ </steps>
+</task>

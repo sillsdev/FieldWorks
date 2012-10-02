@@ -1,0 +1,85 @@
+HKCR
+{
+	SILConvertersOfficeShim.Connect.2 = s 'Connect Class'
+	{
+		CLSID = s '{3C86D6AE-C692-4b31-A384-5C7C0BAB7029}'
+	}
+	SILConvertersOfficeShim.Connect = s 'Connect Class'
+	{
+		CLSID = s '{3C86D6AE-C692-4b31-A384-5C7C0BAB7029}'
+		CurVer = s 'SILConvertersOfficeShim.Connect.2'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove '{3C86D6AE-C692-4b31-A384-5C7C0BAB7029}' = s 'Connect Class'
+		{
+			ProgID = s 'SILConvertersOfficeShim.Connect.2'
+			VersionIndependentProgID = s 'SILConvertersOfficeShim.Connect'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+		}
+	}
+}
+
+HKCU
+{
+	NoRemove Software
+	{
+		NoRemove Microsoft
+		{
+			NoRemove Office
+			{
+				NoRemove Word
+				{
+					NoRemove Addins
+					{
+						ForceRemove SILConvertersOfficeShim.Connect
+						{
+							 val 'Description' = s 'Providing access to SILConverters from Microsoft Office applications'
+							 val 'FriendlyName' = s 'SILConverters for Microsoft Office'
+							 val 'LoadBehavior' = d 3
+						}
+					}
+				}
+				NoRemove Publisher
+				{
+					NoRemove Addins
+					{
+						ForceRemove SILConvertersOfficeShim.Connect
+						{
+							 val 'Description' = s 'Providing access to SILConverters from Microsoft Office applications'
+							 val 'FriendlyName' = s 'SILConverters for Microsoft Office'
+							 val 'LoadBehavior' = d 3
+						}
+					}
+				}
+				NoRemove Excel
+				{
+					NoRemove Addins
+					{
+						ForceRemove SILConvertersOfficeShim.Connect
+						{
+							 val 'Description' = s 'Providing access to SILConverters from Microsoft Office applications'
+							 val 'FriendlyName' = s 'SILConverters for Microsoft Office'
+							 val 'LoadBehavior' = d 3
+						}
+					}
+				}
+				NoRemove Access
+				{
+					NoRemove Addins
+					{
+						ForceRemove SILConvertersOfficeShim.Connect
+						{
+							 val 'Description' = s 'Providing access to SILConverters from Microsoft Office applications'
+							 val 'FriendlyName' = s 'SILConverters for Microsoft Office'
+							 val 'LoadBehavior' = d 3
+						}
+					}
+				}
+			}
+		}
+	}
+}

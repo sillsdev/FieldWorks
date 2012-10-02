@@ -1,0 +1,458 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksUndoChangingApprovalStatus" xml:space="preserve">
+	<value>Undo Changing Approval Status</value>
+  </data>
+  <data name="ksRedoChangingApprovalStatus" xml:space="preserve">
+	<value>Redo Changing Approval Status</value>
+  </data>
+  <data name="ks_Find_" xml:space="preserve">
+	<value>&amp;Find:</value>
+  </data>
+  <data name="ksErrorInEnvironment" xml:space="preserve">
+	<value>Error in Environment</value>
+	<comment>message box caption</comment>
+  </data>
+  <data name="ksFindWordform" xml:space="preserve">
+	<value>Find Wordform</value>
+  </data>
+  <data name="ksCannotMergeWordformsYet" xml:space="preserve">
+	<value>Merging wordforms needs serious definition, before it can be done. Sorry.</value>
+  </data>
+  <data name="ksAnalysisX" xml:space="preserve">
+	<value>Analysis {0}</value>
+	<comment>{0} is a number ("Analysis 1" for first, etc)</comment>
+  </data>
+  <data name="ksNoAnalysis" xml:space="preserve">
+	<value>no analysis</value>
+  </data>
+  <data name="ksTodo_WordformEditing" xml:space="preserve">
+	<value>TODO: Basic wordform editing happens here.</value>
+  </data>
+  <data name="ks_GoTo" xml:space="preserve">
+	<value>&amp;Go To</value>
+  </data>
+  <data name="ksQuestions" xml:space="preserve">
+	<value>???</value>
+	<comment>indicates unknown/undefined/missing value</comment>
+  </data>
+  <data name="ksCannotRespellWordform" xml:space="preserve">
+	<value>Sorry. We are not able to support respelling the wordform in the required writing system at this time.</value>
+	<comment>There was no 'best vernacular' alternative for the given wordform is why we can't change it.</comment>
+  </data>
+  <data name="ksLess" xml:space="preserve">
+	<value>Less</value>
+	<comment>Alternative text for more/less options button when more options are shown</comment>
+  </data>
+  <data name="ksClear" xml:space="preserve">
+	<value>Clear</value>
+	<comment>Alternative text for the Preview button, indicating that the Preview should be removed.</comment>
+  </data>
+  <data name="ksRedoChangeSpelling" xml:space="preserve">
+	<value>Redo changing {0} to {1}</value>
+	<comment>old spelling, new spelling</comment>
+  </data>
+  <data name="ksUndoChangeSpelling" xml:space="preserve">
+	<value>Undo changing {0} to {1}</value>
+	<comment>old spelling, new spelling</comment>
+  </data>
+  <data name="ksExplainDisabledScripture" xml:space="preserve">
+	<value>(Some items are disabled because the wordform occurs in texts not currently included)</value>
+	<comment>Message that appears in the respelling dialog when we know of occurrences of the wordform in Scripture sections not currently included in the concordance.</comment>
+  </data>
+  <data name="ksChangingSpelling" xml:space="preserve">
+	<value>Changing spelling</value>
+	<comment>String used in spelling progress dialog</comment>
+  </data>
+  <data name="ksDealingAnalyses" xml:space="preserve">
+	<value>Cleaning up analyses</value>
+	<comment>String used in spelling progress dialog</comment>
+  </data>
+  <data name="ksProgress" xml:space="preserve">
+	<value>Progress</value>
+	<comment>Label for progress bar in progress dialog.</comment>
+  </data>
+  <data name="ksFindingOccurrences" xml:space="preserve">
+	<value>Find Occurrences</value>
+	<comment>Dialog caption for progress dialog, launching spelling dlg in TE</comment>
+  </data>
+  <data name="ksSearchingOccurrences" xml:space="preserve">
+	<value>Searching Scripture for occurrences of the word</value>
+	<comment>longer explanation goes with ksFindingOccurrences</comment>
+  </data>
+  <data name="ksPhonologicalFeatures" xml:space="preserve">
+	<value>Phonological Features</value>
+  </data>
+  <data name="ksPhonologicalFeaturesAdd" xml:space="preserve">
+	<value>The phonological feature I need is not shown here.  Add a new phonological feature.</value>
+  </data>
+  <data name="ks_DontCare_" xml:space="preserve">
+	<value>&lt;n/a&gt;</value>
+  </data>
+  <data name="ksMetaRuleInput" xml:space="preserve">
+	<value>Input</value>
+  </data>
+  <data name="ksMetaRuleLeftEnv" xml:space="preserve">
+	<value>Left environment</value>
+  </data>
+  <data name="ksMetaRuleResult" xml:space="preserve">
+	<value>Result</value>
+  </data>
+  <data name="ksMetaRuleRightEnv" xml:space="preserve">
+	<value>Right environment</value>
+  </data>
+  <data name="ksMetaRuleSwitch" xml:space="preserve">
+	<value>Switch these items</value>
+  </data>
+  <data name="ksRuleFeaturesOpt" xml:space="preserve">
+	<value>Phonological Features</value>
+  </data>
+  <data name="ksRuleMorphBdryOpt" xml:space="preserve">
+	<value>Morpheme Boundary (+)</value>
+  </data>
+  <data name="ksRuleNCChooserLink" xml:space="preserve">
+	<value>Edit the Natural Classes</value>
+  </data>
+  <data name="ksRuleNCOpt" xml:space="preserve">
+	<value>Natural Class</value>
+  </data>
+  <data name="ksRulePhonemeChooserLink" xml:space="preserve">
+	<value>Edit the Phonemes</value>
+  </data>
+  <data name="ksRulePhonemeOpt" xml:space="preserve">
+	<value>Phoneme</value>
+  </data>
+  <data name="ksRuleWordBdryOpt" xml:space="preserve">
+	<value>Word Boundary (#)</value>
+  </data>
+  <data name="ksRuleEnvChooserLink" xml:space="preserve">
+	<value>Edit the Environments</value>
+  </data>
+  <data name="ksRuleEnvChooserName" xml:space="preserve">
+	<value>Environment</value>
+  </data>
+  <data name="ksRuleNCFeatsName" xml:space="preserve">
+	<value>Created automatically for rule "{0}"</value>
+  </data>
+  <data name="ksContextOccurrenceDlgError" xml:space="preserve">
+	<value>Minimum must be less than or equal to maximum</value>
+  </data>
+  <data name="ksRuleRedoInsert" xml:space="preserve">
+	<value>Redo Insert {0}</value>
+  </data>
+  <data name="ksRuleRedoRemove" xml:space="preserve">
+	<value>Redo Remove from Rule</value>
+  </data>
+  <data name="ksRuleUndoInsert" xml:space="preserve">
+	<value>Undo Insert {0}</value>
+  </data>
+  <data name="ksRuleUndoRemove" xml:space="preserve">
+	<value>Undo Remove from Rule</value>
+  </data>
+  <data name="ksRegRuleRedoSetOccurrence" xml:space="preserve">
+	<value>Redo Set occurrence</value>
+  </data>
+  <data name="ksRuleRedoUpdateEnv" xml:space="preserve">
+	<value>Redo Update Environment</value>
+  </data>
+  <data name="ksRegRuleUndoSetOccurrence" xml:space="preserve">
+	<value>Undo Set occurrence</value>
+  </data>
+  <data name="ksRuleUndoUpdateEnv" xml:space="preserve">
+	<value>Undo Update Environment</value>
+  </data>
+  <data name="ksFeatConstrAgree" xml:space="preserve">
+	<value>&lt;agree&gt;</value>
+  </data>
+  <data name="ksFeatConstrDisagree" xml:space="preserve">
+	<value>&lt;disagree&gt;</value>
+  </data>
+  <data name="ksRuleRedoSetFeatures" xml:space="preserve">
+	<value>Redo Set Phonological Features</value>
+  </data>
+  <data name="ksRuleUndoSetFeatures" xml:space="preserve">
+	<value>Undo Set Phonological Features</value>
+  </data>
+  <data name="ksRegRuleRedoSetVariables" xml:space="preserve">
+	<value>Redo Set Feature Variables</value>
+  </data>
+  <data name="ksRegRuleUndoSetVariables" xml:space="preserve">
+	<value>Undo Set Feature Variables</value>
+  </data>
+  <data name="ksRuleVarOpt" xml:space="preserve">
+	<value>X Variable</value>
+  </data>
+  <data name="ksRuleColOpt" xml:space="preserve">
+	<value>Column</value>
+  </data>
+  <data name="ksRuleIndexOpt" xml:space="preserve">
+	<value>Index</value>
+  </data>
+  <data name="ksAffixRuleRedoSetMappingFeatures" xml:space="preserve">
+	<value>Redo Set Modification Features</value>
+  </data>
+  <data name="ksAffixRuleUndoSetMappingFeatures" xml:space="preserve">
+	<value>Undo Set Modification Features</value>
+  </data>
+  <data name="ksAffixRuleIndex" xml:space="preserve">
+	<value>Index</value>
+  </data>
+  <data name="ksAffixRuleInput" xml:space="preserve">
+	<value>Input</value>
+  </data>
+  <data name="ksAffixRuleRedoSetNC" xml:space="preserve">
+	<value>Redo Set Natural Class</value>
+  </data>
+  <data name="ksAffixRuleResult" xml:space="preserve">
+	<value>Result</value>
+  </data>
+  <data name="ksAffixRuleUndoSetNC" xml:space="preserve">
+	<value>Undo Set Natural Class</value>
+  </data>
+  <data name="ksMetaRuleNoOptsMsg" xml:space="preserve">
+	<value>The item in this cell must be removed before a new item can be inserted.</value>
+  </data>
+  <data name="ksAffixRuleNoOptsMsg" xml:space="preserve">
+	<value>No items can be inserted into a cell containing an X variable.</value>
+  </data>
+  <data name="ksRuleWordBdryNoOptsMsg" xml:space="preserve">
+	<value>Items cannot be inserted outside of word boundaries.</value>
+  </data>
+  <data name="ksRuleFeatsChooserTitle" xml:space="preserve">
+	<value>Set Phonological Features</value>
+  </data>
+  <data name="ksFiltered" xml:space="preserve">
+	<value>Filtered</value>
+  </data>
+  <data name="ksNoRecords" xml:space="preserve">
+	<value>No Records</value>
+  </data>
+  <data name="ksUndoAssignAnalyses" xml:space="preserve">
+	<value>Undo Assign Analyses</value>
+  </data>
+  <data name="ksRedoAssignAnalyses" xml:space="preserve">
+	<value>Redo Assign Analyses</value>
+  </data>
+  <data name="ksRedoAddSlot" xml:space="preserve">
+	<value>Redo Adding Slot</value>
+  </data>
+  <data name="ksUndoAddSlot" xml:space="preserve">
+	<value>Undo Adding Slot</value>
+  </data>
+  <data name="ksUndoSelectionOfPhonologicalFeatures" xml:space="preserve">
+	<value>Undo selection of Phonological Features</value>
+  </data>
+  <data name="ksRedoSelectionOfPhonologicalFeatures" xml:space="preserve">
+	<value>Redo selection of Phonological Features</value>
+  </data>
+  <data name="ksInsertEnvironmentSlash" xml:space="preserve">
+	<value>Insert Environment slash</value>
+  </data>
+  <data name="ksInsertEnvironmentBar" xml:space="preserve">
+	<value>Insert Environment bar</value>
+  </data>
+  <data name="ksInsertNaturalClass" xml:space="preserve">
+	<value>Insert Natural Class</value>
+  </data>
+  <data name="ksInsertOptionalItem" xml:space="preserve">
+	<value>Insert Optional Item</value>
+  </data>
+  <data name="ksInsertWordBoundary" xml:space="preserve">
+	<value>Insert Word Boundary</value>
+  </data>
+  <data name="ksUpdateMonoMorphemicLexicalEntries" xml:space="preserve">
+	<value>Update lexical entries of mono-morphemic analyses</value>
+  </data>
+  <data name="ksClose" xml:space="preserve">
+	<value>&amp;Close</value>
+  </data>
+  <data name="ksNewSpelling" xml:space="preserve">
+	<value>New Spelling:</value>
+  </data>
+  <data name="ksPreview" xml:space="preserve">
+	<value>&amp;Preview</value>
+  </data>
+  <data name="ksHelp" xml:space="preserve">
+	<value>Help...</value>
+  </data>
+  <data name="ksApply" xml:space="preserve">
+	<value>&amp;Apply</value>
+  </data>
+  <data name="ksKeepMultiMorphemicAnalyses" xml:space="preserve">
+	<value>Keep multi-morphemic analyses</value>
+  </data>
+  <data name="ksDeleteMultiMorphemicAnalyses" xml:space="preserve">
+	<value>Delete multi-morphemic analyses</value>
+  </data>
+  <data name="ksMore" xml:space="preserve">
+	<value>&amp;More</value>
+  </data>
+  <data name="ksMaintainExistingCaseInBaseline" xml:space="preserve">
+	<value>Maintain existing case in the Baseline of texts</value>
+  </data>
+  <data name="ksSomeOptionsAreDisabledBecause_" xml:space="preserve">
+	<value>(Some options are disabled because they only apply when all occurrences are being changed)</value>
+  </data>
+  <data name="ksCopyApprovedAnalysesToNewSpelling" xml:space="preserve">
+	<value>Copy any approved analyses to the new spelling</value>
+  </data>
+  <data name="ksOptions" xml:space="preserve">
+	<value>Options</value>
+  </data>
+  <data name="ksChangeSpelling" xml:space="preserve">
+	<value>Change Spelling</value>
+  </data>
+  <data name="ksRedoChangeSlotName" xml:space="preserve">
+	<value>Redo changing slot name</value>
+  </data>
+  <data name="ksRedoRemovingAffix" xml:space="preserve">
+	<value>Redo Removing Affix</value>
+  </data>
+  <data name="ksUndoChangeSlotName" xml:space="preserve">
+	<value>Undo changing slot name</value>
+  </data>
+  <data name="ksUndoRemovingAffix" xml:space="preserve">
+	<value>Undo Removing Affix</value>
+  </data>
+  <data name="ksRedoAddAffixes" xml:space="preserve">
+	<value>Redo Adding Affixes</value>
+  </data>
+  <data name="ksUndoAddAffixes" xml:space="preserve">
+	<value>Undo Adding Affixes</value>
+  </data>
+  <data name="ksUndoChangeOptionalityOfSlot" xml:space="preserve">
+	<value>Undo Change Optionality of {0} Slot</value>
+  </data>
+  <data name="ksRedoChangeOptionalityOfSlot" xml:space="preserve">
+	<value>Redo Change Optionality of {0} Slot</value>
+  </data>
+  <data name="ksUndoRemovingSlot" xml:space="preserve">
+	<value>Undo Removing the {0} Slot</value>
+  </data>
+  <data name="ksRedoRemovingSlot" xml:space="preserve">
+	<value>Redo Removing the {0} Slot</value>
+  </data>
+  <data name="ksRedoEditAnalysis" xml:space="preserve">
+	<value>Redo Edit Analysis</value>
+  </data>
+  <data name="ksUndoEditAnalysis" xml:space="preserve">
+	<value>Undo Edit Analysis</value>
+  </data>
+</root>

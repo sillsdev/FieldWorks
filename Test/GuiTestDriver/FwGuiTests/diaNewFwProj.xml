@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<accil on-fail="assert">
+ <on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+  <click wait="3000" path="button:Views" />
+  <click path="button:Draft" />
+  <click path="menu:File/menu:New Language Project..." />
+  <on-dialog title="New FieldWorks Project">
+   <!-- the default input field is the project name -->
+   <insert wait="2000">A New Name</insert>
+   <insert>%v{DOWN 4}</insert> <!-- alt v  and 4 down arrows-->
+   <click path="button:OK" />
+  </on-dialog>
+ </on-application>
+ <on-application id="app2" run="no" title="A New Name*" exe="TE.exe">
+ </on-application>
+
+</accil>

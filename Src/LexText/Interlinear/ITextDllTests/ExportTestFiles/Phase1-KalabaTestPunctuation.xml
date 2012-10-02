@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document>
+	<interlinear-text>
+		<languages>
+			<language lang="xkal" font="Times New Roman" vernacular="true"/>
+			<language lang="" font="Times New Roman"/>
+			<language lang="en" font="Times New Roman"/>
+		</languages>
+		<paragraphs>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="xkal">nihimbilira</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">ni-</item>
+										<item type="cf" lang="xkal">ni-</item>
+										<item type="gls" lang="en">1SgSubj</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">him-</item>
+										<item type="cf" lang="xkal">hiN-</item>
+										<item type="gls" lang="en">3SgObj</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="bound root" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">*bili</item>
+										<item type="cf" lang="xkal">*bili</item>
+										<item type="gls" lang="en">to.see</item>
+										<item type="msa" lang="en">trans  (1) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">-ra</item>
+										<item type="cf" lang="xkal">-ra</item>
+										<item type="gls" lang="en">Pres</item>
+										<item type="msa" lang="en">sta:Tense</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">I see</item>
+								<item type="pos" lang="en">V</item>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">.</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+					<phrase>
+						<words>
+							<word>
+								<item type="punct" lang="xkal">(</item>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">pus</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">pus</item>
+										<item type="cf" lang="xkal">pus</item>
+										<item type="hn" lang="en">1</item>
+										<item type="gls" lang="en">green</item>
+										<item type="msa" lang="en">adj </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">green</item>
+								<item type="pos" lang="en">mod</item>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">pal</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">pal</item>
+										<item type="cf" lang="xkal">pal</item>
+										<item type="gls" lang="en">tree</item>
+										<item type="msa" lang="en">N  (II) </item>
+									</morph>
+								</morphemes>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">).</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="xkal">pulal</item>
+								<morphemes>
+									<morph type="infix">
+										<item type="txt" lang="xkal">&lt;ul&gt;</item>
+										<item type="cf" lang="xkal">&lt;ul&gt;</item>
+										<item type="gls" lang="en">Adjectivizer</item>
+										<item type="msa" lang="en">N&gt;adj</item>
+									</morph>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">pal</item>
+										<item type="cf" lang="xkal">pal</item>
+										<item type="gls" lang="en">tree</item>
+										<item type="msa" lang="en">N  (II) </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">tree</item>
+								<item type="pos" lang="en">adj</item>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">nihimbilira</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">ni-</item>
+										<item type="cf" lang="xkal">ni-</item>
+										<item type="gls" lang="en">1SgSubj</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">him-</item>
+										<item type="cf" lang="xkal">hiN-</item>
+										<item type="gls" lang="en">3SgObj</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="bound root" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">*bili</item>
+										<item type="cf" lang="xkal">*bili</item>
+										<item type="gls" lang="en">to.see</item>
+										<item type="msa" lang="en">trans  (1) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">-ra</item>
+										<item type="cf" lang="xkal">-ra</item>
+										<item type="gls" lang="en">Pres</item>
+										<item type="msa" lang="en">sta:Tense</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">I see</item>
+								<item type="pos" lang="en">V</item>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">,</item>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">(</item>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">pus</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">pus</item>
+										<item type="cf" lang="xkal">pus</item>
+										<item type="hn" lang="en">1</item>
+										<item type="gls" lang="en">green</item>
+										<item type="msa" lang="en">adj </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">green</item>
+								<item type="pos" lang="en">mod</item>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">).</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+			<paragraph>
+				<phrases>
+					<phrase>
+						<words>
+							<word>
+								<item type="txt" lang="xkal">nihimbilira</item>
+								<morphemes>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">ni-</item>
+										<item type="cf" lang="xkal">ni-</item>
+										<item type="gls" lang="en">1SgSubj</item>
+										<item type="msa" lang="en">V:(Subject)</item>
+									</morph>
+									<morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">him-</item>
+										<item type="cf" lang="xkal">hiN-</item>
+										<item type="gls" lang="en">3SgObj</item>
+										<item type="msa" lang="en">V:Object</item>
+									</morph>
+									<morph type="bound root" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">*bili</item>
+										<item type="cf" lang="xkal">*bili</item>
+										<item type="gls" lang="en">to.see</item>
+										<item type="msa" lang="en">trans  (1) </item>
+									</morph>
+									<morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">-ra</item>
+										<item type="cf" lang="xkal">-ra</item>
+										<item type="gls" lang="en">Pres</item>
+										<item type="msa" lang="en">sta:Tense</item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">I see</item>
+								<item type="pos" lang="en">V</item>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">(</item>
+							</word>
+							<word>
+								<item type="txt" lang="xkal">pus</item>
+								<morphemes>
+									<morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+										<item type="txt" lang="xkal">pus</item>
+										<item type="cf" lang="xkal">pus</item>
+										<item type="hn" lang="en">1</item>
+										<item type="gls" lang="en">green</item>
+										<item type="msa" lang="en">adj </item>
+									</morph>
+								</morphemes>
+								<item type="gls" lang="en">green</item>
+								<item type="pos" lang="en">mod</item>
+							</word>
+							<word>
+								<item type="punct" lang="xkal">).</item>
+							</word>
+						</words>
+						<item type="gls" lang="en"/>
+					</phrase>
+				</phrases>
+			</paragraph>
+		</paragraphs>
+	</interlinear-text>
+</document>

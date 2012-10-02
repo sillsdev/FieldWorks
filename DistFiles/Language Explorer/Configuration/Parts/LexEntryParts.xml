@@ -1,0 +1,1367 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Nonstandard parts for LexEntry. -->
+<PartInventory>
+	<bin class="LexEntry">
+		<part id="LexEntry-Detail-LexemeForm" type="detail">
+			<obj field="LexemeForm" layout="AsLexemeFormBasic" menu="mnuDataTree-Help" ghost="Form" ghostWs="vernacular"
+				 ghostLabel="Lexeme Form" ghostClass="MoStemAllomorph" ghostInitMethod="SetMorphTypeToRoot" />
+		</part>
+		<part id="LexEntry-Detail-CitationFormAllV" type="detail">
+			<slice field="CitationForm" label="Lexeme" editor="multistring" ws="all vernacular" weight="light"
+				   menu="mnuDataTree-Help" contextMenu="mnuDataTree-CitationFormContext"
+				   tooltip="The Citation Form is used to override the Lexeme Form as the headword in the printed dictionary.">
+				<!-- removed per LT-4192 properties>
+					 <bold value="on" />
+					 <fontsize value="150%" />
+					 </properties-->
+			</slice>
+		</part>
+		<part id="LexEntry-Detail-Pronunciations" type="detail">
+			<seq field="Pronunciations" layout="Normal" ghost="Form" ghostWs="pronunciation" ghostLabel="Pronunciation"
+				 menu="mnuDataTree-Pronunciation" />
+		</part>
+		<part id="LexEntry-Detail-RestrictionsAllA" type="Detail">
+			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis"
+				   menu="mnuDataTree-Help" />
+		</part>
+	<part id ="LexEntry-Detail-EntryRefsGhostComponents" type="detail">
+	  <if field="ComplexFormEntryRefs" lengthatmost="0">
+		<slice field="EntryRefs" label="Components" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice"
+					   menu="mnuDataTree-Help">
+		  <deParams displayProperty='HeadWord' />
+		</slice>
+	  </if>
+	</part>
+	<part id="LexEntry-Detail-PublishIn" type="Detail">
+		<slice field="PublishIn" label="Publish In" tooltip="Remove a publication from this field to completely exclude this entry from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
+			menu="mnuDataTree-Help">
+			<deParams displayProperty="ShortName" ws="best analysis" />
+			<chooserInfo>
+				<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+			</chooserInfo>
+		</slice>
+	</part>
+	<part id ="LexEntry-Detail-EntryRefsGhostVariantOf" type="detail">
+	  <if field="VariantEntryRefs" lengthatmost="0">
+		<slice field="EntryRefs" label="Variant of" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.GhostLexRefSlice"
+					   menu="mnuDataTree-Help" forVariant='true' helpTopicID="khtpField-LexEntryRef-VariantOf">
+		  <deParams displayProperty='HeadWord'/>
+		</slice>
+	  </if>
+	</part>
+	<part id="LexEntry-Detail-EntryRefs" type="detail">
+	  <seq field="EntryRefs" menu="mnuDataTree-Help"/>
+	</part>
+		<part id="LexEntry-Detail-BibliographyAllA" type="Detail">
+			<slice field="Bibliography" label="Bibliography" editor="multistring" ws="all analysis"
+				   menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEntry-Jt-SenseList">
+			<para>
+				<seq field="Senses" sep=", " layout="Gloss" />
+			</para>
+		</part>
+		<part id="LexEntry-Jt-LexemeFormSummary" type="jtview">
+			<para>
+				<lit></lit>
+			</para>
+		</part>
+		<part id="LexEntry-Jt-MLHeadWordPub" type="jtview">
+			<configureMlString field="MLHeadWord"/>
+		</part>
+		<part id="LexEntry-Jt-HeadWordRef" type="jtview">
+			<configureMlString field="HeadWordRef"/>
+		</part>
+		<!-- JH 8/24/2005 -->
+		<part id="LexEntry-Jt-GrammaticalFunctionsSummary" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="ControlDarkDark" />
+					<bold value="on" />
+					<style value="UiElement"/>
+				</properties>
+				<lit>Grammatical Info. Details</lit>
+			</para>
+		</part>
+		<part id="LexEntry-Detail-GrammaticalFunctionsSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help"
+				   header="true" helpTopicID="khtpField-LexEntry-GrammaticalFunctionsSection" />
+		</part>
+		<part id="LexEntry-Detail-PublicationSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help"
+				   header="true" helpTopicID="khtpField-LexEntry-PublicationSection" />
+		</part>
+		<part id="LexEntry-Detail-AlternateFormsSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help"
+				   header="true" helpTopicID="khtpField-LexEntry-AlternateFormsSection"/>
+		</part>
+		<part id="LexEntry-Detail-AlternateForms" type="Detail">
+			<seq field="AlternateForms" menu="mnuDataTree-AlternateForm" />
+		</part>
+		<part id="LexEntry-Jt-HeadWordInPara" type="jtview">
+			<para>
+				<properties>
+					<firstindent value="-18000"/>
+					<leadingindent value="0"/>
+					<editable value="false"/>
+				</properties>
+				<string field="MLHeadWord" ws="$ws=vernacular"/>
+			</para>
+		</part>
+		<part id="LexEntry-Jt-HeadWordAndTypeInPara" type="jtview">
+			<para>
+				<properties>
+					<firstindent value="-18000"/>
+					<leadingindent value="0"/>
+					<editable value="false"/>
+				</properties>
+				<string field="HeadWordAndType"/>
+			</para>
+		</part>
+		<part id="LexEntry-Jt-HeadWord" type="jtview">
+			<string field="MLHeadWord" ws="$ws=vernacular"/>
+		</part>
+		<part id="LexEntry-Jt-MLHeadWord" type="jtview">
+			<string field="MLHeadWord"  ws="$ws=vernacular"/>
+		</part>
+		<part id="LexEntry-Jt-SensesForComplexFormSmartDefn" type="jtview">
+			<seq field="Senses" layout="publishMinorComplexFormDefn" inheritSeps="true" />
+		</part>
+		<part id="LexEntry-Jt-SensesEachInPara" type="jtview">
+			<seq field="Senses" layout="DefAnalysisInPara" />
+		</part>
+		<part id="LexEntry-Jt-DefinitionsEachInPara" type="jtview">
+			<seq field="Senses" layout="DefinitionInPara" />
+		</part>
+		<part id="LexEntry-Jt-DomainsOfSenses" type="jtview">
+			<div>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<seq field="Senses" layout="empty">
+					<para>
+						<seq field="SemanticDomains" layout="AbbrAndName" sep="; "/>
+					</para>
+				</seq>
+			</div>
+		</part>
+
+		<part id="LexEntry-Jt-AnthroCodesOfSenses" type="jtview">
+			<div>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<seq field="Senses" layout="empty">
+					<para>
+						<seq field="AnthroCodes" layout="AbbrAndName" sep="; "/>
+					</para>
+				</seq>
+			</div>
+		</part>
+
+		<part id="LexEntry-Jt-EntryTypeofEntry" type="jtview">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<obj class="LexEntry" field="EntryType" layout="empty">
+					<string field="Name" ws="best analysis"/>
+				</obj>
+			</span>
+		</part>
+
+		<part id="LexEntry-Jt-MorphTypeofEntry" type="jtview">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<obj class="LexEntry" field="LexemeForm" layout="MorphTypeName"/>
+			</span>
+		</part>
+
+		<part id="LexEntry-Jt-PicCaptionofSenses" type="jtview">
+			<div>
+				<properties>
+					<editable value="false" />
+				</properties>
+				<seq field="Senses" layout="PictureCaption" />
+			</div>
+		</part>
+		<part id="LexEntry-Jt-PicFilenameofSenses" type="jtview">
+			<div>
+				<properties>
+					<editable value="false" />
+				</properties>
+				<seq field="Senses" layout="PictureFileName" />
+			</div>
+		</part>
+
+		<part id="LexEntry-Jt-EtymologyGloss" type="jtview">
+			<obj field="Etymology" layout="empty">
+				<para>
+					<string field="Gloss" ws="best analysis"/>
+				</para>
+			</obj>
+		</part>
+		<part id="LexEntry-Jt-EtymologySource" type="jtview">
+			<obj field="Etymology" layout="empty">
+				<para>
+					<string field="Source" ws="$ws=vernacular"/>
+				</para>
+			</obj>
+		</part>
+		<part id="LexEntry-Jt-EtymologyForm" type="jtview">
+			<obj field="Etymology" layout="empty">
+				<para>
+					<string field="Form" ws="best vernacular"/>
+				</para>
+			</obj>
+		</part>
+		<part id="LexEntry-Jt-EtymologyComment" type="jtview">
+			<obj field="Etymology" layout="empty">
+				<para>
+					<string field="Comment" ws="best analysis"/>
+				</para>
+			</obj>
+		</part>
+		<!-- ForEntryOrSense parts (BulkEdit) -->
+		<!-- 1. Entry Fields -->
+		<part id="LexEntry-Jt-LexemeFormForEntry" type="jtview">
+			<obj field="LexemeForm" layout="empty">
+				<string field="Form" ws="vernacular"/>
+			</obj>
+		</part>
+		<part id="LexEntry-Jt-EntryHeadwordForEntry" type="jtview">
+			<span>
+				<properties>
+					<bold value="on"/>
+					<editable value="false"/>
+				</properties>
+				<string field="MLHeadWord" ws="$ws=vernacular"/>
+			</span>
+		</part>
+		<part id="LexEntry-Jt-CitationFormForEntry" type="jtview">
+			<string field="CitationForm" ws="vernacular"/>
+		</part>
+		<part id="LexEntry-Jt-EntryTypeForEntry" type="jtview">
+			<obj class="LexEntry" field="EntryType" layout="empty">
+				<string field="Name" ws="best analysis"/>
+			</obj>
+		</part>
+		<part id="LexEntry-Jt-Pronunciation" type="jtview">
+			<seq field="Pronunciations" layout="Pronunciation"/>
+		</part>
+		<part id="LexEntry-Jt-CVPattern" type="jtview">
+			<seq field="Pronunciations" layout="CVPattern"/>
+		</part>
+		<part id="LexEntry-Jt-Tone" type="jtview">
+			<seq field="Pronunciations" layout="Tone"/>
+		</part>
+		<part id="LexEntry-Jt-Location" type="jtview">
+			<seq field="Pronunciations" layout="Location"/>
+		</part>
+		<part id="LexEntry-Jt-BibliographyForEntry" type="jtview">
+			<string field="Bibliography" ws="$ws=analysis"/>
+		</part>
+		<part id="LexEntry-Jt-LiteralMeaningForEntry" type="jtview">
+			<string field="LiteralMeaning" ws="$ws=analysis"/>
+		</part>
+		<part id="LexEntry-Jt-NoteForEntry" type="jtview">
+			<string field="Comment" ws="$ws=analysis"/>
+		</part>
+		<part id="LexEntry-Jt-RestrictionsForEntry" type="jtview">
+			<string field="Restrictions" ws="$ws=analysis"/>
+		</part>
+		<part id="LexEntry-Jt-DateCreatedForEntry" type="jtview">
+			<datetime field="DateCreated"/>
+			<!--Default format is 'G': ShortDate + LongTime for current system locale -->
+		</part>
+		<part id="LexEntry-Jt-DateModifiedForEntry" type="jtview">
+			<datetime field="DateModified" format="$format=G"/>
+			<!--format G: ShortDate + LongTime for current system locale -->
+		</part>
+		<part id="LexEntry-Jt-SummaryDefinitionForEntry" type="jtview">
+			<string field="SummaryDefinition" ws="$ws=analysis"/>
+		</part>
+		<part id="LexEntry-Jt-MorphTypeForEntry" type="jtview">
+			<obj class="LexEntry" field="LexemeForm" layout="MorphTypeName"/>
+		</part>
+		<part id="LexEntry-Detail-ShowMainEntryIn" type="Detail">
+			<slice field="ShowMainEntryIn" label="Show As Headword In" tooltip="The current entry is included as a main entry headword only in publications shown in this field; otherwise, it only appears in references." editor="defaultVectorReference" visField="DoNotShowMainEntryIn"
+				menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-lexiconEdit-PrimaryLexemes">
+				<deParams displayProperty="ShortName" ws="best analysis" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Publications list" tool="publicationsEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexEntry-Jt-PublishAsHeadword" type="jtview">
+			<seq field="ShowMainEntryIn" layout="Name" />
+		</part>
+		<part id="LexEntry-Jt-IsAbstractFormForEntry" type="jtview">
+			<if field="LexemeForm/IsAbstract" boolequals="false">
+				<lit>no</lit>
+			</if>
+			<if field="LexemeForm/IsAbstract" boolequals="true">
+				<lit>yes</lit>
+			</if>
+		</part>
+		<part id="LexEntry-Jt-BibliographyEntryForEntry" type="jtview">
+			<string class="LexEntry" field="Bibliography" ws="$ws=analysis"/>
+		</part>
+		<part id="LexEntry-Jt-ImportResidueEntry" type="jtview">
+			<string field="ImportResidue" ws="analysis"/>
+		</part>
+		<part id="LexEntry-Jt-Allomorph" type="jtview">
+			<seq field="AlternateForms" layout="Allomorph"/>
+		</part>
+		<part id="LexEntry-Jt-IsAbstractFormForAllomorph" type="jtview">
+			<seq field="AlternateForms" layout="IsAbstractFormForAllomorph"/>
+		</part>
+		<part id="LexEntry-Jt-MorphTypeForAllomorph" type="JtView">
+			<seq field="AlternateForms" layout="MorphTypeForAllomorph"/>
+		</part>
+		<part id="LexEntry-Jt-EnvironmentsForLexemeForm" type="JtView">
+			<obj field="LexemeForm" layout="Environments"/>
+		</part>
+		<part id="LexEntry-Jt-EnvironmentsForAllomorphs" type="JtView">
+			<seq field="AlternateForms" layout="Environments"/>
+		</part>
+		<part id="LexEntry-Jt-PublishInForEntries" type="JtView">
+			<seq field="PublishIn" layout="Name" />
+		</part>
+		<part id="LexEntry-Jt-InflectionClassForAffix" type="jtview">
+			<obj field="LexemeForm" layout="InflectionClassForLexemeForm"/>
+			<seq field="AlternateForms" layout="InflectionClassForAffix"/>
+		</part>
+		<part id="LexEntry-Jt-RequiredFeatures" type="JtView">
+			<seq field="AlternateForms" layout="RequiredFeatures"/>
+		</part>
+		<part id="LexEntry-Jt-HomographNumberForEntry" type="jtview">
+			<int field="HomographNumber"/>
+		</part>
+		<part id="LexEntry-Jt-CrossReferencesForEntry" type="jtview">
+			<seq field="MinimalLexReferences" layout="ShowInPara"/>
+		</part>
+		<part id="LexEntry-Jt-StemNameForEntry" type="jtview">
+			<obj class="LexEntry" field="LexemeForm" layout="empty">
+				<if is="MoStemAllomorph">
+					<obj class="MoStemAllomorph" field="StemName" layout="empty">
+						<string class="MoStemName" field="Name" ws="$ws=best analysis"/>
+					</obj>
+				</if>
+			</obj>
+		</part>
+		<part id="LexEntry-Jt-NumberOfSensesForEntry" type="jtview">
+			<int field="NumberOfSensesForEntry"/>
+		</part>
+
+		<!-- auto-generated custom field parts -->
+		<!-- Entry custom field parts -->
+		<part id="LexEntry-Jt-CustomMultiStringForEntry_$fieldName" type="jtview">
+			<string field="$fieldName" ws="$wsName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomSimpleStringForEntry_$fieldName" type="jtview">
+			<string field="$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomIntegerForEntry_$fieldName" type="jtview">
+			<int field="$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomGenDateForEntry_$fieldName" type="jtview">
+			<gendate field="$fieldName" format="short"/>
+		</part>
+		<part id="LexEntry-Jt-CustomStTextForEntry_$fieldName" type="jtview">
+			<obj field="$fieldName" layout="FullText"/>
+		</part>
+		<part id="LexEntry-Jt-CustomPossVectorForEntry_$fieldName" type="jtview">
+			<seq field="$fieldName" layout="PossibilityName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomPossAtomForEntry_$fieldName" type="jtview">
+			<obj field="$fieldName" layout="Name"/>
+		</part>
+		<!-- Entry -> Allomorph custom field path parts -->
+		<part id="LexEntry-Jt-CustomMultiStringForAllomorph_$fieldName" type="jtview">
+			<seq field="AlternateForms" layout="CustomMultiStringForAllomorph_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomSimpleStringForAllomorph_$fieldName" type="jtview">
+			<seq field="AlternateForms" layout="CustomSimpleStringForAllomorph_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomIntegerForAllomorph_$fieldName" type="jtview">
+			<seq field="AlternateForms" layout="CustomIntegerForAllomorph_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomGenDateForAllomorph_$fieldName" type="jtview">
+			<seq field="AlternateForms" layout="CustomGenDateForAllomorph_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomStTextForAllomorph_$fieldName" type="jtview">
+			<seq field="AlternateForms" layout="CustomStTextForAllomorph_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomPossVectorForAllomorph_$fieldName" type="jtview">
+			<seq field="AlternateForms" layout="CustomPossVectorForAllomorph_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomPossAtomForAllomorph_$fieldName" type="jtview">
+			<seq field="AlternateForms" layout="CustomPossAtomForAllomorph_$fieldName"/>
+		</part>
+		<!-- By default let ChildPartGenerator look for missing part layouts under LexSense -->
+		<part id="LexEntry-Jt-$fieldName" type="jtview">
+			<seq class="LexEntry" field="Senses" layout="$fieldName"/>
+		</part>
+		<!-- Entry -> Sense custom field path parts -->
+		<part id="LexEntry-Jt-CustomMultiStringForSense_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomMultiStringForSense_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomSimpleStringForSense_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomSimpleStringForSense_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomIntegerForSense_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomIntegerForSense_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomGenDateForSense_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomGenDateForSense_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomStTextForSense_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomStTextForSense_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomPossVectorForSense_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomPossVectorForSense_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomPossAtomForSense_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomPossAtomForSense_$fieldName"/>
+		</part>
+		<!-- Entry -> Sense -> Example Sentence custom field path parts -->
+		<part id="LexEntry-Jt-CustomMultiStringForExample_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomMultiStringForExample_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomSimpleStringForExample_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomSimpleStringForExample_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomIntegerForExample_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomIntegerForExample_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomGenDateForExample_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomGenDateForExample_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomStTextForExample_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomStTextForExample_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomPossVectorForExample_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomPossVectorForExample_$fieldName"/>
+		</part>
+		<part id="LexEntry-Jt-CustomPossAtomForExample_$fieldName" type="jtview">
+			<seq field="Senses" layout="CustomPossAtomForExample_$fieldName"/>
+		</part>
+
+		<part id="LexEntry-Jt-SenseHeadwordForSense" type="jtview">
+			<seq field="Senses" layout="SenseHeadwordForSense"/>
+		</part>
+		<part id="LexEntry-Jt-GrammaticalInfoFullForSense" type="jtview">
+			<seq field="Senses" layout="GrammaticalInfoFullForSense"/>
+		</part>
+		<part id="LexEntry-Jt-GrammaticalInfoAbbrForSense" type="jtview">
+			<seq field="Senses" layout="GrammaticalInfoAbbrForSense"/>
+		</part>
+		<part id="LexEntry-Jt-GrammaticalCategoryForSense" type="jtview">
+			<seq field="Senses" layout="GrammaticalCategoryForSense"/>
+		</part>
+		<part id="LexEntry-Jt-GlossesForSense" type="jtview">
+			<seq field="Senses" layout="GlossesForSense"/>
+		</part>
+		<part id="LexEntry-Jt-DefinitionsForSense" type="jtview">
+			<seq field="Senses" layout="DefinitionsForSense"/>
+		</part>
+		<part id="LexEntry-Jt-PictureCaptionForSense" type="jtview">
+			<seq field="Senses" layout="PictureCaptionForSense"/>
+		</part>
+		<part id="LexEntry-Jt-PictureFileNameForSense" type="jtview">
+			<seq field="Senses" layout="PictureFileNameForSense"/>
+		</part>
+		<part id="LexEntry-Jt-StatusForSense" type="jtview">
+			<seq field="Senses" layout="StatusForSense"/>
+		</part>
+		<part id="LexEntry-Jt-AnthropologyNoteForSense" type="jtview">
+			<seq field="Senses" layout="AnthropologyNoteForSense"/>
+		</part>
+		<part id="LexEntry-Jt-BibliographyForSense" type="jtview">
+			<seq field="Senses" layout="BibliographyForSense"/>
+		</part>
+		<part id="LexEntry-Jt-DiscourseNoteForSense" type="jtview">
+			<seq field="Senses" layout="DiscourseNoteForSense"/>
+		</part>
+		<part id="LexEntry-Jt-EncyclopedicInfoForSense" type="jtview">
+			<seq field="Senses" layout="EncyclopedicInfoForSense"/>
+		</part>
+		<part id="LexEntry-Jt-GeneralNoteForSense" type="jtview">
+			<seq field="Senses" layout="GeneralNoteForSense"/>
+		</part>
+		<part id="LexEntry-Jt-GrammarNoteForSense" type="jtview">
+			<seq field="Senses" layout="GrammarNoteForSense"/>
+		</part>
+		<part id="LexEntry-Jt-ImportResidueSense" type="jtview">
+			<seq field="Senses" layout="ImportResidueSense"/>
+		</part>
+		<part id="LexEntry-Jt-PhonologyNoteForSense" type="jtview">
+			<seq field="Senses" layout="PhonologyNoteForSense"/>
+		</part>
+		<part id="LexEntry-Jt-RestrictionsForSense" type="jtview">
+			<seq field="Senses" layout="RestrictionsForSense"/>
+		</part>
+		<part id="LexEntry-Jt-ScientificNameForSense" type="jtview">
+			<seq field="Senses" layout="ScientificNameForSense"/>
+		</part>
+		<part id="LexEntry-Jt-SemanticsNoteForSense" type="jtview">
+			<seq field="Senses" layout="SemanticsNoteForSense"/>
+		</part>
+		<part id="LexEntry-Jt-SociolinguisticsNoteForSense" type="jtview">
+			<seq field="Senses" layout="SociolinguisticsNoteForSense"/>
+		</part>
+		<part id="LexEntry-Jt-SourceForSense" type="jtview">
+			<seq field="Senses" layout="SourceForSense"/>
+		</part>
+		<part id="LexEntry-Jt-AnthropologyCategoriesForSense" type="jtview">
+			<seq field="Senses" layout="AnthropologyCategoriesForSense"/>
+		</part>
+		<part id="LexEntry-Jt-AcademicDomainsForSense" type="jtview">
+			<seq field="Senses" layout="AcademicDomainsForSense"/>
+		</part>
+		<part id="LexEntry-Jt-SenseTypeForSense" type="jtview">
+			<seq field="Senses" layout="SenseTypeForSense"/>
+		</part>
+		<part id="LexEntry-Jt-UsagesForSense" type="jtview">
+			<seq field="Senses" layout="UsagesForSense"/>
+		</part>
+		<part id="LexEntry-Jt-TranslationsOfExamplesForSense" type="jtview">
+			<seq field="Senses" layout="TranslationsOfExamplesForSense"/>
+		</part>
+		<part id="LexEntry-Jt-LexicalRelationsForSense" type="jtview">
+			<seq field="Senses" layout="LexicalRelationsForSense"/>
+		</part>
+		<part id="LexEntry-Jt-InflectionClassForStem" type="jtview">
+			<seq field="Senses" layout="InflectionClassForStem"/>
+		</part>
+		<part id="LexEntry-Jt-InflectionFeaturesForSense" type="jtview">
+			<seq field="Senses" layout="InflectionFeaturesForSense"/>
+		</part>
+
+		<part id="LexEntry-Jt-DomainsOfSensesForSense" type="jtview">
+			<seq field="Senses" layout="DomainsOfSensesForSense"/>
+		</part>
+		<part id="LexEntry-Jt-ReversalEntriesForSense" type="jtview">
+			<seq field="Senses" layout="ReversalEntriesForSense"/>
+		</part>
+		<part id="LexEntry-Jt-ReversalEntriesForSenseEdit" type="jtview">
+			<seq field="Senses" layout="ReversalEntriesForSenseEdit"/>
+		</part>
+	<!-- ========================================================================= -->
+		<part id="LexEntry-Jt-MsasOfSenses" type="jtview">
+			<div>
+				<properties>
+					<editable value="false" />
+				</properties>
+				<seq field="Senses" layout="MsaInPara" />
+			</div>
+		</part>
+		<part id="LexEntry-Jt-MsasOfSensesAbbr" type="jtview">
+			<div>
+				<properties>
+					<editable value="false" />
+				</properties>
+				<seq field="Senses" layout="MsaInParaAbbr" />
+			</div>
+		</part>
+		<part id="LexEntry-Jt-CrossRefName" type="jtview">
+			<span>
+				<properties>
+					<bold value="on" />
+				</properties>
+				<string field="MLHeadWord" ws="$ws=vernacular"/>
+			</span>
+		</part>
+		<part id="LexEntry-Jt-BoldCitationForm" type="jtview">
+			<span>
+				<properties>
+					<bold value="on" />
+				</properties>
+				<string field="CitationForm" ws="vernacular" />
+			</span>
+		</part>
+		<!-- *********************************************************************************** -->
+		<!-- Overrides of otherwise generated parts -->
+		<!-- *********************************************************************************** -->
+		<part id="LexEntry-Detail-MorphoSyntaxAnalyses" type="Detail">
+			<seq field="MorphoSyntaxAnalyses" />
+		</part>
+		<part id="LexEntry-Detail-Senses" type="Detail">
+			<seq field="Senses" />
+		</part>
+		<!-- *********************************************************************************** -->
+		<part id="LexEntry-Detail-SummaryDefinitionAllA" type="Detail">
+			<slice field="SummaryDefinition" label="Summary Definition" editor="multistring" ws="all analysis"
+				   menu="mnuDataTree-Help"  />
+		</part>
+		<part id="LexEntry-Detail-CommentAllA" type="Detail">
+			<slice field="Comment" label="Note" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="LexEntry-Jt-SummaryDefinitionPub">
+			<configureMlString field="SummaryDefinition" />
+		</part>
+		<part id="LexEntry-Jt-RestrictionsEntryPub">
+			<configureMlString field="Restrictions" />
+		</part>
+		<part id="LexEntry-Jt-BibliographyPub">
+			<configureMlString field="Bibliography" />
+		</part>
+		<part id="LexEntry-Jt-CitationFormPub">
+			<configureMlString field="CitationForm" />
+		</part>
+		<part id="LexEntry-Jt-CommentPub">
+			<configureMlString field="Comment" />
+		</part>
+		<part id="LexEntry-Jt-LiteralMeaningPub">
+			<configureMlString field="LiteralMeaning" />
+		</part>
+		<part id="LexEntry-Jt-RestrictionsPub">
+			<configureMlString field="Restrictions" />
+		</part>
+		<part id="LexEntry-Jt-EntryTypePub">
+			<obj field="EntryType" layout="ReverseAbbr" />
+		</part>
+		<part id="LexEntry-Jt-LexemeFormPub">
+			<obj field="LexemeForm" layout="publication" />
+		</part>
+		<part id="LexEntry-Jt-AlternateFormsPub">
+			<seq field="AlternateForms" layout="publication" />
+		</part>
+		<part id="LexEntry-Jt-PronunciationsPub">
+			<seq field="Pronunciations" layout="publication" />
+		</part>
+		<part id="LexEntry-Jt-HomographNumber" type="JtView">
+			<if field="HomographNumber" intgreaterthan="0">
+				<int field="HomographNumber"/>
+			</if>
+		</part>
+		<part id="LexEntry-Jt-ComponentLexemesBrowse" type="jtview">
+			<seq field="EntryRefs" layout="ComponentLexemesBrowse"/>
+		</part>
+		<!-- MUST not pass any complex forms to LexEntryRef-Jt-VariantEntryTypesBrowse. See the comment there.-->
+		<part id="LexEntry-Jt-VariantEntryTypesBrowse" type="jtview">
+			<seq field="VariantEntryRefs" layout="VariantEntryTypesBrowse"/>
+		</part>
+		<part id="LexEntry-Jt-VariantsBrowse" type="jtview">
+			<seq field="VariantFormEntries" layout="MLHeadWord"/>
+		</part>
+		<part id="LexEntry-Jt-PrimaryLexemesBrowse" type="jtview">
+			<seq field="EntryRefs" layout="PrimaryLexemesBrowse"/>
+		</part>
+		<part id="LexEntry-Jt-ComplexEntryTypesBrowse" type="jtview">
+			<seq field="ComplexFormEntryRefs" layout="ComplexEntryTypesInBrowse" />
+		</part>
+		<part id="LexEntry-Jt-ShowMinorEntryBrowse" type="jtview">
+			<seq field="EntryRefs" layout="ShowMinorEntryBrowse"/>
+		</part>
+		<part id="LexEntry-Jt-ComplexFormsBrowse" type="jtview">
+			<seq field="ComplexFormEntries" layout="MLHeadWord"/>
+		</part>
+		<part id="LexEntry-Jt-ComponentsBrowse" type="jtview">
+			<seq field="EntryRefs" layout="ComponentsBrowse"/>
+		</part>
+		<part id="LexEntryType-Jt-ReverseAbbr">
+			<string field="ReverseAbbr" ws="best analorvern" />
+		</part>
+		<part id="LexEntryType-Jt-ReverseAbbrPub">
+			<configureMlString field="ReverseAbbr" />
+		</part>
+		<part id="LexEntryType-Jt-NamePub">
+			<configureMlString field="Name" />
+		</part>
+		<part id="LexEntry-Jt-pubSubEntry" type="jtview">
+			<para>
+				<properties>
+					<editable value="no" />
+					<firstindent value="-36000" />
+					<leadingindent value="36000" />
+					<spaceafter value="3000" />
+				</properties>
+				<span>
+					<properties>
+						<bold value="on" />
+					</properties>
+					<string field="MLHeadWord" ws="$ws=vernacular"/>
+				</span>
+				<obj field="EntryType" layout="SpaceParenRevAbbr" />
+				<multiling ws="all analysis">
+					<ifnot field="SummaryDefinition" stringaltequals="" ws="current">
+						<lit>&#32;</lit>
+						<string field="SummaryDefinition" ws="current" />
+					</ifnot>
+				</multiling>
+			</para>
+		</part>
+		<part id="LexEntry-Jt-Headword">
+			<string field="MLHeadWord" ws="$ws=vernacular"/>
+		</part>
+		<part id="LexEntry-Jt-Pronunciations">
+			<seq field="Pronunciations" layout="FormOnly" inheritSeps="true" />
+		</part>
+		<part id="LexEntry-Jt-LexReferences">
+			<seq class="LexEntry" field="MinimalLexReferences" layout="publication" inheritSeps="true" />
+		</part>
+		<part id="LexEntry-Jt-Senses">
+			<seq field="Senses" layout="publicationNew" inheritSeps="true" />
+		</part>
+		<!-- display all (non-empty) analysis writing systems of the SummaryDefinition,
+			 with a preceding space for each -->
+		<part id="LexEntry-Jt-SummaryDefinitionAllA" type="jtview">
+			<multiling ws="all analysis">
+				<ifnot field="SummaryDefinition" stringaltequals="" ws="current">
+					<lit>&#32;</lit>
+					<string class="LexEntry" field="SummaryDefinition" ws="current" />
+				</ifnot>
+			</multiling>
+		</part>
+		<part id="LexEntry-Detail-EntryType" type="Detail">
+			<slice field="EntryType" label="Entry Type" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+				<deParams ws="best analysis" changeRequiresRefresh="true" />
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Entry Types" tool="entryTypeEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexEntry-Detail-LiteralMeaningAllA" type="detail">
+			<slice field="LiteralMeaning" label="Literal Meaning" editor="multistring" ws="all analysis"
+				   menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEntry-Detail-DateCreatedAllA" type="Detail">
+			<slice field="DateCreated" label="Date Created" editor="Time">
+			</slice>
+		</part>
+		<part id="LexEntry-Detail-DateModifiedAllA" type="Detail">
+			<slice field="DateModified" label="Date Modified" editor="Time">
+			</slice>
+		</part>
+		<part id="LexEntry-Detail-CurrentLexReferences" type="detail">
+			<slice label="Cross References" field="LexEntryReferences" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexReferenceMultiSlice" />
+		</part>
+		<part id="LexEntry-Detail-Etymology" type="detail">
+			<obj field="Etymology" menu="mnuDataTree-Help" ghost="Form" ghostWs="vernacular" ghostLabel="Etymology"
+				 ghostAbbe="et" />
+		</part>
+		<part id="LexEntry-Detail-ComplexFormEntries" type="Detail">
+			<slice field="ComplexFormEntries" label="Complex Forms" menu="mnuReorderVector" reorder="true"
+				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				<deParams displayProperty="HeadWord"/>
+			</slice>
+		</part>
+		<part id="LexEntry-Detail-VisibleComplexFormEntries" type="Detail">
+			<slice field="VisibleComplexFormBackRefs" label="Referenced Complex Forms" tooltip="Complex forms shown in this field are shown as references in this component entry in Dictionary." menu="mnuReorderVector" reorder="true"
+				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice" helpTopicID="khtpField-ReferencedComplexForms-PubLevel">
+				<deParams displayProperty="HeadWord"/>
+			</slice>
+		</part>
+		<part id="LexEntry-Detail-Subentries" type="Detail">
+			<slice field="Subentries" label="Subentries" tooltip="Show these subentries below this entry in root-based dictionary views." menu="mnuReorderVector" reorder="true"
+				   editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice">
+				<deParams displayProperty="HeadWord"/>
+			</slice>
+		</part>
+		<part id="LexEntry-Detail-VariantFormsSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true" helpTopicID="khtpField-LexEntry-VariantsSection"/>
+		</part>
+		<part id="LexEntry-Detail-VariantForms" type="Detail">
+			<seq field="VariantFormEntryBackRefs" menu="mnuDataTree-VariantForms" layout="VariantSection"/>
+		</part>
+		<part id="LexEntry-Detail-AsVariantForm" type="Detail">
+			<obj field="LexemeForm" layout="AsVariantForm" menu="mnuDataTree-VariantForm"
+				 ghost="Form" ghostWs="vernacular" ghostLabel="Variant Form" ghostClass="MoStemAllomorph" ghostInitMethod="SetMorphTypeToRoot" />
+		</part>
+		<!--										   -->
+		<!-- Parts for MatchingEntriesBrowser		   -->
+		<!-- (needed to enable sorting - see LT-10293) -->
+		<!--										   -->
+		<part id="LexEntry-Jt-EntryHeadwordForFindEntry" type="jtview">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<string field="MLHeadWord" ws="vernacular"/>
+			</span>
+		</part>
+		<part id="LexEntry-Jt-LexemeFormForFindEntry" type="jtview">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<obj field="LexemeForm" layout="empty">
+					<string field="Form" ws="$ws=vernacular"/>
+				</obj>
+			</span>
+		</part>
+		<part id="LexEntry-Jt-CitationFormForFindEntry" type="jtview">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<string field="CitationForm" ws="$ws=vernacular"/>
+			</span>
+		</part>
+		<part id="LexEntry-Jt-AllomorphsForFindEntry" type="jtview">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<seq field="AlternateForms" layout="empty" sep=", " frag="true"><!-- flag not to split into multiple items when sorted on -->
+					<string field="Form" ws="$ws=vernacular"/>
+				</seq>
+			</span>
+		</part>
+		<part id="LexEntry-Jt-GlossesForFindEntry" type="jtview">
+			<span>
+				<properties>
+					<editable value="false"/>
+				</properties>
+				<seq field="Senses" layout="empty" sep=", " frag="true"><!-- flag not to split into multiple items when sorted on -->
+					<string field="Gloss" ws="$ws=analysis"/>
+				</seq>
+			</span>
+		</part>
+	</bin>
+
+	<bin class="LexEtymology">
+		<part id="LexEtymology-Detail-FormAllWs" type="Detail">
+			<slice field="Form" label="Etymology" editor="multistring" ws="vernacular analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Detail-CommentAllA" type="Detail">
+			<slice field="Comment" label="Comment" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+		<part id="LexEtymology-Detail-GlossAllA" type="Detail">
+			<slice field="Gloss" label="Gloss" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+		</part>
+	</bin>
+
+	<bin class="LexPronunciation">
+		<part id="LexPronunciation-Detail-FormOnly" type="Detail">
+			<slice field="Form" label="Pronunciation" editor="multistring" ws="all pronunciation" optionalWs="all vernacular" menu="mnuDataTree-Pronunciation" />
+		</part>
+		<part id="LexPronunciation-Detail-Location" type="Detail">
+			<slice field="Location" label="Location" editor="defaultAtomicReference" menu="mnuDataTree-Help" sameObject="true"><!-- assume same object as preceding field for formatting lines on display -->
+				<deParams ws="vernacular analysis" displayProperty="VernShortNameTss"/>
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Locations list" tool="locationsEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="LexPronunciation-Detail-CVPattern" type="Detail">
+			<slice field="CVPattern" label="CVPattern" editor="String" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+		</part>
+		<part id="LexPronunciation-Detail-Tone" type="Detail">
+			<slice field="Tone" label="Tone" editor="String" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+		</part>
+		<part id="LexPronunciation-Jt-FormOnly" type="JtView">
+			<string field="Form" ws="pronunciation" />
+		</part>
+		<part id="LexPronunciation-Jt-Pronunciation" type="JtView">
+			<string field="Form" ws="pronunciation" />
+		</part>
+		<part id="LexPronunciation-Jt-FormPub">
+			<configureMlString field="Form" />
+		</part>
+		<part id="LexPronunciation-Jt-CVPattern">
+			<string field="CVPattern" />
+		</part>
+		<part id="LexPronunciation-Jt-Tone">
+			<string field="Tone" />
+		</part>
+		<part id="LexPronunciation-Jt-Location">
+			<obj field="Location" layout="NameOnly"/>
+		</part>
+		<part id="LexPronunciation-Jt-$fieldName" type="jtview"><!-- for ChildPartGenerator -->
+			<obj class="LexPronunciation" field="OwningEntry" layout="$fieldName"/>
+		</part>
+	</bin>
+
+	<bin class="LexEntryRef">
+		<part id="LexEntryRef-Detail-VariantEntryTypes" type="Detail">
+			<if field="RefType" intequals="0">
+				<slice field="VariantEntryTypes" label="Variant Type" editor="defaultVectorReference" indent="true"
+					   menu="mnuDataTree-VariantSpec" helpTopicID="khtpField-lexiconEdit-LexEntryRef-EntryLevel-VariantEntryTypes">
+					<deParams ws="best analysis" changeRequiresRefresh="true" />
+					<chooserInfo>
+						<chooserLink type="goto" label="Edit the Variant Types" tool="variantEntryTypeEdit" />
+					</chooserInfo>
+				</slice>
+			</if>
+		</part>
+		<part id="LexEntryRef-Detail-ComplexEntryTypes" type="Detail">
+<!-- ENHANCE (SteveMc): Make ComplexEntryTypes look atomic? -->
+			<if field="RefType" intequals="1">
+				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="defaultVectorReference" menu="mnuDataTree-ComplexFormSpec">
+					<deParams ws="best analysis" changeRequiresRefresh="true" />
+					<chooserInfo>
+						<chooserLink type="goto" label="Edit the Complex Form Types" tool="complexEntryTypeEdit" />
+					</chooserInfo>
+				</slice>
+			</if>
+		</part>
+		<part id="LexEntryRef-Detail-ComponentLexemes" type="Detail">
+			<if field="RefType" intequals="1">
+				<slice field="ComponentLexemes" label="Components" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice"
+					   menu="mnuReorderVector">
+					<deParams displayProperty='HeadWord' />
+				</slice>
+			</if>
+			<if field="RefType" intequals="0">
+				<slice field="ComponentLexemes" label="Variant of" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice"
+					   menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntryRef-VariantOf">
+					<deParams displayProperty='HeadWord' />
+				</slice>
+			</if>
+		</part>
+		<part id="LexEntryRef-Detail-PrimaryLexemes" type="Detail">
+			<if field="RefType" intequals="1">
+				<slice field="PrimaryLexemes" label="Show Subentry under" tooltip="The current entry is shown as a subentry under the component entries shown in this field in Dictionary." editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.EntrySequenceReferenceSlice"
+					   menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-lexiconEdit-ShowSubentryUnder">
+					<deParams displayProperty='HeadWord' />
+				</slice>
+			</if>
+		</part>
+		<part id="LexEntry-Detail-ShowMinorEntry" type="Detail">
+			<if field="EntryRefs" lengthatleast="1">
+				<slice field="PublishAsMinorEntry" label="Show Minor Entry" tooltip="Show this entry as a minor entry in Dictionary." editor="checkbox" editable="true" indent="true"
+					   menu="mnuDataTree-Help"/>
+			</if>
+		</part>
+		<part id="LexEntryRef-Detail-Summary" type="Detail">
+			<slice field="Summary" label="Comment" editor="multistring" ws="all analysis"
+				   menu="mnuDataTree-Help" helpTopicID="khtpField-lexiconEdit-LexEntryRef-EntryLevel-Comment"/>
+		</part>
+		<part id="LexEntryRef-Detail-RefVariantForm" type="Detail">
+			<obj class="LexEntryRef" field="OwningEntry" layout="AsVariantForm" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="LexEntryRef-Detail-RefVariantEntryTypes" type="Detail">
+			<if field="RefType" intequals="0">
+		<slice field="VariantEntryTypes" label="Variant Type" editor="defaultVectorReference" sameObject="true" menu="mnuDataTree-Help">
+		  <deParams ws="best analysis" changeRequiresRefresh="true" />
+		  <chooserInfo>
+			<chooserLink type="goto" label="Edit the Variant Types" tool="variantEntryTypeEdit" />
+		  </chooserInfo>
+		</slice>
+			</if>
+		</part>
+		<part id="LexEntryRef-Detail-RefComplexEntryTypes" type="Detail">
+<!-- ENHANCE (SteveMc): Make ComplexEntryTypes look atomic? -->
+			<if field="RefType" intequals="1">
+				<slice field="ComplexEntryTypes" label="Complex Form Type" editor="defaultVectorReference" menu="mnuDataTree-Help"/>
+			</if>
+		</part>
+		<part id="LexEntryRef-Detail-RefShowMinorEntry" type="Detail">
+			<slice field="HideMinorEntry" label="Show Minor Entry" editor="checkbox" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="LexEntryRef-Detail-RefSummary" type="Detail">
+			<slice field="Summary" label="Comment" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+		</part>
+
+		<part id="LexEntryRef-Jt-VariantEntryTypePub" type="jtview">
+			<seq field="VariantEntryTypes" layout="ReverseAbbr" inheritSeps="true" />
+		</part>
+		<part id="LexEntryRef-Jt-VariantEntryTypeConfig" type="jtview">
+			<seq field="VariantEntryTypes" layout="publishStemVariantType" inheritSeps="true" />
+		</part>
+
+		<part id="LexEntryRef-Jt-VariantHeadwordConfig" type="jtview">
+			<obj class="LexEntryRef" field="OwningEntry" targetclass="LexEntry"/>
+		</part>
+		<part id="LexEntryRef-Jt-VariantPronunciationsConfig" type="jtview">
+			<obj class="LexEntryRef" field="OwningEntry" targetclass="LexEntry" layout="VariantPronunciationsConfig" />
+		</part>
+		<part id="LexEntryRef-Jt-ComplexEntryTypePub" type="jtview">
+			<seq field="ComplexEntryTypes" layout="publishStemAbbreviation" inheritSeps="true" />
+		</part>
+		<part id="LexEntryRef-Jt-ComplexFormHeadwordConfig" type="jtview">
+			<obj class="LexEntryRef" field="OwningEntry" targetclass="LexEntry" layout="publishStemComplexFormHeadword"/>
+		</part>
+		<part id="LexEntryRef-Jt-ComplexFormGramInfoConfig" type="jtview">
+			<seq field="MorphoSyntaxAnalyses" targetclass="MoMorphSynAnalysis" layout="publishStemComplexFormGramInfo" inheritSeps="true"/>
+		</part>
+		<part id="LexEntryRef-Jt-ComplexFormMinorSmartDefinitionConfig" type="jtview">
+			<obj class="LexEntryRef" field="OwningEntry" targetclass="LexEntry"/>
+		</part>
+		<part id="LexEntryRef-Jt-EntryTypesConfig" type="jtview">
+			<seq field="ComplexEntryTypes" layout="publishStemEntryType" inheritSeps="true" targetclass="LexEntryType"/>
+			<seq field="VariantEntryTypes" layout="publishStemEntryType" inheritSeps="true" targetclass="LexEntryType"/>
+		</part>
+		<part id="LexEntryRef-Jt-ComplexEntryTypesConfig" type="jtview">
+			<seq field="ComplexEntryTypes" layout="publishStemComplexFormType" inheritSeps="true" targetclass="LexEntryType"/>
+		</part>
+		<part id="LexEntryRef-Jt-ComponentHeadwordsConfig" type="jtview">
+			<seq field="ComponentLexemes" layout="publishStemComponentTarget" targetclass="LexEntry,LexSense" inheritSeps="true"/>
+		</part>
+		<part id="LexEntryRef-Jt-PrimaryHeadwordsConfig" type="jtview">
+			<seq field="PrimaryLexemes" targetclass="LexEntry,LexSense" inheritSeps="true"/>
+		</part>
+		<part id="LexEntryRef-Jt-SummaryPub" type="jtview">
+			<configureMlString class="LexEntryRef" field="Summary"/>
+		</part>
+		<part id="LexEntryRef-Jt-SummaryDefinitionConfig" type="jtview">
+			<obj field="OwningEntry" layout="publishStemComplexFormSummaryDef" targetclass="LexEntry"/>
+		</part>
+		<part id="LexEntryRef-Jt-ComplexEntryTypes" type="jtview">
+			<seq field="ComplexEntryTypes" layout="publishStemAbbreviation" inheritSeps="true"/>
+		</part>
+		<part id="LexEntryRef-Jt-ComplexEntryTypesInBrowse" type="jtview">
+			<para>
+				<seq field="ComplexEntryTypes" sep=", " layout="ComplexEntryTypesInBrowse" />
+			</para>
+		</part>
+		<part id="LexEntryRef-Jt-ShowMinorEntryBrowse" type="jtview">
+			<para>
+				<if field="HideMinorEntry" boolequals="false">
+					<lit>yes</lit>
+				</if>
+				<if field="HideMinorEntry" boolequals="true">
+					<lit>no</lit>
+				</if>
+			</para>
+		</part>
+		<part id="LexEntryRef-Jt-PrimaryLexemesBrowse" type="jtview">
+			<para>
+				<seq field="PrimaryLexemes" sep=", " layout="HeadWord" targetclass="LexEntry,LexSense"/>
+			</para>
+		</part>
+		<part id="LexEntryRef-Jt-ComponentsBrowse" type="jtview">
+			<if field="RefType" intequals="1">
+				<para>
+					<seq field="ComponentLexemes" sep=", " layout="MLHeadWord" targetclass="LexEntry,LexSense"/>
+				</para>
+			</if>
+		</part>
+		<part id="LexEntryRef-Jt-VariantEntryTypes" type="jtview">
+			<seq field="VariantEntryTypes" layout="publishStemAbbreviation" inheritSeps="true"/>
+		</part>
+		<!-- This is called in two ways. When the root object in the browse is a LexEntry or a path takes us to one,
+		it displays its VariantEntryRefs using this view, which is the layout specified in the column.
+		In that case all the LER's passed will be variants and take the second path.
+		When sorting or bulk editing by LER, the top-level object is an LER, and if it's a variant
+		we display it normally. If it's a complex form, though, to see the corresponding variant info
+		we have to go UP to the entry.
+		It's very important that the LexEntry.VariantEntryTypesBrowse part does not pass any complex forms
+		to this.-->
+		<part id="LexEntryRef-Jt-VariantEntryTypesBrowse" type="jtview">
+			<para>
+				<choice>
+					<where field="RefType" intequals="1">
+						<obj field="Owner" layout="VariantEntryTypesBrowse"/>
+					</where>
+					<otherwise>
+						<seq field="VariantEntryTypes" sep=", " layout="VariantEntryTypesBrowse" />
+					</otherwise>
+				</choice>
+			</para>
+		</part>
+		<part id="LexEntryRef-Jt-ComponentLexemesBrowse" type="jtview">
+			<if field="RefType" intequals="0">
+				<para>
+					<seq field="ComponentLexemes" sep=", " layout="MLHeadWord" targetclass="LexEntry,LexSense"/>
+				</para>
+			</if>
+		</part>
+		<part id="LexEntryRef-Jt-$fieldName" type="jtview"> <!-- for ChildPartGenerator -->
+			<obj class="LexEntryRef" field="OwningEntry" layout="$fieldName"/>
+		</part>
+		<part id="LexEntryRef-Jt-RootSubentry">
+			<obj field="OwningEntry" layout="publishRootSubentry" targetclass="LexEntry"/><!-- omits pictures -->
+		</part>
+		<part id="LexEntryRef-Jt-ComplexFormEntryTypePub">
+			<seq field="ComplexEntryTypes" layout="ReverseAbbr" inheritSeps="true" />
+		</part>
+		<part id="LexEntryRef-Jt-RootSubEntryType" type="jtview">
+			<seq field="ComplexEntryTypes" inheritSeps="true" layout="publishRootSubEntryType" />
+		</part>
+		<part id="LexEntryRef-Jt-ComplexFormSummaryDefinitionConfig" type="jtview">
+			<obj field="OwningEntry" layout="publishStemComplexFormSummaryDef" targetclass="LexEntry"/>
+		</part>
+		<part id="LexEntryRef-Jt-ComplexFormExamplesConfig" type="jtview">
+			<seq field="ExampleSentences" layout="publishStemComplexFormExample" targetclass="LexExampleSentence"/>
+		</part>
+	</bin>
+
+	<bin class="CmLocation">
+		<part id="CmLocation-Jt-NameOnly">
+			<string field="Name" ws="all analysis"/>
+		</part>
+	</bin>
+
+	<bin class="CmMedia">
+		<part id="CmMedia-Detail-MediaFile" type="Detail">
+			<slice label="Media File" field="MediaFile" editor="custom" assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.AudioVisualSlice" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+		</part>
+		<part id="CmMedia-Detail-Label" type="Detail">
+			<slice label="Label" field="Label" editor="multistring" ws="all analysis" menu="mnuDataTree-CmMedia" sameObject="true"/><!-- assume same object as preceding field for formatting lines on display -->
+		</part>
+	</bin>
+
+	<!-- STUFF ADDED FOR NEW CONFIGURATION WORK -->
+
+	<bin class="LexEntry">
+		<part id="LexEntry-Jt-PicturesConfig" type="jtview">
+			<seq field="PicturesOfSenses" layout="publishStem" inheritSeps="true" targetclass="CmPicture" />
+		</part>
+
+		<part id="LexEntry-Jt-LexemeFormConfig">
+			<obj field="LexemeForm" layout="publishStemLexemeForm" />
+		</part>
+
+		<part id="LexEntry-Jt-PronunciationsConfig">
+			<seq field="Pronunciations" layout="publishStemForLexEntry" inheritSeps="true" />
+		</part>
+
+		<part id="LexEntry-Jt-VariantFormsConfig">
+			<seq class="LexEntry" field="VariantFormEntryBackRefs" layout="publishStemVariantRef" inheritSeps="true" targetclass="LexEntryRef" />
+		</part>
+
+		<part id="LexEntry-Jt-EtymologyConfig">
+			<obj field="Etymology" layout="publishStemEtymology" />
+		</part>
+
+		<part id="LexEntry-Jt-LexReferencesConfig">
+			<seq class="LexEntry" field="MinimalLexReferences" layout="publishStemEntry" targetclass="LexReference" inheritSeps="true" />
+		</part>
+
+		<part id="LexEntry-Jt-SensesConfig">
+			<seq field="Senses" layout="publishStem" inheritSeps="true" />
+		</part>
+
+		<part id="LexEntry-Jt-AlternateFormsConfig">
+			<seq field="AlternateForms" layout="publishStemForm" inheritSeps="true" />
+		</part>
+
+		<part id="LexEntry-Jt-AsVariantHeadwordPub">
+			<configureMlString class="LexEntry" field="MLHeadWord"/>
+		</part>
+		<part id="LexEntry-Jt-VariantPronunciationsConfig">
+			<seq field="Pronunciations" inheritSeps="true" />
+		</part>
+
+
+		<part id="LexEntry-Jt-StemMainEntryConfig">
+			<seq field="EntryRefs" layout="publishStemEntryRefs" targetclass="LexEntryRef" inheritSeps="true"/>
+		</part>
+		<part id="LexEntry-Jt-StemMainEntryConfig">
+			<seq field="EntryRefs" layout="publishStemEntryRefs" targetclass="LexEntryRef" inheritSeps="true"/>
+		</part>
+		<part id="LexEntry-Jt-StemMinorComponentsConfig">
+			<seq field="ComplexFormEntryRefs" targetclass="LexEntryRef" inheritSeps="true"/>
+		</part>
+		<part id="LexEntry-Jt-VisibleVariantEntryRefsConfig">
+			<seq field="VisibleVariantEntryRefs" targetclass="LexEntryRef" inheritSeps="true"/>
+		</part>
+		<part id="LexEntry-Jt-RootSubMainEntryConfig">
+			<seq field="VisibleVariantEntryRefs" layout="publishRootSubEntryRefs" targetclass="LexEntryRef" inheritSeps="true"/>
+		</part>
+
+		<part id="LexEntryRef-Jt-SubentryUnder">
+			<seq field="NonTrivialEntryRoots" targetclass="LexEntry" inheritSeps="true"/>
+		</part>
+
+
+
+		<part id="LexEntry-Jt-StemComplexFormsConfig">
+			<seq field="VisibleComplexFormBackRefs" layout="publishStemComplexFormRef" inheritSeps="true" targetclass="LexEntryRef"/>
+		</part>
+		<part id="LexEntry-Jt-ComplexFormsNotSubentries">
+			<seq field="ComplexFormsNotSubentries" inheritSeps="true" targetclass="LexEntryRef" sort="ascending"/>
+		</part>
+		<part id="LexEntry-Jt-RootComplexFormsConfig">
+			<seq field="VisibleComplexFormBackRefs" layout="publishRootComplexFormRef" inheritSeps="true" targetclass="LexEntryRef" sort="ascending"/>
+		</part>
+		<part id="LexEntry-Jt-RootSubentriesConfig">
+			<seq field="Subentries" layout="publishRootSubentry" targetclass="LexEntry"/>
+		</part>
+		<part id="LexEntry-Jt-RootSubEntryTypeConfig">
+			<seq field="ComplexFormEntryRefs" layout="publishRootSubEntryType" targetclass="LexEntryRef" inheritSeps="true"/>
+		</part>
+		<part id="LexEntry-Jt-ComplexFormHeadwordPub">
+			<configureMlString class="LexEntry" field="MLHeadWord" />
+		</part>
+		<part id="LexEntry-Jt-SummaryDefinitionPub" type="jtview">
+			<configureMlString class="LexEntry" field="SummaryDefinition"/>
+		</part>
+		<part id="LexEntry-Jt-RestrictionsEntryPub" type="jtview">
+			<configureMlString class="LexEntry" field="Restrictions"/>
+		</part>
+
+		<part id="LexEntry-Jt-LexEntryRefsConfig" type="jtview">
+			<seq field="ComplexFormEntryRefs" layout="publishRootMinorComplexFormEntryRef" targetclass="LexEntryRef"/>
+			<seq field="VariantEntryRefs" layout="publishRootMinorVariantEntryRef" targetclass="LexEntryRef"/>
+		</part>
+
+		<!-- This decides whether to display the dictionary preview of the LexEntry or to display a Not Published string instead -->
+		<part id="LexEntry-Jt-PublishEntryPreviewConfig" type="jtview">
+			<choice>
+				<where field="PublishIn" lengthatmost="0">
+					<para>
+						<properties>
+							<forecolor value="Red" />
+						</properties>
+						<lit>Not published</lit>
+					</para>
+				</where>
+				<where field="ShowMainEntryIn" lengthatmost="0">
+					<para>
+						<properties>
+							<forecolor value="Red" />
+						</properties>
+						<lit>Main Entry not shown</lit>
+					</para>
+				</where>
+				<otherwise>
+					<obj field="Self" targetclass="LexEntry"/>
+				</otherwise>
+			</choice>
+		</part>
+
+
+		<!-- This decides which layout the current LexEntry is going to use based on the EntryRefs field. -->
+		<!-- The virtual field "Self" redirects the layout to the exact same object. -->
+		<part id="LexEntry-Jt-StemConfig" type="jtview">
+			<choice>
+				<where field="VariantEntryRefs" lengthatmost="0">
+					<obj class="LexEntry" field="Self" layoutArg=""/>
+				</where>
+				<otherwise>
+					<if field="PublishAsMinorEntry" boolequals="true">
+						<obj class="LexEntry" field="Self" layoutArg="Minor"/>
+					</if>
+				</otherwise>
+			</choice>
+		</part>
+		<part id="LexEntry-Jt-RootConfig" type="jtview">
+			<choice>
+				<where field="EntryRefs" lengthatmost="0">
+					<obj class="LexEntry" field="Self" layoutArg=""/>
+				</where>
+				<where field="VisibleVariantEntryRefs" lengthatleast="1">
+					<obj class="LexEntry" field="Self" layoutArg="Minor"/>
+				</where>
+				<where field="PrimaryComponentLexemes" lengthatmost="0">
+					<!-- This case handles the request of LT-10747. -->
+					<if field="ComplexFormEntryRefs" lengthatleast="1">
+						<obj class="LexEntry" field="Self" layoutArg=""/>
+					</if>
+				</where>
+				<otherwise>
+					<if field="PublishAsMinorEntry" boolequals="true">
+						<obj class="LexEntry" field="Self" layoutArg="Minor"/>
+					</if>
+				</otherwise>
+			</choice>
+		</part>
+
+		<part id="LexEntry-Jt-MinorEntryConfig" type="jtview">
+			<obj field="Self" layout="publishStemMinorPara" targetclass="LexEntry"/>
+		</part>
+
+		<part id="LexEntry-Jt-RootMinorComplexFormLexEntryRefsConfig" type="jtview">
+			<seq field="ComplexFormEntryRefs" targetclass="LexEntryRef" layout="publishRootMinorComplexForm"/>
+		</part>
+		<part id="LexEntry-Jt-RootMinorVariantLexEntryRefsConfig" type="jtview">
+			<seq field="VariantEntryRefs" targetclass="LexEntryRef" layout="publishRootMinorVariant"/>
+		</part>
+
+	</bin>
+
+	<bin class="LexEntryType">
+		<part id="LexEntryType-Jt-Abbreviation">
+			<string field="Abbreviation" ws="best analorvern" />
+		</part>
+		<part id="LexEntryType-Jt-AbbreviationPub">
+			<configureMlString field="Abbreviation" />
+		</part>
+		<part id="LexEntryType-Jt-VariantEntryTypesBrowse">
+			<string field="Name" ws="$ws=analysis"/>
+		</part>
+		<part id="LexEntryType-Jt-ComplexEntryTypesInBrowse">
+			<string field="Name" ws="$ws=analysis"/>
+		</part>
+	</bin>
+
+	<bin class="LexEtymology">
+		<part id="LexEtymology-Jt-FormPub">
+			<configureMlString field="Form" />
+		</part>
+		<part id="LexEtymology-Jt-GlossPub">
+			<configureMlString field="Gloss" />
+		</part>
+		<part id="LexEtymology-Jt-CommentPub">
+			<configureMlString field="Comment" />
+		</part>
+		<part id="LexEtymology-Jt-SourcePub">
+			<string field="Source" />
+		</part>
+	</bin>
+
+	<bin class="LexPronunciation">
+		<part id="LexPronunciation-Jt-LocationConfig">
+			<obj field="Location" layout="publishStemLocation" />
+		</part>
+	</bin>
+
+	<bin class="LexReference">
+		<part id="LexReference-Jt-EntryTargetsConfig" type="jtview">
+			<choice>
+				<where field="Targets" lengthatleast="2">
+					<choice>
+						<where target="owner" field="MappingType" intmemberof="0,1,5,6,10,11">
+							<!-- Collections and simple pairs, leave out the current item -->
+							<seq field="Targets" layout="publishStemCrossRef" targetclass="LexEntry" inheritSeps="true" excludeHvo="parent" />
+						</where>
+						<where target="owner" field="MappingType" intmemberof="2,3,7,8,12,13">
+							<!-- Trees and assymetrical pairs  -->
+							<if field="Targets" index="0" hvoequals="$ParentHvo">
+								<!-- the first entry in Targets (root) is the current object, so exclude it -->
+								<seq field="Targets" layout="publishStemCrossRef" targetclass="LexEntry" inheritSeps="true" excludeHvo="parent" />
+							</if>
+							<ifnot field="Targets" index="0" hvoequals="$ParentHvo">
+								<!-- The current one is not the first, so show only the first -->
+								<seq field="Targets" layout="publishStemCrossRef" targetclass="LexEntry" firstOnly="true" />
+							</ifnot>
+						</where>
+						<where target="owner" field="MappingType" intmemberof="4,9,14">
+							<!-- Sequences; show everything, including the current one. -->
+							<seq field="Targets" layout="publishStemCrossRef" targetclass="LexEntry" inheritSeps="true" />
+						</where>
+					</choice>
+				</where>
+				<where field="Targets" lengthatleast="1" lengthatmost="1">
+					<if target="owner" field="MappingType" intmemberof="4,9,14">
+						<!-- Sequences -->
+						<seq field="Targets" layout="publishStemCrossRef" targetclass="LexEntry" inheritSeps="true" />
+					</if>
+				</where>
+			</choice>
+		</part>
+		<part id="LexReference-Jt-ShowInPara" type="jtview">
+			<para>
+				<properties>
+					<firstindent value="-18000"/>
+					<leadingindent value="0"/>
+				</properties>
+				<string field="FullDisplayText"/>
+			</para>
+		</part>
+	</bin>
+
+	<bin class="CmLocation">
+		<part id="CmLocation-Jt-AbbreviationPub">
+			<configureMlString field="Abbreviation"/>
+		</part>
+		<part id="CmLocation-Jt-NamePub">
+			<configureMlString field="Name"/>
+		</part>
+	</bin>
+
+	<bin class="LexDb">
+		<part id="LexDb-Jt-EntriesFound">
+<!--            <seq field="EntriesFound" layout="publicationNew" targetClass="LexEntry"/>-->
+			<seq field="EntriesFound" layout="publishStem" targetClass="LexEntry"/>
+		</part>
+	</bin>
+
+</PartInventory>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000010" xsi:noNamespaceSchemaLocation="TestModel.xsd">
+	<class num="0" id="CmObject" abstract="true" abbr="obj">
+		<props/>
+	</class>
+	<class num="1" id="LexDb" abstract="false" abbr="proj" base="CmObject" depth="0">
+		<props>
+			<owning num="2" id="Entries" card="seq" sig="Entry"/>
+		</props>
+	</class>
+	<class num="7" id="Entry" abstract="false" abbr="E" base="CmObject" depth="0">
+		<props>
+			<owning num="1" id="Senses" card="seq" sig="Sense"/>
+			<basic num="5" id="Form" sig="MultiString"/>
+			<basic num="6" id="Summary" sig="String"/>
+		</props>
+	</class>
+	<class num="14" id="Sense" abstract="false" abbr="S" base="CmObject" depth="0">
+		<props>
+			<basic num="5" id="Definition" sig="MultiString"/>
+		</props>
+	</class>
+</EntireModel>

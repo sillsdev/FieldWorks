@@ -1,0 +1,22 @@
+﻿<LayoutInventory>
+  <layout class="MoMorphType" type="jtview" name="publishStemMorphType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="MoMorphType" type="jtview" name="publishStemMinorMorphType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="MoMorphType" type="jtview" name="publishRootMorphType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="MoMorphType" type="jtview" name="publishRootSubMorphType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+  <layout class="MoMorphType" type="jtview" name="publishRootMinorMorphType" version="9">
+	<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never" wsType="analysis" sep=" " />
+	<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" sep=" " />
+  </layout>
+</LayoutInventory>

@@ -1,0 +1,135 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "TeStylesDlgRes.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "..\..\AppCore\AfDef.h"
+#include "..\..\AppCore\Res\AfAppRes.h"
+#include "..\..\AppCore\Res\AfStylesDlgRes.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"TeStylesDlgRes.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
+	"#include ""..\\..\\AppCore\\Res\\AfStylesDlgRes.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+kridTeStyleDlg DIALOGEX 0, 0, 399, 260
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Style"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	DEFPUSHBUTTON   "OK",kctidClose,178,239,50,14
+	PUSHBUTTON      "Ap&ply",kctidOk,233,239,50,14
+	PUSHBUTTON      "Cancel",kctidCancel,288,239,50,14
+	PUSHBUTTON      "Help...",kctidHelp,342,239,50,14
+	LTEXT           "&Styles:",IDC_STATIC,7,7,22,9
+	CONTROL         "ListStyles",kctidLstStyles,"SysListView32",LVS_REPORT |
+					LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING |
+					LVS_EDITLABELS | LVS_NOCOLUMNHEADER | WS_BORDER |
+					WS_VSCROLL | WS_TABSTOP,7,20,130,178
+	PUSHBUTTON      "&Add",kctidAfsdBtnAdd,16,202,34,14
+	PUSHBUTTON      "&Copy",kctidAfsdBtnCopy,52,202,34,14
+	PUSHBUTTON      "&Delete...",kctidAfsdBtnDel,88,202,40,14
+	LTEXT           "&List:",IDC_STATIC,7,220,14,8
+	COMBOBOX        kctidTesdCbList,24,218,114,100,CBS_DROPDOWNLIST |
+					WS_VSCROLL | WS_TABSTOP
+	CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,7,235,
+					385,1
+	CONTROL         "Tab1",kctidTabDlgs,"SysTabControl32",TCS_HOTTRACK |
+					TCS_RAGGEDRIGHT | WS_TABSTOP,140,7,252,226
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	kridTeStyleDlg, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 392
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 253
+		HORZGUIDE, 202
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+	kctidTesdCbList         "Defines the styles that are visible in the Styles list box."
+	kstidTesdListBasic      "Basic Styles"
+	kstidTesdListAll        "All Styles"
+	kstidTesdListCustom     "Custom Styles"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

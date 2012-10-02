@@ -1,0 +1,1788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+================================================================
+FXT to generate output for M3 Parser (for Stage 2)
+================================================================
+Revision History is at the end of this file.
+-->
+<M3Dump><PartsOfSpeech><PartOfSpeech DefaultInflectionClass="0" Id="d7f7150d-e8cf-11d3-9764-00c04f186933"><Name>adjunct</Name>
+<Abbreviation>adjunct</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7150e-e8cf-11d3-9764-00c04f186933"><Name>article</Name>
+<Abbreviation>art</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+<SubPossibilities dst="d7f7150f-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<SubPossibilities dst="d7f71510-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7150f-e8cf-11d3-9764-00c04f186933"><Name>definite article</Name>
+<Abbreviation>def</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71510-e8cf-11d3-9764-00c04f186933"><Name>indefinite article</Name>
+<Abbreviation>indef</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71511-e8cf-11d3-9764-00c04f186933"><Name>disc</Name>
+<Abbreviation>disc</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71512-e8cf-11d3-9764-00c04f186933"><Name>interjection</Name>
+<Abbreviation>interj</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71513-e8cf-11d3-9764-00c04f186933"><Name>marker</Name>
+<Abbreviation>mkr</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+<SubPossibilities dst="d7f71514-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<SubPossibilities dst="d7f71515-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<SubPossibilities dst="d7f71516-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<SubPossibilities dst="d7f71517-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<SubPossibilities dst="d7f71518-e8cf-11d3-9764-00c04f186933" ord="4"/>
+<SubPossibilities dst="d7f71519-e8cf-11d3-9764-00c04f186933" ord="5"/>
+<SubPossibilities dst="d7f7151a-e8cf-11d3-9764-00c04f186933" ord="6"/>
+<SubPossibilities dst="d7f7151b-e8cf-11d3-9764-00c04f186933" ord="7"/>
+<SubPossibilities dst="d7f7151c-e8cf-11d3-9764-00c04f186933" ord="8"/>
+<SubPossibilities dst="d7f7151d-e8cf-11d3-9764-00c04f186933" ord="9"/>
+<SubPossibilities dst="d7f7151e-e8cf-11d3-9764-00c04f186933" ord="10"/>
+<SubPossibilities dst="d7f7151f-e8cf-11d3-9764-00c04f186933" ord="11"/>
+<SubPossibilities dst="d7f71520-e8cf-11d3-9764-00c04f186933" ord="12"/>
+<SubPossibilities dst="d7f71521-e8cf-11d3-9764-00c04f186933" ord="13"/>
+<SubPossibilities dst="d7f71522-e8cf-11d3-9764-00c04f186933" ord="14"/>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71514-e8cf-11d3-9764-00c04f186933"><Name>aspectual</Name>
+<Abbreviation>asp</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71515-e8cf-11d3-9764-00c04f186933"><Name>case marker</Name>
+<Abbreviation>case</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71516-e8cf-11d3-9764-00c04f186933"><Name>focus marker</Name>
+<Abbreviation>foc</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71517-e8cf-11d3-9764-00c04f186933"><Name>honorific marker</Name>
+<Abbreviation>hon</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71518-e8cf-11d3-9764-00c04f186933"><Name>modal</Name>
+<Abbreviation>mod</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71519-e8cf-11d3-9764-00c04f186933"><Name>mood</Name>
+<Abbreviation>mood</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7151a-e8cf-11d3-9764-00c04f186933"><Name>negation</Name>
+<Abbreviation>neg</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7151b-e8cf-11d3-9764-00c04f186933"><Name>number</Name>
+<Abbreviation>num</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7151c-e8cf-11d3-9764-00c04f186933"><Name>person</Name>
+<Abbreviation>pers</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7151d-e8cf-11d3-9764-00c04f186933"><Name>quotative</Name>
+<Abbreviation>quo</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7151e-e8cf-11d3-9764-00c04f186933"><Name>rank marker</Name>
+<Abbreviation>rank</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7151f-e8cf-11d3-9764-00c04f186933"><Name>switch reference marker</Name>
+<Abbreviation>sw ref</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71520-e8cf-11d3-9764-00c04f186933"><Name>tense marker</Name>
+<Abbreviation>tens</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71521-e8cf-11d3-9764-00c04f186933"><Name>topic marker</Name>
+<Abbreviation>top</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71522-e8cf-11d3-9764-00c04f186933"><Name>voice marker</Name>
+<Abbreviation>voice</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71523-e8cf-11d3-9764-00c04f186933"><Name>modifier</Name>
+<Abbreviation>mod</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+<SubPossibilities dst="d7f71524-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<SubPossibilities dst="d7f71525-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71524-e8cf-11d3-9764-00c04f186933"><Name>adjective</Name>
+<Abbreviation>adj</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71525-e8cf-11d3-9764-00c04f186933"><Name>adverb</Name>
+<Abbreviation>Adv</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71526-e8cf-11d3-9764-00c04f186933"><Name>negator</Name>
+<Abbreviation>neg</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71527-e8cf-11d3-9764-00c04f186933"><Name>noun</Name>
+<Abbreviation>N</Abbreviation>
+<AffixSlots><MoInflAffixSlot Id="32bf0473-d3a8-40ba-b681-dbecfa10edd9" Optional="1"><Name>Possessor</Name>
+<Description></Description>
+</MoInflAffixSlot>
+</AffixSlots>
+<AffixTemplates><MoInflAffixTemplate Final="1" Id="3e2e6b4e-cbc5-46d6-a198-77415ecce02a"><Name>Possessed noun</Name>
+<Description></Description>
+<Slots dst="32bf0473-d3a8-40ba-b681-dbecfa10edd9" ord="0"/>
+<SuffixSlots dst="32bf0473-d3a8-40ba-b681-dbecfa10edd9" ord="0"/>
+</MoInflAffixTemplate>
+</AffixTemplates>
+<InflectionClasses><MoInflClass Id="39b3605b-9384-48da-b16e-f9a4b5ff659a"><Name>1st nominal declension</Name>
+<Abbreviation>I</Abbreviation>
+<Description>first nominal declension</Description>
+</MoInflClass>
+<MoInflClass Id="441be6a9-e5d5-43c4-bd89-ab335f80e46a"><Name>2nd nominal declension</Name>
+<Abbreviation>II</Abbreviation>
+<Description>second nominal declension</Description>
+</MoInflClass>
+<MoInflClass Id="1bd0464c-7c79-48c3-a9cf-7760c3a81f5e"><Name>3rd nominal declension</Name>
+<Abbreviation>III</Abbreviation>
+<Description>third nominal declension</Description>
+</MoInflClass>
+</InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+<SubPossibilities dst="d7f71528-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<SubPossibilities dst="d7f71529-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<SubPossibilities dst="d7f7152a-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<SubPossibilities dst="d7f7152b-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<SubPossibilities dst="d7f7152c-e8cf-11d3-9764-00c04f186933" ord="4"/>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71528-e8cf-11d3-9764-00c04f186933"><Name>common noun</Name>
+<Abbreviation>comm</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71529-e8cf-11d3-9764-00c04f186933"><Name>concrete noun</Name>
+<Abbreviation>conc</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7152a-e8cf-11d3-9764-00c04f186933"><Name>nominal</Name>
+<Abbreviation>nom</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7152b-e8cf-11d3-9764-00c04f186933"><Name>possessive noun</Name>
+<Abbreviation>poss</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7152c-e8cf-11d3-9764-00c04f186933"><Name>proper noun</Name>
+<Abbreviation>prop</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7152d-e8cf-11d3-9764-00c04f186933"><Name>particle</Name>
+<Abbreviation>part</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7152e-e8cf-11d3-9764-00c04f186933"><Name>precategorial</Name>
+<Abbreviation>precat</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7152f-e8cf-11d3-9764-00c04f186933"><Name>pronoun</Name>
+<Abbreviation>Pro</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+<SubPossibilities dst="d7f71530-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<SubPossibilities dst="d7f71531-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<SubPossibilities dst="d7f71532-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<SubPossibilities dst="d7f71533-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<SubPossibilities dst="d7f71534-e8cf-11d3-9764-00c04f186933" ord="4"/>
+<SubPossibilities dst="d7f71535-e8cf-11d3-9764-00c04f186933" ord="5"/>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71530-e8cf-11d3-9764-00c04f186933"><Name>demonstrative pronoun</Name>
+<Abbreviation>dem</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71531-e8cf-11d3-9764-00c04f186933"><Name>indefinite pronoun</Name>
+<Abbreviation>ind</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71532-e8cf-11d3-9764-00c04f186933"><Name>interrogative pronoun</Name>
+<Abbreviation>int</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71533-e8cf-11d3-9764-00c04f186933"><Name>personal pronoun</Name>
+<Abbreviation>pers</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71534-e8cf-11d3-9764-00c04f186933"><Name>posessive pronoun</Name>
+<Abbreviation>pos pron</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71535-e8cf-11d3-9764-00c04f186933"><Name>relative pronoun</Name>
+<Abbreviation>rel</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71536-e8cf-11d3-9764-00c04f186933"><Name>relator</Name>
+<Abbreviation>rel</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+<SubPossibilities dst="d7f71537-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<SubPossibilities dst="d7f7153a-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71537-e8cf-11d3-9764-00c04f186933"><Name>adposition</Name>
+<Abbreviation>adpos</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+<SubPossibilities dst="d7f71538-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<SubPossibilities dst="d7f71539-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71538-e8cf-11d3-9764-00c04f186933"><Name>postposition</Name>
+<Abbreviation>post</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71539-e8cf-11d3-9764-00c04f186933"><Name>preposition</Name>
+<Abbreviation>prep</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7153a-e8cf-11d3-9764-00c04f186933"><Name>conjunction</Name>
+<Abbreviation>conj</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" Id="d7f7153b-e8cf-11d3-9764-00c04f186933"><Name>verb</Name>
+<Abbreviation>V</Abbreviation>
+<AffixSlots><MoInflAffixSlot Id="617322ab-79f5-4302-8b9f-f92ca1d1eeba" Optional="0"><Name>Tense</Name>
+<Description>tense suffixes</Description>
+</MoInflAffixSlot>
+<MoInflAffixSlot Id="42b52eed-0970-438d-9608-a03fc8c35855" Optional="1"><Name>Subject</Name>
+<Description>subject prefixes</Description>
+</MoInflAffixSlot>
+<MoInflAffixSlot Id="395e7178-199d-415a-a5b4-f8f3196a93f2" Optional="0"><Name>Object</Name>
+<Description></Description>
+</MoInflAffixSlot>
+</AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses><MoInflClass Id="8a0a8938-a569-4e3f-9adf-8c933a3e26de"><Name>1st verbal conjugation</Name>
+<Abbreviation>1</Abbreviation>
+<Description>First verbal conjugation</Description>
+</MoInflClass>
+<MoInflClass Id="d64cbd78-3277-44b5-9ec3-6a6b0b38f772"><Name>2nd verbal conjugation</Name>
+<Abbreviation>2</Abbreviation>
+<Description>Second verbal conjugation</Description>
+</MoInflClass>
+</InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+<SubPossibilities dst="d7f7153c-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<SubPossibilities dst="d7f7153e-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<SubPossibilities dst="d7f7153f-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<SubPossibilities dst="d7f71540-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<SubPossibilities dst="d7f71541-e8cf-11d3-9764-00c04f186933" ord="4"/>
+<SubPossibilities dst="d7f71542-e8cf-11d3-9764-00c04f186933" ord="5"/>
+<SubPossibilities dst="d7f71543-e8cf-11d3-9764-00c04f186933" ord="6"/>
+<SubPossibilities dst="d7f7153d-e8cf-11d3-9764-00c04f186933" ord="7"/>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7153c-e8cf-11d3-9764-00c04f186933"><Name>auxiliary verb</Name>
+<Abbreviation>aux</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7153e-e8cf-11d3-9764-00c04f186933"><Name>infinitive</Name>
+<Abbreviation>inf</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7153f-e8cf-11d3-9764-00c04f186933"><Name>intransitive verb</Name>
+<Abbreviation>intrans</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates><MoInflAffixTemplate Final="1" Id="4abcc54f-332a-4b81-b1d6-ed7a3c42db1b"><Name>Intransitive verb</Name>
+<Description></Description>
+<Slots dst="42b52eed-0970-438d-9608-a03fc8c35855" ord="0"/>
+<Slots dst="617322ab-79f5-4302-8b9f-f92ca1d1eeba" ord="1"/>
+<PrefixSlots dst="42b52eed-0970-438d-9608-a03fc8c35855" ord="0"/>
+<SuffixSlots dst="617322ab-79f5-4302-8b9f-f92ca1d1eeba" ord="0"/>
+</MoInflAffixTemplate>
+</AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71540-e8cf-11d3-9764-00c04f186933"><Name>participle</Name>
+<Abbreviation>part</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71541-e8cf-11d3-9764-00c04f186933"><Name>reflexive</Name>
+<Abbreviation>ref</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates></AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71542-e8cf-11d3-9764-00c04f186933"><Name>stative</Name>
+<Abbreviation>sta</Abbreviation>
+<AffixSlots><MoInflAffixSlot Id="0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde" Optional="0"><Name>Tense</Name>
+<Description></Description>
+</MoInflAffixSlot>
+</AffixSlots>
+<AffixTemplates><MoInflAffixTemplate Final="1" Id="9e2f0090-61c3-4c37-b3ca-a7b7abd4ca0c"><Name>Stative verb</Name>
+<Description></Description>
+<Slots dst="42b52eed-0970-438d-9608-a03fc8c35855" ord="0"/>
+<Slots dst="0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde" ord="1"/>
+<PrefixSlots dst="42b52eed-0970-438d-9608-a03fc8c35855" ord="0"/>
+<SuffixSlots dst="0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde" ord="0"/>
+</MoInflAffixTemplate>
+</AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f71543-e8cf-11d3-9764-00c04f186933"><Name>transitive verb</Name>
+<Abbreviation>trans</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates><MoInflAffixTemplate Final="1" Id="0e42bd7d-6e4f-47b9-a88b-8afe38d2d2fc"><Name>Transitive verb</Name>
+<Description></Description>
+<Slots dst="42b52eed-0970-438d-9608-a03fc8c35855" ord="0"/>
+<Slots dst="395e7178-199d-415a-a5b4-f8f3196a93f2" ord="1"/>
+<Slots dst="617322ab-79f5-4302-8b9f-f92ca1d1eeba" ord="2"/>
+<PrefixSlots dst="42b52eed-0970-438d-9608-a03fc8c35855" ord="0"/>
+<PrefixSlots dst="395e7178-199d-415a-a5b4-f8f3196a93f2" ord="1"/>
+<SuffixSlots dst="617322ab-79f5-4302-8b9f-f92ca1d1eeba" ord="0"/>
+</MoInflAffixTemplate>
+</AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+<PartOfSpeech DefaultInflectionClass="0" Id="d7f7153d-e8cf-11d3-9764-00c04f186933"><Name>bitransitive verb</Name>
+<Abbreviation>bitrans</Abbreviation>
+<AffixSlots></AffixSlots>
+<AffixTemplates><MoInflAffixTemplate Final="1" Id="3ff09630-b36d-47dc-874f-26e298756241"><Name>Bitransitive verb</Name>
+<Description></Description>
+<Slots dst="42b52eed-0970-438d-9608-a03fc8c35855" ord="0"/>
+<Slots dst="395e7178-199d-415a-a5b4-f8f3196a93f2" ord="1"/>
+<Slots dst="617322ab-79f5-4302-8b9f-f92ca1d1eeba" ord="2"/>
+<PrefixSlots dst="42b52eed-0970-438d-9608-a03fc8c35855" ord="0"/>
+<PrefixSlots dst="395e7178-199d-415a-a5b4-f8f3196a93f2" ord="1"/>
+<SuffixSlots dst="617322ab-79f5-4302-8b9f-f92ca1d1eeba" ord="0"/>
+</MoInflAffixTemplate>
+</AffixTemplates>
+<InflectionClasses></InflectionClasses>
+<StemNames></StemNames>
+<BearableFeatures></BearableFeatures>
+</PartOfSpeech>
+</PartsOfSpeech>
+<PhPhonData Id="8ea37d3d-b2a1-4e4e-ab8e-ada83c7459da"><Environments><PhEnvironment Id="38658b87-6a90-4710-9f40-11e7e95c1762" LeftContext="0" RightContext="0" StringRepresentation="/ [V] _"><Name>after vowel</Name>
+</PhEnvironment>
+<PhEnvironment Id="88bf7a79-50fc-47d0-9883-c48cfda879ac" LeftContext="0" RightContext="0" StringRepresentation="/ [C] _"><Name>after consonant</Name>
+</PhEnvironment>
+<PhEnvironment Id="35a3fffa-b3e9-4a27-bed0-ac5bb6c64a87" LeftContext="0" RightContext="0" StringRepresentation="/ _ [C^1][V^1]"><Name>redup before CV</Name>
+</PhEnvironment>
+<PhEnvironment Id="24282d27-6c40-445a-bbf9-b99211286cfd" LeftContext="0" RightContext="0" StringRepresentation="/ _ b"><Name>before voiced labial stop</Name>
+</PhEnvironment>
+<PhEnvironment Id="0d4d9c33-e4f0-48b4-8eb1-21972000fd4e" LeftContext="0" RightContext="0" StringRepresentation="/ _ g"><Name>before voiced velar stop</Name>
+</PhEnvironment>
+<PhEnvironment Id="a83c25d1-c71c-42bb-914a-f069de93cb68" LeftContext="0" RightContext="0" StringRepresentation="/ _ [+cor,+vd]"><Name>before voiced coronals</Name>
+</PhEnvironment>
+<PhEnvironment Id="08ca1347-3af9-42d3-b7bd-97c668c5a896" LeftContext="0" RightContext="0" StringRepresentation="/ _ [V^1]"><Name>redup before V</Name>
+</PhEnvironment>
+<PhEnvironment Id="c4d6ffaf-c8dd-4bcf-996b-4f9f3320836b" LeftContext="0" RightContext="0" StringRepresentation="/ _ [V]"><Name>before a vowel</Name>
+</PhEnvironment>
+<PhEnvironment Id="0a8a0bd6-3bea-4ca3-ab8b-02b1f081aed7" LeftContext="0" RightContext="0" StringRepresentation="/ #[C] _"><Name>after (stem initial) consonant</Name>
+</PhEnvironment>
+<!-- Object filtered out by filter Constraint-Filter, reason: There is a problem with this environment string '/ _ i _': There is some kind of error somewhere around here: '_'.  It may be a missing underscore _, two or more underscores, a missing slash /, something beyond a word boundary symbol #, or two or more word boundary symbols at the same edge. --><PhEnvironment Id="9d482960-d7c3-4f3a-8b93-1c42e4f90e0a" LeftContext="0" RightContext="0" StringRepresentation="/ # _ #"><Name>standalone word</Name>
+</PhEnvironment>
+</Environments>
+<NaturalClasses><PhNCSegments Id="43c9ba97-2883-4f95-aa5d-ef9309e85025"><Abbreviation>V</Abbreviation>
+<Segments dst="640a1fe6-fcc4-408b-be18-cfa3f41f562d"/>
+<Segments dst="a61064d4-6497-44cd-be69-64c2bc573fb8"/>
+<Segments dst="a818e2d9-42e6-4c71-b52f-3d522386ea5a"/>
+<Segments dst="fd00fede-80dd-49ab-8b06-e0fd32b3083a"/>
+<Segments dst="dbeac85a-8c0f-4ece-8422-919cffdcc97b"/>
+</PhNCSegments>
+<PhNCSegments Id="a1f47fd7-6c56-419b-9370-17e1c899fec2"><Abbreviation>C</Abbreviation>
+<Segments dst="df51fe23-e653-4a9c-a66c-5a3166085692"/>
+<Segments dst="a758d97e-5757-4207-adf5-60936d39b14b"/>
+<Segments dst="e1d46fbd-8cac-4881-b6c4-aacf3e775cef"/>
+<Segments dst="037b9355-3e02-4cbb-8eed-17cbd8a83fa1"/>
+<Segments dst="b03fff3b-e556-48a2-a650-4fb343f7f37a"/>
+<Segments dst="62198cd8-f4d6-4782-9934-af24f6101b81"/>
+<Segments dst="684268e7-38e4-46c3-a780-25ee830e679d"/>
+<Segments dst="abbae86d-ab0f-40e8-9029-d9768aadc85a"/>
+<Segments dst="28c086f5-06f7-47a8-b0ce-6472ab69522c"/>
+<Segments dst="a29e004e-5312-4529-9a49-bb8ef3e0ec38"/>
+<Segments dst="08ce5de8-085d-4cb7-aac1-64a9f65c21e2"/>
+<Segments dst="d4c047d2-d1ed-4fcb-9fe5-2d6f87c942c0"/>
+<Segments dst="1bbbeae2-318a-445f-89a7-bbd52d7c65d4"/>
+<Segments dst="4d41dc42-62bf-4212-9f65-13f6bc6057ba"/>
+<Segments dst="59ec70d8-899d-4f63-accc-85060b84c5bf"/>
+<Segments dst="f0aa1aee-dc0a-4e99-84ef-fb9f706b2f34"/>
+<Segments dst="c7572c82-a61d-4b40-9412-60d36e21e301"/>
+<Segments dst="99c6a8e2-8972-4869-a2b9-17c10559c01a"/>
+</PhNCSegments>
+<PhNCSegments Id="a27edaa2-622e-4a0d-9a13-df381910e509"><Abbreviation>+cor,+vd</Abbreviation>
+<Segments dst="037b9355-3e02-4cbb-8eed-17cbd8a83fa1"/>
+<Segments dst="a29e004e-5312-4529-9a49-bb8ef3e0ec38"/>
+<Segments dst="59ec70d8-899d-4f63-accc-85060b84c5bf"/>
+<Segments dst="f0aa1aee-dc0a-4e99-84ef-fb9f706b2f34"/>
+<Segments dst="99c6a8e2-8972-4869-a2b9-17c10559c01a"/>
+</PhNCSegments>
+</NaturalClasses>
+<Contexts></Contexts>
+<PhonemeSets><PhPhonemeSet Id="0d3e609a-3af7-4eff-9244-a6a7d38334d1"><Name>Main set</Name>
+<Phonemes><PhPhoneme Id="640a1fe6-fcc4-408b-be18-cfa3f41f562d"><Codes><PhCode Id="b7324dc4-107d-4f1e-b91f-a2e7d2e493fc"><Representation>i</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="a61064d4-6497-44cd-be69-64c2bc573fb8"><Codes><PhCode Id="13d72246-7dc8-4e8c-af1f-8e7757db68ef"><Representation>e</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="a818e2d9-42e6-4c71-b52f-3d522386ea5a"><Codes><PhCode Id="cd187a6f-5aa9-444b-b674-a28f30a5214c"><Representation>a</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="fd00fede-80dd-49ab-8b06-e0fd32b3083a"><Codes><PhCode Id="c03ea3f3-3e7a-403d-a5ef-a28cceded136"><Representation>o</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="dbeac85a-8c0f-4ece-8422-919cffdcc97b"><Codes><PhCode Id="c96ff95c-0f5d-4311-bf11-f4b89682d544"><Representation>u</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="df51fe23-e653-4a9c-a66c-5a3166085692"><Codes><PhCode Id="ab921bce-40bf-4077-9a7c-5c6d888d8c3a"><Representation>p</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="a758d97e-5757-4207-adf5-60936d39b14b"><Codes><PhCode Id="90e04501-6113-417a-8f66-9bb835300a6c"><Representation>b</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="e1d46fbd-8cac-4881-b6c4-aacf3e775cef"><Codes><PhCode Id="c82c0c3c-775d-401f-a2e2-cda20fbb8054"><Representation>t</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="037b9355-3e02-4cbb-8eed-17cbd8a83fa1"><Codes><PhCode Id="51f71063-e051-4564-8823-8593ea21df27"><Representation>d</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="b03fff3b-e556-48a2-a650-4fb343f7f37a"><Codes><PhCode Id="09c291b3-4513-4a7b-88b4-ddcf151f26eb"><Representation>k</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="62198cd8-f4d6-4782-9934-af24f6101b81"><Codes><PhCode Id="1a791f0a-e2e7-47df-b42d-b3f0afa37f61"><Representation>g</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="684268e7-38e4-46c3-a780-25ee830e679d"><Codes><PhCode Id="87fda0b8-0be0-466c-bf05-119118ea7ec2"><Representation>f</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="abbae86d-ab0f-40e8-9029-d9768aadc85a"><Codes><PhCode Id="82809a7c-beca-46f8-97ac-bf1cc90eacd9"><Representation>v</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="28c086f5-06f7-47a8-b0ce-6472ab69522c"><Codes><PhCode Id="9a8c1fde-ca2a-459e-8740-bde25463e3de"><Representation>s</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="a29e004e-5312-4529-9a49-bb8ef3e0ec38"><Codes><PhCode Id="5a24f3dd-de3e-4723-8427-d92fdc2bd6fb"><Representation>z</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="08ce5de8-085d-4cb7-aac1-64a9f65c21e2"><Codes><PhCode Id="c618073b-9453-4f5e-b5e5-f7b772b12b04"><Representation>x</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="d4c047d2-d1ed-4fcb-9fe5-2d6f87c942c0"><Codes><PhCode Id="5c483457-a4d5-4804-b329-b17eb193d8e5"><Representation>m</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="1bbbeae2-318a-445f-89a7-bbd52d7c65d4"><Codes><PhCode Id="3d3b340d-7aa0-43f6-9bd2-2c5ae4539be6"><Representation>n</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="4d41dc42-62bf-4212-9f65-13f6bc6057ba"><Codes><PhCode Id="1c5b48ed-0fc6-45ef-b2e2-e87bbbb48b10"><Representation>ŋ</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="59ec70d8-899d-4f63-accc-85060b84c5bf"><Codes><PhCode Id="fc840dd8-57c7-45d4-9e0b-822fbf7810a2"><Representation>l</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="f0aa1aee-dc0a-4e99-84ef-fb9f706b2f34"><Codes><PhCode Id="fdf8a2a0-2813-4c3c-a7a1-9f4276b9eb3b"><Representation>r</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="c7572c82-a61d-4b40-9412-60d36e21e301"><Codes><PhCode Id="deb14e25-7eaf-402a-a5db-f05cefae5a86"><Representation>w</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+<PhPhoneme Id="99c6a8e2-8972-4869-a2b9-17c10559c01a"><Codes><PhCode Id="97dff63f-0020-4cff-844c-6447e2824bf1"><Representation>y</Representation>
+</PhCode>
+</Codes>
+</PhPhoneme>
+</Phonemes>
+<BoundaryMarkers><PhBdryMarker Guid="7db635e0-9ef3-4167-a594-12551ed89aaa" Id="7db635e0-9ef3-4167-a594-12551ed89aaa"><Name>#</Name>
+<Codes><PhCode Id="76d48dfb-ce44-406c-a2ce-de40cb8b44f0"><Representation>#</Representation>
+</PhCode>
+</Codes>
+</PhBdryMarker>
+<PhBdryMarker Guid="3bde17ce-e39a-4bae-8a5c-a8d96fd4cb56" Id="3bde17ce-e39a-4bae-8a5c-a8d96fd4cb56"><Name>+</Name>
+<Codes><PhCode Id="559fbc6a-ae96-4384-ac47-ff8d820ea5e5"><Representation>+</Representation>
+</PhCode>
+</Codes>
+</PhBdryMarker>
+</BoundaryMarkers>
+</PhPhonemeSet>
+</PhonemeSets>
+<FeatConstraints></FeatConstraints>
+<PhonRules></PhonRules>
+<PhIters></PhIters>
+<PhIters></PhIters>
+<PhIters></PhIters>
+<PhIters></PhIters>
+<PhIters></PhIters>
+<PhIters></PhIters>
+</PhPhonData>
+
+<ParserParameters><XAmple><MaxNulls>1</MaxNulls><MaxPrefixes>5</MaxPrefixes><MaxInfixes>1</MaxInfixes><MaxRoots>3</MaxRoots><MaxSuffixes>5</MaxSuffixes><MaxAnalysesToReturn>10</MaxAnalysesToReturn></XAmple></ParserParameters>
+<CompoundRules><MoExoCompound Id="3e4b40e8-1fad-4884-8fe6-d2206a30875c"><Name>noun-adverb -&gt; intransitive verb, ic:2</Name>
+<Description></Description>
+<LeftMsa dst="27ae1791-568e-4395-8cd1-9fab1c420f6c"></LeftMsa>
+<RightMsa dst="55156c92-cb83-4187-aeaa-ca8ac8bc7a0c"></RightMsa>
+<ToMsa dst="dc3e7eaa-eadb-4706-8e85-eab8f0ac4aaf"></ToMsa>
+</MoExoCompound>
+<MoExoCompound Id="98fd86d7-6333-4a50-ab18-5dda7631ba93"><Name>adverb-noun --&gt; intransitive verb, ic:2</Name>
+<Description></Description>
+<LeftMsa dst="aaeb01f0-c66f-46ce-b214-6b4b2c612f52"></LeftMsa>
+<RightMsa dst="9bf77e61-2a58-48f1-86ee-2a7e1b387f24"></RightMsa>
+<ToMsa dst="329cbe58-dad7-406d-a5a1-dd6a4c19deae"></ToMsa>
+</MoExoCompound>
+<MoEndoCompound HeadLast="1" Id="2a784607-2cb5-4d11-9521-32ba927e1003"><Name>adj-noun with linker </Name>
+<Description>adjective with noun and an "a" linker </Description>
+<LeftMsa dst="51f61708-ffc6-494b-9cf4-2c58492570b1"></LeftMsa>
+<RightMsa dst="77f1f77a-4f35-4de7-911b-62e3cb30cade"></RightMsa>
+<OverridingMsa dst="63c40219-b3d7-475d-8c0a-3ede7f537d5e"></OverridingMsa>
+</MoEndoCompound>
+<MoEndoCompound HeadLast="0" Id="ef8a159f-dabc-403d-a928-6eaac070331d"><Name>verb-adverb </Name>
+<Description>adverb incorporation </Description>
+<LeftMsa dst="e037915b-9111-4674-ab37-88aa77c0e9eb"></LeftMsa>
+<RightMsa dst="158a8bf2-79db-4395-80d8-1a474f0a15b3"></RightMsa>
+<OverridingMsa dst="40621054-c9b3-4d94-8ad9-0d064f4a5880"></OverridingMsa>
+</MoEndoCompound>
+<MoEndoCompound HeadLast="1" Id="6ee29822-7ef2-4b1a-aa50-9fa9996d6540"><Name>noun-transitive verb </Name>
+<Description></Description>
+<LeftMsa dst="2948d47b-43b6-436f-af3b-969607648611"></LeftMsa>
+<RightMsa dst="262a34a9-71d2-4e72-b197-f5b53814f366"></RightMsa>
+<OverridingMsa dst="710e12b5-b61a-4782-b4d6-ed2748bda620"></OverridingMsa>
+</MoEndoCompound>
+<MoEndoCompound HeadLast="1" Id="533fd4ea-334f-4f16-a91e-feba34883496"><Name>noun-Intransitive verb </Name>
+<Description></Description>
+<LeftMsa dst="b433be29-cc3f-461e-b419-a973aea038fb"></LeftMsa>
+<RightMsa dst="59ea81de-7416-4d11-b333-4000b99f167a"></RightMsa>
+<OverridingMsa dst="3b5a04f6-af38-4406-88a6-705aaa0a0dc7"></OverridingMsa>
+</MoEndoCompound>
+</CompoundRules>
+<AdhocCoProhibitions><MoMorphAdhocProhib Adjacency="0" Id="73889f8a-6ccc-4f33-aa2d-025d5bf2beb3"><FirstMorpheme dst="069aee8f-8b79-4f8f-afb5-2c433ec4a9e1"/><RestOfMorphs dst="8c98c459-33a4-41ad-9f06-217348bb18e5" ord="0"/>
+</MoMorphAdhocProhib>
+<MoMorphAdhocProhib Adjacency="0" Id="78e7df77-dc49-44bb-8cad-700af2a8722b"><FirstMorpheme dst="1af70026-0364-402d-9937-246ca89cfdab"/><RestOfMorphs dst="99b44a20-3fc6-43d7-9271-bffb30c2d66c" ord="0"/>
+</MoMorphAdhocProhib>
+<MoMorphAdhocProhib Adjacency="0" Id="94df94ed-539a-42d5-9e4c-21b652583e64"><FirstMorpheme dst="d4ec9b02-9a91-418f-ac42-9a79438b88e2"/><RestOfMorphs dst="e4f26931-0e18-42a6-b898-8dc0d3746276" ord="0"/>
+</MoMorphAdhocProhib>
+<MoMorphAdhocProhib Adjacency="0" Id="783ab6dc-41d3-49b1-ad97-aac078f1ae67"><FirstMorpheme dst="3c2b9e2f-405c-4416-bae8-e50b95fb3b6d"/><RestOfMorphs dst="cf730e86-e5a8-4405-956e-e66417e51d68" ord="0"/>
+</MoMorphAdhocProhib>
+<MoMorphAdhocProhib Adjacency="1" Id="b364bb90-4358-45d5-836c-a76453754c52"><FirstMorpheme dst="bfd7f99b-bc6d-4926-acee-0c1583c9170c"/><RestOfMorphs dst="f17bfe28-abef-40c8-b747-0367ac06c620" ord="0"/>
+</MoMorphAdhocProhib>
+<MoMorphAdhocProhib Adjacency="4" Id="6ace8fef-9336-4634-b656-44a8358d4093"><FirstMorpheme dst="b656833a-b8e9-44a2-992a-5462d49fe67b"/><RestOfMorphs dst="fa8d0d01-a92a-444d-be4d-f890aad342fa" ord="0"/>
+</MoMorphAdhocProhib>
+<MoMorphAdhocProhib Adjacency="3" Id="216f2b6e-d1ac-421f-9b66-d9589640d8c7"><FirstMorpheme dst="bfd7f99b-bc6d-4926-acee-0c1583c9170c"/><RestOfMorphs dst="fa8d0d01-a92a-444d-be4d-f890aad342fa" ord="0"/>
+</MoMorphAdhocProhib>
+<MoMorphAdhocProhib Adjacency="2" Id="babc00cd-3688-4fe0-9ce6-c766cd4fd125"><FirstMorpheme dst="f17bfe28-abef-40c8-b747-0367ac06c620"/><RestOfMorphs dst="bfd7f99b-bc6d-4926-acee-0c1583c9170c" ord="0"/>
+</MoMorphAdhocProhib>
+<MoAlloAdhocProhib Adjacency="0" Id="d5e9bc84-7b72-4e37-92c2-fd5b55f26194"><FirstAllomorph dst="3cbec368-e525-45b3-afd6-ff295b7ac96d"/><RestOfAllos dst="b2c43ab8-8597-4d00-9994-075f619c7436" ord="0"/>
+</MoAlloAdhocProhib>
+<MoAlloAdhocProhib Adjacency="1" Id="10447dc2-00aa-4855-932d-38cfb2b0c16d"><FirstAllomorph dst="b2c43ab8-8597-4d00-9994-075f619c7436"/><RestOfAllos dst="5e15569e-b60b-430c-8777-785eecc6ab80" ord="0"/>
+</MoAlloAdhocProhib>
+<MoAlloAdhocProhib Adjacency="2" Id="1d1a8382-86b0-4f03-bc81-c0dc71106405"><FirstAllomorph dst="f72d6a4e-d591-4ad2-bbdc-ec9d39cc54c7"/><RestOfAllos dst="b2c43ab8-8597-4d00-9994-075f619c7436" ord="0"/>
+</MoAlloAdhocProhib>
+<MoAlloAdhocProhib Adjacency="3" Id="4c6d2c3d-3539-421c-8def-6495d0f34021"><FirstAllomorph dst="5e15569e-b60b-430c-8777-785eecc6ab80"/><RestOfAllos dst="f72d6a4e-d591-4ad2-bbdc-ec9d39cc54c7" ord="0"/>
+</MoAlloAdhocProhib>
+<MoAlloAdhocProhib Adjacency="4" Id="3e253672-1fa8-4d51-b70c-2e36bd4c7184"><FirstAllomorph dst="de88c8da-ca64-4951-bb34-faa101a1f01b"/><RestOfAllos dst="b2c43ab8-8597-4d00-9994-075f619c7436" ord="0"/>
+</MoAlloAdhocProhib>
+<MoAlloAdhocProhib Adjacency="1" Id="8d413d82-56f3-4693-8189-95b9a319c547"><FirstAllomorph dst="b2c43ab8-8597-4d00-9994-075f619c7436"/><RestOfAllos dst="37442f21-a4d5-4f8e-a59b-8b1b3b16019c" ord="0"/>
+</MoAlloAdhocProhib>
+<MoAlloAdhocProhib Adjacency="2" Id="e2ebe85b-c2e2-40e4-b551-138e7afb1df2"><FirstAllomorph dst="5d2239fb-c480-4316-affe-5fe7bcebdc6a"/><RestOfAllos dst="b2c43ab8-8597-4d00-9994-075f619c7436" ord="0"/>
+</MoAlloAdhocProhib>
+</AdhocCoProhibitions>
+<ProdRestrict></ProdRestrict>
+<MoMorphTypes><MoMorphType Guid="56db04bf-3d58-44cc-b292-4c8aa68538f4" Id="56db04bf-3d58-44cc-b292-4c8aa68538f4"><Name>particle</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713da-e8cf-11d3-9764-00c04f186933" Id="d7f713da-e8cf-11d3-9764-00c04f186933"><Name>infix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713db-e8cf-11d3-9764-00c04f186933" Id="d7f713db-e8cf-11d3-9764-00c04f186933"><Name>prefix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713dc-e8cf-11d3-9764-00c04f186933" Id="d7f713dc-e8cf-11d3-9764-00c04f186933"><Name>simulfix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713dd-e8cf-11d3-9764-00c04f186933" Id="d7f713dd-e8cf-11d3-9764-00c04f186933"><Name>suffix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713de-e8cf-11d3-9764-00c04f186933" Id="d7f713de-e8cf-11d3-9764-00c04f186933"><Name>suprafix</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713df-e8cf-11d3-9764-00c04f186933" Id="d7f713df-e8cf-11d3-9764-00c04f186933"><Name>circumfix</Name>
+</MoMorphType>
+<MoMorphType Guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c" Id="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c"><Name>clitic</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e1-e8cf-11d3-9764-00c04f186933" Id="d7f713e1-e8cf-11d3-9764-00c04f186933"><Name>enclitic</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e2-e8cf-11d3-9764-00c04f186933" Id="d7f713e2-e8cf-11d3-9764-00c04f186933"><Name>proclitic</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e4-e8cf-11d3-9764-00c04f186933" Id="d7f713e4-e8cf-11d3-9764-00c04f186933"><Name>bound root</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e5-e8cf-11d3-9764-00c04f186933" Id="d7f713e5-e8cf-11d3-9764-00c04f186933"><Name>root</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e7-e8cf-11d3-9764-00c04f186933" Id="d7f713e7-e8cf-11d3-9764-00c04f186933"><Name>bound stem</Name>
+</MoMorphType>
+<MoMorphType Guid="d7f713e8-e8cf-11d3-9764-00c04f186933" Id="d7f713e8-e8cf-11d3-9764-00c04f186933"><Name>stem</Name>
+</MoMorphType>
+<MoMorphType Guid="18d9b1c3-b5b6-4c07-b92c-2fe1d2281bd4" Id="18d9b1c3-b5b6-4c07-b92c-2fe1d2281bd4"><Name>infixing interfix</Name>
+</MoMorphType>
+<MoMorphType Guid="af6537b0-7175-4387-ba6a-36547d37fb13" Id="af6537b0-7175-4387-ba6a-36547d37fb13"><Name>prefixing interfix</Name>
+</MoMorphType>
+<MoMorphType Guid="3433683d-08a9-4bae-ae53-2a7798f64068" Id="3433683d-08a9-4bae-ae53-2a7798f64068"><Name>suffixing interfix</Name>
+</MoMorphType>
+<MoMorphType Guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f" Id="a23b6faa-1052-4f4d-984b-4b338bdaf95f"><Name>phrase</Name>
+</MoMorphType>
+<MoMorphType Guid="0cc8c35a-cee9-434d-be58-5d29130fba5b" Id="0cc8c35a-cee9-434d-be58-5d29130fba5b"><Name>discontiguous phrase</Name>
+</MoMorphType>
+</MoMorphTypes>
+<Lexicon><Entries><LexEntry Id="265f5359-8290-40d9-a708-641d474383aa"><LexemeForm dst="54e532e0-fad6-4804-b1b7-fd6459ef4681" MorphType="d7f713e4-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="c3569ffb-967b-4191-beaa-d92eb3a45166" ord="0"/>
+<Sense dst="af577845-98fb-4c96-9df1-b77d7a873bb0" ord="1"/>
+<MorphoSyntaxAnalysis dst="bfd7f99b-bc6d-4926-acee-0c1583c9170c"/>
+</LexEntry>
+<LexEntry Id="0ef532e9-e312-40b6-ad6a-c0618820c3af"><LexemeForm dst="d3861892-1433-4dbd-a9ca-a57da70a5397" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="abec2e30-ac89-4990-bbac-9f8a17716262" ord="0"/>
+<MorphoSyntaxAnalysis dst="32018d1e-e107-4250-9394-e49f41d5645d"/>
+</LexEntry>
+<LexEntry Id="04758355-1e6c-49de-86f0-15d6347f25cd"><LexemeForm dst="bd771cf4-d7f4-4993-8399-f47217237d42" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="f26405ee-9090-496c-b2b4-2180bb34201c" ord="0"/>
+<MorphoSyntaxAnalysis dst="069aee8f-8b79-4f8f-afb5-2c433ec4a9e1"/>
+</LexEntry>
+<LexEntry Id="4a5858f4-3be4-42fc-b23a-e8a6f4d8694e"><AlternateForms dst="7a65c6a5-6ee8-4ff7-be7b-9341ed39ac0e" ord="0"/>
+<AlternateForms dst="f126109d-f8f4-4a0f-b935-bf0e90bf34ec" ord="1"/>
+<AlternateForms dst="37442f21-a4d5-4f8e-a59b-8b1b3b16019c" ord="2"/>
+<LexemeForm dst="ac75309e-a2ac-4791-9870-329a447095a3" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="04ae991f-a257-467a-9a2b-80d409d320e4" ord="0"/>
+<MorphoSyntaxAnalysis dst="be41902f-590a-44a4-99d0-c511fa0f65e7"/>
+</LexEntry>
+<LexEntry Id="1c2cbb5d-f0d9-47ff-86af-38d0aae0c765"><AlternateForms dst="f370b536-5cc7-4a65-ae1b-92b8b4483230" ord="0"/>
+<LexemeForm dst="2184e638-4b1e-40f7-bcd5-28fb0dac1876" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="355d022b-bc29-4e5e-b2df-0d0bde07b418" ord="0"/>
+<MorphoSyntaxAnalysis dst="fa8d0d01-a92a-444d-be4d-f890aad342fa"/>
+<MorphoSyntaxAnalysis dst="d9487299-a9db-455d-922a-f5c95ae5eedd"/>
+</LexEntry>
+<LexEntry Id="016f2759-ed12-42a5-abcb-7fe3f53d05b0"><LexemeForm dst="b906f755-3c7d-45b8-a7cd-49b6bc040abe" MorphType="d7f713e4-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="406e0027-905b-445f-ae17-4653abf47d46" ord="0"/>
+<MorphoSyntaxAnalysis dst="f17bfe28-abef-40c8-b747-0367ac06c620"/>
+</LexEntry>
+<LexEntry Id="cd97ed84-5265-4971-843c-72a1e2ae5add"><LexemeForm dst="de88c8da-ca64-4951-bb34-faa101a1f01b" MorphType="d7f713e4-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="9a833399-1859-4620-b888-fe92b93a34a9" ord="0"/>
+<MorphoSyntaxAnalysis dst="dbbbe324-8e8c-4a21-84f3-467df33e3b7a"/>
+</LexEntry>
+<LexEntry Id="23151593-0c75-4359-a2bf-6220fc142d79"><LexemeForm dst="908e113d-1959-465a-87a8-b110f3790b10" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="24e80e8a-c31d-4bbc-883b-788f709e2691" ord="0"/>
+<MorphoSyntaxAnalysis dst="30e7bbb0-e5c3-4f58-b308-400ed55c5e62"/>
+</LexEntry>
+<LexEntry Id="5c77efd9-8d14-4f19-a049-162588265cad"><LexemeForm dst="c0778640-2ea7-4a2e-a5e5-3122a99f139b" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="9cadf7c5-dd4d-4f32-8430-ce81bf5076a2" ord="0"/>
+<MorphoSyntaxAnalysis dst="7a913885-3d98-4c33-bf6b-cfaec62395b8"/>
+</LexEntry>
+<LexEntry Id="47359e87-527f-4105-8589-029ed0a08532"><LexemeForm dst="ab629abb-2cdf-42a9-afe4-451e37d67219" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="3fa2cbb0-1218-4427-9288-b4c1ba298926" ord="0"/>
+<MorphoSyntaxAnalysis dst="bdc76042-5f07-4772-82ba-91fd08862535"/>
+</LexEntry>
+<LexEntry Id="82d6bc2e-768e-4ec4-95b8-2cff376208c4"><LexemeForm dst="798e057f-f610-4388-af3a-ad1016562cd0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="df2d8269-ef25-42c9-b85d-23b794096d76" ord="0"/>
+<MorphoSyntaxAnalysis dst="f5b2e173-202a-49da-8cab-d216ea79765b"/>
+</LexEntry>
+<LexEntry Id="7045f230-4b97-4f9c-9d5f-047e7d66a2df"><LexemeForm dst="e2e776be-321f-440b-bb22-90b19173aa44" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="a962f0d9-3162-4625-ba97-2e0fd2c5ecf0" ord="0"/>
+<MorphoSyntaxAnalysis dst="a3e3e0c3-f3d0-464f-9b03-e6cd6713046a"/>
+</LexEntry>
+<LexEntry Id="b660fb0e-2864-4219-a203-591fe644bb20"><LexemeForm dst="5b8ceb99-0c57-4a98-8c6a-ef4c6a1cb8ed" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="7f6024ef-7fcc-4be8-bf4b-c28ccb39be46" ord="0"/>
+<MorphoSyntaxAnalysis dst="af274eac-6aa2-4ede-acc4-ada3237f6588"/>
+<MorphoSyntaxAnalysis dst="23042d5c-a25d-4be7-863b-93ed3b4d162f"/>
+<MorphoSyntaxAnalysis dst="1ed2356a-2a20-4656-a8fa-ba1ddc300631"/>
+</LexEntry>
+<LexEntry Id="2703f3e7-5440-422c-8d25-455b4f4cc1b7"><LexemeForm dst="5e15569e-b60b-430c-8777-785eecc6ab80" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="4ac8be82-6d99-432d-bfca-f3fd2b79a2da" ord="0"/>
+<MorphoSyntaxAnalysis dst="6b1c89e8-94b2-4598-bc8a-551f1905d3a9"/>
+<MorphoSyntaxAnalysis dst="b948c950-90f5-42b7-b344-2b464d0ded65"/>
+</LexEntry>
+<LexEntry Id="0e99a5be-aca0-4b04-8462-d6961c7428e8"><LexemeForm dst="bc8ee989-4b84-4ca9-be59-86af4e6bc366" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="24652d3b-0bca-42da-9795-871871a8dc10" ord="0"/>
+<MorphoSyntaxAnalysis dst="fa222f19-c11a-4bf2-9846-a1ce45cd0f30"/>
+<MorphoSyntaxAnalysis dst="20fd734a-8c62-4b40-8172-4bf073d983ad"/>
+<MorphoSyntaxAnalysis dst="512b8e9a-8bfc-4601-9952-d4af9aaea107"/>
+</LexEntry>
+<LexEntry Id="d2036a5e-8ec7-4ab3-9d5e-434735abfcee"><LexemeForm dst="31e1765f-48a3-4e37-a5e3-0d63e14e8e3f" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="aedb3e94-56a7-488b-b16f-400bc6ae7de5" ord="0"/>
+<MorphoSyntaxAnalysis dst="10465805-0e9a-4477-930f-4b54d60522d5"/>
+</LexEntry>
+<LexEntry Id="0fc019bf-7eb5-4038-9be6-63db1d502029"><LexemeForm dst="ae8fc7b8-a138-4d86-8f41-edef74a19f00" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="d9390087-7504-4890-9526-4dc824cfded9" ord="0"/>
+<MorphoSyntaxAnalysis dst="6d3217da-43bd-46f2-8746-9422df8fa159"/>
+<MorphoSyntaxAnalysis dst="1f0d4f3b-3850-4667-9d04-c902e63d5743"/>
+</LexEntry>
+<LexEntry Id="05c54cf0-4e5a-4bf2-99f8-ec787e4113ac"><LexemeForm dst="36b2112c-4327-4f3c-91a1-8f26c07430e7" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="cce5dfa5-c227-447d-8ce0-b8e4b12b76f9" ord="0"/>
+<MorphoSyntaxAnalysis dst="14565f93-d7de-4b1c-b62b-17c477d35d94"/>
+</LexEntry>
+<LexEntry Id="d8c3cf2e-1c0f-4048-8023-944cc9095e06"><LexemeForm dst="bdb0119f-9017-4ce5-8201-ca76a95417e8" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="9f55b49f-3f82-4619-9beb-51c38d20371f" ord="0"/>
+<MorphoSyntaxAnalysis dst="1af70026-0364-402d-9937-246ca89cfdab"/>
+</LexEntry>
+<LexEntry Id="fa3c17eb-4160-428b-81eb-4c558e67e7c1"><LexemeForm dst="7ea5c25b-bae2-44fc-8f65-0c3b176e662b" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="50c2ef47-ec48-47d4-bc24-587c9b833e92" ord="0"/>
+<MorphoSyntaxAnalysis dst="d4ec9b02-9a91-418f-ac42-9a79438b88e2"/>
+</LexEntry>
+<LexEntry Id="05806ea3-ce01-41a6-b87a-94f17055df1a"><LexemeForm dst="b32483b8-9835-47fb-adcb-9d4a2642cf91" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="dfdf3054-b6bd-4503-b502-dff8524a6605" ord="0"/>
+<MorphoSyntaxAnalysis dst="3c2b9e2f-405c-4416-bae8-e50b95fb3b6d"/>
+</LexEntry>
+<LexEntry Id="3ab3e31e-eb2c-49c2-820b-8abe98221073"><LexemeForm dst="3cbec368-e525-45b3-afd6-ff295b7ac96d" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="24a74c09-343f-47d3-a75f-a550c1719fb1" ord="0"/>
+<MorphoSyntaxAnalysis dst="8c98c459-33a4-41ad-9f06-217348bb18e5"/>
+</LexEntry>
+<LexEntry Id="f8b09b4c-9017-4db7-a70b-1a7be236e742"><LexemeForm dst="b3a11d22-1904-435f-986f-b5d152cdeb37" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="d13df39d-c749-4925-addf-67fdfc35d393" ord="0"/>
+<MorphoSyntaxAnalysis dst="99b44a20-3fc6-43d7-9271-bffb30c2d66c"/>
+</LexEntry>
+<LexEntry Id="c069c6d1-19d2-41a4-946a-060af2e350ba"><LexemeForm dst="7abe65e5-c5de-469d-8431-2e3ca34bd49a" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="30908c01-5706-45c8-a8be-56668ec2b3d4" ord="0"/>
+<MorphoSyntaxAnalysis dst="e4f26931-0e18-42a6-b898-8dc0d3746276"/>
+</LexEntry>
+<LexEntry Id="ce02e154-a2aa-48da-baaf-16c58c45072c"><LexemeForm dst="f72d6a4e-d591-4ad2-bbdc-ec9d39cc54c7" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="c3f51305-cf91-4fbd-864c-90adddbc511e" ord="0"/>
+<MorphoSyntaxAnalysis dst="cf730e86-e5a8-4405-956e-e66417e51d68"/>
+</LexEntry>
+<LexEntry Id="d6e17340-dc0f-458a-9fd6-c8de368918d5"><AlternateForms dst="5b408299-855a-4806-9a89-9f71a7655846" ord="0"/>
+<AlternateForms dst="23eb1415-4b6f-4f49-91fa-fb89b34d973f" ord="1"/>
+<AlternateForms dst="5d2239fb-c480-4316-affe-5fe7bcebdc6a" ord="2"/>
+<LexemeForm dst="4a8c84f7-cd14-41ee-ad8f-71277b6de387" MorphType="0"></LexemeForm>
+<Sense dst="e79c8d25-eb3d-43ec-94b7-ccb4fead1d40" ord="0"/>
+<MorphoSyntaxAnalysis dst="d170e517-38e1-4167-8e6c-14e03fbc0c11"/>
+</LexEntry>
+<LexEntry Id="c5b7c026-5f8f-4971-adc1-daf76422632f"><AlternateForms dst="b70998be-e888-46b3-8087-ab50c75e8916" ord="0"/>
+<LexemeForm dst="c4471efc-0fc3-425c-bf79-05ed3814ae6a" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="b630d938-a976-40f5-b632-b40f5107db54" ord="0"/>
+<MorphoSyntaxAnalysis dst="c274b2d9-740e-423f-a81f-cc06450a7061"/>
+<MorphoSyntaxAnalysis dst="50e06993-ccd3-4edc-9140-9e25cde6d90f"/>
+</LexEntry>
+<LexEntry Id="58a6c6c3-fdbd-4fef-b3de-43e849d6842f"><AlternateForms dst="2026c102-2ed7-4a2b-aae2-d1f408f868dc" ord="0"/>
+<LexemeForm dst="883925ad-d74c-4895-874f-774975f8d53b" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="deb27c57-b391-453c-8a7f-37cf10686954" ord="0"/>
+<MorphoSyntaxAnalysis dst="6be211bd-c7ae-4878-ac83-e43fa51f9a86"/>
+</LexEntry>
+<LexEntry Id="1cfcbd55-1b84-40db-8fbc-c91d1600c531"><AlternateForms dst="d901a4f7-577f-4156-abf7-c54669d4952f" ord="0"/>
+<AlternateForms dst="025df008-354e-4df8-90d3-fc0c7c7f839e" ord="1"/>
+<LexemeForm dst="4c0031fd-8f01-43be-ac75-0c71ad6baad8" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="286e2992-6184-4ba8-9517-2aba99861ccc" ord="0"/>
+<MorphoSyntaxAnalysis dst="4604b938-3880-4b15-b84e-62cdf0450913"/>
+</LexEntry>
+<LexEntry Id="271d373b-e4b7-4c92-80a5-9c36dc8cc810"><AlternateForms dst="346339c0-46c3-4295-85ef-d037cceafac8" ord="0"/>
+<AlternateForms dst="2f528413-6ede-4959-90cc-e26639a38305" ord="1"/>
+<LexemeForm dst="d5af6e34-d0b1-4114-8a80-c598ae709dfa" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="1f9081a4-0817-4610-8619-62db6d3791e2" ord="0"/>
+<MorphoSyntaxAnalysis dst="17e79a60-3539-4cbf-92ba-182bbda9de05"/>
+</LexEntry>
+<LexEntry Id="37e2ccb6-5432-4b80-a599-5dddace292d3"><AlternateForms dst="dff0280b-c5fd-43fa-8f2f-d2b7fcee2e53" ord="0"/>
+<LexemeForm dst="28a4e632-9d6f-4e2d-8b44-b86ba46991b7" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="e219a773-0461-40d8-9728-05fcd886a5b2" ord="0"/>
+<MorphoSyntaxAnalysis dst="1771c1af-1e67-48fd-b19f-98b10a59395a"/>
+</LexEntry>
+<LexEntry Id="f1895e27-1613-41d4-be06-6b5e075fb768"><AlternateForms dst="0b331a9a-b11e-4e94-8906-3fcba95474c8" ord="0"/>
+<LexemeForm dst="c72610b1-ab45-45ec-966f-57ed56a9398c" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="86b5c09c-4e6a-463a-8f01-56444d6f1470" ord="0"/>
+<MorphoSyntaxAnalysis dst="fd350256-2838-4303-afc9-2d64b6daae75"/>
+</LexEntry>
+<LexEntry Id="377f0674-d454-4e37-b2d3-81096fabc84f"><AlternateForms dst="b87770a3-ca75-4272-8466-2fcbe3d36201" ord="0"/>
+<LexemeForm dst="0f7ff8c6-2c39-4dd3-877d-36452bd8cfc2" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="e2b83111-7ac1-4061-8f34-2f93c014afd6" ord="0"/>
+<MorphoSyntaxAnalysis dst="2b559217-d31d-4a2e-865b-c189f5499b27"/>
+</LexEntry>
+<LexEntry Id="ea4b87bf-6525-4e6d-9c9c-a44ff6097e94"><AlternateForms dst="89638dc7-5501-4ba7-a1f1-fb38bca9f315" ord="0"/>
+<LexemeForm dst="2ea62ae1-d6c1-439b-be69-a80c52835239" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="15a47ecc-77b9-48d4-915b-6dfce4979b64" ord="0"/>
+<MorphoSyntaxAnalysis dst="f8e0cf27-4a52-49dd-a064-4576a379c03d"/>
+</LexEntry>
+<LexEntry Id="3ea5b344-ec0b-4fd0-829b-02b6ee424b07"><LexemeForm dst="b2c43ab8-8597-4d00-9994-075f619c7436" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="f71171ed-25ed-4ea1-8ba1-1c67eb643510" ord="0"/>
+<MorphoSyntaxAnalysis dst="2d58f09e-228d-4e09-98b1-6d7e79b66ba7"/>
+</LexEntry>
+<LexEntry Id="fd42f793-7fe9-423e-8d7a-a3c280e5e11d"><AlternateForms dst="ff4e0504-3262-4431-914f-79994bf7b088" ord="0"/>
+<AlternateForms dst="eda0cce7-773d-4ef4-8dad-599deeeff961" ord="1"/>
+<LexemeForm dst="77eaf8e6-53b3-4475-b35d-fb67fc4d2110" MorphType="0"></LexemeForm>
+<Sense dst="059978b6-5dd8-47ee-ba3a-8235f67ba1ae" ord="0"/>
+<MorphoSyntaxAnalysis dst="10736715-15e3-4a79-8a14-8b437830cba8"/>
+<MorphoSyntaxAnalysis dst="1b19025a-a20a-49aa-8fb7-10e27659adc4"/>
+</LexEntry>
+<LexEntry Id="f764500c-a3cf-4b35-98bf-e39929f488f6"><LexemeForm dst="3f212d8c-4673-4f6f-ad2b-93a366ac812f" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="7aceb172-10cb-4cc4-a580-125e79c05f52" ord="0"/>
+<MorphoSyntaxAnalysis dst="f40536b7-4578-412a-bc75-52fbf10ca62d"/>
+</LexEntry>
+<LexEntry Id="16c0e27c-9287-49e8-85bc-78c884607caa"><LexemeForm dst="742bf838-c14e-48be-a1b3-1ff9e9c5751b" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="64871ec7-2d6b-4f0d-8c1f-fc307ba3678c" ord="0"/>
+<MorphoSyntaxAnalysis dst="4fd14684-b1ed-4457-8784-491750354715"/>
+</LexEntry>
+<LexEntry Id="fd4f8fee-6da8-483b-910f-814becc80b13"><LexemeForm dst="2c48d5d0-500e-4eae-a97e-4aaa32ff7728" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="a9c5ee75-59f1-4b5b-b8f2-db723454b6ad" ord="0"/>
+<MorphoSyntaxAnalysis dst="8b4dcdf5-b9fe-4670-be2b-38060056a6ca"/>
+</LexEntry>
+<LexEntry Id="0877c5fb-b2b8-452e-b286-0215018c0e27"><LexemeForm dst="169331ec-f910-49b4-b0c4-2790bd285d94" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="b52a2583-8845-4f9b-8521-189455468ab6" ord="0"/>
+<MorphoSyntaxAnalysis dst="cfae7ea4-92ce-4235-922a-0e852f84ab1e"/>
+</LexEntry>
+<LexEntry Id="ffc22c43-a24d-45fb-bc37-1e3e6b1c5560"><LexemeForm dst="8fc65b59-f1d5-4c53-b83a-2d0fc32ddbe8" MorphType="56db04bf-3d58-44cc-b292-4c8aa68538f4"></LexemeForm>
+<Sense dst="a74b3d5d-6856-4421-8c1a-c63126f6ef42" ord="0"/>
+<MorphoSyntaxAnalysis dst="8d90096e-d9fc-4377-ba55-da8c61d0b9e0"/>
+</LexEntry>
+<LexEntry Id="3c99c376-e6dc-45a5-aaa4-bde6808acdcb"><LexemeForm dst="c537f739-b7d5-494c-a4fd-311e7af06057" MorphType="d7f713e2-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="85352e90-319f-4b63-98a3-ba3d9a094c52" ord="0"/>
+<MorphoSyntaxAnalysis dst="580a3aed-71bc-4f96-a179-e685c07d94f2"/>
+</LexEntry>
+<LexEntry Id="b3693338-1690-4bf2-9424-009e1e75398c"><LexemeForm dst="c2d263a8-0059-4ad2-9a0a-7773d047566f" MorphType="d7f713e1-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="afb1bd7e-7a2b-4ece-b44d-5fba1cbd8bfc" ord="0"/>
+<MorphoSyntaxAnalysis dst="3bd2934e-e68a-46a3-9cd7-d78c0b383fe2"/>
+</LexEntry>
+<LexEntry Id="1067370f-fd9a-4240-9ba9-2c4fe002565c"><LexemeForm dst="7a1135a0-f342-4258-94ca-e58cf5403625" MorphType="d7f713e2-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="c503dfac-7a07-4091-bc3d-9d9c048efc7b" ord="0"/>
+<MorphoSyntaxAnalysis dst="09477ee9-5488-4796-abdd-a4a06c75d219"/>
+</LexEntry>
+<LexEntry Id="cabdcba8-bdb6-4005-9f02-e28b50366850"><LexemeForm dst="89da5c44-c9e5-4078-a48a-412d7a73d063" MorphType="d7f713e1-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="38c06afc-0e7e-444a-ae22-21b96a8a5a1f" ord="0"/>
+<MorphoSyntaxAnalysis dst="4a9f796c-1216-4ab1-b263-a892a1401a82"/>
+</LexEntry>
+<LexEntry Id="e32d9cbb-79ab-422e-8cd4-005a2b1f3e29"><LexemeForm dst="9feb6014-cdb1-41a8-aabc-69fab81f4175" MorphType="d7f713da-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="ec5a4ea2-3487-4e83-af73-6c7046ac85a1" ord="0"/>
+<MorphoSyntaxAnalysis dst="f77a1f4f-18b7-48e4-b1c1-cf54fe56ea94"/>
+</LexEntry>
+<LexEntry Id="631b3df9-81ff-43da-82cf-c323dbc72e80"><LexemeForm dst="207798b5-22a1-40c9-b3ab-e11a4ff1cd57" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="7290a235-a77d-4b83-bc63-e765e239214a" ord="0"/>
+<MorphoSyntaxAnalysis dst="b656833a-b8e9-44a2-992a-5462d49fe67b"/>
+</LexEntry>
+<LexEntry Id="0bfa5f0e-c655-46a3-9047-05bc21547002"><LexemeForm dst="7e676746-acf4-4ae0-a829-ea977114c740" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="ac2c6727-1d63-46e9-9115-152ec84bb959" ord="0"/>
+<MorphoSyntaxAnalysis dst="833e5c0e-f62f-4ed1-ad00-1ccab13dfc16"/>
+</LexEntry>
+<LexEntry Id="57e4edde-8c0c-441a-bac5-cb0fab50b5a5"><LexemeForm dst="4dc1841d-6cc0-4f3b-a2f2-9404d0a5d1ed" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="344ffa99-0484-4670-8811-983bf89ce654" ord="0"/>
+<MorphoSyntaxAnalysis dst="2c87ff16-70d3-488b-b3fb-72e3c64b01a6"/>
+</LexEntry>
+<LexEntry Id="81a73bd1-9c25-4dc0-9396-3c58c7a75395"><AlternateForms dst="607bb09f-8d6b-4afa-8379-db1fefa2080a" ord="0"/>
+<LexemeForm dst="d717bf50-d812-4730-ad3c-a274b11b4f4e" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="3c7e40d3-d3ae-437e-8f99-807dbea093fc" ord="0"/>
+<MorphoSyntaxAnalysis dst="4280e494-7966-4e04-ba4c-798bfaee2cdd"/>
+</LexEntry>
+<LexEntry Id="e55e9139-d219-4359-8e36-355cfd423e74"><LexemeForm dst="5357f883-8e18-4f3a-99e6-036b9e2adb48" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="d2b2e71d-e8f2-4371-9015-0fb19b0f6238" ord="0"/>
+<MorphoSyntaxAnalysis dst="c5710b03-5da7-4152-83e8-d27be49a9cec"/>
+</LexEntry>
+<LexEntry Id="e322312f-bcfb-42af-91fb-60973c86fea0"><LexemeForm dst="8e8ff051-607b-4be4-bef0-841f61084050" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="cac78a64-c311-4f87-a11b-0288edb15344" ord="0"/>
+<MorphoSyntaxAnalysis dst="3354a8dd-1aee-4834-a625-d05baca82451"/>
+</LexEntry>
+<LexEntry Id="ad7824e6-474b-45db-b19f-ca4deaed6902"><LexemeForm dst="c5dac887-ed14-4f25-8951-43e1ef6da511" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="6ff74937-aeed-42ac-ac9c-610c4261b308" ord="0"/>
+<MorphoSyntaxAnalysis dst="4f259db9-b821-45e3-be81-02a5e475f048"/>
+</LexEntry>
+<LexEntry Id="38ed6cca-8a56-481a-9292-2bd2b435dd36"><LexemeForm dst="676ecc01-f26c-4e03-b69a-2255f8cc5ace" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="8feb941b-4625-4443-ad1f-e1bcd8c2a41c" ord="0"/>
+<MorphoSyntaxAnalysis dst="a6cff649-bf98-43ff-b323-be658b5f07c6"/>
+</LexEntry>
+<LexEntry Id="3f2d918f-4650-4725-9923-7e423d57f59e"><LexemeForm dst="22389a4c-b71e-4279-9602-fa84d1be9a2d" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="e3c2d179-3ccd-431e-ac2e-100bdb883680" ord="0"/>
+<MorphoSyntaxAnalysis dst="f8ba641d-6f64-4081-9eca-4359ac40a4c3"/>
+</LexEntry>
+<LexEntry Id="3133a72d-33c4-4b2b-a657-a33085e17465"><LexemeForm dst="f0103dd1-398d-425e-a779-83e33cfa6422" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="053de7da-da00-4ee2-accf-8daeb4ba0c17" ord="0"/>
+<MorphoSyntaxAnalysis dst="ed77747e-40fd-4a00-b275-20c5114344fd"/>
+</LexEntry>
+<LexEntry Id="f61fc071-6b70-4375-9271-92a5fb04024c"><LexemeForm dst="9043a334-1de2-4146-b6ff-4970b1e98192" MorphType="d7f713da-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="a469c4fd-2760-4c06-b203-31865e32022c" ord="0"/>
+<MorphoSyntaxAnalysis dst="51d80b28-2440-4ede-87e0-19a73ec93a9f"/>
+</LexEntry>
+<LexEntry Id="1a705846-a814-4289-8594-4b874faca6cc"><AlternateForms dst="bb464c5d-de15-494b-bc05-1ee92c3028e6" ord="0"/>
+<AlternateForms dst="ad24269e-0e46-4be5-9279-266b4d3bf949" ord="1"/>
+<LexemeForm dst="e5eed8d7-b79f-4efc-8173-3805ab4d38ba" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="eea9c29f-244f-4891-81db-c8274cd61f0c" ord="0"/>
+<Sense dst="59db2bec-d740-41c1-96df-f7843c5c6854" ord="1"/>
+<MorphoSyntaxAnalysis dst="425ec2ef-f3be-4a00-be13-dbe678e6eb98"/>
+<MorphoSyntaxAnalysis dst="cdbdf5ac-797d-4ccc-905d-6ad743379203"/>
+</LexEntry>
+<LexEntry Id="157edd55-886f-4d91-b009-8e6b49991c85"><LexemeForm dst="1a1507b0-a899-4b45-afa2-9c294b8f81d6" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="3421c175-e7d1-47ea-93ec-7d88bd41cf2e" ord="0"/>
+<MorphoSyntaxAnalysis dst="b7261799-50d0-4d4d-a546-3b73561daeaa"/>
+</LexEntry>
+<LexEntry Id="a6babda6-6830-4ec0-a363-c7fba14268eb"><LexemeForm dst="999df9bd-e000-4c73-b843-c9fec409d989" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933"></LexemeForm>
+<Sense dst="b4514ac6-b41a-4a07-92ba-1c39443fbe3d" ord="0"/>
+<MorphoSyntaxAnalysis dst="5704a774-1a34-4d60-a868-d5c659eb7cc9"/>
+</LexEntry>
+<LexEntry Id="97e6e1c7-0979-4a06-8891-a84e99b694e5"><LexemeForm dst="134f8f6c-5bf8-40a3-a0b3-1b7e0c5df72f" MorphType="0"></LexemeForm>
+</LexEntry>
+</Entries>
+<MorphoSyntaxAnalyses><MoStemMsa Id="f17bfe28-abef-40c8-b747-0367ac06c620" InflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" PartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="dbbbe324-8e8c-4a21-84f3-467df33e3b7a" InflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" PartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="30e7bbb0-e5c3-4f58-b308-400ed55c5e62" InflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" PartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="7a913885-3d98-4c33-bf6b-cfaec62395b8" InflectionClass="39b3605b-9384-48da-b16e-f9a4b5ff659a" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="bdc76042-5f07-4772-82ba-91fd08862535" InflectionClass="441be6a9-e5d5-43c4-bd89-ab335f80e46a" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="f5b2e173-202a-49da-8cab-d216ea79765b" InflectionClass="39b3605b-9384-48da-b16e-f9a4b5ff659a" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="a3e3e0c3-f3d0-464f-9b03-e6cd6713046a" InflectionClass="441be6a9-e5d5-43c4-bd89-ab335f80e46a" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="bfd7f99b-bc6d-4926-acee-0c1583c9170c" InflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" PartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="32018d1e-e107-4250-9394-e49f41d5645d" InflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" PartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="2d58f09e-228d-4e09-98b1-6d7e79b66ba7" InflectionClass="0" PartOfSpeech="d7f71525-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="4fd14684-b1ed-4457-8784-491750354715" InflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" PartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="8b4dcdf5-b9fe-4670-be2b-38060056a6ca" InflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" PartOfSpeech="d7f7153d-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="cfae7ea4-92ce-4235-922a-0e852f84ab1e" InflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" PartOfSpeech="d7f7153d-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="8d90096e-d9fc-4377-ba55-da8c61d0b9e0" InflectionClass="0" PartOfSpeech="d7f71526-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="580a3aed-71bc-4f96-a179-e685c07d94f2" InflectionClass="0" PartOfSpeech="d7f7152d-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="3bd2934e-e68a-46a3-9cd7-d78c0b383fe2" InflectionClass="0" PartOfSpeech="d7f7152d-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="09477ee9-5488-4796-abdd-a4a06c75d219" InflectionClass="0" PartOfSpeech="d7f7152d-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="4a9f796c-1216-4ab1-b263-a892a1401a82" InflectionClass="0" PartOfSpeech="d7f7152d-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="425ec2ef-f3be-4a00-be13-dbe678e6eb98" InflectionClass="0" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="cdbdf5ac-797d-4ccc-905d-6ad743379203" InflectionClass="0" PartOfSpeech="d7f71529-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="b7261799-50d0-4d4d-a546-3b73561daeaa" InflectionClass="0" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="5704a774-1a34-4d60-a868-d5c659eb7cc9" InflectionClass="0" PartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="dc3e7eaa-eadb-4706-8e85-eab8f0ac4aaf" InflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" PartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="27ae1791-568e-4395-8cd1-9fab1c420f6c" InflectionClass="0" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="55156c92-cb83-4187-aeaa-ca8ac8bc7a0c" InflectionClass="0" PartOfSpeech="d7f71525-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="329cbe58-dad7-406d-a5a1-dd6a4c19deae" InflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" PartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="aaeb01f0-c66f-46ce-b214-6b4b2c612f52" InflectionClass="0" PartOfSpeech="d7f71525-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="9bf77e61-2a58-48f1-86ee-2a7e1b387f24" InflectionClass="0" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="63c40219-b3d7-475d-8c0a-3ede7f537d5e" InflectionClass="0" PartOfSpeech="0"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="51f61708-ffc6-494b-9cf4-2c58492570b1" InflectionClass="0" PartOfSpeech="d7f71524-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="77f1f77a-4f35-4de7-911b-62e3cb30cade" InflectionClass="0" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="40621054-c9b3-4d94-8ad9-0d064f4a5880" InflectionClass="0" PartOfSpeech="0"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="e037915b-9111-4674-ab37-88aa77c0e9eb" InflectionClass="0" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="158a8bf2-79db-4395-80d8-1a474f0a15b3" InflectionClass="0" PartOfSpeech="d7f71525-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="710e12b5-b61a-4782-b4d6-ed2748bda620" InflectionClass="0" PartOfSpeech="0"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="2948d47b-43b6-436f-af3b-969607648611" InflectionClass="0" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="262a34a9-71d2-4e72-b197-f5b53814f366" InflectionClass="0" PartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="3b5a04f6-af38-4406-88a6-705aaa0a0dc7" InflectionClass="0" PartOfSpeech="0"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="b433be29-cc3f-461e-b419-a973aea038fb" InflectionClass="0" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="59ea81de-7416-4d11-b333-4000b99f167a" InflectionClass="0" PartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="b656833a-b8e9-44a2-992a-5462d49fe67b" InflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" PartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="833e5c0e-f62f-4ed1-ad00-1ccab13dfc16" InflectionClass="0" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="2c87ff16-70d3-488b-b3fb-72e3c64b01a6" InflectionClass="0" PartOfSpeech="d7f71524-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="c5710b03-5da7-4152-83e8-d27be49a9cec" InflectionClass="0" PartOfSpeech="d7f71524-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="3354a8dd-1aee-4834-a625-d05baca82451" InflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" PartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="4f259db9-b821-45e3-be81-02a5e475f048" InflectionClass="0" PartOfSpeech="d7f71542-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="a6cff649-bf98-43ff-b323-be658b5f07c6" InflectionClass="0" PartOfSpeech="d7f71529-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="f8ba641d-6f64-4081-9eca-4359ac40a4c3" InflectionClass="0" PartOfSpeech="d7f71529-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoStemMsa Id="ed77747e-40fd-4a00-b275-20c5114344fd" InflectionClass="0" PartOfSpeech="d7f71529-e8cf-11d3-9764-00c04f186933"><InflectionFeatures></InflectionFeatures>
+<FromPartsOfSpeech></FromPartsOfSpeech>
+</MoStemMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f71524-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="4280e494-7966-4e04-ba4c-798bfaee2cdd" ToInflectionClass="0" ToPartOfSpeech="d7f71525-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="f77a1f4f-18b7-48e4-b1c1-cf54fe56ea94" ToInflectionClass="0" ToPartOfSpeech="d7f71524-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="10736715-15e3-4a79-8a14-8b437830cba8" ToInflectionClass="0" ToPartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="1b19025a-a20a-49aa-8fb7-10e27659adc4" ToInflectionClass="0" ToPartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="af274eac-6aa2-4ede-acc4-ada3237f6588" ToInflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" ToPartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="23042d5c-a25d-4be7-863b-93ed3b4d162f" ToInflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" ToPartOfSpeech="d7f7153d-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="1ed2356a-2a20-4656-a8fa-ba1ddc300631" ToInflectionClass="8a0a8938-a569-4e3f-9adf-8c933a3e26de" ToPartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="6b1c89e8-94b2-4598-bc8a-551f1905d3a9" ToInflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" ToPartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f7153d-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="b948c950-90f5-42b7-b344-2b464d0ded65" ToInflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" ToPartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="fa222f19-c11a-4bf2-9846-a1ce45cd0f30" ToInflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" ToPartOfSpeech="d7f7153f-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="20fd734a-8c62-4b40-8172-4bf073d983ad" ToInflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" ToPartOfSpeech="d7f71543-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f7153d-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="512b8e9a-8bfc-4601-9952-d4af9aaea107" ToInflectionClass="d64cbd78-3277-44b5-9ec3-6a6b0b38f772" ToPartOfSpeech="d7f7153d-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="10465805-0e9a-4477-930f-4b54d60522d5" ToInflectionClass="441be6a9-e5d5-43c4-bd89-ab335f80e46a" ToPartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="6d3217da-43bd-46f2-8746-9422df8fa159" ToInflectionClass="0" ToPartOfSpeech="d7f71525-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoDerivAffMsa FromInflectionClass="0" FromPartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933" FromStemName="0" Id="1f0d4f3b-3850-4667-9d04-c902e63d5743" ToInflectionClass="0" ToPartOfSpeech="d7f71525-e8cf-11d3-9764-00c04f186933"><FromMsFeatures></FromMsFeatures>
+<ToMsFeatures></ToMsFeatures>
+</MoDerivAffMsa>
+<MoInflAffMsa Id="1af70026-0364-402d-9937-246ca89cfdab" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="42b52eed-0970-438d-9608-a03fc8c35855"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="d4ec9b02-9a91-418f-ac42-9a79438b88e2" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="42b52eed-0970-438d-9608-a03fc8c35855"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="3c2b9e2f-405c-4416-bae8-e50b95fb3b6d" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="42b52eed-0970-438d-9608-a03fc8c35855"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="8c98c459-33a4-41ad-9f06-217348bb18e5" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="395e7178-199d-415a-a5b4-f8f3196a93f2"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="99b44a20-3fc6-43d7-9271-bffb30c2d66c" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="395e7178-199d-415a-a5b4-f8f3196a93f2"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="e4f26931-0e18-42a6-b898-8dc0d3746276" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="395e7178-199d-415a-a5b4-f8f3196a93f2"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="cf730e86-e5a8-4405-956e-e66417e51d68" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="395e7178-199d-415a-a5b4-f8f3196a93f2"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="d170e517-38e1-4167-8e6c-14e03fbc0c11" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="395e7178-199d-415a-a5b4-f8f3196a93f2"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="c274b2d9-740e-423f-a81f-cc06450a7061" PartOfSpeech="d7f71542-e8cf-11d3-9764-00c04f186933"><Slots dst="0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="50e06993-ccd3-4edc-9140-9e25cde6d90f" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="617322ab-79f5-4302-8b9f-f92ca1d1eeba"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="6be211bd-c7ae-4878-ac83-e43fa51f9a86" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="617322ab-79f5-4302-8b9f-f92ca1d1eeba"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="4604b938-3880-4b15-b84e-62cdf0450913" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><Slots dst="32bf0473-d3a8-40ba-b681-dbecfa10edd9"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="17e79a60-3539-4cbf-92ba-182bbda9de05" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><Slots dst="32bf0473-d3a8-40ba-b681-dbecfa10edd9"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="1771c1af-1e67-48fd-b19f-98b10a59395a" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><Slots dst="32bf0473-d3a8-40ba-b681-dbecfa10edd9"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="fd350256-2838-4303-afc9-2d64b6daae75" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><Slots dst="32bf0473-d3a8-40ba-b681-dbecfa10edd9"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="2b559217-d31d-4a2e-865b-c189f5499b27" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><Slots dst="32bf0473-d3a8-40ba-b681-dbecfa10edd9"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="f8e0cf27-4a52-49dd-a064-4576a379c03d" PartOfSpeech="d7f71527-e8cf-11d3-9764-00c04f186933"><Slots dst="32bf0473-d3a8-40ba-b681-dbecfa10edd9"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="f40536b7-4578-412a-bc75-52fbf10ca62d" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="42b52eed-0970-438d-9608-a03fc8c35855"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="069aee8f-8b79-4f8f-afb5-2c433ec4a9e1" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="42b52eed-0970-438d-9608-a03fc8c35855"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="be41902f-590a-44a4-99d0-c511fa0f65e7" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="395e7178-199d-415a-a5b4-f8f3196a93f2"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="fa8d0d01-a92a-444d-be4d-f890aad342fa" PartOfSpeech="d7f71542-e8cf-11d3-9764-00c04f186933"><Slots dst="0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoInflAffMsa Id="d9487299-a9db-455d-922a-f5c95ae5eedd" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"><Slots dst="617322ab-79f5-4302-8b9f-f92ca1d1eeba"/>
+<InflectionFeatures></InflectionFeatures>
+</MoInflAffMsa>
+<MoUnclassifiedAffixMsa Id="14565f93-d7de-4b1c-b62b-17c477d35d94" PartOfSpeech="d7f7153b-e8cf-11d3-9764-00c04f186933"></MoUnclassifiedAffixMsa>
+<MoUnclassifiedAffixMsa Id="51d80b28-2440-4ede-87e0-19a73ec93a9f" PartOfSpeech="0"></MoUnclassifiedAffixMsa>
+</MorphoSyntaxAnalyses>
+<Senses><LexSense Id="c3569ffb-967b-4191-beaa-d92eb3a45166"><Gloss>to.see</Gloss>
+</LexSense>
+<LexSense Id="af577845-98fb-4c96-9df1-b77d7a873bb0"><Gloss>to.understand</Gloss>
+</LexSense>
+<LexSense Id="abec2e30-ac89-4990-bbac-9f8a17716262"><Gloss>to.sleep</Gloss>
+</LexSense>
+<LexSense Id="f26405ee-9090-496c-b2b4-2180bb34201c"><Gloss>1SgSubj</Gloss>
+</LexSense>
+<LexSense Id="04ae991f-a257-467a-9a2b-80d409d320e4"><Gloss>3SgObj</Gloss>
+</LexSense>
+<LexSense Id="355d022b-bc29-4e5e-b2df-0d0bde07b418"><Gloss>Pres</Gloss>
+</LexSense>
+<LexSense Id="406e0027-905b-445f-ae17-4653abf47d46"><Gloss>to.think</Gloss>
+</LexSense>
+<LexSense Id="9a833399-1859-4620-b888-fe92b93a34a9"><Gloss>pegar</Gloss>
+</LexSense>
+<LexSense Id="24e80e8a-c31d-4bbc-883b-788f709e2691"><Gloss>to.eat</Gloss>
+</LexSense>
+<LexSense Id="9cadf7c5-dd4d-4f32-8430-ce81bf5076a2"><Gloss>mat</Gloss>
+</LexSense>
+<LexSense Id="3fa2cbb0-1218-4427-9288-b4c1ba298926"><Gloss>house</Gloss>
+</LexSense>
+<LexSense Id="df2d8269-ef25-42c9-b85d-23b794096d76"><Gloss>water</Gloss>
+</LexSense>
+<LexSense Id="a962f0d9-3162-4625-ba97-2e0fd2c5ecf0"><Gloss>tree</Gloss>
+</LexSense>
+<LexSense Id="7f6024ef-7fcc-4be8-bf4b-c28ccb39be46"><Gloss>Caus</Gloss>
+</LexSense>
+<LexSense Id="4ac8be82-6d99-432d-bfca-f3fd2b79a2da"><Gloss>Pass</Gloss>
+</LexSense>
+<LexSense Id="24652d3b-0bca-42da-9795-871871a8dc10"><Gloss>Rapidly</Gloss>
+</LexSense>
+<LexSense Id="aedb3e94-56a7-488b-b16f-400bc6ae7de5"><Gloss>Nom</Gloss>
+</LexSense>
+<LexSense Id="d9390087-7504-4890-9526-4dc824cfded9"><Gloss>Adverbializer</Gloss>
+</LexSense>
+<LexSense Id="cce5dfa5-c227-447d-8ce0-b8e4b12b76f9"><Gloss>???</Gloss>
+</LexSense>
+<LexSense Id="9f55b49f-3f82-4619-9beb-51c38d20371f"><Gloss>2SgSubj</Gloss>
+</LexSense>
+<LexSense Id="50c2ef47-ec48-47d4-bc24-587c9b833e92"><Gloss>1PlSubj</Gloss>
+</LexSense>
+<LexSense Id="dfdf3054-b6bd-4503-b502-dff8524a6605"><Gloss>2PlSubj</Gloss>
+</LexSense>
+<LexSense Id="24a74c09-343f-47d3-a75f-a550c1719fb1"><Gloss>1SgObj</Gloss>
+</LexSense>
+<LexSense Id="d13df39d-c749-4925-addf-67fdfc35d393"><Gloss>2SgObj</Gloss>
+</LexSense>
+<LexSense Id="30908c01-5706-45c8-a8be-56668ec2b3d4"><Gloss>1PlObj</Gloss>
+</LexSense>
+<LexSense Id="c3f51305-cf91-4fbd-864c-90adddbc511e"><Gloss>2PlObj</Gloss>
+</LexSense>
+<LexSense Id="e79c8d25-eb3d-43ec-94b7-ccb4fead1d40"><Gloss>3PlObj</Gloss>
+</LexSense>
+<LexSense Id="b630d938-a976-40f5-b632-b40f5107db54"><Gloss>Past</Gloss>
+</LexSense>
+<LexSense Id="deb27c57-b391-453c-8a7f-37cf10686954"><Gloss>Future</Gloss>
+</LexSense>
+<LexSense Id="286e2992-6184-4ba8-9517-2aba99861ccc"><Gloss>1SgPoss</Gloss>
+</LexSense>
+<LexSense Id="1f9081a4-0817-4610-8619-62db6d3791e2"><Gloss>2SgPoss</Gloss>
+</LexSense>
+<LexSense Id="e219a773-0461-40d8-9728-05fcd886a5b2"><Gloss>3SgPoss</Gloss>
+</LexSense>
+<LexSense Id="86b5c09c-4e6a-463a-8f01-56444d6f1470"><Gloss>1PlPoss</Gloss>
+</LexSense>
+<LexSense Id="e2b83111-7ac1-4061-8f34-2f93c014afd6"><Gloss>2PlPoss</Gloss>
+</LexSense>
+<LexSense Id="15a47ecc-77b9-48d4-915b-6dfce4979b64"><Gloss>3PlPoss</Gloss>
+</LexSense>
+<LexSense Id="f71171ed-25ed-4ea1-8ba1-1c67eb643510"><Gloss>slowly</Gloss>
+</LexSense>
+<LexSense Id="059978b6-5dd8-47ee-ba3a-8235f67ba1ae"><Gloss>Intensifier</Gloss>
+</LexSense>
+<LexSense Id="7aceb172-10cb-4cc4-a580-125e79c05f52"><Gloss>3PlSubj</Gloss>
+</LexSense>
+<LexSense Id="64871ec7-2d6b-4f0d-8c1f-fc307ba3678c"><Gloss>to.stand</Gloss>
+</LexSense>
+<LexSense Id="a9c5ee75-59f1-4b5b-b8f2-db723454b6ad"><Gloss>to.buy</Gloss>
+</LexSense>
+<LexSense Id="b52a2583-8845-4f9b-8521-189455468ab6"><Gloss>to.sell</Gloss>
+</LexSense>
+<LexSense Id="a74b3d5d-6856-4421-8c1a-c63126f6ef42"><Gloss>not</Gloss>
+</LexSense>
+<LexSense Id="85352e90-319f-4b63-98a3-ba3d9a094c52"><Gloss>Question</Gloss>
+</LexSense>
+<LexSense Id="afb1bd7e-7a2b-4ece-b44d-5fba1cbd8bfc"><Gloss>PhraseFinal</Gloss>
+</LexSense>
+<LexSense Id="c503dfac-7a07-4091-bc3d-9d9c048efc7b"><Gloss>PhraseInitial</Gloss>
+</LexSense>
+<LexSense Id="38c06afc-0e7e-444a-ae22-21b96a8a5a1f"><Gloss>RelativeClause</Gloss>
+</LexSense>
+<LexSense Id="ec5a4ea2-3487-4e83-af73-6c7046ac85a1"><Gloss>Adjectivizer</Gloss>
+</LexSense>
+<LexSense Id="7290a235-a77d-4b83-bc63-e765e239214a"><Gloss>to.be</Gloss>
+</LexSense>
+<LexSense Id="ac2c6727-1d63-46e9-9115-152ec84bb959"><Gloss>to.be.3SgSubj.Present</Gloss>
+</LexSense>
+<LexSense Id="344ffa99-0484-4670-8811-983bf89ce654"><Gloss>green</Gloss>
+</LexSense>
+<LexSense Id="3c7e40d3-d3ae-437e-8f99-807dbea093fc"><Gloss>Adverbializer2</Gloss>
+</LexSense>
+<LexSense Id="d2b2e71d-e8f2-4371-9015-0fb19b0f6238"><Gloss>quick</Gloss>
+</LexSense>
+<LexSense Id="cac78a64-c311-4f87-a11b-0288edb15344"><Gloss>to.strengthen</Gloss>
+</LexSense>
+<LexSense Id="6ff74937-aeed-42ac-ac9c-610c4261b308"><Gloss>to.be.long</Gloss>
+</LexSense>
+<LexSense Id="8feb941b-4625-4443-ad1f-e1bcd8c2a41c"><Gloss>Doctor</Gloss>
+</LexSense>
+<LexSense Id="e3c2d179-3ccd-431e-ac2e-100bdb883680"><Gloss>cat</Gloss>
+</LexSense>
+<LexSense Id="053de7da-da00-4ee2-accf-8daeb4ba0c17"><Gloss>blood</Gloss>
+</LexSense>
+<LexSense Id="a469c4fd-2760-4c06-b203-31865e32022c"><Gloss>who.knows</Gloss>
+</LexSense>
+<LexSense Id="eea9c29f-244f-4891-81db-c8274cd61f0c"><Gloss>English gloss</Gloss>
+<LexSense Id="3efc1961-2392-4d63-b0ec-b2599303b8cd"><Gloss>English subsense gloss1.1</Gloss>
+</LexSense>
+<LexSense Id="416836d2-f09d-4c15-8f22-087d1f1cc632"><Gloss>English subsense gloss1.2</Gloss>
+</LexSense>
+</LexSense>
+<LexSense Id="3efc1961-2392-4d63-b0ec-b2599303b8cd"><Gloss>English subsense gloss1.1</Gloss>
+</LexSense>
+<LexSense Id="416836d2-f09d-4c15-8f22-087d1f1cc632"><Gloss>English subsense gloss1.2</Gloss>
+</LexSense>
+<LexSense Id="59db2bec-d740-41c1-96df-f7843c5c6854"><Gloss>English gloss2</Gloss>
+</LexSense>
+<LexSense Id="3421c175-e7d1-47ea-93ec-7d88bd41cf2e"><Gloss>English gloss</Gloss>
+</LexSense>
+<LexSense Id="b4514ac6-b41a-4a07-92ba-1c39443fbe3d"><Gloss>English glos</Gloss>
+</LexSense>
+</Senses>
+<Allomorphs><MoAffixAllomorph Id="5b8ceb99-0c57-4a98-8c6a-ef4c6a1cb8ed" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>ti</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="5e15569e-b60b-430c-8777-785eecc6ab80" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>xo</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="bc8ee989-4b84-4ca9-be59-86af4e6bc366" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>wu</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="31e1765f-48a3-4e37-a5e3-0d63e14e8e3f" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>lis</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="ae8fc7b8-a138-4d86-8f41-edef74a19f00" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>ya</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="36b2112c-4327-4f3c-91a1-8f26c07430e7" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>kes</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="bdb0119f-9017-4ce5-8201-ca76a95417e8" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>ti</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="7ea5c25b-bae2-44fc-8f65-0c3b176e662b" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>mo</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="b32483b8-9835-47fb-adcb-9d4a2642cf91" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>se</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="3cbec368-e525-45b3-afd6-ff295b7ac96d" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>mi</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="b3a11d22-1904-435f-986f-b5d152cdeb37" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>yu</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="7abe65e5-c5de-469d-8431-2e3ca34bd49a" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>us</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="f72d6a4e-d591-4ad2-bbdc-ec9d39cc54c7" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>yul</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="4a8c84f7-cd14-41ee-ad8f-71277b6de387" IsAbstract="1" MorphType="0"><Form>deN</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="5b408299-855a-4806-9a89-9f71a7655846" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>dem</Form>
+<PhoneEnv dst="24282d27-6c40-445a-bbf9-b99211286cfd"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="23eb1415-4b6f-4f49-91fa-fb89b34d973f" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>den</Form>
+<PhoneEnv dst="a83c25d1-c71c-42bb-914a-f069de93cb68"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="5d2239fb-c480-4316-affe-5fe7bcebdc6a" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>deŋ</Form>
+<PhoneEnv dst="0d4d9c33-e4f0-48b4-8eb1-21972000fd4e"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="c4471efc-0fc3-425c-bf79-05ed3814ae6a" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>bi</Form>
+<InflectionClasses dst="8a0a8938-a569-4e3f-9adf-8c933a3e26de"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="b70998be-e888-46b3-8087-ab50c75e8916" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>ko</Form>
+<InflectionClasses dst="d64cbd78-3277-44b5-9ec3-6a6b0b38f772"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="883925ad-d74c-4895-874f-774975f8d53b" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>gu</Form>
+<InflectionClasses dst="8a0a8938-a569-4e3f-9adf-8c933a3e26de"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="2026c102-2ed7-4a2b-aae2-d1f408f868dc" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>pe</Form>
+<InflectionClasses dst="d64cbd78-3277-44b5-9ec3-6a6b0b38f772"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="4c0031fd-8f01-43be-ac75-0c71ad6baad8" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>la</Form>
+<PhoneEnv dst="38658b87-6a90-4710-9f40-11e7e95c1762"/>
+<InflectionClasses dst="39b3605b-9384-48da-b16e-f9a4b5ff659a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="d901a4f7-577f-4156-abf7-c54669d4952f" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>zi</Form>
+<InflectionClasses dst="441be6a9-e5d5-43c4-bd89-ab335f80e46a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="025df008-354e-4df8-90d3-fc0c7c7f839e" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>a</Form>
+<PhoneEnv dst="88bf7a79-50fc-47d0-9883-c48cfda879ac"/>
+<InflectionClasses dst="39b3605b-9384-48da-b16e-f9a4b5ff659a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="d5af6e34-d0b1-4114-8a80-c598ae709dfa" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>or</Form>
+<PhoneEnv dst="88bf7a79-50fc-47d0-9883-c48cfda879ac"/>
+<InflectionClasses dst="39b3605b-9384-48da-b16e-f9a4b5ff659a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="346339c0-46c3-4295-85ef-d037cceafac8" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>fi</Form>
+<InflectionClasses dst="441be6a9-e5d5-43c4-bd89-ab335f80e46a"/>
+<InflectionClasses dst="1bd0464c-7c79-48c3-a9cf-7760c3a81f5e"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="2f528413-6ede-4959-90cc-e26639a38305" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>k</Form>
+<PhoneEnv dst="38658b87-6a90-4710-9f40-11e7e95c1762"/>
+<InflectionClasses dst="39b3605b-9384-48da-b16e-f9a4b5ff659a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="28a4e632-9d6f-4e2d-8b44-b86ba46991b7" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>vo</Form>
+<InflectionClasses dst="39b3605b-9384-48da-b16e-f9a4b5ff659a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="dff0280b-c5fd-43fa-8f2f-d2b7fcee2e53" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>yo</Form>
+<InflectionClasses dst="441be6a9-e5d5-43c4-bd89-ab335f80e46a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="c72610b1-ab45-45ec-966f-57ed56a9398c" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>ni</Form>
+<InflectionClasses dst="39b3605b-9384-48da-b16e-f9a4b5ff659a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="0b331a9a-b11e-4e94-8906-3fcba95474c8" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>pa</Form>
+<InflectionClasses dst="441be6a9-e5d5-43c4-bd89-ab335f80e46a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="0f7ff8c6-2c39-4dd3-877d-36452bd8cfc2" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>tu</Form>
+<InflectionClasses dst="39b3605b-9384-48da-b16e-f9a4b5ff659a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="b87770a3-ca75-4272-8466-2fcbe3d36201" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>go</Form>
+<InflectionClasses dst="441be6a9-e5d5-43c4-bd89-ab335f80e46a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="2ea62ae1-d6c1-439b-be69-a80c52835239" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>te</Form>
+<InflectionClasses dst="39b3605b-9384-48da-b16e-f9a4b5ff659a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="89638dc7-5501-4ba7-a1f1-fb38bca9f315" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>fo</Form>
+<InflectionClasses dst="441be6a9-e5d5-43c4-bd89-ab335f80e46a"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="bd771cf4-d7f4-4993-8399-f47217237d42" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>ni</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="ac75309e-a2ac-4791-9870-329a447095a3" IsAbstract="1" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>hiN</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="7a65c6a5-6ee8-4ff7-be7b-9341ed39ac0e" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>hin</Form>
+<PhoneEnv dst="a83c25d1-c71c-42bb-914a-f069de93cb68"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="f126109d-f8f4-4a0f-b935-bf0e90bf34ec" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>him</Form>
+<PhoneEnv dst="24282d27-6c40-445a-bbf9-b99211286cfd"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="37442f21-a4d5-4f8e-a59b-8b1b3b16019c" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>hiŋ</Form>
+<PhoneEnv dst="0d4d9c33-e4f0-48b4-8eb1-21972000fd4e"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="2184e638-4b1e-40f7-bcd5-28fb0dac1876" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>ra</Form>
+<InflectionClasses dst="8a0a8938-a569-4e3f-9adf-8c933a3e26de"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="f370b536-5cc7-4a65-ae1b-92b8b4483230" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>sa</Form>
+<InflectionClasses dst="d64cbd78-3277-44b5-9ec3-6a6b0b38f772"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="77eaf8e6-53b3-4475-b35d-fb67fc4d2110" IsAbstract="1" MorphType="0"><Form>CV</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="ff4e0504-3262-4431-914f-79994bf7b088" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>[V^1]t</Form>
+<PhoneEnv dst="08ca1347-3af9-42d3-b7bd-97c668c5a896"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="eda0cce7-773d-4ef4-8dad-599deeeff961" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>[C^1][V^1]</Form>
+<PhoneEnv dst="35a3fffa-b3e9-4a27-bed0-ac5bb6c64a87"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="3f212d8c-4673-4f6f-ad2b-93a366ac812f" IsAbstract="0" MorphType="d7f713db-e8cf-11d3-9764-00c04f186933"><Form>de</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="d717bf50-d812-4730-ad3c-a274b11b4f4e" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>o</Form>
+<PhoneEnv dst="88bf7a79-50fc-47d0-9883-c48cfda879ac"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="607bb09f-8d6b-4afa-8379-db1fefa2080a" IsAbstract="0" MorphType="d7f713dd-e8cf-11d3-9764-00c04f186933"><Form>*0</Form>
+<PhoneEnv dst="38658b87-6a90-4710-9f40-11e7e95c1762"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="9feb6014-cdb1-41a8-aabc-69fab81f4175" IsAbstract="0" MorphType="d7f713da-e8cf-11d3-9764-00c04f186933"><Form>ul</Form>
+<Position dst="c4d6ffaf-c8dd-4bcf-996b-4f9f3320836b" ord="0"/>
+<Position dst="0a8a0bd6-3bea-4ca3-ab8b-02b1f081aed7" ord="1"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="9043a334-1de2-4146-b6ff-4970b1e98192" IsAbstract="0" MorphType="d7f713da-e8cf-11d3-9764-00c04f186933"><Form>ni</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="ad24269e-0e46-4be5-9279-266b4d3bf949" IsAbstract="0" MorphType="56db04bf-3d58-44cc-b292-4c8aa68538f4"><Form>affix allomorph</Form>
+<PhoneEnv dst="08ca1347-3af9-42d3-b7bd-97c668c5a896"/>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="f2575fd5-7b4f-4138-aa29-b9ca9c67fe8e" IsAbstract="0" MorphType="0"><Form>t</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoAffixAllomorph Id="17309c87-7f64-4fd0-969a-4a31f457175c" IsAbstract="0" MorphType="0"><Form>a</Form>
+<MsEnvFeatures></MsEnvFeatures>
+</MoAffixAllomorph>
+<MoStemAllomorph Id="1a1507b0-a899-4b45-afa2-9c294b8f81d6" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>ztestsub</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="999df9bd-e000-4c73-b843-c9fec409d989" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>ztestminor</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="134f8f6c-5bf8-40a3-a0b3-1b7e0c5df72f" IsAbstract="0" MorphType="0" StemName="0"><Form>variant</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="e5eed8d7-b79f-4efc-8173-3805ab4d38ba" IsAbstract="1" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>underlying form</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="bb464c5d-de15-494b-bc05-1ee92c3028e6" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>stem allomorph</Form>
+<PhoneEnv dst="38658b87-6a90-4710-9f40-11e7e95c1762"/>
+</MoStemAllomorph>
+<MoStemAllomorph Id="54e532e0-fad6-4804-b1b7-fd6459ef4681" IsAbstract="0" MorphType="d7f713e4-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>bili</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="d3861892-1433-4dbd-a9ca-a57da70a5397" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>nad</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="207798b5-22a1-40c9-b3ab-e11a4ff1cd57" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>kala</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="7e676746-acf4-4ae0-a829-ea977114c740" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>kalo</Form>
+<PhoneEnv dst="9d482960-d7c3-4f3a-8b93-1c42e4f90e0a"/>
+</MoStemAllomorph>
+<MoStemAllomorph Id="4dc1841d-6cc0-4f3b-a2f2-9404d0a5d1ed" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>pus</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="5357f883-8e18-4f3a-99e6-036b9e2adb48" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>kola</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="8e8ff051-607b-4be4-bef0-841f61084050" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>palti</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="c5dac887-ed14-4f25-8951-43e1ef6da511" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>duro</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="676ecc01-f26c-4e03-b69a-2255f8cc5ace" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>dok</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="22389a4c-b71e-4279-9602-fa84d1be9a2d" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>pus</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="f0103dd1-398d-425e-a779-83e33cfa6422" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>pus</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="742bf838-c14e-48be-a1b3-1ff9e9c5751b" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>pone</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="2c48d5d0-500e-4eae-a97e-4aaa32ff7728" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>gel</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="169331ec-f910-49b4-b0c4-2790bd285d94" IsAbstract="0" MorphType="d7f713e8-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>bako</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="8fc65b59-f1d5-4c53-b83a-2d0fc32ddbe8" IsAbstract="0" MorphType="56db04bf-3d58-44cc-b292-4c8aa68538f4" StemName="0"><Form>dok</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="c537f739-b7d5-494c-a4fd-311e7af06057" IsAbstract="0" MorphType="d7f713e2-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>ke</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="c2d263a8-0059-4ad2-9a0a-7773d047566f" IsAbstract="0" MorphType="d7f713e1-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>lo</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="7a1135a0-f342-4258-94ca-e58cf5403625" IsAbstract="0" MorphType="d7f713e2-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>su</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="89da5c44-c9e5-4078-a48a-412d7a73d063" IsAbstract="0" MorphType="d7f713e1-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>zo</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="b906f755-3c7d-45b8-a7cd-49b6bc040abe" IsAbstract="0" MorphType="d7f713e4-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>dok</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="de88c8da-ca64-4951-bb34-faa101a1f01b" IsAbstract="0" MorphType="d7f713e4-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>gabi</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="908e113d-1959-465a-87a8-b110f3790b10" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>lik</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="c0778640-2ea7-4a2e-a5e5-3122a99f139b" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>yalo</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="ab629abb-2cdf-42a9-afe4-451e37d67219" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>kasa</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="798e057f-f610-4388-af3a-ad1016562cd0" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>iŋ</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="e2e776be-321f-440b-bb22-90b19173aa44" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>pal</Form>
+</MoStemAllomorph>
+<MoStemAllomorph Id="b2c43ab8-8597-4d00-9994-075f619c7436" IsAbstract="0" MorphType="d7f713e5-e8cf-11d3-9764-00c04f186933" StemName="0"><Form>ximu</Form>
+</MoStemAllomorph>
+</Allomorphs>
+</Lexicon>
+<FeatureSystem Id="39a6c58c-2ec9-4262-b6fb-a002ed4e85dd"><Types></Types>
+<Features></Features>
+</FeatureSystem>
+<PhFeatureSystem Id="10502627-4e60-46e8-8a61-bdf27f320c5e"><Types></Types>
+<Features></Features>
+</PhFeatureSystem>
+</M3Dump>

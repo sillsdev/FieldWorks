@@ -1,0 +1,8 @@
+LIBRARY VIEWTEST
+
+EXPORTS
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE
+	DllCanUnloadNow     PRIVATE
+	DllInstall			PRIVATE

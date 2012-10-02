@@ -1,0 +1,152 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Design", "..\..\..\Src\Common\Controls\Design\Design.csproj", "{7D26EF89-0A01-4961-8D2A-EA2340719D64}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FwControls", "..\..\..\Src\Common\Controls\FwControls\FwControls.csproj", "{2322C388-DD81-466A-B079-956B5524B9A9}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework", "..\..\..\Src\Common\Framework\Framework.csproj", "{C4A415C6-AB60-4118-BE82-5777C0877A8B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FDO", "..\..\..\Src\FDO\FDO.csproj", "{E5E9DDC7-2855-4D92-AD46-960AC4C46457}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WhatsThisHelp", "..\..\..\Src\Common\Controls\WhatsThisHelp\WhatsThisHelp.vcproj", "{D9BDB9C0-C7BC-4EBD-8776-B0C62E34990C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "..\..\..\Src\Common\Utils\Utils.csproj", "{C6783865-65DF-4AB3-8C40-895BA7292CEB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "COMInterfaces", "..\..\..\Src\Common\COMInterfaces\COMInterfaces.csproj", "{AFD8FD49-A08C-478E-BC8D-9BCED0588B2D}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FwCoreDlgs", "..\..\..\Src\FwCoreDlgs\FwCoreDlgs.csproj", "{17090FC0-6BDA-409A-A99A-5AE7F35647ED}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComFwDlgs", "..\..\..\Src\Common\ComFwDlgs\ComFwDlgs.csproj", "{FE67B6EC-C7A2-4DC6-8A02-774B198147B2}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcSample", "ConcSample.csproj", "{0B89D977-2724-4459-92E6-1135FCDEAE1A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E} = {C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TreeForms", "..\..\..\Src\Common\Controls\TreeForms\TreeForms.csproj", "{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SideBar", "..\..\..\Src\Common\Controls\SideBar\SideBar.csproj", "{F4DE20DE-2E3B-47F0-B905-9FA5D22A28E8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 13
+		SccProjectName0 = Perforce\u0020Project
+		SccLocalPath0 = .
+		SccProvider0 = MSSCCI:Perforce\u0020SCM
+		CanCheckoutShared = true
+		SolutionUniqueID = {0B66E248-94C7-4C6A-851D-A3EC6D1A9B44}
+		SccProjectUniqueName1 = ..\\..\\..\\Src\\Common\\Controls\\Design\\Design.csproj
+		SccLocalPath1 = ..\\..\\..\\Src\\Common\\Controls\\Design
+		CanCheckoutShared = true
+		SccProjectUniqueName2 = ..\\..\\..\\Src\\Common\\Controls\\FwControls\\FwControls.csproj
+		SccLocalPath2 = ..\\..\\..\\Src\\Common\\Controls\\FwControls
+		CanCheckoutShared = true
+		SccProjectUniqueName3 = ..\\..\\..\\Src\\Common\\Framework\\Framework.csproj
+		SccLocalPath3 = ..\\..\\..\\Src\\Common
+		CanCheckoutShared = true
+		SccProjectFilePathRelativizedFromConnection3 = Framework\\
+		SccProjectUniqueName4 = ..\\..\\..\\Src\\FDO\\FDO.csproj
+		SccLocalPath4 = ..\\..\\..\\Src
+		CanCheckoutShared = true
+		SccProjectFilePathRelativizedFromConnection4 = FDO\\
+		SccProjectUniqueName5 = ..\\..\\..\\Src\\Common\\Controls\\WhatsThisHelp\\WhatsThisHelp.vcproj
+		SccLocalPath5 = ..\\..\\..\\Src\\Common\\Controls\\WhatsThisHelp
+		CanCheckoutShared = true
+		SccProjectUniqueName6 = ..\\..\\..\\Src\\Common\\Utils\\Utils.csproj
+		SccLocalPath6 = ..\\..\\..\\Src
+		CanCheckoutShared = true
+		SccProjectFilePathRelativizedFromConnection6 = Common\\Utils\\
+		SccProjectUniqueName7 = ..\\..\\..\\Src\\Common\\COMInterfaces\\COMInterfaces.csproj
+		SccLocalPath7 = ..\\..\\..\\Src
+		CanCheckoutShared = true
+		SccProjectFilePathRelativizedFromConnection7 = Common\\COMInterfaces\\
+		SccProjectUniqueName8 = ..\\..\\..\\Src\\FwCoreDlgs\\FwCoreDlgs.csproj
+		SccLocalPath8 = ..\\..\\..\\Src\\FwCoreDlgs
+		CanCheckoutShared = true
+		SccProjectUniqueName9 = ..\\..\\..\\Src\\Common\\ComFwDlgs\\ComFwDlgs.csproj
+		SccLocalPath9 = ..\\..\\..\\Src\\Common\\ComFwDlgs
+		CanCheckoutShared = true
+		SccProjectUniqueName10 = ..\\..\\..\\Src\\Common\\Controls\\TreeForms\\TreeForms.csproj
+		SccLocalPath10 = ..\\..\\..\\Src\\Common\\Controls\\TreeForms
+		CanCheckoutShared = true
+		SccProjectUniqueName11 = ConcSample.csproj
+		SccLocalPath11 = .
+		CanCheckoutShared = true
+		SccProjectUniqueName12 = ..\\..\\..\\Src\\Common\\Controls\\SideBar\\SideBar.csproj
+		SccLocalPath12 = ..\\..\\..\\Src\\Common\\Controls\\SideBar
+		CanCheckoutShared = true
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Bounds = Bounds
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{7D26EF89-0A01-4961-8D2A-EA2340719D64}.Bounds.ActiveCfg = Debug|.NET
+		{7D26EF89-0A01-4961-8D2A-EA2340719D64}.Debug.ActiveCfg = Debug|.NET
+		{7D26EF89-0A01-4961-8D2A-EA2340719D64}.Release.ActiveCfg = Release|.NET
+		{2322C388-DD81-466A-B079-956B5524B9A9}.Bounds.ActiveCfg = Debug|.NET
+		{2322C388-DD81-466A-B079-956B5524B9A9}.Debug.ActiveCfg = Debug|.NET
+		{2322C388-DD81-466A-B079-956B5524B9A9}.Release.ActiveCfg = Release|.NET
+		{C4A415C6-AB60-4118-BE82-5777C0877A8B}.Bounds.ActiveCfg = Debug|.NET
+		{C4A415C6-AB60-4118-BE82-5777C0877A8B}.Debug.ActiveCfg = Debug|.NET
+		{C4A415C6-AB60-4118-BE82-5777C0877A8B}.Release.ActiveCfg = Release|.NET
+		{E5E9DDC7-2855-4D92-AD46-960AC4C46457}.Bounds.ActiveCfg = Debug|.NET
+		{E5E9DDC7-2855-4D92-AD46-960AC4C46457}.Debug.ActiveCfg = Debug|.NET
+		{E5E9DDC7-2855-4D92-AD46-960AC4C46457}.Release.ActiveCfg = Release|.NET
+		{D9BDB9C0-C7BC-4EBD-8776-B0C62E34990C}.Bounds.ActiveCfg = Debug|Win32
+		{D9BDB9C0-C7BC-4EBD-8776-B0C62E34990C}.Debug.ActiveCfg = Debug|Win32
+		{D9BDB9C0-C7BC-4EBD-8776-B0C62E34990C}.Release.ActiveCfg = Release|Win32
+		{C6783865-65DF-4AB3-8C40-895BA7292CEB}.Bounds.ActiveCfg = Debug|.NET
+		{C6783865-65DF-4AB3-8C40-895BA7292CEB}.Debug.ActiveCfg = Debug|.NET
+		{C6783865-65DF-4AB3-8C40-895BA7292CEB}.Release.ActiveCfg = Release|.NET
+		{AFD8FD49-A08C-478E-BC8D-9BCED0588B2D}.Bounds.ActiveCfg = Debug|.NET
+		{AFD8FD49-A08C-478E-BC8D-9BCED0588B2D}.Debug.ActiveCfg = Debug|.NET
+		{AFD8FD49-A08C-478E-BC8D-9BCED0588B2D}.Release.ActiveCfg = Release|.NET
+		{17090FC0-6BDA-409A-A99A-5AE7F35647ED}.Bounds.ActiveCfg = Debug|.NET
+		{17090FC0-6BDA-409A-A99A-5AE7F35647ED}.Debug.ActiveCfg = Debug|.NET
+		{17090FC0-6BDA-409A-A99A-5AE7F35647ED}.Release.ActiveCfg = Release|.NET
+		{FE67B6EC-C7A2-4DC6-8A02-774B198147B2}.Bounds.ActiveCfg = Debug|.NET
+		{FE67B6EC-C7A2-4DC6-8A02-774B198147B2}.Debug.ActiveCfg = Debug|.NET
+		{FE67B6EC-C7A2-4DC6-8A02-774B198147B2}.Release.ActiveCfg = Release|.NET
+		{0B89D977-2724-4459-92E6-1135FCDEAE1A}.Bounds.ActiveCfg = Debug|.NET
+		{0B89D977-2724-4459-92E6-1135FCDEAE1A}.Bounds.Build.0 = Debug|.NET
+		{0B89D977-2724-4459-92E6-1135FCDEAE1A}.Debug.ActiveCfg = Debug|.NET
+		{0B89D977-2724-4459-92E6-1135FCDEAE1A}.Debug.Build.0 = Debug|.NET
+		{0B89D977-2724-4459-92E6-1135FCDEAE1A}.Release.ActiveCfg = Release|.NET
+		{0B89D977-2724-4459-92E6-1135FCDEAE1A}.Release.Build.0 = Release|.NET
+		{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}.Bounds.ActiveCfg = Debug|.NET
+		{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}.Bounds.Build.0 = Debug|.NET
+		{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}.Debug.ActiveCfg = Debug|.NET
+		{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}.Release.ActiveCfg = Release|.NET
+		{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}.Release.Build.0 = Release|.NET
+		{F4DE20DE-2E3B-47F0-B905-9FA5D22A28E8}.Bounds.ActiveCfg = Bounds|.NET
+		{F4DE20DE-2E3B-47F0-B905-9FA5D22A28E8}.Debug.ActiveCfg = Debug|.NET
+		{F4DE20DE-2E3B-47F0-B905-9FA5D22A28E8}.Release.ActiveCfg = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

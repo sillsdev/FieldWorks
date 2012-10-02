@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- schemaVersion of 2001/02/15 -->
+<xs:schema targetNamespace="http://www.ascc.net/xml/schematron" xmlns:sch="http://www.ascc.net/xml/schematron" xmlns="http://www.ascc.net/xml/schematron" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="+//IDN sinica.edu.tw//SGML W3C XML Schema for Schematron 1.5//EN">
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd">
+	<xs:annotation>
+			<xs:documentation>
+			Get access to the xml: attribute groups for xml:lang
+			</xs:documentation>
+	</xs:annotation>
+	</xs:import>
+	<xs:annotation>
+		<xs:documentation source="http://www.ascc.net/xml/resource/schematron/schematron.html" xml:lang="en"/>
+	</xs:annotation>
+	<xs:element name="active">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sch:dir"/>
+				<xs:element ref="sch:emph"/>
+				<xs:element ref="sch:span"/>
+			</xs:choice>
+			<xs:attribute name="pattern" type="xs:IDREF" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="assert">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sch:name"/>
+				<xs:element ref="sch:emph"/>
+				<xs:element ref="sch:dir"/>
+				<xs:element ref="sch:span"/>
+				<xs:any namespace="##other" processContents="lax"/>
+			</xs:choice>
+			<xs:attribute name="test" type="xs:string" use="required"/>
+			<xs:attribute name="role" type="xs:NMTOKEN"/>
+			<xs:attribute name="id" type="xs:string"/>
+			<xs:attribute name="diagnostics" type="xs:IDREFS"/>
+			<xs:attribute name="icon" type="xs:anyURI"/>
+			<xs:attribute name="subject" type="xs:string" default="."/>
+			<xs:attribute ref="xml:lang"/>
+			<xs:anyAttribute namespace="##other" processContents="lax"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="diagnostic">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sch:value-of"/>
+				<xs:element ref="sch:emph"/>
+				<xs:element ref="sch:dir"/>
+				<xs:element ref="sch:span"/>
+				<xs:any namespace="##other" processContents="lax"/>
+			</xs:choice>
+			<xs:attribute name="id" type="xs:ID" use="required"/>
+			<xs:attribute name="icon" type="xs:anyURI"/>
+			<xs:attribute ref="xml:lang"/>
+			<xs:anyAttribute namespace="##other" processContents="lax"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="diagnostics">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="diagnostic" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="dir">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="value">
+						<xs:simpleType>
+							<xs:restriction base="xs:NMTOKEN">
+								<xs:enumeration value="ltr"/>
+								<xs:enumeration value="rtl"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="emph" type="xs:string"/>
+	<xs:element name="extends">
+		<xs:complexType>
+			<xs:attribute name="rule" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="key">
+		<xs:complexType>
+			<xs:attribute name="name" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="path" type="xs:string" use="required"/>
+			<xs:attribute name="icon" type="xs:anyURI"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="name">
+		<xs:complexType>
+			<xs:attribute name="path" type="xs:string" default="."/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ns">
+		<xs:complexType>
+			<xs:attribute name="uri" type="xs:anyURI" use="required"/>
+			<xs:attribute name="prefix" type="xs:NCName"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="p">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sch:dir"/>
+				<xs:element ref="sch:emph"/>
+				<xs:element ref="sch:span"/>
+			</xs:choice>
+			<xs:attribute name="id" type="xs:string"/>
+			<xs:attribute name="class" type="xs:string"/>
+			<xs:attribute name="icon" type="xs:anyURI"/>
+			<xs:attribute ref="xml:lang"/>
+			<xs:anyAttribute namespace="##other" processContents="lax"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pattern">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="p" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="sch:rule" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="see" type="xs:anyURI"/>
+			<xs:attribute name="id" type="xs:string"/>
+			<xs:attribute name="icon" type="xs:anyURI"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="phase">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="sch:p" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="sch:active" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+			<xs:attribute name="fpi" type="xs:string"/>
+			<xs:attribute name="icon" type="xs:anyURI"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="report">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sch:name"/>
+				<xs:element ref="sch:emph"/>
+				<xs:element ref="sch:dir"/>
+				<xs:element ref="sch:span"/>
+				<xs:any namespace="##other" processContents="lax"/>
+			</xs:choice>
+			<xs:attribute name="test" type="xs:string" use="required"/>
+			<xs:attribute name="role" type="xs:NMTOKEN"/>
+			<xs:attribute name="id" type="xs:string"/>
+			<xs:attribute name="diagnostics" type="xs:IDREFS"/>
+			<xs:attribute name="icon" type="xs:anyURI"/>
+			<xs:attribute name="subject" type="xs:string" default="."/>
+			<xs:attribute ref="xml:lang"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="rule">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="sch:assert"/>
+				<xs:element ref="sch:report"/>
+				<xs:element ref="sch:key"/>
+				<xs:element ref="sch:extends"/>
+			</xs:choice>
+			<xs:attribute name="context" type="xs:string"/>
+			<xs:attribute name="abstract" type="xs:boolean" default="false"/>
+			<xs:attribute name="role" type="xs:NMTOKEN"/>
+			<xs:attribute name="id" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="schema">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="sch:title" minOccurs="0"/>
+				<xs:element ref="sch:ns" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="sch:p" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="sch:phase" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="sch:pattern" maxOccurs="unbounded"/>
+				<xs:element ref="sch:p" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="sch:diagnostics" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:ID"/>
+			<xs:attribute name="fpi" type="xs:string"/>
+			<xs:attribute name="schemaVersion" type="xs:string"/>
+			<xs:attribute name="defaultPhase" type="xs:string"/>
+			<xs:attribute name="icon" type="xs:anyURI"/>
+			<xs:attribute name="ns" type="xs:anyURI"/>
+			<xs:attribute name="version" type="xs:string" default="1.5"/>
+			<xs:attribute ref="xml:lang"/>
+			<xs:anyAttribute namespace="##other" processContents="lax"/>
+		</xs:complexType>
+		<xs:unique name="assertId">
+			<xs:selector xpath="sch:pattern/sch:rule/sch:assert"/>
+			<xs:field xpath="@id"/>
+		</xs:unique>
+		<xs:unique name="reportId">
+			<xs:selector xpath="sch:pattern/sch:rule/sch:report"/>
+			<xs:field xpath="@id"/>
+		</xs:unique>
+		<xs:unique name="ruleId">
+			<xs:selector xpath="sch:pattern/sch:rule"/>
+			<xs:field xpath="@id"/>
+		</xs:unique>
+		<xs:unique name="patternId">
+			<xs:selector xpath="sch:pattern"/>
+			<xs:field xpath="@id"/>
+		</xs:unique>
+		<xs:unique name="pId">
+			<xs:selector xpath=".//sch:p"/>
+			<xs:field xpath="@id"/>
+		</xs:unique>
+		<xs:key name="phaseId">
+			<xs:selector xpath="sch:phase"/>
+			<xs:field xpath="@id"/>
+		</xs:key>
+		<xs:keyref name="activePattern" refer="patternId">
+			<xs:selector xpath="sch:phase/sch:active"/>
+			<xs:field xpath="@pattern"/>
+		</xs:keyref>
+		<xs:keyref name="extendsRule" refer="ruleId">
+			<xs:selector xpath="sch:pattern/sch:rule/sch:extends"/>
+			<xs:field xpath="@rule"/>
+		</xs:keyref>
+		<xs:keyref name="defaultPhase" refer="phaseId">
+			<xs:selector xpath="."/>
+			<xs:field xpath="@defaultPhase"/>
+		</xs:keyref>
+		<!-- Define the identity constraints -->
+	</xs:element>
+	<xs:element name="span">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="class" type="xs:string"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="title">
+		<xs:complexType mixed="true">
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="sch:dir"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="value-of">
+		<xs:complexType>
+			<xs:attribute name="select" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

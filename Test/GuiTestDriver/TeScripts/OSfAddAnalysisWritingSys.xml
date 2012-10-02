@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;MALVI OTHERSF IMPORT TEST&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!-- ========================================================================== -->
+		<!-- Import Standard Format Setup -->
+
+		<click select="menubar/file/project-management/fieldworks-project-properties"/>
+
+		<on-dialog title="FieldWorks Project Properties" until="10000">
+			<click path="9:NAMELESS/37:Writing Systems"/>
+			<!--Click the UP button-->
+			<click path="9:Writing Systems/9:5[2]/43:5"/>
+			<click path="9:Writing Systems/9:Modify...[2]/43:Modify..."/>
+
+			<on-dialog title="Writing System Properties" until="30000">
+				<click path="9:NAMELESS/37:Fonts"/>
+				<insert>{TAB 3}</insert>
+
+				<var id="Label" set="Default publication font:"/>
+				<var id="CheckPath" set="9:$Label;[2]/41:$Label"/>
+				<!-- Select the current item -->
+				<click path="$CheckPath"/>
+				<!-- Go to the top item of the drop-down list box -->
+				<insert>{UP 50}</insert>
+				<var id="ExpectedValue" set="Arial Unicode MS"/>
+				<include from="IncLangProjComboBox.xml"/>
+
+				<click path="$OK"/>
+			</on-dialog>
+
+			<click path="$OK"/>
+		</on-dialog>
+
+	</on-application>
+
+</accil>

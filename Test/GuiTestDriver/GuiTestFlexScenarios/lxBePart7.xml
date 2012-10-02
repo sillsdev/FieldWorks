@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Bulk edit entries test Part 7: TecKit processor test -->
+
+<accil on-fail="assert">
+
+<!--  -->
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncLexicon.xml"/>
+
+   <var id="copyIt" set="Copy the contents of the source field to the target field"/>
+   <var id="pop" set="Populate a field by applying a complex process to another field"/>
+   <var id="changeIt" set="Select the target field and the list choice to change it to"/>
+   <var id="arrow" set="  "/>
+   <var id="oldVal" set="When the old value is not empty..."/>
+   <var id="HOW" set="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$nl;[3]/9:$oldVal;/20:$oldVal;/"/>
+   <var id="sepVal" set="Add after old value, sep. by"/>
+
+<!-- Go to Lexicon/Bulk Edit Entries -->
+   <click path="$menuLEXICON;menu:Bulk Edit Entries"/>
+
+<!-- Goto Bulk Copy tab -->
+
+   <click path="$BEE;9:BulkEditBar/9:$changeIt;[2]/37:Bulk Copy"/>
+
+<!-- Goto Process  tab -->
+
+   <click path="$BEE;9:BulkEditBar/9:$copyIt;[2]/37:Process"/>
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Setup.../43:Setup..."/>
+   <on-dialog title="Setup Processor">
+	  <click path="9:Add/43:Add"/>
+	  <click path="9:Processor Properties/20:Processor Properties/$NL;46:NAMELESS/43:Open"/>
+	  <insert>tt~</insert>
+	  <click path="9:Processor Properties/20:Processor Properties/9:Name:[2]/42:Name:"/>
+	  <insert>$ScriptPath;\bToXbeforeI.map</insert>
+	  <click path="9:Processor Properties/20:Processor Properties/$nl;[3]/42:NAMELESS"/>
+	  <insert>TecKit map Test</insert>
+	  <click path="$ok"/>
+   </on-dialog>
+
+<!-- Source is Citation Form, Target is Import Residue (Entry) -->
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$NL;43:Open"/>
+   <insert>c~</insert><!-- Citation Form -->
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/9:Target Field[2]/43:Open"/>
+   <insert>i~</insert><!-- Import Residue (Entry) -->
+
+   <click path="$firstRec"/><!-- Select the first record -->
+<!-- Goto the "bi" section and scroll down a page -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	  <insert wait="1000">bi</insert>
+	  <click path="$goto"/>
+   </on-dialog>
+   <insert wait="500">{PGDN}</insert>
+   <click path="$beeRec;[*binzi]/$Col;[2]/$Text;/value:binzi"/>
+   <click path="$beeRec;[$binzi;]/$Col;[4]/$Text"/>
+   <insert wait="500">bibi</insert>
+   <click path="$tbSTANDARD;43:Save"/>
+
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+
+<skip>
+   <click path="$firstRec"/><!-- Select the first record -->
+<!-- Goto the "bi" section and scroll down a page -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	  <insert wait="1000">bi</insert>
+	  <click path="$goto"/>
+   </on-dialog>
+   <insert wait="500">{PGDN}</insert>
+</skip>
+
+   <click path="$beeRec;[*ind]/$Col;[2]/$Text;/value:bichu"/>
+   <glimpse id="44" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; "/><!-- bichu -->
+   <var id="ind" add="1"/>
+   <glimpse id="45" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; Xidza"/><!-- bidz -->
+   <var id="ind" add="2"/>
+   <glimpse id="47" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect="bibi"/><!-- binzi -->
+   <var id="ind" add="1"/>
+   <glimpse id="48" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; "/><!-- bira -->
+   <var id="ind" add="2"/>
+   <glimpse id="50" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; ciXisoXiso"/><!-- bisobiso
+ -->
+
+   <click path="$BEE;9:BulkEditBar/9:Clear/43:Clear"/>
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$nl;[3]/9:$oldVal;/20:$oldVal;/9:Overwrite/45:Overwrite"/>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$firstRec"/><!-- Select the first record -->
+<!-- Goto the "bi" section and scroll down a page -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	  <insert wait="1000">bi</insert>
+	  <click path="$goto"/>
+   </on-dialog>
+   <insert wait="500">{PGDN}</insert>
+
+   <click path="$beeRec;[*ind]/$Col;[2]/$Text;/value:bichu"/>
+   <glimpse id="44a" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; "/><!-- bichu -->
+   <var id="ind" add="1"/>
+   <glimpse id="45a" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; Xidza"/><!-- bidz -->
+   <var id="ind" add="2"/>
+   <glimpse id="47a" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect="bibi $arrow; m'Xinzi"/><!-- binzi -->
+   <var id="ind" add="1"/>
+   <glimpse id="48a" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; "/><!-- bira -->
+   <var id="ind" add="2"/>
+   <glimpse id="50a" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; ciXisoXiso"/><!-- bisobiso
+ -->
+
+   <click path="$BEE;9:BulkEditBar/9:Clear/43:Clear"/>
+   <click  path="$HOW;9:$sepVal;/45:$sepVal;"/>
+   <!-- click  path="$HOW;9: /20:RootSite/42:Paragraph"/-->
+   <click  path="$HOW;20:RootSite/42:Paragraph"/>
+   <insert>;</insert>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <click path="$firstRec"/><!-- Select the first record -->
+<!-- Goto the "bi" section and scroll down a page -->
+   <click path="$lxFindLex"/>
+   <on-dialog title="Find Lexical Entry">
+	  <insert wait="1000">bi</insert>
+	  <click path="$goto"/>
+   </on-dialog>
+   <insert wait="500">{PGDN}</insert>
+
+   <click path="$beeRec;[*ind]/$Col;[2]/$Text;/value:bichu"/>
+   <glimpse id="44b" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; "/><!-- bichu -->
+   <var id="ind" add="1"/>
+   <glimpse id="45b" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; Xidza"/><!-- bidz -->
+   <var id="ind" add="2"/>
+   <glimpse id="47b" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect="bibi $arrow; bibi ;m'Xinzi"/><!-- binzi -->
+   <var id="ind" add="1"/>
+   <glimpse id="48b" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; "/><!-- bira -->
+   <var id="ind" add="2"/>
+   <glimpse id="50b" path="$beeRec;[$ind;]/$Col;[4]/$Text" prop="value" expect=" $arrow; ciXisoXiso"/><!-- bisobiso
+ -->
+   <click path="$BEE;9:BulkEditBar/9:Clear/43:Clear"/>
+
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Setup.../43:Setup..."/>
+   <on-dialog title="Setup Processor">
+	  <click path="9:Add/43:Add"/>
+	  <click path="9:Processor Properties/20:Processor Properties/$NL;46:NAMELESS/43:Open"/>
+	  <insert>tt~</insert>
+	  <click path="9:Processor Properties/20:Processor Properties/9:Name:[2]/42:Name:"/>
+	  <insert>$ScriptPath;\bToXbeforeI2.map</insert>
+	  <click path="9:Processor Properties/20:Processor Properties/$nl;[3]/42:NAMELESS"/>
+	  <insert>TecKit map legacy Test</insert>
+	  <click path="$ok"/>
+   </on-dialog>
+
+   <on-dialog title="Cannot Use Processor">
+	  <click path="$ok"/>
+   </on-dialog>
+
+   <glimpse  path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$nl;[2]/41:NAMELESS" prop="value" expect="TecKit map legacy Test" on-pass="assert"/>
+
+ </on-application>
+</accil>

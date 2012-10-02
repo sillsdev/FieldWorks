@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+<!-- Andy Black's demo section I -->
+
+<!--I.	Compounding-->
+<!--1.	Show the Orizaba Nahuatl adjective-nominal compounds PowerPoint slide.-->
+
+<skip>
+
+ <on-application wait="6000" path="C:\Program Files\Microsoft Office\PowerPoint Viewer" exe="PPTVIEW.EXE" title="Microsoft Office PowerPoint Viewer" run="yes" close="no" on-fail="assert">
+ <!--on-application wait="6000" path="C:\Program Files\Microsoft Office\OFFICE11" exe="PPTVIEW.EXE" title="Microsoft Office PowerPoint Viewer" run="yes" close="no" on-fail="assert"-->
+  <insert wait="1000">C:\GuiTestDriver\Scripts\LT\MoeWorks.ppt~</insert>
+  <!--insert wait="1000">C:\fw\Test\GuiTestDriver\LexTextGuiTests\MoeWorks.ppt~</insert-->
+  <insert>{F5}</insert> <!-- show the presentation -->
+  <insert wait="4000">{ESC}</insert> <!-- end the presentation -->
+  <insert wait="2000">{ESC}</insert>  <!-- close the dialog box -->
+  <click path="$cancel"/>
+ </on-application>
+
+</skip>
+
+<include from="IncKalaba.xml"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		<include from="IncStartUp.xml"/>
+		<include from="IncGrammar.xml"/>
+
+<!--2.	Have an adjective and a noun compounding.  What is the category of the resulting compound (and how do you know)?  Is a noun ￢ﾀﾓ it has the nominal suffix on it.-->
+<!--3.	When the category of  a compound is the same as one of the members of the compound, we say that the compound is "headed" by the member of that category.-->
+<!--4.	Let's allow this kind of adjective-noun compound-->
+<!--5.	Go to Grammar / Compound Rules.-->
+  <click path="$menuGRAMMAR;menu:Compound Rules" />
+
+<!--6.	Delete a rule-->
+<!--a.	(The first one listed is similar, but actually no longer valid ￢ﾀﾓ we're not allowing for linkers at this point.)   So we're going to delete this one and then add our new one.-->
+<!--b.	Select "adj-noun with linker " in the Record List-->
+  <click path="$grmCrRec;/$Col;/$Text"/>
+
+<!--c.	Click on the Delete (red X) toolbar button.-->
+  <click path="$deleteRec"/>
+
+<!--d.	The "Are you sure?" dialog box appears.  Click on Yes.-->
+  <insert>d</insert>
+
+<!--7.	Click on "Create a new headed compound-->
+  <click path="$insGrmCrHc"/>
+
+<!--a.	In the Name field, type "Adjective-noun compound"-->
+  <click path="$grmCrName"/>
+  <insert>Adjective-noun compound</insert>
+
+<!--b.	In the Description field, type "An adjective root may be compounded with a noun.  The head of the compound is the noun."-->
+  <click path="$grmCrDesc"/>
+  <insert>An adjective root may be compounded with a noun.  The head of the compound is the noun.</insert>
+
+<!--c.	In the Left member category, click on the chooser and choose "adjective" (under modifier)-->
+  <click path="$grmCrLmcBtn"/>
+  <insert>{HOME}mm{RIGHT 2}~</insert>
+
+<!--d.	In the Right member category, click on the chooser and select "noun".-->
+  <click path="$grmCrRmcBtn"/>
+  <insert>{HOME}nn~</insert>
+
+<!--e.	Click on the Right Headed check box. (it is always off since the record is new)-->
+  <click path="$grmCrRhChk"/>
+
+<!--8.	Go back to the Grammar Sketch and regenerate-->
+  <click path="$menuVIEW;menu:Grammar/menu:Grammar Sketch" />
+  <click path="$Generate" />
+
+<!--9.	Go to the Compounding section and see the new rule.-->
+  <click path="$grmSkPanel" />
+  <insert>{PGDN 27}</insert>
+
+ </on-application>
+</accil>

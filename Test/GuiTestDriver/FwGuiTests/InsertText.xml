@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<accil on-fail="assert">
+	<on-application gui="TE" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+		<click path="button:Views" />
+		<click path="button:Draft" />
+		<!-- omitting the run attribute sets it to zero so it moves the cursor only. -->
+		<select-text id="before" path="view:Draft" loc="b:2/s:5/p:0" at="36" run="9" />
+		<select-text path="view:Draft" loc="b:2/s:5/p:0" at="36" />
+		<insert id="actualText">Hi There!</insert>
+		<select-text id="after" path="view:Draft" loc="b:2/s:5/p:0" at="36" run="9" />
+		<match-strings id="ok" of="before" to="after"
+			expect='&lt;xmldiff>&lt;node match="1">&lt;node match="1">&lt;change match="1">Hi There!&lt;/change>&lt;/node>&lt;/node>&lt;/xmldiff>' on-fail="assert">
+			Match-strings found these differences: <data get="diffs" />
+		</match-strings>
+		<!-- click path="split:Undo (Ctrl+Z)" repeat="9"/-->
+		<insert id="delete">{BACKSPACE}</insert><!-- see SendKeys doc for special keys-->
+		<select-text id="restored" path="view:Draft" loc="b:2/s:5/p:0" at="36" run="9" />
+		<match-strings id="again" of="before" to="restored" on-fail="assert">
+			Match-strings found these differences from the original: <data get="diffs" />
+		</match-strings>
+	</on-application>
+</accil>

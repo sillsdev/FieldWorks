@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>class  unitpp::tester</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2>class  <A HREF="#DOC.DOCU">unitpp::tester</A></H2></H2><BLOCKQUOTE> The standard text based tester.</BLOCKQUOTE>
+<HR>
+
+<H2>Inheritance:</H2>
+<APPLET CODE="ClassGraph.class" WIDTH=600 HEIGHT=65>
+<param name=classes value="Cvisitor,Mvisitor.html,Ctester,Mtester.html">
+<param name=before value="M,M">
+<param name=after value="Md_,M">
+<param name=indent value="0,1">
+<param name=arrowdir value="down">
+</APPLET>
+<HR>
+
+<DL>
+<P><DL>
+<DT><H3>Public Methods</H3><DD><DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif> <B><A HREF="#DOC.1.22.1">tester</A></B>(std::ostream&amp; os, bool verbose = false)
+<DD><I> Create a text tester.</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif><!1><A HREF="res_cnt.html">res_cnt</A> <B><A HREF="#DOC.1.22.2">res_tests</A></B>()
+<DD><I>Get the score for tests</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif><!1><A HREF="res_cnt.html">res_cnt</A> <B><A HREF="#DOC.1.22.3">res_suites</A></B>()
+<DD><I>Get the score for suites</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.22.4">summary</A></B>()
+<DD><I>Write the summary</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.22.5">visit</A></B>(<!1><A HREF="test.html">test</A>&amp;)
+<DD><I>Part of the visitor pattern</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.22.6">visit</A></B>(<!1><A HREF="suite.html">suite</A>&amp;)
+<DD><I>Part of the visitor pattern</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.22.7">visit</A></B>(<!1><A HREF="suite.html">suite</A>&amp; t, int)
+<DD><I>Part of the visitor pattern; visit to suite after children</I>
+</DL></P>
+
+</DL>
+<HR><H3>Inherited from <A HREF="visitor.html">visitor</A>:</H3>
+<DL>
+</DL>
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+The standard text based tester. It implements the visitor pattern for the
+test and suite classes, and executes each test case in a depth first
+traversal, toting the score of test cases.
+
+<P>The class might be used for test executers aimed at other environments,
+e.g. a GUI based version.
+
+<P>Please note that this class is automagically instantiated by the main
+method supplied in the library. This means that you might very well do all
+your testing without directly laying hans on this fellow.</BLOCKQUOTE>
+<DL>
+
+<A NAME="tester"></A>
+<A NAME="DOC.1.22.1"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B> tester(std::ostream&amp; os, bool verbose = false)</B></TT>
+<DD>
+Create a text tester.
+
+<DL><DT><DT><B>Parameters:</B><DD><B>os</B> -  the stream to write results to.
+<BR><B>verbose</B> -  whether to report on succesful tests<BR><DD></DL><P>
+<A NAME="res_tests"></A>
+<A NAME="DOC.1.22.2"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B><!1><A HREF="res_cnt.html">res_cnt</A> res_tests()</B></TT>
+<DD>Get the score for tests
+<DL><DT><DD></DL><P>
+<A NAME="res_suites"></A>
+<A NAME="DOC.1.22.3"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B><!1><A HREF="res_cnt.html">res_cnt</A> res_suites()</B></TT>
+<DD>Get the score for suites
+<DL><DT><DD></DL><P>
+<A NAME="summary"></A>
+<A NAME="DOC.1.22.4"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void summary()</B></TT>
+<DD>Write the summary
+<DL><DT><DD></DL><P>
+<A NAME="visit"></A>
+<A NAME="DOC.1.22.5"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void visit(<!1><A HREF="test.html">test</A>&amp;)</B></TT>
+<DD>Part of the visitor pattern
+<DL><DT><DD></DL><P>
+<A NAME="visit"></A>
+<A NAME="DOC.1.22.6"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void visit(<!1><A HREF="suite.html">suite</A>&amp;)</B></TT>
+<DD>Part of the visitor pattern
+<DL><DT><DD></DL><P>
+<A NAME="visit"></A>
+<A NAME="DOC.1.22.7"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void visit(<!1><A HREF="suite.html">suite</A>&amp; t, int)</B></TT>
+<DD>Part of the visitor pattern; visit to suite after children
+<DL><DT><DD></DL><P></DL>
+
+<HR><DL><DT><B>This class has no child classes.</B></DL>
+
+<DL><DT><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

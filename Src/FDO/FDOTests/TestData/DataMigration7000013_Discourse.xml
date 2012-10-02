@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000012">
+	<!-- Need some version 7000012 data to test.-->
+	<rt class="ConstChartRow" guid="c1ec8357-e382-11de-8a39-0800200c9a66" ownerguid="c1ec5c4d-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<ConstChartRow>
+			<Cells>
+				<objsur t="o" guid="c84614e6-168b-4304-a025-0d6ae6573085" />
+				<objsur t="o" guid="8151a002-a32e-476f-9c32-f95ee48fc71c" />
+				<objsur t="o" guid="76f05e0e-0fd3-4d1e-8ccf-132a7bf88e7c" />
+				<objsur t="o" guid="557d1120-d40d-40b5-8178-37432d514788" />
+			</Cells>
+		</ConstChartRow>
+	</rt>
+	<rt class="ConstChartWordGroup" guid="c84614e6-168b-4304-a025-0d6ae6573085" ownerguid="c1ec8357-e382-11de-8a39-0800200c9a66">
+		<!-- Normal WordGroup object should not be migrated.-->
+		<CmObject />
+		<ConstituentChartCellPart>
+			<Column>
+				<objsur t="r" guid="c1ec835f-e382-11de-8a39-0800200c9a66" />
+			</Column>
+			<MergesAfter val="False" />
+			<MergesBefore val="False" />
+		</ConstituentChartCellPart>
+		<ConstChartWordGroup>
+			<BeginSegment>
+				<objsur t="r" guid="068d00db-db4f-430b-aa71-532b92cdb30f" />
+			</BeginSegment>
+			<EndSegment>
+				<objsur t="r" guid="068d00db-db4f-430b-aa71-532b92cdb30f" />
+			</EndSegment>
+			<BeginAnalysisIndex val="0" />
+			<EndAnalysisIndex val="2" />
+		</ConstChartWordGroup>
+	</rt>
+	<rt class="ConstChartWordGroup" guid="8151a002-a32e-476f-9c32-f95ee48fc71c" ownerguid="c1ec8357-e382-11de-8a39-0800200c9a66">
+		<!-- Word Group with invalid IAnalysisReference should be migrated to a 'missing marker' Tag.-->
+		<CmObject />
+		<ConstituentChartCellPart>
+			<Column>
+				<objsur t="r" guid="c1ec835f-e382-11de-8a39-0800200c9a66" />
+			</Column>
+			<MergesAfter val="False" />
+			<MergesBefore val="False" />
+		</ConstituentChartCellPart>
+		<ConstChartWordGroup>
+			<BeginAnalysisIndex val="-1" />
+			<EndAnalysisIndex val="-1" />
+		</ConstChartWordGroup>
+	</rt>
+	<rt class="ConstChartTag" guid="76f05e0e-0fd3-4d1e-8ccf-132a7bf88e7c" ownerguid="c1ec8357-e382-11de-8a39-0800200c9a66">
+		<!-- Normal chart tag should remain normal.-->
+		<CmObject />
+		<ConstituentChartCellPart>
+			<Column>
+				<objsur t="r" guid="c1ec835f-e382-11de-8a39-0800200c9a66" />
+			</Column>
+			<MergesAfter val="False" />
+			<MergesBefore val="False" />
+		</ConstituentChartCellPart>
+		<ConstChartTag>
+			<Tag>
+				<objsur t="r" guid="c1ec8360-e382-11de-8a39-0800200c9a66" />
+			</Tag>
+		</ConstChartTag>
+	</rt>
+	<rt class="ConstChartTag" guid="557d1120-d40d-40b5-8178-37432d514788" ownerguid="c1ec8357-e382-11de-8a39-0800200c9a66">
+		<!-- Normal chart tag should remain normal.-->
+		<CmObject />
+		<ConstituentChartCellPart>
+			<Column>
+				<objsur t="r" guid="c1ec835f-e382-11de-8a39-0800200c9a66" />
+			</Column>
+			<MergesAfter val="False" />
+			<MergesBefore val="False" />
+		</ConstituentChartCellPart>
+		<ConstChartTag>
+			<Tag>
+				<objsur t="r" guid="c1ec8360-e382-11de-8a39-0800200c9a66" />
+			</Tag>
+		</ConstChartTag>
+	</rt>
+</languageproject>

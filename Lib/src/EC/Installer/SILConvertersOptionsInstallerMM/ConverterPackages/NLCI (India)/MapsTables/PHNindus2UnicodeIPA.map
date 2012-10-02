@@ -1,0 +1,248 @@
+﻿; This file was created by Mark Penny using TECkitMappingEditorU.exe v3.1.0.0 on 19/08/2011.
+;   Conversion Type = Legacy_to_from_Unicode
+;   Left-hand side font = PHN Indus;15.75
+;   Right-hand side font = Doulos SIL;18
+;   Main Window Position = 0,0,650,708
+;   Left-hand side Character Map Window Position = 650,0,630,581
+;   Right-hand side Character Map Window Position = 652,129,626,607
+
+EncodingName            "PHNindus"
+DescriptiveName         "encoding used by the PHN Indus font"
+Version                 "1"
+Contact                 "mailto:mark_penny@sil.org"
+RegistrationAuthority   "NLCI and SIL International"
+RegistrationName        "PHNindus to Unicode IPA"
+Copyright               "© 2011 SIL International. All rights reserved."
+LHSFlags                ()
+RHSFlags                ()
+
+; ---- Comments, corrections and suggestions for improvement are welcome! -----
+
+pass(Byte_Unicode)
+
+0x20    <>  space
+0x21    <>  exclamation_mark
+0x22    <>  quotation_mark
+0x23    <>  number_sign
+0x24    <>  dollar_sign
+0x25    <>  percent_sign
+0x26    <>  ampersand
+0x27    <>  apostrophe
+0x28    <>  left_parenthesis
+0x29    <>  right_parenthesis
+0x2A    <>  asterisk
+0x2B    <>  plus_sign
+0x2C    <>  comma
+0x2D    <>  hyphen_minus
+0x2E    <>  full_stop
+0x2F    <>  solidus
+0x30    <>  digit_zero
+0x31    <>  digit_one
+0x32    <>  digit_two
+0x33    <>  digit_three
+0x34    <>  digit_four
+0x35    <>  digit_five
+0x36    <>  digit_six
+0x37    <>  digit_seven
+0x38    <>  digit_eight
+0x39    <>  digit_nine
+0x3A    <>  colon
+0x3B    <>  semicolon
+0x3C    <>  less_than_sign
+0x3D    <>  equals_sign
+0x3E    <>  greater_than_sign
+0x3F    <>  question_mark
+
+0x40    <>  latin_small_letter_m combining_tilde
+0x41    <>  latin_small_letter_m combining_ring_above
+
+0x42    <>  modifier_letter_small_h
+0x43    <>  latin_small_letter_turned_v
+
+0x44    <>  latin_small_letter_a
+0x71    <>  latin_small_letter_b
+0xD3    <>  latin_small_letter_c
+0xD4    <>  latin_small_letter_d
+0xB2    <>  latin_small_letter_e
+0x4D     >  latin_small_letter_e
+0xC9    <>  latin_small_letter_f
+0x56    <>  latin_small_letter_g
+0xA4    <>  latin_small_letter_h
+0xAA    <>  latin_small_letter_i
+0x46     >  latin_small_letter_i
+0x74    <>  latin_small_letter_j
+0x54    <>  latin_small_letter_k
+0x77    <>  latin_small_letter_l
+0x73    <>  latin_small_letter_m
+0x6E    <>  latin_small_letter_n
+0x51    <>  latin_small_letter_o
+0xB8     >  latin_small_letter_o
+0x6F    <>  latin_small_letter_p
+0xC3    <>  latin_small_letter_q
+0xD5    <>  latin_small_letter_r
+0xA3    <>  latin_small_letter_s
+0xD6    <>  latin_small_letter_t
+0x48    <>  latin_small_letter_u
+0xAC     >  latin_small_letter_u
+0xD7    <>  latin_small_letter_v
+0xD8    <>  latin_small_letter_w
+0xC4    <>  latin_small_letter_x
+0xD9    <>  latin_small_letter_y
+0xC6    <>  latin_small_letter_z
+
+0x45    <>  latin_small_letter_a modifier_letter_triangular_colon
+0xA9     >  latin_small_letter_a modifier_letter_triangular_colon
+0x47    <>  latin_small_letter_i modifier_letter_triangular_colon
+0xAB     >  latin_small_letter_i modifier_letter_triangular_colon
+0x49    <>  latin_small_letter_u modifier_letter_triangular_colon
+0xAE     >  latin_small_letter_u modifier_letter_triangular_colon
+0x4E    <>  latin_small_letter_e modifier_letter_triangular_colon
+0xB3     >  latin_small_letter_e modifier_letter_triangular_colon
+0x52    <>  latin_small_letter_o modifier_letter_triangular_colon
+0xB9     >  latin_small_letter_o modifier_letter_triangular_colon
+
+0x4A    <>  latin_small_letter_r_with_tail combining_short_stroke_overlay
+0x4B    <>  latin_small_letter_l_with_retroflex_hook combining_short_stroke_overlay
+
+0x4C    <>  latin_small_letter_open_e
+0x4F    <>  latin_small_letter_a superscript_latin_small_letter_i
+0xB4     >  latin_small_letter_a superscript_latin_small_letter_i
+
+0x53    <>  latin_small_letter_a modifier_letter_small_u
+0xBA    <>  latin_small_letter_a modifier_letter_small_u
+
+0x55    <>  latin_small_letter_k modifier_letter_small_h
+0x57    <>  latin_small_letter_g modifier_letter_small_h
+
+0x50    <>  latin_small_letter_open_o
+0x58    <>  latin_small_letter_eng
+0x59    <>  latin_small_letter_tesh_digraph
+0x5A    <>  latin_small_letter_tesh_digraph modifier_letter_small_h
+
+0x5B    <>  left_square_bracket
+0x5C    <>  reverse_solidus
+0x5D    <>  right_square_bracket
+0x5E    <>  circumflex_accent
+0x5F    <>  low_line
+0x60    <>  grave_accent
+0x61    <>  latin_small_letter_dezh_digraph
+0x62    <>  latin_small_letter_dezh_digraph modifier_letter_small_h
+0x63    <>  latin_small_letter_n_with_left_hook
+0x64    <>  latin_small_letter_t_with_retroflex_hook
+0x65    <>  latin_small_letter_t_with_retroflex_hook modifier_letter_small_h
+0x66    <>  latin_small_letter_d_with_tail
+0x67    <>  latin_small_letter_d_with_tail modifier_letter_small_h
+0x68    <>  latin_small_letter_n_with_retroflex_hook
+0x69    <>  latin_small_letter_t combining_bridge_below
+0x6A    <>  latin_small_letter_t combining_bridge_below modifier_letter_small_h
+0x6B    <>  latin_small_letter_d combining_bridge_below
+0x6C    <>  latin_small_letter_d combining_bridge_below modifier_letter_small_h
+0x6D    <>  latin_small_letter_n combining_bridge_below
+0x70    <>  latin_small_letter_p modifier_letter_small_h
+0x72    <>  latin_small_letter_b modifier_letter_small_h
+
+0x75    <>  latin_small_letter_r_with_fishhook
+0x76    <>  latin_small_letter_r_with_tail
+0x78    <>  latin_small_letter_l_with_retroflex_hook
+0x79    <>  latin_small_letter_turned_r_with_hook
+0x7A    <>  latin_small_letter_v_with_hook
+
+0x7B    <>  left_curly_bracket
+0x7C    <>  vertical_line
+0x7D    <>  right_curly_bracket
+0x7E    <>  combining_tilde
+
+; Some of these quotation marks may be preferred to the acute & grave accents used below
+; left_single_quotation_mark
+; right_single_quotation_mark
+; single_low_9_quotation_mark
+; single_high_reversed_9_quotation_mark
+; left_double_quotation_mark
+; right_double_quotation_mark
+; double_low_9_quotation_mark
+; double_high_reversed_9_quotation_mark
+
+; prime
+; double_prime
+; triple_prime
+; reversed_prime
+; reversed_double_prime
+; reversed_triple_prime
+
+0x82    <>  modifier_letter_low_acute_accent
+0x84    <>  modifier_letter_low_acute_accent modifier_letter_low_acute_accent
+0x85    <>  horizontal_ellipsis
+
+; 0x91    <>  modifier_letter_grave_accent
+; 0x91    <>  modifier_letter_middle_grave_accent
+0x91    <>  modifier_letter_turned_comma
+
+; 0x92    <>  modifier_letter_acute_accent
+; 0x92    <>  modifier_letter_prime
+0x92    <>  modifier_letter_apostrophe
+
+0x93    <>  modifier_letter_middle_double_grave_accent
+; 0x93    <>
+
+0x94    <>  modifier_letter_middle_double_acute_accent
+; 0x94    <>  modifier_letter_double_apostrophe
+
+0x98    <>  modifier_letter_triangular_colon
+0x99    <>  modifier_letter_small_h
+0x9A    <>  combining_diaeresis_below
+0x9B    <>  combining_bridge_below
+0xA1    <>  latin_small_letter_esh
+0xA2    <>  latin_small_letter_s_with_hook
+; 0xA5    <>
+0xA7    <>  combining_ring_below
+0xA8    <>  modifier_letter_vertical_line
+0xAD    <>  hyphen
+0xAF    <>  latin_small_letter_r_with_tail combining_short_stroke_overlay
+0xB0    <>  latin_small_letter_r_with_tail combining_short_stroke_overlay modifier_letter_triangular_colon
+0xB1    <>  latin_small_letter_open_e
+0xB5     >  latin_small_letter_open_o
+; 0xB6    <>
+
+0xBB    <>  modifier_letter_low_macron
+0xBF    <>  modifier_letter_vertical_line
+0xC0    <>  modifier_letter_vertical_line modifier_letter_vertical_line
+0xC1    <>  modifier_letter_grave_accent
+0xC2    <>  modifier_letter_acute_accent
+
+0xC5    <>  latin_letter_small_capital_g
+0xC7    <>  latin_small_letter_d_with_tail combining_caron
+0xC8    <>  latin_small_letter_d_with_tail combining_caron modifier_letter_small_h
+0xCA    <>  latin_small_letter_c combining_ring_below
+0xCB    <>  latin_small_letter_r_with_tail combining_short_stroke_overlay modifier_letter_triangular_colon
+0xCC    <>  latin_small_letter_l_with_retroflex_hook combining_short_stroke_overlay modifier_letter_triangular_colon
+0xCE     >  latin_small_letter_l_with_retroflex_hook combining_short_stroke_overlay modifier_letter_triangular_colon
+0xCD    <>  latin_small_letter_l_with_retroflex_hook combining_short_stroke_overlay
+0xCF    <>  combining_dot_below
+0xD0     >  combining_dot_below
+0xD1    <>  modifier_letter_end_low_tone
+
+0xDA    <>  latin_small_letter_ezh
+0xDB    <>  latin_letter_glottal_stop
+0xDF    <>  latin_small_letter_c_with_cedilla
+
+0xE0    <>  latin_small_letter_dotless_j combining_ring_above
+0xE1    <>  latin_small_letter_schwa
+0xE2    <>  latin_small_letter_h_with_hook
+0xE3    <>  latin_small_letter_i_with_stroke
+0xE4    <>  latin_small_letter_rams_horn
+0xE5    <>  latin_small_letter_o_with_stroke
+0xE6    <>  latin_small_letter_alpha
+0xE7    <>  latin_small_letter_upsilon
+0xE8    <>  latin_small_letter_u_bar
+0xE9    <>  latin_letter_small_capital_y
+0xEB    <>  latin_small_ligature_oe
+0xEC    <>  latin_capital_letter_o_with_middle_tilde
+0xED    <>  latin_small_letter_eth
+0xEE    <>  latin_small_letter_sharp_s
+0xEF    <>  latin_small_letter_turned_alpha
+0xF0    <>  latin_small_letter_turned_a
+0xF1    <>  latin_small_letter_ae
+0xF2    <>  latin_letter_small_capital_i
+0xF3    <>  latin_small_letter_iota
+
+; ---- Comments, corrections and suggestions for improvement are welcome! -----

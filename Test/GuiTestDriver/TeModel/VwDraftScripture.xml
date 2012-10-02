@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?-->
+
+<draft-scripture role="view" name="Draft" path="$NL;$nl;[2]/$nl" root="yes">
+
+  <titlebar path="rexp#/9:Draft - ">
+	<scripture-draft role="button" tip="Scripture - Draft" path="$NL"/>
+	<back-translation role="button" tip="Back Translation" path="$nl;[2]"/>
+	<checking role="button" tip="Checking" path="$nl;[3]"/>
+	<trial-publication role="button" tip="Trial Publication" path="$nl;[4]"/>
+  </titlebar>
+
+  <pane role="pane" path="[2]/9:DataGridView/24:DataGridView/28:Row 1/29: Row 1/20:BottomDraftView/">
+
+	  <book path="20:Div[$book;]/">
+		  <title path="42:Paragraph">
+			   <line path="42:String[$line;]"/>
+		  </title>
+		  <section path="20:Div/">
+			   <line path="42:String[$line;]"/>
+		  </section>
+		  <chapter path="20:Div[$chpt;]/"> <!-- the first $chpt is offset by 1 if there is a section -->
+			 <head path="42:Paragraph/42:String"/>
+			 <number path="42:Paragraph[2]/42:String"/>
+			 <verse path="42:Paragraph[$verse;]"> <!-- the first $verse is 2 and so on, offset by 1 -->
+			   <number path="/42:String"/> <!-- it's the first few characters of the line -->
+			   <line path="/42:String[$line;]"/>
+			 </verse>
+		  </chapter>
+	  </book>
+  </pane>
+
+  <!-- click a book titled "Mateu" using model select="draft-scripture[@role='view']/pane" :
+	  var id="book" set="*"
+	  click select="book/title" path="/value:rexp#Mateu"
+	-->
+
+  <!-- click the 4th verse of chapter 3 of book titled "Marku" using model select="draft-scripture[@role='view']/pane" in a couple steps:
+	  var id="book" set="*"
+	  var id="chpt" set="*"
+	  var id="verse" set="*"
+	  click select="book/title" path="/value:rexp#Marku" //sets $book
+	  click select="book/chapter/number" path="value:3" //sets $chpt
+	  click select="book/chapter/verse" path="value:rexp#^4" //sets $verse
+	-->
+
+  <statusbar role="statusbar" path="9:statusStrip1/23:statusStrip1/" root="yes">
+	<text path="41:#ANY"/>
+	<progressbar role="progressbar" path="$NL;48:NAMELESS[2]"/>
+  </statusbar>
+
+</draft-scripture>

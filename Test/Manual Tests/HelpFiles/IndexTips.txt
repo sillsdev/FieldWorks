@@ -1,0 +1,49 @@
+To:	Michael Lastufka/IntlAdmin/WCT@SIL
+cc:
+
+Subject:	Re: Index Info
+
+Dear Mike,
+
+Yes, I need to add a module or two about indexing. It is not addressed currently. Thanks for reminding me!
+
+The way I identify index items for a given module is to ask the question "What questions does this module answer?" For example, suppose the module is a task module "How to insert a module."From the list of items, I create separate index items for  inversions such as "insert a module" and "module, inserting." Then I try to think of all the synonyms for "insert" such as "create," "add," and "make". I also enter inversions for all of these. The idea is to make it as redundant as possible to try to anticipate all the ways a user may try to find the information.
+
+In the LinguaLinks editor, the index items are added by clicking the "Main Index Items" button, identifying the appropriate authority list (index list), and creating new entries.
+
+The Index in the help file is intended to answer the last question in the list below, that is, the user has a word or action in mind and wants information about it.
+
+You should be able to use the index to find answers to all the questions, but the other three would normally be addressed (in the order listed)
+
+o from the task tree in the TOC  ("Tell me how to do X.")
+o from a help button on a dialog box in the application or with "What's This? Help" on a window (the question mark button) (“Tell me what this thing does.” )
+o from a link in a task module to a concept module (“What do you mean by X?”)
+
+
+
+Clay
+
+
+
+	Michael Lastufka
+	02/02/01 02:05 PM
+
+		 To: Clay Johnston/IntlAdmin/WCT@SIL
+		 cc:
+		 Subject: Index Info
+
+Dear Clay,
+
+In the Authoring guide, I don't see any guidelines about coming up with index keywords or phrases. It's hard for an author to figure out what the user will want to see in an index to get him to the "right" place. You seem to use the module subject plus submodule label names a lot. There are a few  runs of index items where clicking any one will get you to the same module. "Help Files: ..." is an example. Obviously, you used other guidelines as well. It'd be nice to see a module on them.
+
+In one module you write:
+
+With these features, users can approach the information from any of several viewpoints:
+"Tell me how to do X."
+“Tell me what this thing does.”
+“What do you mean by X?”
+“Show me information about X.”
+
+Are these questtions a good basis for creating index items or are they better suited for finding module titles for the TOC?
+
+Michael_Lastufka@sil.org

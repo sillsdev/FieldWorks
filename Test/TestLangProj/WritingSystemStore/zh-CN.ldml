@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2011-07-18T14:01:19" />
+		<language
+			type="zh" />
+		<territory
+			type="CN" />
+	</identity>
+	<collations />
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Ch" />
+		<palaso:defaultFontFamily
+			value="SimSun" />
+		<palaso:languageName
+			value="Chinese" />
+		<palaso:spellCheckingId
+			value="cmn" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+		<fw:legacyMapping
+			value="Chinese - Not Installed - Not Installed - Not Installed - Not Installed - Not Installed - Not Installed - Not Installed - Not Installed - Not Installed - Not Installed - Not Installed" />
+		<fw:windowsLCID
+			value="2052" />
+	</special>
+</ldml>

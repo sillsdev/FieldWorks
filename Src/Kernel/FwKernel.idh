@@ -1,0 +1,770 @@
+/*-----------------------------------------------------------------------*//*:Ignore in Surveyor
+Copyright (C) 1999, 2001 SIL International. All rights reserved.
+
+Distributable under the terms of either the Common Public License or the
+GNU Lesser General Public License, as specified in the LICENSING.txt file.
+
+File: FwKernel.idh
+Responsibility: John Thomson
+Last reviewed: never
+
+	Defines "Kernel" interfaces widely used in FieldWorks, not including the TextServ
+	interfaces which, though part of FwKernel, are in a separate IDH file.
+-------------------------------------------------------------------------------*//*:End Ignore*/
+
+interface ITsString;
+interface IUndoGrouper;		// used by ActionHandler
+interface IFwMetaDataCache;
+
+typedef [v1_enum] enum UndoResult
+{
+	kuresSuccess,		// Undo succeeded
+	kuresRefresh,		// Undo succeeded and refresh is needed
+	kuresFailed,		// Legitimate failure, typically data changed since original action.
+						// If an UndoGrouper is installed, CancelGroup has already been called
+						// to roll back the transaction. Typically a Refresh is needed
+						// along with a warning message.
+	kuresError,			// A serious unexpected error occurred. The group has been rolled back.
+						// Typically a Refresh is needed along with an error message.
+} UndoResult;
+
+
+/***********************************************************************************************
+	Interface IUndoAction
+
+	This interface is used in conjunction with the ActionHandler interface to provide
+	undo/redo functionality in an application.
+
+	@h3{When to implement}
+	You could create an implementation of this interface if you want a very plain "undo
+	action" to be used with the ActionHandler.
+
+	@h3{When to use}
+	When the client code performs an action that it would like to be reversible, create
+	an UndoAction (or more likely, a subclass of one) and give it to the ActionHandler
+	(via the ${IActionHandler#StartSeq} or ${IActionHandler#AddAction} methods as
+	appropriate).  For subclasses of UndoAction, there may be further requirements.
+
+	@h3{How to obtain an instance}
+	While an implementation of this interface could be made, right now, its primary reason
+	for existence is to be used by the SqlUndoAction implementation and to keep things open
+	for future implementations.  In this way, the ActionHandler does not have to know about
+	databases and so can be used for simpler undo/redo functionality.
+
+	@h3{Hungarian: uact}
+***********************************************************************************************/
+DeclareInterface(UndoAction, Unknown, B831F535-0D5F-42c8-BF9F-7F5ECA2C4657)
+{
+	// Reverses (or "un-does") an action. Sets *pfSuccess to true if successful. If not successful
+	// because the database state has changed unexpectedly, sets *pfSuccess to false but still
+	// returns S_OK. More catastrophic errors may produce error result codes.
+	HRESULT Undo([out, retval] ComBool * pfSuccess);
+
+	// Re-applies (or "re-does") an action.
+	HRESULT Redo([out, retval] ComBool * pfSuccess);
+
+	// Irreversibly commits an action.
+	HRESULT Commit();
+
+	// True for most actions, which make changes to data; false for actions that represent
+	// updates to the user interface, like replacing the selection.
+	[propget] HRESULT IsDataChange([out, retval] ComBool * pfRet);
+
+	// True for most actions, which are redoable; false for actions that aren't, like
+	// Scripture import.
+	[propget] HRESULT IsRedoable([out, retval] ComBool * pfRet);
+
+	// Sets whether this undo action should notify the world that the action has been undone
+	// or redone. For ISqlUndoAction, this supresses the PropChanged notifications.
+	[propput] HRESULT SuppressNotification(
+		[in] ComBool fSuppress);
+};
+
+
+/*******************************************************************************************
+	Interface IActionHandler
+
+	Use this interface to implement undo/redo functionality for an application.
+	Examine the following document for further information on how it works:
+
+	@code{~FWROOT/Doc/Architecture/Database/ActionHandler.htm}
+
+	@h3{When to implement}
+	The standard implementation should suffice for both database and non-database
+	applications.
+
+	@h3{When to use}
+	A class implementing this interface should be created right at the initialization of
+	an application.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_ActionHandler or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: acth}
+*******************************************************************************************/
+DeclareInterface(ActionHandler, Unknown, 0F8EA3BE-C982-40f8-B674-25B8482EB222)
+{
+	// Begin a sequence of actions that will be treated as one task for the purposes
+	// of undo and redo. If there is already such a task in process, this sequence will be
+	// included (nested) in that one, and the descriptive strings will be ignored.
+	// @param bstrUndo Short description of an action.  This is intended to appear on the
+	// "undo" menu item (e.g. "Typing" or "Clear")
+	// @param bstrRedo Short description of an action.  This is intended to appear on the
+	// "redo" menu item (e.g. "Typing" or "Clear").  Usually, this is the same as @i{bstrUndo}
+	HRESULT BeginUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+	// End the current task sequence. If an outer sequence is in progress, that one will
+	// continue.
+	HRESULT EndUndoTask();
+
+	// Continue the previous sequence. This is intended to be called from a place like
+	// OnIdle that performs "clean-up" operations that are really part of the previous
+	// sequence.
+	HRESULT ContinueUndoTask();
+
+	// End the current sequence, and any outer ones that are in progress. This is intended
+	// to be used as a clean-up function to get everything back in sync.
+	HRESULT EndOuterUndoTask();
+
+	// Break the current undo task into two at the current point. Subsequent actions will
+	// be part of new task which will be assigned the given labels.
+	HRESULT BreakUndoTask(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo);
+
+	// Begin a sequence of actions that cannot be undone.
+	// This sequence will commit any previous undo actions.
+	HRESULT BeginNonUndoableTask();
+
+	// End the task sequence and commit it.
+	HRESULT EndNonUndoableTask();
+
+	// Sets a flag which makes the ActionHandler create a mark if there is no mark and
+	// another action is added to the stack.
+	HRESULT CreateMarkIfNeeded(
+		[in] ComBool fCreateMark);
+
+	// Begins an action sequence.  An action sequence consists of one or more UndoAction's
+	// that constitute a single task (at least, from the user's perspective).  Note that
+	// calling this method requires that an UndoAction be supplied to "seed" the action
+	// sequence.
+	// @param bstrUndo Short description of an action.  This is intended to appear on the
+	// "undo" menu item (e.g. "Undo Typing")
+	// @param bstrRedo Short description of an action.  This is intended to appear on the
+	// "redo" menu item (e.g. "Redo Typing").  Usually, this is the same as @i{bstrUndo}
+	// @param puact Pointer to an IUndoAction interface.  This is the first action of an
+	// action sequence.
+	HRESULT StartSeq(
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo,
+		[in] IUndoAction * puact);
+
+	// Adds an UndoAction to the current action sequence.  Note that an action sequence
+	// @b{MUST} already be started before an additional UndoAction can be added.
+	// @param puact Pointer to an UndoAction interface.  Note that this is @b{NEVER} the
+	// first action of an action sequence.
+	HRESULT AddAction(
+		[in] IUndoAction * puact);
+
+	// Returns the "undo" description of the current action sequence, as was given in
+	// the ${IActionHandler#StartSeq} call.
+	// @param pbstrUndoText "Undo" description of the current action sequence.
+	HRESULT GetUndoText(
+		[out, retval] BSTR * pbstrUndoText);
+
+	// Returns the "undo" description of the specified action sequence, as was given in
+	// the ${IActionHandler#StartSeq} call.
+	// @param iAct Zero-based index of the undo action
+	// @param pbstrUndoText "Undo" description of the current action sequence.
+	HRESULT GetUndoTextN(
+		[in] int iAct,
+		[out, retval] BSTR * pbstrUndoText);
+
+	// Returns the "redo" description of the action sequence that would be re-done,
+	// as was given in the ${IActionHandler#StartSeq} call.  This is usually the same
+	// as the "undo" description.
+	// @param pbstrRedoText "Redo" description of the current action sequence.
+	HRESULT GetRedoText(
+		[out, retval] BSTR * pbstrRedoText);
+
+	// Returns the "redo" description of the specified action sequence, as was given in
+	// the ${IActionHandler#StartSeq} call.  This is usually the same as the "undo"
+	// description.
+	// @param iAct Zero-based index of the redo action
+	// @param pbstrRedoText "Redo" description of the current action sequence.
+	HRESULT GetRedoTextN(
+		[in] int iAct,
+		[out, retval] BSTR * pbstrRedoText);
+
+	// Indicates if there is an action sequence on the stack that can be undone.
+	// @param pfCanUndo Flag indicating if there is an action sequence to undo.
+	HRESULT CanUndo(
+		[out, retval] ComBool * pfCanUndo);
+
+	// Indicates if there is an action sequence on the stack that can be redone.
+	// @param pfCanRedo Flag indicating if there is an action sequence to redo.
+	HRESULT CanRedo(
+		[out, retval] ComBool * pfCanRedo);
+
+	// Un-does an action sequence.  Note that this can involve the reversal of several
+	// UndoAction's.
+	HRESULT Undo(
+		[out, retval] UndoResult * pures);
+
+	// Re-does an action sequence.  Note that this can involve the re-application of
+	// several UndoAction's.
+	HRESULT Redo(
+		[out, retval] UndoResult * pures);
+
+	// Rollback an action sequence to the outmost current task. This needs to be called
+	// before an EndUndoTask. Note that this can involve the reversal of several UndoAction's.
+	HRESULT Rollback(
+		[in] int nDepth);
+
+	// Gets the current depth of the nested BeginUndoTask() calls. Used to set the depth
+	// back during a Rollback(). Should be called before the BeginUndoTask() call.
+	[propget] HRESULT CurrentDepth(
+		[out, retval] int * pnDepth);
+
+	// Irreversably commits all actions that have been executed so far (or at least since
+	// the last Commit) and clears the action stack.  (Note that currently, both undo and
+	// redo actions are cleared).
+	HRESULT Commit();
+
+	// Deletes all actions that are on the (internal) action stack, thereby releasing
+	// references and resources.  This should be called just before the application is to
+	// end so that there aren't any circular reference problems.
+	HRESULT Close();
+
+	// Inserts a mark and returns a handle that can be used later to discard all Undo items
+	// back to the mark. Handle will never be zero.
+	HRESULT Mark(
+		[out, retval] int * phMark);
+
+	// Collapses all Undo tasks back to a specified mark and creates a single Undo task for
+	// them all. Also discards the mark.
+	// @param hMark The mark handle
+	// @param bstrUndo Short description of an action.  This is intended to appear on the
+	// "undo" menu item (e.g. "Undo Typing") for the task created by collapsing all tasks
+	// following the mark
+	// @param bstrRedo Short description of an action.  This is intended to appear on the
+	// "redo" menu item (e.g. "Redo Typing") for the task created by collapsing all tasks
+	// following the mark. Usually, this is the same as @i{bstrUndo}
+	// @param pf Returns true if undo actions were collapsed; false otherwise.
+	HRESULT CollapseToMark(
+		[in] int hMark,
+		[in] BSTR bstrUndo,
+		[in] BSTR bstrRedo,
+		[out, retval] ComBool * pf);
+
+	// Discard all Undo items back to the specified mark (or the most recent mark, if any,
+	// if handle is zero).
+	HRESULT DiscardToMark(
+		[in] int hMark);
+
+	// Get the handle to the top mark. If there are no marks on the undo stack, returns 0.
+	[propget] HRESULT TopMarkHandle(
+		[out, retval] int * phMark);
+
+	// Return true if there is anything undoable after the top mark (and if there is at
+	// least one mark).
+	[propget] HRESULT TasksSinceMark(
+		[in] ComBool fUndo,
+		[out, retval] ComBool * pf);
+
+	// Return the number of outstanding Undoable actions. This may be more than the number of
+	// times the user could issue the Undo command, as that depends on individual items
+	// being grouped into sequences. This does not count items that could be redone.
+	[propget] HRESULT UndoableActionCount(
+		[out, retval] int * pcAct);
+
+	// Returns the number of Undoable sequences. This is the number of times the user
+	// could issue the Undo command.
+	[propget] HRESULT UndoableSequenceCount(
+		[out, retval] int * pcSeq);
+
+	// Returns the number of Redoable sequences. This is the number of times the user
+	// could issue the Redo command.
+	[propget] HRESULT RedoableSequenceCount(
+		[out, retval] int * pcSeq);
+
+	// This will return the current UndoGrouper for the AH - if one exists, otherwise returns null.
+	[propget] HRESULT UndoGrouper(
+		[out, retval] IUndoGrouper ** ppundg);
+
+	// This will set the UndoGrouper for this AH.
+	[propput] HRESULT UndoGrouper(
+		[in] IUndoGrouper * pundg);
+
+	// Tells whether an Undo or Redo operation is in progress. During such operations,
+	// actions should not be added to the sequence, and some other side-effect tasks
+	// may be suppressed. For example, we don't update modify times when a data field
+	// is modified by Undo/Redo; it is assumed that there is an action in the sequence
+	// to set the modify time to the appropriate value.
+	[propget] HRESULT IsUndoOrRedoInProgress(
+		[out, retval] ComBool * pfInProgress);
+
+	// Tells whether making selections should be suppressed during a unit of work or an
+	// Undo/Redo operation.
+	[propget] HRESULT SuppressSelections(
+		[out, retval] ComBool * pfSupressSel);
+};
+#ifndef NO_COCLASSES
+DeclareCoClass(ActionHandler, 6A46D810-7F14-4151-80F5-0B13FFC1F917)
+{
+	interface IActionHandler;
+};
+#endif // !NO_COCLASSES
+
+/***********************************************************************************************
+	Interface FwMetaDataCache
+
+	Used to cache FieldWorks metadata information.  Since this type of data only changes
+	when a user adds, edits, or deletes a custom field (which should happen very rarely),
+	this interface allows the data to be brought into memory all at once (upon initialization
+	of an FwMetaDataCache object) and thereafter, data can be randomly accessed, very quickly.
+	Since there is not too much metadata for FieldWorks, the data does not take up a lot of
+	memory.
+
+	@h3{When to implement}
+	Use the standard implementation.
+
+	@h3{When to use}
+	It is beneficial to make use of a FwMetaDataCache to provide quick, random access to
+	FieldWorks metadata information particularly if that information is frequently required by
+	many different parts of an application.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_ActionHandler or CreateInstance on smart pointer.
+
+	@h3{Hungarian: mdc}
+***********************************************************************************************/
+DeclareInterface(FwMetaDataCache, Unknown, EDBB1DED-7065-4b56-A262-746453835451)
+{
+	// Alternative way to initialize, passing an XML file (like Ling.cm).
+	//<class num="int" id="className" base="baseClassName" abstract="true">
+	//	<props>
+	//		<basic num="int" id="FieldName" sig="Boolean/Integer/Time/String/MultiString/MultiUnicode" />
+	//		<rel/owning num="int" id="FieldName" card="atomic/seq/col" sig="classname"/>
+	// currently doesn't initialize some less essential stuff like help strings and labels.
+	// Set fClearPrevCache to false to read in multiple XML files.
+	// Enhance JohnT: support attributes to handle these.
+	HRESULT InitXml(
+		[in] BSTR bstrPathname,
+		[in] ComBool fClearPrevCache);
+
+	//:>****************************************************************************************
+	//:> Field access methods
+	//:>****************************************************************************************
+
+	// Gets the number of "fields" defined for this conceptual model.
+	// @param pcflid Points to the output count of fields.
+	[propget] HRESULT FieldCount(
+		[out, retval] int * pcflid);
+
+	// Gets the list of field identification numbers (in no particular order).  If the array
+	// provided is too small, only an arbitrary set of cflid values is returned.  If the array
+	// provided is too large, the excess entries are set to zero.
+	// @param cflid The size of the output array.
+	// @param rgflid An integer array for returning the field identification numbers.
+	HRESULT GetFieldIds(
+		[in] int cflid,
+		[out, size_is(cflid)] int * rgflid);
+
+	// Gets the name of the class that contains this field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrOwnClsName Points to the output name of the class that contains the field.
+	// In the database, this is the "Name" column in the Class$ table that corresponds to the
+	// Class column in the Field$ table.
+	HRESULT GetOwnClsName(
+		[in] int luFlid,
+		[out, retval] BSTR * pbstrOwnClsName);
+
+	// Gets the name of the destination class that corresponds to this field.  This is the name
+	// of the class that is either owned or referred to by another class.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrDstClsName Points to the output name of the destination class.  In the
+	// database, this is the "Name" column in  the Class$ table that corresponds to the DstCls
+	// column in the Field$ table.
+	HRESULT GetDstClsName(
+		[in] int luFlid,
+		[out, retval] BSTR * pbstrDstClsName);
+
+	// Gets the "Id" value of the class that contains this field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pluOwnClsid Points to the output "Id" of the class that contains the field.  In
+	// the database, this corresponds to the Class column in the Field$ table.
+	HRESULT GetOwnClsId(
+		[in] int luFlid,
+		[out, retval] int * pluOwnClsid);
+
+	// Gets the "Id" of the destination class that corresponds to this field.  This is the "Id"
+	// of the class that is either owned or referred to by another class.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pluDstClsid Points to the output "Id" of the class that contains the field.  In
+	// the database, this corresponds to the DstCls column in the Field$ table. If it is NULL,
+	// (int)-1 is returned, which indicates the field holds a basic value instead of an
+	// object.
+	HRESULT GetDstClsId(
+		[in] int luFlid,
+		[out, retval] int * pluDstClsid);
+
+	// Gets the name of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldName Points to the output name of the field.  In the database, this
+	// corresponds to the "Name" column in the Field$ table.
+	HRESULT GetFieldName(
+		[in] int luFlid,
+		[out, retval] BSTR * pbstrFieldName);
+
+	// Gets the user label of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldLabel Points to the output Label of the field.  In the database, this
+	// corresponds to the "UserLabel" column in the Field$ table.
+	HRESULT GetFieldLabel(
+		[in] int luFlid,
+		[out, retval] BSTR * pbstrFieldLabel);
+
+	// Gets the help string of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldHelp Points to the output help string of the field.  In the database, this
+	// corresponds to the "HelpString" column in the Field$ table.
+	HRESULT GetFieldHelp(
+		[in] int luFlid,
+		[out, retval] BSTR * pbstrFieldHelp);
+
+	// Gets the Xml UI of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldXml Points to the output name of the field.  In the database, this
+	// corresponds to the "XmlUI" column in the Field$ table.
+	HRESULT GetFieldXml(
+		[in] int luFlid,
+		[out, retval] BSTR * pbstrFieldXml);
+
+	// Gets the Ws of the field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param piWs Points to the output field Ws.  In the database, this
+	// corresponds to the "WsSelector" column in the Field$ table.
+	HRESULT GetFieldWs(
+		[in] int luFlid,
+		[out, retval] int * piWs);
+
+	// Gets the type of the field.  This value indicates if the field is a primitive data type
+	// or a MultiStr/MultiBigStr/MultiTxt/MultiBigTxt value or describes the relationship
+	// between two classes (i.e. owning/reference and atomic/collection/sequence).  These
+	// numeric values are defined in the @b{~FWROOT\src\cellar\lib\CmTypes.h} file.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// Historical note: at one point, the result could include the virtual bit, kcptVirtual, or'd
+	// with one of the other kcpt values. This caused endless bugs and has been removed.
+	// @param piType Points to the output field type.
+	HRESULT GetFieldType(
+		[in] int luFlid,
+		[out, retval] int * piType);
+
+	// Given a field id and a class id, this returns true it it is legal to store this class of
+	// object in the field.
+	// @param luFlid Field identification number.
+	// @param luClid Class identification number.
+	// @param pfValid Points to the output boolean set to true if luClid can be stored in
+	// luFlid, else set to false.
+	[propget] HRESULT IsValidClass(
+		[in] int luFlid,
+		[in] int luClid,
+		[out, retval] ComBool * pfValid);
+
+	//:>****************************************************************************************
+	//:> Class access methods
+	//:>****************************************************************************************
+
+	// Gets the number of "classes" defined for this conceptual model.
+	// @param pcclid Points to the output count of classes.
+	[propget] HRESULT ClassCount(
+		[out, retval] int * pcclid);
+
+	// Gets the list of class identification numbers (in no particular order).  If the array
+	// provided is too small, only an arbitrary subset of cclid values is returned.  If the
+	// array provided is too large, the excess entries are set to zero.
+	// @param cclid The size of the output array.
+	// @param rgclid An integer array for returning the class identification numbers.
+	HRESULT GetClassIds(
+		[in] int cclid,
+		[out, size_is(cclid)] int * rgclid);
+
+	// Gets the name of the class.
+	// @param luClid Class identification number.  In the database, this corresponds to "Id"
+	// column in the Class$ table.
+	// @param pbstrClassName Points to the output name of the class with the given
+	// identification number.  In the database, this is the "Name" column in the Class$ table.
+	HRESULT GetClassName(
+		[in] int luClid,
+		[out, retval] BSTR * pbstrClassName);
+
+	// Indicates whether a class is abstract or concrete.
+	// @param luClid Class identification number.  In the database, this corresponds to "Id"
+	// column in the Class$ table.
+	// @param pfAbstract Points to the output boolean set to "true" if abstract, or set to
+	// "false" for concrete.
+	HRESULT GetAbstract(
+		[in] int luClid,
+		[out, retval] ComBool * pfAbstract);
+
+	// Gets the base class id for a given class.
+	// @param luClid Class identification number.  In the database, this corresponds to "Id"
+	// column in the Class$ table.
+	// @param pluClid Points to the output base class identification number.  In the database,
+	// this corresponds to  the "Base" column in the Class$ table.
+	HRESULT GetBaseClsId(
+		[in] int luClid,
+		[out, retval] int * pluClid);
+
+	// Gets the name of the base class for a given class.
+	// @param luClid Class identification number.  In the database, this corresponds to "Id"
+	// column in the Class$ table.
+	// @param pbstrBaseClsName Points to the output name of the base class.  In the database,
+	// this is the "Name" column in the (base) Class$ table that corresponds to the Base column
+	// in the (given) Class$ table.
+	HRESULT GetBaseClsName(
+		[in] int luClid,
+		[out, retval] BSTR * pbstrBaseClsName);
+
+	// Gets a list of the fields for the specified class.
+	// Gets all fields whose types match the specified argument, which should be a combination
+	// of the fcpt values defined in CmTypes.h, e.g., to get all owning properties
+	// pass kfcptOwningCollection | kfcptOwningAtom | kfcptOwningSequence.
+	// Returns E_FAIL if the array is too small. cflidMax 0 may be passed to obtain the required
+	// size.
+	// Fields of superclasses are also returned, if the relevant flag is true.
+	// [Note: The special CmObject fields are not returned, for now,
+	// but the plan to include them before too long.]
+	HRESULT GetFields(
+		[in] int luClid,
+		[in] ComBool fIncludeSuperclasses,
+		[in] int grfcpt,
+		[in] int cflidMax,
+		[out, size_is(cflidMax)] int * prgflid,
+		[out, retval] int * pcflid);
+
+	//:>****************************************************************************************
+	//:> Reverse access methods
+	//:>****************************************************************************************
+
+	// Get the ID of the class having the specified name. Returns 0 if not found.
+	HRESULT GetClassId(
+		[in] BSTR bstrClassName,
+		[out, retval] int * pluClid);
+
+	// Gets the field ID given the class and field names. Returns 0 if not found.
+	// Searches superclasses as well as actual class given.
+	HRESULT GetFieldId(
+		[in] BSTR bstrClassName,
+		[in] BSTR bstrFieldName,
+		[in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+		[out, retval] int * pluFlid);
+
+	// This is more efficient if the client already has the classID specified classID and field name.
+	// Returns 0 if not found.
+	// Searches superclasses as well as actual class given.
+	HRESULT GetFieldId2(
+		[in] int luClid,
+		[in] BSTR bstrFieldName,
+		[in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+		[out, retval] int * pluFlid);
+	// Gets the direct subclasses of the given class (not including itself).
+	HRESULT GetDirectSubclasses(
+		[in] int luClid,
+		[in] int cluMax,
+		[out] int * pcluOut,
+		[out, size_is(cluMax)] int * prgluSubclasses);
+	// Gets all subclasses of the given class, including itself (which is always the first
+	// result in the list, so it can easily be skipped if desired). The list is therefore
+	// a complete list of the classes which are valid to store in a property whose
+	// signature is the class identified by luClid.
+	HRESULT GetAllSubclasses(
+		[in] int luClid,
+		[in] int cluMax,
+		[out] int * pcluOut,
+		[out, size_is(cluMax)] int * prgluSubclasses);
+
+	// Note a virtual property. The type is the simulated type, one of the original types,
+	// NOT with the virtual bit OR'd in.
+	HRESULT AddVirtualProp(
+		[in] BSTR bstrClass,
+		[in] BSTR bstrField,
+		[in] int luFlid,
+		[in] int type);
+
+	[propget] HRESULT IsVirtual(
+		[in] int luFlid,
+		[out, retval] ComBool * pfVirtual);
+
+	// Gets the name of a field.
+	// @param luFlid Field identification number.  In the database, this corresponds to the "Id"
+	// column in the Field$ table.
+	// @param pbstrFieldName Points to the output name of the field.  In the database, this
+	// corresponds to the "Name" column in the Field$ table.
+	// This version is allowed to return null (with S_OK) if the field is unknown.
+	HRESULT GetFieldNameOrNull(
+		[in] int luFlid,
+		[out, retval] BSTR * pbstrFieldName);
+}
+
+#ifdef DEBUG
+/*----------------------------------------------------------------------------------------------
+	Report type
+----------------------------------------------------------------------------------------------*/
+typedef [v1_enum] enum CrtReportType
+{
+	Warn    = 0x0,	// Warning
+	Error   = 0x1,	// Error
+	Assert  = 0x2,	// Assertion
+} CrtReportType;
+
+/*----------------------------------------------------------------------------------------------
+	Interface IDebugReportSink
+	This interface is used in managed code (C#) for debugging purposes. It allows managed
+	code to get and display debug output and assertions from unmanaged code.
+	Debug version only.
+
+	@h3{When to implement}
+	When you want to receive (or ignore) debug output in a non-standard way.
+
+	@h3{When to use}
+	You pass this interface to the SetSink method of IDebugReport.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_DebugReportSink or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: dbrs}
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(DebugReportSink, Unknown, DD9CE7AD-6ECC-4e0c-BBFC-1DC52E053354)
+{
+	// Method that gets called to report any debug messages. This is needed to display
+	// debug output and assert messages in managed code that happen in unmanaged code when
+	// unmanaged debugging is not turned on.
+	// @param nReportType Type of report
+	// @param szMsg Debug message
+	HRESULT Report(
+		[in] CrtReportType nReportType,
+		[in] BSTR szMsg);
+
+	// Managed assert method. This method gets called when an assert fails
+	// in unmanaged code.
+	// @param pszExp    the expression of the assertion that failed
+	// @param pszFile   the filename of the failed assertion
+	// @param nLine	    the line number of the failed assertion
+	HRESULT AssertProc(
+		[in] BSTR pszExp,
+		[in] BSTR pszFile,
+		[in] int nLine);
+
+};
+
+/*----------------------------------------------------------------------------------------------
+	Interface IDebugReport
+	This interface provides means for managed code (C#) to detour debug output and control
+	the popping up of message boxes on asserts.
+	Debug version only.
+
+	@h3{When to implement}
+	Usually the default implementation should be sufficient.
+
+	@h3{When to use}
+	In managed code when you want to receive debug output from unmanaged code.
+
+	@h3{How to obtain an instance}
+	Use CoCreateInstance with CLSID_DebugReport or CreateInstance() on a smart pointer.
+
+	@h3{Hungarian: dbr}
+----------------------------------------------------------------------------------------------*/
+DeclareInterface(DebugReport, Unknown, 3D6A0880-D17D-4e4a-9DE9-861A85CA4046)
+{
+	// Sets the DebugReport sink object that gets called for reporting debug output.
+	HRESULT SetSink(
+		[in] IDebugReportSink * pSink);
+
+	// Sets the DebugReport sink object to NULL
+	HRESULT ClearSink();
+};
+
+#ifndef NO_COCLASSES
+DeclareCoClass(DebugReport, 24636FD1-DB8D-4b2c-B4C0-44C2592CA482)
+{
+	interface IDebugReport;
+};
+#endif // !NO_COCLASSES
+
+#endif // DEBUG
+
+/*******************************************************************************************
+	Interface IUndoGrouper
+	This interface supports grouping a seq. of Undo and/or Redo actions into a transaction.
+	Note that it is NOT used for the grouping of the original 'doing' of the actions; that
+	is the responsibility of the code that is executing the original actions. Rather, it
+	is used by the ActionHandler during an actual Undo or Redo operation to group the
+	(possibly several) UndoActions that make up a single action-handler Undo/Redo.
+
+	@h3{When to implement}
+	The existing implementation in IOleDbEncap is sufficient.
+
+	@h3{When to use}
+	Pass the instance of this to the ActionHandler if you have one. All other calls will be
+	made by the ActionHandler.
+
+	@h3{How to obtain an instance}
+	QueryInterface on IOleDbEncap.
+
+	@h3{Hungarian: undg}
+*******************************************************************************************/
+DeclareInterface(UndoGrouper, Unknown, C38348D3-392C-4e02-BD50-A01DC4189E1D)
+{
+	// Called before the seq of undo actions is undone or redone. (Begin Transaction)
+	// Returns a handle that must be passed to the corresponding EndGroup or CancelGroup.
+	HRESULT BeginGroup(
+		[out, retval] int * phndl);
+
+	// Called to end a seq of undo actions. (End Transaction)
+	HRESULT EndGroup(
+		[in] int hndl);
+
+	// Call following and error condition to return things to the state where it was when the
+	// BeginGroup was called. (Rollback)
+	HRESULT CancelGroup(
+		[in] int hndl);
+};
+
+#ifndef NO_COCLASSES
+
+#endif /*!NO_COCLASSES*/
+
+/*******************************************************************************************
+	Interface IComDisposable
+	This interface allows access to the Dispose method thus allowing to call Dispose() on
+	managed COM objects.
+
+	@h3{When to implement}
+	Usually you wouldn't implement this interface in unmanaged code.
+
+	@h3{How to obtain an instance}
+	QueryInterface on a managed COM object that implements IDisposable
+
+*******************************************************************************************/
+DeclareInterface(ComDisposable, Unknown, CA9AAF91-4C34-4c6a-8E07-97C1A7B3486A)
+{
+	HRESULT Dispose();
+};
+
+#ifndef NO_COCLASSES
+
+#endif /*!NO_COCLASSES*/

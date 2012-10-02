@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>class  unitpp::test_runner</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2>class  <A HREF="#DOC.DOCU">unitpp::test_runner</A></H2></H2><BLOCKQUOTE> A runner is the base class for the objects that actually processes the tests from main.</BLOCKQUOTE>
+<HR>
+
+<H2>Inheritance:</H2>
+<APPLET CODE="ClassGraph.class" WIDTH=600 HEIGHT=65>
+<param name=classes value="Ctest_runner,Mtest_runner.html,Cplain_runner,Mplain_runner.html">
+<param name=before value="M,M^_">
+<param name=after value="M,M">
+<param name=indent value="0,0">
+<param name=arrowdir value="down">
+</APPLET>
+<HR>
+
+<DL>
+<P><DL>
+<DT><H3>Public Methods</H3><DD><DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   bool <B><A HREF="#DOC.1.18.1">run_tests</A></B>(int argc, const char** argv, int i) = 0
+<DD><I> run all the tests with arguments in the argc, argv set, starting at i</I>
+</DL></P>
+
+</DL>
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+A runner is the base class for the objects that actually processes the
+tests from main. Main simply invokes the run_tests method of the current
+test runner.
+<!1><A HREF="suite.html#DOC.1.7.6">main</A></BLOCKQUOTE>
+<DL>
+
+<A NAME="run_tests"></A>
+<A NAME="DOC.1.18.1"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   bool run_tests(int argc, const char** argv, int i) = 0</B></TT>
+<DD>
+run all the tests with arguments in the argc, argv set, starting at i
+<DL><DT><DD></DL><P></DL>
+<HR>
+<DL><DT><B>Direct child classes:
+</B><DD><A HREF="plain_runner.html">plain_runner</A><BR>
+</DL>
+
+<DL><DT><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

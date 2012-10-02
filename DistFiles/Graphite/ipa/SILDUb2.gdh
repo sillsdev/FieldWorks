@@ -1,0 +1,723 @@
+/*
+	Glyph information for font SILDoulosUnicodeIPA at Sat Jul 21 10:47:48 2001
+*/
+
+table(glyph) {MUnits = 1000};
+gspace = unicode(0x0020);
+gEth = unicode(0x00D0) {US = gpath(3); BS = gpath(2)};
+geth = unicode(0x00F0) {US = gpath(3); BS = gpath(2); CS = gpath(4)};
+gThorn = unicode(0x00DE) {US = gpath(3); BS = gpath(2)};
+gthorn = unicode(0x00FE) {US = gpath(3); BS = gpath(2)};
+gonehalf = unicode(0x00BD);
+gonequarter = unicode(0x00BC);
+gonesuperior = unicode(0x00B9);
+gthreequarters = unicode(0x00BE);
+gthreesuperior = unicode(0x00B3);
+gtwosuperior = unicode(0x00B2);
+gbrokenbar = unicode(0x00A6);
+gmultiply = unicode(0x00D7);
+gexclam = unicode(0x0021);
+gquotedbl = unicode(0x0022);
+gnumbersign = unicode(0x0023);
+gdollar = unicode(0x0024);
+gpercent = unicode(0x0025);
+gampersand = unicode(0x0026);
+gquotesingle = unicode(0x0027);
+gparenleft = unicode(0x0028);
+gparenright = unicode(0x0029);
+gasterisk = unicode(0x002A);
+gplus = unicode(0x002B);
+gcomma = unicode(0x002C);
+ghyphen = unicode(0x002D);
+gperiod = unicode(0x002E);
+gslash = unicode(0x002F);
+gzero = unicode(0x0030);
+gone = unicode(0x0031);
+gtwo = unicode(0x0032);
+gthree = unicode(0x0033);
+gfour = unicode(0x0034);
+gfive = unicode(0x0035);
+gsix = unicode(0x0036);
+gseven = unicode(0x0037);
+geight = unicode(0x0038);
+gnine = unicode(0x0039);
+gcolon = unicode(0x003A);
+gsemicolon = unicode(0x003B);
+gless = unicode(0x003C);
+gequal = unicode(0x003D);
+ggreater = unicode(0x003E);
+gquestion = unicode(0x003F);
+gat = unicode(0x0040);
+gA = unicode(0x0041) {US = gpath(3); BS = gpath(2)};
+gB = unicode(0x0042) {US = gpath(4); BS = gpath(3)};
+gC = unicode(0x0043) {US = gpath(2); BS = gpath(1)};
+gD = unicode(0x0044) {US = gpath(3); BS = gpath(2)};
+gE = unicode(0x0045) {US = gpath(2); BS = gpath(1)};
+gF = unicode(0x0046) {US = gpath(2); BS = gpath(1)};
+gG = unicode(0x0047) {US = gpath(2); BS = gpath(1)};
+gH = unicode(0x0048) {US = gpath(2); BS = gpath(1)};
+gI = unicode(0x0049) {US = gpath(2); BS = gpath(1)};
+gJ = unicode(0x004A) {US = gpath(2); BS = gpath(1)};
+gK = unicode(0x004B) {US = gpath(2); BS = gpath(1)};
+gL = unicode(0x004C) {US = gpath(2); BS = gpath(1)};
+gM = unicode(0x004D) {US = gpath(2); BS = gpath(1)};
+gN = unicode(0x004E) {US = gpath(2); BS = gpath(1)};
+gO = unicode(0x004F) {US = gpath(3); BS = gpath(2)};
+gP = unicode(0x0050) {US = gpath(3); BS = gpath(2)};
+gQ = unicode(0x0051) {US = gpath(3); BS = gpath(2)};
+gR = unicode(0x0052) {US = gpath(3); BS = gpath(2)};
+gS = unicode(0x0053) {US = gpath(2); BS = gpath(1)};
+gT = unicode(0x0054) {US = gpath(2); BS = gpath(1)};
+gU = unicode(0x0055) {US = gpath(2); BS = gpath(1)};
+gV = unicode(0x0056) {US = gpath(2); BS = gpath(1)};
+gW = unicode(0x0057) {US = gpath(2); BS = gpath(1)};
+gX = unicode(0x0058) {US = gpath(2); BS = gpath(1)};
+gY = unicode(0x0059) {US = gpath(2); BS = gpath(1)};
+gZ = unicode(0x005A) {US = gpath(2); BS = gpath(1)};
+gbracketleft = unicode(0x005B);
+gbackslash = unicode(0x005C);
+gbracketright = unicode(0x005D);
+gasciicircum = unicode(0x005E);
+gunderscore = unicode(0x005F);
+ggrave = unicode(0x0060);
+ga = unicode(0x0061) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+gb = unicode(0x0062) {US = gpath(3); BS = gpath(2)};
+gc = unicode(0x0063) {US = gpath(2); BS = gpath(1)};
+gd = unicode(0x0064) {US = gpath(3); BS = gpath(2); CS = gpath(4)};
+ge = unicode(0x0065) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+gf = unicode(0x0066) {US = gpath(2); BS = gpath(1)};
+gg = unicode(0x0067) {US = gpath(4); BS = gpath(3)};
+gh = unicode(0x0068) {US = gpath(2); BS = gpath(1)};
+gi = unicode(0x0069) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+gj = unicode(0x006A) {US = gpath(3); BS = gpath(2)};
+gk = unicode(0x006B) {US = gpath(2); BS = gpath(1)};
+gl = unicode(0x006C) {US = gpath(2); BS = gpath(1); CS = gpath(3)};
+gm = unicode(0x006D) {US = gpath(2); BS = gpath(1)};
+gn = unicode(0x006E) {US = gpath(2); BS = gpath(1)};
+go = unicode(0x006F) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+gp = unicode(0x0070) {US = gpath(3); BS = gpath(2)};
+gq = unicode(0x0071) {US = gpath(3); BS = gpath(2)};
+gr = unicode(0x0072) {US = gpath(2); BS = gpath(1); CS = gpath(3)};
+gs = unicode(0x0073) {US = gpath(2); BS = gpath(1); CS = gpath(3)};
+gt = unicode(0x0074) {US = gpath(2); BS = gpath(1); CS = gpath(3)};
+gu = unicode(0x0075) {US = gpath(2); BS = gpath(1); NS = gpath(3)};
+gv = unicode(0x0076) {US = gpath(2); BS = gpath(1)};
+gw = unicode(0x0077) {US = gpath(2); BS = gpath(1)};
+gx = unicode(0x0078) {US = gpath(2); BS = gpath(1)};
+gy = unicode(0x0079) {US = gpath(2); BS = gpath(1); NS = gpath(3)};
+gz = unicode(0x007A) {US = gpath(2); BS = gpath(1); CS = gpath(3)};
+gbraceleft = unicode(0x007B);
+gbar = unicode(0x007C);
+gbraceright = unicode(0x007D);
+gasciitilde = unicode(0x007E);
+gCcedilla = unicode(0x00C7) {US = gpath(2); BS = gpath(1)};
+gccedilla = unicode(0x00E7) {US = gpath(2); BS = gpath(1)};
+gdagger = unicode(0x2020);
+gdegree = unicode(0x00B0);
+gcent = unicode(0x00A2);
+gsterling = unicode(0x00A3);
+gsection = unicode(0x00A7);
+gbullet = unicode(0x2022);
+gparagraph = unicode(0x00B6);
+ggermandbls = unicode(0x00DF) {US = gpath(2); BS = gpath(1)};
+gregistered = unicode(0x00AE);
+gcopyright = unicode(0x00A9);
+gtrademark = unicode(0x2122);
+gacute = unicode(0x00B4);
+gdieresis = unicode(0x00A8);
+gnotequal = unicode(0x2260);
+gAE = unicode(0x00C6) {US = gpath(3); BS = gpath(2)};
+gOslash = unicode(0x00D8) {US = gpath(4); BS = gpath(3)};
+ginfinity = unicode(0x221E);
+gplusminus = unicode(0x00B1);
+glessequal = unicode(0x2264);
+ggreaterequal = unicode(0x2265);
+gyen = unicode(0x00A5);
+gmu = unicode(0x00B5);
+gpartialdiff = unicode(0x2202);
+gsummation = unicode(0x2211);
+gproduct = unicode(0x220F);
+gpi = unicode(0x03C0);
+gintegral = unicode(0x222B);
+gordfeminine = unicode(0x00AA);
+gordmasculine = unicode(0x00BA);
+gOmega = unicode(0x03A9);
+gae = unicode(0x00E6) {US = gpath(4); BS = gpath(3); NS = gpath(5)};
+goslash = unicode(0x00F8) {US = gpath(4); BS = gpath(3); NS = gpath(5)};
+gquestiondown = unicode(0x00BF);
+gexclamdown = unicode(0x00A1);
+glogicalnot = unicode(0x00AC);
+gradical = unicode(0x221A);
+gapproxequal = unicode(0x2248);
+gDelta = unicode(0x2206);
+gguillemotleft = unicode(0x00AB);
+gguillemotright = unicode(0x00BB);
+gellipsis = unicode(0x2026);
+gspace1 = unicode(0x00A0);
+gOE = unicode(0x0152) {US = gpath(3); BS = gpath(2)};
+goe = unicode(0x0153) {US = gpath(4); BS = gpath(3); NS = gpath(5)};
+gendash = unicode(0x2013);
+gemdash = unicode(0x2014);
+gquotedblleft = unicode(0x201C);
+gquotedblright = unicode(0x201D);
+gquoteleft = unicode(0x2018);
+gquoteright = unicode(0x2019);
+gdivide = unicode(0x00F7);
+glozenge = unicode(0x25CA);
+gfraction = unicode(0x2044);
+gcurrency = unicode(0x00A4);
+gguilsinglleft = unicode(0x2039);
+gguilsinglright = unicode(0x203A);
+gfi = unicode(0xFB01);
+gfl = unicode(0xFB02);
+gdaggerdbl = unicode(0x2021);
+gperiodcentered = unicode(0x00B7);
+gquotesinglbase = unicode(0x201A);
+gquotedblbase = unicode(0x201E);
+gperthousand = unicode(0x2030);
+gdotlessi = unicode(0x0131) {US = gpath(2); BS = gpath(1); NS = gpath(3)};
+gcircumflex = unicode(0x02C6);
+gtilde = unicode(0x02DC);
+gmacron = unicode(0x00AF);
+gbreve = unicode(0x02D8);
+gdotaccent = unicode(0x02D9);
+gring = unicode(0x02DA);
+gcedilla = unicode(0x00B8);
+ghungarumlaut = unicode(0x02DD);
+gogonek = unicode(0x02DB);
+gcaron = unicode(0x02C7);
+g0250 = unicode(0x0250) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+g0251 = unicode(0x0251) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+g0252 = unicode(0x0252) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+g0253 = unicode(0x0253) {US = gpath(3); BS = gpath(2)};
+g0299 = unicode(0x0299) {US = gpath(4); BS = gpath(3)};
+gbeta = unicode(0x03B2) {US = gpath(2); BS = gpath(1)};
+g0254 = unicode(0x0254) {US = gpath(2); BS = gpath(1); NS = gpath(3)};
+g0255 = unicode(0x0255) {US = gpath(3); BS = gpath(2)};
+g0257 = unicode(0x0257) {US = gpath(3); BS = gpath(2)};
+g0256 = unicode(0x0256) {US = gpath(3); BS = gpath(2)};
+g0259 = unicode(0x0259) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+g0258 = unicode(0x0258) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+g025B = unicode(0x025B) {US = gpath(2); BS = gpath(1); NS = gpath(3)};
+g025C = unicode(0x025C) {US = gpath(2); BS = gpath(1); NS = gpath(3)};
+g025E = unicode(0x025E) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+gflorin = unicode(0x0192) {US = gpath(2); BS = gpath(1)};
+g0284 = unicode(0x0284) {US = gpath(2); BS = gpath(1)};
+g0261 = unicode(0x0261) {US = gpath(3); BS = gpath(2)};
+g0260 = unicode(0x0260) {US = gpath(3); BS = gpath(2)};
+g0262 = unicode(0x0262) {US = gpath(2); BS = gpath(1)};
+g029B = unicode(0x029B) {US = gpath(2); BS = gpath(1)};
+g02B0 = unicode(0x02B0);
+g0266 = unicode(0x0266) {US = gpath(2); BS = gpath(1)};
+g0267 = unicode(0x0267) {US = gpath(2); BS = gpath(1)};
+ghbar = unicode(0x0127) {US = gpath(2); BS = gpath(1)};
+g0265 = unicode(0x0265) {US = gpath(2); BS = gpath(1)};
+g029C = unicode(0x029C) {US = gpath(2); BS = gpath(1)};
+g0268 = unicode(0x0268) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+gtbd4 = glyphid(214) {US = gpath(2); BS = gpath(1)};
+g026A = unicode(0x026A) {US = gpath(2); BS = gpath(1); NS = gpath(3)};
+g02B2 = unicode(0x02B2);
+gtbd5 = glyphid(217) {US = gpath(2); BS = gpath(1)};
+g025F = unicode(0x025F) {US = gpath(2); BS = gpath(1)};
+g029D = unicode(0x029D) {US = gpath(4); BS = gpath(3)};
+g029E = unicode(0x029E) {US = gpath(2); BS = gpath(1)};
+g02E1 = unicode(0x02E1);
+g026D = unicode(0x026D) {US = gpath(2); BS = gpath(1)};
+g026C = unicode(0x026C) {US = gpath(3); BS = gpath(2)};
+g026B = unicode(0x026B) {US = gpath(2); BS = gpath(1)};
+g026E = unicode(0x026E) {US = gpath(2); BS = gpath(1)};
+g029F = unicode(0x029F) {US = gpath(2); BS = gpath(1)};
+gtbd1 = glyphid(227);
+g0271 = unicode(0x0271) {US = gpath(2); BS = gpath(1)};
+g026F = unicode(0x026F) {US = gpath(2); BS = gpath(1)};
+g0270 = unicode(0x0270) {US = gpath(2); BS = gpath(1)};
+gnsuperior = unicode(0x207F);
+geng = unicode(0x014B) {US = gpath(2); BS = gpath(1)};
+gtbd2 = glyphid(233);
+g0273 = unicode(0x0273) {US = gpath(2); BS = gpath(1)};
+g0272 = unicode(0x0272) {US = gpath(2); BS = gpath(1)};
+gtbd3 = glyphid(236);
+g0274 = unicode(0x0274) {US = gpath(2); BS = gpath(1)};
+g0275 = unicode(0x0275) {US = gpath(4); BS = gpath(3); NS = gpath(5)};
+g0278 = unicode(0x0278) {US = gpath(4); BS = gpath(3)};
+gtheta = unicode(0x03B8) {US = gpath(4); BS = gpath(3)};
+g0276 = unicode(0x0276) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+g0298 = unicode(0x0298) {US = gpath(4); BS = gpath(3)};
+g0279 = unicode(0x0279) {US = gpath(2); BS = gpath(1)};
+g027A = unicode(0x027A) {US = gpath(2); BS = gpath(1)};
+g027D = unicode(0x027D) {US = gpath(2); BS = gpath(1)};
+g027E = unicode(0x027E) {US = gpath(2); BS = gpath(1); CS = gpath(3)};
+g027B = unicode(0x027B) {US = gpath(2); BS = gpath(1)};
+g0280 = unicode(0x0280) {US = gpath(3); BS = gpath(2)};
+g0281 = unicode(0x0281) {US = gpath(3); BS = gpath(2)};
+g0282 = unicode(0x0282) {US = gpath(2); BS = gpath(1)};
+g0283 = unicode(0x0283) {US = gpath(2); BS = gpath(1); CS = gpath(3)};
+g0288 = unicode(0x0288) {US = gpath(2); BS = gpath(1)};
+g0289 = unicode(0x0289) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+g028B = unicode(0x028B) {US = gpath(2); BS = gpath(1)};
+g028A = unicode(0x028A) {US = gpath(2); BS = gpath(1); NS = gpath(3)};
+g028C = unicode(0x028C) {US = gpath(2); BS = gpath(1); NS = gpath(3)};
+g0263 = unicode(0x0263) {US = gpath(3); BS = gpath(2)};
+g02E0 = unicode(0x02E0);
+g0264 = unicode(0x0264) {US = gpath(3); BS = gpath(2); NS = gpath(4)};
+g02B7 = unicode(0x02B7);
+g028D = unicode(0x028D) {US = gpath(2); BS = gpath(1)};
+g02E3 = unicode(0x02E3);
+gchi = unicode(0x03C7) {US = gpath(2); BS = gpath(1)};
+g028E = unicode(0x028E) {US = gpath(2); BS = gpath(1)};
+g028F = unicode(0x028F) {US = gpath(2); BS = gpath(1)};
+g0291 = unicode(0x0291) {US = gpath(3); BS = gpath(2)};
+g0290 = unicode(0x0290) {US = gpath(2); BS = gpath(1)};
+g0292 = unicode(0x0292) {US = gpath(2); BS = gpath(1); CS = gpath(3)};
+gzerosuperior = unicode(0x2070);
+gfoursuperior = unicode(0x2074);
+gfivesuperior = unicode(0x2075);
+gsixsuperior = unicode(0x2076);
+gsevensuperior = unicode(0x2077);
+geightsuperior = unicode(0x2078);
+gninesuperior = unicode(0x2079);
+g0294 = unicode(0x0294) {US = gpath(2); BS = gpath(1)};
+g02A1 = unicode(0x02A1) {US = gpath(2); BS = gpath(1)};
+g0295 = unicode(0x0295) {US = gpath(2); BS = gpath(1)};
+g02E4 = unicode(0x02E4);
+g02A2 = unicode(0x02A2) {US = gpath(2); BS = gpath(1)};
+g02D1 = unicode(0x02D1);
+g02D0 = unicode(0x02D0);
+g0361 = unicode(0x0361) {US = gpath(1); UM = gpath(2); breakweight = -5};
+g203F = unicode(0x203F);
+g031A = unicode(0x031A);
+g207B = unicode(0x207B);
+g031C = unicode(0x031C) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g0339 = unicode(0x0339) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g031E = unicode(0x031E) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g031D = unicode(0x031D) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g0318 = unicode(0x0318) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g0319 = unicode(0x0319) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g0320 = unicode(0x0320) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g0304 = unicode(0x0304) {US = gpath(1); UM = gpath(2); breakweight = -5};
+g0330 = unicode(0x0330) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g0334 = unicode(0x0334) {CM = gpath(1); breakweight = -5};
+gtildecomb = unicode(0x0303) {US = gpath(1); UM = gpath(2); breakweight = -5};
+g0317 = unicode(0x0317) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+gacutecomb = unicode(0x0301) {US = gpath(1); UM = gpath(2); breakweight = -5};
+g030B = unicode(0x030B) {US = gpath(2); UM = gpath(3); breakweight = -5};
+g0316 = unicode(0x0316) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+ggravecomb = unicode(0x0300) {US = gpath(1); UM = gpath(2); breakweight = -5};
+g030F = unicode(0x030F) {US = gpath(2); UM = gpath(3); breakweight = -5};
+g0324 = unicode(0x0324) {BS = gpath(2); BM = gpath(3); breakweight = -5};
+g0308 = unicode(0x0308) {US = gpath(2); UM = gpath(3); breakweight = -5};
+g0302 = unicode(0x0302) {US = gpath(1); UM = gpath(2); breakweight = -5};
+g032C = unicode(0x032C) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g030C = unicode(0x030C) {US = gpath(1); UM = gpath(2); breakweight = -5};
+g0306 = unicode(0x0306) {US = gpath(1); UM = gpath(2); breakweight = -5};
+g032F = unicode(0x032F) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g033C = unicode(0x033C) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g0325 = unicode(0x0325) {BS = gpath(2); BM = gpath(3); breakweight = -5};
+g030A = unicode(0x030A) {US = gpath(2); UM = gpath(3); breakweight = -5};
+g0329 = unicode(0x0329) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g031F = unicode(0x031F) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g033D = unicode(0x033D) {US = gpath(1); UM = gpath(2); breakweight = -5};
+g02DE = unicode(0x02DE) {NM = gpath(1); breakweight = -5};
+g032A = unicode(0x032A) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g033A = unicode(0x033A) {BS = gpath(1); BM = gpath(2); breakweight = -5};
+g033B = unicode(0x033B) {BS = gpath(2); BM = gpath(3); breakweight = -5};
+gafii57929 = unicode(0x02BC);
+g01C3 = unicode(0x01C3) {US = gpath(3); BS = gpath(2)};
+ghyphen1 = unicode(0x00AD);
+garrowdown = unicode(0x2193);
+garrowup = unicode(0x2191);
+g2198 = unicode(0x2198);
+g2197 = unicode(0x2197);
+g02CC = unicode(0x02CC);
+g02C8 = unicode(0x02C8);
+g01C0 = unicode(0x01C0) {US = gpath(2); BS = gpath(1)};
+g01C2 = unicode(0x01C2) {US = gpath(2); BS = gpath(1)};
+g01C1 = unicode(0x01C1) {US = gpath(3); BS = gpath(2)};
+g02D6 = unicode(0x02D6);
+g02D7 = unicode(0x02D7);
+g2016 = unicode(0x2016);
+g02E502E9 = glyphid(336);
+g02E502E8 = glyphid(337);
+g02E502E7 = glyphid(338);
+g02E502E6 = glyphid(339);
+g02E5 = unicode(0x02E5);
+g02E502E902E9 = glyphid(341);
+g02E502E902E8 = glyphid(342);
+g02E502E902E7 = glyphid(343);
+g02E502E902E6 = glyphid(344);
+g02E502E902E5 = glyphid(345);
+g02E502E802E9 = glyphid(346);
+g02E502E802E8 = glyphid(347);
+g02E502E802E7 = glyphid(348);
+g02E502E802E6 = glyphid(349);
+g02E502E802E5 = glyphid(350);
+g02E602E9 = glyphid(351);
+g02E602E8 = glyphid(352);
+g02E602E7 = glyphid(353);
+g02E6 = unicode(0x02E6);
+g02E602E5 = glyphid(355);
+g02E602E902E9 = glyphid(356);
+g02E602E902E8 = glyphid(357);
+g02E602E902E7 = glyphid(358);
+g02E602E902E6 = glyphid(359);
+g02E602E902E5 = glyphid(360);
+g02E602E802E9 = glyphid(361);
+g02E602E802E8 = glyphid(362);
+g02E602E802E7 = glyphid(363);
+g02E602E802E6 = glyphid(364);
+g02E602E802E5 = glyphid(365);
+g02E702E9 = glyphid(366);
+g02E702E8 = glyphid(367);
+g02E7 = unicode(0x02E7);
+g02E702E6 = glyphid(369);
+g02E702E5 = glyphid(370);
+g02E702E902E9 = glyphid(371);
+g02E702E902E8 = glyphid(372);
+g02E702E902E7 = glyphid(373);
+g02E702E902E6 = glyphid(374);
+g02E702E902E5 = glyphid(375);
+g02E702E802E8 = glyphid(376);
+g02E702E802E7 = glyphid(377);
+g02E702E802E6 = glyphid(378);
+g02E702E802E5 = glyphid(379);
+g02E802E9 = glyphid(380);
+g02E8 = unicode(0x02E8);
+g02E802E7 = glyphid(382);
+g02E802E6 = glyphid(383);
+g02E802E5 = glyphid(384);
+g02E802E902E9 = glyphid(385);
+g02E802E902E8 = glyphid(386);
+g02E802E902E7 = glyphid(387);
+g02E802E902E6 = glyphid(388);
+g02E802E902E5 = glyphid(389);
+g02E802E802E9 = glyphid(390);
+g02E802E802E7 = glyphid(391);
+g02E802E802E6 = glyphid(392);
+g02E802E802E5 = glyphid(393);
+g02E9 = unicode(0x02E9);
+g02E902E8 = glyphid(395);
+g02E902E7 = glyphid(396);
+g02E902E6 = glyphid(397);
+g02E902E5 = glyphid(398);
+g02E902E902E8 = glyphid(399);
+g02E902E902E7 = glyphid(400);
+g02E902E902E6 = glyphid(401);
+g02E902E902E5 = glyphid(402);
+g02E902E802E9 = glyphid(403);
+g02E902E802E8 = glyphid(404);
+g02E902E802E6 = glyphid(405);
+g02E902E802E5 = glyphid(406);
+g02E502E702E8 = glyphid(407);
+g02E502E702E7 = glyphid(408);
+g02E502E702E6 = glyphid(409);
+g02E502E702E5 = glyphid(410);
+g02E502E602E9 = glyphid(411);
+g02E502E602E8 = glyphid(412);
+g02E502E602E6 = glyphid(413);
+g02E502E602E5 = glyphid(414);
+g02E502E502E9 = glyphid(415);
+g02E502E502E8 = glyphid(416);
+g02E502E502E7 = glyphid(417);
+g02E502E502E6 = glyphid(418);
+g02E602E702E9 = glyphid(419);
+g02E602E702E7 = glyphid(420);
+g02E602E702E6 = glyphid(421);
+g02E602E702E5 = glyphid(422);
+g02E602E602E9 = glyphid(423);
+g02E602E602E8 = glyphid(424);
+g02E602E602E7 = glyphid(425);
+g02E602E602E5 = glyphid(426);
+g02E602E502E9 = glyphid(427);
+g02E602E502E8 = glyphid(428);
+g02E602E502E7 = glyphid(429);
+g02E602E502E6 = glyphid(430);
+g02E602E502E5 = glyphid(431);
+g02E702E702E9 = glyphid(432);
+g02E702E702E8 = glyphid(433);
+g02E702E702E6 = glyphid(434);
+g02E702E702E5 = glyphid(435);
+g02E702E602E9 = glyphid(436);
+g02E702E602E8 = glyphid(437);
+g02E702E602E7 = glyphid(438);
+g02E702E602E6 = glyphid(439);
+g02E702E502E9 = glyphid(440);
+g02E702E502E8 = glyphid(441);
+g02E702E502E7 = glyphid(442);
+g02E702E502E6 = glyphid(443);
+g02E702E502E5 = glyphid(444);
+g02E802E702E9 = glyphid(445);
+g02E802E702E8 = glyphid(446);
+g02E802E702E7 = glyphid(447);
+g02E802E702E5 = glyphid(448);
+g02E802E602E9 = glyphid(449);
+g02E802E602E8 = glyphid(450);
+g02E802E602E7 = glyphid(451);
+g02E802E602E6 = glyphid(452);
+g02E802E602E5 = glyphid(453);
+g02E802E502E9 = glyphid(454);
+g02E802E502E8 = glyphid(455);
+g02E802E502E7 = glyphid(456);
+g02E802E502E6 = glyphid(457);
+g02E802E502E5 = glyphid(458);
+g02E902E702E9 = glyphid(459);
+g02E902E702E8 = glyphid(460);
+g02E902E702E7 = glyphid(461);
+g02E902E702E6 = glyphid(462);
+g02E902E602E9 = glyphid(463);
+g02E902E602E8 = glyphid(464);
+g02E902E602E7 = glyphid(465);
+g02E902E602E6 = glyphid(466);
+g02E902E602E5 = glyphid(467);
+g02E902E502E9 = glyphid(468);
+g02E902E502E8 = glyphid(469);
+g02E902E502E7 = glyphid(470);
+g02E902E502E6 = glyphid(471);
+g02E902E502E5 = glyphid(472);
+gEuro = unicode(0x20AC);
+gAacute = unicode(0x00C1) {US = gpath(5); BS = gpath(2)};
+gaacute = unicode(0x00E1) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gAcircumflex = unicode(0x00C2) {US = gpath(5); BS = gpath(2)};
+gacircumflex = unicode(0x00E2) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gAdieresis = unicode(0x00C4) {US = gpath(6); BS = gpath(2)};
+gadieresis = unicode(0x00E4) {US = gpath(7); BS = gpath(2); NS = gpath(4)};
+gAgrave = unicode(0x00C0) {US = gpath(5); BS = gpath(2)};
+gagrave = unicode(0x00E0) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gAring = unicode(0x00C5) {US = gpath(6); BS = gpath(2)};
+garing = unicode(0x00E5) {US = gpath(7); BS = gpath(2); NS = gpath(4)};
+gAtilde = unicode(0x00C3) {US = gpath(5); BS = gpath(2)};
+gatilde = unicode(0x00E3) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gEacute = unicode(0x00C9) {US = gpath(4); BS = gpath(1)};
+geacute = unicode(0x00E9) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gEcircumflex = unicode(0x00CA) {US = gpath(4); BS = gpath(1)};
+gecircumflex = unicode(0x00EA) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gEdieresis = unicode(0x00CB) {US = gpath(5); BS = gpath(1)};
+gedieresis = unicode(0x00EB) {US = gpath(7); BS = gpath(2); NS = gpath(4)};
+gEgrave = unicode(0x00C8) {US = gpath(4); BS = gpath(1)};
+gegrave = unicode(0x00E8) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gIacute = unicode(0x00CD) {US = gpath(4); BS = gpath(1)};
+giacute = unicode(0x00ED) {US = gpath(5); BS = gpath(1); NS = gpath(3)};
+gIcircumflex = unicode(0x00CE) {US = gpath(4); BS = gpath(1)};
+gicircumflex = unicode(0x00EE) {US = gpath(5); BS = gpath(1); NS = gpath(3)};
+gIdieresis = unicode(0x00CF) {US = gpath(5); BS = gpath(1)};
+gidieresis = unicode(0x00EF) {US = gpath(6); BS = gpath(1); NS = gpath(3)};
+gIgrave = unicode(0x00CC) {US = gpath(4); BS = gpath(1)};
+gigrave = unicode(0x00EC) {US = gpath(5); BS = gpath(1); NS = gpath(3)};
+gNtilde = unicode(0x00D1) {US = gpath(4); BS = gpath(1)};
+gntilde = unicode(0x00F1) {US = gpath(4); BS = gpath(1)};
+gOacute = unicode(0x00D3) {US = gpath(5); BS = gpath(2)};
+goacute = unicode(0x00F3) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gOcircumflex = unicode(0x00D4) {US = gpath(5); BS = gpath(2)};
+gocircumflex = unicode(0x00F4) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gOdieresis = unicode(0x00D6) {US = gpath(6); BS = gpath(2)};
+godieresis = unicode(0x00F6) {US = gpath(7); BS = gpath(2); NS = gpath(4)};
+gOgrave = unicode(0x00D2) {US = gpath(5); BS = gpath(2)};
+gograve = unicode(0x00F2) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gOtilde = unicode(0x00D5) {US = gpath(5); BS = gpath(2)};
+gotilde = unicode(0x00F5) {US = gpath(6); BS = gpath(2); NS = gpath(4)};
+gScaron = unicode(0x0160) {US = gpath(4); BS = gpath(1)};
+gscaron = unicode(0x0161) {US = gpath(5); BS = gpath(1); CS = gpath(3)};
+gUacute = unicode(0x00DA) {US = gpath(4); BS = gpath(1)};
+guacute = unicode(0x00FA) {US = gpath(5); BS = gpath(1); NS = gpath(3)};
+gUcircumflex = unicode(0x00DB) {US = gpath(4); BS = gpath(1)};
+gucircumflex = unicode(0x00FB) {US = gpath(5); BS = gpath(1); NS = gpath(3)};
+gUdieresis = unicode(0x00DC) {US = gpath(5); BS = gpath(1)};
+gudieresis = unicode(0x00FC) {US = gpath(6); BS = gpath(1); NS = gpath(3)};
+gUgrave = unicode(0x00D9) {US = gpath(4); BS = gpath(1)};
+gugrave = unicode(0x00F9) {US = gpath(5); BS = gpath(1); NS = gpath(3)};
+gYacute = unicode(0x00DD) {US = gpath(4); BS = gpath(1)};
+gyacute = unicode(0x00FD) {US = gpath(5); BS = gpath(1); NS = gpath(3)};
+gydieresis = unicode(0x00FF) {US = gpath(6); BS = gpath(1); NS = gpath(3)};
+gYdieresis = unicode(0x0178) {US = gpath(5); BS = gpath(1)};
+gZcaron = unicode(0x017D) {US = gpath(4); BS = gpath(1)};
+gzcaron = unicode(0x017E) {US = gpath(5); BS = gpath(1); CS = gpath(3)};
+
+/* Classes */
+cBDia = (g031C, g0339, g031E, g031D, g0318, g0319, g0320, g0330,
+	g0317, g0316, g0324, g032C, g032F, g033C, g0325, g0329,
+	g031F, g032A, g033A, g033B);
+
+cBase = (gEth, geth, gThorn, gthorn, gA, gB, gC, gD,
+	gE, gF, gG, gH, gI, gJ, gK, gL,
+	gM, gN, gO, gP, gQ, gR, gS, gT,
+	gU, gV, gW, gX, gY, gZ, ga, gb,
+	gc, gd, ge, gf, gg, gh, gi, gj,
+	gk, gl, gm, gn, go, gp, gq, gr,
+	gs, gt, gu, gv, gw, gx, gy, gz,
+	gCcedilla, gccedilla, ggermandbls, gAE, gOslash, gae, goslash, gOE,
+	goe, gdotlessi, g0250, g0251, g0252, g0253, g0299, gbeta,
+	g0254, g0255, g0257, g0256, g0259, g0258, g025B, g025C,
+	g025E, gflorin, g0284, g0261, g0260, g0262, g029B, g0266,
+	g0267, ghbar, g0265, g029C, g0268, gtbd4, g026A, gtbd5,
+	g025F, g029D, g029E, g026D, g026C, g026B, g026E, g029F,
+	g0271, g026F, g0270, geng, g0273, g0272, g0274, g0275,
+	g0278, gtheta, g0276, g0298, g0279, g027A, g027D, g027E,
+	g027B, g0280, g0281, g0282, g0283, g0288, g0289, g028B,
+	g028A, g028C, g0263, g0264, g028D, gchi, g028E, g028F,
+	g0291, g0290, g0292, g0294, g02A1, g0295, g02A2, g01C3,
+	g01C0, g01C2, g01C1, gAacute, gaacute, gAcircumflex, gacircumflex, gAdieresis,
+	gadieresis, gAgrave, gagrave, gAring, garing, gAtilde, gatilde, gEacute,
+	geacute, gEcircumflex, gecircumflex, gEdieresis, gedieresis, gEgrave, gegrave, gIacute,
+	giacute, gIcircumflex, gicircumflex, gIdieresis, gidieresis, gIgrave, gigrave, gNtilde,
+	gntilde, gOacute, goacute, gOcircumflex, gocircumflex, gOdieresis, godieresis, gOgrave,
+	gograve, gOtilde, gotilde, gScaron, gscaron, gUacute, guacute, gUcircumflex,
+	gucircumflex, gUdieresis, gudieresis, gUgrave, gugrave, gYacute, gyacute, gydieresis,
+	gYdieresis, gZcaron, gzcaron);
+
+cDia = (g0361, g031C, g0339, g031E, g031D, g0318, g0319, g0320,
+	g0304, g0330, g0334, gtildecomb, g0317, gacutecomb, g030B, g0316,
+	ggravecomb, g030F, g0324, g0308, g0302, g032C, g030C, g0306,
+	g032F, g033C, g0325, g030A, g0329, g031F, g033D, g02DE,
+	g032A, g033A, g033B);
+
+cOther = (gspace, gonehalf, gonequarter, gonesuperior, gthreequarters, gthreesuperior, gtwosuperior, gbrokenbar,
+	gmultiply, gexclam, gquotedbl, gnumbersign, gdollar, gpercent, gampersand, gquotesingle,
+	gparenleft, gparenright, gasterisk, gplus, gcomma, ghyphen, gperiod, gslash,
+	gzero, gone, gtwo, gthree, gfour, gfive, gsix, gseven,
+	geight, gnine, gcolon, gsemicolon, gless, gequal, ggreater, gquestion,
+	gat, gbracketleft, gbackslash, gbracketright, gasciicircum, gunderscore, ggrave, gbraceleft,
+	gbar, gbraceright, gasciitilde, gdagger, gdegree, gcent, gsterling, gsection,
+	gbullet, gparagraph, gregistered, gcopyright, gtrademark, gacute, gdieresis, gnotequal,
+	ginfinity, gplusminus, glessequal, ggreaterequal, gyen, gmu, gpartialdiff, gsummation,
+	gproduct, gpi, gintegral, gordfeminine, gordmasculine, gOmega, gquestiondown, gexclamdown,
+	glogicalnot, gradical, gapproxequal, gDelta, gguillemotleft, gguillemotright, gellipsis, gspace1,
+	gendash, gemdash, gquotedblleft, gquotedblright, gquoteleft, gquoteright, gdivide, glozenge,
+	gfraction, gcurrency, gguilsinglleft, gguilsinglright, gfi, gfl, gdaggerdbl, gperiodcentered,
+	gquotesinglbase, gquotedblbase, gperthousand, gcircumflex, gtilde, gmacron, gbreve, gdotaccent,
+	gring, gcedilla, ghungarumlaut, gogonek, gcaron, g02B0, g02B2, g02E1,
+	gtbd1, gnsuperior, gtbd2, gtbd3, g02E0, g02B7, g02E3, gzerosuperior,
+	gfoursuperior, gfivesuperior, gsixsuperior, gsevensuperior, geightsuperior, gninesuperior, g02E4, g02D1,
+	g02D0, g203F, g031A, g207B, gafii57929, ghyphen1, garrowdown, garrowup,
+	g2198, g2197, g02CC, g02C8, g02D6, g02D7, g2016, g02E502E9,
+	g02E502E8, g02E502E7, g02E502E6, g02E5, g02E502E902E9, g02E502E902E8, g02E502E902E7, g02E502E902E6,
+	g02E502E902E5, g02E502E802E9, g02E502E802E8, g02E502E802E7, g02E502E802E6, g02E502E802E5, g02E602E9, g02E602E8,
+	g02E602E7, g02E6, g02E602E5, g02E602E902E9, g02E602E902E8, g02E602E902E7, g02E602E902E6, g02E602E902E5,
+	g02E602E802E9, g02E602E802E8, g02E602E802E7, g02E602E802E6, g02E602E802E5, g02E702E9, g02E702E8, g02E7,
+	g02E702E6, g02E702E5, g02E702E902E9, g02E702E902E8, g02E702E902E7, g02E702E902E6, g02E702E902E5, g02E702E802E8,
+	g02E702E802E7, g02E702E802E6, g02E702E802E5, g02E802E9, g02E8, g02E802E7, g02E802E6, g02E802E5,
+	g02E802E902E9, g02E802E902E8, g02E802E902E7, g02E802E902E6, g02E802E902E5, g02E802E802E9, g02E802E802E7, g02E802E802E6,
+	g02E802E802E5, g02E9, g02E902E8, g02E902E7, g02E902E6, g02E902E5, g02E902E902E8, g02E902E902E7,
+	g02E902E902E6, g02E902E902E5, g02E902E802E9, g02E902E802E8, g02E902E802E6, g02E902E802E5, g02E502E702E8, g02E502E702E7,
+	g02E502E702E6, g02E502E702E5, g02E502E602E9, g02E502E602E8, g02E502E602E6, g02E502E602E5, g02E502E502E9, g02E502E502E8,
+	g02E502E502E7, g02E502E502E6, g02E602E702E9, g02E602E702E7, g02E602E702E6, g02E602E702E5, g02E602E602E9, g02E602E602E8,
+	g02E602E602E7, g02E602E602E5, g02E602E502E9, g02E602E502E8, g02E602E502E7, g02E602E502E6, g02E602E502E5, g02E702E702E9,
+	g02E702E702E8, g02E702E702E6, g02E702E702E5, g02E702E602E9, g02E702E602E8, g02E702E602E7, g02E702E602E6, g02E702E502E9,
+	g02E702E502E8, g02E702E502E7, g02E702E502E6, g02E702E502E5, g02E802E702E9, g02E802E702E8, g02E802E702E7, g02E802E702E5,
+	g02E802E602E9, g02E802E602E8, g02E802E602E7, g02E802E602E6, g02E802E602E5, g02E802E502E9, g02E802E502E8, g02E802E502E7,
+	g02E802E502E6, g02E802E502E5, g02E902E702E9, g02E902E702E8, g02E902E702E7, g02E902E702E6, g02E902E602E9, g02E902E602E8,
+	g02E902E602E7, g02E902E602E6, g02E902E602E5, g02E902E502E9, g02E902E502E8, g02E902E502E7, g02E902E502E6, g02E902E502E5,
+	gEuro);
+
+cPitch = (g02E9, g02E8, g02E7, g02E6, g02E5);
+
+cPitch0 = (g02E9, g02E902E802E9, g02E902E702E9, g02E902E602E9, g02E902E502E9, g02E802E9, g02E802E902E9, g02E802E702E9,
+	g02E802E602E9, g02E802E502E9, g02E702E9, g02E702E902E9, g02E702E9, g02E702E602E9, g02E702E502E9, g02E602E9,
+	g02E602E902E9, g02E602E802E9, g02E602E702E9, g02E602E502E9, g02E502E9, g02E502E902E9, g02E502E802E9, g02E502E9,
+	g02E502E602E9);
+
+cPitch1 = (g02E902E8, g02E902E802E8, g02E902E702E8, g02E902E602E8, g02E902E502E8, g02E8, g02E802E902E8, g02E802E702E8,
+	g02E802E602E8, g02E802E502E8, g02E702E8, g02E702E902E8, g02E702E802E8, g02E702E602E8, g02E702E502E8, g02E602E8,
+	g02E602E902E8, g02E602E802E8, g02E602E8, g02E602E502E8, g02E502E8, g02E502E902E8, g02E502E802E8, g02E502E702E8,
+	g02E502E602E8);
+
+cPitch2 = (g02E902E7, g02E902E7, g02E902E702E7, g02E902E602E7, g02E902E502E7, g02E802E7, g02E802E902E7, g02E802E702E7,
+	g02E802E602E7, g02E802E502E7, g02E7, g02E702E902E7, g02E702E802E7, g02E702E602E7, g02E702E502E7, g02E602E7,
+	g02E602E902E7, g02E602E802E7, g02E602E702E7, g02E602E502E7, g02E502E7, g02E502E902E7, g02E502E802E7, g02E502E702E7,
+	g02E502E7);
+
+cPitch3 = (g02E902E6, g02E902E802E6, g02E902E702E6, g02E902E602E6, g02E902E502E6, g02E802E6, g02E802E902E6, g02E802E6,
+	g02E802E602E6, g02E802E502E6, g02E702E6, g02E702E902E6, g02E702E802E6, g02E702E602E6, g02E702E502E6, g02E6,
+	g02E602E902E6, g02E602E802E6, g02E602E702E6, g02E602E502E6, g02E502E6, g02E502E902E6, g02E502E802E6, g02E502E702E6,
+	g02E502E602E6);
+
+cPitch4 = (g02E902E5, g02E902E802E5, g02E902E5, g02E902E602E5, g02E902E502E5, g02E802E5, g02E802E902E5, g02E802E702E5,
+	g02E802E602E5, g02E802E502E5, g02E702E5, g02E702E902E5, g02E702E802E5, g02E702E5, g02E702E502E5, g02E602E5,
+	g02E602E902E5, g02E602E802E5, g02E602E702E5, g02E602E502E5, g02E5, g02E502E902E5, g02E502E802E5, g02E502E702E5,
+	g02E502E602E5);
+
+cPitchLong0 = (g02E9, g02E802E802E9, g02E702E702E9, g02E602E602E9, g02E502E502E9);
+
+cPitchLong1 = (g02E902E902E8, g02E8, g02E702E702E8, g02E602E602E8, g02E502E502E8);
+
+cPitchLong2 = (g02E902E902E7, g02E802E802E7, g02E7, g02E602E602E7, g02E502E502E7);
+
+cPitchLong3 = (g02E902E902E6, g02E802E802E6, g02E702E702E6, g02E6, g02E502E502E6);
+
+cPitchLong4 = (g02E902E902E5, g02E802E802E5, g02E702E702E5, g02E602E602E5, g02E5);
+
+cPitches = (g02E9, g02E902E8, g02E902E7, g02E902E6, g02E902E5, g02E8, g02E802E9, g02E802E7,
+	g02E802E6, g02E802E5, g02E7, g02E702E9, g02E702E8, g02E702E6, g02E702E5, g02E6,
+	g02E602E9, g02E602E8, g02E602E7, g02E602E5, g02E5, g02E502E9, g02E502E8, g02E502E7,
+	g02E502E6);
+
+cTakesBDia = (gEth, geth, gThorn, gthorn, gA, gB, gC, gD,
+	gE, gF, gG, gH, gI, gJ, gK, gL,
+	gM, gN, gO, gP, gQ, gR, gS, gT,
+	gU, gV, gW, gX, gY, gZ, ga, gb,
+	gc, gd, ge, gf, gg, gh, gi, gj,
+	gk, gl, gm, gn, go, gp, gq, gr,
+	gs, gt, gu, gv, gw, gx, gy, gz,
+	gCcedilla, gccedilla, ggermandbls, gAE, gOslash, gae, goslash, gOE,
+	goe, gdotlessi, g0250, g0251, g0252, g0253, g0299, gbeta,
+	g0254, g0255, g0257, g0256, g0259, g0258, g025B, g025C,
+	g025E, gflorin, g0284, g0261, g0260, g0262, g029B, g0266,
+	g0267, ghbar, g0265, g029C, g0268, gtbd4, g026A, gtbd5,
+	g025F, g029D, g029E, g026D, g026C, g026B, g026E, g029F,
+	g0271, g026F, g0270, geng, g0273, g0272, g0274, g0275,
+	g0278, gtheta, g0276, g0298, g0279, g027A, g027D, g027E,
+	g027B, g0280, g0281, g0282, g0283, g0288, g0289, g028B,
+	g028A, g028C, g0263, g0264, g028D, gchi, g028E, g028F,
+	g0291, g0290, g0292, g0294, g02A1, g0295, g02A2, g031C,
+	g0339, g031E, g031D, g0318, g0319, g0320, g0330, g0317,
+	g0316, g0324, g032C, g032F, g033C, g0325, g0329, g031F,
+	g032A, g033A, g033B, g01C3, g01C0, g01C2, g01C1, gAacute,
+	gaacute, gAcircumflex, gacircumflex, gAdieresis, gadieresis, gAgrave, gagrave, gAring,
+	garing, gAtilde, gatilde, gEacute, geacute, gEcircumflex, gecircumflex, gEdieresis,
+	gedieresis, gEgrave, gegrave, gIacute, giacute, gIcircumflex, gicircumflex, gIdieresis,
+	gidieresis, gIgrave, gigrave, gNtilde, gntilde, gOacute, goacute, gOcircumflex,
+	gocircumflex, gOdieresis, godieresis, gOgrave, gograve, gOtilde, gotilde, gScaron,
+	gscaron, gUacute, guacute, gUcircumflex, gucircumflex, gUdieresis, gudieresis, gUgrave,
+	gugrave, gYacute, gyacute, gydieresis, gYdieresis, gZcaron, gzcaron);
+
+cTakesCenter = (geth, gd, gl, gr, gs, gt, gz, g027E,
+	g0283, g0292, gscaron, gzcaron);
+
+cTakesHook = (ga, ge, gi, go, gu, gy, gae, goslash,
+	goe, gdotlessi, g0250, g0251, g0252, g0254, g0259, g0258,
+	g025B, g025C, g025E, g0268, g026A, g0275, g0276, g0289,
+	g028A, g028C, g0264, gaacute, gacircumflex, gadieresis, gagrave, garing,
+	gatilde, geacute, gecircumflex, gedieresis, gegrave, giacute, gicircumflex, gidieresis,
+	gigrave, goacute, gocircumflex, godieresis, gograve, gotilde, guacute, gucircumflex,
+	gudieresis, gugrave, gyacute, gydieresis);
+
+cTakesUDia = (gEth, geth, gThorn, gthorn, gA, gB, gC, gD,
+	gE, gF, gG, gH, gI, gJ, gK, gL,
+	gM, gN, gO, gP, gQ, gR, gS, gT,
+	gU, gV, gW, gX, gY, gZ, ga, gb,
+	gc, gd, ge, gf, gg, gh, gi, gj,
+	gk, gl, gm, gn, go, gp, gq, gr,
+	gs, gt, gu, gv, gw, gx, gy, gz,
+	gCcedilla, gccedilla, ggermandbls, gAE, gOslash, gae, goslash, gOE,
+	goe, gdotlessi, g0250, g0251, g0252, g0253, g0299, gbeta,
+	g0254, g0255, g0257, g0256, g0259, g0258, g025B, g025C,
+	g025E, gflorin, g0284, g0261, g0260, g0262, g029B, g0266,
+	g0267, ghbar, g0265, g029C, g0268, gtbd4, g026A, gtbd5,
+	g025F, g029D, g029E, g026D, g026C, g026B, g026E, g029F,
+	g0271, g026F, g0270, geng, g0273, g0272, g0274, g0275,
+	g0278, gtheta, g0276, g0298, g0279, g027A, g027D, g027E,
+	g027B, g0280, g0281, g0282, g0283, g0288, g0289, g028B,
+	g028A, g028C, g0263, g0264, g028D, gchi, g028E, g028F,
+	g0291, g0290, g0292, g0294, g02A1, g0295, g02A2, g0361,
+	g0304, gtildecomb, gacutecomb, g030B, ggravecomb, g030F, g0308, g0302,
+	g030C, g0306, g030A, g033D, g01C3, g01C0, g01C2, g01C1,
+	gAacute, gaacute, gAcircumflex, gacircumflex, gAdieresis, gadieresis, gAgrave, gagrave,
+	gAring, garing, gAtilde, gatilde, gEacute, geacute, gEcircumflex, gecircumflex,
+	gEdieresis, gedieresis, gEgrave, gegrave, gIacute, giacute, gIcircumflex, gicircumflex,
+	gIdieresis, gidieresis, gIgrave, gigrave, gNtilde, gntilde, gOacute, goacute,
+	gOcircumflex, gocircumflex, gOdieresis, godieresis, gOgrave, gograve, gOtilde, gotilde,
+	gScaron, gscaron, gUacute, guacute, gUcircumflex, gucircumflex, gUdieresis, gudieresis,
+	gUgrave, gugrave, gYacute, gyacute, gydieresis, gYdieresis, gZcaron, gzcaron);
+
+cUDia = (g0361, g0304, gtildecomb, gacutecomb, g030B, ggravecomb, g030F, g0308,
+	g0302, g030C, g0306, g030A, g033D);
+
+endtable;

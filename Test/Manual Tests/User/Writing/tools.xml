@@ -1,0 +1,36 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Writing\tools.xml">
+ <title tag="wrttls">Using the XML authoring tools</title>
+ <index>
+  <li>XML: authoring tools</li>
+ </index>
+ <prerequisites>
+  <p>Before using the XML authoring tools:</p>
+  <ul>
+   <li>Install the free <link uri="http://msdn.microsoft.com/downloads/" type="doc">Microsoft Internet Explorer 6.0</link> or better from the Microsoft download center. Earlier versions do not allow out-of-the-box XML processing. Netscape 6.0 or better may work for most of the following tasks. Some of the stylesheets may use MS non-standard XSLT functions like node-set().</li>
+   <li>Download and unzip the XMLauthor.zip file from the same medium or web address where you got this manual.</li>
+  </ul>
+ </prerequisites>
+ <guidelines>
+  <p>Here are some guidelines for setting up and using the XML authoring tools once they are unzipped:</p>
+  <ul>
+   <li>Create a directory structure like this:
+	<ul>
+	 <li>Your Test Script Folder</li>
+	 <li>XSL</li>
+	</ul>
+   </li>
+   <li>Put the extracted files in appropriate folders:
+	<ul>
+	 <li>ModularBook.dtd - Our modular book DTD. Should be placed in the XSL folder.</li>
+	 <li>HelpFile.xsl - Our help file xml stylesheet. Should be placed in the XSL folder.</li>
+	 <li>Sample.htm - should be put in your test script directory.</li>
+	 <li>Library.xml - should be put in your test script directory.</li>
+	 <li>Sample.xml - should be put in your test script directory.</li>
+	 <li>MSXSL.exe - Microsoft XML stylesheet transformation program. Can be put in Program Files\XML or where ever it makes sense to you.</li>
+	</ul>
+   </li>
+   <li>Double click MSXSL.exe and install msxsl.exe in the same folder or where ever it makes sense to you. If you write some batch files to make your job easier, you will need to use the path to this executable.</li>
+  </ul>
+ </guidelines>
+</task>

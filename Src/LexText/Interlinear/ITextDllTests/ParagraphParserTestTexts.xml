@@ -1,0 +1,618 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- NOTE: The xml here follows the Database Model, except when we get under StTxtPara, then we switch to referencing virtual properties that describe
+	the different types of SegmentForms37 in the paragraph (Wordforms, Punctuations), from which CmBaseAnnotations and Paragraph Contents can be built. -->
+<Texts6001>
+	<Text id="">
+		<Name5>
+			<AUni ws="xkal">Test Text1 for ParagraphParser</AUni>
+		</Name5>
+		<Description5>
+			<AStr ws="en">
+				<Run ws="en">This text has a number of paragraphs, each exercising specific Annotation areas of the ParagraphParser.</Run>
+			</AStr>
+		</Description5>
+		<Contents5054>
+			<StText>
+				<Paragraphs14>
+					<!--Paragraph 1 - empty.-->
+					<StTxtPara id="">
+						<Segments16>
+						</Segments16>
+					</StTxtPara>
+					<!--Paragraph 2 - simple segments -->
+					<!--xxxpus xxxyalola xxxnihimbilira. xxxnihimbilira xxxpus xxxyalola. xxxhesyla xxxnihimbilira.-->
+					<StTxtPara id="">
+						<Segments16>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxyalola</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxyalola</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxhesyla</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="0">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+						</Segments16>
+					</StTxtPara>
+					<!-- Paragraph 3 - complex punctuation -->
+					<!--xxxnihimbiligu  xxxyaloni, xxxkasani & xxxnihimbilibi... "xxxnihimbilira (xxxpus) xxxkasani."! ! ! xxxpus-->
+					<StTxtPara id="">
+						<Segments16>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">xxxnihimbiligu</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxyaloni</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">,</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">xxxkasani</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">&#x0026;</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilibi</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="0">...</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="0">"</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="0">(</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">)</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxkasani</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">."!</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37>!</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">!</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+						</Segments16>
+					</StTxtPara>
+					<!--Paragraph 4 - complex wordforms.-->
+					<!--xxxnihimbili'gu xxxyaloni. xxxkasani1xxxpus xxxnihimbilibi 123. xxxnihimbilira xxxpus-kola xxxkasani.-->
+					<StTxtPara id="">
+						<Segments16>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbili'gu</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxyaloni</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxkasani</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="0">1</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">xxxnihimbilibi</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">123.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus-kola</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxkasani</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="0">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+						</Segments16>
+					</StTxtPara>
+					<!--Paragraph 5 - capitalization.-->
+					<!--Xxxpus xxxyalola xxxnihimbilira. Xxxnihimbilira xxxpus Xxxyalola. Xxxhesyla XXXNIHIMBILIRA.-->
+					<StTxtPara id="">
+						<Segments16>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>Xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxyalola</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>Xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>Xxxyalola</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>Xxxhesyla</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>XXXNIHIMBILIRA</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="0">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+						</Segments16>
+					</StTxtPara>
+					<!--Paragraph 6 - multiple writing systems.-->
+					<!--This builds a paragraph with multiple words in different writing systems.
+						1) Test unique words with different ws
+							xxes : Spanish (es)
+							xxfr : French (fr)
+							xxde : German (de)
+						2) Test typical analysis ws in vernacular context)
+							xxen : English (en)
+						3) Test special ws followed by default vernacular)
+							xxkal: German (de)
+							xxkal: Kalaba (xkal)
+						4) Test default vernacular followed by special ws.
+							xxxxhesyla: Kalaba (xkal)
+							xxxxhesyla: German (de)
+						-->
+					<!--xxxpus xxes xxxnihimbilira. xxfr xxen xxxnihimbilira xxxpus xxde. xxkal xxkal xxxxhesyla xxxxhesyla.-->
+					<StTxtPara id="">
+						<Segments16>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 ws="es">xxes</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 ws="fr">xxfr</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 ws="en">xxen</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 ws="de">xxde</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 ws="de">xxkal</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 ws="xkal">xxkal</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxxhesyla</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37 ws="de">xxxxhesyla</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="0">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+						</Segments16>
+					</StTxtPara>
+					<!--Paragraph 6 - Phrase wordforms -->
+					<!--([xxxpus xxxyalola] xxxnihimbilira). {xxxpus xxxyalola} xxxhesyla xxxnihimbilira. {{xxxpus xxxyalola} xxxnihimbilira}.-->
+					<StTxtPara id="">
+						<Segments16>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxyalola</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxyalola</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxhesyla</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37 extraTrailingWhitespace="1">.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+							<CmBaseAnnotation id="">
+								<SegmentForms37>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxpus</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxyalola</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Wordform In Context" guid="eb92e50f-ba96-4d1d-b632-057b5c274132" />
+										</AnnotationType34>
+										<StringValue37>xxxnihimbilira</StringValue37>
+									</CmBaseAnnotation>
+									<CmBaseAnnotation id="">
+										<AnnotationType34>
+											<Link ws="en" name="Punctuation In Context" guid="cfecb1fe-037a-452d-a35b-59e06d15f4df" />
+										</AnnotationType34>
+										<StringValue37>.</StringValue37>
+									</CmBaseAnnotation>
+								</SegmentForms37>
+							</CmBaseAnnotation>
+						</Segments16>
+					</StTxtPara>
+				</Paragraphs14>
+			</StText>
+		</Contents5054>
+	</Text>
+</Texts6001>

@@ -1,0 +1,111 @@
+# IDL Makefile. Preprocess IDL files. Produce C++ headers with midl.
+
+BUILD_ROOT = ../../..
+include $(BUILD_ROOT)/Bld/_init.mak.lnx
+include $(BUILD_ROOT)/Bld/_user.mak.lnx
+#OUTPUT=$(COM_OUT_DIR)
+#tlbs-copy rule in main makefile creates links from COM_OUT_DIR
+OUTPUT=$(BUILD_ROOT)/Lib/linux/Common
+
+all: headers
+
+
+MODS = \
+	FwKernelTlb \
+	LanguageTlb \
+	FwCellarTlb \
+	ViewsTlb \
+	WorldPadTlb \
+	LangInstaller \
+
+# ViewsTlb.h imports LanguageTlb.tlb and FwKernelTlb.tlb
+$(OUTPUT)/ViewsTlb.h: $(OUTPUT)/LanguageTlb.h $(OUTPUT)/FwKernelTlb.h
+
+
+MIDL=midl
+FIX_MIDL=fix-midl.sh
+EXTRACT_IIDS=extract_iids.sh
+REMOTE_WIN32_DEV_PORT ?= 22
+
+# Note: If make errors, saying
+# "make: *** No rule to make target `../../../Output/Common/FooTlb.h', needed by `headers'.  Stop."
+# it's because you need a rule to build FooTlb.idl, not .h.
+
+$(OUTPUT)/%.h: $(OUTPUT)/%.idl
+	PATH=$(PATH):$(LIBRARIES)/COM/remote-midl $(MIDL) $(REMOTE_WIN32_DEV_HOST) -p $(REMOTE_WIN32_DEV_PORT) /Oicf /env win32 /h $@ $<
+	mv $@ $@.raw
+	PATH=$(PATH):$(LIBRARIES)/COM/test $(FIX_MIDL) $@.raw >$@
+# Can optionally enable creating foo_GUIDs.cpp files
+#	PATH=$(PATH):$(LIBRARIES)/COM/test $(EXTRACT_IIDS) $@ >"$$(basename "$@" Tlb.h)_GUIDs.cpp"
+
+#	cp $*.tlb $(OUTPUT)
+
+headers: $(MODS:%=$(OUTPUT)/%.h)
+
+clean:
+	$(RM) $(MODS:%=$(OUTPUT)/%.h) $(MODS:%=$(OUTPUT)/%.tlb) $(MODS:%=$(OUTPUT)/%_i.c) $(MODS:%=$(OUTPUT)/%.idl)
+
+CPPINCLUDE = \
+	-I$(BUILD_ROOT)/Src/Language \
+	-I$(BUILD_ROOT)/Src/Kernel \
+	-I$(BUILD_ROOT)/Src/Cellar \
+	-I$(BUILD_ROOT)/Src/Generic \
+	-I$(BUILD_ROOT)/Src/DbServices \
+	-I$(BUILD_ROOT)/Src/Cellar/lib \
+	-I$(BUILD_ROOT)/Src/Sql/tsql/Headers \
+	-I$(BUILD_ROOT)/Src/views \
+	-I$(BUILD_ROOT)/Src/WorldPad \
+	-I$(BUILD_ROOT)/Src/CommonCOMDlgs \
+	-I$(OUTPUT) \
+
+CPPFLAGS =
+
+FWKERNEL_IDHS=$(BUILD_ROOT)/Src/Kernel/FwKernel.idh \
+	$(BUILD_ROOT)/Src/Kernel/TextServ.idh \
+	$(BUILD_ROOT)/Src/DbServices/BackupDelegates.idh \
+	$(BUILD_ROOT)/Src/DbServices/DbBackup.idh \
+	$(BUILD_ROOT)/Src/DbServices/DbDisconnect.idh \
+	$(BUILD_ROOT)/Src/DbServices/RemoteWarn.idh \
+	$(BUILD_ROOT)/Src/Language/Render.idh \
+	$(BUILD_ROOT)/Src/Language/Language.idh \
+	$(BUILD_ROOT)/Src/Generic/common.idh
+
+VIEWS_IDHS=$(BUILD_ROOT)/Src/views/Views.idh \
+	$(BUILD_ROOT)/Src/CommonCOMDlgs/CmnFwDlgs.idh \
+	$(BUILD_ROOT)/Src/Generic/common.idh
+
+CELLAR_IDHS=$(BUILD_ROOT)/Src/Cellar/Cellar.idh \
+	$(BUILD_ROOT)/Src/Generic/common.idh
+
+LANGUAGE_IDHS=$(BUILD_ROOT)/Src/Kernel/FwKernel.idh \
+	$(BUILD_ROOT)/Src/Kernel/TextServ.idh \
+	$(BUILD_ROOT)/Src/Language/Render.idh \
+	$(BUILD_ROOT)/Src/Language/Language.idh \
+	$(BUILD_ROOT)/Src/Generic/common.idh
+
+COMPILE.idl = gcc -DDEBUG -E -P -x c -MMD -MT $@ $(CPPINCLUDE)
+
+$(OUTPUT)/LanguageTlb.idl: $(BUILD_ROOT)/Src/Language/LanguageTlb.idl $(LANGUAGE_IDHS)
+	$(COMPILE.idl) -o $@ $<
+
+$(OUTPUT)/FwKernelTlb.idl: $(BUILD_ROOT)/Src/Kernel/FwKernelTlb.idl $(FWKERNEL_IDHS)
+	$(COMPILE.idl) -o $@ $<
+
+$(OUTPUT)/FwCellarTlb.idl: $(BUILD_ROOT)/Src/Cellar/FwCellarTlb.idl $(CELLAR_IDHS)
+	$(COMPILE.idl) -o $@ $<
+
+$(OUTPUT)/ViewsTlb.idl: $(BUILD_ROOT)/Src/views/ViewsTlb.idl $(VIEWS_IDHS)
+	$(COMPILE.idl) -o $@ $<
+
+$(OUTPUT)/WorldPadTlb.idl: $(BUILD_ROOT)/Src/WorldPad/WorldPadTlb.idl
+	$(COMPILE.idl) -o $@ $<
+
+$(OUTPUT)/LangInstaller.idl: $(BUILD_ROOT)/Src/Language/LangInstaller.idl
+	$(COMPILE.idl) -o $@ $<
+
+idl: $(MODS:%=%.idl)
+
+clean.idl:
+	$(RM) $(MODS:%=%.idl) *.d
+
+-include *.d

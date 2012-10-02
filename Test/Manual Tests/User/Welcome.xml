@@ -1,0 +1,37 @@
+<?xml-stylesheet type="text/xsl" href="..\XSL\HelpFile.xsl" ?>
+<fact file="Welcome.xml">
+ <title tag="Welcome">Welcome to the FieldWorks Test Manual</title>
+ <index>
+  <li>abstract of this manual</li>
+  <li>about this manual</li>
+  <li>purpose of this manual</li>
+  <li>expectations of this manual</li>
+ </index>
+ <introduction>
+  <p>This manual contains test scripts and procedures devised by the <link uri="Milestone\LSTD.xml" type="module">Language Software Test Department</link> for the FieldWorks family of applications. You will find test scripts for each of the FieldWorks applications and how to use them and report any bugs discovered. Additionally, materials for writing test scripts are included.</p>
+ </introduction>
+ <label name="User expectations">
+  <p>Depending on which role you participate in, you may expect this HTML Help file to enable you to do the following tasks.</p>
+  <ul name="Off-site testers">
+   <li>Download this file and its updates in a reasonable amount of time. We hope that providing this information in one file, your internet connect time should be minimized overall. We will not ship CDs.</li>
+   <li>Test FieldWorks software.</li>
+   <li>Report bugs discovered via e-mail.</li>
+   <li>Write new FieldWorks test scripts.</li>
+   <li>Send your new test script to the Language Software Test Department via e-mail.</li>
+  </ul>
+  <ul name="On-site testers">
+   <li>Copy this manual to your computer via the Wycliffe network. If you are not connected, you may be able to obtain a CD or set of diskettes. Visiting developers may download the current XML web from the document control system.</li>
+   <li>Test FieldWorks software.</li>
+   <li>Report bugs discovered via e-mail or a shared folder.</li>
+   <li>Write new FieldWorks test scripts.</li>
+   <li>Send your new test script to the Language Software Test Department via e-mail or a shared folder.</li>
+  </ul>
+  <ul name="Test Department testers">
+   <li>Copy this manual to your computer via the Wycliffe network. Those with a developer environment may download the current XML web from the document control system.</li>
+   <li>Make use of the full text search capabilities of HTML Help.</li>
+   <li>Use the Table of Contents and Index.</li>
+   <li>Use to test on low-end machines.</li>
+   <li>Build this HTML Help image from the XML source.</li>
+  </ul>
+ </label>
+</fact>

@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="XmlViewer.xsl"?>
+
+<!--test to evalute Jumping from TE to the Language Explorer
+  This is done by going to a word in TE I know is in the Lexicon and jumping to that link then checking to
+   see if Language explorer is at the link. This test should be expanded to evaluate all conditions
+  (e.g. word there, not there, with categories, without categories, etc.)-->
+
+<accil on-fail="assert">
+ <on-application run="yes" args="-db &quot;TokPisin&quot;" on-fail="assert" close="yes">
+
+  <insert wait="1000">{END}</insert>
+  <click path="menubar:~MainMenu~/menu:mnuEdit/menu:mnuFind"/>
+
+  <!-- search for bilong in the Tok Pisin Bible -->
+  <on-dialog wait="1000" title="Find and Replace">
+   <insert>bilong</insert>
+   <click path="button:Find Next"/>
+   <click path="button:Cancel"/>
+  </on-dialog>
+
+  <click path="menubar:~MainMenu~/menu:mnuTools/menu:mnuFindInDict"/>
+
+  <!-- open the Language explorer looking for the word -->
+  <on-dialog wait="1000" title="Dictionary Entry">
+   <click wait="1000" path="button:Open Lexicon"/>
+  </on-dialog>
+
+<!-- give time for FLEx to come up -->
+  <!--hover-over wait="9000" path="menu:mnuFile" /-->
+
+  <on-application wait="25000" run="ok" path="C:\program files\fieldworks\" exe="flex.exe" close="yes">
+	   <glimpse path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:LexItemsAndDetailMultiPane/window:TestEditMulti/window:normalEdit/window:RecordEditView.DataTree/window:multistring/grp:Lexeme Form/para:0/line:0" wait="3000" prop="value" expect="bilong">
+	  Failed should have found <data of="$.expect"/> but found <data of="$.value"/>
+   </glimpse>
+   <!--click wait="1000" path="window:MenuBar/menu:File/menu:Exit"/-->
+
+  </on-application>
+   <!--click wait="1000" path="menu:mnuFile/menu:mnuExit"/-->
+
+ </on-application>
+</accil>

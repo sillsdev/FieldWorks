@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="radiobtn" num="0.2" abbr="rdbn" file="StdCtrls\RadioBtn.xml">
+ <title tag="radiobtn">Radio Button Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A radio button group is an "N" state control that interacts with a set of N radio buttons. Only one radio button is "dotted" at any time, the others in the group are "undotted". They may simply set an internal interface or program state or they may have immediate side-effects. In dialogs, the side-effect of each radio button is typically delayed until the dialog is closed.</p>
+  </introduction>
+  <context>
+<p>Each group of radio buttons is tested together as a unit. Testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report. The first words of the bug report title should be a noun phrase containing the words "radio button".</p>
+<p>When side-effects are delayed, the "triggering" control must be used before a radio button action can be witnessed.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, it is described in the help system of many interface development products.</p>
+  </warning>
+ <case id="rdbnInsp" num="1" order="any">
+  <title tag="rdbnInsp">Radio Button Inspection</title>
+  <context>
+<p>When the application GUI, dialog or frame containing the radio button group is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control group is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A label may be placed near each radio control, usually to its right. An underscored letter indicates an &lt;Alt&gt;&lt;alpha&gt; shortcut. Occassionally, there may be only a single radio button in a "group".</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of each radio button in the group.
+   <r>The radio buttons, labels and dots must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Radio button group has incorrect appearance</p>
+   <p name="bug">Radio button has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the locations of the radio buttons, labels and dots relative to eachother and other visible controls.
+   <r>The radio buttons, labels and dots should be close to the positions indicated in the specification.</r>
+   <p name="bug">Radio button group has incorrect location</p>
+   <p name="bug">Radio button has incorrect location</p>
+  </step>
+  <step name="1.3" link="Bug">If on a toolbar, hover the cursor over the radio button.
+   <r>A help bubble displays a short help message.</r>
+   <p name="bug">Tool bar radio button doesn't have hover help</p>
+  </step>
+
+ </case>
+
+ <case id="rdbnOp" num="2" order="any">
+  <title tag="rdbnOp">Radio Button Operation</title>
+  <context>
+<p>When the radio button group is enabled</p>
+</context>
+
+   <p name="Principle">The state of the radio button group is changed by left clicking one of the radio buttons with a pointer device (usually a mouse) and often selected by a "short-cut" key sequence. Immediate or delayed side-effects may include changes in a preview window on the control frame or changes in another view.</p>
+
+  <step name="2.1" link="Bug">Left click over a label or on a radio button that is NOT dotted.
+   <r>The dot is only displayed in the clicked radio button and side-effects match the "on" description in the specification.</r>
+   <p name="bug">Clicked radio button not dotted.</p>
+   <p name="bug">Radio button "on" side-effect incorrect.</p>
+   <p name="bug">Clicked radio button not dotted but works.</p>
+  </step>
+  <step name="2.2" link="Bug">Left click over the label or in the radio button that is dotted.
+   <r>The dot remains displayed and side-effects still match the "on" description in the specification.</r>
+   <p name="bug">Clicked radio button undotted.</p>
+   <p name="bug">Clicked radio button "on" side-effect incorrect.</p>
+  </step>
+  <step name="2.3" link="Bug">Press the short-cut &lt;alt&gt;&lt;alpha&gt; for a radio button that is NOT dotted.
+   <r>The dot is only displayed in the shorted radio button and side-effects match the "on" description in the specification.</r>
+   <p name="bug">Shorted radio button not dotted.</p>
+   <p name="bug">Shorted radio button "on" side-effect incorrect.</p>
+  </step>
+  <step name="2.4" link="Bug">Press the short-cut &lt;alt&gt;&lt;alpha&gt; for the radio button that is dotted.
+   <r>The dot remains displayed and side-effects still match the "on" description in the specification.</r>
+   <p name="bug">Shorted radio button not dotted.</p>
+   <p name="bug">Shorted radio button "on" side-effect incorrect.</p>
+  </step>
+  <step name="2.5" link="Bug">Exercise the triggering control to activate the delayed side-effects of the dotted radio button.
+   <r>The side-effects match the "on" description in the specification if the radio button was dotted. They match the "off" action otherwise.</r>
+   <p name="bug">Radio button action incorrect</p>
+  </step>
+  <step name="2.6" link="Bug">When operating the radio button group, do side-effects obscure or disable other functionality in the control frame or in an affected view?
+   <r>There should be no undesirable effects from the user's point of view.</r>
+   <p name="Notes">This test is subjective. Infelicities resulting from this step will likely be "issues" rather than "bugs".</p>
+   <p name="bug">Radio button operation hampers user ability to ..</p>
+  </step>
+
+ </case>
+ <update date="Dec-12-00" author="MikeL">Test created.</update>
+
+</test>

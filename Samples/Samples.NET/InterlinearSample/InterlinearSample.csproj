@@ -1,0 +1,150 @@
+<VisualStudioProject>
+	<CSHARP
+		ProjectType = "Local"
+		ProductVersion = "7.0.9466"
+		SchemaVersion = "1.0"
+		ProjectGuid = "{531E1B62-83C3-4FA6-90A6-236A551F88B4}"
+	>
+		<Build>
+			<Settings
+				ApplicationIcon = "App.ico"
+				AssemblyKeyContainerName = ""
+				AssemblyName = "InterlinearSample"
+				AssemblyOriginatorKeyFile = ""
+				DefaultClientScript = "JScript"
+				DefaultHTMLPageLayout = "Grid"
+				DefaultTargetSchema = "IE50"
+				DelaySign = "false"
+				OutputType = "WinExe"
+				RootNamespace = "InterlinearSample"
+				StartupObject = ""
+			>
+				<Config
+					Name = "Debug"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "false"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "DEBUG;TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "true"
+					FileAlignment = "4096"
+					IncrementalBuild = "true"
+					Optimize = "false"
+					OutputPath = "bin\Debug\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "false"
+					WarningLevel = "4"
+				/>
+				<Config
+					Name = "Release"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "false"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "true"
+					FileAlignment = "4096"
+					IncrementalBuild = "false"
+					Optimize = "true"
+					OutputPath = "bin\Release\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "false"
+					WarningLevel = "4"
+				/>
+			</Settings>
+			<References>
+				<Reference
+					Name = "System"
+					AssemblyName = "System"
+					HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.dll"
+				/>
+				<Reference
+					Name = "System.Data"
+					AssemblyName = "System.Data"
+					HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
+				/>
+				<Reference
+					Name = "System.Drawing"
+					AssemblyName = "System.Drawing"
+					HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Drawing.dll"
+				/>
+				<Reference
+					Name = "System.Windows.Forms"
+					AssemblyName = "System.Windows.Forms"
+					HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Windows.Forms.dll"
+				/>
+				<Reference
+					Name = "System.XML"
+					AssemblyName = "System.Xml"
+					HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
+				/>
+				<Reference
+					Name = "FwKernelInterop"
+					AssemblyName = "FwKernelInterop"
+					HintPath = "..\..\..\Output\Common\FwKernelInterop.dll"
+				/>
+				<Reference
+					Name = "LanguageInterop"
+					AssemblyName = "LanguageInterop"
+					HintPath = "..\..\..\Output\Common\LanguageInterop.dll"
+				/>
+				<Reference
+					Name = "ViewsInterop"
+					AssemblyName = "ViewsInterop"
+					HintPath = "..\..\..\Output\Common\ViewsInterop.dll"
+				/>
+				<Reference
+					Name = "FDO"
+					AssemblyName = "FDO"
+					HintPath = "..\..\..\Output\debug\FDO.dll"
+				/>
+				<Reference
+					Name = "COMInterfaces"
+					AssemblyName = "COMInterfaces"
+					HintPath = "..\..\..\Output\debug\COMInterfaces.dll"
+				/>
+				<Reference
+					Name = "Framework"
+					AssemblyName = "Framework"
+					HintPath = "..\..\..\Output\debug\Framework.dll"
+				/>
+			</References>
+		</Build>
+		<Files>
+			<Include>
+				<File
+					RelPath = "App.ico"
+					BuildAction = "Content"
+				/>
+				<File
+					RelPath = "AssemblyInfo.cs"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "InterlinearForm.cs"
+					SubType = "Form"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "InterlinearForm.resx"
+					DependentUpon = "InterlinearForm.cs"
+					BuildAction = "EmbeddedResource"
+				/>
+				<File
+					RelPath = "InterlinearVc.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "InterlinearView.cs"
+					SubType = "UserControl"
+					BuildAction = "Compile"
+				/>
+			</Include>
+		</Files>
+	</CSHARP>
+</VisualStudioProject>

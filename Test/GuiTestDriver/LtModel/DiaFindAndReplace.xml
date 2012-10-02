@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--?xml-stylesheet type="text/xsl" href="Possibilities.xsl"?-->
+
+<find-and-replace role="dialog" title="Find and Replace" root="yes">
+
+  <find role="tab" name="Find">
+	<tab path="37:Find"/>
+	<var id="findPane" set="9:Find/$NL"/>
+	<find-what path="$findPane;9:Find what:">
+	  <label name="Find what:" path="/41:$name"/>
+	  <text path="[2]/20:RootSite/$Text"/>
+	</find-what>
+	<more name="More" path="$findPane;9:$name;/43:$name">
+	 <enables pane="search-options"/>
+	 <enables button="less"/>
+	 <disables button="more"/>
+	</more>
+	<less name="Less" enabled="false" path="$findPane;9:$name;/43:$name">
+	 <enables button="more"/>
+	 <disables pane="search-options"/>
+	 <disables button="less"/>
+	</less>
+	<find-next name="Find Next" path="$findPane;9:$name;/43:$name"/>
+	<close name="Close" path="$findPane;9:$name;/43:$name"/>
+	<help name="Help" path="$findPane;9:$name;/43:$name">
+	  <dialog title="FieldWorks Language Explorer Help" topic="Find and Replace Text" topic-path="$topic"/>
+	</help>
+  </find>
+
+  <replace role="tab" name="Replace">
+	<tab path="37:Replace"/>
+	<var id="replPane" set="9:Replace/$NL"/>
+	<find-what path="$replPane;9:Find what:">
+	  <label name="Find what:" path="/41:$name"/>
+	  <text path="[2]/20:RootSite/$Text"/>
+	</find-what>
+	<replace-with path="$replPane;9:Replace with:">
+	  <label name="Replace with:" path="/41:$name"/>
+	  <text path="[2]/20:RootSite/$Text"/>
+	</replace-with>
+	<more name="More" path="$replPane;9:$name;/43:$name">
+	 <enables pane="search-options"/>
+	 <enables button="less"/>
+	 <disables button="more"/>
+	</more>
+	<less name="Less" enabled="false" path="$replPane;9:$name;/43:$name">
+	 <enables button="more"/>
+	 <disables pane="search-options"/>
+	 <disables button="less"/>
+	</less>
+	<replace name="Replace" enabled="false" path="$replPane;9:$name;/43:$name"/>
+	<replace-all name="Replace All" enabled="false" path="$replPane;9:$name;/43:$name"/>
+	<find-next name="Find Next" path="$replPane;9:$name;/43:$name"/>
+	<close name="Close" path="$replPane;9:$name;/43:$name"/>
+	<help name="Help" path="$replPane;9:$name;/43:$name">
+	  <dialog title="FieldWorks Language Explorer Help" topic="Find and Replace Text" topic-path="$topic"/>
+	</help>
+  </replace>
+
+  <search-options role="pane" name="Search Options" path="60:NAMELESS[2]/9:Format:/">
+	 <!-- Before 9:Format:/ there is 9:Find/ or 9:Replace/ but leaving it out should be OK -->
+	 <format role="menu" name="Format" ak="o" path="9:Format/43:Format">
+	   <!-- The 2 following @path's might have role 34 or something else instead of 12 -->
+	   <writing-system role="menu" name="Writing System" k="w" path="/9:$name;/12:$name"/>
+	   <style role="menu" name="Style" k="s" path="/9:$name;/12:$name"/>
+	 </format>
+	 <match-case role="checkbox" name="Match case" path="9:$name;/44:$name"/>
+	 <match-as-whole-word role="checkbox" name="Match As Whole Word" path="9:$name;/44:$name"/>
+	 <match-diacritics role="checkbox" name="Match Diacritics" path="9:$name;/44:$name"/>
+	 <match-writing-system role="checkbox" name="Match writing system" path="9:$name;/44:$name"/>
+	 <use-regular-expressions role="checkbox" name="Use regular expressions" path="9:$name;/44:$name"/>
+  </search-options>
+
+</find-and-replace>

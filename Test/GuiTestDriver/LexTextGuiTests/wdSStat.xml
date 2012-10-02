@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<accil on-fail="assert">
+
+	<goal>Exercises word spelling status and change category</goal>
+
+	<bug id="FWR-1499" desc="Yellow Error window in Word Analyses" />
+	<bug id="FWR-662" desc="Crash undoing a Word Analysis Word Category" />
+	<bug n="LT-5720"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+<!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+<!-- Go to View/Words/Analyses-->
+	<click select="menubar/view/texts-words/word-analyses"/>
+	<click select="toolbar/standard/first"/> <!-- Select the first record -->
+
+<model select="word-analysis[@role='view']">
+
+<!-- select "biliya" in wordforms list-->
+	<click select="wordforms/record/col" row="2" col="1"/>
+
+<!-- change spelling status to "Correct"-->
+	<click select="analyses/spelling-status/data"/>
+	<insert>{DOWN}~</insert>
+
+<!--check spelling status-->
+	<glimpse id="spellCheck" select="analyses/spelling-status/data" prop="value" expect="Correct"/>
+
+<!-- change spelling status again-->
+   <click select="analyses/spelling-status/data"/>
+   <insert>{DOWN}~</insert>
+
+<!--check spelling status-->
+	<glimpse id="spellCheck2" select="analyses/spelling-status/data" prop="value" expect="Incorrect"/>
+
+<!-- change spelling status again-->
+   <click select="analyses/spelling-status/data"/>
+   <insert>{UP 2}~</insert>
+
+<!--check spelling status-->
+	<glimpse id="spellCheck3" select="analyses/spelling-status/data" prop="value" expect="Undecided"/>
+
+<!-- change word category-->
+   <click select="analyses/analysis-seq/word-category/data"/>
+   <insert>n~</insert>
+
+<!--check spelling status-->
+	<glimpse id="catCheck" select="analyses/analysis-seq/word-category/data" prop="value" expect="negator"/>
+
+<!-- Go to Edit/Undo-->
+   <click select="//menubar/edit/undo"/>
+
+   <click select="//toolbar/standard/refresh"/>
+ <!-- can't leave the cursor on refresh, or the next test won't start -->
+   <click select="wordforms/record/col"/>
+
+</model>
+
+ </on-application>
+</accil>

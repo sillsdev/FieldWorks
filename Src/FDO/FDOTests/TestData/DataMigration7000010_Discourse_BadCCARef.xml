@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+  <!--Need two Charts with at least a row and a cell each and two StTexts with at least one twfic each.
+	One chart each BasedOn each StText, but one cell referencing a twfic in the wrong text.-->
+  <rt class="DsDiscourseData" guid="c1ec5c4c-e382-11de-8a39-0800200c9a66" ownerguid="E4952BB2-3663-4F8C-A754-947F1DDDD0BE">
+	<CmObject></CmObject>
+	<DsDiscourseData>
+	  <Charts>
+		<objsur guid="c1ec5c4d-e382-11de-8a39-0800200c9a66" t="o"></objsur>
+		<objsur guid="6e69eaaa-b9fc-4491-8db4-4022a309aefa" t="o"></objsur>
+	  </Charts>
+	</DsDiscourseData>
+  </rt>
+  <rt class="DsConstChart" guid="c1ec5c4d-e382-11de-8a39-0800200c9a66" ownerguid="c1ec5c4c-e382-11de-8a39-0800200c9a66">
+	<CmObject></CmObject>
+	<CmMajorObject></CmMajorObject>
+	<DsChart></DsChart>
+	<DsConstChart>
+		<!-- Chart 1 -->
+		<BasedOn>
+		<objsur guid="c1ec835c-e382-11de-8a39-0800200c9a66" t="r"></objsur>
+	  </BasedOn>
+	  <Rows>
+		<objsur guid="c1ec8357-e382-11de-8a39-0800200c9a66" t="r"></objsur>
+	  </Rows>
+	</DsConstChart>
+  </rt>
+  <rt class="DsConstChart" guid="6e69eaaa-b9fc-4491-8db4-4022a309aefa" ownerguid="c1ec5c4c-e382-11de-8a39-0800200c9a66">
+	<CmObject></CmObject>
+	<CmMajorObject></CmMajorObject>
+	<DsChart></DsChart>
+	<DsConstChart>
+		<!-- Chart 2 -->
+		<BasedOn>
+		<objsur guid="ea1776ea-f735-4186-8cd7-42d623b77aa6" t="r"></objsur>
+	  </BasedOn>
+	  <Rows>
+		<objsur guid="c1ec8358-e382-11de-8a39-0800200c9a66" t="r"></objsur>
+	  </Rows>
+	</DsConstChart>
+  </rt>
+  <rt class="CmIndirectAnnotation" guid="c1ec8357-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<!--CCR1 -->
+	<CmObject></CmObject>
+	<CmAnnotation>
+		<Comment>
+			<AStr ws="en">
+				<Run ws="en">1</Run>
+			</AStr>
+		</Comment>
+		<AnnotationType>
+		<!-- CCR type -->
+		<objsur guid="50C1A53D-925D-4F55-8ED7-64A297905346" t="r"></objsur>
+	  </AnnotationType>
+	</CmAnnotation>
+	<CmIndirectAnnotation>
+	  <AppliesTo>
+		<objsur guid="c1ecaa6a-e382-11de-8a39-0800200c9a66" t="r"></objsur>
+	  </AppliesTo>
+	</CmIndirectAnnotation>
+  </rt>
+  <rt class="CmIndirectAnnotation" guid="c1ec8358-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<!--CCR2-->
+	<CmObject></CmObject>
+	<CmAnnotation>
+		<Comment>
+			<AStr ws="en">
+				<Run ws="en">1</Run>
+			</AStr>
+		</Comment>
+		<AnnotationType>
+		<!-- CCR type -->
+		<objsur guid="50C1A53D-925D-4F55-8ED7-64A297905346" t="r"></objsur>
+	  </AnnotationType>
+	</CmAnnotation>
+	<CmIndirectAnnotation>
+	  <AppliesTo>
+		<objsur guid="8a851060-16cf-4db6-a432-3abe77c1ff9d" t="r"></objsur>
+	  </AppliesTo>
+	</CmIndirectAnnotation>
+  </rt>
+  <rt class="StText" guid="c1ec835c-e382-11de-8a39-0800200c9a66" ownerguid="c1ec8358-e382-11de-8a39-0800200c9a66">
+	<!--StText1-->
+	<CmObject></CmObject>
+	<StText>
+	  <Paragraphs>
+		<!-- StTxtPara (Only need one.) -->
+		<objsur guid="c1ec835d-e382-11de-8a39-0800200c9a66" t="o"></objsur>
+	  </Paragraphs>
+	</StText>
+  </rt>
+  <rt class="StText" guid="ea1776ea-f735-4186-8cd7-42d623b77aa6" ownerguid="c1ec8358-e382-11de-8a39-0800200c9a66">
+	<!--StText2-->
+	<CmObject></CmObject>
+	<StText>
+	  <Paragraphs>
+		<!-- StTxtPara (Only need one.) -->
+		<objsur guid="c1ec835e-e382-11de-8a39-0800200c9a66" t="o"></objsur>
+	  </Paragraphs>
+	</StText>
+  </rt>
+  <rt class="StTxtPara" guid="c1ec835d-e382-11de-8a39-0800200c9a66" ownerguid="c1ec835c-e382-11de-8a39-0800200c9a66">
+	<!--StTxtPara1-->
+	<CmObject></CmObject>
+	<StPara></StPara>
+	<StTxtPara>
+	  <Contents>
+		<Str>
+		  <Run ws="en">word1</Run>
+		</Str>
+	  </Contents>
+	</StTxtPara>
+  </rt>
+  <rt class="StTxtPara" guid="c1ec835e-e382-11de-8a39-0800200c9a66" ownerguid="ea1776ea-f735-4186-8cd7-42d623b77aa6">
+	<!--StTxtPara2-->
+	<CmObject></CmObject>
+	<StPara></StPara>
+	<StTxtPara>
+	  <Contents>
+		<Str>
+		  <Run ws="en">word2</Run>
+		</Str>
+	  </Contents>
+	</StTxtPara>
+  </rt>
+	<!-- 1st Segment in StTxtPara1 -->
+	<rt class="CmBaseAnnotation" guid="22a8431f-f974-412f-a261-8bd1a4e1be1b">
+		<CmObject/>
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r"/>
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0"/>
+			<EndOffset val="5"/>
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec835d-e382-11de-8a39-0800200c9a66" t="r"/>
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- 1st Segment in StTxtPara2 -->
+	<rt class="CmBaseAnnotation" guid="00ac8bc3-4fad-4a18-8809-4a729d449707">
+		<CmObject/>
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r"/>
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0"/>
+			<EndOffset val="5"/>
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec835e-e382-11de-8a39-0800200c9a66" t="r"/>
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<rt class="CmIndirectAnnotation" guid="c1ecaa6a-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<!--CCA1-->
+	<CmObject></CmObject>
+	<CmAnnotation>
+	  <AnnotationType>
+		<!-- CCA -->
+		<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r"></objsur>
+	  </AnnotationType>
+	  <InstanceOf>
+		<!-- A CmPossibility -->
+		<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r"></objsur>
+	  </InstanceOf>
+	</CmAnnotation>
+	<CmIndirectAnnotation>
+	  <AppliesTo>
+		<!-- twfic -->
+		<objsur guid="1198b781-d981-44ce-a1c4-2a667af9c11f" t="r"></objsur>
+	  </AppliesTo>
+	</CmIndirectAnnotation>
+  </rt>
+  <rt class="CmIndirectAnnotation" guid="8a851060-16cf-4db6-a432-3abe77c1ff9d" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<!--CCA2 Should get deleted by migration-->
+	<CmObject></CmObject>
+	<CmAnnotation>
+	  <AnnotationType>
+		<!-- CCA -->
+		<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r"></objsur>
+	  </AnnotationType>
+	  <InstanceOf>
+		<!-- A CmPossibility -->
+		<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r"></objsur>
+	  </InstanceOf>
+	</CmAnnotation>
+	<CmIndirectAnnotation>
+	  <AppliesTo>
+		<!-- twfic (same as CCA1!) -->
+		<objsur guid="1198b781-d981-44ce-a1c4-2a667af9c11f" t="r"></objsur>
+	  </AppliesTo>
+	</CmIndirectAnnotation>
+  </rt>
+  <rt class="CmBaseAnnotation" guid="1198b781-d981-44ce-a1c4-2a667af9c11f" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+	<!--CBA1 (twfic)-->
+	<CmObject></CmObject>
+	<CmAnnotation>
+	  <AnnotationType>
+		<!--twfic-->
+		<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r"></objsur>
+	  </AnnotationType>
+	  <InstanceOf>
+		<objsur t="r" guid="96cc7e7b-b13e-4d3b-9d8d-712a25b89ca8" />
+	  </InstanceOf>
+	</CmAnnotation>
+	<CmBaseAnnotation>
+	  <BeginObject>
+		<objsur guid="c1ec835d-e382-11de-8a39-0800200c9a66" t="r"></objsur>
+	  </BeginObject>
+	  <BeginOffset val="0" />
+	  <EndOffset val="5" />
+	</CmBaseAnnotation>
+  </rt>
+  <rt class="WfiGloss" guid="96cc7e7b-b13e-4d3b-9d8d-712a25b89ca8" ownerguid="2faf8b99-eddc-4ca8-b582-df3868630162">
+	<!-- paragraph -->
+	<CmObject />
+	<WfiGloss />
+  </rt>
+</languageproject>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+ <!-- Visits the lexicon tool views. -->
+
+<accil on-fail="assert">
+
+ <var id="projectName" set="Kalaba"/>
+ <var id="toolsMenu" set="window:ParentOfMenuBar/window:MenuBar/menu:Tools/"/>
+
+ <on-application run="ok" args="-db $projectName" on-fail="assert">
+
+		<click wait="2000" path="$toolsMenu;menu:Lexicon/menu:Browse"/>
+
+		<click wait="1000" path="$toolsMenu;menu:Lexicon/menu:Lexicon Edit"/>
+
+		<click wait="1000" path="$toolsMenu;menu:Lexicon/menu:Dictionary"/>
+	<on-dialog wait="3000" title="Beta Notice" on-fail="assert">
+		<click wait="1000" path="window:Ok/button:Ok"/>
+	</on-dialog>
+
+		<click wait="3000" path="$toolsMenu;menu:Lexicon/menu:Categorized Entry"/>
+
+	<on-dialog wait="5000"  title="Information" on-fail="skip">
+		<click wait="1000" path="window:Ok/button:Ok"/>
+	</on-dialog>
+
+		<click wait="2000" path="$toolsMenu;menu:Lexicon/menu:Bulk Edit Demonstration"/>
+
+<!--
+Note:  I removed the 'tabs' part of the path since this name changes with each selection of one of the tabs. The
+software does look for decendents of BulkEditBar with the names specified for 'tab'
+
+Note: double SLASH for 'Find/Replace'
+-->
+
+		<!--<click wait="2000" path="window:BulkEditBar/tabs:Select the target field and the list choice to change it to/tab:Other"/>-->
+		<click wait="2000" path="window:BulkEditBar/tab:Other"/>
+		<!-- <click wait="2000" path="window:BulkEditBar/tabs:Perform other operations/tab:Transduce"/> -->
+	<click wait="2000" path="window:BulkEditBar/tab:Transduce"/>
+		<click wait="2000" path="window:BulkEditBar/tab:Other"/>
+		<click wait="2000" path="window:BulkEditBar/tab:Find//Replace"/>     <!-- NOTE: double SLASH for 'Find/Replace' -->
+		<click wait="2000" path="window:BulkEditBar/tab:Click Copy"/>
+		<click wait="2000" path="window:BulkEditBar/tab:Bulk Copy"/>
+		<click wait="2000" path="window:BulkEditBar/tab:List Choice"/>
+
+	<!-- Before finishing the test get it back to Lexicon:Lexicon Edit -->
+		<click wait="500" path="$toolsMenu;menu:Lexicon/menu:Lexicon Edit"/>
+
+ </on-application>
+</accil>

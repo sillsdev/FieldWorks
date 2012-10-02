@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000021">
+	<!-- {0}-{1}-{2} {3}:{4}:{5}.{6} Year, Month, Day, Hour, Minute, Second, Millisecond-->
+	<rt class="LangProject" guid="c1ecd171-e382-11de-8a39-0800200c9a66">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+		<LexDb>
+			<objsur guid="d7f71381-e8cf-11d3-9764-00c04f186933" t="o" />
+		</LexDb>
+	</rt>
+	<rt class="LexDb" guid="d7f71381-e8cf-11d3-9764-00c04f186933" ownerguid="c1ecd171-e382-11de-8a39-0800200c9a66">
+		<Entries>
+			<objsur t="o" guid="265f5359-8290-40d9-a708-641d474383aa" />
+		</Entries>
+	</rt>
+	<rt class="LexEntry" guid="265f5359-8290-40d9-a708-641d474383aa" ownerguid="d7f71381-e8cf-11d3-9764-00c04f186933">
+		<DateCreated val="2009-12-31 23:59:59.000" />
+		<DateModified val="2010-01-01 23:59:59.000" />
+	</rt>
+</languageproject>

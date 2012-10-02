@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000017">
+  <rt guid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC" class="LangProject">
+	<LexDb>
+	  <objsur guid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC" t="o" />
+	</LexDb>
+	<ResearchNotebook>
+	  <objsur guid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC" t="o" />
+	</ResearchNotebook>
+	<TranslatedScripture>
+	  <objsur guid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4" t="o" />
+	</TranslatedScripture>
+	<Styles>
+	  <objsur guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" t="o" />
+	  <objsur guid="D9CBD1B4-EA5E-11DE-8F8B-0013722F8DEC" t="o" />
+	  <objsur guid="D9BFE5FC-EA5E-11DE-9282-0013722F8DEC" t="o" />
+	  <objsur guid="B8179DD2-EA5E-11DE-8537-0013722F8DEC" t="o" />
+	  <objsur guid="B8238980-EA5E-11DE-86E1-0013722F8DEC" t="o" />
+	  <objsur guid="B82D12DE-EA5E-11DE-88CD-0013722F8DEC" t="o" />
+	  <objsur guid="44944544-DF17-4553-94B8-A5E13C3392C5" t="o" />
+	  <objsur guid="D85A4702-EA5E-11DE-93D4-0013722F8DEC" t="o" />
+	  <objsur guid="B838FE8C-EA5E-11DE-8ED9-0013722F8DEC" t="o" />
+	  <objsur guid="B844EA44-EA5E-11DE-8766-0013722F8DEC" t="o" />
+	  <objsur guid="B84E73A2-EA5E-11DE-9B31-0013722F8DEC" t="o" />
+	  <objsur guid="B85A5F50-EA5E-11DE-8168-0013722F8DEC" t="o" />
+	  <objsur guid="B8664B08-EA5E-11DE-9C9F-0013722F8DEC" t="o" />
+	  <objsur guid="B87236B6-EA5E-11DE-97C0-0013722F8DEC" t="o" />
+	  <objsur guid="B87BC014-EA5E-11DE-912A-0013722F8DEC" t="o" />
+	</Styles>
+  </rt>
+  <rt class="LexDb" guid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<Name>
+	  <AUni ws="en">Dictionary</AUni>
+	</Name>
+	<Styles>
+	  <objsur t="o" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	  <objsur t="o" guid="DC69AFDC-2052-4245-A840-5052B668D540" />
+	  <objsur t="o" guid="0B1A9792-0FB6-4BF8-B899-7635F36CF8C1" />
+	  <objsur t="o" guid="71B2233D-8B14-42D5-A625-AAC8EDE7503B" />
+	  <objsur t="o" guid="BB482CD4-79F3-41da-ACDE-164D5AB6B6BB" />
+	  <objsur t="o" guid="97509992-852B-45DA-9740-F51161CA40BD" />
+	  <objsur t="o" guid="64FF6BBA-704F-4591-AD86-6104BC8722E9" />
+	  <objsur t="o" guid="B26F65A7-B0AB-4641-9A9A-F45AA7746389" />
+	  <objsur t="o" guid="012C34B2-84C1-44F5-A0E3-2999A3860B73" />
+	  <objsur t="o" guid="D5395BD1-9F59-4EA1-A849-C334BFB4A8C8" />
+	  <objsur t="o" guid="CB739C5A-05DD-4543-A6CC-F18283B65B7F" />
+	  <objsur t="o" guid="69EB2A82-BF21-449A-8492-85B23376C96C" />
+	  <objsur t="o" guid="AB8AF0B1-8A1F-4163-9682-33A47BBCD65C" />
+	  <objsur guid="3AEF5EDB-3849-44de-975E-B9607176406F" t="o" />
+	</Styles>
+  </rt>
+  <rt class="StStyle" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<IsModified val="true" />
+	<Name><Uni>Normal</Uni></Name>
+	<Rules>
+	  <Prop align="leading" backcolor="white" bold="off" borderBottom="0" borderColor="black" borderLeading="0" borderTop="0" borderTrailing="0" bulNumScheme="0" bulNumStartAt="1" firstIndent="0" fontFamily="&lt;default serif&gt;" fontsize="10000" fontsizeUnit="mpt" forecolor="black" italic="off" leadingIndent="0" lineHeight="10000" lineHeightUnit="rel" offset="0" offsetUnit="mpt" spaceAfter="6000" spaceBefore="0" superscript="off" trailingIndent="0" undercolor="black" underline="none">
+		<BulNumFontInfo backcolor="white" bold="off" fontFamily="Times New Roman" fontsize="0mpt" forecolor="black" italic="off" offset="0mpt" superscript="off" undercolor="black" underline="none" />
+	  </Prop>
+	</Rules>
+	<Next>
+	  <objsur t="r" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="DC69AFDC-2052-4245-A840-5052B668D540" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Heading 1</Uni></Name>
+	<Rules>
+	  <Prop bold="invert" fontFamily="&lt;default sans serif&gt;" fontsize="14000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="12000" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="0B1A9792-0FB6-4BF8-B899-7635F36CF8C1" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Heading 2</Uni></Name>
+	<Rules>
+	  <Prop bold="invert" fontFamily="&lt;default sans serif&gt;" fontsize="12000" fontsizeUnit="mpt" italic="invert" spaceAfter="3000" spaceBefore="12000" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="71B2233D-8B14-42D5-A625-AAC8EDE7503B" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Heading 3</Uni></Name>
+	<Rules>
+	  <Prop bold="off" fontFamily="Times New Roman" fontsize="11000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="12000" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="0B1A9792-0FB6-4BF8-B899-7635F36CF8C1" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="DC69AFDC-2052-4245-A840-5052B668D540" />
+	</Next>
+  </rt>
+	<rt class="StStyle" guid="BB482CD4-79F3-41da-ACDE-164D5AB6B6BB" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+		<IsBuiltIn val="false" />
+		<Name>
+			<Uni>Heading 5</Uni>
+		</Name>
+		<Rules>
+			<Prop bold="off" fontFamily="Times New Roman" fontsize="11000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="12000" />
+		</Rules>
+		<BasedOn>
+			<objsur t="r" guid="0B1A9792-0FB6-4BF8-B899-7635F36CF8C1" />
+		</BasedOn>
+		<Next>
+			<objsur t="r" guid="DC69AFDC-2052-4245-A840-5052B668D540" />
+		</Next>
+	</rt>
+	<rt class="StStyle" guid="97509992-852B-45DA-9740-F51161CA40BD" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Emphasized Text</Uni></Name>
+	<Rules>
+	  <Prop italic="invert" spaceAfter="0" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="64FF6BBA-704F-4591-AD86-6104BC8722E9" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Internal Link</Uni></Name>
+	<Rules>
+	  <Prop forecolor="blue" undercolor="blue" underline="single" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="B26F65A7-B0AB-4641-9A9A-F45AA7746389" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Language Code</Uni></Name>
+	<Rules>
+	  <Prop fontsize="8000" fontsizeUnit="mpt" forecolor="2f60ff" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="012C34B2-84C1-44F5-A0E3-2999A3860B73" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>External Link</Uni></Name>
+	<Rules>
+	  <Prop forecolor="7f007f" undercolor="7f007f" underline="single" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="D5395BD1-9F59-4EA1-A849-C334BFB4A8C8" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="True" />
+	<Name><Uni>Dictionary-Normal</Uni></Name>
+	<Rules>
+	  <Prop firstIndent="-36000" leadingIndent="9000" spaceBefore="1000" spaceAfter="2000" />
+	</Rules>
+	<BasedOn><objsur guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" t="r" /></BasedOn>
+	<Type val="0" />
+  </rt>
+  <rt class="StStyle" guid="CB739C5A-05DD-4543-A6CC-F18283B65B7F" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="True" />
+	<Name><Uni>Classified-MainEntry</Uni></Name>
+	<Rules>
+	  <Prop italic="off" bold="invert" fontsize="12000" fontsizeUnit="mpt" spaceBefore="8000" spaceAfter="2000" fontFamily="&lt;default sans serif&gt;" />
+	</Rules>
+	<BasedOn><objsur guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" t="r" /></BasedOn>
+	<Next><objsur guid="69EB2A82-BF21-449A-8492-85B23376C96C" t="r" /></Next>
+	<Type val="0" />
+  </rt>
+  <rt class="StStyle" guid="69EB2A82-BF21-449A-8492-85B23376C96C" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="True" />
+	<Name><Uni>Classified-Item</Uni></Name>
+	<Rules>
+	  <Prop firstIndent="-9000" leadingIndent="9000" spaceBefore="2000" />
+	</Rules>
+	<BasedOn><objsur guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" t="r" /></BasedOn>
+	<Type val="0" />
+  </rt>
+  <rt class="StStyle" guid="AB8AF0B1-8A1F-4163-9682-33A47BBCD65C" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<IsBuiltIn val="false" />
+	<Name><Uni>Heading 4</Uni></Name>
+	<Rules>
+	  <Prop bold="off" fontFamily="&lt;default sans serif&gt;" fontsize="11000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="11000" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="3AEF5EDB-3849-44de-975E-B9607176406F" ownerguid="AF26D792-EA5E-11DE-8F7E-0013722F8DEC">
+	<Name><Uni>Dictionary-Custom</Uni></Name>
+	<Rules>
+	  <Prop bold="invert" fontFamily="&lt;default sans serif&gt;" fontsize="11000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="11000" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="6DA6D9AE-D627-4E67-9851-EBFBD6B9AF28" />
+	</Next>
+  </rt>
+  <rt class="RnResearchNbk" guid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<Name>
+	  <AUni ws="en">Data Notebook</AUni>
+	</Name>
+	<Records>
+	  <objsur guid="DBAD582E-1E2D-4BC6-AC9A-E31E03D6903D" t="o" />
+	</Records>
+  </rt>
+  <rt class="StStyle" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Normal</Uni></Name>
+	<Rules>
+	  <Prop align="leading" backcolor="white" bold="off" borderBottom="0" borderColor="black" borderLeading="0" borderTop="0" borderTrailing="0" bulNumScheme="0" bulNumStartAt="1" firstIndent="0" fontFamily="&lt;default serif&gt;" fontsize="10000" fontsizeUnit="mpt" forecolor="black" italic="off" leadingIndent="0" lineHeight="10000" lineHeightUnit="rel" offset="0" offsetUnit="mpt" spaceAfter="6000" spaceBefore="0" superscript="off" trailingIndent="0" undercolor="black" underline="none">
+		<BulNumFontInfo backcolor="white" bold="off" fontFamily="Times New Roman" fontsize="10000mpt" forecolor="black" italic="off" offset="0mpt" superscript="off" undercolor="black" underline="none" />
+	  </Prop>
+	</Rules>
+	<Next>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="D9CBD1B4-EA5E-11DE-8F8B-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<Name><Uni>Numbered List</Uni></Name>
+	<Rules>
+	  <Prop bulNumScheme="10" bulNumStartAt="1" firstIndent="-18000" spaceAfter="0" spaceBefore="0" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="D9CBD1B4-EA5E-11DE-8F8B-0013722F8DEC" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="D9BFE5FC-EA5E-11DE-9282-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<Name><Uni>Bulleted List</Uni></Name>
+	<Rules>
+	  <Prop bulNumScheme="101" bulNumStartAt="1" firstIndent="-18000" spaceAfter="0" trailingIndent="0" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="D9BFE5FC-EA5E-11DE-9282-0013722F8DEC" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="B8179DD2-EA5E-11DE-8537-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Heading 1</Uni></Name>
+	<Rules>
+	  <Prop bold="invert" fontFamily="&lt;default sans serif&gt;" fontsize="14000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="12000" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="B8238980-EA5E-11DE-86E1-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Heading 2</Uni></Name>
+	<Rules>
+	  <Prop bold="invert" fontFamily="&lt;default sans serif&gt;" fontsize="12000" fontsizeUnit="mpt" italic="invert" spaceAfter="3000" spaceBefore="12000" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="B82D12DE-EA5E-11DE-88CD-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Heading 3</Uni></Name>
+	<Rules>
+	  <Prop bold="off" fontFamily="&lt;default sans serif&gt;" fontsize="12000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="12000" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</Next>
+  </rt>
+	<rt class="StStyle" guid="44944544-DF17-4553-94B8-A5E13C3392C5" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+		<IsBuiltIn val="false" />
+		<Name>
+			<Uni>Heading 5</Uni>
+		</Name>
+		<Rules>
+			<Prop bold="off" fontFamily="&lt;default sans serif&gt;" fontsize="12000" fontsizeUnit="mpt" spaceAfter="3000" spaceBefore="12000" />
+		</Rules>
+	</rt>
+	<rt class="StStyle" guid="D85A4702-EA5E-11DE-93D4-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<Name><Uni>Block Quote</Uni></Name>
+	<Rules>
+	  <Prop firstIndent="0" leadingIndent="36000" spaceAfter="6000" trailingIndent="36000" />
+	</Rules>
+	<BasedOn>
+	  <objsur t="r" guid="D9AA70F0-EA5E-11DE-8EFB-0013722F8DEC" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="D85A4702-EA5E-11DE-93D4-0013722F8DEC" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="B838FE8C-EA5E-11DE-8ED9-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Title Text</Uni></Name>
+	<Rules>
+	  <Prop align="leading" bold="invert" firstIndent="0" fontsize="12000" fontsizeUnit="mpt" spaceBefore="0" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="B844EA44-EA5E-11DE-8766-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<Name><Uni>Emphasized Text</Uni></Name>
+	<Rules>
+	  <Prop italic="invert" spaceAfter="0" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="B84E73A2-EA5E-11DE-9B31-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Internal Link</Uni></Name>
+	<Rules>
+	  <Prop forecolor="blue" undercolor="blue" underline="single" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="B85A5F50-EA5E-11DE-8168-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>Language Code</Uni></Name>
+	<Rules>
+	  <Prop>
+		<WsStyles9999>
+		  <WsProp fontsize="8000" fontsizeUnit="mpt" forecolor="2f60ff" ws="en" />
+		</WsStyles9999>
+	  </Prop>
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="B8664B08-EA5E-11DE-9C9F-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<IsBuiltIn val="true" />
+	<Name><Uni>External Link</Uni></Name>
+	<Rules>
+	  <Prop forecolor="7f007f" undercolor="7f007f" underline="single" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="B87236B6-EA5E-11DE-97C0-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<Name><Uni>Added Text</Uni></Name>
+	<Rules>
+	  <Prop forecolor="2f9060" undercolor="2f9060" underline="single" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="B87BC014-EA5E-11DE-912A-0013722F8DEC" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<Name><Uni>Deleted Text</Uni></Name>
+	<Rules>
+	  <Prop forecolor="red" undercolor="red" underline="strikethrough" />
+	</Rules>
+	<Type val="1" />
+  </rt>
+  <rt class="RnGenericRec" guid="DBAD582E-1E2D-4BC6-AC9A-E31E03D6903D" ownerguid="D739CBEA-EA5E-11DE-85BE-0013722F8DEC">
+	<Title>
+	  <Str>
+		<Run ws="en">The balafon</Run>
+	  </Str>
+	</Title>
+	<ExternalMaterials>
+	  <objsur t="o" guid="5DA77477-FA40-4665-BEA8-9482131E86CA" />
+	</ExternalMaterials>
+	<FurtherQuestions>
+	  <objsur t="o" guid="43215DEA-B15F-4E92-892F-93AF904CCA0D" />
+	</FurtherQuestions>
+	<VersionHistory>
+	  <objsur t="o" guid="6F37AB1C-DFBF-4693-9449-5885EB2AA1D4" />
+	</VersionHistory>
+	<DateOfEvent val="200201061" />
+	<Description>
+	  <objsur t="o" guid="579B7ACC-619B-4933-9FA7-1E1AC57A1161" />
+	</Description>
+	<PersonalNotes>
+	  <objsur t="o" guid="BB6AC716-8032-46F3-9420-FBC28D510BBD" />
+	</PersonalNotes>
+  </rt>
+  <rt class="StText" guid="5DA77477-FA40-4665-BEA8-9482131E86CA" ownerguid="DBAD582E-1E2D-4BC6-AC9A-E31E03D6903D">
+	<Paragraphs>
+	  <objsur t="o" guid="108FCD88-1AEA-4090-A51E-CB8C7AFC43FE" />
+	</Paragraphs>
+  </rt>
+  <rt class="StTxtPara" guid="108FCD88-1AEA-4090-A51E-CB8C7AFC43FE" ownerguid="5DA77477-FA40-4665-BEA8-9482131E86CA">
+	<Contents>
+	  <Str>
+		<Run ws="en" externalLink="C:\Program Files\FieldWorks\Data Notebook\Training\Pictures\balafon.gif" namedStyle="External Link">Balafon picture</Run>
+	  </Str>
+	</Contents>
+	<ParseIsCurrent val="False" />
+  </rt>
+  <rt class="StText" guid="43215DEA-B15F-4E92-892F-93AF904CCA0D" ownerguid="DBAD582E-1E2D-4BC6-AC9A-E31E03D6903D">
+	<Paragraphs>
+	  <objsur t="o" guid="2A49E64E-A4F5-40B6-BD15-65D8C0B19FC1" />
+	</Paragraphs>
+  </rt>
+  <rt class="StTxtPara" guid="2A49E64E-A4F5-40B6-BD15-65D8C0B19FC1" ownerguid="43215DEA-B15F-4E92-892F-93AF904CCA0D">
+	<Contents>
+	  <Str>
+		<Run ws="en" namedStyle="Internal Link">Who can make a balafon? Who can play it?</Run>
+	  </Str>
+	</Contents>
+	<ParseIsCurrent val="False" />
+  </rt>
+  <rt class="StText" guid="6F37AB1C-DFBF-4693-9449-5885EB2AA1D4" ownerguid="DBAD582E-1E2D-4BC6-AC9A-E31E03D6903D">
+	<Paragraphs>
+	  <objsur t="o" guid="524753E9-5654-4433-AF10-EDBE59480BE0" />
+	  <objsur t="o" guid="0C879C7E-9E8B-4e23-91C6-D6381B9257EA" />
+	  <objsur t="o" guid="D9ABCCF1-9414-4EF7-8993-EE0FFD74FA47" />
+	</Paragraphs>
+  </rt>
+  <rt class="StTxtPara" guid="524753E9-5654-4433-AF10-EDBE59480BE0" ownerguid="6F37AB1C-DFBF-4693-9449-5885EB2AA1D4">
+	<Contents>
+	  <Str>
+		<Run ws="en" namedStyle="External Link">This is a test.  </Run>
+		<Run ws="en" namedStyle="Internal Link">This is only a test!  </Run>
+		<Run ws="en" namedStyle="Language Code">Why is there air?</Run>
+	  </Str>
+	</Contents>
+	<ParseIsCurrent val="False" />
+  </rt>
+  <rt class="StTxtPara" guid="0C879C7E-9E8B-4e23-91C6-D6381B9257EA" ownerguid="6F37AB1C-DFBF-4693-9449-5885EB2AA1D4">
+	<StyleRules>
+	  <Prop backcolor="ffff90" leadingIndent="28347" namedStyle="Normal"/>
+	</StyleRules>
+	<Contents>
+	  <Str>
+	<Run ws="en" bold="invert">This is a test.</Run>
+		<Run ws="en">  </Run>
+	<Run ws="en" namedStyle="Emphasized Text">This is </Run>
+	<Run ws="en" bold="invert" namedStyle="Emphasized Text">only</Run>
+	<Run ws="en" namedStyle="Emphasized Text"> a </Run>
+	<Run ws="en" underline="single" forecolor="red" undercolor="2f9060" fontFamily="Impact" namedStyle="Emphasized Text">test</Run>
+	<Run ws="en" namedStyle="Emphasized Text">.</Run>
+	<Run ws="en">  I like this test.  It is a </Run>
+	<Run ws="en" italic="invert" bold="invert">very</Run>
+	<Run ws="en"> interesting, and </Run>
+	<Run ws="en" italic="invert">Turing</Run>
+	<Run ws="en"> </Run>
+		<Run ws="en" italic="invert" bold="invert" superscript="super" underline="double" fontsize="14000" fontsizeUnit="mpt" offset="2000" offsetUnit="mpt" forecolor="ffff90" backcolor="902f00" undercolor="2f60ff" fontFamily="Abyssinica SIL">complete</Run>
+	<Run ws="en"> , test.</Run>
+	  </Str>
+	</Contents>
+	<ParseIsCurrent val="False" />
+  </rt>
+  <rt class="StTxtPara" guid="D9ABCCF1-9414-4EF7-8993-EE0FFD74FA47" ownerguid="6F37AB1C-DFBF-4693-9449-5885EB2AA1D4">
+	<StyleRules>
+	  <Prop backcolor="c0ffff" align="center" firstIndent="21600" leadingIndent="14173" trailingIndent="14173" spaceBefore="6000" spaceAfter="12000" lineHeight="20000" lineHeightUnit="rel" rightToLeft="1" bulNumScheme="11" bulNumStartAt="4" namedStyle="Normal" bulNumTxtBef="BEFORE=" bulNumTxtAft="=AFTER">
+	<BulNumFontInfo backcolor="white" fontsize="10000mpt" forecolor="black" offset="0mpt" superscript="off" undercolor="black" underline="none" fontFamily="Abyssinica SIL"/>
+	  </Prop>
+	</StyleRules>
+	<Contents>
+	  <Str>
+	<Run ws="en">But the third paragraph is another story.  It has all sorts of direct paragraph level formatting!</Run>
+	  </Str>
+	</Contents>
+  </rt>
+  <rt class="StText" guid="579B7ACC-619B-4933-9FA7-1E1AC57A1161" ownerguid="DBAD582E-1E2D-4BC6-AC9A-E31E03D6903D">
+	<Paragraphs>
+	  <objsur t="o" guid="8FF471BC-1475-457D-AEAE-A10BDEB169A4" />
+	</Paragraphs>
+  </rt>
+  <rt class="StTxtPara" guid="8FF471BC-1475-457D-AEAE-A10BDEB169A4" ownerguid="579B7ACC-619B-4933-9FA7-1E1AC57A1161">
+	<Contents>
+	  <Str>
+		<Run ws="en">I just realized that I never really described the balafon that I've seen played at funerals quite a few times now.</Run>
+	  </Str>
+	</Contents>
+	<ParseIsCurrent val="False" />
+  </rt>
+  <rt class="StText" guid="BB6AC716-8032-46F3-9420-FBC28D510BBD" ownerguid="DBAD582E-1E2D-4BC6-AC9A-E31E03D6903D">
+	<Paragraphs>
+	  <objsur t="o" guid="662A1E17-F9BA-487D-991E-F87EBE08D420" />
+	</Paragraphs>
+  </rt>
+  <rt class="StTxtPara" guid="662A1E17-F9BA-487D-991E-F87EBE08D420" ownerguid="BB6AC716-8032-46F3-9420-FBC28D510BBD">
+	<Contents>
+	  <Str>
+		<Run ws="en" namedStyle="Language Code">This is a test!?</Run>
+	  </Str>
+	</Contents>
+	<ParseIsCurrent val="False" />
+  </rt>
+  <rt class="Scripture" guid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4" ownerguid="AF1D4E34-EA5E-11DE-8EC5-0013722F8DEC">
+	<ScriptureBooks>
+	  <objsur guid="740C01CE-24FC-452A-B16F-328347632E20" t="o" />
+	</ScriptureBooks>
+	<Styles>
+	  <objsur guid="3D3534C3-B326-4C85-ABE6-2F8E322143A2" t="o" />
+	  <objsur guid="B7B82F43-467E-4E11-BF4F-D19CFA2178BF" t="o" />
+	  <objsur guid="15FCE9F9-BF1A-4686-918B-340AFC71E62D" t="o" />
+	  <objsur guid="BB81B046-0E4F-4746-8410-9A9E2B8C32A2" t="o" />
+	  <objsur guid="EE88B096-A48B-427D-BEF8-DBC7048BFDFC" t="o" />
+	  <objsur guid="298FCEA2-FB6C-4256-A84A-7032D967799F" t="o" />
+	</Styles>
+  </rt>
+  <rt class="ScrBook" guid="740C01CE-24FC-452A-B16F-328347632E20" ownerguid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4">
+	<Abbrev>
+	  <AUni ws="en">Phm</AUni>
+	</Abbrev>
+	<CanonicalNum val="57" />
+	<Name>
+	  <AUni ws="en">Philemon</AUni>
+	</Name>
+	<Sections>
+	  <objsur t="o" guid="05C9EA68-F4AF-4EDD-A4F0-608FBB355CDC" />
+	</Sections>
+	<Title>
+	  <objsur t="o" guid="B5DC5292-5C82-4793-AE53-D23ADB1C16FD" />
+	</Title>
+  </rt>
+  <rt class="ScrSection" guid="05C9EA68-F4AF-4EDD-A4F0-608FBB355CDC" ownerguid="740C01CE-24FC-452A-B16F-328347632E20">
+	<VerseRefEnd val="57001000" />
+	<VerseRefMax val="57001000" />
+	<VerseRefMin val="57001000" />
+	<VerseRefStart val="57001000" />
+	<Content>
+	  <objsur t="o" guid="7CA13600-FC11-49F8-AD7B-A26E2DCAF6E0" />
+	</Content>
+	<Heading>
+	  <objsur t="o" guid="76C64D63-CEDF-4A85-B41B-FEBD101DA1F1" />
+	</Heading>
+  </rt>
+  <rt class="StText" guid="7CA13600-FC11-49F8-AD7B-A26E2DCAF6E0" ownerguid="05C9EA68-F4AF-4EDD-A4F0-608FBB355CDC">
+	<Paragraphs>
+	  <objsur t="o" guid="E56D6C08-DCE1-48E0-BAFC-00CA0BF9F505" />
+	</Paragraphs>
+  </rt>
+  <rt guid="E56D6C08-DCE1-48E0-BAFC-00CA0BF9F505" class="ScrTxtPara" ownerguid="7ca13600-fc11-49f8-ad7b-a26e2dcaf6e0">
+	<StyleRules>
+	  <Prop namedStyle="Intro Paragraph" />
+	</StyleRules>
+	<Contents>
+	  <Str>
+		<Run ws="en" namedStyle="External Link">L'Epître à Philémon est la plus brève, la plus personnelle aussi.</Run>
+	  </Str>
+	</Contents>
+	<ParseIsCurrent val="False" />
+  </rt>
+  <rt class="StText" guid="76C64D63-CEDF-4A85-B41B-FEBD101DA1F1" ownerguid="05C9EA68-F4AF-4EDD-A4F0-608FBB355CDC">
+	<Paragraphs>
+	  <objsur t="o" guid="A3C684AC-D975-48DC-9088-67A60BFF93A0" />
+	</Paragraphs>
+  </rt>
+  <rt class="ScrTxtPara" guid="A3C684AC-D975-48DC-9088-67A60BFF93A0" ownerguid="76C64D63-CEDF-4A85-B41B-FEBD101DA1F1">
+	<StyleRules>
+	  <Prop namedStyle="Intro Section Head"></Prop>
+	</StyleRules>
+	<ParseIsCurrent val="False" />
+  </rt>
+  <rt class="StText" guid="B5DC5292-5C82-4793-AE53-D23ADB1C16FD" ownerguid="740C01CE-24FC-452A-B16F-328347632E20">
+	<Paragraphs>
+	  <objsur t="o" guid="3246CCDC-DBF1-4869-8B1E-3E83A109E332" />
+	</Paragraphs>
+  </rt>
+  <rt guid="3246ccdc-dbf1-4869-8b1e-3e83a109e332" class="ScrTxtPara" ownerguid="b5dc5292-5c82-4793-ae53-d23adb1c16fd">
+	<StyleRules>
+	  <Prop namedStyle="Title Main" />
+	</StyleRules>
+	<Contents>
+	  <Str>
+		<Run ws="en" namedStyle="Internal Link">ÉPÎTRE À PHILÉMON </Run>
+		<Run ws="en" namedStyle="Language Code">INTRODUCTION</Run>
+	  </Str>
+	</Contents>
+	<ParseIsCurrent val="False" />
+  </rt>
+  <rt class="StStyle" guid="3D3534C3-B326-4C85-ABE6-2F8E322143A2" ownerguid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4">
+	<Context val="5" />
+	<IsBuiltIn val="true" />
+	<Name>
+	  <Uni>Normal</Uni>
+	</Name>
+	<Rules>
+	  <Prop fontsize="10000" fontsizeUnit="mpt" lineHeight="12000" lineHeightUnit="mpt" lineHeightType="exact" widowOrphan="1" fontFamily="&lt;default pub font&gt;"></Prop>
+	</Rules>
+	<Next>
+	  <objsur t="r" guid="298FCEA2-FB6C-4256-A84A-7032D967799F" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="B7B82F43-467E-4E11-BF4F-D19CFA2178BF" ownerguid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4">
+	<Context val="10" />
+	<Function val="4" />
+	<IsBuiltIn val="true" />
+	<IsPublishedTextStyle val="true" />
+	<Name>
+	  <Uni>Language Code</Uni>
+	</Name>
+	<Rules>
+	  <Prop spellcheck="doNotCheck"></Prop>
+	</Rules>
+	<Structure val="2" />
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="15FCE9F9-BF1A-4686-918B-340AFC71E62D" ownerguid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4">
+	<Context val="10" />
+	<IsBuiltIn val="true" />
+	<IsPublishedTextStyle val="true" />
+	<Name>
+	  <Uni>External Link</Uni>
+	</Name>
+	<Rules>
+	  <Prop spellcheck="doNotCheck"></Prop>
+	</Rules>
+	<Type val="1" />
+	<UserLevel val="4" />
+  </rt>
+  <rt class="StStyle" guid="BB81B046-0E4F-4746-8410-9A9E2B8C32A2" ownerguid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4">
+	<Context val="10" />
+	<Function val="5" />
+	<IsBuiltIn val="true" />
+	<IsPublishedTextStyle val="true" />
+	<Name>
+	  <Uni>Internal Link</Uni>
+	</Name>
+	<Rules>
+	  <Prop superscript="super" spellcheck="doNotCheck"></Prop>
+	</Rules>
+	<Structure val="2" />
+	<Type val="1" />
+  </rt>
+  <rt class="StStyle" guid="EE88B096-A48B-427D-BEF8-DBC7048BFDFC" ownerguid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4">
+	<Context val="10" />
+	<IsBuiltIn val="true" />
+	<IsPublishedTextStyle val="true" />
+	<Name>
+	  <Uni>Section Head</Uni>
+	</Name>
+	<Rules>
+	  <Prop align="center" bold="invert" fontsize="9000" fontsizeUnit="mpt" italic="off" spaceAfter="4000" spaceBefore="8000" keepWithNext="1" keepTogether="1"></Prop>
+	</Rules>
+	<Structure val="1" />
+	<BasedOn>
+	  <objsur t="r" guid="3D3534C3-B326-4C85-ABE6-2F8E322143A2" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="298FCEA2-FB6C-4256-A84A-7032D967799F" />
+	</Next>
+  </rt>
+  <rt class="StStyle" guid="298FCEA2-FB6C-4256-A84A-7032D967799F" ownerguid="A067DDF3-165D-40AC-B9D4-AFC4F73B26C4">
+	<Context val="10" />
+	<IsBuiltIn val="true" />
+	<IsPublishedTextStyle val="true" />
+	<Name>
+	  <Uni>Paragraph</Uni>
+	</Name>
+	<Rules>
+	  <Prop firstIndent="12000"></Prop>
+	</Rules>
+	<Structure val="2" />
+	<BasedOn>
+	  <objsur t="r" guid="3D3534C3-B326-4C85-ABE6-2F8E322143A2" />
+	</BasedOn>
+	<Next>
+	  <objsur t="r" guid="298FCEA2-FB6C-4256-A84A-7032D967799F" />
+	</Next>
+  </rt>
+</languageproject>

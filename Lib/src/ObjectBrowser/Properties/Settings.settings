@@ -1,0 +1,45 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SIL.ObjectBrowser.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+	<Setting Name="MainWndLocation" Type="System.Drawing.Point" Scope="User">
+	  <Value Profile="(Default)">0, 0</Value>
+	</Setting>
+	<Setting Name="MainWndSize" Type="System.Drawing.Size" Scope="User">
+	  <Value Profile="(Default)">0, 0</Value>
+	</Setting>
+	<Setting Name="UseShading" Type="System.Boolean" Scope="User">
+	  <Value Profile="(Default)">True</Value>
+	</Setting>
+	<Setting Name="ShadeColor" Type="System.Drawing.Color" Scope="User">
+	  <Value Profile="(Default)">Gainsboro</Value>
+	</Setting>
+	<Setting Name="RUFile1" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+	<Setting Name="RUFile2" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+	<Setting Name="RUFile3" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+	<Setting Name="RUFile4" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+	<Setting Name="RUFile5" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+	<Setting Name="RUFile6" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+	<Setting Name="RUFile7" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+	<Setting Name="RUFile8" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+	<Setting Name="RUFile9" Type="System.String" Scope="User">
+	  <Value Profile="(Default)" />
+	</Setting>
+  </Settings>
+</SettingsFile>

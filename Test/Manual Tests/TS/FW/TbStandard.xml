@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tbstd" num="3.1" abbr="tsd" file="FW\TbStandard.xml">
+ <title tag="tbstd">Standard Toolbar Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>Standard toolbar icons include those for saving a file, printing, cutting and pasting, navigation and question arrow help.</p>
+   <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#StandardToolbar" type="doc">Standard Toolbar</link>
+</p>
+  </introduction>
+  <context>
+<p>Most icons are tested separately. A few that perform inverse operations like cut and paste are best tested together. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Standard Toolbar".</p>
+<p>For more detailed tests of functionality, use the respective tests available in other test scripts.</p>
+  </context>
+
+ <case id="tsdBsc" num="0" order="any">
+  <title tag="tsdBsc">Basic Standard Toolbar</title>
+  <context>
+<p>When the application is running.</p>
+</context>
+  <step name="0.0" link="Bug">Use <link uri="../StdCtrls/TlbButton.xml">Toolbar Button Tests</link> to test this toolbar's basic functionality. Use this image <img uri="file:///C:/fw/FwSpecs/FW/App/Features/Toolbars/ToolbarStandard.gif" alt="Image of standard toolbar">
+</img> to compare appearance.
+   <r>
+<ul>
+<li>Toolbar icons and controls should be enabled.</li>
+<li>Report any failures as suggested using "Standard Toolbar &lt;control name&gt;" as the name of the control.</li>
+</ul>
+</r>
+ <p name="bug">Standard toolbar &lt;icon&gt; not enabled</p>
+  </step>
+ </case>
+
+ <case id="tsdSave" num="1" order="any">
+  <title tag="tsdSave">Save Icon</title>
+  <context>
+<p>When the Standard toolbar is displayed</p>
+</context>
+  <step name="1.1">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Save icon control - there is no shortcut.
+   <r>Report any failures using "Standard Toolbar Save Icon" as the name of the control.</r>
+  </step>
+  <step name="1.2" link="Bug">Click on the Save Icon.
+   <r>The current application file is saved in its current format.</r>
+   <p name="bug">Standard toolbar Save Icon does nothing</p>
+  </step>
+ </case>
+
+ <case id="tsdPrint" num="2" order="any">
+  <title tag="tsdPrint">Print Icon</title>
+  <context>
+<p>When the Standard toolbar is displayed</p>
+</context>
+  <step name="2.1">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Print icon control - there is no shortcut.
+   <r>Report any failures using "Standard Toolbar Print Icon" as the name of the control.</r>
+  </step>
+  <step name="2.2" link="Bug">Click on the Print Icon.
+   <r>The current application file is printed using the default printer settings.</r>
+   <p name="bug">Standard toolbar Print Icon does nothing</p>
+  </step>
+ </case>
+
+ <case id="tsdPrintPre" num="3" order="any">
+  <title tag="tsdPrintPre">Print Preview Icon</title>
+  <context>
+<p>When the Standard toolbar is displayed</p>
+</context>
+  <step name="3.1">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Print Preview icon control - there is no shortcut.
+   <r>Report any failures using "Standard Toolbar Print Preview Icon" as the name of the control.</r>
+  </step>
+  <step name="3.2" link="Bug">Click on the Print Preview Icon.
+   <r>The current application file is displayed using the default printer settings.</r>
+   <p name="bug">Standard toolbar Print Preview Icon does nothing</p>
+  </step>
+ </case>
+
+ <case id="tsdCut" num="4" order="any">
+  <title tag="tsdCut">Cut Icon</title>
+  <context>
+<p>When the Standard toolbar is displayed</p>
+</context>
+  <step name="4.1">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Cut icon control - there is no shortcut.
+   <r>Report any failures using "Standard Toolbar Cut Icon" as the name of the control.</r>
+  </step>
+  <step name="4.2" link="Bug">Click on the Cut Icon.
+   <r>The current selected text is cut (deleted) to the paste buffer.</r>
+   <p name="bug">Standard toolbar Cut Icon does nothing</p>
+  </step>
+ </case>
+
+ <case id="tsdCopy" num="5" order="any">
+  <title tag="tsdCopy">Copy Icon</title>
+  <context>
+<p>When the Standard toolbar is displayed</p>
+</context>
+  <step name="5.1">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Copy icon control - there is no shortcut.
+   <r>Report any failures using "Standard Toolbar Copy Icon" as the name of the control.</r>
+  </step>
+  <step name="5.2" link="Bug">Click on the Copy Icon.
+   <r>The current selected text is copied to the paste buffer.</r>
+   <p name="bug">Standard toolbar Copy Icon does nothing</p>
+  </step>
+ </case>
+
+ <case id="tsdPaste" num="6" order="any">
+  <title tag="tsdPaste">Paste Icon</title>
+  <context>
+<p>When the Standard toolbar is displayed</p>
+</context>
+  <step name="6.1">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Paste icon control - there is no shortcut.
+   <r>Report any failures using "Standard Toolbar Paste Icon" as the name of the control.</r>
+  </step>
+  <step name="6.2" link="Bug">Click on the Paste Icon.
+   <r>The content of the paste buffer is inserted at the cursor and becomes the selected text.</r>
+   <p name="bug">Standard toolbar Paste Icon does nothing</p>
+  </step>
+ </case>
+
+ <case id="tsdUndo" num="7" order="any">
+  <title tag="tsdUndo">Undo Icon</title>
+  <context>
+<p>When the Standard toolbar is displayed</p>
+</context>
+  <step name="7.1">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Undo icon control - there is no shortcut.
+   <r>Report any failures using "Standard Toolbar Undo Icon" as the name of the control.</r>
+  </step>
+  <step name="7.2" link="Bug">Click on the Undo Icon.
+   <r>The last user action affecting some persistent aspect of the application but that is not saved is undone if it is possible.</r>
+   <p name="bug">Standard toolbar Undo Icon does nothing</p>
+  </step>
+  <step name="7.3">Use <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> to test the Undo icon dropdown control - there is no shortcut.
+   <r>The list contains short phrases for reversible (uncommited) user actions. The selected item should be undone and removed from the list. Report any failures using "Standard Toolbar Undo Icon" as the name of the control.</r>
+  </step>
+ </case>
+
+ <case id="tsdRedo" num="8" order="any">
+  <title tag="tsdRedo">Redo Icon</title>
+  <context>
+<p>When the Standard toolbar is displayed</p>
+</context>
+  <step name="8.1">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Redo icon control - there is no shortcut.
+   <r>Report any failures using "Standard Toolbar Redo Icon" as the name of the control.</r>
+  </step>
+  <step name="8.2" link="Bug">Click on the Redo Icon.
+   <r>The last user action affecting some persistent aspect of the application but that is not saved is redone.</r>
+   <p name="bug">Standard toolbar Redo Icon does nothing</p>
+  </step>
+  <step name="8.3">Use <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> to test the Redo icon dropdown control - there is no shortcut.
+   <r>The list contains short phrases for recent (uncommited) user actions. The selected item should be redone but remain on the list. Report any failures using "Standard Toolbar Redo Icon" as the name of the control.</r>
+  </step>
+ </case>
+
+ <case id="tsdQHelp" num="9" order="any">
+  <title tag="tsdQHelp">What's This? Icon</title>
+  <context>
+<p>When the Standard toolbar is displayed</p>
+</context>
+  <step name="9.1">Use <link uri="../StdCtrls/Dialog.xml#dlgQst">Dialog Question Button Tests</link> to test the What's This? icon control. See Results for test exceptions.
+   <r>
+<ul>
+	<li>When clicking with the changed cursor where there is no control, the cursor remains changed and no help bubble appears.</li>
+	<li>A toolbar icon is used instead of a dialog title bar icon.</li>
+	<li>There is no shortcut to the icon.</li>
+	<li>In a menu, only leaf items bring up a help bubble.</li>
+	</ul>
+	Report any failures using "Standard Toolbar Context Help Icon" as the name of the control.</r>
+  </step>
+ </case>
+
+ <update date="Jan-09-01" author="MikeL">Test created.</update>
+ <update date="Mar-26-01" author="MikeL">Corrected Context Help Icon case.</update>
+ <update date="Sep-21-01" author="MikeL">Small changes to cases and links.</update>
+ <update date="May-31-02" author="JoelC">Updated to reflect changes in specs.</update>
+
+</test>

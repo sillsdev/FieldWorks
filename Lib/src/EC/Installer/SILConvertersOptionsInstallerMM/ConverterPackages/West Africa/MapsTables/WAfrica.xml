@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SILConvertersInstallerDetails xmlns="http://www.sil.org/computing/schemas/SILConvertersInstallerDetails.xsd">
+  <MapsTables>
+	<MapTable description="SIL Burkina Faso 1990 font family to Unicode">
+	  <autoInstall mappingName="SIL-93linb-2005&lt;&gt;UNICODE" converterSpec="MapsTables\93-linb.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-93linb-2005" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\93-linb.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\93-linb.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="UBS-Abidjan-2005">
+	  <autoInstall mappingName="UBS-Abidjan-2005&lt;&gt;UNICODE" converterSpec="MapsTables\Abidjan.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="UBS-Abidjan-2005" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\Abidjan.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\Abidjan.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="Bambara SIL Charis">
+	  <autoInstall mappingName="Bambara SIL Charis&lt;&gt;UNICODE" converterSpec="MapsTables\Bambara SIL Charis.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="Bambara SIL Charis" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\Bambara SIL Charis.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\Bambara SIL Charis.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL Burkina Faso font family to Unicode">
+	  <autoInstall mappingName="SIL-BF Font Family-2005&lt;&gt;UNICODE" converterSpec="MapsTables\BF Font Family.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-BF_Font_Family-2005" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\BF Font Family.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\BF Font Family.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL Burkina Faso Times to Unicode">
+	  <autoInstall mappingName="SIL-BF_Times-2006&lt;&gt;UNICODE" converterSpec="MapsTables\BF Times.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-BF_Times-2006" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\BF Times.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\BF Times.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL FHP Fulfulde">
+	  <autoInstall mappingName="X-SIL-Fulfulde&lt;&gt;UNICODE" converterSpec="MapsTables\fulfulde.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="X-SIL-Fulfulde" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\fulfulde.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\fulfulde.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL-Ghana Fonts to Unicode">
+	  <autoInstall mappingName="SIL-Ghana Doulos-2005&lt;&gt;UNICODE" converterSpec="MapsTables\Ghana.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-Ghana_Doulos-2005" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\Ghana.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\Ghana.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL-Mali Standard Font to Unicode mapping">
+	  <autoInstall mappingName="SIL-Mali Standard Font Family&lt;&gt;UNICODE" converterSpec="MapsTables\Mali Standard.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="Mali Standard SILDoulos-2005" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\Mali Standard.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\Mali Standard.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="RCI Standard encoding conversion map">
+	  <autoInstall mappingName="RCI Standard Doulos/Sophia/Manuscript&lt;&gt;UNICODE" converterSpec="MapsTables\RCIStandard.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-RCI Standard-1994" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\RCIStandard.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\RCIStandard.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="Senufo">
+	  <autoInstall mappingName="X-SIL-Senufo&lt;&gt;UNICODE" converterSpec="MapsTables\Senufo.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="X-SIL-Senufo" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\Senufo.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\Senufo.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL Karaboro font family to Unicode">
+	  <autoInstall mappingName="SIL-Karaboro-2006&lt;&gt;UNICODE" converterSpec="MapsTables\SIL-Kar.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-Karaboro-2006" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\SIL-Kar.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\SIL-Kar.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL Samogho encoding conversion map">
+	  <autoInstall mappingName="SIL Samogho Doulos/Sophia/Manuscript&lt;&gt;UNICODE" converterSpec="MapsTables\SILSamogho.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-Samogho-2006" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\SILSamogho.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\SILSamogho.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL Songhai Mali fonts to Unicode">
+	  <autoInstall mappingName="SIL-Songhai-2006&lt;&gt;UNICODE" converterSpec="MapsTables\Songhai.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-Songhai-2006" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\Songhai.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\Songhai.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="Tombouctou-Dutch to Unicode">
+	  <autoInstall mappingName="Tombouctou-Dutch&lt;&gt;UNICODE" converterSpec="MapsTables\Tombouctou.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-Tombouctou-Dutch-2006" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\Tombouctou.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\Tombouctou.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL-Burkina Winye Unknown Font to Unicode mapping">
+	  <autoInstall mappingName="Burkina Faso Winye-2003&lt;&gt;UNICODE" converterSpec="MapsTables\Winye.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-Burkina_Winye_Unknown_Font-2005" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="Test Data"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\Winye.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\Winye.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+	<MapTable description="SIL Togo-Benin Tbb font family to Unicode mapping">
+	  <autoInstall mappingName="SIL Togo-Benin Tbb font family&lt;&gt;UNICODE" converterSpec="MapsTables\Tbb4.tec" IsConverterSpecAFile="true" conversionType="LegacyToFromUnicode" implementType="SIL.tec" leftEncoding="SIL-TBB-1996" rightEncoding="UNICODE" processType="UnicodeEncodingConversion"  sampleData="fýrýn wýËýtÿÿma"></autoInstall>
+	  <FilesToInstall>
+		<FileToInstall filename="MapsTables\Tbb4.tec"></FileToInstall>
+		<FileToInstall filename="MapsTables\Tbb4.map"></FileToInstall>
+	  </FilesToInstall>
+	</MapTable>
+  </MapsTables>
+</SILConvertersInstallerDetails>

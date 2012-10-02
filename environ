@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# Environment settings for running FieldWorks
+#
+# Source this file in a shell and then run "mono FieldWorks.exe -app {Te,Flex}"
+
+BASE=$(pwd)
+COM=$(dirname "${BASE}")/COM
+ARCH=$(uname -m)
+[ -z "$BUILD" ] && BUILD=Debug
+
+# Dependency locations
+# TODO - search for xulrunner-1.9.2.* locations, (and select the latest)
+XULRUNNER=$(ls -d /usr/lib/xulrunner-1.9.2* | tail -1)
+GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
+
+# Directory settings
+PATH="${BASE}/Output_${ARCH}/${BUILD}:\
+${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/build${ARCH}/bin:\
+${BASE}/Bin/nant/bin:\
+$PATH"
+LD_LIBRARY_PATH="${COM}/build${ARCH}/src/.libs:${COM}/build${ARCH}/lib:\
+${BASE}/Lib/src/icu/install${ARCH}/lib:\
+${BASE}/Output_${ARCH}/${BUILD}:\
+${LD_LIBRARY_PATH}"
+
+# Add packaged mono items to paths
+PATH="/usr/lib/fieldworks/mono/bin:${PATH}"
+LD_LIBRARY_PATH="/usr/lib/fieldworks/mono/lib:${XULRUNNER}:${LD_LIBRARY_PATH}"
+PKG_CONFIG_PATH="/usr/lib/fieldworks/mono/lib/pkgconfig:${PKG_CONFIG_PATH}"
+
+if [ "$RUNMODE" != "PACKAGE" ]
+then
+	# Make locally-built software (eg mono) visible
+	PATH="/usr/local/bin:${PATH}"
+	LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
+	PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}"
+fi
+
+if [ "$RUNMODE" = "INSTALLED" ]
+then
+	COMPONENTS_MAP_PATH="${BASE}"
+	FW_ROOT="${BASE}/../../share/fieldworks"
+	FW_ROOTDATA="${HOME}/.config/fieldworks"
+	FW_ROOTCODE="${BASE}/../../share/fieldworks"
+	ICU_DATA="${HOME}/.config/fieldworks/Icu40/icudt40l"
+	PATH="${BASE}/icu-bin:${PATH}"
+	LD_LIBRARY_PATH="${BASE}:${LD_LIBRARY_PATH}"
+	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
+else
+	COMPONENTS_MAP_PATH="${BASE}/Output_${ARCH}/${BUILD}"
+	FW_ROOT="${BASE}/DistFiles"
+	FW_ROOTDATA="${BASE}/DistFiles"
+	FW_ROOTCODE="${BASE}/DistFiles"
+	ICU_DATA="${BASE}/DistFiles/Icu40/icudt40l"
+	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
+fi
+
+MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}"
+MONO_TRACE_LISTENER="Console.Out"
+#MONO_IOMAP=case
+MONO_MWF_SCALING=disable
+# if debugging Fieldworks for performance unset DEBUG_ENABLE_PTR_VALIDATION env var.
+#DEBUG_ENABLE_PTR_VALIDATION=1
+
+export \
+	PATH LD_LIBRARY_PATH PKG_CONFIG_PATH \
+	COMPONENTS_MAP_PATH \
+	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
+	ICU_DATA \
+	MONO_PATH MONO_REGISTRY_PATH \
+	MONO_TRACE_LISTENER MONO_IOMAP MONO_MWF_SCALING
+
+#DEBUG_ENABLE_PTR_VALIDATION
+
+#sets keyboard input method to none
+unset XMODIFIERS

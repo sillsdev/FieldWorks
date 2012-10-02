@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fntipa" num="4.2" abbr="fipa" file="WorldPad\fntIPA.xml">
+ <title tag="fntipa">IPA Graphite Font Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>IPA was the first font developed with Graphite. It is used to represent every sound a human can make to communicate. IPA is used in the field for language survey, language acquisition and study.</p>
+  </introduction>
+  <context>
+<p>Often times bugs in this font are isolated but may affect the placement or appearance of many characters in a view. Try to report the bug in its most elemental form.</p>
+  </context>
+  <guidelines>
+<p>There is no project specification for this font.</p>
+  </guidelines>
+ <case id="fipaInsp" num="1" order="any">
+  <title tag="fipaInsp">IPA Inspection</title>
+  <context>
+<p>When WorldPad is running</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of each character is important to insure all are displayable.</p>
+
+  <step name="1.1" link="Bug">Click File-Open and browse for IPA_Table.wpx. Click OK. Inspect the appearance of each character against the chart. <link uri="ipachart.gif" type="doc">IPA chart to compare characters.</link>
+   <r>Each character should match.</r>
+   <p name="Notes">The IPA_Table.xml file should be in the same directory as this test file.</p>
+   <p name="bug">IPA character &lt;code&gt; has incorrect appearance</p>
+  </step>
+
+ </case>
+ <case id="fipaKey" num="2" order="any">
+  <title tag="fipaKey">IPA Keyboarding</title>
+  <context>
+<p>When WorldPad is running and the main view is empty</p>
+</context>
+
+   <p name="Principle">Every character must be keyboarded to prove it can be.</p>
+
+  <step name="2.1" link="Bug">Use the <link uri="ipakeys1.gif" type="doc">IPA keyboarding codes</link> to enter all characters.
+   <r>Each character should be displayed by the indicated code.</r>
+   <p name="Notes">Keyman has to be set up and running to allow keyboarding using the codes.</p>
+   <p name="bug">IPA character &lt;code&gt; does not key character</p>
+  </step>
+  <step name="2.2" link="Bug">Use the <link uri="ipakeys2.gif" type="doc">IPA keyboarding codes</link> to enter all diacritics.
+   <r>Each diacritic should be displayed by the indicated code.</r>
+   <p name="bug">IPA diacritic &lt;code&gt; does not key character</p>
+  </step>
+  <step name="2.3" link="Bug">Use a <link uri="czech1.gif" type="doc">Czech IPA paragraph</link> to test the use of the IPA font. Type the paragraph using the keyman codes from the previous steps.
+   <r>It should be possible to type fluidly without a lot of difficult associations or odd finger reaching. It may take a little getting used to.</r>
+   <p name="bug">IPA &lt;code&gt; is not easy to use entering a string of text</p>
+  </step>
+
+ </case>
+ <update date="Jan-17-01" author="MikeL">Test created.</update>
+ <update date="Mar-07-01" author="MikeL">Updated ipa links and bug links. Added a step to test case 2.</update>
+
+</test>

@@ -1,0 +1,151 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"#include ""afxres.h""\r\n"
+	"\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+	"\r\n"
+	"\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+	IDD_SDKWIDGETS_DIALOG, DIALOG
+	BEGIN
+		LEFTMARGIN, 7
+		RIGHTMARGIN, 471
+		VERTGUIDE, 117
+		VERTGUIDE, 142
+		VERTGUIDE, 252
+		VERTGUIDE, 270
+		VERTGUIDE, 405
+		TOPMARGIN, 7
+		BOTTOMMARGIN, 316
+		HORZGUIDE, 20
+		HORZGUIDE, 93
+		HORZGUIDE, 100
+		HORZGUIDE, 115
+		HORZGUIDE, 134
+		HORZGUIDE, 208
+		HORZGUIDE, 214
+		HORZGUIDE, 232
+		HORZGUIDE, 277
+	END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SDKWIDGETS_DIALOG DIALOGEX 0, 0, 478, 323
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "SdkWidgets"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LISTBOX         IDC_LISTSTD,7,20,110,74,LBS_SORT | LBS_NOINTEGRALHEIGHT |
+					LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP,
+					WS_EX_CLIENTEDGE
+	LTEXT           "Standard list box",IDC_STATIC,7,7,111,8
+	LTEXT           "VwWidgets list box",IDC_STATIC,123,7,110,8
+	PUSHBUTTON      "Show selected item(s)",IDC_BTNLISTSTD,7,100,110,15
+	PUSHBUTTON      "Show selected item(s)",IDC_BTNLISTFW,123,100,110,15
+	LISTBOX         IDC_LISTFW,123,20,110,73,LBS_SORT | LBS_NOINTEGRALHEIGHT |
+					LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP,
+					WS_EX_CLIENTEDGE
+	PUSHBUTTON      "OK",IDOK,405,302,55,14
+	EDITTEXT        IDC_EDITSTD,7,120,110,74,ES_MULTILINE | ES_AUTOVSCROLL
+	EDITTEXT        IDC_EDITFW,123,120,110,74,ES_MULTILINE | ES_AUTOVSCROLL
+	PUSHBUTTON      "Show selected text",IDC_BTNEDITSTD,7,200,110,14
+	PUSHBUTTON      "Show selected text",IDC_BTNEDITFW,123,200,110,14
+	PUSHBUTTON      "Show selected item(s)",IDC_BTNLVSTD,238,100,110,15
+	PUSHBUTTON      "Show selected item(s)",IDC_BTNLVFW,354,100,110,15
+	CONTROL         "List1",IDC_LVSTD,"SysListView32",LVS_REPORT |
+					LVS_EDITLABELS | WS_BORDER | WS_TABSTOP,238,20,110,73
+	CONTROL         "List2",IDC_LVFW,"SysListView32",LVS_REPORT | WS_BORDER |
+					WS_TABSTOP,354,20,117,73
+	CONTROL         "Tree1",IDC_TVSTD,"SysTreeView32",TVS_HASBUTTONS |
+					TVS_HASLINES | TVS_LINESATROOT | TVS_EDITLABELS |
+					WS_BORDER | WS_TABSTOP,238,120,109,74
+	CONTROL         "Tree1",IDC_TVFW,"SysTreeView32",TVS_HASBUTTONS |
+					TVS_HASLINES | TVS_LINESATROOT | TVS_EDITLABELS |
+					WS_BORDER | WS_TABSTOP,354,120,117,74
+	PUSHBUTTON      "Show selected item(s)",IDC_BTNTVSTD,238,200,110,14
+	PUSHBUTTON      "Show selected item(s)",IDC_BTNTVFW,354,200,110,14
+	PUSHBUTTON      "Show selected text",IDC_BTNCOMBOSTD,7,250,110,14
+	PUSHBUTTON      "Show selected text",IDC_BTNCOMBOFW,124,250,110,14
+	CONTROL         "",IDC_COMBOSTD,"ComboBoxEx32",CBS_DROPDOWN | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP,7,220,110,57
+	CONTROL         "",IDC_COMBOFW,"ComboBoxEx32",CBS_DROPDOWN | CBS_SORT |
+					WS_VSCROLL | WS_TABSTOP,124,220,110,57
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_PLANETS             BITMAP  DISCARDABLE     "Planets.bmp"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED

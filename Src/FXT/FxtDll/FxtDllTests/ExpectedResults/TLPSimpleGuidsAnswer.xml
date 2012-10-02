@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LangProject Description="FieldWorks Test Language Project" Name="TestLangProj"><Lexicon Description=""></Lexicon>
+<AllPartsOfSpeech><PartOfSpeech Description="" Id="d7f7150d-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7150e-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f7150f-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71510-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7150f-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71510-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71511-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71512-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71513-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71514-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71515-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<poss dst="d7f71516-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<poss dst="d7f71517-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<poss dst="d7f71518-e8cf-11d3-9764-00c04f186933" ord="4"/>
+<poss dst="d7f71519-e8cf-11d3-9764-00c04f186933" ord="5"/>
+<poss dst="d7f7151a-e8cf-11d3-9764-00c04f186933" ord="6"/>
+<poss dst="d7f7151b-e8cf-11d3-9764-00c04f186933" ord="7"/>
+<poss dst="d7f7151c-e8cf-11d3-9764-00c04f186933" ord="8"/>
+<poss dst="d7f7151d-e8cf-11d3-9764-00c04f186933" ord="9"/>
+<poss dst="d7f7151e-e8cf-11d3-9764-00c04f186933" ord="10"/>
+<poss dst="d7f7151f-e8cf-11d3-9764-00c04f186933" ord="11"/>
+<poss dst="d7f71520-e8cf-11d3-9764-00c04f186933" ord="12"/>
+<poss dst="d7f71521-e8cf-11d3-9764-00c04f186933" ord="13"/>
+<poss dst="d7f71522-e8cf-11d3-9764-00c04f186933" ord="14"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71514-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71515-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71516-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71517-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71518-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71519-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7151a-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7151b-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7151c-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7151d-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7151e-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7151f-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71520-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71521-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71522-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71523-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71524-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71525-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71524-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71525-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71526-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71527-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71528-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71529-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<poss dst="d7f7152a-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<poss dst="d7f7152b-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<poss dst="d7f7152c-e8cf-11d3-9764-00c04f186933" ord="4"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71528-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71529-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7152a-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7152b-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7152c-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7152d-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7152e-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7152f-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71530-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71531-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<poss dst="d7f71532-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<poss dst="d7f71533-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<poss dst="d7f71534-e8cf-11d3-9764-00c04f186933" ord="4"/>
+<poss dst="d7f71535-e8cf-11d3-9764-00c04f186933" ord="5"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71530-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71531-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71532-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71533-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71534-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71535-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71536-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71537-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f7153a-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71537-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71538-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71539-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71538-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71539-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7153a-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7153b-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f7153c-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f7153e-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<poss dst="d7f7153f-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<poss dst="d7f71540-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<poss dst="d7f71541-e8cf-11d3-9764-00c04f186933" ord="4"/>
+<poss dst="d7f71542-e8cf-11d3-9764-00c04f186933" ord="5"/>
+<poss dst="d7f71543-e8cf-11d3-9764-00c04f186933" ord="6"/>
+<poss dst="d7f7153d-e8cf-11d3-9764-00c04f186933" ord="7"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7153c-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7153e-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="verb with one participant" Id="d7f7153f-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71540-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71541-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71542-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="verb with two participants" Id="d7f71543-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="verb with three participants " Id="d7f7153d-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+</AllPartsOfSpeech>
+<TopPartsOfSpeech><PartOfSpeech Description="" Id="d7f7150d-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7150e-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f7150f-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71510-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71511-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71512-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71513-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71514-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71515-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<poss dst="d7f71516-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<poss dst="d7f71517-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<poss dst="d7f71518-e8cf-11d3-9764-00c04f186933" ord="4"/>
+<poss dst="d7f71519-e8cf-11d3-9764-00c04f186933" ord="5"/>
+<poss dst="d7f7151a-e8cf-11d3-9764-00c04f186933" ord="6"/>
+<poss dst="d7f7151b-e8cf-11d3-9764-00c04f186933" ord="7"/>
+<poss dst="d7f7151c-e8cf-11d3-9764-00c04f186933" ord="8"/>
+<poss dst="d7f7151d-e8cf-11d3-9764-00c04f186933" ord="9"/>
+<poss dst="d7f7151e-e8cf-11d3-9764-00c04f186933" ord="10"/>
+<poss dst="d7f7151f-e8cf-11d3-9764-00c04f186933" ord="11"/>
+<poss dst="d7f71520-e8cf-11d3-9764-00c04f186933" ord="12"/>
+<poss dst="d7f71521-e8cf-11d3-9764-00c04f186933" ord="13"/>
+<poss dst="d7f71522-e8cf-11d3-9764-00c04f186933" ord="14"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71523-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71524-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71525-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71526-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71527-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71528-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71529-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<poss dst="d7f7152a-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<poss dst="d7f7152b-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<poss dst="d7f7152c-e8cf-11d3-9764-00c04f186933" ord="4"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7152d-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7152e-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7152f-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71530-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f71531-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<poss dst="d7f71532-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<poss dst="d7f71533-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<poss dst="d7f71534-e8cf-11d3-9764-00c04f186933" ord="4"/>
+<poss dst="d7f71535-e8cf-11d3-9764-00c04f186933" ord="5"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f71536-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f71537-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f7153a-e8cf-11d3-9764-00c04f186933" ord="1"/>
+</SubPossibilities>
+</PartOfSpeech>
+<PartOfSpeech Description="" Id="d7f7153b-e8cf-11d3-9764-00c04f186933"><SubPossibilities><poss dst="d7f7153c-e8cf-11d3-9764-00c04f186933" ord="0"/>
+<poss dst="d7f7153e-e8cf-11d3-9764-00c04f186933" ord="1"/>
+<poss dst="d7f7153f-e8cf-11d3-9764-00c04f186933" ord="2"/>
+<poss dst="d7f71540-e8cf-11d3-9764-00c04f186933" ord="3"/>
+<poss dst="d7f71541-e8cf-11d3-9764-00c04f186933" ord="4"/>
+<poss dst="d7f71542-e8cf-11d3-9764-00c04f186933" ord="5"/>
+<poss dst="d7f71543-e8cf-11d3-9764-00c04f186933" ord="6"/>
+<poss dst="d7f7153d-e8cf-11d3-9764-00c04f186933" ord="7"/>
+</SubPossibilities>
+</PartOfSpeech>
+</TopPartsOfSpeech>
+<JustOnePartOfSpeech><PartOfSpeech Description="" Id="d7f7150d-e8cf-11d3-9764-00c04f186933"><SubPossibilities></SubPossibilities>
+</PartOfSpeech>
+</JustOnePartOfSpeech>
+<TestALiteral literalAttr="red"></TestALiteral>
+</LangProject>

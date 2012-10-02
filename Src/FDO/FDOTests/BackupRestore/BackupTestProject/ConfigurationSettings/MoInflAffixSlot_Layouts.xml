@@ -1,0 +1,17 @@
+﻿<LayoutInventory>
+  <layout class="MoInflAffixSlot" type="jtview" name="publishStem" version="9">
+	<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name" after=" " sep=" " />
+  </layout>
+  <layout class="MoInflAffixSlot" type="jtview" name="publishStemMinor" version="9">
+	<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-minor" after=" " sep=" " />
+  </layout>
+  <layout class="MoInflAffixSlot" type="jtview" name="publishRoot" version="9">
+	<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name" after=" " sep=" " />
+  </layout>
+  <layout class="MoInflAffixSlot" type="jtview" name="publishRootSub" version="9">
+	<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-sub" after=" " sep=" " />
+  </layout>
+  <layout class="MoInflAffixSlot" type="jtview" name="publishRootMinor" version="9">
+	<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name-minor" after=" " sep=" " />
+  </layout>
+</LayoutInventory>

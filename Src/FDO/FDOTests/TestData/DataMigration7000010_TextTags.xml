@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+
+	<rt class="StText" guid="c1ec5c50-e382-11de-8a39-0800200c9a66" ownerguid="B63F0702-32F7-4ABB-B005-C1D2265636AD">
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" ownerguid="c1ec5c50-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Segment number one of two. Segment number two of two.</Run>
+				</Str>
+			</Contents>
+			<ParseIsCurrent val="True" />
+		</StTxtPara>
+	</rt>
+	<!-- Segment 1 and its five twfics and one pfic. -->
+	<rt class="CmBaseAnnotation" guid="c1ec5c51-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment #1 -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="27" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic one of Segment 1. -->
+	<rt class="CmBaseAnnotation" guid="c1ec8355-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="0" />
+			<EndOffset val="7" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic two of Segment 1. -->
+	<rt class="CmBaseAnnotation" guid="c1ec8354-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="8" />
+			<EndOffset val="14" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic three of Segment 1. -->
+	<rt class="CmBaseAnnotation" guid="c1ec8353-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="15" />
+			<EndOffset val="18" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic four of Segment 1. -->
+	<rt class="CmBaseAnnotation" guid="c1ec8352-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="19" />
+			<EndOffset val="21" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic five of Segment 1. -->
+	<rt class="CmBaseAnnotation" guid="c1ec8351-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="22" />
+			<EndOffset val="25" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Only pfic in segment 1. -->
+	<rt class="CmBaseAnnotation" guid="c1ec8350-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- pfic -->
+				<objsur guid="CFECB1FE-037A-452D-A35B-59E06D15F4DF" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="25" />
+			<EndOffset val="26" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Segment1, Text Tag 1 of 2 -->
+	<rt class="CmIndirectAnnotation" guid="c1ec5c41-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Text Tag -->
+				<objsur t="r" guid="084A3AFE-0D00-41DA-BFCF-5D8DEAFA0296" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- XP -->
+				<objsur t="r" guid="c1ec5c43-e382-11de-8a39-0800200c9a66" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- twfics -->
+				<objsur t="r" guid="c1ec8355-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec8354-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<!-- Segment1, Text Tag 2 of 2 -->
+	<rt class="CmIndirectAnnotation" guid="c1ec5c40-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Text Tag -->
+				<objsur t="r" guid="084A3AFE-0D00-41DA-BFCF-5D8DEAFA0296" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- YP -->
+				<objsur t="r" guid="c1ec5c44-e382-11de-8a39-0800200c9a66" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- twfics -->
+				<objsur t="r" guid="c1ec8353-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec8352-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec8351-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+
+	<!-- Segment 2 and its five twfics and one pfic. -->
+	<rt class="CmBaseAnnotation" guid="c1ec5c52-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Segment #2 -->
+				<objsur guid="b63f0702-32f7-4abb-b005-c1d2265636ad" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="27" />
+			<EndOffset val="53" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic one of Segment 2. -->
+	<rt class="CmBaseAnnotation" guid="c1ec5c58-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="27" />
+			<EndOffset val="34" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic two of Segment 2. -->
+	<rt class="CmBaseAnnotation" guid="c1ec5c57-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="35" />
+			<EndOffset val="41" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic three of Segment 2. -->
+	<rt class="CmBaseAnnotation" guid="c1ec5c56-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="42" />
+			<EndOffset val="45" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic four of Segment 2. -->
+	<rt class="CmBaseAnnotation" guid="c1ec5c55-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="46" />
+			<EndOffset val="48" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- twfic five of Segment 2. -->
+	<rt class="CmBaseAnnotation" guid="c1ec5c54-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- twfic -->
+				<objsur guid="eb92e50f-ba96-4d1d-b632-057b5c274132" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- First gloss which should win.-->
+				<objsur t="r" guid="068DC680-CD40-4C47-BBE6-00E572EE2602" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="49" />
+			<EndOffset val="52" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Only pfic in segment 2. -->
+	<rt class="CmBaseAnnotation" guid="c1ec5c53-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- pfic -->
+				<objsur guid="CFECB1FE-037A-452D-A35B-59E06D15F4DF" t="r" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginOffset val="52" />
+			<EndOffset val="53" />
+			<BeginObject>
+				<!-- An StTxPara -->
+				<objsur guid="c1ec5c4f-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+	<!-- Segment2, Text Tag 1 of 2, Defective -->
+	<rt class="CmIndirectAnnotation" guid="c1ec5c4e-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Text Tag -->
+				<objsur t="r" guid="084A3AFE-0D00-41DA-BFCF-5D8DEAFA0296" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- XP2 -->
+				<objsur t="r" guid="c1ec5c47-e382-11de-8a39-0800200c9a66" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation />
+		<!-- Defective TextTag has no AppliesTo. It should be skipped -->
+	</rt>
+	<!-- Segment2, Text Tag 2 of 2 -->
+	<rt class="CmIndirectAnnotation" guid="c1ec8356-e382-11de-8a39-0800200c9a66">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- Text Tag -->
+				<objsur t="r" guid="084A3AFE-0D00-41DA-BFCF-5D8DEAFA0296" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- YP2 -->
+				<objsur t="r" guid="c1ec5c48-e382-11de-8a39-0800200c9a66" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- twfics -->
+				<objsur t="r" guid="c1ec5c56-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec5c55-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec5c54-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+
+	<!-- common data -->
+	<rt class="CmPossibility" guid="c1ec5c43-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">XP</AUni>
+			</Abbreviation>
+		</CmPossibility>
+	</rt>
+	<rt class="CmPossibility" guid="c1ec5c44-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">YP</AUni>
+			</Abbreviation>
+		</CmPossibility>
+	</rt>
+	<rt class="CmPossibility" guid="c1ec5c47-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">XP2</AUni>
+			</Abbreviation>
+		</CmPossibility>
+	</rt>
+	<rt class="CmPossibility" guid="c1ec5c48-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">YP2</AUni>
+			</Abbreviation>
+		</CmPossibility>
+	</rt>
+</languageproject>

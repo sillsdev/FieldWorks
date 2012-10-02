@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000011">
+	<rt class="UserViewField" guid="E29F0951-E04F-4702-8822-BB2E79B81F96" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7001" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Name</AUni>
+			</Label>
+			<Required val="2" />
+			<Type val="2" />
+			<WsSelector val="-3" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="CEF1A6BB-7166-4190-8A18-DA0A2E9905AE" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7002" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Abbreviation</AUni>
+			</Label>
+			<Type val="2" />
+			<WsSelector val="-3" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="D8EFE5B9-9DFA-47A6-BC34-F849522B3C9F" ownerguid="D9416D4B-C5A6-4337-97FD-F020A881EB54">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="7007" />
+			<Label>
+				<AUni ws="en">Restrictions</AUni>
+			</Label>
+			<Type val="5" />
+			<Visibility val="2" />
+			<WsSelector val="-3" />
+			<PossList>
+				<objsur t="r" guid="D456A3AD-7B16-4243-B0E0-B1F2B0F8A0E6" />
+			</PossList>
+			<SubfieldOf>
+				<objsur t="r" guid="E2756880-6544-40EB-AF88-166C4D473495" />
+			</SubfieldOf>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="3722DCE3-F174-4310-8D7F-86460F278623" ownerguid="D9416D4B-C5A6-4337-97FD-F020A881EB54">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="7008" />
+			<Label>
+				<AUni ws="en">Confidence</AUni>
+			</Label>
+			<Type val="4" />
+			<Visibility val="2" />
+			<WsSelector val="-3" />
+			<PossList>
+				<objsur t="r" guid="69D0B94E-C3C8-4613-ACEC-D167F2900D76" />
+			</PossList>
+			<SubfieldOf>
+				<objsur t="r" guid="E2756880-6544-40EB-AF88-166C4D473495" />
+			</SubfieldOf>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="E6D7A12E-9114-49A8-9EA6-7887C4183743" ownerguid="D9416D4B-C5A6-4337-97FD-F020A881EB54">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="7013" />
+			<Label>
+				<AUni ws="en">Researcher</AUni>
+			</Label>
+			<Type val="5" />
+			<Visibility val="2" />
+			<WsSelector val="-6" />
+			<PossList>
+				<objsur t="r" guid="A1521090-95DD-42A0-B94F-6F833B8FB088" />
+			</PossList>
+			<SubfieldOf>
+				<objsur t="r" guid="E2756880-6544-40EB-AF88-166C4D473495" />
+			</SubfieldOf>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="1CA7F2BB-3F73-4B8A-A190-608CE10DAC73" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7003" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Short Description</AUni>
+			</Label>
+			<Type val="1" />
+			<WsSelector val="-3" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="D3DA6A99-1858-4C12-8405-B9BD519A7F5E" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7012" />
+			<HelpString>
+				<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Discussion</AUni>
+			</Label>
+			<Type val="9" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="37CCFD8D-EFEC-4993-A90C-88648ADB60DF" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="7007" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Restrictions</AUni>
+			</Label>
+			<Type val="5" />
+			<WsSelector val="-3" />
+			<PossList>
+				<objsur t="r" guid="D456A3AD-7B16-4243-B0E0-B1F2B0F8A0E6" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="978C2048-11CD-4E87-B11C-9A3983F1BAE2" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="7008" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Confidence</AUni>
+			</Label>
+			<Type val="4" />
+			<WsSelector val="-3" />
+			<PossList>
+				<objsur t="r" guid="69D0B94E-C3C8-4613-ACEC-D167F2900D76" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="D20BE9A6-8D82-421B-8078-89378614A752" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="7013" />
+			<HelpString>
+
+				<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Researcher</AUni>
+			</Label>
+			<Type val="5" />
+			<WsSelector val="-6" />
+			<PossList>
+				<objsur t="r" guid="A1521090-95DD-42A0-B94F-6F833B8FB088" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="479DDEA3-7035-4A94-A4D2-17AFF259360F" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7014" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Help Id</AUni>
+			</Label>
+			<Type val="7" />
+			<Visibility val="2" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="8742C4A9-842B-4299-A7CB-D233DA4DB78B" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7010" />
+			<HelpString>
+				<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Date Created</AUni>
+			</Label>
+			<Type val="15" />
+			<Visibility val="2" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="C24E3434-9839-4075-93C5-54571226CEC8" ownerguid="6621A7E9-1A7E-439F-BC8C-4844D4CDC3E3">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7011" />
+			<HelpString>
+				<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Date Modified</AUni>
+			</Label>
+			<Type val="15" />
+			<Visibility val="2" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="C29E34A5-EFB1-487E-B662-5FB68F07469D" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7001" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  The complete name of the person.  Whenever possible, enter names in a consistent pattern such as 'John P. Doe' or 'Doe, John P.'.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Full Name</AUni>
+			</Label>
+			<Required val="2" />
+			<Style>
+				<Uni>Title Text</Uni>
+			</Style>
+			<Type val="2" />
+			<WsSelector val="-6" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="6D0DCDB0-A02C-4C97-B1F4-E88F9A2CA102" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7002" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Abbreviation</AUni>
+			</Label>
+			<Type val="2" />
+			<WsSelector val="-6" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="37B39410-4471-4243-BF26-36F5C6B8A900" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7003" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Short Description</AUni>
+			</Label>
+			<Type val="1" />
+			<WsSelector val="-3" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="0C367713-6397-4E94-B9F3-D3792AD0DF20" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>
+					64000000
+				</Binary>
+			</Details>
+			<Flid val="7012" />
+			<HelpString>
+				<AUni ws="en">(multiparagraph text field)  Biographical information for the person.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Biographical Information</AUni>
+			</Label>
+			<Type val="9" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="15118E93-E237-40D5-AB29-F6DB54CDAB3A" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="7007" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Restrictions</AUni>
+			</Label>
+			<Type val="5" />
+			<WsSelector val="-3" />
+			<PossList>
+				<objsur t="r" guid="D456A3AD-7B16-4243-B0E0-B1F2B0F8A0E6" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="5983F100-4708-407E-A679-E6BBA0887F26" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="7008" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Confidence</AUni>
+			</Label>
+			<Type val="4" />
+			<WsSelector val="-3" />
+			<PossList>
+				<objsur t="r" guid="69D0B94E-C3C8-4613-ACEC-D167F2900D76" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="45E671EA-727B-415F-A28A-F482EBF0E4E7" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="7013" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Researcher</AUni>
+			</Label>
+			<Type val="5" />
+			<WsSelector val="-6" />
+			<PossList>
+				<objsur t="r" guid="A1521090-95DD-42A0-B94F-6F833B8FB088" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="7A974B9B-3B08-4B7B-B8D2-9C3682871E87" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="13001" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  The assumed or special-usage name of the person.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Alias</AUni>
+			</Label>
+			<Type val="2" />
+			<WsSelector val="-3" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="962BB05C-A305-4998-AB48-F10881E1ACE6" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="13003" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  The sex of the person.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Gender</AUni>
+			</Label>
+			<Type val="6" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="0425D028-3D24-402A-B984-7C1047E9CBF1" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="13004" />
+			<HelpString>
+				<AUni ws="en">(date field)  The date the person was born.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Date of Birth</AUni>
+			</Label>
+			<Type val="17" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="F2805EF7-64CB-44B0-8827-9A3FA6F62745" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="13006" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  The location where the person was born.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Place of Birth</AUni>
+			</Label>
+			<Type val="3" />
+			<WsSelector val="-6" />
+			<PossList>
+				<objsur t="r" guid="A50C1109-3D78-4E3F-8F15-098596247852" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="254DE8C2-C50D-4B79-AB54-83831843A6A3" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="13008" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  Specifies whether or not the person is a researcher contributing to this project.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Is a Researcher</AUni>
+			</Label>
+			<Type val="6" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="BBCC9A36-9EA9-49DA-9B43-4A7FAB4A725A" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="13009" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  The place where the person lives or calls home.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Place of Residence</AUni>
+			</Label>
+			<Type val="5" />
+			<WsSelector val="-6" />
+			<PossList>
+				<objsur t="r" guid="A50C1109-3D78-4E3F-8F15-098596247852" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="D5F0CBBE-5944-45FF-B34F-46C0A0708C90" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="13010" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  The highest level of schooling completed by the person.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Education</AUni>
+			</Label>
+			<Type val="4" />
+			<WsSelector val="-3" />
+			<PossList>
+				<objsur t="r" guid="BD339C6B-4167-41C1-9284-80F1D811D419" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="0BF3FC96-F8F5-4E6F-AB6C-7554D42FCAEC" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="13011" />
+			<HelpString>
+				<AUni ws="en">(date field)  The date the person died.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Date of Death</AUni>
+			</Label>
+			<Type val="17" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="C5BD59D6-32A7-4959-966F-3F1F31F89D61" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="13013" />
+			<HelpString>
+				<AUni ws="en">(list reference field)  The social position, job title, rank, religious office and other capabilities of the person.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Position</AUni>
+			</Label>
+			<Type val="5" />
+			<WsSelector val="-3" />
+			<PossList>
+				<objsur t="r" guid="31D9855D-6CCD-4A61-AF97-B57213FA870D" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="2D1EBE44-E25D-43B1-A3FF-25A2957E0E2F" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7014" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Help Id</AUni>
+			</Label>
+			<Type val="7" />
+			<Visibility val="2" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="390CAB24-7F2C-4B9B-AA38-C38364089EA8" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7010" />
+			<HelpString>
+				<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Date Created</AUni>
+			</Label>
+			<Type val="15" />
+			<Visibility val="2" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="E1BF091D-2A05-4240-8DFE-3BBC45FFFBF3" ownerguid="4648B23A-C200-4328-8EED-1C015F55D315">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7011" />
+			<HelpString>
+				<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Date Modified</AUni>
+			</Label>
+			<Type val="15" />
+			<Visibility val="2" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="F68BD4D9-1B41-460C-8BDD-1858FF0DC9DC" ownerguid="55FA4E66-32E0-436C-8942-6ECEB7202F69">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7001" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  Specifies a location by a place's name or a unique descriptive phrase.  Enter a more detailed description in the Short Description field, and a complete discussion in the discussion field.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Location Name</AUni>
+			</Label>
+			<Required val="2" />
+			<Type val="2" />
+			<WsSelector val="-6" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="2546A9B2-FD52-43BA-BD87-C6AB32EBE001" ownerguid="55FA4E66-32E0-436C-8942-6ECEB7202F69">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>64000000</Binary>
+			</Details>
+			<Flid val="7002" />
+			<HelpString>
+				<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+			</HelpString>
+			<Label>
+				<AUni ws="en">Abbreviation</AUni>
+			</Label>
+			<Type val="2" />
+			<WsSelector val="-6" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="198A4FAD-CFA2-4213-8773-D7571171DCD8" ownerguid="948ED875-8F73-410D-8C3B-006D74D738D1">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>6400000000000000</Binary>
+			</Details>
+			<Flid val="4010002" />
+			<Label>
+				<AUni ws="en">Role</AUni>
+			</Label>
+			<Type val="3" />
+			<Visibility val="1" />
+			<WsSelector val="-3" />
+			<PossList>
+				<objsur t="r" guid="6C26903D-4B8F-496D-854F-D9A152226E8D" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="8D62F0C8-A8EC-4C2E-B883-09131CF63882" ownerguid="6CFB79FA-0F01-40EA-A3C7-AF9839D9584A">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>
+					64000000
+				</Binary>
+			</Details>
+			<Flid val="4004504" />
+			<HelpString>
+				<AUni ws="en">A new field that we want to migrate from UserViewField to its new location in the new representation. (Integer)</AUni>
+			</HelpString>
+			<IsCustomField val="true" />
+			<Label>
+				<AUni ws="en">New Field 5-integer</AUni>
+			</Label>
+			<Type val="21" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="0DDB31EF-C8C5-4B04-B579-9603A2136FE1" ownerguid="6CFB79FA-0F01-40EA-A3C7-AF9839D9584A">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>
+					64000000
+				</Binary>
+			</Details>
+			<Flid val="4004503" />
+			<HelpString>
+				<AUni ws="en">A new field that we want to migrate from UserViewField to its new location in the new representation. (Date)</AUni>
+			</HelpString>
+			<IsCustomField val="true" />
+			<Label>
+				<AUni ws="en">New Field 4-Date</AUni>
+			</Label>
+			<Type val="17" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="B0EDFD84-173F-477E-A1F9-4156F27836CC" ownerguid="6CFB79FA-0F01-40EA-A3C7-AF9839D9584A">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>
+					6400000000000000
+				</Binary>
+			</Details>
+			<Flid val="4004502" />
+			<HelpString>
+				<AUni ws="en">A new field that we want to migrate from UserViewField to its new location in the new representation. (List reference to Locations)</AUni>
+			</HelpString>
+			<IsCustomField val="true" />
+			<Label>
+				<AUni ws="en">New Field 3-List Reference</AUni>
+			</Label>
+			<Type val="5" />
+			<WsSelector val="-2" />
+			<PossList>
+				<objsur t="r" guid="62DBA2F3-C729-424E-8D05-0EA5D51546F3" />
+			</PossList>
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="CC29E2C1-A86F-401D-8377-9F3E3C763CFD" ownerguid="6CFB79FA-0F01-40EA-A3C7-AF9839D9584A">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>
+					64000000
+				</Binary>
+			</Details>
+			<Flid val="4004501" />
+			<HelpString>
+				<AUni ws="en">A new field that we want to migrate from UserViewField to its new location in the new representation. (Single-line text)</AUni>
+			</HelpString>
+			<IsCustomField val="true" />
+			<Label>
+				<AUni ws="en">New Field 2-Single-line text</AUni>
+			</Label>
+			<Type val="9" />
+			<WsSelector val="-1" />
+		</UserViewField>
+	</rt>
+	<rt class="UserViewField" guid="FE10997C-2BE9-49B2-96B3-F9B14A7750A2" ownerguid="6CFB79FA-0F01-40EA-A3C7-AF9839D9584A">
+		<CmObject></CmObject>
+		<UserViewField>
+			<Details>
+				<Binary>
+					64000000
+				</Binary>
+			</Details>
+			<Flid val="4004500" />
+			<HelpString>
+				<AUni ws="en">A second field that we want to migrate from UserViewField to its new location in the new representation. (Multi-paragraph text)</AUni>
+			</HelpString>
+			<IsCustomField val="true" />
+			<Label>
+				<AUni ws="en">New Field 1-multi-para text</AUni>
+			</Label>
+			<Type val="1" />
+			<WsSelector val="-3" />
+		</UserViewField>
+	</rt>
+</languageproject>

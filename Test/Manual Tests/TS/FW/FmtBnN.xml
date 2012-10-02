@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fmtBN" num="2.6.4" abbr="fmbn" file="FW\FmtBnN.xml">
+<title tag="fmtBN">Format-Bullets and Numbering Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The dialog has controls and layout in exactly the same manner as the Bullets and Numbering tab in the Format-Style dialog. The difference is that this dialog applies direct formatting to the selected paragraph, whereas the Style dialog is used to set up the list characteristics in a global style.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-List" type="doc">Format-Bullets and Numbering</link>
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/List/FormatList.html" type="doc">Bullets and Numbering Dialog</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Format-Bullets and Numbering"</p>
+</context>
+
+<case id="fmbnAct" num="0" order="any">
+<title tag="fmbnAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.0" link="Bug">InvokeClick on the Format-Bullets and Numbering menu item.
+   <r>
+<ul>
+<li>When the cursor is in a text field, the menu item is enabled</li>
+<li>When the cursor is NOT in a text field, the menu item is disabled</li>
+</ul>
+</r>
+<p name="bug">Format-Bullets and Numbering is enabled for nontext insertion point</p>
+<p name="bug">Format-Bullets and Numbering is disabled for text insertion point</p>
+</step>
+
+</case>
+
+<case id="fmbnDiac" num="1" order="any">
+<title tag="fmbnDiac">Exercise dialog controls</title>
+<context>
+<p>When the Format-Bullets and Numbering is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Format-Bullets and Numbering. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/List/FormatList.html" type="doc">Format-Bullets and Numbering specification</link> to visually inspect the dialog layout.
+   <r>
+<ul>
+<li>Up to approximate size and position the two appear the same - especially any text and icons.</li>
+<li>In normal text, the None radio button is selected and the Bullet and Number controls are grayed out</li>
+<li>In bulleted text, the Bullet radio button is selected and the Number controls are grayed out</li>
+<li>In numbered text, the Number radio button is selected and the Bullet controls are grayed out</li>
+</ul>
+</r>
+<p name="bug">Format-Bullets and Numbering layout incorrect</p>
+<p name="bug">Format-Bullets and Numbering has the wrong default settings</p>
+</step>
+<step name="1.2">Use <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Format-Bullets and Numbering" as the name of the dialog.</r>
+</step>
+<step name="1.3" link="Bug">Use the <link uri="../StdCtrls/RadioBtn.xml">Radio button tests</link> and the shortcut &lt;Alt&gt;&lt;N&gt; to test the None radio button.
+   <r>
+<ul>
+<li>Removes all list behavior from the selection</li>
+<li>Report any failures as suggested using "Format-Bullets and Numbering None" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Bullets and Numbering None radio button: list behavior not removed</p>
+</step>
+<step name="1.4" link="Bug">Use the <link uri="../StdCtrls/RadioBtn.xml">Radio button tests</link> and the shortcut &lt;Alt&gt;&lt;U&gt; to test the unspecified radio button.
+   <r>
+<ul>
+<li>Return the list attributes to an unspecified state so that the selection will inherit the bullet or numbering values from the underlying paragraph style</li>
+<li>Report any failures as suggested using "Format-Bullets and Numbering None" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Bullets and Numbering unspecified radio button: underlying style not inherited</p>
+<p>Only used on the Styles B&amp;N tab. Not in release 1.</p>
+</step>
+
+</case>
+
+<case id="fmbnbc" num="2" order="any">
+<title tag="fmbnbc">Bullet Controls</title>
+<context>
+<p>When the Format-Bullets and Numbering is displayed:</p>
+</context>
+
+<step name="2.1" link="Bug">Use the <link uri="../StdCtrls/RadioBtn.xml">Radio button tests</link> and the shortcut &lt;Alt&gt;&lt;u&gt; to test the Bullet radio button.
+   <r>
+<ul>
+<li>When the cursor is in bulletted text, the bullet radio button is dotted</li>
+<li>When the cursor is NOT in bulletted text, the bullet radio button is not dotted</li>
+<li>Report any failures as suggested using "Format-Bullets radio button" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Bullets radio button not dotted for a list</p>
+<p name="bug">Format-Bullets radio button dotted without a list</p>
+</step>
+<step name="2.2" link="Bug">use the <link uri="../StdCtrls/ListBox.xml" type="module">list and combo box tests</link> and the shortcut &lt;Alt&gt;&lt;h&gt; to test the Bullet Scheme combo box.
+   <r>
+<ul>
+<li>The Scheme list displays the symbols <img uri="BulletChoices.gif" alt="Bullets">
+</img>
+</li>
+<li>When the cursor is in bulletted text, the bullet used is the default</li>
+<li>When a the text selected includes paragraphs with different bullets and numbering this field is gray (for unspecified)</li>
+<li>Report any failures as suggested using "Format-Bullets Scheme list" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Bullets Scheme list has other symbols than spec'd</p>
+<p name="bug">Format-Bullets Scheme list does not show the bullet from list</p>
+<p name="bug">Format-Bullets Scheme list does not gray with multiple lists</p>
+</step>
+
+</case>
+
+<case id="fmbnnc" num="3" order="any">
+<title tag="fmbnnc">Number Controls</title>
+<context>
+<p>When the Format-Bullets and Numbering is displayed:</p>
+</context>
+
+<step name="3.1" link="Bug">Use the <link uri="../StdCtrls/RadioBtn.xml">Radio button tests</link> and the shortcut &lt;Alt&gt;&lt;r&gt; to test the Number radio button.
+   <r>
+<ul>
+<li>When the cursor is in numbered text, the number radio button is dotted</li>
+<li>When the cursor is NOT in numbered text, the number radio button is not dotted</li>
+<li>Report any failures as suggested using "Format-Numbering radio button" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Numbering radio button not dotted for a list</p>
+<p name="bug">Format-Numbering radio button dotted without a list</p>
+</step>
+<step name="3.2" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List/combo box tests</link> and the shortcut &lt;Alt&gt;&lt;m&gt; to test the Scheme combo box.
+   <r>
+<ul>
+<li>The Scheme combo box displays the schemes none, unspecified, 1, I, i, A, a and 01</li>
+<li>When the cursor is in numbered text, the number scheme used is the default</li>
+<li>When a the text selected includes paragraphs with different bullets and numbering this field is gray (for unspecified)</li>
+<li>Report any failures as suggested using "Format-Numbering Scheme" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Numbering Scheme has other schemes than spec'd</p>
+<p name="bug">Format-Numbering Scheme does not show the number scheme from list</p>
+<p name="bug">Format-Numbering Scheme does not gray with multiple lists</p>
+</step>
+<step name="3.3" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check box tests</link> and the shortcut &lt;Alt&gt;&lt;t&gt; to test the Number Start At check box.
+   <r>
+<ul>
+<li>If the Numbers radio button is newly dotted, this check box is clear</li>
+<li>If the Numbers radio button is dotted and the selected text is numbered, the check box is checked if the item has a start number set</li>
+<li>When the check box is checked, the preview box is renumbered if the first number is different from the Start At spin control</li>
+<li>Report any failures as suggested using "Format-Bullets and Numbering Start At" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Numbering Start At is checked with no numbers</p>
+<p name="bug">Format-Numbering Start At fails to renumber preview</p>
+</step>
+<step name="3.4" link="Bug">Use the <link uri="../StdCtrls/SpinCtrl.xml">Spin control tests</link> and the shortcut &lt;Alt&gt;&lt;t&gt; to test the Number Start At spin control.
+   <r>
+<ul>
+<li>When the spin control is changed, the preview box is renumbered if the first number is different from the Start At spin control</li>
+<li>When multiple paragraphs are selected, Start At applies only to the first one</li>
+<li>Alphabetic numbers go from a to about
+			520 (zzzzzzzzzzzzzzzzzzzz) (20 z's) revert to back to a, b, c</li>
+<li>Roman: 1-5000 (I - MMMMM) work correctly, subsequent paragraphs revert to 1, 2, 3, etc. (I, II, III, ...)</li>
+<li>To number from a previous paragraph that is not selected, the current paragragh and number settings must match (except this start at must be disabled).</li>
+<li>Report any failures as suggested using "Format-Bullets and Numbering Start At spin" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Numbering Start At spin gets applied to all selected paragraphs</p>
+<p name="bug">Format-Numbering Start At spin alphabetic numbers don't cover range</p>
+<p name="bug">Format-Numbering Start At spin roman numerals don't cover range</p>
+<p name="bug">Format-Numbering Start At spin fails to renumber list</p>
+</step>
+<step name="3.5" link="Bug">Use the <link uri="../StdCtrls/TextBox.xml">Text Box tests</link> and the shortcut &lt;Alt&gt;&lt;B&gt; to test the Number Text Before text box.
+   <r>
+<ul>
+<li>Text entered shows in the preview box before the number</li>
+<li>Text entered shows in the preview box in the style set by the number font button</li>
+<li>Report any failures as suggested using "Format-Bullets and Numbering Text Before" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Numbering Text Before is not shown correctly in the preview</p>
+<p name="bug">Format-Numbering Text Before style incorrect</p>
+</step>
+<step name="3.6" link="Bug">Use the <link uri="../StdCtrls/TextBox.xml">Text Box tests</link> and the shortcut &lt;Alt&gt;&lt;x&gt; to test the Number Text After text box.
+   <r>
+<ul>
+<li>Text entered shows in the preview box after the number</li>
+<li>Text entered shows in the preview box in the style set by the number font button</li>
+<li>Report any failures as suggested using "Format-Bullets and Numbering Text After" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Numbering Text After is not shown correctly in the preview</p>
+<p name="bug">Format-Numbering Text After style incorrect</p>
+</step>
+<step name="3.7" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button tests</link> and the shortcut &lt;Alt&gt;&lt;f&gt; to test the Number Font button.
+   <r>
+<ul>
+<li>Launches the Font Dialog</li>
+<li>Affects text before, text after, and numbering scheme in the preview and main window</li>
+<li>Report any failures as suggested using "Format-Bullets and Numbering Number Font" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Format-Numbering Number Font does not Launch the Font Dialog</p>
+<p name="bug">Format-Numbering Number Font does not affect what?</p>
+</step>
+
+</case>
+
+<case id="fmbnSe" num="4" order="any">
+<title tag="fmbnSe">Side effects</title>
+<context>
+<p>When the Format-Bullets and Numbering is displayed:</p>
+</context>
+
+<step name="4.1" link="Bug">Exercise the Format-Bullets and Numbering on selected paragraphs with different settings. Click OK and then verify that the settings persist by bringing up the dialog again.
+   <r>Selected paragraphs are affected accordingly, resembling the form of the preview.</r>
+<p name="bug">Format-Bullets and Numbering control sequence causes problem</p>
+</step>
+<step name="4.2" link="Bug">Exercise the Format-Bullets and Numbering on selected paragraphs with different settings. Exit the application, restart it and verify that the settings persist by bringing up the Format-Bullets and Numbering again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly.</li>
+<li>The settings persist after leaving and re-entering the application.</li>
+</ul>
+</r>
+<p name="bug">Format-Bullets and Numbering &lt;attribute&gt; does not persist</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Aug-27-01" author="MikeL">Brought up to spec</update>
+
+</test>

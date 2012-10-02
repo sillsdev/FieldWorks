@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+  <pre-build>
+	<copy todir="${dir.buildOutput}">
+	  <fileset>
+		<include name="${dir.srcProj}/remoting_tcp_server.config"/>
+	  </fileset>
+	</copy>
+  </pre-build>
+</include>

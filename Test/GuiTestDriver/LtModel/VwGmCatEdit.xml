@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<category-edit role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.">
+
+  <!-- the browse pane -->
+  <categories role="pane" path="One/9:XCore.RecordBar/$NL">
+	<record path="36:"/> <!-- set the name of the category via path="Verb" or Adjective or Noun, etc.. -->
+	<scroll>
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </categories>
+
+  <!-- the edit pane -->
+  <category role="pane" path="Two/9:XCore.PaneBarContainer/">
+	<var id="header" set="9:XCore.PaneBar/9:Category (or Part of Speech)"/>
+	<title name="Category (or Part of Speech)" path="$header"/>
+	<show-hidden-fields path="$header;/9:Show Hidden Fields">
+	  <check-box path="/$NL;44:NAMELESS"/>
+	</show-hidden-fields>
+
+	<slice path="9:advancedEdit/9:RecordEditView.DataTree/">
+	   <var id="LABEL" set="9:SplitContainer/9:Panel1/"/>
+	   <var id="DATA" set="9:SplitContainer/9:Panel2/"/>
+
+	   <name path="9:multistring[$ind;]/"><!-- index, usually 1, also used in Inflection Class Info SubClasses -->
+		 <label path="$LABEL;9:Name"/>
+		 <ws path="$DATA;20:Name/24:Table/28:Row[$row;]/29:Cell/$Text"/>
+		 <data path="$DATA;20:Name/24:Table/28:Row[$row;]/29:Cell[2]/$Text"/>
+	   </name>
+
+	   <abbreviation path="9:multistring[$ind;]/"><!-- index, usually 2, also used in Inflection Class Info -->
+		 <label path="$LABEL;9:Abbreviation"/>
+		 <ws path="$DATA;20:Abbreviation/24:Table/$Col;/$Text"/>
+		 <data path="$DATA;20:Abbreviation/24:Table/$Col;[2]/$Text"/>
+	   </abbreviation>
+
+	   <description path="9:multistring[$ind;]/"><!-- index, usually 3, 5 for first affix template, then 7, 9, etc.. Aslo used in Affix Slots etc.. -->
+		 <label path="$LABEL;9:Description"/>
+		 <ws path="$DATA;20:Description/24:Table/$Col;/$Text"/>
+		 <data path="$DATA;20:Description/24:Table/$Col;[2]/$Text"/>
+	   </description>
+
+	   <string-field  path="9:multistring[$ind;]/"> <!-- [*ind] finds the index; get the label then use $ind to get the data -->
+		 <label path="$LABEL;9:"/> <!-- add field name via @path -->
+		 <lang path="$DATA;20:$fld;/24:Table[$row;]/$Col;$Text"/>
+		 <text path="$DATA;20:$fld;/24:Table[$row;]/$Col;[2]/$Text"/>
+	   </string-field>
+
+	   <affix-templates path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/$Text;/value:Affix Templates"/><!-- index, usually 1 -->
+	   <template-name path="9:multistring[$ind;]/"><!-- index, usually 4 -->
+		 <label path="$LABEL;9:Template Name"/>
+		 <ws path="$DATA;20:Template Name/24:Table/$Col;/$Text"/>
+		 <data path="$DATA;20:Template Name/24:Table/$Col;[2]/$Text"/>
+	   </template-name>
+	   <table path="9:custom[$ind;]/"><!-- index, usually 4 -->
+		 <label path="$LABEL;9:Table"/>
+		 <head path="$DATA;20:Table/20:Div/24:Table/$Col;[$col;]/$Text"/><!-- use $col="*" and path="/value:rexp#STEM" to find the stem -->
+		 <data path="$DATA;20:Table/20:Div/24:Table/28:Row[$row;]/29:Cell[$col;]/$Text"/><!-- set $row > 0 and $col to get at data -->
+	   </table>
+	   <note path="9:jtview[$ind;]/"><!-- index, usually 1, add 1 for each affix template before it -->
+		 <label path="$LABEL;9:Note"/>
+		 <data path="$DATA;20:Note/20:Div/$Text"/>
+	   </note>
+	   <more-derivation path="9:checkbox[$ind;]/"><!-- index, usually 1, add 1 for each affix template before it -->
+		 <label path="$LABEL;9:Requires more derivation"/>
+		 <check path="$DATA;20:Requires more derivation/44:Requires more derivation"/>
+		 <!-- state is checked otherwise no state  (ie., prop="checked" is="true") -->
+	   </more-derivation>
+
+	   <affix-slots path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/$Text;/value:Affix Slots"/><!-- index, usually 2 -->
+	   <slot-name path="9:multistring[$ind;]/"><!-- index, usually 4 -->
+		 <label path="$LABEL;9:Slot Name"/>
+		 <ws path="$DATA;20:Slot Name/24:Table/$Col;/$Text"/>
+		 <data path="$DATA;20:Slot Name/24:Table/$Col;[2]/$Text"/>
+	   </slot-name>
+	   <optional path="9:checkbox[$ind;]/"><!-- index, usually 1, add 1 for each affix template before it -->
+		 <label path="$LABEL;9:Optional"/>
+		 <check path="$DATA;9:Optional/44:Optional"/>
+		 <!-- state is checked otherwise no state  (ie., prop="checked" is="true") -->
+	   </optional>
+
+	   <inflection-class-info path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/$Text;/value:Inflection Class Info"/><!-- index, usually 3 -->
+	   <inflection-class-name path="9:multistring[$ind;]/"><!-- index -->
+		 <label path="$LABEL;9:Name"/>
+		 <ws path="$DATA;20:Name/24:Table/$Col;/$Text"/>
+		 <data path="$DATA;20:Name/24:Table/$Col;[2]/$Text"/>
+	   </inflection-class-name>
+	   <subclasses path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/$Text;/value:Subclasses"/>
+	   <subclass-name name="Subclass Name" path="9:multistring[$ind;]/$LABEL;9:$name"/>
+	   <default-inflection-class path="9:defaultatomicreference[$ind;]/">
+		 <label path="$LABEL;9:Default Inflection Class"/>
+		 <empty path="$DATA;9:Default Inflection Class/20:Root"/>
+		 <data path="$DATA;9:Default Inflection Class/20:Root/$Text"/>
+		 <chooser path="$DATA;9:Default Inflection Class/9:.../$NL;43:NAMELESS"/>
+	   </default-inflection-class>
+
+	   <features path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/20:Div/$Text;/value:Features"/><!-- index, usually 4 -->
+	   <inflectable-features path="9:defaultvectorreference[$ind;]/$LABEL;9:Inflectable Features"/><!-- index, usually 1 -->
+
+	   <stem-names path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/20:Div/$Text;/value:Stem Names"/><!-- index, usually 5 -->
+	   <stem-name path="9:multistring[$ind;]/"><!-- index, usually 4 -->
+		 <label path="$LABEL;9:Stem Name"/>
+		 <ws path="$DATA;20:Stem Name/24:Table/$Col;/$Text"/>
+		 <data path="$DATA;20:Stem Name/24:Table/$Col;[2]/$Text"/>
+	   </stem-name>
+	   <feature-sets path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/$Text"/>
+	   <feature-set path="9:custom[$ind;]/$LABEL;/9:Feature Set"/>
+
+	   <subcategories path="9:summary[$ind;]/$DATA;9:Slice_unknown/20:Root/$Text;/value:Subcategories"/><!-- index, usually 6 -->
+
+	   <scroll>
+		  <down path="43:Page down"/>
+		  <up path="43:Page up"/>
+	   </scroll>
+	</slice>
+  </category>
+
+</category-edit>

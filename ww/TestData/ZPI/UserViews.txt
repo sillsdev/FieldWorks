@@ -1,0 +1,7223 @@
+<UserView>
+<Type18>
+<Integer val="1"/>
+</Type18>
+<App18>
+<Guid val="5EA62D01-7A78-11D4-8078-0000C0FB81B5"/>
+</App18>
+<System18>
+<Boolean val="true"/>
+</System18>
+<Details18>
+<Binary>03000000</Binary>
+</Details18>
+<Name18>
+<AUni ws="en">Data Entry</AUni>
+</Name18>
+<Records18>
+<UserViewRec>
+<Clsid19>
+<Integer val="7"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="13"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Full Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  The complete name of the person.  Whenever possible, enter names in a consistent pattern such as 'John P. Doe' or 'Doe, John P.'.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Biographical Information</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  Biographical information for the person.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="13001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Alias</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  The assumed or special-usage name of the person.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="6"/>
+</Type20>
+<Flid20>
+<Integer val="13003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Gender</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The sex of the person.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="17"/>
+</Type20>
+<Flid20>
+<Integer val="13004"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date of Birth</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date the person was born.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="13006"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="LocationsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Place of Birth</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The location where the person was born.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="6"/>
+</Type20>
+<Flid20>
+<Integer val="13008"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Is a Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Specifies whether or not the person is a researcher contributing to this project.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="13009"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="LocationsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Place of Residence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The place where the person lives or calls home.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="13010"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="EducationList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Education</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The highest level of schooling completed by the person.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="17"/>
+</Type20>
+<Flid20>
+<Integer val="13011"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date of Death</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date the person died.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="13013"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PositionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Position</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The social position, job title, rank, religious office and other capabilities of the person.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="12"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Location Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Specifies a location by a place's name or a unique descriptive phrase.  Enter a more detailed description in the Short Description field, and a complete discussion in the discussion field.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="12001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Alias</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  The assumed or special-usage name of the location.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="26"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="27"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5049"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="18"/>
+</Type20>
+<Flid20>
+<Integer val="5049006"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000002000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Infl. Affix Slot</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="18"/>
+</Type20>
+<Flid20>
+<Integer val="5049005"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000002000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Infl. Affix Template</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5042"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="5042002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Prefix</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="5042001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Postfix</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="21"/>
+</Type20>
+<Flid20>
+<Integer val="5042003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Secondary Order</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5021"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  The official or commonly understood name or term used for the list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A short identifier for the list item.  This is usually an official or commonly understood abbreviation such as a person's initials, if available.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  A brief description of the list item.  The contents of this field can appear in the expanded Chooser dialog.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  The main body of information about this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Specifies any limitations on the distribution of information associated with this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The reliability of the data in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The names of people who obtained, entered, or analyzed the information in this list item.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="21"/>
+</Type20>
+<Flid20>
+<Integer val="5021001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Secondary Order</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Used to associate a topics list item with a help file topic that describes it.  The help file is a compiled HTML file and is identified in the Topics List Properties dialog Writing Systems tab.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this list item was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5036"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="5036001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="5036002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="6"/>
+</Type20>
+<Flid20>
+<Integer val="5036004"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Optional</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5037"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="5037001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="5037002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="5037003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Slots</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="5037006"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Prefix Slots</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="5037007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Suffix Slots</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">L</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+</Records18>
+</UserView>
+<UserView>
+<Type18>
+<Integer val="2"/>
+</Type18>
+<App18>
+<Guid val="5EA62D01-7A78-11D4-8078-0000C0FB81B5"/>
+</App18>
+<System18>
+<Boolean val="true"/>
+</System18>
+<Details18>
+<Binary>03000000</Binary>
+</Details18>
+<Name18>
+<AUni ws="en">Document</AUni>
+</Name18>
+<Records18>
+<UserViewRec>
+<Clsid19>
+<Integer val="7"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmPossibility-OtherInformation">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Other Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPossibility-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPossibility-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPossibility-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPossibility-OtherInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmPossibility-History">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPossibility-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPossibility-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="13"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Full Name</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmPerson-GeneralInformation">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">General Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="17"/>
+</Type20>
+<Flid20>
+<Integer val="13004"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-GeneralInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date of Birth</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="13006"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-GeneralInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="LocationsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Place of Birth</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="6"/>
+</Type20>
+<Flid20>
+<Integer val="13003"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-GeneralInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Gender</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="17"/>
+</Type20>
+<Flid20>
+<Integer val="13011"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-GeneralInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date of Death</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="13009"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-GeneralInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="LocationsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Place of Residence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="13010"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-GeneralInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="EducationList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Education</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="13013"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-GeneralInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PositionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Position</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="6"/>
+</Type20>
+<Flid20>
+<Integer val="13008"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-GeneralInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Is a Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="13001"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-GeneralInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Alias</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Biographical Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmPerson-OtherInformation">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Other Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-OtherInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmPerson-History">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmPerson-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="12"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Location Name</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="12001"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Alias</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmLocation-OtherInformation">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Other Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmLocation-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmLocation-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmLocation-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmLocation-OtherInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmLocation-History">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmLocation-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmLocation-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="26"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmAnthroItem-OtherInformation">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Other Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmAnthroItem-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmAnthroItem-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmAnthroItem-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmAnthroItem-OtherInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmAnthroItem-History">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmAnthroItem-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmAnthroItem-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="27"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmCustomItem-OtherInformation">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Other Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmCustomItem-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmCustomItem-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmCustomItem-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmCustomItem-OtherInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-CmCustomItem-History">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmCustomItem-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-CmCustomItem-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5049"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="18"/>
+</Type20>
+<Flid20>
+<Integer val="5049006"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000002000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Infl. Affix Slot</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="18"/>
+</Type20>
+<Flid20>
+<Integer val="5049005"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000002000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Infl. Affix Template</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-PartOfSpeech-OtherInformation">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Other Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-PartOfSpeech-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-PartOfSpeech-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-PartOfSpeech-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-PartOfSpeech-OtherInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-PartOfSpeech-History">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-PartOfSpeech-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-PartOfSpeech-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5042"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Flid20>
+<Integer val="5042002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-4"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Prefix</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Flid20>
+<Integer val="5042001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-4"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Postfix</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="21"/>
+</Type20>
+<Flid20>
+<Integer val="5042003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Secondary Order</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-MoMorphType-OtherInformation">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Other Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-MoMorphType-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-MoMorphType-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-MoMorphType-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-MoMorphType-OtherInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-MoMorphType-History">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-MoMorphType-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-MoMorphType-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5021"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7001"/>
+</Flid20>
+<Required20>
+<Integer val="2"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="7002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Abbreviation</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="1"/>
+</Type20>
+<Flid20>
+<Integer val="7003"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Short Description</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="21"/>
+</Type20>
+<Flid20>
+<Integer val="5021001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Secondary Order</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="7012"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-LexSubentryType-OtherInformation">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Other Information</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7007"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-LexSubentryType-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="7008"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-LexSubentryType-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="7013"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-LexSubentryType-OtherInformation"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="7"/>
+</Type20>
+<Flid20>
+<Integer val="7014"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-LexSubentryType-OtherInformation"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Help Id</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-LexSubentryType-History">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-LexSubentryType-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="7011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-LexSubentryType-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5036"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="5036001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="5037"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="2"/>
+</Type20>
+<Flid20>
+<Integer val="5037001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Name</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+</Records18>
+</UserView>
+<UserView>
+<App18>
+<Guid val="39886581-4DD5-11D4-8078-0000C0FB81B5"/>
+</App18>
+<System18>
+<Boolean val="true"/>
+</System18>
+<Details18>
+<Binary>05000000</Binary>
+</Details18>
+<Name18>
+<AUni ws="en">Browse</AUni>
+</Name18>
+<Records18>
+<UserViewRec>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="17"/>
+</Type20>
+<Flid20>
+<Integer val="4006008"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date of Event</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date or approximate date this event occurred.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Flid20>
+<Integer val="4004001"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Title</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Title for entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000001000000</Binary>
+</Details20>
+<PossList20>
+<Link target="AnthroListList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Anthropology categories for this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006003"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="LocationsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Location</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Identification of the places where the event occurred.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Source</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  List of people reporting the event or information to the researcher.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4004015"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">See Also</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(cross-reference field)  Internal links to other entries or subentries.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4004014"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Further Questions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  New or unresolved questions related to your event, hypothesis or conclusions.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="4010"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4010001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Participants</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="4010002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RolesList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Role</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+</Records18>
+</UserView>
+<UserView>
+<Type18>
+<Integer val="1"/>
+</Type18>
+<App18>
+<Guid val="39886581-4DD5-11D4-8078-0000C0FB81B5"/>
+</App18>
+<System18>
+<Boolean val="true"/>
+</System18>
+<Details18>
+<Binary>05000000</Binary>
+</Details18>
+<Name18>
+<AUni ws="en">Data Entry</AUni>
+</Name18>
+<Records18>
+<UserViewRec>
+<Clsid19>
+<Integer val="4006"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Flid20>
+<Integer val="4004001"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Title</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Title for entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004006"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  An indication of any limitations on the distribution of data in this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="17"/>
+</Type20>
+<Flid20>
+<Integer val="4006008"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date of Event</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date or approximate date this event occurred.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006009"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="TimeOfDayList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Time of Event</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The approximate time of day this event occurred.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004004"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Names of people who obtained, entered, or analyzed the data in this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Source</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  List of people reporting the event or information to the researcher.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="23"/>
+</Type20>
+<Flid20>
+<Integer val="4006002"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Participants</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  List of people involved in this event.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="4004005"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  An indication of the reliability of the data in this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006003"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="LocationsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Location</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Identification of the places where the event occurred.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="4006004"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="EventTypesList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Event Type</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Event type.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4006001"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Description</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  Description of the event or of culturally significant facts identified by the title. This field contains the main body of data for this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000001000000</Binary>
+</Details20>
+<PossList20>
+<Link target="AnthroListList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Anthropology categories for this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4004015"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">See Also</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(cross-reference field)  Internal links to other entries or subentries.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4004014"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Further Questions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  New or unresolved questions related to your event, hypothesis or conclusions.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006006"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000040</Binary>
+</Details20>
+<PossList20>
+<Link target="WeatherConditionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Weather</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Description of weather conditions existing during this event.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4004013"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">External Materials</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  List of photos, recordings, or other materials supporting this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4006010"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Personal Notes</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph field)  Your notes on this entry that you do not want published.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="4004010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this entry was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="4004011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this entry was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="18"/>
+</Type20>
+<Flid20>
+<Integer val="4004009"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000002000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Subentries</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">Event subentry.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="4005"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Flid20>
+<Integer val="4004001"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Title</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(single-line text field)  Title for entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004004"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Names of people who obtained, entered, or analyzed the data in this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4005001"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Hypothesis</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  A statement of your hypothesis.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4005003"/>
+</Flid20>
+<Required20>
+<Integer val="1"/>
+</Required20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  A write-up of the results of your research.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004007"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000001000000</Binary>
+</Details20>
+<PossList20>
+<Link target="AnthroListList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Anthropology categories for this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4005004"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Conclusions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  A summary of the results.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4005005"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Supporting Evidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(cross-reference field)  Internal links to entries that support this hypothesis.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4005006"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Counter Evidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(cross-reference field)  Internal links to entries that refute this hypothesis.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4005007"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Superseded By</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(cross-reference field)  Internal links to other analysis entries that encompass or replace this one.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4004015"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">See Also</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(cross-reference field)  Internal links to other entries or subentries.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="4005008"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="AnalysisStatusList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Status</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  An indication of the current status of this hypothesis.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="4"/>
+</Type20>
+<Flid20>
+<Integer val="4004005"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  An indication of the reliability of the data in this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004006"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  An indication of any limitations on the distribution of data in this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4004013"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">External Materials</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  List of photos, recordings, or other materials supporting this entry.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4004014"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Further Questions</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  New or unresolved questions related to your event, hypothesis or conclusions.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4005002"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Research Plan</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(multiparagraph text field)  Description of a plan to test the hypothesis.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="4004010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Created</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this entry was first created.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="4004011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Date Modified</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(date field)  The date and time this entry was last modified.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="18"/>
+</Type20>
+<Flid20>
+<Integer val="4004009"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000002000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Subentries</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">Analysis subentry.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="4010"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4010001"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Participants</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  Participants with a given role.</AUni>
+</HelpString20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="4010002"/>
+</Flid20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RolesList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Role</AUni>
+</Label20>
+<HelpString20>
+<AUni ws="en">(list reference field)  The role of one or more participants.</AUni>
+</HelpString20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+</Records18>
+</UserView>
+<UserView>
+<Type18>
+<Integer val="2"/>
+</Type18>
+<App18>
+<Guid val="39886581-4DD5-11D4-8078-0000C0FB81B5"/>
+</App18>
+<System18>
+<Boolean val="true"/>
+</System18>
+<Details18>
+<Binary>05000000</Binary>
+</Details18>
+<Name18>
+<AUni ws="en">Document</AUni>
+</Name18>
+<Records18>
+<UserViewRec>
+<Clsid19>
+<Integer val="4006"/>
+</Clsid19>
+<Fields19>
+<UserViewField id="DocumentView-RnEvent-Title">
+<Type20>
+<Integer val="14"/>
+</Type20>
+<Flid20>
+<Integer val="4004001"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Title</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="10"/>
+</Type20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Title"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Entry Type</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004007"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000001000000</Binary>
+</Details20>
+<PossList20>
+<Link target="AnthroListList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4006001"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Description</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4004014"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Further Questions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4006010"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Personal Notes</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-RnEvent-Classifications">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Classifications</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="4006004"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="EventTypesList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Event Type</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="17"/>
+</Type20>
+<Flid20>
+<Integer val="4006008"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Date of Event</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006009"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="TimeOfDayList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Time of Event</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006007"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Source</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="23"/>
+</Type20>
+<Flid20>
+<Integer val="4006002"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Participants</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006003"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="LocationsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Location</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="4004005"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4006006"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000040</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="WeatherConditionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Weather</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004004"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004006"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4004013"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">External Materials</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4004015"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">See Also</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-RnEvent-History">
+<Type20>
+<Integer val="13"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="4004010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="4004011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnEvent-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Modified</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="18"/>
+</Type20>
+<Flid20>
+<Integer val="4004009"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000002000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Subentries</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="4005"/>
+</Clsid19>
+<Fields19>
+<UserViewField id="DocumentView-RnAnalysis-Title">
+<Type20>
+<Integer val="14"/>
+</Type20>
+<Flid20>
+<Integer val="4004001"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000080</Binary>
+</Details20>
+<Style20>
+<Uni>Title Text</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Title</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="10"/>
+</Type20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnAnalysis-Title"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Entry Type</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004007"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000001000000</Binary>
+</Details20>
+<PossList20>
+<Link target="AnthroListList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Anthropology Categories</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4005001"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Hypothesis</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4005003"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Discussion</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4005004"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Conclusions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4004014"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Further Questions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4005002"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Research Plan</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4005005"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Supporting Evidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4005006"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Counter Evidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4005007"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">Superseded By</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="20"/>
+</Type20>
+<Flid20>
+<Integer val="4004015"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Style20>
+<Uni>Internal Link</Uni>
+</Style20>
+<Label20>
+<AUni ws="en">See Also</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="9"/>
+</Type20>
+<Flid20>
+<Integer val="4004013"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">External Materials</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-RnAnalysis-Classifications">
+<Type20>
+<Integer val="12"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Classifications</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="4005008"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnAnalysis-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="AnalysisStatusList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Status</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="4004005"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnAnalysis-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="ConfidenceLevelsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Confidence</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004004"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnAnalysis-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Researcher</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4004006"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnAnalysis-Classifications"/>
+</SubfieldOf20>
+<PossList20>
+<Link target="RestrictionsList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Restrictions</AUni>
+</Label20>
+</UserViewField>
+<UserViewField id="DocumentView-RnAnalysis-History">
+<Type20>
+<Integer val="13"/>
+</Type20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">History</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="4004010"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnAnalysis-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Created</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="15"/>
+</Type20>
+<Flid20>
+<Integer val="4004011"/>
+</Flid20>
+<Visibility20>
+<Integer val="2"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>64000000</Binary>
+</Details20>
+<SubfieldOf20>
+<Link target="DocumentView-RnAnalysis-History"/>
+</SubfieldOf20>
+<Label20>
+<AUni ws="en">Modified</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="18"/>
+</Type20>
+<Flid20>
+<Integer val="4004009"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-1"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000002000000</Binary>
+</Details20>
+<Label20>
+<AUni ws="en">Subentries</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+<UserViewRec>
+<Clsid19>
+<Integer val="4010"/>
+</Clsid19>
+<Fields19>
+<UserViewField>
+<Type20>
+<Integer val="5"/>
+</Type20>
+<Flid20>
+<Integer val="4010001"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-6"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="PeopleList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Participants</AUni>
+</Label20>
+</UserViewField>
+<UserViewField>
+<Type20>
+<Integer val="3"/>
+</Type20>
+<Flid20>
+<Integer val="4010002"/>
+</Flid20>
+<Visibility20>
+<Integer val="1"/>
+</Visibility20>
+<WsSelector20>
+<Integer val="-3"/>
+</WsSelector20>
+<Details20>
+<Binary>6400000000000000</Binary>
+</Details20>
+<PossList20>
+<Link target="RolesList"/>
+</PossList20>
+<Label20>
+<AUni ws="en">Role</AUni>
+</Label20>
+</UserViewField>
+</Fields19>
+</UserViewRec>
+</Records18>
+</UserView>

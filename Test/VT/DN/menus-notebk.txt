@@ -1,0 +1,51 @@
+'This file contains the menus specific to FieldWorks Data Notebook, as specified in
+'http://intranet.sil.org/softwaredev/SantaFe/FW/Notebooks/ResearchNBMenus/RnMenuCommands.gif
+'Used by fw\test\vt\DN\General-GUI-1-0-2.mst
+'See fw\test\vt\menus-generic.txt for explanations.
+'All top-level menus must be specified (if any later ones are specified).
+'E.g. if you want to specify Edit, you must specify File.
+
+&File
+	'same as generic
+&Edit
+	'same as generic
+&View
+	*
+	&Toolbars
+		*
+		'Actually "insert" is on generic menus too, despite the DN spec
+		Insert Toolbar	'Should be just "Insert"; Raid #1344
+&Data
+	'same as generic
+&Insert
+	&Event	Alt+B
+	&Analysis	Alt+Y
+	&Subentry
+		&Event
+		&Analysis
+	-
+	*
+F&ormat
+	'same as generic
+&Tools
+	&Reminders...	Ctrl+R
+	&Auto Tagging...	Alt+A
+	&Spelling...
+	&Version History...
+	-
+	Re&ports
+		&Outlines and Categories...
+		&Summary Information...
+		&Annual Cycle...
+	-
+	' etc.
+&Window
+	'Same as generic
+&Help
+	&FieldWorks
+		'same as generic
+	-
+	&Data Notebook...	F1
+	*
+	-
+	&About Data Notebook...

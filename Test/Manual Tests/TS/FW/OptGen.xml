@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="Tlgen" num="2.7.9.0" abbr="Tlgen" file="FW\OptGen.xml">
+
+ <title tag="Tlgen">Tools-Options-General tests</title>
+
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+	<p>The Options Dialog is invoked from the <i>Tools-Options</i> command, and is used for various setup options for the application. The <i>General Tab</i> is used largely for miscellaneous settings.</p>
+
+   <p name="Note">The DN and TLE versions of the General tab are nearly identical with the main difference being the addition of the
+   combo box to select a type of entry for DN. The entry types of each application also have different fields.</p>
+  </introduction>
+  <context>
+	<p>The specs for this test can be found at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html" type="doc">Options dialog</link>,
+	<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc"> Data Entry View</link>,
+	<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/DataEntry/DataEntryViews.html" type="doc"> Data Entry Views General Description </link>, and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesListEditor/ChoicesListEditor.html" type="doc">Topics List Editor</link>.</p>
+<p>Use "Tools-Options-Gen" in bug reports.</p>
+  </context>
+
+<case id="TlgenAct" num="0" order="any">
+ <title tag="TlgenAct">Activation of Tools-Options-General tab</title>
+ <context>
+<p>While the application is running</p>
+</context>
+
+ <step name="0.0" link="Bug">
+ Use the Tools Menu and select Options.
+ <r>The Options dialog should open and the General tab should be selected by default.</r>
+ <p name="bug">Tools-Options-Gen error opening Options dialog from menu</p>
+ </step>
+
+ <step name="0.1" link="Bug">
+ Compare the dialog displayed in the application to the one defined in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheGeneralTab" type="doc">the specifications</link>.
+ <r>The dialogs should be approximately the same with respect to size, controls present, text and layout.</r>
+ <p name="bug">Tools-Options-Gen dialog layout or appearance is incorrect</p>
+ </step>
+
+</case>
+
+<case id="Tlgenapp" num="1" order="any">
+  <title tag="Tlgenapp">Exercise Dialog Controls</title>
+  <context>
+<p>When the Options dialog is open with the General tab selected</p>
+</context>
+
+  <step name="1.1" link="Bug">Test this dialog using the <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link>
+ <r>
+<ul>
+<li>Report errors with the first title words "Tools-Options-Gen"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Gen basic controls do not work properly.</p>
+  </step>
+
+  <step name="1.2" link="Bug">Use <link uri="../StdCtrls/ListBox.xml">List/Combo Box Tests</link> to inspect the "Fields in" dropdown list box.
+ <r>
+<ul>
+<li>Its contents are as shown in the spec: Event Entry, Analysis Entry.</li>
+	<li>Making a different selection changes the contents of the list of fields below.</li>
+</ul> </r>
+ <p name="bug">Tools-Options-Gen Fields in dropdown contents incorrect</p>
+ <p name="bug">Tools-Options-Gen Fields in dropdown box not working</p>
+ <p name="note">This step does not apply to TLE</p>
+
+  </step>
+  <step name="1.3" link="Bug">For each value in the <i>Fields in</i> dropdown (or just the one list for TLE), inspect the field names listed in the Field column below "Fields in".
+ <r>The field names match those given for the selected entry type: <ul>
+<li>DN - <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc"> Data Entry View</link>
+</li>
+<li>TLE - <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesListEditor/ChoicesListEditor.html" type="doc">Topics List Editor</link> (includes People and Location lists)</li>
+</ul>
+</r>
+ <p name="Note">Need specs on list of fields that should be present for other factory lists</p>
+ <p name="bug">Tools-Options-Gen information displayed is incorrect</p>
+  </step>
+  <step name="1.4" link="Bug">For each value in the <i>Fields in</i> dropdown, inspect the values listed in the Data column beside the field names.
+	<r>These values, by default, are all either <i>Encouraged</i> or <i>Not required</i>, corresponding to the Initially Mandatory column shown in the tables at:
+<ul>
+<li>DN - <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc"> Data Entry View</link>
+</li>
+<li>TLE - <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/ChoicesListEditor/ChoicesListEditor.html" type="doc">Topics List Editor</link> (includes People and Location lists)</li>
+</ul>
+</r>
+ <p name="Note">Need specs on list of fields that should be mandatory for other factory lists</p>
+  <p name="bug">Tools-Options-Gen information displayed is incorrect</p>
+  </step>
+  <step name="1.5" link="Bug">In the main window and from each view (DE, Document, Browse), place the cursor in each type of entry, then invoke Tools - Options.
+ <r>In each case, the initial selection in the <i>Fields</i> in dropdown reflects the context from which the Options dialog was invoked.</r>
+ <p name="bug">Tools-Options-Gen dialog does not open correctly</p>
+ <p name="note">This step does not apply to TLE since there is only one type of entry</p>
+  </step>
+
+</case>
+
+<case id="Tlgenver" num="2" order="any">
+  <title tag="Tlgenver">Verify enforcement of 'Required/Encouraged' settings</title>
+  <context>
+<p>In the application</p>
+</context>
+
+  <step name="2.1" link="Bug">In the Options - General dialog, note one (or more) of the fields that is <i>Required</i>. (You may have to set one to Required using the Modify button.) Press OK. Insert a new entry (or subentry -- try both). Fill in some data but leave blank the required field in question. Then leave the entry (e.g. by using &lt;Alt&gt;&lt;N&gt; (Next Entry)).
+ <r>
+<ul>
+<li>A dialog appears with something like "You are required to enter data in the Research field before you can leave this entry."</li>
+<li>It has only an OK button.</li>
+<li>When OK is pressed, focus returns to the required field.</li>
+<li>The application does not leave the current entry.</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Gen empty required field allowed</p>
+ <p name="note">See Raid #2945 for acceptable ways to circumvent entering data in the required field.</p>
+  </step>
+  <step name="2.2" link="Bug">Try to switch to another view before entering the required field data.
+ <r>The application switches to the desired view with no message about the required field.</r>
+ <p name="bug">Tools-Options-Gen required field needed for switching views</p>
+  </step>
+  <step name="2.2a" link="Bug">With a required field left empty in an expanded subentry, but filled in in the main entry, attempt to leave the record in the ways described above.
+ <r>
+<ul>
+<li>A dialog appears with something like "You are required to enter data in the Research field before you can leave this entry."</li>
+<li>It has only an OK button.</li>
+<li>When OK is pressed, focus returns to the required field.</li>
+<li>The application does not leave the current entry.</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Gen empty required field allowed</p>
+  </step>
+  <step name="2.2b" link="Bug">With a required field left empty in a collapsed subentry, but filled in in the main entry, attempt to leave the record in the ways described above.
+ <r>The application does not check collapsed subentries for required fields.</r>
+ <p name="bug">Tools-Options-Gen collapsed subentry checked for required field</p>
+  </step>
+  <step name="2.3" link="Bug">After the required field warning dialog, enter some data in the required field and then leave the record.
+ <r>The application leaves the entry without raising a warning dialog.</r>
+ <p name="bug">Tools-Options-Gen required field data not allowed</p>
+  </step>
+  <step name="2.3a" link="Bug">After the required field warning dialog, without entering data in the required field, delete the record using Edit-Delete from the main menu.
+ <r>The application allows deletion of the entry.</r>
+ <p name="bug">Tools-Options-Gen deletion is not allowed</p>
+  </step>
+  <step name="2.4" link="Bug">In the Options - General dialog, note one (or more) of the fields that is <i>Not required</i>. Press OK. Insert a new entry (or subentry, as appropriate to the field being tested). Fill in some data but leave blank the non-required field. Leave the record, e.g. by using &lt;Alt&gt;&lt;N&gt; (Next Entry).
+ <r>The application leaves the record without raising a warning dialog.</r>
+ <p name="bug">Tools-Options-Gen nonrequired field gets warning</p>
+  </step>
+  <step name="2.5" link="Bug">In the Options - General dialog, note one (or more) of the fields that is <i>Encouraged</i>. Press OK. Insert a new entry (or subentry, as appropriate to the field being tested). Fill in some data but leave blank the "encouraged" field. Then leave the record, e.g. by using &lt;Alt&gt;&lt;N&gt; (Next Entry).
+ <r>A dialog appears with something like "You should enter data in the Research field." Yes, No, and No to All buttons are available.
+[Note: This check does not occur if the Encouraged field (1) is Not Visible (or visible If Data Present); or (2) is buried in a collapsed subentry. - personal conversation with DavidC]
+</r>
+ <p name="bug">Tools-Options-Gen empty encouraged field displays no dialog</p>
+  </step>
+<step name="2.5.1" link="Bug">When an <i>Encouraged</i> warning dialog is showing, press Yes.
+ <r>
+<ul>
+<li>The dialog disappears, and focus returns to the <i>Encouraged</i> field.</li>
+<li>The application does not leave the current entry.</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Gen Yes does not return to encouraged field</p>
+  </step>
+  <step name="2.5.1.1" link="Bug">When an <i>Encouraged</i> warning dialog is showing, press Yes. Enter some data in the <i>Encouraged</i> field, and then leave the record.
+ <r>The application leaves the record without raising a warning dialog.</r>
+ <p name="bug">Tools-Options-Gen encouraged field not allowed</p>
+  </step>
+
+ <step name="2.5.2" link="Bug">When an <i>Encouraged</i> warning dialog is showing, click No (or press Esc).
+	<r>
+<ul>
+<li>The dialog disappears</li>
+<li>The application leaves the current entry and does whatever action the user had requested, e.g. leaves the current record.</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Gen No returns to Encouraged field or record</p>
+  </step>
+
+<step name="2.5.3" link="Bug">When several <i>Encouraged</i> fields are missing data and the warning dialog is showing, click No (or press Esc).
+<r>
+<ul>
+ <li>No (or Esc) must be executed for each warning dialog</li>
+ <li>After all the warning dialogs have been closed, the application procedes with the user command (eg moving to the next entry).</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Gen No returns to Encouraged field or record on several warning dialogs</p>
+</step>
+
+<step name="2.5.4" link="Bug">When several <i>Encouraged</i> fields are missing data and the warning dialog is showing, click No to All.
+<r>
+<ul>
+ <li>All the warning dialogs are closed with clicking No to All</li>
+ <li>The application procedes with the original user command that prompted the warning dialogs (eg. moving to the next entry).</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Gen No to All does not close all the warning dialog boxes.</p>
+</step>
+
+</case>
+
+<case id="Tlgenchn" num="3" order="any">
+  <title tag="Tlgenchn">Required/Encouraged/Not required settings</title>
+  <context>
+<p>In the application</p>
+</context>
+
+  <step name="3.1" link="Bug">On the Options-General tab, right-click on one of the field names.
+ <r>A menu of three items pops up: Not required, Required, and Encouraged.</r>
+ <p name="bug">Tools-Options-Gen popup menu has wrong entries</p>
+  </step>
+  <step name="3.1.1" link="Bug">When the popup menu is displayed, select one of the items on it.
+ <r>The value for that field in the Data column changes to the item clicked.</r>
+ <p name="bug">Tools-Options-Gen popup selection not set in field</p>
+  </step>
+  <step name="3.2" link="Bug">On the Options-General tab, select one of the field names, then click on the Modify... button.
+ <r>A Field Settings dialog appears, giving the three choices as shown in the spec.</r>
+ <p name="bug">Tools-Options-Gen modify Field Settings dialog not launched</p>
+ <p name="bug">Tools-Options-Gen modify Field Settings dialog looks wrong</p>
+  </step>
+  <step name="3.3" link="Bug">Test the Field Settings dialog using the <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link>
+ <r>
+<ul>
+<li>OK sets the field value.</li>
+<li>Report errors with the first title words "Tools-Options-Gen Field Settings"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Gen Field Settings OK does not set field value</p>
+  </step>
+  <step name="3.4" link="Bug">On the Options-General-Views tab, Copy or Add a new Data Entry view so that there is more than one.  On the Options-General tab, choose a field that is Not required and whose visibility in DE view is currently not Always visible. Right-click on that field in the Data column of the listbox and select Required from the menu.
+ <r>A Field Settings Notice dialog appears, whose appearance matches that shown at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html" type="doc">Options dialog</link>.</r>
+ <p name="bug">Tools-Options-Gen Field Settings Notice not launched</p>
+  </step>
+  <step name="3.5" link="Bug">Test the Field Settings Notice dialog using the <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link>
+ <r>
+<ul>
+<li>Yes sets the field value to <i>Required</i>, and also make the field Always Visible in all DE view settings (verify this).</li>
+<li>No cancels the action to make the field required and does not make any changes to the visibility settings.</li>
+<li>Report errors with the first title words "Tools-Options-Gen Field Settings Notice"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Gen Field Settings Notice OK does not set field value</p>
+  </step>
+
+</case>
+
+<case id="Tlgenmsr" num="4" order="any">
+  <title tag="Tlgenmsr">Measurement units</title>
+  <context>
+<p>In the application</p>
+</context>
+
+  <step name="4.1" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List/Combo box Tests</link> and the shortcut &lt;Alt&gt;&lt;u&gt; to test the Measurement units combo box.
+ <r>
+<ul>
+<li>The types of data entry are - inches, cm, and mm</li>
+<li>Report errors with the first title words "Tools-Options-Gen Measurement"</li>
+</ul>
+</r>
+ <r>A list drops down show the values inches, cm, and mm.</r>
+ <p name="bug">Tools-Options-Gen Measurement dropdown values wrong</p>
+  </step>
+  <step name="4.2" link="Bug">After setting the measurement units and pressing OK, invoke a dialog that uses measurement units, such as File-Page Setup.
+ <r>The measurement units shown on the dialog are the ones set in the General Options dialog.</r>
+ <p name="bug">Tools-Options-Gen Measurement value is not used in other dialogs</p>
+  </step>
+  <step name="4.3" link="Bug">After setting the measurement units and pressing Cancel, invoke a dialog that uses measurement units, such as File-Page Setup.
+ <r>The measurement units shown on the dialog are the ones that were in effect before the General Options dialog was opened.</r>
+ <p name="bug">Tools-Options-Gen Measurement value is changed despite Cancel</p>
+  </step>
+
+</case>
+
+<case id="Tlgenprs" num="5" order="any">
+  <title tag="Tlgenprs">Persistence</title>
+  <context>
+<p>In the application</p>
+</context>
+
+  <step name="5.2.1" link="Bug">After making some changes on the General Options tab and pressing OK, exit the application and restart. Then open the General Options dialog.
+ <r>The changes just made are still in effect, including visibility of fields in DE view (check this on the Views tab).</r>
+ <p name="bug">Tools-Options-Gen changes don't persist</p>
+  </step>
+
+</case>
+
+ <update date="Jan-15-01" author="RickM">Test created.</update>
+ <update date="Jan-18-01" author="LarsH">Test updated.</update>
+ <update date="Sep-20-01" author="MikeL">Made changes to integrate with libraries.</update>
+ <update date="Mar-15-01" author="LarsH">Minor twiddles.</update>
+ <update date="Jun-24-02" author="RussD">Updated to specs, made more general to be used with TLE</update>
+</test>

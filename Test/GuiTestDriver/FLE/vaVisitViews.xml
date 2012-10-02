@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Open each view from the menu.
+	  Close any nag windows.
+	  Click all tabs to show all the tabbed views.
+ -->
+
+<accil on-fail="assert">
+
+ <include from="IncKalaba.xml"/>
+
+<!--  -->
+<on-application args="-db $projectName" title="$projectName$FlexSig" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+
+   <model select="menubar/view/*[name()!='filters']/*">
+	 <click path="$guiPath"/>
+	  <on-dialog wait="1000" title="Information" on-fail="skip">
+		  <click path="$ok"/>
+	  </on-dialog>
+	  <!-- not all views have tabs, so skip if there arn't any -->
+	  <model select="//$nodeName;/*/tab" on-fail="skip">
+		<click path="$guiPath"/>
+	  </model>
+   </model>
+
+ </on-application>
+
+</accil>

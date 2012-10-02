@@ -1,0 +1,78 @@
+c Right to Left Fields - reversal of certain fields
+c based on rtl.cct - Right to Left - reversal of BHS text
+
+c ----------------------------------------------------
+begin >	store(wdlen) '0' endstore		c holds count of number of chars in word
+	store(linelen) '0' endstore		c holds count of number of chars in line
+	store(num) '1234567890' endstore	c numbers
+	store(white) " " x09 nl endstore		c space, tab, newline (whitespace)
+	use(main)
+
+c ----------------------------------------------------
+c output a reversed line and reset count
+define(newline) > 	store(linelen) outs(wdlen)	c put wdlen count into linelen
+		store(wdlen)  '0' endstore	c put 0 into wdlen
+		out(line)			c output the line store area
+		store(line) endstore		c empty the line store area
+
+c put the reversed word in word store area at the beginning of the line store area
+define(newword) >	store(temp)		c empty temp store area and start storing into it
+		outs(word) " "		c put the contents of word store area plus space into temp
+		outs(line)			c followed by the line store area contents
+		store(line) outs(temp)	c empty line store area and put temp contents into it
+		store(word)  store(temp) endstore	c empty word and temp store areas
+		store(wdlen)  '0' endstore	c zero count in wdlen
+
+c ----------------------------------------------------
+c choose fields that need reversal (all others pass unchanged)
+group(main)
+
+"\hes" any(white) > dup use(reverse)
+"\hm" any(white) > dup use(reverse)
+
+c ----------------------------------------------------
+c reverse text in a chosen field
+group(reverse)
+
+c new word -- add reversed word to front of reversed line
+' ' >   incr(linelen) do(newword)
+
+c end of line -- output reversed line
+nl >  do(newword) do(newline) nl
+
+c (Put a "c " before the "any(num)" to comment out non-reversed numbers)
+c inline verse and chapter numbers of 2 or more digits: don't reverse them
+any(num) >   incr(linelen) do(newword) store(word) dup use(numbers)
+
+c new character -- add next character to front of reversed word
+"" >	incr(wdlen) incr(linelen)		c incr counts
+	store(temp)			c empty temp store area and start storing into it
+	fwd(1)				c advance over next character, putting it in temp
+	outs(word)			c put contents of word store area in temp
+	store(word)			c empty word store area and start storing into it
+	outs(temp)			c put contents of temp store area into word store area
+	store(temp) endstore		c empty temp store area
+	ifgt(linelen) '150' begin do(newline) write 'over 150 ' nl end endif	c error if line length >150
+
+c backslash marker signals new field, so return to main group
+"\" > dup back(1) use(main)
+
+c ----------------------------------------------------
+c don't reverse numbers
+group(numbers)
+
+any(num) > dup
+
+nl >  do(newword) do(newline) nl use(reverse)
+
+c space or nonnumber signals a new word, so go back to reversing
+" "	>	incr(linelen) next
+""	>	do(newword)
+	store(temp)			c empty temp store area and start storing into it
+	fwd(1)				c advance over next character, putting it in temp
+	outs(word)			c put contents of word store area in temp
+	store(word)			c empty word store area and start storing into it
+	outs(temp)			c put contents of temp store area into word store area
+	store(temp) endstore		c empty temp store area
+	ifgt(linelen) '150' begin do(newline) write 'over 150 ' nl end endif	c error if line length >150
+	use(reverse)			c go back to reverse group

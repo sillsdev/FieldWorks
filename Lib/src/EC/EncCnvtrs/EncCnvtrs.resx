@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IDS_InEncodingFormNotSupported" xml:space="preserve">
+	<value>The input data format is not supported by this converter</value>
+  </data>
+  <data name="IDS_OutEncodingFormNotSupported" xml:space="preserve">
+	<value>The output data format is not supported by this converter</value>
+  </data>
+  <data name="IDS_EncodingConvTypeNotSpecified" xml:space="preserve">
+	<value>Either the ConversionType or the EncodingForm must be specified</value>
+  </data>
+  <data name="IDS_InvalidConversionType" xml:space="preserve">
+	<value>The configured conversion type (Unicode vs. non-Unicode) is invalid for this converter</value>
+  </data>
+  <data name="IDS_kStatus_OutOfMemory" xml:space="preserve">
+	<value>Unable to allocate required memory</value>
+  </data>
+  <data name="IDS_NoReturnData" xml:space="preserve">
+	<value>The converter DLL returned no data! Is the table/map correct?</value>
+  </data>
+  <data name="IDS_NoReturnDataBadOutForm" xml:space="preserve">
+	<value>No data to return! Perhaps bad output encoding form.</value>
+  </data>
+  <data name="IDS_IncompleteChar" xml:space="preserve">
+	<value>Bad input data (lone surrogate, incomplete UTF8 sequence)</value>
+  </data>
+  <data name="IDS_NoAvailableConverters" xml:space="preserve">
+	<value>No installed converter supports the extension of the given ConverterSpec or the given 'ProcessTypeFlag' (did you forget the ProcessTypeFlag?)</value>
+  </data>
+  <data name="IDS_kStatus_InvalidForm" xml:space="preserve">
+	<value>inForm or outForm parameter doesn't match mapping (bytes/Unicode mismatch)</value>
+  </data>
+  <data name="IDS_kStatus_InvalidMapping" xml:space="preserve">
+	<value>The compiled mapping data is not recognizable</value>
+  </data>
+  <data name="IDS_kStatus_CompilationFailed" xml:space="preserve">
+	<value>mapping compilation failed (syntax errors, etc)</value>
+  </data>
+  <data name="IDS_kStatus_NameNotFound" xml:space="preserve">
+	<value>couldn't find the requested name: '{0}'</value>
+  </data>
+  <data name="IDS_kStatus_Exception" xml:space="preserve">
+	<value>an internal error has occurred in the TECkit DLL</value>
+  </data>
+  <data name="IDS_kStatus_BadMappingVersion" xml:space="preserve">
+	<value>compiled mapping is not a version we can handle</value>
+  </data>
+  <data name="IDS_kStatus_InvalidConverter" xml:space="preserve">
+	<value>converter object is corrupted (or not really a TECkit_Converter at all)</value>
+  </data>
+  <data name="IDS_kStatus_ConverterBusy" xml:space="preserve">
+	<value>can't initiate a conversion, as the converter is already in the midst of an operation</value>
+  </data>
+  <data name="IDS_NotEnoughBuffer" xml:space="preserve">
+	<value>Not a large enough buffer was provided; contact the vendor</value>
+  </data>
+  <data name="IDS_SyntaxErrorInTable" xml:space="preserve">
+	<value>syntax error in the CC table</value>
+  </data>
+  <data name="IDS_CantOpenReadMap" xml:space="preserve">
+	<value>Unable to open or read the map file '{0}'</value>
+  </data>
+  <data name="IDS_NoConverter" xml:space="preserve">
+	<value>No encoding converter by the name '{0}'</value>
+  </data>
+  <data name="IDS_NoErrorCode" xml:space="preserve">
+	<value>Oops, this error is not being handled; contact the EncCnvtrs vendor</value>
+  </data>
+  <data name="IDS_RegistryCorrupt" xml:space="preserve">
+	<value>The repository information store appears to be corrupted. You should reinstall or use the repository interface to add converters</value>
+  </data>
+  <data name="IDS_MissingConverter" xml:space="preserve">
+	<value>One or more of the converters in this virtual converter are missing</value>
+  </data>
+  <data name="IDS_ConverterPluginUninstall" xml:space="preserve">
+	<value>This converter is a plug-in and must be uninstalled rather than removed;</value>
+  </data>
+  <data name="IDS_Exception" xml:space="preserve">
+	<value>an internal error has occurred in EncConverters and/or the converter DLLs (TECkit or CC)</value>
+  </data>
+  <data name="IDS_InvalidCharFound" xml:space="preserve">
+	<value>No mapping was found from the source to the target encoding</value>
+  </data>
+  <data name="IDS_TruncatedCharFound" xml:space="preserve">
+	<value>All of the source data was read, and a character sequence was incomplete</value>
+  </data>
+  <data name="IDS_IllegalCharFound" xml:space="preserve">
+	<value>A character sequence was found in the source which is disallowed in the source encoding scheme</value>
+  </data>
+  <data name="IDS_InvalidTableFormat" xml:space="preserve">
+	<value>An error occurred trying to read the backing data for the converter</value>
+  </data>
+  <data name="IDS_AddFontFirst" xml:space="preserve">
+	<value>No font name entry '{0}'! You must call the 'AddFont' method first before calling this method</value>
+  </data>
+  <data name="IDS_InvalidNormalizeForm" xml:space="preserve">
+	<value>Invalid NormalizeFlags form</value>
+  </data>
+  <data name="IDS_NoAliasName" xml:space="preserve">
+	<value>Alias name does not exist</value>
+  </data>
+  <data name="IDS_ConverterAlreadyExists" xml:space="preserve">
+	<value>A converter by this name already exists</value>
+  </data>
+  <data name="IDS_NoImplementDetails" xml:space="preserve">
+	<value>Some implementation details are missing</value>
+  </data>
+  <data name="IDS_NoEncodingName" xml:space="preserve">
+	<value>No encoding by the name '{0}'</value>
+  </data>
+  <data name="IDS_NeedSpecTypeInfo" xml:space="preserve">
+	<value>There are multiple implementations of this mapping, you must specify which one's properties you want (e.g. '{0}' see BuildConverterName)</value>
+  </data>
+  <data name="IDS_InvalidAliasName" xml:space="preserve">
+	<value>Invalid Alias Name</value>
+  </data>
+  <data name="IDS_FallbackTwoStepsRequired" xml:space="preserve">
+	<value>Fallback converters require two steps</value>
+  </data>
+  <data name="IDS_FallbackSimilarConvType" xml:space="preserve">
+	<value>The Fallback converter must have a similar ConvType as the main converters (they don't have to both be bi-directional, but they need to have the same input and output type: Unicode vs. Legacy)</value>
+  </data>
+  <data name="IDS_InvalidMappingName" xml:space="preserve">
+	<value>Invalid character in mapping name (e.g. ';')</value>
+  </data>
+  <data name="IDS_InstallFont" xml:space="preserve">
+	<value>The font '{0}' doesn't appear to be installed!</value>
+  </data>
+</root>
