@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FxtDocumentDescription dataLabel="HTML" formatLabel="HTM" defaultExtension="html" filter="HTML files (*.htm)|*.htm|All files (*.*)|*.*" mode="applySingleTransform" transform="xml2htm.xsl">
+Export to a simple HTML format which can be displayed using Internet Explorer or FireFox. This is a form suitable for Web publishing.
+</FxtDocumentDescription>

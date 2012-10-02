@@ -1,0 +1,968 @@
+Comment *===================================================================
+Comment Created March 1997 by Raghunath Rao (rrao@crystal.cirrus.com)
+Comment IFM file to support KanTeX font for use with ITRANS.
+Comment *===================================================================
+
+itrans: Comment Using following maps:
+itrans: Comment vowels: a aa i ii u uu ri rii li lii ay aay ai o oo au (..gap..) aha
+
+itrans: StartINDIAN
+itrans: TEX kannada kan12.tfm
+XX Disable Hyphenation, so no HYPHENCHAR defn: itrans: HYPHENCHAR 45 ;
+
+itrans: Comment *************************************************************
+
+itrans: Comment **************** The Vowels *******************
+itrans: CC a 2 ; PCC 23 0 0 ; PCC none 101 0 ;
+itrans: CC aa 2 ; PCC 24 0 0 ;  PCC none 101 0 ;
+itrans: CC i 2 ; PCC 25 0 0 ; PCC none 101 0 ;
+itrans: CC ii 2 ; PCC 26 0 0 ; PCC none 101 0 ;
+itrans: CC u 2 ; PCC 27 0 0 ; PCC none 101 0 ;
+itrans: CC uu 2 ; PCC 28 0 0 ; PCC none 101 0 ;
+itrans: CC ri 2 ; PCC 29 0 0 ; PCC none 101 0 ;
+itrans: CC rii 2 ; PCC 30 0 0 ; PCC none 101 0 ;
+itrans: CC li 3 ; PCC 104 0 0 ; PCC 135 0 0 ; PCC none 101 0 ;
+itrans: CC lii 3 ; PCC 104 0 0 ; PCC 136 0 0 ; PCC none 101 0 ;
+itrans: CC ay 2 ; PCC 31 0 0 ; PCC none 101 0 ;
+itrans: CC aay 2 ; PCC 32 0 0 ; PCC none 101 0 ;
+itrans: CC ai 2 ; PCC 65 0 0 ;  PCC none 101 0 ;
+itrans: CC o 2 ; PCC 66 0 0 ;  PCC none 101 0 ;
+itrans: CC oo 2 ; PCC 67 0 0 ;  PCC none 101 0 ;
+itrans: CC au 2 ; PCC 68 0 0 ;  PCC none 101 0 ;
+itrans: Comment No explicit am
+itrans: CC aha 2 ; PCC 9 0 0 ;  PCC none 101 0 ;
+
+
+
+itrans: Comment **************** The Digits *******************
+itrans:	Comment Needed since the font uses a non-ASCII mapping for digits
+itrans: CC zero 2 ; PCC 13 0 0 ; PCC none 101 0 ;
+itrans: CC one 2 ; PCC 14 0 0 ; PCC none 101 0 ;
+itrans: CC two 2 ; PCC 15 0 0 ; PCC none 101 0 ;
+itrans: CC three 2 ; PCC 16 0 0 ; PCC none 101 0 ;
+itrans: CC four 2 ; PCC 17 0 0 ; PCC none 101 0 ;
+itrans: CC five 2 ; PCC 18 0 0 ; PCC none 101 0 ;
+itrans: CC six 2 ; PCC 19 0 0 ; PCC none 101 0 ;
+itrans: CC seven 2 ; PCC 20 0 0 ; PCC none 101 0 ;
+itrans: CC eight 2 ; PCC 21 0 0 ; PCC none 101 0 ;
+itrans: CC nine 2 ; PCC 22 0 0 ; PCC none 101 0 ;
+
+
+
+itrans: Comment ******************* VOWEL MODIFIER STRATEGY ******************
+itrans: Comment To construct a Consonant + Vowel (C+V for short)
+itrans: Comment the base consonant is placed, then with a right shift of
+itrans: Comment \cb???OFFSETA and left shift of \vm???OFFSETA (usually
+itrans: Comment 12 units) from the left edge of the box (with PCC ..
+itrans: Comment ox+value) the vowel modifier is placed, followed by blank
+itrans: Comment space of 101 units. In case of multiple glyphs for a
+itrans: Comment particular vowel modifier (like oo), the above is done
+itrans: Comment after first attaching any glyphs to the end of the base
+itrans: Comment consonant, i.e. the u glyph, the vowel extender glyph, and
+itrans: Comment then the e glyph with the ox+value. Some cases need
+itrans: Comment fine-tuning by hand.
+
+itrans: Comment For jh, m, and y, \cb???OFFSETC is used for the aa and au
+itrans: Comment vowel modifiers instead of \cb???OFFSETA
+
+itrans: Comment *********** CONJUNCT CONSONANT STRATEGY ***********
+itrans: Comment Each Conjunct consonant is defined with a pre-specified
+itrans: Comment left shift. This is done purely by hand-tuning based on
+itrans: Comment the nature of the particular consonant. The \cc???OFFSETA
+itrans: Comment values are not useful since there is no \cb???OFFSETB
+itrans: Comment reference since the particular base consonant under
+itrans: Comment consideration is unknown.
+
+
+
+
+
+itrans: Comment ********** SPECIAL DEFINE FOR ka and ga  ************
+itrans: CCADD tmplA ;
+itrans: CC tmplA-half 2 ; PCC implicit 0 0 ; PCC 130 ox+182 0 ;
+itrans: CC tmplA-a 3 ; PCC implicit 0 0 ; PCC 128 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-aa 3 ; PCC implicit 0 0 ; PCC 129 ox+182 0 ; PCC none 301 0 ;
+itrans: CC tmplA-u 4 ; PCC implicit 0 0 ; PCC 133 0 0 ; PCC 128 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-uu 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 128 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-ri 4 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC 128 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-rii 4 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC 128 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-li 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-lii 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-ay 3 ; PCC implicit 0 0 ; PCC 137 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-aay 4 ; PCC implicit 0 0 ; PCC 137 ox+182 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC tmplA-ai 4 ; PCC implicit 0 0 ; PCC 139 0 0 ; PCC 137 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-o 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 137 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-oo 5 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+182 0 ; PCC none 101 0 ;
+itrans: CC tmplA-au 3 ; PCC implicit 0 0 ; PCC 140 ox+52 -30 ; PCC none 401 0 ;
+
+
+itrans: Comment ********** SPECIAL DEFINE FOR dda and ddha ************
+itrans: CCADD tmplB ;
+itrans: CC tmplB-half 2 ; PCC implicit 0 0 ; PCC 130 ox+321 0 ;
+itrans: CC tmplB-a 3 ; PCC implicit 0 0 ; PCC 128 ox+321 0 ; PCC none 151 0 ;
+itrans: CC tmplB-aa 3 ; PCC implicit 0 0 ; PCC 129 ox+341 0 ; PCC none 351 0 ;
+itrans: CC tmplB-u 4 ; PCC implicit 0 0 ; PCC 133 40 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC tmplB-uu 4 ; PCC implicit 0 0 ; PCC 134 40 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC tmplB-ri 4 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC tmplB-rii 4 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC tmplB-li 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC tmplB-lii 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC tmplB-ay 3 ; PCC implicit 0 0 ; PCC 137 ox+321 0 ; PCC none 151 0 ;
+itrans: CC tmplB-aay 4 ; PCC implicit 0 0 ; PCC 137 ox+321 0 ; PCC 132 0 0 ; PCC none 151 0 ;
+itrans: CC tmplB-ai 4 ; PCC implicit 0 0 ; PCC 139 0 0 ; PCC 137 ox+321 0 ; PCC none 101 0 ;
+itrans: CC tmplB-o 4 ; PCC implicit 0 0 ; PCC 134 40 0 ; PCC 137 ox+321 0 ; PCC none 101 0 ;
+itrans: CC tmplB-oo 5 ; PCC implicit 0 0 ; PCC 134 40 0 ; PCC 132 0 0 ; PCC 137 ox+321 0 ; PCC none 101 0 ;
+itrans: CC tmplB-au 3 ; PCC implicit 0 0 ; PCC 140 ox+191 -30 ; PCC none 401 0 ;
+
+
+itrans: Comment ********** SPECIAL DEFINE FOR tha, da and dha  ************
+itrans: CCADD tmplC ;
+itrans: CC tmplC-half 2 ; PCC implicit 0 0 ; PCC 130 ox+349 0 ;
+itrans: CC tmplC-a 3 ; PCC implicit 0 0 ; PCC 128 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-aa 3 ; PCC implicit 0 0 ; PCC 129 ox+349 0 ; PCC none 301 0 ;
+itrans: CC tmplC-u 4 ; PCC implicit 0 0 ; PCC 133 0 0 ; PCC 128 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-uu 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 128 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-ri 4 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC 128 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-rii 4 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC 128 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-li 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-lii 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-ay 3 ; PCC implicit 0 0 ; PCC 137 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-aay 4 ; PCC implicit 0 0 ; PCC 137 ox+349 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC tmplC-ai 4 ; PCC implicit 0 0 ; PCC 139 0 0 ; PCC 137 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-o 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 137 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-oo 5 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+349 0 ; PCC none 101 0 ;
+itrans: CC tmplC-au 3 ; PCC implicit 0 0 ; PCC 140 ox+229 -30 ; PCC none 401 0 ;
+
+itrans: Comment ********** SPECIAL DEFINE FOR pa, pha, ba and bha  ************
+itrans: CCADD tmplD ;
+itrans: CC tmplD-half 2 ; PCC implicit 0 0 ; PCC 130 ox+266 0 ;
+itrans: CC tmplD-a 3 ; PCC implicit 0 0 ; PCC 128 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-aa 3 ; PCC implicit 0 0 ; PCC 129 ox+266 0 ; PCC none 301 0 ;
+itrans: CC tmplD-u 4 ; PCC implicit 0 0 ; PCC 133 0 0 ; PCC 128 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-uu 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 128 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-ri 4 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC 128 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-rii 4 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC 128 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-li 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-lii 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-ay 3 ; PCC implicit 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-aay 4 ; PCC implicit 0 0 ; PCC 137 ox+266 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC tmplD-ai 4 ; PCC implicit 0 0 ; PCC 139 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-o 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-oo 5 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ;
+itrans: CC tmplD-au 3 ; PCC implicit 0 0 ; PCC 140 ox+136 -30 ; PCC none 401 0 ;
+
+
+
+
+
+itrans: Comment ********** SPECIAL DEFINE FOR ttha and ra ************
+itrans: CCADD tmplE ;
+itrans: CC tmplE-half 2 ; PCC implicit 0 0 ; PCC 130 ox+210 0 ;
+itrans: CC tmplE-a 3 ; PCC implicit 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-aa 3 ; PCC implicit 0 0 ; PCC 129 ox+210 0 ; PCC none 351 0 ;
+itrans: CC tmplE-u 4 ; PCC implicit 0 0 ; PCC 133 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-uu 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-ri 4 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-rii 4 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-li 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-lii 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-ay 3 ; PCC implicit 0 0 ; PCC 137 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-aay 4 ; PCC implicit 0 0 ; PCC 137 ox+210 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC tmplE-ai 4 ; PCC implicit 0 0 ; PCC 139 0 0 ; PCC 137 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-o 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 137 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-oo 5 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+210 0 ; PCC none 101 0 ;
+itrans: CC tmplE-au 3 ; PCC implicit 0 0 ; PCC 140 ox+80 -30 ; PCC none 401 0 ;
+
+
+
+itrans: Comment ********** SPECIAL DEFINE FOR va and shha ************
+itrans: CCADD tmplF ;
+itrans: CC tmplF-half 2 ; PCC implicit 0 0 ; PCC 130 ox+283 0 ;
+itrans: CC tmplF-a 3 ; PCC implicit 0 0 ; PCC 128 ox+283 0 ; PCC none 101 0 ;
+itrans: CC tmplF-aa 3 ; PCC implicit 0 0 ; PCC 129 ox+283 0 ; PCC none 301 0 ;
+itrans: CC tmplF-ri 4 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC 128 ox+283 0 ; PCC none 101 0 ;
+itrans: CC tmplF-rii 4 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC 128 ox+283 0 ; PCC none 101 0 ;
+itrans: CC tmplF-li 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+283 0 ; PCC none 101 0 ;
+itrans: CC tmplF-lii 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+283 0 ; PCC none 101 0 ;
+itrans: CC tmplF-ay 3 ; PCC implicit 0 0 ; PCC 137 ox+283 0 ; PCC none 101 0 ;
+itrans: CC tmplF-aay 4 ; PCC implicit 0 0 ; PCC 137 ox+283 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC tmplF-ai 4 ; PCC implicit 0 0 ; PCC 139 0 0 ; PCC 137 ox+283 0 ; PCC none 101 0 ;
+itrans: CC tmplF-au 3 ; PCC implicit 0 0 ; PCC 140 ox+153 -30 ; PCC none 401 0 ;
+
+
+itrans: Comment ********** SPECIAL DEFINE FOR na and sa  ************
+itrans: CCADD tmplG ;
+itrans: CC tmplG-half 2 ; PCC implicit 0 0 ; PCC 130 ox+228 0 ;
+itrans: CC tmplG-a 3 ; PCC implicit 0 0 ; PCC 128 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-aa 3 ; PCC implicit 0 0 ; PCC 129 ox+228 0 ; PCC none 301 0 ;
+itrans: CC tmplG-u 4 ; PCC implicit 0 0 ; PCC 133 0 0 ; PCC 128 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-uu 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 128 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-ri 4 ; PCC implicit 0 0 ; PCC 135 0 0 ; PCC 128 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-rii 4 ; PCC implicit 0 0 ; PCC 136 0 0 ; PCC 128 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-li 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-lii 5 ; PCC implicit 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-ay 3 ; PCC implicit 0 0 ; PCC 137 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-aay 4 ; PCC implicit 0 0 ; PCC 137 ox+228 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC tmplG-ai 4 ; PCC implicit 0 0 ; PCC 139 0 0 ; PCC 137 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-o 4 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 137 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-oo 5 ; PCC implicit 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+228 0 ; PCC none 101 0 ;
+itrans: CC tmplG-au 3 ; PCC implicit 0 0 ; PCC 140 ox+148 -30 ; PCC none 401 0 ;
+
+
+itrans: Comment  **************** Consonant+Vowel *******************
+
+
+itrans: Comment  	     ---------- Consonant ka -----------
+itrans: CCS ka tmplA ;
+itrans: CC ka-implicit 1 ; PCC 69 0 0 ;
+
+itrans: Comment cckaOFFSETA = 114.85
+
+itrans: Comment cbkaOFFSETA = 194.44
+itrans: CC ka-i 2 ; PCC 177 0 0 ; PCC none 101 0 ;
+itrans: CC ka-ii 3 ; PCC 177 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant kha -----------
+itrans: Comment cckhaOFFSETA = 402.66
+
+itrans: Comment cbkhaOFFSETA = 300.46
+itrans: CC kha-half 2 ; PCC 70 0 0 ; PCC 130 ox+288 0 ;
+itrans: CC kha-a 2 ; PCC 70 0 0 ; PCC none 101 0 ;
+itrans: CC kha-aa 3 ; PCC 70 0 0 ; PCC 129 ox+288 0 ; PCC none 351 0 ;
+itrans: CC kha-i 2 ; PCC 178 0 0 ; PCC none 101 0 ;
+itrans: CC kha-ii 3 ; PCC 178 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC kha-u 3 ; PCC 70 0 0 ; PCC 133 0 0 ; PCC none 101 0 ;
+itrans: CC kha-uu 3 ; PCC 70 0 0 ; PCC 134 0 0 ; PCC none 101 0 ;
+itrans: CC kha-ri 3 ; PCC 70 0 0 ; PCC 135 0 0 ; PCC none 101 0 ;
+itrans: CC kha-rii 3 ; PCC 70 0 0 ; PCC 136 0 0 ; PCC none 101 0 ;
+itrans: CC kha-li 4 ; PCC 70 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC none 101 0 ;
+itrans: CC kha-lii 4 ; PCC 70 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC none 101 0 ;
+itrans: CC kha-ay 3 ; PCC 70 0 0 ; PCC 137 ox+288 0 ; PCC none 151 0 ;
+itrans: CC kha-aay 4 ; PCC 70 0 0 ; PCC 137 ox+288 0 ; PCC 132 0 0 ; PCC none 151 0 ;
+itrans: CC kha-ai 4 ; PCC 70 0 0 ; PCC 139 0 0 ; PCC 137 ox+288 0 ; PCC none 101 0 ;
+itrans: CC kha-o 4 ; PCC 70 0 0 ; PCC 134 0 0 ; PCC 137 ox+288 0 ; PCC none 101 0 ;
+itrans: CC kha-oo 5 ; PCC 70 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+288 0 ; PCC none 101 0 ;
+itrans: CC kha-au 3 ; PCC 70 0 0 ; PCC 140 ox+258 -30 ; PCC none 501 0 ;
+
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant ga -----------
+itrans: CCS ga tmplA ;
+itrans: CC ga-implicit 1 ; PCC 71 0 0 ;
+
+itrans: Comment ccgaOFFSETA = 114.85
+
+itrans: Comment cbgaOFFSETA = 194.44
+itrans: CC ga-i 2 ; PCC 179 0 0 ; PCC none 101 0 ;
+itrans: CC ga-ii 3 ; PCC 179 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+itrans: Comment  	     ---------- Consonant gha -----------
+itrans: Comment ccghaOFFSETA = 122.68
+
+itrans: Comment cbghaOFFSETA = 263.89
+itrans: CC gha-half 2 ; PCC 72 0 0 ; PCC 130 ox+192 0 ;
+itrans: CC gha-a 3 ; PCC 72 0 0 ; PCC 128 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-aa 3 ; PCC 72 0 0 ; PCC 129 ox+272 0 ; PCC none 251 0 ;
+itrans: CC gha-i 2 ; PCC 180 0 0 ; PCC none 101 0 ;
+itrans: CC gha-ii 3 ; PCC 180 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC gha-u 4 ; PCC 72 0 0 ; PCC 133 -90 0 ; PCC 128 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-uu 4 ; PCC 72 0 0 ; PCC 134 -90 0 ; PCC 128 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-ri 4 ; PCC 72 0 0 ; PCC 135 0 0 ; PCC 128 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-rii 4 ; PCC 72 0 0 ; PCC 136 0 0 ; PCC 128 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-li 5 ; PCC 72 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-lii 5 ; PCC 72 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-ay 3 ; PCC 72 0 0 ; PCC 137 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-aay 4 ; PCC 72 0 0 ; PCC 137 ox+192 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC gha-ai 4 ; PCC 72 0 0 ; PCC 139 0 0 ; PCC 137 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-o 4 ; PCC 72 0 0 ; PCC 134 -90 0 ; PCC 137 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-oo 5 ; PCC 72 0 0 ; PCC 134 -90 0 ; PCC 132 0 0 ; PCC 137 ox+192 0 ; PCC none 101 0 ;
+itrans: CC gha-au 3 ; PCC 72 0 0 ; PCC 140 ox+52 -30 ; PCC none 401 0 ;
+
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant nga -----------
+
+itrans: Comment ccngaOFFSETA = 138.35
+
+itrans: Comment cbngaOFFSETA = 312.50
+itrans: CC nga-half 2 ; PCC 73 0 0 ; PCC 130 ox+266 0 ;
+itrans: CC nga-a 2 ; PCC 73 0 0 ; PCC none 101 0 ;
+itrans: CC nga-aa 3 ; PCC 73 0 0 ; PCC 129 ox+266 0 ; PCC none 301 0 ;
+itrans: CC nga-i 3 ; PCC 73 0 0 ; PCC 131 ox+266 0 ; PCC none 101 0 ;
+itrans: CC nga-ii 4 ; PCC 73 0 0 ; PCC 131 ox+266 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC nga-u 3 ; PCC 73 0 0 ; PCC 133 0 0 ; PCC none 101 0 ;
+itrans: CC nga-uu 3 ; PCC 73 0 0 ; PCC 134 0 0 ; PCC none 101 0 ;
+itrans: CC nga-ri 3 ; PCC 73 0 0 ; PCC 135 0 0 ; PCC none 101 0 ;
+itrans: CC nga-rii 3 ; PCC 73 0 0 ; PCC 136 0 0 ; PCC none 101 0 ;
+itrans: CC nga-li 4 ; PCC 73 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC none 101 0 ;
+itrans: CC nga-lii 4 ; PCC 73 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC none 101 0 ;
+itrans: CC nga-ay 3 ; PCC 73 0 0 ; PCC 137 ox+266 0 ; PCC none 151 0 ;
+itrans: CC nga-aay 4 ; PCC 73 0 0 ; PCC 137 ox+266 0 ; PCC 132 0 0 ; PCC none 151 0 ;
+itrans: CC nga-ai 4 ; PCC 73 0 0 ; PCC 139 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ;
+itrans: CC nga-o 4 ; PCC 73 0 0 ; PCC 134 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ;
+itrans: CC nga-oo 5 ; PCC 73 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ;
+itrans: CC nga-au 3 ; PCC 73 0 0 ; PCC 140 ox+238 -30 ; PCC none 501 0 ;
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant cha -----------
+itrans: Comment ccchaOFFSETA = 107.03 (from ja)
+
+itrans: Comment cbchaOFFSETA = 289.80
+itrans: CC cha-half 2 ; PCC 74 0 0 ; PCC 130 ox+272 0 ;
+itrans: CC cha-a 3 ; PCC 74 0 0 ; PCC 128 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-aa 3 ; PCC 74 0 0 ; PCC 129 ox+292 0 ; PCC none 331 0 ;
+itrans: CC cha-i 2 ; PCC 181 0 0 ; PCC none 101 0 ;
+itrans: CC cha-ii 3 ; PCC 181 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC cha-u 4 ; PCC 74 0 0 ; PCC 133 0 0 ; PCC 128 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-uu 4 ; PCC 74 0 0 ; PCC 134 0 0 ; PCC 128 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-ri 4 ; PCC 74 0 0 ; PCC 135 0 0 ; PCC 128 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-rii 4 ; PCC 74 0 0 ; PCC 136 0 0 ; PCC 128 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-li 5 ; PCC 74 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-lii 5 ; PCC 74 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-ay 3 ; PCC 74 0 0 ; PCC 137 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-aay 4 ; PCC 74 0 0 ; PCC 137 ox+272 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC cha-ai 4 ; PCC 74 0 0 ; PCC 139 0 0 ; PCC 137 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-o 4 ; PCC 74 0 0 ; PCC 134 0 0 ; PCC 137 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-oo 5 ; PCC 74 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+272 0 ; PCC none 101 0 ;
+itrans: CC cha-au 3 ; PCC 74 0 0 ; PCC 140 ox+198 -30 ; PCC none 401 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant chha -----------
+itrans: Comment ccchhaOFFSETA = 107.03
+
+itrans: Comment cbchhaOFFSETA = 250.00
+itrans: CC chha-half 2 ; PCC 75 0 0 ; PCC 130 ox+238 0 ;
+itrans: CC chha-a 3 ; PCC 75 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-aa 3 ; PCC 75 0 0 ; PCC 129 ox+268 0 ; PCC none 301 0 ;
+itrans: CC chha-i 2 ; PCC 182 0 0 ; PCC none 101 0 ;
+itrans: CC chha-ii 3 ; PCC 182 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC chha-u 4 ; PCC 75 0 0 ; PCC 133 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-uu 4 ; PCC 75 0 0 ; PCC 134 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-ri 4 ; PCC 75 0 0 ; PCC 135 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-rii 4 ; PCC 75 0 0 ; PCC 136 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-li 5 ; PCC 75 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-lii 5 ; PCC 75 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-ay 3 ; PCC 75 0 0 ; PCC 137 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-aay 4 ; PCC 75 0 0 ; PCC 137 ox+238 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC chha-ai 4 ; PCC 75 0 0 ; PCC 139 0 0 ; PCC 137 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-o 4 ; PCC 75 0 0 ; PCC 134 0 0 ; PCC 137 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-oo 5 ; PCC 75 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+238 0 ; PCC none 101 0 ;
+itrans: CC chha-au 3 ; PCC 75 0 0 ; PCC 140 ox+208 -30 ; PCC none 401 0 ;
+
+
+
+itrans: Comment  	     ---------- Consonant ja -----------
+itrans: Comment ccjaOFFSETA = 107.03
+
+itrans: Comment cbjaOFFSETA = 284.73
+itrans: CC ja-half 2 ; PCC 76 0 0 ; PCC 130 ox+273 0 ;
+itrans: CC ja-a 3 ; PCC 76 0 0 ; PCC 128 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-aa 3 ; PCC 76 0 0 ; PCC 129 ox+273 0 ; PCC none 301 0 ;
+itrans: CC ja-i 2 ; PCC 183 0 0 ; PCC none 101 0 ;
+itrans: CC ja-ii 3 ; PCC 183 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ja-u 4 ; PCC 76 0 0 ; PCC 133 0 0 ; PCC 128 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-uu 4 ; PCC 76 0 0 ; PCC 134 0 0 ; PCC 128 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-ri 4 ; PCC 76 0 0 ; PCC 135 0 0 ; PCC 128 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-rii 4 ; PCC 76 0 0 ; PCC 136 0 0 ; PCC 128 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-li 5 ; PCC 76 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-lii 5 ; PCC 76 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-ay 3 ; PCC 76 0 0 ; PCC 137 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-aay 4 ; PCC 76 0 0 ; PCC 137 ox+273 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ja-ai 4 ; PCC 76 0 0 ; PCC 139 0 0 ; PCC 137 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-o 4 ; PCC 76 0 0 ; PCC 134 0 0 ; PCC 137 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-oo 5 ; PCC 76 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+273 0 ; PCC none 101 0 ;
+itrans: CC ja-au 3 ; PCC 76 0 0 ; PCC 140 ox+203 -30 ; PCC none 401 0 ;
+
+
+
+itrans: Comment  	     ---------- Consonant jha -----------
+itrans: Comment ccjhaOFFSETA = 268.25
+
+itrans: Comment cbjhaOFFSETA = 222.23
+itrans: Comment cbjhaOFFSETC = 668.96
+itrans: CC jha-half 2 ; PCC 77 0 0 ; PCC 130 ox+210 0 ;
+itrans: CC jha-a 3 ; PCC 77 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-aa 4 ; PCC 77 0 0 ; PCC 128 ox+210 0 ; PCC 129 ox+656 0 ; PCC none 401 0 ;
+itrans: CC jha-i 2 ; PCC 184 0 0 ; PCC none 101 0 ;
+itrans: CC jha-ii 3 ; PCC 184 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC jha-u 4 ; PCC 77 0 0 ; PCC 133 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-uu 4 ; PCC 77 0 0 ; PCC 134 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-ri 4 ; PCC 77 0 0 ; PCC 135 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-rii 4 ; PCC 77 0 0 ; PCC 136 0 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-li 5 ; PCC 77 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-lii 5 ; PCC 77 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-ay 3 ; PCC 77 0 0 ; PCC 137 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-aay 4 ; PCC 77 0 0 ; PCC 137 ox+210 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC jha-ai 4 ; PCC 77 0 0 ; PCC 139 0 0 ; PCC 137 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-o 4 ; PCC 77 0 0 ; PCC 134 0 0 ; PCC 137 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-oo 5 ; PCC 77 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+210 0 ; PCC none 101 0 ;
+itrans: CC jha-au 4 ; PCC 77 0 0 ; PCC 128 ox+210 0 ; PCC 140 ox+607 -30 ; PCC none 431 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant jnh -----------
+itrans: Comment ccjnhOFFSETA = 0
+
+itrans: Comment cbjnhOFFSETA = 557.28
+itrans: CC jnh-half 2 ; PCC 78 0 0 ; PCC 130 ox+545 0 ;
+itrans: CC jnh-a 2 ; PCC 78 0 0 ; PCC none 101 0 ;
+itrans: CC jnh-aa 3 ; PCC 78 0 0 ; PCC 129 ox+545 0 ; PCC none 401 0 ;
+itrans: CC jnh-i 3 ; PCC 78 0 0 ; PCC 131 ox+545 0 ; PCC none 201 0 ;
+itrans: CC jnh-ii 4 ; PCC 78 0 0 ; PCC 131 ox+545 0 ; PCC 132 51 0 ; PCC none 101 0 ;
+itrans: CC jnh-u 3 ; PCC 78 0 0 ; PCC 133 0 0 ; PCC none 101 0 ;
+itrans: CC jnh-uu 3 ; PCC 78 0 0 ; PCC 134 0 0 ; PCC none 101 0 ;
+itrans: CC jnh-ri 3 ; PCC 78 0 0 ; PCC 135 0 0 ; PCC none 101 0 ;
+itrans: CC jnh-rii 3 ; PCC 78 0 0 ; PCC 136 0 0 ; PCC none 101 0 ;
+itrans: CC jnh-li 4 ; PCC 78 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC none 101 0 ;
+itrans: CC jnh-lii 4 ; PCC 78 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC none 101 0 ;
+itrans: CC jnh-ay 3 ; PCC 78 0 0 ; PCC 137 ox+545 0 ; PCC none 201 0 ;
+itrans: CC jnh-aay 4 ; PCC 78 0 0 ; PCC 137 ox+545 0 ; PCC 132 51 0 ; PCC none 151 0 ;
+itrans: CC jnh-ai 4 ; PCC 78 0 0 ; PCC 139 0 0 ; PCC 137 ox+545 0 ; PCC none 101 0 ;
+itrans: CC jnh-o 4 ; PCC 78 0 0 ; PCC 134 0 0 ; PCC 137 ox+545 0 ; PCC none 101 0 ;
+itrans: CC jnh-oo 5 ; PCC 78 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+545 0 ; PCC none 101 0 ;
+itrans: CC jnh-au 3 ; PCC 78 0 0 ; PCC 140 ox+455 -30 ; PCC none 501 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant tta -----------
+itrans: Comment ccttaOFFSETA = 214.07
+
+itrans: Comment cbttaOFFSETA = 307.40
+itrans: CC tta-half 2 ; PCC 79 0 0 ; PCC 130 ox+295 0 ;
+itrans: CC tta-a 2 ; PCC 79 0 0 ; PCC none 151 0 ;
+itrans: CC tta-aa 3 ; PCC 79 0 0 ; PCC 129 ox+320 0 ; PCC none 381 0 ;
+itrans: CC tta-i 2 ; PCC 185 0 0 ; PCC none 151 0 ;
+itrans: CC tta-ii 3 ; PCC 185 0 0 ; PCC 132 0 0 ; PCC none 151 0 ;
+itrans: CC tta-u 3 ; PCC 79 0 0 ; PCC 133 40 0 ; PCC none 101 0 ;
+itrans: CC tta-uu 3 ; PCC 79 0 0 ; PCC 134 40 0 ; PCC none 101 0 ;
+itrans: CC tta-ri 3 ; PCC 79 0 0 ; PCC 135 0 0 ; PCC none 101 0 ;
+itrans: CC tta-rii 3 ; PCC 79 0 0 ; PCC 136 0 0 ; PCC none 101 0 ;
+itrans: CC tta-li 4 ; PCC 79 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC none 101 0 ;
+itrans: CC tta-lii 4 ; PCC 79 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC none 101 0 ;
+itrans: CC tta-ay 3 ; PCC 79 0 0 ; PCC 137 ox+295 0 ; PCC none 151 0 ;
+itrans: CC tta-aay 4 ; PCC 79 0 0 ; PCC 137 ox+295 0 ; PCC 132 0 0 ; PCC none 151 0 ;
+itrans: CC tta-ai 4 ; PCC 79 0 0 ; PCC 139 0 0 ; PCC 137 ox+295 0 ; PCC none 101 0 ;
+itrans: CC tta-o 4 ; PCC 79 0 0 ; PCC 134 40 0 ; PCC 137 ox+295 0 ; PCC none 101 0 ;
+itrans: CC tta-oo 5 ; PCC 79 0 0 ; PCC 134 40 0 ; PCC 132 0 0 ; PCC 137 ox+295 0 ; PCC none 101 0 ;
+itrans: CC tta-au 3 ; PCC 79 0 0 ; PCC 140 ox+263 -30 ; PCC none 501 0 ;
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant ttha -----------
+itrans: CCS ttha tmplE ;
+itrans: CC ttha-implicit 1 ; PCC 80 0 0 ;
+
+itrans: Comment cctthaOFFSETA = 114.85
+
+itrans: Comment cbtthaOFFSETA = 222.23
+itrans: CC ttha-i 2 ; PCC 186 0 0 ; PCC none 101 0 ;
+itrans: CC ttha-ii 3 ; PCC 186 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant dda -----------
+itrans: CCS dda tmplB ;
+itrans: CC dda-implicit 1 ; PCC 81 0 0 ;
+
+itrans: Comment ccddaOFFSETA = 114.85
+
+itrans: Comment cbddaOFFSETA = 333.30
+itrans: CC dda-i 2 ; PCC 187 0 0 ; PCC none 101 0 ;
+itrans: CC dda-ii 3 ; PCC 187 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+itrans: Comment  	     ---------- Consonant ddha -----------
+itrans: CCS ddha tmplB ;
+itrans: CC ddha-implicit 1 ; PCC 82 0 0 ;
+
+itrans: Comment ccddhaOFFSETA = 114.85
+
+itrans: Comment cbddhaOFFSETA = 333.30
+itrans: CC ddha-i 2 ; PCC 188 0 0 ; PCC none 101 0 ;
+itrans: CC ddha-ii 3 ; PCC 188 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant nna -----------
+itrans: Comment ccnnaOFFSETA = 146.18
+
+itrans: Comment cbnnaOFFSETA = 454.18
+itrans: CC nna-half 2 ; PCC 83 0 0 ; PCC 130 ox+362 0 ;
+itrans: CC nna-a 2 ; PCC 83 0 0 ; PCC none 101 0 ;
+itrans: CC nna-aa 3 ; PCC 83 0 0 ; PCC 129 ox+372 0 ; PCC none 351 0 ;
+itrans: CC nna-i 3 ; PCC 83 0 0 ; PCC 131 ox+266 0 ; PCC none 101 0 ;
+itrans: CC nna-ii 4 ; PCC 83 0 0 ; PCC 131 ox+266 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC nna-u 3 ; PCC 83 0 0 ; PCC 133 0 0 ; PCC none 101 0 ;
+itrans: CC nna-uu 3 ; PCC 83 0 0 ; PCC 134 0 0 ; PCC none 101 0 ;
+itrans: CC nna-ri 3 ; PCC 83 0 0 ; PCC 135 0 0 ; PCC none 101 0 ;
+itrans: CC nna-rii 3 ; PCC 83 0 0 ; PCC 136 0 0 ; PCC none 101 0 ;
+itrans: CC nna-li 4 ; PCC 83 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC none 101 0 ;
+itrans: CC nna-lii 4 ; PCC 83 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC none 101 0 ;
+itrans: CC nna-ay 3 ; PCC 83 0 0 ; PCC 137 ox+372 0 ; PCC none 151 0 ;
+itrans: CC nna-aay 4 ; PCC 83 0 0 ; PCC 137 ox+372 0 ; PCC 132 0 0 ; PCC none 151 0 ;
+itrans: CC nna-ai 4 ; PCC 83 0 0 ; PCC 139 0 0 ; PCC 137 ox+372 0 ; PCC none 101 0 ;
+itrans: CC nna-o 4 ; PCC 83 0 0 ; PCC 134 0 0 ; PCC 137 ox+372 0 ; PCC none 101 0 ;
+itrans: CC nna-oo 5 ; PCC 83 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+372 0 ; PCC none 101 0 ;
+itrans: CC nna-au 3 ; PCC 83 0 0 ; PCC 140 ox+352 -30 ; PCC none 501 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant ta -----------
+itrans: Comment cctaOFFSETA = 385.44
+
+itrans: Comment cbtaOFFSETA = 250.00
+itrans: CC ta-half 2 ; PCC 84 0 0 ; PCC 130 ox+238 0 ;
+itrans: CC ta-a 3 ; PCC 84 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-aa 3 ; PCC 84 0 0 ; PCC 129 ox+238 0 ; PCC none 301 0 ;
+itrans: CC ta-i 2 ; PCC 189 0 0 ; PCC none 101 0 ;
+itrans: CC ta-ii 3 ; PCC 189 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ta-u 4 ; PCC 84 0 0 ; PCC 133 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-uu 4 ; PCC 84 0 0 ; PCC 134 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-ri 4 ; PCC 84 0 0 ; PCC 135 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-rii 4 ; PCC 84 0 0 ; PCC 136 0 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-li 5 ; PCC 84 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-lii 5 ; PCC 84 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-ay 3 ; PCC 84 0 0 ; PCC 137 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-aay 4 ; PCC 84 0 0 ; PCC 137 ox+238 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ta-ai 4 ; PCC 84 0 0 ; PCC 139 0 0 ; PCC 137 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-o 4 ; PCC 84 0 0 ; PCC 134 0 0 ; PCC 137 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-oo 5 ; PCC 84 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+238 0 ; PCC none 101 0 ;
+itrans: CC ta-au 3 ; PCC 84 0 0 ; PCC 140 ox+188 -30 ; PCC none 401 0 ;
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant tha -----------
+itrans: CCS tha tmplC ;
+itrans: CC tha-implicit 1 ; PCC 85 0 0 ;
+
+itrans: Comment ccthaOFFSETA = 130.52
+
+itrans: Comment cbthaOFFSETA = 361.11
+itrans: CC tha-i 2 ; PCC 190 0 0 ; PCC none 101 0 ;
+itrans: CC tha-ii 3 ; PCC 190 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+itrans: Comment  	     ---------- Consonant da -----------
+itrans: CCS da tmplC ;
+itrans: CC da-implicit 1 ; PCC 86 0 0 ;
+
+itrans: Comment ccdaOFFSETA = 130.52
+
+itrans: Comment cbdaOFFSETA = 361.11
+itrans: CC da-i 2 ; PCC 191 0 0 ; PCC none 101 0 ;
+itrans: CC da-ii 3 ; PCC 191 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+itrans: Comment  	     ---------- Consonant dha -----------
+itrans: CCS dha tmplC ;
+itrans: CC dha-implicit 1 ; PCC 87 0 0 ;
+
+itrans: Comment ccdhaOFFSETA = 130.52
+
+itrans: Comment cbdhaOFFSETA = 361.11
+itrans: CC dha-i 2 ; PCC 192 0 0 ; PCC none 101 0 ;
+itrans: CC dha-ii 3 ; PCC 192 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant na -----------
+itrans: CCS na tmplG ;
+itrans: CC na-implicit 1 ; PCC 88 0 0 ;
+
+itrans: Comment ccnaOFFSETA = 172.67
+
+itrans: Comment cbnaOFFSETA = 250.00 (but uses 240.00 instead)
+itrans: CC na-i 2 ; PCC 193 0 0 ; PCC none 101 0 ;
+itrans: CC na-ii 3 ; PCC 193 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant pa -----------
+itrans: CCS pa tmplD ;
+itrans: CC pa-implicit 1 ; PCC 90 0 0 ;
+
+itrans: Comment ccpaOFFSETA = 234.88
+
+itrans: Comment cbpaOFFSETA = 277.79
+itrans: CC pa-i 2 ; PCC 194 0 0 ; PCC none 101 0 ;
+itrans: CC pa-ii 3 ; PCC 194 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+itrans: Comment  	     ---------- Consonant pha -----------
+itrans: CCS pha tmplD ;
+itrans: CC pha-implicit 1 ; PCC 97 0 0 ;
+
+itrans: Comment ccphaOFFSETA = 234.88
+
+itrans: Comment cbphaOFFSETA = 277.79
+itrans: CC pha-i 2 ; PCC 195 0 0 ; PCC none 101 0 ;
+itrans: CC pha-ii 3 ; PCC 195 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant ba -----------
+itrans: CCS ba tmplD ;
+itrans: CC ba-implicit 1 ; PCC 98 0 0 ;
+
+itrans: Comment ccbaOFFSETA = 234.88
+
+itrans: Comment cbbaOFFSETA = 277.79
+itrans: CC ba-a 2 ; PCC 98 0 0 ; PCC none 101 0 ;
+itrans: CC ba-i 2 ; PCC 196 0 0 ; PCC none 101 0 ;
+itrans: CC ba-ii 3 ; PCC 196 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ba-au 3 ; PCC 98 0 0 ; PCC 140 ox+206 -30 ; PCC none 401 0 ;
+
+
+
+itrans: Comment  	     ---------- Consonant bha -----------
+itrans: CCS bha tmplD ;
+itrans: CC bha-implicit 1 ; PCC 99 0 0 ;
+
+
+itrans: Comment ccbhaOFFSETA = 234.88
+
+itrans: Comment cbbhaOFFSETA = 277.79
+itrans: CC bha-i 2 ; PCC 197 0 0 ; PCC none 101 0 ;
+itrans: CC bha-ii 3 ; PCC 197 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC bha-au 3 ; PCC 99 0 0 ; PCC 140 ox+206 -30 ; PCC none 401 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant ma -----------
+itrans: Comment ccmaOFFSETA = 234.88 (from pa)
+
+itrans: Comment cbmaOFFSETA = 294.45
+itrans: Comment cbmaOFFSETC = 643.25
+itrans: CC ma-half 2 ; PCC 100 0 0 ; PCC 130 ox+232 0 ;
+itrans: CC ma-a 3 ; PCC 100 0 0 ; PCC 128 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-aa 4 ; PCC 100 0 0 ; PCC 128 ox+232 0 ; PCC 129 ox+491 0 ; PCC none 401 0 ;
+itrans: CC ma-i 2 ; PCC 198 0 0 ; PCC none 101 0 ;
+itrans: CC ma-ii 3 ; PCC 198 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ma-u 4 ; PCC 100 0 0 ; PCC 133 0 0 ; PCC 128 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-uu 4 ; PCC 100 0 0 ; PCC 134 0 0 ; PCC 128 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-ri 4 ; PCC 100 0 0 ; PCC 135 0 0 ; PCC 128 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-rii 4 ; PCC 100 0 0 ; PCC 136 0 0 ; PCC 128 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-li 5 ; PCC 100 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-lii 5 ; PCC 100 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-ay 3 ; PCC 100 0 0 ; PCC 137 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-aay 4 ; PCC 100 0 0 ; PCC 137 ox+232 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ma-ai 4 ; PCC 100 0 0 ; PCC 139 0 0 ; PCC 137 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-o 4 ; PCC 100 0 0 ; PCC 134 0 0 ; PCC 137 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-oo 5 ; PCC 100 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+232 0 ; PCC none 101 0 ;
+itrans: CC ma-au 4 ; PCC 100 0 0 ; PCC 128 ox+232 0 ; PCC 140 ox+471 -30 ; PCC none 431 0 ;
+
+
+
+itrans: Comment  	     ---------- Consonant ya -----------
+itrans: Comment ccyaOFFSETA = 0
+
+itrans: Comment cbyaOFFSETA = 427.78
+itrans: Comment cbyaOFFSETC = 644.45
+itrans: CC ya-half 2 ; PCC 101 0 0 ; PCC 130 ox+396 0 ;
+itrans: CC ya-a 3 ; PCC 101 0 0 ; PCC 128 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-aa 4 ; PCC 101 0 0 ; PCC 128 ox+396 0 ; PCC 129 ox+632 0 ; PCC none 401 0 ;
+itrans: CC ya-i 2 ; PCC 201 0 0 ; PCC none 101 0 ;
+itrans: CC ya-ii 3 ; PCC 201 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ya-u 4 ; PCC 101 0 0 ; PCC 133 0 0 ; PCC 128 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-uu 4 ; PCC 101 0 0 ; PCC 134 0 0 ; PCC 128 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-ri 4 ; PCC 101 0 0 ; PCC 135 0 0 ; PCC 128 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-rii 4 ; PCC 101 0 0 ; PCC 136 0 0 ; PCC 128 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-li 5 ; PCC 101 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-lii 5 ; PCC 101 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-ay 3 ; PCC 101 0 0 ; PCC 137 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-aay 4 ; PCC 101 0 0 ; PCC 137 ox+396 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ya-ai 4 ; PCC 101 0 0 ; PCC 139 0 0 ; PCC 137 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-o 4 ; PCC 101 0 0 ; PCC 134 0 0 ; PCC 137 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-oo 5 ; PCC 101 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+396 0 ; PCC none 101 0 ;
+itrans: CC ya-au 4 ; PCC 101 0 0 ; PCC 128 ox+396 0 ; PCC 140 ox+632 -30 ; PCC none 431 0 ;
+
+
+
+itrans: Comment  	     ---------- Consonant ra -----------
+itrans: CCS ra tmplE ;
+itrans: CC ra-implicit 1 ; PCC 102 0 0 ;
+
+itrans: Comment ccraOFFSETA = 385.44
+
+itrans: Comment cbraOFFSETA = 222.23
+itrans: CC ra-i 2 ; PCC 199 0 0 ; PCC none 101 0 ;
+itrans: CC ra-ii 3 ; PCC 199 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant la -----------
+itrans: Comment cclaOFFSETA = 308.35
+
+itrans: Comment cblaOFFSETA = 332.40
+itrans: CC la-half 2 ; PCC 104 0 0 ; PCC 130 ox+320 0 ;
+itrans: CC la-a 3 ; PCC 104 0 0 ; PCC 128 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-aa 3 ; PCC 104 0 0 ; PCC 129 ox+320 0 ; PCC none 301 0 ;
+itrans: CC la-i 2 ; PCC 200 0 0 ; PCC none 101 0 ;
+itrans: CC la-ii 3 ; PCC 200 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC la-u 4 ; PCC 104 0 0 ; PCC 133 0 0 ; PCC 128 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-uu 4 ; PCC 104 0 0 ; PCC 134 0 0 ; PCC 128 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-ri 4 ; PCC 104 0 0 ; PCC 135 0 0 ; PCC 128 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-rii 4 ; PCC 104 0 0 ; PCC 136 0 0 ; PCC 128 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-li 5 ; PCC 104 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-lii 5 ; PCC 104 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-ay 3 ; PCC 104 0 0 ; PCC 137 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-aay 4 ; PCC 104 0 0 ; PCC 137 ox+320 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC la-ai 4 ; PCC 104 0 0 ; PCC 139 0 0 ; PCC 137 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-o 4 ; PCC 104 0 0 ; PCC 134 0 0 ; PCC 137 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-oo 5 ; PCC 104 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+320 0 ; PCC none 101 0 ;
+itrans: CC la-au 3 ; PCC 104 0 0 ; PCC 140 ox+300 -30 ; PCC none 401 0 ;
+
+
+
+itrans: Comment  	     ---------- Consonant lda -----------
+itrans: Comment ccldaOFFSETA = 114.85
+
+itrans: Comment cbldaOFFSETA = 187.03
+itrans: CC lda-half 2 ; PCC 105 0 0 ; PCC 130 ox+180 0 ;
+itrans: CC lda-a 3 ; PCC 105 0 0 ; PCC 128 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-aa 3 ; PCC 105 0 0 ; PCC 129 ox+180 0 ; PCC none 301 0 ;
+itrans: CC lda-i 2 ; PCC 202 0 0 ; PCC none 101 0 ;
+itrans: CC lda-ii 3 ; PCC 202 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC lda-u 4 ; PCC 105 0 0 ; PCC 133 0 0 ; PCC 128 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-uu 4 ; PCC 105 0 0 ; PCC 134 0 0 ; PCC 128 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-ri 4 ; PCC 105 0 0 ; PCC 135 0 0 ; PCC 128 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-rii 4 ; PCC 105 0 0 ; PCC 136 0 0 ; PCC 128 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-li 5 ; PCC 105 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-lii 5 ; PCC 105 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-ay 3 ; PCC 105 0 0 ; PCC 137 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-aay 4 ; PCC 105 0 0 ; PCC 137 ox+180 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC lda-ai 4 ; PCC 105 0 0 ; PCC 139 0 0 ; PCC 137 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-o 4 ; PCC 105 0 0 ; PCC 134 0 0 ; PCC 137 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-oo 5 ; PCC 105 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+180 0 ; PCC none 101 0 ;
+itrans: CC lda-au 3 ; PCC 105 0 0 ; PCC 140 ox+180 -30 ; PCC none 451 0 ;
+
+
+
+itrans: Comment  	     ---------- Consonant va -----------
+itrans: CCS va tmplF ;
+itrans: CC va-implicit 1 ; PCC 107 0 0 ;
+
+itrans: Comment ccvaOFFSETA = 234.88
+
+itrans: Comment cbvaOFFSETA = 294.45
+itrans: CC va-i 2 ; PCC 203 0 0 ; PCC none 101 0 ;
+itrans: CC va-ii 3 ; PCC 203 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC va-u 3 ; PCC 204 0 0 ; PCC 128 ox+283 0 ; PCC none 101 0 ;
+itrans: CC va-uu 3 ; PCC 205 0 0 ; PCC 128 ox+283 0 ; PCC none 101 0 ;
+itrans: CC va-o 3 ; PCC 205 0 0 ; PCC 137 ox+283 0 ; PCC none 101 0 ;
+itrans: CC va-oo 4 ; PCC 205 0 0 ; PCC 132 0 0 ; PCC 137 ox+283 0 ; PCC none 101 0 ;
+
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant sha -----------
+itrans: Comment ccshaOFFSETA = 114.85 (from sha)
+
+itrans: Comment cbshaOFFSETA = 166.67
+itrans: CC sha-half 2 ; PCC 108 0 0 ; PCC 130 ox+155 0 ;
+itrans: CC sha-a 3 ; PCC 108 0 0 ; PCC 128 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-aa 3 ; PCC 108 0 0 ; PCC 129 ox+155 0 ; PCC none 301 0 ;
+itrans: CC sha-i 2 ; PCC 206 0 0 ; PCC none 101 0 ;
+itrans: CC sha-ii 3 ; PCC 206 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC sha-u 4 ; PCC 108 0 0 ; PCC 133 0 0 ; PCC 128 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-uu 4 ; PCC 108 0 0 ; PCC 134 0 0 ; PCC 128 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-ri 4 ; PCC 108 0 0 ; PCC 135 0 0 ; PCC 128 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-rii 4 ; PCC 108 0 0 ; PCC 136 0 0 ; PCC 128 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-li 5 ; PCC 108 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-lii 5 ; PCC 108 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-ay 3 ; PCC 108 0 0 ; PCC 137 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-aay 4 ; PCC 108 0 0 ; PCC 137 ox+155 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC sha-ai 4 ; PCC 108 0 0 ; PCC 139 0 0 ; PCC 137 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-o 4 ; PCC 108 0 0 ; PCC 134 0 0 ; PCC 137 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-oo 5 ; PCC 108 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+155 0 ; PCC none 101 0 ;
+itrans: CC sha-au 3 ; PCC 108 0 0 ; PCC 140 ox+55 -30 ; PCC none 401 0 ;
+
+
+
+
+
+itrans: Comment  	     ---------- Consonant shha -----------
+itrans: CCS shha tmplF ;
+itrans: CC shha-implicit 1 ; PCC 109 0 0 ;
+
+itrans: Comment ccshhaOFFSETA = 234.88 (from va)
+
+itrans: Comment cbshhaOFFSETA = 294.45
+itrans: CC shha-i 2 ; PCC 207 0 0 ; PCC none 101 0 ;
+itrans: CC shha-ii 3 ; PCC 207 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC shha-u 4 ; PCC 109 0 0 ; PCC 133 0 0 ; PCC 128 ox+283 0 ; PCC none 101 0 ;
+itrans: CC shha-uu 4 ; PCC 109 0 0 ; PCC 134 0 0 ; PCC 128 ox+283 0 ; PCC none 101 0 ;
+itrans: CC shha-o 4 ; PCC 109 0 0 ; PCC 134 0 0 ; PCC 137 ox+283 0 ; PCC none 101 0 ;
+itrans: CC shha-oo 5 ; PCC 109 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+283 0 ; PCC none 101 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant sa -----------
+itrans: CCS sa tmplG ;
+itrans: CC sa-implicit 1 ; PCC 110 0 0 ;
+
+itrans: Comment ccsaOFFSETA = 172.67 (from na)
+
+itrans: Comment cbsaOFFSETA = 233.34 (but uses 240.00 instead)
+itrans: CC sa-i 2 ; PCC 208 0 0 ; PCC none 101 0 ;
+itrans: CC sa-ii 3 ; PCC 208 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant ha -----------
+itrans: Comment cchaOFFSETA = 0
+
+itrans: Comment cbhaOFFSETA = 333.30
+itrans: CC ha-half 2 ; PCC 111 0 0 ; PCC 130 ox+321 0 ;
+itrans: CC ha-a 3 ; PCC 111 0 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-aa 3 ; PCC 111 0 0 ; PCC 129 ox+321 0 ; PCC none 301 0 ;
+itrans: CC ha-i 2 ; PCC 209 0 0 ; PCC none 101 0 ;
+itrans: CC ha-ii 3 ; PCC 209 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ha-u 4 ; PCC 111 0 0 ; PCC 133 0 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-uu 4 ; PCC 111 0 0 ; PCC 134 0 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-ri 4 ; PCC 111 0 0 ; PCC 135 0 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-rii 4 ; PCC 111 0 0 ; PCC 136 0 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-li 5 ; PCC 111 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-lii 5 ; PCC 111 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC 128 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-ay 3 ; PCC 111 0 0 ; PCC 137 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-aay 4 ; PCC 111 0 0 ; PCC 137 ox+321 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+itrans: CC ha-ai 4 ; PCC 111 0 0 ; PCC 139 0 0 ; PCC 137 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-o 4 ; PCC 111 0 0 ; PCC 134 0 0 ; PCC 137 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-oo 5 ; PCC 111 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+321 0 ; PCC none 101 0 ;
+itrans: CC ha-au 3 ; PCC 111 0 0 ; PCC 140 ox+191 -30 ; PCC none 401 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant ksha -----------
+itrans: CCS ksha tmplA ;
+itrans: CC ksha-implicit 1 ; PCC 112 0 0 ;
+
+itrans: Comment cbkshaOFFSETA = 194.44
+itrans: CC ksha-i 2 ; PCC 210 0 0 ; PCC none 101 0 ;
+itrans: CC ksha-ii 3 ; PCC 210 0 0 ; PCC 132 0 0 ; PCC none 101 0 ;
+
+
+
+
+itrans: Comment  	     ---------- Consonant gya -----------
+itrans: Comment Define as nga + jnh
+itrans: CC gya-half 4 ; PCC 73 0 0 ; PCC 130 ox+266 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-a 4 ; PCC 73 0 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-aa 5 ; PCC 73 0 0 ; PCC 129 ox+266 0 ; PCC none 301 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-i 5 ; PCC 73 0 0 ; PCC 131 ox+266 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-ii 6 ; PCC 73 0 0 ; PCC 131 ox+266 0 ; PCC 132 0 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-u 5 ; PCC 73 0 0 ; PCC 133 0 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-uu 5 ; PCC 73 0 0 ; PCC 134 0 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-ri 5 ; PCC 73 0 0 ; PCC 135 0 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-rii 5 ; PCC 73 0 0 ; PCC 136 0 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-li 6 ; PCC 73 0 0 ; PCC 170 -328 0 ; PCC 135 90 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-lii 6 ; PCC 73 0 0 ; PCC 170 -328 0 ; PCC 136 90 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-ay 5 ; PCC 73 0 0 ; PCC 137 ox+266 0 ; PCC none 151 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-aay 6 ; PCC 73 0 0 ; PCC 137 ox+266 0 ; PCC 132 0 0 ; PCC none 151 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-ai 6 ; PCC 73 0 0 ; PCC 139 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-o 6 ; PCC 73 0 0 ; PCC 134 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-oo 7 ; PCC 73 0 0 ; PCC 134 0 0 ; PCC 132 0 0 ; PCC 137 ox+266 0 ; PCC none 101 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+itrans: CC gya-au 5 ; PCC 73 0 0 ; PCC 140 ox+238 -30 ; PCC none 501 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+
+
+
+
+itrans: Comment  **************** Conjunct Consonans *******************
+
+itrans: CC ka-conjunct 2 ; PCC 141 -125 0 ; PCC none 102 0 ;
+itrans: CC kha-conjunct 2 ; PCC 142 -115 0 ; PCC none 102 0 ;
+itrans: CC ga-conjunct 2 ; PCC 143 -125 0 ;  PCC none 102 0 ;
+itrans: CC gha-conjunct 2 ; PCC 144 -115 0 ;  PCC none 102 0 ;
+itrans: CC nga-conjunct 2 ; PCC 145 -115 0 ; PCC none 102 0 ;
+
+itrans: CC cha-conjunct 2 ; PCC 146 0 0 ;  PCC none 102 0 ;
+itrans: CC chha-conjunct 2 ; PCC 147 0 0 ;  PCC none 102 0 ;
+itrans: CC ja-conjunct 2 ; PCC 148 0 0 ;  PCC none 102 0 ;
+itrans: CC jha-conjunct 2 ; PCC 149 0 0 ;  PCC none 102 0 ;
+itrans: CC jnh-conjunct 2 ; PCC 150 -110 0 ; PCC none 102 0 ;
+
+itrans: CC tta-conjunct 2 ; PCC 151 -105 0 ; PCC none 102 0 ;
+itrans: CC ttha-conjunct 2 ; PCC 152 -115 0 ;  PCC none 102 0 ;
+itrans: CC dda-conjunct 2 ; PCC 153 -115 0 ;  PCC none 102 0 ;
+itrans: CC ddha-conjunct 2 ; PCC 154 -115 0 ;  PCC none 102 0 ;
+itrans: CC nna-conjunct 2 ; PCC 155 -115 0 ; PCC none 102 0 ;
+
+itrans: CC ta-conjunct 2 ; PCC 156 -385 0 ;  PCC none 102 0 ;
+itrans: CC tha-conjunct 2 ; PCC 157 -115 0 ;  PCC none 102 0 ;
+itrans: CC da-conjunct 2 ; PCC 158 -115 0 ;  PCC none 102 0 ;
+itrans: CC dha-conjunct 2 ; PCC 159 -115 0 ;  PCC none 102 0 ;
+itrans: CC na-conjunct 2 ; PCC 160 -115 0 ;  PCC none 102 0 ;
+
+itrans: CC pa-conjunct 2 ; PCC 161 -35 0 ;  PCC none 102 0 ;
+itrans: CC pha-conjunct 2 ; PCC 162 -35 0 ;  PCC none 102 0 ;
+itrans: CC ba-conjunct 2 ; PCC 163 -35 0 ;  PCC none 102 0 ;
+itrans: CC bha-conjunct 2 ; PCC 164 -35 0 ;  PCC none 102 0 ;
+itrans: CC ma-conjunct 2 ; PCC 165 -35 0 ;  PCC none 102 0 ;
+
+itrans: CC ya-conjunct 2 ; PCC 166 -115 0 ;  PCC none 102 0 ;
+itrans: CC ra-conjunct 2 ; PCC 167 -345 0 ;  PCC none 102 0 ;
+itrans: CC la-conjunct 2 ; PCC 170 -205 0 ;  PCC none 102 0 ;
+itrans: CC lda-conjunct 2 ; PCC 171 -155 0 ;  PCC none 102 0 ;
+itrans: CC va-conjunct 2 ; PCC 172 -115 0 ;  PCC none 102 0 ;
+
+itrans: CC sha-conjunct 2 ; PCC 173 -80 0 ;  PCC none 102 0 ;
+itrans: CC shha-conjunct 2 ; PCC 174 -80 0 ;  PCC none 102 0 ;
+itrans: CC sa-conjunct 2 ; PCC 175 -115 0 ;  PCC none 102 0 ;
+itrans: CC ha-conjunct 2 ; PCC 176 -115 0 ;  PCC none 102 0 ;
+itrans: CC ksha-conjunct 3 ; PCC 112 0 0 ; PCC 130 ox+182 0 ; PCC none 102 0 ;
+itrans: CC gya-conjunct 4 ; PCC 73 0 0 ; PCC 130 ox+266 0 ; PCC 150 -110 0 ; PCC none 102 0 ;
+
+itrans: Comment  	     ---------- SPECIALS -----------
+itrans: CC viraam-implicit 2 ; PCC 0 0 0 ; PCC none 101 0 ;
+itrans: CC avagraha-implicit 2 ; PCC 10 -30 0 ; PCC none 101 0 ;
+itrans: CC rahalf-implicit 2 ; PCC 22 0 0 ; PCC none 101 0 ;
+itrans: CC anusvara-implicit 2 ; PCC 8 0 0 ; PCC none 101 0 ;
+
+itrans: EndINDIAN

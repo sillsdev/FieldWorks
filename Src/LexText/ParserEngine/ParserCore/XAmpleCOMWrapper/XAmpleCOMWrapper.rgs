@@ -1,0 +1,11 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		'%APPID%' = s 'XAmpleCOMWrapper'
+		'XAmpleCOMWrapper.DLL'
+		{
+			val AppID = s '%APPID%'
+		}
+	}
+}

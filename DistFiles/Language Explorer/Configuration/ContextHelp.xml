@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<strings>
+	<!-- for now, just put all of them in this file. Since we may switch to a non XML format,
+	I'm hesitant to do the coding necessary to support including at the moment.
+	and in the near-term, we plan to ship one application ("LexText").
+	<includeBase path="put something here"/>
+	-->
+	<!--
+	attributes of an item element:
+		id             required; the identifier; should be the same as an id or attr attribute of an XDE node or command
+		caption        optional; the caption to display in the balloon help; the default is to use the XDE node's label attribute
+		captionformat  optional; text to format the caption; useful for buttons (e.g. "Choose {0}")
+		-->
+	<item id="NoHelp" caption="No Help"></item> <!-- For DEBUG, use this inner text: Sorry, there's no help available for this item(id:"{0}"; caption:"{1}"). -->
+	<item id="MissingHelpId" caption="No Help">Sorry, there's no help available for this item (missing id).</item>
+	<!--
+=======================
+  LexText menus
+=======================
+  -->
+	<!--
+		  Words  items
+		  -->
+	<item id="CmdInsertHumanApprovedAnalysis">Create new approved analysis</item>
+	<item id="CmdGoToWfiWordform">Find a wordform.</item>
+	<!--
+		  Rerversal items
+		  -->
+	<item id="CmdInsertReversalEntry">Create a new reversal entry.</item>
+	<item id="CmdGoToReversalEntry">Find a reversal entry.</item>
+	<!--
+		  File menu
+		  -->
+	<item id="CmdNewLangProject">Create a new FieldWorks project.</item>
+	<item id="CmdChooseLangProject">Open an existing FieldWorks project.</item>
+	<item id="CmdClose">Close this project.</item>
+	<item id="CmdSave">Save</item>
+	<item id="CmdRefresh">Refresh the screen.</item>
+	<item id="CmdPageSetup">Determine page layout options for printing.</item>
+	<item id="CmdPrint">Print</item>
+	<item id="CmdImport">Import an existing lexicon.</item>
+	<item id="CmdExport">Export this FieldWorks project to a file.</item>
+	<item id="CmdBackup">Back up a FieldWorks project.</item>
+	<item id="CmdRestoreFromBackup">Restore a FieldWorks project.</item>
+	<item id="CmdDeleteProject">Delete FieldWorks project.</item>
+	<item id="CmdCreateProjectShortcut">Create a desktop shortcut to this project.</item>
+	<!-- What is this?                <item id="CmdMainObjectProperties"/> -->
+	<item id="CmdProjectProperties">Edit the special properties of this FieldWorks project (such as name and writing systems).</item>
+	<!--
+		  Edit menu
+		  -->
+	<item id="CmdUndo">Undo previous actions.</item>
+	<item id="CmdRedo">Redo previous actions.</item>
+	<item id="CmdCut">Cut</item>
+	<item id="CmdCopy">Copy</item>
+	<item id="CmdPaste">Paste</item>
+	<item id="CmdPasteHyperlink">Paste clipboard content as hyperlink.</item>
+	<item id="CmdCopyLocationAsHyperlink">Create a hyperlink to this location and copy it to the clipboard.</item>
+	<item id="CmdGoToEntry">Find a lexical entry.</item> <!-- Replaced "CmdFind" -->
+	<item id="CmdDeleteRecord">Delete this {0}.</item>
+	<item id="CmdFindAndReplaceText">Find and Replace Text</item>
+	<item id="CmdBreakPhrase">Break selected phrase into words.</item>
+	<item id="CmdGoToRecord">Find a Record in your Notebook.</item>
+	<!--
+		 View menu
+		 -->
+	<item id="CmdHistoryBack">Back</item>
+	<item id="CmdHistoryForward">Forward</item>
+	<!-- not sure how to hook these up -->
+	<item id="BasicEditView">Shows only the basic set of fields.</item>
+	<!--      <menu id="ViewChoices" list="ListViews" behavior="singlePropertyAtomicValue" property="currentContentControl" b4InsertMenu="true" inline="true"/>
+	  <menu id="FilterChoices" label="Filters">
+	  <menu id="SortChoices" label="Sort Methods">
+	  -->
+	<item id="Sidebar">Show the sidebar.</item>
+	<item id="Record List">Show the list of records.</item>
+
+	<item id="Show_DictionaryPubPreview">Display the dictionary entry for this lexeme above the Lexicon Edit pane.</item>
+	<item id="ShowHiddenFields">Display all possible fields.</item>
+	<item id="CmdToggleRawAndInterlinear">Toggle between the baseline and interlinear text view.</item>
+	<item id="CmdChangeFilterClearAll">Turn off all filters.</item>
+	<item id="ShowInvisibleSpaces">View the invisible, zero-width spaces in this text.</item>
+	<!--
+		 Data menu
+		 -->
+	<item id="CmdFirstRecord">Show the first item.</item>
+	<item id="CmdPreviousRecord">Show the previous item.</item>
+	<item id="CmdNextRecord">Show the next item.</item>
+	<item id="CmdLastRecord">Show the last item.</item>
+	<item id="CmdMergeEntry">Merge current lexical entry into another entry.</item>
+	<item id="CmdApproveAndMoveNext">Approve the suggested analysis and move to the next word.</item>
+	<item id="CmdApproveForWholeTextAndMoveNext">Approve the suggested analysis throughout this text, and move to the next word.</item>
+	<item id="CmdNextIncompleteBundle">Approve the suggested analysis, and jump to the next word with a suggested or incomplete analysis.</item>
+	<item id="CmdApprove">Approve the suggested analysis and stay on this word</item>
+	<!-- Approve submenu items -->
+	<item id="CmdApproveAndMoveNextSameLine">Approve the suggested analysis and move to the next word, to the same interlinear line.</item>
+	<item id="CmdMoveFocusBoxRight">Approve the suggested analysis and move to the word on the right.</item>
+	<item id="CmdMoveFocusBoxLeft">Approve the suggested analysis and move to the word on the left,</item>
+	<!-- Leave submenu items -->
+	<item id="CmdBrowseMoveNext">Leave the suggested analysis as a suggestion, and move to the next word.</item>
+	<item id="CmdNextIncompleteBundleNc">Leave the suggested analysis as a suggestion, and jump to the next word with a suggested or incomplete analysis.</item>
+	<item id="CmdBrowseMoveNextSameLine">Leave the suggested analysis and move to the next word, to the same interlinear line.</item>
+	<item id="CmdMoveFocusBoxRightNc">Leave the suggested analysis as a suggestion, and move to the word on the right.</item>
+	<item id="CmdMoveFocusBoxLeftNc">Leave the suggested analysis as a suggestion, and move to the word on the left.</item>
+	<!-- "CmdGoToEntry" now also under Edit menu -->
+
+	<!--
+		 Insert menu
+		 -->
+	<item id="CmdInsertGenericMajorEntry">Create a new entry and add it to the lexicon.</item>
+	<item id="CmdInsertLexEntry">Create a new lexical entry.</item>
+	<item id="CmdInsertPOS">Add a new category.</item>
+	<item id="CmdInsertAnnotationDef">Create a new annotation definition.</item>
+	<item id="CmdInsertSemDom">Create a new semantic domain.</item>
+	<item id="CmdInsertPossibility">Create a new {0}.</item>
+	<item id="CmdInsertCustomItem">Create a new {0}.</item>
+	<item id="CmdInsertExceptionFeature">Create a new {0}.</item>
+	<item id="CmdInsertMorphType">Create a new morpheme type.</item>
+	<item id="CmdInsertLexEntryType">Create a new {0}.</item>
+	<item id="CmdDataTree-Insert-LexEntryType">Insert a new subtype in this type.</item>
+	<item id="CmdInsertVariant">Add a Variant Form to this entry</item>
+	<item id="CmdChangeToComplexForm">This Lexeme Form contains several morphemes. Add the fields for me to specify the components and type of complex form.</item>
+	<item id="CmdChangeToVariant">This Lexeme Form is related to another form as a variant. Add the fields for me to specify the related form(s) and type of variant.</item>
+	<item id="CmdDataTree-Insert-VariantSpec">This Lexeme Form is also another kind of variant. Add the fields for me to specify the related form(s) and the variant type(s).</item>
+	<item id="CmdDataTree-Insert-AlternateForm">Add an allomorph to this entry</item>
+	<item id="CmdInsertAnthroCategory">Create a new anthropology category.</item>
+	<item id="CmdInsertLocation">Create a new location.</item>
+	<item id="CmdInsertPerson">Add a new person.</item>
+	<item id="CmdInsertPicture">Add a picture to this entry.</item>
+	<item id="CmdInsertLexRefType">Create a new lexical relation.</item>
+	<item id="CmdInsertEndocentricCompound">Create a new headed compound.</item>
+	<item id="CmdInsertExocentricCompound">Create a new non-headed compound.</item>
+	<item id="CmdInsertPhoneme">Create a new phoneme.</item>
+	<item id="CmdInsertSegmentNaturalClasses">Create a new natural class, defined by listing phonemes.</item>
+	<item id="CmdInsertFeatureNaturalClasses">Create a new natural class, defined by features.</item>
+	<item id="CmdInsertPhEnvironment">Create a new environment.</item>
+	<item id="CmdInsertPhRegularRule">Create a new phonological rule.</item>
+	<item id="CmdInsertPhMetathesisRule">Create a new metathesis rule.</item>
+	<item id="CmdInsertMorphemeACP">Create a rule to prevent morphemes from co-occurring.</item>
+	<item id="CmdInsertAllomorphACP">Create a rule to prevent allomorphs from co-occurring.</item>
+	<item id="CmdInsertACPGroup">Create a group of ad hoc rules.</item>
+	<item id="CmdImportWordSet">Import a set of words in a file and give the set a name.</item>
+	<item id="CmdInsertSense">Insert a new sense.</item>
+	<item id="CmdInsertSubsense">Insert a new subsense.</item>
+	<item id="CmdInsertLinkToFile">Insert a link to an external file.</item>
+	<item id="CmdAddFreeTrans">Insert a free translation.</item>
+	<item id="CmdAddLitTrans">Insert a literal translation.</item>
+	<item id="CmdAddNote">Insert a note.</item>
+	<item id="CmdAddTexts">Choose texts to display and use.</item>
+	<item id="CmdAddCustomList">Add a custom list.</item>
+	<item id="CmdInsertStemAllomorph">Add an allomorph of a stem.</item>
+	<item id="CmdInsertAffixAllomorph">Add an allomorph of an affix.</item>
+	<item id="CmdDataTree-Insert-Pronunciation">Add a pronunciation field to this entry.</item>
+	<item id="CmdInsertMediaFile">Add a sound or movie file to the pronunciation, creating the pronunciation if necessary.</item>
+	<item id="CmdInsertText">Add a new text to the corpus.</item>
+	<item id="CmdInsertFeatureType">Create a new feature type.</item>
+	<item id="CmdInsertPhonologicalClosedFeature">Add a phonological feature.</item>
+	<item id="CmdInsertClosedFeature">Add a feature.</item>
+	<item id="CmdInsertComplexFeature">Add a complex feature.</item>
+	<item id="CmdDataTree-Insert-POS-SubPossibilities">Add a subcategory...</item>
+	<item id="CmdDataTree-Insert-AnthroCategory">Insert a subcategory in this anthropology category.</item>
+	<item id="CmdDataTree-Insert-SemanticDomain">Insert a subdomain in this semantic domain.</item>
+	<item id="CmdDataTree-Insert-Location">Insert a subitem in this location.</item>
+	<item id="CmdDataTree-Insert-Possibility">Insert a subitem in this item.</item>
+	<item id="CmdDataTree-Insert-CustomItem">Insert a subitem in this item.</item>
+	<item id="CmdInsertRecord">Create a new Record in your Notebook.</item>
+	<item id="CmdInsertSubrecord">Create a Subrecord in your Notebook.</item>
+	<item id="ClickInvisibleSpace">Turn on mode in which a click inserts an invisible, zero-width space.</item>
+	<item id="CmdGuessWordBreaks">Have Language Explorer insert invisible, zero-width spaces as word breaks according to the word list and lexical entries.</item>
+
+	<!--
+		 Format menu
+		 -->
+	<item id="CmdFormatStyle">Add, delete, or change styles.</item>
+	<item id="CmdWritingSystemProperties">Add, remove, or change the writing systems specified for this project.</item>
+	<!--
+		 Tools menu
+		 -->
+	<item id="Entries">Show the entries and edit them.</item>
+	<item id="Problems">See a list of entries with problems.</item>
+	<item id="CmdConfigureList">Configure properties of a list.</item>
+	<item id="CmdProjectUtilities">Run some special utilities to process your data.</item>
+	<item id="CmdAddCustomField">Add or edit custom fields.</item>
+	<item id="CmdConfigureColumns">Configure current browse pane.</item>
+	<item id="CmdLexiconLookup">Show dictionary entry for root/stem of current word, or open a search dialog box.</item>
+	<item id="CmdAddToLexicon">Add the current word to the lexicon (if it is a vernacular word).</item>
+	<item id="CmdShowCharMap">Start the Character Map utility.</item>
+	<item id="CmdAddWordsToSpellDict">Add words marked as correctly spelled to the active spelling dictionary.</item>
+	<item id="CmdEditSpellingStatus">Bulk Edit Spelling Status.</item>
+	<item id="CmdViewIncorrectWords">View incorrectly spelled words in use.</item>
+	<item id="CmdChangeSpelling">Change spelling of multiple occurrences.</item>
+	<item id="ITexts_AddWordsToLexicon">As I add new word glosses, create lexical entries.</item>
+	<!--
+		 Parse menu
+		 -->
+	<item id="CmdStartParser">Start the Parser running.</item>
+	<item id="CmdStopParser">Stop the Parser.</item>
+	<item id="CmdReloadParser">Reload the Parser information.</item>
+	<item id="CmdTryAWord">Have the Parser try a single word.</item>
+	<item id="CmdParseCurrentWord">Have the Parser parse just the current word.</item>
+	<item id="CmdEditParserParameters">Edit the special parameters for the Parser.</item>
+	<!--
+		 Window menu
+		 -->
+	<item id="CmdNewWindow">Launch a new window of this editor.</item>
+	<!--
+		 Help menu
+		 -->
+	<item id="CmdShowHelpBalloons">If checked, this will show balloon pop-up help for items.</item>
+	<item id="CmdHelpAbout">Display version information about this application.</item>
+	<item id="CmdHelpMorphologyInto">Display a document describing how FieldWorks handles morphology (only available in English).</item>
+	<item id="CmdHelpUserManual">Display the Language Explorer Student Manual, to learn the basics.</item>
+	<item id="CmdHelpInstructorGuide">Display the Language Explorer Instructor Guide.</item>
+	<item id="CmdHelpXLingPap">You can edit your Grammar Sketch in XLingPaper format using an XML editor (only available in English).</item>
+	<item id="CmdHelpExercises">Display exercises you can follow to practice using Language Explorer.</item>
+	<item id="CmdHelpLanguageExplorer">Help on using Language Explorer (only available in English).</item>
+	<item id="CmdHelpDemoMovies">Run the Demo Movies.</item>
+	<item id="CmdHelpDemoWelcome">Purpose of movies and where else to find help.</item>
+	<item id="CmdHelpDemoOverview">Tour of Language Explorer.</item>
+	<item id="CmdHelpDemoConfigColumns">Examples of configuring columns.</item>
+	<item id="CmdHelpDemoFilter">Examples of filtering.</item>
+	<item id="CmdHelpDemoSort">Examples of using sorting features.</item>
+	<item id="CmdHelpDemoFields">Configuring fields displayed in an Edit pane.</item>
+	<item id="CmdHelpDemoNewEntry">Example of creating a new entry.</item>
+	<item id="CmdHelpDemoFindEntry">Example of finding an entry.</item>
+	<item id="CmdHelpDemoGramInfo">Explanation of Grammatical info.</item>
+	<item id="CmdHelpDemoLexRel">Example of specifying a lexical relation.</item>
+	<item id="CmdHelpDemoSubentry">Example of specifying a derivative.</item>
+	<item id="CmdHelpDemoMinor">Example of specifying a variant.</item>
+	<item id="CmdHelpDemoCategorized">Example of using Categorized Entry.</item>
+	<item id="CmdHelpDemoBulkList">Example of using Bulk Edit List Choice.</item>
+	<item id="CmdHelpDemoBulkCopy">Example of using Bulk Edit Bulk Copy.</item>
+	<item id="CmdHelpDemoBulkClick">Example of using Bulk Edit Click Copy.</item>
+	<item id="CmdHelpDemoText">Example of adding a text and interlinearizing some words.</item>
+	<item id="CmdHelpDemoWords">Example of changing analysis usage.</item>
+	<item id="CmdHelpDemoGrammar">Example of adding an affix template.</item>
+	<item id="CmdHelpDemoPlayAll">Play all the movies (length 84 minutes).</item>
+	<item id="CmdHelpLexicographyIntro">Display Introduction to Lexicography (only available in English).</item>
+	<item id="CmdHelpNotesSFMDatabaseImport">Display technical notes on SFM database import (only available in English).</item>
+	<item id="CmdHelpNotesLinguaLinksDatabaseImport">Display technical notes on LinguaLinks database import (only available in English).</item>
+	<item id="CmdHelpNotesInterlinearImport">Display technical notes on interlinear import (only available in English).</item>
+	<item id="CmdHelpNotesWritingSystems">Display technical notes on Writing Systems (only available in English).</item>
+	<!--
+=======================
+  LexText Slices
+=======================
+  -->
+	<!--
+   POS slices
+	-->
+	<item id="CategoryName">A short name for this category.</item>
+	<item id="CategoryAbbreviation">The abbreviation to be used for this category.</item>
+	<item id="CategoryDescription">A fuller description of this category.</item>
+	<!-- Inflectional Template Info -->
+	<item id="InflectionalTemplateInfo">Information about any inflectional templates of this category.</item>
+	<item id="AffixSlots">The set of inflectional affix slots which can appear in any inflectional affix template for this category.</item>
+	<item id="AffixSlot">An inflectional affix slot which can appear in at least one inflectional affix template for this category.</item>
+	<item id="SlotName">A short name for this inflectional affix slot.</item>
+	<item id="SlotDescription">A fuller description for this inflectional affix slot.</item>
+	<item id="SlotOptional" captionformat="Choose {0}">Check the box if  this inflectional affix slot is optional in all of the templates it appears in.</item>
+	<item id="AffixTemplates">The set of inflectional affix templates which are required in order for a word of this category to be well-formed.</item>
+	<item id="AffixTemplate">An inflectional affix template of this category.</item>
+	<item id="TemplateName">A short name for this inflectional affix template.</item>
+	<item id="TemplateDescription">A fuller descripton for this inflectional affix template.</item>
+	<item id="TemplateTable">A table representation of the inflectional affix template.  Right-click in it to edit it.</item>
+	<item id="TemplateTableSpecialNote">A special note on how to edit the template table above.</item>
+	<item id="TemplateFinal" captionformat="Choose {0}">Check the box if this template completes a well-formed word.  Uncheck it if there must be some category-changing derivational affix that applies to the template (and possibly another template of the new category) to finish the word.</item>
+	<!-- Inflection Class Info -->
+	<item id="PartOfSpeechInflectionClasses">Information about any inflectional classes for this category.  Inflection classes are sometimes referred to as conjugation or declension classes.</item>
+	<item id="InflectionClasses">The set of inflection classes this category has.</item>
+	<item id="InflectionClass">An inflection class (sometimes called conjugation or declension classes).</item>
+	<item id="InflClassName">A short name for this inflection class.</item>
+	<item id="InflClassAbbreviation">The abbreviation for this inflection class.</item>
+	<item id="InflClassDescription">A fuller description for this inflection class.</item>
+	<item id="InflClassSubclasses">The set of inflection classes which are specializations of this inflection class.</item>
+	<item id="DefaultInflectionClass">The Inflection Class to which newly coined lexemes are usually assigned, to which lexemes from other classes 'drift' in the process of historical change, and the class to which children tend to assign lexemes before they learn the correct class.</item>
+	<item id="DefaultInflectionClassButton" captionformat="Choose {0}">Click here to select the default inflection class.</item>
+	<!-- SubCategories -->
+	<item id="SubCategories">Categories which are subclasses of this category.</item>
+	<item id="SubCategory">A category which is a subtype of the main category. (These are also listed in the Record List view.)</item>
+	<!--
+Compound Rules slices
+-->
+	<item id="LeftMsa">What the category of the left-hand member of the compound must be.</item>
+	<item id="RightMsa">What the category of the right-hand member of the compound must be.</item>
+	<item id="MoStemMsaPOS">The category of this part of the compound.</item>
+	<item id="MoStemMsaPOSButton" captionformat="Choose {0}">Click here to select the category of this part of the compound.</item>
+	<item id="MoStemMsaInflectionClass">The inflection class of this part of the compound.</item>
+	<item id="MoStemMsaInflectionClassButton" captionformat="Choose {0}">Click here to select the inflection class of this part of the compound.</item>
+	<item id="Linker">Any phonemes that are inserted between the two parts of the compound.  These phonemes do not carry any meaning.</item>
+	<item id="LinkerForm">The phonemes of the linker.</item>
+	<item id="LinkerEnv">Any environments which constrain when the linker may appear.</item>
+	<item id="LinkerEnvButton" captionformat="Choose {0}">Click here to select any environments which constrain when the linker may appear.</item>
+	<!--          Endocentric -->
+	<item id="EndocentricCompoundName">A short name for this headed compound.</item>
+	<item id="EndocentricCompoundDescription">A fuller description of this headed compound.</item>
+	<item id="HeadLast" captionformat="Choose {0}">Check the box if the right member of the compound is the "head" of the compound; that is, if the resulting stem has the category, etc. of the right member.  If the box is not checked, the left member will be used as the "head."</item>
+	<!--          Exocentric -->
+	<item id="ExocentricCompoundName">A short name for this non-headed compound.</item>
+	<item id="ExocentricCompoundDescription">A fuller description of this non-headed compound.</item>
+	<item id="ToMsa">The category, etc. that the resulting stem of the compound is.</item>
+	<!--
+Phonemes slices
+-->
+	<item id="PhonemeName">A short name for this phoneme.</item>
+	<item id="PhonemeDescription">A fuller description of this phoneme.</item>
+	<item id="Representations">The set of ways this phoneme surfaces.</item>
+	<item id="Representation">One way this phoneme surfaces.</item>
+	<!--
+Natural Class slices
+-->
+	<item id="NaturalClassName">A short name for this natural class.</item>
+	<item id="NaturalClassDescription">A fuller description of this natural class.</item>
+	<item id="NaturalClassAbbreviation">The abbreviation for this natural class.</item>
+	<item id="Segments">The set of segments which belong to this natural class.</item>
+	<item id="SegmentsButton" captionformat="Choose {0}">Click here to select a segment which belongs to this natural class.</item>
+	<!--
+Environment slices
+-->
+	<item id="EnvironmentName">A short name for this phonological environment.</item>
+	<item id="EnvironmentDescription">A fuller description of this phonological environment.</item>
+	<item id="StringRepresentation">The representation for this environment.  See the help file for more information. [For now: Please see section 3.1.3 of the Conceptual Introduction document for how to key an environment.]</item>
+	<item id="EnvStrRepSpecialNote">A special note on where to get information on how to key an environment.</item>
+	<!--
+Adhoc CoProhibition slices
+-->
+	<!--             Allomorph -->
+	<item id="FirstAllomorph">The primary allomorph that the constraint is about.</item>
+	<item id="FirstAllomorphButton" captionformat="Choose {0}">Click here to select the primary allomorph that the constraint is about.</item>
+	<item id="AllomorphAdjacency" captionformat="Choose {0}">Click on the button to select the relative position of the other allomorph(s) with respect to the key allomorph.</item>
+	<item id="RestOfAllos">The other allomorph(s) which cannot occur with the key allomorph.</item>
+	<item id="RestOfAllosButton" captionformat="Choose {0}">Click here to select the other allomorph(s) which cannot occur with the key allomorph.</item>
+	<!--             Morpheme -->
+	<item id="FirstMorpheme">The primary morpheme that the constraint is about.</item>
+	<item id="FirstMorphemeButton" captionformat="Choose {0}">Click here to select the primary morpheme that the constraint is about.</item>
+	<item id="MorphemeAdjacency" captionformat="Choose {0}">Click on the button to select the relative position of the other morpheme(s) with respect to the key morpheme.</item>
+	<item id="RestOfMorphs">The other morpheme(s) which cannot occur with the key morpheme.</item>
+	<item id="RestOfMorphsButton" captionformat="Choose {0}">Click here to select the other morpheme(s) which cannot occur with the key morpheme.</item>
+
+	<!-- CurtisH: Renamed these as a part of LT-4664, but could not find where they are actually used in the program.  They may be safe to delete. -->
+	<!--             Group -->
+	<item id="AdhocGroupName">A short name for this group of ad hoc rules.</item>
+	<item id="AdhocGroupDescription">A fuller description for this group of ad hoc rules; e.g. explaining what they have in common.</item>
+	<item id="AdhocGroupMembers">The set of ad hoc rules belonging to this group.</item>
+	<item id="AllomorphAdhocCoprohibition">A rule which prevents allomorphs from co-occurring that is in this group of ad hoc rules.</item>
+	<item id="MorphemeAdhocCoprohibition">A rule which prevents morphemes from co-occurring that is in this group of ad hoc rules.</item>
+
+	<!--
+   Lexicon Slices
+	-->
+	<item id="CitationForm">The form which introduces an entry in a printed dictionary. It is the form by which a dictionary is sorted.</item>
+	<!-- above is actually definition for a headword from LL library.  A citation form is more like: "For bound lexemes, it is usually a predetermined inflected or affixed form (e.g. the 3rd person singular form of a verb). " -->
+	<!-- Form -->
+	<item id="FormGroup">Information about the form(s) of the entry.</item>
+	<item id="UnderlyingForm">The base or underlying form of the lexical entry.</item>
+	<item id="AllomorphsGroup">This shows all of the allomorphs of this entry.</item>
+	<item id="AffixForm">An allomorph of the affix.</item>
+	<item id="StemAllomorph">An allomorph of the stem or root.</item>
+	<item id="PhoneEnv">The environments in which this allomorph occurs. Testers: Please see section 3.1.3 of the Conceptual Introduction document for how to key an environment.</item>
+	<item id="PhoneEnvButton" captionformat="Choose {0}">Click here to select from phonetic environments you have used in the past.</item>
+	<item id="MorphType">The type of morpheme this is: root, prefix, suffix, etc.</item>
+	<item id="MorphTypeButton" captionformat="Choose {0}">Click here to select from a list of morpheme types.</item>
+	<item id="MoAffixAllomorphInflectionClasses">This allomorph can attach to stems whose inflection classes are listed here.</item>
+	<item id="MoAffixAllomorphInflectionClassesButton" captionformat="Choose {0}">Click here to select from a list of inflection classes.</item>
+	<item  id="InfixPosition">The environments describing where the infix may occur with respect to the stem.  Testers: Please see section 3.3 of the Conceptual Introduction document for how to key an infix position environment.  (A review of section 3.1.3 might also prove helpful.)</item>
+	<item id="LexMajorEntryFunction">Groups the possible functions of the lexical entry.</item>
+	<!-- Function -->
+	<item id="LexMajorEntryFunction">Information about the function(s) of the entry (how it can be used).</item>
+	<!--           Stem -->
+	<item id="MoStemMsa">Information about this entry when it functions as a stem or root.</item>
+	<item id="PartOfSpeech">The category of this stem or root.</item>
+	<item id="PartOfSpeechButton" captionformat="Choose {0}">Click here to select the category of this stem or root.</item>
+	<item id="MoStemMsaInflectionClass">The inflection (conjugation or declension) class of this stem or root.  Leave it blank if the inflection class does not matter for this stem or root.</item>
+	<item id="MoStemMsaInflectionClassButton" captionformat="Choose {0}">Click here to select the inflection (conjugation or declension) class of this stem or root.</item>
+	<!--           Derivational affix -->
+	<item id="MoDerivAffMsa">Information about this affix when it functions as a derivational affix.</item>
+	<item id="FromPartOfSpeech">The category of the stem to which this affix attaches.</item>
+	<item id="FromPartOfSpeechButton" captionformat="Choose {0}">Click here to select the category of the stem to which this affix attaches.</item>
+	<item id="MoDerivAffMsaFromInflectionClass">The inflection (conjugation or declension) class which the stem to which this affix attaches must belong.  Leave it blank if the inflection class does not matter for this affix.</item>
+	<item id="MoDerivAffMsaFromInflectionClassButton" captionformat="Choose {0}">Click here to select the inflection (conjugation or declension) class which the stem to which this affix attaches must belong.</item>
+	<item id="ToPartOfSpeech">The category of the stem resulting from the attachment of this affix.</item>
+	<item id="ToPartOfSpeechButton" captionformat="Choose {0}">Click here to select the category of the stem resulting from the attachment of this affix.</item>
+	<item id="MoDerivAffMsaToInflectionClass">The inflection (conjugation or declension) class of the stem resulting from the attachment of this affix.  Leave it blank if the inflection class does not matter for this affix.</item>
+	<item id="MoDerivAffMsaToInflectionClassButton" captionformat="Choose {0}">Click here to select the inflection (conjugation or declension) class of the stem which results after this affix attaches.</item>
+	<!--           Inflectional affix -->
+	<item id="MoInflAffMsa">Information about this affix when it functions as an inflectional affix.</item>
+	<item id="AffixCategory">This is the label or "category" this affix had when the lexical item was imported from some other lexicon (such as ShoeBox or ToolBox or LinguaLinks).</item>
+	<item id="PartOfSpeechOrSlot">An inflectional affix slot to which this affix belongs.  It can also refer to a category, if you do not yet know what slot the affix belongs in.</item>
+	<item id="PartOfSpeechOrSlotButton" captionformat="Choose {0}">Click here to set the template slot (or category, if you don't know which slot yet).</item>
+	<!-- Meaning -->
+	<item id="MeaningGroup">Information about the meaning(s) of the entry.</item>
+	<item id="LexSenseId">One sense of this lexical entry.</item>
+	<item id="Gloss">The gloss for this sense to use in interlinearization.</item>
+	<item id="Definition">The definition for this sense.</item>
+	<item id="MorphoSyntaxAnalysis">The way this sense functions.</item>
+	<item id="MorphoSyntaxAnalysisButton" captionformat="Choose {0}">Click here to select the way this sense functions.</item>
+	<item id="ExamplesGroup">Vernacular example sentences for this entry.</item>
+	<item id="Example">A vernacular example sentence for this entry.</item>
+	<item id="TranslationsGroup">Translations of the vernacular example sentence.</item>
+	<item id="Translation">A translation of the vernacular example sentence.</item>
+	<item id="SubSensesGroup">Other senses which are related to this sense of the entry.</item>
+	<!--
+  Dates
+   -->
+	<item id="DateCreated" caption="Creation Date">This is the date on which this item was first created.</item>
+	<item id="DateModified" caption="Modification Date">This is the date on which this item was last modified.</item>
+</strings>

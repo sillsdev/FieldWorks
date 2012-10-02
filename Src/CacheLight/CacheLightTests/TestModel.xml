@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000010" xsi:noNamespaceSchemaLocation="TestModel.xsd">
+	<class num="0" id="BaseClass" abstract="true" abbr="obj">
+	  <props/>
+	</class>
+	<class num="7" id="ClassK" abstract="false" abbr="K" base="BaseClass" depth="0">
+	  <props>
+		<basic num="1" id="MultiStringProp11" sig="MultiUnicode"/>
+		<basic num="10" id="TimeProp6" sig="Time"/>
+	  </props>
+	</class>
+	<class num="13" id="ClassF" abstract="false" abbr="F" base="ClassK" depth="1">
+	  <props>
+		<basic num="4" id="Int64Prop5" sig="GenDate"/>
+	  </props>
+	</class>
+	<class num="15" id="ClassG" abstract="true" abbr="G" base="BaseClass" depth="0">
+	  <props>
+		<basic num="2" id="TextPropsProp7" sig="TextPropBinary"/>
+		  <basic num="68" id="BigStringProp68" sig="String" big="true"/>
+	  </props>
+	</class>
+	<class num="18" id="ClassH" abstract="false" abbr="H" base="BaseClass" depth="0" owner="none">
+	  <props>
+		<basic num="5" id="BinaryProp8" sig="Binary"/>
+	  </props>
+	</class>
+	<class num="8" id="ClassI" abstract="false" abbr="I" base="BaseClass" depth="0">
+	  <props>
+		  <basic num="1" id="BinaryProp9" sig="Binary"/>
+		  <basic num="2" id="GuidProp42" sig="Guid"/>
+	  </props>
+	</class>
+	<class num="2" id="ClassD" abstract="false" abbr="D" base="BaseClass" depth="0">
+	  <props>
+		<basic num="3" id="MultiUnicodeProp12" sig="MultiUnicode"/>
+		<basic num="5" id="TimeProp6" sig="Time"/>
+		<basic num="27" id="BoolProp3" sig="Boolean"/>
+	  </props>
+	</class>
+	<class num="26" id="ClassC" abstract="true" abbr="C" base="BaseClass" depth="0">
+	  <props>
+		<basic num="2" id="IntProp2" sig="Integer"/>
+	  </props>
+	</class>
+	<class num="35" id="ClassL" abstract="true" abbr="L" base="BaseClass" depth="0">
+		<props>
+			<basic num="1" id="Whatever" sig="Unicode" big="true"/>
+		</props>
+	</class>
+	<class num="28" id="ClassL1" abstract="true" abbr="L1" base="ClassL" depth="1">
+		<props>
+			<basic num="2" id="Nice" sig="Unicode" big="true"/>
+		</props>
+	</class>
+	<class num="45" id="ClassL2" abstract="true" abbr="L2" base="ClassL" depth="1">
+		<props>
+			<basic num="3" id="Goodness" sig="Unicode" big="true"/>
+		</props>
+	</class>
+	<class num="49" id="ClassB" abstract="false" abbr="B" base="ClassK" depth="1">
+	  <props>
+		<owning num="1" id="WhoCares" card="atomic" sig="Unicode">
+		</owning>
+	  </props>
+	</class>
+	<class num="59" id="ClassA" abstract="false" abbr="A" base="BaseClass" depth="0">
+	  <props>
+		<rel num="3" id="Prop1" card="atomic" sig="ClassB"/>
+		  <rel num="4" id="BaseClassProp" card="atomic" sig="BaseClass"/>
+		  <rel num="5" id="ClassLProp" card="atomic" sig="ClassL"/>
+	  </props>
+	</class>
+	<class num="97" id="ClassJ" abstract="false" abbr="J" base="BaseClass" depth="0">
+	  <props>
+		<basic num="8" id="StringProp10" sig="String"/>
+		  <basic num="20" id="MultiBigStringProp20" sig="MultiString" big="true"/>
+		  <basic num="21" id="MultiStringProp21" sig="MultiString"/>
+		  <basic num="31" id="BigUnicodeProp31" sig="Unicode" big="true"/>
+	  </props>
+	</class>
+	<class num="1" id="ClassE" abstract="false" abbr="E" base="ClassB" depth="1" singleton="true" owner="none">
+	  <props>
+		<basic num="1" id="UnicodeProp4" sig="Unicode"/>
+		<owning num="2" id="AtomicProp97" card="atomic" sig="ClassA"/>
+		<owning num="3" id="SequenceProp98" card="seq" sig="ClassB"/>
+		<owning num="4" id="CollectionProp99" card="coll" sig="ClassC"/>
+	  </props>
+	</class>
+</EntireModel>

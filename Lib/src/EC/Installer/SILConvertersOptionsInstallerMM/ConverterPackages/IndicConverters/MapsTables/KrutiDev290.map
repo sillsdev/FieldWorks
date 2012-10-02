@@ -1,0 +1,460 @@
+﻿; This file was edited using TECkitMappingEditorU.exe v3.0.1.0 on 9/19/2008.
+;   Conversion Type = Legacy_to_from_Unicode
+;   Left-hand side font = Kruti Dev 290;14.25
+;   Right-hand side font = Arial Unicode MS;11.25
+;   Main Window Position = 0,0,701,943
+;   Left-hand side Character Map Window Position = 701,0,451,528
+;   Right-hand side Character Map Window Position = 701,415,451,419
+
+;KrutiDev290.map
+;Copyright (c) 2006 SIL International.
+; Mapping table for KrutiDev 290 font encoding
+
+EncodingName			"KrutiDev290"
+DescriptiveName		"Mapping table for KrutiDev 290 font encoding"
+Version			"1.0"
+Contact			"mailto:bob_eaton@sall.com"
+RegistrationAuthority	"SIL International"
+RegistrationName		"KrutiDev290"
+
+RHSFlags			(ExpectsNFD)
+
+; First define a bunch of things that we'll use below
+Define IKAR     102
+Define NUKTA    164
+Define REPH     90
+Define VERTBAR  107
+Define HALANT   126
+
+; In Kruti Dev there are two kinds of half-characters: those that also have full forms, and
+; those that only have half-forms for which a full form is made by adding a vertical
+; bar. The former, we need to be able to convert to Unicode because they could occur in texts,
+; but we won't ever need to reverse those (why? why not just go to the full form?)
+
+; Half consonants that only have half-forms in the Kruti Dev font (use VERTBAR to get full form)
+;                       Sh- sh- N-  dh- gh- th- kh- y-  ny-
+Define  HConlyHForms    34  39  46  47  63  70  91  184 165
+
+; Half consonants that only have half-forms in the Kruti Dev font (use VERTBAR to get full form)
+; AND require special processing (since they involve multiple Unicode characters.
+;                          tt- r-  ksh-
+Define  HConlySpecialForms 159 218 123
+
+; Half consonants that have half-forms and full-forms in the Kruti Dev font
+; AND require special processing (since they involve multiple Unicode characters.
+;                          nn-  tr-
+Define  HCalsoSpecialForms 153  171
+
+; Half consonants that also have corresponding full forms
+;                       b-  k-  m-  bh- p-  ph- s-  w-  c-  t-  j-  n-  g-  l-  y-  h-  jh-
+Define  HCalsoFForms    67  68  69  72  73  182 76  79  80  82  84  85  88  89  184 186 214
+
+; The full forms corresponding to HCalsoFForms
+;                       ba  ka  ma  bha pa  pha sa  wa  ca  ta  ja  na  ga  la  ya  ha  jha
+Define  FCalsoHForms    99  100 101 210 105 81  108 111 112 114 116 117 120 121 59  103 62
+
+; all full-consonant forms:
+;               ya  Dha jha Tha La  Da  cha pha Ta  ba  ka  ma  ha  pa  ra
+;               sa  da  wa  ca  ta  ja  na  ga  la  nga gha bha -ya
+Define  FCall   59  60  62  66  71  77  78  81  86  99  100 101 103 105 106 \
+				108 110 111 112 114 116 117 120 121 179 196 210 211
+
+; all stack consonant forms:
+;               ddha    tra shra    gya dya dwa khra    pra dda TTa TTha
+;               DDa DDha    kra phra    hna hya hma kta dra nna ThTha
+;               kka dbha
+Define  SCall   41      61  74      75  124 125 163     193 204 205 206 \
+				207 212     216 221     224 225 227 228 230 233 240 \
+				244 152
+
+; all dependent vowel forms:
+; though ikar is a dependent vowel, don't include it here, because it never comes *after* the
+; consonant we're trying to reorder below
+;                       visarga ii  ai  ri  uu  aa  e   u   o   au
+Define  DepVowelAll     37      104 83  96  119 107 115 113 168 169
+
+; all nasal forms
+;               anusvar chandrabindu    chandra
+Define  Nall    97      161             87
+
+; optional post-consonantal pre-vocalic things (e.g. low Rs)
+;               lowR    lowTentR
+Define PCall    122     170
+
+pass(Byte)
+class [N] = ( Nall )
+class [DepVowel] = ( DepVowelAll )
+class [HC] = (HCalsoFForms)
+
+[N]=nas [DepVowel]=vwl > @vwl @nas
+[HC]=hc 122=lr VERTBAR=aakar    >   @hc @aakar @lr ; lowR (e.g. pra) that comes before the vertbar
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 1: convert duplicate glyphs
+;
+; Kruti Dev has some duplicate glyphs... We're always going to use only one
+; of the forms (the one with the lower code point value--just to have a
+; convention). But handle the case where the input data might be using the
+; other.
+;
+; THIS pass is non-reversible
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+pass(Byte)
+
+; some characters seems to be in the font twice. We'll normalize to one form (also unidirectional)
+97 97   >   97      ; get rid of duplicate anusvars
+145     >   39      ; sh-
+146     >   39      ; sh-
+147     >   34      ; Sh-
+148     >   34      ; Sh-
+174     >   168     ; okars
+180     >   165     ; ny-
+203     >   47      ; dh-
+209     >   151     ; kri
+144     >   210     ; bha - for some reason, the lower valued one sometimes doesn't show
+217     >   159     ; tt-
+219     >   164     ; nukta
+229     >   140     ; dev zero
+231     >   193     ; pra
+232     >   47      ; dh-
+234     >   205     ; TTa
+235     >   206     ; TTha
+236     >   207     ; DDa
+237     >   204     ; dda
+238     >   211     ; -ya
+239     >   212     ; DDha
+241     >   150     ; dri
+243     >   76 61   ; stra (this looks better than the combined form)
+245     >   155     ; aikar reph anusvar
+246     >   152     ; dbha
+247     >   214     ; jh-
+248     >   191     ; left-curly brace
+249     >   62      ; jha (the 249 version doesn't look identical, but they have to be in Unicode)
+
+pass(Byte)
+
+class [HConly] = (HConlyHForms HConlySpecialForms)
+class [HC] = (HCalsoFForms)
+class [FC] = (FCalsoHForms)
+
+; turn any half-consonant plus a following vertical bar into the corresponding
+; full consonant form (unidirectional conversion)
+[HC] VERTBAR    >   [FC]
+171 VERTBAR     >   61      ; tra -- special multi-char form
+153 VERTBAR     >   233     ; nna -- special multi-char form
+
+[HConly]=hc VERTBAR=aakar       >   @hc @aakar      ; these have to be kept as half-c + aakar
+[HConly]=hc (174 | 168)=okar    >   @hc VERTBAR 115 ; half-cs with okar for full-c+ekar
+[HConly]=hc 169=aukar           >   @hc VERTBAR 83  ; half-cs with aukar for full-c+aikar
+
+; fix up some infilicities in the input (e.g. using aakar with ekar to make okar)
+107 115     >   168     ; aakar matra + ekar matra -> okar matra
+107 115 90  <>  168 90  ; aakar matra + ekar matra + reph -> okar matra + reph... this actually looks better than the previous
+107 83      >   169     ; aakar matra + aikar matra -> aukar matra
+98 90       >   195     ; ikar + reph -> iikar
+87 97       >   161     ; chandra + bindu -> chandrabindu
+107 87      >   130     ; aakar matra + chandra -> aakar matra w/ chandra
+107 87 97   >   107 161 ; aakar matra + chandra + bindu -> aakar matra w/ chandrabindu
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 2: positional dependent vowels
+;
+; Some dependent vowels are different depending on which consonant they go
+; above e.g. ekar
+;
+; This pass also takes care of unpacking multiple-character glyphs (e.g.
+; combined ikar + reph), by breaking them down into the individual chars
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+pass(Byte)
+
+;chars which take center ("left") diacritic variants
+;               ka, pha kri kra phra    kta kka
+class[cd] = (   100 81  151 216 221     228 244 )
+
+;chars which take tent-r form of "lower r"
+;               nga Ta  THa Da, DHa TTa TTha    DDa DDha    ThTha
+class[tentr] = (179 86  66  77  60  205 206     207 212     240     )
+
+;diacritics which might occur between a diacritic to be adjusted and its base char
+; diacritics (regular forms only) for optional [d] in contexts
+;           nyukta  chandra-bindu   anusvar lowR    reph    ukar    uukar   rikar
+class[d] = (NUKTA   161             97      122     90      113     119     96      )
+
+162     <>  115 / [cd] [d]* _       ; ekar left
+170     <>  122 / [tentr] [d]* _    ; tent-r
+
+; unpack the combined symbols:
+;   CV sequences
+35      <>  106 113             ; ru
+58      <>  106 119             ; ruu
+150     <>  110 96              ; dri
+151     <>  100 96              ; kri
+226     <>  103 96              ; hri
+
+;   other sequences
+198     <>  102 90              ; ikar reph
+199     <>  102 97              ; ikar anusvar
+200     <>  104 97              ; iikar anusvar
+201     <>  102 90  97          ; ikar reph anusvar
+202     <>  104 90              ; iikar reph
+155     <>  83  90  97          ; aikar reph anusvar
+177     <>  90  97              ; reph anusvar
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 3: rearrange syllable for subsequent reordering rule
+;
+; This is for the few ikar glyphs which have both an ikar and a reph,
+; but in all other situations, these two are separated by a character.
+; So rearrange this one situation so that we can feed the real reordering rule
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Byte order:
+;       ikar
+;       reph
+;       nasal?
+;       char
+;
+; following rule expected order:
+;       ikar
+;       char
+;       reph
+;       nasal?
+
+pass(Byte)
+; Half-consonant forms
+class [HC] = ( HConlyHForms HConlySpecialForms HCalsoSpecialForms HCalsoFForms )
+
+; Full-consonant forms
+class [FC] = ( FCall )
+
+; Stack consonant forms
+class [SC] = ( SCall )
+
+; Nasal forms
+class [N] =( Nall )
+
+; 'C' can go immediately before vowels (thus, full-consonants and full-stacks)
+class[C] = ([FC] [SC])
+
+; optional post-consonantal things (low Rs)
+class[PC] = ( PCall )
+
+IKAR=ikar REPH?=reph [N]?=nas (([HC] NUKTA?)* (([C] NUKTA?)|([HC] NUKTA? VERTBAR)) [PC]?)=cons \
+		<> @ikar @cons @reph @nas
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 4: rearrange syllable into Unicode order
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Byte order:
+;	ikar?
+;	(cons nukta? virama)*
+;	cons nukta?
+;	vowel?
+;	reph?
+;	nasal?
+;
+; Unicode order:
+;	reph?
+;	(cons nukta? virama)*
+;	cons nukta?
+;	(vowel | ikar)?
+;	nasal?
+
+pass(Byte)
+; Half-consonant forms
+class [HC] = ( HConlyHForms HConlySpecialForms HCalsoSpecialForms HCalsoFForms )
+
+; Full-consonant forms
+class [FC] = ( FCall )
+
+; Stack consonant forms
+class [SC] = ( SCall )
+
+; Dependent vowel forms
+class [DepVowel] = ( DepVowelAll )
+
+; Nasal forms
+class [N] =( Nall )
+
+; 'C' can go immediately before vowels (thus, full-consonants and full-stacks)
+class[C] = ([FC] [SC])
+
+; optional post-consonantal things (nukta and low rs)
+class[PC] = ( PCall )
+
+; The tricky part here is 'cons': It should include all full-consonants and other consonant clusters.
+IKAR?=ikar (([HC] NUKTA?)* (([C] NUKTA?)|([HC] NUKTA? VERTBAR)) [PC]?)=cons [DepVowel]?=vwl REPH?=reph [N]?=nas \
+		<> @reph @cons @ikar @vwl @nas
+
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; Pass 5: map byte codes to Unicodes
+; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+; This pass deals with "basic" byte codes; it never sees the "presentation form"
+; byte codes for half forms/conjuncts/positional variants
+
+pass(Byte_Unicode)
+
+; define a default character for failed reverse conversions (i.e. something I'm not expecting to occur
+; in input text and which doesn't generate an actual character (like the default default does)
+ByteDefault         219
+
+ByteClass[CTL]  = ( 0 .. 31 32 )
+UniClass[CTL]   = ( 0 .. 31 32 )
+
+ByteClass[HConly]   = ( HConlyHForms )
+
+UniClass[FConly]    = ( DEVANAGARI_LETTER_SSA   DEVANAGARI_LETTER_SHA   DEVANAGARI_LETTER_NNA \
+						DEVANAGARI_LETTER_DHA   DEVANAGARI_LETTER_GHA   DEVANAGARI_LETTER_THA \
+						DEVANAGARI_LETTER_KHA   DEVANAGARI_LETTER_YA    DEVANAGARI_LETTER_NYA )
+
+ByteClass[HCalso]   = ( HCalsoFForms )
+
+UniClass[FCalso]    = ( DEVANAGARI_LETTER_BA    DEVANAGARI_LETTER_KA    DEVANAGARI_LETTER_MA \
+						DEVANAGARI_LETTER_BHA   DEVANAGARI_LETTER_PA    DEVANAGARI_LETTER_PHA \
+						DEVANAGARI_LETTER_SA    DEVANAGARI_LETTER_VA    DEVANAGARI_LETTER_CA \
+						DEVANAGARI_LETTER_TA    DEVANAGARI_LETTER_JA    DEVANAGARI_LETTER_NA \
+						DEVANAGARI_LETTER_GA    DEVANAGARI_LETTER_LA    DEVANAGARI_LETTER_YA \
+						DEVANAGARI_LETTER_HA    DEVANAGARI_LETTER_JHA )
+
+ByteClass[OneToOnePunct] = ( \
+						33                          36                          38 \
+						40                          42                          43 \
+						48                          92                          49 \
+						50                          51                          93 \
+						52                          53                          54 \
+						94                          55                          56 \
+						57                          64                          187 \
+						188                         189                         42 \
+						190                         191                         192 \
+						65                          222                         223 \
+						131                         132                         45 \
+						133                         134                         135 \
+						136                         137                         138 \
+						139                         140 \
+					  )
+
+UniClass[OneToOnePunct]  = ( \
+						EXCLAMATION_MARK            PLUS_SIGN                       HYPHEN_MINUS \
+						SEMICOLON                   APOSTROPHE                      FULL_STOP \
+						DIGIT_ZERO                  QUESTION_MARK                   DIGIT_ONE \
+						DIGIT_TWO                   DIGIT_THREE                     COMMA \
+						DIGIT_FOUR                  DIGIT_FIVE                      DIGIT_SIX \
+						LEFT_SINGLE_QUOTATION_MARK  DIGIT_SEVEN                     DIGIT_EIGHT \
+						DIGIT_NINE                  SOLIDUS                         DIVISION_SIGN \
+						LEFT_PARENTHESIS            RIGHT_PARENTHESIS               RIGHT_SINGLE_QUOTATION_MARK \
+						EQUALS_SIGN                 LEFT_CURLY_BRACKET              RIGHT_CURLY_BRACKET \
+						DEVANAGARI_DANDA            RIGHT_DOUBLE_QUOTATION_MARK     LEFT_DOUBLE_QUOTATION_MARK \
+						DEVANAGARI_DIGIT_ONE        DEVANAGARI_DIGIT_TWO            ONE_DOT_LEADER \
+						DEVANAGARI_DIGIT_THREE      DEVANAGARI_DIGIT_FOUR           DEVANAGARI_DIGIT_FIVE \
+						DEVANAGARI_DIGIT_SIX        DEVANAGARI_DIGIT_SEVEN          DEVANAGARI_DIGIT_EIGHT \
+						DEVANAGARI_DIGIT_NINE       DEVANAGARI_DIGIT_ZERO \
+					  )
+
+ByteClass[OneToOneCs] = ( \
+						37                      NUKTA                   59 \
+						60                      62                      66 \
+						71                      77                      78 \
+						81                      86                      \
+						99                      100                     101 \
+						103                     105                     106 \
+						108                     110                     111 \
+						112                     114                     116 \
+						117                     120                     121 \
+						179                     \
+						196                     210 \
+					  )
+
+UniClass[OneToOneCs]  = ( \
+						DEVANAGARI_SIGN_VISARGA DEVANAGARI_SIGN_NUKTA   DEVANAGARI_LETTER_YA \
+						DEVANAGARI_LETTER_DDHA  DEVANAGARI_LETTER_JHA   DEVANAGARI_LETTER_TTHA \
+						DEVANAGARI_LETTER_LLA   DEVANAGARI_LETTER_DDA   DEVANAGARI_LETTER_CHA \
+						DEVANAGARI_LETTER_PHA   DEVANAGARI_LETTER_TTA   \
+						DEVANAGARI_LETTER_BA    DEVANAGARI_LETTER_KA    DEVANAGARI_LETTER_MA \
+						DEVANAGARI_LETTER_HA    DEVANAGARI_LETTER_PA    DEVANAGARI_LETTER_RA \
+						DEVANAGARI_LETTER_SA    DEVANAGARI_LETTER_DA    DEVANAGARI_LETTER_VA \
+						DEVANAGARI_LETTER_CA    DEVANAGARI_LETTER_TA    DEVANAGARI_LETTER_JA \
+						DEVANAGARI_LETTER_NA    DEVANAGARI_LETTER_GA    DEVANAGARI_LETTER_LA \
+						DEVANAGARI_LETTER_NGA   \
+						DEVANAGARI_LETTER_GHA   DEVANAGARI_LETTER_BHA \
+					  )
+
+ByteClass[OneToOneVs] = ( \
+						118                         98                          195 \
+						109                         197                         95 \
+						44                          102                         104 \
+						113                         119                         96 \
+						115                         83                          168 \
+						169                         183                         87 \
+						97                          161                         107 \
+						130 \
+					  )
+
+UniClass[OneToOneVs]  = ( \
+						DEVANAGARI_LETTER_A         DEVANAGARI_LETTER_I         DEVANAGARI_LETTER_II \
+						DEVANAGARI_LETTER_U         DEVANAGARI_LETTER_UU        DEVANAGARI_LETTER_VOCALIC_R \
+						DEVANAGARI_LETTER_E         DEVANAGARI_VOWEL_SIGN_I     DEVANAGARI_VOWEL_SIGN_II \
+						DEVANAGARI_VOWEL_SIGN_U     DEVANAGARI_VOWEL_SIGN_UU    DEVANAGARI_VOWEL_SIGN_VOCALIC_R \
+						DEVANAGARI_VOWEL_SIGN_E     DEVANAGARI_VOWEL_SIGN_AI    DEVANAGARI_VOWEL_SIGN_O \
+						DEVANAGARI_VOWEL_SIGN_AU    DEVANAGARI_SIGN_AVAGRAHA    DEVANAGARI_VOWEL_SIGN_CANDRA_E \
+						DEVANAGARI_SIGN_ANUSVARA    DEVANAGARI_SIGN_CANDRABINDU DEVANAGARI_VOWEL_SIGN_AA \
+						DEVANAGARI_VOWEL_SIGN_CANDRA_O \
+					  )
+
+; first do the easy ones
+[CTL]               <>  [CTL]
+[OneToOnePunct]     <>  [OneToOnePunct]
+[OneToOneCs]        <>  [OneToOneCs]
+[OneToOneVs]        <>  [OneToOneVs]
+
+; all half-chars followed by the vertical bar are turned into full chars
+[HConly] VERTBAR	<>	[FConly]
+
+; all the rest get the corresponding full char + virama + ZWJ
+[HConly]            <	[FConly] DEVANAGARI_SIGN_VIRAMA
+[HConly]            <>	[FConly] DEVANAGARI_SIGN_VIRAMA ZERO_WIDTH_JOINER
+
+; also have to handle the remain half-consonants that have full forms (but which weren't
+; converted in pass one to the full forms (i.e. they are bonefide half forms only with
+; no trailing vertical bar).
+[HCalso]            <>      [FCalso] devanagari_sign_virama ZERO_WIDTH_JOINER
+
+; now deal with all the stacks and other multiple character glyphs
+41                  <>      DEVANAGARI_LETTER_DA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_DHA
+44 115              <>      DEVANAGARI_LETTER_AI
+61                  <>      DEVANAGARI_LETTER_TA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_RA
+65 65               <>      DEVANAGARI_DOUBLE_DANDA
+74                  <>      DEVANAGARI_LETTER_SHA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_RA
+75                  <>      DEVANAGARI_LETTER_JA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_NYA
+90                  <>      DEVANAGARI_LETTER_RA DEVANAGARI_SIGN_VIRAMA
+118 107             <>      DEVANAGARI_LETTER_AA
+118 168             <>      DEVANAGARI_LETTER_O
+118 169             <>      DEVANAGARI_LETTER_AU
+122                 <>      DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_RA
+193                 <>      DEVANAGARI_LETTER_PA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_RA
+123                 <>      DEVANAGARI_LETTER_KA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_SSA DEVANAGARI_SIGN_VIRAMA ZERO_WIDTH_JOINER
+123 VERTBAR         <>      DEVANAGARI_LETTER_KA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_SSA
+124                 <>      DEVANAGARI_LETTER_DA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_YA
+125                 <>      DEVANAGARI_LETTER_DA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_VA
+126                 <>      DEVANAGARI_SIGN_VIRAMA ZERO_WIDTH_NON_JOINER
+153                 <>      DEVANAGARI_LETTER_NA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_NA DEVANAGARI_SIGN_VIRAMA ZERO_WIDTH_JOINER
+163                 <>      DEVANAGARI_LETTER_KHA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_RA
+165                 <>      DEVANAGARI_LETTER_NYA DEVANAGARI_SIGN_VIRAMA ZERO_WIDTH_JOINER
+171                 <>      DEVANAGARI_LETTER_TA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_RA DEVANAGARI_SIGN_VIRAMA
+204                 <>      DEVANAGARI_LETTER_DA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_DA
+205                 <>      DEVANAGARI_LETTER_TTA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_TTA
+206                 <>      DEVANAGARI_LETTER_TTA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_TTHA
+207                 <>      DEVANAGARI_LETTER_DDA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_DDA
+211                 <>      DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_YA
+212                 <>      DEVANAGARI_LETTER_DDA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_DDHA
+216                 <>      DEVANAGARI_LETTER_KA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_RA
+159                 <>      DEVANAGARI_LETTER_TA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_TA DEVANAGARI_SIGN_VIRAMA ZERO_WIDTH_JOINER
+218                 <>      DEVANAGARI_LETTER_RA DEVANAGARI_SIGN_VIRAMA ZERO_WIDTH_JOINER
+221                 <>      DEVANAGARI_LETTER_PHA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_RA
+224                 <>      DEVANAGARI_LETTER_HA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_NA
+225                 <>      DEVANAGARI_LETTER_HA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_YA
+227                 <>      DEVANAGARI_LETTER_HA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_MA
+228                 <>      DEVANAGARI_LETTER_KA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_TA
+230                 <>      DEVANAGARI_LETTER_DA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_RA
+233                 <>      DEVANAGARI_LETTER_NA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_NA
+240                 <>      DEVANAGARI_LETTER_TTHA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_TTHA
+244                 <>      DEVANAGARI_LETTER_KA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_KA
+152                 <>      DEVANAGARI_LETTER_DA DEVANAGARI_SIGN_VIRAMA DEVANAGARI_LETTER_BHA

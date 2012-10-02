@@ -1,0 +1,1401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_operationLabel.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_operationLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>198, 12</value>
+  </data>
+  <data name="m_operationLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>87, 13</value>
+  </data>
+  <data name="m_operationLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_operationLabel.Text" xml:space="preserve">
+	<value>Operations Label</value>
+  </data>
+  <data name="&gt;&gt;m_operationLabel.Name" xml:space="preserve">
+	<value>m_operationLabel</value>
+  </data>
+  <data name="&gt;&gt;m_operationLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_operationLabel.Parent" xml:space="preserve">
+	<value>m_listChoiceTab</value>
+  </data>
+  <data name="&gt;&gt;m_operationLabel.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_operationsTabControl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="m_bulkEditIconButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+	<value>Flat</value>
+  </data>
+  <data name="m_bulkEditIconButton.ImageIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <metadata name="m_imageList16x16.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>169, 17</value>
+  </metadata>
+  <data name="m_imageList16x16.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
+	<value>
+		AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+		LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+		ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADi
+		BwAAAk1TRnQBSQFMAwEBAAEEAQABBAEAARABAAEQAQAE/wEJAQAI/wFCAU0BNgEEBgABNgEEAgABKAMA
+		AUADAAEQAwABAQEAAQgGAAEEGAABgAIAAYADAAKAAQABgAMAAYABAAGAAQACgAIAA8ABAAHAAdwBwAEA
+		AfABygGmAQABMwUAATMBAAEzAQABMwEAAjMCAAMWAQADHAEAAyIBAAMpAQADVQEAA00BAANCAQADOQEA
+		AYABfAH/AQACUAH/AQABkwEAAdYBAAH/AewBzAEAAcYB1gHvAQAB1gLnAQABkAGpAa0CAAH/ATMDAAFm
+		AwABmQMAAcwCAAEzAwACMwIAATMBZgIAATMBmQIAATMBzAIAATMB/wIAAWYDAAFmATMCAAJmAgABZgGZ
+		AgABZgHMAgABZgH/AgABmQMAAZkBMwIAAZkBZgIAApkCAAGZAcwCAAGZAf8CAAHMAwABzAEzAgABzAFm
+		AgABzAGZAgACzAIAAcwB/wIAAf8BZgIAAf8BmQIAAf8BzAEAATMB/wIAAf8BAAEzAQABMwEAAWYBAAEz
+		AQABmQEAATMBAAHMAQABMwEAAf8BAAH/ATMCAAMzAQACMwFmAQACMwGZAQACMwHMAQACMwH/AQABMwFm
+		AgABMwFmATMBAAEzAmYBAAEzAWYBmQEAATMBZgHMAQABMwFmAf8BAAEzAZkCAAEzAZkBMwEAATMBmQFm
+		AQABMwKZAQABMwGZAcwBAAEzAZkB/wEAATMBzAIAATMBzAEzAQABMwHMAWYBAAEzAcwBmQEAATMCzAEA
+		ATMBzAH/AQABMwH/ATMBAAEzAf8BZgEAATMB/wGZAQABMwH/AcwBAAEzAv8BAAFmAwABZgEAATMBAAFm
+		AQABZgEAAWYBAAGZAQABZgEAAcwBAAFmAQAB/wEAAWYBMwIAAWYCMwEAAWYBMwFmAQABZgEzAZkBAAFm
+		ATMBzAEAAWYBMwH/AQACZgIAAmYBMwEAA2YBAAJmAZkBAAJmAcwBAAFmAZkCAAFmAZkBMwEAAWYBmQFm
+		AQABZgKZAQABZgGZAcwBAAFmAZkB/wEAAWYBzAIAAWYBzAEzAQABZgHMAZkBAAFmAswBAAFmAcwB/wEA
+		AWYB/wIAAWYB/wEzAQABZgH/AZkBAAFmAf8BzAEAAcwBAAH/AQAB/wEAAcwBAAKZAgABmQEzAZkBAAGZ
+		AQABmQEAAZkBAAHMAQABmQMAAZkCMwEAAZkBAAFmAQABmQEzAcwBAAGZAQAB/wEAAZkBZgIAAZkBZgEz
+		AQABmQEzAWYBAAGZAWYBmQEAAZkBZgHMAQABmQEzAf8BAAKZATMBAAKZAWYBAAOZAQACmQHMAQACmQH/
+		AQABmQHMAgABmQHMATMBAAFmAcwBZgEAAZkBzAGZAQABmQLMAQABmQHMAf8BAAGZAf8CAAGZAf8BMwEA
+		AZkBzAFmAQABmQH/AZkBAAGZAf8BzAEAAZkC/wEAAcwDAAGZAQABMwEAAcwBAAFmAQABzAEAAZkBAAHM
+		AQABzAEAAZkBMwIAAcwCMwEAAcwBMwFmAQABzAEzAZkBAAHMATMBzAEAAcwBMwH/AQABzAFmAgABzAFm
+		ATMBAAGZAmYBAAHMAWYBmQEAAcwBZgHMAQABmQFmAf8BAAHMAZkCAAHMAZkBMwEAAcwBmQFmAQABzAKZ
+		AQABzAGZAcwBAAHMAZkB/wEAAswCAALMATMBAALMAWYBAALMAZkBAAPMAQACzAH/AQABzAH/AgABzAH/
+		ATMBAAGZAf8BZgEAAcwB/wGZAQABzAH/AcwBAAHMAv8BAAHMAQABMwEAAf8BAAFmAQAB/wEAAZkBAAHM
+		ATMCAAH/AjMBAAH/ATMBZgEAAf8BMwGZAQAB/wEzAcwBAAH/ATMB/wEAAf8BZgIAAf8BZgEzAQABzAJm
+		AQAB/wFmAZkBAAH/AWYBzAEAAcwBZgH/AQAB/wGZAgAB/wGZATMBAAH/AZkBZgEAAf8CmQEAAf8BmQHM
+		AQAB/wGZAf8BAAH/AcwCAAH/AcwBMwEAAf8BzAFmAQAB/wHMAZkBAAH/AswBAAH/AcwB/wEAAv8BMwEA
+		AcwB/wFmAQAC/wGZAQAC/wHMAQACZgH/AQABZgH/AWYBAAFmAv8BAAH/AmYBAAH/AWYB/wEAAv8BZgEA
+		ASEBAAGlAQADXwEAA3cBAAOGAQADlgEAA8sBAAOyAQAD1wEAA90BAAPjAQAD6gEAA/EBAAP4AQAB8AH7
+		Af8BAAGkAqABAAOAAwAB/wIAAf8DAAL/AQAB/wMAAf8BAAH/AQAC/wIAA/8GAAb8OQAB/AYAAfw2AAL8
+		CAAC/DQAAfwGAAH8AwAB/DMAAfwIAAH8AwAB/DEAAfwKAAH8AwAB/DAAAfwBAAv8AgAB/DAAAfwJAAL8
+		AwAB/DAAAfwJAAL8AwAB/DAAAfwBAAv8AgAB/DAAAfwKAAH8AwAB/DEAAfwIAAH8AwAB/DMAAfwGAAH8
+		AwAB/DQAAvwIAAL8NgAB/AYAAfw5AAb8NQABQgFNAT4HAAE+AwABKAMAAUADAAEQAwABAQEAAQEFAAGA
+		FwAD/wEAAfgBHwYAAfcB7wYAAc8B8wYAAd8BuwYAAb8B3QYAAX8B7gYAAUABBgYAAX8BzgYAAX8BzgYA
+		AUABBgYAAX8B7gYAAb8B3QYAAd8BuwYAAc8B8wYAAfcB7wYAAfgBHwYACw==
+</value>
+  </data>
+  <data name="m_bulkEditIconButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>13, 9</value>
+  </data>
+  <data name="m_bulkEditIconButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>19, 19</value>
+  </data>
+  <data name="m_bulkEditIconButton.TabIndex" type="System.Int32, mscorlib">
+	<value>16</value>
+  </data>
+  <data name="&gt;&gt;m_bulkEditIconButton.Name" xml:space="preserve">
+	<value>m_bulkEditIconButton</value>
+  </data>
+  <data name="&gt;&gt;m_bulkEditIconButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_bulkEditIconButton.Parent" xml:space="preserve">
+	<value>m_listChoiceTab</value>
+  </data>
+  <data name="&gt;&gt;m_bulkEditIconButton.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_bulkEditOperationLabel.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_bulkEditOperationLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>38, 12</value>
+  </data>
+  <data name="m_bulkEditOperationLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>101, 13</value>
+  </data>
+  <data name="m_bulkEditOperationLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="m_bulkEditOperationLabel.Text" xml:space="preserve">
+	<value>Bulk Edit Operation:</value>
+  </data>
+  <data name="&gt;&gt;m_bulkEditOperationLabel.Name" xml:space="preserve">
+	<value>m_bulkEditOperationLabel</value>
+  </data>
+  <data name="&gt;&gt;m_bulkEditOperationLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_bulkEditOperationLabel.Parent" xml:space="preserve">
+	<value>m_listChoiceTab</value>
+  </data>
+  <data name="&gt;&gt;m_bulkEditOperationLabel.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_listChoiceChangeToCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>201, 72</value>
+  </data>
+  <data name="m_listChoiceChangeToCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>185, 21</value>
+  </data>
+  <data name="m_listChoiceChangeToCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceChangeToCombo.Name" xml:space="preserve">
+	<value>m_listChoiceChangeToCombo</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceChangeToCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceChangeToCombo.Parent" xml:space="preserve">
+	<value>m_listChoiceTab</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceChangeToCombo.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>200, 50</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>63, 13</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+	<value>Change To:</value>
+  </data>
+  <data name="label3.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+	<value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+	<value>m_listChoiceTab</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_listChoiceTargetCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 72</value>
+  </data>
+  <data name="m_listChoiceTargetCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>155, 21</value>
+  </data>
+  <data name="m_listChoiceTargetCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceTargetCombo.Name" xml:space="preserve">
+	<value>m_listChoiceTargetCombo</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceTargetCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceTargetCombo.Parent" xml:space="preserve">
+	<value>m_listChoiceTab</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceTargetCombo.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 50</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>66, 13</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+	<value>Target Field:</value>
+  </data>
+  <data name="label2.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+	<value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+	<value>m_listChoiceTab</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_closeButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Right</value>
+  </data>
+  <data name="m_closeButton.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="m_closeButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+	<value>Flat</value>
+  </data>
+  <data name="m_closeButton.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="m_closeButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+	<value>
+		Qk0WBQAAAAAAADYEAAAoAAAADQAAAA4AAAABAAgAAAAAAAAAAADEDgAAxA4AAAABAAAAAQAAAAAA/wAA
+		gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP/A3MD/8Mqm/wAgQP8AIGD/ACCA/wAgoP8AIMD/ACDg/wBA
+		AP8AQCD/AEBA/wBAYP8AQID/AECg/wBAwP8AQOD/AGAA/wBgIP8AYED/AGBg/wBggP8AYKD/AGDA/wBg
+		4P8AgAD/AIAg/wCAQP8AgGD/AICA/wCAoP8AgMD/AIDg/wCgAP8AoCD/AKBA/wCgYP8AoID/AKCg/wCg
+		wP8AoOD/AMAA/wDAIP8AwED/AMBg/wDAgP8AwKD/AMDA/wDA4P8A4AD/AOAg/wDgQP8A4GD/AOCA/wDg
+		oP8A4MD/AODg/0AAAP9AACD/QABA/0AAYP9AAID/QACg/0AAwP9AAOD/QCAA/0AgIP9AIED/QCBg/0Ag
+		gP9AIKD/QCDA/0Ag4P9AQAD/QEAg/0BAQP9AQGD/QECA/0BAoP9AQMD/QEDg/0BgAP9AYCD/QGBA/0Bg
+		YP9AYID/QGCg/0BgwP9AYOD/QIAA/0CAIP9AgED/QIBg/0CAgP9AgKD/QIDA/0CA4P9AoAD/QKAg/0Cg
+		QP9AoGD/QKCA/0CgoP9AoMD/QKDg/0DAAP9AwCD/QMBA/0DAYP9AwID/QMCg/0DAwP9AwOD/QOAA/0Dg
+		IP9A4ED/QOBg/0DggP9A4KD/QODA/0Dg4P+AAAD/gAAg/4AAQP+AAGD/gACA/4AAoP+AAMD/gADg/4Ag
+		AP+AICD/gCBA/4AgYP+AIID/gCCg/4AgwP+AIOD/gEAA/4BAIP+AQED/gEBg/4BAgP+AQKD/gEDA/4BA
+		4P+AYAD/gGAg/4BgQP+AYGD/gGCA/4BgoP+AYMD/gGDg/4CAAP+AgCD/gIBA/4CAYP+AgID/gICg/4CA
+		wP+AgOD/gKAA/4CgIP+AoED/gKBg/4CggP+AoKD/gKDA/4Cg4P+AwAD/gMAg/4DAQP+AwGD/gMCA/4DA
+		oP+AwMD/gMDg/4DgAP+A4CD/gOBA/4DgYP+A4ID/gOCg/4DgwP+A4OD/wAAA/8AAIP/AAED/wABg/8AA
+		gP/AAKD/wADA/8AA4P/AIAD/wCAg/8AgQP/AIGD/wCCA/8AgoP/AIMD/wCDg/8BAAP/AQCD/wEBA/8BA
+		YP/AQID/wECg/8BAwP/AQOD/wGAA/8BgIP/AYED/wGBg/8BggP/AYKD/wGDA/8Bg4P/AgAD/wIAg/8CA
+		QP/AgGD/wICA/8CAoP/AgMD/wIDg/8CgAP/AoCD/wKBA/8CgYP/AoID/wKCg/8CgwP/AoOD/wMAA/8DA
+		IP/AwED/wMBg/8DAgP/AwKD/8Pv//6SgoP+AgID/AAD//wD/AP8A/////wAA//8A/////wD///////b2
+		9vb29vb29vb29vYAAP/29vb29vb29vb29vb2AAD/9vb29vb29vb29vb29gAA//b2pKT29vb29qSk9vYA
+		AP/29qSkpPb29qSkpPb2AAD/9vb2pKSk9qSkpPb29gAA//b29vakpKSkpPb29vYAAP/29vb29qSkpPb2
+		9vb2AAD/9vb29qSkpKSk9vb29gAA//b29qSkpPakpKT29vYAAP/29qSkpPb29qSkpPb2AAD/9vakpPb2
+		9vb2pKT29gAA//b29vb29vb29vb29vYAAP/29vb29vb29vb29vb2AAD/
+</value>
+  </data>
+  <data name="m_closeButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>418, 87</value>
+  </data>
+  <data name="m_closeButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>19, 19</value>
+  </data>
+  <data name="m_closeButton.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="m_closeButton.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="&gt;&gt;m_closeButton.Name" xml:space="preserve">
+	<value>m_closeButton</value>
+  </data>
+  <data name="&gt;&gt;m_closeButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_closeButton.Parent" xml:space="preserve">
+	<value>m_listChoiceTab</value>
+  </data>
+  <data name="&gt;&gt;m_closeButton.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="m_listChoiceTab.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 4</value>
+  </data>
+  <data name="m_listChoiceTab.Size" type="System.Drawing.Size, System.Drawing">
+	<value>728, 142</value>
+  </data>
+  <data name="m_listChoiceTab.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_listChoiceTab.Text" xml:space="preserve">
+	<value>List Choice</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceTab.Name" xml:space="preserve">
+	<value>m_listChoiceTab</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceTab.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceTab.Parent" xml:space="preserve">
+	<value>m_operationsTabControl</value>
+  </data>
+  <data name="&gt;&gt;m_listChoiceTab.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_bulkCopySourceCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 53</value>
+  </data>
+  <data name="m_bulkCopySourceCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>155, 21</value>
+  </data>
+  <data name="m_bulkCopySourceCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopySourceCombo.Name" xml:space="preserve">
+	<value>m_bulkCopySourceCombo</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopySourceCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopySourceCombo.Parent" xml:space="preserve">
+	<value>m_bulkCopyTab</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopySourceCombo.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 31</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+	<value>69, 13</value>
+  </data>
+  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+	<value>Source Field:</value>
+  </data>
+  <data name="label4.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+	<value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+	<value>m_bulkCopyTab</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_bulkCopyTargetCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 103</value>
+  </data>
+  <data name="m_bulkCopyTargetCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>155, 21</value>
+  </data>
+  <data name="m_bulkCopyTargetCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopyTargetCombo.Name" xml:space="preserve">
+	<value>m_bulkCopyTargetCombo</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopyTargetCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopyTargetCombo.Parent" xml:space="preserve">
+	<value>m_bulkCopyTab</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopyTargetCombo.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="label5.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 81</value>
+  </data>
+  <data name="label5.Size" type="System.Drawing.Size, System.Drawing">
+	<value>66, 13</value>
+  </data>
+  <data name="label5.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="label5.Text" xml:space="preserve">
+	<value>Target Field:</value>
+  </data>
+  <data name="label5.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label5.Name" xml:space="preserve">
+	<value>label5</value>
+  </data>
+  <data name="&gt;&gt;label5.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
+	<value>m_bulkCopyTab</value>
+  </data>
+  <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_bulkCopyTab.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="m_bulkCopyTab.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 4</value>
+  </data>
+  <data name="m_bulkCopyTab.Size" type="System.Drawing.Size, System.Drawing">
+	<value>728, 142</value>
+  </data>
+  <data name="m_bulkCopyTab.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_bulkCopyTab.Text" xml:space="preserve">
+	<value>Bulk Copy</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopyTab.Name" xml:space="preserve">
+	<value>m_bulkCopyTab</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopyTab.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopyTab.Parent" xml:space="preserve">
+	<value>m_operationsTabControl</value>
+  </data>
+  <data name="&gt;&gt;m_bulkCopyTab.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_clickCopySepBox.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 100pt</value>
+  </data>
+  <data name="m_clickCopySepBox.Location" type="System.Drawing.Point, System.Drawing">
+	<value>212, 24</value>
+  </data>
+  <data name="m_clickCopySepBox.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>1, 1, 1, 1</value>
+  </data>
+  <data name="m_clickCopySepBox.Size" type="System.Drawing.Size, System.Drawing">
+	<value>28, 22</value>
+  </data>
+  <data name="m_clickCopySepBox.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopySepBox.Name" xml:space="preserve">
+	<value>m_clickCopySepBox</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopySepBox.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=5.5.0.20802, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopySepBox.Parent" xml:space="preserve">
+	<value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopySepBox.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_clickCopyOverwriteButton.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_clickCopyOverwriteButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 40</value>
+  </data>
+  <data name="m_clickCopyOverwriteButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>70, 17</value>
+  </data>
+  <data name="m_clickCopyOverwriteButton.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_clickCopyOverwriteButton.Text" xml:space="preserve">
+	<value>Overwrite</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyOverwriteButton.Name" xml:space="preserve">
+	<value>m_clickCopyOverwriteButton</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyOverwriteButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyOverwriteButton.Parent" xml:space="preserve">
+	<value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyOverwriteButton.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_clickCopyAppendButton.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_clickCopyAppendButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 20</value>
+  </data>
+  <data name="m_clickCopyAppendButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>132, 17</value>
+  </data>
+  <data name="m_clickCopyAppendButton.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_clickCopyAppendButton.Text" xml:space="preserve">
+	<value>Append, separated by:</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyAppendButton.Name" xml:space="preserve">
+	<value>m_clickCopyAppendButton</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyAppendButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyAppendButton.Parent" xml:space="preserve">
+	<value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyAppendButton.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>325, 35</value>
+  </data>
+  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>253, 100</value>
+  </data>
+  <data name="groupBox2.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="groupBox2.Text" xml:space="preserve">
+	<value>If the Target field is not empty</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.Name" xml:space="preserve">
+	<value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
+	<value>m_clickCopyTab</value>
+  </data>
+  <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_clickCopyReorderButton.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>TopLeft</value>
+  </data>
+  <data name="m_clickCopyReorderButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="m_clickCopyReorderButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 40</value>
+  </data>
+  <data name="m_clickCopyReorderButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>160, 57</value>
+  </data>
+  <data name="m_clickCopyReorderButton.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="m_clickCopyReorderButton.Text" xml:space="preserve">
+	<value>String, reordered at word clicked</value>
+  </data>
+  <data name="m_clickCopyReorderButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>TopLeft</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyReorderButton.Name" xml:space="preserve">
+	<value>m_clickCopyReorderButton</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyReorderButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyReorderButton.Parent" xml:space="preserve">
+	<value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyReorderButton.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_clickCopyWordButton.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_clickCopyWordButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>5, 20</value>
+  </data>
+  <data name="m_clickCopyWordButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>51, 17</value>
+  </data>
+  <data name="m_clickCopyWordButton.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="m_clickCopyWordButton.Text" xml:space="preserve">
+	<value>Word</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyWordButton.Name" xml:space="preserve">
+	<value>m_clickCopyWordButton</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyWordButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyWordButton.Parent" xml:space="preserve">
+	<value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyWordButton.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>149, 35</value>
+  </data>
+  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>170, 100</value>
+  </data>
+  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+	<value>Copy</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
+	<value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
+	<value>m_clickCopyTab</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_clickCopyTargetCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 72</value>
+  </data>
+  <data name="m_clickCopyTargetCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>135, 21</value>
+  </data>
+  <data name="m_clickCopyTargetCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyTargetCombo.Name" xml:space="preserve">
+	<value>m_clickCopyTargetCombo</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyTargetCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyTargetCombo.Parent" xml:space="preserve">
+	<value>m_clickCopyTab</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyTargetCombo.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="label6.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 50</value>
+  </data>
+  <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
+	<value>66, 13</value>
+  </data>
+  <data name="label6.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="label6.Text" xml:space="preserve">
+	<value>Target Field:</value>
+  </data>
+  <data name="label6.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;label6.Name" xml:space="preserve">
+	<value>label6</value>
+  </data>
+  <data name="&gt;&gt;label6.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label6.Parent" xml:space="preserve">
+	<value>m_clickCopyTab</value>
+  </data>
+  <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_clickCopyTab.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 4</value>
+  </data>
+  <data name="m_clickCopyTab.Size" type="System.Drawing.Size, System.Drawing">
+	<value>728, 142</value>
+  </data>
+  <data name="m_clickCopyTab.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="m_clickCopyTab.Text" xml:space="preserve">
+	<value>Click Copy</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyTab.Name" xml:space="preserve">
+	<value>m_clickCopyTab</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyTab.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyTab.Parent" xml:space="preserve">
+	<value>m_operationsTabControl</value>
+  </data>
+  <data name="&gt;&gt;m_clickCopyTab.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_transduceSetupButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>424, 97</value>
+  </data>
+  <data name="m_transduceSetupButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>100, 23</value>
+  </data>
+  <data name="m_transduceSetupButton.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="m_transduceSetupButton.Text" xml:space="preserve">
+	<value>Setup...</value>
+  </data>
+  <data name="&gt;&gt;m_transduceSetupButton.Name" xml:space="preserve">
+	<value>m_transduceSetupButton</value>
+  </data>
+  <data name="&gt;&gt;m_transduceSetupButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_transduceSetupButton.Parent" xml:space="preserve">
+	<value>m_transduceTab</value>
+  </data>
+  <data name="&gt;&gt;m_transduceSetupButton.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_transduceSourceCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 53</value>
+  </data>
+  <data name="m_transduceSourceCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>155, 21</value>
+  </data>
+  <data name="m_transduceSourceCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="&gt;&gt;m_transduceSourceCombo.Name" xml:space="preserve">
+	<value>m_transduceSourceCombo</value>
+  </data>
+  <data name="&gt;&gt;m_transduceSourceCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_transduceSourceCombo.Parent" xml:space="preserve">
+	<value>m_transduceTab</value>
+  </data>
+  <data name="&gt;&gt;m_transduceSourceCombo.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="label7.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 31</value>
+  </data>
+  <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
+	<value>69, 13</value>
+  </data>
+  <data name="label7.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="label7.Text" xml:space="preserve">
+	<value>Source Field:</value>
+  </data>
+  <data name="label7.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label7.Name" xml:space="preserve">
+	<value>label7</value>
+  </data>
+  <data name="&gt;&gt;label7.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label7.Parent" xml:space="preserve">
+	<value>m_transduceTab</value>
+  </data>
+  <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_transduceTargetCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 105</value>
+  </data>
+  <data name="m_transduceTargetCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>155, 21</value>
+  </data>
+  <data name="m_transduceTargetCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;m_transduceTargetCombo.Name" xml:space="preserve">
+	<value>m_transduceTargetCombo</value>
+  </data>
+  <data name="&gt;&gt;m_transduceTargetCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_transduceTargetCombo.Parent" xml:space="preserve">
+	<value>m_transduceTab</value>
+  </data>
+  <data name="&gt;&gt;m_transduceTargetCombo.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="label8.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 83</value>
+  </data>
+  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
+	<value>66, 13</value>
+  </data>
+  <data name="label8.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="label8.Text" xml:space="preserve">
+	<value>Target Field:</value>
+  </data>
+  <data name="label8.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label8.Name" xml:space="preserve">
+	<value>label8</value>
+  </data>
+  <data name="&gt;&gt;label8.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
+	<value>m_transduceTab</value>
+  </data>
+  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="m_transduceProcessorCombo.Items" xml:space="preserve">
+	<value>CC Table</value>
+  </data>
+  <data name="m_transduceProcessorCombo.Items1" xml:space="preserve">
+	<value>Python</value>
+  </data>
+  <data name="m_transduceProcessorCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>422, 68</value>
+  </data>
+  <data name="m_transduceProcessorCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>155, 21</value>
+  </data>
+  <data name="m_transduceProcessorCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="&gt;&gt;m_transduceProcessorCombo.Name" xml:space="preserve">
+	<value>m_transduceProcessorCombo</value>
+  </data>
+  <data name="&gt;&gt;m_transduceProcessorCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_transduceProcessorCombo.Parent" xml:space="preserve">
+	<value>m_transduceTab</value>
+  </data>
+  <data name="&gt;&gt;m_transduceProcessorCombo.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="label9.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
+	<value>421, 46</value>
+  </data>
+  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
+	<value>48, 13</value>
+  </data>
+  <data name="label9.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="label9.Text" xml:space="preserve">
+	<value>Process:</value>
+  </data>
+  <data name="label9.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label9.Name" xml:space="preserve">
+	<value>label9</value>
+  </data>
+  <data name="&gt;&gt;label9.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label9.Parent" xml:space="preserve">
+	<value>m_transduceTab</value>
+  </data>
+  <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="m_transduceTab.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 4</value>
+  </data>
+  <data name="m_transduceTab.Size" type="System.Drawing.Size, System.Drawing">
+	<value>728, 142</value>
+  </data>
+  <data name="m_transduceTab.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="m_transduceTab.Text" xml:space="preserve">
+	<value>Process</value>
+  </data>
+  <data name="&gt;&gt;m_transduceTab.Name" xml:space="preserve">
+	<value>m_transduceTab</value>
+  </data>
+  <data name="&gt;&gt;m_transduceTab.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_transduceTab.Parent" xml:space="preserve">
+	<value>m_operationsTabControl</value>
+  </data>
+  <data name="&gt;&gt;m_transduceTab.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_findReplaceSummaryLabel.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 12pt, style=Bold</value>
+  </data>
+  <data name="m_findReplaceSummaryLabel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>275, 72</value>
+  </data>
+  <data name="m_findReplaceSummaryLabel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>215, 56</value>
+  </data>
+  <data name="m_findReplaceSummaryLabel.TabIndex" type="System.Int32, mscorlib">
+	<value>17</value>
+  </data>
+  <data name="m_findReplaceSummaryLabel.Text" xml:space="preserve">
+	<value>Replace o: with oo</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceSummaryLabel.Name" xml:space="preserve">
+	<value>m_findReplaceSummaryLabel</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceSummaryLabel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceSummaryLabel.Parent" xml:space="preserve">
+	<value>m_findReplaceTab</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceSummaryLabel.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_findReplaceSetupButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>175, 72</value>
+  </data>
+  <data name="m_findReplaceSetupButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>100, 23</value>
+  </data>
+  <data name="m_findReplaceSetupButton.TabIndex" type="System.Int32, mscorlib">
+	<value>16</value>
+  </data>
+  <data name="m_findReplaceSetupButton.Text" xml:space="preserve">
+	<value>Setup...</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceSetupButton.Name" xml:space="preserve">
+	<value>m_findReplaceSetupButton</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceSetupButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceSetupButton.Parent" xml:space="preserve">
+	<value>m_findReplaceTab</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceSetupButton.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_findReplaceTargetCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 72</value>
+  </data>
+  <data name="m_findReplaceTargetCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>155, 21</value>
+  </data>
+  <data name="m_findReplaceTargetCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceTargetCombo.Name" xml:space="preserve">
+	<value>m_findReplaceTargetCombo</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceTargetCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceTargetCombo.Parent" xml:space="preserve">
+	<value>m_findReplaceTab</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceTargetCombo.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="label12.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label12.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 50</value>
+  </data>
+  <data name="label12.Size" type="System.Drawing.Size, System.Drawing">
+	<value>66, 13</value>
+  </data>
+  <data name="label12.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="label12.Text" xml:space="preserve">
+	<value>Target Field:</value>
+  </data>
+  <data name="label12.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label12.Name" xml:space="preserve">
+	<value>label12</value>
+  </data>
+  <data name="&gt;&gt;label12.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label12.Parent" xml:space="preserve">
+	<value>m_findReplaceTab</value>
+  </data>
+  <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="m_findReplaceTab.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 4</value>
+  </data>
+  <data name="m_findReplaceTab.Size" type="System.Drawing.Size, System.Drawing">
+	<value>728, 142</value>
+  </data>
+  <data name="m_findReplaceTab.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="m_findReplaceTab.Text" xml:space="preserve">
+	<value>Bulk Replace</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceTab.Name" xml:space="preserve">
+	<value>m_findReplaceTab</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceTab.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceTab.Parent" xml:space="preserve">
+	<value>m_operationsTabControl</value>
+  </data>
+  <data name="&gt;&gt;m_findReplaceTab.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="label13.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="label13.Location" type="System.Drawing.Point, System.Drawing">
+	<value>7, 50</value>
+  </data>
+  <data name="label13.Size" type="System.Drawing.Size, System.Drawing">
+	<value>74, 13</value>
+  </data>
+  <data name="label13.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="label13.Text" xml:space="preserve">
+	<value>Item to delete:</value>
+  </data>
+  <data name="label13.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>MiddleRight</value>
+  </data>
+  <data name="&gt;&gt;label13.Name" xml:space="preserve">
+	<value>label13</value>
+  </data>
+  <data name="&gt;&gt;label13.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label13.Parent" xml:space="preserve">
+	<value>m_deleteTab</value>
+  </data>
+  <data name="&gt;&gt;label13.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="m_deleteWhatCombo.Location" type="System.Drawing.Point, System.Drawing">
+	<value>8, 72</value>
+  </data>
+  <data name="m_deleteWhatCombo.Size" type="System.Drawing.Size, System.Drawing">
+	<value>155, 21</value>
+  </data>
+  <data name="m_deleteWhatCombo.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;m_deleteWhatCombo.Name" xml:space="preserve">
+	<value>m_deleteWhatCombo</value>
+  </data>
+  <data name="&gt;&gt;m_deleteWhatCombo.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=5.5.0.33554, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_deleteWhatCombo.Parent" xml:space="preserve">
+	<value>m_deleteTab</value>
+  </data>
+  <data name="&gt;&gt;m_deleteWhatCombo.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_deleteTab.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 4</value>
+  </data>
+  <data name="m_deleteTab.Size" type="System.Drawing.Size, System.Drawing">
+	<value>728, 142</value>
+  </data>
+  <data name="m_deleteTab.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="m_deleteTab.Text" xml:space="preserve">
+	<value>Delete</value>
+  </data>
+  <data name="&gt;&gt;m_deleteTab.Name" xml:space="preserve">
+	<value>m_deleteTab</value>
+  </data>
+  <data name="&gt;&gt;m_deleteTab.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_deleteTab.Parent" xml:space="preserve">
+	<value>m_operationsTabControl</value>
+  </data>
+  <data name="&gt;&gt;m_deleteTab.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="m_operationsTabControl.Font" type="System.Drawing.Font, System.Drawing">
+	<value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="m_operationsTabControl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>0, 0</value>
+  </data>
+  <data name="m_operationsTabControl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>736, 168</value>
+  </data>
+  <data name="m_operationsTabControl.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;m_operationsTabControl.Name" xml:space="preserve">
+	<value>m_operationsTabControl</value>
+  </data>
+  <data name="&gt;&gt;m_operationsTabControl.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.VSTabControl, Widgets, Version=5.5.0.20802, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_operationsTabControl.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_operationsTabControl.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <metadata name="m_imageList16x14.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="m_imageList16x14.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
+	<value>
+		AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+		LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+		ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAA4
+		BwAAAk1TRnQBSQFMAwEBAAEEAQABBAEAARABAAENAQAE/wEJAQAI/wFCAU0BNgEEBgABNgEEAgABKAMA
+		AUADAAENAwABAQEAAQgFAAFAAQMYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHA
+		AQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEAAykBAANVAQADTQEAA0IBAAM5
+		AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMA
+		AWYDAAGZAwABzAIAATMDAAIzAgABMwFmAgABMwGZAgABMwHMAgABMwH/AgABZgMAAWYBMwIAAmYCAAFm
+		AZkCAAFmAcwCAAFmAf8CAAGZAwABmQEzAgABmQFmAgACmQIAAZkBzAIAAZkB/wIAAcwDAAHMATMCAAHM
+		AWYCAAHMAZkCAALMAgABzAH/AgAB/wFmAgAB/wGZAgAB/wHMAQABMwH/AgAB/wEAATMBAAEzAQABZgEA
+		ATMBAAGZAQABMwEAAcwBAAEzAQAB/wEAAf8BMwIAAzMBAAIzAWYBAAIzAZkBAAIzAcwBAAIzAf8BAAEz
+		AWYCAAEzAWYBMwEAATMCZgEAATMBZgGZAQABMwFmAcwBAAEzAWYB/wEAATMBmQIAATMBmQEzAQABMwGZ
+		AWYBAAEzApkBAAEzAZkBzAEAATMBmQH/AQABMwHMAgABMwHMATMBAAEzAcwBZgEAATMBzAGZAQABMwLM
+		AQABMwHMAf8BAAEzAf8BMwEAATMB/wFmAQABMwH/AZkBAAEzAf8BzAEAATMC/wEAAWYDAAFmAQABMwEA
+		AWYBAAFmAQABZgEAAZkBAAFmAQABzAEAAWYBAAH/AQABZgEzAgABZgIzAQABZgEzAWYBAAFmATMBmQEA
+		AWYBMwHMAQABZgEzAf8BAAJmAgACZgEzAQADZgEAAmYBmQEAAmYBzAEAAWYBmQIAAWYBmQEzAQABZgGZ
+		AWYBAAFmApkBAAFmAZkBzAEAAWYBmQH/AQABZgHMAgABZgHMATMBAAFmAcwBmQEAAWYCzAEAAWYBzAH/
+		AQABZgH/AgABZgH/ATMBAAFmAf8BmQEAAWYB/wHMAQABzAEAAf8BAAH/AQABzAEAApkCAAGZATMBmQEA
+		AZkBAAGZAQABmQEAAcwBAAGZAwABmQIzAQABmQEAAWYBAAGZATMBzAEAAZkBAAH/AQABmQFmAgABmQFm
+		ATMBAAGZATMBZgEAAZkBZgGZAQABmQFmAcwBAAGZATMB/wEAApkBMwEAApkBZgEAA5kBAAKZAcwBAAKZ
+		Af8BAAGZAcwCAAGZAcwBMwEAAWYBzAFmAQABmQHMAZkBAAGZAswBAAGZAcwB/wEAAZkB/wIAAZkB/wEz
+		AQABmQHMAWYBAAGZAf8BmQEAAZkB/wHMAQABmQL/AQABzAMAAZkBAAEzAQABzAEAAWYBAAHMAQABmQEA
+		AcwBAAHMAQABmQEzAgABzAIzAQABzAEzAWYBAAHMATMBmQEAAcwBMwHMAQABzAEzAf8BAAHMAWYCAAHM
+		AWYBMwEAAZkCZgEAAcwBZgGZAQABzAFmAcwBAAGZAWYB/wEAAcwBmQIAAcwBmQEzAQABzAGZAWYBAAHM
+		ApkBAAHMAZkBzAEAAcwBmQH/AQACzAIAAswBMwEAAswBZgEAAswBmQEAA8wBAALMAf8BAAHMAf8CAAHM
+		Af8BMwEAAZkB/wFmAQABzAH/AZkBAAHMAf8BzAEAAcwC/wEAAcwBAAEzAQAB/wEAAWYBAAH/AQABmQEA
+		AcwBMwIAAf8CMwEAAf8BMwFmAQAB/wEzAZkBAAH/ATMBzAEAAf8BMwH/AQAB/wFmAgAB/wFmATMBAAHM
+		AmYBAAH/AWYBmQEAAf8BZgHMAQABzAFmAf8BAAH/AZkCAAH/AZkBMwEAAf8BmQFmAQAB/wKZAQAB/wGZ
+		AcwBAAH/AZkB/wEAAf8BzAIAAf8BzAEzAQAB/wHMAWYBAAH/AcwBmQEAAf8CzAEAAf8BzAH/AQAC/wEz
+		AQABzAH/AWYBAAL/AZkBAAL/AcwBAAJmAf8BAAFmAf8BZgEAAWYC/wEAAf8CZgEAAf8BZgH/AQAC/wFm
+		AQABIQEAAaUBAANfAQADdwEAA4YBAAOWAQADywEAA7IBAAPXAQAD3QEAA+MBAAPqAQAD8QEAA/gBAAHw
+		AfsB/wEAAaQCoAEAA4ADAAH/AgAB/wMAAv8BAAH/AwAB/wEAAf8BAAL/AgAD/wEAB/8B/Aj/MAAH/wP8
+		Bv8wAAj/BPwE/zAACP8G/AL/MAAQ/DAAEPwwAAj/BvwC/zAACP8E/AT/MAAH/wP8Bv8wAAf/AfwI/zAA
+		EP8wABD/MAAQ/zAAAUIBTQE+BwABPgMAASgDAAFAAwABDQMAAQEBAAEBBQABaBcAA/9pAAs=
+</value>
+  </data>
+  <data name="m_helpButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>500, 105</value>
+  </data>
+  <data name="m_helpButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_helpButton.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="m_helpButton.Text" xml:space="preserve">
+	<value>Help</value>
+  </data>
+  <data name="&gt;&gt;m_helpButton.Name" xml:space="preserve">
+	<value>m_helpButton</value>
+  </data>
+  <data name="&gt;&gt;m_helpButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_helpButton.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_helpButton.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="m_previewButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>500, 39</value>
+  </data>
+  <data name="m_previewButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_previewButton.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="m_previewButton.Text" xml:space="preserve">
+	<value>Preview</value>
+  </data>
+  <data name="&gt;&gt;m_previewButton.Name" xml:space="preserve">
+	<value>m_previewButton</value>
+  </data>
+  <data name="&gt;&gt;m_previewButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_previewButton.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_previewButton.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="m_ApplyButton.Location" type="System.Drawing.Point, System.Drawing">
+	<value>500, 72</value>
+  </data>
+  <data name="m_ApplyButton.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="m_ApplyButton.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
+  </data>
+  <data name="m_ApplyButton.Text" xml:space="preserve">
+	<value>Apply</value>
+  </data>
+  <data name="&gt;&gt;m_ApplyButton.Name" xml:space="preserve">
+	<value>m_ApplyButton</value>
+  </data>
+  <data name="&gt;&gt;m_ApplyButton.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_ApplyButton.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_ApplyButton.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+	<value>744, 171</value>
+  </data>
+  <data name="&gt;&gt;m_imageList16x16.Name" xml:space="preserve">
+	<value>m_imageList16x16</value>
+  </data>
+  <data name="&gt;&gt;m_imageList16x16.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_imageList16x14.Name" xml:space="preserve">
+	<value>m_imageList16x14</value>
+  </data>
+  <data name="&gt;&gt;m_imageList16x14.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>BulkEditBar</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

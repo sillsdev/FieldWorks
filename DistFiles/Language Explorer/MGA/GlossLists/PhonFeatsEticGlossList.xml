@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE eticGlossList
+  SYSTEM "eticGlossList.dtd">
+<eticGlossList expandAll="true" afterSeparator="." complexNameFirst="yes" complexNameSeparator=":">
+   <item id="gPAPhonFeatures" type="group">
+	  <abbrev ws="en">all</abbrev>
+	  <term ws="en">All phonological features</term>
+	  <def ws="en">Selecting this check box selects all the features in this catalog; if you clear this check box all the features are cleared.   The features below are also included as binary features in the Phonology Assistant program.   Note that we offer these features as a potential convenience to you. The exact set of features you need may well be different. We recognize that there is still debate about the best set of features to use.</def>
+	  <citation>[http://www.sil.org/computing/pa/] Date accessed: 12-Feb-2009</citation>
+	  <item id="gPAMajorClassFeature" posid="Adjective" status="visible" type="group">
+		 <abbrev ws="en">mcf</abbrev>
+		 <term ws="en">major class features</term>
+		 <def ws="en">“The features that represent the major classes of sounds.”</def>
+		 <citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 <item id="fPAConsonantal" type="feature">
+			<abbrev ws="en">cons</abbrev>
+			<term ws="en">consonantal</term>
+			<def ws="en">“Consonantal segments are produced with an audible constriction in the vocal tract, like plosives, affricates, fricatives, nasals, laterals and [r]. Vowels, glides and laryngeal segments are not consonantal.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPASonorant" type="feature">
+			<abbrev ws="en">son</abbrev>
+			<term ws="en">sonorant</term>
+			<def ws="en">“This feature describes the type of oral constriction that can occur in the vocal tract. [+son] designates the vowels and sonorant consonants, which are produced without the imbalance of air pressure in the vocal tract that might cause turbulence. [-son] alternatively describes the obstruents, articulated with a noticeable turbulence caused by an imbalance of air pressure in the vocal tract.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPASyllabic" type="feature">
+			<abbrev ws="en">syl</abbrev>
+			<term ws="en">syllabic</term>
+			<def ws="en">“Syllabic segments may function as the nucleus of a syllable, while their counterparts, the [-syl] segments, may not.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+	  </item>
+	  <item id="gPALaryngealFeatures" posid="Adjective" status="visible" type="group">
+		 <abbrev ws="en">lf</abbrev>
+		 <term ws="en">laryngeal features</term>
+		 <def ws="en">“The features that specify the glottal states of sounds.”</def>
+		 <citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 <item id="fPAVoice" type="feature">
+			<abbrev ws="en">voice</abbrev>
+			<term ws="en">voice</term>
+			<def ws="en">“This feature indicates whether vibration of the vocal folds occurs with the articulation of the segment.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPASpreadGlottis" type="feature">
+			<abbrev ws="en">sg</abbrev>
+			<term ws="en">spread glottis</term>
+			<def ws="en">“Used to indicate the aspiration of a segment, this feature denotes the openness of the glottis. For [+sg] the vocal folds are spread apart wide enough for frication to occur; for [-sg] there is not the same friction-inducing spreading.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPAConstrictedGlottis" type="feature">
+			<abbrev ws="en">cg</abbrev>
+			<term ws="en">constricted glottis</term>
+			<def ws="en">“The constricted glottis features denotes the degree of closure of the glottis. [+cg] implies that the vocal folds are held closely together, enough so that air cannot pass through momentarily. [-cg] implies the opposite.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+	  </item>
+	  <item id="gPAMannerFeatures" posid="Adjective" status="visible" type="group">
+		 <abbrev ws="en">mf</abbrev>
+		 <term ws="en">manner features</term>
+		 <def ws="en">“The features that specify the manner of articulation.”</def>
+		 <citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 <item id="fPAContinuant" type="feature">
+			<abbrev ws="en">cont</abbrev>
+			<term ws="en">continuant</term>
+			<def ws="en">“Continuant features describe the passage of air through the vocal tract. [+cont] segments are produced without any significant obstruction in the tract, and so air passes through in a continuous stream. [-cont] segments on the other hand have such an obstruction, and so occlude the air flow at some point of articulation.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPANasal" type="feature">
+			<abbrev ws="en">nas</abbrev>
+			<term ws="en">nasal</term>
+			<def ws="en">“This feature describes the position of the velum. [+nas] segments are produced by lowering the velum so that air can pass through the nasal tract. [-nas] segments conversely are produced with a raised velum, blocking the passages of air to the nasal tract and shunting it to the oral tract.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPAStrident" type="feature">
+			<abbrev ws="en">str</abbrev>
+			<term ws="en">strident</term>
+			<def ws="en">“The strident feature applies to obstruents only and refers to a type of friction that is noisier that [sic] usual. This is caused by high energy white noise.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPALateral" type="feature">
+			<abbrev ws="en">lat</abbrev>
+			<term ws="en">lateral</term>
+			<def ws="en">“This feature designates the shape and positioning of the tongue with respect to the oral tract. [+lat] segments are produced as the center of the tongue rises to contact the roof of the mouth, thereby blocking air from flowing centrally through the oral tract and instead forcing more lateral flow along the lowered side(s) of the tongue.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPADelayedRelease" type="feature">
+			<abbrev ws="en">dr</abbrev>
+			<term ws="en">delayed release</term>
+			<def ws="en">“This feature distinguishes stops from affricates. Affricates are designated [+dr].”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPAApproximant" type="feature">
+			<abbrev ws="en">approx</abbrev>
+			<term ws="en">approximant</term>
+			<def ws="en">A “[f]rictionless continuant. [A] consonantal sound articulated in a manner involving an opening in the oral tract not radical enough to produce audible friction.”</def>
+			<citation>Pullum &amp; Ladusaw (1986:233)</citation>
+		 </item>
+		 <item id="fPAImplosive" type="feature">
+			<abbrev ws="en">implosive</abbrev>
+			<term ws="en">implosive</term>
+			<def ws="en">“Stop consonant formed with a glottalic ingressive airstream, tat is, with inflowing release of air using suction developed by downward movement of the larynx while another complete obstruction is maintained further forward in the oral tract.”</def>
+			<citation>Pullum &amp; Ladusaw (1986;236)</citation>
+		 </item>
+	  </item>
+	  <item id="gPAPlaceFeatures" posid="Adjective" status="visible" type="group">
+		 <abbrev ws="en">plf</abbrev>
+		 <term ws="en">place features</term>
+		 <def ws="en">“The features that specify the place of articulation. ”</def>
+		 <citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 <item id="fPALabial" type="feature">
+			<abbrev ws="en">lab</abbrev>
+			<term ws="en">labial</term>
+			<def ws="en">“Labial segments are articulated with the lips.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPALabioDental" type="feature">
+			<abbrev ws="en">labio-dental</abbrev>
+			<term ws="en">labio-dental</term>
+			<def ws="en">“Articulated by bringing the lower lip into contact with the upper teeth.”</def>
+			<citation>Pullum &amp; Ladusaw (1986:237)</citation>
+		 </item>
+		 <item id="fPARound" type="feature">
+			<abbrev ws="en">rnd</abbrev>
+			<term ws="en">round</term>
+			<def ws="en">“[+round] are produced with lip rounding. [-round] are not.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPACoronal" type="feature">
+			<abbrev ws="en">cor</abbrev>
+			<term ws="en">coronal</term>
+			<def ws="en">“Coronal sounds are articulated with the tip and/or blade of the tongue.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPAAnterior" type="feature">
+			<abbrev ws="en">ant</abbrev>
+			<term ws="en">anterior</term>
+			<def ws="en">“Anterior segments are articulated with the tip or blade of the tongue at or in front of the alveolar ridge.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPADistributed" type="feature">
+			<abbrev ws="en">dist</abbrev>
+			<term ws="en">distributed</term>
+			<def ws="en">“For [+dist] segments the tongue is extended for some distance in the mouth.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPADorsal" type="feature">
+			<abbrev ws="en">dor</abbrev>
+			<term ws="en">dorsal</term>
+			<def ws="en">“Dorsal sounds are articulated by raising the dorsum of the tongue. All vowels are DORSAL sounds.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPAHigh" type="feature">
+			<abbrev ws="en">high</abbrev>
+			<term ws="en">high</term>
+			<def ws="en">“[+high] segments raise the dorsum close to the palate. [-high] segments do not.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPALow" type="feature">
+			<abbrev ws="en">low</abbrev>
+			<term ws="en">low</term>
+			<def ws="en">“[+low] segments bunch the dorsum to a position low in the mouth.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPAFront" type="feature">
+			<abbrev ws="en">front</abbrev>
+			<term ws="en">front</term>
+			<def ws="en">“(Of vowels) Articulated with the highest point of the tongue in the front region of the mouth, i.e. below the hard palate.”</def>
+			<citation>Pullum &amp; Ladusaw (1986:236)</citation>
+		 </item>
+		 <item id="fPABack" type="feature">
+			<abbrev ws="en">back</abbrev>
+			<term ws="en">back</term>
+			<def ws="en">“[+back] segments are produced with the tongue dorsum bunched and retracted slightly to the back of the mouth. [-back] segments are bunched and extended slightly forward.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPATense" type="feature">
+			<abbrev ws="en">tense</abbrev>
+			<term ws="en">tense</term>
+			<def ws="en">“This feature (mainly) applies to the position of the root of the tongue when articulating vowels. [+tense] vowels have an advanced tongue root. In fact, this feature is often referred to as Advanced tongue root, though there is a debate on whether tense and ATR are same or different features.”</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
+		 </item>
+		 <item id="fPAATR" type="feature">
+			<abbrev ws="en">ATR</abbrev>
+			<term ws="en">advanced tongue root</term>
+			<def ws="en">“This feature (mainly) applies to the position of the root of the tongue when articulating vowels.” See also tense.</def>
+			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature]</citation>
+		 </item>
+		 <item id="fPARTR" type="feature">
+			<abbrev ws="en">RTR</abbrev>
+			<term ws="en">retracted tongue root</term>
+			<def ws="en">Possibly related to ATR and tense. “[+ATR] involves a forward position of the tongue body, with concomitant enlargement of the pharynx, while [+RTR] involves a retraction and lowering of the tongue body, with concomitant narrowing of the pharynx.”</def>
+			<citation>Gussenhoven &amp; Jacobs (2005:69)</citation>
+		 </item>
+		 <item id="fPAPharyngeal" type="feature">
+			<abbrev ws="en">phar</abbrev>
+			<term ws="en">pharyngeal</term>
+			<def ws="en">"Pharyngeals are formed by a constiction at the back wall of the pharynx with the root of the tongue.”</def>
+			<citation>Kenstowicz (1994:32)</citation>
+		 </item>
+	  </item>
+	  <item id="gPAProsodicFeatures" posid="Adjective" status="visible" type="group">
+		 <abbrev ws="en">prf</abbrev>
+		 <term ws="en">prosodic features</term>
+		 <def ws="en">Prosodic-oriented features</def>
+		 <citation>Durand, Jacques (1990:58)</citation>
+		 <item id="fPALong" type="feature">
+			<abbrev ws="en">long</abbrev>
+			<term ws="en">long</term>
+			<def ws="en">“This feature applies to long vs. short segments and is often in competition with [+/-tense].”</def>
+			<citation>Durand, Jacques (1990:58)</citation>
+		 </item>
+	  </item>
+   </item>
+</eticGlossList>

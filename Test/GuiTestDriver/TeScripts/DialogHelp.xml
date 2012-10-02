@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?-->
+<accil>
+  <!-- Launch each dialog with a help button, click it,           verify it is the right help topic then close the help window           ready for the next. -->
+  <var id = "projectName" set = "&quot;TestLangProj&quot;"/>
+  <sound frequency = "700" duration = "500"/>
+  <!--Start TE with "TestLangProj" project loaded -->
+  <on-application          gui = "TE"          run = "ok"          args = "-db $projectName"          close = "no"          on-fail = "assert">
+	<include from = "IncStartUp.xml"/>
+	<model log="all" select="menubar//dialog[@title=//*[@role='dialog']/@title]">
+	  <click path="$guiPath"/>
+	  <var id="title" select="@title"/>
+	  <var id="tab" select="@tab" when="exists"/>
+	  <if>
+		<condition of="$tab" is="'#not-exists#'"/>
+		<then>
+		  <var id="xPath" set="//*[@role='dialog' and @title='$title;']//help[dialog]"/>
+		  <var id="close" set="//*[@role='dialog' and @title='$title;']//cancel"/>
+		</then>
+		<else>
+		  <var id="xPath" set="//*[@role='dialog' and @title='$title;']//*[@role='tab' and @name='$tab;']//help[dialog]"/>
+		  <var id="close" set="//*[@role='dialog' and @title='$title;']//*[@role='tab' and @name='$tab;']//close"/>
+		</else>
+	  </if>
+	  <model select="$xPath">
+		<!-- Help button context -->
+		<var id="diaName" select="./ancestor::*[@role='dialog']/@name" when="exists"/>
+		<if>
+		  <condition of="$diaName" is="'#not-exists#'"/>
+		  <then>
+			<on-dialog title="$title">
+			  <if>
+				<condition of="$tab" is="'#not-exists#'"/>
+				<else>
+				  <click select="./ancestor::*[@role='tab']/tab"/>
+				</else>
+			  </if>
+			  <click path="$guiPath"/>
+			  <on-dialog title="FieldWorks Translation Editor Help">
+				<var id="topic" select="dialog/@topic-path"/>
+				<glimpse wait="1000" path="36:$topic" prop="selected"/>
+				<insert wait="1000">%{F4}</insert>
+			  </on-dialog>
+			  <click select="$close"/>
+			</on-dialog>
+		  </then>
+		  <else>
+			<on-dialog title="$title" name="$diaName">
+			  <if>
+				<condition of="$tab" is="'#not-exists#'"/>
+				<else>
+				  <click select="./ancestor::*[@role='tab']/tab"/>
+				</else>
+			  </if>
+			  <click path="$guiPath"/>
+			  <on-dialog title="FieldWorks Translation Editor Help">
+				<var id="topic" select="dialog/@topic-path"/>
+				<glimpse wait="1000" path="36:$topic" prop="selected"/>
+				<insert wait="1000">%{F4}</insert>
+			  </on-dialog>
+			  <click select="$close"/>
+			</on-dialog>
+		  </else>
+		</if>
+	  </model>
+	</model>
+  </on-application>
+</accil>

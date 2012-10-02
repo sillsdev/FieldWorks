@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reusableControls>
+	<control id="TextPaneBarList">
+		<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+		<parameters id="textsChooser">
+			<control>
+				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
+				<parameters id="textsChooser" clerk="interlinearTexts" filterBar="true" treeBarAvailability="NotAllowed" defaultCursor="Arrow" altTitleId="Text-Plural" editable="false">
+					<columns>
+						<column label="Title" width="144000" chooserFilter="special">
+							<dynamicloaderinfo assemblyPath="ITextdll.dll" class="SIL.FieldWorks.IText.TextsFilterItem" />
+							<string field="Title" ws="$ws=best vernoranal"/>
+						</column>
+						<column label="Abbreviation" visibility="menu" width="72000">
+							<string field="TitleAbbreviation" ws="$ws=best vernoranal"/>
+						</column>
+						<column label="Source" visibility="menu" width="115000">
+							<string field="Source" ws="$ws=best vernoranal"/>
+						</column>
+						<column label="Is Translation" visibility="menu" width="72000" blankPossible="false" sortType="YesNo">
+							<if field="IsTranslation" boolequals="false">
+								<lit>no</lit>
+							</if>
+							<if field="IsTranslation" boolequals="true">
+								<lit>yes</lit>
+							</if>
+						</column>
+						<column label="Genres" visibility="menu" chooserFilter="complexListMultiple" field="StText.GenreCategories" list="GenreList" width="115000">
+							<span>
+								<properties>
+									<editable value="false"/>
+								</properties>
+								<seq field="GenreCategories" layout="Name" sep=", "/>
+							</span>
+						</column>
+						<column label="Comment" visibility="menu" width="144000">
+							<string field="Comment" ws="$ws=best analorvern"/>
+						</column>
+					</columns>
+				</parameters>
+			</control>
+		</parameters>
+	</control>
+</reusableControls>

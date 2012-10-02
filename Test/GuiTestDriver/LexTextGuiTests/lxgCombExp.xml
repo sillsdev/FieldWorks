@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+   <goal>Exercises Lexicon Edit regular expression combinations</goal>
+
+	<bug id="LT-9688" desc="Lexicon Filter Crashes" />
+
+<!--Tests regular expression combinations in Lexicon Edit-->
+<!--Assumes Kalaba Database-->
+<!--Assumes Lexeme is second column in Lexicon Edit pane and triangle is pointing up-->
+<!--   The results need the data to be sorted by Headword, if this changes, so do the expected results -->
+<!-- Read "headword" instead of Lexeme: this test uses the Headword column -->
+
+ <!-- 1. Start Flex on Kalaba -->
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+<on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+ <!-- 2. Go to Lexicon/Lexicon Edit -->
+	   <click select="menubar/view/lexicon/lexicon-edit"/>
+
+<!-- reset combo box to show all -->
+		  <click select="toolbar/view/no-filters"/>
+
+<model select="lexicon-edit[@role='view']">
+
+<!-- Force sort on headword -->
+   <click select="entries/col/header" path="Headword"/>
+		  <click select="//toolbar/standard/first"/>
+			<var id="row" set="1"/>
+			<var id="col" set="1"/>
+   <glimpse id="sortHw" select="entries/record/col" prop="value" expect="-bi" on-fail="skip" />
+   <if><condition of="$sortHw" is="false"/>
+   <then>
+	  <click select="entries/col/header" path="Headword"/>
+	  <click select="//toolbar/standard/first"/>
+   </then>
+   </if>
+   <glimpse id="HWnotSorted" select="entries/record/col" prop="value" expect="-bi" />
+
+ <!-- 3. Bring up Lexeme Filter For dialog box -->
+	 <click select="entries/col/filter/text"/>
+	<insert wait="1000">f</insert>   <!-- Filter For... -->
+	<insert wait="100">~</insert>
+
+
+ <!-- 4. Enter regular expression -->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <!--click path="20:RootSite/$Text"/>
+	 <insert wait="300">{END}+{HOME}</insert-->
+	 <insert wait="300">\d$</insert>
+	 <var id="fltMatchRegExp" set="9:Match for regular expression/45:Match for regular expression"/>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+ <!-- 5. Check results of search-->
+	<click select="//toolbar/standard/first"/>
+	<glimpse id="word1" select="entries/record/col" prop="value" expect="dok1"/>
+
+
+<!-- turn filter off -->
+	 <click select="entries/col/filter/text"/>
+	<insert wait="1000">s</insert>   <!-- Filter For... -->
+	<insert wait="100">~</insert>
+
+ <!-- Insert new entry -->
+	<click wait="2000" select="//toolbar/insert/new-entry"/>
+
+   <on-dialog select="//new-entry[@role='dialog']">
+	  <insert>liklik</insert>
+	  <click path="$create"/>
+	</on-dialog>
+
+ <!-- 3. Bring up Lexeme Filter For dialog box -->
+	 <click select="entries/col/filter/text"/>
+	<insert wait="1000">f</insert>   <!-- Filter For... -->
+	<insert wait="100">~</insert>
+
+ <!-- 4. Enter regular expression -->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>\b{(}\w{+}{)}{+}\1\b</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+ <!-- 5. Check results of search-->
+	<click select="//toolbar/standard/first"/>
+	<glimpse id="word2" select="entries/record/col" prop="value" expect="liklik"/>
+
+ <!-- delete entry-->
+	<click select="entries/record/col"/>
+	<click select="//toolbar/standard/delete"/>
+	<insert>d</insert>
+
+
+ <!-- 3. Bring up Lexeme Filter For dialog box -->
+	 <click select="entries/col/filter/text"/>
+	<insert wait="1000">f</insert>   <!-- Filter For... -->
+	<insert wait="100">~</insert>
+
+ <!-- 4. Enter regular expression to find words with an 'o' but not as the first character -->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>.{+}o</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+ <!-- 5. Check results of search-->
+	<click select="//toolbar/standard/first"/>
+	<glimpse id="word3" select="entries/record/col" prop="value" expect="CV reduplication"/>
+
+
+ <!-- 3. Bring up Lexeme Filter For dialog box -->
+	 <click select="entries/col/filter/text"/>
+	<insert wait="1000">f</insert>   <!-- Filter For... -->
+	<insert wait="100">~</insert>
+
+ <!-- 4. Enter regular expression finds words with an 'l' in them -->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>.?{+}l</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+ <!-- 5. Check results of search-->
+	<click select="//toolbar/standard/first"/>
+	<glimpse id="word4" select="entries/record/col" prop="value" expect="CV reduplication"/>
+
+
+ <!-- 3. Bring up Lexeme Filter For dialog box -->
+	 <click select="entries/col/filter/text"/>
+	<insert wait="1000">f</insert>   <!-- Filter For... -->
+	<insert wait="100">~</insert>
+
+ <!-- 4. Enter regular expression -->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert wait="500">l{[}+6i{]}</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+ <!-- 5. Check results of search-->
+	<click select="//toolbar/standard/first"/>
+	<glimpse id="word5" select="entries/record/col" prop="value" expect="hi&#x14B;gelra"/>
+
+<!-- 3. Bring up Lexeme Filter For dialog box -->
+	 <click select="entries/col/filter/text"/>
+	<insert wait="1000">f</insert>   <!-- Filter For... -->
+	<insert wait="100">~</insert>
+
+ <!-- 4. Enter regular expression -->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>{(}.{+}{)}{(}e{)}{(}.{+}{)}</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+ <!-- 5. Check results of search-->
+	<click select="//toolbar/standard/first"/>
+	<glimpse id="word6" select="entries/record/col" prop="value" expect="CV reduplication"/>
+
+
+<!-- 3. Bring up Lexeme Filter For dialog box -->
+	 <click select="entries/col/filter/text"/>
+	<insert wait="1000">f</insert>   <!-- Filter For... -->
+	<insert wait="100">~</insert>
+
+ <!-- 4. Enter regular expression -->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>{[}tnl{]}{{}2{}}</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+ <!-- 5. Check results of search-->
+	<click select="//toolbar/standard/first"/>
+	<glimpse id="word7" select="entries/record/col" prop="value" expect="hinliksa"/>
+
+<!-- 3. Bring up Lexeme Filter For dialog box -->
+	 <click select="entries/col/filter/text"/>
+	<insert wait="1000">f</insert>   <!-- Filter For... -->
+	<insert wait="100">~</insert>
+
+ <!-- 4. Enter regular expression -->
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+	 <insert>{[}aeiou{]}{+}.{+}{[}aeiou{]}</insert>
+	 <click path="$fltMatchRegExp"/>
+	 <click path="$ok"/>
+	</on-dialog>
+
+ <!-- 5. Check results of search-->
+	<click select="//toolbar/standard/first"/>
+	<glimpse id="word8" select="entries/record/col" prop="value" expect="CV reduplication"/>
+
+<!-- reset combo box to show all -->
+		  <click select="//toolbar/view/no-filters"/>
+			<var id="ind" set="*"/>
+		  <click select="entry/slice/lexeme-form/data"/>
+
+</model>
+
+  </on-application>
+</accil>

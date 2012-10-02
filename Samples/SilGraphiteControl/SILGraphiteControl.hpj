@@ -1,0 +1,20 @@
+[OPTIONS]
+CONTENTS=main_index
+TITLE=SILGraphiteControl Control Help
+COMPRESS=true
+WARNING=2
+HLP=SILGraphiteControl.hlp
+ERRORLOG=SILGraphiteControl.log
+
+[FILES]
+hlp\SILGraphiteControl.rtf
+
+[BITMAPS]
+; miscellaneous
+hlp\Bullet.bmp
+
+[ALIAS]
+HIDD_ABOUTBOX_SILGRAPHITECONTROL = HID_APP_ABOUT_SILGRAPHITECONTROL
+
+[MAP]
+#include <hlp\SILGraphiteControl.hm>

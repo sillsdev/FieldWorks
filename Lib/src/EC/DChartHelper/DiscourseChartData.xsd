@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema targetNamespace="http://www.sil.org/computing/schemas/DiscourseChartData.xsd" elementFormDefault="qualified"
+	xmlns="http://www.sil.org/computing/schemas/DiscourseChartData.xsd" xmlns:mstns="http://www.sil.org/computing/schemas/DiscourseChartData.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+	<xs:element name="DiscourseChartData">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Fonts" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="VernacularFont" type="FontInfo" minOccurs="1" maxOccurs="1" />
+							<xs:element name="TransliterationFont" type="FontInfo" minOccurs="1" maxOccurs="1" />
+							<xs:element name="GlossFont" type="FontInfo" minOccurs="1" maxOccurs="1" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="DiscourseClause" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Vernacular" minOccurs="1" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="PreS" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="Subject" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="X1" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="X2" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="Verb" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="PostS" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Transliteration" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="PreS" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="Subject" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="X1" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="X2" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="Verb" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="PostS" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Gloss" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="PreS" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="Subject" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="X1" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="X2" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="Verb" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+										<xs:element name="PostS" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FreeTranslation" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+						</xs:sequence>
+						<xs:attribute name="Ref" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="DisplayIndexRef" type="xs:int" default="0" msprop:nullValue="0" />
+			<xs:attribute name="DisplayIndexPreS" type="xs:int" default="1" msprop:nullValue="1" />
+			<xs:attribute name="DisplayIndexSubject" type="xs:int" default="2" msprop:nullValue="2" />
+			<xs:attribute name="DisplayIndexX1" type="xs:int" default="3" msprop:nullValue="3" />
+			<xs:attribute name="DisplayIndexX2" type="xs:int" default="4" msprop:nullValue="4" />
+			<xs:attribute name="DisplayIndexVerb" type="xs:int" default="5" msprop:nullValue="5" />
+			<xs:attribute name="DisplayIndexPostS" type="xs:int" default="6" msprop:nullValue="6" />
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="FontInfo">
+		<xs:sequence />
+		<xs:attribute name="FontName" type="xs:string" />
+		<xs:attribute name="FontSize" type="xs:float" />
+		<xs:attribute name="FontColor" type="xs:string" />
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,18 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<structure file="Source\HelpFile.xml">
+ <title tag="srchfd">HelpFile directory structure</title>
+ <index>
+  <li>Manual: HelpFile directory</li>
+ </index>
+ <description>
+  <p>The <b>HelpFiles directory</b> contains the same subdirectories as the User and TS directories. However, each (except XSL) initially contians onlly a single batch file. This file generates another batch file that actually transforms the XML primary source from the TS and User directories into HTML modules (topics).</p>
+  <p>It also generates the <link uri="ProjFiles.xml" type="module">help project files</link> for each subdirectory. These files can be concatenated together with some intervention to become the master project files found in the HelpFile directory (TestHelp.hh%).</p>
+  <p>Files in the HelpFiles folder are mostly hand-edited and should not be deleted.</p>
+  <p>Generated files are considered temporary.</p>
+ </description>
+ <seeAlso>
+  <li><link uri="..\XML\XML.xml" type="module">What is XML?</link></li>
+  <li><link uri="..\XML\XSL.xml" type="module">What is XSL?</link></li>
+  <li><link uri="..\XML\MarkUp.xml" type="module">What is HTML?</link></li>
+ </seeAlso>
+</structure>

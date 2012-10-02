@@ -1,0 +1,15 @@
+// Extracted from AfApp.rc
+kridDatePickDlg DIALOGEX 0, 0, 177, 118
+STYLE DS_CONTEXTHELP | WS_CHILD
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	COMBOBOX        kctidDpkPrecision,5,7,43,60,CBS_DROPDOWNLIST | WS_TABSTOP
+	COMBOBOX        kctidDpkMonth,49,7,37,125,CBS_DROPDOWNLIST | WS_TABSTOP
+	COMBOBOX        kctidDpkDay,88,7,37,289,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	EDITTEXT        kctidDpkYear,127,7,43,13,ES_AUTOHSCROLL
+	CONTROL         "Spin1",kctidDpkYearSpin,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,162,17,8,10
+	CONTROL         "MonthCalendar1",kctidDpkCalendar,"SysMonthCal32",MCS_NOTODAY | WS_TABSTOP,27,24,125,87
+	GROUPBOX        "",kctidDpkGroup,27,24,125,87
+	LTEXT           "No Calendar Available",kctidDpkNoCal,50,60,80,9
+END

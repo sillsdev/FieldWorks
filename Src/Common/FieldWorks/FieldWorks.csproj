@@ -1,0 +1,293 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.30729</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{7CE209AF-EB05-4584-9444-966C0978757F}</ProjectGuid>
+	<OutputType>WinExe</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace>SIL.FieldWorks</RootNamespace>
+	<AssemblyName>FieldWorks</AssemblyName>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<SccProjectName>SAK</SccProjectName>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccProvider>SAK</SccProvider>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<NoWin32Manifest>true</NoWin32Manifest>
+	<ApplicationIcon>BookOnCubeVersion.ico</ApplicationIcon>
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<OutputPath>..\..\..\Output\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>..\..\..\Output\Debug\FieldWorks.xml</DocumentationFile>
+	<ErrorReport>prompt</ErrorReport>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<UseVSHostingProcess>false</UseVSHostingProcess>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="BasicUtils, Version=6.1.1.30632, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="COMInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="CoreImpl, Version=6.9.4.17937, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO, Version=6.1.1.19928, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FdoUi, Version=7.0.1.19899, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	</Reference>
+	<Reference Include="FwControls, Version=6.1.1.19925, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+	</Reference>
+	<Reference Include="FwCoreDlgs, Version=6.1.1.27759, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+	</Reference>
+	<Reference Include="FwResources, Version=6.1.1.30858, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+	</Reference>
+	<Reference Include="FwUtils, Version=6.1.1.19918, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
+	</Reference>
+	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+	</Reference>
+	<Reference Include="PaToFdoInterfaces, Version=1.0.4031.20876, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\PaToFdoInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="Reporting, Version=1.0.3664.19926, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
+	</Reference>
+	<Reference Include="RootSite, Version=6.1.1.19944, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="SimpleRootSite, Version=6.1.1.19942, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	</Reference>
+	<Reference Include="System" />
+	<Reference Include="System.Configuration" />
+	<Reference Include="System.Core">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Data" />
+	<Reference Include="System.Deployment" />
+	<Reference Include="System.Drawing" />
+	<Reference Include="System.Net">
+	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Runtime.Remoting" />
+	<Reference Include="System.Runtime.Serialization">
+	  <RequiredTargetFramework>3.0</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.ServiceModel">
+	  <RequiredTargetFramework>3.0</RequiredTargetFramework>
+	</Reference>
+	<Reference Include="System.Windows.Forms" />
+	<Reference Include="System.Xml" />
+	<Reference Include="xCoreInterfaces, Version=6.1.1.19937, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+	</Reference>
+	<Reference Include="XMLUtils, Version=6.1.1.30855, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="xWorks, Version=6.1.1.27976, Culture=neutral, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
+	</Reference>
+	<Reference Include="Framework">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+	</Reference>
+	<Reference Include="Skybound.Gecko, Version=1.9.2.0, Culture=neutral, PublicKeyToken=3209ac31600d1857">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\DistFiles\Skybound.Gecko.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="ApplicationBusyDialog.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ApplicationBusyDialog.Designer.cs">
+	  <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
+	</Compile>
+	<Compile Include="FieldWorksManager.cs" />
+	<Compile Include="FwRestoreProjectSettings.cs" />
+	<Compile Include="LexicalProvider\LexicalProviderImpl.cs" />
+	<Compile Include="LexicalProvider\LexicalProviderManager.cs" />
+	<Compile Include="LexicalProvider\LexicalServiceProvider.cs" />
+	<Compile Include="MoveProjectsDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="MoveProjectsDlg.Designer.cs">
+	  <DependentUpon>MoveProjectsDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="PaObjects\PaCmPossibility.cs" />
+	<Compile Include="PaObjects\PaComplexFormInfo.cs" />
+	<Compile Include="PaObjects\PaLexEntry.cs" />
+	<Compile Include="PaObjects\PaLexicalInfo.cs" />
+	<Compile Include="PaObjects\PaLexPronunciation.cs" />
+	<Compile Include="PaObjects\PaLexSense.cs" />
+	<Compile Include="PaObjects\PaMediaFile.cs" />
+	<Compile Include="PaObjects\PaMultiString.cs" />
+	<Compile Include="PaObjects\PaRemoteRequest.cs" />
+	<Compile Include="PaObjects\PaVariant.cs" />
+	<Compile Include="PaObjects\PaVariantOfInfo.cs" />
+	<Compile Include="PaObjects\PaWritingSystem.cs" />
+	<Compile Include="LexicalProvider\ILexicalProvider.cs" />
+	<Compile Include="ProjectId.cs" />
+	<Compile Include="FieldWorks.cs" />
+	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="ProjectMatch.cs" />
+	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<Compile Include="Properties\Resources.Designer.cs">
+	  <DesignTime>True</DesignTime>
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>Resources.resx</DependentUpon>
+	</Compile>
+	<Compile Include="RemoteRequest.cs" />
+	<Compile Include="ShareProjectsFolderDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+	<Compile Include="ShareProjectsFolderDlg.Designer.cs">
+	  <DependentUpon>ShareProjectsFolderDlg.cs</DependentUpon>
+	</Compile>
+	<Compile Include="WelcomeToFieldWorksDlg.cs">
+	  <SubType>Form</SubType>
+	</Compile>
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\Framework\Framework.csproj">
+	  <Project>{C4A415C6-AB60-4118-BE82-5777C0877A8B}</Project>
+	  <Name>Framework</Name>
+	</ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+	<EmbeddedResource Include="ApplicationBusyDialog.resx">
+	  <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
+	</EmbeddedResource>
+	<EmbeddedResource Include="MoveProjectsDlg.resx">
+	  <DependentUpon>MoveProjectsDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="Properties\Resources.resx">
+	  <Generator>ResXFileCodeGenerator</Generator>
+	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	</EmbeddedResource>
+	<EmbeddedResource Include="ShareProjectsFolderDlg.resx">
+	  <DependentUpon>ShareProjectsFolderDlg.cs</DependentUpon>
+	  <SubType>Designer</SubType>
+	</EmbeddedResource>
+	<EmbeddedResource Include="WelcomeToFieldWorksDlg.resx">
+	  <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="BookOnCubeVersion.ico" />
+	<None Include="Resources\OpenFile.png" />
+	<None Include="Resources\DatabaseNew.png" />
+	<None Include="Resources\Download.png" />
+	<Content Include="SmallBookOnCubeVersion.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

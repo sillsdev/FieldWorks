@@ -1,0 +1,30 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<fact file="Bugs\PatList.xml">
+ <title tag="bugPL">Bug pattern list</title>
+ <index>
+  <li>bug pattern: list of</li>
+  <li>list of bugs</li>
+ </index>
+ <label name="List of Bug Patterns">
+  <p>The following is typical of a list of bug patterns extracted from the XML source of the testscripts. They are organized by library and shortened in form to save space. This one is very short, just to give you an idea of what they look like.</p>
+
+  <p name="Start up and No Entry Condition Tests: Welcome Dialog"/>
+
+  <p name="startup11.1"><i>Title:</i> Start Up: the application did not load with the start up dialog</p>
+  <p><i>Actions:</i> After installing the application, double click on the icon to load it. View the state of the application on initial start up.</p>
+  <p><i>Failed Expectation:</i> The application should load with the Welcome dialog described in the specifications.</p>
+  <p><i>Additional observations:</i></p>
+
+  <p name="startup11.2"><i>Title:</i> Start Up: Welcome dialog visually incorrect</p>
+  <p><i>Actions:</i> Visually inspect the Welcome dialog.</p>
+  <p><i>Failed Expectation:</i> The dialog should appear approximately the same as the one displayed in the specifications.</p>
+  <p><i>Additional observations:</i></p>
+
+  <p name="Start up and No Entry Condition Tests: Empty Project Dialog"/>
+
+  <p name="startup22.1"><i>Title:</i> Start Up: Empty Project dialog does not open correctly</p>
+  <p><i>Actions:</i> Create a new project or delete all the entries of an existing project to get a project that contains no entries. (Or do the same with list items for a list in TLE).</p>
+  <p><i>Failed Expectation:</i> If a project or list is open with no entries or list items it should display the Empty &lt;Project> dialog (where Project is Data Notebook, Topics List, etc.)</p>
+  <p><i>Additional observations:</i></p>
+ </label>
+</fact>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tbdata" num="3.3" abbr="tbda" file="FW\TbData.xml">
+<title tag="tbdata">Data Toolbar Tests</title>
+<index>
+<li>test</li>
+</index>
+
+<introduction>
+<p>Provides access to operations for those applications that work on a record orientation, such as the Lexical Database or the Research Notebook. Thus not all applications will use the Data Toolbar; only those for which it makes sense.</p>
+<p>See the specification for <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Toolbars/Toolbars.html#DataToolbar" type="doc">Data Toolbar</link>.</p>
+</introduction>
+<context>
+<p>Most icons are tested separately. A few that perform inverse operations like next and previous are best tested together. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Data Tool bar".</p>
+<p>For more detailed tests of functionality, use the respective tests available in other test scripts.</p>
+</context>
+
+
+<!-- Activation -->
+<case id="tbdaAct" num="0" order="any">
+<title tag="tbdaAct">Basic Data Toolbar</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.0" link="Bug">Use <link uri="../StdCtrls/TlbButton.xml">Toolbar Button Tests</link> to test this toolbar's basic functionality. The Data Toolbar looks like this: <img uri="file:///C:/fw/FwSpecs/FW/App/Features/Toolbars/ToolbarData.gif" alt="Image of data tool bar">
+</img>.
+   <r>
+<ul>
+<li>Toolbar icons and controls should be enabled.</li>
+<li>Up to approximate size and position the two should be the same - especially any text and icons.</li>
+<li>Report any failures as suggested using "Data Toolbar &lt;control name&gt;" as the name of the control.</li>
+</ul>
+</r>
+ <p name="bug">Data toolbar &lt;icon&gt; not enabled</p>
+<p name="bug">Data Toolbar layout incorrect</p>
+</step>
+</case>
+
+
+<!-- Arrow Buttons -->
+<case id="tbdaArrw" num="1" order="any">
+<title tag="tbdaArrw">Exercise Arrow Buttons</title>
+<context>
+<p>When the Data Toolbar is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Use the <link uri="DataNav.xml">Data Menu Tests</link> to test the Data toolbar arrow icons.
+   <r>Report any failures using "Data Toolbar &lt;First Prev Next Last&gt; arrow" as the name of the control.</r>
+<p name="bug">Data Toolbar &lt;First Prev Next Last&gt; arrow not working</p>
+</step>
+</case>
+
+
+<!-- Quick Search Combo Box -->
+<case id="tbdaQs" num="2" order="any">
+<title tag="tbdaQs">Exercise Quick Search combo box</title>
+<context>
+<p>When the Data Toolbar is displayed:</p>
+</context>
+
+<step name="2.1" link="Bug">Use <link uri="../StdCtrls/ListBox.xml">List/Combo Box Tests</link> to test the Quick Search control - there is no shortcut.
+ <r>
+<ul>
+  <li>The combo box displays the 16 most recent searches, ordered in a most-recently-used order.</li>
+  <li>Report any failures using "Data Toolbar Quick Search" as the name of the control.</li>
+ </ul>
+</r>
+<p name="bug">Data Toolbar Quick Search list displays nothing</p>
+<p name="bug">Data Toolbar Quick Search list limit is not 16</p>
+<p name="note">No combo box in v1; is a simple text box.</p>
+</step>
+
+<step name="2.2" link="Bug">In the Quick Find combo box, type some text that you know is found in the database. Press &lt;Enter&gt;.
+ <r>
+<ul>
+  <li>The search makes the following assumptions
+   <ul>
+	<li>Show list of all results = No</li>
+	<li>Find in = All entries</li>
+	<li>Match case = Last setting from Edit-Find dialog</li>
+	<li>Match diacritics = Last setting from Edit-Find dialog</li>
+	<li>Match as a whole word = Last setting from Edit-Find dialog</li>
+	<li>Match writing system = Last setting from Edit-Find dialog</li>
+   </ul>
+  </li>
+ </ul>
+</r>
+<p name="bug">Data Toolbar Quick Search status bar message wrong</p>
+<p name="bug">Data Toolbar Quick Search progress indicator wrong</p>
+<p name="bug">Data Toolbar Quick Search hour glass mouse cursor missing</p>
+<p name="bug">Data Toolbar Quick Search selection position wrong</p>
+<p name="bug">Data Toolbar Quick Search makes incorrect assumptions</p>
+<p name="note">in v1.6 find only searches the field with focus in DE view</p>
+</step>
+
+<step name="2.3" link="Bug">After searching for some text, Press &lt;Enter&gt; a second time.
+ <r>Pressing Enter when the focus is in the Quick Search box initiates a Find Next action. The user can press Enter repeatedly to do successive searches</r>
+ <p name="bug">Data Toolbar Quick Search</p>
+</step>
+
+<step name="2.3" link="Bug">In the Quick Find combo box, type some text that is not found in the database. Press Enter.
+   <r>A message box appears, notifying the user that the requested text was not found.</r>
+<p name="bug">Data Toolbar Quick Search makes bad match</p>
+</step>
+<step name="2.4" link="Bug">Select a recent search from the Quick Find combo box.
+ <r>
+<ul>
+  <li>The search makes the following assumptions
+   <ul>
+	<li>Show list of all results = No</li>
+	<li>Find in = All entries</li>
+	<li>Match case = Last setting from Edit-Find dialog</li>
+	<li>Match diacritics = Last setting from Edit-Find dialog</li>
+	<li>Match as a whole word = Last setting from Edit-Find dialog</li>
+	<li>Match writing system = Last setting from Edit-Find dialog</li>
+   </ul>
+  </li>
+ </ul>
+</r>
+<p name="bug">Data Toolbar Quick Search status bar message wrong</p>
+<p name="bug">Data Toolbar Quick Search progress indicator wrong</p>
+<p name="bug">Data Toolbar Quick Search hour glass mouse cursor missing</p>
+<p name="bug">Data Toolbar Quick Search selection position wrong</p>
+<p name="bug">Data Toolbar Quick Search makes incorrect assumotions</p>
+<p name="bug">Data Toolbar Quick Search unable to use selected match text</p>
+<p name="note">No combo box in v1; is a simple text box.</p>
+</step>
+</case>
+
+
+<!-- Find -->
+<case id="tbdaFi" num="3" order="any">
+<title tag="tbdaFi">Exercise the Find Icon</title>
+<context>
+<p>When the Data Toolbar is displayed:</p>
+</context>
+
+<step name="3.1" link="Bug">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Data-Find icon control (the binoculars) - shortcut for Find is &lt;Ctrl&gt;&lt;F&gt;.
+   <r>
+<ul>
+<li>The Find dialog appears.</li>
+<li>Tests for this dialog are found in <link uri="EdtFind.xml">Edit-Find Dialog Tests</link>
+</li>
+<li>Report any failures using "Data Toolbar Find" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar Find fails to launch find dialog</p>
+</step>
+</case>
+
+
+<!-- Next and Previous Match -->
+<case id="tbdaFNP" num="4" order="any">
+<title tag="tbdaFNP">Exercise the Data-Next Match and Data-Previous Match Icons</title>
+<context>
+<p>When the Data Toolbar is displayed:</p>
+</context>
+
+<step name="4.1" link="Bug">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Data-Next Match and Data-Previous Match icon controls (the binoculars with arrows underneath) - shortcut for Next Match is &lt;Ctrl&gt;&lt;G&gt; and for Previous Match &lt;Ctrl&gt;&lt;D&gt;.
+   <r>
+<ul>
+<li>The most recent search is repeated, which may have been via the Find dialog, or by the Quick Find command</li>
+<li>The search begins at the current text cursor position</li>
+<li>For Next, the search moves forward through the data</li>
+<li>For Previous, the search moves backward through the data</li>
+<li>Report any failures using "Data Toolbar Next/Previous" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar Next/Previous doesn't repeat most recent search</p>
+<p name="bug">Data Toolbar Next/Previous doesn't start at cursor</p>
+<p name="bug">Data Toolbar Next/Previous misses some matches</p>
+</step>
+</case>
+
+
+<!-- Replace -->
+<case id="tbdaRe" num="5" order="any">
+<title tag="tbdaRe">Exercise the Replace Icon</title>
+<context>
+<p>When the Data Toolbar is displayed:</p>
+</context>
+
+<step name="5.1" link="Bug">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Data-Replace icon control (the triangle and blob with curved arrows) - shortcut for Replace is &lt;Ctrl&gt;&lt;H&gt;.
+   <r>
+<ul>
+<li>The Replace dialog appears.</li>
+<li>Tests for this dialog are found in <link uri="EdtReplace.xml">Edit-Replace Dialog Tests</link>
+</li>
+<li>Report any failures using "Data Toolbar Replace" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar Replace fails to launch replace dialog</p>
+</step>
+</case>
+
+
+<!-- Data History -->
+<case id="tbdaHi" num="6" order="any">
+<title tag="tbdaHi">Exercise the Data History Icon</title>
+<context>
+<p>When the Data Toolbar is displayed: </p>
+<p name="note">
+<b>Not in v1</b>
+</p>
+</context>
+
+<step name="6.1" link="Bug">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Data-History icon control (the sundial) - there is no shortcut.
+   <r>
+<ul>
+<li>A pop-up menu appears, which lists the titles of the dozen most-recently-edited (modified) records in the record set</li>
+<li>These entries are displayed in order of most recently edited with the last one edited at the top of the menu</li>
+<li>Report any failures using "Data Toolbar History" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar History list not shown</p>
+<p name="bug">Data Toolbar History list limit is not 12</p>
+<p name="bug">Data Toolbar History doesn't list a recently changed record</p>
+<p name="bug">Data Toolbar History fails to order the list</p>
+</step>
+<step name="6.2" link="Bug">View several records one after another, using the arrow buttons, Quick Find, and any other ways of navigating the database. Keep track of the records you view. Click the Data-History button.
+   <r>
+<ul>
+<li>A pop-up menu appears, which lists the titles of the dozen most-recently-edited (modified) records in the record set</li>
+<li>These entries are displayed in order of most recently edited with the last one edited at the top of the menu</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar History list not shown</p>
+<p name="bug">Data Toolbar History list limit is not 12</p>
+<p name="bug">Data Toolbar History doesn't list a recently changed record</p>
+<p name="bug">Data Toolbar History fails to order the list</p>
+</step>
+<step name="6.3" link="Bug">Choose an item from the History pop-up menu.
+   <r>
+<ul>
+<li>In Browse view: The chosen record should be at the top of the main window, and the cursor should be at the front of the title of the first record.</li>
+<li>In Data Entry view: The chosen record is displayed in the window by itself.</li>
+<li>In Document view: The display scrolls to the chosen record, and the text insertion point is placed at its beginning.</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar History record is positioned wrong</p>
+</step>
+
+<step name="6.4" link="Bug">View a record, then activate a filter which excludes that record. Click the Data-History button and choose the excluded record.
+   <r>
+<ul>
+<li>The chosen record is displayed in its proper way depending on view.</li>
+<li>The filter is turned off.</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar History doesn't turn filter off</p>
+<p name="bug">Data Toolbar History doesn't show filtered selection</p>
+</step>
+</case>
+
+
+<!-- Favorites -->
+<case id="tbdaFa" num="7" order="any">
+<title tag="tbdaFa">Exercise the Favorites Icon</title>
+<context>
+<p>When the Data Toolbar is displayed: </p>
+<p name="note">
+<b>Not in v1</b>
+</p>
+</context>
+
+<step name="7.1" link="Bug">Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the Data-Favorites icon control (the folder with a star) - there is no shortcut.
+   <r>
+<ul>
+<li>A pop-up menu appears that displays the list of favorites in cascading sub-menus, in accordance with any folders that the user has set up in a hierarchy in prior calls to Organize Favorites.</li>
+<li>Report any failures using "Data Toolbar Favorites" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar Favorites doesn't cascade sub-menus properly</p>
+</step>
+<step name="7.2" link="Bug">Choose an item from the Favorites pop-up menu.
+   <r>
+<ul>
+<li>In Browse view: The chosen record should be at the top of the main window, and the cursor should be at the front of the title of the first record.</li>
+<li>In Data Entry view: The chosen record is displayed in the window by itself.</li>
+<li>In Document view: The display scrolls to the chosen record, and the text insertion point is placed at its beginning.</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar Favorites record is positioned wrong</p>
+</step>
+
+<step name="7.3" link="Bug">Activate a filter that excludes a record in the Favorites list. Click the Data-Favorites button and choose the excluded record.
+   <r>
+<ul>
+<li>The chosen record is displayed in its proper way depending on view.</li>
+<li>The filter is turned off.</li>
+</ul>
+</r>
+<p name="bug">Data Toolbar Favorites doesn't turn filter off</p>
+<p name="bug">Data Toolbar Favorites doesn't show filtered selection</p>
+</step>
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Sep-21-01" author="MikeL">Put the guts in</update>
+<update date="May-31-02" author="JoelC">Updated to reflect changed specs</update>
+<update date="Jun-25-02" author="RussD">Second look, minor changes.</update>
+
+</test>

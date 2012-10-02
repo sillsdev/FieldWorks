@@ -1,0 +1,149 @@
+<!ELEMENT characterMapping (history?, validity?, assignments, contexts?)>
+
+<!ATTLIST characterMapping
+	id CDATA #REQUIRED
+	version NMTOKEN #REQUIRED
+	description CDATA #IMPLIED
+	contact CDATA #IMPLIED
+	registrationAuthority CDATA #IMPLIED
+	registrationName CDATA #IMPLIED
+	copyright CDATA #IMPLIED
+	bidiOrder (RTL|LTR|logical) "logical"
+	normalization (undetermined|neither|NFC|NFD|NFC_NFD) "undetermined"
+>
+
+<!ELEMENT history (modified)+>
+
+<!ELEMENT modified (#PCDATA)>
+<!ATTLIST modified
+	version NMTOKEN #REQUIRED
+	date NMTOKEN #REQUIRED
+>
+
+<!ELEMENT validity (illegal | legal)+>
+<!ELEMENT illegal EMPTY>
+<!ATTLIST illegal
+	type NMTOKEN "start"
+	s NMTOKENS #REQUIRED
+	e NMTOKENS "-1"
+>
+<!ELEMENT legal EMPTY>
+<!ATTLIST legal
+	type NMTOKEN "start"
+	s NMTOKENS #REQUIRED
+	e NMTOKENS "-1"
+	next NMTOKENS "end"
+>
+
+<!ELEMENT assignments (a | fbu | fub | range | ordering)+>
+<!ATTLIST assignments
+	sub NMTOKEN "1A"
+>
+
+<!ELEMENT a EMPTY>
+<!ATTLIST a
+	b NMTOKENS #REQUIRED
+	u NMTOKENS #REQUIRED
+	c CDATA #IMPLIED
+	v NMTOKEN #IMPLIED
+	bactxt NMTOKENS #IMPLIED
+	bbctxt NMTOKENS #IMPLIED
+	uactxt NMTOKENS #IMPLIED
+	ubctxt NMTOKENS #IMPLIED
+	priority NMTOKEN #IMPLIED
+>
+
+<!ELEMENT fbu EMPTY>
+<!ATTLIST fbu
+	b NMTOKENS #REQUIRED
+	u NMTOKENS #REQUIRED
+	v NMTOKEN #IMPLIED
+	bactxt NMTOKENS #IMPLIED
+	bbctxt NMTOKENS #IMPLIED
+	uactxt NMTOKENS #IMPLIED
+	ubctxt NMTOKENS #IMPLIED
+	priority NMTOKEN #IMPLIED
+>
+
+<!ELEMENT fub EMPTY>
+<!ATTLIST fub
+	b NMTOKENS #REQUIRED
+	u NMTOKENS #REQUIRED
+	c CDATA #IMPLIED
+	v NMTOKEN #IMPLIED
+	bactxt NMTOKENS #IMPLIED
+	bbctxt NMTOKENS #IMPLIED
+	uactxt NMTOKENS #IMPLIED
+	ubctxt NMTOKENS #IMPLIED
+	priority NMTOKEN #IMPLIED
+	ru CDATA #IMPLIED
+	rc CDATA #IMPLIED
+>
+
+<!ELEMENT range EMPTY>
+<!ATTLIST range
+	bFirst NMTOKENS #REQUIRED
+	bLast NMTOKENS #REQUIRED
+	uFirst NMTOKENS #REQUIRED
+	uLast NMTOKENS #REQUIRED
+	bMin NMTOKENS #IMPLIED
+	bMax NMTOKENS #IMPLIED
+	v NMTOKEN #IMPLIED
+>
+
+<!ELEMENT ordering (order)+>
+<!ATTLIST ordering
+	side (unicode|bytes) #REQUIRED
+>
+
+<!ELEMENT order EMPTY>
+<!ATTLIST order
+	b CDATA #REQUIRED
+	u CDATA #REQUIRED
+>
+
+<!ELEMENT contexts (group | class)+>
+
+<!ELEMENT group (group | class-ref | context-ref | eos)+>
+<!ATTLIST group
+	id NMTOKEN #IMPLIED
+	alt (0|1) "0"
+	min CDATA #IMPLIED
+	max CDATA #IMPLIED
+>
+
+<!ELEMENT class-ref EMPTY>
+<!ATTLIST class-ref
+	name NMTOKEN #REQUIRED
+	id NMTOKEN #IMPLIED
+	min CDATA #IMPLIED
+	max CDATA #IMPLIED
+	neg (0|1) "0"
+>
+
+<!ELEMENT context-ref EMPTY>
+<!ATTLIST context-ref
+	name CDATA #REQUIRED
+	id NMTOKEN #IMPLIED
+	min CDATA #IMPLIED
+	max CDATA #IMPLIED
+>
+
+<!ELEMENT eos EMPTY>
+
+<!ELEMENT class (#PCDATA | class-include | class-range)*>
+<!ATTLIST class
+	name CDATA #REQUIRED
+	size (unicode|bytes) "unicode"
+>
+
+<!ELEMENT class-include EMPTY>
+<!ATTLIST class-include
+	name NMTOKEN #REQUIRED
+>
+
+<!ELEMENT class-range EMPTY>
+<!ATTLIST class-range
+	first NMTOKEN #REQUIRED
+	last NMTOKEN #REQUIRED
+>

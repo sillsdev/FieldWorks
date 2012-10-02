@@ -1,0 +1,43 @@
+NAME "Stacking Diacritics Demo"
+VERSION 6.0
+BITMAP stakdiac
+
+c English (Zimbabwe)
+c LANGUAGE x09, x0C
+
+begin ANSI > use(MainA)
+begin UNICODE > use(MainU)
+
+group(MainA) using keys
++ "a" > d128 d251
+
+group(MainU) using keys
+U+030D + '-' 	> U+0319	c right tack below
+U+0301 + "'" 	> U+030B	c double acute
+U+0300 + '`' 	> U+030F	c double grave
+'+' + '-' 	> U+0304	c macron
+'+' + '_' 	> U+0305	c overline
+'+' + 'u' 	> U+0306	c breve
+'+' + '.' 	> U+0307	c dot above
+'+' + 'o' 	> U+030A	c ring above
+'+' + 'v' 	> U+030C	c caron
+'+' + 'n' 	> U+0311	c inverted breve
+'+' + 'N' 	> U+0361	c wide inverted breve
+'-' + '`' 	> U+0316	c grave accent below
+'-' + "'" 	> U+0317	c acute accent below
+'-' + '|' 	> U+0318	c left tack below
+'-' + 't' 	> U+031E	c down tack below
+'-' + '+' 	> U+031F	c plus sign below
+'-' + '-' 	> U+0320	c minus sign below
+'-' + 'o' 	> U+0325	c ring below
+'-' + '#' 	> U+033B	c square below
+'-' + 'm' 	> U+033C   	c seagull
+'-' + '~' 	> U+0330	c tilde below
+	+ '`'   > U+0300	c grave
+	+ "'"   > U+0301	c acute
+	+ '^'   > U+0302	c circumflex
+	+ '~'   > U+0303	c tilde
+	+ ':'   > U+0308	c dieresis
+	+ '|'   > U+030D	c vertical line
+'s' + 'h'   > U+0283    c esh
+'z' + 'h'   > U+0292    c ezh

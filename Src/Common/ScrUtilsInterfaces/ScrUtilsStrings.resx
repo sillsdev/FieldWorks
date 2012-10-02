@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstidImportErrorFileDetails" xml:space="preserve">
+	<value>File {0}</value>
+	<comment>Used to format file details when import fails</comment>
+  </data>
+  <data name="kstidImportErrorBookDetails" xml:space="preserve">
+	<value>Attempting to read {0}</value>
+	<comment>Used to format book code details when import fails</comment>
+  </data>
+  <data name="kstidImportErrorChapterDetails" xml:space="preserve">
+	<value>Chapter: {0}</value>
+	<comment>Used to format chapter details when import fails</comment>
+  </data>
+  <data name="kstidImportErrorVerseDetails" xml:space="preserve">
+	<value>Verse: {0}</value>
+	<comment>Used to format verse details when import fails</comment>
+  </data>
+  <data name="kstidImportMissingBookAndChapterMarkers" xml:space="preserve">
+	<value>No book or chapter markers in file.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportVerseNoChapter" xml:space="preserve">
+	<value>Verse number without a preceding chapter number.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportErrorLineAndFileDetails" xml:space="preserve">
+	<value>Line {0} of file {1}:
+</value>
+	<comment>Used to format file and line number details when import fails</comment>
+  </data>
+  <data name="kstidImportVerseNotPartOfBook" xml:space="preserve">
+	<value>Verse not part of a book.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportFileError" xml:space="preserve">
+	<value>File error occurred.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportMissingChapterMarker" xml:space="preserve">
+	<value>No chapter markers in file.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportChapterNoBook" xml:space="preserve">
+	<value>Chapter not part of a book.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportBooksNoChapters" xml:space="preserve">
+	<value>Missing chapter marker.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportInvalidBook" xml:space="preserve">
+	<value>Invalid book code.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportInvalidChapterNumber" xml:space="preserve">
+	<value>Invalid chapter number.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportInvalidVerseNumber" xml:space="preserve">
+	<value>Invalid verse number.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportErrorCaption" xml:space="preserve">
+	<value>Unable to Import</value>
+	<comment>Messagebox caption</comment>
+  </data>
+  <data name="kstidImportErrorPictureParameters" xml:space="preserve">
+	<value>Invalid figure parameters</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportErrorPictureFileName" xml:space="preserve">
+	<value>Invalid figure file name property</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidBTImportErrorCaption" xml:space="preserve">
+	<value>Unable to Import Back Translation</value>
+	<comment>Messagebox caption</comment>
+  </data>
+  <data name="kstidXmlImportErrorCaption" xml:space="preserve">
+	<value>Unable to Import XML</value>
+	<comment>Messagebox caption</comment>
+  </data>
+	<data name="kstidImportUnexcludedDataBeforeId" xml:space="preserve">
+	<value>Unexpected field precedes the \id identification field.</value>
+	<comment>Import error</comment>
+  </data>
+  <data name="kstidBTStyleMismatch" xml:space="preserve">
+	<value>Back translation does not correspond to the preceding vernacular paragraph:
+	{0}
+The style for a back translation paragraph must match the style for the vernacular paragraph. A back translation paragraph must belong to the immediately preceding vernacular paragraph.</value>
+  </data>
+  <data name="kstidBTParagraphMismatch" xml:space="preserve">
+	<value>Back translation does not correspond to a vernacular paragraph:
+	{0}
+The style for a back translation paragraph must match the style for the corresponding vernacular paragraph.</value>
+  </data>
+  <data name="kstidBtTextNotPartofPara" xml:space="preserve">
+	<value>Back translation not part of a paragraph:
+	{0}</value>
+  </data>
+  <data name="kstidMissingVernParaForBT" xml:space="preserve">
+	<value>Back translation precedes vernacular fields in book.
+A back translation paragraph must belong to the immediately preceding vernacular paragraph.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidMissingVernBookForBT" xml:space="preserve">
+	<value>No corresponding vernacular book for back translation.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidMissingVernFootnoteForBT" xml:space="preserve">
+	<value>Back translation does not correspond to a vernacular footnote:
+A back translation footnote must correspond to a footnote in the corresponding vernacular paragraph.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidBTNoCorrespondingPicture" xml:space="preserve">
+	<value>Back translation does not correspond to a vernacular picture.
+A back translation picture must correspond to a picture in the corresponding vernacular paragraph.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidEncConvMissingConverter" xml:space="preserve">
+	<value>Encoding converter not found.
+Line {0} of file {1}:
+Encoding converter: {2}
+Marker: {3}</value>
+  </data>
+  <data name="kstidEncConverterError" xml:space="preserve">
+	<value>Encoding conversion failed.
+{0}
+Encoding converter: {1}</value>
+  </data>
+	<data name="kstidEncConverterInitError" xml:space="preserve">
+	<value>Encoding conversion failed.
+{0}</value>
+	<comment>Error message when attempting to intialize the encoding converters.</comment>
+  </data>
+  <data name="kstidImportBadFigure" xml:space="preserve">
+	<value>Invalid figure parameters</value>
+  </data>
+  <data name="kstidImportIntroWithinScripture" xml:space="preserve">
+	<value>Book introduction within Scripture text.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidImportInvalidCharacterInMarker" xml:space="preserve">
+	<value>Invalid character in marker.</value>
+	<comment>Import error message</comment>
+  </data>
+  <data name="kstidUnexpectedParagraph" xml:space="preserve">
+	<value>Unexpected paragraph element.</value>
+	<comment>kstidUnexpectedParagraph</comment>
+  </data>
+  <data name="kstidOxesMigrationFailed" xml:space="preserve">
+	<value>Incompatible file version
+
+File: {0}
+Version: {1}</value>
+	<comment>Occurs if the version number in the OXES file cannot be migrated to the current OXES version supported by TE</comment>
+  </data>
+  <data name="kstidOxesValidationFailed" xml:space="preserve">
+	<value>Invalid file
+
+Validation error:
+{0}
+	</value>
+	<comment>Occurs if the validation check on the OXES file chosen for import fails, user probably manually edited the file.</comment>
+  </data>
+  <data name="kstidUndefinedWritingSystem" xml:space="preserve">
+	<value>Unknown writing system</value>
+	<comment>Occurs if the writing system is unknown during an OXES import.</comment>
+  </data>
+</root>

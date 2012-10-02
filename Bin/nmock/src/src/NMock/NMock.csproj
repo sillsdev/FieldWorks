@@ -1,0 +1,171 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+	<ProjectType>Local</ProjectType>
+	<ProductVersion>8.0.50727</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{9079A8CF-4143-4737-9F47-0FD3C83A0CE7}</ProjectGuid>
+	<SccProjectName>Perforce Project</SccProjectName>
+	<SccLocalPath>.</SccLocalPath>
+	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ApplicationIcon>
+	</ApplicationIcon>
+	<AssemblyKeyContainerName>
+	</AssemblyKeyContainerName>
+	<AssemblyName>NMock</AssemblyName>
+	<AssemblyOriginatorKeyFile>
+	</AssemblyOriginatorKeyFile>
+	<DefaultClientScript>JScript</DefaultClientScript>
+	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+	<DefaultTargetSchema>IE50</DefaultTargetSchema>
+	<DelaySign>false</DelaySign>
+	<OutputType>Library</OutputType>
+	<RootNamespace>NMock</RootNamespace>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	<StartupObject>
+	</StartupObject>
+	<FileUpgradeFlags>
+	</FileUpgradeFlags>
+	<UpgradeBackupLocation>
+	</UpgradeBackupLocation>
+	<OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>bin\Debug\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>true</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>false</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>full</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<OutputPath>bin\Release\</OutputPath>
+	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<BaseAddress>285212672</BaseAddress>
+	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+	<ConfigurationOverrideFile>
+	</ConfigurationOverrideFile>
+	<DefineConstants>TRACE</DefineConstants>
+	<DocumentationFile>
+	</DocumentationFile>
+	<DebugSymbols>false</DebugSymbols>
+	<FileAlignment>4096</FileAlignment>
+	<NoStdLib>false</NoStdLib>
+	<NoWarn>
+	</NoWarn>
+	<Optimize>true</Optimize>
+	<RegisterForComInterop>false</RegisterForComInterop>
+	<RemoveIntegerChecks>false</RemoveIntegerChecks>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningLevel>4</WarningLevel>
+	<DebugType>none</DebugType>
+	<ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="nunit.framework">
+	  <Name>nunit.framework</Name>
+	  <HintPath>..\..\tools\nunit.framework.dll</HintPath>
+	</Reference>
+	<Reference Include="System">
+	  <Name>System</Name>
+	</Reference>
+	<Reference Include="System.Data">
+	  <Name>System.Data</Name>
+	</Reference>
+	<Reference Include="System.Xml">
+	  <Name>System.XML</Name>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="build.build" />
+	<Compile Include="CallMethodOrder.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CallMethodWithoutExpectation.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CallMethodWithParams.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Constraints\Constraints.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Constraints\IConstraint.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Constraints\IsArrayEqual.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="DynamicMock.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Dynamic\ClassGenerator.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Dynamic\InterfaceLister.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IInvocationHandler.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IMethod.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IMock.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Invocation.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="IVerifiable.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Method.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MethodSignature.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Mock.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="MockCall.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Remoting\MockServer.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="Remoting\RemotingMock.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="SingleMethod.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="VerifyException.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+	<PreBuildEvent>
+	</PreBuildEvent>
+	<PostBuildEvent>
+	</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>niyaloximura</form>
+  <seq step="Try to apply the Compound rule 'noun-adverb -&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem syncat="152" syncatAbbr="" inflClass="178" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'adverb-noun --&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (adv) of the left-hand member of the compound rule is incompatible with the category (n) of the left-hand stem:</content>
+		<stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		  <morph wordType="root">
+			<shortName>yalo (mat): yalo</shortName>
+			<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <failure>
+		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'adj-noun with linker'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (n) of the left-hand stem:</content>
+		<stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		  <morph wordType="root">
+			<shortName>yalo (mat): yalo</shortName>
+			<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <failure>
+		<content>In applying the compound rule "adj-noun with linker ": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'verb-adverb'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "verb-adverb ": The category (v) of the left-hand member of the compound rule is incompatible with the category (n) of the left-hand stem:</content>
+		<stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		  <morph wordType="root">
+			<shortName>yalo (mat): yalo</shortName>
+			<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'noun-transitive verb'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'noun-Intransitive verb'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-" blocksInflection="+">
+	  <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (n) of the stem.</failure>
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem></stem>
+	<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+	  <morph wordType="root">
+		<shortName>ximu (slowly): ximu</shortName>
+		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+	  </morph>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+	  <morph wordType="root">
+		<shortName>yalo (mat): yalo</shortName>
+		<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+	  </morph>
+	</stem>
+	<stem syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-" blocksInflection="+">
+	  <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (adv) of the stem.</failure>
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem></stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'noun-adverb -&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem syncat="152" syncatAbbr="" inflClass="178" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'adverb-noun --&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (adv) of the left-hand member of the compound rule is incompatible with the category (n) of the left-hand stem:</content>
+		<stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		  <morph wordType="root">
+			<shortName>yalo (mat): yalo</shortName>
+			<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <failure>
+		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'adj-noun with linker'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (n) of the left-hand stem:</content>
+		<stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		  <morph wordType="root">
+			<shortName>yalo (mat): yalo</shortName>
+			<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <failure>
+		<content>In applying the compound rule "adj-noun with linker ": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'verb-adverb'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "verb-adverb ": The category (v) of the left-hand member of the compound rule is incompatible with the category (n) of the left-hand stem:</content>
+		<stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		  <morph wordType="root">
+			<shortName>yalo (mat): yalo</shortName>
+			<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'noun-transitive verb'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply the Compound rule 'noun-Intransitive verb'.  The result will be a new Stem node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem>
+	  <failure>
+		<content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		  <morph wordType="root">
+			<shortName>ximu (slowly): ximu</shortName>
+			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		  </morph>
+		</stem>
+	  </failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-" blocksInflection="+">
+	  <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (n) of the stem.</failure>
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+		<morph wordType="root">
+		  <shortName>yalo (mat): yalo</shortName>
+		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+		</morph>
+	  </stem></stem>
+	<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+	  <morph wordType="root">
+		<shortName>ximu (slowly): ximu</shortName>
+		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+	  </morph>
+	</stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
+	<morph wordType="180">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <inflMsa slot="180" slotAbbr="Subject" />
+	</morph>
+	<stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+	  <morph wordType="root">
+		<shortName>yalo (mat): yalo</shortName>
+		<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+	  </morph>
+	</stem>
+	<stem syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-" blocksInflection="+">
+	  <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (adv) of the stem.</failure>
+	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+		<morph wordType="root">
+		  <shortName>ximu (slowly): ximu</shortName>
+		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+		</morph>
+	  </stem></stem>
+	<morph wordType="166">
+	  <shortName>-ra (Pres): ra</shortName>
+	  <inflClasses>
+		<inflClass hvo="177" abbr="1" />
+	  </inflClasses>
+	  <inflMsa slot="166" slotAbbr="Tense" />
+	</morph>
+  </seq>
+</word>

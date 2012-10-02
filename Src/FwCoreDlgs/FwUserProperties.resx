@@ -1,0 +1,1430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="btnOk.AccessibleDescription" xml:space="preserve">
+	<value>Okay button. Click to accept changes.</value>
+  </data>
+  <data name="btnOk.AccessibleName" xml:space="preserve">
+	<value>Okay button</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="btnOk.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnOk.Location" type="System.Drawing.Point, System.Drawing">
+	<value>368, 443</value>
+  </data>
+  <data name="btnOk.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnOk.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="btnOk.Text" xml:space="preserve">
+	<value>OK</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Name" xml:space="preserve">
+	<value>btnOk</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnOk.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnOk.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <metadata name="btnCancel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="btnCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
+	<value>448, 443</value>
+  </data>
+  <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+	<value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Name" xml:space="preserve">
+	<value>btnCancel</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="lblMaintenanceAccess.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="lblMaintenanceAccess.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblMaintenanceAccess.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblMaintenanceAccess.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 258</value>
+  </data>
+  <data name="lblMaintenanceAccess.Size" type="System.Drawing.Size, System.Drawing">
+	<value>107, 13</value>
+  </data>
+  <data name="lblMaintenanceAccess.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="lblMaintenanceAccess.Text" xml:space="preserve">
+	<value>Maintenance Access</value>
+  </data>
+  <data name="&gt;&gt;lblMaintenanceAccess.Name" xml:space="preserve">
+	<value>lblMaintenanceAccess</value>
+  </data>
+  <data name="&gt;&gt;lblMaintenanceAccess.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblMaintenanceAccess.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblMaintenanceAccess.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="lblConfirmPwd2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblConfirmPwd2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="lblConfirmPwd2.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblConfirmPwd2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblConfirmPwd2.Location" type="System.Drawing.Point, System.Drawing">
+	<value>32, 202</value>
+  </data>
+  <data name="lblConfirmPwd2.Size" type="System.Drawing.Size, System.Drawing">
+	<value>56, 13</value>
+  </data>
+  <data name="lblConfirmPwd2.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="lblConfirmPwd2.Text" xml:space="preserve">
+	<value>Pass&amp;word:</value>
+  </data>
+  <data name="&gt;&gt;lblConfirmPwd2.Name" xml:space="preserve">
+	<value>lblConfirmPwd2</value>
+  </data>
+  <data name="&gt;&gt;lblConfirmPwd2.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblConfirmPwd2.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblConfirmPwd2.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <metadata name="lblPassword.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblPassword.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="lblPassword.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblPassword.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblPassword.Location" type="System.Drawing.Point, System.Drawing">
+	<value>32, 161</value>
+  </data>
+  <data name="lblPassword.Size" type="System.Drawing.Size, System.Drawing">
+	<value>56, 13</value>
+  </data>
+  <data name="lblPassword.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="lblPassword.Text" xml:space="preserve">
+	<value>&amp;Password:</value>
+  </data>
+  <data name="&gt;&gt;lblPassword.Name" xml:space="preserve">
+	<value>lblPassword</value>
+  </data>
+  <data name="&gt;&gt;lblPassword.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblPassword.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblPassword.ZOrder" xml:space="preserve">
+	<value>7</value>
+  </data>
+  <data name="lblPasswordGroup.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="lblPasswordGroup.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblPasswordGroup.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblPasswordGroup.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 134</value>
+  </data>
+  <data name="lblPasswordGroup.Size" type="System.Drawing.Size, System.Drawing">
+	<value>53, 13</value>
+  </data>
+  <data name="lblPasswordGroup.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="lblPasswordGroup.Text" xml:space="preserve">
+	<value>Password</value>
+  </data>
+  <data name="&gt;&gt;lblPasswordGroup.Name" xml:space="preserve">
+	<value>lblPasswordGroup</value>
+  </data>
+  <data name="&gt;&gt;lblPasswordGroup.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblPasswordGroup.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblPasswordGroup.ZOrder" xml:space="preserve">
+	<value>8</value>
+  </data>
+  <metadata name="lblDescription.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblDescription.AccessibleDescription" xml:space="preserve">
+	<value>Description of selected user</value>
+  </data>
+  <data name="lblDescription.AccessibleName" xml:space="preserve">
+	<value>User Description</value>
+  </data>
+  <data name="lblDescription.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblDescription.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblDescription.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 48</value>
+  </data>
+  <data name="lblDescription.Size" type="System.Drawing.Size, System.Drawing">
+	<value>63, 13</value>
+  </data>
+  <data name="lblDescription.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="lblDescription.Text" xml:space="preserve">
+	<value>D&amp;escription:</value>
+  </data>
+  <data name="&gt;&gt;lblDescription.Name" xml:space="preserve">
+	<value>lblDescription</value>
+  </data>
+  <data name="&gt;&gt;lblDescription.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblDescription.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblDescription.ZOrder" xml:space="preserve">
+	<value>11</value>
+  </data>
+  <metadata name="lblName.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblName.AccessibleDescription" xml:space="preserve">
+	<value>Indicates the name of the selected user</value>
+  </data>
+  <data name="lblName.AccessibleName" xml:space="preserve">
+	<value>User's name</value>
+  </data>
+  <data name="lblName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 16</value>
+  </data>
+  <data name="lblName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>38, 13</value>
+  </data>
+  <data name="lblName.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblName.Text" xml:space="preserve">
+	<value>&amp;Name:</value>
+  </data>
+  <data name="&gt;&gt;lblName.Name" xml:space="preserve">
+	<value>lblName</value>
+  </data>
+  <data name="&gt;&gt;lblName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblName.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblName.ZOrder" xml:space="preserve">
+	<value>12</value>
+  </data>
+  <metadata name="lblApplication.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblApplication.AccessibleDescription" xml:space="preserve">
+	<value>The selected application</value>
+  </data>
+  <data name="lblApplication.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblApplication.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblApplication.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 48</value>
+  </data>
+  <data name="lblApplication.Size" type="System.Drawing.Size, System.Drawing">
+	<value>62, 13</value>
+  </data>
+  <data name="lblApplication.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="lblApplication.Text" xml:space="preserve">
+	<value>A&amp;pplication:</value>
+  </data>
+  <data name="&gt;&gt;lblApplication.Name" xml:space="preserve">
+	<value>lblApplication</value>
+  </data>
+  <data name="&gt;&gt;lblApplication.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblApplication.Parent" xml:space="preserve">
+	<value>tabFeatures</value>
+  </data>
+  <data name="&gt;&gt;lblApplication.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="btnModify.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="btnModify.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnModify.Location" type="System.Drawing.Point, System.Drawing">
+	<value>312, 288</value>
+  </data>
+  <data name="btnModify.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnModify.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="btnModify.Text" xml:space="preserve">
+	<value>&amp;Modify...</value>
+  </data>
+  <data name="&gt;&gt;btnModify.Name" xml:space="preserve">
+	<value>btnModify</value>
+  </data>
+  <data name="&gt;&gt;btnModify.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnModify.Parent" xml:space="preserve">
+	<value>tabDataAccess</value>
+  </data>
+  <data name="&gt;&gt;btnModify.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="lblUsers.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="lblUsers.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblUsers.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblUsers.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 16</value>
+  </data>
+  <data name="lblUsers.Size" type="System.Drawing.Size, System.Drawing">
+	<value>37, 13</value>
+  </data>
+  <data name="lblUsers.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblUsers.Text" xml:space="preserve">
+	<value>Users:</value>
+  </data>
+  <data name="&gt;&gt;lblUsers.Name" xml:space="preserve">
+	<value>lblUsers</value>
+  </data>
+  <data name="&gt;&gt;lblUsers.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblUsers.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblUsers.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <metadata name="btnAdd.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="btnAdd.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="btnAdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnAdd.Location" type="System.Drawing.Point, System.Drawing">
+	<value>30, 404</value>
+  </data>
+  <data name="btnAdd.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnAdd.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="btnAdd.Text" xml:space="preserve">
+	<value>&amp;Add...</value>
+  </data>
+  <data name="&gt;&gt;btnAdd.Name" xml:space="preserve">
+	<value>btnAdd</value>
+  </data>
+  <data name="&gt;&gt;btnAdd.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnAdd.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnAdd.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <metadata name="btnHelp.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>False</value>
+  </metadata>
+  <data name="btnHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Right</value>
+  </data>
+  <data name="btnHelp.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnHelp.Location" type="System.Drawing.Point, System.Drawing">
+	<value>529, 443</value>
+  </data>
+  <data name="btnHelp.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnHelp.TabIndex" type="System.Int32, mscorlib">
+	<value>8</value>
+  </data>
+  <data name="btnHelp.Text" xml:space="preserve">
+	<value>Help...</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Name" xml:space="preserve">
+	<value>btnHelp</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnHelp.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <metadata name="FaceImages.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<value>17, 17</value>
+  </metadata>
+  <data name="FaceImages.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
+	<value>
+		AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+		LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+		ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADk
+		BwAAAk1TRnQBSQFMAwEBAAEEAQABBAEAARABAAEQAQAE/wEJAQAI/wFCAU0BNgEEBgABNgEEAgABKAMA
+		AUADAAEQAwABAQEAAQgGAAEEGAABgAIAAYADAAKAAQABgAMAAYABAAGAAQACgAIAA8ABAAHAAdwBwAEA
+		AfABygGmAQABMwUAATMBAAEzAQABMwEAAjMCAAMWAQADHAEAAyIBAAMpAQADVQEAA00BAANCAQADOQEA
+		AYABfAH/AQACUAH/AQABkwEAAdYBAAH/AewBzAEAAcYB1gHvAQAB1gLnAQABkAGpAa0CAAH/ATMDAAFm
+		AwABmQMAAcwCAAEzAwACMwIAATMBZgIAATMBmQIAATMBzAIAATMB/wIAAWYDAAFmATMCAAJmAgABZgGZ
+		AgABZgHMAgABZgH/AgABmQMAAZkBMwIAAZkBZgIAApkCAAGZAcwCAAGZAf8CAAHMAwABzAEzAgABzAFm
+		AgABzAGZAgACzAIAAcwB/wIAAf8BZgIAAf8BmQIAAf8BzAEAATMB/wIAAf8BAAEzAQABMwEAAWYBAAEz
+		AQABmQEAATMBAAHMAQABMwEAAf8BAAH/ATMCAAMzAQACMwFmAQACMwGZAQACMwHMAQACMwH/AQABMwFm
+		AgABMwFmATMBAAEzAmYBAAEzAWYBmQEAATMBZgHMAQABMwFmAf8BAAEzAZkCAAEzAZkBMwEAATMBmQFm
+		AQABMwKZAQABMwGZAcwBAAEzAZkB/wEAATMBzAIAATMBzAEzAQABMwHMAWYBAAEzAcwBmQEAATMCzAEA
+		ATMBzAH/AQABMwH/ATMBAAEzAf8BZgEAATMB/wGZAQABMwH/AcwBAAEzAv8BAAFmAwABZgEAATMBAAFm
+		AQABZgEAAWYBAAGZAQABZgEAAcwBAAFmAQAB/wEAAWYBMwIAAWYCMwEAAWYBMwFmAQABZgEzAZkBAAFm
+		ATMBzAEAAWYBMwH/AQACZgIAAmYBMwEAA2YBAAJmAZkBAAJmAcwBAAFmAZkCAAFmAZkBMwEAAWYBmQFm
+		AQABZgKZAQABZgGZAcwBAAFmAZkB/wEAAWYBzAIAAWYBzAEzAQABZgHMAZkBAAFmAswBAAFmAcwB/wEA
+		AWYB/wIAAWYB/wEzAQABZgH/AZkBAAFmAf8BzAEAAcwBAAH/AQAB/wEAAcwBAAKZAgABmQEzAZkBAAGZ
+		AQABmQEAAZkBAAHMAQABmQMAAZkCMwEAAZkBAAFmAQABmQEzAcwBAAGZAQAB/wEAAZkBZgIAAZkBZgEz
+		AQABmQEzAWYBAAGZAWYBmQEAAZkBZgHMAQABmQEzAf8BAAKZATMBAAKZAWYBAAOZAQACmQHMAQACmQH/
+		AQABmQHMAgABmQHMATMBAAFmAcwBZgEAAZkBzAGZAQABmQLMAQABmQHMAf8BAAGZAf8CAAGZAf8BMwEA
+		AZkBzAFmAQABmQH/AZkBAAGZAf8BzAEAAZkC/wEAAcwDAAGZAQABMwEAAcwBAAFmAQABzAEAAZkBAAHM
+		AQABzAEAAZkBMwIAAcwCMwEAAcwBMwFmAQABzAEzAZkBAAHMATMBzAEAAcwBMwH/AQABzAFmAgABzAFm
+		ATMBAAGZAmYBAAHMAWYBmQEAAcwBZgHMAQABmQFmAf8BAAHMAZkCAAHMAZkBMwEAAcwBmQFmAQABzAKZ
+		AQABzAGZAcwBAAHMAZkB/wEAAswCAALMATMBAALMAWYBAALMAZkBAAPMAQACzAH/AQABzAH/AgABzAH/
+		ATMBAAGZAf8BZgEAAcwB/wGZAQABzAH/AcwBAAHMAv8BAAHMAQABMwEAAf8BAAFmAQAB/wEAAZkBAAHM
+		ATMCAAH/AjMBAAH/ATMBZgEAAf8BMwGZAQAB/wEzAcwBAAH/ATMB/wEAAf8BZgIAAf8BZgEzAQABzAJm
+		AQAB/wFmAZkBAAH/AWYBzAEAAcwBZgH/AQAB/wGZAgAB/wGZATMBAAH/AZkBZgEAAf8CmQEAAf8BmQHM
+		AQAB/wGZAf8BAAH/AcwCAAH/AcwBMwEAAf8BzAFmAQAB/wHMAZkBAAH/AswBAAH/AcwB/wEAAv8BMwEA
+		AcwB/wFmAQAC/wGZAQAC/wHMAQACZgH/AQABZgH/AWYBAAFmAv8BAAH/AmYBAAH/AWYB/wEAAv8BZgEA
+		ASEBAAGlAQADXwEAA3cBAAOGAQADlgEAA8sBAAOyAQAD1wEAA90BAAPjAQAD6gEAA/EBAAP4AQAB8AH7
+		Af8BAAGkAqABAAOAAwAB/wIAAf8DAAL/AQAB/wMAAf8BAAH/AQAC/wIAA/8BABD/MAAD/wP+AgAC/gIA
+		Av4C/zAAAv8BAAL+AQAC/gIAAf4BAAH+AQAC/zAAA/8CAAL+AQABBwH/AwAD/zAABP8DAAEHAf8BBwEA
+		Bf8wAAX/AQABBwH/BAAE/zAABP8DAAEHAf8BBwH/AQcBAAP/MAAE/wMAAf8BBwH/AQcCAAP/MAAD/wQA
+		AQcB/wEHAf8BBwEAA/8wAAL/BAABBwH/AQcB/wEHAf8BBwEAAv8wAAL/BgAB/wEHAfwBBwEAA/8wAAL/
+		BQAB/wEHAf8CAAT/MAAC/wQAAewBBwH/AQcB/wEABP8wAAL/BgAB7AH/AQAF/zAAA/8JAAT/MAAE/wcA
+		Bf8wAAFCAU0BPgcAAT4DAAEoAwABQAMAARADAAEBAQABAQUAAYAXAAP/gQAL
+</value>
+  </data>
+  <data name="tabAccount.AccessibleDescription" xml:space="preserve">
+	<value>Information about the selected user's account</value>
+  </data>
+  <data name="tabAccount.AccessibleName" xml:space="preserve">
+	<value>Account tab</value>
+  </data>
+  <data name="optMaintenanceAccess.AccessibleDescription" xml:space="preserve">
+	<value>User May Access Other Accounts For Maintenance Purposes</value>
+  </data>
+  <data name="optMaintenanceAccess.AccessibleName" xml:space="preserve">
+	<value>Checkbox - User May Access Other Accounts For Maintenance Purposes</value>
+  </data>
+  <data name="optMaintenanceAccess.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="optMaintenanceAccess.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="optMaintenanceAccess.Location" type="System.Drawing.Point, System.Drawing">
+	<value>35, 274</value>
+  </data>
+  <data name="optMaintenanceAccess.Size" type="System.Drawing.Size, System.Drawing">
+	<value>235, 24</value>
+  </data>
+  <data name="optMaintenanceAccess.TabIndex" type="System.Int32, mscorlib">
+	<value>18</value>
+  </data>
+  <data name="optMaintenanceAccess.Text" xml:space="preserve">
+	<value>A&amp;llow maintenance of other accounts?</value>
+  </data>
+  <data name="&gt;&gt;optMaintenanceAccess.Name" xml:space="preserve">
+	<value>optMaintenanceAccess</value>
+  </data>
+  <data name="&gt;&gt;optMaintenanceAccess.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;optMaintenanceAccess.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;optMaintenanceAccess.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="optMustChangePwd.AccessibleDescription" xml:space="preserve">
+	<value>User Must Change Password at Next Login</value>
+  </data>
+  <data name="optMustChangePwd.AccessibleName" xml:space="preserve">
+	<value>Checkbox - User Must Change Password at Next Login</value>
+  </data>
+  <data name="optMustChangePwd.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="optMustChangePwd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="optMustChangePwd.Location" type="System.Drawing.Point, System.Drawing">
+	<value>35, 218</value>
+  </data>
+  <data name="optMustChangePwd.Size" type="System.Drawing.Size, System.Drawing">
+	<value>276, 24</value>
+  </data>
+  <data name="optMustChangePwd.TabIndex" type="System.Int32, mscorlib">
+	<value>10</value>
+  </data>
+  <data name="optMustChangePwd.Text" xml:space="preserve">
+	<value>&amp;User Must Change Password at Next Login</value>
+  </data>
+  <data name="&gt;&gt;optMustChangePwd.Name" xml:space="preserve">
+	<value>optMustChangePwd</value>
+  </data>
+  <data name="&gt;&gt;optMustChangePwd.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;optMustChangePwd.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;optMustChangePwd.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="lblConfirmPwd1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="lblConfirmPwd1.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblConfirmPwd1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblConfirmPwd1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>32, 188</value>
+  </data>
+  <data name="lblConfirmPwd1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>42, 13</value>
+  </data>
+  <data name="lblConfirmPwd1.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="lblConfirmPwd1.Text" xml:space="preserve">
+	<value>Confirm</value>
+  </data>
+  <data name="&gt;&gt;lblConfirmPwd1.Name" xml:space="preserve">
+	<value>lblConfirmPwd1</value>
+  </data>
+  <data name="&gt;&gt;lblConfirmPwd1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblConfirmPwd1.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblConfirmPwd1.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="txtConfirmPwd.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="txtConfirmPwd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="txtConfirmPwd.Location" type="System.Drawing.Point, System.Drawing">
+	<value>96, 190</value>
+  </data>
+  <data name="txtConfirmPwd.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+	<value>*</value>
+  </data>
+  <data name="txtConfirmPwd.Size" type="System.Drawing.Size, System.Drawing">
+	<value>160, 20</value>
+  </data>
+  <data name="txtConfirmPwd.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="&gt;&gt;txtConfirmPwd.Name" xml:space="preserve">
+	<value>txtConfirmPwd</value>
+  </data>
+  <data name="&gt;&gt;txtConfirmPwd.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtConfirmPwd.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;txtConfirmPwd.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="txtPassword.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="txtPassword.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="txtPassword.Location" type="System.Drawing.Point, System.Drawing">
+	<value>96, 158</value>
+  </data>
+  <data name="txtPassword.PasswordChar" type="System.Char, mscorlib" xml:space="preserve">
+	<value>*</value>
+  </data>
+  <data name="txtPassword.Size" type="System.Drawing.Size, System.Drawing">
+	<value>160, 20</value>
+  </data>
+  <data name="txtPassword.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="&gt;&gt;txtPassword.Name" xml:space="preserve">
+	<value>txtPassword</value>
+  </data>
+  <data name="&gt;&gt;txtPassword.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtPassword.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;txtPassword.ZOrder" xml:space="preserve">
+	<value>6</value>
+  </data>
+  <data name="txtUserDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="txtUserDescription.Location" type="System.Drawing.Point, System.Drawing">
+	<value>80, 48</value>
+  </data>
+  <data name="txtUserDescription.Multiline" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="txtUserDescription.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+	<value>Vertical</value>
+  </data>
+  <data name="txtUserDescription.Size" type="System.Drawing.Size, System.Drawing">
+	<value>312, 70</value>
+  </data>
+  <data name="txtUserDescription.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="&gt;&gt;txtUserDescription.Name" xml:space="preserve">
+	<value>txtUserDescription</value>
+  </data>
+  <data name="&gt;&gt;txtUserDescription.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtUserDescription.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;txtUserDescription.ZOrder" xml:space="preserve">
+	<value>9</value>
+  </data>
+  <data name="lblUserName.AccessibleDescription" xml:space="preserve">
+	<value>The selected user's name is {0}</value>
+  </data>
+  <data name="lblUserName.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblUserName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblUserName.Location" type="System.Drawing.Point, System.Drawing">
+	<value>80, 16</value>
+  </data>
+  <data name="lblUserName.Size" type="System.Drawing.Size, System.Drawing">
+	<value>21, 13</value>
+  </data>
+  <data name="lblUserName.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="lblUserName.Text" xml:space="preserve">
+	<value>{0}</value>
+  </data>
+  <data name="&gt;&gt;lblUserName.Name" xml:space="preserve">
+	<value>lblUserName</value>
+  </data>
+  <data name="&gt;&gt;lblUserName.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblUserName.Parent" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;lblUserName.ZOrder" xml:space="preserve">
+	<value>10</value>
+  </data>
+  <data name="tabAccount.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tabAccount.Size" type="System.Drawing.Size, System.Drawing">
+	<value>408, 390</value>
+  </data>
+  <data name="tabAccount.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="tabAccount.Text" xml:space="preserve">
+	<value>Account</value>
+  </data>
+  <data name="tabAccount.ToolTipText" xml:space="preserve">
+	<value>Information about the selected user's account</value>
+  </data>
+  <data name="&gt;&gt;tabAccount.Name" xml:space="preserve">
+	<value>tabAccount</value>
+  </data>
+  <data name="&gt;&gt;tabAccount.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabAccount.Parent" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tabAccount.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="tabFeatures.AccessibleDescription" xml:space="preserve">
+	<value>Information about which features the selected user can use</value>
+  </data>
+  <data name="tabFeatures.AccessibleName" xml:space="preserve">
+	<value>Features tab</value>
+  </data>
+  <data name="grpFeatureDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left, Right</value>
+  </data>
+  <data name="txtFeatureDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left, Right</value>
+  </data>
+  <data name="txtFeatureDescription.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="txtFeatureDescription.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 16</value>
+  </data>
+  <data name="txtFeatureDescription.Multiline" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="txtFeatureDescription.Size" type="System.Drawing.Size, System.Drawing">
+	<value>352, 40</value>
+  </data>
+  <data name="txtFeatureDescription.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;txtFeatureDescription.Name" xml:space="preserve">
+	<value>txtFeatureDescription</value>
+  </data>
+  <data name="&gt;&gt;txtFeatureDescription.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtFeatureDescription.Parent" xml:space="preserve">
+	<value>grpFeatureDescription</value>
+  </data>
+  <data name="&gt;&gt;txtFeatureDescription.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="grpFeatureDescription.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 310</value>
+  </data>
+  <data name="grpFeatureDescription.Size" type="System.Drawing.Size, System.Drawing">
+	<value>376, 64</value>
+  </data>
+  <data name="grpFeatureDescription.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="grpFeatureDescription.Text" xml:space="preserve">
+	<value>Description:</value>
+  </data>
+  <data name="&gt;&gt;grpFeatureDescription.Name" xml:space="preserve">
+	<value>grpFeatureDescription</value>
+  </data>
+  <data name="&gt;&gt;grpFeatureDescription.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;grpFeatureDescription.Parent" xml:space="preserve">
+	<value>tabFeatures</value>
+  </data>
+  <data name="&gt;&gt;grpFeatureDescription.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="clbFeatures.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="clbFeatures.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 104</value>
+  </data>
+  <data name="clbFeatures.Size" type="System.Drawing.Size, System.Drawing">
+	<value>376, 184</value>
+  </data>
+  <data name="clbFeatures.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="&gt;&gt;clbFeatures.Name" xml:space="preserve">
+	<value>clbFeatures</value>
+  </data>
+  <data name="&gt;&gt;clbFeatures.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckedListBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;clbFeatures.Parent" xml:space="preserve">
+	<value>tabFeatures</value>
+  </data>
+  <data name="&gt;&gt;clbFeatures.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="lblSelectFeatures.AccessibleDescription" xml:space="preserve">
+	<value />
+  </data>
+  <data name="lblSelectFeatures.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblSelectFeatures.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblSelectFeatures.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 80</value>
+  </data>
+  <data name="lblSelectFeatures.Size" type="System.Drawing.Size, System.Drawing">
+	<value>217, 13</value>
+  </data>
+  <data name="lblSelectFeatures.TabIndex" type="System.Int32, mscorlib">
+	<value>3</value>
+  </data>
+  <data name="lblSelectFeatures.Text" xml:space="preserve">
+	<value>Select the features to make available for {0}.</value>
+  </data>
+  <data name="&gt;&gt;lblSelectFeatures.Name" xml:space="preserve">
+	<value>lblSelectFeatures</value>
+  </data>
+  <data name="&gt;&gt;lblSelectFeatures.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSelectFeatures.Parent" xml:space="preserve">
+	<value>tabFeatures</value>
+  </data>
+  <data name="&gt;&gt;lblSelectFeatures.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="cboApplication.ItemHeight" type="System.Int32, mscorlib">
+	<value>15</value>
+  </data>
+  <data name="cboApplication.Location" type="System.Drawing.Point, System.Drawing">
+	<value>80, 44</value>
+  </data>
+  <data name="cboApplication.Size" type="System.Drawing.Size, System.Drawing">
+	<value>312, 21</value>
+  </data>
+  <data name="cboApplication.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="&gt;&gt;cboApplication.Name" xml:space="preserve">
+	<value>cboApplication</value>
+  </data>
+  <data name="&gt;&gt;cboApplication.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=3.3.0.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;cboApplication.Parent" xml:space="preserve">
+	<value>tabFeatures</value>
+  </data>
+  <data name="&gt;&gt;cboApplication.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="lblAvailableFeatures.AccessibleDescription" xml:space="preserve">
+	<value>The selected user's name is {0}</value>
+  </data>
+  <data name="lblAvailableFeatures.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblAvailableFeatures.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblAvailableFeatures.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 16</value>
+  </data>
+  <data name="lblAvailableFeatures.Size" type="System.Drawing.Size, System.Drawing">
+	<value>126, 13</value>
+  </data>
+  <data name="lblAvailableFeatures.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="lblAvailableFeatures.Text" xml:space="preserve">
+	<value>Available Features for {0}</value>
+  </data>
+  <data name="&gt;&gt;lblAvailableFeatures.Name" xml:space="preserve">
+	<value>lblAvailableFeatures</value>
+  </data>
+  <data name="&gt;&gt;lblAvailableFeatures.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAvailableFeatures.Parent" xml:space="preserve">
+	<value>tabFeatures</value>
+  </data>
+  <data name="&gt;&gt;lblAvailableFeatures.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="tabFeatures.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tabFeatures.Size" type="System.Drawing.Size, System.Drawing">
+	<value>408, 390</value>
+  </data>
+  <data name="tabFeatures.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="tabFeatures.Text" xml:space="preserve">
+	<value>Features</value>
+  </data>
+  <data name="tabFeatures.ToolTipText" xml:space="preserve">
+	<value>Information about which features the selected user can use</value>
+  </data>
+  <data name="&gt;&gt;tabFeatures.Name" xml:space="preserve">
+	<value>tabFeatures</value>
+  </data>
+  <data name="&gt;&gt;tabFeatures.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabFeatures.Parent" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tabFeatures.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="tabDataAccess.AccessibleDescription" xml:space="preserve">
+	<value>Information about which portions of which FieldWorks projects the selected user can access</value>
+  </data>
+  <data name="tabDataAccess.AccessibleName" xml:space="preserve">
+	<value>Data Access tab</value>
+  </data>
+  <data name="grpDataDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left, Right</value>
+  </data>
+  <data name="txtDataDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left, Right</value>
+  </data>
+  <data name="txtDataDescription.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="txtDataDescription.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 16</value>
+  </data>
+  <data name="txtDataDescription.Multiline" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="txtDataDescription.Size" type="System.Drawing.Size, System.Drawing">
+	<value>320, 40</value>
+  </data>
+  <data name="txtDataDescription.TabIndex" type="System.Int32, mscorlib">
+	<value>0</value>
+  </data>
+  <data name="&gt;&gt;txtDataDescription.Name" xml:space="preserve">
+	<value>txtDataDescription</value>
+  </data>
+  <data name="&gt;&gt;txtDataDescription.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtDataDescription.Parent" xml:space="preserve">
+	<value>grpDataDescription</value>
+  </data>
+  <data name="&gt;&gt;txtDataDescription.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="grpDataDescription.Location" type="System.Drawing.Point, System.Drawing">
+	<value>48, 310</value>
+  </data>
+  <data name="grpDataDescription.Size" type="System.Drawing.Size, System.Drawing">
+	<value>344, 64</value>
+  </data>
+  <data name="grpDataDescription.TabIndex" type="System.Int32, mscorlib">
+	<value>9</value>
+  </data>
+  <data name="grpDataDescription.Text" xml:space="preserve">
+	<value>Description:</value>
+  </data>
+  <data name="&gt;&gt;grpDataDescription.Name" xml:space="preserve">
+	<value>grpDataDescription</value>
+  </data>
+  <data name="&gt;&gt;grpDataDescription.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;grpDataDescription.Parent" xml:space="preserve">
+	<value>tabDataAccess</value>
+  </data>
+  <data name="&gt;&gt;grpDataDescription.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="tvwDataAccess.Enabled" type="System.Boolean, mscorlib">
+	<value>False</value>
+  </data>
+  <data name="tvwDataAccess.Indent" type="System.Int32, mscorlib">
+	<value>19</value>
+  </data>
+  <data name="tvwDataAccess.Location" type="System.Drawing.Point, System.Drawing">
+	<value>48, 96</value>
+  </data>
+  <data name="tvwDataAccess.Size" type="System.Drawing.Size, System.Drawing">
+	<value>344, 184</value>
+  </data>
+  <data name="tvwDataAccess.TabIndex" type="System.Int32, mscorlib">
+	<value>7</value>
+  </data>
+  <data name="&gt;&gt;tvwDataAccess.Name" xml:space="preserve">
+	<value>tvwDataAccess</value>
+  </data>
+  <data name="&gt;&gt;tvwDataAccess.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TreeView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tvwDataAccess.Parent" xml:space="preserve">
+	<value>tabDataAccess</value>
+  </data>
+  <data name="&gt;&gt;tvwDataAccess.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="optJustThisData.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="optJustThisData.Location" type="System.Drawing.Point, System.Drawing">
+	<value>24, 64</value>
+  </data>
+  <data name="optJustThisData.Size" type="System.Drawing.Size, System.Drawing">
+	<value>360, 24</value>
+  </data>
+  <data name="optJustThisData.TabIndex" type="System.Int32, mscorlib">
+	<value>6</value>
+  </data>
+  <data name="optJustThisData.Text" xml:space="preserve">
+	<value>&amp;Just This Data:</value>
+  </data>
+  <data name="&gt;&gt;optJustThisData.Name" xml:space="preserve">
+	<value>optJustThisData</value>
+  </data>
+  <data name="&gt;&gt;optJustThisData.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;optJustThisData.Parent" xml:space="preserve">
+	<value>tabDataAccess</value>
+  </data>
+  <data name="&gt;&gt;optJustThisData.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <data name="optAllData.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="optAllData.Location" type="System.Drawing.Point, System.Drawing">
+	<value>24, 40</value>
+  </data>
+  <data name="optAllData.Size" type="System.Drawing.Size, System.Drawing">
+	<value>360, 24</value>
+  </data>
+  <data name="optAllData.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="optAllData.Text" xml:space="preserve">
+	<value>A&amp;ll Data</value>
+  </data>
+  <data name="&gt;&gt;optAllData.Name" xml:space="preserve">
+	<value>optAllData</value>
+  </data>
+  <data name="&gt;&gt;optAllData.Type" xml:space="preserve">
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;optAllData.Parent" xml:space="preserve">
+	<value>tabDataAccess</value>
+  </data>
+  <data name="&gt;&gt;optAllData.ZOrder" xml:space="preserve">
+	<value>4</value>
+  </data>
+  <data name="lblAvailableData.AccessibleDescription" xml:space="preserve">
+	<value>The selected user's name is {0}</value>
+  </data>
+  <data name="lblAvailableData.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="lblAvailableData.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="lblAvailableData.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 16</value>
+  </data>
+  <data name="lblAvailableData.Size" type="System.Drawing.Size, System.Drawing">
+	<value>108, 13</value>
+  </data>
+  <data name="lblAvailableData.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="lblAvailableData.Text" xml:space="preserve">
+	<value>Available Data for {0}</value>
+  </data>
+  <data name="&gt;&gt;lblAvailableData.Name" xml:space="preserve">
+	<value>lblAvailableData</value>
+  </data>
+  <data name="&gt;&gt;lblAvailableData.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblAvailableData.Parent" xml:space="preserve">
+	<value>tabDataAccess</value>
+  </data>
+  <data name="&gt;&gt;lblAvailableData.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="tabDataAccess.Location" type="System.Drawing.Point, System.Drawing">
+	<value>4, 22</value>
+  </data>
+  <data name="tabDataAccess.Size" type="System.Drawing.Size, System.Drawing">
+	<value>408, 390</value>
+  </data>
+  <data name="tabDataAccess.TabIndex" type="System.Int32, mscorlib">
+	<value>2</value>
+  </data>
+  <data name="tabDataAccess.Text" xml:space="preserve">
+	<value>Data Access</value>
+  </data>
+  <data name="tabDataAccess.ToolTipText" xml:space="preserve">
+	<value>Information about which portions of which FieldWorks projects the selected user can access</value>
+  </data>
+  <data name="&gt;&gt;tabDataAccess.Name" xml:space="preserve">
+	<value>tabDataAccess</value>
+  </data>
+  <data name="&gt;&gt;tabDataAccess.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabDataAccess.Parent" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tabDataAccess.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="tabControl.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+	<value>Right</value>
+  </data>
+  <data name="tabControl.ItemSize" type="System.Drawing.Size, System.Drawing">
+	<value>52, 18</value>
+  </data>
+  <data name="tabControl.Location" type="System.Drawing.Point, System.Drawing">
+	<value>210, 16</value>
+  </data>
+  <data name="tabControl.ShowToolTips" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="tabControl.Size" type="System.Drawing.Size, System.Drawing">
+	<value>416, 416</value>
+  </data>
+  <data name="tabControl.TabIndex" type="System.Int32, mscorlib">
+	<value>5</value>
+  </data>
+  <data name="&gt;&gt;tabControl.Name" xml:space="preserve">
+	<value>tabControl</value>
+  </data>
+  <data name="&gt;&gt;tabControl.Type" xml:space="preserve">
+	<value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabControl.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;tabControl.ZOrder" xml:space="preserve">
+	<value>5</value>
+  </data>
+  <data name="lvwUsers.AccessibleDescription" xml:space="preserve">
+	<value>List of Users defined for current project</value>
+  </data>
+  <data name="lvwUsers.AccessibleName" xml:space="preserve">
+	<value>Users</value>
+  </data>
+  <data name="lvwUsers.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="user.Text" xml:space="preserve">
+	<value />
+  </data>
+  <data name="user.Width" type="System.Int32, mscorlib">
+	<value>1000</value>
+  </data>
+  <data name="lvwUsers.Location" type="System.Drawing.Point, System.Drawing">
+	<value>16, 32</value>
+  </data>
+  <data name="lvwUsers.Size" type="System.Drawing.Size, System.Drawing">
+	<value>184, 366</value>
+  </data>
+  <data name="lvwUsers.TabIndex" type="System.Int32, mscorlib">
+	<value>1</value>
+  </data>
+  <data name="&gt;&gt;lvwUsers.Name" xml:space="preserve">
+	<value>lvwUsers</value>
+  </data>
+  <data name="&gt;&gt;lvwUsers.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lvwUsers.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;lvwUsers.ZOrder" xml:space="preserve">
+	<value>2</value>
+  </data>
+  <data name="btnDelete.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+	<value>Bottom, Left</value>
+  </data>
+  <data name="btnDelete.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+	<value>NoControl</value>
+  </data>
+  <data name="btnDelete.Location" type="System.Drawing.Point, System.Drawing">
+	<value>110, 404</value>
+  </data>
+  <data name="btnDelete.Size" type="System.Drawing.Size, System.Drawing">
+	<value>75, 23</value>
+  </data>
+  <data name="btnDelete.TabIndex" type="System.Int32, mscorlib">
+	<value>4</value>
+  </data>
+  <data name="btnDelete.Text" xml:space="preserve">
+	<value>&amp;Delete</value>
+  </data>
+  <data name="&gt;&gt;btnDelete.Name" xml:space="preserve">
+	<value>btnDelete</value>
+  </data>
+  <data name="&gt;&gt;btnDelete.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnDelete.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnDelete.ZOrder" xml:space="preserve">
+	<value>3</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>True</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+	<value>49</value>
+  </metadata>
+  <data name="$this.AccessibleDescription" xml:space="preserve">
+	<value>User Properties dialog box</value>
+  </data>
+  <data name="$this.AccessibleName" xml:space="preserve">
+	<value>User Properties</value>
+  </data>
+  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
+	<value>5, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+	<value>634, 484</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+	<value>640, 512</value>
+  </data>
+  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>16, 16, 8, 52</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+	<value>CenterParent</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+	<value>User Properties</value>
+  </data>
+  <data name="&gt;&gt;FaceImages.Name" xml:space="preserve">
+	<value>FaceImages</value>
+  </data>
+  <data name="&gt;&gt;FaceImages.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;user.Name" xml:space="preserve">
+	<value>user</value>
+  </data>
+  <data name="&gt;&gt;user.Type" xml:space="preserve">
+	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+	<value>FwUserProperties</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

@@ -1,0 +1,2693 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lingPaper SYSTEM "XLingPap.dtd">
+<?xml-stylesheet type="text/xsl" href="XLingPap1.xsl"?>
+<lingPaper css="UserDoc.css">
+  <language id="lEng" name="English">english</language>
+  <language id="lNah" name="Nahuatl">nahuatl</language>
+  <language id="lSpn" name="Spanish">spanish</language>
+  <language id="lCar" name="Carolinian">carolinian</language>
+  <language id="lSET" name="Southeastern Tepehuan">setepehuan</language>
+  <language id="lAttribute" name="Attribute">attribute</language>
+  <language id="lValue" name="Value">attrValue</language>
+  <language id="lMeaning" name="Value"/>
+  <frontMatter>
+	<title>XLingPAP User Documentation</title>
+	<author>H. Andrew Black</author>
+	<author>Cheryl A. Black</author>
+	<affiliation>SIL International</affiliation>
+	<date>13 January 2003</date>
+	<version>1.5.0</version>
+	<contents showLevel="3"/>
+  </frontMatter>
+  <section1 id="sIntro">
+	<secTitle>Introduction</secTitle>
+	<p>
+The  <object class="XLingPap">XLingPap</object> package is a tool to aid the linguist in
+writing linguistic papers.
+</p>
+	<p>
+Linguists commonly face three obstacles in formatting papers.
+First, all examples are numbered in a paper.
+If during the writing process the author discovers a need to
+insert an example, then the numbering of all following
+examples and all references in the text to those examples
+need to be re-adjusted.
+This mechanical change can be both time-consuming and prone to error.
+Similarly, if the author decides to reorder some examples,
+then the numbering needs to be adjusted appropriately.
+<object class="XLingPap">XLingPap</object> provides an automatic way to facilitate such
+numbering and renumbering.
+</p>
+	<p>
+Secondly, linguists cite the work of other researchers using
+a standard citation format.
+This format functions essentially as an abbreviation or
+reference to the full citation entry which appears in the
+references section of the paper.
+The burden of maintaining consistency between citation and
+reference typically falls totally on the author.
+Many a reader has been disappointed to find a citation to a
+paper in the body of a paper for which there is no entry in
+the references section.
+<object class="XLingPap">XLingPap</object> provides an automatic means for a writer to
+maintain consistency; all citations in the text must have a
+corresponding entry in the references.
+Conversely, <object class="XLingPap">XLingPap</object> will include only those
+entries in the references section which are cited in the text.  This latter characteristic implies that one can maintain one master list of references and merely include it in any given paper.  Only those references actually cited in the given paper will appear in the references section.
+</p>
+	<p>Thirdly, in some formatting systems such as HTML, headers are not automatically numbered.  <object class="XLingPap">XLingPap</object> will automatically number all parts, chapters, and sections.  In addition, one may create references to parts, chapters, or sections and these will display as hyperlinks to them.</p>
+	<section2 id="sIntroMajor">
+	  <secTitle>Major Components</secTitle>
+	  <p>
+		<object class="XLingPap">XLingPap</object> has several major components:</p>
+	  <ol>
+		<li>Front matter</li>
+		<li>Sections</li>
+		<li>Back matter</li>
+	  </ol>
+	  <p>
+The front matter contains items like the title, author, date, contents, and abstract.
+	</p>
+	  <p>The sections contain the main body of the paper.  The main body can be as large as book parts which contain chapters (which in turn contain sections) or be a series of chapters or just a series of sections.</p>
+	  <p>The back matter contains items like appendices, endnotes, and references.</p>
+	</section2>
+	<section2 id="sIntroLang">
+	  <secTitle>Language Definitions</secTitle>
+	  <p>Besides the main text of the paper, one may also define the languages used within the paper.  One can then tag individual data items as belonging to one of these languages and use a style sheet to format the items for a given language in some unique, consistent way.</p>
+	</section2>
+	<section2 id="sIntroUsing">
+	  <secTitle>Using <object class="XLingPap">XLingPap</object>
+	  </secTitle>
+	  <p>This section describes how to use <object class="XLingPap">XLingPap</object>.
+There are two basic steps involved.
+The first consists of entering the appropriate element tags into an XML document.
+To do this, one may use a plain text editor (e.g. Notepad or even WinWord) or an XML-aware editor (e.g. XMLSpy).
+That is, the writer needs to key the correct tags in the
+file(s) to enable <object class="XLingPap">XLingPap</object> to recognize them.
+Secondly, the document file(s) must be processed to show the output in HTML form.  One way to do this is by loading the file into your web browser (e.g. Internet Explorer version 5.5).</p>
+	  <p>
+The syntax of the element tags follows the syntax of the XML elements.
+The basic syntax for an XML element is given in <exampleRef num="xXMLElement"/>,
+where parentheses delimit optional elements.</p>
+	  <example num="xXMLElement">
+		<chart class="element">
+&amp;lt;element (attribute&lt;span class="sub"&gt;1&lt;/span&gt;="value&lt;span class="sub"&gt;1&lt;/span&gt;") (attribute&lt;span class="sub"&gt;2&lt;/span&gt;="value&lt;span class="sub"&gt;2&lt;/span&gt;") (...) (attribute&lt;span class="sub"&gt;n&lt;/span&gt;="value&lt;span class="sub"&gt;n&lt;/span&gt;")&amp;gt;(command content)&amp;lt;/element&amp;gt;
+</chart>
+	  </example>
+	  <p>That is, a command begins with the opening wedge &lt; character, the element tag name, any optional attribute names and their values, the closing wedge &gt; character, the content of the tag, and a closing element tag.
+Some elements have required attributes.  Others do not.
+</p>
+	  <p>Example <exampleRef num="xMinimum"/> below shows the minimum you need to start.<endnote id="eMinimum">
+		  <p>Note that this assumes that the XLingpap.dtd and XLingPap1.xsl files are both in the same directory as this file.  If they are located somewhere else, you will need to enter the path to where they are.  For example, if these files are located in the "C:\Program Files\SIL\XLingPap" directory, then the first two lines should read as shown below.</p>
+		  <chart class="element">
+&amp;lt;!DOCTYPE lingPaper SYSTEM "C:\Program Files\SIL\XLingPap\XLingPap.dtd"&amp;gt;&lt;br/&gt;
+&amp;lt;?xml-stylesheet type="text/xsl" href="C:\Program Files\SIL\XLingPap\XLingPap1.xsl"?&amp;gt;&lt;br/&gt;
+</chart>
+		</endnote>
+	  </p>
+	  <example num="xMinimum">
+		<chart class="element">
+&amp;lt;!DOCTYPE lingPaper SYSTEM "XLingPap.dtd"&amp;gt;&lt;br/&gt;
+&amp;lt;?xml-stylesheet type="text/xsl" href="XLingPap1.xsl"?&amp;gt;&lt;br/&gt;
+&amp;lt;lingPaper&amp;gt;&lt;br/&gt;
+&amp;lt;/lingPaper&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	</section2>
+	<section2 id="sIntroOrg">
+	  <secTitle>Organization of this Documentation</secTitle>
+	  <p>This user documentation is organized first by the major components: front matter, sections, and then back matter.  There also are sections on examples and citations.  An appendix contains a reference listing of all the elements that <object class="XLingPap">XLingPap</object> uses.</p>
+	</section2>
+  </section1>
+  <section1 id="sFrontMatter">
+	<secTitle>Front Matter</secTitle>
+	<p>This section delineates the elements that can appear in the front matter of a paper.</p>
+	<section2 id="sFMTitle">
+	  <secTitle>Title</secTitle>
+	  <p>The <object class="element">&lt;title&gt;</object> element is required in a frontmatter.  Titles may include language data and endnotes.</p>
+	</section2>
+	<section2 id="sFMAuthor">
+	  <secTitle>Author</secTitle>
+	  <p>One or more <object class="element">&lt;author&gt;</object> elements must be included.</p>
+	</section2>
+	<section2 id="sFMAffiliation">
+	  <secTitle>Affiliation</secTitle>
+	  <p>Each author name may be followed by the affiliation of that author or the preceding authors, using an <object class="element">&lt;affiliation&gt;</object> element.  These are optional elements.</p>
+	</section2>
+	<section2 id="sFMPresentedAt">
+	  <secTitle>PresentedAt</secTitle>
+	  <p>One may add this line in the front matter indicating that the paper had been presented at some conference.  This is an optional element.</p>
+	</section2>
+	<section2 id="sFMDate">
+	  <secTitle>Date</secTitle>
+	  <p>The date of the paper may also be included as a <object class="element">&lt;date&gt;</object> element.  This is an optional element.</p>
+	</section2>
+	<section2 id="sFMVersion">
+	  <secTitle>Version</secTitle>
+	  <p>The <object class="element">&lt;version&gt;</object> element may be included to provide a version number for the document.  It is also optional.</p>
+	</section2>
+	<section2 id="sFMContents">
+	  <secTitle>Table of Contents</secTitle>
+	  <p>One may optionally include a table of contents by merely including the <object class="element">&lt;contents/&gt;</object> element.  Including this tag will instruct <object class="XLingPap">XLingPap</object> to automatically generate a table of contents.</p>
+	  <p>The default situation is for the table of contents to include sections up to three levels deep (i.e. it will include the titles for all of the following: <object class="element">&lt;part&gt;</object>, <object class="element">&lt;chapter&gt;</object>, <object class="element">&lt;appendix&gt;</object>, <object class="element">&lt;section1&gt;</object>, <object class="element">&lt;section2&gt;</object>, and <object class="element">&lt;section3&gt;</object>).  You can control how many section levels will be included in the table of contents by changing the value of the <object class="attribute">showLevel</object> attribute.  Its value can be any of the integer numbers between "1" and "6".</p>
+	  <p>The table of contents will also include acknowledgements (if any), the abstract (if present), endnotes, and references.</p>
+	  <p>
+		<object class="XLingPap">XLingPap</object> will use a title of "Table of Contents" for the contents.  If you wish to use some other title, add the <object class="attribute">label</object> attribute and set its value to the title you want to use.</p>
+	</section2>
+	<section2 id="sFMAcknowledgements">
+	  <secTitle>Acknowledgements</secTitle>
+	  <p>Acknowledgements for the paper may be included by using the <object class="element">&lt;acknowledgements&gt;</object> element.  The content of the acknowledgements may be a sequence of any "chunk" elements.<endnote id="eChunk">
+		  <p>The "chunk" elements are: <object class="element">&lt;p&gt;</object>, <object class="element">&lt;example&gt;</object>, <object class="element">&lt;table&gt;</object>, <object class="element">&lt;chart&gt;</object>, <object class="element">&lt;tree&gt;</object>, <object class="element">&lt;blockquote&gt;</object>, <object class="element">&lt;ol&gt;</object>, <object class="element">&lt;ul&gt;</object>, and <object class="element">&lt;dl&gt;</object>.</p>
+		</endnote>
+	  </p>
+	  <p>
+		<object class="XLingPap">XLingPap</object> will use a title of "Acknowledgements" for the acknowledgements.  If you wish to use some other title, add the <object class="attribute">label</object> attribute and set its value to the title you want to use.</p>
+	</section2>
+	<section2 id="sFMAbstract">
+	  <secTitle>Abstract</secTitle>
+	  <p>An abstract for the paper may be included by using the <object class="element">&lt;abstract&gt;</object> element.  The content of the abstract may be a sequence of any "chunk" elements.  (See endnote <endnoteRef ref="eChunk"/> for what the "chunk" elements are.)</p>
+	  <p>
+		<object class="XLingPap">XLingPap</object> will use a title of "Abstract" for the abstract.  If you wish to use some other title, add the <object class="attribute">label</object> attribute and set its value to the title you want to use.</p>
+	</section2>
+	<section2 id="sFMExample">
+	  <secTitle>Front Matter Example</secTitle>
+	  <p>Here is an example of the front matter using all possibilities.  If one keys the following</p>
+	  <example num="xFrontMatter">
+		<chart class="elementExample">
+  &amp;lt;frontMatter&amp;gt;&lt;br/&gt;
+	&amp;lt;title&amp;gt;Sample XLingPap Paper&amp;lt;/title&amp;gt;&lt;br/&gt;
+	&amp;lt;author&amp;gt;Cheryl A. Black&amp;lt;/author&amp;gt;&lt;br/&gt;
+	&amp;lt;author&amp;gt;H. Andrew Black&amp;lt;/author&amp;gt;&lt;br/&gt;
+	&amp;lt;affiliation&amp;gt;SIL International&amp;lt;/affiliation&amp;gt;&lt;br/&gt;
+	&amp;lt;date&amp;gt;21 June, 2001&amp;lt;/date&amp;gt;&lt;br/&gt;
+	&amp;lt;version&amp;gt;1.0&amp;lt;/version&amp;gt;&lt;br/&gt;
+	&amp;lt;contents showLevel="4"/&amp;gt;&lt;br/&gt;
+	&amp;lt;abstract&amp;gt;&lt;br/&gt;
+	  &amp;lt;p&amp;gt;This paper illustrates the various elements available in the XML/XSLT-based linguistic paper markup scheme called XLingPap. It provides examples of the various markups and shows how they can be rendered in HTML.&amp;lt;/p&amp;gt;&lt;br/&gt;
+	&amp;lt;/abstract&amp;gt;&lt;br/&gt;
+  &amp;lt;/frontMatter&amp;gt;&lt;br/&gt;</chart>
+	  </example>
+	  <p>Then it might come out looking like what is shown in example <exampleRef num="xFrontMatterHTML"/>.</p>
+	  <example num="xFrontMatterHTML">
+		<chart class="htmloutput">
+&lt;center&gt;&lt;b&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;Sample XLingPap Paper&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/b&gt;&lt;/center&gt;
+&lt;center&gt;&lt;i&gt;Cheryl A. Black&lt;/i&gt;&lt;/center&gt;
+&lt;center&gt;&lt;i&gt;H. Andrew Black&lt;/i&gt;&lt;/center&gt;
+&lt;center&gt;&lt;i&gt;SIL International&lt;/i&gt;&lt;/center&gt;
+&lt;br&gt;&lt;center&gt;&lt;small&gt;21 June, 2001&lt;/small&gt;&lt;/center&gt;
+&lt;center&gt;&lt;small&gt;Version: 1.0&lt;/small&gt;&lt;/center&gt;
+&lt;hr&gt;
+&lt;div&gt;
+&lt;center&gt;&lt;big&gt;&lt;big&gt;&lt;b&gt;Table of Contents&lt;/b&gt;&lt;/big&gt;&lt;/big&gt;&lt;/center&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#rXLingPapAbstract"&gt;Abstract&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secIntr"&gt;1 Introduction to this paper&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secSecWithSubs"&gt;2 Section with subsections&lt;/a&gt;&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#secSub1"&gt;2.1 First subsection&lt;/a&gt;&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#secSub12"&gt;2.1.1 A sub-sub-section&lt;/a&gt;&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#secSub4"&gt;2.1.1.1 Fourth level section&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/ul&gt;
+&lt;li&gt;&lt;a href="#secSub2"&gt;2.2 Second subsection&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;li&gt;&lt;a href="#secSampleReferences"&gt;3 Section references&lt;/a&gt;&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#secEN"&gt;3.1 Endnotes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;li&gt;&lt;a href="#secEx"&gt;4 Examples&lt;/a&gt;&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#sExWord"&gt;4.1 Word examples&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#sExListWord"&gt;4.2 List of Words examples&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secExSingle"&gt;4.3 Single line examples&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secExListSingle"&gt;4.4 List of single line examples&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secExInterlinear"&gt;4.5 Single interlinear examples&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secExListInterlinear"&gt;4.6 List of interlinear examples&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#sExRef"&gt;4.7 References to examples&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;li&gt;&lt;a href="#secTables"&gt;5 Tables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secCharts"&gt;6 Charts&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secTrees"&gt;7 Trees&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#sQuotes"&gt;8 Quotes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#sLists"&gt;9 Lists&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secCitations"&gt;10 Citations&lt;/a&gt;&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#secCitPage"&gt;10.1 Adding page numbers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secCitParen"&gt;10.2 Controlling the parentheses around dates&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secCitAlpha"&gt;10.3 Dealing with multiple works by the same author in the same year&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secCitHyper"&gt;10.4 Hyperlinks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#secCitRefList"&gt;10.5 Only cited references appear in the references&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;li&gt;&lt;a href="#a1"&gt;A.1 First appendix section&lt;/a&gt;&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#a12"&gt;A.1.1 Subsection in an appendix&lt;/a&gt;&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#a123"&gt;A.1.1.1 Sub-sub-section of an appendix&lt;/a&gt;&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="#a1234"&gt;A.1.1.1.1 Fourth level section in appendix&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/ul&gt;
+&lt;/ul&gt;
+&lt;li&gt;&lt;a href="#a2"&gt;B.1 Second appendix&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#rXLingPapEndnotes"&gt;Endnotes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#rXLingPapReferences"&gt;References&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;br&gt;&lt;center&gt;&lt;b&gt;&lt;big&gt;&lt;big&gt;&lt;a name="rXLingPapAbstract"&gt;Abstract&lt;/a&gt;&lt;/big&gt;&lt;/big&gt;&lt;/b&gt;&lt;/center&gt;
+
+&lt;div style="margin-left: 0.5in; margin-right: 0.5in"&gt;
+&lt;p&gt;This paper illustrates the various elements available in the XML/XSLT-based linguistic paper markup scheme called XLingPap. It provides examples of the various markups and shows how they can be rendered in HTML.&lt;/p&gt;
+&lt;/div&gt;
+&lt;hr&gt;</chart>
+	  </example>
+	</section2>
+  </section1>
+  <section1 id="sSections">
+	<secTitle>Sections</secTitle>
+	<p>Sections may be nested up to six levels deep.  Each level is an element tag consisting of the word <q>section</q> followed by the level number.  For example, a third level section is <object class="element">&lt;section3&gt;</object>.</p>
+	<section2 id="sSectionTitle">
+	  <secTitle>Section Title</secTitle>
+	  <p>Every section element has a required <object class="element">&lt;secTitle&gt;</object> element which gives the section title.  The title may contain language data and an endnote, if one so desires.</p>
+	</section2>
+	<section2 id="sSectionContent">
+	  <secTitle>Section Content</secTitle>
+	  <p>Sections may contain a sequence of any of the following elements:</p>
+	  <ul>
+		<li>Paragraphs (<object class="element">&lt;p&gt;</object>).</li>
+		<li>Examples (<object class="element">&lt;example&gt;</object>).</li>
+		<li>Table (<object class="element">&lt;table&gt;</object>).</li>
+		<li>Chart (<object class="element">&lt;chart&gt;</object>).</li>
+		<li>Tree (<object class="element">&lt;tree&gt;</object>).</li>
+		<li>Block quote (<object class="element">&lt;blockquote&gt;</object>).</li>
+		<li>Ordered list (<object class="element">&lt;ol&gt;</object>).</li>
+		<li>Unordered list (<object class="element">&lt;ul&gt;</object>).</li>
+		<li> Definition list (<object class="element">&lt;dl&gt;</object>).</li>
+		<li>Sub sections.</li>
+	  </ul>
+	</section2>
+	<section2 id="sSectionReference">
+	  <secTitle>Section Referencing</secTitle>
+	  <p>Every section element also has a required <object class="attribute">id</object> attribute which is used to uniquely identify the section.  One can use the <object class="element">&lt;sectionRef&gt;</object> element to refer to a particular section via its <object class="attribute">sec</object> attribute.<endnote id="eInitialIDLetter">
+		  <p>We suggest that you use a unique prefix letter for each kind of id.  That way, when you are keying a reference to that kind of element using a tool such as <object class="tool">XML Spy</object>, you can more easily find the possible list of ids (they will all be together since they all begin with the same letter).  Here are some suggested initial letters you can use:</p>
+		  <table>
+			<headerRow>
+			  <headerCol>
+				<langData lang="lEng">Letter</langData>
+			  </headerCol>
+			  <headerCol>
+				<langData lang="lEng">Element</langData>
+			  </headerCol>
+			</headerRow>
+			<row>
+			  <col>
+				<langData lang="lEng">a</langData>
+			  </col>
+			  <col>
+				<langData lang="lEng">appendix</langData>
+			  </col>
+			</row>
+			<row>
+			  <col>
+				<langData lang="lEng">c</langData>
+			  </col>
+			  <col>
+				<langData lang="lEng">chapter</langData>
+			  </col>
+			</row>
+			<row>
+			  <col>
+				<langData lang="lEng">e</langData>
+			  </col>
+			  <col>
+				<langData lang="lEng">endnote</langData>
+			  </col>
+			</row>
+			<row>
+			  <col>
+				<langData lang="lEng">l</langData>
+			  </col>
+			  <col>
+				<langData lang="lEng">language</langData>
+			  </col>
+			</row>
+			<row>
+			  <col>
+				<langData lang="lEng">p</langData>
+			  </col>
+			  <col>
+				<langData lang="lEng">part</langData>
+			  </col>
+			</row>
+			<row>
+			  <col>
+				<langData lang="lEng">r</langData>
+			  </col>
+			  <col>
+				<langData lang="lEng">refWork</langData>
+			  </col>
+			</row>
+			<row>
+			  <col>
+				<langData lang="lEng">s</langData>
+			  </col>
+			  <col>
+				<langData lang="lEng">section[1,2,3,4,5,6]</langData>
+			  </col>
+			</row>
+			<row>
+			  <col>
+				<langData lang="lEng">x</langData>
+			  </col>
+			  <col>
+				<langData lang="lEng">example</langData>
+			  </col>
+			</row>
+		  </table>
+		</endnote>  A hyperlink is made between the reference and the section header.
+	</p>
+	  <p>Note that if you wish to refer to an appendix, you should use the <object class="element">appendixRef</object> element and set its <object class="attribute">app</object> attribute to the <object class="attribute">id</object> attribute of the <object class="element">appendix</object> element.</p>
+	</section2>
+	<section2 id="sSectionExample">
+	  <secTitle>Section Example</secTitle>
+	  <p>Here is an example of some sections, including some section references.</p>
+	  <example num="xSectionExample">
+		<chart class="elementExample">
+  &amp;lt;section1 id="sIntr"&amp;gt;&lt;br/&gt;
+	&amp;lt;secTitle&amp;gt;Introduction  &amp;lt;langData lang="lCar"&amp;gt;to this paper&amp;lt;/langData&amp;gt;&lt;br/&gt;
+	&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+	&amp;lt;p&amp;gt;This is the first section and it is an introduction.&amp;lt;/p&amp;gt;&lt;br/&gt;
+  &amp;lt;/section1&amp;gt;&lt;br/&gt;
+  &amp;lt;section1 id="sSecWithSubs"&amp;gt;&lt;br/&gt;
+	&amp;lt;secTitle&amp;gt;Section with subsections&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+	&amp;lt;p&amp;gt;This section has subsections.&amp;lt;/p&amp;gt;&lt;br/&gt;
+	&amp;lt;section2 id="sSub1"&amp;gt;&lt;br/&gt;
+	  &amp;lt;secTitle&amp;gt;First subsection&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+	  &amp;lt;p&amp;gt;This is the first subsection.  It has its own subsection.&amp;lt;/p&amp;gt;&lt;br/&gt;
+	  &amp;lt;section3 id="sSub12"&amp;gt;&lt;br/&gt;
+		&amp;lt;secTitle&amp;gt;A sub-sub-section&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+		&amp;lt;p&amp;gt;This is a subsubsection.&amp;lt;/p&amp;gt;&lt;br/&gt;
+		&amp;lt;section4 id="sSub4"&amp;gt;&lt;br/&gt;
+		  &amp;lt;secTitle&amp;gt;Fourth level section&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;p&amp;gt;This is a section, nested four levels deep.&amp;lt;/p&amp;gt;&lt;br/&gt;
+		  &amp;lt;section5 id="sSub5"&amp;gt;&lt;br/&gt;
+			&amp;lt;secTitle&amp;gt;Fifth level section&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;p&amp;gt;This is a section, nested five levels deep.&amp;lt;/p&amp;gt;&lt;br/&gt;
+			&amp;lt;section6 id="sSub6"&amp;gt;&lt;br/&gt;
+			  &amp;lt;secTitle&amp;gt;Sixth level section&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+			  &amp;lt;p&amp;gt;This is a section, nested six levels deep.  Six levels is the maximum allowed.&amp;lt;/p&amp;gt;&lt;br/&gt;
+			&amp;lt;/section6&amp;gt;&lt;br/&gt;
+		  &amp;lt;/section5&amp;gt;&lt;br/&gt;
+		&amp;lt;/section4&amp;gt;&lt;br/&gt;
+	  &amp;lt;/section3&amp;gt;&lt;br/&gt;
+	&amp;lt;/section2&amp;gt;&lt;br/&gt;
+	&amp;lt;section2 id="sSub2"&amp;gt;&lt;br/&gt;
+	  &amp;lt;secTitle&amp;gt;Second subsection&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+	  &amp;lt;p&amp;gt;This is the second subsection.&amp;lt;/p&amp;gt;&lt;br/&gt;
+	&amp;lt;/section2&amp;gt;&lt;br/&gt;
+  &amp;lt;/section1&amp;gt;&lt;br/&gt;
+  &amp;lt;section1 id="sSampleReferences"&amp;gt;&lt;br/&gt;
+	&amp;lt;secTitle&amp;gt;Section references&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+	&amp;lt;p&amp;gt;One can refer to sections by using a &amp;lt;object class="element"&amp;gt;&lt;sectionRef&gt;&amp;lt;/object&amp;gt; element tag.  For example, we could say, See section &amp;lt;sectionRef sec="sSub12"/&amp;gt; or see section &amp;lt;sectionRef sec="sIntr"/&amp;gt;.&amp;lt;/p&amp;gt;&lt;br/&gt;
+&amp;lt;/section1&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <p>Example <exampleRef num="xSectionExample"/> comes out as shown in example <exampleRef num="xSectionExampleHTML"/>.</p>
+	  <example num="xSectionExampleHTML">
+		<chart class="htmloutput">
+&lt;h1&gt;&lt;a name="sIntr"&gt;1 Introduction&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;This is the first section and it is an introduction.&lt;/p&gt;
+&lt;h1&gt;&lt;a name="sSecWithSubs"&gt;2 Section with subsections&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;This section has subsections.&lt;/p&gt;
+&lt;h2&gt;&lt;a name="sSub1"&gt;2.1 First subsection&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;This is the first subsection.  It has its own subsection.&lt;/p&gt;
+&lt;h3&gt;&lt;a name="sSub12"&gt;2.1.1 A sub-sub-section&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;This is a subsubsection.&lt;/p&gt;
+&lt;h4&gt;&lt;a name="sSub4"&gt;2.1.1.1 Fourth level section&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;This is a section, nested four levels deep.&lt;/p&gt;
+&lt;h5&gt;&lt;a name="sSub5"&gt;2.1.1.1.1 Fifth level section&lt;/a&gt;&lt;/h5&gt;
+&lt;p&gt;This is a section, nested five levels deep.&lt;/p&gt;
+&lt;h6&gt;&lt;a name="sSub6"&gt;2.1.1.1.1.1 Sixth level section&lt;/a&gt;&lt;/h6&gt;
+&lt;p&gt;This is a section, nested six levels deep.  Six levels is the maximum allowed.&lt;/p&gt;
+&lt;h2&gt;&lt;a name="sSub2"&gt;2.2 Second subsection&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;This is the second subsection.&lt;/p&gt;
+&lt;h1&gt;&lt;a name="sSampleReferences"&gt;3 Section references&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;One can refer to sections by using a &lt;span class="element"&gt;&lt;sectionRef&gt;&lt;/span&gt; element tag.  For example, we could say, See section &lt;a href="#sSub12"&gt;2.1.1&lt;/a&gt; or see section &lt;a href="#sIntr"&gt;1&lt;/a&gt;.
+	&lt;/p&gt;
+</chart>
+	  </example>
+	</section2>
+	<section2 id="sSectionChapter">
+	  <secTitle>Chapters</secTitle>
+	  <p>Instead of starting a paper with a top level section, one may use chapters instead.  Each chapter then may have up to six levels of sections and subsections.  Use the <object class="element">&lt;chapter&gt;</object> element as the first element after any front matter.</p>
+	</section2>
+	<section2 id="sSectionPart">
+	  <secTitle>Parts</secTitle>
+	  <p>If one is working on a larger project and the paper has not only chapters, but also parts (each of which contains chapters), then one should use the <object class="element">&lt;part&gt;</object> element as the first element after any front matter.</p>
+	</section2>
+  </section1>
+  <section1 id="sBackMatter">
+	<secTitle>Back Matter</secTitle>
+	<p>Back matter consists of appendices, endnotes, and references.  All of these are optional.</p>
+	<section2 id="sBMAppendix">
+	  <secTitle>Appendices</secTitle>
+	  <p>Appendices are similar to chapters.  One merely adds an <object class="element">&lt;appendix&gt;</object> element.  It has its title and one may include sections and subsections.  The appendix will automatically be given a letter.  Its sections and subsections will be numbered like other sections, only they will begin with the appropriate appendix letter.  See the example back matter section (<sectionRef sec="sBMExample"/>) below.</p>
+	</section2>
+	<section2 id="sBMEndnotes">
+	  <secTitle>Endnotes</secTitle>
+	  <p>HTML does not readily allow for footnotes, since the entire paper may be rendered on one HTML page.  Therefore we use endnotes instead of footnotes.</p>
+	  <p>One keys an endnote in the text at the point where the reference to the endnote should go (i.e. the <q>endnote number</q>, usually rendered in superscript).  Create the <object class="element">&lt;endnote&gt;</object> element, give it its required <object class="attribute">id</object> attribute, type the content of the endnote, and then give the <object class="element">&lt;/endnote&gt;</object> closing tag.  The content of the endnote normally begins with a paragraph tag <object class="element">&lt;p&gt;</object>, although one may use a sequence of any "chunk" elements.<endnoteRef ref="eChunk"/>
+	  </p>
+	  <p>Note that an <object class="element">&lt;endnotes/&gt;</object> element is required in the back matter section in order to get endnotes to come out properly.</p>
+	</section2>
+	<section2 id="sBMReferences">
+	  <secTitle>References</secTitle>
+	  <p>The references section begins by using the <object class="element">&lt;references&gt;</object> element.  One then creates a sequence of <object class="element">&lt;refAuthor&gt;</object> elements within it.  The <object class="element">&lt;refAuthor&gt;</object> elements should be ordered alphabetically by the author's last name.  Note that <object class="XLingPap">XLingPap</object> has you group the references by author, not by work.</p>
+	  <p>Each <object class="element">&lt;refAuthor&gt;</object> element has two required attributes: <object class="attribute">name</object> and <object class="attribute">citeName</object>.  The <object class="attribute">name</object> attribute is how you want the author's name to appear in the references (usually last name first for single authors; see the examples below <sectionRef sec="sBMExample"/>).  The <object class="attribute">citeName</object> attribute is how you want the author's name to be shown in a citation within the body of the paper.</p>
+	  <p>Within each <object class="element">&lt;refAuthor&gt;</object> element, one lists one or more <object class="element">&lt;refWork&gt;</object> elements, each of which describes a work by that author.  They should be ordered by date, oldest first.  Each <object class="element">&lt;refWork&gt;</object> element has a required <object class="attribute">id</object> attribute which can be referred to by <object class="element">&lt;citation&gt;</object> elements within the body of the paper.</p>
+	  <p>Every <object class="element">&lt;refWork&gt;</object> element has both a <object class="element">&lt;refDate&gt;</object> element and a <object class="element">&lt;refTitle&gt;</object> element.  The <object class="element">&lt;refDate&gt;</object> element contains the date (i.e. year) of the work.  If there is more than one work by the same author within a given year, merely list the year for each such work.  <object class="XLingPap">XLingPap</object> will automatically append a letter after the year as appropriate.</p>
+	  <p>The <object class="element">&lt;refTitle&gt;</object> element contains the title of the work.  The title should not include any formatting (such as surrounding quotes) as these will be added automatically by <object class="XLingPap">XLingPap</object>.  The title may, however, include any "embedded" elements.<endnote id="eEmbedded">
+		  <p>The "embedded" elements are: <object class="element">&lt;langData&gt;</object>, <object class="element">&lt;gloss&gt;</object>, <object class="element">&lt;exampleRef&gt;</object>, <object class="element">&lt;sectionRef&gt;</object>, <object class="element">&lt;citation&gt;</object>, <object class="element">&lt;comment&gt;</object>, <object class="element">&lt;object&gt;</object>, <object class="element">&lt;br&gt;</object>, <object class="element">&lt;endnote&gt;</object>, <object class="element">&lt;endnoteRef&gt;</object>, <object class="element">&lt;q&gt;</object>, and <object class="element">&lt;img&gt;</object>.</p>
+		</endnote>
+	  </p>
+	  <p>The rest of the information about the citation depends on the type of citation it is.  <object class="XLingPap">XLingPap</object> allows the types given in the following sections:</p>
+	  <section3 id="sBMRefArticle">
+		<secTitle>
+		  <object class="element">&lt;article&gt;</object>
+		</secTitle>
+		<p>This is for an article published in a journal.  Besides the date and the title, an article also has <object class="element">&lt;jTitle&gt;</object>, <object class="element">&lt;jVol&gt;</object>, and <object class="element">&lt;jPages&gt;</object> elements (for the journal title, the journal volume number, and the page numbers of the article in the journal).</p>
+	  </section3>
+	  <section3 id="sBMRefBook">
+		<secTitle>
+		  <object class="element">&lt;book&gt;</object>
+		</secTitle>
+		<p>This is for a book.  Besides the date and the title, a book also has an optional <object class="element">&lt;series&gt;</object>  element, a required <object class="element">&lt;publisher&gt;</object> element and a required <object class="element">&lt;location&gt;</object> element.
+</p>
+	  </section3>
+	  <section3 id="sBMRefCollection">
+		<secTitle>
+		  <object class="element">&lt;collection&gt;</object>
+		</secTitle>
+		<p>This is for a paper included in a volume or collection of papers.  Besides the date and the title, a collection paper also has:</p>
+		<ol>
+		  <li>a required <object class="element">&lt;collEd&gt;</object> (collection volume editor(s)) element,</li>
+		  <li>a required <object class="element">&lt;collTitle&gt;</object> (collection volume title) element,</li>
+		  <li>an optional <object class="element">&lt;collVol&gt;</object> (collection volume number) element,</li>
+		  <li>an optional <object class="element">&lt;collPage&gt;</object> (page numbers in the volume) element,</li>
+		  <li>a required <object class="element">&lt;publisher&gt;</object>, and</li>
+		  <li>an optional <object class="element">&lt;location&gt;</object> element.</li>
+		</ol>
+		<p>The <object class="element">&lt;collEd&gt;</object> element also has a <object class="attribute">plural</object> attribute to indicate whether there is more than one editor.  Use the value of <object class="attrValue">yes</object> if there are more than one editor; otherwise, use the value of <object class="attrValue">no</object>.</p>
+	  </section3>
+	  <section3 id="sBMRefDissertation">
+		<secTitle>
+		  <object class="element">&lt;dissertation&gt;</object>
+		</secTitle>
+		<p>This is for a Ph.D. dissertation.  Besides the date and the title, a dissertation also has a required <object class="element">&lt;institution&gt;</object> element, a required <object class="element">&lt;location&gt;</object> element, and an optional <object class="element">&lt;published&gt;</object> element.  The latter is for the case where the dissertation has also been published.  A <object class="element">&lt;published&gt;</object> element consists of <object class="element">&lt;publisher&gt;</object>, <object class="element">&lt;location&gt;</object>, and <object class="element">&lt;pubDate&gt;</object> elements (all required).</p>
+	  </section3>
+	  <section3 id="sBMRefMs">
+		<secTitle>
+		  <object class="element">&lt;ms&gt;</object>
+		</secTitle>
+		<p>This is for an unpublished manuscript.  Besides the date and the title, a manuscript also has an <object class="element">&lt;institution&gt;</object> element.</p>
+	  </section3>
+	  <section3 id="sBMRefPaper">
+		<secTitle>
+		  <object class="element">&lt;paper&gt;</object>
+		</secTitle>
+		<p>This is for a paper presented at a conference.  Besides the date and the title, a paper also has a required <object class="element">&lt;conference&gt;</object> element and an optional <object class="element">&lt;location&gt;</object> element.</p>
+	  </section3>
+	  <section3 id="sBMRefProceedings">
+		<secTitle>
+		  <object class="element">&lt;proceedings&gt;</object>
+		</secTitle>
+		<p>This is for a paper included in a conference proceedings volume.  Besides the date and the title, a proceedings paper also has:</p>
+		<ol>
+		  <li>a required <object class="element">&lt;procEd&gt;</object> (proceedings volume editor(s)) element,</li>
+		  <li>a required <object class="element">&lt;procTitle&gt;</object> (proceedings volume title) element,</li>
+		  <li>an optional <object class="element">&lt;procVol&gt;</object> (proceedings volume number) element,</li>
+		  <li>an optional <object class="element">&lt;procPage&gt;</object> (page numbers in the volume) element,</li>
+		  <li>a required <object class="element">&lt;publisher&gt;</object>, and</li>
+		  <li>an optional <object class="element">&lt;location&gt;</object> element.</li>
+		</ol>
+		<p>The <object class="element">&lt;procEd&gt;</object> element also has a <object class="attribute">plural</object> attribute to indicate whether there is more than one editor.  Use the value of <object class="attrValue">yes</object> if there are more than one editor; otherwise, use the value of <object class="attrValue">no</object>.</p>
+	  </section3>
+	  <section3 id="sBMRefThesis">
+		<secTitle>
+		  <object class="element">&lt;thesis&gt;</object>
+		</secTitle>
+		<p>This is for an M.A. thesis.  Besides the date and the title, a thesis also has a required <object class="element">&lt;institution&gt;</object> element, a required <object class="element">&lt;location&gt;</object> element, and an optional <object class="element">&lt;published&gt;</object> element.  The latter is for the case where the thesis has also been published.  A <object class="element">&lt;published&gt;</object> element consists of <object class="element">&lt;publisher&gt;</object>, <object class="element">&lt;location&gt;</object>, and <object class="element">&lt;pubDate&gt;</object> elements (all required).</p>
+	  </section3>
+	  <section3 id="sBMRefWebPage">
+		<secTitle>
+		  <object class="element">&lt;webPage&gt;</object>
+		</secTitle>
+		<p>This is for a paper that has been posted on the World Wide Web.  Besides the date and the title, a web paper also has an optional <object class="element">&lt;institution&gt;</object> element or <object class="element">&lt;publisher&gt;</object> element, an optional <object class="element">&lt;location&gt;</object> element, and a required <object class="element">&lt;url&gt;</object> element.  The latter is, of course, the address of the page on the World Wide Web.  The URL will contain an HTML link to it, so you should be able to click on it within your web browser and link to it.</p>
+	  </section3>
+	</section2>
+	<section2 id="sBMExample">
+	  <secTitle>Back Matter Example</secTitle>
+	  <p>Here is an example of the back matter using all possibilities.  If one keys the following</p>
+	  <example num="xBackMatter">
+		<chart class="elementExample">
+  &amp;lt;backMatter&amp;gt;&lt;br/&gt;
+	&amp;lt;appendix id="aa"&amp;gt;&lt;br/&gt;
+	  &amp;lt;secTitle&amp;gt;First Appendix&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+	  &amp;lt;p&amp;gt;This is an appendix.  It has all possible number of section nesting.&amp;lt;/p&amp;gt;&lt;br/&gt;
+	  &amp;lt;section1 id="a1"&amp;gt;&lt;br/&gt;
+		&amp;lt;secTitle&amp;gt;First appendix section&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+		&amp;lt;p&amp;gt;One can also add appendices.  They will be numbered like sections, except using initial capital letters.&amp;lt;/p&amp;gt;&lt;br/&gt;
+		&amp;lt;section2 id="a12"&amp;gt;&lt;br/&gt;
+		  &amp;lt;secTitle&amp;gt;Subsection in an appendix&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;p&amp;gt;One can have subsections, too.  They may be nested up to six levels,  just like regular sections.&amp;lt;/p&amp;gt;&lt;br/&gt;
+		  &amp;lt;section3 id="a123"&amp;gt;&lt;br/&gt;
+			&amp;lt;secTitle&amp;gt;Sub-sub-section of an appendix&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;section4 id="a1234"&amp;gt;&lt;br/&gt;
+			  &amp;lt;secTitle&amp;gt;Fourth level section in appendix&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+			  &amp;lt;section5 id="a12345"&amp;gt;&lt;br/&gt;
+				&amp;lt;secTitle&amp;gt;Fifth level section in appendix&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+				&amp;lt;section6 id="a123456"&amp;gt;&lt;br/&gt;
+				  &amp;lt;secTitle&amp;gt;Sixth level section in appendix&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+				&amp;lt;/section6&amp;gt;&lt;br/&gt;
+			  &amp;lt;/section5&amp;gt;&lt;br/&gt;
+			&amp;lt;/section4&amp;gt;&lt;br/&gt;
+		  &amp;lt;/section3&amp;gt;&lt;br/&gt;
+		&amp;lt;/section2&amp;gt;&lt;br/&gt;
+	  &amp;lt;/section1&amp;gt;&lt;br/&gt;
+	&amp;lt;/appendix&amp;gt;&lt;br/&gt;
+	&amp;lt;appendix id="aA2"&amp;gt;&lt;br/&gt;
+	  &amp;lt;secTitle&amp;gt;Second Appendix&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+	  &amp;lt;p&amp;gt;This is the beginning of the second appendix. And it has a reference to example &amp;lt;exampleRef equal="no" num="x103d"/&amp;gt;.&amp;lt;/p&amp;gt;&lt;br/&gt;
+	  &amp;lt;section1 id="a2"&amp;gt;&lt;br/&gt;
+		&amp;lt;secTitle&amp;gt;Second appendix&amp;lt;/secTitle&amp;gt;&lt;br/&gt;
+		&amp;lt;p&amp;gt;This is an example of another appendix.&amp;lt;/p&amp;gt;&lt;br/&gt;
+	  &amp;lt;/section1&amp;gt;&lt;br/&gt;
+	&amp;lt;/appendix&amp;gt;&lt;br/&gt;
+	&amp;lt;!--&lt;br/&gt;
+		ENDNOTES&lt;br/&gt;
+--&amp;gt;&lt;br/&gt;
+	&amp;lt;endnotes/&amp;gt;&lt;br/&gt;
+	&amp;lt;!--&lt;br/&gt;
+		REFERENCES&lt;br/&gt;
+--&amp;gt;&lt;br/&gt;
+	&amp;lt;references&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor citeName="Akinlabi" name="Akinlabi, Akinbiyi"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rAkinlabi1984"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1984&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Tonal underspecification and Yoruba tone&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;ms&amp;gt;&lt;br/&gt;
+			&amp;lt;institution&amp;gt;Univeristy of Ibadan&amp;lt;/institution&amp;gt;&lt;br/&gt;
+		  &amp;lt;/ms&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor citeName="Alfonso et al." name="Alfonso, P., K. Honda, T. Baer, and K. Harris"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rAlfonsoEtAl1982"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1982&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Multi-channel study of tongue EMG during vowel production&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;paper&amp;gt;&lt;br/&gt;
+			&amp;lt;conference&amp;gt;103rd Meeting of the Acoustical Society of America&amp;lt;/conference&amp;gt;&lt;br/&gt;
+		  &amp;lt;/paper&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+&amp;lt;refAuthor name="Antworth, Evan" citeName="Antworth"&amp;gt;&lt;br/&gt;
+  &amp;lt;refWork id="rAntworth95"&amp;gt;&lt;br/&gt;
+	&amp;lt;refDate&amp;gt;1995&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+	&amp;lt;refTitle&amp;gt;User's Guide to PC-KIMMO Version 2&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+&amp;lt;webPage&amp;gt;&lt;br/&gt;
+&amp;lt;publisher&amp;gt;SIL International&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+&amp;lt;location&amp;gt;Dallas, Texas&amp;lt;/location&amp;gt;&lt;br/&gt;
+  &amp;lt;url&amp;gt;http://www.sil.org/pckimmo/v2/doc/guide.html&amp;lt;/url&amp;gt;&lt;br/&gt;
+&amp;lt;/webPage&amp;gt;&lt;br/&gt;
+  &amp;lt;/refWork&amp;gt;&lt;br/&gt;
+&amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor citeName="Dixon" name="Dixon, Robert"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rDixon1977a"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1977&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;A grammar of Yidin&amp;lt;object class="super"&amp;gt;y&amp;lt;/object&amp;gt;&lt;br/&gt;
+		  &amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;book&amp;gt;&lt;br/&gt;
+			&amp;lt;publisher&amp;gt;Cambridge University Press&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+			&amp;lt;location&amp;gt;Cambridge&amp;lt;/location&amp;gt;&lt;br/&gt;
+		  &amp;lt;/book&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rDixon1977b"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1977&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Some phonological rules in Yidin&amp;lt;object class="super"&amp;gt;y&amp;lt;/object&amp;gt;&lt;br/&gt;
+		  &amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;article&amp;gt;&lt;br/&gt;
+			&amp;lt;jTitle&amp;gt;Linguistic Inquiry&amp;lt;/jTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;jVol&amp;gt;8&amp;lt;/jVol&amp;gt;&lt;br/&gt;
+			&amp;lt;jPages&amp;gt;1-34&amp;lt;/jPages&amp;gt;&lt;br/&gt;
+		  &amp;lt;/article&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rDixon1977c"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1977&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Something made up to test year-letter&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;article&amp;gt;&lt;br/&gt;
+			&amp;lt;jTitle&amp;gt;Linguistic Inquiry&amp;lt;/jTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;jVol&amp;gt;8&amp;lt;/jVol&amp;gt;&lt;br/&gt;
+			&amp;lt;jPages&amp;gt;185-86&amp;lt;/jPages&amp;gt;&lt;br/&gt;
+		  &amp;lt;/article&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rDixon1988"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1988&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;A grammar of Boumaa Fijian&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;book&amp;gt;&lt;br/&gt;
+			&amp;lt;publisher&amp;gt;University of Chicago Press&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+			&amp;lt;location&amp;gt;Chicago&amp;lt;/location&amp;gt;&lt;br/&gt;
+		  &amp;lt;/book&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor citeName="Itô" name="Itô, Junko"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rIto1986"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1986&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Syllable theory in prosodic phonology&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;dissertation&amp;gt;&lt;br/&gt;
+			&amp;lt;institution&amp;gt;University of Massachusetts&amp;lt;/institution&amp;gt;&lt;br/&gt;
+			&amp;lt;location&amp;gt;Amherst&amp;lt;/location&amp;gt;&lt;br/&gt;
+			&amp;lt;published&amp;gt;&lt;br/&gt;
+			  &amp;lt;publisher&amp;gt;Garland Press&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+			  &amp;lt;location&amp;gt;New York&amp;lt;/location&amp;gt;&lt;br/&gt;
+			  &amp;lt;pubDate&amp;gt;1988&amp;lt;/pubDate&amp;gt;&lt;br/&gt;
+			&amp;lt;/published&amp;gt;&lt;br/&gt;
+		  &amp;lt;/dissertation&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rIto1989"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1989&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;A prosodic theory of epenthesis&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;article&amp;gt;&lt;br/&gt;
+			&amp;lt;jTitle&amp;gt;Natural Language and Linguistic Theory&amp;lt;/jTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;jVol&amp;gt;7&amp;lt;/jVol&amp;gt;&lt;br/&gt;
+			&amp;lt;jPages&amp;gt;217-59&amp;lt;/jPages&amp;gt;&lt;br/&gt;
+		  &amp;lt;/article&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rIto1990"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1990&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Prosodic minimality in Japanese&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;proceedings&amp;gt;&lt;br/&gt;
+			&amp;lt;procEd plural="yes"&amp;gt;  Michael Ziolkowski, Manuela Noske, and Karen Deaton&amp;lt;/procEd&amp;gt;&lt;br/&gt;
+			&amp;lt;procTitle&amp;gt;CLS 26-II: Papers from the parasession on the syllable in phonetics and phonology&amp;lt;/procTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;procVol&amp;gt;26&amp;lt;/procVol&amp;gt;&lt;br/&gt;
+			&amp;lt;procPage&amp;gt;213-39&amp;lt;/procPage&amp;gt;&lt;br/&gt;
+			&amp;lt;publisher&amp;gt;Chicago Linguistics Society, University of Chicago&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+			&amp;lt;location&amp;gt;Chicago&amp;lt;/location&amp;gt;&lt;br/&gt;
+		  &amp;lt;/proceedings&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor citeName="Mester" name="Mester, Armin"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rMester1990"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1990&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Patterns of truncation&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;article&amp;gt;&lt;br/&gt;
+			&amp;lt;jTitle&amp;gt;Linguistic Inquiry&amp;lt;/jTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;jVol&amp;gt;21&amp;lt;/jVol&amp;gt;&lt;br/&gt;
+			&amp;lt;jPages&amp;gt;478-85&amp;lt;/jPages&amp;gt;&lt;br/&gt;
+		  &amp;lt;/article&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor name="Selkirk, E.O." citeName="Selkirk"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rSelkirk84"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1984&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;On the major class features and syllable theory&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+&amp;lt;collection&amp;gt;&lt;br/&gt;
+  &amp;lt;collEd plural="yes"&amp;gt;M. Aronoff and R. Oehrle&amp;lt;/collEd&amp;gt;&lt;br/&gt;
+  &amp;lt;collTitle&amp;gt;Language Sound Structure&amp;lt;/collTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;publisher&amp;gt;MIT Press&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+			&amp;lt;location&amp;gt;Cambridge&amp;lt;/location&amp;gt;&lt;br/&gt;
+&amp;lt;/collection&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor citeName="Spencer" name="Spencer, Andrew"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rSpencer1991"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1991&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Morphological Theory&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;book&amp;gt;&lt;br/&gt;
+			&amp;lt;publisher&amp;gt;Basil Blackwell&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+			&amp;lt;location&amp;gt;Cambridge, Massachusetts&amp;lt;/location&amp;gt;&lt;br/&gt;
+		  &amp;lt;/book&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor citeName="E.Willett" name="Willett, Elizabeth"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rEWillett81"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1981&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Word Shortening in Southeastern Tepehuan&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+&amp;lt;thesis&amp;gt;&lt;br/&gt;
+  &amp;lt;institution&amp;gt;University of North Dakota&amp;lt;/institution&amp;gt;&lt;br/&gt;
+  &amp;lt;location&amp;gt;Grand Forks, N.D.&amp;lt;/location&amp;gt;&lt;br/&gt;
+&amp;lt;/thesis&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	&amp;lt;/references&amp;gt;&lt;br/&gt;
+  &amp;lt;/backMatter&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <p>Then it might come out looking like what is shown in example <exampleRef num="xBackMatterHTML"/>.</p>
+	  <example num="xBackMatterHTML">
+		<chart class="htmloutput">
+&lt;hr size="3"&gt;
+&lt;p&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;b&gt;&lt;a name="aa"&gt;A First Appendix&lt;/a&gt;&lt;/b&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/p&gt;
+&lt;p&gt;This is an appendix.  It has all possible number of section nesting.&lt;/p&gt;
+&lt;h1&gt;&lt;a name="a1"&gt;A.1 First appendix section&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;One can also add appendices.  They will be numbered like sections, except using initial capital letters.&lt;/p&gt;
+&lt;h2&gt;&lt;a name="a12"&gt;A.1.1 Subsection in an appendix&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;One can have subsections, too.  They may be nested up to six levels,  just like regular sections.&lt;/p&gt;
+&lt;h3&gt;&lt;a name="a123"&gt;A.1.1.1 Sub-sub-section of an appendix&lt;/a&gt;&lt;/h3&gt;
+&lt;h4&gt;&lt;a name="a1234"&gt;A.1.1.1.1 Fourth level section in appendix&lt;/a&gt;&lt;/h4&gt;
+&lt;h5&gt;&lt;a name="a12345"&gt;A.1.1.1.1.1 Fifth level section in appendix&lt;/a&gt;&lt;/h5&gt;
+&lt;h6&gt;&lt;a name="a123456"&gt;A.1.1.1.1.1.1 Sixth level section in appendix&lt;/a&gt;&lt;/h6&gt;
+&lt;hr size="3"&gt;
+&lt;p&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;b&gt;&lt;a name="aA2"&gt;B Second Appendix&lt;/a&gt;&lt;/b&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/p&gt;
+&lt;p&gt;This is the beginning of the second appendix. And it has a reference to example &lt;a href="#ex103d"&gt;(4)&lt;/a&gt;.&lt;/p&gt;
+&lt;h1&gt;&lt;a name="a2"&gt;B.1 Second appendix&lt;/a&gt;&lt;/h1&gt;
+&lt;p&gt;This is an example of another appendix.&lt;/p&gt;
+&lt;hr size="3"&gt;&lt;a name="rXLingPapEndnotes2"&gt;&lt;p&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;b&gt;&lt;a name=""&gt;Endnotes&lt;/a&gt;&lt;/b&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/p&gt;&lt;/a&gt;&lt;table&gt;
+&lt;tr&gt;
+&lt;td valign="top"&gt;&lt;a name="f1"&gt;[1]&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;This is the first endnote.  It can contain just text or paragraphs or other main items.&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td valign="top"&gt;&lt;a name="f3"&gt;[2]&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;This has two paragraphs with a chart in between.&lt;/p&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;div&gt;This is a chart&lt;/div&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;
+&lt;p&gt;This is the second paragraph.&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td valign="top"&gt;&lt;a name="f4"&gt;[3]&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;p&gt;Eph. 2:14-16, NASB&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;hr size="3"&gt;&lt;a name="rXLingPapReferences"&gt;&lt;p&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;b&gt;&lt;a name=""&gt;References&lt;/a&gt;&lt;/b&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/p&gt;&lt;/a&gt;&lt;div style="margin-left:0.25in"&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rAkinlabi1984"&gt;Akinlabi, Akinbiyi&lt;/a&gt;.  1984.
+
+			  "Tonal underspecification and Yoruba tone."  Univeristy of Ibadan ms.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rAlfonsoEtAl1982"&gt;Alfonso, P., K. Honda, T. Baer, and K. Harris&lt;/a&gt;.  1982.
+
+			  "Multi-channel study of tongue EMG during vowel production."  Paper presented at the 103rd Meeting of the Acoustical Society of America.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rAntworth95"&gt;Antworth, Evan&lt;/a&gt;.   1995.
+
+			  "User's Guide to PC-KIMMO Version 2."  SIL International, Dallas, Texas (&lt;a href="http://www.sil.org/pckimmo/v2/doc/guide.html"&gt;http://www.sil.org/pckimmo/v2/doc/guide.html&lt;/a&gt;).&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rDixon1977b"&gt;Dixon, Robert&lt;/a&gt;.  1977a.
+
+"Some phonological rules in Yidin&lt;span class="super"&gt;y&lt;/span&gt;."
+			  &lt;i&gt;Linguistic Inquiry
+				8:1-34&lt;/i&gt;.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rDixon1977c"&gt;Dixon, Robert&lt;/a&gt;.  1977b.
+
+"Something made up to test year-letter."
+			  &lt;i&gt;Linguistic Inquiry
+				8:185-86&lt;/i&gt;.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rDixon1988"&gt;Dixon, Robert&lt;/a&gt;.  1988.
+&lt;i&gt;A grammar of Boumaa Fijian.  &lt;/i&gt;University of Chicago Press.  Chicago.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rIto1986"&gt;Itô, Junko&lt;/a&gt;.  1986.
+&lt;i&gt;Syllable theory in prosodic phonology.  &lt;/i&gt;Amherst: University of Massachusetts Ph.D. dissertation.  Published by Garland Press, New York, 1988.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rIto1989"&gt;Itô, Junko&lt;/a&gt;.  1989.
+
+"A prosodic theory of epenthesis."
+			  &lt;i&gt;Natural Language and Linguistic Theory
+				7:217-59&lt;/i&gt;.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rIto1990"&gt;Itô, Junko&lt;/a&gt;.  1990.
+
+			  "Prosodic minimality in Japanese."  In   Michael Ziolkowski, Manuela Noske, and Karen Deaton, eds.  &lt;i&gt;CLS 26-II: Papers from the parasession on the syllable in phonetics and phonology&lt;/i&gt;
+				26:213-39.  Chicago Linguistics Society, University of Chicago, Chicago.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rSelkirk84"&gt;Selkirk, E.O.&lt;/a&gt;   1984.
+
+			  "On the major class features and syllable theory."  In M. Aronoff and R. Oehrle, eds.  &lt;i&gt;Language Sound Structure&lt;/i&gt;
+			  MIT Press, Cambridge.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rEWillett81"&gt;Willett, Elizabeth&lt;/a&gt;.   1981.
+&lt;i&gt;Word Shortening in Southeastern Tepehuan.  &lt;/i&gt;Grand Forks, N.D.: University of North Dakota M.A. thesis.&lt;/p&gt;
+&lt;/div&gt;
+</chart>
+	  </example>
+	</section2>
+  </section1>
+  <section1 id="sExamples">
+	<secTitle>Examples</secTitle>
+	<p>
+	  <object class="XLingPap">XLingPap</object> has several types of examples.  All types will be automatically numbered.  If you are going to refer to an example, then you will need to specify the <object class="attribute">num</object> attribute of the <object class="element">&lt;example&gt;</object> element tag and also give it a unique value.</p>
+	<p>The various types are illustrated in the following sections.  Each section shows what to type and how it would appear.</p>
+	<section2 id="sExWord">
+	  <secTitle>Word examples</secTitle>
+	  <p>Word examples consist of a single word and its gloss, usually.  A single word example is given below.  If you type what is shown in <exampleRef num="xExWord"/>, you'll get the result in <exampleRef num="xExWordHTML"/> (assuming that this is the second example in the paper).</p>
+	  <example num="xExWord">
+		<chart class="elementExample">
+	  &amp;lt;example num="xW1"&amp;gt;&lt;br/&gt;
+		&amp;lt;word&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lNah"&amp;gt;nikita&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;gloss lang="lEng"&amp;gt;"I saw it."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		&amp;lt;/word&amp;gt;&lt;br/&gt;
+	  &amp;lt;/example&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xExWordHTML">
+		<chart class="htmloutput">
+&lt;div style="margin-left: 0.25in; margin-right: 0.25in"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a name="xW1"&gt;(2)&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="nahuatl"&gt;nikita&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;"I saw it."&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+</chart>
+	  </example>
+	  <p>Notice that one uses the <object class="attribute">num</object> attribute of the <object class="element">example</object> element for these.</p>
+	</section2>
+	<section2 id="sExListWord">
+	  <secTitle>List of Words examples</secTitle>
+	  <p>Lists of words examples consist of a list of words and their glosses, usually.  A list of words example is given below.  If you type what is shown in <exampleRef num="xLW2"/>, then you'll get the result shown in <exampleRef num="xLW2HTML"/> (assuming that this is the third example in the paper).</p>
+	  <example num="xLW2">
+		<chart class="elementExample">
+	  &amp;lt;example num="xLW2"&amp;gt;&lt;br/&gt;
+		&amp;lt;listWord letter="xLW2d"&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lNah"&amp;gt;nikita&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;gloss lang="lEng"&amp;gt;"I see it."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+		&amp;lt;listWord letter="xLW2s"&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lNah"&amp;gt;tikita&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;gloss lang="lEng"&amp;gt;"You(sg) see it."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+		&amp;lt;listWord letter="xLW2e"&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lNah"&amp;gt;kita&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;gloss lang="lEng"&amp;gt;"He/she/it sees it."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+		&amp;lt;listWord letter="xLW2g"&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lNah"&amp;gt;tikitah&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;gloss lang="lEng"&amp;gt;"We see it."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+		&amp;lt;listWord letter="xLW2t"&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lNah"&amp;gt;ankitah&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;gloss lang="lEng"&amp;gt;"You(pl) see it."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+		&amp;lt;listWord letter="xLW2u"&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lNah"&amp;gt;kitah&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;gloss lang="lEng"&amp;gt;"They see it."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+	  &amp;lt;/example&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xLW2HTML">
+		<chart class="htmloutput">
+&lt;div style="margin-left: 0.25in; margin-right: 0.25in"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a name="xLW2"&gt;(3)&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a name="xLW2d"&gt;a.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="nahuatl"&gt;nikita&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;"I see it."&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xLW2s"&gt;b.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="nahuatl"&gt;tikita&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;"You(sg) see it."&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xLW2e"&gt;c.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="nahuatl"&gt;kita&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;"He/she/it sees it."&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xLW2g"&gt;d.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="nahuatl"&gt;tikitah&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;"We see it."&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xLW2t"&gt;e.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="nahuatl"&gt;ankitah&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;"You(pl) see it."&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xLW2u"&gt;f.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="nahuatl"&gt;kitah&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;"They see it."&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+</chart>
+	  </example>
+	  <p>Notice that one uses the <object class="attribute">num</object> attribute of the <object class="element">example</object> element for these.  In addition, one uses the <object class="attribute">letter</object> attribute of the <object class="element">listWord</object> element.   One does not need to label these <object class="attribute">letter</object> attributes in any particular order.  <object class="XLingPap">XLingPap</object> will correctly assign the letters.</p>
+	</section2>
+	<section2 id="secExSingle">
+	  <secTitle>Single line examples</secTitle>
+	  <p>Single line examples consist of but one line.  An English example is given below.  If you type what is shown in <exampleRef num="xSingleLine"/>, you'll get the result in <exampleRef num="xSingleLineHTML"/> (assuming that this is the fourth example in the paper).</p>
+	  <example num="xSingleLine">
+		<chart class="elementExample">
+	  &amp;lt;example num="x102"&amp;gt;&lt;br/&gt;
+		&amp;lt;single&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lEng"&amp;gt;This is an example of a single line.&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		&amp;lt;/single&amp;gt;&lt;br/&gt;
+	  &amp;lt;/example&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xSingleLineHTML">
+		<chart class="htmloutput">
+&lt;div style="margin-left: 0.25in; margin-right: 0.25in"&gt;
+&lt;table&gt;&lt;a name="x102"&gt;(4)&lt;/a&gt; &lt;span class="english"&gt;This is an example of a single line.&lt;/span&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+</chart>
+	  </example>
+	  <p>Notice that one uses the <object class="attribute">num</object> attribute of the <object class="element">example</object> element for these.</p>
+	</section2>
+	<section2 id="secExListSingle">
+	  <secTitle>List of single line examples</secTitle>
+	  <p>A list of single line examples consist of but one line each.  The key difference between just a single example and a list of single examples is that the latter are indented and each line is prefixed by an alphabetic letter.  The following is an English example.  If you type what is shown in <exampleRef num="xLSingleLine"/>, you'll get the result in <exampleRef num="xLSingleLineHTML"/> (assuming that this is the fifth example in the paper).</p>
+	  <example num="xLSingleLine">
+		<chart class="elementExample">
+	  &amp;lt;example num="x103"&amp;gt;&lt;br/&gt;
+		&amp;lt;listSingle letter="x103d"&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lEng"&amp;gt;This is the first example.&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		&amp;lt;/listSingle&amp;gt;&lt;br/&gt;
+		&amp;lt;listSingle letter="x103g"&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lEng"&amp;gt;Which is the second example?&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		&amp;lt;/listSingle&amp;gt;&lt;br/&gt;
+		&amp;lt;listSingle letter="x103a"&amp;gt;&lt;br/&gt;
+		  &amp;lt;langData lang="lEng"&amp;gt;If you'd like, this is the third example.&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		&amp;lt;/listSingle&amp;gt;&lt;br/&gt;
+	  &amp;lt;/example&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xLSingleLineHTML">
+		<chart class="htmloutput">
+&lt;div style="margin-left: 0.25in; margin-right: 0.25in"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a name="x103"&gt;(5)&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a name="x103d"&gt;a.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;This is the first example.&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="x103g"&gt;b.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;Which is the second example?&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="x103a"&gt;c.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;If you'd like, this is the third example.&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+</chart>
+	  </example>
+	  <p>Notice that one uses the <object class="attribute">num</object> attribute of the <object class="element">example</object> element for these.  In addition, one uses the <object class="attribute">letter</object> attribute of the <object class="element">listSingle</object> element.   One does not need to label these <object class="attribute">letter</object> attributes in any particular order.  <object class="XLingPap">XLingPap</object> will correctly assign the letters.</p>
+	</section2>
+	<section2 id="secExInterlinear">
+	  <secTitle>Single interlinear examples</secTitle>
+	  <p>Single interlinear examples consist of several lines of aligned text along with one or more lines of an unaligned free translation.  The following is a Nahuatl/English example.  If you type what is shown in <exampleRef num="xSingleInter"/>, you'll get the result in <exampleRef num="xSingleInterHTML"/> (assuming that this is the sixth example in the paper).</p>
+	  <example num="xSingleInter">
+		<chart class="elementExample">
+	  &amp;lt;example num="x10"&amp;gt;&lt;br/&gt;
+		&amp;lt;interlinear&amp;gt;&lt;br/&gt;
+		  &amp;lt;lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;In  Wan onikitak in kowat.&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;in Wan o-ni-k-ita-k in kowa-t&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;gloss lang="lEng"&amp;gt;the John PST-1-3O-see-PRET the snake-ABS&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;/lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;free&amp;gt;&lt;br/&gt;
+			&amp;lt;gloss lang="lEng"&amp;gt;"John saw the snake."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		  &amp;lt;/free&amp;gt;&lt;br/&gt;
+		&amp;lt;/interlinear&amp;gt;&lt;br/&gt;
+	  &amp;lt;/example&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xSingleInterHTML">
+		<chart class="htmloutput">
+&lt;div style="margin-left: 0.25in; margin-right: 0.25in"&gt;
+&lt;table&gt;
+
+&lt;table&gt;
+&lt;tr style="line-height:87.5%"&gt;
+&lt;td&gt;&lt;a name="ex10"&gt;(6)&lt;/a&gt;&lt;/td&gt;
+&lt;td class="nahuatl"&gt;In&lt;/td&gt;
+&lt;td class="nahuatl"&gt;Wan&lt;/td&gt;
+&lt;td class="nahuatl"&gt;onikitak&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;kowat.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;Wan&lt;/td&gt;
+&lt;td class="nahuatl"&gt;o-ni-k-ita-k&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;kowa-t&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td class="english"&gt;the&lt;/td&gt;
+&lt;td class="english"&gt;John&lt;/td&gt;
+&lt;td class="english"&gt;PST-1-3O-see-PRET&lt;/td&gt;
+&lt;td class="english"&gt;the&lt;/td&gt;
+&lt;td class="english"&gt;snake-ABS&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:150%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td colspan="30" class="english"&gt; "John saw the snake." &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+</chart>
+	  </example>
+	  <p>Notice that one uses the <object class="attribute">num</object> attribute of the <object class="element">example</object> element for these.  In addition, notice how the <object class="element">line</object> elements are grouped together under a <object class="element">lineGroup</object> element.</p>
+	  <p>Also note that <object class="XLingPap">XLingPap</object> does all that is needed to do the aligning  (with the exception that it will not be able to automatically break long lines; see <sectionRef sec="secExInterlinearContinuation"/> below).</p>
+	</section2>
+	<section2 id="secExListInterlinear">
+	  <secTitle>List of interlinear examples</secTitle>
+	  <p>A list of interlinear examples consist of interlinear examples.  The key difference between just a single interlinear example and a list of interlinear examples is that the latter are indented and each interlinear unit is prefixed by an alphabetic letter.  The following is a Nahuatl/ English example.  If you type what is shown in <exampleRef num="xLInter"/>, you'll get the result in <exampleRef num="xLInterHTML"/> (assuming that this is the seventh example in the paper).</p>
+	  <example num="xLInter">
+		<chart class="elementExample">
+	  &amp;lt;example num="x16"&amp;gt;&lt;br/&gt;
+		&amp;lt;listInterlinear letter="x16d"&amp;gt;&lt;br/&gt;
+		  &amp;lt;lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;In  Wan onikitak in kowat.&lt;br/&gt;
+			&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;in Wan o-ni-k-ita-k in kowa-t&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;the John PST-1-3O-see-PRET the snake-ABS&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;/lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;free&amp;gt;&lt;br/&gt;
+			&amp;lt;gloss lang="lEng"&amp;gt;"John saw the snake."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		  &amp;lt;/free&amp;gt;&lt;br/&gt;
+		&amp;lt;/listInterlinear&amp;gt;&lt;br/&gt;
+		&amp;lt;listInterlinear letter="x16g"&amp;gt;&lt;br/&gt;
+		  &amp;lt;lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;Onikitak in  Wan in kowat.&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;o-ni-k-ita-k in Wan in kowa-t&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;PST-1-3O-see-PRET the John the snake-ABS&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;/lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;free&amp;gt;&lt;br/&gt;
+			&amp;lt;gloss lang="lEng"&amp;gt;"John saw the snake."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		  &amp;lt;/free&amp;gt;&lt;br/&gt;
+		&amp;lt;/listInterlinear&amp;gt;&lt;br/&gt;
+	  &amp;lt;/example&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xLInterHTML">
+		<chart class="htmloutput">
+
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td valign="top"&gt;&lt;a name="x16"&gt;(7)&lt;/a&gt;&lt;/td&gt;
+&lt;td valign="top"&gt;&lt;a name="x16d"&gt;a.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;
+
+&lt;table&gt;
+&lt;tr style="line-height:87.5%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td class="nahuatl"&gt;In&lt;/td&gt;
+&lt;td class="nahuatl"&gt;Wan&lt;/td&gt;
+&lt;td class="nahuatl"&gt;onikitak&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;kowat.&lt;/td&gt;
+&lt;td class="nahuatl"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;Wan&lt;/td&gt;
+&lt;td class="nahuatl"&gt;o-ni-k-ita-k&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;kowa-t&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td class="english"&gt;the&lt;/td&gt;
+&lt;td class="english"&gt;John&lt;/td&gt;
+&lt;td class="english"&gt;PST-1-3O-see-PRET&lt;/td&gt;
+&lt;td class="english"&gt;the&lt;/td&gt;
+&lt;td class="english"&gt;snake-ABS&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:150%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td colspan="30" class="english"&gt; "John saw the snake." &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td valign="top"&gt;
+&lt;/td&gt;
+&lt;td valign="top"&gt;&lt;a name="x16g"&gt;b.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;
+
+&lt;table&gt;
+&lt;tr style="line-height:87.5%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td class="nahuatl"&gt;Onikitak&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;Wan&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;kowat.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td class="nahuatl"&gt;o-ni-k-ita-k&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;Wan&lt;/td&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;kowa-t&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td class="english"&gt;PST-1-3O-see-PRET&lt;/td&gt;
+&lt;td class="english"&gt;the&lt;/td&gt;
+&lt;td class="english"&gt;John&lt;/td&gt;
+&lt;td class="english"&gt;the&lt;/td&gt;
+&lt;td class="english"&gt;snake-ABS&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:150%"&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td colspan="30" class="english"&gt; "John saw the snake." &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+</chart>
+	  </example>
+	</section2>
+	<section2 id="secExInterlinearContinuation">
+	  <secTitle>Handling long interlinear examples</secTitle>
+	  <p>As mentioned in section <sectionRef sec="secExInterlinear"/> above, <object class="XLingPap">XLingPap</object> does not automatically break lengthy interlinear examples.  You have to do that yourself.  You do this by embedding an <object class="element">interlinear</object> element within either another <object class="element">interlinear</object> element or within a <object class="element">llistInterlinear</object> element.</p>
+	  <p>Example <exampleRef num="xSingleInterCont"/> shows one way this could be done.  The result is given in <exampleRef num="xSingleInterContHTML"/>.</p>
+	  <example num="xSingleInterCont">
+		<chart class="elementExample">
+	  &amp;lt;example num="x10"&amp;gt;&lt;br/&gt;
+		&amp;lt;interlinear&amp;gt;&lt;br/&gt;
+		  &amp;lt;lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;In  Wan onikitak&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;in Wan o-ni-k-ita-k&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;gloss lang="lEng"&amp;gt;the John PST-1-3O-see-PRET&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;/lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;free&amp;gt;&lt;br/&gt;
+			&amp;lt;gloss lang="lEng"&amp;gt;"John saw"&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		  &amp;lt;/free&amp;gt;&lt;br/&gt;
+		&amp;lt;interlinear&amp;gt;&lt;br/&gt;
+		  &amp;lt;lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;in kowat.&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lNah"&amp;gt;in kowa-t&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;line&amp;gt;&lt;br/&gt;
+			&amp;lt;gloss lang="lEng"&amp;gt;the snake-ABS&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		  &amp;lt;/line&amp;gt;&lt;br/&gt;
+		  &amp;lt;/lineGroup&amp;gt;&lt;br/&gt;
+		  &amp;lt;free&amp;gt;&lt;br/&gt;
+			&amp;lt;gloss lang="lEng"&amp;gt;"the snake."&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		  &amp;lt;/free&amp;gt;&lt;br/&gt;
+		&amp;lt;/interlinear&amp;gt;&lt;br/&gt;
+		&amp;lt;/interlinear&amp;gt;&lt;br/&gt;
+	  &amp;lt;/example&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xSingleInterContHTML">
+		<chart class="htmloutput">
+&lt;div style="margin-left: 0.25in; margin-right: 0.25in"&gt;
+&lt;table class="fromExample"&gt;
+&lt;tr class="fromExample"&gt;
+&lt;td valign="top" class="fromExample"&gt;&lt;a name="x10"&gt;(8)&lt;/a&gt;&lt;/td&gt;
+&lt;td class="fromExample"&gt;
+&lt;table class="fromLineGroup"&gt;
+&lt;tr style="line-height:87.5%" class="fromLine"&gt;
+&lt;td class="nahuatl"&gt;In&lt;/td&gt;
+&lt;td class="nahuatl"&gt;Wan&lt;/td&gt;
+&lt;td class="nahuatl"&gt;onikitak&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%" class="fromLine"&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;Wan&lt;/td&gt;
+&lt;td class="nahuatl"&gt;o-ni-k-ita-k&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%" class="fromLine"&gt;
+&lt;td class="english"&gt;the&lt;/td&gt;
+&lt;td class="english"&gt;John&lt;/td&gt;
+&lt;td class="english"&gt;PST-1-3O-see-PRET&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;table class="fromFree"&gt;
+&lt;tr style="line-height:125%" class="fromFree"&gt;
+&lt;td colspan="30" class="english"&gt;&lt;span class="english"&gt;"John saw"&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;table class="fromLineGroup" style="margin-left: 0.1in"&gt;
+&lt;tr style="line-height:87.5%" class="fromLine"&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;kowat.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%" class="fromLine"&gt;
+&lt;td class="nahuatl"&gt;in&lt;/td&gt;
+&lt;td class="nahuatl"&gt;kowa-t&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr style="line-height:87.5%" class="fromLine"&gt;
+&lt;td class="english"&gt;the&lt;/td&gt;
+&lt;td class="english"&gt;snake-ABS&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;table class="fromFree" style="margin-left: 0.1in"&gt;
+&lt;tr style="line-height:125%" class="fromFree"&gt;
+&lt;td colspan="30" class="english"&gt;&lt;span class="english"&gt;"the snake."&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+</chart>
+	  </example>
+	</section2>
+	<section2 id="sExampleRefs">
+	  <secTitle>References to Examples</secTitle>
+	  <p>Example numbering involves two aspects:
+an example number <object class="keyTerm">declaration</object> and an example number
+<object class="keyTerm">reference</object>.
+The example number declaration <q>declares</q> the existence of
+an example number and its unique name.
+The example number reference refers to an example number
+that is <q>declared</q> elsewhere within the file(s).
+Consider the following example:</p>
+	  <example num="xSampleExample">
+		<chart class="elementExample">
+&amp;lt;p&amp;gt;...Several monosyllabic stems are shown in &amp;lt;exampleRef num="xMonosyllabicStems"/&amp;gt;.&lt;br/&gt;
+&amp;lt;/p&amp;gt;&lt;br/&gt;
+&amp;lt;example num="xMonosyllabicStems"&amp;gt;&lt;br/&gt;
+&amp;lt;listWord letter="xMonosyllabicStemVoi"&amp;gt;&lt;br/&gt;
+  &amp;lt;langData lang="lSET"&amp;gt;voi&amp;lt;/langData&amp;gt;&lt;br/&gt;
+&amp;lt;gloss lang="lEng"&amp;gt;'trail'&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+&amp;lt;listWord letter="xMonosyllabicStemTai"&amp;gt;&lt;br/&gt;
+  &amp;lt;langData lang="lSET"&amp;gt;tai&amp;lt;/langData&amp;gt;&lt;br/&gt;
+&amp;lt;gloss lang="lEng"&amp;gt;'fire'&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+&amp;lt;listWord letter="xMonosyllabicStemDui"&amp;gt;&lt;br/&gt;
+  &amp;lt;langData lang="lSET"&amp;gt;dui&amp;lt;/langData&amp;gt;&lt;br/&gt;
+&amp;lt;gloss lang="lEng"&amp;gt;'plum'&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+&amp;lt;listWord letter="xMonosyllabicStemGaa"&amp;gt;&lt;br/&gt;
+  &amp;lt;langData lang="lSET"&amp;gt;gaa&amp;lt;/langData&amp;gt;&lt;br/&gt;
+&amp;lt;gloss lang="lEng"&amp;gt;'cornfield'&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+&amp;lt;/example&amp;gt;&lt;br/&gt;
+&amp;lt;p&amp;gt;Notice that while &amp;lt;exampleRef letter="xMonosyllabicStemVoi" punct="-" paren="initial"/&amp;gt;&amp;lt;exampleRef letter="xMonosyllabicStemDui" paren="final" letterOnly="yes"/&amp;gt; contain diphthongs,&lt;br/&gt;
+&amp;lt;exampleRef letter="xMonosyllabicStemGaa"/&amp;gt; has a final long vowel.&amp;lt;br/&amp;gt;&lt;br/&gt;
+...&amp;lt;br/&amp;gt;&lt;br/&gt;
+Now consider the following forms, some repeated from earlier.&lt;br/&gt;
+&amp;lt;/p&amp;gt;&lt;br/&gt;
+&amp;lt;example num="xIamb"&amp;gt;&lt;br/&gt;
+&amp;lt;listWord letter="xIambGaa"&amp;gt;&lt;br/&gt;
+  &amp;lt;langData lang="lSET"&amp;gt;gaa&amp;lt;/langData&amp;gt;&lt;br/&gt;
+&amp;lt;gloss lang="lEng"&amp;gt;'cornfield' &amp;lt;exampleRef equal="yes" letter="xMonosyllabicStemGaa"/&amp;gt;&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+&amp;lt;listWord letter="xIambTopaa"&amp;gt;&lt;br/&gt;
+  &amp;lt;langData lang="lSET"&amp;gt;topaa&amp;lt;/langData&amp;gt;&lt;br/&gt;
+&amp;lt;gloss lang="lEng"&amp;gt;'pestle'&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+&amp;lt;listWord letter="xIambKasio"&amp;gt;&lt;br/&gt;
+  &amp;lt;langData lang="lSET"&amp;gt;kasio&amp;lt;/langData&amp;gt;&lt;br/&gt;
+&amp;lt;gloss lang="lEng"&amp;gt;'fox'&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+&amp;lt;/listWord&amp;gt;&lt;br/&gt;
+&amp;lt;/example&amp;gt;&lt;br/&gt;</chart>
+	  </example>
+	  <p>If example <object class="element">&lt;example num="xMonosyllabicStems"&gt;</object> turned out to be the third example
+in the document and <object class="element">&lt;example num="xIamb"&gt;</object> was the twenty-first, the
+output of <exampleRef num="xSampleExample"/> would be:
+</p>
+	  <example num="xSampleExampleHTML">
+		<chart class="htmloutput">
+&lt;p&gt;...Several monosyllabic stems are shown in &lt;a href="#xMonosyllabicStems"&gt;(3)&lt;/a&gt;.
+&lt;/p&gt;
+&lt;div style="margin-left: 0.25in; margin-right: 0.25in"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a name="xMonosyllabicStems"&gt;(3)&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a name="xMonosyllabicStemVoi"&gt;a.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="setepehuan"&gt;voi&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;'trail'&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xMonosyllabicStemTai"&gt;b.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="setepehuan"&gt;tai&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;'fire'&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xMonosyllabicStemDui"&gt;c.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="setepehuan"&gt;dui&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;'plum'&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xMonosyllabicStemGaa"&gt;d.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="setepehuan"&gt;gaa&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;'cornfield'&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;p&gt;Notice that while &lt;a href="#xMonosyllabicStemVoi"&gt;(3a-&lt;/a&gt;&lt;a href="#xMonosyllabicStemDui"&gt;c)&lt;/a&gt; contain diphthongs,
+&lt;a href="#xMonosyllabicStemGaa"&gt;(3d)&lt;/a&gt; has a final long vowel.&lt;br&gt;
+...&lt;br&gt;
+Now consider the following forms, some repeated from earlier.
+&lt;/p&gt;
+&lt;div style="margin-left: 0.25in; margin-right: 0.25in"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a name="xIamb"&gt;(21)&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a name="xIambGaa"&gt;a.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="setepehuan"&gt;gaa&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;'cornfield' &lt;a href="#xMonosyllabicStemGaa"&gt;(=3d)&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xIambTopaa"&gt;b.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="setepehuan"&gt;topaa&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;'pestle'&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a name="xIambKasio"&gt;c.&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="setepehuan"&gt;kasio&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="english"&gt;'fox'&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;</chart>
+	  </example>
+	  <p>The <object class="element">&lt;example&gt;</object> element declares a new example.
+Two basic types of example references were used.
+One, <object class="element">&lt;exampleRef num="x..."&gt;</object>, becomes the number enclosed in
+parentheses.
+The other, <object class="element">&lt;exampleRef letter="x..."&gt;</object> adds a letter.  Notice that one can also create example references which contain a sequence of letters.  One does this by using the <object class="attribute">paren</object>, <object class="attribute">punct</object>, and <object class="attribute">letterOnly</object> attributes.
+</p>
+	  <p>Also note that a hyperlink is made between the reference and the example in the text.</p>
+	  <p>
+The <object class="attribute">equal</object> attribute can be used to insert an equals sign in the reference.
+This, of course, indicates that the particular example has
+been given earlier in the paper.
+Example reference commands can be used anywhere within a
+document.  They do not need to immediately precede or follow
+their respective example declaration.
+</p>
+	  <p>The attributes of the <object class="element">&lt;exampleRef&gt;</object> element are summarized in the table in <exampleRef num="xExampleRefAttributes"/>.</p>
+	  <example num="xExampleRefAttributes">
+		<table>
+		  <headerRow>
+			<headerCol>
+			  <langData lang="lEng">Attribute</langData>
+			</headerCol>
+			<headerCol>
+			  <langData lang="lEng">Possible Values</langData>
+			</headerCol>
+			<headerCol>
+			  <langData lang="lEng">Meaning</langData>
+			</headerCol>
+		  </headerRow>
+		  <row>
+			<col>
+			  <langData lang="lEng">
+				<object class="attribute">num</object>
+			  </langData>
+			</col>
+			<col>
+			  <langData lang="lEng">(user control)</langData>
+			</col>
+			<col>
+			  <langData lang="lEng">Reference to an ID used in the <object class="attribute">num</object> attribute of an <object class="element">&lt;example&gt;</object> element.</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng">
+				<object class="attribute">letter</object>
+			  </langData>
+			</col>
+			<col>
+			  <langData lang="lEng">(user control)</langData>
+			</col>
+			<col>
+			  <langData lang="lEng">Reference to an ID used in the <object class="attribute">letter</object> attribute of a <object class="element">&lt;listWord&gt;</object>, <object class="element">&lt;listSingle&gt;</object>, or <object class="element">&lt;listInterlinear&gt;</object> element.</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng">
+				<object class="attribute">equal</object>
+			  </langData>
+			</col>
+			<col>
+			  <langData lang="lEng">
+				<object class="attrValue">yes</object> or <object class="attrValue">no</object> (the default is <object class="attrValue">no</object>)</langData>
+			</col>
+			<col>
+			  <langData lang="lEng">Whether to include an equals sign before the number (<object class="attrValue">yes</object>) or not (<object class="attrValue">no</object>).</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng">
+				<object class="attribute">punct</object>
+			  </langData>
+			</col>
+			<col>
+			  <langData lang="lEng">(user control)</langData>
+			</col>
+			<col>
+			  <langData lang="lEng">Any punctuation that should follow the number or letter.  Typically, this will be a hyphen or a comma.</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng">
+				<object class="attribute">paren</object>
+			  </langData>
+			</col>
+			<col>
+			  <langData lang="lEng">
+				<object class="attrValue">both</object>, <object class="attrValue">none</object>, <object class="attrValue">initial</object>, or <object class="attrValue">final</object> (the default is <object class="attrValue">both</object>)</langData>
+			</col>
+			<col>
+			  <langData lang="lEng">This controls the appearance of opening and closing parentheses around the example number and/or letter.  An opening parenthesis appears if either <object class="attrValue">both</object> or <object class="attrValue">initial</object> are set.  A closing parenthesis appears if either <object class="attrValue">both</object> or <object class="attrValue">initial</object> are set.  No parentheses appear if <object class="attrValue">none</object> is set.  </langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng">
+				<object class="attribute">letterOnly</object>
+			  </langData>
+			</col>
+			<col>
+			  <langData lang="lEng">
+				<object class="attrValue">yes</object> or <object class="attrValue">no</object> (the default is <object class="attrValue">no</object>)</langData>
+			</col>
+			<col>
+			  <langData lang="lEng">If this is set to <object class="attrValue">yes</object>, then only the letter will appear, not the number and the letter.  Of course, this only makes sense if one is using the <object class="attribute">letter</object> attribute.</langData>
+			</col>
+		  </row>
+		</table>
+	  </example>
+	</section2>
+  </section1>
+  <section1 id="sTablesChartsTrees">
+	<secTitle>Tables, Charts, and Trees</secTitle>
+	<p>One may also create tables, charts, and trees.</p>
+	<section2 id="sTCTTables">
+	  <secTitle>Tables</secTitle>
+	  <p>In defining tables, one defines the rows and column elements, etc.  Consider the following example:</p>
+	  <example num="xSampleTable">
+		<chart class="elementExample">
+	  &amp;lt;table border="1"&amp;gt;&lt;br/&gt;
+		&amp;lt;headerRow&amp;gt;&lt;br/&gt;
+		  &amp;lt;headerCol&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;Column1&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/headerCol&amp;gt;&lt;br/&gt;
+		  &amp;lt;headerCol&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;Column2&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/headerCol&amp;gt;&lt;br/&gt;
+		  &amp;lt;headerCol&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;Column3&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/headerCol&amp;gt;&lt;br/&gt;
+		&amp;lt;/headerRow&amp;gt;&lt;br/&gt;
+		&amp;lt;row&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;Row1, Col1&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;Row1, Col2&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;Row1, Col3&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/col&amp;gt;&lt;br/&gt;
+		&amp;lt;/row&amp;gt;&lt;br/&gt;
+		&amp;lt;row&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;Row2, Col1&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;Row2, Col2&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;&lt;br/&gt;
+			&amp;lt;langData lang="lEng"&amp;gt;Row2, Col3&amp;lt;/langData&amp;gt;&lt;br/&gt;
+		  &amp;lt;/col&amp;gt;&lt;br/&gt;
+		&amp;lt;/row&amp;gt;&lt;br/&gt;
+		&amp;lt;row&amp;gt;&lt;br/&gt;
+		  &amp;lt;col colspan="3"&amp;gt;This spans all three columns.&amp;lt;/col&amp;gt;&lt;br/&gt;
+		&amp;lt;/row&amp;gt;&lt;br/&gt;
+		&amp;lt;row&amp;gt;&lt;br/&gt;
+		  &amp;lt;col rowspan="2"&amp;gt;This spans two rows.&amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;Row4, Col2&amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;Row4, Col3&amp;lt;/col&amp;gt;&lt;br/&gt;
+		&amp;lt;/row&amp;gt;&lt;br/&gt;
+		&amp;lt;row&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;Row5, Col2&amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;col&amp;gt;Row5, Col3&amp;lt;/col&amp;gt;&lt;br/&gt;
+		&amp;lt;/row&amp;gt;&lt;br/&gt;
+	  &amp;lt;/table&amp;gt;&lt;br/&gt;
+		</chart>
+	  </example>
+	  <!-- ### -->
+	  <p>This could come out as shown in <exampleRef num="xSampleTableHTML"/>.</p>
+	  <example num="xSampleTableHTML">
+		<chart class="htmloutput">
+&lt;table border="1"&gt;
+&lt;tr&gt;
+&lt;th align="left" valign="top"&gt;&lt;span class="english"&gt;Column1&lt;/span&gt;&lt;/th&gt;
+&lt;th align="left" valign="top"&gt;&lt;span class="english"&gt;Column2&lt;/span&gt;&lt;/th&gt;
+&lt;th align="left" valign="top"&gt;&lt;span class="english"&gt;Column3&lt;/span&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt;Row1, Col1&lt;/span&gt;&lt;/td&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt;Row1, Col2&lt;/span&gt;&lt;/td&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt;Row1, Col3&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt;Row2, Col1&lt;/span&gt;&lt;/td&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt;Row2, Col2&lt;/span&gt;&lt;/td&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt;Row2, Col3&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left" colspan="3" valign="top"&gt;This spans all three columns.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left" rowspan="2" valign="top"&gt;This spans two rows.&lt;/td&gt;
+&lt;td align="left" valign="top"&gt;Row4, Col2&lt;/td&gt;
+&lt;td align="left" valign="top"&gt;Row4, Col3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left" valign="top"&gt;Row5, Col2&lt;/td&gt;
+&lt;td align="left" valign="top"&gt;Row5, Col3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+		</chart>
+	  </example>
+	  <p>Tables can also be numbered like examples. For example, if you key what is in <exampleRef num="xSampleTable2Element"/>, it could come out as in <exampleRef num="xSampleTable2HTML"/>.</p>
+	  <example num="xSampleTable2Element">
+		<chart class="elementExample">
+	  &amp;lt;example&amp;gt;&lt;br/&gt;
+		&amp;lt;table&amp;gt;&lt;br/&gt;
+		  &amp;lt;caption&amp;gt;&lt;br/&gt;
+			&amp;lt;gloss lang="lEng"&amp;gt;Orthographic vowel symbols in Carolinian&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+		  &amp;lt;/caption&amp;gt;&lt;br/&gt;
+		  &amp;lt;row class="exampleTableHeaderRow"&amp;gt;&lt;br/&gt;
+			&amp;lt;col&amp;gt;&lt;br/&gt;
+			  &amp;lt;gloss lang="lEng"&amp;gt;&#x20;&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;gloss lang="lEng"&amp;gt;Front&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;gloss lang="lEng"&amp;gt;Central&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;gloss lang="lEng"&amp;gt;Back&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;/row&amp;gt;&lt;br/&gt;
+		  &amp;lt;row&amp;gt;&lt;br/&gt;
+			&amp;lt;col&amp;gt;&lt;br/&gt;
+			  &amp;lt;gloss lang="lEng"&amp;gt;High&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;langData lang="lCar"&amp;gt;i&amp;lt;/langData&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;langData lang="lCar"&amp;gt;ú&amp;lt;/langData&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;langData lang="lCar"&amp;gt;u&amp;lt;/langData&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;/row&amp;gt;&lt;br/&gt;
+		  &amp;lt;row&amp;gt;&lt;br/&gt;
+			&amp;lt;col&amp;gt;&lt;br/&gt;
+			  &amp;lt;gloss lang="lEng"&amp;gt;Mid&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;langData lang="lCar"&amp;gt;e&amp;lt;/langData&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;langData lang="lCar"&amp;gt;é&amp;lt;/langData&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;langData lang="lCar"&amp;gt;o&amp;lt;/langData&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;/row&amp;gt;&lt;br/&gt;
+		  &amp;lt;row&amp;gt;&lt;br/&gt;
+			&amp;lt;col&amp;gt;&lt;br/&gt;
+			  &amp;lt;gloss lang="lEng"&amp;gt;Low&amp;lt;/gloss&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;langData lang="lCar"&amp;gt;á&amp;lt;/langData&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;langData lang="lCar"&amp;gt;a&amp;lt;/langData&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+			&amp;lt;col class="CarolinianVowelChartCol"&amp;gt;&lt;br/&gt;
+			  &amp;lt;langData lang="lCar"&amp;gt;ó&amp;lt;/langData&amp;gt;&lt;br/&gt;
+			&amp;lt;/col&amp;gt;&lt;br/&gt;
+		  &amp;lt;/row&amp;gt;&lt;br/&gt;
+		&amp;lt;/table&amp;gt;&lt;br/&gt;
+	  &amp;lt;/example&amp;gt;&lt;br/&gt;
+
+</chart>
+	  </example>
+	  <example num="xSampleTable2HTML">
+		<chart class="htmloutput">
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td valign="top"&gt;&lt;a name=""&gt;(5)&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td colspan="30" align="left" valign="top"&gt;&lt;b&gt;&lt;span class="english"&gt;Orthographic vowel symbols in Carolinian&lt;/span&gt;&lt;/b&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="exampleTableHeaderRow"&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt; &lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="english"&gt;Front&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="english"&gt;Central&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="english"&gt;Back&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt;High&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="carolinian"&gt;i&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="carolinian"&gt;ú&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="carolinian"&gt;u&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt;Mid&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="carolinian"&gt;e&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="carolinian"&gt;é&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="carolinian"&gt;o&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left" valign="top"&gt;&lt;span class="english"&gt;Low&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="carolinian"&gt;á&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="carolinian"&gt;a&lt;/span&gt;&lt;/td&gt;
+&lt;td class="CarolinianVowelChartCol" align="left" valign="top"&gt;&lt;span class="carolinian"&gt;ó&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+</chart>
+	  </example>
+	</section2>
+	<section2 id="sTCTCharts">
+	  <secTitle>Charts</secTitle>
+	  <p>One can also create charts.  These currently simply have whatever content you put in them.  One such possiblity is to use a reference to an image file.   See the input in <exampleRef num="xSampleChartGif"/> and the corresponding output in <exampleRef num="xSampleChartGifHtml"/>.<endnote id="eImages">
+		  <p>Image files can be produced using tools such as Paint and Visio, among others.  Use formats such as JPEG File Interchange Format (*.jpg or *.jpeg files), Graphics Interchange Format (*.gif files) or Portable Network Graphics (*.png files).</p>
+		</endnote>
+	  </p>
+	  <example num="xSampleChartGif">
+		<chart class="elementExample">
+	  &amp;lt;chart&amp;gt;&lt;br/&gt;
+		&amp;lt;img src="ParseC.gif"/&amp;gt;&lt;br/&gt;
+	  &amp;lt;/chart&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xSampleChartGifHtml">
+		<chart class="htmloutput">
+		&lt;div&gt;&lt;img src="ParseC.gif"&gt;&lt;/div&gt;
+		</chart>
+	  </example>
+	  <p>Charts can also be used as numbered example merely by enclosing them within an <object class="element">&lt;example&gt;</object> element.</p>
+	</section2>
+	<section2 id="sTCTTrees">
+	  <secTitle>Trees</secTitle>
+	  <p>One can also create tree diagrams.  You can type plain text to try and format the tree (by using a lot of non-breaking spaces, for example) or you can use some tool to produce a tree image file (e.g. LingTree).  The following two trees use the latter.</p>
+	  <p>Trees may be included as numbered examples.  The input in <exampleRef num="xSampleTree"/> might produce what is in <exampleRef num="xSampleTreeHTML"/>.</p>
+	  <example num="xSampleTree">
+		<chart class="elementExample">
+		&amp;lt;tree&amp;gt;&lt;br/&gt;
+		  &amp;lt;img src="SNpVp.png"/&amp;gt;&lt;br/&gt;
+		&amp;lt;/tree&amp;gt;&lt;br/&gt;
+	  </chart>
+	  </example>
+	  <example num="xSampleTreeHTML">
+		<chart class="htmloutput">
+	  &lt;table&gt;
+&lt;tr&gt;
+&lt;td valign="top"&gt;&lt;a name="xTree"&gt;(30)&lt;/a&gt;&lt;/td&gt;
+&lt;td valign="top"&gt;&lt;img src="SNpVp.png"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+</chart>
+	  </example>
+	  <p>A tree may also just be inserted by not enclosing it within an <object class="element">&lt;example&gt;</object> element.</p>
+	</section2>
+  </section1>
+  <section1 id="sCitations">
+	<secTitle>Citations</secTitle>
+	<p>Reference citations involve two aspects: the declaration of a label and citations to that label.  As with example number names, the label is chosen by the user.  A label can be any sequence of characters the user wishes to use (such as <object class="citationLabel">rChomsky81</object> or <object class="citationLabel">rLGB</object>, for example).  The <object class="attribute">id</object> attribute of the <object class="element">refWork</object> element declares the unique label.  The <object class="element">citation</object> element refers to the label and <object class="XLingPap">XLingPap</object> will insert the author name(s)<endnote id="eAuthName">
+		<p>As declared in the <object class="attribute">citeName</object> attribute of the <object class="element">refAuthor</object> element.</p>
+	  </endnote> and date in an appropriate fashion.</p>
+	<section2 id="sCitationsExample">
+	  <secTitle>Basic Examples</secTitle>
+	  <p>
+Consider the examples shown in <exampleRef num="xCitationExample"/> which come out as shown in <exampleRef num="xCitationExampleHTML"/>.</p>
+	  <example num="xCitationExample">
+		<chart class="elementExample">
+	&amp;lt;p&amp;gt;QZ has consonant clusters which violate the normal sonority sequencing patterns given as universals by &amp;lt;citation ref="rGreenberg78"/&amp;gt; and further discussed in &amp;lt;citation ref="rBellSaka83"/&amp;gt; and &amp;lt;citation ref="rSelkirk84"/&amp;gt;, among others.&lt;br/&gt;
+QZ exhibits many reversed onset clusters consisting of a sonorant or glide followed by an obstruent (data are from&lt;br/&gt;
+&amp;lt;citation ref="rRegnier89" paren="none"/&amp;gt;).&amp;lt;/p&amp;gt;&lt;br/&gt;
+	&amp;lt;p&amp;gt;...&amp;lt;/p&amp;gt;&lt;br/&gt;
+  &amp;lt;/section1&amp;gt;&lt;br/&gt;
+  &amp;lt;backMatter&amp;gt;&lt;br/&gt;
+	&amp;lt;endnotes/&amp;gt;&lt;br/&gt;
+	&amp;lt;!--&lt;br/&gt;
+		REFERENCES&lt;br/&gt;
+--&amp;gt;&lt;br/&gt;
+	&amp;lt;references&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor citeName="Bell &amp; Saka" name="Bell, Alan and Mohamad M. Saka."&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rBellSaka83"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1983&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Reversed sonority in Pashto initial clusters&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;article&amp;gt;&lt;br/&gt;
+			&amp;lt;jTitle&amp;gt;Journal of Phonetics&amp;lt;/jTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;jVol&amp;gt;11&amp;lt;/jVol&amp;gt;&lt;br/&gt;
+			&amp;lt;jPages&amp;gt;259-275&amp;lt;/jPages&amp;gt;&lt;br/&gt;
+		  &amp;lt;/article&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor name="Greenberg, J." citeName="Greenberg"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rGreenberg78"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1978&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Some generalizations concerning initial and final consonant clusters&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+&amp;lt;collection&amp;gt;&lt;br/&gt;
+  &amp;lt;collEd plural="no"&amp;gt;J. Greenberg&amp;lt;/collEd&amp;gt;&lt;br/&gt;
+  &amp;lt;collTitle&amp;gt;Universals of Human Language Vol. 2&amp;lt;/collTitle&amp;gt;&lt;br/&gt;
+  &amp;lt;publisher&amp;gt;Stanford University Press&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+&amp;lt;/collection&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor name="Regnier, Sue" citeName="Regnier"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rRegnier89"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1989&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Quiegolani Zapotec phonology&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+		  &amp;lt;ms&amp;gt;&lt;br/&gt;
+			&amp;lt;institution&amp;gt;Summer Institute of Linguistics, Mexico Branch&amp;lt;/institution&amp;gt;&lt;br/&gt;
+		  &amp;lt;/ms&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor name="Selkirk, E.O." citeName="Selkirk"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rSelkirk84"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1984&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;On the major class features and syllable theory&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+&amp;lt;collection&amp;gt;&lt;br/&gt;
+  &amp;lt;collEd plural="yes"&amp;gt;M. Aronoff and R. Oehrle&amp;lt;/collEd&amp;gt;&lt;br/&gt;
+  &amp;lt;collTitle&amp;gt;Language Sound Structure&amp;lt;/collTitle&amp;gt;&lt;br/&gt;
+			&amp;lt;publisher&amp;gt;MIT Press&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+			&amp;lt;location&amp;gt;Cambridge&amp;lt;/location&amp;gt;&lt;br/&gt;
+&amp;lt;/collection&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	&amp;lt;/references&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xCitationExampleHTML">
+		<chart class="htmloutput">
+&lt;p&gt;QZ has consonant clusters which violate the normal sonority sequencing patterns given as universals by &lt;a href="#rGreenberg78"&gt;Greenberg (1978)&lt;/a&gt; and further discussed in &lt;a href="#rBellSaka83"&gt;Bell &amp; Saka (1983)&lt;/a&gt; and &lt;a href="#rSelkirk84"&gt;Selkirk (1984)&lt;/a&gt;, among others.
+QZ exhibits many reversed onset clusters consisting of a sonorant or glide followed by an obstruent (data are from
+&lt;a href="#rRegnier89"&gt;Regnier 1989&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;...&lt;/p&gt;
+&lt;hr size="3"&gt;&lt;a name="rXLingPapReferences"&gt;&lt;p&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;b&gt;&lt;a name=""&gt;References&lt;/a&gt;&lt;/b&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/p&gt;&lt;/a&gt;&lt;div style="margin-left:0.25in"&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rBellSaka83"&gt;Bell, Alan and Mohamad M. Saka.&lt;/a&gt;   1983.
+
+"Reversed sonority in Pashto initial clusters."
+			  &lt;i&gt;Journal of Phonetics
+				11:259-275&lt;/i&gt;.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rGreenberg78"&gt;Greenberg, J.&lt;/a&gt;   1978.
+
+			  "Some generalizations concerning initial and final consonant clusters."  In J. Greenberg, ed.  &lt;i&gt;Universals of Human Language Vol. 2&lt;/i&gt;
+			  Stanford University Press.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rRegnier89"&gt;Regnier, Sue&lt;/a&gt;.   1989.
+
+			  "Quiegolani Zapotec phonology."  Summer Institute of Linguistics, Mexico Branch ms.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rSelkirk84"&gt;Selkirk, E.O.&lt;/a&gt;   1984.
+
+			  "On the major class features and syllable theory."  In M. Aronoff and R. Oehrle, eds.  &lt;i&gt;Language Sound Structure&lt;/i&gt;
+			  MIT Press, Cambridge.&lt;/p&gt;
+&lt;/div&gt;
+
+</chart>
+	  </example>
+	</section2>
+	<section2 id="sCitationsDate">
+	  <secTitle>Controlling the Date</secTitle>
+	  <p>
+Recall that <object class="XLingPap">XLingPap</object> only includes those reference entries which have a corresponding citation somewhere in the file(s).  Suppose that there are two <object class="element">&lt;refWork&gt;</object> elements for a particular <object class="element">&lt;refAuthor&gt;</object> element, both of which are for the same year as in <exampleRef num="xCitationDateExample"/>
+	  </p>
+	  <example num="xCitationDateExample">
+		<chart class="elementExample">
+&amp;lt;refAuthor name="Clements, G.N." citeName="Clements"&amp;gt;&lt;br/&gt;
+  &amp;lt;refWork id="rClements85a"&amp;gt;&lt;br/&gt;
+	&amp;lt;refDate&amp;gt;1985&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+	&amp;lt;refTitle&amp;gt;The Problem of Transfer in Nonlinear Phonology&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+	&amp;lt;article&amp;gt;&lt;br/&gt;
+	  &amp;lt;jTitle&amp;gt;Cornell Working Papers in Linguistics&amp;lt;/jTitle&amp;gt;&lt;br/&gt;
+	  &amp;lt;jVol&amp;gt;5&amp;lt;/jVol&amp;gt;&lt;br/&gt;
+	  &amp;lt;jPages&amp;gt;38-73&amp;lt;/jPages&amp;gt;&lt;br/&gt;
+	&amp;lt;/article&amp;gt;&lt;br/&gt;
+  &amp;lt;/refWork&amp;gt;&lt;br/&gt;
+&amp;lt;refWork id="rClements85b"&amp;gt;&lt;br/&gt;
+  &amp;lt;refDate&amp;gt;1985&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+  &amp;lt;refTitle&amp;gt;The Geometry of Phonological Features&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+  &amp;lt;article&amp;gt;&lt;br/&gt;
+	&amp;lt;jTitle&amp;gt;Phonology Yearbook&amp;lt;/jTitle&amp;gt;&lt;br/&gt;
+	&amp;lt;jVol&amp;gt;2&amp;lt;/jVol&amp;gt;&lt;br/&gt;
+	&amp;lt;jPages&amp;gt;223-250&amp;lt;/jPages&amp;gt;&lt;br/&gt;
+  &amp;lt;/article&amp;gt;&lt;br/&gt;
+&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+&amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <p>If only the second such entry is cited in the text (i.e. via a <object class="element">&lt;citation&gt;</object> element), then the date should be produced as <object class="citationLabel">1985</object>, not as <object class="citationLabel">1985b</object> or even as <object class="citationLabel">1985a</object>.  <object class="XLingPap">XLingPap</object> formats this correctly.  It adjusts the value of the letter in the date for such entries to correspond to the appropriate value.  If there were three dates (such as <object class="citationLabel">1985a</object>, <object class="citationLabel">1985b</object>, and <object class="citationLabel">1985c</object>) and only two were cited (such as <object class="citationLabel">1985b</object> and <object class="citationLabel">1985c</object>), then <object class="XLingPap">XLingPap</object> will output these as <object class="citationLabel">1985a</object> and <object class="citationLabel">1985b</object>, respectively.</p>
+	  <p>The content of the <object class="element">&lt;refDate&gt;</object> element can be any text, so one can also use strings such as <object class="citationLabel">in prep.</object>, <object class="citationLabel">to appear</object>, or <object class="citationLabel">forthcoming</object> as the date.</p>
+	  <p>The placement of the parentheses around the date in the citation within the text can be controlled by the user.
+The default option is to enclose the date in parentheses.  In <exampleRef num="xCitationExample"/>-<exampleRef num="xCitationExampleHTML"/> above, notice how <object class="inTextExample">&lt;citation ref="rRegnier89" paren="none"/&gt;</object> becomes <object class="inTextExample">Regnier 1989</object>.
+The <object class="attribute">paren</object> attribute with a value of <object class="attrValue">none</object> outputs the date without any parentheses.
+ The table in <exampleRef num="xCitationParen"/>
+ delineates the various options.</p>
+	  <example num="xCitationParen">
+		<table>
+		  <headerRow>
+			<headerCol>
+			  <langData lang="lAttribute">Attribute</langData>
+			</headerCol>
+			<headerCol>
+			  <langData lang="lValue">Value</langData>
+			</headerCol>
+			<headerCol>
+			  <langData lang="lMeaning">Meaning</langData>
+			</headerCol>
+		  </headerRow>
+		  <row>
+			<col>
+			  <langData lang="lAttribute">paren</langData>
+			</col>
+			<col>
+			  <langData lang="lValue">both</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">use both opening and closing parentheses around the date</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng"/>
+			</col>
+			<col>
+			  <langData lang="lValue">none</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">use neither opening nor closing parentheses around the date</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng"/>
+			</col>
+			<col>
+			  <langData lang="lValue">initial</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">use only an opening parenthesis before the date</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng"/>
+			</col>
+			<col>
+			  <langData lang="lValue">final</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">use only a closing parenthesis after the date</langData>
+			</col>
+		  </row>
+		</table>
+	  </example>
+	  <p>In addition, one can control whether or not the author name appears.  The default action is for the name to appear.  If you do not want the author name to appear, use the <object class="attribute">author</object> attribute and give it a value of <object class="attrValue">no</object>.
+This is useful when listing several works by the same author(s).
+For example, the commands in <exampleRef num="xCitationNoAuthor"/> will give the results in
+<exampleRef num="xCitationNoAuthorHTML"/>.</p>
+	  <example num="xCitationNoAuthor">
+		<chart class="elementExample">
+&amp;lt;p&amp;gt;This Uto-Aztecan language, spoken in the state of Durango,&lt;br/&gt;
+Mexico, has been described in &amp;lt;citation ref="rEWillett81" paren="initial"/&amp;gt;,&lt;br/&gt;
+&amp;lt;citation ref="rEWillett82" author="no" paren="none"/&amp;gt;, &lt;br/&gt;
+&amp;lt;citation ref="rEWillett85" author="no" paren="final"/&amp;gt;, and&lt;br/&gt;
+&amp;lt;citation ref="rTWillett91"/&amp;gt;.&amp;lt;/p&amp;gt;&lt;br/&gt;
+...&lt;br/&gt;
+	&amp;lt;!--&lt;br/&gt;
+		REFERENCES&lt;br/&gt;
+--&amp;gt;&lt;br/&gt;
+	&amp;lt;references&amp;gt;&lt;br/&gt;
+	  &amp;lt;refAuthor citeName="E.Willett" name="Willett, Elizabeth"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rEWillett81"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1981&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;Word Shortening in Southeastern Tepehuan&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+&amp;lt;thesis&amp;gt;&lt;br/&gt;
+  &amp;lt;institution&amp;gt;University of North Dakota&amp;lt;/institution&amp;gt;&lt;br/&gt;
+  &amp;lt;location&amp;gt;Grand Forks, N.D.&amp;lt;/location&amp;gt;&lt;br/&gt;
+&amp;lt;/thesis&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+&amp;lt;refWork id="rEWillett82"&amp;gt;&lt;br/&gt;
+  &amp;lt;refDate&amp;gt;1982&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+  &amp;lt;refTitle&amp;gt;Reduplication and Accent in&lt;br/&gt;
+Southeastern Tepehuan&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+  &amp;lt;article&amp;gt;&lt;br/&gt;
+	&amp;lt;jTitle&amp;gt;IJAL&amp;lt;/jTitle&amp;gt;&lt;br/&gt;
+	&amp;lt;jVol&amp;gt;48&amp;lt;/jVol&amp;gt;&lt;br/&gt;
+	&amp;lt;jPages&amp;gt;168-184&amp;lt;/jPages&amp;gt;&lt;br/&gt;
+  &amp;lt;/article&amp;gt;&lt;br/&gt;
+&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+&amp;lt;refWork id="rEWillett85"&amp;gt;&lt;br/&gt;
+  &amp;lt;refDate&amp;gt;1985&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+  &amp;lt;refTitle&amp;gt;Palatalization in Southeastern Tepehuan&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+  &amp;lt;article&amp;gt;&lt;br/&gt;
+	&amp;lt;jTitle&amp;gt;IJAL&amp;lt;/jTitle&amp;gt;&lt;br/&gt;
+	&amp;lt;jVol&amp;gt;51&amp;lt;/jVol&amp;gt;&lt;br/&gt;
+	&amp;lt;jPages&amp;gt;618-620&amp;lt;/jPages&amp;gt;&lt;br/&gt;
+  &amp;lt;/article&amp;gt;&lt;br/&gt;
+&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+	  &amp;lt;/refAuthor&amp;gt;&amp;lt;refAuthor name="Willett, Thomas Leslie" citeName="T.Willett"&amp;gt;&lt;br/&gt;
+		&amp;lt;refWork id="rTWillett91"&amp;gt;&lt;br/&gt;
+		  &amp;lt;refDate&amp;gt;1991&amp;lt;/refDate&amp;gt;&lt;br/&gt;
+		  &amp;lt;refTitle&amp;gt;A Reference Grammar of Southeastern Tepehuan&amp;lt;/refTitle&amp;gt;&lt;br/&gt;
+&amp;lt;book&amp;gt;&lt;br/&gt;
+&amp;lt;series&amp;gt;Summer Institute of Linguistics and The University of Texas at Arlington Publications in Linguistics No. 100&amp;lt;/series&amp;gt;&lt;br/&gt;
+  &amp;lt;publisher&amp;gt;The Summer Institute of Linguistics and the University of Texas at Arlington&amp;lt;/publisher&amp;gt;&lt;br/&gt;
+  &amp;lt;location&amp;gt;Dallas, Texas&amp;lt;/location&amp;gt;&lt;br/&gt;
+&amp;lt;/book&amp;gt;&lt;br/&gt;
+		&amp;lt;/refWork&amp;gt;&lt;br/&gt;
+		&amp;lt;/refAuthor&amp;gt;&lt;br/&gt;
+	&amp;lt;/references&amp;gt;&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xCitationNoAuthorHTML">
+		<chart class="htmloutput">
+&lt;p&gt;This Uto-Aztecan language, spoken in the state of Durango,
+Mexico, has been described in &lt;a href="#rEWillett81"&gt;E.Willett (1981&lt;/a&gt;,
+&lt;a href="#rEWillett82"&gt;1982&lt;/a&gt;,
+&lt;a href="#rEWillett85"&gt;1985)&lt;/a&gt;, and
+&lt;a href="#rTWillett91"&gt;T.Willett (1991)&lt;/a&gt;.&lt;/p&gt;
+...
+
+&lt;hr size="3"&gt;&lt;a name="rXLingPapReferences"&gt;&lt;p&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;b&gt;&lt;a name=""&gt;References&lt;/a&gt;&lt;/b&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/p&gt;&lt;/a&gt;&lt;div style="margin-left:0.25in"&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rEWillett81"&gt;Willett, Elizabeth&lt;/a&gt;.   1981.
+&lt;i&gt;Word Shortening in Southeastern Tepehuan.  &lt;/i&gt;Grand Forks, N.D.: University of North Dakota M.A. thesis.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rEWillett82"&gt;Willett, Elizabeth&lt;/a&gt;.   1982.
+
+"Reduplication and Accent in
+Southeastern Tepehuan."
+			  &lt;i&gt;IJAL
+				48:168-184&lt;/i&gt;.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rEWillett85"&gt;Willett, Elizabeth&lt;/a&gt;.   1985.
+
+"Palatalization in Southeastern Tepehuan."
+			  &lt;i&gt;IJAL
+				51:618-620&lt;/i&gt;.&lt;/p&gt;
+&lt;p style="text-indent:-0.25in;margin-bottom:0in;margin-top:0in"&gt;&lt;a name="rTWillett91"&gt;Willett, Thomas Leslie&lt;/a&gt;.   1991.
+&lt;i&gt;A Reference Grammar of Southeastern Tepehuan.  &lt;/i&gt;Summer Institute of Linguistics and The University of Texas at Arlington Publications in Linguistics No. 100.  The Summer Institute of Linguistics and the University of Texas at Arlington.  Dallas, Texas.&lt;/p&gt;
+&lt;/div&gt;
+</chart>
+	  </example>
+	</section2>
+	<section2 id="sCitationsPage">
+	  <secTitle>Controlling Page Numbers</secTitle>
+	  <p>Sometimes a writer wishes to include a page number with the citation.  <object class="XLingPap">XLingPap</object> provides a means for doing this.  Suppose the references section for <exampleRef num="xCitationPage"/> below is the same
+as that in <exampleRef num="xCitationExample"/>-<exampleRef num="xCitationExampleHTML"/> above.
+Then the result of giving <exampleRef num="xCitationPage"/> to <object class="XLingPap">XLingPap</object> is shown in <exampleRef num="xCitationPageHTML"/>.</p>
+	  <example num="xCitationPage">
+		<chart class="elementExample">
+&amp;lt;p&amp;gt;As &amp;lt;citation ref="rGreenberg78" page="251"/&amp;gt; notes,&lt;br/&gt;
+a voiced consonant may not appear outside of a voiceless obstruent within a single syllable.&lt;br/&gt;
+</chart>
+	  </example>
+	  <example num="xCitationPageHTML">
+		<chart class="htmloutput">
+&lt;p&gt;As &lt;a href="#rGreenberg78"&gt;Greenberg (1978:251)&lt;/a&gt; notes, a voiced consonant may not appear outside of a voiceless obstruent within a single syllable.
+</chart>
+	  </example>
+	  <p>The contents of the <object class="attribute">page</object> attribute of the <object class="element">&lt;citation&gt;</object> element is inserted after the date with an intervening colon.  Any string of characters (not just digits) can be used as a page number.</p>
+	</section2>
+	<section2 id="sCitationsAttributes">
+	  <secTitle>Attribute Summary</secTitle>
+	  <p>The reference citation attributes are summarized in <exampleRef num="xCitationAttributes"/>.</p>
+	  <example num="xCitationAttributes">
+		<table>
+		  <headerRow>
+			<headerCol>
+			  <langData lang="lAttribute">Attribute</langData>
+			</headerCol>
+			<headerCol>
+			  <langData lang="lValue">Value</langData>
+			</headerCol>
+			<headerCol>
+			  <langData lang="lMeaning">Meaning</langData>
+			</headerCol>
+		  </headerRow>
+		  <row>
+			<col>
+			  <langData lang="lAttribute">ref</langData>
+			</col>
+			<col>
+			  <langData lang="lValue">(user determined)</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">refers to the <object class="attribute">id</object> attribute of the <object class="element">refWork</object> element that corresponds to this citation</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lAttribute">page</langData>
+			</col>
+			<col>
+			  <langData lang="lValue">(user determined)</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">the page number(s) of the citation</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lAttribute">author</langData>
+			</col>
+			<col>
+			  <langData lang="lValue">yes</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">show the author name</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lAttribute"/>
+			</col>
+			<col>
+			  <langData lang="lValue">no</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">do not show the author name</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lAttribute">paren</langData>
+			</col>
+			<col>
+			  <langData lang="lValue">both</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">use both opening and closing parentheses around the date</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng"/>
+			</col>
+			<col>
+			  <langData lang="lValue">none</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">use neither opening nor closing parentheses around the date</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng"/>
+			</col>
+			<col>
+			  <langData lang="lValue">initial</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">use only an opening parenthesis before the date</langData>
+			</col>
+		  </row>
+		  <row>
+			<col>
+			  <langData lang="lEng"/>
+			</col>
+			<col>
+			  <langData lang="lValue">final</langData>
+			</col>
+			<col>
+			  <langData lang="lMeaning">use only a closing parenthesis after the date</langData>
+			</col>
+		  </row>
+		</table>
+	  </example>
+	</section2>
+  </section1>
+  <section1 id="sSpecialEffects">
+	<secTitle>Special Effects</secTitle>
+	<p><object class="XLingPap">XLingPap</object> allows for two types of special effects.</p>
+	<section2 id="sSpecialEffectsText">
+	  <secTitle>Text</secTitle>
+	<p>Within a paragraph or other text, you may want to create some special effects (such as we do here for the word <object class="XLingPap">XLingPap</object> and for element and attribute names).   Normally you will use an <object class="element">object</object> element for these, although there is also the <object class="element">langData</object> element.  The latter is to be used for all language data in order to provide a consistent rendering for language data.  If you wish to produce some special effect for any non-language data item, use an <object class="element">object</object> element and define a section in the .css file which tells how to render it.  (See appendix <appendixRef app="aCSS"/> for more on Cascading Style Sheets.)</p>
+	<p>You can also add highlights or other effects to a language data item by embedding an <object class="element">object</object> element within a <object class="element">langData</object> element.</p>
+	</section2>
+	<section2 id="sSpecialEffectsLinks">
+	  <secTitle>HyperText Links</secTitle>
+	  <p>It is also possible to create a special hyperlink by using the <object class="element">genericRef</object> element within text.  The <object class="element">genericRef</object> element has one attribute: <object class="attribute">ref</object> which should be the <object class="attribute">id</object> attribute of some section, appendix, example, or endnote element.  Type some text between the begin <object class="element">genericRef</object> element and its endtag.  The result will be a hyperlink on that text that will link to the appropriate section, appendix, example, or endnote.</p>
+	</section2>
+	  </section1>
+  <backMatter>
+	<appendix id="aElements">
+	  <secTitle>
+		<object class="XLingPap">XLingPap</object> Element Reference Guide</secTitle>
+	  <p>This appendix lists the various elements available with <object class="XLingPap">XLingPap</object> and briefly explains their usage.  They are listed in alphabetical order.</p>
+	  <dl>
+		<dt>
+		  <object class="element">&lt;abstract&gt;</object>
+		</dt>
+		<dd>Paper abstract definition</dd>
+		<dt>
+		  <object class="element">&lt;acknowledgements&gt;</object>
+		</dt>
+		<dd>The acknowledgements section of a paper or book</dd>
+		<dt>
+		  <object class="element">&lt;affiliation&gt;</object>
+		</dt>
+		<dd>The affiliation of one of the authors of the paper</dd>
+		<dt>
+		  <object class="element">&lt;appendix&gt;</object>
+		</dt>
+		<dd>An appendix section of the paper</dd>
+		<dt>
+		  <object class="element">&lt;appendixRef&gt;</object>
+		</dt>
+		<dd>A reference to an appendix in the paper</dd>
+		<dt>
+		  <object class="element">&lt;article&gt;</object>
+		</dt>
+		<dd>Reference information for an article in a journal</dd>
+		<dt>
+		  <object class="element">&lt;author&gt;</object>
+		</dt>
+		<dd>An author of the paper</dd>
+		<dt>
+		  <object class="element">&lt;backMatter&gt;</object>
+		</dt>
+		<dd>The back matter section of the paper (it includes appendices, endnotes, and references)</dd>
+		<dt>
+		  <object class="element">&lt;blockquote&gt;</object>
+		</dt>
+		<dd>A quotation that is to be set off as a block</dd>
+		<dt>
+		  <object class="element">&lt;book&gt;</object>
+		</dt>
+		<dd>Reference information for a book</dd>
+		<dt>
+		  <object class="element">&lt;br&gt;</object>
+		</dt>
+		<dd>Forces a line break in the text</dd>
+		<dt>
+		  <object class="element">&lt;caption&gt;</object>
+		</dt>
+		<dd>A caption on a table</dd>
+		<dt>
+		  <object class="element">&lt;chapter&gt;</object>
+		</dt>
+		<dd>A chapter section or portion of the paper</dd>
+		<dt>
+		  <object class="element">&lt;chart&gt;</object>
+		</dt>
+		<dd>A chart in the text; may also be included in an example</dd>
+		<dt>
+		  <object class="element">&lt;citation&gt;</object>
+		</dt>
+		<dd>A citation to a reference</dd>
+		<dt>
+		  <object class="element">&lt;col&gt;</object>
+		</dt>
+		<dd>A column entry within a table</dd>
+		<dt>
+		  <object class="element">&lt;collEd&gt;</object>
+		</dt>
+		<dd>Reference information for an editor of a collection of papers volume</dd>
+		<dt>
+		  <object class="element">&lt;collPage&gt;</object>
+		</dt>
+		<dd>Reference information for page numbers in a paper that is part of a collection volume</dd>
+		<dt>
+		  <object class="element">&lt;collTitle&gt;</object>
+		</dt>
+		<dd>Reference information for the title of a collection volume</dd>
+		<dt>
+		  <object class="element">&lt;collVol&gt;</object>
+		</dt>
+		<dd>Reference information for the volume number of a collection volume</dd>
+		<dt>
+		  <object class="element">&lt;collection&gt;</object>
+		</dt>
+		<dd>Reference information for a paper included in a collection volume</dd>
+		<dt>
+		  <object class="element">&lt;comment&gt;</object>
+		</dt>
+		<dd>A way to add a comment in the text; it will not be shown in the HTML form of the paper</dd>
+		<dt>
+		  <object class="element">&lt;conference&gt;</object>
+		</dt>
+		<dd>Reference information for a conference (for a paper presented at a conference)</dd>
+		<dt>
+		  <object class="element">&lt;contents&gt;</object>
+		</dt>
+		<dd>Includes a table of contents</dd>
+		<dt>
+		  <object class="element">&lt;date&gt;</object>
+		</dt>
+		<dd>Date of the paper</dd>
+		<!-- @@@ -->
+		<dt>
+		  <object class="element">&lt;dd&gt;</object>
+		</dt>
+		<dd>A definition list definition</dd>
+		<dt>
+		  <object class="element">&lt;dissertation&gt;</object>
+		</dt>
+		<dd>Reference information for a Ph.D. dissertation</dd>
+		<dt>
+		  <object class="element">&lt;dl&gt;</object>
+		</dt>
+		<dd>A definition list</dd>
+		<dt>
+		  <object class="element">&lt;dt&gt;</object>
+		</dt>
+		<dd>A definition list term</dd>
+		<dt>
+		  <object class="element">&lt;endnote&gt;</object>
+		</dt>
+		<dd>An endnote definition</dd>
+		<dt>
+		  <object class="element">&lt;endnoteRef&gt;</object>
+		</dt>
+		<dd>A reference to an endnote</dd>
+		<dt>
+		  <object class="element">&lt;endnotes&gt;</object>
+		</dt>
+		<dd>Includes endnotes in the back matter of the paper</dd>
+		<dt>
+		  <object class="element">&lt;example&gt;</object>
+		</dt>
+		<dd>An example, which may be numbered or unnumbered</dd>
+		<dt>
+		  <object class="element">&lt;exampleRef&gt;</object>
+		</dt>
+		<dd>A reference to an example</dd>
+		<dt>
+		  <object class="element">&lt;free&gt;</object>
+		</dt>
+		<dd>A free translation field within an interlinear example</dd>
+		<dt>
+		  <object class="element">&lt;frontMatter&gt;</object>
+		</dt>
+		<dd>Defines the front matter of the paper</dd>
+		<dt>
+		  <object class="element">&lt;gloss&gt;</object>
+		</dt>
+		<dd>A gloss field in an interlinear example</dd>
+		<dt>
+		  <object class="element">&lt;headerCol&gt;</object>
+		</dt>
+		<dd>A heading column within a table</dd>
+		<dt>
+		  <object class="element">&lt;headerRow&gt;</object>
+		</dt>
+		<dd>A heading row within a table</dd>
+		<dt>
+		  <object class="element">&lt;img&gt;</object>
+		</dt>
+		<dd>A simple-minded HTML <object class="element">img</object> element; it only includes the <object class="attribute">src</object> attribute</dd>
+		<dt>
+		  <object class="element">&lt;institution&gt;</object>
+		</dt>
+		<dd>Reference information for the institution of a manuscript, dissertation or thesis</dd>
+		<dt>
+		  <object class="element">&lt;interlinear&gt;</object>
+		</dt>
+		<dd>An interlinear text example</dd>
+		<dt>
+		  <object class="element">&lt;jPages&gt;</object>
+		</dt>
+		<dd>Reference information for the page numbers of an article in a journal</dd>
+		<dt>
+		  <object class="element">&lt;jTitle&gt;</object>
+		</dt>
+		<dd>Reference information for the title of a journal</dd>
+		<dt>
+		  <object class="element">&lt;jVol&gt;</object>
+		</dt>
+		<dd>Reference information for the volume number of a journal</dd>
+		<dt>
+		  <object class="element">&lt;langData&gt;</object>
+		</dt>
+		<dd>Tags some text as belonging to a particular language</dd>
+		<dt>
+		  <object class="element">&lt;language&gt;</object>
+		</dt>
+		<dd>A language (to be used with <object class="element">&lt;langData&gt;</object> or <object class="element">&lt;gloss&gt;</object>)</dd>
+		<dt>
+		  <object class="element">&lt;li&gt;</object>
+		</dt>
+		<dd>A list item</dd>
+		<dt>
+		  <object class="element">&lt;lineGroup&gt;</object>
+		</dt>
+		<dd>A group or set of lines within an interlinear; the contents of the lines are aligned</dd>
+		<dt>
+		  <object class="element">&lt;line&gt;</object>
+		</dt>
+		<dd>A line in an interlinear example</dd>
+		<dt>
+		  <object class="element">&lt;lingPaper&gt;</object>
+		</dt>
+		<dd>The main element of the paper</dd>
+		<dt>
+		  <object class="element">&lt;listInterlinear&gt;</object>
+		</dt>
+		<dd>A list of interlinear examples</dd>
+		<dt>
+		  <object class="element">&lt;listSingle&gt;</object>
+		</dt>
+		<dd>A list of single line examples</dd>
+		<dt>
+		  <object class="element">&lt;listWord&gt;</object>
+		</dt>
+		<dd>A list of word, gloss examples</dd>
+		<dt>
+		  <object class="element">&lt;location&gt;</object>
+		</dt>
+		<dd>Reference information for the location of a publication</dd>
+		<dt>
+		  <object class="element">&lt;ms&gt;</object>
+		</dt>
+		<dd>Reference information for a manuscript</dd>
+		<dt>
+		  <object class="element">&lt;object&gt;</object>
+		</dt>
+		<dd>An user-defined "object" which can have a class name that the user's CSS stylesheet defines (see Appendix ###)</dd>
+		<dt>
+		  <object class="element">&lt;ol&gt;</object>
+		</dt>
+		<dd>An ordered list</dd>
+		<dt>
+		  <object class="element">&lt;p&gt;</object>
+		</dt>
+		<dd>A paragraph</dd>
+		<dt>
+		  <object class="element">&lt;pc&gt;</object>
+		</dt>
+		<dd>A continuation paragraph (which never has an indented initial line)</dd>
+		<dt>
+		  <object class="element">&lt;paper&gt;</object>
+		</dt>
+		<dd>Reference information for a paper presented at a conference</dd>
+		<dt>
+		  <object class="element">&lt;part&gt;</object>
+		</dt>
+		<dd>A part section which contains chapters</dd>
+		<dt>
+		  <object class="element">&lt;presentedAt&gt;</object>
+		</dt>
+		<dd>A line in the front matter indicating that the paper had been presented at some conference</dd>
+		<dt>
+		  <object class="element">&lt;procEd&gt;</object>
+		</dt>
+		<dd>Reference information for the editor(s) of a proceedings volume</dd>
+		<dt>
+		  <object class="element">&lt;procPage&gt;</object>
+		</dt>
+		<dd>Reference information for the pages of an article in a proceedings volume</dd>
+		<dt>
+		  <object class="element">&lt;procTitle&gt;</object>
+		</dt>
+		<dd>Reference information for the title of a proceedings volume</dd>
+		<dt>
+		  <object class="element">&lt;procVol&gt;</object>
+		</dt>
+		<dd>Reference information for the volume number of a proceedings volume</dd>
+		<dt>
+		  <object class="element">&lt;proceedings&gt;</object>
+		</dt>
+		<dd>Reference information for a paper included within a conference proceedings volume</dd>
+		<dt>
+		  <object class="element">&lt;pubDate&gt;</object>
+		</dt>
+		<dd>Reference information for the publication date of a dissertation or thesis</dd>
+		<dt>
+		  <object class="element">&lt;published&gt;</object>
+		</dt>
+		<dd>Reference information for a published dissertation or thesis</dd>
+		<dt>
+		  <object class="element">&lt;publisher&gt;</object>
+		</dt>
+		<dd>Reference information for the publisher of a book, collection volume, Ph.D. dissertation, conference proceedings volume, or M.A. thesis</dd>
+		<dt>
+		  <object class="element">&lt;q&gt;</object>
+		</dt>
+		<dd>An inline quote</dd>
+		<dt>
+		  <object class="element">&lt;refAuthor&gt;</object>
+		</dt>
+		<dd>Reference information for an author</dd>
+		<dt>
+		  <object class="element">&lt;refDate&gt;</object>
+		</dt>
+		<dd>Reference information for the date of a publication or manuscript</dd>
+		<dt>
+		  <object class="element">&lt;refTitle&gt;</object>
+		</dt>
+		<dd>Reference information for title of a publication or manuscript</dd>
+		<dt>
+		  <object class="element">&lt;refWork&gt;</object>
+		</dt>
+		<dd>Reference information for a work by an author that is included in the references section</dd>
+		<dt>
+		  <object class="element">&lt;references&gt;</object>
+		</dt>
+		<dd>The references section of the back matter</dd>
+		<dt>
+		  <object class="element">&lt;row&gt;</object>
+		</dt>
+		<dd>A row in a table</dd>
+		<dt>
+		  <object class="element">&lt;secTitle&gt;</object>
+		</dt>
+		<dd>The title of a section within the paper</dd>
+		<dt>
+		  <object class="element">&lt;section1&gt;</object>
+		</dt>
+		<dd>A level one section of the paper</dd>
+		<dt>
+		  <object class="element">&lt;section2&gt;</object>
+		</dt>
+		<dd>A level two section of the paper (i.e. a sub-section)</dd>
+		<dt>
+		  <object class="element">&lt;section3&gt;</object>
+		</dt>
+		<dd>A level three section of the paper</dd>
+		<dt>
+		  <object class="element">&lt;section4&gt;</object>
+		</dt>
+		<dd>A level four section of the paper</dd>
+		<dt>
+		  <object class="element">&lt;section5&gt;</object>
+		</dt>
+		<dd>A level five section of the paper</dd>
+		<dt>
+		  <object class="element">&lt;section6&gt;</object>
+		</dt>
+		<dd>A level six section of the paper</dd>
+		<dt>
+		  <object class="element">&lt;sectionRef&gt;</object>
+		</dt>
+		<dd>A reference to a section in the paper</dd>
+		<dt>
+		  <object class="element">&lt;series&gt;</object>
+		</dt>
+		<dd>Reference information for a book that is published within a series</dd>
+		<dt>
+		  <object class="element">&lt;single&gt;</object>
+		</dt>
+		<dd>A single line example</dd>
+		<dt>
+		  <object class="element">&lt;table&gt;</object>
+		</dt>
+		<dd>A table</dd>
+		<dt>
+		  <object class="element">&lt;thesis&gt;</object>
+		</dt>
+		<dd>Reference information for an M.A. thesis</dd>
+		<dt>
+		  <object class="element">&lt;title&gt;</object>
+		</dt>
+		<dd>The title of the paper</dd>
+		<dt>
+		  <object class="element">&lt;tree&gt;</object>
+		</dt>
+		<dd>A tree in the text; may also be included in an example</dd>
+		<dt>
+		  <object class="element">&lt;ul&gt;</object>
+		</dt>
+		<dd>An unordered list</dd>
+		<dt>
+		  <object class="element">&lt;version&gt;</object>
+		</dt>
+		<dd>The version number of the paper</dd>
+		<dt>
+		  <object class="element">&lt;word&gt;</object>
+		</dt>
+		<dd>A word, gloss example</dd>
+		<dt>
+		  <object class="element">&lt;wrd&gt;</object>
+		</dt>
+		<dd>A single word item within a line of an interlinear example; use these when you need to highlight some word(s) within the line (via an <object class="element">&lt;object&gt;</object> element)</dd>
+	  </dl>
+	</appendix>
+	<appendix id="aCSS">
+	  <secTitle>Attributes Chart for use in Cascading Style Sheet</secTitle>
+	  <table border="1">
+		<caption align="center">Attributes Chart for use in Cascading Style Sheet</caption>
+		<headerRow>
+		  <headerCol>Attribute</headerCol>
+		  <headerCol>Default Value</headerCol>
+		  <headerCol>Other Possible Values</headerCol>
+		</headerRow>
+		<row>
+		  <col class="bold">color</col>
+		  <col>black</col>
+		  <col>color name or RGB value; see http://msdn.microsoft.com/library/default.asp?url=/workshop/author/css/reference/attributes.asp</col>
+		</row>
+		<row>
+		  <col class="bold">font-family</col>
+		  <col>none</col>
+		  <col>Times, Times New Roman, Courier, Courier New,  SIL Doulos IPA93, etc.</col>
+		</row>
+		<row>
+		  <col class="bold">font-size</col>
+		  <col>medium</col>
+		  <col>_% (of default), xx-small, x-small, small, large, x-large, xx-large, smaller, larger</col>
+		</row>
+		<row>
+		  <col class="bold">font-style</col>
+		  <col>normal</col>
+		  <col>italic</col>
+		</row>
+		<row>
+		  <col class="bold">font-variant</col>
+		  <col>normal</col>
+		  <col>small-caps</col>
+		</row>
+		<row>
+		  <col class="bold">font-weight</col>
+		  <col>normal</col>
+		  <col>bold, bolder, lighter</col>
+		</row>
+		<row>
+		  <col class="bold">text-indent</col>
+		  <col>0</col>
+		  <col>In units of cm (centimeters), in (inches), em (typesetters em width), or ex (typesetters ex width) or a percentage of the parent object.  For example "0.25in" will indent a quarter of an inch.</col>
+		</row>
+		<row>
+		  <col class="bold">vertical-align</col>
+		  <col>baseline</col>
+		  <col>sub, super (combine with font-size:65%)</col>
+		</row>
+	  </table>
+	  <p>If you wish to have indented paragraphs, then you can add the following lines to your .css file:</p>
+	  <table class="tableCSS">
+		<row>
+		  <col>p.pc {
+</col>
+		</row>
+		<row>
+		  <col>text-indent: 0.0in;
+</col>
+		</row>
+		<row>
+		  <col>}</col>
+		</row>
+		<row>
+		  <col/>
+		</row>
+		<row>
+		  <col>p {</col>
+		</row>
+		<row>
+		  <col>text-indent: 0.25in;</col>
+		</row>
+		<row>
+		  <col>}</col>
+		</row>
+	  </table>
+	  <p>The first makes sure that continuation paragraphs do not have an indert.  The second gives regular paragraphs an indent of a quarter of an inch.  You can change the value, of course, to be what you want.</p>
+	</appendix>
+	<endnotes/>
+  </backMatter>
+</lingPaper>

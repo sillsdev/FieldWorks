@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<accil on-fail="assert">
+
+<!-- Andy Black's demo section I -->
+
+ <on-application args="-db Kalaba" title="Kalaba - FieldWorks Harvest" run="ok" on-fail="assert">
+
+<!--I.	Compounding-->
+<!--1.	Show the Orizaba Nahuatl adjective-nominal compounds PowerPoint slide.-->
+ <on-application wait="6000" path="C:\Program Files\Microsoft Office\PowerPoint Viewer" exe="PPTVIEW.EXE" title="Microsoft Office PowerPoint Viewer" run="yes" close="no" on-fail="assert">
+ <!--on-application wait="6000" path="C:\Program Files\Microsoft Office\OFFICE11" exe="PPTVIEW.EXE" title="Microsoft Office PowerPoint Viewer" run="yes" close="no" on-fail="assert"-->
+  <!--insert wait="1000">C:\GuiTestDriver\Scripts\LT\MoeWorks.ppt~</insert-->
+  <insert wait="1000">C:\fw\Test\GuiTestDriver\LexTextGuiTests\MoeWorks.ppt~</insert>
+  <insert>{F5}</insert>
+  <insert wait="4000">{ESC}</insert>
+  <insert wait="2000">{TAB}</insert>
+  <insert wait="1000">{TAB}</insert>
+  <insert wait="1000">{TAB}~</insert>
+  <!--click wait="1000" path="button:Cancel"/-->
+ </on-application>
+
+<!--2.	Have an adjective and a noun compounding.  What is the category of the resulting compound (and how do you know)?  Is a noun ￯﾿ﾢ￯ﾾﾀ￯ﾾﾓ it has the nominal suffix on it.-->
+<!--3.	When the category of  a compound is the same as one of the members of the compound, we say that the compound is "headed" by the member of that category.-->
+<!--4.	Let's allow this kind of adjective-noun compound-->
+<!--5.	Go to Grammar / Compound Rules.-->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Compound Rules" />
+
+<!--6.	Delete a rule-->
+<!--a.	(The first one listed is similar, but actually no longer valid ￯﾿ﾢ￯ﾾﾀ￯ﾾﾓ we're not allowing for linkers at this point.)   So we're going to delete this one and then add our new one.-->
+<!--b.	Select "adj-noun with linker" in the Record List-->
+  <click path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:CompoundRuleItemsAndDetailMultiPane/window:CompoundRuleList[1]/window:CompoundRuleList[1]/window:NAMELESS[1]/group:Root/table:Table/row:Row/cell:Cell/para:0/line:0"/>
+
+<!--c.	Click on the Delete (red X) toolbar button.-->
+  <click path="window:Standard/toolbar:Standard/button:Delete Record..."/>
+
+<!--d.	The "Are you sure?" dialog box appears.  Click on Yes.-->
+  <insert>~</insert>
+
+<!--7.	Click on "Create a new headed compound-->
+  <click path="window:Insert/toolbar:Insert/button:Headed Compound"/>
+
+<!--a.	In the Name field, type "Adjective-noun compound"-->
+  <var id="HComp" set="window:xWindow.mainPanel/window:xWindow.contentPanel/window:advancedEdit/window:RecordEditView.DataTree/"/>
+  <click path="$HComp;window:string/group:Name"/>
+  <insert>Adjective-noun compound</insert>
+
+<!--b.	In the Description field, type "An adjective root may be compounded with a noun.  The head of the compound is the noun."-->
+  <click path="$HComp;window:string[2]/group:Description"/>
+  <insert>An adjective root may be compounded with a noun.  The head of the compound is the noun.</insert>
+
+<!--c.	In the Left member category, click on the chooser and choose "adjective" (under modifier)-->
+  <var id="widget" set="window:Category/window:NAMELESS[1]/button:NAMELESS"/>
+  <click path="$HComp;window:atomicreferencepos/$widget"/>
+  <insert>{HOME}mm{RIGHT 2}~</insert>
+
+<!--d.	In the Right member category, click on the chooser and select "noun".-->
+  <click path="$HComp;window:atomicreferencepos[2]/$widget"/>
+  <insert>{HOME}nn~</insert>
+
+<!--e.	Click on the Right Headed check box. (it is always off since the record is new)-->
+  <click path="$HComp;window:checkbox/chkbox:Right Headed"/>
+
+<!--8.	Go back to the Grammar Sketch and regenerate-->
+  <click wait="3000" path="window:MenuBar/menu:View /menu:Grammar/menu:Grammar Sketch" />
+  <click path="window:xWindow.mainPanel/window:xWindow.contentPanel/button:btnGenerate" />
+
+<!--9.	Go to the Compounding section and see the new rule.-->
+  <click wait="3000" path="window:xWindow.mainPanel/window:xWindow.contentPanel/window:SIL.FieldWorks.XWorks.FxtViewer/window:panelBottom/window:HtmlControl/window:SHDocVw.WebBrowser_V1" />
+  <insert>{PGDN 27}</insert>
+
+ </on-application>
+</accil>

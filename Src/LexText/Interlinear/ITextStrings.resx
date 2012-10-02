@@ -1,0 +1,761 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ksAcceptEntireAnalysis" xml:space="preserve">
+	<value>Accept entire analysis (Ctrl-TAB)</value>
+  </data>
+  <data name="ksAddNewSense_" xml:space="preserve">
+	<value>    Add New Sense...</value>
+	<comment>note indentation by leading spaces</comment>
+  </data>
+  <data name="ksAddNewSenseForX_" xml:space="preserve">
+	<value>Add New Sense for {0} ...</value>
+  </data>
+  <data name="ksAllomorphOf_" xml:space="preserve">
+	<value>Allomorph of...</value>
+  </data>
+  <data name="ksAreYouSureAddZtoX" xml:space="preserve">
+	<value>Are you sure you want to add the {0} allomorph ({1}) to this entry?</value>
+  </data>
+  <data name="ksBstAn" xml:space="preserve">
+	<value>bst. an</value>
+	<comment>short for Best Analysis (writing system)</comment>
+  </data>
+  <data name="ksCannotHideField" xml:space="preserve">
+	<value>Cannot hide field</value>
+  </data>
+  <data name="ksCannotRedoChangesHere" xml:space="preserve">
+	<value>Can't Redo Changes in this Analysis</value>
+  </data>
+  <data name="ksConvMapError" xml:space="preserve">
+	<value>Conversion map error</value>
+	<comment>caption for error message box</comment>
+  </data>
+  <data name="ksCreateNewEntry_" xml:space="preserve">
+	<value>Create New Entry...</value>
+  </data>
+  <data name="ksDeleteThisWordform" xml:space="preserve">
+	<value>Delete this Wordform</value>
+  </data>
+  <data name="ksEditMorphBreaks_" xml:space="preserve">
+	<value>Edit Morph Breaks...</value>
+  </data>
+  <data name="ksEditThisWordform" xml:space="preserve">
+	<value>Edit this Wordform</value>
+  </data>
+  <data name="ksEmpty" xml:space="preserve">
+	<value>&lt;Empty&gt;</value>
+  </data>
+  <data name="ksEmptyPara" xml:space="preserve">
+	<value>An empty paragraph</value>
+  </data>
+  <data name="ksEncConvFailed" xml:space="preserve">
+	<value>Encoding Converter '{0}' failed: '{1}'</value>
+  </data>
+  <data name="ksEnterOrPasteHere" xml:space="preserve">
+	<value>Enter or paste your text here, then click "Show Interlinear."</value>
+  </data>
+  <data name="ksExpectedXButGotY" xml:space="preserve">
+	<value>Expected "{0}" but found "{1}".</value>
+  </data>
+  <data name="ksExportErrorMsg" xml:space="preserve">
+	<value>An error occurred while exporting your data.  This is probably a bug in the FieldWorks code. Details: {0}</value>
+  </data>
+  <data name="ksExportInterlinear" xml:space="preserve">
+	<value>Export Interlinear</value>
+  </data>
+  <data name="ksExtension" xml:space="preserve">
+	<value>Extension</value>
+  </data>
+  <data name="ksFailedLoadingLL" xml:space="preserve">
+	<value>Loading {0} into {1} failed.{2}Look at {3} for details.</value>
+	<comment>{2} is a newline character</comment>
+  </data>
+  <data name="ksFinishLLTextsProblem5" xml:space="preserve">
+	<value>Finish LinguaLinks texts problem (phase 5): {0}</value>
+  </data>
+  <data name="ksFocusBox_btnBreakPhrase" xml:space="preserve">
+	<value>Break phrase into words</value>
+  </data>
+  <data name="ksFocusBox_btnConfirmChanges" xml:space="preserve">
+	<value>Confirm and move next</value>
+  </data>
+  <data name="ksFocusBox_btnLinkNextWord" xml:space="preserve">
+	<value>Make phrase with next word</value>
+  </data>
+  <data name="ksFocusBox_btnUndoChanges" xml:space="preserve">
+	<value>Undo</value>
+  </data>
+  <data name="ksFormat" xml:space="preserve">
+	<value>Format</value>
+  </data>
+  <data name="ksFree_" xml:space="preserve">
+	<value>Free </value>
+	<comment>short for Free Translation; there is a trailing space</comment>
+  </data>
+  <data name="ksFreeTranslation" xml:space="preserve">
+	<value>Free Translation</value>
+  </data>
+  <data name="ksFT" xml:space="preserve">
+	<value>FT </value>
+	<comment>short for Free Translation; there is a trailing space</comment>
+  </data>
+  <data name="ksGloss" xml:space="preserve">
+	<value>Lex. Gloss</value>
+	<comment>note indentation formed by leading spaces</comment>
+  </data>
+  <data name="ksGramInfo" xml:space="preserve">
+	<value>Lex. Gram. Info.</value>
+	<comment>short for Grammatical Information; note indentation formed by leading spaces</comment>
+  </data>
+  <data name="ksHidesDependentLinesAlso" xml:space="preserve">
+	<value>If you hide this line, some dependent lines will also be hidden.</value>
+  </data>
+  <data name="ksIgnore" xml:space="preserve">
+	<value>ignore</value>
+	<comment>label for writing system to ignore during import from LinguaLinks</comment>
+  </data>
+  <data name="ksImport" xml:space="preserve">
+	<value>Import</value>
+	<comment>button label</comment>
+  </data>
+  <data name="ksInputFileNotFound" xml:space="preserve">
+	<value>Input file ({0}) not found.</value>
+  </data>
+  <data name="ksInvalidLLFile" xml:space="preserve">
+	<value>The file you selected ({0}) does not appear to be a valid LinguaLinks XML file. Please choose a valid LinguaLinks XML file.</value>
+  </data>
+  <data name="ksLexEntries" xml:space="preserve">
+	<value>Lex. Entries</value>
+	<comment>short for Lexical Entries</comment>
+  </data>
+  <data name="ksLit_" xml:space="preserve">
+	<value>Lit. </value>
+	<comment>short for Literal Translation; there is a trailing space</comment>
+  </data>
+  <data name="ksLiteralTranslation" xml:space="preserve">
+	<value>Literal Translation</value>
+  </data>
+  <data name="ksLLEncConv" xml:space="preserve">
+	<value>LinguaLinks Encoding Conversion</value>
+	<comment>caption for message box</comment>
+  </data>
+  <data name="ksLLFileNotFound" xml:space="preserve">
+	<value>LinguaLinks XML file ({0}) not found.</value>
+  </data>
+  <data name="ksLLImport" xml:space="preserve">
+	<value>LinguaLinks Import</value>
+	<comment>caption for message box</comment>
+  </data>
+  <data name="ksLLImportFailed" xml:space="preserve">
+	<value>LinguaLinks Import Failed</value>
+	<comment>caption for message box</comment>
+  </data>
+  <data name="ksLLImportPhase1" xml:space="preserve">
+	<value>Phase 1 of 5: character conversions</value>
+  </data>
+  <data name="ksLLImportPhase2" xml:space="preserve">
+	<value>Phase 2 of 5: XML transformations</value>
+  </data>
+  <data name="ksLLImportPhase3" xml:space="preserve">
+	<value>Phase 3 of 5: XML clean up</value>
+  </data>
+  <data name="ksLLImportPhase4" xml:space="preserve">
+	<value>Phase 4 of 5: loading XML data into FieldWorks</value>
+  </data>
+  <data name="ksLLImportPhase5" xml:space="preserve">
+	<value>Phase 5 of 5: Finishing importing LinguaLinks texts</value>
+  </data>
+  <data name="ksLLImportProgress" xml:space="preserve">
+	<value>LinguaLinks Import Progress</value>
+	<comment>dialog box caption</comment>
+  </data>
+  <data name="ksLLImportSucceeded" xml:space="preserve">
+	<value>LinguaLinks Import Successful</value>
+	<comment>caption for message box</comment>
+  </data>
+  <data name="ksLT" xml:space="preserve">
+	<value>LT </value>
+	<comment>short for Literal Translation; there is a trailing space</comment>
+  </data>
+  <data name="ksMorphemes" xml:space="preserve">
+	<value>Morphemes</value>
+  </data>
+  <data name="ksNeedOneField" xml:space="preserve">
+	<value>You must have at least one field showing</value>
+  </data>
+  <data name="ksNeedWordLine" xml:space="preserve">
+	<value>You cannot hide the Word line in this view</value>
+  </data>
+  <data name="ksNewAnalysis" xml:space="preserve">
+	<value>New analysis</value>
+  </data>
+  <data name="ksNewWordGloss" xml:space="preserve">
+	<value>   New word gloss</value>
+	<comment>note indentation formed by leading spaces</comment>
+  </data>
+  <data name="ksNewWordGloss2" xml:space="preserve">
+	<value>New word gloss</value>
+	<comment>no leading spaces for indentation</comment>
+  </data>
+  <data name="ksNoForm" xml:space="preserve">
+	<value>there is no form!</value>
+  </data>
+  <data name="ksNoMorphemes" xml:space="preserve">
+	<value>no morphemes</value>
+  </data>
+  <data name="ksNote" xml:space="preserve">
+	<value>Note</value>
+  </data>
+  <data name="ksNote_" xml:space="preserve">
+	<value>Note </value>
+	<comment>there is a trailing space</comment>
+  </data>
+  <data name="ksNt" xml:space="preserve">
+	<value>Nt </value>
+	<comment>short for Note; there is a trailing space</comment>
+  </data>
+  <data name="ksPhaseButton" xml:space="preserve">
+	<value>Ph{0} {1}</value>
+	<comment>{0} is phase number; {1} is either "Process" or "Import"</comment>
+  </data>
+  <data name="ksPreparingInterlinear1" xml:space="preserve">
+	<value>Preparing Interlinear (Step 1)</value>
+  </data>
+  <data name="ksPreparingInterlinear2" xml:space="preserve">
+	<value>Preparing Interlinear (Step 2)</value>
+  </data>
+  <data name="ksPreparingInterlinear3" xml:space="preserve">
+	<value>Preparing Interlinear (Step 3)</value>
+  </data>
+  <data name="ksPreparingInterlinear4" xml:space="preserve">
+	<value>Preparing Interlinear (Step 4)</value>
+  </data>
+  <data name="ksPreparingInterlinear5" xml:space="preserve">
+	<value>Preparing Interlinear (Step 5)</value>
+  </data>
+  <data name="ksProblem" xml:space="preserve">
+	<value>Problem</value>
+  </data>
+  <data name="ksProcess" xml:space="preserve">
+	<value>Process</value>
+	<comment>button label</comment>
+  </data>
+  <data name="ksQuestions" xml:space="preserve">
+	<value>???</value>
+	<comment>signals unknown/missing value</comment>
+  </data>
+  <data name="ksRedoAddFreeformTranslation" xml:space="preserve">
+	<value>Redo insert Freeform Translation</value>
+  </data>
+  <data name="ksRedoAddLiteralTranslation" xml:space="preserve">
+	<value>Redo insert Literal Translation</value>
+  </data>
+  <data name="ksRedoAddNote" xml:space="preserve">
+	<value>Redo insert Note</value>
+  </data>
+  <data name="ksRedoApproveAnalysis" xml:space="preserve">
+	<value>Redo Approve Analysis</value>
+  </data>
+  <data name="ksRedoBreakPhrase" xml:space="preserve">
+	<value>Redo Break Phrase into Words</value>
+  </data>
+  <data name="ksRedoCommand" xml:space="preserve">
+	<value>Redo {0}</value>
+  </data>
+  <data name="ksRedoLinkWords" xml:space="preserve">
+	<value>Redo Link Words into Phrase</value>
+  </data>
+  <data name="ksSelectedLexEntryXisaY" xml:space="preserve">
+	<value>The selected lexical entry ({0}) is a {1}.</value>
+  </data>
+  <data name="ksSelectLLFWXMLFile" xml:space="preserve">
+	<value>Select the LinguaLinks/FieldWorks XML file to use</value>
+	<comment>caption for open file dialog</comment>
+  </data>
+  <data name="ksSelectLLXMLFile" xml:space="preserve">
+	<value>Select the LinguaLinks XML file to use</value>
+	<comment>caption for open file dialog</comment>
+  </data>
+  <data name="ksStars" xml:space="preserve">
+	<value>***</value>
+	<comment>signals missing value</comment>
+  </data>
+  <data name="ksSuccessLoadingLL" xml:space="preserve">
+	<value>Successfully loaded {0} into {1}.{2}Look at {3} for details.</value>
+	<comment>{2} is a newline character</comment>
+  </data>
+  <data name="ksTitle" xml:space="preserve">
+	<value>Title</value>
+  </data>
+  <data name="ksTransformProblem" xml:space="preserve">
+	<value>Transformation problem:  {0}</value>
+  </data>
+  <data name="ksTransformProblem1" xml:space="preserve">
+	<value>Transformation problem (phase 1): {0}</value>
+  </data>
+  <data name="ksTransformProblem2" xml:space="preserve">
+	<value>Transformation problem (phase 2): {0}</value>
+  </data>
+  <data name="ksTransformProblem3" xml:space="preserve">
+	<value>Transformation problem (phase 3): {0}</value>
+  </data>
+  <data name="ksUndoAddFreeformTranslation" xml:space="preserve">
+	<value>Undo insert Free Translation</value>
+  </data>
+  <data name="ksUndoAddLiteralTranslation" xml:space="preserve">
+	<value>Undo insert Literal Translation</value>
+  </data>
+  <data name="ksUndoAddNote" xml:space="preserve">
+	<value>Undo insert Note</value>
+  </data>
+  <data name="ksUndoAllChangesHere" xml:space="preserve">
+	<value>Undo all changes in this Analysis</value>
+  </data>
+  <data name="ksUndoApproveAnalysis" xml:space="preserve">
+	<value>Undo Approve Analysis</value>
+  </data>
+  <data name="ksUndoBreakPhrase" xml:space="preserve">
+	<value>Undo Break Phrase into Words</value>
+  </data>
+  <data name="ksUndoCommand" xml:space="preserve">
+	<value>Undo {0}</value>
+  </data>
+  <data name="ksUndoLinkWords" xml:space="preserve">
+	<value>Undo Link Words into Phrase</value>
+  </data>
+  <data name="ksUnhandledError" xml:space="preserve">
+	<value>Unhandled Error</value>
+	<comment>caption for message box</comment>
+  </data>
+  <data name="ksUnknown" xml:space="preserve">
+	<value>Unknown</value>
+  </data>
+  <data name="ksUseDefaultAnalysis" xml:space="preserve">
+	<value>Use default analysis</value>
+  </data>
+  <data name="ksWarning" xml:space="preserve">
+	<value>Warning</value>
+  </data>
+  <data name="ksWord" xml:space="preserve">
+	<value>Word</value>
+  </data>
+  <data name="ksWordCat" xml:space="preserve">
+	<value>Word Cat.</value>
+	<comment>short for Word Category</comment>
+  </data>
+  <data name="ksWordGloss" xml:space="preserve">
+	<value>Word Gloss</value>
+  </data>
+  <data name="ksXMLParsingProblem4" xml:space="preserve">
+	<value>XML parsing problem (phase 4): {0}</value>
+  </data>
+  <data name="ksBaseline" xml:space="preserve">
+	<value>Baseline</value>
+  </data>
+  <data name="ksLexEntry" xml:space="preserve">
+	<value>Lex. Entry</value>
+  </data>
+  <data name="ksLexGloss" xml:space="preserve">
+	<value>Lex. Gloss</value>
+  </data>
+  <data name="ksSpecifyConcordanceCriteria" xml:space="preserve">
+	<value>Specify Concordance Criteria</value>
+  </data>
+  <data name="ksConcordance" xml:space="preserve">
+	<value>concordance</value>
+  </data>
+  <data name="ksTexts" xml:space="preserve">
+	<value>texts</value>
+  </data>
+  <data name="ksMatchStringTooLong" xml:space="preserve">
+	<value>The match string is too long, and has been trimmed to the first 1000 characters.</value>
+  </data>
+  <data name="ksBaselineAbbr" xml:space="preserve">
+	<value>base</value>
+  </data>
+  <data name="ksShowingOnlyTheFirstXXXMatches" xml:space="preserve">
+	<value>Showing only the first {0} matches, found in the first {1} of {2} paragraphs.</value>
+  </data>
+  <data name="ksNotice" xml:space="preserve">
+	<value>Notice</value>
+  </data>
+  <data name="DeletedObjectDetected" xml:space="preserve">
+	<value>Deleted object detected</value>
+  </data>
+  <data name="SelectedObjectHasBeenDeleted" xml:space="preserve">
+	<value>The selected object has been deleted (possibly by another user on a networked computer). Refreshing.</value>
+  </data>
+  <data name="ksTurningOffFilter" xml:space="preserve">
+	<value>The filter is being turned off so that you can see the new text.</value>
+  </data>
+  <data name="ksBaseLineNotEditable" xml:space="preserve">
+	<value>This tab shows the contents of the current text (editable only in the Texts Edit tool).</value>
+  </data>
+  <data name="ksToSpecifyAConcordance_" xml:space="preserve">
+	<value>To specify a Concordance, select a line in which to search and enter the text to search for.</value>
+  </data>
+  <data name="ksBackToConcordedItem" xml:space="preserve">
+	<value>Back to concorded item...</value>
+  </data>
+  <data name="ksConcordedOn0" xml:space="preserve">
+	<value>Concorded on {0}</value>
+  </data>
+  <data name="ksSpecifyConcordanceCriteria_" xml:space="preserve">
+	<value>Specify concordance criteria...</value>
+  </data>
+  <data name="ksCannotCreateNewEntry" xml:space="preserve">
+	<value>Cannot create new entry</value>
+  </data>
+  <data name="ksCannotAddAllomorph" xml:space="preserve">
+	<value>Cannot add allomorph</value>
+  </data>
+  <data name="ksDeleteFreeTrans" xml:space="preserve">
+	<value>Delete Free Translation</value>
+  </data>
+  <data name="ksDeleteLitTrans" xml:space="preserve">
+	<value>Delete Literal Translation</value>
+  </data>
+  <data name="ksDeleteNote" xml:space="preserve">
+	<value>Delete Note</value>
+  </data>
+  <data name="ksLexWordGloss" xml:space="preserve">
+	<value>Lex./Word Gloss</value>
+	<comment>this label is used when in "Add Word to Lexicon" mode</comment>
+  </data>
+  <data name="ksLexWordCat" xml:space="preserve">
+	<value>Lex./Word Cat.</value>
+  </data>
+  <data name="ksNamelessText" xml:space="preserve">
+	<value>(Nameless text)</value>
+	<comment>Default text name when exporting a text that has no name</comment>
+  </data>
+  <data name="ksExportInterlinearizedTexts" xml:space="preserve">
+	<value>Export interlinearized texts</value>
+  </data>
+  <data name="ksSelectSectionsExported" xml:space="preserve">
+	<value>Select the texts to be exported into a single document.</value>
+  </data>
+  <data name="ksSectionHeading" xml:space="preserve">
+	<value>{0} (Heading)</value>
+  </data>
+  <data name="ksEmptyFreeTransPrompt" xml:space="preserve">
+	<value>Press Enter to copy in Word Glosses, or start typing.</value>
+	<comment>Prompt displayed in empty free translations.</comment>
+  </data>
+  <data name="ksRedoAddTextTag" xml:space="preserve">
+	<value>Redo add Text Tag</value>
+  </data>
+  <data name="ksUndoAddTextTag" xml:space="preserve">
+	<value>Undo add Text Tag</value>
+  </data>
+  <data name="ksCannotAddVariant" xml:space="preserve">
+	<value>Cannot add Variant</value>
+  </data>
+  <data name="ksVariantOf_" xml:space="preserve">
+	<value>Variant of...</value>
+  </data>
+  <data name="ksInterlinImportErrorPhase1" xml:space="preserve">
+	<value>Interlinear XML parsing problem (phase 1): {0}.</value>
+  </data>
+  <data name="ksInterlinImportErrorPhase2" xml:space="preserve">
+	<value>Problem finishing interlinear import (phase 2): {0}.</value>
+  </data>
+  <data name="ksInterlinImportPhase1of2" xml:space="preserve">
+	<value>Phase 1 of 2: Loading interlinear XML data into FieldWorks</value>
+  </data>
+  <data name="ksInterlinImportPhase2of2" xml:space="preserve">
+	<value>Phase 2 of 2: Finishing importing interlinear texts.</value>
+  </data>
+  <data name="ksRedoDeleteTextTag" xml:space="preserve">
+	<value>Redo remove Text Tag</value>
+  </data>
+  <data name="ksUndoDeleteTextTag" xml:space="preserve">
+	<value>Undo remove Text Tag</value>
+  </data>
+  <data name="ksEndTagSymbol" xml:space="preserve">
+	<value>]</value>
+  </data>
+  <data name="ksStartTagSymbol" xml:space="preserve">
+	<value>[</value>
+  </data>
+  <data name="ksImportFailed" xml:space="preserve">
+	<value>Import Failed</value>
+	<comment>caption to go with ksInterlinImportFailed</comment>
+  </data>
+  <data name="ksInterlinImportFailed" xml:space="preserve">
+	<value>Interlinear Import failed. Are you sure you are importing a file in FieldWorks interlinear format? Word and Open Office docs cannot yet be imported. The following messages from the import process may be helpful:</value>
+  </data>
+  <data name="ksCannotLaunchX" xml:space="preserve">
+	<value>Sorry, could not launch {0}.</value>
+	<comment>Interlinear Import instructions link</comment>
+  </data>
+  <data name="ksError" xml:space="preserve">
+	<value>Error</value>
+  </data>
+  <data name="ksUndoAddAllomorph" xml:space="preserve">
+	<value>Undo add allomorph</value>
+  </data>
+  <data name="ksRedoAddAllomorph" xml:space="preserve">
+	<value>Redo add allomorph</value>
+  </data>
+  <data name="ksCannotDeleteScripture" xml:space="preserve">
+	<value>In this tool, we do not allow deleting parts of Scripture sections. Please use Translation Editor to edit Scripture.</value>
+  </data>
+  <data name="ksTransformProblem3A" xml:space="preserve">
+	<value>Transformation problem (phase 3A): {0}</value>
+  </data>
+  <data name="ksTransformProblem3B" xml:space="preserve">
+	<value>Transformation problem (phase 3B): {0}</value>
+  </data>
+  <data name="ksCannotDeleteWordform" xml:space="preserve">
+	<value>This wordform cannot be deleted.</value>
+  </data>
+  <data name="ksRedoSetTransFromWordGlosses" xml:space="preserve">
+	<value>Redo insert Translation</value>
+	<comment>(from concatenating word glosses)</comment>
+  </data>
+  <data name="ksUndoSetTransFromWordGlosses" xml:space="preserve">
+	<value>Undo insert Translation</value>
+	<comment>(from concatenating word glosses)</comment>
+  </data>
+  <data name="ksUndoAddAllomorphToSimilarEntry" xml:space="preserve">
+	<value>undo add allomorph to similar entry</value>
+  </data>
+  <data name="ksRedoAddAllomorphToSimilarEntry" xml:space="preserve">
+	<value>redo add allomorph to similar entry</value>
+  </data>
+  <data name="ksRedoGuessWordBreaks" xml:space="preserve">
+	<value>Redo Guess Word Breaks</value>
+  </data>
+  <data name="ksUndoGuessWordBreaks" xml:space="preserve">
+	<value>Undo Guess Word Breaks</value>
+  </data>
+  <data name="ksUndoAddSense" xml:space="preserve">
+	<value>Undo Add Sense</value>
+  </data>
+  <data name="ksRedoAddSense" xml:space="preserve">
+	<value>Redo Add Sense</value>
+  </data>
+  <data name="ksInvalidInterlinearFiles" xml:space="preserve">
+	<value>Some of the selected file(s) ({0}) may not be valid SFM files. Are you sure that you want to use them?</value>
+  </data>
+  <data name="ksPossibleInvalidFile" xml:space="preserve">
+	<value>Possible Invalid File</value>
+  </data>
+  <data name="ksRedoInsertInvisibleSpace" xml:space="preserve">
+	<value>Redo Insert Invisible Space</value>
+  </data>
+  <data name="ksSelectInterlinFile" xml:space="preserve">
+	<value>Select the SFM file to import</value>
+  </data>
+  <data name="ksUndoInsertInvisibleSpace" xml:space="preserve">
+	<value>Undo Insert Invisible Space</value>
+  </data>
+  <data name="ksInvalidFileAreYouSure" xml:space="preserve">
+	<value>The selected file ({0}) may not be valid. Are you sure that you want to use it?</value>
+  </data>
+  <data name="ksSelectMapFile" xml:space="preserve">
+	<value>Select the mapping file to import</value>
+  </data>
+  <data name="ksAskSaveSettings" xml:space="preserve">
+	<value>Do you want to save your settings for future imports?</value>
+  </data>
+  <data name="ksErrorAcessingEncodingConverters" xml:space="preserve">
+	<value>Error Acessing Encoding Converters</value>
+  </data>
+  <data name="ksErrorReadingSettings" xml:space="preserve">
+	<value>Could not load your settings from {0}. The system reported that {1}.</value>
+  </data>
+  <data name="ksErrorWritingSettings" xml:space="preserve">
+	<value>Could not save your settings to {0}. The system reported that {1}.</value>
+  </data>
+  <data name="ksFldBaseline" xml:space="preserve">
+	<value>Baseline</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldComment" xml:space="preserve">
+	<value>Comment (of text)</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldFreeTranslation" xml:space="preserve">
+	<value>Free Translation</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldId" xml:space="preserve">
+	<value>New Text</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldIgnored" xml:space="preserve">
+	<value>Don't Import</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldLiteralTranslation" xml:space="preserve">
+	<value>Literal Translation</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldNote" xml:space="preserve">
+	<value>Note</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldParagraphBreak" xml:space="preserve">
+	<value>Paragraph Break</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldReference" xml:space="preserve">
+	<value>Reference</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldSource" xml:space="preserve">
+	<value>Source (of text)</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksFldTitle" xml:space="preserve">
+	<value>Title (of text)</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksSaveSettingsCaption" xml:space="preserve">
+	<value>Save Settings?</value>
+  </data>
+  <data name="ksFldAbbreviation" xml:space="preserve">
+	<value>Abbreviation (of text)</value>
+	<comment>name for SFM import field; name matches enumeration member name</comment>
+  </data>
+  <data name="ksMustHaveBaseline" xml:space="preserve">
+	<value>At least one field must be specified as containing Baseline text</value>
+  </data>
+  <data name="ksSfmImportProblem" xml:space="preserve">
+	<value>There was a problem with the import. The system reported {0}.</value>
+  </data>
+  <data name="ksTextAreaStatisticsViewName" xml:space="preserve">
+	<value>Statistics</value>
+  </data>
+  <data name="ksStatisticsView_HeaderText" xml:space="preserve">
+	<value>Texts &amp; Words Statistics (using chosen texts)</value>
+  </data>
+  <data name="ksStatisticsViewTotalSentencesText" xml:space="preserve">
+	<value>Total number of sentences (segments):</value>
+  </data>
+  <data name="ksStatisticsViewTotalWordTokensText" xml:space="preserve">
+	<value>Total word count (tokens):</value>
+  </data>
+	<data name="ksStatisticsViewTotalWordTypesText">
+		<value xml:space="preserve">Total number of unique words (types):</value>
+	</data>
+</root>

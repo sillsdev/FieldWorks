@@ -1,0 +1,1028 @@
+#line 1 "C:\\fw\\Src\\DbAccess\\DbAccessPs.idl"
+
+
+
+
+
+
+
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+#line 1 "C:\\fw\\Src\\Generic\\Common.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+
+
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+
+
+#line 14 "C:\\fw\\Src\\DbAccess\\DbAccessPs.idl"
+
+
+
+#line 1 "c:\\fw\\src\\dbaccess\\DbAccess.idh"
+
+
+
+
+
+
+
+
+import "unknwn.idl";
+
+typedef [v1_enum] enum SqlStmtType
+{
+	knSqlStmtNoResults = 0,
+	knSqlStmtSelectWithOneRowset = 1,
+	knSqlStmtStoredProcedure = 2,
+} SqlStmtType;
+
+typedef [v1_enum] enum OdeLockTimeoutMode
+{
+	koltNone,
+	koltMsgBox,
+	koltReturnError
+} OdeLockTimeoutMode;
+
+typedef [v1_enum] enum OdeLockTimeoutValue
+{
+	koltvForever = -1,
+	koltvNoWait = 0,
+	koltvFwDefault = 1000
+} OdeLockTimeoutValue;
+
+
+interface IOleDbCommand;
+interface IOleDbEncap;
+interface IFwMetaDataCache;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOleDbCommand") cpp_quote(",") cpp_quote("21993161-3E24-11d4-A1BD-00C04F0C9593") cpp_quote(");") [ uuid("21993161-3E24-11d4-A1BD-00C04F0C9593"), object, pointer_default(unique) ] interface IOleDbCommand : IUnknown
+{
+
+
+
+	HRESULT ColValWasNull(
+		[out] int * pfIsNull);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT ExecCommand(
+		[in] BSTR bstrSqlStatement,
+		[in] int nStatementType);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetColValue(
+		[in] ULONG iluColIndex,
+		[out, size_is(cbBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cbBufferLength,
+		[out] ULONG * pcbAmtBuffUsed,
+		[out] ComBool * pfIsNull,
+		[in] int cbPad);
+
+
+
+
+
+
+
+
+
+	HRESULT GetInt(
+		[in] int iColIndex,
+		[out] int * pnValue);
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetParameter(
+		[in] ULONG iluColIndex,
+		[out, size_is(cluBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cluBufferLength,
+		[out] ComBool * pfIsNull);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT GetRowset(
+		[in] int nRowsBuffered);
+
+
+
+
+
+
+
+	HRESULT Init(
+		[in] IUnknown * punkSession,
+		[in] IStream * pfistLog);
+
+
+
+	HRESULT NextRow(
+		[out] ComBool * pfMoreRows);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT SetParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in] WORD nDataType,
+		[in, size_is(cluBufferLength)] ULONG * prgluDataBuffer,
+		[in] ULONG cluBufferLength);
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT SetByteBuffParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in, size_is(cluBufferLength)] BYTE * prgbDataBuffer,
+		[in] ULONG cluBufferLength);
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT SetStringParameter(
+		[in] ULONG iluParamIndex,
+		[in] DWORD dwFlags,
+		[in] BSTR bstrParamName,
+		[in, size_is(cluBufferLength)] OLECHAR * prgchDataBuffer,
+		[in] ULONG cluBufferLength);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOleDbEncap") cpp_quote(",") cpp_quote("CB7BEA0F-960A-4b23-80D3-DE06C0530E04") cpp_quote(");") [ uuid("CB7BEA0F-960A-4b23-80D3-DE06C0530E04"), object, pointer_default(unique) ] interface IOleDbEncap : IUnknown
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT BeginTrans();
+
+
+
+
+
+
+
+	HRESULT CommitTrans();
+
+
+
+
+
+	HRESULT CreateCommand(
+		[out] IOleDbCommand ** ppodc);
+
+
+
+
+
+
+
+
+
+	HRESULT Init(
+		[in] BSTR bstrServer,
+		[in] BSTR bstrDatabase,
+		[in] IStream * pfistLog,
+		[in] OdeLockTimeoutMode olt,
+		[in] int nmsTimeout);
+
+
+
+	HRESULT IsTransactionOpen(
+		[out,retval] ComBool * pfTransactionOpen);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT RollbackTrans();
+
+
+
+
+
+
+
+	HRESULT RollbackSavePoint(
+		[in] BSTR bstrSavePoint);
+
+
+
+
+
+
+
+
+	HRESULT SetSavePoint(
+		[out] BSTR * pbstr);
+
+
+
+
+
+	HRESULT SetSavePointOrBeginTrans(
+		[out] BSTR * pbstr);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT InitMSDE(
+		[in] IStream * pfistLog,
+		[in] ComBool fForce);
+
+
+
+	[propget] HRESULT Server(
+		[out, retval] BSTR * pbstrSvr);
+
+
+
+	[propget] HRESULT Database(
+		[out, retval] BSTR * pbstrDb);
+
+
+
+	HRESULT GetFreeLogKb(
+		[in] int nReservespace,
+		[out] int * pnKbFree);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwMetaDataCache") cpp_quote(",") cpp_quote("6AA9042E-0A4D-4f33-881B-3FBE48861D14") cpp_quote(");") [ uuid("6AA9042E-0A4D-4f33-881B-3FBE48861D14"), object, pointer_default(unique) ] interface IFwMetaDataCache : IUnknown
+{
+
+
+
+
+
+
+	HRESULT Init(
+		[in] IOleDbEncap * pode);
+
+
+
+
+	HRESULT Reload(
+		[in] IOleDbEncap * pode,
+		[in] ComBool fKeepVirtuals);
+
+
+
+
+
+
+
+
+
+	HRESULT InitXml(
+		[in] BSTR bstrPathname,
+		[in] ComBool fClearPrevCache);
+
+
+
+
+
+
+
+	[propget] HRESULT FieldCount(
+		[out, retval] int * pcflid);
+
+
+
+
+
+
+	HRESULT GetFieldIds(
+		[in] int cflid,
+		[out, size_is(cflid)] ULONG * rgflid);
+
+
+
+
+
+
+
+	HRESULT GetOwnClsName(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrOwnClsName);
+
+
+
+
+
+
+
+
+	HRESULT GetDstClsName(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrDstClsName);
+
+
+
+
+
+
+	HRESULT GetOwnClsId(
+		[in] ULONG luFlid,
+		[out] ULONG * pluOwnClsid);
+
+
+
+
+
+
+
+
+
+	HRESULT GetDstClsId(
+		[in] ULONG luFlid,
+		[out] ULONG * pluDstClsid);
+
+
+
+
+
+
+	HRESULT GetFieldName(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrFieldName);
+
+
+
+
+
+
+	HRESULT GetFieldLabel(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrFieldLabel);
+
+
+
+
+
+
+	HRESULT GetFieldHelp(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrFieldHelp);
+
+
+
+
+
+
+	HRESULT GetFieldXml(
+		[in] ULONG luFlid,
+		[out] BSTR * pbstrFieldXml);
+
+
+
+
+
+
+	HRESULT GetFieldListRoot(
+		[in] ULONG luFlid,
+		[out] int * piListRoot);
+
+
+
+
+
+
+	HRESULT GetFieldWs(
+		[in] ULONG luFlid,
+		[out] int * piWs);
+
+
+
+
+
+
+
+
+	HRESULT GetFieldType(
+		[in] ULONG luFlid,
+		[out] int * piType);
+
+
+
+
+
+
+
+	[propget] HRESULT IsValidClass(
+		[in] ULONG luFlid,
+		[in] ULONG luClid,
+		[out, retval] ComBool * pfValid);
+
+
+
+
+
+
+
+	[propget] HRESULT ClassCount(
+		[out, retval] int * pcclid);
+
+
+
+
+
+
+	HRESULT GetClassIds(
+		[in] int cclid,
+		[out, size_is(cclid)] ULONG * rgclid);
+
+
+
+
+
+
+	HRESULT GetClassName(
+		[in] ULONG luClid,
+		[out] BSTR * pbstrClassName);
+
+
+
+
+
+
+	HRESULT GetAbstract(
+		[in] ULONG luClid,
+		[out] ComBool * pfAbstract);
+
+
+
+
+
+
+	HRESULT GetBaseClsId(
+		[in] ULONG luClid,
+		[out] ULONG * pluClid);
+
+
+
+
+
+
+
+	HRESULT GetBaseClsName(
+		[in] ULONG luClid,
+		[out] BSTR * pbstrBaseClsName);
+
+
+
+
+
+
+
+
+	HRESULT GetFields(
+		[in] ULONG luClid,
+		[in] ComBool fIncludeSuperclasses,
+		[in] int grfcpt,
+		[in] int cflidMax,
+		[out, size_is(cflidMax)] ULONG * prgflid,
+		[out] int * pcflid);
+
+
+
+
+
+
+	HRESULT GetClassId(
+		[in] BSTR bstrClassName,
+		[out, retval] ULONG * pluClid);
+
+
+
+	HRESULT GetFieldId(
+		[in] BSTR bstrClassName,
+		[in] BSTR bstrFieldName,
+		[in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+		[out, retval] ULONG * pluFlid);
+
+
+
+
+	HRESULT GetFieldId2(
+		[in] ULONG luClid,
+		[in] BSTR bstrFieldName,
+		[in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+		[out, retval] ULONG * pluFlid);
+
+	HRESULT GetDirectSubclasses(
+		[in] ULONG luClid,
+		[in] int cluMax,
+		[out] int * pcluOut,
+		[out, size_is(cluMax), length_is(*pcluOut)] ULONG * prgluSubclasses);
+
+
+
+
+	HRESULT GetAllSubclasses(
+		[in] ULONG luClid,
+		[in] int cluMax,
+		[out] int * pcluOut,
+		[out, size_is(cluMax), length_is(*pcluOut)] ULONG * prgluSubclasses);
+
+
+
+	HRESULT AddVirtualProp(
+		[in] BSTR bstrClass,
+		[in] BSTR bstrField,
+		[in] ULONG luFlid,
+		[in] int type);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDbAdmin") cpp_quote(",") cpp_quote("2A861F95-63D0-480d-B5AF-4FAF0D22125D") cpp_quote(");") [ uuid("2A861F95-63D0-480d-B5AF-4FAF0D22125D"), object, pointer_default(unique) ] interface IDbAdmin : IUnknown
+{
+
+
+
+
+	HRESULT CopyDatabase(
+		[in] BSTR bstrSrcPathName,
+		[in] BSTR bstrDstPathName);
+
+
+
+
+	HRESULT AttachDatabase(
+		[in] BSTR bstrDatabaseName,
+		[in] BSTR bstrPathName);
+
+
+	HRESULT DetachDatabase(
+		[in] BSTR bstrDatabaseName);
+
+
+
+
+
+
+
+
+	HRESULT RenameDatabase(
+		[in] BSTR bstrDirName,
+		[in] BSTR bstrOldName,
+		[in] BSTR bstrNewName,
+		[in] ComBool fDetachBefore,
+		[in] ComBool fAttachAfter);
+
+
+	[propputref] HRESULT LogStream(
+		[in] IStream * pstrm);
+
+
+	[propget] HRESULT FwRootDir(
+		[out, retval] BSTR * pbstr);
+
+	[propget] HRESULT FwMigrationScriptDir(
+		[out, retval] BSTR * pbstr);
+
+	[propget] HRESULT FwDatabaseDir(
+		[out, retval] BSTR * pbstr);
+
+	[propget] HRESULT FwTemplateDir(
+		[out, retval] BSTR * pbstr);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 18 "C:\\fw\\Src\\DbAccess\\DbAccessPs.idl"

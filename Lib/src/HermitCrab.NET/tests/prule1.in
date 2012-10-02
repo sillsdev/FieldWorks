@@ -1,0 +1,47 @@
+;A file of simple prules
+;First load the nat classes (msg 6541):
+(load_nat_class message <nat_class name asp      features (asp +)>)
+(load_nat_class message <nat_class name non_cons features (cons -)>)
+(morpher_set message (*quit_on_error* false))
+;Load two prules (msg 6505, twice):
+; t -> th / V_
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (allophonic)
+		  in_pseq (<seg rep t ctable table1>)
+		  subrules (<psub out_pseq (<simp_cntxt class asp>)
+						  left_environ <ptemp pseq (<simp_cntxt class non_cons>)>
+					>
+				   )
+  >
+)
+; p -> ph / _V
+(load_morpher_rule message
+  <prule  nm rule2
+		  str (morphophonemic allophonic)
+		  in_pseq (<seg rep p ctable table3>)
+		  subrules (<psub out_pseq (<simp_cntxt class asp>)
+						  right_environ <ptemp pseq (<simp_cntxt class non_cons>)>
+					>
+				   )
+  >
+)
+;Now we morph a few words
+;First one should be 2x ambiguous:
+(morph_and_lookup_word pretty_print pHitH)
+;Next one should be 2x ambiguous:
+(morph_and_lookup_word pretty_print datH)
+;Third one should be 2x ambiguous:
+(morph_and_lookup_word pretty_print gab)
+;Now we'll trace the rules, to watch their application (msg 6535, 2x):
+(trace_morpher_rule message (true true rule1))
+(trace_morpher_rule message (true true rule2))
+(morph_and_lookup_word pretty_print pHitH)
+(morpher_set message (*quit_on_error* true))
+
+;Now we'll remove those rules (msg 6506):
+(remove_morpher_rule message rule1)
+(remove_morpher_rule message rule2)
+;...and the natural classes:
+(remove_nat_class message asp)
+(remove_nat_class message non_cons)

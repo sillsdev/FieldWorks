@@ -1,0 +1,367 @@
+EncodingName			"SIL-IPA93-2001"
+DescriptiveName			"SIL IPA93 Font encoding"
+Version					"14"
+Contact					"mailto:jonathan_kew@sil.org"
+RegistrationAuthority	"SIL International"
+RegistrationName		"IPA93"
+
+RHSFlags				(ExpectsNFD)
+
+; 2004-07-20	JK	updated mappings for 0xC9, 0xD4 to use Unicode 4.0 assignments
+; 2002-10-21	JK	use Define feature for contexts needed in multiple rules
+;					left version field unchanged because mapping is unchanged
+; 2002-10-07	JK	converted to TECkit .map format from MH's xml
+;					fixed 0x43 to use NFD representation
+;
+; Outstanding issues:
+;	check discrepancy in handling of dotless variants (i, j, barred-i)
+;
+; Revision history from the xml version:
+;    <modified version="14" date="2008-02-12">
+;        changed 0x8B and 0x9B to IPA-sanctioned new Unicode 5.1 values (A71B, A71C),
+;        created reverse conversion to old codepoints (2191, 2193)
+;    </modified>
+;    <modified version="13" date="2006-12-06">
+;        changed 0xCB to new Unicode 5.0 value (1DAE), kept reverse conversion to PUA rule (F181)
+;        8E, 92, 9x, and 84 are all correct and checked against IPA
+;        added "with_middle_tilde" characters (U+1D6C..U+1D76)
+;    </modified>
+;    <modified version="12" date="2005-01-24">
+;        substitute 02BE with 026E (typo) in tall class
+;    </modified>
+;    <modified version="11" date="2004-09-9">
+;        Change PUA to Unicode 4.0 but still support back mapping from PUA.
+;        These PUA values are deprecated and will disappear once no more reference to the PUA
+;        is needed (cf F181)
+;    </modified>
+;    <modified version="10" date="2002-10-7">
+;        0X43 maps to decomposed sequence rather than composed form
+;        version number corrected
+;    </modified>
+;    <modified version="9" date="2002-09-18">
+;        Add explicit mappings for U+0334 precomposed characters.
+;        Correct 0xCF from being U+029A.
+;        g maps to U+0261 by default (significant shape change).
+;        Add U+0320, U+032C to ldia, remove U+0331.
+;        Remove 0xF2 mapping to indicate how naughty it is to use U+0334 nowadays.
+;    </modified>
+;    <modified version="8" date="2002-09-17">
+;        Add itall and tall classes, change regexps accordingly. Changed 0xAD to U+0320 from U+0331
+;    </modified>
+;    <modified version="7" date="2001-08-23">
+;        Finalise PUA codes to SIL corporate standard
+;    </modified>
+;    <modified version="6" date="2001-07-17">
+;        Tidy up and conform to DTD
+;    </modified>
+;    <modified version="5" date="2001-07-07">
+;        Fixed dotless reverse mapping
+;    </modified>
+;    <modified version="4" date="2001-06-29">
+;        Changed context names: iwidth -> i-udia, i-ldia -> iwidth. Added more than
+;        one optional ldia to i-udia and iwidth.
+;    </modified>
+;    <modified version="3" date="2001-05-10">
+;        Changed 0x3D to U+0320 from U+0331
+;    </modified>
+;    <modified version="2" date="2001-05-10">
+;        Still need to deal with ordering issues for over-arch and rhotic hook
+;    </modified>
+;    <modified version="1" date="2000-11-08">
+;        Original. Trying new language extensions
+;    </modified>
+
+pass(Byte_Unicode)
+
+ByteClass[ctl] = (0x00   .. 0x1F  )
+UniClass [ctl] = (U+0000 .. U+001F)
+
+[ctl]	<>	[ctl]
+
+UniClass[ilow] = (	latin_small_letter_i latin_small_letter_j latin_small_letter_r latin_small_letter_dotless_i \
+					latin_small_letter_i_with_stroke latin_letter_small_capital_i latin_small_letter_turned_r \
+					latin_small_letter_turned_r_with_hook latin_small_letter_r_with_tail latin_small_letter_r_with_fishhook \
+					latin_small_letter_j_with_crossed_tail latin_small_letter_r_with_middle_tilde  latin_small_letter_r_with_fishhook_and_middle_tilde)
+UniClass[itall] = (	latin_small_letter_f latin_small_letter_l latin_small_letter_t latin_small_letter_l_with_retroflex_hook \
+					latin_small_letter_turned_r_with_long_leg latin_small_letter_esh \
+					latin_small_letter_dotless_j_with_stroke_and_hook latin_small_letter_t_with_retroflex_hook  latin_small_letter_f_with_middle_tilde \
+					 latin_small_letter_t_with_middle_tilde)
+UniClass[tall] = (	latin_small_letter_b latin_small_letter_d latin_small_letter_h latin_small_letter_k latin_small_letter_eth \
+					latin_small_letter_h_with_stroke latin_letter_retroflex_click latin_small_letter_b_with_hook \
+					latin_small_letter_d_with_tail latin_small_letter_d_with_hook latin_small_letter_g_with_hook \
+					latin_small_letter_h_with_hook latin_small_letter_heng_with_hook latin_small_letter_l_with_belt \
+					latin_small_letter_lezh latin_small_letter_phi latin_small_letter_turned_y latin_letter_glottal_stop \
+					latin_letter_pharyngeal_voiced_fricative latin_letter_glottal_stop_with_stroke \
+					latin_letter_reversed_glottal_stop_with_stroke greek_small_letter_beta \
+					greek_small_letter_theta  latin_small_letter_b_with_middle_tilde  latin_small_letter_d_with_middle_tilde)
+
+ByteClass[ldiab] = (0x2B 0x2D 0x30 0x31 0x32 0x33 0x34 0x35 0x36 0x37 0x38 0x39 0x3D 0x60 0xB1 0xA2 0xA3 \
+					0xA4 0xA5 0xA6 0xAA 0xB0 0xBB 0xBC 0xC1 0xD0 0xD1)
+UniClass[ldia] = (	combining_left_tack_below combining_right_tack_below combining_left_half_ring_below combining_up_tack_below \
+					combining_down_tack_below combining_plus_sign_below combining_minus_sign_below combining_diaeresis_below \
+					combining_ring_below combining_vertical_line_below combining_bridge_below combining_caron_below \
+					combining_inverted_breve_below combining_tilde_below combining_right_half_ring_below \
+					combining_inverted_bridge_below combining_square_below combining_seagull_below)
+
+ByteClass[udiab] = (0x28 0x29 0x2A 0x5F 0x7E 0xA1 0xE1 0xE2 0x21 0x23 0x24 0x25 0x26 0x40 0x5E 0x88 0x89 0x8F \
+					0x90 0x93 0x94 0x98 0x99 0x9D 0x9E 0xDA 0xDB 0xDC 0xDD 0xDE 0xDF 0xE0 0xE6 0xE9 0xF3 0xF4)
+UniClass[udia] = (	combining_tilde combining_breve combining_diaeresis combining_ring_above combining_x_above)
+UniClass[udia_all] = ([udia] combining_grave_accent combining_acute_accent combining_circumflex_accent combining_macron \
+					combining_double_acute_accent combining_caron combining_double_grave_accent)
+
+Define	PRE_CTX_UDIA			([udia] | [tall] [ldia]{0,3}) _
+Define	PRE_CTX_I_UDIA			([ilow] [ldia]{0,3} [udia] | [itall] [ldia]{0,3}) _
+Define	PRE_CTX_IWIDTH			 [ilow] [ldia]{0,3} _
+Define	POST_CTX_DIA_ABOVE		_ [ldia]{0,3} [udia_all]
+
+0x20	<>	space
+0x21	<>	combining_double_acute_accent
+0x22 / _ [ldiab]{0,3} [udiab]	<>	latin_small_letter_i / POST_CTX_DIA_ABOVE
+0x22	<>	latin_small_letter_dotless_i
+0x23	<>	combining_macron
+0x24	<>	combining_grave_accent
+0x25	<>	combining_double_grave_accent
+0x26	<>	combining_caron
+0x27	<>	modifier_letter_apostrophe
+0x28	<>	combining_breve
+0x29	<>	combining_tilde
+0x2A	<>	combining_ring_above
+0x2B	<>	combining_plus_sign_below
+0x2C	<>	comma
+0x2D	<>	combining_diaeresis_below
+0x2E	<>	full_stop
+0x2F	<>	solidus
+
+0x30	<>	combining_tilde_below
+0x31	<>	combining_left_tack_below
+0x32	<>	combining_right_tack_below
+0x33	<>	combining_up_tack_below
+0x34	<>	combining_down_tack_below
+0x35	<>	combining_bridge_below
+0x36	<>	combining_square_below
+0x37	<>	combining_left_half_ring_below
+0x38	<>	combining_ring_below
+0x39	<>	combining_inverted_breve_below
+0x3A	<>	modifier_letter_small_l
+0x3B	<>	latin_letter_small_capital_l
+0x3C	<>	superscript_latin_small_letter_n
+0x3D	<>	combining_minus_sign_below
+0x3E	<>	modifier_letter_half_triangular_colon
+0x3F	<>	latin_letter_glottal_stop
+
+0x40	<>	combining_acute_accent
+0x41	<>	latin_small_letter_alpha
+0x42	<>	greek_small_letter_beta
+0x43	<>	latin_small_letter_c combining_cedilla	; JK 2002-10-07 -- use decomposed representation
+0x44	<>	latin_small_letter_eth
+0x45	<>	latin_small_letter_open_e
+0x46	<>	latin_small_letter_rams_horn
+0x47	<>	latin_letter_small_capital_g
+0x48	<>	modifier_letter_small_h
+0x49	<>	latin_letter_small_capital_i
+0x4A	<>	modifier_letter_small_j
+0x4B	<>	latin_letter_small_capital_h
+0x4C	<>	latin_small_letter_lezh
+0x4D	<>	latin_small_letter_m_with_hook
+0x4E	<>	latin_small_letter_eng
+0x4F	<>	latin_small_letter_o_with_stroke
+
+0x50	<>	latin_small_letter_barred_o
+0x51	<>	latin_small_letter_ae
+0x52	<>	latin_small_letter_r_with_fishhook
+0x53	<>	latin_small_letter_esh
+0x54	<>	greek_small_letter_theta
+0x55	<>	latin_small_letter_upsilon
+0x56	<>	latin_small_letter_v_with_hook
+0x57	<>	modifier_letter_small_w
+0x58	<>	greek_small_letter_chi
+0x59	<>	latin_letter_small_capital_y
+0x5A	<>	latin_small_letter_ezh
+0x5B	<>	left_square_bracket
+0x5C	<>	reverse_solidus
+0x5D	<>	right_square_bracket
+0x5E	<>	combining_circumflex_accent
+0x5F	<>	combining_diaeresis
+
+0x60	<>	combining_vertical_line_below
+0x61	<>	latin_small_letter_a
+0x62	<>	latin_small_letter_b
+0x63	<>	latin_small_letter_c
+0x64	<>	latin_small_letter_d
+0x65	<>	latin_small_letter_e
+0x66	<>	latin_small_letter_f
+0x67	<>	latin_small_letter_script_g
+0x68	<>	latin_small_letter_h
+0x69	<>	latin_small_letter_i
+0x6A	<>	latin_small_letter_j
+0x6B	<>	latin_small_letter_k
+0x6C	<>	latin_small_letter_l
+0x6D	<>	latin_small_letter_m
+0x6E	<>	latin_small_letter_n
+0x6F	<>	latin_small_letter_o
+
+0x70	<>	latin_small_letter_p
+0x71	<>	latin_small_letter_q
+0x72	<>	latin_small_letter_r
+0x73	<>	latin_small_letter_s
+0x74	<>	latin_small_letter_t
+0x75	<>	latin_small_letter_u
+0x76	<>	latin_small_letter_v
+0x77	<>	latin_small_letter_w
+0x78	<>	latin_small_letter_x
+0x79	<>	latin_small_letter_y
+0x7A	<>	latin_small_letter_z
+0x7B	<>	latin_letter_small_capital_r
+0x7C	<>	combining_left_angle_above
+0x7D	<>	latin_small_letter_r_with_tail
+0x7E	<>	combining_x_above
+0x7F	<>	U+007F
+
+0x80	<>	modifier_letter_extra_low_tone_bar modifier_letter_mid_tone_bar
+0x81	<>	latin_small_letter_turned_alpha
+0x82	<>	latin_small_letter_reversed_e
+0x83	<>	combining_double_inverted_breve
+0x84	<>	double_vertical_line
+0x85	<>	modifier_letter_extra_high_tone_bar modifier_letter_mid_tone_bar
+0x86	<>	modifier_letter_extra_high_tone_bar modifier_letter_extra_low_tone_bar
+0x87	<>	latin_letter_bilabial_click
+0x88	<>	combining_double_acute_accent		/ PRE_CTX_UDIA
+0x89	<>	combining_double_acute_accent		/ PRE_CTX_I_UDIA
+0x8A	<>	modifier_letter_extra_high_tone_bar
+0x8B	<>	MODIFIER_LETTER_RAISED_UP_ARROW ; upwards_arrow
+0x8B	<	upwards_arrow
+0x8C	<>	latin_small_letter_turned_a
+0x8D	<>	latin_small_letter_open_o
+0x8E	<>	latin_letter_dental_click
+0x8F	<>	combining_acute_accent				/ PRE_CTX_UDIA
+
+0x90	<>	combining_acute_accent				/ PRE_CTX_I_UDIA
+0x91	<>	modifier_letter_high_tone_bar
+0x92	<>	latin_letter_lateral_click
+0x93	<>	combining_macron					/ PRE_CTX_UDIA
+0x94	<>	combining_macron					/ PRE_CTX_I_UDIA
+0x95	<>	modifier_letter_mid_tone_bar
+0x96	<>	vertical_line
+0x97	<>	latin_letter_retroflex_click
+0x98	<>	combining_grave_accent				/ PRE_CTX_UDIA
+0x99	<>	combining_grave_accent				/ PRE_CTX_I_UDIA
+0x9A	<>	modifier_letter_low_tone_bar
+0x9B	<>	MODIFIER_LETTER_RAISED_DOWN_ARROW
+0x9B	<	downwards_arrow
+0x9C	<>	latin_letter_alveolar_click
+0x9D	<>	combining_double_grave_accent		/ PRE_CTX_UDIA
+0x9E	<>	combining_double_grave_accent		/ PRE_CTX_I_UDIA
+0x9F	<>	modifier_letter_extra_low_tone_bar
+
+0xA1	<>	combining_ring_above				/ PRE_CTX_IWIDTH
+0xA2	<>	combining_down_tack_below			/ PRE_CTX_IWIDTH
+0xA3	<>	combining_up_tack_below				/ PRE_CTX_IWIDTH
+0xA4	<>	combining_caron_below
+0xA5	<>	combining_ring_below				/ PRE_CTX_IWIDTH
+0xA6	<>	combining_right_half_ring_below
+0xA7	<>	latin_small_letter_s_with_hook
+0xA8	<>	latin_small_letter_turned_r
+0xA9	<>	latin_small_letter_g_with_hook
+0xAA	<>	combining_right_tack_below			/ PRE_CTX_IWIDTH
+0xAB	<>	latin_small_letter_schwa
+0xAC	<>	latin_small_letter_u_bar
+0xAD	<>	combining_minus_sign_below			/ PRE_CTX_IWIDTH
+0xAE	<>	latin_small_letter_i_with_stroke	/ POST_CTX_DIA_ABOVE
+0xAF	<>	latin_letter_small_capital_oe
+
+0xB0	<>	combining_inverted_bridge_below
+0xB1	<>	combining_plus_sign_below			/ PRE_CTX_IWIDTH
+0xB2	<>	latin_letter_small_capital_n
+0xB3	<>	modifier_letter_small_reversed_glottal_stop
+0xB4	<>	latin_small_letter_turned_y
+0xB5	<>	latin_small_letter_turned_m
+0xB8	<>	latin_small_letter_phi
+0xB9	<>	latin_letter_reversed_glottal_stop_with_stroke
+0xBA	<>	latin_small_letter_b_with_hook
+0xBB	<>	combining_inverted_breve_below		/ PRE_CTX_IWIDTH
+0xBC	<>	combining_tilde_below				/ PRE_CTX_IWIDTH
+0xBD	<>	latin_small_letter_z_with_retroflex_hook
+0xBE	<>	latin_small_letter_j				/ POST_CTX_DIA_ABOVE
+0xBF	<>	latin_small_ligature_oe
+
+0xC0	<>	latin_letter_pharyngeal_voiced_fricative
+0xC1	<>	combining_left_tack_below			/ PRE_CTX_IWIDTH
+0xC2	<>	latin_small_letter_l_with_belt
+0xC3	<>	latin_small_letter_turned_v
+0xC4	<>	latin_small_letter_gamma
+0xC6	<>	latin_small_letter_j_with_crossed_tail
+0xC7	<>	modifier_letter_low_vertical_line
+0xC8	<>	modifier_letter_vertical_line
+0xC9	<>	modifier_letter_small_m
+0xC9	<	U+F180	; superscript m
+0xCA	<>	hair_space
+0xCB	<>	modifier_letter_small_n_with_left_hook ; U+1DAE
+0xCB	<	U+F181	; superscript nya
+0xCC	<>	north_east_arrow
+0xCD	<>	south_east_arrow
+0xCE	<>	latin_small_letter_reversed_open_e
+0xCF	<>	latin_small_letter_closed_reversed_open_e
+
+0xD0	<>	combining_diaeresis_below			/ PRE_CTX_IWIDTH
+0xD1	<>	combining_seagull_below
+0xD2	<>	latin_letter_small_capital_inverted_r
+0xD3	<>	latin_small_letter_turned_r_with_hook
+0xD4	<>	modifier_letter_small_eng
+0xD4	< 	U+F182	; superscript eng
+0xD5	<>	modifier_letter_rhotic_hook
+0xD6	<>	hyphen_minus
+0xD7	<>	latin_small_letter_dotless_j_with_stroke_and_hook
+0xD8	<>	modifier_letter_mid_tone_bar modifier_letter_extra_high_tone_bar
+0xD9	<>	modifier_letter_mid_tone_bar modifier_letter_extra_low_tone_bar
+0xDA	<>	combining_double_acute_accent		/ PRE_CTX_IWIDTH
+0xDB	<>	combining_acute_accent				/ PRE_CTX_IWIDTH
+0xDC	<>	combining_macron					/ PRE_CTX_IWIDTH
+0xDD	<>	combining_grave_accent				/ PRE_CTX_IWIDTH
+0xDE	<>	combining_double_grave_accent		/ PRE_CTX_IWIDTH
+0xDF	<>	combining_circumflex_accent			/ PRE_CTX_IWIDTH
+
+0xE0	<>	combining_caron						/ PRE_CTX_IWIDTH
+0xE1	<>	combining_breve						/ PRE_CTX_IWIDTH
+0xE2	<>	combining_tilde						/ PRE_CTX_IWIDTH
+0xE3	<>	latin_small_letter_turned_w
+0xE4	<>	latin_small_letter_turned_r_with_long_leg
+0xE5	<>	latin_small_letter_turned_m_with_long_leg
+0xE6	<>	combining_circumflex_accent			/ PRE_CTX_I_UDIA
+0xE7	<>	latin_small_letter_turned_h
+0xE8	<>	modifier_letter_extra_low_tone_bar modifier_letter_extra_high_tone_bar
+0xE9	<>	combining_circumflex_accent			/ PRE_CTX_UDIA
+0xEA	<>	latin_small_letter_d_with_tail
+0xEB	<>	latin_small_letter_d_with_hook
+0xEC	<>	modifier_letter_small_gamma
+0xED	<>	undertie
+0xEE	<>	latin_small_letter_heng_with_hook
+0xEF	<>	latin_small_letter_dotless_j_with_stroke
+
+0xF0	<>	latin_small_letter_h_with_stroke
+0xF1	<>	latin_small_letter_l_with_retroflex_hook
+0x6C 0xF2	<>	latin_small_letter_l_with_middle_tilde
+0x62 0xF2	<>	U+1D6C	;latin_small_letter_b_with_middle_tilde	;jw
+0x64 0xF2	<>	U+1D6D	;latin_small_letter_d_with_middle_tilde	;jw
+0x66 0xF2	<>	U+1D6E	;latin_small_letter_f_with_middle_tilde	;jw
+0x6D 0xF2	<>	U+1D6F	;latin_small_letter_m_with_middle_tilde	;jw
+0x6E 0xF2	<>	U+1D70	;latin_small_letter_n_with_middle_tilde	;jw
+0x70 0xF2	<>	U+1D71	;latin_small_letter_p_with_middle_tilde	;jw
+0x72 0xF2	<>	U+1D72	;latin_small_letter_r_with_middle_tilde	;jw
+0x52 0xF2	<>	U+1D73	;latin_small_letter_r_with_fishhook_and_middle_tilde	;jw
+0x73 0xF2	<>	U+1D74	;latin_small_letter_s_with_middle_tilde	;jw
+0x74 0xF2	<>	U+1D75	;latin_small_letter_t_with_middle_tilde	;jw
+0x7A 0xF2	<>	U+1D76	;latin_small_letter_z_with_middle_tilde	;jw
+;0xF2	<>	combining_tilde_overlay
+0xF3	<>	combining_caron						/ PRE_CTX_I_UDIA
+0xF4	<>	combining_caron						/ PRE_CTX_UDIA
+0xF5	<>	latin_letter_small_capital_b
+0xF6	<>	latin_small_letter_i_with_stroke
+0xF7	<>	latin_small_letter_n_with_retroflex_hook
+0xF8	<>	latin_small_letter_n_with_left_hook
+0xF9	<>	modifier_letter_triangular_colon
+0xFA	<>	latin_small_letter_h_with_hook
+0xFB	<>	latin_letter_glottal_stop_with_stroke
+0xFC	<>	latin_small_letter_z_with_curl
+0xFD	<>	latin_letter_small_capital_g_with_hook
+0xFE	<>	latin_small_letter_c_with_curl
+0xFF	<>	latin_small_letter_t_with_retroflex_hook

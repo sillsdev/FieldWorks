@@ -1,0 +1,375 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
+<glade-interface>
+  <widget class="GtkWindow" id="FwFontAttributesWindow">
+	<property name="title" translatable="yes"/>
+	<property name="type">GTK_WINDOW_TOPLEVEL</property>
+	<property name="window_position">GTK_WIN_POS_NONE</property>
+	<property name="modal">False</property>
+	<property name="resizable">True</property>
+	<property name="destroy_with_parent">False</property>
+	<property name="decorated">True</property>
+	<property name="skip_taskbar_hint">False</property>
+	<property name="skip_pager_hint">False</property>
+	<property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
+	<property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
+	<property name="focus_on_map">True</property>
+	<property name="urgency_hint">False</property>
+	<child>
+	  <widget class="GtkFixed" id="FwFontAttributes">
+		<property name="visible">True</property>
+		<child>
+		  <widget class="GtkLabel" id="label13">
+			<property name="width_request">68</property>
+			<property name="height_request">15</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="label" translatable="yes">Fo_nt color:</property>
+			<property name="use_underline">True</property>
+			<property name="use_markup">False</property>
+			<property name="justify">GTK_JUSTIFY_LEFT</property>
+			<property name="wrap">False</property>
+			<property name="selectable">False</property>
+			<property name="xalign">0.0</property>
+			<property name="yalign">0.0</property>
+			<property name="xpad">0</property>
+			<property name="ypad">0</property>
+			<property name="mnemonic_widget">m_cboFontColor</property>
+		  </widget>
+		  <packing>
+			<property name="x">0</property>
+			<property name="y">0</property>
+		  </packing>
+		</child>
+		<!-- Derived from an 'SIL.FieldWorks.Common.Controls.FwColorCombo' -->
+		<child>
+		  <widget class="GtkColorButton" id="m_cboFontColor">
+			<property name="width_request">99</property>
+			<property name="height_request">25</property>
+			<property name="visible">True</property>
+			<signal name="color_set" handler="on_m_cboFontColor_color_set"/>
+		  </widget>
+		  <packing>
+			<property name="x">3</property>
+			<property name="y">20</property>
+		  </packing>
+		</child>
+		<child>
+		  <widget class="GtkLabel" id="label14">
+			<property name="width_request">81</property>
+			<property name="height_request">15</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="label" translatable="yes">Bac_kground:</property>
+			<property name="use_underline">True</property>
+			<property name="use_markup">False</property>
+			<property name="justify">GTK_JUSTIFY_LEFT</property>
+			<property name="wrap">False</property>
+			<property name="selectable">False</property>
+			<property name="xalign">0.0</property>
+			<property name="yalign">0.0</property>
+			<property name="xpad">0</property>
+			<property name="ypad">0</property>
+			<property name="mnemonic_widget">m_cboBackgroundColor</property>
+		  </widget>
+		  <packing>
+			<property name="x">106</property>
+			<property name="y">0</property>
+		  </packing>
+		</child>
+		<!-- Derived from an 'SIL.FieldWorks.Common.Controls.FwColorCombo' -->
+		<child>
+		  <widget class="GtkColorButton" id="m_cboBackgroundColor">
+			<property name="width_request">99</property>
+			<property name="height_request">25</property>
+			<property name="visible">True</property>
+			<signal name="color_set" handler="on_m_cboBackgroundColor_color_set"/>
+		  </widget>
+		  <packing>
+			<property name="x">110</property>
+			<property name="y">20</property>
+		  </packing>
+		</child>
+		<child>
+		  <widget class="GtkLabel" id="label15">
+			<property name="width_request">98</property>
+			<property name="height_request">15</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="label" translatable="yes">_Underline style:</property>
+			<property name="use_underline">True</property>
+			<property name="use_markup">False</property>
+			<property name="justify">GTK_JUSTIFY_LEFT</property>
+			<property name="wrap">False</property>
+			<property name="selectable">False</property>
+			<property name="xalign">0.0</property>
+			<property name="yalign">0.0</property>
+			<property name="xpad">0</property>
+			<property name="ypad">0</property>
+			<property name="mnemonic_widget">m_cboUnderlineStyle</property>
+		  </widget>
+		  <packing>
+			<property name="x">213</property>
+			<property name="y">0</property>
+		  </packing>
+		</child>
+		<!-- Derived from an 'SIL.FieldWorks.FwCoreDlgControls.FwInheritablePropComboBox' -->
+		<child>
+		  <widget class="GtkComboBox" id="m_cboUnderlineStyle">
+			<property name="width_request">99</property>
+			<property name="height_request">25</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="items" translatable="yes">(unspecified)
+None
+.1
+.2
+.3
+.4
+Strikethrough
+</property>
+			<signal name="changed" handler="on_m_cboUnderlineStyle_changed"/>
+		  </widget>
+		  <packing>
+			<property name="x">217</property>
+			<property name="y">20</property>
+		  </packing>
+		</child>
+		<child>
+		  <widget class="GtkLabel" id="label16">
+			<property name="width_request">99</property>
+			<property name="height_request">15</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="label" translatable="yes">Under_line color:</property>
+			<property name="use_underline">True</property>
+			<property name="use_markup">False</property>
+			<property name="justify">GTK_JUSTIFY_LEFT</property>
+			<property name="wrap">False</property>
+			<property name="selectable">False</property>
+			<property name="xalign">0.0</property>
+			<property name="yalign">0.0</property>
+			<property name="xpad">0</property>
+			<property name="ypad">0</property>
+			<property name="mnemonic_widget">m_cboUnderlineColor</property>
+		  </widget>
+		  <packing>
+			<property name="x">322</property>
+			<property name="y">0</property>
+		  </packing>
+		</child>
+		<!-- Derived from an 'SIL.FieldWorks.Common.Controls.FwColorCombo' -->
+		<child>
+		  <widget class="GtkColorButton" id="m_cboUnderlineColor">
+			<property name="width_request">99</property>
+			<property name="height_request">25</property>
+			<property name="visible">True</property>
+			<signal name="color_set" handler="on_m_cboUnderlineColor_color_set"/>
+		  </widget>
+		  <packing>
+			<property name="x">326</property>
+			<property name="y">20</property>
+		  </packing>
+		</child>
+		<child>
+		  <widget class="GtkCheckButton" id="m_chkBold">
+			<property name="width_request">56</property>
+			<property name="height_request">20</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="can_focus">True</property>
+			<property name="label" translatable="yes">_Bold</property>
+			<property name="use_underline">True</property>
+			<property name="relief">GTK_RELIEF_NORMAL</property>
+			<property name="focus_on_click">True</property>
+			<property name="active">False</property>
+			<property name="inconsistent">False</property>
+			<property name="draw_indicator">True</property>
+			<signal name="toggled" handler="on_m_chkBold_toggled"/>
+		  </widget>
+		  <packing>
+			<property name="x">32</property>
+			<property name="y">52</property>
+		  </packing>
+		</child>
+		<child>
+		  <widget class="GtkCheckButton" id="m_chkItalic">
+			<property name="width_request">57</property>
+			<property name="height_request">20</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="can_focus">True</property>
+			<property name="label" translatable="yes">_Italic</property>
+			<property name="use_underline">True</property>
+			<property name="relief">GTK_RELIEF_NORMAL</property>
+			<property name="focus_on_click">True</property>
+			<property name="active">False</property>
+			<property name="inconsistent">False</property>
+			<property name="draw_indicator">True</property>
+			<signal name="toggled" handler="on_m_chkItalic_toggled"/>
+		  </widget>
+		  <packing>
+			<property name="x">32</property>
+			<property name="y">80</property>
+		  </packing>
+		</child>
+		<child>
+		  <widget class="GtkCheckButton" id="m_chkSuperscript">
+			<property name="width_request">95</property>
+			<property name="height_request">20</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="can_focus">True</property>
+			<property name="label" translatable="yes">Sup_erscript</property>
+			<property name="use_underline">True</property>
+			<property name="relief">GTK_RELIEF_NORMAL</property>
+			<property name="focus_on_click">True</property>
+			<property name="active">False</property>
+			<property name="inconsistent">False</property>
+			<property name="draw_indicator">True</property>
+			<signal name="toggled" handler="on_m_chkSuperscript_toggled"/>
+		  </widget>
+		  <packing>
+			<property name="x">32</property>
+			<property name="y">108</property>
+		  </packing>
+		</child>
+		<child>
+		  <widget class="GtkCheckButton" id="m_chkSubscript">
+			<property name="width_request">84</property>
+			<property name="height_request">20</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="can_focus">True</property>
+			<property name="label" translatable="yes">Subscrip_t</property>
+			<property name="use_underline">True</property>
+			<property name="relief">GTK_RELIEF_NORMAL</property>
+			<property name="focus_on_click">True</property>
+			<property name="active">False</property>
+			<property name="inconsistent">False</property>
+			<property name="draw_indicator">True</property>
+			<signal name="toggled" handler="on_m_chkSubscript_toggled"/>
+		  </widget>
+		  <packing>
+			<property name="x">32</property>
+			<property name="y">135</property>
+		  </packing>
+		</child>
+		<child>
+		  <widget class="GtkLabel" id="label17">
+			<property name="width_request">56</property>
+			<property name="height_request">15</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="label" translatable="yes">P_osition:</property>
+			<property name="use_underline">True</property>
+			<property name="use_markup">False</property>
+			<property name="justify">GTK_JUSTIFY_LEFT</property>
+			<property name="wrap">False</property>
+			<property name="selectable">False</property>
+			<property name="xalign">0.0</property>
+			<property name="yalign">0.0</property>
+			<property name="xpad">0</property>
+			<property name="ypad">0</property>
+			<property name="mnemonic_widget">m_cboFontPosition</property>
+		  </widget>
+		  <packing>
+			<property name="x">213</property>
+			<property name="y">112</property>
+		  </packing>
+		</child>
+		<!-- Derived from an 'SIL.FieldWorks.FwCoreDlgControls.FwInheritablePropComboBox' -->
+		<child>
+		  <widget class="GtkComboBox" id="m_cboFontPosition">
+			<property name="width_request">99</property>
+			<property name="height_request">25</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="items" translatable="yes">(unspecified)
+Normal
+Raised
+Lowered
+</property>
+			<signal name="changed" handler="on_m_cboFontPosition_changed"/>
+		  </widget>
+		  <packing>
+			<property name="x">217</property>
+			<property name="y">132</property>
+		  </packing>
+		</child>
+		<child>
+		  <widget class="GtkLabel" id="label18">
+			<property name="width_request">26</property>
+			<property name="height_request">15</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="label" translatable="yes">B_y:</property>
+			<property name="use_underline">True</property>
+			<property name="use_markup">False</property>
+			<property name="justify">GTK_JUSTIFY_LEFT</property>
+			<property name="wrap">False</property>
+			<property name="selectable">False</property>
+			<property name="xalign">0.0</property>
+			<property name="yalign">0.0</property>
+			<property name="xpad">0</property>
+			<property name="ypad">0</property>
+			<property name="mnemonic_widget">m_nudPositionAmount</property>
+		  </widget>
+		  <packing>
+			<property name="x">322</property>
+			<property name="y">112</property>
+		  </packing>
+		</child>
+		<!-- Derived from an 'SIL.FieldWorks.FwCoreDlgControls.UpDownMeasureControl' -->
+		<child>
+		  <widget class="GtkSpinButton" id="m_nudPositionAmount">
+			<property name="width_request">99</property>
+			<property name="height_request">24</property>
+			<property name="visible">True</property>
+			<property name="sensitive">True</property>
+			<property name="climb_rate">0.01</property>
+			<property name="digits">2</property>
+			<property name="numeric">True</property>
+			<property name="update_policy">GTK_UPDATE_ALWAYS</property>
+			<property name="snap_to_ticks">True</property>
+			<property name="wrap">False</property>
+			<property name="adjustment">0 0 3 0.1 0.5 0</property>
+			<signal name="value_changed" handler="on_m_nudPositionAmount_value_changed"/>
+		  </widget>
+		  <packing>
+			<property name="x">326</property>
+			<property name="y">132</property>
+		  </packing>
+		</child>
+		<!-- Derived from an 'SIL.FieldWorks.FwCoreDlgControls.FontFeaturesButton' -->
+		<child>
+		  <widget class="GtkVBox" id="m_btnFontFeatures_vbox">
+			<property name="width_request">132</property>
+			<property name="height_request">27</property>
+			<property name="visible">True</property>
+			<property name="homogeneous">False</property>
+			<property name="spacing">0</property>
+			<child>
+			  <widget class="Custom" id="m_btnFontFeatures">
+				<property name="visible">True</property>
+				<property name="creation_function">SIL.FieldWorks.FwCoreDlgControlsGTK.FontFeaturesButton, FwCoreDlgControlsGTK</property>
+				<property name="int1">0</property>
+				<property name="int2">0</property>
+				<property name="last_modification_time">Fri, 16 May 2008 19:23:32 GMT</property>
+			  </widget>
+			  <packing>
+				<property name="padding">0</property>
+				<property name="expand">True</property>
+				<property name="fill">True</property>
+			  </packing>
+			</child>
+		  </widget>
+		  <packing>
+			<property name="x">218</property>
+			<property name="y">73</property>
+		  </packing>
+		</child>
+	  </widget>
+	</child>
+  </widget>
+</glade-interface>

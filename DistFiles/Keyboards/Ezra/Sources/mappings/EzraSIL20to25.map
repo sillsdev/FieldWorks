@@ -1,0 +1,143 @@
+﻿; This file was edited using TECkitMappingEditorU.exe v1.0.0.1 on 2/13/2007.
+;   Conversion Type = Unicode_to_from_Unicode
+;   Left-hand side font = Ezra SIL;12
+;   Right-hand side font = Ezra SIL;12
+;   Main Window Position = 0,0,650,740
+;   Code Point Window Position = 660,80,364,488
+
+; EzraSIL20to25.map
+; modifies 'old' Unicode 4.0 Hebrew for added characters and recommendations in Unicode 4.1 and 5.0
+; and corrects a few errors on 'old' text, though some are unfixable.
+; cjs April 2006-March 2007
+
+EncodingName	"SIL-HEBREW_Unicode_40-2004"
+DescriptiveName	"Modifies Unicode Hebrew from 4.0 to 5.0"
+Version	"1"
+Contact	"mailto: sil_fonts@sil.org"
+RegistrationAuthority	"SIL International"
+RegistrationName "SILEzraUpdate"
+
+;LHSFlags (Consonant-Vowel-CantOrder)
+;RHSFlags (Consonant-Vowel-CantOrder)
+
+; NB - neither NFC nor NFD is an appropriate choice for biblical Hebrew displayed with any Ezra SIL font
+
+
+; ***********
+; first pass changes to the new characters in Unicode 4.1,
+; and implements holam haser 05BA in Unicode 5.0
+; inserts CGJ into vowel-vowel and similar sequences
+; also correct error where non-final + 2 cants should be final in decalogue
+; but preserves stand-alone kaph (preposition) as non-final form
+; and preserves pethuha as non-final form
+
+; the old mapping changed 0599 to 05A8 before holem, including plene holem, to avoid clashes
+; the change was unnecessary in the case of plene holem, since the holem moves on to the waw, so there is no clash
+; this cannot be reversed since it would change every 0599 which would be worse
+
+; the old mapping gave no left methegs with hateph vowels
+; this cannot be reversed since it would change every medial metheg which would be worse
+
+pass (Unicode)
+
+Class	[cons]		= ( U+05D0 U+05D1 U+05D2 U+05D3 U+05D4 U+05D5 U+05D6 U+05D7 \
+				U+05D8 U+05D9 U+05DB U+05DC U+05DE U+05E0 U+05E1 U+05E2 \
+				U+05E4 U+05E6 U+05E7 U+05E8 U+05E9 U+05EA )
+
+Class	[shindots]	= ( U+05C1 U+05C2 )
+
+Class	[low_p]		= ( U+0591 U+0596 U+059B U+05A2 U+05A3 U+05A4 U+05A5 U+05A6 U+05A7 \
+				U+05AA U+05BD U+05C5 )
+
+Class	[lo_vow]	= ( U+05B0 .. U+05B8 U+05BB U+05C7 )
+
+Class	[final]		= ( U+05DA U+05DD U+05DF U+05E3 U+05E5 )
+Class	[nonf]		= ( U+05DB U+05DE U+05E0 U+05E4 U+05E6 )
+
+Class	[cant]		= ( U+0591 U+0592 U+0593 U+0594 U+0595 U+0596 U+0597 U+0598 U+0599 \
+				U+059A U+059B U+059C U+059D U+059E U+059F U+05A0 U+05A1 \
+				U+05A2 U+05A3 U+05A4 U+05A5 U+05A6 U+05A7 U+05A8 U+05A9 \
+				U+05AA U+05AB U+05AC U+05AD U+05AE U+05AF U+05C4 U+05C5 U+05BD )
+
+Class	[kvow]		= ( U+05B0 U+05B8 U+05C7 )
+
+Class	[dr]		= ( U+05BC U+05BF )
+
+Class	[OOB]		= ( U+0009 U+000A U+000D U+0020 U+00A0 U+0020 .. U+0040 U+05F3 U+05F4 \
+				U+05BE U+05C0 U+05C3 U+005B .. U+0060 \
+				U+007B .. U+007E U+00A7 U+00AB U+00AF \
+				U+00B6 U+00BB U+00BF U+2000 .. U+200A U+2010 .. U+2021 \
+				U+2039 U+203A )
+
+U+05E0 U+034F U+0307	 > U+05C6 U+0307 ; Hebrew letter INVERTED NUN is U+05C6 in Unicode 4.1  U+034F no longer needed
+U+F300			 > U+05C6 U+0307 ; old PUA
+
+U+0323			 > U+05C5 ; Hebrew mark LOWER DOT is U+05C5 in Unicode 4.1
+U+F301			 > U+05C5 ; old PUA
+
+[lo_vow]=a [low_p]?=b [lo_vow]=c	<> [lo_vow]=a [low_p]?=b U+034F [lo_vow]=c
+
+[nonf]=b    /               _ [dr]{0,2} [kvow]? [cant]{0,2} ( [OOB] | # ) <>  [final]=b
+[nonf]=b    / ( [OOB] | # ) _ [dr]{0,2} [kvow]? [cant]{0,2} ( [OOB] | # ) <>  [nonf]=b  ;protects stand-alone non-final forms
+
+;implementation of 05BA = holam haser
+;restricted to when preceded by a vowel to prevent a second pass making vocalic WO (05B9) into consonantal WO (05BA)
+U+05D5=a [dr]?=b U+05B9=c / [lo_vow] [cant]{0,2} _ <> U+05D5=a [dr]?=b U+05BA=c
+;need to allow for a plene hireq as a vowel eg at Dan 5.6.3 and 5.9.6
+U+05D5=a [dr]?=b U+05B9=c / U+05B4 U+05D9 _ <> U+05D5=a [dr]?=b U+05BA=c
+
+;when holam-waw is followed by a vowel, the waw is consonantal so block this change
+U+05B9 [cant]?=a U+05D5 [lo_vow]=b <> U+05B9 [cant]?=a U+05D5 [lo_vow]=b
+
+;change vocalic holam waw to waw-holam order and move cants
+;the context does not appear to be necessary here - / [cons] [shindots]? [dr]? _
+U+05B9=a [cant]?=b [cant]?=c U+05D5=d  <> [cant]?=b [cant]?=c U+05D5=d U+05B9=a
+
+;more complex where there is consonantal waw followed by plene holem
+U+05D5=a [dr]?=b U+05B9=c [cant]?=d U+05D5=e <> U+05D5=a [dr]?=b [cant]?=d U+05D5=e U+05B9=c
+
+;special case at Jdg 19.13.3 - seems to have the wrong vowel-cant order in WLC
+U+05DC U+05B0 U+05DB U+05A5 U+05B8 > U+05DC U+05B0 U+05DA U+05B8 U+05A5
+
+; ***********
+; second pass inserts CGJ, ZWJ, ZWNJ into vowel-meteg and similar sequences
+; corrects incorrect hi-lo cant ordering in decalogue
+; also corrects an error from the old map:
+; 1. at 2Ki 21.26.1 where there is a holam and another vowel on the same consonant > double holam
+; 2. in Jerusalem pathah hireq sometimes gives a double hireq
+
+
+pass (Unicode)
+
+Class [lo_vow]  = ( U+05B0 U+05B4 U+05B5 U+05B6 U+05B7 U+05B8 U+05BB U+05C7)
+Class [hataf]   = ( U+05B1 .. U+05B3)
+Class [lo_cant] = ( U+0591 U+0596 U+059A U+059B U+05A2 U+05A3 U+05A4 U+05A5 U+05A6 U+05A7 \
+			U+05AA U+05AD U+05C5)
+Class [hi_cant] = ( U+0592 U+0593 U+0594 U+0595 U+0597 U+0598 U+0599 U+059C U+059D U+059E U+059F \
+			U+05A0 U+05A1 U+05A8 U+05A9 U+05AB U+05AC U+05AE U+05AF U+05C4)
+
+;[lo_vow] U+05BD - canonical order so unchanged - U+05BD = meteg - left meteg
+
+U+05BD [hi_cant]?=b	[lo_vow]=a 	<> U+05BD U+034F [lo_vow]=a [hi_cant]?=b ;right meteg CGJ
+U+05BD [lo_cant]?=b 	[lo_vow]=a 	<> U+05BD U+034F [lo_vow]=a [lo_cant]?=b ;right meteg CGJ
+
+[lo_vow]=a U+F302 <> U+05BD U+034F [lo_vow]=a ; old PUA
+
+;left meteg with hataf not distinguished from medial by the old mapping - would use ZWNJ U+200C
+
+[hataf]=a U+05BD <> [hataf]=a U+200D U+05BD ;medial meteg ZWJ
+U+05BD [hataf]=a <> U+05BD U+034F [hataf]=a ;right  meteg CGJ
+
+[hataf]=a U+F303  > [hataf]=a U+200C U+05BD ; old PUA
+[hataf]=a U+F302  > U+05BD U+034F [hataf]=a
+
+;when metheg (silluq) is to the left of another low cant, it needs a CGJ to hold it on normalisation
+U+05BD / [lo_cant] _ <> U+034F U+05BD
+
+[hi_cant]=a [lo_cant]=b > @b @a
+
+; for Jerusalem - see above
+U+05B4 U+05B4 > U+05B4
+
+; for 2Ki 21.26.1 - see above
+U+05D1 U+05BC U+05B0 U+05B9 U+05B9 U+05A5 > U+05D1 U+05BC U+05B9 U+034F U+05B0 U+05A5

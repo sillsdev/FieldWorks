@@ -1,0 +1,1760 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lingPaper PUBLIC "-//XMLmind//DTD XLingPap//EN"
+"file://%SystemDrive%/Documents and Settings/%USERNAME%/Application Data/XMLmind/XMLEditor/addon/XLingPap/XLingPap.dtd">
+<lingPaper
+><frontMatter
+><title
+>Modeling Bantu Noun Classes<br
+></br
+>in the FieldWorks Language Explorer</title
+><author
+>H. Andrew Black</author
+><affiliation
+>SIL International</affiliation
+><date
+>September 28, 2006</date
+><acknowledgements
+><p
+>This paper is the result of discussions I have had with Robert Hedinger, Ron Moe, David Ker, and John Heins on how to model noun class in the FieldWorks Language Explorer program for the Bantu languages they work on (or have worked on). While they are all Bantuists, I am not. Therefore, the content here reflects the understanding of Bantu I have gleaned from them. Any errors of fact in this paper are mine. Please let me know of any errors by sending an email message to <link
+href="mailto:andy_black@sil.org"
+>andy_black@sil.org</link
+>.</p
+></acknowledgements
+></frontMatter
+><section1
+id="sProblem"
+><secTitle
+>The Problem</secTitle
+><p
+>This section briefly outlines the challenges inherit in trying to model Bantu noun classes.</p
+><p
+>Bantu noun classes tend to come in pairs. Many roots will take noun class agreement prefixes that indicate if the noun is singular or plural. For example, David Ker (p.c. 2006) provides the following examples from Nyungwe.<endnote
+id="nAkooseHill"
+><p
+>The free translations are my guesses.</p
+></endnote
+></p
+><example
+num="xNyungweCloth"
+><listInterlinear
+letter="xNyungweClothSg"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>a-bad</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>5-cloth</gloss
+></line
+></lineGroup
+><free
+>‘cloth’</free
+></listInterlinear
+><listInterlinear
+letter="xNyungweClothPl"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>me-bad</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>6-cloth</gloss
+></line
+></lineGroup
+><free
+>‘cloths’</free
+></listInterlinear
+></example
+><p
+>In <exampleRef
+letter="xNyungweClothSg"
+num="xNyungweClothSg"
+></exampleRef
+> the prefix is for class 5 and is singular. In <exampleRef
+letter="xNyungweClothPl"
+num="xNyungweClothPl"
+></exampleRef
+> the prefix is for class 6 and is plural. So the root can take either class 5 or class 6.</p
+><p
+>Furthermore, there are other roots which not marked for number. Consider the word in <exampleRef
+letter="xMedib"
+num="xMedib"
+></exampleRef
+> provided by David Ker (p.c. 2006).</p
+><example
+num="xMedib"
+><interlinear
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>me-dib</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>6-water</gloss
+></line
+></lineGroup
+><free
+>‘water’</free
+></interlinear
+></example
+><p
+>The <langData
+lang="lVernacular"
+>me-</langData
+> prefix is not marked for number in this case. In addition, this root cannot take the class 5 prefix <langData
+lang="lVernacular"
+>a-</langData
+> like the root <langData
+lang="lVernacular"
+>bad</langData
+> did in <exampleRef
+letter="xNyungweCloth"
+num="xNyungweCloth"
+></exampleRef
+>.</p
+><p
+>Yet another issue are other categories that agree with the head noun in a noun phrase.</p
+><p
+>Then there are the agreement prefixes on verbs. Some of these agree with the subject and some agree with the object.</p
+><p
+>Finally, at least in some Bantu languages,<endnote
+id="nLocatives"
+><p
+>My ignorance may be showing in this statement. Perhaps all Bantu languages do this.</p
+></endnote
+> locative noun class prefixes pose some special “challenges.” Consider the following three pairs of Akoose data (Hedinger p.c. 2006).</p
+><example
+num="xAkooseNoun"
+><listInterlinear
+letter="xAkooseNounSg"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>e-kone</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>7-hill</gloss
+></line
+></lineGroup
+><free
+>‘hill’</free
+></listInterlinear
+><listInterlinear
+letter="xAkooseNounPl"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>e'-kone</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>8-hill</gloss
+></line
+></lineGroup
+><free
+>‘hills’</free
+></listInterlinear
+></example
+><example
+num="xAkooseNounVb"
+><listInterlinear
+letter="xAkooseNounVbSg"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>e-kone é-bóó</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>7-hill 7-be.good.PERF</gloss
+></line
+></lineGroup
+><free
+>‘The hill is good.’</free
+></listInterlinear
+><listInterlinear
+letter="xAkooseNounVbPl"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>e'-kone é'-bóó</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>8-hill 8-be.good.PERF</gloss
+></line
+></lineGroup
+><free
+>‘The hills are good.’</free
+></listInterlinear
+></example
+><example
+num="xAkooseNounVbLoc"
+><listInterlinear
+letter="xAkooseNounVbLocSg"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>á-e-kone á-bóó</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>5-7-hill 5-be.good.PERF</gloss
+></line
+></lineGroup
+><free
+>‘On the hill it is good.’</free
+></listInterlinear
+><listInterlinear
+letter="xAkooseNounVbLocPl"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>á-e'-kone á-bóó</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>5-8-hill 5-be.good.PERF</gloss
+></line
+></lineGroup
+><free
+>‘On the hills it is good.’</free
+></listInterlinear
+></example
+><p
+>In particular, notice that the locative <langData
+lang="lVernacular"
+>á-</langData
+> prefix now agrees with the verb in <exampleRef
+letter="xAkooseNounVbLoc"
+num="xAkooseNounVbLoc"
+></exampleRef
+> whereas it was the gender of the noun root that agreed in <exampleRef
+letter="xAkooseNounVbSg"
+num="xAkooseNounVbSg"
+></exampleRef
+> and <exampleRef
+letter="xAkooseNounVbPl"
+num="xAkooseNounVbPl"
+></exampleRef
+>.</p
+><p
+>In the FieldWorks Language Explorer (henceforth <object
+type="tFLEx"
+></object
+>), how do we handle these things? A solution is proposed in section <sectionRef
+sec="sSolution"
+></sectionRef
+>.</p
+></section1
+><section1
+id="sSolution"
+><secTitle
+>The Solution</secTitle
+><p
+>To solve these issues, we use inflection features. We need to set up inflection features for number and for gender. To set up number, do this:<endnote
+id="nDefaultAnalysisWSIsEnglish"
+><p
+>In this version of <object
+type="tFLEx"
+></object
+>, you should set your default analysis writing system to English.</p
+></endnote
+></p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Grammar</object
+> / <object
+type="tInstruction"
+>Features</object
+></li
+><li
+>Insert features (Click on either of the feature icons or click <object
+type="tInstruction"
+>Insert</object
+> /<object
+type="tInstruction"
+> Feature</object
+>).</li
+><li
+>This brings up the <object
+type="tInstruction"
+>Add Inflection Feature from Catalog</object
+> dialog.</li
+><li
+>Open up the <object
+type="tInstruction"
+>noun-related</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>noun agreement</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>number</object
+> section.</li
+><li
+>Click on <object
+type="tInstruction"
+>number</object
+>.</li
+><li
+>Observe the description information in the right hand portion.</li
+><li
+>Click on the check box before <object
+type="tInstruction"
+>singular number</object
+> and also click on the check box before <object
+type="tInstruction"
+>plural number</object
+>. As you do, notice the information that shows up in the right-hand pane. This information will be copied to your language project.</li
+><li
+>Click on the <object
+type="tInstruction"
+>Add</object
+> button.</li
+><li
+>You should now see the two number features you just added as well as noun agreement.</li
+></ol
+><p
+>Next we set up the Bantu gender features. Note that appendix <appendixRef
+app="aProtoBantu"
+></appendixRef
+> lists the classes and their Proto-Bantu forms. Perhaps this will help you know which class/gender each of your prefixes are.</p
+><p
+>First, we do nouns:</p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Grammar</object
+> / <object
+type="tInstruction"
+>Features</object
+></li
+><li
+>Insert features (Click on either of the feature icons or click <object
+type="tInstruction"
+>Insert</object
+> /<object
+type="tInstruction"
+> Feature</object
+>).</li
+><li
+>This brings up the <object
+type="tInstruction"
+>Add Inflection Feature from Catalog</object
+> dialog.</li
+><li
+>Open up the <object
+type="tInstruction"
+>noun-related</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>noun agreement</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>Bantu noun class: gender</object
+> section.</li
+><li
+>Click on <object
+type="tInstruction"
+>Bantu noun class: gender</object
+>.</li
+><li
+>Observe the description information in the right hand portion.</li
+><li
+>Click on the check box before every gender combination your language has. As you do, notice the information that shows up in the right-hand pane. This information will be copied to your language project.</li
+><li
+>If you do not see some genders that your language has, choose ones that are similar. You can then edit them to make them be what you need.</li
+><li
+>Click on the <object
+type="tInstruction"
+>Add</object
+> button.</li
+><li
+>You should now see the classes you chose listed.</li
+><li
+>Edit any changes that you need to make.</li
+></ol
+><p
+>This sets up the basic set of noun class genders and does it for noun agreement. You can now do something similar for adjective agreement:</p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Grammar</object
+> / <object
+type="tInstruction"
+>Features</object
+></li
+><li
+>Insert features (Click on either of the feature icons or click <object
+type="tInstruction"
+>Insert</object
+> /<object
+type="tInstruction"
+> Feature</object
+>).</li
+><li
+>This brings up the <object
+type="tInstruction"
+>Add Inflection Feature from Catalog</object
+> dialog.</li
+><li
+>Open up the <object
+type="tInstruction"
+>adjective-related</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>adjective agreement</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>Bantu noun class: gender</object
+> section.</li
+><li
+>Click on the check box before at least one gender combination you chose before. (You do not actually have to select them all; <object
+type="tFLEx"
+></object
+> will use the same ones you used before.)</li
+><li
+>Click on the <object
+type="tInstruction"
+>Add</object
+> button.</li
+><li
+>You should now also see adjective agreement listed.</li
+></ol
+><p
+>You can do something similar now for article agreement:</p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Grammar</object
+> / <object
+type="tInstruction"
+>Features</object
+></li
+><li
+>Insert features (Click on either of the feature icons or click <object
+type="tInstruction"
+>Insert</object
+> /<object
+type="tInstruction"
+> Feature</object
+>).</li
+><li
+>This brings up the <object
+type="tInstruction"
+>Add Inflection Feature from Catalog</object
+> dialog.</li
+><li
+>Open up the <object
+type="tInstruction"
+>article-related</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>article agreement</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>Bantu noun class: gender</object
+> section.</li
+><li
+>Click on the check box before at least one gender combination you chose before. (You do not actually have to select them all; <object
+type="tFLEx"
+></object
+> will use the same ones you used before.)</li
+><li
+>Click on the <object
+type="tInstruction"
+>Add</object
+> button.</li
+><li
+>You should now also see article agreement listed.</li
+></ol
+><p
+>Another one to do is for pronouns:<endnote
+id="nPronouns"
+><p
+>I am assuming that third person pronouns have noun class prefixes. If they do not, ignore this part.</p
+></endnote
+></p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Grammar</object
+> / <object
+type="tInstruction"
+>Features</object
+></li
+><li
+>Insert features (Click on either of the feature icons or click <object
+type="tInstruction"
+>Insert</object
+> /<object
+type="tInstruction"
+> Feature</object
+>).</li
+><li
+>This brings up the <object
+type="tInstruction"
+>Add Inflection Feature from Catalog</object
+> dialog.</li
+><li
+>Open up the <object
+type="tInstruction"
+>pronoun-related</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>pronoun agreement</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>Bantu noun class: gender</object
+> section.</li
+><li
+>Click on the check box before at least one gender combination you chose before. (You do not actually have to select them all; <object
+type="tFLEx"
+></object
+> will use the same ones you used before.)</li
+><li
+>Click on the <object
+type="tInstruction"
+>Add</object
+> button.</li
+><li
+>You should now also see pronoun agreement listed.</li
+></ol
+><p
+>We have two more to do: subject-agreement and object-agreement. First is subject agreement:</p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Grammar</object
+> / <object
+type="tInstruction"
+>Features</object
+></li
+><li
+>Insert features (Click on either of the feature icons or click <object
+type="tInstruction"
+>Insert</object
+> /<object
+type="tInstruction"
+> Feature</object
+>).</li
+><li
+>This brings up the <object
+type="tInstruction"
+>Add Inflection Feature from Catalog</object
+> dialog.</li
+><li
+>Open up the <object
+type="tInstruction"
+>verb-related</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>agreement</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>subject agreement</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>Bantu noun class: gender</object
+> section.</li
+><li
+>Click on the check box before at least one gender combination you chose before. (You do not actually have to select them all; <object
+type="tFLEx"
+></object
+> will use the same ones you used before.)</li
+><li
+>Click on the <object
+type="tInstruction"
+>Add</object
+> button.</li
+><li
+>You should now also see subject agreement listed.</li
+></ol
+><p
+>The last one is object agreement:</p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Grammar</object
+> / <object
+type="tInstruction"
+>Features</object
+></li
+><li
+>Insert features (Click on either of the feature icons or click <object
+type="tInstruction"
+>Insert</object
+> /<object
+type="tInstruction"
+> Feature</object
+>).</li
+><li
+>This brings up the <object
+type="tInstruction"
+>Add Inflection Feature from Catalog</object
+> dialog.</li
+><li
+>Open up the <object
+type="tInstruction"
+>verb-related</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>agreement</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>object agreement</object
+> section.</li
+><li
+>Open up the <object
+type="tInstruction"
+>Bantu noun class: gender</object
+> section.</li
+><li
+>Click on the check box before at least one gender combination you chose before. (You do not actually have to select them all; <object
+type="tFLEx"
+></object
+> will use the same ones you used before.)</li
+><li
+>Click on the <object
+type="tInstruction"
+>Add</object
+> button.</li
+><li
+>You should now also see object agreement listed.</li
+></ol
+><section2
+id="sSingularPlural"
+><secTitle
+>Count Nouns</secTitle
+><p
+>For count nouns (ones which can have either a singular or plural class prefix), one needs to do one set of things for the prefixes and another set of things for the noun roots themselves.</p
+><section3
+id="sCountNounPrefixes"
+><secTitle
+>Count Noun Class Prefixes</secTitle
+><p
+>Do this for each pair of prefixes:</p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Lexicon</object
+> / <object
+type="tInstruction"
+>Lexicon Edit</object
+></li
+><li
+>Find (or create if you do not already have it in the language project) the singular prefix. For our example in <exampleRef
+letter="xNyungweClothSg"
+num="xNyungweClothSg"
+></exampleRef
+>, it would be <langData
+lang="lVernacular"
+>a-</langData
+>.<ol
+><li
+>Make the <object
+type="tInstruction"
+>Gloss</object
+> be the class number (5 in the case of <exampleRef
+letter="xNyungweClothSg"
+num="xNyungweClothSg"
+></exampleRef
+>).<endnote
+id="nClassAndNumber"
+><p
+>If it is appropriate in your situation, you could also add the singular abbreviation to the gloss. So it might be 5Sg.</p
+></endnote
+></li
+><li
+>Make the <object
+type="tInstruction"
+>Affix Type</object
+> be <object
+type="tInstruction"
+>Inflectional</object
+>.</li
+><li
+>Make the <object
+type="tInstruction"
+>Attaches to Category</object
+> be <object
+type="tInstruction"
+>Noun</object
+>.</li
+></ol
+></li
+><li
+>Click on <object
+type="tInstruction"
+>Show Hidden Fields</object
+>.</li
+><li
+>Scroll down to the bottom of the entry.</li
+><li
+>Click on the <object
+type="tInstruction"
+>Inflection Features</object
+> field</li
+><li
+>Click on the chooser button in the <object
+type="tInstruction"
+>Inflection Features</object
+> field.</li
+><li
+>This brings up the <object
+type="tInstruction"
+>Choose Inflection Features</object
+> dialog.<endnote
+id="nNoFeaturesListed"
+><p
+>If the dialog does not list any features, do these steps:</p
+><ol
+><li
+>Click on the link at the bottom.</li
+><li
+>This will take you to the category editor.</li
+><li
+>Click on the <object
+type="tInstruction"
+>Inflectable Features</object
+> field.</li
+><li
+>Click on the chooser button.</li
+><li
+>Click on the check box in front of the appropriate agreement item for this category.</li
+><li
+>Click on <object
+type="tInstruction"
+>OK</object
+>.</li
+><li
+>Click on the Go Back arrow button.</li
+></ol
+></endnote
+></li
+><li
+>Click on the gender that is appropriate for this pair (5/6 in the case of <exampleRef
+letter="xNyungweClothSg"
+num="xNyungweClothSg"
+></exampleRef
+>).</li
+><li
+>Click on the number that is appropriate for this prefix (singular in the case of <langData
+lang="lVernacular"
+>a-</langData
+> in <exampleRef
+letter="xNyungweClothSg"
+num="xNyungweClothSg"
+></exampleRef
+>).</li
+><li
+>Click on <object
+type="tInstruction"
+>OK</object
+>.</li
+><li
+>The features will now show up in the <object
+type="tInstruction"
+>Inflection Features</object
+> field (as [NounAgr:[Num:Sg gender:5/6]] in the case of <exampleRef
+letter="xNyungweClothSg"
+num="xNyungweClothSg"
+></exampleRef
+>).</li
+><li
+>Set the Field Visibility of the <object
+type="tInstruction"
+>Inflection Features</object
+> field to <object
+type="tInstruction"
+>Always visible</object
+>.</li
+><li
+>Click on <object
+type="tInstruction"
+>Show Hidden Fields</object
+>.</li
+></ol
+><p
+>Now you have said that this nominal inflectional affix goes on nouns with the specified gender and is also singular.</p
+><p
+>Do something similar for the plural prefix (but, of course, choose plural number instead of singular). Note that if you set the field visibility as suggested above, you will not need to click on <object
+type="tInstruction"
+>Show Hidden Fields</object
+> in order to get the <object
+type="tInstruction"
+>Inflection Feature</object
+>s field to show.</p
+><p
+>If this same prefix appears on adjectives and articles and pronouns,<endnoteRef
+note="nPronouns"
+></endnoteRef
+> do this:</p
+><ol
+><li
+>Add new senses, one each for adjective and article and pronoun.</li
+><li
+>Give it a gloss of the class number.</li
+><li
+>Change the <object
+type="tInstruction"
+>Grammatical Info.</object
+> field to be for adjective (or article).</li
+><li
+>Under the <object
+type="tInstruction"
+>Grammatical Info. Details</object
+> section, set the <object
+type="tInstruction"
+>Inflection Features</object
+> field to use the correct gender and number.<endnoteRef
+note="nNoFeaturesListed"
+></endnoteRef
+></li
+></ol
+><p
+>If the prefix that appears on adjectives and/or articles and/or pronouns<endnoteRef
+note="nPronouns"
+></endnoteRef
+> has a different shape, then create a new lexical entry for it.</p
+><p
+>Do something similar for the verbal subject and object agreement prefixes.</p
+><p
+>If a particular prefix is null, I recommend going ahead and adding the entry as above.</p
+></section3
+><section3
+id="sCountNounRoots"
+><secTitle
+>Count Noun Roots</secTitle
+><p
+>For the count noun roots, if you already have these noun roots entered, do the following:<endnote
+id="nBackup"
+><p
+>As always when doing bulk edit changes, it is the better part of wisdom to back-up your language project before doing bulk edit modifications. This way, if you discover you've made a change by mistake, you can always just restore the language project to how it was before you performed the bulk edit operation(s).</p
+></endnote
+></p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Lexicon</object
+> / <object
+type="tInstruction"
+>Build Edit Senses</object
+>.</li
+><li
+>Filter <object
+type="tInstruction"
+>Grammatical Category</object
+> on noun.</li
+><li
+>Show Inflection Features.</li
+><li
+>Choose the <object
+type="tInstruction"
+>List Choice</object
+> tab.</li
+><li
+>Filter on the <object
+type="tInstruction"
+>Headword</object
+> column so only the entries with a particular prefix are showing. (If you have homophony, you may have to try selecting these by hand, unless you can think of some other piece of information that may be available, such as Import Residue.)</li
+><li
+>Set the <object
+type="tInstruction"
+>Target Field</object
+> to <object
+type="tInstruction"
+>Inflection Features</object
+>.</li
+><li
+>Set the <object
+type="tInstruction"
+>Change to:</object
+> chooser to be the gender of the prefix. Use the combination gender; that is, if the prefix is class 5 and you have a 5/6 gender, use the 5/6 gender.</li
+><li
+>Click on the <object
+type="tInstruction"
+>Preview</object
+> button.</li
+><li
+>Examine the preview to make sure all of these are correct.</li
+><li
+>Press the <object
+type="tInstruction"
+>Apply</object
+> button to make the change.</li
+></ol
+><p
+>Repeat this process for each gender combination.</p
+><p
+>If you do not have roots entered, then for each such entry, do this:</p
+><ol
+><li
+>Create the new entry.</li
+><li
+>Click on <object
+type="tInstruction"
+>Show Hidden Fields</object
+>.</li
+><li
+>At the bottom, open up the chooser for the <object
+type="tInstruction"
+>Inflection Features</object
+> field.</li
+><li
+>Click on the gender combination this root can take (do *not* click on either singular or plural number; leave it blank).</li
+><li
+>You can set the <object
+type="tInstruction"
+>Field Visibility</object
+> to <object
+type="tInstruction"
+>Always visible</object
+>, so you will not have to click on <object
+type="tInstruction"
+>Show Hidden Fields</object
+>.</li
+><li
+>Turn off <object
+type="tInstruction"
+>Show Hidden Fields</object
+>.</li
+></ol
+><p
+>Or alternatively, you can add a set of roots, using, say, the <object
+type="tInstruction"
+>Citation Form</object
+> field to include the noun class prefix. Then use the bulk edit approach outlined above to set them all to the appropriate gender.</p
+></section3
+></section2
+><section2
+id="sMassNoun"
+><secTitle
+>Nouns Unmarked for Number</secTitle
+><p
+>For nouns which do not get marked for number (see <exampleRef
+letter="xMedib"
+num="xMedib"
+></exampleRef
+> above for an example), one still needs to add the prefix entries and the root entries.</p
+><p
+>The prefix entries are just like in section <sectionRef
+sec="sCountNounPrefixes"
+></sectionRef
+>, except that you do not assign any number features to it. You use the single gender for these, of course.</p
+><p
+>The root entries can be handled just like in section <sectionRef
+sec="sCountNounRoots"
+></sectionRef
+></p
+></section2
+><section2
+id="sAdjectives"
+><secTitle
+>Adjective Roots</secTitle
+><p
+>Adjectives and other categories which agree in noun class with the head noun in their noun phrase do not require any special processing. Leave these roots unspecified for gender. Their prefix markers will supply the class/gender information.</p
+></section2
+><section2
+id="sVerbAgreement"
+><secTitle
+>Verb Agreement</secTitle
+><p
+>Like adjectives, verbs do not need to be marked for gender either. The subject prefixes and the object prefixes provide this agreement information with the noun phrase they refer to.<endnote
+id="nObjMarker"
+><p
+>Or that they actually are, if one takes the view that the object markers are incorporated.</p
+></endnote
+></p
+></section2
+><section2
+id="sTemplates"
+><secTitle
+>Inflectional Templates</secTitle
+><p
+>The remaining major item to be done is to create the inflectional templates for all the categories that have noun class prefixes. For example, for noun, do this:</p
+><ol
+><li
+>Go to <object
+type="tInstruction"
+>Grammar</object
+> / <object
+type="tInstruction"
+>Category Edit</object
+>.</li
+><li
+>Insert a new inflectional affix template.</li
+><li
+>Give it a name and description.</li
+><li
+>Click on the Stem and insert a slot before the stem.</li
+><li
+>Add an obligatory slot. Note that this assumes that any null prefixes have been explicitly entered in the lexicon.</li
+><li
+>Rename it to what you want (e.g. Class).</li
+><li
+>Select <object
+type="tInstruction"
+>Add an inflectional morpheme to</object
+> (the slot name).</li
+><li
+>Select one of the appropriate prefixes.</li
+><li
+>Repeat 7 and 8 until you have all the prefixes added.</li
+></ol
+><p
+>For verbs, remember to add both the subject and the object slots and assign their prefixes to each slot.</p
+></section2
+><section2
+id="sLocatives"
+><secTitle
+>Locatives</secTitle
+><p
+>The data in <exampleRef
+letter="xAkooseNounVbLoc"
+num="xAkooseNounVbLoc"
+></exampleRef
+> repeated below are actually a real challenge for version 1 of <object
+type="tFLEx"
+></object
+>. More bluntly, the parser in <object
+type="tFLEx"
+></object
+> will not be able to correctly analyze these words that have both the locative and the prefix when <object
+type="tBold"
+>both</object
+> the prefix and the locative are tagged with their appropriate gender features. The reason is that we need the locative prefix to override the gender of the regular noun class prefix.<endnote
+id="nLocAsDeriv"
+><p
+>While version 1 of <object
+type="tFLEx"
+></object
+> allows a derivational affix to do just this, I find it hard to believe that these locatives are derivational affixes which attach outside the inflected noun. If we were to model them this way, I suspect we'd end up opening the door to some unwanted parses.</p
+></endnote
+></p
+><example
+num="xAkooseNounVbLoc2"
+><listInterlinear
+letter="xAkooseNounVbLocSg2"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>á-e-kone á-bóó</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>5-7-hill 5-be.good.PERF</gloss
+></line
+></lineGroup
+><free
+>‘On the hill it is good.’</free
+></listInterlinear
+><listInterlinear
+letter="xAkooseNounVbLocPl2"
+><lineGroup
+><line
+><langData
+lang="lVernacular"
+>á-e'-kone á-bóó</langData
+></line
+><line
+><gloss
+lang="lGloss"
+>5-8-hill 5-be.good.PERF</gloss
+></line
+></lineGroup
+><free
+>‘On the hills it is good.’</free
+></listInterlinear
+></example
+><p
+>So, sadly, for now, you can do either of these options:</p
+><ol
+><li
+>Treat the locatives as clitics.</li
+><li
+>Treat the locatives as inflectional prefixes.</li
+></ol
+><p
+>In either case, if you do not give the locatives any gender features, then the parser should provide an analysis for you. (Of course, it may also provide some undesirable analyses as well.)</p
+><p
+>In a future version of <object
+type="tFLEx"
+></object
+>, we plan to allow you to model these as clitics, give them their gender feature, and also mark them as overriding the features of the stem to which they attach.</p
+></section2
+></section1
+><backMatter
+><appendix
+id="aProtoBantu"
+><secTitle
+>Proto-Bantu Prefixes</secTitle
+><p
+>The following chart is taken from <citation
+ref="rSchroeder2006"
+></citation
+> (which is based in part on <citation
+page="54"
+paren="none"
+ref="rGarnder2005"
+></citation
+>).</p
+><table
+border="1"
+><tr
+><th
+>Class</th
+><th
+>Nominal Prefix</th
+><th
+>Pronominal Prefix</th
+><th
+>Enumerative Prefix</th
+></tr
+><tr
+><td
+>1</td
+><td
+><langData
+lang="lProtoBantu"
+>mʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>jʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>ʊ-</langData
+></td
+></tr
+><tr
+><td
+>2</td
+><td
+><langData
+lang="lProtoBantu"
+>ba-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>bá-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>bá</langData
+></td
+></tr
+><tr
+><td
+>3</td
+><td
+><langData
+lang="lProtoBantu"
+>mʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>gʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>ʊ-</langData
+></td
+></tr
+><tr
+><td
+>4</td
+><td
+><langData
+lang="lProtoBantu"
+>mɪ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>gɪ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>ɪ-</langData
+></td
+></tr
+><tr
+><td
+>5</td
+><td
+><langData
+lang="lProtoBantu"
+>i-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>lɪ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>lɪ-</langData
+></td
+></tr
+><tr
+><td
+>6</td
+><td
+><langData
+lang="lProtoBantu"
+>ma-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>gá-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>á-</langData
+></td
+></tr
+><tr
+><td
+>7</td
+><td
+><langData
+lang="lProtoBantu"
+>kɪ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>kɪ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>kɪ-</langData
+></td
+></tr
+><tr
+><td
+>8</td
+><td
+><langData
+lang="lProtoBantu"
+>bi-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>bi-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>bi-</langData
+></td
+></tr
+><tr
+><td
+>9</td
+><td
+><langData
+lang="lProtoBantu"
+>N-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>jɪ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>ɪ-</langData
+></td
+></tr
+><tr
+><td
+>10</td
+><td
+><langData
+lang="lProtoBantu"
+>N-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>jɪ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>í-</langData
+></td
+></tr
+><tr
+><td
+>11</td
+><td
+><langData
+lang="lProtoBantu"
+>lʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>lʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>lʊ-</langData
+></td
+></tr
+><tr
+><td
+>12</td
+><td
+><langData
+lang="lProtoBantu"
+>ka-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>ká-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>ká-</langData
+></td
+></tr
+><tr
+><td
+>13</td
+><td
+><langData
+lang="lProtoBantu"
+>tʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>tʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>tʊ-</langData
+></td
+></tr
+><tr
+><td
+>14</td
+><td
+><langData
+lang="lProtoBantu"
+>bʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>bʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>bʊ-</langData
+></td
+></tr
+><tr
+><td
+>15</td
+><td
+><langData
+lang="lProtoBantu"
+>kʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>kʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>kʊ-</langData
+></td
+></tr
+><tr
+><td
+>16</td
+><td
+><langData
+lang="lProtoBantu"
+>pa-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>pá-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>pá-</langData
+></td
+></tr
+><tr
+><td
+>17</td
+><td
+><langData
+lang="lProtoBantu"
+>kʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>kʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>kʊ-</langData
+></td
+></tr
+><tr
+><td
+>18</td
+><td
+><langData
+lang="lProtoBantu"
+>mʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>mʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>mʊ-</langData
+></td
+></tr
+><tr
+><td
+>19</td
+><td
+><langData
+lang="lProtoBantu"
+>pi-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>pí-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>pí-</langData
+></td
+></tr
+><tr
+><td
+>20</td
+><td
+><langData
+lang="lProtoBantu"
+>gʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>gʊ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>gʊ-</langData
+></td
+></tr
+><tr
+><td
+>21</td
+><td
+><langData
+lang="lProtoBantu"
+>gi-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>gí-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>gí-</langData
+></td
+></tr
+><tr
+><td
+>22</td
+><td
+><langData
+lang="lProtoBantu"
+>ga-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>gá-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>gá-</langData
+></td
+></tr
+><tr
+><td
+>23</td
+><td
+><langData
+lang="lProtoBantu"
+>ɪ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>ɪ-</langData
+></td
+><td
+><langData
+lang="lProtoBantu"
+>ɪ-</langData
+></td
+></tr
+></table
+></appendix
+><endnotes
+></endnotes
+><references
+><refAuthor
+citename="Gardner"
+name="Gardner, William"
+><refWork
+id="rGarnder2005"
+><refDate
+>2005</refDate
+><refTitle
+>Overview of Bantu languages</refTitle
+><ms
+><institution
+>Fuller Theological Seminary</institution
+></ms
+></refWork
+></refAuthor
+><refAuthor
+citename="Schroeder"
+name="Schroeder, Leila"
+><refWork
+id="rSchroeder2006"
+><refDate
+>2006</refDate
+><refTitle
+>Bantu Orthography Manual. Version I</refTitle
+><ms
+><institution
+>SIL International</institution
+></ms
+></refWork
+></refAuthor
+></references
+></backMatter
+><languages
+><language
+font-weight="bold"
+id="lVernacular"
+name="vernacular"
+></language
+><language
+id="lGloss"
+name="gloss"
+></language
+><language
+font-family="Doulos SIL"
+font-size="12pt"
+font-style="normal"
+font-weight="normal"
+id="lProtoBantu"
+></language
+></languages
+><types
+><comment
+>The following types are provided as pre-set examples. You may well want to create your own types that refer to one or more of these. You do that by typing in the names of the types in the types attribute of your type.</comment
+><type
+font-weight="bold"
+id="tBold"
+></type
+><type
+font-style="italic"
+font-weight="bold"
+id="tBoldItalic"
+></type
+><type
+font-style="italic"
+id="tItalic"
+></type
+><type
+cssSpecial="text-decoration:none"
+id="tNoOverline"
+xsl-foSpecial="text-decoration=&quot;no-overline&quot;"
+></type
+><type
+font-variant="normal"
+id="tNoSmallCaps"
+></type
+><type
+cssSpecial="text-decoration:none"
+id="tNoStrikethrough"
+xsl-foSpecial="text-decoration=&quot;no-line-through&quot;"
+></type
+><type
+cssSpecial="text-decoration:none"
+id="tNoUnderline"
+xsl-foSpecial="text-decoration=&quot;no-underline&quot;"
+></type
+><type
+cssSpecial="text-decoration:overline"
+id="tOverline"
+xsl-foSpecial="text-decoration=&quot;overline&quot;"
+></type
+><type
+font-style="normal"
+font-variant="normal"
+font-weight="normal"
+id="tRegular"
+></type
+><type
+font-variant="small-caps"
+id="tSmallCaps"
+></type
+><type
+cssSpecial="text-decoration:line-through"
+id="tStrikethrough"
+xsl-foSpecial="text-decoration=&quot;line-through&quot;"
+></type
+><type
+cssSpecial="vertical-align:sub;"
+font-size="65%"
+id="tSubscript"
+xsl-foSpecial="baseline-shift='sub'"
+></type
+><type
+cssSpecial="vertical-align:super;"
+font-size="65%"
+id="tSuperscript"
+xsl-foSpecial="baseline-shift='super'"
+></type
+><type
+cssSpecial="text-decoration:underline"
+id="tUnderline"
+xsl-foSpecial="text-decoration=&quot;underline&quot;"
+></type
+><comment
+>Add your custom types here.</comment
+><type
+color="#333333"
+id="tInstruction"
+types="tBold"
+></type
+><type
+after="FLEx"
+color="#006666"
+font-family="Courier New"
+font-style="normal"
+font-weight="normal"
+id="tFLEx"
+></type
+></types
+></lingPaper
+>

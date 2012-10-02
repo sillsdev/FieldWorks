@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+   <goal>Exercises a Hyperlink</goal>
+
+	<bug id="FWR-2075" desc="Alt keys do not drop menus" />
+	<bug id="FWR-609" desc="Cannot follow Hyperlink" />
+	<bug id="LT-6470" />
+	<bug id="LT-5061" />
+
+<!-- Copy Location as Hyperlink, select text in other location and excerise link-->
+  <!--1.  Open the existing Kalaba db -->
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <on-application args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' run="ok" on-fail="assert">
+
+		<var id="env" set="after vowel"/>
+
+<!-- Go to Grammar / Natural Classes, click "Vowels"-->
+  <click select="menubar/view/grammar/natural-classes"/>
+
+<model select="natural-classes[@role='view']">
+
+  <click select="browse/record/col" path="/value:Vowels" row="*" col="1" />
+
+<!-- Click the Name slice and select the text there -->
+  <glimpse id="notVowels" wait="1000" select="edit/slice/name/data" ind="1"  col="1" prop="value" expect="Vowels"/>
+  <click select="edit/slice/name/data"/>
+  <insert wait="100">^a</insert>
+
+<!-- Open Edit menu and select "Copy Location as Hyperlink" -->
+<insert wait="1000">%eL</insert>
+
+</model>
+
+<!-- Go to Environments, select "after vowel" with env "/ [V] _" and select text in Description -->
+  <click select="menubar/view/grammar/environments"/>
+
+<model select="environments[@role='view']">
+
+  <click select="browse/record/col" path="/value:$env" row="*" col="1"/>
+
+  <click select="edit/slice/representation/data" ind="*"/>
+  <insert wait="500">^a</insert>
+
+<!-- Open Edit menu and select "Paste Hyperlink" -->
+<insert wait="200">%eH</insert>
+
+<!-- Click the new hyperlink -->
+  <click wait="2000" select="edit/slice/representation/data"/>
+
+
+</model>
+
+<model select="natural-classes[@role='view']">
+
+<!--Verify clicking the link went to desired view-->
+  <!--insert wait="2000">{F5}</insert--><!-- need a delay -->
+  <glimpse id="badLink" wait="5000" select="edit/slice/name/data" ind="*" col="1" prop="value" expect="Vowels"/>
+  <click select="edit/slice/name/data" />
+
+</model>
+
+<!--Go back and delete the link -->
+  <click wait="1000" select="menubar/view/grammar/environments"/>
+  <click wait="1000" select="menubar/view/grammar/environments"/>
+
+<model select="environments[@role='view']">
+
+  <click select="browse/record/col" path="/value:$env" row="*" col="1"/>
+  <click dx="50" select="edit/slice/representation/data" ind="*"/>
+  <insert wait="500">^a</insert>
+  <insert wait="500">{DELETE}</insert>
+
+<!-- Must go to another record and back to really delete it. -->
+
+  <click dx="50" select="edit/slice/representation/data" ind="*ind"/>
+  <insert wait="1000">^a</insert>
+  <click select="//toolbar/format/writing-system"/>
+  <insert wait="1000">e~</insert>
+  <click dx="50" select="edit/slice/representation/data" />
+  <insert wait="500">/ [V] _</insert>
+  <glimpse id="notRestored" wait="5000" select="edit/slice/representation/data" ind="*" prop="value" expect="/ [V] _"/>
+
+</model>
+
+ </on-application>
+</accil>

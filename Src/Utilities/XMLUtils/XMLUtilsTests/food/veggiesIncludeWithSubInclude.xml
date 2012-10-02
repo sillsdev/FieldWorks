@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- used by the include XML tests -->
+<food>
+  <veggies id="InPng">
+	<name txt="aibika"/>
+	<name txt="taro"/>
+	<include path="fruit/sortOfFruitInclude.xml" query = "//thing"/>
+  </veggies>
+</food>

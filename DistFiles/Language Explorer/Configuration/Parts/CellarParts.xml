@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand crafted parts for Cellar related classes. -->
+<PartInventory>
+	<bin class="CmPossibility">
+		<part id="CmPossibility-Jt-AbbreviationDot" type="jtview">
+			<string field="Abbreviation" ws="best analorvern"/>
+			<lit>. </lit>
+		</part>
+
+		<!-- A group of parts that may be selected for configuration in document views -->
+		<part id="CmPossibility-Jt-ConfigureAbbr" type="jtview">
+			<configureMlString field="Abbreviation"/>
+		</part>
+		<part id="CmPossibility-Jt-ConfigureName" type="jtview">
+			<configureMlString field="Name"/>
+		</part>
+
+		<!-- Shows the names of the item in all current analysis writing systems,
+		surrounded by parentheses and separated by a space, all in italics -->
+		<part id="CmPossibility-Jt-ItalicNameList" type="jtview">
+			<span>
+				<properties>
+					<italic value="on"/>
+				</properties>
+				<lit>(</lit>
+				<multiling ws="all analysis" sep=" ">
+					<!-- <labelws/> -->
+					<string class="CmPossibility" field="Name" ws="current"/>
+				</multiling>
+				<lit>) </lit>
+			</span>
+		</part>
+
+		<part id="CmPossibility-Jt-NameList" type="jtview">
+			<multiling ws="all analysis" sep=" ">
+				<string class="CmPossibility" field="Name" ws="current"/>
+			</multiling>
+		</part>
+
+		<part id="CmPossibility-Jt-FirstAnalysisName" type="jtview">
+			<string class="CmPossibility" field="Name" ws="analysis"/>
+		</part>
+
+		<!-- displays the abbreviation and a space for the 'best available' writing system-->
+		<part id="CmPossibility-Jt-bestAbbrSpace" type="jtview">
+			<string field="Abbreviation" ws="best analorvern"/>
+			<lit>&#32;</lit>
+		</part>
+
+	<!-- displays the name for the 'best available' writing system-->
+	<part id="CmPossibility-Jt-bestName" type="jtview">
+	  <string field="Name" ws="best analorvern"/>
+	</part>
+
+		<!-- displays the abbreviation preceded by two spaces and open paren,
+		followed by close paren space (all omitted if default analysis ws is empty)-->
+		<part id="CmPossibility-Jt-SpaceParenAbbr" type="jtview">
+			<ifnot field="Abbreviation" stringaltequals="" ws="analysis">
+				<lit>&#32;&#32;(</lit>
+				<string field="Abbreviation" ws="best analorvern"/>
+				<lit>)&#32;</lit>
+			</ifnot>
+		</part>
+
+		<part id="CmPossibility-Jt-GreenNamePara" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="green"/>
+				</properties>
+				<string class="PartOfSpeech" field="Name" ws="best analorvern"/>
+			</para>
+		</part>
+		<part id="CmPossibility-Jt-GreenAbbrPara" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="green"/>
+				</properties>
+				<string class="PartOfSpeech" field="Abbreviation" ws="best analorvern"/>
+			</para>
+		</part>
+		<part id="CmPossibility-Jt-ParaAbbrColonName" type="jtview">
+			<para>
+				<string field="Abbreviation" ws="best analorvern"/>
+				<lit>:&#32;</lit>
+				<string field="Name" ws="analysis"/>
+			</para>
+		</part>
+
+	</bin>
+	<bin class="CmObject">
+	<!-- a trivial part that just inserts a literal space -->
+		<part id="CmObject-Jt-Space" type="jtview">
+			<lit>&#32;</lit>
+		</part>
+		<!-- a part useful in debugging to ensure that a particular layout
+		is actually being found and used -->
+		<part id="CmObject-Jt-Marker" type="jtview">
+			<lit>Got it!!</lit>
+		</part>
+		<part id="CmObject-Jt-shortname" type="jtview">
+			<string field="ShortNameTSS"/>
+		</part>
+	</bin>
+	<bin class="CmBaseAnnotation">
+		<part id="CmBaseAnnotation-Jt-Note" type="jtview">
+			<para>
+				<lit>This will eventually have an explanation of the problem, links to help about fixing it, and a way to jump to the problem object. The user won't see this...  we need to have a way to convert it to a sentence in the user interface language.</lit>
+			</para>
+		</part>
+		<part id="CmBaseAnnotation-Detail-BeginObjectLink" type="Detail">
+			<slice field="BeginObject" label="Problem Object" editor="hyperlink" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="Segment-Jt-BaselineText">
+			  <string field="BaselineText"/>
+	</part>
+	<part id="Segment-Jt-FreeTrans">
+		<lit>FT </lit>
+		<multiling ws="all analysis" sep=" ">
+		  <ifnot field="FreeTranslation" stringaltequals="" ws="current">
+			<string field="FreeTranslation" ws="current"/>
+		  </ifnot>
+		</multiling>
+	</part>
+	<part id="Segment-Jt-LitTrans">
+	  <lit>LT </lit>
+	  <multiling ws="all analysis" sep=" ">
+		<ifnot field="LiteralTranslation" stringaltequals="" ws="current">
+		  <string field="LiteralTranslation" ws="current"/>
+		</ifnot>
+	  </multiling>
+	</part>
+	<part id="Segment-Jt-Notes">
+	  <seq field="Notes" layout="preview"/>
+	</part>
+  </bin>
+  <bin class="Note">
+	<part id="Note-Jt-Content">
+	  <lit>Note </lit>
+	  <multiling ws="all analysis" sep=" ">
+		<ifnot field="Content" stringaltequals="" ws="current">
+		  <string field="Content" ws="current"/>
+		</ifnot>
+	  </multiling>
+	</part>
+
+  </bin>
+	<bin class="CmAnnotation">
+		<part id="CmAnnotation-Detail-TextOnly" type="Detail">
+			<slice label="Text" editor="sttext" field="Text" menu="mnuDataTree-Help"/>
+		</part>
+	</bin>
+	<bin class="CmIndirectAnnotation">
+		<part id="CmIndirectAnnotation-Jt-CommentPub">
+			<multiling ws="all analysis" sep=" ">
+				<ifnot field="Comment" stringaltequals="" ws="current">
+					<string field="Comment" ws="current"/>
+				</ifnot>
+			</multiling>
+		</part>
+		<part id="CmIndirectAnnotation-Jt-TypePub">
+			<ifnot field="Comment" stringaltequals="" ws="all analysis">
+				<obj class="CmAnnotation" field="AnnotationType" layout="bestAbbrSpace" />
+			</ifnot>
+		</part>
+	</bin>
+	<bin class="Text">
+		<part id="Text-Detail-TitleAllWs" type="Detail">
+			<slice label="Title" editor="multistring" ws="vernacular analysis" field="Name" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="Text-Detail-AbbreviationAllWs" type="Detail">
+			<slice label="Abbreviation" editor="multistring" ws="vernacular analysis" field="Abbreviation" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="Text-Detail-SourceAllWs" type="Detail">
+			<slice label="Source" editor="multistring" ws="vernacular analysis" field="Source" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="Text-Detail-IsTranslated" type="Detail">
+			<slice label="Text is a translation" field="IsTranslated" editor="Checkbox" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="Text-Detail-CommentAllWs" type="Detail">
+			<slice label="Comment" editor="multistring" ws="analysis vernacular" field="Description" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="Text-Detail-Genres" type="Detail">
+			<slice field="Genres" label="Genres" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analysis"/>
+				<chooserInfo>
+					<chooserLink type="goto" label="Edit the Genres" tool="genresEdit" />
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="Text-Detail-Contents" type="Detail">
+			<slice field="Contents" label="Text" editor="sttext" sameObject="true" sameObjectNext="true" menu="mnuDataTree-Text"/>
+		</part>
+		<part id="Text-Detail-NotebookSection" type="Detail" paramType="LiteralString">
+			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" menu="mnuTextInfo-Notebook"/>
+		</part>
+		<part id="Text-Detail-NotebookFields" type="Detail" >
+			<choice>
+				<where target="owner" is="RnGenericRec">
+					<obj field="Owner" layout="TextInfoFields"/>
+				</where>
+				<otherwise>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Researchers" label="Researchers">
+						<chooserInfo>
+							<!-- Duplicates info in RnGenericRec-Detail-Researchers-->
+							<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
+						</chooserInfo>
+					</slice>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Sources" label="Sources">
+						<chooserInfo>
+							<!-- Duplicates info in RnGenericRec-Detail-Sources-->
+							<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
+						</chooserInfo>
+					</slice>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Participants" label="Participants">
+						<chooserInfo>
+							<!-- Duplicates info in RnGenericRec-Detail-Participants-->
+							<chooserLink type="goto" label="Edit the list of People" tool="peopleEdit" />
+						</chooserInfo>
+					</slice>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Locations" label="Locations">
+						<chooserInfo>
+							<!-- Duplicates info in RnGenericRec-Detail-Locations-->
+							<chooserLink type="goto" label="Edit the list of Locations" tool="locationsEdit" />
+						</chooserInfo>
+					</slice>
+					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="AnthroCodes" label="AnthroCodes">
+						<chooserInfo helpBrowser="true">
+							<!-- Duplicates info in RnGenericRec-Detail-AnthroCodes-->
+							<chooserLink type="goto" label="Edit the Anthropology Categories" tool="anthroEdit" />
+						</chooserInfo>
+					</slice>
+				</otherwise>
+			</choice>
+		</part>
+
+	</bin>
+	<bin class="StText">
+		<part id="StText-Detail-TitleAllWs" type="Detail">
+			<slice label="Title" editor="multistring" editable="no" ws="vernacular analysis" field="Title" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="StText-Detail-IsTranslation" type="Detail">
+			<slice label="Text is a translation" field="IsTranslation" editor="Checkbox" editable="no" menu="mnuDataTree-Help"/>
+		</part>
+		<part id="StText-Jt-Paragraphs" type="jtview">
+			<div>
+				<properties>
+					<maxlines value="5"/>
+				</properties>
+				<seq field="Paragraphs" layout="FullText"/>
+			</div>
+		</part>
+		<part id="StText-Jt-FullTextInParagraphs" type="jtview">
+			<seq field="Paragraphs" layout="publishParagraph"/>
+		</part>
+	</bin>
+	<bin class="StTxtPara">
+		<part id="StTxtPara-Jt-Contents" type="jtview">
+			<para>
+				<string field="Contents"/>
+			</para>
+		</part>
+		<part id="StTxtPara-Jt-ContentsAsPara" type="jtview">
+			<!--lit>&#x2028;</lit-->
+			<string field="Contents"/>
+		</part>
+	</bin>
+</PartInventory>

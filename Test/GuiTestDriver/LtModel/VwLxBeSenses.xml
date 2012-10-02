@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<bulk-edit-senses role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer/">
+
+  <var id="SBE2" set="9:SenseBulkEdit/9:SenseBulkEdit/"/>
+
+  <!-- the browse pane -->
+  <senses role="pane">
+	<var id="senseBeList" set="$SBE2;$nl"/>
+	<title path="9:XCore.PaneBar/9:Senses"/>
+	<col path="$senseBeList">
+	   <checks path="[3]/43:NAMELESS"/>
+	   <changer path="[4]/43:NAMELESS"/>
+	   <header path="/9:HeaderListView/33:HeaderListView/$NL;25:"/>
+	   <filter path="/9:FilterBar/9:FwComboBox[$col;]/">
+		 <text path="20:RootSite/$Text"/>
+		 <drop path="$NL;43:NAMELESS"/>
+	   </filter>
+	</col>
+	<record path="$senseBeList;/20:RootSite/24:Table[$row;]/">
+	   <col path="$Col;[$col;]/$Text"/>
+	   <check path="$Col;/40:Picture"/>
+	</record>
+	<scroll path="$senseBeList;[2]/">
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </senses>
+
+  <var id="SBE2BEB" set="$SBE2;9:BulkEditBar/"/>
+
+  <list-choice role="tab" path="$SBE2BEB">
+	<tab path="37:List Choice"/>
+	<target-field path="9:Select the target field and the list choice to change it to[2]/60:Select the target field and the list choice to change it to/9:List Choice/9:Target Field:[2]/">
+	  <text path="41:Target Field:"/>
+	  <open path="43:Open"/>
+	</target-field>
+	<change-to path="9:Select the target field and the list choice to change it to[2]/60:Select the target field and the list choice to change it to/9:List Choice/">
+	   <none path="9:Change To:[3]/">
+		 <text path="20:RootSite/$Text"/>
+		 <open path="$NL;43:NAMELESS"/>
+	   </none>
+	   <text path="9:$fld;/20:RootSite/$Text"/>
+	   <open path="9:$fld;/$NL;43:NAMELESS"/>
+	</change-to>
+	<preview path="9:Preview/43:Preview"/>
+	<apply path="9:Apply/43:Apply"/>
+	<help path="9:Help/43:Help"/>
+  </list-choice>
+
+  <bulk-copy role="tab" path="$SBE2BEB">
+	<tab path="37:Bulk Copy"/>
+	<source-field path="9:Copy the contents of the source field to the target field[2]/60:Copy the contents of the source field to the target field/9:Bulk Copy/9:Target Field:[2]/">
+	  <text path="41:Target Field:"/>
+	  <open path="43:Open"/>
+	</source-field>
+	<change-to path="9:Copy the contents of the source field to the target field[2]/60:Copy the contents of the source field to the target field/9:Bulk Copy/$nl">
+	  <text path="/41:NAMELESS"/>
+	  <open path="/43:Open"/>
+	</change-to>
+	<old-value path="[2]/9:When the old value is not empty.../20:When the old value is not empty.../">
+	  <do-nothing path="9:Do nothing/45:Do nothing"/>
+	  <overwrite path="9:Overwrite/45:Overwrite"/>
+	  <append path="9:Add after old value, sep. by/45:Add after old value, sep. by"/>
+	  <separator path="9: /20:RootSite"/>
+	</old-value>
+	<preview path="9:Preview/43:Preview"/>
+	<apply path="9:Apply/43:Apply"/>
+	<help path="9:Help/43:Help"/>
+  </bulk-copy>
+
+  <click-copy role="tab" path="$SBE2BEB">
+	<tab path="37:Click Copy"/>
+	<var id="titleCC" set="9:Click on any word to copy it to the target field[2]/60:Click on any word to copy it to the target field/9:Click Copy/"/>
+	<target-field path="$titleCC;9:Target Field:[2]/">
+	  <text path="41:Target Field:"/>
+	  <open path="43:Open"/>
+	</target-field>
+	<copy path="$titleCC;9:Copy/20:Copy/" >
+	  <word path="9:Word/45:Word"/>
+	  <string path="9:String, reordered at word clicked/45:String, reordered at word clicked"/>
+	</copy>
+	<old-value path="$titleCC;9:If target is not empty.../20:If target is not empty.../">
+	  <append path="9:Append/45:Append"/>
+	  <separator path="9: /20:RootSite"/>
+	  <overwrite path="9:Overwrite/45:Overwrite"/>
+	</old-value>
+	<help path="9:Help/43:Help"/>
+  </click-copy>
+
+  <process role="tab" path="$SBE2BEB">
+	<tab path="37:Process"/>
+	<var id="titlePR" set="9:Populate a field by applying a complex process to another field[2]/60:Populate a field by applying a complex process to another field/9:Process/"/>
+	<source-field path="$titlePR;$NL">
+	  <text path="41:NAMELESS"/>
+	  <open path="43:Open"/>
+	</source-field>
+	<target-field path="$titlePR;9:Target Field:[2]/">
+	  <text path="41:Target Field:"/>
+	  <open path="43:Open"/>
+	</target-field>
+	<old-value path="$titlePR;$nl;[3]/9:When the old value is not empty.../20:When the old value is not empty.../">
+	  <do-nothing path="9:Do nothing/45:Do nothing"/>
+	  <overwrite path="9:Overwrite/45:Overwrite"/>
+	  <append path="9:Add after old value, sep. by/45:Add after old value, sep. by"/>
+	  <separator path="9: /20:RootSite"/>
+	</old-value>
+	<process path="$titlePR;$nl;[2]/">
+	  <text path="41:NAMELESS"/>
+	  <open path="43:Open"/>
+	</process>
+	<setup role="button" path="$titlePR;9:Setup.../43:Setup..."/>
+	<preview path="9:Preview/43:Preview"/>
+	<apply path="9:Apply/43:Apply"/>
+	<help path="9:Help/43:Help"/>
+  </process>
+
+  <bulk-replace role="tab" path="$SBE2BEB">
+	<tab path="37:Bulk Replace"/>
+	<var id="titleBR" set="9:Change each occurrence of a pattern to the replacement text[2]/60:Change each occurrence of a pattern to the replacement text/9:Bulk Replace/"/>
+	<target-field path="$titleBR;9:Target Field:[2]/">
+	  <text path="41:Target Field:"/>
+	  <open path="43:Open"/>
+	</target-field>
+	<setup role="button" path="$titleBR;9:Setup.../43:Setup..."/>
+	<preview path="9:Preview/43:Preview"/>
+	<apply path="9:Apply/43:Apply"/>
+	<help path="9:Help/43:Help"/>
+  </bulk-replace>
+
+  <delete role="tab" path="$SBE2BEB">
+	<tab path="37:Delete"/>
+	<item path="9:Delete the contents of the specified column for all selected rows[2]/60:Delete the contents of the specified column for all selected rows/9:Delete/9:Replace o: with oo/">
+	  <text path="41:Replace o: with oo"/>
+	  <open path="43:Open"/>
+	</item>    <preview path="9:Preview/43:Preview"/>
+	<apply path="9:Apply/43:Apply"/>
+	<help path="9:Help/43:Help"/>
+  </delete>
+
+</bulk-edit-senses>

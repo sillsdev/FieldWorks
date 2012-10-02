@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<!-- ********************************************************** -->
+	<!-- ************************ commands ******************** -->
+	<!-- ********************************************************** -->
+	<commands>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/commands/*"/>
+		<!-- Parser commands -->
+		<command id="CmdEditParserParameters" label="_Edit Parser Parameters..." message="EditParserParameters">
+			<params className="MoMorphData"/>
+		</command>
+		<command id="CmdParseAllWords" label="Pa_rse all words" message="ParseAllWords"/>
+		<command id="CmdStopParser" label="_Stop Parser" message="StopParser"/>
+		<command id="CmdReparseAllWords" label="_Reparse all words" message="ReparseAllWords"/>
+		<command id="CmdTryAWord" label="_Try a Word..." icon="tryAWord" message="TryAWord"/>
+		<command id="CmdParseCurrentWord" label="Parse _Current Word" message="ParseCurrentWord"/>
+	<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
+	<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
+	<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
+	<command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
+		<command id="CmdChooseXAmpleParser" label="Default Parser (XAmple)" message="ChooseParser">
+			<parameters parser="XAmple"/>
+		</command>
+		<command id="CmdChooseHCParser" label="Phonological Rule-based Parser (HermitCrab.NET)" message="ChooseParser">
+			<parameters parser="HC"/>
+		</command>
+
+		<!-- Texts Area commands-->
+		<command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
+			<parameters className="StText"/>
+		</command>
+		<command id="CmdAddTexts" label="Choose Texts..." message="AddTexts" icon="addScripture"/>
+		<command id="CmdLexiconLookup" label="Find in _Dictionary..." message="LexiconLookup" icon="findInDictionary"/>
+		<command id="CmdAddFreeTrans" label="_Free Translation" message="AddFreeTrans" icon="addFreeTranslation"/>
+		<command id="CmdAddLitTrans" label="_Literal Translation" message="AddLitTrans" shortcut="Ctrl+L" icon="addLiteralTranslation"/>
+		<command id="CmdAddNote" label="_Note" message="AddNote" shortcut="Ctrl+N" icon="insertNote"/>
+
+		<!--Note: -->
+		<!--the shortcut="Enter" does not actually work.  Other options like shortcut="Ctrl+W: do work. Therefore code was added to
+			C:\fw60\Src\LexText\Interlinear\InterlinDocView.cs  OnKeyDown(KeyEventArgs e) to actually call OnAddWordGlossesToFreeTrans()
+			LT-9570 -->
+		<command id="CmdAddWordGlossesToFreeTrans" label="_Word Glosses" message="AddWordGlossesToFreeTrans" shortcut="Enter"/>
+
+		<command id="CmdGuessWordBreaks" label="_Guess Word Breaks" message="GuessWordBreaks"/>
+		<command id="CmdParse" label="_Parse" message="ReParse"/>
+
+		<command id="CmdApprove" label="Approve and _Stay" message="ApproveAndStayPut" shortcut="Ctrl+S"/>
+		<!--command id="CmdApproveAndStayPut" label="Stay Put" tooltip="Approve (and do not move)" message="ApproveAndStayPut" shortcut="Ctrl+S" /-->
+		<command id="CmdApproveAndMoveNext" label="_Approve and Move Next" message="ApproveAndMoveNext" shortcut="Enter" icon="approveAndMoveNext"/>
+		<command id="CmdBrowseMoveNext" label="Move _Next" message="BrowseMoveNext" shortcut="Shift+Enter"/>
+		<command id="CmdApproveAndMoveNextSameLine" label="Move Next, _Same Line" message="ApproveAndMoveNextSameLine" shortcut="Ctrl+Enter"/>
+		<command id="CmdApproveForWholeTextAndMoveNext" label="Approve _Throughout this Text" message="ApproveForWholeTextAndMoveNext" shortcut="Ctrl+E" icon="browseAndMoveNext"/>
+		<command id="CmdBrowseMoveNextSameLine" label="Move Next, _Same Line" message="BrowseMoveNextSameLine" shortcut="Shift+Ctrl+Enter"/>
+		<command id="CmdMoveFocusBoxRight" label="Move _Right" message="MoveFocusBoxRight" shortcut="Ctrl+Right"/>
+		<command id="CmdMoveFocusBoxLeft" label="Move _Left" message="MoveFocusBoxLeft" shortcut="Ctrl+Left"/>
+		<command id="CmdBundleDown" label="Move _Down" message="BundleDown" shortcut="Ctrl+Down"/>
+		<command id="CmdBundleUp" label="Move _Up" message="BundleUp" shortcut="Ctrl+Up"/>
+		<command id="CmdMoveFocusBoxRightNc" label="Move _Right" message="MoveFocusBoxRightNc" shortcut="Shift+Ctrl+Right"/>
+		<command id="CmdMoveFocusBoxLeftNc" label="Move _Left" message="MoveFocusBoxLeftNc" shortcut="Shift+Ctrl+Left"/>
+		<command id="CmdBundleDownNc" label="Move _Down" message="BundleDownNc" shortcut="Ctrl+Shift+Down"/>
+		<command id="CmdBundleUpNc" label="Move _Up" message="BundleUpNc" shortcut="Ctrl+Shift+Up"/>
+		<command id="CmdLastBundle" label="Last Word" message="LastBundle" shortcut="Ctrl+End"/>
+		<command id="CmdFirstBundle" label="First Word" message="FirstBundle" shortcut="Ctrl+Home"/>
+		<command id="CmdOpenCombo" label="Open Combo" message="OpenCombo" shortcut="Alt+Down"/>
+		<command id="CmdNextIncompleteBundle" label="Approve and _Jump to Next Incomplete" message="NextIncompleteBundle" shortcut="Ctrl+J"/>
+		<command id="CmdNextIncompleteBundleNc" label="_Jump to Next" message="NextIncompleteBundleNc" shortcut="Shift+Ctrl+J"/>
+		<command id="CmdPrevIncompleteBundle" label="Previous Incomplete Word" message="PrevIncompleteBundle"/>
+		<!--<command id="CmdToggleRawAndInterlinear" label="Toggle _Baseline and Interlinearize" message="ToggleRawAndInterlinear" shortcut="Ctrl+R"/>-->
+		<command id="CmdShowMorphology" label="Show _Morphology" message="ShowMorphology" shortcut="Ctrl+M"/>
+		<command id="CmdBreakPhrase" label="_Break phrase into words" message="BreakPhrase" icon="breakPhrase" shortcut="Ctrl+W"/>
+		<command id="CmdMakePhrase" label="_Make phrase with next word" message="JoinWords" icon="linkWords" shortcut="Ctrl+M"/>
+		<!-- The next three commands have different labels, but the same message. -->
+		<command id="CmdDeleteFreeTrans" label="Delete Free Translation" message="DeleteFreeform"/>
+		<command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform"/>
+		<command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform"/>
+		<!--		<command id="CmdShowMorphBundles" label="Show Morphology" message="ShowMorphBundles" boolProperty="ShowMorphBundles"/> -->
+		<command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear"/>
+		<command id="CmdExportInterlinear" label="_Export Interlinear..." message="ExportInterlinear"/>
+		<command id="CmdExportDiscourseChart" label="Export Discourse Chart..." message="ExportDiscourse"/>
+		<!-- the next two commands duplicate another shortcut, and should not be shown or enabled at the same time as
+			  the focus-box moving commands-->
+		<command id="CmdRepeatLastMoveLeft" label="Move _Left (last thing moved)" message="RepeatLastMoveLeft" shortcut="Ctrl+Left"/>
+		<command id="CmdRepeatLastMoveRight" label="Move _Right (last thing moved)" message="RepeatLastMoveRight" shortcut="Ctrl+Right"/>
+
+		<!-- Wordform commands -->
+		<command id="CmdGoToWfiWordform" label="_Find Wordform..." message="GotoWfiWordform" icon="findWordform" shortcut="Ctrl+F">
+			<parameters title="Go To Wordform" formlabel="Go _To..." okbuttonlabel="_Go"/>
+		</command>
+		<command id="CmdShowWordformConc" label="Assign Analysis..." message="ShowWordformConc"/>
+		<!--<command id="CmdWordformSpellingStatusUnknown" label="Unknown" message="SpellingStatusUnknown"/>
+		<command id="CmdWordformSpellingStatusGood" label="Good" message="SpellingStatusGood"/>
+		<command id="CmdWordformSpellingStatusDisapprove" label="Disapproved" message="SpellingStatusDisapprove"/>-->
+		<command id="CmdDataTree-Merge-MainWordform" label="Merge Wordform..." message="MergeWordform"/>
+		<command id="CmdDataTree-Delete-MainWordform" label="Delete Wordform..." message="DeleteRecord" icon="Delete"/>
+		<command id="CmdWordformEditForm" label="Edit..." message="WordformEditForm"/>
+		<command id="CmdWordformChangeCase" label="Change Case..." message="WordformChangeCase"/>
+		<!-- Analysis commands -->
+		<command id="CmdShowHumanApprovedAnalysisConc" label="Assign Analysis..." message="ShowHumanApprovedAnalysisConc"/>
+		<command id="CmdDataTree-Delete-HumanApprovedAnalysis" label="Delete Analysis..." message="DataTreeDelete" icon="Delete">
+			<parameters field="Analyses" className="WfiAnalysis"/>
+		</command>
+		<command id="CmdDataTree-Delete-ParserProducedAnalysis" label="Delete Candidate..." message="DataTreeDelete" icon="Delete">
+			<parameters field="Analyses" className="WfiAnalysis"/>
+		</command>
+		<command id="CmdDataTree-Delete-HumanDisapprovedAnalysis" label="Delete Disapproved Analysis..." message="DataTreeDelete" icon="Delete">
+			<parameters field="Analyses" className="WfiAnalysis"/>
+		</command>
+		<command id="CmdAnalysisApprove" label="Approve" message="AnalysisApprove"/>
+		<command id="CmdAnalysisUnknown" label="Unknown" message="AnalysisUnknown"/>
+		<command id="CmdAnalysisDisapprove" label="Disapprove" message="AnalysisDisapprove"/>
+		<!-- WfiGloss commands -->
+		<command id="CmdShowWordGlossConc" label="Assign Analysis..." message="ShowWordGlossConc"/>
+		<command id="CmdDataTree-Merge-WordGloss" label="Merge Gloss..." message="DataTreeMerge">
+			<parameters field="Meanings" className="WfiGloss"/>
+		</command>
+		<command id="CmdDataTree-Delete-WordGloss" label="Delete Gloss..." message="DataTreeDelete" icon="Delete">
+			<parameters field="Meanings" className="WfiGloss"/>
+		</command>
+		<command id="CmdDataTree-Insert-WordGloss" label="Add Word Gloss" message="DataTreeInsert">
+			<parameters field="Meanings" className="WfiGloss"/>
+		</command>
+		<command id="CmdInsertHumanApprovedAnalysis" label="Add Approved Analysis..." message="AddApprovedAnalysis" icon="addNewAnalysis">
+			<parameters field="Analyses" className="WfiAnalysis"/>
+		</command>
+		<command id="CmdRespeller" label="Change Spelling..." message="LaunchRespellerDlg"/>
+	</commands>
+	<!-- ********************************************************** -->
+	<!-- ************************ lists *********************** -->
+	<!-- ********************************************************** -->
+	<lists>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/lists/*"/>
+		<list id="WordToolsList"/>
+	</lists>
+	<!-- ********************************************************** -->
+	<!-- ************* controls (embedded browse view) ************ -->
+	<!-- ********************************************************** -->
+	<controls>
+		<parameters id="guicontrols">
+			<guicontrol id="TextInformationPane">
+				<control>
+					<!-- dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/ -->
+					<parameters area="textsWords" clerk="interlinearTexts" layout="FullInformation" treeBarAvailability="NotAllowed">
+						<menuHandler>
+							<dynamicloaderinfo assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryMenuHandler"/>
+						</menuHandler>
+					</parameters>
+				</control>
+			</guicontrol>
+			<guicontrol id="WordformConcordanceBrowseView">
+				<parameters id="WordformInSegmentsOccurrenceList" selectColumn="true"
+					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiWordform" filterBar="true"
+					ShowOwnerShortname="true">
+					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="AnalysisConcordanceBrowseView">
+				<parameters id="AnalysisInSegmentsOccurrenceList" selectColumn="true"
+					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiAnalysis" filterBar="true"
+					ShowOwnerShortname="true">
+					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="GlossConcordanceBrowseView">
+				<parameters id="GlossInSegmentsOccurrenceList" selectColumn="true"
+					defaultChecked="true" omitFromHistory="true" allowInsertDeleteRecord="false"
+					editable="false" clerk="segmentOccurrencesOfWfiGloss" filterBar="true"
+					ShowOwnerShortname="true">
+					<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="WordformsBrowseView">
+				<parameters id="simpleWordList" listItemsClass="WfiWordform" clerk="matchingWords"
+					filterBar="false" treeBarAvailability="NotAllowed" defaultCursor="Arrow"
+					hscroll="true" editable="false">
+					<columns>
+						<column label="Wordform" ws="$ws=best vernacular" editable="false"
+							width="100%" field="Form">
+							<span>
+								<properties>
+									<editable value="false"/>
+								</properties>
+								<string field="Form" ws="$ws=best vernacular"/>
+							</span>
+						</column>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<guicontrol id="MergeWordGlossList">
+				<parameters id="mergeWordGlossList" listItemsClass="WfiGloss" filterBar="false"
+					treeBarAvailability="NotAllowed" defaultCursor="Arrow" hscroll="true"
+					editable="false" selectColumn="false">
+					<columns>
+						<column label="Gloss" width="100%" layout="Form" ws="$ws=best analysis" field="Form"/>
+					</columns>
+				</parameters>
+			</guicontrol>
+			<include path="Extensions/*/AreaConfigurationExtension.xml"
+				query="root/controls/parameter/guicontrol/*"/>
+			<clerks>
+				<!-- this clerk is explicitly known to InterlinearSfmImportWizard.OnFinishButton-->
+				<clerk id="interlinearTexts" shouldHandleDeletion="false">
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
+		  <recordList owner="LangProject" property="InterestingTexts">
+			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
+		  </recordList>
+		  <filters/>
+					<sortMethods/>
+				</clerk>
+				<clerk id="segmentOccurrencesOfWfiWordform" shouldHandleDeletion="false">
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
+					<recordList class="WfiWordform" field="ExactOccurrences">
+			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+		  </recordList>
+					<filters/>
+					<sortMethods/>
+				</clerk>
+				<clerk id="segmentOccurrencesOfWfiAnalysis" shouldHandleDeletion="false">
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
+					<recordList class="WfiAnalysis" field="ExactOccurrences">
+			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+		  </recordList>
+					<filters/>
+					<sortMethods/>
+				</clerk>
+				<clerk id="segmentOccurrencesOfWfiGloss" shouldHandleDeletion="false">
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.TemporaryRecordClerk"/>
+					<recordList class="WfiGloss" field="ExactOccurrences">
+			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+		  </recordList>
+					<filters/>
+					<sortMethods/>
+				</clerk>
+				<clerk id="matchingWords" shouldHandleDeletion="false">
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MatchingItemsRecordClerk"/>
+					<recordList owner="WordformInventory" property="Wordforms">
+						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MatchingItemsRecordList"/>
+					</recordList>
+					<filters/>
+					<sortMethods/>
+				</clerk>
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/controls/parameter/clerks/clerk/*"/>
+			</clerks>
+		</parameters>
+	</controls>
+	<!-- ********************************************************** -->
+	<!-- ************************ menus *********************** -->
+	<!-- ********************************************************** -->
+	<menubar>
+		<menu id="Parser" label="Pa_rser">
+			<item command="CmdParseAllWords"/>
+	  <item command="CmdReparseAllWords"/>
+	  <item command="CmdReInitializeParser"/>
+	  <item command="CmdStopParser"/>
+			<item label="-" translate="do not translate"/>
+	  <item command="CmdTryAWord"/>
+	  <item command="CmdParseWordsInCurrentText"/>
+	  <item command="CmdParseCurrentWord"/>
+	  <item command="CmdClearSelectedWordParserAnalyses" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<menu id="ChooseParserMenu" label="Choose Parser">
+				<item command="CmdChooseXAmpleParser"/>
+				<item command="CmdChooseHCParser"/>
+			</menu>
+	  <item command="CmdEditParserParameters"/>
+		</menu>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
+	</menubar>
+	<!-- ********************************************************** -->
+	<!-- ************************ menuAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<menuAddOn>
+		<menu id="FileExport">
+			<item command="CmdExportInterlinear" defaultVisible="false"/>
+			<item command="CmdExportDiscourseChart" defaultVisible="false"/>
+		</menu>
+		<menu id="Edit">
+			<item command="CmdGoToWfiWordform" defaultVisible="false"/>
+		</menu>
+		<menu id="View">
+			<item command="CmdAddTexts" defaultVisible="false"/>
+			<!--<item command="CmdToggleRawAndInterlinear" defaultVisible="false"/>-->
+			<!--<item label="Show _Morphology" boolProperty="ShowMorphBundles" defaultVisible="false" /> -->
+		</menu>
+
+		<menu id="Data">
+			<item command="CmdParse" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdApproveAndMoveNext" defaultVisible="false"/>
+			<item command="CmdApproveForWholeTextAndMoveNext" defaultVisible="false"/>
+			<item command="CmdNextIncompleteBundle" defaultVisible="false"/>
+			<item command="CmdApprove" defaultVisible="false"/>
+			<menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
+				<!--item command="CmdApproveAndStayPut" /-->
+				<item command="CmdApproveAndMoveNextSameLine"/>
+				<item command="CmdMoveFocusBoxRight"/>
+				<item command="CmdMoveFocusBoxLeft"/>
+			</menu>
+			<menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
+				<item command="CmdBrowseMoveNext"/>
+				<item command="CmdNextIncompleteBundleNc"/>
+				<item command="CmdBrowseMoveNextSameLine"/>
+				<item command="CmdMoveFocusBoxRightNc"/>
+				<item command="CmdMoveFocusBoxLeftNc"/>
+			</menu>
+			<item command="CmdMakePhrase" defaultVisible="false"/>
+			<item command="CmdBreakPhrase" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdRepeatLastMoveLeft"  defaultVisible="false"/>
+			<item command="CmdRepeatLastMoveRight"  defaultVisible="false"/>
+		</menu>
+
+		<menu id="Insert">
+			<item command="CmdInsertText" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdAddFreeTrans" defaultVisible="false"/>
+			<item command="CmdAddLitTrans" defaultVisible="false"/>
+			<item command="CmdAddNote" defaultVisible="false"/>
+			<item command="CmdAddWordGlossesToFreeTrans" defaultVisible="false"/>
+			<item label="Click Inserts Invisible Space" boolProperty="ClickInvisibleSpace" defaultVisible="false" settingsGroup="local" icon="zeroWidth"/>
+			<item command="CmdGuessWordBreaks" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdImportWordSet" defaultVisible="false"/>
+			<item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false"/>
+		</menu>
+
+		<menu id="Tools">
+			<!-- These two are mutually exclusive.-->
+			<item command="CmdLexiconLookup" defaultVisible="false"/>
+			<item label="Add Words to Lexicon" defaultVisible="false" boolProperty="ITexts_AddWordsToLexicon"/>
+		</menu>
+		<!-- This is really the Tools-Configure submenu.-->
+		<menu id="Configure">
+			<item command="CmdConfigureInterlinear" defaultVisible="false"/>
+		</menu>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menuAddOn/*"/>
+	</menuAddOn>
+	<!-- ********************************************************** -->
+	<!-- ************************ contextMenus *********************** -->
+	<!-- ********************************************************** -->
+	<contextMenus>
+		<menu id="PaneBar-ITextContent" label="">
+			<item label="Add Words to Lexicon" boolProperty="ITexts_AddWordsToLexicon" defaultVisible="false" settingsGroup="local"/>
+		</menu>
+		<menu id="mnuIText-FreeTrans">
+			<item command="CmdDeleteFreeTrans"/>
+		</menu>
+		<menu id="mnuIText-LitTrans">
+			<item command="CmdDeleteLitTrans"/>
+		</menu>
+		<menu id="mnuIText-Note">
+			<item command="CmdDeleteNote"/>
+		</menu>
+		<menu id="mnuIText-RawText">
+			<item command="CmdCut"/>
+			<item command="CmdCopy"/>
+			<item command="CmdPaste"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdLexiconLookup"/>
+			<item command="CmdWordformJumpToAnalyses"/>
+			<item command="CmdWordformJumpToConcordance"/>
+			<!-- multiple change spelling is also wanted...see LT-4014-->
+		</menu>
+		<menu id="mnuFocusBox">
+			<item command="CmdApproveAndMoveNext"/>
+			<item command="CmdApproveForWholeTextAndMoveNext"/>
+			<item command="CmdNextIncompleteBundle"/>
+			<item command="CmdApprove">Approve the suggested analysis and stay on this word</item>
+			/>
+			<menu id="ApproveAnalysisMovementMenu" label="_Approve suggestion and" defaultVisible="false">
+				<!--item command="CmdApproveAndStayPut" /-->
+				<item command="CmdApproveAndMoveNextSameLine"/>
+				<item command="CmdMoveFocusBoxRight"/>
+				<item command="CmdMoveFocusBoxLeft"/>
+			</menu>
+			<menu id="BrowseMovementMenu" label="Leave _suggestion and" defaultVisible="false">
+				<item command="CmdBrowseMoveNext"/>
+				<item command="CmdNextIncompleteBundleNc"/>
+				<item command="CmdBrowseMoveNextSameLine"/>
+				<item command="CmdMoveFocusBoxRightNc"/>
+				<item command="CmdMoveFocusBoxLeftNc"/>
+			</menu>
+			<item command="CmdMakePhrase" defaultVisible="false"/>
+			<item command="CmdBreakPhrase" defaultVisible="false"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdRepeatLastMoveLeft"  defaultVisible="false"/>
+			<item command="CmdRepeatLastMoveRight"  defaultVisible="false"/>
+		</menu>
+
+		<menu id="mnuDataTree-MainWordform">
+			<item command="CmdShowWordformConc"/>
+			<item command="CmdRespeller"/>
+			<!-- Not implemented yet
+			<menu id="mnuDataTree-WordformEdit" label="Form">
+				<item command="CmdWordformEditForm"/>
+				<item command="CmdWordformChangeCase"/>
+			</menu>
+			-->
+			<!--<menu id="mnuDataTree-WordformSpellingStatus" label="Spelling Status">
+				<item command="CmdWordformSpellingStatusUnknown"/>
+				<item command="CmdWordformSpellingStatusGood"/>
+				<item command="CmdWordformSpellingStatusDisapprove"/>
+			</menu>
+			<item label="-" translate="do not translate"/>-->
+			<!-- Not implemented yet
+			<item command="CmdDataTree-Merge-MainWordform"/>
+			-->
+			<item command="CmdDataTree-Delete-MainWordform"/>
+		</menu>
+		<menu id="mnuDataTree-WordformSpelling">
+			<item command="CmdRespeller"/>
+		</menu>
+		<menu id="mnuDataTree-MainWordform-Hotlinks">
+			<!--<item command="CmdWordformEditForm"/>
+			<item command="CmdWordformChangeCase"/>-->
+			<item command="CmdShowWordformConc"/>
+		</menu>
+		<menu id="mnuDataTree-HumanApprovedAnalysisSummary">
+			<item command="CmdInsertHumanApprovedAnalysis"/>
+		</menu>
+		<menu id="mnuDataTree-HumanApprovedAnalysisSummary-Hotlinks">
+			<item command="CmdInsertHumanApprovedAnalysis"/>
+		</menu>
+		<menu id="mnuDataTree-HumanApprovedAnalysis">
+			<item command="CmdShowHumanApprovedAnalysisConc"/>
+			<item command="CmdAnalysisJumpToConcordance"/>
+			<menu id="mnuDataTree-HumanApprovedStatus" label="User Opinion">
+				<item command="CmdAnalysisApprove"/>
+				<item command="CmdAnalysisUnknown"/>
+				<item command="CmdAnalysisDisapprove"/>
+			</menu>
+			<item command="CmdDataTree-Insert-WordGloss"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-HumanApprovedAnalysis"/>
+		</menu>
+		<menu id="mnuDataTree-HumanApprovedAnalysis-Hotlinks">
+			<!--<item command="CmdAnalysisUnknown"/>
+			<item command="CmdAnalysisDisapprove"/>-->
+			<item command="CmdShowHumanApprovedAnalysisConc"/>
+		</menu>
+		<menu id="mnuDataTree-ParserProducedAnalysis">
+			<menu id="mnuDataTree-ParserProducedStatus" label="User Opinion">
+				<item command="CmdAnalysisApprove"/>
+				<item command="CmdAnalysisUnknown"/>
+				<item command="CmdAnalysisDisapprove"/>
+			</menu>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-ParserProducedAnalysis"/>
+		</menu>
+		<!--<menu id="mnuDataTree-ParserProducedAnalysis-Hotlinks">
+			<item command="CmdAnalysisApprove"/>
+			<item command="CmdAnalysisDisapprove"/>
+		</menu>-->
+		<menu id="mnuDataTree-HumanDisapprovedAnalysis">
+			<menu id="mnuDataTree-HumanDisapprovedStatus" label="User Opinion">
+				<item command="CmdAnalysisApprove"/>
+				<item command="CmdAnalysisUnknown"/>
+				<item command="CmdAnalysisDisapprove"/>
+			</menu>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Delete-HumanDisapprovedAnalysis"/>
+		</menu>
+		<!--<menu id="mnuDataTree-HumanDisapprovedAnalysis-Hotlinks">
+			<item command="CmdAnalysisApprove"/>
+			<item command="CmdAnalysisUnknown"/>
+		</menu>-->
+		<menu id="mnuDataTree-WordGlossForm">
+			<item command="CmdShowWordGlossConc"/>
+			<item command="CmdWordGlossJumpToConcordance"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdDataTree-Merge-WordGloss"/>
+			<item command="CmdDataTree-Delete-WordGloss"/>
+		</menu>
+		<!--<menu id="mnuDataTree-WordGloss">
+			<item command="CmdDataTree-Insert-WordGloss"/>
+		</menu>
+		<menu id="mnuDataTree-WordGloss-Hotlinks">
+			<item command="CmdDataTree-Insert-WordGloss"/>
+		</menu>-->
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
+	</contextMenus>
+	<!-- ********************************************************** -->
+	<!-- ************************ sidebar *********************** -->
+	<!-- ********************************************************** -->
+	<sidebar>
+		<tab label="Word Tools" list="WordToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
+		<!-- <tab label="Filters" list="WordsFiltersList" behavior="singlePropertyAtomicValue" property="words">
+	  <item id="all" label="All" boolProperty="foo" icon="NoFilter"/>
+ see RecordClerk::OnDisplayWordsFiltersList
+	</tab>-->
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/sidebar/*"/>
+	</sidebar>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbars *********************** -->
+	<!-- ********************************************************** -->
+	<toolbars>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbars/*"/>
+	</toolbars>
+	<!-- ********************************************************** -->
+	<!-- ************************ toolbarsAddOn *********************** -->
+	<!-- ********************************************************** -->
+	<toolbarsAddOn>
+		<toolbar id="Edit">
+			<item command="CmdGoToWfiWordform" defaultVisible="false"/>
+			<item command="CmdFindAndReplaceText" defaultVisible="false"/>
+			<item command="CmdBreakPhrase" defaultVisible="false"/>
+		</toolbar>
+		<toolbar id="View">
+			<item command="CmdAddTexts" defaultVisible="false"/>
+		</toolbar>
+		<toolbar id="Insert">
+			<item command="CmdInsertText" defaultVisible="false"/>
+			<!--item command="CmdLexiconLookup" defaultVisible="false"/-->
+			<item label="-" translate="do not translate"/>
+			<item command="CmdAddFreeTrans" defaultVisible="false"/>
+			<item command="CmdAddLitTrans" defaultVisible="false"/>
+			<item command="CmdAddNote" defaultVisible="false"/>
+
+			<item command="CmdInsertHumanApprovedAnalysis" defaultVisible="false"/>
+		</toolbar>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/toolbarsAddOn/*"/>
+	</toolbarsAddOn>
+	<!-- ********************************************************** -->
+	<!-- ************************ resources *********************** -->
+	<!-- ********************************************************** -->
+	<resources>
+		<imageList assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ImageHolder" field="buttonImages" size="small"
+			labels="findInDictionary, addLiteralTranslation, addFreeTranslation, addNewText, insertNote, findReplaceText, linkWords, breakPhrase, addScripture, approveAndMoveNext, browseAndMoveNext, tryAWord, zeroWidth"/>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/resources/*"/>
+	</resources>
+	<!-- ********************************************************** -->
+	<!-- ************************ listeners *********************** -->
+	<!-- ********************************************************** -->
+	<listeners>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/listeners/*"/>
+		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MorphologyListener">
+			<parameters clerk="concordanceWords"/>
+		</listener>
+		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserListener"/>
+		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ParserParametersListener"/>
+		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.ImportWordSetListener"/>
+		<listener assemblyPath="ParserUI.dll" class="SIL.FieldWorks.LexText.Controls.TryAWordDialogLauncher"/>
+		<listener assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlgListener">
+			<parameters>
+				<clerks>
+					<clerk id="SrcWfiWordformConc" shouldHandleDeletion="false">
+						<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerTemporaryRecordClerk"/>
+						<recordList class="WfiWordform" field="Occurrences">
+							<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellerRecordList"/>
+							<decoratorClass assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RespellingSda"/>
+						</recordList>
+						<filters/>
+						<sortMethods/>
+					</clerk>
+				</clerks>
+				<controls>
+					<control id="srcSentences">
+						<parameters id="srcSentencesList" selectColumn="true" defaultChecked="true"
+							allowInsertDeleteRecord="false" editable="false"
+							clerk="SrcWfiWordformConc" filterBar="false" ShowOwnerShortname="true"
+							selectionStyle="none">
+							<include path="reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+						</parameters>
+					</control>
+				</controls>
+			</parameters>
+		</listener>
+	</listeners>
+	<!-- ********************************************************** -->
+	<!-- ************************ defaultProperties *********************** -->
+	<!-- ********************************************************** -->
+	<defaultProperties>
+		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/defaultProperties/*"/>
+		<!--This next line specifies which tool in this area is the default tool which Flex starts off in
+			  when the user switches to this area.-->
+		<property name="ToolForAreaNamed_textsWords" value="interlinearEdit" settingsGroup="local"/>
+		<!--
+			Set to 'true' to remove multi-morpheme analyses on simple typo fix.
+			Otherwise, set it to false to keep them.
+			The user will get to decide in the UI.
+		-->
+		<property name="RemoveAnalyses" bool="true" persist="true"/>
+		<property name="UpdateLexiconIfPossible" bool="true" persist="true"/>
+		<property name="ITexts_AddWordsToLexicon" bool="false" persist="true" settingsGroup="local"/>
+		<property name="ITexts_ShowAddWordsToLexiconDlg" bool="true" persist="true" settingsGroup="local"/>
+		<property name="ITexts-ScriptureIds" value="" persist="true" settingsGroup="local"/>
+	</defaultProperties>
+	<!-- ********************************************************** -->
+	<!-- *********************** Area Item *********************************** -->
+	<!-- ********************************************************** -->
+	<item label="Texts &amp; Words" value="textsWords" icon="folder-words">
+		<parameters id="textsWords">
+			<panels>
+				<listPanel label="Word Tools" listId="WordToolsList"/>
+				<!--  <listPanel label="Filters" listId="FiltersList"/>-->
+			</panels>
+			<clerks>
+				<!-- Only put clerks here if they are shared by various tools. Put clerks for specific tool usage in the tool definition file. -->
+				<clerk id="interlinearTexts">
+					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk"/>
+		  <recordList owner="LangProject" property="InterestingTexts">
+			<!-- We use a decorator here so it can override certain virtual properties and limit occurrences to interesting texts. -->
+			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.InterestingTextsDecorator"/>
+		  </recordList>
+					<filterMethods/>
+					<sortMethods/>
+				</clerk>
+				<clerk id="concordanceWords">
+					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearTextsRecordClerk"/>
+					<recordList owner="LangProject" property="Wordforms">
+			<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+		  </recordList>
+		  <filters>
+			<filter label="Default" assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WordsUsedOnlyElsewhereFilter"/>
+		  </filters>
+					<sortMethods>
+						<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
+					</sortMethods>
+					<recordFilterListProvider assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.WfiRecordFilterListProvider"/>
+				</clerk>
+				<include path="Analyses/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="Concordance/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="BulkEdit/toolConfiguration.xml" query="root/clerks/*"/>
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/clerks/*"/>
+			</clerks>
+			<tools>
+				<include path="Texts/toolConfiguration.xml" query="root/tools/*"/>
+		<include path="Concordance/toolConfiguration.xml" query="root/tools/*"/>
+		<include path="Analyses/toolConfiguration.xml" query="root/tools/*"/>
+		<include path="BulkEdit/toolConfiguration.xml" query="root/tools/*"/>
+		<include path="Statistics/toolConfiguration.xml" query="root/tools/*"/>
+				<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/tools/*"/>
+			</tools>
+		</parameters>
+	</item>
+</root>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+
+<accil on-fail="assert">
+ <on-application close="yes" on-fail="assert">
+  <!-- Views has to be clicked or the icon IAccess interfaces won't be created for the "invisibility" test. -->
+  <click select="//menubar[@id='mainMenu']/button//item[item]"/>
+  <click path="tray:Views" />
+  <click path="button:Draft" />
+  <glimpse select="//menubar[@id='mainMenu']/button//item[@name and not(contains(@name,'*')) and not(contains(@name,'#ANY'))]" prop="name" on-fail="assert">
+   Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+  </glimpse>
+  <glimpse select="//menubar[@id='mainMenu']/button//item" prop="hotkey" on-fail="assert">
+   Glimpse of <data get="path"/> found '<data get="value"/>' but was expecting '<data get="expect"/>'.
+  </glimpse>
+ </on-application>
+</accil>

@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="Performance.xsl"?>
+<performance>
+<action desc="Thai db, Open">
+<time ellapsed="26531" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="30250" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="27672" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="27844" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="26703" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="26140" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="26547" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="25734" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="30203" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="26032" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="26046" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db, Reopen">
+<time ellapsed="26609" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="24578" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="24906" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="26203" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="24953" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="28453" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="30453" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="25437" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="25125" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="24578" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="25203" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db Lex Edit, Sort Lexeme Form">
+<time ellapsed="8890" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="6875" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="6907" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="7125" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="6985" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="7328" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="7125" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="7438" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="6610" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="7281" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="7765" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db Lex Edit, Sort Glosses">
+<time ellapsed="14703" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="14907" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="14937" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="14906" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="15046" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="14625" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="14485" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="14390" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="15312" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="14500" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="14297" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db Lex Edit, Sort Grammatical Info. (Full)">
+<time ellapsed="13766" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="12078" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="12125" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="12829" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="11985" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="12281" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="12265" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="12032" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="12891" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="12859" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="13172" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db Lex Edit, Sort Headword">
+<time ellapsed="10984" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="12172" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="11875" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="11109" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="11812" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="11813" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="11735" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="12312" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="11297" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="11469" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="11078" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db, Lex Edit to Dictionary">
+<time ellapsed="13562" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="13219" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="13203" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="13125" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="13109" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="13235" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="13063" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="13016" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="13282" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="13109" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="13188" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db Dictionary, Scroll down">
+<time ellapsed="3203" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="2922" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="2922" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="3172" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="2875" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="3140" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="3078" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="3109" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="3140" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="3204" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="3187" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db Texts Edit, click Interlinearize tab">
+<time ellapsed="10422" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="11141" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="10047" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="9953" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="10141" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="10141" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="10406" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="10094" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="10469" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="10531" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="10844" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db, generate Grammar Sketch">
+<time ellapsed="73125" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="72734" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="72766" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="72656" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="72656" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="72687" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="72672" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="73438" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="73016" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="72891" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="72875" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Thai db Lex Edit, find n-shaped letter">
+<time ellapsed="9438" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="9297" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="8953" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="8985" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="9094" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="9109" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="8984" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="8938" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="8953" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="9266" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="9484" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Tagakaulo db, Lex Edit to Words Analysis">
+<time ellapsed="39750" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="38906" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="39235" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="38906" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="38797" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="39687" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="39406" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="38969" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="39125" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="40172" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="38531" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Tagakaulo db, Words Analysis sort by num in corpus">
+<time ellapsed="6891" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="6375" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="7016" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="6437" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="7438" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="7547" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="6312" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="6375" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="6281" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="6375" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="5953" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Tagakaulo db, Words Analysis sort by Word Glosses">
+<time ellapsed="9890" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="9500" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="9578" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="9781" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="9219" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="9234" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="9500" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="9407" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="9219" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="9438" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="9703" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Tagakaulo db, Words Analysis sort by Form">
+<time ellapsed="4516" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="4406" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="4453" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="4297" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="4218" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="4531" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="4688" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="4266" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="4406" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="4219" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="4297" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Tagakaulo db, generate Grammar Sketch">
+<time ellapsed="18234" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="17922" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="17954" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="18000" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="17828" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="18703" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="18015" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="18062" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="17969" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="18094" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="18281" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Tagakaulo db, Grammar Sketch to Word List Concordance">
+<time ellapsed="3344" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="3016" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="3015" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="3047" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="3016" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="3078" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="3032" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="3016" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="2922" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="2859" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="2969" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Tagakaulo db Concordance, search for na">
+<time ellapsed="19438" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="18656" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="18141" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="18484" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="13797" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="13719" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="13718" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="13500" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="13547" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="13359" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="17969" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Tagakaulo db Concordance, select 13th record">
+<time ellapsed="9265" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="9281" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="8828" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="9547" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="6984" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="8235" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="7141" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="7953" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="7281" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="7141" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="6813" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Mutsun db Texts Edit, click Interlinearize tab">
+<time ellapsed="52157" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="51250" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="51078" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="51922" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="51640" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="51937" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="52078" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="51672" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="51812" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="51547" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="51531" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Mutsun db, Interlinear to Words Analysis">
+<time ellapsed="39312" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="39672" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="39078" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="39437" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="39969" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="39688" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="39891" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="39578" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="39469" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="40438" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="39688" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Mutsun db Concordance, search for .* reg. expr.">
+<time ellapsed="14516" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="13094" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="13422" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="17360" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="13078" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="13344" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="13359" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="13140" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="17453" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="17672" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="13235" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Mutsun db Lex Edit, find an example sentence">
+<time ellapsed="42390" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="41860" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="41547" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="41656" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="42032" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="41765" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="42031" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="41985" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="42016" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="42219" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="42281" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Websters db Lex Edit, Sort Lexeme Form">
+<time ellapsed="11031" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="8812" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="11094" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="8750" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="10875" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="9328" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="10828" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="10547" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="10969" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="10797" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="10844" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Websters db Lex Edit, Sort Glosses">
+<time ellapsed="14625" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="17688" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="15375" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="17438" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="16265" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="16391" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="16344" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="16031" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="16453" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="16187" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="15766" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Websters db Lex Edit, Sort Grammatical Info. (Full)">
+<time ellapsed="24984" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="25750" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="24172" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="25421" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="24328" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="24718" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="24188" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="23047" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="23359" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="25125" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="23609" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Websters db, Lex Edit to Words Analysis">
+<time ellapsed="186843" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="187250" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="190297" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="189953" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="188343" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="188875" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="189062" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="187250" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="187219" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="187109" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="187844" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Websters db, Words Analysis to Concordance">
+<time ellapsed="3110" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="3484" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="3468" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="3454" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="3282" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="3234" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="3407" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="3421" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="3391" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="3219" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="3188" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Websters db, Concordance to Word List Concordance">
+<time ellapsed="3015" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="3078" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="2922" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="3046" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="3031" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="3063" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="3031" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="3046" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="3015" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="3203" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="3093" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Websters db Concordance, find Jesus in baseline">
+<time ellapsed="12922" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="13234" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="13422" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="13828" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="13531" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="13922" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="12953" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="13734" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="12500" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="12750" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="14328" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+<action desc="Websters db Concordance, find Jesus in word line">
+<time ellapsed="134078" expected="999999999" date="8/18/2008" ver="D" />
+<time ellapsed="139141" expected="999999999" date="8/15/2008" ver="D" />
+<time ellapsed="139000" expected="999999999" date="8/14/2008" ver="D" />
+<time ellapsed="136969" expected="999999999" date="8/13/2008" ver="D" />
+<time ellapsed="131844" expected="999999999" date="8/12/2008" ver="D" />
+<time ellapsed="140094" expected="999999999" date="8/11/2008" ver="D" />
+<time ellapsed="143344" expected="999999999" date="8/8/2008" ver="D" />
+<time ellapsed="144922" expected="999999999" date="8/7/2008" ver="D" />
+<time ellapsed="141093" expected="999999999" date="8/6/2008" ver="D" />
+<time ellapsed="144516" expected="999999999" date="8/5/2008" ver="D" />
+<time ellapsed="141547" expected="999999999" date="8/4/2008" ver="D" />
+</action>
+</performance>

@@ -1,0 +1,195 @@
+;Test generate_word with "ordinary" (non-realizational) rules.
+
+;Have to open a language for first test:
+(open_language message foobar)
+;Don't let errors stop us:
+(morpher_set message (*quit_on_error* false))
+;Start by trying generate_word with no strata defined; error msg 6022:
+(generate_word pretty_print
+	   (<lex id err1 sh sig str noneyet pos N gl sig>
+		(()())
+		*NA*
+		*NA*
+	   )
+)
+(close_language message foobar)
+;Now load the strata etc.:
+(morpher_input_from_file message c:\data\hc\morpher\tests\startup.in)
+;Don't let errors stop us (we have to do it again, because we closed
+; the language before):
+(morpher_set message (*quit_on_error* false))
+;Load some natural classes:
+(load_nat_class message <nat_class name null features ()>)
+(load_nat_class message <nat_class name alv_stop features (cons + strident - del_rel - poa alveolar)>)
+(load_nat_class message <nat_class name voiceless_c features (cons + vd -)>)
+(load_nat_class message <nat_class name labiodental features (cons + poa labiodental)>)
+(load_nat_class message <nat_class name voiced features (vd +)>)
+(load_nat_class message <nat_class name strident features (cons + strident +)>)
+(load_nat_class message <nat_class name C features (cons +)>)
+(load_nat_class message <nat_class name unasp features (asp -)>)
+;Load some morphological rules:
+;Load two mrules (msg 6505, twice):
+; English -s suffix: "Ås" after strident C (that's a barred i), "s" after other voiceless C,
+; "z" otherwise
+(load_morpher_rule message
+  <mrule  nm s_suffix
+		  str allophonic
+		  r_pos (N)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl 3SG
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									   <simp_cntxt class strident>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out (1 (Åz table3))>
+					>
+					<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									   <simp_cntxt class voiceless_c>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out (1 (s table3))>
+					>
+					<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out (1 (z table3))>
+					>
+				  )
+	>
+)
+; English -ed suffix: "Åd" (= barred-i + d) after t or d, "t" after other voiceless C,
+; "d" otherwise.
+(load_morpher_rule message
+  <mrule  nm ed_suffix
+		  str allophonic
+		  r_pos (N)
+		  r_hf (tense (past pres))
+		  hf (tense (past))
+		  gl PAST
+		  subrules (<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									   <simp_cntxt class alv_stop>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out (1 (Åd table3))>
+					>
+					<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									   <simp_cntxt class voiceless_c>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out (1 (t table3))>
+					>
+					<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out (1 (d table3))>
+					>
+				  )
+  >
+)
+; t -> th / C__
+; This rule is just here to ensure that prules function correctly, too.
+; (In particular, we'll check that we don't apply prules from a deeper
+; stratum to a lex entry from a shallower stratum.)
+(load_morpher_rule message
+  <prule  nm rule1
+		  str (morphophonemic)
+		  in_pseq (<seg rep t ctable table3>)
+		  subrules (<psub out_pseq (<simp_cntxt class unasp>)
+						   left_environ <ptemp pseq (<simp_cntxt class C>)>
+					>
+				   )
+  >
+)
+;Start out with rule tracing off, and exercise some error msgs.
+;Try generation of a lex entry without a stratum (err msg 6056):
+(generate_word pretty_print
+	   (<lex id gen1 sh sig pos N gl sig>
+		(()(s_suffix ed_suffix)) ()
+		*NA*
+		*NA*
+	   )
+)
+;Try generation of a lex entry with an invalid stratum (err msg 6024):
+(generate_word pretty_print
+	   (<lex id gen1 sh sig str nonesuch pos N gl sig>
+		(()(s_suffix ed_suffix)) ()
+		*NA*
+		*NA*
+	   )
+)
+;Try generation of a lex entry with incorrect number of strata (err msg 6025):
+(generate_word pretty_print
+	   (<lex id gen1 sh sig str morphophonemic pos N gl sig>
+		(()(s_suffix ed_suffix)()) ()
+		*NA*
+		*NA*
+	   )
+)
+;Try generation of a lex entry with an invalid mrule (err msg 6026):
+(generate_word pretty_print
+	   (<lex id gen1 sh sig str morphophonemic pos N gl sig>
+		((nonesuch)(s_suffix ed_suffix)) ()
+		*NA*
+		*NA*
+	   )
+)
+;Try generation of a lex entry with an mrule in the wrong stratum
+; (also err msg 6026):
+(generate_word pretty_print
+	   (<lex id gen1 sh sig str morphophonemic pos N gl sig>
+		((s_suffix)(ed_suffix)) ()
+		*NA*
+		*NA*
+	   )
+)
+
+;Now try some commands that should succeed.  First try generation with a
+; user-supplied lex entry (one that isn't already in the lexicon):
+(generate_word pretty_print
+	   (<lex id gen1 sh sig gl sig pos N str morphophonemic>
+		(()(s_suffix ed_suffix)) ()
+		*NA*
+		*NA*
+	   )
+)
+;Now turn on rule tracing:
+(trace_morpher_rule message (true true))
+;Generate it again, but this time we try the rules in the opposite order,
+; just to make sure we can run generate_word with a rule order different
+; from the one specified for the stratum:
+(generate_word pretty_print
+	   (<lex id gen1 sh sig gl sig pos N str morphophonemic>
+		(()(ed_suffix s_suffix)) ()
+		*NA*
+		*NA*
+	   )
+)
+;Now try generation with a lex entry that is already in the lexicon.
+; (This one is in the allophonic stratum, so won't see "rule1".)
+(generate_word pretty_print (1 ((ed_suffix)) () *NA* *NA*))
+;Also try gen with nonexistent lex entry (error msg 6013):
+(generate_word pretty_print (nonesuch ((ed_suffix)) () *NA* *NA*))
+
+;Turn off tracing:
+(trace_morpher_rule message (false false))
+
+;Now we'll remove the rules (msg 6506):
+(remove_morpher_rule message s_suffix)
+(remove_morpher_rule message ed_suffix)
+(remove_morpher_rule message rule1)
+;...and the natural classes (msg 6542):
+(remove_nat_class message null)
+(remove_nat_class message alv_stop)
+(remove_nat_class message voiceless_c)
+(remove_nat_class message labiodental)
+(remove_nat_class message voiced)
+(remove_nat_class message strident)
+(remove_nat_class message C)
+(remove_nat_class message unasp)

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="fmtws" num="2.6.2" abbr="fws" file="FW\FmtWS.xml" ready="V2">
+<title tag="fmtws">Format-Writing system Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Permits the writing system to be changed for selected text. If no text is selected, then the current mode of the text cursor is set to that writing system, and any new text typed will be in that writing system. When the writing system for selected text is changed, the underlying characters are interpreted by that new writing system. The software cannot guarantee that the interpretation will be correct, as the user is expected to change writing systems responsibly. The rendering mechanism is expected to handle characters that are not defined in the writing system (e.g., by displaying squares.)</p>
+<p name="Specification">See the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/FormatMenu.html#Format-Writing System" type="doc">Format-Writing system menu item</link>
+	and the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/WritingSystem/FormatWritingSystem.html" type="doc">Writing System dialog</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Format-Writing system"</p>
+</context>
+<case id="fwsAct" num="1" order="any">
+<title tag="fwsAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="1.1" link="Bug">Invoke Format-Writing system. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/FormatMenu/WritingSystem/FormatWritingSystem.html" type="doc">Format-Writing system specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Format-Writing system dialog fails to open</p>
+<p name="bug">Format-Writing system dialog layout incorrect</p>
+</step>
+<step name="1.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>The the current writing system is highlighted.</li>
+</ul>
+</r>
+<p name="bug">Format-Writing systemFormat-Writing system the current writing system is highlighted failed</p>
+</step>
+<step name="1.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OK, the dialog disappears.</li>
+<li>The selected text is changed to the selected writing system.</li>
+<li>The new text is typed in the selected writing system.</li>
+<li>Report any failures as suggested using "Format-Writing system" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Format-Writing system dialog remains after OK</p>
+<p name="bug">Format-Writing system selected text is changed to the selected writing system failed</p>
+<p name="bug">Format-Writing system new text is typed in the selected writing system failed</p>
+</step>
+<step name="1.4" link="Bug">When a writing system is right-clicked, right-click the  dialog.<r>Its Language Definition Properties dialog pops up.</r>
+<p name="note">Not in v1</p>
+<p name="bug">Format-Writing system right-click When a writing system is right-clicked failed</p>
+</step>
+</case>
+<case id="fwspc" num="2" order="any">
+<title tag="fwspc">Writing System Selection List Box</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> to test the Writing system selection list box.<r>
+<ul>
+<li>There is a list below the text box.</li>
+<li>The default is "&lt;all writing systems set up in the language project&gt;".</li>
+<li>Report any failures using the first words, "Format-Writing system Writing system selection".</li>
+</ul>
+</r>
+<p name="bug">Format-Writing system Writing system selection has list problems</p>
+<p name="bug">Format-Writing system Writing system selection default is not "&lt;all writing systems set up in the language project&gt;"</p>
+</step>
+<step name="2.2" link="Bug">Check the list entries.<r>
+<ul>
+<li>The cursor highlights each item.</li>
+	<li>The list contains the same entries as the Options-Writing Systems dialog.</li>
+   </ul>
+</r>
+<p name="bug">Format-Writing systemWriting system selection list items not highlighted</p>
+	<p name="bug">Format-Writing systemWriting system selection drop list missing &lt;the same entries as the Options-Writing Systems dialog&gt;</p>
+   </step>
+<step name="2.3" link="Bug">Select a Writing System:
+  <r>The Writing System combo box in the Formatting Toolbar updates to show the new writing system..</r>
+<p name="bug">Format-Writing system  Writing system selection not in sync with Formatting Toolbar</p>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="Apr-19-02" author="Janet">Corrected duplicate step numbers.</update>
+<update date="May-23-02" author="RussD">Fixed step numbers, minor change for specs.</update>
+
+</test>

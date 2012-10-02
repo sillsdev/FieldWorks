@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LayoutInventory>
+	<layout class="LexEntry" type="detail" name="CfOnly">
+		<part ref="CitationForm"/>
+		<part ref="Bibliography" visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="CfAndBib">
+		<part ref="CitationForm"/>
+		<part ref="Bibliography" visibility="ifdata"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="Nested-Collapsed">
+		<part ref="Nested-Collapsed"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="Nested-Expanded">
+		<part ref="Nested-Expanded"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="OptSensesEty">
+		<part ref="Senses" visibility="ifdata" param="GlossSn" expansion="expanded"/>
+		<part ref="Etymology" visibility="ifdata" expansion="expanded" param="empty">
+			<part ref="Form" visibility="ifdata"/>
+			<part ref="Source" visibility="ifdata"/>
+		</part>
+	</layout>
+	<layout class="LexSense" type="detail" name="GlossSn" expansion="expanded">
+		<part ref="Gloss"/>
+		<part ref="ScientificName" visibility="ifdata"/>
+	</layout>
+	<layout class="LexEntry" type="detail" name="Abbrs">
+		<part ref="CitationForm"/>
+		<part ref="CitationForm" label="Citation Form"/>
+		<part ref="CitationForm" label="Citation Form" abbr="!?"/>
+	</layout>
+</LayoutInventory>

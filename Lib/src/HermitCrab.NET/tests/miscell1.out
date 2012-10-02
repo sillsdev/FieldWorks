@@ -1,0 +1,20 @@
+;This line should appear as first line in "miscell1.out"
+;Ensure that we can't open for reading a file that is open for output
+; (error msg 6030):
+ERROR:hc6030 --- <hc6030 fname c:\data\hc\morpher\tests\MISCELL.OUT >
+;Test loading of msg file.  First try one that does't exist (err msg 6049):
+ERROR:hc6049 --- <hc6049 fname c:\data\hc\morpher\nonesuch >
+;Now try loading a real file (msg 6514):
+((
+ <hc6514 fname c:\data\hc\morpher\messages.ari > ) )
+;Trigger an error and see if we get the full text of the msg:
+ERROR:hc6001 --- Morpher error: Unknown morpher variable: nonesuch.
+;Get rid of the msgs (in case we have further tests):
+(Prolog command finished )
+;Now we'll revert to stdout.  Should get msg m6522:
+(message (
+ <hc6522 fname standard out > ) )
+;This line should also be in "miscell1.out"
+;Now we'll close this file for output and revert to stdout; msg m6522:
+(message (
+ <hc6522 fname standard out > ) )

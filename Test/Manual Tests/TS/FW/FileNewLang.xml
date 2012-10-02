@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="newlang" num="2.1.7.2a" abbr="nlw" file="FW\FileNewLang.xml">
+<title tag="newlang">File - New Language Definition Wizard Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The New Language Definition Wizard is used to create a new Language Definition. It is accessed through the New...button on the Writing System tab of the Project Properties dialog (see <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Properties/LangProjProperties.html" type="doc">Language Project Properties -- Writing System</link> and <link uri="FileProperties.xml">File - Language Project Properties Tests</link>). The Wizard has two steps and so two dialog boxes.
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/NewLangDefnWiz/NewLangDefnWizard.html" type="doc">New Language Definition Wizard</link>
+</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "File - New Language Definition"</p>
+<p name="todo">See questions in 3.1.2.</p>
+</context>
+
+<case id="nlwAct" num="1" order="any">
+<title tag="flnpAct">Activation</title>
+<context>
+<p>When the Writing System Tab on the File - Language Project Properties dialog is displayed</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke the New Language Definition Wizard (by clicking on New...).
+<r>Step 1 of the New Language Defintion Wizard is displayed.</r>
+<p name="bug">File - Language Project Properties; New... button is not working</p>
+</step>
+
+<step name="1.2" link="Bug">Invoke the New Language Definition Wizard. Use the images at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/NewLangDefnWiz/NewLangDefnWizard.html" type="doc">New Language Definition Wizard</link> to visually inspect the two dialog boxes of this Wizard.
+<r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">File - New Language Definition layout is incorrect.</p>
+</step>
+
+</case>
+
+<case id="nlwtcon" num="2" order="any">
+<title tag="nlwtcon">Testing controls</title>
+<context>
+<p>When the Wizard is running</p>
+</context>
+
+<step name="2.1">The controls for this Wizard are the same as those for the first two steps of the New Language Project Wizard. Follow Test Cases 2, 3, and 4 of the <link uri="FileNewProject.xml">File - New Language Project Wizard Tests</link> to test the controls for this Wizard.
+<r>Report any failures as suggested using "File - New Language Definition" as the name of the dialog.</r>
+</step>
+</case>
+
+<case id="nlwEffect" num="3" order="sequential">
+<title tag="flnpEffect" num="3">Testing effects</title>
+<context>
+<p>When language project "A" is open (e.g. TestLangProj),
+do the following in sequential order:</p>
+</context>
+
+<step name="3.1">
+Create a new writing system, using File - Properties - Project Properties -
+Writing Systems - Add - New, and step through the wizard.  Press Finish.
+<r>The new writing system appears in the list for Vernacular or
+Analysis writing systems, depending on which Add button you pressed,
+and is checked.</r>
+</step>
+
+<step name="3.1.1">
+Press OK on the Project Properties dialog.  Then open it again
+and go to the Writing Systems page.
+<r>The new writing system is still there in the list for Vernacular or
+Analysis writing systems.</r>
+</step>
+
+<step name="3.1.2">
+Press OK on the Project Properties dialog.  Go to a multilingual
+field.  (I think you may have to be go to TLE to see this?  Ask
+an analyst.)
+<r>The new writing system abbreviation appears in blue at the left
+of the appropriate fields, aligned
+vertically with other writing systems in the same category (e.g.
+ENG, FRN). (This apparently only occurs for Analysis writing systems.
+Are there other fields where multiple vernacular WS's are used?)</r>
+</step>
+
+<step name="3.2">
+Open language project "B" (e.g. Lela-Teli Sample).
+Then close project A, then close project B.
+Open language project A.  Check the list of writing systems under
+File - Properties - Project Properties - Writing Systems.
+<r>The writing system added in 3.1 appears in the list for Vernacular or
+Analysis writing systems.</r>
+</step>
+
+<step name="3.2.1">
+Then open language project B.
+Check the list of writing systems under
+File - Properties - Project Properties - Writing Systems.
+<r>The writing system added in 3.1 does NOT appear in the list
+for Vernacular or Analysis writing systems.</r>
+</step>
+
+<step name="3.2.2">
+Then go to a multilingual field (e.g. in TLE -- see step 3.1.2).
+<r>The new writing system abbreviation does NOT appear in the blue list
+at the left of the multilingual fields.</r>
+</step>
+</case>
+
+<update date="Aug-30-01" author="ShalomA">Test created.</update>
+<update date="Apr-16-02" author="JanetW">Duplicate step number corrected.</update>
+<update date="May-22-02" author="RussD">Fixed broken link.</update>
+<update date="Jun-28-02" author="LarsH">Added tests for effects (3.*).</update>
+</test>

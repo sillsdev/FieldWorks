@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000033">
+	<rt guid="586f4406-49a6-47c5-a822-4e7e14ac5f36" class="LangProject">
+		<DateCreated val="2009-1-23 12:11:14.487" />
+		<DateModified val="2010-7-1 11:14:18.570" />
+		<AnalysisWss>
+			<Uni>en</Uni>
+		</AnalysisWss>
+		<Styles></Styles>
+		<Pictures>
+			<!-- Contains empty CmFolders at beginning and end, 2 CmFolders
+				that need to be combined, 2 CmFiles that need to be
+				removed and 1 CmFile that needs to be moved to combined
+				folder -->
+			<objsur t="o" guid="30057f20-465a-412f-a1e9-3b810ced53c5" />
+			<objsur t="o" guid="69499275-ad6c-46ca-902a-7a5afb8fe5ea" />
+			<objsur t="o" guid="4150b8c8-a16d-4ee5-b47a-681ab7957cfb" />
+			<objsur t="o" guid="39c4febb-447c-4a45-918e-cae2ceb2294e" />
+			<objsur t="o" guid="1e3f73bd-68ff-4764-8c76-c5cf048e76d2" />
+			<objsur t="o" guid="d6d2bd58-81a6-4d06-ada8-71302e774ec6" />
+			<objsur t="o" guid="65443934-188e-4a75-b6ca-60bdb6c3ef97" />
+		</Pictures>
+	</rt>
+	<rt class="CmFolder" guid="69499275-ad6c-46ca-902a-7a5afb8fe5ea" ownerguid="586f4406-49a6-47c5-a822-4e7e14ac5f36">
+		<Name>
+			<AUni ws="en">Local Pictures</AUni>
+		</Name>
+		<Files>
+			<objsur t="o" guid="c975892a-3e0e-4c7e-bf16-5c84e2c08a14" />
+		</Files>
+	</rt>
+	<rt class="CmFile" guid="4150b8c8-a16d-4ee5-b47a-681ab7957cfb" ownerguid="586f4406-49a6-47c5-a822-4e7e14ac5f36">
+		<OriginalPath>
+			<Uni>G:\Work4Him\Exported Files\Images\Reused.jpg</Uni>
+		</OriginalPath>
+		<InternalPath>
+			<Uni>Pictures\Reused.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt class="CmFile" guid="39c4febb-447c-4a45-918e-cae2ceb2294e" ownerguid="586f4406-49a6-47c5-a822-4e7e14ac5f36">
+		<OriginalPath>
+			<Uni>G:\Work4Him\Exported Files\Images\Reused.jpg</Uni>
+		</OriginalPath>
+		<InternalPath>
+			<Uni>Pictures\Reused.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt class="CmFile" guid="c975892a-3e0e-4c7e-bf16-5c84e2c08a14" ownerguid="69499275-ad6c-46ca-902a-7a5afb8fe5ea">
+		<OriginalPath>
+			<Uni>G:\Work4Him\Exported Files\Images\Reused.jpg</Uni>
+		</OriginalPath>
+		<InternalPath>
+			<Uni>Pictures\Reused.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt class="CmFile" guid="d6d2bd58-81a6-4d06-ada8-71302e774ec6" ownerguid="69499275-ad6c-46ca-902a-7a5afb8fe5ea">
+		<OriginalPath>
+			<Uni>G:\Work4Him\Exported Files\Images\Unique1.jpg</Uni>
+		</OriginalPath>
+		<InternalPath>
+			<Uni>Pictures\Unique1.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt class="CmPicture" guid="16102823-9dd6-4e16-88a4-f25317c225f2">
+		<PictureFile>
+			<objsur t="r" guid="4150b8c8-a16d-4ee5-b47a-681ab7957cfb" />
+		</PictureFile>
+	</rt>
+	<rt class="CmPicture" guid="8001139b-a022-4c82-b28c-3de5caa9b095">
+		<PictureFile>
+			<objsur t="r" guid="c975892a-3e0e-4c7e-bf16-5c84e2c08a14" />
+		</PictureFile>
+	</rt>
+	<rt class="CmPicture" guid="f6b5bbfe-5e55-4966-bac3-6cb203d93c58">
+		<PictureFile>
+			<objsur t="r" guid="39c4febb-447c-4a45-918e-cae2ceb2294e" />
+		</PictureFile>
+	</rt>
+	<rt class="CmPicture" guid="0be0246f-ed65-4cda-a696-5a8c0fd3afa6">
+		<PictureFile>
+			<objsur t="r" guid="d6d2bd58-81a6-4d06-ada8-71302e774ec6" />
+		</PictureFile>
+	</rt>
+	<rt class="CmFolder" guid="1e3f73bd-68ff-4764-8c76-c5cf048e76d2" ownerguid="586f4406-49a6-47c5-a822-4e7e14ac5f36">
+		<Name>
+			<AUni ws="en">Local Pictures</AUni>
+		</Name>
+		<Files>
+			<objsur t="o" guid="569fda89-30ff-4257-a666-7fb4d03ae6a8" />
+			<objsur t="o" guid="fa06ccef-4eac-46cf-9cb5-104fa0f2dfe5" />
+		</Files>
+	</rt>
+	<rt class="CmFile" guid="569fda89-30ff-4257-a666-7fb4d03ae6a8" ownerguid="1e3f73bd-68ff-4764-8c76-c5cf048e76d2">
+		<OriginalPath>
+			<Uni>G:\Work4Him\Exported Files\Images\Unique2.jpg</Uni>
+		</OriginalPath>
+		<InternalPath>
+			<Uni>Pictures\Unique2.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt class="CmFile" guid="fa06ccef-4eac-46cf-9cb5-104fa0f2dfe5" ownerguid="1e3f73bd-68ff-4764-8c76-c5cf048e76d2">
+		<OriginalPath>
+			<Uni>G:\Work4Him\Exported Files\Images\Unique3.jpg</Uni>
+		</OriginalPath>
+		<InternalPath>
+			<Uni>Pictures\Unique3.jpg</Uni>
+		</InternalPath>
+	</rt>
+	<rt class="CmFolder" guid="30057f20-465a-412f-a1e9-3b810ced53c5" ownerguid="586f4406-49a6-47c5-a822-4e7e14ac5f36">
+		<Name>
+			<AUni ws="en">Local Pictures</AUni>
+		</Name>
+	</rt>
+	<rt class="CmFolder" guid="65443934-188e-4a75-b6ca-60bdb6c3ef97" ownerguid="586f4406-49a6-47c5-a822-4e7e14ac5f36">
+		<Name>
+			<AUni ws="en">Local Pictures</AUni>
+		</Name>
+	</rt>
+</languageproject>

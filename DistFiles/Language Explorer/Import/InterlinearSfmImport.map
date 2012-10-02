@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfInterlinearMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <InterlinearMapping>
+	<Marker>ab</Marker>
+	<Destination>Abbreviation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>abb</Marker>
+	<Destination>Abbreviation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>au</Marker>
+	<Destination>Source</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>author</Marker>
+	<Destination>Source</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>cmt</Marker>
+	<Destination>Note</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>co</Marker>
+	<Destination>Comment</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>com</Marker>
+	<Destination>Note</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>comp</Marker>
+	<Destination>Source</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>compiler</Marker>
+	<Destination>Source</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>description-e</Marker>
+	<Destination>Comment</Destination>
+	<WritingSystem>en</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>dt</Marker>
+	<Destination>Note</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>en</Marker>
+	<Destination>Note</Destination>
+	<WritingSystem>en</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>et</Marker>
+	<Destination>FreeTranslation</Destination>
+	<WritingSystem>en</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>etitle</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem>en</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>f</Marker>
+	<Destination>FreeTranslation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>fe</Marker>
+	<Destination>FreeTranslation</Destination>
+	<WritingSystem>en</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>filename</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>fn</Marker>
+	<Destination>Note</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>fr</Marker>
+	<Destination>FreeTranslation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>fre</Marker>
+	<Destination>FreeTranslation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>ft</Marker>
+	<Destination>FreeTranslation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>id</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>itm</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>l</Marker>
+	<Destination>LiteralTranslation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>li</Marker>
+	<Destination>LiteralTranslation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>lit</Marker>
+	<Destination>LiteralTranslation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>lt</Marker>
+	<Destination>LiteralTranslation</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>lx</Marker>
+	<Destination>Baseline</Destination>
+	<WritingSystem>{vern}</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>mp-e</Marker>
+	<Destination>Source</Destination>
+	<WritingSystem>en</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>mp-s</Marker>
+	<Destination>Source</Destination>
+	<WritingSystem>es</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>name</Marker>
+	<Destination>Id</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>nd</Marker>
+	<Destination>Note</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>nt</Marker>
+	<Destination>Note</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>p</Marker>
+	<Destination>ParagraphBreak</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>po</Marker>
+	<Destination>Baseline</Destination>
+	<WritingSystem>{vern}</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>ref</Marker>
+	<Destination>Reference</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>rf</Marker>
+	<Destination>Reference</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>s</Marker>
+	<Destination>Baseline</Destination>
+	<WritingSystem>{vern}</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>sectn</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>sn</Marker>
+	<Destination>Note</Destination>
+	<WritingSystem>es</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>so</Marker>
+	<Destination>Source</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>source</Marker>
+	<Destination>Source</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>st</Marker>
+	<Destination>FreeTranslation</Destination>
+	<WritingSystem>es</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>t</Marker>
+	<Destination>Baseline</Destination>
+	<WritingSystem>{vern}</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>te</Marker>
+	<Destination>FreeTranslation</Destination>
+	<WritingSystem>en</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>ti</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>tit</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>title</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>title-e</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem>en</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>title-s</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem>es</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>title-v</Marker>
+	<Destination>Title</Destination>
+	<WritingSystem>{vern}</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>tn</Marker>
+	<Destination>Reference</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>tx</Marker>
+	<Destination>Baseline</Destination>
+	<WritingSystem>{vern}</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>wn</Marker>
+	<Destination>Note</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+</ArrayOfInterlinearMapping>

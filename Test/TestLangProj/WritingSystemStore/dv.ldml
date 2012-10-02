@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2011-07-18T14:01:19" />
+		<language
+			type="dv" />
+	</identity>
+	<layout>
+		<orientation
+			characters="right-to-left" />
+	</layout>
+	<collations>
+		<collation>
+			<base>
+				<alias
+					source="dv" />
+			</base>
+			<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+				<palaso:sortRulesType
+					value="OtherLanguage" />
+			</special>
+		</collation>
+	</collations>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="Div" />
+		<palaso:defaultFontFamily
+			value="MV Boli" />
+		<palaso:languageName
+			value="Divehi" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+		<fw:windowsLCID
+			value="1125" />
+	</special>
+</ldml>

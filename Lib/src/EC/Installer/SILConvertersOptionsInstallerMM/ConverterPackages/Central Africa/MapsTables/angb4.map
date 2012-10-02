@@ -1,0 +1,72 @@
+EncodingName            "SIL-angb4-2006"
+DescriptiveName         "angb4 font to Unicode"
+Version                 "1"
+Contact                 "mailto:Doug_Higby@sil.org"
+RegistrationAuthority   "SIL International"
+RegistrationName        "SIL-angb4-2005"
+
+;set normalization flags
+pass ( Byte_Unicode )
+RHSflags (ExpectsNFD)
+ByteDefault		'?'
+UniDefault		replacement_character
+ByteClass [CTL] = (   0x00 .. 0x1F   )
+UniClass  [CTL] = ( U+0000 .. U+001F )
+ByteClass [SevenBit] = ( 0x20 .. 0x5A 0x5C 0x5E ..  0x7A 0x7C 0x7E 0x7F )
+UniClass [SevenBit] = ( U+0020 .. U+005A U+005C U+005E ..  U+007A U+007C U+007E U+007F)
+ByteClass [UpperASCII] = ( 0xA0 0xA2 .. 0xA4 0xA6 .. 0xCF 0xDA .. 0xFF)
+UniClass [UpperASCII] = ( U+00A0 U+00A2 .. U+00A4 U+00A6 .. U+00CF U+00DA .. U+00FF)
+[CTL]  		<>	[CTL]
+[SevenBit]	<>	[SevenBit]
+[UpperASCII]	<>	[UpperASCII]
+;One to one maps
+0x5B	<>	LATIN_SMALL_LETTER_OPEN_E
+0x5D	<>	LATIN_SMALL_LETTER_OPEN_O
+0x7B	<>	LATIN_CAPITAL_LETTER_OPEN_E
+0x7D	<>	LATIN_CAPITAL_LETTER_OPEN_O
+0x80	<>	euro_sign
+0x81	<>	LATIN_SMALL_LETTER_U COMBINING_TILDE
+0x82	>	LATIN_SMALL_LETTER_I COMBINING_TILDE ; single_low_9_quotation_mark
+0x83	<>	LATIN_SMALL_LETTER_OPEN_E COMBINING_TILDE
+0x84	<>	LATIN_SMALL_LETTER_OPEN_E COMBINING_ACUTE_ACCENT
+0x85	<>	LATIN_SMALL_LETTER_OPEN_O COMBINING_ACUTE_ACCENT
+0x86	<>	LATIN_SMALL_LETTER_OPEN_O COMBINING_TILDE
+0x87	<>	LATIN_SMALL_LETTER_OPEN_O COMBINING_GRAVE_ACCENT
+0x88	<>	modifier_letter_circumflex_accent
+0x89	<>	WHITE_SMILING_FACE
+0x8A	<>	WHITE_FROWNING_FACE
+0x8b	<>	single_left_pointing_angle_quotation_mark
+0x8c	<>	latin_capital_ligature_oe
+0x8D	>	LEFT_DOUBLE_QUOTATION_MARK
+0x8E	<>	LATIN_SMALL_LETTER_U_BAR
+;0x8f	undefined
+;0x90	undefined
+0x91	<>	left_single_quotation_mark
+0x92	<>	right_single_quotation_mark
+0x93	<>	LEFT_DOUBLE_QUOTATION_MARK
+0x94	<>	RIGHT_DOUBLE_QUOTATION_MARK
+0x95	<>	bullet
+0x96	<>	en_dash
+0x97	<>	em_dash
+0x98	<>	small_tilde
+0x99	<>	trade_mark_sign
+0x9a	<>	latin_small_letter_s_with_caron
+0x9b	<>	single_right_pointing_angle_quotation_mark
+0x9c	<>	latin_small_ligature_oe
+0x9D	<>	NON_BREAKING_HYPHEN
+0x9E	<>	LATIN_CAPITAL_LETTER_I COMBINING_TILDE
+0x9F	<>	LATIN_CAPITAL_LETTER_OPEN_E COMBINING_TILDE
+0xA1	<>	LATIN_SMALL_LETTER_OPEN_E COMBINING_GRAVE_ACCENT
+0xA5	<>	LATIN_SMALL_LETTER_I COMBINING_TILDE
+0xD0	<>	LATIN_SMALL_LETTER_A COMBINING_TILDE COMBINING_GRAVE_ACCENT
+0xD1	<>	LATIN_SMALL_LETTER_A COMBINING_TILDE COMBINING_ACUTE_ACCENT
+0xD2	<>	LATIN_SMALL_LETTER_OPEN_E COMBINING_TILDE COMBINING_GRAVE_ACCENT
+0xD3	<>	LATIN_SMALL_LETTER_OPEN_E COMBINING_TILDE COMBINING_ACUTE_ACCENT
+0xD4	<>	LATIN_SMALL_LETTER_OPEN_O COMBINING_TILDE COMBINING_GRAVE_ACCENT
+0xD5	<>	LATIN_SMALL_LETTER_OPEN_O COMBINING_TILDE COMBINING_ACUTE_ACCENT
+0xD6	<>	LATIN_SMALL_LETTER_U COMBINING_TILDE COMBINING_GRAVE_ACCENT
+0xD7	<>	LATIN_SMALL_LETTER_U COMBINING_TILDE COMBINING_ACUTE_ACCENT
+0xD8	<>	LATIN_SMALL_LETTER_I COMBINING_TILDE COMBINING_GRAVE_ACCENT
+0xD9	<>	LATIN_SMALL_LETTER_I COMBINING_TILDE COMBINING_ACUTE_ACCENT
+
+pass ( NFD_fwd )

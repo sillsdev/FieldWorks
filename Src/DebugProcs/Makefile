@@ -1,0 +1,73 @@
+
+#	$Id: Makefile 2072 2008-12-03 22:25:08Z hindlet $
+#
+#	Makefile for DebugProcs library
+#
+#	Eberhard Beilharz, 11 Dec 2008
+
+BUILD_ROOT = ../..
+include $(BUILD_ROOT)/Bld/_names.mak
+BUILD_PRODUCT = $(DEBUGPROCS_NAME)
+include $(BUILD_ROOT)/Bld/_init.mak.lnx
+
+OUTPUT  = $(FWOUTPUT)
+INCLUDE = $(BUILD_ROOT)/Include
+
+GENERIC_SRC  = .
+TLB_SRC      = $(OUTPUT)/Common
+
+DEFINES  := $(DEFINES) -DGR_FW -DSUPPRESS_FW_EXCEPTION_HANDLING -D_DEBUG
+
+PACKAGES := gtkmm-2.4
+
+INCLUDES := $(shell icu-config --cppflags) \
+	 $(INCLUDES) \
+	-I$(GENERIC_SRC) -I$(TLB_SRC) -I$(INCLUDE) \
+	-I$(LIBRARIES)/Win32More/include \
+	-I$(LIBRARIES)/COM/include \
+	-I$(LIBRARIES)/Win32Base/include \
+	$(shell pkg-config --cflags $(PACKAGES)) \
+
+
+LDLIBS = \
+	-L$(FWINCLUDE) \
+	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
+	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
+	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	$(shell pkg-config --libs $(PACKAGES)) \
+	$(shell icu-config --ldflags) \
+	-luuid -lexpat
+
+CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
+CXXFLAGS = -g -O0 -fPIC -fvisibility=hidden -Werror
+
+ARFLAGS  = -crs
+
+# === Object Lists ===
+
+OBJS = \
+	$(INT_DIR)/DebugProcs.o \
+
+# === Targets ===
+
+all: $(OUT_DIR)/libDebugProcs.a link_check
+
+$(OUT_DIR)/libDebugProcs.a: $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+
+link_check: libDebugProcs
+
+libDebugProcs: $(OBJS) $(GENERIC_OBJ)/main.o
+	$(LINK.cc) -o $@ $^ $(LDLIBS)
+
+# === Rules ===
+
+$(GENERIC_OBJ)/main.o:
+	@$(MAKE) -C $(SRC)/$(GENERIC_NAME)/ -q $@ || \
+	 $(MAKE) -C $(SRC)/$(GENERIC_NAME)/ $@
+
+-include $(OBJS:%.o=%.d)
+-include $(PCHNAME:%.gch=%.d)
+
+clean:
+	$(RM) $(OUT_DIR)/libDebugProcs.a libDebugProcs $(INT_DIR)/*.[od] $(INT_DIR)/*.gch

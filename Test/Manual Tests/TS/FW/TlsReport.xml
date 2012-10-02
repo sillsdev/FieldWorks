@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlsreport" num="2.7.5" abbr="tlrpt" file="FW\TlsReport.xml" ready="V2">
+<title tag="tlsreport">Tools-Reports Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>This menu item reveals a cascading menu of various reports that exist for the application. Choosing one of these sub-items brings up a new window containing the report. Each individual application is responsible for creating these reports (and filling in this submenu). It is mentioned here only because this menu behavior is intended to be standard FieldWorks behavior.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-Reports" type="doc">Tools-Reports</link>
+</p>
+<p name="todo">This test script requires editing to fit the specifications listed above. This is just a template to start out with.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-Reports"</p>
+</context>
+
+<case id="tlrptAct" num="0" order="any">
+<title tag="tlrptAct">Activation</title>
+<context>
+<p>When the application is running.</p>
+</context>
+
+<step name="0.0" link="Bug">Invoke Tools-Reports. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-Reports" type="doc">Definition of Tools-Reports.</link>
+<r>Expected result.</r>
+<p name="bug">Tools-Reports not working</p>
+</step>
+<step name="0.1" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-Reports ..</p>
+</step>
+
+</case>
+
+<case id="tlrptDiac" num="1" order="any">
+<title tag="tlrptDiac">Exercise dialog controls</title>
+<context>
+<p>When the Tools-Reports is displayed:</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke Tools-Reports. <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/TOOLSMENU/TOOLMENU.HTML#Tools-Reports" type="doc">Tools-Reports specification</link> to visually inspect the dialog layout.
+   <r>Up to approximate size and position the two should be the same - especially any text and icons.</r>
+<p name="bug">Tools-Reports layout incorrect</p>
+</step>
+<step name="1.2">Use <link uri="../StdCtrls/Dialog.xml" type="module">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Tools-Reports" as the name of the dialog.</r>
+</step>
+<step name="1.3" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-Reports ..</p>
+</step>
+
+</case>
+
+<case id="tlrpt??" num="2" order="any">
+<title tag="tlrpt??">Other controls</title>
+<context>
+<p>When the Tools-Reports is displayed:</p>
+</context>
+
+<step name="2.1">
+<link uri="../StdCtrls/??.xml" type="module">?? control</link> and use the shortcut &lt;Alt&gt;&lt;?&gt; to test the ?? control.
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Report any failures as suggested using "Tools-Reports ??" as the name of the control.</li>
+</ul>
+</r>
+</step>
+<step name="2.2" link="Bug">Condition
+   <r>
+<ul>
+<li>Expected result 1</li>
+<li>Expected result 2</li>
+<li>Expected result 3</li>
+</ul>
+</r>
+<p name="bug">Tools-Reports ..</p>
+</step>
+
+</case>
+
+<case id="tlrptSe" num="3" order="any">
+<title tag="tlrptSe">Side effects</title>
+<context>
+<p>When the Tools-Reports is displayed:</p>
+</context>
+
+<step name="3.1">Exercise the Tools-Reports on selected paragraphs with different settings. Click OK and then verify that the settings persist by bringing up the dialog again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly, resembling the form of the preview.</li>
+<li>
+</li>
+</ul>
+</r>
+<p name="bug">Tools-Reports control sequence causes problem</p>
+</step>
+<step name="3.2" link="Bug">Exercise the Tools-Reports on selected paragraphs with different settings. Exit the application, restart it and verify that the settings persist by bringing up the Tools-Reports again.
+   <r>
+<ul>
+<li>Selected paragraphs are affected accordingly.</li>
+<li>The settings persist after leaving and re-entering the application.</li>
+</ul>
+</r>
+<p name="bug">Tools-Reports &lt;attribute&gt; does not persist</p>
+</step>
+
+</case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+
+</test>

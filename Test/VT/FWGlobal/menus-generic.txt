@@ -1,0 +1,148 @@
+'This file contains the generic menu structure for FW apps, as specified in
+'http://intranet.sil.org/softwaredev/SantaFe/FW/App/Images/GENERICAPPMENUCOMMANDS.GIF
+'This file can be used as a template for app-specific menu files, which are used in automated testing
+'to verify each app's menu structure.  See e.g. fw\test\vt\DN\General-GUI-1-0-2.mst
+'Comments and blank lines are ignored.  Ampersands (&) are significant.
+' Case is ignored by VT.  Accelerators (e.g. Ctrl+S) are currently not used but may be included here.
+'Tabs must be used for indentation and to separate captions from accelerators.
+'Asterisk (*) (optionally followed by a comment on the same line) matches zero or more unspecified menu items, e.g. dynamic items.
+
+&File
+	&New Language Project...
+	&Open Language Project...
+	Language Project P&roperties...
+	-
+	&Save
+	-
+	Page Set&up...
+	Print Pre&view
+	&Print...	Ctrl+P
+	-
+	&Import...
+	&Export...
+	&Backup and Restore...
+	-
+	E&xit
+
+&Edit
+	&Undo	Ctrl+Z
+	&Redo	Ctrl+Y
+	-
+	Cu&t
+	&Copy
+	&Paste
+	Paste &Special...
+	Select A&ll	Ctrl+A
+	-
+	&Find...	Ctrl+F
+	Ne&xt Match	Ctrl+G
+	Pre&vious Match	Ctrl+D
+	&Replace...	Ctrl+H
+	-
+	&Delete...
+
+&View
+	&Views
+		*
+		-
+		&Configure...
+	&Filters
+		&No Filter
+		-
+		*
+		-
+		&Configure...
+	&Sort Methods
+		&Default Sort
+		-
+		*
+		'-	This second separator may not be there if there are no dynamic items.
+		&Configure...
+	&Overlays
+		&No Overlays 'The spec actually puts No Overlays *after* the dynamic items, but
+		'putting it before is consistent with the Views - Filters menu, and is how it's implemented now.
+		-
+		*
+		-
+		&Configure...
+	-
+	&Toolbars
+		'##DN currently has "&Standard Toolbar" instead of "&Standard", etc. Raid #1344
+		'&Standard
+		'&Formatting
+		'&Data
+		'&View
+		'&Insert 'This is on generic menus too, despite the DN spec
+		'&Tools
+		'&Window
+	Vie&w Bar
+	Status &Bar
+	-
+	Fu&ll Window
+&Data
+	&First
+	&Previous	Alt+P
+	&Next	Alt+N
+	&Last
+	-
+	&History
+	F&avorites
+	&Organize Favorites...
+	-
+	&Modify Templates
+&Insert
+	* 'App items
+	-
+	&Comment...
+	&Link...
+	-
+	&Table...
+	So&und...
+	&Video...
+	&Picture...
+	&Object...
+F&ormat
+	&Font...
+	&Writing System...
+	&Paragraph...
+	Bullets and &Numbering...
+	&Border...
+	&Table...
+	-
+	&Style...
+&Tools
+	*
+	&Spelling...
+	* 'e.g. &Version History...
+	-
+	Re&ports
+		* 'E.g. &Outlines and Categories...
+	-
+	&Lists...
+	-
+	&FieldWorks Explorer...	Ctrl+E
+	Show Selection &Using...
+	-
+	&Options...
+	&Customize...
+&Window
+	&New Window
+	&Split Window
+	-
+	&Cascade
+	&Tile
+	Tile Side-&By-Side
+	- '?
+	*
+&Help
+	&FieldWorks
+		&Contents...
+		&Index...
+		&Find...
+	-
+	* '(AppName)...	F1
+	&How do I...
+	&What's This?	Shift+F1
+	&Tutorials...
+	-
+	* '&About (AppName)

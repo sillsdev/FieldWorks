@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>namespace unitpp</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2>namespace <A HREF="#DOC.DOCU">unitpp</A></H2></H2><BLOCKQUOTE> The unitpp name space holds all the stuff needed to use the unit++ testing framework.</BLOCKQUOTE>
+
+<HR>
+<P><DL>
+ <DT>
+class  <B><A HREF="test.html">test</A></B>
+<DD><I> The heart of a test system: A test.</I>
+<DT>
+template&lt;typename C&gt; class  <B><A HREF="test_mfun.html">test_mfun</A></B>: public <!1><A HREF="test.html">test</A>
+<DD><I> A test that is implemented by a member function</I>
+<DT>
+class  <B><A HREF="testcase.html">testcase</A></B>
+<DD><I> A ref counted reference to a test.</I>
+<DT>
+template&lt;typename E&gt; class  <B><A HREF="exception_test.html">exception_test</A></B>: public <!1><A HREF="test.html">test</A>
+<DD><I> A wrapper class for the testcase class that succedes if the correct exception is generated</I>
+<DT>
+template&lt;typename E&gt;  <!1><A HREF="testcase.html">testcase</A> <B><A HREF="exception_case.html">exception_case</A></B>(const <!1><A HREF="testcase.html">testcase</A>&amp; tc)
+<DD><I> Generate a testcase that expects a specific exception from the testcase it wraps.</I>
+<DT>
+extern std::vector&lt;std::string&gt;  <B><A HREF="vectorize.html">vectorize</A></B>(const std::string&amp; str, char c)
+<DD><I> Splits the string by char c.</I>
+<DT>
+class  <B><A HREF="suite.html">suite</A></B>: public <!1><A HREF="test.html">test</A>
+<DD><I> A suite is a test that happens to be a collection of tests.</I>
+<DT>
+class  <B><A HREF="visitor.html">visitor</A></B>
+<DD><I> The visitor class is a base class for classes that wants to participate in the visitor pattern with the test hierarchi.</I>
+<DT>
+class  <B><A HREF="assertion_error.html">assertion_error</A></B>: public std::exception
+<DD><I>The basic for all failed assert statements</I>
+<DT>
+template&lt;class T1, class T2&gt; class  <B><A HREF="assert_value_error.html">assert_value_error</A></B>: public <!1><A HREF="assertion_error.html">assertion_error</A>
+<DD><I> This exception represents a failed comparison between two values of types T1 and T2.</I>
+<DT>
+inline   void <B><A HREF="fail.html">fail</A></B>(const std::string&amp; msg)
+<DD><I>The test was not succesful</I>
+<DT>
+template&lt;class A&gt;inline   void <B><A HREF="assert_true.html">assert_true</A></B>(const std::string&amp; msg, A assertion)
+<DD><I>Assert that the assertion is true, that is fail <TT>if&nbsp;(!assertion)&nbsp;</TT></I>
+<DT>
+template&lt;class T1, class T2&gt;inline   void <B><A HREF="assert_eq.html">assert_eq</A></B>(const std::string&amp; msg, T1 exp, T2 got)
+<DD><I>Assert that the two arguments are equal in the <TT>==</TT> sense</I>
+<DT>
+<!1><A HREF="optmap.html">options_utils::optmap</A>&amp; <B><A HREF="options.html">options</A></B>()
+<DD><I> The singleton instance of the option handler of main.</I>
+<DT>
+class  <B><A HREF="gui_hook.html">gui_hook</A></B>
+<DD><I> An instance of this class hooks the GUI code into the test executable.</I>
+<DT>
+void <B><A HREF="GlobalSetup.html">GlobalSetup</A></B>()
+<DD><I> This function performs global initialization before any tests are run.</I>
+<DT>
+void <B><A HREF="GlobalTeardown.html">GlobalTeardown</A></B>()
+<DD><I> This function performs global cleanup after all tests have been run.</I>
+<DT>
+class  <B><A HREF="test_runner.html">test_runner</A></B>
+<DD><I> A runner is the base class for the objects that actually processes the tests from main.</I>
+<DT>
+void <B><A HREF="set_tester.html">set_tester</A></B>(<!1><A HREF="test_runner.html">test_runner</A>*)
+<DD><I> Sets the test_runner to be used in testing.</I>
+<DT>
+class  <B><A HREF="plain_runner.html">plain_runner</A></B>: public <!1><A HREF="test_runner.html">test_runner</A>
+<DD><I>A plain test runner for the ordinary text version</I>
+<DT>
+class  <B><A HREF="res_cnt.html">res_cnt</A></B>
+<DD><I>A mostly internal class for keeping score</I>
+<DT>
+class  <B><A HREF="tester.html">tester</A></B>: public <!1><A HREF="visitor.html">visitor</A>
+<DD><I> The standard text based tester.</I>
+</DL></P>
+
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+The unitpp name space holds all the stuff needed to use the unit++ testing
+framework.
+
+<P>The normal way to make a test is like this:
+
+<P><PRE>
+#include&lt;unit++.h&gt;
+using&nbsp;namespace&nbsp;unitpp;
+//&nbsp;use&nbsp;anonymous&nbsp;namespace&nbsp;so&nbsp;all&nbsp;test&nbsp;classes&nbsp;can&nbsp;be&nbsp;named&nbsp;Test
+namespace&nbsp;{
+class&nbsp;Test&nbsp;:&nbsp;public&nbsp;suite&nbsp;{
+	void&nbsp;test1()
+	{
+		//&nbsp;do&nbsp;test&nbsp;stuff
+		assert_true(&quot;message&quot;,&nbsp;exp1);&nbsp;//&nbsp;exp1&nbsp;should&nbsp;be&nbsp;true
+		assert_eq(&quot;another&nbsp;msg&quot;,&nbsp;123456,&nbsp;exp2);&nbsp;//&nbsp;exp2&nbsp;should&nbsp;be&nbsp;123456
+		//&nbsp;...
+	}
+	void&nbsp;test2()
+	{
+		//&nbsp;do&nbsp;something&nbsp;that&nbsp;provokes&nbsp;exception&nbsp;out_of_range
+	}
+public:
+	Test()&nbsp;:&nbsp;suite(&quot;appropriate&nbsp;name&nbsp;for&nbsp;test&nbsp;suite&quot;)
+	{
+		//&nbsp;any&nbsp;setup&nbsp;you&nbsp;need
+		add(&quot;id1&quot;,&nbsp;testcase(this,&nbsp;&quot;Test&nbsp;1&quot;,&nbsp;&amp;Test::test1));
+		//&nbsp;make&nbsp;a&nbsp;testcase&nbsp;from&nbsp;the&nbsp;method
+		testcase&nbsp;tc(this,&nbsp;&quot;Test&nbsp;2&quot;,&nbsp;&amp;Test::test2);
+		//&nbsp;add&nbsp;a&nbsp;testcase&nbsp;that&nbsp;expects&nbsp;the&nbsp;exception
+		add(&quot;id2&quot;,&nbsp;exception_case&lt;out_of_range&gt;(tc));
+		//&nbsp;add&nbsp;the&nbsp;suite&nbsp;to&nbsp;the&nbsp;global&nbsp;test&nbsp;suite
+		suite::main().add(&quot;id&quot;,&nbsp;this);
+	}
+}&nbsp;*&nbsp;theTest&nbsp;=&nbsp;new&nbsp;Test();&nbsp;&nbsp;//&nbsp;by&nbsp;new,&nbsp;since&nbsp;testcase&nbsp;claims&nbsp;ownership
+}
+</PRE>
+
+<P>In order to make an executable test, simply link the above code against
+libunit++, something like
+
+<P><TT>g++&nbsp;-o&nbsp;test++&nbsp;mytest.cc&nbsp;-L&nbsp;&lt;location&nbsp;of&nbsp;libunit++&gt;&nbsp;-lunit++</TT>
+
+<P>This will generate a test called <TT>test++</TT> and the standard behaviour for a
+test. Note that most shells have <TT>test</TT> defined as a shell builtin which
+makes it a moderately bad name for a program, since it is rather hard to
+get executed, hence <TT>test++</TT>.
+</BLOCKQUOTE>
+<DL>
+</DL>
+<DL><DT><DT><B>See Also:</B><DD><!1><A HREF="suite.html#DOC.1.7.6">main</A><BR><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

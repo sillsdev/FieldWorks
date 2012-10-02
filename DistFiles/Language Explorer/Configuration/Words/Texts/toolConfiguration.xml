@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<clerks/>
+	<tools>
+		<tool label="Interlinear Texts" value="interlinearEdit" icon="EditView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="textsWords" id="EditViewTextsMultiPane" splitterBarOrientation="vertical" firstLabel="Texts" secondLabel="Text"
+						dontCollapseFillPane="true" defaultFocusControl="InterlinMaster" defaultFixedPaneSizePoints="145"
+						defaultPrintPane="ITextContent">
+					<!--this will fill the pane on the left. We get the solid blue background because textsChooser_readOnlySelect defaultProperty is true in area-->
+					<include path="./toolConfigInclude.xml" query="reusableControls/control[@id='TextPaneBarList']"/>
+					<!--this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="ITextContent" PaneBarGroupId="PaneBar-ITextContent" collapse="180000">
+							<control>
+								<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMaster"/>
+								<parameters id="ITextContent" area="textsWords" clerk="interlinearTexts" treeBarAvailability="NotAllowed"/>
+							</control>
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+	</tools>
+</root>

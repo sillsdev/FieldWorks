@@ -1,0 +1,71 @@
+﻿￯ﾻ﾿<?xml version="1.0" encoding="UTF-8"?>
+
+ <!-- Exercises Sorts and Filters in Grammar \ Category Browse -->
+
+<accil on-fail="assert">
+
+ <var id="projectName" set="Kalaba"/>
+ <var id="toolsMenu" set="window:ParentOfMenuBar/window:MenuBar/menu:View /"/>
+ <var id="filterBox1" set="window:FilterBar/window:FwComboBox[1]"/>
+ <var id="filterBox2" set="window:FilterBar/window:FwComboBox[2]"/>
+ <var id="filterBox3" set="window:FilterBar/window:FwComboBox[3]"/>
+ <var id="filterBox4" set="window:FilterBar/window:FwComboBox[4]"/>
+ <var id="catBrowse" set="$toolsMenu;menu:Grammar/menu:Categories Browse"/>
+
+ <on-application log="all" run="yes" args="-db $projectName" on-fail="assert">
+
+   <click wait="2000" path="$catBrowse"/>
+
+   <click path="$filterBox1"/>
+   <insert>N{ENTER}</insert>
+
+   <click path="$filterBox1"/>
+   <insert>B{ENTER}</insert>
+
+   <click path="$filterBox1"/>
+   <insert>F{ENTER}</insert>
+   <insert>ad{ENTER}</insert>
+
+   <click path="$filterBox1"/>
+   <insert>S{ENTER}</insert>
+
+   <click path="$filterBox1"/>
+   <insert>F{ENTER}</insert>
+   <insert>N{ENTER}</insert>
+
+   <click path="$filterBox1"/>
+   <insert>S{ENTER}</insert>
+
+   <click path="colhead:Name"/>
+   <click path="colhead:Name"/>
+
+   <click path="$filterBox2"/>
+   <insert>N{ENTER}</insert>
+   <click path="colhead:Abbreviation"/>
+   <click path="colhead:Name"/>
+   <click path="colhead:Abbreviation"/>
+
+   <click path="$toolsMenu;menu:Grammar/menu:Category Edit"/>
+   <click path="$catBrowse"/>
+
+   <click path="$filterBox2"/>
+   <insert>S{ENTER}</insert>
+
+   <click path="$filterBox3"/>
+   <insert>F{ENTER}</insert>
+   <insert>1{ENTER}</insert>
+
+   <click path="$filterBox4"/>
+   <insert>B{ENTER}</insert>
+   <insert>S{ENTER}</insert>
+
+   <click path="$filterBox3"/>
+   <insert>s{ENTER}</insert>
+
+   <click side="right" path="table:Table/row:Row"/>
+   <insert>{DOWN}{ENTER}</insert>
+
+   <click path="$catBrowse"/>
+
+ </on-application>
+</accil>

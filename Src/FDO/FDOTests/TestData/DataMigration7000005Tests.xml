@@ -1,0 +1,1450 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000004">
+	<rt class="LangProject" guid="2465F3C4-30EC-4B5B-BF0F-9AA0BA23634A">
+		<CmObject/>
+		<CmProject>
+			<DateCreated val="2003-07-09 09:59:47.183" />
+			<DateModified val="2007-05-22 08:50:26.907" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">FieldWorks Test Language Project</Run>
+				</AStr>
+			</Description>
+			<Name>
+				<AUni ws="en">TestLangProj</AUni>
+			</Name>
+		</CmProject>
+		<LangProject>
+			<EthnologueCode>
+				<Uni>XKAL</Uni>
+			</EthnologueCode>
+			<ResearchNotebook>
+				<objsur t="o" guid="2BDD10D6-F9B2-11D3-977B-00C04F186933" />
+			</ResearchNotebook>
+		</LangProject>
+	</rt>
+	<rt class="CmPossibilityList" guid="37DC8E52-ABDA-4092-AFF9-33BCA6669CFA" ownerguid="2465F3C4-30EC-4B5B-BF0F-9AA0BA23634A" owningflid="6001034" owningord="1">
+		<CmObject/>
+		<CmMajorObject>
+			<DateCreated val="2003-07-09 09:59:47.183" />
+			<DateModified val="2003-07-09 09:59:47.183" />
+		</CmMajorObject>
+		<CmPossibilityList>
+			<ItemClsid val="7" />
+			<WsSelector val="-3" />
+		</CmPossibilityList>
+	</rt>
+	<rt class="CmPossibilityList" guid="2BDD10DD-F9B2-11D3-977B-00C04F186933" ownerguid="2465F3C4-30EC-4B5B-BF0F-9AA0BA23634A" owningflid="6001029" owningord="1">
+		<CmObject/>
+		<CmMajorObject>
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<Name>
+				<AUni ws="en">Possible Status</AUni>
+				<AUni ws="fr">fPossible Status</AUni>
+				<AUni ws="es">sPossible Status</AUni>
+			</Name>
+		</CmMajorObject>
+		<CmPossibilityList>
+			<Abbreviation>
+				<AUni ws="en">Stat</AUni>
+			</Abbreviation>
+			<Depth val="1" />
+			<ItemClsid val="7" />
+			<WsSelector val="-3" />
+			<Possibilities>
+				<objsur t="o" guid="2BDD10E4-F9B2-11D3-977B-00C04F186933" />
+				<objsur t="o" guid="2BDD10EB-F9B2-11D3-977B-00C04F186933" />
+				<objsur t="o" guid="2BDD10F2-F9B2-11D3-977B-00C04F186933" />
+			</Possibilities>
+		</CmPossibilityList>
+	</rt>
+	<rt class="CmPossibility" guid="2BDD10E4-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD10DD-F9B2-11D3-977B-00C04F186933" owningflid="8008" owningord="1">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Conf</AUni>
+				<AUni ws="fr">fConf</AUni>
+				<AUni ws="es">sConf</AUni>
+			</Abbreviation>
+			<BackColor val="16760976" />
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Confirmed</AUni>
+				<AUni ws="fr">fConfirmed</AUni>
+				<AUni ws="es">sConfirmed</AUni>
+				<AUni ws="ar_IQ">لا شك أن</AUni>
+			</Name>
+			<UnderColor val="24831" />
+			<UnderStyle val="3" />
+			<Discussion>
+				<objsur t="o" guid="1CA4C82E-D4DD-40B0-A289-4B693C39A80C" />
+			</Discussion>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="1CA4C82E-D4DD-40B0-A289-4B693C39A80C" ownerguid="2BDD10E4-F9B2-11D3-977B-00C04F186933" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="F44C0EA3-FE21-4F0A-912A-67ADEC1F07D7" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="F44C0EA3-FE21-4F0A-912A-67ADEC1F07D7" ownerguid="1CA4C82E-D4DD-40B0-A289-4B693C39A80C" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmPossibility" guid="2BDD10EB-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD10DD-F9B2-11D3-977B-00C04F186933" owningflid="8008" owningord="2">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Dis</AUni>
+				<AUni ws="fr">fDis</AUni>
+				<AUni ws="es">sDis</AUni>
+			</Abbreviation>
+			<BackColor val="9461856" />
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Disproved</AUni>
+				<AUni ws="fr">fDisproved</AUni>
+				<AUni ws="es">sDisproved</AUni>
+			</Name>
+			<UnderColor val="8355584" />
+			<UnderStyle val="1" />
+			<Discussion>
+				<objsur t="o" guid="7CC557D8-C331-4BF0-9375-3AEEE3ACDB21" />
+			</Discussion>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="7CC557D8-C331-4BF0-9375-3AEEE3ACDB21" ownerguid="2BDD10EB-F9B2-11D3-977B-00C04F186933" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="FEF8A63F-0BDE-45A9-B46B-2DA70B77733F" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="FEF8A63F-0BDE-45A9-B46B-2DA70B77733F" ownerguid="7CC557D8-C331-4BF0-9375-3AEEE3ACDB21" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmPossibility" guid="2BDD10F2-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD10DD-F9B2-11D3-977B-00C04F186933" owningflid="8008" owningord="3">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Pend</AUni>
+				<AUni ws="fr">fPend</AUni>
+				<AUni ws="es">sPend</AUni>
+			</Abbreviation>
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Pending</AUni>
+				<AUni ws="fr">fPending</AUni>
+				<AUni ws="es">sPending</AUni>
+			</Name>
+			<UnderColor val="8355711" />
+			<UnderStyle val="3" />
+			<Discussion>
+				<objsur t="o" guid="A53F0CEB-B3E8-4184-94A3-B20C96D639F9" />
+			</Discussion>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="A53F0CEB-B3E8-4184-94A3-B20C96D639F9" ownerguid="2BDD10F2-F9B2-11D3-977B-00C04F186933" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="FDE8C177-3AFD-4A7C-AFB6-308A6D640DE4" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="FDE8C177-3AFD-4A7C-AFB6-308A6D640DE4" ownerguid="A53F0CEB-B3E8-4184-94A3-B20C96D639F9" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmAnthroItem" guid="6BDD640F-A2A5-48EA-8B82-8EFC5B4ECF15" ownerguid="517B1171-4FAD-44BF-BBE2-82EC405CC32C" owningflid="7004" owningord="1">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">3</AUni>
+			</Abbreviation>
+			<BackColor val="16760832" />
+			<DateCreated val="2001-10-06 22:50:09.347" />
+			<DateModified val="2001-10-06 22:50:09.347" />
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Universe, creation</AUni>
+				<AUni ws="fr">Univers, création</AUni>
+				<AUni ws="es">Universo, creación</AUni>
+			</Name>
+			<UnderColor val="255" />
+			<UnderStyle val="1" />
+			<Discussion>
+				<objsur t="o" guid="F06425AC-706F-4E90-A0E2-5F259F999304" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnthroItem />
+	</rt>
+	<rt class="StText" guid="F06425AC-706F-4E90-A0E2-5F259F999304" ownerguid="6BDD640F-A2A5-48EA-8B82-8EFC5B4ECF15" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="CF4BEAB4-B6C1-4911-93B8-4F0C92BFF018" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="CF4BEAB4-B6C1-4911-93B8-4F0C92BFF018" ownerguid="F06425AC-706F-4E90-A0E2-5F259F999304" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmAnthroItem" guid="721D8749-B505-49A7-B871-8A5042B46223" ownerguid="BA3B72A7-3043-489E-802E-2D7026CE03D8" owningflid="7004" owningord="5">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">14</AUni>
+			</Abbreviation>
+			<BackColor val="16776960" />
+			<DateCreated val="2001-10-06 22:50:09.347" />
+			<DateModified val="2001-10-06 22:50:09.347" />
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Bodies of water</AUni>
+				<AUni ws="fr">Régions d'eau</AUni>
+				<AUni ws="es">Regiones de agua</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<Discussion>
+				<objsur t="o" guid="84FC5548-8AB2-4AA0-AFE5-72F64F567982" />
+			</Discussion>
+		</CmPossibility>
+		<CmAnthroItem />
+	</rt>
+	<rt class="StText" guid="84FC5548-8AB2-4AA0-AFE5-72F64F567982" ownerguid="721D8749-B505-49A7-B871-8A5042B46223" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="155B8419-0A9B-44A4-A960-F78983C84768" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="155B8419-0A9B-44A4-A960-F78983C84768" ownerguid="84FC5548-8AB2-4AA0-AFE5-72F64F567982" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="RnResearchNbk" guid="2BDD10D6-F9B2-11D3-977B-00C04F186933" ownerguid="2465F3C4-30EC-4B5B-BF0F-9AA0BA23634A" owningflid="6001015" owningord="1">
+		<CmObject/>
+		<CmMajorObject>
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2004-03-12 19:40:45.687" />
+			<Name>
+				<AUni ws="en">Data Notebook on the French People</AUni>
+			</Name>
+		</CmMajorObject>
+		<RnResearchNbk>
+			<EventTypes>
+				<objsur t="o" guid="FF55ED7A-7772-4ACF-AB5B-A61C86F8E611" />
+			</EventTypes>
+			<Records>
+				<objsur t="o" guid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" />
+			</Records>
+		</RnResearchNbk>
+	</rt>
+	<rt class="CmPossibilityList" guid="FF55ED7A-7772-4ACF-AB5B-A61C86F8E611" ownerguid="2BDD10D6-F9B2-11D3-977B-00C04F186933" owningflid="4001003" owningord="1">
+		<CmObject/>
+		<CmMajorObject>
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<Name>
+				<AUni ws="en">Event Types</AUni>
+			</Name>
+		</CmMajorObject>
+		<CmPossibilityList>
+			<Abbreviation>
+				<AUni ws="en">Type</AUni>
+			</Abbreviation>
+			<Depth val="127" />
+			<ItemClsid val="7" />
+			<WsSelector val="-3" />
+			<Possibilities>
+				<objsur t="o" guid="80815D5C-11FD-40A4-AEB9-1A0AFD416754" />
+				<objsur t="o" guid="776E3F73-F353-4042-AD41-CCF191FB8655" />
+				<objsur t="o" guid="3B357C01-1D60-4FE1-877F-412BBCF16F00" />
+				<objsur t="o" guid="1D98C4A0-B55B-41DE-B695-8F5853368CB1" />
+			</Possibilities>
+		</CmPossibilityList>
+	</rt>
+	<rt class="CmPossibility" guid="80815D5C-11FD-40A4-AEB9-1A0AFD416754" ownerguid="FF55ED7A-7772-4ACF-AB5B-A61C86F8E611" owningflid="8008" owningord="1">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Con</AUni>
+			</Abbreviation>
+			<BackColor val="12176" />
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">In a conversation, all participants are free to direct and change the course of the activity; a dialogue is egalitarian. Most of your interaction with people is in the form of conversations. Conversations carry few expectations except an assumption of mutual cooperation. Conversations are a good place to start in order to build friendships and establish trust with people.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Conversation</AUni>
+			</Name>
+			<UnderColor val="-1073741824" />
+			<UnderStyle val="1" />
+			<Discussion>
+				<objsur t="o" guid="9F1946BB-BBCD-46B4-AE69-60FCAA753E9C" />
+			</Discussion>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="9F1946BB-BBCD-46B4-AE69-60FCAA753E9C" ownerguid="80815D5C-11FD-40A4-AEB9-1A0AFD416754" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="1DD84CA6-EBB0-4FBD-A50D-45E758CA9D12" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="1DD84CA6-EBB0-4FBD-A50D-45E758CA9D12" ownerguid="9F1946BB-BBCD-46B4-AE69-60FCAA753E9C" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmPossibility" guid="776E3F73-F353-4042-AD41-CCF191FB8655" ownerguid="FF55ED7A-7772-4ACF-AB5B-A61C86F8E611" owningflid="8008" owningord="2">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Intv</AUni>
+			</Abbreviation>
+			<BackColor val="9486591" />
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Interviews involve an intentional request for information on a predetermined topic. The interviewer asks questions and the interviewee(s) provides answers. For this reason an interview is different from a conversation. It is more one-sided. Interviews range from "unstructured" to "structured." The more focus and structure in an interview, the more structured it becomes.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Interview</AUni>
+			</Name>
+			<UnderColor val="49407" />
+			<Discussion>
+				<objsur t="o" guid="47CB99E3-045D-4F56-AA76-986FCD92F4AC" />
+			</Discussion>
+			<SubPossibilities>
+				<objsur t="o" guid="AF95A42B-235A-49A7-A859-E611043E6298" />
+				<objsur t="o" guid="6D0126F4-6FC7-48ED-B108-22AEB6209B32" />
+			</SubPossibilities>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="47CB99E3-045D-4F56-AA76-986FCD92F4AC" ownerguid="776E3F73-F353-4042-AD41-CCF191FB8655" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="DEF8D621-AED9-4C93-8ED2-EB7E5853A265" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="DEF8D621-AED9-4C93-8ED2-EB7E5853A265" ownerguid="47CB99E3-045D-4F56-AA76-986FCD92F4AC" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmPossibility" guid="AF95A42B-235A-49A7-A859-E611043E6298" ownerguid="776E3F73-F353-4042-AD41-CCF191FB8655" owningflid="7004" owningord="1">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Str</AUni>
+			</Abbreviation>
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">A structured interview is used to obtain comparative data and is therefore intended to be given to more than one person. Consistency is important. The interviewer should ask questions the same way each time and the interviewee should be cued as to the appropriate way to respond (yes/no, multiple choice, short sentence answer, etc.).</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Structured</AUni>
+			</Name>
+			<UnderColor val="16777152" />
+			<UnderStyle val="1" />
+			<Discussion>
+				<objsur t="o" guid="5E99D147-7EC7-4622-8D5C-06332FA9939E" />
+			</Discussion>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="5E99D147-7EC7-4622-8D5C-06332FA9939E" ownerguid="AF95A42B-235A-49A7-A859-E611043E6298" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="9E9702D0-163C-4789-8789-2E6D71A80FD7" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="9E9702D0-163C-4789-8789-2E6D71A80FD7" ownerguid="5E99D147-7EC7-4622-8D5C-06332FA9939E" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmPossibility" guid="6D0126F4-6FC7-48ED-B108-22AEB6209B32" ownerguid="776E3F73-F353-4042-AD41-CCF191FB8655" owningflid="7004" owningord="2">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Uns</AUni>
+			</Abbreviation>
+			<BackColor val="12176" />
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Unstructured interviews will likely be the most common type of interview you use. In unstructured interviews, you are usually not concerned with comparing responses and may only give the interview to one person. The goal is to get basic information. The topic is usually approached in a general way, without restricting the how of the respondent answers. Questions are generally open-ended.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Unstructured</AUni>
+			</Name>
+			<UnderColor val="12032" />
+			<UnderStyle val="4" />
+			<Discussion>
+				<objsur t="o" guid="941C7550-2AC3-48A3-B48C-E9820C79606F" />
+			</Discussion>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="941C7550-2AC3-48A3-B48C-E9820C79606F" ownerguid="6D0126F4-6FC7-48ED-B108-22AEB6209B32" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="5EDDA523-82F8-4618-BD83-2DBBD1290E93" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="5EDDA523-82F8-4618-BD83-2DBBD1290E93" ownerguid="941C7550-2AC3-48A3-B48C-E9820C79606F" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmPossibility" guid="3B357C01-1D60-4FE1-877F-412BBCF16F00" ownerguid="FF55ED7A-7772-4ACF-AB5B-A61C86F8E611" owningflid="8008" owningord="3">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Lit</AUni>
+			</Abbreviation>
+			<BackColor val="6328367" />
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">Literature summaries are not limited to books. You may run across newspaper and magazine articles that have important information. Other sources of information are unpublished manuscripts like MA theses and PhD dissertations, brochures, field notes from other researchers, and letters. Still, don't forget the books. You can make use of this information by appending it directly into the Data Notebook.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Literature Summary</AUni>
+			</Name>
+			<UnderColor val="16736303" />
+			<UnderStyle val="4" />
+			<Discussion>
+				<objsur t="o" guid="377CCA78-607B-441A-BC67-1C72152563E1" />
+			</Discussion>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="377CCA78-607B-441A-BC67-1C72152563E1" ownerguid="3B357C01-1D60-4FE1-877F-412BBCF16F00" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="5F9B59FD-F69A-44A2-A752-E4AD956DA48B" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="5F9B59FD-F69A-44A2-A752-E4AD956DA48B" ownerguid="377CCA78-607B-441A-BC67-1C72152563E1" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmPossibility" guid="1D98C4A0-B55B-41DE-B695-8F5853368CB1" ownerguid="FF55ED7A-7772-4ACF-AB5B-A61C86F8E611" owningflid="8008" owningord="4">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Obs</AUni>
+			</Abbreviation>
+			<BackColor val="9474192" />
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">This will be one of your richest sources of information. It entails activities and conversations that you witness, but do not control. You may participate actively or passively in the activity you observe. The point is to be curious and approach the activity with questions. Important skills to develop that will make your observations more useful are memory and awareness.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Observation</AUni>
+			</Name>
+			<UnderColor val="16711935" />
+			<Discussion>
+				<objsur t="o" guid="643581A1-D824-41B1-B243-9907D26E9611" />
+			</Discussion>
+			<SubPossibilities>
+				<objsur t="o" guid="5C4DF452-AD5F-44ED-A62C-6B00B41B807A" />
+			</SubPossibilities>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="643581A1-D824-41B1-B243-9907D26E9611" ownerguid="1D98C4A0-B55B-41DE-B695-8F5853368CB1" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="80029E0C-7427-4974-BB40-720EC451683A" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="80029E0C-7427-4974-BB40-720EC451683A" ownerguid="643581A1-D824-41B1-B243-9907D26E9611" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="CmPossibility" guid="5C4DF452-AD5F-44ED-A62C-6B00B41B807A" ownerguid="1D98C4A0-B55B-41DE-B695-8F5853368CB1" owningflid="7004" owningord="1">
+		<CmObject/>
+		<CmPossibility>
+			<Abbreviation>
+				<AUni ws="en">Per</AUni>
+			</Abbreviation>
+			<BackColor val="49407" />
+			<DateCreated val="2001-07-24 14:33:09.563" />
+			<DateModified val="2001-07-24 14:33:09.563" />
+			<Description>
+				<AStr ws="en">
+					<Run ws="en">A "performance" is a type of observation, but one where the performer(s) expects the performance to be evaluated based on culturally appropriate criteria. One example of a "performance" is a play. Gossip is less obvious but also falls into the performance category.</Run>
+				</AStr>
+			</Description>
+			<ForeColor val="16777215" />
+			<Name>
+				<AUni ws="en">Performance</AUni>
+			</Name>
+			<UnderColor val="37119" />
+			<UnderStyle val="3" />
+			<Discussion>
+				<objsur t="o" guid="E4EFA72B-AB51-41D3-9ED8-8675B2182F96" />
+			</Discussion>
+		</CmPossibility>
+	</rt>
+	<rt class="StText" guid="E4EFA72B-AB51-41D3-9ED8-8675B2182F96" ownerguid="5C4DF452-AD5F-44ED-A62C-6B00B41B807A" owningflid="7012" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="0F664668-EC3C-448C-8831-55342E11535A" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="0F664668-EC3C-448C-8831-55342E11535A" ownerguid="E4EFA72B-AB51-41D3-9ED8-8675B2182F96" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="RnEvent" guid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD10D6-F9B2-11D3-977B-00C04F186933" owningflid="4001001" owningord="1">
+		<CmObject/>
+		<RnGenericRec>
+			<DateCreated val="1999-01-05 18:00:00.000" />
+			<DateModified val="2004-10-18 15:41:00.000" />
+			<Title>
+				<Str>
+					<Run ws="en">Fishing in the river for pirana</Run>
+				</Str>
+			</Title>
+			<ExternalMaterials>
+				<objsur t="o" guid="355F0A9B-4E94-4E6E-AC97-AFE1FCF72561" />
+			</ExternalMaterials>
+			<FurtherQuestions>
+				<objsur t="o" guid="8BDB0B08-F1AC-43F6-8EB9-AE752048DA7E" />
+			</FurtherQuestions>
+			<VersionHistory>
+				<objsur t="o" guid="27C7D761-B585-4EBB-9291-36F68ED00154" />
+			</VersionHistory>
+			<AnthroCodes>
+				<objsur t="r" guid="6BDD640F-A2A5-48EA-8B82-8EFC5B4ECF15" />
+				<objsur t="r" guid="721D8749-B505-49A7-B871-8A5042B46223" />
+			</AnthroCodes>
+			<Confidence>
+				<objsur t="r" guid="2BDD1100-F9B2-11D3-977B-00C04F186933" />
+			</Confidence>
+			<PhraseTags>
+				<objsur t="r" guid="2121F090-4744-4BC0-AE46-3E0D48C071B5" />
+				<objsur t="r" guid="CED1521C-C3E0-4687-83D6-2F1CF393A984" />
+				<objsur t="r" guid="F68975D7-E225-4F8E-9506-92128C673FEF" />
+				<objsur t="r" guid="343A99A4-FEBA-470B-935D-18D9045806FA" />
+				<objsur t="r" guid="2BDD0E8D-F9B2-11D3-977B-00C04F186933" />
+			</PhraseTags>
+			<Reminders>
+				<objsur t="r" guid="2BDD0EA5-F9B2-11D3-977B-00C04F186933" />
+			</Reminders>
+			<Researchers>
+				<objsur t="r" guid="2BDD0EA2-F9B2-11D3-977B-00C04F186933" />
+			</Researchers>
+			<SeeAlso>
+				<objsur t="r" guid="DEB87FFC-5384-4DF9-9C3B-FE34334A8C33" />
+			</SeeAlso>
+		</RnGenericRec>
+		<RnEvent>
+			<DateOfEvent val="193112111" />
+			<Description>
+				<objsur t="o" guid="2BDD0E8F-F9B2-11D3-977B-00C04F186933" />
+			</Description>
+			<Participants>
+				<objsur t="o" guid="2BDD0EA3-F9B2-11D3-977B-00C04F186933" />
+				<objsur t="o" guid="2BDD0EA4-F9B2-11D3-977B-00C04F186933" />
+			</Participants>
+			<PersonalNotes>
+				<objsur t="o" guid="FBA9CA56-965F-4415-9E40-469F5A09D660" />
+			</PersonalNotes>
+			<Locations>
+				<objsur t="r" guid="2BDD0E85-F9B2-11D3-977B-00C04F186933" />
+			</Locations>
+			<Sources>
+				<objsur t="r" guid="2BDD0EA2-F9B2-11D3-977B-00C04F186933" />
+			</Sources>
+			<TimeOfEvent>
+				<objsur t="r" guid="C9ECED51-59CD-44C6-883F-7D4DC8044A89" />
+				<objsur t="r" guid="3E8BB722-DA48-41A0-96E1-194A9F38EF41" />
+			</TimeOfEvent>
+			<Type>
+				<objsur t="r" guid="1D98C4A0-B55B-41DE-B695-8F5853368CB1" />
+			</Type>
+			<Weather>
+				<objsur t="r" guid="2BDD1165-F9B2-11D3-977B-00C04F186933" />
+			</Weather>
+		</RnEvent>
+	</rt>
+	<rt class="StText" guid="355F0A9B-4E94-4E6E-AC97-AFE1FCF72561" ownerguid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" owningflid="4004013" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="2CEF6D53-0F60-4405-B9DB-F648AEF002A9" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="2CEF6D53-0F60-4405-B9DB-F648AEF002A9" ownerguid="355F0A9B-4E94-4E6E-AC97-AFE1FCF72561" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="StText" guid="8BDB0B08-F1AC-43F6-8EB9-AE752048DA7E" ownerguid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" owningflid="4004014" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="A96C96A4-1615-4B9C-9CC4-709DFB5ACFB1" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="A96C96A4-1615-4B9C-9CC4-709DFB5ACFB1" ownerguid="8BDB0B08-F1AC-43F6-8EB9-AE752048DA7E" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">What nutritional value does the pirana have?</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+	<rt class="StText" guid="27C7D761-B585-4EBB-9291-36F68ED00154" ownerguid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" owningflid="4004002" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="0FAF99AB-2FEB-4DCB-9B4F-EAF51E33F954" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="0FAF99AB-2FEB-4DCB-9B4F-EAF51E33F954" ownerguid="27C7D761-B585-4EBB-9291-36F68ED00154" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="StText" guid="2BDD0E8F-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" owningflid="4006001" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="2BDD0E90-F9B2-11D3-977B-00C04F186933" />
+				<objsur t="o" guid="2BDD0EA0-F9B2-11D3-977B-00C04F186933" />
+				<objsur t="o" guid="2BDD0EA1-F9B2-11D3-977B-00C04F186933" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="2BDD0E90-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD0E8F-F9B2-11D3-977B-00C04F186933" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara>
+			<StyleRules>
+				<Prop namedStyle="Normal">
+				</Prop>
+			</StyleRules>
+		</StPara>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Went fishing with </Run>
+					<Run ws="en" tags="I2BDD0E8D-F9B2-11D3-977B-00C04F186933">Tiga</Run>
+					<Run ws="en"> at the </Run>
+					<Run ws="en" tags="I2121F090-4744-4BC0-AE46-3E0D48C071B5">river. </Run>
+					<Run ws="en" tags="I2121F090-4744-4BC0-AE46-3E0D48C071B5 ICED1521C-C3E0-4687-83D6-2F1CF393A984">Within no </Run>
+					<Run ws="en" tags="I2121F090-4744-4BC0-AE46-3E0D48C071B5 IF68975D7-E225-4F8E-9506-92128C673FEF ICED1521C-C3E0-4687-83D6-2F1CF393A984">time</Run>
+					<Run ws="en" tags="I2121F090-4744-4BC0-AE46-3E0D48C071B5 IF68975D7-E225-4F8E-9506-92128C673FEF">, he </Run>
+					<Run ws="en" tags="I2121F090-4744-4BC0-AE46-3E0D48C071B5 I343A99A4-FEBA-470B-935D-18D9045806FA IF68975D7-E225-4F8E-9506-92128C673FEF">had</Run>
+					<Run ws="en" tags="I2121F090-4744-4BC0-AE46-3E0D48C071B5 I343A99A4-FEBA-470B-935D-18D9045806FA"> caught</Run>
+					<Run ws="en" tags="I2121F090-4744-4BC0-AE46-3E0D48C071B5"> about</Run>
+					<Run ws="en"> 10 fierce looking </Run>
+					<Run ws="en" namedStyle="Emphasized Text">pirana</Run>
+					<Run ws="en" tags="ICED1521C-C3E0-4687-83D6-2F1CF393A984"> which we</Run>
+					<Run ws="en"> subsequently </Run>
+					<Run ws="en" tags="I343A99A4-FEBA-470B-935D-18D9045806FA">cleaned and</Run>
+					<Run ws="en"> ate for breakfast.</Run>
+				</Str>
+			</Contents>
+			<Label>
+				<Str>
+					<Run ws="en">Fishing for Pirana</Run>
+				</Str>
+			</Label>
+		</StTxtPara>
+	</rt>
+	<rt class="StTxtPara" guid="2BDD0EA0-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD0E8F-F9B2-11D3-977B-00C04F186933" owningflid="14001" owningord="2">
+		<CmObject/>
+		<StPara>
+			<StyleName>
+				<Uni>italic</Uni>
+			</StyleName>
+			<StyleRules>
+				<Prop namedStyle="Normal">
+				</Prop>
+			</StyleRules>
+		</StPara>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">When cleaning the pirana </Run>
+					<Run ws="en" type="picture">
+						424D262C00000000000036040000280000008E00000047000000010008000000
+						0000F0270000C40E0000C40E00000000000000000000040710000C162A001D27
+						1D0016292D0027201E00241E260026291B002A2E2C0007193D000E2A42000C30
+						52002A313E00293652002E3B3000173D4300163D54002E3F3E002A4253002D50
+						4300345552003A31310039353B003D4032003E44400042485000425045004354
+						50004D4848004C514400505551000C345F00144465000E497500175167001753
+						76002D4864002C526700295776001E518600445566004D622D0049623B004660
+						54004A6E500057664000526457005A704800547257002D6278002A6A8C00347F
+						990043646300426478004A726D00496E76005567630054657500587265005373
+						79003E6987004372890042789400526B850055768700517995005B8473004F86
+						96005E5A6600606F54006B8A550062696400636973006474680066787300736B
+						7D007076680070797400697887006F8674006785880064859600699285006894
+						9700748786007888940078928800769496007F76870086957300849092000000
+						FF002D2DFF003E3EFF002775A8003089AF002C8FC500487CA1004088A6003E8A
+						B0004493A7004495B4005188A500548DAE005294A8005298B5004B9AC1006B97
+						A8006299C3008899A4006B6DFF009292FF007AA4720078A391008FAC73008DA8
+						950098C3760096C98C0051A2B90046A5C50048A8D10049AECB0048B6D80054A7
+						C60052ABD10054B1C90055B5D40053C0D70053B8E10052C6E9005BD0FF0070A5
+						B10063A7C50062ACD00066B3C80065B7D40072A8C30076B3C70074B8D20074C8
+						BB0072C3D60086A4A80086A8B30087B2A70088B2B60094A6A90095A8B10099B2
+						AA0095B5B6008BB8C60094C7B30086C1CA0086C6D6008AD9C7008BD1DA0096C2
+						C70095C7D5009ADAC90097CFD60067B9E00066C6E40065CBF00067CFE90068D1
+						F40074C8E50072CCF70076D0E70073D3F3006FD9FF008F9EFF0085C8E30086D0
+						E60085D6F20094CADF0094D3E50092D8F20099ECBC0093E1CC0079EBFF0094E1
+						F40092E2FE00BB000000C6040400CB2A2A00CF2D2D00D3494800DF5A5400E574
+						7100EC8D8B00A5B69800A2C47A00ADCE8F00B6E09300C8EF9500D1FF7300D8FF
+						9B00DAFF8A00DCFF9000DEFF9B00FFFFFF00E1FF9800A6B2AD00A4B6C400ADC9
+						AF00A8CAD000C6D3B000C8D4D000B4B5FF00A5D8EA00BCBEFF00CBD8E300D2D0
+						FF00ACE9B000B6EDC000CFEDAC00CCE9C400D6FFA400D2FFCB00AEE5F300B8F0
+						FF00C4EDF100C5F4FF00F3ABAD00FDC6C600FEB7B200FFC4B900FFD5D500DFF6
+						B500E4F8CC00E2FFA500E6FFB700E4FFA000EAFFB100F0FFB700EAFFC400EBFF
+						D200EAFFC200F1FFC800F7FFD300F8FFC800F9FFD100FFFFD800E9F7F700F7FA
+						FF00F8FFE100FFF7ED00FFFFEA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+						FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C648BEC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6586A4D4EC6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C66CC9C9C8C8C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						57595759935972C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6F1F15491C9CFC86CC8BC58465349532723113F234D2755597272CCCCC6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C64A6C6ACBC8C94D54CAC6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C68E9A568334663F3E6C94592743240738
+						503E4027271F24242733382750273D3E49BCC6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C659
+						476CC86CCB6CC96A56C8C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C69397979E
+						867A8484849E9E6B3D31273C6A3B3B340F0F2301080809030901010809091123
+						4027113A58C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6595491544D916C6A6C5440375282CAC6C6C6
+						C6C6C6C6C6C6C6C6CB9794674061606561426440656A6560424026242323231E
+						1127230F110911080101010103000000110909100F3448C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6544C
+						94C9596A6C87656A506A2452828EC6C6C6C6C6C6C6C6536A6A6A657A8368697A
+						6462646866406A833E2427272327110B182327180B1A27475454596A544D3407
+						3B4231000109343AC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C86C6C9494CB6A546A6A653C3F7A0E754270CC
+						C6C6C6C61D346868838683867D7B7D797D697D7B7D86231E01010001000B4338
+						27473727473747496A6C6C596C6A4D476A534034000001111156C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6CA495991
+						934D94946549403A3A3421645E7C426863CD8F6A406031828B9F7B807F7F7F80
+						77799E9E7D7A898668623F270B03050B1827474D4D4D47576C6C4D6C6C6A4D42
+						274D4DCB0000080000000616C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C659475991CF6C676A82403742615E766464423D31
+						6A89866A7A8386A69FA28080807F8080777F797F7D7D8B777F9F7F7A866A3813
+						08050C0B1827384D57594D4D4D5947384D273C94011F092222250A21121AC6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C659595994
+						6C823C673F325E5F5E766442653C3D8286857F86899F9F7F819EA2808080A280
+						807F7F7F7F7F77797F7B9F867A7D7B75876A504D3E180C274D4D4D4D43272711
+						276A4200080A11302309090301030FC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C84C6C6A828D426A67765E6464756164653C7A8B89
+						A3A6A69FA5A69FA29FA4A280A280A6A28080808079777D7B7B7A7A867D9F8686
+						84696A8689876A6C6C6A6C6A6A6A4D384D11081F276A406540313C3C25242423
+						2470C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6E3596CC86A6A
+						6A4F42767564755E61683C3185979EA3ABA4A5A6A69FA0A6A29F80A2B1A7A79F
+						7FA7807F7F79777D769E807D7D9EA6A37D8683836A686866313B27380B000001
+						00000F2740313031302130313131313431112AC6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C64272C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C659596A54826A3B6469643D5E5E42613485A3A5ABA6A5
+						A3A686A0A6A2A09FA2A0A2A7A0A0A0A2A2A080809E7B9E7F7D7D7AA07B7F9EA2
+						7B7F869F7A878665250A01090A0100000A23013F0024273B31243B2503212231
+						0F0F3011C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6CA8C8F678CC6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6D653916C884D50
+						687A616468325E3C31868B8BA09FABABA39FA680A0A6809EA080A780A680A2A6
+						80837A7D837A8468A27D7A61767D7F7DA09E7D837A688669270A0F0800093161
+						68423C03310A0C0A08110109000001010A1F0F300359C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6956A5682427C85C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C66C5994826A6A647B646768615E30429FA6A5A1A3A68BAB
+						A3A0A2A29FA49FA080A2807D857F9F9F869F867D867D7A85648B697A83759F7D
+						A97A869E85A3A6682500000031313D42696B0B30013427111F092421213B2424
+						0F0A0A0001232737C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C694938E82708B7E
+						7CA5C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6CC596A9396827B7A
+						61646563613C7AA5A5A6A6A69FA6ABA4A0A69F9F9FA37F86807D7A8086867A7A
+						7A7A837C9F83A3857F7A867A7A9E86879FA38BA3A9A9893109000165653D6168
+						8927270A613C313131312524252422240F100901000001030E39C6C6C6C6C6C6
+						C6C6C6C60000C6C6C68D9A938F85829780A5A18BC6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6914987825075645E3D6131613175A3A3AAA6A69F9FABABA3
+						A5A79F9EA0A37F9E8B7D7A808B7C7C857A75837C9F7A9E86867C867C7A9E8983
+						9F85759788A3682701004261653D6A31882334695E648368426160503D3D3D30
+						310A31010000000001092739C6C6C6C6C6C6C6C60000C6C6C6526A93939A8298
+						97A17CA57E8AC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6CDCB539B896A786464
+						636132318B9F9FA2B2A6A39FA48B9FA6A27D9F9F7D8585A37A7D7E8B767D8B7A
+						7A86837D687D89857D8386699F678389A9A39E8989866909000F64423D6A6284
+						8254317D677A687A82836B6A8361823D4031260B000000000101000F2470C6C6
+						C6C6C6C60000C6C6C68E82758FCB9A8F7898AB7FA5797CD3C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6906C6C946A695E63643231317C9F9F86A2A3A39F9F9FA3A586
+						9F8086A186837C868B7C7D8B807575787C678582648263858589898687AB89A9
+						88899489897A23003C8765426A6661893F318B7D9E86858B948B838783686A68
+						42313024000809010A010A09092439C6C6C6C6C60000C6C6C68C928F8B7E829A
+						9D858B9F7EA97E7D95C6C6C6C6C6C6C6C6C6C6C6C6C6CC596A6A82756375615E
+						313186A58686A380A5A3A69F859F9F8BA385757A7D858B857C7D7A6376827575
+						7588757A837C638275838986A5A9828289AE873187300001876A61606A846989
+						20829F86A3AAA397ADAD889788656A67655E313F00010A21404265653D240A17
+						C6C6C6C60000C6C6C6514F528E9A8BA197CB977CAB8097807D8BD5C6C6C6C6C6
+						C6C6C6C6C6C659548F828269755E4242638B9FA39F83A38986A08B9FA39F83A3
+						8986A08B9FA39F83A38986A08B9FA39F83A38986A08B9FA39F83A38986A08986
+						A0AC8611861101948865406A84689465207AA5A1AEAEAAA3CFCFCF899B616542
+						61313167010001222665879485653B0E19C6C6C60000C6C6C67467757582CBCB
+						AB9F9D977DA580977DA18BCBC6C6C6C6C6C6C6C6C6CA59946A9B677A5E426567
+						8BA3869F8BA5A39F83A3A3869F8BA5A39F83A3A3869F8BA5A39F83A3A3869F8B
+						A5A39F83A3A3869F8BA5A39F83A39F83A394820082003E9487829B83877AA91E
+						227DA6AAAED9ADADADCFCFAECB6531263131215D6A00000831305E65833B3425
+						2A71C6C60000C6C6C6D5725152758B7CCBD9A5A5AAA28B808B7CB29974EBC6C6
+						C6C6C6C6C6596C6C9489687A61427594A9A9ACA3A3ABA38BA189A9ACA3A3ABA3
+						8BA189A9ACA3A3ABA38BA189A9ACA3A3ABA38BA189A9ACA3A3ABA38BA1898BA1
+						89CB40014D0813CF87ACAD9BA387870A25869FAED9DCD9DAAED9D9D9AD89421F
+						1F300A616410010F333F6887898231000044C6C60000C6C6C6C6BC6A728E9696
+						9F8B8BD9B288A2869F976385948FD5C6C6C6C6C6C6C6CB94897A6865426B97A3
+						ABAAAAA9A389A3A3AB85AAAAA9A389A3A3AB85AAAAA9A389A3A3AB85AAAAA9A3
+						89A3A3AB85AAAAA9A389A3A3AB85A3AB85CB3F38403400AD9488A997ABA9091F
+						317B86AEDADADCD9D9D9CFD9D9943111092121226165000043436CCDCBF1CDF1
+						4916C6C60000C6C6C6C6D553568282CBCB9D9F9F97B29B868B82AA8BAA9BCAD6
+						C6C6C6C6C6C6C6CB8261403C8389978BAD89A3978B8BA9A38BAA89A3978B8BA9
+						A38BAA89A3978B8BA9A38BAA89A3978B8BA9A38BAA89A3978B8BA9A38BAAA38B
+						AACB4F114F18339494AC97AAA940010F257A8BAED9D9DADAD9D9CFCFD9D92609
+						03252222253C300300276C5701C807C8C845C6C60000C6C6C6C6C6BE55568282
+						859B9BCFA68897AD87AD899797A9899A95C6C6C6C6C6C6F5CD40757B858BA98B
+						A9AAAA8B89899789A385AAAA8B89899789A385AAAA8B89899789A385AAAA8B89
+						899789A385AAAA8B89899789A38589A385C96A476A3E079487A99788A3270A11
+						60617ACFD9D9DBD9DAD9CBCFAD8F09423C313D30303065230009180C0B000500
+						44C0C6C60000C6C6C6C6C6E5725270828FCB8B7C8D9DAE8DA99B9797AE8BAA97
+						888E95D6EDE3DBCB97827B88898B9DA389AA97888883978B8994AA9788888397
+						8B8994AA97888883978B8994AA97888883978B8994AA97888883978B89948B89
+						94C8544D534D00509B829487A53B1E34425E7A89DADAD9D9D9CFAC8F94D9310F
+						27504F423B3D6822420759C890724E45C6C6C6C60000C6C6C6C6C6C6D5925282
+						858B948DCBA98F9A949BCBAAD9D9AE97AA978882888B9797A38BA38B97978B99
+						AA82AD9496968888839782AD9496968888839782AD9496968888839782AD9496
+						968888839782AD949696888883978883978F5636543F014D916B8889B2251F3B
+						637A836AABD9DADAD9DACB94AD8431690F0901090E03653B6B1D0015E3C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6E7CA51565282858B97949A9ACBCB9D99AAADAAAD
+						ADB2ADADADAD99AD9D949797948B9B94969A829A968F949694829A829A968F94
+						9694829A829A968F949694829A829A968F949694829A829A968F949694829694
+						829053374D37274D94888889AB1E1F3B647D86A3AD9786A9D9CFADCF42257620
+						00000A22090900096A8D001571C6C6C6C6C6C6C60000C6C6C6C6C6C6C6E38F82
+						424242426A969A9B9B9BCF9D9BCFADAC9DD9CF9D9B9B9A94889694888F886A8F
+						829A9D8F8C8C96948F949A9D8F8C8C96948F949A9D8F8C8C96948F949A9D8F8C
+						8C96948F949A9D8F8C8C96948F94948F946C90119117504DC9899B89AA1F203D
+						767B8BA59BAED99B85A9CFCF310F680000215F265F0A0109259A3D0216C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6926A424142428F949B939B9BCB949B948F9A
+						96CB93958D8F8FCB938D82826A8C8F8C8F6A828F956A938C8E916A828F956A93
+						8C8E916A828F956A938C8E916A828F956A938C8E916A828F956A938C8E918C8E
+						91568D4991496C10CFCFA9A97B1E20317A778B8BD9D9D9D9D99B89D925096800
+						005E0000005F000F0A40940F2EC6C6C6C6C6C6C60000C6C6C6C6C6C6C6C69582
+						6A42888282948F948C9ACB938F908256826C938E8C828D728D8256928272428C
+						6A8C728D8C938F9370828C728D8C938F9370828C728D8C938F9370828C728D8C
+						938F9370828C728D8C938F9370829370826A59536C4F3700CFAEACAB640A0F31
+						7A7FA3A5ABD9D9D9CFD9CB878901300100310118085D000109090E246FC6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C86782756A8270526A8C8C8C568D8F726C51
+						5694568D4F566C52515056525254526C556C8C8D56928F8D938C6C8C8D56928F
+						8D938C6C8C8D56928F8D938C6C8C8D56928F8D938C6C8C8D56928F8D938C8D93
+						8C56565356541027CBADADAA64080A24627C9FABADCFD9D9DBD9CF9B875F0003
+						0000265D310100000A090927BFC6C6C6C6C6C6C60000C6C6C6C6C6C6C6EC8242
+						42423C5052428E8C9356CBC856726A93567093565255827053564F4F3A3A424F
+						4F4F4D53564D8C56908C4F4D53564D8C56908C4F4D53564D8C56908C4F4D5356
+						4D8C56908C4F4D53564D8C56908C56908C534F8C538C335249D9ADA968010122
+						647C85A9AAD9DCDCD9D9D1AE69826901000000000009312100030039D5C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6D693827575756A8282568C7292C89393597259
+						56705453563A4F4D4F5355544E4E534E4F55554F53534F564D4E55554F53534F
+						564D4E55554F53534F564D4E55554F53534F564D4E55554F53534F564D4E564D
+						4E4D4E3F4E4F553727CF9B946701000A7A7686AAAAD9DCDBDCD9CF9E64313B3B
+						080000001F6B6409031F0141C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C69A8270
+						7542758B8293728C909093C87256598C565256514F5149414F4E4E3A37494F51
+						593A494E4953534E534E3A494E4953534E534E3A494E4953534E534E3A494E49
+						53534E534E3A494E4953534E534E4E534E48534E533A4F271A599B6B3F010020
+						64759FA3A5ABDAB3CF9489A361261F0F243C638069865E64310F6171C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6D65482828A857EAA978C5156567259C859725592
+						5355374E523753534E4D4E53395337494849494E494C4F49534F49494E494C4F
+						49534F49494E494C4F49534F49494E494C4F49534F49494E494C4F49534F4953
+						4F535553555346370B38C96A2701000A31858586A0A6ABA1A37B9E9E31313031
+						08A3897B315D7D809E2588BEC6C6C6C6C6C6C6C60000C6C6C6C6C6C6728D7042
+						99CB96AAD94259565559728C72514F4E39413A39483A4956494E394639394848
+						4841484953394C494E4E41484953394C494E4E41484953394C494E4E41484953
+						394C494E4E41484953394C494E4E494E4E4E59555955592A27174D9413000000
+						22677C7D9F7D7B7C69847A315E425E5E0A89A22264A4847F623D41C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6E34F8D94CB8BAAD999B297704E3949394E4E394E4E
+						4E714E2F3948394E392D4E492F4E494E2D394848394E49533749394848394E49
+						533749394848394E49533749394848394E49533749394848394E495337495337
+						494E594959485337490D186C01000100313179757F78837C75683D6126685E5F
+						263C7B3D75A37F62314FBEC6C6C6C6C6C6C6C6C60000C6C6C6C6C6CA938C9499
+						9B9DB2B297A5944233392A39C6C6C6C6C6C6F5EDCA1A2D483939394849484937
+						484E3939483948394E484E3939483948394E484E3939483948394E484E393948
+						3948394E484E3939483948394E48394E48594E584E59595849480B0701000000
+						095E6476637661683D11091F215E625D261F6964657B60244273C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C68C829ACB9AA5B2AD8BAD8597978C4EC6C6C6C6C6C6
+						C6C6CA72BC0B1A2D2D122D37444848442D39393739332F37483A3937392D3737
+						39392F39373948482D482D48374E4E4E484E394E484949534E484C4E4E46374E
+						484E4C494E4B535948592D0D0200000A000831313131302508005E765D767B5E
+						5D1F317A403B1F39BEC6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C68C8D928B99
+						CB96B2CF97AAAA8995C6C6C6C6C6C6C6C6C6AD886C565939392D372D39372D4E
+						49483A482D2D46494844372A2A1A2A37482D332D3739392B49482D4848484E4E
+						484C4E2D4D4E4E48594B594C49594C48494C4C2D4C594E59484C483310000101
+						01000101090F090901898B7D7A7B775D26317E6A25224273C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6CA93828ED4CBB2D99CABA3AA8595C6C6C6C6C6C6C6C6
+						C6C6C6CB6A8D594C4E482A2D4437482D2D4B48392F2A374639372D1A2A371D37
+						3937392D332D37392F39484E48484E53494E49594848484B3948484E48484649
+						46394648464C484B46484637100000010A00000000090F1E7C86757A7B7D5F26
+						265EA731203F45C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C68C938ECBACDA
+						CBADAB97AA8B95C6C6C6C6C6C6C6C6C6C6C6C6C6C65958484E494E48391D372D
+						2D2D3748372D48372D2D1A2A482D372A2A1D121A2A2A291A2D462F484E484E48
+						4E4E494E48484E484C534E494C4E48394948483746371D2D2D49484819100000
+						09000001010A203D69897A7B9E625D1E317B3D26426FC6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6D656928C9ACBCB9DA5A9B28AC6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6BC4E4848484837192D1A1C1A2D2D482D19190D13192D121D
+						291A291919192A1A1C2F464E49482F4B482D484E58274B584846494846374C2D
+						4E2D481D37371A4646392D4E1010030100000000080A265D5F7B7F775E310811
+						253127424EC6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6724F528F959399
+						A58BB0B0C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6BE714E4B2D37
+						482D2D441C1017462D2A1A2A372D371D2A1D122A33292A192D462F484E484E48
+						4E4E485946484E484C534E4C4C4E494849394937372D37172A482D101A190E0D
+						010000000001080A2631312626080924250A3474C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6558259568F8B8BD48BD3C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C64444442D37192D191A2C1A120D13192D131A
+						2C1A191919192A2D1948444E494839484837484E4E2D4B584646494846374C2D
+						4E37462D1A371737172A37483A170D1003000000010E090F0F301F2122250924
+						242428C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6544E8E708F8EB0
+						B0C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C658
+						4448191A1B2D191A1A0B190D17170D0D170716121919190D19171A4637494648
+						4649374437434C49484837461D4846463937171A1A1A1A1D1D2D2D1D101A1719
+						100D000000000000000000000000091F0F3373C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6D5598E708295D3C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C0441C2C192D191A1917170D030D0203
+						030D070D170D0D170D172A2D4837374837464648462D2D2D19274646462A462D
+						1D1A49172D1D2D1A191A17191A1A10102D100D0D0D030313103803090900010A
+						33BEC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6D36F7274C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6BE1616170D1C1917190D0D0D100D070606070D0D0D0D19191717192A192D
+						1A2D2D1D1D191D2C2D2D1A1A2D191D191A1D332D2D191D18171A121D1A101212
+						1A0310020E03101A13121933100101024EC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6581C0D070D06070D0D160202
+						0702060303060D070D100D190D1919191C191919191D1A191C2D191919171917
+						19101A182D10191A0D171917191A170D1912100D0319091A1A1710191000022B
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6CA1901070007160D071616070007050604000606060D190D170D1D
+						1719171917161D2D17181C0D171607100D1C1A1717100D100702031210190D0E
+						0D191010100D19172A03191A10000DC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6CD3E4D3E0B1A03000407140D
+						0D161404040706070206070D0D16160D19171717071619171617190D17171916
+						100D171019070D00070D070607032903070D10100E12072A1912071800024EC6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6CD3734343C4D2718013700000716140D160D0607070D0B161717191719
+						19070D151416160D060D0D0D0B030D1707171919170D06170706070307070D19
+						030D10100D10171016011903022EC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6BC4747544D382738504D38342707
+						0B171717171507161617171A17171617171717160707140716070D0414160707
+						1707171707191005070003070307031012101717101007171017090745C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6594D436C6A434D3E383454278D272738111A18151717191D1D1D182C1D1917
+						44171D1C1616161614060D1407040D1717171A071915071403170203020D070D
+						171010101A070D0D0D11106FC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6474A4C4D434D914D8C494D6A4D54384D
+						504D650B4D27070B141C272D2D1A1B1D46461B19191C171B16141716171D1516
+						161A151A171C19060D0B070700070710100710101017061A073770C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						59575457594D4A594D5950594D6A4D4D6A3F4D6A6A6A94341B371B1C151B1D2D
+						2D171C1D1D1D1A1D16171B171B14171B19171D191D1C16171007050710070703
+						0707070D060D1A1A4EC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C659916C6C6C596C5959576C6CC8916C3E
+						4D596A476C4D5049944D551B1B171D1D2D461D1C18441C1B1B171717171A1C1D
+						1B171C171D1D171B19171707170703070007100D16194EC6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C9C9C957594D594D6CC9C86C6C6C545759544D6A4D824DAD72C6C671441C161B
+						1D1D46462D1D271D17171D1B1A1D2D171D1D461D1D171D1D171D1817170B0716
+						0B1910164EC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6CA6C4A56276C596CC96C6C5957544A54
+						4D940B54495270C6C6C6C6C6C6C6C6C671454416161B441D4444171717100D1D
+						191717181919170B0701170707070500162871C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						CC6C17494A59594A4D4D185759594E91154D4C4EC6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6BD714E4444442E2C2F2C2C19181A18040707000D162945C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6EC4C1D1D4A464346474D4D4D59542759
+						594EC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C84D6C595927474D5756594A4DBC58BEC6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C690434C574D57594E5872C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6BE5872C8BCBC71C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C60000C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
+						C6C6C6C60000
+					</Run>
+					<Run ws="en"> fish, </Run>
+					<Run ws="en" tags="IF68975D7-E225-4F8E-9506-92128C673FEF">special care</Run>
+					<Run ws="en"> was taken to avoid being cut by the razor sharp teeth</Run>
+				</Str>
+			</Contents>
+			<Label>
+				<Str>
+					<Run ws="en">Cleaning the Pirana</Run>
+				</Str>
+			</Label>
+		</StTxtPara>
+	</rt>
+	<rt class="StTxtPara" guid="2BDD0EA1-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD0E8F-F9B2-11D3-977B-00C04F186933" owningflid="14001" owningord="3">
+		<CmObject/>
+		<StPara>
+			<StyleName>
+				<Uni>regular</Uni>
+			</StyleName>
+			<StyleRules>
+				<Prop namedStyle="Normal">
+				</Prop>
+			</StyleRules>
+		</StPara>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en" tags="I2BDD0E8D-F9B2-11D3-977B-00C04F186933">Tiga</Run>
+					<Run ws="en">'s family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire.</Run>
+				</Str>
+			</Contents>
+			<Label>
+				<Str>
+					<Run ws="en">Roasting and eating the pirana</Run>
+				</Str>
+			</Label>
+		</StTxtPara>
+	</rt>
+	<rt class="RnRoledPartic" guid="2BDD0EA3-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" owningflid="4006002" owningord="1">
+		<CmObject/>
+		<RnRoledPartic>
+			<Participants>
+				<objsur t="r" guid="2BDD0E8D-F9B2-11D3-977B-00C04F186933" />
+			</Participants>
+			<Role>
+				<objsur t="r" guid="2BDD1146-F9B2-11D3-977B-00C04F186933" />
+			</Role>
+		</RnRoledPartic>
+	</rt>
+	<rt class="RnRoledPartic" guid="2BDD0EA4-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" owningflid="4006002" owningord="2">
+		<CmObject/>
+		<RnRoledPartic>
+			<Participants>
+				<objsur t="r" guid="2BDD0EA2-F9B2-11D3-977B-00C04F186933" />
+			</Participants>
+			<Role>
+				<objsur t="r" guid="2BDD114D-F9B2-11D3-977B-00C04F186933" />
+			</Role>
+		</RnRoledPartic>
+	</rt>
+	<rt class="StText" guid="FBA9CA56-965F-4415-9E40-469F5A09D660" ownerguid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" owningflid="4006010" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="7E198D85-4C86-41FF-BC7A-0538510407EC" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="7E198D85-4C86-41FF-BC7A-0538510407EC" ownerguid="FBA9CA56-965F-4415-9E40-469F5A09D660" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">This is a very very personal note that I don't want anyone to read, so I'll use invisible ink.</Run>
+				</Str>
+			</Contents>
+			<Label>
+				<Str>
+					<Run ws="en">Private information</Run>
+				</Str>
+			</Label>
+		</StTxtPara>
+	</rt>
+	<rt class="RnAnalysis" guid="DEB87FFC-5384-4DF9-9C3B-FE34334A8C33" ownerguid="2BDD0EAB-F9B2-11D3-977B-00C04F186933" owningflid="4004009" owningord="4">
+		<CmObject/>
+		<RnGenericRec>
+			<DateCreated val="1999-01-08 15:00:00.000" />
+			<DateModified val="1999-01-07 15:20:57.000" />
+			<Title>
+				<Str>
+					<Run ws="en">Fish are regarded simply as food.</Run>
+				</Str>
+			</Title>
+			<ExternalMaterials>
+				<objsur t="o" guid="5EBE9B7A-AC8F-4E45-B784-E710B44EE926" />
+			</ExternalMaterials>
+			<FurtherQuestions>
+				<objsur t="o" guid="FD9028FB-7E24-4EA9-A20D-3606CF001DD7" />
+			</FurtherQuestions>
+			<VersionHistory>
+				<objsur t="o" guid="2592C796-DDFE-40B2-BF11-67F3E29611B5" />
+			</VersionHistory>
+			<AnthroCodes>
+				<objsur t="r" guid="6BDD640F-A2A5-48EA-8B82-8EFC5B4ECF15" />
+			</AnthroCodes>
+			<Confidence>
+				<objsur t="r" guid="2BDD1100-F9B2-11D3-977B-00C04F186933" />
+			</Confidence>
+			<Researchers>
+				<objsur t="r" guid="2BDD0EA2-F9B2-11D3-977B-00C04F186933" />
+			</Researchers>
+			<SeeAlso>
+				<objsur t="r" guid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" />
+			</SeeAlso>
+		</RnGenericRec>
+		<RnAnalysis>
+			<Conclusions>
+				<objsur t="o" guid="365F10D0-8B5E-4B87-A74B-F939E6D55B77" />
+			</Conclusions>
+			<Discussion>
+				<objsur t="o" guid="F77F47A9-E930-4D1F-BE29-04620B260CE0" />
+			</Discussion>
+			<Hypothesis>
+				<objsur t="o" guid="A19B0FCF-BD4E-486A-9FDC-B6CEC7CD6F1F" />
+			</Hypothesis>
+			<ResearchPlan>
+				<objsur t="o" guid="4357104D-4531-4DA9-A3D6-CC28DEE9823D" />
+			</ResearchPlan>
+			<CounterEvidence>
+				<objsur t="r" guid="2BDD0EEA-F9B2-11D3-977B-00C04F186933" />
+			</CounterEvidence>
+			<Status>
+				<objsur t="r" guid="2BDD10E4-F9B2-11D3-977B-00C04F186933" />
+			</Status>
+			<SupersededBy>
+				<objsur t="r" guid="2BDD0EDD-F9B2-11D3-977B-00C04F186933" />
+			</SupersededBy>
+			<SupportingEvidence>
+				<objsur t="r" guid="2BDD0E8E-F9B2-11D3-977B-00C04F186933" />
+				<objsur t="r" guid="BE122646-438D-4C62-92EB-EA124988283E" />
+				<objsur t="r" guid="2BDD0EBE-F9B2-11D3-977B-00C04F186933" />
+			</SupportingEvidence>
+		</RnAnalysis>
+	</rt>
+	<rt class="StText" guid="5EBE9B7A-AC8F-4E45-B784-E710B44EE926" ownerguid="DEB87FFC-5384-4DF9-9C3B-FE34334A8C33" owningflid="4004013" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="1498EFE3-E58D-4242-A621-928551509CCD" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="1498EFE3-E58D-4242-A621-928551509CCD" ownerguid="5EBE9B7A-AC8F-4E45-B784-E710B44EE926" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="StText" guid="FD9028FB-7E24-4EA9-A20D-3606CF001DD7" ownerguid="DEB87FFC-5384-4DF9-9C3B-FE34334A8C33" owningflid="4004014" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="09DA01B4-06BD-4438-AF51-626A40AE9A24" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="09DA01B4-06BD-4438-AF51-626A40AE9A24" ownerguid="FD9028FB-7E24-4EA9-A20D-3606CF001DD7" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="StText" guid="2592C796-DDFE-40B2-BF11-67F3E29611B5" ownerguid="DEB87FFC-5384-4DF9-9C3B-FE34334A8C33" owningflid="4004002" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="40F9C7F6-071C-452E-9074-8BCD98A144D5" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="40F9C7F6-071C-452E-9074-8BCD98A144D5" ownerguid="2592C796-DDFE-40B2-BF11-67F3E29611B5" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="StText" guid="365F10D0-8B5E-4B87-A74B-F939E6D55B77" ownerguid="DEB87FFC-5384-4DF9-9C3B-FE34334A8C33" owningflid="4005004" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="0ED1765D-BD52-42DF-834D-3E7BB0D33BA9" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="0ED1765D-BD52-42DF-834D-3E7BB0D33BA9" ownerguid="365F10D0-8B5E-4B87-A74B-F939E6D55B77" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Based on the fact that fish are eaten regularly, and that there are no fish gods or spirits, I suspect that fish are simply regarded as food.</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+	<rt class="StText" guid="F77F47A9-E930-4D1F-BE29-04620B260CE0" ownerguid="DEB87FFC-5384-4DF9-9C3B-FE34334A8C33" owningflid="4005003" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="07C5974A-CDD7-4FEF-BCED-3E9C27A4A7C2" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="07C5974A-CDD7-4FEF-BCED-3E9C27A4A7C2" ownerguid="F77F47A9-E930-4D1F-BE29-04620B260CE0" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Results of fish Analysis</Run>
+				</Str>
+			</Contents>
+			<Label>
+				<Str>
+					<Run ws="en">hmmmm...</Run>
+				</Str>
+			</Label>
+		</StTxtPara>
+	</rt>
+	<rt class="StText" guid="A19B0FCF-BD4E-486A-9FDC-B6CEC7CD6F1F" ownerguid="DEB87FFC-5384-4DF9-9C3B-FE34334A8C33" owningflid="4005001" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="BE9BA534-35AE-4F47-B3AC-0291F9F4B635" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="BE9BA534-35AE-4F47-B3AC-0291F9F4B635" ownerguid="A19B0FCF-BD4E-486A-9FDC-B6CEC7CD6F1F" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Fish are simply regarded as food and are neither worshipped nor regarded highly amongst the Orang people.</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+	<rt class="StText" guid="4357104D-4531-4DA9-A3D6-CC28DEE9823D" ownerguid="DEB87FFC-5384-4DF9-9C3B-FE34334A8C33" owningflid="4005002" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="58649CF4-CD06-4A78-9CBD-AD3C70CDE0B9" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="58649CF4-CD06-4A78-9CBD-AD3C70CDE0B9" ownerguid="4357104D-4531-4DA9-A3D6-CC28DEE9823D" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Examine mountain shrine (with permission) for any images or carvings of fish.</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+	<rt class="StText" guid="D60CD919-E64C-439F-8129-F87F00F2034B" ownerguid="2BDD0EAB-F9B2-11D3-977B-00C04F186933" owningflid="4004002" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="2A015530-55A7-4B12-8067-112C5291550D" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="2A015530-55A7-4B12-8067-112C5291550D" ownerguid="D60CD919-E64C-439F-8129-F87F00F2034B" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+	<rt class="StText" guid="2BDD0E8F-5332-11D3-977B-00C04F186933" ownerguid="2BDD0EAB-F9B2-11D3-977B-00C04F186933" owningflid="4006001" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="2BDD0E90-3224-11D3-977B-00C04F186933" />
+				<objsur t="o" guid="2BDD0EA0-3323-11D3-977B-00C04F186933" />
+				<objsur t="o" guid="2BDD0EA1-4432-11D3-977B-00C04F186933" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="2BDD0E90-3224-11D3-977B-00C04F186933" ownerguid="2BDD0E8F-5332-11D3-977B-00C04F186933" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Went fishing with Tiga at the river.  Within no time, he had caught about 10 fierce looking pirana which we subsequently cleaned and ate for breakfast.</Run>
+				</Str>
+			</Contents>
+			<Label>
+				<Str>
+					<Run ws="en">Fishing for Pirana</Run>
+				</Str>
+			</Label>
+		</StTxtPara>
+	</rt>
+	<rt class="StTxtPara" guid="2BDD0EA0-3323-11D3-977B-00C04F186933" ownerguid="2BDD0E8F-5332-11D3-977B-00C04F186933" owningflid="14001" owningord="2">
+		<CmObject/>
+		<StPara>
+			<StyleName>
+				<Uni>italic</Uni>
+			</StyleName>
+		</StPara>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">This is a very long paragraph that is over 4K characters. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fi sh, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. This is a long paragraph. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fi sh, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth. When cleaning the pirana fish, special care was taken to avoid being cut by the razor sharp teeth.</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+	<rt class="StTxtPara" guid="2BDD0EA1-4432-11D3-977B-00C04F186933" ownerguid="2BDD0E8F-5332-11D3-977B-00C04F186933" owningflid="14001" owningord="3">
+		<CmObject/>
+		<StPara>
+			<StyleName>
+				<Uni>regular</Uni>
+			</StyleName>
+		</StPara>
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Another long paragraph. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fis h after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. Tiga's family and I enjoyed eating the pirana fish after we roasted them on sticks over the fire. </Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+	<rt class="RnRoledPartic" guid="2BDD0EAE-F9B2-11D3-977B-00C04F186933" ownerguid="2BDD0EAB-F9B2-11D3-977B-00C04F186933" owningflid="4006002" owningord="1">
+		<CmObject/>
+		<RnRoledPartic>
+			<Participants>
+				<objsur t="r" guid="2BDD0E8C-F9B2-11D3-977B-00C04F186933" />
+				<objsur t="r" guid="2BDD0E91-F9B2-11D3-977B-00C04F186933" />
+				<objsur t="r" guid="2BDD0E95-F9B2-11D3-977B-00C04F186933" />
+			</Participants>
+			<Role>
+				<objsur t="r" guid="2BDD1146-F9B2-11D3-977B-00C04F186933" />
+			</Role>
+		</RnRoledPartic>
+	</rt>
+	<rt class="StText" guid="A4AE7565-320E-45E1-996D-3D6277DF3C0C" ownerguid="2BDD0EAB-F9B2-11D3-977B-00C04F186933" owningflid="4006010" owningord="1">
+		<CmObject/>
+		<StText>
+			<Paragraphs>
+				<objsur t="o" guid="63C7360F-8E8E-4A5A-85E1-D9074C699979" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="63C7360F-8E8E-4A5A-85E1-D9074C699979" ownerguid="A4AE7565-320E-45E1-996D-3D6277DF3C0C" owningflid="14001" owningord="1">
+		<CmObject/>
+		<StPara/>
+		<StTxtPara/>
+	</rt>
+</languageproject>

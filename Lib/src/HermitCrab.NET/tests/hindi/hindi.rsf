@@ -1,0 +1,27 @@
+\major
+\base ga)p
+\sense
+\pos V
+\gloss <ENG>foo
+\-sense
+
+\major
+\base pit
+\sense
+\pos N
+\gloss <ENG>bar
+\-sense
+
+\major
+\base pHit
+\sense
+\pos N
+\gloss <ENG>foobar
+\-sense
+
+\major
+\base sat
+\sense
+\pos V
+\gloss <ENG>fum
+\-sense

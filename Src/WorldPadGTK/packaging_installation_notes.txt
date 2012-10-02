@@ -1,0 +1,22 @@
+$Id$
+
+This file documents steps to associate WorldPadGTK with WPX files in Gnome Nautilus, KDE 3 Konqueror, and KDE 4 Dolphin. The file browser will show an icon for WPX files, and they should open in WorldPad. Nautilus and one of the KDE versions lets us select multiple files and open them all in multiple WP windows.
+Gnome, KDE3, and KDE4 all show SIL WorldPad in the proper place in the application menus.
+
+For more information about this sort of thing, see http://linux.lsdev.sil.org/wiki/index.php/Integrating_an_Application_into_a_Gnome_Environment
+
+Parts of Worldpad installation include:
+$ sudo cp worldpad /usr/bin
+$ sudo cp application-x-worldpad.svg /usr/share/icons/gnome/scalable/mimetypes
+$ sudo cp application-x-worldpad.svg /usr/share/icons/hicolor/scalable/mimetypes
+$ sudo cp worldpad.xml /usr/share/mime/packages
+$ sudo update-mime-database /usr/share/mime
+$ sudo desktop-file-install --rebuild-mime-info-cache worldpad.desktop
+
+Uninstallation:
+$ sudo rm /usr/bin/worldpad
+$ sudo rm /usr/share/applications/worldpad.desktop
+$ sudo rm /usr/share/mime/packages/worldpad.xml
+$ sudo rm /usr/share/icons/gnome/scalable/mimetypes/application-x-worldpad.svg
+$ sudo rm /usr/share/icons/hicolor/scalable/mimetypes/application-x-worldpad.svg
+$ sudo update-mime-database /usr/share/mime

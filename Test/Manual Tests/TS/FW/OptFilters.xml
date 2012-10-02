@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="tlsoptfilt" num="2.7.9.2" abbr="tlof" file="FW\OptFilters.xml">
+<title tag="tlsoptfilt">Tools-Options-Filters Tab Tests</title>
+<index>
+<li>test</li>
+</index>
+
+<introduction>
+<p>The Filters page of the Options dialog lets users create,
+configure and delete Basic or Advanced filters. There are two
+possible styles to the right half of the dialog, depending
+on whether the selected filter is basic or advanced.
+</p>
+<p name="Specification">See the specification for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/Toolsmenu/Options/Filters/Filters.html" type="doc">Tools-Options-Filters Tab</link>
+</p>
+</introduction>
+
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Tools-Options-Filters Tab"</p>
+</context>
+
+
+<!-- Activation -->
+<case id="tlofAct" num="0" order="any">
+<title tag="tlofAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Tools-Options-Filters Tab. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Filters/Filters.html" type="doc">Tools-Options-Filters Tab specification</link> to visually inspect the layout of the dialog controls.
+ <r>
+<ul>
+  <li>The dialog opens.</li>
+  <li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+  <li>Default values are tested in the control cases below.</li>
+  <li>Shortcuts are as tested in the control cases below.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: dialog fails to open</p>
+<p name="bug">Tools-Options-Filters Tab: dialog layout incorrect</p>
+</step>
+
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+ <r>
+<ul>
+  <li>When invoked from a filter button right-click, associated filter is selected.</li>
+  <li>The Criteria fields are filled with data of the selected fileter.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: associated filter is selected failed</p>
+<p name="bug">Tools-Options-Filters Tab: Criteria fields are filled with data of the selected filter failed</p>
+</step>
+
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+ <r>
+<ul>
+  <li>On OK, the dialog disappears.</li>
+  <li>The filter is updated and applied if currently in use.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: dialog remains after OK</p>
+<p name="bug">Tools-Options-Filters Tab: filter is run on the current view failed</p>
+</step>
+</case>
+
+
+<!-- Filters List Box -->
+<case id="tlofflt" num="1" order="any">
+<title tag="tlofflt">Filters List Box</title>
+<context>
+<p>When the Filters tab is displayed</p>
+</context>
+
+<step name="1.1" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;F&gt; to test the <b>Filters</b> list box.<r>
+<ul>
+<li>The shortcut "F" is underlined.</li>
+<li>There is a list below the text box.</li>
+<li>The default is "&lt;filters in the project&gt;".</li>
+<li>Report any failures using the first words, "Tools-Options-Filters Tab Filters".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab Filters shortcut is not &lt;F&gt;</p>
+<p name="bug">Tools-Options-Filters Tab Filters has list problems</p>
+<p name="bug">Tools-Options-Filters Tab Filters default is not "&lt;filters in the project&gt;"</p>
+</step>
+
+<step name="1.2" link="Bug">Check the list entries.<r>
+<ul>
+<li>The cursor highlights each item.</li>
+<li>The list contains filters in the project.</li>
+<li>Each list item has an icon beside it which correctly indicates whether it is a basic or advanced filter.</li>
+ </ul>
+</r>
+  <p name="bug">Tools-Options-Filters Tab: Filters list items not highlighted</p>
+  <p name="bug">Tools-Options-Filters Tab: Filters drop list missing &lt;filters in the project&gt;</p>
+  <p name="bug">Tools-Options-Filters Tab: Filters list icon(s) missing or incorrect</p>
+ </step>
+</case>
+
+
+<!-- Add button -->
+<case id="tlofadd" num="2" order="any">
+<title tag="tlofadd">Add Button</title>
+<context>
+<p>When the Filters tab is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;A&gt; to test the <b>Add</b> button.
+ <r>The shortcut "A" is underlined.</r>
+<p name="bug">Tools-Options-Filters Tab Add shortcut is not &lt;A&gt;</p>
+</step>
+
+<step name="2.2" link="Bug">Click the <b>Add</b> button.
+ <r>Gives two choices, Basic Filter and Advanced Filter.</r>
+<p name="bug">Tools-Options-Filters Tab Add: Click failed</p>
+</step>
+
+<step name="2.3" link="Bug">Click on <b>Basic Filter</b> and select an item.
+ <r>
+<ul>
+  <li>The right side of the dialog shows the Basic Filter controls.</li>
+  <li>The only option available is to Choose a field.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Click on Basic Filter failed</p>
+<p name="bug">Tools-Options-Filters Tab: Not restricted to Choose a field when creating new basic filter</p>
+</step>
+
+<step name="2.4" link="Bug">Click on <b>Advanced Filter</b> and select an item.
+ <r>
+<ul>
+  <li>The right side of the dialog shows the Advanced Filter Criteria Table.</li>
+  <li>The criteria table is blank.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Click on Advanced Filter failed</p>
+</step>
+</case>
+
+<!-- Copy Button -->
+<case id="tlofcpy" num="3" order="any">
+<title tag="tlofcpy">Copy Button</title>
+<context>
+<p>When the Filters tab is displayed</p>
+</context>
+<step name="3.1" link="Bug">  Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;C&gt; to test the <b>Copy</b> button.
+ <r>
+<ul>
+  <li>The shortcut "C" is underlined.</li>
+  <li>Report any failures using the first words, "Tools-Options-Filters Tab Copy".</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Copy shortcut is not &lt;C&gt;</p>
+</step>
+
+<step name="3.2" link="Bug">Click the <b>Copy</b> button.
+ <r>
+<ul>
+  <li>Copies the selected filter.</li>
+  <li>Assigns name 'Copy(i) of X'. (i is the copy number, no number is given the first copy)</li>
+  <li>In-place edit box opens.</li>
+  <li>User must give a valid name or will get a "Bonk!"</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Copy failed</p>
+</step>
+</case>
+
+
+<!-- Delete Button -->
+<case id="tlofdel" num="4" order="any">
+<title tag="tlofdel">Delete Button</title>
+<context>
+<p>When the Filters tab is displayed</p>
+</context>
+<step name="4.1" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;D&gt; to test the <b>Delete</b> button.
+<r>The shortcut "D" is underlined.</r>
+<p name="bug">Tools-Options-Filters Tab: Delete shortcut is not &lt;D&gt;</p>
+</step>
+
+<step name="4.2" link="Bug">Click the <b>Delete</b> button.
+ <r>
+<ul>
+  <li>Brings up confirmation dialog.</li>
+  <li>When No is clicked, does not delete the selected filter.</li>
+  <li>When Yes is clicked, deletes the selected filter.</li>
+  <li>Focus moves to the next filter.</li>
+  <li>If deleting last filter, moves focus to the last filter.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab deletion failed</p>
+</step>
+</case>
+
+
+<!-- Criteria Combo Box -->
+<case id="tlofbfcri" num="5" order="any">
+<title tag="tlofbfcri">Basic Filter Criteria Combo Box Tests</title>
+<context>
+<p>While creating a new basic filter</p>
+</context>
+
+<step name="5.1" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;e&gt; to test the <b>Choose a field</b> combo box. Select a Text field, Date, List reference, cross-reference, overlay tag, participant-&gt;role and Boolean and Integer field if posible.
+ <r>
+<ul>
+  <li>The shortcut "e" is underlined.</li>
+  <li>There is a drop-down list widget to the side of the textbox.</li>
+  <li>The list appears.</li>
+  <li>The list contains application specific entry types.</li>
+  <li>The list contains <i>Any Entry Type</i>.</li>
+  <li>The list sorts secondary lists in descending alphabetical order.</li>
+  <li>Report any other failures using the first words, "Tools-Options-Filters Tab Choose a field".</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab Fields combo box test list error</p>
+</step>
+
+<step name="5.2" link="Bug">For field, select a <b>text field</b> and inspect the Condition combo box.
+ <r>
+<ul>
+  <li>Default Condition is Contains</li>
+  <li>Has only the following conditions: <ul>
+   <li>Empty</li>
+   <li>Not empty</li>
+   <li>Contains</li>
+   <li>Does not contain</li>
+   <li>Equal to</li>
+   <li>Not equal to</li>
+  </ul>
+</li>
+ </ul>
+</r>
+ <p name="bug">Tools-Options-Filters Tab wrong conditions for text fields</p>
+</step>
+
+<step name="5.3" link="Bug">For field, select a <b>list reference field</b> and inspect the Condition combo box.
+ <r>
+<ul>
+  <li>Default Condition is Matches</li>
+  <li>Has only the following conditions: <ul>
+   <li>Empty</li>
+   <li>Not empty</li>
+   <li>Contains</li>
+   <li>Does not contain</li>
+   <li>Matches</li>
+   <li>Does not match</li>
+  </ul>
+</li>
+ </ul>
+</r>
+ <p name="bug">Tools-Options-Filters Tab wrong conditions for list reference fields</p>
+</step>
+
+<step name="5.4" link="Bug">For field, select a <b>date field</b> and inspect the Condition combo box.
+ <r>
+<ul>
+  <li>Default Condition is "On or After"</li>
+  <li>Has only the following conditions: <ul>
+   <li>Empty</li>
+   <li>Not empty</li>
+   <li>On</li>
+   <li>Not on</li>
+   <li>After</li>
+   <li>Before</li>
+   <li>On or after</li>
+   <li>On or before</li>
+  </ul>
+</li>
+ </ul>
+</r>
+ <p name="bug">Tools-Options-Filters Tab wrong conditions for date fields</p>
+</step>
+
+<step name="5.5" link="Bug">For field, select an <b>integer field</b> and inspect the Condition combo box.
+ <r>
+<ul>
+  <li>Default Condition is "Equal to"</li>
+  <li>Has only the following conditions: <ul>
+   <li>Empty</li>
+   <li>Not empty</li>
+   <li>Equal to</li>
+   <li>Not equal to</li>
+   <li>Greater than</li>
+   <li>Less than</li>
+   <li>Greater than or equal to</li>
+   <li>Less than or equal to</li>
+  </ul>
+</li>
+ </ul>
+</r>
+ <p name="bug">Tools-Options-Filters Tab wrong conditions for integer fields</p>
+</step>
+
+<step name="5.6" link="Bug">For field, select a <b>cross reference field</b> and inspect the Condition combo box.
+ <r>
+<ul>
+  <li>Default Condition is Contains</li>
+  <li>Has only the following conditions: <ul>
+   <li>Empty</li>
+   <li>Not empty</li>
+   <li>Contains</li>
+   <li>Does not contain</li>
+  </ul>
+</li>
+ </ul>
+</r>
+ <p name="bug">Tools-Options-Filters Tab wrong conditions for cross reference fields</p>
+</step>
+
+<step name="5.7" link="Bug">For field, select a <b>boolean field</b> and inspect the Condition combo box.
+ <r>
+<ul>
+  <li>Default Condition is Yes</li>
+  <li>Has only the following conditions: <ul>
+   <li>Yes</li>
+   <li>No</li>
+  </ul>
+</li>
+ </ul>
+</r>
+ <p name="bug">Tools-Options-Filters Tab wrong conditions for boolean fields</p>
+</step>
+</case>
+
+
+<!-- Text String Text Box -->
+<case id="tloftext" num="6" order="any">
+<title tag="tloftext">Text String Text Box</title>
+<context>
+<p>When a text field is selected in the Field combo box</p>
+</context>
+
+<step name="6.1" link="Bug">
+  Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;T&gt; to test the <b>Text string</b> text box.<r>
+<ul>
+<li>The shortcut "T" is underlined.</li>
+<li>Report any other failures using the first words, "Tools-Options-Filters Tab: Text String".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Text String shortcut is not &lt;T&gt;</p>
+</step>
+
+<step name="6.2" link="Bug">Change the value to test possible values.
+ <r>
+<ul>
+  <li>The default value is empty.</li>
+  <li>The value is editable text that persists.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: default value is not empty</p>
+<p name="bug">Tools-Options-Filters Tab: Text String value is not editable text that persists</p>
+</step>
+</case>
+
+
+<!-- List Field Box -->
+<case id="tloflist" num="7" order="any">
+<title tag="tloflist">List Field Box</title>
+<context>
+<p>When a list field is selected in the Field combo box</p>
+</context>
+
+<step name="7.1" link="Bug">Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;T&gt; to test the <b>Item</b> text box.
+ <r>
+<ul>
+  <li>The shortcut "T" is underlined.</li>
+  <li>Report any other failures using the first words, "Tools-Options-Filters Tab: Text String".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Item shortcut is not &lt;T&gt;</p>
+</step>
+
+<step name="7.2" link="Bug">Change the value to test possible values.
+ <r>
+<ul>
+  <li>There is a "..." button.</li>
+  <li>The "..." button calls up the List Chooser Dialog.</li>
+  <li>The box is an auto-complete type ahead box.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: default value is not empty</p>
+<p name="bug">Tools-Options-Filters Tab: Text String value is not editable text that persists</p>
+</step>
+</case>
+
+
+<!-- Data Field Box -->
+<case id="tlofdate" num="8" order="any">
+<title tag="tlofdate">Date Field Box</title>
+<context>
+<p>When a date field is selected in the Field combo box</p>
+</context>
+
+<step name="8.1" link="Bug">Use the shortcut &lt;Alt&gt;&lt;T&gt; to test the <b>Date</b> box.
+ <r>The shortcut "T" is underlined.</r>
+<p name="bug">Tools-Options-Filters Tab: Item shortcut is not &lt;T&gt;</p>
+</step>
+
+<step name="8.2" link="Bug">Use the shortcut &lt;Alt&gt;&lt;o&gt; to test the <b>Scope</b> text box.
+ <r>
+<ul>
+  <li>The shortcut "o" is underlined.</li>
+  <li>The combo box has these items (may not all be implemented yet): <img uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Filters/FiltersSimple-Date-Scope.gif">
+</img>
+</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Scope shortcut is not &lt;o&gt;</p>
+<p name="bug">Tools-Options-Filters Tab: Scope items incorrect</p>
+</step>
+
+<step name="8.3" link="Bug">Change the value to test possible values.
+ <r>
+<ul>
+  <li>There is a "..." button.</li>
+  <li>The "..." button calls up the Date floating toolbar.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Date field problem</p>
+</step>
+</case>
+
+
+<!-- Integer Field Box -->
+<case id="tlofint" num="9" order="any">
+<title tag="tlofint">Integer Field Box</title>
+<context>
+<p>When an integer field is selected in the Field combo box</p>
+</context>
+
+<step name="9.1" link="Bug">Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;N&gt; to test the <b>Number</b> text box.
+ <r>
+<ul>
+  <li>The shortcut "N" is underlined.</li>
+  <li>Only simple numbers are allowed; no decimals.</li>
+  <li>Report any other failures using the first words, "Tools-Options-Filters Tab: Text String".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Number shortcut is not &lt;N&gt;</p>
+<p name="bug">Tools-Options-Filters Tab: Number box allows more than simple numbers</p>
+</step>
+</case>
+
+
+<!-- Other Buttons -->
+<case id="tlofbutt" num="10" order="any">
+<title tag="tlofbutt">Other Buttons Tests</title>
+<context>
+<p>When the relevant buttons are displayed</p>
+</context>
+
+<step name="10.1" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;l&gt; to test the <b>Special</b> button.
+ <r>
+<ul>
+  <li>The shortcut "l" is underlined.</li>
+  <li>There is a drop-down list widget to the side of the textbox.</li>
+  <li>The wildcard variables are as shown (not all may be implemented): <img uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Filters/FiltersSpecialButton.gif">
+</img>
+</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Special button shortcut not &lt;l&gt;</p>
+<p name="bug">Tools-Options-Filters Tab: Special button has no drop-down widget</p>
+<p name="bug">Tools-Options-Filters Tab: Special button wildcards incorrect</p>
+</step>
+
+<step name="10.2" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;o&gt; to test the <b>Format</b> button. Also test effects of the menu options.
+ <r>
+<ul>
+  <li>The shortcut "o" is underlined.</li>
+  <li>There is a drop-down list widget to the side of the textbox.</li>
+  <li>The menu options have the following items: <ul>
+   <li>Writing system menu - allows user to specify a language from a list of possible languages for the match string.</li>
+   <li>Font - Brings up font dialog. Selecting any number of font attributes will add the attributes to the match string.</li>
+   <li>Style - Brings up style dialog. Selecting character style and clicking OK will add that style spec attribute to the match string.</li>
+   <li>No Format - removes all specified attributes from the text string.</li>
+  </ul>
+</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Format button shortcut is not &lt;o&gt;</p>
+<p name="bug">Tools-Options-Filters Tab: Format button has no drop-down widget</p>
+<p name="bug">Tools-Options-Filters Tab: Format button options not working correctly</p>
+</step>
+</case>
+
+
+<!-- Check Boxes -->
+<case id="tlofchkb" num="11" order="any">
+<title tag="tlofchkb">Check Boxes Tests</title>
+<context>
+<p>When the relevant check boxes are displayed</p>
+</context>
+
+<step name="11.1" link="Bug">Use the <link uri="../StdCtrls/checkbox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;M&gt; to test the <b>Match case</b> check box.
+ <r>
+<ul>
+  <li>The shortcut "M" is underlined.</li>
+  <li>Checking the box makes the search case sensitive.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Match case shortcut not &lt;m&gt;</p>
+<p name="bug">Tools-Options-Filters Tab: Match case does not work</p>
+</step>
+
+<step name="11.2" link="Bug">Use the <link uri="../StdCtrls/checkbox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;w&gt; to test the <b>Match whole word</b> check box.
+ <r>
+<ul>
+  <li>The shortcut "w" is underlined.</li>
+  <li>Checking the box makes the search match only whole words.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Match whole word shortcut not &lt;w&gt;</p>
+<p name="bug">Tools-Options-Filters Tab: Match whole word does not work</p>
+</step>
+
+<step name="11.3" link="Bug">Use the <link uri="../StdCtrls/checkbox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;i&gt; to test the <b>Match diacritics</b> check box.
+ <r>
+<ul>
+  <li>The shortcut "i" is underlined.</li>
+  <li>Checking the box makes the search sensitive to diacritics.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Match diacritics shortcut not &lt;i&gt;</p>
+<p name="bug">Tools-Options-Filters Tab: Match diacritics does not work</p>
+<p name="note">Not v1</p>
+</step>
+
+<step name="11.4" link="Bug">Use the <link uri="../StdCtrls/checkbox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;k&gt; to test the <b>Ask</b> check box.
+ <r>
+<ul>
+  <li>The shortcut "k" is underlined.</li>
+  <li>Checking the box causes applications to ask the user for a filter criteria before it actually applies the filter to the data.</li>
+  <li>Filter value defaults to whatever the user has already set in this filter.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Ask shortcut not &lt;k&gt;</p>
+<p name="bug">Tools-Options-Filters Tab: Prompt does not work</p>
+</step>
+</case>
+
+
+<!-- Prompt Message Text Box -->
+<case id="tlofmsg" num="12" order="any">
+<title tag="tlofmsg">Prompt Message Text Box</title>
+<context>
+<p>When the Prompt message text box is displayed</p>
+</context>
+
+<step name="12.1" link="Bug">Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;P&gt; to test the <b>Prompt message</b> text box.
+ <r>
+<ul>
+  <li>The shortcut "P" is underlined.</li>
+  <li>Report any failures using the first words, "Tools-Options-Filters Tab: Prompt message".</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Prompt message shortcut is not &lt;P&gt;</p>
+</step>
+<step name="12.2" link="Bug">Change the value to test possible values.
+ <r>
+<ul>
+  <li>The default value is empty.</li>
+  <li>The value is editable text that persists.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: default vaule is not empty</p>
+<p name="bug">Tools-Options-Filters Tab: Prompt message value is not editable criteria text that persists</p>
+</step>
+</case>
+
+
+<!-- Advanced Filter -->
+<case id="tlofAdvDiag" num="13" order="any">
+<title tag="tlofAdvDiag">Advanced Filter Dialog</title>
+<context>
+<p>When creating a new advanced filter</p>
+</context>
+
+<step name="13.1" link="Bug">Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Filters/Filters.html#AdvancedFilter" type="doc">Tools-Options-Filters Tab specification</link> to visually inspect the layout of the dialog controls.
+ <r>
+<ul>
+  <li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Advanced dialog differs from the specs</p>
+</step>
+
+<step name="13.2" link="Bug">Use the <link uri="../StdCtrls/checkbox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;t&gt; to test the <b>Show tips</b> check box.
+ <r>
+<ul>
+  <li>The shortcut "t" is underlined.</li>
+  <li>Checking the box brings up the Advanced Filter Tips popup dialog.</li>
+  <li>Unchecking the box closes the Advanced Filter Tips popup dialog.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: ShoW tips check box not behaving correctly</p>
+</step>
+
+<step name="13.3" link="Bug">Use the <link uri="../StdCtrls/checkbox.xml">Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;B&gt; to test the <b>Show the Criteria Builder</b> check box.
+ <r>
+<ul>
+  <li>The shortcut "B" is underlined.</li>
+  <li>Checking the box brings up the Criteria Builder dialog.</li>
+  <li>Unchecking the box closes the Criteria Builder dialog.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Show Criteria Builder check box not behaving correctly</p>
+</step>
+
+<step name="13.4" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;o&gt; to test the <b>Choose a field</b> button.
+ <r>
+<ul>
+  <li>The shortcut "o" is underlined.</li>
+  <li>The menu options are identical to that for the Basic Filter field menu.</li>
+  <li>An additional option is the Remove field option.</li>
+  <li>Check that the Remove field option removes the field. May have to add a criteria first.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Advanced filters Choose a field menu not correct</p>
+</step>
+</case>
+
+<!-- Advanced Filter Tips -->
+<case id="tlofAdvTips" num="14" order="any">
+<title tag="tlofAdvTips">Advanced Filter Tips</title>
+<context>
+<p>When creating a new advanced filter</p>
+</context>
+
+<step name="14.1" link="Bug">Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Filters/Filters.html#AdvancedFilter" type="doc">Tools-Options-Filters Tab specification</link> to visually inspect the contents of the popup dialog.
+ <r>
+<ul>
+  <li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Advanced Filter Tips dialog differs from the specs</p>
+</step>
+
+<step name="14.2" link="Bug">Close the Advanced Filter Tips dialog by clicking on the <b>X</b>.
+ <r>
+<ul>
+  <li>The dialog disappears.</li>
+  <li>The Show tips check box in the main dialog disappears.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Advanced Filter Tips dialog does not disapper</p>
+<p name="bug">Tools-Options-Filters Tab: Show tips check box does not get unchecked</p>
+</step>
+</case>
+
+
+<!-- Criteria Builder -->
+<case id="tlofAdvCritB" num="15" order="any">
+<title tag="tlofAdvCritB">Criteria Builder</title>
+<context>
+<p>When creating a new advanced filter</p>
+</context>
+
+<step name="15.1" link="Bug">Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Filters/Filters.html#AdvancedFilter" type="doc">Tools-Options-Filters Tab specification</link> to visually inspect the contents of the Criteria Builder dialog.
+ <r>
+<ul>
+  <li>The dialog is modeless.</li>
+  <li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Criteria Builder dialog differs from the specs</p>
+</step>
+
+<step name="15.2">Test the fields using the same cases as in Step 6 through 11 above.
+ <r>Results stated in the respective steps</r>
+</step>
+
+<step name="15.3" link="Bug">Use the <link uri="../StdCtrls/RadioBtn.xml">Radio Button Tests</link> and use the shortcuts &lt;Alt&gt;&lt;A&gt; and &lt;Alt&gt;&lt;O&gt; to test the <b>And</b> and <b>Or</b> radio buttons.
+ <r>And button is selected by default</r>
+<p name="bug">Tools-Options-Filters Tab: Criteria Builder And radio buton not default</p>
+</step>
+
+<step name="15.4" link="Bug">Use the <link uri="../StdCtrls/button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;I&gt; to test the <b>Insert</b> button.
+ <r>
+<ul>
+  <li>The criteria is added to the table cell.</li>
+  <li>If more than one criiteria in the cell, will add And or Or depending on which radio button is selected.</li>
+  <li>After clicking Insert, Criteria Builder clears the "string" but retains the condition and the Insert button is grayed</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: Criteria Builder dialog differs from the specs</p>
+</step>
+</case>
+
+
+<!-- No Matches Dialog -->
+<case id="tlofNoMatch" num="16" order="any">
+<title tag="tlofAdvNoMatch">No Matches Dialog</title>
+<context>
+<p>When applying a new filter with no matches</p>
+</context>
+
+<step name="16.1" link="Bug">Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Filters/Filters.html#NoMatches" type="doc">Tools-Options-Filters Tab specification</link> to visually inspect the contents of the No Matches dialog.
+ <r>
+<ul>
+  <li>The status bar reflects the 'no match' condition by displaying the message "No entries match the current filter"</li>
+  <li>The current and total entry numbers are set to 0/0</li>
+  <li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: No Matches dialog differs from the specs</p>
+<p name="bug">Tools-Options-Filters Tab: No Matches status bar does not reflect no match condition</p>
+</step>
+
+<step name="16.2" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;T&gt; to test the <b>Turn of the filter</b> button.
+ <r>
+<ul>
+  <li>Pressing this button closes the dialog.</li>
+  <li>It turns off the filter</li>
+  <li>The display reverts to the display without the filter active.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: No Matches dialog Turn off filter not working</p>
+</step>
+
+<step name="16.3" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;M&gt; to test the <b>Modify the filter...</b> button.
+ <r>
+<ul>
+  <li>Pressing this button closes the dialog.</li>
+  <li>It reopens the Tools-Options Filter tab.</li>
+  <li>The filter that caused the message is displayed.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: No Matches dialog Modify the filter not working</p>
+</step>
+
+<step name="16.4" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and use the shortcut &lt;Alt&gt;&lt;U&gt; to test the <b>Use another filter</b> button.
+ <r>
+<ul>
+  <li>Pressing this button opens a cascading menu that has the same contents as the View-Filters menu.</li>
+  <li>Selecting a filter closes the dialog and applies it.</li>
+ </ul>
+</r>
+<p name="bug">Tools-Options-Filters Tab: No Matches dialog Use another filter not working</p>
+</step>
+
+</case>
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="May-29-02" author="JoelC">Updated.</update>
+<update date="Jun-20-02" author="JoelC">Added Case 16.</update>
+
+</test>

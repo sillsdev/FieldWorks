@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.00"
+	Name="HelloView"
+	ProjectGUID="{9C8F516C-BFFB-4D72-8720-D074C0B27CCA}"
+	SccProjectName="&quot;$/Samples/HelloView/Simple&quot;, WWFAAAAA"
+	SccAuxPath=""
+	SccLocalPath="."
+	SccProvider="MSSCCI:Perforce SCM"
+	Keyword="MakeFileProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
+			ConfigurationType="0"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\bin\mkhv.bat r"
+				ReBuildCommandLine="..\..\..\bin\mkhv.bat r cc"
+				Output="..\..\..\output\release\HelloView.exe"/>
+		</Configuration>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory=".\HelloView___Win32_Debug"
+			IntermediateDirectory=".\HelloView___Win32_Debug"
+			ConfigurationType="0"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="..\..\..\bin\mkhv.bat"
+				ReBuildCommandLine="..\..\..\bin\mkhv.bat cc"
+				Output="..\..\..\output\debug\HelloView.exe"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Res"
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			<File
+				RelativePath=".\Res\HelloView.ico">
+			</File>
+			<File
+				RelativePath=".\Res\HelloView.rc">
+			</File>
+			<File
+				RelativePath=".\Res\Resource.h">
+			</File>
+		</Filter>
+		<File
+			RelativePath=".\HelloView.cpp">
+		</File>
+		<File
+			RelativePath=".\HelloView.h">
+		</File>
+		<File
+			RelativePath=".\HelloView.mak">
+		</File>
+		<File
+			RelativePath=".\Main.h">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

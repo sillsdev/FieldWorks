@@ -1,0 +1,302 @@
+import "oaidl.idl";
+import "ocidl.idl";
+import "objidl.idl";
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("AAB4A4A1-3C83-11d4-A1BB-00C04F0C9593") cpp_quote(",") cpp_quote("DbAccess") cpp_quote(");") [ uuid(AAB4A4A1-3C83-11d4-A1BB-00C04F0C9593), version(1.0), helpstring("DbAccess 1.0 Type Library") ] library DbAccess
+{
+ importlib("FwKernelTlb.tlb");
+import "unknwn.idl";
+typedef [v1_enum] enum SqlStmtType
+{
+ knSqlStmtNoResults = 0,
+ knSqlStmtSelectWithOneRowset = 1,
+ knSqlStmtStoredProcedure = 2,
+} SqlStmtType;
+typedef [v1_enum] enum OdeLockTimeoutMode
+{
+ koltNone,
+ koltMsgBox,
+ koltReturnError
+} OdeLockTimeoutMode;
+typedef [v1_enum] enum OdeLockTimeoutValue
+{
+ koltvForever = -1,
+ koltvNoWait = 0,
+ koltvFwDefault = 20000
+} OdeLockTimeoutValue;
+interface IOleDbCommand;
+interface IOleDbEncap;
+interface IFwMetaDataCache;
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOleDbCommand") cpp_quote(",") cpp_quote("E77E6DE4-5F5A-4b21-8864-060C7A4F26BD") cpp_quote(");") [ uuid("E77E6DE4-5F5A-4b21-8864-060C7A4F26BD"), object, pointer_default(unique) ] interface IOleDbCommand : IUnknown
+{
+ HRESULT ColValWasNull(
+  [out] int * pfIsNull);
+ HRESULT ExecCommand(
+  [in] BSTR bstrSqlStatement,
+  [in] int nStatementType);
+ HRESULT GetColValue(
+  [in] UINT iluColIndex,
+  [out, size_is(cbBufferLength)] BYTE * prgbDataBuffer,
+  [in] UINT cbBufferLength,
+  [out] UINT * pcbAmtBuffUsed,
+  [out] ComBool * pfIsNull,
+  [in] int cbPad);
+ HRESULT GetInt(
+  [in] int iColIndex,
+  [out] int * pnValue);
+ HRESULT GetParameter(
+  [in] UINT iluColIndex,
+  [out, size_is(cluBufferLength)] BYTE * prgbDataBuffer,
+  [in] UINT cluBufferLength,
+  [out] ComBool * pfIsNull);
+ HRESULT GetRowset(
+  [in] int nRowsBuffered);
+ HRESULT Init(
+  [in] IUnknown * punkSession,
+  [in] IStream * pfistLog);
+ HRESULT NextRow(
+  [out] ComBool * pfMoreRows);
+ HRESULT SetParameter(
+  [in] UINT iluParamIndex,
+  [in] DWORD dwFlags,
+  [in] BSTR bstrParamName,
+  [in] WORD nDataType,
+  [in, size_is(cluBufferLength)] BYTE * prgluDataBuffer,
+  [in] UINT cluBufferLength);
+ HRESULT SetByteBuffParameter(
+  [in] UINT iluParamIndex,
+  [in] DWORD dwFlags,
+  [in] BSTR bstrParamName,
+  [in, size_is(cluBufferLength)] BYTE * prgbDataBuffer,
+  [in] UINT cluBufferLength);
+ HRESULT SetStringParameter(
+  [in] UINT iluParamIndex,
+  [in] DWORD dwFlags,
+  [in] BSTR bstrParamName,
+  [in, size_is(cluBufferLength)] OLECHAR * prgchDataBuffer,
+  [in] UINT cluBufferLength);
+ HRESULT ReleaseExceptParams();
+}
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IOleDbEncap") cpp_quote(",") cpp_quote("45A8CF79-E944-4cbb-BAAA-68349DAE1DDF") cpp_quote(");") [ uuid("45A8CF79-E944-4cbb-BAAA-68349DAE1DDF"), object, pointer_default(unique) ] interface IOleDbEncap : IUnknown
+{
+ HRESULT BeginTrans();
+ HRESULT CommitTrans();
+ HRESULT CreateCommand(
+  [out] IOleDbCommand ** ppodc);
+ HRESULT Init(
+  [in] BSTR bstrServer,
+  [in] BSTR bstrDatabase,
+  [in] IStream * pfistLog,
+  [in] OdeLockTimeoutMode olt,
+  [in] int nmsTimeout);
+ HRESULT IsTransactionOpen(
+  [out,retval] ComBool * pfTransactionOpen);
+ HRESULT RollbackTrans();
+ HRESULT RollbackSavePoint(
+  [in] BSTR bstrSavePoint);
+ HRESULT SetSavePoint(
+  [out] BSTR * pbstr);
+ HRESULT SetSavePointOrBeginTrans(
+  [out] BSTR * pbstr);
+ HRESULT InitMSDE(
+  [in] IStream * pfistLog,
+  [in] ComBool fForce);
+ [propget] HRESULT Server(
+  [out, retval] BSTR * pbstrSvr);
+ [propget] HRESULT Database(
+  [out, retval] BSTR * pbstrDb);
+ HRESULT GetFreeLogKb(
+  [in] int nReservespace,
+  [out] int * pnKbFree);
+ HRESULT Reinit();
+ HRESULT GetSession(
+  [out] IUnknown ** ppunkSession);
+}
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IFwMetaDataCache") cpp_quote(",") cpp_quote("81E4AEF4-8E22-4343-ACAE-93FCA999C0D9") cpp_quote(");") [ uuid("81E4AEF4-8E22-4343-ACAE-93FCA999C0D9"), object, pointer_default(unique) ] interface IFwMetaDataCache : IUnknown
+{
+ HRESULT Init(
+  [in] IOleDbEncap * pode);
+ HRESULT Reload(
+  [in] IOleDbEncap * pode,
+  [in] ComBool fKeepVirtuals);
+ HRESULT InitXml(
+  [in] BSTR bstrPathname,
+  [in] ComBool fClearPrevCache);
+ [propget] HRESULT FieldCount(
+  [out, retval] int * pcflid);
+ HRESULT GetFieldIds(
+  [in] int cflid,
+  [out, size_is(cflid)] UINT * rgflid);
+ HRESULT GetOwnClsName(
+  [in] UINT luFlid,
+  [out, retval] BSTR * pbstrOwnClsName);
+ HRESULT GetDstClsName(
+  [in] UINT luFlid,
+  [out, retval] BSTR * pbstrDstClsName);
+ HRESULT GetOwnClsId(
+  [in] UINT luFlid,
+  [out, retval] UINT * pluOwnClsid);
+ HRESULT GetDstClsId(
+  [in] UINT luFlid,
+  [out, retval] UINT * pluDstClsid);
+ HRESULT GetFieldName(
+  [in] UINT luFlid,
+  [out, retval] BSTR * pbstrFieldName);
+ HRESULT GetFieldLabel(
+  [in] UINT luFlid,
+  [out, retval] BSTR * pbstrFieldLabel);
+ HRESULT GetFieldHelp(
+  [in] UINT luFlid,
+  [out, retval] BSTR * pbstrFieldHelp);
+ HRESULT GetFieldXml(
+  [in] UINT luFlid,
+  [out, retval] BSTR * pbstrFieldXml);
+ HRESULT GetFieldListRoot(
+  [in] UINT luFlid,
+  [out, retval] int * piListRoot);
+ HRESULT GetFieldWs(
+  [in] UINT luFlid,
+  [out, retval] int * piWs);
+ HRESULT GetFieldType(
+  [in] UINT luFlid,
+  [out, retval] int * piType);
+ [propget] HRESULT IsValidClass(
+  [in] UINT luFlid,
+  [in] UINT luClid,
+  [out, retval] ComBool * pfValid);
+ [propget] HRESULT ClassCount(
+  [out, retval] int * pcclid);
+ HRESULT GetClassIds(
+  [in] int cclid,
+  [out, size_is(cclid)] UINT * rgclid);
+ HRESULT GetClassName(
+  [in] UINT luClid,
+  [out, retval] BSTR * pbstrClassName);
+ HRESULT GetAbstract(
+  [in] UINT luClid,
+  [out, retval] ComBool * pfAbstract);
+ HRESULT GetBaseClsId(
+  [in] UINT luClid,
+  [out, retval] UINT * pluClid);
+ HRESULT GetBaseClsName(
+  [in] UINT luClid,
+  [out, retval] BSTR * pbstrBaseClsName);
+ HRESULT GetFields(
+  [in] UINT luClid,
+  [in] ComBool fIncludeSuperclasses,
+  [in] int grfcpt,
+  [in] int cflidMax,
+  [out, size_is(cflidMax)] UINT * prgflid,
+  [out, retval] int * pcflid);
+ HRESULT GetClassId(
+  [in] BSTR bstrClassName,
+  [out, retval] UINT * pluClid);
+ HRESULT GetFieldId(
+  [in] BSTR bstrClassName,
+  [in] BSTR bstrFieldName,
+  [in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+  [out, retval] UINT * pluFlid);
+ HRESULT GetFieldId2(
+  [in] UINT luClid,
+  [in] BSTR bstrFieldName,
+  [in, defaultvalue(-1)] ComBool fIncludeBaseClasses,
+  [out, retval] UINT * pluFlid);
+ HRESULT GetDirectSubclasses(
+  [in] UINT luClid,
+  [in] int cluMax,
+  [out] int * pcluOut,
+  [out, size_is(cluMax)] UINT * prgluSubclasses);
+ HRESULT GetAllSubclasses(
+  [in] UINT luClid,
+  [in] int cluMax,
+  [out] int * pcluOut,
+  [out, size_is(cluMax)] UINT * prgluSubclasses);
+ HRESULT AddVirtualProp(
+  [in] BSTR bstrClass,
+  [in] BSTR bstrField,
+  [in] UINT luFlid,
+  [in] int type);
+ [propget] HRESULT IsVirtual(
+  [in] UINT luFlid,
+  [out, retval] ComBool * pfVirtual);
+ HRESULT GetFieldNameOrNull(
+  [in] UINT luFlid,
+  [out, retval] BSTR * pbstrFieldName);
+}
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDbAdmin") cpp_quote(",") cpp_quote("70D6EBB2-9529-45B1-8F86-345E0179D024") cpp_quote(");") [ uuid("70D6EBB2-9529-45B1-8F86-345E0179D024"), object, pointer_default(unique) ] interface IDbAdmin : IUnknown
+{
+ HRESULT CopyDatabase(
+  [in] BSTR bstrSrcPathName,
+  [in] BSTR bstrDstPathName);
+ HRESULT AttachDatabase(
+  [in] BSTR bstrDatabaseName,
+  [in] BSTR bstrPathName);
+ HRESULT DetachDatabase(
+  [in] BSTR bstrDatabaseName);
+ HRESULT RenameDatabase(
+  [in] BSTR bstrDirName,
+  [in] BSTR bstrOldName,
+  [in] BSTR bstrNewName,
+  [in] ComBool fDetachBefore,
+  [in] ComBool fAttachAfter);
+ [propputref] HRESULT LogStream(
+  [in] IStream * pstrm);
+ [propget] HRESULT FwRootDir(
+  [out, retval] BSTR * pbstr);
+ [propget] HRESULT FwMigrationScriptDir(
+  [out, retval] BSTR * pbstr);
+ [propget] HRESULT FwDatabaseDir(
+  [out, retval] BSTR * pbstr);
+ [propget] HRESULT FwTemplateDir(
+  [out, retval] BSTR * pbstr);
+ HRESULT SimplyRenameDatabase(
+  [in] BSTR bstrOldName,
+  [in] BSTR bstrNewName);
+};
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("AAB4A4A3-3C83-11d4-A1BB-00C04F0C9593") cpp_quote(",") cpp_quote("OleDbEncap") cpp_quote(");") [ uuid(AAB4A4A3-3C83-11d4-A1BB-00C04F0C9593) ] coclass OleDbEncap
+{
+ interface IOleDbEncap;
+ interface IUndoGrouper;
+};
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("3A1B1AC6-24C5-4ffe-85D5-675DB4B9FCBB") cpp_quote(",") cpp_quote("FwMetaDataCache") cpp_quote(");") [ uuid(3A1B1AC6-24C5-4ffe-85D5-675DB4B9FCBB) ] coclass FwMetaDataCache
+{
+ interface IFwMetaDataCache;
+};
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("D584A725-8CF4-4699-941F-D1337AC7DB5C") cpp_quote(",") cpp_quote("DbAdmin") cpp_quote(");") [ uuid(D584A725-8CF4-4699-941F-D1337AC7DB5C) ] coclass DbAdmin
+{
+ interface IDbAdmin;
+};
+};

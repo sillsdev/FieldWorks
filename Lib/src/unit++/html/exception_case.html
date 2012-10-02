@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>template<typename E>  testcase unitpp::exception_case</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2>template&lt;typename E&gt;  <!1><A HREF="testcase.html">testcase</A> <A HREF="#DOC.DOCU">unitpp::exception_case</A></H2><H2>(const <!1><A HREF="testcase.html">testcase</A>&amp; tc)</H2><BLOCKQUOTE> Generate a testcase that expects a specific exception from the testcase it wraps.</BLOCKQUOTE>
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+Generate a testcase that expects a specific exception from the testcase it
+wraps. It can be used something like
+
+<P><TT>testcase&nbsp;tc(this,&nbsp;&quot;Test&nbsp;name&quot;,&nbsp;&amp;Test::test);</TT>
+
+<P><TT>add(&quot;ex&quot;,&nbsp;exception_case&lt;out_of_range&gt;(tc));</TT>
+
+<P>The name of the exception_case is copied from the wrapped testcase, and
+the exception_case will execute the tc test case and report a failure
+unless the <TT>out_of_range</TT> exception is generated.</BLOCKQUOTE>
+<DL><DT><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

@@ -1,0 +1,101 @@
+<!-- Styles.dtd -->
+<!-- IMPORTANT NOTE TO MAINTAINERS
+	*********************************************************************************************
+	ANY change to this DTD must be accompanied by the generation of a new DTDVer using guidgen.
+	The DTD version should be changed below, in TeStyles.xml, in FlexStyles.xml, and in StylesXmlAccessor.cs. The
+	TE and Flex programs will only work with a stylesheet having the DTD version for which they were created.
+	TE and Flex must be modified and recompiled to process a file having an updated DTD. Field personnel
+	who do not have the capability to rebuild the software should not modify this file.
+	*********************************************************************************************
+-->
+<!ELEMENT Styles (markup, replacements, ImportMappingSets)>
+<!ATTLIST Styles
+	date CDATA #REQUIRED
+	DTDver (7E9FC46B-A1F9-4e31-A548-D1FBE4232387) #REQUIRED
+	label CDATA #IMPLIED
+>
+<!ELEMENT markup (tag+)>
+<!ATTLIST markup
+	version CDATA #REQUIRED
+>
+<!ELEMENT tag (sfm*, sfmchar?, usage*, help?, font, paragraph?)>
+<!ATTLIST tag
+	id ID #REQUIRED
+	userlevel (0 | 1 | 2 | 3 | 4 | 5) #REQUIRED
+	context (annotation | back | backTranslation | book | general | internal | internalMappable | intro | introtitle | note | publication | text | title | internalConfigureView | psuedoStyle) #REQUIRED
+	structure (body | heading) #IMPLIED
+	use (chapter | verse | prose | proseSentenceInitial | line | lineSentenceInitial | list | table | footnote | stanzabreak | title | properNoun | special) #IMPLIED
+	type (character | paragraph) #REQUIRED
+>
+<!ELEMENT sfm (#PCDATA)>
+<!ATTLIST sfm
+	paraStyleContext IDREF #IMPLIED>
+<!ELEMENT sfmchar (#PCDATA)>
+<!ELEMENT usage (#PCDATA)>
+<!ATTLIST usage
+	wsId CDATA #REQUIRED
+>
+<!ELEMENT help EMPTY>
+<!ATTLIST help
+	category CDATA #IMPLIED
+	topic CDATA #IMPLIED
+>
+<!ELEMENT font (override*)>
+<!ATTLIST font
+	size CDATA #IMPLIED
+	bold (true | false) #IMPLIED
+	italic (true | false) #IMPLIED
+	color CDATA #IMPLIED
+	underlineColor CDATA #IMPLIED
+	superscript (true | false) #IMPLIED
+	subscript (true | false) #IMPLIED
+	dropCap CDATA #IMPLIED
+	smallCaps (true | false) #IMPLIED
+	underline (none | single | double | dotted | dashed | squiggle) #IMPLIED
+	spellcheck (true | false) #IMPLIED
+>
+<!ELEMENT override EMPTY>
+<!ATTLIST override
+	wsId CDATA #REQUIRED
+	size CDATA #IMPLIED
+	family CDATA #IMPLIED
+>
+<!ELEMENT paragraph EMPTY>
+<!ATTLIST paragraph
+	basedOn IDREF #IMPLIED
+	next IDREF #IMPLIED
+	alignment (left | center | right | full) #IMPLIED
+	background (white) #IMPLIED
+	indentLeft CDATA #IMPLIED
+	indentRight CDATA #IMPLIED
+	lineSpacing CDATA #IMPLIED
+	lineSpacingType (atleast | exact) 'atleast'
+	firstLine CDATA #IMPLIED
+	hanging CDATA #IMPLIED
+	spaceBefore CDATA #IMPLIED
+	spaceAfter CDATA #IMPLIED
+	border (top | bottom | leading | trailing) #IMPLIED
+	keepWithNext (true | false) #IMPLIED
+	keepTogether (true | false) #IMPLIED
+	widowOrphan (true | false) #IMPLIED
+>
+<!ELEMENT replacements (change*)>
+<!ELEMENT change EMPTY>
+<!ATTLIST change
+	old CDATA #REQUIRED
+	new IDREF #REQUIRED
+>
+<!ELEMENT ImportMappingSets (ImportMapping+)>
+<!ELEMENT ImportMapping (mapping+)>
+<!ATTLIST ImportMapping
+	name CDATA #IMPLIED
+>
+<!ELEMENT mapping EMPTY>
+<!ATTLIST mapping
+	id CDATA #REQUIRED
+	type (style | property | excluded) #REQUIRED
+	propertyName (DefaultParagraphCharacters | ChapterLabel | Figure | FigureFilename | FigureCaption |
+	FigureCopyright | FigureDescription | FigureLayoutPosition | FigureRefRange | FigureScale |
+	TitleShort | DefaultFootnoteCharacters) #IMPLIED
+	styleName IDREF #IMPLIED
+>

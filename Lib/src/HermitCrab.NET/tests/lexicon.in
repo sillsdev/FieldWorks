@@ -1,0 +1,200 @@
+;Test loading of lexical entries
+;Open a new language for testing purposes (msg 6510):
+(open_language message Phonology Test Language)
+;Don't let abort make us quit:
+(morpher_set message (*quit_on_error* false))
+;First a morpher_set command, which should result in msg 6502:
+(morpher_set message
+  (*pfeatures*
+	(voc     (+ -)
+	 cons    (+ -)
+	 high    (+ -)
+	 low     (+ -)
+	 back    (+ -)
+	 round   (+ -)
+	 vd      (+ -)
+	 poa     (bilabial labiodental alveolar velar)
+	 asp     (+ -)
+	 del_rel (+ -)
+	 ATR     (+ -)
+	 strident (+ -)
+	)
+  )
+)
+;Then we run three load_char_def_table commands, each of
+; which should result in a msg 6501:
+(load_char_def_table message
+  <char_table
+  name table1
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd +))
+	  (i   (cons - voc + high + low - back - round - vd +))
+	  (u   (cons - voc + high + low - back + round + vd +))
+	  (o   (cons - voc + high - low - back + round + vd +))
+	  (uû (cons - voc + high + low - back - round + vd +))
+	  (   (cons - voc + high + low - back + round - vd +))
+	  (p   (cons + voc - poa bilabial vd - asp - strident -))
+	  (t   (cons + voc - poa alveolar vd - asp - del_rel - strident -))
+	  (k   (cons + voc - poa velar    vd - asp - strident -))
+	  (ts  (cons + voc - poa alveolar vd - asp - del_rel + strident +))
+	  (pH  (cons + voc - poa bilabial vd - asp + strident -))
+	  (tH  (cons + voc - poa alveolar vd - asp + del_rel - strident -))
+	  (kH  (cons + voc - poa velar    vd - asp + strident -))
+	  (tsH (cons + voc - poa alveolar vd - asp + del_rel + strident +))
+	  (b   (cons + voc - poa bilabial vd + strident -))
+	  (d   (cons + voc - poa alveolar vd + strident -))
+	  (g   (cons + voc - poa velar    vd + strident -))
+	  (s   (cons + voc - poa alveolar vd - asp - del_rel - strident +))
+	  (z   (cons + voc - poa alveolar vd + asp - del_rel - strident +))
+	)
+  >
+)
+(load_char_def_table message
+  <char_table
+  name table2
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd +))
+	  (i   (cons - voc + high + low - back - round - vd +))
+	  (u   (cons - voc + high + low - back + round + vd +))
+	  (uû (cons - voc + high + low - back - round + vd +))
+	  (o   (cons - voc + high - low - back + round + vd +))
+	  (p   (cons + voc - poa bilabial vd - ))
+	  (t   (cons + voc - poa alveolar vd -  del_rel - strident -))
+	  (k   (cons + voc - poa velar    vd - ))
+	  (ts  (cons + voc - poa alveolar vd -  del_rel + strident +))
+	  (b   (cons + voc - poa bilabial vd + ))
+	  (d   (cons + voc - poa alveolar vd + strident -))
+	  (g   (cons + voc - poa velar    vd + ))
+	  (s   (cons + voc - poa alveolar vd - asp - del_rel - strident +))
+	  (z   (cons + voc - poa alveolar vd + asp - del_rel - strident +))
+	)
+	bdry_defs (+ # ! . $xyz)
+  >
+)
+(load_char_def_table message
+  <char_table
+  name table3
+  encoding test encoding
+  seg_defs
+	(
+	  (a   (cons - voc + high - low + back + round - vd + ATR +))
+	  (a·  (cons - voc + high - low + back + round - vd + ATR -))
+	  (i   (cons - voc + high + low - back - round - vd +))
+	  (u   (cons - voc + high + low - back + round + vd +))
+	  (uû  (cons - voc + high + low - back - round + vd +))
+	  (   (cons - voc + high + low - back + round - vd +))
+	  (o   (cons - voc + high - low - back + round + vd +))
+	  (p   (cons + voc - poa bilabial vd -))
+	  (t   (cons + voc - poa alveolar vd - del_rel - strident -))
+	  (k   (cons + voc - poa velar    vd -))
+	  (ts  (cons + voc - poa alveolar vd - del_rel + strident +))
+	  (b   (cons + voc - poa bilabial vd +))
+	  (d   (cons + voc - poa alveolar vd + strident -))
+	  (g   (cons + voc - poa velar    vd +))
+	  (s   (cons + voc - poa alveolar vd - asp - del_rel - strident +))
+	  (z   (cons + voc - poa alveolar vd + asp - del_rel - strident +))
+	)
+	bdry_defs (+ # ! .)
+	>
+)
+
+;Exercise err msg 6027 (can't load lex entries before setting *strata*):
+(load_lexical_entry message
+  <lex sh pat pos N str morphophonemic>
+)
+;Likewise, err msg 6028 (can't reset lexicon before setting *strata*):
+(reset_lexicon message *dummy*)
+
+;Now load the strata (msg 6502):
+(morpher_set message
+  (*strata* (morphophonemic allophonic)))
+;Exercise err msg 6033 (can't load a lex entry before its stratum has ctable):
+(load_lexical_entry message
+  <lex id err1 sh pat pos N str morphophonemic>
+)
+
+;...and set their char def tables (msg m6550):
+(set_stratum message <stratum_setting nm morphophonemic type ctable value table3>)
+(set_stratum message <stratum_setting nm allophonic type ctable value table1>)
+(set_stratum message <stratum_setting nm *surface* type ctable value table1>)
+
+;Exercise error msg 6029 (no lex id):
+(load_lexical_entry message
+  <lex sh pat pos N str morphophonemic>
+)
+;And error msg 6057, for no stratum:
+(load_lexical_entry message
+  <lex id 1 sh pat pos N>
+)
+;...and for no pshape (err msg 6057):
+(load_lexical_entry message
+  <lex id 1 pos N str morphophonemic>
+)
+;...and for no POS (err msg 6057):
+(load_lexical_entry message
+  <lex id 1 sh pat str morphophonemic>
+)
+
+;Preliminaries over, we'll load a couple lex entries.  The first has only
+; obligatory fields (msg m6512):
+(load_lexical_entry message
+  <lex id 1 sh pat pos N str morphophonemic>
+)
+;The second has all the optional fields (msg m6512):
+(load_lexical_entry message
+  <lex id ok2 sh pat fam maxwell gl fido
+			 pos N sub () mrs ()
+			 str morphophonemic rf (foo bar)
+			 hf (flea mite) ff (paws four)
+			 of (collar) misc down, boy, down!
+  >
+)
+
+;The third is one that we're going to delete in a moment (msg 6512):
+(load_lexical_entry message
+  <lex id ok3 sh bad pos A str morphophonemic>)
+
+;Next, we'll try show_lexical_entry on that last entry:
+(show_lexical_entry pretty_print ok3)
+;Remove it (msg 6513):
+(remove_lexical_entry ok3)
+;--and try to show it again (error msg 6013):
+(show_lexical_entry pretty_print ok3)
+
+;Change the pshape of the first entry, and see if it changes (msg 6523):
+(load_lexical_entry message
+  <lex id 1 sh patpat pos N str morphophonemic>
+)
+;Check:
+(show_lexical_entry pretty_print 1)
+
+
+;Now we'll load in a dictionary file (msgs m6515 and m6700).  Two of the
+; lex entries in the file are purposely erroneous.  The first should give
+; an error msg of 6024, and the second an error msg of 6009; the remaining
+; lex entries should load OK:
+(merge_in_dictionary_file message c:\data\hc\morpher\tests\diction.txt)
+;Show_lexical_entry for the first le in the file (which should have replaced
+; the le of same lex id we loaded earlier):
+(show_lexical_entry pretty_print 1)
+;Then remove it (msg 6513):
+(remove_lexical_entry message 1)
+;And try to show it (err msg 6013):
+(show_lexical_entry pretty_print 1)
+;Now replace a lex entry from the file with one loaded from the cmd line (6523):
+(load_lexical_entry message
+  <lex id 2 sh patpat pos N str morphophonemic>
+)
+;And show it:
+(show_lexical_entry pretty_print 2)
+
+;See what happens if we're asked to open a nonexistent dict file (err msg 6302):
+(merge_in_dictionary_file message c:\data\hc\morpher\tests\foobar.txt)
+;Reset the lexicon to null (msg 6516):
+(reset_lexicon message *dummy*)
+;Now quit:
+(terminate_morpher x)

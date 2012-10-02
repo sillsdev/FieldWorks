@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+  <bug id="LT-7996" desc="Imported Word Set Filter is Broken"/>
+
+<include from="IncKalaba.xml"/>
+
+<!-- Andy Black's demo section G -->
+<!-- Creates lex entry "kal" -->
+<!-- Creates Import Word Set "House paradigm" -->
+<!-- Turns on parser, plays with it, stops it -->
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		<include from="IncStartUp.xml"/>
+		<include from="IncLexicon.xml"/>
+		<include from="IncTexts.xml"/>
+		<include from="IncWords.xml"/>
+
+  <var id="slot3Wake"  set="$wrdEditPANE;9:summary[3]/$sp;2/9:Slice_unknown/20:Root/20:Div/$Text"/>
+  <var id="slot3Drop"  set="$wrdEditPANE;9:summary[3]/$sp;1/9:SliceTreeNode"/>
+  <var id="slot4Wake"  set="$wrdEditPANE;9:summary[4]/$sp;2/9:Slice_unknown/20:Root/20:Div/$Text"/>
+  <var id="slot4Drop"  set="$wrdEditPANE;9:summary[4]/$sp;1/9:SliceTreeNode"/>
+  <var id="slot5Wake"  set="$wrdEditPANE;9:summary[5]/$sp;2/9:Slice_unknown/20:Root/20:Div/$Text"/>
+  <var id="slot5Drop"  set="$wrdEditPANE;9:summary[5]/$sp;1/9:SliceTreeNode"/>
+  <var id="approved"  set="Analysis "/>
+  <var id="unknown"  set="Analysis Candidate "/>
+  <var id="disapproved"  set="Test Case "/>
+
+<!-- G.	Parser -->
+
+<!-- 1.	Now let's go see if we can get the WordWorks parser to parse the Orizaba Nahuatl paradigm. -->
+<!-- 2.	First, we need to add the root kal ￢ﾀﾘhouse'. -->
+<!-- a.	Go to Lexicon / Lexicon -->
+  <click path="$vwLexEdit"/>
+
+<!-- b.	Click on create new major entry button -->
+  <click path="$insEntry"/>
+
+<!-- c.	Type "kal" in the Form field -->
+  <on-dialog title="New Entry">
+   <insert wait="500">kal</insert>
+
+<!-- d.	Type "house" as the gloss -->
+   <insert wait="500">{TAB 2}house</insert>
+
+<!-- e.	Click on the Category chooser button -->
+   <click path="$NL;9:Category Info./20:Category Info./9:&lt;Not sure&gt;/$NL;43:NAMELESS"/>
+
+<!-- f.	Open up "noun" and choose "possessive noun" -->
+	<insert>{HOME}</insert>
+	<insert>nn</insert>
+	<insert>{RIGHT}</insert>
+	<insert>p~</insert>
+	<insert>{TAB}</insert>
+	<insert>{DOWN 2}</insert>
+
+<!-- g.	Click on the Create button -->
+   <click path="button:Create"/>
+  </on-dialog>
+
+  <insert wait="3000">{F5}</insert>
+
+<!-- 3.	Now go to Words / Analyses. -->
+  <click path="$menuTEXTS;menu:Word Analyses"/>
+
+<!-- 4.	Explain what is showing. -->
+<!-- 5.	Create a Word Set. -->
+<!-- a.	Click on Insert menu item -->
+<!-- b.	Select "Import Word Set" -->
+  <click path="$menuINSERT;menu:Import Word Set..."/>
+
+<!-- c.	In the Import Word Set dialog: House paradigm -->
+  <on-dialog title="Import Word Set">
+
+<!-- 1.	In "Name of new word set", type "House paradigm" -->
+   <insert>House paradigm</insert>
+
+<!-- 2.	Click on "Choose File(s)" -->
+   <click path="button:Choose File(s)"/>
+
+<!-- 3.	Navigate to where the OrizabaNahautlPnP.txt file is and open it. -->
+   <on-dialog title="Open"> <!-- File chooser system dialog -->
+	<insert>C:\GuiTestDriver\Scripts\LT\OrizabaNahuatlPnP.txt</insert>
+	<!--insert>C:\fw\Test\GuiTestDriver\LexTextGuiTests\OrizabaNahuatlPnP.txt</insert-->
+	<click path="9:Open/button:Open"/>
+   </on-dialog>
+
+<!-- 4.	Click on the Import button. -->
+   <click path="button:Import"/>
+  </on-dialog>
+
+  <click wait="3000" path="$NoFilters"/>
+
+<!-- 6.	View a Word Set -->
+<!-- a.	Click on View menu item / Filters and select House paradigm. -->
+   <click path="$menuVIEW;menu:Filters/menu:House paradigm"/>
+
+<!-- 7.	Parse words while viewing a word set -->
+<!-- a.	Click on Parser menu item / Start Parser. -->
+  <click path="$menuPARSER;menu:Parse all words"/>
+
+  <click wait="2000" path="$menuVIEW;menu:Filters/menu:House paradigm"/>
+
+<!-- b.	Explain what is happening. -->
+<!-- c.	Go to Parser / Parse Current Word. -->
+  <click path="$wrdFormRec;[*]/$Col;/$Text;/value:inkal"/>
+
+  <click path="$menuPARSER;menu:Parse Current Word"/>
+
+<!-- d.	Note the analysis that appears and explain the columns and notions about user opinion vs. parser opinion (and "predicted analyses"). -->
+<!-- e.	In the User Opinion column, click on the blue question mark (no user opinion).  Note that it changes to a green check mark (user says this is a valid analysis). -->
+
+  <insert wait="5000">{F5}</insert>
+  <click path="$menuPARSER;menu:Parse all words"/>
+
+<!-- Then change it to approved from unknown-->
+ <click wait="5000" path="$slot4Wake"/>
+ <click path="$slot4Drop"/>
+ <insert wait="500">{DOWN}</insert>
+ <insert wait="100">{RIGHT}</insert>
+ <insert wait="100">{UP}{DOWN}~</insert>
+ <glimpse wait="500" id="g13" path="$slot3Wake" prop="value" expect="$approved;1"/>
+
+<!-- f.	Click on it again and it changes to a red X (user says this is not a valid analysis). -->
+ <click path="$slot3Wake"/>
+ <click path="$slot3Drop"/>
+ <insert wait="500">{DOWN 3}</insert>
+ <insert wait="100">{RIGHT}{UP}~</insert>
+ <glimpse wait="500" id="g16" path="$slot5Wake" prop="value" expect="$disapproved;1"/>
+
+<!-- g.	Click again and it goes back to the blue question mark. -->
+ <click path="$slot5Wake"/>
+ <click path="$slot5Drop"/>
+ <insert wait="500">{DOWN}</insert>
+ <insert wait="100">{RIGHT}{UP 2}~</insert>
+ <glimpse wait="500" id="g19" path="$slot4Wake" prop="value" expect="$unknown;1"/>
+
+  <click path="$menuVIEW;menu:Filters/menu:House paradigm"/>
+<!-- 8.	Trace a parse -->
+<!-- a.	Click on "mokalvan" in the Form column. -->
+  <click path="$wrdConcFind"/> <!-- Find Wordform.. toolbar button -->
+  <on-dialog title="Find Wordform">
+   <insert wait="1000">mokalvan</insert>
+   <click path="9:Go To/43:Go To"/>
+  </on-dialog>
+
+  <!--Target not found a filter is on, Turn it off? -->
+   <insert wait="500">~</insert>
+
+  <!--click path="$wrdFormRec;[*]/$Col;/$Text;/value:mokalvan"/-->
+
+<!--/skip-->
+  <click path="$menuTEXTS;menu:Word Analyses"/>
+
+<!-- b.	Go to Parser menu item / Trace Word￢ﾀﾦ  The Trace Word dialog comes up. -->
+  <click path="$menuPARSER;menu:Try a Word..."/>
+<!-- c.	Explain the dialog, -->
+<!-- d.	Click on the Trace button. -->
+  <on-dialog title="Kalaba - Try a Word">
+   <insert wait="2000">mokalvan</insert>
+   <!--click path="9:Try it/button:Try it" on-fail="skip"/-->
+   <click path="9:Try it/button:Try it"/>
+
+<!-- e.	Note the contents of the trace result. -->
+<!-- f.	Follow the successful path by opening the green tree node.  Discuss what it shows. -->
+   <!-- can't get to the tree control -->
+
+<!-- g.	Follow the unsuccessful mo- (1PlSubj) path and note how it says what went wrong for that path. -->
+
+	<!--click path="9:HtmlControl/9:SHDocVw.WebBrowser_V1/$NL;10:file://C:\Documents and Settings\lastufka.DALLAS\Local Settings\Temp\KalabaXAmpleTrace.htm/43:Show Details"/-->
+
+   <click path="9:Close/43:Close"/>
+  </on-dialog>
+
+<!-- 9.	Go to Parser / Stop Parser. -->
+  <click path="$menuPARSER;menu:Stop Parser"/>
+
+  <click path="$NoFilters"/>
+  <click path="$wrdFormRec;[4]/$Col;/$Text"/>
+
+ </on-application>
+</accil>

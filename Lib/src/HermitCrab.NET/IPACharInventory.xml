@@ -1,0 +1,1830 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfIPACharInfo>
+  <IPACharInfo Codepoint="-7" IPAChar="˥˧" HexIPAChar="FFFFFFF9">
+	<Name>High fall contour tone</Name>
+	<Description>Tone High Falling</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="-6" IPAChar="˧˩" HexIPAChar="FFFFFFFA">
+	<Name>Low fall contour tone</Name>
+	<Description>Tone Low Falling</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="-5" IPAChar="˦˥˦" HexIPAChar="FFFFFFFB">
+	<Name>Rise fall contour tone</Name>
+	<Description>Tone Rising-Falling</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="-4" IPAChar="˩˨" HexIPAChar="FFFFFFFC">
+	<Name>Low rise contour tone</Name>
+	<Description>Tone Low Rising</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="-3" IPAChar="˦˥" HexIPAChar="FFFFFFFD">
+	<Name>High rise contour tone</Name>
+	<Description>Tone High Rising</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="-2" IPAChar="˥˩" HexIPAChar="FFFFFFFE">
+	<Name>Fall contour tone</Name>
+	<Description>Tone Falling</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="-1" IPAChar="˩˥" HexIPAChar="FFFFFFFF">
+	<Name>Rise contour tone</Name>
+	<Description>Tone Rising</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="33" IPAChar="!" HexIPAChar="0021">
+	<Name>NON-STD IPA - Exclamation Point - Use U+01C3 (ǃ) instead</Name>
+	<Description>(Post)alveolar Click</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="39" IPAChar="'" HexIPAChar="0027">
+	<Name>NON-STD IPA - Apostrophe - Use U+02C8 (ˈ) instead</Name>
+	<Description>Primary Stress</Description>
+	<Type>BOUNDARY</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="45" IPAChar="-" HexIPAChar="002D">
+	<Name>Hyphen-Minus</Name>
+	<Description>Morpheme break</Description>
+	<Type>BOUNDARY</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="46" IPAChar="." HexIPAChar="002E">
+	<Name>Period</Name>
+	<Description>Syllable break</Description>
+	<Type>BOUNDARY</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="58" IPAChar=":" HexIPAChar="003A">
+	<Name>NON-STD IPA - Colon - Use U+02D0 (ː) instead</Name>
+	<Description>Long</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="97" IPAChar="a" HexIPAChar="0061">
+	<Name>Lower case A</Name>
+	<Description>Open Front Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="98" IPAChar="b" HexIPAChar="0062">
+	<Name>Lower case B</Name>
+	<Description>Voiced Bilabial Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="99" IPAChar="c" HexIPAChar="0063">
+	<Name>Lower case C</Name>
+	<Description>Voiceless Palatal Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="100" IPAChar="d" HexIPAChar="0064">
+	<Name>Lower case D</Name>
+	<Description>Voiced Alveolar Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="101" IPAChar="e" HexIPAChar="0065">
+	<Name>Lower case E</Name>
+	<Description>Close-mid Front Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="102" IPAChar="f" HexIPAChar="0066">
+	<Name>Lower case F</Name>
+	<Description>Voiceless Labiodental Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="103" IPAChar="g" HexIPAChar="0067">
+	<Name>NON-STD IPA - Lower case G - Use U+0261 (ɡ) instead</Name>
+	<Description>Voiced Velar Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="104" IPAChar="h" HexIPAChar="0068">
+	<Name>Lower case H</Name>
+	<Description>Voiceless Glottal Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="105" IPAChar="i" HexIPAChar="0069">
+	<Name>Lower case I</Name>
+	<Description>Close Front Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="106" IPAChar="j" HexIPAChar="006A">
+	<Name>Lower case J</Name>
+	<Description>Voiced Palatal Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="107" IPAChar="k" HexIPAChar="006B">
+	<Name>Lower case K</Name>
+	<Description>Voiceless Velar Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="108" IPAChar="l" HexIPAChar="006C">
+	<Name>Lower case L</Name>
+	<Description>Voiced Alveolar Lateral Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="109" IPAChar="m" HexIPAChar="006D">
+	<Name>Lower case M</Name>
+	<Description>Voiced Bilabial Nasal</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="110" IPAChar="n" HexIPAChar="006E">
+	<Name>Lower case N</Name>
+	<Description>Voiced Alveolar Nasal</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="111" IPAChar="o" HexIPAChar="006F">
+	<Name>Lower case O</Name>
+	<Description>Close-mid Back Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="112" IPAChar="p" HexIPAChar="0070">
+	<Name>Lower case P</Name>
+	<Description>Voiceless Bilabial Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="113" IPAChar="q" HexIPAChar="0071">
+	<Name>Lower case Q</Name>
+	<Description>Voiceless Uvular Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="114" IPAChar="r" HexIPAChar="0072">
+	<Name>Lower case R</Name>
+	<Description>Voiced Alveolar Trill</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="115" IPAChar="s" HexIPAChar="0073">
+	<Name>Lower case S</Name>
+	<Description>Voiceless Alveolar Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="116" IPAChar="t" HexIPAChar="0074">
+	<Name>Lower case T</Name>
+	<Description>Voiceless Alveolar Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="117" IPAChar="u" HexIPAChar="0075">
+	<Name>Lower case U</Name>
+	<Description>Rounded Close Back</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="118" IPAChar="v" HexIPAChar="0076">
+	<Name>Lower case V</Name>
+	<Description>Voiced Labiodental Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="119" IPAChar="w" HexIPAChar="0077">
+	<Name>Lower case W</Name>
+	<Description>Voiced labial-velar Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="120" IPAChar="x" HexIPAChar="0078">
+	<Name>Lower case X</Name>
+	<Description>Voiceless Velar Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="121" IPAChar="y" HexIPAChar="0079">
+	<Name>Lower case Y</Name>
+	<Description>Close Front Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="122" IPAChar="z" HexIPAChar="007A">
+	<Name>Lower case Z</Name>
+	<Description>Voiced Alveolar Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="124" IPAChar="|" HexIPAChar="007C">
+	<Name>Vertical Line</Name>
+	<Description>Minor (foot) group</Description>
+	<Type>BOUNDARY</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="178" IPAChar="²" HexIPAChar="00B2">
+	<Name>Superscript 2</Name>
+	<Description>Custom Use Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="179" IPAChar="³" HexIPAChar="00B3">
+	<Name>Superscript 3</Name>
+	<Description>Custom Use Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="185" IPAChar="¹" HexIPAChar="00B9">
+	<Name>Superscript 1</Name>
+	<Description>Custom Use Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="230" IPAChar="æ" HexIPAChar="00E6">
+	<Name>Ash Digraph</Name>
+	<Description>Near-open Front Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="231" IPAChar="ç" HexIPAChar="00E7">
+	<Name>C Cedilla</Name>
+	<Description>Voiceless Palatal Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="240" IPAChar="ð" HexIPAChar="00F0">
+	<Name>Eth</Name>
+	<Description>Voiced Dental Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="248" IPAChar="ø" HexIPAChar="00F8">
+	<Name>Slashed O</Name>
+	<Description>Close-mid Front Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="295" IPAChar="ħ" HexIPAChar="0127">
+	<Name>Crossed H</Name>
+	<Description>Voiceless Pharyngeal Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="331" IPAChar="ŋ" HexIPAChar="014B">
+	<Name>Eng</Name>
+	<Description>Voiced Velar Nasal</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="339" IPAChar="œ" HexIPAChar="0153">
+	<Name>Lower case O-E Digraph</Name>
+	<Description>Open-mid Front Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="392" IPAChar="ƈ" HexIPAChar="0188">
+	<Name>OBSOLETE IPA - small letter c with hook - Voiceless palatal implosive</Name>
+	<Description>Voiceless palatal implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="397" IPAChar="ƍ" HexIPAChar="018D">
+	<Name>OBSOLETE IPA - Replaced with labialized z or ð</Name>
+	<Description>Voiced rounded/labialized dental fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="409" IPAChar="ƙ" HexIPAChar="0199">
+	<Name>OBSOLETE IPA - small letter k with hook - voiceless velar implosive</Name>
+	<Description>Voiceless velar implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="421" IPAChar="ƥ" HexIPAChar="01A5">
+	<Name>OBSOLETE IPA - Small letter p with hook - Replace with voiceless bilabial implosive</Name>
+	<Description>Voiceless bilabial implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="426" IPAChar="ƪ" HexIPAChar="01AA">
+	<Name>OBSOLETE IPA - Reversed Esh</Name>
+	<Description>Voiceless labialized postalveolar fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="427" IPAChar="ƫ" HexIPAChar="01AB">
+	<Name>OBSOLETE IPA - Left-hook T, withdrawn 1989, = [tʲ]</Name>
+	<Description>Voiceless palatalized alveolar plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="429" IPAChar="ƭ" HexIPAChar="01AD">
+	<Name>OBSOLETE IPA - Small letter t wtih hook - Replace with voiceless alveolar implosive</Name>
+	<Description>Voiceless alveolar implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="442" IPAChar="ƺ" HexIPAChar="01BA">
+	<Name>OBSOLETE IPA - ezh with tail</Name>
+	<Description>Voiced labialized postalveolar fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="448" IPAChar="ǀ" HexIPAChar="01C0">
+	<Name>Pipe</Name>
+	<Description>Dental Click</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="449" IPAChar="ǁ" HexIPAChar="01C1">
+	<Name>Double Pipe</Name>
+	<Description>Alveolar lateral click</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="450" IPAChar="ǂ" HexIPAChar="01C2">
+	<Name>Double-barred Pipe</Name>
+	<Description>Palatoalveolar Click</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="451" IPAChar="ǃ" HexIPAChar="01C3">
+	<Name>Exclamation Point</Name>
+	<Description>(Post)alveolar Click</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="545" IPAChar="ȡ" HexIPAChar="0221">
+	<Name>NON-STD IPA - d with curl</Name>
+	<Description>Voiced palatalized postalveolar (alveolo-palatal) plosive, used by Sinologists</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="565" IPAChar="ȵ" HexIPAChar="0235">
+	<Name>NON-STD IPA - n with curl</Name>
+	<Description>Voiced palatalized postalveolar (alveolo-palatal) nasal, used by Sinologists</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="566" IPAChar="ȶ" HexIPAChar="0236">
+	<Name>NON-STD IPA - t with curl</Name>
+	<Description>Voiceless palatalized postalveolar (alveolo-palatal) plosive, used by Sinologists</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="592" IPAChar="ɐ" HexIPAChar="0250">
+	<Name>Turned A</Name>
+	<Description>Near-open Central Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="593" IPAChar="ɑ" HexIPAChar="0251">
+	<Name>Cursive A</Name>
+	<Description>Open Back Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="594" IPAChar="ɒ" HexIPAChar="0252">
+	<Name>Turned Cursive A</Name>
+	<Description>Open Back Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="595" IPAChar="ɓ" HexIPAChar="0253">
+	<Name>Hooktop B</Name>
+	<Description>Voiced Bilabial Implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="596" IPAChar="ɔ" HexIPAChar="0254">
+	<Name>Open O</Name>
+	<Description>Open-mid Back Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="597" IPAChar="ɕ" HexIPAChar="0255">
+	<Name>Curly-tail C</Name>
+	<Description>Voiceless Alveolo-palatal fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="598" IPAChar="ɖ" HexIPAChar="0256">
+	<Name>Right-tail D</Name>
+	<Description>Voiced Retroflex Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="599" IPAChar="ɗ" HexIPAChar="0257">
+	<Name>Hooktop D</Name>
+	<Description>Voiced Dental/Alevolar Implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="600" IPAChar="ɘ" HexIPAChar="0258">
+	<Name>Reversed E</Name>
+	<Description>Close-mid Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="601" IPAChar="ə" HexIPAChar="0259">
+	<Name>Schwa</Name>
+	<Description>Mid Central Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="602" IPAChar="ɚ" HexIPAChar="025A">
+	<Name>ALTERNATIVE IPA - shwa with rhoticized - Use shwa with diacritic instead</Name>
+	<Description>Rhoticized Close-mid Central Unrounded Vowel</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="603" IPAChar="ɛ" HexIPAChar="025B">
+	<Name>Epsilon</Name>
+	<Description>Open-mid Front Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="604" IPAChar="ɜ" HexIPAChar="025C">
+	<Name>Reversed Epsilon</Name>
+	<Description>Open-mid Central Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="605" IPAChar="ɝ" HexIPAChar="025D">
+	<Name>ALTERNATIVE IPA - reversed open e with hook - use reversed open e with diacritic instead</Name>
+	<Description>Rhotacized Open-mid Central Unrounded Vowel</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="606" IPAChar="ɞ" HexIPAChar="025E">
+	<Name>Closed Epsilon</Name>
+	<Description>Open-mid Central Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="607" IPAChar="ɟ" HexIPAChar="025F">
+	<Name>Barred Dotless J</Name>
+	<Description>Voiced Palatal Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="608" IPAChar="ɠ" HexIPAChar="0260">
+	<Name>Hooktop G</Name>
+	<Description>Voiced Velar Implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="609" IPAChar="ɡ" HexIPAChar="0261">
+	<Name>Lower case script G</Name>
+	<Description>Voiced Velar Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="610" IPAChar="ɢ" HexIPAChar="0262">
+	<Name>Small Capital G</Name>
+	<Description>Voiced Uvular Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="611" IPAChar="ɣ" HexIPAChar="0263">
+	<Name>Gamma</Name>
+	<Description>Voiced Velar Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="612" IPAChar="ɤ" HexIPAChar="0264">
+	<Name>Ram's Horns (Baby Gamma)</Name>
+	<Description>Close-mid Back Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="613" IPAChar="ɥ" HexIPAChar="0265">
+	<Name>Turned H</Name>
+	<Description>Voiced Labial Palatal approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="614" IPAChar="ɦ" HexIPAChar="0266">
+	<Name>Hooktop H</Name>
+	<Description>Voiced Glottal Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="615" IPAChar="ɧ" HexIPAChar="0267">
+	<Name>Hooked Heng</Name>
+	<Description>Simultaneous Esh and x</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="616" IPAChar="ɨ" HexIPAChar="0268">
+	<Name>Barred I</Name>
+	<Description>Close Central Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="617" IPAChar="ɩ" HexIPAChar="0269">
+	<Name>OBSOLETE IPA - Iota - Replaced with U+026A</Name>
+	<Description>Near-close Front Unrounded Vowel</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="618" IPAChar="ɪ" HexIPAChar="026A">
+	<Name>Small Capital I</Name>
+	<Description>Near-close Front Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="619" IPAChar="ɫ" HexIPAChar="026B">
+	<Name>Lower case L with Middle Tilde</Name>
+	<Description>Velarized Voiced Alveolar Lateral Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="620" IPAChar="ɬ" HexIPAChar="026C">
+	<Name>Belted L</Name>
+	<Description>Voiceless Alveolar Lateral Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="621" IPAChar="ɭ" HexIPAChar="026D">
+	<Name>Right-tail L</Name>
+	<Description>Voiced Retroflex Lateral Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="622" IPAChar="ɮ" HexIPAChar="026E">
+	<Name>L-Yogh Digraph</Name>
+	<Description>Voiced Alveolar Lateral Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="623" IPAChar="ɯ" HexIPAChar="026F">
+	<Name>Turned M</Name>
+	<Description>Close Back Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="624" IPAChar="ɰ" HexIPAChar="0270">
+	<Name>Turned M, Right Leg</Name>
+	<Description>Voiced Velar Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="625" IPAChar="ɱ" HexIPAChar="0271">
+	<Name>Left-tail M (at right)</Name>
+	<Description>Voiced Labiodental Nasal</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="626" IPAChar="ɲ" HexIPAChar="0272">
+	<Name>Left-tail N (at left)</Name>
+	<Description>Voiced Palatal Nasal</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="627" IPAChar="ɳ" HexIPAChar="0273">
+	<Name>Right-tail N</Name>
+	<Description>Voiced Retroflex Nasal</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="628" IPAChar="ɴ" HexIPAChar="0274">
+	<Name>Small Capital N</Name>
+	<Description>Voiced Uvular Nasal</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="629" IPAChar="ɵ" HexIPAChar="0275">
+	<Name>Barred O</Name>
+	<Description>Close-mid Central Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="630" IPAChar="ɶ" HexIPAChar="0276">
+	<Name>Small Capital O-E Digraph</Name>
+	<Description>Open Front Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="631" IPAChar="ɷ" HexIPAChar="0277">
+	<Name>OBSOLETE IPA - Closed Omega - Replaced with U+028A</Name>
+	<Description>Near-close Back Unrounded Vowel</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="632" IPAChar="ɸ" HexIPAChar="0278">
+	<Name>Phi</Name>
+	<Description>Voiceless Bilabial Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="633" IPAChar="ɹ" HexIPAChar="0279">
+	<Name>Turned R</Name>
+	<Description>Voiced Alveolar Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="634" IPAChar="ɺ" HexIPAChar="027A">
+	<Name>Turned Long-leg R</Name>
+	<Description>Alveolar Lateral Flap</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="635" IPAChar="ɻ" HexIPAChar="027B">
+	<Name>Turned R, Right Tail</Name>
+	<Description>Voiced Retroflex Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="636" IPAChar="ɼ" HexIPAChar="027C">
+	<Name>OBSOLETE IPA - Long-leg R - Replaced with U+0072 U+031D</Name>
+	<Description>Voiced strident apico-alveolar trill (e.g. Czech ř)</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="637" IPAChar="ɽ" HexIPAChar="027D">
+	<Name>Right-tail R</Name>
+	<Description>Voiced Retroflexed Flap</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="638" IPAChar="ɾ" HexIPAChar="027E">
+	<Name>Fish-hook R</Name>
+	<Description>Voiced Alveolar Flap</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="639" IPAChar="ɿ" HexIPAChar="027F">
+	<Name>NON-STD IPA! Reversed fishhook R - 007A 0329</Name>
+	<Description>Apical Dental unrounded syllabic alveolar fricative - used by Sinologists</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="640" IPAChar="ʀ" HexIPAChar="0280">
+	<Name>Small Capital R</Name>
+	<Description>Voiced Uvular Trill</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="641" IPAChar="ʁ" HexIPAChar="0281">
+	<Name>Inverted Small Capital R</Name>
+	<Description>Voiced Uvular Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="642" IPAChar="ʂ" HexIPAChar="0282">
+	<Name>Right-Tail S (at left)</Name>
+	<Description>Voiceless Retroflex Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="643" IPAChar="ʃ" HexIPAChar="0283">
+	<Name>Esh</Name>
+	<Description>Voiceless Postalveolar Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="644" IPAChar="ʄ" HexIPAChar="0284">
+	<Name>Hooktop Barred Dotless J</Name>
+	<Description>Voiced Palatal Implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="645" IPAChar="ʅ" HexIPAChar="0285">
+	<Name>NON-STD IPA! Reversed fishhook R with tail. U0290 U0329</Name>
+	<Description>Apical retroflex unrounded syllabic alveolar fricative - used by Sinologists</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="646" IPAChar="ʆ" HexIPAChar="0286">
+	<Name>OBSOLETE IPA - Curly-tail esh withdrawn 1989, Replaced with [ɕ]</Name>
+	<Description>Voiceless alveopalatal fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="647" IPAChar="ʇ" HexIPAChar="0287">
+	<Name>OBSOLETE IPA - Inverted t - Replaced with U+01C0</Name>
+	<Description>Voiceless alveolar click</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="648" IPAChar="ʈ" HexIPAChar="0288">
+	<Name>Right-tail T</Name>
+	<Description>Voiceless Retroflex Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="649" IPAChar="ʉ" HexIPAChar="0289">
+	<Name>Barred U</Name>
+	<Description>Close Central Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="650" IPAChar="ʊ" HexIPAChar="028A">
+	<Name>Upsilon</Name>
+	<Description>Near-close Back Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="651" IPAChar="ʋ" HexIPAChar="028B">
+	<Name>Cursive V</Name>
+	<Description>Voiced Labiodental Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="652" IPAChar="ʌ" HexIPAChar="028C">
+	<Name>Turned V</Name>
+	<Description>Open-mid Back Unrounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="653" IPAChar="ʍ" HexIPAChar="028D">
+	<Name>Turned W</Name>
+	<Description>Voiceless Labial-velar Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="654" IPAChar="ʎ" HexIPAChar="028E">
+	<Name>Turned Y</Name>
+	<Description>Voiced Palatal Lateral Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="655" IPAChar="ʏ" HexIPAChar="028F">
+	<Name>Small Capital Y</Name>
+	<Description>Near-close Front Rounded</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="656" IPAChar="ʐ" HexIPAChar="0290">
+	<Name>Right-tail Z</Name>
+	<Description>Voiced Retroflex Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="657" IPAChar="ʑ" HexIPAChar="0291">
+	<Name>Curly-tail Z</Name>
+	<Description>Voiced Alveolo-palatal fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="658" IPAChar="ʒ" HexIPAChar="0292">
+	<Name>Small Ezh</Name>
+	<Description>Voiced Postalveolar Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="659" IPAChar="ʓ" HexIPAChar="0293">
+	<Name>OBSOLETE IPA - Curly-tail ezh, withdrawn 1989, Replaced with [ʑ]</Name>
+	<Description>Voiced alveopalatal fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="660" IPAChar="ʔ" HexIPAChar="0294">
+	<Name>Glottal Stop</Name>
+	<Description>Voiceless Glottal Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="661" IPAChar="ʕ" HexIPAChar="0295">
+	<Name>Reversed Glottal Stop</Name>
+	<Description>Voiced Pharyngeal Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="662" IPAChar="ʖ" HexIPAChar="0296">
+	<Name>OBSOLETE IPA - Inverted glottal stop - Replaced with  U+01C1</Name>
+	<Description>Voiceless alveolar lateral click</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="663" IPAChar="ʗ" HexIPAChar="0297">
+	<Name>OBSOLETE IPA - Stretched C - Replaced with U+01C3</Name>
+	<Description>Voiceless postalveolar click</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="664" IPAChar="ʘ" HexIPAChar="0298">
+	<Name>Bull's Eye</Name>
+	<Description>Bilabial Click</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="665" IPAChar="ʙ" HexIPAChar="0299">
+	<Name>Small Capital B</Name>
+	<Description>Voiced Bilabial Trill</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="666" IPAChar="ʚ" HexIPAChar="029A">
+	<Name>NON-STD IPA! Closed Epsilon. A mistake for U+025E</Name>
+	<Description>Open-mid Central Rounded Vowel</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="667" IPAChar="ʛ" HexIPAChar="029B">
+	<Name>Hooktop Small Capital G</Name>
+	<Description>Voiced Uvular Implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="668" IPAChar="ʜ" HexIPAChar="029C">
+	<Name>Small Capital H</Name>
+	<Description>Voiceless Epiglottal Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="669" IPAChar="ʝ" HexIPAChar="029D">
+	<Name>Curly-tail J</Name>
+	<Description>Voiced Palatal Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="671" IPAChar="ʟ" HexIPAChar="029F">
+	<Name>Small Capital L</Name>
+	<Description>Voiced Velar Lateral Approximant</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="672" IPAChar="ʠ" HexIPAChar="02A0">
+	<Name>OBSOLETE IPA - small letter q with hook - voiceless uvular implosive</Name>
+	<Description>Voiceless uvular implosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="673" IPAChar="ʡ" HexIPAChar="02A1">
+	<Name>Barred Glottal Stop</Name>
+	<Description>Epiglottal Plosive</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>true</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="674" IPAChar="ʢ" HexIPAChar="02A2">
+	<Name>Barred Reversed Glottal Stop</Name>
+	<Description>Voiced Epiglottal Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="675" IPAChar="ʣ" HexIPAChar="02A3">
+	<Name>ALTERNATIVE IPA - Small letter digraph dz - Use d z with or without tiebar</Name>
+	<Description>Voiceless dental/alveolar affricate</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="676" IPAChar="ʤ" HexIPAChar="02A4">
+	<Name>ALTERNATIVE IPA - small letter d ezh digraph - Use d ezh with or without tiebar instead</Name>
+	<Description>Voiced Postalveolar Affricate</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="677" IPAChar="ʥ" HexIPAChar="02A5">
+	<Name>ALTERNATIVE IPA - Small letter dz with curl - Use d z with curl</Name>
+	<Description>Voiced alveopalatal fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="678" IPAChar="ʦ" HexIPAChar="02A6">
+	<Name>ALTERNATIVE IPA - small letter ts digraph - Use t s with or without tiebar instead</Name>
+	<Description>Voiceless alveolar affricate</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="679" IPAChar="ʧ" HexIPAChar="02A7">
+	<Name>ALTERNATIVE IPA - Small letter tesh digraph - Use t esh with or without tiebar</Name>
+	<Description>Voiceless postalveolar affricate</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="680" IPAChar="ʨ" HexIPAChar="02A8">
+	<Name>ALTERNATIVE IPA - tc digraph with curl - Use t c with curl with or without tiebar instead</Name>
+	<Description>Voiceless alveolo-palatal affricate</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="681" IPAChar="ʩ" HexIPAChar="02A9">
+	<Name>small letter feng digraph</Name>
+	<Description>Velopharyngeal fricative (IPA for disordered speech)</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="682" IPAChar="ʪ" HexIPAChar="02AA">
+	<Name>IPA Disordered speech - Small letter ls digraph</Name>
+	<Description>Lateral Alveolar Fricative (IPA for lisp)</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="683" IPAChar="ʫ" HexIPAChar="02AB">
+	<Name>IPA Disordered Speech - small letter lz digraph</Name>
+	<Description>Voiced lateral alveolar fricative (IPA for voiced lisp)</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="684" IPAChar="ʬ" HexIPAChar="02AC">
+	<Name>IPA Disordered Speech - Bilabial percussive</Name>
+	<Description>Bilabial Percussive - IPA for audible lip smack</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="685" IPAChar="ʭ" HexIPAChar="02AD">
+	<Name>IPA Disordered Speech - Bidental Percussive</Name>
+	<Description>Bidental Percussive - IPA for audible teeth gnashing</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="686" IPAChar="ʮ" HexIPAChar="02AE">
+	<Name>NON-STD IPA - turned h with fishhook - Replaced with U+007A U+0329 U+02B7</Name>
+	<Description>Apical Dental Rounded Syllabic Alveolar Fricative - used by Sinologists</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="687" IPAChar="ʯ" HexIPAChar="02AF">
+	<Name>NON-STD IPA - turned h with fishhook and tail - Replaced with U+0290 U+0329 U+02B7</Name>
+	<Description>Apical Dental Rounded Syllabic Retroflex Fricative - used by Sinologists</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="688" IPAChar="ʰ" HexIPAChar="02B0">
+	<Name>Superscript H</Name>
+	<Description>Aspirated</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="689" IPAChar="ʱ" HexIPAChar="02B1">
+	<Name>NON-STD IPA - superscript small letter h with hook - Use U+0324 instead (s̤)</Name>
+	<Description>Breathy voice modification</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="690" IPAChar="ʲ" HexIPAChar="02B2">
+	<Name>Superscript J</Name>
+	<Description>Palatalized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="695" IPAChar="ʷ" HexIPAChar="02B7">
+	<Name>Superscript W</Name>
+	<Description>Labialized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="696" IPAChar="ʸ" HexIPAChar="02B8">
+	<Name>Superscript y</Name>
+	<Description>Superscript y</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="697" IPAChar="ʹ" HexIPAChar="02B9">
+	<Name>ALTERNATIVE IPA - Primary stress mark - use U+02C8 instead</Name>
+	<Description>Primary stress</Description>
+	<Type>BOUNDARY</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="700" IPAChar="ʼ" HexIPAChar="02BC">
+	<Name>Apostrophe</Name>
+	<Description>Ejective</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="712" IPAChar="ˈ" HexIPAChar="02C8">
+	<Name>Vertical Stroke (Superior)</Name>
+	<Description>Primary Stress</Description>
+	<Type>BOUNDARY</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="716" IPAChar="ˌ" HexIPAChar="02CC">
+	<Name>Vertical Stroke (Inferior)</Name>
+	<Description>Secondary stress</Description>
+	<Type>BOUNDARY</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="720" IPAChar="ː" HexIPAChar="02D0">
+	<Name>Length Mark</Name>
+	<Description>Long</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="721" IPAChar="ˑ" HexIPAChar="02D1">
+	<Name>Half-length Mark</Name>
+	<Description>Half-long</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="734" IPAChar="˞" HexIPAChar="02DE">
+	<Name>Right Hook</Name>
+	<Description>Rhoticity</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="736" IPAChar="ˠ" HexIPAChar="02E0">
+	<Name>Superscript Gamma</Name>
+	<Description>Velarized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="737" IPAChar="ˡ" HexIPAChar="02E1">
+	<Name>Superscript L</Name>
+	<Description>Lateral Release</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="740" IPAChar="ˤ" HexIPAChar="02E4">
+	<Name>Superscript Rev. Glottal Stop</Name>
+	<Description>Pharyngealized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="741" IPAChar="˥" HexIPAChar="02E5">
+	<Name>Extra-high Tone Bar</Name>
+	<Description>Tone Extra High</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="742" IPAChar="˦" HexIPAChar="02E6">
+	<Name>High Tone Bar</Name>
+	<Description>High Tone</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="743" IPAChar="˧" HexIPAChar="02E7">
+	<Name>Mid Tone Bar</Name>
+	<Description>Mid Tone</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="744" IPAChar="˨" HexIPAChar="02E8">
+	<Name>Low Tone Bar</Name>
+	<Description>Low Tone</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="745" IPAChar="˩" HexIPAChar="02E9">
+	<Name>Extra-low Tone Bar</Name>
+	<Description>Tone Extra Low</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="768" IPAChar="̀" HexIPAChar="0300">
+	<Name>Grave Accent</Name>
+	<Description>Low Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="769" IPAChar="́" HexIPAChar="0301">
+	<Name>Acute Accent</Name>
+	<Description>High Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="770" IPAChar="̂" HexIPAChar="0302">
+	<Name>Circumflex</Name>
+	<Description>Tone Falling</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="771" IPAChar="̃" HexIPAChar="0303">
+	<Name>Superscript Tilde</Name>
+	<Description>Nasalized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="772" IPAChar="̄" HexIPAChar="0304">
+	<Name>Macron</Name>
+	<Description>Mid Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="774" IPAChar="̆" HexIPAChar="0306">
+	<Name>Breve</Name>
+	<Description>Extra-short</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="776" IPAChar="̈" HexIPAChar="0308">
+	<Name>Umlaut</Name>
+	<Description>Centralized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="778" IPAChar="̊" HexIPAChar="030A">
+	<Name>Over-ring</Name>
+	<Description>Voiceless</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="779" IPAChar="̋" HexIPAChar="030B">
+	<Name>Double Acute Accent</Name>
+	<Description>Tone Extra High</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="780" IPAChar="̌" HexIPAChar="030C">
+	<Name>Wedge</Name>
+	<Description>Tone Rising</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="783" IPAChar="̏" HexIPAChar="030F">
+	<Name>Double Grave Accent</Name>
+	<Description>Tone Extra Low</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="792" IPAChar="̘" HexIPAChar="0318">
+	<Name>Advancing Sign</Name>
+	<Description>Advanced Tongue Root</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="793" IPAChar="̙" HexIPAChar="0319">
+	<Name>Retracting Sign</Name>
+	<Description>Retracted Tongue Root</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="794" IPAChar="̚" HexIPAChar="031A">
+	<Name>Corner</Name>
+	<Description>No Audible Release</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="796" IPAChar="̜" HexIPAChar="031C">
+	<Name>Subscript Left Half-ring</Name>
+	<Description>Less Rounded</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="797" IPAChar="̝" HexIPAChar="031D">
+	<Name>Raising Sign</Name>
+	<Description>Raised</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="798" IPAChar="̞" HexIPAChar="031E">
+	<Name>Lowering Sign</Name>
+	<Description>Lowered</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="799" IPAChar="̟" HexIPAChar="031F">
+	<Name>Subscript Plus</Name>
+	<Description>Advanced</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="800" IPAChar="̠" HexIPAChar="0320">
+	<Name>Under-bar</Name>
+	<Description>Retracted</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="801" IPAChar="̡" HexIPAChar="0321">
+	<Name>OBSOLETE IPA - Subscript left hook, superseded 1989 by superscript j</Name>
+	<Description>Diacritic - palatalized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="802" IPAChar="̢" HexIPAChar="0322">
+	<Name>OBSOLETE IPA</Name>
+	<Description>Retroflex or R-colored vowels</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="804" IPAChar="̤" HexIPAChar="0324">
+	<Name>Subscript Umlaut</Name>
+	<Description>Breathy voiced</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="805" IPAChar="̥" HexIPAChar="0325">
+	<Name>Under-ring</Name>
+	<Description>Voiceless</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="809" IPAChar="̩" HexIPAChar="0329">
+	<Name>Syllabicity Mark</Name>
+	<Description>Syllabic</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="810" IPAChar="̪" HexIPAChar="032A">
+	<Name>Subscript Bridge</Name>
+	<Description>Dental</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="811" IPAChar="̫" HexIPAChar="032B">
+	<Name>OBSOLETE IPA - subscript w - replaced with superscript w</Name>
+	<Description>Labialized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="812" IPAChar="̬" HexIPAChar="032C">
+	<Name>Subscript Wedge</Name>
+	<Description>Voiced</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="815" IPAChar="̯" HexIPAChar="032F">
+	<Name>Subscript Arch</Name>
+	<Description>Non-syllabic</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="816" IPAChar="̰" HexIPAChar="0330">
+	<Name>Subscript Tilde</Name>
+	<Description>Creaky Voiced</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="820" IPAChar="̴" HexIPAChar="0334">
+	<Name>Superimposed Tilde</Name>
+	<Description>Velarized or Pharyngealized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="825" IPAChar="̹" HexIPAChar="0339">
+	<Name>Subscript Right Half-ring</Name>
+	<Description>More rounded</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="826" IPAChar="̺" HexIPAChar="033A">
+	<Name>Inverted Subscript Bridge</Name>
+	<Description>Apical</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="827" IPAChar="̻" HexIPAChar="033B">
+	<Name>Subscript Square</Name>
+	<Description>Laminal</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="828" IPAChar="̼" HexIPAChar="033C">
+	<Name>Subscript Seagull</Name>
+	<Description>Linguolabial</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="829" IPAChar="̽" HexIPAChar="033D">
+	<Name>Over-cross</Name>
+	<Description>Mid-centralized</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="860" IPAChar="͜" HexIPAChar="035C">
+	<Name>Bottom Tie Bar</Name>
+	<Description>Double Articulation</Description>
+	<Type>TIE_BAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="865" IPAChar="͡" HexIPAChar="0361">
+	<Name>Top Tie Bar</Name>
+	<Description>Double articulation</Description>
+	<Type>TIE_BAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="946" IPAChar="β" HexIPAChar="03B2">
+	<Name>Beta</Name>
+	<Description>Voiced Bilabial Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="952" IPAChar="θ" HexIPAChar="03B8">
+	<Name>Theta</Name>
+	<Description>Voiceless Dental Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="963" IPAChar="σ" HexIPAChar="03C3">
+	<Name>OBSOLETE IPA - Replaced with labialized theta.</Name>
+	<Description>Voiceless rounded/labialized dental fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="967" IPAChar="χ" HexIPAChar="03C7">
+	<Name>Chi</Name>
+	<Description>Voiceless Uvular Fricative</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>true</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7424" IPAChar="ᴀ" HexIPAChar="1D00">
+	<Name>NON-STD IPA - small capital A - Replaced with U+00E4</Name>
+	<Description>Open central vowel used by Sinologists, between [a] and [ɑ], = [ä] used unofficially as an open central vowel</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7431" IPAChar="ᴇ" HexIPAChar="1D07">
+	<Name>NON-STD IPA - small capital E - used by Sinologists</Name>
+	<Description>mid front unrounded vowel between [e] and [ɛ]</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7491" IPAChar="ᵃ" HexIPAChar="1D43">
+	<Name>Superscript a</Name>
+	<Description>Superscript a</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7492" IPAChar="ᵄ" HexIPAChar="1D44">
+	<Name>Superscript inverted a</Name>
+	<Description>Superscript inverted a</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7493" IPAChar="ᵅ" HexIPAChar="1D45">
+	<Name>Superscript rounded a</Name>
+	<Description>Superscript rounded a</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7494" IPAChar="ᵆ" HexIPAChar="1D46">
+	<Name>Superscript ae</Name>
+	<Description>Superscript ae</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7497" IPAChar="ᵉ" HexIPAChar="1D49">
+	<Name>Superscript e</Name>
+	<Description>Superscript e</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7498" IPAChar="ᵊ" HexIPAChar="1D4A">
+	<Name>Superscript inverted e</Name>
+	<Description>Superscript inverted e</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7499" IPAChar="ᵋ" HexIPAChar="1D4B">
+	<Name>Superscript epsilon</Name>
+	<Description>Superscript epsilon</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7504" IPAChar="ᵐ" HexIPAChar="1D50">
+	<Name>Superscript m</Name>
+	<Description>Superscript m</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7505" IPAChar="ᵑ" HexIPAChar="1D51">
+	<Name>Superscript Eng</Name>
+	<Description>Superscript Eng</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7506" IPAChar="ᵒ" HexIPAChar="1D52">
+	<Name>Superscript o</Name>
+	<Description>Superscript o</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7507" IPAChar="ᵓ" HexIPAChar="1D53">
+	<Name>Superscript open o</Name>
+	<Description>Superscript open o</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7512" IPAChar="ᵘ" HexIPAChar="1D58">
+	<Name>Superscript u</Name>
+	<Description>Superscript u</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7514" IPAChar="ᵚ" HexIPAChar="1D5A">
+	<Name>Superscript inverted m</Name>
+	<Description>Superscript inverted m</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7579" IPAChar="ᶛ" HexIPAChar="1D9B">
+	<Name>Superscript inverted rounded a</Name>
+	<Description>Superscript inverted rounded a</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7583" IPAChar="ᶟ" HexIPAChar="1D9F">
+	<Name>Superscript backwards epsilon</Name>
+	<Description>Superscript backwards epsilon</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7588" IPAChar="ᶤ" HexIPAChar="1DA4">
+	<Name>Superscript barred i</Name>
+	<Description>Superscript barred i</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7590" IPAChar="ᶦ" HexIPAChar="1DA6">
+	<Name>Superscript small capital I</Name>
+	<Description>Superscript small capital I</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7598" IPAChar="ᶮ" HexIPAChar="1DAE">
+	<Name>Superscript Left-tail N (at left)</Name>
+	<Description>Superscript Left-tail N (at left)</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7601" IPAChar="ᶱ" HexIPAChar="1DB1">
+	<Name>Superscript barred o</Name>
+	<Description>Superscript barred o</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7606" IPAChar="ᶶ" HexIPAChar="1DB6">
+	<Name>Superscript barred u</Name>
+	<Description>Superscript barred u</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7607" IPAChar="ᶷ" HexIPAChar="1DB7">
+	<Name>Superscript upsilon</Name>
+	<Description>Superscript upsilon</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7610" IPAChar="ᶺ" HexIPAChar="1DBA">
+	<Name>Superscript inverted v</Name>
+	<Description>Superscript inverted v</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7620" IPAChar="᷄" HexIPAChar="1DC4">
+	<Name>Macron/acute</Name>
+	<Description>Tone High Rising</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7621" IPAChar="᷅" HexIPAChar="1DC5">
+	<Name>Grave-Macron</Name>
+	<Description>Tone Low Rising</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="7624" IPAChar="᷈" HexIPAChar="1DC8">
+	<Name>Tone Rising-Falling Mark</Name>
+	<Description>Tone Rising-Falling</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8214" IPAChar="‖" HexIPAChar="2016">
+	<Name>Double Vertical Line</Name>
+	<Description>Major (intonation) group</Description>
+	<Type>BOUNDARY</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8255" IPAChar="‿" HexIPAChar="203F">
+	<Name>Bottom Tie Bar</Name>
+	<Description>Linking (absence of break)</Description>
+	<Type>TIE_BAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8305" IPAChar="ⁱ" HexIPAChar="2071">
+	<Name>Superscript i</Name>
+	<Description>Superscript i</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8308" IPAChar="⁴" HexIPAChar="2074">
+	<Name>Superscript 4</Name>
+	<Description>Custom Use Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8309" IPAChar="⁵" HexIPAChar="2075">
+	<Name>Superscript 5</Name>
+	<Description>Custom Use Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8310" IPAChar="⁶" HexIPAChar="2076">
+	<Name>Superscript 6</Name>
+	<Description>Custom Use Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8311" IPAChar="⁷" HexIPAChar="2077">
+	<Name>Superscript 7</Name>
+	<Description>Custom Use Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8312" IPAChar="⁸" HexIPAChar="2078">
+	<Name>Superscript 8</Name>
+	<Description>Custom Use Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8313" IPAChar="⁹" HexIPAChar="2079">
+	<Name>Superscript 9</Name>
+	<Description>Custom Use Tone</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8319" IPAChar="ⁿ" HexIPAChar="207F">
+	<Name>Superscript N</Name>
+	<Description>Nasal release</Description>
+	<Type>MODIFIER</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8593" IPAChar="↑" HexIPAChar="2191">
+	<Name>Up Arrow</Name>
+	<Description>Upstep</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8595" IPAChar="↓" HexIPAChar="2193">
+	<Name>Down Arrow</Name>
+	<Description>Downstep</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8599" IPAChar="↗" HexIPAChar="2197">
+	<Name>Upward Diagonal Arrow</Name>
+	<Description>Global Rise (tone)</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+  <IPACharInfo Codepoint="8600" IPAChar="↘" HexIPAChar="2198">
+	<Name>Downward Diagonal Arrow</Name>
+	<Description>Global Fall (tone)</Description>
+	<Type>BASE_CHAR</Type>
+	<IsStop>false</IsStop>
+	<IsFricative>false</IsFricative>
+  </IPACharInfo>
+</ArrayOfIPACharInfo>

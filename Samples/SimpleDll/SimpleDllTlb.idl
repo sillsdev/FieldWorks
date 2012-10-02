@@ -1,0 +1,26 @@
+/*----------------------------------------------------------------------------------------------
+Copyright 1999, SIL International. All rights reserved.
+
+File: SimpleDllTlb.idl
+Responsibility: John Thomson
+Last reviewed: never
+
+Description:
+	Builds the type library for the SimpleDll server.
+----------------------------------------------------------------------------------------------*/
+
+/***********************************************************************************************
+	Include files
+***********************************************************************************************/
+import "oaidl.idl";
+import "ocidl.idl";
+#include "Common.idh" // DeclareInterface and similar
+
+DeclareLibrary(SimpleDllLib, 1.0, "SimpleDll 1.0 Type Library",
+	47A18F8B-C2AF-447f-A300-4CADFA133C33)
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	#include "SimpleDll.idh"
+};

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="Performance.xsl"?>
+<performance>
+<action desc="Malay PT5 Import Test db, Import">
+</action>
+<action desc="Malay PT5 Import Test db, Export Scripture">
+</action>
+<action desc="Malay PT5 Import Test db, Export BT">
+</action>
+<action desc="Malay PT5 Import Test db, Export Notes">
+</action>
+<action desc="Malay PT6 Import Test db, Import">
+</action>
+<action desc="Malay PT6 Import Test db, Export Scripture">
+</action>
+<action desc="Malay PT6 Import Test db, Export BT">
+</action>
+<action desc="Malay PT6 Import Test db, Export Notes">
+</action>
+<action desc="Malay OtherSF Import Test db, Import">
+</action>
+<action desc="Malay OtherSF Import Test db, Export Scripture">
+</action>
+<action desc="Malay OtherSF Import Test db, Export BT">
+</action>
+<action desc="Malay OtherSF Import Test db, Export Notes">
+</action>
+</performance>

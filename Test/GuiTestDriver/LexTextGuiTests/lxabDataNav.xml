@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- User Interface / Menus / Data / "Data overview" -->
+
+<!-- This test expects 3 intransitive verbs  and "Lexeme Form" in column 2-->
+
+<accil on-fail="assert">
+   <goal>Navigates in Lexicon Edit</goal>
+
+	<var id="projectName" set="Kalaba"/>
+	<sound frequency = "500" duration = "500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <on-application args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' run="ok">
+
+  <!-- Go to Lexicon / Lexicon Edit -->
+	   <click select="menubar/view/lexicon/lexicon-edit"/>
+
+	   <model select="lexicon-edit[@role='view']">
+	 <!-- * Filter the Entries pane data to display only 'intransitive verbs'  -->
+	<!--  Find 'intransitive verbs' via Grammatical Info column filter -->
+			<!--var id="col" set="4"/--><!-- $col is in the model for filter -->
+		<click select="entries/col/filter" col="4"/>
+		<insert wait="1000">f</insert> <!-- Filter for -->
+	<insert wait="1000">~</insert>
+	<on-dialog name="SimpleMatchDlg" title="Filter for items containing...">
+		 <insert wait="1000" >intransitive verb</insert>
+		 <click path="$ok"/>
+	</on-dialog>
+
+	<glimpse wait="500" id="leEntry1" select="entries/record/col" row="1" col="2" prop="value" on-fail="skip"/>
+	<glimpse id="leEntry2" select="entries/record/col" row="2" prop="value" on-fail="skip"/>
+	<glimpse id="leEntry3" select="entries/record/col" row="3" prop="value" on-fail="skip"/>
+	<!-- Assert that we only have three 'intransitive' entries in this filter -->
+	<glimpse log="all" id="leBogus1" select="entries/record/col" row="4" prop="absent" />
+
+	<!-- From '1st Record' -->
+	 <!-- Test 'First record' -->
+	<click select="//toolbar/standard/first"/>
+	<!-- Verify we're still on the first record -->
+			<var id="ind" set="*"/><!-- lexeme-form might not be the first one, find it -->
+	<glimpse wait="1000" id="g1" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry1.value"/>
+
+	 <!-- Test 'Previous record' -->
+	<click select="//toolbar/standard/previous"/>
+	<!-- Verify we're still on the first record -->
+	<glimpse wait="500" id="g2" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry1.value"/>
+
+	 <!-- Test 'Last record' -->
+	<click select="//toolbar/standard/last"/>
+	<!-- Verify we're on the last record -->
+	<glimpse wait="500" id="g3" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry3.value"/>
+
+	 <!-- Go Back to '1st Entry' -->
+	<click select="//toolbar/standard/go-back"/>
+	<!-- Verify we're back on the first record -->
+	<glimpse wait="500" id="g4" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry1.value"/>
+
+	 <!-- Test 'Next record' -->
+	<click select="//toolbar/standard/next"/>
+	<!-- Verify we're on the next record -->
+	<glimpse wait="500" id="g4b" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry2.value"/>
+
+	<!-- From '2nd Record' -->
+	 <!-- Test 'First record' -->
+	<click select="//toolbar/standard/first"/>
+	<!-- Verify we're still on the first record -->
+	<glimpse wait="500" id="g5" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry1.value"/>
+
+	 <!-- Go Back to '2nd Entry' -->
+	<click select="//toolbar/standard/go-back"/>
+	<!-- Verify we're back on the 2nd record -->
+	<glimpse wait="500" id="g6" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry2.value"/>
+
+	 <!-- Test 'Previous record' -->
+	<click select="//toolbar/standard/previous"/>
+	<!-- Verify we're on the first record -->
+	<glimpse wait="500" id="g7" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry1.value"/>
+
+	 <!-- Go Back to '2nd Entry' -->
+	<click select="//toolbar/standard/go-back"/>
+	<!-- Verify we're back on the 2nd record -->
+	<glimpse wait="500" id="g8" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry2.value"/>
+
+	 <!-- Test 'Next record' -->
+	<click select="//toolbar/standard/next"/>
+	<!-- Verify we're on the next record -->
+	<glimpse wait="500" id="g9" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry3.value"/>
+
+	 <!-- Go Back to '2nd Entry' -->
+	<click select="//toolbar/standard/go-back"/>
+	<!-- Verify we're back on the 2nd record -->
+	<glimpse wait="500" id="g10" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry2.value"/>
+
+	 <!-- Test 'Last record' -->
+	<click select="//toolbar/standard/last"/>
+	<!-- Verify we're on the last record -->
+	<glimpse wait="500" id="g11" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry3.value"/>
+
+	<!-- From 'Last Record' -->
+
+	 <!-- Test 'First record' -->
+	<click select="//toolbar/standard/first"/>
+	<!-- Verify we're on the first record -->
+	<glimpse wait="500" id="g12" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry1.value"/>
+
+	 <!-- Go Back to 'Last Entry' -->
+	<click select="//toolbar/standard/go-back"/>
+	<!-- Verify we're back on the 3rd record -->
+	<glimpse wait="500" id="g13" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry3.value"/>
+
+	 <!-- Test 'Previous record' -->
+	<click select="//toolbar/standard/previous"/>
+	<!-- Verify we're on the first record -->
+	<glimpse wait="500" id="g14" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry2.value"/>
+
+	 <!-- Go Back to 'Last Entry' -->
+	<click select="//toolbar/standard/go-back"/>
+	<!-- Verify we're back on the 3rd record -->
+	<glimpse wait="500" id="g15" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry3.value"/>
+
+	 <!-- Test 'Next record' -->
+	<click select="//toolbar/standard/next"/>
+	<!-- Verify we're on the last record -->
+	<glimpse wait="500" id="g16" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry3.value"/>
+
+	 <!-- Test 'Last record' -->
+	<click select="//toolbar/standard/last"/>
+	<!-- Verify we're on the last record -->
+	<glimpse wait="500" id="g17" select="entry/slice/lexeme-form/data" prop="value" expect="$leEntry3.value"/>
+
+ <!-- UNDO Changes -->
+	 <!-- clear Filter -->
+		  <click select="//toolbar/view/no-filters"/>
+		  <click select="entry/slice/lexeme-form/data"/> <!-- Get the cursor off the toolbar so the next test won't die! -->
+
+	   </model>
+
+ </on-application>
+</accil>

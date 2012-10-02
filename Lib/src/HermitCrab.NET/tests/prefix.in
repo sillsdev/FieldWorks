@@ -1,0 +1,191 @@
+;A file of simple prefix rules
+(load_nat_class message <nat_class name null features ()>)
+(load_nat_class message <nat_class name alv_stop features (cons + strident - cont - del_rel - poa alveolar nasal - )>)
+(load_nat_class message <nat_class name voiceless_c features (cons + vd -)>)
+(load_nat_class message <nat_class name labiodental features (cons + poa labiodental)>)
+(load_nat_class message <nat_class name voiced features (vd +)>)
+(load_nat_class message <nat_class name strident features (cons + strident +)>)
+(load_nat_class message <nat_class name voiceless_stop features (vd - cont -)>)
+(load_nat_class message <nat_class name cons features (cons +)>)
+(load_nat_class message <nat_class name vowel features (cons -)>)
+(load_nat_class message <nat_class name low_vowel features (cons - voc + high - low + back + round - vd + cont +)>)
+; Note that the above is unique to "a" in table1, but ambiguous
+; between "a" and "a·" in table3.
+(load_nat_class message <nat_class name unasp features (asp -)>)
+;Load two mrules (msg 6505, twice):
+; Like English -s suffix, but prefix:
+; "zi" before strident C, "s" before other voiceless C, "z" otherwise
+(load_morpher_rule message
+  <mrule  nm s_prefix
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (pers (1 2 3))
+		  hf (pers (3))
+		  gl 3SG
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class strident>
+									   <opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out ((zi table3) 1)>
+					>
+					<msub
+					  in <m_lhs pseq ((<simp_cntxt class voiceless_c>
+									   <opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out ((s table3) 1)>
+					>
+					<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out ((z table3) 1)>
+					>
+				  )
+	>
+)
+; Like English -ed suffix, but prefix:
+; "di+" before t or d, "t+" before other voiceless C, "d+" otherwise.  (Note the bdry marker.)
+(load_morpher_rule message
+  <mrule  nm ed_prefix
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (tense (past pres))
+		  hf (tense (past))
+		  gl PAST
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class alv_stop>
+									   <opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out ((di+ table3) 1)>
+					>
+					<msub
+					  in <m_lhs pseq ((<simp_cntxt class voiceless_c>
+									   <opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out ((t+ table3) 1)>
+					>
+					<msub
+					  in <m_lhs pseq ((<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>))>
+					  out <m_rhs p_out ((d+ table3) 1)>
+					>
+				  )
+  >
+)
+; /p t k/ -> [p t k]
+; This rule needed to ensure that /ptk/ become unambiguously xlatable
+; (note: no environ, just a feature filling rule)
+(load_morpher_rule message
+  <prule  nm aspiration
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class voiceless_stop>)
+		  subrules (<psub out_pseq (<simp_cntxt class unasp>)>)
+  >
+)
+;We'll trace the mrules, to watch their application (msg 6535, 2x):
+(trace_morpher_rule message (true true s_prefix))
+(trace_morpher_rule message (true true ed_prefix))
+;Also trace lex lookup:
+(trace_lexical_lookup message true)
+;Now we morph a few words; each should be unambiguous:
+(morph_and_lookup_word pretty_print zisag)
+(morph_and_lookup_word pretty_print stag)
+(morph_and_lookup_word pretty_print zabba)
+(morph_and_lookup_word pretty_print ditag)
+(morph_and_lookup_word pretty_print tpag)
+;Next word is 2x ambiguous (two stems identical except for bdry marker):
+(morph_and_lookup_word pretty_print dabba)
+;The following words should fail to morph:
+(morph_and_lookup_word pretty_print zitag)
+(morph_and_lookup_word pretty_print sabba)
+(morph_and_lookup_word pretty_print ztag)
+(morph_and_lookup_word pretty_print disag)
+(morph_and_lookup_word pretty_print tabba)
+(morph_and_lookup_word pretty_print dtag)
+
+;Now test with alpha variables:
+(load_morpher_rule message
+  <mrule  nm ed_prefix
+		  str morphophonemic
+		  r_pos (V)
+		  r_hf (tense (past pres))
+		  hf (tense (past))
+		  gl PAST
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class alv_stop>
+									   <opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out ((di+ table3) 1)>
+					>
+					<msub
+					  in <m_lhs pseq ((<simp_cntxt class null alpha_vars (a +)>
+									   <opt_seq min 1 max -1 seq (<simp_cntxt class null>)>
+									  )
+									 )
+						 >
+					  out <m_rhs p_out (<simp_cntxt class alv_stop alpha_vars (a +)> 1)>
+					  var_fs (a vd)
+					>
+				  )
+  >
+)
+;Test; each word should be unambiguous:
+(morph_and_lookup_word pretty_print ditag)
+(morph_and_lookup_word pretty_print tpag)
+(morph_and_lookup_word pretty_print dabba)
+
+;Next version of the rule adds a prefix which causes deletion of the first V
+; of the stem (exercising the "untruncate" code in MRULE.ARI).  A crucial
+; test is the ATR harmony; note that the vowel causing the harmony will be
+; ambiguous for the ATR feature during analysis (because the "a" comes from
+; table1 in STARTUP.IN), but unambiguous during synthesis (because that "a"
+; comes from table3).  An earlier version of HC couldn't handle the ambiguity
+; during analysis...
+(load_morpher_rule message
+  <mrule  nm ed_prefix
+		  str morphophonemic
+		  r_hf (tense (past pres))
+		  r_pos (V)
+		  hf (tense (past))
+		  gl PAST
+		  subrules (<msub
+					  in <m_lhs pseq ((<simp_cntxt class cons>)
+									  (<simp_cntxt class low_vowel alpha_vars (a + )>)
+									  (<opt_seq min 1 max -1 seq (<simp_cntxt class null>)>)
+									 )
+						 >
+					  out <m_rhs p_out ((m table3)
+										<simp_cntxt class low_vowel alpha_vars (a +)>
+										1 3
+									   )
+						  >
+					  var_fs (a ATR)
+					>
+				   )
+  >
+)
+;Test; should be unambiguous:
+(morph_and_lookup_word pretty_print masg)
+
+;Now we'll remove the rules (msg 6506):
+(remove_morpher_rule message s_prefix)
+(remove_morpher_rule message ed_prefix)
+(remove_morpher_rule message aspiration)
+;And the natural classes (msg 6542):
+(remove_nat_class message null)
+(remove_nat_class message alv_stop)
+(remove_nat_class message voiceless_c)
+(remove_nat_class message labiodental)
+(remove_nat_class message voiced)
+(remove_nat_class message strident)
+(remove_nat_class message voiceless_stop)
+(remove_nat_class message cons)
+(remove_nat_class message vowel)
+(remove_nat_class message unasp)

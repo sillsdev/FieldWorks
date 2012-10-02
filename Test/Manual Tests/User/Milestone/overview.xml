@@ -1,0 +1,15 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<overview file="Milestone\overview.xml">
+ <title tag="mst">Milestone testing</title>
+ <index>
+  <li>Milestones</li>
+  <li>testing milestones</li>
+ </index>
+ <moduleGroup>
+  <li>What is a milestone?</li>
+  <li>The milestone testing process</li>
+  <li><link uri="LSTD.xml" type="module">What is the Language Software Test Department?</link></li>
+  <li><link uri="Offsite.xml" type="module">What is an off-site tester?</link></li>
+  <li><link uri="SilIntranet.xml" type="module">What is the SIL Intranet?</link></li>
+ </moduleGroup>
+</overview>

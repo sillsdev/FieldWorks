@@ -1,0 +1,44 @@
+File List Version 2.5                        15 June 2007
+
+This file: FileList.txt
+
+MAIN FONT PACKAGE
+Readme.txt
+FONTLOG.txt
+Licenses.txt
+OFL-FAQ.txt
+Ezra Unicode Install2.5.pdf	(Installation Guide)
+
+FONTS
+SILEOT.ttf           (Ezra SIL font)
+SILEOTSR.ttf         (Ezra SIL SR font)
+
+CONVERSION
+Ezra Unicode Convert30.pdf (Conversion Guidelines)
+SILEzratoUni50.map
+SILEzratoUni50.tec
+EzraSIL20to25.map
+EzraSIL20to25.tec
+HEB-map.xml
+Hebrew_MCtoUni50.map
+Hebrew_MCtoUni50.tec
+iso-8859-1.map
+iso-8859-1.tec
+MC2se_2007.cct
+r2l.cct
+r2l_2004.cct
+se2de_2007.cct
+se2tr_2007.cct
+unpoint.cct
+WLC2sfm.cct
+
+
+
+KEYBOARDING
+All of the above, plus:
+Ezra SIL Keyboard Chart2.3.pdf
+Keying in Hebrew.pdf
+Simplified keyboard chart.pdf
+Unicode Ezra Chart17short.pdf
+EZRAUNI23.kmx        (v6 compiled keyboard)
+EzraUni23.kvk        (v6 visual keyboard)

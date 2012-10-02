@@ -1,0 +1,69 @@
+c converts BCV references from WLC format to \ref 01-001-001 format,
+c leaves the text in MC encoding and puts it into a \txt field
+c and strips all the mark-up
+
+begin		>	store(num) '1234567890'
+			store(]flags) '0123456789qaym'
+			endstore
+			'\ref ' use(ref)
+
+
+	group(main)
+
+nl		>	nl nl '\ref ' use(ref)
+nl endfile	>	dup
+
+'/'		>	''
+'*'		>	''
+']' any(]flags)	>	''
+c 'N]8'		>	dup c preserves ]8 for later conversion
+
+group(ref)
+
+'gn'	>	'01-'
+'ex'	>	'02-'
+'lv'	>	'03-'
+'nu'	>	'04-'
+'dt'	>	'05-'
+'js'	>	'06-'
+'ju'	>	'07-'
+'ru'	>	'08-'
+'1s'	>	'09-'
+'2s'	>	'10-'
+'1k'	>	'11-'
+'2k'	>	'12-'
+'1c'	>	'13-'
+'2c'	>	'14-'
+'er'	>	'15-'
+'ne'	>	'16-'
+'es'	>	'17-'
+'jb'	>	'18-'
+'ps'	>	'19-'
+'pr'	>	'20-'
+'ec'	>	'21-'
+'ca'	>	'22-'
+'is'	>	'23-'
+'je'	>	'24-'
+'lm'	>	'25-'
+'ek'	>	'26-'
+'da'	>	'27-'
+'ho'	>	'28-'
+'jl'	>	'29-'
+'am'	>	'30-'
+'ob'	>	'31-'
+'jn'	>	'32-'
+'mi'	>	'33-'
+'na'	>	'34-'
+'hb'	>	'35-'
+'zp'	>	'36-'
+'hg'	>	'37-'
+'zc'	>	'38-'
+'ma'	>	'39-'
+
+any(num)		>	'00' dup
+any(num) any(num)	>	'0'  dup
+any(num) any(num) any(num)	>    dup
+
+':'			>	'-'
+
+' '	>	nl '\txt ' use(main)

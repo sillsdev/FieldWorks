@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Texts6001>
+	<Text id="">
+		<Name5>
+			<AUni ws="xkal">Test Text1 for InterlinearExporterTexts</AUni>
+		</Name5>
+		<Description5>
+			<AStr ws="en">
+				<Run ws="en"></Run>
+			</AStr>
+		</Description5>
+		<Contents5054>
+			<StText>
+				<Paragraphs14>
+					<StTxtPara id="">
+						<Contents16>
+							<Str>
+								<Run ws="xkal">Xxxpus xxxyalola xxxnihimbilira. Xxxnihimbilira xxxpus Xxxyalola. Xxxhesyla XXXNIHIMBILIRA.</Run>
+							</Str>
+						</Contents16>
+					</StTxtPara>
+		  <StTxtPara id="">
+			<Contents16>
+			  <Str>
+				<Run ws="xkal">go went gone</Run>
+			  </Str>
+			</Contents16>
+		  </StTxtPara>
+				</Paragraphs14>
+			</StText>
+		</Contents5054>
+	</Text>
+</Texts6001>

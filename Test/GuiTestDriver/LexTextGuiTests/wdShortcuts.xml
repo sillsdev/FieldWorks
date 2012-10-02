@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+	<goal>Exercises Words tool shortcuts</goal>
+
+	<bug id="FWR-1499" desc="Yellow Error window in Word Analyses" />
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <!-- 1. Start Flex on Kalaba -->
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' close="no" on-fail="assert">
+
+	<click select="menubar/view/texts-words/word-analyses"/>
+
+<!-- reset combo boxes to show all -->
+	<click select="toolbar/view/no-filters"/>
+
+<model select="word-analysis[@role='view']">
+
+   <!-- go to top of list -->
+	 <var id="row" set="10"/>
+	 <var id="col" set="1"/>
+	 <click select="wordforms/record/col"/>
+
+	 <click select="//toolbar/standard/first"/>
+
+	 <var id="row" set="1"/>
+	 <click select="wordforms/record/col"/>
+	 <glimpse id="top" select="analyses/current" prop="value" expect="biliya"/>
+
+   <!-- move down 2 -->
+	  <insert wait="100">%n</insert>
+	  <insert wait="100">%n</insert>
+	  <glimpse id="next1" select="analyses/current" prop="value" expect="dedembakope"/>
+
+   <!-- move up -->
+	  <insert wait="500">%p</insert>
+	  <glimpse id="prev1" select="analyses/current" prop="value" expect="dedembakoko"/>
+   <!-- 'contains' was added via a text area test -->
+
+</model>
+
+  </on-application>
+</accil>

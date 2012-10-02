@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PREFIX=/usr
+APP_DIR="${PREFIX}/lib/FieldWorks/WorldPad"
+COMMON_DLL_DIR="${PREFIX}/lib/FieldWorks/Common"
+
+EXE="$APP_DIR/WorldPad.exe"
+
+MONO_PATH="${COMMON_DLL_DIR}" mono "$EXE" "$@"

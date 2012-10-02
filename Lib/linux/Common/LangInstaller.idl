@@ -1,0 +1,67 @@
+import "oaidl.idl";
+import "ocidl.idl";
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("C13F5F35-1FD2-4388-B905-394D18D28EFB") cpp_quote(",") cpp_quote("LangInstaller") cpp_quote(");") [ uuid(C13F5F35-1FD2-4388-B905-394D18D28EFB), version(1.0), helpstring("InstallLang") ] library LangInstaller
+{
+ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("ILangInstaller") cpp_quote(",") cpp_quote("EB5B7CFA-6EC8-4641-97D2-5FE338FF5434") cpp_quote(");") [ uuid("EB5B7CFA-6EC8-4641-97D2-5FE338FF5434"), object, pointer_default(unique) ] interface ILangInstaller : IUnknown
+ {
+  HRESULT Install(
+	[in] BSTR locale,
+	[in] VARIANT_BOOL fNewLang,
+	[in] VARIANT_BOOL fAddPUA,
+	[out, retval] VARIANT_BOOL *pfSuccess);
+  HRESULT AddPUAChars(
+	[in] BSTR locale,
+	[out, retval] VARIANT_BOOL *pfSuccess);
+  HRESULT Uninstall(
+	[in] BSTR locale,
+	[out, retval] VARIANT_BOOL *pfSuccess);
+  HRESULT ShowCustomLocales(
+	[out, retval] VARIANT_BOOL *pfSuccess);
+  HRESULT ShowCustomLanguages(
+	[out, retval] VARIANT_BOOL *pfSuccess);
+  HRESULT RestoreOriginalSettings(
+	[in] VARIANT_BOOL fNewLang,
+	[out, retval] VARIANT_BOOL *pfSuccess);
+  HRESULT get_ErrorCode(
+	[out, retval] long *pErrorCode);
+  HRESULT Cleanup();
+ };
+ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("5EDF610A-F38F-4034-8714-76B95FDF70EC") cpp_quote(",") cpp_quote("LangInstaller") cpp_quote(");") [ uuid(5EDF610A-F38F-4034-8714-76B95FDF70EC) ] coclass LangInstaller
+ {
+  interface ILangInstaller;
+ };
+}

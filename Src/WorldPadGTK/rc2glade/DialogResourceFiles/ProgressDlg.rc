@@ -1,0 +1,9 @@
+// Extracted from AfProgressDlg.rc
+kridProgressDlg DIALOG DISCARDABLE  0, 0, 210, 50
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION ""
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL     "",kctidProgressMessage,"Static", SS_LEFT, 5,5,200,25
+	CONTROL     "Progress1",kctidProgressBar,"msctls_progress32",PBS_SMOOTH | WS_VISIBLE | WS_BORDER, 5,34,200,11
+END

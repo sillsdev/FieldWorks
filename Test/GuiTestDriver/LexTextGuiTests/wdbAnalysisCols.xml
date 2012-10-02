@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+	<goal>Exercises sorting ability of the Words Analysis columns</goal>
+
+	<bug id="FWR-1499" desc="Yellow Error window in Word Analyses" />
+	<bug id="FWR-1046" desc="Crash clicking Number in columns heading" />
+	<bug id="FWR-608" desc="Analysis user opinion does not change" />
+
+	<!-- Column defaults are Form, Word Glosses, Number in Corpus -->
+
+	 <var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+<on-application args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' run="ok" on-fail="assert">
+
+  <!-- Go to Lexicon / Bulk-Edit Entries -->
+	   <click select="menubar/view/lexicon/bulk-edit-entries"/>
+
+  <!-- Go to menu bar/View/Words/Analyses -->
+	   <click select="menubar/view/texts-words/word-analyses"/>
+
+  <!-- Set all columns to "Show All"-->
+	 <click select="toolbar/view/no-filters"/>
+	 <click select="toolbar/standard/first"/>
+
+<model select="word-analysis[@role='view']">
+
+	 <var id="row" set="1"/>
+	 <var id="col" set="1"/>
+	 <glimpse wait="500" id="wdFirstRecHead" select="wordforms/record/col"  prop="value" expect="biliya" on-fail="skip"/>
+
+	<!-- make sure the word forms are sorted in ascending order -->
+	<if><condition of="$wdFirstRecHead" is="false"/>
+	<then>
+	   <click select="wordforms/col/header" path="Form"/>
+	   <click select="//toolbar/standard/first"/>
+	</then>
+	</if>
+
+<!-- The columns are too wide and we can't resize them, so Reorder Form and Word
+	   Glosses, then replace them with User Analyses and Predicted Analyses and
+	   reodrer them, then restore original columns.  -->
+
+<!-- we're at the first record of the defualt columns with no filters -->
+	   <glimpse wait="500" id="g1" select="wordforms/record/col" prop="value" expect="biliya"/>
+	   <click select="wordforms/col/header" path="Form"/>
+	   <click select="//toolbar/standard/first"/>
+	   <glimpse wait="2000" id="g2" select="wordforms/record/col" prop="value" expect="yuxogelximutira"/>
+
+<!-- sort glosses from empty to longer-->
+	   <click select="wordforms/col/header" path="Word Glosses"/>
+	   <click select="//toolbar/standard/first"/>
+	   <var id="col" set="2"/>
+	   <glimpse wait="2000" id="g3" select="wordforms/record/col" prop="value" expect=""/>
+	   <click select="wordforms/col/header" path="Word Glosses"/>
+	   <click select="//toolbar/standard/first"/>
+	   <glimpse wait="2000" id="g4" select="wordforms/record/col" prop="value" expect="my mat"/>
+
+<!-- sort Number in Corpus from 0 to 3-->
+	   <click select="wordforms/col/header" path="Number in Corpus"/>
+	   <click select="//toolbar/standard/first"/>
+	   <var id="col" set="3"/>
+	   <glimpse wait="2000" id="g5" select="wordforms/record/col" prop="value" expect="0"/>
+	   <click select="wordforms/col/header" path="Number in Corpus"/>
+	   <click select="//toolbar/standard/first"/>
+	   <glimpse wait="2000" id="g6" select="wordforms/record/col" prop="value" expect="3"/>
+
+
+<!-- Replace them with User Analyses and Predicted Analyses and reodrer them, then restore original columns.  -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">w</insert><!-- remove Word Gloss column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">f</insert><!-- remove Form column -->
+	  <!--click select="wordforms/col/changer"/>
+	  <insert wait="500">u</insert--><!-- add User Analyses column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">p</insert><!-- add Predicted Analyses column -->
+
+<!-- The columns are now Number in Corpus, User Analyses, Predicted Analyses -->
+
+<!-- sort User Analyses from 0 to 3-->
+	   <click select="wordforms/col/header" path="User Analyses"/>
+	   <click select="//toolbar/standard/first"/>
+	   <var id="col" set="2"/>
+	   <glimpse wait="1000" id="g7" select="wordforms/record/col" prop="value" expect="0"/>
+	   <click select="wordforms/col/header" path="User Analyses"/>
+	   <click select="//toolbar/standard/first"/>
+	   <glimpse wait="1000" id="g8" select="wordforms/record/col" prop="value" expect="2"/>
+
+<!-- sort Predicted Analyses from 0 to 3-->
+	   <click select="wordforms/col/header" path="Predicted Analyses"/>
+	   <click select="//toolbar/standard/first"/>
+	   <var id="col" set="3"/>
+	   <glimpse wait="1000" id="g9" select="wordforms/record/col" prop="value" expect="0"/>
+	   <click select="wordforms/col/header" path="Predicted Analyses"/>
+	   <click select="//toolbar/standard/first"/>
+	   <glimpse wait="1000" id="g10" select="wordforms/record/col" prop="value" expect="2"/>
+
+<!-- Restore the original columns.  -->
+	  <!--click select="wordforms/col/changer"/>
+	  <insert wait="500">u</insert--><!-- remove User Analyses column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">p</insert><!-- remove Predicted Analyses column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">w</insert><!-- add Word Gloss column -->
+	  <click select="wordforms/col/changer"/>
+	  <insert wait="500">f</insert><!-- add Form column -->
+
+	<!-- make sure the word forms are sorted in ascending order -->
+	 <click select="//toolbar/standard/first"/>
+	   <var id="col" set="1"/>
+	 <glimpse wait="1000" id="fisrtWrd" select="wordforms/record/col" prop="value" expect="A" on-fail="skip"/>
+	<if><condition of="$fisrtWrd" is="false"/>
+	<then>
+	   <click select="wordforms/col/header" path="Form"/>
+	   <click select="//toolbar/standard/first"/>
+	</then>
+	</if>
+
+	 <click select="wordforms/record/col"/> <!-- get cursor off the toolbar or next test dies -->
+</model>
+
+</on-application>
+</accil>

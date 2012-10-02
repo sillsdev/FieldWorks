@@ -1,0 +1,284 @@
+﻿; This file was edited using TECkitMappingEditorU.exe v1.0.0.1 on 2/20/2007.
+;   Conversion Type = Legacy_to_from_Unicode
+;   Left-hand side font = Courier New;12
+;   Right-hand side font = Ezra SIL;12
+;   Main Window Position = 0,0,1283,740
+;   Code Point Window Position = 891,52,351,764
+
+;Hebrew_MCtoUni50.map
+;cjs Sept 2005-March 2007
+
+;NB do not apply normalisation to Hebrew with current fonts
+;they assume consonant-dagesh-vowel-cant order
+
+EncodingName	"Michigan-Claremont"
+DescriptiveName	"Michigan-Claremont to Unicode"
+Contact	"mailto: sil_fonts@sil.org"
+RegistrationAuthority	"SIL International"
+RegistrationName "Michigan-Claremont"
+
+
+;Initial pass to handle mark-up in WLC and to do O-cant-W reordering
+
+pass (Byte)
+
+ByteClass [num]     = ( 48 .. 57 )
+ByteClass [rbrkt]   = ( 48 .. 57 113 97 121 109 ) ; to deal with right bracket codes
+
+;reorder all non-post-positive cant codes to precede vocalic OW
+79=a [num]=c [num]=d                    87=b > [num]=c [num]=d                  79=a 87=b
+79=a [num]=c [num]=d [num]=e [num]=f    87=b > [num]=c [num]=d [num]=e [num]=f  79=a 87=b
+
+;trash the morph-break marker
+47 >        ; morph break marker
+
+;trash the dummy definite article
+95 >        ; dummy article
+
+;trash right-bracket codes - if you want to retain them comment out the line below
+93 [rbrkt] >
+
+;handling of kk and qq in kwlq and qwlk leaves the * if it is there
+;depending on input text and what is wanted, this may be changed
+107 107 > 75 75
+113 113 > 81 81
+
+
+;Main pass to convert to Unicode
+
+pass (Byte_Unicode)
+
+ByteDefault		63
+UniDefault		replacement_character
+
+Define CGJ  U+034F
+Define ZWNJ U+200C
+Define ZWJ  U+200D
+
+ByteClass [x]       = (0..255)
+UniClass  [x]       = (0..255)
+
+ByteClass [final]   = ( 075    077    078    080    067 ) ;consonants with final forms
+UniClass  [final]   = ( U+05DA U+05DD U+05DF U+05E3 U+05E5 )
+
+ByteClass [WS]      = ( 009 010 013 032 045 176 )
+
+ByteClass [num]     = ( 48 .. 57 )
+
+ByteClass [rbrkt]   = ( 48 .. 57 113 97 121 109 ) ; to protect right bracket codes
+UniClass  [rbrkt]   = ( U+0030 .. U+0039 U+0071 U+0061 U+0079 U+006D )
+
+ByteClass [cons]    = ( 41 66 71 68 72 87 90 88 43 89 75 76 77 78 83 40 80 67 81 82 38 36 84 )
+
+ByteClass [vow]     = ( 34 58 65 69 70 73 79 85 )
+
+ByteClass [lovow]   = ( 34 58 65 69 70 73    85 )
+
+ByteClass [notsh]   = ( 70     73     34     69     65     85     ) ;low vowels except schwa
+UniClass  [notsh]   = ( U+05B8 U+05B4 U+05B5 U+05B6 U+05B7 U+05BB )
+
+ByteClass [kvow]    = ( 58 70 ) ;vowels found with final kaph and nun
+
+ByteClass [hatvow]  = ( 65     69     70     ) ;vowels found with ':' in hatephs
+UniClass  [hatvow]  = ( U+05B2 U+05B1 U+05B3 )
+
+
+;**************************
+
+;section to preserve WLC-type references - not needed with sfm markup, but it doesn't interfere
+;needs both rules so that two-digit refs are not treated as cant codes or vice versa
+
+ByteClass [refs]    = ( 97     .. 122    48     .. 57     058    )
+UniClass  [refs]    = ( U+0061 .. U+007A U+0030 .. U+0039 U+003A )
+ByteClass [newline] = ( 10 13 )
+
+[refs]          / ( # | [newline] ) [refs]* _                   > [refs]
+[refs] [refs]   / ( # | [newline] ) [refs]* _ ( 32 | [refs] )   > [refs] [refs]
+
+;**************************
+
+;consonants
+041 > U+05D0 ; aleph
+066 > U+05D1 ; beth
+071 > U+05D2 ; gimmel
+068 > U+05D3 ; daleth
+072 > U+05D4 ; he
+087 > U+05D5 ; waw
+090 > U+05D6 ; zayin
+088 > U+05D7 ; heth
+043 > U+05D8 ; teth
+089 > U+05D9 ; yodh
+075 > U+05DB ; kaph
+076 > U+05DC ; lamed
+077 > U+05DE ; mem
+078 > U+05E0 ; nun
+083 > U+05E1 ; samek
+040 > U+05E2 ; ayin
+080 > U+05E4 ; pe
+067 > U+05E6 ; tsade
+081 > U+05E7 ; qoph
+082 > U+05E8 ; resh
+038 > U+05E9 U+05C2 ; sin
+036 > U+05E9 U+05C1 ; shin
+035 > U+05E9 ; unpointed sin
+084 > U+05EA ; tau
+
+;final forms
+[final] / ^32 _ 46? [kvow]? [num]{0,6} ( [WS] | # ) > [final] ;^32 needed for correct handling of inverted nun
+
+;pethuhah must be non-final - always with white space or end
+80 / [WS] _ ( [WS] | # ) > U+0020 U+05E4 ;pethuha
+83 / [WS] _ ( [WS] | # ) > U+0020 U+05E1 ;sethuma
+
+;inverted nun - CGJ (U+034F) no longer needed
+78 / [WS] _ 93 56           > U+05C6 U+0307 ; if ]8 is retained
+78 / [WS] _ ( [WS] | # )    > U+05C6 U+0307 ; if ]8 is deleted
+
+;miscellaneous
+044 > U+05BF ; rafe
+046 > U+05BC ; dagesh
+045 > U+05BE ; maqqeph
+042 > U+002A ; asterisk
+126 > U+00A0 ; NBSP in compound names
+093 [rbrkt] > U+005D [rbrkt] ;if you want the right brackets, but see above
+
+;vowels
+065 > U+05B7 ; pathah
+070 > U+05B8 ; qamets
+069 > U+05B6 ; seghol
+034 > U+05B5 ; tsere
+073 > U+05B4 ; hireq
+079 > U+05B9 ; holem
+085 > U+05BB ; qibbuts
+058 > U+05B0 ; shewa
+058 065 > U+05B2 ; hateph pathah
+058 069 > U+05B1 ; hateph seghol
+058 070 > U+05B3 ; hateph qamets
+
+;schwa with metheg - context needed to discriminate schwa from ':' in refs
+58 55 53 / ^[num] _ > U+05B0     U+05BD ;left
+58 57 53 / ^[num] _ > U+05BD CGJ U+05B0 ;right
+
+;other vowels with metheg
+[notsh]=a 55 53 > [notsh]=a  U+05BD    ;left
+[notsh]=a 57 53 > U+05BD CGJ [notsh]=a ;right
+
+79 57 53 > U+05B9 U+05BD ;right metheg (95) with holem (O) is meaningless
+
+58 [hatvow]=a 51 53   > [hatvow]=a ZWJ  U+05BD     ;medial
+58 [hatvow]=a 55 53   > [hatvow]=a ZWNJ U+05BD     ;left
+58 [hatvow]=a 57 53   > U+05BD CGJ [hatvow]=a      ;right
+
+;OW and WO sequences
+79 87               / _ ^[lovow]    > U+05D5 U+05B9                         ; vocalic OW is impossible if followed by a vowel
+87 79  87                           > U+05D5 U+05D5 U+05B9                  ; WOW = consonantal folowed by vocalic
+87=a      79=c                      > U+05D5=a          U+05BA=c            ; consonantal WO without dagesh
+87=a 46=b 79=c                      > U+05D5=a U+05BC=b U+05BA=c            ; consonantal WO with dagesh
+87=a 46=b 79=c 87=d / [cons] _      > U+05D5=a U+05BC=b U+05D5=d U+05BA=c   ; shureq followed by consonantal WO
+87=a 46=b 79=c 87=d / [vow]  _      > U+05D5=a U+05BC=b U+05D5=d U+05B9=c   ; waw+dagesh followed by vocalic OW
+
+;cants
+048 048 > U+05C3 ; sop pasuq                   00
+048 049 > U+0592 ; segolta                     01
+048 050 > U+05AE ; zarqa, sinnor               02
+048 051 > U+0599 ; pashta, azla legarmeh       03
+048 052 > U+05A9 ; telisha parvum              04
+048 053 > U+00A0 U+05C0 ; paseq [separator] legarmeh (with NBSP)  05
+049 048 > U+059A ; yetib (yetiv)               10
+049 049 > U+059D ; mugrash                     11
+049 051 > U+05AD ; dehi or tipha               13
+049 052 > U+05A0 ; telisha magnum              14
+050 052 > U+05A9 ; telisha qetannah (med)      24
+051 051 > U+0599 ; (with 03, left of letter)   33
+051 053 > U+05BD ; meteg (med)                 35
+052 052 > U+05A0 ; telisha magnum (med)        44
+053 050 > U+05C4 ; upper punctum               52
+053 051 > U+05C5 ; lower punctum               53
+054 048 > U+05AB ; ole or mahpakatum           60
+054 049 > U+059C ; geresh or teres             61
+054 050 > U+059E ; garshajim                   62
+054 051 > U+05A8 ; azla, azla or qadma         63
+054 052 > U+05AC ; illuj                       64
+054 053 > U+0593 ; shalshelet (magn,parv)      65
+055 048 > U+05A4 ; mahpak or mehuppak          70
+055 049 > U+05A5 ; mereka                      71
+055 050 > U+05A6 ; mereka kepulah (duplex)     72
+055 051 > U+0596 ; tipha, tarha majela         73
+055 052 > U+05A3 ; munah                       74
+055 053 > U+05BD ; silluq [meteg (left)]       75
+056 048 > U+0594 ; zaqep parvum                80
+056 049 > U+0597 ; rebia (magnum=parvum)       81
+056 050 > U+0598 ; sinnorit                    82
+056 051 > U+05A1 ; pazer                       83
+056 052 > U+059F ; pazer mag. or qarne para    84
+056 053 > U+0595 ; zaqep magnum                85
+057 049 > U+059B ; tebir                       91
+057 050 > U+0591 ; atnah                       92
+057 051 > U+05AA ; galgal or jerah             93
+057 052 > U+05A7 ; darga                       94
+057 053 > U+05BD ; meteg (right) [cf 35,75]    95
+
+;*****************************
+;delete the code beween ***
+;special code to output 05A8 (azla, qadma, 63) in place of 0599 (pashta, 33) where it would clash
+;with holem, sin dot or the ascender of a lamed
+;strictly this is improper, but it is necessary for the font to render the cant centrally above the consonant
+;for that reason, it may be commented out to ensure accurate encoding, but it will be rendered incorrectly
+;it would not be reversible since the distinction between a real azla and a modifed pashta is lost
+;this should not happen with holem before aleph where the holem moves to the left on to the holem
+;
+;now handled in the font, so this section is commented out - eventually delete it
+;51 51 / 76 46? [vow]? _       > U+05A8    ;lamed
+;51 51 / 79            _ ^41   > U+05A8    ;holem - not before aleph (nor waw, since O is moved after 33)
+;51 51 / 38 46? [vow]  _       > U+05A8    ;sin dot
+;*****************************
+
+;special case at 2Ki 21.26.1 - holam as a second vowel occurs only here but must occur first and needs the CGJ to prevent reordering
+66=a 46=b 58=c 79=d 55=e 49=f 82=g > U+05D1=a U+05BC=b U+05B9=d U+034F U+05B0=c U+05A5 U+05E8=g
+
+;special case at Jdg 19.13.3 - seems to have the wrong vowel-cant order in WLC
+76 58 75 55 49 70 > U+05DC U+05B0 U+05DA U+05B8 U+05A5
+
+[x] > [x] ; anything else just gets passed as ascii
+
+;This pass does final rearrangment to the standard non-canonical order
+
+pass (Unicode)
+
+Class [pp]	=	( U+059D U+05A0 U+059A U+05AD )
+
+Class [high_p]	=	( U+0593 U+0594 U+0595 U+0597 U+0598 U+0599 U+059C U+059E U+059F \
+				U+05A1 U+05A8 U+05A9 U+05AB U+05AC U+05AE U+05C4 U+0307 U+0308 )
+
+Class [low_p]	=	( U+0591 U+0592 U+0596 U+059B U+05A2 U+05A3 U+05A4 U+05A5 U+05A6 U+05A7 \
+				U+05AA U+05BD U+05C5 )
+
+Class [cons]	=	( U+05D0 U+05D1 U+05D2 U+05D3 U+05D4 U+05D5 U+05D6 U+05D7 \
+				U+05D8 U+05D9 U+05DB U+05DC U+05DE U+05E0 U+05E1 U+05E2 \
+				U+05E4 U+05E6 U+05E7 U+05E8 U+05E9 U+05EA ) ;non-final only
+
+Class [dr]	=	( U+05BC U+05BF )
+
+Class [vow] 	=	( U+05B0 .. U+05BB U+05C7 )
+
+Class [shindots] =	( U+05C1 U+05C2)
+
+; OUT OF BOUNDS - whitespace or word-breaking, incl. numbers, punctuation, latin punctuation, dashes, spaces, no thinspace, quotes.
+UniClass	[OOB] 	= ( U+0009 U+000A U+000D U+0020 U+00A0 U+0020 .. U+0040 U+05F3 U+05F4 \
+				U+05BE U+05C0 U+05C3 U+005B .. U+0060 \
+				U+007B .. U+007E U+00A7 U+00AB U+00AF \
+				U+00B6 U+00BB U+00BF U+05BE U+05C0 U+05C3 U+2000 .. U+200A U+2010 .. U+2021 \
+				U+2039 U+203A )
+
+;NOTE pp_se MUST be used with WhiteSpace/OOB environments. Otherwise, you will have similar marks identified as word-initial which are not.
+;includes special case when there is a right metheg (MC 95)
+[pp]=a [cons]=b [shindots]=j? [dr]{0,2}=c U+05BD?=l U+034F?=m [vow]{0,2}=d ( U+200C | U+200D)?=k [high_p]{0,2}=i [low_p]{0,2}=e U+05C5?=h [high_p]{0,2}=f [low_p]{0,2}=g / ( [OOB] | # ) _  >  @b @j @c @l @m @d @k @h @e @g @a @f @i
+
+;when metheg (silluq) is to the left of another low cant, it needs a CGJ to hold it on normalisation
+[cons]=b [shindots]=j? [dr]{0,2}=c [vow]{0,2}=d [high_p]{0,2}=f [low_p]{1,1}=e [high_p]{0,2}=i U+05BD [low_p]{0,2}=g > @b @j @c @d @e U+034F U+05BD @g @f @i
+
+;normal rearrangement - no pre-positive, no second vowel, no out-of-order metheg
+[cons]=b [shindots]=j? [dr]{0,2}=c [vow]{0,2}=d [high_p]{0,2}=f [low_p]{0,2}=e [high_p]{0,2}=i [low_p]{0,2}=g > @b @j @c @d @e @g @f @i
+
+;rare 2nd vowel rearrangement adds CGJ-034F before 2nd vowel to prevent canonical reordering.
+[cons]=b [shindots]=k? [dr]{0,2}=c [vow]{1,2}=d [high_p]{0,2}=f [low_p]{0,2}=e [high_p]{0,2}=i [low_p]{0,2}=g [vow]=j  >  @b @k @c [vow]{1,2}=d @e @g U+034F @j @f @i

@@ -1,0 +1,487 @@
+#line 1 "C:\\fw\\Src\\DbServices\\DbServicesTlb.idl"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import "oaidl.idl";
+import "ocidl.idl";
+#line 1 "C:\\fw\\Src\\Generic\\Common.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("")
+cpp_quote("#undef ATTACH_GUID_TO_CLASS")
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls) \\")
+cpp_quote("	type __declspec(uuid(#guid)) cls;")
+cpp_quote("#else // !defined(__cplusplus)")
+cpp_quote("#define ATTACH_GUID_TO_CLASS(type, guid, cls)")
+cpp_quote("#endif // !defined(__cplusplus)")
+cpp_quote("")
+cpp_quote("#ifndef DEFINE_COM_PTR")
+cpp_quote("#define DEFINE_COM_PTR(cls)")
+cpp_quote("#endif")
+cpp_quote("")
+cpp_quote("#undef GENERIC_DECLARE_SMART_INTERFACE_PTR")
+cpp_quote("#define GENERIC_DECLARE_SMART_INTERFACE_PTR(cls, iid) \\")
+cpp_quote("	ATTACH_GUID_TO_CLASS(interface, iid, cls); \\")
+cpp_quote("	DEFINE_COM_PTR(cls);")
+cpp_quote("")
+
+
+cpp_quote("")
+cpp_quote("#ifndef CUSTOM_COM_BOOL")
+typedef VARIANT_BOOL ComBool;
+cpp_quote("#endif")
+cpp_quote("")
+
+cpp_quote("#if 0")
+cpp_quote("// This is so there is an equivalent VB type.")
+typedef CY SilTime;
+cpp_quote("#elif defined(SILTIME_IS_STRUCT)")
+cpp_quote("// This is for code that compiles UtilTime.*.")
+cpp_quote("struct SilTime;")
+cpp_quote("#else")
+cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
+cpp_quote("typedef __int64 SilTime;")
+cpp_quote("#endif")
+cpp_quote("")
+
+
+#line 20 "C:\\fw\\Src\\DbServices\\DbServicesTlb.idl"
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("03BAB68B-6C7F-42ff-8438-B6D523CB79B9") cpp_quote(",") cpp_quote("FwDbServices") cpp_quote(");") [ uuid(03BAB68B-6C7F-42ff-8438-B6D523CB79B9), version(2.0), helpstring("FieldWorks Database Services 2.0 Type Library") ] library FwDbServices
+#line 23 "C:\\fw\\Src\\DbServices\\DbServicesTlb.idl"
+{
+	importlib("FwKernelTlb.tlb");
+
+	#line 1 "c:\\fw\\src\\dbservices\\BackupDelegates.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IBackupDelegates") cpp_quote(",") cpp_quote("1C0FA5AF-00B4-4dc1-8F9E-168AF3F892B0") cpp_quote(");") [ uuid("1C0FA5AF-00B4-4dc1-8F9E-168AF3F892B0"), object, pointer_default(unique) ] interface IBackupDelegates : IUnknown
+	{
+
+		HRESULT GetLocalServer_Bkupd([out, retval] BSTR * pbstrSvrName);
+
+
+		HRESULT GetLogPointer_Bkupd([out, retval] IStream** ppfist);
+
+
+
+
+		HRESULT SaveAllData_Bkupd(
+			[in, string] const OLECHAR * pszServer,
+			[in, string] const OLECHAR * pszDbName);
+
+
+
+		HRESULT CloseDbAndWindows_Bkupd(
+			[in, string]  const OLECHAR * pszSvrName,
+			[in, string]  const OLECHAR * pszDbName,
+			[in]  ComBool fOkToClose,
+			[out, retval] ComBool * pfWindowsClosed);
+
+
+
+		HRESULT IncExportedObjects_Bkupd();
+
+
+
+		HRESULT DecExportedObjects_Bkupd();
+
+
+
+		HRESULT CheckDbVerCompatibility_Bkupd(
+			[in, string]  const OLECHAR * pszSvrName,
+			[in, string]  const OLECHAR * pszDbName,
+			[out, retval] ComBool * pfCompatible);
+
+
+
+
+		HRESULT ReopenDbAndOneWindow_Bkupd(
+			[in, string] const OLECHAR * pszSvrName,
+			[in, string] const OLECHAR * pszDbName);
+	};
+#line 27 "C:\\fw\\Src\\DbServices\\DbServicesTlb.idl"
+	#line 1 "c:\\fw\\src\\dbservices\\DbBackup.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import "unknwn.idl";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("DIFwBackupDb") cpp_quote(",") cpp_quote("00A94783-8F5F-42af-A993-49F2154A67E2") cpp_quote(");") [ uuid("00A94783-8F5F-42af-A993-49F2154A67E2"), dual, oleautomation, pointer_default(unique) ] interface DIFwBackupDb : IDispatch
+{
+
+
+
+	HRESULT Init([in] IBackupDelegates * pbkupd, [in] int hwndParent);
+
+
+	HRESULT CheckForMissedSchedules();
+
+
+	HRESULT Backup();
+
+
+	HRESULT Remind();
+
+
+
+
+
+
+
+
+
+
+
+
+	HRESULT UserConfigure(
+		[in] IUnknown * phtprovHelpUrls,
+		[in] ComBool fShowRestore,
+		[out,retval] int * pnUserAction);
+};
+
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("0783E03E-5208-4d71-9D98-3D4974C8E633") cpp_quote(",") cpp_quote("FwBackup") cpp_quote(");") [ uuid(0783E03E-5208-4d71-9D98-3D4974C8E633) ] coclass FwBackup
+{
+	interface DIFwBackupDb;
+};
+
+#line 81 "c:\\fw\\src\\dbservices\\DbBackup.idh"
+#line 28 "C:\\fw\\Src\\DbServices\\DbServicesTlb.idl"
+	#line 1 "c:\\fw\\src\\dbservices\\DbDisconnect.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import "unknwn.idl";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDisconnectDb") cpp_quote(",") cpp_quote("0CC74E0C-3017-4c02-A507-3FB8CE621CDC") cpp_quote(");") [ uuid("0CC74E0C-3017-4c02-A507-3FB8CE621CDC"), object, pointer_default(unique) ] interface IDisconnectDb : IUnknown
+{
+
+
+
+
+
+
+
+
+	HRESULT Init(
+		[in] BSTR bstrDatabase,
+		[in] BSTR bstrServer,
+		[in] BSTR bstrReason,
+		[in] BSTR bstrExternalReason,
+		[in] ComBool fConfirmCancel,
+		[in] BSTR bstrCancelQuestion,
+		[in] int hwndParent);
+
+
+
+	HRESULT CheckConnections([out, retval] int * pnResponse);
+
+
+
+	HRESULT DisconnectAll([out, retval] ComBool * pfResult);
+
+
+	HRESULT ForceDisconnectAll();
+}
+
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("008B93C5-866A-4238-963B-3F6C51B5BB03") cpp_quote(",") cpp_quote("FwDisconnect") cpp_quote(");") [ uuid(008B93C5-866A-4238-963B-3F6C51B5BB03) ] coclass FwDisconnect
+{
+	interface IDisconnectDb;
+};
+
+#line 86 "c:\\fw\\src\\dbservices\\DbDisconnect.idh"
+#line 29 "C:\\fw\\Src\\DbServices\\DbServicesTlb.idl"
+	#line 1 "c:\\fw\\src\\dbservices\\RemoteWarn.idh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import "unknwn.idl";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRemoteDbWarn") cpp_quote(",") cpp_quote("004C42AE-CB07-47b5-A936-D9CA4AC466D7") cpp_quote(");") [ uuid("004C42AE-CB07-47b5-A936-D9CA4AC466D7"), object, pointer_default(unique) ] interface IRemoteDbWarn : IUnknown
+{
+
+
+
+
+	HRESULT WarnSimple(
+		[in] BSTR bstrMessage,
+		[in] int nFlags,
+		[out, retval] int * pnResponse);
+
+
+
+
+	HRESULT WarnWithTimeout(
+		[in] BSTR bstrMessage,
+		[in] int nTimeLeft);
+
+
+	HRESULT Cancel();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IDbWarnSetup") cpp_quote(",") cpp_quote("06082023-C2BA-4425-90FD-2F76B74CCBE7") cpp_quote(");") [ uuid("06082023-C2BA-4425-90FD-2F76B74CCBE7"), object, pointer_default(unique) ] interface IDbWarnSetup : IUnknown
+{
+
+	HRESULT PermitRemoteWarnings();
+
+
+	HRESULT RefuseRemoteWarnings();
+}
+
+
+
+
+
+
+
+cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("0732A981-4921-4d4b-9E1D-AF9362E2708D") cpp_quote(",") cpp_quote("FwRemote") cpp_quote(");") [ uuid(0732A981-4921-4d4b-9E1D-AF9362E2708D) ] coclass FwRemote
+{
+	interface IRemoteDbWarn;
+	interface IDbWarnSetup;
+};
+
+#line 113 "c:\\fw\\src\\dbservices\\RemoteWarn.idh"
+#line 30 "C:\\fw\\Src\\DbServices\\DbServicesTlb.idl"
+};

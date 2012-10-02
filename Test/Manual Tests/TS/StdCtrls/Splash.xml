@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="splash" num="0.23" abbr="spl" file="StdCtrls\Splash.xml">
+ <title tag="splash">Splash Screen Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <context>
+   <p>A splash screen is the first evidence that an application is running. It says something about the product and remains visible until the application is ready to use.</p>
+  </context>
+
+ <case id="splAct" num="0" order="any">
+  <title tag="splAct">Activation</title>
+  <context>
+<p>When the application is not running</p>
+</context>
+  <step name="0.1" link="Bug">Invoke the application via the explorer or Windows Start menu.
+   <r>
+	<ul>
+	 <li>Almost immediately, the "splash screen" appears, showing the application title, a graphic logo, a copyright notice, and a status message that tells what's going on, such as "Loading project X"</li>
+	 <li>The splash screen remains until the application window is ready to use; within 30 seconds.</li>
+	 <li>The application title bar should appear, preceded by the name of a language project if applicable. A hyphen separates the former from the latter if both are present.</li>
+   </ul>
+</r>
+   <p name="bug">Application invokation not working</p>
+   <p name="bug">Splash screen does not display</p>
+   <p name="bug">Splash screen content incorrect</p>
+   <p name="bug">Splash screen remains visible too long</p>
+   <p name="bug">Application is not ready when splash screen closes</p>
+  </step>
+ </case>
+
+ <update date="Mar-28-01" author="MikeL">File created.</update>
+
+</test>

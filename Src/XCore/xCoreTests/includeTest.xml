@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file demonstrates using ability to factor xcore configurations into multiple files so that similar applications can reuse configuration pieces.-->
+<window label="Itinerary Maker" settingsId="xWindowUnitTest">
+	<!-- bring in all of the commands  -->
+	<commands>
+		<include path='basicTest.xml' query='//commands/command'/>
+	</commands>
+
+	<!-- here, we will just copy the entire section -->
+	<include path='basicTest.xml' query='window/lists'/>
+
+	<!-- here, we will bring in the menus individually  -->
+	<menubar>
+		<include path='basicTest.xml' query="//menubar/menu[@id='DebugMenu']"/>
+	</menubar>
+	<include path='basicTest.xml' query='window/contentClass'/>
+</window>

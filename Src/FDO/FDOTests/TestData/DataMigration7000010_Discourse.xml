@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+
+	<!-- Need some gutless old CCRs to test the various non-CCA property combinations. -->
+	<rt class="DsDiscourseData" guid="c1ec5c4c-e382-11de-8a39-0800200c9a66" ownerguid="E4952BB2-3663-4F8C-A754-947F1DDDD0BE" >
+		<CmObject>
+		</CmObject>
+		<DsDiscourseData>
+			<Charts>
+				<objsur t="o" guid="c1ec5c4d-e382-11de-8a39-0800200c9a66" />
+			</Charts>
+		</DsDiscourseData>
+	</rt>
+	<rt class="DsConstChart" guid="c1ec5c4d-e382-11de-8a39-0800200c9a66" ownerguid="c1ec5c4c-e382-11de-8a39-0800200c9a66" >
+		<CmObject>
+		</CmObject>
+		<CmMajorObject />
+		<DsChart />
+		<DsConstChart>
+			<Rows>
+				<objsur t="r" guid="c1ec8357-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec8358-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec835b-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec8359-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec835a-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ecaa6b-e382-11de-8a39-0800200c9a66" />
+			</Rows>
+		</DsConstChart>
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="c1ec8357-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- No notes. No CompDetails. (first) -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">NoNotesOrCompDetails</Run>
+				</AStr>
+			</Comment>
+			<AnnotationType>
+				<!-- CCR type -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation />
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="c1ec8358-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- With Notes and some CompDetails. (second) -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="es">
+					<Run ws="es">cancion</Run>
+				</AStr>
+				<AStr ws="en">
+					<Run ws="en">NotesAndAllNonEnumCompDetails</Run>
+				</AStr>
+			</Comment>
+			<CompDetails>
+				<!-- Override all non-enum props. -->
+				<Uni>&lt;ccinfo endPara="true" endSent="true" firstDep="true" endDep="true" /&gt;</Uni>
+			</CompDetails>
+			<Text>
+				<!-- StText -->
+				<objsur t="o" guid="c1ec835c-e382-11de-8a39-0800200c9a66" />
+			</Text>
+			<AnnotationType>
+				<!-- CCR type -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation />
+	</rt>
+	<rt class="StText" guid="c1ec835c-e382-11de-8a39-0800200c9a66" ownerguid="c1ec8358-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<StText>
+			<Paragraphs>
+				<!-- StTxtPara (Should only use the first one.) -->
+				<objsur t="o" guid="c1ec835d-e382-11de-8a39-0800200c9a66" />
+				<objsur t="o" guid="c1ec835e-e382-11de-8a39-0800200c9a66" />
+			</Paragraphs>
+		</StText>
+	</rt>
+	<rt class="StTxtPara" guid="c1ec835d-e382-11de-8a39-0800200c9a66" ownerguid="c1ec835c-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Blah, blah.</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+	<rt class="StTxtPara" guid="c1ec835e-e382-11de-8a39-0800200c9a66" ownerguid="c1ec835c-e382-11de-8a39-0800200c9a66" >
+		<CmObject />
+		<StPara />
+		<StTxtPara>
+			<Contents>
+				<Str>
+					<Run ws="en">Bad note.</Run>
+				</Str>
+			</Contents>
+		</StTxtPara>
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="c1ec835b-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- No Notes. CompDetails 'dependent'. (third) -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">dependent</Run>
+				</AStr>
+			</Comment>
+			<CompDetails>
+				<!-- Override 'dependent'. -->
+				<Uni>&lt;ccinfo dependent="true" /&gt;</Uni>
+			</CompDetails>
+			<AnnotationType>
+				<!-- CCR type -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation />
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="c1ec8359-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- No Notes. CompDetails 'speech'. (fourth) -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">speech</Run>
+				</AStr>
+			</Comment>
+			<CompDetails>
+				<!-- Override 'speech'. -->
+				<Uni>&lt;ccinfo speech="true" /&gt;</Uni>
+			</CompDetails>
+			<AnnotationType>
+				<!-- CCR type -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation />
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="c1ec835a-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- No Notes. CompDetails 'song'. (fifth) -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">song</Run>
+				</AStr>
+			</Comment>
+			<CompDetails>
+				<!-- Override 'song'. -->
+				<Uni>&lt;ccinfo song="true" /&gt;</Uni>
+			</CompDetails>
+			<AnnotationType>
+				<!-- CCR type -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation />
+	</rt>
+
+<!-- CCR with all six possible CCAs. -->
+	<rt class="CmIndirectAnnotation" guid="c1ecaa6b-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- No Notes. 'normal'. (sixth) -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">normal</Run>
+				</AStr>
+			</Comment>
+			<AnnotationType>
+				<!-- CCR type -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- Convert CmBaseAnnotation to ConstChartTag -->
+				<objsur t="r" guid="c1ecaa66-e382-11de-8a39-0800200c9a66" />
+				<!-- Convert CmIndirectAnnotation to ConstChartClauseMarker
+				(One or more AppliesTo references to CmIndirectAnnotation of type Constituent Chart Row) -->
+				<objsur t="r" guid="c1ecaa67-e382-11de-8a39-0800200c9a66" />
+				<!-- Convert CmIndirectAnnotation to ConstChartMovedTextMarker
+				(Single AppliesTo that is a CmIndirectAnnotation of type CCA) -->
+				<objsur t="r" guid="c1ecaa68-e382-11de-8a39-0800200c9a66" />
+				<!-- Convert CmIndirectAnnotation to a ConstChartWordGroup
+				(Null AppliesTo) -->
+				<objsur t="r" guid="c1ec8361-e382-11de-8a39-0800200c9a66" />
+				<!-- Convert CmIndirectAnnotation to a ConstChartWordGroup
+				(Sequence in AppliesTo that are CmBaseAnnotations of type twfic/(pfic)) -->
+				<objsur t="r" guid="c1ecaa6a-e382-11de-8a39-0800200c9a66" />
+				<!-- Convert CmIndirectAnnotation to a ConstChartWordGroup
+				(Sequence in AppliesTo that are CmBaseAnnotations of type twfic/(pfic)) -->
+				<objsur t="r" guid="c1ecaa71-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="c1ecaa71-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!--  (Sequence in AppliesTo that are CmBaseAnnotations of type twfic) [Trouble maker test data. :-)] -->
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec5c58-e382-11de-8a39-0800200c9a66" />
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec5c57-e382-11de-8a39-0800200c9a66" />
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec5c56-e382-11de-8a39-0800200c9a66" />
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec5c55-e382-11de-8a39-0800200c9a66" />
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec5c54-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="c1ecaa6a-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- (Sequence in AppliesTo that are CmBaseAnnotations of type twfic/(pfic)) -->
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec8355-e382-11de-8a39-0800200c9a66" />
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec8354-e382-11de-8a39-0800200c9a66" />
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec8353-e382-11de-8a39-0800200c9a66" />
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec8352-e382-11de-8a39-0800200c9a66" />
+				<!-- twfic -->
+				<objsur t="r" guid="c1ec8351-e382-11de-8a39-0800200c9a66" />
+				<!-- pfic -->
+				<objsur t="r" guid="c1ec8350-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="c1ecaa68-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- Single AppliesTo that is a CmIndirectAnnotation of type CCA -->
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">&lt;&lt;</Run>
+				</AStr>
+			</Comment>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<objsur t="r" guid="c1ec8361-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<rt class="CmIndirectAnnotation" guid="c1ec8361-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- Converted to ConstChartWordGoup -->
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation />
+	</rt>
+
+	<rt class="CmIndirectAnnotation" guid="c1ecaa67-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<!-- CCA with a couple of CCRs in AppliesTo -->
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<objsur t="r" guid="c1ec8357-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec8358-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+
+	<rt class="CmBaseAnnotation" guid="c1ecaa66-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6">
+		<CmObject />
+		<CmAnnotation>
+			<CompDetails>
+				<!-- Override 'mergeAfter' and 'mergeBefore'. -->
+				<Uni>&lt;ccinfo mergeAfter="true" mergeBefore="true" /&gt;</Uni>
+			</CompDetails>
+			<AnnotationType>
+				<!-- CCA -->
+				<objsur guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" t="r" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec8360-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+
+</languageproject>

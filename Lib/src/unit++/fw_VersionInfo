@@ -1,0 +1,9 @@
+This is a modified unit++
+
+Origin: Unit++ 3.0.0
+http://freefr.dl.sourceforge.net/project/unitpp/unit%2B%2B-3.0.0.tgz
+
+
+We added support for Setup/Teardown.
+Modified source code can be downloaded from GitHub:
+git://github.com/ermshiperete/unitpp.git

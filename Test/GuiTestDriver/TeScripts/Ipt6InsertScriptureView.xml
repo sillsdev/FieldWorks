@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ScriptPaths.xsl"?>
+
+<accil>
+	<var id="projectName" set="&quot;Sena 3&quot;"/>
+
+	<!-- Start TE with project loaded -->
+	<on-application gui="TE"  run="ok" args="-db $projectName" close="no" on-fail="assert">
+
+		<!--<on-dialog title="Empty Scripture" until="10000">
+			<click path="9:Import/43:Import" when="exist"/>
+		</on-dialog>
+
+		<glimpse id="no_menu1" path="20:BottomDraftView/20:Div/20:Div/42:Paragraph[7]" prop="unavailable" on-fail="assert"/>-->
+
+		<glimpse path="20:BottomDraftView/20:Div/20:Div[2]/42:Paragraph[2]/42:String" prop="value" expect="HELLO WORLD" on-fail="assert">
+			Value "HELLO WORLD" expected, but found <data of="$.value"/>
+		</glimpse>
+
+	</on-application>
+
+</accil>

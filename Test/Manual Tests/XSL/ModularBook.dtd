@@ -1,0 +1,207 @@
+<!-- ModularBook.dtd
+
+Document Type Definition for Modular Books in XML
+
+This documents the content form of a modular book.
+
+Draft: Friday, 26-jan-01
+Revised:
+
+-->
+
+<!-- ******************** Entity Declarations ****************** -->
+
+<!ENTITY % string     "(#PCDATA)" > <!-- Any printable character; constrained by context -->
+
+<!ENTITY % moduleType "(overview | task | concept | structure | fact | process | principle | story | training | test)" >
+
+<!ENTITY % para       "#PCDATA | i | b | link | img | pre" >
+
+<!ENTITY % linkType   "(module | doc | popup | e-mail | bug | test)" >
+
+<!ENTITY % abstract   "link" >   <!-- link to a fact module about the book -->
+
+<!ENTITY % olType   "(1 | A | a | I | i)" > <!-- ordered list letter selections -->
+
+<!ENTITY % order   "(any | 123)" > <!-- order of test sequence -->
+
+<!ENTITY % halign   "(left | center | right)" >
+
+<!-- ******************** Element Declarations ****************** -->
+
+<!-- Root elements -->
+
+<!ELEMENT modularbook (titlePage, (%moduleType;)+)>
+<!ATTLIST modularbook
+	file  CDATA   #REQUIRED > <!-- all file attributes specify a path from this root -->
+
+<!ELEMENT titlePage (title, index, authors, copywrite, %abstract;, img?, shortcuts)>
+<!ATTLIST titlePage
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT title  %string;>
+<!ATTLIST title
+	tag   CDATA    #REQUIRED >      <!-- tag is this module's link name -->
+<!ELEMENT index     (li)+>          <!-- index keyword phrases that get you to this module -->
+<!ELEMENT authors   (div)+>         <!-- text with links -->
+<!ELEMENT copywrite %string;>
+<!ELEMENT shortcuts (link)+>
+
+<!-- Modules -->
+
+<!ELEMENT overview (title, index, introduction?, context?, benefits?, discussion?, warning?, moduleGroup, seeAlso?, sources?, label?, helpFor?)>
+<!ATTLIST overview
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT task (title, index, introduction?, benefits?, context?, objectives?, indications?, prerequisites?, materials?, warning?, guidelines?, (steps | thingsToDo | alternatives)?, examples?, seeAlso?, sources?, label?, objective?, helpFor?)>
+<!ATTLIST task
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT concept (title, index, introduction?, definition, context?, benefits?, discussion?, partsAndFunctions?, parts?, whole?, function?, examples?, nonexamples?, instances?, analogy?, classification?, kinds?, generic?, features?, diagram?, antonyms?, synonyms?, seeAlso?, sources?, label?, term?, helpFor?)>
+<!ATTLIST concept
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT structure (title, index, introduction?,(description | partsAndFunctions | diagram), context?, benefits?, partsAndFunctions?, parts?, whole?, function?, analogy?, kinds?, generic?, features?, diagram?, seeAlso?, sources?, label?, helpFor?)>
+<!ATTLIST structure
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT fact (title, index, introduction?, context?, label, benefits?, discussion?, diagram?, evidence?, seeAlso?, sources?, helpFor?)>
+<!ATTLIST fact
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT process (title, index, introduction?, context?, benefits?, discussion?, description, stages?, diagram?, guidelines?, roles?, seeAlso?, sources?, label?, helpFor?)>
+<!ATTLIST process
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT principle (title, index, introduction?, context?, benefits?, (principles | label), proverb?, areas?, discussion?, evidence?, implications?, seeAlso?, sources?, helpFor?)>
+<!ATTLIST principle
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT story (title, index, introduction?, label, proverb?, postEvaluation?, principles?, sources?)>
+<!ATTLIST story
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT training (title, index, introduction, objective, preparatiion, practice, skillCheck)>
+<!ATTLIST training
+	file  CDATA   #REQUIRED >
+
+<!ELEMENT test (title, index, introduction?, benefits?, context?, objectives?, indications?, prerequisites?, materials?, warning?, guidelines?, case+, seeAlso?, sources?, update+, objective?, helpFor?)>
+<!ATTLIST test
+	id    CDATA   #REQUIRED
+	num   CDATA   #REQUIRED
+	abbr  CDATA   #REQUIRED
+	ready CDATA   #IMPLIED
+	file  CDATA   #REQUIRED >
+
+<!-- Key Submodules -->
+
+<!ELEMENT alternatives (p, step+)>  <!-- alphabetized list (ol type="A") -->
+<!ELEMENT definition (p+, ul?, p?)> <!-- "A (concept name) is a kind of (larger concept) that (identifying characteristics)." -->
+<!ELEMENT description (p+, ul?, (table | img)?)> <!-- -->
+<!ELEMENT guidelines ((p, ul) | link)> <!-- the link is to a principle module -->
+<!ELEMENT label (p | div | ul | table)+> <!-- user defined -->
+<!ATTLIST label
+	name  CDATA   #REQUIRED >
+<!ELEMENT moduleGroup (li)+>     <!-- list of links to other modules (unordered)-->
+<!ELEMENT principles (p, ul?)>   <!-- -->
+<!ELEMENT steps (p, step+)>      <!-- numbered list -->
+<!ELEMENT thingsToDo (p, step+)> <!-- unordered list -->
+<!ELEMENT case (title, context, p*, step+)>       <!-- unordered list -->
+<!ATTLIST case
+	id    CDATA   #REQUIRED
+	num   CDATA   #REQUIRED
+	order %order; #REQUIRED >
+
+<!-- Other Submodules -->
+
+<!ELEMENT analogy (p+ | table)>
+<!ELEMENT antonyms (p, ol)>           <!-- links to concept module describing antonyms of this -->
+<!ELEMENT areas (link | p+)>
+<!ELEMENT benefits (p+, ul?)>
+<!ELEMENT classification (p* | ul | table)>
+<!ELEMENT context (p+, ul?)>
+<!ELEMENT diagram (p)>                <!-- The pragraph has an image in it -->
+<!ELEMENT discussion (p+, ul?)>
+<!ELEMENT evidence (p, (ul | table)?)>
+<!ELEMENT examples (p, (ul | table)?)>
+<!ELEMENT features (p, ul?)+>          <!-- list positives, then negatives or other groups of comparisons -->
+<!ELEMENT function (p+, (ul | table)?)>
+<!ELEMENT generic (p, ul)>            <!-- link to concept module describing a generalization of this -->
+<!ELEMENT helpFor (link)>             <!-- link to thing documented by this module -->
+<!ELEMENT implications (p, ul)>
+<!ELEMENT indications (p, ul)>        <!-- when it is or isn't good to do something -->
+<!ELEMENT instances (p, ul?)>         <!-- links to instances -->
+<!ELEMENT introduction (p+, ul?)>
+<!ELEMENT kinds (p, ul?)>
+<!ELEMENT materials (p, ul)+>         <!-- unordered list -->
+<!ELEMENT nonexamples (p+, ul?)>
+<!ELEMENT objective %string;>
+<!ELEMENT objectives (p, ul)>
+<!ELEMENT parts (p, ul)>              <!-- names or links to concept modules describing the parts -->
+<!ELEMENT partsAndFunctions (p, (ul | table))>
+<!ELEMENT postEvaluation (p+ | ul | table)>
+<!ELEMENT practice (li)+>             <!-- numbered list -->
+<!ELEMENT preparatiion (li)+>         <!-- numbered list -->
+<!ELEMENT prerequisites (p, ul)>      <!-- "You need to..." -->
+<!ELEMENT proverb (p)>
+<!ELEMENT roles (p+ | ul)>
+<!ELEMENT seeAlso (li)+>              <!-- unordered links -->
+<!ELEMENT sources (li)+>              <!-- unordered links -->
+<!ELEMENT skillCheck (p+ | ul)>
+<!ELEMENT stages (p, (ul | table)?)>
+<!ELEMENT synonyms (p, ol)>           <!-- links to concept module describing synonyms of this -->
+<!ELEMENT term %string;>
+<!ELEMENT update %string;>
+<!ATTLIST update
+	date   CDATA  #REQUIRED
+	author CDATA #REQUIRED >
+<!ELEMENT warning (p+, ul?)>
+<!ELEMENT whole (p, ul)>              <!-- links to concept module describing the whole this part belongs to -->
+
+<!-- Basic elements -->
+
+<!ELEMENT div    (%para;)*>                <!-- Division - like p but no vertical spacing -->
+<!ELEMENT p      (%para;)*>                <!-- Paragraph -->
+<!ATTLIST p
+	name  CDATA  #IMPLIED
+	align %halign; "left" >                <!-- a short label for the paragraph -->
+<!ELEMENT pre    (#PCDATA)>                <!-- Division - like p but no vertical spacing -->
+<!ELEMENT i      (#PCDATA | b | link)*>    <!-- Italic -->
+<!ELEMENT b      (#PCDATA | i | link)*>    <!-- Bold -->
+<!ELEMENT ul     (li)*>                    <!-- Bulleted list -->
+<!ATTLIST ul
+	name  CDATA  #IMPLIED >                <!-- a title or phrase describing the list -->
+<!ELEMENT ol     (li)*>                    <!-- Ordered List item -->
+<!ATTLIST ol
+	name  CDATA   #IMPLIED
+	type %olType;  "1" >                   <!-- The style of "numbers" used in front of each item -->
+<!-- 'name' is a title or phrase describing the list -->
+<!ELEMENT li     (%para; | p | ol | ul | table)*> <!-- List item -->
+<!ELEMENT step   (%para; | r | p)*>        <!-- "Step in task object" %para; is the instruction, r the result and p the discussion-->
+<!ATTLIST step
+	name CDATA   #IMPLIED
+	link CDATA   #IMPLIED
+	uri  CDATA   #IMPLIED
+	type %linkType; "module" >
+<!-- name is Name or ID of step -->
+<!-- link is Text for link like More or Details-->
+<!ELEMENT r     (%para; | ol | ul | table)*> <!-- result of a step -->
+<!ATTLIST r
+	name  CDATA  #IMPLIED >
+<!ELEMENT link   %string;>                 <!-- Link to another source or document -->
+<!ATTLIST link
+	uri  CDATA      #REQUIRED
+	type %linkType; "module" >
+<!ELEMENT img    EMPTY>                 <!-- gif or jpg images -->
+<!ATTLIST img
+	uri  CDATA   #REQUIRED
+	alt  CDATA   #REQUIRED
+	align %halign; "left"
+	height CDATA #IMPLIED
+	width  CDATA #IMPLIED >
+<!ELEMENT table  (tr)*>
+<!ATTLIST table
+	align %halign; "left" >
+<!ELEMENT tr     (th | td)*>
+<!ELEMENT th     (%para; | p | ul | ol)*> <!-- centered, bold text -->
+<!ELEMENT td     (%para; | p | ul | ol)*> <!-- normal text -->

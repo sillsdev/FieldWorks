@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="kstrCc" xml:space="preserve">
+	<value>CC</value>
+  </data>
+  <data name="kstrIcuConv" xml:space="preserve">
+	<value>ICU legacy converter</value>
+  </data>
+  <data name="kstrIcuTransduce" xml:space="preserve">
+	<value>ICU Unicode to Unicode transducer</value>
+  </data>
+  <data name="kstrTecTec" xml:space="preserve">
+	<value>TECkit (compiled TEC file)</value>
+  </data>
+  <data name="kstrTecMap" xml:space="preserve">
+	<value>TECkit (source MAP file)</value>
+  </data>
+  <data name="kstrCodePage" xml:space="preserve">
+	<value>Windows Code Page</value>
+	<comment>Item in combo box</comment>
+  </data>
+  <data name="kstrLegacy_to_from_Unicode" xml:space="preserve">
+	<value>Legacy to and from Unicode</value>
+  </data>
+  <data name="kstrLegacy_to_from_Legacy" xml:space="preserve">
+	<value>Legacy to and from Legacy</value>
+  </data>
+  <data name="kstrUnicode_to_from_Legacy" xml:space="preserve">
+	<value>Unicode to and from Legacy</value>
+  </data>
+  <data name="kstrUnicode_to_from_Unicode" xml:space="preserve">
+	<value>Unicode to and from Unicode</value>
+  </data>
+  <data name="kstrLegacy_to_Unicode" xml:space="preserve">
+	<value>Legacy to Unicode</value>
+  </data>
+  <data name="kstrLegacy_to_Legacy" xml:space="preserve">
+	<value>Legacy to Legacy</value>
+  </data>
+  <data name="kstrUnicode_to_Legacy" xml:space="preserve">
+	<value>Unicode to Legacy</value>
+  </data>
+  <data name="kstrUnicode_to_Unicode" xml:space="preserve">
+	<value>Unicode to Unicode</value>
+  </data>
+  <data name="kstrMapFileLabel" xml:space="preserve">
+	<value>Converter &amp;Mapping File:</value>
+	<comment>labels the file box when type is CC or TEC</comment>
+  </data>
+  <data name="kstrCodePageLabel" xml:space="preserve">
+	<value>Code &amp;Page:</value>
+	<comment>describes the list-of-code-pages combo box when type is code page</comment>
+  </data>
+  <data name="kstMappingName" xml:space="preserve">
+	<value>&amp;Mapping Name:</value>
+	<comment>labels the spec combo for ICU</comment>
+  </data>
+  <data name="kstrAdd" xml:space="preserve">
+	<value>&amp;Add</value>
+	<comment>Button text when adding new mapping</comment>
+  </data>
+  <data name="kstrSave" xml:space="preserve">
+	<value>&amp;Save</value>
+	<comment>Button text when saving modified mapping</comment>
+  </data>
+  <data name="kstrMapFileNotFound" xml:space="preserve">
+	<value>The file specifying the conversion does not exist</value>
+  </data>
+  <data name="kstrMapFileNotFoundTitle" xml:space="preserve">
+	<value>File not found</value>
+  </data>
+  <data name="kstrOverwriteExistingMap" xml:space="preserve">
+	<value>The converter you are trying to create already exists. Do you want to replace it?</value>
+  </data>
+  <data name="kstrOverwriteTitle" xml:space="preserve">
+	<value>Overwrite mapping?</value>
+  </data>
+  <data name="kstrEcExceptionTitle" xml:space="preserve">
+	<value>Conversion map error</value>
+	<comment>Title for message box displayed when an ECException is caught</comment>
+  </data>
+  <data name="kstrConversionError" xml:space="preserve">
+	<value>Conversion failed. Check your map file for errors.</value>
+	<comment>Text of message displayed when Test conversion fails</comment>
+  </data>
+  <data name="kstrMustProvideName" xml:space="preserve">
+	<value>You must provide a name for the processor</value>
+  </data>
+  <data name="kstrMustProvideNameTitle" xml:space="preserve">
+	<value>Missing Processor Name</value>
+  </data>
+  <data name="kstrDuplicateName" xml:space="preserve">
+	<value>Each processor must have a unique name</value>
+  </data>
+  <data name="kstrDuplicateNameTitle" xml:space="preserve">
+	<value>Duplicate Name</value>
+  </data>
+  <data name="kstrNewProcessor" xml:space="preserve">
+	<value>New Processor</value>
+  </data>
+  <data name="kstrUnknownTransducer" xml:space="preserve">
+	<value>This processor uses a transducer unknown to this version of ICU. The first transducer will be substituted.</value>
+  </data>
+  <data name="kstrError" xml:space="preserve">
+	<value>Error</value>
+  </data>
+  <data name="kstrProcessorFile" xml:space="preserve">
+	<value>Processor file:</value>
+  </data>
+  <data name="kstrRegExp" xml:space="preserve">
+	<value>Find-&gt;Replace:</value>
+  </data>
+  <data name="kstrRegExpIcu" xml:space="preserve">
+	<value>Regular Expression (ICU)</value>
+  </data>
+  <data name="kstrMustChooseIcuMapping" xml:space="preserve">
+	<value>Please choose the particular ICU processor you want from the Process Options combo box.</value>
+  </data>
+  <data name="kstrCCHelp" xml:space="preserve">
+	<value>Specifies the CC table to use.</value>
+	<comment>Help string for CC Table</comment>
+  </data>
+  <data name="kstrCCTitle" xml:space="preserve">
+	<value>Find CC Table File</value>
+	<comment>Title for Open File dialog for CC tables</comment>
+  </data>
+  <data name="kstrCPHelp" xml:space="preserve">
+	<value>Specifies the Windows code page to use.</value>
+	<comment>Help string for Windows Code pages</comment>
+  </data>
+  <data name="kstrFindMapping" xml:space="preserve">
+	<value>Browse for file.</value>
+	<comment>Help string for Find Mapping button</comment>
+  </data>
+  <data name="kstrGenericHelp" xml:space="preserve">
+	<value>Specifies the actual encoding converter.</value>
+	<comment>Generic help string</comment>
+  </data>
+  <data name="kstrHelpAddButton" xml:space="preserve">
+	<value>Add:  Adds the new encoding converter to this registry.</value>
+	<comment>Help string for Add/Save button</comment>
+  </data>
+  <data name="kstrHelpSaveButton" xml:space="preserve">
+	<value>Save:  Saves any changes you have made.</value>
+	<comment>Help string for Add/Save button</comment>
+  </data>
+  <data name="kstrIcuConvHelp" xml:space="preserve">
+	<value>Specifies the ICU converter to use.</value>
+	<comment>Help string for ICU converter</comment>
+  </data>
+  <data name="kstrIcuTransHelp" xml:space="preserve">
+	<value>Specifies the ICU transducer to use.</value>
+	<comment>Help string for ICU transducer</comment>
+  </data>
+  <data name="kstrTecHelp" xml:space="preserve">
+	<value>Specifies the TECkit file to use.</value>
+	<comment>Help string for TECkit files</comment>
+  </data>
+  <data name="kstrTecTitle" xml:space="preserve">
+	<value>Find Conversion Mapping File</value>
+	<comment>Title for Open File dialog for TECkit files</comment>
+  </data>
+  <data name="kstrUnspecifiedTitle" xml:space="preserve">
+	<value>Find Spec file for unknown mapping type</value>
+	<comment>Title for Open File dialog for unspecified mapping type</comment>
+  </data>
+</root>

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#
+# WorldPadGTK Demo launcher script
+# Created 20081020 MarkS
+#
+# Usage: ./worldpad-demo
+#
+
+# Turn on for additional debugging output.
+#export MONO_TRACE_LISTENER=Console.Out
+
+MY_DIR="$(dirname "$0")"
+FW_DEV_ROOT="$("$MY_DIR/../../Bin/abs.py" "$MY_DIR/../..")"
+COM_DEV_ROOT="$FW_DEV_ROOT/../COM"
+WPGTK_LOGFILE="$FW_DEV_ROOT/Src/WorldPadGTK/wpgtk_logfile.txt"
+OUTDEBUG="${FW_DEV_ROOT}/Output/Debug"
+ICU_LIB_DIR="${FW_DEV_ROOT}/Lib/src/icu/install/lib"
+DISTFILES="${FW_DEV_ROOT}/DistFiles"
+
+export FW_ROOT="${DISTFILES}"
+export FW_ROOTCODE="${DISTFILES}"
+export COMPONENTS_MAP_PATH="${OUTDEBUG}"
+export LD_LIBRARY_PATH="${OUTDEBUG}:$COM_DEV_ROOT/lib:${ICU_LIB_DIR}"
+export MONO_PATH="${DISTFILES}:${OUTDEBUG}:$COM_DEV_ROOT/src/.libs"
+export ICU_DATA="${DISTFILES}/Icu36"
+
+echo Launching WorldPadGTK. Saving debugging output to ${WPGTK_LOGFILE}
+cd "$MY_DIR"
+exec mono --debug "${OUTDEBUG}/WorldPad.exe" "$FW_DEV_ROOT/Src/WorldPadGTK/hello.wpx" >${WPGTK_LOGFILE} 2>&1

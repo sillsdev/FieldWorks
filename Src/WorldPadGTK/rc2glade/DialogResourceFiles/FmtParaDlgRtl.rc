@@ -1,0 +1,42 @@
+// Extracted from FmtParaDlg.rc
+kridFmtParaDlgRtl DIALOGEX 0, 0, 233, 187
+STYLE DS_SETFONT | DS_CONTEXTHELP | WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "Direction:",IDC_STATIC,6,3,35,8
+	COMBOBOX        kctidFpCbDirection,49,2,95,82,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "Ali&gnment:",IDC_STATIC,6,19,35,8
+	COMBOBOX        kctidFpCbAlign,49,17,50,74,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "Bac&kground:",IDC_STATIC,120,19,42,8
+	PUSHBUTTON      "",kctidFpCbBkgrnd,165,19,59,11
+	LTEXT           "&Left:",kctidFpLabelIndLft,17,43,29,8
+	EDITTEXT        kctidFpEdIndLft,49,41,50,12,ES_AUTOHSCROLL
+	CONTROL         "Left",kctidFpSpIndLft,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,99,42,11,14
+	LTEXT           "&Right:",kctidFpLabelIndRt,17,59,29,8
+	EDITTEXT        kctidFpEdIndRt,49,57,50,12,ES_AUTOHSCROLL
+	CONTROL         "Right",kctidFpSpIndRt,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,99,57,11,14
+	LTEXT           "Spec&ial:",IDC_STATIC,120,44,26,8
+	COMBOBOX        kctidFpCbSpec,120,54,53,82,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "B&y:",IDC_STATIC,175,44,11,8
+	EDITTEXT        kctidFpEdSpIndBy,175,54,50,12,ES_AUTOHSCROLL | WS_DISABLED
+	CONTROL         "By",kctidFpSpSpIndBy,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,226,54,11,13
+	LTEXT           "&Before:",IDC_STATIC,17,86,24,8
+	EDITTEXT        kctidFpEdSpacBef,49,85,50,12,ES_AUTOHSCROLL
+	CONTROL         "Before",kctidFpSpSpacBef,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,99,85,11,14
+	LTEXT           "Aft&er:",IDC_STATIC,17,103,18,8
+	EDITTEXT        kctidFpEdSpacAft,49,101,50,12,ES_AUTOHSCROLL
+	CONTROL         "After",kctidFpSpSpacAft,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,99,101,11,14
+	LTEXT           "Li&ne spacing:",IDC_STATIC,120,86,44,8
+	COMBOBOX        kctidFpCbLineSpace,120,96,53,73,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "A&t:",IDC_STATIC,175,86,10,8
+	EDITTEXT        kctidFpEdLineSpaceAt,175,96,50,12,ES_AUTOHSCROLL | WS_DISABLED
+	CONTROL         "At",kctidFpSpLineSpaceAt,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,221,97,11,13
+	LTEXT           "Preview",IDC_STATIC,6,118,38,8
+	LTEXT           "Indentation",IDC_STATIC,6,33,38,8
+	LTEXT           "Spacing",IDC_STATIC,6,74,31,9
+	LTEXT           "",IDC_STATIC,37,122,189,1,SS_SUNKEN
+	LTEXT           "",IDC_STATIC,38,78,188,1,SS_SUNKEN
+	LTEXT           "",IDC_STATIC,47,37,179,1,SS_SUNKEN
+	CONTROL         "Preview",kctidFpPreview,"Button",BS_OWNERDRAW,17,129,209,51
+END

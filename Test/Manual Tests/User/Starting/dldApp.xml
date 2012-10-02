@@ -1,0 +1,30 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Starting\dldApp.xml">
+ <title tag="sttDldApp">How to download a FieldWorks application</title>
+ <index>
+  <li>application: download</li>
+  <li>download application</li>
+ </index>
+ <prerequisites>
+  <p>Before you can dowload an application to test, you will need to:</p>
+  <ul>
+   <li>Connect to the <link uri="..\Starting\Connect.xml" type="module">SIL Intranet</link>.</li>
+   <li>Realize, the download of about 100 MB will likely take much longer than the theoretical half an hour using a 56K modem with no competing traffic.</li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps to download an appliction from the SIL Intranet:</p>
+  <step>Locate or create a directory to recieve the software download.
+   <p>If the download is a "zip" file or installation folder, a temporary folder can be used. Otherwise, provide a more permanent location such as in a subfolder of the "Program Files" system folder.</p></step>
+  <step link="Connect now!" uri="http://intranet.sil.org/softwaredev/" type="doc">Start your browser and enter this universal resource locator (url), http://intranet.sil.org/softwaredev/ in its address box then press the &lt;Enter> key or click</step>
+  <step>Beside "Current Project's Home Pages", click the link of the project producing the software.</step>
+  <step>Locate the download page or link.</step>
+  <step>Click the link.</step>
+  <step> A dialog asks whether to run from the website or copy to your disk. Click "copy to disk".</step>
+  <step>Another dialog askes you to choose a folder on your system to put the file in. Choose the folder you selected in step 1.</step>
+  <step>Click "Finish".</step>
+ </steps>
+ <seeAlso>
+  <li><link uri="..\Starting\InstallApp.xml" type="module">How to install a FieldWorks application</link></li>
+ </seeAlso>
+</task>

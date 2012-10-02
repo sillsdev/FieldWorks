@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+
+	<on-startup>
+		<!-- Need to give the Backup Reminder dialog enough time (600000 seconds / 10 minutes)
+	or the entire test will fail. TE is VERY SLOW starting up the first time. -->
+		<!--<on-dialog title="Backup Reminder"  until="20000" on-fail="skip">-->
+		<!--<on-dialog title="Backup Reminder"  until="600000" on-fail="skip">
+			<click path="No" when="exist"/>
+		</on-dialog>-->
+	</on-startup>
+
+</include>

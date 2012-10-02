@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE WpDoc SYSTEM "WorldPad.dtd">
+<WpDoc wpxVersion="2.0">
+
+<Languages>
+  <LgWritingSystem id="en" language="en" type="ISO-639-1">
+	<Name24>
+	  <AUni ws="en">English</AUni>
+	</Name24>
+	<Abbr24>
+	  <AUni ws="en">Eng</AUni>
+	</Abbr24>
+	<Description24>
+	  <AStr ws="en">
+		<Run ws="en">The standard alphabetic representation of English (United States style).</Run>
+	  </AStr>
+	</Description24>
+	<Locale24><Integer val="1033"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<DefaultSerif24><Uni>Tahoma</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+	<DefaultBodyFont24><Uni>Charis SIL</Uni></DefaultBodyFont24>
+	<DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24>
+	<ICULocale24><Uni>en</Uni></ICULocale24>
+	<KeyboardType24><Uni>standard</Uni></KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">Default Collation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1033"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">Case Sensitive</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1033"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CS_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+  <LgWritingSystem id="russian" language="russian" type="OTHER">
+	<Name24>
+	  <AUni ws="en">Russian</AUni>
+	</Name24>
+	<Locale24><Integer val="1049"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<DefaultSerif24><Uni>Tahoma</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+	<DefaultBodyFont24><Uni>Charis SIL</Uni></DefaultBodyFont24>
+	<DefaultMonospace24><Uni>Courier</Uni></DefaultMonospace24>
+	<ICULocale24><Uni>russian</Uni></ICULocale24>
+	<KeyboardType24><Uni>keyman</Uni></KeyboardType24>
+	<KeymanKeyboard24><Uni>PhonyRus</Uni></KeymanKeyboard24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1033"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+  <LgWritingSystem id="xipa" language="ipa - IPA" type="OTHER">
+	<Name24>
+	  <AUni ws="en">IPA</AUni>
+	</Name24>
+	<Locale24><Integer val="1078"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<FontVariation24><Uni>23=0</Uni></FontVariation24>
+	<DefaultSerif24><Uni>SILDoulosUnicodeIPA</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>SILDoulosUnicodeIPA</Uni></DefaultSansSerif24>
+	<DefaultBodyFont24><Uni>Charis SIL</Uni></DefaultBodyFont24>
+	<DefaultMonospace24><Uni>SILDoulosUnicodeIPA</Uni></DefaultMonospace24>
+	<ICULocale24><Uni>xipa</Uni></ICULocale24>
+	<KeyboardType24><Uni>keyman</Uni></KeyboardType24>
+	<KeymanKeyboard24><Uni>IPA93 2.1 (Testing)</Uni></KeymanKeyboard24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1078"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+  <LgWritingSystem id="xpig" language="pig" type="OTHER">
+	<Description24>
+	  <AStr ws="en">
+		<Run ws="en">pig latin for demo purposes</Run>
+	  </AStr>
+	</Description24>
+	<Locale24><Integer val="1033"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<DefaultSerif24><Uni>SILDoulos PigLatinDemo</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>SILDoulos PigLatinDemo</Uni></DefaultSansSerif24>
+	<DefaultBodyFont24><Uni>Charis SIL</Uni></DefaultBodyFont24>
+	<DefaultMonospace24><Uni>SILDoulos PigLatinDemo</Uni></DefaultMonospace24>
+	<ICULocale24><Uni>xpig</Uni></ICULocale24>
+	<KeyboardType24><Uni>standard</Uni></KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1033"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+</Languages>
+
+<Styles>
+  <StStyle>
+	<Name17><Uni>Normal</Uni></Name17>
+	<Type17><Integer val="0"/></Type17>
+	<BasedOn17><Uni></Uni></BasedOn17>
+	<Next17><Uni>Normal</Uni></Next17>
+	<Rules17>
+	  <Prop italic="off" bold="off" superscript="off" underline="none" fontsize="10000" fontsizeUnit="mpt" offset="0" offsetUnit="mpt" forecolor="black" backcolor="white" undercolor="black" align="leading" firstIndent="0" leadingIndent="0" trailingIndent="0" spaceBefore="0" spaceAfter="0" lineHeight="10000" lineHeightUnit="mpt" lineHeightType="atLeast" rightToLeft="0" borderTop="0" borderBottom="0" borderLeading="0" borderTrailing="0" borderColor="black" bulNumScheme="0" bulNumStartAt="1" fontFamily="&lt;default serif&gt;">
+		<BulNumFontInfo backcolor="white" bold="off" fontsize="10000mpt" forecolor="black" italic="off" offset="0mpt" superscript="off" undercolor="black" underline="none" fontFamily="Times New Roman"/>
+	  </Prop>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>Heading 1</Uni></Name17>
+	<Type17><Integer val="0"/></Type17>
+	<BasedOn17><Uni>Normal</Uni></BasedOn17>
+	<Next17><Uni>Normal</Uni></Next17>
+	<Rules17>
+	  <Prop bold="invert" fontsize="16000" fontsizeUnit="mpt" align="left" spaceBefore="6000" spaceAfter="6000" bulNumStartAt="1"/>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>Heading 2</Uni></Name17>
+	<Type17><Integer val="0"/></Type17>
+	<BasedOn17><Uni>Heading 1</Uni></BasedOn17>
+	<Next17><Uni>Normal</Uni></Next17>
+	<Rules17>
+	  <Prop bold="off" fontsize="14000" fontsizeUnit="mpt" spaceBefore="6000"/>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>Menu Commands</Uni></Name17>
+	<Type17><Integer val="1"/></Type17>
+	<BasedOn17><Uni></Uni></BasedOn17>
+	<Next17><Uni></Uni></Next17>
+	<Rules17>
+	  <Prop>
+		<WsStyles9999>
+		  <WsProp ws="en" fontFamily="Courier New" />
+		  <WsProp ws="xipa" fontFamily="Courier New" />
+		  <WsProp ws="xpig" fontFamily="Courier New" />
+		</WsStyles9999>
+	  </Prop>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>Numbered</Uni></Name17>
+	<Type17><Integer val="0"/></Type17>
+	<BasedOn17><Uni>Normal</Uni></BasedOn17>
+	<Next17><Uni>Numbered</Uni></Next17>
+	<Rules17>
+	  <Prop firstIndent="-21600" leadingIndent="7200" bulNumScheme="10" bulNumTxtAft="."/>
+	</Rules17>
+  </StStyle>
+</Styles>
+
+<Body docRightToLeft="false">
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert" fontsize="8000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert" fontsize="18000" fontsizeUnit="mpt" fontFamily="Verdana">Welcome to WorldPad for Linux!</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" italic="invert" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">WorldPad</Run>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"> is a simple word-processor that uses the SIL-developed </Run>
+		<Run ws="en" italic="invert" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">Graphite</Run>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"> program to display complicated scripts. Here are some unique capabilities of WorldPad.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="16000" fontsizeUnit="mpt" fontFamily="Verdana">Complex Scripts</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">As this document shows, you can mix simple scripts (like English) with complex ones in WorldPad such as the phonetic text (IPA) for &quot;Welcome to WorldPad for Linux&quot;:</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop align="center" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="xipa" fontsize="22000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">wɛlkʰəm tʰu wʊ˞ldpʰæd</Run>
+		<Run ws="en" fontsize="22000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL"> </Run>
+		<Run ws="russian" fontsize="22000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">ɸø</Run>
+		<Run ws="xipa" fontsize="22000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">˞</Run>
+		<Run ws="en" fontsize="22000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL"> lınʌks</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="16000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="16000" fontsizeUnit="mpt" fontFamily="Verdana">Stacking Diacritics</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">The following example demonstrates Graphite's ability to perform smart rendering, in this case displaying stacking diacritics:</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop align="center" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">We</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="2f60ff" fontFamily="Doulos SIL">̥</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">̖</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">̋</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">lc̘̠o</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="blue" fontFamily="Doulos SIL">̂</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">m̼</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">̀</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">̈̄è tö</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" fontFamily="Doulos SIL">̂</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL"> Wȯ</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" fontFamily="Doulos SIL">̑</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">r̻l</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="blue" fontFamily="Doulos SIL">̃</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">d</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">̞</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">̰Pȧ</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">̅</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" fontFamily="Doulos SIL">̋</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">d</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" fontFamily="Doulos SIL">̗</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL"> fö</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" fontFamily="Doulos SIL">̂</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">r Liǹ̼̈̄ux</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">̞</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="00c000" fontFamily="Doulos SIL">̰!</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="16000" fontsizeUnit="mpt" fontFamily="Verdana">Reordering of Characters</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">The following is the welcome sentence in Pig Latin. It is using Graphite's smart rendering capabilities to move the initial consonant cluster to the end of the word and follow it with &quot;ay.&quot; Try typing ordinary English into the line below and watch Graphite turn it into Pig Latin. </Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop align="center" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="xpig" fontsize="20000" fontsizeUnit="mpt" forecolor="blue">Welcome to WorldPad for Linux!</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="xpig" fontsize="20000" fontsizeUnit="mpt" forecolor="blue"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="16000" fontsizeUnit="mpt" fontFamily="Verdana">Notes</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">IPA: </Run>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">In order to properly type IPA in WorldPad you need to install </Run>
+		<Run ws="en" italic="invert" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">Kmfl</Run>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"> and </Run>
+		<Run ws="en" italic="invert" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">Scim</Run>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"> along with the IPA Keyman keyboard (ipa93_5.kmn). Documentation for typing IPA can be found in ipa_release_notes.pdf.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">For more information on setting up </Run>
+		<Run ws="en" italic="invert" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">KMFL</Run>
+		<Run ws="en" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"> </Run>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">and </Run>
+		<Run ws="en" italic="invert" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">Scim</Run>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"> for use with WorldPad in Linux,  (Not done yet!).</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">Pig Latin: </Run>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">You can use a text editor to inspect the source for the Graphite Pig Latin font in piglatin.gdl. Documentation for this font can be found in Pig_Latin_Demo.rtf.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">WorldPad File Format: </Run>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">WorldPad saves its files in XML. This means you can look at the underlying form of these files outside of WorldPad. Try opening this Welcome.wpx file in Gedit to see how data and format information is saved.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">We need a longer text to test the scrolling feature.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">So I am just adding some text to the bottom of this file.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana">I'm not sure how long it needs to be.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="16000" fontsizeUnit="mpt" fontFamily="Verdana">Maybe this will be long enough now!</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="11000" fontsizeUnit="mpt" fontFamily="Verdana"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+</Body>
+
+<PageSetup>
+  <PageInfo>
+	<TopMargin9999><Integer val="72000"/></TopMargin9999>
+	<BottomMargin9999><Integer val="72000"/></BottomMargin9999>
+	<LeftMargin9999><Integer val="90000"/></LeftMargin9999>
+	<RightMargin9999><Integer val="90000"/></RightMargin9999>
+	<HeaderMargin9999><Integer val="36000"/></HeaderMargin9999>
+	<FooterMargin9999><Integer val="36000"/></FooterMargin9999>
+	<PageSize9999><Integer val="0"/></PageSize9999>
+	<PageHeight9999><Integer val="792000"/></PageHeight9999>
+	<PageWidth9999><Integer val="612000"/></PageWidth9999>
+	<PageOrientation9999><Integer val="0"/></PageOrientation9999>
+	<Header9999>
+	  <Str>
+		<Run ws="en">Welcome.wpx</Run>
+	  </Str>
+	</Header9999>
+	<Footer9999>
+	  <Str>
+		<Run ws="en">&amp;[page],&amp;[date]</Run>
+	  </Str>
+	</Footer9999>
+  </PageInfo>
+</PageSetup>
+
+</WpDoc>

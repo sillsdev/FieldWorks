@@ -1,0 +1,54 @@
+;"Long distance" rules
+;First load the nat classes (msg 6541):
+(load_nat_class message <nat_class name cons     features (cons +)>)
+(load_nat_class message <nat_class name high_v   features (cons - voc + high +)>)
+(load_nat_class message <nat_class name back_rnd features (back + round +)>)
+(load_nat_class message <nat_class name rnd_v    features (cons - voc + round +)>)
+(load_nat_class message <nat_class name low_v    features (cons - voc + low +)>)
+(morpher_set message (*quit_on_error* false))
+;Load a rule (m6505):
+; {i, umlauted u, barred i} -> u / {u, o}CaC_
+(load_morpher_rule message
+  <prule  nm rule3
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class high_v>)
+		  subrules (<psub out_pseq (<simp_cntxt class back_rnd>)
+						  left_environ <ptemp pseq (<simp_cntxt class rnd_v>
+													<simp_cntxt class cons>
+													<simp_cntxt class low_v>
+													<simp_cntxt class cons>)>
+					>
+				   )
+  >
+)
+;Trace it (msg 6535):
+(trace_morpher_rule message (true true rule3))
+;Now morph; should be 2x ambig:
+(morph_and_lookup_word pretty_print bubabu)
+;
+;Replace the rule with its mirror image (msg 6504):
+; {i, umlauted u, barred i} -> u / _CaC{u, o}
+(load_morpher_rule message
+  <prule  nm rule3
+		  str (allophonic)
+		  in_pseq (<simp_cntxt class high_v>)
+		  subrules (<psub out_pseq (<simp_cntxt class back_rnd>)
+						  right_environ <ptemp pseq (<simp_cntxt class cons>
+													 <simp_cntxt class low_v>
+													 <simp_cntxt class cons>
+													 <simp_cntxt class rnd_v>)>
+					>
+				   )
+  >
+)
+;Parse; 2x ambig:
+(morph_and_lookup_word pretty_print bubabu)
+(morpher_set message (*quit_on_error* true))
+;Now remove the rule (msg 6506):
+(remove_morpher_rule message rule3)
+;...and the natural classes:
+(remove_nat_class message cons)
+(remove_nat_class message high_v)
+(remove_nat_class message back_rnd)
+(remove_nat_class message rnd_v)
+(remove_nat_class message low_v)

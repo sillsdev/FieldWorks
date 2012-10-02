@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000041">
+<rt guid="af1d4e34-ea5e-11de-8ec5-0013722f8dec" class="LangProject">
+<DateCreated val="1-1-1 0:0:0.0" />
+<DateModified val="1-1-1 0:0:0.0" />
+<LexDb>
+<objsur guid="af26d792-ea5e-11de-8f7e-0013722f8dec" t="o" />
+</LexDb>
+</rt>
+<rt class="LexDb" guid="af26d792-ea5e-11de-8f7e-0013722f8dec" ownerguid="af1d4e34-ea5e-11de-8ec5-0013722f8dec">
+<Name>
+<AUni ws="en">Dictionary</AUni>
+</Name>
+<ComplexEntryTypes>
+<objsur t="o" guid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6" />
+</ComplexEntryTypes>
+<VariantEntryTypes>
+<objsur t="o" guid="bb372467-5230-43ef-9cc7-4d40b053fb94" />
+</VariantEntryTypes>
+</rt>
+<rt class="CmPossibilityList" guid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+<Name>
+<AUni ws="en">Complex Form Types</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">EntTyp</AUni>
+</Abbreviation>
+<Depth val="127" />
+<ItemClsid val="5118" />
+<PreventDuplicates val="true" />
+<WsSelector val="-3" />
+<Possibilities>
+<objsur t="o" guid="1f6ae209-141a-40db-983c-bee93af0ca3c" />
+<objsur t="o" guid="73266a3a-48e8-4bd7-8c84-91c730340b7d" />
+<objsur t="o" guid="98c273c4-f723-4fb0-80df-eede2204dfca" />
+<objsur t="o" guid="b2276dec-b1a6-4d82-b121-fd114c009c59" />
+<objsur t="o" guid="35cee792-74c8-444e-a9b7-ed0461d4d3b7" />
+<objsur t="o" guid="9466d126-246e-400b-8bba-0703e09bc567" />
+</Possibilities>
+</rt>
+<rt class="CmPossibilityList" guid="bb372467-5230-43ef-9cc7-4d40b053fb94" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+<Name>
+<AUni ws="en">Variant Types</AUni>
+</Name>
+<Abbreviation>
+<AUni ws="en">EntTyp</AUni>
+</Abbreviation>
+<Depth val="127" />
+<ItemClsid val="5118" />
+<PreventDuplicates val="true" />
+<WsSelector val="-3" />
+<Possibilities>
+<objsur t="o" guid="024b62c9-93b3-41a0-ab19-587a0030219a" />
+<objsur t="o" guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" />
+<objsur t="o" guid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" />
+<objsur t="o" guid="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" />
+</Possibilities>
+</rt>
+<rt class="LexEntryType" guid="1f6ae209-141a-40db-983c-bee93af0ca3c" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
+<Abbreviation>
+<AUni ws="en">comp. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A stem that is made up of more than one root.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Compound</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">comp.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="73266a3a-48e8-4bd7-8c84-91c730340b7d" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
+<Abbreviation>
+<AUni ws="en">contr. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A combination of two lexemes that are phonologically reduced.</Run>
+</AStr>
+</Description>
+<Name>
+<AUni ws="en">Contraction</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">contr.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="98c273c4-f723-4fb0-80df-eede2204dfca" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
+<Abbreviation>
+<AUni ws="en">der. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A stem that is made up of a root plus an affix that adds a non-inflectional component of meaning.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Derivative</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">der.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="b2276dec-b1a6-4d82-b121-fd114c009c59" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
+<Abbreviation>
+<AUni ws="en">id. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A multi-word expression that is recognized as a semantic unit.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Idiom</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">id.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="35cee792-74c8-444e-a9b7-ed0461d4d3b7" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
+<Abbreviation>
+<AUni ws="en">ph. v. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A combination of a lexical verb and a verbal particle that forms a single semantic and syntactic unit.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Phrasal Verb</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">ph. v.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="9466d126-246e-400b-8bba-0703e09bc567" ownerguid="1ee09905-63dd-4c7a-a9bd-1d496743ccd6">
+<Abbreviation>
+<AUni ws="en">say. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">Any pithy phrasal expression of wisdom or truth; esp., an adage, proverb, or maxim.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Saying</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">say.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="024b62c9-93b3-41a0-ab19-587a0030219a" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
+<Abbreviation>
+<AUni ws="en">dial. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A variant of a lexeme, characteristically used by a specific demographic subset of the language.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Dialectal Variant</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">dial. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="4343b1ef-b54f-4fa4-9998-271319a6d74c" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
+<Abbreviation>
+<AUni ws="en">fr. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">If two forms are free variants, the same speaker might use either one in the same setting. The more frequent form would be considered the basic form.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Free Variant</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">fr. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
+<Abbreviation>
+<AUni ws="en">irreg. infl. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">An Irregularly Inflected Form is an inflected form of the lexeme that is different from what you would expect from the normal rules of the grammar.</Run>
+</AStr>
+</Description>
+<Name>
+<AUni ws="en">Irregularly Inflected Form</AUni>
+</Name>
+<SubPossibilities>
+<objsur t="o" guid="a32f1d1c-4832-46a2-9732-c2276d6547e8" />
+<objsur t="o" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" />
+</SubPossibilities>
+<ReverseAbbr>
+<AUni ws="en">irreg. infl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="a32f1d1c-4832-46a2-9732-c2276d6547e8" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+<Abbreviation>
+<AUni ws="en">pl. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">The plural form of a noun that does not take the regular inflectional affix for plural.</Run>
+</AStr>
+</Description>
+<Name>
+<AUni ws="en">Plural</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">pl.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="837ebe72-8c1d-4864-95d9-fa313c499d78" ownerguid="01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c">
+<Abbreviation>
+<AUni ws="en">pst. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">The past tense form of a verb that does not take the regular inflectional affix for past tense.</Run>
+</AStr>
+</Description>
+<Name>
+<AUni ws="en">Past</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">pst.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntryType" guid="0c4663b3-4d9a-47af-b9a1-c8565d8112ed" ownerguid="bb372467-5230-43ef-9cc7-4d40b053fb94">
+<Abbreviation>
+<AUni ws="en">sp. var. of</AUni>
+</Abbreviation>
+<Description>
+<AStr ws="en">
+<Run ws="en">A variant spelling of a lexeme.</Run>
+</AStr>
+</Description>
+<IsProtected val="true" />
+<Name>
+<AUni ws="en">Spelling Variant</AUni>
+</Name>
+<ReverseAbbr>
+<AUni ws="en">sp. var.</AUni>
+</ReverseAbbr>
+</rt>
+<rt class="LexEntry" guid="685b96e0-73f4-48b7-90e4-e011ba02b435">
+<DateCreated val="2002-6-17 13:0:0.0" />
+<DateModified val="2007-6-27 8:23:28.687" />
+<MorphoSyntaxAnalyses>
+<objsur t="o" guid="1de97f19-6f8a-4452-844a-90bc8b6cf8cf" />
+</MorphoSyntaxAnalyses>
+<Senses>
+<objsur t="o" guid="117891e2-b47b-4211-b394-2f18f0caebfc" />
+</Senses>
+<LexemeForm>
+<objsur t="o" guid="90f27e9d-618b-4c77-a37e-4c6e42df0fee" />
+</LexemeForm>
+</rt>
+<rt class="MoStemMsa" guid="1de97f19-6f8a-4452-844a-90bc8b6cf8cf" ownerguid="685b96e0-73f4-48b7-90e4-e011ba02b435" />
+<rt class="LexSense" guid="117891e2-b47b-4211-b394-2f18f0caebfc" ownerguid="685b96e0-73f4-48b7-90e4-e011ba02b435">
+<MorphoSyntaxAnalysis>
+<objsur t="r" guid="1de97f19-6f8a-4452-844a-90bc8b6cf8cf" />
+</MorphoSyntaxAnalysis>
+<Gloss>
+<AUni ws="en">jug</AUni>
+</Gloss>
+<Definition>
+<AStr ws="en"><Run ws="en">earthen jar (various sizes)</Run></AStr>
+</Definition>
+</rt>
+<rt class="MoStemAllomorph" guid="90f27e9d-618b-4c77-a37e-4c6e42df0fee" ownerguid="685b96e0-73f4-48b7-90e4-e011ba02b435">
+<MorphType>
+<objsur t="r" guid="d7f713e5-e8cf-11d3-9764-00c04f186933" />
+</MorphType>
+<Form>
+<AUni ws="ii">ꄣ</AUni>
+</Form>
+</rt>
+</languageproject>

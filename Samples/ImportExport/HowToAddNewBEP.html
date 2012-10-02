@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
+	<META NAME="AUTHOR" CONTENT="Steve Miller">
+	<META NAME="CREATED" CONTENT="20090925;16131564">
+	<META NAME="CHANGEDBY" CONTENT="Steve Miller">
+	<META NAME="CHANGED" CONTENT="20090925;16165115">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P><FONT COLOR="#1f497d"><FONT SIZE=2 STYLE="font-size: 11pt"><FONT FACE="Calibri, sans-serif">The
+current test bench app is called ImportExport and is located in the
+Samples folder in your branch.</FONT></FONT></FONT></P>
+<P><FONT COLOR="#1f497d"><FONT FACE="Calibri, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">The
+is no documentation for that app, of course, other than what I added
+to the app. Look at the [design view of ImportExport.cs], while I
+cover how it works.</FONT></FONT></FONT></P>
+<P><FONT COLOR="#1f497d"><FONT FACE="Calibri, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">The
+basics to get it working for a new BEP are:</FONT></FONT></FONT></P>
+<P><FONT COLOR="#1f497d"><FONT FACE="Calibri, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Add
+the new BEP to the collection of BEPs that are pre-processed by
+creating and populating each from an xml source BEP data file.<BR>The
+&ldquo;Convert to all (Basic)&rdquo; btn needs this, and that btn
+must be clicked before any other tests can be performed.</FONT></FONT></FONT></P>
+<P><FONT COLOR="#1f497d"><FONT FACE="Calibri, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">You
+will need to add two new radio btns. One goes in the &ldquo;Source
+System&rdquo; group and the other in the &ldquo;Target System&rdquo;
+group. The checked values of one or the other radio btn is used, when
+the &ldquo;Load Source&rdquo; or &ldquo;Import&rdquo; btns are
+clicked.</FONT></FONT></FONT></P>
+<P><FONT COLOR="#1f497d"><FONT FACE="Calibri, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Having
+done the basic conversion in step 1, you can then select the number
+of repetitions the other three tests will do. There will always be
+one more than what you select, as that is done &lsquo;for free&rsquo;,
+and the times are not included in the output report. I tend to just
+go with the default of 10 reps for the full test loop, but I also
+start with more like 1, just to make sure it works.</FONT></FONT></FONT></P>
+<P><FONT COLOR="#1f497d"><FONT FACE="Calibri, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Results
+come up as the average (mean) of the number of reps.</FONT></FONT></FONT></P>
+<P><FONT COLOR="#1f497d"><FONT FACE="Calibri, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">That
+is the overview. You&rsquo;ll need to look at the current code to see
+how it works and how to add MySql to the test bench.</FONT></FONT></FONT></P>
+<P><FONT COLOR="#1f497d"><FONT FACE="Calibri, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Randy</FONT></FONT></FONT></P>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

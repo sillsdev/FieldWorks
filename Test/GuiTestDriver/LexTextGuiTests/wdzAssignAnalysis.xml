@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<accil on-fail="assert">
+
+	<goal>Exercises Assign Analysis dialog in Words / Analysis</goal>
+
+   <bug id="FWR-1499" desc="Yellow Error window in Word Analyses" />
+   <bug id="FWR-1119" desc="Crash clicking Analysis Usage dialog item"/>
+   <bug id="FWR-1011" desc="Concordance doesn't work"/>
+   <bug id="FWR-664" desc="Crash undoing Word Analysis gloss change" />
+   <bug id="FWR-663" desc="Lose place returning to Lexicon Edit" />
+   <bug id="FWR-618" desc="Texts &amp; Words/Concordance/Concordance Results record selection fails to place focus box at occurrence" />
+   <bug id="FWR-465" desc="No focus box in Concordance IT Analysis" />
+   <bug id="LT-9229" desc="Cut not working in Interlinear Analysis piles" />
+   <bug id="LT-8147" desc="Reopened: Crash clicking Assign Analysis item twice"/>
+   <bug id="LT-8147" desc="Crash clicking Assign Analysis item twice"/>
+   <bug id="LT-7644" desc="Wrong reference numbers in Assign Analysis dialog"/>
+   <bug id="LT-7087" desc="Analysis Usage dialog has inconsistant state until closed"/>
+   <bug id="LT-7045" desc="Focus box tab order broken"/>
+   <bug id="LT-6720" desc="Word Analyses column number in corpus is all zeros"/>
+<!--  -->
+	<var id="projectName" set="Sena 3"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <on-application args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata" -type "XML"' run="yes" on-fail="assert">
+
+<!-- Change one analysis to another and see that updates are correct -->
+<!-- Go to Words / Analysis -->
+  <click wait="2000" select="menubar/view/texts-words/word-analyses"/>
+
+<model select="word-analysis[@role='view']">
+
+<!-- Sort Number in Corpus with highest number at the top -->
+	   <click wait="25000" select="wordforms/col/header" path="Number in Corpus"/>
+	   <click select="wordforms/col/header" path="Number in Corpus"/>
+	   <click select="//toolbar/standard/first"/><!-- Select the first record -->
+<!-- Click "na" first one with 4 in corpus -->
+	   <var id="row" set="1"/>
+	   <var id="col" set="1"/>
+	   <click select="wordforms/record/col" path="/value:na" />
+
+<!-- WORKAROUND 1: Scroll Wordform Analyses pane to top -->
+	   <click select="analyses/scroll/up" />
+
+<!-- Click Assign Analysis -->
+	   <var id="ind" set="1"/>
+	   <click dx="500" select="analyses/assign-analysis" /><!-- lastufkam computer -->
+
+  <on-dialog select="//analysis-usage[@role='dialog']">
+	   <!-- check that the word shows up where it is supposed to -->
+
+	   <click id="analysis1" select="from/item" path="Analysis 1"/>
+	   <glimpse id="noGloss1" select="concordance/empty" path="/24:Table" prop="absent"/>
+	   <click id="em1c" select="from/item" path="em"/>
+	   <var id="row" set="1"/>
+	   <var id="col" set="2"/>
+	   <glimpse id="em1" select="concordance/record/col" path="/value:Wapakila 1.1"/>
+	   <click id="in1c" select="from/item" path="in"/>
+	   <glimpse id="in0" select="concordance/empty" path="/24:Table" prop="absent"/>
+	   <click id="and1c" select="from/item" path="and"/>
+	   <glimpse id="and0" select="concordance/empty" path="/24:Table" prop="absent"/>
+
+
+	   <click id="analysis2" select="from/item" path="Analysis 2"/>
+	   <glimpse id="noGloss2" select="concordance/empty" path="/24:Table" prop="absent"/>
+	   <click id="and2c" select="from/item" path="e"/>
+	   <glimpse id="and1" select="concordance/record/col" path="/value:M'munda 3.1"/>
+	   <var id="row" set="2"/>
+	   <glimpse id="and2" select="concordance/record/col" path="/value:M'munda 6.1"/>
+	   <var id="row" set="1"/>
+	   <click select="from/down"/>
+	   <click id="com" select="from/item" path="com"/>
+	   <glimpse id="com0" select="concordance/record/col" path="/value:Thika na 1.1"/>
+	   <click id="by2c" select="from/item" path="by"/>
+	   <glimpse id="by0" select="concordance/empty" path="/24:Table" prop="absent"/>
+
+
+	   <click id="analysis3" select="from/item" path="Analysis 3"/>
+	   <glimpse id="noGloss3" select="concordance/empty" path="/24:Table" prop="absent"/>
+	   <click id="and3c" select="from/item" path="and[2]"/>
+	   <glimpse id="and31" select="concordance/record/col" path="/value:Wapakila 2.1"/>
+	   <click id="with3c" select="from/item" path="with"/>
+	   <glimpse id="with30" select="concordance/empty" path="/24:Table" prop="absent"/>
+
+	   <click id="analysis4" select="from/item" path="Analysis 4"/>
+	   <glimpse id="noGloss4" select="concordance/empty" path="/24:Table" prop="absent"/>
+	   <click select="from/down"/>
+	   <click id="and4c" select="from/item" path="and[3]"/>
+	   <glimpse id="and40" select="concordance/empty" path="/24:Table" prop="absent"/>
+	   <click id="by4" select="from/item" path="by[2]"/>
+	   <glimpse id="by40" select="concordance/empty" path="/24:Table" prop="absent"/>
+
+	   <click id="analysis5" select="from/item" path="Analysis 5"/>
+	   <glimpse id="noGloss5" select="concordance/empty" path="/24:Table" prop="absent"/>
+	   <click id="havec" select="from/item" path="have"/>
+	   <glimpse id="have50" select="concordance/empty" path="/24:Table" prop="absent"/>
+
+<!-- change Analysis 2 "e" M'mun 6.1 to Analysis 1 "in" -->
+	   <click select="from/up"/>
+	   <click id="clickE" select="from/item" path="e"/>
+	   <click select="concordance/col/check"/><!-- checkbox control in header -->
+	   <insert wait="200">c</insert><!-- check all -->
+ <!-- uncheck the first occurrance -->
+	   <click id="mun61" select="concordance/record/check" />
+ <!-- check to change "e" M'munda 6.1 to "in" -->
+	   <click select="to/item" path="in"/>
+	   <click select="assign"/>
+	   <click select="close"/>
+  </on-dialog>
+
+  <!-- Add Portuguese gloss "in" since it is only in English and only Port shows in the dialog-->
+  <var id="port" set="2"/>
+  <var id="ind" set="$port"/>
+  <var id="row" set="1"/>
+  <click id="glossInPort" select="analyses/analysis-seq/word-gloss/empty" />
+  <insert wait="1000">in</insert><!-- end of  the gloss -->
+  <!--click id="glossPort" select="analyses/analysis-seq/word-gloss/lang"  path="/value:Por"/-->
+
+</model>
+
+<!-- Go to Words / Concordance -->
+	   <click id="gotoConc" select="menubar/view/texts-words/concordance"/>
+
+<model select="concordance[@role='view']">
+
+<!-- Interlinearize Tab -->
+  <click id="InterlinearTab" select="full-context/interlinear/analyze/tab" />
+
+<!-- Configure interlinear to show english word glosses (otherwise it only shows Portugese) -->
+	   <click select="//menubar/tools/configure/configure-interlinear"/>
+  <on-dialog select="//configure-interlinear[@role='dialog']" title="Configure Interlinear Lines">
+	 <click select="available/line" path="Word Gloss"/>
+	 <click select="show"/>
+	 <click select="ws-drop"/>
+	 <insert wait="200">{DOWN}~</insert><!-- English -->
+	 <click select="ok"/>
+  </on-dialog>
+
+<!-- Click on combo box, go to "Search in the line:"-->
+  <click select="criteria/search-in/value"/>
+  <insert wait="200">b~</insert>
+  <click select="criteria/for-the-text/value"/>
+   <insert wait="300">{END}+{HOME}</insert>
+   <insert wait="200">na</insert>
+   <click select="criteria/search"/>
+
+	<sound frequency="500" duration="500"/>
+
+  <!-- click the first one so the tabs are captured by the na Word Focus Box -->
+   <click select="results/record/col" row="1" col="1"/>
+   <click id="lookAtConc" select="results/record/col" row="8"/> <!--;/value:M'munda 6.1"/ its the 2nd one-->
+  <insert wait="8000">{TAB}</insert>
+  <insert wait="300">{TAB}</insert>
+  <insert wait="300">{TAB}</insert>
+  <insert wait="300">{TAB}</insert>
+  <insert wait="300">{TAB}</insert>
+  <insert wait="300">+{HOME}</insert><!-- select the gloss -->
+  <insert wait="300">^{c}</insert><!-- copy it -->
+
+
+</model>
+
+<!--/skip-->
+
+<!-- Go to Words / Analysis -->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+ <model select="word-analysis[@role='view']">
+
+ <!-- find na -->
+   <!--click select="//toolbar/insert/find-wordform"/>
+  <on-dialog select="//find-wordform[@role='dialog']">
+	 <insert wait="500">na</insert>
+	 <click select="go-to"/>
+  </on-dialog-->
+
+  <var id="ind" set="$port"/>
+  <click wait="10000" id="1stGloss" select="analyses/analysis-seq/word-gloss/data" path="/value:in"/>
+  <insert wait="2000">{END}</insert><!-- end of  the gloss -->
+  <insert wait="1000">^{v}</insert><!-- insert copied gloss from the concordance -->
+  <glimpse wait="2000" id="2ndGloss" select="analyses/analysis-seq/word-gloss/data" path="/value:in"/>
+
+<!-- Click Assign Analysis -->
+	   <var id="ind" set="3"/>
+  <click dx="500" select="analyses/assign-analysis" /><!-- lastufkam computer -->
+  <on-dialog select="//analysis-usage[@role='dialog']">
+	 <click id="inin" select="from/item" path="inin"/>
+	 <click select="close"/>
+  </on-dialog>
+
+  <insert wait="200">^{z}</insert><!-- Undo gloss from the concordance -->
+
+<!-- Undo "manually" -->
+
+</model>
+
+<!-- Go to Words / Concordance -->
+	   <click id="gotoConc2" select="menubar/view/texts-words/concordance"/>
+
+<model select="concordance[@role='view']">
+
+<!-- Interlinearize Tab -->
+  <click id="InterlinearTab2" select="full-context/interlinear/analyze/tab" />
+
+<!-- Click on combo box, go to "Search in the line:"-->
+  <click select="criteria/search-in/value"/>
+  <insert wait="200">b~</insert>
+  <click select="criteria/for-the-text/value"/>
+   <insert wait="300">{END}+{HOME}</insert>
+   <insert wait="200">na</insert>
+   <click select="criteria/search"/>
+
+<!-- Configure interlinear not to show english word glosses -->
+	<click select="//menubar/tools/configure/configure-interlinear"/>
+  <on-dialog select="//configure-interlinear[@role='dialog']" title="Configure Interlinear Lines">
+	 <click select="displayed/line" path="Word Gloss"/>
+	 <insert wait="300">{DOWN}</insert>
+	 <click select="hide"/>
+	 <click select="ok"/>
+  </on-dialog>
+
+<!--/skip-->
+
+</model>
+
+<!-- Go to Words / Analysis -->
+  <click select="menubar/view/texts-words/word-analyses"/>
+
+<model select="word-analysis[@role='view']">
+
+  <!-- find na -->
+   <!--click select="//toolbar/insert/find-wordform"/>
+  <on-dialog select="//find-wordform[@role='dialog']">
+	 <insert wait="500">na</insert>
+	 <click select="go-to"/>
+  </on-dialog-->
+
+  <var id="ind" set="$port"/>
+  <click id="remGlossInPort" select="analyses/analysis-seq/word-gloss/data" path="/value:in"/>
+   <insert wait="300">{END}+{HOME}</insert>
+  <insert wait="300">{DELETE}</insert>
+
+<!-- Click Assign Analysis -->
+	   <var id="ind" set="3"/>
+  <click dx="500" select="analyses/assign-analysis" /><!-- lastufkam computer -->
+  <insert wait="500">{DOWN}~</insert>
+  <on-dialog select="//analysis-usage[@role='dialog']">
+	 <click select="from/item" path="in"/>
+	 <click select="to/item" path="e"/>
+	 <click select="assign"/>
+	 <click select="close"/>
+  </on-dialog>
+
+<!-- Sort by Form -->
+   <click select="wordforms/col/header" path="Form" />
+   <click select="//toolbar/standard/first"/><!-- Select the first record -->
+   <var id="row" set="1"/>
+   <var id="col" set="1"/>
+   <click select="wordforms/record/col" />
+
+</model>
+
+ </on-application>
+</accil>

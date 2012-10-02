@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>9.0.21022</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{6CE0EFE2-D885-4744-A91A-100B00DD8DC6}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<RootNamespace>KeyboardSwitcherTests</RootNamespace>
+	<AssemblyName>KeyboardSwitcherTests</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\..\..\Output\Debug</OutputPath>
+	<DefineConstants>DEBUG</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>none</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>..\..\..\..\Output\Debug</OutputPath>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+	<Reference Include="KeyboardSwitcher, Version=6.1.1.20900, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\KeyboardSwitcher.dll</HintPath>
+	</Reference>
+	<Reference Include="ibusdotnet, Version=1.0.3883.16243, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\DistFiles\ibusdotnet.dll</HintPath>
+	</Reference>
+	<Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Bin\NUnit\bin\framework\nunit.framework.dll</HintPath>
+	</Reference>
+	<Reference Include="System.Core" />
+	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="SimpleRootSite, Version=6.9.2.0, Culture=neutral, PublicKeyToken=null">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+	<Compile Include="KeyboardSwitcherTests.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

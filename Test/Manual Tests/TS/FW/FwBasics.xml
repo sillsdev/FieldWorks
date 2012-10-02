@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE modularbook ..\..\XSL\ModularBook.dtd" []-->
+<?xml-stylesheet type="text/xsl" href="..\XSL\TCLlist.xsl"?>
+<modularbook file="FW\FwBasics.xml">
+
+<titlePage file="FW\FwBasics.xml">
+ <title tag="tp">FieldWorks Test Library</title>
+ <index>
+  <li>all title page</li>
+ </index>
+ <authors>
+  <div>Michael Lastufka (creator, drudge)</div>
+ </authors>
+ <copywrite>2001 SIL International</copywrite>
+ <link uri="maintask.xml" type="module">No link</link>
+ <shortcuts>
+  <link uri="maintask.xml" type="module">Testing a FieldWorks application</link>
+ </shortcuts>
+</titlePage>
+
+<!-- Test Scripts defined in files -->
+
+<include-test>StartUp.xml</include-test>
+<include-test>BackupRestore.xml</include-test>
+<include-test>FileNewProject.xml</include-test>
+<include-test>FileOpenProject.xml</include-test>
+<include-test>FileSave.xml</include-test>
+<include-test>PgSetup.xml</include-test>
+<include-test>FilePrtPrev.xml</include-test>
+<include-test>..\StdCtrls\PrintDlg.xml</include-test>
+<include-test>FileImport.xml</include-test>
+<include-test>FileImportStandard.xml</include-test>
+<include-test>FileExport.xml</include-test>
+<include-test>FileProps.xml</include-test>
+<include-test>FilePropsProj.xml</include-test>
+<include-test>FileNewLang.xml</include-test>
+<include-test>WritSysProp.xml</include-test>
+<include-test>FileExit.xml</include-test>
+<include-test>EdtUndo.xml</include-test>
+<include-test>EdtRedo.xml</include-test>
+<include-test>Edtccp.xml</include-test>
+<include-test>EdtSelectAll.xml</include-test>
+<include-test>EdtFind.xml</include-test>
+<include-test>EdtNxtMat.xml</include-test>
+<include-test>EdtPrvMat.xml</include-test>
+<include-test>EdtReplace.xml</include-test>
+<include-test>EdtDel.xml</include-test>
+<include-test>EdtDelEffDiag.xml</include-test>
+<include-test>VwViews.xml</include-test>
+<include-test>VwFilter.xml</include-test>
+<include-test>VwSortM.xml</include-test>
+<include-test>VwOverlay.xml</include-test>
+<include-test>VwToolbar.xml</include-test>
+<include-test>VwSideBar.xml</include-test>
+<include-test>VwStatusBar.xml</include-test>
+<include-test>DataNav.xml</include-test>
+<include-test>DataHistory.xml</include-test>
+<include-test>DatOrgFav.xml</include-test>
+<include-test>DatModTemp.xml</include-test>
+<include-test>InsComment.xml</include-test>
+<include-test>InsExtLink.xml</include-test>
+<include-test>InsTable.xml</include-test>
+<include-test>InsSound.xml</include-test>
+<include-test>InsVideo.xml</include-test>
+<include-test>InsPicture.xml</include-test>
+<include-test>InsObject.xml</include-test>
+<include-test>FmtFont.xml</include-test>
+<include-test>FmtWS.xml</include-test>
+<include-test>FmtPara.xml</include-test>
+<include-test>FmtBnN.xml</include-test>
+<include-test>FmtBrdr.xml</include-test>
+<include-test>FmtStyle.xml</include-test>
+<include-test>TlsSpell.xml</include-test>
+<include-test>TlsReport.xml</include-test>
+<include-test>TlsList.xml</include-test>
+<include-test>TlsExplore.xml</include-test>
+<include-test>TlsShoSelUse.xml</include-test>
+<include-test>OptGen.xml</include-test>
+<include-test>OptCFields.xml</include-test>
+<include-test>OptFilters.xml</include-test>
+<include-test>OptOverlays.xml</include-test>
+<include-test>OptSortMeth.xml</include-test>
+<include-test>OverlaysUsage.xml</include-test>
+<include-test>TlsCustomize.xml</include-test>
+<include-test>Window.xml</include-test>
+<include-test>FwHelp.xml</include-test>
+<include-test>HlpApp.xml</include-test>
+<include-test>HlpHow.xml</include-test>
+<include-test>HlpTutor.xml</include-test>
+<include-test>HlpAbout.xml</include-test>
+<include-test>Install.xml</include-test>
+<include-test>BarSide.xml</include-test>
+<include-test>TbStandard.xml</include-test>
+<include-test>TbFormat.xml</include-test>
+<include-test>TbWindow.xml</include-test>
+<include-test>TbData.xml</include-test>
+<include-test>TbInsert.xml</include-test>
+<include-test>TbTools.xml</include-test>
+<include-test>BarStatus.xml</include-test>
+<include-test>ChcList.xml</include-test>
+<include-test>DragDrop.xml</include-test>
+<include-test>DataEntryView.xml</include-test>
+<include-test>BrowseView.xml</include-test>
+<include-test>DocumentView.xml</include-test>
+<include-test>FilterUsage.xml</include-test>
+<include-test>SortUsage.xml</include-test>
+<include-test>BackupRestoreDlg.xml</include-test>
+<include-test>BackupScheduleDlg.xml</include-test>
+<include-test>BackupReminderDlg.xml</include-test>
+<include-test>BackupPasswordDlg.xml</include-test>
+<include-test>Sync.xml</include-test>
+</modularbook>

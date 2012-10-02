@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LayoutInventory>
+	<layout class="LexDb" type="jtview" name="root">
+		<part ref="Entries" label="Entries" param="basic" visibility="ifdata"/>
+	</layout>
+
+	<layout class="Entry" type="jtview" name="basic" css="$fwstyle=Dictionary-Normal">
+		<part ref="Headword" label="HeadwordL" before="head(" sep=" " after=")" ws="vernacular" wsType="vernacular" style="Dictionary-Headword" visibility="ifdata"/>
+		<part ref="Summary" label="Sum."/>
+	</layout>
+</LayoutInventory>

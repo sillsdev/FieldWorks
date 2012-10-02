@@ -1,0 +1,647 @@
+'$INCLUDE 'RECORDER.INC'
+'$INCLUDE '..\DNTesting.inc'
+'$INCLUDE 'FilPgSetDlgRes.inc'
+
+SetDefaultWaitTimeout(Timeout)
+
+const sDlgTitle$ = "Page Setup"
+const nControls% = 22
+const sExpFooter$ = "&[page],&[date]"
+
+dim sResult as string
+dim sres2 as string, sexp as string
+dim hwnd as long
+dim info as INFO
+
+'This array represents the controls that are in the direct tab
+'sequence, in their order.
+dim ctrlIDs(1 to nControls) as long
+
+ctrlIDs(1) = kcidFilPgSetMLE
+ctrlIDs(2) = kcidFilPgSetMRE
+ctrlIDs(3) = kcidFilPgSetMTE
+ctrlIDs(4) = kcidFilPgSetMBE
+ctrlIDs(5) = kcidFilPgSetEHE
+ctrlIDs(6) = kcidFilPgSetEFE
+
+ctrlIDs(7) = kcidFilPgSetSize
+ctrlIDs(8) = kcidFilPgSetWE
+ctrlIDs(9) = kcidFilPgSetHE
+ctrlIDs(10) = kcidFilPgSetPort
+
+ctrlIDs(11) = kcidFilPgSetFont
+ctrlIDs(12) = kcidFilPgSetPgNum
+ctrlIDs(13) = kcidFilPgSetTotPg
+ctrlIDs(14) = kcidFilPgSetDate
+ctrlIDs(15) = kcidFilPgSetTime
+ctrlIDs(16) = kcidFilPgSetTitle
+ctrlIDs(17) = kcidFilPgSetHdE
+ctrlIDs(18) = kcidFilPgSetFtE
+
+ctrlIDs(19) = FWIDOKButton
+ctrlIDs(20) = FWIDCancelButton
+ctrlIDs(21) = kcidFilPgSetDef
+ctrlIDs(22) = kctidHelp
+
+'This test script corresponds to
+' 2.1.2 DN File - Page Setup Dialog Tests
+
+'=======================================================================
+'Scenarios
+'=======================================================================
+
+Scenario "File - Page Setup: open dialog (2.1.2)"
+	'Minimize the Visual Test window.
+	If GetHandle(GH_HWNDCLIENT) Then WMinWnd(GetHandle(GH_HWNDCLIENT))
+
+	'Close any dlgs that are already open
+	play "{Esc}{Esc}"
+
+	StartDN 'if DN not already started
+
+	'Test: selecting File - Page Setup causes Page Setup window to appear.
+	OpenFilePageSetupDlg(True)
+	'Strange: sometimes the above call fails, with the message
+	'  Toolbar "#31500" does not exist.
+	'But the next time it happens, it doesn't fail.
+	'I guess that failure can be ignored. :-(
+End Scenario
+
+Scenario "File - Page Setup: check initial values (2.1.2)"
+	TestDefaults
+End Scenario
+
+'Unless otherwise specified, the following scenarios assume that
+'the Page Setup dialog is open and has focus.
+
+'The (2.1.2:1.1) in the scenario name indicates this is step 1.1 of
+'test script 2.1.2.
+
+Scenario "Page Setup - OK (2.1.2: 1.1)"
+	'Test: press OK on Page Setup dialog closes dialog
+	WButtonClick("OK")
+	WaitUntilIdle(500)
+	CurrentWindow = WFndWndC(DNExpTitle, DNMainClass, FINDWINDOWFLAGS, Timeout)
+	'Make sure the dialog actually disappeared.
+	RecVerifyExistence(sDlgTitle, FWDialogClass, V_WINDOW, FALSE)
+
+Scenario cleanup
+	'Now have to reopen the dialog for the next scenario
+	OpenFilepageSetupDlg(False)
+End Scenario
+
+Scenario "Page Setup - Cancel (2.1.2: 1.2)"
+	'Test: press Cancel on Page Setup dialog closes dialog
+	WButtonClick("Cancel")
+	WaitUntilIdle(500)
+	CurrentWindow = WFndWndC(DNExpTitle, DNMainClass, FINDWINDOWFLAGS, Timeout)
+	RecVerifyExistence(sDlgTitle, FWDialogClass, V_WINDOW, FALSE)
+
+Scenario Cleanup
+	OpenFilepageSetupDlg(False)
+End Scenario
+
+'Step 1.3 is placed later in the script, when many of the values are messed up.
+
+Scenario "Page Setup - Help (2.1.2: 1.4)"
+	FWVerifyHelp(DNHHTitle, "Dialog: Page Setup")
+
+Scenario Cleanup
+	'Now close the help window and return to dlg
+	hwnd = WFndWndC(Null, FWHelpClass, FW_FOCUS, Timeout)
+	if hwnd > 0 then Play "%({F4})" 'Alt+F4
+	WaitUntilIdle(500)
+	WFndWndC(sDlgTitle, FWDialogClass, FW_FOCUS, Timeout)
+End Scenario
+
+' This scenario is redundant, covered by the "check initial values" scenario
+
+'Scenario "Page Setup - Header (2.1.2: 2.0)"
+'	'Verify the default contents of the Header field
+'	sResult = EditText(_id(kcidFilPgSetHdE))
+'	'TODO LarsH: This test shouldn't be so tied to the debug database and English encoding.
+'	' It might be better to get the name of the current object, e.g. from the main window's title bar.
+'	if sResult <> DNExpTitle then
+'		fail "Incorrect default contents in Header field: "; sResult; " instead of "; DNExpTitle
+'	end if
+'End Scenario
+
+' This scenario is redundant, covered by the "check initial values" scenario
+'Scenario "Page Setup - Footer (2.1.2: 3.0)"
+'	'Verify the default contents of the Footer field
+'	sResult = EditText(_id(kcidFilPgSetFtE))
+'	' It might be better to get the name of the current object, e.g. from the main window's title bar.
+'	if sResult <> sExpFooter then
+'		fail "Incorrect default contents in Footer field: "; sResult; " instead of "; sExpFooter
+'	end if
+'End Scenario
+
+Scenario "Page Setup - Format Font (2.1.2: 4.1)"
+	'Verify that [A] button (format font) opens dialog and takes effect on Header/Footer
+	'TODO LarsH: when this feature is implemented, write a test for it.
+	'Pseudocode:
+	'Select some text in Header
+	'press [A]
+	'check that Format Font dialog appeared
+	'check that FF dlg is modal
+	'check the Bold checkbox
+	'press OK
+	'verify that FF dlg disappears
+	'return to PS dlg
+	'check that the selected text is now bold (how??)
+End Scenario
+
+
+Scenario "Page Setup - Page # (2.1.2: 4.2)"
+	'Verify that Page# insertion button inserts &[page]
+	'Set focus to Footer field
+	WEditSetFocus(_id(kcidFilPgSetFtE))
+	WEditSetSel(_id(kcidFilPgSetFtE), -1, 0)
+	sResult = EditText(_id(kcidFilPgSetFtE))
+	sexp = sResult + "&[page]"
+	WButtonClick(_id(kcidFilPgSetPgNum))
+	sres2 = EditText(_id(kcidFilPgSetFtE))
+	if sexp <> sres2  then
+		fail "Page# button turned """ + sResult + """ into """ + sres2 + """ instead of """ + sexp + """"
+	end if
+End Scenario
+
+
+Scenario "Page Setup - Num Pages (2.1.2: 4.3)"
+	'Verify that NumPages insertion button inserts &[pages]
+	'Set focus to Header field
+	WEditSetFocus(_id(kcidFilPgSetHdE))
+	WEditSetSel(_id(kcidFilPgSetHdE), -1, 0)
+	sResult = EditText(_id(kcidFilPgSetHdE))
+	sexp = sResult + "&[pages]"
+	WButtonClick(_id(kcidFilPgSetTotPg))
+	sres2 = EditText(_id(kcidFilPgSetHdE))
+	if sexp <> sres2  then
+		fail "NumPages button turned """ + sResult + """ into """ + sres2 + """ instead of """ + sexp + """"
+	end if
+End Scenario
+
+
+Scenario "Page Setup - Date (2.1.2: 4.4)"
+	'Verify that Date insertion button inserts &[date]
+	'Set focus to Header field
+	WEditSetFocus(_id(kcidFilPgSetHdE))
+	WEditSetSel(_id(kcidFilPgSetHdE), 1, 0)
+	sResult = EditText(_id(kcidFilPgSetHdE))
+	sexp = "&[date]" + sResult
+	WButtonClick(_id(kcidFilPgSetDate))
+	sres2 = EditText(_id(kcidFilPgSetHdE))
+	if sexp <> sres2  then
+		fail "Date button turned """ + sResult + """ into """ + sres2 + """ instead of """ + sexp + """"
+	end if
+End Scenario
+
+
+Scenario "Page Setup - Time (2.1.2: 4.5)"
+	'Verify that Time insertion button inserts &[time]
+	'Set focus to Footer field
+	WEditSetFocus(_id(kcidFilPgSetFtE))
+	WEditSetSel(_id(kcidFilPgSetFtE), 1, 0)
+	sResult = EditText(_id(kcidFilPgSetFtE))
+	sexp = "&[time]" + sResult
+	WButtonClick(_id(kcidFilPgSetTime))
+	sres2 = EditText(_id(kcidFilPgSetFtE))
+	if sexp <> sres2  then
+		fail "Time button turned """ + sResult + """ into """ + sres2 + """ instead of """ + sexp + """"
+	end if
+End Scenario
+
+
+Scenario "Page Setup - Title (2.1.2: 4.6)"
+	'Verify that Time insertion button inserts title
+	'Set focus to Footer field
+	WEditSetFocus(_id(kcidFilPgSetFtE))
+	sResult = EditText(_id(kcidFilPgSetFtE))
+	sexp = sResult + DNExpTitle
+	WEditSetSel(_id(kcidFilPgSetFtE), len(sResult)+1, 0) 'For some reason, a selstart of -1 doesn't work here
+	log #10, "WEditSelStart: "; WEditSelStart(_id(kcidFilPgSetFtE))
+	WButtonClick(_id(kcidFilPgSetTitle))
+	sres2 = EditText(_id(kcidFilPgSetFtE))
+	if sexp <> sres2  then
+		fail "Title button turned """ + sResult + """ into """ + sres2 + """ instead of """ + sexp + """"
+	end if
+End Scenario
+
+
+'Steps 4.7 through 4.10 can't be automatically tested, because they involve printed output
+
+Scenario "Page Setup - Left Margin A (2.1.2: 5.1)"
+	TestMargin1 ("Left",  kcidFilPgSetMLE, 0.1, 3.0)  'Assuming measurement unit is inches
+End Scenario
+
+Scenario "Page Setup - Left Margin B (2.1.2: 5.1.1)"
+	TestMargin2 ("Left",  kcidFilPgSetMLE, 0.1, 3.0, 0.1)
+End Scenario
+
+Scenario "Page Setup - Right Margin A (2.1.2: 5.2)"
+	TestMargin1 ("Right",  kcidFilPgSetMRE, 0.1, 3.0)
+End Scenario
+
+Scenario "Page Setup - Right Margin B (2.1.2: 5.2.1)"
+	TestMargin2 ("Right",  kcidFilPgSetMRE, 0.1, 3.0, 0.1)
+End Scenario
+
+Scenario "Page Setup - Top Margin A (2.1.2: 5.3)"
+	TestMargin1 ("Top",  kcidFilPgSetMTE, 0.1, 3.0)
+End Scenario
+
+Scenario "Page Setup - Top Margin B (2.1.2: 5.3.1)"
+	TestMargin2 ("Top",  kcidFilPgSetMTE, 0.1, 3.0, 0.1)
+End Scenario
+
+Scenario "Page Setup - Bottom Margin A (2.1.2: 5.4)"
+	TestMargin1 ("Bottom",  kcidFilPgSetMBE, 0.1, 3.0)
+End Scenario
+
+Scenario "Page Setup - Bottom Margin B (2.1.2: 5.4.1)"
+	TestMargin2 ("Bottom",  kcidFilPgSetMBE, 0.1, 3.0, 0.1)
+End Scenario
+
+
+Scenario "Page Setup - From Edge Footer A (2.1.2: 5.5)"
+	TestMargin1 ("Footer",  kcidFilPgSetEFE, 0.1, 3.0)
+End Scenario
+
+Scenario "Page Setup - From Edge Footer B (2.1.2: 5.5.1)"
+	TestMargin2 ("Footer",  kcidFilPgSetEFE, 0.1, 3.0, 0.1)
+End Scenario
+
+Scenario "Page Setup - From Edge Header A (2.1.2: 5.6)"
+	TestMargin1 ("Header",  kcidFilPgSetEHE, 0.1, 3.0)
+End Scenario
+
+Scenario "Page Setup - From Edge Header B (2.1.2: 5.6.1)"
+	TestMargin2 ("Header",  kcidFilPgSetEHE, 0.1, 3.0, 0.1)
+End Scenario
+
+
+Scenario "Page Setup - modify Paper Size combo (2.1.2: 6.1)"
+	'This scenario assumes we're in Portrait mode.
+
+	'Note: the ComboItemClk call can intermittently fail for no apparent reason with "cannot find listbox in combo".  This failure can be ignored.
+	WComboItemClk(_id(kcidFilPgSetSize), "@1") 'Click the first item in the combo, i.e. Letter 8 1/2 x 11 in
+	FWVerifyText(_id(kcidFilPgSetSize), "Letter 8 1/2 x 11 in", 0, V_COMBO)
+	FWVerifyText(_id(kcidFilPgSetWE), "8.5""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetHE), "11.0""", 0, V_EDIT)
+	'TODO LarsH: when cm and mm are implemented, test this with units set to cm or mm.
+
+	'Note: the ComboItemClk call can intermittently fail for no apparent reason with "cannot find listbox in combo".  This failure can be ignored.
+	WComboItemClk(_id(kcidFilPgSetSize), "@2") 'Click the second item in the combo, i.e. Legal 8 1/2 x 14 in
+	FWVerifyText(_id(kcidFilPgSetSize), "Legal 8 1/2 x 14 in", 0, V_COMBO)
+	FWVerifyText(_id(kcidFilPgSetWE), "8.5""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetHE), "14.0""", 0, V_EDIT)
+
+	'Note: the ComboItemClk call can intermittently fail for no apparent reason with "cannot find listbox in combo".  This failure can be ignored.
+	WComboItemClk(_id(kcidFilPgSetSize), "@3")
+	FWVerifyText(_id(kcidFilPgSetSize), "A4 210 x 297 mm", 0, V_COMBO)
+	FWVerifyText(_id(kcidFilPgSetWE), "8.26""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetHE), "11.69""", 0, V_EDIT)
+End Scenario
+
+Scenario "Page Setup - Paper Width A (2.1.2: 6.2)"
+	TestMargin1 ("Width",  kcidFilPgSetWE, 3, 34)
+
+	'also verify that changing paper width affects Paper Size combo
+	'Note: the ComboItemClk call can intermittently fail for no apparent reason with "cannot find listbox in combo".  This failure can be ignored.
+	WComboItemClk(_id(kcidFilPgSetSize), "@1") 'Click the first item in the combo, i.e. Letter 8 1/2 x 11 in
+	WEditSetFocus(_id(kcidFilPgSetWE))
+	Play "{up}"
+	FWVerifyText(_id(kcidFilPgSetSize), "Custom size", 0, V_COMBO)
+End Scenario
+
+Scenario "Page Setup - Paper Width B (2.1.2: 6.2.1)"
+	TestMargin2 ("Width",  kcidFilPgSetWE, 3, 34, 0.1)
+
+End Scenario
+
+Scenario "Page Setup - Paper Height A (2.1.2: 6.3)"
+	TestMargin1 ("Height", kcidFilPgSetHE, 3, 34)
+
+	'also verify that changing paper height affects Paper Size combo
+	'Note: the ComboItemClk call can intermittently fail for no apparent reason with "cannot find listbox in combo".  This failure can be ignored.
+	WComboItemClk(_id(kcidFilPgSetSize), "@1") 'Click the first item in the combo, i.e. Letter 8 1/2 x 11 in
+	WEditSetFocus(_id(kcidFilPgSetHE))
+	Play "{down}"
+	FWVerifyText(_id(kcidFilPgSetSize), "Custom size", 0, V_COMBO)
+End Scenario
+
+Scenario "Page Setup - Paper Height B (2.1.2: 6.3.1)"
+	TestMargin2 ("Height", kcidFilPgSetHE, 3, 34, 0.1)
+End Scenario
+
+Scenario "Page Setup - Portrait (2.1.2: 6.4)"
+	dim sw as string, sh as string
+	WOptionClick(_id(kcidFilPgSetLand))
+	sw = EditText(_id(kcidFilpgSetWE))
+	sh = EditText(_id(kcidFilpgSetHE))
+
+	WOptionClick(_id(kcidFilPgSetPort))
+	RecVerifySelected(_id(kcidFilPgSetPort),  "", V_OPTION, True)
+	RecVerifySelected(_id(kcidFilPgSetLand),  "", V_OPTION, False)
+	FWVerifyText(_id(kcidFilpgSetWE), sh, 0, V_EDIT)
+	FWVerifyText(_id(kcidFilpgSetHE), sw, 0, V_EDIT)
+End Scenario
+
+Scenario "Page Setup - Portrait (2.1.2: 6.5)"
+	'redundancy, so this scen doesn't have to follow the previous
+	WOptionClick(_id(kcidFilPgSetPort))
+	sw = EditText(_id(kcidFilpgSetWE))
+	sh = EditText(_id(kcidFilpgSetHE))
+
+	WOptionClick(_id(kcidFilPgSetLand))
+	RecVerifySelected(_id(kcidFilPgSetPort),  "", V_OPTION, False)
+	RecVerifySelected(_id(kcidFilPgSetLand),  "", V_OPTION, True)
+	FWVerifyText(_id(kcidFilpgSetWE), sh, 0, V_EDIT)
+	FWVerifyText(_id(kcidFilpgSetHE), sw, 0, V_EDIT)
+End Scenario
+
+Scenario "Page Setup - Shortcuts (2.1.2: 7.0)"
+	FWTestKbdShortcut("f", kcidFilPgSetMLE)
+	FWTestKbdShortcut("g", kcidFilPgSetMRE)
+	FWTestKbdShortcut("t", kcidFilPgSetMTE)
+	FWTestKbdShortcut("b", kcidFilPgSetMBE)
+	FWTestKbdShortcut("e", kcidFilPgSetEHE)
+	FWTestKbdShortcut("r", kcidFilPgSetEFE)
+	FWTestKbdShortcut("z", kcidFilPgSetSize)
+	FWTestKbdShortcut("w", kcidFilPgSetWE)
+	FWTestKbdShortcut("h", kcidFilPgSetHE)
+	'Note: the next two are radio buttons, so pressing their shortcut keys
+	'will actually do something.  That's why I'm putting Portrait last, to
+	'restore the default.
+	FWTestKbdShortcut("a", kcidFilPgSetLand)
+	FWTestKbdShortcut("i", kcidFilPgSetPort)
+
+	FWTestKbdShortcut("d", kcidFilPgSetHdE)
+	FWTestKbdShortcut("o", kcidFilPgSetFtE)
+
+	'TODO LarsH: See if there's a systematic way to test keyboard shortcuts for
+	'command buttons.  You can't just play the key and then check whether the button
+	'has focus; focus generally doesn't get set to the invoked button.
+End Scenario
+
+Scenario "Page Setup - tab sequence (2.1.2: 7.1)"
+	'The FWTestTabSeq routine assumes the last control to be a "Button", so we have
+	'to set the button class name so the FWTestTabSeq routine will find our Help button.
+	WButtonSetClass("AfButton")
+	FWTestTabSeq(nControls, ctrlIds)
+	WButtonSetClass("Button")
+End Scenario
+
+Scenario "Page Setup - Default... button (2.1.2: 1.3)"
+	'''Step 1.3: the Default button will soon be removed, they say.  So let's not test it.
+	'''Or was I thinking of the "Remove Formatting" button on the Format Font dialog?
+
+	'Press Default button
+	WButtonClick(_id(kcidFilPgSetDef))
+	WFndWndC("Page Setup Defaults", FWDialogClass, FW_FOCUS + FW_ERROR)
+	WaitUntilIdle(500)
+	'Press OK
+	WButtonClick(_id(FWIDMsgBoxYesButton))
+
+	TestDefaults
+End Scenario
+
+'Invalid combination tests
+
+Scenario "Page Setup - Invalid combo A (2.1.2: 8.1)"
+	TestBadCombo(kcidFilPgSetMLE, "2.5""", kcidFilPgSetMRE, "2.5""", _
+				 kcidFilPgSetWE, "6.8""", "The Left and Right Margin values are too high")
+End Scenario
+
+
+Scenario "Page Setup - Invalid combo B (2.1.2: 8.2)"
+	TestBadCombo(kcidFilPgSetMTE, "3.0""", kcidFilPgSetMBE, "3.0""", _
+				 kcidFilPgSetHE, "7.8""", "The Top and Bottom Margin values are too high")
+End Scenario
+
+'Set the top margin and header-from-edge to conflict
+Scenario "Page Setup - Invalid combo C (2.1.2: 8.3)"
+	'TODO LarsH: When Raid bug 1274 is resolved, change the next line to:
+	'TestBadCombo(kcidFilPgSetMTE, "0.7""", kcidFilPgSetEHE, "0.65""", _
+	TestBadCombo(kcidFilPgSetMTE, "0.7""", kcidFilPgSetEHE, "0.75""", _
+				 kcidFilPgSetMTE, "0.7""", "The header will not fit in the space allowed")
+End Scenario
+
+'Set the top margin and header-from-edge to conflict
+Scenario "Page Setup - Invalid combo D (2.1.2: 8.4)"
+	'TODO LarsH: When Raid bug 1274 is resolved, uncomment the next line:
+	'(if strict) TestBadCombo(kcidFilPgSetMTE, "0.8""", kcidFilPgSetEHE, "0.75""", _
+	'(if less strict) TestBadCombo(kcidFilPgSetMBE, "0.8""", kcidFilPgSetEFE, "0.85""", _
+	'			 kcidFilPgSetMBE, "0.8""", "The footer will not fit in the space allowed")
+End Scenario
+
+
+'Test conversion of measurement units.  At the moment, application units
+'can only be set to "inches."  So we can only do conversion to inches.
+'TODO LarsH: when Options - General - Measurement units is implemented,
+'expand this scenario to test conversion to cm and mm.
+Scenario "Page Setup - measurement conversion (2.1.2: 9.0)"
+	'cm -> in
+	WEditSetFocus(_id(kcidFilPgSetMLE))
+	WEditSetText(_id(kcidFilPgSetMLE), "4.9cm")
+	Play("{Tab}") 'lose focus
+	FWVerifyText(_id(kcidFilPgSetMLE), "1.93""", 0, V_EDIT)
+
+	'mm -> in
+	WEditSetFocus(_id(kcidFilPgSetHE))
+	WEditSetText(_id(kcidFilPgSetHE), "234mm")
+	Play("{Tab}") 'lose focus
+	FWVerifyText(_id(kcidFilPgSetHE), "9.21""", 0, V_EDIT)
+End Scenario
+
+
+'Step 10: TODO LarsH: is there a way to have the computer examine printed output?
+' Maybe via Print-to-file?
+
+
+'Restore default values and close the dialog.
+Scenario "Page Setup - Clean up all (2.1.2)"
+	'Comment these out when done debugging test scripts, so you can see what's been happening
+
+	'Make sure we're on the Page Setup dlg
+	Play "{Esc}" 'Get rid of any error dialogs
+	Play "{Esc}" 'Get rid of Page Setup dlg
+	OpenFilePageSetupDlg(False)
+	'Press Default button
+	WButtonClick(_id(kcidFilPgSetDef))
+
+	WaitUntilIdle(500)
+	WFndWndC("Page Setup Defaults", FWDialogClass, FW_FOCUS + FW_ERROR)
+	WButtonClick(_id(FWIDMsgBoxYesButton)) 'press Yes
+
+	WaitUntilIdle(500)
+	WFndWndC(sDlgTitle, FWDialogClass, FW_FOCUS + FW_ERROR)
+	WButtonClick(_id(FWIDOKButton)) 'close Page Setup dlg
+End Scenario
+
+
+'=======================================================================
+'Subroutines
+'=======================================================================
+
+'Assuming that only the main DN window is open, click File - Page Setup.
+'Wait for dialog to appear and set focus to it.  Fail if it doesn't appear.
+Sub OpenFilePageSetupDlg(fStrict as integer)
+	dim hwnd as long
+
+	'These hardcoded captions should be replaced by the symbols in an include file if possible.
+	WToolbarButtonClk(_id(FWIDMenuToolbar), "&File")
+	WMenuSelect("Page Set&up...")
+	WaitUntilIdle(500)
+	'Test whether dialog appeared.  (And set focus to it.)
+	hwnd = WFndWndC(sDlgTitle, FWDialogClass, FW_FOCUS, Timeout)
+	if fStrict = TRUE and hwnd = 0 then Fail "Page Setup dialog didn't appear."
+End Sub
+
+'Check minimum and maximum values
+Sub TestMargin1 (sName as string, id as long, min as single, max as single)
+	dim sID as string, sResult as string
+
+	sID = _id(id)
+
+	WEditSetFocus(sID)
+	'Test the lower limit
+	WEditSetText(sID, str(min/2))
+	Play "{TAB}" 'lose focus; this should trigger the verification code
+	sResult = EditText(sID)
+	if FWPrettyClose(val(sResult), min) = 0 then
+		fail sName; " margin field did not enforce minimum value ("; min/2; " -> "; val(sResult); " instead of "; min; ")"
+	end if
+
+	'Test the upper limit
+	WEditSetText(sID, str(max*1.1))
+	Play "{TAB}" 'lose focus; this should trigger the verification code
+	sResult = EditText(sID)
+	if FWPrettyClose(val(sResult), max) = 0 then
+		fail sName; " margin field did not enforce maximum value ("; max*1.1; " -> "; sResult; " instead of "; max; ")"
+	end if
+End Sub
+
+Sub TestMargin2 (sName as string, id as long, min as single, max as single, increm as single)
+	dim sID as string, sResult as string
+
+	'Test limits using up/down (spinbutton) arrows
+	'It's hard to reach those arrow controls with an automated click, so we'll use the up/down arrow keys.
+	sID = _id(id)
+	WEditSetText(sID, str(max - increm))
+	WEditSetFocus(sID)
+
+	'Test upper limit
+	Play "{UP}" 'up arrow
+	sResult = EditText(sID)
+	if FWPrettyClose(val(sResult), max) = 0 then
+		fail sName; " margin field failed increment to max ["; sResult; ", "; max; ", "; increm; "]"
+	end if
+
+	Play "{UP}"
+	sResult = EditText(sID)
+	if FWPrettyClose(val(sResult), max) = 0 then
+		fail sName; " margin field failed increment from max ["; sResult; ", "; max; ", "; increm; "]"
+	end if
+
+	Play "{DOWN}"
+	sResult = EditText(sID)
+	if FWPrettyClose(val(sResult), max - increm) = 0 then
+		fail sName; " margin field failed decrement from max ["; sResult; ", "; max; ", "; increm; "]"
+	end if
+
+	WEditSetText(sID, str(min + increm))
+	WEditSetFocus(sID)
+	'Test lower limit
+	Play "{DOWN}" 'down arrow
+	sResult = EditText(sID)
+	if FWPrettyClose(val(sResult), min) = 0 then
+		fail sName; " margin field failed decrement to min ["; sResult; ", "; min; ", "; increm; "]"
+	end if
+
+	Play "{DOWN}"
+	sResult = EditText(sID)
+	if FWPrettyClose(val(sResult), min) = 0 then
+		fail sName; " margin field failed decrement from min ["; sResult; ", "; min; ", "; increm; "]"
+	end if
+
+	Play "{UP}"
+	sResult = EditText(sID)
+	if FWPrettyClose(val(sResult), min + increm) = 0 then
+		fail sName; " margin field failed increment from min ["; sResult; ", "; min; ", "; increm; "]"
+	end if
+
+	'Revert to a reasonable value
+	WEditSetText(sID, str((min + max)/2))
+End Sub
+
+'Check default values of all fields
+Sub TestDefaults()
+	FWVerifyText(_id(kcidFilPgSetMLE), "1.25""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetMRE), "1.25""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetMTE), "1.0""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetMBE), "1.0""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetEFE), "0.5""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetEHE), "0.5""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetSize), "Letter 8 1/2 x 11 in", 0, V_COMBO)
+	FWVerifyText(_id(kcidFilPgSetWE),  "8.5""", 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetHE),  "11.0""", 0, V_EDIT)
+	RecVerifySelected(_id(kcidFilPgSetPort),  "", V_OPTION, True)
+	RecVerifySelected(_id(kcidFilPgSetLand),  "", V_OPTION, False)
+	FWVerifyText(_id(kcidFilPgSetHdE),  DNExpTitle, 0, V_EDIT)
+	FWVerifyText(_id(kcidFilPgSetFtE),  "&[page],&[date]", 0, V_EDIT)
+End Sub
+
+'Try bad combinations of margins, sizes, and h/f distances.
+'id1, val1...id3, val3 are ids of controls and the bad values to set them to.
+'After the error dialog, focus is expected to return to one of these.
+'If only two bad values are needed, make id3 and val3 the same as id1 and val1.
+Sub TestBadCombo(id1 as long, val1 as string, id2 as long, val2 as string, _
+		id3 as long, val3 as string, errmsg as string)
+	dim hwnd as long
+	dim info as INFO
+	dim sResult as string
+
+	'Set all to acceptable values first, so we don't get an error from the wrong fields
+	WEditSetText(_id(kcidFilPgSetMLE), "1.0""")
+	WEditSetText(_id(kcidFilPgSetMRE), "1.0""")
+	WEditSetText(_id(kcidFilPgSetWE),  "8.5""")
+	WEditSetText(_id(kcidFilPgSetMTE), "1.0""")
+	WEditSetText(_id(kcidFilPgSetMBE), "1.0""")
+	WEditSetText(_id(kcidFilPgSetHE), "11.5""")
+	WEditSetText(_id(kcidFilPgSetEHE), "0.5""")
+	WEditSetText(_id(kcidFilPgSetEFE), "0.5""")
+
+	'Set the bad values
+	WEditSetText(_id(id1), val1)
+	WEditSetText(_id(id2), val2)
+	WEditSetText(_id(id3), val3)
+	WButtonClick(_id(FWIDOKButton))
+	'should trigger an error dialog
+	WaitUntilIdle(100)
+
+	hwnd = WFndWndC(FWErrorDlgTitle, FWDialogClass, FW_FOCUS)
+	if hwnd = 0 then
+		Log #0, "Invalid margin settings not caught."
+		'Must reopen dialog so the next scenario will work.
+		OpenFilePageSetupDlg(False)
+		Fail "Invalid margin settings not caught."
+	else
+		sResult = StaticText(_id(FWIDMsgBoxStatic))
+		if left$(sResult, len(errmsg)) <> errmsg then
+			Fail "Wrong error message for bad margin combo: ["; sResult; "] instead of ["; errmsg; "]"
+		end if
+
+		'Press OK
+		WButtonClick(_id(FWIDMsgBoxOKButton))
+		'check return to dialog
+		RecVerifyExistence(FWErrorDlgTitle, FWDialogClass, V_WINDOW, FALSE)
+		hwnd = WFndWndC(sDlgTitle, FWDialogClass, FW_FOCUS)
+		if hwnd = 0 then Fail "Can't find Page Setup dialog."
+		'Verify that focus went to correct editbox.
+		WGetInfo(WGetFocus(), info) 'Find the id of the ctrl that now has focus
+		if info.id <> id1 and info.id <> id2 and info.id <> id3 then
+			fail "After bad margins, focus went to ctrl #"; info.id; " instead of ";id1;", ";id2;", or ";id3
+		end if
+	end if
+End Sub

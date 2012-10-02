@@ -1,0 +1,58 @@
+#!/bin/bash
+# see http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html for standard
+# locations and environment variables
+
+XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
+
+FW_DATA="${XDG_DATA_HOME}/fieldworks"
+FW_CONFIG="${XDG_CONFIG_HOME}/fieldworks"
+FW_SAMPLES=${FW_SAMPLES:-/usr/share/fieldworks-examples}
+
+if [ ! -d "${FW_CONFIG}/" ]; then
+	(
+		echo "# Finishing user specific setup"
+		script_location="$(dirname "$0")"
+		mkdir -p "${FW_CONFIG}/Icu40/"
+		cp -R "${script_location}/Icu40/icudt40l" "${FW_CONFIG}/Icu40/"
+		cp -R "${script_location}/Icu40/data" "${FW_CONFIG}/Icu40/"
+		cp -R "${script_location}/Languages" "${FW_CONFIG}/"
+		cp -R "${script_location}/SIL" "${FW_CONFIG}/"
+		mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
+		mkdir -p "${FW_DATA}/Projects"
+
+
+		# TODO it would be nice to abs ${script_location} before writing it into the registry.
+		export MONO_REGISTRY_PATH="${FW_CONFIG}/registry"
+		WRITEKEY="${script_location}/../../lib/fieldworks/WriteKey.exe"
+		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootDataDir" "${FW_CONFIG}/"
+		mono "${WRITEKEY}" LM "Software/SIL" "Icu40DataDir" "${FW_CONFIG}/Icu40/icudt40l"
+		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootCodeDir" "${script_location}"
+		mono "${WRITEKEY}" LM "Software/SIL" "Icu40Dir" "${FW_CONFIG}/Icu40"
+
+
+		# REVIEW these were taken from nant setup registry may not be correct for an install.
+		mono "${WRITEKEY}" LM "SOFTWARE/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
+		mono "${WRITEKEY}" LM "SOFTWARE/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
+		mono "${WRITEKEY}" LM "SOFTWARE/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "${script_location}/../../lib/fieldworks"
+		mono "${WRITEKEY}" LM "SOFTWARE/SIL" "InitIcu" "1"
+		mono "${WRITEKEY}" LM "SOFTWARE/SIL/FieldWorks" "InstallLanguageUseLog" "False"
+		mono "${WRITEKEY}" LM "SOFTWARE/SIL/FieldWorks/7.0" "ProjectsDir" "${FW_DATA}/Projects"
+
+
+		# copy sample databases
+		if [ -d ${FW_SAMPLES}/ReleaseData ]; then
+			for db in ${FW_SAMPLES}/ReleaseData/*; do
+				dbname=$(basename "$db")
+				echo "# Copying sample database $dbname"
+				cp -r "$db" "${FW_DATA}/Projects/"
+				chmod -R gu+w "${FW_DATA}/Projects/$dbname"
+			done
+		fi
+	) |
+	zenity --progress \
+	  --title="User specific setup" \
+	  --percentage=0 \
+	  --pulsate \
+	  --auto-close
+fi

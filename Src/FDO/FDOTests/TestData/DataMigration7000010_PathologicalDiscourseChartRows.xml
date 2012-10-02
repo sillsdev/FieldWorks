@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000009">
+	<!-- Have one good chart, just so the code gets to work better. -->
+	<rt class="DsConstChart" guid="A89BA0EB-3D4E-4032-9AD4-B86A84697C4E" ownerguid="79EC6390-51E8-4543-A439-6D6F12AE7D50" >
+		<CmObject>
+		</CmObject>
+		<CmMajorObject />
+		<DsChart />
+		<DsConstChart>
+			<Rows>
+				<objsur t="r" guid="3A423141-E352-4FCF-9030-24AF0AF75539" />
+			</Rows>
+		</DsConstChart>
+	</rt>
+
+	<!-- Good CCR -->
+	<rt class="CmIndirectAnnotation" guid="3A423141-E352-4FCF-9030-24AF0AF75539" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">NoNotesOrCompDetails</Run>
+				</AStr>
+			</Comment>
+			<AnnotationType>
+				<!-- CCR -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation />
+	</rt>
+
+	<!-- Defective CCR, with no inbound reference from a Chart. -->
+	<rt class="CmIndirectAnnotation" guid="c1ec5c49-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<CmObject />
+		<CmAnnotation>
+			<Comment>
+				<AStr ws="en">
+					<Run ws="en">NoNotesOrCompDetails</Run>
+				</AStr>
+			</Comment>
+			<AnnotationType>
+				<!-- CCR -->
+				<objsur t="r" guid="50C1A53D-925D-4F55-8ED7-64A297905346" />
+			</AnnotationType>
+		</CmAnnotation>
+		<CmIndirectAnnotation>
+			<AppliesTo>
+				<objsur t="r" guid="c1ec5c4a-e382-11de-8a39-0800200c9a66" />
+				<objsur t="r" guid="c1ec5c4b-e382-11de-8a39-0800200c9a66" />
+			</AppliesTo>
+		</CmIndirectAnnotation>
+	</rt>
+	<!-- Defective CCA (CmIndirectAnnotation) that is in the AppliesTo prop of a defective CCR (c1ec5c49-e382-11de-8a39-0800200c9a66) -->
+	<rt class="CmIndirectAnnotation" guid="c1ec5c4a-e382-11de-8a39-0800200c9a66" ownerguid="9719A466-2240-4DEA-9722-9FE0746A30A6" >
+		<CmObject>
+		</CmObject>
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- CCA type-->
+				<objsur t="r" guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec8360-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+		<CmIndirectAnnotation />
+	</rt>
+	<!-- Another defective CCA (CmBaseAnnotation). -->
+	<rt guid="c1ec5c4b-e382-11de-8a39-0800200c9a66" class="CmBaseAnnotation">
+		<CmObject />
+		<CmAnnotation>
+			<AnnotationType>
+				<!-- CCA type-->
+				<objsur t="r" guid="EC0A4DAD-7E90-4E73-901A-21D25F0692E3" />
+			</AnnotationType>
+			<InstanceOf>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec835f-e382-11de-8a39-0800200c9a66" t="r" />
+			</InstanceOf>
+		</CmAnnotation>
+		<CmBaseAnnotation>
+			<BeginObject>
+				<!-- A CmPossibility -->
+				<objsur guid="c1ec8360-e382-11de-8a39-0800200c9a66" t="r" />
+			</BeginObject>
+		</CmBaseAnnotation>
+	</rt>
+
+	<!-- common data -->
+</languageproject>

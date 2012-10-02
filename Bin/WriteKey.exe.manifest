@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly manifestVersion="1.0" xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1">
+  <asmv1:assemblyIdentity version="1.0.0.1" processorArchitecture="x86" name="WriteKey.exe" type="win32" publicKeyToken="0000000000000000" language="neutral" />
+  <description xmlns="urn:schemas-microsoft-com:asm.v1">Writes Registry Keys</description>
+  <application />
+  <entryPoint>
+	<assemblyIdentity name="WriteKey" version="1.0.4028.29941" language="neutral" processorArchitecture="x86" />
+	<commandLine file="WriteKey.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+	<security>
+	  <applicationRequestMinimum>
+		<PermissionSet class="System.Security.PermissionSet" version="1" Unrestricted="true" ID="Custom" SameSite="site" />
+		<defaultAssemblyRequest permissionSetReference="Custom" />
+	  </applicationRequestMinimum>
+	   <requestedPrivileges>
+		<requestedExecutionLevel level="requireAdministrator" uiAccess="false" />
+	  </requestedPrivileges>
+	</security>
+  </trustInfo>
+  <dependency>
+	<dependentOS>
+	  <osVersionInfo>
+		<os majorVersion="4" minorVersion="10" buildNumber="0" servicePackMajor="0" />
+	  </osVersionInfo>
+	</dependentOS>
+  </dependency>
+  <dependency>
+	<dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+	  <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="2.0.50727.0" />
+	</dependentAssembly>
+  </dependency>
+  <dependency>
+	<dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="WriteKey.exe" size="5632">
+	  <assemblyIdentity name="WriteKey" version="1.0.4028.29941" language="neutral" processorArchitecture="x86" />
+	  <hash>
+		<dsig:Transforms>
+		  <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+		</dsig:Transforms>
+		<dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+		<dsig:DigestValue>hozFctQ0NBgaLZFqV1cSD+oNtls=</dsig:DigestValue>
+	  </hash>
+	</dependentAssembly>
+  </dependency>
+</asmv1:assembly>

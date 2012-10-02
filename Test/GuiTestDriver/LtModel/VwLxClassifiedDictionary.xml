@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<classified-dictionary role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer/">
+
+  <popup title="Information" role="dialog">
+	<ok role="button" path="$ok" close="yes"/>
+  </popup>
+
+  <!-- the document pane -->
+  <var id="lxClassDHead" set="9:XCore.PaneBar/9:Classified Senses"/>
+  <entries role="pane">
+	<title name="Classified Senses" path="$lxClassDHead"/>
+	<show-unused name="Show Unused Items" path="$lxClassDHead;/9:$name">
+	   <checkbox path="/$NL;44:NAMELESS"/>
+	</show-unused>
+	<entry path="9:ClassDict/20:Root/20:Div[$ind;]">
+	   <paragraph path="/42:Paragraph[$row;]"> <!-- can use path="/value:rexp#something" -->
+		  <string path="/42:String"/> <!-- use path="[3]/value:rexp#something" -->
+	   </paragraph>
+	</entry>
+  </entries>
+
+</classified-dictionary>

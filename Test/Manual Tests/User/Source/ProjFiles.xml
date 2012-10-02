@@ -1,0 +1,112 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<structure file="Source\ProjFiles.xml">
+ <title tag="srcproj">HTML Help project files</title>
+ <index>
+  <li>Manual: project files</li>
+ </index>
+
+<partsAndFunctions>
+ <p>An HTML Help project consists of the collection of HTML and image files to be put in the help file and three special project files. HTML hacks will note that the html used for the table of contents and index file need not be XHTML (i.e., XML) compliant.</p>
+ <ul name="The project files are">
+  <li><p name="Project file (*.hhp)">This *.ini-like file contains the help file configuration data and list of HTML and image files to be placed in the help file. Each HTML file to appear in the help file is listed in the FILES section. Image files need not be listed if they appear in an anchor href attribute. The table of contents and index files are named in the OPTIONS section. A title, titlepage, the name of the output file and other information can also be specified in the OPTIONS section. We do not use INFOTYPES.</p>
+   <p name="Example">TestHelp.hhp
+<pre>[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=TestHelp.chm
+Contents file=TestHelp.hhc
+Default topic=TitlePage.htm
+Display compile progress=No
+Full-text search=Yes
+Index file=TestHelp.hhk
+Language=0x409 English (United States)
+Title=FieldWorks Test Manual
+
+[FILES]
+TitlePage.htm
+Welcome.htm
+nolink.htm
+Apps\maintask.htm
+	 . . .
+	 . . .
+Bugs\overview.htm
+
+[INFOTYPES]
+</pre></p>
+  </li>
+
+  <li><p name="Table of Contents file (*.hhc)">An HTML unordered list of content objects including the titles and uri's to their corresponding pages. Subgrouping of content titles is achieved by nesting unordered lists.</p>
+   <p name="Example">TestHelp.hhc
+<pre>&lt;HTML>
+&lt;HEAD>
+&lt;!-- Sitemap 1.0 -->
+&lt;/HEAD>&lt;BODY>
+&lt;UL>
+	&lt;LI> &lt;OBJECT type="text/sitemap">
+		&lt;param name="Name" value="FieldWorks Test Manual">
+		&lt;param name="Local" value="TitlePage.htm">
+		&lt;/OBJECT>
+	&lt;UL>
+		&lt;LI> &lt;OBJECT type="text/sitemap">
+			&lt;param name="Name" value="Welcome to the FieldWorks Test Manual">
+			&lt;param name="Local" value="Welcome.htm">
+			&lt;/OBJECT>
+		&lt;LI> &lt;OBJECT type="text/sitemap">
+			&lt;param name="Name" value="No Link Yet!">
+			&lt;param name="Local" value="nolink.htm">
+			&lt;/OBJECT>
+	&lt;/UL>
+	&lt;LI> &lt;OBJECT type="text/sitemap">
+		&lt;param name="Name" value="Testing a FieldWorks application">
+		&lt;param name="Local" value="Apps\maintask.htm">
+		&lt;param name="ImageNumber" value="1">
+		&lt;/OBJECT>
+	&lt;LI> &lt;OBJECT type="text/sitemap">
+		&lt;param name="Name" value="Software Bugs">
+		&lt;param name="Local" value="Bugs\overview.htm">
+		&lt;/OBJECT>
+			   . . .
+			   . . .
+	&lt;/UL>
+		. . .
+		. . .
+&lt;/UL>
+&lt;/BODY>&lt;/HTML>
+</pre></p>
+  </li>
+
+  <li><p name="Index file (*.hhk)">An HTML unordered list of index objects including index phrases, titles and uri's to corresponding pages. Subgrouping of index items is achieved by nesting unordered lists.</p>
+   <p name="Example">TestHelp.hhk
+<pre>&lt;HTML>
+&lt;HEAD>
+&lt;!-- Sitemap 1.0 -->
+&lt;/HEAD>&lt;BODY>
+&lt;UL>
+	&lt;LI> &lt;OBJECT type="text/sitemap">
+		&lt;param name="Name" value="about this manual">
+		&lt;param name="Name" value="Welcome to the FieldWorks Test Manual">
+		&lt;param name="Local" value="Welcome.htm">
+		&lt;/OBJECT>
+	&lt;LI> &lt;OBJECT type="text/sitemap">
+		&lt;param name="Name" value="abstract of this manual">
+		&lt;param name="Name" value="Welcome to the FieldWorks Test Manual">
+		&lt;param name="Local" value="Welcome.htm">
+		&lt;/OBJECT>
+	&lt;LI> &lt;OBJECT type="text/sitemap">
+		&lt;param name="Name" value="action: definition">
+		&lt;param name="Name" value="What is an action?">
+		&lt;param name="Local" value="TCL\Action.htm">
+		&lt;/OBJECT>
+	&lt;LI> &lt;OBJECT type="text/sitemap">
+		&lt;param name="Name" value="application testing">
+		&lt;param name="Name" value="Testing a FieldWorks application">
+		&lt;param name="Local" value="Apps\maintask.htm">
+		&lt;/OBJECT>
+		. . .
+		. . .
+&lt;/UL>
+&lt;/BODY>&lt;/HTML>
+</pre></p>
+  </li>
+ </ul>
+ </partsAndFunctions>
+</structure>

@@ -1,0 +1,74 @@
+
+/*********************************************************************************
+	File: piglatin.gdl
+
+	Sample GDL file for rendering Pig Latin.
+
+	Compile with Std SILDoulos (stddr.ttf).
+*********************************************************************************/
+
+#include "stddef.gdh"
+
+Bidi = false;
+
+// We use the following user-defined slot attribute to mark the members of the
+// consonant cluster that we are moving towards the end of the word:
+#define u_InitialCons user1
+
+table(glyph)
+
+	clsVowelUC = codepoint("AEIOU");
+	clsVowelLC = codepoint("aeiou");
+	clsVowel = (clsVowelUC clsVowelLC);
+
+	clsConsUC = codepoint("BCDFGHJKLMNPQRSTVWXYZ");
+	clsConsLC = codepoint("bcdfghjklmnpqrstvwxyz");
+	clsCons = (clsConsUC, clsConsLC);
+
+	// word-forming letters
+	clsWfUC = (clsVowelUC clsConsUC);
+	clsWfLC = (clsVowelLC clsConsLC);
+	clsWf = (clsWfUC clsWfLC);
+
+	// "a" and "y" to insert
+	g_aIns = codepoint("a");
+	g_yIns = codepoint("y");
+
+endtable;	// glyph
+
+table(sub)
+
+	// Note that the consonant cluster to be moved to the end of the word can be at most 3 letters long.
+
+	// The following three rules handle an upper case consonant (and possibly a consonant cluster) followed by a lower-case
+	// letter at the beginning of the word (the consonant cluster has not yet been marked with u_InitialCons).
+	// We need to not only switch the order but also switch the capitalization.
+	clsConsUC clsCons clsCons clsWfLC
+		>  clsWfUC$4:4  clsConsLC$1:1 {u_InitialCons = true}  @2 {u_InitialCons = true}  @3 {u_InitialCons = true}
+		/  _ {u_InitialCons == false}  ^  _ {u_InitialCons == @1.u_InitialCons}  _ {u_InitialCons == @1.u_InitialCons}  _;
+	clsConsUC clsCons clsWfLC
+		>  clsWfUC$3:3  clsConsLC$1:1 {u_InitialCons = true}  @2 {u_InitialCons = true}
+		/  _ {u_InitialCons == false} ^  _ {u_InitialCons == @1.u_InitialCons}  _;
+	clsConsUC clsWfLC
+		>  clsWfUC$2:2  clsConsLC$1:1 {u_InitialCons = true}
+		/  _ {u_InitialCons == false} ^ _;
+
+	// We have found a consonant or cluster followed by a word-forming letter. Switch the order, moving the consonant(s)
+	// toward the end of the word. Mark the members of the word-initial cluster.
+	clsCons clsCons clsCons clsWf
+		>  @4  @1 {u_InitialCons = true}  @2 {u_InitialCons = true}  @3 {u_InitialCons = true}
+		/ _  ^  _ {u_InitialCons == @1.u_InitialCons}  _ {u_InitialCons == @1.u_InitialCons}  _ {u_InitialCons == false};
+	clsCons clsCons clsWf
+		>  @3  @1 { u_InitialCons = true }  @2 {u_InitialCons = true}
+		/ _  ^  _ {u_InitialCons == @1.u_InitialCons}  _ {u_InitialCons == false};
+	clsCons clsWf  >  @2 @1 { u_InitialCons = true } / _ ^ _ {u_InitialCons == false};
+
+	// Here we have hit the end of the word--the word-initial consonant or cluster is not followed by another word-forming letter.
+	// Insert the "ay" at the end of the word, and associate them with the last letter of the cluster.
+	clsCons clsCons clsCons _ _  >  @1 @2 @3 g_aIns:3 g_yIns:3
+		/  _ {u_InitialCons == true}  _ {u_InitialCons == true} _ {u_InitialCons == true}  _  _;
+	clsCons clsCons _ _  >  @1 @2 g_aIns:2 g_yIns:2
+		/  _ {u_InitialCons == true}  _ {u_InitialCons == true} _  _;
+	clsCons _ _  >  @1 g_aIns:1 g_yIns:1  /  _ {u_InitialCons == true} _ _;
+
+endtable;

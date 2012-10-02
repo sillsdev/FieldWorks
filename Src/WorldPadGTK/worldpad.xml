@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+  <mime-type type="application/x-worldpad">
+	<comment>WorldPad Document</comment>
+	<comment xml:lang="fr">Document "WorldPad"</comment>
+	<glob pattern="*.wpx"/>
+  </mime-type>
+</mime-info>

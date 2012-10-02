@@ -1,0 +1,91 @@
+<Project name="WorldPadGTK" fileversion="2.0" language="C#" clr-version="Net_1_1" ctype="DotNetProject">
+  <Configurations active="Debug">
+	<Configuration name="Debug" ctype="DotNetProjectConfiguration">
+	  <Output directory="." assemblyKeyFile="." assembly="WorldPad" />
+	  <Build debugmode="True" target="Exe" />
+	  <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" clr-version="Net_1_1" />
+	  <CodeGeneration compiler="Mcs" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+	</Configuration>
+	<Configuration name="Release" ctype="DotNetProjectConfiguration">
+	  <Output directory="bin/Release" assembly="WorldPadGTK" />
+	  <Build debugmode="False" target="Exe" />
+	  <Execution runwithwarnings="True" consolepause="True" runtime="MsNet" clr-version="Net_1_1" />
+	  <CodeGeneration compiler="Mcs" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+	</Configuration>
+  </Configurations>
+  <Contents>
+	<File name="app.desktop" subtype="Code" buildaction="FileCopy" DeployService.TargetDirectoryId="Linux.DesktopApplications" />
+	<File name="WorldPad.cs" subtype="Code" buildaction="Compile" />
+	<File name="WorldPadAppModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="WorldPadDocModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="WpDoc.cs" subtype="Code" buildaction="Compile" />
+	<File name="IWorldPadAppController.cs" subtype="Code" buildaction="Compile" />
+	<File name="IWorldPadAppModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="IWorldPadDocController.cs" subtype="Code" buildaction="Compile" />
+	<File name="IWorldPadDocModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="IWorldPadDocView.cs" subtype="Code" buildaction="Compile" />
+	<File name="IWorldPadPaneView.cs" subtype="Code" buildaction="Compile" />
+	<File name="WorldPadAppController.cs" subtype="Code" buildaction="Compile" />
+	<File name="WorldPadDocController.cs" subtype="Code" buildaction="Compile" />
+	<File name="WorldPadDocView.cs" subtype="Code" buildaction="Compile" />
+	<File name="WorldPadPaneView.cs" subtype="Code" buildaction="Compile" />
+	<File name="WorldPadView.cs" subtype="Code" buildaction="Compile" />
+	<File name="WorldPadVc.cs" subtype="Code" buildaction="Compile" />
+	<File name="AfStyleDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="FileOpenDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="FilPgSetDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtBdrDlgPController.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtBulNumDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtFntDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtParaDlgRtlController.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtWrtSysDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="OldWritingSystemsDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="OptionsDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="WpFindReplaceDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="DialogFactory.cs" subtype="Code" buildaction="Compile" />
+	<File name="FilPgSetDlgModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="MySpinButton.cs" subtype="Code" buildaction="Compile" />
+	<File name="BulNumPreviewWidget.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtBdrDlgPModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtFntDlgModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtParaDlgRtlModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtWrtSysDlgModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="OldWritingSystemsDlgModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="OptionsDlgModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="FmtBulNumDlgModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="DrawItemEventArgs.cs" subtype="Code" buildaction="Compile" />
+	<File name="FileSaveDlgController.cs" subtype="Code" buildaction="Compile" />
+	<File name="FileOpenDlgModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="FileSaveModel.cs" subtype="Code" buildaction="Compile" />
+	<File name="WpStylesheet.cs" subtype="Code" buildaction="Compile" />
+	<File name="AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
+  </Contents>
+  <References>
+	<ProjectReference type="Gac" localcopy="True" refto="glade-sharp, Version=2.10.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+	<ProjectReference type="Gac" localcopy="True" refto="gtk-sharp, Version=2.10.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+	<ProjectReference type="Gac" localcopy="True" refto="System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+	<ProjectReference type="Gac" localcopy="True" refto="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+	<ProjectReference type="Gac" localcopy="True" refto="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+	<ProjectReference type="Gac" localcopy="True" refto="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+	<ProjectReference type="Project" localcopy="True" refto="SimpleRootSite" />
+	<ProjectReference type="Project" localcopy="True" refto="COMInterfaces" />
+	<ProjectReference type="Assembly" localcopy="True" refto="../../Output/Debug/Framework.dll" />
+	<ProjectReference type="Assembly" localcopy="True" refto="../../Output/Debug/BasicUtils.dll" />
+	<ProjectReference type="Assembly" localcopy="True" refto="../../Output/Debug/RootSite.dll" />
+	<ProjectReference type="Assembly" localcopy="True" refto="../../Output/Debug/FwCoreDlgsGTK.dll" />
+	<ProjectReference type="Assembly" localcopy="True" refto="../../Output/Debug/FwResources.dll" />
+	<ProjectReference type="Assembly" localcopy="True" refto="../../Output/Debug/Utils.dll" />
+	<ProjectReference type="Assembly" localcopy="True" refto="../../Output/Debug/FDO.dll" />
+	<ProjectReference type="Assembly" localcopy="True" refto="../../Output/Debug/FwCoreDlgWidgets.dll" />
+  </References>
+  <Deployment.LinuxDeployData scriptName="worldpad" />
+  <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="True" RelativeMakefileName="./Makefile" ExecuteTargetName="run" SyncReferences="True">
+	<BuildFilesVar Sync="True" Name="SOURCE_CODE_FILES" />
+	<DeployFilesVar />
+	<ResourcesVar Sync="True" Name="RESOURCES" />
+	<OthersVar />
+	<GacRefVar Sync="True" Name="PACKAGE_REFERENCES" />
+	<AsmRefVar Sync="True" Name="ASSEMBLY_REFERENCES" />
+	<ProjectRefVar Sync="True" Name="PROJECT_REFERENCES" />
+  </MonoDevelop.Autotools.MakefileInfo>
+</Project>

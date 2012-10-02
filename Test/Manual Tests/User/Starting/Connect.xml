@@ -1,0 +1,22 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Starting\Connect.xml">
+ <title tag="sttCon">Connecting to the SIL Intranet</title>
+ <index>
+  <li>SIL Intranet: connect</li>
+  <li>web address</li>
+ </index>
+ <prerequisites>
+  <p>Before you can connect to our website, you will need to:</p>
+  <ul>
+   <li>Install and be familiar with a web browser like Microsoft Internet Explorer or Netscape Navigator or a File Transfer Protocol (FTP) client.</li>
+   <li>Connect to the Internet via an Internet Service Provider (ISP). SIL is does not provide this service for the general public.</li>
+   <li>Understand what the <link uri="..\Milestone\SilIntranet.xml" type="module">SIL Intranet</link> is for.</li>
+  </ul>
+ </prerequisites>
+ <thingsToDo>
+  <p>Here are some things to do to get connected:</p>
+  <step>Start your browser and enter this universal resource locator (url), http://intranet.sil.org/ in its address box then press the &lt;Enter> key or click <link uri="http://intranet.sil.org/" type="doc">Connect now!</link></step>
+  <step link="FTP now!" uri="..\nolink.xml">If you are using an FTP client, ....</step>
+  <step link="Click this" uri="http://intranet.sil.org/softwaredev/test/index.html" type="doc">To go directly to the Language Software Testing Department website, copy http://intranet.sil.org/softwaredev/test/index.html to your browser's address box or</step>
+ </thingsToDo>
+</task>

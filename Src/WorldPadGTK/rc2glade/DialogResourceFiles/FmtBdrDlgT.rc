@@ -1,0 +1,25 @@
+// Extracted from FmtBdrDlg.rc
+kridFmtBdrDlgT DIALOGEX 0, 0, 277, 195
+STYLE DS_CONTEXTHELP | WS_CHILD | WS_TABSTOP
+EXSTYLE WS_EX_CONTEXTHELP | WS_EX_CONTROLPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+	LTEXT           "C&olor:",IDC_STATIC,15,13,35,10
+	PUSHBUTTON      "",kctidColor,16,20,88,15
+	LTEXT           "&Width:",IDC_STATIC,15,42,35,10
+	COMBOBOX        kctidFmtBdrDlgWidth,15,52,91,135,CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_TABSTOP
+	CTEXT           "Click below to apply borders:",IDC_STATIC,133,15,97,10
+	CONTROL         "&Top",kctidFmtBdrDlgTop,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,170,25,30,10
+	CONTROL         "&Right",kctidFmtBdrDlgTrailing,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,227,70,43,10
+	CONTROL         "&Bottom",kctidFmtBdrDlgBottom,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,165,125,35,10
+	CONTROL         "Le&ft",kctidFmtBdrDlgLeading,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | BS_NOTIFY | WS_TABSTOP,98,70,40,10
+	CONTROL         "Between colu&mns",kctidFmtBdrDlgCols,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,140,72,10
+	CONTROL         "B&etween rows",kctidFmtBdrDlgRows,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,150,74,10
+	CTEXT           "None",IDC_STATIC,10,130,20,10
+	CONTROL         1618,kctidFmtBdrDlgNoneT,"Static",SS_BITMAP | SS_NOTIFY,10,140,35,36,WS_EX_CLIENTEDGE
+	CTEXT           "Box",IDC_STATIC,55,130,20,10
+	CONTROL         1614,kctidFmtBdrDlgBox,"Static",SS_BITMAP | SS_NOTIFY,55,140,35,36,WS_EX_CLIENTEDGE
+	LTEXT           "Grid",IDC_STATIC,100,130,16,10
+	CONTROL         1616,kctidFmtBdrDlgGrid,"Static",SS_BITMAP | SS_NOTIFY,100,140,35,36,WS_EX_CLIENTEDGE
+	CONTROL         "",kctidFmtBdrDlgDiag,"Button",BS_OWNERDRAW | BS_FLAT,140,35,85,90
+END

@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE WpDoc SYSTEM "WorldPad.dtd">
+<WpDoc wpxVersion="2.0">
+
+<Languages>
+  <LgWritingSystem id="en" language="en" type="ISO-639-1">
+	<Name24>
+	  <AUni ws="en">English</AUni>
+	</Name24>
+	<Locale24><Integer val="1033"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<DefaultSerif24><Uni>Times New Roman</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>Arial</Uni></DefaultSansSerif24>
+	<DefaultMonospace24><Uni>Courier New</Uni></DefaultMonospace24>
+	<ICULocale24><Uni>en</Uni></ICULocale24>
+	<KeyboardType24><Uni>standard</Uni></KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1033"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+  <LgWritingSystem id="xipa" language="ipa - IPA" type="OTHER">
+	<Name24>
+	  <AUni ws="en">IPA</AUni>
+	</Name24>
+	<Locale24><Integer val="1078"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<FontVariation24><Uni>23=0</Uni></FontVariation24>
+	<DefaultSerif24><Uni>SILDoulosUnicodeIPA</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>SILDoulosUnicodeIPA</Uni></DefaultSansSerif24>
+	<DefaultMonospace24><Uni>SILDoulosUnicodeIPA</Uni></DefaultMonospace24>
+	<ICULocale24><Uni>xipa</Uni></ICULocale24>
+	<KeyboardType24><Uni>keyman</Uni></KeyboardType24>
+	<KeymanKeyboard24><Uni>IPA93 2.1 (Testing)</Uni></KeymanKeyboard24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1078"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+  <LgWritingSystem id="xpig" language="pig" type="OTHER">
+	<Description24>
+	  <AStr ws="en">
+		<Run ws="en">pig latin for demo purposes</Run>
+	  </AStr>
+	</Description24>
+	<Locale24><Integer val="1033"/></Locale24>
+	<RightToLeft24><Boolean val="false"/></RightToLeft24>
+	<DefaultSerif24><Uni>SILDoulos PigLatinDemo</Uni></DefaultSerif24>
+	<DefaultSansSerif24><Uni>SILDoulos PigLatinDemo</Uni></DefaultSansSerif24>
+	<DefaultMonospace24><Uni>SILDoulos PigLatinDemo</Uni></DefaultMonospace24>
+	<ICULocale24><Uni>xpig</Uni></ICULocale24>
+	<KeyboardType24><Uni>standard</Uni></KeyboardType24>
+	<Collations24>
+	  <LgCollation>
+		<Name30>
+		  <AUni ws="en">DefaultCollation</AUni>
+		</Name30>
+		<WinLCID30><Integer val="1033"/></WinLCID30>
+		<WinCollation30><Uni>Latin1_General_CI_AI</Uni></WinCollation30>
+	  </LgCollation>
+	</Collations24>
+  </LgWritingSystem>
+</Languages>
+
+<Styles>
+  <StStyle>
+	<Name17><Uni>Normal</Uni></Name17>
+	<Type17><Integer val="0"/></Type17>
+	<BasedOn17><Uni></Uni></BasedOn17>
+	<Next17><Uni>Normal</Uni></Next17>
+	<Rules17>
+	  <Prop spaceAfter="6000"/>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>Heading 1</Uni></Name17>
+	<Type17><Integer val="0"/></Type17>
+	<BasedOn17><Uni>Normal</Uni></BasedOn17>
+	<Next17><Uni>Normal</Uni></Next17>
+	<Rules17>
+	  <Prop bold="invert" fontsize="16000" fontsizeUnit="mpt" align="left" spaceBefore="6000" spaceAfter="6000" bulNumStartAt="1"/>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>File Name</Uni></Name17>
+	<Type17><Integer val="1"/></Type17>
+	<BasedOn17><Uni></Uni></BasedOn17>
+	<Next17><Uni></Uni></Next17>
+	<Rules17>
+	  <Prop>
+		<WsStyles9999>
+		  <WsProp ws="en" fontFamily="Courier New" />
+		  <WsProp ws="xipa" fontFamily="Courier New" />
+		  <WsProp ws="xpig" fontFamily="Courier New" />
+		  <WsProp ws="xstk" fontFamily="Courier New" />
+		</WsStyles9999>
+	  </Prop>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>Emphasized</Uni></Name17>
+	<Type17><Integer val="1"/></Type17>
+	<BasedOn17><Uni></Uni></BasedOn17>
+	<Next17><Uni></Uni></Next17>
+	<Rules17>
+	  <Prop italic="invert"/>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>Heading 2</Uni></Name17>
+	<Type17><Integer val="0"/></Type17>
+	<BasedOn17><Uni>Heading 1</Uni></BasedOn17>
+	<Next17><Uni>Normal</Uni></Next17>
+	<Rules17>
+	  <Prop bold="off" fontsize="14000" fontsizeUnit="mpt" spaceBefore="6000"/>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>Menu Commands</Uni></Name17>
+	<Type17><Integer val="1"/></Type17>
+	<BasedOn17><Uni>File Name</Uni></BasedOn17>
+	<Next17><Uni></Uni></Next17>
+	<Rules17>
+	</Rules17>
+  </StStyle>
+  <StStyle>
+	<Name17><Uni>Numbered</Uni></Name17>
+	<Type17><Integer val="0"/></Type17>
+	<BasedOn17><Uni>Normal</Uni></BasedOn17>
+	<Next17><Uni>Numbered</Uni></Next17>
+	<Rules17>
+	  <Prop firstIndent="-21600" leadingIndent="7200" bulNumScheme="10" bulNumTxtAft="."/>
+	</Rules17>
+  </StStyle>
+</Styles>
+
+<Body docRightToLeft="false">
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Heading 1"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en">Welcome to WorldPad!</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceBefore="6000" spaceAfter="6000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert" namedStyle="Emphasized">WorldPad</Run>
+		<Run ws="en"> is a simple word-processor that uses the SIL-developed </Run>
+		<Run ws="en" bold="invert" namedStyle="Emphasized">Graphite</Run>
+		<Run ws="en"> program to display complicated scripts. Here are some unique capabilities of WorldPad. </Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceBefore="12000" namedStyle="Heading 2"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en">Complex Scripts</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en">As this document shows, you can mix simple scripts (like English) with complex ones in WorldPad such as the phonetic text (IPA) for "Welcome to WorldPad":</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop align="center" spaceBefore="0" spaceAfter="12000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="xipa" fontsize="20000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">wɛlkʰəm tʰu wʊ˞ldpʰæd</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Heading 2"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en">Stacking Diacritics</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceAfter="0" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en">The following example demonstrates Graphite's ability to perform </Run>
+		<Run ws="en" namedStyle="Emphasized">smart rendering</Run>
+		<Run ws="en">, in this case displaying stacking diacritics:</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop align="center" spaceBefore="0" spaceAfter="0" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">We</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="2f60ff" fontFamily="Doulos SIL">̥</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">̖</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">̋</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">lc̘̠o</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="blue" fontFamily="Doulos SIL">̂</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">m̼</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">̀</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">̈̄è tö</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="black" fontFamily="Doulos SIL">̂</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL"> Wȯ</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="black" fontFamily="Doulos SIL">̑</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">r̻l</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="blue" fontFamily="Doulos SIL">̃</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">d</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">̞</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">̰Pȧ</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="red" fontFamily="Doulos SIL">̅</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="black" fontFamily="Doulos SIL">̋</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">d</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="black" fontFamily="Doulos SIL">̗</Run>
+		<Run ws="en" fontsize="24000" fontsizeUnit="mpt" forecolor="green" fontFamily="Doulos SIL">!</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Heading 2"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en">Reordering of Characters</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceAfter="6000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en">The following is the welcome sentence in Pig Latin. It is using Graphite's smart rendering capabilities to move the initial consonant cluster to the end of the word and follow it with "ay." Try typing ordinary English into the line below and watch Graphite turn it into Pig Latin. </Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop align="center" spaceBefore="6000" spaceAfter="12000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="xpig" fontsize="16000" fontsizeUnit="mpt" forecolor="blue">Welcome to WorldPad! </Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop namedStyle="Heading 2"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en">Notes</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceAfter="6000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert">File locations: </Run>
+		<Run ws="en">If you accepted the suggested folder when installing WorldPad, the Graphite font files mentioned below are in their relevant subfolders under </Run>
+		<Run ws="en" fontsize="9000" fontsizeUnit="mpt" fontFamily="Courier New">C:\Program Files\FieldWorks\Graphite</Run>
+		<Run ws="en" fontFamily="&lt;default serif&gt;">.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceBefore="6000" spaceAfter="6000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert">IPA: </Run>
+		<Run ws="en">In order to properly type IPA in WorldPad you need to install </Run>
+		<Run ws="en" bold="invert" namedStyle="Emphasized">Keyman</Run>
+		<Run ws="en"> and the IPA Keyman keyboard (</Run>
+		<Run ws="en" fontsize="9000" fontsizeUnit="mpt" namedStyle="File Name">ipa93_5.kmx</Run>
+		<Run ws="en">). Documentation for typing IPA can be found in </Run>
+		<Run ws="en" fontsize="9000" fontsizeUnit="mpt" namedStyle="File Name">ipa_release_notes.pdf</Run>
+		<Run ws="en"> in the same folder (opens with </Run>
+		<Run ws="en" italic="invert">Acrobat Reader</Run>
+		<Run ws="en">). </Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceAfter="6000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en">For more information on setting up </Run>
+		<Run ws="en" bold="invert" namedStyle="Emphasized">Keyman </Run>
+		<Run ws="en">for use with WorldPad,  press F1 and open WorldPad's help pages: </Run>
+		<Run ws="en" namedStyle="Emphasized">Installing and configuring Keyman 5.0 </Run>
+		<Run ws="en">and </Run>
+		<Run ws="en" namedStyle="Emphasized">Switching writing systems and keyboards in WorldPad</Run>
+		<Run ws="en">.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceBefore="6000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert">Pig Latin: </Run>
+		<Run ws="en">You can use a text editor to inspect the source for the Graphite Pig Latin font in </Run>
+		<Run ws="en" fontsize="9000" fontsizeUnit="mpt" namedStyle="File Name">piglatin.gdl</Run>
+		<Run ws="en">. Documentation for this font can be found in </Run>
+		<Run ws="en" fontsize="9000" fontsizeUnit="mpt" namedStyle="File Name">Pig_Latin_Demo.rtf</Run>
+		<Run ws="en">.</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceBefore="6000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert">WorldPad File Format: </Run>
+		<Run ws="en">WorldPad saves its files in XML. This means you can look at the underlying form of these files outside of WorldPad. Try opening this </Run>
+		<Run ws="en" fontsize="9000" fontsizeUnit="mpt" namedStyle="File Name">Welcome.wpx</Run>
+		<Run ws="en"> file in </Run>
+		<Run ws="en" namedStyle="Emphasized">Notepad</Run>
+		<Run ws="en"> to see how data and format information is saved. (If you accepted the suggested folder when installing WorldPad, the </Run>
+		<Run ws="en" fontsize="9000" fontsizeUnit="mpt" namedStyle="File Name">Welcome.wpx</Run>
+		<Run ws="en"> file is in the folder </Run>
+		<Run ws="en" fontsize="9000" fontsizeUnit="mpt" fontFamily="Courier New">C:\Program Files\FieldWorks\Worldpad</Run>
+		<Run ws="en">.)</Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+  <StTxtPara>
+	<StyleRules15>
+	  <Prop spaceBefore="6000" namedStyle="Normal"/>
+	</StyleRules15>
+	<Contents16>
+	  <Str>
+		<Run ws="en" bold="invert"></Run>
+	  </Str>
+	</Contents16>
+  </StTxtPara>
+</Body>
+
+<PageSetup>
+  <PageInfo>
+	<TopMargin9999><Integer val="72000"/></TopMargin9999>
+	<BottomMargin9999><Integer val="72000"/></BottomMargin9999>
+	<LeftMargin9999><Integer val="90000"/></LeftMargin9999>
+	<RightMargin9999><Integer val="90000"/></RightMargin9999>
+	<HeaderMargin9999><Integer val="36000"/></HeaderMargin9999>
+	<FooterMargin9999><Integer val="36000"/></FooterMargin9999>
+	<PageSize9999><Integer val="0"/></PageSize9999>
+	<PageHeight9999><Integer val="792000"/></PageHeight9999>
+	<PageWidth9999><Integer val="612000"/></PageWidth9999>
+	<PageOrientation9999><Integer val="0"/></PageOrientation9999>
+	<Header9999>
+	  <Str>
+		<Run ws="en">Welcome.wpx</Run>
+	  </Str>
+	</Header9999>
+	<Footer9999>
+	  <Str>
+		<Run ws="en">&amp;[page],&amp;[date]</Run>
+	  </Str>
+	</Footer9999>
+  </PageInfo>
+</PageSetup>
+
+</WpDoc>

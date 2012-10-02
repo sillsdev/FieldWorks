@@ -1,0 +1,12 @@
+// Extracted from AfFindDlg.rc
+kridEmptyReplaceDlg DIALOGEX 0, 0, 246, 70
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Replace"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+	ICON          "",kridConfirmReplaceIcon,10,5,21,20
+	LTEXT         "You are about to replace all occurrences of the specified writing system, style, and/or overlay tag. Are you sure you want to do this?",kcidConfirmEmptyReplaceText,37,9,200,27
+	PUSHBUTTON    "&Replace",kctidOk,43,47,50,15
+	DEFPUSHBUTTON "&Cancel",kctidCancel,99,47,50,15
+	PUSHBUTTON    "&Help...",kctidHelp,153,47,50,15
+END

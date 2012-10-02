@@ -1,0 +1,13 @@
+<word>
+  <form>yalozo</form>
+  <seq>
+	<morph wordType="root">
+	  <shortName>yalo (mat): yalo</shortName>
+	  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+	</morph>
+	<morph wordType="enclitic">
+	  <shortName>=zo (RelativeClause): zo</shortName>
+	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+</word>

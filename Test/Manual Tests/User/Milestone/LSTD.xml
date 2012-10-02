@@ -1,0 +1,19 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="Milestone\LSTD.xml">
+ <title tag="mstLstd">What is the Language Software Test Department?</title>
+ <index>
+  <li>Language Software Test Department</li>
+  <li>test department</li>
+  <li>responsibility: testing</li>
+ </index>
+ <definition>
+  <p>The Language Software Test Department is charged with testng FieldWorks software for SIL, the Summer Institute of Linguistics.</p>
+  <p>In addition to on-site personnel, participation from <link uri="Offsite.xml" type="module">off-site SIL and non-SIL members</link> is encouraged.</p>
+  <ul>
+   <li><p name="Location">The International Linguistics Center at 7500 W. Camp Wisdom Road, Dallas, TX 75236 USA</p></li>
+   <li><p name="Center Telephone">(972) 708-7400</p></li>
+   <li><p name="Department Telephone">(972) 708-7353</p></li>
+   <li><p name="e-mail"><link uri="Michael_Lastufka@sil.org" type="e-mail">Michael_Lastufka@sil.org</link></p></li>
+  </ul>
+ </definition>
+</concept>

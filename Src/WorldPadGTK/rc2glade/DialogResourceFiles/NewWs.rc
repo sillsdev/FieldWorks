@@ -1,0 +1,12 @@
+// Extracted from WorldPad.rc
+kridNewWs DIALOG DISCARDABLE  0, 0, 193, 99
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add a Writing System"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "Enter a unique identifier for the new writing system. Use the Ethnologue code for the language, and if needed, append an underscore followed by a regional or variant abbreviation.",IDC_STATIC,16,7,166,32
+	EDITTEXT        kctidWs,16,52,161,12,ES_AUTOHSCROLL
+	DEFPUSHBUTTON   "OK",kctidOk,26,78,41,14
+	PUSHBUTTON      "Cancel",kctidCancel,76,78,41,14
+	PUSHBUTTON      "Help...",kctidHelp,126,78,41,14
+END

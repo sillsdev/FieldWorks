@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="InsAn" num="2.5.1" abbr="InsAn" file="DN\InsertAnalysis.xml">
+ <title tag="InsAn">Insert-Analysis Tests</title>
+ <index>
+<li>Analysis</li>
+		<li>Insert: Analysis</li>
+ </index>
+
+
+  <introduction>
+
+<p>Insert an Analysis record.
+
+ </p>
+
+
+  </introduction>
+
+  <context>
+<p>  Subentry only enabled in DE mode. </p>
+<p>    See specs at
+
+
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc">DN Data Entry View</link>
+
+</p>
+  </context>
+
+
+
+
+<!--  CASE 1 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-->
+ <case id="InsAn" num="1.0" order="any">
+  <title tag="InsAn">Insert Analysis</title>
+  <context>
+<p>With a language project open in DN</p>
+</context>
+
+<!-- Step 1.1 -->
+  <step name="1.1" link="Bug">
+
+	Observe the current number of records displayed in the status bar (the N in M/N).  While in DE view, select Insert Analysis (from Insert menu or toolbar).
+
+	<r>DE view remains in effect.  A new record is displayed, with the caption "Analysis - Data Entry".  All fields are empty.  The visible fields are those which are "Always" visible by default in DE view (Title, Hypothesis, Research Plan, Discussion, Conclusions, Anthropology Codes, Status, Confidence, Researchers), as specified in
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc">DN Data Entry View</link>
+ - unless visibility settings have been changed.  The record number displayed in the lower right corner in the status bar is N+1/N+1, e.g. 11/11. (This assumes that the
+default sort [by creation date] is in effect: the record just created is ordered last.) </r>
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 1.2 -->
+  <step name="1.2" link="Bug">
+
+	Observe the current number of records displayed in the status bar.  While in Browse view, select Insert Analysis (from Insert menu or toolbar).
+
+	<r>View switches to DE.  Other than that, same result as in 1.1.</r>
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 1.3 -->
+  <step name="1.3" link="Bug">
+
+	Observe the current number of records displayed in the status bar.  While in Doc view, select Insert Analysis (from Insert menu or toolbar).
+
+	<r>View switches to DE.  Other than that, same result as in 1.1.</r>
+
+	<p name="bug">
+</p>
+  </step>
+
+
+<!-- Step 1.4 -->
+  <step name="1.4" link="Bug">
+
+	Change some of the visibility settings for DE view on the Tools - Options - Views dialog.  Then select Insert Analysis.
+
+	<r>The set of visible fields reflects the changes made to the DE view.</r>
+
+
+	<p name="bug">
+</p>
+  </step>
+
+
+<!-- Step 2.1 -->
+  <step name="2.1" link="Bug">
+
+	After inserting a new Analysis entry, change to Doc or Browse mode.  Look for the new Analysis entry.
+
+	<r>The new entry should be available from all modes. </r>
+
+
+	<p name="bug">
+</p>
+  </step>
+
+<!-- Step 2.2.0 -->
+  <step name="2.2.0" link="Bug">
+
+	While a filter is in effect that excludes empty records, select Insert Analysis.
+
+	<r> A warning dialog appears, saying, "This action requires that Filters be turned off." (If this dialog doesn't appear, the "Do not show" checkbox may have been
+ checked already. You can undo this by exiting DN, deleting the HKEY_CURRENT_USER\Software\SIL\FieldWorks\Data Notebook\Filter Dialog key
+in the registry, and restarting DN.)</r>
+
+
+	<p name="bug">
+</p>
+  </step>
+  <step name="2.2.1" link="Bug">
+
+	While the warning dialog in 2.2.0 is showing, and the checkbox for "Do not show
+	this dialog again" is cleared, press OK.
+
+	<r>Filter is automatically turned off and new entry appears as in 1.1. </r>
+
+
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="2.2.2" link="Bug">
+
+	After 2.2.1, re-enable the filter that excludes empty records, then
+	select Insert Analysis.
+
+	<r>The warning dialog appears again, saying, "This action requires that Filters be turned off." </r>
+
+
+	<p name="bug">
+</p>
+  </step>
+  <step name="2.2.3" link="Bug">
+
+	While the warning dialog in 2.2.2 is showing, check the checkbox for "Do not show
+	this dialog again", and press OK.
+
+	<r>Filter is automatically turned off and new entry appears as in 1.1. </r>
+
+
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="2.2.4" link="Bug">
+
+	After 2.2.3, re-enable the filter that excludes empty records, then
+	select Insert Analysis.
+
+	<r>This time no warning dialog appears.
+ Filter is automatically turned off and new entry appears as in 1.1. </r>
+
+	<p name="bug">
+</p>
+  </step>
+
+ </case>
+
+
+<!--***********************************************-->
+
+
+
+
+
+
+ <update date="Apr-25-01" author="RickM">Put into XML format</update>
+ <update date="Sep-06-01" author="LarsH">Various updates, including 2.2.*</update>
+
+</test>

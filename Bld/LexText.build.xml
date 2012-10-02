@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
+<!-- This file is included in WordWorks_xWroks.build.xml -->
+<project name="LexText" default="LexTextExe" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<!-- ********************************************************************************** -->
+	<!-- Add super target here -->
+	<!-- -->
+	<target name="remakele" description="Completely rebuilds Flex.">
+		<property name="remakele" value="true"/>
+		<property name="remakeSfx" value="le"/>
+		<call target="remakeFOO" cascade="false"/>
+		<!--call target="InstallLanguage" cascade="false"/-->
+		<call target="FDOBrowser" cascade="false"/>
+		<!-- call target="FDOToPa" cascade="false"/ -->
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add individual project targets below this point. -->
+	<!-- FlexDePlugin,MorphologyEditorDll,ParserUI,Discourse -->
+	<target name="LexTextExe" description="Build LexText EXE project."
+		depends="LexTextDll,FieldWorks,xWorks,xCore,FDO,Framework,BasicUtils,FwControls,COMInterfaces,FwCoreDlgs,xCoreInterfaces,RootSite,
+		FlexDePlugin,SilSidePane,FlexUIAdapter,xCoreOpenSourceAdapter,ITextDll,LexEdDll,Discourse,RBRExtensions,FwRemoteDatabaseConnectorService">
+		<call target="LexTextExe-nodep" cascade="false"/>
+	</target>
+	<target name="LexTextExe-nodep" description="Build LexTextExe project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/LexText/LexTextExe"/>
+		<call target="vsconvert-convert"/>
+	</target>
+		<!-- -->
+	<target name="FlexDePlugin" description="Build FlexDePlugin project."
+		depends="BasicUtils,FwCoreDlgs,FwResources,FwUtils,Reporting,xCoreInterfaces,SilUtils,XMLUtils,xWorks">
+		<call target="FlexDePlugin-nodep" cascade="false"/>
+	</target>
+	<target name="FlexDePlugin-nodep" description="Build FlexDePlugin project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/LexText/FlexDePlugin"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<target name="LexTextDll" description="Build LexText DLL project."
+		depends="RootSite,xCoreInterfaces,xWorks,xCore,FDO,Framework,FwUtils,BasicUtils,FwControls,COMInterfaces,
+		FwCoreDlgs,ParserCore,DetailControls,XMLViews,XMLUtils,LexTextControls,ITextDll,
+		MessageBoxExLib,Reporting,ParserUI">
+		<call target="LexTextDll-nodep" cascade="false"/>
+	</target>
+	<target name="LexTextDll-nodep" description="Build LexTextDll project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/LexText/LexTextDll"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- ITextDll also calls into ScrControls in BTE version. We can't add that as dependency though. -->
+	<target name="ITextDll" description="Build ITextDll project."
+		depends="xWorks,xCore,FDO,FdoUi, Reporting,RootSite,xCoreInterfaces,FwResources,
+		XMLViews,FxtDll,Framework,BasicUtils,XMLUtils,FwControls,LexTextControls,COMInterfaces,
+		FwCoreDlgs,Widgets,Filters,SimpleRootSite,copy-uiAutomation,DetailControls,FwUtils,ParserCore">
+		<call target="ITextDll-nodep" cascade="false"/>
+	</target>
+	<target name="ITextDll-nodep" description="Build ITextDll project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/LexText/Interlinear"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="Discourse" description="Build Discourse project."
+			depends="ITextDll">
+		<call target="Discourse-nodep" cascade="false"/>
+	</target>
+	<target name="Discourse-nodep" description="Build Discourse project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/LexText/Discourse"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="LexEdDll" description="Build xWorks project."
+			depends="xWorks,xCore,FDO,Framework,BasicUtils,FwControls,COMInterfaces,FdoUi,MessageBoxExLib,Filters,
+			FwCoreDlgs,LexTextControls,RootSite,xCoreInterfaces,XMLUtils,DetailControls,SimpleRootSite,mkfwk,mkvw,mklg,
+			Widgets,PhonEnvValidator,FwUtils,ParserCore,MGA,XMLViews,FwResources,Sfm2Xml,MorphologyEditorDll,FxtDll,FixFwDataDll">
+		<call target="LexEdDll-nodep" cascade="false"/>
+	</target>
+	<target name="LexEdDll-nodep" description="Build LexEdDll project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/LexText/Lexicon"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<target name="MorphologyEditorDll" description="Build Morphology Editor DLL project."
+		depends="xWorks,xCore,FDO,FdoUi,Framework,BasicUtils,FwControls,COMInterfaces,CoreImpl,FwCoreDlgs,
+			LexTextControls,FwResources,Filters,RootSite,xCoreInterfaces,XMLViews,XMLUtils,
+			DetailControls,SimpleRootSite,PhonEnvValidator,DetailControls,Sfm2Xml,Widgets,
+			FwUtils,EncConvertersDlls,ParserCore,MGA,FwCoreDlgs,
+			EncConvertersDlls,ITextDll">
+		<call target="MorphologyEditorDll-nodep" cascade="false"/>
+	</target>
+	<target name="MorphologyEditorDll-nodep" description="Build MorphologyEditorDll project.">
+		<property name="dir.srcProj" value="${fwroot}/Src/LexText/Morphology"/>
+		<call target="vsconvert-convert"/>
+	</target>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add internal project targets here. These should not be called outside of this project. -->
+	<!-- -->
+	<target name="remakele-internal" description="Completely rebuilds FLex - don't call directly">
+		<property name="fw-remake-internal-error" value="true"/>
+		<call target="remakele-internal-core" cascade="false"/>
+		<property name="fw-remake-internal-error" value="false"/>
+	</target>
+	<target name="remakele-internal-core" description="Allows for replacing two 'call' task with one 'depends'."
+		 depends="LexTextExe"/>
+	<!-- -->
+	<!-- ********************************************************************************** -->
+	<!-- Add project includes here -->
+	<!-- -->
+	<!-- -->
+</project>

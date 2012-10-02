@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- This script requires the Doulos SIL IPA font and Keyman keyboard IME --><!-- Generates Grammar Scketch --><!-- Adds an affix template to Adjective, Verb and Noun grammar categories -->
+<accil on-fail="assert">
+   <bug id="LT-7771"/>
+   <bug id="LT-5810"/>
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+   <var id="projectName" set="&quot;English IPA&quot;"/>
+
+  <on-application run="ok" args="-db  $projectName"  on-fail="assert">
+
+  <!--  4.	Examine morph sketch: Go to Grammar / Grammar Sketch  -->
+	<click select="menubar/view/grammar/grammar-sketch"/>
+  <!--  a.	Click on the Generate button  -->
+	<click select="grammar-sketch/generate"/>
+  <!--  b.	In section 5 (Inflection), notice that it says there is no inflection.  But we know that there is!  -->
+	<insert wait="2000">{PGDN 5}</insert>
+
+  <!--  5.	Add inflectional templates: Go to Grammar / Category Edit  -->
+	<click select="menubar/view/grammar/category-edit"/>
+
+  <!--  a.	Adjective: add it -->
+	<click select="toolbar/insert-category"/>
+	<on-dialog title="Add from Catalog">
+	   <insert wait="1000">{HOME}~</insert>
+	</on-dialog>
+
+<model select="category-edit[@role='view']">
+
+  <!--  i.	Insert inflectional template  -->
+  <var id="ind" set="1"/>
+  <click side="right" select="category/slice/affix-templates"/>
+  <insert>{DOWN}~</insert><!-- Create affix template -->
+  <!--  ii.	Right-click on Stem and Insert slot after stem  -->
+  <var id="col" set="1"/>
+  <click side="right" select="category/slice/table/head" path="/value:rexp#STEM"/>
+	<insert wait="500">{DOWN}~</insert>
+
+  <!--  iii.	Add an optional slot  -->
+	<var id="opSlot" set="Add an optional slot to Adjective"/>
+	<on-dialog title="Choose Slot">
+	  <click path="9:$opSlot;/41:$opSlot;/30:$opSlot"/>
+	  <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	  <insert wait="300">{ESC}</insert>
+	  <insert wait="300">{ESC}</insert>
+	</on-dialog>
+  <!--  iv.	Rename it to Degree  -->
+  <var id="col" set="2"/>
+  <click dx="50" select="category/slice/table/head"/>
+	<insert wait="200">{HOME}+{END}</insert>
+	<insert wait="200">Degree</insert>
+
+  <!--  v.	Right-click in the Degree column and choose Add inflectional morpheme to Degree  -->
+  <click side="right" select="category/slice/table/head" path="/value:rexp#Degree"/>
+	<insert>~</insert><!-- Add inflectional morpheme to Future -->
+  <!--  vi.	Select -ist SUP  -->
+	<var id="crInfAfx" set=" Create new inflectional affix "/>
+	<on-dialog title="Choose Inflectional Affixes">
+	  <click path="9:XCoreUserControl/9:NAMELESS/20:RootSite/24:Table/28:Row/29:Cell/40:Picture"/>
+	  <click path="9:$crInfAfx;/41:$crInfAfx;/30:$crInfAfx"/>
+	</on-dialog>
+  <!--  vii.	Type -y#x0279;, make gloss be COMP  -->
+	<on-dialog title="New Entry">
+	   <insert wait="500" pause="300">e=r=</insert>
+	   <click path="9:Gloss:[2]/20:RootSite/$Text"/>
+	   <insert wait="500">COMP</insert>
+	   <click path="$create"/>
+	   <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	   <insert wait="300">{ESC}</insert>
+	   <insert wait="300">{ESC}</insert>
+	</on-dialog>
+
+  <!--  b.	Noun  -->
+   <click select="categories/record" path="Noun"/>
+  <!--  i.	Insert inflectional template  -->
+  <var id="ind" set="1"/>
+  <click side="right" select="category/slice/affix-templates"/>
+	<insert>{DOWN}~</insert><!-- Create affix template -->
+  <!--  ii.	Right-click on Stem and Insert slot after stem  -->
+  <var id="col" set="1"/>
+  <click side="right" select="category/slice/table/head" path="/value:rexp#STEM"/>
+	<insert wait="500">{DOWN}~</insert>
+  <!--  iii.	Add an optional slot  -->
+	<var id="opSlot" set="Add an optional slot to Noun"/>
+	<on-dialog title="Choose Slot">
+	 <click path="9:$opSlot;/41:$opSlot;/30:$opSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+	</on-dialog>
+  <!--  iv.	Rename it to Number  -->
+  <var id="col" set="2"/>
+  <click dx="50" select="category/slice/table/head"/>
+	<insert wait="200">{HOME}+{END}</insert>
+	<insert wait="200">Number</insert>
+
+  <!--  v.	Right-click in the Number column and choose Add inflectional morpheme to Number  -->
+  <click side="right" select="category/slice/table/head" path="/value:rexp#Number"/>
+	<insert>~</insert><!-- Add inflectional morpheme to Future -->
+  <!--  vi.	Select -z PL  -->
+	<on-dialog title="Choose Inflectional Affixes">
+	  <click path="$NL;9:XCoreUserControl/$nl;/20:RootSite/24:Table[2]/$Col;/40:Picture"/>
+	  <click path="$ok"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+	</on-dialog>
+
+  <!--  c.	Verb  -->
+   <click select="categories/record" path="Verb"/>
+  <!--  i.	Insert inflectional template  -->
+  <var id="ind" set="1"/>
+  <click side="right" select="category/slice/affix-templates"/>
+  <insert>{DOWN}~</insert><!-- Create affix template -->
+  <!--  ii.	Right-click on Stem and Insert slot after stem  -->
+  <var id="col" set="1"/>
+  <click side="right" select="category/slice/table/head" path="/value:rexp#STEM"/>
+	<insert wait="500">{DOWN}~</insert>
+
+  <!--  iii.	Add an optional slot  -->
+	<var id="opSlot" set="Add an optional slot to Verb"/>
+	<on-dialog title="Choose Slot">
+	 <click path="9:$opSlot;/41:$opSlot;/30:$opSlot"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+	</on-dialog>
+  <!--  iv.	Rename it to Tense  -->
+  <var id="col" set="2"/>
+  <click dx="50" select="category/slice/table/head"/>
+	<insert wait="200">{HOME}+{END}</insert>
+	<insert wait="200">Tense</insert>
+
+  <!--  v.	Right-click in the Tense column and choose Add inflectional morpheme to Tense  -->
+  <click side="right" select="category/slice/table/head" path="/value:rexp#Tense"/>
+	<insert wait="200">~</insert>
+  <!--  vi.	Select -d PAST  -->
+	<on-dialog title="Choose Inflectional Affixes">
+	  <click path="$NL;9:XCoreUserControl/$nl;/20:RootSite/24:Table[3]/$Col;/40:Picture"/>
+	  <click path="$ok"/>
+	 <insert wait="300">{ESC}</insert> <!-- The dialog doesn't go away when invoked via {RETURN} -->
+	 <insert wait="300">{ESC}</insert>
+	 <insert wait="300">{ESC}</insert>
+	</on-dialog>
+
+</model>
+
+</on-application>
+</accil>

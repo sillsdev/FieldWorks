@@ -1,0 +1,3 @@
+These image files are the original source files used in various WordWorks applications.
+
+We actually put them in image lists within the applications, so technically we do not need to save them in a place like we do here.  If we ever want to go back and revise an image, however, we'll need the original source file of the image.  That's what this directory is for.

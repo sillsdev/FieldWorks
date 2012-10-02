@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="edtdeleffdiag" num="2.2.12.1" abbr="edded" file="FW\EdtDelEffDiag.xml">
+ <title tag="edtdel">Edit-Delete Effects Dialog Tests</title>
+<index>
+<li>Delete Effects</li>
+<li>Edit: Delete Effects</li>
+</index>
+
+<introduction>
+<p>This dialog is invoked in response to a deletion action in which the target for deletion has sub-entries or incoming links from other objects that would be broken. This can be in response to the user hitting the Delete key, or from the Edit-Delete menu item.</p>
+</introduction>
+<context>
+<p>See specs at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Delete" type="doc">Edit: Delete</link>
+and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/Delete/DeleteEffects.html" type="doc">Edit : Delete Effects (dialog)</link>
+and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/Incoming/IncomingReferencesExplorer.html" type="doc">Edit : Delete (Incoming References Explorer)</link>
+</p>
+</context>
+
+<case id="eddedAct" num="0" order="any">
+<title tag="eddedAct">Activate Edit Delete Effects Dialog</title>
+<context>
+<p>User is deleting an entry</p>
+</context>
+<step name="0.1" link="Bug">Compare the dialog visually with the picture in the specs at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/Delete/DeleteEffects.html" type="doc">Edit : Delete Effects (dialog)</link>.
+ <r>
+<ul>
+  <li>The same fields are present.</li>
+  <li>Button placement is similar.</li>
+  <li>Justification of lines is correct.</li>
+  <li>No glitches in display.</li>
+ </ul>
+</r>
+ <p name="bug">Edit-Delete Effects Dialog display error</p>
+</step>
+<step name="0.2">Test the dialog using <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link>.
+ <r>
+<ul>
+  <li>"Yes" results in the dialog disappearing and removing the entry.</li>
+  <li>"No" results in the dialog disappearing and leaving the entry unchanged.</li>
+  <li>Report any failures using the suggested title "Edit-Delete Effects Dialog"</li>
+ </ul>
+</r>
+</step>
+</case>
+
+<case id="eddedEff" num="1" order="any">
+<title tag="eddedEff">Delete Effects Dialog Display</title>
+<context>
+<p>Deleting an entry with subentries and references from other entries</p>
+</context>
+<step name="1.1" link="Bug">Check the info displayed about the entry to be deleted.
+ <r>
+<ul>
+  <li>Name of entry and date of creation is accurate.</li>
+  <li>Number of subentries is correct.</li>
+  <li>Number of references from other places is correct.</li>
+ </ul>
+</r>
+<p name="bug">Edit-Delete Effects Dialog displays incorrect info about item being deleted</p>
+</step>
+</case>
+
+<update date="May-29-02" author="JoelC">Test created.</update>
+
+
+</test>

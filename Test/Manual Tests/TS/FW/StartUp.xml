@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="startup" num="1.1" abbr="inst" file="FW\StartUp.xml">
+<title tag="startup">Start up and No Entry Condition Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The Data Notebook and Topics List Editor need atleast one entry to display in the main window when the application loads. The following tests cover the special cases when there are no entries in a language project or topics list. A special dialog should be displayed in either case to ask the user what he/she would like to do. There is also a special dialog displayed when Data Notebook is started for the first time (and until the user tells the dialog to go away).</p>
+<p>Specifications <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/GeneralUI/EmptyPane/EmptyPane.htm" type="doc">Starting up and No Entry Conditions</link>.</p>
+</introduction>
+<context>
+<p>Relatively few setting combinations are possible. Even so, testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the word "Start Up".</p>
+</context>
+
+<case id="startup1" num="1" order="any">
+<title tag="startup1">Welcome Dialog</title>
+<context>
+<p>When the application has just been installed and is run for the first time.</p>
+</context>
+
+<step name="1.1" link="Bug">
+After installing the application, double click on the icon to load it. View the state of the application on initial start up.
+<r>The application should load with the Welcome dialog described in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/GeneralUI/EmptyPane/EmptyPane.htm" type="doc">the specifications</link>.</r>
+<p name="bug">Start Up: the application did not load with the start up dialog</p>
+</step>
+
+<step name="1.2" link="Bug">
+Visually inspect the Welcome dialog.
+<r>The dialog should appear approximately the same as the one displayed in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/GeneralUI/EmptyPane/EmptyPane.htm" type="doc">the specifications</link>.</r>
+<p name="bug">Start Up: Welcome dialog visually incorrect</p>
+</step>
+
+<step name="1.3" link="Bug">
+Use <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> to test the buttons displayed on the dialog.
+<r>
+<ul>
+<li>Start - simply closes the dialog and drops the user into the current record.</li>
+<li>Tutorials - closes the dialog and launches the tutorials</li>
+<li>New - closes the dialog and launches the New Language Definition Wizard.</li>
+<li>Open - closes the dialog and opens the Open Language Project dialog.</li>
+<li>Exit - closes the dialog and the application.</li>
+</ul>
+</r>
+<p name="bug">Start Up: Welcome dialog start button not working</p>
+<p name="bug">Start Up: Welcome dialog tutorials button not working</p>
+<p name="bug">Start Up: Welcome dialog new button not working</p>
+<p name="bug">Start Up: Welcome dialog open button not working</p>
+<p name="bug">Start Up: Welcome dialog exit button not working</p>
+</step>
+
+<step name="1.4" link="Bug">
+Use <link uri="../StdCtrls/CheckBox.xml" type="module">Check Box Tests</link> to test the "Don't show me anymore" checkbox.
+<r>Check box turns off the Welcome dialog, so the user won't see it any more. The design is that this dialog will continue to appear until the user turns it off</r>
+<p name="bug">Start Up: Welcome dialog check box doesn't turn off dialog</p>
+<p name="todo">Find out what registry entry is for this check box so dialog can be tested on machine that has previous install</p>
+</step>
+
+<step name="1.5" link="Bug">
+Test the remaining dialog controls using <link uri="../StdCtrls/Dialog.xml" type="module">Dialog Tests</link>.
+<r>Report any errors with "Start Up: Welcome" as the name of the dialog.</r>
+<p name="bug">Start Up: Welcome dialog basic control not working</p>
+</step>
+
+</case>
+
+
+<case id="startup2" num="2" order="any">
+<title tag="startup2">Empty Project Dialog</title>
+<context>
+<p>On application opening, there are no entries in the project.</p>
+</context>
+
+<step name="2.1" link="Bug">
+Create a new project or delete all the entries of an existing project to get a project that contains no entries. (Or do the same with list items for a list in TLE).
+<r>If a project or list is open with no entries or list items it should display the Empty &lt;Project&gt; dialog (where Project is Data Notebook, Topics List, etc.)</r>
+<p name="bug">Start Up: Empty Project dialog does not open correctly</p>
+</step>
+
+<step name="2.2" link="Bug">
+Visually inspect the Empty Project dialog displayed.
+<r>The dialog should be approximately the same to the one defined in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/GeneralUI/EmptyPane/EmptyPane.htm#No Records in Database" type="doc">the specifications</link>.</r>
+<p name="bug">Start Up: Empty Project dialog does not agree with specs visually</p>
+</step>
+
+<step name="2.3" link="Bug">
+Use <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> to test the buttons displayed on the dialog.
+<r>The buttons displayed on this dialog are tailored to each application. In general there should be button(s) to insert new item(s), a button to import data from another format, and an exit button.  </r>
+<p name="bug">Start Up: Empty Project dialog button X does not work correctly</p>
+</step>
+
+<step name="2.4" link="Bug">
+Test the remaining dialog controls using <link uri="../StdCtrls/Dialog.xml" type="module">Dialog Tests</link>.
+<r>Report any errors with "Start Up: Empty Project" as the name of the dialog.</r>
+<p name="bug">Start Up: Empty Project dialog basic control not working</p>
+</step>
+
+</case>
+
+
+<case id="startup3" num="3" order="any">
+<title tag="startup3">Project Not Found Dialog</title>
+<context>
+<p>On opening the application, there is a problem opening the project</p>
+</context>
+
+<step name="3.1" link="Bug">
+Use the Command Line Syntax to try to open up a project or list that doesn't exist. In the Run box type something to this effect: <i>"C:\Program Files\FieldWorks\FwNotebook.exe" -proj Bob</i> Where the first part is the path of the application, and <i>-proj Bob</i> says to open up the project titled Bob. More info on <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/GeneralUI/StartingUp/StartingUp.htm#TargetCommandLineSyntax" type="doc">Command Line Syntax</link>
+<r>The application should open and display the Project Not Found dialog. (or Topics List Not Found, etc.)</r>
+<p name="bug">Start Up: Project Not Found dialog does not open correctly</p>
+<p name="note">Try <i>"C:\Program Files\FieldWorks\FwListEditor.exe" Bob -proj 'Lela-Teli Sample'</i> to get the Topics List Not Found dialog to open</p>
+</step>
+
+
+<step name="3.2" link="Bug">
+Visually inspect the Project Not Found Dialog. Compare it to the one displayed in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/GeneralUI/EmptyPane/EmptyPane.htm" type="doc">the specifications</link>.
+<r>The dialog should be approximately the same as the one in the specifications in accordance with the size, text and buttons displayed.</r>
+<p name="bug">Start Up: Project Not Found dialog does not agree with specs visually</p>
+</step>
+
+<step name="3.3" link="Bug">
+Use <link uri="../StdCtrls/Button.xml" type="module">Button Tests</link> to test the buttons displayed on the dialog.
+<r>The buttons displayed on this dialog are tailored to each application. In general there should be an Open button, a New Button and an Exit button. There may be additional buttons such as Restore.</r>
+<p name="bug">Start Up: Project Not Found dialog button X does not work correctly</p>
+</step>
+
+<step name="3.4" link="Bug">
+Test the remaining dialog controls using <link uri="../StdCtrls/Dialog.xml" type="module">Dialog Tests</link>.
+<r>Report any errors with "Start Up: Project Not Found" as the name of the dialog.</r>
+<p name="bug">Start Up: Project Not Found dialog basic control not working</p>
+</step>
+
+</case>
+
+
+<update date="Jun-20-02" author="RussD">Test script created.</update>
+
+</test>

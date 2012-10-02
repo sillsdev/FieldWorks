@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="ViewAccTest.xsl"?>
+<accil>
+ <on-application gui="TE" close="yes" path="C:\fw\output\debug" exe="TE.exe" on-fail="assert">
+  <glimpse id="ViewsOpen" path="button:Draft"/>
+  <if>
+   <condition is="true" id1="ViewsOpen"/>
+   <else>
+	<click path="tray:Views"/>
+   </else>
+  </if>
+  <click path="button:Draft"/>
+  <click path="menu:Format/menu:Style..." />
+  <on-dialog name="Style" title="Style" on-fail="log">
+   <click path="button:OK" />
+  </on-dialog>
+  <click for="all" path="menu:File/Import/Standard Format..." />
+  <on-dialog name="Import" title="Standard Format Import Setup" on-fail="log">
+   <click path="button:Cancel" />
+  </on-dialog>
+ </on-application>
+</accil>

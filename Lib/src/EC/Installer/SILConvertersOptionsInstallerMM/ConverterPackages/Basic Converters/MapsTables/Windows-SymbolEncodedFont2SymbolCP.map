@@ -1,0 +1,47 @@
+﻿; This file was edited using TECkitMappingEditorU.exe v3.0.2.0 on 7/9/2009.
+;   Conversion Type = Unicode_to_from_Legacy
+;   Left-hand side font = SILDoulos IPA93;12
+;   Right-hand side font = SILDoulos IPA93;12
+;   Main Window Position = 0,0,650,708
+;   Left-hand side Character Map Window Position = 650,0,449,442
+;   Right-hand side Character Map Window Position = 650,442,445,540
+;   Right-hand side code page = 42
+
+;Windows-Symbolfont2SymbolCPs.map
+;Copyright (c) 2009 SIL International.
+
+; Windows SymbolFont to CP_42 'narrow' transliterator
+;
+; This map has the effect of stripping off the high (0xF0) byte and returning
+; narrow data that is consistent with the (symbol) code page 42.
+;
+; It's useful for a situation like this:
+; Suppose a user opened an SFM document containing IPA93 data in Word and
+; applied the SILDoulos IPA93 font (so that Word would now store it as 0xFF..
+; values). Then without using the IPA93<>UNICODE converter, they saved the
+; document as UTF-8 (thinking that might convert it to Unicode). Since
+; 0xFF.. is valid "unicode" data (even though the data is *not*
+; unicode), this will be properly stored (though incorrectly interpreted).
+;
+; To solve this, they could open the SFM document using the Bulk SFM Converter
+; (opening the file as Unicode) and create a daisy-chain compound converter
+; for which the first step is this SymbolFont2SymbolCP (Unicode<>Legacy)
+; converter, which will get the data properly back to single byte legacy
+; data, followed by the SIL IPA93<>UNICODE converter which will properly
+; take those single bytes into a proper Unicode interpretation.
+
+LHSName	'WINDOWS-SymbolEncodedFont'
+RHSName	'WINDOWS-42
+DescriptiveName	'Windows SymbolEncodedFont to cp42 transliterator'
+Version	'1.0'
+Contact 'Bob Eaton at SIL'
+
+RHSFlags		()
+
+pass(Unicode_Byte)
+
+
+UniClass [UniSymbol]    = ( U+F000 .. U+F0FF )
+ByteClass [ByteSymbol]  = ( 00 .. 0xFF )
+
+[UniSymbol] <> [ByteSymbol]

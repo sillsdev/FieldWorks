@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ -z "${TMPDIR}" ]; then
+	export temp=/tmp
+else
+	export temp=${TMPDIR}
+fi
+# Mono has problem with unload appdomain, therefore we have to set env variable (see comment in
+# mono/mono/metadata/appdomain.c)
+MONO_NO_UNLOAD=1 exec mono --debug ${0}.exe "$@"

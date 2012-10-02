@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>class  unitpp::suite</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2>class  <A HREF="#DOC.DOCU">unitpp::suite</A></H2></H2><BLOCKQUOTE> A suite is a test that happens to be a collection of tests.</BLOCKQUOTE>
+<HR>
+
+<H2>Inheritance:</H2>
+<APPLET CODE="ClassGraph.class" WIDTH=600 HEIGHT=65>
+<param name=classes value="Ctest,Mtest.html,Csuite,Msuite.html">
+<param name=before value="M,M">
+<param name=after value="Md_,M">
+<param name=indent value="0,1">
+<param name=arrowdir value="down">
+</APPLET>
+<HR>
+
+<DL>
+<P><DL>
+<DT><H3>Public Methods</H3><DD><DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif> <B><A HREF="#DOC.1.7.1">suite</A></B>(const std::string&amp; name)
+<DD><I>Make an empty test suite</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>void <B><A HREF="#DOC.1.7.2">add</A></B>(const std::string&amp; id, const <!1><A HREF="testcase.html">testcase</A>&amp; t)
+<DD><I>Add a testcase to the suite</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   <!1><A HREF="test.html">test</A>* <B><A HREF="#DOC.1.7.3">get_child</A></B>(const std::string&amp; id)
+<DD><I> Get a child with the specified id.</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.7.4">operator()</A></B>()
+<DD><I>An empty implementation</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>void <B><A HREF="#DOC.1.7.5">visit</A></B>(<!1><A HREF="visitor.html">visitor</A>*)
+<DD><I>Allow a visitor to visit a suite node of the test tree</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>static   <!1><A HREF="suite.html">suite</A>&amp; <B><A HREF="#DOC.1.7.6">main</A></B>()
+<DD><I>Get a reference to the main test suite that the main program will run</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.7.7">SuiteSetup</A></B>()
+<DD><I>Initialize before running a test suite.</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>virtual   void <B><A HREF="#DOC.1.7.8">SuiteTeardown</A></B>()
+<DD><I>Cleanup after running a test suite.</I>
+</DL></P>
+
+</DL>
+<HR><H3>Inherited from <A HREF="test.html">test</A>:</H3>
+<DL>
+<P><DL>
+<DT><H3>Public Methods</H3><DD><DT>
+<IMG ALT="o" SRC=icon2.gif>virtual   void <B>Setup</B>()
+<DT>
+<IMG ALT="o" SRC=icon2.gif>virtual   void <B>Teardown</B>()
+</DL></P>
+
+</DL>
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+A suite is a test that happens to be a collection of tests. This is an
+implementation of the Composite pattern.</BLOCKQUOTE>
+<DL>
+
+<A NAME="suite"></A>
+<A NAME="DOC.1.7.1"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B> suite(const std::string&amp; name)</B></TT>
+<DD>Make an empty test suite
+<DL><DT><DD></DL><P>
+<A NAME="add"></A>
+<A NAME="DOC.1.7.2"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>void add(const std::string&amp; id, const <!1><A HREF="testcase.html">testcase</A>&amp; t)</B></TT>
+<DD>Add a testcase to the suite
+<DL><DT><DD></DL><P>
+<A NAME="get_child"></A>
+<A NAME="DOC.1.7.3"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   <!1><A HREF="test.html">test</A>* get_child(const std::string&amp; id)</B></TT>
+<DD>
+Get a child with the specified id.
+
+<DL><DT><DT><B>Returns:</B><DD>  0 if not found.<BR><DD></DL><P>
+<A NAME="operator()"></A>
+<A NAME="DOC.1.7.4"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void operator()()</B></TT>
+<DD>An empty implementation
+<DL><DT><DD></DL><P>
+<A NAME="visit"></A>
+<A NAME="DOC.1.7.5"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>void visit(<!1><A HREF="visitor.html">visitor</A>*)</B></TT>
+<DD>Allow a visitor to visit a suite node of the test tree
+<DL><DT><DD></DL><P>
+<A NAME="main"></A>
+<A NAME="DOC.1.7.6"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>static   <!1><A HREF="suite.html">suite</A>&amp; main()</B></TT>
+<DD>Get a reference to the main test suite that the main program will run
+<DL><DT><DD></DL><P>
+<A NAME="SuiteSetup"></A>
+<A NAME="DOC.1.7.7"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void SuiteSetup()</B></TT>
+<DD>Initialize before running a test suite.  The default method does nothing.
+<DL><DT><DD></DL><P>
+<A NAME="SuiteTeardown"></A>
+<A NAME="DOC.1.7.8"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>virtual   void SuiteTeardown()</B></TT>
+<DD>Cleanup after running a test suite.  The default method does nothing.
+<DL><DT><DD></DL><P></DL>
+
+<HR><DL><DT><B>This class has no child classes.</B></DL>
+
+<DL><DT><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

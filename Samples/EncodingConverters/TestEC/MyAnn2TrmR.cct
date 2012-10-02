@@ -1,0 +1,665 @@
+c Ann2TrmR.cct - Annapurna to TransRoman2 Reversable Changes Table, Ann2TrmR.CCT
+c
+c o 18-Sep-2000
+c   Added support for retroflex flap 'l' (newly placed at d66 in Annapurna)
+c
+c o 09-Mar-2000
+c   Added d150 as an alternate hyphen that is a Carla word-forming character. This
+c   hyphen can be used when the two words of the hyphated compound have specialized
+c   meaning. There should be a separate lexical entry for the compound using this
+c   new hyphen (so it'll get interpreted as part of the 'word' and not as punctuation
+c   and the special lexical meaning will be analyzed.
+c
+c Modified by Bob Eaton 15Nov99 to be reversable.
+c
+c o Based on Ann2TrmC.cct for romanizing Annapurna font.
+c
+c o This table should work as both a stand-alone cctable (to be used in a
+c   batch file) as well as with Shoebox. Currently, in stand-alone processing
+c   mode (for use with Carla, for example), it will only convert SFM field '\r '.
+c   If you want to add other fields that the table should convert, then add them
+c   to the 'BackslashCode' group below. All other fields will be passed thru
+c   unmodified.
+c
+c o Changed aspirated consonants (e.g. 'ph') to use the raised h (to
+c   disambiguate between a half consonant followed by an 'h').
+c
+c o Changed the vowels to be single glyphs (e.g. long i is now
+c   just 'i' rather than 'i' followed by length. Short i is now the
+c   corresponding IPA symbol (shortened capital I)., etc...).
+c
+c   The main reason this was done was to simply searching for nasals because
+c   now nasals are always <1 vowel glyph> followed by <1 nasal diacritic>.
+c   Previously, for example, with nasalized aikar, you could get the nasal
+c   diacritic above both letters of the digraph (i.e. the tilde was added above
+c   both the schwa and the following 'i'). To get this, the two nasal diacritics
+c   actually split up the vowel digraph (i.e. the actual string is:
+c   schwa + nasal + 'i' + nasal) and it was making the search/replace statements
+c   complicated.
+c
+c   If you really, really hate the way this was done--for example, aikar itself
+c   is represented by the ae glyph (d193 in TransRoman2)--then you could perhaps
+c   change it back to the way it was done in earlier versions of Ann2Trm?.cct,
+c   but keep in mind that you then have to rewrite the search/replace statements
+c   to handle the interspersed nasal diacritics. This change might also have
+c   implications for the reversing table Trm2AnnR.cct.
+c
+c o rikar is now 'r' followed by the syllabic "circle-under" diacritic (=d249)
+c
+c c nasalization is done in one of two ways: if the original nasal
+c   was the anusvar, then the low tildes (d228,9) above the vowel are used.
+c   If the original was the chandra bindu, then the upper tildes (d230,1) are
+c   used. Which vowels get which version (i.e. centered vs. right diacritics)
+c   is similar to the way keyman does it.
+c
+c o Annapurna contains some stack symbols (e.g. 'cca' stack=d105) that
+c   can also be represented by a bonefide half character followed by
+c   a full character (i.e. 'c'=d104 + 'ca'=d103).
+c   In order to be *truely* reversable, we'd need to distinguish between
+c   these two (even though we'd prefer they both romanize as 'cca')
+c   otherwise, when reversing the process (in Trm2AnnR.cct) they'd only
+c   be able to reverse as one or the other, but not both.
+c
+c   To solve this, we use a stack indicator (d226 in TimesRoman2) between
+c   the two 'parts' of the stack. This indicator is 0-width, so it doesn't
+c   interfere too much with the romanization, and is only used for stacks (which
+c   are always, by definition, ambiguous) so it minimizes the disruption to
+c   clear romanization.
+c
+c o The halant character is now represented by the other stack indicator
+c   character (d227). This, again, is perhaps counter-intuitive, but makes
+c   for nicer romanization for the more standard spelling options.
+c
+c o There are some symbols which represent combined characters
+c   (e.g. d79 is 'kta' which represents the standard Hindi spelling) that can
+c   also be spelled "aberrently" (e.g. half-k plus full-t or full-k + halant + full-t).
+c   In order to be able to generate the original form during re-annapurnization
+c   we must use unique romanizations for each of these (as outlined above).
+c
+c   Below are some alternate sets of search/replace statements--one set of which is
+c   commented out in this standard table. Using the lines that are uncommented will
+c   result in unique romanizations for each of the 3 possibilities mentioned above
+c   (so that completely unprejudiced re-annapurnization is possible). Use of the
+c   commented out lines (and, of course, then commenting out the alternate
+c   sets), results in the different annapurna forms generating the same roman forms
+c   (i.e. 'kta'). On re-annapurnization, then, the 'correct' spelling (i.e. d79)
+c   will be chosen.
+c
+c   Of course, if you choose to switch the commented and uncommented lines, THEN
+c   YOU MUST ALSO MAKE THE CHANGES TO Trm2AnnR.cct so it will also be searching
+c   for the alternate forms.
+c
+c o There are some vowel combinations that may have been "wrongly" keyed that
+c   this table fixes. For example, it is possible for the okar independant form
+c   to be keyed as d74 (i.e. via DevRom.kmn as 'q' + 'o') and also possible as
+c   d65 (=akar as 'q' + 'a') plus d252 (=okar matra as 'o' by itself). Both of
+c   these possibilities should be romanized as 'o' (and this is re-annapurnized
+c   as d74--okar).
+c
+c   This completes the revision comments for the Ann2TrmR version. Below are the
+c   comments from earlier versions from which this table is based.
+c
+c Modified by Austin Hale 15Oct98 as a general Devanagri
+c revision of the Newar-specific table, Nag2Trma.cct
+c Modified 30Aug98: Word-final consonant romanizes as word-final
+c consonant without shewa-insertion for languages such as Hindi and
+c Nepali
+
+c  Ann2Trma.cct maps Annapurna to TransRoman2 on call from Shoebox 4.10
+
+c Following comments are from Pedrotti since his basic design survives
+c in this table
+c ---------------------------------------------
+
+c This change table follows Devanagri syllable structure.
+c Groups gSylMain and gSylRest set switches and fill stores
+c that are output in proper order by define(OutputSyl).
+c It makes the following changes for Romanization:
+c 1. Make the implicit vowel (the "unwritten shewa") explicit
+c 2. Move the preconsonantal vowel ikar- after the consonant(s)
+c 3. Replace conjunct consonants by their constituents
+c 4. Move the reph (the "flying r") to the left of the current syllable
+c 5. Separate out nukta, nasal, and vowel diacritics where they have
+c    combined with preceding character into a single glyph in the font.
+
+c ---------------------------------------------------------------
+c The (C) store [upper case (C)!] is used by 6a. Halant at the end of the table.
+
+begin >
+	store(C)
+
+	c Full consonants
+	d76  d83   d85  d89   d96   c ka kHa  ga gHa  nGa
+	d103 d106  d107 d110  d114  c ca cHa  ja jHa  nYa
+	d116 d119  d121 d128  d129  c Ta THa  Da DHa  Na   Retroflex
+	d131 d136  d138 d144  d152  c ta tHa  da dHa  na   Dental
+	d155 d158  d162 d165  d167  c pa pHa  ba bHa  ma
+
+	d170  d175  d180 d66 d185   c ya  ra  la  lRa wa
+	d191  d196  d200            c sHa SHa sa
+	d204                        c ha
+
+	d109  c ja with dot below: fricative za
+	d111  c jHa Alternate
+	d161  c pHa with dot below: fricative fa
+	d173  c -ya following conjunct
+	d187  c wa with dot below
+
+	c Half consonants
+	d77  d84   d86  d90         c k- kH-  g- gH-
+	d104       d108 d112  d115  c c-      j- jH-  nY-
+						  d130  c                 N-   Retroflex
+	d132 d137       d149  d153  c t- tH-     dH-  n-   Dental
+	d156 d159  d163 d166  d168  c p- pH-  b- bH-  m-
+
+	d171        d181  d186      c y-      l-  w-
+	d192  d197  d201            c sH-  SH-  s-
+
+	d113  c jH- Alternate
+	d174  c -y- following conjunct
+	d177  c r- preceding y
+
+	c Full conjunct consonants
+	d78  d79  d80  d81             c kka kta kra ksHa
+	d87                            c gya
+	d97  d98  d99  d100 d101 d102  c nGka nGkHa nGga nGgHa nGnGa nGha
+	d105                           c cca
+	d117 d118                      c TTa TTHa
+	d120                           c THTHa
+	d122                           c DDa
+	d134 d135                      c tta tra
+	d139 d140 d141 d142 d143       c dda ddHa dma dya dwa
+	d154                           c nna
+	d157                           c pta
+	d169                           c mla
+	d184                           c lla
+	d193 d194 d195                 c sHca sHra sHwa
+	d198 d199                      c SHTa SHTHa
+	d202 d203                      c sna sra
+	d205 d206 d207 d208 d209 d210  c hna hma hya hra hla hwa
+
+	c Half conjunct consonants
+	d82  c ksH-
+	d88  c gy-
+
+	c Combined consonant-vowel
+	d178 d179  c ru ruu
+	d211       c hRI
+
+	endstore
+	store(WhiteSpace) d9 nl ' ' endstore
+	store(Backslash) '\' endstore
+	store(Punctuation) '|' d33 d34 d40 d41 d42 d44 d45 d46 d63 d58 d59 d91 d93 d95 d133 d145 d146 d147 d148 d150 d151 d164 endstore
+	store(c)     c Set up syllable by storing into consonant
+	use(SylMain)
+
+c ---------------------------------------------------------------
+
+define(OutputSyl) >
+c 1. Output the syllable; EAH 5Jun98
+
+ifn(vow)                             c if there is no vowel
+	store(v) d195 endstore               c store shewa in(v)
+endif
+
+c for halant
+
+ifeq(v) d39
+	store(v) endstore
+endif
+
+clear(vow)           c clears (vow) after shewa insertion 5Jun98 EAH
+
+	out(reph)        c Reph from following nagari syllable (if present)
+	out(c)           c Consonant(s) (if present)
+	out(LowD)        c Dot Under (if present)
+	out(LowR)        c ra following other consonants (if present)
+	out(g)           c Surviving glides "w" and "y" output here EAH 4Apr98
+	out(v)           c Vowel
+	out(nasal)       c Nasal diacritics
+	out(length)      c Sanskrit length symbol
+
+c 2. Prepare for a new syllable
+
+	store(c,g,v,reph,LowD,LowR,nasal,length) endstore
+
+define(OutputSylEx) >
+c if you want word final schwas, then comment out the following line:
+	set(vow)
+	do(OutputSyl)
+
+c ---------------------------------------------------------------
+
+group(SylMain)   c SYLLABLE-INITIAL VOWELS, ikar-, AND CONSONANTS
+
+c if we get a backslash, it implies that we're doing a standalone file,
+c so go see if we should convert it or pass it on unchanged.
+fol(Backslash) > store(c) use(BackslashCode)
+
+c if we get a nl, then output any current syllable.
+nl > do(OutputSylEx) dup
+
+c NUMERALS
+c "use(WordSpace)" keeps the table from inserting shewas
+c next to numerals. It has to be reminded that it is not
+c necessary to insert a vowel even though numerals don't
+c have vowels.
+
+d48 > next
+d49 > next
+d50 > next
+d51 > next
+d52 > next
+d53 > next
+d54 > next
+d55 > next
+d56 > next
+d57 > dup use(WordSpace)
+
+c PUNCTUATION
+c use(WordSpace) keeps the table from inserting shewas
+c next to punctuation marks
+
+" |"        >  next                 c full stop
+d160 "|"    >  next
+"|"         >  "." use(WordSpace)
+"..."       > d133                  c ellipse
+
+c footnotes are keyed by * followed by 1-9
+d42 "1"     > d252 use(WordSpace)   c fn #1
+d42 "2"     > d253 use(WordSpace)   c fn #2
+d42 "3"     > d254 use(WordSpace)   c fn #3
+d42 "4"     > d255 use(WordSpace)   c fn #4
+d42 "5"     > d177 use(WordSpace)   c fn #5
+d42 "6"     > d178 use(WordSpace)   c fn #6
+d42 "7"     > d179 use(WordSpace)   c fn #7
+d42 "8"     > d180 use(WordSpace)   c fn #8
+d42 "9"     > d181 use(WordSpace)   c fn #9
+
+d33         > next                  c exclamantion point
+d40         > next                  c left paranthesis
+d41         > next                  c right paranthesis
+d42         > next                  c star (used as footnote in prathi)
+d44         > next                  c comma
+d45         > next                  c dash
+d46         > next                  c abbreviation point
+d63         > next                  c question mark
+d58         > next                  c colon punctuation
+d59         > next                  c semicolon
+d91         > next                  c left bracket
+d93         > next                  c right bracket
+d133        > next                  c glottal stop??? (this used to be the ellipse)
+d145        > next                  c open single quote
+d146        > next                  c close single quote
+d147        > next                  c open double quote
+d148        > next                  c close double quote
+d150        > next                  c alternate hyphen (word-forming character in Carla)
+d164        > dup use(WordSpace)    c abreviation character (from roman period in Prathi)
+
+c INDEPENDENT (SYLLABLE-INITIAL) VOWELS
+
+d65         > store(v) d195     endstore    c akar
+			  set(vow) use(SylRest)
+
+d65 d231    > store(v) d192     endstore    c aakar
+			  set(vow) use(SylRest)
+
+d67         > store(v) d140     endstore    c ikar
+			  set(vow) use(SylRest)
+
+d68         > store(v) "i"      endstore    c iikar
+			  set(vow) use(SylRest)
+
+d69         > store(v) d156     endstore    c ukar
+			  set(vow) use(SylRest)
+
+d70         > store(v) "u"      endstore    c uukar
+			  set(vow) use(SylRest)
+
+d71         > store(v) "r" d249 endstore    c rikar
+			  set(vow) use(SylRest)
+
+d72         > store(v) "e"      endstore    c ekar
+			  set(vow) use(SylRest)
+
+c if we have 'ekar' plus 'ekar matra' then it's really aikar.
+d72 d248    > next
+d73         > store(v) d193     endstore    c aikar
+			  set(vow) use(SylRest)
+
+d72 d213    > store(v) d193     endstore    c aikar + chandra bindu
+			  store(nasal) d230 endstore
+			  set(vow) use(SylRest)
+
+c if we have aakar and ekar matra (or akar and okar matra), then it's really okar.
+d65 d231 d248   > next
+d65 d252        > next
+d74             > store(v) "o"      endstore    c okar
+				  set(vow) use(SylRest)
+
+c if we have aakar and aikar matra (or akar and aukar matra), then it's really aukar.
+d65 d231 d250   > next
+d65 d253        > next
+d75             > store(v) d198     endstore    c aukar
+			  set(vow) use(SylRest)
+
+c PRE-CONSONANTAL DEPENDENT VOWEL ikar-
+
+d232        > next                          c ikar
+d233        > store(v) d140     endstore set(vow)
+
+c HALF CONSONANTS
+c replaced "store(c)" with "append(c)" because the store was deleting
+c word-medialhalanted syllable-final full consonants EAH 15Oct98
+c These half-consonants mean that a full-consonant is coming, so
+c stay in SylMain.
+d77       > append(c) "k"      endstore      c k-
+d84       > append(c) "k" d210 endstore      c kH-
+d86       > append(c) "g"      endstore      c g-
+d90       > append(c) "g" d210 endstore      c gH-
+d104      > append(c) "c"      endstore      c c-
+d108      > append(c) "j"      endstore      c j-
+d108 d219 > append(c) "z"      endstore      c j- + LowDot = z- BE
+d112      > append(c) "j" d210 endstore      c jH-
+d115      > append(c) d203     endstore      c nj-
+d130      > append(c) d206     endstore      c N-
+d132      > append(c) "t"      endstore      c t-
+d137      > append(c) "t" d210 endstore      c tH-
+d149      > append(c) "d" d210 endstore      c dH-
+d153      > append(c) "n"      endstore      c n-
+d156      > append(c) "p"      endstore      c p-
+d159      > append(c) "p" d210 endstore      c pH-
+d159 d219 > append(c) "f"      endstore      c pH- + LowDot = f- BE
+d163      > append(c) "b"      endstore      c b-
+d166      > append(c) "b" d210 endstore      c bH-
+d168      > append(c) "m"      endstore      c m-
+d171      > append(c) "y"      endstore      c y-
+d174      > append(c) "y"      endstore      c -y-  completer-y following conjunct
+d181      > append(c) "l"      endstore      c l-
+d186      > append(c) "w"      endstore      c w-
+d192      > append(c) d208     endstore      c sH-
+d197      > append(c) d207     endstore      c SH-
+d201      > append(c) "s"      endstore      c s-
+
+c HALF CONJUNCT CONSONANTS
+d82 >  append(c)  "k" d226 d208 endstore               c ksH-
+d88 >  append(c)  "g" d226 "y"  endstore               c gy-
+
+c FULL CONSONANTS
+d76     > append(c) "k"         endstore use(SylRest)   c ka
+d83     > append(c) "k" d210    endstore use(SylRest)   c kha
+d85     > append(c) "g"         endstore use(SylRest)   c ga
+d89     > append(c) "g" d210    endstore use(SylRest)   c gHa
+d96     > append(c) d202        endstore use(SylRest)   c nGa
+d103    > append(c) "c"         endstore use(SylRest)   c ca
+d106    > append(c) "c" d210    endstore use(SylRest)   c cHa
+d107    > append(c) "j"         endstore use(SylRest)   c ja
+d109    > append(c) "z"         endstore use(SylRest)   c ja + LowDot = za
+d110    > append(c) "j" d210    endstore use(SylRest)   c jHa
+d114    > append(c) d203        endstore use(SylRest)   c nja
+d116    > append(c) d204        endstore use(SylRest)   c Ta
+d119    > append(c) d204 d210   endstore use(SylRest)   c THa
+d121    > append(c) d205        endstore use(SylRest)   c Da
+d128    > append(c) d205 d210   endstore use(SylRest)   c DHa
+d129    > append(c) d206        endstore use(SylRest)   c Na
+d131    > append(c) "t"         endstore use(SylRest)   c ta
+d136    > append(c) "t" d210    endstore use(SylRest)   c tHa
+d138    > append(c) "d"         endstore use(SylRest)   c da
+d144    > append(c) "d" d210    endstore use(SylRest)   c dHa
+d152    > append(c) "n"         endstore use(SylRest)   c na
+d155    > append(c) "p"         endstore use(SylRest)   c pa
+d158    > append(c) "p" d210    endstore use(SylRest)   c pHa
+d161    > append(c) "f"         endstore use(SylRest)   c pHa + LowDot = fa
+d162    > append(c) "b"         endstore use(SylRest)   c ba
+d165    > append(c) "b" d210    endstore use(SylRest)   c bHa
+d167    > append(c) "m"         endstore use(SylRest)   c ma
+
+c The completer-y, d173 when correctly used will only FOLLOW a full
+c consonant which triggers the use of group(SylRest) so at this point
+c in the table d173 will never get matched. Hence the following version:
+
+d170    > append(c)  "y"        endstore use(SylRest)   c ya General 20Aug98
+d175    > append(c)  "r"        endstore use(SylRest)   c ra
+d180    > append(c)  "l"        endstore use(SylRest)   c la
+d66     > append(c)  "l"        endstore                c la + LowDot
+		  store(LowD) d246      endstore use(SylRest)
+d185    > append(c)  "w"        endstore use(SylRest)   c wa (General) 5Jun98
+d187    > append(c)  "w"        endstore                c wa + LowDot
+		  store(LowD) d246      endstore use(SylRest)
+d191    > append(c)   d208      endstore use(SylRest)   c sHa
+d196    > append(c)   d207      endstore use(SylRest)   c Sa
+d200    > append(c)  "s"        endstore use(SylRest)   c sa
+d204    > append(c)  "h"        endstore use(SylRest)   c ha
+d216    > append(c) "h" d211    endstore use(SylRest)   c visarga (=h followed by 'length' colon)
+
+		c FULL CONJUNCT CONSONANTS
+c full-consonants that are two-character stacks (these must all have d226
+c to separate the stack parts)
+d78  > append(c) "k" d226 "k"               endstore use(SylRest)  c kka stack
+d79  > append(c) "k" d226 "t"               endstore use(SylRest)  c kta
+d80  > append(c) "k" d226 "r"               endstore use(SylRest)  c kra
+d81  > append(c) "k" d226 d208              endstore use(SylRest)  c ksHa
+d87  > append(c) "g" d226 "y"               endstore use(SylRest)  c gya
+d97  > append(c) d202 d226 "k"              endstore use(SylRest)  c nGka
+d98  > append(c) d202 d226 "k" d210         endstore use(SylRest)  c nGkHa
+d99  > append(c) d202 d226 "g"              endstore use(SylRest)  c nGga
+d100 > append(c) d202 d226 "g" d210         endstore use(SylRest)  c nGgHa
+d101 > append(c) d202 d226 d202             endstore use(SylRest)  c nGnGa
+d102 > append(c) d202 d226 "h"              endstore use(SylRest)  c nGha
+d105 > append(c) "c" d226 "c"               endstore use(SylRest)  c cca
+d117 > append(c) d204 d226 d204             endstore use(SylRest)  c TTa
+d118 > append(c) d204 d226 d204 d210        endstore use(SylRest)  c TTHa
+d120 > append(c) d204 d210 d226 d204 d210   endstore use(SylRest)  c THTHa
+d122 > append(c) d205 d226 d205             endstore use(SylRest)  c DDa
+d134 > append(c) "t" d226 "t"               endstore use(SylRest)  c tta
+d135 > append(c) "t" d226 "r"               endstore use(SylRest)  c tra
+d139 > append(c) "d" d226 "d"               endstore use(SylRest)  c dda
+d140 > append(c) "d" d226 "d" d210          endstore use(SylRest)  c ddHa
+d141 > append(c) "d" d226 "m"               endstore use(SylRest)  c dma
+d142 > append(c) "d" d226 "y"               endstore use(SylRest)  c dya
+d143 > append(c) "d" d226 "w"               endstore use(SylRest)  c dwa
+d154 > append(c) "n" d226 "n"               endstore use(SylRest)  c nna
+d157 > append(c) "p" d226 "t"               endstore use(SylRest)  c pta
+d169 > append(c) "m" d226 "l"               endstore use(SylRest)  c mla
+d184 > append(c) "l" d226 "l"               endstore use(SylRest)  c lla
+d193 > append(c) d208 d226 "c"              endstore use(SylRest)  c sHca
+d194 > append(c) d208 d226 "r"              endstore use(SylRest)  c sHra
+d195 > append(c) d208 d226 "w"              endstore use(SylRest)  c Shwa
+d198 > append(c) d207 d226 d204             endstore use(SylRest)  c SHTa
+d199 > append(c) d207 d226 d204 d210        endstore use(SylRest)  c SHTHa
+d202 > append(c) "s" d226 "n"               endstore use(SylRest)  c sna
+d203 > append(c) "s" d226 "r"               endstore use(SylRest)  c sra
+d205 > append(c) "h" d226 "n"               endstore use(SylRest)  c hna
+d206 > append(c) "h" d226 "m"               endstore use(SylRest)  c hma
+d207 > append(c) "h" d226 "y"               endstore use(SylRest)  c hya
+d208 > append(c) "h" d226 "r"               endstore use(SylRest)  c hra
+d209 > append(c) "h" d226 "l"               endstore use(SylRest)  c hla
+d210 > append(c) "h" d226 "w"               endstore use(SylRest)  c hwa
+
+c COMBINED CONSONANT-VOWEL
+
+d178   > append(c) "r"    endstore               c ru
+		 store(v)  d156   endstore
+		 set(vow) use(SylRest)
+
+d179   > append(c)     "r"      endstore         c ruu
+		 store(v)      "u"      endstore
+		 set(vow) use(SylRest)
+
+d211   > append(c) "h"      endstore
+		 store(v) "r" d249  endstore
+		 set(vow) use(SylRest)                   c h + rikar
+
+c Variants
+
+d111 > d110 back(1)  c jHa Alternate
+d113 > d112 back(1)  c jH- Alternate
+
+d232 > d233 back(1)  c Center removing this line disabled short-i permutation
+
+c ---------------------------------------------------------------
+
+group(SylRest)
+
+c get LowDot for 'post-full-consonants' (if you want a LowDot in a
+c half-character then you must search for it especially
+c (see 'f-' and 'z-' above)
+d219    > next
+d220    > store(LowD) d246 endstore
+
+c special trapping for combined 'short-u' + LowDot character
+d239    > next
+d240    > store(LowD)   d246 endstore   c LowDot
+		  store(v)      d156 endstore   c ukar
+		  set(vow)
+
+c special trapping for combined 'long-u' + LowDot character
+d244    > next
+d245    > store(LowD)   d246 endstore   c LowDot
+		  store(v)     "u"  endstore    c uukar
+		  set(vow)
+
+c 1996-10-14 MRP: The "completer y" occurs within (half) or
+c at the end (full) of a consonant cluster. Therefore we must NOT
+c insert an implicit akar between it and the preceding consonant.
+
+d173 > append(g) "y" endstore       c Full completer -ya
+d174 > append(g) "y" endstore       c Half completer -y-
+	   use(SylMain)
+
+c Right now this group's logic assumes that diacritics will occur
+c in the following relative order, the order which the devrom.kmn and
+c devtyp.kmn tables put them out:
+
+c 1. LowR IS AN "R" WHICH FOLLOWS OTHER CONSONANTS
+
+d226 > next c Right
+d227 > next c Center
+d228 > store(LowR) "r" endstore  c After retroflex ("tent-r")
+
+c 3a. POST-CONSONANTAL DEPENDENT VOWELS
+
+d231    > store(v) d192     endstore    c -aa
+		  set(vow)
+
+d234    > next                          c -ii Right
+d235    > store(v) "i"      endstore    c -ii Center
+		  set(vow)
+
+d236    > next                          c -u Right
+d237    > next                          c -u Center
+d238    > store(v) d156     endstore    c -u Lowered
+		  set(vow)
+
+d241    > next                          c -uu Right
+d242    > next                          c -uu Center
+d243    > store(v) "u"      endstore    c -uu Lowered
+		  set(vow)
+
+d246    > next                          c -rikar Right
+d247    > store(v) "r" d249 endstore    c -rikar Center IPA
+		  set(vow)
+
+d248    > next                          c -e  Right
+d249    > store(v) "e"      endstore    c -e  Center IPA
+		  set(vow)
+
+d213    > next                          c -e + chandra bindu Right
+d214    > store(v) "e"                  c -e + chandra bindu Center
+		  set(vow)
+		  store(nasal) d230 endstore    c o-wide nasal 8Apr98 EAH
+
+d250    > next                          c -aikar (General)
+d251    > store(v) d193     endstore
+		  set(vow)
+
+d252    > store(v) "o"      endstore    c -okar
+		  set(vow)
+
+d253    > store(v) d198     endstore    c -aukar (General)
+		  set(vow)
+
+c Sanskrit length symbol (Annapurna d215 - TR2 d211)
+d215    > store(length) d211 endstore    c -sanskrit length char
+
+c 4. Reph ("flying-r") is pronounced at the end of the previous syllable
+
+d229    > next                          c Right
+d230    > store(reph) "r"   endstore    c Center
+
+c 5a. Anusvara - represented by tilde (d228/9)
+d224  > next                               c Right Anusvara
+d225  >                                    c Center Anusvara
+	begin
+	   ifeq(v) "i"
+			store(nasal)  d229 endstore    c i-wide tilde
+	   else
+		begin
+			ifeq(v) d140                    c short-i
+				store(nasal)  d229 endstore    c i-wide tilde
+			else
+				store(nasal)  d228 endstore    c o-wide tilde
+			endif
+		end
+	   endif
+	end
+
+c 5b. Chandra Bindu - represented by the upper tilde chars (d230/1)
+d222   > next                              c Right Chandra Bindu
+d223   >                                   c Center Chandra Bindu
+	begin
+	   ifeq(v) "i"
+			store(nasal) d231 endstore c i-wide caret
+	   else
+		begin
+			ifeq(v) d140                   c short-i
+				store(nasal) d231 endstore c i-wide caret
+			else
+				store(nasal) d230 endstore c o-wide caret
+			endif
+		end
+	   endif
+	end
+
+c handle the chandra of the chandra bindu (ctrl-alt 5 from DevRom.kmn)
+c as the closely related symbol in TransRoman2 (put it in the nasal
+c store as we won't likely get both). BE 20-Oct-99
+d221 > store(nasal) d243 endstore
+
+c 6a. Halant (virama) connects two consonants together into a cluster,
+c leaving out the inherent vowel
+d254 fol(C) > next                                  c Right
+d255 fol(C) > append(c) d227 endstore use(SylMain)  c Center
+
+c other (i.e. word-final) halants (stay in SylRest so we get to OutputSyl below)
+d254 > next                     c Right
+d255 > append(c) d227 endstore  c Center
+
+c End of sort field in Shoebox or end of file when testing
+
+endfile             > do(OutputSyl) dup
+fol(Backslash)      > store(c) use(BackslashCode)
+fol(Punctuation)    > do(OutputSylEx) use(SylMain)
+any(WhiteSpace)     > do(OutputSylEx) dup use(SylMain)
+
+c End of syllable (when all else fails)
+
+'' > do(OutputSyl) store(c) endstore use(WordSpace)
+
+group(WordSpace) c ==================================
+
+endfile > do(OutputSylEx) endfile
+any(WhiteSpace) >  dup
+'' > use(SylMain)
+
+group(BackslashCode) c ==============================
+
+endfile > do(OutputSylEx) endfile
+
+c normally, we just want to pass the input to the output
+c if we get a field code, but put entries here for any
+c fields we *do* want to convert. For example, to have \d converted...
+c '\d ' > next
+'\a ' > next
+'\lx ' > next
+'\r ' > do(OutputSylEx) dup use(SylMain)

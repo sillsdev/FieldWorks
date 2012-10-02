@@ -1,0 +1,21 @@
+HKCR
+{
+	SilEncConverters31.IcuECConvConfig.40 = s 'ICU Converter Configurator Class'
+	{
+		CLSID = s '{341D73FD-B7ED-4103-856C-F3792F764187}'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {341D73FD-B7ED-4103-856C-F3792F764187} = s 'ICU Converter Configurator Class'
+		{
+			ProgID = s 'SilEncConverters31.IcuECConvConfig.40'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			TypeLib = s '{6E560CF3-4FCB-4f1f-B686-273F5999F855}'
+		}
+	}
+}

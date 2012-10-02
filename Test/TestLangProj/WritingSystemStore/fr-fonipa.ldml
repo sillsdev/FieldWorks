@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ldml>
+	<identity>
+		<version
+			number="" />
+		<generation
+			date="2011-07-18T14:01:19" />
+		<language
+			type="fr" />
+		<variant
+			type="fonipa" />
+	</identity>
+	<collations>
+		<collation>
+			<base>
+				<alias
+					source="fr" />
+			</base>
+			<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+				<palaso:sortRulesType
+					value="OtherLanguage" />
+			</special>
+		</collation>
+	</collations>
+	<special xmlns:palaso="urn://palaso.org/ldmlExtensions/v1">
+		<palaso:abbreviation
+			value="FrnI" />
+		<palaso:defaultFontFamily
+			value="Doulos SIL" />
+		<palaso:defaultKeyboard
+			value="IPA Unicode 5.0c (ver 1.1.5) KMN" />
+		<palaso:languageName
+			value="French" />
+		<palaso:spellCheckingId
+			value="fr__IPA" />
+		<palaso:version
+			value="2" />
+	</special>
+	<special xmlns:fw="urn://fieldworks.sil.org/ldmlExtensions/v1">
+		<fw:graphiteEnabled
+			value="False" />
+		<fw:windowsLCID
+			value="1039" />
+	</special>
+</ldml>

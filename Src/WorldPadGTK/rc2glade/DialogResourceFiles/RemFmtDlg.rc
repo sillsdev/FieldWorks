@@ -1,0 +1,24 @@
+// Extracted from FmtFntDlg.rc
+kridRemFmtDlg DIALOG DISCARDABLE  0, 0, 241, 146
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Remove Formatting"
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON   "OK",kctidOk,72,128,50,15
+	PUSHBUTTON      "Cancel",kctidCancel,128,128,50,15
+	PUSHBUTTON      "Help...",kctidHelp,184,128,50,15
+	CHECKBOX        "&Font",kctidRfdFont,15,4,69,10
+	CHECKBOX        "&Size",kctidRfdSize,15,15,69,10
+	CHECKBOX        "Font &Color",kctidRfdForeClr,15,26,69,10
+	CHECKBOX        "B&ackground",kctidRfdBackClr,15,37,69,10
+	CHECKBOX        "&Underline Style",kctidRfdUnder,15,48,69,10
+	CHECKBOX        "U&nderline Color",kctidRfdUnderClr,15,59,69,10
+	CHECKBOX        "&Bold",kctidRfdBold,15,70,69,10
+	CHECKBOX        "&Italic",kctidRfdItalic,15,81,69,10
+	CHECKBOX        "Su&perscript",kctidRfdSuper,15,92,96,10
+	CHECKBOX        "Subscrip&t",kctidRfdSub,15,104,96,10
+	CHECKBOX        "P&osition",kctidRfdOffset,15,115,69,10
+	LTEXT           "Clear any selected checkbox to remove its direct formatting.",IDC_STATIC,91,4,139,19
+	LTEXT           "(Disabled options have no direct formatting and are already using underlying character and paragraph styles.)",IDC_STATIC,91,25,141,26
+END

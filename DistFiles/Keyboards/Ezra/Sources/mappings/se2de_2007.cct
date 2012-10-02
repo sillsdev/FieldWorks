@@ -1,0 +1,659 @@
+c	se2de_2007.cct modified by cjs March 2007. Originally from
+c	dbse2de3.CCT  Standard Encoding to Display Encoding ver 3  4-26-96  tvw
+
+c       July 27/99 added a closing bracket to the wdend variable for ketiv-qere braketing vps
+c	July 16, 1999 added the processing for the \wc field for a wordform without cants - Verna Stutzman
+c	7/1/98  Added 4 environments for final consonants vps
+c    4-26-96  4 fixes 1/ munah: add 2nd space after vowels; 2/ munah c2 cant after c4 cons/vowel;
+c	3/ atnah: c2 cant after c4 cons/vowel; 4/ tebir: c1 cant after cons if not c3 cons
+c    4-25-96  left pashta and lamed  6/ 4-25-96  tvw
+c    4-25-96 5 fixes: 1/ holem/left_pashta; 2/ lo cants after c1 vowel; 3/ thin spaces after lo cant fol(c4 cons);
+c	 4/ thin space before c1 munah; 5/ wdbeg c2 telisha gedola, c2 to c1.
+c    adjusted furtive patah code (ayin as c4 now), and final forms (cancons) list  4-18-96
+c   fixed finals and holem with cants, also weak aleph and furtive patah   4-12-96
+c   swapped tsere_yod and he with segol_yod and he  4-3-96 tvw
+c      d202-d234 d203-d235   don't occur in this cct
+
+c	  for Ezra 5.6 Display Font as per Joan,  3-26-96 tvw
+
+c	  designed to run on HEB DB files, with each word in a field, space before, nl after,
+c	 / (morpheme break) removed, 00 (end of verse) moved to \ep field.
+
+c	resulting output will need to be reversed for correct Windows and regular Mac display
+c added the tilde as an end of word character -vps 1/24/02
+
+c added the ) as an end of word character (in Kethib) - cjs 14.02.02
+c further modified (April 2003) to ensure that changes apply only to \ws and not to other \ws* fields
+c modified to ensure that a cant folloiwng furtive pathah was not lost cjs May 2006
+
+begin > store(white) ' ' nl
+	store(wdend) ' -?:])~'  nl endstore c only - or nl in hdb, : (end of verse) and ? (end of line)  in BHS
+	store(wdbeg) ' -' nl endstore  c vps makkef is a word begin envirnment
+						c should only be space or nl: only space in hdb
+	store(num) '1234567890'
+c paseq,zakef,segolta,telisha_qetanna,telisha_gedola,pazer_gad,ole_weyored
+c  pazer,zakef_gadol,pashta,geresh,gershayim,illuj,sarqa,salseleth,left_pashta,left_zarqa
+c metheg,yetib,tebir,galgal,tipha,mereka,mereka_k,munah,darga,athnah
+store(secant) d124 d128 d129 d130 d131 d132 d133 d134 d135 d136 d137
+	 d138 d139 d140 d141 d142 d143 d144
+	d152 d153 d154 d155 d156 d157 d158 d159 d161
+	d149 c d149, metheg is special, moved to precede vowel in BHS to SE, when was 95, not when 35 and 75
+
+  c   for adding thin spaces  4-25-96  tvw
+store(locant) d152 d096    c yetib  for adding thin spaces 3/ 4-25-96  tvw
+	 d153 d095    c tebir
+	 d154 d106    c galgal
+	 d155 d089 d247  c tipha
+	 d156 d066 d245  c mereka
+	 d157 d084    c mereka_k
+	 d158 d090 d249  c munah
+	 d159 d094 d250  c darga
+	 d161 d242 d253  c athnah
+	d149 d189 d190 d191 d192 d193  c  metheg
+store(nonbadcant) 	 d155 d089 d247  c tipha
+	 d156 d066 d245  c mereka
+	 d158 d090 d249  c munah
+	 d159 d094 d250  c darga
+	 d161 d242 d253  c athnah
+	d149 d189 d190 d191 d192 d193  c  metheg
+store(badcant) d152 d153 d154 d157 c cants with limited positioning interfere with the qoph
+	c  patah,kamets,kamets_o,segol,tsere,hireq,qibb
+	c schewa, furtive schewa, h_patah, h_segol, h_kamets
+	store(diavowel) 'aAoeEiu' d252 d248 d225 d233 d243  c class2 vowels (default)
+	store(v3) d209 d210 d211 d212 d213 d214 d216 d217 d218 d219 d220 d221 c class3 vowels, for metheg
+	store(v4) d222 d223 d224 d230 d229 d227 d231 d232  c class4 of vowels, excpt holem and h_ ones 2/ 4-25-96  tvw
+store(tipha) d155
+
+store(vowel)  'aAoOeEiu' d194 d209 d222 d195 d210 d223 d196 d211 d224
+	d199 d214 d230 d198 d213 d229 d197 d212 d227 d201 d216 d231 d204
+	d252 d217 d232 d207 d225 d220 d240 d236 d243 d221 d241 d206 d233 d219 d239
+	d205 d248 d218 d237 d254 d102   c all vowels except holem and cons vowels (default)
+
+	store(holem) 'O' d200 c 2 types of holem, last for checking for holem after it has changed already
+	store(holem3) 'O' d200 d215  c  3 types of holem  4-12-96
+	store(vowelcons) d202 d203 d228 d234 d235 d238 d244 d246 d251 c vowels which take a consonant slot
+	store(cons) "'bgdhwzxXyklmnsvpcqrSWHt"   c cons  not used right now 4-12-96 tvw
+
+	store(cancons) "'bgdhwzxXyklmnsvpcqrSWHt" 'O' d200  d215  c cons + holem+class2+class3 holem for lower cants
+	d162 c final_kaf     final forms added for cases of following lo cants  4-12-96
+	d170 c final_kaf_schewa
+	d163  c final_mem
+	d165 c final_pe
+	d172 c final_kaf_dagesh
+	d169 c final_pe_dagesh
+c	d164 c final_nun      c removed these from list 4-18-96
+c	d166 c final_tsade    c  cant shouldn't move from C0 in these cases
+c	d167 c final_ka
+c	d168 c final_na
+c	d173 c final_ka_dagesh
+
+	store(weakalef) "'bgdhwzxXyklmnsvpcqrSWHt"   '-'  c cons + makkef for weak aleph changes
+		 ' ?' nl   c added 4-12-96
+
+	store(aleph) "'"	c added by cjs Feb 2007
+	store(legarmeh) d124	c added by cjs Feb 2007
+
+	store(cv1) 'gwzynN'  c gimel,waw,zayin,yod,nun,inverted_nun
+c cv2 is default position:
+	store(cv2) "'bhxXklmsvpcWHSt" c aleph,beth,he,heth,teth,kaf,lamed,
+						c mem,samek,ayin,pe,tsade,sin,shin,unp_sin,taw
+	store(cv3) 'q'  c qoph
+	store(cv4) 'dr'  c daleth,resh
+	store(lamed) 'l'
+
+	store(dagc1) 'z' c zayin d183
+	store(dagc2) 'y' c yod d067 C
+	store(dagc3) 'wncg' c waw,nun,tsade,gimel d070 F
+c base form d208 store(dagc4) 'bdqhksr' c beth,daleth,qoph,he,kaf,samek,resh
+	store(dagc5) 'xlmt' c heth,lamed,mem,taw d071 G
+	store(dagc6) "'" c aleph d073 I
+	store(dagc7) 'v' c ayin d074 J
+	store(dagc8) 'WHp' c sin,shin,pe d075 K
+	store(dagc9) 'X' c teth d076 L
+	endstore
+	set(c0)  c in case first letter is a vowel
+
+	write 'converting from SE to DE encoding' nl
+	use(main)
+
+c write spin definition (makes spining bar so we can see that something
+c                        is happening.)
+define(wr_spin) > incr(spin) write d8
+	 ifeq(spin) '1' write '|' endif
+	 ifeq(spin) '2' write '/' endif
+	 ifeq(spin) '3' write '-' endif
+	  ifeq(spin) '4' write '\'  store(spin) '0' endstore endif
+
+c  processing for intervening cantillation marks
+c for one letter
+define(proc1a) > dup back(2)
+	store(temp) fwd(1) endstore   c dump first char
+	store(temp) endstore
+c vps 7/1/98 for 'm' followed by 2 cants
+define(proc1aa) > dup back(3)
+	store(temp) fwd(1) endstore   c dump first char
+	store(temp) endstore
+c for two letters
+define(proc1b) > dup back(3)
+	store(temp) fwd(2) endstore   c dump first 2 chars
+	store(temp) endstore
+c vps 17/1/98 for 'kA' followed by 2 cants
+define(proc1c) > dup back(4)
+	store(temp) fwd(2) endstore   c dump first 2 chars
+	store(temp) endstore
+c vps 17/1/98 for 'kA' followed by 3 cants
+define(proc1d) > dup back(5)
+	store(temp) fwd(2) endstore   c dump first 2 chars
+	store(temp) endstore
+
+c for inserting 2 thinspaces before skinny consonants vps
+define(space1) > back(4) d255 d255 fwd(4)
+define(space2) > back(5) d255 d255 fwd(5)
+define(space3) > back(6) d255 d255 fwd(6)
+define(space4) > back(7) d255 d255 fwd(7)
+
+c *********** This section sets the environment for the changes
+group(main)
+'\ws '	>	do(wr_spin) dup back use(convert)
+'\wc'	>	dup use(convert)
+'\ms'	>	dup use(morfnum)
+'\ls'	>	dup use(morfnum)
+'\txt '	>	dup back use(convert)
+
+group(morfnum)
+any(num) ' '  >	dup back use(convert) c pass on the morf num
+
+group(convert)
+nl	>	dup set(c0) clear(c1,c2,c3,c4,fp4,fc,sc,qc,rc) use(main)  c cons class code
+
+c *********** This section sets the environment for the changes
+
+c punctuation/paragraph unit markers
+
+c "-"	>	"-"	c maqqeph stay as dash 8-14-95
+c "."	>	d208	c dagesh       c  from 'D'  1-16-96 tvw
+c ","	>	"&"	c rape
+
+c the following are as per Directions of 3-16-96 from Joan
+c dageshim
+d208 prec(dagc1) > d183
+d208 prec(dagc2) > d067 set(dag) c C
+d208 prec(dagc3) > d070 set(dag) c F
+d208 prec(dagc5) > d071 set(dag) c G
+d208 prec(dagc6) > d073 set(dag) c I
+d208 prec(dagc7) > d074 set(dag) c J
+d208 prec(dagc8) > d075 set(dag) c K
+d208 prec(dagc9) > d076 set(dag) c L
+
+c   final forms   kaf,mem,nun,pe,tsade
+c     finals in BHS don't occur with any vowels except kamets and schewa
+c     so I'm not handling any vowels here except those
+c    added class changes for following cants mem=2, all others=1,
+c	leave cant backed for latter conversion
+
+c kaf should not change to final form when it occurs as a prefix 7-20-99 vps
+' k' d208 fol(wdend) > dup
+' k' fol(wdend) > dup
+
+'k' fol(wdend)	>	d162 clear(sc,fc,qc,dag) c final_kaf
+  'k' any(secant) fol(wdend) > do(proc1a) d162 set(c1,sc) clear(c0,c2,c3,c4,fc,sc,qc,dag)
+'k' d252 fol(wdend)	>	d170 clear(sc,fc,qc,dag) c final_kaf_schewa
+  'k' d252 any(secant) fol(wdend) > do(proc1b) d170 set(c1,sc) clear(c0,c2,c3,c4,sc,fc,qc,dag)
+
+'m' fol(wdend)	>	d163 set(c2,fc) clear(sc,fc,qc,dag) c final_mem
+c final_mem   set to class2 for following cant
+  'm' any(secant) fol(wdend) > do(proc1a) d163  set(c2,fc) clear(c0,c1,c3,c4,fc,sc,qc,dag)
+c vps 7/1/98  Est 9:27:4
+c final_mem   set to class2 for following cant
+  'm' any(secant) any(secant) fol(wdend) > do(proc1aa) d163  set(c2,fc)
+				clear(c0,c1,c3,c4,fc,sc,qc,dag)
+'n' fol(wdend)	>	d164 clear(fc,sc,qc,dag) c final_nun
+  'n' any(secant) fol(wdend) > do(proc1a) d164 set(c1,sc)
+				clear(c0,c2,c3,c4,fc,sc,qc,dag) c final_nun
+'p' fol(wdend)	>	d165 clear(sc,fc,qc,dag) c final_pe
+  'p' any(secant) fol(wdend) > do(proc1a) d165 set(c1,sc)
+				clear(c0,c2,c3,c4,fc,sc,qc,dag) c final_pe
+'c' fol(wdend)	>	d166 clear(sc,fc,qc,dag) c final_tsade
+  'c' any(secant) fol(wdend) > do(proc1a) d166 set(c1,sc)
+				clear(c0,c2,c3,c4,fc,sc,qc,dag) c final_tsade
+
+c cants code proc1b, for 2 letters
+c 2  kaf,nun and kamets
+'kA' fol(wdend) > d167 set(fc) clear(sc) clear(qc) clear(dag) c final_ka
+  'kA' any(secant) fol(wdend) > do(proc1b)  d167 set(c1,sc)
+			clear(c0,c2,c3,c4,fc,sc,qc,dag) c final_ka
+c vps 7/1/98  Deut 5:7:2
+ 'kA' any(secant) any(secant) fol(wdend) > do(proc1c)  d167 set(c1,sc)
+			clear(c0,c2,c3,c4,fc,sc,qc,dag) c final_ka
+c vps 7/1/98  Deut 5:12:6
+ 'kA' any(secant) any(secant) any(secant) fol(wdend) > do(proc1d)  d167 set(c1,sc)
+				clear(c0,c2,c3,c4,sc,fc,qc,dag) c final_ka
+'nA' fol(wdend) > d168 clear(sc,fc,qc) c final_na
+  'nA' any(secant) fol(wdend) > do(proc1b) d168 set(c1,sc)
+				clear(c0,c2,c3,c4,sc,fc,qc,dag) c final_na
+
+c 3  kaf dagesh
+'k' d208 fol(wdend) > d172 clear(fc,sc,qc,dag) c final_kaf_dagesh
+
+c 4  pe dagesh
+'p' d208 fol(wdend) > d169 clear(fc,sc,qc,dag) c final_pe_dagesh
+
+c 5  kaf dagesh kamets
+'k' d208 'A' fol(wdend) > d173 clear(fc,sc,qc,dag) c final_ka_dagesh
+
+c vps kaf dagesh shewa
+c vps 7/1/98 Jud 14:16:1 II Sam 3:32:7
+'k' d208 d252 any(secant) fol(wdend) > do(proc1c) d172
+				clear(sc,qc,fc) c final_kaf_dagesh
+
+c these consonant flags need to follow the final form consonant finds above
+any(cv1)	>	dup set(c1,sc)  clear(c0,c2,c3,c4,fp4,lam,fc,qc,rc,dag)
+any(cv2)	>	store(tmp) dup endstore set(fc,c2)
+			clear(c0,c1,c3,c4,fp4,lam,sc,qc,rc,dag)
+		ifeq(tmp) 'l' begin set(lam) end endif  c for left pashta    6/ 4-25-96  tvw
+		ifeq(tmp) 'h' begin set(fp4) end endif  c for furtive patah
+		ifeq(tmp) 'x' begin set(fp4) end endif
+		ifeq(tmp) 'v' begin set(fp4) end endif c v ayin moved from c3 change 4-18-96
+		out(tmp)
+
+any(cv3)	>	dup set(c3,qc)  clear(c0,c1,c2,c4,fp4,lam,sc,fc,rc,dag)
+any(cv4) >	dup set(c4,rc)  clear(c0,c1,c2,c3,fp4,lam,sc,qc,fc,dag)
+   c insert 2 thin spaces between lo cant and c4 cons   3/ 4-25-96  tvw
+any(cv4) prec(locant) >	d255 d255 dup set(c4,rc) clear(c0,c1,c2,c3,fp4,lam,qc,sc,fc,dag)
+c moved to end of field catch for db processing
+c any(wdend) >	dup set(c0) clear(c1,c2,c3,c4,fp4,sc,fc,qc,rc)
+
+c low vowels
+c patah
+'a' >	if(c1) d194 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d209 endif
+	if(c4) d222 endif
+
+c vps Consonant with vowel and lo cant
+'a' fol(locant) > if(qc) d222 set(qvl) clear(qc,scvl,cvl,rcvl,sv) endif
+			if(sc) dup set(scvl) clear(sc,qvl,cvl,rcvl,sv) endif
+			if(fc) d209 set(cvl) clear(fc,qvl,scvl,rcvl,sv) endif
+			if(rc) d222 set(rcvl) clear(rc,qvl,scvl,cvl,sv) endif
+
+c furtive patah
+c  dump the old patah, any following cant is backed into stream
+'a' any(secant) fol(wdend) > set(qvl) do(proc1a) next c added set(qvl) cjs May 2006
+'a' fol(wdend) >	store(tmp) 'a'
+	if(c1) store(tmp) d194 endif
+c	if(c2) store(tmp) 'a' endif
+c	if(c0) store(tmp) 'a' endif
+	if(c3) store(tmp) d209 endif
+	if(c4) store(tmp) d222 endif
+	if(fp4) store(tmp) d222 endif  c h x he, heth   v ayin moved from c3 change 4-18-96
+	endstore out(tmp)
+
+c kamets
+'A' >	if(c1) d195 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d210 endif
+	if(c4) d223 endif
+
+c vps consonant with vowel and lo cant
+'A' fol(locant) > if(qc) d223 set(qvl) clear(qc,scvl,cvl,rcvl,sv) endif
+			if(sc) dup set(scvl) clear(sc,qvl,cvl,rcvl,sv) endif
+			if(fc) d210 set(cvl) clear(fc,qvl,scvl,rcvl,sv) endif
+			if(rc) d223 set(rcvl) clear(rc,qvl,scvl,cvl,sv) endif
+
+c kamets_o
+'o'  > 	if(c1) d196 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d211 endif
+	if(c4) d224 endif
+
+c vps consonant with vowel and lo cant
+'o' fol(locant) > if(qc) d224 set(qvl) clear(qc,scvl,cvl,rcvl,sv) endif
+			if(sc) dup set(scvl) clear(sc,qvl,cvl,rcvl,sv) endif
+			if(fc) d211 set(cvl) clear(fc,qvl,scvl,rcvl,sv) endif
+			if(rc) d224 set(rcvl) clear(rc,qvl,scvl,cvl,sv) endif
+
+c segol
+'e'  > 	if(c1) d198 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d213 endif
+	if(c4) d229 endif
+
+c vps consonant with vowel and lo cant
+'e' fol(locant) > if(qc) d229 set(qvl) clear(qc,scvl,cvl,rcvl,sv) endif
+			if(sc) dup set(scvl) clear(sc,qvl,cvl,rcvl,sv) endif
+			if(fc) d213 set(cvl) clear(fc,qvl,scvl,rcvl,sv) endif
+			if(rc) d229 set(rcvl) clear(rc,qvl,scvl,cvl,sv) endif
+
+c tsere
+'E'  > 	if(c1) d197 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d212 endif
+	if(c4) d227 endif
+
+c vps consonant with vowel and lo cant
+'E' fol(locant) > if(qc) d227 set(qvl) clear(qc,scvl,cvl,rcvl,sv) endif
+			if(sc) dup set(scvl) clear(sc,qvl,cvl,rcvl,sv) endif
+			if(fc) d212 set(cvl) clear(fc,qvl,scvl,rcvl,sv) endif
+			if(rc) d227 set(rcvl) clear(rc,qvl,scvl,cvl,sv) endif
+
+c hireq
+'i'  > 	if(c1) d199 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d214 endif
+	if(c4) d230 endif
+
+c vps consonant with vowel and lo cant
+'i' fol(badcant) > if(qc) d214 set(qvl) set(sv) clear(qc,scvl,cvl,rcvl) endif
+			if(sc) dup set(scvl) set(sv) clear(sc,qvl,cvl,rcvl) endif
+			if(fc) d214 set(cvl) set(sv) clear(fc,qvl,scvl,rcvl) endif
+			if(rc) d230 set(rcvl) set(sv) clear(rc,qvl,scvl,cvl) endif
+
+c vps consonant with vowel and lo cant
+'i' fol(nonbadcant) > if(qc) d230 set(qvl) set(sv) clear(qc,scvl,cvl,rcvl) endif
+			if(sc) dup set(scvl) set(sv) clear(sc,qvl,cvl,rcvl) endif
+			if(fc) d214 set(cvl) set(sv) clear(fc,qvl,scvl,rcvl) endif
+			if(rc) d230 set(rcvl) set(sv) clear(rc,qvl,scvl,cvl) endif
+
+
+c qibb
+'u'  > 	if(c1) d201 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d216 endif
+	if(c4) d231 endif
+
+c vps consonant with vowel and lo cant
+'u' fol(locant) > if(qc) d231 set(qvl) clear(qc,scvl,cvl,rcvl,sv) endif
+			if(sc) dup set(scvl) clear(sc,qvl,cvl,rcvl,sv) endif
+			if(fc) d216 set(cvl) clear(fc,qvl,scvl,rcvl,sv) endif
+			if(rc) d231 set(rcvl) clear(rc,qvl,scvl,cvl,sv) endif
+
+c schewa
+d252 >  	if(c1) d204 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d217 endif
+	if(c4) d232 endif
+
+c vps consonant with vowel and lo cant
+d252 fol(badcant) > if(qc) d217 set(qvl) set(sv) clear(qc,scvl,cvl,rcvl) endif
+			 if(sc) dup set(scvl) set(sv) clear(sc,qvl,cvl,rcvl) endif
+			 if(fc) d217 set(cvl) set(sv) clear(fc,qvl,scvl,rcvl) endif
+			 if(rc) d232 set(rcvl) set(sv) clear(rc,qvl,scvl,cvl) endif
+
+c vps consonant with vowel and lo cant
+d252 fol(nonbadcant) > if(qc) d232 set(qvl) set(sv) clear(qc,scvl,cvl,rcvl) endif
+			 if(sc) dup set(scvl) set(sv) clear(sc,qvl,cvl,rcvl) endif
+			 if(fc) d217 set(cvl) set(sv) clear(fc,qvl,scvl,rcvl) endif
+			 if(rc) d232 set(rcvl) set(sv) clear(rc,qvl,scvl,cvl) endif
+
+
+c furtive schewa
+d248 >  	if(c1) d205 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d218 endif
+	if(c4) d237 endif
+
+c vps consonant with vowel and lo cant
+d248 fol(badcant) > if(qc) d218 set(qvl) set(sv) clear(qc,scvl,cvl,rcvl,sv) endif
+			 if(sc) dup set(scvl) set(sv) clear(sc,qvl,cvl,rcvl,sv) endif
+			 if(fc) d218 set(cvl) set(sv) clear(fc,qvl,scvl,rcvl,sv) endif
+			 if(rc) d237 set(rcvl) set(sv) clear(rc,qvl,scvl,cvl,sv) endif
+
+c vps consonant with vowel and lo cant
+d248 fol(nonbadcant) > if(qc) d237 set(qvl) set(sv) clear(qc,scvl,cvl,rcvl,sv) endif
+			 if(sc) dup set(scvl) set(sv) clear(sc,qvl,cvl,rcvl,sv) endif
+			 if(fc) d218 set(cvl) set(sv) clear(fc,qvl,scvl,rcvl,sv) endif
+			 if(rc) d237 set(rcvl) set(sv) clear(rc,qvl,scvl,cvl,sv) endif
+
+c h_patah
+d225 >  	if(c1) d207 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d220 endif
+	if(c4) d240 endif
+
+c vps consonant with vowel and lo cant
+d225 fol(locant) > if(qc) d240 set(qvl) clear(qc,scvl,cvl,rcvl,sv) endif
+			 if(sc) dup set(scvl) clear(sc,qvl,cvl,rcvl,sv) endif
+			 if(fc) d240 set(cvl) clear(fc,qvl,scvl,rcvl,sv) endif
+			 if(rc) d240 set(rcvl) clear(rc,qvl,scvl,cvl,sv) endif
+
+c h_segol
+d233  >   	if(c1) d206 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d219 endif
+	if(c4) d239 endif
+
+c vps consonant with vowel and lo cant
+d233 fol(locant) > if(qc) d239 set(qvl) clear(qc,scvl,cvl,rcvl,sv) endif
+			 if(sc) dup set(scvl) clear(sc,qvl,cvl,rcvl,sv) endif
+			 if(fc) d239 set(cvl) clear(fc,qvl,scvl,rcvl,sv)endif
+			 if(rc) d239 set(rcvl) clear(rc,qvl,scvl,cvl,sv)endif
+
+c h_kamets
+d243  >   	if(c1) d236 endif
+	if(c2) dup endif
+	if(c0) dup endif
+	if(c3) d221 endif
+	if(c4) d241 endif
+
+c vps consonant with vowel and lo cant
+d243 fol(locant) > if(qc) d241 set(qvl) clear(qc,scvl,cvl,rcvl,sv) endif
+			 if(sc) dup set(scvl) clear(sc,qvl,cvl,rcvl,sv) endif
+			 if(fc) d241 set(cvl) clear(fc,qvl,scvl,rcvl,sv) endif
+			 if(rc) d241 set(rcvl) clear(rc,qvl,scvl,cvl,sv) endif
+
+c high vowel
+c holem
+c lamed  class2_holem  need to keep in stream for next check
+'O' prec(lamed)  >  d215  back(1)
+
+c weak aleph   see Directions. display encoding 3-13-96   tvw
+c  holem + weak aleph (= fol by cons or wdend) , can have cants after holem or aleph
+any(holem) "'" fol(weakalef)	>	d215 "'"  c change to class3_holem
+c  need to keep all in stream for cants checks
+any(holem) any(secant) "'" fol(weakalef)	>	dup back(3)
+		store(trash) fwd(1) endstore  c toss out the holem
+		d215 back(1) c new holem
+c  need to keep all in stream for cants checks
+any(holem) "'"  any(secant) fol(weakalef)	>	dup back(3)
+		store(trash) fwd(1) endstore  c toss out the holem
+		d215 back(1) c new holem
+c  need to keep all in stream for cants checks
+any(holem)  any(secant) "'"  any(secant)  fol(weakalef)	>	dup back(4)
+		store(trash) fwd(1) endstore  c toss out the holem
+		d215 back(1) c new holem
+
+c vowel consonants - switch position with following locant
+any(vowelcons) fol(locant) > dup back store(vocons) fwd endstore fwd out(vocons) back(2)
+c don't do the above if word intial shureq followed by tipha - only at Psa 22.16.4
+any(vowelcons) fol(tipha) prec(wdbeg) > dup
+
+c cantillation marks
+
+c high cants
+c special cases, final lamed   -  should have no intervening vowel, always word final
+d130 prec(lamed) fol(wdend)	>	d177  c segolta word final after lamed - class 2
+d144 prec(lamed) fol(wdend)	>	d086  c left_zarqa word final after lamed - class 2
+
+c exceptions
+d131 prec(holem3)	>	d182 c  telisha qetannah  class1
+d143 	> if(lam) begin d137 end else dup endif  c  c for left pashta after lamed 6/ 4-25-96  tvw
+d143 fol(wdend)		>	d255 d255 dup c left_pashta wd end, thin spaces added 6/ 4-25-96  tvw
+d143 fol(legarmeh)	>	d255 d255 dup c cjs Feb 2007
+d143 prec(holem3)		>	d137 c left_pashta   c 1/ 4-25-96
+d143 prec(holem3) fol(aleph)	>	dup  c no change before aleph cjs Feb 2007
+ c for left pashta    6/ 4-25-96  tvw
+c default - class2
+d132	>	if(c1) d184 else dup endif c  telisha magnum (med)/ telisha_gedola
+   d132 prec(wdbeg)	>	d184  c word initial telisha_gedola   c 5/ 4-25-96
+
+d134	>	if(c1) d186 else dup endif c  ole or mahpakatum    or ole_weyored
+c vps geresh at the beginning of a word
+d138 prec(wdbeg)	> d077 c  geresh or teres
+d138	>	if(c1) d077 else dup endif c  geresh or teres
+d139	>	if(c1) d085 else dup endif c  gershayim
+d137	>	if(c1) d061 else dup endif c  azla, azla or qadma or pashta
+d140	>	if(c1) d080 else dup endif c  illuj
+d142	>	if(c1) d082 else dup endif c shalshelet or salseleth
+d129	>	if(c1) d175 else dup endif c  zaqep parvum or zakef
+d128	>	if(c1) d174 else dup endif c  rebia
+d141	>	if(c1) d081 else dup endif c  sinnorit or zarqa
+d135	>	if(c1) d188 else dup endif c  pazer
+d133	>	if(c1) d185 else dup endif c  pazer mag. or qarne para or pazer gad
+d136	>	if(c1) d068 else dup endif c  zaqep magnum or zakef_gadol
+
+c low cants:  * have class4 as well
+c  meteg: special case  35,75,95   95 moved to preceed any diacritic vowel????
+c d149	c  silluq [meteg (left)]
+c d149	c  meteg (right) [cf 35,75]
+c  class0 with vowel, c1 with cons only (no vowel)
+
+c preceeded by consonant or holem
+d149 prec(cancons)  >	if(sc) d189 endif
+	if(fc) d191 endif
+	if(c0) dup endif  c don't change if word initial
+	if(qc) d192 endif
+	if(rc) d193 endif
+
+c following was 95 in BHS, moved to preceed vowel, vowel hasn't changed yet
+d149 prec(cancons) fol(diavowel)  >	if(c1) d192 endif  c use class3 metheg  JW 4-4-96
+	if(c2) d193 endif  c use class4 metheg  JW 4-4-96
+	if(c0) dup endif  c don't change if word initial
+	if(c3) d193 endif  c use class4 metheg  JW 4-4-96
+	if(c4) d193 clear(c4) set(c3) endif  c change vowel to class3  JW 4-4-96
+
+c vps consonant with cant and vowel
+d149 prec(vowel) > if(qvl) begin d190 clear(qvl) end
+			   else if(cvl) begin d189  clear(cvl) end
+			   else if(rcvl) begin d190  clear(rcvl) end
+			   else if(scvl) begin
+				if(dag) begin
+					if(sv) begin d189 d255 clear(scvl) clear(dag) do(space2) end
+					else begin d149 d255 clear(scvl) clear(dag) do(space2) end end
+				else begin if(sv) begin d189 d255 clear(scvl) do(space1) end
+					else begin d149 d255 clear(scvl) clear(dag) do(space1) end end end
+
+c exceptions
+c  mereka kepulah  default is class2, use class1 if no lo vowel
+d157 prec(cancons)  > if(qc) dup else d084 endif c  mereka kepulah (duplex)
+								c if c3, leave alone  4-12-96
+c vps consonant with cant and vowel
+d157 prec(vowel) > if(qvl) begin d255 d084 clear(qvl) end
+			else if(scvl) begin
+				   if(dag) begin d255 d255 d157 d255 clear(scvl) clear(dag) do(space4) end
+				   else begin d255 d255 d157 d255 clear(scvl) do(space3) end end
+			else if(cvl) begin d255 dup clear(cvl) end
+			else if(rcvl) begin d255 dup clear(rcvl) end
+
+
+c  munah default is c1, if no vowel use class2 if c2, class4 if c3 or c4
+d158 prec(cancons)  > if(sc) begin dup end
+				else if(fc) begin d090 end
+				else if(qc) begin d249 end
+				else if(rc) begin d249 end  c  munah  *  4-12-96
+c vps consonant with cant and vowel
+d158 prec(vowel) > if(qvl) begin d255 d090 clear(qvl) end
+			else if(scvl) begin
+				   if(dag) begin d255 d255 d158 d255 clear(scvl) clear(dag) do(space4) end
+				   else begin d255 d255 d158 d255 clear(scvl) do(space3) end end
+			else if(cvl) begin
+				   if(sv) begin dup clear(cvl,sv) end
+				   else begin d255 dup clear(cvl) end end
+			else if(rcvl) begin d255 dup clear(rcvl) end
+
+
+c  atnah  default is c1,  if no vowel use class2 if c2, class4 if c3 or c4  fixed 4-25-96 tvw
+d161 prec(cancons)  >	if(sc) begin dup end
+				else if(fc) begin d242 end
+				else if(qc) begin d253 end
+				else if(rc) begin d253 end c  atnah  *
+c vps consonant with cant and vowel
+d161 prec(vowel) > if(qvl) begin d255 d242 clear(qvl) end
+			else if(scvl) begin
+				if(dag) begin d255 d255 d161 d255 clear(scvl) clear(dag) do(space4) end
+				else begin d255 d255 d161 d255 clear(scvl) do(space3) end end
+			else if(cvl) begin d255 dup clear(cvl) end
+			else if(rcvl) begin d255 dup clear(rcvl) end
+
+
+c default - class0  use class1 if no lo vowel or c4 vowel
+d152 prec(cancons)  >	d096 		c  yetib  4-12-96
+c vps consonant with cant and vowel
+d152 prec(vowel) > if(qvl) begin d096 clear(qvl) end
+			else if(scvl) begin
+				if(dag) begin d152 d255 clear(scvl) clear(dag) do(space2) end
+				else begin d152 d255 clear(scvl) do(space1) end end
+			else if(cvl) begin
+				if(sv) begin dup clear(cvl,sv) end
+				else begin dup clear(cvl) end end
+			else if(rcvl) begin d096 clear(rcvl) end
+
+d156 prec(cancons)  > if(qc) begin d245 end
+				else if(rc) begin d245 end
+				else if(sc) begin d066 end
+				else if(fc) begin d066 end    c mereka  *
+c vps consonant with cant and vowel
+d156 prec(vowel) > if(qvl) begin
+				if(sv) begin d255 d255 d255 d245 clear(qvl,sv) end
+				else begin d066 clear(qvl) end end
+			else if(scvl) begin
+				if(dag) begin d156 d255 clear(scvl) clear(dag) do(space2) end
+				else begin d156 d255 clear(scvl) do(space1) end end
+			else if(cvl) begin
+				if(sv) begin d066 clear(cvl,sv) end
+				else begin d255 d255 d255 d066 clear(cvl) end end
+			else if(rcvl) begin d066 clear(rcvl) end
+
+
+d155 prec(cancons)  >	if(qc) begin d247 end
+				else if(rc) begin d247 end
+				else if(sc) begin d089 end
+				else if(fc) begin d089 end    c  tipha  *
+c vps consonant with cant and vowel
+d155 prec(vowel) > if(qvl) begin
+				if(sv) begin d255 d255 d255 d247 clear(qvl,sv) end
+				else begin d089 clear(qvl) end end
+			else if(scvl) begin
+				if(dag) begin d255 d155 d255 clear(scvl) clear(dag) do(space3) end
+				else begin d255 d155 d255 clear(scvl) do(space2) end end
+			else if(cvl) begin
+				if(sv) begin d089 clear(cvl,sv) end
+				else begin d255 d089 clear(cvl) end end
+			else if(rcvl) begin d089 clear(rcvl) end
+
+d153 prec(cancons)  >	d095 			c  tebir 4/ 4-26-96
+c vps consonant with cant and vowel
+d153 prec(vowel) > if(qvl) begin d095 clear(qvl) end
+			else if(scvl) begin
+				if(dag) begin d153 d255 clear(scvl) clear(dag) do(space2) end
+				else begin d153 d255 clear(scvl) do(space1) end end
+			else if(cvl) begin d095 clear(cvl)  end
+			else if(rcvl) begin d095 clear(rcvl)  end
+
+d154 prec(cancons)  >	if(qc) dup else d106 endif  			c  galgal  4-12-96
+c vps consonant with cant and vowel
+d154 prec(vowel) > if(qvl) begin d106 clear(qvl) end
+			else if(scvl) begin
+				if(dag) begin d154 d255 clear(scvl) clear(dag) do(space2) end
+				else begin d154 d255 clear(scvl) do(space1) end end
+			else if(cvl) begin dup clear(cvl) end
+			else if(rcvl) begin dup clear(rcvl) end
+
+d159 prec(cancons)  >	if(qc) d250 else begin if(rc) d250 else d094 endif end endif    c  darga  *
+c vps consonant with cant and vowel
+d159 prec(vowel) > if(qvl) begin d255 d255 d255 d250 clear(qvl) end
+			else if(scvl) begin
+				if(dag) begin d159 d255 clear(scvl) clear(dag) do(space2) end
+				else begin d159 d255 clear(scvl) do(space1) end end
+			else if(cvl) begin dup clear(cvl) end
+			else if(rcvl) begin dup clear(rcvl) end

@@ -1,0 +1,99 @@
+/*
+	Title:  SILDU.gdl
+	Author: M. Hosken
+
+	IPA GDL description
+0.001   MJPH    26-SEP-2000     Original
+0.002   MJPH    10-JAN-2001     Support g02E9g02E9g02E8 and friends
+*/
+
+Bidi = false;
+
+// #include <stddefns.gdl>
+#include "SILDUb2.gdh"
+#define DIASTR(x) [ x [ x [ x x ?]?]?]?
+#define DIASTR2(x) [ x [ x [ x [ x [ x [ x [ x x ?]?]?]?]?]?]?]?
+#define glide user1
+#define attached user2
+
+table(glyph);
+
+cSupNum = (gzerosuperior, gonesuperior, gtwosuperior, gthreesuperior, gfoursuperior);
+// cPitch = (g02E9, g02E8, g02E7, g02E6, g02E5);
+cDotted = (gi, gj, g0268);
+cDotless = (gdotlessi, gtbd5, gtbd4);
+cFLigFol = (gi, gl);
+cFLig    = (gfi, gfl);
+cnBDia = (cUDia g02DE g0334);
+cnUDia = (cBDia g02DE g0334);
+cnNDia = (cUDia cBDia g0334);
+cnCDia = (cUDia cBDia g02DE);
+cnDia = (cUDia cBDia g02DE g0334);
+endtable;
+
+table(feature)
+
+supernum.id = 23;
+supernum.name.1033 = string("Pitches as Numbers");
+supernum.default = no;
+supernum.settings.yes.value = 1;
+supernum.settings.yes.name.1033 = string("Numbers");
+supernum.settings.no.value = 0;
+supernum.settings.no.name.1033 = string("Characters");
+
+endtable
+
+table(substitution);
+
+// Handle pitch character ligating in included file
+
+if (supernum == yes)
+	_ cPitch > g207B:3 cSupNum:3 / cSupNum _ _;
+	cPitch > cSupNum / _;
+else
+	g02E9 g02E9 > _ g02E9:(1 2){glide = 1}/ _ ^ _;
+	g02E8 g02E8 > _ g02E8:(1 2){glide = 1}/ _ ^ _;
+	g02E7 g02E7 > _ g02E7:(1 2){glide = 1}/ _ ^ _;
+	g02E6 g02E6 > _ g02E6:(1 2){glide = 1}/ _ ^ _;
+	g02E5 g02E5 > _ g02E5:(1 2){glide = 1}/ _ ^ _;
+
+	cPitch g02E9 > _ cPitchLong0$1:(1 2) / _ {glide == 1} ^ _;
+	cPitch g02E8 > _ cPitchLong1$1:(1 2) / _ {glide == 1} ^ _;
+	cPitch g02E7 > _ cPitchLong2$1:(1 2) / _ {glide == 1} ^ _;
+	cPitch g02E6 > _ cPitchLong3$1:(1 2) / _ {glide == 1} ^ _;
+	cPitch g02E5 > _ cPitchLong4$1:(1 2) / _ {glide == 1} ^ _;
+
+	cPitches g02E9 > _ cPitch0$1:(1 2) / _ ^ _;
+	cPitches g02E8 > _ cPitch1$1:(1 2) / _ ^ _;
+	cPitches g02E7 > _ cPitch2$1:(1 2) / _ ^ _;
+	cPitches g02E6 > _ cPitch3$1:(1 2) / _ ^ _;
+	cPitches g02E5 > _ cPitch4$1:(1 2) / _ ^ _;
+endif;
+
+cDotted > cDotless / _ DIASTR(cnUDia) cUDia;
+
+gf cFLigFol > _ cFLig:(1 2) / _ _ cBase;
+gf cFLigFol > _ cFLig:(1 2) / _ _ cOther;
+gf cFLigFol > _ cFLig:(1 2) / _ _ #;
+
+endtable;
+
+
+table(positioning) {MUnits = 1000};
+
+// Handle attachments
+
+pass(1);
+cTakesBDia cBDia {attach {to = @1; at = BS; with = BM}; attached = 1} / ^ _ DIASTR(cnBDia) _{attached == 0};
+cTakesUDia cUDia {attach {to = @1; at = US; with = UM}; attached = 1} / ^ _ DIASTR(cnUDia) _{attached == 0};
+cTakesHook g02DE {attach {to = @1; at = NS; with = NM}; attached = 1} / ^ _ DIASTR(cnNDia) _{attached == 0};
+cTakesCenter g0334 {attach {to = @1; at = CS; with = CM}; attached = 1} / ^ _ DIASTR(cnCDia) _{attached == 0};
+endpass;
+
+// Handle over-arch
+
+pass(2);
+g0361 {shift.y = max(@B.boundingbox.top, @A.boundingbox.top) - 700m} /
+		cBase=B DIASTR2(cnDia) _ cBase=A;
+endpass;
+endtable;

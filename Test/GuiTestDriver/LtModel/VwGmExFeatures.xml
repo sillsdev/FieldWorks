@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--?xml-stylesheet type="text/xsl" href="TBD.xsl"?-->
+
+<exception-features role="view" root="yes" path="9:xWindow.mainSplitContainer/9:CSC.SplitContainer.Two/9:xWindow.m_secondarySplitContainer/9:CSC.SplitContainer.">
+
+  <!-- the browse pane -->
+  <browse role="pane" path="Two/9:XCore.MultiPane/9:CSC.SplitContainer.One/9:XCore.PaneBarContainer.First/">
+	<var id="grmPRList" set="9:ProductivityRestrictionsList/9:ProductivityRestrictionsList/$nl"/>
+
+	<title name="Categories (or Parts of Speech)" path="9:XCore.PaneBar/9:$name"/>
+
+	<col path="$grmPRList">
+	   <changer path="[3]/43:NAMELESS"/>
+	   <header path="/9:HeaderListView/33:HeaderListView/$NL;25:"/> <!-- add path="Name" or Description, etc.. -->
+	   <filter path="/9:FilterBar/9:FwComboBox[$col;]/" >
+		 <text path="20:RootSite/$Text"/>
+		 <drop path="$NL;43:NAMELESS"/>
+	   </filter>
+	</col>
+	<record path="20:RootSite/24:Table[$row;]">
+	  <col path="/$Col;[$col;]/$Text"/>
+	</record>
+	<scroll>
+	   <down path="43:Page down"/>
+	   <up path="43:Page up"/>
+	</scroll>
+  </browse>
+
+
+  <!-- the edit pane -->
+  <edit role="pane" path="Two/9:XCore.MultiPane/9:CSC.SplitContainer.Two/9:XCore.PaneBarContainer.Second/">
+	<var id="header" set="9:XCore.PaneBar/9:Exception &quot;Feature&quot;"/>
+	<title name="Exception &quot;Feature&quot;" path="$header"/>
+	<show-hidden-fields path="9:XCore.PaneBar/9:Show Hidden Fields"> <!-- can be No Records or title/@name in between -->
+	  <check-box path="/$NL;44:NAMELESS"/>
+	</show-hidden-fields>
+
+	<slice path="9:advancedEdit/9:RecordEditView.DataTree/">
+	   <var id="LABEL" set="9:SplitContainer/9:Panel1/"/>
+	   <var id="DATA" set="9:SplitContainer/9:Panel2/"/>
+
+	   <name path="9:multistring[$ind;]/"><!-- index, usually 1, also used in Inflection Class Info SubClasses -->
+		 <label path="$LABEL;9:Name"/>
+		 <ws path="$DATA;20:Name/24:Table/28:Row[$row;]/29:Cell/$Text"/> <!-- $row chooses the ws -->
+		 <empty path="$DATA;20:Name/24:Table/28:Row[$row;]/29:Cell[2]"/>
+		 <data path="$DATA;20:Name/24:Table/28:Row[$row;]/29:Cell[2]/$Text"/>
+	   </name>
+
+	   <abbreviation path="9:multistring[$ind;]/"><!-- index, usually 2, also used in Inflection Class Info -->
+		 <label path="$LABEL;9:Abbreviation"/>
+		 <ws path="$DATA;20:Abbreviation/24:Table/$Col;/$Text"/>
+		 <data path="$DATA;20:Abbreviation/24:Table/$Col;[2]/$Text"/>
+	   </abbreviation>
+
+	   <description path="9:multistring[$ind;]/"><!-- index, usually 3, 5 for first affix template, then 7, 9, etc.. Aslo used in Affix Slots etc.. -->
+		 <label path="$LABEL;9:Description"/>
+		 <ws path="$DATA;20:Description/24:Table/$Col;/$Text"/>
+		 <data path="$DATA;20:Description/24:Table/$Col;[2]/$Text"/>
+	   </description>
+
+	   <string-field  path="9:multistring[$ind;]/"> <!-- [*ind] finds the index; get the label then use $ind to get the data -->
+		 <label path="$LABEL;9:"/> <!-- add field name via @path -->
+		 <lang path="$DATA;20:$fld;/24:Table[$row;]/$Col;$Text"/>
+		 <text path="$DATA;20:$fld;/24:Table[$row;]/$Col;[2]/$Text"/>
+	   </string-field>
+
+	   <scroll>
+		  <down path="43:Page down"/>
+		  <up path="43:Page up"/>
+	   </scroll>
+	</slice>
+  </edit>
+
+</exception-features>

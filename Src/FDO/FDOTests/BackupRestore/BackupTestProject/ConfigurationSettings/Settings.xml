@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfProperty xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Property>
+	<name>db$BackupRestoreTestProject$ToolForAreaNamed_lexicon</name>
+	<value xsi:type="xsd:string">lexiconEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$Show_DictionaryPubPreview</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$ToolForAreaNamed_textsWords</name>
+	<value xsi:type="xsd:string">interlinearEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$ITexts_AddWordsToLexicon</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$ITexts_ShowAddWordsToLexiconDlg</name>
+	<value xsi:type="xsd:boolean">true</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$ITexts-ScriptureIds</name>
+	<value xsi:type="xsd:string" />
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$ToolForAreaNamed_notebook</name>
+	<value xsi:type="xsd:string">notebookEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$ToolForAreaNamed_lists</name>
+	<value xsi:type="xsd:string">domainTypeEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$ToolForAreaNamed_grammar</name>
+	<value xsi:type="xsd:string">posEdit</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$PartsOfSpeech.posEdit.DataTree-Splitter</name>
+	<value xsi:type="xsd:int">200</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$PartsOfSpeech.posAdvancedEdit.DataTree-Splitter</name>
+	<value xsi:type="xsd:int">200</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$InitialArea</name>
+	<value xsi:type="xsd:string">lexicon</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$SortedFromEnd</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$SortedByLength</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$LexDb.Entries_sortName</name>
+	<value xsi:type="xsd:string">Headword</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$LexDb.Entries_sorter</name>
+	<value xsi:type="xsd:string">&lt;sorter assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.GenRecordSorter"&gt;&lt;comparer assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.StringFinderCompare"&gt;&lt;finder assemblyPath="XMLViews.dll" class="SIL.FieldWorks.Common.Controls.SortMethodFinder" layout="EntryHeadwordForEntry" sortmethod="FullSortKey" ws="vernacular"&gt;&lt;column layout="EntryHeadwordForEntry" label="Headword" ws="$ws=vernacular" width="72000" sortmethod="FullSortKey" cansortbylength="true" visibility="always" /&gt;&lt;/finder&gt;&lt;comparer assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.IcuComparer" ws="fr" /&gt;&lt;/comparer&gt;&lt;/sorter&gt;</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$LexDb.Entries_filter</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$lexiconEdit_lexentryList_ColumnList</name>
+	<value xsi:type="xsd:string">&lt;root version="12"&gt;&lt;column layout="EntryHeadwordForEntry" label="Headword" ws="$ws=vernacular" width="72000" sortmethod="FullSortKey" cansortbylength="true" visibility="always" /&gt;&lt;column layout="LexemeFormForEntry" label="Lexeme Form" common="true" width="72000" ws="$ws=vernacular" sortmethod="MorphSortKey" cansortbylength="true" visibility="always" transduce="LexEntry.LexemeForm.Form" transduceCreateClass="MoStemAllomorph" /&gt;&lt;column layout="GlossesForSense" label="Glosses" multipara="true" width="72000" ws="$ws=analysis" transduce="LexSense.Gloss" cansortbylength="true" visibility="always" /&gt;&lt;column layout="GrammaticalInfoFullForSense" headerlabel="Grammatical Info." chooserFilter="external" label="Grammatical Info. (Full)" multipara="true" width="72000" visibility="always"&gt;&lt;dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PosFilter" /&gt;&lt;/column&gt;&lt;column layout="ComplexEntryTypesBrowse" ws="$ws=analysis" label="Complex Form Types" multipara="true" editable="false" visibility="dialog" chooserFilter="complexListMultiple" canChooseEmpty="true" bulkEdit="complexEntryTypes" field="LexEntryRef.ComplexEntryTypes" bulkDelete="false" list="LexDb.ComplexEntryTypes" displayNameProperty="ShortNameTSS" displayWs="analysis" /&gt;&lt;column layout="ComponentsBrowse" label="Components" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" /&gt;&lt;/root&gt;</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$lexiconEdit_lexentryList_Column_0_Width</name>
+	<value xsi:type="xsd:int">96</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$lexiconEdit_lexentryList_Column_1_Width</name>
+	<value xsi:type="xsd:int">96</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$lexiconEdit_lexentryList_Column_2_Width</name>
+	<value xsi:type="xsd:int">96</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$lexiconEdit_lexentryList_Column_3_Width</name>
+	<value xsi:type="xsd:int">96</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$entries-Index</name>
+	<value xsi:type="xsd:int">-1</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$ShowHiddenFields-lexiconEdit</name>
+	<value xsi:type="xsd:boolean">false</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$lexicon$lexiconEdit$CurrentSlicePartName</name>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$lexicon$lexiconEdit$CurrentSliceObjectGuid</name>
+	<value xmlns:q1="http://microsoft.com/wsdl/types/" xsi:type="q1:guid">00000000-0000-0000-0000-000000000000</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$DictionaryPublicationLayout</name>
+	<value xsi:type="xsd:string">publishStem</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$lexiconEdit_lexentryList_Column_4_Width</name>
+	<value xsi:type="xsd:int">64</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+  <Property>
+	<name>db$BackupRestoreTestProject$lexiconEdit_lexentryList_Column_5_Width</name>
+	<value xsi:type="xsd:int">64</value>
+	<doPersist>true</doPersist>
+	<doDispose>false</doDispose>
+  </Property>
+</ArrayOfProperty>

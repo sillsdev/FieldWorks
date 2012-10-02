@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+   <TITLE>class  unitpp::testcase</TITLE>
+   <META NAME="GENERATOR" CONTENT="DOC++ 3.4.10">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+
+<H2>class  <A HREF="#DOC.DOCU">unitpp::testcase</A></H2></H2><BLOCKQUOTE> A ref counted reference to a test.</BLOCKQUOTE>
+<HR>
+
+<DL>
+<P><DL>
+<DT><H3>Public Methods</H3><DD><DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif> <B><A HREF="#DOC.1.3.1">testcase</A></B>(<!1><A HREF="test.html">test</A>* t)
+<DD><I>Simply wrap -- and own -- a test</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif> <B><A HREF="#DOC.1.3.2">testcase</A></B>(const <!1><A HREF="testcase.html#DOC.1.3.2">testcase</A>&amp; tr)
+<DD><I>Keep the ref count</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif>template&lt;typename C&gt;  <B><A HREF="#DOC.1.3.3">testcase</A></B>(C* par, const std::string&amp; name, typename <!1><A HREF="test_mfun.html">test_mfun</A>&lt;C&gt;::mfp fp)
+<DD><I> Make a testcase from a class and a member function.</I>
+<DT>
+<IMG ALT="[more]" BORDER=0 SRC=icon1.gif><!1><A HREF="testcase.html">testcase</A>&amp; <B><A HREF="#DOC.1.3.4">operator=</A></B>(const <!1><A HREF="testcase.html">testcase</A>&amp;)
+<DD><I>Assignment that maintains reference count</I>
+</DL></P>
+
+</DL>
+
+<A NAME="DOC.DOCU"></A>
+<HR>
+<H2>Documentation</H2>
+<BLOCKQUOTE>
+A ref counted reference to a test. This is what test suites are composed
+of, and what ensures destruction.</BLOCKQUOTE>
+<DL>
+
+<A NAME="testcase"></A>
+<A NAME="DOC.1.3.1"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B> testcase(<!1><A HREF="test.html">test</A>* t)</B></TT>
+<DD>Simply wrap -- and own -- a test
+<DL><DT><DD></DL><P>
+<A NAME="testcase"></A>
+<A NAME="DOC.1.3.2"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B> testcase(const <!1><A HREF="testcase.html#DOC.1.3.2">testcase</A>&amp; tr)</B></TT>
+<DD>Keep the ref count
+<DL><DT><DD></DL><P>
+<A NAME="testcase"></A>
+<A NAME="DOC.1.3.3"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B>template&lt;typename C&gt;  testcase(C* par, const std::string&amp; name, typename <!1><A HREF="test_mfun.html">test_mfun</A>&lt;C&gt;::mfp fp)</B></TT>
+<DD>
+Make a testcase from a class and a member function.
+
+<P>The normal usage is inside some test suite class Test:
+
+<P><TT>add(&quot;id&quot;,&nbsp;testcase(this,&nbsp;&quot;Testing&nbsp;this&nbsp;and&nbsp;that&quot;,&nbsp;&amp;Test::test))</TT>
+
+<P>to make a test that invokes the test method on the instance of the
+suite class.
+<!1><A HREF="test_mfun.html">test_mfun</A>
+<DL><DT><DD></DL><P>
+<A NAME="operator="></A>
+<A NAME="DOC.1.3.4"></A>
+<DT><IMG ALT="o" BORDER=0 SRC=icon2.gif><TT><B><!1><A HREF="testcase.html">testcase</A>&amp; operator=(const <!1><A HREF="testcase.html">testcase</A>&amp;)</B></TT>
+<DD>Assignment that maintains reference count
+<DL><DT><DD></DL><P></DL>
+
+<HR><DL><DT><B>This class has no child classes.</B></DL>
+
+<DL><DT><DD></DL><P><P><I><A HREF="index.html">Alphabetic index</A></I> <I><A HREF="HIER.html">HTML hierarchy of classes</A> or <A HREF="HIERjava.html">Java</A></I></P><HR>
+<BR>
+This page was generated with the help of <A HREF="http://docpp.sourceforge.net">DOC++</A>.
+</BODY>
+</HTML>

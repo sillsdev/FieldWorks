@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="sf">
+	<FxtDocumentDescription dataLabel="Full Lexicon (root-based)" formatLabel="SFM" defaultExtension="db" filter="Standard Format files (*.db)|*.db|All files (*.*)|*.*">
+Export using the Multi-Dictionary Formatter root-based standard. This includes subentries as part of the main entry rather than as separate entries with a link to them. This can be imported into Lexique Pro for publishing dictionaries, either on the Web or in print. (Note the exported file actually includes writing system designators as part of the SFM code, so it is not pure MDF.)
+	</FxtDocumentDescription>
+	<class name="LangProject">
+		<group objProperty="LexDbOA"  preload="PreloadForLexiconExport">
+			<objVector objProperty="Entries" tryvirtual="true" class="LexEntry"/>
+		</group>
+	</class>
+
+	<class name="LexEntry">
+		<if field="ComplexFormEntryRefs" lengthequals="0">
+			<element name="lx" progressIncrement="true">
+				<string simpleProperty="LexemeFormWithAffixType"/>
+			</element>
+			<numberElement name="hm" simpleProperty="HomographNumber" ifnotequal="0"/>
+			<objAtomic objProperty="LexemeFormOA"/>
+			<multilingualStringElement name="lc" simpleProperty="CitationForm"/>
+			<objVector objProperty="EntryRefsOS"/>
+			<refObjVector field="VariantFormEntryBackRefs" virtual="true" itemLabel="" itemProperty="" classtag="VariantBackRef"/>
+			<objVector objProperty="PronunciationsOS"/>
+			<objVector objProperty="LexEntryReferences" virtual="true"/>
+			<multilingualStringElement name="co" simpleProperty="Comment"/>
+			<generateCustom class="LexEntry" fieldType="mlstring">
+				<customMultilingualStringElement name="${sfm}" field="${fieldName}"/>
+			</generateCustom>
+			<generateCustom class="LexEntry" fieldType="simplestring">
+				<customStringElement name="${sfm}" field="${fieldName}"/>
+			</generateCustom>
+			<objVector objProperty="SensesOS"/>
+			<element name="dt">
+				<string simpleProperty="DateModified"/>
+			</element>
+			<!--refObjVector field="ComplexFormEntryBackRefs" virtual="true" itemLabel="" itemProperty="" classtag="Subentry"/-->
+			<refObjVector field="VisibleComplexFormBackRefs" virtual="true" itemLabel="" itemProperty="" classtag="Subentry"/>
+			<newLine/>
+		</if>
+		<!-- Subentry minor entry referring back to main entry. -->
+		<ifnot field="ComplexFormEntryRefs" lengthequals="0">
+			<element name="lx" progressIncrement="true">
+				<string simpleProperty="LexemeFormWithAffixType"/>
+			</element>
+			<numberElement name="hm" simpleProperty="HomographNumber" ifnotequal="0"/>
+			<objAtomic objProperty="LexemeFormOA"/>
+			<objVector objProperty="EntryRefsOS"/>
+			<multilingualStringElement name="su" simpleProperty="SummaryDefinition"/>
+			<newLine/>
+		</ifnot>
+	</class>
+
+	<!-- Subentry within the main entry -->
+	<class name="LexEntry-Subentry">
+		<numberElement name="hm" simpleProperty="HomographNumber" ifnotequal="0"/>
+		<objAtomic objProperty="LexemeFormOA"/>
+		<multilingualStringElement name="lc" simpleProperty="CitationForm"/>
+		<!--refObjVector field="ComplexFormEntryBackRefs" virtual="true" itemLabel="" itemProperty="" classtag="Subentry"/-->
+		<refObjVector field="VisibleComplexFormBackRefs" virtual="true" itemLabel="" itemProperty="" classtag="Subentry"/>
+		<refObjVector field="VariantFormEntryBackRefs" virtual="true" itemLabel="" itemProperty="" classtag="VariantBackRef"/>
+		<objVector objProperty="PronunciationsOS"/>
+		<objVector objProperty="LexEntryReferences" virtual="true"/>
+		<multilingualStringElement name="co" simpleProperty="Comment"/>
+		<generateCustom class="LexEntry" fieldType="mlstring">
+			<customMultilingualStringElement name="${sfm}" field="${fieldName}"/>
+		</generateCustom>
+		<generateCustom class="LexEntry" fieldType="simplestring">
+			<customStringElement name="${sfm}" field="${fieldName}"/>
+		</generateCustom>
+		<objVector objProperty="SensesOS"/>
+	</class>
+
+	<class name="LexPronunciation">
+		<multilingualStringElement name="ph" simpleProperty="Form"/>
+		<!--todo cvpattern, tone, Media, Location-->
+	</class>
+
+	<class name="LexSense">
+		<element name="sn">
+			<string simpleProperty="SenseNumber"/>
+		</element>
+		<objAtomic objProperty="MorphoSyntaxAnalysisRA"/>
+		<multilingualStringElement name="g" simpleProperty="Gloss"/>
+		<multilingualStringElement name="d" simpleProperty="Definition"/>
+		<refVector field="ReversalEntries" itemLabel="re" itemProperty="LongName" itemWsProp="WritingSystem"/>
+		<objVector objProperty="ExamplesOS"/>
+		<objVector objProperty="LexSenseReferences"/><!-- virtual property -->
+		<multilingualStringElement name="np" simpleProperty="PhonologyNote"/>
+		<multilingualStringElement name="ng" simpleProperty="GrammarNote"/>
+		<multilingualStringElement name="nd" simpleProperty="DiscourseNote"/>
+		<multilingualStringElement name="na" simpleProperty="AnthroNote"/>
+		<multilingualStringElement name="ns" simpleProperty="SocioLinguisticsNote"/>
+		<multilingualStringElement name="nt" simpleProperty="GeneralNote"/>
+		<objVector objProperty="PicturesOS"/>
+		<objVector objProperty="SemanticDomainsRC"/>
+		<generateCustom class="LexSense" fieldType="mlstring">
+			<customMultilingualStringElement name="${sfm}" field="${fieldName}"/>
+		</generateCustom>
+		<generateCustom class="LexSense" fieldType="simplestring">
+			<customStringElement name="${sfm}" field="${fieldName}"/>
+		</generateCustom>
+		<objVector objProperty="SensesOS"/>
+	</class>
+
+	<class name="LexExampleSentence">
+		<multilingualStringElement name="xv" simpleProperty="Example"/>
+		<objVector objProperty="TranslationsOC"/>
+		<generateCustom class="LexExampleSentence" fieldType="mlstring">
+			<customMultilingualStringElement name="${sfm}" field="${fieldName}"/>
+		</generateCustom>
+		<generateCustom class="LexExampleSentence" fieldType="simplestring">
+			<customStringElement name="${sfm}" field="${fieldName}"/>
+		</generateCustom>
+	</class>
+
+	<class name="MoStemAllomorph">
+		<call name="MoForm"/>
+	</class>
+
+	<class name="MoAffixAllomorph">
+		<call name="MoForm"/>
+	</class>
+
+<!-- TODO For MoForms it seems like we need a named call ability, since later moform will be used for alternate forms -->
+	<class name="MoForm">
+		<multilingualStringElement name="lx" simpleProperty="Form" ws="all vernacular"/>
+	</class>
+
+	<class name="CmTranslation">
+		<multilingualStringElement name="x" simpleProperty="Translation" ws="all analysis"/>
+	</class>
+
+	<class name="MoStemMsa">
+		<objAtomic objProperty="PartOfSpeechRA"/>
+	</class>
+
+	<class name="PartOfSpeech">
+		<multilingualStringElement name="ps" simpleProperty="Name" ws="all analysis"/>
+	</class>
+
+	<class name="LexReference">
+		<objVector objProperty="Targets" ordered="true" virtualclass="SingleLexReference"/>
+	</class>
+
+	<class name="SingleLexReference"><!-- virtual class, not conceptual model class -->
+		<element name="lf">
+			<string simpleProperty="TypeAbbreviation" ws="analysis"/>
+		</element>
+		<element name="lv">
+			<string simpleProperty="CrossReference" ws="vernacular"/>
+		</element>
+		<element name="le">
+			<string simpleProperty="CrossReferenceGloss" ws="analysis"/>
+		</element>
+	</class>
+
+	<class name="CmPicture">
+		<!-- the element name is at this level because a CmFile can point to things other than pictures -->
+		<element name="pc">
+			<objAtomic objProperty="PictureFileRA"/>
+		</element>
+		<multilingualStringElement name="pc" simpleProperty="Caption" ws="every"/>
+	</class>
+
+	<class name="CmSemanticDomain">
+		<multilingualStringElement name="is" simpleProperty="Abbreviation"/>
+		<multilingualStringElement name="sd" simpleProperty="Name"/>
+	</class>
+
+	<class name="CmFile">
+		<string simpleProperty="InternalPath"/>
+	</class>
+
+	<class name="LexEntryRef">
+		<ifnot field="VariantEntryTypes" lengthequals="0">
+			<element name="vt">
+				<objVector objProperty="VariantEntryTypesRS" sep="; "/>
+			</element>
+		</ifnot>
+		<ifnot field="ComplexEntryTypes" lengthequals="0">
+			<element name="ct">
+				<objVector objProperty="ComplexEntryTypesRS" sep="; "/>
+			</element>
+		</ifnot>
+		<refVector field="ComponentLexemes" itemLabel="mn" itemProperty="ReferenceName"/>
+		<multilingualStringElement name="su" simpleProperty="Summary"/>
+	</class>
+
+	<class name="LexEntryRef-VariantBackRef">
+		<refAtomic simpleProperty="Owner" itemLabel="va" itemProperty="ReferenceName"/>
+		<element name="vet">
+			<objVector objProperty="VariantEntryTypesRS" classtag="Reverse" sep="; "/>
+		</element>
+		<multilingualStringElement name="v" simpleProperty="Summary"/>
+	</class>
+
+	<class name="LexEntryRef-Subentry">
+		<refAtomic simpleProperty="Owner" itemLabel="se" itemProperty="ReferenceName"/>
+		<element name="cet">
+			<objVector objProperty="ComplexEntryTypesRS" classtag="Reverse" sep="; "/>
+		</element>
+		<objAtomic objProperty="Owner" classtag="Subentry"/>
+	</class>
+
+	<class name="LexEntryType">
+		<string simpleProperty="Abbreviation" ws="analysis"/>
+	</class>
+
+	<class name="LexEntryType-Reverse">
+		<string simpleProperty="ReverseAbbr" ws="analysis"/>
+	</class>
+
+</template>

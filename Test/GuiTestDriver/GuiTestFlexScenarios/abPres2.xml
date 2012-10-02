@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+<!-- This script requires the Doulos SIL IPA font and Keyman keyboard IME --><!-- To run again, EVERYTHING must be deleted from the English IPA project.
+		Leaving words in the word list or in the lexicon changes keystroke navigation
+		in the Texts Interlinear view.  --><!-- Adds a text and interlinearizes it -->
+<accil on-fail="assert">
+
+	<bug id="LT-8161" desc="Lex Entries drop-down not accessible interlinearizing" />
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\Language Explorer\launches" data="1"/>
+
+  <var id="projectName" set="&quot;English IPA&quot;"/>
+
+  <on-application run="ok" args="-db  $projectName"  on-fail="assert">
+
+  <!--  2.	Add text and analyze  -->
+  <!--  a.	Go to Texts / Edit  -->
+<click select="menubar/view/texts-words/interlinear-texts"/>
+
+<model select="interlinear-texts[@role='view']/text">
+
+  <!--  b.	Make sure you are showing all fields except literal translation and notes (in Tools / Configure Interlinear…)  -->
+  <!--  c.	Title: The dogs / #x00f0;y da#x0261;z -->
+   <var id="row" set="1"/>
+   <click select="Title/data"/>
+   <insert wait="500" pause="300">d=e= da=gz</insert>
+   <var id="row" set="2"/>
+   <click select="Title/data"/>
+   <insert pause="300">The Dogs</insert>
+
+  <!--  d.	In the Edit tab, paste: The biggest dogs slowly wandered home, even though they normally wanted their master's approval.  -->
+<click select="baseline/tab"/>
+<click select="baseline/empty"/>
+<!-- Need to pause between chars to let IME catch up -->
+	<insert pause="300">d=e= bi=gi=st da=gz  slou</insert>
+	<insert wait="300">&lt;</insert>
+	<insert pause="300">li wa=nde=r=d hou</insert>
+	<insert wait="300">&lt;</insert>
+	<insert pause="300">m, ive=n d=ou</insert>
+	<insert wait="300">&lt;</insert>
+	<insert pause="100"> d=ei= nor=me=li we=nti=d d=ei=r= ma</insert>
+	<insert wait="300">&lt;</insert>
+	<insert pause="300">ste=r=z epr=uvl.</insert>
+
+  <!--  e.	Move cursor to home (i.e. before the first word).  -->
+  <insert wait="1000">{HOME}{UP 2}</insert>
+
+  <!--  f.	Click on the Interlinearize texts/analyze tab  -->
+<click select="analyze/tab"/>
+
+
+<!--
+Important note: Advancing from one focus box to another is done via ^{RIGHT}
+If the word moved to is in the word list, use
+   <insert wait="500">{TAB 3}</insert>
+to move to its Lex field.
+If it isn't in the word list, it will already be in the Lex field.
+-->
+  <!-- Place the cursor in the focus box -->
+  <click dx="50" dy="30" select="analyze/focus-box"/>
+
+</model>
+
+<model select="new-entry[@role='dialog']">
+
+  <!--  g.	the  -->
+  <!--  i.	Create new lex entry, particle, the, More definite article  -->
+   <!--insert wait="3000">{TAB 3}</insert-->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">{DOWN 2}~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <!--insert wait="1000">%M</insert--><!-- Morpheme Type -->
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">p~</insert> <!-- select Particle -->
+	 <insert wait="500">{TAB}</insert> <!-- gloss -->
+	 <insert wait="500">the</insert> <!-- gloss 'the' -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">m{END}</insert> <!-- goto More ... -->
+	 <insert wait="500">~</insert> <!-- click More ... -->
+	 <on-dialog title="Add from Catalog">
+	   <insert wait="500">d{RIGHT}a{RIGHT}d~</insert> <!-- select definite article -->
+	 </on-dialog>
+	 <click select="create"/>
+   </on-dialog>
+
+
+  <!--  ii.	CTRL-right arrow  -->
+   <insert wait="1000">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  h.	bigist  -->
+  <!--  i.	Split into big-ist 	  -->
+   <!--insert wait="500">{TAB}</insert>
+   <insert wait="300">{TAB}</insert--> <!-- get to the morphemes field -->
+   <insert wait="300">{RIGHT}</insert>
+   <insert wait="300">{RIGHT}</insert>
+   <insert wait="300">{RIGHT}-</insert> <!-- split off the suffix -->
+
+  <!--  ii.	Create new entry for big; root, big, More adjective  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select root -->
+	 <insert wait="500">{TAB}</insert> <!-- gloss -->
+	 <insert wait="500">big</insert> <!-- gloss 'big' -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">m{END}</insert> <!-- goto More ... -->
+	 <insert wait="500">~</insert> <!-- click More ... -->
+	 <on-dialog title="Add from Catalog">
+	   <click path="9:Grammatical Category Catalog[2]/36:Adjective"/>
+	   <click path="$add"/>
+	 </on-dialog>
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iii. Create new entry for -ist; suffix, SUP, Inflectional Adj  -->
+   <insert wait="2000">{TAB }</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <!-- already suffix -->
+	 <!--insert wait="500">%G</insert--> <!-- gloss -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">SUP</insert> <!-- gloss 'SUP' = superlative-->
+	 <var id="value" set="Not Sure"/>
+	 <click select="category-info/affix-type/data"/>
+	 <insert wait="500">i~</insert> <!-- Inflectional affix -->
+	 <var id="value" set="&lt;Any>"/>
+	 <click select="category-info/attaches-to/data"/>
+	 <insert wait="500">a~</insert> <!-- attaches to adj -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iv. Make word gloss be 'biggest'	  -->
+	 <insert wait="500">{TAB}</insert> <!-- go to the word gloss field -->
+	 <insert wait="500">+{END}biggest</insert> <!-- word gloss -->
+
+  <!--  v.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  i.	dogz  -->
+  <!--  i.	Split into dɑ#x0261; -z  -->
+   <insert wait="500">{RIGHT 3}-</insert> <!-- split off the suffix -->
+
+  <!--  ii.	Create entry for dog; root, dog, Noun  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">dog</insert> <!-- gloss -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">nn~</insert> <!-- click Noun ... -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iii.	Create entry for -z; suffix, PL, Inflectional, Noun  -->
+   <insert wait="2000">{TAB }</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <!-- already suffix -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">PL</insert> <!-- gloss 'PL' = peural-->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">i~</insert> <!-- Inflectional affix -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">nn~</insert> <!-- attaches to noun -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iv.	Make word gloss be 'dogs'  -->
+	 <insert wait="500">{TAB}</insert> <!-- go to the word gloss field -->
+	 <insert wait="500">+{END}dogs</insert> <!-- word gloss -->
+
+  <!--  v.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  j.	slowli  -->
+  <!--  i.	Split into slow -li  -->
+   <insert wait="500">{RIGHT 4}-</insert> <!-- split off the suffix -->
+  <!--  ii.	Create entry for slow; root, slow, Adj  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">slow</insert> <!-- gloss -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">aa~</insert> <!-- attaches to adj -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iii.	Create entry for -li; suffix, ADVZR, Derivational, from adj to adv  -->
+   <insert wait="2000">{TAB }</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <!-- already suffix -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">ADVZR</insert> <!-- gloss 'ADVZR' = adverbializer-->
+	 <var id="value" set="Not Sure"/>
+	 <click select="category-info/affix-type/data"/>
+	 <insert wait="500">d~</insert> <!-- Derivational affix -->
+	 <var id="value" set="&lt;Any>"/>
+	 <click select="category-info/attaches-to/data"/>
+	 <insert wait="500">aa~</insert> <!-- attaches to adj -->
+	 <insert wait="500">{TAB}</insert> <!-- click the drop list button-->
+	 <insert wait="500">a~</insert> <!-- to Adv -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iv.	Make word gloss be 'slowly'  -->
+	 <insert wait="500">{TAB}</insert> <!-- go to the word gloss field -->
+	 <insert wait="500">+{END}slowly</insert> <!-- word gloss -->
+
+  <!--  v.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  k.	wandered  -->
+  <!--  i.	Split into wander -d  -->
+   <insert wait="500">{RIGHT 6}-</insert> <!-- split off the suffix -->
+  <!--  ii.	Create entry for wander; root, to wander, V  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">to wander</insert> <!-- gloss -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">v~</insert> <!-- click verb ... -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iii.	Create entry for -d; suffix, PAST, Inflectional, V  -->
+   <insert wait="2000">{TAB }</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <!-- already suffix -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">PAST</insert> <!-- gloss 'PAST' -->
+	 <var id="value" set="Not Sure"/>
+	 <click select="category-info/affix-type/data"/>
+	 <insert wait="500">i~</insert> <!-- Inflectional affix -->
+	 <var id="value" set="&lt;Any>"/>
+	 <click select="category-info/attaches-to/data"/>
+	 <insert wait="500">v~</insert> <!-- attaches to verb -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iv.	Make word gloss be 'wandered'  -->
+	 <insert wait="500">{TAB}</insert> <!-- go to the word gloss field -->
+	 <insert wait="500">+{END}wandered</insert> <!-- word gloss -->
+
+  <!--  v.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+  <!--  l.	houm  -->
+  <!--  i.	Create entry for houm; root, home, Noun  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select Root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">home</insert> <!-- gloss 'the' -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">n~</insert> <!-- click More ... -->
+	 <click select="create"/>
+	</on-dialog>
+
+  <!--  ii.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  m.	iven  -->
+  <!--  i.	Create entry for iven; particle, even, More… Adverbializer  -->
+   <insert wait="1000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">p~</insert> <!-- select Particle -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">even</insert> <!-- gloss 'the' -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">m{END}~</insert> <!-- click More ... -->
+	 <on-dialog title="Add from Catalog">
+	   <insert wait="500">aaaa~</insert> <!-- select Adverbializer -->
+	 </on-dialog>
+	 <click select="create"/>
+	</on-dialog>
+
+  <!--  ii.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  n.	dou  -->
+  <!--  i.	Create entry for dou; particle, though, Adverbializer  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">p~</insert> <!-- select Particle -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">though</insert> <!-- gloss 'the' -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">aaa~</insert> <!-- click Adverbializer -->
+	 <click select="create"/>
+	</on-dialog>
+
+  <!--  ii.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  o.	dei  -->
+  <!--  i.	Create entry for dei; particle, they, pronoun  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">p~</insert> <!-- select Particle -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">they</insert> <!-- gloss 'the' -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">p{RIGHT}p~</insert> <!-- click Pronoun -->
+	 <click select="create"/>
+	</on-dialog>
+
+  <!--  ii.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  p.	normyli  -->
+  <!--  i.	Split into normyl -i  -->
+   <insert wait="500">{RIGHT 6}-</insert> <!-- split off the suffix i -->
+  <!--  ii.	Create entry for no#x0279;myl; root, normal, Adj  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">normal</insert> <!-- gloss -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">aa~</insert> <!-- click Adj -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iii.	For i, use Allomorph of; Go To li; click on Add Allomorph  -->
+   <insert wait="2000">{TAB }</insert> <!-- go to -li on the same line -->
+   <insert wait="2000">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">{up}a~</insert> <!-- click Add allomorph -->
+   <on-dialog title="Find entry to add allomorph">
+	 <insert wait="1000">{HOME}l</insert> <!-- delete i, select li -->
+	 <!--insert wait="500">~</insert-->
+	 <click path="9:Add Allomorph.../43:Add Allomorph..."/>
+   </on-dialog>
+
+  <!--  iv.	Make word gloss be 'normally'  -->
+	 <insert wait="1000">{TAB }</insert> <!-- go to the word gloss field -->
+	 <insert wait="500">+{END}normally</insert> <!-- word gloss -->
+
+  <!--  v.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  q.	wyntid  -->
+  <!--  i.	Split into wynt -id  -->
+   <insert wait="500">{RIGHT 4}-</insert> <!-- split off the suffix -->
+  <!--  ii.	Create entry for wynt; root, to want, V  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">to want</insert> <!-- gloss -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">v~</insert> <!-- click verb -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iii.	For -id , use Allomorph of; Go To -d  -->
+   <insert wait="2000">{TAB }</insert><!-- go to d -->
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">{up}aa~</insert> <!-- click Add allomorph -->
+   <on-dialog title="Find entry to add allomorph">
+	 <insert wait="500">{BS}</insert> <!-- select the default to write over -->
+	 <insert wait="500">{BS}</insert>
+	 <insert wait="500">d</insert>
+	 <!--insert wait="500">~</insert-->
+	 <click path="9:Add Allomorph.../43:Add Allomorph..."/>
+   </on-dialog>
+
+  <!--  iv.	Make word gloss be 'wanted'  -->
+	 <insert wait="500">{TAB }</insert> <!-- go to the word gloss field -->
+	 <insert wait="500">+{END}wanted</insert> <!-- word gloss -->
+
+  <!--  v.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  r.	deir -->
+  <!--  i.	Create entry for deir; particle, their, pronoun  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">p~</insert> <!-- select Particle -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">their</insert> <!-- gloss 'the' -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">p{RIGHT}p~</insert> <!-- click Pronoun -->
+	 <click select="create"/>
+	</on-dialog>
+
+  <!--  ii.	CTRL-right arrow   -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  s.	masterz  -->
+  <!--  t.	Split into master =z  -->
+   <insert wait="500">{RIGHT 6}-</insert> <!-- split off the suffix -->
+  <!--  i.	Create entry for master; root, master, Noun  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">master</insert> <!-- gloss -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">n~</insert> <!-- click Noun ... -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  ii.	Create entry for =z; enclitic, POSSR, <Not Sure>   -->
+   <insert wait="2000">{TAB }</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry; there are 2 new items before it -->
+   <on-dialog title="New Entry">
+	 <!--  change suffix to enclitic -->
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">=~</insert> <!--  =enclitic -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">POSSR</insert> <!-- gloss possessor -->
+	 <!--click path="9:Category Info./20:Category Info./9:&lt;Not sure>/20:RootSite/$Text"/-->
+	 <!-- leave not sure -->
+	 <click select="create"/>
+   </on-dialog>
+
+  <!--  iii.	Make word gloss be 'master’s'  -->
+	 <insert wait="500">{TAB}</insert> <!-- go to the word gloss field -->
+	 <insert wait="500">+{END}master's</insert> <!-- word gloss -->
+
+  <!--  iv.	CTRL-right arrow  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+
+  <!--  u.	epruvl  -->
+  <!--  i.	Create entry for epruvl; root, approval, Noun  -->
+   <insert wait="2000">{TAB}</insert>
+   <insert wait="500">{DOWN}</insert> <!-- open the drop down list -->
+   <insert wait="500">c~</insert> <!-- click Create New Entry -->
+   <on-dialog title="New Entry">
+	 <click select="morpheme-type/data"/>
+	 <insert wait="500">r~</insert> <!-- select root -->
+	 <click select="gloss/data"/>
+	 <insert wait="500">approval</insert> <!-- gloss -->
+	 <var id="value" set="&lt;Not sure>"/>
+	 <click select="category-info/category/data"/>
+	 <insert wait="500">n~</insert> <!-- click Noun ... -->
+	 <click select="create"/>
+   </on-dialog>
+
+</model>
+
+  <!--  ii.	CTRL-right arrow (which doesn't do anything)  -->
+   <insert wait="500">^{RIGHT}</insert> <!-- open the focus box to the right -->
+  <!--  v.	Click in Free: and type: The biggest dogs slowly wandered home, even though they normally wanted their master's approval.  -->
+  <!--click path="$insFree"/-->
+  <click dx="30" select="interlinear-texts[@role='view']/text/analyze/free-trans/empty"/>
+<insert wait="500">The biggest dogs slowly wandered home, even though they normally wanted their master's approval.</insert>
+
+  </on-application>
+</accil>

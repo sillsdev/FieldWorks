@@ -1,0 +1,4 @@
+4x2	!!!!!!!!
+0	key = 0 (first line)\nkey = 0 (second line)\nkey = 0 (third line)
+93	mañaña
+1	key = 1 (first line)\nkey = 1 (second line)\n

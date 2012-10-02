@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <!-- Adds and then Deletes a category -->
+
+<accil on-fail="assert">
+   <goal>Creates a Grammar category</goal>
+
+   <bug id="FWR-386" desc="Delete a Grammar Category, Get a Crash!"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <on-application log="all" run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' on-fail="assert">
+
+	<click select="menubar/view/grammar/category-edit"/>
+
+<model select="category-edit[@role='view']">
+
+	<click select="categories/record" path="modifier"/>
+
+	<!--click select="//toolbar/insert/insert-category"/-->
+
+	<insert>^i</insert>
+	<on-dialog title="Add from Catalog" name="MasterCategoryListDlg" on-fail="assert">
+					   <insert wait="500">ppppp</insert>
+					   <insert wait="500">{RIGHT}</insert>
+					   <insert wait="500">ppp</insert>
+					   <insert wait="500">{RIGHT}</insert>
+					   <insert wait="500">p</insert>
+					   <insert wait="500">{RIGHT}</insert>
+			   <click path="9:Grammatical Category Catalog[2]/36:Emphatic pronoun"/>
+					   <click path="$add"/>
+	</on-dialog>
+
+	<click select="categories/record" path="Emphatic pronoun"/>
+
+	<click select="//toolbar/standard/delete"/>
+	<insert wait="500">d</insert>
+
+	<!-- still have to get the cursor off the delete button or the next test fails -->
+	<var id="ind" set="*"/>
+	<click dx="50" select="category/slice/name/label"/>
+
+</model>
+
+ </on-application>
+</accil>

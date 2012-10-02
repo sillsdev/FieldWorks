@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Bulk edit entries test Part 4: cc table processor test -->
+
+<accil on-fail="assert">
+
+<!--  -->
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+
+ <on-application args="-db $projectName" run="ok" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+		 <include from="IncLexicon.xml"/>
+
+   <var id="copyIt" set="Copy the contents of the source field to the target field"/>
+   <var id="pop" set="Populate a field by applying a complex process to another field"/>
+   <var id="del" set="Delete the contents of the specified column for all selected rows"/>
+   <var id="changeIt" set="Select the target field and the list choice to change it to"/>
+   <var id="arrow" set="  "/>
+   <var id="oldVal" set="When the old value is not empty..."/>
+
+<!-- Go to Lexicon/Bulk Edit Entries -->
+   <click path="$menuLEXICON;menu:Bulk Edit Entries"/>
+
+<!-- Goto Bulk Copy tab -->
+
+   <click path="$BEE;9:BulkEditBar/9:$changeIt;[2]/37:Bulk Copy"/>
+
+<!-- Goto Process  tab -->
+
+   <click path="$BEE;9:BulkEditBar/9:$copyIt;[2]/37:Process"/>
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Setup.../43:Setup..."/>
+   <on-dialog title="Setup Processor">
+	  <click path="9:Processor Properties/20:Processor Properties/$NL;43:Open"/>
+	  <insert>c~</insert>
+	  <click path="9:Processor Properties/20:Processor Properties/9:Name:[2]/42:Name:"/>
+	  <insert>$ScriptPath;\CVpattern.cc</insert>
+	  <click path="9:Processor Properties/20:Processor Properties/$nl;[3]/42:NAMELESS"/>
+	  <insert>make CV Pattern</insert>
+	  <click path="9:Add/43:Add"/>
+	  <click path="9:Remove/43:Remove"/>
+	  <click path="$ok"/>
+   </on-dialog>
+   <glimpse id="procName" path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$nl;[2]/41:NAMELESS" prop="value" expect="make CV Pattern"/>
+
+<!-- Source is Citation Form, Target is Import Residue (Entry) -->
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$NL;43:Open"/>
+   <insert>c~</insert><!-- Citation Form -->
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/9:Target Field[2]/43:Open"/>
+   <insert>i~</insert><!-- Import Residue (Entry) -->
+
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+   <glimpse id="1f" path="$beeRec;[1]/$Col;[3]/$Text" prop="value" expect="ennie"/>
+   <glimpse id="4f" path="$beeRec;[4]/$Col;[3]/$Text" prop="value" expect=" meanie"/>
+   <glimpse id="8f" path="$beeRec;[8]/$Col;[3]/$Text" prop="value" expect="minie"/>
+   <glimpse id="2d" path="$beeRec;[2]/$Col;[3]/$Text" prop="value" expect=" $arrow; "/>
+   <glimpse id="3d" path="$beeRec;[3]/$Col;[3]/$Text" prop="value" expect=" $arrow; "/>
+   <glimpse id="7d" path="$beeRec;[7]/$Col;[3]/$Text" prop="value" expect=" $arrow; "/>
+   <glimpse id="11" path="$beeRec;[11]/$Col;[3]/$Text" prop="value" expect=" $arrow; CCVCVV"/><!-- mwadia -->
+   <glimpse id="13" path="$beeRec;[13]/$Col;[3]/$Text" prop="value" expect=" $arrow; CVCV"/><!-- cadu -->
+   <glimpse id="15" path="$beeRec;[15]/$Col;[3]/$Text" prop="value" expect=" $arrow; CVCV"/><!-- caka -->
+
+   <click path="$BEE;9:BulkEditBar/9:Clear/43:Clear"/>
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/60:$pop;/9:Process/$nl;[3]/9:$oldVal;/20:$oldVal;/9:Overwrite/45:Overwrite"/>
+   <click path="$BEE;9:BulkEditBar/9:Preview/43:Preview"/>
+
+   <click path="$beeRec;[11]/$Col;[2]/$Text"/>
+   <click path="$firstRec"/><!-- Select the first record -->
+   <glimpse id="1g" path="$beeRec;[1]/$Col;[3]/$Text" prop="value" expect="ennie $arrow; CV"/>
+   <glimpse id="4g" path="$beeRec;[4]/$Col;[3]/$Text" prop="value" expect=" meanie $arrow; "/>
+   <glimpse id="8g" path="$beeRec;[8]/$Col;[3]/$Text" prop="value" expect="minie $arrow; "/>
+   <glimpse id="2e" path="$beeRec;[2]/$Col;[3]/$Text" prop="value" expect=" $arrow; "/>
+   <glimpse id="3e" path="$beeRec;[3]/$Col;[3]/$Text" prop="value" expect=" $arrow; "/>
+   <glimpse id="7e" path="$beeRec;[7]/$Col;[3]/$Text" prop="value" expect=" $arrow; "/>
+   <glimpse id="11a" path="$beeRec;[11]/$Col;[3]/$Text" prop="value" expect=" $arrow; CCVCVV"/><!-- mwadia -->
+   <glimpse id="13a" path="$beeRec;[13]/$Col;[3]/$Text" prop="value" expect=" $arrow; CVCV"/><!-- cadu -->
+   <glimpse id="15a" path="$beeRec;[15]/$Col;[3]/$Text" prop="value" expect=" $arrow; CVCV"/><!-- caka -->
+
+<!-- Goto Delete  tab -->
+
+   <click path="$BEE;9:BulkEditBar/9:$pop;[2]/37:Delete"/>
+   <click path="$BEE;9:BulkEditBar/9:$del;[2]/60:$del;/9:Delete/9:Replace o: with oo/43:Open"/>
+   <insert>i~</insert><!-- Import Residue (Entry) -->
+   <click path="$BEE;9:BulkEditBar/9:Apply/43:Apply"/>
+   <click path="$tbSTANDARD;43:Save"/>
+
+<!-- page 5 starts here -->
+
+ </on-application>
+</accil>

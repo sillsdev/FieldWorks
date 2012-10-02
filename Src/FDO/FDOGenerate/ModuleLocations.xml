@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- This file contains overrides for the location of cellar modules. Any module specified
+	in here will be placed in the "assembly". "path" specifies the location of the assembly
+	project relative to the FDO directory. -->
+<ModuleLocations>
+	<!-- TODO-Linux: Review. Was path="../../ScrFDO". -->
+	<module name="Scripture" assembly="ScrFDO" path="../ScrFDO"/>
+</ModuleLocations>

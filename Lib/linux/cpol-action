@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# Perform an action on files governed by CPOL
+#
+# CPOL is the Code Project Open License
+
+FILES="SilSidePane.dll"
+
+cd "$(dirname "$0")"
+
+case $1 in
+	pack)
+		for F in $FILES
+		do
+			gzip -f $F || true
+		done
+	;;
+	unpack)
+		for F in $FILES
+		do
+			gunzip -f $F.gz || true
+		done
+	;;
+	check)
+		for F in $FILES
+		do
+			[ -f $F ] || exit 1
+		done
+	;;
+	*)
+		echo >&2 "$0: Unknown action: $1"
+		exit 1
+	;;
+esac

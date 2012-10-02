@@ -1,0 +1,57 @@
+/* XLingPap1.css
+   Cascading Style Sheet used with the XLingPap1.xsl XSLT template.
+   It includes some items used with the SampleXLingPap.xml file.
+
+   The user should modify the classes to be formatted per their preference.
+ */
+
+/**************************
+ language formatting
+ **************************/
+.carolinian {
+  font-weight: bold;
+  color: blue;
+}
+
+.nahuatl {
+  color: #446688;
+}
+
+.english {
+  color: maroon;
+}
+
+.spanish {
+ color: purple;
+}
+
+/**************************
+ class element formatting
+ **************************/
+SPAN.attribute {
+  font-family: fixed;
+  color: purple;
+}
+
+SPAN.element {
+  font-family: fixed;
+  color: maroon;
+}
+
+span.super {
+  vertical-align: super;
+  font-size: 65%;
+}
+
+span.sub {
+  vertical-align: sub;
+  font-size: 65%;
+}
+
+/**************************
+ special formatting for a particular chart in a particular paper
+ **************************/
+TD.CarolinianVowelChartCol {
+text-align: center;
+
+}

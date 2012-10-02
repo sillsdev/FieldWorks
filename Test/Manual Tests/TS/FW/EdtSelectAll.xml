@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="edtselall" num="2.2.7" abbr="edsa" file="FW\EdtSelectAll.xml">
+<title tag="edtselall">Edit-Select All Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>Selects as much as is appropriate for the given view. In the initial implementation this to corresponds to what can be cut or copied to the clipboard and will thus be limited to the string or text where the cursor is located.</p>
+<p>Later, this may be extended to non-editable selections, so that data can be copied from a FieldWorks application to other apps. In this case, Select All behaves as follows: If in data entry view, then this selects the data in the current field. If in a record-oriented view, then the entire record is selected. If it is a document view (e.g., a view of the entire object), then everything in the view is displayed.</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Select All" type="doc">Edit-Select All</link>
+</p>
+</introduction>
+<context>
+<p>Many selection combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Edit-Select All"</p>
+</context>
+
+ <case id="edsaInsp" num="0" order="any">
+  <title tag="edsaInsp">Inspection</title>
+  <context>
+<p>When the application is running and text is displayed in an active window</p>
+</context>
+  <p name="Specifications">See <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/EditMenu/EditMenu.html#Edit-Select All" type="doc">Edit-Select All</link>.</p>
+  <step name="0.1">Use the <link uri="../StdCtrls/MenuBtn.xml#mnuItemInsp">Menu Item Inspection tests (cases 3 and 4)</link> to inspect the Edit-Select All menu item. Use short-cut &lt;ctrl&gt;&lt;A&gt;.
+   <r>Report any failures as suggested using "Edit-Select All" as the name of the menu item.</r>
+  </step>
+  <step name="0.2" link="Bug">While the cursor is in editable text or some text is selected, click Edit-Select All.
+   <r>
+<ul>
+	<li>
+<b>In Browse view:</b> all text in every record is selected.</li>
+	<li>
+<b>In Data Entry view:</b> only the current field is selected.</li>
+	<li>
+<b>In Document view:</b> all text in every record is selected.</li>
+   </ul>
+</r>
+   <p name="bug">Edit-Select All selects incorrect number of fields</p>
+  </step>
+  <step name="0.3" link="Bug">While the cursor is not in editable text click Edit-Select All. (This may only be possible in Data Entry view)
+   <r>No text is selected.</r>
+   <p name="bug">Edit-Select All selects non-editable text</p>
+  </step>
+ </case>
+
+<update date="Jul-11-01" author="MikeL">Generated via yet more XML (what a time saver!)</update>
+<update date="Jul-13-01" author="MikeL">Added cases inspired by Lars and Janet previous work</update>
+<update date="May-24-02" author="JoelC">Checked up to specs</update>
+
+</test>

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding = "windows-1250"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.00"
+	Name="SILGraphiteControl"
+	ProjectGUID="{A764D9E8-77E4-4F51-8953-807D8F9B38E2}"
+	Keyword="MFCActiveXProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="2"
+			UseOfMFC="2"
+			CharacterSet="1">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="../../include;&quot;C:\Singapore\unicode recompiled\include&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL"
+				MinimalRebuild="TRUE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				TreatWChar_tAsBuiltInType="FALSE"
+				UsePrecompiledHeader="3"
+				WarningLevel="2"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="grengine.lib"
+				OutputFile="$(OutDir)/SILGraphiteControl.ocx"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="GraphiteLib/Debug"
+				ModuleDefinitionFile=".\SILGraphiteControl.def"
+				GenerateDebugInformation="TRUE"
+				SubSystem="2"
+				ImportLibrary="$(OutDir)/SILGraphiteControl.lib"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="FALSE"
+				TypeLibraryName="$(IntDir)/$(ProjectName).tlb"
+				HeaderFileName="$(ProjectName)idl.h"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Performing registration"
+				CommandLine="regsvr32 /s /c &quot;$(TargetPath)&quot;
+copy &quot;SILGraphiteControl.lic&quot; $(OutDir)
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"
+				AdditionalIncludeDirectories="$(IntDir)"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="2"
+			UseOfMFC="2"
+			CharacterSet="1">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				OmitFramePointers="TRUE"
+				AdditionalIncludeDirectories="../../include;&quot;C:\Singapore\unicode recompiled\include&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="TRUE"
+				TreatWChar_tAsBuiltInType="FALSE"
+				UsePrecompiledHeader="3"
+				WarningLevel="2"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)/SILGraphiteControl.ocx"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="../Graphite_UNICODE_debug_MDd/Release;&quot;C:\Singapore\unicode recompiled\contrib\Gr_UNICODE_compiled_MDd_\Release&quot;"
+				ModuleDefinitionFile=".\SILGraphiteControl.def"
+				GenerateDebugInformation="TRUE"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				ImportLibrary="$(OutDir)/SILGraphiteControl.lib"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="FALSE"
+				TypeLibraryName="$(IntDir)/$(ProjectName).tlb"
+				HeaderFileName="$(ProjectName)idl.h"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Performing registration"
+				CommandLine="regsvr32 /s /c &quot;$(TargetPath)&quot;
+copy &quot;SILGraphiteControl.lic&quot; $(OutDir)
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"
+				AdditionalIncludeDirectories="$(IntDir)"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
+			<File
+				RelativePath="GrGraphics.cpp">
+			</File>
+			<File
+				RelativePath="GrTextSrc.cpp">
+			</File>
+			<File
+				RelativePath="LinkedStack.cpp">
+			</File>
+			<File
+				RelativePath="SILGraphiteControl.cpp">
+			</File>
+			<File
+				RelativePath="SILGraphiteControl.def">
+			</File>
+			<File
+				RelativePath="SILGraphiteControl.hpj">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Making help file..."
+						CommandLine="start /wait hcw /C /E /M &quot;$(ProjectName).hpj&quot;
+"
+						AdditionalDependencies=".\hlp\$(ProjectName).hm"
+						Outputs=".\$(ProjectName).hlp"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Making help file..."
+						CommandLine="start /wait hcw /C /E /M &quot;$(ProjectName).hpj&quot;
+"
+						AdditionalDependencies=".\hlp\$(ProjectName).hm"
+						Outputs=".\$(ProjectName).hlp"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="SILGraphiteControl.idl">
+			</File>
+			<File
+				RelativePath="SILGraphiteControlCtrl.cpp">
+			</File>
+			<File
+				RelativePath="SILGraphiteControlPropPage.cpp">
+			</File>
+			<File
+				RelativePath="TextDocument.cpp">
+			</File>
+			<File
+				RelativePath="TextRange.cpp">
+			</File>
+			<File
+				RelativePath="TextSelection.cpp">
+			</File>
+			<File
+				RelativePath="stdafx.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc">
+			<File
+				RelativePath="GrGraphics.h">
+			</File>
+			<File
+				RelativePath="GrInclude.h">
+			</File>
+			<File
+				RelativePath="GrTextSrc.h">
+			</File>
+			<File
+				RelativePath="LinkedStack.h">
+			</File>
+			<File
+				RelativePath="Resource.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating map file for help compiler..."
+						CommandLine="echo // Generated Help Map file.  Used by $(ProjectName).HPJ. &gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Commands (ID_* and IDM_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm ID_,HID_,0x10000 IDM_,HIDM_,0x10000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Prompts (IDP_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDP_,HIDP_,0x30000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Resources (IDR_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDR_,HIDR_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Dialogs (IDD_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDD_,HIDD_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Frame Controls (IDW_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDW_,HIDW_,0x50000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+"
+						Outputs=".\hlp\$(ProjectName).hm"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating map file for help compiler..."
+						CommandLine="echo // Generated Help Map file.  Used by $(ProjectName).HPJ. &gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Commands (ID_* and IDM_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm ID_,HID_,0x10000 IDM_,HIDM_,0x10000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Prompts (IDP_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDP_,HIDP_,0x30000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Resources (IDR_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDR_,HIDR_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Dialogs (IDD_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDD_,HIDD_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo. &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+echo // Frame Controls (IDW_*) &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+makehm IDW_,HIDW_,0x50000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\$(ProjectName).hm&quot;
+"
+						Outputs=".\hlp\$(ProjectName).hm"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="SILGraphiteControl.h">
+			</File>
+			<File
+				RelativePath="SILGraphiteControlCtrl.h">
+			</File>
+			<File
+				RelativePath="SILGraphiteControlPropPage.h">
+			</File>
+			<File
+				RelativePath="TextDocument.h">
+			</File>
+			<File
+				RelativePath="TextRange.h">
+			</File>
+			<File
+				RelativePath="TextSelection.h">
+			</File>
+			<File
+				RelativePath="stdafx.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			<File
+				RelativePath="hlp\Bullet.bmp">
+			</File>
+			<File
+				RelativePath="SILGraphiteControl.ico">
+			</File>
+			<File
+				RelativePath="SILGraphiteControl.rc">
+			</File>
+			<File
+				RelativePath="SILGraphiteControlCtrl.bmp">
+			</File>
+		</Filter>
+		<File
+			RelativePath="..\..\Gr_UNICODE_compiled_MDd_\Debug\GrEngine.lib">
+		</File>
+		<File
+			RelativePath="ReadMe.txt">
+		</File>
+		<File
+			RelativePath="SILGraphiteControl.lic">
+		</File>
+		<File
+			RelativePath="hlp\SILGraphiteControl.rtf">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

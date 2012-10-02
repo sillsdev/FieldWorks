@@ -1,0 +1,23 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<task file="Using\Related.xml">
+ <title tag="useRel">How to link related bugs</title>
+ <index>
+  <li>report: related bugs</li>
+  <li>bug links</li>
+  <li>links between bugs</li>
+ </index>
+ <introduction>
+  <p>Links can be established between similar, but not identical bugs, only via the bug tracking system.</p>
+ </introduction>
+ <prerequisites>
+  <p>Before you can link bugs,</p>
+  <ul>
+   <li>you must have access to the bug tracking system.</li>
+  </ul>
+ </prerequisites>
+ <steps>
+  <p>Here are the steps to follow when linking bugs:</p>
+  <step>step 1</step>
+  <step>step 2</step>
+ </steps>
+</task>

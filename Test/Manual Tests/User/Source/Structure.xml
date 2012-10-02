@@ -1,0 +1,24 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<structure file="Source\Structure.xml">
+ <title tag="srctman">Test manual structure</title>
+ <index>
+  <li>Manual: structure</li>
+ </index>
+ <description>
+  <p>The test manual source is a collection of three directories (folders) which contain a number of subdirectories. Each subdirectory contains files which are either primary source files or generated source files.</p>
+  <p>Primary source files are XML (*.xml), XSL (*.xsl) and batch (*.bat) files. There are also a few HTML (*.htm) files. All other files, mostly HTML and batch files, are generated from the primary files.</p>
+  <ul name="The three directories are">
+   <li><link uri="HelpFile.xml" type="module">HelpFiles</link> - where this manual is generated, integrated and compiled.</li>
+   <li><link uri="TcContent.xml" type="module">TS</link> - where the test script primary source is stored by product.</li>
+   <li><link uri="UserContent.xml" type="module">User</link> - where the user content primary source is stored.</li>
+  </ul>
+ </description>
+ <features>
+  <p>Each of these main directories has an XSL subdirectory. It contains XML style sheets, DTDs and batch files necessary to validate and display various views of the modules. Some of these files have the same names but differ in a few details mostly having to do with forming links.</p>
+ </features>
+ <seeAlso>
+  <li><link uri="..\XML\XML.xml" type="module">What is XML?</link></li>
+  <li><link uri="..\XML\XSL.xml" type="module">What is XSL?</link></li>
+  <li><link uri="..\XML\MarkUp.xml" type="module">What is HTML?</link></li>
+ </seeAlso>
+</structure>

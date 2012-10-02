@@ -1,0 +1,52 @@
+﻿<LayoutInventory>
+  <layout class="LexReference" type="jtview" name="publishStemEntry" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="EntryTargetsConfig" label="Targets" sep=", " before="" after="" visibility="ifdata" param="publishStemCrossRef" css="crossref-targets" />
+  </layout>
+  <layout class="LexReference" type="jtview" name="publishStemSenseRef" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="lexref-type" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="SenseTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishStemCrossRef" css="lexref-targets" after=" " />
+  </layout>
+  <layout class="LexReference" type="jtview" name="publishStemMinorEntry" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type-minor" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishStemMinorCrossRef" css="crossref-targets-minor" after=" " />
+  </layout>
+  <layout class="LexReference" type="jtview" name="publishStemMinorSenseRef" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="lexref-type-minor" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="SenseTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishStemMinorCrossRef" css="lexref-targets-minor" after=" " />
+  </layout>
+  <layout class="LexReference" type="jtview" name="publishRootEntry" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootCrossRef" css="crossref-targets" after=" " />
+  </layout>
+  <layout class="LexReference" type="jtview" name="publishRootSenseRef" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="lexref-type" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="SenseTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootCrossRef" css="lexref-targets" after=" " />
+  </layout>
+  <layout class="LexReference" type="jtview" name="publishRootSubEntry" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type-sub" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootSubCrossRef" css="crossref-targets-sub" after=" " />
+  </layout>
+  <layout class="LexReference" type="jtview" name="publishRootSubSenseRef" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="lexref-type-sub" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="SenseTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootSubCrossRef" css="lexref-targets-sub" after=" " />
+  </layout>
+  <layout class="LexReference" type="jtview" name="publishRootMinorEntry" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type-minor" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootMinorCrossRef" css="crossref-targets-minor" after=" " />
+  </layout>
+  <layout class="LexReference" type="jtview" name="publishRootMinorSenseRef" version="9">
+	<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="lexref-type-minor" sep=" " />
+	<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting" sep=" " />
+	<part ref="SenseTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootMinorCrossRef" css="lexref-targets-minor" after=" " />
+  </layout>
+</LayoutInventory>

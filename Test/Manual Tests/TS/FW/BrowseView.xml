@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="browseview" num="5.2" abbr="bview" file="FW\BrowseView.xml">
+ <title tag="bview">Browse View Usage Tests</title>
+ <index>
+<li>Browse View Usage Test</li>
+ </index>
+
+ <introduction>
+ <p>Working in the Browse View Mode.
+ </p>
+ <p name="todo">This is the first version, please look over for completeness</p>
+ </introduction>
+
+  <context>
+  <p>Specs for Browse View:</p>
+  <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Browse/Browse.html" type="doc">Browse View</link>
+</p>
+  <p>Specs for Tools - Options:</p>
+  <p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html" type="doc">Tools-Options</link>
+</p>
+  <p>The first words of any bug report entries should be "Browse View".</p>
+  </context>
+
+<!--**************CASE 1*****************-->
+
+<case id="bview1" num="1">
+ <title tag="bview1">Inspect the Browse View</title>
+ <context>
+<p>With a language project open in Browse View in Data Notebook</p>
+</context>
+
+ <step name="1.1" link="Bug">
+   Examine the window displayed and make sure it agrees with the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Browse/Browse.html" type="doc">Browse View</link>.
+   <r>The view should be similar to the one displayed in the specifications just with different data being displayed.</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.2" link="Bug">
+	Check the fields being displayed for the Browse view.  Make sure they agree with those listed under Tools-Options-View tab.
+	<r>The default fields displayed in the browse view are:<ul>
+	   <li>Date of Event</li>
+<li>Title</li>
+<li>Anthropology Categories</li>
+<li>Locations</li>
+<li>Sources</li>
+<li>See Also</li>
+<li>Further Questions</li>
+</ul>
+</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.3" link="Bug">
+	Under Tools-Options-View tab, see if Ignore Hierarchy is checked (default is checked).
+	<r>
+<b>Ignore Hierarchy Not Checked:</b>
+<p>Only the main entries should be displayed in the browse view.</p>
+	   <b>Ignore Hierarchy Checked:</b>
+<p>Subentries should be displayed following their main entry in the browse view.  They should also have a little plus symbol in the column directly to the left to indicate their subentry status.</p>
+	  </r>
+	<p name="bug">
+</p>
+ </step>
+
+ <step name="1.4" link="Bug">
+	Under Tools-Options-View tab, see how many lines should be displayed per entry (default is 5) for the Browse View.
+	<r>Each entry should display no more than the number of lines listed for the Browse View under the Tools-Options-View tab.</r>
+	<p name="bug">
+</p>
+ </step>
+
+ <step name="1.5" link="Bug">
+   The width of the fields can be adjusted by moving the cursor next to the dividers between the field titles and dragging the cursor to the new desired width.
+   <r>The width is changed and the data in the field should then conform to the new width.</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.6" link="Bug">
+   The order of the fields being displayed can be reordered by dragging the title bar to the desired spot in the sequence.
+   <r>The column of data is moved to the new location and the change of the order is noted in the Browse View under the Tools-Options-View tab.</r>
+   <p name="bug">
+</p>
+   <p name="note">This has not been implemented yet. (5/29/02)</p>
+ </step>
+
+ <step name="1.7" link="Bug">
+   Change some text in a text field (like Title, description, further questions, etc.)
+   <r>The text should be editable and changes should persist throughout other views. Commands that normally can be done to editable text (like formatting) should also be available.</r>
+   <p name="bug">
+</p>
+ </step>
+
+ <step name="1.8" link="Bug">
+   Try to change a field that is not a normal text field (a reference field like Anthro Categories).
+  <r>The text in a reference type field or a date field should be unchangeable. It should only be viewable and selectable for copying purposes.</r>
+   <p name="bug">
+</p>
+ </step>
+
+</case>
+
+<case id="bview2" num="2">
+  <title tag="bview2">Navigating in the Browse View</title>
+  <context>
+<p>With a language project open in Browse View in Data Notebook</p>
+</context>
+
+  <step name="2.1" link="Bug">
+	 To Navigate in the Browse View, the Data-First,Previous,Next and Last arrows (either from the menu or toolbar) are used in the same manner as in the other views.  Click the arrow to navigate to the entry associated with that arrow.
+	 <r>
+<ul>
+<li>If Next is pressed the cursor should move from the current entry to the next entry</li>
+		<li>Next and Last should be disabled if the cursor is in the last entry.  The same for First and Previous if in the first entry.</li>
+	 <li>When switching to another view, the focus should remain on the same entry</li>
+</ul> </r>
+	 <p name="bug">
+</p>
+  </step>
+
+  <step name="2.2" link="Bug">
+	Viewing subentries. An Entry that contains subentries is expanded by clicking the plus symbol in the left column (If Ignore Hierarchy is checked, subentries are already displayed below their main entry).
+	<p name="note">Expanding/Collapsing Hierarchy not implemented in version 1</p>
+	<r>The subentries of the entry should be displayed below and the plus symbol should change to minus (clicking the minus will collapse the listed subentries).</r>
+	<p name="bug">
+</p>
+  </step>
+
+</case>
+
+
+<case id="bview3" num="3">
+  <title tag="bview3">Sorting Features of Browse View</title>
+  <context>
+<p>With a language project open in Browse View in Data Notebook</p>
+</context>
+  <p name="note">
+<b>Sorting for browse view not yet implemented as of 5/29/02</b>
+</p>
+
+  <step name="3.1" link="Bug">
+	Sort by a field that is displayed in browse view. Simply left-click on the field to sort the entries by that field (a-z sort). Clicking a second time should reverse the order of the sort (z-a sort).
+	 <r>
+<ul>
+<li>Verify the entries are sorted according to the field clicked on.</li>
+<li>An arrow is placed in the title bar of that field to indicate the entries are sorted according to it (Down arrow represents a-z, up arrow represents z-a).</li>
+</ul>
+</r>
+	 <p name="bug">
+</p>
+  </step>
+
+  <step name="3.2" link="Bug">
+	A user can also sort by a field not displayed in browse view by using a user defined sort.  If this is the case then no arrow would appear in any of the title bars for the fields. A user defined sort would be invoked using one of the sorts listed under Sort Methods on the side panel.
+	<r>Data is sorted according to the user defined sort and no sort arrow is present in the title bars.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="3.3" link="Bug">
+	The "Temporary Sort" listed in the Sort Methods is to keep track of the last sort invoked in the Browse View by clicking on one of the title bars.  Sort by a field in Browse View, then run a random user defined sort. Then click Temporary Sort.
+	<r>The entries should be sorted in the same way as before the random user defined sort just executed.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="3.4" link="Bug">
+	Using sort features with Ignore Hierarchy checked. Execute a sort by clicking on one of the title bars with Ignore Hierarchy checked.
+	<r>The entries and subentries should be sorted based on the selected field. The sorting treats all entries the same (as if they were all main entries). Verify the entries are sorted correctly.</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="3.5" link="Bug">
+	Sorting by a category with multiple items. If a field contains multiple pieces of data such as the Anthropology Categories field, the entries are sorted by each piece of data in the field. Click on the Anthropology Category field to test sorting by a field with multiple items.
+   <r>A duplicate entry for each piece of data in the field is created with the piece of data being used for the sorting of the entry listed first in that field (ie. if an entry had 3 different anthropology categories listed, then 3 entries would be created with a different piece of data at the top of the anthropology field each time). Verify the entries are sorted based on the first piece of data in the selected field.</r>
+   <p name="bug">
+</p>
+  </step>
+</case>
+
+<case id="bview4" num="4" order="any">
+  <title tag="bview4">Adding Entries</title>
+  <context>
+<p>With a language project open in Browse View in Data Notebook</p>
+</context>
+
+  <step name="4.1" link="Bug">
+	 To add an entry, simply click Insert - Event or Analysis on the Menu or Toolbar.
+	<r>The view automatically switches to the Data Entry View at the end of the entry list to the blank entry.</r>
+	<p name="bug">
+</p>
+	<p name="note">Subentries cannot be added in the Browse View.</p>
+  </step>
+</case>
+
+<case id="bview5" num="5" order="any">
+  <title tag="bview5">Removing An Entry</title>
+  <context>
+<p>With a language project open in Browse View in Data Notebook</p>
+</context>
+
+  <step name="5.1" link="Bug">
+	To delete an entry, use the Edit-Delete menu command when focus is in the entry to be deleted. Use <link uri="EdtDel.xml">Edit-Delete Tests</link> to test this command.
+	<r>
+<ul>
+<li>If text is selected, a prompt will ask if the text or the entry is to be deleted.</li>
+	   <li>Then a box will be displayed saying which entry is to be deleted, and how many subentries and references will also be deleted as a result of deleting the entry. Select No to abort deleting of entry.</li>
+	   <li>Clicking Yes will remove the entry, subentries, and references to the deleted entry.</li>
+</ul>
+</r>
+	<p name="bug">
+</p>
+  </step>
+
+  <step name="5.2" link="Bug">
+	To remove a subentry put focus in the subentry (click inside one of its fields) and use the Edit-Delete menu command.
+	<r>The subentry is deleted in the same way an entry is deleted as tested in 4.1 above.</r>
+	<p name="bug">
+</p>
+	<p name="note">There are currently no specs on how delete should work among the different views</p>
+  </step>
+
+</case>
+
+
+<!--***********************************************-->
+
+ <update date="May-29-02" author="RussD">Test script created.</update>
+
+</test>

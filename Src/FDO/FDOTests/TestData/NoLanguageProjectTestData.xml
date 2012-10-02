@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE FwDatabase SYSTEM "FwDatabase.dtd">
+<FwDatabase version="200160">
+	<LgWritingSystem id="IBB99B9AD-E657-11D3-9764-00C04F186933">
+		<Locale24>
+			<Integer val="1033"/>
+		</Locale24>
+		<LastModified24>
+			<Time val="2007-01-17 17:55:02.000"/>
+		</LastModified24>
+		<DefaultMonospace24>
+			<Uni>Courier New</Uni>
+		</DefaultMonospace24>
+		<DefaultSansSerif24>
+			<Uni>Arial</Uni>
+		</DefaultSansSerif24>
+		<DefaultSerif24>
+			<Uni>Times New Roman</Uni>
+		</DefaultSerif24>
+		<DefaultBodyFont24>
+			<Uni>Charis SIL</Uni>
+		</DefaultBodyFont24>
+		<ICULocale24>
+			<Uni>en</Uni>
+		</ICULocale24>
+		<Name24>
+			<AUni ws="en">English</AUni>
+			<AUni ws="es">Ingles</AUni>
+		</Name24>
+		<Abbr24>
+			<AUni ws="en">Eng</AUni>
+			<AUni ws="es">Ing</AUni>
+		</Abbr24>
+		<Collations24>
+			<LgCollation id="I3D813C21-9079-4B3D-A9B0-9164068A6E73">
+				<WinLCID30>
+					<Integer val="1033"/>
+				</WinLCID30>
+				<WinCollation30>
+					<Uni>Latin1_General_CI_AI</Uni>
+				</WinCollation30>
+			</LgCollation>
+			<LgCollation id="I9CD30BC1-3E35-4B71-85FA-EA7867F6A8F8">
+				<WinLCID30>
+					<Integer val="1033"/>
+				</WinLCID30>
+				<WinCollation30>
+					<Uni>Latin1_General_CS_AI</Uni>
+				</WinCollation30>
+			</LgCollation>
+		</Collations24>
+	</LgWritingSystem>
+	<LgWritingSystem id="I2FEA3857-0006-4478-811E-2CAE34C4080D">
+		<Locale24>
+			<Integer val="2058"/>
+		</Locale24>
+		<LastModified24>
+			<Time val="2007-01-17 18:43:29.000"/>
+		</LastModified24>
+		<DefaultMonospace24>
+			<Uni>Courier New</Uni>
+		</DefaultMonospace24>
+		<DefaultSansSerif24>
+			<Uni>Arial</Uni>
+		</DefaultSansSerif24>
+		<DefaultSerif24>
+			<Uni>Times New Roman</Uni>
+		</DefaultSerif24>
+		<DefaultBodyFont24>
+			<Uni>Charis SIL</Uni>
+		</DefaultBodyFont24>
+		<ICULocale24>
+			<Uni>es</Uni>
+		</ICULocale24>
+		<Name24>
+			<AUni ws="en">Spanish</AUni>
+			<AUni ws="es">español</AUni>
+		</Name24>
+		<Abbr24>
+			<AUni ws="en">Spn</AUni>
+			<AUni ws="es">esp</AUni>
+		</Abbr24>
+		<Collations24>
+			<LgCollation id="IEC3331A5-AC0F-4E75-A624-217629CF7A57">
+				<WinLCID30>
+					<Integer val="2058"/>
+				</WinLCID30>
+				<WinCollation30>
+					<Uni>Traditional_Spanish_CI_AI</Uni>
+				</WinCollation30>
+				<Name30>
+					<AUni ws="en">Default Collation</AUni>
+				</Name30>
+			</LgCollation>
+			<LgCollation id="I660C3533-7204-42C1-AD9A-0F2D00FDCE23">
+				<WinLCID30>
+					<Integer val="1034"/>
+				</WinLCID30>
+				<WinCollation30>
+					<Uni>Traditional_Spanish_CS_AI</Uni>
+				</WinCollation30>
+				<Name30>
+					<AUni ws="en">Case Sensitive</AUni>
+				</Name30>
+			</LgCollation>
+			<LgCollation id="I6097C173-39A8-410E-823D-B9B966FCF0A3">
+				<WinLCID30>
+					<Integer val="1034"/>
+				</WinLCID30>
+				<WinCollation30>
+					<Uni>Traditional_Spanish_CI_AS</Uni>
+				</WinCollation30>
+				<Name30>
+					<AUni ws="en">Accent Sensitive</AUni>
+				</Name30>
+			</LgCollation>
+			<LgCollation id="IA2E78702-1B48-438E-9F74-8CF9EFA25EF0">
+				<WinLCID30>
+					<Integer val="1034"/>
+				</WinLCID30>
+				<WinCollation30>
+					<Uni>Traditional_Spanish_CS_AS</Uni>
+				</WinCollation30>
+				<Name30>
+					<AUni ws="en">Case and Accent Sensitive</AUni>
+				</Name30>
+			</LgCollation>
+		</Collations24>
+	</LgWritingSystem>
+</FwDatabase>

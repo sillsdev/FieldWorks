@@ -1,0 +1,37 @@
+// Extracted from AfFindDlg.rc
+kridAfFindDlg DIALOGEX 0, 0, 404, 199
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_VISIBLE | WS_CAPTION |
+	WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Find and Replace"
+FONT 8, "MS Sans Serif"
+BEGIN
+	CONTROL         "Tab1",kctidFindTab,"SysTabControl32",TCS_HOTTRACK | WS_TABSTOP,7,7,390,185
+	LTEXT           "Find w&hat:",IDC_STATIC,13,33,36,8
+	EDITTEXT        kctidFindWhat,70,30,316,14,ES_AUTOHSCROLL
+	LTEXT           "Re&place with:",kctidReplaceLabel,13,53,44,8
+	EDITTEXT        kctidFindReplaceWith,70,50,316,14,ES_AUTOHSCROLL
+	PUSHBUTTON      "&More",kctidFindMoreLess,71,78,50,14
+	PUSHBUTTON      "&Replace",kctidFindReplace,125,78,50,14,NOT WS_VISIBLE
+	PUSHBUTTON      "Replace &All",kctidFindReplaceAll,179,78,50,14,NOT WS_VISIBLE
+	DEFPUSHBUTTON   "&Find Next",kctidFindFindNow,233,78,50,14
+	PUSHBUTTON      "Close",kctidFindClose,287,78,50,14
+	// The Stop button occupies the same space as the Close button:
+	PUSHBUTTON      "Stop",kctidFindStop,287,78,50,14
+	PUSHBUTTON      "Help...",kctidHelp,341,78,50,14
+	LTEXT           "Search Options",kctidSearchOptionsLabel,13,98,54,8,NOT WS_VISIBLE
+	LTEXT           "",kctidSeparator,68,102,327,1,SS_SUNKEN
+	CONTROL         "Match &case",kctidFindMatchCase,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,112,53,10
+	CONTROL         "Match &diacritics",kctidFindMatchDiacritics,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,126,65,10
+	CONTROL         "Match as a &whole word",kctidFindMatchWholeWord,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,140,89,10
+	CONTROL         "Match writing s&ystem",kctidFindMatchWrtSys,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,154,81,10
+	CONTROL         "Animate1",kctidFindAnimation,"SysAnimate32",ACS_TRANSPARENT | NOT WS_VISIBLE | WS_BORDER,18,61,41,33
+	GROUPBOX        "Search in:",kctidFindInBorder,175,115,184,44,NOT WS_VISIBLE
+	LTEXT           "Which E&ntries:",kctidWhichEntriesLabel,180,126,47,8,NOT WS_VISIBLE
+	COMBOBOX        kctidFindWhichEntries,235,122,116,30,CBS_DROPDOWNLIST | CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	CONTROL         "F&ield:",kctidFindFieldCheck,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,182,140,33,10
+	COMBOBOX        kctidFindFieldCombo,235,138,116,30,CBS_DROPDOWN | CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "F&ormat   ",kctidFindFormat,16,172,50,14
+	PUSHBUTTON      "Sp&ecial    ",kctidFindSpecial,71,172,50,14,NOT WS_VISIBLE
+	CONTROL         "&Show a list of matches",kctidListResults,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,271,176,87,10
+END

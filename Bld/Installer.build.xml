@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Targets related to installers. This file is included in FieldWorks.build -->
+<project name="WixInstaller" default="all" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+
+	<target name="Installers" description="Handle everything related to FW installers."
+		depends="overnight-init">
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Start building installers."/>
+		<delete failonerror="false" verbose="false">
+			<fileset>
+				<include name="${fwroot}/DistFiles/**/asserts.log" />
+			</fileset>
+		</delete>
+		<call target="WixCleanUpPrevious"/>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Building FieldWorks ${config} and SEC installers."/>
+		<call target="BuildFwAndSecInstaller"/>
+		<tstamp/>
+		<echo message="******************************************************************"/>
+		<echo message="Building installer for FW without TE..."/>
+		<exec program="cmd.exe" commandline='/c "WIX Installer Build No TE.bat" ${build.date}' workingdir="${fwroot}/Installer"/>
+		<echo message="******************************************************************"/>
+		<echo message="Computing MD5 checksums for FW installers..."/>
+		<exec program="cmd.exe" commandline='/c "ComputeMd5Checksums.bat"' workingdir="${fwroot}/Installer"/>
+		<echo message="******************************************************************"/>
+		<tstamp/>
+		<echo message="Finished building ${config} installer."/>
+	</target>
+
+	<target name="installer" description="Builds the FW installer"
+			depends="IcuData">
+		<tstamp/>
+		<call target="BuildFwInstaller"/>
+		<tstamp/>
+	</target>
+
+	<target name="WixCleanUpPrevious">
+		<echo message="Deleting previous installers..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}/Installer">
+				<include name="*.msi"/>
+				<include name="*.cab"/>
+				<include name="*.md5"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting all WIX output."/>
+	</target>
+
+	<target name="FwWixPreprocess" description="Pre-process the FW WIX source files.">
+		<echo message="Deleting previous WIX preprocessed files..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}/Installer">
+				<include name="FileLibraryAddenda.xml"/>
+				<include name="RegLibraryAddenda.xml"/>
+				<include name="ProcessedAutoFiles.wxs"/>
+				<include name="ProcessedFiles.wxs"/>
+				<include name="ProcessedMergeModules.wxs"/>
+				<include name="ProcessedAutoFiles.wixobj"/>
+				<include name="ProcessedFiles.wixobj"/>
+				<include name="ProcessedMergeModules.wixobj"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting WIX preprocessed source files and compiled objects."/>
+	<echo message="Cleanup ICU data files..."/>
+	<call target="IcuData-nodep" cascade="true"/>
+		<echo message="Preprocessing Merge Modules..."/>
+		<exec workingdir="${fwroot}/Installer" program="WScript.exe" commandline="${fwroot}/Installer/ProcessMergeModules.js" />
+		<echo message="Generating AutoFiles.wxs..."/>
+	<exec workingdir="${fwroot}/Installer" program="${fwroot}/Installer/GenerateFilesSource.exe" commandline="${config}" failonerror="true" />
+	<echo message="Preprocessing Files..."/>
+		<exec workingdir="${fwroot}/Installer" program="${fwroot}/Installer/ProcessFiles.exe" commandline="${config}" failonerror="true" />
+		<echo message="Testing installer integrity..."/>
+		<exec workingdir="${fwroot}/Installer" program="${fwroot}/Installer/TestInstallerIntegrity.exe" commandline="silent" />
+		<echo message="Finished preprocessing FW WIX sources."/>
+	</target>
+
+	<target name="FwWixCompile" description="Compile the FW WIX sources." depends="FwWixPreprocess">
+		<echo message="Deleting previous FW WIX compiled objects..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}/Installer">
+				<include name="Actions.wixobj" />
+				<include name="CopyFiles.wixobj" />
+				<include name="Environment.wixobj" />
+				<include name="Features.wixobj" />
+				<include name="FW.wixobj" />
+				<include name="FwUI.wixobj" />
+				<include name="PatchCorrections.wixobj" />
+				<include name="ProcessedAutoFiles.wixobj" />
+				<include name="ProcessedFiles.wixobj" />
+				<include name="ProcessedMergeModules.wixobj" />
+				<include name="Registry.wixobj" />
+				<include name="Shortcuts.wixobj" />
+			</fileset>
+		</delete>
+		<echo message="...Done deleting FW WIX compiled objects."/>
+		<echo message="Compiling FW WIX installer source files..."/>
+		<candle out="${fwroot}/Installer/" exedir="${fwroot}/bin" suppresswarning="1044">
+			<sources basedir="${fwroot}/Installer">
+				<include name="Actions.wxs" />
+				<include name="CopyFiles.wxs" />
+				<include name="Environment.wxs" />
+				<include name="Features.wxs" />
+				<include name="FW.wxs" />
+				<include name="FwUI.wxs" />
+				<include name="PatchCorrections.wxs" />
+				<include name="ProcessedAutoFiles.wxs" />
+				<include name="ProcessedFiles.wxs" />
+				<include name="ProcessedMergeModules.wxs" />
+				<include name="Registry.wxs" />
+				<include name="Shortcuts.wxs" />
+			</sources>
+		</candle>
+		<echo message="Finished compiling FW WIX sources."/>
+	</target>
+
+	<target name="BuildFwAndSecInstaller" description="Build the FW and SEC installers" depends="BuildFwInstaller,BuildSecInstaller">
+		<echo message="Built FW and SEC installers."/>
+	</target>
+
+	<target name="BuildFwInstaller" description="Build the FW installer" depends="FwWixCompile,BuildFwMergeModules">
+		<echo message="Deleting previous FW WIX linker output..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}/Installer">
+				<include name="SetupFW.msi"/>
+				<include name="*.cab"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting FW WIX linker output."/>
+		<echo message="Linking FW WIX installer files..."/>
+		<light out="${fwroot}/Installer/SetupFW.msi" exedir="${fwroot}/bin" rebuild="true">
+			<sources basedir="${fwroot}/Installer">
+				<include name="wixca.wixlib"/>
+				<include name="Actions.wixobj"/>
+				<include name="CopyFiles.wixobj"/>
+				<include name="Environment.wixobj"/>
+				<include name="Features.wixobj"/>
+				<include name="FW.wixobj"/>
+				<include name="FwUI.wixobj"/>
+				<include name="PatchCorrections.wixobj"/>
+				<include name="ProcessedMergeModules.wixobj"/>
+				<include name="ProcessedAutoFiles.wixobj"/>
+				<include name="ProcessedFiles.wixobj"/>
+				<include name="Registry.wixobj"/>
+				<include name="Shortcuts.wixobj"/>
+			</sources>
+		</light>
+		<echo message="Finished building FW WIX installer."/>
+	</target>
+
+	<target name="SecWixPreprocess" description="Pre-process WIX source files for SEC installer.">
+		<echo message="Deleting previous SEC WIX preprocessed source files and compiled objects..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}/Installer">
+				<include name="EcProcessedMergeModules.wxs"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting SEC WIX preprocessed source files and compiled objects."/>
+		<echo message="Preprocessing SEC WIX sources..."/>
+		<exec workingdir="${fwroot}/Installer" program="WScript.exe" commandline="${fwroot}/Installer/EcProcessMergeModules.js" />
+		<echo message="Finished preprocessing SEC WIX sources."/>
+	</target>
+
+	<target name="SecWixCompile" description="Compile SEC installer source files." depends="SecWixPreprocess">
+		<echo message="Deleting previous SEC WIX compiled objects..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}/Installer">
+				<include name="EC.wixobj"/>
+				<include name="EcActions.wixobj"/>
+				<include name="EcFeatures.wixobj"/>
+				<include name="EcUI.wixobj"/>
+				<include name="EcProcessedMergeModules.wixobj"/>
+				<include name="EcFiles.wixobj"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting SEC WIX compiled objects."/>
+		<echo message="Compiling SEC WIX installer source files..."/>
+		<candle out="${fwroot}/Installer/" exedir="${fwroot}/bin" suppresswarning="1044">
+			<sources basedir="${fwroot}/Installer">
+				<include name="EC.wxs" />
+				<include name="EcActions.wxs" />
+				<include name="EcFeatures.wxs" />
+				<include name="EcUI.wxs" />
+				<include name="EcProcessedMergeModules.wxs" />
+				<include name="EcFiles.wxs" />
+			</sources>
+		</candle>
+		<echo message="Finished compiling FW WIX sources."/>
+	</target>
+
+	<target name="BuildSecInstaller" description="Build SEC installer" depends="SecWixCompile,BuildSecMergeModules">
+		<echo message="Deleting previous SEC WIX linker output..."/>
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}/Installer">
+				<include name="SetupEC.msi"/>
+			</fileset>
+		</delete>
+		<echo message="...Done deleting SEC WIX linker output."/>
+		<echo message="Linking SEC WIX installer files..."/>
+		<light out="${fwroot}/Installer/SetupEC.msi" exedir="${fwroot}/bin" rebuild="true">
+			<sources basedir="${fwroot}/Installer">
+				<include name="Ec.wixobj"/>
+				<include name="EcActions.wixobj"/>
+				<include name="EcFeatures.wixobj"/>
+				<include name="EcUI.wixobj"/>
+				<include name="EcProcessedMergeModules.wixobj"/>
+				<include name="EcFiles.wixobj"/>
+			</sources>
+		</light>
+		<echo message="Finished building SEC WIX installer."/>
+	</target>
+
+	<target name="BuildAllMergeModules"
+					description="Build the FW and SEC merge modules"
+					depends="BuildEcOnlyMergeModules,BuildFwOnlyMergeModules,BuildFwEcSharedMergeModules">
+		<echo message="Built all merge modules."/>
+	</target>
+
+	<target name="BuildSecMergeModules"
+					description="Build the SEC merge modules"
+					depends="BuildEcOnlyMergeModules,BuildFwEcSharedMergeModules">
+		<echo message="Built SEC merge modules."/>
+	</target>
+
+	<target name="BuildFwMergeModules"
+					description="Build the FW merge modules"
+					depends="BuildFwOnlyMergeModules,BuildFwEcSharedMergeModules">
+		<echo message="Built FW merge modules."/>
+	</target>
+
+	<target name="BuildEcOnlyMergeModules" description="Build the merge modules used exclusively in SEC installer.">
+
+		<echo message="Building merge modules exclusive to SEC."/>
+
+	<!--EncConverter specifics for SEC-->
+	<property name="MergeModule" value="SEC_EC_40"/>
+		<call target="BuildMergeModule"/>
+
+	<!--a KB update fix specific to SEC-->
+	<property name="MergeModule" value="MS KB908002 Fix"/>
+		<call target="BuildMergeModule"/>
+
+	<!--ICU specifics for SEC-->
+	<property name="MergeModule" value="SEC_ICU40"/>
+	<call target="BuildMergeModule"/>
+
+	<!--Perl specifics for SEC-->
+	<property name="MergeModule" value="SEC_PerlEC"/>
+	<call target="BuildMergeModule"/>
+
+	<!--Python specifics for SEC-->
+	<property name="MergeModule" value="SEC_PythonEC"/>
+	<call target="BuildMergeModule"/>
+
+	<!--Open/LibreOffice extension for SEC-->
+	<property name="MergeModule" value="OO_Ling_Tools"/>
+	<call target="BuildMergeModule"/>
+  </target>
+
+	<target name="BuildFwOnlyMergeModules" description="Build the merge modules used exclusively in FW installer.">
+
+		<echo message="Building merge modules exclusive to FW."/>
+
+	<!--EncConverter specifics for FW-->
+		<property name="MergeModule" value="FW_EC_40"/>
+		<call target="BuildMergeModule"/>
+
+	<!--ICU specifics for FW-->
+	<property name="MergeModule" value="FW_ICU40"/>
+	<call target="BuildMergeModule"/>
+
+	<!--Perl specifics for FW-->
+	<property name="MergeModule" value="FW_PerlEC"/>
+	<call target="BuildMergeModule"/>
+
+	<!--Python specifics for FW-->
+	<property name="MergeModule" value="FW_PythonEC"/>
+	<call target="BuildMergeModule"/>
+  </target>
+
+	<target name="BuildFwEcSharedMergeModules" description="Build the merge modules shared by both SEC and FW installers.">
+
+		<echo message="Building merge modules shared by FW and SEC."/>
+
+		<property name="MergeModule" value="EC_40"/>
+		<property name="UseWixCa" value="true"/>
+		<call target="BuildMergeModule"/>
+
+		<property name="MergeModule" value="EcFolderACLs"/>
+		<property name="UseWixCa" value="true"/>
+		<call target="BuildMergeModule"/>
+
+		<property name="MergeModule" value="SetPath"/>
+		<call target="BuildMergeModule"/>
+
+		<property name="MergeModule" value="ICU040"/>
+		<property name="UseWixCa" value="true"/>
+		<call target="BuildMergeModule"/>
+
+		<property name="MergeModule" value="ICUECHelp"/>
+		<property name="UseWixCa" value="true"/>
+		<call target="BuildMergeModule"/>
+
+		<property name="MergeModule" value="Managed Install Fix"/>
+		<call target="BuildMergeModule"/>
+
+		<property name="MergeModule" value="PerlEC"/>
+		<property name="UseWixCa" value="true"/>
+		<call target="BuildMergeModule"/>
+
+		<property name="MergeModule" value="PythonEC"/>
+		<property name="UseWixCa" value="true"/>
+		<call target="BuildMergeModule"/>
+	</target>
+
+	<target name="AnnihilateMergeModule" description="Delete a merge module and all the intermediate files used to build it.">
+		<!-- Requires that you set the property "MergeModule" to the module's name (e.g. ICU040) before calling. -->
+		<delete failonerror="false">
+			<fileset basedir="${fwroot}\Installer">
+				<include name="${MergeModule}.msm"/>
+				<include name="WixLink${MergeModule}.log"/>
+				<include name="${MergeModule}.mmp.wixobj"/>
+				<include name="${MergeModule}.mmp.wxs"/>
+				<include name="${MergeModule}.mmp.wxs.log"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="PreprocessMergeModule" description="Run the JavaScript to pre-process a merge module.">
+		<!-- Requires that you set the property "MergeModule" to the module's name (e.g. ICU040) before calling. -->
+		<exec workingdir="${fwroot}\Installer" program="WScript.exe" commandline="${fwroot}\Installer\ProcessWixMMs.js ${config} &quot;${MergeModule}.mm.wxs&quot;"
+			  failonerror="false" resultproperty="ProcessWixMMsResult" />
+		<if test="${int::parse(ProcessWixMMsResult) != 0}">
+			<if test="${int::parse(ProcessWixMMsResult) == -1}">
+				<fail message="Error while preprocessing ${MergeModule}.mm.wxs. See Installer\ProcessWixMMs.log for details."/>
+			</if>
+		</if>
+	</target>
+
+	<target name="CompileMergeModule" description="Run the WIX Candle utility to compile a merge module.">
+		<!-- Requires that you set the property "MergeModule" to the module's name (e.g. ICU040) before calling. -->
+		<candle out="${fwroot}\Installer\" exedir="${fwroot}\bin" suppresswarning="1044">
+			<sources basedir="${fwroot}\Installer">
+				<include name="${MergeModule}.mmp.wxs" />
+			</sources>
+		</candle>
+	</target>
+
+	<target name="LinkMergeModule" description="Run the WIX Light utility to link a merge module.">
+		<!-- Requires that you set the property "MergeModule" to the module's name (e.g. ICU040) before calling. -->
+		<light out="${fwroot}\Installer\${MergeModule}.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="${MergeModule}.mmp.wixobj"/>
+			</sources>
+		</light>
+	</target>
+
+	<target name="LinkMergeModuleWithWixAdditions" description="Run the WIX Light utility to link a merge module, including the WIX additions library.">
+		<!-- Requires that you set the property "MergeModule" to the module's name (e.g. ICU040) before calling. -->
+		<light out="${fwroot}\Installer\${MergeModule}.msm" exedir="${fwroot}\bin" rebuild="true">
+			<sources basedir="${fwroot}\Installer">
+				<include name="${MergeModule}.mmp.wixobj"/>
+				<include name="wixca.wixlib"/>
+			</sources>
+		</light>
+	</target>
+
+	<target name="BuildMergeModule" description="Build a merge module. Requires that you set the property MergeModule before calling.">
+		<!-- Set the property "UseWixCa" to "true" if you want the wixca library to be included. -->
+		<!-- The property "UseWixCa" is reset to "false" in any case during this target. -->
+
+		<echo message="Building merge module ${MergeModule}."/>
+
+		<if test="${not property::exists('UseWixCa')}">
+			<property name="UseWixCa" value="false"/>
+		</if>
+
+		<!-- Delete previous intermediate files: -->
+		<call target="AnnihilateMergeModule"/>
+		<!-- Pre-process source file: -->
+		<call target="PreprocessMergeModule"/>
+		<!-- Compile pre-processed file: -->
+		<call target="CompileMergeModule"/>
+		<!-- Link merge module: -->
+		<if test="${UseWixCa == 'true'}">
+			<call target="LinkMergeModuleWithWixAdditions"/>
+		</if>
+		<if test="${UseWixCa != 'true'}">
+			<call target="LinkMergeModule"/>
+		</if>
+		<!-- Reset UseWixCa property: -->
+		<property name="UseWixCa" value="false"/>
+	</target>
+
+</project>

@@ -1,0 +1,14 @@
+
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=SIL WorldPad
+Comment=Write documents in any scripting language.
+Exec=worldpad %F
+Icon=worldpad
+Terminal=false
+Type=Application
+Categories=GNOME;GTK;Office;
+MimeType=application/x-worldpad;
+
+X-Desktop-File-Install-Version=0.15

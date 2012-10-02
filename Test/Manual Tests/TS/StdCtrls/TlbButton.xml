@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlbbutton" num="0.4" abbr="tbtn" file="StdCtrls\TlbButton.xml">
+ <title tag="tlbbutton">Toolbar Button Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A toolbar button is a simple control with immediate side-effects called "actions". The actions may be dependent on other control settings, selected text or may be exactly the same actions each time the button is pressed. The button remains depressed for the duration of the action. Sometimes a group of toolbar buttons acts like <link uri="RadioBtn.xml" type="module">radio buttons</link>.</p>
+  </introduction>
+  <context>
+<p>Each toolbar button may require setting other controls or selecting view objects to thoroughly test its action. Testing does not require exhaustive combinations of such settings and selections, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. The first words of a bug report title for this button should be a noun phrase containing the name of the toolbar button.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, each toolbar button is described in a specification.</p>
+  </warning>
+ <case id="tbtnInsp" num="1" order="any">
+  <title tag="tbtnInsp">Button Inspection</title>
+  <context>
+<p>When the application GUI, dialog or frame containing the toolbar button is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A button has a name or picture on it and is usually a 3-D rectangle - small and nearly square. It may be "grayed out" (disabled).</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the button.
+   <r>The button and its icon must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Toolbar button has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the location of the button and its icon relative to other visible controls.
+   <r>The button and its icon should be close to the position indicated in the specification.</r>
+   <p name="bug">Toolbar button has incorrect location</p>
+  </step>
+  <step name="1.3" link="Bug">Hover the cursor over the toolbar button.
+   <r>The button and its icon should be raised (unless depressed - it stays depressed) and a balloon help should appear with a name and shortcut if any.</r>
+   <p name="bug">Toolbar button has no hover help</p>
+  </step>
+
+ </case>
+ <case id="tbtnOp" num="2" order="any">
+  <title tag="tbtnOp">Button Operation</title>
+  <context>
+<p>When the button is enabled</p>
+</context>
+
+   <p name="Principle">The button is depressed by left clicking with a pointer device (usually a mouse) and often by a "short-cut" key sequence. Actions may include launching another display component or changes in another view.</p>
+
+  <step name="2.1" link="Bug">Left click the button.
+   <r>The button depresses and side-effects match the description in the specification.</r>
+   <p name="bug">Toolbar button does not depress</p>
+   <p name="bug">Toolbar button does not remain depressed</p>
+   <p name="bug">Toolbar button side-effect incorrect</p>
+  </step>
+  <step name="2.2" link="Bug">Press the short-cut &lt;alt&gt;&lt;alpha&gt;.
+   <r>The button depresses and side-effects match the description in the specification.</r>
+   <p name="bug">Shorted toolbar button does not depress</p>
+   <p name="bug">Shorted toolbar button does not remain depressed</p>
+   <p name="bug">Shorted toolbar button side-effect incorrect</p>
+  </step>
+  <step name="2.3" link="Bug">When operating the button, do side-effects obscure or disable other functionality in the control frame or in an affected view?
+   <r>There should be no undesirable effects from the user's point of view.</r>
+   <p name="Notes">This test is subjective. Infelicities resulting from this step will likely be "issues" rather than "bugs".</p>
+   <p name="bug">Toolbar button operation hampers user ability to ..</p>
+  </step>
+
+ </case>
+ <update date="Dec-12-00" author="MikeL">Test created.</update>
+
+</test>

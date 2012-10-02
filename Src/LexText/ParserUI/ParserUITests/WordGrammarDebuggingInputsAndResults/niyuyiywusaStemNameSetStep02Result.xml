@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>niyuyiywusa</form>
+  <resultSoFar>
+	<morph type="pfx" wordType="181">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <alloform>ni-</alloform>
+	  <gloss>1SgSubj</gloss>
+	  <citationForm>ni</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	</morph>
+	<morph type="pfx" wordType="182">
+	  <shortName>yu- (2SgObj): yu</shortName>
+	  <alloform>yu-</alloform>
+	  <gloss>2SgObj</gloss>
+	  <citationForm>yu</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	</morph>
+	<stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+	  <stemName id="45382">testsn</stemName>
+	  <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+		<morph type="root" wordType="root">
+		  <shortName>yiy (testing): wow</shortName>
+		  <alloform>yiy</alloform>
+		  <stemName id="45382">testsn</stemName>
+		  <gloss>testing</gloss>
+		  <citationForm>wow</citationForm>
+		  <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <morph type="sfx" wordType="derivSfx">
+		<shortName>-wu (???): wu</shortName>
+		<alloform>-wu</alloform>
+		<gloss>???</gloss>
+		<citationForm>wu</citationForm>
+		<derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+	  </morph>
+	</stem>
+	<morph type="sfx" wordType="180">
+	  <shortName>-sa (Pres): ra</shortName>
+	  <alloform>-sa</alloform>
+	  <gloss>Pres</gloss>
+	  <citationForm>ra</citationForm>
+	  <inflClasses>
+		<inflClass hvo="179" abbr="2" />
+	  </inflClasses>
+	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		<fs id="6069">
+		  <feature>
+			<name>absolute tense</name>
+			<value>present tense</value>
+		  </feature>
+		</fs>
+	  </inflMsa>
+	</morph>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </resultSoFar>
+  <seq step="Try to build a Full analysis node on an uninflected Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<morph type="pfx" wordType="181">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <alloform>ni-</alloform>
+	  <gloss>1SgSubj</gloss>
+	  <citationForm>ni</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	</morph>
+	<morph type="pfx" wordType="182">
+	  <shortName>yu- (2SgObj): yu</shortName>
+	  <alloform>yu-</alloform>
+	  <gloss>2SgObj</gloss>
+	  <citationForm>yu</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	</morph>
+	<full syncat="168" syncatAbbr="trans" requiresInfl="+" inflected="-">
+	  <stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+		<stemName id="45382">testsn</stemName>
+		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+		  <morph type="root" wordType="root">
+			<shortName>yiy (testing): wow</shortName>
+			<alloform>yiy</alloform>
+			<stemName id="45382">testsn</stemName>
+			<gloss>testing</gloss>
+			<citationForm>wow</citationForm>
+			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+		  </morph>
+		</stem>
+		<morph type="sfx" wordType="derivSfx">
+		  <shortName>-wu (???): wu</shortName>
+		  <alloform>-wu</alloform>
+		  <gloss>???</gloss>
+		  <citationForm>wu</citationForm>
+		  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+		</morph>
+	  </stem>
+	</full>
+	<morph type="sfx" wordType="180">
+	  <shortName>-sa (Pres): ra</shortName>
+	  <alloform>-sa</alloform>
+	  <gloss>Pres</gloss>
+	  <citationForm>ra</citationForm>
+	  <inflClasses>
+		<inflClass hvo="179" abbr="2" />
+	  </inflClasses>
+	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		<fs id="6069">
+		  <feature>
+			<name>absolute tense</name>
+			<value>present tense</value>
+		  </feature>
+		</fs>
+	  </inflMsa>
+	</morph>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<morph type="pfx" wordType="181">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <alloform>ni-</alloform>
+	  <gloss>1SgSubj</gloss>
+	  <citationForm>ni</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	</morph>
+	<morph type="pfx" wordType="182">
+	  <shortName>yu- (2SgObj): yu</shortName>
+	  <alloform>yu-</alloform>
+	  <gloss>2SgObj</gloss>
+	  <citationForm>yu</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	</morph>
+	<full syncat="168" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The  category (N) of the inflectional template "Possessed noun" is incompatible with the category (trans) of the stem.</failure><stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-"><stemName id="45382">testsn</stemName><stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+"><morph type="root" wordType="root"><shortName>yiy (testing): wow</shortName><alloform>yiy</alloform><stemName id="45382">testsn</stemName><gloss>testing</gloss><citationForm>wow</citationForm><stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" /></morph></stem><morph type="sfx" wordType="derivSfx"><shortName>-wu (???): wu</shortName><alloform>-wu</alloform><gloss>???</gloss><citationForm>wu</citationForm><derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" /></morph></stem></full>
+	<morph type="sfx" wordType="180">
+	  <shortName>-sa (Pres): ra</shortName>
+	  <alloform>-sa</alloform>
+	  <gloss>Pres</gloss>
+	  <citationForm>ra</citationForm>
+	  <inflClasses>
+		<inflClass hvo="179" abbr="2" />
+	  </inflClasses>
+	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		<fs id="6069">
+		  <feature>
+			<name>absolute tense</name>
+			<value>present tense</value>
+		  </feature>
+		</fs>
+	  </inflMsa>
+	</morph>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'test stem name features'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<morph type="pfx" wordType="181">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <alloform>ni-</alloform>
+	  <gloss>1SgSubj</gloss>
+	  <citationForm>ni</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	</morph>
+	<morph type="pfx" wordType="182">
+	  <shortName>yu- (2SgObj): yu</shortName>
+	  <alloform>yu-</alloform>
+	  <gloss>2SgObj</gloss>
+	  <citationForm>yu</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	</morph>
+	<full syncat="168" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The  category (comm) of the inflectional template "test stem name features" is incompatible with the category (trans) of the stem.</failure><stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-"><stemName id="45382">testsn</stemName><stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+"><morph type="root" wordType="root"><shortName>yiy (testing): wow</shortName><alloform>yiy</alloform><stemName id="45382">testsn</stemName><gloss>testing</gloss><citationForm>wow</citationForm><stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" /></morph></stem><morph type="sfx" wordType="derivSfx"><shortName>-wu (???): wu</shortName><alloform>-wu</alloform><gloss>???</gloss><citationForm>wu</citationForm><derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" /></morph></stem><failure>The inflectional template named 'test stem name features' for category 'common noun' failed because the required suffix slot 'Gender' was not found.</failure></full>
+	<morph type="sfx" wordType="180">
+	  <shortName>-sa (Pres): ra</shortName>
+	  <alloform>-sa</alloform>
+	  <gloss>Pres</gloss>
+	  <citationForm>ra</citationForm>
+	  <inflClasses>
+		<inflClass hvo="179" abbr="2" />
+	  </inflClasses>
+	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		<fs id="6069">
+		  <feature>
+			<name>absolute tense</name>
+			<value>present tense</value>
+		  </feature>
+		</fs>
+	  </inflMsa>
+	</morph>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<morph type="pfx" wordType="181">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <alloform>ni-</alloform>
+	  <gloss>1SgSubj</gloss>
+	  <citationForm>ni</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	</morph>
+	<morph type="pfx" wordType="182">
+	  <shortName>yu- (2SgObj): yu</shortName>
+	  <alloform>yu-</alloform>
+	  <gloss>2SgObj</gloss>
+	  <citationForm>yu</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	</morph>
+	<full syncat="168" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (trans) of the stem.</failure>
+	  <fs id="UnificationOf(EmptyandUnificationOf(Emptyand6069))">
+		<feature>
+		  <name>absolute tense</name>
+		  <value>present tense</value>
+		</feature>
+	  </fs>
+	  <stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+		<stemName id="45382">testsn</stemName>
+		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+		  <morph type="root" wordType="root">
+			<shortName>yiy (testing): wow</shortName>
+			<alloform>yiy</alloform>
+			<stemName id="45382">testsn</stemName>
+			<gloss>testing</gloss>
+			<citationForm>wow</citationForm>
+			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+		  </morph>
+		</stem>
+		<morph type="sfx" wordType="derivSfx">
+		  <shortName>-wu (???): wu</shortName>
+		  <alloform>-wu</alloform>
+		  <gloss>???</gloss>
+		  <citationForm>wu</citationForm>
+		  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <morph type="sfx" wordType="180">
+		<shortName>-sa (Pres): ra</shortName>
+		<alloform>-sa</alloform>
+		<gloss>Pres</gloss>
+		<citationForm>ra</citationForm>
+		<inflClasses>
+		  <inflClass hvo="179" abbr="2" />
+		</inflClasses>
+		<inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		  <fs id="6069">
+			<feature>
+			  <name>absolute tense</name>
+			  <value>present tense</value>
+			</feature>
+		  </fs>
+		</inflMsa>
+	  </morph>
+	</full>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<morph type="pfx" wordType="181">
+	  <shortName>ni- (1SgSubj): ni</shortName>
+	  <alloform>ni-</alloform>
+	  <gloss>1SgSubj</gloss>
+	  <citationForm>ni</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	</morph>
+	<morph type="pfx" wordType="182">
+	  <shortName>yu- (2SgObj): yu</shortName>
+	  <alloform>yu-</alloform>
+	  <gloss>2SgObj</gloss>
+	  <citationForm>yu</citationForm>
+	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	</morph>
+	<full syncat="168" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (trans) of the stem.</failure>
+	  <stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+		<stemName id="45382">testsn</stemName>
+		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+		  <morph type="root" wordType="root">
+			<shortName>yiy (testing): wow</shortName>
+			<alloform>yiy</alloform>
+			<stemName id="45382">testsn</stemName>
+			<gloss>testing</gloss>
+			<citationForm>wow</citationForm>
+			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+		  </morph>
+		</stem>
+		<morph type="sfx" wordType="derivSfx">
+		  <shortName>-wu (???): wu</shortName>
+		  <alloform>-wu</alloform>
+		  <gloss>???</gloss>
+		  <citationForm>wu</citationForm>
+		  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+	</full>
+	<morph type="sfx" wordType="180">
+	  <shortName>-sa (Pres): ra</shortName>
+	  <alloform>-sa</alloform>
+	  <gloss>Pres</gloss>
+	  <citationForm>ra</citationForm>
+	  <inflClasses>
+		<inflClass hvo="179" abbr="2" />
+	  </inflClasses>
+	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		<fs id="6069">
+		  <feature>
+			<name>absolute tense</name>
+			<value>present tense</value>
+		  </feature>
+		</fs>
+	  </inflMsa>
+	</morph>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="168" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <fs id="UnificationOf(EmptyandUnificationOf(Emptyand6069))">
+		<feature>
+		  <name>absolute tense</name>
+		  <value>present tense</value>
+		</feature>
+	  </fs>
+	  <morph type="pfx" wordType="181">
+		<shortName>ni- (1SgSubj): ni</shortName>
+		<alloform>ni-</alloform>
+		<gloss>1SgSubj</gloss>
+		<citationForm>ni</citationForm>
+		<inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	  </morph>
+	  <morph type="pfx" wordType="182">
+		<shortName>yu- (2SgObj): yu</shortName>
+		<alloform>yu-</alloform>
+		<gloss>2SgObj</gloss>
+		<citationForm>yu</citationForm>
+		<inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	  </morph>
+	  <stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+		<stemName id="45382">testsn</stemName>
+		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+		  <morph type="root" wordType="root">
+			<shortName>yiy (testing): wow</shortName>
+			<alloform>yiy</alloform>
+			<stemName id="45382">testsn</stemName>
+			<gloss>testing</gloss>
+			<citationForm>wow</citationForm>
+			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+		  </morph>
+		</stem>
+		<morph type="sfx" wordType="derivSfx">
+		  <shortName>-wu (???): wu</shortName>
+		  <alloform>-wu</alloform>
+		  <gloss>???</gloss>
+		  <citationForm>wu</citationForm>
+		  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <morph type="sfx" wordType="180">
+		<shortName>-sa (Pres): ra</shortName>
+		<alloform>-sa</alloform>
+		<gloss>Pres</gloss>
+		<citationForm>ra</citationForm>
+		<inflClasses>
+		  <inflClass hvo="179" abbr="2" />
+		</inflClasses>
+		<inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		  <fs id="6069">
+			<feature>
+			  <name>absolute tense</name>
+			  <value>present tense</value>
+			</feature>
+		  </fs>
+		</inflMsa>
+	  </morph>
+	</full>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
+	<full syncat="168" syncatAbbr="trans" requiresInfl="-" inflected="+">
+	  <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (trans) of the stem.</failure>
+	  <fs id="UnificationOf(EmptyandUnificationOf(Emptyand6069))">
+		<feature>
+		  <name>absolute tense</name>
+		  <value>present tense</value>
+		</feature>
+	  </fs>
+	  <morph type="pfx" wordType="181">
+		<shortName>ni- (1SgSubj): ni</shortName>
+		<alloform>ni-</alloform>
+		<gloss>1SgSubj</gloss>
+		<citationForm>ni</citationForm>
+		<inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+	  </morph>
+	  <morph type="pfx" wordType="182">
+		<shortName>yu- (2SgObj): yu</shortName>
+		<alloform>yu-</alloform>
+		<gloss>2SgObj</gloss>
+		<citationForm>yu</citationForm>
+		<inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+	  </morph>
+	  <stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+		<stemName id="45382">testsn</stemName>
+		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+		  <morph type="root" wordType="root">
+			<shortName>yiy (testing): wow</shortName>
+			<alloform>yiy</alloform>
+			<stemName id="45382">testsn</stemName>
+			<gloss>testing</gloss>
+			<citationForm>wow</citationForm>
+			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+		  </morph>
+		</stem>
+		<morph type="sfx" wordType="derivSfx">
+		  <shortName>-wu (???): wu</shortName>
+		  <alloform>-wu</alloform>
+		  <gloss>???</gloss>
+		  <citationForm>wu</citationForm>
+		  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+		</morph>
+	  </stem>
+	  <morph type="sfx" wordType="180">
+		<shortName>-sa (Pres): ra</shortName>
+		<alloform>-sa</alloform>
+		<gloss>Pres</gloss>
+		<citationForm>ra</citationForm>
+		<inflClasses>
+		  <inflClass hvo="179" abbr="2" />
+		</inflClasses>
+		<inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+		  <fs id="6069">
+			<feature>
+			  <name>absolute tense</name>
+			  <value>present tense</value>
+			</feature>
+		  </fs>
+		</inflMsa>
+	  </morph>
+	</full>
+	<morph type="sfx" wordType="derivSfx">
+	  <shortName>-*0 (Adverbializer2): o</shortName>
+	  <alloform>-*0</alloform>
+	  <gloss>Adverbializer2</gloss>
+	  <citationForm>o</citationForm>
+	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+	</morph>
+  </seq>
+</word>

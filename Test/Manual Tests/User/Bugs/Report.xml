@@ -1,0 +1,31 @@
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl" ?>
+<concept file="Bugs\Report.xml">
+ <title tag="bugRep">What is a bug report?</title>
+ <index>
+  <li>bug report</li>
+  <li>test report</li>
+  <li>report</li>
+ </index>
+ <definition>
+  <p>A bug report is a collection of bug patterns and notes resulting from the execution of a test script. Each test case step that can result in a reportable bug has one or more patterns for reporting that bug. The tester chooses a pattern and fills in any missing or enhancing information. Each completed pattern is included in the bug report. In cases where there is no adequate pattern, the tester creates a pattern-like entry for the report.</p>
+ </definition>
+ <partsAndFunctions>
+  <p>Here are the parts of a bug report:</p>
+  <table>
+   <tr><th>Element</th><th>Content</th></tr>
+   <tr><td>Heading</td><td>Name of tester, software tested, date, test script id</td></tr>
+   <tr><td>Test system</td><td>CPU type and speed, operating system</td></tr>
+   <tr><td>Bugs</td><td>List of bug patterns describing the failures encountered while testing</td></tr>
+   <tr><td>Bug patterns</td><td>See next rows</td></tr>
+   <tr><td>Title</td><td>Title of the bug</td></tr>
+   <tr><td>Step</td><td>Number of the test case and step where failure occured</td></tr>
+   <tr><td>Actions</td><td>List of actions taken to trigger the failure</td></tr>
+   <tr><td>Expectations</td><td>A short description of the "normal" outcome of the actions</td></tr>
+   <tr><td>Failures</td><td>How the behavior deviated from expectations.</td></tr>
+  </table>
+ </partsAndFunctions>
+ <seeAlso>
+  <li><link uri="..\Using\maintask.xml" type="module">How to use a test script</link></li>
+  <li><link uri="..\Using\Report.xml" type="module">Creating a test report</link></li>
+ </seeAlso>
+</concept>

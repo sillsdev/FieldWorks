@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="taskbb" num="0.22" abbr="tbbtn" file="StdCtrls\TaskbarBtn.xml">
+ <title tag="taskbb">Taskbar Button Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <context>
+   <p>When the application is running, Windows creates a button for it on the taskbar. The button has a short list of right-click methods and direct click behavior.</p>
+  </context>
+
+ <case id="tbbtnInsp" num="0" order="any">
+  <title tag="tbbtnInsp">Inspection</title>
+  <context>
+<p>When the application is running</p>
+</context>
+  <step name="0.1" link="Bug">Examine the Windows taskbar and find the application's button.
+   <r>The taskbar button should be present. It shows the first part of the contents of the application title bar if it does not all fit on the button.</r>
+   <p name="bug">Application taskbar button not present</p>
+  </step>
+  <step name="0.2" link="Bug">Hover the cursor over the button.
+   <r>If the title text was truncated, the button title will expand out to show the entire application title.</r>
+   <p name="bug">Application taskbar title does not expand for hover</p>
+  </step>
+  <step name="0.3" link="Bug">When the application is minimized, click its desktop taskbar button.
+   <r>The application is restored to its former location and size and receives the focus.</r>
+   <p name="bug">Application taskbar button does not restore properly on click</p>
+  </step>
+  <step name="0.4" link="Bug">When the application is minimized, right-click its desktop taskbar button and click <i>Restore</i>.
+   <r>The application is restored to its former location and size and receives the focus.</r>
+   <p name="bug">Application taskbar right-click restore item does not restore application</p>
+  </step>
+ </case>
+
+ <update date="Mar-28-01" author="MikeL">File created.</update>
+ <update date="Apr-02-01" author="MikeL">Added steps 0.3 and 0.4.</update>
+
+</test>

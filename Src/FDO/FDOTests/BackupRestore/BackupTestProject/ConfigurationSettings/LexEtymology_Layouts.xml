@@ -1,0 +1,32 @@
+﻿<LayoutInventory>
+  <layout class="LexEtymology" type="jtview" name="publishStemEtymology" version="9">
+	<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="vernacular" wsType="vernacular" css="etymology-form" sep=" " />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss" sep=" " />
+	<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment" sep=" " />
+	<part ref="SourcePub" label="Source" before="" after=" " visibility="never" />
+  </layout>
+  <layout class="LexEtymology" type="jtview" name="publishStemMinorEtymology" version="9">
+	<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="vernacular" wsType="vernacular" css="etymology-form-minor" sep=" " />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor" sep=" " />
+	<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor" sep=" " />
+	<part ref="SourcePub" label="Source" before="" after=" " visibility="never" />
+  </layout>
+  <layout class="LexEtymology" type="jtview" name="publishRootEtymology" version="9">
+	<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="vernacular" wsType="vernacular" css="etymology-form" sep=" " />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss" sep=" " />
+	<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment" sep=" " />
+	<part ref="SourcePub" label="Source" before="" after=" " visibility="never" />
+  </layout>
+  <layout class="LexEtymology" type="jtview" name="publishRootSubEtymology" version="9">
+	<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="vernacular" wsType="vernacular" css="etymology-form-sub" sep=" " />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-sub" sep=" " />
+	<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-sub" sep=" " />
+	<part ref="SourcePub" label="Source" before="" after=" " visibility="never" />
+  </layout>
+  <layout class="LexEtymology" type="jtview" name="publishRootMinorEtymology" version="9">
+	<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="vernacular" wsType="vernacular" css="etymology-form-minor" sep=" " />
+	<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss-minor" sep=" " />
+	<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-minor" sep=" " />
+	<part ref="SourcePub" label="Source" before="" after=" " visibility="never" />
+  </layout>
+</LayoutInventory>

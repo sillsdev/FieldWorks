@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="EntireModel">
+	<xs:complexType>
+	  <xs:sequence>
+		<xs:element minOccurs="1" maxOccurs="unbounded" ref="class"/>
+	  </xs:sequence>
+	</xs:complexType>
+  </xs:element>
+  <xs:element name="class">
+	<xs:complexType>
+	  <xs:sequence>
+		<xs:element ref="props"/>
+	  </xs:sequence>
+	  <xs:attributeGroup ref="idNumGroup"/>
+	  <xs:attribute name="abbr" use="required" type="xs:NCName"/>
+	  <xs:attribute name="abstract" use="required" type="xs:boolean"/>
+	  <xs:attribute name="base" type="xs:NCName"/>
+	  <xs:attribute name="depth" type="xs:integer"/>
+	  <xs:attribute name="singleton" type="xs:boolean" default="false"/>
+	  <xs:attribute name="owner" type="ownerType" default="required"/>
+	</xs:complexType>
+  </xs:element>
+  <xs:element name="props">
+	<xs:complexType>
+	  <xs:sequence>
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+		  <xs:element ref="basic"/>
+		  <xs:element ref="owning"/>
+		  <xs:element ref="rel"/>
+		</xs:choice>
+	  </xs:sequence>
+	</xs:complexType>
+  </xs:element>
+  <xs:element name="basic">
+	<xs:complexType>
+	  <xs:attributeGroup ref="coreGroup"/>
+	  <xs:attribute name="big" type="xs:boolean"/>
+	  <xs:attribute name="max" type="xs:integer"/>
+	  <xs:attribute name="min" type="xs:integer"/>
+	</xs:complexType>
+  </xs:element>
+  <xs:element name="owning">
+	<xs:complexType>
+	  <xs:attributeGroup ref="cardGroup"/>
+	</xs:complexType>
+  </xs:element>
+  <xs:element name="rel">
+	<xs:complexType>
+	  <xs:attributeGroup ref="cardGroup"/>
+	</xs:complexType>
+  </xs:element>
+  <xs:simpleType name="ownerType">
+	<xs:restriction base="xs:string">
+	  <xs:enumeration value="none"/>
+	  <xs:enumeration value="required"/>
+	  <xs:enumeration value="optional"/>
+	</xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="cardType">
+	<xs:restriction base="xs:string">
+	  <xs:enumeration value="atomic"/>
+	  <xs:enumeration value="seq"/>
+	  <xs:enumeration value="col"/>
+	</xs:restriction>
+  </xs:simpleType>
+  <xs:attributeGroup name="coreGroup">
+	<xs:attributeGroup ref="idNumGroup"/>
+	<xs:attribute name="sig" use="required" type="xs:NCName"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="cardGroup">
+	<xs:attributeGroup ref="coreGroup"/>
+	<xs:attribute name="card" use="required" type="cardType"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="idNumGroup">
+	<xs:attribute name="num" use="required" type="xs:integer"/>
+	<xs:attribute name="id" use="required" type="xs:NCName"/>
+  </xs:attributeGroup>
+</xs:schema>

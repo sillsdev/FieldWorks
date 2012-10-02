@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="xml" type="translatedList" datatype="ExportedList">
+	<FxtDocumentDescription dataLabel="Translated List(s)" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*">Export one or more translated lists to XML.</FxtDocumentDescription>
+</template>

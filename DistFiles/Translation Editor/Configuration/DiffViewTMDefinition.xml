@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- ============================================================================================
+IMPORTANT NOTICE: id's given to toolbars and toolbar items must all be unique within the
+application. That doesn't just mean unique within a particular XML definition file. It means
+unique among all the XML definition files used in a single application.
+
+Item "type" Values:
+	0 = Regular Button
+	1 = Button with popup arrow that pops-ups subitems on a toolbar
+	2 = Button with popup arrow that pops-ups subitems on a menu
+	3 = Button with popup arrow that pops-ups a custom (application-defined) control.
+	4 = ComboBox
+	5 = Container for application-defined control (e.g. goto scripture passage control)
+
+	customizeitem - By default, only menu items are shown in the list of command items in the
+	toolbar customization dialog. However, there may be some toolbar items that aren't on the
+	menu but should be in the customization list. When applied to a toolbar item, this
+	attribute tells the adapter to put the toolbar item in the customization list even though
+	it isn't a menu item.
+
+	replacecustomizeitem - By default, only menu items are shown in the list of command items in the
+	toolbar customization dialog. However, sometimes the toolbar representation of a menu item
+	varies a little from the menu item. For example, when the undo and redo items appear on a
+	menu, they act like normal buttons. However, when they appear on a toolbar, the include a
+	drop-down arrow allowing the user to drop-down a list of actions to undo/redo. Therefore,
+	the toolbar implementation of the undo/redo command differs somewhat from the menu
+	implementation. In cases like these, it is desirable to only allow the drop-down version
+	of the buttons to be placed on toolbars. Applying this attribute to an item tells the
+	adapter to use the item to replace another one that has already been added to the
+	collection of customization items. This attribute should only be applied to toolbar items
+	and it's expected that the item being replaced is already in the customization collection.
+
+	windowlist - This attribute should only be applied to one menu item. It tells the
+	adapter the item is the first item in the list of an application's open windows. The item
+	with this attribute set to true handle's it's update handler differently from other items.
+	When the update handler is called, an argument of type WindowListInfo is passed. The
+	update handler should fill-in the list property with the list of windows that should
+	be displayed in the menu.
+
+	morewindowsitem - This attribute flags an item as the "More Windows..." item. The
+	adapter will automatically make this item visible or hidden as necessary. When there are
+	more than 10 items in the window list, the adapter will make this item visible. Otherwise
+	it will be hidden.
+
+	allowcustomizing - This attribute for toolbars determines whether or not the last item
+	on the toolbar will be the little button that allows the user to customize the items
+	that are visible on the toolbar.
+
+	settingFilesPrefix - This attribute for toolbars tells the adapter what prefix to use
+	when saving or restoring a toolbar's settings from a settings file. A settings file
+	saves all the information about a toolbar when the form it belongs to is closed. That
+	is how user customization information is saved. The file format for a toolbar's
+	settings format is: prefix.toolbarname.xml where toolbarname is replaced with the
+	toolbar's name (i.e. the name attribute of toolbar definition sections below).
+
+	onmodalform - In the event the toolbar adapter allows toolbar's to be undocked, this
+	attribute for toolbars tells the adapter the toolbars will be placed on a modal form.
+	Therefore, the adapter will not allow toolbar's to be undocked. The reason being,
+	after toolbars are undocked, they cannot be docked again since the modal form doesn't
+	allow other windows (which undocked toolbars are) in the application to gain focus.
+============================================================================================ -->
+<TMDef>
+	<resources>
+		<!-- localizedmanagementstrings are for strings displayed in the customize menu,
+		and dialog box (assuming one is available) for menu and toolbar user customization -->
+		<systemstringids assemblyPath="FwResources.dll" class="SIL.FieldWorks.Resources.ToolBarSystemStrings"/>
+		<localizedstrings assemblyPath="FwResources.dll" class="SIL.FieldWorks.Resources.FwTMStrings"/>
+		<localizedstrings assemblyPath="TeResources.dll" class="SIL.FieldWorks.TE.TeTMStrings"/>
+		<imageList assemblyPath="TeResources.dll"
+			class="SIL.FieldWorks.TE.TeResourceHelper"
+			field="teMenuToolBarImages"
+			labels="CmdInsertChapNum, CmdInsertVerseNum, CmdInsertVerseMode, CmdInsertFootnote,
+			CmdInsertScrSection, CmdInsertPicture, CmdAppHelp, CmdHelpAbout, CmdBtFinished, CmdBtUnFinished,
+			CmdBtChecked, CmdPrevBtUnfinished, CmdNextBtUnfinished, CmdNotRendered, CmdUseAsVernEq,
+			CmdVernEqNotAssigned, 16, CmdApplyUnTransWord, CmdBookFilterDlg, CmdNoFilter, CmdGotoPrevFootnote,
+			CmdGotoNextFootnote, CmdGotoFirstBook, CmdGotoPrevBook, CmdGotoNextBook, CmdGotoLastBook,
+			CmdGotoFirstSection, CmdGotoPrevSection, CmdGotoNextSection, CmdGotoLastSection,
+			CmdGotoFirstChapter, CmdGotoPrevChapter, CmdGotoNextChapter, CmdGotoLastChapter,
+			CmdPrevDiff, CmdNextDiff, CmdApplyFilterToKeyTerms, CmdInsertCrossRef,
+			CmdEnableSendSync, CmdEnableReceiveSync, CmdFindInDict, CmdScrChecksIgnored,
+			CmdScrChecksInconsistency, CmdScrChecksEditComment, 46, 47, 48, CmdFindKeyTerm">
+			<!-- Note: the same imageList is in TeTMDefinition.xml. The two lists should
+			  stay in sync! -->
+		</imageList>
+		<imageList assemblyPath="FwResources.dll"
+			class="SIL.FieldWorks.Resources.ResourceHelper"
+			field="menuToolBarImages"
+			labels="CmdOpen, 1, CmdPrint, CmdCut, CmdCopy, CmdPaste, CmdUndo, CmdRedo,
+			8, CmdAbout, CmdFontBold, CmdFontItalic, CmdDecreaseIndent, CmdIncreaseIndent,
+			CmdAlignLeft, CmdCenter, CmdAlignRight, CmdBulletList, CmdNumberedList,
+			CmdForegroundColor,	CmdBackgroundColor, CmdBorders, CmdBordersBottom, CmdBordersTop,
+			CmdBordersLeft,	CmdBordersRight, CmdBordersNone, 27, CmdRemoveCharStyle,
+			CmdResetParaStyle, 30, CmdPageSetup, CmdDelete, CmdDeleteProj, CmdFind, CmdFindNext,
+			CmdFindPrev, CmdReplace, 38, CmdCascade, CmdTileSideBySide, CmdTile, 42, CmdStyles,
+			CmdNewWindow, 45, CmdConfig, CmdAppHelp, CmdHowDoI, CmdTraining, CmdPrintLayout,
+			CmdBrowse, CmdDataEntry, CmdFullWindow">
+		</imageList>
+	</resources>
+	<commands>
+		<command id="CmdFile" text="kstidFileItemName"/>
+		<command id="CmdEdit" text="kstidEditItemName"/>
+		<command id="CmdView" text="kstidViewItemName"/>
+		<command id="CmdHelp" text="kstidHelpItemName"/>
+		<command id="CmdClose" text="kstidCloseItemName" tooltip="kstidCloseToolTip"
+			message="FileClose" category="kstidFileCategory">
+		</command>
+		<command id="CmdCut" text="kstidCutItemName" tooltip="kstidCutToolTip"
+			message="EditCut" category="kstidEditCategory" shortcutkey="CtrlX">
+		</command>
+		<command id="CmdCopy" text="kstidCopyItemName" tooltip="kstidCopyToolTip"
+			message="EditCopy" category="kstidEditCategory" shortcutkey="CtrlC">
+		</command>
+		<command id="CmdPaste" text="kstidPasteItemName" tooltip="kstidPasteToolTip"
+			message="EditPaste" category="kstidEditCategory" shortcutkey="CtrlV" >
+		</command>
+		<command id="CmdUndo" text="kstidUndoItemName" tooltip="kstidUndoToolTip"
+			message="EditUndo" category="kstidEditCategory" shortcutkey="CtrlZ">
+		</command>
+		<command id="CmdRedo" text="kstidRedoItemName" tooltip="kstidRedoToolTip"
+			message="EditRedo" category="kstidEditCategory" shortcutkey="CtrlY">
+		</command>
+		<command id="CmdPrevDiff" text="kstidPrevDiffItemName" message="PreviousDifference"
+				 category="kstidViewCategory"/>
+		<command id="CmdNextDiff" text="kstidNextDiffItemName" message="NextDifference"
+				 category="kstidViewCategory"/>
+		<command id="CmdReCenter" text="kstidReCenterItemName" message="ReCenter"
+				 category="kstidViewCategory"/>
+		<command id="CmdToolBar" text="kstidViewToolbarItemName" message="ViewToolBar"/>
+		<command id="CmdZoom" text="kstidZoomItemName" tooltip="kstidZoomToolTip"
+			message="ViewZoom" category="kstidViewCategory" dnboverridedrawing="false">
+		</command>
+	</commands>
+
+	<menus>
+		<!-- *************** -->
+		<!--    FILE MENU    -->
+		<!-- *************** -->
+		<item name="mnuFile" commandid="CmdFile">
+			<item name="mnuClose" commandid="CmdClose"/>
+		</item>
+
+		<!-- *************** -->
+		<!--    EDIT MENU    -->
+		<!-- *************** -->
+		<item name="mnuEdit" commandid="CmdEdit">
+			<item name="mnuUndo" commandid="CmdUndo"/>
+			<item name="mnuRedo" commandid="CmdRedo"/>
+			<item name="mnuCut" commandid="CmdCut" begingroup="true"/>
+			<item name="mnuCopy" commandid="CmdCopy"/>
+			<item name="mnuPaste" commandid="CmdPaste"/>
+		</item>
+
+		<!-- *************** -->
+		<!--    VIEW MENU    -->
+		<!-- *************** -->
+		<item name="mnuView" commandid="CmdView">
+			<item name="mnuPrevDiff" commandid="CmdPrevDiff"/>
+			<item name="mnuNextDiff" commandid="CmdNextDiff"/>
+			<item name="mnuReCenter" commandid="CmdReCenter"/>
+			<item name="mnuToolBars" commandid="CmdToolBar" begingroup="true"/>
+		</item>
+	</menus>
+
+	<toolbars settingFilesPrefix="TE.TBDef.DiffView" onmodalform="false">
+		<toolbar name="tbDiffView" text="kstidDiffViewBarText" row="0" position="0" allowcustomizing="false">
+			<item name="tbbCut" commandid="CmdCut" type="0" begingroup="true"/>
+			<item name="tbbCopy" commandid="CmdCopy" type="0"/>
+			<item name="tbbPaste" commandid="CmdPaste" type="0"/>
+			<item name="tbbUndo" commandid="CmdUndo" type="3" begingroup="true"/>
+			<item name="tbbRedo" commandid="CmdRedo" type="3"/>
+			<item name="tbbZoom" commandid="CmdZoom" type="4" begingroup="true" width="100"/>
+		</toolbar>
+	</toolbars>
+
+</TMDef>

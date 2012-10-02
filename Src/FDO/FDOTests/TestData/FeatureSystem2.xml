@@ -1,0 +1,704 @@
+<item id="tSubjAgr" type="fsType">
+   <abbrev ws="en">sbj</abbrev>
+   <term ws="en">Subject agreement</term>
+   <def ws="en">Features common to subject agreement on verbs.</def>
+   <item id="cSubjAgr" type="complex">
+	  <abbrev ws="en">sbj</abbrev>
+	  <term ws="en">subject agreement</term>
+	  <def ws="en">This contains the set of features used in subject agreement.</def>
+	  <item status="proxy" target="tPersonAgr" id="tPersonAgr" type="fsType">
+		 <abbrev ws="en">agr</abbrev>
+		 <term ws="en">person agreement</term>
+		 <item status="proxy" target="fPers" id="fPers" type="feature">
+			<abbrev ws="en">pers</abbrev>
+			<term ws="en">person</term>
+			<item status="proxy" target="v1" id="v1" type="value">
+			   <abbrev ws="en">1</abbrev>
+			   <term ws="en">first person</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="pers">
+						   <sym value="1"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">First person deixis is deictic reference that refers to the speaker, or both the speaker and referents grouped with the speaker.</def>
+			   <citation>Crystal 1980:263</citation>
+			   <citation>Hartmann and Stork 1972:168</citation>
+			   <citation>Mish et al. 1990:466</citation>
+			   <citation>Levinson 1983:62</citation>
+			   <citation>Fleming 1988:322</citation>
+			</item>
+			<item status="proxy" target="v1Ex" id="v1Ex" type="value">
+			   <abbrev ws="en">1excl</abbrev>
+			   <term ws="en">first person exclusive</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="pers">
+						   <sym value="1excl"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Exclusive first person deixis is deixis that refers to a group not including the addressee(s).</def>
+			   <citation>Crystal 1980:182</citation>
+			   <citation>Pei and Gaynor 1954:69</citation>
+			</item>
+			<item status="proxy" target="v1Incl" id="v1Incl" type="value">
+			   <abbrev ws="en">1incl</abbrev>
+			   <term ws="en">first person inclusive</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="pers">
+						   <sym value="1incl"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Inclusive first person deixis is deixis that refers to a group including the addressee(s).</def>
+			   <citation>Crystal 1980:182</citation>
+			   <citation>Pei and Gaynor 1954:98</citation>
+			</item>
+			<item status="proxy" target="v2" id="v2" type="value">
+			   <abbrev ws="en">2</abbrev>
+			   <term ws="en">second person</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="pers">
+						   <sym value="2"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Second person deixis is deictic reference to a person or persons identified as addressee.</def>
+			   <citation>Crystal 1980:263</citation>
+			   <citation>Hartmann and Stork 1972:168</citation>
+			   <citation>Mish et al. 1990:1060</citation>
+			   <citation>Levinson 1983:62</citation>
+			   <citation>Fleming 1988:322</citation>
+			</item>
+			<item status="proxy" target="v3" id="v3" type="value">
+			   <abbrev ws="en">3</abbrev>
+			   <term ws="en">third person</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="pers">
+						   <sym value="3"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Third person deixis is deictic reference to a referent(s) not identified as the speaker or addressee.</def>
+			   <citation>Crystal 1980:263</citation>
+			   <citation>Hartmann and Stork 1972:168</citation>
+			   <citation>Mish et al. 1990:1227</citation>
+			   <citation>Levinson 1983:62</citation>
+			   <citation>Anderson and Keenan 1985:261-262</citation>
+			   <citation>Fleming 1988:322</citation>
+			</item>
+			<item status="proxy" target="v3Obv" id="v3Obv" type="value">
+			   <abbrev ws="en">3obv</abbrev>
+			   <term ws="en">obviative person</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="pers">
+						   <sym value="3obv"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Obviative person deixis is third person deixis that distinguishes a less important referent in the present stage of the discourse from a referent that is more important.</def>
+			</item>
+			<item status="proxy" target="v3Prox" id="v3Prox" type="value">
+			   <abbrev ws="en">3prox</abbrev>
+			   <term ws="en">proximate person</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="pers">
+						   <sym value="3prox"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Proximate person deixis is a third person deixis that distinguishes a referent that is more important at the present stage of the discourse from a referent that is less important.</def>
+			</item>
+			<item status="proxy" target="vUnknownfPers" id="vUnknownfPers" type="value">
+			   <abbrev ws="en">?</abbrev>
+			   <term ws="en">unknown person</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="pers">
+						   <unknown/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			</item>
+			<def ws="en">Person deixis is deictic reference to the participant role of a referent, such as the speaker, the addressee, and referents which are neither speaker nor addressee.</def>
+			<citation>Levinson 1983:62</citation>
+			<citation>Crystal 1980:263</citation>
+			<citation>Hartmann and Stork 1972:168</citation>
+			<citation>Mish et al. 1990:877</citation>
+		 </item>
+	  </item>
+	  <item status="proxy" target="tCommonAgr" id="tCommonAgr" type="fsType">
+		 <abbrev ws="en">agr</abbrev>
+		 <term ws="en">common agreement</term>
+		 <item status="proxy" target="fGender" id="fGender" type="feature">
+			<abbrev ws="en">gen</abbrev>
+			<term ws="en">gender</term>
+			<item status="proxy" target="vMasc" id="vMasc" type="value">
+			   <abbrev ws="en">m</abbrev>
+			   <term ws="en">masculine gender</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gen">
+						   <sym value="m"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Masculine gender is a grammatical gender that (1) marks nouns having human or animal male referents, and (2) often marks nouns having referents that do not have distinctions of sex.</def>
+			   <citation>Hartmann and Stork 1972:93</citation>
+			   <citation>Mish et al. 1990:730</citation>
+			</item>
+			<item status="proxy" target="vFem" id="vFem" type="value">
+			   <abbrev ws="en">f</abbrev>
+			   <term ws="en">feminine gender</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gen">
+						   <sym value="f"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Feminine gender is a grammatical gender that (1) marks nouns that have human or animal female referents, and (2) often marks nouns that have referents that do not carry distinctions of sex.</def>
+			   <citation>Hartmann and Stork 1972:93</citation>
+			   <citation>Mish et al. 1990:456</citation>
+			</item>
+			<item status="proxy" target="vNeut" id="vNeut" type="value">
+			   <abbrev ws="en">n</abbrev>
+			   <term ws="en">neuter gender</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gen">
+						   <sym value="n"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Neuter gender is a grammatical gender that (1) includes those nouns having referents which do not have distinctions of sex, and (2) often includes some which do have a natural sex distinction.</def>
+			   <citation>Hartmann and Stork 1972:93</citation>
+			   <citation>Mish et al. 1990:795</citation>
+			</item>
+			<item status="proxy" target="vUnknownfGender" id="vUnknownfGender" type="value">
+			   <abbrev ws="en">?</abbrev>
+			   <term ws="en">unknown gender</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gen">
+						   <unknown/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			</item>
+			<def ws="en">Grammatical gender is a noun class system, composed of two or three classes, whose nouns that have human male and female referents tend to be in separate classes. Other nouns that are classified in the same way in the language may not be classed by any correlation with natural sex distinctions.</def>
+			<citation>Hartmann and Stork 1972:93</citation>
+			<citation>Foley and Van Valin 1984:325</citation>
+			<citation>Mish et al. 1990:510</citation>
+			<citation>Crystal 1985:133</citation>
+			<citation>Dixon, R. 1968:105</citation>
+			<citation>Quirk, et al. 1985:314</citation>
+		 </item>
+		 <item status="proxy" target="fNum" id="fNum" type="feature">
+			<abbrev ws="en">num</abbrev>
+			<term ws="en">number</term>
+			<item status="proxy" target="vSg" id="vSg" type="value">
+			   <abbrev ws="en">sg</abbrev>
+			   <term ws="en">singular number</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="num">
+						   <sym value="sg"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Singular number is number that refers to one member of a designated class.</def>
+			   <citation>Crystal 1980:245</citation>
+			   <citation>Hartmann and Stork 1972:210</citation>
+			</item>
+			<item status="proxy" target="vPl" id="vPl" type="value">
+			   <abbrev ws="en">pl</abbrev>
+			   <term ws="en">plural number</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="num">
+						   <sym value="pl"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Plural number is number that expresses reference to a quantity greater than that expressed by the largest specific number category in a language, such as "more than one" in English, and "more than two" in some other languages.</def>
+			   <citation>Crystal 1980:245</citation>
+			   <citation>Hartmann and Stork 1972:178</citation>
+			   <citation>Crystal 1987:428</citation>
+			   <citation>Mish et al. 1990:906</citation>
+			</item>
+			<item status="proxy" target="vDual" id="vDual" type="value">
+			   <abbrev ws="en">du</abbrev>
+			   <term ws="en">dual number</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="num">
+						   <sym value="du"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Dual number is number which refers to two members of the class identified by the noun.</def>
+			</item>
+			<item status="proxy" target="vTrial" id="vTrial" type="value">
+			   <abbrev ws="en">trial</abbrev>
+			   <term ws="en">trial number</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="num">
+						   <sym value="trial"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">A trial number is a number that refers to three members of the designated class.</def>
+			   <citation>Pei and Gaynor 1954:220</citation>
+			   <citation>Gove, et al. 1966:2439</citation>
+			</item>
+			<item status="proxy" target="vPaucal" id="vPaucal" type="value">
+			   <abbrev ws="en">paucal</abbrev>
+			   <term ws="en">paucal number</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="num">
+						   <sym value="paucal"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">few</def>
+			   <citation>Crystal 1997:265</citation>
+			</item>
+			<item status="proxy" target="vUnknownfNum" id="vUnknownfNum" type="value">
+			   <abbrev ws="en">?</abbrev>
+			   <term ws="en">unknown number</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="num">
+						   <unknown/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			</item>
+			<def ws="en">Number is a grammatical category of nouns, pronouns, and verb agreement that expresses count distinctions (such as "one" or "more than one"). The count distinctions typically, but not always, correspond to the actual count of the referents of the marked noun or pronoun.</def>
+			<citation>Crystal 1980:245</citation>
+			<citation>Hartmann and Stork 1972:155</citation>
+			<citation>Mish et al. 1990:811</citation>
+		 </item>
+		 <item status="proxy" target="fClass" id="fClass" type="feature">
+			<abbrev ws="en">class</abbrev>
+			<term ws="en">noun class</term>
+			<item status="proxy" target="vAnim" id="vAnim" type="value">
+			   <abbrev ws="en">anim</abbrev>
+			   <term ws="en">animate class</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="class">
+						   <sym value="anim"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">An animate class is a category of nouns having human or animal referents.</def>
+			</item>
+			<item status="proxy" target="vHum" id="vHum" type="value">
+			   <abbrev ws="en">hum</abbrev>
+			   <term ws="en">human class</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="class">
+						   <sym value="hum"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">A human class is a noun class that has human referents.</def>
+			   <citation>Lyons 1968:286-288</citation>
+			   <citation>Andrews, Avery 1985:77</citation>
+			   <citation>Bolinger 1968:114-115</citation>
+			</item>
+			<item status="proxy" target="vInanim" id="vInanim" type="value">
+			   <abbrev ws="en">inan</abbrev>
+			   <term ws="en">inanimate class</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="class">
+						   <sym value="inan"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">An inanimate class is a category of nouns that do not have human or animal referents.</def>
+			</item>
+			<item status="proxy" target="vUnknownfClass" id="vUnknownfClass" type="value">
+			   <abbrev ws="en">?</abbrev>
+			   <term ws="en">unknown noun class</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="class">
+						   <unknown/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			</item>
+			<def ws="en">A noun class system is a grammatical system that some languages use to overtly categorize nouns. Noun classes (1) are often based, at least in part, on characteristics (such as gender, animacy, shape) of the referents of some of the nouns in each class, and (2) are distinguished (a) by an affix on the noun or by a clitic or word in the noun phrase, and (b) by agreement affixes on noun phrase constituents and on the verb.</def>
+			<citation>Dixon, R. 1968:105</citation>
+			<citation>Dixon, R. 1986:105-111</citation>
+		 </item>
+		 <item status="proxy" target="fBantuClass" id="fBantuClass" type="feature">
+			<abbrev ws="en">gender</abbrev>
+			<term ws="en">Bantu noun class</term>
+			<item status="proxy" target="vBantuGender1.2" id="vBantuGender1.2" type="value">
+			   <abbrev ws="en">1/2</abbrev>
+			   <term ws="en">Gender 1/2</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="1/2"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 1/2 is a grammatical gender that (1) marks nouns that refer to human beings, and (2) may mark nouns having referents that are not human beings. Nouns marked for gender 1/2 can be singular (class 1) or plural (class 2). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 1 are m?- / j?- / ?-; for class 2 they are ba- / bá- / bá-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender1a" id="vBantuGender1a" type="value">
+			   <abbrev ws="en">1a</abbrev>
+			   <term ws="en">Gender 1a</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="1a"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 1a is a grammatical gender that (1) marks nouns that are proper names, kinship terms, or personifications and (2) may mark nouns having referents that are not proper names.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender3.4" id="vBantuGender3.4" type="value">
+			   <abbrev ws="en">3/4</abbrev>
+			   <term ws="en">Gender 3/4</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="3/4"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 3/4 is a grammatical gender that (1) marks nouns that are non-human living things ('semi-animates'): trees, plants, spirits, natural phenomena, e.g., fire, smoke, river, objects associated with these things; things made of wood, etc., and (2) may mark nouns having referents that are not non-human living things. It also may mark body parts.. Nouns marked for gender 3/4 can be singular (class 3) or plural (class 4). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 3 are m?- / g?- / ?-; for class 4 they are m?- / g?- / ?-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender5.6" id="vBantuGender5.6" type="value">
+			   <abbrev ws="en">5/6</abbrev>
+			   <term ws="en">Gender 5/6</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="5/6"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 5/6 is a grammatical gender that (1) marks nouns that are paired objects, animals, body parts, collective nouns, undesirable people, augmentatives, derogatives, or fruits, and (2) may mark nouns having referents that are none of these. Nouns marked for gender 5/6 can be singular (class 5) or plural (class 6). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 5 are i- / l?- / l?-; for class 6 they are ma- / gá- / á-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender6a" id="vBantuGender6a" type="value">
+			   <abbrev ws="en">6a</abbrev>
+			   <term ws="en">Gender 6a</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="6a"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 6a is a grammatical gender that (1) marks nouns that are mass nouns, liquids, time references, mannerisms, or modes of action and (2) may mark nouns having referents that are none of these. Nouns marked for gender 6a do not have a singular/plural distinction.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender7.8" id="vBantuGender7.8" type="value">
+			   <abbrev ws="en">7/8</abbrev>
+			   <term ws="en">Gender 7/8</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="7/8"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 7/8 is a grammatical gender that (1) marks nouns that are artifacts, defective human beings, body parts, tools, instruments, utensils, animals, insects, languages, diseases, outstanding people, amelioratives, derogatives, augmentatives, curatives (shortness and stoutness), or mannerisms, and (2) may mark nouns having referents that are none of these. Nouns marked for gender 7/8 can be singular (class 7) or plural (class 8). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 7 are k?- / k?- / k?-; for class 8 they are bi- / bi- / bi-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender9.10" id="vBantuGender9.10" type="value">
+			   <abbrev ws="en">9/10</abbrev>
+			   <term ws="en">Gender 9/10</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="9/10"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 9/10 is a grammatical gender that (1) marks nouns that are animals, special kinds of people, body parts, tools, instruments, or household effects and (2) may mark nouns having referents that are none of these. Nouns marked for gender 9/10 can be singular (class 9) or plural (class 10). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 9 are N- / j?- / ?-; for class 10 they are N- / j?- / í-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender11.10" id="vBantuGender11.10" type="value">
+			   <abbrev ws="en">11/10</abbrev>
+			   <term ws="en">Gender 11/10</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="11/10"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 11/10 is a grammatical gender that (1) marks nouns that are long, thin objects, languages, body parts, natural phenomena, implements, utensils or other artifacts and (2) may mark nouns having referents that are none of these. Nouns marked for gender 11/10 can be singular (class 11) or plural (class 10). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 11 are l?- / l?- / l?-; for class 10 they are N- / j?- / í-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender12.13" id="vBantuGender12.13" type="value">
+			   <abbrev ws="en">12/13</abbrev>
+			   <term ws="en">Gender 12/13</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="12/13"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 12/13 is a grammatical gender that (1) marks nouns that are diminutives, augmentatives, derogatives, or amelioratives and (2) may mark nouns having referents that are none of these. Nouns marked for gender 12/13 can be singular (class 12) or plural (class 13). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 12 are ka- / ká- / ká-; for class 13 they are t?- / t?- / t?-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender14.6" id="vBantuGender14.6" type="value">
+			   <abbrev ws="en">14/6</abbrev>
+			   <term ws="en">Gender 14/6</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="14/6"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 14/6 is a grammatical gender that (1) marks nouns that are abstract or collectives, and (2) may mark nouns having referents that are neither abstract nor collective. Nouns marked for gender 14/6 can be singular (class 14) or plural (class 6). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 14 are b?- / b?- / b?-; for class 6 they are ma- / gá- / á-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender14" id="vBantuGender14" type="value">
+			   <abbrev ws="en">14</abbrev>
+			   <term ws="en">Gender 14</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="14"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 14 is a grammatical gender that (1) marks nouns that are abstract or collectives, and (2) may mark nouns having referents that are neither abstract nor collective. Nouns marked for gender 14 do not have a singular/plural distinction. The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 14 are b?- / b?- / b?-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender15.6" id="vBantuGender15.6" type="value">
+			   <abbrev ws="en">15/6</abbrev>
+			   <term ws="en">Gender 15/6</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="15/6"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 15/6 is a grammatical gender that (1) marks nouns that are paired body parts, and (2) may mark nouns having referents that are not paired body parts. Nouns marked for gender 15/6 can be singular (class 15) or plural (class 6). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 15 are k?- / k?- / k?-; for class 6 they are ma- / gá- / á-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender15" id="vBantuGender15" type="value">
+			   <abbrev ws="en">15</abbrev>
+			   <term ws="en">Gender 15</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="15"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 15 is a grammatical gender that marks infinitives. Nouns marked for gender 15 do not have a singular/plural distinction. The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 15 are k?- / k?- / k?-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender19.13" id="vBantuGender19.13" type="value">
+			   <abbrev ws="en">19/13</abbrev>
+			   <term ws="en">Gender 19/13</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="19/13"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 19/13 is a grammatical gender that (1) marks nouns that are diminutives, and (2) may mark nouns having referents that are not diminutives. Nouns marked for gender 19/13 can be singular (class 19) or plural (class 13). The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 19 are pi- / pí- / pí-; for class 13 they are t?- / t?- / t?-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender16" id="vBantuGender16" type="value">
+			   <abbrev ws="en">16</abbrev>
+			   <term ws="en">Gender 16</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="16"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 16 is a grammatical gender that has a locative sense. The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 16 are pa- / pá- / pá-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender17" id="vBantuGender17" type="value">
+			   <abbrev ws="en">17</abbrev>
+			   <term ws="en">Gender 17</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="17"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 17 is a grammatical gender that has a locative sense. The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 17 are k?- / k?- / k?-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vBantuGender18" id="vBantuGender18" type="value">
+			   <abbrev ws="en">18</abbrev>
+			   <term ws="en">Gender 18</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <sym value="18"/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			   <def ws="en">Gender 18 is a grammatical gender that has a locative sense. The Proto-Bantu nominal, pronominal, and enumerative prefixes for class 18 are m?- / m?- / m?-.</def>
+			   <citation>Katamba 2003:114ff;</citation>
+			   <citation>Hinnebusch 1989:466-467,</citation>
+			   <citation>Gardner 2005:54.</citation>
+			</item>
+			<item status="proxy" target="vUnknownfBantuClass" id="vUnknownfBantuClass" type="value">
+			   <abbrev ws="en">?</abbrev>
+			   <term ws="en">unknown Bantu noun class</term>
+			   <fs type="tSubjAgr">
+				  <f name="sbj">
+					 <fs type="tSubjAgr">
+						<f name="gender">
+						   <unknown/>
+						</f>
+					 </fs>
+				  </f>
+			   </fs>
+			</item>
+			<def ws="en">Grammatical gender is a noun class system composed of several classes. All Bantu noun genders are primarily a matter of form. Nouns in a given gender may share some semantic notions, but this is not always the case.</def>
+			<citation>Katamba 2003:114ff;</citation>
+			<citation>Hinnebusch 1989:466-7;</citation>
+			<citation>Murphy 1997:221-237;</citation>
+			<citation>Contini-Morava 1997:599-628.</citation>
+		 </item>
+	  </item>
+   </item>
+</item>

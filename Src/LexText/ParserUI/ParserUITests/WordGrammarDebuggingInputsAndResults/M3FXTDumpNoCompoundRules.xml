@@ -1,0 +1,1841 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+================================================================
+FXT to generate output for M3 Parser (for Stage 1)
+================================================================
+Revision History is at the end of this file.
+-->
+<M3Dump>
+  <PartsOfSpeech>
+	<PartOfSpeech Id="3">
+	  <Name>adjunct</Name>
+	  <Abbreviation>adjunct</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="6">
+	  <Name>article</Name>
+	  <Abbreviation>art</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	  <SubPossibilities dst="7" ord="0"/>
+	  <SubPossibilities dst="10" ord="1"/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="7">
+	  <Name>definite article</Name>
+	  <Abbreviation>def</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="10">
+	  <Name>indefinite article</Name>
+	  <Abbreviation>indef</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="15">
+	  <Name>disc</Name>
+	  <Abbreviation>disc</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="18">
+	  <Name>interjection</Name>
+	  <Abbreviation>interj</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="21">
+	  <Name>marker</Name>
+	  <Abbreviation>mkr</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	  <SubPossibilities dst="22" ord="0"/>
+	  <SubPossibilities dst="25" ord="1"/>
+	  <SubPossibilities dst="28" ord="2"/>
+	  <SubPossibilities dst="31" ord="3"/>
+	  <SubPossibilities dst="34" ord="4"/>
+	  <SubPossibilities dst="37" ord="5"/>
+	  <SubPossibilities dst="40" ord="6"/>
+	  <SubPossibilities dst="43" ord="7"/>
+	  <SubPossibilities dst="46" ord="8"/>
+	  <SubPossibilities dst="49" ord="9"/>
+	  <SubPossibilities dst="52" ord="10"/>
+	  <SubPossibilities dst="55" ord="11"/>
+	  <SubPossibilities dst="58" ord="12"/>
+	  <SubPossibilities dst="61" ord="13"/>
+	  <SubPossibilities dst="64" ord="14"/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="22">
+	  <Name>aspectual</Name>
+	  <Abbreviation>asp</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="25">
+	  <Name>case marker</Name>
+	  <Abbreviation>case</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="28">
+	  <Name>focus marker</Name>
+	  <Abbreviation>foc</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="31">
+	  <Name>honorific marker</Name>
+	  <Abbreviation>hon</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="34">
+	  <Name>modal</Name>
+	  <Abbreviation>mod</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="37">
+	  <Name>mood</Name>
+	  <Abbreviation>mood</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="40">
+	  <Name>negation</Name>
+	  <Abbreviation>neg</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="43">
+	  <Name>number</Name>
+	  <Abbreviation>num</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="46">
+	  <Name>person</Name>
+	  <Abbreviation>pers</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="49">
+	  <Name>quotative</Name>
+	  <Abbreviation>quo</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="52">
+	  <Name>rank marker</Name>
+	  <Abbreviation>rank</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="55">
+	  <Name>switch reference marker</Name>
+	  <Abbreviation>sw ref</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="58">
+	  <Name>tense marker</Name>
+	  <Abbreviation>tens</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="61">
+	  <Name>topic marker</Name>
+	  <Abbreviation>top</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="64">
+	  <Name>voice marker</Name>
+	  <Abbreviation>voice</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="69">
+	  <Name>modifier</Name>
+	  <Abbreviation>mod</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	  <SubPossibilities dst="70" ord="0"/>
+	  <SubPossibilities dst="73" ord="1"/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="70">
+	  <Name>adjective</Name>
+	  <Abbreviation>adj</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="73">
+	  <Name>adverb</Name>
+	  <Abbreviation>adv</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="78">
+	  <Name>negator</Name>
+	  <Abbreviation>neg</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="81">
+	  <Name>noun</Name>
+	  <Abbreviation>n</Abbreviation>
+	  <AffixSlots>
+		<MoInflAffixSlot Id="102" Optional="true">
+		  <Name>Possessor</Name>
+		  <Description/>
+		</MoInflAffixSlot>
+	  </AffixSlots>
+	  <AffixTemplates>
+		<MoInflAffixTemplate Id="101" Final="true">
+		  <Name>Possessed noun</Name>
+		  <Description/>
+		  <Slots dst="102" ord="0"/>
+		  <SuffixSlots dst="102" ord="0"/>
+		</MoInflAffixTemplate>
+	  </AffixTemplates>
+	  <InflectionClasses>
+		<MoInflClass Id="99">
+		  <Name>1st nominal declension</Name>
+		  <Abbreviation>I</Abbreviation>
+		  <Description>first nominal declension</Description>
+		</MoInflClass>
+		<MoInflClass Id="100">
+		  <Name>2nd nominal declension</Name>
+		  <Abbreviation>II</Abbreviation>
+		  <Description>second nominal declension</Description>
+		</MoInflClass>
+	  </InflectionClasses>
+	  <SubPossibilities dst="82" ord="0"/>
+	  <SubPossibilities dst="85" ord="1"/>
+	  <SubPossibilities dst="88" ord="2"/>
+	  <SubPossibilities dst="91" ord="3"/>
+	  <SubPossibilities dst="94" ord="4"/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="82">
+	  <Name>common noun</Name>
+	  <Abbreviation>comm</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="85">
+	  <Name>concrete noun</Name>
+	  <Abbreviation>conc</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="88">
+	  <Name>nominal</Name>
+	  <Abbreviation>nom</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="91">
+	  <Name>possessive noun</Name>
+	  <Abbreviation>poss</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="94">
+	  <Name>proper noun</Name>
+	  <Abbreviation>prop</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="103">
+	  <Name>particle</Name>
+	  <Abbreviation>part</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="106">
+	  <Name>precategorial</Name>
+	  <Abbreviation>precat</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="109">
+	  <Name>pronoun</Name>
+	  <Abbreviation>pro</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	  <SubPossibilities dst="110" ord="0"/>
+	  <SubPossibilities dst="113" ord="1"/>
+	  <SubPossibilities dst="116" ord="2"/>
+	  <SubPossibilities dst="119" ord="3"/>
+	  <SubPossibilities dst="122" ord="4"/>
+	  <SubPossibilities dst="125" ord="5"/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="110">
+	  <Name>demonstrative pronoun</Name>
+	  <Abbreviation>dem</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="113">
+	  <Name>indefinite pronoun</Name>
+	  <Abbreviation>ind</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="116">
+	  <Name>interrogative pronoun</Name>
+	  <Abbreviation>int</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="119">
+	  <Name>personal pronoun</Name>
+	  <Abbreviation>pers</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="122">
+	  <Name>posessive pronoun</Name>
+	  <Abbreviation>pos pron</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="125">
+	  <Name>relative pronoun</Name>
+	  <Abbreviation>rel</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="130">
+	  <Name>relator</Name>
+	  <Abbreviation>rel</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	  <SubPossibilities dst="131" ord="0"/>
+	  <SubPossibilities dst="140" ord="1"/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="131">
+	  <Name>adposition</Name>
+	  <Abbreviation>adpos</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	  <SubPossibilities dst="132" ord="0"/>
+	  <SubPossibilities dst="135" ord="1"/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="132">
+	  <Name>postposition</Name>
+	  <Abbreviation>post</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="135">
+	  <Name>preposition</Name>
+	  <Abbreviation>prep</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="140">
+	  <Name>conjunction</Name>
+	  <Abbreviation>conj</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="145">
+	  <Name>verb</Name>
+	  <Abbreviation>v</Abbreviation>
+	  <AffixSlots>
+		<MoInflAffixSlot Id="179" Optional="false">
+		  <Name>Tense</Name>
+		  <Description>tense suffixes</Description>
+		</MoInflAffixSlot>
+		<MoInflAffixSlot Id="180" Optional="true">
+		  <Name>Subject</Name>
+		  <Description>subject prefixes</Description>
+		</MoInflAffixSlot>
+		<MoInflAffixSlot Id="181" Optional="false">
+		  <Name>Object</Name>
+		  <Description/>
+		</MoInflAffixSlot>
+	  </AffixSlots>
+	  <AffixTemplates/>
+	  <InflectionClasses>
+		<MoInflClass Id="177">
+		  <Name>1st verbal conjugation</Name>
+		  <Abbreviation>1</Abbreviation>
+		  <Description>First verbal conjugation</Description>
+		</MoInflClass>
+		<MoInflClass Id="178">
+		  <Name>2nd verbal conjugation</Name>
+		  <Abbreviation>2</Abbreviation>
+		  <Description>Second verbal conjugation</Description>
+		</MoInflClass>
+	  </InflectionClasses>
+	  <SubPossibilities dst="146" ord="0"/>
+	  <SubPossibilities dst="149" ord="1"/>
+	  <SubPossibilities dst="152" ord="2"/>
+	  <SubPossibilities dst="156" ord="3"/>
+	  <SubPossibilities dst="159" ord="4"/>
+	  <SubPossibilities dst="162" ord="5"/>
+	  <SubPossibilities dst="167" ord="6"/>
+	  <SubPossibilities dst="171" ord="7"/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="146">
+	  <Name>auxiliary verb</Name>
+	  <Abbreviation>aux</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="149">
+	  <Name>infinitive</Name>
+	  <Abbreviation>inf</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="152">
+	  <Name>intransitive verb</Name>
+	  <Abbreviation>intrans</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates>
+		<MoInflAffixTemplate Id="155" Final="true">
+		  <Name>Intransitive verb</Name>
+		  <Description/>
+		  <Slots dst="180" ord="0"/>
+		  <Slots dst="179" ord="1"/>
+		  <PrefixSlots dst="180" ord="0"/>
+		  <SuffixSlots dst="179" ord="0"/>
+		</MoInflAffixTemplate>
+	  </AffixTemplates>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="156">
+	  <Name>participle</Name>
+	  <Abbreviation>part</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="159">
+	  <Name>reflexive</Name>
+	  <Abbreviation>ref</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates/>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="162">
+	  <Name>stative</Name>
+	  <Abbreviation>sta</Abbreviation>
+	  <AffixSlots>
+		<MoInflAffixSlot Id="166" Optional="false">
+		  <Name>Tense</Name>
+		  <Description/>
+		</MoInflAffixSlot>
+	  </AffixSlots>
+	  <AffixTemplates>
+		<MoInflAffixTemplate Id="165" Final="true">
+		  <Name>Stative verb</Name>
+		  <Description/>
+		  <Slots dst="180" ord="0"/>
+		  <Slots dst="166" ord="1"/>
+		  <PrefixSlots dst="180" ord="0"/>
+		  <SuffixSlots dst="166" ord="0"/>
+		</MoInflAffixTemplate>
+	  </AffixTemplates>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="167">
+	  <Name>transitive verb</Name>
+	  <Abbreviation>trans</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates>
+		<MoInflAffixTemplate Id="170" Final="true">
+		  <Name>Transitive verb</Name>
+		  <Description/>
+		  <Slots dst="180" ord="0"/>
+		  <Slots dst="181" ord="1"/>
+		  <Slots dst="179" ord="2"/>
+		  <PrefixSlots dst="180" ord="0"/>
+		  <PrefixSlots dst="181" ord="1"/>
+		  <SuffixSlots dst="179" ord="0"/>
+		</MoInflAffixTemplate>
+		<MoInflAffixTemplate Id="1111170" Final="false">
+		  <Name>Non-final Transitive </Name>
+		  <Description>A nominalized transitive verb uses this.  The only inflection is the object prefix.</Description>
+		  <Slots dst="181" ord="0"/>
+		  <PrefixSlots dst="181" ord="0"/>
+		</MoInflAffixTemplate>
+	  </AffixTemplates>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+	<PartOfSpeech Id="171">
+	  <Name>bitransitive verb</Name>
+	  <Abbreviation>bitrans</Abbreviation>
+	  <AffixSlots/>
+	  <AffixTemplates>
+		<MoInflAffixTemplate Id="174" Final="true">
+		  <Name>Bitransitive verb</Name>
+		  <Description/>
+		  <Slots dst="180" ord="0"/>
+		  <Slots dst="181" ord="1"/>
+		  <Slots dst="179" ord="2"/>
+		  <PrefixSlots dst="180" ord="0"/>
+		  <PrefixSlots dst="181" ord="1"/>
+		  <SuffixSlots dst="179" ord="0"/>
+		</MoInflAffixTemplate>
+	  </AffixTemplates>
+	  <InflectionClasses/>
+	</PartOfSpeech>
+  </PartsOfSpeech>
+  <PhPhonData Id="7402">
+	<Environments>
+	  <PhEnvironment Id="7452" StringRepresentation="/ [V] _" LeftContext="0" RightContext="0">
+		<Name>after vowel</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7453" StringRepresentation="/ [C] _" LeftContext="0" RightContext="0">
+		<Name>after consonant</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7454" StringRepresentation="/ _ [C^1][V^1]" LeftContext="0" RightContext="0">
+		<Name>redup before CV</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7455" StringRepresentation="/ _ b" LeftContext="0" RightContext="0">
+		<Name>before voiced labial stop</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7456" StringRepresentation="/ _ g" LeftContext="0" RightContext="0">
+		<Name>before voiced velar stop</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7457" StringRepresentation="/ _ [+cor,+vd]" LeftContext="0" RightContext="0">
+		<Name>before voiced coronals</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7458" StringRepresentation="/ _ [V^1]" LeftContext="0" RightContext="0">
+		<Name>redup before V</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7459" StringRepresentation="/ _ [V]" LeftContext="0" RightContext="0">
+		<Name>before a vowel</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7460" StringRepresentation="/ #[C] _" LeftContext="0" RightContext="0">
+		<Name>after (stem initial) consonant</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7461" StringRepresentation="/ _ i _" LeftContext="0" RightContext="0">
+		<Name>BES</Name>
+	  </PhEnvironment>
+	  <PhEnvironment Id="7462" StringRepresentation="/ # _ #" LeftContext="0" RightContext="0">
+		<Name>standalone word</Name>
+	  </PhEnvironment>
+	</Environments>
+	<NaturalClasses>
+	  <PhNCSegments Id="7463">
+		<Abbreviation>V</Abbreviation>
+		<Segments dst="7404"/>
+		<Segments dst="7406"/>
+		<Segments dst="7408"/>
+		<Segments dst="7410"/>
+		<Segments dst="7412"/>
+	  </PhNCSegments>
+	  <PhNCSegments Id="7464">
+		<Abbreviation>C</Abbreviation>
+		<Segments dst="7414"/>
+		<Segments dst="7416"/>
+		<Segments dst="7418"/>
+		<Segments dst="7420"/>
+		<Segments dst="7422"/>
+		<Segments dst="7424"/>
+		<Segments dst="7426"/>
+		<Segments dst="7428"/>
+		<Segments dst="7430"/>
+		<Segments dst="7432"/>
+		<Segments dst="7434"/>
+		<Segments dst="7436"/>
+		<Segments dst="7438"/>
+		<Segments dst="7440"/>
+		<Segments dst="7442"/>
+		<Segments dst="7444"/>
+		<Segments dst="7446"/>
+		<Segments dst="7448"/>
+	  </PhNCSegments>
+	  <PhNCSegments Id="7465">
+		<Abbreviation>+cor,+vd</Abbreviation>
+		<Segments dst="7420"/>
+		<Segments dst="7432"/>
+		<Segments dst="7442"/>
+		<Segments dst="7444"/>
+		<Segments dst="7448"/>
+	  </PhNCSegments>
+	</NaturalClasses>
+	<Contexts/>
+	<PhonemeSets>
+	  <PhPhonemeSet Id="7403">
+		<Name>Main set</Name>
+		<Phonemes>
+		  <PhPhoneme Id="7404">
+			<Codes>
+			  <PhCode Id="7405">
+				<Representation>i</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7406">
+			<Codes>
+			  <PhCode Id="7407">
+				<Representation>e</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7408">
+			<Codes>
+			  <PhCode Id="7409">
+				<Representation>a</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7410">
+			<Codes>
+			  <PhCode Id="7411">
+				<Representation>o</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7412">
+			<Codes>
+			  <PhCode Id="7413">
+				<Representation>u</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7414">
+			<Codes>
+			  <PhCode Id="7415">
+				<Representation>p</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7416">
+			<Codes>
+			  <PhCode Id="7417">
+				<Representation>b</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7418">
+			<Codes>
+			  <PhCode Id="7419">
+				<Representation>t</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7420">
+			<Codes>
+			  <PhCode Id="7421">
+				<Representation>d</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7422">
+			<Codes>
+			  <PhCode Id="7423">
+				<Representation>k</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7424">
+			<Codes>
+			  <PhCode Id="7425">
+				<Representation>g</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7426">
+			<Codes>
+			  <PhCode Id="7427">
+				<Representation>f</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7428">
+			<Codes>
+			  <PhCode Id="7429">
+				<Representation>v</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7430">
+			<Codes>
+			  <PhCode Id="7431">
+				<Representation>s</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7432">
+			<Codes>
+			  <PhCode Id="7433">
+				<Representation>z</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7434">
+			<Codes>
+			  <PhCode Id="7435">
+				<Representation>x</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7436">
+			<Codes>
+			  <PhCode Id="7437">
+				<Representation>m</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7438">
+			<Codes>
+			  <PhCode Id="7439">
+				<Representation>n</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7440">
+			<Codes>
+			  <PhCode Id="7441">
+				<Representation>ŋ</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7442">
+			<Codes>
+			  <PhCode Id="7443">
+				<Representation>l</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7444">
+			<Codes>
+			  <PhCode Id="7445">
+				<Representation>r</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7446">
+			<Codes>
+			  <PhCode Id="7447">
+				<Representation>w</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		  <PhPhoneme Id="7448">
+			<Codes>
+			  <PhCode Id="7449">
+				<Representation>y</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhPhoneme>
+		</Phonemes>
+		<BoundaryMarkers>
+		  <PhBdryMarker Id="7450">
+			<Name/>
+			<Codes>
+			  <PhCode Id="7451">
+				<Representation>#</Representation>
+			  </PhCode>
+			</Codes>
+		  </PhBdryMarker>
+		</BoundaryMarkers>
+	  </PhPhonemeSet>
+	</PhonemeSets>
+	<PhIters/>
+	<PhIters/>
+	<PhIters/>
+	<PhIters/>
+	<PhIters/>
+	<PhIters/>
+  </PhPhonData>
+  <ParserParameters>
+	<XAmple>
+	  <MaxNulls>1</MaxNulls>
+	  <MaxPrefixes>5</MaxPrefixes>
+	  <MaxInfixes>1</MaxInfixes>
+	  <MaxRoots>3</MaxRoots>
+	  <MaxSuffixes>5</MaxSuffixes>
+	  <MaxAnalysesToReturn>-1</MaxAnalysesToReturn>
+	</XAmple>
+  </ParserParameters>
+  <AdhocCoProhibitions>
+	<MoAlloAdhocProhib Id="7046" Adjacency="0">
+	  <FirstAllomorph dst="6208"/>
+	  <RestOfAllos dst="6274" ord="0"/>
+	</MoAlloAdhocProhib>
+	<MoAlloAdhocProhib Id="7047" Adjacency="1">
+	  <FirstAllomorph dst="6274"/>
+	  <RestOfAllos dst="6172" ord="0"/>
+	</MoAlloAdhocProhib>
+	<MoAlloAdhocProhib Id="7048" Adjacency="2">
+	  <FirstAllomorph dst="6220"/>
+	  <RestOfAllos dst="6274" ord="0"/>
+	</MoAlloAdhocProhib>
+	<MoAlloAdhocProhib Id="7049" Adjacency="3">
+	  <FirstAllomorph dst="6172"/>
+	  <RestOfAllos dst="6220" ord="0"/>
+	</MoAlloAdhocProhib>
+	<MoAlloAdhocProhib Id="7050" Adjacency="4">
+	  <FirstAllomorph dst="6142"/>
+	  <RestOfAllos dst="6274" ord="0"/>
+	</MoAlloAdhocProhib>
+	<MoMorphAdhocProhib Id="7042" Adjacency="1">
+	  <FirstMorpheme dst="6113"/>
+	  <RestOfMorphs dst="6139" ord="0"/>
+	</MoMorphAdhocProhib>
+	<MoMorphAdhocProhib Id="7043" Adjacency="4">
+	  <FirstMorpheme dst="6326"/>
+	  <RestOfMorphs dst="6134" ord="0"/>
+	</MoMorphAdhocProhib>
+	<MoMorphAdhocProhib Id="7044" Adjacency="3">
+	  <FirstMorpheme dst="6113"/>
+	  <RestOfMorphs dst="6134" ord="0"/>
+	</MoMorphAdhocProhib>
+	<MoMorphAdhocProhib Id="7045" Adjacency="2">
+	  <FirstMorpheme dst="6139"/>
+	  <RestOfMorphs dst="6113" ord="0"/>
+	</MoMorphAdhocProhib>
+	<MoAlloAdhocProhib Id="7052" Adjacency="1">
+	  <FirstAllomorph dst="6274"/>
+	  <RestOfAllos dst="6127" ord="0"/>
+	</MoAlloAdhocProhib>
+	<MoAlloAdhocProhib Id="7053" Adjacency="2">
+	  <FirstAllomorph dst="6226"/>
+	  <RestOfAllos dst="6274" ord="0"/>
+	</MoAlloAdhocProhib>
+	<MoMorphAdhocProhib Id="7038" Adjacency="0">
+	  <FirstMorpheme dst="6122"/>
+	  <RestOfMorphs dst="6209" ord="0"/>
+	</MoMorphAdhocProhib>
+	<MoMorphAdhocProhib Id="7039" Adjacency="0">
+	  <FirstMorpheme dst="6197"/>
+	  <RestOfMorphs dst="6213" ord="0"/>
+	</MoMorphAdhocProhib>
+	<MoMorphAdhocProhib Id="7040" Adjacency="0">
+	  <FirstMorpheme dst="6201"/>
+	  <RestOfMorphs dst="6217" ord="0"/>
+	</MoMorphAdhocProhib>
+	<MoMorphAdhocProhib Id="7041" Adjacency="0">
+	  <FirstMorpheme dst="6205"/>
+	  <RestOfMorphs dst="6221" ord="0"/>
+	</MoMorphAdhocProhib>
+  </AdhocCoProhibitions>
+  <MoMorphTypes>
+	<MoMorphType Id="6651">
+	  <Name>particle</Name>
+	</MoMorphType>
+	<MoMorphType Id="6654">
+	  <Name>infix</Name>
+	</MoMorphType>
+	<MoMorphType Id="6657">
+	  <Name>prefix</Name>
+	</MoMorphType>
+	<MoMorphType Id="6660">
+	  <Name>simulfix</Name>
+	</MoMorphType>
+	<MoMorphType Id="6663">
+	  <Name>suffix</Name>
+	</MoMorphType>
+	<MoMorphType Id="6666">
+	  <Name>suprafix</Name>
+	</MoMorphType>
+	<MoMorphType Id="6669">
+	  <Name>circumfix</Name>
+	</MoMorphType>
+	<MoMorphType Id="6672">
+	  <Name>enclitic</Name>
+	</MoMorphType>
+	<MoMorphType Id="6675">
+	  <Name>proclitic</Name>
+	</MoMorphType>
+	<MoMorphType Id="6678">
+	  <Name>bound root</Name>
+	</MoMorphType>
+	<MoMorphType Id="6681">
+	  <Name>root</Name>
+	</MoMorphType>
+	<MoMorphType Id="6684">
+	  <Name>bound stem</Name>
+	</MoMorphType>
+	<MoMorphType Id="6687">
+	  <Name>stem</Name>
+	</MoMorphType>
+	<MoMorphType Id="6690">
+	  <Name>infixing interfix</Name>
+	</MoMorphType>
+	<MoMorphType Id="6693">
+	  <Name>prefixing interfix</Name>
+	</MoMorphType>
+	<MoMorphType Id="6696">
+	  <Name>suffixing interfix</Name>
+	</MoMorphType>
+  </MoMorphTypes>
+  <Lexicon>
+	<Entries>
+	  <LexSubentry Id="6345">
+		<LexMajorEntry Id="6345">
+		  <Allomorphs dst="6346" ord="0"/>
+		  <Sense dst="6348" ord="0"/>
+		  <MorphoSyntaxAnalysis dst="6347"/>
+		</LexMajorEntry>
+	  </LexSubentry>
+	  <LexSubentry Id="6386">
+		<LexMajorEntry Id="6386">
+		  <Allomorphs dst="6387" ord="0"/>
+		  <Sense dst="6389" ord="0"/>
+		  <MorphoSyntaxAnalysis dst="6388"/>
+		</LexMajorEntry>
+	  </LexSubentry>
+	  <LexMajorEntry Id="6332">
+		<Allomorphs dst="6333" ord="0"/>
+		<Sense dst="6335" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6334"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6336">
+		<Allomorphs dst="6337" ord="0"/>
+		<Allomorphs dst="6338" ord="1"/>
+		<Sense dst="6340" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6339"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6341">
+		<Allomorphs dst="6342" ord="0"/>
+		<Sense dst="6344" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6343"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6349">
+		<Allomorphs dst="6350" ord="0"/>
+		<Sense dst="6352" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6351"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6353">
+		<Allomorphs dst="6354" ord="0"/>
+		<Sense dst="6356" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6355"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6357">
+		<Allomorphs dst="6358" ord="0"/>
+		<Sense dst="6360" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6359"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6361">
+		<Allomorphs dst="6362" ord="0"/>
+		<Sense dst="6364" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6363"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6365">
+		<Allomorphs dst="6366" ord="0"/>
+		<Sense dst="6368" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6367"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6369">
+		<Allomorphs dst="6370" ord="0"/>
+		<Allomorphs dst="6371" ord="1"/>
+		<UnderlyingForm>underlying form</UnderlyingForm>
+		<Sense dst="6375" ord="0"/>
+		<Sense dst="6382" ord="1"/>
+		<MorphoSyntaxAnalysis dst="6372"/>
+		<MorphoSyntaxAnalysis dst="6373"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6111">
+		<Allomorphs dst="6112" ord="0"/>
+		<Sense dst="6114" ord="0"/>
+		<Sense dst="6115" ord="1"/>
+		<MorphoSyntaxAnalysis dst="6113"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6116">
+		<Allomorphs dst="6117" ord="0"/>
+		<Sense dst="6119" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6118"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6304">
+		<Allomorphs dst="6305" ord="0"/>
+		<Sense dst="6307" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6306"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6308">
+		<Allomorphs dst="6309" ord="0"/>
+		<Sense dst="6311" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6310"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6312">
+		<Allomorphs dst="6313" ord="0"/>
+		<Sense dst="6315" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6314"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6316">
+		<Allomorphs dst="6317" ord="0"/>
+		<Sense dst="6319" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6318"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6320">
+		<Allomorphs dst="6321" ord="0"/>
+		<Sense dst="6323" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6322"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6324">
+		<Allomorphs dst="6325" ord="0"/>
+		<Sense dst="6327" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6326"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6120">
+		<Allomorphs dst="6121" ord="0"/>
+		<Sense dst="6123" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6122"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6124">
+		<Allomorphs dst="6125" ord="0"/>
+		<Allomorphs dst="6126" ord="1"/>
+		<Allomorphs dst="6127" ord="2"/>
+		<UnderlyingForm>hiN-</UnderlyingForm>
+		<Sense dst="6130" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6128"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6131">
+		<Allomorphs dst="6132" ord="0"/>
+		<Allomorphs dst="6133" ord="1"/>
+		<Sense dst="6136" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6134"/>
+		<MorphoSyntaxAnalysis dst="6135"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6137">
+		<Allomorphs dst="6138" ord="0"/>
+		<Sense dst="6140" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6139"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6141">
+		<Allomorphs dst="6142" ord="0"/>
+		<Sense dst="6144" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6143"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6145">
+		<Allomorphs dst="6146" ord="0"/>
+		<Sense dst="6148" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6147"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6149">
+		<Allomorphs dst="6150" ord="0"/>
+		<Sense dst="6152" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6151"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6153">
+		<Allomorphs dst="6154" ord="0"/>
+		<Sense dst="6156" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6155"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6157">
+		<Allomorphs dst="6158" ord="0"/>
+		<Sense dst="6160" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6159"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6161">
+		<Allomorphs dst="6162" ord="0"/>
+		<Sense dst="6164" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6163"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6165">
+		<Allomorphs dst="6166" ord="0"/>
+		<Sense dst="6170" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6167"/>
+		<MorphoSyntaxAnalysis dst="6168"/>
+		<MorphoSyntaxAnalysis dst="6169"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6171">
+		<Allomorphs dst="6172" ord="0"/>
+		<Sense dst="6175" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6173"/>
+		<MorphoSyntaxAnalysis dst="6174"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6176">
+		<Allomorphs dst="6177" ord="0"/>
+		<Sense dst="6181" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6178"/>
+		<MorphoSyntaxAnalysis dst="6179"/>
+		<MorphoSyntaxAnalysis dst="6180"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6182">
+		<Allomorphs dst="6183" ord="0"/>
+		<Sense dst="6185" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6184"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6186">
+		<Allomorphs dst="6187" ord="0"/>
+		<Sense dst="6190" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6188"/>
+		<MorphoSyntaxAnalysis dst="6189"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6191">
+		<Allomorphs dst="6192" ord="0"/>
+		<Sense dst="6194" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6193"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6195">
+		<Allomorphs dst="6196" ord="0"/>
+		<Sense dst="6198" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6197"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6199">
+		<Allomorphs dst="6200" ord="0"/>
+		<Sense dst="6202" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6201"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6203">
+		<Allomorphs dst="6204" ord="0"/>
+		<Sense dst="6206" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6205"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6207">
+		<Allomorphs dst="6208" ord="0"/>
+		<Sense dst="6210" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6209"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6211">
+		<Allomorphs dst="6212" ord="0"/>
+		<Sense dst="6214" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6213"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6215">
+		<Allomorphs dst="6216" ord="0"/>
+		<Sense dst="6218" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6217"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6219">
+		<Allomorphs dst="6220" ord="0"/>
+		<Sense dst="6222" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6221"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6223">
+		<Allomorphs dst="6224" ord="0"/>
+		<Allomorphs dst="6225" ord="1"/>
+		<Allomorphs dst="6226" ord="2"/>
+		<UnderlyingForm>deN</UnderlyingForm>
+		<Sense dst="6229" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6227"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6230">
+		<Allomorphs dst="6231" ord="0"/>
+		<Allomorphs dst="6232" ord="1"/>
+		<Sense dst="6235" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6233"/>
+		<MorphoSyntaxAnalysis dst="6234"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6236">
+		<Allomorphs dst="6237" ord="0"/>
+		<Allomorphs dst="6238" ord="1"/>
+		<Sense dst="6240" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6239"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6241">
+		<Allomorphs dst="6242" ord="0"/>
+		<Allomorphs dst="6243" ord="1"/>
+		<Allomorphs dst="6244" ord="2"/>
+		<Sense dst="6246" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6245"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6247">
+		<Allomorphs dst="6248" ord="0"/>
+		<Allomorphs dst="6249" ord="1"/>
+		<Allomorphs dst="6250" ord="2"/>
+		<Sense dst="6252" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6251"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6253">
+		<Allomorphs dst="6254" ord="0"/>
+		<Allomorphs dst="6255" ord="1"/>
+		<Sense dst="6257" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6256"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6258">
+		<Allomorphs dst="6259" ord="0"/>
+		<Allomorphs dst="6260" ord="1"/>
+		<Sense dst="6262" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6261"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6263">
+		<Allomorphs dst="6264" ord="0"/>
+		<Allomorphs dst="6265" ord="1"/>
+		<Sense dst="6267" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6266"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6268">
+		<Allomorphs dst="6269" ord="0"/>
+		<Allomorphs dst="6270" ord="1"/>
+		<Sense dst="6272" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6271"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6273">
+		<Allomorphs dst="6274" ord="0"/>
+		<Sense dst="6276" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6275"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6277">
+		<Allomorphs dst="6278" ord="0"/>
+		<Allomorphs dst="6279" ord="1"/>
+		<UnderlyingForm>CV</UnderlyingForm>
+		<Sense dst="6283" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6280"/>
+		<MorphoSyntaxAnalysis dst="6281"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6284">
+		<Allomorphs dst="6285" ord="0"/>
+		<Sense dst="6287" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6286"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6288">
+		<Allomorphs dst="6289" ord="0"/>
+		<Sense dst="6291" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6290"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6292">
+		<Allomorphs dst="6293" ord="0"/>
+		<Sense dst="6295" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6294"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6296">
+		<Allomorphs dst="6297" ord="0"/>
+		<Sense dst="6299" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6298"/>
+	  </LexMajorEntry>
+	  <LexMajorEntry Id="6300">
+		<Allomorphs dst="6301" ord="0"/>
+		<Sense dst="6303" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6302"/>
+	  </LexMajorEntry>
+	  <LexMinorEntry Id="6328">
+		<Allomorphs dst="6329" ord="0"/>
+		<Sense dst="6331" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6330"/>
+	  </LexMinorEntry>
+	  <LexMinorEntry Id="6390">
+		<Allomorphs dst="6391" ord="0"/>
+		<Sense dst="6393" ord="0"/>
+		<MorphoSyntaxAnalysis dst="6392"/>
+	  </LexMinorEntry>
+	</Entries>
+	<MorphoSyntaxAnalyses>
+	  <MoStemMsa Id="6290" PartOfSpeech="152" InflectionClass="178"/>
+	  <MoStemMsa Id="6294" PartOfSpeech="171" InflectionClass="177"/>
+	  <MoStemMsa Id="6298" PartOfSpeech="171" InflectionClass="178"/>
+	  <MoStemMsa Id="6302" PartOfSpeech="78" InflectionClass="0"/>
+	  <MoStemMsa Id="6306" PartOfSpeech="103" InflectionClass="0"/>
+	  <MoStemMsa Id="6310" PartOfSpeech="103" InflectionClass="0"/>
+	  <MoStemMsa Id="6314" PartOfSpeech="103" InflectionClass="0"/>
+	  <MoStemMsa Id="6318" PartOfSpeech="103" InflectionClass="0"/>
+	  <MoStemMsa Id="6275" PartOfSpeech="73" InflectionClass="0"/>
+	  <MoStemMsa Id="6326" PartOfSpeech="152" InflectionClass="177"/>
+	  <MoStemMsa Id="6330" PartOfSpeech="145" InflectionClass="0"/>
+	  <MoStemMsa Id="6334" PartOfSpeech="70" InflectionClass="0"/>
+	  <MoStemMsa Id="6372" PartOfSpeech="81" InflectionClass="0"/>
+	  <MoStemMsa Id="6373" PartOfSpeech="85" InflectionClass="0"/>
+	  <MoStemMsa Id="6388" PartOfSpeech="81" InflectionClass="0"/>
+	  <MoStemMsa Id="6392" PartOfSpeech="167" InflectionClass="0"/>
+	  <MoStemMsa Id="7016" PartOfSpeech="152" InflectionClass="178"/>
+	  <MoStemMsa Id="7017" PartOfSpeech="81" InflectionClass="0"/>
+	  <MoStemMsa Id="7018" PartOfSpeech="73" InflectionClass="0"/>
+	  <MoStemMsa Id="7020" PartOfSpeech="152" InflectionClass="178"/>
+	  <MoStemMsa Id="7021" PartOfSpeech="73" InflectionClass="0"/>
+	  <MoStemMsa Id="7022" PartOfSpeech="81" InflectionClass="0"/>
+	  <MoStemMsa Id="7025" PartOfSpeech="70" InflectionClass="0"/>
+	  <MoStemMsa Id="7026" PartOfSpeech="81" InflectionClass="0"/>
+	  <MoStemMsa Id="7029" PartOfSpeech="145" InflectionClass="0"/>
+	  <MoStemMsa Id="7030" PartOfSpeech="73" InflectionClass="0"/>
+	  <MoStemMsa Id="7032" PartOfSpeech="81" InflectionClass="0"/>
+	  <MoStemMsa Id="7033" PartOfSpeech="167" InflectionClass="0"/>
+	  <MoStemMsa Id="7035" PartOfSpeech="81" InflectionClass="0"/>
+	  <MoStemMsa Id="7036" PartOfSpeech="152" InflectionClass="0"/>
+	  <MoStemMsa Id="6139" PartOfSpeech="167" InflectionClass="178"/>
+	  <MoStemMsa Id="6143" PartOfSpeech="167" InflectionClass="177"/>
+	  <MoStemMsa Id="6147" PartOfSpeech="167" InflectionClass="178"/>
+	  <MoStemMsa Id="6151" PartOfSpeech="81" InflectionClass="99"/>
+	  <MoStemMsa Id="6155" PartOfSpeech="81" InflectionClass="100"/>
+	  <MoStemMsa Id="6159" PartOfSpeech="81" InflectionClass="99"/>
+	  <MoStemMsa Id="6163" PartOfSpeech="81" InflectionClass="100"/>
+	  <MoStemMsa Id="6343" PartOfSpeech="70" InflectionClass="0"/>
+	  <MoStemMsa Id="6347" PartOfSpeech="167" InflectionClass="177"/>
+	  <MoStemMsa Id="6351" PartOfSpeech="162" InflectionClass="0"/>
+	  <MoStemMsa Id="6355" PartOfSpeech="85" InflectionClass="0"/>
+	  <MoStemMsa Id="6359" PartOfSpeech="85" InflectionClass="0"/>
+	  <MoStemMsa Id="6363" PartOfSpeech="85" InflectionClass="0"/>
+	  <MoStemMsa Id="6113" PartOfSpeech="167" InflectionClass="177"/>
+	  <MoStemMsa Id="6118" PartOfSpeech="152" InflectionClass="177"/>
+	  <MoDerivAffMsa Id="6167" Defined="0" FromPartOfSpeech="152" ToPartOfSpeech="167" FromInflectionClass="0" ToInflectionClass="177"/>
+	  <MoDerivAffMsa Id="6168" Defined="0" FromPartOfSpeech="167" ToPartOfSpeech="171" FromInflectionClass="0" ToInflectionClass="177"/>
+	  <MoDerivAffMsa Id="6169" Defined="0" FromPartOfSpeech="81" ToPartOfSpeech="167" FromInflectionClass="0" ToInflectionClass="177"/>
+	  <MoDerivAffMsa Id="6173" Defined="0" FromPartOfSpeech="167" ToPartOfSpeech="152" FromInflectionClass="0" ToInflectionClass="178"/>
+	  <MoDerivAffMsa Id="6174" Defined="0" FromPartOfSpeech="171" ToPartOfSpeech="167" FromInflectionClass="0" ToInflectionClass="178"/>
+	  <MoDerivAffMsa Id="6178" Defined="0" FromPartOfSpeech="152" ToPartOfSpeech="152" FromInflectionClass="0" ToInflectionClass="178"/>
+	  <MoDerivAffMsa Id="6179" Defined="0" FromPartOfSpeech="167" ToPartOfSpeech="167" FromInflectionClass="0" ToInflectionClass="178"/>
+	  <MoDerivAffMsa Id="6180" Defined="0" FromPartOfSpeech="171" ToPartOfSpeech="171" FromInflectionClass="0" ToInflectionClass="178"/>
+	  <MoDerivAffMsa Id="6184" Defined="0" FromPartOfSpeech="145" ToPartOfSpeech="81" FromInflectionClass="0" ToInflectionClass="100"/>
+	  <MoDerivAffMsa Id="6188" Defined="0" FromPartOfSpeech="145" ToPartOfSpeech="73" FromInflectionClass="0" ToInflectionClass="0"/>
+	  <MoDerivAffMsa Id="6189" Defined="0" FromPartOfSpeech="81" ToPartOfSpeech="73" FromInflectionClass="0" ToInflectionClass="0"/>
+	  <MoDerivAffMsa Id="6339" Defined="0" FromPartOfSpeech="70" ToPartOfSpeech="73" FromInflectionClass="0" ToInflectionClass="0"/>
+	  <MoDerivAffMsa Id="6280" Defined="0" FromPartOfSpeech="167" ToPartOfSpeech="167" FromInflectionClass="0" ToInflectionClass="0"/>
+	  <MoDerivAffMsa Id="6281" Defined="0" FromPartOfSpeech="152" ToPartOfSpeech="152" FromInflectionClass="0" ToInflectionClass="0"/>
+	  <MoDerivAffMsa Id="6322" Defined="0" FromPartOfSpeech="81" ToPartOfSpeech="70" FromInflectionClass="0" ToInflectionClass="0"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="180" Id="6286"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="180" Id="6122"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="181" Id="6128"/>
+	  <MoInflAffMsa PartOfSpeech="162" Slot="166" Id="6134"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="179" Id="6135"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="180" Id="6197"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="180" Id="6201"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="180" Id="6205"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="181" Id="6209"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="181" Id="6213"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="181" Id="6217"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="181" Id="6221"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="181" Id="6227"/>
+	  <MoInflAffMsa PartOfSpeech="162" Slot="166" Id="6233"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="179" Id="6234"/>
+	  <MoInflAffMsa PartOfSpeech="145" Slot="179" Id="6239"/>
+	  <MoInflAffMsa PartOfSpeech="81" Slot="102" Id="6245"/>
+	  <MoInflAffMsa PartOfSpeech="81" Slot="102" Id="6251"/>
+	  <MoInflAffMsa PartOfSpeech="81" Slot="102" Id="6256"/>
+	  <MoInflAffMsa PartOfSpeech="81" Slot="102" Id="6261"/>
+	  <MoInflAffMsa PartOfSpeech="81" Slot="102" Id="6266"/>
+	  <MoInflAffMsa PartOfSpeech="81" Slot="102" Id="6271"/>
+	  <MoUnclassifiedAffixMsa Id="6367" PartOfSpeech="0"/>
+	  <MoUnclassifiedAffixMsa Id="6193" PartOfSpeech="145"/>
+	</MorphoSyntaxAnalyses>
+	<Senses>
+	  <LexSense Id="6114">
+		<Gloss>to.see</Gloss>
+	  </LexSense>
+	  <LexSense Id="6115">
+		<Gloss>to.understand</Gloss>
+	  </LexSense>
+	  <LexSense Id="6303">
+		<Gloss>not</Gloss>
+	  </LexSense>
+	  <LexSense Id="6307">
+		<Gloss>Question</Gloss>
+	  </LexSense>
+	  <LexSense Id="6311">
+		<Gloss>PhraseFinal</Gloss>
+	  </LexSense>
+	  <LexSense Id="6315">
+		<Gloss>PhraseInitial</Gloss>
+	  </LexSense>
+	  <LexSense Id="6319">
+		<Gloss>RelativeClause</Gloss>
+	  </LexSense>
+	  <LexSense Id="6323">
+		<Gloss>Adjectivizer</Gloss>
+	  </LexSense>
+	  <LexSense Id="6327">
+		<Gloss>to.be</Gloss>
+	  </LexSense>
+	  <LexSense Id="6331">
+		<Gloss>to.be.3SgSubj.Present</Gloss>
+	  </LexSense>
+	  <LexSense Id="6335">
+		<Gloss>green</Gloss>
+	  </LexSense>
+	  <LexSense Id="6340">
+		<Gloss>Adverbializer2</Gloss>
+	  </LexSense>
+	  <LexSense Id="6344">
+		<Gloss>quick</Gloss>
+	  </LexSense>
+	  <LexSense Id="6348">
+		<Gloss>to.strengthen</Gloss>
+	  </LexSense>
+	  <LexSense Id="6352">
+		<Gloss>to.be.long</Gloss>
+	  </LexSense>
+	  <LexSense Id="6356">
+		<Gloss>Doctor</Gloss>
+	  </LexSense>
+	  <LexSense Id="6360">
+		<Gloss>cat</Gloss>
+	  </LexSense>
+	  <LexSense Id="6364">
+		<Gloss>blood</Gloss>
+	  </LexSense>
+	  <LexSense Id="6368">
+		<Gloss>who.knows</Gloss>
+	  </LexSense>
+	  <LexSense Id="6375">
+		<Gloss>English gloss</Gloss>
+		<LexSense Id="6376">
+		  <Gloss>English subsense gloss1.1</Gloss>
+		</LexSense>
+		<LexSense Id="6377">
+		  <Gloss>English subsense gloss1.2</Gloss>
+		</LexSense>
+	  </LexSense>
+	  <LexSense Id="6376">
+		<Gloss>English subsense gloss1.1</Gloss>
+	  </LexSense>
+	  <LexSense Id="6377">
+		<Gloss>English subsense gloss1.2</Gloss>
+	  </LexSense>
+	  <LexSense Id="6382">
+		<Gloss>English gloss2</Gloss>
+	  </LexSense>
+	  <LexSense Id="6389">
+		<Gloss>English gloss</Gloss>
+	  </LexSense>
+	  <LexSense Id="6393">
+		<Gloss>English glos</Gloss>
+	  </LexSense>
+	  <LexSense Id="6119">
+		<Gloss>to.sleep</Gloss>
+	  </LexSense>
+	  <LexSense Id="6123">
+		<Gloss>1SgSubj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6130">
+		<Gloss>3SgObj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6136">
+		<Gloss>Pres</Gloss>
+	  </LexSense>
+	  <LexSense Id="6140">
+		<Gloss>to.think</Gloss>
+	  </LexSense>
+	  <LexSense Id="6144">
+		<Gloss>to.hit</Gloss>
+	  </LexSense>
+	  <LexSense Id="6148">
+		<Gloss>to.eat</Gloss>
+	  </LexSense>
+	  <LexSense Id="6152">
+		<Gloss>mat</Gloss>
+	  </LexSense>
+	  <LexSense Id="6156">
+		<Gloss>house</Gloss>
+	  </LexSense>
+	  <LexSense Id="6160">
+		<Gloss>water</Gloss>
+	  </LexSense>
+	  <LexSense Id="6164">
+		<Gloss>tree</Gloss>
+	  </LexSense>
+	  <LexSense Id="6170">
+		<Gloss>Caus</Gloss>
+	  </LexSense>
+	  <LexSense Id="6175">
+		<Gloss>Pass</Gloss>
+	  </LexSense>
+	  <LexSense Id="6181">
+		<Gloss>Rapidly</Gloss>
+	  </LexSense>
+	  <LexSense Id="6185">
+		<Gloss>Nom</Gloss>
+	  </LexSense>
+	  <LexSense Id="6190">
+		<Gloss>Adverbializer</Gloss>
+	  </LexSense>
+	  <LexSense Id="6194">
+		<Gloss>???</Gloss>
+	  </LexSense>
+	  <LexSense Id="6198">
+		<Gloss>2SgSubj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6202">
+		<Gloss>1PlSubj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6206">
+		<Gloss>2PlSubj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6210">
+		<Gloss>1SgObj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6214">
+		<Gloss>2SgObj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6218">
+		<Gloss>1PlObj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6222">
+		<Gloss>2PlObj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6229">
+		<Gloss>3PlObj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6235">
+		<Gloss>Past</Gloss>
+	  </LexSense>
+	  <LexSense Id="6240">
+		<Gloss>Future</Gloss>
+	  </LexSense>
+	  <LexSense Id="6246">
+		<Gloss>1SgPoss</Gloss>
+	  </LexSense>
+	  <LexSense Id="6252">
+		<Gloss>2SgPoss</Gloss>
+	  </LexSense>
+	  <LexSense Id="6257">
+		<Gloss>3SgPoss</Gloss>
+	  </LexSense>
+	  <LexSense Id="6262">
+		<Gloss>1PlPoss</Gloss>
+	  </LexSense>
+	  <LexSense Id="6267">
+		<Gloss>2PlPoss</Gloss>
+	  </LexSense>
+	  <LexSense Id="6272">
+		<Gloss>3PlPoss</Gloss>
+	  </LexSense>
+	  <LexSense Id="6276">
+		<Gloss>slowly</Gloss>
+	  </LexSense>
+	  <LexSense Id="6283">
+		<Gloss>Intensifier</Gloss>
+	  </LexSense>
+	  <LexSense Id="6287">
+		<Gloss>3PlSubj</Gloss>
+	  </LexSense>
+	  <LexSense Id="6291">
+		<Gloss>to.stand</Gloss>
+	  </LexSense>
+	  <LexSense Id="6295">
+		<Gloss>to.buy</Gloss>
+	  </LexSense>
+	  <LexSense Id="6299">
+		<Gloss>to.sell</Gloss>
+	  </LexSense>
+	</Senses>
+	<Allomorphs>
+	  <MoAffixAllomorph Id="6249" MorphType="6663">
+		<Form>k</Form>
+		<PhoneEnv dst="7452"/>
+		<InflectionClasses dst="99"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6250" MorphType="6663">
+		<Form>or</Form>
+		<PhoneEnv dst="7453"/>
+		<InflectionClasses dst="99"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6254" MorphType="6663">
+		<Form>yo</Form>
+		<InflectionClasses dst="100"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6255" MorphType="6663">
+		<Form>vo</Form>
+		<InflectionClasses dst="99"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6259" MorphType="6663">
+		<Form>pa</Form>
+		<InflectionClasses dst="100"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6260" MorphType="6663">
+		<Form>ni</Form>
+		<InflectionClasses dst="99"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6264" MorphType="6663">
+		<Form>go</Form>
+		<InflectionClasses dst="100"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6265" MorphType="6663">
+		<Form>tu</Form>
+		<InflectionClasses dst="99"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6269" MorphType="6663">
+		<Form>fo</Form>
+		<InflectionClasses dst="100"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6270" MorphType="6663">
+		<Form>te</Form>
+		<InflectionClasses dst="99"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6278" MorphType="6657">
+		<Form>[V^1]t</Form>
+		<PhoneEnv dst="7458"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6279" MorphType="6657">
+		<Form>[C^1][V^1]</Form>
+		<PhoneEnv dst="7454"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6282" MorphType="0">
+		<Form>CV</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6285" MorphType="6657">
+		<Form>de</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6337" MorphType="6663">
+		<Form>*0</Form>
+		<PhoneEnv dst="7452"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6338" MorphType="6663">
+		<Form>o</Form>
+		<PhoneEnv dst="7453"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6321" MorphType="6654">
+		<Form>ul</Form>
+		<Position dst="7459" ord="0"/>
+		<Position dst="7460" ord="1"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6366" MorphType="6654">
+		<Form>ni</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="7023" MorphType="0">
+		<Form>t</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="7027" MorphType="0">
+		<Form>a</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6121" MorphType="6657">
+		<Form>ni</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6125" MorphType="6657">
+		<Form>hin</Form>
+		<PhoneEnv dst="7457"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6126" MorphType="6657">
+		<Form>him</Form>
+		<PhoneEnv dst="7455"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6127" MorphType="6657">
+		<Form>hiŋ</Form>
+		<PhoneEnv dst="7456"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6129" MorphType="0">
+		<Form>hiN-</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6132" MorphType="6663">
+		<Form>sa</Form>
+		<InflectionClasses dst="178"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6133" MorphType="6663">
+		<Form>ra</Form>
+		<InflectionClasses dst="177"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6166" MorphType="6663">
+		<Form>ti</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6172" MorphType="6657">
+		<Form>xo</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6177" MorphType="6663">
+		<Form>wu</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6183" MorphType="6663">
+		<Form>lis</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6187" MorphType="6663">
+		<Form>ya</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6192" MorphType="6663">
+		<Form>kes</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6196" MorphType="6657">
+		<Form>ti</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6200" MorphType="6657">
+		<Form>mo</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6204" MorphType="6657">
+		<Form>se</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6208" MorphType="6657">
+		<Form>mi</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6212" MorphType="6657">
+		<Form>yu</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6216" MorphType="6657">
+		<Form>us</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6220" MorphType="6657">
+		<Form>yul</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6224" MorphType="6657">
+		<Form>dem</Form>
+		<PhoneEnv dst="7455"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6225" MorphType="6657">
+		<Form>den</Form>
+		<PhoneEnv dst="7457"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6226" MorphType="6657">
+		<Form>deŋ</Form>
+		<PhoneEnv dst="7456"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6228" MorphType="0">
+		<Form>deN</Form>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6231" MorphType="6663">
+		<Form>ko</Form>
+		<InflectionClasses dst="178"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6232" MorphType="6663">
+		<Form>bi</Form>
+		<InflectionClasses dst="177"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6237" MorphType="6663">
+		<Form>pe</Form>
+		<InflectionClasses dst="178"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6238" MorphType="6663">
+		<Form>gu</Form>
+		<InflectionClasses dst="177"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6242" MorphType="6663">
+		<Form>zi</Form>
+		<InflectionClasses dst="100"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6243" MorphType="6663">
+		<Form>a</Form>
+		<PhoneEnv dst="7453"/>
+		<InflectionClasses dst="99"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6244" MorphType="6663">
+		<Form>la</Form>
+		<PhoneEnv dst="7452"/>
+		<InflectionClasses dst="99"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6248" MorphType="6663">
+		<Form>fi</Form>
+		<InflectionClasses dst="100"/>
+	  </MoAffixAllomorph>
+	  <MoAffixAllomorph Id="6371" MorphType="6651">
+		<Form>affix allomorph</Form>
+		<PhoneEnv dst="7458"/>
+	  </MoAffixAllomorph>
+	  <MoStemAllomorph Id="6374" MorphType="6681">
+		<Form>underlying form</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6387" MorphType="6687">
+		<Form>ztestsub</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6391" MorphType="6687">
+		<Form>ztestminor</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6138" MorphType="6678">
+		<Form>dok</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6142" MorphType="6678">
+		<Form>gabi</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6146" MorphType="6681">
+		<Form>lik</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6150" MorphType="6681">
+		<Form>yalo</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6154" MorphType="6681">
+		<Form>kasa</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6158" MorphType="6681">
+		<Form>iŋ</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6162" MorphType="6681">
+		<Form>pal</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6370" MorphType="6687">
+		<Form>stem allomorph</Form>
+		<PhoneEnv dst="7452"/>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6112" MorphType="6678">
+		<Form>bili</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6117" MorphType="6681">
+		<Form>nad</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6325" MorphType="6687">
+		<Form>kala</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6329" MorphType="6687">
+		<Form>kalo</Form>
+		<PhoneEnv dst="7462"/>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6333" MorphType="6681">
+		<Form>pus</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6342" MorphType="6681">
+		<Form>kola</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6346" MorphType="6681">
+		<Form>palti</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6350" MorphType="6681">
+		<Form>duro</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6354" MorphType="6687">
+		<Form>dok</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6358" MorphType="6687">
+		<Form>pus</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6362" MorphType="6687">
+		<Form>pus</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6289" MorphType="6687">
+		<Form>pone</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6293" MorphType="6687">
+		<Form>gel</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6297" MorphType="6687">
+		<Form>bako</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6301" MorphType="6651">
+		<Form>dok</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6305" MorphType="6675">
+		<Form>ke</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6309" MorphType="6672">
+		<Form>lo</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6313" MorphType="6675">
+		<Form>su</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6317" MorphType="6672">
+		<Form>zo</Form>
+	  </MoStemAllomorph>
+	  <MoStemAllomorph Id="6274" MorphType="6681">
+		<Form>ximu</Form>
+	  </MoStemAllomorph>
+	</Allomorphs>
+  </Lexicon>
+  <FeatureStructures/>
+</M3Dump>

@@ -1,0 +1,401 @@
+INSTRUCTIONS FOR BUILDING THE INTERNATIONAL COMPONENTS FOR UNICODE
+==================================================================
+
+We are currently using ICU 4.0.  This is reflected occasionally by "40" being
+part of the file or directory name.  This number, of course, will vary from
+version to version.
+
+Directory and filename conventions: (forward slashes are used in paths)
+ 1. $FW refers to the root of the FieldWorks build directory.  (For many or
+	most developers, this is C:/FW.)
+ 2. $ICUSRC refers to $FW/Lib/src/icu.
+ 3. $ICU40 refers to $FW/DistFiles/Icu40.
+
+
+ 1. Get the zip file for the latest version of the ICU source code from its
+	official website:
+	http://icu.sourceforge.net/download/
+
+	For example, ICU 4.0 (the latest version as of this writing) comes in a zip
+	file named icu4c-4_0-src.zip.  (There are some documentation files that are
+	also available, and may be worth downloading, but which aren't officially
+	required by our process.)
+
+	Expand the zip file contents in the directory $ICUSRC.  This will create a
+	subdirectory $ICUSRC/icu.  It may be helpful to rename this directory to
+	something like icu-4.0, and unzip the zip archive file a second time.  This
+	gives you two copies of the source code in parallel, one (icu-4.0) kept for
+	reference as the original sources, and one (icu) used for building, with
+	modifications made to some of the files.
+
+	The $ICUSRC/icu/source/allinone directory contains a solution file
+	allinone.sln.  Open this in Visual Studio.  (ICU Version 4.0 supports
+	Visual Studio 2003, but the solution and project files will be converted
+	automatically to Visual Studio 2005.)  Change the C/C++ Code Generation
+	Runtime Library property to "Multi-threaded (/MT)" for the Release
+	configuration or "Multi-threaded Debug (/MTd)" for the Debug configuration
+	in the project files.  (Linking with /MT or /MTd allows programs to run
+	without MSVCR70.DLL.)  Note that the sample and test project files do not
+	need to be fixed.
+
+	Although you need to obtain the raw data files via Subversion (step 11
+	below), it is important to have $ICUSRC/icu/source/data/in/icudt40l.dat
+	file for the build process.  I don't know how the ICU project bootstraps
+	that file, but the Visual Studio based build process breaks without it.
+
+ 2. As of version 4.0, you probably need to edit a few files to change some
+	compile time settings.  The default behavior for the ICU library now is to
+	compile in the standard data for maximum speed of access.  This obviously
+	won't work for our use of the ICU libraries!  The following four
+	definitions were changed from 1 to 0 in order to enable loading the data at
+	runtime for version 4.0.  You may need to do something else in future
+	versions.
+
+	$ICUSRC/icu/source/common/ubidi_props.h:27:#define UBIDI_HARDCODE_DATA 0
+	$ICUSRC/icu/source/common/ucase.h:47:#define UCASE_HARDCODE_DATA 0
+	$ICUSRC/icu/source/common/uchar.c:38:#define UCHAR_HARDCODE_DATA 0
+	$ICUSRC/icu/source/common/unorm.cpp:189:#define UNORM_HARDCODE_DATA 0
+
+	There are probably other changes that need to be made in the sources.  Look
+	at the patch file created for the previous version for ideas.
+
+ 3. Once you have done this, build the entire solution in both Debug and
+	Release configurations, building the Debug version first so that we end up
+	with Release builds of the executable programs.  After building the entire
+	solution in both configurations, rebuild the stubdata project in the
+	Release configuration.  (This process builds more than we really need, but
+	it's easier than picking and choosing, and not that much more compilation
+	time on modern computers.)
+
+	This results in the following output files (among others).
+
+		$ICUSRC/icu/bin/derb.exe
+		$ICUSRC/icu/bin/genbidi.exe
+		$ICUSRC/icu/bin/genbrk.exe
+		$ICUSRC/icu/bin/gencase.exe
+		$ICUSRC/icu/bin/genccode.exe
+		$ICUSRC/icu/bin/gencmn.exe
+		$ICUSRC/icu/bin/gencnval.exe
+		$ICUSRC/icu/bin/genctd.exe
+		$ICUSRC/icu/bin/gennames.exe
+		$ICUSRC/icu/bin/gennorm.exe
+		$ICUSRC/icu/bin/genpname.exe
+		$ICUSRC/icu/bin/genprops.exe
+		$ICUSRC/icu/bin/genrb.exe
+		$ICUSRC/icu/bin/gensprep.exe
+		$ICUSRC/icu/bin/genuca.exe
+		$ICUSRC/icu/bin/icupkg.exe
+		$ICUSRC/icu/bin/icuswap.exe
+		$ICUSRC/icu/bin/makeconv.exe
+		$ICUSRC/icu/bin/pkgdata.exe
+		$ICUSRC/icu/bin/uconv.exe
+		$ICUSRC/icu/bin/icudt40.dll
+		$ICUSRC/icu/bin/icuin40.dll
+		$ICUSRC/icu/bin/icuin40d.dll
+		$ICUSRC/icu/bin/icutu40.dll
+		$ICUSRC/icu/bin/icuuc40.dll
+		$ICUSRC/icu/bin/icuuc40d.dll
+		$ICUSRC/icu/lib/icudt.lib
+		$ICUSRC/icu/lib/icuin.lib
+		$ICUSRC/icu/lib/icuind.lib
+		$ICUSRC/icu/lib/icuuc.lib
+		$ICUSRC/icu/lib/icuucd.lib
+
+ 4. Copy $ICUSRC/icu/bin/icudt40.dll, $ICUSRC/icu/bin/icuin40.dll,
+	$ICUSRC/icu/bin/icuin40d.dll, $ICUSRC/icu/bin/icuuc40.dll, and
+	$ICUSRC/icu/bin/icuuc40d.dll to $FW/DistFiles.  Add the copied files to
+	source control, and remove the earlier versions of these DLLs from source
+	control (which should delete them from your machine).
+
+ 5. Copy $ICUSRC/icu/lib/icuin.lib and $ICUSRC/icu/lib/icuuc.lib to
+	$FW/Lib/Release.  (Check out the target files first!)
+
+ 6. Copy $ICUSRC/icu/lib/icuind.lib and $ICUSRC/icu/lib/icuucd.lib to
+	$FW/Lib/Debug.  (Check out the target files first!)
+
+ 7. Copy $ICUSRC/icu/lib/icudt.lib to $FW/Lib, since it is not build dependent.
+	(Check out the target file first!)  The DLL should be smaller than 50KB in
+	size since it is the stub version that references an external data file.
+
+ 8. Create a new directory $FW/DistFiles/Icu40 ($ICU40), and remove all files
+	in the older directory (such as $FW/DistFiles/Icu36) from source control.
+
+ 9. Create a new directory $ICU40/tools and copy all of the
+	$ICUSRC/icu/bin/*.exe files to that location.  Also copy
+	$ICUSRC/icu/bin/icutu40.dll to that location, and add all the copied file
+	to source control.
+
+10. The build process in step 3 created a number of files and directories in
+	$ICUSRC/icu/source/data/out/build/icudt40l/.  Copy the icudt40l directory
+	and its contents to $ICU40.  This should give you a directory structure
+	like the following:
+
+		$ICU40/icudt40l/brkitr
+		$ICU40/icudt40l/coll
+		$ICU40/icudt40l/rbnf
+		$ICU40/icudt40l/translit
+		$ICU40/tools
+
+	Delete icudt40.exp, and icudt40.lib in the $ICU40/icudt40l directory.
+	These files are not needed for FieldWorks.
+
+11. Obtain the source data files via Subversion.  (Unfortunately, the data
+	files are no longer shipped in the standard zip/tgz source download files.)
+	It may be easiest (but slow and network intensive!) to download the entire
+	source tree to get the full set of data files.  This is an involved process
+	described at http://icu.sourceforge.net/repository/.  A suggested command
+	would be like this:
+
+	svn export http://source.icu-project.org/repos/icu/icu/tags/release-3-6/ icu-3-6
+
+	You may need to set up a proxy server for Subversion to work across the
+	network.  Consult the Subversion documentation for how to do this.
+
+12. Copy the icu-3-6/source/data/ directory and its contents to the new
+	directory also.  Delete all the files (not directories!) from the
+	$ICU40/data directory, and all the *.mk files from the subdirectories.
+	Also delete the entire $ICU40/data/xml subdirectory.  You should end up
+	with the following subdirectories:
+
+		$ICU40/data/brkitr
+		$ICU40/data/coll
+		$ICU40/data/locales
+		$ICU40/data/mappings
+		$ICU40/data/misc
+		$ICU40/data/rbnf
+		$ICU40/data/translit
+		$ICU40/data/unidata
+
+13. Delete $ICU40/icudt40l/*.cnv and $ICU40/data/mappings/*.ucm since we won't
+	be using these ICU converters.
+
+14. Create $ICU40/data/locales/res_index.txt somehow, either by building the
+	data in the Subversion download (which is easiest on a Linux system) or by
+	handcrafting it by analogy to the one from the previous version which
+	already exists.  If you build the data directory, it is placed in the
+	$ICUSRC/icu/source/data/out/tmp directory.  Copy it from there to
+	$ICU40/data/locales.  Do the same for $ICU40/data/brkitr/res_index.txt,
+	$ICU40/data/coll/res_index.txt and $ICU40/data/rbnf/res_index.txt.  (Check
+	whether there are any other res_index.res files under $ICU40/icudt40l, and
+	create the corresponding res_index.txt files accordingly.)  If you use
+	make to build these files, first remove $ICUSRC/icu/source/data/in if
+	it exists (or at least rename it).
+
+15. Download UCD.html from http://www.unicode.org/Public/UNIDATA/ and copy it
+	to $ICU40/data.
+
+16. Update the unicode data files UnicodeData.txt, LineBreak.txt,
+	BidiMirroring.txt, DerivedBidiClass.txt, and DerivedNormalizationProps.txt
+	to include the SIL PUA character information.  This information is
+	available at http://scripts.sil.org/SILPUAassignments.  If you're lucky,
+	and neither the files shipped by ICU nor the SIL PUA assignments have
+	changed, this may involve merely copying our versions of these files over
+	the shipped versions.  [Other files may be modified in the future, so check
+	this carefully.  Also the unicode version may change from 5.1, so adjust
+	the commands below accordingly.]
+
+	The Hebrew section of UnicodeData.txt was designed for modern day Hebrew.
+	Using standard normalization on Biblical Hebrew results in incorrect reordering
+	of diacritics. To solve this problem, we need to set the canonical combining classes for
+	Hebrew characters to custom values described in SBLHebrewUserManual1.5x.pdf
+	available at http://www.sbl-site.org/educational/BiblicalFonts_SBLHebrew.aspx.
+	See below for custom data from this file. Some code points between 599-5C7 are
+	affected. It's probably simplest to copy this section from our previous custom
+	UnicodeData.txt file into the new file. These values have been tested by normalizing
+	the entire Hebrew OT text and verifying that it didn't change the input. This test
+	revealed 2 words that had reordered code points (dt29:28 and pr15:31), but
+	Christopher Samuel verified the original Hebrew input was incorrect in these
+	two places resulting in these errors.
+
+		cd $ICU40
+		tools\genprops.exe -u 5.1 -s data/unidata -d icudt40l -i $ICU40/icudt40l
+		tools\gennames.exe -1 -u 5.1 -d icudt40l data/unidata/UnicodeData.txt
+		tools\gennorm.exe -u 5.1 -s data/unidata -d icudt40l -i $ICU40/icudt40l
+		tools\genbidi.exe -u 5.1 -s data/unidata -d icudt40l -i $ICU40/icudt40l
+		tools\gencase.exe -u 5.1 -s data/unidata -d icudt40l -i $ICU40/icudt40l
+
+	Note that as of ICU version 3.6, the -i option requires a full pathname
+	such as C:/FW/DistFiles/Icu40/icudt40l, and not just a relative
+	pathname (icudt40l) as used for the -d and -s options.  (On Windows XP,
+	either forward slashes or backslashes are acceptable in the pathname.)
+	Make sure that the contents of $ICU40 is in pristine state without any
+	bogus data added by testing or running any FieldWorks applications.
+
+17. Zip the entire $ICU40/data and $ICU40/icu40dtl directories into
+	$FW/DistFiles/Icu40.zip using a command like the following from inside
+	$ICU40.
+
+		zip -9ro ../Icu40.zip icudt40l data
+
+	The resulting Icu40.zip file should be checked into Perforce in the
+	DistFiles directory. The files in the $ICU40/data and $ICU40/icudt40l
+	directories should not be checked individually into Perforce, since
+	they may change as users make modifications, and we need a way for the
+	system to restore a pristine set of ICU data if things go awry.
+
+18. In addition, at the root of the ICU directory, a directory called include
+	is created.  Inside that is a directory called unicode.  The contents of
+	the unicode directory should be copied to fw\Include\unicode.  (Check out
+	all existing files $FW/Include/unicode first.)  Our file IcuCommon.h (in
+	directory fw\Include) needs to list all of these include header files.  So
+	make sure these match the current set of files.  Delete any files from
+	source control which no longer exist, and add any new files to source
+	control.
+
+19. The file $FW/Src/Common/Utils/IcuWrappers.cs has a pair of string constants
+	near the top for the icuucNN.dll which reflect the current version number.
+	These must be updated, along with the string definition of kIcuVersion.
+	The following files refer to the registry keys, which embed the ICU
+	version number ("Icu40Dir" and "Icu40DataDir"):
+		$FW/Src/Common/Utils/DirectoryFinder.cs
+		$FW/Src/Generic/StrUtil.cpp
+		$FW/Src/Generic/Util.cpp
+		$FW/Src/LangInst/InstallLanguage.cs
+
+	The Unicode version (which not the same as the ICU version) is embedded as
+	part of the command arguments of the ICU tools used by InstallLanguage in
+	$FW/Src/LangInst/LocaleFile.cs.  Look for something like " -u 5.1 ".
+
+	Several files in $FW/Lib/src/EC/IcuEC need to be changed to reflect the new
+	ICU version number, for example by changing all relevant occurrences of 36
+	to 40.  This includes changing the name of the output DLL.
+
+	The XAmpleCOMWrapper DLLs should not require any code changes, but do need
+	to be recompiled with the new ICU DLLs.
+
+	There are at least a few other program changes required to get things
+	working (see step 21 below), but these files definitely need to be fixed
+	when updating to a new version of ICU.
+
+20. Change all occurrences of Icu36 in the build files in $FW/Bld to Icu40, and
+	change all occurrences of icudt36l to icudt40l.  (Adjust these numbers to
+	fit the upgrade situation.)  For ICU version 4.0, these files needed to be
+	fixed:
+
+		$FW/Bld/FieldWorks.build
+		$FW/Bld/Installer.build.xml
+		$FW/Bld/mkall.build.xml
+		$FW/Bld/UseThis.build.xml
+
+21. Inform the install master (Alistair Imrie when this was written) of the new
+	registry key values:
+
+		[HKEY_LOCAL_MACHINE\SOFTWARE\SIL]
+		"Icu40Dir"="C:\\FW\\DistFiles\\Icu40"
+		"Icu40DataDir"="C:\\FW\\DistFiles\\Icu40\\icudt40l"
+
+	The NAnt build process will create these keys on developer machines, but
+	won't put them into the installer.
+
+22. After all of the above, check for format changes in the data files, and
+	adjust any necessary code accordingly.  This sounds rather open-ended
+	because it is.  A good starting point is running the tests after doing
+	the first twenty-one steps, and seeing what fails.  This is necessary,
+	but don't count on it being sufficient!
+
+	As an example of what to look for, the format of lines in
+	DerivedNormalizationProps.txt changed between Unicode version 4.0 and
+	version 4.1.  In version 4.0, lines in one section looked like this:
+
+		00BC..00BE    ; NFKD_NO
+
+	while in version 4.1 the corresponding line looks like this:
+
+		00BC..00BE    ; NFKD_QC; N
+
+	This kind of change impacts the source code for the InstallLanguage program
+	($FW/Src/LangInst).
+
+	Another change in ICU's behavior between ICU version 2.8 and version 3.4
+	was in storing the binary data files.  In version 2.8 the filenames were
+	prefixed with "icudt28l_" to distinguish the version number.  In version
+	3.4, the files are stored in the subdirectory icudt34l.  Again, this
+	required a change to the source code for InstallLanguage, plus changes in a
+	number of other places throughout the source code.
+
+23. After recompiling fieldworks ($FW/Bin/RemakeFw.bat), make sure that the
+	Language dll tests (($FW/Bin/mklg-tst.bat), the AppCore library tests
+	($FW/Bin/mkaflib-tst.bat) and InstallLanguage tests (Nunit-gui.exe
+	$FW/Output/Debug/InstallLanguageTests.dll) all pass, then make sure none of
+	the other tests have been broken by this upgrade.
+
+24. When the sources are in good shape, a new patch file can be created by
+	using the GNU diff and grep programs from the Cygwin utilities something
+	like this:
+
+diff -bur -x '*.vcproj*' -x '*.sln' icu-4.0 icu | grep -v "Only in icu" > Icu40-SIL.patch
+
+	In this command icu-4.0 is a pristine directory tree of the sources
+	downloaded from the network, and icu is the working directory containing
+	modified sources.
+
+25. Inform the person responsible for the overnight build machine, and the FW
+	installer, about the filename changes, and about any changes to the list of
+	executables. The build and installer will break if they are not similarly
+	updated.  (The installer may pick up on the list of executables
+	automatically.)
+
+
+Questions?  Steve McConnel has most recently worked on this process, upgrading
+from ICU version 2.8 to version 3.4 in November 2005, from 3.4 to 3.6 in
+January 2007, and from 3.6 to 4.0 in November 2008.  Steve McConnel and Ken
+Zook have worked on customizing the Unicode data files to add the SIL
+(NRSI) use of PUA characters.
+
+*****************
+From: SBLHebrewUserManual1.5x.pdf
+Appendix B	Custom combining classes.	As explained on pages 8-11, Unicode normalisation may break Biblical Hebrew text by reordering marks that should not be reordered. This appendix provides alternate combining classes to use in custom normalisation routines. Nota bene: these alternate combining classes are outside of any recognised standard, and text produced using custom normalisations may still be subject to other normalisations in software beyond the author's control (e.g. web browsers). This list is provided purely as a suggestion, and no guarantee is made that it will be supported as is in software developed by SBL, Tiro Typeworks, or any of their project partners.
+
+This table contains custom value, original value, code point, name
+10	24	U+05C1	Point Shin Dot
+11	25	U+05C2	Point Sin Dot
+21	21	U+05BC	Point Dagesh or Mapiq
+23	23	U+05BF	Point Rafe
+27	19	U+05B9	Point Holam
+27	19	U+05BA	Point Holam Haser for Vav
+220	220	U+05C5	Lower Punctum
+220	220	U+0591	Accent Atnah
+220	220	U+05A2	Accent Atnah Hafukh
+220	220	U+0596	Accent Tipeha
+220	220	U+059B	Accent Tevir
+220	220	U+05A3	Accent Munah
+220	220	U+05A4	Accent Mahapakh
+220	220	U+05A5	Accent Merkha
+220	220	U+05A6	Accent Merkha Kefula
+220	220	U+05A7	Accent Darga
+220	220	U+05AA	Accent Yerah Ben Yomo
+220	10	U+05B0	Point Sheva
+220	11	U+05B1	Point Hataf Segol
+220	12	U+05B2	Point Hataf Patah
+220	13	U+05B3	Point Hataf Qamats
+220	14	U+05B4	Point Hiriq
+220	15	U+05B5	Point Tsere
+220	16	U+05B6	Point Segol
+220	17	U+05B7	Point Patah
+220	18	U+05B8	Point Qamats
+220	18	U+05C7	Point Qamats Qatan
+220	20	U+05BB	Point Qubuts
+220	22	U+05BD	Point Meteg
+222	222	U+059A	Accent Yetiv
+222	222	U+05AD	Accent Dehi
+230	230	U+05C4	Upper Punctum
+230	230	U+0593	Accent Shalshelet
+230	230	U+0594	Accent Zaqef Qatan
+230	230	U+0595	Accent Zaqef Gadol
+230	230	U+0597	Accent Revia
+230	230	U+0598	Accent Zarqa
+230	230	U+059F	Accent Qarney Para
+230	230	U+059E	Accent Gershayim
+230	230	U+059D	Accent Geresh Muqdam
+230	230	U+059C	Accent Geresh
+230	230	U+0592	Accent Segolta
+230	230	U+05A0	Accent Telisha Gedola
+230	230	U+05AC	Accent Iluy
+230	230	U+05A8	Accent Qadma
+230	230	U+05AB	Accent Ole
+230	230	U+05AF	Mark Masora Circle
+230	230	U+05A1	Accent Pazer
+230	230	U+0307	Mark Number/Masora Dot
+232	228	U+05AE	Accent Zinor
+232	230	U+05A9	Accent Telisha Qetana
+232	230	U+0599	Accent Pashta

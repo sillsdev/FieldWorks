@@ -1,0 +1,21 @@
+// Extracted from AfApp.rc
+kridHelpAboutDlg DIALOG DISCARDABLE  0, 0, 283, 162
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 8, "MS Sans Serif"
+BEGIN
+	DEFPUSHBUTTON   "OK",kctidOk,226,141,50,14
+	CONTROL         31601,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,60,55
+	LTEXT           "SIL FieldWorks",kctidSuiteName,79,15,197,20
+	LTEXT           "Default Fieldworks Application",kctidName,93,27,197,25
+	CTEXT           "SIL FieldWorks Family Member",IDC_STATIC,13,67,48,17
+	LTEXT           "Version:",kctidVersion,79,67,197,9
+	LTEXT           "Registration Number:  ",IDC_STATIC,79,80,220,22
+	LTEXT           "Unregistered",kctidRegistrationNumber,156,80,120,10
+	LTEXT           COPYRIGHTRESERVED,IDC_STATIC,79,93,220,22
+	LTEXT           "Available memory:",IDC_STATIC,79,111,58,9
+	LTEXT           "0 KB",kctidMemory,156,111,120,10,SS_SUNKEN
+	LTEXT           "Available disk space:",IDC_STATIC,79,124,77,9
+	LTEXT           "0 KB Free on C:",kctidDiskSpace,156,124,120,9,SS_SUNKEN
+	LTEXT           "This program will not work after ",kctidExpiration,7,142,208,13
+END

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root>
+<LexEntry id="1">
+	<ms prop="CitationForm" ws="de" val="nonsence"/>
+	<seq prop="MorphoSyntaxAnalyses">
+		<MoStemMsa id="2">
+		</MoStemMsa>
+	</seq>
+	<obj prop="Etymology">
+		<LexEtymology id="60">
+			<ms prop="Comment" ws="en" val="rubbish word from English"/>
+		</LexEtymology>
+	</obj>
+</LexEntry>
+
+<LexEntry id="4">
+	<ms prop="CitationForm" ws="de" val="pferd"/>
+	<seq prop="Senses">
+		<LexSense id="5">
+			<ms prop="Gloss" ws="en" val="horse"/>
+		</LexSense>
+	</seq>
+</LexEntry>
+
+<LexEntry id="6">
+	<ms prop="CitationForm" ws="de" val="rot"/>
+	<seq prop="Senses">
+		<LexSense id="7">
+			<ms prop="Gloss" ws="en" val="red"/>
+		</LexSense>
+		<LexSense id="8">
+			<ms prop="Gloss" ws="en" val="messy"/>
+		</LexSense>
+		<LexSense id="9">
+			<ms prop="Gloss" ws="en" val="dangerous"/>
+		</LexSense>
+	</seq>
+	<seq prop="MorphoSyntaxAnalyses">
+		<MoDerivAffMsa id="10">
+		</MoDerivAffMsa>
+		<MoStemMsa id="11">
+		</MoStemMsa>
+	</seq>
+	<obj prop="Etymology">
+		<LexEtymology id="61">
+			<ms prop="Comment" ws="en" val="last two senses are phony"/>
+		</LexEtymology>
+	</obj>
+</LexEntry>
+
+<CmPossibility id="3"> <!-- POS -->
+	<ms prop="Name" ws="en" val="noun"/>
+	<ms prop="Abbreviation" ws="en" val="n"/>
+</CmPossibility>
+<CmPossibility id="19"> <!-- POS -->
+	<ms prop="Name" ws="en" val="verb"/>
+	<ms prop="Abbreviation" ws="en" val="v"/>
+</CmPossibility>
+
+<CmPossibility id="30"> <!-- semantic domains -->
+	<ms prop="Name" ws="en" val="politics"/>
+	<ms prop="Abbreviation" ws="en" val="3.3.1"/>
+</CmPossibility>
+<CmPossibility id="31">
+	<ms prop="Name" ws="en" val="leadership"/>
+	<ms prop="Abbreviation" ws="en" val="3.3.2"/>
+</CmPossibility>
+<CmPossibility id="32">
+	<ms prop="Name" ws="en" val="government"/>
+	<ms prop="Abbreviation" ws="en" val="3.3.3"/>
+</CmPossibility>
+
+<CmPossibility id="40"> <!-- status -->
+	<ms prop="Name" ws="en" val="Certain"/>
+	<ms prop="Abbreviation" ws="en" val="OK"/>
+</CmPossibility>
+<CmPossibility id="41">
+	<ms prop="Name" ws="en" val="Doubtful"/>
+	<ms prop="Abbreviation" ws="en" val="??"/>
+</CmPossibility>
+
+<CmPossibility id="50"> <!-- sensetype -->
+	<ms prop="Name" ws="en" val="Primary"/>
+	<ms prop="Abbreviation" ws="en" val="1st"/>
+</CmPossibility>
+<CmPossibility id="51">
+	<ms prop="Name" ws="en" val="Secondary"/>
+	<ms prop="Abbreviation" ws="en" val="2nd"/>
+</CmPossibility>
+
+<relatomic src="2" prop="PartOfSpeech" dst="3"/>
+<relatomic src="11" prop="PartOfSpeech" dst="19"/>
+<relatomic src="10" prop="FromPartOfSpeech" dst="3"/>
+<relatomic src="10" prop="ToPartOfSpeech" dst="19"/>
+
+<relatomic src="7" prop="Status" dst="40"/>
+<relatomic src="8" prop="Status" dst="40"/>
+<relatomic src="9" prop="Status" dst="41"/>
+
+<relatomic src="7" prop="SenseType" dst="51"/>
+<relatomic src="8" prop="SenseType" dst="50"/>
+<relatomic src="9" prop="SenseType" dst="50"/>
+
+<relseq src="7" prop="SemanticDomains">
+	<item dst="30"/>
+</relseq>
+<relseq src="8" prop="SemanticDomains">
+	<item dst="31"/>
+</relseq>
+<relseq src="9" prop="SemanticDomains">
+	<item dst="30"/>
+	<item dst="31"/>
+	<item dst="32"/>
+</relseq>
+</root>

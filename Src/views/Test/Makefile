@@ -1,0 +1,145 @@
+#	$Id: Makefile 2650 2009-12-15 14:15:18Z beilharz $
+#
+#	Makefile for FW views Test directory
+#
+#	Brent McCarthy - 2007-08-07
+#
+#	Adapted from testViews.mak
+
+BUILD_ROOT = ../../..
+include $(BUILD_ROOT)/Bld/_names.mak
+BUILD_PRODUCT = $(VIEWS_NAME)Test
+include $(BUILD_ROOT)/Bld/_init.mak.lnx
+
+UNIT = $(BUILD_ROOT)/Include/unit++
+LIB_UNIT  = $(BUILD_ROOT)/Lib/src/unit++
+
+VIEWS_LIB	= $(VIEWS_OBJ)/lib
+GRENG   = $(SRC)/Graphite/lib
+GRFW    = $(SRC)/Graphite/FwOnly
+
+LANGUAGETEST_SRC=$(SRC)/Language/Test
+
+DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING \
+	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1 -DENABLE_TSF -D_DEBUG
+
+PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid enchant
+
+INCLUDES := -I$(VIEWS_SRC) -I$(VIEWS_SRC)/lib -I$(VIEWS_SRC)/Test \
+		-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(CELLAR_SRC) -I$(KERNEL_SRC) \
+		-I$(LANGUAGE_SRC) -I$(GRENG) -I$(GRFW) -I$(DBACCESS_SRC) -I$(LANGUAGETEST_SRC)\
+
+INCLUDES := \
+	$(shell icu-config --cppflags) \
+	$(INCLUDES) \
+	-I$(FWINCLUDE) \
+	-I$(LIB_UNIT) \
+	-I$(COM_OUT_DIR) \
+	-I$(LIBRARIES)/Win32More/include \
+	-I$(LIBRARIES)/COM/include \
+	-I$(LIBRARIES)/Win32Base/include \
+	$(shell pkg-config --cflags $(PACKAGES)) \
+
+
+LDLIBS := \
+	$(shell icu-config --ldflags) \
+	-L$(FWINCLUDE) \
+	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
+	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
+	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(OUT_DIR) -lDebugProcs \
+	$(shell pkg-config --libs $(PACKAGES)) \
+	-lexpat\
+
+CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
+CXXFLAGS = -g -O0 -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all
+
+PRECOMPS = $(VIEWS_OBJ)/Main.h.gch
+
+LINK_LIBS := $(LIB_UNIT)/build$(ARCH)/libunit++.a $(OUT_DIR)/libGeneric.a $(OUT_DIR)/libAppCore.a \
+	$(COM_OUT_DIR)/libFwKernelTlb.a $(OUT_DIR)/libDebugProcs.a
+COMS := $(OUT_DIR)/libLanguage.so $(OUT_DIR)/libViews.so
+
+#	$(VIEWS_SRC)/GrGraphics.o \
+#	$(VIEWS_SRC)/AfColorTable.o \
+#	$(VIEWS_SRC)/AfGfx.o \
+#	$(VIEWS_SRC)/VwTextStore.o \
+
+VIEWS_OBJS = \
+	$(VIEWS_OBJ)/ViewsGlobals.o \
+	$(VIEWS_OBJ)/VwTextStoreX11.o \
+	$(VIEWS_OBJ)/ExplicitInstantiation.o \
+	$(VIEWS_OBJ)/VwEnv.o \
+	$(VIEWS_OBJ)/VwLayoutStream.o \
+	$(VIEWS_OBJ)/VwLazyBox.o \
+	$(VIEWS_OBJ)/VwNotifier.o \
+	$(VIEWS_OBJ)/VwOverlay.o \
+	$(VIEWS_OBJ)/VwPattern.o \
+	$(VIEWS_OBJ)/VwPrintContext.o \
+	$(VIEWS_OBJ)/VwPropertyStore.o \
+	$(VIEWS_OBJ)/VwRootBox.o \
+	$(VIEWS_OBJ)/VwSelection.o \
+	$(VIEWS_OBJ)/VwSimpleBoxes.o \
+	$(VIEWS_OBJ)/VwSynchronizer.o \
+	$(VIEWS_OBJ)/VwTableBox.o \
+	$(VIEWS_OBJ)/VwTextBoxes.o \
+	$(VIEWS_OBJ)/VwTxtSrc.o \
+	$(VIEWS_LIB)/DisplayCapsInfo.o \
+	$(VIEWS_LIB)/GrJustifier.o \
+	$(VIEWS_LIB)/GrTxtSrc.o \
+	$(VIEWS_LIB)/VwBaseDataAccess.o \
+	$(VIEWS_LIB)/VwBaseVirtualHandler.o \
+	$(VIEWS_LIB)/VwCacheDa.o \
+	$(VIEWS_LIB)/VwColor.o \
+	$(VIEWS_LIB)/VwJustifier.o \
+	$(VIEWS_LIB)/VwUndo.o \
+	$(VIEWS_LIB)/Enchant.o \
+	$(GENERIC_OBJ)/ModuleEntry.o \
+	$(KERNEL_OBJ)/FwKernel_GUIDs.o \
+	$(VIEWS_OBJ)/Views_GUIDs.o \
+
+DEPS = $(PRECOMPS:%.gch=%.d)
+
+-include $(DEPS)
+
+all: $(OUT_DIR)/testViews
+
+$(OUT_DIR)/testViews: $(INT_DIR)/testViews.o $(INT_DIR)/Collection.o $(VIEWS_OBJS) $(LINK_LIBS) $(COMS)
+	$(LINK.cc) -v -o $@ $(INT_DIR)/testViews.o $(INT_DIR)/Collection.o $(VIEWS_OBJS) $(LINK_LIBS) $(LDLIBS)
+
+# this now assumes environ has been sourced
+check: all
+	cd $(OUT_DIR) && ./testViews
+
+clean:
+	$(RM) $(OUT_DIR)/testViews $(INT_DIR)/testViews.o $(INT_DIR)/Collection.cpp $(INT_DIR)/*.[od] *.gch
+
+%.h.gch: %.h
+	$(COMPILE.cc) -o $@ $<
+
+%.i: %.cpp
+	$(COMPILE.cc) -E -o $@ $<
+
+COLLECT=$(BUILD_ROOT)/Bin/CollectUnit++Tests.sh Views
+
+$(INT_DIR)/Collection.cpp: \
+	DummyBaseVc.h \
+	DummyRootsite.h \
+	testViews.h \
+	$(LANGUAGETEST_SRC)/MockLgWritingSystemFactory.h \
+	$(LANGUAGETEST_SRC)/MockLgWritingSystem.h \
+	TestNotifier.h \
+	TestLayoutPage.h \
+	TestVwTxtSrc.h \
+	TestVwParagraph.h \
+	TestVwPattern.h \
+	TestVwEnv.h \
+	TestVwOverlay.h \
+	TestLazyBox.h \
+	TestVwRootBox.h \
+	TestVwSelection.h \
+	TestInsertDiffPara.h \
+	TestVwTextBoxes.h \
+	TestVwTableBox.h
+	@echo Collecting tests for testViews
+	$(COLLECT) $^ >$@

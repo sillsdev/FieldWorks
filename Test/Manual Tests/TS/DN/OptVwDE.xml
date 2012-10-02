@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="tlvDE" num="2.7.9.1.1" abbr="tlvDE" file="DN\OptVwDE.xml">
+
+ <title tag="tlvDE">Tools-Options-Views-Data Entry Tests</title>
+
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+	<p>The controls for customizing Data Entry view are accessed through the views tab in the Tools-Options Dialog. In the Data Entry view, each field appears on a separate row of the view. Using these controls various settings such as visibility and ordering can be adjusted for each field.</p>
+  </introduction>
+
+  <context>
+	<p>The specs for these tests are based on the following link: <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheViewsTab" type="doc">Tools-Options-Views Tab</link>. Links showing the Data Entry view are the following: <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/DataEntry/DataEntryViews.html" type="doc"> Data Entry Views General Description </link> and <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html" type="doc">Data Entry View</link>.</p>
+<p>Use "Tools-Options-Views-DE" in bug reports.</p>
+  </context>
+
+<case id="tlvDEapp" num="1" order="any">
+  <title tag="tlvDEapp">Basic appearance and display</title>
+  <context>
+<p>In Data Notebook</p>
+</context>
+
+  <step name="1.1" link="Bug">Select Tools-Options-Views. Select the Data Entry view in the left pane. Compare the overall appearance of the Views tab with <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheViewsTab" type="doc">the specifications</link>.
+ <r>
+<ul>
+<li>The Views Tab dialog must conform to the specs in appearance</li>
+<li>It displays the default factory and user added views in the Views pane</li>
+<li>The correct order and settings of the Fields is specified in <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Notebooks/Features/DataEntry/DataEntryView.html#Event Data Entry" type="doc">Data Entry View</link>
+</li>
+</ul>
+</r>
+  <p name="bug">Tools-Options-Views-DE appearance is incorrect</p>
+  </step>
+  <step name="1.2" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;a&gt; to test the Add button.
+ <r>
+<ul>
+<li>A drop-down menu is displayed, with menu items for each of type of view (e.g., Data Entry, Browse, Document, etc.) that can be added.</li>
+<li>Selecting a view type puts a view holder in the views pane.</li>
+<li>Report errors with the first title words "Tools-Options-Views-DE Add"</li>
+</ul>
+</r>
+<p name="bug">Tools-Options-Views-DE Add button drop-down list problem</p>
+<p name="bug">Tools-Options-Views-DE Add selection problem.</p>
+  </step>
+  <step name="1.3" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;C&gt; to test the Copy button.
+ <r>
+<ul>
+<li>A copy of the selected view is created</li>
+<li>The new view is named "Copy of X", where X is the previous copy of the view</li>
+<li>When a copy is made, it shows up in the list control and is selected</li>
+<li>Report errors with the first title words "Tools-Options-Views-DE Copy"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Copy button fails to create copy</p>
+ <p name="bug">Tools-Options-Views-DE Copy has wrong title</p>
+ <p name="bug">Tools-Options-Views-DE Copy is not selected</p>
+  </step>
+  <step name="1.4" link="Bug">When a view has been added or copied, change the name by clicking over the name to get an edit box.
+ <r>
+<ul>
+<li>The user can't change the name of a default factory view</li>
+<li>The user can change an added or copied view name</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Able to rename factory view</p>
+ <p name="bug">Tools-Options-Views-DE Unable to rename user defined view</p>
+  </step>
+  <step name="1.5" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;D&gt; to test the Delete button.
+ <r>
+<ul>
+<li>If a factory view is selected, the delete button is disabled</li>
+<li>Otherwise, the selected view is removed from the system</li>
+<li>A warning dialog with <i>Delete</i>, <i>Cancel</i> and <i>Help</i> buttons is displayed, asking, <i>Are you sure you want to delete this view?</i>
+</li>
+<li>Report errors with the first title words "Tools-Options-Views-DE Delete"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Delete button enabled with factory view</p>
+ <p name="bug">Tools-Options-Views-DE Delete button does not remove selection</p>
+ <p name="bug">Tools-Options-Views-DE Delete dialog not displayed</p>
+  </step>
+  <step name="1.6" link="Bug">When present, slide the slider bar up and down in the Views box.
+ <r>The list should scroll as expected.</r>
+ <p name="bug">Tools-Options-Views-DE Slider bar problem</p>
+  </step>
+
+</case>
+
+<case id="tlvDEchn" num="2" order="any">
+
+  <title tag="tlvDEchn"> Changing settings</title>
+  <context>
+<p>While the Views tab is displayed</p>
+</context>
+<!--  <p name="Note">Be sure to try these steps with subentries as well as full entries. Do this by changing the selection in the <i>Fields in</i> combobox.</p>  -->
+
+ <step name="2.1" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List/Combo box Tests</link> and the shortcut &lt;Alt&gt;&lt;F&gt; to test the <i>Settings-Fields in</i> combo box.
+ <r>
+<ul>
+<li>The types of data entry are - Event Entry, Analysis Entry</li>
+<li>Depending on the type, the items, order and visibility of fields are as in the specification</li>
+<li>Report errors with the first title words "Tools-Options-Views-DE Fields in"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Fields in types incorrect</p>
+ <p name="bug">Tools-Options-Views-DE Fields in list wrong for type</p>
+  </step>
+  <step name="2.2" link="Bug">Select a field and click Move Up or press &lt;Alt&gt;&lt;U&gt;.
+ <r>
+<ul>
+<li>The field moves up one place</li>
+<li>The displaced field moves down</li>
+<li>In the Data Entry view the field order reflects these changes</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Move Up bungled in field list</p>
+ <p name="bug">Tools-Options-Views-DE Move Up has unexpected effect in DE view</p>
+  </step>
+  <step name="2.3" link="Bug">Select a field and click Move Down or press &lt;Alt&gt;&lt;N&gt;.
+ <r>
+<ul>
+<li>The field moves down one place</li>
+<li>The displaced field moves up</li>
+<li>In the Data Entry view the field order reflects these changes</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Move Down bungled in field list</p>
+ <p name="bug">Tools-Options-Views-DE Move Down has unexpected effect in DE view</p>
+  </step>
+  <step name="2.4" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;M&gt; to test the Modify button.
+ <r>
+<ul>
+<li>Brings up a settings dialog for each field</li>
+<li>Settings Dialogs correspond to the selected field type</li>
+<li>Report errors with the first title words "Tools-Options-Views-DE Modify"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Modify settings dialog not launched</p>
+ <p name="bug">Tools-Options-Views-DE Modify settings dialog same for all field types</p>
+  </step>
+  <step name="2.5" link="Bug">Double-click on a field in the list.
+<r>The Modify Field Settings dialog for Text fields is displayed</r>
+<p name="bug">Tools-Options-Views-DE no Modify action via double click</p>
+  </step>
+  <step name="2.6" link="Bug">Right click in the Visibility column for some field and select an item from the list.
+ <r>
+<ul>
+<li>The drop down lists three possible values, <i>Always</i>, <i>If data present</i> and <i>Not visible</i>
+</li>
+<li>The selected value replaces the one for the selected field</li>
+<li>When the field is "Required" (see Options-General tab), then the Modify Field Settings Notice is displayed</li>
+<li>When the field visibility is "Always", then it must have data displayed in the DE view</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Visibility drop down list is wrong</p>
+ <p name="bug">Tools-Options-Views-DE Visibility value not changed</p>
+ <p name="bug">Tools-Options-Views-DE Visibility Modify Notice not launched</p>
+ <p name="bug">Tools-Options-Views-DE Visibility Always gives no error with no data</p>
+  </step>
+  <step name="2.7" link="Bug">Inspect the Style column.
+ <r>
+<ul>
+<li>The name of any style applied to each field appears</li>
+<li>For the default style, it is left blank</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Style column shows text for default</p>
+ <p name="bug">Tools-Options-Views-DE Style column text wrong for field</p>
+  </step>
+
+</case>
+
+<case id="tlvDEmod" num="3" order="any">
+
+  <title tag="tlvDEmod">Modifying Field Settings dialog for text fields</title>
+  <context>
+<p>When the Modify Field Settings dialog for text fields is displayed</p>
+</context>
+<!--  <p name="Note">Be sure to try these steps with subentries as well as full entries. Do this by changing the selection in the <i>Fields in</i> combobox.</p>  -->
+
+  <step name="3.1">Test this dialog via the <link uri="../StdCtrls/Dialog.xml">Basic Dialog tests</link>.
+ <r>Report errors with the first title words "Modifying Field Settings (text)"</r>
+  </step>
+  <step name="3.2" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List/Combo box Tests</link> and the shortcut &lt;Alt&gt;&lt;C&gt; to test the <i>Character Style</i> combo box.
+ <r>
+<ul>
+<li>The list of available styles is displayed</li>
+<li>Report errors with the first title words "Modifying Field Settings (text) Character Style"</li>
+</ul>
+</r>
+ <p name="bug">Tools-Options-Views-DE Drop down box does not display correctly.</p>
+  </step>
+  <step name="3.3" link="Bug">Use the <link uri="../StdCtrls/Button.xml">Button Tests</link> and the shortcut &lt;Alt&gt;&lt;d&gt; to test the Modify Styles button.
+ <r>
+<ul>
+<li>The <link uri="../FW/FmtStyle.xml">Format-Style dialog</link> comes up</li>
+<li>Any changes made apply to the previously selected field</li>
+</ul>
+</r>
+ <p name="bug">Modifying Field Settings (text) Modify Styles does not affect DE view</p>
+  </step>
+  <step name="3.4" link="Bug">Use the <link uri="../StdCtrls/RadioBtn.xml">Radio Button Tests</link> and the shortcuts &lt;Alt&gt;&lt;A&gt;, &lt;Alt&gt;&lt;V&gt; and &lt;Alt&gt;&lt;N&gt; to test the Field visibility setting radio button group.
+ <r>
+<ul>
+<li>
+<b>Always visible:</b> The field is visible whether or not it has data entered in it</li>
+<li>
+<b>Visible if data present:</b> The field is visible only when data is in the field</li>
+<li>
+<b>Not visible:</b> The field is not visible</li>
+<li>The changes take effect in both the Options dialog Settings list and the DE view</li>
+<li>Report errors with the first title words "Modifying Field Settings (text) Field visibility settings"</li>
+</ul>
+</r>
+ <p name="bug">Modifying Field Settings (text) Field visibility always doesn't show data</p>
+ <p name="bug">Modifying Field Settings (text) Field visibility if data is incorrect</p>
+ <p name="bug">Modifying Field Settings (text) Field visibility "not" shows data</p>
+ <p name="bug">Modifying Field Settings (text) Field visibility not reflected in options</p>
+ <p name="bug">Modifying Field Settings (text) Field visibility not reflected in DE</p>
+  </step>
+
+</case>
+
+<case id="tlvDEcl" num="4" order="any">
+
+  <title tag="tlvDEcl">Modifying Field Settings dialog for choices list fields</title>
+  <context>
+<p>When the Modify Field Settings dialog for Choices List fields is displayed</p>
+</context>
+<!--  <p name="Note">Be sure to try these steps with subentries as well as full entries. Do this by changing the selection in the <i>Fields in</i> combobox.</p> -->
+
+  <step name="4.1">Test this dialog via the <link uri="#tlvDEmod">Modifying Field Settings (text) case</link> tests.
+ <r>Report errors with the first title words "Modifying Field Settings (choices list)"</r>
+  </step>
+  <step name="4.2" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check Box Tests</link> and the shortcuts &lt;Alt&gt;&lt;b&gt;, &lt;Alt&gt;&lt;m&gt;, &lt;Alt&gt;&lt;h&gt; and &lt;Alt&gt;&lt;L&gt; to test the Choices List display settings check box group.
+<r>
+<ul>
+<li>Show abbreviation or Show name must be checked - they are automatically maintained</li>
+<li>
+<b>Show abbreviation:</b> Shows the field's abbreviation in the choices list</li>
+<li>
+<b>Show name:</b> Shows the field's name in the choices list</li>
+<li>
+<b>Show hierarchy:</b> If the choices list does not have hierarchy, this item is disabled. Otherwise, hierarchy is shown by using colons. Upper nodes in the choice list are shown.</li>
+<li>
+<b>(Not in v1) List items in this field vertically:</b> The items are displayed in a column, one line per item. If unchecked, they are run together in a single paragraph with vertical bars separating each item</li>
+<li>Preview shows a correct example rendering</li>
+<li>The changes take effect in both the Options dialog Settings list and the DE view</li>
+<li>Report errors with the first title words "Modifying Field Settings (choices list) display settings"</li>
+</ul>
+</r>
+ <p name="bug">Modifying Field Settings (choices list) settings not reflected in preview</p>
+ <p name="bug">Modifying Field Settings (choices list) settings not reflected in options</p>
+ <p name="bug">Modifying Field Settings (choices list) settings not reflected in DE</p>
+  </step>
+
+</case>
+
+<case id="tlvDEhr" num="5" order="any">
+
+  <title tag="tlvDEhr">Modifying Field Settings dialog for hierarchical fields</title>
+  <context>
+<p>When the Modify Field Settings dialog for Hierarchical fields is displayed</p>
+</context>
+  <p name="Note">Be sure to try these steps with subentries as well as full entries. Do this by changing the selection in the <i>Fields in</i> combobox.</p>
+
+  <step name="5.1">Test this dialog via the <link uri="#tlvDEmod">Modifying Field Settings (text) case</link> tests.
+ <r>Report errors with the first title words "Modifying Field Settings (hierarchical)"</r>
+  </step>
+  <step name="5.2" link="Bug">Use the <link uri="../StdCtrls/CheckBox.xml">Check Box Tests</link> and the shortcuts &lt;Alt&gt;&lt;e&gt; and &lt;Alt&gt;&lt;s&gt; to test the Hierarchical field settings check box group.
+ <r>
+<ul>
+<li>
+<b>Always expand in this view:</b> the field is always shown expanded</li>
+<li>
+<b>Numbering style:</b> the field is automatically numbered according to the combo box selection</li>
+<li>When the associated combo box is clicked, the Numbering style check box is checked</li>
+<li>The changes take effect in both the Options dialog Settings list and the DE view</li>
+<li>Report errors with the first title words "Modifying Field Settings (hierarchical) field settings"</li>
+</ul>
+</r>
+ <p name="bug">Modifying Field Settings (hierarchical) display not expanded</p>
+ <p name="bug">Modifying Field Settings (hierarchical) numbers wrong</p>
+ <p name="bug">Modifying Field Settings (hierarchical) combo box does not set check box</p>
+ <p name="bug">Modifying Field Settings (hierarchical) settings not reflected in options</p>
+ <p name="bug">Modifying Field Settings (hierarchical) settings not reflected in DE</p>
+  </step>
+  <step name="5.3" link="Bug">Use the <link uri="../StdCtrls/ListBox.xml">List/Combo Box Tests</link> to test the Numbering style combo box.
+ <r>
+<ul>
+<li>The field is automatically numbered according to the combo box style selection</li>
+<li>The change takes effect in both the Options dialog Settings list and the DE view</li>
+<li>Report errors with the first title words "Modifying Field Settings (hierarchical) Numbering style combo box"</li>
+</ul>
+</r>
+ <p name="bug">Modifying Field Settings (hierarchical) Numbering style not reflected in options</p>
+ <p name="bug">Modifying Field Settings (hierarchical) Numbering style not reflected in DE</p>
+  </step>
+
+</case>
+
+<case id="tlvDEnt" num="6" order="any">
+
+  <title tag="tlvDEnt">Modify Field Settings Notice dialog </title>
+  <context>
+<p>When the Modify Field Settings Notice dialog is displayed</p>
+</context>
+  <p name="Note">Be sure to try these steps with subentries as well as full entries. Do this by changing the selection in the <i>Fields in</i> combobox.</p>
+
+  <step name="6.1">Test this dialog via the <link uri="../StdCtrls/Dialog.xml">Basic Dialog tests</link> Scroll down in the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/ToolsMenu/Options/Options.html#TheViewsTab" type="doc">specification</link> to see what it looks like.
+ <r>Report errors with the first title words "Modify Field Settings Notice"</r>
+  </step>
+
+</case>
+
+ <update date="May-24-00" author="RickM">Test created.</update>
+ <update date="Aug-29-01" author="MikeL">Made changes to integrate with libraries.</update>
+ <update date="May-22-02" author="JoelC">Minor changes to reflect changes in specs.</update>
+
+</test>

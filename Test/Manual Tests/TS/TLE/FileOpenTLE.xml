@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="fileopentle" num="2.1.2" abbr="flopntle" file="TLE\FileOpenTLE.xml">
+<title tag="fileopen">File - Open Topics List Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The <i>Open Topics List</i> dialog is used to navigate to specific projects and to open them in the
+Topics List Editor. This dialog is modeled after other File-Open dialogs used in Windows programs.
+The main difference here is that in order to reflect the database servers, a tree is displayed showing
+the network structure instead of folders on a hard disk.
+</p>
+<p>
+<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/OpenProject/OpenProjectDlg.html#FileOpenTopicsList" type="doc">Open Topics List Dialog.</link>
+</p>
+</introduction>
+<context>
+<p>This test is run from the Topics List Editor. The first words of the bug report title should be a noun phrase containing the words "Open Topics List".</p>
+</context>
+
+<case id="flopntleAct" num="1" order="any">
+<title tag="flopntleAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+
+<step name="1.1" link="Bug">Invoke File-Open.
+<r>The Open Topics List dialog box is displayed.</r>
+<p name="bug">File-Open menu item fails</p>
+</step>
+</case>
+
+<case id="flopntleDiac" num="2" order="any">
+<title tag="flopntleDiac">Exercise dialog controls</title>
+<context>
+<p>When the Open Topics List dialog is displayed</p>
+</context>
+
+<step name="2.1" link="Bug">Use the image at <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/OpenProject/OpenProjectDlg.html#FileOpenTopicsList" type="doc">Open Topics List dialog </link> to visually inspect the dialog layout.
+   <r>
+<ul>
+ <li>When the Look in tree first comes up, it is expanded only to show the first level (Network Neighborhood node is not expanded).</li>
+ <li>The local machine is selected.</li>
+ <li>There are at least two items in this list, even for non-networked machines: the name of the local machine, and the Network Neighborhood node.</li>
+ <li>Up to approximate size and position the two should be the same - especially any text and icons.</li>
+</ul>
+</r>
+<p name="bug">Open Topics List dialog layout incorrect</p>
+<p name="bug">Open Topics List tree initially expanded</p>
+<p name="bug">Open Topics List local machine not initially selected</p>
+<p name="bug">Open Topics List Look in list missing items</p>
+</step>
+<step name="2.2">Use <link uri="../StdCtrls/Dialog.xml">Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Open Topics List" as the name of the dialog.</r>
+</step>
+<step name="2.3">Use <link uri="../StdCtrls/Tree.xml">Tree Tests</link> to test the network tree under <i>Look in</i>.
+   <r>Report any failures as suggested using "Open Topics List Look in" as the name of the control.</r>
+</step>
+
+<step name="2.4" link="Bug">Select a <i>Look in</i> computer.
+   <r>While the list is being built:
+ <ul>
+<li>The cursor becomes an hourglass and is displayed.</li>
+ <li>The roving flashlight animation is displayed.</li>
+ <li>The message "Searching..." with the binoculars icon is displayed in the <i>Choose a Project</i> list box.</li>
+</ul>
+ When the list has been built:
+ <ul>
+<li>The cursor changes back to its regular shape.</li>
+ <li>
+<i>Choose a Project</i> list updates to display the projects on selected computer.</li>
+ <li>The roving flashlight animation disappears.</li>
+ <li>The message "Searching..." with the binoculars icon disappears.</li>
+</ul>
+</r>
+<p name="bug">Open Topics List <i>Look in</i> displays wrong project list</p>
+</step>
+
+<step name="2.5" link="Bug"> Use <link uri="../StdCtrls/listbox.xml">List Box / Combo Box Tests</link> to test the listbox under <i>Choose a Project</i>.
+   <r>
+<ul>
+ <li>When there are no projects on the selected computer of the Project Type selected or the <i>Look in</i> selection is not a computer, it shows "There are no items to show in this list".</li>
+ <li>When a list cannot be built, then it shows "This machine's database isn't running".</li>
+ <li>Each list item has an icon according to its type (only Languagle Projects for v1).</li>
+ <li>Report any failures as suggested using "Open Project Choose" as the name of the control.</li>
+</ul>
+</r>
+<p name="bug">Open Project Choose list is empty</p>
+<p name="bug">Open Project Choose wrong icon displayed</p>
+</step>
+
+<step name="2.6" link="Bug">Select a project in the <i>Choose a Project</i> list box.
+   <r>While the list is being built:
+ <ul>
+<li>The cursor becomes an hourglass.</li>
+ <li>
+<i>Choose a Topics List</i> list box displays the  words "Searching..." with the binoculars icon.</li>
+ <li>The roving flashlight animation appears.</li>
+</ul>
+ When the list has been built:
+ <ul>
+<li>The cursor changes back to its regular shape.</li>
+ <li>
+<i>Choose a Topics List</i> list box updates to display the topics lists of the selected project.</li>
+ <li>The roving flashlight animation disappears.</li>
+ <li>The message "Searching..." with the binoculars icon disappears.</li>
+</ul>
+</r>
+<p name="bug">Open Project Choose list is empty</p>
+<p name="bug">Open Project Choose wrong icon displayed</p>
+</step>
+
+<step name="2.7" link="Bug"> Use <link uri="../StdCtrls/listbox.xml">List Box / Combo Box Tests</link> to test the listbox under <i>Choose a Topics List</i>.
+ <r>
+<ul>
+  <li>If the list cannot be built because the server is not running, the list box will display the item: "This machine's database isn't running".</li>
+  <li>If there are no items to place in the list, the list box will display the item: "There are no items to show in this list".</li>
+  <li>Else, the topic lists attached to the selected project are shown.</li>
+  <li>Report any failures as suggested using "Open Project Choose" as the name of the control.</li>
+ </ul>
+</r>
+</step>
+<step name="2.8">Select a project in the <i>Choose a Topics List</i> list box.
+ <r>The topics list is highlighted</r>
+</step>
+
+<step name="2.9" link="Bug">Use <link uri="../StdCtrls/TextBox.xml">Text Box Tests</link> to test the <i>Topics List name</i> text box.
+   <r>
+<ul>
+ <li>Default: The same value as the topics list selected in the <i>Choose a Topics List</i> list box.</li>
+ <li>Default: When nothing is selected, it is blank.</li>
+ <li>When typing, the Choose list box selection moves to the first match.</li>
+ <li>When nothing matches, selection highlight is removed from the Choose list.</li>
+</ul>
+</r>
+<p name="Note">Not in v1</p>
+<p name="bug">Topics List name not in sync with Choose list</p>
+<p name="bug">Topics List name wrong default</p>
+</step>
+
+<step name="2.10" link="Bug"> Use <link uri="../StdCtrls/Button.xml">Button Tests</link> to test the <i>Open</i> button.
+   <r>
+<ul>
+ <li>When a valid topics list name is in the Project Name text box, this button is enabled.</li>
+ <li>The selected project is loaded.</li>
+</ul>
+</r>
+<p name="bug">Open Topics List Open not enabled for valid topics list</p>
+<p name="bug">Open Topics List Open enabled with no topics list selection</p>
+<p name="bug">Open Topics List Open fails to load selected topics list</p>
+</step>
+</case>
+
+
+<case id="flopntleDiacDel" num="3" order="any">
+<title tag="flopntleDiac">Deleting Projects and Topic Lists</title>
+<context>
+<p>When the Open Topics List dialog is displayed</p>
+</context>
+
+<step name="3.1" link="Bug">Right click a project name on your computer and select the options "Remove this Project..."
+ <r>
+<ul>
+  <li>This option is the only item available on the right-click menu.</li>
+  <li>A warning dialog appears which is is worded as defined in the specs.</li>
+  <li>The default button is Cancel</li>
+ </ul>
+</r>
+<p name="bug">Open Topics List Right click project menu items incorrect</p>
+<p name="bug">Open Topics List Remove project warning dialog incorrect</p>
+</step>
+
+<step name="3.2" link="Bug">Right click a topic name on your computer and select the options "Delete this Topics List..."
+ <r>
+<ul>
+  <li>This option is the only item available on the right-click menu.</li>
+  <li>A warning dialog appears which is is worded as defined in the specs.</li>
+  <li>The default button is Cancel</li>
+ </ul>
+</r>
+<p name="bug">Open Topics List Right click topics list menu items incorrect</p>
+<p name="bug">Open Topics List Delete topics list warning dialog incorrect</p>
+<p name="note">Deletion of Topics Lists in this dialog follows the same restrictions as the Delete button under Tools - Lists. See <link uri="../FW/TlsList.xml">Tools-Lists Tests</link>.</p>
+</step>
+
+<step name="3.3" link="Bug">Repeat steps 3.1 and 3.2 on a project over the network.
+ <r>The right-click menu options are greyed and not selectable.</r>
+<p name="bug">Remove and delete options available for projects over the network.</p>
+</step>
+
+</case>
+
+<update date="Jun-04-02" author="JanetW">Test created.</update>
+<update date="Jun-07-02" author="JanetW">Needs more work by someone.</update>
+<update date="Jun-11-02" author="JoelC">Updated and added Case 3.</update>
+<update date="Jun-17-02" author="RussD">Minor changes.</update>
+</test>

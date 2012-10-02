@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+ <!-- Adds a lists list item then deletes it. -->
+
+<accil on-fail="assert">
+   <goal>Create a List Confidence Level</goal>
+
+   <bug id="FWR-455" desc="Crash choosing Status n List item"/>
+   <bug id="FWR-317" desc="List Choosers Empty"/>
+   <bug id="LT-10092" desc="Choser List not Showing Best ws"/>
+   <bug id="LT-9328" desc="Delete a Confidence-Level get a crash!"/>
+
+	<var id="projectName" set="Kalaba"/>
+
+	<sound frequency="400" duration="500"/>
+
+	<!-- set to 1 launch so the nag message doesn't come up at 0 or 10 -->
+	<registry key="HKEY_CURRENT_USER\Software\SIL\FieldWorks\7.0\Language Explorer\launches" data="1"/>
+
+ <on-application run="ok" args = '-app Flex -proj "C:\GuiTestDriver\Projects\$projectName;\$projectName;.fwdata"' on-fail="assert">
+
+  <click select="menubar/view/lists/confidence-levels"/>
+  <click select="toolbar/insert/new-confidence-level"/>
+
+  <model select="list[@role='view']">
+
+  <var id="ind" set="*"/>
+  <var id="fld" set="Name"/>
+  <var id="row" set="1"/>
+  <click select="item/multi/text"/>
+  <insert wait="1000">NorthNorthWest</insert>
+  <insert wait="500">{TAB}</insert>
+  <insert wait="500">abrev</insert>
+  <insert wait="500">{TAB}</insert>
+  <insert wait="500">how could this fit in with Low-Medium-High hahahaaaaa</insert>
+  <insert wait="500">{TAB}</insert>
+
+  <var id="ind" set="*"/>
+  <var id="fld" set="Status"/>
+  <click select="item/ref/empty"/>
+  <click select="item/ref/chooser"/>
+  <insert>{DOWN 3}{ENTER}</insert>
+
+  <var id="fld" set="Researchers"/>
+  <click select="item/vec-ref/empty"/>
+  <click select="item/vec-ref/chooser"/>
+
+	   <on-dialog select="//chooser-list[@role='dialog']">
+		 <var id="row" set="*row"/>
+		 <click select="items/record/name" path="/42:String/value:Satu"/>
+		 <click select="items/record/check"/>
+		 <click select="ok"/>
+	   </on-dialog>
+
+  <var id="row" set="*"/>
+  <click select="tree" path="NorthNorthWest"/>
+  <click select="//toolbar/standard/delete"/>
+  <insert>d</insert>
+
+  <var id="ind" set="*"/>
+  <var id="fld" set="Name"/>
+  <var id="row" set="1"/>
+  <click select="item/multi/text"/>
+
+  </model>
+
+ </on-application>
+</accil>

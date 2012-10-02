@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../XSL/HelpFile.xsl"?>
+<test id="inscom" num="2.5.4" abbr="incom" file="FW\InsComment.xml" ready="V2">
+<title tag="inscom">Insert-Comment Tests</title>
+<index>
+<li>test</li>
+</index>
+<introduction>
+<p>The ability to add notes, comments, or annotations to a piece of text enhances the user's interaction with his data. In FW these notes are "Comments". Comments can be inserted into text at any point, or into any tag already in the text. The Generic Comment allows the user to enter a comment without having to specify a Topical Outline tag. This menu item inserts a comment icon at the current cursor position, and opens the popup window by which the comment is edited.</p>
+<p name="Specification">See the specifications for the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Commands/INSERTMENU/InsertMenu.html#Insert-Comment" type="doc">Insert-Comment menu item</link>
+	and the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Comments/comments.htm" type="doc">Comments feature</link>
+</p>
+<p name="todo">This is a first draft, generated test script. Please verify and complete content.</p>
+</introduction>
+<context>
+<p>Many setting combinations are possible. Testing does not require exhaustive combinations of these settings, but should identify critical ones and seek reasonable coverage for others. If possible, testing continues after a bug is found to report as many symptoms as reasonable. If these tests fail on more than one step, combine the suggested bugs into a single bug report only if the underlying cause seems to be the same. The first words of the bug report title should be a noun phrase containing the words "Insert-Comment"</p>
+</context>
+<case id="incomAct" num="0" order="any">
+<title tag="incomAct">Activation</title>
+<context>
+<p>When the application is running</p>
+</context>
+<step name="0.1" link="Bug">Invoke Insert-Comment. Use the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/App/Features/Comments/comments.htm" type="doc">Insert-Comment specification</link> to visually inspect the layout of the dialog controls.
+   <r>
+<ul>
+<li>The dialog opens.</li>
+<li>Up to approximate size, position, exact text and icons, the two are the same.</li>
+<li>Default values are tested in the control cases below.</li>
+<li>Shortcuts are as tested in the control cases below.</li>
+</ul>
+</r>
+<p name="bug">Insert-Comment dialog fails to open</p>
+<p name="bug">Insert-Comment dialog layout incorrect</p>
+</step>
+<step name="0.2" link="Bug">When the dialog comes up, verify that:
+	<r>
+<ul>
+<li>The text box is empty.</li>
+</ul>
+</r>
+<p name="bug">Insert-CommentInsert-Comment text box is empty failed</p>
+</step>
+<step name="0.3" link="Bug">Use <link uri="../StdCtrls/dialog.xml">Basic dialog Tests</link> to test this dialog's basic functionality.
+   <r>
+<ul>
+<li>On OK, the dialog disappears.</li>
+<li>The comment icon appears at the insertion point in the text.</li>
+<li>The comment icon appears at the end of the tag label the insertion point was in.</li>
+<li>Report any failures as suggested using "Insert-Comment" as the name of the dialog.</li>
+</ul>
+</r>
+<p name="bug">Insert-Comment dialog remains after OK</p>
+<p name="bug">Insert-Comment comment icon appears at the insertion point in the text failed</p>
+<p name="bug">Insert-Comment comment icon appears at the end of the tag label the insertion point was in failed</p>
+</step>
+</case>
+<case id="incomtxt" num="1" order="any">
+<title tag="incomtxt">Comment Text Box</title>
+<context>
+<p>When the  dialog  is displayed</p>
+</context>
+<step name="1.1" link="Bug">
+	Use the <link uri="../StdCtrls/textbox.xml">Text Box Tests</link> to test the Comment text box.<r>
+<ul>
+<li>Report any failures using the first words, "Insert-Comment Comment text box".</li>
+</ul>
+</r>
+</step>
+<step name="1.2" link="Bug">Change the value to test possible values.<r>
+<ul>
+<li>The default value is empty.</li>
+	<li>The value is the user's comment.</li>
+	<li>The value is editable text that persists.</li>
+   </ul>
+</r>
+<p name="bug">Insert-Comment default vaule is not empty</p>
+	<p name="bug">Insert-CommentComment value is not the user's comment</p>
+	<p name="bug">Insert-CommentComment value is not editable text that persists</p>
+   </step>
+</case>
+<case id="incomicon" num="1" order="any">
+<title tag="incomicon">Icon Button</title>
+<context>
+<p>When the  artifact  is displayed</p>
+</context>
+<step name="2.1" link="Bug">
+	Use the <link uri="../StdCtrls/button.xml">Button Tests</link> to test the icon button.<r>
+<ul>
+<li>It is enabled when its containing text is visible.</li>
+<li>Report any failures using the first words, "Insert-Comment icon".</li>
+</ul>
+</r>
+<p name="bug">Insert-Comment icon disabled when its containing text is visible</p>
+</step>
+<step name="2.2" link="Bug">
+	Click the icon button to test its action.
+	<r>Not specified.</r>
+<p name="bug">Insert-Comment Clicking the icon button fails</p>
+<p name="todo">Find or request a spec for this and fill in the expected result for this test step.</p>
+</step>
+<step name="2.3" link="Bug">Hover over the icon button.<r>A pop-up window shows the comment in multi-string format.</r>
+<p name="bug">Insert-Comment Hover over  failed</p>
+</step>
+<step name="2.4" link="Bug">When the comment is long, Hover over the icon button.<r>Adds '...', indicating more..</r>
+<p name="bug">Insert-Comment Hover over When the comment is long failed</p>
+</step>
+<step name="2.5" link="Bug">Double-click the icon button.<r>Opens the comment for reading and editing.</r>
+<p name="bug">Insert-Comment Double-click  failed</p>
+</step>
+<step name="2.6" link="Bug">With no selected text, Right-click the icon button.<r>Gives options 'Edit Comment' and 'Delete Comment'.</r>
+<p name="bug">Insert-Comment Right-click With no selected text failed</p>
+</step>
+<step name="2.7" link="Bug">With selected text, Right-click the icon button.<r>Gives options 'Tag' and 'Insert Comment'.</r>
+<p name="bug">Insert-Comment Right-click With selected text failed</p>
+</step>
+</case>
+
+<update date="Oct-11-01" author="MikeL">Generated.</update>
+<update date="Apr-19-02" author="JanetW">Corrected duplicate step numbers.</update>
+
+</test>

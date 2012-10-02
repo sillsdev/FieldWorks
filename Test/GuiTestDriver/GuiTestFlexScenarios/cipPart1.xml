@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<!-- Conceptual Intro to Parsing test -->
+<!-- Part 1 : Create the CipTest project -->
+<!-- Note: Because the intro uses data from many different languages, we're going to create distinct categories for each language.  That way, the parser should still work properly for each language data set. -->
+
+<accil on-fail="assert">
+
+<!--  -->
+ <var id="projectName" set="&quot;Sena 3&quot;"/>
+
+ <on-application args="-db $projectName" run="ok" close="yes" on-fail="assert">
+		 <include from="IncStartUp.xml"/>
+
+  <!-- Delete the CIPTest project if it exists -->
+	<click path="$menuFILE;menu:Project Management/menu:Delete..."/>
+	<on-dialog title="Delete Fieldworks Project">
+	  <glimpse id="projExists" path="$NL;item:CIPTest" on-fail="skip"/>
+	  <if><condition of="$projExists" is="true"/>
+		<then>
+		  <click path="$NL;item:CIPTest"/>
+		  <click path="$delete"/>
+		  <on-dialog title="Delete Fieldworks Project">
+			<click path="$yes"/>
+		  </on-dialog>
+		</then>
+	  </if>
+	  <click path="$close"/>
+	</on-dialog>
+
+<!-- 1.	Create a new project, -->
+	<click path="$menuFILE;menu:New FieldWorks Project..."/>
+	<on-dialog title="New FieldWorks Project">
+<!-- a.	call it "CIPTest" for Conceptual Introduction to Parsing Test -->
+	  <insert wait="200">CIPTest</insert>
+<!-- b.	use Kalaba for the Vernacular and English for the Analysis -->
+	  <insert>%v</insert>
+	  <insert>k</insert>
+	  <!-- English is the default Analysis language -->
+	  <click path="$ok"/>
+	</on-dialog>
+<!-- c.	In Choose a List of Anthropology Categories, choose "Create my own" -->
+	<on-dialog until="9999999" title="Choose a List of Anthropology Categories">
+	  <insert wait="200">%c</insert>
+	  <click path="$ok"/>
+	</on-dialog>
+
+ </on-application>
+
+</accil>

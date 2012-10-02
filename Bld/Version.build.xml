@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NAnt build file for creating version info for C++ projects build with batch files. -->
+<project name="VersionInfo" default="default" xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
+	<style style="${BUILD_ROOT}/Bld/TransformGlobalInclude.xslt"
+		in="${BUILD_ROOT}/Bld/GlobalInclude.xml"
+		out="${BUILD_ROOT}/Bld/GlobalInclude.build.xml"/>
+	<include buildfile="${BUILD_ROOT}/Bld/GlobalInclude.build.xml"/>
+	<if test="${not property::exists('dir.fwoutput')}">
+		<property name="dir.fwoutput" value="${BUILD_ROOT}/Output_${fw::architecture()}" if="${platform::is-unix()}"/>
+		<property name="dir.fwoutput" value="${BUILD_ROOT}\Output" unless="${platform::is-unix()}"/>
+	</if>
+	<target name="default">
+		<if test="${not file::up-to-date(path::combine(BUILD_ROOT, 'Src/bldinc.h'), path::combine(dir.fwoutput, 'Common/bldinc.h'))}">
+			<mkdir dir="${path::combine(dir.fwoutput, 'Common')}"/>
+			<versionex output="${dir.fwoutput}/Common/bldinc.h">
+				<sources>
+					<include name="${BUILD_ROOT}/Src/bldinc.h"/>
+				</sources>
+			</versionex>
+		</if>
+	</target>
+</project>

@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="bkuprestdlg" num="2.1.12b" abbr="brd" file="FW\BackupRestoreDlg.xml">
+
+ <title tag="bkuprestdlg">Backup/Restore Dialog Tests</title>
+
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+   <p>The Backup and Restore Dialog is the means by which the user enters settings for backing up and restoring data. It is implemented as part of the Backup Feature.</p>
+   <p>Specifications: <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/BackupRestoreDlg.html">
+<i>Fieldworks Explorer Backup and Restore</i> Dialog</link>
+</p>
+   <p>Related test scripts:
+	<ul>
+<li>
+<link uri="./BackupRestore.xml">Backup and Restore Tests</link> (tests more general Backup and Restore functionality - distinct from this file, which tests Backup/Restore <i>dialog</i> behavior)</li>
+	<li>
+<link uri="./BackupReminderDlg.xml">Backup Reminder Dialog Tests</link>
+</li>
+	<li>
+<link uri="./BackupScheduleDlg.xml">Backup Schedule Dialog Tests</link>
+</li>
+	<li>
+<link uri="./BackupPasswordDlg.xml">Backup Password Dialog Tests</link>
+</li>
+</ul>
+</p>
+  </introduction>
+
+
+<!--================Case 0: Invoking the Backup and Restore Dialog================-->
+
+ <case id="brdInvoke" num="0" order="any">
+  <title tag="brdInvoke">Invoking the Backup and Restore Dialog</title>
+  <context>
+<p>When the main DN window is active</p>
+</context>
+
+  <step name="0.1" link="Bug">
+   Select <i>File - Backup and Restore</i> from the menu.
+<r>
+<ul>
+<li>The Backup and Restore dialog appears.</li>
+	<li>The Backup tab of the dialog is on top.</li>
+	<li>Its appearance agrees with the spec (<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/BackupRestoreDlg.html#BackupTab">The Backup Tab</link>).</li>
+</ul>
+</r>
+   <p name="bug">Backup and Restore Dialog does not appear</p>
+   <p name="bug">Backup and Restore Dialog <i>Backup</i> tab is not on top</p>
+   <p name="bug">Backup and Restore Dialog appearance wrong</p>
+  </step>
+
+  <step name="0.2" link="Bug">
+   Click on the <i>Restore</i> tab of the dialog.
+<r>
+<ul>
+<li>The Restore tab of the dialog is on top.</li>
+	<li>Its appearance agrees with the spec (<link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/BackupRestoreDlg.html#RestoreTab">The Restore Tab</link>).</li>
+</ul>
+</r>
+   <p name="bug">Backup and Restore Dialog <i>Restore</i> tab is not on top</p>
+   <p name="bug">Backup and Restore Dialog appearance wrong</p>
+  </step>
+ </case>
+
+<!--================Case 1: Exercise dialog controls (Backup)================-->
+
+ <case id="brdDiab" num="1" order="any">
+  <title tag="brdDiab">Exercise dialog controls (Backup)</title>
+  <context>
+<p>When the Backup tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="1.1">
+<link uri="../StdCtrls/Dialog.xml">
+   Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Backup and Restore" as the name of the dialog.</r>
+  </step>
+
+  <step name="1.2" link="Bug">
+<link uri="../StdCtrls/ListBox.xml">
+   List Box/Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;p&gt; to test the <i>Projects to back up</i> list box.
+   <r>
+<ul>
+	<li>The box displays all of the Explorer's projects which are on the local machine, and no projects which physically reside on another machine.</li>
+	<li>The icons correspond to the type of project.</li>
+</ul>
+	Report any failures as suggested using "Projects to back up list box" as the name of the control.</r>
+<p name="bug">Backup: Projects to back up is missing (a) project(s).</p>
+<p name="bug">Backup: Projects to back up has wrong information.</p>
+  </step>
+
+  <step name="1.3" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml">
+   Check Box Tests</link> to test the checkboxes in the <i>Projects to back up</i> list box.
+   <r>They should behave like regular checkboxes even though they are in the list box.
+	Report any failures as suggested using "Projects to back up list box" as the name of the control.</r>
+<p name="bug">Backup: <i>Projects to back up</i> checkboxes misbehave.</p>
+  </step>
+
+  <step name="1.4" link="Bug">
+<link uri="../StdCtrls/ListBox.xml">
+   List Box/Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;d&gt; to test the <i>Destination</i> combo box.
+   <r>
+	The combo box displays all possible backup devices attached to the computer, including (if available)
+<ul>
+	<li>Floppy drive</li>
+	<li>LS-120 drive</li>
+	<li>Zip drive (100Mb and 250Mb)</li>
+	<li>CD-R and CD-RW using Direct CD software--which makes the CD drive appear and act just like a floppy drive (we are not supporting direct read/write access)</li>
+	<li>Tape drive <i>(not version 1, maybe never)</i>
+</li>
+</ul>
+	The default is a CD-R or RW if available. Otherwise, the highest-capacity backup device available.
+	The icons correspond to the type of device.
+	Report any failures as suggested using "Backup Destination list box" as the name of the control.</r>
+<p name="bug">Backup: <i>Destination</i> combo box is missing (a) device(s).</p>
+<p name="bug">Backup: <i>Destination</i> combo box has the wrong options.</p>
+<p name="bug">Backup: <i>Destination</i> combo box has the wrong default.</p>
+  </step>
+
+  <step name="1.5" link="Bug">
+<link uri="../StdCtrls/Button.xml">
+   Button Tests</link> to test the <i>Browse...</i> button.
+   <r>
+	Invokes a Windows Explorer dialog.
+	Report any failures as suggested using "Backup Browse button" as the name of the control.</r>
+<p name="bug">Backup: <i>Browse</i> button does not launch Windows Explorer dialog.</p>
+<p name="bug">Backup: Result of dialog does not appear in <i>Destination</i> list box.</p>
+  </step>
+
+  <step name="1.6" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml">
+   Check Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;i&gt; to test the <i>Include human readable (XML) backup?</i> checkbox.
+   <r>
+	Report any failures as suggested using "Backup Include human readable checkbox" as the name of the control.</r>
+<p name="bug">Backup: <i>Include human readable (XML) backup?</i> checkbox misbehaves.</p>
+  </step>
+
+  <step name="1.7" link="Bug">
+<link uri="../StdCtrls/Button.xml">
+   Button Tests</link> to test the <i>Reminders...</i> button.
+   <r>
+	Invokes the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Reminder/BackupReminderDlg.html">Backup Reminder dialog</link>.
+	Report any failures as suggested using "Backup Reminders button" as the name of the control.</r>
+<p name="bug">Backup: <i>Browse</i> button does not launch Backup Reminder dialog.</p>
+  </step>
+
+  <step name="1.8" link="Bug">
+<link uri="../StdCtrls/Button.xml">
+   Button Tests</link> to test the <i>Schedule...</i> button.
+   <r>
+	Invokes the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Schedule/BackupScheduleDlg.html">Backup Schedule dialog</link>.
+	Report any failures as suggested using "Backup Schedule button" as the name of the control.</r>
+<p name="bug">Backup: <i>Browse</i> button does not launch Backup Schedule dialog.</p>
+  </step>
+
+  <step name="1.9" link="Bug">
+<link uri="../StdCtrls/Button.xml">
+   Button Tests</link> to test the <i>Password...</i> button.
+   <r>
+	Invokes the <link uri="http://lsdev.sil.org/intranet/FwSpecs/FW/Expl/Dialogs/Backup/Password/BackupPasswordDlg.html">Backup Password dialog</link>.
+	Report any failures as suggested using "Backup Password button" as the name of the control.</r>
+<p name="bug">Backup: <i>Browse</i> button does not launch Backup Password dialog.</p>
+  </step>
+ </case>
+
+<!--================Case 2: Exercise dialog controls (Restore)================-->
+
+ <case id="brdDiar" num="2" order="any">
+  <title tag="brdDiar">Exercise dialog controls (Restore)</title>
+  <context>
+<p>When the Restore tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="2.1">
+<link uri="../StdCtrls/Dialog.xml">
+   Basic Dialog Tests</link> to test this dialog's basic functionality.
+   <r>Report any failures as suggested using "Backup and Restore" as the name of the dialog.</r>
+  </step>
+
+  <step name="2.2" link="Bug">
+<link uri="../StdCtrls/ListBox.xml">
+   List Box/Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;r&gt; to test the <i>Restore from</i> combo box.
+   <r>
+	The combo box displays all possible backup devices attached to the computer, including (if available)
+<ul>
+	<li>Floppy drive</li>
+	<li>LS-120 drive</li>
+	<li>Zip drive (100Mb and 250Mb)</li>
+	<li>CD-R and CD-RW using Direct CD software--which makes the CD drive appear and act just like a floppy drive (we are not supporting direct read/write access)</li>
+	<li>Tape drive (not version 1, maybe never)</li>
+</ul>
+	The icons correspond to the type of device.
+	Report any failures as suggested using "Backup Restore from combo box" as the name of the control.</r>
+<p name="bug">Backup: <i>Restore from</i> combo box is missing (a) device(s).</p>
+<p name="bug">Backup: <i>Restore from</i> combo box has the wrong options.</p>
+  </step>
+
+  <step name="2.3" link="Bug">
+<link uri="../StdCtrls/Button.xml">
+   Button Tests</link> to test the <i>Browse...</i> button.
+   <r>
+	Invokes a Windows Explorer dialog.
+	Report any failures as suggested using "Restore Browse button" as the name of the control.</r>
+<p name="bug">Restore: <i>Browse</i> button does not launch Windows Explorer dialog.</p>
+<p name="bug">Restore: Result of dialog does not appear in <i>Destination</i> list box.</p>
+  </step>
+
+  <step name="2.4" link="Bug">
+<link uri="../StdCtrls/ListBox.xml">
+   List Box/Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;p&gt; to test the <i>Project</i> combo box.
+   <r>
+<ul>
+	<li>The box displays all of the possible Language Projects that are backed up on the device and folder given in the Restore from combo.</li>
+	<li>The icons correspond to the type of project.</li>
+	<li>Default value is the first backup file available from the selected backup device.</li>
+</ul>
+	Report any failures as suggested using "Projects to back up combo box" as the name of the control.</r>
+<p name="bug">Restore: Projects to back up is missing (a) project(s).</p>
+<p name="bug">Restore: Projects to back up has wrong projects.</p>
+<p name="bug">Restore: Projects to back up has wrong default project.</p>
+  </step>
+
+  <step name="2.5" link="Bug">
+<link uri="../StdCtrls/ListBox.xml">
+   List Box/Combo Box Tests</link> and use the shortcut &lt;Alt&gt;&lt;v&gt; to test the <i>Version</i> list box.
+   <r>
+<ul>
+	<li>Displays all the versions of the specified Language Project that are available on the device and folder given in the Restore from combo. </li>
+	<li>These files are displayed according to the name of the language project, their date of save and their time of save (yyyy-mm-dd tttt) where time (tttt) is on the 24 hour basis.</li>
+	<li>The list is sorted from most recent to oldest backup file.</li>
+	<li>Default value is the most recent backup file available for the selected project from the selected backup device.</li>
+	<li>The list fills when the user has selected a specific language project from the Project combo box.</li>
+</ul>
+	Report any failures as suggested using "Projects to back up list box" as the name of the control.</r>
+<p name="bug">Restore: Version list box is missing (a) version(s).</p>
+<p name="bug">Restore: Version list box is missing information for (a) version(s).</p>
+<p name="bug">Restore: Version list box is sorted incorrectly.</p>
+<p name="bug">Restore: Version list box has wrong default value.</p>
+  </step>
+
+  <step name="2.6" link="Bug">
+<link uri="../StdCtrls/CheckBox.xml">
+   Check Box Tests</link> to test the <i>Restore from the XML file, if available</i> checkbox.
+   <r>
+	Report any failures as suggested using "Restore from XML" as the name of the control.</r>
+<p name="bug">Restore: <i>Restore from the XML file, if available</i> checkbox misbehaves.</p>
+  </step>
+ </case>
+
+<!--================Case 3: Interactions (Backup)================-->
+
+ <case id="brdIntb" num="3" order="any">
+  <title tag="brdIntb">Interactions (Backup)</title>
+  <context>
+<p>When the Backup tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="3.1" link="Bug">
+   Uncheck all of the projects listed in the <i>Projects to back up</i> list box.
+   <r>The <i>Start</i> button is disabled.</r>
+<p name="bug">The <i>Start</i> button is enabled.</p>
+  </step>
+
+  <step name="3.2" link="Bug">
+   Check one of the projects listed in the <i>Projects to back up</i> list box.
+   <r>The <i>Start</i> button is enabled.</r>
+<p name="bug">The <i>Start</i> button is disabled.</p>
+  </step>
+ </case>
+
+<!--================Case 4: Interactions (Restore)================-->
+
+ <case id="brdIntr" num="4" order="any">
+  <title tag="brdIntr">Interactions (Restore)</title>
+  <context>
+<p>When the Restore tab of the Backup and Restore Dialog is displayed</p>
+</context>
+  <step name="4.1" link="Bug">
+   In the <i>Restore from</i> combo box, select a path where no FieldWorks database is stored.
+   <r>The <i>Start</i> button is disabled.</r>
+<p name="bug">The <i>Start</i> button is enabled.</p>
+  </step>
+
+  <step name="4.2" link="Bug">
+   In the <i>Restore from</i> combo box, select a path where a FieldWorks database is stored.
+   <r>The <i>Start</i> button is enabled.</r>
+<p name="bug">The <i>Start</i> button is disabled.</p>
+  </step>
+ </case>
+
+
+<!--================xml comment================-->
+ <update date="Dec-11-01" author="JanetW">Test created.</update>
+ <update date="Feb-19-02" author="JanetW">Test completed through step 5.1 (except bug reports).</update>
+ <update date="Feb-21-02" author="JanetW">Test completed through step 6.2 (except bug reports).</update>
+ <update date="Feb-22-02" author="JanetW">Test completed through step 6.7.</update>
+ <update date="Mar-14-02" author="JanetW">Tests 5 and 6 moved to BackupRestore.xml as tests 1 and 2.</update>
+
+</test>

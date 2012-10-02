@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../ScriptPaths.xsl"?>
+
+<include>
+  <!--
+		  Often used variables for the Text tools
+   -->
+
+  <var id="menuTEXTS" set="$menuVIEW;menu:Texts  Words/"/>
+  <var id="insText" set="$INSERT;43:New Text"/>
+  <var id="insFree" set="$INSERT;43:Free Translation"/>
+
+  <var id="txtTextsPANE" set="$multiBROWSE;9:textsChooser/9:textsChooser/$NL;"/>
+  <var id="txtTitlesHeader" set="$txtTextsPANE;$HEADER;25:Title"/>
+  <var id="txtRec" set="$txtTextsPANE;20:RootSite/table:Table"/>
+
+  <!-- Text Edit -->
+  <var id="txtEDIT" set="$multiEDIT;9:ITextContent/"/>
+  <var id="txtTABS" set="$txtEDIT;9:m_tabCtrl.AccessibleName/"/>
+  <var id="txtTitle" set="$txtEDIT;grp:RootSite/table:Table/$Col;[3]"/>
+  <var id="txtTitle2" set="$txtEDIT;grp:RootSite/table:Table/28:Row[2]/29:Cell[3]"/>
+
+  <var id="txtBaseline" set="$txtTABS;37:Baseline"/>
+  <var id="txtBLInput" set="$txtTABS;9:m_tpRawText.AccessibleName"/>
+  <var id="txtBLEditLook" set="$txtBLInput;/20:RootSite/$Text"/>
+
+  <!-- Interlinear tab -->
+
+  <var id="txtInterlinear" set="$txtTABS;37:Analyze"/>
+
+  <var id="txtLt" set="$INSERT;43:Literal Translation"/>
+  <var id="txtNote" set="$INSERT;43:Note"/>
+
+  <var id="txtDataRow" set="$txtTABS;9:m_tpAnalyze.AccessibleName/$NL;20:m_idcPane/20:Div"/>
+
+  <!-- Row heading line -->
+  <var id="txtRowHeads" set="$txtDataRow;/$Text;/20:InnerPile/$Text"/>
+  <var id="txtRowCol" set="$txtDataRow;/$Text;/20:InnerPile"/>
+	<!-- $txtRowCol;[n] is the nth column in the data row where 1 is the heading column -->
+	<!-- $txtRowCol;[n]/$Text;[m] is the mth line or group in the nth column in the data row -->
+
+  <!-- free translation -->
+  <!--var id="txtFt" set="$INSERT;43:Free Translation"/-->
+  <var id="txtFt" set="$txtDataRow;/$Text;[2]"/>
+
+  <var id="txtComment" set="$txtTABS;9:m_tpInfo.AccessibleName/$NL;9:Comment:[2]/grp:RootSite/$Text"/>
+
+  <!-- Configure Interlinear Lines dialog -->
+
+  <var id="cilUp" set="$NL;43:NAMELESS"/><!-- Up arrow button -->
+  <var id="cilDown" set="$nl;[2]43:NAMELESS"/><!-- Down arrow button -->
+  <var id="cilWsDrop" set="$nl;[3]/43:Open"/><!-- Writing System drop down widget -->
+  <var id="cilAvailableLines" set="9:Available lines:[2]/34:"/>
+  <var id="cilDisplayedLines" set="9:Displayed lines:[2]/34:"/>
+
+  <!-- Text Document -->
+
+</include>

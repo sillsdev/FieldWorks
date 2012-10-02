@@ -1,0 +1,127 @@
+
+\ca W Prt Linker
+\cr W W
+
+
+\maxnull 1
+\maxprops 255
+\maxp 5
+\maxi 0
+\maxs 5
+\maxr 2
+\maxn 1
+\mcl DerivAffix 23592 23607 24116 24121 39921 39933 24746 24749 24752 24755 24760 24766 24772 24778 24685 24239 24246 24150 24154 24158 24162 24166 58173 24653 24060 24065 24070 24075 24080 23581 23213 23349 23356 23520 23525 23532 23538 23201 22889 22898 16523
+\mp Proclitic Enclitic
+\mp RootPOS0 RootPOS255 RootPOS256 RootPOS13146 RootPOS13147 RootPOS13148 RootPOS13339 RootPOS13681 RootPOS24234 RootPOS24235 RootPOS24236 RootPOS257 RootPOS258 RootPOS16929 RootPOS16930 RootPOS22932 RootPOS13605 RootPOS13683 RootPOS13696 RootPOS13697 RootPOS13698 RootPOS13744 RootPOS13765 RootPOS13766 RootPOS23342 RootPOS19944 RootPOS20333 RootPOS20334 RootPOS20335 RootPOS22754 RootPOS22963 RootPOS22964 RootPOS23053 RootPOS23345 RootPOS23389 ToInflClass15408 ToInflClass15409 ToInflClass15410 ToInflClass15411 ToInflClass17760 ToInflClass17761 ToInflClass17765 ToInflClass17766 ToInflClass23233 ToInflClass23234 ExcpFeat31275Plus FromExcpFeat31275Plus ToExcpFeat31275Plus ExcpFeat31278Plus FromExcpFeat31278Plus ToExcpFeat31278Plus ExcpFeat39912Plus FromExcpFeat39912Plus ToExcpFeat39912Plus ExcpFeat39915Plus FromExcpFeat39915Plus ToExcpFeat39915Plus ExcpFeat39918Plus FromExcpFeat39918Plus ToExcpFeat39918Plus ExcpFeat39930Plus FromExcpFeat39930Plus ToExcpFeat39930Plus ExcpFeat39936Plus FromExcpFeat39936Plus ToExcpFeat39936Plus ExcpFeat57399Plus FromExcpFeat57399Plus ToExcpFeat57399Plus ExcpFeat57429Plus FromExcpFeat57429Plus ToExcpFeat57429Plus StemNameAffix66683 StemNameAffix66696 StemNameAffix66698
+\ap Bound  MSEnvPOS255 MSEnvPOS256 MSEnvPOS13146 MSEnvPOS13147 MSEnvPOS13148 MSEnvPOS13339 MSEnvPOS13681 MSEnvPOS24234 MSEnvPOS24235 MSEnvPOS24236 MSEnvPOS257 MSEnvPOS258 MSEnvPOS16929 MSEnvPOS16930 MSEnvPOS22932 MSEnvPOS13605 MSEnvPOS13683 MSEnvPOS13696 MSEnvPOS13697 MSEnvPOS13698 MSEnvPOS13744 MSEnvPOS13765 MSEnvPOS13766 MSEnvPOS23342 MSEnvPOS19944 MSEnvPOS20333 MSEnvPOS20334 MSEnvPOS20335 MSEnvPOS22754 MSEnvPOS22963 MSEnvPOS22964 MSEnvPOS23053 MSEnvPOS23345 MSEnvPOS23389 InflClass15408 ICA15408 InflClass15409 ICA15409 InflClass15410 ICA15410 InflClass15411 ICA15411 InflClass17760 ICA17760 InflClass17761 ICA17761 InflClass17765 ICA17765 InflClass17766 ICA17766 InflClass23233 ICA23233 InflClass23234 ICA23234 ICA17765ICA17766 ICA17760ICA17761  StemName66683 StemName66696 StemName66698 NotStemName66683 NotStemName66696
+\mcc 13643 +/  ~_  22672
+\mcc 24395 +/ 13423  ~_
+\mcc 24395 +/ 23642  ~_
+\mcc 24395 +/ 23066  ~_
+\mcc 23066 +/  ~_  22831
+\mcc 13408 +/  ~_  19900
+\mcc 13781 +/  ~_  24551
+\mcc 13781 +/  ~_  17786
+\mcc 23066 +/  ~_  17808
+\mcc 13491 +/  ~_  24395
+\mcc 13408 +/  ~_  22889
+\mcc 24272 +/  ~_  24239
+\mcc 13541 +/  ~_  24150
+\mcc 13643 +/  ~_  24150
+\mcc 24395 +/  ~_  23532
+\mcc 24395 +/  ~_  23520
+\mcc 19972 +/ 22889  ~_
+\mcc 18504 +/ 18397 ...  ~_
+\mcc 63031 +/ 17047 ...  ~_
+\mcc 18527 +/ 18397 ...  ~_
+\mcc 63066 +/ 17047 ...  ~_
+\ancc 24398 / _ 24789 23535
+\ancc 18146 / 18183 _
+\ancc 24093 / 18183 _
+\ancc 18276 / 18183 _
+\ancc 20992 / _ 56162
+\ancc 20992 / _ 56593
+\scl 13144 | V
+
+ i e a o ii ee aa oo
+\scl 13145 | C
+
+ p t k v s x m n w y h ch tz tl ku
+\scl 24624 | LAB
+
+ p m
+\pt SEC_ST
+\pt OrderPfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+	OR (current orderclass = 0)
+	OR ((current orderclass = -1) AND (left orderclass = -1))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+
+\pt Category (left tocategory is current fromcategory)
+\it SEC_ST
+\it OrderIfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+	OR (current orderclass = 0)
+	OR ((current orderclass = -1) AND (left orderclass = -1))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\it Category
+\nt InterfixType_ST
+	 NOT (    (left    type is interfixprefix)
+		  AND (current type is interfixsuffix)
+		 )
+\rt SEC_ST
+\co only proclitics can occur left of a particle
+\rt RootCategory_ST
+  IF (current tocategory is Prt)
+THEN (left property is Proclitic)
+
+\st SEC_ST
+\st OrderSfx_ST
+(    (left orderclassmin < current orderclassmin)
+AND (left orderclassmax < current orderclassmax) )
+OR (current orderclass = 0)
+OR ((current orderclass = 1) AND (left orderclass = 1))
+OR ((current orderclass = 32000) AND (left orderclass = 32000))
+OR ((current orderclassmin = 1) AND (current orderclassmax = 31999))
+OR ((left orderclassmin = 1) AND (left orderclassmax = 31999))
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\st SuffixCategory_ST
+   (left tocategory is current fromcategory)
+OR
+   | only enclitics can go on particles
+   (  IF (left tocategory is Prt)
+	THEN (current property is Enclitic)
+   )
+\ft OrderFinal_FT
+IF   (    (current orderclass = 0)
+	  AND (NOT (current type is root))
+	  AND (FOR_SOME_LEFT  (LEFT  orderclass ~= 0))
+	  AND (FOR_SOME_RIGHT (RIGHT orderclass ~= 0))
+	 )
+THEN (   (LEFT orderclass <= RIGHT orderclass)
+	  OR (    (LEFT  orderclass = -1)
+		  AND (RIGHT orderclass ~= -32000)
+		  )
+	  OR (    (RIGHT orderclass = 1)
+		  AND (LEFT  orderclass ~= 32000)
+		  )
+	 )
+\ft BoundStemOrRoot_FT
+IF   (current property is Bound)
+THEN (NOT (    (current type is initial)
+		   AND (current type is final))
+	 )
+\ft MCC_FT
+
+\patr TreeStyle none
+\patr ShowGlosses Off
+\patr ShowFeatures On

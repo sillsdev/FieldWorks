@@ -1,0 +1,31 @@
+// Extracted from WorldPad.rc
+kridOldWritingSystemsDlg DIALOG DISCARDABLE  0, 0, 325, 161
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Writing System Properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+	LTEXT           "&Writing Systems:",IDC_STATIC,7,6,58,8
+	LISTBOX         kctidWritingSystems,7,15,91,108,WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "&Add...",kctidAddWs,8,119,40,14
+	PUSHBUTTON      "&Delete...",kctidDeleteWs,58,119,40,14
+	LTEXT           "&Name:",IDC_STATIC,107,17,42,11
+	EDITTEXT        kctidWsName,149,15,105,13,ES_AUTOHSCROLL
+	LTEXT			"Code:",IDC_STATIC,263,17,37,11
+	EDITTEXT        kctidWsCode,288,15,30,13,ES_READONLY
+	LTEXT           "D&escription:",IDC_STATIC,107,34,42,11
+	EDITTEXT        kctidWsDescrip,149,32,169,13,ES_AUTOHSCROLL
+	GROUPBOX        "&Keyboard",IDC_STATIC,107,50,101,85
+	COMBOBOX        kctidKeyboardType,114,61,87,36,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "&Language ID:",IDC_STATIC,115,81,51,8
+	COMBOBOX        kctidLangId,114,90,87,81,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	LTEXT           "&Keyman Keyboard:",IDC_STATIC,115,110,80,8
+	COMBOBOX        kctidKeymanKeyboard,114,119,87,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	GROUPBOX        "&Rendering",IDC_STATIC,217,50,101,85
+	CONTROL         "Ri&ght-to-left",kctidRightToLeft,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,224,63,52,10
+	LTEXT           "&Font:",IDC_STATIC,224,81,26,8
+	COMBOBOX        kctidFont,224,90,86,81,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+	PUSHBUTTON      "Font Feature&s...",kctidFeatures,224,113,86,14
+	DEFPUSHBUTTON   "OK",kctidOk,162,143,46,14
+	PUSHBUTTON      "Cancel",kctidCancel,217,143,46,14
+	PUSHBUTTON      "Help...",kctidHelp,272,143,46,14
+END

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<parameters>
+		<clerks>
+			<clerk id="OccurrencesOfSelectedUnit">
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit"/>
+				<recordList owner="WordformInventory" property="MatchingConcordanceItems" convertRemainingDummiesOnIdle="false" convertDummiesSelected="true">
+					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems"/>
+				</recordList>
+				<sortMethods/>
+			</clerk>
+		</clerks>
+		<tools>
+			<tool label="Concordance" value="concordance" icon="SideBySideView">
+				<control id="concordanceControl">
+					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceControl"/>
+					<parameters id="concordanceControl" clerk="OccurrencesOfSelectedUnit"/>
+				</control>
+			</tool>
+		</tools>
+	</parameters>
+</root>

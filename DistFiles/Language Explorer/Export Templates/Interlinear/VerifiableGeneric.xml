@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FxtDocumentDescription dataLabel="Verifiable generic XML" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*" mode="applySingleTransform" transform="xml2Verifiable.xsl">
+Export to a generic XML format which can be verfied by an XSD schema. This format may be useful for further transforms that require a verifiable input, but does not preserve the order of the interlinear lines. To verify, copy the file FlexInterlinear.xsd (from Program Files\SIL\FieldWorks\Language Explorer\Export Templates\Interlinear) to your output directory.
+</FxtDocumentDescription>

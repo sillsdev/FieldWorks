@@ -1,0 +1,449 @@
+c	se2tr_2007.cct modified by cjs March 2007. Originally from
+c	se2tr3.CCT  Standard Encoding to Transliteration Encoding ver 3  4-25-96  tvw
+c	  for SIL Heb Trans 1.0 Transliteration Font as per Joan,  3-26-96 tvw
+
+c	  designed to run on HEB DB files, with each word in a field, space before, nl after,
+c	 / (morpheme break) removed, 00 (end of verse) moved to \ep field.
+
+c	modified by cjs (April 2003) to ensure that this applies to \lt and \mt in the same way as \wt
+c	modified by cjs (April 2003) to protect article from treatment as a furtive pathah
+c	modified by cjs (March 2007) to ensure correct treatment of hatephs with medial metheg
+
+begin > store(white) ' ' nl
+	store(wdend) ' -?:'  nl endstore c only - or nl in hdb, : (end of verse) and ? (end of line)  in BHS
+	store(wdbeg) ' ' nl endstore  c should only be space or nl: only space in hdb
+
+c se cants, in order to eat them out of the translit conversion
+	  c paseq,zakef,segolta,telisha_qetanna,telisha_gedola,pazer_gad,ole_weyored
+	  c  pazer,zakef_gadol,pashta,geresh,gershayim,illuj,sarqa,salseleth,left_pashta,
+		c left_zarqa
+	  c metheg,yetib,tebir,galgal,tipha,mereka,mereka_k,munah,darga,athnah
+	  c upper and lower puncta (d178 and d179) added cjs March 2007
+store(secant) d124 d128 d129 d130 d131 d132 d133 d134 d135 d136 d137
+	 d138 d139 d140 d141 d142 d143 d144
+	d149 d152 d153 d154 d155 d156 d157 d158 d159 d161
+	   d178 d179
+
+c begadhkephath
+   store(bkcons) 'bgdkptBGDKPT'
+   store(nontBK) 'bgdkpBGDKP'
+   store(nonbk) "'hwzxXylmnsvcqrSWH"   c non begad kefat cons
+   store(cons) "'hwzxXylmnsvcqrSWHbgdkptBGDKPT"   c all consonants
+   store(nonycons) "'hwzxXlmnsvcqrSWHbgdkptBGDKPT"   c all consonants except yod
+   store(gutteral) d039 d118 d104 d120 c aleph, ayin, he, heth
+   store(nonmcons) "'hwzxXylnsvcqrSWHbgdkptBGDKPT"   c all consonants except mem
+   store(nonwcons) "'hzxXylmnsvcqrSWHbgdkptBGDKPT"   c all consonants except waw
+   store(nonlbhncons) "'wzxXymsvcqrSWHgdkptBGDKPT"   c all consonants except lamed, bet, he, nun,
+   store(okalcons) "hkmn" d244 c consonants for the 'okal rule
+   store(bkl) "bklBK" c consonants for infinitive construct
+   store(nonhcons) "'wzxXylmnsvcqrSWHbgdkptBGDKPT"
+   store(nonmycons) "'hwzxXlnsvcqrSWHbgdkptBGDKPT" c all consonants except yod, mem
+   store(nonwhbklm) "'zxXynsvcqrSWHgdpt" c all consonants except "whbklm"
+   store(whbklm) "whbklm" c consonants for the kamets-hatuph rule
+   store(km)  "km" c consonants for kamets-hatuph rule
+
+c vowels
+store(shvowel) d097 d105 d101 d111 d117 c patah, hireq, segol, kamets-hatuph, qibuts
+store(nonpshvowel) d105 d101 d111 d117 c hireq, segol, kamets-hatuph, qibuts
+store(lgvowel) d065 d069 d079 d202 d203 d228 d234 d244 d246 d251 c qamets, tsere, holem, sureq
+store(vowel)  'aAoOeEiu' d202 d203 d225 d228 d233 d234 d235 d238 d243 d244 d246 d248 d251 d252  c all vowels (default)
+store(nonsvowel)  'aAoOeEiu' d202 d203 d225 d228 d233 d234 d235 d238 d243 d244 d246 d248 d252  c all vowels (default)
+store(ie) 'ieE' c vowels for the doubling of 'y' in 'iy' dagesh
+store(nonslgvowel) d065 d069 d079 d105 d244 d228 d246 d202 d234 c qamets, tsere, holem, plus hireq, except sureq
+store(noniAvowel)  'aoOeEu' d202 d203 d225 d228 d233 d234 d235 d238 d243
+		d244 d246 d248 d251  c all vowels except hireq, kamets, shewa
+
+c  (forte/lene)
+store(dagesh) d208
+
+c furtive patah cons
+store(fp) 'hxv'
+
+	store(num) '1234567890' endstore
+
+	write 'converting from SE3 to TR3 encoding' nl
+	use(main)
+
+c write spin definition (makes spining bar so we can see that something
+c                        is happening.)
+define(wr_spin) > incr(spin) write d8
+	 ifeq(spin) '1' write '|' endif
+	 ifeq(spin) '2' write '/' endif
+	 ifeq(spin) '3' write '-' endif
+	  ifeq(spin) '4' write '\'  store(spin) '0' endstore endif
+
+c  processing for intervening cantillation marks
+c for one letter
+define(proc1a) > dup back(2)
+	store(temp) fwd(1) endstore   c dump first char
+	store(temp) endstore
+c for two letters
+define(proc1b) > dup back(3)
+	store(temp) fwd(2) endstore   c dump first 2 chars
+	store(temp) endstore
+
+
+c ********* ( this part is to handle Hebrew Data Base sfm environment
+group(main)
+'\wt '	>	do(wr_spin) dup use(start)  c field for making stand alone translit Heb OT
+
+'\mt'	>	next
+'\lt'	>	dup use(morfnum)  c field for creating query links to lexicons
+
+group(morfnum)
+any(num) ' '	>	dup use(start) c pass on the morf num
+
+c ********* this part is to handle Hebrew Data Base sfm environment )
+
+c silent shewa in separate group to keep from getting into an infinite loop
+
+group(start)
+any(nonwhbklm) any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(4)
+							else out(c1) d252 out(c2) back(5) endif
+							use(convert)
+any(nonwhbklm) 'a' any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(4)
+							else out(c1) d252 out(c2) back(5) endif
+							use(convert)
+any(whbklm) any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(4)
+							else out(c1) d252 out(c2) back(5) endif
+							use(convert)
+any(whbklm) 'a' any(nonmycons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(4)
+							else out(c1) d252 out(c2) back(5) endif
+							use(convert)
+
+any(nonwhbklm) d208 any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+any(nonwhbklm) d208 'a' any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+
+'GG' any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+'GG' 'a' any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+
+'DD' any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+'DD' 'a' any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+
+'PP' any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+'PP' 'a' any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+
+'TT' any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+'TT' 'a' any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+any(whbklm) d208 any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+any(whbklm) d208 'a' any(nonmycons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+'BB' any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+'BB' 'a' any(nonmycons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+'KK' any(nonpshvowel) any(cons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+'KK' 'a' any(nonmycons) d252 any(cons) > dup back(3) store(c1) fwd endstore
+							store(shewa) fwd endstore
+							store(c2) fwd endstore
+							ifneq(c1) cont(c2)
+							out(c1) out(c2) back(5)
+							else out(c1) d252 out(c2) back(6) endif
+							use(convert)
+
+'' > use(convert)
+
+group(convert)
+nl	>	dup use(main)
+
+c punctuation/paragraph unit markers
+
+c "-"	>	"-"	c maqqeph stay as dash 8-14-95
+c "."	>	d208	c dagesh       c  from 'D'  1-16-96 tvw
+c ","	>	"&"	c rape
+
+c strip cants
+any(secant)	>	''  use(start) c eat out
+
+c begadhkephath  'bgdkpt'
+  'b' d208	>	'B' back use(start)
+  'g' d208	>	'G' back use(start)
+  'd' d208	>	'D' back use(start)
+  'k' d208	>	'K' back use(start)
+  'p' d208	>	'P' back use(start)
+  't' d208	>	'T' back use(start)
+
+c begadhkephath  'bgdkpt' after the makkef
+ 'h-' 'b' d208 	> dup back(2) 'BB' store(junk) fwd(2) endstore back(4) use(start)
+  'h-' 'g' d208 	> dup back(2) 'GG' store(junk) fwd(2) endstore back(4) use(start)
+  'h-' 'd' d208 	> dup back(2) 'DD' store(junk) fwd(2) endstore back(4) use(start)
+  'h-' 'k' d208 	> dup back(2) 'KK' store(junk) fwd(2) endstore back(4) use(start)
+  'h-' 'p' d208 	> dup back(2) 'PP' store(junk) fwd(2) endstore back(4) use(start)
+  'h-' 't' d208 	> dup back(2) 'TT' store(junk) fwd(2) endstore back(4) use(start)
+
+c begadhkephath  'bgdkpt' after a vowel
+
+  any(cons) any(shvowel) 'b' d208 any(vowel)	> dup back(3) 'BB'
+							store(junk) fwd(2) endstore back(4) use(start)
+  any(cons) any(shvowel) 'g' d208 any(vowel)	> dup back(3) 'GG'
+							store(junk) fwd(2) endstore back(4) use(start)
+  any(cons) any(shvowel) 'd' d208 any(vowel)	> dup back(3) 'DD'
+							store(junk) fwd(2) endstore back(4) use(start)
+  any(cons) any(shvowel) 'k' d208 any(vowel)	> dup back(3) 'KK'
+							store(junk) fwd(2) endstore back(4) use(start)
+  any(cons) any(shvowel) 'p' d208 any(vowel)	> dup back(3) 'PP'
+							store(junk) fwd(2) endstore back(4) use(start)
+  any(cons) any(shvowel) 't' d208 any(vowel)	> dup back(3) 'TT'
+							store(junk) fwd(2) endstore back(4) use(start)
+
+  any(cons) d208 any(shvowel) 'b' d208 any(vowel)	> dup back(3) 'BB'
+							store(junk) fwd(2) endstore back(5) use(start)
+  any(cons) d208 any(shvowel) 'g' d208 any(vowel)	> dup back(3) 'GG'
+							store(junk) fwd(2) endstore back(5) use(start)
+  any(cons) d208 any(shvowel) 'd' d208 any(vowel)	> dup back(3) 'DD'
+							store(junk) fwd(2) endstore back(5) use(start)
+  any(cons) d208 any(shvowel) 'k' d208 any(vowel)	> dup back(3) 'KK'
+							store(junk) fwd(2) endstore back(5) use(start)
+  any(cons) d208 any(shvowel) 'p' d208 any(vowel)	> dup back(3) 'PP'
+							store(junk) fwd(2) endstore back(5) use(start)
+  any(cons) d208 any(shvowel) 't' d208 any(vowel)	> dup back(3) 'TT'
+							store(junk) fwd(2) endstore back(5) use(start)
+
+c  (forte/lene)
+any(nonbk) fol(dagesh)  >  dup dup  c double the non begad kefat consonant
+	store(trash) fwd(1) endstore use(start) c eat out the following dagesh
+
+c furtive patah - word final after hxv
+'a' prec(fp) fol(wdend)	>	back(1) d242 fwd(1)  use(start) c reverse the order of
+							c the patah and cons
+
+'ha' prec(white) fol(wdend) >	dup	c protects the article from the furtive pathah change
+
+
+c silent schewa - word final
+c d252 fol(wdend) > d248 use(start)
+
+any(cons) d252 any(cons) d252 > dup back(3)    c vps First schewa is silent
+					store(junk) fwd endstore back use(start)
+any(cons) d252 any(cons) d208 d252 > dup back(4)    c vps First schewa is silent
+					store(junk) fwd endstore back use(start)
+any(cons) d208 d252 any(cons) d252 > dup back(3)    c vps First schewa is silent
+					store(junk) fwd endstore back(2) use(start)
+any(cons) any(lgvowel) any(cons) d252 any(gutteral) > dup back(2)
+					store(junk) fwd endstore back(3) use(start)
+any(cons) any(lgvowel) any(cons) d252 any(bkcons) d208 > dup back(3)
+					store(junk) fwd endstore back(3) use(start)
+
+any(cons) d079 any(cons) d252 d110 d065 d104 > dup back(4) store(junk) fwd endstore
+						back(3) use(start)
+d107 d252 fol(wdend) > d107 back use(start)
+
+c silent schewa - lexical items
+'x' d065 'l' 'a' 'm' d252 any(cons) > dup back(2) store(junk) fwd endstore back(5)
+							use(start)
+
+c kamets hatuph
+any(nonwcons) d065 any(nonmcons) d208 any(vowel) > dup back(4) store(junk) fwd endstore
+						d111 back(2) use(start)
+any(cons) d065 any(cons) d252 any(cons) d252 > dup back(5) store(junk) fwd endstore
+						d111 back(2) use(start)
+any(nonlbhncons) d065 any(cons) d243 > dup back(3) store(junk) fwd endstore
+						d111 back(2) use(start)
+any(nonlbhncons) d208 d065 any(cons) d243 > dup back(3) store(junk) fwd endstore
+						d111 back(3) use(start)
+'h' d065 d120 d243 > dup back(3) store(junk) fwd endstore d111 back(2) use(start)
+'w' any(vowel) d121 d208 d065 any(cons) d065 any(cons) fol(wdend) > dup back(2)
+						store(junk) fwd endstore d111 back(7) use(start)
+'w' any(vowel) d116 d208 d065 any(cons) d065 any(cons) fol(wdend) > dup back(2)
+						store(junk) fwd endstore d111 back(7) use(start)
+
+d107 d065 d108 fol(wdend) > dup back(2) store(junk) fwd endstore d111 back(2) use(start)
+d107 d208 d065 d108 fol(wdend) > dup back(2) store(junk) fwd endstore d111 back(3) use(start)
+
+d075 d065 d108 fol(wdend) > dup back(2) store(junk) fwd endstore d111 back(2) use(start) c to take care
+							c of 'k' dagesh that's been changed to a 'K'
+any(bkl) d208 d252 any(cons) d065 any(cons) d252 > dup back(3) store(junk) fwd endstore
+			d111 back(5) use(start)
+any(bkl) d252 any(cons) d065 any(cons) d252 > dup back(3) store(junk) fwd endstore
+			d111 back(4) use(start)
+any(cons) d065 any(cons) d252 any(nontBK) d208 any(vowel) > dup back(6) store(junk) fwd endstore
+			d111 fwd store(junk) fwd endstore back(3) use(start)
+any(cons) d065 any(cons) d252 't' d208 any(noniAvowel) > dup back(6) store(junk) fwd endstore
+			d111 fwd store(junk) fwd endstore back(3) use(start)
+any(cons) d065 any(cons) d252 't' d208 'i' any(nonycons) > dup back(6) store(junk) fwd endstore
+			d111 fwd store(junk) fwd endstore back(3) use(start)
+
+any(cons) d065 any(cons) any(nontBK) d208 any(vowel) > dup back(5) store(junk) fwd endstore
+			d111 back(2) use(start)
+any(cons) d065 any(cons) 't' d208 any(noniAvowel) > dup back(5) store(junk) fwd endstore
+			d111 back(2) use(start)
+any(cons) d065 any(cons) 't' d208 'i' any(nonycons) > dup back(5) store(junk) fwd endstore
+			d111 back(2) use(start)
+
+
+c kamets hatuph lexical items
+'q' d065 'd' any(vowel) 'H' any(vowel) > dup back(5) store(junk) fwd endstore d111 back(2) use(start)
+'q' d065 d149 'd' any(vowel) 'H' any(vowel) > dup back(6) store(junk) fwd endstore d111 back(2) use(start)
+'x' d065 'k' d252 'm' any(nonsvowel) > dup back(5) store(junk) fwd endstore d111 back(2) use(start)
+'l' d252 d039 d065 'k' d252 'l' > dup back(4) store(junk) fwd endstore d111 back(4) use(start)
+d039 d065 'k' d252 'l' any(vowel) any(okalcons) > dup back(6) store(junk) fwd endstore
+						d111 back(2) use(start)
+'H' d065 'r' d252 'H' any(vowel) > dup back(5) store(junk) fwd endstore
+			d111 back(2) use(start)		c sheresh
+'m' d252 'vAl' > 'mv' d111 'l' back(4) use(start)	c Ez 14:13:5
+'v' d065 'z' d252 any(cons) any(nonslgvowel) > dup back(5) store(junk) fwd endstore		c oz rule
+						d111 back(2) use(start)
+'v' d065 'z-' > dup back(3) store(junk) fwd endstore d111 back(2) use(start)		c oz-makkef rule
+d039 any(vowel) 'b' d065 'd' d252 'k' any(vowel) > dup back(5) store(junk) fwd endstore
+								d111 fwd store(junk) fwd endstore
+								back(5) use(start)	c stray infinitive construct (Deu 28:20:13)
+d039 d065 'b' d252 'd' any(vowel) any(km) > dup back(6) store(junk) fwd endstore
+							d111 fwd store(junk) fwd endstore
+							back(3) use(start)	c stray infinitive construct (Deu 28:22:12)
+'q' d065 'd' d252 'q' d243 'd' > dup back(6) store(junk) fwd endstore d111 fwd
+					store(junk) fwd endstore back(3) use(start) c qdqd reduplication (Deu 28:35:13)
+d039 d065 'm' d252 'n' > dup back(4) store(junk) fwd endstore d111 fwd store(junk) fwd endstore
+				back(3) use(start) c Amen rule (II Kings 19:17:1)
+
+c final he dagesh
+'h' d208  fol(wdend) 	>	'h' d247 back(2) use(start)
+
+c final he dagesh and furtive patah  Ex 12:39 and Isa 44:8
+'h' d208 'a' fol(wdend) 	>	d242 'h' d247  back(3) use(start) c furpat, final dagesh
+
+c letter vowels
+any(ie) 'y' d208 > dup back store(junk) fwd endstore 'y' back(2) use(start) 	c hireq yod yod
+'iy' > d238 back use(start) 	c hireq-yod
+d069 'y' > d202 back use(start) c tsere-yod
+'ey' > d234 back use(start) 	c segol-yod
+d065 'h' d208 > d065 'h' d247 back(3) use(start) c h-mappiq
+d065 'h' fol(wdend) > d228 back use(start) c kamets-he
+
+c added to ensure correct treatment of hatephs with medial metheg
+d102	>	d233
+d254	>	d225
+
+any(vowel) d251 any(vowel) > dup back(2) store(junk) fwd endstore		c double sureq - first should be double waw
+				'ww' back(3) use(start)
+c The divine name
+c modified and extended, cjs October 2006
+
+	'y'	any(vowel)	'h'	any(vowel)	'w'	any(vowel)	'h'	>	'yhwh'		use(start)
+	'y'	any(vowel)	'h'			'w'	any(vowel)	'h'	>	'yhwh'		use(start)
+
+'He'	'y'	any(vowel)	'h'			'w'	any(vowel)	'h'	>	'Hyhwh'		use(start)
+'la'	'y'	any(vowel)	'h'			'w'	any(vowel)	'h'	>	'lyhwh'		use(start)
+'mE'	'y'	any(vowel)	'h'			'w'	any(vowel)	'h'	>	'myhwh'		use(start)
+'ûmE'	'y'	any(vowel)	'h'			'w'	any(vowel)	'h'	>	'wmyhwh'	use(start)
+
+'wa'	'y'			'h'	any(vowel)	'w'	any(vowel)	'h'	>	'wyhwh'		use(start)
+'la'	'y'			'h'	any(vowel)	'w'	any(vowel)	'h'	>	'lyhwh'		use(start)
+'bĞa'	'y'			'h'	any(vowel)	'w'	any(vowel)	'h'	>	'Byhwh'		use(start)
+
+'wa'	'y'			'h'			'w'	any(vowel)	'h'	>	'wyhwh'		use(start)
+'ba'	'y'			'h'			'w'	any(vowel)	'h'	>	'Byhwh'		use(start)
+'ha'	'y'			'h'			'w'	any(vowel)	'h'	>	'hyhwh'		use(start)
+'la'	'y'			'h'			'w'	any(vowel)	'h'	>	'lyhwh'		use(start)
+'mE'	'y'			'h'			'w'	any(vowel)	'h'	>	'myhwh'		use(start)
+'wüla'	'y'			'h'			'w'	any(vowel)	'h'	>	'wlyhwh'	use(start)
+'wülE'	'y'			'h'			'w'	any(vowel)	'h'	>	'wlyhwh'	use(start)
+'bĞa'	'y'			'h'			'w'	any(vowel)	'h'	>	'Byhwh'		use(start)
+'kĞa'	'y'			'h'			'w'	any(vowel)	'h'	>	'Kyhwh'		use(start)
+'ûba'	'y'			'h'			'w'	any(vowel)	'h'	>	'wByhwh'	use(start)
+
+
+c to keep from getting into infinite loop
+'' > fwd use(start)

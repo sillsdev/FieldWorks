@@ -1,0 +1,29 @@
+<!-- Basic IPA Symbol handling DTD
+-->
+<!ELEMENT SegmentDefinitions (SegmentDefinition+) >
+<!ELEMENT SegmentDefinition (Representations, Descriptions, Features) >
+<!ELEMENT Representations (Representation+) >
+<!ELEMENT Representation (#PCDATA) >
+<!-- unicodeCodePoints contains one or more 'uABCD' Unicode code points that describe this representation;
+	   we assume NFD
+	   -->
+<!ATTLIST Representation
+ unicodeCodePoints ID #REQUIRED
+ >
+ <!ELEMENT Descriptions (Description+) >
+ <!ELEMENT Description (#PCDATA) >
+<!-- lang is the language code for this description  -->
+ <!ATTLIST Description
+   lang CDATA #REQUIRED
+ >
+<!ELEMENT Features (FeatureValuePair*) >
+<!ELEMENT  FeatureValuePair EMPTY>
+<!--
+  feature refers to a Feature ID in the phonological feature catalog
+  value refers to a Value ID of a vlaue for the feature in the phonological feature catalog
+  N.B.  These values must be maintained by hand currently!
+	-->
+<!ATTLIST FeatureValuePair
+  feature CDATA #REQUIRED
+  value CDATA #REQUIRED
+>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="..\..\XSL\HelpFile.xsl"?>
+<test id="msgbox" num="0.12" abbr="msbx" file="StdCtrls\MsgBox.xml">
+ <title tag="msgbox">Message Box Tests</title>
+ <index>
+<li>test</li>
+</index>
+
+  <introduction>
+<p>A message box is a simple dialog. Its purpose is to alert the user to some condition or provide information. At least one button is presented to dismiss the message.</p>
+  </introduction>
+  <context>
+<p>Except for textual errors, bugs in message boxes are almost always due to another program unit. However, it is not often that the unit can be tied to a specific GUI element. The bug should be reported for the message box to let the developers find the unit. The first words of a bug report title for this control should be a noun phrase containing the name of the message box. Use <link uri="Button.xml" type="module">Button Tests</link> to test the message box buttons.</p>
+  </context>
+  <warning>
+<p>There is no project specification for this control, however, each message box is described in a specification.</p>
+  </warning>
+
+ <case id="msbxInsp" num="1" order="any">
+  <title tag="msbxInsp">Message Box Inspection</title>
+  <context>
+<p>When the message box is displayed</p>
+</context>
+
+   <p name="Principle">Visual inspection of the appearance and position of this control is to match the specification up to minor variations caused by the drawing tool or textual description of this control.</p>
+
+   <p name="Notes">A message box is usually "modal" - not allowing any thing in the application to be changed while it is showing. If the message box pertains to an area in a view, it should not obscure it.</p>
+
+  <step name="1.1" link="Bug">Inspect the appearance of the message box.
+   <r>The message box, its name, text and button(s) must have the styles, colors and sizes indicated in the specification.</r>
+   <p name="bug">Message box has incorrect appearance</p>
+  </step>
+  <step name="1.2" link="Bug">Inspect the location of the message box and its content relative to other visible controls.
+   <r>The message box and its content should be close to the positions indicated in the specification.</r>
+   <p name="bug">Message box has incorrect location</p>
+  </step>
+
+ </case>
+ <update date="Dec-20-00" author="MikeL">Test created.</update>
+
+</test>

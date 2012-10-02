@@ -1,0 +1,2838 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+	Microsoft ResX Schema
+
+	Version 2.0
+
+	The primary goals of this format is to allow a simple XML format
+	that is mostly human readable. The generation and parsing of the
+	various data types are done through the TypeConverter classes
+	associated with the data types.
+
+	Example:
+
+	... ado.net/XML headers & schema ...
+	<resheader name="resmimetype">text/microsoft-resx</resheader>
+	<resheader name="version">2.0</resheader>
+	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+		<value>[base64 mime encoded serialized .NET Framework object]</value>
+	</data>
+	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+		<comment>This is a comment</comment>
+	</data>
+
+	There are any number of "resheader" rows that contain simple
+	name/value pairs.
+
+	Each data row contains a name, and value. The row also contains a
+	type or mimetype. Type corresponds to a .NET class that support
+	text/value conversion through the TypeConverter architecture.
+	Classes that don't support this are serialized and stored with the
+	mimetype set.
+
+	The mimetype is used for serialized objects, and tells the
+	ResXResourceReader how to depersist the object. This is currently not
+	extensible. For a given mimetype the value must be set accordingly:
+
+	Note - application/x-microsoft.net.object.binary.base64 is the format
+	that the ResXResourceWriter will generate, however the reader can
+	read any of the formats listed below.
+
+	mimetype: application/x-microsoft.net.object.binary.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.soap.base64
+	value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+	mimetype: application/x-microsoft.net.object.bytearray.base64
+	value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+	<xsd:element name="root" msdata:IsDataSet="true">
+	  <xsd:complexType>
+		<xsd:choice maxOccurs="unbounded">
+		  <xsd:element name="metadata">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" use="required" type="xsd:string" />
+			  <xsd:attribute name="type" type="xsd:string" />
+			  <xsd:attribute name="mimetype" type="xsd:string" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="assembly">
+			<xsd:complexType>
+			  <xsd:attribute name="alias" type="xsd:string" />
+			  <xsd:attribute name="name" type="xsd:string" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="data">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+			  <xsd:attribute ref="xml:space" />
+			</xsd:complexType>
+		  </xsd:element>
+		  <xsd:element name="resheader">
+			<xsd:complexType>
+			  <xsd:sequence>
+				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+			  </xsd:sequence>
+			  <xsd:attribute name="name" type="xsd:string" use="required" />
+			</xsd:complexType>
+		  </xsd:element>
+		</xsd:choice>
+	  </xsd:complexType>
+	</xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+	<value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="UserHelpFile" xml:space="preserve">
+	<value>\Helps\FieldWorks_Language_Explorer_Help.chm</value>
+  </data>
+  <data name="khtpWelcomeToFieldworks" xml:space="preserve">
+	<value>Overview/welcome_to_fieldworks.htm</value>
+  </data>
+  <data name="khtpUnableToOpenProject" xml:space="preserve">
+	<value>User_Interface/Menus/File/Unable_to_Open_Project.htm</value>
+  </data>
+  <data name="khtpECProcessProperties" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Using_Setup_Processor_dialog_box.htm</value>
+  </data>
+  <data name="khtpCustomFields" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Custom_Fields/Custom_Fields_overview.htm</value>
+  </data>
+  <data name="khtpAddFromCatalog" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Using_Add_from_Catalog_dialog_box.htm</value>
+  </data>
+  <data name="khtpAddNewSense" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/add_a_new_sense.htm</value>
+  </data>
+  <data name="khtpWsAddPUAChar" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Add_PUA_Character.htm</value>
+  </data>
+  <data name="khtpWsModifyPUAChar" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Private_Use_Area_character_properties.htm</value>
+  </data>
+  <data name="khtpInsertMorphemeChooseFunction" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Ad_hoc_Rules/insert_a_morpheme_ad_hoc_rule.htm</value>
+  </data>
+  <data name="hktpInsertAllomorphChooseAllomorph" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Ad_hoc_Rules/insert_an_allomorph_ad_hoc_rule.htm</value>
+  </data>
+  <data name="khtpChoose-DefaultInflectionClass" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Category_Edit/choose_a_default_inflection_class.htm</value>
+  </data>
+  <data name="khtpConfigureColumns" xml:space="preserve">
+	<value>Basic_Tasks/Configure_Columns/Using_Configure_Columns_dialog_box.htm</value>
+  </data>
+  <data name="khtpConfigureInterlinearLines" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/configure_interlinear_lines_dialog_box.htm</value>
+  </data>
+  <data name="khtpCreateNewGrammaticalFunction" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Using_Create_New_Grammatical_Info_dialog_box.htm</value>
+  </data>
+  <data name="khtpEditGrammaticalFunction" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Using_Edit_Gram_Infodlg.htm</value>
+  </data>
+  <data name="khtpDeleteWordform" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Word_Analyses/Delete_a_wordform.htm</value>
+  </data>
+  <data name="khtpDictionaryEntry" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/dictionary_entry_dialog_box.htm</value>
+  </data>
+  <data name="khtpExportLexicon" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_overview.htm</value>
+  </data>
+  <data name="khtpExportNotebook" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_overview.htm</value>
+  </data>
+  <data name="khtpFindEntryToAddAllomorph" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/add_morpheme_as_allomorph_of_lexical_entry.htm</value>
+  </data>
+  <data name="khtpFindInDictionary" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Find_in_Dictionary_overview.htm</value>
+  </data>
+  <data name="khtpFindLexicalEntry" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_a_lexical_entry.htm</value>
+  </data>
+  <data name="khtpFindReversalEntry" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_a_reversal_entry.htm</value>
+  </data>
+  <data name="khtpImportSFMStep1" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/step_1_of_8_overview_and_backup.htm</value>
+  </data>
+  <data name="khtpImportSFMStep2" mimetype="">
+	<value>Beginning_Tasks/Importing_Data/Step_2_of_8_File_and_Setting.htm</value>
+  </data>
+  <data name="khtpImportSFMStep3" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Step_3_of_8_Language_mapping.htm</value>
+  </data>
+  <data name="khtpImportSFMStep4" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Step_4_of_8_Content_mapping.htm</value>
+  </data>
+  <data name="khtpImportSFMStep5" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/step_5_of_8_key_markers.htm</value>
+  </data>
+  <data name="khtpImportSFMStep6" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Step_6_of_8_Character_mapping.htm</value>
+  </data>
+  <data name="khtpImportSFMStep7" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Step_7_of_8_Readiness.htm</value>
+  </data>
+  <data name="khtpImportSFMStep8" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Step_8_of_8_Ready_to_Import.htm</value>
+  </data>
+  <data name="khtpImportSFMLanguageMapping" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Step_3_of_8_Language_mapping.htm</value>
+  </data>
+  <data name="khtpImportSFMModifyMapping" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Step_4_of_8_Content_mapping.htm</value>
+  </data>
+  <data name="khtpImportWordSet" xml:space="preserve">
+	<value>User_Interface/Menus/Insert/Import_a_word_set.htm</value>
+  </data>
+  <data name="khtpEditMorphBreaks" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/Insert_or_remove_morpheme_breaks.htm</value>
+  </data>
+  <data name="khtpProjectUtilities" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Language_Project_Utilities_overview.htm</value>
+  </data>
+  <data name="khtpFilterFor" xml:space="preserve">
+	<value>Basic_Tasks/Filtering_data/Using_Filter_for.htm</value>
+  </data>
+  <data name="khtpFilterRestrict" xml:space="preserve">
+	<value>Basic_Tasks/Filtering_data/Using_Restrict_dialog_box.htm</value>
+  </data>
+  <data name="khtpMergeAllomorph" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Merge_allomorphs.htm</value>
+  </data>
+  <data name="khtpMergeEntry" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Merge_entries.htm</value>
+  </data>
+  <data name="khtpMergeReversalEntry" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Reversal_Indexes/Merge_a_reversal_entry_or_subentry.htm</value>
+  </data>
+  <data name="khtpMergeSense" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Merge_senses.htm</value>
+  </data>
+  <data name="khtpMGA" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Using_Morphosyntactic_Gloss_Assistant.htm</value>
+  </data>
+  <data name="khtpMoveReversalEntry" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Reversal_Indexes/move_a_reversal_entry_or_subentry.htm</value>
+  </data>
+  <data name="khtpInsertEntry" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Create_a_lexical_entry.htm</value>
+  </data>
+  <data name="khtpFwNewLangProjHelpTopic" xml:space="preserve">
+	<value>User_Interface/Menus/File/Create_a_new_Fieldworks_project.htm</value>
+  </data>
+  <data name="khtpPictureProperties" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Insert_a_picture.htm</value>
+  </data>
+  <data name="khtpMoveOrCopyFiles" xml:space="preserve">
+	<value>User_Interface/Menus/File/Project_Properties/Move_Or_Copy_Files.htm</value>
+	<comment>help topic ID for moving Files when changing the default location</comment>
+  </data>
+  <data name="khtpMoveOrCopyFile" xml:space="preserve">
+	<value>User_Interface/Menus/File/Project_Properties/Move_Or_Copy_Files.htm</value>
+	<comment>help topic ID for the move or copy dialog from the pronunciation field.</comment>
+  </data>
+  <data name="khtpReferenceSetDetails" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/edit_reference_set_details.htm</value>
+  </data>
+  <data name="khtpTryAWord" xml:space="preserve">
+	<value>User_Interface/Menus/Parser/Try_a_word.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-CitationForm" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Citation_Form_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-MorphType" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Morph_Type_Field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-Bibliography" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/bibliography_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-Comment" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Note_field.htm</value>
+  </data>
+  <data name="khtpField-LexEtymology-Comment" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Comment_field_Etymology.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-Condition" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Condition_field.htm</value>
+  </data>
+  <data name="khtpFieldLexEntryCrossReference" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/cross_references_field.htm</value>
+  </data>
+  <data name="khtpField-LexPronunciation-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Pronunciation_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-EntryType" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Entry_Type_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-Environments" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Environments_field.htm</value>
+  </data>
+  <data name="khtpField-LexEtymology-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Etymology_field.htm</value>
+  </data>
+  <data name="khtpField-LexEtymology-Gloss" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Gloss_field_Etymology.htm</value>
+  </data>
+  <data name="khtpField-MoAffixAllomorph-Position" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Infix_Positions_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-LiteralMeaning" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Literal_Meaning_field.htm</value>
+  </data>
+  <data name="khtpField-LexPronunciation-Location" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Location_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Restrictions_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-SummaryDefinition" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Summary_Definition_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-DomainTypes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/academic_domains_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-AnthroCodes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/anthropology_categories_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-AnthroNote" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/anthropology_note_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-Bibliography" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/bibliography_field.htm</value>
+  </data>
+  <data name="khtpField-CmPicture-Caption" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/caption_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-Definition" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/definition_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-EncyclopedicInfo" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/encyclopedic_info_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-DiscourseNote" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/discourse_note_field.htm</value>
+  </data>
+  <data name="khtpField-LexExampleSentence-Example" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/example_field.htm</value>
+  </data>
+  <data name="khtpField-CmFile-OriginalPath" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/File_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-GeneralNote" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/general_note_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-Gloss" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Gloss_field_Sense.htm</value>
+  </data>
+  <data name="khtpField-LexSense-GrammarNote" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/grammar_note_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-MorphoSyntaxAnalysis" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Grammatical_Info_field.htm</value>
+  </data>
+  <data name="khtpFieldLexSenseLexicalRelations" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/lexical_relations_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-PhonologyNote" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/phonology_note_field.htm</value>
+  </data>
+  <data name="khtpField-CmPicture-Picture" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Picture_field.htm</value>
+  </data>
+  <data name="khtpField-LexExampleSentence-Reference" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Reference_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/restrictions_field.htm</value>
+  </data>
+  <data name="khtpFieldLexSenseReversalEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/reversal_entries_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-ScientificName" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/scientific_name_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-SemanticDomains" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/semantic_domains_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-SemanticsNote" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/semantics_note_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-SenseType" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Sense_Type_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-SocioLinguisticsNote" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/SocioLinguistics_Note_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-Source" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Source_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Status_field.htm</value>
+  </data>
+  <data name="khtpField-CmTranslation-Translation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Translation_field.htm</value>
+  </data>
+  <data name="khtpField-CmTranslation-Type" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Type_field.htm</value>
+  </data>
+  <data name="khtpField-LexSense-UsageTypes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Usages_field.htm</value>
+  </data>
+  <data name="khtpField-rapidDataEntry-CmSemanticDomain-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Categorized_Entry_fields/Vernacular_field.htm</value>
+  </data>
+  <data name="khtpField-LexPronunciation-CVPattern" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/cv_pattern_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-ShowAsHeadwordIn" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Show_As_Headword_In_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-IsAbstract" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Is_Abstract_Form_field.htm</value>
+  </data>
+  <data name="khtpField-LexEtymology-Source" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Source_field_Etymology.htm</value>
+  </data>
+  <data name="khtpField-LexPronunciation-Tone" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Tone_field.htm</value>
+  </data>
+  <data name="khtpField-MoAffixAllomorph-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Lexeme_Form_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntryRef-VariantLevel-MoStemAllomorph-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Variants_level_fields/Variant_Form_field.htm</value>
+  </data>
+  <data name="khtpField-MoStemAllomorph-IsAbstract" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Is_Abstract_Form_fld_Allomorph.htm</value>
+  </data>
+  <data name="khtpField-MoStemAllomorph-MorphType" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Morph_type_fld_allomorph.htm</value>
+  </data>
+  <data name="khtpField-MoStemAllomorph-PhoneEnv" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Environments_fld_allomorph.htm</value>
+  </data>
+  <data name="khtpField-MoAffixAllomorph-IsAbstract" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_fields/is_abstract_form_field_allomorph.htm</value>
+  </data>
+  <data name="khtpField-MoAffixAllomorph-MorphType" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_fields/morph_type_field_allomorph.htm</value>
+  </data>
+  <data name="khtpField-MoAffixAllomorph-PhoneEnv" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_fields/environments_field_allomorph.htm</value>
+  </data>
+  <data name="khtpField-MoDerivAffMsa-FromProdRestrict" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/from_exception_features_field.htm</value>
+  </data>
+  <data name="khtpField-MoDerivAffMsa-FromInflectionClass" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/from_inflection_class_field.htm</value>
+  </data>
+  <data name="khtpField-MoDerivAffMsa-FromMsFeatures" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/from_inflection_features_field.htm</value>
+  </data>
+  <data name="khtpField-MoDerivAffMsa-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/Category_Info_field.htm</value>
+  </data>
+  <data name="khtpField-MoStemMsa-InflectionClass" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/Inflection_Class_field_Lex_Edit.htm</value>
+  </data>
+  <data name="khtpField-MoStemMsa-MsFeatures" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/Inflection_Features_field.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffMsa-Slots" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/Slots_field.htm</value>
+  </data>
+  <data name="khtpField-MoDerivAffMsa-ToProdRestrict" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/To_Exception_Features_field.htm</value>
+  </data>
+  <data name="khtpField-MoDerivAffMsa-ToInflectionClass" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/To_Inflection_Class_field.htm</value>
+  </data>
+  <data name="khtpField-MoDerivAffMsa-ToMsFeatures" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/To_Inflection_Features_field.htm</value>
+  </data>
+  <data name="khtpField-ReversalIndexEntry-PartOfSpeech" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Reversal_Indexes_fields/category_field.htm</value>
+  </data>
+  <data name="khtpField-ReversalIndexEntry-ReversalForm" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Reversal_Indexes_fields/form_field.htm</value>
+  </data>
+  <data name="khtpField-ReversalIndexEntry-ReferringSenses" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Reversal_Indexes_fields/senses_field.htm</value>
+  </data>
+  <data name="khtpField-ReversalIndexEntry-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Reversal_Indexes_fields/Subentries_field.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/abbreviation_field_category_category_edit.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-AffixSlotsSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Affix_Slots_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-AffixTemplatesSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Affix_Templates_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixTemplate-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/description_field_template_category_edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixTemplate-Final" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/requires_more_derivation_field.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixTemplate-Table" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Table_field.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoStemMsa-PartOfSpeech" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Category_field_Compound_Rules.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoEndoCompound-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Description_field_Compound_Rules.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoExoCompound-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Description_field_Compound_Rules.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoEndoCompound-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Name_field_Compound_Rules.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoExoCompound-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Name_field_Compound_Rules.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoEndoCompound-HeadLast" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Right_Headed_field.htm</value>
+  </data>
+  <data name="khtpField-PhPhoneme-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonemes_fields/description_field_phonemes.htm</value>
+  </data>
+  <data name="khtpField-PhPhoneme-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonemes_fields/name_field_phonemes.htm</value>
+  </data>
+  <data name="khtpField-PhCode-Representation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonemes_fields/representation_field_phonemes.htm</value>
+  </data>
+  <data name="khtpField-PhCode-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonemes_fields/representations_field_phonemes.htm</value>
+  </data>
+  <data name="khtpField-PhNCSegments-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Natural_Classes_fields/name_field_natural_classes.htm</value>
+  </data>
+  <data name="khtpField-PhNCSegments-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Natural_Classes_fields/Abbreviation_field_Natural_Classes.htm</value>
+  </data>
+  <data name="khtpField-PhNCSegments-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Natural_Classes_fields/description_field_natural_classes.htm</value>
+  </data>
+  <data name="khtpField-PhNCSegments-Segments" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Natural_Classes_fields/Phonemes_field_Natural_Classes.htm</value>
+  </data>
+  <data name="khtpField-PhEnvironment-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Environments_fields/description_field_environments.htm</value>
+  </data>
+  <data name="khtpField-PhEnvironment-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Environments_fields/name_field_environments.htm</value>
+  </data>
+  <data name="khtpField-PhEnvironment-StringRepresentation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Environments_fields/String_Representation_field_Environments.htm</value>
+  </data>
+  <data name="khtpField-MoMorphAdhocProhib-Adjacency" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Cannot_Occur_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpField-MoAdhocProhibGr-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Description_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpField-MoAlloAdhocProhib-FirstAllomorph" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Key_Allomorph_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpField-MoAdhocProhibGr-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Members_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpField-MoAdhocProhibGr-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Name_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpField-MoAlloAdhocProhib-RestOfAllos" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Other_Allomorphs_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpLinguaLinksImport" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/import_lingualinks_data.htm</value>
+  </data>
+  <data name="khtpLinguaLinksImportLink" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/prepare_lingualinks_data.htm</value>
+  </data>
+  <data name="khtpLinguaLinksImportLanguageMapping" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Specify_language_mapping_dialog_box.htm</value>
+  </data>
+  <data name="khtpDocConfigure" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Configure_Dictionary_dialog_box.htm</value>
+  </data>
+  <data name="khtpField-FsComplexFeature-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/name_field_feature_features.htm</value>
+  </data>
+  <data name="khtpField-FsComplexFeature-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/abbreviation_field_feature_features.htm</value>
+  </data>
+  <data name="khtpField-FsComplexFeature-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/description_field_feature_features.htm</value>
+  </data>
+  <data name="khtpField-FsClosedFeature-ShowInGloss" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Show_Abbr_as_label_field_Features.htm</value>
+  </data>
+  <data name="khtpField-FsComplexFeature-Type" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/Type_field_Features.htm</value>
+  </data>
+  <data name="khtpField-FsSymFeatVal-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/value_field_features.htm</value>
+  </data>
+  <data name="khtpField-FsClosedFeature-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/name_field_feature_features.htm</value>
+  </data>
+  <data name="khtpField-FsClosedFeature-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/abbreviation_field_feature_features.htm</value>
+  </data>
+  <data name="khtpField-FsClosedFeature-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/description_field_feature_features.htm</value>
+  </data>
+  <data name="khtpField-FsComplexFeature-ShowInGloss" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/Show_Abbreviation_as_its_label_field_Features.htm</value>
+  </data>
+  <data name="khtpField-ProdRestrictEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Exception_Features_fields/name_field_exception_features.htm</value>
+  </data>
+  <data name="khtpField-ProdRestrictEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Exception_Features_fields/abbreviation_field_exception_features.htm</value>
+  </data>
+  <data name="khtpField-ProdRestrictEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Exception_Features_fields/description_field_exception_features.htm</value>
+  </data>
+  <data name="khtpField-CmBaseAnnotation-BeginObject" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Problems_fields/Problem_Object_field_Problems.htm</value>
+  </data>
+  <data name="khtpField-CmBaseAnnotation-Text" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Problems_fields/Text_field_Problems.htm</value>
+  </data>
+  <data name="khtpField-MoMorphAdhocProhib-FirstMorpheme" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Key_Morpheme_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpField-MoMorphAdhocProhib-RestOfMorphs" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/other_morphemes_field_ad_hoc_rules.htm</value>
+  </data>
+  <data name="khtpField-MoAlloAdhocProhib-Adjacency" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Cannot_Occur_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpField-FsClosedFeature-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/Values_field_Features.htm</value>
+  </data>
+  <data name="khtpField-FsSymFeatVal-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/name_field_value_features.htm</value>
+  </data>
+  <data name="khtpField-FsSymFeatVal-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/abbreviation_field_value_features.htm</value>
+  </data>
+  <data name="khtpField-FsSymFeatVal-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/description_field_value_features.htm</value>
+  </data>
+  <data name="khtpField-FsSymFeatVal-ShowInGloss" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/Show_Abbreviation_as_its_label_field_Features.htm</value>
+  </data>
+  <data name="khtpField-FsFeatStrucType-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/abbreviation_field_feature_types.htm</value>
+  </data>
+  <data name="khtpField-FsFeatStrucType-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/description_field_feature_types.htm</value>
+  </data>
+  <data name="khtpField-FsFeatStrucType-Features" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/Features_field_Feature_Types.htm</value>
+  </data>
+  <data name="khtpField-FsFeatStrucType-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/Name_field_Feature_Types.htm</value>
+  </data>
+  <data name="khtpField-FsFeatStrucType-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/special_note_field_feature_types.htm</value>
+  </data>
+  <data name="khtpField-minorEntryConditionEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Conditions_fields/Name_field_Variant_Conditions.htm</value>
+  </data>
+  <data name="khtpField-minorEntryConditionEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Conditions_fields/Abbreviation_field_Variant_Conditions.htm</value>
+  </data>
+  <data name="khtpField-minorEntryConditionEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Conditions_fields/Confidence_field_Variant_Conditions.htm</value>
+  </data>
+  <data name="khtpField-minorEntryConditionEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Conditions_fields/Description_field_Variant_Conditions.htm</value>
+  </data>
+  <data name="khtpField-minorEntryConditionEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Conditions_fields/Status_field_Variant_Conditions.htm</value>
+  </data>
+  <data name="khtpField-minorEntryConditionEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Conditions_fields/Researchers_field_Variant_Conditions.htm</value>
+  </data>
+  <data name="khtpField-minorEntryConditionEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Conditions_fields/Restrictions_field_Variant_Conditions.htm</value>
+  </data>
+  <data name="khtpField-minorEntryConditionEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Conditions_fields/Discussion_field_Variant_Conditions.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/abbreviation_field_semantic_domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Confidence_field_Semantic_domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/description_field_semantic_domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Discussion_field_Semantic_domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmDomainQ-ExampleSentences" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Example_Sentences_field_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmDomainQ-ExampleWords" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Example_Words_field_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-LouwNidaCodes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Louw_Nida_Codes_field_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/name_field_semantic_domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-OcmCodes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Ocm_Codes_field_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmDomainQ-Question" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Question_field_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Questions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Questions_field_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/researchers_field_semantic_domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/restrictions_field_semantic_domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/status_field_semantic_domains.htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Status_fields/Abbreviation_field_Status.htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Status_fields/Confidence_field_Status.htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Status_fields/Description_field_Status.htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Status_fields/Discussion_field_Status.htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Status_fields/Name_field_Status.htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Status_fields/Researchers_field_Status.htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Status_fields/Restrictions_field_Status.htm</value>
+  </data>
+  <data name="khtpField-statusEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Status_fields/Status_field_Status.htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Usages_fields/Abbreviation_field_Usages.htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Usages_fields/Confidence_field_Usages.htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Usages_fields/Description_field_Usages.htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Usages_fields/Discussion_field_Usages.htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Usages_fields/Name_field_Usages.htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Usages_fields/Researchers_field_Usages.htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Usages_fields/Restrictions_field_Usages.htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Usages_fields/Status_field_Usages.htm</value>
+  </data>
+  <data name="khtpField-usageTypeEdit-CmPossibility-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Usages_fields/Subitems_field_Usages.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-Pronunciations" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Pronunciation_field.htm</value>
+  </data>
+  <data name="khtpField-MoStemMsa-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/Category_Info_field.htm</value>
+  </data>
+  <data name="khtpField-MoStemMsa-ProdRestrict" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/exception_features_field.htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/abbreviation_field_academic_domains.htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/Confidence_field_Academic_Domains.htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/Description_field_Academic_Domains.htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/Discussion_field_Academic_Domains.htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/Name_field_Academic_Domains.htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/Researchers_field_Academic_Domains.htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/Restrictions_field_Academic_Domains.htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/Status_field_Academic_Domains.htm</value>
+  </data>
+  <data name="khtpField-domainTypeEdit-CmPossibility-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Academic_Domains_fields/subitems_field_academic_domains.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/abbreviation_field_anthropology_categories.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Confidence_field_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Description_field_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Discussion_field_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Name_field_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Researchers_field_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Restrictions_field_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Status_field_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/Subcategories_field_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-confidenceEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/abbreviation_field_confidence_levels.htm</value>
+  </data>
+  <data name="khtpField-confidenceEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/Description_field_Confidence_Levels.htm</value>
+  </data>
+  <data name="khtpField-confidenceEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/Discussion_field_Confidence_Levels.htm</value>
+  </data>
+  <data name="khtpField-confidenceEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/Name_field_Confidence_Levels.htm</value>
+  </data>
+  <data name="khtpField-confidenceEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/Researchers_field_Confidence_Levels.htm</value>
+  </data>
+  <data name="khtpField-confidenceEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/Restrictions_field_Confidence_Levels.htm</value>
+  </data>
+  <data name="khtpField-confidenceEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/Status_field_Confidence_Levels.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/abbreviation_field_education_levels.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/confidence_field_education_levels.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/description_field_education_levels.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/discussion_field_education_levels.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/Name_field_Education_Levels.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/Researchers_field_Education_Levels.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/Restrictions_field_Education_Levels.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/status_field_education_levels.htm</value>
+  </data>
+  <data name="khtpField-entryTypeEdit-LexEntryType-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Entry_Types_fields/Name_field_Entry_Types.htm</value>
+  </data>
+  <data name="khtpField-entryTypeEdit-LexEntryType-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Entry_Types_fields/abbreviation_field_entry_types.htm</value>
+  </data>
+  <data name="khtpField-entryTypeEdit-LexEntryType-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Entry_Types_fields/confidence_field_entry_types.htm</value>
+  </data>
+  <data name="khtpField-entryTypeEdit-LexEntryType-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Entry_Types_fields/description_field_entry_types.htm</value>
+  </data>
+  <data name="khtpField-entryTypeEdit-LexEntryType-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Entry_Types_fields/discussion_field_entry_types.htm</value>
+  </data>
+  <data name="khtpField-entryTypeEdit-LexEntryType-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Entry_Types_fields/researchers_field_entry_types.htm</value>
+  </data>
+  <data name="khtpField-entryTypeEdit-LexEntryType-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Entry_Types_fields/restrictions_field_entry_types.htm</value>
+  </data>
+  <data name="khtpField-entryTypeEdit-LexEntryType-ReverseAbbr" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Entry_Types_fields/reverse_abbreviation_field_entry_types.htm</value>
+  </data>
+  <data name="khtpField-entryTypeEdit-LexEntryType-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Entry_Types_fields/status_field_entry_types.htm</value>
+  </data>
+  <data name="khtpField-featureTypesAdvancedEdit-FsFeatStrucType-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/special_note_field_feature_types.htm</value>
+  </data>
+  <data name="khtpField-featureTypesAdvancedEdit-FsFeatStrucType-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/abbreviation_field_feature_types.htm</value>
+  </data>
+  <data name="khtpField-featureTypesAdvancedEdit-FsFeatStrucType-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/description_field_feature_types.htm</value>
+  </data>
+  <data name="khtpField-featureTypesAdvancedEdit-FsFeatStrucType-Features" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/Features_field_Feature_Types.htm</value>
+  </data>
+  <data name="khtpField-featureTypesAdvancedEdit-FsFeatStrucType-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Feature_Types_fields/Name_field_Feature_Types.htm</value>
+  </data>
+  <data name="khtpField-lexRefEdit-LexRefType-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Lexical_Relations_fields/abbreviation_field_lexical_relations.htm</value>
+  </data>
+  <data name="khtpField-lexRefEdit-LexRefType-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Lexical_Relations_fields/description_field_lexical_relations.htm</value>
+  </data>
+  <data name="khtpField-lexRefEdit-LexRefType-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Lexical_Relations_fields/discussion_field_lexical_relations.htm</value>
+  </data>
+  <data name="khtpField-lexRefEdit-LexRefType-MappingType" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Lexical_Relations_fields/reference_set_type_field.htm</value>
+  </data>
+  <data name="khtpField-lexRefEdit-LexRefType-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Lexical_Relations_fields/name_field_lexical_relations.htm</value>
+  </data>
+  <data name="khtpField-lexRefEdit-LexRefType-ReverseAbbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Lexical_Relations_fields/reverse_abbreviation_field_lexical_relations.htm</value>
+  </data>
+  <data name="khtpField-lexRefEdit-LexRefType-ReverseName" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Lexical_Relations_fields/reverse_name_field_lexical_relations.htm</value>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/abbreviation_field_locations.htm</value>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-Alias" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/alias_field_locations.htm</value>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/confidence_field_locations.htm</value>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/discussion_field_locations.htm</value>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/location_name_field_locations.htm</value>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/Researchers_field_Locations.htm</value>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/Restrictions_field_Locations.htm</value>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/Short_Description_field_Locations.htm</value>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-Subitems" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/subitems_field_(locations).htm</value>
+	<comment>Help TopID for List Location Subitem</comment>
+  </data>
+  <data name="khtpField-morphTypeEdit-MoMorphType-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Morpheme_Types_fields/abbreviation_field_morpheme_types.htm</value>
+  </data>
+  <data name="khtpField-morphTypeEdit-MoMorphType-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Morpheme_Types_fields/description_field_morpheme_types.htm</value>
+  </data>
+  <data name="khtpField-morphTypeEdit-MoMorphType-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Morpheme_Types_fields/discussion_field_morpheme_types.htm</value>
+  </data>
+  <data name="khtpField-morphTypeEdit-MoMorphType-Prefix" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Morpheme_Types_fields/leading_token_field_morpheme_types.htm</value>
+  </data>
+  <data name="khtpField-morphTypeEdit-MoMorphType-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Morpheme_Types_fields/Name_field_Morpheme_Types.htm</value>
+  </data>
+  <data name="khtpField-morphTypeEdit-MoMorphType-SecondaryOrder" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Morpheme_Types_fields/Secondary_Order_field_Morpheme_Types.htm</value>
+  </data>
+  <data name="khtpField-morphTypeEdit-MoMorphType-Postfix" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Morpheme_Types_fields/trailing_token_field_morpheme_types.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/abbreviation_field_people.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Alias" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/alias_field_people.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/biographical_information_field_people.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/confidence_field_people.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Education" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/education_field_people.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Gender" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/gender_field_people.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-IsResearcher" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/is_a_researcher_field_people.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-PlaceOfBirth" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/Place_of_Birth_field_People.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-PlacesOfResidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/Place_of_Residence_field_People.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Positions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/Positions_field_People.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/Researchers_field_People.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/Restrictions_field_People.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/short_description_field_people.htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Positions_fields/abbreviation_field_positions.htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Positions_fields/confidence_field_positions.htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Positions_fields/description_field_positions.htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Positions_fields/discussion_field_positions.htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Positions_fields/name_field_positions.htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Positions_fields/Researchers_field_Positions.htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Positions_fields/Restrictions_field_Position.htm</value>
+  </data>
+  <data name="khtpField-positionsEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Positions_fields/status_field_positions.htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Restrictions_fields/abbreviation_field_restrictions.htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Restrictions_fields/confidence_field_restrictions.htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Restrictions_fields/description_field_restrictions.htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Restrictions_fields/discussion_field_restrictions.htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Restrictions_fields/name_field_restrictions.htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Restrictions_fields/researchers_field_restrictions.htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Restrictions_fields/restrictions_field_restrictions.htm</value>
+  </data>
+  <data name="khtpField-restrictionsEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Restrictions_fields/Status_field_Restrictions.htm</value>
+  </data>
+  <data name="khtpField-senseStatusEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Status_fields/abbreviation_field_sense_status.htm</value>
+  </data>
+  <data name="khtpField-senseStatusEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Status_fields/confidence_field_sense_status.htm</value>
+  </data>
+  <data name="khtpField-senseStatusEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Status_fields/description_field_sense_status.htm</value>
+  </data>
+  <data name="khtpField-senseStatusEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Status_fields/discussion_field_sense_status.htm</value>
+  </data>
+  <data name="khtpField-senseStatusEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Status_fields/name_field_sense_status.htm</value>
+  </data>
+  <data name="khtpField-senseStatusEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Status_fields/researchers_field_sense_status.htm</value>
+  </data>
+  <data name="khtpField-senseStatusEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Status_fields/restrictions_field_sense_status.htm</value>
+  </data>
+  <data name="khtpField-senseStatusEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Status_fields/status_field_sense_status.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Types_fields/abbreviation_field_sense_types.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Types_fields/confidence_field_sense_types.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Types_fields/description_field_sense_types.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Types_fields/discussion_field_sense_types.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Types_fields/name_field_sense_types.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Types_fields/researchers_field_sense_types.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Types_fields/restrictions_field_sense_types.htm</value>
+  </data>
+  <data name="khtpField-senseTypeEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Sense_Types_fields/status_field_sense_types.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Abbreviation_field_Translation_Types.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Confidence_field_Translation_Types.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Description_field_Translation_Types.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Discussion_field_Translation_Types.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Name_field_Translation_Types.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Researchers_field_Translation_Types.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Restrictions_field_Translation_Types.htm</value>
+  </data>
+  <data name="khtpField-translationTypeEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Translation_Types_fields/Status_field_Translation_Types.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Sense_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_fields/Alternate_Forms_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-GrammaticalFunctionsSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/grammatical_info_details_field.htm</value>
+  </data>
+  <data name="khtpField-peopleEdit-CmPerson-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/People_fields/full_name_field_people.htm</value>
+  </data>
+  <data name="khtpFWOpenProject" xml:space="preserve">
+	<value>User_Interface/Menus/File/Open_a_Fieldworks_project.htm</value>
+  </data>
+  <data name="khtpRegexes" xml:space="preserve">
+	<value>Basic_Tasks/Filtering_data/using_regular_expressions_assistance.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixTemplate-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/name_field_template_category_edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixSlot-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/name_field_slot_category_edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixSlot-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/description_field_slot_category_edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflClass-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Inflection_Class_Info_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflClass-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/name_field_inflection_class_category_edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflClass-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/abbreviation_field_inflection_class_category_edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflClass-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/description_field_inflection_class_category_edit.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/name_field_category_category_edit.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/description_field_category_category_edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixTemplate-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Template_field_Category_Edit.htm</value>
+  </data>
+  <data name="hkhtpField-PartOfSpeech-Subcategory" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Subcategory_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-InflectableFeats" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Inflectable_Features_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-posEdit-PartOfSpeech-Features" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/features_field_category_edit.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Subcategories_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-DefaultInflectionClass" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Default_Inflection_Class_field.htm</value>
+  </data>
+  <data name="khtpField-MoInflClass-Subclasses" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/subclasses_field_category_edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflClass-InflectionClassInfo" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Inflection_Class_Info_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixSlot-Optional" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Optional_field.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixSlot-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Slot_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffixTemplate-Note" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Note_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoCompound-RightMember" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/right_member_field.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoCompound-LeftMember" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/left_member_field.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoCompound-OverrideHead" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Override_Head_with_field.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoCompound-Result" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Result_field.htm</value>
+  </data>
+  <data name="khtpField-PhPhoneme-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonemes_fields/representations_field_phonemes.htm</value>
+  </data>
+  <data name="khtpField-MoAlloAdhocProhib-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Note_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpField-MoMorphAdhocProhib-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Note_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpField-FsComplexFeature-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Features_fields/Special_Note_field_Features.htm</value>
+  </data>
+  <data name="khtpField-FsClosedFeature-Note" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Special_Note_field_Features.htm</value>
+  </data>
+  <data name="khtpField-LexSense-Examples" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/example_field.htm</value>
+  </data>
+  <data name="khtpField-LexExampleSentence-Translations" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Translation_field.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffMsa-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/Category_Info_field.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffMsa-InflFeats" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/Inflection_Features_field.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffMsa-FromProdRestrict" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/from_exception_features_field.htm</value>
+  </data>
+  <data name="khtpField-MoAffixAllomorph-InflectionClasses" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_fields/inflection_classes_field_Allomorph.htm</value>
+  </data>
+  <data name="khtpField-LexSense-ImportResidue" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/import_residue_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-ImportResidue" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/import_residue_field.htm</value>
+  </data>
+  <data name="khtpExportInterlinear" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_Interlinear.htm</value>
+  </data>
+  <data name="khtpField-reversalToolReversalIndexPOS-PartOfSpeech-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Reversal_Index_Categories_fields/Subcategories_field_Reversal_Index_Categories.htm</value>
+  </data>
+  <data name="khtpField-reversalToolReversalIndexPOS-PartOfSpeech-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Reversal_Index_Categories_fields/Abbreviation_field_Reversal_Index_Categories.htm</value>
+  </data>
+  <data name="khtpField-reversalToolReversalIndexPOS-PartOfSpeech-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Reversal_Index_Categories_fields/Description_field_Reversal_Index_Categories.htm</value>
+  </data>
+  <data name="khtpField-reversalToolReversalIndexPOS-PartOfSpeech-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Reversal_Index_Categories_fields/Name_field_Reversal_Index_Categories.htm</value>
+  </data>
+  <data name="khtpFindWordform" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/find_wordform.htm</value>
+  </data>
+  <data name="khtpParserParamters" xml:space="preserve">
+	<value>User_Interface/Menus/Parser/About_parser_parameters.htm</value>
+  </data>
+  <data name="khtpBulkEditBarEntriesOrSenses" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpBulkEditBarReversalEntries" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Reversal_Entries/bulk_edit_reversal_entries_overview.htm</value>
+  </data>
+  <data name="khtpConfigureDictionaryModify" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/modify_display_properties_of_name_dialog_box.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-Environments" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_environments.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-NaturalClassLexicon" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_environments.htm</value>
+  </data>
+  <data name="khtpField-educationEdit-CmPossibility-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Education_Levels_fields/Subitems_field_Education_Levels.htm</value>
+  </data>
+  <data name="khtpECAdvanced" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Encoding_Converters/Encoding_Converters_Advanced_tab.htm</value>
+  </data>
+  <data name="khtpECProperties" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Encoding_Converters/Encoding_Converters_Properties_tab.htm</value>
+  </data>
+  <data name="khtpECTest" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Encoding_Converters/Encoding_Converters_Test_tab.htm</value>
+  </data>
+  <data name="khtpAddSenseToReversalEntry" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Reversal_Indexes/add_a_sense_to_a_reversal_entry.htm</value>
+  </data>
+  <data name="khtpInsertInflectionFeature" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Inflection_Features/Insert_a_Feature_or_Complex_Feature.htm</value>
+  </data>
+  <data name="khtpChoose-InflectableFeats" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Category_Edit/Choose_inflectable_features.htm</value>
+  </data>
+  <data name="khtpField-WfiAnalysis-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/analysis_1_field.htm</value>
+  </data>
+  <data name="khtpField-WfiAnalysis-Category" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/word_category_field.htm</value>
+  </data>
+  <data name="khtpField-WfiAnalysis-MorphBundles" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Analysis_field.htm</value>
+  </data>
+  <data name="khtpField-WfiAnalysis-ParserStatusIcon" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Parse_result_field.htm</value>
+  </data>
+  <data name="khtpField-WfiGloss-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Word_Gloss_field_Words.htm</value>
+  </data>
+  <data name="khtpField-WfiWordform-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/wordform_field.htm</value>
+  </data>
+  <data name="khtpField-WfiWordform-HumanApprovedAnalysesSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/user_approved_field.htm</value>
+  </data>
+  <data name="khtpField-WfiWordform-HumanDisapprovedAnalysesSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/user_disapproved_field.htm</value>
+  </data>
+  <data name="khtpField-WfiWordform-HumanNoOpinionAnalysesSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/user_opinion_unknown_field.htm</value>
+  </data>
+  <data name="khtpField-WfiWordform-SpellingStatus" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/spelling_status_field.htm</value>
+  </data>
+  <data name="khtpImportCharacterMapping" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/import_character_mapping_dlg_box.htm</value>
+  </data>
+  <data name="khtpField-CmMedia-Label" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/label_field.htm</value>
+  </data>
+  <data name="khtpField-CmMedia-MediaFile" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/media_file_field.htm</value>
+  </data>
+  <data name="khtpField-MoAdhocProhibGr-NestedGroupName" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Nested_Group_Name_field_Ad_hoc_Rules.htm</value>
+  </data>
+  <data name="khtpMergeWordGloss" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Word_Analyses/Merge_word_gloss.htm </value>
+  </data>
+  <data name="khtpAssignAnalysisUsage" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Word_Analyses/Analysis_Usage_box_details.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-Condition" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_a_condition.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-EntryType" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_entry_type.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-MorphType" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/change_the_morph_type.htm</value>
+  </data>
+  <data name="khtpChoose-CategoryToMergeInto" xml:space="preserve">
+	<value>Using_Tools/Lists_tools/merge_categories.htm</value>
+  </data>
+  <data name="khtpChoose-CategoryToMoveTo" xml:space="preserve">
+	<value>Using_Tools/Lists_tools/move_a_category.htm</value>
+  </data>
+  <data name="khtpChoose-CmPossibility" xml:space="preserve">
+	<value>Using_Tools/Lists_tools/choose_item_for_list_field.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-FromExceptionFeatures" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_exception_features.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-InflectionClasses" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_an_inflection_class.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-InflFeats" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_inflection_features.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-ProdRestrict" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_exception_features.htm</value>
+  </data>
+  <data name="khtpField-rapidDataEntry-CmDomainQ-ExampleSentences" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Categorized_Entry_fields/example_sentences_field_categorized_entry.htm</value>
+  </data>
+  <data name="khtpField-rapidDataEntry-CmDomainQ-ExampleWords" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Categorized_Entry_fields/example_words_field_categorized_entry.htm</value>
+  </data>
+  <data name="khtpField-rapidDataEntry-CmDomainQ-Question" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Categorized_Entry_fields/question_field_categorized_entry.htm</value>
+  </data>
+  <data name="khtpField-anthroEdit-CmAnthroItem-Subcategory" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Anthropology_Categories_fields/subcategory_field_anthropology_categories.htm</value>
+  </data>
+  <data name="khtpField-rapidDataEntry-CmSemanticDomain-Analysis" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Categorized_Entry_fields/Analysis_field_Categorized_Entry.htm</value>
+  </data>
+  <data name="khtpField-rapidDataEntry-CmSemanticDomain-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Categorized_Entry_fields/description_field_categorized_entry.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-OcmRefs" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Anthropology_Categories_field_Sem_Dom.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-RelatedDomains" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Related_Domains_field_Sem_Dom.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Subdomain" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Subdomain_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-semanticDomainEdit-CmSemanticDomain-Subdomains" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Semantic_Domains_fields/Subdomains_Semantic_Domains.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-InflectionClasses" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/inflection_classes_field_entry_level.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-Position" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_infix_positions.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-FromInflectionClass" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_an_inflection_class.htm</value>
+  </data>
+  <data name="khtpField-CmPicture-Thumbnail" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Thumbnail_field.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoStemMsa-InflectionClass" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/inflection_class_field_compound_rules.htm</value>
+  </data>
+  <data name="khtpField-confidenceEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Confidence_Levels_fields/confidence_field_confidence_levels.htm</value>
+  </data>
+  <data name="khtpChoose-AffixSlots" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Category_Edit/Edit_an_Affix_Template_Table.htm</value>
+  </data>
+  <data name="khtpChoose-PrefixSlots" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Category_Edit/Edit_an_Affix_Template_Table.htm</value>
+  </data>
+  <data name="khtpChoose-Slot" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Category_Edit/Edit_an_Affix_Template_Table.htm</value>
+  </data>
+  <data name="khtpChoose-InflectionalAffixes" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_components_for_Components_field.htm</value>
+  </data>
+  <data name="khtpChoose-SuffixSlots" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Category_Edit/Edit_an_Affix_Template_Table.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-Etymology" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Etymology_field.htm</value>
+  </data>
+  <data name="khtpField-CmPicture-File" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/File_field.htm</value>
+  </data>
+  <data name="khtpField-FsFeatStruc-FeatureSet" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Feature_Set_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-LexemeForm-StemName" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/stem_name_field_lex_form.htm</value>
+  </data>
+  <data name="khtpField-MoStemAllomorph-StemName" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Stem_Name_fld_Allomorph.htm</value>
+  </data>
+  <data name="khtpField-MoStemName-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Abbreviation_field_Stem_Name.htm</value>
+  </data>
+  <data name="khtpField-MoStemName-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Description_field_Stem_Name.htm</value>
+  </data>
+  <data name="khtpField-MoStemName-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Name_field.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-StemNameRegionsSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Feature_Sets_field_Category_Edit.htm</value>
+  </data>
+  <data name="khtpField-PartOfSpeech-StemNamesSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Names_field.htm</value>
+  </data>
+  <data name="khtpChoose-AnyAllNoneItems" xml:space="preserve">
+	<value>Basic_Tasks/Filtering_data/Using_Choose_Items_dialog_box.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-StemName" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_Stem_Name.htm</value>
+  </data>
+  <data name="khtpLexOptions" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Options/Options_overview.htm</value>
+  </data>
+  <data name="khtpRestoreDefaults" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Restore_defaults.htm</value>
+  </data>
+  <data name="khtpFindExampleSentence" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Find_example_sentence.htm </value>
+  </data>
+  <data name="khtpField-LexEntry-DerivedComplexEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Complex_Forms.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-VariantEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Variant_Forms.htm</value>
+  </data>
+  <data name="khtpField-MoStemMsa-FromPartsOfSpeech" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/attaches_to_categories_field.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-PartsOfSpeech" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_categories.htm</value>
+  </data>
+  <data name="khtpChooseLexicalRelationAdd" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Add_Reference_to_Lexical_Relation.htm</value>
+  </data>
+  <data name="khtpChoose-Phonemes" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Natural_Classes/Specify_Phonemes_for_Natural_Class.htm</value>
+  </data>
+  <data name="khtpField-Text-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Title_field_Info.htm</value>
+  </data>
+  <data name="khtpField-Text-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Abbreviation_field_Info.htm</value>
+  </data>
+  <data name="khtpField-Text-Source" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Source_field_Info.htm</value>
+  </data>
+  <data name="khtpField-Text-IsTranslated" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Text_is_a_translation_field_Info.htm</value>
+  </data>
+  <data name="khtpField-Text-Genres" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Genres_field_Info.htm</value>
+  </data>
+  <data name="khtpField-Text-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Comment_field_Info.htm</value>
+  </data>
+  <data name="khtpField-StText-Title" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Title_field_Info.htm</value>
+  </data>
+  <data name="khtpField-StText-IsTranslation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Text_is_a_translation_field_Info.htm</value>
+  </data>
+  <data name="khtpField-LexSense-DerivedComplexEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Complex_Forms.htm</value>
+  </data>
+  <data name="khtpField-LexSense-VariantEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Variant_Forms.htm</value>
+  </data>
+  <data name="khtpFind" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_and_Replace_Text.htm</value>
+	<comment>help topic ID for find/replace dialog</comment>
+  </data>
+  <data name="khtpReplace" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_and_Replace_Text.htm</value>
+	<comment>help topic ID for find/replace dialog</comment>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Genres_fields/confidence_field_genres.htm</value>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Genres_fields/Researchers_field_Genres.htm</value>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Genres_fields/Restrictions_field_Genres.htm</value>
+  </data>
+  <data name="khtpSpecConcordanceCrit" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Concordance/Manually_specify_concordance_criteria.htm</value>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Genres_fields/abbreviation_field_genres.htm</value>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Genres_fields/description_field_genres.htm</value>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Genres_fields/discussion_field_genres.htm</value>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Genres_fields/Name_field_Genres.htm</value>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Genres_fields/Status_field_Genres.htm</value>
+  </data>
+  <data name="khtpField-genresEdit-CmPossibility-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Genres_fields/Subitems_field_Genres.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-DomainTypes" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_academic_domains.htm</value>
+	<comment>NOTE: All chooser help topic keys should consist of "khtpChoose-" concatinated with the field name (spaces removed, first letter of each word capitalized)</comment>
+  </data>
+  <data name="khtpChoose-lexiconEdit-AnthroCodes" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_anthropology_categories.htm</value>
+  </data>
+  <data name="khtpChoose-Genres" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/Enter_text_metadata.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-Location" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Enter_a_Pronunciation.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-SemanticDomains" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_semantic_domains.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-Status" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_a_sense_status.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-SenseType" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_a_sense_type.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-Slots" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_slots.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-UsageTypes" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_usages.htm</value>
+  </data>
+  <data name="khtpBulkEditUsages" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_choose_usages.htm</value>
+  </data>
+  <data name="khtpBulkEditSemanticDomains" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/bulk_choose_semantic_domains.htm</value>
+  </data>
+  <data name="khtpConfigDictionary" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Configure_Dictionary/Configure_Dictionary_View.htm</value>
+  </data>
+  <data name="khtpField-MoDerivAffMsa-FromStemName" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Name_field.htm</value>
+  </data>
+  <data name="khtpField-MoInflAffMsa-FromStemName" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Name_field.htm</value>
+  </data>
+  <data name="khtpField-MoStemMsa-FromStemName" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Name_field.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-InfixPositions" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_infix_positions.htm</value>
+  </data>
+  <data name="khtpField-MoCompound-LeftMember" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/left_member_field.htm</value>
+  </data>
+  <data name="khtpField-MoCompound-OverrideHead" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Override_Head_with_field.htm</value>
+  </data>
+  <data name="khtpField-MoCompound-RightMember" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/right_member_field.htm</value>
+  </data>
+  <data name="khtpField-MoAdhocProhibGr-MembersSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/Members_field_ad_hoc_rules.htm</value>
+  </data>
+  <data name="kstidApplyStyleDialog" xml:space="preserve">
+	<value>User_Interface/Menus/Format/Apply_a_style_to_text.htm</value>
+  </data>
+  <data name="khtpBaselineTextWs" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/baseline_text_writing_systems.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-ReversalEntries" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/reversal_entries_field.htm</value>
+  </data>
+  <data name="khtpChoose-DataTreeWritingSystems" xml:space="preserve">
+	<value>Basic_Tasks/Showing_Writing_Systems/Show_WSs_overview.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-DateCreated" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Field_Types/date_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-DateModified" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Field_Types/date_field.htm</value>
+  </data>
+  <data name="khtpRespellerDlg" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Word_Analyses/Change_Spelling/change_spelling_overview.htm</value>
+  </data>
+  <data name="khtpBulkEditBarWordforms" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Bulk_Edit_Wordforms/Bulk_Edit_Wordforms_overview.htm</value>
+  </data>
+  <data name="khtpImportLIFT" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/import_lift_lex.htm</value>
+  </data>
+  <data name="khtpField-posEdit-PartOfSpeech-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/rlt1edc.htm</value>
+	<comment>help topic for Grammar:Category Edit: Name field </comment>
+  </data>
+  <data name="khtpConcorderTool" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Concorder/Using_Concorder.htm</value>
+  </data>
+  <data name="khtpField-posEdit-MoInflClass-Subclasses" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/subclasses_field_category_edit.htm</value>
+  </data>
+  <data name="khtpAnotherClausePostposed" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/Text_Chart_tab/Mark_as_Advanced_options.htm</value>
+  </data>
+  <data name="khtpAnotherClausePrepose" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/Text_Chart_tab/Mark_as_Advanced_options.htm</value>
+  </data>
+  <data name="kshtpAddWordsToLexicon" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/About_Add_Words_to_Lexicon.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-MsEnvFeatures" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/required_features_lex.htm</value>
+  </data>
+  <data name="khtpField-MoAffixAllomorph-MsEnvFeatures" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_fields/required_features.htm</value>
+  </data>
+  <data name="khtpExportDiscourse" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_Discourse_Chart.htm</value>
+  </data>
+  <data name="khtpProjectProperties_WritingSystem" xml:space="preserve">
+	<value>User_Interface/Menus/File/Project_Properties/Proj_Prop_WSs.tab.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/abbreviation_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/confidence_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/description_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/discussion_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/name_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/researchers_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/restrictions_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/status_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Subitem" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/subitems_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-chartmarkEdit-CmPossibility-Subitems" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Markers_fields/subitems_fld_tcmrkers.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/abbreviation_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/confidence_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/description_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/discussion_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/name_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/researchers_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/restrictions_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/status_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Subitem" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/subitems_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-charttempEdit-CmPossibility-Subitems" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Chart_Temp_fields/subitems_field_tctemp.htm</value>
+  </data>
+  <data name="khtpField-PhNCFeatures-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Natural_Classes_fields/Abbreviation_field_Natural_Classes.htm</value>
+  </data>
+  <data name="khtpField-PhNCFeatures-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Natural_Classes_fields/description_field_natural_classes.htm</value>
+  </data>
+  <data name="khtpField-PhNCFeatures-Features" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Natural_Classes_fields/Phonological_Features_fld(NC).htm</value>
+  </data>
+  <data name="khtpField-PhNCFeatures-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Natural_Classes_fields/name_field_natural_classes.htm</value>
+  </data>
+  <data name="khtpField-PhPhoneme-Features" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonemes_fields/Phonological_Features_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntryRef-ComplexEntryTypes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Complex_Form_Type_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntryRef-ComponentLexemes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Components_field.htm</value>
+  </data>
+  <data name="khtpField-LexEntryRef-VariantOf" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Variant_of_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntryRef-HideMinorEntry" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Variants_level_fields/Show_Minor_Entry_Var_level.htm</value>
+	<comment>Variant Minor Entry</comment>
+  </data>
+  <data name="khtpField-LexEntryRef-PrimaryLexemes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Show_Subentry_under.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntryRef-Summary" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Variants_level_fields/Comment_field_Variants.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntryRef-VariantEntryTypes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Variants_level_fields/Variant_Type_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-ComplexFormEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Complex_Forms.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-EntryRefs" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Components_field.htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/abbr_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/confidence_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/description_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/discussion_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/name_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/researchers_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/restrictions_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-ReverseAbbr" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/reverse_abbr_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/status_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-complexEntryTypeEdit-LexEntryType-Subtypes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Complex_Form_Types_flds/subtypes_fld_(complex_fm_types).htm</value>
+  </data>
+  <data name="khtpField-LexEntry-AlternateFormsSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Alternate_Forms_fld.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntryRef-EntryLevel-Comment" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Comment_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-PublishAsMinorEntry" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Show_Minor_Entry_Pub_Set_level.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntryRef-EntryLevel-VariantEntryTypes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Variant_Type_field.htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Abbreviation_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Confidence_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Description_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Discussion_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Name_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Researchers_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Restrictions_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Status_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-textMarkupTagsEdit-CmPossibility-Subitems" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Text_Markup_Tags_fields/Subitems_fld_txtmkup.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/abbreviation_fld_variant_types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Confidence_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/description_fld_variant_types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/discussion_fld_variant_types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/name_fid_variant_types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Researchers_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Restrictions_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-ReverseAbbr" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Reverse_Abbr_fld_Variant_Types.htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Status_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-variantEntryTypeEdit-LexEntryType-Subtypes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Subtypes_fld_(Variant_Types).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-AlternateFormsSection-IsAbstract" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Is_Abstract_Form_fld_Allomorph.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Affix_allomorph_fld.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-InflectionClasses" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Inflection_classes_fld_Allomorph.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-AlternateFormsSection-MoAffixAllomorph-MsEnvFeatures" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/required_features.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-AlternateFormsSection-MorphType" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Morph_type_fld_allomorph.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Stem_Allomorph_fld.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-StemName" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Stem_Name_fld_Allomorph.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-AlternateFormsSection-PhoneEnv" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Environments_fld_allomorph.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-MoAffixProcess-AffixProcessRule" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Affix_Process_Rule_fldAF.htm</value>
+  </data>
+  <data name="khtpField-phonologicalFeaturesAdvancedEdit-FsClosedFeature-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonological_Features_fields/Abbreviation_field_(Ph_Features).htm</value>
+  </data>
+  <data name="khtpField-phonologicalFeaturesAdvancedEdit-FsClosedFeature-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonological_Features_fields/Description_field_(Ph_Features).htm</value>
+  </data>
+  <data name="khtpField-phonologicalFeaturesAdvancedEdit-FsClosedFeature-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonological_Features_fields/Name_field_(Ph_Feature).htm</value>
+  </data>
+  <data name="khtpField-phonologicalFeaturesAdvancedEdit-FsSymFeatVal-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonological_Features_fields/Abbreviation_field_(Value_Ph_Features).htm</value>
+  </data>
+  <data name="khtpField-phonologicalFeaturesAdvancedEdit-FsSymFeatVal-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonological_Features_fields/Description_field_(Value_Ph_Features).htm</value>
+  </data>
+  <data name="khtpField-phonologicalFeaturesAdvancedEdit-FsSymFeatVal-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonological_Features_fields/Value_Name_field_(Ph_Features).htm</value>
+  </data>
+  <data name="khtpField-phonologicalFeaturesAdvancedEdit-ValuesSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonological_Features_fields/Values_field_(Ph_Features).htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-ComplexFormTypes" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_Complex_Form_Type.htm</value>
+  </data>
+  <data name="khtpChoose-PhonFeats" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonemes/Choose_phonological_features.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-ShowSubentryUnder" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_components_for_Show_Subentry_Under.htm</value>
+	<comment>Show Subentry Under</comment>
+  </data>
+  <data name="khtpChoose-lexiconEdit-VariantTypes" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_Variant_Type.htm</value>
+  </data>
+  <data name="khtpConfigReversalIndex" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Configure_Reversal_Index/Configure_Reversal_Index_View_dialog_box.htm</value>
+  </data>
+  <data name="khtpCtxtOccur" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Rules/Set_occurrence.htm</value>
+  </data>
+  <data name="khtpField-Analyses-WfiGloss-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Word_Gloss_field.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsSymFeatVal-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Abbr_field_value_features.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsSymFeatVal-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/description_field_value_features.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsSymFeatVal-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/name_field_value_features.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsSymFeatVal-ShowInGloss" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Show_Abbr_as_label_field_Features.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsSymFeatVal-ValuesSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Values_field_Features.htm</value>
+  </data>
+  <data name="khtpField-FsClosedFeature-SpecialNote" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Special_Note_field_Features.htm</value>
+  </data>
+  <data name="khtpField-LexemeForm-RuleFormula" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Affix_Process_Rule_field.htm</value>
+  </data>
+  <data name="khtpField-phonemeEdit-PhPhoneme-BasicIPASymbol" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonemes_fields/Basic_IPA_Symbol_fld_(Phms).htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhRegularRule-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Description_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhRegularRule-Direction" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Direction_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhRegularRule-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Name_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhRegularRule-OrderNumber" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Order_Number_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhRegularRule-RuleFormulaSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Rule_Formula_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpInsertPhonologicalFeature" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Features/Using_Add_Ph_Features_Cat_dialog_box.htm</value>
+  </data>
+  <data name="khtpPunctuationMatchingPairs" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Punctuation_Usage/Punct_Use_Matching_Pairs_tab.htm</value>
+  </data>
+  <data name="khtpPunctuationPatterns" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Punctuation_Usage/Punct_Use_Punct_Pat_tab.htm</value>
+  </data>
+  <data name="khtpPunctuationQuotationMarks" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Punctuation_Usage/Punctuation_Use_Quote_Marks_tab.htm</value>
+  </data>
+  <data name="khtpSwapLexemeWithAllomorph" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Swap_LexForm_with_Allomorph.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsComplexFeature-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/abbreviation_field_feature_features.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsComplexFeature-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/description_field_feature_features.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsComplexFeature-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/name_field_feature_features.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsComplexFeature-ShowInGloss" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Show_Abbr_as_label_field_Features.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsComplexFeature-SpecialNote" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Special_Note_field_Features.htm</value>
+  </data>
+  <data name="khtpField-featuresAdvancedEdit-FsComplexFeature-Type" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Inflection_Features/Insert_a_Feature_or_Complex_Feature.htm</value>
+  </data>
+  <data name="khtpChoose-Environment" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Rules/Build_a_phonological_rule.htm</value>
+  </data>
+  <data name="khtpChoose-FeatConstr" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Rules/Set_Feature_Variables.htm</value>
+  </data>
+  <data name="khtpChoose-InflectableFeatures" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Category_Edit/Choose_inflectable_features.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-NaturalClass" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Build_Affix_Process_Rule.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-Phoneme" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Build_Affix_Process_Rule.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-VariantType" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_variant_types.htm</value>
+  </data>
+  <data name="khtpChooseLexicalEntryOrSense-Components" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_components_for_Components_field.htm</value>
+  </data>
+  <data name="khtpChooseLexicalEntryOrSense-Variantof" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_Variant_of_entry.htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhMetathesisRule-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Rule_Formula_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhMetathesisRule-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Description_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhMetathesisRule-Direction" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Direction_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhMetathesisRule-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Name_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpField-PhonologicalRuleEdit-PhMetathesisRule-OrderNumber" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Phonologocial_Rules_fields/Order_Number_field_(Ph_Rules).htm</value>
+  </data>
+  <data name="khtpInterlinearImportDlg" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Import_interlinear_data.htm</value>
+  </data>
+  <data name="khtpChoose-Grammar-PhonFeats-MetaRuleFormulaControl" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Rules/Build_a_metathesis_rule.htm</value>
+  </data>
+  <data name="khtpChoose-Grammar-PhonFeats-RegRuleFormulaControl" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Rules/Build_a_phonological_rule.htm</value>
+  </data>
+  <data name="khtpChoose-LexiconEdit-PhonFeats-AffixRuleFormulaControl" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Build_Affix_Process_Rule.htm</value>
+  </data>
+  <data name="khtpChoose-Grammar-PhonRules-SetPhonologicalFeatures" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Phonological_Rules/Set_phonological_features.htm</value>
+  </data>
+  <data name="khtpMergeToExistingWsDlg" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Merge_writing_systems.htm</value>
+  </data>
+  <data name="khtpValidCharsTabBasedOn" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Valid_Characters_dialog_box/Valid_Char_overview.htm</value>
+  </data>
+  <data name="khtpValidCharsTabData" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Valid_Characters_dialog_box/Valid_Chars_From_Data_tab.htm</value>
+  </data>
+  <data name="khtpValidCharsTabManual" xml:space="preserve">
+	<value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Valid_Characters_dialog_box/Valid_Chars_Manual_Entry_tab.htm</value>
+  </data>
+  <data name="khtpInsertVariantDlg" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Insert_a_variant_form.htm</value>
+  </data>
+  <data name="khtpField-FsComplexFeature-RightGlossSep" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Right_Gloss_Sep.htm</value>
+  </data>
+  <data name="khtpInsertEntryFromInterlinear" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/Create_new_lex_entry_interlinear_view.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-ComplexFormType" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_Complex_Form_Type.htm</value>
+  </data>
+  <data name="khtpBulkReplace" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/bulk_replace.htm</value>
+  </data>
+  <data name="khtpChooseLexicalEntryOrSense" xml:space="preserve">
+	<value>/User_Interface/Menus/Edit/Find_a_lexical_entry.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-ComplexFormEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Complex_Forms.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-VariantFormEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Variant_of_Sense_field.htm</value>
+  </data>
+  <data name="khtpFieldChooseLexicalEntryOrSense-Variantof" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_Variant_of_entry.htm</value>
+  </data>
+  <data name="khtpAddVariantFromInterlinear" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/Add_variant_of_lexical_entry.htm</value>
+  </data>
+  <data name="khtpFwCheckAnthroListDlg" xml:space="preserve">
+	<value>/User_Interface/Menus/File/Choose_a_List_of_Anthropology_Categories.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-AnthroCodes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Anthro_Cat_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Conclusions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Conclusion_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Confidence_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-CounterEvidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Count_Evid_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-DateCreated" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Date_Created_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-DateModified" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Date_Modified_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-DateOfEvent" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Date_of_Event_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Description_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Discussion_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-ExternalMaterials" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/External_Materials_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-FurtherQuestions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Further_Questions_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Hypothesis" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Hypothesis_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Locations" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Locations_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-PersonalNotes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Personal_Notes_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Researchers_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-ResearchPlan" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Research_Plan_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Restrictions_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-SeeAlso" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/See_Also_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Sources" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Sources_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Status_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-SupersededBy" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Superceded_By_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-SupportingEvidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Support_Evid_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-TimeOfEvent" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Time_of_Event_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Title" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Title_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Type" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Record_Type_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Weather" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Weather_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-CustomSlice-RnGenericRec-Participants" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Participants_field_Ntbk.htm</value>
+  </data>
+  <data name="khtpDataNotebook-FindRecordDlg" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_a_fieldnote_record.htm</value>
+  </data>
+  <data name="khtpDataNotebook-InsertRecordDlg" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Insert_a_fieldnote_record.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-SubRecords" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Subrecords_field.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-AnthroCodes" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_anthropology_categories.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-Confidence" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_confidence.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-Locations" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_locations.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-Researchers" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_researchers.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-Restrictions" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_restrictions.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-Sources" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_sources.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-TimeOfEvent" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_Time_of_Event.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-Type" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_record_type.htm</value>
+  </data>
+  <data name="khtpField-notebookEdit-RnRoledPartic-Participants" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_participants_roles.htm</value>
+  </data>
+  <data name="khtpGenDateChooserDlg" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Set_date_of_event.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-SeeAlso" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Select_See_Also_references.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-CounterEvidence" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Select_Counter_Evidence_references.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-SupersededBy" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Select_Superceded_By_references.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-SupportingEvidence" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Select_Supporting_Evidence_references.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-Status" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_status.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-Weather" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_weather.htm</value>
+  </data>
+  <data name="khtpChoose-notebookEdit-RnGenericRec-Participants" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_participants_roles.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-VariantsSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Variants_level_fields/Variants_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-MoInflAffMsa-CategoryInfo" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/Category_Info_field.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexEntryRef-VariantEntryTypes" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_variant_types.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-ToExceptionFeatures" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_exception_features.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-ToInflectionClass" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_an_inflection_class.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-FromInflFeats" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_inflection_features.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-ToInflFeats" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_inflection_features.htm</value>
+  </data>
+  <data name="khtpConfigDocument" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Configure_Document/Configure_Document_View_dialog_box.htm</value>
+  </data>
+  <data name="khtpConfigureList" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Configure_List.htm</value>
+  </data>
+  <data name="khtpNewCustomList" xml:space="preserve">
+	<value>Using_Tools/Lists_tools/Insert_a_custom_list.htm</value>
+  </data>
+  <data name="khtpField-rapidDataEntry-CmSemanticDomain-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Categorized_Entry_fields/Analysis_field_Categorized_Entry.htm</value>
+  </data>
+  <data name="khtpField-recTypeEdit-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/abbreviation_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list column help topic ID for notebook fields list Abbreviation</comment>
+  </data>
+  <data name="khtpField-recTypeEdit-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/confidence_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list column help topic ID for notebook fields list field Confidence</comment>
+  </data>
+  <data name="khtpField-recTypeEdit-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/Description_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list column help topic ID for notebook fields list Description</comment>
+  </data>
+  <data name="khtpField-recTypeEdit-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/Discussion_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list column help topic ID for notebook fields list Discussion</comment>
+  </data>
+  <data name="khtpField-recTypeEdit-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/Name_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list  column help topic ID for notebook fields list name</comment>
+  </data>
+  <data name="khtpField-recTypeEdit-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/Researchers_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list column help topic ID for notebook fields list Researchers</comment>
+  </data>
+  <data name="khtpField-recTypeEdit-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/Restrictions_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list column help topic ID for notebook fields list field Restrictions</comment>
+  </data>
+  <data name="khtpField-recTypeEdit-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/Status_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list column help topic ID for notebook fields list field Status</comment>
+  </data>
+  <data name="khtpField-recTypeEdit-Subitems" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/subitems_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list  column help topic ID for notebook fields list Subitems</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Abbr_field_(Time_of_Day).htm</value>
+	<comment>help topic ID for the Time of Day list and the Abbreviation field</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Confidence_field_(Time_of_Day).htm</value>
+	<comment>help topic ID for the Time of Day list and the Confidence field</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Description_field_(Time_of_Day).html</value>
+	<comment>help topic ID for the Time of Day list and the Description field</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Discussion_field_(Time_of_Day).htm</value>
+	<comment>help topic ID for the Time of Day list and the Discusson field</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Name_field_(Time_of_Day).htm</value>
+	<comment>help topic ID for the Time of Day list and the Name field</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Researchers_field_(Time_of_Day).htm</value>
+	<comment>help topic ID for the Time of Day list and the Researchers field</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Restrictions_field_(Time_of_Day).htm</value>
+	<comment>help topic ID for the Time of Day list and the Restrictions field</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Status_field_(Time_of_Day).htm</value>
+	<comment>help topic ID for the Time of Day list and the Status field</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-Subitems" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Subitems_field_(Time_Of_Day).htm</value>
+	<comment>help topic ID for the Time of Day list and the Subitem field</comment>
+  </data>
+  <data name="khtpAdvancedPreposedDialog" xml:space="preserve">
+	<value>Using_Tools/Texts_&amp;_Words_tools/Interlinear_Texts/Text_Chart_tab/Mark_as_Advanced_options.htm</value>
+	<comment>help topic ID for Discourse Advanced Options Preposed/Postposed dialog box.</comment>
+  </data>
+  <data name="khtpDataNotebookImportCharMapping" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Import_Character_Mapping.htm</value>
+	<comment>help topic ID for data notebook import character mapping settings</comment>
+  </data>
+  <data name="khtpDataNotebookImportContMapSet" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Import_Content_Mapping_Settings.htm</value>
+	<comment>help topic ID for data notebook import content mapping settings</comment>
+  </data>
+  <data name="khtpDataNotebookImportWizStep1" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Step_1_of_7_Overview_and_Backup.htm</value>
+	<comment>help topic  ID for Data Notebook Import Wizard Step 1</comment>
+  </data>
+  <data name="khtpDataNotebookImportWizStep2" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Import_Notebook_Data/Step_2_of_7_File_&amp;_Setting.htm</value>
+	<comment>help topic  ID for Data Notebook Import Wizard Step 2</comment>
+  </data>
+  <data name="khtpDataNotebookImportWizStep3" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Step_3_of_7_Encoding_conversion.htm</value>
+	<comment>help topic  ID for Data Notebook Import Wizard Step 3</comment>
+  </data>
+  <data name="khtpDataNotebookImportWizStep4" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Step_4_of_7_Content_mapping.htm</value>
+	<comment>help topic  ID for Data Notebook Import Wizard Step 4</comment>
+  </data>
+  <data name="khtpDataNotebookImportWizStep5" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Step_5_of_7_Key_markers.htm</value>
+	<comment>help topic  ID for Data Notebook Import Wizard Step 5</comment>
+  </data>
+  <data name="khtpDataNotebookImportWizStep6" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Step_6_of_7_Character_mapping.htm</value>
+	<comment>help topic  ID for Data Notebook Import Wizard Step 6</comment>
+  </data>
+  <data name="khtpDataNotebookImportWizStep7" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Step_7_of_7_Add_or_replace.htm</value>
+	<comment>help topic  ID for Data Notebook Import Wizard Step 7</comment>
+  </data>
+  <data name="khtpDataNotebookImportDateFormatDef" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Topics_List_Import_Options.htm'</value>
+	<comment>help topic ID for data notebook import TopicsListImportOptions Dialog.</comment>
+  </data>
+  <data name="khtpDataNotebookImportDateFormatDlg" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/Import_Date_Format_Definition.htm</value>
+	<comment>help topic ID for data notebook import DateFormat Definition Dialog.</comment>
+  </data>
+  <data name="khtpField-locationsEdit-CmLocation-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Locations_fields/subitems_field_(locations).htm</value>
+	<comment>Help TopID for List Location Subitem</comment>
+  </data>
+  <data name="khtpLexFind" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_and_Replace_Lexicon.htm</value>
+	<comment>help topic ID for Lexicon find/replace dialog</comment>
+  </data>
+  <data name="khtpField-timeOfDayEdit-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Subitems_field_(Time_Of_Day).htm</value>
+	<comment>help topic ID for the Time of Day list and the Subitems field</comment>
+  </data>
+  <data name="khtpField-CmAnthroItem-Subitems" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lists/Locations_fields/Subitems_field_(Locations).htm</value>
+	<comment>help Topic for Subitems</comment>
+  </data>
+  <data name="khtpField-CmPossibility-" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lists/Locations_fields/Subitems_field_(Locations).htm</value>
+	<comment>help Topic for Subitems</comment>
+  </data>
+  <data name="khtpField-CmPossibility-Subitems" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lists/Locations_fields/Subitems_field_(Locations).htm</value>
+	<comment>help Topic for Subitems</comment>
+  </data>
+  <data name="khtpField-CmSemanticDomain-" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lists/Locations_fields/Subitems_field_(Locations).htm</value>
+	<comment>help Topic for Subitems</comment>
+  </data>
+  <data name="khtpField-CmSemanticDomain-Subitems" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lists/Locations_fields/Subitems_field_(Locations).htm</value>
+	<comment>help Topic for Subitems</comment>
+  </data>
+  <data name="khtpField-LexEntryType-" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lists/Locations_fields/Subitems_field_(Locations).htm</value>
+	<comment>help Topic for Subitems</comment>
+  </data>
+  <data name="khtpField-LexEntryType-Subitems" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lists/Locations_fields/Subitems_field_(Locations).htm</value>
+	<comment>help Topic for Subitems</comment>
+  </data>
+  <data name="khtpField-LexiconEdit-LexPronunciation-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Pronunciation_field.htm</value>
+  </data>
+  <data name="khtpField-recTypeEdit-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Notebook_Record_Types_fields/subitems_field_Ntbk_Rec_Types.htm</value>
+	<comment>help topic id for notebook fields list  column help topic ID for notebook fields list Subitems</comment>
+  </data>
+  <data name="khtpProjPropsMergeWS" xml:space="preserve">
+	<value>User_Interface/Menus/File/Project_Properties/Merge_writing_systems.htm</value>
+	<comment>Help Topic ID on Merge Writing System Dialog</comment>
+  </data>
+  <data name="khtpfield-cmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Time_of_Day_fields/Status_field_(Time_of_Day).htm</value>
+	<comment>Help Topic Id for all status fields</comment>
+  </data>
+  <data name="khtpField-MoAdhocProhibGr-NestedMembersSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Grammar/Ad_hoc_Rules_fields/nested_group_members_field_ad_hoc_rules.htm</value>
+	<comment>HelpTopicID for Nested Group Members</comment>
+  </data>
+  <data name="khtp-LinkedFilesFolder" xml:space="preserve">
+	<value>User_Interface/Menus/File/Backup_and_Restore/LinkedFiles_folder.htm</value>
+  </data>
+  <data name="khtp-LinkedFilesInBackupAreOlder" xml:space="preserve">
+	<value>User_Interface/Menus/File/Backup_and_Restore/Linked_Files_in_backup_are_older.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-SubRecordsSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Subrecords_field.htm</value>
+	<comment>help topic ID for SubRecords</comment>
+  </data>
+  <data name="khtpChooseLangProjectDialog" xml:space="preserve">
+	<value>User_Interface/Menus/File/Open_a_language_project.htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Roles_fields/Abbreviation_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Roles_fields/Confidence_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Roles_fields/Description_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Roles_fields/Discussion_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Roles_fields/Name_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Roles_fields/Researchers_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Roles_fields/Restrictions_field_(Roles).htm</value>
+  </data>
+  <data name="khtpField-roleEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Roles_fields/Status_field_(Roles).htm</value>
+  </data>
+  <data name="khtpProjectLocationSharingDlg" xml:space="preserve">
+	<value>User_Interface/Menus/File/Project_Locations_and_Sharing.htm</value>
+  </data>
+  <data name="khtpDataNotebook-ChooseOwnerOfDemotedRecord" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Reorder_demote_or_promote_a_record.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-MoStemAllomorph-Form" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Lexeme_Form_field.htm</value>
+  </data>
+  <data name="khtpChangeDefaultBackupDir" xml:space="preserve">
+	<value>User_Interface/Menus/File/Backup_and_Restore/Back_up_this_Project.htm</value>
+  </data>
+  <data name="khtpDataNotebookImportMatchReplace" xml:space="preserve">
+	<value>/Beginning_Tasks/Importing_Data/Import_Notebook_Data/List_Import_Options.htm</value>
+  </data>
+  <data name="khtpExportTranslatedListsDlg" xml:space="preserve">
+	<value>User_Interface/Menus/File/Export/Export_Translated_Lists.htm</value>
+  </data>
+  <data name="khtpMergeCategories" xml:space="preserve">
+	<value>Using_Tools/Lists_tools/merge_categories.htm</value>
+  </data>
+  <data name="khtpChoose-Grammar-InflAffixTemplateControl" xml:space="preserve">
+	<value>Using_Tools/Grammar_tools/Category_Edit/Edit_an_Affix_Template_Table.htm</value>
+  </data>
+  <data name="khtpBulkEditAnthropologyCategories" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/bulk_edit_overview.htm</value>
+	<comment>Bulk Edit Anthropology Categories Help Topic</comment>
+  </data>
+  <data name="khtpField-CategoryInfo" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/Category_Info_field.htm</value>
+  </data>
+  <data name="khtpBulkEditCustomField" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/bulk_edit_overview.htm</value>
+	<comment>Bulk Edit Help Topic for Custom Fields</comment>
+  </data>
+  <data name="khtpManageDictionary" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Configure_Dictionary/Manage_Dictionary_Views.htm</value>
+  </data>
+  <data name="khtpManageDocument" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Configure_Document/Manage_Document_Views.htm</value>
+  </data>
+  <data name="khtpManageReversalIndex" xml:space="preserve">
+	<value>User_Interface/Menus/Tools/Configure_Reversal_Index/Manage_Reversal_Index_Views.htm</value>
+  </data>
+  <data name="khtpField-LexEntry-PublicationSection" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Publication_Settings_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-ShowAsHeadwordIn" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Show_As_Headword_In_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-PublishIn" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Publish_In_(Publication_Settings).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-Subentries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Subentries_(Publication_Settings).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-VisibleComplexFormEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Visible_Complex_Forms_(Publication_Settings.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntryRef-PrimaryLexemes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Show_Subentry_under.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexExampleSentence-PublishIn" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Publish_In_(Example).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-PublishIn" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Publish_In_(Sense).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-VisibleComplexFormEntries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Visible_Complex_Forms_(sense).htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexEntry-Subentries" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_subentry_for_Subentries_field.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexEntry-VisibleComplexFormEntries" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_visible_complex_forms.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-PublishIn" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_Publish_In_Publications.htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Abbreviation" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Publications/Abbreviation_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Confidence" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Publications/Confidence_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Description" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Publications/Description_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Discussion" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Publications/Discussion_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Name" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Publications/Name_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Publications/Researchers_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Restrictions" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Publications/Restrictions_field_(Publications).htm</value>
+  </data>
+  <data name="khtpField-publicationsEdit-CmPossibility-Status" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Publications/Status_field_(Publications).htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexSense-Subentries" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_subentry_for_Subentries_field.htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexSense-Subentries" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Subentries_(Sense).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-MoAffixProcess-" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Affix_Process_Rule_fldAF.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishAsHeadwordIn" xml:space="preserve">
+	<value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishIn(Entry)" xml:space="preserve">
+	<value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishIn(Example)" xml:space="preserve">
+	<value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpBulkEditPublishIn(Sense)" xml:space="preserve">
+	<value>/Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_change_publications.htm</value>
+  </data>
+  <data name="khtpConfigureHomograph" xml:space="preserve">
+	<value>/User_Interface/Menus/Tools/Configure_Homograph_Number/Configure_Homograph_Number_dialog_box.htm</value>
+	<comment>Configure Homograph Number Dialog box.</comment>
+  </data>
+  <data name="khtpChoose-lexiconEdit-PrimaryLexemes" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_Show_as_Headwords_In.htm</value>
+	<comment>Show as Headword in</comment>
+  </data>
+  <data name="khtpBulkEditAcademicDomains" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_choose_academic_domains.htm</value>
+	<comment>Bulk Edit Chooser Academic Domains Help Topic</comment>
+  </data>
+  <data name="khtpChooseLexicalEntryOrSense-ComplexForms" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_a_lexical_entry.htm</value>
+	<comment>Complex Forms in Entry or Sense Help Topic</comment>
+  </data>
+  <data name="khtpChoose-InflectionClass" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_an_inflection_class.htm</value>
+	<comment>Help Toopic for Choosing an Inflection Class</comment>
+  </data>
+  <data name="khtpField-ReferencedComplexForms-EntryLevel" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Referenced_Complex_Forms_(sense).htm</value>
+  </data>
+  <data name="khtpField-ReferencedComplexForms-PubLevel" xml:space="preserve">
+	<value>/User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Publication_Settings_flds/Referenced_Complex_Forms_Publication_Settings.htm</value>
+  </data>
+  <data name="khtpChoose-ReferencedComplexForms-CFChooser" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_referenced_complex_forms.htm</value>
+  </data>
+  <data name="khtpChoose-CmPossibility-CFChooser" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_referenced_complex_forms.htm</value>
+  </data>
+  <data name="khtpChooseComplexFormEntryOrSense-ComplexForms" xml:space="preserve">
+	<value>User_Interface/Menus/Edit/Find_a_lexical_entry.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexSense-Subentries-CFChooser" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_subentry_for_Subentries_field.htm</value>
+  </data>
+  <data name="khtpChoose-lexiconEdit-LexEntry-Subentries-CFChooser" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_subentry_for_Subentries_field.htm</value>
+  </data>
+  <data name="khtpField-InterlinearSfmImportWizard-Step1" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Import_Interlinear_SFM/Step_1_of_3_Import_Files.htm</value>
+  </data>
+  <data name="khtpField-InterlinearSfmImportWizard-Step2" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Import_Interlinear_SFM/Step_2_of_3_Field_Mapping.htm</value>
+  </data>
+  <data name="khtpField-InterlinearSfmImportWizard-Step3" xml:space="preserve">
+	<value>Beginning_Tasks/Importing_Data/Import_Interlinear_SFM/Step_3_of_3_Ready_to_Import.htm</value>
+  </data>
+  <data name="khtpChooseTexts" xml:space="preserve">
+	<value>Basic_Tasks/Filtering_data/Choose_Texts.htm</value>
+  </data>
+  <data name="khtp-CustomListField" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Lists/Custom_Lists_fields_overview.htm</value>
+	<comment>Help topic for custom list and Scripture Note Categories fields</comment>
+  </data>
+  <data name="khtpField-interlinearEdit-AnthroCodes" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Anthropology_Categories_field_(Info).htm</value>
+	<comment>Anthropology Categories field in Text's Info Tab</comment>
+  </data>
+  <data name="khtpField-interlinearEdit-Locations" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Locations_field_(Info).htm</value>
+	<comment>Locations field in Text's Info Tab</comment>
+  </data>
+  <data name="khtpField-interlinearEdit-Researchers" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Researchers_field_(Info).htm</value>
+	<comment>Researchers field in Text's Info Tab</comment>
+  </data>
+  <data name="khtpField-interlinearEdit-Sources" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Sources_field_(Info).htm</value>
+	<comment>Sources field in Text's Info Tab</comment>
+  </data>
+  <data name="khtpField-interlinearEdit-Text-" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Notebook_Record_(Info).htm</value>
+	<comment>Notebook Record field in Text's Info Tab</comment>
+  </data>
+  <data name="khtpField-interlinearEdit-Text-DateCreated" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Date_Created_(Info).htm</value>
+	<comment>Date Created in Text's Info Tab</comment>
+  </data>
+  <data name="khtpField-interlinearEdit-Text-DateModified" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Date_Modified_(Info).htm</value>
+	<comment>Date Modified in Text's Info Tab</comment>
+  </data>
+  <data name="khtpField-notebookEdit-InterlinearEdit-RnGenericRec-Participants" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Participants_field_(Info).htm</value>
+	<comment>Participants field in Text's Info Tab</comment>
+  </data>
+  <data name="khtpField-notebookEdit-Text-Contents" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Text_field_(Notebook).htm</value>
+	<comment>Text field in Notebook Edit (w/ contents)</comment>
+  </data>
+  <data name="khtpField-interlinearEdit-Text-Participants" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Texts_&amp;_Words/Participants_field_(Info).htm</value>
+	<comment>Researchers field in Text's Info Tab (Empty)</comment>
+  </data>
+  <data name="khtpField-notebookEdit-RnGenericRec-Text" xml:space="preserve">
+	<value>User_Interface/Field_Descriptions/Notebook/Text_field_(Notebook).htm</value>
+	<comment>Text field in Notebook Edit (Empty)</comment>
+  </data>
+  <data name="khtpChoose-AnthroCodes" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_anthropology_categories.htm</value>
+	<comment>Choose  Aanthropology_Categories help button for empty texts in the Info tab</comment>
+  </data>
+  <data name="khtpChoose-Locations" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_locations.htm</value>
+	<comment>Choose Locations help button for empty texts in the Info tab</comment>
+  </data>
+  <data name="khtpChoose-Participants" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_participants_roles.htm</value>
+	<comment>Choose Participants help button for empty texts in the Info tab</comment>
+  </data>
+  <data name="khtpChoose-Researchers" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_researchers.htm</value>
+	<comment>Choose Researchers help button for empty texts in the Info tab</comment>
+  </data>
+  <data name="khtpChoose-Sources" xml:space="preserve">
+	<value>Using_Tools/Notebook_tools/Record_Edit_overview/Choose_sources.htm</value>
+	<comment>Choose Sources help button for empty texts in the Info tab</comment>
+  </data>
+</root>

@@ -1,0 +1,149 @@
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2008, SIL International. All Rights Reserved.
+// <copyright from='2008' to='2008' company='SIL International'>
+//		Copyright (c) 2008, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Common Public License or the
+//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+// </copyright>
+#endregion
+//
+// File: TestChecksDataSource.cs
+// Responsibility: TE Team
+// ---------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Text;
+using SILUBS.SharedScrUtils;
+
+namespace SILUBS.ScriptureChecks
+{
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// Test Checks data source
+	/// </summary>
+	/// ----------------------------------------------------------------------------------------
+	public class TestChecksDataSource : IChecksDataSource
+	{
+		private Dictionary<string, string> m_parameters = new Dictionary<string, string>();
+		internal List<ITextToken> m_tokens = new List<ITextToken>();
+
+		#region IChecksDataSource Members
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the books present.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public List<int> BooksPresent
+		{
+			get { return new List<int>(); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the character categorizer.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public CharacterCategorizer CharacterCategorizer
+		{
+			get { return new CharacterCategorizer(); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the parameter value.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// ------------------------------------------------------------------------------------
+		public string GetParameterValue(string key)
+		{
+			string value;
+
+			if (m_parameters.TryGetValue(key, out value))
+				return value;
+
+			if (key.Contains("ValidCharacters"))
+				return value;
+
+			return string.Empty;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the text.
+		/// </summary>
+		/// <param name="bookNum">The book num.</param>
+		/// <param name="chapterNum">The chapter num.</param>
+		/// ------------------------------------------------------------------------------------
+		public bool GetText(int bookNum, int chapterNum)
+		{
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the localized name of the check.
+		/// </summary>
+		/// <param name="scrCheckName">Name of the check.</param>
+		/// ------------------------------------------------------------------------------------
+		public string GetUiCheckName(string scrCheckName)
+		{
+			return scrCheckName;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the localized name of the inventory column header.
+		/// </summary>
+		/// <param name="scrCheckUnit">The check unit.</param>
+		/// ------------------------------------------------------------------------------------
+		public string GetUiInventoryColumnHeader(string scrCheckUnit)
+		{
+			return scrCheckUnit;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// No-op.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public void Save()
+		{
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the parameter value.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <param name="value">The value.</param>
+		/// ------------------------------------------------------------------------------------
+		public void SetParameterValue(string key, string value)
+		{
+			m_parameters[key] = value;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets an enumarable thingy to enumerate the tokens.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<ITextToken> TextTokens()
+		{
+			return m_tokens;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Returns a localized version of the specified string.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string GetLocalizedString(string strToLocalize)
+		{
+			return strToLocalize;
+		}
+
+		#endregion
+	}
+}

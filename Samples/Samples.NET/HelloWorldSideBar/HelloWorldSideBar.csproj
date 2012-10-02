@@ -1,0 +1,156 @@
+<VisualStudioProject>
+	<CSHARP
+		ProjectType = "Local"
+		ProductVersion = "7.10.3077"
+		SchemaVersion = "2.0"
+		ProjectGuid = "{D311D3F1-EC19-47C7-AE27-614D67910D43}"
+		SccProjectName = "Perforce Project"
+		SccLocalPath = "."
+		SccProvider = "MSSCCI:Perforce SCM"
+	>
+		<Build>
+			<Settings
+				ApplicationIcon = "App.ico"
+				AssemblyKeyContainerName = ""
+				AssemblyName = "HelloWorldSideBar"
+				AssemblyOriginatorKeyFile = ""
+				DefaultClientScript = "JScript"
+				DefaultHTMLPageLayout = "Grid"
+				DefaultTargetSchema = "IE50"
+				DelaySign = "false"
+				OutputType = "WinExe"
+				PreBuildEvent = ""
+				PostBuildEvent = ""
+				RootNamespace = "HelloWorldSideBar"
+				RunPostBuildEvent = "OnBuildSuccess"
+				StartupObject = ""
+			>
+				<Config
+					Name = "Debug"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "false"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "DEBUG;TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "true"
+					FileAlignment = "4096"
+					IncrementalBuild = "true"
+					NoStdLib = "false"
+					NoWarn = ""
+					Optimize = "false"
+					OutputPath = "bin\Debug\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "false"
+					WarningLevel = "4"
+				/>
+				<Config
+					Name = "Release"
+					AllowUnsafeBlocks = "false"
+					BaseAddress = "285212672"
+					CheckForOverflowUnderflow = "false"
+					ConfigurationOverrideFile = ""
+					DefineConstants = "TRACE"
+					DocumentationFile = ""
+					DebugSymbols = "true"
+					FileAlignment = "4096"
+					IncrementalBuild = "false"
+					NoStdLib = "false"
+					NoWarn = ""
+					Optimize = "true"
+					OutputPath = "bin\Release\"
+					RegisterForComInterop = "false"
+					RemoveIntegerChecks = "false"
+					TreatWarningsAsErrors = "false"
+					WarningLevel = "4"
+				/>
+			</Settings>
+			<References>
+				<Reference
+					Name = "System"
+					AssemblyName = "System"
+					HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.dll"
+				/>
+				<Reference
+					Name = "System.Data"
+					AssemblyName = "System.Data"
+					HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
+				/>
+				<Reference
+					Name = "System.Drawing"
+					AssemblyName = "System.Drawing"
+					HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Drawing.dll"
+				/>
+				<Reference
+					Name = "System.Windows.Forms"
+					AssemblyName = "System.Windows.Forms"
+					HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Windows.Forms.dll"
+				/>
+				<Reference
+					Name = "System.XML"
+					AssemblyName = "System.Xml"
+					HintPath = "..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
+				/>
+				<Reference
+					Name = "Controls.Design"
+					AssemblyName = "Controls.Design"
+					HintPath = "..\..\..\Output\Debug\Controls.Design.dll"
+				/>
+				<Reference
+					Name = "FwControls"
+					AssemblyName = "FwControls"
+					HintPath = "..\..\..\Output\Debug\FwControls.dll"
+				/>
+				<Reference
+					Name = "SideBar"
+					AssemblyName = "SideBar"
+					HintPath = "..\..\..\Output\Debug\SideBar.dll"
+				/>
+				<Reference
+					Name = "MenuExtender"
+					AssemblyName = "MenuExtender"
+					HintPath = "..\..\..\..\fwtexp\Output\debug\MenuExtender.dll"
+				/>
+				<Reference
+					Name = "xCoreInterfaces"
+					AssemblyName = "xCoreInterfaces"
+					HintPath = "..\..\..\..\fwtexp\Output\debug\xCoreInterfaces.dll"
+				/>
+			</References>
+		</Build>
+		<Files>
+			<Include>
+				<File
+					RelPath = "App.ico"
+					BuildAction = "Content"
+				/>
+				<File
+					RelPath = "AssemblyInfo.cs"
+					SubType = "Code"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "Form1.cs"
+					SubType = "Form"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "Form1.resx"
+					DependentUpon = "Form1.cs"
+					BuildAction = "EmbeddedResource"
+				/>
+				<File
+					RelPath = "Form2.cs"
+					SubType = "Form"
+					BuildAction = "Compile"
+				/>
+				<File
+					RelPath = "Form2.resx"
+					DependentUpon = "Form2.cs"
+					BuildAction = "EmbeddedResource"
+				/>
+			</Include>
+		</Files>
+	</CSHARP>
+</VisualStudioProject>
