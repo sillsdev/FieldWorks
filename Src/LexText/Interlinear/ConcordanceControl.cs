@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -36,6 +37,7 @@ namespace SIL.FieldWorks.IText
 		private IVwPattern m_vwPattern;
 		private bool m_fObjectConcorded = false;
 		private int m_hvoMatch = 0;
+		private int m_backupHvo = 0;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private POSPopupTreeManager m_pOSPopupTreeManager;
 
@@ -787,7 +789,13 @@ namespace SIL.FieldWorks.IText
 		private List<IParaFragment> FindMatchingItems()
 		{
 			var result = new List<IParaFragment>();
-			var target = m_cache.ServiceLocator.GetObject(m_hvoMatch);
+			var target = GetMatchObject();
+			if (target == null)
+			{
+				m_hvoMatch = 0;
+				HasLoadedMatches = false;
+				return result; // shouldn't happen... :)
+			}
 			int clid = target.ClassID;
 			var analyses = new HashSet<IAnalysis>();
 			switch (clid)
@@ -864,6 +872,34 @@ namespace SIL.FieldWorks.IText
 					}
 					return new List<IParaFragment>();
 			}
+		}
+
+		private ICmObject GetMatchObject()
+		{
+			try
+			{
+				return m_cache.ServiceLocator.GetObject(m_hvoMatch);
+			}
+			catch (KeyNotFoundException e)
+			{
+			}
+			// LT-13503 It is just possible that we are deleting the last remaining analysis of a wordform
+			m_hvoMatch = m_backupHvo;
+			if (m_hvoMatch <= 0)
+			{
+				return null;
+			}
+			var newTarget = m_cache.ServiceLocator.GetObject(m_hvoMatch);
+			var targetAsWordform = newTarget as IWfiWordform;
+			if (targetAsWordform != null && targetAsWordform.AnalysesOC.Count > 0)
+			{
+				InitializeConcordanceSearch(((IWfiWordform)newTarget).AnalysesOC.First());
+			}
+			else
+			{
+				InitializeConcordanceSearch(newTarget);
+			}
+			return newTarget;
 		}
 
 		private void m_btnSearch_Click(object sender, EventArgs e)
@@ -1637,6 +1673,7 @@ namespace SIL.FieldWorks.IText
 			SetDefaultVisibilityOfItems(false, sTag);
 			m_fObjectConcorded = true;
 			m_hvoMatch = cmo.Hvo;
+			m_backupHvo = cmo.Owner == null ? 0 : cmo.Owner.Hvo;
 			ITsTextProps ttpObj = tssObj.get_PropertiesAt(0);
 			int nVar;
 			int ws = ttpObj.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar);
