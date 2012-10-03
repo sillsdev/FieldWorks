@@ -338,6 +338,7 @@
 	</Target>
 
 	<Target Name="setRegistryValues" Condition="'$(OS)'=='Unix' Or '$(UserIsAdmin)'=='True'" DependsOnTargets="initLinux;initWindows">
+		<Message Text="Setting registry values for $(fwrt)."/>
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootCodeDir"
 					   Value="$(dir-fwdistfiles)"/>

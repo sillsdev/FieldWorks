@@ -13,8 +13,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -23,9 +21,6 @@ using SIL.FieldWorks.FDO;
 using System.IO;
 using SIL.Utils;
 using System.Diagnostics;
-using SIL.FieldWorks.FDO.Infrastructure;
-using System.Xml;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
@@ -54,7 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwCheckAnthroList"/> class.
+		/// Initializes a new instance of the <see cref="T:FwCheckAnthroListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public FwCheckAnthroListDlg()
