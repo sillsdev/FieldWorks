@@ -5,7 +5,7 @@
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="MakeDirs;EncConvertersDlls">
+			DependsOnTargets="Initialize;EncConvertersDlls">
 	</Target>
 
 	<!-- Copy the EncodingConverters files, registering them on Windows -->

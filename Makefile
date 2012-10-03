@@ -119,7 +119,7 @@ test-database: \
 # Make copies of pre-generated files in Common.
 tlbs-copy:
 	@-mkdir -p $(COM_OUT_DIR)
-	-cp -rf $(BUILD_ROOT)/Lib/linux/Common/* $(COM_OUT_DIR)/
+	-cp -prf $(BUILD_ROOT)/Lib/linux/Common/* $(COM_OUT_DIR)/
 
 tlbs-clean:
 	$(RM) -rf $(COM_OUT_DIR)
@@ -132,7 +132,7 @@ tlbs-clean:
 IcuDataFiles:
 	(cd $(BUILD_ROOT)/DistFiles/Icu40 && unzip -u ../Icu40.zip)
 	-(cd $(BUILD_ROOT)/DistFiles/Icu40/icudt40l && mkdir icudt40l)
-	-(cd $(BUILD_ROOT)/DistFiles/Icu40/icudt40l && cp *.icu icudt40l)
+	-(cd $(BUILD_ROOT)/DistFiles/Icu40/icudt40l && cp -p *.icu icudt40l)
 
 
 # This build item isn't run on a normal build.
@@ -145,7 +145,7 @@ generate-strings:
 
 # now done in NAnt
 install-strings:
-	cp -f $(BUILD_ROOT)/DistFiles/strings-en.txt $(OUT_DIR)/strings-en.txt
+	cp -pf $(BUILD_ROOT)/DistFiles/strings-en.txt $(OUT_DIR)/strings-en.txt
 
 # setup current sets up the mono registry necessary to run certain program
 # This is now done in NAnt
@@ -264,8 +264,8 @@ install-tree:
 	install -m 644 Lib/linux/ShareFwProjects.desktop $(DESTDIR)/usr/share/fieldworks
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd,rng} $(DESTDIR)/usr/share/fieldworks
-	cp -dr --preserve=mode DistFiles/{"Editorial Checks",EncodingConverters,lib} $(DESTDIR)/usr/share/fieldworks
-	cp -dr --preserve=mode DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu40,Keyboards,"Language Explorer",Parts,ReleaseData,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters,lib} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu40,Keyboards,"Language Explorer",Parts,ReleaseData,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
 	# Relocate items that are in separate packages
 	rm -rf $(DESTDIR)/usr/share/fieldworks-movies/"Language Explorer"
 	mv $(DESTDIR)/usr/share/fieldworks/"Language Explorer"/Movies $(DESTDIR)/usr/share/fieldworks-movies/"Language Explorer"
@@ -359,7 +359,7 @@ DebugProcs-link:
 ManagedComBridge-all:
 	$(MAKE) -C$(COM_DIR)/ManagedComBridge all
 	-mkdir -p $(OUT_DIR)
-	cp -f ../COM/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(OUT_DIR)
+	cp -pf ../COM/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(OUT_DIR)
 
 ManagedComBridge-clean:
 	$(MAKE) -C$(COM_DIR)/ManagedComBridge clean
@@ -695,9 +695,9 @@ ComponentsMap-clean:
 	$(RM) $(OUT_DIR)/components.map
 
 install-between-DistFiles:
-	(cd $(OUT_DIR) && cp -f ../../DistFiles/UIAdapters-simple.dll TeUIAdapters.dll)
-	(cd DistFiles && cp -f $(OUT_DIR)/FwResources.dll .)
-	-(cd DistFiles && cp -f $(OUT_DIR)/TeResources.dll .)
+	(cd $(OUT_DIR) && cp -pf ../../DistFiles/UIAdapters-simple.dll TeUIAdapters.dll)
+	(cd DistFiles && cp -pf $(OUT_DIR)/FwResources.dll .)
+	-(cd DistFiles && cp -pf $(OUT_DIR)/TeResources.dll .)
 	(cd $(OUT_DIR) && ln -sf ../../DistFiles/Language\ Explorer/Configuration/ContextHelp.xml contextHelp.xml)
 
 uninstall-between-DistFiles:

@@ -4,4 +4,4 @@
 
 BUILD_ROOT=$(dirname $0)
 
-mono --debug $BUILD_ROOT/CollectCppUnitTests $*
+mono --debug $BUILD_ROOT/CollectCppUnitTests.exe $*

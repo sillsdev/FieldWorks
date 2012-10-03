@@ -84,9 +84,6 @@ LINK_LIBS := \
 	$(COM_OUT_DIR)/libGraphiteTlb.a \
 	$(COM_OUT_DIR)/libViewsTlb.a \
 
-#	$(OUT_DIR)/libAppCore.a \
-#	$(OUT_DIR)/libCellar.a \
-
 # === Object Lists ===
 
 OBJ_LANGSERV =
@@ -248,14 +245,6 @@ $(OUT_DIR)/libDebugProcs.a:
 $(OUT_DIR)/libGeneric.a:
 	@$(MAKE) -C $(SRC)/Generic $@ -q || \
 	 $(MAKE) -C $(SRC)/Generic $@
-
-$(COM_OUT_DIR)/libCellar.a:
-	@$(MAKE) -C $(SRC)/Cellar all -q || \
-	 $(MAKE) -C $(SRC)/Cellar all
-
-$(COM_OUT_DIR)/libAppCore.a:
-	@$(MAKE) -C $(SRC)/AppCore all -q || \
-	 $(MAKE) -C (SRC)/AppCore all
 
 $(COM_OUT_DIR)/libFwKernelTlb.a:
 	@$(MAKE) -C $(SRC)/Kernel $@ -q || \

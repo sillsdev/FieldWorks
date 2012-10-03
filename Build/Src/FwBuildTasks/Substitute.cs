@@ -24,7 +24,7 @@ namespace FwBuildTasks
 		public string Template { get; set; }
 
 		/// <summary>
-		/// Symbol file, typically src/MasterVersionInfo.cs. Contains lines each with a pair
+		/// Symbol file, typically src/MasterVersionInfo.txt. Contains lines each with a pair
 		/// Name=Value, e.g., FWMAJOR=7.
 		/// Used to implement the substitutions $!(Name) and $!{Name:Default}.
 		/// If the specified Name occurs on the LHS in the Symbols file, it will be replaced with
@@ -113,6 +113,16 @@ namespace FwBuildTasks
 				fileContents = string.Format("// This file is generated from {0}. Do NOT modify!\n{1}",
 					Path.GetFileName(template), fileContents);
 
+				// Don't write the output file if it hasn't changed from a previous run.
+				if (File.Exists(Output))
+				{
+					string oldFileContents = File.ReadAllText(Output);
+					if (fileContents == oldFileContents)
+					{
+						Log.LogMessage(MessageImportance.Low, "Skipping generating {0} from {1} because it hasn't changed.", Output, Path.GetFileName(template));
+						return true;
+					}
+				}
 				using (MemoryStream memoryStream = new MemoryStream())
 				{
 					StreamWriter outStream = new StreamWriter(memoryStream);

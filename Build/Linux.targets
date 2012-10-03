@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<!-- call preparatory Linux targets -->
-	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="MakeDirs;unitpp;tlbs-copy;teckit;iculibs;linuxLibs;checkTLBsUpToDate;setupLinuxRegistry"
+	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="Initialize;unitpp;tlbs-copy;teckit;iculibs;linuxLibs;checkTLBsUpToDate;setupLinuxRegistry"
 			Inputs="$(dir-fwdistfiles)/strings-en.txt" Outputs="$(dir-outputBase)/strings-en.txt">
 		<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt"
 			  DestinationFolder="$(dir-outputBase)"

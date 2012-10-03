@@ -194,7 +194,7 @@ namespace FwBuildTasks
 				{
 					writer.Write("\t<Target Name=\"{0}\"", project);
 					var bldr = new StringBuilder();
-					bldr.Append("MakeDirs");	// ensure the output directories exist.
+					bldr.Append("Initialize");	// ensure the output directories and version files exist.
 					if (project == "COMInterfaces")
 						bldr.Append(";mktlbs");
 					// The xWorksTests require us to have built on of the adapters, typically FlexUIAdapter.dll.

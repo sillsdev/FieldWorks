@@ -241,32 +241,23 @@
 
 	<ItemGroup>
 		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"/>
-		<CellarConstantsInputs Include="$(fwrt)/Src/bldinc.h"/>
-		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarBaseConstants.h"/>
+		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"/>
 		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
-		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/bldinc.h"/>
-		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarBaseConstants.h"/>
 	</ItemGroup>
 
-	<ItemGroup>
-		<BldIncTemplate Include="$(fwrt)/Src/bldinc.h"/>
-		<BldIncVersion Include="$(fwrt)/Src/MasterVersionInfo.txt"/>
-		<BldIncOutput Include="$(fwrt)/Output/Common/bldinc.h"/>
-	</ItemGroup>
-
-	<Target Name="GenerateCellarConstants" Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
-		<MakeDir Directories="$(dir-fwoutputCommon)"
-				 Condition="'$(action)'!='clean'"/>
+	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants"
+			Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
+		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
 		<FdoGenerate XmlFile="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"
 					 OutputDir="$(dir-fwoutputCommon)"
 					 OutputFile="CellarConstants.h"
 					 TemplateFile="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"
 					 WorkingDirectory="$(fwrt)/Src/FDO"
 					 Condition="'$(action)'!='clean'"/>
-		<Substitute Template="@(BldIncTemplate)"
-					Symbols="@(BldIncSymbols)"
-					Output="@(BldIncOutput)"
-					Condition="'$(action)'!='clean'"/>
+	</Target>
+
+	<Target Name="CopyCellarBaseConstants" Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h" Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h">
+		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
 		<Copy SourceFiles="$(fwrt)/Src/Kernel/CellarBaseConstants.h"
 			  DestinationFolder="$(fwrt)/Output/Common"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
@@ -308,7 +299,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw" DependsOnTargets="CleanAll;MakeDirs;IcuData;setRegistryValues;CopyDlls;mkall"/>
+	<Target Name="remakefw" DependsOnTargets="CleanAll;Initialize;IcuData;setRegistryValues;CopyDlls;mkall"/>
 
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 
