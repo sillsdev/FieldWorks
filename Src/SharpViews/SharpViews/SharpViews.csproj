@@ -97,6 +97,10 @@
 	<Reference Include="xCoreInterfaces, Version=7.1.0.40680, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
+	<Reference Include="SimpleRootSite">
+	  <Name>SimpleRootSite</Name>
+	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -196,12 +200,6 @@
 	  <DependentUpon>SharpView.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\Common\SimpleRootSite\SimpleRootSite.csproj">
-	  <Project>{99898933-E3F3-45E0-82CA-3257805CDA69}</Project>
-	  <Name>SimpleRootSite</Name>
-	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

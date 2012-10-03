@@ -251,6 +251,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
 	</Reference>
+	<Reference Include="TeDialogs">
+	  <Name>TeDialogs</Name>
+	  <HintPath>..\..\..\Output\Debug\TeDialogs.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -343,12 +347,6 @@
 	  <ProductName>.NET Framework 3.5 SP1</ProductName>
 	  <Install>false</Install>
 	</BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\TeDialogs\TeDialogs.csproj">
-	  <Project>{93D3BC58-E0B2-4769-88CF-3BB1CC32DB02}</Project>
-	  <Name>TeDialogs</Name>
-	</ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

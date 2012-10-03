@@ -104,6 +104,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
 	</Reference>
+	<Reference Include="SharpViews">
+	  <Name>SharpViews</Name>
+	  <HintPath>..\..\..\Output\Debug\SharpViews.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="AssembledStylesTests.cs" />
@@ -143,12 +147,6 @@
 	<Compile Include="StTextTests.cs" />
 	<Compile Include="TextSourceTests.cs" />
 	<Compile Include="TripleTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\SharpViews\SharpViews.csproj">
-	  <Project>{DE6F45DA-35BD-469C-90D2-B7918D2BC01F}</Project>
-	  <Name>SharpViews</Name>
-	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<None Include="App.config" />
