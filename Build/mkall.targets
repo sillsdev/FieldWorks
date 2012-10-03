@@ -241,11 +241,8 @@
 
 	<ItemGroup>
 		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"/>
-		<CellarConstantsInputs Include="$(fwrt)/Src/bldinc.h"/>
-		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarBaseConstants.h"/>
+		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"/>
 		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
-		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/bldinc.h"/>
-		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarBaseConstants.h"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -254,19 +251,28 @@
 		<BldIncOutput Include="$(fwrt)/Output/Common/bldinc.h"/>
 	</ItemGroup>
 
-	<Target Name="GenerateCellarConstants" Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
-		<MakeDir Directories="$(dir-fwoutputCommon)"
-				 Condition="'$(action)'!='clean'"/>
+	<Target Name="GenerateCellarConstants" DependsOnTargets="GenerateBldIncH;CopyCellarBaseConstants"
+			Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
+		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
 		<FdoGenerate XmlFile="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"
 					 OutputDir="$(dir-fwoutputCommon)"
 					 OutputFile="CellarConstants.h"
 					 TemplateFile="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"
 					 WorkingDirectory="$(fwrt)/Src/FDO"
 					 Condition="'$(action)'!='clean'"/>
+	</Target>
+
+	<Target Name="GenerateBldIncH">
+		<Message Text="Starting GenerateBldIncH target"/>
+		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
 		<Substitute Template="@(BldIncTemplate)"
-					Symbols="@(BldIncSymbols)"
+					Symbols="@(BldIncVersion)"
 					Output="@(BldIncOutput)"
 					Condition="'$(action)'!='clean'"/>
+	</Target>
+
+	<Target Name="CopyCellarBaseConstants" Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h" Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h">
+		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
 		<Copy SourceFiles="$(fwrt)/Src/Kernel/CellarBaseConstants.h"
 			  DestinationFolder="$(fwrt)/Output/Common"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"

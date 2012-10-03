@@ -124,14 +124,6 @@ $(GENERIC_OBJ)/main.o:
 	@$(MAKE) -C $(SRC)/$(GENERIC_NAME)/ -q $@ || \
 	 $(MAKE) -C $(SRC)/$(GENERIC_NAME)/ $@
 
-$(OUT_DIR)/libCellar.a:
-	@$(MAKE) -C $(SRC)/Cellar $@ -q || \
-	 $(MAKE) -C $(SRC)/Cellar $@
-
-$(OUT_DIR)/libAppCore.a:
-	@$(MAKE) -C $(SRC)/AppCore $@ -q || \
-	 $(MAKE) -C $(SRC)/AppCore $@
-
 $(OUT_DIR)/libGeneric.a:
 	@$(MAKE) -C $(SRC)/Generic $@ -q || \
 	 $(MAKE) -C $(SRC)/Generic $@
