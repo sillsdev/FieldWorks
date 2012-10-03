@@ -6161,3 +6161,4 @@ GordonM, 2 Oct 2012. LT-13556 Made new project start with vernacular spell check
 SteveMc, October 3, 2012.  Integrate from Calgary/WW to WW.  Fix version datestamping to work
 	properly using msbuild.
 GordonM, 3 Oct 2012. missing files for NUnitReport.exe build
+NaylorJ, 3 Oct 2012. LT-13617 Add an option to allow users (like me) to avoid updating Global Writing System stores when the project WS settings are done.

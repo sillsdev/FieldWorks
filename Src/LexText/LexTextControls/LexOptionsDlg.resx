@@ -117,86 +117,92 @@
   <resheader name="writer">
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-	<value>False</value>
-  </metadata>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-	<value>NoControl</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-	<value>6, 18</value>
-  </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-	<value>123, 13</value>
-  </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-	<value>9</value>
-  </data>
-  <data name="label1.Text" xml:space="preserve">
-	<value>User interface language:</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-	<value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-	<value>m_tabInterface</value>
-  </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-	<value>2</value>
-  </data>
   <data name="tabControl1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Bottom, Left, Right</value>
   </data>
   <data name="m_tabInterface.AccessibleName" xml:space="preserve">
 	<value>tabInterface</value>
   </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-	<value>9, 115</value>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
   </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-	<value>340, 46</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 116</value>
   </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
-	<value>11</value>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+	<value>59, 13</value>
   </data>
-  <data name="label3.Text" xml:space="preserve">
-	<value>These localizations are not all complete and are not necessarily thoroughly reviewed.  If you have feedback, please send it to FLEx_Localization@sil.org.</value>
+  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+	<value>13</value>
   </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-	<value>label3</value>
+  <data name="label4.Text" xml:space="preserve">
+	<value>Advanced:</value>
   </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+	<value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
 	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
 	<value>m_tabInterface</value>
   </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
 	<value>0</value>
+  </data>
+  <data name="updateGlobalWS.AutoSize" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="updateGlobalWS.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>TopLeft</value>
+  </data>
+  <data name="updateGlobalWS.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 132</value>
+  </data>
+  <data name="updateGlobalWS.Size" type="System.Drawing.Size, System.Drawing">
+	<value>275, 17</value>
+  </data>
+  <data name="updateGlobalWS.TabIndex" type="System.Int32, mscorlib">
+	<value>12</value>
+  </data>
+  <data name="updateGlobalWS.Text" xml:space="preserve">
+	<value>Do not copy writing system changes to other projects</value>
+  </data>
+  <data name="updateGlobalWS.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+	<value>TopLeft</value>
+  </data>
+  <data name="&gt;&gt;updateGlobalWS.Name" xml:space="preserve">
+	<value>updateGlobalWS</value>
+  </data>
+  <data name="&gt;&gt;updateGlobalWS.Type" xml:space="preserve">
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updateGlobalWS.Parent" xml:space="preserve">
+	<value>m_tabInterface</value>
+  </data>
+  <data name="&gt;&gt;updateGlobalWS.ZOrder" xml:space="preserve">
+	<value>1</value>
   </data>
   <data name="label2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-	<value>9, 75</value>
+	<value>343, 182</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-	<value>340, 40</value>
+	<value>10, 10</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
 	<value>10</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
 	<value>You can add other language options by running the installer, using Modify, and choosing to install Language Packs. See Help for details. </value>
+  </data>
+  <data name="label2.Visible" type="System.Boolean, mscorlib">
+	<value>False</value>
   </data>
   <data name="&gt;&gt;label2.Name" xml:space="preserve">
 	<value>label2</value>
@@ -208,13 +214,13 @@
 	<value>m_tabInterface</value>
   </data>
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-	<value>1</value>
+	<value>2</value>
   </data>
   <data name="m_userInterfaceChooser.AccessibleName" xml:space="preserve">
 	<value>UserInterfaceChooser</value>
   </data>
   <data name="m_userInterfaceChooser.Location" type="System.Drawing.Point, System.Drawing">
-	<value>192, 15</value>
+	<value>6, 21</value>
   </data>
   <data name="m_userInterfaceChooser.Size" type="System.Drawing.Size, System.Drawing">
 	<value>161, 21</value>
@@ -226,12 +232,63 @@
 	<value>m_userInterfaceChooser</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=7.3.0.23921, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=7.3.0.23046, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Parent" xml:space="preserve">
-	<value>m_tabInterface</value>
+	<value>groupBox1</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+	<value>3, 51</value>
+  </data>
+  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+	<value>0, 0, 0, 0</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+	<value>330, 40</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+	<value>11</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+	<value>Some localizations are not complete and others need review.  Contact FLEx_Localization@sil.org with any feedback.</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+	<value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+	<value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+	<value>1</value>
+  </data>
+  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>6, 7</value>
+  </data>
+  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
+	<value>339, 94</value>
+  </data>
+  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
+	<value>14</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+	<value>User Interface:</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
+	<value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
+	<value>m_tabInterface</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
 	<value>3</value>
   </data>
   <data name="m_tabInterface.Location" type="System.Drawing.Point, System.Drawing">
@@ -247,7 +304,7 @@
 	<value>0</value>
   </data>
   <data name="m_tabInterface.Text" xml:space="preserve">
-	<value>Interface</value>
+	<value>General</value>
   </data>
   <data name="&gt;&gt;m_tabInterface.Name" xml:space="preserve">
 	<value>m_tabInterface</value>

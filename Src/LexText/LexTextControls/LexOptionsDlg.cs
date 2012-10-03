@@ -20,12 +20,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Net.Sockets;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
@@ -44,12 +42,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string s_helpTopic = "khtpLexOptions";
 		private HelpProvider helpProvider;
 		private IHelpTopicProvider m_helpTopicProvider;
+		private ToolTip optionsTooltip;
 
 		internal bool m_failedToConnectToService;
 
 		public LexOptionsDlg()
 		{
 			InitializeComponent();
+			optionsTooltip = new ToolTip {AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true};
+			optionsTooltip.SetToolTip(updateGlobalWS, "Consultants or people who work on several unrelated projects may want to select this.");
+			optionsTooltip.SetToolTip(groupBox1, label2.Text);
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
@@ -160,7 +162,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Leave any dlls in place since they may be shared, or in use for the moment.
 				}
 			}
-
+			CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore = !updateGlobalWS.Checked;
+			CoreImpl.Properties.Settings.Default.Save();
 			DialogResult = DialogResult.OK;
 		}
 
@@ -179,6 +182,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		void IFwExtension.Init(FdoCache cache, Mediator mediator)
 		{
+			updateGlobalWS.Checked = !CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore;
 			m_mediator = mediator;
 			m_cache = cache;
 			m_helpTopicProvider = mediator.HelpTopicProvider;
@@ -241,6 +245,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		public bool PluginsUpdated
 		{
 			get { return m_pluginsUpdated; }
+		}
+
+		private void updateGlobalWS_MouseHover(object sender, EventArgs e)
+		{
+			;
 		}
 	}
 }
