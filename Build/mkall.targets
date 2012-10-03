@@ -299,7 +299,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw" DependsOnTargets="CleanAll;MakeDirs;IcuData;setRegistryValues;CopyDlls;mkall"/>
+	<Target Name="remakefw" DependsOnTargets="CleanAll;Initialize;IcuData;setRegistryValues;CopyDlls;mkall"/>
 
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 

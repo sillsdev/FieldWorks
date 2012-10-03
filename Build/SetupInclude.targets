@@ -70,26 +70,7 @@
 		</Otherwise>
 	</Choose>
 
-	<!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
-	<!-- Generate Output/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
-	<ItemGroup>
-		<VersionTemplate Include="../Src/CommonAssemblyInfoTemplate.cs"/>
-		<VersionSymbols Include="../Src/MasterVersionInfo.txt"/>
-		<VersionOutput Include="../Src/CommonAssemblyInfo.cs"/>
-		<BldIncTemplate Include="../Src/bldinc.h"/>
-		<BldIncOutput Include="../Output/Common/bldinc.h"/>
-	</ItemGroup>
-	<!--
-		Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
-		write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
-		change once a day.)
-	-->
-	<Target Name="GenerateVersionFiles">
-		<Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
-		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
-		<Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean'"/>
-	</Target>
-  <Target Name="Setup" DependsOnTargets="GenerateVersionFiles">
+  <Target Name="Setup"><!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
 
 	<!-- set fwrt to the proper value before we do anything else. -->
 	<ParentDirectory CurrentDirectory="$(MSBuildProjectDirectory)">
@@ -312,9 +293,11 @@
 	<Message Text="Finished deleting NUnit report files." Importance="normal" />
   </Target>
 
-  <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles">
-	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase)" Condition="'$(action)'!='clean'"/>
+  <Target Name="Initialize" DependsOnTargets="MakeDirs;GenerateVersionFiles"/>
 
+  <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles">
+	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"
+			 Condition="'$(action)'!='clean'"/>
 	<!-- extra directory (and symbolic links) needed for Linux -->
 	<MakeDir Directories="$(fwrt)/Output" Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
 	  <Output TaskParameter="DirectoriesCreated" ItemName="OutputCreatedForLinux"/>
@@ -331,6 +314,26 @@
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
 	<Exec Condition="'$(action)'!='clean' And '@(OutputCreatedForLinux)'!=''"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
+  </Target>
+
+  <!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
+  <!-- Generate Output/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
+  <ItemGroup>
+	  <VersionTemplate Include="../Src/CommonAssemblyInfoTemplate.cs"/>
+	  <VersionSymbols Include="../Src/MasterVersionInfo.txt"/>
+	  <VersionOutput Include="../Src/CommonAssemblyInfo.cs"/>
+	  <BldIncTemplate Include="../Src/bldinc.h"/>
+	  <BldIncOutput Include="../Output/Common/bldinc.h"/>
+  </ItemGroup>
+  <!--
+	  Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
+	  write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
+	  change once a day.)
+  -->
+  <Target Name="GenerateVersionFiles">
+	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
+	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean'"/>
+	  <Message Text="Updated CommonAssemblyInfo.cs and bldinc.h (if needed)."/>
   </Target>
 
   <PropertyGroup>
