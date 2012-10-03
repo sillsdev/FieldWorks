@@ -245,13 +245,7 @@
 		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
 	</ItemGroup>
 
-	<ItemGroup>
-		<BldIncTemplate Include="$(fwrt)/Src/bldinc.h"/>
-		<BldIncVersion Include="$(fwrt)/Src/MasterVersionInfo.txt"/>
-		<BldIncOutput Include="$(fwrt)/Output/Common/bldinc.h"/>
-	</ItemGroup>
-
-	<Target Name="GenerateCellarConstants" DependsOnTargets="GenerateBldIncH;CopyCellarBaseConstants"
+	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants"
 			Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
 		<FdoGenerate XmlFile="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"
@@ -260,15 +254,6 @@
 					 TemplateFile="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"
 					 WorkingDirectory="$(fwrt)/Src/FDO"
 					 Condition="'$(action)'!='clean'"/>
-	</Target>
-
-	<Target Name="GenerateBldIncH">
-		<Message Text="Starting GenerateBldIncH target"/>
-		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
-		<Substitute Template="@(BldIncTemplate)"
-					Symbols="@(BldIncVersion)"
-					Output="@(BldIncOutput)"
-					Condition="'$(action)'!='clean'"/>
 	</Target>
 
 	<Target Name="CopyCellarBaseConstants" Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h" Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h">

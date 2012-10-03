@@ -70,17 +70,24 @@
 		</Otherwise>
 	</Choose>
 
-	<!-- Generate CommonAssemblyInfo.cs from CommonAssemblyInfoTemplate.cs-->
+	<!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
+	<!-- Generate Output/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
 	<ItemGroup>
 		<VersionTemplate Include="../Src/CommonAssemblyInfoTemplate.cs"/>
 		<VersionSymbols Include="../Src/MasterVersionInfo.txt"/>
 		<VersionOutput Include="../Src/CommonAssemblyInfo.cs"/>
-		<VersionInputs Include="@(VersionSymbols)"/>
-		<VersionInputs Include="@(VersionTemplate)"/>
+		<BldIncTemplate Include="../Src/bldinc.h"/>
+		<BldIncOutput Include="../Output/Common/bldinc.h"/>
 	</ItemGroup>
-	<Target Name="GenerateVersionFiles" Inputs="@(VersionInputs)" Outputs="@(VersionOutput)">
-		<Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)"/>
-		<!-- Enhance JohnT: eventually should also generate buildinc.h for the C++ world-->
+	<!--
+		Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
+		write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
+		change once a day.)
+	-->
+	<Target Name="GenerateVersionFiles">
+		<Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
+		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
+		<Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean'"/>
 	</Target>
   <Target Name="Setup" DependsOnTargets="GenerateVersionFiles">
 
