@@ -26,7 +26,7 @@ MakeSureFolderExists(destination);
 
 var shellObj = new ActiveXObject("WScript.Shell");
 var Cmd = 'cmd /Q /D /C  copy "' + source + '" "' + destination + '"';
-WScript.Echo(Cmd);
+
 if (shellObj.Run(Cmd, 0, true) != 0)
 	WScript.Quit(-1);
 
