@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using FwBuildTasks;
 using Microsoft.Build.Framework;
 
@@ -12,6 +13,7 @@ namespace NUnitReport
 		private const string s_output = "Output";
 		private const string s_debug = "Debug";
 		private const string s_fileSuffix = ".dll-nunit-output.xml";
+		private const string s_unitppSuffix = "-results.xml";
 		private LoggerVerbosity m_verbosity = LoggerVerbosity.Minimal;
 
 		public List<string> Projects { get; set; }
@@ -54,6 +56,8 @@ namespace NUnitReport
 			if (args.Length == 0 || args[0] == "/?" || args[0] == "/help")
 				return result;
 
+			List<string> wildResults = null;
+
 			foreach (string argument in args)
 			{
 				if (argument.StartsWith("/v"))
@@ -61,11 +65,30 @@ namespace NUnitReport
 					SetVerbosity(argument.Split(':').Last());
 					continue;
 				}
+				if (argument == "/a")
+				{
+					// Collect all matching files.
+					wildResults = CollectAllMatchingFiles();
+					continue;
+				}
 				// Check project name
 				var completeFileName = BuildCompleteTestReportName(argument);
 				if (!File.Exists(completeFileName))
-					continue;
+				{
+					completeFileName = BuildCompleteUnitppReportName(argument);
+					if (!File.Exists(completeFileName))
+						continue;
+				}
 				result.Add(argument);
+			}
+			if (wildResults != null)
+			{
+				if (result.Count > 0)
+				{
+					Console.WriteLine("The /a switch cannot be combined with explicit test fixture names.  It is being ignored.");
+					return result;
+				}
+				return wildResults;
 			}
 			return result;
 		}
@@ -95,7 +118,28 @@ namespace NUnitReport
 
 		private string BuildCompleteTestReportName(string projName)
 		{
-			return OutputDir + Path.DirectorySeparatorChar + projName + s_fileSuffix;
+			return Path.Combine(OutputDir, projName + s_fileSuffix);
+		}
+
+		string BuildCompleteUnitppReportName(string projName)
+		{
+			return Path.Combine(OutputDir, projName + s_unitppSuffix);
+		}
+
+		List<string> CollectAllMatchingFiles()
+		{
+			var result = new List<string>();
+			foreach (var path in Directory.EnumerateFiles(OutputDir, "*" + s_fileSuffix))
+			{
+				var target = Path.GetFileName(path);
+				result.Add(target.Replace(s_fileSuffix, ""));
+			}
+			foreach (var path in Directory.EnumerateFiles(OutputDir, "test*" + s_unitppSuffix))
+			{
+				var target = Path.GetFileName(path);
+				result.Add(target.Replace(s_unitppSuffix, ""));
+			}
+			return result;
 		}
 
 		public void GenerateReport()
@@ -110,14 +154,17 @@ namespace NUnitReport
 
 		private string DelimitedStringFromListOfProjects()
 		{
-			var result = string.Empty;
+			var result = new StringBuilder();
 			foreach (var projName in Projects)
 			{
-				if (result != string.Empty)
-					result += ";";
-				result += BuildCompleteTestReportName(projName);
+				if (result.Length > 0)
+					result.Append(";");
+				var completeFileName = BuildCompleteTestReportName(projName);
+				if (!File.Exists(completeFileName))
+					completeFileName = BuildCompleteUnitppReportName(projName);
+				result.Append(completeFileName);
 			}
-			return result;
+			return result.ToString();
 		}
 	}
 }

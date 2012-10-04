@@ -182,6 +182,10 @@
 	  <Name>FDOTests</Name>
 	  <HintPath>..\..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
 	</Reference>
+	<Reference Include="BasicUtilsTests">
+	  <Name>BasicUtilsTests</Name>
+	  <HintPath>..\..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+	</Reference>
 	<Reference Include="xCoreInterfaces, Version=6.1.1.29173, Culture=neutral, PublicKeyToken=null">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
@@ -232,12 +236,6 @@
 	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\..\..\Utilities\BasicUtils\BasicUtilsTests\BasicUtilsTests.csproj">
-	  <Project>{6A3565C8-E957-4DD5-A4B1-AD500C299AF4}</Project>
-	  <Name>BasicUtilsTests</Name>
-	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

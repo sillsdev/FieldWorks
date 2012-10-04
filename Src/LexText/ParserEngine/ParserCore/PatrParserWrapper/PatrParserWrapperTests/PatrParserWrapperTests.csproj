@@ -65,6 +65,10 @@
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\..\..\..\Output\Debug\Patr100Interop.dll</HintPath>
 	</Reference>
+	<Reference Include="PatrParserWrapper">
+	  <Name>PatrParserWrapper</Name>
+	  <HintPath>..\..\..\..\..\..\Output\Debug\PatrParserWrapper.dll</HintPath>
+	</Reference>
 	<Reference Include="System" />
 	<Reference Include="System.Core" />
 	<Reference Include="System.Windows.Forms" />
@@ -76,12 +80,6 @@
   <ItemGroup>
 	<Compile Include="AssemblyInfo.cs" />
 	<Compile Include="PatrParserTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\PatrParserWrapper.csproj">
-	  <Project>{A9F7981A-9275-4C89-8479-725B69C0C7E1}</Project>
-	  <Name>PatrParserWrapper</Name>
-	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
 	<Folder Include="Properties\" />

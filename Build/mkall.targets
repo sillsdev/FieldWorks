@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
+	<UsingTask TaskName="Unitpp" AssemblyFile="FwBuildTasks.dll"/>
+
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;allCpp;allCsharp">
 		<Message Text="Finished mkall Target."/>
@@ -24,9 +26,6 @@
 	</Target>
 
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
-		<CreateProperty Value="all" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
 			  Configuration="$(config-capital)"
@@ -41,9 +40,6 @@
 	</Target>
 
 	<Target Name="GenericLib" DependsOnTargets="DebugProcs">
-		<CreateProperty Value="all" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\Generic\GenericLib.mak"
 			  Configuration="$(config-capital)"
@@ -58,9 +54,6 @@
 	</Target>
 
 	<Target Name="testGenericLib" DependsOnTargets="GenericLib">
-		<CreateProperty Value="check" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
 			  Configuration="$(config-capital)"
@@ -76,16 +69,15 @@
 				 Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
-		<Exec Command="$(dir-outputBase)\testGenericLib.exe -v -l"
-			  WorkingDirectory="$(dir-outputBase)"
-			  Condition="'$(OS)'=='Windows_NT' And '$(action)'=='test'" ContinueOnError="true"/>
-		<Message Text="Finished building testGenericLib."/>
+		<Unitpp Condition="'$(action)'=='test'"
+				FixturePath="$(dir-outputBase)/testGenericLib"
+				TimeOut="60000"
+				ContinueOnError="true" />
+		<Message Text="Finished building testGenericLib." Condition="'$(action)'!='test'"/>
+		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
 	<Target Name="GrEngine" DependsOnTargets="GenericLib;FwKernel">
-		<CreateProperty Value="all" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\Graphite\GrEngine\GrEngine.mak"
 			  Configuration="$(config-capital)"
@@ -100,9 +92,6 @@
 	</Target>
 
 	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore">
-		<CreateProperty Value="all" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Message Text="FwKernel make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
@@ -118,9 +107,6 @@
 	</Target>
 
 	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel">
-		<CreateProperty Value="check" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
 			  Configuration="$(config-capital)"
@@ -136,16 +122,15 @@
 				 Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
-		<Exec Command="$(dir-outputBase)\testFwKernel.exe -v -l"
-			  WorkingDirectory="$(dir-outputBase)"
-			  Condition="'$(OS)'=='Windows_NT' And '$(action)'=='test'" ContinueOnError="true"/>
-		<Message Text="Finished building testFwKernel."/>
+		<Unitpp Condition="'$(action)'=='test'"
+				FixturePath="$(dir-outputBase)/testFwKernel"
+				TimeOut="60000"
+				ContinueOnError="true" />
+		<Message Text="Finished building testFwKernel." Condition="'$(action)'!='test'"/>
+		<Message Text="Finished building testFwKernel and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
 	<Target Name="AppCore" DependsOnTargets="DebugProcs;GenericLib">
-		<CreateProperty Value="all" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Message Text="AppCore make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
 			  Makefile="$(fwrt)/Src/AppCore/Makefile"
@@ -156,9 +141,6 @@
 	</Target>
 
 	<Target Name="Language" DependsOnTargets="GenericLib;FwKernel;ManagedLgIcuCollator;GenerateCellarConstants">
-		<CreateProperty Value="all" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\Language\Language.mak"
 			  Configuration="$(config-capital)"
@@ -173,9 +155,6 @@
 	</Target>
 
 	<Target Name="testLanguage" DependsOnTargets="GenericLib;Language;FwKernel;Views;GrEngine">
-		<CreateProperty Value="check" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\Language\Test\testLanguage.mak"
 			  Configuration="$(config-capital)"
@@ -191,16 +170,15 @@
 				 Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testLanguage.exe -manifest $(dir-outputBase)\testLanguage.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
-		<Exec Command="$(dir-outputBase)\testLanguage.exe -v -l"
-			  WorkingDirectory="$(dir-outputBase)"
-			  Condition="'$(OS)'=='Windows_NT' And '$(action)'=='test'" ContinueOnError="true"/>
-		<Message Text="Finished building testLanguage."/>
+		<Unitpp Condition="'$(action)'=='test'"
+				FixturePath="$(dir-outputBase)/testLanguage"
+				TimeOut="60000"
+				ContinueOnError="true" />
+		<Message Text="Finished building testLanguage." Condition="'$(action)'!='test'"/>
+		<Message Text="Finished building testLanguage and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
 	<Target Name="Views" DependsOnTargets="GenericLib;Language;KeyboardSwitcher;GenerateCellarConstants"><!-- mktlbs -->
-		<CreateProperty Value="all" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\views\Views.mak"
 			  Configuration="$(config-capital)"
@@ -215,9 +193,6 @@
 	</Target>
 
 	<Target Name="testViews" DependsOnTargets="GenericLib;Views">
-		<CreateProperty Value="check" Condition="'$(action)'=='test'">
-			<Output TaskParameter="Value" PropertyName="make-target"/>
-		</CreateProperty>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\views\Test\testViews.mak"
 			  Configuration="$(config-capital)"
@@ -233,10 +208,12 @@
 				 Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
-		<Exec Command="$(dir-outputBase)\testViews.exe -v -l"
-			  WorkingDirectory="$(dir-outputBase)"
-			  Condition="'$(OS)'=='Windows_NT' And '$(action)'=='test'" ContinueOnError="true"/>
-		<Message Text="Finished building testViews."/>
+		<Unitpp Condition="'$(action)'=='test'"
+				FixturePath="$(dir-outputBase)/testViews"
+				TimeOut="600000"
+				ContinueOnError="true" />
+		<Message Text="Finished building testViews." Condition="'$(action)'!='test'"/>
+		<Message Text="Finished building testViews and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
 	<ItemGroup>

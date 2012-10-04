@@ -88,28 +88,26 @@
 	<Reference Include="System" />
 	<Reference Include="System.Data" />
 	<Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\..\Common\FwUtils\FwUtils.csproj">
-	  <Project>{89EC1097-4786-4611-B6CB-2B8BC01CDDED}</Project>
+	<Reference Include="FwUtils">
 	  <Name>FwUtils</Name>
-	</ProjectReference>
-	<ProjectReference Include="..\..\..\FDO\FDO.csproj">
-	  <Project>{E5E9DDC7-2855-4D92-AD46-960AC4C46457}</Project>
+	  <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="FDO">
 	  <Name>FDO</Name>
-	</ProjectReference>
-	<ProjectReference Include="..\..\..\FDO\FDOTests\FDOTests.csproj">
-	  <Project>{5B119AEF-2895-44AB-BB28-6C1071A9B62B}</Project>
+	  <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
+	<Reference Include="FDOTests">
 	  <Name>FDOTests</Name>
-	</ProjectReference>
-	<ProjectReference Include="..\..\..\TestUtils\TestUtils.csproj">
-	  <Project>{91AE66B6-2926-402A-9F4E-CB89366D884F}</Project>
+	  <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
+	</Reference>
+	<Reference Include="TestUtils">
 	  <Name>TestUtils</Name>
-	</ProjectReference>
-	<ProjectReference Include="..\FixFwDataDll.csproj">
-	  <Project>{9C534D8A-3445-4827-8D3B-957D98461533}</Project>
+	  <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
+	</Reference>
+	<Reference Include="FixFwDataDll">
 	  <Name>FixFwDataDll</Name>
-	</ProjectReference>
+	  <HintPath>..\..\..\..\Output\Debug\FixFwDataDll.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
