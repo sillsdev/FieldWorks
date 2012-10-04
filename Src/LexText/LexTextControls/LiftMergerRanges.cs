@@ -845,7 +845,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (!m_PossibilityListGuids.Contains(list.Guid))
 					m_PossibilityListGuids.Add(list.Guid);
 			}
-			StoreSandardListsWithGuids();
+			StoreStandardListsWithGuids();
 			try
 			{
 				if (!File.Exists(sRangesFile))
@@ -900,7 +900,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 
-		private void StoreSandardListsWithGuids()
+		private void StoreStandardListsWithGuids()
 		{
 			Guid guid;
 

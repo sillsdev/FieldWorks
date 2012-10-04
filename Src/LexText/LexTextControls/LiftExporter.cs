@@ -2289,6 +2289,33 @@ namespace SIL.FieldWorks.LexText.Controls
 					GetListsNotAddedYet(allomorph, cmPossibilityListsReferenced);
 				}
 			}
+			// Add in possibility lists referenced by custom fields
+			var possListRepo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
+			foreach (var flid in m_mdc.GetFieldIds())
+			{
+				if (!m_mdc.IsCustom(flid))
+					continue;
+				var flidType = (CellarPropertyType)m_mdc.GetFieldType(flid);
+				switch (flidType)
+				{
+					case CellarPropertyType.ReferenceAtomic:
+					case CellarPropertyType.ReferenceCollection:
+					case CellarPropertyType.ReferenceSequence:
+						var listGuid = m_mdc.GetFieldListRoot(flid);
+						if (cmPossibilityListsReferenced.ContainsKey(listGuid))
+							continue;
+						ICmPossibilityList possList;
+						if (possListRepo.TryGetObject(listGuid, out possList))
+						{
+							var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, possList);
+							if (!cmPossibilityListsReferenced.ContainsKey(possList.Guid))
+								cmPossibilityListsReferenced.Add(possList.Guid, XmlUtils.MakeSafeXml(rangeName));
+						}
+						break;
+					default:
+						break;
+				}
+			}
 			return cmPossibilityListsReferenced;
 		}
 

@@ -1025,7 +1025,7 @@ namespace SIL.CoreImpl
 		public override void Save()
 		{
 			base.Save();
-			if (m_globalStore != null)
+			if (m_globalStore != null && Properties.Settings.Default.UpdateGlobalWSStore)
 				m_globalStore.Save();
 		}
 	}
