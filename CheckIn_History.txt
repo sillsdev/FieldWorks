@@ -330,3 +330,5 @@ JohnT, 2 Oct 2012. Completed the integration that was broken yesterday.
 GordonM, 2 Oct 2012. Integrated fix for LT-13503 from WW.
 KenZ, 2 Oct 2012. Fixed LT-13621 Lift import crash.
 GordonM, 4 Oct 2012. Integrate fix for LT-13652 from WW.
+JohnT, 4 Oct 2012. LT-13635 Parentheses in custom field name prevent export to XHTML. This is also a better fix
+	than the one in the main WW branch for LT-12507 XHTML export failure with custom fields with punctuation

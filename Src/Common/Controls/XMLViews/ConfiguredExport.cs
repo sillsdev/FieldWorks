@@ -21,6 +21,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Diagnostics;
 using SIL.CoreImpl;
@@ -918,11 +919,45 @@ namespace SIL.FieldWorks.Common.Controls
 			int iTopClass = m_rgClassNames.Count - 1;
 			if (iTopClass >= 0)
 				sClass2 = m_rgClassNames[iTopClass];
+			var safeField = MakeStringValidXmlElement(sField);
 			if (sClass != null && sClass.Length != 0)
-				sXml = String.Format("{0}_{1}", sClass, sField);
+				sXml = String.Format("{0}_{1}", sClass, safeField);
 			else
-				sXml = String.Format("{0}_{1}", sClass2, sField);
+				sXml = String.Format("{0}_{1}", sClass2, safeField);
 			return sXml;
+		}
+
+		/// <summary>
+		/// Replace any necessary characters in the string to make it a valid continuation (not the first character) of an
+		/// XML element name. According to http://www.xml.com/pub/a/2001/07/25/namingparts.html, it has to conform to
+		/// Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender. more precisely, the RE here is based on
+		/// http://www.w3.org/TR/REC-xml/#NT-Name. I have left out the range [#x10000-#xEFFFF] as this involves
+		/// surrogate pairs and I'm not sure how this RE handles them. Characters in this range will be converted.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		private string MakeStringValidXmlElement(string input)
+		{
+			// Anything followed by one illegal character followed by anything; must match whole string.
+			var pattern = new Regex(@"^(.*)([^\-:_.A-Za-z0-9\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037f-\u1FFF"
+				+ @"\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD"
+				+ @"\u00B7\u0300-\u036F\u203F-\u2040])"
+				+ @"(.*)$");
+			var result = input;
+			for (; ;)
+			{
+				var match = pattern.Match(result);
+				if (!match.Success)
+					return result; // We can't find an illegal character, string is good.
+				result = match.Groups[1].Value + MakeValueForXmlElement(match.Groups[2].Value[0]) + match.Groups[3].Value;
+			}
+		}
+
+		private string MakeValueForXmlElement(Char c)
+		{
+			if (c == ' ')
+				return "_"; // friendlier than hex.
+			return string.Format("{0:x}", Convert.ToInt32(c));
 		}
 
 		private void WriteFieldEndTag(int flid, CurrentContext ccOld)
