@@ -6162,3 +6162,4 @@ SteveMc, October 3, 2012.  Integrate from Calgary/WW to WW.  Fix version datesta
 	properly using msbuild.
 GordonM, 3 Oct 2012. missing files for NUnitReport.exe build
 NaylorJ, 3 Oct 2012. LT-13617 Add an option to allow users (like me) to avoid updating Global Writing System stores when the project WS settings are done.
+LastufkaM, 4 Oct 2012. XML comments needed to make the build work.
