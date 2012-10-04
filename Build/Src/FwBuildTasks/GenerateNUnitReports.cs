@@ -59,11 +59,27 @@ namespace FwBuildTasks
 
 			// Grab test-results node and parse totals
 			var resultsNode = doc.SelectSingleNode("test-results");
-			var secsToRun = resultsNode.SelectSingleNode("test-suite").Attributes["time"].Value;
+			var timeAttr = resultsNode.SelectSingleNode("test-suite").Attributes["time"];
+			string secsToRun = "0";
+			if (timeAttr != null)
+				secsToRun = timeAttr.Value;		// does not exist for unit++ output.
 			var projFails = Convert.ToInt32(resultsNode.Attributes["failures"].Value);
 			projFails += Convert.ToInt32(resultsNode.Attributes["errors"].Value);
-			var projIgnores = Convert.ToInt32(resultsNode.Attributes["skipped"].Value);
-			projIgnores += Convert.ToInt32(resultsNode.Attributes["ignored"].Value);
+			var skippedAttr = resultsNode.Attributes["skipped"];
+			int projIgnores = 0;
+			if (skippedAttr != null)
+			{
+				projIgnores = Convert.ToInt32(skippedAttr.Value);		// produced by NUnit
+			}
+			else
+			{
+				var notrunAttr = resultsNode.Attributes["not-run"];		// produced by unit++ (and NUnit for that matter)
+				if (notrunAttr != null)
+					projIgnores = Convert.ToInt32(notrunAttr.Value);
+			}
+			var ignoredAttr = resultsNode.Attributes["ignored"];
+			if (ignoredAttr != null)
+				projIgnores += Convert.ToInt32(ignoredAttr.Value);
 			var projPasses = Convert.ToInt32(resultsNode.Attributes["total"].Value) - projFails - projIgnores;
 			m_totalFailure += projFails;
 			m_totalIgnore += projIgnores;
@@ -80,7 +96,20 @@ namespace FwBuildTasks
 			var cases = resultsNode.SelectNodes("//test-case"); // does this get all of them?
 			foreach (XmlNode testCaseNode in cases)
 			{
-				var testResult = testCaseNode.Attributes["result"].Value;
+				var resultAttr = testCaseNode.Attributes["result"];
+				string testResult;
+				if (resultAttr != null)
+				{
+					testResult = testCaseNode.Attributes["result"].Value;
+				}
+				else
+				{
+					// Unit++ result only have the success attribute.
+					if (testCaseNode.Attributes["success"].Value == "True")
+						testResult = "Success";
+					else
+						testResult = "Failure";
+				}
 				var completeTestCaseName = testCaseNode.Attributes["name"].Value;
 				var testCaseName = completeTestCaseName.Split('.').Last();
 				// Log Successes as importance Low, Ignored as Medium and Failures as High

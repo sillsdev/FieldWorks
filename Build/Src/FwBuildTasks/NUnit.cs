@@ -322,7 +322,6 @@ namespace FwBuildTasks	// MSBuild.Community.Tasks
 				Log.LogErrorFromException(ex);
 			}
 			ToolPath = nunitPath;
-
 		}
 
 		/// <summary>
