@@ -1436,6 +1436,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							return 0;
 						}
 						m_dictCustomFlid.Add(sTag, fd.Id);
+						possListGuid = fd.ListRootId;
 						m_CustomFieldNamesToPossibilityListGuids.Add(sTag, possListGuid);
 						return fd.Id; // field with same label and type information exists already.
 					}

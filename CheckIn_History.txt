@@ -6165,3 +6165,4 @@ NaylorJ, 3 Oct 2012. LT-13617 Add an option to allow users (like me) to avoid up
 LastufkaM, 4 Oct 2012. XML comments needed to make the build work.
 SteveMc, October 4, 2012.  Integrate from Calgary/WW to WW.  (This adds a Unitpp msbuild Task,
 	and adjusts the GenerateNUnitReports Task to handle reports from Unitpp.)
+GordonM, 4 Oct 2012. Fix LIFT Import/Export for Custom fields/lists (LT-13652).
