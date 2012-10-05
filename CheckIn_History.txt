@@ -6171,3 +6171,4 @@ SteveMc, October 4, 2012.  Integrate from Calgary/WW to WW.  (merely fixes a Lin
 GordonM, 5 Oct 2012. LT-13636 fixed so custom fields referencing custom lists can be browseable.
 Bush, 5 Oct 2012. Integrated Graphite bug fix from Sharon.
 GordonM, 5 Oct 2012. Finish LT-13617 so FLEx doesn't ask devs about GlobalWritingSystem stuff.
+	Later... Fixed LT-9047 so Spelling Errors isn't a filter option for Pronunciation or CVPattern.
