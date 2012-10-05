@@ -55,6 +55,33 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			adjuster.RunTest();
 		}
 
+
+		/// <summary>
+		/// This example caused a problem that was caught in LT-13633. It involves a combination of
+		/// text in another writing sytem adjacent to punctuation, and caused a problem because the code that
+		/// skips unchanged stuff was not properly treating foreign text as punctuation.
+		/// </summary>
+		[Test]
+		public virtual void InsertCharacterAtEndOfParaWithPunctuationAndForeignWords()
+		{
+			var adjuster = new BothWaysAdjustmentVerifier(Cache)
+			{
+				MatchingInitialAnalyses = 19,
+				MatchOneMoreInitialTN = true,
+			};
+			//											        1         2         3         4         5         6         7         8         9
+			//								          0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+			var bldr = Cache.TsStrFactory.MakeString("(TB: kajem) diki mi diki lapolo neki tari di ten te (TB: tarin) dep xy",
+				Cache.DefaultVernWs).GetBldr();
+			// The two 'TB' labels are supposed to be English.
+			bldr.SetIntPropValues(1,3, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultAnalWs);
+			bldr.SetIntPropValues(53, 55, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultAnalWs);
+			adjuster.SetOldContents(bldr.GetString());
+			bldr.ReplaceRgch(bldr.Length, bldr.Length, "z", 1, null); // the edit is typing an extra letter at the end
+			adjuster.SetNewContents(bldr.GetString());
+			adjuster.RunTest();
+		}
+
 		/// <summary>
 		///
 		/// </summary>
