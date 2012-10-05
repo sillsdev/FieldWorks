@@ -6166,3 +6166,5 @@ LastufkaM, 4 Oct 2012. XML comments needed to make the build work.
 SteveMc, October 4, 2012.  Integrate from Calgary/WW to WW.  (This adds a Unitpp msbuild Task,
 	and adjusts the GenerateNUnitReports Task to handle reports from Unitpp.)
 GordonM, 4 Oct 2012. Fix LIFT Import/Export for Custom fields/lists (LT-13652).
+SteveMc, October 4, 2012.  Integrate from Calgary/WW to WW.  (merely fixes a Linux bug in the
+	msbuild setup)
