@@ -98,8 +98,15 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_mdc.get_IsVirtual(flid))
 				return false;
 
-			if (m_destClsid != 0 && m_mdc.GetDstClsId(flid) != m_destClsid)
-				return false;
+			// LT-13636 -- The line below kept custom fields referencing custom lists from being valid browse columns.
+			//if (m_destClsid != 0 && m_mdc.GetDstClsId(flid) != m_destClsid) is too strict! Should accept a subclass!
+			if (m_destClsid != 0)
+			{
+				var flidDestClass = m_mdc.GetDstClsId(flid);
+				var acceptableClasses = ((IFwMetaDataCacheManaged)m_mdc).GetAllSubclasses(m_destClsid);
+				if (!acceptableClasses.ContainsCollection(new int[] { flidDestClass }))
+					return false;
+			}
 
 			switch (m_restrictions)
 			{

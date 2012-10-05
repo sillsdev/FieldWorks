@@ -1041,12 +1041,7 @@ namespace SIL.FieldWorks.Common.Controls
 					// for the relevant language, and provided it is NOT a list (for which we will make a chooser).
 					if (!String.IsNullOrEmpty(beSpec))
 						break;
-					Enchant.Dictionary dict = m_bv.BrowseView.RootSiteEditingHelper.GetDictionary(ws);
-					if (dict != null)
-					{
-						combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksSpellingErrors),
-							new BadSpellingMatcher(ws), item));
-					}
+					AddSpellingErrorsIfAppropriate(item, combo, ws);
 					break;
 			}
 			combo.Items.Add(new FindComboItem(MakeLabel(XMLViewsStrings.ksFilterFor_), item, ws, combo, m_bv));
@@ -1070,6 +1065,26 @@ namespace SIL.FieldWorks.Common.Controls
 			combo.SelectedIndexChanged += Combo_SelectedIndexChanged;
 			combo.AccessibleName = "FwComboBox";
 			Controls.Add(combo);
+		}
+
+		private void AddSpellingErrorsIfAppropriate(FilterSortItem item, FwComboBox combo, int ws)
+		{
+			// LT-9047 For certain fields, filtering on Spelling Errors just doesn't make sense.
+			var layout = item.Spec.Attributes["layout"].Value;
+			switch (layout)
+			{
+				case "Pronunciation":
+				case "CVPattern":
+					break;
+				default:
+					Enchant.Dictionary dict = m_bv.BrowseView.RootSiteEditingHelper.GetDictionary(ws);
+					if (dict != null)
+					{
+						combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksSpellingErrors),
+															new BadSpellingMatcher(ws), item));
+					}
+					break;
+			}
 		}
 
 		internal IVwPattern MatchExactPattern(String str)

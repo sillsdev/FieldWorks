@@ -6166,3 +6166,9 @@ LastufkaM, 4 Oct 2012. XML comments needed to make the build work.
 SteveMc, October 4, 2012.  Integrate from Calgary/WW to WW.  (This adds a Unitpp msbuild Task,
 	and adjusts the GenerateNUnitReports Task to handle reports from Unitpp.)
 GordonM, 4 Oct 2012. Fix LIFT Import/Export for Custom fields/lists (LT-13652).
+SteveMc, October 4, 2012.  Integrate from Calgary/WW to WW.  (merely fixes a Linux bug in the
+	msbuild setup)
+GordonM, 5 Oct 2012. LT-13636 fixed so custom fields referencing custom lists can be browseable.
+Bush, 5 Oct 2012. Integrated Graphite bug fix from Sharon.
+GordonM, 5 Oct 2012. Finish LT-13617 so FLEx doesn't ask devs about GlobalWritingSystem stuff.
+	Later... Fixed LT-9047 so Spelling Errors isn't a filter option for Pronunciation or CVPattern.
