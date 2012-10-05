@@ -70,7 +70,8 @@
 		</Otherwise>
 	</Choose>
 
-  <Target Name="Setup"><!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
+  <!-- Setup cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes. -->
+  <Target Name="Setup">
 
 	<!-- set fwrt to the proper value before we do anything else. -->
 	<ParentDirectory CurrentDirectory="$(MSBuildProjectDirectory)">
@@ -280,7 +281,11 @@
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
 	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu40/icudt40l" />
 
-	<!-- Create the output directories if they don't already exist -->
+	<!-- Set some environment variables needed on Linux. -->
+	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_dir)/build$(arch)/src/.libs:$(com_dir)/build$(arch)/lib:$(icu_lib):$(dir-outputBase):$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="MONO_PATH" Value="$(dir-fwdistfiles):$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="MONO_REGISTRY_PATH" Value="$(dir-fwoutput)/registry" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="COMPONENTS_MAP_PATH" Value="$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
 
 	<Message Text="msbuild-target='$(msbuild-target)'; msbuild-props='$(msbuild-props)'"/>
 
@@ -295,13 +300,15 @@
 
   <Target Name="Initialize" DependsOnTargets="MakeDirs;GenerateVersionFiles"/>
 
+  <!-- Create the output directories if they don't already exist -->
   <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles">
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"
 			 Condition="'$(action)'!='clean'"/>
-	<!-- extra directory (and symbolic links) needed for Linux -->
+	<!-- extra directories (and symbolic links) needed for Linux -->
 	<MakeDir Directories="$(fwrt)/Output" Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
 	  <Output TaskParameter="DirectoriesCreated" ItemName="OutputCreatedForLinux"/>
 	</MakeDir>
+	<MakeDir Directories="$(dir-fwoutput)/registry" Condition="'$(OS)'=='Unix' And '$(action)'!='clean'"/>
 	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-capital)"/>
 	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
