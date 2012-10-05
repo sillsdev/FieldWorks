@@ -1098,9 +1098,8 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 
 	//	line-break flag
 	int nLineBreak = grstrm.ReadByteFromFont();
-	if (nLineBreak != 0 && nLineBreak != 1)
-		return false; // bad table
-	m_fLineBreak = (bool)nLineBreak;
+	m_fLineBreak = ((nLineBreak & 0x0001) == 0)? false : true;
+	// ignore other flags
 
 	//	range of possible cross-line-boundary contextualization
 	m_cchwPreXlbContext = grstrm.ReadByteFromFont();
