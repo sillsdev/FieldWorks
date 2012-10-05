@@ -299,25 +299,29 @@ namespace SIL.FieldWorks.FDO
 						updatedInUseWSs.Append(ws.DisplayLabel);
 					}
 				}
-				if (!String.IsNullOrEmpty(updatedInUseWSs.ToString()))
+				if (CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore)
 				{
-					//Ask the user if they want to update to the global version for their writing systems
-					if (NewerWritingSystemFound(updatedInUseWSs.ToString(), ProjectId.UiName))
+					if (!String.IsNullOrEmpty(updatedInUseWSs.ToString()))
 					{
-						//If they said yes, update all the writing systems which have newer versions
-						//even the ones we didn't ask about, since they don't even really know they are there.
+
+							//Ask the user if they want to update to the global version for their writing systems
+							if (NewerWritingSystemFound(updatedInUseWSs.ToString(), ProjectId.UiName))
+							{
+								//If they said yes, update all the writing systems which have newer versions
+								//even the ones we didn't ask about, since they don't even really know they are there.
+								foreach (var ws in writingSystemsWithNewerGlobalVersions)
+								{
+									writingSystemManager.Replace(ws);
+								}
+							}
+					}
+					else
+					{
+						// None of them is in use...go ahead and update them all
 						foreach (var ws in writingSystemsWithNewerGlobalVersions)
 						{
 							writingSystemManager.Replace(ws);
 						}
-					}
-				}
-				else
-				{
-					// None of them is in use...go ahead and update them all
-					foreach (var ws in writingSystemsWithNewerGlobalVersions)
-					{
-						writingSystemManager.Replace(ws);
 					}
 				}
 			}
