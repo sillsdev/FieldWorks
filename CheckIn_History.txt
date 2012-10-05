@@ -335,3 +335,4 @@ JohnT, 4 Oct 2012. LT-13635 Parentheses in custom field name prevent export to X
 RickM, 5 Oct 2012. LT-13638 Picture and Media files not copied in restore
 JohnT, 5 Oct 2012. LT-13633 No response entering baseline data
 GordonM, 5 Oct 2012. Integrate fix for LT-13636 from WW.
+JohnT, 5 Oct 2012. LT-13663 Crash merging homographs.
