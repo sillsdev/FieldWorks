@@ -6168,3 +6168,4 @@ SteveMc, October 4, 2012.  Integrate from Calgary/WW to WW.  (This adds a Unitpp
 GordonM, 4 Oct 2012. Fix LIFT Import/Export for Custom fields/lists (LT-13652).
 SteveMc, October 4, 2012.  Integrate from Calgary/WW to WW.  (merely fixes a Linux bug in the
 	msbuild setup)
+GordonM, 5 Oct 2012. LT-13636 fixed so custom fields referencing custom lists can be browseable.
