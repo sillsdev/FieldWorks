@@ -12,13 +12,13 @@
 		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
 	</Target>
 
-	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine;createCompMaps">
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
 		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
-	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Language;Views;GrEngine;createCompMaps">
+	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Language;Views;GrEngine">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
@@ -91,7 +91,7 @@
 		<Message Text="Finished building GrEngine."/>
 	</Target>
 
-	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore">
+	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps">
 		<Message Text="FwKernel make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
@@ -122,6 +122,10 @@
 				 Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="KernelCompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(KernelCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testFwKernel"
 				TimeOut="60000"
@@ -170,6 +174,10 @@
 				 Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testLanguage.exe -manifest $(dir-outputBase)\testLanguage.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="LanguageCompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(LanguageCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testLanguage"
 				TimeOut="60000"
@@ -178,7 +186,7 @@
 		<Message Text="Finished building testLanguage and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
-	<Target Name="Views" DependsOnTargets="GenericLib;Language;KeyboardSwitcher;GenerateCellarConstants"><!-- mktlbs -->
+	<Target Name="Views" DependsOnTargets="GenericLib;Language;KeyboardSwitcher;GenerateCellarConstants">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\views\Views.mak"
 			  Configuration="$(config-capital)"
@@ -192,7 +200,7 @@
 		<Message Text="Finished building Views."/>
 	</Target>
 
-	<Target Name="testViews" DependsOnTargets="GenericLib;Views">
+	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\views\Test\testViews.mak"
 			  Configuration="$(config-capital)"
@@ -208,6 +216,10 @@
 				 Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="ViewsCompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(ViewsCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
 				TimeOut="600000"
