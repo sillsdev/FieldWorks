@@ -1070,7 +1070,12 @@ namespace SIL.FieldWorks.Common.Controls
 		private void AddSpellingErrorsIfAppropriate(FilterSortItem item, FwComboBox combo, int ws)
 		{
 			// LT-9047 For certain fields, filtering on Spelling Errors just doesn't make sense.
-			var layout = item.Spec.Attributes["layout"].Value;
+			var layoutNode = item.Spec.Attributes["layout"] ?? item.Spec.Attributes["label"];
+			string layout = "";
+			if(layoutNode != null)
+			{
+				layout = layoutNode.Value;
+			}
 			switch (layout)
 			{
 				case "Pronunciation":
