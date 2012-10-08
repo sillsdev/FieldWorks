@@ -254,14 +254,14 @@ rule {Stem with a derivational prefix}
 		<Stem_2 stemName>         = <derivPfx stemName>
 		<Stem_2 exception>        = <derivPfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivPfx fromCat>
 		<Stem_2 synCat>           = <derivPfx envCat>
 		/
 		<derivPfx fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 		<derivPfx envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -271,7 +271,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 		<derivPfx envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -294,7 +294,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 		<derivPfx envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -304,7 +304,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 		<derivPfx envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -317,7 +317,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 		<derivPfx envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -331,7 +331,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 		<derivPfx envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -343,7 +343,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 		<derivPfx envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -353,7 +353,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 		<derivPfx envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -389,14 +389,14 @@ rule {Stem with a derivational suffix}
 		<Stem_2 stemName>         = <derivSfx stemName>
 		<Stem_2 exception>        = <derivSfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivSfx fromCat>
 		<Stem_2 synCat>           = <derivSfx envCat>
 		/
 		<derivSfx fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 		<derivSfx envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -406,7 +406,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 		<derivSfx envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -429,7 +429,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 		<derivSfx envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -439,7 +439,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 		<derivSfx envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -452,7 +452,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 		<derivSfx envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -466,7 +466,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 		<derivSfx envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -478,7 +478,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 		<derivSfx envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -488,7 +488,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 		<derivSfx envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -533,7 +533,7 @@ rule {Stem with a derivational circumfix}
 		 <Stem_2 exception>        = <derivCircumPfx fromException>
 		 <Stem_2 exception>        = <derivCircumSfx fromException>
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx envCat>
 		<Stem_2 synCat>           = <derivCircumSfx fromCat>
@@ -544,7 +544,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 		<derivCircumSfx envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -556,7 +556,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 		<derivCircumSfx envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -581,7 +581,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 		<derivCircumSfx envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -593,7 +593,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 		<derivCircumSfx envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -608,7 +608,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 		<derivCircumSfx envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -624,7 +624,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 		<derivCircumSfx envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -638,7 +638,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 		<derivCircumSfx envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -650,7 +650,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 		<derivCircumSfx envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -663,7 +663,7 @@ rule {Stem with a derivational circumfix}
 }
 
 	  }
-
+	  
 rule {Stem with a derivational circumfix where the rightmost part is an infix (and so may end up as a prefix}
 		 Stem_1 = derivCircumPfx_1 derivCircumPfx_2 Stem_2
 		 | percolation
@@ -698,7 +698,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		 | rightmost "prefix" must be an infix
 		 <derivCircumPfx_2> == [morphType : infix]
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx_1 fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx_1 envCat>
 		<Stem_2 synCat>           = <derivCircumPfx_2 fromCat>
@@ -709,7 +709,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 		<derivCircumPfx_2 envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -721,7 +721,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 		<derivCircumPfx_2 envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -746,7 +746,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 		<derivCircumPfx_2 envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -758,7 +758,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 		<derivCircumPfx_2 envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -773,7 +773,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 		<derivCircumPfx_2 envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -789,7 +789,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 		<derivCircumPfx_2 envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -803,7 +803,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 		<derivCircumPfx_2 envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -815,7 +815,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 		<derivCircumPfx_2 envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Stem_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -828,15 +828,15 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 }
 
 	  }
-
+	  
 rule {Stem via compound rule 3e4b40e8-1fad-4884-8fe6-d2206a30875c}
   Stem_1 = Stem_2 Stem_3
-								| percolation
-		<Stem_1 synCat>       = d7f7153f-e8cf-11d3-9764-00c04f186933
+                                | percolation
+		<Stem_1 synCat>       = d7f7153f-e8cf-11d3-9764-00c04f186933 
 
 		<Stem_1 requiresInflection> = +
 		<Stem_1 inflected> = -
-
+						
 		<Stem_1 inflectionClass>       = d64cbd78-3277-44b5-9ec3-6a6b0b38f772
 		<Stem_1 blocksInflection> = - | This stem can now be inflected
 						  | constraints
@@ -848,16 +848,16 @@ rule {Stem via compound rule 3e4b40e8-1fad-4884-8fe6-d2206a30875c}
 		<Stem_2 synCat>           = d7f7152a-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7152b-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7152c-e8cf-11d3-9764-00c04f186933 }
-
+								
 		<Stem_3 synCat> = d7f71525-e8cf-11d3-9764-00c04f186933
 rule {Stem via compound rule 98fd86d7-6333-4a50-ab18-5dda7631ba93}
   Stem_1 = Stem_2 Stem_3
-								| percolation
-		<Stem_1 synCat>       = d7f7153f-e8cf-11d3-9764-00c04f186933
+                                | percolation
+		<Stem_1 synCat>       = d7f7153f-e8cf-11d3-9764-00c04f186933 
 
 		<Stem_1 requiresInflection> = +
 		<Stem_1 inflected> = -
-
+						
 		<Stem_1 inflectionClass>       = d64cbd78-3277-44b5-9ec3-6a6b0b38f772
 		<Stem_1 blocksInflection> = - | This stem can now be inflected
 						  | constraints
@@ -870,10 +870,10 @@ rule {Stem via compound rule 98fd86d7-6333-4a50-ab18-5dda7631ba93}
 		<Stem_3 synCat>           = d7f7152a-e8cf-11d3-9764-00c04f186933 /
 		<Stem_3 synCat>           = d7f7152b-e8cf-11d3-9764-00c04f186933 /
 		<Stem_3 synCat>           = d7f7152c-e8cf-11d3-9764-00c04f186933 }
-
+				
 rule {Stem via compound rule 2a784607-2cb5-4d11-9521-32ba927e1003}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -893,10 +893,10 @@ rule {Stem via compound rule 2a784607-2cb5-4d11-9521-32ba927e1003}
 		<Stem_3 synCat>           = d7f7152a-e8cf-11d3-9764-00c04f186933 /
 		<Stem_3 synCat>           = d7f7152b-e8cf-11d3-9764-00c04f186933 /
 		<Stem_3 synCat>           = d7f7152c-e8cf-11d3-9764-00c04f186933 }
-
+				
 rule {Stem via compound rule ef8a159f-dabc-403d-a928-6eaac070331d}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_2 morphoSyntax>
 		<Stem_1 synCat> = <Stem_2 synCat>
 		<Stem_1 requiresInflection> = <Stem_2 requiresInflection>
@@ -918,11 +918,11 @@ rule {Stem via compound rule ef8a159f-dabc-403d-a928-6eaac070331d}
 		<Stem_2 synCat>           = d7f71542-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f71543-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7153d-e8cf-11d3-9764-00c04f186933 }
-
+								
 		<Stem_3 synCat> = d7f71525-e8cf-11d3-9764-00c04f186933
 rule {Stem via compound rule 6ee29822-7ef2-4b1a-aa50-9fa9996d6540}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -941,11 +941,11 @@ rule {Stem via compound rule 6ee29822-7ef2-4b1a-aa50-9fa9996d6540}
 		<Stem_2 synCat>           = d7f7152a-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7152b-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7152c-e8cf-11d3-9764-00c04f186933 }
-
+								
 		<Stem_3 synCat> = d7f71543-e8cf-11d3-9764-00c04f186933
 rule {Stem via compound rule 533fd4ea-334f-4f16-a91e-feba34883496}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -964,7 +964,7 @@ rule {Stem via compound rule 533fd4ea-334f-4f16-a91e-feba34883496}
 		<Stem_2 synCat>           = d7f7152a-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7152b-e8cf-11d3-9764-00c04f186933 /
 		<Stem_2 synCat>           = d7f7152c-e8cf-11d3-9764-00c04f186933 }
-
+								
 		<Stem_3 synCat> = d7f7153f-e8cf-11d3-9764-00c04f186933
 | ------------------------------------------------------------
 |                PARTIALLY ANALYZED WORD PORTION
@@ -1056,9 +1056,9 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
 		<Full synCat>           = <Suffixes synCat>
@@ -1069,7 +1069,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -1081,7 +1081,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -1106,7 +1106,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -1118,7 +1118,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -1133,7 +1133,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -1149,7 +1149,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -1163,7 +1163,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -1175,7 +1175,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -1195,16 +1195,16 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
 		/
 		<Prefixes synCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 		<Prefixes envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -1214,7 +1214,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 		<Prefixes envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -1237,7 +1237,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 		<Prefixes envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -1247,7 +1247,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 		<Prefixes envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -1260,7 +1260,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 		<Prefixes envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -1274,7 +1274,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 		<Prefixes envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -1286,7 +1286,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 		<Prefixes envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -1296,7 +1296,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 		<Prefixes envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -1316,16 +1316,16 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Suffixes synCat>
 		<Full synCat>           = <Suffixes envCat>
 		/
 		<Suffixes synCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -1335,7 +1335,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -1358,7 +1358,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -1368,7 +1368,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -1381,7 +1381,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -1395,7 +1395,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -1407,7 +1407,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -1417,7 +1417,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 		<Suffixes envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -1437,9 +1437,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <circumPfx synCat>
 		<Full synCat>           = <circumPfx envCat>
 		<Full synCat>           = <circumSfx synCat>
@@ -1450,7 +1450,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 		<circumSfx envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -1462,7 +1462,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 		<circumSfx envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -1487,7 +1487,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 		<circumSfx envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -1499,7 +1499,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 		<circumSfx envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -1514,7 +1514,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 		<circumSfx envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -1530,7 +1530,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 		<circumSfx envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -1544,7 +1544,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 		<circumSfx envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -1556,7 +1556,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 		<circumSfx envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -1578,9 +1578,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 								 | constraints
 								 | rightmost "prefix" must be an infix
 	<circumPfx_2> == [morphType : infix]
-
+	  
 	  {
-
+	  
 		<Full synCat>           = <circumPfx_1 synCat>
 		<Full synCat>           = <circumPfx_1 envCat>
 		<Full synCat>           = <circumPfx_2 synCat>
@@ -1591,7 +1591,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 		<circumPfx_2 envCat>         = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -1603,7 +1603,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 		<circumPfx_2 envCat>         = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -1628,7 +1628,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 		<circumPfx_2 envCat>         = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -1640,7 +1640,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 		<circumPfx_2 envCat>         = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -1655,7 +1655,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 		<circumPfx_2 envCat>         = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -1671,7 +1671,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 		<circumPfx_2 envCat>         = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -1685,7 +1685,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 		<circumPfx_2 envCat>         = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -1697,7 +1697,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 		<circumPfx_2 envCat>         = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Full synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Full synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -1783,14 +1783,14 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 								| percolation
   <Prefixes_1 synCat> = <prefix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Prefixes_2 synCat>           = <prefix fromCat>
 		/
 		<prefix fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -1799,7 +1799,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -1821,7 +1821,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -1830,7 +1830,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -1842,7 +1842,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -1855,7 +1855,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -1866,7 +1866,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -1875,7 +1875,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -1895,12 +1895,12 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
   <Prefixes_1 synCat> = <derivPfx toCat>
 								| constraints
   {
-
+  
 		<Prefixes_2 synCat>           = <derivPfx fromCat>
 		/
 		<derivPfx fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -1909,7 +1909,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -1931,7 +1931,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -1940,7 +1940,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -1952,7 +1952,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -1965,7 +1965,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -1976,7 +1976,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -1985,7 +1985,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Prefixes_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Prefixes_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -2004,14 +2004,14 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 								| percolation
   <Suffixes_1 synCat> = <suffix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Suffixes_2 synCat>           = <suffix fromCat>
 		/
 		<suffix fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -2020,7 +2020,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -2042,7 +2042,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -2051,7 +2051,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -2063,7 +2063,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -2076,7 +2076,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -2087,7 +2087,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -2096,7 +2096,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -2116,12 +2116,12 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
   <Suffixes_1 synCat> = <derivSfx toCat>
 								| constraints
   {
-
+  
 		<Suffixes_2 synCat>           = <derivSfx fromCat>
 		/
 		<derivSfx fromCat>        = d7f7150e-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f7150e-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f7150f-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71510-e8cf-11d3-9764-00c04f186933
@@ -2130,7 +2130,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = d7f71513-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71513-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71514-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71515-e8cf-11d3-9764-00c04f186933 /
@@ -2152,7 +2152,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = d7f71523-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71523-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71524-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71525-e8cf-11d3-9764-00c04f186933
@@ -2161,7 +2161,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = d7f71527-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71527-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71528-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71529-e8cf-11d3-9764-00c04f186933 /
@@ -2173,7 +2173,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = d7f7152f-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f7152f-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71530-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71531-e8cf-11d3-9764-00c04f186933 /
@@ -2186,7 +2186,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = d7f71536-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71536-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
@@ -2197,7 +2197,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = d7f71537-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f71537-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71538-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f71539-e8cf-11d3-9764-00c04f186933
@@ -2206,7 +2206,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = d7f7153b-e8cf-11d3-9764-00c04f186933
 {
-
+	  
 		<Suffixes_2 synCat>           = d7f7153b-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f7153c-e8cf-11d3-9764-00c04f186933 /
 		<Suffixes_2 synCat>           = d7f7153e-e8cf-11d3-9764-00c04f186933 /
@@ -2233,45 +2233,45 @@ rule {Partially analyzed stem with inflectional template  3e2e6b4e-cbc5-46d6-a19
 				  <Partial_2 synCat>       =  d7f7152a-e8cf-11d3-9764-00c04f186933 /
 				  <Partial_2 synCat>       =  d7f7152b-e8cf-11d3-9764-00c04f186933 /
 				  <Partial_2 synCat>       =  d7f7152c-e8cf-11d3-9764-00c04f186933
-}
+} 
 
   <Partial_1 morphoSyntax>    = <32bf0473-d3a8-40ba-b681-dbecfa10edd9_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  4abcc54f-332a-4b81-b1d6-ed7a3c42db1b}
   Partial_1 =  (42b52eed-0970-438d-9608-a03fc8c35855_0) Partial_2  617322ab-79f5-4302-8b9f-f92ca1d1eeba_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = d7f7153f-e8cf-11d3-9764-00c04f186933
+  <Partial_2 synCat>       = d7f7153f-e8cf-11d3-9764-00c04f186933 
 
   <Partial_1 morphoSyntax>    = <42b52eed-0970-438d-9608-a03fc8c35855_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <617322ab-79f5-4302-8b9f-f92ca1d1eeba_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  9e2f0090-61c3-4c37-b3ca-a7b7abd4ca0c}
   Partial_1 =  (42b52eed-0970-438d-9608-a03fc8c35855_0) Partial_2  0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = d7f71542-e8cf-11d3-9764-00c04f186933
+  <Partial_2 synCat>       = d7f71542-e8cf-11d3-9764-00c04f186933 
 
   <Partial_1 morphoSyntax>    = <42b52eed-0970-438d-9608-a03fc8c35855_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <0c7f9ffb-2fdd-4ba6-af2d-1b610d492fde_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  0e42bd7d-6e4f-47b9-a88b-8afe38d2d2fc}
   Partial_1 =  (42b52eed-0970-438d-9608-a03fc8c35855_0) 395e7178-199d-415a-a5b4-f8f3196a93f2_1 Partial_2  617322ab-79f5-4302-8b9f-f92ca1d1eeba_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = d7f71543-e8cf-11d3-9764-00c04f186933
+  <Partial_2 synCat>       = d7f71543-e8cf-11d3-9764-00c04f186933 
 
   <Partial_1 morphoSyntax>    = <42b52eed-0970-438d-9608-a03fc8c35855_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <395e7178-199d-415a-a5b4-f8f3196a93f2_1 morphoSyntax>
@@ -2279,13 +2279,13 @@ rule {Partially analyzed stem with inflectional template  0e42bd7d-6e4f-47b9-a88
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  3ff09630-b36d-47dc-874f-26e298756241}
   Partial_1 =  (42b52eed-0970-438d-9608-a03fc8c35855_0) 395e7178-199d-415a-a5b4-f8f3196a93f2_1 Partial_2  617322ab-79f5-4302-8b9f-f92ca1d1eeba_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = d7f7153d-e8cf-11d3-9764-00c04f186933
+  <Partial_2 synCat>       = d7f7153d-e8cf-11d3-9764-00c04f186933 
 
   <Partial_1 morphoSyntax>    = <42b52eed-0970-438d-9608-a03fc8c35855_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <395e7178-199d-415a-a5b4-f8f3196a93f2_1 morphoSyntax>
@@ -2293,7 +2293,7 @@ rule {Partially analyzed stem with inflectional template  3ff09630-b36d-47dc-874
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 | ------------------------------------------------------------
 |                TEMPLATES
 | ------------------------------------------------------------
@@ -2305,8 +2305,8 @@ Let Proclitic be []
 Let Enclitic be []
 Let Bound be []
 
-Let RootPOS0 be [rootCat:unknown]
-Let CliticPOS0 be [rootCat:unknown]
+Let RootPOS0 be [rootCat:unknown] 
+Let CliticPOS0 be [rootCat:unknown] 
 Let RootPOSd7f7150d-e8cf-11d3-9764-00c04f186933 be [rootCat:d7f7150d-e8cf-11d3-9764-00c04f186933
 	requiresInflection : -]
 Let MSEnvPOSd7f7150d-e8cf-11d3-9764-00c04f186933 be {[envCat:d7f7150d-e8cf-11d3-9764-00c04f186933]}
@@ -2806,30 +2806,30 @@ Let InflClass39b3605b-9384-48da-b16e-f9a4b5ff659a be [inflectionClass:39b3605b-9
 Let FromInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a be [fromInflectionClass:39b3605b-9384-48da-b16e-f9a4b5ff659a]
 Let ToInflClass39b3605b-9384-48da-b16e-f9a4b5ff659a be [toInflectionClass:39b3605b-9384-48da-b16e-f9a4b5ff659a]
 Let ICA39b3605b-9384-48da-b16e-f9a4b5ff659a be [inflectionClass:39b3605b-9384-48da-b16e-f9a4b5ff659a]
-
+		 
 Let InflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a be [inflectionClass:441be6a9-e5d5-43c4-bd89-ab335f80e46a]
 Let FromInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a be [fromInflectionClass:441be6a9-e5d5-43c4-bd89-ab335f80e46a]
 Let ToInflClass441be6a9-e5d5-43c4-bd89-ab335f80e46a be [toInflectionClass:441be6a9-e5d5-43c4-bd89-ab335f80e46a]
 Let ICA441be6a9-e5d5-43c4-bd89-ab335f80e46a be [inflectionClass:441be6a9-e5d5-43c4-bd89-ab335f80e46a]
-
+		 
 Let InflClass1bd0464c-7c79-48c3-a9cf-7760c3a81f5e be [inflectionClass:1bd0464c-7c79-48c3-a9cf-7760c3a81f5e]
 Let FromInflClass1bd0464c-7c79-48c3-a9cf-7760c3a81f5e be [fromInflectionClass:1bd0464c-7c79-48c3-a9cf-7760c3a81f5e]
 Let ToInflClass1bd0464c-7c79-48c3-a9cf-7760c3a81f5e be [toInflectionClass:1bd0464c-7c79-48c3-a9cf-7760c3a81f5e]
 Let ICA1bd0464c-7c79-48c3-a9cf-7760c3a81f5e be [inflectionClass:1bd0464c-7c79-48c3-a9cf-7760c3a81f5e]
-
+		 
 Let InflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de be [inflectionClass:8a0a8938-a569-4e3f-9adf-8c933a3e26de]
 Let FromInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de be [fromInflectionClass:8a0a8938-a569-4e3f-9adf-8c933a3e26de]
 Let ToInflClass8a0a8938-a569-4e3f-9adf-8c933a3e26de be [toInflectionClass:8a0a8938-a569-4e3f-9adf-8c933a3e26de]
 Let ICA8a0a8938-a569-4e3f-9adf-8c933a3e26de be [inflectionClass:8a0a8938-a569-4e3f-9adf-8c933a3e26de]
-
+		 
 Let InflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772 be [inflectionClass:d64cbd78-3277-44b5-9ec3-6a6b0b38f772]
 Let FromInflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772 be [fromInflectionClass:d64cbd78-3277-44b5-9ec3-6a6b0b38f772]
 Let ToInflClassd64cbd78-3277-44b5-9ec3-6a6b0b38f772 be [toInflectionClass:d64cbd78-3277-44b5-9ec3-6a6b0b38f772]
 Let ICAd64cbd78-3277-44b5-9ec3-6a6b0b38f772 be [inflectionClass:d64cbd78-3277-44b5-9ec3-6a6b0b38f772]
-
-Let ICA441be6a9-e5d5-43c4-bd89-ab335f80e46aICA1bd0464c-7c79-48c3-a9cf-7760c3a81f5e be {[inflectionClass:441be6a9-e5d5-43c4-bd89-ab335f80e46a][inflectionClass:1bd0464c-7c79-48c3-a9cf-7760c3a81f5e]}
-
-
+		  
+Let ICA441be6a9-e5d5-43c4-bd89-ab335f80e46aICA1bd0464c-7c79-48c3-a9cf-7760c3a81f5e be {[inflectionClass:441be6a9-e5d5-43c4-bd89-ab335f80e46a][inflectionClass:1bd0464c-7c79-48c3-a9cf-7760c3a81f5e]} 
+ 
+ 
 
 Let Infix be [morphType:infix]
 Let prefixinginterfix be {[cat:prefix]

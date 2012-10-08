@@ -119,7 +119,7 @@ rule {Fully analyzed stem with a final inflectional template 15004}
   <Stem inflectionClass> = <15005_0 inflectionClass>
   <Full stemNameInfo morphoSyntax> = <15005_0 morphoSyntax>
 		 <Full envMorphoSyntaxInfo name> = <15005_0 envMorphoSyntax name>
-
+	  
 		<Full envMorphoSyntaxInfo morphoSyntax> = <Full morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Full envMorphoSyntaxInfo> == (
@@ -131,11 +131,11 @@ rule {Fully analyzed stem with a final inflectional template 15004}
 	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
 	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
 	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) ) 
 	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 rule {Fully analyzed stem with a final inflectional template 15331}
   Full =  (15332_0) Stem (15333_0)
@@ -153,14 +153,14 @@ rule {Fully analyzed stem with a final inflectional template 15331}
   <Stem inflectionClass> = <15332_0 inflectionClass>
   <Full stemNameInfo morphoSyntax> = <15332_0 morphoSyntax>
 		 <Full envMorphoSyntaxInfo name> = <15332_0 envMorphoSyntax name>
-
+	  
   <Stem morphoSyntax>    = <15333_0 morphoSyntax>
   <Stem synCat>          = <15333_0 envCat>   | allomorph
   <Stem exception>       = <15333_0 fromException>
   <Stem inflectionClass> = <15333_0 inflectionClass>
   <Full stemNameInfo morphoSyntax> = <15333_0 morphoSyntax>
 		 <Full envMorphoSyntaxInfo name> = <15333_0 envMorphoSyntax name>
-
+	  
 		<Full envMorphoSyntaxInfo morphoSyntax> = <Full morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Full envMorphoSyntaxInfo> == (
@@ -172,11 +172,11 @@ rule {Fully analyzed stem with a final inflectional template 15331}
 	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
 	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
 	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) ) 
 	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 | ------------------------------------------------------------
 |                STEM
@@ -217,21 +217,21 @@ rule {Stem with a derivational prefix}
 		<Stem_2 stemName>         = <derivPfx stemName>
 		<Stem_2 exception>        = <derivPfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivPfx fromCat>
 		<Stem_2 synCat>           = <derivPfx envCat>
 		/
 		<derivPfx fromCat>        = 260
 		<derivPfx envCat>         = 260
 {
-
+	  
 		<Stem_2 synCat>           = 260 /
 		<Stem_2 synCat>           = 261
 }
 
 	  }
 		 <Stem_2 envMorphoSyntaxInfo name> = <derivPfx envMorphoSyntax name>
-
+	  
 		<Stem_2 envMorphoSyntaxInfo morphoSyntax> = <Stem_2 morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Stem_2 envMorphoSyntaxInfo> == (
@@ -243,11 +243,11 @@ rule {Stem with a derivational prefix}
 	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
 	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
 	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) ) 
 	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 
 rule {Stem with a derivational suffix}
@@ -272,21 +272,21 @@ rule {Stem with a derivational suffix}
 		<Stem_2 stemName>         = <derivSfx stemName>
 		<Stem_2 exception>        = <derivSfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivSfx fromCat>
 		<Stem_2 synCat>           = <derivSfx envCat>
 		/
 		<derivSfx fromCat>        = 260
 		<derivSfx envCat>         = 260
 {
-
+	  
 		<Stem_2 synCat>           = 260 /
 		<Stem_2 synCat>           = 261
 }
 
 	  }
 		 <Stem_2 envMorphoSyntaxInfo name> = <derivSfx envMorphoSyntax name>
-
+	  
 		<Stem_2 envMorphoSyntaxInfo morphoSyntax> = <Stem_2 morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Stem_2 envMorphoSyntaxInfo> == (
@@ -298,11 +298,11 @@ rule {Stem with a derivational suffix}
 	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
 	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
 	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) ) 
 	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 rule {Stem with a derivational circumfix}
 		 Stem_1 = derivCircumPfx Stem_2 derivCircumSfx
@@ -336,7 +336,7 @@ rule {Stem with a derivational circumfix}
 		 <Stem_2 exception>        = <derivCircumPfx fromException>
 		 <Stem_2 exception>        = <derivCircumSfx fromException>
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx envCat>
 		<Stem_2 synCat>           = <derivCircumSfx fromCat>
@@ -347,17 +347,17 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 260
 		<derivCircumSfx envCat>         = 260
 {
-
+	  
 		<Stem_2 synCat>           = 260 /
 		<Stem_2 synCat>           = 261
 }
 
 	  }
-
+	  
 		 <Stem_2 envMorphoSyntaxInfo name> = <derivCircumPfx envMorphoSyntax name>
-
+	  
 		 <Stem_2 envMorphoSyntaxInfo name> = <derivCircumSfx envMorphoSyntax name>
-
+	  
 		<Stem_2 envMorphoSyntaxInfo morphoSyntax> = <Stem_2 morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Stem_2 envMorphoSyntaxInfo> == (
@@ -369,11 +369,11 @@ rule {Stem with a derivational circumfix}
 	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
 	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
 	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) ) 
 	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 rule {Stem with a derivational circumfix where the rightmost part is an infix (and so may end up as a prefix}
 		 Stem_1 = derivCircumPfx_1 derivCircumPfx_2 Stem_2
@@ -409,7 +409,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		 | rightmost "prefix" must be an infix
 		 <derivCircumPfx_2> == [morphType : infix]
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx_1 fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx_1 envCat>
 		<Stem_2 synCat>           = <derivCircumPfx_2 fromCat>
@@ -420,17 +420,17 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 260
 		<derivCircumPfx_2 envCat>         = 260
 {
-
+	  
 		<Stem_2 synCat>           = 260 /
 		<Stem_2 synCat>           = 261
 }
 
 	  }
-
+	  
 		 <Stem_2 envMorphoSyntaxInfo name> = <derivCircumPfx_1 envMorphoSyntax name>
-
+	  
 		 <Stem_2 envMorphoSyntaxInfo name> = <derivCircumPfx_2 envMorphoSyntax name>
-
+	  
 		<Stem_2 envMorphoSyntaxInfo morphoSyntax> = <Stem_2 morphoSyntax>
 			| environment morpho-syntax logical constraint
 		<Stem_2 envMorphoSyntaxInfo> == (
@@ -442,11 +442,11 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 	 & ( ([name:15354] -> [morphoSyntax:[ 15351:15353]] )
 	 & ( ([name:15039] -> [morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
 	 & ( ([name:Not15045Not15039] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15227Not15233] -> ( (~[morphoSyntax:[14997 : [ 14998:14999 15001:15002]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:14999 15001:15003]]] ) )) ) 
 	 & ( ([name:Not15238Not15244] -> ( (~[morphoSyntax:[14997 : [ 14998:15000 15001:15003]]] )
-		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) )
+		  & ((~[morphoSyntax:[14997 : [ 14998:15000 15001:15002]]] ) )) ) 
 	 & ( ([name:Not15354] -> ( (~[morphoSyntax:[ 15351:15353]] ) )) )  )  )  )  )  )  )  )  )  ) )
 | ------------------------------------------------------------
 |                PARTIALLY ANALYZED WORD PORTION
@@ -538,9 +538,9 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
 		<Full synCat>           = <Suffixes synCat>
@@ -551,7 +551,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 260
 		<Suffixes envCat>         = 260
 {
-
+	  
 		<Full synCat>           = 260 /
 		<Full synCat>           = 261
 }
@@ -564,16 +564,16 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
 		/
 		<Prefixes synCat>        = 260
 		<Prefixes envCat>         = 260
 {
-
+	  
 		<Full synCat>           = 260 /
 		<Full synCat>           = 261
 }
@@ -586,16 +586,16 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Suffixes synCat>
 		<Full synCat>           = <Suffixes envCat>
 		/
 		<Suffixes synCat>        = 260
 		<Suffixes envCat>         = 260
 {
-
+	  
 		<Full synCat>           = 260 /
 		<Full synCat>           = 261
 }
@@ -608,9 +608,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <circumPfx synCat>
 		<Full synCat>           = <circumPfx envCat>
 		<Full synCat>           = <circumSfx synCat>
@@ -621,7 +621,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 260
 		<circumSfx envCat>         = 260
 {
-
+	  
 		<Full synCat>           = 260 /
 		<Full synCat>           = 261
 }
@@ -636,9 +636,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 								 | constraints
 								 | rightmost "prefix" must be an infix
 	<circumPfx_2> == [morphType : infix]
-
+	  
 	  {
-
+	  
 		<Full synCat>           = <circumPfx_1 synCat>
 		<Full synCat>           = <circumPfx_1 envCat>
 		<Full synCat>           = <circumPfx_2 synCat>
@@ -649,7 +649,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 260
 		<circumPfx_2 envCat>         = 260
 {
-
+	  
 		<Full synCat>           = 260 /
 		<Full synCat>           = 261
 }
@@ -728,14 +728,14 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 								| percolation
   <Prefixes_1 synCat> = <prefix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Prefixes_2 synCat>           = <prefix fromCat>
 		/
 		<prefix fromCat>        = 260
 {
-
+	  
 		<Prefixes_2 synCat>           = 260 /
 		<Prefixes_2 synCat>           = 261
 }
@@ -748,12 +748,12 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
   <Prefixes_1 synCat> = <derivPfx toCat>
 								| constraints
   {
-
+  
 		<Prefixes_2 synCat>           = <derivPfx fromCat>
 		/
 		<derivPfx fromCat>        = 260
 {
-
+	  
 		<Prefixes_2 synCat>           = 260 /
 		<Prefixes_2 synCat>           = 261
 }
@@ -765,14 +765,14 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 								| percolation
   <Suffixes_1 synCat> = <suffix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Suffixes_2 synCat>           = <suffix fromCat>
 		/
 		<suffix fromCat>        = 260
 {
-
+	  
 		<Suffixes_2 synCat>           = 260 /
 		<Suffixes_2 synCat>           = 261
 }
@@ -785,12 +785,12 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
   <Suffixes_1 synCat> = <derivSfx toCat>
 								| constraints
   {
-
+  
 		<Suffixes_2 synCat>           = <derivSfx fromCat>
 		/
 		<derivSfx fromCat>        = 260
 {
-
+	  
 		<Suffixes_2 synCat>           = 260 /
 		<Suffixes_2 synCat>           = 261
 }
@@ -803,26 +803,26 @@ rule {Partially analyzed stem with inflectional template  15004}
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 259
+  <Partial_2 synCat>       = 259 
 
   <Partial_1 morphoSyntax>    = <15005_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  15331}
   Partial_1 =  15332_0 Partial_2  15333_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 262
+  <Partial_2 synCat>       = 262 
 
   <Partial_1 morphoSyntax>    = <15332_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <15333_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 		| if there are no compound rules, use the remaining rules:
 			| these allow derivational affixes next to the stem
 rule {Totally unanalyzed form with one or more prefixes and suffixes; no compound rules}
@@ -880,7 +880,7 @@ rule {A sequence of two or more interfixes; no compound rules}
 
 rule {An interfix; no compound rules}
   Interfixes = interfix
-
+  
 | ------------------------------------------------------------
 |                TEMPLATES
 | ------------------------------------------------------------
@@ -892,8 +892,8 @@ Let Proclitic be []
 Let Enclitic be []
 Let Bound be []
 
-Let RootPOS0 be [rootCat:unknown]
-Let CliticPOS0 be [rootCat:unknown]
+Let RootPOS0 be [rootCat:unknown] 
+Let CliticPOS0 be [rootCat:unknown] 
 Let RootPOS258 be [rootCat:258
 	requiresInflection : -]
 Let MSEnvPOS258 be {[envCat:258]}
@@ -954,10 +954,10 @@ Let MSFS15015 be [ morphoSyntax : [14997 : [ 14998:14999 15001:15003]] ]
 Let MSFS15024 be [ morphoSyntax : [14997 : [ 14998:15000 15001:15002]] ]
 Let MSFS15034 be [ morphoSyntax : [14997 : [ 14998:15000 15001:15003]] ]
 Let MSFS15006 be [ morphoSyntax : [14997 : [ 14998:14999 15001:15002]] ]
-Let InflectionFS15356 be [ morphoSyntax : [ 15351:15353] ]
-
-
-
+Let InflectionFS15356 be [ morphoSyntax : [ 15351:15353] ] 
+ 
+ 
+ 
 
 Let Infix be [morphType:infix]
 Let prefixinginterfix be {[cat:prefix]
