@@ -305,6 +305,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					sw.WriteLine("<html>");
 					sw.WriteLine("<head>");
+					sw.WriteLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>");
 					string sHeadInfo = String.Format(LexTextControls.ksImportLogForX, inputFileName);
 					sw.WriteLine(String.Format("  <title>{0}</title>", sHeadInfo));
 					// add the script

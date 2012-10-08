@@ -6175,3 +6175,4 @@ GordonM, 5 Oct 2012. Finish LT-13617 so FLEx doesn't ask devs about GlobalWritin
 	CVPattern.
 SteveMc, October 5, 2012.  Integrate from Calgary/WW to WW.  (get C++ tests and one NUnit test
 	 working on Linux)
+NaylorJ, 8 Oct 2012. Fixed some problems in SFM import with next button sensitivity, and final report encoding.
