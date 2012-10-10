@@ -54,7 +54,7 @@ JohnT, 27 Jan 2012. LT-12621, Allow Flex to import current SayMore files.
 NaylorJ, 27 Jan 2012. LT-12403 Segment level translations will now be retained on a writing system switch of an entire paragraph.
 NaylorJ, 27 Jan 2012. LT-12614 Scripture export will work without crashing now.
 AlistairI, 27 Jan 2012. LT-12613 Put flashing cursor on newly added interlinear note.
-RIckM, 27 Jan 2012. LT-12577 Crash on Reversal Index pane when deleting reversal entry in "Bulk Edit Entries" pane ? Delete tab.
+RickM, 27 Jan 2012. LT-12577 Crash on Reversal Index pane when deleting reversal entry in "Bulk Edit Entries" pane ? Delete tab.
 NaylorJ, 27 Jan 2012. LT-12593 Show the number of text that will be imported from the SFM (if it is more than one)
 NaylorJ, 30 Jan 2012. Fixed LT-12615. The baseline will no longer steal the focus back from the Info tab when there are no paragraphs.
 JohnT, 30 Jan 2012. LT-12609, Made sorting large file by guid use temp files to avoid running out of memory.
@@ -337,3 +337,5 @@ JohnT, 5 Oct 2012. LT-13633 No response entering baseline data
 GordonM, 5 Oct 2012. Integrate fix for LT-13636 from WW.
 JohnT, 5 Oct 2012. LT-13663 Crash merging homographs.
 Zook, 5 Oct 2012. Integrated a Graphite change for Sharon Correll..
+RickM, 10 Oct 2012. LT-13681  Null reference exception in the WriteMediaFile method of LiftExporter (LexTextControls project),
+	exporting LIFT data.

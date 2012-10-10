@@ -527,6 +527,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void WriteMediaFile(TextWriter w, ICmMedia file)
 		{
+			//LT-13681
+			if (file == null || file.MediaFileRA == null)
+				return;
 			w.Write("<media href=\"");
 			ExportFile(w, file.MediaFileRA.InternalPath, file.MediaFileRA.AbsoluteInternalPath, "audio",
 				DirectoryFinder.ksMediaDir);
