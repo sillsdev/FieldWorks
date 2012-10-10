@@ -218,8 +218,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				CheckDisposed();
 
 				return m_phase == TaskPhase.ErrorEncountered
-					? String.Format(ParserCoreStrings.ksX_error, m_description)
-					: m_description;
+						? string.Format(ParserCoreStrings.ksX_error, m_description)
+						: m_description;
 			}
 		}
 

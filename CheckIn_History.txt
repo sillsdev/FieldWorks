@@ -6177,3 +6177,5 @@ SteveMc, October 5, 2012.  Integrate from Calgary/WW to WW.  (get C++ tests and 
 	 working on Linux)
 NaylorJ, 8 Oct 2012. Fixed some problems in SFM import with next button sensitivity, and final report encoding.
 NaylorJ, 8 Oct 2012. LT-13677 Fixed a crash related to testing if Spelling Errors should be a filter option certain columns.
+GordonM, 10 Oct 2012. LT-13569 Use a timer to update status bar during parsing and fix condition where
+	   the status bar sometimes said it was working on a word when it was finished.

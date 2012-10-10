@@ -71,6 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private TryAWordDlg m_dialog;
 		private FormWindowState m_prevWindowState;
 		private ParserConnection m_parserConnection;
+		private Timer m_timer;
 
 		public void Init(Mediator mediator, XmlNode configurationParameters)
 		{
@@ -156,6 +157,34 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#endregion
 
+		#region Timer Related
+
+		private const int TIMER_INTERVAL = 250; // every 1/4 second
+
+		private void StartProgressUpdateTimer()
+		{
+			if (m_timer == null)
+			{
+				m_timer = new Timer();
+				m_timer.Interval = TIMER_INTERVAL;
+				m_timer.Tick += m_timer_Tick;
+			}
+			m_timer.Start();
+		}
+
+		private void StopUpdateProgressTimer()
+		{
+			if (m_timer != null)
+				m_timer.Stop();
+		}
+
+		public void m_timer_Tick(object sender, EventArgs eventArgs)
+		{
+			UpdateStatusPanelProgress();
+		}
+
+		#endregion
+
 		public bool ConnectToParser()
 		{
 			CheckDisposed();
@@ -166,6 +195,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					return false;
 				m_parserConnection = new ParserConnection(m_cache, m_mediator.IdleQueue);
 			}
+			StartProgressUpdateTimer();
 			return true;
 		}
 
@@ -173,6 +203,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
+			StopUpdateProgressTimer();
 			if (m_parserConnection != null)
 			{
 				m_parserConnection.Dispose();
@@ -185,7 +216,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			m_mediator.PropertyTable.SetProperty("StatusPanelProgress", ParserQueueString + " " + ParserActivityString);
+			UpdateStatusPanelProgress();
+
+			return false; // Don't stop other people from getting the idle message
+		}
+
+		// Now called by timer AND by OnIdle
+		private void UpdateStatusPanelProgress()
+		{
+			var statusMessage = ParserQueueString + " " + ParserActivityString;
+			m_mediator.PropertyTable.SetProperty("StatusPanelProgress", statusMessage);
 			m_mediator.PropertyTable.SetPropertyPersistence("StatusPanelProgress", false);
 
 			if (m_parserConnection != null)
@@ -194,8 +234,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (ex != null)
 				{
 					DisconnectFromParser();
-					var app = (IApp) m_mediator.PropertyTable.GetValue("App");
-					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress, app.ActiveMainWindow, false);
+					var app = (IApp)m_mediator.PropertyTable.GetValue("App");
+					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
+												  app.ActiveMainWindow, false);
 				}
 				else
 				{
@@ -204,8 +245,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_mediator.SendMessage("ShowNotification", notification);
 				}
 			}
-
-			return false; // Don't stop other people from getting the idle message
+			if (ParserActivityString == ParserUIStrings.ksIdle_ && m_timer.Enabled)
+				StopUpdateProgressTimer();
 		}
 
 		//note that the Parser also supports an event oriented system
@@ -337,6 +378,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// other clients may now parse
 				// Dispose managed resources here.
+				if (m_timer != null)
+				{
+					m_timer.Stop();
+					m_timer.Tick -= m_timer_Tick;
+				}
 				if (m_sda != null)
 					m_sda.RemoveNotification(this);
 				m_mediator.RemoveColleague(this);
@@ -347,6 +393,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_timer = null;
 			m_sda = null;
 			m_mediator = null;
 			m_cache = null;
