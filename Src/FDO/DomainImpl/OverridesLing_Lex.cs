@@ -7567,7 +7567,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (entry == null)
 						entry = ((ILexSense)e.ObjectAdded).Entry;
 					if (entry.IsComponent((ILexEntry)Owner))
-						throw new ArgumentException("components can't be circular");
+					{
+						string exceptionStr;
+						if (entry.ShortName == "???")
+						{
+							exceptionStr = String.Format("components can't have circular references. \n See entry in lift file with LIFTId:     {0}\n",
+							entry.LIFTid);
+						}
+						else
+						{
+							exceptionStr = String.Format("components can't have circular references. \n See entry in lift file with LIFTId:     {0}\nand Form:     {1}",
+							entry.LIFTid, entry.ShortName);
+						}
+						throw new ArgumentException(exceptionStr);
+					}
 					break;
 			}
 			base.ValidateAddObjectInternal(e);

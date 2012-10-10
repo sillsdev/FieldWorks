@@ -6179,3 +6179,4 @@ NaylorJ, 8 Oct 2012. Fixed some problems in SFM import with next button sensitiv
 NaylorJ, 8 Oct 2012. LT-13677 Fixed a crash related to testing if Spelling Errors should be a filter option certain columns.
 GordonM, 10 Oct 2012. LT-13569 Use a timer to update status bar during parsing and fix condition where
 	   the status bar sometimes said it was working on a word when it was finished.
+RickM, 10 Oct 2012. LT-13422 Circular components error when importing lift file
