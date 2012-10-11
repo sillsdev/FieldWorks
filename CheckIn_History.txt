@@ -339,3 +339,4 @@ JohnT, 5 Oct 2012. LT-13663 Crash merging homographs.
 Zook, 5 Oct 2012. Integrated a Graphite change for Sharon Correll..
 RickM, 10 Oct 2012. LT-13681  Null reference exception in the WriteMediaFile method of LiftExporter (LexTextControls project),
 	exporting LIFT data.
+NaylorJ, 10 Oct 2012. LT-13675 Handle data which may be duplicated in the LIFT file without failing.

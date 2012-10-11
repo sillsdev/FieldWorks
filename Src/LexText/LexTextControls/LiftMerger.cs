@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -1183,7 +1184,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				IFsSymFeatVal featValue;
-				List<string> rgsMissing = new List<string>(rgsValues.Count);
+				var rgsMissing = new List<string>(rgsValues.Count);
 				foreach (string sAbbr in rgsValues)
 				{
 					string key = String.Format("{0}:{1}", id, sAbbr);
@@ -1214,7 +1215,21 @@ namespace SIL.FieldWorks.LexText.Controls
 					rgsMissing.Add(sAbbr);
 				}
 				if (rgsMissing.Count > 0)
-					m_mapClosedFeatMissingValueAbbrs.Add(featClosed, rgsMissing);
+				{
+					List<string> missingItems;
+					if(!m_mapClosedFeatMissingValueAbbrs.TryGetValue(featClosed, out missingItems))
+					{
+						m_mapClosedFeatMissingValueAbbrs.Add(featClosed, rgsMissing);
+					}
+					else
+					{
+						if(!missingItems.ContainsCollection(rgsMissing))
+						{
+							Debug.Assert(false, "Different closed feature lists");
+							;// m_rgcdConflicts.Add(new ConflictingEntry("Closed Feature Problem", id, this));
+						}
+					}
+				}
 			}
 		}
 
