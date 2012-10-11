@@ -117,6 +117,7 @@
 		<IdhFiles Include="$(fwrt)/Src/views/ViewsTlb.idl"/>
 	</ItemGroup>
 	<Target Name="checkTLBsUpToDate">
+		<MakeDir Directories="$(dir-fwoutput)"/><!-- just in case... -->
 		<CatenateFiles SourceFiles="@(IdhFiles)" TargetFile="$(dir-fwoutput)/idhfiles" UseUnixNewlines="true"/>
 		<Md5Checksum SourceFile="$(dir-fwoutput)/idhfiles"/>
 		<VerifyFilesIdentical FirstFile="$(dir-fwoutput)/idhfiles.MD5"
@@ -127,6 +128,7 @@
 
 	<Target Name="setupLinuxRegistry" Condition="'$(OS)'=='Unix'">
 		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>
+		<MakeDir Directories="$(fwrt)/DistFiles/Editorial Checks"/>
 		<!-- we use our own copy of the registry, so permissions aren't a problem -->
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\EncodingConverterRepository\Registry"
@@ -137,10 +139,10 @@
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\Microsoft\.NETFramework\AssemblyFolders\Primary Interop Assemblies"
 					   Value="${dir.outputBase}"/>
+		<!-- These are obsolete, as far as I know. -->
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\Firebird Project\Firebird Server\Instances\DefaultInstance"
 					   Value="/usr/lib/firebird/2.1"/>
-		<!-- These are obsolete, as far as I know. -->
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\FieldWorks\InstallLanguageUseLog"
 					   Value="False"/>

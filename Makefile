@@ -143,14 +143,14 @@ generate-strings:
 	(cd $(BUILD_ROOT)/Src/views/ && $(BUILD_ROOT)/Bin/make-strings.sh Views.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
 	(cd $(BUILD_ROOT)/Src/AppCore/ && C_INCLUDE_PATH=./Res $(BUILD_ROOT)/Bin/make-strings.sh Res/AfApp.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
 
-# now done in NAnt
+# now done in xbuild/msbuild
 install-strings:
 	cp -pf $(BUILD_ROOT)/DistFiles/strings-en.txt $(OUT_DIR)/strings-en.txt
 
 # setup current sets up the mono registry necessary to run certain program
-# This is now done in NAnt
+# This is now done in xbuild/msbuild.
 setup:
-	(cd $(BUILD_ROOT)/Bld && ../Bin/nant/bin/nant build setupRegistry icudlls)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:setRegistryValues)
 
 
 clean: \
@@ -452,12 +452,6 @@ libGraphiteTlb:
 Graphite-GrEngine-clean:
 	$(MAKE) -C$(BUILD_ROOT)/Src/Graphite/GrEngine clean
 
-Nant-Task-FdoGenerate:
-	$(MAKE) -C$(BUILD_ROOT)/Bin/nant/src/FwTasks/FdoGenerate all
-
-Nant-Task-FdoGenerate-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Bin/nant/src/FwTasks/FdoGenerate clean
-
 unit++-all:
 	-mkdir -p $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 	([ ! -e $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)/Makefile ] && cd $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH) && autoreconf -isf .. && ../configure ; true)
@@ -509,9 +503,9 @@ DbAccessFirebird-check:
 
 # $(MAKE) Common items
 common-COMInterfaces:
-	(cd $(BUILD_ROOT)/Bld && ../Bin/nant/bin/nant build COMInterfaces-nodep)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:COMInterfaces)
 common-COMInterfaces-clean:
-	(cd $(BUILD_ROOT)/Bld && ../Bin/nant/bin/nant clean COMInterfaces-nodep)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:COMInterfaces /property:action=clean)
 
 common-Utils:
 	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Utils all
@@ -663,7 +657,7 @@ Unit++-clean: unit++-clean
 # in accidentally. Besides we currently don't use it, so I don't see a need for building it.
 CodeGen:
 	$(MAKE) -C$(BUILD_ROOT)/Bin/src/CodeGen
-	# Put the cmcg executable where nant is expecting it (cm.build.xml). Only do the cp if
+	# Put the cmcg executable where xbuild/msbuild is expecting it (cm.build.xml). Only do the cp if
 	# the source file is newer than the target file, or if the target doesn't exist.
 	if [ ! -e $(BUILD_ROOT)/Bin/cmcg.exe ] || \
 		[ $(BUILD_ROOT)/Bin/src/CodeGen/CodeGen -nt $(BUILD_ROOT)/Bin/cmcg.exe ]; then \
@@ -689,7 +683,7 @@ teckit-clean:
 ComponentsMap: COM-all COM-install RegisterServer RegisterServer-install libFwKernel libLanguage libViews libCellar DbAccess ComponentsMap-nodep
 
 ComponentsMap-nodep:
-# the info gets now added by the NAnt build
+# the info gets now added by the xbuild/msbuild process.
 
 ComponentsMap-clean:
 	$(RM) $(OUT_DIR)/components.map
@@ -705,38 +699,38 @@ uninstall-between-DistFiles:
 	rm DistFiles/FwResources.dll
 	rm DistFiles/TeResources.dll
 
-# // TODO-Linux: delete all C# makefiles and replace with Nant calls
+# // TODO-Linux: delete all C# makefiles and replace with xbuild/msbuild calls
 BasicUtils-Nant-Build:
-	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe build BasicUtils)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:BasicUtils)
 
 Te-Nant-Build:
-	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe build allTe)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:allTe)
 
 Te-Nant-Run:
-	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe allTe)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:allTe /property:action=test)
 
 Flex-Nant-Build:
-	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe build LexTextExe)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:LexTextExe)
 
 Flex-Nant-Run:
-	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe LexTextExe)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:LexTextExe /property:action=test)
 
-# InstallLanguage.exe is redundant now. Included for now to make test results match windows tests.
-InstallLanguage-Nant:
-	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe InstallLanguage-nodep)
+## InstallLanguage.exe is redundant now. Included for now to make test results match windows tests.
+##InstallLanguage-Nant:
+##	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe InstallLanguage-nodep)
 
 TE: linktoOutputDebug tlbs-copy teckit externaltargets Te-Nant-Build install install-strings ComponentsMap-nodep Te-Nant-Run
 
 Flex: linktoOutputDebug tlbs-copy externaltargets Flex-Nant-Build install-strings ComponentsMap-nodep Flex-Nant-Run
 
 Fw:
-	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe remakefw)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw /property:action=test)
 
 Fw-build:
-	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe build remakefw)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw)
 
 Fw-build-package:
-	(cd $(BUILD_ROOT)/Bld && mono ../Bin/nant/bin/NAnt.exe release build remakefw)
+	(cd $(BUILD_ROOT)/Build && xbuild /t:remakefw /property:config=release)
 
 TE-run: ComponentsMap-nodep
 	(. ./environ && cd $(OUT_DIR) && mono --debug TE.exe -db "$${TE_DATABASE}")

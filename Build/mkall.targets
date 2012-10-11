@@ -71,7 +71,7 @@
 			  Condition="'$(OS)'=='Windows_NT'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testGenericLib"
-				TimeOut="60000"
+				Timeout="60000"
 				ContinueOnError="true" />
 		<Message Text="Finished building testGenericLib." Condition="'$(action)'!='test'"/>
 		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
@@ -128,7 +128,7 @@
 		<CatenateFiles SourceFiles="@(KernelCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testFwKernel"
-				TimeOut="60000"
+				Timeout="60000"
 				ContinueOnError="true" />
 		<Message Text="Finished building testFwKernel." Condition="'$(action)'!='test'"/>
 		<Message Text="Finished building testFwKernel and running tests." Condition="'$(action)'=='test'"/>
@@ -180,7 +180,7 @@
 		<CatenateFiles SourceFiles="@(LanguageCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testLanguage"
-				TimeOut="60000"
+				Timeout="60000"
 				ContinueOnError="true" />
 		<Message Text="Finished building testLanguage." Condition="'$(action)'!='test'"/>
 		<Message Text="Finished building testLanguage and running tests." Condition="'$(action)'=='test'"/>
@@ -222,7 +222,7 @@
 		<CatenateFiles SourceFiles="@(ViewsCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
-				TimeOut="600000"
+				Timeout="60000"
 				ContinueOnError="true" />
 		<Message Text="Finished building testViews." Condition="'$(action)'!='test'"/>
 		<Message Text="Finished building testViews and running tests." Condition="'$(action)'=='test'"/>
@@ -289,6 +289,9 @@
 	</Target>
 
 	<Target Name="remakefw" DependsOnTargets="CleanAll;Initialize;IcuData;setRegistryValues;CopyDlls;mkall"/>
+
+	<Target Name="remakefw-hudson" DependsOnTargets="remakefw-jenkins"/>
+	<Target Name="remakefw-jenkins" DependsOnTargets="checkTLBsUpToDate;remakefw"/>
 
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 
@@ -360,5 +363,8 @@
 					   Value="$(dir-outputBase)/EC/Plugins"
 					   Condition="'$(OS)'=='Unix'"/>
 	</Target>
+
+
+	<Target Name="allTe" DependsOnTargets="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>
 
 </Project>

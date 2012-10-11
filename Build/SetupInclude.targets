@@ -286,6 +286,7 @@
 	<SetEnvVar Variable="MONO_PATH" Value="$(dir-fwdistfiles):$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
 	<SetEnvVar Variable="MONO_REGISTRY_PATH" Value="$(dir-fwoutput)/registry" Condition="'$(OS)'=='Unix'"/>
 	<SetEnvVar Variable="COMPONENTS_MAP_PATH" Value="$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="MONO_RUNTIME_EXECUTABLE_PATH" Value="/usr/local/bin/mono-real" Condition="'$(OS)'=='Unix'"/>
 
 	<Message Text="msbuild-target='$(msbuild-target)'; msbuild-props='$(msbuild-props)'"/>
 
@@ -298,7 +299,7 @@
 	<Message Text="Finished deleting NUnit report files." Importance="normal" />
   </Target>
 
-  <Target Name="Initialize" DependsOnTargets="MakeDirs;GenerateVersionFiles"/>
+  <Target Name="Initialize" DependsOnTargets="GenerateVersionFiles"/>
 
   <!-- Create the output directories if they don't already exist -->
   <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles">
@@ -337,7 +338,7 @@
 	  write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
 	  change once a day.)
   -->
-  <Target Name="GenerateVersionFiles">
+  <Target Name="GenerateVersionFiles" DependsOnTargets="MakeDirs">
 	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
 	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean'"/>
 	  <Message Text="Updated CommonAssemblyInfo.cs and bldinc.h (if needed)."/>

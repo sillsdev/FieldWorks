@@ -239,15 +239,19 @@ namespace FwBuildTasks
 					writer.WriteLine("\t\t         Properties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0}\"",
 						Path.DirectorySeparatorChar, projectSubDir);
 					writer.WriteLine("\t\t         ToolsVersion=\"4.0\"/>");
-					if (project.EndsWith("Tests"))
+					if (project.EndsWith("Tests") ||
+						project == "PhonEnvValidatorTest" ||
+						project == "TestManager" ||
+						project == "ProjectUnpacker")
 					{
 						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
-						writer.WriteLine("\t\t       Assemblies=\"$(dir-outputBase)/{0}.dll\"", project);
+						writer.WriteLine("\t\t       FixturePath=\"$(dir-outputBase)/{0}.dll\"", project);
 						writer.WriteLine("\t\t       ToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
 						writer.WriteLine("\t\t       WorkingDirectory=\"$(dir-outputBase)\"");
 						writer.WriteLine("\t\t       OutputXmlFile=\"$(dir-outputBase)/{0}.dll-nunit-output.xml\"", project);
 						writer.WriteLine("\t\t       Force32Bit=\"$(useNUnit-x86)\"");
 						writer.WriteLine("\t\t       ExcludeCategory=\"$(excludedCategories)\"");
+						writer.WriteLine("\t\t       Timeout=\"{0}\"", TimeoutForProject(project));
 						writer.WriteLine("\t\t       ContinueOnError=\"true\" />");
 						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\" Condition=\"'$(action)'!='test'\"/>", project);
 						writer.WriteLine("\t\t<Message Text=\"Finished building {0} and running tests.\" Condition=\"'$(action)'=='test'\"/>", project);
@@ -303,6 +307,50 @@ namespace FwBuildTasks
 				writer.Close();
 			}
 			Console.WriteLine("Created {0}", Path.Combine(m_fwroot, "Build/FieldWorks.targets"));
+		}
+
+		/// <summary>
+		/// Return the timeout for running the tests in the given test project.
+		/// </summary>
+		/// <remarks>
+		/// This could just use the biggest number for everything, but I prefer a finer grain.
+		/// These timings from from a fairly old computer (Dell Precision 390), so should be
+		/// safe for a wide variety of systems.
+		/// </remarks>
+		int TimeoutForProject(string project)
+		{
+			switch (project)
+			{
+				case "FwCoreDlgsTests":		// ~122 sec
+				case "xWorksTests":			// ~138 sec
+				case "FDOTests":			// ~143 sec
+					return 240000;
+				case "DiffViewTests":		// ~55 sec
+				case "MGATests":			// ~72 sec
+				case "TeDllTests":			// ~76 sec
+				case "TeImportExportTests":	// ~90 sec
+					return 120000;
+				case "PrintLayoutTests":	// ~22 sec
+				case "ITextDllTests":		// ~26 sec
+				case "DiscourseTests":		// ~36 sec
+					return 60000;
+				case "RootSiteTests":					// ~11 sec
+				case "TeDialogsTests":					// ~11 sec
+				case "TeEditingTests":					// ~12 sec
+				case "TePrintLayoutTests":				// ~12 sec
+				case "FwPrintLayoutComponentsTests":	// ~13 sec
+				case "LexTextControlsTests":			// ~15 sec
+				case "TePrintLayoutComponentsTests":	// ~17 sec
+				case "FwControlsTests":					// ~19 sec
+					return 30000;
+				case "PhraseTranslationHelperTests":	// ~8 sec
+				case "CoreImplTests":					// ~9 sec
+				case "SimpleRootSiteTests":				// ~9 sec
+				case "TeScrInitializerTests":			// ~9 sec
+					return 15000;
+				default:
+					return 10000;
+			}
 		}
 	}
 }
