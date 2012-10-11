@@ -6181,3 +6181,4 @@ GordonM, 10 Oct 2012. LT-13569 Use a timer to update status bar during parsing a
 	   the status bar sometimes said it was working on a word when it was finished.
 RickM, 10 Oct 2012. LT-13422 Circular components error when importing lift file
 RandyR, 10 Oct 2012. Updated FLEx Bridge installer to 0.3.75.
+GordonM, 11 Oct 2012. LT-13669 fixes Style non-owner problem in new projects (and receive project crash).

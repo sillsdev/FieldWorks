@@ -511,7 +511,8 @@ namespace SIL.FieldWorks.Common.Framework
 			IStStyle style;
 			bool fUsingExistingStyle = false;
 			if (m_htOrigStyles.ContainsKey(styleName))
-			{   // These factory styles are already in the project
+			{
+				// These factory styles are already in the project
 				style = m_htOrigStyles[styleName];
 				int hvo = style.Hvo;
 				if (style.Guid != factoryGuid)
@@ -523,8 +524,9 @@ namespace SIL.FieldWorks.Common.Framework
 					style.IsBuiltIn = oldStyle.IsBuiltIn;
 					style.IsModified = true;
 
-					// Set the style name, type, context, structure, and function
+					// Set the style name, owner, type, context, structure, and function
 					style.Name = oldStyle.Name;
+					ReplaceStyleInOwner(style, oldStyle);
 					style.Type = oldStyle.Type;
 					style.Context = oldStyle.Context;
 					style.Structure = oldStyle.Structure;
@@ -538,9 +540,13 @@ namespace SIL.FieldWorks.Common.Framework
 				fUsingExistingStyle = (hvo == style.Hvo);  // how could this be false??
 			}
 			else
-			{   // These factory styles aren't in the project yet.
+			{
+				// These factory styles aren't in the project yet.
+				// WARNING: Using this branch may create ownerless StStyle objects! Shouldn't be possible!
 				style = m_cache.ServiceLocator.GetInstance<IStStyleFactory>().Create(m_cache, factoryGuid);
 				m_databaseStyles.Add(style);
+				if (style.Owner == null)
+					throw new ApplicationException("StStyle objects must be owned!");
 			}
 
 			m_htUpdatedStyles[styleName] = style;
@@ -559,6 +565,24 @@ namespace SIL.FieldWorks.Common.Framework
 				style.Function = function;
 			}
 			return style;
+		}
+
+		private void ReplaceStyleInOwner(IStStyle newStyle, IStStyle oldStyle)
+		{
+			var owner = oldStyle.Owner;
+			switch (owner.ClassID)
+			{
+				case ScriptureTags.kClassId:
+					((IScripture)owner).StylesOC.Remove(oldStyle);
+					((IScripture)owner).StylesOC.Add(newStyle);
+					break;
+				case LangProjectTags.kClassId:
+					((ILangProject)owner).StylesOC.Remove(oldStyle);
+					((ILangProject)owner).StylesOC.Add(newStyle);
+					break;
+				default:
+					throw new ApplicationException("StStyle should be owned!");
+			}
 		}
 
 		#region BasedOn Context, Structure, Function, and type interpreters
