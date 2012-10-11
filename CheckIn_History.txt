@@ -6180,3 +6180,4 @@ NaylorJ, 8 Oct 2012. LT-13677 Fixed a crash related to testing if Spelling Error
 GordonM, 10 Oct 2012. LT-13569 Use a timer to update status bar during parsing and fix condition where
 	   the status bar sometimes said it was working on a word when it was finished.
 RickM, 10 Oct 2012. LT-13422 Circular components error when importing lift file
+RandyR, 10 Oct 2012. Updated FLEx Bridge installer to 0.3.75.
