@@ -8,15 +8,22 @@ Collection.cpp
 /DistFiles/Icu40/data/
 /DistFiles/Icu40/icudt40l/
 /DistFiles/Languages/
+/DistFiles/Helps/
+/DistFiles/Language Explorer/Movies/
+/DistFiles/ReleaseData/
+/Installer/
 /Lib/Debug
 /Lib/Release
 /Lib/src/icu/
+/Localizations/
 /Bld/GlobalInclude.build.xml
 /Bin/_setLatestBuildConfig.bat
 /Bin/_setroot.bat
 /Bld/pathinclude.*.xml
 /Lib/debug/DebugProcs.lib
 /Lib/debug/Generic.lib
+/DistFiles/Parts/Generated.fwlayout
+/Src/CommonAssemblyInfo.cs
 /Src/LangInst/InstallLanguageTests/timing.txt
 
 # other files
