@@ -1,5 +1,6 @@
 /* Copyright © 2012 by SIL International. */
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
@@ -147,6 +148,7 @@ namespace FwBuildTasks
 				bldr.AppendFormat(" \"{0}err={1}\"", switchChar, ErrorOutputFile);
 			if (!String.IsNullOrEmpty(Framework))
 				bldr.AppendFormat(" {0}framework={1}", switchChar, Framework);
+			bldr.AppendFormat(" {0}labels", switchChar);
 			return bldr.ToString();
 		}
 
@@ -205,14 +207,46 @@ namespace FwBuildTasks
 			ToolPath = ".";
 		}
 
-		protected override void ProcessOutput()
+		protected override void ProcessOutput(bool fTimedOut, TimeSpan delta)
 		{
+			var lines = new List<string>();
 			using (var reader = new StreamReader(MemoryStream))
 			{
 				while (!reader.EndOfStream)
 				{
 					var line = reader.ReadLine();
-					Log.LogMessage(MessageImportance.Normal, line);
+					if (line.StartsWith("***** "))
+						lines.Add(line);
+					else
+						Log.LogMessage(MessageImportance.Normal, line);
+				}
+			}
+			if (fTimedOut)
+			{
+				if (File.Exists(OutputXmlFile))
+				{
+					FileInfo fi = new FileInfo(OutputXmlFile);
+					if (fi.Length > 0)
+						File.Move(OutputXmlFile, OutputXmlFile + "-partial");
+					else
+						File.Delete(OutputXmlFile);
+				}
+				using (StreamWriter writer = new StreamWriter(OutputXmlFile))
+				{
+					var num = lines.Count;
+					writer.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+					writer.WriteLine("<test-results name=\"{0}\" total=\"{1}\" errors=\"{2}\" failures=\"{3}\" not-run=\"{4}\" inconclusive=\"{5}\" ignored=\"{6}\" skipped=\"{7}\" invalid=\"{8}\" date=\"{9}\" time=\"{10}\">",
+									 FixturePath, num+1, 0, 1, 0, num, 0, 0, 0, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString());
+					writer.WriteLine("<test-suite type=\"Assembly\" name=\"{0}\" executed=\"True\" result=\"Timeout\" success=\"False\" time=\"{1}\">",
+									 FixturePath, delta.TotalSeconds.ToString("F3"));
+					writer.WriteLine("<!-- tests tried before time ran out:");
+					foreach (var line in lines)
+					{
+						writer.WriteLine(line.Substring(6));
+					}
+					writer.WriteLine("-->");
+					writer.WriteLine("</test-suite>");
+					writer.WriteLine("</test-results>");
 				}
 			}
 		}

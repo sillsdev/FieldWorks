@@ -45,7 +45,10 @@ namespace FwBuildTasks
 
 		public override bool Execute()
 		{
-			Log.LogMessage(MessageImportance.Normal, "Running {0}", Path.GetFileName(FixturePath));
+			if (Timeout == Int32.MaxValue)
+				Log.LogMessage(MessageImportance.Normal, "Running {0}", Path.GetFileName(FixturePath));
+			else
+				Log.LogMessage(MessageImportance.Normal, "Running {0} (timeout = {1} seconds)", Path.GetFileName(FixturePath), ((double)Timeout/1000.0).ToString("F1"));
 
 			Thread outputThread = null;
 			Thread errorThread = null;
@@ -71,6 +74,7 @@ namespace FwBuildTasks
 				outputThread.Join(2000);
 				errorThread.Join(2000);
 
+				bool fTimedOut = false;
 				if (!process.HasExited)
 				{
 					try
@@ -82,18 +86,28 @@ namespace FwBuildTasks
 						// ignore possible exceptions that are thrown when the
 						// process is terminated
 					}
-					Log.LogError("The tests in {0} did not finish in {1} milliseconds.", FixturePath, Timeout);
-					return false;
+					fTimedOut = true;
 				}
-
-				MemoryStream.Position = 0;
-				ProcessOutput();
-				MemoryWriter.Close();
-				MemoryStream.Close();
 
 				TimeSpan delta = DateTime.Now - dtStart;
 				Log.LogMessage(MessageImportance.Normal, "Total time for running {0} = {1}", Path.GetFileName(FixturePath), delta);
 
+				try
+				{
+					MemoryStream.Position = 0;
+					ProcessOutput(fTimedOut, delta);
+					MemoryWriter.Close();
+					MemoryStream.Close();
+				}
+				catch
+				{
+				}
+
+				if (fTimedOut)
+				{
+					Log.LogError("The tests in {0} did not finish in {1} milliseconds.", FixturePath, Timeout);
+					return false;
+				}
 				if (process.ExitCode != 0)
 				{
 					Log.LogError("{0} returned with exit code {1}", FixturePath, process.ExitCode);
@@ -163,7 +177,7 @@ namespace FwBuildTasks
 
 		protected abstract string ProgramArguments();
 
-		protected abstract void ProcessOutput();
+		protected abstract void ProcessOutput(bool fTimedOut, TimeSpan delta);
 
 		/// <summary>
 		/// Gets the memory stream, creating it if necessary.

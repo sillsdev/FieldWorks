@@ -41,7 +41,7 @@ namespace FwBuildTasks
 		/// lines are also logged in the normal msbuild fashion.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected override void ProcessOutput()
+		protected override void ProcessOutput(bool fTimedOut, TimeSpan delta)
 		{
 			Log.LogMessage(MessageImportance.Low, "Processing test results for writing XML result file");
 			m_Doc = new XmlDocument();
@@ -50,6 +50,7 @@ namespace FwBuildTasks
 			m_Doc.AppendChild(root);
 			var outerSuite = m_Doc.CreateElement("test-suite");
 			outerSuite.SetAttribute("name", FixturePath);
+			outerSuite.SetAttribute("time", delta.TotalSeconds.ToString("F3"));
 			root.AppendChild(outerSuite);
 			var outerResults = m_Doc.CreateElement("results");
 			outerSuite.AppendChild(outerResults);
@@ -165,10 +166,28 @@ namespace FwBuildTasks
 				}
 			}
 			FinishTestCase();
+			if (fTimedOut)
+			{
+				var fakeSuite = m_Doc.CreateElement("test-suite");
+				outerResults.AppendChild(fakeSuite);
+				fakeSuite.SetAttribute("name", "Timeout");
+				var fakeResults = m_Doc.CreateElement("results");
+				fakeSuite.AppendChild(fakeResults);
+				var fakeTestCase = m_Doc.CreateElement("test-case");
+				fakeResults.AppendChild(fakeTestCase);
+				fakeTestCase.SetAttribute("name", "Timeout");
+				fakeTestCase.SetAttribute("success", "False");
+				fakeTestCase.SetAttribute("time", Timeout.ToString());
+				fakeTestCase.SetAttribute("asserts", "0");
+				notRun = 0;
+				++fail;
+			}
 			root.SetAttribute("total", (ok + fail + error).ToString());
 			root.SetAttribute("failures", fail.ToString());
 			root.SetAttribute("errors", error.ToString());
 			root.SetAttribute("not-run", notRun.ToString());
+			root.SetAttribute("date", DateTime.Now.ToShortDateString());
+			root.SetAttribute("time", DateTime.Now.ToShortTimeString());
 			Log.LogMessage(MessageImportance.Low, "Writing XML result file: {0}", ResultFileName);
 			m_Doc.Save(ResultFileName);
 		}
