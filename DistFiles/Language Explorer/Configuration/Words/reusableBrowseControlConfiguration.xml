@@ -88,7 +88,7 @@
 					<properties>
 						<editable value="false"/>
 					</properties>
-					<string class="FakeOccurrence" field="Reference"/>
+					<string class="FakeOccurrence" field="Reference" ws="$ws=best vernoranal"/>
 				</span>
 			</column>
 			<column label="Occurrence" width="415000" multipara="true">
@@ -99,7 +99,7 @@
 					<obj class="FakeOccurrence" field="TextObject" layout="empty">
 						<choice>
 						<where is="StTxtPara">
-							<string class="StTxtPara" field="Contents"/>
+							<string class="StTxtPara" field="Contents" ws="$ws=best vernacular"/>
 						</where>
 						<where is="CmPicture">
 							<string class="CmPicture" field="Caption" ws="vernacular"/>
