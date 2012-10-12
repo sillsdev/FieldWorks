@@ -52,9 +52,17 @@ echo FieldWorks build using DISPLAY of $DISPLAY
 trap "{ echo Killing off Xvfb \(pid $Xvfb_PID\) and Xephyr \(pid $Xephyr_PID\) ...; kill $Xephyr_PID || (sleep 10s; kill -9 $Xephyr_PID); sleep 3s; kill $Xvfb_PID || (sleep 10s; kill -9 $Xvfb_PID); }" EXIT $EXIT_STATUS
 
 # Build
-(cd Bld && ../Bin/nant/bin/nant $1 remakefw-jenkins)
+echo ready to start FieldWorks build
+case $1 in
+	release)	(cd Build && xbuild /t:remakefw-jenkins /property:config=release);
+	;;
+	# the default operation is to rebuild with tests.
+	*)		(cd Build && xbuild /t:remakefw-jenkins /property:action=test);
+	;;
+	build)	(cd Build && xbuild /t:remakefw-jenkins);
+	;;
+esac
 EXIT_STATUS=$?
 echo "FieldWorks build finished - exit status: $EXIT_STATUS"
-#(cd Bld && ../Bin/nant/bin/nant linux-smoketest)
 exit $EXIT_STATUS
 ###################################################

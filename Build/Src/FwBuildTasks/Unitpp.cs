@@ -10,173 +10,38 @@ using Microsoft.Build.Utilities;
 
 namespace FwBuildTasks
 {
-	public class Unitpp : Task
+	public class Unitpp : TestTask
 	{
-		private StreamReader m_StdError;
-		private StreamReader m_StdOut;
-		private MemoryStream m_MemoryStream;
-		private TextWriter m_MemoryWriter;
 		private XmlDocument m_Doc;
 		private XmlElement m_Message;
 		private StringBuilder m_MsgBldr;
-
-		/// <summary>
-		/// Will be used to ensure thread-safe operations.
-		/// </summary>
-		private static readonly object LockObject = new object();
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public Unitpp()
 		{
-			TimeOut = Int32.MaxValue;
+			Timeout = Int32.MaxValue;
 		}
 
-		/// <summary>
-		/// Gets or sets the full path to the unit++ executable (test program).
-		/// </summary>
-		[Required]
-		public string FixturePath { get; set; }
 
-		/// <summary>
-		/// Gets or sets the maximum amount of time the test is allowed to execute,
-		/// expressed in milliseconds.  The default is essentially no time-out.
-		/// </summary>
-		public int TimeOut { get; set; }
-
-		public override bool Execute()
+		protected override string ProgramName()
 		{
-			Log.LogMessage(MessageImportance.Normal, "Running {0}", Path.GetFileName(FixturePath));
-
-			Thread outputThread = null;
-			Thread errorThread = null;
-
-			try
-			{
-				// Start the external process
-				var process = StartProcess();
-				outputThread = new Thread(StreamReaderThread_Output);
-				errorThread = new Thread(StreamReaderThread_Error);
-
-				m_StdOut = process.StandardOutput;
-				m_StdError = process.StandardError;
-
-				outputThread.Start();
-				errorThread.Start();
-
-				// Wait for the process to terminate
-				process.WaitForExit(TimeOut);
-
-				// Wait for the threads to terminate
-				outputThread.Join(2000);
-				errorThread.Join(2000);
-
-				if (!process.HasExited)
-				{
-					try
-					{
-						process.Kill();
-					}
-					catch
-					{
-						// ignore possible exceptions that are thrown when the
-						// process is terminated
-					}
-					Log.LogError("{0} did not finish in {1} milliseconds.", FixturePath, TimeOut);
-					return false;
-				}
-
-				MemoryStream.Position = 0;
-				WriteXmlResultFile();
-				MemoryWriter.Close();
-				MemoryStream.Close();
-
-				if (process.ExitCode != 0)
-				{
-					Log.LogError("{0} returned with exit code {1}", FixturePath, process.ExitCode);
-					return false;
-				}
-			}
-			catch (Exception e)
-			{
-				Log.LogErrorFromException(e, true);
-				return false;
-			}
-			finally
-			{
-				// ensure outputThread is always aborted
-				if (outputThread != null && outputThread.IsAlive)
-				{
-					outputThread.Abort();
-				}
-				// ensure errorThread is always aborted
-				if (errorThread != null && errorThread.IsAlive)
-				{
-					errorThread.Abort();
-				}
-			}
-			return true;
+			return FixturePath;
 		}
 
-		/// <summary>
-		/// Starts the process and handles errors.
-		/// </summary>
-		protected virtual Process StartProcess()
+		protected override string ProgramArguments()
 		{
-			var process = new Process
-				{
-					StartInfo =
-						{
-							FileName = FixturePath,
-							//Arguments = CommandLine,
-							Arguments = "-v -l",
-							RedirectStandardOutput = true,
-							RedirectStandardError = true,
-							//required to allow redirects
-							UseShellExecute = false,
-							// do not start process in new window
-							CreateNoWindow = true,
-							WorkingDirectory = Path.GetFullPath(Path.GetDirectoryName(FixturePath))
-						}
-				};
-			try
-			{
-				var msg = string.Format("Starting program: {1} ({2}) in {0}",
-					process.StartInfo.WorkingDirectory,
-					process.StartInfo.FileName,
-					process.StartInfo.Arguments);
-
-				Log.LogMessage(MessageImportance.Low, msg);
-
-				process.Start();
-				return process;
-			}
-			catch (Exception ex)
-			{
-				throw new Exception(String.Format("Got exception starting {0}", process.StartInfo.FileName), ex);
-			}
+			return "-v -l";
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the name of the result file.
+		/// Processes the output into an XML file similar to those produced by NUnit.  Some
+		/// lines are also logged in the normal msbuild fashion.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private string ResultFileName
-		{
-			get
-			{
-				return Path.Combine(Path.GetDirectoryName(FixturePath),
-									Path.GetFileName(FixturePath) + "-results.xml");
-			}
-		}
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Processes the output.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void WriteXmlResultFile()
+		protected override void ProcessOutput()
 		{
 			Log.LogMessage(MessageImportance.Low, "Processing test results for writing XML result file");
 			m_Doc = new XmlDocument();
@@ -308,6 +173,20 @@ namespace FwBuildTasks
 			m_Doc.Save(ResultFileName);
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the name of the result file.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private string ResultFileName
+		{
+			get
+			{
+				return Path.Combine(Path.GetDirectoryName(FixturePath),
+									Path.GetFileName(FixturePath) + "-results.xml");
+			}
+		}
+
 		private void AppendStackTrace(Match match, XmlNode errorNode)
 		{
 			var stackTrace = m_Doc.CreateElement("stack-trace");
@@ -364,101 +243,6 @@ namespace FwBuildTasks
 			testCase.SetAttribute("asserts", "0");
 			results.AppendChild(testCase);
 			return testCase;
-		}
-
-		/// <summary>
-		/// Gets the memory stream, creating it if necessary.
-		/// </summary>
-		private MemoryStream MemoryStream
-		{
-			get
-			{
-				if (m_MemoryStream == null)
-					m_MemoryStream = new MemoryStream();
-				return m_MemoryStream;
-			}
-		}
-
-		/// <summary>
-		/// Gets the memory writer, creating it if necessary.
-		/// </summary>
-		private TextWriter MemoryWriter
-		{
-			get
-			{
-				if (m_MemoryWriter == null)
-					m_MemoryWriter = new StreamWriter(MemoryStream);
-				return TextWriter.Synchronized(m_MemoryWriter);
-			}
-		}
-
-		/// <summary>
-		/// Reads from the standard output stream until the external program is ended.
-		/// </summary>
-		private void StreamReaderThread_Output()
-		{
-			try
-			{
-				var reader = m_StdOut;
-
-				while (true)
-				{
-					var logContents = reader.ReadLine();
-					if (logContents == null)
-					{
-						break;
-					}
-
-					// ensure only one thread writes to the log at any time
-					lock (LockObject)
-					{
-						MemoryWriter.WriteLine(logContents);
-					}
-				}
-
-				lock (LockObject)
-				{
-					MemoryWriter.Flush();
-				}
-			}
-			catch (Exception)
-			{
-				// just ignore any errors
-			}
-		}
-
-		/// <summary>
-		/// Reads from the standard error stream until the external program is ended.
-		/// </summary>
-		private void StreamReaderThread_Error()
-		{
-			try
-			{
-				var reader = m_StdError;
-
-				while (true)
-				{
-					var logContents = reader.ReadLine();
-					if (logContents == null)
-					{
-						break;
-					}
-
-					// ensure only one thread writes to the log at any time
-					lock (LockObject)
-					{
-						MemoryWriter.WriteLine(logContents);
-					}
-				}
-				lock (LockObject)
-				{
-					MemoryWriter.Flush();
-				}
-			}
-			catch (Exception)
-			{
-				// just ignore any errors
-			}
 		}
 	}
 }
