@@ -6183,3 +6183,4 @@ RickM, 10 Oct 2012. LT-13422 Circular components error when importing lift file
 RandyR, 10 Oct 2012. Updated FLEx Bridge installer to 0.3.75.
 GordonM, 11 Oct 2012. LT-13669 fixes Style non-owner problem in new projects (and receive project crash).
 SteveMc, October 11, 2012.  Integrated from Calgary/WW to WW.
+EberhardB, 12 Oct 2012. Fix nant build.
