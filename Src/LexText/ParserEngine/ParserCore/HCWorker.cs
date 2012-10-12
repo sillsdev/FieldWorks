@@ -536,27 +536,34 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				return ParserCoreStrings.ksDidNotParse;
 
 			var sb = new StringBuilder();
-			var settings = new XmlWriterSettings
-							{
-								OmitXmlDeclaration = true
-							};
+			var settings = new XmlWriterSettings { OmitXmlDeclaration = true };
 			using (var writer = XmlWriter.Create(sb, settings))
 			{
-			writer.WriteStartElement("Wordform");
-			writer.WriteAttributeString("DbRef", Convert.ToString(hvoWordform));
-			writer.WriteAttributeString("Form", form);
-			var output = new FwXmlOutput(writer, fDotrace, m_patr,
-				Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"), m_cache);
-			output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, true);
-			writer.WriteEndElement();
-			writer.Close();
-			return sb.ToString();
+				writer.WriteStartElement("Wordform");
+				writer.WriteAttributeString("DbRef", Convert.ToString(hvoWordform));
+				writer.WriteAttributeString("Form", form);
+				var output = new FwXmlOutput(writer, fDotrace, m_patr,
+					Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"), m_cache);
+				output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, true);
+				writer.WriteEndElement();
+				writer.Close();
+				return sb.ToString();
+			}
 		}
+
+		public string HcInputPath
+		{
+			get { return Path.Combine(m_outputDirectory, m_projectName + "HCInput.xml"); }
+		}
+
+		public string HcGrammarPath
+		{
+			get { return Path.Combine(m_outputDirectory, m_projectName + "gram.txt"); }
 		}
 
 		protected override void LoadParser(ref XmlDocument model, XmlDocument template)
 		{
-			string hcPath = Path.Combine(m_outputDirectory, m_projectName + "HCInput.xml");
+			string hcPath = HcInputPath;
 			File.Delete(hcPath); // In case we don't produce one successfully, don't keep an old one.
 			// Check for errors that will prevent the transformations working.
 			foreach (var affix in m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().AllInstances())
@@ -575,7 +582,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						validator.ErrorMessage);
 					m_cache.ThreadHelper.Invoke(() => // We may be running in a background thread
 						{
-
 							MessageBox.Show(Form.ActiveForm, msg, ParserCoreStrings.ksBadAffixForm,
 								MessageBoxButtons.OK, MessageBoxIcon.Error);
 						});
@@ -587,8 +593,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var transformer = new M3ToHCTransformer(m_projectName, m_taskUpdateHandler);
 			transformer.MakeHCFiles(ref model);
 
-			string gramPath = Path.Combine(m_outputDirectory, m_projectName + "gram.txt");
-			m_patr.LoadGrammarFile(gramPath);
+			m_patr.LoadGrammarFile(HcGrammarPath);
 			m_loader.Load(hcPath);
 
 			XmlNode delReappsNode = model.SelectSingleNode("/M3Dump/ParserParameters/HC/DelReapps");

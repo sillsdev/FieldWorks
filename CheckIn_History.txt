@@ -6171,4 +6171,15 @@ SteveMc, October 4, 2012.  Integrate from Calgary/WW to WW.  (merely fixes a Lin
 GordonM, 5 Oct 2012. LT-13636 fixed so custom fields referencing custom lists can be browseable.
 Bush, 5 Oct 2012. Integrated Graphite bug fix from Sharon.
 GordonM, 5 Oct 2012. Finish LT-13617 so FLEx doesn't ask devs about GlobalWritingSystem stuff.
-	Later... Fixed LT-9047 so Spelling Errors isn't a filter option for Pronunciation or CVPattern.
+	Later... Fixed LT-9047 so Spelling Errors isn't a filter option for Pronunciation or
+	CVPattern.
+SteveMc, October 5, 2012.  Integrate from Calgary/WW to WW.  (get C++ tests and one NUnit test
+	 working on Linux)
+NaylorJ, 8 Oct 2012. Fixed some problems in SFM import with next button sensitivity, and final report encoding.
+NaylorJ, 8 Oct 2012. LT-13677 Fixed a crash related to testing if Spelling Errors should be a filter option certain columns.
+GordonM, 10 Oct 2012. LT-13569 Use a timer to update status bar during parsing and fix condition where
+	   the status bar sometimes said it was working on a word when it was finished.
+RickM, 10 Oct 2012. LT-13422 Circular components error when importing lift file
+RandyR, 10 Oct 2012. Updated FLEx Bridge installer to 0.3.75.
+GordonM, 11 Oct 2012. LT-13669 fixes Style non-owner problem in new projects (and receive project crash).
+SteveMc, October 11, 2012.  Integrated from Calgary/WW to WW.

@@ -3906,6 +3906,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int curStep = CurrentStepNumber;
 			int curTab = tabSteps.SelectedIndex;
 
+			bool nextState = NextButtonEnabled;
 			// before saving we need to make sure all the data structures are populated
 			while (CurrentStepNumber <= 6)
 			{
@@ -3917,6 +3918,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// restore back to pre-saved state/page/tab...
 			tabSteps.SelectedIndex = curStep;
 			m_CurrentStepNumber = curTab;
+			NextButtonEnabled = nextState;
 			UpdateStepLabel();
 
 			AllowQuickFinishButton();	// make it visible if needed, or hidden if not

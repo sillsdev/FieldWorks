@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using Palaso.Lift.Parsing;
 using Palaso.WritingSystems;
@@ -2403,6 +2404,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			ILexEntry le = null;
 			ICmObject target = null;
+			//"main" is no longer used as a relationType in LIFT export but is handled here in case
+			//an older LIFT file is being imported.
+			//The current LIFT export will have rgRefs[0].RelationType == "_component-lexeme"
 			if (rgRefs.Count == 1 && rgRefs[0].RelationType == "main")
 			{
 				target = rgRefs[0].CmObject;
@@ -2440,21 +2444,53 @@ namespace SIL.FieldWorks.LexText.Controls
 			for (int i = 0; i < rgRefs.Count; ++i)
 			{
 				PendingLexEntryRef pend = rgRefs[i];
+				//This is handling the historical LIFT export data where relationType was "main"
 				if (pend.RelationType == "main" && i == 0 && target != null)
 				{
 					componentLexemes.Add(target);
 					primaryLexemes.Add(target);
 				}
 				else if (pend.Target != null)
+					// pend.RelationType == "_component-lexeme" is now the default and there should be a non-null Target, however
+					//when the LIFT file was produced by a partial export vs. full export the compontent/variant contained
+					//in the lexEntry might be referencing another lexEntry that was not part of the export. In this case Target will be null.
 				{
 					componentLexemes.Add(pend.Target);
+					//With compontents, for example a compound word, often one of the components is considered the
+					//primary lexeme and the others are not.
 					if (pend.IsPrimary || pend.RelationType == "main")
 						primaryLexemes.Add(pend.Target);
 				}
 				else
+					// pend.Target == null
+					//If there is a partial LIFT export "Filtered Lexicon LIFT 0.13 XML" we can encounter a LexEntryRef that has a null target.
+					//For example if the word 'unbelieving' has Components un- believe -ing then these three components will be included
+					//in the <entry> 'unbelieving' as relations <relation type="_component-lexeme".../> when doing a LIFT export.
+					//However, for a partial export where'un-' 'believe' and '-ing' are not included in the export, the reference	s to these found in
+					//the lexEntry 'unbelieving' are invalid and therefore pend.Target will be null for each of these.
+					//Therefore they are removed from this lexEntry on importing the LIFT file.
+					//We should however warn the user that this data is not being imported and that they should do a FULL export to ensure this data
+					//is imported correctly.
 				{
-					Debug.Assert(rgRefs.Count == 1);
-					Debug.Assert(!pend.IsPrimary);
+					var bldr = new StringBuilder();
+					bldr.Append("The LIFT file you are importing has entries with 'Component' or 'Variant' references to lexical entries that ");
+					bldr.Append("were not exorted to the LIFT file. ");
+					bldr.Append("Therefore, these references (components or variants) will being excluded from this import.  ");
+					bldr.AppendLine();
+					bldr.AppendLine();
+					bldr.Append("This is probably a result of doing a Filtered Lexicon LIFT export. Instead, a Full Lexicon LIFT export should been done ");
+					bldr.Append("to correct this problem, followed by another LIFT import.  ");
+					bldr.AppendLine();
+					bldr.AppendLine();
+					bldr.AppendFormat("The LIFT reference has TargetId: {0}", pend.TargetId);
+					bldr.AppendLine();
+					if (rgRefs[0].LexemeForm != null)
+					{
+						bldr.AppendFormat("The entry CmLiftEntry.LexicalForm is:    {0}", rgRefs[0].LexemeForm.FirstValue.Value.Text);
+						bldr.AppendLine();
+					}
+					MessageBox.Show(bldr.ToString(), LexTextControls.ksProblemImporting,
+									MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 			if (complexEntryTypes.Count == 0 && variantEntryTypes.Count == 0 && rgRefs[0].RelationType == "BaseForm" && componentLexemes.Count == 1
@@ -2491,10 +2527,30 @@ namespace SIL.FieldWorks.LexText.Controls
 					ler.ComplexEntryTypesRS.Add(item);
 				foreach (var item in variantEntryTypes)
 					ler.VariantEntryTypesRS.Add(item);
-				foreach (var item in componentLexemes)
-					ler.ComponentLexemesRS.Add(item);
-				foreach (var item in primaryLexemes)
-					ler.PrimaryLexemesRS.Add(item);
+				try
+				{
+					foreach (var item in componentLexemes)
+						ler.ComponentLexemesRS.Add(item);
+					foreach (var item in primaryLexemes)
+						ler.PrimaryLexemesRS.Add(item);
+				}
+				catch (Exception error)
+				{
+					var bldr = new StringBuilder();
+					bldr.Append("Something went wrong while FieldWorks was attempting to import the LIFT file.");
+					bldr.AppendLine();
+					bldr.Append(error.Message);
+					bldr.AppendLine();
+					if (rgRefs[0].LexemeForm != null)
+					{
+						bldr.AppendFormat("CmLiftEntry.LexicalForm is:    {0}", rgRefs[0].LexemeForm.FirstValue.Value.Text);
+						bldr.AppendLine();
+						bldr.AppendFormat("RelationType is:     {0}", rgRefs[0].RelationType);
+					}
+					MessageBox.Show(bldr.ToString(), LexTextControls.ksProblemImporting,
+									MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+
 				ler.HideMinorEntry = rgRefs[0].HideMinorEntry;
 				AddNewWsToAnalysis();
 				if (summary != null)
@@ -4259,6 +4315,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			readonly List<string> m_rgsVariantTypes = new List<string>();
 			bool m_fIsPrimary;
 			int m_nHideMinorEntry;
+			private LiftMultiText m_lexemeForm;
 
 			string m_sResidue;
 			// preserve trait values from older LIFT files based on old FieldWorks model
@@ -4282,6 +4339,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					m_sMinorEntryCondition = entry.MinorEntryCondition;
 					m_fExcludeAsHeadword = entry.ExcludeAsHeadword;
 					ProcessRelationData();
+					m_lexemeForm = entry.LexicalForm;
 				}
 			}
 
@@ -4418,6 +4476,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			public LiftField Summary
 			{
 				get { return m_summary; }
+			}
+
+			/// <summary>
+			/// This is used to better error reporting to the user when the default vernacular of the LIFT import file
+			/// does not match the project doing the import.
+			/// </summary>
+			public LiftMultiText LexemeForm
+			{
+				get { return m_lexemeForm; }
 			}
 		}
 		readonly List<PendingLexEntryRef> m_rgPendingLexEntryRefs = new List<PendingLexEntryRef>();

@@ -285,8 +285,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						 && m_queueCounts[(int)ParserPriority.Medium] == 0
 						 && m_queueCounts[(int)ParserPriority.High] == 0;
 			}
-			if (isIdle && m_TaskReport == null)
+			if (isIdle && (m_TaskReport == null || m_TaskReport.Description == ParserCoreStrings.ksIdle_))
+			{
+				if (m_TaskReport != null)
+					m_TaskReport.Dispose();
 				m_TaskReport = new TaskReport(ParserCoreStrings.ksIdle_, HandleTaskUpdate);
+			}
 		}
 
 		/// <summary>
@@ -324,7 +328,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			CheckDisposed();
 
-			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, task.Description + " " + task.PhaseDescription);
+			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Scheduler.HandleTaskUpdate() " + task.Description + " " + task.PhaseDescription);
 
 			if (ParserUpdateNormal != null && ((task.Depth == 0) || (task.NotificationMessage != null)))
 			{
@@ -339,7 +343,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 
-			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, task.Description);
+			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "  Exiting HandleTaskUpdate()" + task.Description);
 		}
 
 		private void ParseFiler_WordformUpdated(object sender, WordformUpdatedEventArgs e)

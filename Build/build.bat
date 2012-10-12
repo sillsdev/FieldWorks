@@ -27,7 +27,7 @@ del StringCheck.txt
 set VALUE_NAME=InstallDir
 
 REM Check for presence of key first.
-reg query %KEY_NAME% /v %VALUE_NAME% 2>nul || (echo No theme name present! & exit /b 1)
+reg query %KEY_NAME% /v %VALUE_NAME% 2>nul || (echo Build requires VisualStudio 2010! & exit /b 1)
 
 REM query the value. pipe it through findstr in order to find the matching line that has the value. only grab token 3 and the remainder of the line. %%b is what we are interested in here.
 set INSTALL_DIR=
@@ -36,4 +36,5 @@ for /f "tokens=2,*" %%a in ('reg query %KEY_NAME% /v %VALUE_NAME% ^| findstr %VA
 )
 call "%INSTALL_DIR%\..\..\VC\vcvarsall.bat"
 
+msbuild /t:refreshTargets
 msbuild %*
