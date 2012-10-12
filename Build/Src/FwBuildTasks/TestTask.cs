@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -17,10 +18,9 @@ namespace FwBuildTasks
 	/// </remarks>
 	public abstract class TestTask : Task
 	{
-		protected StreamReader m_StdError;
-		protected StreamReader m_StdOut;
-		protected MemoryStream m_MemoryStream;
-		protected TextWriter m_MemoryWriter;
+		private StreamReader m_StdError;
+		private StreamReader m_StdOut;
+		protected List<string> m_TestLog = new List<string>();
 
 		/// <summary>
 		/// Used to ensure thread-safe operations.
@@ -45,7 +45,10 @@ namespace FwBuildTasks
 
 		public override bool Execute()
 		{
-			Log.LogMessage(MessageImportance.Normal, "Running {0}", Path.GetFileName(FixturePath));
+			if (Timeout == Int32.MaxValue)
+				Log.LogMessage(MessageImportance.Normal, "Running {0}", Path.GetFileName(FixturePath));
+			else
+				Log.LogMessage(MessageImportance.Normal, "Running {0} (timeout = {1} seconds)", Path.GetFileName(FixturePath), ((double)Timeout/1000.0).ToString("F1"));
 
 			Thread outputThread = null;
 			Thread errorThread = null;
@@ -71,7 +74,8 @@ namespace FwBuildTasks
 				outputThread.Join(2000);
 				errorThread.Join(2000);
 
-				if (!process.HasExited)
+				bool fTimedOut = !process.HasExited;
+				if (fTimedOut)
 				{
 					try
 					{
@@ -82,18 +86,26 @@ namespace FwBuildTasks
 						// ignore possible exceptions that are thrown when the
 						// process is terminated
 					}
-					Log.LogError("The tests in {0} did not finish in {1} milliseconds.", FixturePath, Timeout);
-					return false;
 				}
-
-				MemoryStream.Position = 0;
-				ProcessOutput();
-				MemoryWriter.Close();
-				MemoryStream.Close();
 
 				TimeSpan delta = DateTime.Now - dtStart;
 				Log.LogMessage(MessageImportance.Normal, "Total time for running {0} = {1}", Path.GetFileName(FixturePath), delta);
 
+				try
+				{
+					ProcessOutput(fTimedOut, delta);
+				}
+				catch //(Exception e)
+				{
+					//Console.WriteLine("CAUGHT EXCEPTION: {0}", e.Message);
+					//Console.WriteLine("STACK: {0}", e.StackTrace);
+				}
+
+				if (fTimedOut)
+				{
+					Log.LogError("The tests in {0} did not finish in {1} milliseconds.", FixturePath, Timeout);
+					return false;
+				}
 				if (process.ExitCode != 0)
 				{
 					Log.LogError("{0} returned with exit code {1}", FixturePath, process.ExitCode);
@@ -163,33 +175,7 @@ namespace FwBuildTasks
 
 		protected abstract string ProgramArguments();
 
-		protected abstract void ProcessOutput();
-
-		/// <summary>
-		/// Gets the memory stream, creating it if necessary.
-		/// </summary>
-		protected MemoryStream MemoryStream
-		{
-			get
-			{
-				if (m_MemoryStream == null)
-					m_MemoryStream = new MemoryStream();
-				return m_MemoryStream;
-			}
-		}
-
-		/// <summary>
-		/// Gets the memory writer, creating it if necessary.
-		/// </summary>
-		protected TextWriter MemoryWriter
-		{
-			get
-			{
-				if (m_MemoryWriter == null)
-					m_MemoryWriter = new StreamWriter(MemoryStream);
-				return TextWriter.Synchronized(m_MemoryWriter);
-			}
-		}
+		protected abstract void ProcessOutput(bool fTimedOut, TimeSpan delta);
 
 		/// <summary>
 		/// Reads from the standard output stream until the external program is ended.
@@ -211,13 +197,8 @@ namespace FwBuildTasks
 					// ensure only one thread writes to the log at any time
 					lock (LockObject)
 					{
-						MemoryWriter.WriteLine(logContents);
+						m_TestLog.Add(logContents);
 					}
-				}
-
-				lock (LockObject)
-				{
-					MemoryWriter.Flush();
 				}
 			}
 			catch (Exception)
@@ -246,12 +227,8 @@ namespace FwBuildTasks
 					// ensure only one thread writes to the log at any time
 					lock (LockObject)
 					{
-						MemoryWriter.WriteLine(logContents);
+						m_TestLog.Add(logContents);
 					}
-				}
-				lock (LockObject)
-				{
-					MemoryWriter.Flush();
 				}
 			}
 			catch (Exception)

@@ -6185,4 +6185,8 @@ GordonM, 11 Oct 2012. LT-13669 fixes Style non-owner problem in new projects (an
 SteveMc, October 11, 2012.  Integrated from Calgary/WW to WW.
 EberhardB, 12 Oct 2012. Fix nant build.
 RickM, 12 Oct 2012. LT-13678 Crash on "Analysis Usage" dialog box When adding existing column.
-RandyR, 12 Oct 2012. Updated FLEx Bridge installer to 0.3.76, and added DM62 to redo the StStyles business that didn't "stick" the first time, since I forgot to commit one crucial file.
+RandyR, 12 Oct 2012. Updated FLEx Bridge installer to 0.3.76, and added DM62 to redo the
+	StStyles business that didn't "stick" the first time, since I forgot to commit one
+	crucial file.
+SteveMc, October 12, 2012.  Integrate from Calgary/WW to WW (with some major fixing of custom
+	msbuild TestTask code to get timeout logging working on Windows).
