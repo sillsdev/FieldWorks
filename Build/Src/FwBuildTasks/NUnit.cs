@@ -237,15 +237,20 @@ namespace FwBuildTasks
 					writer.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 					writer.WriteLine("<test-results name=\"{0}\" total=\"{1}\" errors=\"{2}\" failures=\"{3}\" not-run=\"{4}\" inconclusive=\"{5}\" ignored=\"{6}\" skipped=\"{7}\" invalid=\"{8}\" date=\"{9}\" time=\"{10}\">",
 									 FixturePath, num+1, 0, 1, 0, num, 0, 0, 0, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString());
-					writer.WriteLine("<test-suite type=\"Assembly\" name=\"{0}\" executed=\"True\" result=\"Timeout\" success=\"False\" time=\"{1}\">",
+					writer.WriteLine("  <test-suite type=\"Assembly\" name=\"{0}\" executed=\"True\" result=\"Timeout\" success=\"False\" time=\"{1}\">",
 									 FixturePath, delta.TotalSeconds.ToString("F3"));
+					writer.WriteLine("    <results>");
+					writer.WriteLine("      <test-suite name=\"Timeout\">");
+					writer.WriteLine("        <results>");
+					writer.WriteLine("          <test-case name=\"Timeout\" success=\"False\" time=\"{0}\" asserts=\"0\"/>", ((double)Timeout/1000.0).ToString("F3"));
+					writer.WriteLine("        </results>");
+					writer.WriteLine("      </test-suite>");
+					writer.WriteLine("    </results>");
+					writer.WriteLine("  </test-suite>");
 					writer.WriteLine("<!-- tests tried before time ran out:");
 					foreach (var line in lines)
-					{
 						writer.WriteLine(line.Substring(6));
-					}
 					writer.WriteLine("-->");
-					writer.WriteLine("</test-suite>");
 					writer.WriteLine("</test-results>");
 				}
 			}

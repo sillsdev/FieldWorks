@@ -177,7 +177,7 @@ namespace FwBuildTasks
 				fakeResults.AppendChild(fakeTestCase);
 				fakeTestCase.SetAttribute("name", "Timeout");
 				fakeTestCase.SetAttribute("success", "False");
-				fakeTestCase.SetAttribute("time", Timeout.ToString());
+				fakeTestCase.SetAttribute("time", ((double)Timeout/1000.0).ToString("F3"));
 				fakeTestCase.SetAttribute("asserts", "0");
 				notRun = 0;
 				++fail;
