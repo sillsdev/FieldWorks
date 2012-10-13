@@ -559,31 +559,27 @@
 	</xsl:template>
 	<!--
 -->
+	<xsl:template match="ms:PropertyGroup[contains(@Condition, 'Debug')][1]" mode="general">
+		<xsl:call-template name="configuration">
+			<xsl:with-param name="kind">Debug</xsl:with-param>
+			<xsl:with-param name="outputDir">Debug</xsl:with-param>
+		</xsl:call-template>
+		<xsl:call-template name="configuration">
+			<xsl:with-param name="kind">Bounds</xsl:with-param>
+			<xsl:with-param name="outputDir">Debug</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+	<xsl:template match="ms:PropertyGroup[contains(@Condition, 'Release')][1]" mode="general">
+		<xsl:call-template name="configuration">
+			<xsl:with-param name="kind">Release</xsl:with-param>
+			<xsl:with-param name="outputDir">Release</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
 	<xsl:template match="ms:PropertyGroup" mode="general">
-		<xsl:choose>
-			<xsl:when test="contains(@Condition, 'Debug')">
-				<xsl:call-template name="configuration">
-					<xsl:with-param name="kind">Debug</xsl:with-param>
-					<xsl:with-param name="outputDir">Debug</xsl:with-param>
-				</xsl:call-template>
-				<xsl:call-template name="configuration">
-					<xsl:with-param name="kind">Bounds</xsl:with-param>
-					<xsl:with-param name="outputDir">Debug</xsl:with-param>
-				</xsl:call-template>
-			</xsl:when>
-			<xsl:when test="contains(@Condition, 'Release')">
-				<xsl:call-template name="configuration">
-					<xsl:with-param name="kind">Release</xsl:with-param>
-					<xsl:with-param name="outputDir">Release</xsl:with-param>
-				</xsl:call-template>
-			</xsl:when>
-			<xsl:otherwise>
-				<!--
-			Do nothing for any other kind of config, such as the old Bounds config.
-			The old Bounds stuff is handled another way now.
-			-->
-			</xsl:otherwise>
-		</xsl:choose>
+		<!--
+		Do nothing for any other kind of config, such as the old Bounds config.
+		The old Bounds stuff is handled another way now.
+		-->
 	</xsl:template>
 	<!--
 -->

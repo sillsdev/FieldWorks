@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<languageproject version="7000060">
+<languageproject version="7000062">
 <rt class="CmPossibility" guid="00951e6f-2523-4ac9-a649-ad42c659cf83" ownerguid="d9d55b12-ea5e-11de-95ef-0013722f8dec">
 <Abbreviation>
 <AUni ws="en">Evnt</AUni>
@@ -124,7 +124,6 @@
 </Version>
 </rt>
 <rt class="CmFolder" guid="156eff82-9e78-4f5a-b187-5baf85db7cae" ownerguid="af1d4e34-ea5e-11de-8ec5-0013722f8dec">
-<Files />
 <Name>
 <AUni ws="en">File paths in TsStrings</AUni>
 </Name>
@@ -650,7 +649,7 @@
 <objsur guid="b72df880-ea5e-11de-8e18-0013722f8dec" t="o" />
 </Discussion>
 <GlossAppend>
-  <AUni ws="en">.pst</AUni>
+<AUni ws="en">.pst</AUni>
 </GlossAppend>
 <IsProtected val="true" />
 <Name>
@@ -772,7 +771,7 @@
 <objsur guid="b716211a-ea5e-11de-8768-0013722f8dec" t="o" />
 </Discussion>
 <GlossAppend>
-  <AUni ws="en">.pl</AUni>
+<AUni ws="en">.pl</AUni>
 </GlossAppend>
 <IsProtected val="true" />
 <Name>
@@ -3095,7 +3094,6 @@
 <Name>
 <AUni ws="en">Observation</AUni>
 </Name>
-<SubPossibilities />
 </rt>
 <rt class="CmPossibility" guid="b7f63d0e-ea5e-11de-9f02-0013722f8dec" ownerguid="00951e6f-2523-4ac9-a649-ad42c659cf83">
 <Abbreviation>
@@ -6762,11 +6760,9 @@
 <Name>
 <AUni ws="en">Data Notebook</AUni>
 </Name>
-<Records></Records>
 <RecTypes>
 <objsur guid="d9d55b12-ea5e-11de-95ef-0013722f8dec" t="o" />
 </RecTypes>
-<Reminders></Reminders>
 </rt>
 <rt class="CmPossibilityList" guid="d743553e-ea5e-11de-842a-0013722f8dec" ownerguid="af1d4e34-ea5e-11de-8ec5-0013722f8dec">
 <Abbreviation>
@@ -7504,7 +7500,6 @@
 <Name>
 <AUni ws="en">Positions</AUni>
 </Name>
-<Possibilities></Possibilities>
 <WsSelector val="-3" />
 </rt>
 <rt class="StStyle" guid="d9bfe5fc-ea5e-11de-9282-0013722f8dec" ownerguid="af1d4e34-ea5e-11de-8ec5-0013722f8dec">
@@ -7670,8 +7665,6 @@
 <Name>
 <AUni ws="en">Phonological Rule Features</AUni>
 </Name>
-<Possibilities>
-</Possibilities>
 <PreventChoiceAboveLevel val="0" />
 <PreventDuplicates val="False" />
 <PreventNodeChoices val="False" />

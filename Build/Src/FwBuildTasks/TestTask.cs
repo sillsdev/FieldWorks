@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -17,10 +18,9 @@ namespace FwBuildTasks
 	/// </remarks>
 	public abstract class TestTask : Task
 	{
-		protected StreamReader m_StdError;
-		protected StreamReader m_StdOut;
-		protected MemoryStream m_MemoryStream;
-		protected TextWriter m_MemoryWriter;
+		private StreamReader m_StdError;
+		private StreamReader m_StdOut;
+		protected List<string> m_TestLog = new List<string>();
 
 		/// <summary>
 		/// Used to ensure thread-safe operations.
@@ -74,8 +74,8 @@ namespace FwBuildTasks
 				outputThread.Join(2000);
 				errorThread.Join(2000);
 
-				bool fTimedOut = false;
-				if (!process.HasExited)
+				bool fTimedOut = !process.HasExited;
+				if (fTimedOut)
 				{
 					try
 					{
@@ -86,7 +86,6 @@ namespace FwBuildTasks
 						// ignore possible exceptions that are thrown when the
 						// process is terminated
 					}
-					fTimedOut = true;
 				}
 
 				TimeSpan delta = DateTime.Now - dtStart;
@@ -94,13 +93,12 @@ namespace FwBuildTasks
 
 				try
 				{
-					MemoryStream.Position = 0;
 					ProcessOutput(fTimedOut, delta);
-					MemoryWriter.Close();
-					MemoryStream.Close();
 				}
-				catch
+				catch //(Exception e)
 				{
+					//Console.WriteLine("CAUGHT EXCEPTION: {0}", e.Message);
+					//Console.WriteLine("STACK: {0}", e.StackTrace);
 				}
 
 				if (fTimedOut)
@@ -180,32 +178,6 @@ namespace FwBuildTasks
 		protected abstract void ProcessOutput(bool fTimedOut, TimeSpan delta);
 
 		/// <summary>
-		/// Gets the memory stream, creating it if necessary.
-		/// </summary>
-		protected MemoryStream MemoryStream
-		{
-			get
-			{
-				if (m_MemoryStream == null)
-					m_MemoryStream = new MemoryStream();
-				return m_MemoryStream;
-			}
-		}
-
-		/// <summary>
-		/// Gets the memory writer, creating it if necessary.
-		/// </summary>
-		protected TextWriter MemoryWriter
-		{
-			get
-			{
-				if (m_MemoryWriter == null)
-					m_MemoryWriter = new StreamWriter(MemoryStream);
-				return TextWriter.Synchronized(m_MemoryWriter);
-			}
-		}
-
-		/// <summary>
 		/// Reads from the standard output stream until the external program is ended.
 		/// </summary>
 		protected void StreamReaderThread_Output()
@@ -225,13 +197,8 @@ namespace FwBuildTasks
 					// ensure only one thread writes to the log at any time
 					lock (LockObject)
 					{
-						MemoryWriter.WriteLine(logContents);
+						m_TestLog.Add(logContents);
 					}
-				}
-
-				lock (LockObject)
-				{
-					MemoryWriter.Flush();
 				}
 			}
 			catch (Exception)
@@ -260,12 +227,8 @@ namespace FwBuildTasks
 					// ensure only one thread writes to the log at any time
 					lock (LockObject)
 					{
-						MemoryWriter.WriteLine(logContents);
+						m_TestLog.Add(logContents);
 					}
-				}
-				lock (LockObject)
-				{
-					MemoryWriter.Flush();
 				}
 			}
 			catch (Exception)

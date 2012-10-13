@@ -210,16 +210,13 @@ namespace FwBuildTasks
 		protected override void ProcessOutput(bool fTimedOut, TimeSpan delta)
 		{
 			var lines = new List<string>();
-			using (var reader = new StreamReader(MemoryStream))
+			foreach (var line in m_TestLog)
 			{
-				while (!reader.EndOfStream)
-				{
-					var line = reader.ReadLine();
-					if (line.StartsWith("***** "))
-						lines.Add(line);
-					else
-						Log.LogMessage(MessageImportance.Normal, line);
-				}
+				var trim = line.Trim();
+				if (trim.StartsWith("***** "))
+					lines.Add(trim);
+				else
+					Log.LogMessage(MessageImportance.Normal, line);
 			}
 			if (fTimedOut)
 			{
@@ -236,13 +233,14 @@ namespace FwBuildTasks
 					var num = lines.Count;
 					writer.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 					writer.WriteLine("<test-results name=\"{0}\" total=\"{1}\" errors=\"{2}\" failures=\"{3}\" not-run=\"{4}\" inconclusive=\"{5}\" ignored=\"{6}\" skipped=\"{7}\" invalid=\"{8}\" date=\"{9}\" time=\"{10}\">",
-									 FixturePath, num+1, 0, 1, 0, num, 0, 0, 0, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString());
+										FixturePath, num + 1, 0, 1, 0, num, 0, 0, 0,
+										DateTime.Now.ToShortDateString(), DateTime.Now.ToString("HH:mm:ss"));
 					writer.WriteLine("  <test-suite type=\"Assembly\" name=\"{0}\" executed=\"True\" result=\"Timeout\" success=\"False\" time=\"{1}\">",
-									 FixturePath, delta.TotalSeconds.ToString("F3"));
+										FixturePath, delta.TotalSeconds.ToString("F3"));
 					writer.WriteLine("    <results>");
 					writer.WriteLine("      <test-suite name=\"Timeout\">");
 					writer.WriteLine("        <results>");
-					writer.WriteLine("          <test-case name=\"Timeout\" success=\"False\" time=\"{0}\" asserts=\"0\"/>", ((double)Timeout/1000.0).ToString("F3"));
+					writer.WriteLine("          <test-case name=\"Timeout\" success=\"False\" time=\"{0}\" asserts=\"0\"/>", ((double)Timeout / 1000.0).ToString("F3"));
 					writer.WriteLine("        </results>");
 					writer.WriteLine("      </test-suite>");
 					writer.WriteLine("    </results>");

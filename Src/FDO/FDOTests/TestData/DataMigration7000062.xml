@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000061">
+  <!-- Language Project (with owned StStyle) (DM Step 1.A.) -->
+  <rt class="LangProject" guid="88ddebd1-dfad-4033-8b1c-896081469f66">
+	<Styles>
+	  <objsur guid="9d28219c-6185-416e-828b-b9e304de141c" t="o" />
+	</Styles>
+  </rt>
+  <!-- Owned StStyle in LangProject.Styles (DM control) -->
+  <rt class="StStyle" guid ="9d28219c-6185-416e-828b-b9e304de141c" ownerguid="88ddebd1-dfad-4033-8b1c-896081469f66">
+  </rt>
+  <!-- Improperly unowned StStyle (DM Step 1.A.) -->
+  <rt class="StStyle" guid ="bb68f6bc-f233-4cd4-8894-c33b4b4c43ba">
+  </rt>
+
+  <!-- Data for Step 1.B -->
+	<!--  CmResource (TeStyles with previous version guid) -->
+  <rt class="CmResource" guid="5aedaa5f-6f71-4859-953b-a9bb1b78a813" ownerguid="7f39cadd-5392-4d1f-81ae-57049ac30596" >
+	<Name>
+	  <Uni>TeStyles</Uni>
+	</Name>
+	<Version val="700176e1-4f42-4abd-8fb5-3c586670085d" />
+  </rt>
+	<!--  CmResource (FlexStyles with previous version guid) -->
+	<rt class="CmResource" guid="6e729420-75f0-4474-9f27-7335d7a4d39b" ownerguid="7f39cadd-5392-4d1f-81ae-57049ac30596">
+	<Name>
+	  <Uni>FlexStyles</Uni>
+	</Name>
+	<Version val="8ed469cf-b961-46e6-a05c-f223fa4f998d" />
+	</rt>
+  <!-- CmResource (DM control) -->
+  <rt class="CmResource" guid="2eeb13ab-7844-4406-b60d-a9a1c08363bb" ownerguid="7f39cadd-5392-4d1f-81ae-57049ac30596">
+	<Name>
+	  <Uni>ControlResource</Uni>
+	</Name>
+	<Version val="c1ede2e2-e382-11de-8a39-0800200c9a66" />
+  </rt>
+</languageproject>
