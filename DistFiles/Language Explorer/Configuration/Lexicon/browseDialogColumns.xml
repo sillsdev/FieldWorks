@@ -53,10 +53,10 @@
 		chooserFilter="complexListMultiple"
 		bulkEdit="complexListMultiple" field="LexSense.SemanticDomains" list="SemanticDomainList" displayNameProperty="AbbrAndNameTSS"/>
 	<column layout="NumberOfSensesForEntry" label="Number of Senses (Entry)" sortType="integer" blankPossible="false" visibility="dialog"/>
-	<column layout="EtymologyGloss" label="Etymology - Gloss"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
-	<column layout="EtymologySource" label="Etymology - Source"  multipara="true" editable="false" visibility="dialog" />
-	<column layout="EtymologyForm" label="Etymology - Form"  multipara="true" ws="$ws=vernacular" editable="false" visibility="dialog" />
-	<column layout="EtymologyComment" label="Etymology - Comment"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+	<column layout="EtymologyGloss" label="Etymology - Gloss"  multipara="true" ws="$ws=analysis" transduce="LexEntry.Etymology.Gloss" editable="false" visibility="dialog" />
+	<column layout="EtymologySource" label="Etymology - Source"  multipara="true" transduce="LexEntry.Etymology.Source" editable="false" visibility="dialog" />
+	<column layout="EtymologyForm" label="Etymology - Form"  multipara="true" ws="$ws=vernacular" transduce="LexEntry.Etymology.Form" editable="false" visibility="dialog" />
+	<column layout="EtymologyComment" label="Etymology - Comment"  multipara="true" ws="$ws=analysis" transduce="LexEntry.Etymology.Comment" editable="false" visibility="dialog" />
 
 	<column layout="BibliographyForEntry" label="Bibliography (Entry)" transduce="LexEntry.Bibliography" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="LiteralMeaningForEntry" label="Literal Meaning" transduce="LexEntry.LiteralMeaning" ws="$ws=analysis" visibility="dialog"/>

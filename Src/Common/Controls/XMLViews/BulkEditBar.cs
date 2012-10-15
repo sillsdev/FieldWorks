@@ -6848,6 +6848,7 @@ namespace SIL.FieldWorks.Common.Controls
 	internal class OwnStringPropReadWriter : FieldReadWriter
 	{
 		protected int m_flid;
+		protected int m_flidType;
 		protected int m_ws;
 		protected FdoCache m_cache;
 
@@ -6856,7 +6857,13 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			m_cache = cache;
 			m_flid = flid;
+			m_flidType = GetFlidType();
 			m_ws = ws;
+		}
+
+		private int GetFlidType()
+		{
+			return m_cache.MetaDataCacheAccessor.GetFieldType(m_flid);
 		}
 
 		internal override List<int> FieldPath
@@ -6871,6 +6878,14 @@ namespace SIL.FieldWorks.Common.Controls
 				hvoStringOwner = m_ghostParentHelper.GetOwnerOfTargetProperty(hvo);
 			if (hvoStringOwner == 0)
 				return null; // hasn't been created yet.
+			if (m_flidType == (int)CellarPropertyType.Unicode)
+			{
+				var ustring = m_sda.get_UnicodeProp(hvoStringOwner, m_flid);
+				// Enhance: For the time being Default Analysis Ws is sufficient because this is most likely
+				// an Etymology.Source field. If there is ever a Unicode vernacular field that is
+				// made Bulk Editable, we will need to rethink this code.
+				return m_cache.TsStrFactory.MakeString(ustring ?? string.Empty, m_cache.DefaultAnalWs);
+			}
 			return m_sda.get_StringProp(hvoStringOwner, m_flid);
 		}
 
@@ -6879,7 +6894,16 @@ namespace SIL.FieldWorks.Common.Controls
 			int hvoStringOwner = hvo;
 			if (m_ghostParentHelper != null)
 				hvoStringOwner = m_ghostParentHelper.FindOrCreateOwnerOfTargetProp(hvo, m_flid);
-			SetStringValue(hvoStringOwner, tss);
+			if (m_flidType == (int)CellarPropertyType.Unicode)
+				SetUnicodeStringValue(hvoStringOwner, tss);
+			else
+				SetStringValue(hvoStringOwner, tss);
+		}
+
+		private void SetUnicodeStringValue(int hvoStringOwner, ITsString tss)
+		{
+			var strValue = (tss == null) ? string.Empty : tss.Text;
+			m_sda.set_UnicodeProp(hvoStringOwner, m_flid, strValue);
 		}
 
 		protected virtual void SetStringValue(int hvoStringOwner, ITsString tss)
