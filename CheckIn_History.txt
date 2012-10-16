@@ -6191,3 +6191,4 @@ RandyR, 12 Oct 2012. Updated FLEx Bridge installer to 0.3.76, and added DM62 to 
 SteveMc, October 12, 2012.  Integrate from Calgary/WW to WW (with some major fixing of custom
 	msbuild TestTask code to get timeout logging working on Windows).
 GordonM, 15 Oct 2012. LT-13684 enable Bulk Edit of Etymology fields.
+SteveMc, October 16, 2012.  Integrate from Calgary/WW to WW.
