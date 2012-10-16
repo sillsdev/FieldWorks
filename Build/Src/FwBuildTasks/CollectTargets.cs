@@ -206,12 +206,15 @@ namespace FwBuildTasks
 					if (project == "xWorksTests")
 						bldr.Append(";XCoreAdapterSilSidePane");
 					var dependencies = m_mapProjDepends[project];
+					dependencies.Sort();
 					foreach (var dep in dependencies)
 					{
 						if (m_mapProjFile.ContainsKey(dep))
 							bldr.AppendFormat(";{0}", dep);
 					}
-					writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
+					var dependencyList = bldr.ToString();
+					writer.Write(" DependsOnTargets=\"{0}\"", dependencyList);
+
 					if (project == "MigrateSqlDbs")
 					{
 						writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
@@ -302,6 +305,9 @@ namespace FwBuildTasks
 				}
 				writer.WriteLine("\"/>");
 				writer.WriteLine();
+
+				ProcessDependencyGraph(writer);
+
 				writer.WriteLine("</Project>");
 				writer.Flush();
 				writer.Close();
@@ -351,6 +357,128 @@ namespace FwBuildTasks
 				default:
 					return 10000;
 			}
+		}
+
+		void ProcessDependencyGraph(StreamWriter writer)
+		{
+			// Filter dependencies for those that are actually built.
+			// Also collect all projects that don't depend on any other built projects.
+			Dictionary<string, List<string>> mapProjInternalDepends = new Dictionary<string, List<string>>();
+			List<HashSet<string>> groupDependencies = new List<HashSet<string>>();
+			groupDependencies.Add(new HashSet<string>());
+			int cProjects = 0;
+			foreach (var project in m_mapProjFile.Keys)
+			{
+				if (project.StartsWith("SharpViews") ||		// These projects are experimental.
+					project == "FxtExe" ||					// These projects weren't built by nant normally.
+					project == "FixFwData" ||
+					project.StartsWith("LinuxSmokeTest"))
+				{
+					continue;
+				}
+				var dependencies = new List<string>();
+				foreach (var dep in m_mapProjDepends[project])
+				{
+					if (m_mapProjFile.ContainsKey(dep))
+						dependencies.Add(dep);
+				}
+				if (project == "xWorksTests" && !dependencies.Contains("XCoreAdapterSilSidePane"))
+					dependencies.Add("XCoreAdapterSilSidePane");
+				if (dependencies.Count == 0)
+					groupDependencies[0].Add(project);
+				dependencies.Sort();
+				mapProjInternalDepends.Add(project, dependencies);
+				++cProjects;
+			}
+			if (groupDependencies[0].Count == 0)
+				return;
+			int num = 1;
+			HashSet<string> total = new HashSet<string>(groupDependencies[0]);
+			// Work through all the dependencies, collecting sets of projects that can be
+			// built in parallel.
+			while (total.Count < cProjects)
+			{
+				groupDependencies.Add(new HashSet<string>());
+				foreach (var project in mapProjInternalDepends.Keys)
+				{
+					bool fAlready = false;
+					for (int i = 0; i < groupDependencies.Count - 1; ++i)
+					{
+						if (groupDependencies[i].Contains(project))
+						{
+							fAlready = true;
+							break;
+						}
+					}
+					if (fAlready)
+						continue;
+					var dependencies = mapProjInternalDepends[project];
+					if (total.IsSupersetOf(dependencies))
+						groupDependencies[num].Add(project);
+				}
+				if (groupDependencies[num].Count == 0)
+					break;
+				foreach (var x in groupDependencies[num])
+					total.Add(x);
+				++num;
+			}
+			for (int i = 0; i < groupDependencies.Count; ++i)
+			{
+				var targName = string.Format("cs{0:d03}", i+1);
+				writer.Write("\t<Target Name=\"{0}\"", targName);
+				var depends = String.Format("cs{0:d03}", i);
+				if (i == 0)
+					depends = "Initialize";
+				if (groupDependencies[i].Contains("COMInterfaces"))
+					depends = "mktlbs;" + depends;
+				writer.WriteLine(" DependsOnTargets=\"{0}\">", depends);
+				bool fIncludesTests = false;
+				int count = 0;
+				writer.Write("\t\t<MSBuild Projects=\"");
+				foreach (var targ in groupDependencies[i])
+				{
+					if (count > 0)
+						writer.Write(";");
+					writer.Write(m_mapProjFile[targ].Replace(m_fwroot, "$(fwrt)"));
+					++count;
+					if (targ.EndsWith("Tests") ||
+						targ == "PhonEnvValidatorTest" ||
+						targ == "TestManager" ||
+						targ == "ProjectUnpacker")
+					{
+						fIncludesTests = true;
+					}
+				}
+				writer.WriteLine("\"");
+				writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\"");
+				writer.WriteLine("\t\t         Properties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0}\"",
+					Path.DirectorySeparatorChar, targName);
+				writer.WriteLine("\t\t         BuildInParallel=\"true\"");
+				writer.WriteLine("\t\t         ToolsVersion=\"4.0\"/>");
+				if (fIncludesTests)
+				{
+					writer.Write("\t\t<!--NUnit Assemblies=\"");
+					count = 0;
+					foreach (var targ in groupDependencies[i])
+					{
+						if (targ.EndsWith("Tests") ||
+							targ == "PhonEnvValidatorTest" ||
+							targ == "TestManager" ||
+							targ == "ProjectUnpacker")
+						{
+							if (count > 0)
+								writer.Write(";");
+							writer.Write(targ);
+							++count;
+						}
+					}
+					writer.WriteLine("\"/-->");
+				}
+				writer.WriteLine("\t</Target>");
+				writer.WriteLine();
+			}
+			writer.WriteLine("\t<Target Name=\"csAll\" DependsOnTargets=\"cs{0:d03}\"/>", groupDependencies.Count);
+			writer.WriteLine();
 		}
 	}
 }
