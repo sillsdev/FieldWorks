@@ -641,7 +641,10 @@ namespace SIL.FieldWorks.FDO
 			// Add the writing system to the list of Vernacular writing systems and make it the
 			// first one in the list of current Vernacular writing systems.
 			if (fDefault)
+			{
 				cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem = wsVern;
+				cache.LanguageProject.HomographWs = wsVern.Id;
+			}
 			else
 				cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsVern);
 		}

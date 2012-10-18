@@ -548,4 +548,13 @@ Delete the existing relationship before trying to add this one again.</value>
   <data name="ksWhenToConvertVariants" xml:space="preserve">
 	<value>Run this utility when you need to convert one or more of your existing irregularly inflected form variant types to be variant types.  When a variant type is an irregularly inflected form variant type, it has extra fields such as 'Append to Gloss', 'Inflection Features', and 'Slots.'</value>
   </data>
+  <data name="ksReassignHomographsCaution" xml:space="preserve">
+	<value>The homograph numbers are currently based on {0}. Do you want to update the homograph numbers to be based on the current default vernacular writing system, {1}?</value>
+  </data>
+  <data name="ksRedoHomographWs" xml:space="preserve">
+	<value>Redo Reassign Homographs</value>
+  </data>
+  <data name="ksUndoHomographWs" xml:space="preserve">
+	<value>Undo Reassign Homographs</value>
+  </data>
 </root>

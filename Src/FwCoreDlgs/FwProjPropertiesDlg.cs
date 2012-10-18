@@ -126,6 +126,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Button btnLinkedFilesBrowse;
 		/// <summary>The project name when we entered the dialog.</summary>
 		protected string m_sOrigProjName;
+		/// <summary>Used to check if the vern ws at the top of the list changed</summary>
+		private IWritingSystem m_topVernWs;
 		#endregion
 
 		#region Construction and initialization
@@ -178,7 +180,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				btnLinkedFilesBrowse.Visible = false;
 				txtExtLnkEdit.Width = txtExtLnkEdit.Width + deltaX;
 				txtExtLnkEdit.Enabled = false;
-		}
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -229,7 +231,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				// Select the first item in the vernacular writing system list.
 				if (m_lstVernWs.Items.Count > 0)
+				{
 					m_lstVernWs.SelectedIndex = 0;
+					m_topVernWs = (IWritingSystem) m_lstVernWs.CheckedItems[0];
+				}
 
 				// Select the first item in the analysis writing system list.
 				if (m_lstAnalWs.Items.Count > 0)
@@ -953,6 +958,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
+			// if needed put up "should the homograph ws change?" dialog
+			var changeHgWs = DialogResult.No;
+			var topVernWs = (IWritingSystem)m_lstVernWs.CheckedItems[0];
+			Debug.Assert(m_topVernWs != null, "There was no checked top vernacular ws when this dialog loaded");
+			// if the top vern ws changed and it is not the current hg ws, ask
+			if (m_topVernWs.Id != topVernWs.Id && topVernWs.Id != m_cache.LanguageProject.HomographWs)
+			{
+				var msg = ResourceHelper.GetResourceString("kstidChangeHomographNumberWs");
+				changeHgWs = MessageBox.Show(
+					String.Format(msg, topVernWs.DisplayLabel),
+					ResourceHelper.GetResourceString("kstidChangeHomographNumberWsTitle"),
+					MessageBoxButtons.YesNo);
+			}
+
 			using (new WaitCursor(this))
 			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
@@ -960,6 +979,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					DeleteWritingSystems();
 					MergeWritingSystems();
 					SaveInternal();
+					// if dialog indicates it's needed, change homograph ws and renumber
+					if (changeHgWs == DialogResult.No)
+						return;
+					m_cache.LanguageProject.HomographWs = topVernWs.Id;
+					m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().ResetHomographs(null);
 				});
 				m_cache.ServiceLocator.WritingSystemManager.Save();
 				if (m_fWsChanged || m_fProjNameChanged || m_fLinkedFilesChanged)

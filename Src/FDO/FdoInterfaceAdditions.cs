@@ -1201,6 +1201,14 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		///
 		/// </summary>
+		string HomographFormKey
+		{
+			get;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
 		ITsString HeadWord
 		{
 			get;

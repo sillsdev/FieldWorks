@@ -33,6 +33,7 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  15 October 2012 (7000063): Added LangProject property HomographWs (#57) so the ws used homogragh numbering is persisted.
   12 October 2012 (7000062): No actual model change, but a data migration to:
 	1. Redo the new styles guids properly, since the styles updating code didn't make it into the DM61 commit.
 		A. Remove any unowned StStyle instances, since 38014 didn't remove the old ones or add the new ones to respective owners,
@@ -179,7 +180,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000062" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000063" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>
@@ -5238,7 +5239,12 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 			<para>This contains one folder holding owning CmFile objects. The CmFolder is called "File paths in TsStrings" that holds all externalLink's to files found in TsStrings.</para>
 		  </comment>
 		</owning>
-		<owning num="154" id="PhFeatureSystem" card="atomic" sig="FsFeatureSystem">
+		  <basic num="57" id="HomographWs" sig="Unicode">
+			<comment>
+			  <para>This is a writing system tag used for determining homogragh numbers of headwords.</para>
+			</comment>
+		  </basic>
+		  <owning num="154" id="PhFeatureSystem" card="atomic" sig="FsFeatureSystem">
 		  <comment>
 			<para>This feature system contains the phonological features used by phonological rules.</para>
 			<para>They are kept separate from the morpho-syntactic features in the MsFeatureSystem attribute.</para>

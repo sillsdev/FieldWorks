@@ -285,6 +285,7 @@
 	<Compile Include="DataMigrationTests\DataMigration7000060Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000061Tests.cs" />
 	<Compile Include="DataMigrationTests\DataMigration7000062Tests.cs" />
+	<Compile Include="DataMigrationTests\DataMigrationTests7000063.cs" />
 	<Compile Include="DataSortingServiceTests.cs" />
 	<Compile Include="DataStoreInitializationServicesTests.cs" />
 	<Compile Include="Db4oServerInfoTests.cs" />
@@ -410,6 +411,7 @@
 	<Content Include="TestData\DataMigration7000062.xml">
 	  <SubType>Designer</SubType>
 	</Content>
+	<Content Include="TestData\DataMigration7000063.xml" />
 	<None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata" />
 	<None Include="BackupRestore\BackupTestProject\BackupTestProject.fwdata.bak" />
 	<None Include="BackupRestore\BackupTestProject\SupportingFiles\GrkPolyComp.kmp" />

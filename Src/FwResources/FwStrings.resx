@@ -1437,4 +1437,12 @@ To restore from this backup, install version {1} of FieldWorks.
 	<value>No guid attribute on factory style [{0}]</value>
 	<comment>Message for Invalid Installation of factory styles</comment>
   </data>
+  <data name="kstidChangeHomographNumberWs" xml:space="preserve">
+	<value>Do you want to update the homograph numbers to be based on the {0} writing system?</value>
+	<comment>Dialog text to keep or change homograph numbering ws when default vernacular ws is changed</comment>
+  </data>
+  <data name="kstidChangeHomographNumberWsTitle" xml:space="preserve">
+	<value>Change Vernacular Writing System</value>
+	<comment>Dialog title for keeping or changing homograph numbering ws when default vernacular ws is changed</comment>
+  </data>
 </root>

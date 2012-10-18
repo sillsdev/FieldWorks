@@ -147,6 +147,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Assert.AreEqual("French", cache.ServiceLocator.WritingSystems.VernacularWritingSystems.First().LanguageName);
 					Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Count);
 					Assert.AreEqual("French", cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.LanguageName);
+					Assert.AreEqual("fr", cache.LanguageProject.HomographWs);
 				}
 				finally
 				{

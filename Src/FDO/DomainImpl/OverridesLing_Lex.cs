@@ -276,38 +276,51 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				progressBar.PerformStep();
 			}
 		}
+
 		/// <summary>
-		/// Resets the homograph numbers for all entries.
+		/// Resets the homograph numbers for all entries but can take a null progress bar.
 		/// </summary>
 		public void ResetHomographNumbers(ProgressBar progressBar)
 		{
+			if (progressBar != null)
+			{
+				progressBar.Minimum = 0;
+				progressBar.Maximum = Entries.Count();
+				progressBar.Step = 1;
+			}
 			var processedEntryIds = new List<int>();
-			progressBar.Minimum = 0;
-			progressBar.Maximum = Entries.Count();
-			progressBar.Step = 1;
-			UndoableUnitOfWorkHelper.Do(Strings.ksUndoResetHomographs, Strings.ksRedoResetHomographs, Cache.ActionHandlerAccessor,
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Strings.ksUndoResetHomographs, Strings.ksRedoResetHomographs, Cache.ActionHandlerAccessor,
 				() =>
 				{
 					foreach (var le in Entries)
 					{
 						if (processedEntryIds.Contains(le.Hvo))
 						{
-							progressBar.PerformStep();
+							if (progressBar != null)
+								progressBar.PerformStep();
 							continue;
 						}
 
 						var homographs = Services.GetInstance<ILexEntryRepository>().CollectHomographs(
-							le.HomographForm,
+							le.HomographFormKey,
 							le.PrimaryMorphType);
-						CorrectHomographNumbers(homographs);
+						if (le.HomographFormKey == Strings.ksQuestions)
+						{
+							homographs.ForEach(lex => lex.HomographNumber = 0);
+							le.HomographNumber = 0; // just to be sure if homographs is empty
+						}
+						else
+							CorrectHomographNumbers(homographs);
 						foreach (var homograph in homographs)
 						{
 							processedEntryIds.Add(homograph.Hvo);
-							progressBar.PerformStep();
+							if (progressBar != null)
+								progressBar.PerformStep();
 						}
 					}
 				});
 		}
+
 		///// <summary>
 		///// Answer true if the input set of homographs is ordered correctly.
 		///// </summary>
@@ -1668,7 +1681,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public List<ILexEntry> CollectHomographs()
 		{
-			return CollectHomographs(HomographForm, Hvo);
+			return CollectHomographs(HomographFormKey, Hvo);
 		}
 
 		/// <summary>
@@ -1778,7 +1791,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			if (multiAltFlid == LexEntryTags.kflidCitationForm && alternativeWs.Handle == Cache.DefaultVernWs)
 			{
-				// WILL affect HomographForm.
+				// WILL affect HomographFormKey.
 				string oldHf = originalValue == null ? "" : originalValue.Text;
 				// If the old CF was empty, the old Hf is whatever we would normally compute as the HF from the LF etc.
 				if (string.IsNullOrEmpty(oldHf))
@@ -1802,12 +1815,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (Cache.ObjectsBeingDeleted.Contains(this))
 				return; // if something is being changed as part of the process of deleting it, ignore; we already removed it.
-			UpdateHomographs(oldHf, HomographForm, PrimaryMorphType, PrimaryMorphType);
+			UpdateHomographs(oldHf, HomographFormKey, PrimaryMorphType, PrimaryMorphType);
 		}
 
 		internal void UpdateHomographs (IMoMorphType oldType)
 		{
-			var form = HomographForm;
+			var form = HomographFormKey;
 			UpdateHomographs(form, form, oldType, PrimaryMorphType);
 		}
 
@@ -1827,6 +1840,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				.Where(le => repo.HomographMorphType(Cache, le.PrimaryMorphType) == newType).ToList();
 			newHomographs.Sort((first, second) => first.HomographNumber.CompareTo(second.HomographNumber));
 
+			// When the homograph form is not set: it is empty, or entirely non-word forming characters
+			// if not, set the homograph number to 0.
+			if (newHf == Strings.ksQuestions)
+				HomographNumber = 0;
+
+			// When the old and new homograph form was not set, the homograph numbers should remain 0
+			if (newHf == Strings.ksQuestions && oldHf == Strings.ksQuestions)
+				return;
+
 			// This test used to be at the top of this method, but LT-13152 showed
 			// that we still need to do some processing if our condition is true
 			// when we merge one homograph into another of the same form:
@@ -1842,6 +1864,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// However, if we just now built the cache, the entry is already in the right case.
 			if (!newHomographs.Remove(this))
 				((ILexEntryRepositoryInternal)repo).UpdateHomographCache(this, oldHf);
+
 			// OldHomographs should not include this, since something changed.
 			var oldType = repo.HomographMorphType(Cache, oldType1);
 			var oldHomographs = repo.GetHomographs(oldHf)
@@ -1854,9 +1877,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// down to one item, the survivor will not be a homograph.
 				oldHomographs[0].HomographNumber = 0;
 			}
-			else
-			{
-				// Adjust the homograph numbers.
+			else if (oldHf != Strings.ksQuestions)
+			{   // When the old homograph form is set, adjust the homograph numbers.
 				for (int i = 0; i < oldHomographs.Count; i++)
 					oldHomographs[i].HomographNumber = i + 1;
 			}
@@ -1875,7 +1897,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		protected override void OnBeforeObjectDeleted()
 		{
-			UpdateHomographs(HomographForm, "", PrimaryMorphType, null);
+			UpdateHomographs(HomographFormKey, "", PrimaryMorphType, null);
 			RegisterVirtualsModifiedForObjectDeletion(((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService);
 			base.OnBeforeObjectDeleted();
 		}
@@ -1891,7 +1913,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Get the homograph form from the citation form,
+		/// Get the homograph form in the default vernacular ws from the citation form,
 		/// or the lexeme form (no citation form), in that order. In the unlikely event that the lexeme form has
 		/// no value in the specified writing system, tries the alternative forms.
 		/// Note that various other routines know this logic, since they need to figure the old HF after something
@@ -1902,6 +1924,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				return StringServices.ShortName1Static(this);
+			}
+		}
+
+		/// <summary>
+		/// Get the homograph form in the homograph ws from the citation form,
+		/// or the lexeme form (no citation form), in that order. In the unlikely event that the lexeme form has
+		/// no value in the specified writing system, tries the alternative forms.
+		/// This key is used in a dictionary to group homographs for numbering in the homograph writing system.
+		/// </summary>
+		public string HomographFormKey
+		{
+			get
+			{
+				var homographWs = Cache.WritingSystemFactory.GetWsFromStr(Cache.LanguageProject.HomographWs);
+				return StringServices.ShortName1StaticForWs(this, homographWs);
 			}
 		}
 
@@ -2972,7 +3009,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			if (!(objSrc is ILexEntry))
 				return;
 
-			var homoForm = HomographForm;
+			var homoForm = HomographFormKey;
 			ILexEntry le = objSrc as ILexEntry;
 			// If the lexeme forms don't match, make the other LF an allomorph.
 			if (LexemeFormOA != null && le.LexemeFormOA != null &&
@@ -2982,7 +3019,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// Order here is important. We must update any homographs of the entry that is going away.
 				// We must do that AFTER we remove its lexeme form so that it is no longer a homograph.
 				// We must record what form we need to adjust the homographs of BEFORE we change it.
-				var otherHomoForm = le.HomographForm;
+				var otherHomoForm = le.HomographFormKey;
 				AlternateFormsOS.Add(le.LexemeFormOA);
 				if (le.HomographNumber != 0)
 					((LexEntry)le).UpdateHomographs(otherHomoForm);
@@ -3633,7 +3670,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// The goal is to find a lex entry with the same lexeme form.form as our LexEntry.
 			ILexSense ls = cache.ServiceLocator.GetObject(Hvo) as ILexSense;
 			ILexEntry leTarget = ls.OwnerOfClass<ILexEntry>();
-			string homographForm = leTarget.HomographForm;
+			string homographForm = leTarget.HomographFormKey;
 			string sDefnTarget = ls.Definition.AnalysisDefaultWritingSystem.Text;
 
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(

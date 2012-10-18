@@ -6195,3 +6195,4 @@ SteveMc, October 16, 2012.  Integrate from Calgary/WW to WW.
 SteveMc, October 17, 2012.  Fix a few projects to refer to nunit dlls in the right place.
 	Comment out the parallelized targets since they don't achieve much speedup.  Fix
 	RemakeFw.bat to use msbuild.
+LastufkaM 18 Oct 2012. LT-13615 Homograph numbers generated for empty lexeme forms.

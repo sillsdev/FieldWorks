@@ -14,6 +14,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -332,6 +333,11 @@ namespace SIL.FieldWorks.FDO
 			/// Returns the list of all the variant form LexEntry objects that refer to the specified
 		/// LexEntry/LexSense as the main entry or sense.
 		IEnumerable<ILexEntry> GetVariantFormEntries(ICmObject mainEntryOrSense);
+
+		/// <summary>
+		/// Clear the list of homograph information
+		/// </summary>
+		void ResetHomographs(ProgressBar progressBar);
 
 		/// <summary>
 		/// Return a list of all the homographs of the specified form.

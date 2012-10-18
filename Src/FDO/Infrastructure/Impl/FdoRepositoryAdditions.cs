@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -1239,8 +1240,19 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		Dictionary<string, object> m_homographInfo;
 
 		/// <summary>
+		/// Clear the list of homograph information
+		/// </summary>
+		public void ResetHomographs(ProgressBar progressBar)
+		{
+			m_homographInfo = null; // GetHomographs() will rebuild the homograph list
+			Cache.LanguageProject.LexDbOA.ResetHomographNumbers(progressBar);
+		}
+
+		/// <summary>
 		/// Return a list of all the homographs of the specified form.
 		/// </summary>
+		/// <param name="sForm">This form must come from LexEntry.HomographFormKey</param>
+		/// <returns></returns>
 		public List<ILexEntry> GetHomographs(string sForm)
 		{
 			lock (SyncRoot)
@@ -1257,6 +1269,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						// may be a little large, but most usually not homographs?
 					foreach (var entry in instances)
 					{
+						entry.HomographNumber = 0;
 						AddToHomographDict(entry);
 					}
 				}
@@ -1287,7 +1300,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private void AddToHomographDict(ILexEntry entry)
 		{
-			string key = entry.HomographForm;
+			string key = entry.HomographFormKey;
 			object oldVal;
 			if (m_homographInfo.TryGetValue(key, out oldVal))
 			{
@@ -1369,7 +1382,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			foreach (var le in entries)
 				{
-					var homographForm = le.HomographForm;
+					var homographForm = le.HomographFormKey;
 					var lexemeHomograph = homographForm;
 					if (fMatchLexForms)
 						lexemeHomograph = StringServices.LexemeFormStatic(le);
