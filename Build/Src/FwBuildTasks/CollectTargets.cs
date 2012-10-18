@@ -422,6 +422,11 @@ namespace FwBuildTasks
 					total.Add(x);
 				++num;
 			}
+			writer.WriteLine("<!--");
+			writer.WriteLine("\tUsing this parallelization gains only 15% for building FieldWorks,");
+			writer.WriteLine("\tand probably nothing for running tests (although the experiment was");
+			writer.WriteLine("\tcarried out that far).");
+			writer.WriteLine();
 			for (int i = 0; i < groupDependencies.Count; ++i)
 			{
 				var targName = string.Format("cs{0:d03}", i+1);
@@ -451,33 +456,34 @@ namespace FwBuildTasks
 				}
 				writer.WriteLine("\"");
 				writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\"");
-				writer.WriteLine("\t\t         Properties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0}\"",
-					Path.DirectorySeparatorChar, targName);
+				writer.WriteLine("\t\t         Properties=\"$(msbuild-props)\"");
 				writer.WriteLine("\t\t         BuildInParallel=\"true\"");
 				writer.WriteLine("\t\t         ToolsVersion=\"4.0\"/>");
 				if (fIncludesTests)
 				{
-					writer.Write("\t\t<!--NUnit Assemblies=\"");
-					count = 0;
-					foreach (var targ in groupDependencies[i])
-					{
-						if (targ.EndsWith("Tests") ||
-							targ == "PhonEnvValidatorTest" ||
-							targ == "TestManager" ||
-							targ == "ProjectUnpacker")
-						{
-							if (count > 0)
-								writer.Write(";");
-							writer.Write(targ);
-							++count;
-						}
-					}
-					writer.WriteLine("\"/-->");
+					// This is not finished, and requires changing the NUnit task.
+					//writer.Write("\t\t<NUnit Assemblies=\"");
+					//count = 0;
+					//foreach (var targ in groupDependencies[i])
+					//{
+					//    if (targ.EndsWith("Tests") ||
+					//        targ == "PhonEnvValidatorTest" ||
+					//        targ == "TestManager" ||
+					//        targ == "ProjectUnpacker")
+					//    {
+					//        if (count > 0)
+					//            writer.Write(";");
+					//        writer.Write(targ);
+					//        ++count;
+					//    }
+					//}
+					//writer.WriteLine("\"/>");
 				}
 				writer.WriteLine("\t</Target>");
 				writer.WriteLine();
 			}
 			writer.WriteLine("\t<Target Name=\"csAll\" DependsOnTargets=\"cs{0:d03}\"/>", groupDependencies.Count);
+			writer.WriteLine("-->");
 			writer.WriteLine();
 		}
 	}
