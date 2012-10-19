@@ -243,12 +243,11 @@ namespace FwBuildTasks
 						Path.DirectorySeparatorChar, projectSubDir);
 					writer.WriteLine("\t\t         ToolsVersion=\"4.0\"/>");
 					if (project.EndsWith("Tests") ||
-						project == "PhonEnvValidatorTest" ||
 						project == "TestManager" ||
 						project == "ProjectUnpacker")
 					{
 						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
-						writer.WriteLine("\t\t       FixturePath=\"$(dir-outputBase)/{0}.dll\"", project);
+						writer.WriteLine("\t\t       Assemblies=\"$(dir-outputBase)/{0}.dll\"", project);
 						writer.WriteLine("\t\t       ToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
 						writer.WriteLine("\t\t       WorkingDirectory=\"$(dir-outputBase)\"");
 						writer.WriteLine("\t\t       OutputXmlFile=\"$(dir-outputBase)/{0}.dll-nunit-output.xml\"", project);
@@ -361,6 +360,9 @@ namespace FwBuildTasks
 
 		void ProcessDependencyGraph(StreamWriter writer)
 		{
+#if false
+			// The parallelized building isn't much faster, and tests don't all work right.
+			// ----------------------------------------------------------------------------
 			// Filter dependencies for those that are actually built.
 			// Also collect all projects that don't depend on any other built projects.
 			Dictionary<string, List<string>> mapProjInternalDepends = new Dictionary<string, List<string>>();
@@ -424,8 +426,8 @@ namespace FwBuildTasks
 			}
 			writer.WriteLine("<!--");
 			writer.WriteLine("\tUsing this parallelization gains only 15% for building FieldWorks,");
-			writer.WriteLine("\tand probably nothing for running tests (although the experiment was");
-			writer.WriteLine("\tcarried out that far).");
+			writer.WriteLine("\tand possibly nothing for running tests. (Although trials have shown");
+			writer.WriteLine("\t1600+ new test failures when trying this parallelized setup!)");
 			writer.WriteLine();
 			for (int i = 0; i < groupDependencies.Count; ++i)
 			{
@@ -447,7 +449,6 @@ namespace FwBuildTasks
 					writer.Write(m_mapProjFile[targ].Replace(m_fwroot, "$(fwrt)"));
 					++count;
 					if (targ.EndsWith("Tests") ||
-						targ == "PhonEnvValidatorTest" ||
 						targ == "TestManager" ||
 						targ == "ProjectUnpacker")
 					{
@@ -461,23 +462,31 @@ namespace FwBuildTasks
 				writer.WriteLine("\t\t         ToolsVersion=\"4.0\"/>");
 				if (fIncludesTests)
 				{
-					// This is not finished, and requires changing the NUnit task.
-					//writer.Write("\t\t<NUnit Assemblies=\"");
-					//count = 0;
-					//foreach (var targ in groupDependencies[i])
-					//{
-					//    if (targ.EndsWith("Tests") ||
-					//        targ == "PhonEnvValidatorTest" ||
-					//        targ == "TestManager" ||
-					//        targ == "ProjectUnpacker")
-					//    {
-					//        if (count > 0)
-					//            writer.Write(";");
-					//        writer.Write(targ);
-					//        ++count;
-					//    }
-					//}
-					//writer.WriteLine("\"/>");
+					writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
+					writer.Write("\t\t       Assemblies=\"");
+					count = 0;
+					int timeout = 0;
+					foreach (var targ in groupDependencies[i])
+					{
+						if (targ.EndsWith("Tests") ||
+							targ == "TestManager" ||
+							targ == "ProjectUnpacker")
+						{
+							if (count > 0)
+								writer.Write(";");
+							writer.Write("$(dir-outputBase)/{0}.dll", targ);
+							++count;
+							timeout += TimeoutForProject(targ);
+						}
+					}
+					writer.WriteLine("\"");
+					writer.WriteLine("\t\t       ToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
+					writer.WriteLine("\t\t       WorkingDirectory=\"$(dir-outputBase)\"");
+					writer.WriteLine("\t\t       OutputXmlFile=\"$(dir-outputBase)/cs{0:d03}.dll-nunit-output.xml\"", i+1);
+					writer.WriteLine("\t\t       Force32Bit=\"$(useNUnit-x86)\"");
+					writer.WriteLine("\t\t       ExcludeCategory=\"$(excludedCategories)\"");
+					writer.WriteLine("\t\t       Timeout=\"{0}\"", timeout);
+					writer.WriteLine("\t\t       ContinueOnError=\"true\" />");
 				}
 				writer.WriteLine("\t</Target>");
 				writer.WriteLine();
@@ -485,6 +494,7 @@ namespace FwBuildTasks
 			writer.WriteLine("\t<Target Name=\"csAll\" DependsOnTargets=\"cs{0:d03}\"/>", groupDependencies.Count);
 			writer.WriteLine("-->");
 			writer.WriteLine();
+#endif
 		}
 	}
 }
