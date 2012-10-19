@@ -23,6 +23,12 @@ namespace FwBuildTasks
 		}
 
 		/// <summary>
+		/// Gets or sets the full path to the NUnit assemblies (test DLLs).
+		/// </summary>
+		[Required]
+		public ITaskItem[] Assemblies { get; set; }
+
+		/// <summary>
 		/// Gets or sets the categories to include.
 		/// </summary>
 		/// <remarks>Multiple values are separated by a comma ","</remarks>
@@ -58,6 +64,18 @@ namespace FwBuildTasks
 		/// Gets or sets the working directory.
 		/// </summary>
 		public string WorkingDirectory { get; set; }
+
+		protected override string GetWorkingDirectory()
+		{
+			if (!String.IsNullOrEmpty(WorkingDirectory))
+			{
+				return WorkingDirectory;
+			}
+			else
+			{
+				return Path.GetFullPath(Path.GetDirectoryName(Assemblies[0].ItemSpec));
+			}
+		}
 
 		/// <summary>
 		/// Determines whether assemblies are copied to a shadow folder during testing.
@@ -120,10 +138,12 @@ namespace FwBuildTasks
 				else
 					bldr.Append(Path.Combine(ToolPath, "nunit-console.exe"));
 			}
-			if (bldr.Length == 0)
-				bldr.Append(FixturePath);
-			else
-				bldr.AppendFormat(" {0}", FixturePath);
+			foreach (var item in Assemblies)
+			{
+				if (bldr.Length > 0)
+					bldr.Append(" ");
+				bldr.Append(item.ItemSpec);
+			}
 			var switchChar = '/';
 			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
 				switchChar = '-';
@@ -205,6 +225,26 @@ namespace FwBuildTasks
 				}
 			}
 			ToolPath = ".";
+		}
+
+		protected override string TestProgramName()
+		{
+			return String.Format("NUnit ({0})", FixturePath);
+		}
+
+		private string FixturePath
+		{
+			get
+			{
+				StringBuilder bldr = new StringBuilder();
+				foreach (var item in Assemblies)
+				{
+					if (bldr.Length > 0)
+						bldr.Append(" ");
+					bldr.Append(Path.GetFileNameWithoutExtension(item.ItemSpec));
+				}
+				return bldr.ToString();
+			}
 		}
 
 		protected override void ProcessOutput(bool fTimedOut, TimeSpan delta)

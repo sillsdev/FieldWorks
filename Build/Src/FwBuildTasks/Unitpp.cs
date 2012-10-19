@@ -25,6 +25,11 @@ namespace FwBuildTasks
 			Timeout = Int32.MaxValue;
 		}
 
+		/// <summary>
+		/// Gets or sets the full path to the unit++ executable (test program).
+		/// </summary>
+		[Required]
+		public string FixturePath { get; set; }
 
 		protected override string ProgramName()
 		{
@@ -34,6 +39,16 @@ namespace FwBuildTasks
 		protected override string ProgramArguments()
 		{
 			return "-v -l";
+		}
+
+		protected override string GetWorkingDirectory()
+		{
+			return Path.GetFullPath(Path.GetDirectoryName(FixturePath));
+		}
+
+		protected override string TestProgramName()
+		{
+			return Path.GetFileName(FixturePath);
 		}
 
 		/// ------------------------------------------------------------------------------------

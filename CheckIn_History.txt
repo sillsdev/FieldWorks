@@ -6197,3 +6197,4 @@ SteveMc, October 17, 2012.  Fix a few projects to refer to nunit dlls in the rig
 	RemakeFw.bat to use msbuild.
 LastufkaM 18 Oct 2012. LT-13615 Homograph numbers generated for empty lexeme forms.
 LastufkaM 19 Oct 2012. 4 tests were failing because I didn't catch them when submitting LT-13615.
+SteveMc, October 19, 2012.  Integrate from Calgary/WW to WW.

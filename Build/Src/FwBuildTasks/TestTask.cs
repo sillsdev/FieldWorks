@@ -32,12 +32,6 @@ namespace FwBuildTasks
 		}
 
 		/// <summary>
-		/// Gets or sets the full path to the unit++ executable (test program).
-		/// </summary>
-		[Required]
-		public string FixturePath { get; set; }
-
-		/// <summary>
 		/// Gets or sets the maximum amount of time the test is allowed to execute,
 		/// expressed in milliseconds.  The default is essentially no time-out.
 		/// </summary>
@@ -46,9 +40,9 @@ namespace FwBuildTasks
 		public override bool Execute()
 		{
 			if (Timeout == Int32.MaxValue)
-				Log.LogMessage(MessageImportance.Normal, "Running {0}", Path.GetFileName(FixturePath));
+				Log.LogMessage(MessageImportance.Normal, "Running {0}", TestProgramName());
 			else
-				Log.LogMessage(MessageImportance.Normal, "Running {0} (timeout = {1} seconds)", Path.GetFileName(FixturePath), ((double)Timeout/1000.0).ToString("F1"));
+				Log.LogMessage(MessageImportance.Normal, "Running {0} (timeout = {1} seconds)", TestProgramName(), ((double)Timeout/1000.0).ToString("F1"));
 
 			Thread outputThread = null;
 			Thread errorThread = null;
@@ -89,7 +83,7 @@ namespace FwBuildTasks
 				}
 
 				TimeSpan delta = DateTime.Now - dtStart;
-				Log.LogMessage(MessageImportance.Normal, "Total time for running {0} = {1}", Path.GetFileName(FixturePath), delta);
+				Log.LogMessage(MessageImportance.Normal, "Total time for running {0} = {1}", TestProgramName(), delta);
 
 				try
 				{
@@ -103,12 +97,12 @@ namespace FwBuildTasks
 
 				if (fTimedOut)
 				{
-					Log.LogError("The tests in {0} did not finish in {1} milliseconds.", FixturePath, Timeout);
+					Log.LogError("The tests in {0} did not finish in {1} milliseconds.", TestProgramName(), Timeout);
 					return false;
 				}
 				if (process.ExitCode != 0)
 				{
-					Log.LogError("{0} returned with exit code {1}", FixturePath, process.ExitCode);
+					Log.LogError("{0} returned with exit code {1}", TestProgramName(), process.ExitCode);
 					return false;
 				}
 			}
@@ -150,7 +144,7 @@ namespace FwBuildTasks
 							UseShellExecute = false,
 							// do not start process in new window
 							CreateNoWindow = true,
-							WorkingDirectory = Path.GetFullPath(Path.GetDirectoryName(FixturePath))
+							WorkingDirectory = GetWorkingDirectory()
 						}
 				};
 			try
@@ -176,6 +170,10 @@ namespace FwBuildTasks
 		protected abstract string ProgramArguments();
 
 		protected abstract void ProcessOutput(bool fTimedOut, TimeSpan delta);
+
+		protected abstract string GetWorkingDirectory();
+
+		protected abstract string TestProgramName();
 
 		/// <summary>
 		/// Reads from the standard output stream until the external program is ended.
