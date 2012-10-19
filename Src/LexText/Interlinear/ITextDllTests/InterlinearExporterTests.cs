@@ -445,17 +445,19 @@ namespace SIL.FieldWorks.IText
 
 				// NOTE: the whitespace after "+fr. var." is &#160;
 				// /html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td
+				// "esgo 1+fr. var.\u00A0"  has no homograph number after Ls-13615
 				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td").InnerText, Is.EqualTo(formLexEntryEs + "1+fr. var.\u00A0"));
-				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/sub[@class='Interlin_Homograph']", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/sub[@class='Interlin_Homograph']").InnerText, Is.EqualTo("1"));
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td").InnerText, Is.EqualTo(formLexEntryEs + "+fr. var.\u00A0"));
+				//AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/sub[@class='Interlin_Homograph']", 1);
+				//Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/sub[@class='Interlin_Homograph']").InnerText, Is.EqualTo("1"));
 				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/span[@class='Interlin_VariantTypes']", 1);
 				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[2]/td/span[@class='Interlin_VariantTypes']").InnerText, Is.EqualTo("+fr. var."));
 
+				// "go 1+fr. var.\u00A0"  has no homograph number after Ls-13615
 				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td").InnerText, Is.EqualTo(formLexEntry + "1+fr. var.\u00A0"));
-				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/sub[@class='Interlin_Homograph']", 1);
-				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/sub[@class='Interlin_Homograph']").InnerText, Is.EqualTo("1"));
+				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td").InnerText, Is.EqualTo(formLexEntry + "+fr. var.\u00A0"));
+				//AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/sub[@class='Interlin_Homograph']", 1);
+				//Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/sub[@class='Interlin_Homograph']").InnerText, Is.EqualTo("1"));
 				AssertThatXmlIn.Dom(transformedDoc).HasSpecifiedNumberOfMatchesForXpath(@"/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='Interlin_VariantTypes']", 1);
 				Assert.That(transformedDoc.SelectSingleNode("/html/body/p[4]/span[3]/table/tr[2]/td/span/table/tr[3]/td/span[@class='Interlin_VariantTypes']").InnerText, Is.EqualTo("+fr. var."));
 			}
@@ -499,14 +501,16 @@ namespace SIL.FieldWorks.IText
 				XmlNamespaceManager nsmgr = XmlNodeExtensions.LoadNsmgrForDoc(transformedDocOO);
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
+				// "esgo 1+fr. var.\u00A0"  has no homograph number after Ls-13615
 				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", nsmgr), Has.Count.EqualTo(1));
-				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", nsmgr).InnerText, Is.EqualTo(formLexEntryEs + "1+fr. var."));
-				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]/text:span[@text:style-name='Interlin_Homograph']", nsmgr), Has.Count.EqualTo(1));
+				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", nsmgr).InnerText, Is.EqualTo(formLexEntryEs + "+fr. var."));
+				//Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]/text:span[@text:style-name='Interlin_Homograph']", nsmgr), Has.Count.EqualTo(1));
 				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr), Has.Count.EqualTo(1));
 				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr).InnerText, Is.EqualTo("+fr. var."));
 
+				// "go 1+fr. var.\u00A0"  has no homograph number after Ls-13615
 				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]", nsmgr), Has.Count.EqualTo(1));
-				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]", nsmgr).InnerText, Is.EqualTo(formLexEntry + "1+fr. var."));
+				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]", nsmgr).InnerText, Is.EqualTo(formLexEntry + "+fr. var."));
 				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr), Has.Count.EqualTo(1));
 				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr).InnerText, Is.EqualTo("+fr. var."));
 			}
@@ -764,9 +768,10 @@ namespace SIL.FieldWorks.IText
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
 				Assert.That(transformedDocWord.SelectNodes("/w:wordDocument/w:body/w:p[5]/w:pict[3]/v:shape/v:textbox/w:txbxContent/w:tbl/w:tr[2]/w:tc/w:p/w:r[2]/w:t", nsmgr), Has.Count.EqualTo(1), "test homograph number for lex entry: " + formLexEntryEs);
-				Assert.That(transformedDocWord.SelectSingleNode("/w:wordDocument/w:body/w:p[5]/w:pict[3]/v:shape/v:textbox/w:txbxContent/w:tbl/w:tr[2]/w:tc/w:p/w:r[2]/w:t", nsmgr).InnerText, Is.EqualTo("1"), "Inaccurate homograph number for lex entry: " + formLexEntryEs);
-				Assert.That(transformedDocWord.SelectNodes("/w:wordDocument/w:body/w:p[5]/w:pict[3]/v:shape/v:textbox/w:txbxContent/w:tbl/w:tr[2]/w:tc/w:p/w:r[3]/w:t", nsmgr), Has.Count.EqualTo(1));
-				Assert.That(transformedDocWord.SelectSingleNode("/w:wordDocument/w:body/w:p[5]/w:pict[3]/v:shape/v:textbox/w:txbxContent/w:tbl/w:tr[2]/w:tc/w:p/w:r[3]/w:t", nsmgr).InnerText, Is.EqualTo("+fr. var."));
+				// w:p = "eswent+fr. var. "  has no homograph after Ls-13615
+				Assert.That(transformedDocWord.SelectSingleNode("/w:wordDocument/w:body/w:p[5]/w:pict[3]/v:shape/v:textbox/w:txbxContent/w:tbl/w:tr[2]/w:tc/w:p/w:r[2]/w:t", nsmgr).InnerText, Is.Not.EqualTo("1"), "Inaccurate homograph number for lex entry: " + formLexEntryEs);
+				Assert.That(transformedDocWord.SelectNodes("/w:wordDocument/w:body/w:p[5]/w:pict[3]/v:shape/v:textbox/w:txbxContent/w:tbl/w:tr[2]/w:tc/w:p/w:r[2]/w:t", nsmgr), Has.Count.EqualTo(1));
+				Assert.That(transformedDocWord.SelectSingleNode("/w:wordDocument/w:body/w:p[5]/w:pict[3]/v:shape/v:textbox/w:txbxContent/w:tbl/w:tr[2]/w:tc/w:p/w:r[2]/w:t", nsmgr).InnerText, Is.EqualTo("+fr. var."));
 				// /w:worddocument/w:body/w:p[5]/w:pict[3]/v:shape/v:textbox/w:txbxcontent/w:tbl/w:tr[5]/w:tc/w:p/w:r/w:t
 				Assert.That(transformedDocWord.SelectNodes("//*[text()='.pst']", nsmgr), Has.Count.EqualTo(2), "Irregularly inflected types should only match the number of lines for LexGloss");
 				// w:pStyle
@@ -823,10 +828,11 @@ namespace SIL.FieldWorks.IText
 
 				// TODO: enhance AssertThatXmlIn to handle all prefixes
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
-				Assert.That(transformedDocWord.SelectNodes("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[2]", nsmgr), Has.Count.EqualTo(1), "test homograph number for lex entry: " + formLexEntryEs);
-				Assert.That(transformedDocWord.SelectSingleNode("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[2]", nsmgr).InnerText, Is.EqualTo("1"), "Inaccurate homograph number for lex entry: " + formLexEntryEs);
-				Assert.That(transformedDocWord.SelectNodes("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[3]", nsmgr), Has.Count.EqualTo(1));
-				Assert.That(transformedDocWord.SelectSingleNode("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[3]", nsmgr).InnerText, Is.EqualTo("+fr. var."));
+				// m:mr[2]/m:e/m:r = "eswent+fr. var. " has no homograph after Ls-13615
+				//Assert.That(transformedDocWord.SelectNodes("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[2]", nsmgr), Has.Count.EqualTo(1), "test homograph number for lex entry: " + formLexEntryEs);
+				Assert.That(transformedDocWord.SelectSingleNode("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[2]", nsmgr).InnerText, Is.Not.EqualTo("1"), "Inaccurate homograph number for lex entry: " + formLexEntryEs);
+				Assert.That(transformedDocWord.SelectNodes("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[2]", nsmgr), Has.Count.EqualTo(1));
+				Assert.That(transformedDocWord.SelectSingleNode("/pkg:package/pkg:part[3]/pkg:xmlData/w:document/w:body/w:p[5]/m:oMath[2]/m:m/m:mr[2]/m:e/m:m/m:mr[2]/m:e/m:r/m:t[2]", nsmgr).InnerText, Is.EqualTo("+fr. var."));
 				Assert.That(transformedDocWord.SelectNodes("//*[text()='.pst']", nsmgr), Has.Count.EqualTo(2), "Irregularly inflected types should only match the number of lines for LexGloss");
 				Assert.That(transformedDocWord.SelectNodes("//w:rStyle[starts-with(@w:val, '\n') or starts-with(@w:val, ' ')]", nsmgr), Has.Count.EqualTo(0), "style values should not start with whitespace");
 			}
