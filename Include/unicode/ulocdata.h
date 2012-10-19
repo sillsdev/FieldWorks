@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *                                                                            *
-* Copyright (C) 2003-2007, International Business Machines                   *
+* Copyright (C) 2003-2012, International Business Machines                   *
 *                Corporation and others. All Rights Reserved.                *
 *                                                                            *
 ******************************************************************************
@@ -20,6 +20,7 @@
 #include "unicode/ures.h"
 #include "unicode/uloc.h"
 #include "unicode/uset.h"
+#include "unicode/localpointer.h"
 
 /**
  * \file
@@ -38,22 +39,30 @@ typedef struct ULocaleData ULocaleData;
   * @stable ICU 3.4
   */
 typedef enum ULocaleDataExemplarSetType  {
-	 ULOCDATA_ES_STANDARD=0,      /* Basic set */
-	 ULOCDATA_ES_AUXILIARY=1,     /* Auxiliary set */
-	 ULOCDATA_ES_COUNT=2
+	/** Basic set @stable ICU 3.4 */
+	ULOCDATA_ES_STANDARD=0,
+	/** Auxiliary set @stable ICU 3.4 */
+	ULOCDATA_ES_AUXILIARY=1,
+	/** Index Character set @stable ICU 4.8 */
+	ULOCDATA_ES_INDEX=2,
+	/** One higher than the last valid type @stable ICU 3.4 */
+	ULOCDATA_ES_COUNT=3
 } ULocaleDataExemplarSetType;
 
 /** The possible types of delimiters.
   * @stable ICU 3.4
   */
 typedef enum ULocaleDataDelimiterType {
-#ifndef U_HIDE_DRAFT_API
-	ULOCDATA_QUOTATION_START = 0,     /* Quotation start */
-	 ULOCDATA_QUOTATION_END = 1,       /* Quotation end */
-	 ULOCDATA_ALT_QUOTATION_START = 2, /* Alternate quotation start */
-	 ULOCDATA_ALT_QUOTATION_END = 3,   /* Alternate quotation end */
-#endif
-	 ULOCDATA_DELIMITER_COUNT = 4
+	/** Quotation start @stable ICU 3.4 */
+	ULOCDATA_QUOTATION_START = 0,
+	/** Quotation end @stable ICU 3.4 */
+	ULOCDATA_QUOTATION_END = 1,
+	/** Alternate quotation start @stable ICU 3.4 */
+	ULOCDATA_ALT_QUOTATION_START = 2,
+	/** Alternate quotation end @stable ICU 3.4 */
+	ULOCDATA_ALT_QUOTATION_END = 3,
+	/** One higher than the last valid type @stable ICU 3.4 */
+	ULOCDATA_DELIMITER_COUNT = 4
 } ULocaleDataDelimiterType;
 
 /**
@@ -75,6 +84,25 @@ ulocdata_open(const char *localeID, UErrorCode *status);
  */
 U_STABLE void U_EXPORT2
 ulocdata_close(ULocaleData *uld);
+
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalULocaleDataPointer
+ * "Smart pointer" class, closes a ULocaleData via ulocdata_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalULocaleDataPointer, ULocaleData, ulocdata_close);
+
+U_NAMESPACE_END
+
+#endif
 
 /**
  * Sets the "no Substitute" attribute of the locale data
@@ -124,9 +152,11 @@ ulocdata_getNoSubstitute(ULocaleData *uld);
  *                  always set, regardless of the value of 'options'.
  * @param extype    Specifies the type of exemplar set to be retrieved.
  * @param status    Pointer to an input-output error code value;
- *                  must not be NULL.
+ *                  must not be NULL.  Will be set to U_MISSING_RESOURCE_ERROR
+ *                  if the requested data is not available.
  * @return USet*    Either fillIn, or if fillIn is NULL, a pointer to
  *                  a newly-allocated USet that the user must close.
+ *                  In case of error, NULL is returned.
  * @stable ICU 3.4
  */
 U_STABLE USet* U_EXPORT2
@@ -191,4 +221,55 @@ ulocdata_getMeasurementSystem(const char *localeID, UErrorCode *status);
 U_STABLE void U_EXPORT2
 ulocdata_getPaperSize(const char *localeID, int32_t *height, int32_t *width, UErrorCode *status);
 
+/**
+ * Return the current CLDR version used by the library.
+ * @param versionArray fillin that will recieve the version number
+ * @param status error code - could be U_MISSING_RESOURCE_ERROR if the version was not found.
+ * @stable ICU 4.2
+ */
+U_STABLE void U_EXPORT2
+ulocdata_getCLDRVersion(UVersionInfo versionArray, UErrorCode *status);
+
+/**
+ * Returns locale display pattern associated with a locale.
+ *
+ * @param uld       Pointer to the locale data object from which the
+ *                  exemplar character set is to be retrieved.
+ * @param pattern   locale display pattern for locale.
+ * @param patternCapacity the size of the buffer to store the locale display
+ *                  pattern with.
+ * @param status    Must be a valid pointer to an error code value,
+ *                  which must not indicate a failure before the function call.
+ * @return the actual buffer size needed for localeDisplayPattern.  If it's greater
+ * than patternCapacity, the returned pattern will be truncated.
+ *
+ * @stable ICU 4.2
+ */
+U_STABLE int32_t U_EXPORT2
+ulocdata_getLocaleDisplayPattern(ULocaleData *uld,
+								 UChar *pattern,
+								 int32_t patternCapacity,
+								 UErrorCode *status);
+
+
+/**
+ * Returns locale separator associated with a locale.
+ *
+ * @param uld       Pointer to the locale data object from which the
+ *                  exemplar character set is to be retrieved.
+ * @param separator locale separator for locale.
+ * @param separatorCapacity the size of the buffer to store the locale
+ *                  separator with.
+ * @param status    Must be a valid pointer to an error code value,
+ *                  which must not indicate a failure before the function call.
+ * @return the actual buffer size needed for localeSeparator.  If it's greater
+ * than separatorCapacity, the returned separator will be truncated.
+ *
+ * @stable ICU 4.2
+ */
+U_STABLE int32_t U_EXPORT2
+ulocdata_getLocaleSeparator(ULocaleData *uld,
+							UChar *separator,
+							int32_t separatorCapacity,
+							UErrorCode *status);
 #endif

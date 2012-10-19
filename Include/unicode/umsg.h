@@ -1,20 +1,19 @@
-/*
-*******************************************************************************
-* Copyright (C) 1996-2006, International Business Machines Corporation
-* and others. All Rights Reserved.
-*******************************************************************************
-*
-*   file name:  umsg.h
-*   encoding:   US-ASCII
-*   tab size:   8 (not used)
-*   indentation:4
-*
-*   Change history:
-*
-*   08/5/2001  Ram         Added C wrappers for C++ API.
-*
-*
-*/
+/********************************************************************
+ * COPYRIGHT:
+ * Copyright (c) 1997-2011, International Business Machines Corporation and
+ * others. All Rights Reserved.
+ * Copyright (C) 2010 , Yahoo! Inc.
+ ********************************************************************
+ *
+ *   file name:  umsg.h
+ *   encoding:   US-ASCII
+ *   tab size:   8 (not used)
+ *   indentation:4
+ *
+ *   Change history:
+ *
+ *   08/5/2001  Ram         Added C wrappers for C++ API.
+ ********************************************************************/
 
 #ifndef UMSG_H
 #define UMSG_H
@@ -23,22 +22,34 @@
 
 #if !UCONFIG_NO_FORMATTING
 
+#include "unicode/localpointer.h"
 #include "unicode/uloc.h"
 #include "unicode/parseerr.h"
 #include <stdarg.h>
+
 /**
  * \file
  * \brief C API: MessageFormat
  *
- * <h2>Message Format C API </h2>
+ * <h2>MessageFormat C API </h2>
  *
- * Provides means to produce concatenated messages in language-neutral way.
- * Use this for all concatenations that show up to end users.
- * <P>
- * Takes a set of objects, formats them, then inserts the formatted
- * strings into the pattern at the appropriate places.
- * <P>
- * Here are some examples of usage:
+ * <p>MessageFormat prepares strings for display to users,
+ * with optional arguments (variables/placeholders).
+ * The arguments can occur in any order, which is necessary for translation
+ * into languages with different grammars.
+ *
+ * <p>The opaque UMessageFormat type is a thin C wrapper around
+ * a C++ MessageFormat. It is constructed from a <em>pattern</em> string
+ * with arguments in {curly braces} which will be replaced by formatted values.
+ *
+ * <p>Currently, the C API supports only numbered arguments.
+ *
+ * <p>For details about the pattern syntax and behavior,
+ * especially about the ASCII apostrophe vs. the
+ * real apostrophe (single quote) character \htmlonly&#x2019;\endhtmlonly (U+2019),
+ * see the C++ MessageFormat class documentation.
+ *
+ * <p>Here are some examples of C API usage:
  * Example 1:
  * <pre>
  * \code
@@ -105,97 +116,43 @@
  * \endcode
  *  </pre>
  *
- *  The pattern is of the following form.  Legend:
- *  <pre>
- * \code
- *       {optional item}
- *       (group that may be repeated)*
- * \endcode
- *  </pre>
- *  Do not confuse optional items with items inside quotes braces, such
- *  as this: "{".  Quoted braces are literals.
- *  <pre>
- * \code
- *       messageFormatPattern := string ( "{" messageFormatElement "}" string )*
  *
- *       messageFormatElement := argument { "," elementFormat }
- *
- *       elementFormat := "time" { "," datetimeStyle }
- *                      | "date" { "," datetimeStyle }
- *                      | "number" { "," numberStyle }
- *                      | "choice" "," choiceStyle
- *
- *       datetimeStyle := "short"
- *                      | "medium"
- *                      | "long"
- *                      | "full"
- *                      | dateFormatPattern
- *
- *       numberStyle :=   "currency"
- *                      | "percent"
- *                      | "integer"
- *                      | numberFormatPattern
- *
- *       choiceStyle :=   choiceFormatPattern
- * \endcode
- * </pre>
- * If there is no elementFormat, then the argument must be a string,
- * which is substituted. If there is no dateTimeStyle or numberStyle,
- * then the default format is used (e.g.  NumberFormat.getInstance(),
- * DateFormat.getDefaultTime() or DateFormat.getDefaultDate(). For
- * a ChoiceFormat, the pattern must always be specified, since there
- * is no default.
- * <P>
- * In strings, single quotes can be used to quote the "{" sign if
- * necessary. A real single quote is represented by ''.  Inside a
- * messageFormatElement, quotes are [not] removed. For example,
- * {1,number,$'#',##} will produce a number format with the pound-sign
- * quoted, with a result such as: "$#31,45".
- * <P>
- * If a pattern is used, then unquoted braces in the pattern, if any,
- * must match: that is, "ab {0} de" and "ab '}' de" are ok, but "ab
- * {0'}' de" and "ab } de" are not.
- * <p>
- * <dl><dt><b>Warning:</b><dd>The rules for using quotes within message
- * format patterns unfortunately have shown to be somewhat confusing.
- * In particular, it isn't always obvious to localizers whether single
- * quotes need to be doubled or not. Make sure to inform localizers about
- * the rules, and tell them (for example, by using comments in resource
- * bundle source files) which strings will be processed by MessageFormat.
- * Note that localizers may need to use single quotes in translated
- * strings where the original version doesn't have them.
- * <br>Note also that the simplest way to avoid the problem is to
- * use the real apostrophe (single quote) character U+2019 (') for
- * human-readable text, and to use the ASCII apostrophe (U+0027 ' )
- * only in program syntax, like quoting in MessageFormat.
- * See the annotations for U+0027 Apostrophe in The Unicode Standard.</p>
- * </dl>
- * <P>
- * The argument is a number from 0 to 9, which corresponds to the
- * arguments presented in an array to be formatted.
- * <P>
- * It is ok to have unused arguments in the array.  With missing
- * arguments or arguments that are not of the right class for the
- * specified format, a failing UErrorCode result is set.
- * <P>
-
- * <P>
- * [Note:] As we see above, the string produced by a choice Format in
- * MessageFormat is treated specially; occurances of '{' are used to
- * indicated subformats.
- * <P>
- * [Note:] Formats are numbered by order of variable in the string.
- * This is [not] the same as the argument numbering!
+ * Example 3:
  * <pre>
  * \code
- *    For example: with "abc{2}def{3}ghi{0}...",
- *
- *    format0 affects the first variable {2}
- *    format1 affects the second variable {3}
- *    format2 affects the second variable {0}
+ * UChar* str;
+ * UChar* str1;
+ * UErrorCode status = U_ZERO_ERROR;
+ * UChar *result;
+ * UChar pattern[100];
+ * UChar expected[100];
+ * int32_t resultlength,resultLengthOut;
+
+ * str=(UChar*)malloc(sizeof(UChar) * 25);
+ * u_uastrcpy(str, "Kirti");
+ * str1=(UChar*)malloc(sizeof(UChar) * 25);
+ * u_uastrcpy(str1, "female");
+ * log_verbose("Testing message format with Select test #1\n:");
+ * u_uastrcpy(pattern, "{0} est {1, select, female {all\\u00E9e} other {all\\u00E9}} \\u00E0 Paris.");
+ * u_uastrcpy(expected, "Kirti est all\\u00E9e \\u00E0 Paris.");
+ * resultlength=0;
+ * resultLengthOut=u_formatMessage( "fr", pattern, u_strlen(pattern), NULL, resultlength, &status, str , str1);
+ * if(status==U_BUFFER_OVERFLOW_ERROR)
+ *  {
+ *      status=U_ZERO_ERROR;
+ *      resultlength=resultLengthOut+1;
+ *      result=(UChar*)malloc(sizeof(UChar) * resultlength);
+ *      u_formatMessage( "fr", pattern, u_strlen(pattern), result, resultlength, &status, str , str1);
+ *      if(u_strcmp(result, expected)==0)
+ *          log_verbose("PASS: MessagFormat successful on Select test#1\n");
+ *      else{
+ *          log_err("FAIL: Error in MessageFormat on Select test#1\n GOT %s EXPECTED %s\n", austrdup(result),
+ *          austrdup(expected) );
+ *      }
+ *      free(result);
+ * }
  * \endcode
- * </pre>
- * and so on.
+ *  </pre>
  */
 
 /**
@@ -452,6 +409,25 @@ umsg_open(  const UChar     *pattern,
  */
 U_STABLE void U_EXPORT2
 umsg_close(UMessageFormat* format);
+
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUMessageFormatPointer
+ * "Smart pointer" class, closes a UMessageFormat via umsg_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUMessageFormatPointer, UMessageFormat, umsg_close);
+
+U_NAMESPACE_END
+
+#endif
 
 /**
  * Open a copy of a UMessageFormat.

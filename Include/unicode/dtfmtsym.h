@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1997-2007, International Business Machines
+*   Copyright (C) 1997-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -37,8 +37,6 @@ U_NAMESPACE_BEGIN
 /* forward declaration */
 class SimpleDateFormat;
 class Hashtable;
-class ZoneStringFormat;
-class SafeZoneStringFormatPtr;
 
 /**
  * DateFormatSymbols is a public class for encapsulating localizable date-time
@@ -107,6 +105,7 @@ public:
 	DateFormatSymbols(const Locale& locale,
 					  UErrorCode& status);
 
+#ifndef U_HIDE_INTERNAL_API
 	/**
 	 * Construct a DateFormatSymbols object by loading format data from
 	 * resources for the default locale, in the default calendar (Gregorian).
@@ -141,6 +140,7 @@ public:
 	DateFormatSymbols(const Locale& locale,
 					  const char *type,
 					  UErrorCode& status);
+#endif  /* U_HIDE_INTERNAL_API */
 
 	/**
 	 * Copy constructor.
@@ -180,7 +180,7 @@ public:
 	UBool operator!=(const DateFormatSymbols& other) const { return !operator==(other); }
 
 	/**
-	 * Gets era strings. For example: "AD" and "BC".
+	 * Gets abbreviated era strings. For example: "AD" and "BC".
 	 *
 	 * @param count    Filled in with length of the array.
 	 * @return         the era strings.
@@ -189,7 +189,7 @@ public:
 	const UnicodeString* getEras(int32_t& count) const;
 
 	/**
-	 * Sets era strings. For example: "AD" and "BC".
+	 * Sets abbreviated era strings. For example: "AD" and "BC".
 	 * @param eras  Array of era strings (DateFormatSymbols retains ownership.)
 	 * @param count Filled in with length of the array.
 	 * @stable ICU 2.0
@@ -212,6 +212,23 @@ public:
 	 * @stable ICU 3.6
 	 */
 	void setEraNames(const UnicodeString* eraNames, int32_t count);
+
+	/**
+	 * Gets narrow era strings. For example: "A" and "B".
+	 *
+	 * @param count    Filled in with length of the array.
+	 * @return         the narrow era strings.
+	 * @stable ICU 4.2
+	 */
+	const UnicodeString* getNarrowEras(int32_t& count) const;
+
+	/**
+	 * Sets narrow era strings. For example: "A" and "B".
+	 * @param narrowEras  Array of narrow era strings (DateFormatSymbols retains ownership.)
+	 * @param count Filled in with length of the array.
+	 * @stable ICU 4.2
+	 */
+	void setNarrowEras(const UnicodeString* narrowEras, int32_t count);
 
 	/**
 	 * Gets month strings. For example: "January", "February", etc.
@@ -381,6 +398,44 @@ public:
 	 */
 	void setAmPmStrings(const UnicodeString* ampms, int32_t count);
 
+#ifndef U_HIDE_INTERNAL_API
+	/**
+	 * Somewhat temporary constants for leap month pattern types, adequate for supporting
+	 * just leap month patterns as needed for Chinese lunar calendar.
+	 * Eventually we will add full support for different month pattern types (needed for
+	 * other calendars such as Hindu) at which point this approach will be replaced by a
+	 * more complete approach.
+	 * @internal
+	 */
+	enum EMonthPatternType
+	{
+		kLeapMonthPatternFormatWide,
+		kLeapMonthPatternFormatAbbrev,
+		kLeapMonthPatternFormatNarrow,
+		kLeapMonthPatternStandaloneWide,
+		kLeapMonthPatternStandaloneAbbrev,
+		kLeapMonthPatternStandaloneNarrow,
+		kLeapMonthPatternNumeric,
+		kMonthPatternsCount
+	};
+
+	/**
+	 * Somewhat temporary function for getting complete set of leap month patterns for all
+	 * contexts & widths, indexed by EMonthPatternType values. Returns NULL if calendar
+	 * does not have leap month patterns. Note, there is currently no setter for this.
+	 * Eventually we will add full support for different month pattern types (needed for
+	 * other calendars such as Hindu) at which point this approach will be replaced by a
+	 * more complete approach.
+	 * @param count        Filled in with length of the array (may be 0).
+	 * @return             The leap month patterns (DateFormatSymbols retains ownership).
+	 *                     May be NULL if there are no leap month patterns for this calendar.
+	 * @internal
+	 */
+	const UnicodeString* getLeapMonthPatterns(int32_t& count) const;
+
+#endif  /* U_HIDE_INTERNAL_API */
+
+#ifndef U_HIDE_DEPRECATED_API
 	/**
 	 * Gets timezone strings. These strings are stored in a 2-dimensional array.
 	 * @param rowCount      Output param to receive number of rows.
@@ -389,9 +444,14 @@ public:
 	 * @deprecated ICU 3.6
 	 */
 	const UnicodeString** getZoneStrings(int32_t& rowCount, int32_t& columnCount) const;
+#endif  /* U_HIDE_DEPRECATED_API */
 
 	/**
 	 * Sets timezone strings. These strings are stored in a 2-dimensional array.
+	 * <p><b>Note:</b> SimpleDateFormat no longer use the zone strings stored in
+	 * a DateFormatSymbols. Therefore, the time zone strings set by this mthod
+	 * have no effects in an instance of SimpleDateFormat for formatting time
+	 * zones.
 	 * @param strings       The timezone strings as a 2-d array to be copied. (not adopted; caller retains ownership)
 	 * @param rowCount      The number of rows (count of first index).
 	 * @param columnCount   The number of columns (count of second index).
@@ -433,6 +493,31 @@ public:
 	 */
 	Locale getLocale(ULocDataLocaleType type, UErrorCode& status) const;
 
+#ifndef U_HIDE_INTERNAL_API
+	/**
+	 * Constants for capitalization context usage types.
+	 * @internal
+	 */
+	enum ECapitalizationContextUsageType
+	{
+		kCapContextUsageOther,
+		kCapContextUsageMonthFormat,     /* except narrow */
+		kCapContextUsageMonthStandalone, /* except narrow */
+		kCapContextUsageMonthNarrow,
+		kCapContextUsageDayFormat,     /* except narrow */
+		kCapContextUsageDayStandalone, /* except narrow */
+		kCapContextUsageDayNarrow,
+		kCapContextUsageEraWide,
+		kCapContextUsageEraAbbrev,
+		kCapContextUsageEraNarrow,
+		kCapContextUsageZoneLong,
+		kCapContextUsageZoneShort,
+		kCapContextUsageMetazoneLong,
+		kCapContextUsageMetazoneShort,
+		kCapContextUsageTypeCount
+	};
+#endif  /* U_HIDE_INTERNAL_API */
+
 	/**
 	 * ICU "poor man's RTTI", returns a UClassID for the actual class.
 	 *
@@ -453,7 +538,7 @@ private:
 	friend class DateFormatSymbolsSingleSetter; // see udat.cpp
 
 	/**
-	 * Era strings. For example: "AD" and "BC".
+	 * Abbreviated era strings. For example: "AD" and "BC".
 	 */
 	UnicodeString*  fEras;
 	int32_t         fErasCount;
@@ -463,6 +548,12 @@ private:
 	 */
 	UnicodeString*  fEraNames;
 	int32_t         fEraNamesCount;
+
+	/**
+	 * Narrow era strings. For example: "A" and "B".
+	 */
+	UnicodeString*  fNarrowEras;
+	int32_t         fNarrowErasCount;
 
 	/**
 	 * Month strings. For example: "January", "February", etc.
@@ -567,41 +658,75 @@ private:
 	int32_t         fStandaloneShortQuartersCount;
 
 	/**
-	 * The format data of all the timezones in this locale.
+	 * All leap month patterns, for example "{0}bis".
+	 */
+	UnicodeString  *fLeapMonthPatterns;
+	int32_t         fLeapMonthPatternsCount;
+
+	/**
+	 * (Format) Short cyclic year names, for example: "jia-zi", "yi-chou", ... "gui-hai"
+	 */
+	UnicodeString*  fShortYearNames;
+	int32_t         fShortYearNamesCount;
+
+	/**
+	 * Localized names of time zones in this locale.  This is a
+	 * two-dimensional array of strings of size n by m,
+	 * where m is at least 5 and up to 7.  Each of the n rows is an
+	 * entry containing the localized names for a single TimeZone.
+	 *
+	 * Each such row contains (with i ranging from 0..n-1):
+	 *
+	 * zoneStrings[i][0] - time zone ID
+	 *  example: America/Los_Angeles
+	 * zoneStrings[i][1] - long name of zone in standard time
+	 *  example: Pacific Standard Time
+	 * zoneStrings[i][2] - short name of zone in standard time
+	 *  example: PST
+	 * zoneStrings[i][3] - long name of zone in daylight savings time
+	 *  example: Pacific Daylight Time
+	 * zoneStrings[i][4] - short name of zone in daylight savings time
+	 *  example: PDT
+	 * zoneStrings[i][5] - location name of zone
+	 *  example: United States (Los Angeles)
+	 * zoneStrings[i][6] - long generic name of zone
+	 *  example: Pacific Time
+	 * zoneStrings[i][7] - short generic of zone
+	 *  example: PT
+	 *
+	 * The zone ID is not localized; it corresponds to the ID
+	 * value associated with a system time zone object.  All other entries
+	 * are localized names.  If a zone does not implement daylight savings
+	 * time, the daylight savings time names are ignored.
+	 *
+	 * Note:CLDR 1.5 introduced metazone and its historical mappings.
+	 * This simple two-dimensional array is no longer sufficient to represent
+	 * localized names and its historic changes.  Since ICU 3.8.1, localized
+	 * zone names extracted from ICU locale data is stored in a ZoneStringFormat
+	 * instance.  But we still need to support the old way of customizing
+	 * localized zone names, so we keep this field for the purpose.
 	 */
 	UnicodeString   **fZoneStrings;         // Zone string array set by setZoneStrings
 	UnicodeString   **fLocaleZoneStrings;   // Zone string array created by the locale
 	int32_t         fZoneStringsRowCount;
 	int32_t         fZoneStringsColCount;
 
-	const ZoneStringFormat  *fZoneStringFormat;
-	ZoneStringFormat        *fZSFLocal;         // Local ZoneStringFormat instance
-	SafeZoneStringFormatPtr *fZSFCachePtr;      // Cached ZoneStringFormat
 	Locale                  fZSFLocale;         // Locale used for getting ZoneStringFormat
-
-	/**
-	 * Pattern string used for localized time zone GMT format.  For example, "GMT{0}"
-	 */
-	UnicodeString   fGmtFormat;
-
-	/**
-	 * Pattern strings used for formatting zone offset in a localized time zone GMT string.
-	 */
-	UnicodeString  *fGmtHourFormats;
-	int32_t         fGmtHourFormatsCount;
-
-	enum GMTHourType {
-		GMT_NEGATIVE_HMS = 0,
-		GMT_NEGATIVE_HM,
-		GMT_POSITIVE_HMS,
-		GMT_POSITIVE_HM,
-		GMT_HOUR_COUNT
-	};
 
 	/**
 	 * Localized date-time pattern characters. For example: use 'u' as 'y'.
 	 */
 	UnicodeString   fLocalPatternChars;
+
+#ifndef U_HIDE_INTERNAL_API
+	/**
+	 * Capitalization transforms. For each usage type, the first array element indicates
+	 * whether to titlecase for uiListOrMenu context, the second indicates whether to
+	 * titlecase for stand-alone context.
+	 */
+	 UBool fCapitalization[kCapContextUsageTypeCount][2];
+#endif
+
 
 private:
 	/** valid/actual locale information
@@ -621,7 +746,7 @@ private:
 	 *                             failure code upon return.
 	 * @param useLastResortData    determine if use last resort data
 	 */
-	void initializeData(const Locale&, const char *type, UErrorCode& status, UBool useLastResortData = FALSE);
+	void initializeData(const Locale& locale, const char *type, UErrorCode& status, UBool useLastResortData = FALSE);
 
 	/**
 	 * Copy or alias an array in another object, as appropriate.
@@ -667,17 +792,6 @@ private:
 	 * @param other the object to be copied.
 	 */
 	void copyData(const DateFormatSymbols& other);
-
-
-	/**
-	 * Returns a ZoneStringFormat, used only by SimpleDateFormat for now.
-	 */
-	const ZoneStringFormat* getZoneStringFormat(void) const;
-
-	/**
-	 * Create a ZoneStringFormat by locale if not yet availble
-	 */
-	void initZoneStringFormat(void);
 
 	/**
 	 * Create zone strings array by locale if not yet available

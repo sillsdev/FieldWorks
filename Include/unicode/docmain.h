@@ -1,6 +1,6 @@
 /********************************************************************
  * COPYRIGHT:
- * Copyright (c) 1997-2007, International Business Machines Corporation and
+ * Copyright (c) 1997-2012, International Business Machines Corporation and
  * others. All Rights Reserved.
  *
  *  FILE NAME: DOCMAIN.h
@@ -41,18 +41,16 @@
  * <h3>API References for Previous Releases</h3>
  * <p>The API References for each release of ICU are also available as
  * a zip file from the ICU
- * <a href="http://icu-project.org/download/">download page</a>.</p>
+ * <a href="http://site.icu-project.org/download">download page</a>.</p>
  *
  * <hr>
  *
  * <h2>Architecture (User's Guide)</h2>
  * <ul>
- *   <li><a href="http://icu-project.org/userguide/">Introduction</a></li>
- *   <li><a href="http://icu-project.org/userguide/i18n.html">Internationalization</a></li>
- *   <li><a href="http://icu-project.org/userguide/design.html">Locale Model</a></li>
- *   <li><a href="http://icu-project.org/userguide/design.html">Multithreading</a></li>
- *   <li><a href="http://icu-project.org/userguide/conversion.html">Conversion</a></li>
- *   <li><a href="http://icu-project.org/userguide/design.html">Error Handling</a></li>
+ *   <li><a href="http://userguide.icu-project.org/">Introduction</a></li>
+ *   <li><a href="http://userguide.icu-project.org/i18n">Internationalization</a></li>
+ *   <li><a href="http://userguide.icu-project.org/design">Locale Model, Multithreading, Error Handling, etc.</a></li>
+ *   <li><a href="http://userguide.icu-project.org/conversion">Conversion</a></li>
  * </ul>
  *
  * <hr>
@@ -70,128 +68,138 @@
  *   </tr>
  *   <tr>
  *     <td>Strings and Character Iteration</td>
- *     <td>ustring.h, utf.h</td>
- *     <td>UnicodeString, CharacterIterator</td>
+ *     <td>ustring.h, utf8.h, utf16.h, UText, UCharIterator</td>
+ *     <td>icu::UnicodeString, icu::CharacterIterator, icu::Appendable, icu::StringPiece,icu::ByteSink</td>
  *   </tr>
  *   <tr>
- *     <td>Unicode Character<br>Properties and Names</td>
- *     <td>uchar.h</td>
- *     <td>uchar.h C API</td>
+ *     <td>Unicode Character<br/>Properties and Names</td>
+ *     <td>uchar.h, uscript.h</td>
+ *     <td>C API</td>
+ *   </tr>
+ *   <tr>
+ *     <td>Sets of Unicode Code Points and Strings</td>
+ *     <td>uset.h</td>
+ *     <td>icu::UnicodeSet</td>
+ *   </tr>
+ *   <tr>
+ *     <td>Maps from Strings to Integer Values</td>
+ *     <td>(no C API)</td>
+ *     <td>icu::BytesTrie, icu::UCharsTrie</td>
  *   </tr>
  *   <tr>
  *     <td>Codepage Conversion</td>
- *     <td>ucnv.h</td>
- *     <td>ucnv.h C API</td>
+ *     <td>ucnv.h, ucnvsel.hb</td>
+ *     <td>C API</td>
  *   </tr>
  *   <tr>
  *     <td>Unicode Text Compression</td>
- *     <td>ucnv.h <br> (encoding name "SCSU" or "BOCU-1")</td>
- *     <td>ucnv.h C API</td>
+ *     <td>ucnv.h<br/>(encoding name "SCSU" or "BOCU-1")</td>
+ *     <td>C API</td>
  *   </tr>
  *   <tr>
  *     <td>Locales </td>
  *     <td>uloc.h</a></td>
- *     <td>Locale</td>
+ *     <td>icu::Locale</td>
  *   </tr>
  *   <tr>
  *     <td>Resource Bundles</td>
  *     <td>ures.h</td>
- *     <td>ResourceBundle</td>
+ *     <td>icu::ResourceBundle</td>
  *   </tr>
  *   <tr>
  *     <td>Normalization</td>
- *     <td>unorm.h</td>
- *     <td>Normalizer</td>
+ *     <td>unorm2.h</td>
+ *     <td>icu::Normalizer2</td>
  *   </tr>
  *   <tr>
  *     <td>Calendars</td>
  *     <td>ucal.h</td>
- *     <td>Calendar</td>
+ *     <td>icu::Calendar</td>
  *   </tr>
  *   <tr>
  *     <td>Date and Time Formatting</td>
  *     <td>udat.h</td>
- *     <td>DateFormat</td>
+ *     <td>icu::DateFormat</td>
  *   </tr>
  *   <tr>
  *     <td>Message Formatting</td>
  *     <td>umsg.h</td>
- *     <td>MessageFormat</td>
+ *     <td>icu::MessageFormat</td>
  *   </tr>
  *   <tr>
  *     <td>Number Formatting</td>
  *     <td>unum.h</td>
- *     <td>NumberFormat</td>
+ *     <td>icu::NumberFormat</td>
  *   </tr>
  *   <tr>
- *     <td>Number Spellout <br> (Rule Based Number Formatting)</td>
- *     <td>unum.h <br> (use UNUM_SPELLOUT)</td>
- *     <td>RuleBasedNumberFormat</td>
+ *     <td>Number Spellout<br/>(Rule Based Number Formatting)</td>
+ *     <td>unum.h<br/>(use UNUM_SPELLOUT)</td>
+ *     <td>icu::RuleBasedNumberFormat</td>
  *   </tr>
  *   <tr>
- *     <td>Text Transformation <br> (Transliteration)</td>
+ *     <td>Text Transformation<br/>(Transliteration)</td>
  *     <td>utrans.h</td>
- *     <td>Transliterator</td>
+ *     <td>icu::Transliterator</td>
  *   </tr>
  *   <tr>
  *     <td>Bidirectional Algorithm</td>
  *     <td>ubidi.h</td>
- *     <td>ubidi.h C API</td>
+ *     <td>C API</td>
  *   </tr>
  *   <tr>
  *     <td>Arabic Shaping</td>
  *     <td>ushape.h</td>
- *     <td>ushape.h C API</td>
+ *     <td>C API</td>
  *   </tr>
  *   <tr>
  *     <td>Collation</td>
  *     <td>ucol.h</td>
- *     <td>Collator</td>
+ *     <td>icu::Collator</td>
  *   </tr>
  *   <tr>
  *     <td>String Searching</td>
  *     <td>usearch.h</td>
- *     <td>StringSearch</td>
+ *     <td>icu::StringSearch</td>
  *   </tr>
  *   <tr>
- *     <td>Text Boundary Analysis <br> (Break Iteration)</td>
+ *     <td>Index Characters/<br/>Bucketing for Sorted Lists</td>
+ *     <td>(no C API)</td>
+ *     <td>icu::AlphabeticIndex</td>
+ *   </tr>
+ *   <tr>
+ *     <td>Text Boundary Analysis<br/>(Break Iteration)</td>
  *     <td>ubrk.h</td>
- *     <td>BreakIterator</td>
- *   </tr>
- *   <tr>
- *     <td>Unicode Set</td>
- *     <td>uset.h</td>
- *     <td>UnicodeSet</td>
+ *     <td>icu::BreakIterator</td>
  *   </tr>
  *   <tr>
  *     <td>Regular Expressions</td>
  *     <td>uregex.h</td>
- *     <td>RegexPattern, RegexMatcher</td>
+ *     <td>icu::RegexPattern, icu::RegexMatcher</td>
  *   </tr>
  *   <tr>
  *     <td>StringPrep</td>
  *     <td>usprep.h</td>
- *     <td>usprep.h C API</td>
+ *     <td>C API</td>
  *   </tr>
  *   <tr>
- *     <td>International Domain Names in Applications</td>
+ *     <td>International Domain Names in Applications:<br/>
+ *         UTS #46 in C/C++, IDNA2003 only via C API</td>
  *     <td>uidna.h</td>
- *     <td>uidna.h C API</td>
+ *     <td>idna.h</td>
  *   </tr>
+ *   <tr>
+ *     <td>Identifier Spoofing & Confusability</td>
+ *     <td>uspoof.h</td>
+ *     <td>C API</td>
  *   <tr>
  *     <td>Universal Time Scale</td>
  *     <td>utmscale.h</td>
- *     <td>utmscale.h C API</td>
+ *     <td>C API</td>
  *   </tr>
  *   <tr>
- *     <td>Basic Layout Engine Types and Constants</td>
- *     <td>(no C API)</td>
- *     <td>LETypes.h</td>
- *   </tr>
- *   <tr>
- *     <td>Complex Text Layout</td>
- *     <td>(no C API)</td>
- *     <td>LayoutEngine, ParagraphLayout</td>
+ *     <td>Layout Engine/Complex Text Layout</td>
+ *     <td>loengine.h</td>
+ *     <td>icu::LayoutEngine,icu::ParagraphLayout</td>
  *   </tr>
  *   <tr>
  *     <td>ICU I/O</td>
@@ -199,4 +207,5 @@
  *     <td>ustream.h</td>
  *   </tr>
  * </table>
+ * <i>This main page is generated from docmain.h</i>
  */

@@ -1,6 +1,6 @@
 /*
 ********************************************************************************
-*   Copyright (C) 1997-2007, International Business Machines
+*   Copyright (C) 1997-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 ********************************************************************************
 *
@@ -26,11 +26,13 @@
 #define DCFMTSYM_H
 
 #include "unicode/utypes.h"
+#include "unicode/uchar.h"
 
 #if !UCONFIG_NO_FORMATTING
 
 #include "unicode/uobject.h"
 #include "unicode/locid.h"
+#include "unicode/unum.h"
 
 /**
  * \file
@@ -125,6 +127,42 @@ public:
 		 * @stable ICU 3.6
 		 */
 		kMonetaryGroupingSeparatorSymbol,
+		/** One
+		 * @stable ICU 4.6
+		 */
+		kOneDigitSymbol,
+		/** Two
+		 * @stable ICU 4.6
+		 */
+		kTwoDigitSymbol,
+		/** Three
+		 * @stable ICU 4.6
+		 */
+		kThreeDigitSymbol,
+		/** Four
+		 * @stable ICU 4.6
+		 */
+		kFourDigitSymbol,
+		/** Five
+		 * @stable ICU 4.6
+		 */
+		kFiveDigitSymbol,
+		/** Six
+		 * @stable ICU 4.6
+		 */
+		kSixDigitSymbol,
+		/** Seven
+		 * @stable ICU 4.6
+		 */
+		kSevenDigitSymbol,
+		/** Eight
+		 * @stable ICU 4.6
+		 */
+		kEightDigitSymbol,
+		/** Nine
+		 * @stable ICU 4.6
+		 */
+		kNineDigitSymbol,
 		/** count symbol constants */
 		kFormatSymbolCount
 	};
@@ -190,7 +228,7 @@ public:
 	/**
 	 * Get one of the format symbols by its enum constant.
 	 * Each symbol is stored as a string so that graphemes
-	 * (characters with modifyer letters) can be used.
+	 * (characters with modifier letters) can be used.
 	 *
 	 * @param symbol    Constant to indicate a number format symbol.
 	 * @return    the format symbols by the param 'symbol'
@@ -201,13 +239,16 @@ public:
 	/**
 	 * Set one of the format symbols by its enum constant.
 	 * Each symbol is stored as a string so that graphemes
-	 * (characters with modifyer letters) can be used.
+	 * (characters with modifier letters) can be used.
 	 *
 	 * @param symbol    Constant to indicate a number format symbol.
-	 * @param value     value of the format sybmol
+	 * @param value     value of the format symbol
+	 * @param propogateDigits If false, setting the zero digit will not automatically set 1-9.
+	 *     The default behavior is to automatically set 1-9 if zero is being set and the value
+	 *     it is being set to corresponds to a known Unicode zero digit.
 	 * @stable ICU 2.0
 	 */
-	void setSymbol(ENumberFormatSymbol symbol, const UnicodeString &value);
+	void setSymbol(ENumberFormatSymbol symbol, const UnicodeString &value, const UBool propogateDigits);
 
 	/**
 	 * Returns the locale for which this object was constructed.
@@ -221,6 +262,39 @@ public:
 	 * @stable ICU 2.8
 	 */
 	Locale getLocale(ULocDataLocaleType type, UErrorCode& status) const;
+
+	/**
+	  * Get pattern string for 'CurrencySpacing' that can be applied to
+	  * currency format.
+	  * This API gets the CurrencySpacing data from ResourceBundle. The pattern can
+	  * be empty if there is no data from current locale and its parent locales.
+	  *
+	  * @param type :  UNUM_CURRENCY_MATCH, UNUM_CURRENCY_SURROUNDING_MATCH or UNUM_CURRENCY_INSERT.
+	  * @param beforeCurrency : true if the pattern is for before currency symbol.
+	  *                         false if the pattern is for after currency symbol.
+	  * @param status: Input/output parameter, set to success or
+	  *                  failure code upon return.
+	  * @return pattern string for currencyMatch, surroundingMatch or spaceInsert.
+	  *     Return empty string if there is no data for this locale and its parent
+	  *     locales.
+	  * @stable ICU 4.8
+	  */
+	 const UnicodeString& getPatternForCurrencySpacing(UCurrencySpacing type,
+												 UBool beforeCurrency,
+												 UErrorCode& status) const;
+	 /**
+	   * Set pattern string for 'CurrencySpacing' that can be applied to
+	   * currency format.
+	   *
+	   * @param type : UNUM_CURRENCY_MATCH, UNUM_CURRENCY_SURROUNDING_MATCH or UNUM_CURRENCY_INSERT.
+	   * @param beforeCurrency : true if the pattern is for before currency symbol.
+	   *                         false if the pattern is for after currency symbol.
+	   * @param pattern : pattern string to override current setting.
+	   * @stable ICU 4.8
+	   */
+	 void setPatternForCurrencySpacing(UCurrencySpacing type,
+									   UBool beforeCurrency,
+									   const UnicodeString& pattern);
 
 	/**
 	 * ICU "poor man's RTTI", returns a UClassID for the actual class.
@@ -252,15 +326,6 @@ private:
 	void initialize(const Locale& locale, UErrorCode& success, UBool useLastResortData = FALSE);
 
 	/**
-	 * Initialize the symbols from the given array of UnicodeStrings.
-	 * The array must be of the correct size.
-	 *
-	 * @param numberElements    the number format symbols
-	 * @param numberElementsLength length of numberElements
-	 */
-	void initialize(const UChar** numberElements, int32_t *numberElementsStrLen, int32_t numberElementsLength);
-
-	/**
 	 * Initialize the symbols with default values.
 	 */
 	void initialize();
@@ -268,6 +333,7 @@ private:
 	void setCurrencyForSymbols();
 
 public:
+#ifndef U_HIDE_INTERNAL_API
 	/**
 	 * _Internal_ function - more efficient version of getSymbol,
 	 * returning a const reference to one of the symbol strings.
@@ -286,6 +352,7 @@ public:
 	 * @internal
 	 */
 	inline const UChar* getCurrencyPattern(void) const;
+#endif  /* U_HIDE_INTERNAL_API */
 
 private:
 	/**
@@ -316,6 +383,9 @@ private:
 	char actualLocale[ULOC_FULLNAME_CAPACITY];
 	char validLocale[ULOC_FULLNAME_CAPACITY];
 	const UChar* currPattern;
+
+	UnicodeString currencySpcBeforeSym[UNUM_CURRENCY_SPACING_COUNT];
+	UnicodeString currencySpcAfterSym[UNUM_CURRENCY_SPACING_COUNT];
 };
 
 // -------------------------------------
@@ -331,6 +401,7 @@ DecimalFormatSymbols::getSymbol(ENumberFormatSymbol symbol) const {
 	return *strPtr;
 }
 
+#ifndef U_HIDE_INTERNAL_API
 inline const UnicodeString &
 DecimalFormatSymbols::getConstSymbol(ENumberFormatSymbol symbol) const {
 	const UnicodeString *strPtr;
@@ -341,13 +412,27 @@ DecimalFormatSymbols::getConstSymbol(ENumberFormatSymbol symbol) const {
 	}
 	return *strPtr;
 }
+#endif
+
 
 // -------------------------------------
 
 inline void
-DecimalFormatSymbols::setSymbol(ENumberFormatSymbol symbol, const UnicodeString &value) {
+DecimalFormatSymbols::setSymbol(ENumberFormatSymbol symbol, const UnicodeString &value, const UBool propogateDigits = TRUE) {
 	if(symbol<kFormatSymbolCount) {
 		fSymbols[symbol]=value;
+	}
+
+	// If the zero digit is being set to a known zero digit according to Unicode,
+	// then we automatically set the corresponding 1-9 digits
+	if ( propogateDigits && symbol == kZeroDigitSymbol && value.countChar32() == 1 ) {
+		UChar32 sym = value.char32At(0);
+		if ( u_charDigitValue(sym) == 0 ) {
+			for ( int8_t i = 1 ; i<= 9 ; i++ ) {
+				sym++;
+				fSymbols[(int)kOneDigitSymbol+i-1] = UnicodeString(sym);
+			}
+		}
 	}
 }
 
@@ -358,10 +443,13 @@ DecimalFormatSymbols::getLocale() const {
 	return locale;
 }
 
+#ifndef U_HIDE_INTERNAL_API
 inline const UChar*
 DecimalFormatSymbols::getCurrencyPattern() const {
 	return currPattern;
 }
+#endif
+
 U_NAMESPACE_END
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

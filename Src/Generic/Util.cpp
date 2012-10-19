@@ -2561,7 +2561,7 @@ StrUni DirectoryFinder::IcuDir()
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);
 		DWORD dwT;
-		LONG nRet = ::RegQueryValueEx(rk, _T("Icu40Dir"), NULL, &dwT, (BYTE *)rgch, &cb);
+		LONG nRet = ::RegQueryValueEx(rk, _T("Icu50DataDir"), NULL, &dwT, (BYTE *)rgch, &cb);
 		if (nRet == ERROR_SUCCESS)
 		{
 			Assert(dwT == REG_SZ);
@@ -2579,7 +2579,7 @@ StrUni DirectoryFinder::IcuDir()
 {
 	StrUni stuResult = FwRootDataDir();
 	stuResult += kchDirSep;
-	stuResult += L"Icu40";
+	stuResult += L"Icu50";
 	return stuResult;
 }
 
@@ -2599,7 +2599,7 @@ StrUni DirectoryFinder::IcuDataDir()
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);
 		DWORD dwT;
-		LONG nRet = ::RegQueryValueEx(rk, _T("Icu40DataDir"), NULL, &dwT, (BYTE *)rgch, &cb);
+		LONG nRet = ::RegQueryValueEx(rk, _T("Icu50DataDir"), NULL, &dwT, (BYTE *)rgch, &cb);
 		if (nRet == ERROR_SUCCESS)
 		{
 			Assert(dwT == REG_SZ);
@@ -2610,7 +2610,7 @@ StrUni DirectoryFinder::IcuDataDir()
 #else
 	StrUni stuResult = FwRootDataDir();
 	stuResult += kchDirSep;
-	stuResult += L"Icu40/icudt40l/";
+	stuResult += L"Icu50/";
 	return stuResult;
 #endif
 }

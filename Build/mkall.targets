@@ -341,11 +341,8 @@
 					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\ProjectsDir"
 					   Value="$(dir-fwdistfiles)\Projects"/>
 		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\Icu40DataDir"
+					   Key="SOFTWARE\SIL\Icu50DataDir"
 					   Value="$(dir-icuData)"/>
-		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\Icu40Dir"
-					   Value="$(dir-icu)"/>
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
 					   Value="$(fwrt)\DistFiles\Windows\EC Common"

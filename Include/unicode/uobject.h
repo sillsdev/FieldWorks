@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 2002-2007, International Business Machines
+*   Copyright (C) 2002-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -19,45 +19,83 @@
 
 #include "unicode/utypes.h"
 
-U_NAMESPACE_BEGIN
-
 /**
  * \file
  * \brief C++ API: Common ICU base class UObject.
  */
 
-/**  U_OVERRIDE_CXX_ALLOCATION - Define this to override operator new and
- *                               delete in UMemory. Enabled by default for ICU.
+/**
+ * @{
+ * \def U_NO_THROW
+ *         Define this to define the throw() specification so
+ *                 certain functions do not throw any exceptions
  *
- *         Enabling forces all allocation of ICU object types to use ICU's
- *         memory allocation. On Windows, this allows the ICU DLL to be used by
- *         applications that statically link the C Runtime library, meaning that
- *         the app and ICU will be using different heaps.
+ *         UMemory operator new methods should have the throw() specification
+ *         appended to them, so that the compiler adds the additional NULL check
+ *         before calling constructors. Without, if <code>operator new</code> returns NULL the
+ *         constructor is still called, and if the constructor references member
+ *         data, (which it typically does), the result is a segmentation violation.
  *
- * @stable ICU 2.2
+ * @stable ICU 4.2
  */
-#ifndef U_OVERRIDE_CXX_ALLOCATION
-#define U_OVERRIDE_CXX_ALLOCATION 1
+#ifndef U_NO_THROW
+#define U_NO_THROW throw()
 #endif
 
-/**  U_HAVE_PLACEMENT_NEW - Define this to define the placement new and
- *                          delete in UMemory for STL.
- *
- * @stable ICU 2.6
- */
-#ifndef U_HAVE_PLACEMENT_NEW
-#define U_HAVE_PLACEMENT_NEW 1
-#endif
+/** @} */
 
+/*===========================================================================*/
+/* UClassID-based RTTI */
+/*===========================================================================*/
 
-/**  U_HAVE_DEBUG_LOCATION_NEW - Define this to define the MFC debug
- * version of the operator new.
+/**
+ * UClassID is used to identify classes without using the compiler's RTTI.
+ * This was used before C++ compilers consistently supported RTTI.
+ * ICU 4.6 requires compiler RTTI to be turned on.
  *
- * @stable ICU 3.4
+ * Each class hierarchy which needs
+ * to implement polymorphic clone() or operator==() defines two methods,
+ * described in detail below.  UClassID values can be compared using
+ * operator==(). Nothing else should be done with them.
+ *
+ * \par
+ * getDynamicClassID() is declared in the base class of the hierarchy as
+ * a pure virtual.  Each concrete subclass implements it in the same way:
+ *
+ * \code
+ *      class Base {
+ *      public:
+ *          virtual UClassID getDynamicClassID() const = 0;
+ *      }
+ *
+ *      class Derived {
+ *      public:
+ *          virtual UClassID getDynamicClassID() const
+ *            { return Derived::getStaticClassID(); }
+ *      }
+ * \endcode
+ *
+ * Each concrete class implements getStaticClassID() as well, which allows
+ * clients to test for a specific type.
+ *
+ * \code
+ *      class Derived {
+ *      public:
+ *          static UClassID U_EXPORT2 getStaticClassID();
+ *      private:
+ *          static char fgClassID;
+ *      }
+ *
+ *      // In Derived.cpp:
+ *      UClassID Derived::getStaticClassID()
+ *        { return (UClassID)&Derived::fgClassID; }
+ *      char Derived::fgClassID = 0; // Value is irrelevant
+ * \endcode
+ * @stable ICU 2.0
  */
-#ifndef U_HAVE_DEBUG_LOCATION_NEW
-#define U_HAVE_DEBUG_LOCATION_NEW 0
-#endif
+typedef void* UClassID;
+
+U_NAMESPACE_BEGIN
 
 /**
  * UMemory is the common ICU base class.
@@ -77,6 +115,13 @@ U_NAMESPACE_BEGIN
 class U_COMMON_API UMemory {
 public:
 
+/* test versions for debugging shaper heap memory problems */
+#ifdef SHAPER_MEMORY_DEBUG
+	static void * NewArray(int size, int count);
+	static void * GrowArray(void * array, int newSize );
+	static void   FreeArray(void * array );
+#endif
+
 #if U_OVERRIDE_CXX_ALLOCATION
 	/**
 	 * Override for ICU4C C++ memory management.
@@ -86,14 +131,14 @@ public:
 	 * for ICU4C C++ classes
 	 * @stable ICU 2.4
 	 */
-	static void * U_EXPORT2 operator new(size_t size);
+	static void * U_EXPORT2 operator new(size_t size) U_NO_THROW;
 
 	/**
 	 * Override for ICU4C C++ memory management.
 	 * See new().
 	 * @stable ICU 2.4
 	 */
-	static void * U_EXPORT2 operator new[](size_t size);
+	static void * U_EXPORT2 operator new[](size_t size) U_NO_THROW;
 
 	/**
 	 * Override for ICU4C C++ memory management.
@@ -103,14 +148,14 @@ public:
 	 * for ICU4C C++ classes
 	 * @stable ICU 2.4
 	 */
-	static void U_EXPORT2 operator delete(void *p);
+	static void U_EXPORT2 operator delete(void *p) U_NO_THROW;
 
 	/**
 	 * Override for ICU4C C++ memory management.
 	 * See delete().
 	 * @stable ICU 2.4
 	 */
-	static void U_EXPORT2 operator delete[](void *p);
+	static void U_EXPORT2 operator delete[](void *p) U_NO_THROW;
 
 #if U_HAVE_PLACEMENT_NEW
 	/**
@@ -118,14 +163,14 @@ public:
 	 * See new().
 	 * @stable ICU 2.6
 	 */
-	static inline void * U_EXPORT2 operator new(size_t, void *ptr) { return ptr; }
+	static inline void * U_EXPORT2 operator new(size_t, void *ptr) U_NO_THROW { return ptr; }
 
 	/**
 	 * Override for ICU4C C++ memory management for STL.
 	 * See delete().
 	 * @stable ICU 2.6
 	 */
-	static inline void U_EXPORT2 operator delete(void *, void *) {}
+	static inline void U_EXPORT2 operator delete(void *, void *) U_NO_THROW {}
 #endif /* U_HAVE_PLACEMENT_NEW */
 #if U_HAVE_DEBUG_LOCATION_NEW
 	/**
@@ -135,7 +180,7 @@ public:
 	  * @param file   The file where the allocation was requested
 	  * @param line   The line where the allocation was requested
 	  */
-	static void * U_EXPORT2 operator new(size_t size, const char* file, int line);
+	static void * U_EXPORT2 operator new(size_t size, const char* file, int line) U_NO_THROW;
 	/**
 	  * This method provides a matching delete for the MFC debug new
 	  *
@@ -143,7 +188,7 @@ public:
 	  * @param file   The file where the allocation was requested
 	  * @param line   The line where the allocation was requested
 	  */
-	static void U_EXPORT2 operator delete(void* p, const char* file, int line);
+	static void U_EXPORT2 operator delete(void* p, const char* file, int line) U_NO_THROW;
 #endif /* U_HAVE_DEBUG_LOCATION_NEW */
 #endif /* U_OVERRIDE_CXX_ALLOCATION */
 
@@ -256,6 +301,7 @@ protected:
 //     UBool instanceOf(UClassID type) const;
 };
 
+#ifndef U_HIDE_INTERNAL_API
 /**
  * This is a simple macro to add ICU RTTI to an ICU object implementation.
  * This does not go into the header. This should only be used in *.cpp files.
@@ -286,6 +332,19 @@ protected:
 		return (UClassID)&classID; \
 	}
 
+/**
+ * This is a simple macro to express that a class and its subclasses do not offer
+ * ICU's "poor man's RTTI".
+ * Beginning with ICU 4.6, ICU requires C++ compiler RTTI.
+ * This does not go into the header. This should only be used in *.cpp files.
+ * Use this with a private getDynamicClassID() in an immediate subclass of UObject.
+ *
+ * @param myClass The name of the class that needs RTTI defined.
+ * @internal
+ */
+#define UOBJECT_DEFINE_NO_RTTI_IMPLEMENTATION(myClass) \
+	UClassID myClass::getDynamicClassID() const { return NULL; }
+
 // /**
 //  * This macro adds ICU RTTI to an ICU concrete class implementation.
 //  * This macro should be invoked in *.cpp files.  The corresponding
@@ -301,7 +360,7 @@ protected:
 		return myClass::getStaticClassID(); \
 	}
 */
-
+#endif  /* U_HIDE_INTERNAL_API */
 
 U_NAMESPACE_END
 

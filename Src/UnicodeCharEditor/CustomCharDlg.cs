@@ -1339,25 +1339,28 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				// Automatically load the values from the cache
 				PUACharacter cachedCharacter = m_parentDialog.FindCachedIcuEntry(m_txtCodepoint.Text);
 				// If the cache actually gives us a character, load it into the fields
-				if (m_parentDialog.IsDefinedPuaCharacter(m_txtCodepoint.Text))
-				{
-					m_lblWarning.Text = Properties.Resources.kstidOverwriteUserCode;
-					m_puaChar = m_parentDialog.GetDefinedPuaCharacter(m_txtCodepoint.Text);
-					FillFormFromPUACharacter(false);
-					Text = Properties.Resources.kstidModifyPuaTitle;
-				}
-				else if (cachedCharacter != null)
-				{
-					m_puaChar = cachedCharacter;
-					FillFormFromPUACharacter(false);
-					if(!string.IsNullOrEmpty(m_puaChar.Name))
-						m_lblWarning.Text = Properties.Resources.kstidOverwriteUnicode;
-					Text = Properties.Resources.kstidAddPuaTitle;
-				}
-				else // otherwise just use the UnicodeDefault values.
+				if (cachedCharacter == null)
 				{
 					m_puaChar = PUACharacter.UnicodeDefault;
 					FillFormFromPUACharacter(false);
+					m_lblWarning.Text = "";
+					Text = Properties.Resources.kstidAddPuaTitle;
+				}
+				else
+				{
+					m_puaChar = cachedCharacter;
+					FillFormFromPUACharacter(false);
+					if (m_parentDialog.IsCustomChar(cachedCharacter.CodePoint))
+					{
+						m_lblWarning.Text = Properties.Resources.kstidOverwriteUserCode;
+						Text = Properties.Resources.kstidModifyPuaTitle;
+					}
+					else
+					{
+						if (!string.IsNullOrEmpty(m_puaChar.Name))
+							m_lblWarning.Text = Properties.Resources.kstidOverwriteUnicode;
+						Text = Properties.Resources.kstidAddPuaTitle;
+					}
 				}
 			}
 			// Show the error star and block all fields if the character is not a valid, unused

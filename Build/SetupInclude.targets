@@ -142,11 +142,7 @@
 	  <Output TaskParameter="Value" PropertyName="dir-fwdistfiles-data"/>
 	</PathCombine>
 
-	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu40">
-	  <Output TaskParameter="Value" PropertyName="dir-icu"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(dir-icu)" SubPath="icudt40l">
+	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu50">
 	  <Output TaskParameter="Value" PropertyName="dir-icuData"/>
 	</PathCombine>
 
@@ -279,7 +275,7 @@
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
-	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu40/icudt40l" />
+	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu50" />
 
 	<!-- Set some environment variables needed on Linux. -->
 	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_dir)/build$(arch)/src/.libs:$(com_dir)/build$(arch)/lib:$(icu_lib):$(dir-outputBase):$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Unix'"/>

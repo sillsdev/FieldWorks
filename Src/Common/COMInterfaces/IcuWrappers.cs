@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -33,19 +34,19 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 	{
 		private const string kIcuUcDllName =
 #if !__MonoCS__
-			"icuuc40.dll";
+			"icuuc50.dll";
 #else // __MonoCS__
 			"libicuuc.so";
 #endif // __MonoCS__
 
 		private const string kIcuinDllName =
 #if !__MonoCS__
-			"icuin40.dll";
+			"icuin50.dll";
 #else // __MonoCS__
 			"libicui18n.so";
 #endif // __MonoCS__
 
-		private const string kIcuVersion = "_4_0";
+		private const string kIcuVersion = "_50";
 
 		#region Public Properties
 		/// ------------------------------------------------------------------------------------
@@ -55,7 +56,12 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		public static string UnicodeVersion
 		{
-			get { return "5.1"; }
+			get
+			{
+				var arg = new byte[4];
+				u_getUnicodeVersion(arg);
+				return string.Format("{0}.{1}", arg[0], arg[1]);
+			}
 		}
 		#endregion
 
@@ -72,36 +78,26 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			get
 			{
 				string dir = Path.Combine(Environment.GetFolderPath(
-					Environment.SpecialFolder.CommonProgramFiles), "SIL/Icu40/icudt40l");
+					Environment.SpecialFolder.CommonProgramFiles), "SIL/Icu50");
 
 				RegistryKey key = RegistryHelper.CompanyKeyLocalMachine;
 				if (key != null)
-					dir = key.GetValue("Icu40DataDir", dir) as string ?? dir;
+					dir = key.GetValue("Icu50DataDir", dir) as string ?? dir;
 				return dir;
 			}
 		}
 
 		///-------------------------------------------------------------------------------------
 		/// <summary>
-		/// Retrieve the ICU Directory from the Registry.
+		/// Retrieve the ICU Directory from the Registry. As of ICU50, this is the same
+		/// directory we want for the data directory, so just return that.
 		/// </summary>
 		/// <returns>The ICU directory, or empty string if the registry value isn't set or if
 		/// the directory doesn't exist.</returns>
 		///-------------------------------------------------------------------------------------
 		public static string DefaultDirectory
 		{
-			get
-			{
-				string dir = Path.Combine(Environment.GetFolderPath(
-					Environment.SpecialFolder.CommonProgramFiles), "SIL/Icu40");
-
-				RegistryKey key = RegistryHelper.CompanyKeyLocalMachine;
-				if (key != null)
-					dir = key.GetValue("Icu40Dir", dir) as string ?? dir;
-				if (!Directory.Exists(dir))
-					return string.Empty;
-				return dir;
-			}
+			get { return DefaultDataDirectory; }
 		}
 
 		#region Static methods to test codepoints' inclusion in various ranges
@@ -208,12 +204,13 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Makes sure the icu directory is set
+		/// Makes sure the icu directory is set, and any other initialization
+		/// which must be done before we use ICU is done.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string InitIcuDataDir()
+		public static void InitIcuDataDir()
 		{
-			System.Diagnostics.Debug.Assert(kIcuVersion == "_4_0", "Yo developers! We are using a different version of ICU. " +
+			System.Diagnostics.Debug.Assert(kIcuVersion == "_50", "Yo developers! We are using a different version of ICU. " +
 				"Change UnicodeVersion to return the correct version, and then change this assertion so that it checks for the new version of kIcuVersion." +
 				"We had to do it this way because ICU can't tell us which version of Unicode it supports. " +
 				"If they add a method to do this in the future, then we can just make UnicodeVersion work by calling that method." +
@@ -224,13 +221,23 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				szDir = DefaultDataDirectory;
 				DataDirectory = szDir;
 			}
-
 			// ICU docs say to do this after the directory is set, but before others are called.
 			// And it can be called n times with little hit.
 			UErrorCode errorCode;
 			u_Init(out errorCode);
 
-			return szDir;
+			string overrideDataPath = Path.Combine(szDir, "UnicodeDataOverrides.txt");
+			if (!File.Exists(overrideDataPath))
+			{
+				// See if we can get the 'original' one in the data directory.
+				overrideDataPath = Path.Combine(szDir, Path.Combine("data", "UnicodeDataOverrides.txt"));
+			}
+			IntPtr result = SilIcuInit(overrideDataPath);
+			var msg = Marshal.PtrToStringUni(result);
+			if (!string.IsNullOrEmpty(msg))
+			{
+				MessageBox.Show(string.Format(Properties.Resources.ksIcuInitFailed, overrideDataPath, msg));
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -267,6 +274,12 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		#endregion
 
 		#region ICU methods that are not exposed directly
+
+		/// <summary>SIL-specific initialization. Note that we do not currently define the kIcuVersion extension for this method.</summary>
+		[DllImport(kIcuUcDllName, EntryPoint = "SilIcuInit",
+			 CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr SilIcuInit(
+			[MarshalAs(UnmanagedType.LPWStr)]string pathname);
 
 		/// <summary>get the name of an ICU code point</summary>
 		[DllImport(kIcuUcDllName, EntryPoint = "u_init" + kIcuVersion,
@@ -390,6 +403,10 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		private static extern int u_getIntPropertyValue(
 			int characterCode,
 			UProperty choice);
+
+		[DllImport(kIcuUcDllName, EntryPoint = "u_getUnicodeVersion" + kIcuVersion,
+			 CallingConvention = CallingConvention.Cdecl)]
+		private static extern void u_getUnicodeVersion(byte[] versionInfo);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -534,6 +551,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		[DllImport(kIcuUcDllName, EntryPoint = "u_ispunct" + kIcuVersion,
 			 CallingConvention = CallingConvention.Cdecl)]
+		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
+		// which are usually zero, especially in debug builds...but one day we will be sorry.
+		[return: MarshalAs(UnmanagedType.I1)]
 		private static extern bool u_ispunct(
 			int characterCode);
 		/// <summary>Determines whether the specified code point is a punctuation character, as
@@ -564,6 +584,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		[DllImport(kIcuUcDllName, EntryPoint = "u_isMirrored" + kIcuVersion,
 			 CallingConvention = CallingConvention.Cdecl)]
+		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
+		// which are usually zero, especially in debug builds...but one day we will be sorry.
+		[return: MarshalAs(UnmanagedType.I1)]
 		private static extern bool u_isMirrored(
 			int characterCode);
 		/// <summary></summary>
@@ -588,6 +611,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		[DllImport(kIcuUcDllName, EntryPoint = "u_iscntrl" + kIcuVersion,
 			 CallingConvention = CallingConvention.Cdecl)]
+		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
+		// which are usually zero, especially in debug builds...but one day we will be sorry.
+		[return: MarshalAs(UnmanagedType.I1)]
 		private static extern bool u_iscntrl(
 			int characterCode);
 		/// <summary>Determines whether the specified code point is a control character, as
@@ -634,6 +660,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// ------------------------------------------------------------------------------------
 		[DllImport(kIcuUcDllName, EntryPoint = "u_isspace" + kIcuVersion,
 			 CallingConvention = CallingConvention.Cdecl)]
+		// Required because ICU returns a one-byte boolean. Without this C# assumes 4, and picks up 3 more random bytes,
+		// which are usually zero, especially in debug builds...but one day we will be sorry.
+		[return: MarshalAs(UnmanagedType.I1)]
 		private static extern bool u_isspace(
 			int characterCode);
 		/// <summary>Determines whether the specified character is a space character, as

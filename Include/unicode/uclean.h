@@ -1,9 +1,7 @@
 /*
 ******************************************************************************
-*                                                                            *
-* Copyright (C) 2001-2005, International Business Machines                   *
-*                Corporation and others. All Rights Reserved.                *
-*                                                                            *
+* Copyright (C) 2001-2012, International Business Machines
+*                Corporation and others. All Rights Reserved.
 ******************************************************************************
 *   file name:  uclean.h
 *   encoding:   US-ASCII
@@ -24,38 +22,22 @@
  */
 
 /**
- *  Initialize ICU. The description further below applies to ICU 2.6 to ICU 3.4.
- *  Starting with ICU 3.4, u_init() needs not be called any more for
- *  ensuring thread safety, but it can give an indication for whether ICU
- *  can load its data. In ICU 3.4, it will try to load the converter alias table
- *  (cnvalias.icu) and give an error code if that fails.
- *  This may change in the future.
- *  <p>
- *  For ensuring the availability of necessary data, an application should
- *  open the service objects (converters, collators, etc.) that it will use
- *  and check for error codes there.
- *  <p>
- *  Documentation for ICU 2.6 to ICU 3.4:
- *  <p>
- *  This function loads and initializes data items
- *  that are required internally by various ICU functions.  Use of this explicit
- *  initialization is required in multi-threaded applications; in
- *  single threaded apps, use is optional, but incurs little additional
- *  cost, and is thus recommended.
- *  <p>
- *  In multi-threaded applications, u_init() should be called  in the
- *  main thread before starting additional threads, or, alternatively
- *  it can be called in each individual thread once, before other ICU
- *  functions are called in that thread.  In this second scenario, the
- *  application must guarantee that the first call to u_init() happen
- *  without contention, in a single thread only.
- *  <p>
- *  If <code>u_setMemoryFunctions()</code> or
- *  <code>u_setMutexFunctions</code> are needed (uncommon), they must be
- *  called _before_ <code>u_init()</code>.
- *  <p>
- *  Extra, repeated, or otherwise unneeded calls to u_init() do no harm,
- *  other than taking a small amount of time.
+ *  Initialize ICU.
+ *
+ *  Use of this function is optional.  It is OK to simply use ICU
+ *  services and functions without first having initialized
+ *  ICU by calling u_init().
+ *
+ *  u_init() will attempt to load some part of ICU's data, and is
+ *  useful as a test for configuration or installation problems that
+ *  leave the ICU data inaccessible.  A successful invocation of u_init()
+ *  does not, however, guarantee that all ICU data is accessible.
+ *
+ *  Multiple calls to u_init() cause no harm, aside from the small amount
+ *  of time required.
+ *
+ *  In old versions of ICU, u_init() was required in multi-threaded applications
+ *  to ensure the thread safety of ICU.  u_init() is no longer needed for this purpose.
  *
  * @param status An ICU UErrorCode parameter. It must not be <code>NULL</code>.
  *    An Error will be returned if some required part of ICU data can not
@@ -68,6 +50,7 @@
 U_STABLE void U_EXPORT2
 u_init(UErrorCode *status);
 
+#ifndef U_HIDE_SYSTEM_API
 /**
  * Clean up the system resources, such as allocated memory or open files,
  * used in all ICU libraries. This will free/delete all memory owned by the
@@ -165,8 +148,6 @@ typedef void U_CALLCONV UMtxFn   (const void *context, UMTX  *mutex);
   *  directly access system functions for mutex operations
   *  This function can only be used when ICU is in an initial, unused state, before
   *  u_init() has been called.
-  *  This function may be used even when ICU has been built without multi-threaded
-  *  support  (see ICU_USE_THREADS pre-processor variable, umutex.h)
   *  @param context This pointer value will be saved, and then (later) passed as
   *                 a parameter to the user-supplied mutex functions each time they
   *                 are called.
@@ -263,5 +244,6 @@ typedef void  U_CALLCONV UMemFreeFn (const void *context, void *mem);
 U_STABLE void U_EXPORT2
 u_setMemoryFunctions(const void *context, UMemAllocFn *a, UMemReallocFn *r, UMemFreeFn *f,
 					UErrorCode *status);
+#endif  /* U_HIDE_SYSTEM_API */
 
 #endif

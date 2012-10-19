@@ -61,6 +61,20 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			Assert.IsTrue(Icu.IsSymbol(0x0B70));
 		}
 
+		/// <summary>
+		/// Can't easily check the correctness, but make sure we can at least get this.
+		/// </summary>
+		[Test]
+		public void CanGetUnicodeVersion()
+		{
+			var result = Icu.UnicodeVersion;
+			Assert.That(result.Length >= 3);
+			Assert.That(result.IndexOf("."), Is.GreaterThan(0));
+			int major;
+			Assert.True(int.TryParse(result.Substring(0, result.IndexOf(".")), out major));
+			Assert.That(major >= 6);
+		}
+
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the Normalize method: input is NFC, normalize to NFC

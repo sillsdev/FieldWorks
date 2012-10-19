@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1999-2007, International Business Machines
+*   Copyright (C) 1999-2011, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -19,11 +19,9 @@
  * \brief C API: 16-bit Unicode handling macros
  *
  * This file defines macros to deal with 16-bit Unicode (UTF-16) code units and strings.
- * utf16.h is included by utf.h after unicode/umachine.h
- * and some common definitions.
  *
  * For more information see utf.h and the ICU User Guide Strings chapter
- * (http://icu-project.org/userguide/strings.html).
+ * (http://userguide.icu-project.org/strings).
  *
  * <em>Usage:</em>
  * ICU coding guidelines for if() statements should be followed when using these macros.
@@ -34,7 +32,7 @@
 #ifndef __UTF16_H__
 #define __UTF16_H__
 
-/* utf.h must be included first. */
+#include "unicode/umachine.h"
 #ifndef __UTF_H__
 #   include "unicode/utf.h"
 #endif
@@ -81,6 +79,15 @@
  * @stable ICU 2.4
  */
 #define U16_IS_SURROGATE_LEAD(c) (((c)&0x400)==0)
+
+/**
+ * Assuming c is a surrogate code point (U16_IS_SURROGATE(c)),
+ * is it a trail surrogate?
+ * @param c 16-bit code unit
+ * @return TRUE or FALSE
+ * @stable ICU 4.2
+ */
+#define U16_IS_SURROGATE_TRAIL(c) (((c)&0x400)!=0)
 
 /**
  * Helper constant for U16_GET_SUPPLEMENTARY.
@@ -194,7 +201,7 @@
 				(c)=U16_GET_SUPPLEMENTARY((c), __c2); \
 			} \
 		} else { \
-			if((i)-1>=(start) && U16_IS_LEAD(__c2=(s)[(i)-1])) { \
+			if((i)>(start) && U16_IS_LEAD(__c2=(s)[(i)-1])) { \
 				(c)=U16_GET_SUPPLEMENTARY(__c2, (c)); \
 			} \
 		} \

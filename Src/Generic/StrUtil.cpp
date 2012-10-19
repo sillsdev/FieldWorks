@@ -28,6 +28,8 @@ void InitIcuDataDir()
 {
 #if WIN32
 	const char * pszDir = u_getDataDirectory();
+	bool firstTimeInit = false;
+	char rgchDataDirectory[MAX_PATH];
 	if (!pszDir || !*pszDir)
 	{
 		// The ICU Data Directory is not yet set.  Get the root directory from the registry
@@ -37,27 +39,27 @@ void InitIcuDataDir()
 			&hk);
 		if (lRet == ERROR_SUCCESS)
 		{
-			char rgch[MAX_PATH];
-			DWORD cb = sizeof(rgch);
+			DWORD cb = sizeof(rgchDataDirectory);
 			DWORD dwT;
 			// Note: trying to refactor this using
 			// StrAnsi staIcuDir(DirectoryFinder::IcuDir());
 			// u_setDataDirectory(staIcuDir.Chars());
 			// broke Ecobj/Teso. At some point we might want to figure out how to solve the build problems.
-			lRet = ::RegQueryValueExA(hk, "Icu40DataDir", NULL, &dwT, (BYTE *)rgch, &cb);
+			lRet = ::RegQueryValueExA(hk, "Icu50DataDir", NULL, &dwT, (BYTE *)rgchDataDirectory, &cb);
 			if (lRet == ERROR_SUCCESS && dwT == REG_SZ)
 			{
 				// Remove any trailing \ from the registry value.
-				int cch = strlen(rgch);
-				if (rgch[cch - 1] == '\\')
-					rgch[cch - 1] = 0;
-				u_setDataDirectory(rgch);
+				int cch = strlen(rgchDataDirectory);
+				if (rgchDataDirectory[cch - 1] == '\\')
+					rgchDataDirectory[cch - 1] = 0;
+				u_setDataDirectory(rgchDataDirectory);
+				firstTimeInit = true;
 			}
 			::RegCloseKey(hk);
 		}
 	}
 
-#else //WIN32
+#else //not WIN32
 
 	const char * pszDir = u_getDataDirectory();
 	if (!pszDir || !*pszDir)
@@ -65,7 +67,11 @@ void InitIcuDataDir()
 		// The ICU Data Directory is not yet set. Set it from the environment.
 		const char * desiredDir = getenv("ICUDATADIR");
 		if (NULL != desiredDir)
+		{
 			u_setDataDirectory(desiredDir);
+			strncpy(rgchDataDirectory,desiredDir, MAX_PATH);
+			firstTimeInit = true;
+		}
 	}
 
 #endif//WIN32
@@ -85,6 +91,15 @@ void InitIcuDataDir()
 	if (!pszDir || !*pszDir)
 	{
 		ThrowInternalError(E_UNEXPECTED, "Error No Icu Data Directory. Check ICU_DATA is set.");
+	}
+
+	if (firstTimeInit)
+	{
+		// This is somewhat time consuming; it has to allocate memory and read a file. Do it only once.
+		StrUni stuPath(rgchDataDirectory);
+		stuPath.Append("/"); // Works on all OS's we care about, I think. Not sure about Mac OS.
+		stuPath.Append("UnicodeDataOverrides.txt");
+		SilIcuInit(stuPath.Chars());
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1997-2007, International Business Machines
+*   Copyright (C) 1997-2011, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -25,6 +25,7 @@
 
 #include "unicode/utypes.h"
 #include "unicode/uloc.h"
+#include "unicode/localpointer.h"
 
 /**
  * \file
@@ -81,18 +82,6 @@ typedef enum {
 	 * @stable ICU 2.6
 	 */
 	URES_ALIAS=3,
-
-#ifndef U_HIDE_INTERNAL_API
-
-	/**
-	 * Internal use only.
-	 * Alternative resource type constant for tables of key-value pairs.
-	 * Never returned by ures_getType().
-	 * @internal
-	 */
-	URES_TABLE32=4,
-
-#endif /* U_HIDE_INTERNAL_API */
 
 	/**
 	 * Resource type constant for a single 28-bit integer, interpreted as
@@ -219,6 +208,7 @@ ures_openU(const UChar* packageName,
 		   const char* locale,
 		   UErrorCode* status);
 
+#ifndef U_HIDE_DEPRECATED_API
 /**
  * Returns the number of strings/arrays in resource bundles.
  * Better to use ures_getSize, as this function will be deprecated.
@@ -239,6 +229,7 @@ U_DEPRECATED int32_t U_EXPORT2
 ures_countArrayItems(const UResourceBundle* resourceBundle,
 					 const char* resourceKey,
 					 UErrorCode* err);
+#endif  /* U_HIDE_DEPRECATED_API */
 /**
  * Close a resource bundle, all pointers returned from the various ures_getXXX calls
  * on this particular bundle should be considered invalid henceforth.
@@ -250,6 +241,26 @@ ures_countArrayItems(const UResourceBundle* resourceBundle,
 U_STABLE void U_EXPORT2
 ures_close(UResourceBundle* resourceBundle);
 
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUResourceBundlePointer
+ * "Smart pointer" class, closes a UResourceBundle via ures_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUResourceBundlePointer, UResourceBundle, ures_close);
+
+U_NAMESPACE_END
+
+#endif
+
+#ifndef U_HIDE_DEPRECATED_API
 /**
  * Return the version number associated with this ResourceBundle as a string. Please
  * use ures_getVersion as this function is going to be deprecated.
@@ -262,6 +273,7 @@ ures_close(UResourceBundle* resourceBundle);
  */
 U_DEPRECATED const char* U_EXPORT2
 ures_getVersionNumber(const UResourceBundle*   resourceBundle);
+#endif  /* U_HIDE_DEPRECATED_API */
 
 /**
  * Return the version number associated with this ResourceBundle as an
@@ -276,6 +288,7 @@ U_STABLE void U_EXPORT2
 ures_getVersion(const UResourceBundle* resB,
 				UVersionInfo versionInfo);
 
+#ifndef U_HIDE_DEPRECATED_API
 /**
  * Return the name of the Locale associated with this ResourceBundle. This API allows
  * you to query for the real locale of the resource. For example, if you requested
@@ -291,7 +304,7 @@ ures_getVersion(const UResourceBundle* resB,
 U_DEPRECATED const char* U_EXPORT2
 ures_getLocale(const UResourceBundle* resourceBundle,
 			   UErrorCode* status);
-
+#endif  /* U_HIDE_DEPRECATED_API */
 
 /**
  * Return the name of the Locale associated with this ResourceBundle.
@@ -311,6 +324,7 @@ ures_getLocaleByType(const UResourceBundle* resourceBundle,
 					 UErrorCode* status);
 
 
+#ifndef U_HIDE_INTERNAL_API
 /**
  * Same as ures_open() but uses the fill-in parameter instead of allocating
  * a bundle, if r!=NULL.
@@ -332,6 +346,7 @@ ures_openFillIn(UResourceBundle *r,
 				const char* packageName,
 				const char* localeID,
 				UErrorCode* status);
+#endif  /* U_HIDE_INTERNAL_API */
 
 /**
  * Returns a string from a string resource type
@@ -418,7 +433,7 @@ ures_getUTF8String(const UResourceBundle *resB,
  *                Always check the value of status. Don't count on returning NULL.
  *                could be a non-failing error
  *                e.g.: <TT>U_USING_FALLBACK_WARNING</TT>,<TT>U_USING_DEFAULT_WARNING </TT>
- * @return a pointer to a chuck of unsigned bytes which live in a memory mapped/DLL file.
+ * @return a pointer to a chunk of unsigned bytes which live in a memory mapped/DLL file.
  * @see ures_getString
  * @see ures_getIntVector
  * @see ures_getInt
@@ -440,7 +455,7 @@ ures_getBinary(const UResourceBundle* resourceBundle,
  *                Always check the value of status. Don't count on returning NULL.
  *                could be a non-failing error
  *                e.g.: <TT>U_USING_FALLBACK_WARNING</TT>,<TT>U_USING_DEFAULT_WARNING </TT>
- * @return a pointer to a chunk of unsigned bytes which live in a memory mapped/DLL file.
+ * @return a pointer to a chunk of integers which live in a memory mapped/DLL file.
  * @see ures_getBinary
  * @see ures_getString
  * @see ures_getInt
@@ -641,7 +656,7 @@ ures_getStringByIndex(const UResourceBundle *resourceBundle,
  * the output UTF-8 string is always well-formed.
  *
  * @param resB Resource bundle.
- * @param index An index to the wanted string.
+ * @param stringIndex An index to the wanted string.
  * @param dest Destination buffer. Can be NULL only if capacity=*length==0.
  * @param pLength Input: Capacity of destination buffer.
  *               Output: Actual length of the UTF-8 string, not counting the
@@ -670,7 +685,7 @@ ures_getStringByIndex(const UResourceBundle *resourceBundle,
  */
 U_STABLE const char * U_EXPORT2
 ures_getUTF8StringByIndex(const UResourceBundle *resB,
-						  int32_t index,
+						  int32_t stringIndex,
 						  char *dest, int32_t *pLength,
 						  UBool forceCopy,
 						  UErrorCode *status);
@@ -768,7 +783,7 @@ ures_getUTF8StringByKey(const UResourceBundle *resB,
 						UBool forceCopy,
 						UErrorCode *status);
 
-#ifdef XP_CPLUSPLUS
+#if U_SHOW_CPLUSPLUS_API
 #include "unicode/unistr.h"
 
 U_NAMESPACE_BEGIN

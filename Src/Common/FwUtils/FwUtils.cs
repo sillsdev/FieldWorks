@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public const string ksFullFlexAppObjectName = "SIL.FieldWorks.XWorks.LexText.LexTextApp";
 		/// <summary>
-		/// The current version of FieldWorks.
+		/// The current version of FieldWorks. This is also known in COMInterfaces/IcuWrappers.cs, InitIcuDataDir.
 		/// </summary>
 		public const int SuiteVersion = 7;
 
