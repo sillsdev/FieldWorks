@@ -181,6 +181,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void TestWithCancel()
 		{
 			StartTimer(2500);
@@ -198,6 +199,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void TestWithoutCancel()
 		{
 			var nProgress = (int) m_dlg.RunTask(false, BackgroundTask);

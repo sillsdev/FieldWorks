@@ -70,8 +70,7 @@
 		</Otherwise>
 	</Choose>
 
-  <!-- Setup cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes. -->
-  <Target Name="Setup">
+  <Target Name="Setup"><!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
 
 	<!-- set fwrt to the proper value before we do anything else. -->
 	<ParentDirectory CurrentDirectory="$(MSBuildProjectDirectory)">
@@ -142,7 +141,11 @@
 	  <Output TaskParameter="Value" PropertyName="dir-fwdistfiles-data"/>
 	</PathCombine>
 
-	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu50">
+	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu40">
+	  <Output TaskParameter="Value" PropertyName="dir-icu"/>
+	</PathCombine>
+
+	<PathCombine BasePath="$(dir-icu)" SubPath="icudt40l">
 	  <Output TaskParameter="Value" PropertyName="dir-icuData"/>
 	</PathCombine>
 
@@ -262,6 +265,9 @@
 	<CreateProperty Value="LongRunning,ByHand,SmokeTest" Condition="'$(runAllTests)'==''">
 	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
 	</CreateProperty>
+	<CreateProperty Value="$(excludedCategories),DesktopRequired" Condition="'$(desktopNotAvailable)'=='true'">
+	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
+	</CreateProperty>
 	<CreateProperty Value="ByHand,SmokeTest" Condition="'$(runAllTests)'!=''">
 	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
 	</CreateProperty>
@@ -275,14 +281,9 @@
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
-	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu50" />
+	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu40/icudt40l" />
 
-	<!-- Set some environment variables needed on Linux. -->
-	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_dir)/build$(arch)/src/.libs:$(com_dir)/build$(arch)/lib:$(icu_lib):$(dir-outputBase):$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_PATH" Value="$(dir-fwdistfiles):$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_REGISTRY_PATH" Value="$(dir-fwoutput)/registry" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="COMPONENTS_MAP_PATH" Value="$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_RUNTIME_EXECUTABLE_PATH" Value="/usr/local/bin/mono-real" Condition="'$(OS)'=='Unix'"/>
+	<!-- Create the output directories if they don't already exist -->
 
 	<Message Text="msbuild-target='$(msbuild-target)'; msbuild-props='$(msbuild-props)'"/>
 
@@ -295,17 +296,15 @@
 	<Message Text="Finished deleting NUnit report files." Importance="normal" />
   </Target>
 
-  <Target Name="Initialize" DependsOnTargets="GenerateVersionFiles"/>
+  <Target Name="Initialize" DependsOnTargets="MakeDirs;GenerateVersionFiles"/>
 
-  <!-- Create the output directories if they don't already exist -->
   <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles">
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"
 			 Condition="'$(action)'!='clean'"/>
-	<!-- extra directories (and symbolic links) needed for Linux -->
+	<!-- extra directory (and symbolic links) needed for Linux -->
 	<MakeDir Directories="$(fwrt)/Output" Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output') And '$(OS)'=='Unix'">
 	  <Output TaskParameter="DirectoriesCreated" ItemName="OutputCreatedForLinux"/>
 	</MakeDir>
-	<MakeDir Directories="$(dir-fwoutput)/registry" Condition="'$(OS)'=='Unix' And '$(action)'!='clean'"/>
 	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
 	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-capital)"/>
 	<Exec Condition="'$(action)'!='clean' And !Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
@@ -334,7 +333,7 @@
 	  write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
 	  change once a day.)
   -->
-  <Target Name="GenerateVersionFiles" DependsOnTargets="MakeDirs">
+  <Target Name="GenerateVersionFiles">
 	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
 	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean'"/>
 	  <Message Text="Updated CommonAssemblyInfo.cs and bldinc.h (if needed)."/>

@@ -110,6 +110,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ExportAndValidate()
 		{
 			// Export.
@@ -234,6 +235,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void SectionHead_UserDefined()
 		{
 			IStStyle sectionHead = m_scr.FindStyle("Section Head");

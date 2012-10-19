@@ -147,7 +147,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Assert.AreEqual("French", cache.ServiceLocator.WritingSystems.VernacularWritingSystems.First().LanguageName);
 					Assert.AreEqual(1, cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Count);
 					Assert.AreEqual("French", cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.LanguageName);
-					Assert.AreEqual("fr", cache.LanguageProject.HomographWs);
 				}
 				finally
 				{
@@ -192,6 +191,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void CreateNewLangProject_NameTriggersNonAsciiWarning()
 		{
 			const string dbName = "Fran\u00e7ais";
@@ -222,6 +222,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void CreateNewLangProject_NameDoesntTriggerNonAsciiWarning()
 		{
 			using (var dlg = new DummyFwNewLangProject())
@@ -286,6 +287,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void CreateNewLangProject_NameDoesNotHaveNonAsciiCharsRemoved()
 		{
 			using (var dlg = new DummyFwNewLangProject())

@@ -691,6 +691,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <remarks>Jira numbers: TE-4830, TE-4535</remarks>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void CancelDiscardsNewBook()
 		{
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
@@ -727,6 +728,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// <remarks>Jira number is TE-4830</remarks>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void CancelDiscardsNewBook_AfterImportOfOneExistingBook()
 		{
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
@@ -813,6 +815,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void CancelRestoresOriginal_AfterImportingOneCompleteBook()
 		{
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
@@ -858,6 +861,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void CancelRestoresOriginal_FirstBook()
 		{
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
@@ -890,6 +894,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void BtAbortSavesOriginal()
 		{
 			m_settings.ImportTranslation = false;
@@ -952,6 +957,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void BtInterleavedAbortRollsBack()
 		{
 			m_settings.ImportTranslation = true;
@@ -991,6 +997,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void UnableToImportBtAfterSuccessfulBookImport()
 		{
 			m_settings.ImportTranslation = true;
@@ -1047,6 +1054,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ImportIntoEmptyScrDraft()
 		{
 			m_settings.ImportTranslation = true;
@@ -1108,6 +1116,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ImportWithOneBookInScrDraft()
 		{
 			m_settings.ImportTranslation = true;
@@ -1177,6 +1186,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ImportWhenAllBooksInScrDraft()
 		{
 			m_settings.ImportTranslation = true;
@@ -1258,6 +1268,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void PrepareBookNotImportingVern_NoBooksInArchive()
 		{
 			m_settings.ImportTranslation = false;
@@ -1308,6 +1319,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void PrepareBookNotImportingVern_SomeBooksInArchive()
 		{
 			m_settings.ImportTranslation = false;
@@ -1366,6 +1378,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void PrepareBookNotImportingVern_AllBooksInArchive()
 		{
 			m_settings.ImportTranslation = false;
@@ -1424,6 +1437,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void BtUndoPhmAfterImportingBtJudInOtherWs()
 		{
 			m_settings.ImportTranslation = false;
@@ -1506,6 +1520,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ErrorRestoresOriginal()
 		{
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
@@ -1540,6 +1555,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void BtForMissingBookRemovesEmptySavedVersion()
 		{
 			m_settings.ImportTranslation = true;
@@ -1572,6 +1588,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void CancelRemovesIncompleteBookFromRevisionList()
 		{
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
@@ -1650,6 +1667,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void InsertBookAfterCancelledImport()
 		{
 			using (UndoableUnitOfWorkHelper uow = new UndoableUnitOfWorkHelper(m_actionHandler, "Remove book"))
@@ -1693,6 +1711,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void DiffEditAsPartOfImport()
 		{
 			m_settings.ImportTranslation = true;
@@ -1734,6 +1753,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void BtAttachesToImportedVersion()
 		{
 			m_settings.ImportTranslation = true;
@@ -1795,6 +1815,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void BtAttachesToCurrentVersion()
 		{
 			m_settings.ImportTranslation = false;
@@ -1868,6 +1889,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void BtsForMultipleWss()
 		{
 			m_settings.ImportTranslation = false;

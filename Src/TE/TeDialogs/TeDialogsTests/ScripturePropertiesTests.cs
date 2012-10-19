@@ -148,6 +148,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ConvertChapterVerseNumbersTest_Bengali()
 		{
 			using (ScriptureProperties dlg = new ScriptureProperties(Cache, m_stylesheet, null, true, null))
@@ -168,6 +169,7 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ConvertChapterVerseNumbersTest_EmptyChapterNumber()
 		{
 			// Add paragraph with empty chapter number run.

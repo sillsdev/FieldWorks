@@ -6386,6 +6386,7 @@ namespace SIL.FieldWorks.TE.ExportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ExportToMultipleFiles()
 		{
 			string tempPath = Path.GetTempPath();
