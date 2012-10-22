@@ -75,6 +75,7 @@ Release/
 /Src/views/libViews
 /Src/views/libVwGraphics
 /Bin/src/CodeGen/CodeGen
+/debian/
 /DistFiles/FwResources.dll
 /DistFiles/TeResources.dll
 /DistFiles/Parts/GeneratedLayouts.xml
