@@ -1,6 +1,7 @@
 # Generated files
 GeneratedAssemblyInfo.cs
 Collection.cpp
+/Build/FieldWorks.targets
 /Src/Common/COMInterfaces/FwKernel.cs
 /Src/Common/COMInterfaces/Views.cs
 /Src/Common/CoreImpl/CellarPropertyType.cs
