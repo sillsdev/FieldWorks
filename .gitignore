@@ -1,22 +1,31 @@
 # Generated files
 GeneratedAssemblyInfo.cs
 Collection.cpp
+/Build/FieldWorks.targets
 /Src/Common/COMInterfaces/FwKernel.cs
 /Src/Common/COMInterfaces/Views.cs
 /Src/Common/CoreImpl/CellarPropertyType.cs
 /DistFiles/Data/
 /DistFiles/Icu40/data/
 /DistFiles/Icu40/icudt40l/
+/DistFiles/Icu50/
 /DistFiles/Languages/
+/DistFiles/Helps/
+/DistFiles/Language Explorer/Movies/
+/DistFiles/ReleaseData/
+/Installer/
 /Lib/Debug
 /Lib/Release
 /Lib/src/icu/
+/Localizations/
 /Bld/GlobalInclude.build.xml
 /Bin/_setLatestBuildConfig.bat
 /Bin/_setroot.bat
 /Bld/pathinclude.*.xml
 /Lib/debug/DebugProcs.lib
 /Lib/debug/Generic.lib
+/DistFiles/Parts/Generated.fwlayout
+/Src/CommonAssemblyInfo.cs
 /Src/LangInst/InstallLanguageTests/timing.txt
 
 # other files
@@ -68,6 +77,7 @@ Release/
 /Src/views/libViews
 /Src/views/libVwGraphics
 /Bin/src/CodeGen/CodeGen
+/debian/
 /DistFiles/FwResources.dll
 /DistFiles/TeResources.dll
 /DistFiles/Parts/GeneratedLayouts.xml
@@ -81,6 +91,7 @@ Src/FDO/IOC/Generated*.cs
 /DistFiles/Db4objects.Db4o.dll
 /DistFiles/FirebirdSql.Data.FirebirdClient.dll
 /DistFiles/Editorial\ Checks/
+/DistFiles/Language\ Explorer/Configuration/Available\ Plugins/
 /Src/AppCore/libAppCore
 /Src/DebugProcs/libDebugProcs
 /Src/Generic/libGeneric
