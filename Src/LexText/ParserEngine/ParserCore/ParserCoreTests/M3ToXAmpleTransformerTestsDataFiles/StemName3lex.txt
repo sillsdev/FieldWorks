@@ -2,152 +2,152 @@
 \lx 15318
 \g INF
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15314
 \a ن {15319}
 \eType suffix
-
+ 
 \lx 15322
 \g MASC.SG.NOM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15315
 \fd InflectionFS16589
 \a ا {15323}
 \eType suffix
-
+ 
 \lx 16385
 \g MASC.SG.NOM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16377
 \fd InflectionFS16594
 \a ا {15323}
 \eType suffix
-
+ 
 \lx 17081
 \g MASC.SG.NOM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 17080
 \fd InflectionFS18591
 \a ا {15323}
 \eType suffix
-
+ 
 \lx 15326
 \g MASC.PL.NOM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15315
 \fd InflectionFS16567
 \a ے {15327}
 \eType suffix
 \mp StemNameAffix18674
-
+ 
 \lx 16387
 \g MASC.PL.NOM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16377
 \fd InflectionFS16563
 \a ے {15327}
 \eType suffix
-
+ 
 \lx 17083
 \g MASC.PL.NOM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 17080
 \fd InflectionFS18580
 \a ے {15327}
 \eType suffix
-
+ 
 \lx 15330
 \g FEM.SG
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15342
 \fd InflectionFS16547
 \a ی {15331}
 \eType suffix
-
+ 
 \lx 18425
 \g FEM.SG
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 18420
 \fd InflectionFS18612
 \a ی {15331}
 \eType suffix
-
+ 
 \lx 15334
 \g FEM.PL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15342
 \fd InflectionFS16530
 \a یں {15335}
 \eType suffix
 \mp StemNameAffix18674
-
+ 
 \lx 18427
 \g FEM.PL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 18420
 \fd InflectionFS18607
 \a یں {15335}
 \eType suffix
-
+ 
 \lx 15338
 \g FEM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15315
 \fd InflectionFS16519
 \a ی {15339}
 \eType suffix
-
+ 
 \lx 16389
 \g FEM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16377
 \fd InflectionFS16515
 \a ی {15339}
 \eType suffix
-
+ 
 \lx 16970
 \g FEM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16965
 \fd InflectionFS18600
 \a ی {15339}
 \eType suffix
-
+ 
 \lx 17085
 \g FEM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 17080
 \fd InflectionFS18597
 \a ی {15339}
 \eType suffix
-
+ 
 \lx 18475
 \g FEM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 18420
 \fd InflectionFS18602
 \a ی {15339}
 \eType suffix
-
+ 
 \lx 15345
 \g PERF
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15341
 \fd InflectionFS16604
 \a ی {15612} ICA18663 +/ {InflClass18663} ... _ +/ {ToInflClass18663} ... _ / [15666]_ ا  | / [V] _ ا
@@ -169,128 +169,128 @@
 \a 0 {15346} ICA18509 +/ {InflClass18509} ... _ +/ {ToInflClass18509} ... _
 \eType suffix
 \mp StemNameAffix17837
-
+ 
 \lx 17308
 \g IMPFV
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15341
 \fd InflectionFS18617
 \a ت {15350}
 \eType suffix
-
+ 
 \lx 15359
 \g SUBJV.1
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15356
 \fd InflectionFS16606
-\a ؤں {15906} / [15666]_  | / [V] _
-
-\a وں {15360}
-
- ~/ [15666]_  | ~/ [V] _
-
+\a ؤں {15906} / [15666]_  | / [V] _ 
+		
+\a وں {15360}  
+ 
+ ~/ [15666]_  | ~/ [V] _ 
+		
 \eType suffix
 \mp StemNameAffix18674
 \mp StemNameAffix20027
-
+ 
 \lx 15363
 \g SUBJV.2PL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15356
 \fd InflectionFS16608
-\a ؤ {15907} / [15666]_  | / [V] _
-
-\a 0 {15982} / و _  | / و _
-
-
- ~/ [15666]_  | ~/ [V] _
-
-\a و {15364}
-
- ~/ [15666]_  | ~/ [V] _
-
-
- ~/ و _  | ~/ و _
-
+\a ؤ {15907} / [15666]_  | / [V] _ 
+		
+\a 0 {15982} / و _  | / و _ 
+		  
+ 
+ ~/ [15666]_  | ~/ [V] _ 
+		
+\a و {15364}  
+ 
+ ~/ [15666]_  | ~/ [V] _ 
+		  
+ 
+ ~/ و _  | ~/ و _ 
+		
 \eType suffix
 \mp StemNameAffix18674
 \mp StemNameAffix20027
-
+ 
 \lx 15367
 \g SUBJV.3SG
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15356
 \fd InflectionFS16625
-\a ئے {15910} / [15666]_  | / [V] _
-
-\a ے {15368}
-
- ~/ [15666]_  | ~/ [V] _
-
+\a ئے {15910} / [15666]_  | / [V] _ 
+		
+\a ے {15368}  
+ 
+ ~/ [15666]_  | ~/ [V] _ 
+		
 \eType suffix
 \mp StemNameAffix18674
 \mp StemNameAffix20027
-
+ 
 \lx 15371
 \g SUBJV.3PL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15356
 \fd InflectionFS16619
 \a ئیں {15873}
-\a ئں {15909} / [15666]_  | / [V] _
-
-\a یں {15372}
-
- ~/ [15666]_  | ~/ [V] _
-
+\a ئں {15909} / [15666]_  | / [V] _ 
+		
+\a یں {15372}  
+ 
+ ~/ [15666]_  | ~/ [V] _ 
+		
 \eType suffix
 \mp StemNameAffix18674
 \mp StemNameAffix20027
-
+ 
 \lx 15377
 \g IMPV.SG.FAM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15374
 \fd InflectionFS16640
 \a 0 {15378}
 \eType suffix
 \mp StemNameAffix18510
 \mp StemNameAffix18674
-
+ 
 \lx 15381
 \g IMPV.PL.FAM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15374
 \fd InflectionFS16633
-\a ؤ {15942} / [18672]_  | / [AY] _
-
-\a 0 {15990} / و _  | / و _
-
-
- ~/ [18672]_  | ~/ [AY] _
-
-\a و {15382}
-
- ~/ [18672]_  | ~/ [AY] _
-
-
- ~/ و _  | ~/ و _
-
+\a ؤ {15942} / [18672]_  | / [AY] _ 
+		
+\a 0 {15990} / و _  | / و _ 
+		  
+ 
+ ~/ [18672]_  | ~/ [AY] _ 
+		
+\a و {15382}  
+ 
+ ~/ [18672]_  | ~/ [AY] _ 
+		  
+ 
+ ~/ و _  | ~/ و _ 
+		
 \eType suffix
 \mp StemNameAffix18510
 \mp StemNameAffix18674
-
+ 
 \lx 15385
 \g IMPV.POL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15374
 \fd InflectionFS16638
 \a ئے {15943}
@@ -298,7 +298,7 @@
 \eType suffix
 \mp StemNameAffix18510
 \mp StemNameAffix18674
-
+ 
 \lx 15402
 \g listen
 \c W
@@ -306,7 +306,7 @@
 \mp RootPOS261
 \mp InflClass18509
 \a سن {15403}
-
+ 
 \lx 15549
 \g eat
 \c W
@@ -314,7 +314,7 @@
 \mp RootPOS261
 \mp InflClass18509
 \a کھا {15542}
-
+ 
 \lx 15768
 \g sleep
 \c W
@@ -322,22 +322,22 @@
 \mp RootPOS15311
 \mp InflClass18509
 \a سو {15761}
-
+ 
 \lx 16012
 \g drink
 \c W
 \wc root
 \mp RootPOS261
 \mp InflClass18663
-\a پ {17792} StemName17837 +/ _ ... {StemNameAffix17837} +/ {StemNameAffix17837} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _ / _ [15666]  | / _ [V]
-
+\a پ {17792} StemName17837 +/ _ ... {StemNameAffix17837} +/ {StemNameAffix17837} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _ / _ [15666]  | / _ [V] 
+		
 \a پیج {18637} StemName18510 +/ _ ... {StemNameAffix18510} +/ {StemNameAffix18510} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
-\a پo {234560} StemName17837 +/ _ ... {StemNameAffix17837} +/ {StemNameAffix17837} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
-
- ~/ _ [15666]  | ~/ _ [V]
-
+\a پo {234560} StemName17837 +/ _ ... {StemNameAffix17837} +/ {StemNameAffix17837} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _  
+ 
+ ~/ _ [15666]  | ~/ _ [V] 
+		
 \a پی {16013} NotStemName17837StemName18510
-
+ 
 \lx 16121
 \g do
 \c W
@@ -348,14 +348,14 @@
 \a کیج {18638} StemName18510 +/ _ ... {StemNameAffix18510} +/ {StemNameAffix18510} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
 \a ک {18659} StemName17837 +/ _ ... {StemNameAffix17837} +/ {StemNameAffix17837} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
 \a کر {16122} NotStemName17837StemName18510
-
+ 
 \lx 16309
 \g 1SG.NOM
 \c W
 \wc root
 \mp RootPOS260
 \a میں {16310}
-
+ 
 \lx 16322
 \g 1SG.OBL
 \c W
@@ -363,137 +363,137 @@
 \mp RootPOS260
 \a مجھ.کو {16333}
 \a مجھے {16323}
-
+ 
 \lx 16365
 \g 1SG.GEN
 \c W
 \wc root
 \mp RootPOS16362
 \a میر {16366}
-
+ 
 \lx 16380
 \g MASC.PL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15342
 \fd InflectionFS16558
 \a ے {16379}
 \eType suffix
 \mp StemNameAffix18674
-
+ 
 \lx 16968
 \g MASC.PL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16965
 \a ے {16379}
 \eType suffix
-
+ 
 \lx 18423
 \g MASC.PL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 18420
 \a ے {16379}
 \eType suffix
-
+ 
 \lx 16383
 \g MASC.SG
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 15342
 \fd InflectionFS16584
 \a ا {16382}
 \eType suffix
-
+ 
 \lx 16966
 \g MASC.SG
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16965
 \fd InflectionFS18583
 \a ا {16382}
 \eType suffix
-
+ 
 \lx 18421
 \g MASC.SG
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 18420
 \fd InflectionFS18586
 \a ا {16382}
 \eType suffix
-
+ 
 \lx 16392
 \g MASC.SG.NOM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16375
 \fd InflectionFS16578
 \a ہ {16418}
 \a یہ {16419}
 \a ا {16393}
 \eType suffix
-
+ 
 \lx 16396
 \g MASC.PL.NOM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16375
 \fd InflectionFS16552
 \a ئے {16420}
 \a ے {16397}
 \eType suffix
-
+ 
 \lx 16400
 \g FEM.SG
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16375
 \fd InflectionFS16541
 \a یا {16421}
 \a ی {16401}
 \eType suffix
-
+ 
 \lx 16404
 \g FEM.PL.NOM
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16375
 \fd InflectionFS16524
 \a یں {16837}
 \a یاں {16405}
 \eType suffix
-
+ 
 \lx 16408
 \g MASC.SG.OBL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16375
 \fd InflectionFS16598
 \a ئے {16777}
 \a ے {16409}
 \eType suffix
-
+ 
 \lx 16412
 \g MASC.PL.OBL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16375
 \fd InflectionFS16572
 \a وں {16413}
 \eType suffix
-
+ 
 \lx 16416
 \g FEM.PL.OBL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16375
 \fd InflectionFS16535
 \a وں {16852}
 \a یوں {16417}
 \eType suffix
-
+ 
 \lx 16456
 \g boy
 \c W
@@ -501,7 +501,7 @@
 \mp RootPOS259
 \fd MSFS16494
 \a لڑک {16457}
-
+ 
 \lx 16508
 \g girl
 \c W
@@ -509,7 +509,7 @@
 \mp RootPOS259
 \fd MSFS17292
 \a لڑک {16509}
-
+ 
 \lx 16706
 \g child
 \c W
@@ -517,14 +517,14 @@
 \mp RootPOS259
 \fd MSFS17300
 \a بچّ {16707}
-
+ 
 \lx 21890
 \g rupee
 \c W
 \wc root
 \mp RootPOS259
 \a روپ {16759}
-
+ 
 \lx 16793
 \g bird
 \c W
@@ -532,7 +532,7 @@
 \mp RootPOS259
 \fd MSFS17288
 \a چڑ {16794}
-
+ 
 \lx 16816
 \g home
 \c W
@@ -540,7 +540,7 @@
 \mp RootPOS259
 \fd MSFS17298
 \a گھر {16817}
-
+ 
 \lx 16830
 \g book
 \c W
@@ -548,60 +548,60 @@
 \mp RootPOS259
 \fd MSFS17290
 \a کتاب {16831}
-
+ 
 \lx 16873
 \g big
 \c W
 \wc root
 \mp RootPOS16362
 \a بڑ {16874}
-
+ 
 \lx 16891
 \g MASC.OBL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 16377
 \fd InflectionFS16893
 \a ے {16892}
 \eType suffix
-
+ 
 \lx 17087
 \g MASC.OBL
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 17080
 \fd InflectionFS18575
 \a ے {16892}
 \eType suffix
-
+ 
 \lx 17279
 \g interesting
 \c W
 \wc root
 \mp RootPOS16362
 \a دلچسپ {16925}
-
+ 
 \lx 16945
 \g one
 \c W
 \wc root
 \mp RootPOS0
 \a ایک {16946}
-
+ 
 \lx 16953
 \g mosquito
 \c W
 \wc root
 \mp RootPOS20974
 \a مچّھر {16954}
-
+ 
 \lx 16974
 \g GEN
 \c W
 \wc root
 \mp RootPOS16963
 \a ک {16975}
-
+ 
 \lx 16988
 \g story
 \c W
@@ -609,14 +609,14 @@
 \mp RootPOS259
 \fd MSFS17286
 \a کہان {16989}
-
+ 
 \lx 16997
 \g very
 \c W
 \wc root
 \mp RootPOS258
 \a بہت {16998}
-
+ 
 \lx 17010
 \g forest
 \c W
@@ -624,14 +624,14 @@
 \mp RootPOS20974
 \fd MSFS17296
 \a جنگل {17011}
-
+ 
 \lx 17024
 \g in
 \c W
 \wc root
 \mp RootPOS17021
 \a میں {17025}
-
+ 
 \lx 17037
 \g stream
 \c W
@@ -639,7 +639,7 @@
 \mp RootPOS259
 \fd MSFS17284
 \a ند {17038}
-
+ 
 \lx 17054
 \g bank
 \c W
@@ -647,14 +647,14 @@
 \mp RootPOS259
 \fd MSFS17294
 \a کنار {17055}
-
+ 
 \lx 17072
 \g all
 \c W
 \wc root
 \mp RootPOS17069
 \a سار {17073}
-
+ 
 \lx 17096
 \g bush
 \c W
@@ -662,28 +662,28 @@
 \mp RootPOS259
 \fd MSFS17282
 \a جھاڑ {17097}
-
+ 
 \lx 17110
 \g which
 \c W
 \wc root
 \mp RootPOS17107
 \a جن {17111}
-
+ 
 \lx 17125
 \g little
 \c W
 \wc root
 \mp RootPOS16362
 \a چھوٹ {17126}
-
+ 
 \lx 17134
 \g animal
 \c W
 \wc root
 \mp RootPOS20974
 \a جانور {17135}
-
+ 
 \lx 17150
 \g live
 \c W
@@ -691,35 +691,35 @@
 \mp RootPOS261
 \mp InflClass18509
 \a رہ {17151}
-
+ 
 \lx 17161
 \g rabbit
 \c W
 \wc root
 \mp RootPOS20974
 \a خرگوش {17162}
-
+ 
 \lx 17170
 \g whose
 \c W
 \wc root
 \mp RootPOS17107
 \a جو {17171}
-
+ 
 \lx 17179
 \g red
 \c W
 \wc root
 \mp RootPOS16362
 \a لال {17180}
-
+ 
 \lx 17199
 \g from
 \c W
 \wc root
 \mp RootPOS17021
 \a سے {17200}
-
+ 
 \lx 17208
 \g see
 \c W
@@ -727,28 +727,28 @@
 \mp RootPOS261
 \mp InflClass18509
 \a دیکھ {17209}
-
+ 
 \lx 17220
 \g that
 \c W
 \wc root
 \mp RootPOS17217
 \a کہ {17221}
-
+ 
 \lx 17229
 \g who
 \c W
 \wc root
 \mp RootPOS0
 \a کون {17230}
-
+ 
 \lx 17245
 \g and
 \c W
 \wc root
 \mp RootPOS17242
 \a اور {17246}
-
+ 
 \lx 17253
 \g come
 \c W
@@ -756,35 +756,35 @@
 \mp RootPOS15311
 \mp InflClass18509
 \a آ {17254}
-
+ 
 \lx 17316
 \g squirrel
 \c W
 \wc root
 \mp RootPOS259
 \a گلہر {17317}
-
+ 
 \lx 17326
 \g Mrs.
 \c W
 \wc root
 \mp RootPOS0
 \a بیگم {17327}
-
+ 
 \lx 17496
 \g own
 \c W
 \wc root
 \mp RootPOS16963
 \a اپن {17497}
-
+ 
 \lx 17505
 \g eye
 \c W
 \wc root
 \mp RootPOS259
 \a انکھ {17506}
-
+ 
 \lx 17514
 \g roam
 \c W
@@ -792,21 +792,21 @@
 \mp RootPOS15311
 \mp InflClass18509
 \a گھما {17515}
-
+ 
 \lx 17523
 \g to.here
 \c W
 \wc root
 \mp RootPOS258
 \a ادھر {17524}
-
+ 
 \lx 17532
 \g to.there
 \c W
 \wc root
 \mp RootPOS258
 \a اُدھر {17533}
-
+ 
 \lx 17569
 \g go.AUX
 \c W
@@ -815,114 +815,114 @@
 \mp InflClass18509
 \a جا {18237}
 \a گ {17570}
-
+ 
 \lx 17582
 \g therefore
 \c W
 \wc root
 \mp RootPOS0
 \a تو {17583}
-
+ 
 \lx 17595
 \g tree
 \c W
 \wc root
 \mp RootPOS20974
 \a درخت {17596}
-
+ 
 \lx 17603
 \g on
 \c W
 \wc root
 \mp RootPOS17021
 \a پر {17604}
-
+ 
 \lx 17611
 \g frog
 \c W
 \wc root
 \mp RootPOS20974
 \a مینڈک {17612}
-
+ 
 \lx 17620
 \g voice
 \c W
 \wc root
 \mp RootPOS20974
 \a آواز {17621}
-
+ 
 \lx 17635
 \g below
 \c W
 \wc root
 \mp RootPOS17021
 \a نیچے {17636}
-
+ 
 \lx 17681
 \g wow wow!
 \c W
 \wc root
 \mp RootPOS17678
 \a واہ.واہ {17682}
-
+ 
 \lx 17692
 \g 3P.OBL
 \c W
 \wc root
 \mp RootPOS260
 \a اُن {17693}
-
+ 
 \lx 17701
 \g DAT
 \c W
 \wc root
 \mp RootPOS17021
 \a کو {17702}
-
+ 
 \lx 17715
 \g his
 \c W
 \wc root
 \mp RootPOS260
 \a اُن.کو {17716}
-
+ 
 \lx 17724
 \g musical.instrument
 \c W
 \wc root
 \mp RootPOS20974
 \a بین {17725}
-
+ 
 \lx 17841
 \g give
 \c W
 \wc root
 \mp RootPOS261
 \mp InflClass18509
-\a دے {17954} NotStemName18510StemName18674 / _ #  | / _ #
-
+\a دے {17954} NotStemName18510StemName18674 / _ #  | / _ # 
+		
 \a دیج {18639} StemName18510 +/ _ ... {StemNameAffix18510} +/ {StemNameAffix18510} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
 \a د {18681} StemName18674 +/ _ ... {StemNameAffix18674} +/ {StemNameAffix18674} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
-\a دی {17842} NotStemName18510StemName18674
-
- ~/ _ #  | ~/ _ #
-
-
+\a دی {17842} NotStemName18510StemName18674  
+ 
+ ~/ _ #  | ~/ _ # 
+		
+ 
 \lx 17976
 \g take
 \c W
 \wc root
 \mp RootPOS261
 \mp InflClass18663
-\a لے {18090} NotStemName18510StemName18674 / _ #  | / _ #
-
+\a لے {18090} NotStemName18510StemName18674 / _ #  | / _ # 
+		
 \a لیج {18636} StemName18510 +/ _ ... {StemNameAffix18510} +/ {StemNameAffix18510} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
 \a ل {18682} StemName18674 +/ _ ... {StemNameAffix18674} +/ {StemNameAffix18674} ... _  +/ _ ... [DerivAffix] +/ [DerivAffix] ... _ +/ _ ... {root} +/ {root} ... _
-\a لی {17977} NotStemName18510StemName18674
-
- ~/ _ #  | ~/ _ #
-
-
+\a لی {17977} NotStemName18510StemName18674  
+ 
+ ~/ _ #  | ~/ _ # 
+		
+ 
 \lx 18112
 \g go
 \c W
@@ -930,7 +930,7 @@
 \mp RootPOS261
 \mp InflClass18509
 \a جا {18113}
-
+ 
 \lx 18287
 \g BE
 \c W
@@ -938,80 +938,81 @@
 \mp RootPOS261
 \mp InflClass18509
 \a ہو {18288}
-
+ 
 \lx 18388
 \g WAS
 \c W
 \wc root
 \mp RootPOS18385
 \a تھ {18389}
-
+ 
 \lx 18456
 \g CONT
 \c W
 \wc root
 \mp RootPOS18385
 \a رہ {18457}
-
+ 
 \lx 18488
 \g FUT
 \c W
 \wc root
 \mp RootPOS18385
 \a گ {18489}
-
+ 
 \lx 19980
 \g BE.PRES.1SG
 \c W
 \wc root
 \mp RootPOS19942
 \a ہوں {19824}
-
+ 
 \lx 19960
 \g BE.PRES.3SG
 \c W
 \wc root
 \mp RootPOS19942
 \a ہے {19832}
-
+ 
 \lx 19962
 \g BE.PRES.2PL
 \c W
 \wc root
 \mp RootPOS19942
 \a ہو {19840}
-
+ 
 \lx 19961
 \g BE.PRES.3PL
 \c W
 \wc root
 \mp RootPOS19942
 \a ہیں {19848}
-
+ 
 \lx 20038
 \g BE.SUBJ.3SG
 \c W
 \wc root
 \mp RootPOS19942
 \a ہو {20039}
-
+ 
 \lx 20047
 \g BE.SUBJ.3PL
 \c W
 \wc root
 \mp RootPOS19942
 \a ہوں {20048}
-
+ 
 \lx 20840
 \g BE.SUBJ.1
 \c W
 \wc root
 \mp RootPOS19942
 \a ہوں {20841}
-
+ 
 \lx 20848
 \g BE.SUBJ.2PL
 \c W
 \wc root
 \mp RootPOS19942
 \a ہو {20849}
+ 

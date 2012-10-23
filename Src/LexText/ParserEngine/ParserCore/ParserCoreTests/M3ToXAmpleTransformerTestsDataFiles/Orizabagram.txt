@@ -1638,14 +1638,14 @@ rule {Stem with a derivational prefix}
 		<Stem_2 stemName>         = <derivPfx stemName>
 		<Stem_2 exception>        = <derivPfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivPfx fromCat>
 		<Stem_2 synCat>           = <derivPfx envCat>
 		/
 		<derivPfx fromCat>        = 256
 		<derivPfx envCat>         = 256
 {
-
+	  
 		<Stem_2 synCat>           = 256 /
 		<Stem_2 synCat>           = 13146 /
 		<Stem_2 synCat>           = 13147 /
@@ -1661,7 +1661,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = 24234
 		<derivPfx envCat>         = 24234
 {
-
+	  
 		<Stem_2 synCat>           = 24234 /
 		<Stem_2 synCat>           = 24235 /
 		<Stem_2 synCat>           = 24236
@@ -1671,7 +1671,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = 258
 		<derivPfx envCat>         = 258
 {
-
+	  
 		<Stem_2 synCat>           = 258 /
 		<Stem_2 synCat>           = 16929 /
 		<Stem_2 synCat>           = 16930 /
@@ -1682,7 +1682,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = 13605
 		<derivPfx envCat>         = 13605
 {
-
+	  
 		<Stem_2 synCat>           = 13605 /
 		<Stem_2 synCat>           = 13683
 }
@@ -1691,7 +1691,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = 13696
 		<derivPfx envCat>         = 13696
 {
-
+	  
 		<Stem_2 synCat>           = 13696 /
 		<Stem_2 synCat>           = 13697 /
 		<Stem_2 synCat>           = 13698
@@ -1701,7 +1701,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = 13744
 		<derivPfx envCat>         = 13744
 {
-
+	  
 		<Stem_2 synCat>           = 13744 /
 		<Stem_2 synCat>           = 13765 /
 		<Stem_2 synCat>           = 13766 /
@@ -1712,7 +1712,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = 13765
 		<derivPfx envCat>         = 13765
 {
-
+	  
 		<Stem_2 synCat>           = 13765 /
 		<Stem_2 synCat>           = 13766 /
 		<Stem_2 synCat>           = 23342
@@ -1722,7 +1722,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = 20333
 		<derivPfx envCat>         = 20333
 {
-
+	  
 		<Stem_2 synCat>           = 20333 /
 		<Stem_2 synCat>           = 20334 /
 		<Stem_2 synCat>           = 20335
@@ -1732,7 +1732,7 @@ rule {Stem with a derivational prefix}
 		<derivPfx fromCat>        = 22963
 		<derivPfx envCat>         = 22963
 {
-
+	  
 		<Stem_2 synCat>           = 22963 /
 		<Stem_2 synCat>           = 22964 /
 		<Stem_2 synCat>           = 23053
@@ -1762,14 +1762,14 @@ rule {Stem with a derivational suffix}
 		<Stem_2 stemName>         = <derivSfx stemName>
 		<Stem_2 exception>        = <derivSfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivSfx fromCat>
 		<Stem_2 synCat>           = <derivSfx envCat>
 		/
 		<derivSfx fromCat>        = 256
 		<derivSfx envCat>         = 256
 {
-
+	  
 		<Stem_2 synCat>           = 256 /
 		<Stem_2 synCat>           = 13146 /
 		<Stem_2 synCat>           = 13147 /
@@ -1785,7 +1785,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = 24234
 		<derivSfx envCat>         = 24234
 {
-
+	  
 		<Stem_2 synCat>           = 24234 /
 		<Stem_2 synCat>           = 24235 /
 		<Stem_2 synCat>           = 24236
@@ -1795,7 +1795,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = 258
 		<derivSfx envCat>         = 258
 {
-
+	  
 		<Stem_2 synCat>           = 258 /
 		<Stem_2 synCat>           = 16929 /
 		<Stem_2 synCat>           = 16930 /
@@ -1806,7 +1806,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = 13605
 		<derivSfx envCat>         = 13605
 {
-
+	  
 		<Stem_2 synCat>           = 13605 /
 		<Stem_2 synCat>           = 13683
 }
@@ -1815,7 +1815,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = 13696
 		<derivSfx envCat>         = 13696
 {
-
+	  
 		<Stem_2 synCat>           = 13696 /
 		<Stem_2 synCat>           = 13697 /
 		<Stem_2 synCat>           = 13698
@@ -1825,7 +1825,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = 13744
 		<derivSfx envCat>         = 13744
 {
-
+	  
 		<Stem_2 synCat>           = 13744 /
 		<Stem_2 synCat>           = 13765 /
 		<Stem_2 synCat>           = 13766 /
@@ -1836,7 +1836,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = 13765
 		<derivSfx envCat>         = 13765
 {
-
+	  
 		<Stem_2 synCat>           = 13765 /
 		<Stem_2 synCat>           = 13766 /
 		<Stem_2 synCat>           = 23342
@@ -1846,7 +1846,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = 20333
 		<derivSfx envCat>         = 20333
 {
-
+	  
 		<Stem_2 synCat>           = 20333 /
 		<Stem_2 synCat>           = 20334 /
 		<Stem_2 synCat>           = 20335
@@ -1856,7 +1856,7 @@ rule {Stem with a derivational suffix}
 		<derivSfx fromCat>        = 22963
 		<derivSfx envCat>         = 22963
 {
-
+	  
 		<Stem_2 synCat>           = 22963 /
 		<Stem_2 synCat>           = 22964 /
 		<Stem_2 synCat>           = 23053
@@ -1895,7 +1895,7 @@ rule {Stem with a derivational circumfix}
 		 <Stem_2 exception>        = <derivCircumPfx fromException>
 		 <Stem_2 exception>        = <derivCircumSfx fromException>
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx envCat>
 		<Stem_2 synCat>           = <derivCircumSfx fromCat>
@@ -1906,7 +1906,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 256
 		<derivCircumSfx envCat>         = 256
 {
-
+	  
 		<Stem_2 synCat>           = 256 /
 		<Stem_2 synCat>           = 13146 /
 		<Stem_2 synCat>           = 13147 /
@@ -1924,7 +1924,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 24234
 		<derivCircumSfx envCat>         = 24234
 {
-
+	  
 		<Stem_2 synCat>           = 24234 /
 		<Stem_2 synCat>           = 24235 /
 		<Stem_2 synCat>           = 24236
@@ -1936,7 +1936,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 258
 		<derivCircumSfx envCat>         = 258
 {
-
+	  
 		<Stem_2 synCat>           = 258 /
 		<Stem_2 synCat>           = 16929 /
 		<Stem_2 synCat>           = 16930 /
@@ -1949,7 +1949,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 13605
 		<derivCircumSfx envCat>         = 13605
 {
-
+	  
 		<Stem_2 synCat>           = 13605 /
 		<Stem_2 synCat>           = 13683
 }
@@ -1960,7 +1960,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 13696
 		<derivCircumSfx envCat>         = 13696
 {
-
+	  
 		<Stem_2 synCat>           = 13696 /
 		<Stem_2 synCat>           = 13697 /
 		<Stem_2 synCat>           = 13698
@@ -1972,7 +1972,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 13744
 		<derivCircumSfx envCat>         = 13744
 {
-
+	  
 		<Stem_2 synCat>           = 13744 /
 		<Stem_2 synCat>           = 13765 /
 		<Stem_2 synCat>           = 13766 /
@@ -1985,7 +1985,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 13765
 		<derivCircumSfx envCat>         = 13765
 {
-
+	  
 		<Stem_2 synCat>           = 13765 /
 		<Stem_2 synCat>           = 13766 /
 		<Stem_2 synCat>           = 23342
@@ -1997,7 +1997,7 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 20333
 		<derivCircumSfx envCat>         = 20333
 {
-
+	  
 		<Stem_2 synCat>           = 20333 /
 		<Stem_2 synCat>           = 20334 /
 		<Stem_2 synCat>           = 20335
@@ -2009,14 +2009,14 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 22963
 		<derivCircumSfx envCat>         = 22963
 {
-
+	  
 		<Stem_2 synCat>           = 22963 /
 		<Stem_2 synCat>           = 22964 /
 		<Stem_2 synCat>           = 23053
 }
 
 	  }
-
+	  
 rule {Stem with a derivational circumfix where the rightmost part is an infix (and so may end up as a prefix}
 		 Stem_1 = derivCircumPfx_1 derivCircumPfx_2 Stem_2
 		 | percolation
@@ -2051,7 +2051,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		 | rightmost "prefix" must be an infix
 		 <derivCircumPfx_2> == [morphType : infix]
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx_1 fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx_1 envCat>
 		<Stem_2 synCat>           = <derivCircumPfx_2 fromCat>
@@ -2062,7 +2062,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 256
 		<derivCircumPfx_2 envCat>         = 256
 {
-
+	  
 		<Stem_2 synCat>           = 256 /
 		<Stem_2 synCat>           = 13146 /
 		<Stem_2 synCat>           = 13147 /
@@ -2080,7 +2080,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 24234
 		<derivCircumPfx_2 envCat>         = 24234
 {
-
+	  
 		<Stem_2 synCat>           = 24234 /
 		<Stem_2 synCat>           = 24235 /
 		<Stem_2 synCat>           = 24236
@@ -2092,7 +2092,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 258
 		<derivCircumPfx_2 envCat>         = 258
 {
-
+	  
 		<Stem_2 synCat>           = 258 /
 		<Stem_2 synCat>           = 16929 /
 		<Stem_2 synCat>           = 16930 /
@@ -2105,7 +2105,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 13605
 		<derivCircumPfx_2 envCat>         = 13605
 {
-
+	  
 		<Stem_2 synCat>           = 13605 /
 		<Stem_2 synCat>           = 13683
 }
@@ -2116,7 +2116,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 13696
 		<derivCircumPfx_2 envCat>         = 13696
 {
-
+	  
 		<Stem_2 synCat>           = 13696 /
 		<Stem_2 synCat>           = 13697 /
 		<Stem_2 synCat>           = 13698
@@ -2128,7 +2128,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 13744
 		<derivCircumPfx_2 envCat>         = 13744
 {
-
+	  
 		<Stem_2 synCat>           = 13744 /
 		<Stem_2 synCat>           = 13765 /
 		<Stem_2 synCat>           = 13766 /
@@ -2141,7 +2141,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 13765
 		<derivCircumPfx_2 envCat>         = 13765
 {
-
+	  
 		<Stem_2 synCat>           = 13765 /
 		<Stem_2 synCat>           = 13766 /
 		<Stem_2 synCat>           = 23342
@@ -2153,7 +2153,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 20333
 		<derivCircumPfx_2 envCat>         = 20333
 {
-
+	  
 		<Stem_2 synCat>           = 20333 /
 		<Stem_2 synCat>           = 20334 /
 		<Stem_2 synCat>           = 20335
@@ -2165,17 +2165,17 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 22963
 		<derivCircumPfx_2 envCat>         = 22963
 {
-
+	  
 		<Stem_2 synCat>           = 22963 /
 		<Stem_2 synCat>           = 22964 /
 		<Stem_2 synCat>           = 23053
 }
 
 	  }
-
+	  
 rule {Stem via compound rule 24288}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -2197,7 +2197,7 @@ rule {Stem via compound rule 24288}
 		<Stem_2 synCat>           = 24234 /
 		<Stem_2 synCat>           = 24235 /
 		<Stem_2 synCat>           = 24236 }
-
+								
 				{
 		<Stem_3 synCat> =  256 /
 		<Stem_3 synCat>           = 13146 /
@@ -2208,10 +2208,10 @@ rule {Stem via compound rule 24288}
 		<Stem_3 synCat>           = 24234 /
 		<Stem_3 synCat>           = 24235 /
 		<Stem_3 synCat>           = 24236 }
-
+				
 rule {Stem via compound rule 24361}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -2234,10 +2234,10 @@ rule {Stem via compound rule 24361}
 		<Stem_3 synCat>           = 24234 /
 		<Stem_3 synCat>           = 24235 /
 		<Stem_3 synCat>           = 24236 }
-
+				
 rule {Stem via compound rule 24371}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -2259,11 +2259,11 @@ rule {Stem via compound rule 24371}
 		<Stem_2 synCat>           = 24234 /
 		<Stem_2 synCat>           = 24235 /
 		<Stem_2 synCat>           = 24236 }
-
+								
 		<Stem_3 synCat> = 16930
 rule {Stem via compound rule 24503}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -2285,11 +2285,11 @@ rule {Stem via compound rule 24503}
 		<Stem_2 synCat>           = 24234 /
 		<Stem_2 synCat>           = 24235 /
 		<Stem_2 synCat>           = 24236 }
-
+								
 		<Stem_3 synCat> = 16929
 rule {Stem via compound rule 24569}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -2307,10 +2307,10 @@ rule {Stem via compound rule 24569}
 		<Stem_3 synCat>           = 16929 /
 		<Stem_3 synCat>           = 16930 /
 		<Stem_3 synCat>           = 22932 }
-
+				
 rule {Stem via compound rule 24574}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -2326,16 +2326,16 @@ rule {Stem via compound rule 24574}
 		<Stem_2 synCat> =  22963 /
 		<Stem_2 synCat>           = 22964 /
 		<Stem_2 synCat>           = 23053 }
-
+								
 				{
 		<Stem_3 synCat> =  258 /
 		<Stem_3 synCat>           = 16929 /
 		<Stem_3 synCat>           = 16930 /
 		<Stem_3 synCat>           = 22932 }
-
+				
 rule {Stem via compound rule 24613}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -2353,10 +2353,10 @@ rule {Stem via compound rule 24613}
 		<Stem_3 synCat>           = 16929 /
 		<Stem_3 synCat>           = 16930 /
 		<Stem_3 synCat>           = 22932 }
-
+				
 rule {Stem via compound rule 25044}
   Stem_1 = Stem_2 Stem_3
-								| percolation
+                                | percolation
 		<Stem_1 morphoSyntax> = <Stem_3 morphoSyntax>
 		<Stem_1 synCat> = <Stem_3 synCat>
 		<Stem_1 requiresInflection> = <Stem_3 requiresInflection>
@@ -2364,7 +2364,7 @@ rule {Stem via compound rule 25044}
 		<Stem_1 exception> = <Stem_3 exception>
 			   | for stem names, use priority union to handle case of compound within a compound; last one wins
 		<Stem_1 stemName>   <= <Stem_3 stemName>
-		<Stem_1 synCat> <= 16929                                | override category
+        <Stem_1 synCat> <= 16929                                | override category
 		<Stem_1 blocksInflection> = - | This stem can now be inflected
 						  | constraints
 
@@ -2378,7 +2378,7 @@ rule {Stem via compound rule 25044}
 		<Stem_2 synCat>           = 24234 /
 		<Stem_2 synCat>           = 24235 /
 		<Stem_2 synCat>           = 24236 }
-
+								
 		<Stem_3 synCat> = 16930
 | ------------------------------------------------------------
 |                PARTIALLY ANALYZED WORD PORTION
@@ -2470,9 +2470,9 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
 		<Full synCat>           = <Suffixes synCat>
@@ -2483,7 +2483,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 256
 		<Suffixes envCat>         = 256
 {
-
+	  
 		<Full synCat>           = 256 /
 		<Full synCat>           = 13146 /
 		<Full synCat>           = 13147 /
@@ -2501,7 +2501,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 24234
 		<Suffixes envCat>         = 24234
 {
-
+	  
 		<Full synCat>           = 24234 /
 		<Full synCat>           = 24235 /
 		<Full synCat>           = 24236
@@ -2513,7 +2513,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 258
 		<Suffixes envCat>         = 258
 {
-
+	  
 		<Full synCat>           = 258 /
 		<Full synCat>           = 16929 /
 		<Full synCat>           = 16930 /
@@ -2526,7 +2526,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 13605
 		<Suffixes envCat>         = 13605
 {
-
+	  
 		<Full synCat>           = 13605 /
 		<Full synCat>           = 13683
 }
@@ -2537,7 +2537,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 13696
 		<Suffixes envCat>         = 13696
 {
-
+	  
 		<Full synCat>           = 13696 /
 		<Full synCat>           = 13697 /
 		<Full synCat>           = 13698
@@ -2549,7 +2549,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 13744
 		<Suffixes envCat>         = 13744
 {
-
+	  
 		<Full synCat>           = 13744 /
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
@@ -2562,7 +2562,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 13765
 		<Suffixes envCat>         = 13765
 {
-
+	  
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
 		<Full synCat>           = 23342
@@ -2574,7 +2574,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 20333
 		<Suffixes envCat>         = 20333
 {
-
+	  
 		<Full synCat>           = 20333 /
 		<Full synCat>           = 20334 /
 		<Full synCat>           = 20335
@@ -2586,7 +2586,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 22963
 		<Suffixes envCat>         = 22963
 {
-
+	  
 		<Full synCat>           = 22963 /
 		<Full synCat>           = 22964 /
 		<Full synCat>           = 23053
@@ -2600,16 +2600,16 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
 		/
 		<Prefixes synCat>        = 256
 		<Prefixes envCat>         = 256
 {
-
+	  
 		<Full synCat>           = 256 /
 		<Full synCat>           = 13146 /
 		<Full synCat>           = 13147 /
@@ -2625,7 +2625,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = 24234
 		<Prefixes envCat>         = 24234
 {
-
+	  
 		<Full synCat>           = 24234 /
 		<Full synCat>           = 24235 /
 		<Full synCat>           = 24236
@@ -2635,7 +2635,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = 258
 		<Prefixes envCat>         = 258
 {
-
+	  
 		<Full synCat>           = 258 /
 		<Full synCat>           = 16929 /
 		<Full synCat>           = 16930 /
@@ -2646,7 +2646,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = 13605
 		<Prefixes envCat>         = 13605
 {
-
+	  
 		<Full synCat>           = 13605 /
 		<Full synCat>           = 13683
 }
@@ -2655,7 +2655,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = 13696
 		<Prefixes envCat>         = 13696
 {
-
+	  
 		<Full synCat>           = 13696 /
 		<Full synCat>           = 13697 /
 		<Full synCat>           = 13698
@@ -2665,7 +2665,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = 13744
 		<Prefixes envCat>         = 13744
 {
-
+	  
 		<Full synCat>           = 13744 /
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
@@ -2676,7 +2676,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = 13765
 		<Prefixes envCat>         = 13765
 {
-
+	  
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
 		<Full synCat>           = 23342
@@ -2686,7 +2686,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = 20333
 		<Prefixes envCat>         = 20333
 {
-
+	  
 		<Full synCat>           = 20333 /
 		<Full synCat>           = 20334 /
 		<Full synCat>           = 20335
@@ -2696,7 +2696,7 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
 		<Prefixes synCat>        = 22963
 		<Prefixes envCat>         = 22963
 {
-
+	  
 		<Full synCat>           = 22963 /
 		<Full synCat>           = 22964 /
 		<Full synCat>           = 23053
@@ -2710,16 +2710,16 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Suffixes synCat>
 		<Full synCat>           = <Suffixes envCat>
 		/
 		<Suffixes synCat>        = 256
 		<Suffixes envCat>         = 256
 {
-
+	  
 		<Full synCat>           = 256 /
 		<Full synCat>           = 13146 /
 		<Full synCat>           = 13147 /
@@ -2735,7 +2735,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 24234
 		<Suffixes envCat>         = 24234
 {
-
+	  
 		<Full synCat>           = 24234 /
 		<Full synCat>           = 24235 /
 		<Full synCat>           = 24236
@@ -2745,7 +2745,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 258
 		<Suffixes envCat>         = 258
 {
-
+	  
 		<Full synCat>           = 258 /
 		<Full synCat>           = 16929 /
 		<Full synCat>           = 16930 /
@@ -2756,7 +2756,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 13605
 		<Suffixes envCat>         = 13605
 {
-
+	  
 		<Full synCat>           = 13605 /
 		<Full synCat>           = 13683
 }
@@ -2765,7 +2765,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 13696
 		<Suffixes envCat>         = 13696
 {
-
+	  
 		<Full synCat>           = 13696 /
 		<Full synCat>           = 13697 /
 		<Full synCat>           = 13698
@@ -2775,7 +2775,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 13744
 		<Suffixes envCat>         = 13744
 {
-
+	  
 		<Full synCat>           = 13744 /
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
@@ -2786,7 +2786,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 13765
 		<Suffixes envCat>         = 13765
 {
-
+	  
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
 		<Full synCat>           = 23342
@@ -2796,7 +2796,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 20333
 		<Suffixes envCat>         = 20333
 {
-
+	  
 		<Full synCat>           = 20333 /
 		<Full synCat>           = 20334 /
 		<Full synCat>           = 20335
@@ -2806,7 +2806,7 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 22963
 		<Suffixes envCat>         = 22963
 {
-
+	  
 		<Full synCat>           = 22963 /
 		<Full synCat>           = 22964 /
 		<Full synCat>           = 23053
@@ -2820,9 +2820,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <circumPfx synCat>
 		<Full synCat>           = <circumPfx envCat>
 		<Full synCat>           = <circumSfx synCat>
@@ -2833,7 +2833,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 256
 		<circumSfx envCat>         = 256
 {
-
+	  
 		<Full synCat>           = 256 /
 		<Full synCat>           = 13146 /
 		<Full synCat>           = 13147 /
@@ -2851,7 +2851,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 24234
 		<circumSfx envCat>         = 24234
 {
-
+	  
 		<Full synCat>           = 24234 /
 		<Full synCat>           = 24235 /
 		<Full synCat>           = 24236
@@ -2863,7 +2863,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 258
 		<circumSfx envCat>         = 258
 {
-
+	  
 		<Full synCat>           = 258 /
 		<Full synCat>           = 16929 /
 		<Full synCat>           = 16930 /
@@ -2876,7 +2876,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 13605
 		<circumSfx envCat>         = 13605
 {
-
+	  
 		<Full synCat>           = 13605 /
 		<Full synCat>           = 13683
 }
@@ -2887,7 +2887,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 13696
 		<circumSfx envCat>         = 13696
 {
-
+	  
 		<Full synCat>           = 13696 /
 		<Full synCat>           = 13697 /
 		<Full synCat>           = 13698
@@ -2899,7 +2899,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 13744
 		<circumSfx envCat>         = 13744
 {
-
+	  
 		<Full synCat>           = 13744 /
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
@@ -2912,7 +2912,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 13765
 		<circumSfx envCat>         = 13765
 {
-
+	  
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
 		<Full synCat>           = 23342
@@ -2924,7 +2924,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 20333
 		<circumSfx envCat>         = 20333
 {
-
+	  
 		<Full synCat>           = 20333 /
 		<Full synCat>           = 20334 /
 		<Full synCat>           = 20335
@@ -2936,7 +2936,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 22963
 		<circumSfx envCat>         = 22963
 {
-
+	  
 		<Full synCat>           = 22963 /
 		<Full synCat>           = 22964 /
 		<Full synCat>           = 23053
@@ -2952,9 +2952,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 								 | constraints
 								 | rightmost "prefix" must be an infix
 	<circumPfx_2> == [morphType : infix]
-
+	  
 	  {
-
+	  
 		<Full synCat>           = <circumPfx_1 synCat>
 		<Full synCat>           = <circumPfx_1 envCat>
 		<Full synCat>           = <circumPfx_2 synCat>
@@ -2965,7 +2965,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 256
 		<circumPfx_2 envCat>         = 256
 {
-
+	  
 		<Full synCat>           = 256 /
 		<Full synCat>           = 13146 /
 		<Full synCat>           = 13147 /
@@ -2983,7 +2983,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 24234
 		<circumPfx_2 envCat>         = 24234
 {
-
+	  
 		<Full synCat>           = 24234 /
 		<Full synCat>           = 24235 /
 		<Full synCat>           = 24236
@@ -2995,7 +2995,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 258
 		<circumPfx_2 envCat>         = 258
 {
-
+	  
 		<Full synCat>           = 258 /
 		<Full synCat>           = 16929 /
 		<Full synCat>           = 16930 /
@@ -3008,7 +3008,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 13605
 		<circumPfx_2 envCat>         = 13605
 {
-
+	  
 		<Full synCat>           = 13605 /
 		<Full synCat>           = 13683
 }
@@ -3019,7 +3019,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 13696
 		<circumPfx_2 envCat>         = 13696
 {
-
+	  
 		<Full synCat>           = 13696 /
 		<Full synCat>           = 13697 /
 		<Full synCat>           = 13698
@@ -3031,7 +3031,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 13744
 		<circumPfx_2 envCat>         = 13744
 {
-
+	  
 		<Full synCat>           = 13744 /
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
@@ -3044,7 +3044,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 13765
 		<circumPfx_2 envCat>         = 13765
 {
-
+	  
 		<Full synCat>           = 13765 /
 		<Full synCat>           = 13766 /
 		<Full synCat>           = 23342
@@ -3056,7 +3056,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 20333
 		<circumPfx_2 envCat>         = 20333
 {
-
+	  
 		<Full synCat>           = 20333 /
 		<Full synCat>           = 20334 /
 		<Full synCat>           = 20335
@@ -3068,7 +3068,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 22963
 		<circumPfx_2 envCat>         = 22963
 {
-
+	  
 		<Full synCat>           = 22963 /
 		<Full synCat>           = 22964 /
 		<Full synCat>           = 23053
@@ -3148,14 +3148,14 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 								| percolation
   <Prefixes_1 synCat> = <prefix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Prefixes_2 synCat>           = <prefix fromCat>
 		/
 		<prefix fromCat>        = 256
 {
-
+	  
 		<Prefixes_2 synCat>           = 256 /
 		<Prefixes_2 synCat>           = 13146 /
 		<Prefixes_2 synCat>           = 13147 /
@@ -3170,7 +3170,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = 24234
 {
-
+	  
 		<Prefixes_2 synCat>           = 24234 /
 		<Prefixes_2 synCat>           = 24235 /
 		<Prefixes_2 synCat>           = 24236
@@ -3179,7 +3179,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = 258
 {
-
+	  
 		<Prefixes_2 synCat>           = 258 /
 		<Prefixes_2 synCat>           = 16929 /
 		<Prefixes_2 synCat>           = 16930 /
@@ -3189,7 +3189,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = 13605
 {
-
+	  
 		<Prefixes_2 synCat>           = 13605 /
 		<Prefixes_2 synCat>           = 13683
 }
@@ -3197,7 +3197,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = 13696
 {
-
+	  
 		<Prefixes_2 synCat>           = 13696 /
 		<Prefixes_2 synCat>           = 13697 /
 		<Prefixes_2 synCat>           = 13698
@@ -3206,7 +3206,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = 13744
 {
-
+	  
 		<Prefixes_2 synCat>           = 13744 /
 		<Prefixes_2 synCat>           = 13765 /
 		<Prefixes_2 synCat>           = 13766 /
@@ -3216,7 +3216,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = 13765
 {
-
+	  
 		<Prefixes_2 synCat>           = 13765 /
 		<Prefixes_2 synCat>           = 13766 /
 		<Prefixes_2 synCat>           = 23342
@@ -3225,7 +3225,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = 20333
 {
-
+	  
 		<Prefixes_2 synCat>           = 20333 /
 		<Prefixes_2 synCat>           = 20334 /
 		<Prefixes_2 synCat>           = 20335
@@ -3234,7 +3234,7 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 		/
 		<prefix fromCat>        = 22963
 {
-
+	  
 		<Prefixes_2 synCat>           = 22963 /
 		<Prefixes_2 synCat>           = 22964 /
 		<Prefixes_2 synCat>           = 23053
@@ -3248,12 +3248,12 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
   <Prefixes_1 synCat> = <derivPfx toCat>
 								| constraints
   {
-
+  
 		<Prefixes_2 synCat>           = <derivPfx fromCat>
 		/
 		<derivPfx fromCat>        = 256
 {
-
+	  
 		<Prefixes_2 synCat>           = 256 /
 		<Prefixes_2 synCat>           = 13146 /
 		<Prefixes_2 synCat>           = 13147 /
@@ -3268,7 +3268,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = 24234
 {
-
+	  
 		<Prefixes_2 synCat>           = 24234 /
 		<Prefixes_2 synCat>           = 24235 /
 		<Prefixes_2 synCat>           = 24236
@@ -3277,7 +3277,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = 258
 {
-
+	  
 		<Prefixes_2 synCat>           = 258 /
 		<Prefixes_2 synCat>           = 16929 /
 		<Prefixes_2 synCat>           = 16930 /
@@ -3287,7 +3287,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = 13605
 {
-
+	  
 		<Prefixes_2 synCat>           = 13605 /
 		<Prefixes_2 synCat>           = 13683
 }
@@ -3295,7 +3295,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = 13696
 {
-
+	  
 		<Prefixes_2 synCat>           = 13696 /
 		<Prefixes_2 synCat>           = 13697 /
 		<Prefixes_2 synCat>           = 13698
@@ -3304,7 +3304,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = 13744
 {
-
+	  
 		<Prefixes_2 synCat>           = 13744 /
 		<Prefixes_2 synCat>           = 13765 /
 		<Prefixes_2 synCat>           = 13766 /
@@ -3314,7 +3314,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = 13765
 {
-
+	  
 		<Prefixes_2 synCat>           = 13765 /
 		<Prefixes_2 synCat>           = 13766 /
 		<Prefixes_2 synCat>           = 23342
@@ -3323,7 +3323,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = 20333
 {
-
+	  
 		<Prefixes_2 synCat>           = 20333 /
 		<Prefixes_2 synCat>           = 20334 /
 		<Prefixes_2 synCat>           = 20335
@@ -3332,7 +3332,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
 		/
 		<derivPfx fromCat>        = 22963
 {
-
+	  
 		<Prefixes_2 synCat>           = 22963 /
 		<Prefixes_2 synCat>           = 22964 /
 		<Prefixes_2 synCat>           = 23053
@@ -3345,14 +3345,14 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 								| percolation
   <Suffixes_1 synCat> = <suffix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Suffixes_2 synCat>           = <suffix fromCat>
 		/
 		<suffix fromCat>        = 256
 {
-
+	  
 		<Suffixes_2 synCat>           = 256 /
 		<Suffixes_2 synCat>           = 13146 /
 		<Suffixes_2 synCat>           = 13147 /
@@ -3367,7 +3367,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = 24234
 {
-
+	  
 		<Suffixes_2 synCat>           = 24234 /
 		<Suffixes_2 synCat>           = 24235 /
 		<Suffixes_2 synCat>           = 24236
@@ -3376,7 +3376,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = 258
 {
-
+	  
 		<Suffixes_2 synCat>           = 258 /
 		<Suffixes_2 synCat>           = 16929 /
 		<Suffixes_2 synCat>           = 16930 /
@@ -3386,7 +3386,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = 13605
 {
-
+	  
 		<Suffixes_2 synCat>           = 13605 /
 		<Suffixes_2 synCat>           = 13683
 }
@@ -3394,7 +3394,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = 13696
 {
-
+	  
 		<Suffixes_2 synCat>           = 13696 /
 		<Suffixes_2 synCat>           = 13697 /
 		<Suffixes_2 synCat>           = 13698
@@ -3403,7 +3403,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = 13744
 {
-
+	  
 		<Suffixes_2 synCat>           = 13744 /
 		<Suffixes_2 synCat>           = 13765 /
 		<Suffixes_2 synCat>           = 13766 /
@@ -3413,7 +3413,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = 13765
 {
-
+	  
 		<Suffixes_2 synCat>           = 13765 /
 		<Suffixes_2 synCat>           = 13766 /
 		<Suffixes_2 synCat>           = 23342
@@ -3422,7 +3422,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = 20333
 {
-
+	  
 		<Suffixes_2 synCat>           = 20333 /
 		<Suffixes_2 synCat>           = 20334 /
 		<Suffixes_2 synCat>           = 20335
@@ -3431,7 +3431,7 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 		/
 		<suffix fromCat>        = 22963
 {
-
+	  
 		<Suffixes_2 synCat>           = 22963 /
 		<Suffixes_2 synCat>           = 22964 /
 		<Suffixes_2 synCat>           = 23053
@@ -3445,12 +3445,12 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
   <Suffixes_1 synCat> = <derivSfx toCat>
 								| constraints
   {
-
+  
 		<Suffixes_2 synCat>           = <derivSfx fromCat>
 		/
 		<derivSfx fromCat>        = 256
 {
-
+	  
 		<Suffixes_2 synCat>           = 256 /
 		<Suffixes_2 synCat>           = 13146 /
 		<Suffixes_2 synCat>           = 13147 /
@@ -3465,7 +3465,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = 24234
 {
-
+	  
 		<Suffixes_2 synCat>           = 24234 /
 		<Suffixes_2 synCat>           = 24235 /
 		<Suffixes_2 synCat>           = 24236
@@ -3474,7 +3474,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = 258
 {
-
+	  
 		<Suffixes_2 synCat>           = 258 /
 		<Suffixes_2 synCat>           = 16929 /
 		<Suffixes_2 synCat>           = 16930 /
@@ -3484,7 +3484,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = 13605
 {
-
+	  
 		<Suffixes_2 synCat>           = 13605 /
 		<Suffixes_2 synCat>           = 13683
 }
@@ -3492,7 +3492,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = 13696
 {
-
+	  
 		<Suffixes_2 synCat>           = 13696 /
 		<Suffixes_2 synCat>           = 13697 /
 		<Suffixes_2 synCat>           = 13698
@@ -3501,7 +3501,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = 13744
 {
-
+	  
 		<Suffixes_2 synCat>           = 13744 /
 		<Suffixes_2 synCat>           = 13765 /
 		<Suffixes_2 synCat>           = 13766 /
@@ -3511,7 +3511,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = 13765
 {
-
+	  
 		<Suffixes_2 synCat>           = 13765 /
 		<Suffixes_2 synCat>           = 13766 /
 		<Suffixes_2 synCat>           = 23342
@@ -3520,7 +3520,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = 20333
 {
-
+	  
 		<Suffixes_2 synCat>           = 20333 /
 		<Suffixes_2 synCat>           = 20334 /
 		<Suffixes_2 synCat>           = 20335
@@ -3529,7 +3529,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
 		/
 		<derivSfx fromCat>        = 22963
 {
-
+	  
 		<Suffixes_2 synCat>           = 22963 /
 		<Suffixes_2 synCat>           = 22964 /
 		<Suffixes_2 synCat>           = 23053
@@ -3543,19 +3543,19 @@ rule {Partially analyzed stem with inflectional template  13149}
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13146
+  <Partial_2 synCat>       = 13146 
 
   <Partial_1 morphoSyntax>    = <13150_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  13166}
   Partial_1 =  13205_0 Partial_2  (13303_0) (13196_1)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13146
+  <Partial_2 synCat>       = 13146 
 
   <Partial_1 morphoSyntax>    = <13205_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <13303_0 morphoSyntax>
@@ -3563,26 +3563,26 @@ rule {Partially analyzed stem with inflectional template  13166}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17101}
   Partial_1 =  17102_0 Partial_2  13150_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13146
+  <Partial_2 synCat>       = 13146 
 
   <Partial_1 morphoSyntax>    = <17102_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <13150_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17117}
   Partial_1 =  17102_0 13205_1 Partial_2  (13303_0) (13196_1)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13146
+  <Partial_2 synCat>       = 13146 
 
   <Partial_1 morphoSyntax>    = <17102_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <13205_1 morphoSyntax>
@@ -3591,13 +3591,13 @@ rule {Partially analyzed stem with inflectional template  17117}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  13277}
   Partial_1 =  13205_0 Partial_2  (13303_0) (13196_1)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13147
+  <Partial_2 synCat>       = 13147 
 
   <Partial_1 morphoSyntax>    = <13205_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <13303_0 morphoSyntax>
@@ -3605,13 +3605,13 @@ rule {Partially analyzed stem with inflectional template  13277}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17118}
   Partial_1 =  17102_0 13205_1 Partial_2  (13303_0) (13196_1)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13147
+  <Partial_2 synCat>       = 13147 
 
   <Partial_1 morphoSyntax>    = <17102_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <13205_1 morphoSyntax>
@@ -3620,38 +3620,38 @@ rule {Partially analyzed stem with inflectional template  17118}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  13278}
   Partial_1 =  Partial_2  13279_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13148
+  <Partial_2 synCat>       = 13148 
 
   <Partial_1 morphoSyntax>    = <13279_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  13329}
   Partial_1 =  13205_0 Partial_2  (13196_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13148
+  <Partial_2 synCat>       = 13148 
 
   <Partial_1 morphoSyntax>    = <13205_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <13196_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17119}
   Partial_1 =  17102_0 13205_1 Partial_2  (13196_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13148
+  <Partial_2 synCat>       = 13148 
 
   <Partial_1 morphoSyntax>    = <17102_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <13205_1 morphoSyntax>
@@ -3659,38 +3659,38 @@ rule {Partially analyzed stem with inflectional template  17119}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  13340}
   Partial_1 =  Partial_2  13341_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13339
+  <Partial_2 synCat>       = 13339 
 
   <Partial_1 morphoSyntax>    = <13341_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17120}
   Partial_1 =  17102_0 Partial_2  (13341_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 13339
+  <Partial_2 synCat>       = 13339 
 
   <Partial_1 morphoSyntax>    = <17102_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <13341_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  16931}
   Partial_1 =  (16932_0) (24689_1) Partial_2  16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16929
+  <Partial_2 synCat>       = 16929 
 
   <Partial_1 morphoSyntax>    = <16932_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <24689_1 morphoSyntax>
@@ -3698,13 +3698,13 @@ rule {Partially analyzed stem with inflectional template  16931}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22719}
   Partial_1 =  (16932_0) (24689_1) Partial_2  22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16929
+  <Partial_2 synCat>       = 16929 
 
   <Partial_1 morphoSyntax>    = <16932_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <24689_1 morphoSyntax>
@@ -3713,13 +3713,13 @@ rule {Partially analyzed stem with inflectional template  22719}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  20765}
   Partial_1 =  20766_0 (16932_1) (24689_2) Partial_2  22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16929
+  <Partial_2 synCat>       = 16929 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <16932_1 morphoSyntax>
@@ -3728,13 +3728,13 @@ rule {Partially analyzed stem with inflectional template  20765}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22730}
   Partial_1 =  20766_0 (16932_1) (24689_2) Partial_2  22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16929
+  <Partial_2 synCat>       = 16929 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <16932_1 morphoSyntax>
@@ -3744,13 +3744,13 @@ rule {Partially analyzed stem with inflectional template  22730}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17170}
   Partial_1 =  17164_0 (24689_1) Partial_2  (17165_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16929
+  <Partial_2 synCat>       = 16929 
 
   <Partial_1 morphoSyntax>    = <17164_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <24689_1 morphoSyntax>
@@ -3758,13 +3758,13 @@ rule {Partially analyzed stem with inflectional template  17170}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17169}
   Partial_1 =  (17122_0) (24689_1) Partial_2  17142_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16929
+  <Partial_2 synCat>       = 16929 
 
   <Partial_1 morphoSyntax>    = <17122_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <24689_1 morphoSyntax>
@@ -3772,13 +3772,13 @@ rule {Partially analyzed stem with inflectional template  17169}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17006}
   Partial_1 =  (16932_0) 17007_1 (24689_2) (17053_3) Partial_2  16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <16932_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17007_1 morphoSyntax>
@@ -3788,13 +3788,13 @@ rule {Partially analyzed stem with inflectional template  17006}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17060}
   Partial_1 =  17061_0 (24689_1) (17053_2) Partial_2  16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <17061_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <24689_1 morphoSyntax>
@@ -3803,13 +3803,13 @@ rule {Partially analyzed stem with inflectional template  17060}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22742}
   Partial_1 =  (16932_0) 17007_1 (24689_2) (17053_3) Partial_2  22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <16932_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17007_1 morphoSyntax>
@@ -3820,13 +3820,13 @@ rule {Partially analyzed stem with inflectional template  22742}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22743}
   Partial_1 =  17061_0 (24689_1) (17053_2) Partial_2  22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <17061_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <24689_1 morphoSyntax>
@@ -3836,13 +3836,13 @@ rule {Partially analyzed stem with inflectional template  22743}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  20774}
   Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) Partial_2  22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <16932_1 morphoSyntax>
@@ -3853,13 +3853,13 @@ rule {Partially analyzed stem with inflectional template  20774}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  20775}
   Partial_1 =  20766_0 17061_1 (24689_2) (17053_3) Partial_2  22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17061_1 morphoSyntax>
@@ -3869,13 +3869,13 @@ rule {Partially analyzed stem with inflectional template  20775}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22744}
   Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) Partial_2  22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <16932_1 morphoSyntax>
@@ -3887,13 +3887,13 @@ rule {Partially analyzed stem with inflectional template  22744}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22745}
   Partial_1 =  20766_0 17061_1 (24689_2) (17053_3) Partial_2  22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17061_1 morphoSyntax>
@@ -3904,13 +3904,13 @@ rule {Partially analyzed stem with inflectional template  22745}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17163}
   Partial_1 =  17164_0 17007_1 (24689_2) (17053_3) Partial_2  (17165_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <17164_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17007_1 morphoSyntax>
@@ -3920,13 +3920,13 @@ rule {Partially analyzed stem with inflectional template  17163}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  17121}
   Partial_1 =  (17122_0) 17007_1 (24689_2) (17053_3) Partial_2  17142_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <17122_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17007_1 morphoSyntax>
@@ -3936,13 +3936,13 @@ rule {Partially analyzed stem with inflectional template  17121}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  58164}
   Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) Partial_2  58165_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 16930
+  <Partial_2 synCat>       = 16930 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <16932_1 morphoSyntax>
@@ -3954,13 +3954,13 @@ rule {Partially analyzed stem with inflectional template  58164}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22935}
   Partial_1 =  (16932_0) 17007_1 (24689_2) (17053_3) (22936_4) Partial_2  16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <16932_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17007_1 morphoSyntax>
@@ -3971,13 +3971,13 @@ rule {Partially analyzed stem with inflectional template  22935}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22953}
   Partial_1 =  17061_0 (24689_1) (17053_2) (22936_3) Partial_2  16933_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <17061_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <24689_1 morphoSyntax>
@@ -3987,13 +3987,13 @@ rule {Partially analyzed stem with inflectional template  22953}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22954}
   Partial_1 =  (16932_0) 17007_1 (24689_2) (17053_3) (22936_4) Partial_2  22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <16932_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17007_1 morphoSyntax>
@@ -4005,13 +4005,13 @@ rule {Partially analyzed stem with inflectional template  22954}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22955}
   Partial_1 =  17061_0 (24689_1) (17053_2) (22936_3) Partial_2  22720_0 22008_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <17061_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <24689_1 morphoSyntax>
@@ -4022,13 +4022,13 @@ rule {Partially analyzed stem with inflectional template  22955}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22956}
   Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) (22936_5) Partial_2  22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <16932_1 morphoSyntax>
@@ -4040,13 +4040,13 @@ rule {Partially analyzed stem with inflectional template  22956}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22957}
   Partial_1 =  20766_0 17061_1 (24689_2) (17053_3) (22936_4) Partial_2  22008_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17061_1 morphoSyntax>
@@ -4057,13 +4057,13 @@ rule {Partially analyzed stem with inflectional template  22957}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22958}
   Partial_1 =  20766_0 (16932_1) 17007_2 (24689_3) (17053_4) (22936_5) Partial_2  22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <16932_1 morphoSyntax>
@@ -4076,13 +4076,13 @@ rule {Partially analyzed stem with inflectional template  22958}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22959}
   Partial_1 =  20766_0 17061_1 (24689_2) (17053_3) (22936_4) Partial_2  22731_0 16933_1  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <20766_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17061_1 morphoSyntax>
@@ -4094,13 +4094,13 @@ rule {Partially analyzed stem with inflectional template  22959}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22960}
   Partial_1 =  17164_0 17007_1 (24689_2) (17053_3) (22936_4) Partial_2  (17165_0)  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <17164_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17007_1 morphoSyntax>
@@ -4111,13 +4111,13 @@ rule {Partially analyzed stem with inflectional template  22960}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22962}
   Partial_1 =  (17122_0) 17007_1 (24689_2) (17053_3) (22936_4) Partial_2  17142_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22932
+  <Partial_2 synCat>       = 22932 
 
   <Partial_1 morphoSyntax>    = <17122_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <17007_1 morphoSyntax>
@@ -4128,32 +4128,32 @@ rule {Partially analyzed stem with inflectional template  22962}
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  23219}
   Partial_1 =  23222_0 Partial_2  23223_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 19944
+  <Partial_2 synCat>       = 19944 
 
   <Partial_1 morphoSyntax>    = <23222_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <23223_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  22965}
   Partial_1 =  22966_0 Partial_2   :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 22964
+  <Partial_2 synCat>       = 22964 
 
   <Partial_1 morphoSyntax>    = <22966_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 | ------------------------------------------------------------
 |                TEMPLATES
 | ------------------------------------------------------------
@@ -4230,8 +4230,8 @@ Let ToExcpFeat57429Plus  be [toException:[57429:+ 31275:!- 31278:!- 39912:!- 399
 Let ToExcpFeat57429Minus be [toException:[57429:-]]
 Let DefaultExcpFeatures be [exception:[31275:!- 31278:!- 39912:!- 39915:!- 39918:!- 39930:!- 39936:!- 57399:!- 57429:!- ]]
 
-Let RootPOS0 be [rootCat:unknown]
-Let CliticPOS0 be [rootCat:unknown]
+Let RootPOS0 be [rootCat:unknown] 
+Let CliticPOS0 be [rootCat:unknown] 
 Let RootPOS255 be [rootCat:255
 	requiresInflection : -] [DefaultExcpFeatures]
 Let MSEnvPOS255 be {[envCat:255]}
@@ -5112,56 +5112,56 @@ Let InflClass15408 be [inflectionClass:15408]
 Let FromInflClass15408 be [fromInflectionClass:15408]
 Let ToInflClass15408 be [toInflectionClass:15408]
 Let ICA15408 be [inflectionClass:15408]
-
+		 
 Let InflClass15409 be [inflectionClass:15409]
 Let FromInflClass15409 be [fromInflectionClass:15409]
 Let ToInflClass15409 be [toInflectionClass:15409]
 Let ICA15409 be [inflectionClass:15409]
-
+		 
 Let InflClass15410 be [inflectionClass:15410]
 Let FromInflClass15410 be [fromInflectionClass:15410]
 Let ToInflClass15410 be [toInflectionClass:15410]
 Let ICA15410 be [inflectionClass:15410]
-
+		 
 Let InflClass15411 be [inflectionClass:15411]
 Let FromInflClass15411 be [fromInflectionClass:15411]
 Let ToInflClass15411 be [toInflectionClass:15411]
 Let ICA15411 be [inflectionClass:15411]
-
+		 
 Let InflClass17760 be [inflectionClass:17760]
 Let FromInflClass17760 be [fromInflectionClass:17760]
 Let ToInflClass17760 be [toInflectionClass:17760]
 Let ICA17760 be [inflectionClass:17760]
-
+		 
 Let InflClass17761 be [inflectionClass:17761]
 Let FromInflClass17761 be [fromInflectionClass:17761]
 Let ToInflClass17761 be [toInflectionClass:17761]
 Let ICA17761 be [inflectionClass:17761]
-
+		 
 Let InflClass17765 be [inflectionClass:17765]
 Let FromInflClass17765 be [fromInflectionClass:17765]
 Let ToInflClass17765 be [toInflectionClass:17765]
 Let ICA17765 be [inflectionClass:17765]
-
+		 
 Let InflClass17766 be [inflectionClass:17766]
 Let FromInflClass17766 be [fromInflectionClass:17766]
 Let ToInflClass17766 be [toInflectionClass:17766]
 Let ICA17766 be [inflectionClass:17766]
-
+		 
 Let InflClass23233 be [inflectionClass:23233]
 Let FromInflClass23233 be [fromInflectionClass:23233]
 Let ToInflClass23233 be [toInflectionClass:23233]
 Let ICA23233 be [inflectionClass:23233]
-
+		 
 Let InflClass23234 be [inflectionClass:23234]
 Let FromInflClass23234 be [fromInflectionClass:23234]
 Let ToInflClass23234 be [toInflectionClass:23234]
 Let ICA23234 be [inflectionClass:23234]
-
-Let ICA17765ICA17766 be {[inflectionClass:17765][inflectionClass:17766]}
-Let ICA17760ICA17761 be {[inflectionClass:17760][inflectionClass:17761]}
-
-
+		  
+Let ICA17765ICA17766 be {[inflectionClass:17765][inflectionClass:17766]} 
+Let ICA17760ICA17761 be {[inflectionClass:17760][inflectionClass:17761]} 
+ 
+ 
 
 Let Infix be [morphType:infix]
 Let prefixinginterfix be {[cat:prefix]

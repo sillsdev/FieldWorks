@@ -172,14 +172,14 @@ rule {Stem with a derivational prefix}
 		<Stem_2 stemName>         = <derivPfx stemName>
 		<Stem_2 exception>        = <derivPfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivPfx fromCat>
 		<Stem_2 synCat>           = <derivPfx envCat>
 		/
 		<derivPfx fromCat>        = 244
 		<derivPfx envCat>         = 244
 {
-
+	  
 		<Stem_2 synCat>           = 244 /
 		<Stem_2 synCat>           = 245
 }
@@ -208,14 +208,14 @@ rule {Stem with a derivational suffix}
 		<Stem_2 stemName>         = <derivSfx stemName>
 		<Stem_2 exception>        = <derivSfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivSfx fromCat>
 		<Stem_2 synCat>           = <derivSfx envCat>
 		/
 		<derivSfx fromCat>        = 244
 		<derivSfx envCat>         = 244
 {
-
+	  
 		<Stem_2 synCat>           = 244 /
 		<Stem_2 synCat>           = 245
 }
@@ -253,7 +253,7 @@ rule {Stem with a derivational circumfix}
 		 <Stem_2 exception>        = <derivCircumPfx fromException>
 		 <Stem_2 exception>        = <derivCircumSfx fromException>
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx envCat>
 		<Stem_2 synCat>           = <derivCircumSfx fromCat>
@@ -264,13 +264,13 @@ rule {Stem with a derivational circumfix}
 		<derivCircumSfx fromCat>        = 244
 		<derivCircumSfx envCat>         = 244
 {
-
+	  
 		<Stem_2 synCat>           = 244 /
 		<Stem_2 synCat>           = 245
 }
 
 	  }
-
+	  
 rule {Stem with a derivational circumfix where the rightmost part is an infix (and so may end up as a prefix}
 		 Stem_1 = derivCircumPfx_1 derivCircumPfx_2 Stem_2
 		 | percolation
@@ -305,7 +305,7 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		 | rightmost "prefix" must be an infix
 		 <derivCircumPfx_2> == [morphType : infix]
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx_1 fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx_1 envCat>
 		<Stem_2 synCat>           = <derivCircumPfx_2 fromCat>
@@ -316,13 +316,13 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		<derivCircumPfx_2 fromCat>        = 244
 		<derivCircumPfx_2 envCat>         = 244
 {
-
+	  
 		<Stem_2 synCat>           = 244 /
 		<Stem_2 synCat>           = 245
 }
 
 	  }
-
+	  
 | ------------------------------------------------------------
 |                PARTIALLY ANALYZED WORD PORTION
 | ------------------------------------------------------------
@@ -413,9 +413,9 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
 		<Full synCat>           = <Suffixes synCat>
@@ -426,7 +426,7 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
 		<Suffixes synCat>        = 244
 		<Suffixes envCat>         = 244
 {
-
+	  
 		<Full synCat>           = 244 /
 		<Full synCat>           = 245
 }
@@ -439,16 +439,16 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
 		/
 		<Prefixes synCat>        = 244
 		<Prefixes envCat>         = 244
 {
-
+	  
 		<Full synCat>           = 244 /
 		<Full synCat>           = 245
 }
@@ -461,16 +461,16 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Suffixes synCat>
 		<Full synCat>           = <Suffixes envCat>
 		/
 		<Suffixes synCat>        = 244
 		<Suffixes envCat>         = 244
 {
-
+	  
 		<Full synCat>           = 244 /
 		<Full synCat>           = 245
 }
@@ -483,9 +483,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <circumPfx synCat>
 		<Full synCat>           = <circumPfx envCat>
 		<Full synCat>           = <circumSfx synCat>
@@ -496,7 +496,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
 		<circumSfx synCat>        = 244
 		<circumSfx envCat>         = 244
 {
-
+	  
 		<Full synCat>           = 244 /
 		<Full synCat>           = 245
 }
@@ -511,9 +511,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 								 | constraints
 								 | rightmost "prefix" must be an infix
 	<circumPfx_2> == [morphType : infix]
-
+	  
 	  {
-
+	  
 		<Full synCat>           = <circumPfx_1 synCat>
 		<Full synCat>           = <circumPfx_1 envCat>
 		<Full synCat>           = <circumPfx_2 synCat>
@@ -524,7 +524,7 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 		<circumPfx_2 synCat>        = 244
 		<circumPfx_2 envCat>         = 244
 {
-
+	  
 		<Full synCat>           = 244 /
 		<Full synCat>           = 245
 }
@@ -603,14 +603,14 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 								| percolation
   <Prefixes_1 synCat> = <prefix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Prefixes_2 synCat>           = <prefix fromCat>
 		/
 		<prefix fromCat>        = 244
 {
-
+	  
 		<Prefixes_2 synCat>           = 244 /
 		<Prefixes_2 synCat>           = 245
 }
@@ -623,12 +623,12 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
   <Prefixes_1 synCat> = <derivPfx toCat>
 								| constraints
   {
-
+  
 		<Prefixes_2 synCat>           = <derivPfx fromCat>
 		/
 		<derivPfx fromCat>        = 244
 {
-
+	  
 		<Prefixes_2 synCat>           = 244 /
 		<Prefixes_2 synCat>           = 245
 }
@@ -640,14 +640,14 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 								| percolation
   <Suffixes_1 synCat> = <suffix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Suffixes_2 synCat>           = <suffix fromCat>
 		/
 		<suffix fromCat>        = 244
 {
-
+	  
 		<Suffixes_2 synCat>           = 244 /
 		<Suffixes_2 synCat>           = 245
 }
@@ -660,12 +660,12 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
   <Suffixes_1 synCat> = <derivSfx toCat>
 								| constraints
   {
-
+  
 		<Suffixes_2 synCat>           = <derivSfx fromCat>
 		/
 		<derivSfx fromCat>        = 244
 {
-
+	  
 		<Suffixes_2 synCat>           = 244 /
 		<Suffixes_2 synCat>           = 245
 }
@@ -678,25 +678,25 @@ rule {Partially analyzed stem with inflectional template  18429}
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 18428
+  <Partial_2 synCat>       = 18428 
 
   <Partial_1 morphoSyntax>    = <18430_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 rule {Partially analyzed stem with inflectional template  19058}
   Partial_1 =  Partial_2  19059_0  :
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 18318
+  <Partial_2 synCat>       = 18318 
 
   <Partial_1 morphoSyntax>    = <19059_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 		| if there are no compound rules, use the remaining rules:
 			| these allow derivational affixes next to the stem
 rule {Totally unanalyzed form with one or more prefixes and suffixes; no compound rules}
@@ -754,7 +754,7 @@ rule {A sequence of two or more interfixes; no compound rules}
 
 rule {An interfix; no compound rules}
   Interfixes = interfix
-
+  
 | ------------------------------------------------------------
 |                TEMPLATES
 | ------------------------------------------------------------
@@ -766,8 +766,8 @@ Let Proclitic be []
 Let Enclitic be []
 Let Bound be []
 
-Let RootPOS0 be [rootCat:unknown]
-Let CliticPOS0 be [rootCat:unknown]
+Let RootPOS0 be [rootCat:unknown] 
+Let CliticPOS0 be [rootCat:unknown] 
 Let RootPOS242 be [rootCat:242
 	requiresInflection : -]
 Let MSEnvPOS242 be {[envCat:242]}
@@ -864,122 +864,122 @@ Let InflClass18431 be [inflectionClass:18431]
 Let FromInflClass18431 be [fromInflectionClass:18431]
 Let ToInflClass18431 be [toInflectionClass:18431]
 Let ICA18431 be [inflectionClass:18431]
-
+		 
 Let InflClass18432 be [inflectionClass:18432]
 Let FromInflClass18432 be [fromInflectionClass:18432]
 Let ToInflClass18432 be [toInflectionClass:18432]
 Let ICA18432 be [inflectionClass:18432]
-
+			
 Let InflClass19018 be [inflectionClass:19018]
 Let FromInflClass19018 be [fromInflectionClass:19018]
 Let ToInflClass19018 be [toInflectionClass:19018]
 Let ICA19018 be [inflectionClass:19018]
-
+		 
 Let InflClass19019 be [inflectionClass:19019]
 Let FromInflClass19019 be [fromInflectionClass:19019]
 Let ToInflClass19019 be [toInflectionClass:19019]
 Let ICA19019 be [inflectionClass:19019]
-
+		 
 Let InflClass18433 be [inflectionClass:18433]
 Let FromInflClass18433 be [fromInflectionClass:18433]
 Let ToInflClass18433 be [toInflectionClass:18433]
 Let ICA18433 be [inflectionClass:18433]
-
+			
 Let InflClass19007 be [inflectionClass:19007]
 Let FromInflClass19007 be [fromInflectionClass:19007]
 Let ToInflClass19007 be [toInflectionClass:19007]
 Let ICA19007 be [inflectionClass:19007]
-
+			
 Let InflClass19008 be [inflectionClass:19008]
 Let FromInflClass19008 be [fromInflectionClass:19008]
 Let ToInflClass19008 be [toInflectionClass:19008]
 Let ICA19008 be [inflectionClass:19008]
-
+		 
 Let InflClass19012 be [inflectionClass:19012]
 Let FromInflClass19012 be [fromInflectionClass:19012]
 Let ToInflClass19012 be [toInflectionClass:19012]
 Let ICA19012 be [inflectionClass:19012]
-
+		 
 Let InflClass19013 be [inflectionClass:19013]
 Let FromInflClass19013 be [fromInflectionClass:19013]
 Let ToInflClass19013 be [toInflectionClass:19013]
 Let ICA19013 be [inflectionClass:19013]
-
+			
 Let InflClass19014 be [inflectionClass:19014]
 Let FromInflClass19014 be [fromInflectionClass:19014]
 Let ToInflClass19014 be [toInflectionClass:19014]
 Let ICA19014 be [inflectionClass:19014]
-
+		 
 Let InflClass19015 be [inflectionClass:19015]
 Let FromInflClass19015 be [fromInflectionClass:19015]
 Let ToInflClass19015 be [toInflectionClass:19015]
 Let ICA19015 be [inflectionClass:19015]
-
+		 
 Let InflClass18434 be [inflectionClass:18434]
 Let FromInflClass18434 be [fromInflectionClass:18434]
 Let ToInflClass18434 be [toInflectionClass:18434]
 Let ICA18434 be [inflectionClass:18434]
-
+			
 Let InflClass19005 be [inflectionClass:19005]
 Let FromInflClass19005 be [fromInflectionClass:19005]
 Let ToInflClass19005 be [toInflectionClass:19005]
 Let ICA19005 be [inflectionClass:19005]
-
+			
 Let InflClass19009 be [inflectionClass:19009]
 Let FromInflClass19009 be [fromInflectionClass:19009]
 Let ToInflClass19009 be [toInflectionClass:19009]
 Let ICA19009 be [inflectionClass:19009]
-
+		 
 Let InflClass19010 be [inflectionClass:19010]
 Let FromInflClass19010 be [fromInflectionClass:19010]
 Let ToInflClass19010 be [toInflectionClass:19010]
 Let ICA19010 be [inflectionClass:19010]
-
+		 
 Let InflClass19011 be [inflectionClass:19011]
 Let FromInflClass19011 be [fromInflectionClass:19011]
 Let ToInflClass19011 be [toInflectionClass:19011]
 Let ICA19011 be [inflectionClass:19011]
-
+		 
 Let InflClass19006 be [inflectionClass:19006]
 Let FromInflClass19006 be [fromInflectionClass:19006]
 Let ToInflClass19006 be [toInflectionClass:19006]
 Let ICA19006 be [inflectionClass:19006]
-
+		 
 Let InflClass18435 be [inflectionClass:18435]
 Let FromInflClass18435 be [fromInflectionClass:18435]
 Let ToInflClass18435 be [toInflectionClass:18435]
 Let ICA18435 be [inflectionClass:18435]
-
+		 
 Let InflClass19047 be [inflectionClass:19047]
 Let FromInflClass19047 be [fromInflectionClass:19047]
 Let ToInflClass19047 be [toInflectionClass:19047]
 Let ICA19047 be [inflectionClass:19047]
-
+			
 Let InflClass19214 be [inflectionClass:19214]
 Let FromInflClass19214 be [fromInflectionClass:19214]
 Let ToInflClass19214 be [toInflectionClass:19214]
 Let ICA19214 be [inflectionClass:19214]
-
+		 
 Let InflClass19060 be [inflectionClass:19060]
 Let FromInflClass19060 be [fromInflectionClass:19060]
 Let ToInflClass19060 be [toInflectionClass:19060]
 Let ICA19060 be [inflectionClass:19060]
-
+			
 Let InflClass19061 be [inflectionClass:19061]
 Let FromInflClass19061 be [fromInflectionClass:19061]
 Let ToInflClass19061 be [toInflectionClass:19061]
 Let ICA19061 be [inflectionClass:19061]
-
+		 
 Let InflClass19062 be [inflectionClass:19062]
 Let FromInflClass19062 be [fromInflectionClass:19062]
 Let ToInflClass19062 be [toInflectionClass:19062]
 Let ICA19062 be [inflectionClass:19062]
-
+		 
 Let InflClass19063 be [inflectionClass:19063]
 Let FromInflClass19063 be [fromInflectionClass:19063]
 Let ToInflClass19063 be [toInflectionClass:19063]
 Let ICA19063 be [inflectionClass:19063]
-
+			
 Let InflClass19374 be [inflectionClass:19374]
 Let FromInflClass19374 be [fromInflectionClass:19374]
 Let ToInflClass19374 be [toInflectionClass:19374]

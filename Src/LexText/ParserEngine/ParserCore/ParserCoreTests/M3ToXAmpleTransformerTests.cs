@@ -253,6 +253,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				sExpected = expected.ReadToEnd();
 			using (StreamReader actual = new StreamReader(sActualResultFile))
 				sActual = actual.ReadToEnd();
+			// A non-empty last line in a file on Linux always ends with '\n' character
+			if (MiscUtils.IsUnix && sActual.Substring(sActual.Length - 1) != "\n")
+				sActual += '\n';
 			StringBuilder sb = new StringBuilder();
 			sb.Append("Expected file was ");
 			sb.AppendLine(sExpectedResultFile);
