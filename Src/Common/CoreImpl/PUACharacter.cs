@@ -52,6 +52,7 @@ namespace SIL.CoreImpl
 			this.CodePoint = codepoint.ToString("x4").ToUpperInvariant();
 		}
 
+		/// <summary/>
 		public const int ExectedPropCount = 14;
 
 		/// <summary>
