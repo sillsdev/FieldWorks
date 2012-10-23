@@ -77,12 +77,22 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		{
 			get
 			{
-				string dir = Path.Combine(Environment.GetFolderPath(
+				var dir = Path.Combine(Environment.GetFolderPath(
 					Environment.SpecialFolder.CommonProgramFiles), "SIL/Icu50");
 
-				RegistryKey key = RegistryHelper.CompanyKeyLocalMachine;
-				if (key != null)
-					dir = key.GetValue("Icu50DataDir", dir) as string ?? dir;
+				using(var userKey = RegistryHelper.CompanyKey)
+				using(var machineKey = RegistryHelper.CompanyKeyLocalMachine)
+				{
+					if (userKey != null && userKey.GetValue("Icu50DataDir") != null)
+					{
+						dir = userKey.GetValue("Icu50DataDir", dir) as string ?? dir;
+					}
+					else if (machineKey != null && machineKey.GetValue("Icu50DataDir") != null)
+					{
+
+						dir = machineKey.GetValue("Icu50DataDir", dir) as string ?? dir;
+					}
+				}
 				return dir;
 			}
 		}

@@ -397,14 +397,24 @@ namespace FwRemoteDatabaseConnector
 			get
 			{
 				bool result;
-				string value = (string)FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue(
-					ksSharedProjectKey, "false");
-				return (bool.TryParse(value, out result) && result);
+				var value = FwRegistryHelper.FieldWorksRegistryKey.GetValue(ksSharedProjectKey, null) ??
+							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue(ksSharedProjectKey, "false");
+				return (bool.TryParse((string)value, out result) && result);
 			}
 			set
 			{
-				FwRegistryHelper.FieldWorksRegistryKeyLocalMachineForWriting.SetValue(
-					ksSharedProjectKey, value);
+				try
+				{
+					using(var key = FwRegistryHelper.FieldWorksRegistryKeyLocalMachineForWriting)
+					{
+						key.SetValue(ksSharedProjectKey, value);
+					}
+				}
+				catch(UnauthorizedAccessException)
+				{
+					FwRegistryHelper.FieldWorksRegistryKey.SetValue(
+						ksSharedProjectKey, value);
+				}
 			}
 		}
 

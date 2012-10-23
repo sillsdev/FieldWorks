@@ -516,8 +516,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{
-			using (RegistryKey registryKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			using (RegistryKey userKey = FwRegistryHelper.FieldWorksRegistryKey)
+			using (RegistryKey machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
+				var registryKey = userKey;
+				if (userKey == null || userKey.GetValue(registryValue) == null)
+				{
+					registryKey = machineKey;
+				}
+
 				return GetDirectory(registryKey, registryValue, defaultDir);
 			}
 		}
@@ -618,20 +625,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				else
 				{
-				string rootDir = null;
-				if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
-					rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
-				if (string.IsNullOrEmpty(rootDir))
-				{
-					throw new ApplicationException(
-						string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
-						FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
-				}
-				string fw = Directory.GetParent(rootDir).FullName;
-				string src = Path.Combine(fw, "Src");
-				if (!Directory.Exists(src))
-					throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
-					m_srcdir = src;
+					string rootDir = null;
+					if (FwRegistryHelper.FieldWorksRegistryKey != null)
+					{
+						rootDir = FwRegistryHelper.FieldWorksRegistryKey.GetValue("RootCodeDir") as string;
+					}
+					else if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
+					{
+						rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
+					}
+					if (string.IsNullOrEmpty(rootDir))
+					{
+						throw new ApplicationException(
+							string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
+							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
+					}
+					string fw = Directory.GetParent(rootDir).FullName;
+					string src = Path.Combine(fw, "Src");
+					if (!Directory.Exists(src))
+						throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
+						m_srcdir = src;
 				}
 				return m_srcdir;
 			}
@@ -716,18 +729,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (ProjectsDirectory == value)
 					return; // no change.
 
-				// On Vista or later OS's Writing HLKM registry keys can, by processes not running with eleverated privileges,
-				// silently redirect to a virtual location and not the intended HKLM location, rather than throwing a security
-				// exception. The SetValueAsAdmin method writes the registry key in a processes with hopfully elevated
-				// privileges.
-
-				using (var registryKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachineForWriting)
+				using (var registryKey = FwRegistryHelper.FieldWorksRegistryKey)
 				{
-					// We don't want unittests showing the UAC on Vista or later OS's.
-					if (!MiscUtils.RunningTests && !MiscUtils.IsUnix)
-						registryKey.SetValueAsAdmin("ProjectsDir", value);
-					else
-						registryKey.SetValue("ProjectsDir", value);
+					registryKey.SetValue("ProjectsDir", value);
 				}
 			}
 		}
