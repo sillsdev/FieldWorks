@@ -1,0 +1,10 @@
+Verified+1: Eberhard Beilharz <eb1@sil.org>
+Verified-Linux+1: Eberhard Beilharz <eb1@sil.org>
+Code-Review-1: Jenkins CI
+Code-Review+2: Gordon Martin <gordon-soft_martin@sil.org>
+Verified+1: Gordon Martin <gordon-soft_martin@sil.org>
+Submitted-by: Gordon Martin <gordon-soft_martin@sil.org>
+Submitted-at: Tue, 23 Oct 2012 17:55:30 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/197
+Project: FieldWorks
+Branch: refs/heads/develop
