@@ -1,0 +1,9 @@
+Code-Review+2: Eberhard Beilharz <eb1@sil.org>
+Code-Review-1: Jenkins CI
+Verified+1: John Thomson <john.thomson7540@gmail.com>
+Verified-Linux+1: John Thomson <john.thomson7540@gmail.com>
+Submitted-by: John Thomson <john.thomson7540@gmail.com>
+Submitted-at: Thu, 25 Oct 2012 19:17:38 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/219
+Project: FieldWorks
+Branch: refs/heads/develop
