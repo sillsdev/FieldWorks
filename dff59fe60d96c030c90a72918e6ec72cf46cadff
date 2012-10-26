@@ -1,0 +1,10 @@
+Code-Review-1: Jenkins CI
+Code-Review+2: Neil Mayhew <neil_mayhew@sil.org>
+Code-Review+1: Stephen McConnel <stephen_mcconnel@sil.org>
+Verified+1: Stephen McConnel <stephen_mcconnel@sil.org>
+Verified-Linux+1: Stephen McConnel <stephen_mcconnel@sil.org>
+Submitted-by: Stephen McConnel <stephen_mcconnel@sil.org>
+Submitted-at: Fri, 26 Oct 2012 23:06:39 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/224
+Project: FieldWorks
+Branch: refs/heads/develop
