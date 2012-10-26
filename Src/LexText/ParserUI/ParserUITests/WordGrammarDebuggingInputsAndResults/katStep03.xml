@@ -2,121 +2,121 @@
 <word>
   <form>kat</form>
   <seq step="Try to build an Orthographic Word node on a Word, including any clitics.">
-	<orthographicWord>
-	  <word syncat="0" syncatAbbr="">
-		<partial syncat="0" syncatAbbr="">
-		  <morph wordType="root">
-			<shortName>kat (feline): kat</shortName>
-			<stemMsa cat="0" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</partial>
-	  </word>
-	</orthographicWord>
+    <orthographicWord>
+      <word syncat="0" syncatAbbr="">
+        <partial syncat="0" syncatAbbr="">
+          <morph wordType="root">
+            <shortName>kat (feline): kat</shortName>
+            <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+          </morph>
+        </partial>
+      </word>
+    </orthographicWord>
   </seq>
   <seq step="Try to build a Word analysis node on a Partial analysis node.">
-	<word syncat="81" syncatAbbr="n">
-	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-		<partial syncat="0" syncatAbbr="">
-		  <morph wordType="root">
-			<shortName>kat (feline): kat</shortName>
-			<stemMsa cat="0" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</partial>
-	  </partial>
-	</word>
+    <word syncat="81" syncatAbbr="n">
+      <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+        <partial syncat="0" syncatAbbr="">
+          <morph wordType="root">
+            <shortName>kat (feline): kat</shortName>
+            <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+          </morph>
+        </partial>
+      </partial>
+    </word>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'noun'. The result will be another Partial analysis node.">
-	<partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
+    <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'common noun'. The result will be another Partial analysis node.">
-	<partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
+    <partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'concrete noun'. The result will be another Partial analysis node.">
-	<partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
+    <partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'nominal'. The result will be another Partial analysis node.">
-	<partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
+    <partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'possessive noun'. The result will be another Partial analysis node.">
-	<partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
+    <partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'proper noun'. The result will be another Partial analysis node.">
-	<partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
+    <partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure><partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial syncat="0" syncatAbbr=""><morph wordType="root"><shortName>kat (feline): kat</shortName><stemMsa cat="0" inflClass="0" requiresInfl="-" /></morph></partial></partial></partial>
   </seq>
   <seq step="Try to apply inflectional template 'Intransitive verb' on a Partial analysis node.  Apply it for category 'intransitive verb'. The result will be another Partial analysis node.">
-	<partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure>
-	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-		<partial syncat="0" syncatAbbr="">
-		  <morph wordType="root">
-			<shortName>kat (feline): kat</shortName>
-			<stemMsa cat="0" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</partial>
-	  </partial>
-	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</partial>
+    <partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure>
+      <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+        <partial syncat="0" syncatAbbr="">
+          <morph wordType="root">
+            <shortName>kat (feline): kat</shortName>
+            <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+          </morph>
+        </partial>
+      </partial>
+      <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </partial>
   </seq>
   <seq step="Try to apply inflectional template 'Stative verb' on a Partial analysis node.  Apply it for category 'stative'. The result will be another Partial analysis node.">
-	<partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure>
-	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-		<partial syncat="0" syncatAbbr="">
-		  <morph wordType="root">
-			<shortName>kat (feline): kat</shortName>
-			<stemMsa cat="0" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</partial>
-	  </partial>
-	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
-	</partial>
+    <partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure>
+      <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+        <partial syncat="0" syncatAbbr="">
+          <morph wordType="root">
+            <shortName>kat (feline): kat</shortName>
+            <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+          </morph>
+        </partial>
+      </partial>
+      <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+    </partial>
   </seq>
   <seq step="Try to apply inflectional template 'Transitive verb' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
-	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure>
-	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-		<partial syncat="0" syncatAbbr="">
-		  <morph wordType="root">
-			<shortName>kat (feline): kat</shortName>
-			<stemMsa cat="0" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</partial>
-	  </partial>
-	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</partial>
+    <partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure>
+      <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+        <partial syncat="0" syncatAbbr="">
+          <morph wordType="root">
+            <shortName>kat (feline): kat</shortName>
+            <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+          </morph>
+        </partial>
+      </partial>
+      <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </partial>
   </seq>
   <seq step="Try to apply inflectional template 'Non-final Transitive' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
-	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="-" blocksInflection="+">
-	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-		<partial syncat="0" syncatAbbr="">
-		  <morph wordType="root">
-			<shortName>kat (feline): kat</shortName>
-			<stemMsa cat="0" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</partial>
-	  </partial></partial>
+    <partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="-" blocksInflection="+">
+      <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+        <partial syncat="0" syncatAbbr="">
+          <morph wordType="root">
+            <shortName>kat (feline): kat</shortName>
+            <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+          </morph>
+        </partial>
+      </partial></partial>
   </seq>
   <seq step="Try to apply inflectional template 'Bitransitive verb' on a Partial analysis node.  Apply it for category 'bitransitive verb'. The result will be another Partial analysis node.">
-	<partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
-	  <failure>Partial inflectional template has already been inflected.</failure>
-	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-		<partial syncat="0" syncatAbbr="">
-		  <morph wordType="root">
-			<shortName>kat (feline): kat</shortName>
-			<stemMsa cat="0" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</partial>
-	  </partial>
-	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</partial>
+    <partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
+      <failure>Partial inflectional template has already been inflected.</failure>
+      <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+        <partial syncat="0" syncatAbbr="">
+          <morph wordType="root">
+            <shortName>kat (feline): kat</shortName>
+            <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+          </morph>
+        </partial>
+      </partial>
+      <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </partial>
   </seq>
 </word>

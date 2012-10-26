@@ -1,24 +1,24 @@
 <word>
   <form>ximukesra</form>
   <seq>
-	<morph wordType="root">
-	  <shortName>ximu (slowly): ximu</shortName>
-	  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="suffix">
-	  <shortName>-kes (???): kes</shortName>
-	  <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="179">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="179" slotAbbr="Tense" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="root">
+      <shortName>ximu (slowly): ximu</shortName>
+      <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="suffix">
+      <shortName>-kes (???): kes</shortName>
+      <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="179">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="179" slotAbbr="Tense" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
 </word>

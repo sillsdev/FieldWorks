@@ -1,34 +1,34 @@
 <word>
   <form>niyuxobilitiko</form>
   <seq>
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<morph wordType="derivPfx">
-	  <shortName>xo- (Pass): xo</shortName>
-	  <derivMsa fromCat="171" fromCatAbbr="bitrans" toCat="167" toCatAbbr="trans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-	  <morph wordType="root">
-		<shortName>*bili (to.see): himbilira</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<morph wordType="derivSfx">
-	  <shortName>-ti (Caus): ti</shortName>
-	  <derivMsa fromCat="152" fromCatAbbr="intrans" toCat="171" toCatAbbr="bitrans" fromInflClass="0" toInflClass="177" toInflClassAbbr="1" requiresInfl="+" />
-	</morph>
-	<morph wordType="166">
-	  <shortName>-ko (Past): bi</shortName>
-	  <inflClasses>
-		<inflClass hvo="178" abbr="2" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <morph wordType="derivPfx">
+      <shortName>xo- (Pass): xo</shortName>
+      <derivMsa fromCat="171" fromCatAbbr="bitrans" toCat="167" toCatAbbr="trans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+      <morph wordType="root">
+        <shortName>*bili (to.see): himbilira</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+      </morph>
+    </stem>
+    <morph wordType="derivSfx">
+      <shortName>-ti (Caus): ti</shortName>
+      <derivMsa fromCat="152" fromCatAbbr="intrans" toCat="171" toCatAbbr="bitrans" fromInflClass="0" toInflClass="177" toInflClassAbbr="1" requiresInfl="+" />
+    </morph>
+    <morph wordType="166">
+      <shortName>-ko (Past): bi</shortName>
+      <inflClasses>
+        <inflClass hvo="178" abbr="2" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
 </word>

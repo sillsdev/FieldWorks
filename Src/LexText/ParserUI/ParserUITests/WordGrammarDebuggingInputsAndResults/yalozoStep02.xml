@@ -2,105 +2,105 @@
 <word>
   <form>yalozo</form>
   <seq step="Try to build a Full analysis node on an uninflected Stem node.">
-	<full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
-	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>yalo (mat): yalo</shortName>
-		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
-		</morph>
-	  </stem>
-	</full>
-	<morph wordType="enclitic">
-	  <shortName>=zo (RelativeClause): zo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
+    <full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
+      <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>yalo (mat): yalo</shortName>
+          <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+        </morph>
+      </stem>
+    </full>
+    <morph wordType="enclitic">
+      <shortName>=zo (RelativeClause): zo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node.">
-	<full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+"><morph wordType="root"><shortName>yalo (mat): yalo</shortName><stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" /></morph></stem></full>
-	<morph wordType="enclitic">
-	  <shortName>=zo (RelativeClause): zo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
+    <full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+"><morph wordType="root"><shortName>yalo (mat): yalo</shortName><stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" /></morph></stem></full>
+    <morph wordType="enclitic">
+      <shortName>=zo (RelativeClause): zo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node.">
-	<full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-	  <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (n) of the stem.</failure>
-	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>yalo (mat): yalo</shortName>
-		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
-	<morph wordType="enclitic">
-	  <shortName>=zo (RelativeClause): zo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
+    <full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+      <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (n) of the stem.</failure>
+      <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>yalo (mat): yalo</shortName>
+          <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
+    <morph wordType="enclitic">
+      <shortName>=zo (RelativeClause): zo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node.">
-	<full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-	  <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (n) of the stem.</failure>
-	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>yalo (mat): yalo</shortName>
-		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
-	<morph wordType="enclitic">
-	  <shortName>=zo (RelativeClause): zo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
+    <full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+      <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (n) of the stem.</failure>
+      <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>yalo (mat): yalo</shortName>
+          <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
+    <morph wordType="enclitic">
+      <shortName>=zo (RelativeClause): zo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node.">
-	<full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-	  <failure>The  category (trans) of the inflectional template "Transitive verb" is incompatible with the category (n) of the stem.</failure>
-	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>yalo (mat): yalo</shortName>
-		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
-	<morph wordType="enclitic">
-	  <shortName>=zo (RelativeClause): zo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
+    <full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+      <failure>The  category (trans) of the inflectional template "Transitive verb" is incompatible with the category (n) of the stem.</failure>
+      <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>yalo (mat): yalo</shortName>
+          <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
+    <morph wordType="enclitic">
+      <shortName>=zo (RelativeClause): zo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
-	<stem syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-" blocksInflection="+">
-	  <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (n) of the stem.</failure>
-	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>yalo (mat): yalo</shortName>
-		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
-		</morph>
-	  </stem></stem>
-	<morph wordType="enclitic">
-	  <shortName>=zo (RelativeClause): zo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
+    <stem syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-" blocksInflection="+">
+      <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (n) of the stem.</failure>
+      <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>yalo (mat): yalo</shortName>
+          <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+        </morph>
+      </stem></stem>
+    <morph wordType="enclitic">
+      <shortName>=zo (RelativeClause): zo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node.">
-	<full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
-	  <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (n) of the stem.</failure>
-	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>yalo (mat): yalo</shortName>
-		  <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
-	<morph wordType="enclitic">
-	  <shortName>=zo (RelativeClause): zo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
+    <full syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+">
+      <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (n) of the stem.</failure>
+      <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>yalo (mat): yalo</shortName>
+          <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
+    <morph wordType="enclitic">
+      <shortName>=zo (RelativeClause): zo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
 </word>

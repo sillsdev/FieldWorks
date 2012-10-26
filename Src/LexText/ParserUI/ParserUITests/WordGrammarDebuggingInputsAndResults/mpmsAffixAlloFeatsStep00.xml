@@ -2,131 +2,131 @@
 <word>
   <form>mpms</form>
   <seq step="Try to build a Stem node on a root." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
-	  <fs id="15013">
-		<feature>
-		  <name>nagr</name>
-		  <value>
-			<fs id="0">
-			  <feature>
-				<name>gen</name>
-				<value>m</value>
-			  </feature>
-			  <feature>
-				<name>num</name>
-				<value>pl</value>
-			  </feature>
-			</fs>
-		  </value>
-		</feature>
-	  </fs>
-	  <morph alloid="15014" morphname="15013" type="root" wordType="root">
-		<shortName>mp (masc.pl): mp</shortName>
-		<alloform>mp</alloform>
-		<gloss>masc.pl</gloss>
-		<citationForm>mp</citationForm>
-		<stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
-		  <fs id="15013">
-			<feature>
-			  <name>nagr</name>
-			  <value>
-				<fs id="0">
-				  <feature>
-					<name>gen</name>
-					<value>m</value>
-				  </feature>
-				  <feature>
-					<name>num</name>
-					<value>pl</value>
-				  </feature>
-				</fs>
-			  </value>
-			</feature>
-		  </fs>
-		</stemMsa>
-	  </morph>
-	</stem>
-	<morph alloid="14994" morphname="14992" type="sfx" wordType="15005">
-	  <shortName>-ms (INFL): infl</shortName>
-	  <alloform>-ms</alloform>
-	  <affixAlloFeats>
-		<fs id="15039">
-		  <feature>
-			<name>nagr</name>
-			<value>
-			  <fs id="0">
-				<feature>
-				  <name>gen</name>
-				  <value>m</value>
-				</feature>
-				<feature>
-				  <name>num</name>
-				  <value>sg</value>
-				</feature>
-			  </fs>
-			</value>
-		  </feature>
-		</fs>
-	  </affixAlloFeats>
-	  <gloss>INFL</gloss>
-	  <citationForm>infl</citationForm>
-	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
-	</morph>
+    <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+      <fs id="15013">
+        <feature>
+          <name>nagr</name>
+          <value>
+            <fs id="0">
+              <feature>
+                <name>gen</name>
+                <value>m</value>
+              </feature>
+              <feature>
+                <name>num</name>
+                <value>pl</value>
+              </feature>
+            </fs>
+          </value>
+        </feature>
+      </fs>
+      <morph alloid="15014" morphname="15013" type="root" wordType="root">
+        <shortName>mp (masc.pl): mp</shortName>
+        <alloform>mp</alloform>
+        <gloss>masc.pl</gloss>
+        <citationForm>mp</citationForm>
+        <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+          <fs id="15013">
+            <feature>
+              <name>nagr</name>
+              <value>
+                <fs id="0">
+                  <feature>
+                    <name>gen</name>
+                    <value>m</value>
+                  </feature>
+                  <feature>
+                    <name>num</name>
+                    <value>pl</value>
+                  </feature>
+                </fs>
+              </value>
+            </feature>
+          </fs>
+        </stemMsa>
+      </morph>
+    </stem>
+    <morph alloid="14994" morphname="14992" type="sfx" wordType="15005">
+      <shortName>-ms (INFL): infl</shortName>
+      <alloform>-ms</alloform>
+      <affixAlloFeats>
+        <fs id="15039">
+          <feature>
+            <name>nagr</name>
+            <value>
+              <fs id="0">
+                <feature>
+                  <name>gen</name>
+                  <value>m</value>
+                </feature>
+                <feature>
+                  <name>num</name>
+                  <value>sg</value>
+                </feature>
+              </fs>
+            </value>
+          </feature>
+        </fs>
+      </affixAlloFeats>
+      <gloss>INFL</gloss>
+      <citationForm>infl</citationForm>
+      <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked)." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<partial syncat="259" syncatAbbr="n">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
-	  <morph alloid="15014" morphname="15013" type="root" wordType="root">
-		<shortName>mp (masc.pl): mp</shortName>
-		<alloform>mp</alloform>
-		<gloss>masc.pl</gloss>
-		<citationForm>mp</citationForm>
-		<stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
-		  <fs id="15013">
-			<feature>
-			  <name>nagr</name>
-			  <value>
-				<fs id="0">
-				  <feature>
-					<name>gen</name>
-					<value>m</value>
-				  </feature>
-				  <feature>
-					<name>num</name>
-					<value>pl</value>
-				  </feature>
-				</fs>
-			  </value>
-			</feature>
-		  </fs>
-		</stemMsa>
-	  </morph>
-	</partial>
-	<morph alloid="14994" morphname="14992" type="sfx" wordType="15005">
-	  <shortName>-ms (INFL): infl</shortName>
-	  <alloform>-ms</alloform>
-	  <affixAlloFeats>
-		<fs id="15039">
-		  <feature>
-			<name>nagr</name>
-			<value>
-			  <fs id="0">
-				<feature>
-				  <name>gen</name>
-				  <value>m</value>
-				</feature>
-				<feature>
-				  <name>num</name>
-				  <value>sg</value>
-				</feature>
-			  </fs>
-			</value>
-		  </feature>
-		</fs>
-	  </affixAlloFeats>
-	  <gloss>INFL</gloss>
-	  <citationForm>infl</citationForm>
-	  <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
-	</morph>
+    <partial syncat="259" syncatAbbr="n">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
+      <morph alloid="15014" morphname="15013" type="root" wordType="root">
+        <shortName>mp (masc.pl): mp</shortName>
+        <alloform>mp</alloform>
+        <gloss>masc.pl</gloss>
+        <citationForm>mp</citationForm>
+        <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+          <fs id="15013">
+            <feature>
+              <name>nagr</name>
+              <value>
+                <fs id="0">
+                  <feature>
+                    <name>gen</name>
+                    <value>m</value>
+                  </feature>
+                  <feature>
+                    <name>num</name>
+                    <value>pl</value>
+                  </feature>
+                </fs>
+              </value>
+            </feature>
+          </fs>
+        </stemMsa>
+      </morph>
+    </partial>
+    <morph alloid="14994" morphname="14992" type="sfx" wordType="15005">
+      <shortName>-ms (INFL): infl</shortName>
+      <alloform>-ms</alloform>
+      <affixAlloFeats>
+        <fs id="15039">
+          <feature>
+            <name>nagr</name>
+            <value>
+              <fs id="0">
+                <feature>
+                  <name>gen</name>
+                  <value>m</value>
+                </feature>
+                <feature>
+                  <name>num</name>
+                  <value>sg</value>
+                </feature>
+              </fs>
+            </value>
+          </feature>
+        </fs>
+      </affixAlloFeats>
+      <gloss>INFL</gloss>
+      <citationForm>infl</citationForm>
+      <inflMsa cat="259" catAbbr="n" slot="15005" slotAbbr="Inflection" slotOptional="false" />
+    </morph>
   </seq>
 </word>

@@ -2,78 +2,78 @@
 <word>
   <form>ximu</form>
   <seq step="Try to build a Full analysis node on an uninflected Stem node.">
-	<full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-">
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</full>
+    <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-">
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </full>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node.">
-	<full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
-	  <failure>The  category (n) of the inflectional template "Possessed noun" is incompatible with the category (adv) of the stem.</failure><stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-"><morph wordType="root"><shortName>ximu (slowly): ximu</shortName><stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" /></morph></stem></full>
+    <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
+      <failure>The  category (n) of the inflectional template "Possessed noun" is incompatible with the category (adv) of the stem.</failure><stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-"><morph wordType="root"><shortName>ximu (slowly): ximu</shortName><stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" /></morph></stem></full>
   </seq>
   <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node.">
-	<full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
-	  <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (adv) of the stem.</failure>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
+    <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
+      <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (adv) of the stem.</failure>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
   </seq>
   <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node.">
-	<full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
-	  <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (adv) of the stem.</failure>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
+    <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
+      <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (adv) of the stem.</failure>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
   </seq>
   <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node.">
-	<full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
-	  <failure>The  category (trans) of the inflectional template "Transitive verb" is incompatible with the category (adv) of the stem.</failure>
-	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
+    <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
+      <failure>The  category (trans) of the inflectional template "Transitive verb" is incompatible with the category (adv) of the stem.</failure>
+      <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
   </seq>
   <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
-	<stem syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-" blocksInflection="+">
-	  <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (adv) of the stem.</failure>
-	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem></stem>
+    <stem syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-" blocksInflection="+">
+      <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (adv) of the stem.</failure>
+      <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem></stem>
   </seq>
   <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node.">
-	<full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
-	  <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (adv) of the stem.</failure>
-	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
+    <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="+">
+      <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (adv) of the stem.</failure>
+      <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
   </seq>
 </word>

@@ -2,323 +2,323 @@
 <word>
   <form>fsfstov</form>
   <resultSoFar>
-	<stem syncat="262" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
-	  <fs id="PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)">
-		<feature>
-		  <name>nagr</name>
-		  <value>
-			<fs id="0">
-			  <feature>
-				<name>gen</name>
-				<value>f</value>
-			  </feature>
-			  <feature>
-				<name>num</name>
-				<value>sg</value>
-			  </feature>
-			</fs>
-		  </value>
-		</feature>
-	  </fs>
-	  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
-		<fs id="15022">
-		  <feature>
-			<name>nagr</name>
-			<value>
-			  <fs id="0">
-				<feature>
-				  <name>gen</name>
-				  <value>f</value>
-				</feature>
-				<feature>
-				  <name>num</name>
-				  <value>sg</value>
-				</feature>
-			  </fs>
-			</value>
-		  </feature>
-		</fs>
-		<morph alloid="15023" morphname="15022" type="root" wordType="root">
-		  <shortName>fs (fem.sing): fs</shortName>
-		  <alloform>fs</alloform>
-		  <gloss>fem.sing</gloss>
-		  <citationForm>fs</citationForm>
-		  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
-			<fs id="15022">
-			  <feature>
-				<name>nagr</name>
-				<value>
-				  <fs id="0">
-					<feature>
-					  <name>gen</name>
-					  <value>f</value>
-					</feature>
-					<feature>
-					  <name>num</name>
-					  <value>sg</value>
-					</feature>
-				  </fs>
-				</value>
-			  </feature>
-			</fs>
-		  </stemMsa>
-		</morph>
-	  </stem>
-	  <morph alloid="15243" morphname="15161" type="sfx" wordType="derivSfx">
-		<shortName>-fstov (fp to verb): fptov</shortName>
-		<alloform>-fstov</alloform>
-		<affixAlloFeats>
-		  <fs id="15244">
-			<feature>
-			  <name>nagr</name>
-			  <value>
-				<fs id="0">
-				  <feature>
-					<name>gen</name>
-					<value>f</value>
-				  </feature>
-				  <feature>
-					<name>num</name>
-					<value>sg</value>
-				  </feature>
-				</fs>
-			  </value>
-			</feature>
-		  </fs>
-		</affixAlloFeats>
-		<gloss>fp to verb</gloss>
-		<citationForm>fptov</citationForm>
-		<derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<morph alloid="15461" morphname="15460" type="sfx" wordType="derivSfx">
-	  <shortName>-0 (ForWGD): 0</shortName>
-	  <alloform>-0</alloform>
-	  <gloss>ForWGD</gloss>
-	  <citationForm>0</citationForm>
-	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <stem syncat="262" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
+      <fs id="PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)">
+        <feature>
+          <name>nagr</name>
+          <value>
+            <fs id="0">
+              <feature>
+                <name>gen</name>
+                <value>f</value>
+              </feature>
+              <feature>
+                <name>num</name>
+                <value>sg</value>
+              </feature>
+            </fs>
+          </value>
+        </feature>
+      </fs>
+      <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <fs id="15022">
+          <feature>
+            <name>nagr</name>
+            <value>
+              <fs id="0">
+                <feature>
+                  <name>gen</name>
+                  <value>f</value>
+                </feature>
+                <feature>
+                  <name>num</name>
+                  <value>sg</value>
+                </feature>
+              </fs>
+            </value>
+          </feature>
+        </fs>
+        <morph alloid="15023" morphname="15022" type="root" wordType="root">
+          <shortName>fs (fem.sing): fs</shortName>
+          <alloform>fs</alloform>
+          <gloss>fem.sing</gloss>
+          <citationForm>fs</citationForm>
+          <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+            <fs id="15022">
+              <feature>
+                <name>nagr</name>
+                <value>
+                  <fs id="0">
+                    <feature>
+                      <name>gen</name>
+                      <value>f</value>
+                    </feature>
+                    <feature>
+                      <name>num</name>
+                      <value>sg</value>
+                    </feature>
+                  </fs>
+                </value>
+              </feature>
+            </fs>
+          </stemMsa>
+        </morph>
+      </stem>
+      <morph alloid="15243" morphname="15161" type="sfx" wordType="derivSfx">
+        <shortName>-fstov (fp to verb): fptov</shortName>
+        <alloform>-fstov</alloform>
+        <affixAlloFeats>
+          <fs id="15244">
+            <feature>
+              <name>nagr</name>
+              <value>
+                <fs id="0">
+                  <feature>
+                    <name>gen</name>
+                    <value>f</value>
+                  </feature>
+                  <feature>
+                    <name>num</name>
+                    <value>sg</value>
+                  </feature>
+                </fs>
+              </value>
+            </feature>
+          </fs>
+        </affixAlloFeats>
+        <gloss>fp to verb</gloss>
+        <citationForm>fptov</citationForm>
+        <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+      </morph>
+    </stem>
+    <morph alloid="15461" morphname="15460" type="sfx" wordType="derivSfx">
+      <shortName>-0 (ForWGD): 0</shortName>
+      <alloform>-0</alloform>
+      <gloss>ForWGD</gloss>
+      <citationForm>0</citationForm>
+      <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </resultSoFar>
   <seq step="Try to build a Word analysis node on a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<word syncat="262" syncatAbbr="v">
-	  <failure>The category 'v' requires inflection, but there was no inflection.</failure>
-	  <full syncat="262" syncatAbbr="v" requiresInfl="+" inflected="-">
-		<stem syncat="262" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
-		  <fs id="PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)">
-			<feature>
-			  <name>nagr</name>
-			  <value>
-				<fs id="0">
-				  <feature>
-					<name>gen</name>
-					<value>f</value>
-				  </feature>
-				  <feature>
-					<name>num</name>
-					<value>sg</value>
-				  </feature>
-				</fs>
-			  </value>
-			</feature>
-		  </fs>
-		  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
-			<fs id="15022">
-			  <feature>
-				<name>nagr</name>
-				<value>
-				  <fs id="0">
-					<feature>
-					  <name>gen</name>
-					  <value>f</value>
-					</feature>
-					<feature>
-					  <name>num</name>
-					  <value>sg</value>
-					</feature>
-				  </fs>
-				</value>
-			  </feature>
-			</fs>
-			<morph alloid="15023" morphname="15022" type="root" wordType="root">
-			  <shortName>fs (fem.sing): fs</shortName>
-			  <alloform>fs</alloform>
-			  <gloss>fem.sing</gloss>
-			  <citationForm>fs</citationForm>
-			  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
-				<fs id="15022">
-				  <feature>
-					<name>nagr</name>
-					<value>
-					  <fs id="0">
-						<feature>
-						  <name>gen</name>
-						  <value>f</value>
-						</feature>
-						<feature>
-						  <name>num</name>
-						  <value>sg</value>
-						</feature>
-					  </fs>
-					</value>
-				  </feature>
-				</fs>
-			  </stemMsa>
-			</morph>
-		  </stem>
-		  <morph alloid="15243" morphname="15161" type="sfx" wordType="derivSfx">
-			<shortName>-fstov (fp to verb): fptov</shortName>
-			<alloform>-fstov</alloform>
-			<affixAlloFeats>
-			  <fs id="15244">
-				<feature>
-				  <name>nagr</name>
-				  <value>
-					<fs id="0">
-					  <feature>
-						<name>gen</name>
-						<value>f</value>
-					  </feature>
-					  <feature>
-						<name>num</name>
-						<value>sg</value>
-					  </feature>
-					</fs>
-				  </value>
-				</feature>
-			  </fs>
-			</affixAlloFeats>
-			<gloss>fp to verb</gloss>
-			<citationForm>fptov</citationForm>
-			<derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </full>
-	</word>
-	<morph alloid="15461" morphname="15460" type="sfx" wordType="derivSfx">
-	  <shortName>-0 (ForWGD): 0</shortName>
-	  <alloform>-0</alloform>
-	  <gloss>ForWGD</gloss>
-	  <citationForm>0</citationForm>
-	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <word syncat="262" syncatAbbr="v">
+      <failure>The category 'v' requires inflection, but there was no inflection.</failure>
+      <full syncat="262" syncatAbbr="v" requiresInfl="+" inflected="-">
+        <stem syncat="262" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
+          <fs id="PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)">
+            <feature>
+              <name>nagr</name>
+              <value>
+                <fs id="0">
+                  <feature>
+                    <name>gen</name>
+                    <value>f</value>
+                  </feature>
+                  <feature>
+                    <name>num</name>
+                    <value>sg</value>
+                  </feature>
+                </fs>
+              </value>
+            </feature>
+          </fs>
+          <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+            <fs id="15022">
+              <feature>
+                <name>nagr</name>
+                <value>
+                  <fs id="0">
+                    <feature>
+                      <name>gen</name>
+                      <value>f</value>
+                    </feature>
+                    <feature>
+                      <name>num</name>
+                      <value>sg</value>
+                    </feature>
+                  </fs>
+                </value>
+              </feature>
+            </fs>
+            <morph alloid="15023" morphname="15022" type="root" wordType="root">
+              <shortName>fs (fem.sing): fs</shortName>
+              <alloform>fs</alloform>
+              <gloss>fem.sing</gloss>
+              <citationForm>fs</citationForm>
+              <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+                <fs id="15022">
+                  <feature>
+                    <name>nagr</name>
+                    <value>
+                      <fs id="0">
+                        <feature>
+                          <name>gen</name>
+                          <value>f</value>
+                        </feature>
+                        <feature>
+                          <name>num</name>
+                          <value>sg</value>
+                        </feature>
+                      </fs>
+                    </value>
+                  </feature>
+                </fs>
+              </stemMsa>
+            </morph>
+          </stem>
+          <morph alloid="15243" morphname="15161" type="sfx" wordType="derivSfx">
+            <shortName>-fstov (fp to verb): fptov</shortName>
+            <alloform>-fstov</alloform>
+            <affixAlloFeats>
+              <fs id="15244">
+                <feature>
+                  <name>nagr</name>
+                  <value>
+                    <fs id="0">
+                      <feature>
+                        <name>gen</name>
+                        <value>f</value>
+                      </feature>
+                      <feature>
+                        <name>num</name>
+                        <value>sg</value>
+                      </feature>
+                    </fs>
+                  </value>
+                </feature>
+              </fs>
+            </affixAlloFeats>
+            <gloss>fp to verb</gloss>
+            <citationForm>fptov</citationForm>
+            <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+          </morph>
+        </stem>
+      </full>
+    </word>
+    <morph alloid="15461" morphname="15460" type="sfx" wordType="derivSfx">
+      <shortName>-0 (ForWGD): 0</shortName>
+      <alloform>-0</alloform>
+      <gloss>ForWGD</gloss>
+      <citationForm>0</citationForm>
+      <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to build a Word analysis node on a Full analysis node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<word syncat="262" syncatAbbr="v">
-	  <full syncat="262" syncatAbbr="v" requiresInfl="-" inflected="+">
-		<fs id="UnificationOf(PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)andEmpty)">
-		  <feature>
-			<name>nagr</name>
-			<value>
-			  <fs id="0">
-				<feature>
-				  <name>gen</name>
-				  <value>f</value>
-				</feature>
-				<feature>
-				  <name>num</name>
-				  <value>sg</value>
-				</feature>
-			  </fs>
-			</value>
-		  </feature>
-		</fs>
-		<stem syncat="262" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
-		  <fs id="PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)">
-			<feature>
-			  <name>nagr</name>
-			  <value>
-				<fs id="0">
-				  <feature>
-					<name>gen</name>
-					<value>f</value>
-				  </feature>
-				  <feature>
-					<name>num</name>
-					<value>sg</value>
-				  </feature>
-				</fs>
-			  </value>
-			</feature>
-		  </fs>
-		  <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
-			<fs id="15022">
-			  <feature>
-				<name>nagr</name>
-				<value>
-				  <fs id="0">
-					<feature>
-					  <name>gen</name>
-					  <value>f</value>
-					</feature>
-					<feature>
-					  <name>num</name>
-					  <value>sg</value>
-					</feature>
-				  </fs>
-				</value>
-			  </feature>
-			</fs>
-			<morph alloid="15023" morphname="15022" type="root" wordType="root">
-			  <shortName>fs (fem.sing): fs</shortName>
-			  <alloform>fs</alloform>
-			  <gloss>fem.sing</gloss>
-			  <citationForm>fs</citationForm>
-			  <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
-				<fs id="15022">
-				  <feature>
-					<name>nagr</name>
-					<value>
-					  <fs id="0">
-						<feature>
-						  <name>gen</name>
-						  <value>f</value>
-						</feature>
-						<feature>
-						  <name>num</name>
-						  <value>sg</value>
-						</feature>
-					  </fs>
-					</value>
-				  </feature>
-				</fs>
-			  </stemMsa>
-			</morph>
-		  </stem>
-		  <morph alloid="15243" morphname="15161" type="sfx" wordType="derivSfx">
-			<shortName>-fstov (fp to verb): fptov</shortName>
-			<alloform>-fstov</alloform>
-			<affixAlloFeats>
-			  <fs id="15244">
-				<feature>
-				  <name>nagr</name>
-				  <value>
-					<fs id="0">
-					  <feature>
-						<name>gen</name>
-						<value>f</value>
-					  </feature>
-					  <feature>
-						<name>num</name>
-						<value>sg</value>
-					  </feature>
-					</fs>
-				  </value>
-				</feature>
-			  </fs>
-			</affixAlloFeats>
-			<gloss>fp to verb</gloss>
-			<citationForm>fptov</citationForm>
-			<derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </full>
-	</word>
-	<morph alloid="15461" morphname="15460" type="sfx" wordType="derivSfx">
-	  <shortName>-0 (ForWGD): 0</shortName>
-	  <alloform>-0</alloform>
-	  <gloss>ForWGD</gloss>
-	  <citationForm>0</citationForm>
-	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <word syncat="262" syncatAbbr="v">
+      <full syncat="262" syncatAbbr="v" requiresInfl="-" inflected="+">
+        <fs id="UnificationOf(PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)andEmpty)">
+          <feature>
+            <name>nagr</name>
+            <value>
+              <fs id="0">
+                <feature>
+                  <name>gen</name>
+                  <value>f</value>
+                </feature>
+                <feature>
+                  <name>num</name>
+                  <value>sg</value>
+                </feature>
+              </fs>
+            </value>
+          </feature>
+        </fs>
+        <stem syncat="262" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+" blocksInfl="-">
+          <fs id="PriorityUnionOf(UnificationOf(15022andEmpty)andEmpty)">
+            <feature>
+              <name>nagr</name>
+              <value>
+                <fs id="0">
+                  <feature>
+                    <name>gen</name>
+                    <value>f</value>
+                  </feature>
+                  <feature>
+                    <name>num</name>
+                    <value>sg</value>
+                  </feature>
+                </fs>
+              </value>
+            </feature>
+          </fs>
+          <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+            <fs id="15022">
+              <feature>
+                <name>nagr</name>
+                <value>
+                  <fs id="0">
+                    <feature>
+                      <name>gen</name>
+                      <value>f</value>
+                    </feature>
+                    <feature>
+                      <name>num</name>
+                      <value>sg</value>
+                    </feature>
+                  </fs>
+                </value>
+              </feature>
+            </fs>
+            <morph alloid="15023" morphname="15022" type="root" wordType="root">
+              <shortName>fs (fem.sing): fs</shortName>
+              <alloform>fs</alloform>
+              <gloss>fem.sing</gloss>
+              <citationForm>fs</citationForm>
+              <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+                <fs id="15022">
+                  <feature>
+                    <name>nagr</name>
+                    <value>
+                      <fs id="0">
+                        <feature>
+                          <name>gen</name>
+                          <value>f</value>
+                        </feature>
+                        <feature>
+                          <name>num</name>
+                          <value>sg</value>
+                        </feature>
+                      </fs>
+                    </value>
+                  </feature>
+                </fs>
+              </stemMsa>
+            </morph>
+          </stem>
+          <morph alloid="15243" morphname="15161" type="sfx" wordType="derivSfx">
+            <shortName>-fstov (fp to verb): fptov</shortName>
+            <alloform>-fstov</alloform>
+            <affixAlloFeats>
+              <fs id="15244">
+                <feature>
+                  <name>nagr</name>
+                  <value>
+                    <fs id="0">
+                      <feature>
+                        <name>gen</name>
+                        <value>f</value>
+                      </feature>
+                      <feature>
+                        <name>num</name>
+                        <value>sg</value>
+                      </feature>
+                    </fs>
+                  </value>
+                </feature>
+              </fs>
+            </affixAlloFeats>
+            <gloss>fp to verb</gloss>
+            <citationForm>fptov</citationForm>
+            <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+          </morph>
+        </stem>
+      </full>
+    </word>
+    <morph alloid="15461" morphname="15460" type="sfx" wordType="derivSfx">
+      <shortName>-0 (ForWGD): 0</shortName>
+      <alloform>-0</alloform>
+      <gloss>ForWGD</gloss>
+      <citationForm>0</citationForm>
+      <derivMsa fromCat="259" fromCatAbbr="n" toCat="258" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
 </word>

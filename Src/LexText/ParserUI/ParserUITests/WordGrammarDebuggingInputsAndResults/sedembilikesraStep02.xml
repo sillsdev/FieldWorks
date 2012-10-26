@@ -1,65 +1,65 @@
 <word>
   <form>sedembilikesra</form>
   <resultSoFar>
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial inflected="-" syncat="167" syncatAbbr="trans">
-	  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
-		<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>*bili (to.see): himbilira</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </full>
-	  <morph wordType="suffix">
-		<shortName>-kes (???): kes</shortName>
-		<unclassMsa fromCat="145" fromCatAbbr="v" />
-	  </morph>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial inflected="-" syncat="167" syncatAbbr="trans">
+      <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+        <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>*bili (to.see): himbilira</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+          </morph>
+        </stem>
+      </full>
+      <morph wordType="suffix">
+        <shortName>-kes (???): kes</shortName>
+        <unclassMsa fromCat="145" fromCatAbbr="v" />
+      </morph>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </resultSoFar>
   <seq>
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial inflected="-" syncat="167" syncatAbbr="trans">
-	  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
-		<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>*bili (to.see): himbilira</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </full>
-	  <morph wordType="suffix">
-		<shortName>-kes (???): kes</shortName>
-		<unclassMsa fromCat="145" fromCatAbbr="v" />
-	  </morph>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial inflected="-" syncat="167" syncatAbbr="trans">
+      <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+        <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>*bili (to.see): himbilira</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+          </morph>
+        </stem>
+      </full>
+      <morph wordType="suffix">
+        <shortName>-kes (???): kes</shortName>
+        <unclassMsa fromCat="145" fromCatAbbr="v" />
+      </morph>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
 </word>

@@ -1,26 +1,26 @@
 <word>
   <form>nihimbiligu</form>
   <seq>
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>him- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-	  <morph wordType="root">
-		<shortName>*bili (to.see): himbilira</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<morph wordType="179">
-	  <shortName>-gu (Future): gu</shortName>
-	  <inflClasses>
-		<inflClass hvo="178" abbr="2" />
-	  </inflClasses>
-	  <inflMsa slot="179" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>him- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+      <morph wordType="root">
+        <shortName>*bili (to.see): himbilira</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+      </morph>
+    </stem>
+    <morph wordType="179">
+      <shortName>-gu (Future): gu</shortName>
+      <inflClasses>
+        <inflClass hvo="178" abbr="2" />
+      </inflClasses>
+      <inflMsa slot="179" slotAbbr="Tense" />
+    </morph>
   </seq>
 </word>

@@ -2,131 +2,131 @@
 <word>
   <form>fpfstov</form>
   <seq step="Try to build a Stem node on a root." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
-	  <fs id="15033">
-		<feature>
-		  <name>nagr</name>
-		  <value>
-			<fs id="0">
-			  <feature>
-				<name>gen</name>
-				<value>f</value>
-			  </feature>
-			  <feature>
-				<name>num</name>
-				<value>pl</value>
-			  </feature>
-			</fs>
-		  </value>
-		</feature>
-	  </fs>
-	  <morph alloid="15032" morphname="15033" type="root" wordType="root">
-		<shortName>fp (fem/pl): fp</shortName>
-		<alloform>fp</alloform>
-		<gloss>fem/pl</gloss>
-		<citationForm>fp</citationForm>
-		<stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
-		  <fs id="15033">
-			<feature>
-			  <name>nagr</name>
-			  <value>
-				<fs id="0">
-				  <feature>
-					<name>gen</name>
-					<value>f</value>
-				  </feature>
-				  <feature>
-					<name>num</name>
-					<value>pl</value>
-				  </feature>
-				</fs>
-			  </value>
-			</feature>
-		  </fs>
-		</stemMsa>
-	  </morph>
-	</stem>
-	<morph alloid="15477" morphname="15473" type="sfx" wordType="derivSfx">
-	  <shortName>-fstov (fp to verb): fptov</shortName>
-	  <alloform>-fstov</alloform>
-	  <affixAlloFeats>
-		<fs id="15478">
-		  <feature>
-			<name>nagr</name>
-			<value>
-			  <fs id="0">
-				<feature>
-				  <name>gen</name>
-				  <value>f</value>
-				</feature>
-				<feature>
-				  <name>num</name>
-				  <value>sg</value>
-				</feature>
-			  </fs>
-			</value>
-		  </feature>
-		</fs>
-	  </affixAlloFeats>
-	  <gloss>fp to verb</gloss>
-	  <citationForm>fptov</citationForm>
-	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
-	</morph>
+    <stem syncat="259" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="+">
+      <fs id="15033">
+        <feature>
+          <name>nagr</name>
+          <value>
+            <fs id="0">
+              <feature>
+                <name>gen</name>
+                <value>f</value>
+              </feature>
+              <feature>
+                <name>num</name>
+                <value>pl</value>
+              </feature>
+            </fs>
+          </value>
+        </feature>
+      </fs>
+      <morph alloid="15032" morphname="15033" type="root" wordType="root">
+        <shortName>fp (fem/pl): fp</shortName>
+        <alloform>fp</alloform>
+        <gloss>fem/pl</gloss>
+        <citationForm>fp</citationForm>
+        <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+          <fs id="15033">
+            <feature>
+              <name>nagr</name>
+              <value>
+                <fs id="0">
+                  <feature>
+                    <name>gen</name>
+                    <value>f</value>
+                  </feature>
+                  <feature>
+                    <name>num</name>
+                    <value>pl</value>
+                  </feature>
+                </fs>
+              </value>
+            </feature>
+          </fs>
+        </stemMsa>
+      </morph>
+    </stem>
+    <morph alloid="15477" morphname="15473" type="sfx" wordType="derivSfx">
+      <shortName>-fstov (fp to verb): fptov</shortName>
+      <alloform>-fstov</alloform>
+      <affixAlloFeats>
+        <fs id="15478">
+          <feature>
+            <name>nagr</name>
+            <value>
+              <fs id="0">
+                <feature>
+                  <name>gen</name>
+                  <value>f</value>
+                </feature>
+                <feature>
+                  <name>num</name>
+                  <value>sg</value>
+                </feature>
+              </fs>
+            </value>
+          </feature>
+        </fs>
+      </affixAlloFeats>
+      <gloss>fp to verb</gloss>
+      <citationForm>fptov</citationForm>
+      <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked)." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<partial syncat="259" syncatAbbr="n">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
-	  <morph alloid="15032" morphname="15033" type="root" wordType="root">
-		<shortName>fp (fem/pl): fp</shortName>
-		<alloform>fp</alloform>
-		<gloss>fem/pl</gloss>
-		<citationForm>fp</citationForm>
-		<stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
-		  <fs id="15033">
-			<feature>
-			  <name>nagr</name>
-			  <value>
-				<fs id="0">
-				  <feature>
-					<name>gen</name>
-					<value>f</value>
-				  </feature>
-				  <feature>
-					<name>num</name>
-					<value>pl</value>
-				  </feature>
-				</fs>
-			  </value>
-			</feature>
-		  </fs>
-		</stemMsa>
-	  </morph>
-	</partial>
-	<morph alloid="15477" morphname="15473" type="sfx" wordType="derivSfx">
-	  <shortName>-fstov (fp to verb): fptov</shortName>
-	  <alloform>-fstov</alloform>
-	  <affixAlloFeats>
-		<fs id="15478">
-		  <feature>
-			<name>nagr</name>
-			<value>
-			  <fs id="0">
-				<feature>
-				  <name>gen</name>
-				  <value>f</value>
-				</feature>
-				<feature>
-				  <name>num</name>
-				  <value>sg</value>
-				</feature>
-			  </fs>
-			</value>
-		  </feature>
-		</fs>
-	  </affixAlloFeats>
-	  <gloss>fp to verb</gloss>
-	  <citationForm>fptov</citationForm>
-	  <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
-	</morph>
+    <partial syncat="259" syncatAbbr="n">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
+      <morph alloid="15032" morphname="15033" type="root" wordType="root">
+        <shortName>fp (fem/pl): fp</shortName>
+        <alloform>fp</alloform>
+        <gloss>fem/pl</gloss>
+        <citationForm>fp</citationForm>
+        <stemMsa cat="259" catAbbr="n" inflClass="0" requiresInfl="+">
+          <fs id="15033">
+            <feature>
+              <name>nagr</name>
+              <value>
+                <fs id="0">
+                  <feature>
+                    <name>gen</name>
+                    <value>f</value>
+                  </feature>
+                  <feature>
+                    <name>num</name>
+                    <value>pl</value>
+                  </feature>
+                </fs>
+              </value>
+            </feature>
+          </fs>
+        </stemMsa>
+      </morph>
+    </partial>
+    <morph alloid="15477" morphname="15473" type="sfx" wordType="derivSfx">
+      <shortName>-fstov (fp to verb): fptov</shortName>
+      <alloform>-fstov</alloform>
+      <affixAlloFeats>
+        <fs id="15478">
+          <feature>
+            <name>nagr</name>
+            <value>
+              <fs id="0">
+                <feature>
+                  <name>gen</name>
+                  <value>f</value>
+                </feature>
+                <feature>
+                  <name>num</name>
+                  <value>sg</value>
+                </feature>
+              </fs>
+            </value>
+          </feature>
+        </fs>
+      </affixAlloFeats>
+      <gloss>fp to verb</gloss>
+      <citationForm>fptov</citationForm>
+      <derivMsa fromCat="259" fromCatAbbr="n" toCat="262" toCatAbbr="v" fromInflClass="0" toInflClass="0" requiresInfl="+" />
+    </morph>
   </seq>
 </word>

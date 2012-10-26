@@ -2,661 +2,661 @@
 <word>
   <form>nihinlikximura</form>
   <seq step="Try to apply the Compound rule 'noun-adverb -&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "noun-adverb -&gt; intransitive verb, ic:2": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "noun-adverb -&gt; intransitive verb, ic:2": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'adverb-noun --&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (adv) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (adv) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'adj-noun with linker'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "adj-noun with linker ": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "adj-noun with linker ": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'verb-adverb'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'noun-transitive verb'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "noun-transitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "noun-transitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'noun-Intransitive verb'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "noun-Intransitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "noun-Intransitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-" blocksInflection="+">
-	  <morph wordType="181">
-		<shortName>hin- (3SgObj): hiN</shortName>
-		<inflMsa slot="181" slotAbbr="Object" />
-	  </morph>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem></stem>
-	<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-" blocksInflection="+">
+      <morph wordType="181">
+        <shortName>hin- (3SgObj): hiN</shortName>
+        <inflMsa slot="181" slotAbbr="Object" />
+      </morph>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem></stem>
+    <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<stem syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-" blocksInflection="+">
-	  <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (adv) of the stem.</failure>
-	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem></stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </stem>
+    <stem syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-" blocksInflection="+">
+      <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (adv) of the stem.</failure>
+      <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem></stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'noun-adverb -&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "noun-adverb -&gt; intransitive verb, ic:2": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "noun-adverb -&gt; intransitive verb, ic:2": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'adverb-noun --&gt; intransitive verb, ic:2'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (adv) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (adv) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'adj-noun with linker'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "adj-noun with linker ": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "adj-noun with linker ": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'verb-adverb'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'noun-transitive verb'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "noun-transitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "noun-transitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'noun-Intransitive verb'.  The result will be a new Stem node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "noun-Intransitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>lik (to.eat): hinliksa</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "noun-Intransitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>lik (to.eat): hinliksa</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-" blocksInflection="+">
-	  <morph wordType="181">
-		<shortName>hin- (3SgObj): hiN</shortName>
-		<inflMsa slot="181" slotAbbr="Object" />
-	  </morph>
-	  <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>lik (to.eat): hinliksa</shortName>
-		  <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-		</morph>
-	  </stem></stem>
-	<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-" blocksInflection="+">
+      <morph wordType="181">
+        <shortName>hin- (3SgObj): hiN</shortName>
+        <inflMsa slot="181" slotAbbr="Object" />
+      </morph>
+      <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>lik (to.eat): hinliksa</shortName>
+          <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+        </morph>
+      </stem></stem>
+    <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Stem analysis node.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<stem syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-" blocksInflection="+">
-	  <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (adv) of the stem.</failure>
-	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem></stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </stem>
+    <stem syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-" blocksInflection="+">
+      <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (adv) of the stem.</failure>
+      <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem></stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
 </word>
