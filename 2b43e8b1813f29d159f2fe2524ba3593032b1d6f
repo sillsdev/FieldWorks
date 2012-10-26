@@ -1,0 +1,9 @@
+Code-Review-1: Jenkins CI
+Code-Review+2: John Thomson <john.thomson7540@gmail.com>
+Verified+1: John Thomson <john.thomson7540@gmail.com>
+Verified-Linux+1: John Thomson <john.thomson7540@gmail.com>
+Submitted-by: John Thomson <john.thomson7540@gmail.com>
+Submitted-at: Fri, 26 Oct 2012 13:31:37 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/222
+Project: FieldWorks
+Branch: refs/heads/develop
