@@ -232,11 +232,10 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				// See if we can get the 'original' one in the data directory.
 				overrideDataPath = Path.Combine(szDir, Path.Combine("data", "UnicodeDataOverrides.txt"));
 			}
-			IntPtr result = SilIcuInit(overrideDataPath);
-			var msg = Marshal.PtrToStringUni(result);
-			if (!string.IsNullOrEmpty(msg))
+			bool result = SilIcuInit(overrideDataPath);
+			if (!result)
 			{
-				MessageBox.Show(string.Format(Properties.Resources.ksIcuInitFailed, overrideDataPath, msg));
+				MessageBox.Show(string.Format(Properties.Resources.ksIcuInitFailed, overrideDataPath));
 			}
 		}
 
@@ -278,8 +277,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		/// <summary>SIL-specific initialization. Note that we do not currently define the kIcuVersion extension for this method.</summary>
 		[DllImport(kIcuUcDllName, EntryPoint = "SilIcuInit",
 			 CallingConvention = CallingConvention.Cdecl)]
-		private static extern IntPtr SilIcuInit(
-			[MarshalAs(UnmanagedType.LPWStr)]string pathname);
+		[return: MarshalAs(UnmanagedType.I1)]
+		private static extern bool SilIcuInit(
+			[MarshalAs(UnmanagedType.LPStr)]string pathname);
 
 		/// <summary>get the name of an ICU code point</summary>
 		[DllImport(kIcuUcDllName, EntryPoint = "u_init" + kIcuVersion,

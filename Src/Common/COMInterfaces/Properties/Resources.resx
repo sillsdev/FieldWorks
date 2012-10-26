@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
 	Microsoft ResX Schema
@@ -118,7 +118,7 @@
 	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksIcuInitFailed" xml:space="preserve">
-	<value>SIL initialization of ICU using the file "{0}" failed with the message {1}. SIL PUA characters will not behave properly. Please report this problem to the developers.</value>
+	<value>SIL initialization of ICU using the file "{0}" failed. SIL PUA characters will not behave properly. Please report this problem to the developers.</value>
   </data>
   <data name="kstidInvalidInstallation" xml:space="preserve">
 	<value>Languages data is not installed correctly. Please re-run the FieldWorks Installer and repair your installation.</value>

@@ -5,7 +5,7 @@
 # Source this file in a shell and then run "mono FieldWorks.exe -app {Te,Flex}"
 
 BASE=$(pwd)
-COM=$(dirname "${BASE}")/COM
+COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
 
@@ -45,7 +45,7 @@ then
 	FW_ROOT="${BASE}/../../share/fieldworks"
 	FW_ROOTDATA="${HOME}/.config/fieldworks"
 	FW_ROOTCODE="${BASE}/../../share/fieldworks"
-	ICU_DATA="${HOME}/.config/fieldworks/Icu40/icudt40l"
+	ICU_DATA="${HOME}/.config/fieldworks/Icu50"
 	PATH="${BASE}/icu-bin:${PATH}"
 	LD_LIBRARY_PATH="${BASE}:${LD_LIBRARY_PATH}"
 	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
@@ -54,7 +54,7 @@ else
 	FW_ROOT="${BASE}/DistFiles"
 	FW_ROOTDATA="${BASE}/DistFiles"
 	FW_ROOTCODE="${BASE}/DistFiles"
-	ICU_DATA="${BASE}/DistFiles/Icu40/icudt40l"
+	ICU_DATA="${BASE}/DistFiles/Icu50"
 	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
 fi
 

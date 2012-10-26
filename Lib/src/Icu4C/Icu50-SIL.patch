@@ -1,0 +1,1923 @@
+diff --git a/icu/source/allinone/allinone.sln b/icu/source/allinone/allinone.sln
+index 0101cae..87a1c47 100644
+--- a/icu/source/allinone/allinone.sln
++++ b/icu/source/allinone/allinone.sln
+@@ -52,7 +52,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iotest", "..\test\iotest\io
+ EndProject
+ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "icupkg", "..\tools\icupkg\icupkg.vcxproj", "{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}"
+ EndProject
+-Project("{9D4211F7-2C77-439C-82F0-30A4E43BA569}") = "gendict", "..\tools\gendict\gendict.vcxproj", "{9D4211F7-2C77-439C-82F0-30A4E43BA569}"
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gendict", "..\tools\gendict\gendict.vcxproj", "{9D4211F7-2C77-439C-82F0-30A4E43BA569}"
+ EndProject
+ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "letest", "..\test\letest\letest.vcxproj", "{67351485-4D18-4245-BE39-A7EF0675ACD2}"
+ EndProject
+@@ -64,276 +64,482 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "icuinfo", "..\tools\icuinfo
+ EndProject
+ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testplug", "..\tools\icuinfo\testplug.vcxproj", "{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}"
+ EndProject
++Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}"
++EndProject
+ Global
+-	GlobalSection(SubversionScc) = preSolution
+-		Svn-Managed = True
+-		Manager = AnkhSVN - Subversion Support for Visual Studio
+-	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
++		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
++		Debug|x86 = Debug|x86
++		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
++		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
++		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Debug|Win32.Build.0 = Debug|Win32
+		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Debug|x64.ActiveCfg = Debug|x64
+		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Debug|x64.Build.0 = Debug|x64
++		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Debug|x86.ActiveCfg = Debug|x64
++		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Release|Mixed Platforms.Build.0 = Release|x64
+		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Release|Win32.ActiveCfg = Release|Win32
+		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Release|Win32.Build.0 = Release|Win32
+		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Release|x64.ActiveCfg = Release|x64
+		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Release|x64.Build.0 = Release|x64
++		{F7659D77-09CF-4FE9-ACEE-927287AA9509}.Release|x86.ActiveCfg = Release|x64
++		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Debug|Win32.Build.0 = Debug|Win32
+		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Debug|x64.ActiveCfg = Debug|x64
+		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Debug|x64.Build.0 = Debug|x64
++		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Debug|x86.ActiveCfg = Debug|x64
++		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Release|Mixed Platforms.Build.0 = Release|x64
+		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Release|Win32.ActiveCfg = Release|Win32
+		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Release|Win32.Build.0 = Release|Win32
+		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Release|x64.ActiveCfg = Release|x64
+		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Release|x64.Build.0 = Release|x64
++		{3D1246AE-1B32-479B-BECA-AEFA97BE2321}.Release|x86.ActiveCfg = Release|x64
++		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
++		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Debug|Win32.Build.0 = Debug|Win32
+-		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Debug|x64.ActiveCfg = Debug|x64
+-		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Debug|x64.Build.0 = Debug|x64
++		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Debug|x64.ActiveCfg = Debug|Win32
++		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Debug|x86.ActiveCfg = Debug|Win32
++		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Release|Mixed Platforms.ActiveCfg = Release|Win32
++		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Release|Win32.ActiveCfg = Release|Win32
+		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Release|Win32.Build.0 = Release|Win32
+-		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Release|x64.ActiveCfg = Release|x64
+-		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Release|x64.Build.0 = Release|x64
++		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Release|x64.ActiveCfg = Release|Win32
++		{73C0A65B-D1F2-4DE1-B3A6-15DAD2C23F3D}.Release|x86.ActiveCfg = Release|Win32
++		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Debug|Win32.Build.0 = Debug|Win32
+		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Debug|x64.ActiveCfg = Debug|x64
+		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Debug|x64.Build.0 = Debug|x64
++		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Debug|x86.ActiveCfg = Debug|x64
++		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Release|Mixed Platforms.Build.0 = Release|x64
+		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Release|Win32.ActiveCfg = Release|Win32
+		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Release|Win32.Build.0 = Release|Win32
+		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Release|x64.ActiveCfg = Release|x64
+		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Release|x64.Build.0 = Release|x64
++		{ECA6B435-B4FA-4F9F-BF95-F451D078FC47}.Release|x86.ActiveCfg = Release|x64
++		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Debug|Win32.Build.0 = Debug|Win32
+		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Debug|x64.ActiveCfg = Debug|x64
+		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Debug|x64.Build.0 = Debug|x64
++		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Debug|x86.ActiveCfg = Debug|x64
++		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Release|Mixed Platforms.Build.0 = Release|x64
+		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Release|Win32.ActiveCfg = Release|Win32
+		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Release|Win32.Build.0 = Release|Win32
+		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Release|x64.ActiveCfg = Release|x64
+		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Release|x64.Build.0 = Release|x64
++		{38B5751A-C6F9-4409-950C-F4F9DA17275F}.Release|x86.ActiveCfg = Release|x64
++		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Debug|Win32.Build.0 = Debug|Win32
+		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Debug|x64.ActiveCfg = Debug|x64
+		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Debug|x64.Build.0 = Debug|x64
++		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Debug|x86.ActiveCfg = Debug|x64
++		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Release|Mixed Platforms.Build.0 = Release|x64
+		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Release|Win32.ActiveCfg = Release|Win32
+		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Release|Win32.Build.0 = Release|Win32
+		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Release|x64.ActiveCfg = Release|x64
+		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Release|x64.Build.0 = Release|x64
++		{D3065ADB-8820-4CC7-9B6C-9510833961A3}.Release|x86.ActiveCfg = Release|x64
++		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Debug|Win32.Build.0 = Debug|Win32
+		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Debug|x64.ActiveCfg = Debug|x64
+		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Debug|x64.Build.0 = Debug|x64
++		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Debug|x86.ActiveCfg = Debug|x64
++		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Release|Mixed Platforms.Build.0 = Release|x64
+		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Release|Win32.ActiveCfg = Release|Win32
+		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Release|Win32.Build.0 = Release|Win32
+		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Release|x64.ActiveCfg = Release|x64
+		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Release|x64.Build.0 = Release|x64
++		{C2BE5000-7501-4E87-9724-B8D82494FAE6}.Release|x86.ActiveCfg = Release|x64
++		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Debug|Win32.Build.0 = Debug|Win32
+		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Debug|x64.ActiveCfg = Debug|x64
+		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Debug|x64.Build.0 = Debug|x64
++		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Debug|x86.ActiveCfg = Debug|x64
++		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Release|Mixed Platforms.Build.0 = Release|x64
+		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Release|Win32.ActiveCfg = Release|Win32
+		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Release|Win32.Build.0 = Release|Win32
+		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Release|x64.ActiveCfg = Release|x64
+		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Release|x64.Build.0 = Release|x64
++		{FDD3C4F2-9805-44EB-9A77-BC1C1C95B547}.Release|x86.ActiveCfg = Release|x64
++		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Debug|Win32.Build.0 = Debug|Win32
+		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Debug|x64.ActiveCfg = Debug|x64
+		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Debug|x64.Build.0 = Debug|x64
++		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Debug|x86.ActiveCfg = Debug|x64
++		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Release|Mixed Platforms.Build.0 = Release|x64
+		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Release|Win32.ActiveCfg = Release|Win32
+		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Release|Win32.Build.0 = Release|Win32
+		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Release|x64.ActiveCfg = Release|x64
+		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Release|x64.Build.0 = Release|x64
++		{A8D36F8D-09E6-4174-91C3-7BEAA9C3F04F}.Release|x86.ActiveCfg = Release|x64
++		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Debug|Win32.Build.0 = Debug|Win32
+		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Debug|x64.ActiveCfg = Debug|x64
+		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Debug|x64.Build.0 = Debug|x64
++		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Debug|x86.ActiveCfg = Debug|x64
++		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Release|Mixed Platforms.Build.0 = Release|x64
+		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Release|Win32.ActiveCfg = Release|Win32
+		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Release|Win32.Build.0 = Release|Win32
+		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Release|x64.ActiveCfg = Release|x64
+		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Release|x64.Build.0 = Release|x64
++		{8B41752B-5A52-41E4-B7E0-07921C0CC6BF}.Release|x86.ActiveCfg = Release|x64
++		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Debug|Win32.Build.0 = Debug|Win32
+		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Debug|x64.ActiveCfg = Debug|x64
+		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Debug|x64.Build.0 = Debug|x64
++		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Debug|x86.ActiveCfg = Debug|x64
++		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Release|Mixed Platforms.Build.0 = Release|x64
+		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Release|Win32.ActiveCfg = Release|Win32
+		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Release|Win32.Build.0 = Release|Win32
+		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Release|x64.ActiveCfg = Release|x64
+		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Release|x64.Build.0 = Release|x64
++		{97521D06-EC47-45D4-8BD0-9E16B3F93B2A}.Release|x86.ActiveCfg = Release|x64
++		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Debug|Win32.ActiveCfg = Debug|Win32
+		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Debug|Win32.Build.0 = Debug|Win32
+		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Debug|x64.ActiveCfg = Debug|x64
+		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Debug|x64.Build.0 = Debug|x64
++		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Debug|x86.ActiveCfg = Debug|x64
++		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Release|Mixed Platforms.Build.0 = Release|x64
+		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Release|Win32.ActiveCfg = Release|Win32
+		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Release|Win32.Build.0 = Release|Win32
+		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Release|x64.ActiveCfg = Release|x64
+		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Release|x64.Build.0 = Release|x64
++		{77C78066-746F-4EA6-B3FE-B8C8A4A97891}.Release|x86.ActiveCfg = Release|x64
++		{0178B127-6269-407D-B112-93877BB62776}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{0178B127-6269-407D-B112-93877BB62776}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{0178B127-6269-407D-B112-93877BB62776}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0178B127-6269-407D-B112-93877BB62776}.Debug|Win32.Build.0 = Debug|Win32
+		{0178B127-6269-407D-B112-93877BB62776}.Debug|x64.ActiveCfg = Debug|x64
+		{0178B127-6269-407D-B112-93877BB62776}.Debug|x64.Build.0 = Debug|x64
++		{0178B127-6269-407D-B112-93877BB62776}.Debug|x86.ActiveCfg = Debug|x64
++		{0178B127-6269-407D-B112-93877BB62776}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{0178B127-6269-407D-B112-93877BB62776}.Release|Mixed Platforms.Build.0 = Release|x64
+		{0178B127-6269-407D-B112-93877BB62776}.Release|Win32.ActiveCfg = Release|Win32
+		{0178B127-6269-407D-B112-93877BB62776}.Release|Win32.Build.0 = Release|Win32
+		{0178B127-6269-407D-B112-93877BB62776}.Release|x64.ActiveCfg = Release|x64
+		{0178B127-6269-407D-B112-93877BB62776}.Release|x64.Build.0 = Release|x64
++		{0178B127-6269-407D-B112-93877BB62776}.Release|x86.ActiveCfg = Release|x64
++		{73632960-B3A6-464D-83A3-4B43365F19B8}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{73632960-B3A6-464D-83A3-4B43365F19B8}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{73632960-B3A6-464D-83A3-4B43365F19B8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{73632960-B3A6-464D-83A3-4B43365F19B8}.Debug|Win32.Build.0 = Debug|Win32
+		{73632960-B3A6-464D-83A3-4B43365F19B8}.Debug|x64.ActiveCfg = Debug|x64
+		{73632960-B3A6-464D-83A3-4B43365F19B8}.Debug|x64.Build.0 = Debug|x64
++		{73632960-B3A6-464D-83A3-4B43365F19B8}.Debug|x86.ActiveCfg = Debug|x64
++		{73632960-B3A6-464D-83A3-4B43365F19B8}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{73632960-B3A6-464D-83A3-4B43365F19B8}.Release|Mixed Platforms.Build.0 = Release|x64
+		{73632960-B3A6-464D-83A3-4B43365F19B8}.Release|Win32.ActiveCfg = Release|Win32
+		{73632960-B3A6-464D-83A3-4B43365F19B8}.Release|Win32.Build.0 = Release|Win32
+		{73632960-B3A6-464D-83A3-4B43365F19B8}.Release|x64.ActiveCfg = Release|x64
+		{73632960-B3A6-464D-83A3-4B43365F19B8}.Release|x64.Build.0 = Release|x64
++		{73632960-B3A6-464D-83A3-4B43365F19B8}.Release|x86.ActiveCfg = Release|x64
++		{C920062A-0647-4553-A3B2-37C58065664B}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{C920062A-0647-4553-A3B2-37C58065664B}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{C920062A-0647-4553-A3B2-37C58065664B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C920062A-0647-4553-A3B2-37C58065664B}.Debug|Win32.Build.0 = Debug|Win32
+		{C920062A-0647-4553-A3B2-37C58065664B}.Debug|x64.ActiveCfg = Debug|x64
+		{C920062A-0647-4553-A3B2-37C58065664B}.Debug|x64.Build.0 = Debug|x64
++		{C920062A-0647-4553-A3B2-37C58065664B}.Debug|x86.ActiveCfg = Debug|x64
++		{C920062A-0647-4553-A3B2-37C58065664B}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{C920062A-0647-4553-A3B2-37C58065664B}.Release|Mixed Platforms.Build.0 = Release|x64
+		{C920062A-0647-4553-A3B2-37C58065664B}.Release|Win32.ActiveCfg = Release|Win32
+		{C920062A-0647-4553-A3B2-37C58065664B}.Release|Win32.Build.0 = Release|Win32
+		{C920062A-0647-4553-A3B2-37C58065664B}.Release|x64.ActiveCfg = Release|x64
+		{C920062A-0647-4553-A3B2-37C58065664B}.Release|x64.Build.0 = Release|x64
++		{C920062A-0647-4553-A3B2-37C58065664B}.Release|x86.ActiveCfg = Release|x64
++		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Debug|Win32.Build.0 = Debug|Win32
+		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Debug|x64.ActiveCfg = Debug|x64
+		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Debug|x64.Build.0 = Debug|x64
++		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Debug|x86.ActiveCfg = Debug|x64
++		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Release|Mixed Platforms.Build.0 = Release|x64
+		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Release|Win32.ActiveCfg = Release|Win32
+		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Release|Win32.Build.0 = Release|Win32
+		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Release|x64.ActiveCfg = Release|x64
+		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Release|x64.Build.0 = Release|x64
++		{37FC2C7F-1904-4811-8955-2F478830EAD1}.Release|x86.ActiveCfg = Release|x64
++		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Debug|Win32.Build.0 = Debug|Win32
+		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Debug|x64.ActiveCfg = Debug|x64
+		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Debug|x64.Build.0 = Debug|x64
++		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Debug|x86.ActiveCfg = Debug|x64
++		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Release|Mixed Platforms.Build.0 = Release|x64
+		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Release|Win32.ActiveCfg = Release|Win32
+		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Release|Win32.Build.0 = Release|Win32
+		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Release|x64.ActiveCfg = Release|x64
+		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Release|x64.Build.0 = Release|x64
++		{F5AD9738-1A3D-4906-B9C4-A7D9CE33DC2C}.Release|x86.ActiveCfg = Release|x64
++		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Debug|Win32.Build.0 = Debug|Win32
+		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Debug|x64.ActiveCfg = Debug|x64
+		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Debug|x64.Build.0 = Debug|x64
++		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Debug|x86.ActiveCfg = Debug|x64
++		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Release|Mixed Platforms.Build.0 = Release|x64
+		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Release|Win32.ActiveCfg = Release|Win32
+		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Release|Win32.Build.0 = Release|Win32
+		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Release|x64.ActiveCfg = Release|x64
+		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Release|x64.Build.0 = Release|x64
++		{D9DF7F2F-93B7-4810-B5CD-96F4F33C079B}.Release|x86.ActiveCfg = Release|x64
++		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Debug|Win32.Build.0 = Debug|Win32
+		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Debug|x64.ActiveCfg = Debug|x64
+		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Debug|x64.Build.0 = Debug|x64
++		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Debug|x86.ActiveCfg = Debug|x64
++		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Release|Mixed Platforms.Build.0 = Release|x64
+		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Release|Win32.ActiveCfg = Release|Win32
+		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Release|Win32.Build.0 = Release|Win32
+		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Release|x64.ActiveCfg = Release|x64
+		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Release|x64.Build.0 = Release|x64
++		{4C8454FE-81D3-4CA3-9927-29BA96F03DAC}.Release|x86.ActiveCfg = Release|x64
++		{203EC78A-0531-43F0-A636-285439BDE025}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{203EC78A-0531-43F0-A636-285439BDE025}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{203EC78A-0531-43F0-A636-285439BDE025}.Debug|Win32.ActiveCfg = Debug|Win32
+		{203EC78A-0531-43F0-A636-285439BDE025}.Debug|Win32.Build.0 = Debug|Win32
+		{203EC78A-0531-43F0-A636-285439BDE025}.Debug|x64.ActiveCfg = Debug|x64
+		{203EC78A-0531-43F0-A636-285439BDE025}.Debug|x64.Build.0 = Debug|x64
++		{203EC78A-0531-43F0-A636-285439BDE025}.Debug|x86.ActiveCfg = Debug|x64
++		{203EC78A-0531-43F0-A636-285439BDE025}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{203EC78A-0531-43F0-A636-285439BDE025}.Release|Mixed Platforms.Build.0 = Release|x64
+		{203EC78A-0531-43F0-A636-285439BDE025}.Release|Win32.ActiveCfg = Release|Win32
+		{203EC78A-0531-43F0-A636-285439BDE025}.Release|Win32.Build.0 = Release|Win32
+		{203EC78A-0531-43F0-A636-285439BDE025}.Release|x64.ActiveCfg = Release|x64
+		{203EC78A-0531-43F0-A636-285439BDE025}.Release|x64.Build.0 = Release|x64
++		{203EC78A-0531-43F0-A636-285439BDE025}.Release|x86.ActiveCfg = Release|x64
++		{6B231032-3CB5-4EED-9210-810D666A23A0}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{6B231032-3CB5-4EED-9210-810D666A23A0}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{6B231032-3CB5-4EED-9210-810D666A23A0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6B231032-3CB5-4EED-9210-810D666A23A0}.Debug|Win32.Build.0 = Debug|Win32
+		{6B231032-3CB5-4EED-9210-810D666A23A0}.Debug|x64.ActiveCfg = Debug|x64
+		{6B231032-3CB5-4EED-9210-810D666A23A0}.Debug|x64.Build.0 = Debug|x64
++		{6B231032-3CB5-4EED-9210-810D666A23A0}.Debug|x86.ActiveCfg = Debug|x64
++		{6B231032-3CB5-4EED-9210-810D666A23A0}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{6B231032-3CB5-4EED-9210-810D666A23A0}.Release|Mixed Platforms.Build.0 = Release|x64
+		{6B231032-3CB5-4EED-9210-810D666A23A0}.Release|Win32.ActiveCfg = Release|Win32
+		{6B231032-3CB5-4EED-9210-810D666A23A0}.Release|Win32.Build.0 = Release|Win32
+		{6B231032-3CB5-4EED-9210-810D666A23A0}.Release|x64.ActiveCfg = Release|x64
+		{6B231032-3CB5-4EED-9210-810D666A23A0}.Release|x64.Build.0 = Release|x64
++		{6B231032-3CB5-4EED-9210-810D666A23A0}.Release|x86.ActiveCfg = Release|x64
++		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Debug|Win32.Build.0 = Debug|Win32
+		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Debug|x64.ActiveCfg = Debug|x64
+		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Debug|x64.Build.0 = Debug|x64
++		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Debug|x86.ActiveCfg = Debug|x64
++		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Release|Mixed Platforms.Build.0 = Release|x64
+		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Release|Win32.ActiveCfg = Release|Win32
+		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Release|Win32.Build.0 = Release|Win32
+		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Release|x64.ActiveCfg = Release|x64
+		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Release|x64.Build.0 = Release|x64
++		{DBA4088D-F6F9-4F8F-8820-082A4765C16C}.Release|x86.ActiveCfg = Release|x64
++		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Debug|Win32.Build.0 = Debug|Win32
+		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Debug|x64.ActiveCfg = Debug|x64
+		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Debug|x64.Build.0 = Debug|x64
++		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Debug|x86.ActiveCfg = Debug|x64
++		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Release|Mixed Platforms.Build.0 = Release|x64
+		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Release|Win32.ActiveCfg = Release|Win32
+		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Release|Win32.Build.0 = Release|Win32
+		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Release|x64.ActiveCfg = Release|x64
+		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Release|x64.Build.0 = Release|x64
++		{C2B04507-2521-4801-BF0D-5FD79D6D518C}.Release|x86.ActiveCfg = Release|x64
++		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Debug|Win32.Build.0 = Debug|Win32
+		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Debug|x64.ActiveCfg = Debug|x64
+		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Debug|x64.Build.0 = Debug|x64
++		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Debug|x86.ActiveCfg = Debug|x64
++		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Release|Mixed Platforms.Build.0 = Release|x64
+		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Release|Win32.ActiveCfg = Release|Win32
+		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Release|Win32.Build.0 = Release|Win32
+		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Release|x64.ActiveCfg = Release|x64
+		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Release|x64.Build.0 = Release|x64
++		{631C23CE-6C1D-4875-88F0-85E0A42B36EA}.Release|x86.ActiveCfg = Release|x64
++		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Debug|Win32.Build.0 = Debug|Win32
+		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Debug|x64.ActiveCfg = Debug|x64
+		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Debug|x64.Build.0 = Debug|x64
++		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Debug|x86.ActiveCfg = Debug|x64
++		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Release|Mixed Platforms.Build.0 = Release|x64
+		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Release|Win32.ActiveCfg = Release|Win32
+		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Release|Win32.Build.0 = Release|Win32
+		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Release|x64.ActiveCfg = Release|x64
+		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Release|x64.Build.0 = Release|x64
++		{E4993E82-D68A-46CA-BAE0-9D35E172E46F}.Release|x86.ActiveCfg = Release|x64
++		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Debug|Win32.Build.0 = Debug|Win32
+		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Debug|x64.ActiveCfg = Debug|x64
+		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Debug|x64.Build.0 = Debug|x64
++		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Debug|x86.ActiveCfg = Debug|x64
++		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Release|Mixed Platforms.Build.0 = Release|x64
+		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Release|Win32.ActiveCfg = Release|Win32
+		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Release|Win32.Build.0 = Release|Win32
+		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Release|x64.ActiveCfg = Release|x64
+		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Release|x64.Build.0 = Release|x64
++		{62D4B15D-7A90-4ECB-BA19-5E021D6A21BC}.Release|x86.ActiveCfg = Release|x64
++		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Debug|Win32.Build.0 = Debug|Win32
+		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Debug|x64.ActiveCfg = Debug|x64
+		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Debug|x64.Build.0 = Debug|x64
++		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Debug|x86.ActiveCfg = Debug|x64
++		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Release|Mixed Platforms.Build.0 = Release|x64
+		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Release|Win32.ActiveCfg = Release|Win32
+		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Release|Win32.Build.0 = Release|Win32
+		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Release|x64.ActiveCfg = Release|x64
+		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Release|x64.Build.0 = Release|x64
++		{9D4211F7-2C77-439C-82F0-30A4E43BA569}.Release|x86.ActiveCfg = Release|x64
++		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Debug|Win32.Build.0 = Debug|Win32
+		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Debug|x64.ActiveCfg = Debug|x64
+		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Debug|x64.Build.0 = Debug|x64
++		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Debug|x86.ActiveCfg = Debug|x64
++		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Release|Mixed Platforms.Build.0 = Release|x64
+		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Release|Win32.ActiveCfg = Release|Win32
+		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Release|Win32.Build.0 = Release|Win32
+		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Release|x64.ActiveCfg = Release|x64
+		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Release|x64.Build.0 = Release|x64
++		{67351485-4D18-4245-BE39-A7EF0675ACD2}.Release|x86.ActiveCfg = Release|x64
++		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Debug|Win32.ActiveCfg = Debug|Win32
+		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Debug|Win32.Build.0 = Debug|Win32
+		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Debug|x64.ActiveCfg = Debug|x64
+		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Debug|x64.Build.0 = Debug|x64
++		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Debug|x86.ActiveCfg = Debug|x64
++		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Release|Mixed Platforms.Build.0 = Release|x64
+		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Release|Win32.ActiveCfg = Release|Win32
+		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Release|Win32.Build.0 = Release|Win32
+		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Release|x64.ActiveCfg = Release|x64
+		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Release|x64.Build.0 = Release|x64
++		{691EE0C0-DC57-4A48-8AEE-8ED75EB3A057}.Release|x86.ActiveCfg = Release|x64
++		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
++		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Debug|Win32.Build.0 = Debug|Win32
+-		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Debug|x64.ActiveCfg = Debug|x64
+-		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Debug|x64.Build.0 = Debug|x64
++		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Debug|x64.ActiveCfg = Debug|Win32
++		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Debug|x86.ActiveCfg = Debug|Win32
++		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Release|Mixed Platforms.ActiveCfg = Release|Win32
++		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Release|Win32.ActiveCfg = Release|Win32
+		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Release|Win32.Build.0 = Release|Win32
+-		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Release|x64.ActiveCfg = Release|x64
+-		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Release|x64.Build.0 = Release|x64
++		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Release|x64.ActiveCfg = Release|Win32
++		{C7891A65-80AB-4245-912E-5F1E17B0E6C4}.Release|x86.ActiveCfg = Release|Win32
++		{E7611F49-F088-4175-9446-6111444E72C8}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{E7611F49-F088-4175-9446-6111444E72C8}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{E7611F49-F088-4175-9446-6111444E72C8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E7611F49-F088-4175-9446-6111444E72C8}.Debug|Win32.Build.0 = Debug|Win32
+		{E7611F49-F088-4175-9446-6111444E72C8}.Debug|x64.ActiveCfg = Debug|x64
+		{E7611F49-F088-4175-9446-6111444E72C8}.Debug|x64.Build.0 = Debug|x64
++		{E7611F49-F088-4175-9446-6111444E72C8}.Debug|x86.ActiveCfg = Debug|x64
++		{E7611F49-F088-4175-9446-6111444E72C8}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{E7611F49-F088-4175-9446-6111444E72C8}.Release|Mixed Platforms.Build.0 = Release|x64
+		{E7611F49-F088-4175-9446-6111444E72C8}.Release|Win32.ActiveCfg = Release|Win32
+		{E7611F49-F088-4175-9446-6111444E72C8}.Release|Win32.Build.0 = Release|Win32
+		{E7611F49-F088-4175-9446-6111444E72C8}.Release|x64.ActiveCfg = Release|x64
+		{E7611F49-F088-4175-9446-6111444E72C8}.Release|x64.Build.0 = Release|x64
++		{E7611F49-F088-4175-9446-6111444E72C8}.Release|x86.ActiveCfg = Release|x64
++		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
++		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Debug|Win32.Build.0 = Debug|Win32
+		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Debug|x64.ActiveCfg = Debug|x64
+		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Debug|x64.Build.0 = Debug|x64
++		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Debug|x86.ActiveCfg = Debug|x64
++		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Release|Mixed Platforms.ActiveCfg = Release|x64
++		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Release|Mixed Platforms.Build.0 = Release|x64
+		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Release|Win32.ActiveCfg = Release|Win32
+		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Release|Win32.Build.0 = Release|Win32
+		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Release|x64.ActiveCfg = Release|x64
+		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Release|x64.Build.0 = Release|x64
++		{659D0C08-D4ED-4BF3-B02B-2D8D4B5A7A7A}.Release|x86.ActiveCfg = Release|x64
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Debug|Mixed Platforms.Build.0 = Debug|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Debug|Win32.ActiveCfg = Debug|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Debug|x64.ActiveCfg = Debug|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Debug|x86.ActiveCfg = Debug|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Debug|x86.Build.0 = Debug|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Release|Mixed Platforms.ActiveCfg = Release|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Release|Mixed Platforms.Build.0 = Release|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Release|Win32.ActiveCfg = Release|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Release|x64.ActiveCfg = Release|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Release|x86.ActiveCfg = Release|x86
++		{40056AF0-0B25-4B11-9EFA-2AB16BF882D1}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
++	GlobalSection(SubversionScc) = preSolution
++		Svn-Managed = True
++		Manager = AnkhSVN - Subversion Support for Visual Studio
++	EndGlobalSection
+ EndGlobal
+diff --git a/icu/source/common/Makefile.in b/icu/source/common/Makefile.in
+index f8efcf9..c606105 100644
+--- a/icu/source/common/Makefile.in
++++ b/icu/source/common/Makefile.in
+@@ -104,7 +104,7 @@ rbbi.o rbbidata.o rbbinode.o rbbirb.o rbbiscan.o rbbisetb.o rbbistbl.o rbbitblb.
+ serv.o servnotf.o servls.o servlk.o servlkf.o servrbf.o servslkf.o \
+ uidna.o usprep.o uts46.o punycode.o \
+ util.o util_props.o parsepos.o locbased.o cwchar.o wintz.o mutex.o dtintrv.o ucnvsel.o propsvec.o \
+-ulist.o uloc_tag.o icudataver.o icuplug.o listformatter.o
++ulist.o uloc_tag.o icudataver.o icuplug.o listformatter.o silmods.o
+
+ ## Header files to install
+ HEADERS = $(srcdir)/unicode/*.h
+diff --git a/icu/source/common/common.vcxproj b/icu/source/common/common.vcxproj
+index 9d70813..c276f76 100644
+--- a/icu/source/common/common.vcxproj
++++ b/icu/source/common/common.vcxproj
+@@ -106,6 +106,7 @@
+	 <Link>
+	   <OutputFile>..\..\bin\icuuc50.dll</OutputFile>
+	   <SuppressStartupBanner>true</SuppressStartupBanner>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
+	   <ProgramDatabaseFile>.\..\..\lib\icuuc.pdb</ProgramDatabaseFile>
+	   <EnableCOMDATFolding>true</EnableCOMDATFolding>
+	   <BaseAddress>0x4a800000</BaseAddress>
+@@ -232,6 +233,7 @@
+	 </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
++    <ClCompile Include="silmods.c" />
+	 <ClCompile Include="ubidi.c" />
+	 <ClCompile Include="ubidi_props.c" />
+	 <ClCompile Include="ubidiln.c" />
+@@ -454,6 +456,7 @@
+ </Command>
+	   <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\include\unicode\%(Filename)%(Extension);%(Outputs)</Outputs>
+	 </CustomBuild>
++    <ClInclude Include="silmods.h" />
+	 <ClInclude Include="localsvc.h" />
+	 <ClInclude Include="msvcres.h" />
+	 <ClInclude Include="propname_data.h" />
+diff --git a/icu/source/common/common.vcxproj.filters b/icu/source/common/common.vcxproj.filters
+index 01b23c4..6338d1c 100644
+--- a/icu/source/common/common.vcxproj.filters
++++ b/icu/source/common/common.vcxproj.filters
+@@ -1,4 +1,4 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
++<?xml version="1.0" encoding="utf-8"?>
+ <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <ItemGroup>
+	 <Filter Include="bidi">
+@@ -536,6 +536,9 @@
+	 <ClCompile Include="ucharstriebuilder.cpp" />
+	 <ClCompile Include="ucharstrieiterator.cpp" />
+	 <ClCompile Include="listformatter.cpp" />
++    <ClCompile Include="silmods.c">
++      <Filter>properties &amp; sets</Filter>
++    </ClCompile>
+   </ItemGroup>
+   <ItemGroup>
+	 <ClInclude Include="ubidi_props.h">
+@@ -808,6 +811,9 @@
+	 <ClInclude Include="uchar_props_data.h">
+	   <Filter>properties &amp; sets</Filter>
+	 </ClInclude>
++    <ClInclude Include="silmods.h">
++      <Filter>properties &amp; sets</Filter>
++    </ClInclude>
+   </ItemGroup>
+   <ItemGroup>
+	 <ResourceCompile Include="common.rc">
+diff --git a/icu/source/common/silmods.c b/icu/source/common/silmods.c
+new file mode 100644
+index 0000000..b20da23
+--- /dev/null
++++ b/icu/source/common/silmods.c
+@@ -0,0 +1,568 @@
++#include "unicode/uchar.h"
++#include "utrie2.h"
++#include "silmods.h"
++#ifndef _MSC_VER
++#include <errno.h>
++#endif
++#include <stdio.h>
++#include <malloc.h>
++#include <string.h> // for strncmp
++#include <stdlib.h> // for atoi
++#include "uprops.h" // for UPROPS_ALPHABETIC and similar...may be able to remove if we implement all properties.
++#include "ucase.h" // for constants used in SIL_ucase_getType
++
++// The data we keep about one character.
++typedef struct
++{
++	uint32_t props;  // corresponds to the value stored in propsTrie. The low bits store the character category, high ones store numeric value (not implemented).
++	// correspond to the three values stored in propsVectors at the index looked up in propsVectorTrie.
++	// See "Properties in vector word 0" and similar comments in source/common/uprops.h.
++	uint32_t words[3];
++	// case equivalents; 0 if none.
++	UChar32 upper;
++	UChar32 lower;
++	UChar32 title;
++	// Todo:  a pointer to the character name?
++} cdata;
++
++// The data for a block of characters.
++typedef struct block
++{
++	UChar32 first; // first character in the block
++	int count; // number of characters
++	cdata** propData; // data about the characters in the block; items may be null if not overridden.
++	struct block * nextBlock;
++} block;
++
++static block * firstBlock;
++
++/* Convert one hex digit to a numeric value 0..F, or -1 on failure */
++static int8_t _digit16(char c) {
++    if (c >= 0x0030 && c <= 0x0039) { // 0-9
++        return (int8_t)(c - 0x0030);
++    }
++    if (c >= 0x0041 && c <= 0x0046) { // A-F
++        return (int8_t)(c - (0x0041 - 10));
++    }
++    if (c >= 0x0061 && c <= 0x0066) { // a-f
++        return (int8_t)(c - (0x0061 - 10));
++    }
++    return -1;
++}
++
++// Return the leading characters of the line as a unicode value
++UChar32 ParseHexChar(char * line)
++{
++	int result = 0;
++	char * pch = line;
++	int val;
++	while ((val = _digit16(*pch++)) >= 0)
++		result = (result << 4) + val;
++	return result;
++}
++
++char * nextItem(char * start)
++{
++	char *pch = start;
++	for (; *pch; pch++)
++	{
++		if (*pch == ';')
++			return pch + 1;
++	}
++	return pch;
++}
++
++int GetCategory(char * pch)
++{
++	switch (*pch)
++	{
++	case 'L':
++		switch (*(pch+1))
++		{
++		case 'u': return U_UPPERCASE_LETTER;
++		case 'l': return U_LOWERCASE_LETTER;
++		case 't': return U_TITLECASE_LETTER;
++		case 'm': return U_MODIFIER_LETTER;
++		case 'o': return U_OTHER_LETTER;
++		default: return -1;
++		}
++	case 'M':
++		switch (*(pch+1))
++		{
++		case 'n': return U_NON_SPACING_MARK;
++		case 'e': return U_ENCLOSING_MARK;
++		case 'c': return U_COMBINING_SPACING_MARK;
++		default: return -1;
++		}
++	case 'N':
++		switch (*(pch+1))
++		{
++		case 'd': return U_DECIMAL_DIGIT_NUMBER;
++		case 'l': return U_LETTER_NUMBER;
++		case 'o': return U_OTHER_NUMBER;
++		default: return -1;
++		}
++	case 'Z':
++		switch (*(pch+1))
++		{
++		case 's': return U_SPACE_SEPARATOR;
++		case 'l': return U_LINE_SEPARATOR;
++		case 'p': return U_PARAGRAPH_SEPARATOR;
++		default: return -1;
++		}
++	case 'C':
++		switch (*(pch+1))
++		{
++		case 'n': return U_GENERAL_OTHER_TYPES;
++		case 'c': return U_CONTROL_CHAR;
++		case 'f': return U_FORMAT_CHAR;
++		case 'o': return U_PRIVATE_USE_CHAR;
++		case 's': return U_SURROGATE;
++		default: return -1;
++		}
++	case 'P':
++		switch (*(pch+1))
++		{
++		case 'd': return U_DASH_PUNCTUATION;
++		case 's': return U_START_PUNCTUATION;
++		case 'e': return U_END_PUNCTUATION;
++		case 'c': return U_CONNECTOR_PUNCTUATION;
++		case 'o': return U_OTHER_PUNCTUATION;
++		case 'i': return U_INITIAL_PUNCTUATION;
++		case 'f': return U_FINAL_PUNCTUATION;
++		default: return -1;
++		}
++	case 'S':
++		switch (*(pch+1))
++		{
++		case 'm': return U_MATH_SYMBOL;
++		case 'c': return U_CURRENCY_SYMBOL;
++		case 'k': return U_MODIFIER_SYMBOL;
++		case 'o': return U_OTHER_SYMBOL;
++		default: return -1;
++		}
++	default:
++		return -1;
++	}
++}
++
++int MakePropsWord(char * pch)
++{
++	// Enhance JohnT: the high 10 bits of the props word are supposed to be the numeric value;
++	// I think we would get the right result by passing in pchNumericValue and
++	// returning GetCategory(pch) | (atoi(pchNumericValue) << 10).
++	// I haven't done this or written tests for it because I don't think FW uses the numeric value for anything.
++	// In essence, the numeric value for any character we override is zero.
++	return GetCategory(pch); // Todo: error handling; high bits (numeric value);
++}
++
++void FreeBlocks()
++{
++	block * currentBlock = firstBlock;
++	block * nextBlock;
++	cdata ** pdata;
++	while (currentBlock != NULL)
++	{
++		nextBlock = currentBlock->nextBlock;
++		if (firstBlock->propData != NULL)
++		{
++			for (pdata = currentBlock->propData; pdata < currentBlock->propData + currentBlock->count; pdata++)
++			{
++				if (*pdata != NULL)
++					free(*pdata);
++			}
++			free(currentBlock->propData);
++		}
++		free(currentBlock);
++		currentBlock = nextBlock;
++	}
++	firstBlock = NULL;
++}
++
++block * InitBlock(int charCount, UChar32 firstChar)
++{
++	cdata ** pdata;
++	block * newBlock = (block *)malloc(sizeof(block));
++	newBlock->count = charCount;
++	newBlock->first = firstChar;
++	newBlock->nextBlock = NULL;
++	newBlock->propData = (cdata **)malloc(charCount * sizeof(cdata *));
++	for (pdata = newBlock->propData; pdata < newBlock->propData + charCount; pdata++)
++		*pdata = NULL;
++	return newBlock;
++}
++
++void ProcessLine(char * line, cdata * newData)
++{
++	uint32_t overrideProps;
++	char * pchName = nextItem(line);
++	char * pchCategory = nextItem(pchName);
++	char * pchCombiningClass = nextItem(pchCategory);
++	char * pchBidiCategory = nextItem(pchCombiningClass);
++	char * pchDecomposition = nextItem(pchBidiCategory);
++	char * pchDecimalDigitValue = nextItem(pchDecomposition);
++	char * pchDigitValue = nextItem(pchDecimalDigitValue);
++	char * pchNumericValue = nextItem(pchDigitValue);
++	char * pchMirrored = nextItem(pchNumericValue);
++	char * pchUnicode1Name = nextItem(pchMirrored);
++	char * pchComment = nextItem(pchUnicode1Name);
++	char * pchUcEquivalent = nextItem(pchComment);
++	char * pchLcEquivalent = nextItem(pchUcEquivalent);
++	char * pchTcEquivalent= nextItem(pchLcEquivalent);
++
++	int word1 = 0;
++	int category = GetCategory(pchCategory);
++	// This is the definition of 'alphabetic' given in http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/index.jsp?topic=%2Fcom.ibm.itm.doc_6.2.2fp2%2Ficu-regular-expressions.htm
++	// as the definition of \w in a regular expression. It's only a guess that this is what the flag is supposed to be.
++	if (category == U_LOWERCASE_LETTER || category == U_UPPERCASE_LETTER || category == U_TITLECASE_LETTER || category == U_OTHER_LETTER || category == U_DECIMAL_DIGIT_NUMBER)
++		word1 |= U_MASK(UPROPS_ALPHABETIC);
++	// This is the definition of white space given at the same URL for \s in regular expressions.
++	if (category == U_SPACE_SEPARATOR || category == U_LINE_SEPARATOR || category ==  U_PARAGRAPH_SEPARATOR)
++		word1 |= U_MASK(UPROPS_WHITE_SPACE);
++	overrideProps = MakePropsWord(pchCategory);
++	newData->props = overrideProps;
++
++	newData->words[0] = newData->words[2] = 0;
++	newData->words[1] = word1;
++
++	newData->lower = ParseHexChar(pchLcEquivalent);
++	newData->upper = ParseHexChar(pchUcEquivalent);
++	newData->title = ParseHexChar(pchTcEquivalent);}
++
++#define DEFAULTBLOCKSIZE 256
++#define MAXBLOCKSIZE 4096
++#define MAXLINE 2000
++// Initialize our private data structures with the specified data.
++U_CAPI UBool U_EXPORT2 SilIcuInit(const char * dataPath)
++{
++	char line[MAXLINE];
++	FILE * reader = fopen(dataPath, "r");
++	block * currentBlock = NULL;
++	block * lastBlock;
++	int index;
++	cdata * newData;
++	int blockSize = DEFAULTBLOCKSIZE;
++	UChar32 c;
++
++	FreeBlocks();
++
++	if (reader == NULL)
++	{
++#ifdef _MSC_VER
++		int error;
++		_get_errno(&error);
++		//int doserror;
++		//_get_doserrno(&doserror);
++#endif
++		return FALSE;
++	}
++
++	fgets(line, MAXLINE, reader); // skip one line, typically labels.
++	while (fgets(line, MAXLINE, reader))
++	{
++		if (strncmp(line, "block:", 6) == 0)
++		{
++			blockSize = atoi(line + 6);
++			if (blockSize <= 0 || blockSize >= MAXBLOCKSIZE)
++				blockSize = DEFAULTBLOCKSIZE;
++			continue;
++		}
++		c = ParseHexChar(line); // Todo: error handling...
++		if (firstBlock == NULL)
++		{
++			firstBlock = currentBlock = InitBlock(blockSize, c);
++		}
++		index = c- currentBlock->first;
++		if (index >= currentBlock->count)
++		{
++			lastBlock = currentBlock;
++			currentBlock = InitBlock(blockSize, c);
++			lastBlock->nextBlock = currentBlock;
++			index = c- currentBlock->first;
++		}
++		currentBlock->propData[index] = newData = (cdata*)malloc(sizeof(cdata));
++		ProcessLine(line, newData);
++	}
++	fclose(reader);
++	return TRUE;
++}
++
++cdata * GetOverrides(UChar32 c)
++{
++	block * currentBlock;
++	int index;
++	for (currentBlock = firstBlock; currentBlock != NULL; currentBlock = currentBlock->nextBlock)
++	{
++		if (c < currentBlock->first)
++			return NULL;
++		if (c >= currentBlock->first + currentBlock->count)
++			continue;
++		index = c - currentBlock->first;
++		// If it is in this block but has no cdata, it definitely has no override; go to the default behavior.
++		if (currentBlock->propData[index] == NULL)
++			return NULL;
++		return currentBlock->propData[index];
++	}
++	return NULL;
++}
++
++uint32_t Sil_GET_PROPS(const UTrie2 * trie, UChar32 c)
++{
++	cdata * overrideData = GetOverrides(c);
++	if (overrideData != NULL)
++		return overrideData->props;
++
++	return UTRIE2_GET16(trie, c);
++}
++
++typedef struct enumRangeParams
++{
++	UTrie2EnumValue *enumValue;
++	UTrie2EnumRange *enumRange;
++	const void *context;
++	const uint32_t * propsVectors; // if non-null, indicates usage by SIL_enumPropsVecRanges. The array in which we look up word1,2,3
++} enumRangeParams;
++
++
++
++typedef struct enumRangeState
++{
++	enumRangeParams * params;
++	int startRemaining; // must output chars from startRemaining to end using the original or overridden value.
++	int end;
++	int doubtful; // character we have not yet determined output for.
++	int currentValue; // if doubtful > startRemaining, this value must be output for chars from startRemaining to doubtful-1
++	block * currentBlock;
++	// used only from SIL_enumPropsVecRanges
++	int word0, word1, word2;  // indicate the values for the three property words for the chars from startRemaining to doubtful-1
++
++} enumRangeState;
++
++UBool EnumFinished(enumRangeState * state)
++{
++	// We are finished if we have output all the characters.
++	return state->startRemaining > state->end;
++}
++
++UBool EnumNoMoreRelevantBlocks(enumRangeState * state)
++{
++	// There are no more relevant blocks if there are none at all, or all the remain affect characters after the end.
++	return state->currentBlock == NULL || state->currentBlock->first > state->end;
++}
++
++// If there is pending output (chars between startRemaining and doubtful), output them, and adjust the state.
++UBool EnumOutputPending(enumRangeState * state)
++{
++	if (state->doubtful <= state->startRemaining)
++		return TRUE; // nothing to output.
++	if (!state->params->enumRange(state->params->context, state->startRemaining, state->doubtful - 1, state->currentValue))
++		return FALSE;
++	state->startRemaining = state->doubtful;
++	return TRUE;
++}
++
++// The current block is not relevant if we have determined the correct value to output for all the
++// characters it contains data about. The last of these is block->first + block->count-1.
++// This should be called only after determining that there is a currentBlock.
++UBool EnumCurrentBlockIsNotRelevant(enumRangeState * state)
++{
++	return state->doubtful >= state->currentBlock->first + state->currentBlock->count;
++}
++
++// So far the only bits we control (in Word1) are the alphabetic one.
++#define OURBITS (U_MASK(UPROPS_ALPHABETIC) | U_MASK(UPROPS_WHITE_SPACE))
++
++uint32_t GetOverrideForWord1(uint32_t defaultVal, cdata * overrideData)
++{
++	return (defaultVal & !OURBITS) | (overrideData->words[1] & OURBITS);
++}
++
++void EnumNextValue(enumRangeState * state, uint32_t defaultValue, uint32_t * values)
++{
++	int index;
++	cdata * data;
++	// Set default result;
++	values[0] = defaultValue;
++	if (state->params->propsVectors)
++	{
++		values[1] = state->params->propsVectors[defaultValue];
++		values[2] = state->params->propsVectors[defaultValue + 1];
++		values[3] = state->params->propsVectors[defaultValue + 2];
++	}
++	else
++		values[1]=values[2]=values[3]=0;
++
++	// determine the value for the next doubtful character.
++	// it must be before the end of currentBlock.
++	if (state->doubtful < state->currentBlock->first)
++	{
++		// before the range this block overrides.
++		return;
++	}
++	index = state->doubtful - state->currentBlock->first;
++	data = state->currentBlock->propData[index];
++	if (data == NULL)
++	{
++		// we don't have an override for this particular one.
++		return;
++	}
++	// We have an override. Currently only word1 is affected.
++	if (state->params->propsVectors)
++	{
++		values[2] = GetOverrideForWord1(values[2], data);
++	}
++	else
++	{
++		if (state->params->enumValue == NULL)
++			values[0] = data->props; // no converter, use the value itself.
++		else
++			values[0] = state->params->enumValue(state->params->context, data->props);
++	}
++}
++
++// Return true if there are values we need to output between startRemaining and doubtful, and the values in
++// newValue are different.
++UBool EnumDifferentValues(enumRangeState * state, uint32_t * newValues)
++{
++	if (state->startRemaining >= state->doubtful)
++		return FALSE; // nothing to output
++	if(state->currentValue != newValues[0])
++		return TRUE;
++	if (!state->params->propsVectors)
++		return FALSE; // other fields don't matter
++	return state->word0 != newValues[1] || state->word1 != newValues[2] || state->word2 != newValues[3];
++}
++
++
++// Call the original enumRange for contiguous ranges within the start...end range
++// as modified by our tables.
++static UBool U_CALLCONV
++SIL_UTrie2EnumRange(const void *params1, UChar32 start, UChar32 end, uint32_t value)
++{
++	uint32_t nextValue[4];
++
++	enumRangeParams * params = (enumRangeParams *) params1;
++	enumRangeState state;
++	state.params = params;
++	state.startRemaining = state.doubtful = start;
++	state.end = end;
++	state.currentBlock = firstBlock;
++	while (!EnumFinished(&state))
++	{
++		if (EnumNoMoreRelevantBlocks(&state))
++		{
++			if (state.currentValue != value)
++			{
++				if (!EnumOutputPending(&state)) // may do nothing, if no range.
++					return FALSE; // enumeration cancelled.
++			}
++			if (state.startRemaining <= end)
++				params->enumRange(params->context, state.startRemaining, end, value);
++			return TRUE;
++		}
++		if (EnumCurrentBlockIsNotRelevant(&state))
++		{
++			state.currentBlock = state.currentBlock->nextBlock;
++			continue; // to check we still have a relevant current block.
++		}
++
++		// At this point we have a relevant currentBlock, that is, one that may override some value in the range.
++		EnumNextValue(&state, value, nextValue);
++		if (EnumDifferentValues(&state, nextValue)) // currentValue may not be meaningful, but if so, output pending does nothing so it doesn't matter.
++		{
++			if (!EnumOutputPending(&state))
++				return FALSE;
++		}
++		state.currentValue = nextValue[0];
++		state.word0 = nextValue[1];
++		state.word1 = nextValue[2];
++		state.word2 = nextValue[3];
++		state.doubtful++; // one (or one more) character should eventually be output with the current value.
++	}
++	return TRUE;
++}
++
++void SIL_utrie2_enum(const UTrie2 *trie, UTrie2EnumValue *enumValue, UTrie2EnumRange *enumRange, const void *context)
++{
++	enumRangeParams params;
++	params.context = context;
++	params.enumRange = enumRange;
++	params.enumValue = enumValue;
++	params.propsVectors = NULL;
++	utrie2_enum(trie, enumValue, SIL_UTrie2EnumRange, &params);
++}
++
++uint32_t SIL_getUnicodeProperties(uint32_t defaultVal, UChar32 c, int32_t column)
++{
++	cdata * overrideData = GetOverrides(c);
++	if (overrideData != NULL)
++	{
++		// This is what we'd ideally do if we had implemented all the fields.
++		//return overrideData->words[column];
++		switch(column)
++		{
++		case 0:
++		case 2:
++			return defaultVal; // We have not yet implemented initializing these.
++		case 1:
++			return GetOverrideForWord1(defaultVal, overrideData);
++		}
++	}
++	return defaultVal;
++}
++
++// We want to invoke the function enumRange for each range of characters for which we get a different
++// set of the three words stored (usually) in propsVectors and indexed by the value in propsVectorsTrie,
++// and which are overridden in the words array of our cdata.
++// Theoretically we should pass a different value of the index looked up in the trie each time, but in fact,
++// the method that is invoked by this only uses the start-of-range value.
++void SIL_enumPropsVecRanges(const UTrie2 *trie, UTrie2EnumRange *enumRange, const void *context, const uint32_t * propsVectors)
++{
++	enumRangeParams params;
++	params.context = context;
++	params.enumRange = enumRange;
++	params.enumValue = NULL;
++	params.propsVectors = propsVectors;
++	utrie2_enum(trie, NULL, SIL_UTrie2EnumRange, &params);
++}
++
++U_CAPI UBool U_EXPORT2 SIL_tolower(UChar32 * pch)
++{
++	cdata * overrideData = GetOverrides(*pch);
++	if (overrideData == NULL || overrideData->lower == 0)
++		return FALSE;
++	*pch = overrideData->lower;
++	return TRUE;
++}
++
++U_CAPI UBool U_EXPORT2 SIL_toupper(UChar32 * pch)
++{
++	cdata * overrideData = GetOverrides(*pch);
++	if (overrideData == NULL || overrideData->upper == 0)
++		return FALSE;
++	*pch = overrideData->upper;
++	return TRUE;
++}
++
++U_CAPI UBool U_EXPORT2 SIL_totitle(UChar32 * pch)
++{
++	cdata * overrideData = GetOverrides(*pch);
++	if (overrideData == NULL || overrideData->title == 0)
++		return FALSE;
++	*pch = overrideData->title;
++	return TRUE;
++}
++
++U_CAPI int32_t U_EXPORT2 SIL_ucase_getType(UChar32 c)
++{
++	cdata * overrideData = GetOverrides(c);
++	if (overrideData == NULL)
++		return -1;
++	switch(GET_CATEGORY(overrideData->props))
++	{
++	case U_UPPERCASE_LETTER: return UCASE_UPPER;
++	case U_LOWERCASE_LETTER: return UCASE_LOWER;
++	case U_TITLECASE_LETTER: return UCASE_TITLE;
++	default: return UCASE_NONE;
++	}
++}
+diff --git a/icu/source/common/silmods.h b/icu/source/common/silmods.h
+new file mode 100644
+index 0000000..d8d7145
+--- /dev/null
++++ b/icu/source/common/silmods.h
+@@ -0,0 +1,37 @@
++#ifndef SILMODS_H
++#define SILMODS_H
++
++// All our modifications (even in this file) should be controlled by this #ifdef.
++#define SIL_MODIFICATIONS
++
++#ifdef SIL_MODIFICATIONS
++
++// Initialize the SIL overrides. Return TRUE if successful, otherwise FALSE.
++U_CAPI UBool U_EXPORT2 SilIcuInit(const char * dataPath);
++
++// Override function replaces GET_PROPS in uchar.c
++uint32_t Sil_GET_PROPS(const UTrie2 * trie, UChar32 c);
++
++// Function is called for start of each range of characters with different properties.
++// As far as I can tell, it isn't critical that they be called in order, nor is it disastrous to call
++// it for more code points than necessary.
++// Essentially we want to call enumRange(context, start, end, enumValue(context, propsWord)) for each range of code points where the enumValue
++// gives a different result than for the previous code point.
++void InvokeForStartOfEachPropRange(UTrie2EnumValue *enumValue, UTrie2EnumRange *enumRange, const void *context);
++
++// Override of utrie2_enum, called only when the trie is propsTrie, the one our character properties override.
++void SIL_utrie2_enum(const UTrie2 *trie, UTrie2EnumValue *enumValue, UTrie2EnumRange *enumRange, const void *context);
++
++// Override of u_getUnicodeProperties.
++uint32_t SIL_getUnicodeProperties(uint32_t defaultVal, UChar32 c, int32_t column);
++
++// Used to patch
++void SIL_enumPropsVecRanges(const UTrie2 *trie, UTrie2EnumRange *enumRange, const void *context, const uint32_t * propsVectors);
++
++// Used to patch case functions
++U_CAPI UBool U_EXPORT2 SIL_tolower(UChar32 * pch);
++U_CAPI UBool U_EXPORT2 SIL_toupper(UChar32 * pch);
++U_CAPI UBool U_EXPORT2 SIL_totitle(UChar32 * pch);
++U_CAPI int32_t U_EXPORT2 SIL_ucase_getType(UChar32 c);
++#endif
++#endif
+diff --git a/icu/source/common/ucase.cpp b/icu/source/common/ucase.cpp
+index da71169..3b83868 100644
+--- a/icu/source/common/ucase.cpp
++++ b/icu/source/common/ucase.cpp
+@@ -30,6 +30,7 @@
+ #include "utrie2.h"
+ #include "ucase.h"
+ #include "ucln_cmn.h"
++#include "silmods.h" // defines SIL_MODIFICATIONS; including this is an SIL modification.
+
+ struct UCaseProps {
+	 UDataMemory *mem;
+@@ -133,7 +134,11 @@ static const uint8_t flagsOffset[256]={
+
+ U_CAPI UChar32 U_EXPORT2
+ ucase_tolower(const UCaseProps *csp, UChar32 c) {
+-    uint16_t props=UTRIE2_GET16(&csp->trie, c);
++#ifdef SIL_MODIFICATIONS
++	if (SIL_tolower(&c))
++		return c;
++#endif
++	uint16_t props=UTRIE2_GET16(&csp->trie, c);
+	 if(!PROPS_HAS_EXCEPTION(props)) {
+		 if(UCASE_GET_TYPE(props)>=UCASE_UPPER) {
+			 c+=UCASE_GET_DELTA(props);
+@@ -150,7 +155,11 @@ ucase_tolower(const UCaseProps *csp, UChar32 c) {
+
+ U_CAPI UChar32 U_EXPORT2
+ ucase_toupper(const UCaseProps *csp, UChar32 c) {
+-    uint16_t props=UTRIE2_GET16(&csp->trie, c);
++#ifdef SIL_MODIFICATIONS
++	if (SIL_toupper(&c))
++		return c;
++#endif
++	uint16_t props=UTRIE2_GET16(&csp->trie, c);
+	 if(!PROPS_HAS_EXCEPTION(props)) {
+		 if(UCASE_GET_TYPE(props)==UCASE_LOWER) {
+			 c+=UCASE_GET_DELTA(props);
+@@ -167,7 +176,11 @@ ucase_toupper(const UCaseProps *csp, UChar32 c) {
+
+ U_CAPI UChar32 U_EXPORT2
+ ucase_totitle(const UCaseProps *csp, UChar32 c) {
+-    uint16_t props=UTRIE2_GET16(&csp->trie, c);
++#ifdef SIL_MODIFICATIONS
++	if (SIL_totitle(&c))
++		return c;
++#endif
++	uint16_t props=UTRIE2_GET16(&csp->trie, c);
+	 if(!PROPS_HAS_EXCEPTION(props)) {
+		 if(UCASE_GET_TYPE(props)==UCASE_LOWER) {
+			 c+=UCASE_GET_DELTA(props);
+@@ -430,7 +443,12 @@ U_NAMESPACE_END
+ /** @return UCASE_NONE, UCASE_LOWER, UCASE_UPPER, UCASE_TITLE */
+ U_CAPI int32_t U_EXPORT2
+ ucase_getType(const UCaseProps *csp, UChar32 c) {
+-    uint16_t props=UTRIE2_GET16(&csp->trie, c);
++#ifdef SIL_MODIFICATIONS
++	int32_t result = SIL_ucase_getType(c);
++	if (result >= 0)
++		return result;
++#endif
++	uint16_t props=UTRIE2_GET16(&csp->trie, c);
+	 return UCASE_GET_TYPE(props);
+ }
+
+diff --git a/icu/source/common/uchar.c b/icu/source/common/uchar.c
+index 9a285cc..531859c 100644
+--- a/icu/source/common/uchar.c
++++ b/icu/source/common/uchar.c
+@@ -30,6 +30,7 @@
+ #include "udataswp.h"
+ #include "uprops.h"
+ #include "ustr_imp.h"
++#include "silmods.h" // defines SIL_MODIFICATIONS; including this is an SIL modification.
+
+ #define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof((array)[0]))
+
+@@ -40,7 +41,11 @@
+ /* constants and macros for access to the data ------------------------------ */
+
+ /* getting a uint32_t properties word from the data */
++#ifdef SIL_MODIFICATIONS
++#define GET_PROPS(c, result) ((result)=Sil_GET_PROPS(&propsTrie, c));
++#else
+ #define GET_PROPS(c, result) ((result)=UTRIE2_GET16(&propsTrie, c));
++#endif
+
+ U_CFUNC UBool
+ uprv_haveProperties(UErrorCode *pErrorCode) {
+@@ -522,8 +527,13 @@ u_getUnicodeProperties(UChar32 c, int32_t column) {
+	 if(column>=propsVectorsColumns) {
+		 return 0;
+	 } else {
++ #ifdef SIL_MODIFICATIONS
++		uint16_t vecIndex=UTRIE2_GET16(&propsVectorsTrie, c);
++        return SIL_getUnicodeProperties(propsVectors[vecIndex+column], c, column);
++#else
+		 uint16_t vecIndex=UTRIE2_GET16(&propsVectorsTrie, c);
+		 return propsVectors[vecIndex+column];
++#endif
+	 }
+ }
+
+@@ -660,7 +670,11 @@ uchar_addPropertyStarts(const USetAdder *sa, UErrorCode *pErrorCode) {
+	 }
+
+	 /* add the start code point of each same-value range of the main trie */
+-    utrie2_enum(&propsTrie, NULL, _enumPropertyStartsRange, sa);
++#ifdef SIL_MODIFICATIONS
++    SIL_utrie2_enum(&propsTrie, NULL, _enumPropertyStartsRange, sa);
++#else
++	utrie2_enum(&propsTrie, NULL, _enumPropertyStartsRange, sa);
++#endif
+
+	 /* add code points with hardcoded properties, plus the ones following them */
+
+@@ -722,6 +736,10 @@ upropsvec_addPropertyStarts(const USetAdder *sa, UErrorCode *pErrorCode) {
+	 /* add the start code point of each same-value range of the properties vectors trie */
+	 if(propsVectorsColumns>0) {
+		 /* if propsVectorsColumns==0 then the properties vectors trie may not be there at all */
++#ifdef SIL_MODIFICATIONS
++		SIL_enumPropsVecRanges(&propsVectorsTrie, _enumPropertyStartsRange, sa, propsVectors);
++#else
+		 utrie2_enum(&propsVectorsTrie, NULL, _enumPropertyStartsRange, sa);
++#endif
+	 }
+ }
+diff --git a/icu/source/test/cintltst/Makefile.in b/icu/source/test/cintltst/Makefile.in
+index 1bf67ce..1d3775d 100644
+--- a/icu/source/test/cintltst/Makefile.in
++++ b/icu/source/test/cintltst/Makefile.in
+@@ -50,7 +50,7 @@ stdnmtst.o usrchtst.o custrtrn.o sorttest.o trietest.o trie2test.o usettest.o \
+ uenumtst.o utmstest.o currtest.o \
+ idnatest.o nfsprep.o spreptst.o sprpdata.o \
+ hpmufn.o tracetst.o reapits.o utexttst.o ucsdetst.o spooftest.o \
+-cgendtst.o
++cgendtst.o sil_override_tst.o
+
+ DEPS = $(OBJECTS:.o=.d)
+
+diff --git a/icu/source/test/cintltst/SilPropsTestData.txt b/icu/source/test/cintltst/SilPropsTestData.txt
+new file mode 100644
+index 0000000..4432a34
+--- /dev/null
++++ b/icu/source/test/cintltst/SilPropsTestData.txt
+@@ -0,0 +1,267 @@
++Code value;Unicode Character Name;General Category;Canonical Combining Class;Bidi Category;Character Decomposiiton;Decimal Digit Value;Digit Value;Numeric Value;Mirrored;Unicode 1.0 Name (informative);10646 Comment (informative);Upper Case Equivalent;Lower Case Equivalent;Title Case Equivalent;
++block:2
++F130;FONT BASELINE AND SIDE-BEARING MARKER LEFT;So;0;ON;;;;;Y;;;;;;
++F131;FONT BASELINE AND SIDE-BEARING MARKER RIGHT;So;0;ON;;;;;Y;;;;;;
++block:4
++F132;FONT VERTICAL METRICS MARKER LEFT;So;0;ON;;;;;Y;;;;;;
++F133;FONT VERTICAL METRICS MARKER RIGHT;So;0;ON;;;;;Y;;;;;;
++F134;OPENING LOW RIGHT-ANGLE TEXT BRACKET;Ps;0;ON;;;;;Y;;;;;;
++F135;CLOSING LOW RIGHT-ANGLE TEXT BRACKET;Pe;0;ON;;;;;Y;;;;;;
++F170;COMBINING SNAKE BELOW;Mn;220;NSM;;;;;N;;;;;;
++F171;COMBINING MACRON-ACUTE;Mn;230;NSM;;;;;N;;;;;;
++F172;COMBINING GRAVE-MACRON;Mn;230;NSM;;;;;N;;;;;;
++F173;COMBINING MACRON-GRAVE;Mn;230;NSM;;;;;N;;;;;;
++F174;COMBINING ACUTE-MACRON;Mn;230;NSM;;;;;N;;;;;;
++F175;COMBINING GRAVE-ACUTE-GRAVE;Mn;230;NSM;;;;;N;;;;;;
++F176;COMBINING DOUBLE BREVE BELOW;Mn;233;NSM;;;;;N;;;;;;
++F177;COMBINING DOUBLE MACRON;Mn;234;NSM;;;;;N;;;;;;
++F178;COMBINING LATIN SMALL LETTER R BELOW;Mn;220;NSM;;;;;N;;;;;;
++F179;COMBINING ACUTE-GRAVE-ACUTE;Mn;230;NSM;;;;;N;;;;;;
++F17A;COMBINING DOUBLE DIAERESIS;Mn;233;NSM;;;;;N;;;;;;
++F17B;COMBINING ALMOST EQUAL TO BELOW;Mn;220;NSM;;;;;N;;;;;;
++F180;MODIFIER LETTER SMALL M;Lm;0;L;<super> 006D;;;;N;;;;;;
++F181;MODIFIER LETTER SMALL N WITH LEFT HOOK;Lm;0;L;<super> 014B;;;;N;;;;;;
++F182;MODIFIER LETTER SMALL ENG;Lm;0;L;<super> 014B;;;;N;;;;;;
++F183;MODIFIER LETTER SMALL A;Lm;0;L;<super> 0061;;;;N;;;;;;
++F184;MODIFIER LETTER SMALL TURNED A;Lm;0;L;<super> 0250;;;;N;;;;;;
++F185;MODIFIER LETTER SMALL ALPHA;Lm;0;L;<super> 0251;;;;N;;;;;;
++F186;MODIFIER LETTER SMALL B;Lm;0;L;<super> 0062;;;;N;;;;;;
++F187;MODIFIER LETTER SMALL D;Lm;0;L;<super> 0064;;;;N;;;;;;
++F188;MODIFIER LETTER SMALL E;Lm;0;L;<super> 0065;;;;N;;;;;;
++F189;MODIFIER LETTER SMALL SCHWA;Lm;0;L;<super> 0259;;;;N;;;;;;
++F18A;MODIFIER LETTER SMALL OPEN E;Lm;0;L;<super> 025B;;;;N;;;;;;
++F18B;MODIFIER LETTER SMALL REVERSED OPEN E;Lm;0;L;<super> 025C;;;;N;;;;;;
++F18C;MODIFIER LETTER SMALL G;Lm;0;L;<super> 0067;;;;N;;;;;;
++F18D;MODIFIER LETTER SMALL K;Lm;0;L;<super> 006B;;;;N;;;;;;
++F18E;MODIFIER LETTER SMALL O;Lm;0;L;<super> 006F;;;;N;;;;;;
++F18F;MODIFIER LETTER SMALL OPEN O;Lm;0;L;<super> 0254;;;;N;;;;;;
++F190;MODIFIER LETTER SMALL P;Lm;0;L;<super> 0070;;;;N;;;;;;
++F191;MODIFIER LETTER SMALL T;Lm;0;L;<super> 0074;;;;N;;;;;;
++F192;MODIFIER LETTER SMALL U;Lm;0;L;<super> 0075;;;;N;;;;;;
++F193;MODIFIER LETTER SMALL TURNED M;Lm;0;L;<super> 026F;;;;N;;;;;;
++F194;MODIFIER LETTER SMALL V;Lm;0;L;<super> 0076;;;;N;;;;;;
++F195;MODIFIER LETTER CHINANTEC TONE MARK BACKSLASH;Lm;0;ON;;;;;N;;;;;;
++F196;MODIFIER LETTER CHINANTEC TONE MARK VERTICAL BAR;Lm;0;ON;;;;;N;;;;;;
++F197;MODIFIER LETTER CHINANTEC TONE MARK SLASH;Lm;0;ON;;;;;N;;;;;;
++F198;MODIFIER LETTER DOT VERTICAL BAR;Lm;0;ON;;;;;N;;;;;;
++F199;MODIFIER LETTER DOT SLASH;Lm;0;ON;;;;;N;;;;;;
++F19A;MODIFIER LETTER DOT HORIZONTAL BAR;Lm;0;ON;;;;;N;;;;;;
++F19B;MODIFIER LETTER RIGHT CORNER ANGLE;Lm;0;ON;;;;;N;;;;;;
++F19C;MODIFIER LETTER RAISED UP ARROW;Lm;0;ON;;;;;N;;;;;;
++F19D;MODIFIER LETTER RAISED DOWN ARROW;Lm;0;ON;;;;;N;;;;;;
++F19E;MODIFIER LETTER AFRICANIST DOWNSTEP;Lm;0;ON;;;;;N;MODIFIER LETTER RAISED EXCLAMATION MARK;;;;;
++F19F;MODIFIER LETTER AFRICANIST UPSTEP;Lm;0;ON;;;;;N;;;;;;
++F1A0;MODIFIER LETTER SMALL TURNED ALPHA;Lm;0;L;<super> 0252;;;;N;;;;;;
++F1A1;MODIFIER LETTER SMALL AE;Lm;0;L;<super> 00E6;;;;N;;;;;;
++F1A2;MODIFIER LETTER SMALL C WITH CURL;Lm;0;L;<super> 0255;;;;N;;;;;;
++F1A3;MODIFIER LETTER SMALL REVERSED E;Lm;0;L;<super> 0258;;;;N;;;;;;
++F1A4;MODIFIER LETTER SMALL CLOSED REVERSED OPEN E;Lm;0;L;<super> 025E;;;;N;;;;;;
++F1A5;MODIFIER LETTER SMALL F;Lm;0;L;<super> 0066;;;;N;;;;;;
++F1A6;MODIFIER LETTER SMALL SCRIPT G;Lm;0;L;<super> 0261;;;;N;;;;;;
++F1A7;MODIFIER LETTER SMALL I WITH STROKE;Lm;0;L;<super> 0268;;;;N;;;;;;
++F1A8;MODIFIER LETTER SMALL CAPITAL I;Lm;0;L;<super> 026A;;;;N;;;;;;
++F1A9;MODIFIER LETTER SMALL DOTLESS J WITH STROKE;Lm;0;L;<super> 025F;;;;N;;;;;;
++F1AA;MODIFIER LETTER SMALL L WITH RETROFLEX HOOK;Lm;0;L;<super> 026D;;;;N;;;;;;
++F1AB;MODIFIER LETTER SMALL O WITH STROKE;Lm;0;L;<super> 00F8;;;;N;;;;;;
++F1AC;MODIFIER LETTER SMALL BARRED O;Lm;0;L;<super> 0275;;;;N;;;;;;
++F1AD;MODIFIER LETTER SMALL LIGATURE OE;Lm;0;L;<super> 0153;;;;N;;;;;;
++F1AE;MODIFIER LETTER SMALL CAPITAL OE;Lm;0;L;<super> 0276;;;;N;;;;;;
++F1AF;MODIFIER LETTER SMALL ESH;Lm;0;L;<super> 0283;;;;N;;;;;;
++F1B0;MODIFIER LETTER SMALL U BAR;Lm;0;L;<super> 0289;;;;N;;;;;;
++F1B1;MODIFIER LETTER SMALL UPSILON;Lm;0;L;<super> 028A;;;;N;;;;;;
++F1B2;MODIFIER LETTER SMALL TURNED M WITH LONG LEG;Lm;0;L;<super> 0270;;;;N;;;;;;
++F1B3;MODIFIER LETTER SMALL TURNED V;Lm;0;L;<super> 028C;;;;N;;;;;;
++F1B4;MODIFIER LETTER SMALL CAPITAL Y;Lm;0;L;<super> 028F;;;;N;;;;;;
++F1B5;MODIFIER LETTER SMALL RAMS HORN;Lm;0;L;<super> 0264;;;;N;;;;;;
++F1B6;MODIFIER LETTER SMALL Z;Lm;0;L;<super> 007A;;;;N;;;;;;
++F1B7;MODIFIER LETTER SMALL Z WITH CURL;Lm;0;L;<super> 0291;;;;N;;;;;;
++F1B8;MODIFIER LETTER SMALL EZH;Lm;0;L;<super> 0292;;;;N;;;;;;
++F1B9;MODIFIER LETTER SMALL C;Lm;0;L;<super> 0063;;;;N;;;;;;
++F1BA;MODIFIER LETTER SMALL ETH;Lm;0;L;<super> 00F0;;;;N;;;;;;
++F1BB;MODIFIER LETTER SMALL TURNED H;Lm;0;L;<super> 0265;;;;N;;;;;;
++F1BC;MODIFIER LETTER SMALL H WITH STROKE;Lm;0;L;<super> 0127;;;;N;;;;;;
++F1BD;MODIFIER LETTER SMALL J WITH CROSSED-TAIL;Lm;0;L;<super> 029B;;;;N;;;;;;
++F1BE;MODIFIER LETTER SMALL L WITH PALATAL HOOK;Lm;0;L;<super> F22A;;;;N;;;;;;
++F1BF;MODIFIER LETTER SMALL CAPITAL L;Lm;0;L;<super> 029F;;;;N;;;;;;
++F1C0;MODIFIER LETTER SMALL M WITH HOOK;Lm;0;L;<super> 0271;;;;N;;;;;;
++F1C1;MODIFIER LETTER SMALL N WITH RETROFLEX HOOK;Lm;0;L;<super> 0273;;;;N;;;;;;
++F1C2;MODIFIER LETTER SMALL CAPITAL N;Lm;0;L;<super> 0274;;;;N;;;;;;
++F1C3;MODIFIER LETTER SMALL PHI;Lm;0;L;<super> 0278;;;;N;;;;;;
++F1C4;MODIFIER LETTER SMALL S WITH HOOK;Lm;0;L;<super> 0282;;;;N;;;;;;
++F1C5;MODIFIER LETTER SMALL T WITH PALATAL HOOK;Lm;0;L;<super> 01AB;;;;N;;;;;;
++F1C6;MODIFIER LETTER SMALL V WITH HOOK;Lm;0;L;<super> 028B;;;;N;;;;;;
++F1C7;MODIFIER LETTER SMALL Z WITH RETROFLEX HOOK;Lm;0;L;<super> 0290;;;;N;;;;;;
++F1C8;MODIFIER LETTER SMALL GLOTTAL STOP;Lm;0;L;<super> F21E;;;;N;;;;;;
++F1C9;MODIFIER LETTER SMALL THETA;Lm;0;L;<super> 03B8;;;;N;;;;;;
++F1CA;MODIFIER LETTER SMALL IOTA;Lm;0;L;<super> 0196;;;;N;;;;;;
++F1CB;MODIFIER LETTER SMALL CAPITAL I WITH STROKE;Lm;0;L;<super> F254;;;;N;;;;;;
++F1CC;MODIFIER LETTER SMALL CAPITAL U;Lm;0;L;<super> 1D1C;;;;N;;;;;;
++F1CD;MODIFIER LETTER SMALL CAPITAL U BAR;Lm;0;L;<super> F23F;;;;N;;;;;;
++F1CE;MODIFIER LETTER SMALL TURNED Y;Lm;0;L;<super> 028E;;;;N;;;;;;
++F1D0;MODIFIER LETTER EXTRA-HIGH LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1D1;MODIFIER LETTER HIGH LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1D2;MODIFIER LETTER MID LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1D3;MODIFIER LETTER LOW LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1D4;MODIFIER LETTER EXTRA-LOW LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1D5;MODIFIER LETTER EXTRA-HIGH DOTTED TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1D6;MODIFIER LETTER HIGH DOTTED TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1D7;MODIFIER LETTER MID DOTTED TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1D8;MODIFIER LETTER LOW DOTTED TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1D9;MODIFIER LETTER EXTRA-LOW DOTTED TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1DA;MODIFIER LETTER EXTRA-HIGH DOTTED LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1DB;MODIFIER LETTER HIGH DOTTED LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1DC;MODIFIER LETTER MID DOTTED LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1DD;MODIFIER LETTER LOW DOTTED LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1DE;MODIFIER LETTER EXTRA-LOW DOTTED LEFT-STEM TONE BAR;Sk;0;ON;;;;;N;;;;;;
++F1DF;MODIFIER LETTER CHINESE TONE YIN PING;Lm;0;ON;;;;;N;;;;;;
++F1E0;MODIFIER LETTER CHINESE TONE YIN SHANG;Lm;0;ON;;;;;N;;;;;;
++F1E1;MODIFIER LETTER CHINESE TONE YIN QU;Lm;0;ON;;;;;N;;;;;;
++F1E2;MODIFIER LETTER CHINESE TONE YIN RU;Lm;0;ON;;;;;N;;;;;;
++F1E3;MODIFIER LETTER CHINESE TONE YANG PING;Lm;0;ON;;;;;N;;;;;;
++F1E4;MODIFIER LETTER CHINESE TONE YANG SHANG;Lm;0;ON;;;;;N;;;;;;
++F1E5;MODIFIER LETTER CHINESE TONE YANG QU;Lm;0;ON;;;;;N;;;;;;
++F1E6;MODIFIER LETTER CHINESE TONE YANG RU;Lm;0;ON;;;;;N;;;;;;
++F1E7;MODIFIER LETTER LOW CIRCUMFLEX ACCENT;Lm;0;ON;;;;;N;;;;;;
++F1E8;MODIFIER LETTER LOW CARON;Lm;0;ON;;;;;N;;;;;;
++F1E9;MODIFIER LETTER COLON;Lm;0;ON;;;;;N;;;;;;
++F1EA;MODIFIER LETTER SHORT EQUAL;Lm;0;ON;;;;;N;;;;;;
++F1F1;MODIFIER LETTER PITCH ONE;Lm;0;ON;;;;;N;;;;;;
++F1F2;MODIFIER LETTER PITCH TWO;Lm;0;ON;;;;;N;;;;;;
++F1F3;MODIFIER LETTER PITCH THREE;Lm;0;ON;;;;;N;;;;;;
++F1F4;MODIFIER LETTER PITCH FOUR;Lm;0;ON;;;;;N;;;;;;
++F1F5;MODIFIER LETTER PITCH FIVE;Lm;0;ON;;;;;N;;;;;;
++F1F6;MODIFIER LETTER PITCH SIX;Lm;0;ON;;;;;N;;;;;;
++F1F7;MODIFIER LETTER PITCH SEVEN;Lm;0;ON;;;;;N;;;;;;
++F1F8;MODIFIER LETTER PITCH EIGHT;Lm;0;ON;;;;;N;;;;;;
++F1F9;MODIFIER LETTER PITCH NINE;Lm;0;ON;;;;;N;;;;;;
++F200;LATIN LETTER SMALL CAPITAL A;Ll;0;L;;;;;N;;;;;;
++F201;LATIN SMALL LETTER D WITH CURL;Ll;0;L;;;;;N;;;;;;
++F202;LATIN LETTER SMALL CAPITAL E;Ll;0;L;;;;;N;;;;;;
++F203;LATIN SMALL LETTER L WITH CURL;Ll;0;L;;;;;N;;;;;;
++F204;LATIN SMALL LETTER N WITH CURL;Ll;0;L;;;;;N;;;;;;
++F205;LATIN SMALL LETTER T WITH CURL;Ll;0;L;;;;;N;;;;;;
++F206;LATIN SMALL LETTER TURNED H WITH FISHHOOK ;Ll;0;L;;;;;N;;;;;;
++F207;LATIN SMALL LETTER TURNED H WITH FISHHOOK AND TAIL;Ll;0;L;;;;;N;;;;;;
++F208;LATIN CAPITAL LETTER SMALL ALPHA;Lu;0;L;;;;;N;;;;0251;;
++F209;LATIN CAPITAL LETTER SMALL TURNED ALPHA;Lu;0;L;;;;;N;;;;0252;;
++F20A;LATIN CAPITAL LETTER B WITH STROKE;Lu;0;L;;;;;N;;;;0180;;
++F20B;LATIN SMALL LETTER C WITH STROKE;Ll;0;L;;;;;N;;;;;;
++F20C;LATIN SMALL LETTER D WITH HOOK AND TAIL;Ll;0;L;;;;;N;;;;;;
++F20D;LATIN CAPITAL LETTER D WITH STROKE AND HOOK;Lu;0;L;;;;;N;;;;;;
++F20E;LATIN SMALL LETTER L WITH DOUBLE BAR;Ll;0;L;;;;;N;;;F20F;;F20F;
++F20F;LATIN CAPITAL LETTER L WITH DOUBLE BAR;Lu;0;L;;;;;N;;;;F20E;;
++F210;LATIN SMALL LETTER P WITH STROKE;Ll;0;L;;;;;N;;;F25C;;;
++F211;LATIN SMALL LETTER Q WITH HOOK TAIL;Ll;0;L;;;;;N;;;F212;;F212;
++F212;LATIN CAPITAL LETTER SMALL Q WITH HOOK TAIL;Lu;0;L;;;;;N;;;;F211;;
++F213;LATIN SMALL LETTER R WITH STROKE;Ll;0;L;;;;;N;;;F214;;F214;
++F214;LATIN CAPITAL LETTER R WITH STROKE;Lu;0;L;;;;;N;;;;F213;;
++F215;LATIN CAPITAL LETTER SMALL R WITH TAIL;Lu;0;L;;;;;N;;;;027D;;
++F216;LATIN SMALL LETTER ESH WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F217;LATIN CAPITAL LETTER ESH REVERSED;Lu;0;L;;;;;N;;;;0292;;
++F218;LATIN CAPITAL LETTER U BAR;Lu;0;L;;;;;N;;;;0289;;
++F219;LATIN CAPITAL LETTER TURNED V;Lu;0;L;;;;;N;;;;028C;;
++F21A;LATIN SMALL LETTER W WITH HOOK;Ll;0;L;;;;;N;;;F21B;;F21B;
++F21B;LATIN CAPITAL LETTER W WITH HOOK;Lu;0;L;;;;;N;;;;F21A;;
++F21C;LATIN SMALL LETTER EZH WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F21D;LATIN SMALL LETTER SALTILLO;Ll;0;L;;;;;N;LATIN LETTER DOTLESS EXCLAMATION;;F26A;;F26A;
++F21E;LATIN SMALL LETTER GLOTTAL STOP;Lu;0;L;;;;;N;;;;;;
++F21F;LATIN CAPITAL LETTER L WITH BAR;Lu;0;L;;;;;N;;;;;;
++F220;LATIN SMALL LETTER E WITH STROKE;Ll;0;L;;;;;N;;;F221;;F221;
++F221;LATIN CAPITAL LETTER E WITH STROKE;Lu;0;L;;;;;N;;;;F220;;
++F222;LATIN SMALL LETTER H WITH DESCENDER;Ll;0;L;;;;;N;;;;;;
++F223;LATIN CAPITAL LETTER H WITH DESCENDER;Lu;0;L;;;;;N;;;;;;
++F224;LATIN SMALL LETTER B WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F225;LATIN SMALL LETTER C WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F226;LATIN SMALL LETTER D WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F227;LATIN SMALL LETTER F WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F228;LATIN SMALL LETTER G WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F229;LATIN SMALL LETTER K WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F22A;LATIN SMALL LETTER L WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F22B;LATIN SMALL LETTER M WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F22C;LATIN SMALL LETTER N WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F22D;LATIN SMALL LETTER P WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F22E;LATIN SMALL LETTER R WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F22F;LATIN SMALL LETTER S WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F230;LATIN SMALL LETTER ESH WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F231;LATIN SMALL LETTER V WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F232;LATIN SMALL LETTER X WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F233;LATIN SMALL LETTER Z WITH PALATAL HOOK;Ll;0;L;;;;;N;;;F234;;F234;
++F234;LATIN CAPITAL LETTER Z WITH PALATAL HOOK;Lu;0;L;;;;;N;;;;F233;;
++F235;LATIN SMALL LETTER EZH WITH PALATAL HOOK;Ll;0;L;;;;;N;;;;;;
++F236;LATIN SMALL LETTER A WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F237;LATIN SMALL LETTER ALPHA WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F238;LATIN SMALL LETTER E WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F239;LATIN SMALL LETTER OPEN E WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F23A;LATIN SMALL LETTER REVERSED OPEN E WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F23B;LATIN SMALL LETTER SCHWA WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F23C;LATIN SMALL LETTER I WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F23D;LATIN SMALL LETTER OPEN O WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F23E;LATIN SMALL LETTER U WITH RETROFLEX HOOK;Ll;0;L;;;;;N;;;;;;
++F23F;LATIN SMALL CAPITAL LETTER U WITH STROKE;Ll;0;L;;;;;N;;;;;;
++F240;LATIN SMALL LETTER DB DIGRAPH;Ll;0;L;;;;;N;;;;;;
++F241;LATIN SMALL LETTER QP DIGRAPH;Ll;0;L;;;;;N;;;;;;
++F242;LATIN CAPITAL LETTER L WITH MIDDLE TILDE;Lu;0;L;;;;;N;;;;;;
++F243;LATIN SMALL LETTER Y WITH STROKE;Ll;0;L;;;;;N;;;F244;;F244;
++F244;LATIN CAPITAL LETTER Y WITH STROKE;Lu;0;L;;;;;N;;;;F243;;
++F245;LATIN SMALL LETTER TRESILLO;Ll;0;L;;;;;N;;;;;;
++F246;LATIN SMALL LETTER CUATRILLO;Ll;0;L;;;;;N;;;;;;
++F247;LATIN SMALL LETTER AT;Ll;0;L;;;;;N;;;F248;;F248;
++F248;LATIN CAPITAL LETTER AT;Lu;0;L;;;;;N;;;;F247;;
++F249;LATIN SMALL LETTER B WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F24A;LATIN SMALL LETTER D WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F24B;LATIN SMALL LETTER F WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F24C;LATIN SMALL LETTER M WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F24D;LATIN SMALL LETTER N WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F24E;LATIN SMALL LETTER P WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F24F;LATIN SMALL LETTER R WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F250;LATIN SMALL LETTER R WITH FISHHOOK AND MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F251;LATIN SMALL LETTER S WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F252;LATIN SMALL LETTER T WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F253;LATIN SMALL LETTER Z WITH MIDDLE TILDE;Ll;0;L;;;;;N;;;;;;
++F254;LATIN SMALL CAPITAL LETTER I WITH STROKE;Ll;0;L;;;;;N;;;;;;
++F255;LATIN SMALL LETTER UPSILON WITH STROKE;Ll;0;L;;;;;N;;;;;;
++F256;LATIN SMALL LETTER S WITH SWASH TAIL;Ll;0;L;;;;;N;;;;;;
++F257;LATIN SMALL LETTER Z WITH SWASH TAIL;Ll;0;L;;;;;N;;;;;;
++F258;LATIN LETTER SMALL CAPITAL I OVER SMALL SCHWA;Ll;0;L;;;;;N;;;;;;
++F259;LATIN LETTER SMALL UPSILON OVER SMALL SCHWA;Ll;0;L;;;;;N;;;;;;
++F25A;LATIN SMALL LETTER HENG;Ll;0;L;;;;;N;;;;;;
++F25B;LATIN CAPITAL LETTER M WITH HOOK;Lu;0;L;;;;;N;;;;;;
++F25C;LATIN CAPITAL LETTER P WITH STROKE;Lu;0;L;;;;;N;;;;F210;;
++F25D;LATIN SMALL LETTER IOTA WITH STROKE;Ll;0;L;;;;;N;;;;;;
++F25E;LATIN SMALL LETTER V WITH CURL;Ll;0;L;;;;;N;;;;;;
++F25F;LATIN SMALL LETTER V WITH RIGHT HOOK;Ll;0;L;;;;;N;;;;;;
++F260;LATIN SMALL LETTER J WITH STROKE;Ll;0;L;;;;;N;;;F261;;F261;
++F261;LATIN CAPITAL LETTER J WITH STROKE;Lu;0;L;;;;;N;;;;F260;F261;
++F262;LATIN SMALL LETTER K WITH DESCENDER;Ll;0;L;;;;;N;;;F263;;;
++F263;LATIN CAPITAL LETTER K WITH DESCENDER;Lu;0;L;;;;;N;;;;F262;;
++F264;LATIN SMALL LETTER Z WITH DESCENDER;Ll;0;L;;;;;N;;;F265;;;
++F265;LATIN CAPITAL LETTER Z WITH DESCENDER;Lu;0;L;;;;;N;;;;F264;;
++F266;LATIN SMALL LETTER L WITH RETROFLEX HOOK AND BELT;Ll;0;L;;;;;N;;;;;;
++F267;LATIN SMALL LETTER TURNED Y WITH BELT;Ll;0;L;;;;;N;;;;;;
++F268;LATIN LETTER SMALL CAPITAL L WITH BELT;Ll;0;L;;;;;N;;;;;;
++F269;LATIN SMALL LETTER TURNED R WITH LONG LEG AND HOOK;Ll;0;L;;;;;N;;;;;;
++F26A;LATIN CAPITAL LETTER SALTILLO;Lu;0;L;;;;;N;;;;F21D;;
++F26B;LATIN CAPITAL LETTER TURNED H;Lu;0;L;;;;;N;;;;0265;;
++F26C;LATIN CAPITAL LETTER J WITH CROSSED-TAIL;Ll;0;L;;;;;N;;;;029D;;
++F300;HEBREW REVERSED NUN;Lo;0;R;;;;;N;;;;;;
++F301;HEBREW MARK LOWER DOT;Mn;220;NSM;;;;;N;;;;;;
++F302;HEBREW ACCENT RIGHT METEG;Mn;150;NSM;;;;;N;;;;;;
++F303;HEBREW ACCENT LEFT METEG;Mn;151;NSM;;;;;N;;;;;;
++F304;Phony SPACE ONLY FOR TEST;Zs;;;;;;;N;;;;;;
++F305;Phony Digit ONLY FOR TEST;Nd;;;;;;;N;;;;;;
++F306;Phony Letter ONLY FOR TEST;Ll;;;;;;;N;;;F305;;F304;
++F307;Phony title case Letter ONLY FOR TEST;Lt;;;;;;;N;;;F305;F304;;
++F320;CYRILLIC CAPITAL LETTER GHE WITH DESCENDER;Lu;0;L;;;;;N;;;;F321;;
++F321;CYRILLIC SMALL LETTER GHE WITH DESCENDER;Ll;0;L;;;;;N;;;F320;;F320;
++F322;CYRILLIC CAPITAL LETTER EL WITH HOOK;Lu;0;L;;;;;N;;;;F323;;
++F323;CYRILLIC SMALL LETTER EL WITH HOOK;Ll;0;L;;;;;N;;;F322;;F322;
++F324;CYRILLIC CAPITAL LETTER HA WITH HOOK;Lu;0;L;;;;;N;;;;F325;;
++F325;CYRILLIC SMALL LETTER HA WITH HOOK;Ll;0;L;;;;;N;;;F324;;F324;
++F326;CYRILLIC CAPITAL LETTER GHE WITH STROKE AND DESCENDER;Lu;0;L;;;;;N;;;;F327;;
++F327;CYRILLIC SMALL LETTER GHE WITH STROKE AND DESCENDER;Ll;0;L;;;;;N;;;F326;;F326;
++F328;CYRILLIC CAPITAL LETTER HA WITH STROKE;Lu;0;L;;;;;N;;;;F329;;
++F329;CYRILLIC SMALL LETTER HA WITH STROKE;Ll;0;L;;;;;N;;;F328;;F328;
++F32A;CYRILLIC CAPITAL LETTER REVERSED ZE;Lu;0;L;;;;;N;;;;F32B;;
++F32B;CYRILLIC SMALL LETTER REVERSED ZE;Ll;0;L;;;;;N;;;F32A;;F32A;
++F32C;CYRILLIC CAPITAL LETTER SHHA WITH DESCENDER;Lu;0;L;;;;;N;;;;F32D;;
++F32D;CYRILLIC SMALL LETTER SHHA WITH DESCENDER;Ll;0;L;;;;;N;;;F32C;;F32C;
+diff --git a/icu/source/test/cintltst/calltest.c b/icu/source/test/cintltst/calltest.c
+index a2e60c6..c531377 100644
+--- a/icu/source/test/cintltst/calltest.c
++++ b/icu/source/test/cintltst/calltest.c
+@@ -42,9 +42,17 @@ void addUSpoofTest(TestNode** root);
+ #if !UCONFIG_NO_FORMATTING
+ void addGendInfoForTest(TestNode** root);
+ #endif
++#define SIL_MODIFICATIONS
++#ifdef SIL_MODIFICATIONS
++void addSilSetTest(TestNode** root);
++#endif
+
+ void addAllTests(TestNode** root)
+ {
++#ifdef SIL_MODIFICATIONS
++    // If the SIL test is run, it can change the results for other tests.
++    addSilSetTest(root);
++#else
+	 addCnvSelTest(root);
+	 addUDataTest(root);
+	 addHeapMutexTest(root);
+@@ -85,4 +93,5 @@ void addAllTests(TestNode** root)
+ #if !UCONFIG_NO_FORMATTING
+	 addGendInfoForTest(root);
+ #endif
++#endif
+ }
+diff --git a/icu/source/test/cintltst/cintltst.vcxproj b/icu/source/test/cintltst/cintltst.vcxproj
+index ccd56b4..b407ed4 100644
+--- a/icu/source/test/cintltst/cintltst.vcxproj
++++ b/icu/source/test/cintltst/cintltst.vcxproj
+@@ -1,4 +1,4 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
++<?xml version="1.0" encoding="utf-8"?>
+ <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <ItemGroup Label="ProjectConfigurations">
+	 <ProjectConfiguration Include="Debug|Win32">
+@@ -245,6 +245,7 @@
+	 <ClCompile Include="colutil.c" />
+	 <ClCompile Include="cturtst.c" />
+	 <ClCompile Include="encoll.c" />
++    <ClCompile Include="sil_override_tst.c" />
+	 <ClCompile Include="usrchdat.c">
+	   <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+	   <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+diff --git a/icu/source/test/cintltst/cintltst.vcxproj.filters b/icu/source/test/cintltst/cintltst.vcxproj.filters
+index 84f4d73..9f232be 100644
+--- a/icu/source/test/cintltst/cintltst.vcxproj.filters
++++ b/icu/source/test/cintltst/cintltst.vcxproj.filters
+@@ -1,4 +1,4 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
++<?xml version="1.0" encoding="utf-8"?>
+ <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <ItemGroup>
+	 <Filter Include="bidi">
+@@ -297,6 +297,7 @@
+	 <ClCompile Include="spooftest.c">
+	   <Filter>spoof</Filter>
+	 </ClCompile>
++    <ClCompile Include="sil_override_tst.c" />
+   </ItemGroup>
+   <ItemGroup>
+	 <ClInclude Include="cbiditst.h">
+diff --git a/icu/source/test/cintltst/nfkcOverridesTest.txt b/icu/source/test/cintltst/nfkcOverridesTest.txt
+new file mode 100644
+index 0000000..f0c0499
+--- /dev/null
++++ b/icu/source/test/cintltst/nfkcOverridesTest.txt
+@@ -0,0 +1,3 @@
++# Test overrides for sil_override_tst.c
++# Use this as the third input to gennorm2 after nfc.txt and nfkc.txt (from source/data/unicode/norm2).
++F1BE>F22A
+\ No newline at end of file
+diff --git a/icu/source/test/cintltst/sil_override_tst.c b/icu/source/test/cintltst/sil_override_tst.c
+new file mode 100644
+index 0000000..cd56b1c
+--- /dev/null
++++ b/icu/source/test/cintltst/sil_override_tst.c
+@@ -0,0 +1,234 @@
++/*
++**********************************************************************
++* Copyright (c) 2002-2009, International Business Machines
++* Corporation and others.  All Rights Reserved.
++**********************************************************************
++*/
++#include "unicode/uset.h"
++#include "unicode/ustring.h"
++#include "cintltst.h"
++#include <stdlib.h>
++#include <string.h>
++#include "unicode/uchar.h" // required before silmods.h
++#include "utrie2.h" // required before silmods.h
++#include "silmods.h"
++#include "unicode/uregex.h"
++#include "ucase.h"
++#include "unicode/unorm.h"
++
++#define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof((array)[0]))
++
++#define TEST(x) addTest(root, &x, "SIL ext/" # x)
++
++static void TestCharProps(void);
++static void TestRegexProps(void);
++static void TestIsAlphabetic(void);
++static void TestCaseMapping(void);
++static void TestCaseType(void);
++static void TestIsSpace(void);
++static void TestNormalization(void);
++
++void addSilSetTest(TestNode** root);
++
++static void expect(const USet* set,
++                   const char* inList,
++                   const char* outList,
++                   UErrorCode* ec);
++static void expectContainment(const USet* set,
++                              const char* list,
++                              UBool isIn);
++static char oneUCharToChar(UChar32 c);
++static void expectItems(const USet* set,
++                        const char* items);
++
++void
++addSilSetTest(TestNode** root) {
++    TEST(TestCharProps);
++    TEST(TestRegexProps);
++    TEST(TestIsAlphabetic);
++    TEST(TestCaseMapping);
++    TEST(TestCaseType);
++    TEST(TestIsSpace);
++    TEST(TestNormalization);
++}
++
++/*------------------------------------------------------------------
++ * Helper functions
++ *------------------------------------------------------------------*/
++static int assertIntegersEqual(const char* message, const int expected,
++                           const int actual) {
++    if (expected != actual) {
++        log_err("FAIL: %s; got \"%d\"; expected \"%d\"\n",
++                message, actual, expected);
++        return FALSE;
++
++    }
++    return TRUE;
++}
++
++/*------------------------------------------------------------------
++ * Tests
++ *------------------------------------------------------------------*/
++
++static void TestCharProps() {
++    SilIcuInit("SilPropsTestData.txt");
++    if (!assertIntegersEqual("F130 char should be So", U_OTHER_SYMBOL, u_charType((UChar32)L'\uF130')))
++        return;
++    if (!assertIntegersEqual("F131 char should be So", U_OTHER_SYMBOL, u_charType((UChar32)L'\uF131')))
++        return;
++    if (!assertIntegersEqual("F136 (non-override PUA char) should be U_PRIVATE_USE_CHAR", U_PRIVATE_USE_CHAR, u_charType((UChar32)L'\uF136')))
++        return;
++    // Tests character in second block.
++    if (!assertIntegersEqual("F170 char should be Mn", U_NON_SPACING_MARK, u_charType((UChar32)L'\uF170')))
++        return;
++    if (!assertIntegersEqual("F32D char should be Ll", U_LOWERCASE_LETTER, u_charType((UChar32)L'\uF32D')))
++        return;
++}
++
++static void TestIsAlphabetic()
++{
++    SilIcuInit("SilPropsTestData.txt");
++    if (!assertTrue("PUA override char of type Ll should be alphabetic", u_isUAlphabetic(L'\uF32D')))
++        return;
++    if (!assertTrue("PUA override char of type So should not be alphabetic", !u_isUAlphabetic(L'\uF132')))
++        return;
++}
++
++static void TestIsSpace()
++{
++    SilIcuInit("SilPropsTestData.txt");
++    if (!assertTrue("Comma should not be white space", !u_isspace(L',')))
++        return;
++    if (!assertTrue("Space should be white space", u_isspace(L' ')))
++        return;
++    if (!assertTrue("PUA override char of type Ll should not be space", !u_isspace(L'\uF32D')))
++        return;
++    if (!assertTrue("PUA override char of type Zs should be space", u_isspace(L'\uF304')))
++        return;
++}
++static void TestRegexProps()
++{
++    UErrorCode ecode = U_ZERO_ERROR;
++    URegularExpression * handle;
++
++    // Note that L"" is implemented by wchar_t[], and sizeof(wchar_t) can be either 2 or 4.
++    // sizeof(UChar) is carefully defined to be 2 regardless of system or compiler.
++    UChar pattern1[7] = {'\\','p','{','L','l','}',0};   // L"\\p{Ll}"
++    UChar pattern2[3] = {'\\','w',0};                   // L"\\w"
++    UChar pattern3[3] = {'\\','s',0};                   // L"\\s"
++    UChar pattern4[3] = {'\\','d',0};                   // L"\\d"
++    UChar text_Ll[2] = {0xF32D,0};                      // L"\uF32D"
++    UChar text_So[2] = {0xF132,0};                      // L"\uF132"
++    UChar text_Zs[2] = {0xF304,0};                      // L"\uF304"
++    UChar text_Nd[2] = {0xF305,0};                      // L"\uF305"
++
++    SilIcuInit("SilPropsTestData.txt");
++
++    handle = uregex_open(pattern1, -1, 0, NULL, &ecode);
++    uregex_setText(handle, text_Ll, -1, &ecode);
++    if (!assertTrue("\\p{Ll} should match PUA override of type Ll", uregex_matches(handle, 0, &ecode)))
++        return;
++
++    handle = uregex_open(pattern2, -1, 0, NULL, &ecode);
++    uregex_setText(handle, text_Ll, -1, &ecode);
++    if (!assertTrue("\\w should match PUA override of type Ll", uregex_matches(handle, 0, &ecode)))
++        return;
++    uregex_setText(handle, text_So, -1, &ecode);
++    if (!assertTrue("\\w should not match PUA override of type So", !uregex_matches(handle, 0, &ecode)))
++        return;
++
++    handle = uregex_open(pattern3, -1, 0, NULL, &ecode);
++    uregex_setText(handle, text_Zs, -1, &ecode);
++    if (!assertTrue("\\s should match PUA override of type Zs", uregex_matches(handle, 0, &ecode)))
++        return;
++    uregex_setText(handle, text_So, -1, &ecode);
++    if (!assertTrue("\\s should not match PUA override of type So", !uregex_matches(handle, 0, &ecode)))
++        return;
++
++    handle = uregex_open(pattern4, -1, 0, NULL, &ecode);
++    uregex_setText(handle, text_Nd, -1, &ecode);
++    if (!assertTrue("\\d should match PUA override of type Nd", uregex_matches(handle, 0, &ecode)))
++        return;
++    uregex_setText(handle, text_So, -1, &ecode);
++    if (!assertTrue("\\d should not match PUA override of type So", !uregex_matches(handle, 0, &ecode)))
++        return;
++}
++
++static void TestCaseMapping()
++{
++    SilIcuInit("SilPropsTestData.txt");
++
++    if (!assertIntegersEqual("F208 should convert to lower-case 0251", L'\u0251', u_tolower(L'\uF208')))
++        return;
++    if (!assertIntegersEqual("F207 should not change when converted to lower case", L'\uF207', u_tolower(L'\uF207')))
++        return;
++
++    if (!assertIntegersEqual("F208 should not change when converted to upper case", L'\uF208', u_toupper(L'\uF208')))
++        return;
++    if (!assertIntegersEqual("F207 should not change when converted to upper case", L'\uF207', u_toupper(L'\uF207')))
++        return;
++    if (!assertIntegersEqual("F20E should convert to upper-case F20F", L'\uF20F', u_toupper(L'\uF20E')))
++        return;
++
++    if (!assertIntegersEqual("F208 should not change when converted to title case", L'\uF208', u_totitle(L'\uF208')))
++        return;
++    if (!assertIntegersEqual("F207 should not change when converted to title case", L'\uF207', u_totitle(L'\uF207')))
++        return;
++    if (!assertIntegersEqual("F20E should convert to title-case F20F", L'\uF20F', u_totitle(L'\uF20E')))
++        return;
++    // I put in a phony character just to prove that we really can get a different answer for upper and title.
++    if (!assertIntegersEqual("F306 (phony) should convert to title-case F304", L'\uF304', u_totitle(L'\uF306')))
++        return;
++    if (!assertIntegersEqual("F306 (phony) should convert to upper-case F305", L'\uF305', u_toupper(L'\uF306')))
++        return;
++}
++
++static void TestCaseType()
++{
++    SilIcuInit("SilPropsTestData.txt");
++
++    if (!assertTrue("F208 should not be LC", !u_isULowercase(L'\uF208')))
++        return;
++    if (!assertTrue("F208 should be UC", u_isUUppercase(L'\uF208')))
++        return;
++
++    if (!assertTrue("F1F9 (non-letter) should not be LC", !u_isULowercase(L'\uF1F9')))
++        return;
++    if (!assertTrue("F1F9 (non-letter) should not be UC", !u_isUUppercase(L'\uF1F9')))
++        return;
++
++    if (!assertTrue("F20E should be LC", u_isULowercase(L'\uF20E')))
++        return;
++    if (!assertTrue("F20E should not be UC", !u_isUUppercase(L'\uF20E')))
++        return;
++    // And a phone title case character F307
++    if (!assertTrue("F307 (TC) should not be LC", !u_isULowercase(L'\uF307')))
++        return;
++    if (!assertTrue("F307 should not be UC", !u_isUUppercase(L'\uF307')))
++        return;
++}
++
++static void TestNormalization()
++{
++    UErrorCode ecode = U_ZERO_ERROR;
++    // Note that L"" is implemented by wchar_t[], and sizeof(wchar_t) can be either 2 or 4.
++    // sizeof(UChar) is carefully defined to be 2 regardless of system or compiler.
++    UChar input[2] = {0xF1BE,0};    // L"\uF1BE"
++    UChar output[50];
++
++    SilIcuInit("SilPropsTestData.txt");
++    // look in the test source (./icudt50l/nfkc.nrm) for custom normalization data for testing.
++    // This file is generated using a command like
++    // (You may need to "mkdir C:\icu\icu\source\test\cintltst\icudt50l" first.)
++    // gennorm2 -o C:\icu\icu\source\test\cintltst\icudt50l\nfkc.nrm C:\icu\icu\source\data\unidata\norm2\nfc.txt C:\icu\icu\source\data\unidata\norm2\nfkc.txt C:\icu\icu\source\test\cintltst\nfkcOverridesTest.txt
++    u_setDataDirectory(".");
++
++    if (!assertIntegersEqual("Normalizing F1BE should yield one character", 1, unorm_normalize(input,-1, UNORM_NFKD, 0, output, 50, &ecode)))
++        return;
++    if (!assertIntegersEqual("Normalizing F1BE should succeed", U_ZERO_ERROR, ecode))
++        return;
++    if (!assertIntegersEqual("Normalizing F1BE should yield F22A", L'\uF22A', output[0]))
++        return;
++}
++
++/*eof*/

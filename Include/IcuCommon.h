@@ -44,7 +44,7 @@
 #include <unicode/calendar.h>
 #include <unicode/caniter.h>
 #include <unicode/chariter.h>
-#include <unicode/choicfmt.h>
+//#include <unicode/choicfmt.h>
 #include <unicode/coleitr.h>
 #include <unicode/coll.h>
 #include <unicode/colldata.h>
@@ -72,8 +72,8 @@
 #include <unicode/localpointer.h>
 #include <unicode/locdspnm.h>
 #include <unicode/locid.h>
-#include <unicode/messagepattern.h>
-#include <unicode/msgfmt.h>
+//#include <unicode/messagepattern.h>
+//#include <unicode/msgfmt.h>
 #include <unicode/normalizer2.h>
 #include <unicode/normlzr.h>
 #include <unicode/numfmt.h>
@@ -90,7 +90,7 @@
 #include <unicode/resbund.h>
 #include <unicode/schriter.h>
 #include <unicode/search.h>
-#include <unicode/selfmt.h>
+//#include <unicode/selfmt.h>
 #include <unicode/simpletz.h>
 #include <unicode/smpdtfmt.h>
 #include <unicode/sortkey.h>
@@ -168,7 +168,7 @@
 #include <unicode/utrans.h>
 #include <unicode/utypes.h>
 #include <unicode/uversion.h>
-#include <unicode/uvernum.h>
+//#include <unicode/uvernum.h>
 #if U_ICU_VERSION_MAJOR_NUM>2 || (U_ICU_VERSION_MAJOR_NUM==2 && U_ICU_VERSION_MINOR_NUM>=8)
 // The following 4 files are new with version 2.8 of ICU.
 #include <unicode/symtable.h>
@@ -199,7 +199,7 @@
 #include "unicode/basictz.h"
 #include "unicode/dtptngen.h"
 #include "unicode/dtrule.h"
-#include "unicode/plurfmt.h"
+//#include "unicode/plurfmt.h"
 #include "unicode/plurrule.h"
 #include "unicode/rbtz.h"
 #include "unicode/tzrule.h"
@@ -208,6 +208,6 @@
 #include "unicode/vtzone.h"
 
 // Also declared in silmods.h, but one less file to copy and include, from a different location.
-U_CAPI wchar_t* U_EXPORT2 SilIcuInit(const wchar_t * dataPath);
+U_CAPI UBool U_EXPORT2 SilIcuInit(const char * dataPath);
 
 #pragma warning(default: 4512)

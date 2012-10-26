@@ -125,14 +125,14 @@ tlbs-clean:
 	$(RM) -rf $(COM_OUT_DIR)
 
 # ICU on Linux looks for files (like unorm.icu uprops.icu in
-# $(BUILD_ROOT)/DistFiles/Icu40/icudt40l/icudt40l/icudt40l
+# $(BUILD_ROOT)/DistFiles/Icu50/icudt50l/icudt50l/icudt50l
 # I think we need to move the *.icu into a sub dir
 # currently copying incase anything trys to access *.icu in the first
-# icudt40l directory.icudt
+# icudt50l directory.icudt
 IcuDataFiles:
-	(cd $(BUILD_ROOT)/DistFiles/Icu40 && unzip -u ../Icu40.zip)
-	-(cd $(BUILD_ROOT)/DistFiles/Icu40/icudt40l && mkdir icudt40l)
-	-(cd $(BUILD_ROOT)/DistFiles/Icu40/icudt40l && cp -p *.icu icudt40l)
+	(cd $(BUILD_ROOT)/DistFiles/Icu50 && unzip -u ../Icu50.zip)
+	-(cd $(BUILD_ROOT)/DistFiles/Icu50/icudt50l && mkdir icudt50l)
+	-(cd $(BUILD_ROOT)/DistFiles/Icu50/icudt50l && cp -p *.icu icudt50l)
 
 
 # This build item isn't run on a normal build.
@@ -265,7 +265,7 @@ install-tree:
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd,rng} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters,lib} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu40,Keyboards,"Language Explorer",Parts,ReleaseData,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu50,Keyboards,"Language Explorer",Parts,ReleaseData,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
 	# Relocate items that are in separate packages
 	rm -rf $(DESTDIR)/usr/share/fieldworks-movies/"Language Explorer"
 	mv $(DESTDIR)/usr/share/fieldworks/"Language Explorer"/Movies $(DESTDIR)/usr/share/fieldworks-movies/"Language Explorer"
@@ -281,8 +281,8 @@ install-tree:
 	rm -f $(DESTDIR)/usr/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
 	case $(ARCH) in i686) SUFFIX=x86_64;; x86_64) SUFFIX=x86;; esac; \
 	rm -f $(DESTDIR)/usr/lib/fieldworks/libTECkit{,_Compiler}_$$SUFFIX.so
-	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu40/tools
-	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu40/Keyboards
+	rm -Rf $(DESTDIR)/usr/lib/share/fieldworks/Icu50/tools
+	rm -f $(DESTDIR)/usr/lib/share/fieldworks/Icu50/Keyboards
 
 install-menuentries:
 	# Add to Applications menu
@@ -310,7 +310,7 @@ install-COM:
 	(cd $(COM_DIR)/installer$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=/usr; true)
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) install
 	install -d $(DESTDIR)/usr/lib/fieldworks
-	install ../COM/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(DESTDIR)/usr/lib/fieldworks
+	install $(COM_DIR)/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(DESTDIR)/usr/lib/fieldworks
 
 uninstall-COM:
 	[ -e $(COM_DIR)/installer$(ARCH)/Makefile ] && \
@@ -359,7 +359,7 @@ DebugProcs-link:
 ManagedComBridge-all:
 	$(MAKE) -C$(COM_DIR)/ManagedComBridge all
 	-mkdir -p $(OUT_DIR)
-	cp -pf ../COM/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(OUT_DIR)
+	cp -pf $(COM_DIR)/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(OUT_DIR)
 
 ManagedComBridge-clean:
 	$(MAKE) -C$(COM_DIR)/ManagedComBridge clean

@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces.Properties {
 		}
 
 		/// <summary>
-		///   Looks up a localized string similar to SIL initialization of ICU using the file &quot;{0}&quot; failed with the message {1}. SIL PUA characters will not behave properly. Please report this problem to the developers..
+		///   Looks up a localized string similar to SIL initialization of ICU using the file &quot;{0}&quot; failed. SIL PUA characters will not behave properly. Please report this problem to the developers..
 		/// </summary>
 		internal static string ksIcuInitFailed {
 			get {

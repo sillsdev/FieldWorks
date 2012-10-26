@@ -170,7 +170,7 @@ namespace TestLanguage
 			hr = m_qpropeng->get_CharacterName(ch, &sbstr);
 			unitpp::assert_eq("get_CharacterName(ch, &sbstr) HRESULT", S_OK, hr);
 			sta.Assign(sbstr.Chars());
-			staMsg.Format("get_CharacterName(%x)", ch);
+			staMsg.Format("get_CharacterName(%x): expected = \"%s\", actual = \"%s\"", ch, pszName, sta.Chars());
 			unitpp::assert_true(staMsg.Chars(), strcmp(pszName, sta.Chars()) == 0);
 
 			hr = m_qpropeng->get_GeneralCategory(ch, &ccT);

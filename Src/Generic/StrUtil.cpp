@@ -19,6 +19,7 @@ Last reviewed: 27Sep99
 
 namespace StrUtil
 {
+	static bool s_fSilIcuInitCalled = false;
 
 /*----------------------------------------------------------------------------------------------
 	Initialize the ICU Data directory based on the registry setting (or UNIX environment).  It is safe to
@@ -26,10 +27,10 @@ namespace StrUtil
 ----------------------------------------------------------------------------------------------*/
 void InitIcuDataDir()
 {
-#if WIN32
 	const char * pszDir = u_getDataDirectory();
 	bool firstTimeInit = false;
 	char rgchDataDirectory[MAX_PATH];
+#if WIN32
 	if (!pszDir || !*pszDir)
 	{
 		// The ICU Data Directory is not yet set.  Get the root directory from the registry
@@ -58,14 +59,11 @@ void InitIcuDataDir()
 			::RegCloseKey(hk);
 		}
 	}
-
 #else //not WIN32
-
-	const char * pszDir = u_getDataDirectory();
 	if (!pszDir || !*pszDir)
 	{
 		// The ICU Data Directory is not yet set. Set it from the environment.
-		const char * desiredDir = getenv("ICUDATADIR");
+		const char * desiredDir = getenv("ICU_DATA");
 		if (NULL != desiredDir)
 		{
 			u_setDataDirectory(desiredDir);
@@ -73,7 +71,6 @@ void InitIcuDataDir()
 			firstTimeInit = true;
 		}
 	}
-
 #endif//WIN32
 
 	// ICU docs say to do this after the directory is set, but before others are called.
@@ -93,13 +90,14 @@ void InitIcuDataDir()
 		ThrowInternalError(E_UNEXPECTED, "Error No Icu Data Directory. Check ICU_DATA is set.");
 	}
 
-	if (firstTimeInit)
+	if (firstTimeInit || !s_fSilIcuInitCalled)
 	{
 		// This is somewhat time consuming; it has to allocate memory and read a file. Do it only once.
-		StrUni stuPath(rgchDataDirectory);
-		stuPath.Append("/"); // Works on all OS's we care about, I think. Not sure about Mac OS.
-		stuPath.Append("UnicodeDataOverrides.txt");
-		SilIcuInit(stuPath.Chars());
+		StrAnsi staPath(rgchDataDirectory);
+		staPath.Append("/"); // Works on all OS's we care about, I think. Not sure about Mac OS.
+		staPath.Append("UnicodeDataOverrides.txt");
+		SilIcuInit(staPath.Chars());
+		s_fSilIcuInitCalled = true;
 	}
 }
 

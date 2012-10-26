@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.Views
 
 					InputContext context = GlobalCachedInputContext.InputContext;
 
-					if (String.IsNullOrEmpty(value) || value == FwStrings.kstidKeyboardNone)
+					if (String.IsNullOrEmpty(value) || value == ResourceHelper.GetResourceString("kstidKeyboardNone"))
 					{
 						context.Reset();
 						GlobalCachedInputContext.KeyboardName = value;
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.Views
 		internal string FormatKeyboardIdentifier(IBusEngineDesc engineDesc)
 		{
 			string id = engineDesc.Language;
-			string languageName = string.IsNullOrEmpty(id) ? FwStrings.kstidOtherLanguage : Icu.GetDisplayName(id);
+			string languageName = string.IsNullOrEmpty(id) ? ResourceHelper.GetResourceString("kstidOtherLanguage") : Icu.GetDisplayName(id);
 			return String.Format("{0} - {1}", languageName, engineDesc.Name);
 		}
 

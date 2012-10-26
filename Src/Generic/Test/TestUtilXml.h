@@ -62,8 +62,13 @@ namespace TestGenericLib
 		{
 			StrUni stu = L"[&lt;abc&gt;def&lt;ghi&gt;jkl&quot;mno&apos;pqr&#32;stu&#x20;vwx&amp;"
 				L"z&apos;&quot;&amp;quot;&amp;apos;&amp;amp;&#x25000;]";
+#ifdef WIN32
 			StrUni stuConv = L"[<abc>def<ghi>jkl\"mno'pqr stu vwx&z'\"&quot;&apos;&amp;"
 				L"\xD854\xDC00]";
+#else
+			StrUni stuConv = L"[<abc>def<ghi>jkl\"mno'pqr stu vwx&z'\"&quot;&apos;&amp;"
+				L"\x25000" L"]";
+#endif
 			bool fOk = DecodeCharacterEntities(stu);
 			unitpp::assert_true("DecodeCharacterEntities() returned true", fOk);
 			unitpp::assert_true("DecodeCharacterEntities() worked", stu == stuConv);
