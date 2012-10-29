@@ -8,10 +8,6 @@
 	<ProjectGuid>{51FC0FD4-E1FD-494F-A954-D10A5E9EEFE5}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AssemblyName>ManagedVwDrawRootBuffered</AssemblyName>
-	<SccProjectName>SAK</SccProjectName>
-	<SccLocalPath>SAK</SccLocalPath>
-	<SccAuxPath>SAK</SccAuxPath>
-	<SccProvider>SAK</SccProvider>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
 	<OldToolsVersion>3.5</OldToolsVersion>

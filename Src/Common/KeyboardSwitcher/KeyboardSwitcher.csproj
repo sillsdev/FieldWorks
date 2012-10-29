@@ -16,10 +16,6 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<RootNamespace>KeyboardSwitcher</RootNamespace>
 	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-	<SccProjectName>SAK</SccProjectName>
-	<SccLocalPath>SAK</SccLocalPath>
-	<SccAuxPath>SAK</SccAuxPath>
-	<SccProvider>SAK</SccProvider>
 	<TargetFrameworkProfile />
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>

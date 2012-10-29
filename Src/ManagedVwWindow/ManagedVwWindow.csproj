@@ -8,10 +8,6 @@
 	<ProjectGuid>{51FC0FD4-E1FD-494F-A954-D20A5E9EEFE6}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AssemblyName>ManagedVwWindow</AssemblyName>
-	<SccProjectName>SAK</SccProjectName>
-	<SccLocalPath>SAK</SccLocalPath>
-	<SccAuxPath>SAK</SccAuxPath>
-	<SccProvider>SAK</SccProvider>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
 	<OldToolsVersion>3.5</OldToolsVersion>

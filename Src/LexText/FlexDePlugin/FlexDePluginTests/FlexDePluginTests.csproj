@@ -6,9 +6,6 @@
 	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{A1C5E366-D80B-4FB8-A03F-CDA5A0DDF176}</ProjectGuid>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>..\..\..\..</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>.</AppDesignerFolder>
 	<RootNamespace>FlexDePluginTests</RootNamespace>
