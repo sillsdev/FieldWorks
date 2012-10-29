@@ -47,6 +47,8 @@ _user.mak.lnx
 *.pyc
 *.log
 *.vshost.exe*
+*.sdf
+*.opensdf
 
 /.dotest/
 .depend
