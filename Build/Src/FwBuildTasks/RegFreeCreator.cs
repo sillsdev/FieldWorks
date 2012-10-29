@@ -23,6 +23,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Xml;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Microsoft.Win32;
 using LIBFLAGS=System.Runtime.InteropServices.ComTypes.LIBFLAGS;
 using TYPEATTR=System.Runtime.InteropServices.ComTypes.TYPEATTR;
@@ -52,18 +54,18 @@ namespace SIL.FieldWorks.Build.Tasks
 		private static extern int GetLongPathName(string shortPath, StringBuilder longPath,
 			int longPathLength);
 
-		private bool m_fRedirectRegistryFailed;
+		private bool _redirectRegistryFailed;
 		/// <summary>The directory where the type library resides</summary>
-		private string m_BaseDirectory;
-		private string m_FileName;
-		private readonly XmlDocument m_Doc;
-		private readonly bool m_fDisplayWarnings = true;
-		private readonly Dictionary<string, XmlElement> m_Files = new Dictionary<string, XmlElement>();
-		private readonly Dictionary<string, XmlElement> m_CoClasses = new Dictionary<string, XmlElement>();
-		private readonly Dictionary<string, XmlElement> m_InterfaceProxies = new Dictionary<string, XmlElement>();
-		private readonly Dictionary<Guid, string> m_TlbGuids = new Dictionary<Guid, string>();
-		private readonly List<string> m_NonExistingServers = new List<string>();
-		private bool m_fIsDisposed;
+		private string _baseDirectory;
+		private string _fileName;
+		private readonly XmlDocument _doc;
+		private TaskLoggingHelper _log;
+		private readonly Dictionary<string, XmlElement> _files = new Dictionary<string, XmlElement>();
+		private readonly Dictionary<string, XmlElement> _coClasses = new Dictionary<string, XmlElement>();
+		private readonly Dictionary<string, XmlElement> _interfaceProxies = new Dictionary<string, XmlElement>();
+		private readonly Dictionary<Guid, string> _tlbGuids = new Dictionary<Guid, string>();
+		private readonly List<string> _nonExistingServers = new List<string>();
+		private bool _isDisposed;
 
 		private const string UrnSchema = "http://www.w3.org/2001/XMLSchema-instance";
 		private const string UrnAsmv1 = "urn:schemas-microsoft-com:asm.v1";
@@ -80,7 +82,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public RegFreeCreator(XmlDocument doc)
 		{
-			m_Doc = doc;
+			_doc = doc;
 			RedirectRegistry();
 		}
 
@@ -92,9 +94,9 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// <param name="fDisplayWarnings">set to <c>true</c> to display warnings, otherwise
 		/// <c>false</c>.</param>
 		/// ------------------------------------------------------------------------------------
-		public RegFreeCreator(XmlDocument doc, bool fDisplayWarnings): this(doc)
+		public RegFreeCreator(XmlDocument doc, TaskLoggingHelper Log): this(doc)
 		{
-			m_fDisplayWarnings = fDisplayWarnings;
+			this._log = Log;
 		}
 
 		#region IDisposable Members
@@ -133,16 +135,17 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public virtual void Dispose(bool fDisposing)
 		{
-			if (!m_fIsDisposed)
+			if (!_isDisposed)
 			{
-				if (!m_fRedirectRegistryFailed)
+				if (!_redirectRegistryFailed)
 				{
 					EndRedirection();
+					_log.LogMessage(MessageImportance.Low, TmpRegistryKey);
 					Registry.CurrentUser.DeleteSubKeyTree(TmpRegistryKey);
 				}
 			}
 
-			m_fIsDisposed = true;
+			_isDisposed = true;
 		}
 
 		#endregion
@@ -163,7 +166,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public XmlElement CreateExeInfo(string pathName)
 		{
-			XmlElement elem = m_Doc.CreateElement("assembly", UrnAsmv1);
+			XmlElement elem = _doc.CreateElement("assembly", UrnAsmv1);
 			elem.SetAttribute("manifestVersion", "1.0");
 			elem.SetAttribute("xmlns:asmv1", UrnAsmv1);
 			elem.SetAttribute("xmlns:asmv2", UrnAsmv2);
@@ -171,18 +174,18 @@ namespace SIL.FieldWorks.Build.Tasks
 			elem.SetAttribute("xmlns:xsi", UrnSchema);
 			elem.SetAttribute("schemaLocation", UrnSchema, UrnAsmv1 + " assembly.adaptive.xsd");
 
-			XmlNode oldChild = m_Doc.SelectSingleNode("assembly");
+			XmlNode oldChild = _doc.SelectSingleNode("assembly");
 			if (oldChild != null)
-				m_Doc.ReplaceChild(elem, oldChild);
+				_doc.ReplaceChild(elem, oldChild);
 			else
-				m_Doc.AppendChild(elem);
+				_doc.AppendChild(elem);
 
 			// The C++ test programs won't run if an assemblyIdentity element exists.
 			string fileName = Path.GetFileName(pathName);
 			if (!fileName.StartsWith("test"))
 			{
 				// <assemblyIdentity name="TE.exe" version="1.4.1.39149" type="win32" />
-				XmlElement assemblyIdentity = m_Doc.CreateElement("assemblyIdentity", UrnAsmv1);
+				XmlElement assemblyIdentity = _doc.CreateElement("assemblyIdentity", UrnAsmv1);
 				assemblyIdentity.SetAttribute("name", fileName);
 				// ReSharper disable EmptyGeneralCatchClause
 				try
@@ -218,13 +221,13 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void ProcessTypeLibrary(XmlElement parent, string fileName)
 		{
-			m_BaseDirectory = Path.GetDirectoryName(fileName);
-			m_FileName = fileName.ToLower();
+			_baseDirectory = Path.GetDirectoryName(fileName);
+			_fileName = fileName.ToLower();
 
 			try
 			{
 				XmlNode oldChild;
-				ITypeLib typeLib = LoadTypeLib(m_FileName);
+				ITypeLib typeLib = LoadTypeLib(_fileName);
 				IntPtr pLibAttr;
 				typeLib.GetLibAttr(out pLibAttr);
 				var libAttr = (TYPELIBATTR)
@@ -240,15 +243,15 @@ namespace SIL.FieldWorks.Build.Tasks
 
 				// <typelib tlbid="{2f0fccc0-c160-11d3-8da2-005004defec4}" version="1.0" helpdir=""
 				//		resourceid="0" flags="HASDISKIMAGE" />
-				if (m_TlbGuids.ContainsKey(libAttr.guid))
+				if (_tlbGuids.ContainsKey(libAttr.guid))
 				{
-					Console.WriteLine("Warning: Type library with GUID {0} is defined in {1} and {2}",
-						libAttr.guid, m_TlbGuids[libAttr.guid], Path.GetFileName(fileName));
+					_log.LogWarning("Type library with GUID {0} is defined in {1} and {2}",
+						libAttr.guid, _tlbGuids[libAttr.guid], Path.GetFileName(fileName));
 				}
 				else
 				{
-					m_TlbGuids.Add(libAttr.guid, Path.GetFileName(fileName));
-					XmlElement elem = m_Doc.CreateElement("typelib", UrnAsmv1);
+					_tlbGuids.Add(libAttr.guid, Path.GetFileName(fileName));
+					XmlElement elem = _doc.CreateElement("typelib", UrnAsmv1);
 					elem.SetAttribute("tlbid", libAttr.guid.ToString("B"));
 					elem.SetAttribute("version", string.Format("{0}.{1}", libAttr.wMajorVerNum,
 						libAttr.wMinorVerNum));
@@ -282,11 +285,10 @@ namespace SIL.FieldWorks.Build.Tasks
 				else
 					parent.AppendChild(file);
 			}
-			catch (COMException)
+			catch (Exception)
 			{
 				// just ignore if this isn't a type library
-				if (m_fDisplayWarnings)
-					Console.WriteLine("Warning: Can't load type library {0}", fileName);
+				_log.LogMessage(MessageImportance.Normal, "Can't load type library {0}", fileName);
 			}
 		}
 
@@ -319,14 +321,20 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void ProcessClasses(XmlElement parent)
 		{
-			using (var regKeyClsid = Registry.ClassesRoot.OpenSubKey("CLSID"))
+			using (var regKeyClsid = Registry.CurrentUser.OpenSubKey(TmpRegistryKey + @"\CLSID"))
 			{
 				if (regKeyClsid == null)
+				{
+					_log.LogError("No temp registry key found.");
 					return;
-
+				}
+				if(regKeyClsid.SubKeyCount == 0)
+				{
+					_log.LogWarning("No classes were registered in the temporary key.");
+				}
 				foreach (var clsId in regKeyClsid.GetSubKeyNames())
 				{
-					if (m_CoClasses.ContainsKey(clsId.ToLower()))
+					if (_coClasses.ContainsKey(clsId.ToLower()))
 						continue;
 
 					using (var regKeyClass = regKeyClsid.OpenSubKey(clsId))
@@ -356,7 +364,8 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void ProcessInterfaces(XmlElement root)
 		{
-			using (var regKeyInterfaces = Registry.ClassesRoot.OpenSubKey("Interface"))
+			using (var regKeyBase = Registry.CurrentUser.OpenSubKey(TmpRegistryKey))
+			using (var regKeyInterfaces = regKeyBase.OpenSubKey("Interface"))
 			{
 				if (regKeyInterfaces == null)
 					return;
@@ -371,21 +380,21 @@ namespace SIL.FieldWorks.Build.Tasks
 						var proxyStubClsId = GetDefaultValueForKey(regKeyInterface, "ProxyStubClsId32").ToLower();
 						if (string.IsNullOrEmpty(proxyStubClsId))
 						{
-							Console.WriteLine("Error: no proxyStubClsid32 set for interface with iid {0}", interfaceIid);
+							_log.LogError("no proxyStubClsid32 set for interface with iid {0}", interfaceIid);
 							continue;
 						}
 						Debug.WriteLine(string.Format("Interface {0} is {1}: {2} methods, proxy: {3}", interfaceIid,
 							interfaceName, numMethods, proxyStubClsId));
 
-						if (!m_CoClasses.ContainsKey(proxyStubClsId))
+						if (!_coClasses.ContainsKey(proxyStubClsId))
 						{
-							Console.WriteLine("Warning: can't find coclass specified as proxy for interface with iid {0}; manifest might not work",
+							_log.LogWarning(" can't find coclass specified as proxy for interface with iid {0}; manifest might not work",
 								interfaceIid);
 						}
 
-						if (m_InterfaceProxies.ContainsKey(interfaceIid))
+						if (_interfaceProxies.ContainsKey(interfaceIid))
 						{
-							Console.WriteLine("Internal error: encountered interface with iid {0} before", interfaceIid);
+							_log.LogError("encountered interface with iid {0} before", interfaceIid);
 							continue;
 						}
 
@@ -395,7 +404,7 @@ namespace SIL.FieldWorks.Build.Tasks
 						// application.
 						// <comInterfaceExternalProxyStub name="IVwPrintContext" iid="{FF2E1DC2-95A8-41C6-85F4-FFCA3A64216A}"
 						//		numMethods="24" proxyStubClsid32="{EFEBBD00-D418-4157-A730-C648BFFF3D8D}"/>
-						var elem = m_Doc.CreateElement("comInterfaceExternalProxyStub", UrnAsmv1);
+						var elem = _doc.CreateElement("comInterfaceExternalProxyStub", UrnAsmv1);
 						elem.SetAttribute("iid", interfaceIid);
 						elem.SetAttribute("proxyStubClsid32", proxyStubClsId);
 						if (!string.IsNullOrEmpty(interfaceName))
@@ -405,7 +414,7 @@ namespace SIL.FieldWorks.Build.Tasks
 
 						AppendOrReplaceNode(root, elem, "iid", interfaceIid);
 
-						m_InterfaceProxies.Add(interfaceIid, elem);
+						_interfaceProxies.Add(interfaceIid, elem);
 					}
 				}
 			}
@@ -481,8 +490,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		{
 			if (!File.Exists(fileName))
 			{
-				if (m_fDisplayWarnings)
-					Console.WriteLine("Warning: Can't add fragment {0}", fileName);
+				_log.LogWarning(" Can't add fragment {0}", fileName);
 				return;
 			}
 
@@ -544,7 +552,6 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		private void ProcessTypeInfo(XmlNode parent, Guid tlbGuid, ITypeInfo typeInfo)
 		{
-// ReSharper disable EmptyGeneralCatchClause
 			try
 			{
 				IntPtr pTypeAttr;
@@ -569,12 +576,12 @@ namespace SIL.FieldWorks.Build.Tasks
 					string serverFullPath = bldr.ToString();
 					string server = Path.GetFileName(serverFullPath);
 					if (!File.Exists(serverFullPath) &&
-						!File.Exists(Path.Combine(m_BaseDirectory, server)))
+						!File.Exists(Path.Combine(_baseDirectory, server)))
 					{
-						if (!m_NonExistingServers.Contains(server))
+						if (!_nonExistingServers.Contains(server))
 						{
-							Console.WriteLine("{0} is referenced in the TLB but is not in current directory", server);
-							m_NonExistingServers.Add(server);
+							_log.LogMessage(MessageImportance.Low, "{0} is referenced in the TLB but is not in current directory", server);
+							_nonExistingServers.Add(server);
 						}
 						return;
 					}
@@ -588,22 +595,22 @@ namespace SIL.FieldWorks.Build.Tasks
 					//    return;
 					//}
 
-					if (!m_CoClasses.ContainsKey(clsId))
+					if (!_coClasses.ContainsKey(clsId))
 					{
 						var description = (string)typeKey.GetValue(string.Empty);
 						var threadingModel = (string)inprocServer.GetValue("ThreadingModel");
 						var progId = GetDefaultValueForKey(typeKey, "ProgID");
 						AddOrReplaceCoClass(file, clsId, threadingModel, description, tlbGuid.ToString("B"), progId);
-						Debug.WriteLine(string.Format(@"Coclass: clsid=""{0}"", threadingModel=""{1}"", tlbid=""{2}"", progid=""{3}""",
+						_log.LogMessage(MessageImportance.Low, string.Format(@"Coclass: clsid=""{0}"", threadingModel=""{1}"", tlbid=""{2}"", progid=""{3}""",
 							clsId, threadingModel, tlbGuid, progId));
 					}
 				}
 			}
-			catch
+			catch(Exception e)
 			{
-				// just ignore any errors
+				_log.LogMessage(MessageImportance.High, "Failed to process the type info for {0}", tlbGuid);
+				_log.LogMessage(MessageImportance.High, e.StackTrace);
 			}
-// ReSharper restore EmptyGeneralCatchClause
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -627,7 +634,7 @@ namespace SIL.FieldWorks.Build.Tasks
 
 			// <comClass clsid="{2f0fccc2-c160-11d3-8da2-005004defec4}" threadingModel="Apartment"
 			//		tlbid="{2f0fccc0-c160-11d3-8da2-005004defec4}" progid="FieldWorks.FwXmlData" />
-			var elem = m_Doc.CreateElement("comClass", UrnAsmv1);
+			var elem = _doc.CreateElement("comClass", UrnAsmv1);
 			elem.SetAttribute("clsid", clsId);
 			elem.SetAttribute("threadingModel", threadingModel);
 			if (!string.IsNullOrEmpty(description))
@@ -636,7 +643,7 @@ namespace SIL.FieldWorks.Build.Tasks
 				elem.SetAttribute("tlbid", tlbId.ToLower());
 			if (!string.IsNullOrEmpty(progId))
 				elem.SetAttribute("progid", progId);
-			m_CoClasses[clsId] = elem;
+			_coClasses[clsId] = elem;
 			AppendOrReplaceNode(parent, elem, "clsid", clsId);
 		}
 
@@ -651,20 +658,20 @@ namespace SIL.FieldWorks.Build.Tasks
 		private XmlElement GetOrCreateFileNode(XmlNode parent, string filePath)
 		{
 			string fileName = Path.GetFileName(filePath);
-			if (m_Files.ContainsKey(fileName))
-				return m_Files[fileName];
+			if (_files.ContainsKey(fileName))
+				return _files[fileName];
 
 			var fileInfo = new FileInfo(filePath);
 			if (!fileInfo.Exists)
-				fileInfo = new FileInfo(Path.Combine(m_BaseDirectory, fileName));
-			XmlElement file = m_Doc.CreateElement("file", UrnAsmv1);
+				fileInfo = new FileInfo(Path.Combine(_baseDirectory, fileName));
+			XmlElement file = _doc.CreateElement("file", UrnAsmv1);
 			file.SetAttribute("name", fileName);
 			if (fileInfo.Exists)
 			{
 				parent.AppendChild(file);
 				file.SetAttribute("size", "urn:schemas-microsoft-com:asm.v2", fileInfo.Length.ToString());
 			}
-			m_Files.Add(fileName, file);
+			_files.Add(fileName, file);
 			return file;
 		}
 
@@ -718,7 +725,8 @@ namespace SIL.FieldWorks.Build.Tasks
 			}
 			catch
 			{
-				m_fRedirectRegistryFailed = true;
+				_log.LogError("registry redirection failed.");
+				_redirectRegistryFailed = true;
 			}
 		}
 
@@ -803,14 +811,18 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// <param name="methodName">Name of the method.</param>
 		/// <returns><c>true</c> if successfully invoked method, otherwise <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
-		private static void ApiInvoke(string fileName, string methodName)
+		private static void ApiInvoke(string fileName, string methodName, TaskLoggingHelper Log)
 		{
 			if (!File.Exists(fileName))
 				return;
-
+			fileName = Path.GetFullPath(fileName);
 			IntPtr hModule = LoadLibrary(fileName);
 			if (hModule == IntPtr.Zero)
+			{
+				var errorCode = Marshal.GetLastWin32Error();
+				Log.LogError("Failed to load library {0} for {1} with error code {2}", fileName, methodName, errorCode);
 				return;
+			}
 
 			try
 			{
@@ -837,18 +849,18 @@ namespace SIL.FieldWorks.Build.Tasks
 		public void Register(string fileName)
 		{
 			SetDllDirectory(Path.GetDirectoryName(fileName));
-			ApiInvoke(fileName, "DllRegisterServer");
-// ReSharper disable EmptyGeneralCatchClause
+			ApiInvoke(fileName, "DllRegisterServer", _log);
 			try
 			{
 				ITypeLib typeLib = LoadTypeLib(fileName);
-				RegisterTypeLib(typeLib, fileName, null);
+				var registerResult = RegisterTypeLib(typeLib, fileName, null);
+				_log.LogMessage(MessageImportance.Low, "Registered {0} with result {1}", fileName, registerResult);
 			}
-			catch
+			catch(Exception e)
 			{
-				// just ignore any errors
+				_log.LogMessage(MessageImportance.Normal, "Failed to register {0}", fileName);
+				_log.LogMessage(MessageImportance.Normal, e.StackTrace);
 			}
-// ReSharper restore EmptyGeneralCatchClause
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -859,7 +871,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void Unregister(string fileName)
 		{
-			ApiInvoke(fileName, "DllUnregisterServer");
+			ApiInvoke(fileName, "DllUnregisterServer", _log);
 		}
 
 	}

@@ -106,13 +106,21 @@ namespace SIL.FieldWorks.Build.Tasks
 				}
 
 				// Register all DLLs temporarily
-				using (var creator = new RegFreeCreator(doc))
+				using (var creator = new RegFreeCreator(doc, Log))
 				{
 					var dllPaths = IdlImp.GetFilesFrom(Dlls);
 					foreach (string fileName in dllPaths)
 					{
 						Log.LogMessage(MessageImportance.Low, "\tRegistering library {0}", Path.GetFileName(fileName));
-						creator.Register(fileName);
+						try
+						{
+							creator.Register(fileName);
+						}
+						catch(Exception e)
+						{
+							Log.LogMessage(MessageImportance.High, "Failed to register library {0}", fileName);
+							Log.LogMessage(MessageImportance.High, e.StackTrace);
+						}
 					}
 
 					XmlElement root = creator.CreateExeInfo(Executable);

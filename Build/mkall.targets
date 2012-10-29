@@ -327,6 +327,22 @@
 		Possibly could be moved into a buildInclude for projects that need it. Old version did not copy for remakele-->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Utilities.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<!-- ICU50 dlls -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/icudt50.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/icuin50.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/icuuc50.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/icu.net.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- Enchant dlls -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/libenchant.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/glib-2-vs10.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/gmodule-2-vs10.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 	</Target>
 
 	<Target Name="setRegistryValues" Condition="'$(OS)'=='Unix' Or '$(UserIsAdmin)'=='True'" DependsOnTargets="initLinux;initWindows">

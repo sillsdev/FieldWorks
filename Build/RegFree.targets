@@ -7,10 +7,10 @@
 	This allows our programs to run without registering our COM DLLs, which in turn allows different
 	versions of FieldWorks to coexist on the same computer. This is only relevant for Windows.-->
 	<ItemGroup>
-		<Dlls Include="$(OutDir)/FwKernel.dll"/>
-		<Dlls Include="$(OutDir)/Views.dll"/>
-		<Dlls Include="$(OutDir)/Language.dll"/>
-		<Dlls Include="$(OutDir)/Graphite.dll"/>
+		<Dlls Include="$(OutDir)FwKernel.dll"/>
+		<Dlls Include="$(OutDir)Views.dll"/>
+		<Dlls Include="$(OutDir)Language.dll"/>
+		<Dlls Include="$(OutDir)Graphite.dll"/>
 	</ItemGroup>
 	<ItemGroup>
 		<Fragments Include="$(OutDir)/../../DistFiles/*.fragment.manifest"/>
