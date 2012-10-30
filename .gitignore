@@ -8,15 +8,22 @@ Collection.cpp
 /DistFiles/Icu40/data/
 /DistFiles/Icu40/icudt40l/
 /DistFiles/Languages/
+/DistFiles/Helps/
+/DistFiles/Language Explorer/Movies/
+/DistFiles/ReleaseData/
+/DistFiles/SIL/Repository/
+/Installer/
 /Lib/Debug
 /Lib/Release
 /Lib/src/icu/
+/Localizations/
 /Bld/GlobalInclude.build.xml
 /Bin/_setLatestBuildConfig.bat
 /Bin/_setroot.bat
 /Bld/pathinclude.*.xml
 /Lib/debug/DebugProcs.lib
 /Lib/debug/Generic.lib
+/DistFiles/Parts/Generated.fwlayout
 /Src/LangInst/InstallLanguageTests/timing.txt
 
 # other files
@@ -61,12 +68,14 @@ Release/
 /Output_x86_64/
 /Lib/src/unit++/autom4te.cache/
 /Lib/src/unit++/configure
+/Lib/src/Enchant/fieldworks-enchant-1.6.1/
 /Src/DbAccessFirebird/Test/temp.awk
 /Src/DbAccessFirebird/testDbAccess
 /Src/Kernel/libFwKernel
 /Src/views/libViews
 /Src/views/libVwGraphics
 /Bin/src/CodeGen/CodeGen
+/debian/
 /DistFiles/FwResources.dll
 /DistFiles/TeResources.dll
 /DistFiles/Parts/GeneratedLayouts.xml
@@ -80,6 +89,7 @@ Src/FDO/IOC/Generated*.cs
 /DistFiles/Db4objects.Db4o.dll
 /DistFiles/FirebirdSql.Data.FirebirdClient.dll
 /DistFiles/Editorial\ Checks/
+/DistFiles/Language\ Explorer/Configuration/Available\ Plugins/
 /Src/AppCore/libAppCore
 /Src/DebugProcs/libDebugProcs
 /Src/Generic/libGeneric
