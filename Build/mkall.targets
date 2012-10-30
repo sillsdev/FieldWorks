@@ -288,7 +288,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw" DependsOnTargets="CleanAll;Initialize;IcuData;CopyDlls;mkall"/>
+	<Target Name="remakefw" DependsOnTargets="CleanAll;Initialize;setRegistryValues;IcuData;CopyDlls;mkall"/>
 
 	<Target Name="remakefw-hudson" DependsOnTargets="remakefw-jenkins"/>
 	<Target Name="remakefw-jenkins" DependsOnTargets="checkTLBsUpToDate;remakefw"/>
@@ -345,38 +345,49 @@
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 	</Target>
 
-	<Target Name="setRegistryValues" Condition="'$(OS)'=='Unix' Or '$(UserIsAdmin)'=='True'" DependsOnTargets="initLinux;initWindows">
-		<Message Text="Setting registry values for $(fwrt)."/>
+	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>
+
+	<!-- This target only has an effect on Windows machines, and should be removed once encoding converters are updated to look in HKCU by default -->
+	<Target Name="setKeysInHKLM" Condition="'$(UserIsAdmin)'=='True'">
 		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
+					   Value="$(fwrt)\DistFiles\Windows\EC Common"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+					   Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"/>
+	</Target>
+
+	<Target Name="setKeysInHKCU">
+		<Message Text="Setting registry values for $(fwrt)."/>
+		<WriteRegistry Hive="CurrentUser"
 					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootCodeDir"
 					   Value="$(dir-fwdistfiles)"/>
-		<WriteRegistry Hive="LocalMachine"
+		<WriteRegistry Hive="CurrentUser"
 					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootDataDir"
 					   Value="$(dir-fwdistfiles)"/>
-		<WriteRegistry Hive="LocalMachine"
+		<WriteRegistry Hive="CurrentUser"
 					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\ProjectsDir"
 					   Value="$(dir-fwdistfiles)\Projects"/>
-		<WriteRegistry Hive="LocalMachine"
+		<WriteRegistry Hive="CurrentUser"
 					   Key="SOFTWARE\SIL\Icu50DataDir"
 					   Value="$(dir-icuData)"/>
-		<WriteRegistry Hive="LocalMachine"
+		<WriteRegistry Hive="CurrentUser"
 					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
 					   Value="$(fwrt)\DistFiles\Windows\EC Common"
 					   Condition="'$(OS)'=='Windows_NT'"/>
-		<WriteRegistry Hive="LocalMachine"
+		<WriteRegistry Hive="CurrentUser"
 					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
 					   Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"
 					   Condition="'$(OS)'=='Windows_NT'"/>
-		<WriteRegistry Hive="LocalMachine"
+		<WriteRegistry Hive="CurrentUser"
 					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
 					   Value="$(dir-outputBase)"
 					   Condition="'$(OS)'=='Unix'"/>
-		<WriteRegistry Hive="LocalMachine"
+		<WriteRegistry Hive="CurrentUser"
 					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
 					   Value="$(dir-outputBase)/EC/Plugins"
 					   Condition="'$(OS)'=='Unix'"/>
 	</Target>
-
 
 	<Target Name="allTe" DependsOnTargets="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>
 
