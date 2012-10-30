@@ -526,6 +526,7 @@ STDAPI DLLEXPORT__ DllUnregisterServer(void)
 STDAPI DLLEXPORT__ DllRegisterServer(void)
 {
 	ENTER_DLL();
+	ModuleEntry::SetPerUserRegistration(true);
 	ModuleEntry::ModuleAddRef();
 	HRESULT hr = ModuleEntry::ModuleRegisterServer();
 #ifdef _MERGE_PROXYSTUB
@@ -563,6 +564,8 @@ STDAPI DLLEXPORT__ DllInstall(BOOL fInstall, LPCWSTR pszCmdLine)
 	HRESULT hr = E_FAIL;
 #if WIN32 // TODO-Linux
 	static const wchar_t szUserSwitch[] = _T("user");
+
+	ModuleEntry::SetPerUserRegistration(true);
 
 	if (pszCmdLine != NULL)
 	{
