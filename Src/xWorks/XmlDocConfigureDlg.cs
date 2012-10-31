@@ -2586,7 +2586,16 @@ namespace SIL.FieldWorks.XWorks
 			m_cfgParentNode.Visible = true;
 			m_cfgParentNode.SetDetails(sMoreDetail, m_chkDisplayData.Checked && fEnabled, true);
 			if (m_chkDisplayData.Checked && fEnabled)
+			{
 				m_current.Expand();
+				foreach (LayoutTreeNode child in m_current.Nodes)
+				{
+					if (XmlUtils.GetOptionalBooleanAttributeValue(child.Configuration, "autoexp", false))
+					{
+						child.Expand();
+					}
+				}
+			}
 		}
 
 		private void DisplayDetailsForRecursiveNode(bool fEnabled)

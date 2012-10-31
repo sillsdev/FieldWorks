@@ -115,14 +115,14 @@
 	<part ref="Label"/>
   </layout>
 
-  <layout class="CmPossibility" type="jtview" name="classifiedDict">
+  <layout class="CmSemanticDomain" type="jtview" name="classifiedDict">
 	<sublayout name="domainLabel" group="para" style="Classified-MainEntry"/>
-	<part ref="ReferringSenses" param="classifiedDict"/>
+	<part ref="ReferringSenses" label ="Referenced Senses" param="classifiedDict" autoexp="true"/>
   </layout>
 
-  <layout class="CmPossibility" type="jtview" name="domainLabel">
-	<part ref="ConfigureAbbr" after=" " ws="best analorvern"/>
-	<part ref="ConfigureName" ws="best analorvern"/>
+  <layout class="CmSemanticDomain" type="jtview" name="domainLabel">
+	<part ref="ConfigureAbbrCd" label="Abbreviation" after=" " ws="analysis"/>
+	<part ref="ConfigureNameCd" label="Name" ws="analysis"/>
   </layout>
 
 	<!-- STUFF ADDED FOR NEW CONFIGURATION WORK -->
@@ -495,6 +495,13 @@
 		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary"/>
 		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemSenseVariantRef" hideConfig="true"/>
 	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishCdSenseVariantRef">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishCdSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForCdSenseVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForCdSenseVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="sense-variantref-entry-summary"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForCdSenseVariantRef" hideConfig="true"/>
+	</layout>
 	<layout class="LexEntryRef" type="jtview" name="publishStemMinorVariantRef">
 		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemMinorVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type-minor"/>
 		<part ref="VariantHeadwordConfig" param="publishHeadwordForStemMinorVariantRef" hideConfig="true"/>
@@ -572,6 +579,9 @@
 	<layout class="LexEntry" type="jtview" name="publishHeadwordForStemSenseVariantRef">
 		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="sense-variantref-form"/>
 	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHeadwordForCdSenseVariantRef">
+		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="sense-variantref-form"/>
+	</layout>
 	<layout class="LexEntry" type="jtview" name="publishHeadwordForStemMinorVariantRef">
 		<part ref="AsVariantHeadwordPub" label="Variant Form" before="" after="" sep=", " visibility="ifdata" ws="vernacular" wsType="vernacular" css="variantref-form-minor"/>
 	</layout>
@@ -608,6 +618,9 @@
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishPronunForStemSenseVariantRef">
 		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishStemForSenseVariant" before=" " after="" sep=", " visibility="never"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronunForCdSenseVariantRef">
+		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishCdForSenseVariant" before=" " after="" sep=", " visibility="never"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishPronunForStemMinorVariantRef">
 		<part ref="VariantPronunciationsConfig" label="Variant Pronunciations" param="publishStemMinorForEntryVariant" before=" " after="" sep=", " visibility="never"/>
@@ -682,6 +695,13 @@
 		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary"/>
 		<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemSenseComplexFormSummaryDef" hideConfig="true"/>
 		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishStemSenseComplexFormExample" visibility="never" css="sense-complexform-examples"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishCdSenseComplexFormRef">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishCdSenseComplexFormType" before="" after=" " visibility="ifdata" css="sense-complexform-type"/>
+		<part ref="ComplexFormHeadwordConfig" param="publishCdSenseComplexFormHeadword" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="sense-complexform-summary"/>
+		<part ref="ComplexFormSummaryDefinitionConfig" param="publishCdSenseComplexFormSummaryDef" hideConfig="true"/>
+		<part ref="ComplexFormExamplesConfig" label="Example Sentences" before="" after="" sep="" param="publishCdSenseComplexFormExample" visibility="never" css="sense-complexform-examples"/>
 	</layout>
 	<layout class="LexEntryRef" type="jtview" name="publishStemMinorComplexFormRef">
 		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemMinorComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type-minor"/>
@@ -761,6 +781,9 @@
 	<layout class="LexEntry" type="jtview" name="publishStemSenseComplexFormHeadword">
 		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form"/>
 	</layout>
+	<layout class="LexEntry" type="jtview" name="publishCdSenseComplexFormHeadword">
+		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" css="sense-complexform-form"/>
+	</layout>
 	<layout class="LexEntry" type="jtview" name="publishStemMinorComplexFormHeadword">
 		<part ref="ComplexFormHeadwordPub" label="Complex Form" before="" after="" ws="vernacular" wsType="vernacular" visibility="ifdata" style="Dictionary-Headword" css="complexform-form-minor"/>
 	</layout>
@@ -796,6 +819,9 @@
 	<layout class="LexEntry" type="jtview" name="publishStemSenseComplexFormSummaryDef">
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef"/>
 	</layout>
+	<layout class="LexEntry" type="jtview" name="publishCdSenseComplexFormSummaryDef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-complexform-summarydef"/>
+	</layout>
 	<layout class="LexEntry" type="jtview" name="publishStemMinorComplexFormSummaryDef">
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="complexform-summarydef-minor"/>
 	</layout>
@@ -829,6 +855,9 @@
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishSummaryDefForStemSenseVariantRef">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefForCdSenseVariantRef">
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishSummaryDefForStemMinorVariantRef">
@@ -1056,11 +1085,20 @@
 		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
 		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishStemSenseVariantLocation"/>
 	</layout>
+	<layout class="LexPronunciation" type="jtview" name="publishCdForSenseVariant">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishCdSenseVariantLocation"/>
+	</layout>
 	<layout class="CmLocation" type="jtview" name="publishStemSenseVariantLocation">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
 		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
 	</layout>
-
+	<layout class="CmLocation" type="jtview" name="publishCdSenseVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
 	<layout class="LexPronunciation" type="jtview" name="publishStemMinorForEntryVariant">
 		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false"/>
 		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
@@ -1295,6 +1333,10 @@
 		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
 	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishCdSenseComplexFormType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
 	<layout class="LexEntryType" type="jtview" name="publishStemMinorComplexFormType">
 		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
@@ -1337,6 +1379,10 @@
 		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
 	</layout>
 	<layout class="LexEntryType" type="jtview" name="publishStemSenseVariantType">
+		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="LexEntryType" type="jtview" name="publishCdSenseVariantType">
 		<part ref="ReverseAbbrPub" label="Reverse Abbreviation" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
 	</layout>

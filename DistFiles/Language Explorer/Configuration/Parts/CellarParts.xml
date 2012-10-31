@@ -87,6 +87,13 @@
 		</part>
 
 	</bin>
+	<bin class="CmSemanticDomain>">
+		<part id="CmSemanticDomain-Jt-ConfigureAbbrCd" type="jtview">
+			<configureMlString field="Abbreviation"/>
+		</part>
+		<part id="CmSemanticDomain-Jt-ConfigureNameCd" type="jtview">
+			<configureMlString field="Name"/>
+		</part>	</bin>
 	<bin class="CmObject">
 	<!-- a trivial part that just inserts a literal space -->
 		<part id="CmObject-Jt-Space" type="jtview">

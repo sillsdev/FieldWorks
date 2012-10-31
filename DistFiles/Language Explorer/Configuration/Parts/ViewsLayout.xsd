@@ -81,6 +81,15 @@
 										<xs:attribute name="number" type="xs:string" use="optional" />
 										<xs:attribute name="numstyle" type="xs:string" use="optional" />
 										<xs:attribute name="numsingle" type="xs:string" use="optional" />
+										<xs:attribute name="autoexp" type="xs:string" use="optional" >
+											<xs:annotation>
+												<xs:documentation>
+													If this attribute is set to true then when this element becomes visible in a configuration
+													dialog, it will automatically be expanded to show its children.
+												</xs:documentation>
+											</xs:annotation>
+
+										</xs:attribute>
 										<xs:attribute name="recurseConfig" type="xs:boolean" use="optional" >
 											<xs:annotation>
 												<xs:documentation>

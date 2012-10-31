@@ -613,6 +613,13 @@
 		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
 		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
 	</layout>
+	<layout class="MoMorphSynAnalysis" type="jtview" name="publishCd">
+		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-cd"/>
+		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishCd" css="slots-cd"/>
+		<part ref="InflectionClassPub" label="Inflection Class" visibility="never" before="" after=" " ws="analysis"/>
+		<part ref="FeaturesPub" label="Inflection Features" visibility="never" before="" after=" "/>
+		<part ref="ExceptionFeaturesPub" label="Exception Features" visibility="never" before="" after=" "/>
+	</layout>
 	<layout class="MoMorphSynAnalysis" type="jtview" name="publishStemMinor">
 		<part ref="PartOfSpeechPub" label="Category Info." visibility="ifdata" before="" after=" " ws="analysis" css="partofspeech-minor"/>
 		<part ref="SlotsConfig" label="Slots (for Infl. Affixes)" visibility="ifdata" before=": " after="" sep=", " ws="analysis" param="publishStemMinor" css="slots-minor"/>
@@ -650,6 +657,9 @@
 	</layout>
 
 	<layout class="MoInflAffixSlot" type="jtview" name="publishStem">
+		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name"/>
+	</layout>
+	<layout class="MoInflAffixSlot" type="jtview" name="publishCd">
 		<part ref="NamePub" label="Slot Names" ws="analysis" wsType="analysis" css="slot-name"/>
 	</layout>
 	<layout class="MoInflAffixSlot" type="jtview" name="publishStemMinor">

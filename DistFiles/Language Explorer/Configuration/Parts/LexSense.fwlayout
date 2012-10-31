@@ -91,13 +91,73 @@
 	 </layout>
 
 	<layout class="LexSense" type="jtview" name="classifiedDict">
-		<sublayout name="classifiedDictI1" group="para" style="Classified-Item"/>
+		<sublayout name="publishCd" group="para" style="Classified-Item"/>
 	</layout>
-	<layout class="LexSense" type="jtview" name="classifiedDictI1">
-		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Classified-Headword"/>
-		<part ref="MorphoSyntaxAnalysisPub" label="Category" before="" after=" " visibility="ifdata" style="Classified-POS"/>
+	<layout class="LexSense" type="jtview" name="publishCd">
+		<part ref="RIEHeadword" label="Referenced Sense Headword" before="" after=" " visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Classified-Headword"/>
+		<part ref="MorphoSyntaxAnalysisConfig" label="Grammatical Info." before="" after=" " sep="" visibility="ifdata" style="Dictionary-Contrasting" singlegraminfofirst="yes" param="publishCd" css="grammatical-info"/>
 		<!-- Show the definition if it exists, otherwise show the gloss. -->
-		<part ref="SmartDefinitionPub" label="Definition" before="" after=" " visibility="ifdata" ws="analysis" sep=" " showLabels="false" style="Classified-Defn"/>
+		<part ref="SenseTypeConfig" label="Sense Type" before="(" after=") " visibility="never" style="Dictionary-Contrasting" param="publishCdSenseType" css="sense-type"/>
+		<part ref="SmartDefinitionPub" label="Definition (or Gloss)" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" sep=" " showLabels="false" css="definitionCd"/>
+		<part ref="DefinitionPub" label="Definition" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="ExamplesConfig" label="Examples" before="" after=" " sep="  " visibility="never" param="publishCd" css="examplesCd"/>
+		<part ref="EncyclopedicInfoPub" label="Encyclopedic Info." before="[" after="] " visibility="never" ws="analysis" wsType="analysis" sep=" " css="encyclopedic-info"/>
+		<part ref="RestrictionsPub" label="Restrictions" before="Restrictions: " after="] " visibility="never" ws="analysis" wsType="analysis" sep=" " css="restrictions"/>
+		<part ref="LexReferencesConfig" label="Lexical Relations" before="" after=". " sep="; " visibility="never" param="publishCdSenseRef" css="relations" lexreltype="sense"/>
+		<part ref="VariantFormsConfig" label="Variants of Sense" before="(" after=") " sep="; " visibility="never" param="publishCdSenseVariantRef" css="sense-variantrefs"/>
+		<part ref="AnthroNotePub" label="Anthropology Note" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="BibliographyPub" label="Bibliography" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="DiscourseNotePub" label="Discourse Note" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="PhonologyNotePub" label="Phonology Note" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="GrammarNotePub" label="Grammar Note" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="SemanticsNotePub" label="Semantics Note" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="SocioLinguisticsNotePub" label="Sociolinguistics Note" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="GeneralNotePub" label="General Note" before="" after=" " visibility="never" ws="analysis" wsType="analysis" sep=" " showLabels="false"/>
+		<part ref="ScientificName" label="Scientific Name" before="" after=" " visibility="never" css="scientific-name"/>
+		<part ref="Source" label="Source" before="" after=" " visibility="never"/>
+		<part ref="SemanticDomainsConfig" label="Semantic Domains" before="(sem. domains: " after=".) " sep=", " visibility="never" param="publishCdSemDom" css="semantic-domains"/>
+		<part ref="AnthroCodesConfig" label="Anthropology Categories" before="anthro. codes " after=" " visibility="never" sep=", " param="publishCdAnthro"/>
+		<part ref="DomainTypesConfig" label="Academic Domains" before="ac. domains: " after=" " visibility="never" sep=", " param="publishCdDomainType" css="domain-types"/>
+		<part ref="UsageTypesConfig" label="Usages" before="{" after="} " visibility="never" sep=", " param="publishCdUsageType" css="usage-types"/>
+		<part ref="StatusConfig" label="Status" before=" status " after=" " visibility="never" param="publishCdStatus" css="status"/>
+		<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexSense" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexSense" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="$fieldName" layout="Name"/>
+			</part>
+		</generate>
+		<generate class="LexSense" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="LexSense" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="LexSense" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<generate class="LexSense" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
+				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
+		<part ref="StemComplexFormsConfig" label="Referenced Complex Forms" param="publishCdSenseComplexFormRef" visibility="never" before="" after=" " sep=" " css="sense-complexformrefs" showasindentedpara="no"/>
+		<part ref="SensesConfig" label="Subsenses" sep="  " number="%O) " numstyle="bold" numsingle="yes" visibility="never" recurseConfig="false" param="publishcd" css="subsenses" parastyle="Dictionary-Sense"/>
 	</layout>
 
 	<!-- STUFF ADDED FOR NEW CONFIGURATION WORK -->
@@ -552,6 +612,47 @@
 		</generate>
 	</layout>
 
+	<layout class="LexExampleSentence" type="jtview" name="publishCd">
+		<part ref="ExamplePub" label="Example" before="" after=" " visibility="ifdata" ws="vernacular" wsType="vernacular" sep=" " showLabels="false" style="Dictionary-Vernacular" css="exampleCd"/>
+		<part ref="TranslationsConfig" label="Translations" before="" after="" visibility="ifdata" sep="" param="publishCd" css="translations"/>
+		<part ref="ReferencePub" label="Reference" before="" after=" " visibility="never"/>
+		<generate class="LexExampleSentence" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexExampleSentence" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="LexExampleSentence" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="$fieldName" layout="Name"/>
+			</part>
+		</generate>
+		<generate class="LexExampleSentence" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="LexExampleSentence" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="LexExampleSentence" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<generate class="LexExampleSentence" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
+				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
+	</layout>
+
 	<layout class="LexExampleSentence" type="jtview" name="publishStemMinor">
 		<part ref="ExamplePub" label="Example" before="" after=" " visibility="ifdata" ws="all vernacular" wsType="vernacular" sep=" " showLabels="false" style="Dictionary-Vernacular" css="example-minor"/>
 		<part ref="TranslationsConfig" label="Translations" before="" after="" visibility="ifdata" sep="" param="publishStemMinor" css="translations-minor"/>
@@ -626,6 +727,11 @@
 		<part ref="TranslationsConfig" label="Translations" before="" after="" visibility="ifdata" sep="" param="publishStemSenseComplexFormTranslation" css="sense-complexform-translations"/>
 		<part ref="ReferencePub" label="Reference" before="" after=" " visibility="never"/>
 	</layout>
+	<layout class="LexExampleSentence" type="jtview" name="publishCdSenseComplexFormExample">
+		<part ref="ExamplePub" label="Example" before="" after=" " visibility="ifdata" ws="all vernacular" wsType="vernacular" sep=" " showLabels="false" style="Dictionary-Vernacular" css="sense-complexform-example"/>
+		<part ref="TranslationsConfig" label="Translations" before="" after="" visibility="ifdata" sep="" param="publishCdSenseComplexFormTranslation" css="sense-complexform-translations"/>
+		<part ref="ReferencePub" label="Reference" before="" after=" " visibility="never"/>
+	</layout>
 	<layout class="LexExampleSentence" type="jtview" name="publishStemMinorComplexFormExample">
 		<part ref="ExamplePub" label="Example" before="" after=" " visibility="ifdata" ws="all vernacular" wsType="vernacular" sep=" " showLabels="false" style="Dictionary-Vernacular" css="complexform-example-minor"/>
 		<part ref="TranslationsConfig" label="Translations" before="" after="" visibility="ifdata" sep="" param="publishStemMinorComplexFormTranslation" css="complexform-translations-minor"/>
@@ -672,6 +778,10 @@
 		<part ref="TypeConfig" label="Type" before="" after=" " visibility="never"  param="publishStemTransType"/>
 		<part ref="TranslationPub" label="Translation" before="" after=" " visibility="ifdata" sep=" " ws="all analysis" wsType="analysis" showLabels="false" css="translation"/>
 	</layout>
+	<layout class="CmTranslation" type="jtview" name="publishCd">
+		<part ref="TypeConfig" label="Type" before="" after=" " visibility="never"  param="publishCdTransType"/>
+		<part ref="TranslationPub" label="Translation" before="" after=" " visibility="ifdata" sep=" " ws="analysis" wsType="analysis" showLabels="false" css="translation"/>
+	</layout>
 	<layout class="CmTranslation" type="jtview" name="publishStemMinor">
 		<part ref="TypeConfig" label="Type" before="" after=" " visibility="never"  param="publishStemMinorTransType"/>
 		<part ref="TranslationPub" label="Translation" before="" after=" " visibility="ifdata" sep=" " ws="all analysis" wsType="analysis" showLabels="false" css="translation-minor"/>
@@ -699,6 +809,10 @@
 	</layout>
 	<layout class="CmTranslation" type="jtview" name="publishStemSenseComplexFormTranslation">
 		<part ref="TypeConfig" label="Type" before="" after=" " visibility="never"  param="publishStemSenseComplexFormTransType"/>
+		<part ref="TranslationPub" label="Translation" before="" after=" " visibility="ifdata" sep=" " ws="all analysis" wsType="analysis" showLabels="false" css="sense-complexform-translation"/>
+	</layout>
+	<layout class="CmTranslation" type="jtview" name="publishCdSenseComplexFormTranslation">
+		<part ref="TypeConfig" label="Type" before="" after=" " visibility="never"  param="publishCdSenseComplexFormTransType"/>
 		<part ref="TranslationPub" label="Translation" before="" after=" " visibility="ifdata" sep=" " ws="all analysis" wsType="analysis" showLabels="false" css="sense-complexform-translation"/>
 	</layout>
 	<layout class="CmTranslation" type="jtview" name="publishStemMinorComplexFormTranslation">
@@ -739,6 +853,11 @@
 		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="lexref-type"/>
 		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
 		<part ref="SenseTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishStemCrossRef" css="lexref-targets"/>
+	</layout>
+	<layout class="LexReference" type="jtview" name="publishCdSenseRef">
+		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="lexref-type"/>
+		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
+		<part ref="SenseTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishCdCrossRef" css="lexref-targets"/>
 	</layout>
 	<layout class="LexReference" type="jtview" name="publishStemMinorSenseRef">
 		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="lexref-type-minor"/>
@@ -783,6 +902,10 @@
 		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
+	<layout class="LexSense" type="jtview" name="publishCdCrossRef">
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref"/>
+		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="analysis" sep=" " showLabels="false"/>
+	</layout>
 	 <layout class="LexSense" type="jtview" name="publishStemMinorCrossRef">
 		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-minor"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
@@ -842,6 +965,10 @@
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-abbr"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-name"/>
 	</layout>
+	<layout class="CmSemanticDomain" type="jtview" name="publishCdSemDom">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-abbr"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-name"/>
+	</layout>
 	<layout class="CmSemanticDomain" type="jtview" name="publishStemMinorSemDom">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-abbr-minor"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" css="semantic-domain-name-minor"/>
@@ -864,6 +991,10 @@
 	</layout>
 
 	<layout class="CmAnthroItem" type="jtview" name="publishStemAnthro">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " ws="analysis" wsType="analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="CmAnthroItem" type="jtview" name="publishCdAnthro">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" - " ws="analysis" wsType="analysis" visibility="ifdata"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="ifdata" ws="analysis" wsType="analysis" />
 	</layout>
@@ -892,6 +1023,10 @@
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="sense-type-abbr"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
 	</layout>
+	<layout class="CmPossibility" type="jtview" name="publishCdSenseType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="sense-type-abbr"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
 	<layout class="CmPossibility" type="jtview" name="publishStemMinorSenseType">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="sense-type-abbr-minor"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
@@ -914,6 +1049,10 @@
 	</layout>
 
 	<layout class="CmPossibility" type="jtview" name="publishStemDomainType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="domain-type-abbr"/>
+		<part ref="NamePub" label="Name" before=" (" after=")" visibility="ifdata" ws="analysis" wsType="analysis" css="domain-type-name"/>
+	</layout>
+	<layout class="CmPossibility" type="jtview" name="publishCdDomainType">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="domain-type-abbr"/>
 		<part ref="NamePub" label="Name" before=" (" after=")" visibility="ifdata" ws="analysis" wsType="analysis" css="domain-type-name"/>
 	</layout>
@@ -942,6 +1081,10 @@
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="usage-type-abbr"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
 	</layout>
+	<layout class="CmPossibility" type="jtview" name="publishCdUsageType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="usage-type-abbr"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
+	</layout>
 	<layout class="CmPossibility" type="jtview" name="publishStemMinorUsageType">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="ifdata" css="usage-type-abbr-minor"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" wsType="analysis" />
@@ -967,6 +1110,10 @@
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never"/>
 		<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" css="status-name"/>
 	</layout>
+	<layout class="CmPossibility" type="jtview" name="publishCdStatus">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" css="status-name"/>
+	</layout>
 	<layout class="CmPossibility" type="jtview" name="publishStemMinorStatus">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never"/>
 		<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" css="status-name-minor"/>
@@ -989,6 +1136,10 @@
 	</layout>
 
 	<layout class="CmPossibility" type="jtview" name="publishStemTransType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="CmPossibility" type="jtview" name="publishCdTransType">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never"/>
 		<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" />
 	</layout>
@@ -1018,6 +1169,10 @@
 		<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" />
 	</layout>
 	<layout class="CmPossibility" type="jtview" name="publishStemSenseComplexFormTransType">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" />
+	</layout>
+	<layout class="CmPossibility" type="jtview" name="publishCdSenseComplexFormTransType">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" wsType="analysis" visibility="never"/>
 		<part ref="NamePub" label="Name" before="[" after="]" visibility="ifdata" ws="analysis" wsType="analysis" />
 	</layout>
