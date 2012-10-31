@@ -72,10 +72,7 @@ namespace FwBuildTasks
 				catch (Exception)
 				{
 					GC.Collect();
-#if !__MonoCS__
-					// on mono WaitForFullGCComplete is incorrectly a .net 4 method.
 					GC.WaitForFullGCComplete();
-#endif
 				}
 				if (streamWriter == null)
 				{

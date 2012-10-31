@@ -29,7 +29,9 @@ namespace FwBuildTasks
 				return true; // Shouldn't happen...
 
 			GenerateReports(reportFiles);
-			return m_totalFailure == 0;
+
+			// we don't want to fail if we displayed failing tests
+			return true;
 		}
 
 		[Required]
