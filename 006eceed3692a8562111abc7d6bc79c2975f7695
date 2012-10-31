@@ -1,0 +1,9 @@
+Code-Review+2: Eberhard Beilharz <eb1@sil.org>
+Verified+1: Eberhard Beilharz <eb1@sil.org>
+Verified-Linux+1: Eberhard Beilharz <eb1@sil.org>
+Code-Review-1: Jenkins CI
+Submitted-by: Eberhard Beilharz <eb1@sil.org>
+Submitted-at: Wed, 31 Oct 2012 11:29:17 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/250
+Project: FieldWorks
+Branch: refs/heads/develop
