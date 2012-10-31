@@ -78,6 +78,7 @@
 	</Target>
 	<Target Name="linuxLibs" DependsOnTargets="iculibs">
 		<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
+		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)" Condition="'$(action)'=='test'"/>
 		<CreateItem Include="$(dir-fwoutputlibPlatformBase)/*.*">
 			<Output TaskParameter="Include" ItemName="LinuxDebugLibs"/>
 		</CreateItem>

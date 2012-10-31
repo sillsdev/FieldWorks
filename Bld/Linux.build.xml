@@ -134,6 +134,8 @@
 		description="Build external libraries">
 		<exec program="make" commandline="externaltargets"
 			workingdir="${fwroot}" verbose="${verbose}"/>
+		<exec program="make" commandline="externaltargets-test"
+			workingdir="${fwroot}" verbose="${verbose}" if="${doTest}"/>
 	</target>
 
 	<target name="checkTLBsUpToDate"

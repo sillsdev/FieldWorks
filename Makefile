@@ -44,16 +44,19 @@ externaltargets: \
 	COM-all \
 	COM-install \
 	Win32More \
-	RegisterServer \
-	RegisterServer-install \
 	ManagedComBridge-all \
+
+externaltargets-test: \
+	Win32Base-check \
+	COM-check \
+	Win32More-check \
+	ManagedComBridge-check \
 
 nativetargets: \
 	externaltargets \
 	Generic-all \
 	generic-Test \
 	libAppCore \
-	Win32Base-test-build \
 	libFwKernel \
 	Kernel-link \
 	libCellar \
@@ -101,13 +104,11 @@ alltargets: \
 	install-strings \
 
 test: \
+	externaltargets-test \
 	views-Test-check \
 	kernel-Test-check \
 	language-Test-check \
-	Win32Base-test-run \
 	generic-Test-check \
-
-# COM-check currently fails FWNX-65 FIXME	COM-check \
 
 test-interactive: \
 	FwCoreDlgs-SimpleTest \
@@ -164,11 +165,8 @@ clean: \
 	views-clean \
 	AppCore-clean \
 	Kernel-clean \
-	Win32Base-test-clean \
 	Win32Base-clean \
 	Win32More-clean \
-	RegisterServer-clean \
-	RegisterServer-uninstall \
 	Graphite-GrEngine-clean \
 	Language-clean \
 	views-Test-clean \
@@ -325,20 +323,18 @@ CTags-background-generation:
 	(nice -n20 /usr/bin/ctags -R --c++-types=+px --excmd=pattern --exclude=Makefile -f $(BUILD_ROOT)/tags.building $(BUILD_ROOT) $(WIN32BASE_DIR) $(WIN32MORE_DIR) $(COM_DIR) /usr/include && mv -f $(BUILD_ROOT)/tags.building $(BUILD_ROOT)/tags) &
 
 Win32Base:
-	$(MAKE) -C$(WIN32BASE_DIR)/src all
+	$(MAKE) -C$(WIN32BASE_DIR) all
 Win32Base-clean:
-	$(MAKE) -C$(WIN32BASE_DIR)/src clean
-Win32Base-test-build:
-	$(MAKE) -C$(WIN32BASE_DIR)/test all
-Win32Base-test-run:
-	$(MAKE) -C$(WIN32BASE_DIR)/test run-test
-Win32Base-test-clean:
-	$(MAKE) -C$(WIN32BASE_DIR)/test clean
+	$(MAKE) -C$(WIN32BASE_DIR) clean
+Win32Base-check:
+	$(MAKE) -C$(WIN32BASE_DIR) check
 
 Win32More:
-	$(MAKE) -C$(WIN32MORE_DIR)/src all
+	$(MAKE) -C$(WIN32MORE_DIR) all
 Win32More-clean:
-	$(MAKE) -C$(WIN32MORE_DIR)/src clean
+	$(MAKE) -C$(WIN32MORE_DIR) clean
+Win32More-check:
+	$(MAKE) -C$(WIN32MORE_DIR) check
 
 Generic-all: Generic-nodep
 Generic-nodep:
@@ -360,21 +356,20 @@ ManagedComBridge-all:
 	$(MAKE) -C$(COM_DIR)/ManagedComBridge all
 	-mkdir -p $(OUT_DIR)
 	cp -pf $(COM_DIR)/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(OUT_DIR)
-
 ManagedComBridge-clean:
 	$(MAKE) -C$(COM_DIR)/ManagedComBridge clean
 	rm -f $(OUT_DIR)/libManagedComBridge.so
+ManagedComBridge-check:
+	# Not implemented yet
 
 COM-all:
 	-mkdir -p $(COM_DIR)/build$(ARCH)
 	(cd $(COM_DIR)/build$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=`abs.py .`; true)
 	REMOTE_WIN32_DEV_HOST=$(REMOTE_WIN32_DEV_HOST) $(MAKE) -C$(COM_DIR)/build$(ARCH) all
-COM-test-componentsmap:
-	$(MAKE) -C$(COM_DIR)/build$(ARCH)/test components.map
 COM-install:
 	$(MAKE) -C$(COM_DIR)/build$(ARCH) install
 COM-check:
-	$(MAKE) -C$(COM_DIR)/build$(ARCH)/test check
+	$(MAKE) -C$(COM_DIR)/build$(ARCH) check
 COM-uninstall:
 	[ -e $(COM_DIR)/build$(ARCH)/Makefile ] && \
 	$(MAKE) -C$(COM_DIR)/build$(ARCH) uninstall || true
@@ -426,15 +421,6 @@ libAppCore:
 	$(MAKE) -C$(BUILD_ROOT)/Src/AppCore all
 AppCore-clean:
 	$(MAKE) -C$(BUILD_ROOT)/Src/AppCore clean
-
-RegisterServer:
-	$(MAKE) -C$(COM_DIR)/src/RegisterServer
-RegisterServer-install:
-	$(MAKE) -C$(COM_DIR)/src/RegisterServer install
-RegisterServer-uninstall:
-	$(MAKE) -C$(COM_DIR)/src/RegisterServer uninstall
-RegisterServer-clean:
-	$(MAKE) -C$(COM_DIR)/src/RegisterServer clean
 
 Language-all: libFwKernel libViews Language-nodep
 Language-nodep: libLanguage
@@ -680,7 +666,7 @@ teckit:
 teckit-clean:
 	rm -f $(OUT_DIR)/libTECkit_x86.so $(OUT_DIR)/libTECkit_Compiler_x86.so
 
-ComponentsMap: COM-all COM-install RegisterServer RegisterServer-install libFwKernel libLanguage libViews libCellar DbAccess ComponentsMap-nodep
+ComponentsMap: COM-all COM-install libFwKernel libLanguage libViews libCellar DbAccess ComponentsMap-nodep
 
 ComponentsMap-nodep:
 # the info gets now added by the xbuild/msbuild process.
