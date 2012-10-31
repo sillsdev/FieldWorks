@@ -18,10 +18,11 @@ GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/build${ARCH}/bin:\
 ${BASE}/Bin/nant/bin:\
-$PATH"
-LD_LIBRARY_PATH="${COM}/build${ARCH}/src/.libs:${COM}/build${ARCH}/lib:\
+${COM}/build${ARCH}/bin:\
+${PATH}"
+LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/lib:\
-${BASE}/Output_${ARCH}/${BUILD}:\
+${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
 
 # Add packaged mono items to paths
