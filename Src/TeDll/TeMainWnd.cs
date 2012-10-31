@@ -6215,7 +6215,9 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void OpenTrainingDoc(string folder, string document)
 		{
-			string path = Path.Combine(Path.Combine(DirectoryFinder.TeFolder, folder), document);
+			string helpTeFolder = String.Format(DirectoryFinder.FWCodeDirectory +
+				"{0}Helps{0}Translation Editor", Path.DirectorySeparatorChar);
+			string path = Path.Combine(Path.Combine(helpTeFolder, folder), document);
 			ProcessStartInfo processInfo = new ProcessStartInfo(path);
 			processInfo.UseShellExecute = true;
 			try

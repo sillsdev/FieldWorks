@@ -529,7 +529,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}Flex Student Manual.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Flex Student Manual.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}FLEx Instructor Guide.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}FLEx Instructor Guide.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -559,7 +559,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}Technical Notes on LinguaLinks Database Import.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on LinguaLinks Database Import.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -574,7 +574,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -589,7 +589,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -612,7 +612,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
+				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
 				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotShowX, path),
@@ -635,7 +635,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
+				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
 				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotShowX, path),

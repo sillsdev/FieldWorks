@@ -125,7 +125,9 @@ namespace SIL.FieldWorks.IText
 		// Otherwise, maybe we should change the .doc file to an html file for portability.
 		private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			string path = Path.Combine(DirectoryFinder.FWCodeDirectory, @"Language Explorer\Training\Technical Notes on Interlinear Import.doc");
+			string path = String.Format(DirectoryFinder.FWCodeDirectory +
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.doc",
+				Path.DirectorySeparatorChar);
 			try
 			{
 				using (System.Diagnostics.Process.Start(path))
