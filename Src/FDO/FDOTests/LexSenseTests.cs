@@ -310,6 +310,161 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.IsFalse(IsRealLexEntry(le8));
 			Assert.AreEqual(1, le6.SensesOS.Count, "one sense survives merge");
 		}
+		/// <summary>
+		/// Check the method for merging RDE senses, in the more complex cases involving gloss and citation form as well as definition and lexeme form
+		/// Also multiple writing systems.
+		/// </summary>
+		[Test]
+		public void RdeMerge_GlossAndCf()
+		{
+			if (Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count < 5)
+			{
+				ICmSemanticDomainFactory factSemDom = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>();
+				while (Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count < 5)
+				{
+					ICmSemanticDomain sem = factSemDom.Create();
+					Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(sem);
+				}
+			}
+			IFdoOwningSequence<ICmPossibility> seqSemDom = Cache.LangProject.SemanticDomainListOA.PossibilitiesOS;
+			ICmSemanticDomain semDom1 = seqSemDom[0] as ICmSemanticDomain;
+			ICmSemanticDomain semDom2 = seqSemDom[1] as ICmSemanticDomain;
+			ICmSemanticDomain semDom3 = seqSemDom[2] as ICmSemanticDomain;
+			ICmSemanticDomain semDom4 = seqSemDom[4] as ICmSemanticDomain;
+
+			// Create a LexEntry LE1 (cf "red" gloss "rot" in D1).
+			// Attempt to merge it and verify that it survives.
+
+			ILexEntry red = MakeLexEntry("red", "", "rot", "", semDom1);
+			Set<int> newItems = new Set<int>();
+			ILexSense sense1 = red.SensesOS[0];
+			newItems.Add(sense1.Hvo);
+			List<XmlNode> columns = new List<XmlNode>();
+			bool fSenseDeleted = RunMergeSense(columns, red);
+			Assert.IsFalse(fSenseDeleted, "Merging red when there is no similar item should not delete sense");
+			Assert.IsTrue(IsRealLexEntry(red), "Merging with no similar entry should not delete entry");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom1), "Merging should not remove semantic domain");
+
+			// After creating similar entry in another domain with same info, should merge.
+			var red2 = MakeLexEntry("red", "", "rot", "", semDom2);
+			fSenseDeleted = RunMergeSense(columns, red2);
+			Assert.IsTrue(fSenseDeleted, "Merging red/rot with matching lf/gloss should merge and delete new sense");
+			Assert.IsFalse(IsRealLexEntry(red2), "Merging with red/rot with matching lf/gloss should delete entry");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom1), "Merging should not remove old semantic domain");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom2), "Merging should add new semantic domain");
+
+			// Another similar entry should merge, adding definition.
+			var red3 = MakeLexEntry("red", "", "rot", "rot2", semDom3);
+			fSenseDeleted = RunMergeSense(columns, red3);
+			Assert.IsTrue(fSenseDeleted, "Merging red/rot with matching lf/gloss and new defn should merge and delete new sense");
+			Assert.IsFalse(IsRealLexEntry(red3), "Merging with red/rot with matching lf/gloss and new defn should delete entry");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom1), "Merging should not remove old semantic domain");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom2), "Merging should not remove old semantic domain");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom3), "Merging should add new semantic domain");
+			Assert.That(red.SensesOS[0].Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("rot2"));
+
+			// Similarly we should be able to start with a matching definition, and add a gloss.
+			var blue = MakeLexEntry("blue", "", "", "blau", semDom1);
+			var blue2 = MakeLexEntry("blue", "", "blauG", "blau", semDom2);
+			fSenseDeleted = RunMergeSense(columns, blue2);
+			Assert.IsTrue(fSenseDeleted, "Merging blue/blau with matching lf/defn and new gloss should merge and delete new sense");
+			Assert.IsFalse(IsRealLexEntry(blue2), "Merging blue/blau with matching lf/defn and new gloss should delete entry");
+			Assert.IsTrue(blue.SensesOS[0].SemanticDomainsRC.Contains(semDom1), "Merging should not remove old semantic domain");
+			Assert.IsTrue(blue.SensesOS[0].SemanticDomainsRC.Contains(semDom2), "Merging should add new semantic domain");
+			Assert.That(blue.SensesOS[0].Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("blauG"));
+
+			// Conflicts in another writing system should prevent merging
+			var blue3 = MakeLexEntry("blue", "", "blauG", "blau", semDom3);
+			var wsEs = Cache.WritingSystemFactory.GetWsFromStr("es");
+			blue.SensesOS[0].Gloss.set_String(wsEs, "blueS");
+			blue3.SensesOS[0].Gloss.set_String(wsEs, "blueS3");
+			fSenseDeleted = RunMergeSense(columns, blue3);
+			Assert.IsFalse(fSenseDeleted, "Merging blue/blau with matching lf/defn/gloss but different gloss in spanish should not delete sense");
+			Assert.IsFalse(IsRealLexEntry(blue3), "Merging blue/blau with matching lf/defn/gloss but different gloss in spanish should delete entry");
+			Assert.IsTrue(blue.SensesOS[0].SemanticDomainsRC.Contains(semDom1), "Merging should not remove old semantic domain");
+			Assert.IsTrue(blue.SensesOS[0].SemanticDomainsRC.Contains(semDom2), "Merging should not remove old semantic domain");
+			Assert.IsTrue(blue.SensesOS[1].SemanticDomainsRC.Contains(semDom3), "Merging should not remove old semantic domain");
+
+			// A conflicting lex entry, even though a homograph in the current relevant writing system, should prevent merging,
+			// even though the sense data all matches
+			blue.CitationForm.set_String(Cache.DefaultVernWs, "blueCf");
+			var blue4 = MakeLexEntry("blueForm2", "blueCf", "blauG", "blau", semDom4);
+			fSenseDeleted = RunMergeSense(columns, blue4);
+			Assert.IsFalse(fSenseDeleted, "Merging blueCf/blau with matching lf/defn/gloss but different lexeme form should not delete sense");
+			Assert.IsTrue(IsRealLexEntry(blue4), "Merging blueCf/blau with matching lf/defn/gloss but different lexeme form should not delete entry");
+			Assert.IsTrue(blue.SensesOS[0].SemanticDomainsRC.Contains(semDom1), "Merging should not remove old semantic domain");
+			Assert.IsTrue(blue.SensesOS[0].SemanticDomainsRC.Contains(semDom2), "Merging should not remove old semantic domain");
+			Assert.IsTrue(blue4.SensesOS[0].SemanticDomainsRC.Contains(semDom4), "Merging should not remove old semantic domain");
+
+			// This case demonstrates that we can merge when the existing entry has no lexeme form, filling in the one we have.
+			// We can also fill in other WS alternatives.
+			var green = MakeLexEntry("", "greenF", "grun", "color grun", semDom1);
+			var green2 = MakeLexEntry("green", "greenF", "grun", "color grun", semDom2);
+			green2.CitationForm.set_String(wsEs, "grunCfS");
+			green2.LexemeFormOA.Form.set_String(wsEs, "grunS");
+			fSenseDeleted = RunMergeSense(columns, green2);
+			Assert.IsTrue(fSenseDeleted, "Merging green/grun with matching cf/defn/gloss and one missing LF should delete sense");
+			Assert.IsFalse(IsRealLexEntry(green2), "Merging blueCf/blau with matching lf/defn/gloss but different lexeme form should not delete entry");
+			Assert.IsTrue(green.SensesOS[0].SemanticDomainsRC.Contains(semDom1), "Merging should not remove old semantic domain");
+			Assert.IsTrue(green.SensesOS[0].SemanticDomainsRC.Contains(semDom2), "Merging should not remove old semantic domain");
+			Assert.That(green.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("green"), "merge should fill in missing LF");
+			Assert.That(green.LexemeFormOA.Form.get_String(wsEs).Text, Is.EqualTo("grunS"), "merge should fill in missing spanish LF");
+			Assert.That(green.CitationForm.get_String(wsEs).Text, Is.EqualTo("grunCfS"), "merge should fill in missing spanish CF");
+
+			// We should not merge when NO non-empty string matches.
+			var brown = MakeLexEntry("brown", "", "braun", "", semDom1);
+			var brown2 = MakeLexEntry("brown", "", "", "braun color", semDom2);
+			fSenseDeleted = RunMergeSense(columns, brown2);
+			Assert.IsFalse(fSenseDeleted, "Merging two forms of brown with no overlap between gloss and defn should not delete sense");
+
+			// But as a special case we can merge if definition of one matches gloss of other.
+			var brown3 = MakeLexEntry("brown", "", "", "braun", semDom2);
+			fSenseDeleted = RunMergeSense(columns, brown3);
+			Assert.IsTrue(fSenseDeleted, "Merging two forms of brown with no gloss of one equal to defn of other should delete sense");
+			Assert.IsTrue(brown.SensesOS[0].SemanticDomainsRC.Contains(semDom2), "Merging should combine semantic domains");
+			Assert.That(brown.SensesOS[0].Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("braun"), "Merging should copy definition");
+
+			// We want to match entries that have the same LexemeForm even if they are not homographs.
+			// This is possible if one of them has an empty CF in the homograph writing system.
+			var orange = MakeLexEntry("orange", "orangeCf", "orang", "", semDom1);
+			var orange2 = MakeLexEntry("orange", "", "orang", "", semDom2);
+			fSenseDeleted = RunMergeSense(columns, orange2);
+			Assert.IsTrue(fSenseDeleted, "Merging two forms of orange with matching LF and new blank Cf should delete sense");
+
+			var pink = MakeLexEntry("pink", "", "rose", "", semDom1);
+			var pink2 = MakeLexEntry("pink", "pinkCf", "rose", "", semDom2);
+			fSenseDeleted = RunMergeSense(columns, pink2);
+			Assert.IsTrue(fSenseDeleted, "Merging two forms of pink with matching LF and old blank Cf should delete sense");
+			Assert.That(pink.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("pinkCf"), "merge should fill in missing CF");
+
+			// An inexact match that moves a sense should still fill in missing info on the chosen entry.
+			var yellow = MakeLexEntry("yellow", "", "flower", "", semDom1);
+			var yellow2 = MakeLexEntry("yellow", "yellowCf", "floral", "", semDom2);
+			fSenseDeleted = RunMergeSense(columns, yellow2);
+			Assert.IsFalse(fSenseDeleted, "Merging two forms of yellow with matching LF and old blank Cf should delete sense");
+			Assert.That(yellow.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("yellowCf"), "merge should fill in missing CF");
+		}
+
+		private bool RunMergeSense(List<XmlNode> columns, ILexEntry entry)
+		{
+			var sense = entry.SensesOS[0];
+			Set<int> newItems;
+			bool fSenseDeleted;
+			newItems = new Set<int>();
+			newItems.Add(sense.Hvo);
+			fSenseDeleted = sense.RDEMergeSense(sense.SemanticDomainsRC.ToArray()[0].Hvo, columns, Cache, newItems);
+			return fSenseDeleted;
+		}
+
+		private ILexEntry MakeLexEntry(string lf, string cf, string gloss, string defn, ICmSemanticDomain domain)
+		{
+			var le = MakeLexEntry(cf, defn, domain);
+			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			le.LexemeFormOA = morph;
+			morph.Form.set_String(Cache.DefaultVernWs, lf);
+			le.SensesOS[0].Gloss.set_String(Cache.DefaultAnalWs, gloss);
+			return le;
+		}
 
 		private ILexEntry MakeLexEntry(string cf, string defn, ICmSemanticDomain domain)
 		{
@@ -378,6 +533,108 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			sense2.SandboxMSA = newMsa;
 			Assert.That(sense2.MorphoSyntaxAnalysisRA, Is.EqualTo(ls.MorphoSyntaxAnalysisRA));
 			Assert.That(le.MorphoSyntaxAnalysesOC.Count, Is.EqualTo(1));
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense with specified lexeme form and definition
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_LexemeFormAndDefinition()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Lexeme Form)", "Meaning (Definition)" });
+			ITsString[] data = new ITsString[] {MakeVernString("kick"), MakeAnalysisString("strike with foot")};
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, Cache, null);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry) sense.Owner;
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("kick"));
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("strike with foot"));
+		}
+		/// <summary>
+		/// Test that we can make a new sense with specified lexeme form and definition
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_CitationFormAndGloss()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" });
+			ITsString[] data = new ITsString[] { MakeVernString("kick"), MakeAnalysisString("strike with foot") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, Cache, null);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("kick"));
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("strike with foot"));
+			var morphTypeRep = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.EqualTo(morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem)));
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense with specified all four fields filled in. It's especially important to
+		/// test citation form coming before lexeme form.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_FourColumns()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Word (Lexeme Form)", "Meaning (Gloss)", "Meaning (Definition)"});
+			ITsString[] data = new ITsString[] { MakeVernString("kick"), MakeVernString("kickL"),
+				MakeAnalysisString("strike with foot"), MakeAnalysisString("strike sharply with foot") };
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, Cache, null);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("kick"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("kickL"));
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("strike with foot"));
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("strike sharply with foot"));
+			var morphTypeRep = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.EqualTo(morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem)));
+		}
+
+		private List<XmlNode> MakeNodeList(string[] labels)
+		{
+			var doc = new XmlDocument();
+			var result = new List<XmlNode>();
+			foreach (var item in labels)
+			{
+				var node = doc.CreateElement("column");
+				XmlUtils.SetAttribute(node, "label", item);
+				result.Add(node);
+			}
+			return result;
+		}
+
+		private ITsString MakeVernString(string arg)
+		{
+			return Cache.TsStrFactory.MakeString(arg, Cache.DefaultVernWs);
+		}
+
+		private ITsString MakeAnalysisString(string arg)
+		{
+			return Cache.TsStrFactory.MakeString(arg, Cache.DefaultAnalWs);
+		}
+
+		private ICmSemanticDomain MakeSemanticDomain()
+		{
+			var sdList = Cache.LangProject.SemanticDomainListOA;
+			if (sdList == null)
+			{
+				sdList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				Cache.LangProject.SemanticDomainListOA = sdList;
+			}
+			var mySd = Cache.ServiceLocator.GetInstance<CmSemanticDomainFactory>().Create();
+			sdList.PossibilitiesOS.Add(mySd);
+			return mySd;
 		}
 	}
 }

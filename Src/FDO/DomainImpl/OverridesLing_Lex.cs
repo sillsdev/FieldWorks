@@ -3668,173 +3668,361 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			bool result = false;
 			// The goal is to find a lex entry with the same lexeme form.form as our LexEntry.
-			ILexSense ls = cache.ServiceLocator.GetObject(Hvo) as ILexSense;
-			ILexEntry leTarget = ls.OwnerOfClass<ILexEntry>();
+			var leTarget = OwningEntry;
 			string homographForm = leTarget.HomographFormKey;
-			string sDefnTarget = ls.Definition.AnalysisDefaultWritingSystem.Text;
 
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 				"Undo adding sense or entry in Categorized Edit",
 				"Redo adding sense or entry in Categorized Edit",
 				m_cache.ActionHandlerAccessor, () =>
-				{
+					{
 
-					// Check for pre-existing LexEntry which has the same homograph form
-					bool fGotExactMatch;
-					ILexEntry leSaved = FindBestLexEntryAmongstHomographs(cache, homographForm, sDefnTarget, leTarget, newHvos, hvoDomain, out fGotExactMatch);
-					if (fGotExactMatch)
-					{
-						// delete the entry AND sense
-						leTarget.Delete(); // careful! This just got deleted.
-						result = true; // deleted sense altogether
-					}
-					else if (leSaved != null)
-					{
-						// move the one and only sense of leTarget to leSaved...provided it has a compatible MSA
-						// of the expected type.
-						if (MorphoSyntaxAnalysisRA is MoStemMsa)
+						// Check for pre-existing LexEntry which has the same homograph form
+						bool fGotExactMatch;
+						ILexEntry leSaved = FindBestLexEntryAmongstHomographs(cache, homographForm, newHvos, hvoDomain, out fGotExactMatch);
+						if (fGotExactMatch)
 						{
-							IMoMorphSynAnalysis newMsa = null;
-							foreach (IMoMorphSynAnalysis msa in leSaved.MorphoSyntaxAnalysesOC)
+							// delete the entry AND sense
+							leTarget.Delete(); // careful! This just got deleted.
+							result = true; // deleted sense altogether
+						}
+						else if (leSaved != null)
+						{
+							// move this to leSaved...provided it has a compatible MSA
+							// of the expected type.
+							if (MorphoSyntaxAnalysisRA is MoStemMsa)
 							{
-								if (msa is IMoStemMsa)
-									newMsa = msa;
-							}
-							if (newMsa != null)
-							{
-								// Fix the MSA of the sense to point at one of the MSAs of the new owner.
-								MorphoSyntaxAnalysisRA = newMsa;
-								// Move it to the new owner.
-								leSaved.SensesOS.Add(this);
-								// delete the entry.
-								leTarget.Delete();
-								// But NOT the sense from the domain...it just moved to another entry.
-								//DeleteSense(cache, hvoDomain, tagList, hvoSense);
+								IMoMorphSynAnalysis newMsa = null;
+								foreach (IMoMorphSynAnalysis msa in leSaved.MorphoSyntaxAnalysesOC)
+								{
+									if (msa is IMoStemMsa)
+										newMsa = msa;
+								}
+								if (newMsa != null)
+								{
+									// Fix the MSA of the sense to point at one of the MSAs of the new owner.
+									MorphoSyntaxAnalysisRA = newMsa;
+									// Copy any extra fields the user filled in here that the target doesn't have.
+									// Do this BEFORE we move it and lose track of the source!
+									CopyMissingFieldsToEntry(leSaved);
+									// Move it to the new owner.
+									leSaved.SensesOS.Add(this);
+									// delete the entry.
+									leTarget.Delete();
+								}
 							}
 						}
-					}
-				});
+					});
 			// else do nothing (no useful match, let the LE survive)
 			return result;
 		}
 
 		/// <summary>
-		/// find the best existing LexEntry option matching 'homographform' (and possibly 'sDefnTarget')
-		/// in order to determine if we should merge leTarget into that entry.
+		/// find the most promising entry we could merge this sense into among the homographs of our entry.
+		/// Ideally find an exact match: either the same entry or a homograph, and a sense where all non-empty
+		/// glosses and definitions match.
+		/// Failing this return the best homograph to merge with, and fGotExactMatch false.
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="homographForm"></param>
-		/// <param name="sDefnTarget"></param>
-		/// <param name="leTarget">a LexEntry that you want to consider merging into a more appropriate LexEntry,
-		/// if null, we ignore 'newHvos' and 'hvoDomain'</param>
 		/// <param name="newHvos"></param>
 		/// <param name="hvoDomain"></param>
 		/// <param name="fGotExactMatch"></param>
 		/// <returns></returns>
-		private static ILexEntry FindBestLexEntryAmongstHomographs(FdoCache cache,
-			string homographForm, string sDefnTarget, ILexEntry leTarget, Set<int> newHvos,
+		private ILexEntry FindBestLexEntryAmongstHomographs(FdoCache cache,
+			string homographForm, Set<int> newHvos,
 			int hvoDomain, out bool fGotExactMatch)
 		{
 			ILexEntry leSaved = null;
 			var entryRepo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-			List<ILexEntry> rgEntries = ((ILexEntryRepositoryInternal)entryRepo).CollectHomographs(homographForm, 0,
+			List<ILexEntry> rgEntries = ((ILexEntryRepositoryInternal) entryRepo).CollectHomographs(homographForm, 0,
 				entryRepo.GetHomographs(homographForm),
 				cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem), true);
 			leSaved = null; // saved entry to merge into (from previous iteration)
 			bool fSavedIsOld = false; // true if leSaved is old (and non-null).
 			fGotExactMatch = false; // true if we find a match for cf AND defn.
 			bool fCurrentIsNew = false;
+			var ourEntry = OwningEntry;
 			foreach (ILexEntry leCurrent in rgEntries)
 			{
-				if (leTarget != null)
-				{
-					if (leCurrent.Hvo == leTarget.Hvo)
-						continue; // not interested in merging with ourself.
-					// See if this is one of the newly added entries. If it is, it has exactly one sense,
-					// and that sense is in our list.
-					fCurrentIsNew = leCurrent.SensesOS.Count == 1 && newHvos.Contains(leCurrent.SensesOS.ToHvoArray()[0]);
-					if (fCurrentIsNew && leCurrent.Hvo > leTarget.Hvo)
-						continue;  // won't consider ANY kind of merge with a new object of greater HVO.
-				}
-				// Decide whether lexE should be noted as the entry that we will merge with if
-				// we don't find an exact match.
-				if (!fGotExactMatch) // leMerge is irrelevant if we already got an exact match.
-				{
-					if (leSaved == null)
-					{
-						leSaved = leCurrent;
-						fSavedIsOld = !fCurrentIsNew;
-					}
-					else // we have already found a candidate
-					{
-						if (fSavedIsOld)
-						{
-							// We will only consider the new one if it is also old, and
-							// (rather arbitrarily) if it has a smaller HVO
-							if ((!fCurrentIsNew) && leCurrent.Hvo < leSaved.Hvo)
-							{
-								leSaved = leCurrent; // fSavedIsOld stays true.
-							}
-						}
-						else // we already have a candidate, but it is another of the new entries
-						{
-							// if current is old, we'll use it for sure
-							if (!fCurrentIsNew)
-							{
-								leSaved = leCurrent;
-								fSavedIsOld = false; // since fCurrentIsNew is false.
-							}
-							else
-							{
-								// we already have a new candidate (which must have a smaller hvo than target)
-								// and now we have another new entry which matches!
-								// We'll prefer it only if its hvo is smaller still.
-								if (leCurrent.Hvo < leSaved.Hvo)
-								{
-									leSaved = leCurrent; // fSavedIsOld stays false.
-								}
-							}
-						}
-					}
-				}
+				if (leCurrent == ourEntry)
+					continue; // not interested in merging with ourself.
+				if (!IsMatchingEntry(leCurrent))
+					continue; // a homograph, but does not match all the entry-level data that has been entered, so not eligible.
+				if (PickPreferredMergeEntry(newHvos, fGotExactMatch, ourEntry, leCurrent, ref fSavedIsOld, ref leSaved))
+					continue; // won't consider ANY kind of merge with a new object of greater HVO.
 
-				// see if we want to try to find a matching existing sense.
-				if (sDefnTarget == null)
-					continue;
-				// This deals with all senses in the entry,
-				// whether owned directly by the entry or by its senses
-				// at whatever level.
-				// If the new definition matches an existing defintion (or if both
-				// are missing) add the current domain to the existing sense.
-				// Note: if more than one sense has the same definition (maybe missing) we should
-				// add the domain to all senses--not just the first one encountered.
-				foreach (ILexSense lexS in leCurrent.AllSenses)
-				{
-					if (lexS.Definition != null
-						&& lexS.Definition.AnalysisDefaultWritingSystem != null)
-					{
-						string sDefnCurrent = lexS.Definition.AnalysisDefaultWritingSystem.Text;
-						if ((sDefnCurrent == null && sDefnTarget == null) ||
-							(sDefnCurrent != null && sDefnTarget != null && sDefnCurrent.Trim() == sDefnTarget.Trim()))
-						{
-							// We found a sense that has the same citation form and definition as the one
-							// we're trying to merge.
-							// Add the new domain to that sense (if not already present), delete the temporary one,
-							// and return. (We're not displaying this sense, so don't bother trying to update the display)
-							if (hvoDomain > 0)
-							{
-								var domain = cache.ServiceLocator.GetObject(hvoDomain) as ICmSemanticDomain;
-								if (!lexS.SemanticDomainsRC.Contains(domain))
-									lexS.SemanticDomainsRC.Add(domain);
-								fGotExactMatch = true;
-							}
-						}
-					}
-				}
+				fGotExactMatch = FindMatchingSense(hvoDomain, leCurrent);
 			} // loop over matching entries
+			if (fGotExactMatch)
+				return leSaved; // got all we want.
+
+			// Otherwise, it's just possible we missed an interesting match that is NOT a homograph.
+			// There can be non-homographs that match in all non-empty writing systems of CF and LF
+			// under the following conditions:
+			// (a) our citation form in the HWS is blank...there could be an entry with the same LF
+			// that is not a homograph because it has a non-empty CF. (This would not work if we had a CF, because
+			// either it would be a homograph, and we would already have found it, or it would have a different CF
+			// and would not be a match.)
+			// (b) our CF in the HWS is different from our LF...there could be an entry with the same LF as ours
+			// and no CF that matches. It is not a homograph because of our different CF, but there is no conflict
+			// because it has no CF.
+
+			// Of course, if we don't have an LF with at least one non-blank alternative, none of this is relevant.
+			if (!WeHaveAnInterestingLf())
+				return leSaved;
+
+			var homographWs = Cache.WritingSystemFactory.GetWsFromStr(Cache.LanguageProject.HomographWs);
+
+			var hf = ourEntry.CitationForm.get_String(homographWs);
+			if (hf.Length == 0 || !hf.Equals(ourEntry.LexemeFormOA.Form.get_String(homographWs)))
+			{
+				// There might be another match. Try them all.
+				foreach (var entry in Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
+				{
+					if (entry == ourEntry || !IsMatchingEntry(entry))
+						continue; // not interesting
+					if (PickPreferredMergeEntry(newHvos, fGotExactMatch, ourEntry, entry, ref fSavedIsOld, ref leSaved))
+						continue;
+					fGotExactMatch = FindMatchingSense(hvoDomain, entry);
+					if (fGotExactMatch)
+						return entry;
+				}
+			}
 
 			return leSaved;
 		}
+
+		// Updates the entry that we will use if we don't find a perfect match.
+		// Returns true if this one should be ignored altogether (don't call FindMatchingSense).
+		private static bool PickPreferredMergeEntry(Set<int> newHvos, bool fGotExactMatch, ILexEntry ourEntry, ILexEntry leCurrent,
+			ref bool fSavedIsOld, ref ILexEntry leSaved)
+		{
+			bool fCurrentIsNew;
+			// See if this is one of the newly added entries. If it is, it has exactly one sense,
+			// and that sense is in our list.
+			fCurrentIsNew = leCurrent.SensesOS.Count == 1 && newHvos.Contains(leCurrent.SensesOS.ToHvoArray()[0]);
+			if (fCurrentIsNew && leCurrent.Hvo > ourEntry.Hvo)
+				return true;
+			// Decide whether lexE should be noted as the entry that we will merge with if
+			// we don't find an exact match.
+			if (!fGotExactMatch) // leMerge is irrelevant if we already got an exact match.
+			{
+				if (leSaved == null)
+				{
+					leSaved = leCurrent;
+					fSavedIsOld = !fCurrentIsNew;
+				}
+				else // we have already found a candidate
+				{
+					if (fSavedIsOld)
+					{
+						// We will only consider the new one if it is also old, and
+						// (rather arbitrarily) if it has a smaller HVO
+						if ((!fCurrentIsNew) && leCurrent.Hvo < leSaved.Hvo)
+						{
+							leSaved = leCurrent; // fSavedIsOld stays true.
+						}
+					}
+					else // we already have a candidate, but it is another of the new entries
+					{
+						// if current is old, we'll use it for sure
+						if (!fCurrentIsNew)
+						{
+							leSaved = leCurrent;
+							fSavedIsOld = false; // since fCurrentIsNew is false.
+						}
+						else
+						{
+							// we already have a new candidate (which must have a smaller hvo than target)
+							// and now we have another new entry which matches!
+							// We'll prefer it only if its hvo is smaller still.
+							if (leCurrent.Hvo < leSaved.Hvo)
+							{
+								leSaved = leCurrent; // fSavedIsOld stays false.
+							}
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// This deals with all senses in the entry,
+		/// whether owned directly by the entry or by its senses
+		/// at whatever level.
+		/// If the new gloss and definition matches an existing sense add the current domain to the existing sense.
+		/// Note: if more than one sense has the same non-missing definition or gloss we should
+		/// add the domain to all senses--not just the first one encountered.
+		/// </summary>
+		/// <param name="hvoDomain"></param>
+		/// <param name="leCurrent"></param>
+		/// <returns></returns>
+		private bool FindMatchingSense(int hvoDomain, ILexEntry leCurrent)
+		{
+			bool fGotExactMatch = false;
+			foreach (ILexSense lexS in leCurrent.AllSenses)
+			{
+				if (IsMatchingSense(lexS))
+				{
+					// We found a sense that has the same citation form and definition as the one
+					// we're trying to merge.
+					// Add the new domain (if not already present) and any other missing information to that sense and its parent entry.
+					// The caller will delete the unwanted sense.
+					if (hvoDomain > 0)
+					{
+						var domain = Cache.ServiceLocator.GetObject(hvoDomain) as ICmSemanticDomain;
+						if (!lexS.SemanticDomainsRC.Contains(domain))
+							lexS.SemanticDomainsRC.Add(domain);
+					}
+					foreach (var ws in Definition.AvailableWritingSystemIds)
+					{
+						if (lexS.Definition.get_String(ws).Length == 0)
+							lexS.Definition.set_String(ws, Definition.get_String(ws));
+					}
+					foreach (var ws in Gloss.AvailableWritingSystemIds)
+					{
+						if (lexS.Gloss.get_String(ws).Length == 0)
+							lexS.Gloss.set_String(ws, Gloss.get_String(ws));
+					}
+					var entry = ((LexSense) lexS).OwningEntry;
+					CopyMissingFieldsToEntry(entry);
+					fGotExactMatch = true;
+				}
+			}
+			return fGotExactMatch;
+		}
+
+		/// <summary>
+		/// Copy to this entry any alternatives of our own owning entry's citation form or LexemeForm.Form
+		/// which are empty on the destination entry.
+		/// </summary>
+		/// <param name="entry"></param>
+		private void CopyMissingFieldsToEntry(ILexEntry entry)
+		{
+			foreach (var ws in OwningEntry.CitationForm.AvailableWritingSystemIds)
+			{
+				if (entry.CitationForm.get_String(ws).Length == 0)
+					entry.CitationForm.set_String(ws, OwningEntry.CitationForm.get_String(ws));
+			}
+			if (OwningEntry.LexemeFormOA != null && entry.LexemeFormOA != null)
+			{
+				foreach (var ws in OwningEntry.LexemeFormOA.Form.AvailableWritingSystemIds)
+				{
+					if (entry.LexemeFormOA.Form.get_String(ws).Length == 0)
+						entry.LexemeFormOA.Form.set_String(ws,
+							OwningEntry.LexemeFormOA.Form.get_String(ws));
+				}
+			}
+		}
+
+		bool WeHaveAnInterestingLf()
+		{
+			var entry = OwningEntry;
+			if (entry.LexemeFormOA == null)
+				return false;
+			foreach (var ws in entry.LexemeFormOA.Form.AvailableWritingSystemIds)
+			{
+				if (entry.LexemeFormOA.Form.get_String(ws).Length > 0)
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Return whether the other sense matches this one in all non-empty gloss and definition fields.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		bool IsMatchingSense(ILexSense other)
+		{
+			// Note that it doesn't matter if the other sense has other AvailableWritingSystemIds, because those must all
+			// be empty for us, and a ws that is empty for us cannot influence the result.
+			bool gotActualMatch = false;
+			foreach (var ws in Definition.AvailableWritingSystemIds)
+			{
+				var otherDefn = other.Definition.get_String(ws);
+				var myDefn = Definition.get_String(ws);
+				if (myDefn.Length != 0)
+				{
+					if (otherDefn.Length != 0)
+					{
+						if (!otherDefn.Equals(myDefn))
+							return false;
+						gotActualMatch = true;
+						continue;
+					}
+					// Special case: treat my definition matching their gloss as a match.
+					if (other.Gloss.get_String(ws).Equals(myDefn))
+						gotActualMatch = true;
+				}
+			}
+			foreach (var ws in Gloss.AvailableWritingSystemIds)
+			{
+				var otherGloss = other.Gloss.get_String(ws);
+				var myGloss = Gloss.get_String(ws);
+				if (myGloss.Length != 0)
+				{
+					if (otherGloss.Length != 0)
+					{
+						if (!otherGloss.Equals(myGloss))
+							return false;
+						gotActualMatch = true;
+						continue;
+					}
+					// Special case: treat my gloss matching their defn as a match.
+					if (other.Definition.get_String(ws).Equals(myGloss))
+						gotActualMatch = true;
+				}
+			}
+			if (!gotActualMatch)
+			{
+				// As a special case, see if one of our glosses matches one of their definitions.
+			}
+			return gotActualMatch;
+		}
+
+		/// <summary>
+		/// Return whether the other entry matches ours in the fields that are required for our sense to merge into it.
+		/// Currently: all non-empty alternatives of citation form must match;
+		/// all non-empty alternatives of Lexeme Form must match.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		bool IsMatchingEntry(ILexEntry other)
+		{
+			var ours = OwningEntry;
+			bool gotRealMatch = false;
+			// Note that it doesn't matter if the other sense has other AvailableWritingSystemIds, because those must all
+			// be empty for us, and a ws that is empty for us cannot influence the result.
+			foreach (var ws in ours.CitationForm.AvailableWritingSystemIds)
+			{
+				var otherCf = other.CitationForm.get_String(ws);
+				var myCf = ours.CitationForm.get_String(ws);
+				if (otherCf.Length != 0 && myCf.Length != 0)
+				{
+					if (!otherCf.Equals(myCf))
+						return false;
+					gotRealMatch = true;
+				}
+			}
+			if (ours.LexemeFormOA == null || other.LexemeFormOA == null)
+				return gotRealMatch; // can't have a conflicting form
+			foreach (var ws in ours.LexemeFormOA.Form.AvailableWritingSystemIds)
+			{
+				var otherGloss = other.LexemeFormOA.Form.get_String(ws);
+				var myGloss = ours.LexemeFormOA.Form.get_String(ws);
+				if (otherGloss.Length != 0 && myGloss.Length != 0)
+				{
+					if (!otherGloss.Equals(myGloss))
+						return false;
+					gotRealMatch = true;
+				}
+			}
+			return gotRealMatch;
+		}
+
 		/// <summary>
 		/// Return your own pictures followed by those of any subsenses.
 		/// </summary>
