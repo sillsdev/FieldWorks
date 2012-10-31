@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </summary>
 		public static void Install()
 		{
-			SingletonsContainer.Add(new FakeKeyboardController());
+			SingletonsContainer.Add(typeof(IKeyboardController).FullName, new FakeKeyboardController());
 		}
 
 		#region IDisposable implementation
