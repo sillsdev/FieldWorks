@@ -92,7 +92,9 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			/// <param name='description'>Keyboard description object</param>
 			public static void RegisterKeyboard(int lcid, IKeyboardDescription description)
 			{
-				Debug.Assert(!Instance.Keyboards.ContainsKey(lcid));
+				Debug.Assert(!Instance.Keyboards.ContainsKey(lcid),
+					String.Format("KeyboardController.Manager.RegisterKeyboard called with duplicate keyboard lcid '{0}', with description '{1}'.", lcid, description));
+
 				Instance.Keyboards[lcid] = description;
 			}
 		}
