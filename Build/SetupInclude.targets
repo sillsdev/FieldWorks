@@ -284,7 +284,7 @@
 	<SetEnvVar Variable="MONO_PATH" Value="$(dir-fwdistfiles):$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
 	<SetEnvVar Variable="MONO_REGISTRY_PATH" Value="$(dir-fwoutput)/registry" Condition="'$(OS)'=='Unix'"/>
 	<SetEnvVar Variable="COMPONENTS_MAP_PATH" Value="$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_RUNTIME_EXECUTABLE_PATH" Value="/usr/local/bin/mono-real" Condition="'$(OS)'=='Unix'"/>
+	<SetEnvVar Variable="MONO_RUNTIME_EXECUTABLE_PATH" Value="$(MONO_PREFIX)/bin/mono" Condition="'$(OS)'=='Unix'"/>
 
 	<!-- Create the output directories if they don't already exist -->
 

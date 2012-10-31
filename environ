@@ -8,6 +8,7 @@ BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/usr/local
 
 # Dependency locations
 # TODO - search for xulrunner-1.9.2.* locations, (and select the latest)
@@ -34,9 +35,9 @@ PKG_CONFIG_PATH="/usr/lib/fieldworks/mono/lib/pkgconfig:${PKG_CONFIG_PATH}"
 if [ "$RUNMODE" != "PACKAGE" ]
 then
 	# Make locally-built software (eg mono) visible
-	PATH="/usr/local/bin:${PATH}"
-	LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
-	PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}"
+	PATH="${MONO_PREFIX}/bin:${PATH}"
+	LD_LIBRARY_PATH="${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
+	PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 fi
 
 if [ "$RUNMODE" = "INSTALLED" ]
@@ -61,9 +62,8 @@ fi
 if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
 then
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
-	[ ! -d $FW_CommonAppData ] && mkdir $FW_CommonAppData
+	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
 fi
-
 
 MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}"
 MONO_TRACE_LISTENER="Console.Out"
