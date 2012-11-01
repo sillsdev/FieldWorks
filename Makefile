@@ -308,7 +308,7 @@ install-COM:
 	(cd $(COM_DIR)/installer$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=/usr; true)
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) install
 	install -d $(DESTDIR)/usr/lib/fieldworks
-	install ../COM/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(DESTDIR)/usr/lib/fieldworks
+	install $(COM_DIR)/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(DESTDIR)/usr/lib/fieldworks
 
 uninstall-COM:
 	[ -e $(COM_DIR)/installer$(ARCH)/Makefile ] && \
@@ -355,7 +355,8 @@ DebugProcs-link:
 ManagedComBridge-all:
 	$(MAKE) -C$(COM_DIR)/ManagedComBridge all
 	-mkdir -p $(OUT_DIR)
-	cp -f ../COM/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(OUT_DIR)
+	cp -pf $(COM_DIR)/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(OUT_DIR)
+
 ManagedComBridge-clean:
 	$(MAKE) -C$(COM_DIR)/ManagedComBridge clean
 	rm -f $(OUT_DIR)/libManagedComBridge.so

@@ -8,7 +8,7 @@ GCC46 := $(shell expr `gcc -dumpversion | cut -f1-2 -d.` \>= 4.6)
 
 ARCH := $(shell uname -m)
 SRC = $(BUILD_ROOT)/Src
-LIBRARIES = $(BUILD_ROOT)/..
+LIBRARIES = $(BUILD_ROOT)/../libcom
 
 COM_DIR = $(LIBRARIES)/COM
 WIN32BASE_DIR = $(LIBRARIES)/Win32Base

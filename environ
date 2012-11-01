@@ -5,7 +5,7 @@
 # Source this file in a shell and then run "mono FieldWorks.exe -app {Te,Flex}"
 
 BASE=$(pwd)
-COM=$(dirname "${BASE}")/COM
+COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
 
