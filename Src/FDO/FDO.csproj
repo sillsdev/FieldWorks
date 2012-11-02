@@ -480,6 +480,7 @@
     <Compile Include="Infrastructure\Impl\Db4oClientServerBackendProvider.cs" />
     <Compile Include="Infrastructure\Impl\Db4oServerInfo.cs" />
     <Compile Include="Infrastructure\Impl\GeneratedFDOBackendProvider.cs" />
+    <Compile Include="Infrastructure\Impl\CmSemanticDomainRepository.cs" />
     <Compile Include="Infrastructure\Impl\ObjectSurrogateEquater.cs" />
     <Compile Include="Infrastructure\Impl\PargraphCounterRepository.cs" />
     <Compile Include="Infrastructure\Impl\SimpleProjectId.cs" />

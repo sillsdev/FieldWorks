@@ -102,6 +102,62 @@ namespace SIL.FieldWorks.FDO
 	{
 	}
 
+	/// <summary>
+	/// Additions to the Semantic Domain Repository to handle searches
+	/// </summary>
+	public partial interface ICmSemanticDomainRepository
+	{
+		/// <summary>
+		/// Finds all the semantic domains that contain 'searchString' in their text fields.
+		/// Semantic Domains typically have:
+		///   Abbreviation (a hierarchical number, e.g. "8.3.3")
+		///   Name (e.g. "Light")
+		///   Description (e.g. "Use this domain for words related to light.")
+		///   OCM codes and Louw and Nida codes
+		///   Questions (e.g. "(1) What words refer to light?")
+		///   Example Words (e.g. "light, sunshine, gleam (n), glare (n), glow (n), radiance,")
+		/// Search strings beginning with numbers will search Abbreviation only and only match at the beginning.
+		///   (so searching for "3.3" won't return "8.3.3")
+		/// Search strings beginning with alphabetic chars will search Name and Example Words.
+		/// For alphabetic searches, hits will be returned in the following order:
+		///   1) Name begins with search string
+		///   2) Name or Example Words contain words (bounded by whitespace) that match the search string
+		///
+		/// N.B.: This method looks for matches in the UserWs.
+		/// As a result, if the user interface is in a language that does not yet have a translation
+		/// of the semantic domain list, this method will return no values.
+		/// </summary>
+		/// <param name="searchString"></param>
+		/// <returns></returns>
+		IEnumerable<ICmSemanticDomain> FindDomainsThatMatch(string searchString);
+
+		/// <summary>
+		/// Finds all the semantic domains that contain 'searchString' in their text fields.
+		/// Semantic Domains typically have:
+		///   Abbreviation (a hierarchical number, e.g. "8.3.3")
+		///   Name (e.g. "Light")
+		///   Description (e.g. "Use this domain for words related to light.")
+		///   OCM codes and Louw and Nida codes
+		///   Questions (e.g. "(1) What words refer to light?")
+		///   Example Words (e.g. "light, sunshine, gleam (n), glare (n), glow (n), radiance,")
+		/// Search strings beginning with numbers will search Abbreviation only and only match at the beginning.
+		///   (so searching for "3.3" won't return "8.3.3")
+		/// Search strings beginning with alphabetic chars will search Name and Example Words.
+		/// For alphabetic searches, hits will be returned in the following order:
+		///   1) Name begins with search string
+		///   2) Name or Example Words contain words (bounded by whitespace) that match the search string
+		///   3) Name or Example Words contain words that begin with the search string
+		///
+		/// N.B.: This method looks for matches in the UserWs.
+		/// As a result, if the user interface is in a language that does not yet have a translation
+		/// of the semantic domain list, this method will return no values.
+		/// </summary>
+		/// <param name="searchString"></param>
+		/// <param name="group3">out var that returns group 3 matches</param>
+		/// <returns>groups 1 and 2 above</returns>
+		IEnumerable<ICmSemanticDomain> FindMoreDomainsThatMatch(string searchString, out IEnumerable<ICmSemanticDomain> group3);
+	}
+
 	public partial interface IConstChartMovedTextMarkerRepository
 	{
 		/// <summary>
