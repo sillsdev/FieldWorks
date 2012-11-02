@@ -330,6 +330,49 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			}
 		}
 
+		/// <summary>
+		/// Verifies that this property is sorted.
+		/// </summary>
+		[Test]
+		public void CmSemanticDomainReferringSensesAreSorted()
+		{
+			ICmSemanticDomainFactory factSemDom = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>();
+			var semDom = factSemDom.Create() as CmSemanticDomain;
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(semDom);
+			ILexEntry lezzz = MakeLexEntry("zzz", "zzzDefn", semDom);
+			ILexEntry lerrr = MakeLexEntry("rrr", "rrrDefn", semDom);
+			ILexEntry leabc = MakeLexEntry("abc", "abcDefn", semDom);
+			ILexEntry leaa = MakeLexEntry("aa", "aaDefn", semDom);
+			ILexEntry lemnop = MakeLexEntry("mnop", "gloss", semDom);
+			ILexEntry lemnop2 = MakeLexEntry("mnop", "agloss", semDom);
+
+			var list = semDom.ReferringSenses.ToArray();
+			Assert.That(list[0], Is.EqualTo(leaa.SensesOS[0]));
+			Assert.That(list[1], Is.EqualTo(leabc.SensesOS[0]));
+			Assert.That(list[2], Is.EqualTo(lemnop.SensesOS[0]));
+			Assert.That(list[3], Is.EqualTo(lemnop2.SensesOS[0]));
+			Assert.That(list[4], Is.EqualTo(lerrr.SensesOS[0]));
+			Assert.That(list[5], Is.EqualTo(lezzz.SensesOS[0]));
+		}
+
+		private ILexEntry MakeLexEntry(string cf, string defn, ICmSemanticDomain domain)
+		{
+			var servLoc = Cache.ServiceLocator;
+			var le = servLoc.GetInstance<ILexEntryFactory>().Create();
+
+			var ws = Cache.DefaultVernWs;
+			le.CitationForm.set_String(ws, Cache.TsStrFactory.MakeString(cf, ws));
+			var ls = servLoc.GetInstance<ILexSenseFactory>().Create();
+			le.SensesOS.Add(ls);
+			ws = Cache.DefaultAnalWs;
+			ls.Definition.set_String(ws, Cache.TsStrFactory.MakeString(defn, ws));
+			ls.SemanticDomainsRC.Add(domain);
+			var msa = servLoc.GetInstance<IMoStemMsaFactory>().Create();
+			le.MorphoSyntaxAnalysesOC.Add(msa);
+			ls.MorphoSyntaxAnalysisRA = msa;
+			return le;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests adding closed features to feature system and to a feature structure

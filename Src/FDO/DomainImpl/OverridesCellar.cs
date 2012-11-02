@@ -865,6 +865,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (collection.Flid == LexSenseTags.kflidSemanticDomains)
 						senses.Add(collection.MainObject as ILexSense);
 				}
+				var collator = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs).Collator;
+				// they need to be sorted, at least for the classified dictionary view.
+				senses.Sort((x, y) => collator.Compare(((LexSense)x).OwnerOutlineName.Text ?? "", ((LexSense)y).OwnerOutlineName.Text ?? ""));
 				return senses;
 			}
 		}
