@@ -160,8 +160,12 @@ namespace FwBuildTasks
 			string test = RealFwRoot;
 			Debug.WriteLine("RealFwRoot => '{0}'", test);	// keeps compiler from complaining.
 #endif
+			Log.LogMessage(MessageImportance.Low, "PoFileDirectory is set to {0}.", PoFileDirectory);
+
 			// Get all the .po files paths:
 			string[] poFiles = Directory.GetFiles(PoFileDirectory, PoFileLeadIn + "*" + PoFileExtension);
+
+			Log.LogMessage(MessageImportance.Low, "{0} .po files found.", poFiles.Length);
 
 			// Prepare to get responses from processing each .po file
 			bool buildFailed = false;
