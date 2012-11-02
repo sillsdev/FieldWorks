@@ -17,36 +17,31 @@ DEFINES := $(DEFINES) -DGR_FW -DWIN32_KEY_VALUES=1
 ifeq ($(BUILD_CONFIG),Debug)
 	DEBUG_LIBS = $(OUT_DIR)/libDebugProcs.a
 	DEFINES  := $(DEFINES) -D_DEBUG -DDEBUG
-	DEBUG_INCLUDES = -I$(SRC)/DebugProcs
+	DEBUG_INCLUDES = -I$(DEBUGPROCS_SRC)
 	OPTIMIZATIONS = -O0
 else
 	OPTIMIZATIONS = -O3
 endif
 
-FWKERNEL_SRC = $(SRC)/Kernel
-GENERIC_SRC = $(SRC)/Generic
-APPCORE_SRC = $(SRC)/AppCore
 CELLAR_SRC = $(SRC)/Cellar
-DBACCESS_SRC=$(SRC)/DbAccess
-LANGUAGE_SRC=$(SRC)/Language
 DBSERVICES_SRC = $(SRC)/DbServices
 
-INCLUDES := -I$(FWKERNEL_SRC) -I$(CELLAR_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) $(DEBUG_INCLUDES)
+INCLUDES := -I$(KERNEL_SRC) -I$(CELLAR_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) $(DEBUG_INCLUDES)
 INCLUDES := $(INCLUDES) -I$(LANGUAGE_SRC) -I$(DBACCESS_SRC) -I$(DBSERVICES_SRC)
 
 INCLUDES := $(shell icu-config --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(COM_OUT_DIR) \
-	-I$(LIBRARIES)/Win32More/include \
-	-I$(LIBRARIES)/COM/include \
-	-I$(LIBRARIES)/Win32Base/include \
+	-I$(WIN32MORE_INC) \
+	-I$(COM_INC) \
+	-I$(WIN32BASE_INC) \
 
 
 LDLIBS := $(LDLIBS) \
-	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
-	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(WIN32MORE_LIB) -lWin32More \
+	-L$(COM_LIB) -lcom \
+	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell icu-config --ldflags) \
 	-luuid -lexpat
 
@@ -87,7 +82,7 @@ OBJ_OTHER = \
 
 all: $(OUT_DIR)/libFwKernel.so $(COM_OUT_DIR)/libFwKernelTlb.a ComponentsMap link_check
 
-$(OUT_DIR)/libFwKernel.so: $(OBJ_FWKERNEL) $(OBJ_OTHER) $(LINK_LIBS) $(LIBRARIES)/Win32More/src/build$(ARCH)/libWin32More.a $(LIBRARIES)/Win32Base/src/build$(ARCH)/libWin32Base.a
+$(OUT_DIR)/libFwKernel.so: $(OBJ_FWKERNEL) $(OBJ_OTHER) $(LINK_LIBS) $(WIN32MORE_LIB)/libWin32More.a $(WIN32BASE_LIB)/libWin32Base.a
 ifeq "$(GCC46)" "1"
 	$(LINK.cc) -shared -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(OBJ_FWKERNEL) $(OBJ_OTHER) $(LDLIBS)
 else
@@ -113,36 +108,28 @@ $(OBJ_FWKERNEL): $(PCHNAME)
 
 # ensure object dependies are built.
 $(GENERIC_OBJ)/ModuleEntry.o $(GENERIC_OBJ)/TextProps1.o:
-	@$(MAKE) -C $(SRC)/Generic $@ -q || \
-	 $(MAKE) -C $(SRC)/Generic $@
+	@$(MAKE) -C $(GENERIC_SRC) $@ -q || \
+	 $(MAKE) -C $(GENERIC_SRC) $@
 
 $(APPCORE_OBJ)/FwStyledText.o $(APPCORE_OBJ)/WriteXml.o:
-	@$(MAKE) -C $(SRC)/AppCore $@ -q || \
-	 $(MAKE) -C $(SRC)/AppCore $@
+	@$(MAKE) -C $(APPCORE_SRC) $@ -q || \
+	 $(MAKE) -C $(APPCORE_SRC) $@
 
 $(GENERIC_OBJ)/main.o:
-	@$(MAKE) -C $(SRC)/$(GENERIC_NAME)/ -q $@ || \
-	 $(MAKE) -C $(SRC)/$(GENERIC_NAME)/ $@
+	@$(MAKE) -C $(GENERIC_SRC) -q $@ || \
+	 $(MAKE) -C $(GENERIC_SRC) $@
 
 $(OUT_DIR)/libCellar.a:
-	@$(MAKE) -C $(SRC)/Cellar $@ -q || \
-	 $(MAKE) -C $(SRC)/Cellar $@
+	@$(MAKE) -C $(CELLAR_SRC) $@ -q || \
+	 $(MAKE) -C $(CELLAR_SRC) $@
 
 $(OUT_DIR)/libAppCore.a:
-	@$(MAKE) -C $(SRC)/AppCore $@ -q || \
-	 $(MAKE) -C $(SRC)/AppCore $@
+	@$(MAKE) -C $(APPCORE_SRC) $@ -q || \
+	 $(MAKE) -C $(APPCORE_SRC) $@
 
 $(OUT_DIR)/libGeneric.a:
-	@$(MAKE) -C $(SRC)/Generic $@ -q || \
-	 $(MAKE) -C $(SRC)/Generic $@
-
-$(LIBRARIES)/Win32More/src/libWin32More.a:
-	@$(MAKE) -C $(BUILD_ROOT) -q libWin32More.a || \
-	 $(MAKE) -C $(BUILD_ROOT) libWin32More.a
-
-$(LIBRARIES)/Win32Base/src/libWin32Base.a:
-	@$(MAKE) -C $(BUILD_ROOT) -q libWin32Base.a || \
-	 $(MAKE) -C $(BUILD_ROOT) libWin32Base.a
+	@$(MAKE) -C $(GENERIC_SRC) $@ -q || \
+	 $(MAKE) -C $(GENERIC_SRC) $@
 
 %.h.gch: %.h
 	$(COMPILE.cc) -o $@ $<

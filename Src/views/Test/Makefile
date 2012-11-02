@@ -11,14 +11,14 @@ include $(BUILD_ROOT)/Bld/_names.mak
 BUILD_PRODUCT = $(VIEWS_NAME)Test
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 
-UNIT = $(BUILD_ROOT)/Include/unit++
+UNIT = $(FWINCLUDE)/unit++
 LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
 VIEWS_LIB	= $(VIEWS_OBJ)/lib
 GRENG   = $(SRC)/Graphite/lib
 GRFW    = $(SRC)/Graphite/FwOnly
 
-LANGUAGETEST_SRC=$(SRC)/Language/Test
+LANGUAGETEST_SRC = $(LANGUAGE_SRC)/Test
 
 DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING \
 	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1 -D_DEBUG
@@ -35,18 +35,18 @@ INCLUDES := \
 	-I$(FWINCLUDE) \
 	-I$(UNIT) -I$(LIB_UNIT) \
 	-I$(COM_OUT_DIR) \
-	-I$(LIBRARIES)/Win32More/include \
-	-I$(LIBRARIES)/COM/include \
-	-I$(LIBRARIES)/Win32Base/include \
+	-I$(WIN32MORE_INC) \
+	-I$(COM_INC) \
+	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 
 LDLIBS := \
 	$(shell icu-config --ldflags) \
 	-L$(FWINCLUDE) \
-	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
-	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(WIN32MORE_LIB) -lWin32More \
+	-L$(COM_LIB) -lcom \
+	-L$(WIN32BASE_LIB) -lWin32Base \
 	-L$(OUT_DIR) -lDebugProcs \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	-lexpat\

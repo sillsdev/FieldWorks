@@ -23,44 +23,36 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-LANG_SRC = $(SRC)/Language
-GENERIC_SRC = $(SRC)/Generic
-APPCORE_SRC = $(SRC)/AppCore
-TEXT_SRC = $(SRC)/Text
 CELLAR_SRC = $(SRC)/Cellar
-GRENGINE_SRC = $(SRC)/Graphite/GrEngine
-GRUTIL_LIB = $(SRC)/Graphite/lib
-TTFUTIL_LIB = $(SRC)/Graphite/TtfUtil
-KERNEL_SRC = $(SRC)/Kernel
-DBACCESS_SRC = $(SRC)/DbAccess
-VIEWS_SRC = $(SRC)/views
+GRAPHITE_SRC = $(SRC)/Graphite
+GRFW_SRC = $(GRAPHITE_SRC)/FwOnly
+GRUTIL_LIB = $(GRAPHITE_SRC)/lib
+TTFUTIL_LIB = $(GRAPHITE_SRC)/TtfUtil
 VIEWS_LIB = $(SRC)/views/lib
-GRFW_SRC = $(SRC)/Graphite/FwOnly
-# FWUTILS_SRC = $(SRC)/FWUtils
 
 PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0 pangomm-1.4
 
 # Make sure Lang is first, as we want to get the Main.h from there,
 # not any of the others (e.g., in Views)
-INCLUDES := -I$(LANG_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(TEXT_SRC)
+INCLUDES := -I$(LANGUAGE_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(TEXT_SRC)
 INCLUDES := $(INCLUDES) -I$(KERNEL_SRC) -I$(CELLAR_SRC) -I$(DBACCESS_SRC)
 INCLUDES := $(INCLUDES) -I$(GRUTIL_LIB) -I$(TTFUTIL_LIB) -I$(VIEWS_SRC) -I$(VIEWS_LIB) -I$(GRFW_SRC)
 INCLUDES := $(shell icu-config --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(COM_OUT_DIR) \
-	-I$(LIBRARIES)/Win32More/include \
-	-I$(LIBRARIES)/COM/include \
-	-I$(LIBRARIES)/Win32Base/include \
+	-I$(WIN32MORE_INC) \
+	-I$(COM_INC) \
+	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 
 LDLIBS = \
 	-L$(FWINCLUDE) \
 	$(DEBUG_LIBS) \
-	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
-	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(WIN32MORE_LIB) -lWin32More \
+	-L$(COM_LIB) -lcom \
+	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
 	-luuid -lexpat
@@ -262,8 +254,8 @@ $(COM_OUT_DIR)/libFwKernelTlb.a:
 	 $(MAKE) -C $(SRC)/Kernel $@
 
 $(COM_OUT_DIR)/libGraphiteTlb.a:
-	@$(MAKE) -C $(SRC)/Graphite/GrEngine all -q || \
-	 $(MAKE) -C $(SRC)/Graphite/GrEngine all
+	@$(MAKE) -C $(GRENGINE_SRC) all -q || \
+	 $(MAKE) -C $(GRENGINE_SRC) all
 
 $(COM_OUT_DIR)/libViewsTlb.a:
 	@$(MAKE) -C $(SRC)/views/ $@ -q || \

@@ -11,9 +11,8 @@ BUILD_PRODUCT = $(DEBUGPROCS_NAME)
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 
 OUTPUT  = $(FWOUTPUT)
-INCLUDE = $(BUILD_ROOT)/Include
+INCLUDE = $(FWINCLUDE)
 
-GENERIC_SRC  = .
 TLB_SRC      = $(OUTPUT)/Common
 
 DEFINES  := $(DEFINES) -DGR_FW -DSUPPRESS_FW_EXCEPTION_HANDLING -D_DEBUG
@@ -29,17 +28,17 @@ PACKAGES := gtkmm-2.4
 INCLUDES := $(shell icu-config --cppflags) \
 	 $(INCLUDES) \
 	-I$(GENERIC_SRC) -I$(TLB_SRC) -I$(INCLUDE) \
-	-I$(LIBRARIES)/Win32More/include \
-	-I$(LIBRARIES)/COM/include \
-	-I$(LIBRARIES)/Win32Base/include \
+	-I$(WIN32MORE_INC) \
+	-I$(COM_INC) \
+	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 
 LDLIBS = \
 	-L$(FWINCLUDE) \
-	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
-	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(WIN32MORE_LIB) -lWin32More \
+	-L$(COM_LIB) -lcom \
+	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
 	-luuid -lexpat
@@ -69,8 +68,8 @@ $(INT_DIR)/libDebugProcs: $(OBJS) $(GENERIC_OBJ)/main.o
 # === Rules ===
 
 $(GENERIC_OBJ)/main.o:
-	@$(MAKE) -C $(SRC)/$(GENERIC_NAME)/ -q $@ || \
-	 $(MAKE) -C $(SRC)/$(GENERIC_NAME)/ $@
+	@$(MAKE) -C $(GENERIC_SRC)/ -q $@ || \
+	 $(MAKE) -C $(GENERIC_SRC)/ $@
 
 -include $(OBJS:%.o=%.d)
 -include $(PCHNAME:%.gch=%.d)

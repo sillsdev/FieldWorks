@@ -138,11 +138,11 @@ IcuDataFiles:
 
 # This build item isn't run on a normal build.
 generate-strings:
-	(cd $(BUILD_ROOT)/Src/Language/ && $(BUILD_ROOT)/Bin/make-strings.sh Language.rc > $(BUILD_ROOT)/DistFiles/strings-en.txt)
-	(cd $(BUILD_ROOT)/Src/Generic/ && $(BUILD_ROOT)/Bin/make-strings.sh Generic.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
-	(cd $(BUILD_ROOT)/Src/Kernel/ && $(BUILD_ROOT)/Bin/make-strings.sh FwKernel.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
-	(cd $(BUILD_ROOT)/Src/views/ && $(BUILD_ROOT)/Bin/make-strings.sh Views.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
-	(cd $(BUILD_ROOT)/Src/AppCore/ && C_INCLUDE_PATH=./Res $(BUILD_ROOT)/Bin/make-strings.sh Res/AfApp.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
+	(cd $(SRC)/Language/ && $(BUILD_ROOT)/Bin/make-strings.sh Language.rc > $(BUILD_ROOT)/DistFiles/strings-en.txt)
+	(cd $(SRC)/Generic/ && $(BUILD_ROOT)/Bin/make-strings.sh Generic.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
+	(cd $(SRC)/Kernel/ && $(BUILD_ROOT)/Bin/make-strings.sh FwKernel.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
+	(cd $(SRC)/views/ && $(BUILD_ROOT)/Bin/make-strings.sh Views.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
+	(cd $(SRC)/AppCore/ && C_INCLUDE_PATH=./Res $(BUILD_ROOT)/Bin/make-strings.sh Res/AfApp.rc >> $(BUILD_ROOT)/DistFiles/strings-en.txt)
 
 # now done in NAnt
 install-strings:
@@ -216,18 +216,18 @@ tools-clean: \
 idl: idl-do regen-GUIDs
 
 idl-do:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/COMInterfaces -f IDLMakefile all
+	$(MAKE) -C$(SRC)/Common/COMInterfaces -f IDLMakefile all
 
 regen-GUIDs: $(BUILD_ROOT)/Lib/linux/Common/FwKernelTlb.h $(BUILD_ROOT)/Lib/linux/Common/LanguageTlb.h $(BUILD_ROOT)/Lib/linux/Common/ViewsTlb.h
 	$(MAKE) tlbs-clean
 	$(MAKE) tlbs-copy
-	(cd $(COM_OUT_DIR)  && $(COM_DIR)/test/extract_iids.sh FwKernelTlb.h > $(BUILD_ROOT)/Src/Kernel/FwKernel_GUIDs.cpp)
-	(cd $(COM_OUT_DIR)  && $(COM_DIR)/test/extract_iids.sh LanguageTlb.h > $(BUILD_ROOT)/Src/Language/Language_GUIDs.cpp)
-	echo '#include "FwKernelTlb.h"' > $(BUILD_ROOT)/Src/views/Views_GUIDs.cpp
-	(cd $(COM_OUT_DIR)  && $(COM_DIR)/test/extract_iids.sh ViewsTlb.h >> $(BUILD_ROOT)/Src/views/Views_GUIDs.cpp)
+	(cd $(COM_OUT_DIR)  && $(COM_DIR)/test/extract_iids.sh FwKernelTlb.h > $(SRC)/Kernel/FwKernel_GUIDs.cpp)
+	(cd $(COM_OUT_DIR)  && $(COM_DIR)/test/extract_iids.sh LanguageTlb.h > $(SRC)/Language/Language_GUIDs.cpp)
+	echo '#include "FwKernelTlb.h"' > $(SRC)/views/Views_GUIDs.cpp
+	(cd $(COM_OUT_DIR)  && $(COM_DIR)/test/extract_iids.sh ViewsTlb.h >> $(SRC)/views/Views_GUIDs.cpp)
 
 idl-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/COMInterfaces -f IDLMakefile clean
+	$(MAKE) -C$(SRC)/Common/COMInterfaces -f IDLMakefile clean
 
 install-tree:
 	# Create directories
@@ -338,19 +338,19 @@ Win32More-check:
 
 Generic-all: Generic-nodep
 Generic-nodep:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Generic all
+	$(MAKE) -C$(SRC)/Generic all
 Generic-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Generic clean
+	$(MAKE) -C$(SRC)/Generic clean
 Generic-link:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Generic link_check
+	$(MAKE) -C$(SRC)/Generic link_check
 
 DebugProcs-all: DebugProcs-nodep
 DebugProcs-nodep:
-	$(MAKE) -C$(BUILD_ROOT)/Src/DebugProcs all
+	$(MAKE) -C$(SRC)/DebugProcs all
 DebugProcs-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/DebugProcs clean
+	$(MAKE) -C$(SRC)/DebugProcs clean
 DebugProcs-link:
-	$(MAKE) -C$(BUILD_ROOT)/Src/DebugProcs link_check
+	$(MAKE) -C$(SRC)/DebugProcs link_check
 
 ManagedComBridge-all:
 	$(MAKE) -C$(COM_DIR)/ManagedComBridge all
@@ -364,80 +364,80 @@ ManagedComBridge-check:
 	# Not implemented yet
 
 COM-all:
-	-mkdir -p $(COM_DIR)/build$(ARCH)
-	(cd $(COM_DIR)/build$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=`abs.py .`; true)
-	REMOTE_WIN32_DEV_HOST=$(REMOTE_WIN32_DEV_HOST) $(MAKE) -C$(COM_DIR)/build$(ARCH) all
+	-mkdir -p $(COM_BUILD)
+	(cd $(COM_BUILD) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=`abs.py .`; true)
+	REMOTE_WIN32_DEV_HOST=$(REMOTE_WIN32_DEV_HOST) $(MAKE) -C$(COM_BUILD) all
 COM-install:
-	$(MAKE) -C$(COM_DIR)/build$(ARCH) install
+	$(MAKE) -C$(COM_BUILD) install
 COM-check:
-	$(MAKE) -C$(COM_DIR)/build$(ARCH) check
+	$(MAKE) -C$(COM_BUILD) check
 COM-uninstall:
-	[ -e $(COM_DIR)/build$(ARCH)/Makefile ] && \
-	$(MAKE) -C$(COM_DIR)/build$(ARCH) uninstall || true
+	[ -e $(COM_BUILD)/Makefile ] && \
+	$(MAKE) -C$(COM_BUILD) uninstall || true
 COM-clean:
-	[ -e $(COM_DIR)/build$(ARCH)/Makefile ] && \
-	$(MAKE) -C$(COM_DIR)/build$(ARCH) clean || true
+	[ -e $(COM_BUILD)/Makefile ] && \
+	$(MAKE) -C$(COM_BUILD) clean || true
 COM-distclean:
-	[ -e $(COM_DIR)/build$(ARCH)/Makefile ] && \
-	$(MAKE) -C$(COM_DIR)/build$(ARCH) distclean || true
+	[ -e $(COM_BUILD)/Makefile ] && \
+	$(MAKE) -C$(COM_BUILD) distclean || true
 COM-autodegen:
 	(cd $(COM_DIR) && sh autodegen.sh)
 
 Kernel-all: Kernel-nodep
 Kernel-nodep: libFwKernel Kernel-link
 libFwKernel:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Kernel all
+	$(MAKE) -C$(SRC)/Kernel all
 Kernel-componentsmap:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Kernel ComponentsMap
+	$(MAKE) -C$(SRC)/Kernel ComponentsMap
 Kernel-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Kernel clean
+	$(MAKE) -C$(SRC)/Kernel clean
 Kernel-link:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Kernel link_check
+	$(MAKE) -C$(SRC)/Kernel link_check
 
 views-all: views-nodep
 views-nodep: libViews libVwGraphics views-link
 libViews:
-	$(MAKE) -C$(BUILD_ROOT)/Src/views all
+	$(MAKE) -C$(SRC)/views all
 views-componentsmap:
-	$(MAKE) -C$(BUILD_ROOT)/Src/views ComponentsMap
+	$(MAKE) -C$(SRC)/views ComponentsMap
 views-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/views clean
+	$(MAKE) -C$(SRC)/views clean
 libVwGraphics:
-	$(MAKE) -C$(BUILD_ROOT)/Src/views libVwGraphics
+	$(MAKE) -C$(SRC)/views libVwGraphics
 views-link:
-	$(MAKE) -C$(BUILD_ROOT)/Src/views link_check
+	$(MAKE) -C$(SRC)/views link_check
 
 Cellar-all: Cellar-nodep
 Cellar-nodep: libCellar
 libCellar:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Cellar all
+	$(MAKE) -C$(SRC)/Cellar all
 Cellar-componentsmap:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Cellar ComponentsMap
+	$(MAKE) -C$(SRC)/Cellar ComponentsMap
 Cellar-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Cellar clean
+	$(MAKE) -C$(SRC)/Cellar clean
 
 AppCore-all: AppCore-nodep
 AppCore-nodep: libAppCore
 libAppCore:
-	$(MAKE) -C$(BUILD_ROOT)/Src/AppCore all
+	$(MAKE) -C$(SRC)/AppCore all
 AppCore-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/AppCore clean
+	$(MAKE) -C$(SRC)/AppCore clean
 
 Language-all: libFwKernel libViews Language-nodep
 Language-nodep: libLanguage
 libLanguage:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Language all
+	$(MAKE) -C$(SRC)/Language all
 Language-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Language clean
+	$(MAKE) -C$(SRC)/Language clean
 Language-link:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Language link_check
+	$(MAKE) -C$(SRC)/Language link_check
 
 Graphite-GrEngine-all: Graphite-GrEngine-nodep
 Graphite-GrEngine-nodep: libGraphiteTlb
 libGraphiteTlb:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Graphite/GrEngine all
+	$(MAKE) -C$(SRC)/Graphite/GrEngine all
 Graphite-GrEngine-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Graphite/GrEngine clean
+	$(MAKE) -C$(SRC)/Graphite/GrEngine clean
 
 Nant-Task-FdoGenerate:
 	$(MAKE) -C$(BUILD_ROOT)/Bin/nant/src/FwTasks/FdoGenerate all
@@ -454,45 +454,45 @@ unit++-clean:
 	-rm -rf $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
 views-Test:
-	$(MAKE) -C$(BUILD_ROOT)/Src/views/Test all
+	$(MAKE) -C$(SRC)/views/Test all
 views-Test-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/views/Test clean
+	$(MAKE) -C$(SRC)/views/Test clean
 views-Test-check:
-	$(MAKE) -C$(BUILD_ROOT)/Src/views/Test check
+	$(MAKE) -C$(SRC)/views/Test check
 
 generic-Test-all: generic-Test
 generic-Test:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Generic/Test all
+	$(MAKE) -C$(SRC)/Generic/Test all
 generic-Test-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Generic/Test clean
+	$(MAKE) -C$(SRC)/Generic/Test clean
 generic-Test-check:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Generic/Test check
+	$(MAKE) -C$(SRC)/Generic/Test check
 
 kernel-Test:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Kernel/Test all
+	$(MAKE) -C$(SRC)/Kernel/Test all
 kernel-Test-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Kernel/Test clean
+	$(MAKE) -C$(SRC)/Kernel/Test clean
 kernel-Test-check:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Kernel/Test check
+	$(MAKE) -C$(SRC)/Kernel/Test check
 
 language-Test:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Language/Test all
+	$(MAKE) -C$(SRC)/Language/Test all
 language-Test-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Language/Test clean
+	$(MAKE) -C$(SRC)/Language/Test clean
 language-Test-check:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Language/Test check
+	$(MAKE) -C$(SRC)/Language/Test check
 
 language-Test-check:
 
 FwCoreDlgs-SimpleTest:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs/SimpleTest all
+	$(MAKE) -C$(SRC)/FwCoreDlgs/SimpleTest all
 
 FwCoreDlgs-SimpleTest-check:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs/SimpleTest run
+	$(MAKE) -C$(SRC)/FwCoreDlgs/SimpleTest run
 
 
 DbAccessFirebird-check:
-	$(MAKE) -C$(BUILD_ROOT)/Src/DbAccessFirebird check
+	$(MAKE) -C$(SRC)/DbAccessFirebird check
 
 # $(MAKE) Common items
 common-COMInterfaces:
@@ -501,141 +501,141 @@ common-COMInterfaces-clean:
 	(cd $(BUILD_ROOT)/Bld && ../Bin/nant/bin/nant clean COMInterfaces-nodep)
 
 common-Utils:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Utils all
+	$(MAKE) -C$(SRC)/Common/Utils all
 common-Utils-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Utils clean
+	$(MAKE) -C$(SRC)/Common/Utils clean
 
 common-FwUtils:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/FwUtils all
+	$(MAKE) -C$(SRC)/Common/FwUtils all
 common-FwUtils-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/FwUtils clean
+	$(MAKE) -C$(SRC)/Common/FwUtils clean
 
 common-SimpleRootSite:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/SimpleRootSiteGtk all
+	$(MAKE) -C$(SRC)/Common/SimpleRootSiteGtk all
 common-SimpleRootSite-clean:
-	$(MAKE)  -C$(BUILD_ROOT)/Src/Common/SimpleRootSiteGtk clean
+	$(MAKE)  -C$(SRC)/Common/SimpleRootSiteGtk clean
 
 common-RootSite: common-SimpleRootSite
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/RootSite all
+	$(MAKE) -C$(SRC)/Common/RootSite all
 common-RootSite-clean:
-	 $(MAKE) -C$(BUILD_ROOT)/Src/Common/RootSite clean
+	 $(MAKE) -C$(SRC)/Common/RootSite clean
 
 common-Framework:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Framework all
+	$(MAKE) -C$(SRC)/Common/Framework all
 common-Framework-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Framework clean
+	$(MAKE) -C$(SRC)/Common/Framework clean
 
 common-Widgets:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Controls/Widgets all
+	$(MAKE) -C$(SRC)/Common/Controls/Widgets all
 common-Widgets-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Controls/Widgets clean
+	$(MAKE) -C$(SRC)/Common/Controls/Widgets clean
 
 common-Filters:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Filters all
+	$(MAKE) -C$(SRC)/Common/Filters all
 common-Filters-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Filters clean
+	$(MAKE) -C$(SRC)/Common/Filters clean
 
 common-UIAdapterInterfaces:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/UIAdapterInterfaces all
+	$(MAKE) -C$(SRC)/Common/UIAdapterInterfaces all
 common-UIAdapterInterfaces-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/UIAdapterInterfaces clean
+	$(MAKE) -C$(SRC)/Common/UIAdapterInterfaces clean
 
 common-ScriptureUtils:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/ScriptureUtils all
+	$(MAKE) -C$(SRC)/Common/ScriptureUtils all
 common-ScriptureUtils-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/ScriptureUtils clean
+	$(MAKE) -C$(SRC)/Common/ScriptureUtils clean
 
 common-ScrUtilsInterfaces:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/ScrUtilsInterfaces all
+	$(MAKE) -C$(SRC)/Common/ScrUtilsInterfaces all
 common-ScrUtilsInterfaces-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/ScrUtilsInterfaces clean
+	$(MAKE) -C$(SRC)/Common/ScrUtilsInterfaces clean
 
 common-Controls-FwControls:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Controls/FwControls all
+	$(MAKE) -C$(SRC)/Common/Controls/FwControls all
 common-Controls-FwControls-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Controls/FwControls clean
+	$(MAKE) -C$(SRC)/Common/Controls/FwControls clean
 
 common-Controls-Design:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Controls/Design all
+	$(MAKE) -C$(SRC)/Common/Controls/Design all
 common-Controls-Design-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Common/Controls/Design clean
+	$(MAKE) -C$(SRC)/Common/Controls/Design clean
 
 Utilities-BasicUtils:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Utilities/BasicUtils all
+	$(MAKE) -C$(SRC)/Utilities/BasicUtils all
 Utilities-BasicUtils-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Utilities/BasicUtils clean
+	$(MAKE) -C$(SRC)/Utilities/BasicUtils clean
 
 Utilities-MessageBoxExLib:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Utilities/MessageBoxExLib all
+	$(MAKE) -C$(SRC)/Utilities/MessageBoxExLib all
 Utilities-MessageBoxExLib-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Utilities/MessageBoxExLib clean
+	$(MAKE) -C$(SRC)/Utilities/MessageBoxExLib clean
 
 Utilities-XMLUtils:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Utilities/XMLUtils all
+	$(MAKE) -C$(SRC)/Utilities/XMLUtils all
 Utilities-XMLUtils-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Utilities/XMLUtils clean
+	$(MAKE) -C$(SRC)/Utilities/XMLUtils clean
 
 Utilities-Reporting:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Utilities/Reporting all
+	$(MAKE) -C$(SRC)/Utilities/Reporting all
 Utilities-Reporting-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/Utilities/Reporting clean
+	$(MAKE) -C$(SRC)/Utilities/Reporting clean
 
 FDO:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FDO all
+	$(MAKE) -C$(SRC)/FDO all
 FDO-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FDO clean
+	$(MAKE) -C$(SRC)/FDO clean
 
 FwResources:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwResources all
+	$(MAKE) -C$(SRC)/FwResources all
 FwResources-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwResources clean
+	$(MAKE) -C$(SRC)/FwResources clean
 
 FwCoreDlgsGTK:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgsGTK all
+	$(MAKE) -C$(SRC)/FwCoreDlgsGTK all
 FwCoreDlgsGTK-clean:
-	 $(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgsGTK clean
+	 $(MAKE) -C$(SRC)/FwCoreDlgsGTK clean
 
 FwCoreDlgGTKWidgets:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgGTKWidgets all
+	$(MAKE) -C$(SRC)/FwCoreDlgGTKWidgets all
 FwCoreDlgGTKWidgets-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgGTKWidgets clean
+	$(MAKE) -C$(SRC)/FwCoreDlgGTKWidgets clean
 
 FwCoreDlgs-FwCoreDlgControls:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs/FwCoreDlgControls all
+	$(MAKE) -C$(SRC)/FwCoreDlgs/FwCoreDlgControls all
 FwCoreDlgs-FwCoreDlgControls-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs/FwCoreDlgControls clean
+	$(MAKE) -C$(SRC)/FwCoreDlgs/FwCoreDlgControls clean
 
 FwCoreDlgs-FwCoreDlgControlsGTK:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs/FwCoreDlgControlsGTK all
+	$(MAKE) -C$(SRC)/FwCoreDlgs/FwCoreDlgControlsGTK all
 FwCoreDlgs-FwCoreDlgControlsGTK-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs/FwCoreDlgControlsGTK clean
+	$(MAKE) -C$(SRC)/FwCoreDlgs/FwCoreDlgControlsGTK clean
 
 FwCoreDlgs:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs all
+	$(MAKE) -C$(SRC)/FwCoreDlgs all
 FwCoreDlgs-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/FwCoreDlgs clean
+	$(MAKE) -C$(SRC)/FwCoreDlgs clean
 
 LangInst:
-	$(MAKE) -C$(BUILD_ROOT)/Src/LangInst all
+	$(MAKE) -C$(SRC)/LangInst all
 LangInst-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/LangInst clean
+	$(MAKE) -C$(SRC)/LangInst clean
 
 DbAccess-all: DbAccess-nodep
 DbAccess: DbAccess-nodep
 DbAccess-nodep:
-	$(MAKE) -C$(BUILD_ROOT)/Src/DbAccessFirebird all
+	$(MAKE) -C$(SRC)/DbAccessFirebird all
 DbAccess-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/DbAccessFirebird clean
+	$(MAKE) -C$(SRC)/DbAccessFirebird clean
 
 XCore-Interfaces:
-	$(MAKE) -C$(BUILD_ROOT)/Src/XCore/xCoreInterfaces all
+	$(MAKE) -C$(SRC)/XCore/xCoreInterfaces all
 XCore-Interfaces-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/XCore/xCoreInterfaces clean
+	$(MAKE) -C$(SRC)/XCore/xCoreInterfaces clean
 
 XCore:
-	$(MAKE) -C$(BUILD_ROOT)/Src/XCore all
+	$(MAKE) -C$(SRC)/XCore all
 XCore-clean:
-	$(MAKE) -C$(BUILD_ROOT)/Src/XCore clean
+	$(MAKE) -C$(SRC)/XCore clean
 
 IDLImp-package:
 	$(MAKE) -C$(BUILD_ROOT)/Bin/src/IDLImp package

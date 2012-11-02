@@ -12,12 +12,8 @@ include $(BUILD_ROOT)/Bld/_names.mak
 BUILD_PRODUCT = $(APPCORE_NAME)
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 
-LANG_SRC = $(SRC)/Language
-APPCORE_SRC = $(SRC)/AppCore
 AFLIB_SRC = $(APPCORE_SRC)/AfLib
-TEXT_SRC = $(SRC)/Text
 CELLAR_SRC = $(SRC)/Cellar
-DEBUGPROCS_SRC = $(SRC)/DebugProcs
 
 PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0
 
@@ -31,23 +27,21 @@ endif
 # not any of the others (e.g., in Views)
 INCLUDES := -I$(AFLIB_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(TEXT_SRC) -I$(DEBUGPROCS_SRC)
 
-KERNEL_SRC = $(SRC)/Kernel
-DBACCESS_SRC = $(SRC)/DbAccess
 INCLUDES := $(INCLUDES) -I$(KERNEL_SRC) -I$(DBACCESS_SRC)
 
 INCLUDES := $(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(COM_OUT_DIR) \
-	-I$(LIBRARIES)/Win32More/include \
-	-I$(LIBRARIES)/COM/include \
-	-I$(LIBRARIES)/Win32Base/include \
+	-I$(WIN32MORE_INC) \
+	-I$(COM_INC) \
+	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 	$(shell icu-config --cppflags) \
 
 LDLIBS = \
-	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
-	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(WIN32MORE_LIB) -lWin32More \
+	-L$(COM_LIB) -lcom \
+	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
 
@@ -95,8 +89,8 @@ $(INT_DIR)/libAppCore: $(OBJ_ALL) $(LINK_LIBS) $(GENERIC_OBJ)/main.o
 
 # this target is only for lib_check (test?) targets
 $(GENERIC_OBJ)/main.o:
-	@$(MAKE) -C $(SRC)/$(GENERIC_NAME)/ -q $@ || \
-	 $(MAKE) -C $(SRC)/$(GENERIC_NAME)/ $@
+	@$(MAKE) -C $(GENERIC_SRC)/ -q $@ || \
+	 $(MAKE) -C $(GENERIC_SRC)/ $@
 
 clean:
 	$(RM) $(OUT_DIR)/libAppCore.a $(INT_DIR)/libAppCore $(INT_DIR)/*.[od] $(INT_DIR)/*.gch
