@@ -2778,7 +2778,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				FinishMoForm(mf, lv.Form, tssForm, mmt, realForm,
 					le.Guid, LexEntryTags.kflidAlternateForms);
 				bool fTypeSpecified;
-				ProcessMoFormTraits(mf, lv, out fTypeSpecified);
+				ProcessMoFormTraits(mf, lv, out mf, out fTypeSpecified);
 				ProcessMoFormFields(mf, lv);
 				StoreResidueFromVariant(mf, lv);
 				if (!fTypeSpecified)
@@ -2874,7 +2874,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						le.Guid, LexEntryTags.kflidAlternateForms);
 				}
 				bool fTypeSpecified;
-				ProcessMoFormTraits(mf, lv, out fTypeSpecified);
+				ProcessMoFormTraits(mf, lv, out mf, out fTypeSpecified);
 				ProcessMoFormFields(mf, lv);
 				StoreResidueFromVariant(mf, lv);
 				if (!fTypeSpecified)
@@ -2963,7 +2963,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return 0;	// no subclass info in the traits
 		}
 
-		private void ProcessMoFormTraits(IMoForm form, CmLiftVariant variant, out bool fTypeSpecified)
+		private void ProcessMoFormTraits(IMoForm form, CmLiftVariant variant, out IMoForm newForm, out bool fTypeSpecified)
 		{
 			fTypeSpecified = false;
 			foreach (LiftTrait lt in variant.Traits)
@@ -3015,6 +3015,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						break;
 				}
 			}
+			newForm = form;
 		}
 
 		private static void AddEnvironmentIfNeeded(List<IPhEnvironment> rgnew, IFdoReferenceCollection<IPhEnvironment> rgenv)
