@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 						//Contruct the path where the file will be unzipped too.
 						var zipFileLinkFilesPath = DirectoryFinder.GetZipfileFormatedPath(linkedFilesPathPersisted);
 						var filenameWithSubFolders = entry.Name.Substring(zipFileLinkFilesPath.Length);
-						var pathForFileSubFolders = filenameWithSubFolders.Substring(0, filenameWithSubFolders.Length - fileName.Length);
+						var pathForFileSubFolders = filenameWithSubFolders.Substring(1, filenameWithSubFolders.Length - fileName.Length - 1);
 						var destFolderZipFileFormat = DirectoryFinder.GetZipfileFormatedPath(destinationLinkedFilesPath);
 						string pathRoot = Path.GetPathRoot(destinationLinkedFilesPath);
 						Debug.Assert(!String.IsNullOrEmpty(pathRoot));

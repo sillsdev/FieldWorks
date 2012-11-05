@@ -775,18 +775,30 @@ namespace SIL.FieldWorks.IText
 			var para = m_fdoCache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
 			if (!para.ParseIsCurrent)
 			{
-				if (Cache.ActionHandlerAccessor.CurrentDepth > 0)
-					ReparseParagraph(para);
-				else
-					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => ReparseParagraph(para));
+				ReparseParaInUowIfNeeded(para);
 			}
 			var anal = FindClosestWagParsed(para, ichMin, ichLim);
+			if (!para.ParseIsCurrent)
+			{
+				// Something is wrong! The attempt to find the word detected an inconsistency.
+				// Fix the paragraph and try again.
+				ReparseParaInUowIfNeeded(para);
+				anal = FindClosestWagParsed(para, ichMin, ichLim);
+			}
 			if (anal != null && anal.HasWordform)
 			{
 				wordform = anal.Wordform;
 				return true;
 			}
 			return false;
+		}
+
+		private void ReparseParaInUowIfNeeded(IStTxtPara para)
+		{
+			if (Cache.ActionHandlerAccessor.CurrentDepth > 0)
+				ReparseParagraph(para);
+			else
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => ReparseParagraph(para));
 		}
 
 		private void ReparseParagraph(IStTxtPara para)

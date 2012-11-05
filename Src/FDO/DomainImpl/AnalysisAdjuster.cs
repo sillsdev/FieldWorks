@@ -1030,7 +1030,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// This loop reparses m_baseline, determining m_iFirstAnalysisToFix, initializing m_trailingTokens
-		/// and setting up m_newAnalysisGroups (which gives new Segment boundaries) it also initializes m_newAnalyses with
+		/// and setting up m_newAnalysisGroups (which gives new Segment boundaries). It also initializes m_newAnalyses with
 		/// the contents of m_oldAnalyses
 		/// </summary>
 		void AnalyzeNewText()
@@ -1053,6 +1053,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				int ichEndWordBL = m_wordFinder.Position;
 				if (ichStartWordBL == m_baseline.Length)
 					break;
+				var token = m_baseline.Substring(ichStartWordBL, ichEndWordBL - ichStartWordBL); // wordform or punct
 				//Debug.Assert(startWord < endWord);
 				if (ichStartWordBL >= ichLimSegBL)
 				{
@@ -1065,13 +1066,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				canalysis++;
 
-				if (m_iFirstAnalysisToFix < m_oldAnalyses.Count && ichEndWordBL <= ichFirstDiffBL)
+				if (m_iFirstAnalysisToFix < m_oldAnalyses.Count && ichEndWordBL <= ichFirstDiffBL && m_trailingTokens.Count == 0)
 				{
 					// We may possibly be able to increment m_iFirstAnalysisToFix, thus reusing one more
 					// leading analysis, instead of adding the current wordform to m_trailingTokens.
-					if (!m_wordFinder.IsWordforming(ichStartWordBL))
+					if (!m_wordFinder.IsWordforming(ichStartWordBL) || GetFirstVernacularWs(token) == -1)
 					{
-						// Punctuation is relatively easy: don't have to worry about phrases, don't really care if we reuse.
+						// Punctuation (or foreign text treated as punctuation)is relatively easy: don't have to worry about phrases,
+						// don't really care if we reuse.
 						if (ichEndWordBL < ichFirstDiffBL)
 						{
 							// Definitely unaffected, leave with preceding tokens
@@ -1126,8 +1128,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					}
 				}
 
-				m_trailingTokens.Add(new Tuple<int, ITsString>(ichStartWordBL,
-									 m_baseline.Substring(ichStartWordBL, ichEndWordBL - ichStartWordBL)));
+				m_trailingTokens.Add(new Tuple<int, ITsString>(ichStartWordBL, token));
 			}
 			m_newAnalysisGroups.Add(canalysis); // note last group size
 		}
@@ -1193,7 +1194,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			for (int i = 0; i <= iTokenIndex; i++)
 			{
 				var token = m_trailingTokens[i].Item2;
-				var vernWid = TsStringUtils.GetFirstVernacularWs(m_para.Cache.LanguageProject.VernWss, m_para.Services.WritingSystemFactory, token);
+				var vernWid = GetFirstVernacularWs(token);
 
 				//Decide whether we need to make a wordform or a punctuationForm)
 				// must be in a vernacular ws and be word forming characters
@@ -1213,6 +1214,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 			}
 			return newAnalyses;
+		}
+
+		private int GetFirstVernacularWs(ITsString token)
+		{
+			return TsStringUtils.GetFirstVernacularWs(m_para.Cache.LanguageProject.VernWss, m_para.Services.WritingSystemFactory, token);
 		}
 
 		/// <summary>

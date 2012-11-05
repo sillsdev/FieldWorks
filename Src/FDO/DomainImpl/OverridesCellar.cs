@@ -4792,7 +4792,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				NonUndoableUnitOfWorkHelper.DoSomehow(m_segment.Cache.ActionHandlerAccessor,
 					() => m_segment.Paragraph.ParseIsCurrent = false);
 				Debug.Fail("Paragraph is supposedly parsed correctly, but analysis list is inconsistent with content");
-				m_ich = m_segment.BaselineText.Length - 1; // May fix LT-12657
+				// We'd better make some progress, or this can produce an infinite loop (LT-13633).
+				m_ich = Math.Max(m_ich + 1, m_segment.BaselineText.Length - 1); // May fix LT-12657
 				return;
 			}
 			m_ich += m_segment.AnalysesRS[m_ianalysis].GetForm(TsStringUtils.GetWsAtOffset(Baseline, m_ich)).Length;

@@ -873,24 +873,32 @@ Cleanup:
 		// assume that we will be re-displaying the whole outer sequence as a result of its own
 		// changes, and don't bother doing it as a way of showing this change.
 		int hvoOuter = pnoteNextOuter->Object();
-		int outerTag = pnoteNextOuter->Tags()[m_ipropParent];
+		int tagOuter = pnoteNextOuter->Tags()[m_ipropParent];
 		// We can get a -1 here as in the FM Bangla project with its original settings files.
-		if (outerTag == -1)
+		if (tagOuter == -1)
 			return S_OK;
 		int index = ObjectIndex();
 		int chvo;
 		HRESULT hr;
-		IgnoreHr(hr = prootb->GetDataAccess()->get_VecSize(hvoOuter, outerTag, &chvo));
+		IgnoreHr(hr = prootb->GetDataAccess()->get_VecSize(hvoOuter, tagOuter, &chvo));
 		if (hr != S_OK)
 		{
-			// Presumably not a sequence, must(?) be atomic
-			HVO tmpHvo;
-			CheckHr(prootb->GetDataAccess()->get_ObjectProp(hvoOuter, outerTag, &tmpHvo));
-			chvo = tmpHvo == 0 ? 0 : 1;
+			// Presumably not a sequence, may be atomic
+			HVO hvoChild;
+			IgnoreHr(hr = prootb->GetDataAccess()->get_ObjectProp(hvoOuter, tagOuter, &hvoChild));
+			if (hr != S_OK)
+			{
+				// presumably a deleted object. If our parent object has been deleted (e.g., merging entries and
+				// both moving and modifying a sense of the old entry), something else should update the properties
+				// that used to own the old entry and the one that now owns the moved sense. We don't need to update
+				// the display of the modified child property.
+				return S_OK;
+			}
+			chvo = hvoChild == 0 ? 0 : 1;
 		}
 		if (index >= chvo)
 			return S_OK;
-		return pnoteNextOuter->PropChanged(hvoOuter, outerTag, index, 1, 1);
+		return pnoteNextOuter->PropChanged(hvoOuter, tagOuter, index, 1, 1);
 	}
 
 	END_COM_METHOD(g_fact, IID_IVwNotifyChange);
