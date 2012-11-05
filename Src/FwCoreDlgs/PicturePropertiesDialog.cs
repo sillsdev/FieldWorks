@@ -238,8 +238,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						m_filePath = String.Empty;
 				}
 
-				m_filePath = FileUtils.ActualFilePath(m_filePath);
-				if (FileUtils.FileExists(m_filePath))
+				if (FileUtils.TrySimilarFileExists(m_filePath, out m_filePath))
 					m_currentImage = Image.FromFile(m_filePath);
 				else
 				{

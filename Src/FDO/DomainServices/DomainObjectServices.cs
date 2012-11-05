@@ -2309,22 +2309,23 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public static string CopyFileToInternal(string srcFilename, string dstSubdir)
 		{
-			if (!FileUtils.FileExists(srcFilename))
+			string srcFilenameCorrected;
+			if (!FileUtils.TrySimilarFileExists(srcFilename, out srcFilenameCorrected))
 				return EmptyFileName;
 
 			var strDestFolder = Path.Combine(DirectoryFinder.FWDataDirectory, dstSubdir);
 			if (!Directory.Exists(strDestFolder))
 				Directory.CreateDirectory(strDestFolder);
 
-			var strDestFileRelPath = Path.Combine(dstSubdir, Path.GetFileName(srcFilename));
+			var strDestFileRelPath = Path.Combine(dstSubdir, Path.GetFileName(srcFilenameCorrected));
 			var strDestFileAbsPath = Path.Combine(DirectoryFinder.FWDataDirectory, strDestFileRelPath);
 
 			// (The case-independent comparison is valid only for Microsoft Windows.)
-			if (srcFilename.Equals(strDestFileAbsPath, StringComparison.OrdinalIgnoreCase))
+			if (srcFilenameCorrected.Equals(strDestFileAbsPath, StringComparison.OrdinalIgnoreCase))
 				return strDestFileRelPath;	// don't copy files already in internal directory.
 
-			var strFile = Path.GetFileNameWithoutExtension(srcFilename);
-			var strExt = Path.GetExtension(srcFilename);
+			var strFile = Path.GetFileNameWithoutExtension(srcFilenameCorrected);
+			var strExt = Path.GetExtension(srcFilenameCorrected);
 			var iQual = 0;
 			while (FileUtils.FileExists(strDestFileAbsPath))
 			{
@@ -2332,7 +2333,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				strDestFileRelPath = Path.Combine(dstSubdir, strFile + iQual + strExt);
 				strDestFileAbsPath = Path.Combine(DirectoryFinder.FWDataDirectory, strDestFileRelPath);
 			}
-			File.Copy(srcFilename, strDestFileAbsPath);
+			File.Copy(srcFilenameCorrected, strDestFileAbsPath);
 			return strDestFileRelPath;
 		}
 

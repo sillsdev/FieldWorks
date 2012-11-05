@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					if (!String.IsNullOrEmpty(fileName))
 					{
 						string filePath = Path.Combine(DirectoryFinder.ProjectsDirectory, fileName);
-						if (FileUtils.FileExists(filePath))
+						if (FileUtils.TrySimilarFileExists(filePath, out filePath))
 							FileUtils.Delete(filePath);
 					}
 				}
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					}
 				}
 			string bakFile = Path.Combine(m_restoreSettings.ProjectPath, m_restoreSettings.ProjectName) + FwFileExtensions.ksFwDataFallbackFileExtension;
-				if (FileUtils.FileExists(bakFile))
+				if (FileUtils.TrySimilarFileExists(bakFile, out bakFile))
 				{
 					FileUtils.Delete(bakFile); // TODO: do something about the .Lock file.......
 				}
@@ -656,7 +656,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			var newFileName = Path.Combine(restoreDirectory, fileName);
 			//Make sure the directory exists where we are going to create the file.
 			Directory.CreateDirectory(Directory.GetParent(newFileName).ToString());
-			if (FileUtils.FileExists(newFileName))
+			if (FileUtils.TrySimilarFileExists(newFileName, out newFileName))
 			{
 				if ((File.GetAttributes(newFileName) & FileAttributes.ReadOnly) != 0)
 					File.SetAttributes(newFileName, FileAttributes.Normal);

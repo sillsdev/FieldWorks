@@ -85,18 +85,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					foreach (string dir in dirs)
 					{
 						string file = Path.Combine(dir, DirectoryFinder.GetXmlDataFileName(Path.GetFileName(dir)));
-						if (FileUtils.FileExists(file))
+						if (FileUtils.SimilarFileExists(file))
 							m_projectFoundCallback(file);
 						else
 						{
 							string db4oFile = Path.Combine(dir, DirectoryFinder.GetDb4oDataFileName(Path.GetFileName(dir)));
 							//If the db4o file exists it will be added to the list later and therefore we do not want to
 							//show the .bak file to the user in the open project dialog
-							if (!FileUtils.FileExists(db4oFile))
+							if (!FileUtils.SimilarFileExists(db4oFile))
 							{
 								// See if there is a .bak file
 								string backupFile = Path.ChangeExtension(file, FwFileExtensions.ksFwDataFallbackFileExtension);
-								if (FileUtils.FileExists(backupFile))
+								//NOTE: RickM  I think this probably should be changed to TrySimilarFileExists but don't want to try this
+								//on a release build.
+								if (FileUtils.SimilarFileExists(backupFile))
 									m_projectFoundCallback(backupFile);
 							}
 						}

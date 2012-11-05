@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				var estimatedObjectCount = (int)(fileSize/400);
 				m_identityMap.ExpectAdditionalObjects(estimatedObjectCount);
 
-				if (!FileUtils.FileExists(ProjectId.Path))
+				if (!FileUtils.SimilarFileExists(ProjectId.Path))
 					throw new InvalidOperationException("System does not exist.");
 
 				try
