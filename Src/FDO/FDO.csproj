@@ -421,6 +421,9 @@
     <Compile Include="DomainServices\ScrMappingList.cs" />
     <Compile Include="DomainServices\ScrSfFileList.cs" />
     <Compile Include="DomainServices\ScrVerse.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\PartialNameMatchPrioritySearchStrategy.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\SemDomSearchEngine.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\SemDomSearchStrategy.cs" />
     <Compile Include="DomainServices\StringServices.cs" />
     <Compile Include="DomainServices\StTxtParaBldr.cs" />
     <Compile Include="DomainServices\StyleInfoTable.cs" />
@@ -682,6 +685,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
   <PropertyGroup>
