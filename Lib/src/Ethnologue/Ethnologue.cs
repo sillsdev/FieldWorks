@@ -845,43 +845,50 @@ namespace SIL.Ethnologue
 		/// If the installation directory could not be found.
 		/// </exception>
 		/// ------------------------------------------------------------------------------------
-		static public string InstallFolder
+		private static string InstallFolder
 		{
 			get
 			{
 				// This allows FW developers (or any other developer who defines this envioronment
 				// variable) to override the default behavior
-				string defaultDir = Path.Combine(Environment.ExpandEnvironmentVariables(@"%FWROOT%"),
-					"DistFiles");
-				using (var regKey = EthnologueRegistryKey)
+				if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FWROOT")))
 				{
-					string rootDir = (regKey == null) ? null : regKey.GetValue("RootCodeDir", defaultDir) as string;
-					if (rootDir == null)
-						throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
-
-					string path = Path.Combine(rootDir, "Ethnologue");
-					if (!Directory.Exists(path))
-						throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
-					return path;
+					return Path.Combine(Environment.ExpandEnvironmentVariables(@"%FWROOT%"),
+						"DistFiles");
 				}
+
+				string rootDir = RootCodeDir;
+				if (rootDir == null)
+					throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
+
+				string path = Path.Combine(rootDir, "Ethnologue");
+				if (!Directory.Exists(path))
+					throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
+				return path;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the local machine Registry key for FieldWorks.
+		/// Gets the RootCodeDir from registry, either from HKLM if it exists there, or
+		/// otherwise from HKCU.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning a reference")]
-		static public RegistryKey EthnologueRegistryKey
+		private static string RootCodeDir
 		{
 			get
 			{
-				// TODO: Change this when Ethnologue has its own install location.
-				// Note. We don't want to use CreateSubKey here because it will fail on
-				// non-administrator logins. The user doesn't need to modify this setting.
-				return Registry.LocalMachine.OpenSubKey(@"Software\SIL\FieldWorks\7.0");
+				return GetCodeDirFromRegistryKey(Registry.LocalMachine) ??
+					GetCodeDirFromRegistryKey(Registry.CurrentUser);
+			}
+		}
+
+		private static string GetCodeDirFromRegistryKey(RegistryKey key)
+		{
+			// TODO: Change this when Ethnologue has its own install location.
+			// Note. We don't want to use CreateSubKey here because it will fail on
+			// non-administrator logins. The user doesn't need to modify this setting.
+			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\7.0"))
+			{
+				return (regKey == null) ? null : regKey.GetValue("RootCodeDir") as string;
 			}
 		}
 	}
