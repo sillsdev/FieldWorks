@@ -251,8 +251,6 @@ namespace AddConverterDlgTests
 		/// </summary>
 		public override void FixtureTeardown()
 		{
-			base.FixtureTeardown();
-
 			EncConverters encConverters;
 			// Dispose managed resources here.
 			if (m_myCtrl != null)
