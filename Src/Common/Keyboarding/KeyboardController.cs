@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
 #if __MonoCS__
 using SIL.FieldWorks.Views;
 using SIL.FieldWorks.Common.Keyboarding.Linux;
@@ -39,7 +40,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			/// </summary>
 			public static void SetKeyboardAdaptors(IKeyboardAdaptor[] adaptors)
 			{
-				if (SingletonsContainer.Contains<KeyboardControllerImpl>())
+				if (SingletonsContainer.Contains<IKeyboardController>())
 				{
 					// we're modifying an existent KeyboardController.
 					Instance.Keyboards.Clear();
@@ -98,15 +99,15 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		#endregion
 
 		#region Class KeyboardControllerImpl
-		private class KeyboardControllerImpl: IDisposable
+		private class KeyboardControllerImpl: IKeyboardController, IDisposable
 		{
-			internal Dictionary<int, IKeyboardDescription> Keyboards =
-				new Dictionary<int, IKeyboardDescription>();
-			internal IKeyboardEventHandler InternalEventHandler { get; set; }
-			internal IKeyboardMethods InternalMethods { get; set; }
+			public Dictionary<int, IKeyboardDescription> Keyboards { get; private set; }
+			public IKeyboardEventHandler InternalEventHandler { get; set; }
+			public IKeyboardMethods InternalMethods { get; set; }
 
 			public KeyboardControllerImpl()
 			{
+				Keyboards = new Dictionary<int, IKeyboardDescription>();
 			}
 
 			#region Disposable stuff
@@ -226,7 +227,11 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		#endregion
 
 		#region Static methods and properties
-		private static KeyboardControllerImpl Create()
+		/// <summary>
+		/// Create an instance of IKeyboardController. This gets called if SingletonsContainer
+		/// doesn't contain already one.
+		/// </summary>
+		private static IKeyboardController Create()
 		{
 			var controller = new KeyboardControllerImpl();
 			if (Adaptors == null)
@@ -246,7 +251,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// <summary>
 		/// Gets the current keyboard controller singleton.
 		/// </summary>
-		private static KeyboardControllerImpl Instance
+		private static IKeyboardController Instance
 		{
 			get
 			{

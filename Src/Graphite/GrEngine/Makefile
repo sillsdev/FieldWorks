@@ -14,36 +14,35 @@ INCLUDE      = $(FWINCLUDE)
 OUTPUT       = $(FWOUTPUT)
 OUTPUT_COMMON= $(COM_OUT_DIR)
 
-GRE_SRC      = .
-GR_FW_SRC    = $(SRC)/Graphite/FwOnly
-GENERIC_SRC  = $(SRC)/Generic
-GR_LIB_SRC   = $(SRC)/Graphite/lib
+GRAPHITE_SRC = $(SRC)/Graphite
+GR_FW_SRC    = $(GRAPHITE_SRC)/FwOnly
+GR_LIB_SRC   = $(GRAPHITE_SRC)/lib
 GR_LIB_DIR   = $(OBJ_DIR)/$(BUILD_CONFIG)/Graphite/lib
-GR_OPEN_SRC  = $(SRC)/Graphite/OpenSource
-GR_TTFUTIL   = $(SRC)/Graphite/TtfUtil
+GR_OPEN_SRC  = $(GRAPHITE_SRC)/OpenSource
+GR_TTFUTIL   = $(GRAPHITE_SRC)/TtfUtil
 
-TTF_LIB_SRC  = $(SRC)/Graphite/TtfUtil
-VIEW_LIB_SRC = $(SRC)/views/lib
+VIEWS_LIB_SRC = $(VIEWS_SRC)/lib
 
 PACKAGES = silgraphite glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0
 
 DEFINES  += -DGR_FW -DVIEWSDLL
 INCLUDES += \
 	-I$(INCLUDE) \
-	-I$(GRE_SRC) -I$(GENERIC_SRC) -I$(GR_LIB_SRC) \
-	-I$(TTF_LIB_SRC) -I$(VIEW_LIB_SRC) \
+	-I. \
+	-I$(GENERIC_SRC) -I$(GR_LIB_SRC) \
+	-I$(GR_TTFUTIL) -I$(VIEWS_LIB_SRC) \
 	-I$(OUTPUT) -I$(OUTPUT_COMMON) \
-	-I$(LIBRARIES)/Win32More/include \
-	-I$(LIBRARIES)/COM/include \
-	-I$(LIBRARIES)/Win32Base/include \
+	-I$(WIN32MORE_INC) \
+	-I$(COM_INC) \
+	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 	$(shell icu-config --cppflags) \
 
 LDLIBS = \
 	-L$(GENERIC_SRC) -lGeneric \
-	-L$(LIBRARIES)/Win32More/src -lWin32More \
-	-L$(LIBRARIES)/COM/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src -lWin32Base \
+	-L$(WIN32MORE_LIB) -lWin32More \
+	-L$(COM_LIB) -lcom \
+	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
 	-lMagick++ -lMagick -luuid

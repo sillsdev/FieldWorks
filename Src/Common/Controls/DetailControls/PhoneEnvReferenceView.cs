@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml;
@@ -616,6 +617,39 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CacheEnvironments((IMoAffixAllomorph)m_rootObj);
 		}
 
+		/// <returns>
+		/// First matching environment from environmentsHaystack or null if none
+		/// found.
+		/// </returns>
+		private static IPhEnvironment GetEnvironmentFromHvo(
+			IFdoOwningSequence<IPhEnvironment> environmentsHaystack,
+			int hvoPattern)
+		{
+			return environmentsHaystack.FirstOrDefault(env =>
+				env.Hvo == hvoPattern);
+		}
+
+		/// <remarks>
+		/// From local m_sda, not from database
+		/// </remarks>
+		private ITsString GetTsStringOfEnvironment(
+			int localDummyHvoOfAnEnvironmentInEntry)
+		{
+			ITsString environmentTssRep = m_sda.get_StringProp(
+				localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep);
+			return environmentTssRep ?? m_fdoCache.TsStrFactory.MakeString(
+				String.Empty, m_fdoCache.DefaultAnalWs);
+		}
+
+		/// <summary>
+		/// From local m_sda, not from database
+		/// </summary>
+		private string GetStringOfEnvironment(
+			int localDummyHvoOfAnEnvironmentInEntry)
+		{
+			return GetTsStringOfEnvironment(localDummyHvoOfAnEnvironmentInEntry).Text;
+		}
+
 		/// <summary>
 		/// Integrate changes in dummy cache to real cache and DB.
 		/// </summary>
@@ -656,94 +690,120 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_fdoCache.DomainDataByFlid.BeginUndoTask(
 					String.Format(DetailControlsStrings.ksUndoSet, fieldname),
 					String.Format(DetailControlsStrings.ksRedoSet, fieldname));
-				IPhEnvironmentFactory factEnv = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
-				IFdoOwningSequence<IPhEnvironment> phoneEnvs =
+				IPhEnvironmentFactory environmentFactory = m_fdoCache.ServiceLocator.GetInstance<IPhEnvironmentFactory>();
+				IFdoOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
 					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
-				int count = m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments);
-				// We need one less than the size,
-				// because the last 'env' is a dummy that lets the user type a new one.
-				int[] hvos = new int[count - 1];
-				int cvDel = 0;
-				for (int i = hvos.Length - 1; i >= 0; --i)
+
+				// Build list of local dummy hvos of environments in the entry
+				// (including any changes).
+				var envsBeingRequestedForThisEntry = new List<int>();
+				// Last env in local m_sda is a dummy that lets the user type a
+				// new environment
+				const int countOfDummyEnvsForTypingNewEnvs = 1;
+				int countOfThisEntrysEnvironments =
+					m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments) -
+					countOfDummyEnvsForTypingNewEnvs;
+				for (int i = 0; i < countOfThisEntrysEnvironments; i++)
 				{
-					IPhEnvironment env = null;
-					int hvoDummyObj = m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
-					ITsString tss = m_sda.get_StringProp(hvoDummyObj, kEnvStringRep);
-					if (tss == null)
-						tss = m_fdoCache.TsStrFactory.MakeString(String.Empty, m_fdoCache.DefaultAnalWs);
-					ITsStrBldr bldr = tss.GetBldr();
-					string rep = tss.Text;
-					if (rep == null || rep.Trim().Length == 0)
+					int localDummyHvoOfAnEnvironmentInEntry =
+						m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
+
+					// Remove and exclude blank entries
+					string envStringRep = GetStringOfEnvironment(
+						localDummyHvoOfAnEnvironmentInEntry);
+					if (envStringRep == null || envStringRep.Trim().Length == 0)
 					{
-						// The environment at 'i' is being deleted, so
-						// shrink the array of hvos that go into the real cache.
-						cvDel++;
-						m_realEnvs.Remove(hvoDummyObj);
+						m_realEnvs.Remove(localDummyHvoOfAnEnvironmentInEntry);
 						// Remove it from the dummy cache.
 						int oldSelId = m_hvoOldSelection;
-						m_hvoOldSelection = hvoDummyObj;
+						m_hvoOldSelection = localDummyHvoOfAnEnvironmentInEntry;
 						RemoveFromDummyCache(i);
 						m_hvoOldSelection = oldSelId;
+						continue;
 					}
-					else
-					{
-						foreach (IPhEnvironment envCurrent in phoneEnvs)
-						{
-							// Compare them without spaces, since they are not needed.
-							if (envCurrent.StringRepresentation.Text != null &&
-								envCurrent.StringRepresentation.Text.Replace(" ", null) ==
-								rep.Replace(" ", null))
-							{
-								env = envCurrent;
-								// Maybe the ws has changed, so change the real one, in case.
-								env.StringRepresentation = tss;
-								break;
-							}
-						}
-						if (env == null)
-						{
-							env = factEnv.Create();
-							phoneEnvs.Add(env);
-							env.StringRepresentation = tss;
-						}
-						ConstraintFailure failure;
-						if (env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
-							ClearSquigglyLine(hvoDummyObj, ref tss, ref bldr);
-						else
-							MakeSquigglyLine(hvoDummyObj, failure.XmlDescription, ref tss, ref bldr);
-						hvos[i] = env.Hvo;
-						// Refresh
-						m_sda.SetString(hvoDummyObj, kEnvStringRep, bldr.GetString());
-						m_rootb.PropChanged(hvoDummyObj, kEnvStringRep, 0, tss.Length, tss.Length);
-					}
+
+					envsBeingRequestedForThisEntry.Add(
+						localDummyHvoOfAnEnvironmentInEntry);
 				}
-				int[] newHvos = new int[hvos.Length];
-				hvos.CopyTo(newHvos, 0);
-				if (cvDel > 0)
+
+				// Environments just typed into slice that are not already used for
+				// this entry or known about in the project.
+				var newEnvsJustTyped =
+					envsBeingRequestedForThisEntry.Where(localDummyHvoOfAnEnvInEntry =>
+						!allAvailablePhoneEnvironmentsInProject
+							.Select(projectEnv => RemoveSpaces(projectEnv.StringRepresentation.Text))
+							.Contains(RemoveSpaces(GetStringOfEnvironment(localDummyHvoOfAnEnvInEntry))));
+				// Add the unknown/new environments to project
+				foreach (var localDummyHvoOfAnEnvironmentInEntry in
+					newEnvsJustTyped)
 				{
-					newHvos = new int[hvos.Length - cvDel];
-					count = 0;
-					for (int i = 0; i < hvos.Length; ++i)
-					{
-						int tempHvo = hvos[i];
-						if (tempHvo > 0)
-							newHvos[count++] = tempHvo;
-					}
+					ITsString envTssRep = GetTsStringOfEnvironment(
+						localDummyHvoOfAnEnvironmentInEntry);
+					IPhEnvironment newEnv = environmentFactory.Create();
+					allAvailablePhoneEnvironmentsInProject.Add(newEnv);
+					newEnv.StringRepresentation = envTssRep;
 				}
-				count = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
-				// Only reset the main property, if it has changed.
-				// Otherwise, the parser gets too excited about needing to reload.
-				int[] contents;
-				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+
+				var countOfExistingEnvironmentsInDatabaseForEntry =
+					m_fdoCache.DomainDataByFlid.get_VecSize(m_rootObj.Hvo, m_rootFlid);
+				// Contains environments already in entry or recently selected in
+				// dialog, but not ones just typed
+				int[] existingListOfEnvironmentHvosInDatabaseForEntry;
+				int chvoMax = m_fdoCache.DomainDataByFlid.get_VecSize(
+					m_rootObj.Hvo, m_rootFlid);
 				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
 				{
 					m_fdoCache.DomainDataByFlid.VecProp(m_rootObj.Hvo, m_rootFlid, chvoMax, out chvoMax, arrayPtr);
-					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
+					existingListOfEnvironmentHvosInDatabaseForEntry = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
 				}
-				if ((count != newHvos.Length)
-					|| !equalArrays(contents, newHvos))
+
+				// Build up a list of real hvos used in database for the
+				// environments in the entry
+				var newListOfEnvironmentHvosForEntry = new List<int>();
+				foreach (var localDummyHvoOfAnEnvironmentInEntry in
+					envsBeingRequestedForThisEntry)
 				{
-					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0, count, newHvos, newHvos.Length);
+					ITsString envTssRep = GetTsStringOfEnvironment(
+						localDummyHvoOfAnEnvironmentInEntry);
+					string envStringRep = envTssRep.Text;
+
+					// Pick a sensible environment from the known environments in
+					// the project, by string
+					IPhEnvironment anEnvironmentInEntry = FindPhoneEnv(
+						allAvailablePhoneEnvironmentsInProject, envStringRep,
+						newListOfEnvironmentHvosForEntry.ToArray(),
+						existingListOfEnvironmentHvosInDatabaseForEntry);
+
+					// Maybe the ws has changed, so change the real env in database,
+					// in case.
+					anEnvironmentInEntry.StringRepresentation = envTssRep;
+
+					ITsStrBldr bldr = envTssRep.GetBldr();
+					ConstraintFailure failure;
+					if (anEnvironmentInEntry.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, false, out failure, true))
+						ClearSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, ref envTssRep, ref bldr);
+					else
+						MakeSquigglyLine(localDummyHvoOfAnEnvironmentInEntry, failure.XmlDescription, ref envTssRep, ref bldr);
+
+					newListOfEnvironmentHvosForEntry.Add(anEnvironmentInEntry.Hvo);
+
+					// Refresh
+					m_sda.SetString(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, bldr.GetString());
+					m_rootb.PropChanged(localDummyHvoOfAnEnvironmentInEntry, kEnvStringRep, 0,
+						envTssRep.Length, envTssRep.Length);
+				}
+
+				// Only reset the main property, if it has changed.
+				// Otherwise, the parser gets too excited about needing to reload.
+				if ((countOfExistingEnvironmentsInDatabaseForEntry !=
+					newListOfEnvironmentHvosForEntry.Count()) ||
+					!equalArrays(existingListOfEnvironmentHvosInDatabaseForEntry,
+						newListOfEnvironmentHvosForEntry.ToArray()))
+				{
+					m_fdoCache.DomainDataByFlid.Replace(m_rootObj.Hvo, m_rootFlid, 0,
+						countOfExistingEnvironmentsInDatabaseForEntry,
+						newListOfEnvironmentHvosForEntry.ToArray(),
+						newListOfEnvironmentHvosForEntry.Count());
 				}
 				m_fdoCache.DomainDataByFlid.EndUndoTask();
 			}
@@ -755,6 +815,66 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					wc = null;
 				}
 			}
+		}
+
+		private static string RemoveSpaces(string s)
+		{
+			if (s == null)
+				return null;
+			return s.Replace(" ", null);
+		}
+
+		private static bool EqualsIgnoringSpaces(string a, string b)
+		{
+			if (a == null || b == null)
+				return false;
+			return RemoveSpaces(a) == RemoveSpaces(b);
+		}
+
+		/// <summary>
+		/// Find an environment in allProjectEnvs of string representation
+		/// environmentPattern. Prefer to find a match that is in preferredHvos
+		/// (such as hvos used before recent editing) and not in alreadyUsedHvos
+		/// (hvos already used in slice).
+		/// Preferring matching a hvo used before recent editing helps the
+		/// Environments dialog behave more sensibly in the case of multiple
+		/// items with the same string representation. (eg FWNX-822)
+		/// </summary>
+		private static IPhEnvironment FindPhoneEnv(
+			IFdoOwningSequence<IPhEnvironment> allProjectEnvs,
+			string environmentPattern, int[] alreadyUsedHvos,
+			int[] preferredHvos)
+		{
+			// Try to find a match in the preferred set that isn't already used
+			var preferredMatches = preferredHvos.Where(preferredHvo =>
+				EqualsIgnoringSpaces(
+					GetEnvironmentFromHvo(allProjectEnvs, preferredHvo)
+						.StringRepresentation.Text,
+					environmentPattern));
+			if (preferredMatches.Count() > 0)
+			{
+				var unusedPreferred = preferredMatches.Except(alreadyUsedHvos);
+				if (unusedPreferred.Count() > 0)
+					return GetEnvironmentFromHvo(allProjectEnvs,
+						unusedPreferred.First());
+			}
+
+			// Broaden where we look to all project environments
+			var anyMatches = allProjectEnvs.Where(env =>
+				EqualsIgnoringSpaces(
+					env.StringRepresentation.Text,
+					environmentPattern));
+			if (anyMatches.Count() == 0)
+				return null; // Shouldn't happen if adding envs new to project ahead of time.
+
+			// Try to return a match that isn't already used.
+			var unused = anyMatches.Select(env => env.Hvo).Except(alreadyUsedHvos);
+
+			if (unused.Count() > 0)
+				return GetEnvironmentFromHvo(allProjectEnvs, unused.First());
+
+			// Just re-use an env
+			return anyMatches.First();
 		}
 
 		/// <summary>

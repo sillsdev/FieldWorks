@@ -6,13 +6,6 @@ include $(BUILD_ROOT)/Bld/_init.mak.lnx
 OUTPUT  = $(FWOUTPUT)
 INCLUDE = $(FWINCLUDE)
 
-VIEWS_SRC      = .
-VIEWS_LIB_SRC  = lib
-
-KERNEL_SRC     = $(SRC)/Kernel
-GENERIC_SRC    = $(SRC)/Generic
-DEBUGPROCS_SRC = $(SRC)/DebugProcs
-APPCORE_SRC    = $(SRC)/AppCore
 COMMONDLGS_SRC = $(SRC)/CommonCOMDlgs
 GRENG_LIB_SRC  = $(SRC)/Graphite/lib
 GRFW_SRC       = $(SRC)/Graphite/FwOnly
@@ -31,20 +24,21 @@ endif
 
 INCLUDES := \
 	$(shell icu-config --cppflags) \
-	-I$(VIEWS_SRC) -I$(VIEWS_LIB_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC)\
+	-I. \
+	-I$(VIEWS_LIB_SRC) -I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
 	-I$(COMMONDLGS_SRC) -I$(GRENG_LIB_SRC) -I$(GRFW_SRC) \
 	-I$(TLB_SRC) -I$(INCLUDE) \
-	-I$(LIBRARIES)/Win32More/include \
-	-I$(LIBRARIES)/COM/include \
-	-I$(LIBRARIES)/Win32Base/include \
+	-I$(WIN32MORE_INC) \
+	-I$(COM_INC) \
+	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 
 LDLIBS := \
 	-L$(OUT_DIR) -lGeneric -lAppCore $(DEBUG_LIBS) \
-	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
-	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(WIN32MORE_LIB) -lWin32More \
+	-L$(COM_LIB) -lcom \
+	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	$(shell icu-config --ldflags) \
 
@@ -114,7 +108,7 @@ VWG_OBJS = \
 
 all: $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so $(COM_OUT_DIR)/libViewsTlb.a ComponentsMap link_check
 
-$(OUT_DIR)/libViews.so: $(OBJS) $(OUT_DIR)/libGeneric.a $(OUT_DIR)/libDebugProcs.a $(LIBRARIES)/Win32More/src/build$(ARCH)/libWin32More.a  $(LIBRARIES)/Win32Base/src/build$(ARCH)/libWin32Base.a $(OUT_DIR)/libAppCore.a $(LINK_LIBS)
+$(OUT_DIR)/libViews.so: $(OBJS) $(OUT_DIR)/libGeneric.a $(OUT_DIR)/libDebugProcs.a $(WIN32MORE_LIB)/libWin32More.a  $(WIN32BASE_LIB)/libWin32Base.a $(OUT_DIR)/libAppCore.a $(LINK_LIBS)
 	$(LINK.cc) -shared -o $@ $^ $(LDLIBS)
 
 $(OUT_DIR)/libVwGraphics.so: $(VWG_OBJS) $(LINK_LIBS) $(OUT_DIR)/libGeneric.a $(OUT_DIR)/libDebugProcs.a
@@ -139,30 +133,20 @@ ComponentsMap: $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so
 $(OBJS): $(PCHNAME)
 
 $(OUT_DIR)/libAppCore.a:
-	@$(MAKE) -C $(SRC)/$(APPCORE_NAME)/ -q all || \
-	 $(MAKE) -C $(SRC)/$(APPCORE_NAME)/
-
+	@$(MAKE) -C $(APPCORE_SRC)/ -q all || \
+	 $(MAKE) -C $(APPCORE_SRC)/
 
 $(OUT_DIR)/libGeneric.a:
-	@$(MAKE) -C $(SRC)/$(GENERIC_NAME)/ -q all || \
-	 $(MAKE) -C $(SRC)/$(GENERIC_NAME)/
+	@$(MAKE) -C $(GENERIC_SRC)/ -q all || \
+	 $(MAKE) -C $(GENERIC_SRC)/
 
 $(GENERIC_OBJ)/main.o:
-	@$(MAKE) -C $(SRC)/$(GENERIC_NAME)/ -q $@ || \
-	 $(MAKE) -C $(SRC)/$(GENERIC_NAME)/ $@
+	@$(MAKE) -C $(GENERIC_SRC)/ -q $@ || \
+	 $(MAKE) -C $(GENERIC_SRC)/ $@
 
 $(OUT_DIR)/libDebugProcs.a:
-	@$(MAKE) -C $(SRC)/$(DEBUGPROCS_NAME)/ -q all || \
-	 $(MAKE) -C $(SRC)/$(DEBUGPROCS_NAME)/
-
-$(LIBRARIES)/Win32More/src/libWin32More.a:
-	@$(MAKE) -C $(BUILD_ROOT) -q libWin32More.a || \
-	 $(MAKE) -C $(BUILD_ROOT) libWin32More.a
-
-$(LIBRARIES)/Win32Base/src/libWin32Base.a:
-	@$(MAKE) -C $(BUILD_ROOT) -q libWin32Base.a || \
-	 $(MAKE) -C $(BUILD_ROOT) libWin32Base.a
-
+	@$(MAKE) -C $(DEBUGPROCS_SRC)/ -q all || \
+	 $(MAKE) -C $(DEBUGPROCS_SRC)/
 
 -include $(PCHNAME:%.gch=%.d)
 -include $(OBJ_ALL:%.o=%.d)

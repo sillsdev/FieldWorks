@@ -99,3 +99,7 @@ Src/FDO/IOC/Generated*.cs
 /Src/DebugProcs/libDebugProcs
 /Src/Generic/libGeneric
 /Src/Language/libLanguage
+
+DistFiles/ReleaseData/
+# Locally configurable project to run FieldWorks
+/RunFieldWorks.csproj
