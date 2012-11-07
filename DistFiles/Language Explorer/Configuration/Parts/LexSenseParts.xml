@@ -411,7 +411,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-SemanticDomains" type="Detail">
-			<slice field="SemanticDomains" label="Semantic Domains" editor="possVectorReference"
+			<slice field="SemanticDomains" label="Semantic Domains" editor="SemDomVectorReference"
 				menu="mnuDataTree-Help">
 				<deParams displayProperty="AbbrAndNameTSS" ws="best analysis" />
 				<chooserInfo>

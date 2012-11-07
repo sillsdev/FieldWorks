@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
@@ -150,7 +151,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected FlowLayoutPanel m_checkBoxPanel;
 		private CheckBox m_displayUsageCheckBox;
+		/// <summary>
+		/// Used for searching Semantic Domains
+		/// </summary>
+		protected FwTextBox m_textSearch;
+
+		private bool m_displayTextSearchBox = false;
 		private ToolStripButton m_printButton;
+
+		/// <summary>
+		/// Used to redisplay the entire list that was passed in on constructing this dialog. Semantic Domains
+		/// searching will sometimes need to reuse this list for speed of display.
+		/// </summary>
+		protected IEnumerable<ObjectLabel> m_originalLabels;
 
 		/// <summary>
 		/// Check to see if the object has been disposed.
@@ -2000,6 +2013,7 @@ namespace SIL.FieldWorks.Common.Controls
 			this.m_lblExplanation = new System.Windows.Forms.Label();
 			this.buttonHelp = new System.Windows.Forms.Button();
 			this.m_mainPanel = new System.Windows.Forms.Panel();
+			this.m_textSearch = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.m_viewPanel = new System.Windows.Forms.Panel();
 			this.m_viewExtrasPanel = new System.Windows.Forms.Panel();
 			this.m_ctrlClickLabel = new System.Windows.Forms.Label();
@@ -2013,12 +2027,14 @@ namespace SIL.FieldWorks.Common.Controls
 			((System.ComponentModel.ISupportInitialize)(this.m_picboxLink2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_picboxLink1)).BeginInit();
 			this.m_mainPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_textSearch)).BeginInit();
 			this.m_viewPanel.SuspendLayout();
 			this.m_viewExtrasPanel.SuspendLayout();
 			this.m_checkBoxPanel.SuspendLayout();
 			this.m_link2Panel.SuspendLayout();
 			this.m_link1Panel.SuspendLayout();
 			this.m_buttonPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_splitContainer)).BeginInit();
 			this.m_splitContainer.Panel1.SuspendLayout();
 			this.m_splitContainer.SuspendLayout();
 			this.SuspendLayout();
@@ -2044,11 +2060,11 @@ namespace SIL.FieldWorks.Common.Controls
 			this.m_labelsTreeView.HideSelection = false;
 			this.m_labelsTreeView.Name = "m_labelsTreeView";
 			this.m_labelsTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-			((System.Windows.Forms.TreeNode)(resources.GetObject("m_labelsTreeView.Nodes"))),
-			((System.Windows.Forms.TreeNode)(resources.GetObject("m_labelsTreeView.Nodes1")))});
+				((System.Windows.Forms.TreeNode)(resources.GetObject("m_labelsTreeView.Nodes"))),
+				((System.Windows.Forms.TreeNode)(resources.GetObject("m_labelsTreeView.Nodes1")))});
 			this.m_labelsTreeView.ShowLines = false;
-			this.m_labelsTreeView.DoubleClick += new System.EventHandler(this.m_labelsTreeView_DoubleClick);
 			this.m_labelsTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.m_labelsTreeView_AfterSelect);
+			this.m_labelsTreeView.DoubleClick += new System.EventHandler(this.m_labelsTreeView_DoubleClick);
 			//
 			// m_lblLink2
 			//
@@ -2103,6 +2119,7 @@ namespace SIL.FieldWorks.Common.Controls
 			//
 			// m_mainPanel
 			//
+			this.m_mainPanel.Controls.Add(this.m_textSearch);
 			this.m_mainPanel.Controls.Add(this.m_viewPanel);
 			this.m_mainPanel.Controls.Add(this.m_viewExtrasPanel);
 			this.m_mainPanel.Controls.Add(this.m_checkBoxPanel);
@@ -2112,6 +2129,18 @@ namespace SIL.FieldWorks.Common.Controls
 			this.m_mainPanel.Controls.Add(this.m_buttonPanel);
 			resources.ApplyResources(this.m_mainPanel, "m_mainPanel");
 			this.m_mainPanel.Name = "m_mainPanel";
+			//
+			// m_textSearch
+			//
+			this.m_textSearch.AcceptsReturn = false;
+			this.m_textSearch.AdjustStringHeight = true;
+			this.m_textSearch.BackColor = System.Drawing.SystemColors.Window;
+			this.m_textSearch.controlID = null;
+			resources.ApplyResources(this.m_textSearch, "m_textSearch");
+			this.m_textSearch.HasBorder = true;
+			this.m_textSearch.Name = "m_textSearch";
+			this.m_textSearch.SuppressEnter = false;
+			this.m_textSearch.WordWrap = false;
 			//
 			// m_viewPanel
 			//
@@ -2201,18 +2230,21 @@ namespace SIL.FieldWorks.Common.Controls
 			((System.ComponentModel.ISupportInitialize)(this.m_picboxLink1)).EndInit();
 			this.m_mainPanel.ResumeLayout(false);
 			this.m_mainPanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.m_textSearch)).EndInit();
 			this.m_viewPanel.ResumeLayout(false);
 			this.m_viewExtrasPanel.ResumeLayout(false);
 			this.m_viewExtrasPanel.PerformLayout();
 			this.m_checkBoxPanel.ResumeLayout(false);
 			this.m_checkBoxPanel.PerformLayout();
 			this.m_link2Panel.ResumeLayout(false);
+			this.m_link2Panel.PerformLayout();
 			this.m_link1Panel.ResumeLayout(false);
+			this.m_link1Panel.PerformLayout();
 			this.m_buttonPanel.ResumeLayout(false);
 			this.m_splitContainer.Panel1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.m_splitContainer)).EndInit();
 			this.m_splitContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
-
 		}
 		#endregion
 
@@ -2958,6 +2990,38 @@ namespace SIL.FieldWorks.Common.Controls
 					return m_chosenLabel.Object;
 #endif
 				return null;
+			}
+		}
+
+
+		/// <summary>
+		/// Use for when displaying semantic domains.
+		/// </summary>
+		public string DisplayWs  {get; set; }
+
+		/// <summary>
+		/// Used to display or hide the Semantic Domains Search text box
+		/// </summary>
+		public bool DisplayTextSearchBox
+		{
+			get { return m_displayTextSearchBox; }
+			set
+			{
+				m_displayTextSearchBox = value;
+				if (value == true)
+				{
+					m_textSearch.Enabled = true;
+					m_textSearch.Visible = true;
+					if (String.IsNullOrEmpty(m_lblExplanation.Text))
+					{
+						InstructionalText = "   ";
+					}
+				}
+				else
+				{
+					m_textSearch.Enabled = true;
+					m_textSearch.Visible = true;
+				}
 			}
 		}
 

@@ -150,6 +150,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						}
 						break;
 					}
+				case "semdomvectorreference":
+					{
+						var prvSlice = reuseMap.GetSliceToReuse("SemanticDomainReferenceVectorSlice") as SemanticDomainReferenceVectorSlice;
+						if (prvSlice == null)
+							slice = new SemanticDomainReferenceVectorSlice(cache, obj, flid);
+						else
+						{
+							slice = prvSlice;
+							prvSlice.Reuse(obj, flid);
+						}
+						break;
+					}
 				case "string":
 				{
 					if (flid == 0)
