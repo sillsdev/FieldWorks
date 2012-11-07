@@ -644,16 +644,18 @@ namespace TestViews
 
 			// First match should be from 0 to 3
 			int ichMin, ichLim;
+			CheckHr(m_qpat->put_MatchDiacritics(false));	// This is set true by default.
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
-			unitpp::assert_eq("Found 'Änd' at start", 0, ichMin);
-			unitpp::assert_eq("End of 'Änd' at start", 3, ichLim);
+			unitpp::assert_eq("Found 'Änd' at start (ignoring diacritics)", 0, ichMin);
+			unitpp::assert_eq("End of 'Änd' at start (ignoring diacritics)", 3, ichLim);
 
 			// ...but not match requiring diacritics to match
 			CheckHr(m_qpat->put_MatchDiacritics(true));
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
-			unitpp::assert_eq("Found 'Änd' at start, match diacritics", kichoffsetofAnd, ichMin);
+			unitpp::assert_eq("Skipped 'Änd' at start (match diacritics)", kichoffsetofAnd, ichMin);
 
 			// ...still not if we have to match case
+			CheckHr(m_qpat->put_MatchDiacritics(false));
 			CheckHr(m_qpat->put_MatchCase(true));
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
 			unitpp::assert_eq("Skipped 'Änd' at start, match case", kichoffsetofAnd, ichMin);
@@ -770,6 +772,7 @@ namespace TestViews
 			unitpp::assert_eq("2nd canonical find end", 12, ichLim);
 
 			// Matching writing systems we still succeed, because we're ignoring diacritics.
+			CheckHr(m_qpat->put_MatchDiacritics(false));	// This is set true by default.
 			CheckHr(m_qpat->put_MatchOldWritingSystem(true));
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
 			unitpp::assert_eq("First canonical find start, ws", 2, ichMin);
@@ -1237,6 +1240,7 @@ namespace TestViews
 			//unitpp::assert_eq("End of A-diaresis equals AE", 6, ichLim);
 #endif
 
+			CheckHr(m_qpat->put_MatchDiacritics(false));	// This is set true by default.
 			// Should also work with pattern normalized.
 			stuPattern = StrUni(L"A" COMBINING_DIAERESIS);
 			CheckHr(m_qtsf->MakeString(stuPattern.Bstr(), g_wsEng, &qtssPattern));
@@ -1392,6 +1396,7 @@ namespace TestViews
 				CheckHr(m_qtsf->MakeString(stuPattern.Bstr(), g_wsEng, &qtssPattern));
 				CheckHr(m_qpat->putref_Pattern(qtssPattern));
 
+				CheckHr(m_qpat->put_MatchDiacritics(false));	// This is set true by default.
 				// OK, test data set up. Now try some tests...
 				CheckHr(m_qpat->Find(qrootb, true, NULL));
 				ComBool fFound;
