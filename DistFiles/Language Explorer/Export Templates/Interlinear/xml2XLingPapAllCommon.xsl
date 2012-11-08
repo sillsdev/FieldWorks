@@ -1,6 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 	<!-- This stylesheet contains the common components for XLingPap output  -->
+
+	<xsl:template match="interlinear-text">
+	<xsl:variable name="sScriptureType">
+		<xsl:variable name="sTitle" select="item[@type='title']"/>
+		<xsl:variable name="iPreviousInterlinearTexts" select="count(preceding-sibling::interlinear-text)"/>
+		<xsl:choose>
+			<xsl:when test="substring($sTitle,string-length($sTitle)-6)='(Title)'">
+<!--                <xsl:value-of select="$iPreviousInterlinearTexts"/>-->
+				<!-- assume this is a Scripture title -->
+				<xsl:text>Title</xsl:text>
+			</xsl:when>
+			<xsl:when test="substring($sTitle,string-length($sTitle)-8)='(Heading)'">
+<!--                <xsl:value-of select="$iPreviousInterlinearTexts"/>-->
+				<!-- assume this is a Scripture subtitle -->
+				<xsl:text>Subtitle</xsl:text>
+			</xsl:when>
+			<xsl:when test="contains($sTitle,'Footnote(')">
+<!--                <xsl:value-of select="$iPreviousInterlinearTexts"/>-->
+				<!-- assume this is a Scripture footnote -->
+				<xsl:text>Footnote</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<!-- it's something else, so use nothing -->
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+		<xsl:apply-templates>
+			<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+		</xsl:apply-templates>
+	</xsl:template>
+	<xsl:template match="paragraph">
+		<xsl:param name="sScriptureType"/>
+		<xsl:apply-templates>
+			<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+		</xsl:apply-templates>
+	</xsl:template>
+	<xsl:template match="paragraphs">
+		<xsl:param name="sScriptureType"/>
+		<xsl:apply-templates>
+			<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+		</xsl:apply-templates>
+	</xsl:template>
+	<xsl:template match="phrases">
+		<xsl:param name="sScriptureType"/>
+		<xsl:apply-templates>
+			<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+		</xsl:apply-templates>
+	</xsl:template>
+	<xsl:template match="phrase[count(item)=0]">
+		<!-- skip these -->
+	</xsl:template>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		CommonTypes
@@ -74,5 +125,51 @@
 		</xsl:choose>
 		</xsl:attribute>
 	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputLanguageElements
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputLanguageElements">
+		<xsl:for-each select="//interlinear-text[1]/languages/language">
+			<xsl:variable name="sLangId" select="@lang"/>
+			<xsl:if test="//item[@lang=$sLangId]">
+				<language id="{@lang}" font-family="{@font}">
+					<xsl:if test="@vernacular='true'">
+						<xsl:attribute name="name">vernacular</xsl:attribute>
+					</xsl:if>
+				</language>
+			</xsl:if>
+		</xsl:for-each>
+
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputLevelContent
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputLevelContent">
+		<xsl:param name="sScriptureType"/>
+		<xsl:if test="item[@type='segnum']">
+			<xsl:choose>
+				<xsl:when test="string-length($sScriptureType) &gt; 0">
+					<xsl:value-of select="$sScriptureType"/>
+					<xsl:if test="$sScriptureType='Footnote'">
+						<xsl:text>.</xsl:text>
+						<xsl:value-of select="item[@type='segnum']"/>
+					</xsl:if>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="item[@type='segnum']"/>
+<!--                    <xsl:apply-templates select="item[@type='segnum']" mode="ReplaceColon"/>-->
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
+	</xsl:template>
+	<!--<xsl:template match="text()[contains(.,':')]" mode="ReplaceColon">
+		<xsl:value-of select="substring-before(.,':')"/>
+		<xsl:text>___ReplaceWithColon___</xsl:text>
+		<xsl:value-of select="substring-after(.,':')"/>
+	</xsl:template>-->
 	<xsl:include href="MorphTypeGuids.xsl"/>
 </xsl:stylesheet>

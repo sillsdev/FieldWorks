@@ -90,7 +90,7 @@ Elements to ignore or are handled elsewhere
 					 <xsl:with-param name="sLang" select="$sLang"/>
 				  </xsl:call-template>
 			   </xsl:when>
-			   <xsl:when test="parent::morph">
+			   <xsl:when test="parent::morph[count(preceding-sibling::morph)=0]">
 				  <!-- morphemes -->
 				  <xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
 					 <xsl:with-param name="sType" select="'txt'"/>

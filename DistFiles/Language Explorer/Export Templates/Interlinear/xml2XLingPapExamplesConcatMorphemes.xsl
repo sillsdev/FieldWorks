@@ -25,7 +25,7 @@ Main template
    <xsl:template match="document">
 	  <!-- output dtd path -->
 	  <xsl:text disable-output-escaping="yes">&#xa;&#x3c;!DOCTYPE lingPaper PUBLIC   "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd"&#x3e;&#xa;</xsl:text>
-	  <lingPaper>
+	  <lingPaper automaticallywrapinterlinears="yes">
 		 <frontMatter>
 			<title>
 			   <xsl:choose>
@@ -57,16 +57,7 @@ Main template
 			<references/>
 		 </backMatter>
 		 <languages>
-			<xsl:for-each select="//language">
-			   <xsl:variable name="sLangId" select="@lang"/>
-			   <xsl:if test="//item[@lang=$sLangId]">
-				  <language id="{@lang}" font-family="{@font}">
-					 <xsl:if test="@vernacular='true'">
-						<xsl:attribute name="name">vernacular</xsl:attribute>
-					 </xsl:if>
-				  </language>
-			   </xsl:if>
-			</xsl:for-each>
+			<xsl:call-template name="OutputLanguageElements"/>
 		 </languages>
 		 <types>
 			<xsl:call-template name="CommonTypes"/>
@@ -82,16 +73,25 @@ phrase
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
    <xsl:template match="phrase">
+	  <xsl:param name="sScriptureType"/>
 	  <xsl:variable name="sLevel">
-		 <xsl:if test="item[@type='segnum']">
-			<xsl:value-of select="item[@type='segnum']"/>
-		 </xsl:if>
+		 <xsl:call-template name="OutputLevelContent">
+			<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+		 </xsl:call-template>
+	  </xsl:variable>
+	  <xsl:variable name="sThisTextId">
+		 <!-- we really need something from the DB or some such.  Am trying this in hopes it will be unique in most cases -->
+		 <xsl:for-each select="../phrase[position()=last()]">
+			<!--                <xsl:if test="position()=last()">-->
+			<xsl:value-of select="generate-id()"/>
+			<!--                </xsl:if>-->
+		 </xsl:for-each>
 	  </xsl:variable>
 	  <p>
 		 <xsl:text>paragraph </xsl:text>
 		 <xsl:value-of select="$sLevel"/>
 	  </p>
-	  <example num="x{$sLevel}">
+	  <example num="x{$sThisTextId}-{translate($sLevel,':','.')}">
 		 <interlinear>
 			<xsl:call-template name="OutputInterlinearContent"/>
 		 </interlinear>
