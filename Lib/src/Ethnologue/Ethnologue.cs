@@ -870,15 +870,15 @@ namespace SIL.Ethnologue
 		}
 
 		/// <summary>
-		/// Gets the RootCodeDir from registry, either from HKLM if it exists there, or
-		/// otherwise from HKCU.
+		/// Gets the RootCodeDir from registry, either from HKCU if it exists there, or
+		/// otherwise from HKLM.
 		/// </summary>
 		private static string RootCodeDir
 		{
 			get
 			{
-				return GetCodeDirFromRegistryKey(Registry.LocalMachine) ??
-					GetCodeDirFromRegistryKey(Registry.CurrentUser);
+				return GetCodeDirFromRegistryKey(Registry.CurrentUser) ??
+					GetCodeDirFromRegistryKey(Registry.LocalMachine);
 			}
 		}
 
