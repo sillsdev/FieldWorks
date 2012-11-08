@@ -310,6 +310,15 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary>
+		/// Set true currently only for classified dictionary, to allow entries to indent from domain headings.
+		/// Used in WriteParaStyleInfoToCss, it controls how paragraph styles are exported in WriteParaStyleInfoToCss.
+		/// A comment there says that LT-12658 calls for suppressing indentation inside paragraphs (entries).
+		/// This is not obvious to me (JohnT) reading the issue, but I wanted to change things minimally
+		/// so added this property which is set only for the new export style.
+		/// </summary>
+		public bool AllowDictionaryParagraphIndent { get; set; }
+
+		/// <summary>
 		/// Write a Cascading Style Sheet file based on the layouts accumulated in
 		/// m_dictCssXnode and the given stylesheet.
 		/// </summary>
@@ -1712,7 +1721,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		private void WriteParaStyleInfoToCss(ExportStyleInfo esi)
 		{
-			WriteParaStyleInfoToCss(esi, false);
+			WriteParaStyleInfoToCss(esi, AllowDictionaryParagraphIndent);
 		}
 
 		private void WriteParaStyleInfoToCss(ExportStyleInfo esi, bool hangingIndent)

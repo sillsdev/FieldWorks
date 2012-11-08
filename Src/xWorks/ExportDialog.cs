@@ -83,7 +83,8 @@ namespace SIL.FieldWorks.XWorks
 			kftTranslatedLists = 3,
 			kftPathway = 4,
 			kftLift = 5,
-			kftGrammarSketch
+			kftGrammarSketch,
+			kftClassifiedDict
 		}
 		// ReSharper restore InconsistentNaming
 		protected struct FxtType
@@ -232,6 +233,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				hvoRoot = m_cache.LanguageProject.LexDbOA.Hvo;
 				clidRoot = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			}
+			else if (cmo is ICmSemanticDomain)
+			{
+				hvoRoot = cmo.OwnerOfClass<ICmPossibilityList>().Hvo;
+				clidRoot = CmPossibilityListTags.kClassId;
 			}
 			else if (cmo.Owner != null)
 			{
@@ -452,6 +458,12 @@ namespace SIL.FieldWorks.XWorks
 						break;
 					case FxtTypes.kftReversal:
 						tool = "reversalToolEditComplete";
+						break;
+					case FxtTypes.kftClassifiedDict:
+						// Should match the tool in DistFiles/Language Explorer/Configuration/RDE/toolConfiguration.xml, the value attribute in
+						// <tool label="Classified Dictionary" value="lexiconClassifiedDictionary" icon="DocumentView">.
+						// We use this to create that tool and base this export on its objects and saved configuration.
+						tool = "lexiconClassifiedDictionary";
 						break;
 					case FxtTypes.kftGrammarSketch:
 						area = "grammar";
@@ -694,6 +706,7 @@ namespace SIL.FieldWorks.XWorks
 								break;
 							case FxtTypes.kftConfigured:
 							case FxtTypes.kftReversal:
+							case FxtTypes.kftClassifiedDict:
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = m_seqView.ObjectCount;
 								progressDlg.AllowCancel = true;
@@ -963,7 +976,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				if (ft.m_sFormat.ToLowerInvariant() == "xhtml")
-					m_ce.WriteCssFile(Path.ChangeExtension(outPath, ".css"), vss);
+				{
+					m_ce.WriteCssFile(Path.ChangeExtension(outPath, ".css"), vss, AllowDictionaryParagraphIndent(ft));
+				}
 				m_ce = null;
 #if DEBUG
 				File.Copy(outPath, Path.Combine(dirPath, "DebugOnlyExportStage" + copyCount + ".txt"), true);
@@ -974,6 +989,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			return null;
+		}
+
+		// Currently we allow indented paragraph styles only for classified dictionary.
+		// See the comment on XhtmlHelper.AllowDictionaryParagraphIndent for more info.
+		private static bool AllowDictionaryParagraphIndent(FxtType ft)
+		{
+			return ft.m_ft == FxtTypes.kftClassifiedDict;
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)
@@ -1106,6 +1128,9 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "configured":
 					ft.m_ft = FxtTypes.kftConfigured;
+					break;
+				case "classified":
+					ft.m_ft = FxtTypes.kftClassifiedDict;
 					break;
 				case "reversal":
 					ft.m_ft = FxtTypes.kftReversal;
