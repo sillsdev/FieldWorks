@@ -226,7 +226,7 @@
 	<item id="CmdHelpDemoLexRel">Example of specifying a lexical relation.</item>
 	<item id="CmdHelpDemoSubentry">Example of specifying a derivative.</item>
 	<item id="CmdHelpDemoMinor">Example of specifying a variant.</item>
-	<item id="CmdHelpDemoCategorized">Example of using Categorized Entry.</item>
+	<item id="CmdHelpDemoCategorized">Example of using Rapid Words.</item>
 	<item id="CmdHelpDemoBulkList">Example of using Bulk Edit List Choice.</item>
 	<item id="CmdHelpDemoBulkCopy">Example of using Bulk Edit Bulk Copy.</item>
 	<item id="CmdHelpDemoBulkClick">Example of using Bulk Edit Click Copy.</item>

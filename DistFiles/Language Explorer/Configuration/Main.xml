@@ -281,7 +281,7 @@
 		<command id="CmdHelpDemoMinor" label="_Minor entry (variant)" message="HelpDemoMovies">
 			<parameters file="12-minor"/>
 		</command>
-		<command id="CmdHelpDemoCategorized" label="_Categorized entry" message="HelpDemoMovies">
+		<command id="CmdHelpDemoCategorized" label="_Rapid Words" message="HelpDemoMovies">
 			<parameters file="13-categorized"/>
 		</command>
 		<command id="CmdHelpDemoBulkList" label="_Bulk Edit (list choice)" message="HelpDemoMovies">

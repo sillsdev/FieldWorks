@@ -18,7 +18,7 @@
 		</clerk>
 	</clerks>
 	<tools>
-		<tool label="Categorized Entry" value="rapidDataEntry" icon="BrowseView">
+		<tool label="Rapid Words" value="rapidDataEntry" icon="BrowseView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 				<parameters id="SemanticDomainList" PaneBarGroupId="PaneBar-ShowHiddenFields-rapidDataEntry">
