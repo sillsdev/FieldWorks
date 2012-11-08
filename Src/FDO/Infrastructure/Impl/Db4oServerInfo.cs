@@ -390,31 +390,23 @@ namespace FwRemoteDatabaseConnector
 		/// Gets a value indicating whether projects are shared.
 		/// </summary>
 		/// <remarks>Internal method to facilitate testing. Tests can't use public setter
-		/// because that would actually do the conversion.</remarks>
+		/// because that would actually do the conversion. Since this value is used only
+		/// temporarily during a test, there is no point in trying to set it on HKLM;
+		/// that only causes confusion if tests are sometimes run with admin privilege
+		/// and sometimes not.</remarks>
 		/// ------------------------------------------------------------------------------------
 		internal static bool AreProjectsShared_Internal
 		{
 			get
 			{
 				bool result;
-				var value = FwRegistryHelper.FieldWorksRegistryKey.GetValue(ksSharedProjectKey, null) ??
-							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue(ksSharedProjectKey, "false");
+				var value = FwRegistryHelper.FieldWorksRegistryKey.GetValue(ksSharedProjectKey, "false");
 				return (bool.TryParse((string)value, out result) && result);
 			}
 			set
 			{
-				try
-				{
-					using(var key = FwRegistryHelper.FieldWorksRegistryKeyLocalMachineForWriting)
-					{
-						key.SetValue(ksSharedProjectKey, value);
-					}
-				}
-				catch(UnauthorizedAccessException)
-				{
 					FwRegistryHelper.FieldWorksRegistryKey.SetValue(
 						ksSharedProjectKey, value);
-				}
 			}
 		}
 
