@@ -328,8 +328,9 @@ namespace FwBuildTasks
 			{
 				case "FwCoreDlgsTests":		// ~122 sec
 				case "xWorksTests":			// ~138 sec
-				case "FDOTests":			// ~143 sec
 					return 240000;
+				case "FDOTests":			// ~143 sec
+					return 360000;
 				case "DiffViewTests":		// ~55 sec
 				case "MGATests":			// ~72 sec
 				case "TeDllTests":			// ~76 sec
