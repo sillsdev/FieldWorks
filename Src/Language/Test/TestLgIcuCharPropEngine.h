@@ -161,7 +161,7 @@ namespace TestLanguage
 			StrAnsi staMsg;
 			HRESULT hr;
 			LgGeneralCharCategory ccT;
-			LgBidiCategory bicT;
+			//LgBidiCategory bicT;
 			SmartBstr sbstr;
 			StrAnsi sta;
 			int chT;
