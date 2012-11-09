@@ -837,8 +837,8 @@ namespace SIL.Ethnologue
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the directory where the Ethnologue was installed, or the Ethnologue sub-folder
-		/// of the FWROOT environment variable, if it hasn't been installed.
+		/// Gets the directory where the Ethnologue was installed, or the DistFiles/Ethnologue
+		/// sub-folder of the FWROOT environment variable, if it hasn't been installed.
 		/// Will not return null.
 		/// </summary>
 		/// <exception cref="ApplicationException">
@@ -849,18 +849,19 @@ namespace SIL.Ethnologue
 		{
 			get
 			{
-				// This allows FW developers (or any other developer who defines this envioronment
+				// This allows FW developers (or any other developer who defines this environment
 				// variable) to override the default behavior
-				if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FWROOT")))
+				string rootDir = Environment.GetEnvironmentVariable("FWROOT");
+				if (!String.IsNullOrEmpty(rootDir))
 				{
-					return Path.Combine(Environment.ExpandEnvironmentVariables(@"%FWROOT%"),
-						"DistFiles");
+					rootDir = Path.Combine(rootDir, "DistFiles");
 				}
-
-				string rootDir = RootCodeDir;
-				if (rootDir == null)
-					throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
-
+				else
+				{
+					rootDir = RootCodeDir;
+					if (rootDir == null)
+						throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
+				}
 				string path = Path.Combine(rootDir, "Ethnologue");
 				if (!Directory.Exists(path))
 					throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
