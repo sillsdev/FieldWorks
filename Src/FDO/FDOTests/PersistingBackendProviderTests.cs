@@ -621,10 +621,12 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "CorruptedXMLFileTest.fwdata");
 
-			var xmlBep = new MockXMLBackendProvider(Cache, projName);
-			// Should throw an XMLException, but this will be caught and because there's
-			// no .bak file, an FwStartupException will be thrown instead.
-			xmlBep.Startup();
+			using (var xmlBep = new MockXMLBackendProvider(Cache, projName))
+			{
+				// Should throw an XMLException, but this will be caught and because there's
+				// no .bak file, an FwStartupException will be thrown instead.
+				xmlBep.Startup();
+			}
 		}
 
 		/// <summary>
@@ -637,10 +639,12 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "SlightlyCorruptedXMLFile.fwdata");
 
-			var xmlBep = new MockXMLBackendProvider(Cache, projName);
-			// Should not throw an XMLException. The code that detects a corrupt file shouldn't
-			// care about an extra character or two at the end of the file after the last tag.
-			xmlBep.Startup();
+			using (var xmlBep = new MockXMLBackendProvider(Cache, projName))
+			{
+				// Should not throw an XMLException. The code that detects a corrupt file shouldn't
+				// care about an extra character or two at the end of the file after the last tag.
+				xmlBep.Startup();
+			}
 		}
 	}
 
