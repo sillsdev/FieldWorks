@@ -203,8 +203,10 @@ namespace FwBuildTasks
 					// independence of xCore from a particular adapter, and (b) for some bizarre historical reason, the project that
 					// builds FlexUIAdapter.dll is called XCoreAdapterSilSidePane. We may eventually get around to fixing the latter
 					// problem and decide to sacrifice the independence of xCore, but for now, it's simplest to patch the target generation.
-					if (project == "xWorksTests")
+					else if (project == "xWorksTests")
 						bldr.Append(";XCoreAdapterSilSidePane");
+					else if (project == "TeImportExportTests")
+						bldr.Append(";ScrChecks");
 					var dependencies = m_mapProjDepends[project];
 					dependencies.Sort();
 					foreach (var dep in dependencies)
