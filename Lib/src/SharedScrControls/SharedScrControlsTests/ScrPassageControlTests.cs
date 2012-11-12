@@ -437,6 +437,7 @@ namespace SILUBS.SharedScrControls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void ResolveReferenceOnLoseFocus()
 		{
 			m_ctrlOwner.Visible = true;
@@ -452,6 +453,7 @@ namespace SILUBS.SharedScrControls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void TextAllSelectedOnFocus()
 		{
 			m_ctrlOwner.Visible = true;

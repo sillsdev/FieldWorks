@@ -818,6 +818,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void LastTextBoxInFocus()
 		{
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, true, false,
