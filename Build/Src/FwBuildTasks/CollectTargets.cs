@@ -195,18 +195,28 @@ namespace FwBuildTasks
 					writer.Write("\t<Target Name=\"{0}\"", project);
 					var bldr = new StringBuilder();
 					bldr.Append("Initialize");	// ensure the output directories and version files exist.
-					if (project == "COMInterfaces")
-						bldr.Append(";mktlbs");
-					// The xWorksTests require us to have built on of the adapters, typically FlexUIAdapter.dll.
-					// However, we don't discover that dependency, because it is invoked by reflection (in xCore) and neither xWorks
-					// nor xCore references it. Nor can we fix it by adding a reference, because (a) this would break the aimed-for
-					// independence of xCore from a particular adapter, and (b) for some bizarre historical reason, the project that
-					// builds FlexUIAdapter.dll is called XCoreAdapterSilSidePane. We may eventually get around to fixing the latter
-					// problem and decide to sacrifice the independence of xCore, but for now, it's simplest to patch the target generation.
-					else if (project == "xWorksTests")
-						bldr.Append(";XCoreAdapterSilSidePane");
-					else if (project == "TeImportExportTests")
-						bldr.Append(";ScrChecks");
+					switch (project)
+					{
+						case "COMInterfaces":
+							bldr.Append(";mktlbs");
+							break;
+						case "xWorksTests":
+							// The xWorksTests require us to have built on of the adapters, typically FlexUIAdapter.dll.
+							// However, we don't discover that dependency, because it is invoked by reflection (in xCore) and neither xWorks
+							// nor xCore references it. Nor can we fix it by adding a reference, because (a) this would break the aimed-for
+							// independence of xCore from a particular adapter, and (b) for some bizarre historical reason, the project that
+							// builds FlexUIAdapter.dll is called XCoreAdapterSilSidePane. We may eventually get around to fixing the latter
+							// problem and decide to sacrifice the independence of xCore, but for now, it's simplest to patch the target generation.
+							bldr.Append(";XCoreAdapterSilSidePane");
+							break;
+						case "TeImportExportTests":
+							// The TeImportExportTests require that the ScrChecks.dll is in DistFiles/Editorial Checks.
+							// We don't discover that dependency because it's not a reference (LT-13777).
+							bldr.Append(";ScrChecks");
+							break;
+						default:
+							break;
+					}
 					var dependencies = m_mapProjDepends[project];
 					dependencies.Sort();
 					foreach (var dep in dependencies)
