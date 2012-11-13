@@ -445,6 +445,64 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.That(yellow.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("yellowCf"), "merge should fill in missing CF");
 		}
 
+		/// <summary>
+		/// Check the method for merging RDE senses, specifically how it handles non-key fields.
+		/// </summary>
+		[Test]
+		public void RdeMerge_ExtraFields()
+		{
+			ICmSemanticDomainFactory factSemDom = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>();
+			ICmSemanticDomain semDom1 = factSemDom.Create();
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(semDom1);
+			ICmSemanticDomain semDom2 = factSemDom.Create();
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(semDom2);
+			ICmSemanticDomain semDom3 = factSemDom.Create();
+			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(semDom3);
+			List<XmlNode> columns = new List<XmlNode>();
+
+			// Create a LexEntry LE1 (cf "red" gloss "rot" in D1, with bibliographic data).
+			// Attempt to merge it and verify that it survives.
+
+			ILexEntry red = MakeLexEntry("red", "", "rot", "", semDom1);
+
+			// After creating similar entry in another domain with same info, should merge.
+			var red2 = MakeLexEntry("red", "", "rot", "", semDom2);
+			red2.Bibliography.set_String(Cache.DefaultAnalWs, "found in my dictionary");
+			red2.SensesOS[0].SemanticsNote.set_String(Cache.DefaultVernWs, "color of a stop light");
+			red2.SensesOS[0].ScientificName = MakeAnalysisString("R=255,G=0,B=0");
+			var ex1 = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
+			red2.SensesOS[0].ExamplesOS.Add(ex1);
+			bool fSenseDeleted = RunMergeSense(columns, red2);
+			Assert.IsTrue(fSenseDeleted, "Merging red/rot with matching lf/gloss should merge and delete new sense");
+			Assert.IsFalse(IsRealLexEntry(red2), "Merging with red/rot with matching lf/gloss should delete entry");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom1), "Merging should not remove old semantic domain");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom2), "Merging should add new semantic domain");
+			Assert.That(red.Bibliography.AnalysisDefaultWritingSystem.Text, Is.EqualTo("found in my dictionary"), "merge should copy bibliography");
+			Assert.That(red.SensesOS[0].SemanticsNote.VernacularDefaultWritingSystem.Text, Is.EqualTo("color of a stop light"), "merge should copy semantics note");
+			Assert.That(red.SensesOS[0].ScientificName.Text, Is.EqualTo("R=255,G=0,B=0"), "merge should copy scientific name");
+			Assert.That(red.SensesOS[0].ExamplesOS, Has.Member(ex1), "merge should move example");
+
+			// Another similar entry should merge, adding to the bibliography.
+			var red3 = MakeLexEntry("red", "", "rot", "", semDom3);
+			red3.Bibliography.set_String(Cache.DefaultAnalWs, "learned at mother's knee");
+			red3.SensesOS[0].SemanticsNote.set_String(Cache.DefaultVernWs, "color of danger");
+			red3.SensesOS[0].ScientificName = MakeAnalysisString("C=0, M=100, Y=100, K=0");
+			var ex2 = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>().Create();
+			red3.SensesOS[0].ExamplesOS.Add(ex2);
+			fSenseDeleted = RunMergeSense(columns, red3);
+			Assert.IsTrue(fSenseDeleted,
+				"Merging red/rot with matching lf/gloss and new defn should merge and delete new sense");
+			Assert.IsFalse(IsRealLexEntry(red3), "Merging with red/rot with matching lf/gloss and new defn should delete entry");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom1), "Merging should not remove old semantic domain");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom2), "Merging should not remove old semantic domain");
+			Assert.IsTrue(red.SensesOS[0].SemanticDomainsRC.Contains(semDom3), "Merging should add new semantic domain");
+			Assert.That(red.Bibliography.AnalysisDefaultWritingSystem.Text, Is.EqualTo("found in my dictionary; learned at mother's knee"), "merge should append bibliography");
+			Assert.That(red.SensesOS[0].SemanticsNote.VernacularDefaultWritingSystem.Text, Is.EqualTo("color of a stop light; color of danger"), "merge should append semantics note");
+			Assert.That(red.SensesOS[0].ScientificName.Text, Is.EqualTo("R=255,G=0,B=0; C=0, M=100, Y=100, K=0"), "merge should append scientific name");
+			Assert.That(red.SensesOS[0].ExamplesOS, Has.Member(ex1), "merge should leave original example");
+			Assert.That(red.SensesOS[0].ExamplesOS, Has.Member(ex2), "merge should move second example");
+		}
+
 		private bool RunMergeSense(List<XmlNode> columns, ILexEntry entry)
 		{
 			var sense = entry.SensesOS[0];
@@ -543,7 +601,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
 			var mySd = MakeSemanticDomain();
-			var nodes = MakeNodeList(new string[] { "Word (Lexeme Form)", "Meaning (Definition)" });
+			var nodes = MakeNodeList(new string[] { "Word (Lexeme Form)", "Meaning (Definition)" }, false);
 			ITsString[] data = new ITsString[] {MakeVernString("kick"), MakeAnalysisString("strike with foot")};
 
 			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, Cache, null);
@@ -561,7 +619,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
 			var mySd = MakeSemanticDomain();
-			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" });
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
 			ITsString[] data = new ITsString[] { MakeVernString("kick"), MakeAnalysisString("strike with foot") };
 
 			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, Cache, null);
@@ -584,7 +642,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 		{
 			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
 			var mySd = MakeSemanticDomain();
-			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Word (Lexeme Form)", "Meaning (Gloss)", "Meaning (Definition)"});
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Word (Lexeme Form)", "Meaning (Gloss)", "Meaning (Definition)"}, false);
 			ITsString[] data = new ITsString[] { MakeVernString("kick"), MakeVernString("kickL"),
 				MakeAnalysisString("strike with foot"), MakeAnalysisString("strike sharply with foot") };
 
@@ -601,7 +659,75 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.EqualTo(morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem)));
 		}
 
-		private List<XmlNode> MakeNodeList(string[] labels)
+		/// <summary>
+		/// Test that we can make a new sense where there is a non-editable column.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_NonEditColumn()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)"}, false);
+			nodes.AddRange(MakeNodeList(new string[] {"Morph Type"}, true));
+			ITsString[] data = new ITsString[] { MakeVernString("kick"),
+				MakeAnalysisString("strike with foot"), Cache.TsStrFactory.EmptyString(Cache.DefaultAnalWs)};
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, Cache, null);
+
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("kick"));
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("strike with foot"));
+		}
+
+		/// <summary>
+		/// Test that we can make a new sense where there is a column specifying a transduce
+		/// like LexEntry.Bibliography. Covers all four allowed classes with multistring fields
+		/// and the special case for LexSense of a plain string property.
+		/// </summary>
+		[Test]
+		public void RDENewSense_Handles_LexEditTransduce()
+		{
+			var senseFactory = Cache.ServiceLocator.GetInstance<LexSenseFactory>();
+			var mySd = MakeSemanticDomain();
+			var nodes = MakeNodeList(new string[] { "Word (Citation Form)", "Meaning (Gloss)" }, false);
+			var transduceList = MakeNodeList(new string[] {"Bibliograph", "Semantic", "Scientific", "Example", "Reference", "Translation"}, false);
+			nodes.AddRange(transduceList);
+
+			// First merge tests case where old value is empty.
+			XmlUtils.SetAttribute(transduceList[0], "transduce", "LexEntry.Bibliography");
+			XmlUtils.SetAttribute(transduceList[1], "transduce", "LexSense.SemanticsNote");
+			XmlUtils.SetAttribute(transduceList[2], "transduce", "LexSense.ScientificName");
+			XmlUtils.SetAttribute(transduceList[3], "transduce", "LexExampleSentence.Example");
+			XmlUtils.SetAttribute(transduceList[4], "transduce", "LexExampleSentence.Reference");
+			XmlUtils.SetAttribute(transduceList[5], "transduce", "CmTranslation.Translation");
+			ITsString[] data = new ITsString[] { MakeVernString("kick"),
+				MakeAnalysisString("strike with foot"), MakeAnalysisString("see Encycopledia under football"), MakeVernString("used for a forceful motion"),
+				MakeAnalysisString("kickS"), MakeVernString("kick the ball"), MakeAnalysisString("my head"), MakeAnalysisString("strike the ball with your foot")};
+
+			int hvoSense = senseFactory.RDENewSense(mySd.Hvo, nodes, data, Cache, null);
+
+			// Second merge tests case where the old objects have data.
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+			var entry = (ILexEntry)sense.Owner;
+			Assert.That(entry.CitationForm.VernacularDefaultWritingSystem.Text, Is.EqualTo("kick"));
+			Assert.That(entry.HomographNumber, Is.EqualTo(0)); // sneaking this in to save making another whole test
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("strike with foot"));
+			Assert.That(entry.Bibliography.AnalysisDefaultWritingSystem.Text, Is.EqualTo("see Encycopledia under football"));
+			Assert.That(entry.SensesOS[0].SemanticsNote.VernacularDefaultWritingSystem.Text, Is.EqualTo("used for a forceful motion"));
+			Assert.That(entry.SensesOS[0].ScientificName.Text, Is.EqualTo("kickS"));
+			Assert.That(entry.SensesOS[0].ExamplesOS.ToArray()[0].Example.VernacularDefaultWritingSystem.Text, Is.EqualTo("kick the ball"));
+			Assert.That(entry.SensesOS[0].ExamplesOS.ToArray()[0].Reference.Text, Is.EqualTo("my head"));
+			Assert.That(entry.SensesOS[0].ExamplesOS.ToArray()[0].TranslationsOC.ToArray()[0].Translation.AnalysisDefaultWritingSystem.Text,
+				Is.EqualTo("strike the ball with your foot"));
+
+			// enhance: could possibly test
+			// - case where translation field comes before example field
+			// - writing systems other than the default
+			// However the current implementation does not take any different code paths for these cases.
+		}
+
+		private List<XmlNode> MakeNodeList(string[] labels, bool editable)
 		{
 			var doc = new XmlDocument();
 			var result = new List<XmlNode>();
@@ -609,6 +735,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			{
 				var node = doc.CreateElement("column");
 				XmlUtils.SetAttribute(node, "label", item);
+				if (!editable)
+					XmlUtils.SetAttribute(node, "editable", "false");
 				result.Add(node);
 			}
 			return result;

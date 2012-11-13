@@ -163,7 +163,7 @@ namespace XCore
 				string elementKey = overrideNode.Name;
 				string firstAttributeKey = overrideNode.Attributes[0].Name;
 				string firstAttributeValue = overrideNode.Attributes[0].Value;
-				string xPathToModifyElement = String.Format("//{0}[@{1}='{2}']", elementKey, firstAttributeKey, firstAttributeValue);
+				string xPathToModifyElement = String.Format(".//{0}[@{1}='{2}']", elementKey, firstAttributeKey, firstAttributeValue);
 				XmlNode elementToModify = parentNode.SelectSingleNode(xPathToModifyElement);
 				Debug.Assert(elementToModify != null && elementToModify != overrideNode, "Could not find included node '" + xPathToModifyElement + "' to apply override");
 				if (elementToModify != null && elementToModify != overrideNode)

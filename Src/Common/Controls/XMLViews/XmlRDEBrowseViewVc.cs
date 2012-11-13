@@ -378,7 +378,12 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				return (int)RGB(Color.FromKnownColor(KnownColor.Window));
 			}
-			return (int)RGB(SystemColors.ControlLight);
+			return NoEditBackgroundColor;
+		}
+
+		private static int NoEditBackgroundColor
+		{
+			get { return (int)RGB(SystemColors.ControlLight); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -445,6 +450,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			XmlNode node = m_columns[i - 1];
 			// Make a cell and embed an editable virtual string for the column.
+			var editable = XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
+			if (!editable)
+				vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NoEditBackgroundColor);
 			vwenv.OpenTableCell(1, 1);
 			int flid = XMLViewsDataCache.ktagEditColumnBase + i;
 			int ws = WritingSystemServices.GetWritingSystem(m_cache, node, null,
@@ -462,7 +470,7 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.OpenParagraph();
 			vwenv.set_IntProperty((int)FwTextPropType.ktptEditable,
 				(int)FwTextPropVar.ktpvEnum,
-				(int)TptEditable.ktptIsEditable);
+				editable ? (int)TptEditable.ktptIsEditable : (int)TptEditable.ktptNotEditable);
 			vwenv.AddStringAltMember(flid, ws, this);
 			vwenv.CloseParagraph();
 			vwenv.CloseTableCell();

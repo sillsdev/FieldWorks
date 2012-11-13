@@ -37,7 +37,7 @@
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
 								<parameters id="wordList" clerk="RDEwords" filterBar="false" forceReloadListOnInitOrChangeRoot="true" editRowModelClass="LexSense" editRowAssembly="FDO.dll" editRowClass="SIL.FieldWorks.FDO.ILexSense" editRowSaveMethod="RDENewSense" editRowMergeMethod="RDEMergeSense" ShowOwnerShortname="true" TitleFormat="Words for {0}" treeBarAvailability="Required">
 									<!-- Note that currently the labels of these columns are known to LexSenseFactory.RDENewSense-->
-									<columns>
+									<columns generate="childPartsForParentLayouts">
 										<column label="Word (Citation Form)" width="40%" ws="$ws=vernacular" visibility="always">
 											<obj class="LexSense" field="OwningEntry" layout="empty">
 												<string field="CitationForm" ws="vernacular"/>
@@ -56,6 +56,113 @@
 										<column label="Meaning (Definition)" width="60%" ws="$ws=analysis" visibility="menu">
 											<string class="LexSense" field="Definition" ws="analysis"/>
 										</column>
+										<column layout="MorphTypeForEntry" label="Morph Type" visibility="dialog" editable="false"/>
+										<column layout="PublishAsHeadword" multipara="true" label="Show As Headword In" width="72000"
+											displayNameProperty="ShortNameTSS"
+											displayWs="best analysis" visibility="dialog" editable="false"/>
+										<column layout="GrammaticalInfoFullForSense" headerlabel="Grammatical Info." label="Grammatical Info. (Full)" multipara="true"
+												width="72000" visibility="dialog" editable="false"/>
+										<column layout="GrammaticalInfoAbbrForSense" headerlabel="Grammatical Info." chooserFilter="external"
+												label="Grammatical Info. (Abbr.)" multipara="true"  width="72000" visibility="dialog" editable="false"/>
+										<column layout="GrammaticalCategoryForSense" label="Grammatical Category" multipara="true" visibility="dialog"
+												width="72000" editable="false"/>
+										<column layout="ReversalEntriesForSense" editLayout ="ReversalEntriesForSenseEdit" label="Reversals" multipara="true"
+											  ws="$ws=analysis" visibility="dialog" editable="false"/>
+										<column layout="IsAbstractFormForEntry" label="Is Abstract Form" visibility="dialog"
+												items="0:no;1:yes" blankPossible="false" sortType="YesNo" editable="false"/>
+
+										<column layout="InflectionClassForStem" label="Inflection Classes (Stem)" multipara="true"
+												visibility="dialog" displayWs="best analysis" editable="false"/>
+										<column layout="InflectionFeaturesForSense" label="Inflection Features" multipara="true" width="25%"
+											bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis"/>
+										<column layout="ExceptionFeatures" label="Exception 'Features'" multipara="true" width="25%"
+											editable="false" visibility="dialog" displayWs="best analysis"/>
+										<column layout="DomainsOfSensesForSense" label="Semantic Domains" width="72000" multipara="true" visibility="dialog"
+											displayNameProperty="AbbrAndNameTSS" editable="false"/>
+										<column layout="NumberOfSensesForEntry" label="Number of Senses (Entry)" sortType="integer" blankPossible="false" visibility="dialog" editable="false"/>
+										<column layout="EtymologyGloss" label="Etymology - Gloss"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+										<column layout="EtymologySource" label="Etymology - Source"  multipara="true" editable="false" visibility="dialog" />
+										<column layout="EtymologyForm" label="Etymology - Form"  multipara="true" ws="$ws=vernacular" editable="false" visibility="dialog" />
+										<column layout="EtymologyComment" label="Etymology - Comment"  multipara="true" ws="$ws=analysis" editable="false" visibility="dialog" />
+										<column layout="BibliographyForEntry" label="Bibliography (Entry)" transduce="LexEntry.Bibliography" ws="$ws=analysis" visibility="dialog"/>
+										<column layout="LiteralMeaningForEntry" label="Literal Meaning" transduce="LexEntry.LiteralMeaning" ws="$ws=analysis" visibility="dialog"/>
+										<column layout="NoteForEntry" label="Note" transduce="LexEntry.Comment" ws="$ws=analysis" visibility="dialog"/>
+										<column layout="RestrictionsForEntry" label="Restrictions (Entry)" transduce="LexEntry.Restrictions" ws="$ws=analysis" visibility="dialog"/>
+										<column layout="DateCreatedForEntry" label="Date Created"  sortType="date" blankPossible="false" visibility="dialog" editable="false"/>
+										<column layout="DateModifiedForEntry" label="Date Modified" sortType="date" blankPossible="false" visibility="dialog" editable="false"/>
+										<column layout="Pronunciation" label="Pronunciations" multipara="true" editable="false" ws="$ws=vernacular"
+											cansortbylength="true" visibility="dialog"/>
+										<column layout="CVPattern" label="CV Patterns" multipara="true" editable="false" ws="$ws=pronunciation"
+											cansortbylength="true" visibility="dialog"/>
+										<column layout="Tone" label="Tones" multipara="true" editable="false" ws="$ws=pronunciation"
+												cansortbylength="true" visibility="dialog"/>
+										<column layout="Location" label="Locations" multipara="true" visibility="dialog" editable="false"/>
+										<column layout="SummaryDefinitionForEntry" label="Summary Definition" transduce="LexEntry.SummaryDefinition" ws="$ws=analysis" visibility="dialog"/>
+										<column layout="PictureCaptionForSense" label="Picture-Caption" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular analysis" />
+										<column layout="PictureFileNameForSense" label="Picture-FileName"  multipara="true" editable="false" visibility="dialog" />
+										<column layout="ScientificNameForSense" label="Scientific Names" multipara="true" ws="$ws=analysis" transduce="LexSense.ScientificName" visibility="dialog" />
+										<column layout="DiscourseNoteForSense" label="Discourse Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.DiscourseNote" visibility="dialog" />
+										<column layout="AnthropologyNoteForSense" label="Anthropology Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.AnthroNote" visibility="dialog" />
+										<column layout="BibliographyForSense" label="Bibliography (Sense)" multipara="true" ws="$ws=analysis" transduce="LexSense.Bibliography" visibility="dialog" />
+										<column layout="EncyclopedicInfoForSense" label="Encyclopedic Info" multipara="true" ws="$ws=analysis" transduce="LexSense.EncyclopedicInfo" visibility="dialog" />
+										<column layout="GeneralNoteForSense" label="General Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.GeneralNote" visibility="dialog" />
+										<column layout="GrammarNoteForSense" label="Grammar Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.GrammarNote" visibility="dialog" />
+										<column layout="PhonologyNoteForSense" label="Phonology Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.PhonologyNote" visibility="dialog" />
+										<column layout="RestrictionsForSense" label="Restrictions (Sense)" multipara="true" ws="$ws=analysis" transduce="LexSense.Restrictions" visibility="dialog" />
+										<column layout="SemanticsNoteForSense"  label="Semantics Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.SemanticsNote" visibility="dialog" />
+										<column layout="SociolinguisticsNoteForSense"  label="Sociolinguistics Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.SocioLinguisticsNote" visibility="dialog" />
+										<column layout="SourceForSense"  label="Sources" ws="$ws=analysis" multipara="true" transduce="LexSense.Source" visibility="dialog" />
+										<column layout="UsagesForSense" label="Usages" multipara="true" displayWs="best analysis" displayNameProperty="ShortNameTSS"
+											visibility="dialog" editable="false"/>
+										<column layout="SenseTypeForSense" label="Sense Type" multipara="true" editable="false"	visibility="dialog" />
+										<column layout="AcademicDomainsForSense" label="Academic Domains" multipara="true"
+												displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog" editable="false"/>
+										<column layout="AnthropologyCategoriesForSense" label="Anthropology Categories" multipara="true"
+												displayNameProperty="AbbrAndNameTSS" visibility="dialog" editable="false"/>
+										<column layout="StatusForSense" label="Status" multipara="true"
+												editable="false" visibility="dialog"/>
+										<column layout="ImportResidueEntry" label="Import Residue (Entry)" ws="$ws=analysis" transduce="LexEntry.ImportResidue" visibility="dialog" />
+										<column layout="ImportResidueSense" label="Import Residue (Sense)" multipara="true" ws="$ws=analysis" transduce="LexSense.ImportResidue" visibility="dialog"/>
+										<column layout="Allomorph" ws="$ws=vernacular" multipara="true" label="Allomorphs" sortmethod="MorphSortKey"
+												cansortbylength="true" visibility="dialog" editable="false"/>
+										<column layout="IsAbstractFormForAllomorph" multipara="true" label="Is Abstract Form (Allomorph)" visibility="dialog" sortType="YesNo"
+												items="0:no;1:yes" editable="false"/>
+										<column layout="MorphTypeForAllomorph" multipara="true" label="Morph Type (Allomorph)" visibility="dialog" editable="false"/>
+										<column layout="EnvironmentsForLexemeForm" multipara="true" label="Environments" visibility="dialog" editable="false"/>
+										<column layout="EnvironmentsForAllomorphs" multipara="true" label="Environments (Allomorph)" visibility="dialog" editable="false"/>
+										<column layout="PublishInForEntries" multipara="true" label="Publish In (Entry)" width="72000"
+												displayNameProperty="ShortNameTSS"	displayWs="best analysis" visibility="dialog" editable="false"/>
+										<column layout="PublishInForSenses" multipara="true" label="Publish In (Sense)" width="72000"
+												displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog" editable="false"/>
+										<column layout="PublishInForExamples" multipara="true" label="Publish In (Example)" width="72000"
+												displayNameProperty="ShortNameTSS" displayWs="best analysis" visibility="dialog" editable="false"/>
+										<column layout="InflectionClassForAffix" label="Inflection Classes (Affix)" multipara="true" editable="false"
+												visibility="dialog" displayWs="best analysis"/>
+										<column layout="RequiredFeatures" multipara="true" label="Required Features (Allomorph)" visibility="dialog" editable="false"/>
+										<column layout="HomographNumberForEntry" label="Homograph number" visibility="dialog" editable="false" sortType="integer" blankPossible="false" />
+										<column layout="ComponentsBrowse" label="Components" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+										<column layout="PrimaryLexemesBrowse" label="Subentry under" multipara="true" editable="false"  visibility="dialog" />
+										<column layout="ComplexEntryTypesBrowse" ws="$ws=best analysis" label="Complex Form Types" multipara="true" editable="false"  visibility="dialog"
+												displayNameProperty="ShortNameTSS" displayWs="analysis"/>
+										<column layout="ShowMinorEntryBrowse" label="Show Minor Entry" visibility="dialog" sortType="YesNo" multipara="true"
+												items="0:no;1:yes" blankPossible="yes" editable="false"/>
+										<column layout="ComplexFormsBrowse" label="Complex Forms" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+										<column layout="ComponentLexemesBrowse" label="Variant of" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+										<column layout="VariantEntryTypesBrowse" ws="$ws=best analysis" label="Variant Types" multipara="true" editable="false" visibility="dialog"
+												displayNameProperty="ShortNameTSS" displayWs="analysis"/>
+										<column layout="VariantsBrowse" label="Variants" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
+										<column layout="CrossReferencesForEntry"  label="Cross References" multipara="true" editable="false" visibility="dialog"/>
+										<column layout="LexicalRelationsForSense" label="Lexical Relations" multipara="true" editable="false" visibility="dialog"/>
+										<column layout="Example" ws="$ws=vernacular" label="Example Sentences" multipara="true" editable="true" visibility="dialog"
+											transduce="LexExampleSentence.Example" />
+										<column layout="ExampleReference" ws="$ws=analysis" label="Example References" multipara="true" editable="true" visibility="dialog"
+											transduce="LexExampleSentence.Reference" />
+										<column layout="ExampleTranslation" ws="$ws=analysis" label="Example Translations" multipara="true" editable="true" visibility="dialog"
+											transduce="CmTranslation.Translation" />
+										<column layout="ExampleTranslationType" label="Example Translation Types" multipara="true" visibility="dialog" editable="false"/>
+										<column layout="StemNameForEntry" label="Stem Name" visibility="dialog" editable="false"/>
+										<column layout="EntryAnalysesCount" label="Number of Text Analyses (Entry)" sortType="integer" blankPossible="false" visibility="dialog" editable="false"/>
+										<column layout="SenseAnalysesCount" label="Number of Text Analyses (Sense)" multipara="true" sortType="integer" blankPossible="false" visibility="dialog" editable="false"/>
 									</columns>
 								</parameters>
 							</control>

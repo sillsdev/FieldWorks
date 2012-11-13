@@ -28,6 +28,7 @@ using System.Xml; // XMLWriter
 using System.Drawing;
 
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -1854,9 +1855,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// when we merge one homograph into another of the same form:
 			if (oldHf == newHf && oldType1 == newType1)
 			{
-				// Just make sure the new homograph numbers are correct:
+				// Just make sure the new homograph numbers are correct; 'this' should be part of the set.
 				for (int i = 0; i < newHomographs.Count; i++)
-					newHomographs[i].HomographNumber = i + 1;
+					newHomographs[i].HomographNumber = (newHomographs.Count == 1 ? 0 : i + 1);
 				return;
 			}
 
@@ -3657,6 +3658,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// that has the same LF, we want to merge the two. In this case we expect to be called
 		/// in turn for all of these senses, so to simplify, the one with the smallest HVO
 		/// is kept and the others merged.
+		///
+		/// If Entries or senses are merged, non-key string fields are concatenated.
 		/// </summary>
 		/// <param name="hvoDomain"></param>
 		/// <param name="columns">List of XmlNode objects</param>
@@ -3704,7 +3707,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 									MorphoSyntaxAnalysisRA = newMsa;
 									// Copy any extra fields the user filled in here that the target doesn't have.
 									// Do this BEFORE we move it and lose track of the source!
-									CopyMissingFieldsToEntry(leSaved);
+									CopyExtraFieldsToEntry(leSaved);
 									// Move it to the new owner.
 									leSaved.SensesOS.Add(this);
 									// delete the entry.
@@ -3886,8 +3889,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						if (lexS.Gloss.get_String(ws).Length == 0)
 							lexS.Gloss.set_String(ws, Gloss.get_String(ws));
 					}
+					TransferExtraFieldsToSense(lexS);
 					var entry = ((LexSense) lexS).OwningEntry;
-					CopyMissingFieldsToEntry(entry);
+					CopyExtraFieldsToEntry(entry);
 					fGotExactMatch = true;
 				}
 			}
@@ -3895,11 +3899,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Copy to this entry any alternatives of our own owning entry's citation form or LexemeForm.Form
-		/// which are empty on the destination entry.
+		/// Copy to sense any multistring or string fields other than gloss and definition; or append if already non-empty.
+		/// Move any examples from this to sense.
+		/// </summary>
+		/// <param name="sense"></param>
+		private void TransferExtraFieldsToSense(ILexSense sense)
+		{
+			var sda = Cache.DomainDataByFlid as ISilDataAccessManaged;
+			var flids = (Cache.MetaDataCacheAccessor as FdoMetaDataCache).GetFields(LexSenseTags.kClassId, true, (int)CellarPropertyTypeFilter.AllMulti)
+					.Except(new int[] { LexSenseTags.kflidGloss, LexSenseTags.kflidDefinition });
+			CopyMergeMultiStringFields(sense.Hvo, flids, Hvo, sda);
+			foreach (var flid in ((FdoMetaDataCache)Cache.MetaDataCacheAccessor).GetFields(LexSenseTags.kClassId, true, (int)CellarPropertyTypeFilter.String))
+			{
+				var src = sda.get_StringProp(Hvo, flid);
+				if (src.Length == 0)
+					continue;
+				sda.SetString(sense.Hvo, flid, CombineStrings(src, sda.get_StringProp(sense.Hvo, flid)));
+			}
+			foreach (var example in ExamplesOS.ToArray()) // ToArray in case modifying messes up foreach
+				sense.ExamplesOS.Add(example);
+		}
+
+		/// <summary>
+		/// Copy to entry any alternatives of our own owning entry's citation form or LexemeForm.Form
+		/// which are empty on the destination entry. For any other multistring fields of the entry, copy or append.
 		/// </summary>
 		/// <param name="entry"></param>
-		private void CopyMissingFieldsToEntry(ILexEntry entry)
+		private void CopyExtraFieldsToEntry(ILexEntry entry)
 		{
 			foreach (var ws in OwningEntry.CitationForm.AvailableWritingSystemIds)
 			{
@@ -3915,6 +3941,54 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							OwningEntry.LexemeFormOA.Form.get_String(ws));
 				}
 			}
+			var sda = Cache.DomainDataByFlid as ISilDataAccessManaged;
+			var flids = (Cache.MetaDataCacheAccessor as FdoMetaDataCache).GetFields(LexEntryTags.kClassId, true, (int) CellarPropertyTypeFilter.AllMulti)
+					.Except(new int[] {LexEntryTags.kflidCitationForm});
+			CopyMergeMultiStringFields(entry.Hvo, flids, OwningEntry.Hvo, sda);
+		}
+
+		/// <summary>
+		/// For each non-empty WS alternative of each specified multistring field of srcHvo,
+		/// if the corresponding field of destHvo is empty, copy it there;
+		/// otherwise, append them, with an intervening "; ".
+		/// </summary>
+		/// <param name="destHvo"></param>
+		/// <param name="fields"></param>
+		/// <param name="srcHvo"></param>
+		/// <param name="sda"></param>
+		private static void CopyMergeMultiStringFields(int destHvo, IEnumerable<int> fields, int srcHvo, ISilDataAccessManaged sda)
+		{
+			foreach (var flid in fields)
+			{
+				var msSrc = sda.get_MultiStringProp(srcHvo, flid) as MultiAccessor;
+				var msDest = sda.get_MultiStringProp(destHvo, flid) as MultiAccessor;
+				if (msSrc == null || msDest == null)
+					continue; // Don't expect this ever to happen; should we just crash?
+
+				foreach (var ws in msSrc.AvailableWritingSystemIds)
+				{
+					var src = msSrc.get_String(ws);
+					if (src.Length == 0)
+						continue;
+					var newVal = CombineStrings(src, msDest.get_String(ws));
+					msDest.set_String(ws, newVal);
+				}
+			}
+		}
+
+		// Combine a (non-empty) source with an existing value. If the oldVal is empty, the result is the source,
+		// otherwise, oldval; source.
+		private static ITsString CombineStrings(ITsString src, ITsString oldVal)
+		{
+			var newVal = src;
+			if (oldVal.Length != 0)
+			{
+				var bldr = oldVal.GetBldr();
+				bldr.Append("; ", null);
+				bldr.Append(src);
+				newVal = bldr.GetString();
+			}
+			return newVal;
 		}
 
 		bool WeHaveAnInterestingLf()

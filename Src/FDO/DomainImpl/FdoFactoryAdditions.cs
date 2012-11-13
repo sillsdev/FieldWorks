@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (trimmedForm != "")
 						ls.Gloss.set_String(ws, trimmedForm);
 				}
-				else
+				else if (!HandleTransduceColum(ls, column, ws, tssStr))
 				{
 					Debug.Fail("column (" + columnLabel + ") not supported.");
 				}
@@ -217,6 +217,83 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// We don't want a partial MSA created, so don't bother doing anything
 			// about setting ls.MorphoSyntaxAnalysisRA
 			return ls.Hvo;
+		}
+
+		/// <summary>
+		/// Handle a column that contains a "transduce" specification indicating how to find the
+		/// field that should be filled in. Currently we support class.field, where class is
+		/// LexEntry, LexSense, LexExampleSentence, or CmTranslation, and field is one of the multilingual
+		/// or simple string fields of that class.
+		/// LexSense means set a field of the sense passed to the method; entry means its owning entry;
+		/// example means its first example, which will be created if it doesn't already have one;
+		/// and CmTranslation means the first translation of the first example (both of which will
+		/// be created if needed). (Since this is used as part of RDENewSense, the first example field
+		/// encountered will always create a new example, and the first translation field a new translation.)
+		/// enhance: also handle class.field.field, where the first field indicates an atomic object
+		/// property?
+		/// </summary>
+		/// <param name="ls"></param>
+		/// <param name="column"></param>
+		/// <param name="ws"></param>
+		/// <param name="val"></param>
+		/// <returns></returns>
+		private bool HandleTransduceColum(LexSense ls, XmlNode column, int ws, ITsString val)
+		{
+			var transduce = XmlUtils.GetOptionalAttributeValue(column, "transduce");
+			if (string.IsNullOrEmpty(transduce))
+				return false;
+			var mdc = ls.Cache.MetaDataCacheAccessor;
+			var parts = transduce.Split('.');
+			if (parts.Length == 2)
+			{
+				var className = parts[0];
+				var fieldName = parts[1];
+				int flid = mdc.GetFieldId(className, fieldName, true);
+				int hvo;
+				switch (className)
+				{
+					case "LexSense":
+						hvo = ls.Hvo;
+						break;
+					case "LexEntry":
+						hvo = ls.OwningEntry.Hvo;
+						break;
+					case "LexExampleSentence":
+						hvo = GetOrMakeFirstExample(ls).Hvo;
+						break;
+					case "CmTranslation":
+						var example = GetOrMakeFirstExample(ls);
+						hvo = GetOrMakeFirstTranslation(example).Hvo;
+						break;
+						// Enhance JohnT: handle other cases as needed.
+					default:
+						throw new ArgumentException(
+							string.Format("transduce attribute of column argument specifies an unhandled class ({0})"), className);
+				}
+				if (mdc.GetFieldType(flid) == (int)CellarPropertyType.String)
+					ls.Cache.DomainDataByFlid.SetString(hvo, flid, val);
+				else // asssume multistring
+					ls.Cache.DomainDataByFlid.SetMultiStringAlt(hvo, flid, ws, val);
+				return true;
+			}
+			throw new ArgumentException("transduce attr for column spec has wrong number of parts " + transduce + " " + column.OuterXml);
+		}
+
+		private ICmTranslation GetOrMakeFirstTranslation(ILexExampleSentence example)
+		{
+			if (example.TranslationsOC.Count == 0)
+			{
+				var cmTranslation = example.Services.GetInstance<ICmTranslationFactory>().Create(example, m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
+				example.TranslationsOC.Add(cmTranslation);
+			}
+			return example.TranslationsOC.ToArray()[0];
+		}
+
+		private static ILexExampleSentence GetOrMakeFirstExample(LexSense ls)
+		{
+			if (ls.ExamplesOS.Count == 0)
+				ls.ExamplesOS.Add(ls.Services.GetInstance<ILexExampleSentenceFactory>().Create());
+			return ls.ExamplesOS.ToArray()[0];
 		}
 
 		private IMoForm MakeMorphRde(ILexEntry entry, ITsString form, int ws, string trimmedForm)
