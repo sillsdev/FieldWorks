@@ -621,6 +621,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "CorruptedXMLFileTest.fwdata");
 
+			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
+			// Otherwise the build agent might complain, and in the worst case the test might hang.
 			using (var xmlBep = new MockXMLBackendProvider(Cache, projName))
 			{
 				// Should throw an XMLException, but this will be caught and because there's
@@ -630,7 +632,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		}
 
 		/// <summary>
-		/// Tests that a fwdata file that was edited and has an extra CR/LF at the end will not
+		/// Tests that a fwdata file that was edited and has an extra newline at the end will not
 		/// throw an Exception.
 		/// </summary>
 		[Test]
@@ -639,6 +641,8 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "SlightlyCorruptedXMLFile.fwdata");
 
+			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
+			// Otherwise the build agent might complain, and in the worst case the test might hang.
 			using (var xmlBep = new MockXMLBackendProvider(Cache, projName))
 			{
 				// Should not throw an XMLException. The code that detects a corrupt file shouldn't
@@ -671,10 +675,22 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			Cache = cache;
 		}
 
+		/// <summary/>
 		public void Startup()
 		{
 			ProjectId = new TestProjectId(FDOBackendProviderType.kXML, Project);
 			StartupInternal(ModelVersion);
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (m_identityMap != null)
+					m_identityMap.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 	}
 
