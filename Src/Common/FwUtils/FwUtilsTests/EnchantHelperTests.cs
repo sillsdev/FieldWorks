@@ -17,7 +17,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Check how spelling status is set and cleared.
 		/// </summary>
 		[Test]
-		[Ignore("LT-13776)")]
 		public void BasicSpellingStatus()
 		{
 #if __MonoCS__
