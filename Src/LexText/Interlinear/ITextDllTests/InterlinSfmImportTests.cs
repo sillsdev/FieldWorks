@@ -171,7 +171,6 @@ namespace SIL.FieldWorks.IText
 		/// Test the application of encoding converters.
 		/// </summary>
 		[Test]
-		[Platform(Exclude= "Linux", Reason="TODO-Linux: test fails with DllNotFoundException : kernel32 (possibly to do with Encoding Converters or cp1252)")]
 		public void EncodingConverters()
 		{
 			var encConv = new EncConverters();
