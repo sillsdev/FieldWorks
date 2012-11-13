@@ -164,6 +164,7 @@
 	</Reference>
 	<Reference Include="Sfm2Xml, Version=1.0.4254.23866, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>
 	</Reference>
 	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>

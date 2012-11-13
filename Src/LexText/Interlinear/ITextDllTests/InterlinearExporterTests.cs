@@ -998,7 +998,6 @@ namespace SIL.FieldWorks.IText
 			/// Validate that the guids for each paragraph, and each phrase and word annotation are unique.
 			/// </summary>
 			[Test]
-			[Platform(Exclude = "Linux", Reason = "Need to fix validation (FWNX-852)")]
 			public void ValidateELANExport()
 			{
 				m_choices.Add(InterlinLineChoices.kflidWord);
@@ -1020,11 +1019,15 @@ namespace SIL.FieldWorks.IText
 				settings.Schemas.Add("", file);
 				exportedDoc.Schemas.Add("", new Uri(file).AbsoluteUri);
 
+				// The Mono implementation of XmlDocument.Validate is buggy (Xamarin Bug 8381).
+				// But the other validation checks below are still worthwhile.
+#if !__MonoCS__
 				//validate export against schema.
 				Assert.DoesNotThrow(() =>
 				{
 					exportedDoc.Validate(DontIgnore);
 				});
+#endif
 
 				//validate segment reference to MediaURI
 				AssertThatXmlIn.Dom(exportedDoc).HasAtLeastOneMatchForXpath("//phrase[@media-file=\"" + recGuid + "\"]");
