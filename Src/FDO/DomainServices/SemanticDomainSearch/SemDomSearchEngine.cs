@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		{
 			foreach (var domain in m_semdomRepo.AllInstances())
 			{
-				strat.DetermineBucket(domain);
+				strat.PutDomainInDesiredBucket(domain);
 			}
 		}
 	}

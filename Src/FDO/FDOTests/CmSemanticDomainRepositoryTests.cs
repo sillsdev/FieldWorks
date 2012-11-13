@@ -15,13 +15,14 @@
 // <remarks>
 // </remarks>
 // --------------------------------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Xml;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using NUnit.Framework;
+using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -32,6 +33,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	public class CmSemanticDomainRepositoryTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private ICmSemanticDomainRepository m_semdomRepo;
+		private ILexEntryFactory m_entryFactory;
+		private ILexSenseFactory m_senseFactory;
 
 		private const string XMLTESTDATA =
 	@"<?xml version='1.0' encoding='UTF-8'?>
@@ -151,7 +154,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 							<Questions>
 								<CmDomainQ>
 									<ExampleWords>
-										<AUni ws='en'>light, sunshine</AUni>
+										<AUni ws='en'>light, sunshine, skylight</AUni>
 									</ExampleWords>
 								</CmDomainQ>
 							</Questions>
@@ -195,13 +198,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			base.CreateTestData();
 
 			Cache.ActionHandlerAccessor.EndUndoTask(); // I'll make my own Undo tasks, since ImportList has its own.
-			m_semdomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
+			var servLoc = Cache.ServiceLocator;
+			m_semdomRepo = servLoc.GetInstance<ICmSemanticDomainRepository>();
+			m_entryFactory = servLoc.GetInstance<ILexEntryFactory>();
+			m_senseFactory = servLoc.GetInstance<ILexSenseFactory>();
 
-			LoadSemDomTestData();
-		}
-
-		private void LoadSemDomTestData()
-		{
 			LoadSemDomTestData(XMLTESTDATA);
 		}
 
@@ -214,6 +215,72 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			}
 		}
 
+		private void LoadSemDomTestDataFromFile(string filePath)
+		{
+			var loader = new XmlList();
+			loader.ImportList(Cache.LangProject, "SemanticDomainList", filePath, new DummyProgressDlg());
+		}
+
+		#region Helper Methods
+
+		// Used to create a sense to search on for the SenseSearchStrategy.
+		// Therefore it should create the gloss in the AnalysisDefaultWritingSystem.
+		private ILexEntry CreateLexEntry(string form, string gloss)
+		{
+			ILexEntry entry = null;
+			UndoableUnitOfWorkHelper.Do("Undo CreateEntry", "Redo CreateEntry", Cache.ActionHandlerAccessor, () =>
+			{
+				entry = MakeEntry(form, gloss);
+			});
+
+			return entry;
+		}
+
+		private ILexEntry MakeEntry(string form, string gloss)
+		{
+			var result = MakeEntryWithForm(form);
+			var sense = m_senseFactory.Create();
+			result.SensesOS.Add(sense);
+			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+				gloss, Cache.DefaultAnalWs);
+			return result;
+		}
+
+		private ILexEntry MakeEntryWithForm(string form)
+		{
+			var entry = m_entryFactory.Create();
+			entry.LexemeFormOA = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entry.LexemeFormOA.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString(
+				form, Cache.DefaultVernWs);
+			return entry;
+		}
+
+		private void AddReversalsToSense(ILexSense sense, IEnumerable<string> reversalStrings)
+		{
+			var revEntryFactory = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
+			UndoableUnitOfWorkHelper.Do("Undo reversals", "Redo reversals",
+				Cache.ActionHandlerAccessor, () =>
+			{
+				var revIndex = CreateEmptyReversalIndex();
+				foreach (var reversalForm in reversalStrings)
+				{
+					var newEntry = revEntryFactory.Create();
+					revIndex.EntriesOC.Add(newEntry);
+					sense.ReversalEntriesRC.Add(newEntry);
+					newEntry.ReversalForm.SetAnalysisDefaultWritingSystem(reversalForm);
+				}
+			});
+		}
+
+		private IReversalIndex CreateEmptyReversalIndex()
+		{
+			var result = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
+			Cache.LangProject.LexDbOA.ReversalIndexesOC.Add(result);
+			return result;
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Test finding matching semantic domains using an alphabetic search string.
 		/// </summary>
@@ -224,6 +291,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			const string searchString = "sky";
 			const string expectedNum = "1.1"; // group1 match
 			const string expectedName = "Sky";
+			const string expectedNum2 = "8.3.3"; // group3 match
 
 			// SUT
 			var result = m_semdomRepo.FindDomainsThatMatch(searchString);
@@ -231,11 +299,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Verification
 			var resultList = result.ToList();
 			var cresult = resultList.Count;
-			Assert.AreEqual(1, cresult, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(2, cresult, WRONG_NUMBER_OF_MATCHES);
 			Assert.AreEqual(expectedNum, resultList[0].Abbreviation.BestAnalysisAlternative.Text,
 				WRONG_SEMDOM_NUMBER);
 			Assert.AreEqual(expectedName, resultList[0].Name.BestAnalysisAlternative.Text,
 				WRONG_SEMDOM_NAME);
+			Assert.AreEqual(expectedNum2, resultList[1].Abbreviation.BestAnalysisAlternative.Text,
+				WRONG_SEMDOM_NUMBER);
 		}
 
 		/// <summary>
@@ -310,6 +380,40 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				WRONG_SEMDOM_NUMBER);
 			Assert.AreEqual(expectedName2, resultList[1].Name.BestAnalysisAlternative.Text,
 				WRONG_SEMDOM_NAME);
+		}
+
+		/// <summary>
+		/// Test finding matching semantic domains using a short alphabetic search string.
+		/// </summary>
+		[Test]
+		[Category("LongRunning")]
+		[Category("ByHand")]
+		[Ignore("Only run manually as it messes up following tests.")]
+		// because XmlList.ImportList(), which LoadSemDomTestDataFromFile() uses, uses a NonUndoableTask.
+		public void FindDomains_TimingOnLargerDataSet()
+		{
+			//Setup
+			const string searchString = "sun";
+			const string expectedNum1 = "1.1.8"; // group1 match 'sun'
+			const string expectedName1 = "Sun";
+			const string expectedNum2 = "8.3.3"; // group3 match 'sunshine', under 'Light'
+			const string expectedName2 = "Light";
+			const string filePath = @"Templates\semdom.xml";
+			var homeDir = DirectoryFinder.FWCodeDirectory;
+			LoadSemDomTestDataFromFile(Path.Combine(homeDir, filePath));
+
+			// SUT
+			var watch = new Stopwatch();
+			watch.Start();
+			var result = m_semdomRepo.FindDomainsThatMatch(searchString);
+			watch.Stop();
+
+			// Verification
+			var resultList = result.ToList();
+			var cresult = resultList.Count;
+			Assert.AreEqual(22, cresult, WRONG_NUMBER_OF_MATCHES);
+			Assert.Less(watch.ElapsedMilliseconds, 2000, "Too long!");
+			Debug.WriteLine("Finding 'sun' in Semantic Domain search took: {0}ms", watch.ElapsedMilliseconds);
 		}
 
 		/// <summary>
@@ -519,6 +623,188 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				WRONG_SEMDOM_NUMBER);
 			Assert.AreEqual(expectedName2, resultList[1].Name.BestAnalysisAlternative.Text,
 				WRONG_SEMDOM_NAME);
+		}
+
+		/// <summary>
+		/// Test finding matching semantic domains using a sense with only one word in a searchable field.
+		/// </summary>
+		[Test]
+		public void SenseSearch_OneSearchKey()
+		{
+			//Setup
+			const string searchString = "sun";
+			const string expectedNum1 = "1.1.8"; // bucket1 match 'sun'
+			const string expectedNum2 = "8.3.3"; // bucket2 match 'sunshine', under 'Light'
+			IEnumerable<ICmSemanticDomain> partialMatches;
+			var entry = CreateLexEntry("soleil", searchString);
+			var sense = entry.SensesOS[0];
+
+			// SUT
+			var result = m_semdomRepo.FindDomainsThatMatchWordsIn(sense, out partialMatches);
+
+			// Verification
+			var resultList = result.ToList();
+			var partialsList = partialMatches.ToList();
+			var cresult = resultList.Count;
+			var cpartials = partialsList.Count;
+			Assert.AreEqual(1, cresult, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(1, cpartials, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(expectedNum1, resultList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum2, partialsList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+		}
+
+		/// <summary>
+		/// Test finding matching semantic domains using a sense with a two-word gloss.
+		/// </summary>
+		[Test]
+		public void SenseSearch_MultiWordGloss()
+		{
+			//Setup
+			const string searchString = "sky, God";
+			const string expectedNum1 = "1.1";   // bucket1 match 'sky'
+			const string expectedNum2 = "4.9.6"; // bucket1 match 'God', under 'Heaven, Hell'
+			const string expectedNum3 = "8.3.3"; // bucket2 match 'skylight', under 'Light'
+			IEnumerable<ICmSemanticDomain> partialMatches;
+			var entry = CreateLexEntry("waas", searchString);
+			var sense = entry.SensesOS[0];
+
+			// SUT
+			var result = m_semdomRepo.FindDomainsThatMatchWordsIn(sense, out partialMatches);
+
+			// Verification
+			var resultList = result.ToList();
+			var partialsList = partialMatches.ToList();
+			var cresult = resultList.Count;
+			var cpartials = partialsList.Count;
+			Assert.AreEqual(2, cresult, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(1, cpartials, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(expectedNum1, resultList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum2, resultList[1].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum3, partialsList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+		}
+
+		/// <summary>
+		/// Test finding matching semantic domains using a sense with a two-word gloss,
+		/// but ignoring a definition that is 3 words long (as too long).
+		/// </summary>
+		[Test]
+		public void SenseSearch_3WordDefinitionNotUsed()
+		{
+			//Setup
+			const string searchString = "sky, God";
+			const string expectedNum1 = "1.1";   // bucket1 match 'sky'
+			const string expectedNum2 = "4.9.6"; // bucket1 match 'God', under 'Heaven, Hell'
+			const string expectedNum3 = "8.3.3"; // bucket2 match 'skylight', under 'Light'
+			IEnumerable<ICmSemanticDomain> partialMatches;
+			var entry = CreateLexEntry("waas", searchString);
+			var sense = entry.SensesOS[0];
+			// This definition is too long and won't be used. If it were used,
+			// the 8.3.3 bucket2 match would become a bucket1 match of 'Light',
+			// And there would be an additional bucket 1 match of '8.3.3.1 Shine'.
+			UndoableUnitOfWorkHelper.Do("Undo def", "Redo def", Cache.ActionHandlerAccessor,
+				() => sense.Definition.SetAnalysisDefaultWritingSystem("God's light shine"));
+
+			// SUT
+			var result = m_semdomRepo.FindDomainsThatMatchWordsIn(sense, out partialMatches);
+
+			// Verification
+			var resultList = result.ToList();
+			var partialsList = partialMatches.ToList();
+			var cresult = resultList.Count;
+			var cpartials = partialsList.Count;
+			Assert.AreEqual(2, cresult, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(1, cpartials, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(expectedNum1, resultList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum2, resultList[1].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum3, partialsList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+		}
+
+		/// <summary>
+		/// Test finding matching semantic domains using a sense with a two-word gloss,
+		/// and a 2 word definition (short enough).
+		/// </summary>
+		[Test]
+		public void SenseSearch_2WordDefinitionUsed()
+		{
+			//Setup
+			const string searchString = "sky, God";
+			const string expectedNum1 = "1.1";   // bucket1 match 'sky'
+			const string expectedNum2 = "1.1.8"; // bucket1 match 'solar', under 'Sun'
+			const string expectedNum3 = "4.9.6"; // bucket1 match 'God', under 'Heaven, Hell'
+			const string expectedNum4 = "8.3.3"; // bucket1 match 'Light'
+			IEnumerable<ICmSemanticDomain> partialMatches;
+			var entry = CreateLexEntry("waas", searchString);
+			var sense = entry.SensesOS[0];
+			UndoableUnitOfWorkHelper.Do("Undo def", "Redo def", Cache.ActionHandlerAccessor,
+				() => sense.Definition.SetAnalysisDefaultWritingSystem("Solar light"));
+
+			// SUT
+			var result = m_semdomRepo.FindDomainsThatMatchWordsIn(sense, out partialMatches);
+
+			// Verification
+			var resultList = result.ToList();
+			var partialsList = partialMatches.ToList();
+			var cresult = resultList.Count;
+			var cpartials = partialsList.Count;
+			Assert.AreEqual(4, cresult, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(0, cpartials, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(expectedNum1, resultList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum2, resultList[1].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum3, resultList[2].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum4, resultList[3].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+		}
+
+		/// <summary>
+		/// Test finding matching semantic domains using a sense with two reversal entries,
+		/// each with two word forms.
+		/// </summary>
+		[Test]
+		public void SenseSearch_OneGlossKey_TwoTwoWordReversals()
+		{
+			//Setup
+			const string searchString = "sun";
+			const string expectedNum1 = "1";     // bucket1 match 'earth', under 'Universe, creation'
+			const string expectedNum2 = "1.1";   // bucket1 match 'atmosphere', under 'Sky'
+			const string expectedNum3 = "1.1.8"; // bucket1 match 'Sun'
+			const string expectedNum4 = "4.9.6"; // bucket1 match 'Heaven, hell'
+			const string expectedNum5 = "8.3.3"; // bucket2 match 'sunshine', under 'Light'
+			IEnumerable<ICmSemanticDomain> partialMatches;
+			var entry = CreateLexEntry("soleil", searchString);
+			var sense = entry.SensesOS[0];
+			AddReversalsToSense(sense, new string[] { "sunset, atmosphere", "hell on earth" });
+
+			// SUT
+			var result = m_semdomRepo.FindDomainsThatMatchWordsIn(sense, out partialMatches);
+
+			// Verification
+			var resultList = result.ToList();
+			var partialsList = partialMatches.ToList();
+			var cresult = resultList.Count;
+			var cpartials = partialsList.Count;
+			Assert.AreEqual(4, cresult, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(1, cpartials, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(expectedNum1, resultList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum2, resultList[1].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum3, resultList[2].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum4, resultList[3].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum5, partialsList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
 		}
 	}
 }

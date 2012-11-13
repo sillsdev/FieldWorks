@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
@@ -23,7 +22,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		///   2) Name or Example Words contain words (bounded by whitespace) that match the search string
 		///   3) Name or Example Words contain words that begin with the search string
 		///
-		/// N.B.: This method looks for matches in the BestAnalysisAlternative.
+		/// N.B.: This method looks for matches in the BestAnalysisAlternative writing system.
 		/// This ought to match what is displayed in the UI, so if the UI doesn't use
 		/// BestAnalysisAlternative one of them needs to be changed.
 		/// </summary>
@@ -41,6 +40,49 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var strategy = new PartialNameMatchPrioritySearchStrategy(Cache, searchString1);
 			var engine = new SemDomSearchEngine(Cache);
 			engine.WalkDomains(strategy);
+
+			return strategy.FindResults;
+		}
+
+		/// <summary>
+		/// Takes the gloss, a short definition (if only one or two words), and reversal from a LexSense
+		/// and uses those words as search keys to find Semantic Domains that have one of those words in
+		/// their Name or ExampleWords fields.
+		///
+		/// N.B.: This method looks for matches in the AnalysisDefaultWritingSystem.
+		/// This ought to help ensure that we are searching in the Semantic Domain fields in the same
+		/// writing system as the one the search keys in the Sense came from.
+		/// </summary>
+		/// <param name="sense"></param>
+		/// <returns></returns>
+		public IEnumerable<ICmSemanticDomain> FindDomainsThatMatchWordsIn(ILexSense sense)
+		{
+			IEnumerable<ICmSemanticDomain> dummy;
+			return FindDomainsThatMatchWordsIn(sense, out dummy);
+		}
+
+		/// <summary>
+		/// Takes the gloss, a short definition (if only one or two words), and reversal from a LexSense
+		/// and uses those words as search keys to find Semantic Domains that have one of those words in
+		/// their Name or Example Words fields.
+		/// In addition, this method returns additional partial matches in the 'out' parameter where one
+		/// of the search keys matches the beginning of one of the words in the domain's Name or Example
+		/// Words fields.
+		///
+		/// N.B.: This method looks for matches in the AnalysisDefaultWritingSystem.
+		/// This ought to help ensure that we are searching in the Semantic Domain fields in the same
+		/// writing system as the one the search keys in the Sense came from.
+		/// </summary>
+		/// <param name="sense">A LexSense</param>
+		/// <param name="partialMatches">extra partial matches</param>
+		/// <returns></returns>
+		public IEnumerable<ICmSemanticDomain> FindDomainsThatMatchWordsIn(ILexSense sense,
+			out IEnumerable<ICmSemanticDomain> partialMatches)
+		{
+			var strategy = new SenseSearchStrategy(Cache, sense);
+			new SemDomSearchEngine(Cache).WalkDomains(strategy);
+
+			partialMatches = strategy.PartialMatches;
 
 			return strategy.FindResults;
 		}

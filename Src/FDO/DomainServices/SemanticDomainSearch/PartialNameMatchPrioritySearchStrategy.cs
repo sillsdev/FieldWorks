@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 {
@@ -15,19 +13,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 	{
 		#region Member Variables
 
-		private readonly Regex m_regexPattern;
-		private readonly CultureInfo m_appropriateCulture;
 		private readonly bool m_fnumeric;
 		private readonly string m_searchString;
 
 		#endregion
-
-		// starting after whitespace or the beginning of a line,
-		// find a run of either letters or singlequote or hyphen
-		// which is followed by either whitespace or the end of a line.
-		// (the first look-ahead, (?=\w), means that single quote and hyphen are only included
-		// if there is an adjacent following letter, that is, if word-medial)
-		private const string RegexString = @"(?<=(^|\s))(\w|['-](?=\w))*(?=(\s|,|$))";
 
 		/// <summary>
 		/// Semantic Domain Search Strategy for finding:
@@ -36,19 +25,27 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		///   3) Whole word matches of Name or ExampleWords
 		///   4) Partial matches (from the beginning of words) elsewhere in Name and ExampleWords
 		/// N.B. 1 and (2,3,4) are mutually exclusive depending on the first character of the search string.
-		///   1 and 2 go into bucket1
-		///   3 goes into bucket2
-		///   4 goes into bucket3
+		///   1 and 2 go into first bucket
+		///   3 goes into second bucket
+		///   4 goes into third bucket
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="searchKey">This strategy expects to only have one search key string.</param>
 		public PartialNameMatchPrioritySearchStrategy(FdoCache cache, string searchKey)
 			: base(cache)
 		{
-			m_appropriateCulture = GetAppropriateCultureInfo();
-			m_regexPattern = new Regex(RegexString, RegexOptions.IgnoreCase);
 			m_fnumeric = Char.IsDigit(searchKey[0]);
 			m_searchString = searchKey;
+		}
+
+		/// <summary>
+		/// Subclasses can override to set the search results object to have
+		/// the correct number of buckets for a different strategy.
+		/// This strategy needs three buckets.
+		/// </summary>
+		protected override void SetupSearchResults()
+		{
+			SearchResults = new SemDomSearchResults(3);
 		}
 
 		/// <summary>
@@ -57,10 +54,21 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		/// </summary>
 		public IEnumerable<ICmSemanticDomain> FindResults
 		{
-			get { return SearchResults.SortedBucket1.Concat(SearchResults.SortedBucket2.Concat(SearchResults.SortedBucket3)); }
+			get { return SearchResults.SortedBucketX(0).Concat(SearchResults.SortedBucketX(1).Concat(SearchResults.SortedBucketX(2))); }
 		}
 
-		internal override void DetermineBucket(ICmSemanticDomain domain)
+		/// <summary>
+		/// This implementation checks to see of the search key starts with a digit first.
+		/// If so, it looks in the Abbreviation field for a search key match in the hierarchical number
+		/// (e.g. "8.3.3"; these would go in the first bucket).
+		/// Otherwise it checks next for matches where the key corresponds to the beginning
+		/// of the Name field (first bucket). Failing that, it checks for whole word (second bucket) or
+		/// partial matches (third bucket) between the search key and the contents of a Semantic Domain's
+		/// Name and ExampleWords fields.
+		/// N.B. Strategy subclasses should take care not to add a domain to a bucket
+		/// if it is already in a higher priority bucket.
+		/// </summary>
+		internal override void PutDomainInDesiredBucket(ICmSemanticDomain domain)
 		{
 			// Look in Name and Example Words for matches
 			if (m_fnumeric)
@@ -69,99 +77,40 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 				return;
 			}
 
-			// Check to see if this domain is a bucket1 match
+			// Check to see if this domain is a first bucket match
 			// Boolean param in StartsWith() ignores case
 			// N.B.: WritingSystem check should be the same as what's displayed in the UI!
-			if (domain.Name.BestAnalysisAlternative.Text.StartsWith(m_searchString, true, m_appropriateCulture))
+			if (domain.Name.BestAnalysisAlternative.Text.StartsWith(m_searchString, true, AppropriateCulture))
 			{
-				SearchResults.Bucket1.Add(domain);
+				SearchResults.AddResultToBucketX(0, domain);
 				return;
 			}
-			CollectPossibleGroup2Or3Match(domain);
+			base.PutDomainInDesiredBucket(domain);
 		}
+
+		/// <summary>
+		/// Subclass can override to return a different index into the search results bucket list
+		/// that specifies where to put whole word matches.
+		/// This strategy puts a priority on partial Name matches and puts them in bucket[0],
+		/// so WholeWord matches after that go into bucket[1].
+		/// </summary>
+		protected override int WholeWordBucketIndex { get { return 1; } }
 
 		private void SearchInAbbreviationForMatches(ICmSemanticDomain domain)
 		{
 			if (domain.Abbreviation.BestAnalysisAlternative.Text.StartsWith(m_searchString))
-				SearchResults.Bucket1.Add(domain);
+				SearchResults.AddResultToBucketX(0, domain);
 		}
 
-		private void CollectPossibleGroup2Or3Match(ICmSemanticDomain domain)
+		/// <summary>
+		/// This strategy only uses one search string (what the user typed),
+		/// so this version is pretty simple.
+		/// </summary>
+		/// <param name="wordsToLookIn"> </param>
+		/// <returns></returns>
+		protected override MatchingResult DoesInputMatchWord(IEnumerable<string> wordsToLookIn)
 		{
-			// Check for group2 and group3 matches in Name first
-			if (!LookForMatchIn(domain.Name.BestAnalysisAlternative.Text,
-				domain))
-			{
-				LookForMatchIn(GetExampleWordsString(domain.QuestionsOS),
-					domain);
-			}
-		}
-
-		private bool LookForMatchIn(string searchIn, ICmSemanticDomain domain)
-		{
-			switch (DoesInputMatchWordInString(searchIn))
-			{
-				case MatchingResult.WholeWordMatch:
-					SearchResults.Bucket2.Add(domain);
-					SearchResults.Bucket3.Remove(domain);
-					return true;
-				case MatchingResult.StartOfWordMatch:
-					SearchResults.Bucket3.Add(domain);
-					break;
-				case MatchingResult.NoMatch:
-					// do nothing
-					break;
-				default:
-					throw new ApplicationException("Unknown MatchingResult");
-			}
-			return false;
-		}
-
-		private string GetExampleWordsString(IEnumerable<ICmDomainQ> questions)
-		{
-			return (from domainQuest in questions
-					where domainQuest.ExampleWords != null
-					select domainQuest.ExampleWords.BestAnalysisAlternative.Text into text
-					where text.Length > 0
-					select text).Aggregate(
-						  string.Empty, (current, text) => current + (" " + text));
-		}
-
-		private MatchingResult DoesInputMatchWordInString(string lookInMe)
-		{
-			// starting after whitespace or the beginning of a line,
-			// find a run of either letters or singlequote or hyphen
-			// which is followed by either whitespace or the end of a line.
-			var matches = m_regexPattern.Matches(lookInMe);
-			for (var i = 0; i < matches.Count; i++)
-			{
-				if (string.Compare(matches[i].Value, m_searchString, true, m_appropriateCulture) == 0)
-					return MatchingResult.WholeWordMatch;
-				if (matches[i].Value.StartsWith(m_searchString, true, m_appropriateCulture))
-					return MatchingResult.StartOfWordMatch;
-			}
-			return MatchingResult.NoMatch;
-		}
-
-		private CultureInfo GetAppropriateCultureInfo()
-		{
-			CultureInfo ci;
-			try
-			{
-				ci = new CultureInfo(Cache.WritingSystemFactory.GetStrFromWs(Cache.DefaultAnalWs));
-			}
-			catch (Exception)
-			{
-				ci = CultureInfo.InvariantCulture;
-			}
-			return ci;
-		}
-
-		private enum MatchingResult
-		{
-			WholeWordMatch,
-			StartOfWordMatch,
-			NoMatch
+			return LookForHitInWordCollection(wordsToLookIn, m_searchString);
 		}
 	}
 }

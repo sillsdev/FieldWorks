@@ -129,6 +129,36 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="searchString"></param>
 		/// <returns></returns>
 		IEnumerable<ICmSemanticDomain> FindDomainsThatMatch(string searchString);
+
+		/// <summary>
+		/// Takes the gloss, a short definition (if only one or two words), and reversal from a LexSense
+		/// and uses those words as search keys to find Semantic Domains that have one of those words in
+		/// their Name or ExampleWords fields.
+		///
+		/// N.B.: This method looks for matches in the BestAnalysisAlternative writing system.
+		/// This ought to match what is displayed in the UI, so if the UI doesn't use
+		/// BestAnalysisAlternative one of them needs to be changed.
+		/// </summary>
+		/// <param name="sense"></param>
+		/// <returns></returns>
+		IEnumerable<ICmSemanticDomain> FindDomainsThatMatchWordsIn(ILexSense sense);
+
+		/// <summary>
+		/// Takes the gloss, a short definition (if only one or two words), and reversal from a LexSense
+		/// and uses those words as search keys to find Semantic Domains that have one of those words in
+		/// their Name or Example Words fields.
+		/// In addition, this method returns additional partial matches in the 'out' parameter where one
+		/// of the search keys matches the beginning of one of the words in the domain's Name or Example
+		/// Words fields.
+		///
+		/// N.B.: This method looks for matches in the BestAnalysisAlternative writing system.
+		/// This ought to match what is displayed in the UI, so if the UI doesn't use
+		/// BestAnalysisAlternative one of them needs to be changed.
+		/// </summary>
+		/// <param name="sense">A LexSense</param>
+		/// <param name="partialMatches">extra partial matches</param>
+		/// <returns></returns>
+		IEnumerable<ICmSemanticDomain> FindDomainsThatMatchWordsIn(ILexSense sense, out IEnumerable<ICmSemanticDomain> partialMatches);
 	}
 
 	public partial interface IConstChartMovedTextMarkerRepository

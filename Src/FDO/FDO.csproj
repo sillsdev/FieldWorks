@@ -421,6 +421,7 @@
     <Compile Include="DomainServices\ScrMappingList.cs" />
     <Compile Include="DomainServices\ScrSfFileList.cs" />
     <Compile Include="DomainServices\ScrVerse.cs" />
+    <Compile Include="DomainServices\SemanticDomainSearch\SenseSearchStrategy.cs" />
     <Compile Include="DomainServices\SemanticDomainSearch\PartialNameMatchPrioritySearchStrategy.cs" />
     <Compile Include="DomainServices\SemanticDomainSearch\SemDomSearchEngine.cs" />
     <Compile Include="DomainServices\SemanticDomainSearch\SemDomSearchStrategy.cs" />
