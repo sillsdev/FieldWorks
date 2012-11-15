@@ -19,6 +19,7 @@
 
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using XCore;
 using System.Collections;
 using System.Collections.Generic;
@@ -323,6 +324,28 @@ namespace SIL.FieldWorks.XWorks
 														  (int) ownFlid, newIndex);
 					});
 		}
+	}
+
+	/// <summary>
+	/// A trivial override to use a special method to get the names of items.
+	/// For semantic domain in this tool we want to display a sense count (if non-zero).
+	/// Note: this class is instantiated by reflection, based on the setting of the treeBarHandler in the
+	/// SemanticDomainList clerk in the RDE toolConfiguration.xml.
+	/// </summary>
+	public class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
+	{
+		protected override string GetTreeNodeLabel(ICmObject obj, out Font font)
+		{
+			var baseName = base.GetTreeNodeLabel(obj, out font);
+			var sd = obj as ICmSemanticDomain;
+			if (sd == null)
+				return baseName; // pathological defensive programming
+			int senseCount = (from item in sd.ReferringObjects where item is ILexSense select item).Count();
+			if (senseCount == 0)
+				return baseName;
+			return baseName + " (" + senseCount + ")";
+		}
+
 	}
 
 	public class TreeBarHandler : RecordBarHandler

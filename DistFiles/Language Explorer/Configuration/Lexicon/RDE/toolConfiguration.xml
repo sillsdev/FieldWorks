@@ -6,7 +6,7 @@
 			<recordList owner="LangProject" property="SemanticDomainList">
 				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.PossibilityRecordList"/>
 			</recordList>
-			<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analorvern" class="SIL.FieldWorks.XWorks.PossibilityTreeBarHandler"/>
+			<treeBarHandler assemblyPath="xWorks.dll" expand="false" hierarchical="true" includeAbbr="true" ws="best analorvern" class="SIL.FieldWorks.XWorks.SemanticDomainRdeTreeBarHandler"/>
 			<filters/>
 			<sortMethods>
 				<sortMethod label="Default" assemblyPath="Filters.dll" class="SIL.FieldWorks.Filters.PropertyRecordSorter" sortProperty="ShortName"/>
