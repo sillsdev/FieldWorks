@@ -149,6 +149,9 @@
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
 	<value>278, 23</value>
   </data>
+  <data name="label2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+        <value>Bottom, Right</value>
+  </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
 	<value>2</value>
   </data>
@@ -176,6 +179,9 @@
   <data name="m_deleteButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
   </data>
+  <data name="m_deleteButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+        <value>Bottom, Right</value>
+  </data>
   <data name="m_deleteButton.TabIndex" type="System.Int32, mscorlib">
 	<value>4</value>
   </data>
@@ -202,6 +208,9 @@
   </data>
   <data name="m_cancelButton.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
+  </data>
+  <data name="m_cancelButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+        <value>Bottom, Right</value>
   </data>
   <data name="m_cancelButton.TabIndex" type="System.Int32, mscorlib">
 	<value>3</value>
@@ -258,6 +267,9 @@
   <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
 	<value>264, 129</value>
   </data>
+  <data name="panel1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+        <value>Top, Bottom, Left, Right</value>
+  </data>
   <data name="panel1.TabIndex" type="System.Int32, mscorlib">
 	<value>1</value>
   </data>
@@ -278,6 +290,9 @@
   </data>
   <data name="panel2.Size" type="System.Drawing.Size, System.Drawing">
 	<value>264, 55</value>
+  </data>
+  <data name="panel2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+        <value>Bottom, Left, Right</value>
   </data>
   <data name="panel2.TabIndex" type="System.Int32, mscorlib">
 	<value>7</value>
@@ -302,6 +317,9 @@
   </data>
   <data name="buttonHelp.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
+  </data>
+  <data name="buttonHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+        <value>Bottom, Right</value>
   </data>
   <data name="buttonHelp.TabIndex" type="System.Int32, mscorlib">
 	<value>6</value>

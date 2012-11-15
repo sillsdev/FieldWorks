@@ -2562,6 +2562,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Gets a rectangle that encloses the text.
 		/// </summary>
+		/// <remarks>
+		/// The width is likely to be bogus for a multiline textbox, but the height should be
+		/// okay regardless.
+		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public Rectangle TextRect
 		{
@@ -2656,7 +2660,9 @@ namespace SIL.FieldWorks.Common.Widgets
 				// when converted to pixels can often get rounded down), so we add one extra pixel
 				// to be sure there is enough room to fit the text properly so that even if AdjustHeight is
 				// set to true, it will not have to adjust the font size to fit.
-				return TextHeight + 1;
+				// Note that if WordWrap is true, multiple lines are expected, and if it is false,
+				// only one line is expected (which is what TextHeight assumes).
+				return WordWrap ? TextRect.Height + 1 : TextHeight + 1;
 			}
 		}
 

@@ -1283,6 +1283,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (annotationCount > 0)
 				{
 					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultUserWs);
+					tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "UiElement");
 					tisb.Append("\x2028\x2028");
 					tisb.Append(Strings.ksWarningDelAnalysis);
 					tisb.Append("\x2028");
