@@ -113,6 +113,7 @@
     </Reference>
     <Reference Include="CacheLightTests, Version=1.0.4122.26663, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\..\Output\Debug\CacheLightTests.dll</HintPath>
     </Reference>
     <Reference Include="COMInterfaces">
       <Name>COMInterfaces</Name>
@@ -136,6 +137,7 @@
     </Reference>
     <Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -195,12 +197,6 @@
       <HintPath>..\..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
-	<Reference Include="CacheLightTests">
-	  <HintPath>..\..\..\..\..\Output\Debug\CacheLightTests.dll</HintPath>
-	</Reference>
-	<Reference Include="FwUtilsTests">
-	  <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
-	</Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
