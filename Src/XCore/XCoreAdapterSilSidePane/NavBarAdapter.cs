@@ -610,7 +610,12 @@ namespace XCore
 
 						var item = choice.ReferenceWidget as Item;
 						var tab = m_sidepane.GetTabByName(group.ListId);
-						m_sidepane.SelectItem(tab, item.Name);
+						// Selecting an item in the sidepane has side effects, so avoid
+						// calling the SelectItem if it is already the CurrentItem.
+						if(m_sidepane.CurrentItem != item)
+						{
+							m_sidepane.SelectItem(tab, item.Name);
+						}
 						break;
 					}
 				}

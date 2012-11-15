@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// RecordBrowseView is a table oriented view of the collection
 	/// </summary>
-	public class RecordBrowseView : RecordView, ISnapSplitPosition, IPostLayoutInit
+	public class RecordBrowseView : RecordView, ISnapSplitPosition, IPostLayoutInit, IFocusablePanePortion
 	{
 		public event CheckBoxChangedEventHandler CheckBoxChanged;
 
@@ -834,6 +834,11 @@ namespace SIL.FieldWorks.XWorks
 		public void PostLayoutInit()
 		{
 			m_browseViewer.PostLayoutInit();
+		}
+
+		public bool IsFocusedPane
+		{
+			get; set;
 		}
 	}
 	/// <summary>

@@ -1,13 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 using System.Xml;
-
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 
 namespace XCore
@@ -43,10 +41,10 @@ namespace XCore
 		public event EventHandler ShowFirstPaneChanged;
 
 		// When its superclass gets switched to the new SplitContainer class. it has to implement IXCoreUserControl itself.
-		private System.ComponentModel.IContainer components;
+		private IContainer components;
 		private Mediator m_mediator;
 		private bool m_prioritySecond; // true to give second pane first chance at broadcast messages.
-		private System.Drawing.Size m_parentSizeHint;
+		private Size m_parentSizeHint;
 		private bool m_showingFirstPane;
 		private string m_propertyControllingVisibilityOfFirstPane;
 		// true to suppress collapsing fill pane below minimum
@@ -60,6 +58,8 @@ namespace XCore
 		private string m_defaultPrintPaneId = "";
 		private string m_defaultFocusControl = "";
 		private XmlNode m_configurationParameters;
+		//the name of the tool which this MultiPane is a part of.
+		private string toolName = "";
 
 		public MultiPane()
 		{
@@ -228,7 +228,8 @@ namespace XCore
 
 			m_configurationParameters = configurationParameters;
 			m_mediator = mediator;
-
+			var toolNode = configurationParameters.SelectSingleNode("ancestor::tool");
+			toolName = toolNode == null ? "" : toolNode.Attributes["value"].Value;
 //			m_fDontCollapseFillPane = XmlUtils.GetOptionalBooleanAttributeValue(
 //				m_configurationParameters, "dontCollapseFillPane", false);
 
@@ -285,36 +286,18 @@ namespace XCore
 			Panel1Collapsed = !m_showingFirstPane;
 			MakeSubControl(nodes[1], Size, false);
 
-			//if (m_fDontCollapseFillPane)
-			//{
-			//    // As of this writing (6 Feb 2007) only two tools (Texts:Edit & Texts:Document)
-			//    // used this m_fDontCollapseFillPane feature.
-			//    // They had the same fixed size on that date, so no prior layout was needed to get the size.
-			//    // We can, then, safely set the Panel2MinSize right now to that known size.
-			//    // At some point in the future, some tool may use the 'dontCollapseFillPane'
-			//    // to surpress shrinking to the icon,
-			//    // which does not know its minimum size before a layout.
-			//    // When that happens, we will need to revisit setting it here.
-			//    if (Panel2MinSize < 100)
-			//        Panel2MinSize = 100;
-			//}
+			// Attempt to focus the default child control if there is one configured
+			// TODO: Things are not yet in a suitable state, hooking onto a later event should work
+			// TODO: But if you switch between tools in an area there is sometimes an extra
+			// TODO: WM_LBUTTON_DOWN event which steals focus back into the ListViewItemArea
+			// Note: The MakeSubControl calls above set the appropriate IFocusablePanePortion property
+			// which lets SetFocusInDefaultControl know who to focus.
+			SetFocusInDefaultControl();
 
-			// Need to focus proper child control.
-			if (!TrySetFocusInControl(FirstControl, m_defaultFocusControl))
-				TrySetFocusInControl(SecondControl, m_defaultFocusControl);
-
-			//if (Parent != null)
-			//{
-			//    // Set default width of Panel1, since it wasn't done when the parent was set.
-			//    // This happens when the XWindow is in charge of this MultiPane,
-			//    // when loading either of the Text tools (as of 6 Feb 2007).
-			//    SetSplitterDistance();
-			//}
-
-			this.IsInitializing = false;
+			IsInitializing = false;
 			Panel2.ResumeLayout(false);
 			Panel1.ResumeLayout(false);
-			this.ResumeLayout(false);
+			ResumeLayout(false);
 
 			//it's important to do this last, so that we don't go generating property change
 			//notifications that we then go trying to cope with before we are ready
@@ -420,10 +403,18 @@ namespace XCore
 					mpSubControl.DefaultPrintPaneId = m_defaultPrintPaneId;
 				}
 
+
 				XmlNode parameters = null;
 				if (configuration != null)
 					parameters = configuration.SelectSingleNode("parameters");
 				((IxCoreColleague)subControl).Init(m_mediator, parameters);
+
+				//If the sub control has the focusable interface and it matches the name of the defaultFocusControl
+				//then we will set the boolean property indicating that it is the focused pane.
+				if (subControl is IFocusablePanePortion)
+				{
+					(subControl as IFocusablePanePortion).IsFocusedPane = subControl.Name == m_defaultFocusControl;
+				}
 
 				// in normal situations, colleagues add themselves to the mediator when
 				// initialized.  in this case, we don't want this colleague to add itself
@@ -455,25 +446,6 @@ namespace XCore
 			}
 		}
 
-		private MultiPane GetRootMultiPane(Control c)
-		{
-			if (c == null)
-				return null;
-			if (c is MultiPane && (c.Parent == null || c.Parent is SplitterPanel))
-				return c as MultiPane;
-			return GetRootMultiPane(c.Parent);
-		}
-
-		private bool TrySetFocusInControl(Control parentControl, string nameOfChildToFocus)
-		{
-			// Search parent pane context to determine whether we should give focus to this control.
-			Control focusControl = parentControl; // if we haven't specified a control to give focus, by default give it focus.
-			focusControl = XWindow.FindControl(parentControl, nameOfChildToFocus);
-			if (focusControl != null)
-				focusControl.Focus();
-			return focusControl != null && focusControl.ContainsFocus;
-		}
-
 		/// <summary>
 		/// return an array of all of the objects which should
 		/// 1) be queried when looking for someone to deliver a message to
@@ -491,8 +463,7 @@ namespace XCore
 			if (second != null && second.FindForm() == null)
 				second = null;
 
-			List<IxCoreColleague> targets = new List<IxCoreColleague>();
-			targets.Add(this);
+			var targets = new List<IxCoreColleague> {this};
 
 			if (m_prioritySecond)
 			{
@@ -532,25 +503,6 @@ namespace XCore
 		}
 
 		#endregion // IxCoreColleague implementation
-
-		//protected override void OnParentChanged(EventArgs e)
-		//{
-		//    base.OnParentChanged(e);
-
-		//    Control parent = Parent;
-		//    if (parent != null && m_mediator != null)
-		//    {
-		//        ResetSplitterEventHandler(true);
-		//        // Not sure why we were setting this pane's size to the size of its parent.
-		//        // This caused a problem where if this pane were contained inside a container
-		//        // that contained other components, then the size of this pane would be too
-		//        // big. We go ahead and let the parent handle sizing of this pane. If there
-		//        // is a good reason for doing this, then we need to come up with another way
-		//        // of fixing this. see LT-8023
-		//        //Size = parent.Size;
-		//        SetSplitterDistance();
-		//    }
-		//}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
@@ -672,20 +624,53 @@ namespace XCore
 		public void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
-
-			if (name != m_propertyControllingVisibilityOfFirstPane)
+			if (m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) != toolName)
+			{
 				return;
+			}
+			if (name == "ActiveClerkSelectedObject" || name == "ToolForAreaNamed_lexicon")
+			{
+				SetFocusInDefaultControl();
+			}
+			if (name == m_propertyControllingVisibilityOfFirstPane)
+			{
+				bool fShowFirstPane = m_mediator.PropertyTable.GetBoolProperty(m_propertyControllingVisibilityOfFirstPane, true);
+				if (fShowFirstPane == m_showingFirstPane)
+					return; // just in case it didn't really change
 
-			bool fShowFirstPane = m_mediator.PropertyTable.GetBoolProperty(m_propertyControllingVisibilityOfFirstPane, true);
-			if (fShowFirstPane == m_showingFirstPane)
-				return; // just in case it didn't really change
+				m_showingFirstPane = fShowFirstPane;
 
-			m_showingFirstPane = fShowFirstPane;
+				Panel1Collapsed = !fShowFirstPane;
 
-			Panel1Collapsed = !fShowFirstPane;
+				if (ShowFirstPaneChanged != null)
+					ShowFirstPaneChanged(this, new EventArgs());
+			}
 
-			if (ShowFirstPaneChanged != null)
-				ShowFirstPaneChanged(this, new EventArgs());
+		}
+
+		/// <summary>
+		/// The focus will only be set in the default control if it implements IFocusablePanePortion
+		/// </summary>
+		private void SetFocusInDefaultControl()
+		{
+			var firstCtrl = FirstControl as IFocusablePanePortion;
+			var secondCtrl = SecondControl as IFocusablePanePortion;
+			Control focusedTarget = null;
+			if(firstCtrl != null && firstCtrl.IsFocusedPane)
+			{
+				firstCtrl.Focus();
+			}
+			else if (secondCtrl != null && secondCtrl.IsFocusedPane)
+			{
+				secondCtrl.Focus();
+			}
+			else if(!String.IsNullOrEmpty(m_defaultFocusControl))
+			{
+				Debug.Assert(m_defaultFocusControl == String.Empty,
+				"Failed to find focusable subcontrol.",
+				"This MultiPane was configured to focus {0} as a default control. But it either was not found or was not an IFocuablePanePortion",
+				m_defaultFocusControl);
+			}
 		}
 	}
 }

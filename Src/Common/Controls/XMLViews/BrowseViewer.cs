@@ -322,6 +322,17 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
+		/// calls Focus on the important child control
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnGotFocus(EventArgs e)
+		{
+			base.OnGotFocus(e);
+			if (m_xbv != null && !m_xbv.Focused)
+				m_xbv.Focus();
+		}
+
+		/// <summary>
 		/// This supports external clients using the Bulk Edit Preview functionality.
 		/// To turn on, set to the index of the column that should have the preview
 		/// (zero based, not counting the check box column). To turn off, set to -1.

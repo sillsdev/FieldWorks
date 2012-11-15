@@ -53,6 +53,16 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region Construction, initialization, and disposal.
 
+		/// <summary>
+		/// see XmlBrowseViewBase OnGotFocus
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnGotFocus(EventArgs e)
+		{
+			base.OnGotFocus(e);
+			SetSelection();
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:XmlBrowseRDEView"/> class.
@@ -264,6 +274,11 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_rootb == null)
 				MakeRoot();
 
+			SetSelection();
+		}
+
+		private void SetSelection()
+		{
 			// if we haven't already made a selection, make one in the new row.
 			if (m_rootb.Selection == null)
 			{
@@ -274,6 +289,7 @@ namespace SIL.FieldWorks.Common.Controls
 				ScrollToCurrentSelection();
 			}
 		}
+
 		#endregion XCore message handlers
 
 		#region Other methods

@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 	/// This version uses the DetailControls version of DataTree, and will eventually replace the
 	/// original.
 	/// </summary>
-	public class RecordEditView : RecordView, IVwNotifyChange
+	public class RecordEditView : RecordView, IVwNotifyChange, IFocusablePanePortion
 	{
 		#region Data members
 
@@ -333,7 +333,7 @@ namespace SIL.FieldWorks.XWorks
 							obj = obj.Owner;
 					}
 
-					m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, rni.SuppressFocusChange);
+					m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
 				}
 			}
 			catch (Exception error)
@@ -349,6 +349,17 @@ namespace SIL.FieldWorks.XWorks
 			int msEnd = Environment.TickCount;
 			Debug.WriteLineIf(RuntimeSwitches.RecordTimingSwitch.TraceInfo, "ShowRecord took " + (msEnd - msStart) + " ms", RuntimeSwitches.RecordTimingSwitch.DisplayName);
 			return true;
+		}
+
+		/// <summary>
+		/// If this is not the focused pane in a multipane suppress, or if the navigation info requested
+		/// a suppression of the focus change then return true (suppress)
+		/// </summary>
+		/// <param name="rni"></param>
+		/// <returns></returns>
+		private bool ShouldSuppressFocusChange(RecordNavigationInfo rni)
+		{
+			return !IsFocusedPane || rni.SuppressFocusChange;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -674,5 +685,10 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
+		public bool IsFocusedPane
+		{
+			get;
+			set;
+		}
 	}
 }
