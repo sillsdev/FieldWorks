@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			foreach (TreeNode tnode in nodes)
 			{
-				var node = tnode as ReallySimpleListChooser.LabelNode;
+				var node = tnode as LabelNode;
 				if (node == null)
 					continue;
 				var label = node.Label;

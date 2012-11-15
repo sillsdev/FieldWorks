@@ -291,7 +291,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAACm
-        DAAAAk1TRnQBSQFMAgEBBQEAAaQBAQGkAQEBEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
+        DAAAAk1TRnQBSQFMAgEBBQEAAawBAQGsAQEBEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
         AwABQAMAASADAAEBAQABCAYAAQgYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHA
         AQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEAAykBAANVAQADTQEAA0IBAAM5
         AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMA
@@ -430,7 +430,7 @@
     <value>m_mainPanel</value>
   </data>
   <data name="&gt;&gt;m_lblExplanation.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="buttonHelp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
@@ -462,30 +462,6 @@
   <data name="&gt;&gt;buttonHelp.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="m_textSearch.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 100pt</value>
-  </data>
-  <data name="m_textSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 3</value>
-  </data>
-  <data name="m_textSearch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>305, 25</value>
-  </data>
-  <data name="m_textSearch.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;m_textSearch.Name" xml:space="preserve">
-    <value>m_textSearch</value>
-  </data>
-  <data name="&gt;&gt;m_textSearch.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.3.0.22826, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;m_textSearch.Parent" xml:space="preserve">
-    <value>m_mainPanel</value>
-  </data>
-  <data name="&gt;&gt;m_textSearch.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="m_viewPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -508,7 +484,7 @@
     <value>m_mainPanel</value>
   </data>
   <data name="&gt;&gt;m_viewPanel.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <data name="m_ctrlClickLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -601,7 +577,7 @@
     <value>m_mainPanel</value>
   </data>
   <data name="&gt;&gt;m_viewExtrasPanel.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="m_displayUsageCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -655,7 +631,7 @@
     <value>m_mainPanel</value>
   </data>
   <data name="&gt;&gt;m_checkBoxPanel.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="m_link2Panel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -688,7 +664,7 @@
     <value>m_mainPanel</value>
   </data>
   <data name="&gt;&gt;m_link2Panel.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="m_link1Panel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -721,7 +697,7 @@
     <value>m_mainPanel</value>
   </data>
   <data name="&gt;&gt;m_link1Panel.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>5</value>
   </data>
   <data name="m_buttonPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
@@ -751,7 +727,7 @@
     <value>m_mainPanel</value>
   </data>
   <data name="&gt;&gt;m_buttonPanel.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>6</value>
   </data>
   <data name="m_mainPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
