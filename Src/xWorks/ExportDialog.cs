@@ -640,21 +640,46 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void OpenExportFolder(string sDirectory, string sFileName)
 		{
-			// TODO-Linux: this doesn't work on Linux
-
-			// REVIEW: what happens if Windows isn't installed in C:\Windows? What happens if
-			// directory or filename contain spaces?
-			ProcessStartInfo processInfo;
-			if (String.IsNullOrEmpty(sFileName))
+			ProcessStartInfo processInfo = null;
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
 			{
-				processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sDirectory));
+				if (File.Exists("/usr/bin/nautilus"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/nautilus", String.Format("\"{0}\"", sDirectory));
+				}
+				else if (File.Exists("/usr/bin/krusader"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/krusader", String.Format("\"{0}\"", sDirectory));
+				}
+				else if (File.Exists("/usr/bin/pcmanfm"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/nautilus", String.Format("\"{0}\"", sDirectory));
+				}
+				else if (File.Exists("/usr/bin/gnome-commander"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/gnome-commander",
+						String.Format("-l \"{0}\" -r \"{1}\"", Path.GetDirectoryName(sDirectory), sDirectory));
+				}
+				// If the user doesn't have one of these programs installed, I give up!
 			}
 			else
 			{
-				processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sFileName));
+				// REVIEW: what happens if Windows isn't installed in C:\Windows? What happens if
+				// directory or filename contain spaces?
+				if (String.IsNullOrEmpty(sFileName))
+				{
+					processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sDirectory));
+				}
+				else
+				{
+					processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sFileName));
+				}
 			}
-			using (Process.Start(processInfo))
+			if (processInfo != null)
 			{
+				using (Process.Start(processInfo))
+				{
+				}
 			}
 		}
 
