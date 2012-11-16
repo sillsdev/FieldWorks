@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				// This provides a bit of extra info, especially if it fails on a no-gui build machine.
 				Debug.Fail("SilIcuInit returned false. It was trying to load from " + overrideDataPath + ". The file " +
 					(File.Exists(overrideDataPath) ? "exists." : "does not exist."));
-				MessageBox.Show(string.Format(Properties.Resources.ksIcuInitFailed, overrideDataPath));
+				MessageBoxUtils.Show(string.Format(Properties.Resources.ksIcuInitFailed, overrideDataPath));
 			}
 		}
 

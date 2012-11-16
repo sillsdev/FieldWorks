@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
 {
@@ -29,6 +30,14 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 	[TestFixture]
 	public class MarshalExTests // can't derive from BaseTest because of dependencies
 	{
+		/// <summary/>
+		[TestFixtureSetUp]
+		public void FixtureSetup()
+		{
+			// Set stub for messagebox so that we don't pop up a message box when running tests.
+			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the MarshalEx.UShortToString method

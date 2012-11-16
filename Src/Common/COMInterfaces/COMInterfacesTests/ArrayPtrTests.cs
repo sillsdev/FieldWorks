@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using System.Runtime.InteropServices;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
 {
@@ -28,6 +29,14 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 	[TestFixture]
 	public class ArrayPtrTests
 	{
+		/// <summary/>
+		[TestFixtureSetUp]
+		public void FixtureSetup()
+		{
+			// Set stub for messagebox so that we don't pop up a message box when running tests.
+			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
+		}
+
 		/// <summary></summary>
 		[Test]
 		public void Basic()

@@ -41,6 +41,10 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 		{
 			// This needs to be set for ICU
 			RegistryHelper.CompanyName = "SIL";
+
+			// Set stub for messagebox so that we don't pop up a message box when running tests.
+			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
+
 			Icu.InitIcuDataDir();
 		}
 

@@ -112,8 +112,9 @@ namespace SIL.FieldWorks.Test.TestUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public virtual void FixtureSetup()
+		public override void FixtureSetup()
 		{
+			base.FixtureSetup();
 			m_debugProcs = new DebugProcs();
 			try
 			{
@@ -142,10 +143,6 @@ namespace SIL.FieldWorks.Test.TestUtils
 				// just ignore any errors we get
 			}
 #endif
-
-			// Set stub for messagebox so that we don't pop up a message box when running tests.
-			// If we don't want to do this always we should do it at least for !Environment.UserInteractive.
-			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
 		}
 
 		/// ------------------------------------------------------------------------------------

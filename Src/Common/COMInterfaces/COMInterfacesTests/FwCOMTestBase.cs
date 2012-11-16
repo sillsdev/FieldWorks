@@ -23,6 +23,8 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
+using NUnit.Framework;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.COMInterfaces
 {
@@ -146,6 +148,20 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			}
 		}
 #endif
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// If a test overrides this, it should call this base implementation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		/// <summary/>
+		[TestFixtureSetUp]
+		public virtual void FixtureSetup()
+		{
+			// Set stub for messagebox so that we don't pop up a message box when running tests.
+			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
+		}
+
 		// The following code was copied from RegFreeCreator.cs (under $FW/Bin/nant/src/FwTasks).
 
 		#region Imported methods to register dll
