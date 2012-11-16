@@ -3011,11 +3011,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return;
 
 			var homoForm = HomographFormKey;
-			ILexEntry le = objSrc as ILexEntry;
-			// If the lexeme forms don't match, make the other LF an allomorph.
+			var le = objSrc as ILexEntry;
+			// If the lexeme forms don't match, and they both have content in the vernacular, make the other LF an allomorph.
 			if (LexemeFormOA != null && le.LexemeFormOA != null &&
 				LexemeFormOA.Form.VernacularDefaultWritingSystem != null && le.LexemeFormOA.Form.VernacularDefaultWritingSystem != null
-				&& LexemeFormOA.Form.VernacularDefaultWritingSystem.Text != le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text)
+				&& LexemeFormOA.Form.VernacularDefaultWritingSystem.Text != le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text
+				&& LexemeFormOA.Form.VernacularDefaultWritingSystem.Text != null && le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text != null)
 			{
 				// Order here is important. We must update any homographs of the entry that is going away.
 				// We must do that AFTER we remove its lexeme form so that it is no longer a homograph.
@@ -3028,9 +3029,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			//  merge the LexemeForm objects first, if this is possible.  This is important, because otherwise the
 			// LexemeForm objects would not get merged, and that is needed for proper handling
 			// of references and back references.
-			if (this.LexemeFormOA != null && le.LexemeFormOA != null && LexemeFormOA.ClassID == le.LexemeFormOA.ClassID)
+			if (LexemeFormOA != null && le.LexemeFormOA != null && LexemeFormOA.ClassID == le.LexemeFormOA.ClassID)
 			{
-				this.LexemeFormOA.MergeObject(le.LexemeFormOA, fLoseNoStringData);
+				LexemeFormOA.MergeObject(le.LexemeFormOA, fLoseNoStringData);
 				le.LexemeFormOA = null;
 			}
 
