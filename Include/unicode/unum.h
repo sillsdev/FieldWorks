@@ -107,7 +107,7 @@
  * formatters.
  * <P>
  * You can also control the display of numbers with such function as
- * unum_getAttribues() and unum_setAtributes(), which let you set the
+ * unum_getAttributes() and unum_setAttributes(), which let you set the
  * miminum fraction digits, grouping, etc.
  * @see UNumberFormatAttributes for more details
  * <P>
@@ -667,7 +667,7 @@ unum_parseDoubleCurrency(const UNumberFormat* fmt,
 
 /**
  * Set the pattern used by a UNumberFormat.  This can only be used
- * on a DecimalFormat, other formats return U_ILLEGAL_ARGUMENT_ERROR
+ * on a DecimalFormat, other formats return U_UNSUPPORTED_ERROR
  * in the status.
  * @param format The formatter to set.
  * @param localized TRUE if the pattern is localized, FALSE otherwise.
@@ -775,15 +775,41 @@ typedef enum UNumberFormatAttribute {
   /** Lenient parse mode used by rule-based formats.
    * @stable ICU 3.0
    */
-  UNUM_LENIENT_PARSE
-
+  UNUM_LENIENT_PARSE,
 #if UCONFIG_HAVE_PARSEALLINPUT
   /** Consume all input. (may use fastpath). Set to UNUM_YES (require fastpath), UNUM_NO (skip fastpath), or UNUM_MAYBE (heuristic).
+   * This is an internal ICU API. Do not use.
    * @internal
    */
-  ,UNUM_PARSE_ALL_INPUT
+  UNUM_PARSE_ALL_INPUT,
 #endif
 
+  /** Count of "regular" numeric attributes.
+   * @internal */
+  UNUM_NUMERIC_ATTRIBUTE_COUNT,
+
+  /** One below the first bitfield-boolean item.
+   * All items after this one are stored in boolean form.
+   * @internal */
+  UNUM_MAX_NONBOOLEAN_ATTRIBUTE = 0x0FFF,
+
+  /** If 1, specifies that if setting the "max integer digits" attribute would truncate a value, set an error status rather than silently truncating.
+   * For example,  formatting the value 1234 with 4 max int digits would succeed, but formatting 12345 would fail. There is no effect on parsing.
+   * Default: 0 (not set)
+   * @draft ICU 50
+   */
+  UNUM_FORMAT_FAIL_IF_MORE_THAN_MAX_DIGITS,
+  /**
+   * if this attribute is set to 1, specifies that, if the pattern doesn't contain an exponent, the exponent will not be parsed. If the pattern does contain an exponent, this attribute has no effect.
+   * Has no effect on formatting.
+   * Default: 0 (unset)
+   * @draft ICU 50
+   */
+  UNUM_PARSE_NO_EXPONENT,
+
+  /** Limit of boolean attributes.
+   * @internal */
+  UNUM_LIMIT_BOOLEAN_ATTRIBUTE
 } UNumberFormatAttribute;
 
 /**
@@ -899,7 +925,7 @@ typedef enum UNumberFormatTextAttribute {
 /**
 * Get a text attribute associated with a UNumberFormat.
 * An example of a text attribute is the suffix for positive numbers.  If the formatter
-* does not understand the attributre, U_UNSUPPORTED_ERROR is returned as the status.
+* does not understand the attribute, U_UNSUPPORTED_ERROR is returned as the status.
 * Rule-based formatters only understand UNUM_DEFAULT_RULESET and UNUM_PUBLIC_RULESETS.
 * @param fmt The formatter to query.
 * @param tag The attribute to query; one of UNUM_POSITIVE_PREFIX, UNUM_POSITIVE_SUFFIX,

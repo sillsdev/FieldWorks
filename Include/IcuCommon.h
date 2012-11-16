@@ -31,6 +31,8 @@
 //--------------------------------------------------------------------------------
 
 #pragma warning(disable: 4512)
+#pragma warning(disable: 4521)
+#pragma warning(disable: 4251)
 
 #include <unicode/alphaindex.h>
 #include <unicode/appendable.h>
@@ -211,3 +213,5 @@
 U_CAPI UBool U_EXPORT2 SilIcuInit(const char * dataPath);
 
 #pragma warning(default: 4512)
+#pragma warning(default: 4521)
+#pragma warning(default: 4251)

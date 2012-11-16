@@ -334,9 +334,19 @@ typedef enum {
  *  @stable ICU 2.0
  */
 typedef enum {
-  /** Retrieve tailoring only */
+  /**
+   * Retrieves the tailoring rules only.
+   * Same as calling the version of getRules() without UColRuleOption.
+   * @stable ICU 2.0
+   */
   UCOL_TAILORING_ONLY,
-  /** Retrieve UCA rules and tailoring */
+  /**
+   * Retrieves the "UCA rules" concatenated with the tailoring rules.
+   * The "UCA rules" are an <i>approximation</i> of the root collator's sort order.
+   * They are almost never used or useful at runtime and can be removed from the data.
+   * See http://userguide.icu-project.org/collation/customization#TOC-Building-on-Existing-Locales
+   * @stable ICU 2.0
+   */
   UCOL_FULL_RULES
 } UColRuleOption ;
 
@@ -524,6 +534,33 @@ ucol_strcoll(    const    UCollator    *coll,
 		int32_t            targetLength);
 
 /**
+* Compare two strings in UTF-8.
+* The strings will be compared using the options already specified.
+* Note: When input string contains malformed a UTF-8 byte sequence,
+* this function treats these bytes as REPLACEMENT CHARACTER (U+FFFD).
+* @param coll The UCollator containing the comparison rules.
+* @param source The source UTF-8 string.
+* @param sourceLength The length of source, or -1 if null-terminated.
+* @param target The target UTF-8 string.
+* @param targetLength The length of target, or -1 if null-terminated.
+* @param status A pointer to an UErrorCode to receive any errors
+* @return The result of comparing the strings; one of UCOL_EQUAL,
+* UCOL_GREATER, UCOL_LESS
+* @see ucol_greater
+* @see ucol_greaterOrEqual
+* @see ucol_equal
+* @draft ICU 50
+*/
+U_DRAFT UCollationResult U_EXPORT2
+ucol_strcollUTF8(
+		const UCollator *coll,
+		const char      *source,
+		int32_t         sourceLength,
+		const char      *target,
+		int32_t         targetLength,
+		UErrorCode      *status);
+
+/**
  * Determine if one string is greater than another.
  * This function is equivalent to {@link #ucol_strcoll } == UCOL_GREATER
  * @param coll The UCollator containing the comparison rules.
@@ -639,7 +676,7 @@ ucol_setStrength(UCollator *coll,
  * @see UColReorderCode
  * @stable ICU 4.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 ucol_getReorderCodes(const UCollator* coll,
 					int32_t* dest,
 					int32_t destCapacity,
@@ -679,7 +716,7 @@ ucol_getReorderCodes(const UCollator* coll,
  * @see UColReorderCode
  * @stable ICU 4.8
  */
-U_DRAFT void U_EXPORT2
+U_STABLE void U_EXPORT2
 ucol_setReorderCodes(UCollator* coll,
 					const int32_t* reorderCodes,
 					int32_t reorderCodesLength,
@@ -701,7 +738,7 @@ ucol_setReorderCodes(UCollator* coll,
  * @see UColReorderCode
  * @stable ICU 4.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 ucol_getEquivalentReorderCodes(int32_t reorderCode,
 					int32_t* dest,
 					int32_t destCapacity,
@@ -943,10 +980,10 @@ ucol_getSortKey(const    UCollator    *coll,
  *  to preserve state array between calls and to provide
  *  the same type of UCharIterator set with the same string.
  *  The destination buffer provided must be big enough to store
- *  the number of requested bytes. Generated sortkey is not
- *  compatible with sortkeys generated using ucol_getSortKey
- *  API, since we don't do any compression. If uncompressed
- *  sortkeys are required, this API can be used.
+ *  the number of requested bytes.
+ *
+ *  The generated sort key may or may not be compatible with
+ *  sort keys generated using ucol_getSortKey().
  *  @param coll The UCollator containing the collation rules.
  *  @param iter UCharIterator containing the string we need
  *              the sort key to be calculated for.
@@ -1193,12 +1230,16 @@ ucol_safeClone(const UCollator *coll,
  * Returns current rules. Delta defines whether full rules are returned or just the tailoring.
  * Returns number of UChars needed to store rules. If buffer is NULL or bufferLen is not enough
  * to store rules, will store up to available space.
+ *
+ * ucol_getRules() should normally be used instead.
+ * See http://userguide.icu-project.org/collation/customization#TOC-Building-on-Existing-Locales
  * @param coll collator to get the rules from
  * @param delta one of UCOL_TAILORING_ONLY, UCOL_FULL_RULES.
  * @param buffer buffer to store the result in. If NULL, you'll get no rules.
- * @param bufferLen lenght of buffer to store rules in. If less then needed you'll get only the part that fits in.
+ * @param bufferLen length of buffer to store rules in. If less than needed you'll get only the part that fits in.
  * @return current rules
  * @stable ICU 2.0
+ * @see UCOL_FULL_RULES
  */
 U_STABLE int32_t U_EXPORT2
 ucol_getRulesEx(const UCollator *coll, UColRuleOption delta, UChar *buffer, int32_t bufferLen);

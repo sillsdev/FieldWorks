@@ -123,7 +123,7 @@ typedef struct UNormalizer2 UNormalizer2;  /**< C typedef for struct UNormalizer
  * Returns a UNormalizer2 instance for Unicode NFC normalization.
  * Same as unorm2_getInstance(NULL, "nfc", UNORM2_COMPOSE, pErrorCode).
  * Returns an unmodifiable singleton instance. Do not delete it.
- * @param errorCode Standard ICU error code. Its input value must
+ * @param pErrorCode Standard ICU error code. Its input value must
  *                  pass the U_SUCCESS() test, or else the function returns
  *                  immediately. Check for U_FAILURE() on output or use with
  *                  function chaining. (See User Guide for details.)
@@ -137,7 +137,7 @@ unorm2_getNFCInstance(UErrorCode *pErrorCode);
  * Returns a UNormalizer2 instance for Unicode NFD normalization.
  * Same as unorm2_getInstance(NULL, "nfc", UNORM2_DECOMPOSE, pErrorCode).
  * Returns an unmodifiable singleton instance. Do not delete it.
- * @param errorCode Standard ICU error code. Its input value must
+ * @param pErrorCode Standard ICU error code. Its input value must
  *                  pass the U_SUCCESS() test, or else the function returns
  *                  immediately. Check for U_FAILURE() on output or use with
  *                  function chaining. (See User Guide for details.)
@@ -151,7 +151,7 @@ unorm2_getNFDInstance(UErrorCode *pErrorCode);
  * Returns a UNormalizer2 instance for Unicode NFKC normalization.
  * Same as unorm2_getInstance(NULL, "nfkc", UNORM2_COMPOSE, pErrorCode).
  * Returns an unmodifiable singleton instance. Do not delete it.
- * @param errorCode Standard ICU error code. Its input value must
+ * @param pErrorCode Standard ICU error code. Its input value must
  *                  pass the U_SUCCESS() test, or else the function returns
  *                  immediately. Check for U_FAILURE() on output or use with
  *                  function chaining. (See User Guide for details.)
@@ -165,7 +165,7 @@ unorm2_getNFKCInstance(UErrorCode *pErrorCode);
  * Returns a UNormalizer2 instance for Unicode NFKD normalization.
  * Same as unorm2_getInstance(NULL, "nfkc", UNORM2_DECOMPOSE, pErrorCode).
  * Returns an unmodifiable singleton instance. Do not delete it.
- * @param errorCode Standard ICU error code. Its input value must
+ * @param pErrorCode Standard ICU error code. Its input value must
  *                  pass the U_SUCCESS() test, or else the function returns
  *                  immediately. Check for U_FAILURE() on output or use with
  *                  function chaining. (See User Guide for details.)
@@ -179,7 +179,7 @@ unorm2_getNFKDInstance(UErrorCode *pErrorCode);
  * Returns a UNormalizer2 instance for Unicode NFKC_Casefold normalization.
  * Same as unorm2_getInstance(NULL, "nfkc_cf", UNORM2_COMPOSE, pErrorCode).
  * Returns an unmodifiable singleton instance. Do not delete it.
- * @param errorCode Standard ICU error code. Its input value must
+ * @param pErrorCode Standard ICU error code. Its input value must
  *                  pass the U_SUCCESS() test, or else the function returns
  *                  immediately. Check for U_FAILURE() on output or use with
  *                  function chaining. (See User Guide for details.)
@@ -350,7 +350,7 @@ unorm2_append(const UNormalizer2 *norm2,
  * @return the non-negative length of c's decomposition, if there is one; otherwise a negative value
  * @stable ICU 4.6
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 unorm2_getDecomposition(const UNormalizer2 *norm2,
 						UChar32 c, UChar *decomposition, int32_t capacity,
 						UErrorCode *pErrorCode);

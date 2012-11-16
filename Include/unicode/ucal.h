@@ -122,7 +122,7 @@
  * <p>
  * The date or time format strings are not part of the definition of a
  * calendar, as those must be modifiable or overridable by the user at
- * runtime. Use {@link DateFormat}
+ * runtime. Use {@link icu::DateFormat}
  * to format dates.
  *
  * <p>
@@ -564,7 +564,7 @@ typedef enum USystemTimeZoneType USystemTimeZoneType;
  *          *ec will indicate the error.
  * @stable ICU 4.8
  */
-U_DRAFT UEnumeration* U_EXPORT2
+U_STABLE UEnumeration* U_EXPORT2
 ucal_openTimeZoneIDEnumeration(USystemTimeZoneType zoneType, const char* region,
 								const int32_t* rawOffset, UErrorCode* ec);
 
@@ -1426,11 +1426,67 @@ ucal_isWeekend(const UCalendar *cal, UDate date, UErrorCode *status);
  * @return The date difference for the specified field.
  * @stable ICU 4.8
  */
-U_DRAFT int32_t U_EXPORT2
+U_STABLE int32_t U_EXPORT2
 ucal_getFieldDifference(UCalendar* cal,
 						UDate target,
 						UCalendarDateFields field,
 						UErrorCode* status);
+
+#ifndef U_HIDE_DRAFT_API
+/**
+ * Time zone transition types for ucal_getTimeZoneTransitionDate
+ * @draft ICU 50
+ */
+enum UTimeZoneTransitionType {
+	/**
+	 * Get the next transition after the current date,
+	 * i.e. excludes the current date
+	 * @draft ICU 50
+	 */
+	UCAL_TZ_TRANSITION_NEXT,
+	/**
+	 * Get the next transition on or after the current date,
+	 * i.e. may include the current date
+	 * @draft ICU 50
+	 */
+	UCAL_TZ_TRANSITION_NEXT_INCLUSIVE,
+	/**
+	 * Get the previous transition before the current date,
+	 * i.e. excludes the current date
+	 * @draft ICU 50
+	 */
+	UCAL_TZ_TRANSITION_PREVIOUS,
+	/**
+	 * Get the previous transition on or before the current date,
+	 * i.e. may include the current date
+	 * @draft ICU 50
+	 */
+	UCAL_TZ_TRANSITION_PREVIOUS_INCLUSIVE
+};
+
+/** @draft ICU 50 */
+typedef enum UTimeZoneTransitionType UTimeZoneTransitionType;
+
+/**
+* Get the UDate for the next/previous time zone transition relative to
+* the calendar's current date, in the time zone to which the calendar
+* is currently set. If there is no known time zone transition of the
+* requested type relative to the calendar's date, the function returns
+* FALSE.
+* @param cal The UCalendar to query.
+* @param type The type of transition desired.
+* @param transition A pointer to a UDate to be set to the transition time.
+*         If the function returns FALSE, the value set is unspecified.
+* @param status A pointer to a UErrorCode to receive any errors.
+* @return TRUE if a valid transition time is set in *transition, FALSE
+*         otherwise.
+* @draft ICU 50
+*/
+U_DRAFT UBool U_EXPORT2
+ucal_getTimeZoneTransitionDate(const UCalendar* cal, UTimeZoneTransitionType type,
+							   UDate* transition, UErrorCode* status);
+
+#endif  /* U_HIDE_DRAFT_API */
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 

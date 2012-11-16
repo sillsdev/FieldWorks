@@ -1,6 +1,6 @@
 /*
 ******************************************************************************
-* Copyright (C) 2010-2011, International Business Machines Corporation and
+* Copyright (C) 2010-2012, International Business Machines Corporation and
 * others. All Rights Reserved.
 ******************************************************************************
 */
@@ -20,6 +20,7 @@
 #include "unicode/locid.h"
 #include "unicode/uscript.h"
 #include "unicode/uldnames.h"
+#include "unicode/udisplaycontext.h"
 
 U_NAMESPACE_BEGIN
 
@@ -60,6 +61,22 @@ public:
 	static LocaleDisplayNames* U_EXPORT2 createInstance(const Locale& locale,
 							UDialectHandling dialectHandling);
 
+#ifndef U_HIDE_INTERNAL_API
+	/**
+	 * Returns an instance of LocaleDisplayNames that returns names formatted
+	 * for the provided locale, using the provided UDisplayContext settings.
+	 *
+	 * @param locale the display locale
+	 * @param contexts List of one or more context settings (e.g. for dialect
+	 *               handling, capitalization, etc.
+	 * @param length Number of items in the contexts list
+	 * @return a LocaleDisplayNames instance
+	 * @internal ICU 50 technology preview
+	 */
+	static LocaleDisplayNames* U_EXPORT2 createInstance(const Locale& locale,
+							UDisplayContext *contexts, int32_t length);
+#endif  /* U_HIDE_INTERNAL_API */
+
 	// getters for state
 	/**
 	 * Returns the locale used to determine the display names. This is
@@ -75,6 +92,14 @@ public:
 	 * @stable ICU 4.4
 	 */
 	virtual UDialectHandling getDialectHandling() const = 0;
+
+	/**
+	 * Returns the UDisplayContext value for the specified UDisplayContextType.
+	 * @param type the UDisplayContextType whose value to return
+	 * @return the UDisplayContext for the specified type.
+	 * @internal ICU 50 technology preview
+	 */
+	virtual UDisplayContext getContext(UDisplayContextType type) const = 0;
 
 	// names for entire locales
 	/**

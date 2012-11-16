@@ -190,13 +190,14 @@ namespace TestLanguage
 			//staMsg.Format("get_BidiCategory(%x)", ch);
 			//unitpp::assert_eq(staMsg.Chars(), bic, bicT);
 
-			hr = m_qpropeng->get_NumericValue(ch, &nT);
-			unitpp::assert_eq("get_NumericValue(ch, &nT) HRESULT", hrNumericValue, hr);
-			if (hr == S_OK)
-			{
-				staMsg.Format("get_NumericValue(%x)", ch);
-				unitpp::assert_eq(staMsg.Chars(), nNumericValue, nT);
-			}
+			// The SIL/FieldWorks changes for ICU 5.0 do not support get_NumericValue.
+			//hr = m_qpropeng->get_NumericValue(ch, &nT);
+			//unitpp::assert_eq("get_NumericValue(ch, &nT) HRESULT", hrNumericValue, hr);
+			//if (hr == S_OK)
+			//{
+			//	staMsg.Format("get_NumericValue(%x)", ch);
+			//	unitpp::assert_eq(staMsg.Chars(), nNumericValue, nT);
+			//}
 
 			hr = m_qpropeng->get_ToLowerCh(ch, &chT);
 			unitpp::assert_eq("get_ToLowerCh(ch, &chT) HRESULT", S_OK, hr);

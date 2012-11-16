@@ -49,7 +49,7 @@
 
   <Target Name="IcuData">
 	  <Delete Files="$(IcuDataFiles)" TreatErrorsAsWarnings="true"/>
-	  <Unzip ZipFilename="$(fwrt)/DistFiles/Icu50.zip" ToDir="$(fwrt)/DistFiles/Icu50"/>
+	  <Unzip ZipFilename="$(fwrt)/DistFiles/Icu50.zip" ToDir="$(fwrt)/DistFiles"/>
 	  <!-- Not really ICU, but we need to clean out global ws store at same time to prevent
 	 differing versions of ldml files from breaking builds on other branches.
 	 This has different values on XP and Vista/7:

@@ -20,10 +20,11 @@ Directory and filename conventions: (forward slashes are used in paths)
 
 				http://icu.sourceforge.net/download/
 
-	For example, ICU 50 release candidate (the latest version as of this
-	writing) comes in a zip file named icu4c-50_rc-src.zip.  (There are some
+	For example, ICU 50 (the latest version as of this
+	writing) comes in a zip file named icu4c-50_1-src.zip.  (There are some
 	documentation files that are also available, and may be worth downloading,
-	but which aren't officially required by our process.)
+	but which aren't officially required by our process.) You want the download
+	for 32-bit Windows.
 
 	Expand the zip file contents in the directory $ICUSRC.  This will create a
 	subdirectory $ICUSRC/icu.  Create a git repository here with the following
@@ -31,7 +32,7 @@ Directory and filename conventions: (forward slashes are used in paths)
 				cd $ICUSRC
 				git init
 				git add icu
-				git commit
+				git commit -m 'original ICU 50'
 				git checkout -b FieldWorks
 
 	This will give you a baseline of the original sources on the master branch,
@@ -204,6 +205,14 @@ In the end all this didn't work. I ended up making a 32-bit virtual machine to
 build the 32-bit version of ICU, which is what FieldWorks needs.
 --------end of notes about 32-bit build on Win64-------
 
+You should now be able to run our special unit tests. To make the normalization test run, first execute
+some commands in a DOS box; see the comments in sil_override_tst.c in TestNormalization(). Then make cintltst the startup project and use ctrl-F5 to run the tests and pause so you can see the result.
+It should show that all our unit tests passed.
+
+You may also wish to run ICU's own unit tests, to make sure our changes haven't broken anything.
+Unfortunately, running our tests first DOES break some things. So we want to disable ours and just
+run theirs. To do this, in source/test/cintltst/calltest.c, comment out the line that defines SIL_MODIFICATIONS.
+
 	This results in the following output files (among others).
 		Todo: update this.
 		$ICUSRC/icu/bin/gennorm2.exe
@@ -219,6 +228,8 @@ build the 32-bit version of ICU, which is what FieldWorks needs.
 		$ICUSRC/icu/lib/icuuc.lib
 		$ICUSRC/icu/lib/icuucd.lib
 
+[in the next few steps, if you made a virtual machine, the source $ICUSRC should be wherever on
+your virtual machine you set all this up. The point is to copy the DLLs etc that you just built.]
  4. Copy $ICUSRC/icu/bin/icudt50.dll, $ICUSRC/icu/bin/icuin50.dll,
 	$ICUSRC/icu/bin/icuin50d.dll, $ICUSRC/icu/bin/icuuc50.dll, and
 	$ICUSRC/icu/bin/icuuc50d.dll to $FW/DistFiles.  Add the copied files to
@@ -226,11 +237,10 @@ build the 32-bit version of ICU, which is what FieldWorks needs.
 	control (which should delete them from your machine).
 
  5. Copy $ICUSRC/icu/lib/icudt.lib, $ICUSRC/icu/lib/icuin.lib and
-	$ICUSRC/icu/lib/icuuc.lib to $FW/Lib.  (Check out the target files first!)
+	$ICUSRC/icu/lib/icuuc.lib to $FW/Lib.
 
  6. Copy $ICUSRC/icu/bin/gennorm2.exe and $ICUSRC/icu/bin/icutu50.dll [tool
-	utilities] to $FW/DistFiles/Windows, either checking them out first or
-	adding them after, as needed.  (Make sure it is a release build of
+	utilities] to $FW/DistFiles/Windows.  (Make sure it is a release build of
 	gennorm2.exe; otherwise, it will complain when run that it can't find
 	icutu50d.dll.)
 
@@ -238,8 +248,7 @@ build the 32-bit version of ICU, which is what FieldWorks needs.
 	in the older directory (such as $FW/DistFiles/Icu40) from source control.
 
  8. Copy nfc.txt and nfkc.txt from source\data\unidata\norm2 to
-	$FW/DistFiles\icu50\data.  Add these to version control (or check out, as
-	appropriate).
+	$FW/DistFiles\icu50\data.
 
  9. Update $FW/DistFiles/icu50/data/UnicodeDataOverrides.txt. This is based on
 	the overrides at http://scripts.sil.org/SILPUAassignments. I (JT) did a
@@ -281,8 +290,8 @@ build the 32-bit version of ICU, which is what FieldWorks needs.
 	no promises.)  Then execute these commands (appropriately modified for your
 	paths):
 
-				gennorm2 -o f:\DistFiles\icu50\icudt50l\nfc.nrm C:\icu\icu\source\data\unidata\norm2\nfc.txt f:\Distfiles\icu\data\nfcHebrew.txt \f:\DistFiles\nfcOverrides.txt
-				gennorm2 -o f:\DistFiles\icu50\icudt50l\nfkc.nrm C:\icu\icu\source\data\unidata\norm2\nfc.txt f:\Distfiles\icu\data\nfcHebrew.txt C:\icu\icu\source\data\unidata\norm2\nfkc.txt f:DistFiles\nfcOverrides.txt f:\DistFiles\nfkcOverrides.txt
+				gennorm2 -o f:\DistFiles\icu50\icudt50l\nfc.nrm C:\icu\source\data\unidata\norm2\nfc.txt f:\Distfiles\icu50\data\nfcHebrew.txt f:\DistFiles\icu50\data\nfcOverrides.txt
+				gennorm2 -o f:\DistFiles\icu50\icudt50l\nfkc.nrm C:\icu\source\data\unidata\norm2\nfc.txt f:\Distfiles\icu50\data\nfcHebrew.txt C:\icu\source\data\unidata\norm2\nfkc.txt f:DistFiles\icu50\data\nfcOverrides.txt f:\DistFiles\Icu50\data\nfkcOverrides.txt
 
 	(Note that I had configured my virtual machine so that f: is my root
 	fwrepo/fw directory.)
@@ -322,14 +331,18 @@ build the 32-bit version of ICU, which is what FieldWorks needs.
 
 11. In addition, at the root of the ICU directory, a directory called include
 	is created.  Inside that is a directory called unicode.  The contents of
-	the unicode directory should be copied to fw\Include\unicode.  (Check out
-	all existing files $FW/Include/unicode first.)  Our file IcuCommon.h (in
+	the unicode directory should be copied to fw\Include\unicode.  Our file IcuCommon.h (in
 	directory fw\Include) needs to list all of these include header files.  So
 	make sure these match the current set of files.  Delete any files from
 	source control which no longer exist, and add any new files to source
 	control.  [JohnT/50: I added the new files to IcuCommon.h. Unlike Steve's
 	earlier efforts, I did not try to control which files to include using
 	#defines based on the ICU version. ]
+
+	Note: ICU is not intended to be built, as we do, with warnings treated as errors.
+	You may need to add to...or be able to reduce!...the list of warnings which
+	we disable while compiling the ICU headers. This is at the start (and
+	restored at the end) of IcuCommon.h.
 
 12. The file $FW/Src/Common/COMInterfaces/IcuWrappers.cs has a pair of string
 	constants near the top for the icuucNN.dll which reflect the current
@@ -433,7 +446,14 @@ build the 32-bit version of ICU, which is what FieldWorks needs.
 18. When the sources are in good shape, a new patch file can be created by the
 	commands:
 				cd $ICUSRC
+				git add icu/source/common/silmods.c
+				git add icu/source/common/silmods.h
+				git add icu/source/test/cintltst/sil_override_tst.c
 				git diff master >Icu50-SIL.patch
+
+	Note that you must first add any files that are not part of the ICU sources
+	that you need. At least you need the three files that the current patch adds,
+	as above. Also add any others you may need to create.
 
 	Unzip the original sources (e.g. icu4c-50_rc.zip) into a new directory,
 	apply the patch to the fresh set of original sources, and then zip up the

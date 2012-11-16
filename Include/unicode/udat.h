@@ -15,6 +15,7 @@
 #include "unicode/localpointer.h"
 #include "unicode/ucal.h"
 #include "unicode/unum.h"
+#include "unicode/udisplaycontext.h"
 /**
  * \file
  * \brief C API: DateFormat
@@ -167,147 +168,302 @@ typedef enum UDateFormatStyle {
 
 	/** No style */
 	UDAT_NONE = -1,
-	/** for internal API use only */
-	UDAT_IGNORE = -2
 
+	/**
+	 * Use the pattern given in the parameter to udat_open
+	 * @see udat_open
+	 * @draft ICU 50
+	 */
+	UDAT_PATTERN = -2,
+
+	/** @internal alias to UDAT_PATTERN */
+	UDAT_IGNORE = UDAT_PATTERN
 } UDateFormatStyle;
 
-/* Cannot use #ifndef U_HIDE_DRAFT_API for UDateFormatContextType and UDateFormatContextValue
- * since a SimpleDateFormat virtual method & data member depends on them */
-/** Date format context types
- *  @draft ICU 49
- */
-typedef enum UDateFormatContextType {
-	/**
-	 * Type (key) for specifying the capitalization context for which a date
-	 * is to be formatted (possible values are in UDateFormatContextValue).
-	 * @draft ICU 49
-	 */
-	UDAT_CAPITALIZATION = 1
-} UDateFormatContextType;
-
-/** Values for date format context types
- *  @draft ICU 49
- */
-typedef enum UDateFormatContextValue {
-	   /** Values for any UDateFormatContextType (key) */
-	/**
-	 * Value for any UDateFormatContextType (such as UDAT_CAPITALIZATION) if the
-	 * relevant context to be used in formatting a date is unknown (this is the
-	 * default value for any UDateFormatContextType when no value has been
-	 * explicitly specified for that UDateFormatContextType).
-	 * @draft ICU 49
-	 */
-	UDAT_CONTEXT_UNKNOWN = 0,
-#if !UCONFIG_NO_BREAK_ITERATION
-	/** Values for type (key) UDAT_CAPITALIZATION */
-	/**
-	 * UDAT_CAPITALIZATION value if a date (or date symbol) is to be formatted
-	 * with capitalization appropriate for the middle of a sentence.
-	 * @draft ICU 49
-	 */
-	UDAT_CAPITALIZATION_FOR_MIDDLE_OF_SENTENCE = 1,
-	/**
-	 * UDAT_CAPITALIZATION value if a date (or date symbol) is to be formatted
-	 * with capitalization appropriate for the beginning of a sentence.
-	 * @draft ICU 49
-	 */
-	UDAT_CAPITALIZATION_FOR_BEGINNING_OF_SENTENCE = 2,
-	/**
-	 * UDAT_CAPITALIZATION value if a date (or date symbol) is to be formatted
-	 * with capitalization appropriate for a user-interface list or menu item.
-	 * @draft ICU 49
-	 */
-	UDAT_CAPITALIZATION_FOR_UI_LIST_OR_MENU = 3,
-	/**
-	 * UDAT_CAPITALIZATION value if a date (or date symbol) is to be formatted
-	 * with capitalization appropriate for stand-alone usage such as an
-	 * isolated name on a calendar page.
-	 * @draft ICU 49
-	 */
-	UDAT_CAPITALIZATION_FOR_STANDALONE = 4
-#endif
-} UDateFormatContextValue;
+// Skeletons for dates.
 
 /**
- * @{
- * Below are a set of pre-defined skeletons.
- *
- * <P>
- * A skeleton
- * <ol>
- * <li>
- *    only keeps the field pattern letter and ignores all other parts
- *    in a pattern, such as space, punctuations, and string literals.
- * </li>
- * <li>
- *    hides the order of fields.
- * </li>
- * <li>
- *    might hide a field's pattern letter length.
- *
- *    For those non-digit calendar fields, the pattern letter length is
- *    important, such as MMM, MMMM, and MMMMM; EEE and EEEE,
- *    and the field's pattern letter length is honored.
- *
- *    For the digit calendar fields,  such as M or MM, d or dd, yy or yyyy,
- *    the field pattern length is ignored and the best match, which is defined
- *    in date time patterns, will be returned without honor the field pattern
- *    letter length in skeleton.
- * </li>
- * </ol>
- *
+ * Constant for date skeleton with year.
  * @stable ICU 4.0
  */
-
-#define UDAT_MINUTE_SECOND              "ms"
-#define UDAT_HOUR24_MINUTE              "Hm"
-#define UDAT_HOUR24_MINUTE_SECOND       "Hms"
-#define UDAT_HOUR_MINUTE_SECOND         "hms"
-#define UDAT_STANDALONE_MONTH           "LLLL"
-#define UDAT_ABBR_STANDALONE_MONTH      "LLL"
-#define UDAT_YEAR_QUARTER               "yQQQ"
-#define UDAT_YEAR_ABBR_QUARTER          "yQ"
-
-/** @} */
-
-/**
- * @{
- * Below are a set of pre-defined skeletons that
- * have pre-defined interval patterns in resource files.
- * Users are encouraged to use them in date interval format factory methods.
- *
- * @stable ICU 4.0
- */
-#define UDAT_HOUR_MINUTE                "hm"
 #define UDAT_YEAR                       "y"
-#define UDAT_DAY                        "d"
-#define UDAT_NUM_MONTH_WEEKDAY_DAY      "MEd"
-#define UDAT_YEAR_NUM_MONTH             "yM"
-#define UDAT_NUM_MONTH_DAY              "Md"
-#define UDAT_YEAR_NUM_MONTH_WEEKDAY_DAY "yMEd"
-#define UDAT_ABBR_MONTH_WEEKDAY_DAY     "MMMEd"
-#define UDAT_YEAR_MONTH                 "yMMMM"
-#define UDAT_YEAR_ABBR_MONTH            "yMMM"
-#define UDAT_MONTH_DAY                  "MMMMd"
-#define UDAT_ABBR_MONTH_DAY             "MMMd"
-#define UDAT_MONTH_WEEKDAY_DAY          "MMMMEEEEd"
-#define UDAT_YEAR_ABBR_MONTH_WEEKDAY_DAY "yMMMEd"
-#define UDAT_YEAR_MONTH_WEEKDAY_DAY     "yMMMMEEEEd"
-#define UDAT_YEAR_MONTH_DAY             "yMMMMd"
-#define UDAT_YEAR_ABBR_MONTH_DAY        "yMMMd"
-#define UDAT_YEAR_NUM_MONTH_DAY         "yMd"
-#define UDAT_NUM_MONTH                  "M"
-#define UDAT_ABBR_MONTH                 "MMM"
+/**
+ * Constant for date skeleton with quarter.
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_QUARTER                    "QQQQ"
+/**
+ * Constant for date skeleton with abbreviated quarter.
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_ABBR_QUARTER               "QQQ"
+/**
+ * Constant for date skeleton with year and quarter.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_QUARTER               "yQQQQ"
+/**
+ * Constant for date skeleton with year and abbreviated quarter.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_ABBR_QUARTER          "yQQQ"
+/**
+ * Constant for date skeleton with month.
+ * @stable ICU 4.0
+ */
 #define UDAT_MONTH                      "MMMM"
-#define UDAT_HOUR_MINUTE_GENERIC_TZ     "hmv"
-#define UDAT_HOUR_MINUTE_TZ             "hmz"
-#define UDAT_HOUR                       "h"
-#define UDAT_HOUR_GENERIC_TZ            "hv"
-#define UDAT_HOUR_TZ                    "hz"
+/**
+ * Constant for date skeleton with abbreviated month.
+ * @stable ICU 4.0
+ */
+#define UDAT_ABBR_MONTH                 "MMM"
+/**
+ * Constant for date skeleton with numeric month.
+ * @stable ICU 4.0
+ */
+#define UDAT_NUM_MONTH                  "M"
+/**
+ * Constant for date skeleton with year and month.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_MONTH                 "yMMMM"
+/**
+ * Constant for date skeleton with year and abbreviated month.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_ABBR_MONTH            "yMMM"
+/**
+ * Constant for date skeleton with year and numeric month.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_NUM_MONTH             "yM"
+/**
+ * Constant for date skeleton with day.
+ * @stable ICU 4.0
+ */
+#define UDAT_DAY                        "d"
+/**
+ * Constant for date skeleton with year, month, and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_MONTH_DAY             "yMMMMd"
+/**
+ * Constant for date skeleton with year, abbreviated month, and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_ABBR_MONTH_DAY        "yMMMd"
+/**
+ * Constant for date skeleton with year, numeric month, and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_NUM_MONTH_DAY         "yMd"
+/**
+ * Constant for date skeleton with weekday.
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_WEEKDAY                    "EEEE"
+/**
+ * Constant for date skeleton with abbreviated weekday.
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_ABBR_WEEKDAY               "E"
+/**
+ * Constant for date skeleton with year, month, weekday, and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_MONTH_WEEKDAY_DAY     "yMMMMEEEEd"
+/**
+ * Constant for date skeleton with year, abbreviated month, weekday, and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_ABBR_MONTH_WEEKDAY_DAY "yMMMEd"
+/**
+ * Constant for date skeleton with year, numeric month, weekday, and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_YEAR_NUM_MONTH_WEEKDAY_DAY "yMEd"
+/**
+ * Constant for date skeleton with long month and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_MONTH_DAY                  "MMMMd"
+/**
+ * Constant for date skeleton with abbreviated month and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_ABBR_MONTH_DAY             "MMMd"
+/**
+ * Constant for date skeleton with numeric month and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_NUM_MONTH_DAY              "Md"
+/**
+ * Constant for date skeleton with month, weekday, and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_MONTH_WEEKDAY_DAY          "MMMMEEEEd"
+/**
+ * Constant for date skeleton with abbreviated month, weekday, and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_ABBR_MONTH_WEEKDAY_DAY     "MMMEd"
+/**
+ * Constant for date skeleton with numeric month, weekday, and day.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_NUM_MONTH_WEEKDAY_DAY      "MEd"
 
-/** @} */
+// Skeletons for times.
 
+/**
+ * Constant for date skeleton with hour, with the locale's preferred hour format (12 or 24).
+ * @stable ICU 4.0
+ */
+#define UDAT_HOUR                       "j"
+/**
+ * Constant for date skeleton with hour in 24-hour presentation.
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_HOUR24                     "H"
+/**
+ * Constant for date skeleton with minute.
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_MINUTE                     "m"
+/**
+ * Constant for date skeleton with hour and minute, with the locale's preferred hour format (12 or 24).
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_HOUR_MINUTE                "jm"
+/**
+ * Constant for date skeleton with hour and minute in 24-hour presentation.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_HOUR24_MINUTE              "Hm"
+/**
+ * Constant for date skeleton with second.
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_SECOND                     "s"
+/**
+ * Constant for date skeleton with hour, minute, and second,
+ * with the locale's preferred hour format (12 or 24).
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_HOUR_MINUTE_SECOND         "jms"
+/**
+ * Constant for date skeleton with hour, minute, and second in
+ * 24-hour presentation.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_HOUR24_MINUTE_SECOND       "Hms"
+/**
+ * Constant for date skeleton with minute and second.
+ * Used in combinations date + time, date + time + zone, or time + zone.
+ * @stable ICU 4.0
+ */
+#define UDAT_MINUTE_SECOND              "ms"
+
+// Skeletons for time zones.
+
+/**
+ * Constant for <i>generic location format</i>, such as Los Angeles Time;
+ * used in combinations date + time + zone, or time + zone.
+ * @see <a href="http://unicode.org/reports/tr35/#Date_Format_Patterns">LDML Date Format Patterns</a>
+ * @see <a href="http://unicode.org/reports/tr35/#Time_Zone_Fallback">LDML Time Zone Fallback</a>
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_LOCATION_TZ "VVVV"
+/**
+ * Constant for <i>generic non-location format</i>, such as Pacific Time;
+ * used in combinations date + time + zone, or time + zone.
+ * @see <a href="http://unicode.org/reports/tr35/#Date_Format_Patterns">LDML Date Format Patterns</a>
+ * @see <a href="http://unicode.org/reports/tr35/#Time_Zone_Fallback">LDML Time Zone Fallback</a>
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_GENERIC_TZ "vvvv"
+/**
+ * Constant for <i>generic non-location format</i>, abbreviated if possible, such as PT;
+ * used in combinations date + time + zone, or time + zone.
+ * @see <a href="http://unicode.org/reports/tr35/#Date_Format_Patterns">LDML Date Format Patterns</a>
+ * @see <a href="http://unicode.org/reports/tr35/#Time_Zone_Fallback">LDML Time Zone Fallback</a>
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_ABBR_GENERIC_TZ "v"
+/**
+ * Constant for <i>specific non-location format</i>, such as Pacific Daylight Time;
+ * used in combinations date + time + zone, or time + zone.
+ * @see <a href="http://unicode.org/reports/tr35/#Date_Format_Patterns">LDML Date Format Patterns</a>
+ * @see <a href="http://unicode.org/reports/tr35/#Time_Zone_Fallback">LDML Time Zone Fallback</a>
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_SPECIFIC_TZ "zzzz"
+/**
+ * Constant for <i>specific non-location format</i>, abbreviated if possible, such as PDT;
+ * used in combinations date + time + zone, or time + zone.
+ * @see <a href="http://unicode.org/reports/tr35/#Date_Format_Patterns">LDML Date Format Patterns</a>
+ * @see <a href="http://unicode.org/reports/tr35/#Time_Zone_Fallback">LDML Time Zone Fallback</a>
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_ABBR_SPECIFIC_TZ "z"
+/**
+ * Constant for <i>localized GMT/UTC format</i>, such as GMT+8:00 or HPG-8:00;
+ * used in combinations date + time + zone, or time + zone.
+ * @see <a href="http://unicode.org/reports/tr35/#Date_Format_Patterns">LDML Date Format Patterns</a>
+ * @see <a href="http://unicode.org/reports/tr35/#Time_Zone_Fallback">LDML Time Zone Fallback</a>
+ * @internal ICU 50 technology preview
+ */
+#define UDAT_ABBR_UTC_TZ "ZZZZ"
+
+// deprecated skeleton constants
+
+/**
+ * Constant for date skeleton with standalone month.
+ * @deprecated ICU 50 Use UDAT_MONTH instead.
+ */
+#define UDAT_STANDALONE_MONTH           "LLLL"
+/**
+ * Constant for date skeleton with standalone abbreviated month.
+ * @deprecated ICU 50 Use UDAT_ABBR_MONTH instead.
+ */
+#define UDAT_ABBR_STANDALONE_MONTH      "LLL"
+
+/**
+ * Constant for date skeleton with hour, minute, and generic timezone.
+ * @deprecated ICU 50 Use instead UDAT_HOUR_MINUTE UDAT_ABBR_GENERIC_TZ or some other timezone presentation.
+ */
+#define UDAT_HOUR_MINUTE_GENERIC_TZ     "jmv"
+/**
+ * Constant for date skeleton with hour, minute, and timezone.
+ * @deprecated ICU 50 Use instead UDAT_HOUR_MINUTE UDAT_ABBR_SPECIFIC_TZ or some other timezone presentation.
+ */
+#define UDAT_HOUR_MINUTE_TZ             "jmz"
+/**
+ * Constant for date skeleton with hour and generic timezone.
+ * @deprecated ICU 50 Use instead UDAT_HOUR UDAT_ABBR_GENERIC_TZ or some other timezone presentation.
+ */
+#define UDAT_HOUR_GENERIC_TZ            "jv"
+/**
+ * Constant for date skeleton with hour and timezone.
+ * @deprecated ICU 50 Use instead UDAT_HOUR UDAT_ABBR_SPECIFIC_TZ or some other timezone presentation.
+ */
+#define UDAT_HOUR_TZ                    "jz"
 
 /**
  * FieldPosition and UFieldPosition selectors for format fields
@@ -378,6 +534,14 @@ typedef enum UDateFormatField {
 	/**
 	 * FieldPosition and UFieldPosition selector for 'S' field alignment,
 	 * corresponding to the UCAL_MILLISECOND field.
+	 *
+	 * Note: Time formats that use 'S' can display a maximum of three
+	 * significant digits for fractional seconds, corresponding to millisecond
+	 * resolution and a fractional seconds sub-pattern of SSS. If the
+	 * sub-pattern is S or SS, the fractional seconds value will be truncated
+	 * (not rounded) to the number of display places specified. If the
+	 * fractional seconds sub-pattern is longer than SSS, the additional
+	 * display places will be filled with zeros.
 	 * @stable ICU 3.0
 	 */
 	UDAT_FRACTIONAL_SECOND_FIELD = 8,
@@ -581,9 +745,12 @@ udat_toCalendarDateField(UDateFormatField field);
  * @param timeStyle The style used to format times; one of UDAT_FULL, UDAT_LONG,
  * UDAT_MEDIUM, UDAT_SHORT, UDAT_DEFAULT, or UDAT_NONE (relative time styles
  * are not currently supported).
+ * When the pattern parameter is used, pass in UDAT_PATTERN for both timeStyle and dateStyle.
  * @param dateStyle The style used to format dates; one of UDAT_FULL, UDAT_LONG,
  * UDAT_MEDIUM, UDAT_SHORT, UDAT_DEFAULT, UDAT_FULL_RELATIVE, UDAT_LONG_RELATIVE,
- * UDAT_MEDIUM_RELATIVE, UDAT_SHORT_RELATIVE, or UDAT_NONE. As currently implemented,
+ * UDAT_MEDIUM_RELATIVE, UDAT_SHORT_RELATIVE, or UDAT_NONE.
+ * When the pattern parameter is used, pass in UDAT_PATTERN for both timeStyle and dateStyle.
+ * As currently implemented,
  * relative date formatting only affects a limited range of calendar days before or
  * after the current date, based on the CLDR &lt;field type="day"&gt;/&lt;relative&gt; data: For
  * example, in English, "Yesterday", "Today", and "Tomorrow". Outside of this range,
@@ -1026,35 +1193,31 @@ udat_getLocaleByType(const UDateFormat *fmt,
 					 ULocDataLocaleType type,
 					 UErrorCode* status);
 
-#ifndef U_HIDE_DRAFT_API
+#ifndef U_HIDE_INTERNAL_API
 /**
- * Set the formatter's default value for a particular context type,
- * such as UDAT_CAPITALIZATION.
- * @param fmt The formatter for which to set a context type's default value.
- * @param type The context type for which the default value should be set.
- * @param value The default value to set for the specified context type.
+ * Set a particular UDisplayContext value in the formatter, such as
+ * UDISPCTX_CAPITALIZATION_FOR_STANDALONE.
+ * @param fmt The formatter for which to set a UDisplayContext value.
+ * @param value The UDisplayContext value to set.
  * @param status A pointer to an UErrorCode to receive any errors
- * @draft ICU 49
+ * @internal ICU 50 technology preview
  */
-U_DRAFT void U_EXPORT2
-udat_setDefaultContext(UDateFormat* fmt,
-					   UDateFormatContextType type, UDateFormatContextValue value,
-					   UErrorCode* status);
+U_INTERNAL void U_EXPORT2
+udat_setContext(UDateFormat* fmt, UDisplayContext value, UErrorCode* status);
 
 /**
- * Get the formatter's default value for a particular context type,
- * such as UDAT_CAPITALIZATION.
- * @param fmt The formatter from which to get a context type's default value.
- * @param type The context type for which the default value should be obtained.
+ * Get the formatter's UDisplayContext value for the specified UDisplayContextType,
+ * such as UDISPCTX_TYPE_CAPITALIZATION.
+ * @param fmt The formatter to query.
+ * @param type The UDisplayContextType whose value to return
  * @param status A pointer to an UErrorCode to receive any errors
- * @return The current default value for the specified context type.
- * @draft ICU 49
+ * @return The UDisplayContextValue for the specified type.
+ * @internal ICU 50 technology preview
  */
-U_DRAFT int32_t U_EXPORT2
-udat_getDefaultContext(UDateFormat* fmt,
-					   UDateFormatContextType type,
-					   UErrorCode* status);
-#endif  /* U_HIDE_DRAFT_API */
+U_INTERNAL UDisplayContext U_EXPORT2
+udat_getContext(UDateFormat* fmt, UDisplayContextType type, UErrorCode* status);
+
+#endif  /* U_HIDE_INTERNAL_API */
 
 #ifndef U_HIDE_INTERNAL_API
 /**

@@ -12,6 +12,7 @@
 // Responsibility: Eberhard Beilharz
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -245,6 +246,9 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			bool result = SilIcuInit(overrideDataPath);
 			if (!result)
 			{
+				// This provides a bit of extra info, especially if it fails on a no-gui build machine.
+				Debug.Fail("SilIcuInit returned false. It was trying to load from " + overrideDataPath + ". The file " +
+					(File.Exists(overrideDataPath) ? "exists." : "does not exist."));
 				MessageBox.Show(string.Format(Properties.Resources.ksIcuInitFailed, overrideDataPath));
 			}
 		}
