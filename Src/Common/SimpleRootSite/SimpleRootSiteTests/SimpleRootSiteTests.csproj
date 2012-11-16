@@ -1,277 +1,277 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.30729</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{8EE73414-8A08-49D3-BEA4-283B18DE272C}</ProjectGuid>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ApplicationIcon>
-	</ApplicationIcon>
-	<AssemblyKeyContainerName>
-	</AssemblyKeyContainerName>
-	<AssemblyName>SimpleRootSiteTests</AssemblyName>
-	<AssemblyOriginatorKeyFile>
-	</AssemblyOriginatorKeyFile>
-	<DefaultClientScript>JScript</DefaultClientScript>
-	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-	<DefaultTargetSchema>IE50</DefaultTargetSchema>
-	<DelaySign>false</DelaySign>
-	<OutputType>Library</OutputType>
-	<RootNamespace>SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests</RootNamespace>
-	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-	<StartupObject>
-	</StartupObject>
-	<FileUpgradeFlags>
-	</FileUpgradeFlags>
-	<UpgradeBackupLocation>
-	</UpgradeBackupLocation>
-	<OldToolsVersion>3.5</OldToolsVersion>
-	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-	<PublishUrl>publish\</PublishUrl>
-	<Install>true</Install>
-	<InstallFrom>Disk</InstallFrom>
-	<UpdateEnabled>false</UpdateEnabled>
-	<UpdateMode>Foreground</UpdateMode>
-	<UpdateInterval>7</UpdateInterval>
-	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-	<UpdatePeriodically>false</UpdatePeriodically>
-	<UpdateRequired>false</UpdateRequired>
-	<MapFileExtensions>true</MapFileExtensions>
-	<ApplicationRevision>0</ApplicationRevision>
-	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<UseApplicationTrust>false</UseApplicationTrust>
-	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkProfile />
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8EE73414-8A08-49D3-BEA4-283B18DE272C}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>SimpleRootSiteTests</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
-	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-	<BaseAddress>285212672</BaseAddress>
-	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>
-	</DocumentationFile>
-	<DebugSymbols>true</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<NoStdLib>false</NoStdLib>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<Optimize>false</Optimize>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<UseVSHostingProcess>true</UseVSHostingProcess>
-	<PlatformTarget>x86</PlatformTarget>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701,1685</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
-	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-	<BaseAddress>285212672</BaseAddress>
-	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>TRACE</DefineConstants>
-	<DocumentationFile>
-	</DocumentationFile>
-	<DebugSymbols>false</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<NoStdLib>false</NoStdLib>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<Optimize>true</Optimize>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>none</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<PlatformTarget>x86</PlatformTarget>
-</PropertyGroup>
+    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
-	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="BasicUtilsTests, Version=6.1.0.19616, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
-	</Reference>
-	<Reference Include="CacheLight, Version=1.0.3639.21412, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\CacheLight.dll</HintPath>
-	</Reference>
-	<Reference Include="CacheLightTests, Version=1.0.3639.24832, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\CacheLightTests.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfaces">
-	  <Name>COMInterfaces</Name>
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
-	</Reference>
-	<Reference Include="nunit.framework">
-	  <Name>nunit.framework</Name>
-	  <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
-	</Reference>
-	<Reference Include="FwUtils">
-	  <Name>FwUtils</Name>
-	  <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-	</Reference>
-	<Reference Include="NMock">
-	  <Name>NMock</Name>
-	  <HintPath>..\..\..\..\Bin\nmock\NMock.dll</HintPath>
-	</Reference>
-	<Reference Include="nunit.framework">
-	  <Name>nunit.framework</Name>
-	  <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
-	</Reference>
-	<Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
-	</Reference>
-	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="CoreImpl, Version=6.1.0.1532, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-	</Reference>
-	<Reference Include="SimpleRootSite, Version=6.1.1.17073, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-	</Reference>
-	<Reference Include="System">
-	  <Name>System</Name>
-	</Reference>
-	<Reference Include="System.Core" />
-	<Reference Include="System.Data">
-	  <Name>System.Data</Name>
-	</Reference>
-	<Reference Include="System.Drawing">
-	  <Name>System.Drawing</Name>
-	</Reference>
-	<Reference Include="System.Windows.Forms">
-	  <Name>System.Windows.Forms</Name>
-	</Reference>
-	<Reference Include="System.Xml">
-	  <Name>System.XML</Name>
-	</Reference>
-	<Reference Include="TestUtils">
-	  <Name>TestUtils</Name>
-	  <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\DistFiles\UIAutomationProvider.dll</HintPath>
-	  <RequiredTargetFramework>3.0</RequiredTargetFramework>
-	  <Private>True</Private>
-	</Reference>
-	<Reference Include="UIAutomationTypes, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\DistFiles\UIAutomationTypes.dll</HintPath>
-	  <RequiredTargetFramework>3.0</RequiredTargetFramework>
-	  <Private>True</Private>
-	</Reference>
-	<Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\DistFiles\WindowsBase.dll</HintPath>
-	  <RequiredTargetFramework>3.0</RequiredTargetFramework>
-	  <Private>True</Private>
-	</Reference>
-	<Reference Include="xCoreInterfaces">
-	  <Name>xCoreInterfaces</Name>
-	  <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-	</Reference>
+    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="BasicUtilsTests, Version=6.1.0.19616, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="CacheLight, Version=1.0.3639.21412, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CacheLight.dll</HintPath>
+    </Reference>
+    <Reference Include="CacheLightTests, Version=1.0.3639.24832, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CacheLightTests.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfaces">
+      <Name>COMInterfaces</Name>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <Name>nunit.framework</Name>
+      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <Name>FwUtils</Name>
+      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="NMock">
+      <Name>NMock</Name>
+      <HintPath>..\..\..\..\Bin\nmock\NMock.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <Name>nunit.framework</Name>
+      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImpl, Version=6.1.0.1532, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleRootSite, Version=6.1.1.17073, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="TestUtils">
+      <Name>TestUtils</Name>
+      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DistFiles\UIAutomationProvider.dll</HintPath>
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="UIAutomationTypes, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DistFiles\UIAutomationTypes.dll</HintPath>
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DistFiles\WindowsBase.dll</HintPath>
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="xCoreInterfaces">
+      <Name>xCoreInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="App.config" />
-	<Compile Include="SimpleBasicView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="SimpleRootSiteDataProviderView.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="SimpleRootSiteDataProviderView.Designer.cs">
-	  <DependentUpon>SimpleRootSiteDataProviderView.cs</DependentUpon>
-	</Compile>
-	<Compile Include="SimpleViewVc.cs" />
-	<Compile Include="EditingHelperTests.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	</Compile>
-	<Compile Include="SimpleRootsiteTestsBase.cs" />
-	<Compile Include="SelectionHelperTests.cs">
-	</Compile>
-	<Compile Include="SimpleRootSiteTests_IsSelectionVisibleTests.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="SimpleRootSiteTests_ScrollSelectionIntoView.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="TsStringWrapperTests.cs">
-	</Compile>
-	<Compile Include="InputBusControllerTests.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+    <None Include="App.config" />
+    <Compile Include="SimpleBasicView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleRootSiteDataProviderView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleRootSiteDataProviderView.Designer.cs">
+      <DependentUpon>SimpleRootSiteDataProviderView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleViewVc.cs" />
+    <Compile Include="EditingHelperTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SimpleRootsiteTestsBase.cs" />
+    <Compile Include="SelectionHelperTests.cs">
+    </Compile>
+    <Compile Include="SimpleRootSiteTests_IsSelectionVisibleTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleRootSiteTests_ScrollSelectionIntoView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TsStringWrapperTests.cs">
+    </Compile>
+    <Compile Include="InputBusControllerTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-	<EmbeddedResource Include="SimpleBasicView.resx">
-	  <DependentUpon>SimpleBasicView.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	</EmbeddedResource>
+    <EmbeddedResource Include="SimpleBasicView.resx">
+      <DependentUpon>SimpleBasicView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-	<None Include="TextCacheModel.xml" />
+    <None Include="TextCacheModel.xml" />
   </ItemGroup>
   <ItemGroup>
-	<Content Include="SimpleRootSiteDataProviderCacheModel.xml" />
+    <Content Include="SimpleRootSiteDataProviderCacheModel.xml" />
   </ItemGroup>
   <ItemGroup>
-	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-	  <Visible>False</Visible>
-	  <ProductName>Windows Installer 3.1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-	<PreBuildEvent>
-	</PreBuildEvent>
-	<PostBuildEvent>
-	</PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
