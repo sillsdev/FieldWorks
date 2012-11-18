@@ -29,33 +29,58 @@ Directory and filename conventions: (forward slashes are used in paths)
 	Expand the zip file contents in the directory $ICUSRC.  This will create a
 	subdirectory $ICUSRC/icu.  Create a git repository here with the following
 	commands:
-				cd $ICUSRC
+				cd $ICUSRC/icu
 				git init
-				git add icu
-				git commit -m 'original ICU 50'
+				git add .
+				git commit -m "icu4c-50_rc-src.zip"
 				git checkout -b FieldWorks
+				git am ../Icu50-SIL.patch
 
 	This will give you a baseline of the original sources on the master branch,
-	while any changes made for FieldWorks are on the FieldWorks branch.  When
-	things are working, the commands
+	while any changes made for FieldWorks are committed on the FieldWorks
+	branch.  When things are working, the commands
 
-				cd $ICUSRC
-				git diff master >Icu50-SIL.patch
+				cd $ICUSRC/icu
+				git format-patch --stdout master.. >../Icu50-SIL.patch
 
 	will create a patch file containing all changes that have been made.  (Note
 	that new files must be added with "git add" for the patch to contain them.)
 	This git repository is purely for convenience, and can be removed when you
-	are done by removing the .git and icu directories from $ICUSRC.
+	are done by removing the icu directory from $ICUSRC.
 
 	The $ICUSRC/icu/source/allinone directory contains a solution file
 	allinone.sln.  Open this in Visual Studio.  (ICU Version 50 supports Visual
 	Studio 2010.)
 
+	If you need to make additional customizations to ICU without upgrading
+	to a new ICU release, it's not necesary to try to locate an original
+	upstream zip file (which may not even be available any more). Instead,
+	you can reconstruct the original sources by unzipping the modified ICU
+	sources and applying the patch file in reverse:
+
+				cd $ICUSRC/icu
+				git apply -R ../Icu50-SIL.patch
+
+	Do this between unzipping the sources and initializing the git repo.
+
+	Additional changes should be committed to the FieldWorks branch with
+	appropriate commit messages. These commits will then be preserved in the
+	patch as a base for future work.
+
  2. You need to make some patches to ICU to allow for custom PUA character
 	properties.  If things have not changed much, you may be able to apply the
 	patch file from the previous version of ICU using a command something like
-				patch -p1 <Icu50-SIL.patch
-	(patch is available in the git-bash shell.)
+
+				git am <../Icu50-SIL.patch
+
+	If git am is too picky, the patch command is a little looser:
+
+				patch -p1 <../Icu50-SIL.patch
+
+	However, patch will not preserve groups of changes as commits (with their
+	metadata) like git am does.
+
+	(git am and patch are available in the git-bash shell.)
 
 	As of version 50, here were the changes made:
 	- add the files silmods.c and silmods.h to $ICUSRC/icu/source/common.
@@ -443,29 +468,23 @@ your virtual machine you set all this up. The point is to copy the DLLs etc that
 	($FW/Bin/mkaflib-tst.bat) and UnicodeCharEditor tests all pass, then make
 	sure none of the other tests have been broken by this upgrade.
 
-18. When the sources are in good shape, a new patch file can be created by the
-	commands:
-				cd $ICUSRC
-				git add icu/source/common/silmods.c
-				git add icu/source/common/silmods.h
-				git add icu/source/test/cintltst/sil_override_tst.c
-				git diff master >Icu50-SIL.patch
+18. When the sources are in good shape, and all changes have been committed
+    to the FieldWorks branch, a new patch file can be created by the commands:
 
-	Note that you must first add any files that are not part of the ICU sources
-	that you need. At least you need the three files that the current patch adds,
-	as above. Also add any others you may need to create.
+				cd $ICUSRC/icu
+				git format-patch --stdout master.. >../Icu50-SIL.patch
 
-	Unzip the original sources (e.g. icu4c-50_rc.zip) into a new directory,
-	apply the patch to the fresh set of original sources, and then zip up the
-	result to our own copy of the (modified) sources.  For example,
+	Note that you must have added any files that are not part of the ICU sources
+	that you need. git am will have made commits adding the files that the
+	current patch adds, but you will need to add any others you have created.
 
-				md $ICUSRC/tmp
-				cd $ICUSRC/tmp
-				unzip ~/Downloads/icu4c-50_rc.zip
-				patch -p1 <../Icu50-SIL.patch
-		zip -9ro ../Icu50src.zip icu
-				cd ..
-				rm -rf tmp
+	A new zip file of the modified sources should also be created:
+
+				cd $ICUSRC/icu
+				git checkout-index -a --prefix=icu/
+				rm ../Icu50src.zip
+				zip -9ro ../Icu50src.zip icu
+				rm -r icu
 
 	These two files (Icu50-SIL.patch and Icu50src.zip) must be checked in to
 	git.  The old source zip file and patch file must be removed from git.  The

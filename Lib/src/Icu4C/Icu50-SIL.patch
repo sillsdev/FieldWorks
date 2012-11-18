@@ -1,7 +1,30 @@
-diff --git a/icu/source/common/Makefile.in b/icu/source/common/Makefile.in
+From addf1132b9b1d6d352cb3e7bb0bf782d759b9058 Mon Sep 17 00:00:00 2001
+From: John Thomson <john_thomson@sil.org>
+Date: Fri, 16 Nov 2012 10:38:44 -0600
+Subject: [PATCH] SIL modifications
+
+---
+ source/common/Makefile.in                     |    2 +-
+ source/common/common.vcxproj                  |    6 +-
+ source/common/common.vcxproj.filters          |    4 +-
+ source/common/silmods.c                       |  568 +++++++++++++++++++++++++
+ source/common/silmods.h                       |   37 ++
+ source/common/ucase.cpp                       |   26 +-
+ source/common/uchar.c                         |   20 +-
+ source/test/cintltst/Makefile.in              |    2 +-
+ source/test/cintltst/calltest.c               |   11 +-
+ source/test/cintltst/cintltst.vcxproj         |    3 +-
+ source/test/cintltst/cintltst.vcxproj.filters |    3 +-
+ source/test/cintltst/sil_override_tst.c       |  234 ++++++++++
+ 12 files changed, 903 insertions(+), 13 deletions(-)
+ create mode 100644 source/common/silmods.c
+ create mode 100644 source/common/silmods.h
+ create mode 100644 source/test/cintltst/sil_override_tst.c
+
+diff --git a/source/common/Makefile.in b/source/common/Makefile.in
 index f8efcf9..c606105 100644
---- a/icu/source/common/Makefile.in
-+++ b/icu/source/common/Makefile.in
+--- a/source/common/Makefile.in
++++ b/source/common/Makefile.in
 @@ -104,7 +104,7 @@ rbbi.o rbbidata.o rbbinode.o rbbirb.o rbbiscan.o rbbisetb.o rbbistbl.o rbbitblb.
  serv.o servnotf.o servls.o servlk.o servlkf.o servrbf.o servslkf.o \
  uidna.o usprep.o uts46.o punycode.o \
@@ -11,10 +34,10 @@ index f8efcf9..c606105 100644
  
  ## Header files to install
  HEADERS = $(srcdir)/unicode/*.h
-diff --git a/icu/source/common/common.vcxproj b/icu/source/common/common.vcxproj
+diff --git a/source/common/common.vcxproj b/source/common/common.vcxproj
 index 4088fce..b1b266b 100644
---- a/icu/source/common/common.vcxproj
-+++ b/icu/source/common/common.vcxproj
+--- a/source/common/common.vcxproj
++++ b/source/common/common.vcxproj
 @@ -1,4 +1,4 @@
 -<?xml version="1.0" encoding="utf-8"?>
 +﻿<?xml version="1.0" encoding="utf-8"?>
@@ -44,10 +67,10 @@ index 4088fce..b1b266b 100644
 -</Project>
 +</Project>
 \ No newline at end of file
-diff --git a/icu/source/common/common.vcxproj.filters b/icu/source/common/common.vcxproj.filters
+diff --git a/source/common/common.vcxproj.filters b/source/common/common.vcxproj.filters
 index d46101f..75761ab 100644
---- a/icu/source/common/common.vcxproj.filters
-+++ b/icu/source/common/common.vcxproj.filters
+--- a/source/common/common.vcxproj.filters
++++ b/source/common/common.vcxproj.filters
 @@ -536,6 +536,7 @@
      <ClCompile Include="ucharstriebuilder.cpp" />
      <ClCompile Include="ucharstrieiterator.cpp" />
@@ -71,11 +94,11 @@ index d46101f..75761ab 100644
 -</Project>
 +</Project>
 \ No newline at end of file
-diff --git a/icu/source/common/silmods.c b/icu/source/common/silmods.c
+diff --git a/source/common/silmods.c b/source/common/silmods.c
 new file mode 100644
 index 0000000..0dad07c
 --- /dev/null
-+++ b/icu/source/common/silmods.c
++++ b/source/common/silmods.c
 @@ -0,0 +1,568 @@
 +#include "unicode/uchar.h"
 +#include "utrie2.h"
@@ -645,11 +668,11 @@ index 0000000..0dad07c
 +	default: return UCASE_NONE;
 +	}
 +}
-diff --git a/icu/source/common/silmods.h b/icu/source/common/silmods.h
+diff --git a/source/common/silmods.h b/source/common/silmods.h
 new file mode 100644
 index 0000000..c3e4d18
 --- /dev/null
-+++ b/icu/source/common/silmods.h
++++ b/source/common/silmods.h
 @@ -0,0 +1,37 @@
 +#ifndef SILMODS_H
 +#define SILMODS_H
@@ -688,10 +711,10 @@ index 0000000..c3e4d18
 +U_CAPI int32_t U_EXPORT2 SIL_ucase_getType(UChar32 c);
 +#endif
 +#endif
-diff --git a/icu/source/common/ucase.cpp b/icu/source/common/ucase.cpp
+diff --git a/source/common/ucase.cpp b/source/common/ucase.cpp
 index da71169..3b83868 100644
---- a/icu/source/common/ucase.cpp
-+++ b/icu/source/common/ucase.cpp
+--- a/source/common/ucase.cpp
++++ b/source/common/ucase.cpp
 @@ -30,6 +30,7 @@
  #include "utrie2.h"
  #include "ucase.h"
@@ -753,10 +776,10 @@ index da71169..3b83868 100644
      return UCASE_GET_TYPE(props);
  }
  
-diff --git a/icu/source/common/uchar.c b/icu/source/common/uchar.c
+diff --git a/source/common/uchar.c b/source/common/uchar.c
 index 9a285cc..ddd761e 100644
---- a/icu/source/common/uchar.c
-+++ b/icu/source/common/uchar.c
+--- a/source/common/uchar.c
++++ b/source/common/uchar.c
 @@ -30,6 +30,7 @@
  #include "udataswp.h"
  #include "uprops.h"
@@ -815,10 +838,10 @@ index 9a285cc..ddd761e 100644
 +#endif
      }
  }
-diff --git a/icu/source/test/cintltst/Makefile.in b/icu/source/test/cintltst/Makefile.in
+diff --git a/source/test/cintltst/Makefile.in b/source/test/cintltst/Makefile.in
 index 1bf67ce..1d3775d 100644
---- a/icu/source/test/cintltst/Makefile.in
-+++ b/icu/source/test/cintltst/Makefile.in
+--- a/source/test/cintltst/Makefile.in
++++ b/source/test/cintltst/Makefile.in
 @@ -50,7 +50,7 @@ stdnmtst.o usrchtst.o custrtrn.o sorttest.o trietest.o trie2test.o usettest.o \
  uenumtst.o utmstest.o currtest.o \
  idnatest.o nfsprep.o spreptst.o sprpdata.o \
@@ -828,10 +851,10 @@ index 1bf67ce..1d3775d 100644
  
  DEPS = $(OBJECTS:.o=.d)
  
-diff --git a/icu/source/test/cintltst/calltest.c b/icu/source/test/cintltst/calltest.c
+diff --git a/source/test/cintltst/calltest.c b/source/test/cintltst/calltest.c
 index a2e60c6..05bf3d4 100644
---- a/icu/source/test/cintltst/calltest.c
-+++ b/icu/source/test/cintltst/calltest.c
+--- a/source/test/cintltst/calltest.c
++++ b/source/test/cintltst/calltest.c
 @@ -42,10 +42,18 @@ void addUSpoofTest(TestNode** root);
  #if !UCONFIG_NO_FORMATTING
  void addGendInfoForTest(TestNode** root);
@@ -858,10 +881,10 @@ index a2e60c6..05bf3d4 100644
  #endif
 +#endif
  }
-diff --git a/icu/source/test/cintltst/cintltst.vcxproj b/icu/source/test/cintltst/cintltst.vcxproj
+diff --git a/source/test/cintltst/cintltst.vcxproj b/source/test/cintltst/cintltst.vcxproj
 index 15286c6..2de1a48 100644
---- a/icu/source/test/cintltst/cintltst.vcxproj
-+++ b/icu/source/test/cintltst/cintltst.vcxproj
+--- a/source/test/cintltst/cintltst.vcxproj
++++ b/source/test/cintltst/cintltst.vcxproj
 @@ -245,6 +245,7 @@
      <ClCompile Include="colutil.c" />
      <ClCompile Include="cturtst.c" />
@@ -877,10 +900,10 @@ index 15286c6..2de1a48 100644
 -</Project>
 +</Project>
 \ No newline at end of file
-diff --git a/icu/source/test/cintltst/cintltst.vcxproj.filters b/icu/source/test/cintltst/cintltst.vcxproj.filters
+diff --git a/source/test/cintltst/cintltst.vcxproj.filters b/source/test/cintltst/cintltst.vcxproj.filters
 index db1ec5a..466e62b 100644
---- a/icu/source/test/cintltst/cintltst.vcxproj.filters
-+++ b/icu/source/test/cintltst/cintltst.vcxproj.filters
+--- a/source/test/cintltst/cintltst.vcxproj.filters
++++ b/source/test/cintltst/cintltst.vcxproj.filters
 @@ -297,6 +297,7 @@
      <ClCompile Include="spooftest.c">
        <Filter>spoof</Filter>
@@ -896,11 +919,11 @@ index db1ec5a..466e62b 100644
 -</Project>
 +</Project>
 \ No newline at end of file
-diff --git a/icu/source/test/cintltst/sil_override_tst.c b/icu/source/test/cintltst/sil_override_tst.c
+diff --git a/source/test/cintltst/sil_override_tst.c b/source/test/cintltst/sil_override_tst.c
 new file mode 100644
 index 0000000..cd56b1c
 --- /dev/null
-+++ b/icu/source/test/cintltst/sil_override_tst.c
++++ b/source/test/cintltst/sil_override_tst.c
 @@ -0,0 +1,234 @@
 +/*
 +**********************************************************************
@@ -1136,3 +1159,6 @@ index 0000000..cd56b1c
 +}
 +
 +/*eof*/
+-- 
+1.7.10.4
+
