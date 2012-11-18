@@ -1,7 +1,7 @@
 From addf1132b9b1d6d352cb3e7bb0bf782d759b9058 Mon Sep 17 00:00:00 2001
 From: John Thomson <john_thomson@sil.org>
 Date: Fri, 16 Nov 2012 10:38:44 -0600
-Subject: [PATCH] SIL modifications
+Subject: [PATCH 1/2] SIL modifications
 
 ---
  source/common/Makefile.in                     |    2 +-
@@ -1159,6 +1159,110 @@ index 0000000..cd56b1c
 +}
 +
 +/*eof*/
+-- 
+1.7.10.4
+
+
+From 14ae48169b479b52bd670a2305b088939c76bb89 Mon Sep 17 00:00:00 2001
+From: Neil Mayhew <neil_mayhew@sil.org>
+Date: Mon, 19 Nov 2012 11:01:15 -0700
+Subject: [PATCH 2/2] Fix link errors with newer compilers
+
+Without this change, ICU 5.0 uses the C++11 type char16_t in its C++
+APIs. This requires client programs to be compiled with the same
+options (eg -std=c++11 for g++) which typically enables the whole of
+C++11 and is currently undesirable.
+
+The problem doesn't occur with g++ versions less than 4.7 because they
+don't have -std=c++11. However, 4.7 has now arrived in Debian wheezy
+and Ubuntu quantal.
+
+This change is a cherry-pick of r32780 from upstream svn.
+---
+ source/common/unicode/platform.h |    4 ++--
+ source/common/unicode/umachine.h |   10 +++++-----
+ source/common/unicode/ustring.h  |    2 +-
+ source/test/intltest/strtest.cpp |    4 ++--
+ 4 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/source/common/unicode/platform.h b/source/common/unicode/platform.h
+index 94769d6..46b8d5c 100644
+--- a/source/common/unicode/platform.h
++++ b/source/common/unicode/platform.h
+@@ -664,9 +664,9 @@
+      * does not support u"abc" string literals.
+      * gcc 4.4 defines the __CHAR16_TYPE__ macro to a usable type but
+      * does not support u"abc" string literals.
+-     * C++11 requires support for UTF-16 literals
++     * C++11 and C11 require support for UTF-16 literals
+      */
+-#   if (defined(__cplusplus) && __cplusplus >= 201103L)
++#   if (defined(__cplusplus) && __cplusplus >= 201103L) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
+ #       define U_HAVE_CHAR16_T 1
+ #   else
+ #       define U_HAVE_CHAR16_T 0
+diff --git a/source/common/unicode/umachine.h b/source/common/unicode/umachine.h
+index 6dd6a8e..d1102f4 100644
+--- a/source/common/unicode/umachine.h
++++ b/source/common/unicode/umachine.h
+@@ -256,7 +256,7 @@ typedef int8_t UBool;
+ 
+ /**
+  * \var UChar
+- * Define UChar to be char16_t, if available,
++ * Define UChar to be UCHAR_TYPE, if that is #defined (for example, to char16_t),
+  * or wchar_t if that is 16 bits wide; always assumed to be unsigned.
+  * If neither is available, then define UChar to be uint16_t.
+  *
+@@ -266,10 +266,10 @@ typedef int8_t UBool;
+  *
+  * @stable ICU 4.4
+  */
+-
+-/* Define UChar to be compatible with char16_t or wchar_t if possible. */
+-#if U_HAVE_CHAR16_T
+-    typedef char16_t UChar;
++#if defined(UCHAR_TYPE)
++    typedef UCHAR_TYPE UChar;
++/* Not #elif U_HAVE_CHAR16_T -- because that is type-incompatible with pre-C++11 callers
++    typedef char16_t UChar;  */
+ #elif U_SIZEOF_WCHAR_T==2
+     typedef wchar_t UChar;
+ #elif defined(__CHAR16_TYPE__)
+diff --git a/source/common/unicode/ustring.h b/source/common/unicode/ustring.h
+index c577431..d2ea31c 100644
+--- a/source/common/unicode/ustring.h
++++ b/source/common/unicode/ustring.h
+@@ -939,7 +939,7 @@ u_memrchr32(const UChar *s, UChar32 c, int32_t count);
+  * @stable ICU 2.0
+  */
+ #if defined(U_DECLARE_UTF16)
+-#   define U_STRING_DECL(var, cs, length) static const UChar var[(length)+1]=U_DECLARE_UTF16(cs)
++#   define U_STRING_DECL(var, cs, length) static const UChar *var=(const UChar *)U_DECLARE_UTF16(cs)
+     /**@stable ICU 2.0 */
+ #   define U_STRING_INIT(var, cs, length)
+ #elif U_SIZEOF_WCHAR_T==U_SIZEOF_UCHAR && (U_CHARSET_FAMILY==U_ASCII_FAMILY || (U_SIZEOF_UCHAR == 2 && defined(U_WCHAR_IS_UTF16)))
+diff --git a/source/test/intltest/strtest.cpp b/source/test/intltest/strtest.cpp
+index 1f7c81d..2081454 100644
+--- a/source/test/intltest/strtest.cpp
++++ b/source/test/intltest/strtest.cpp
+@@ -1,6 +1,6 @@
+ /********************************************************************
+  * COPYRIGHT: 
+- * Copyright (c) 1997-2011, International Business Machines Corporation and
++ * Copyright (c) 1997-2012, International Business Machines Corporation and
+  * others. All Rights Reserved.
+  ********************************************************************/
+ /*   file name:  strtest.cpp
+@@ -94,7 +94,7 @@ U_STRING_DECL(ustringVar, "aZ0 -", 5);
+ void
+ StringTest::Test_U_STRING() {
+     U_STRING_INIT(ustringVar, "aZ0 -", 5);
+-    if( sizeof(ustringVar)/sizeof(*ustringVar)!=6 ||
++    if( u_strlen(ustringVar)!=5 ||
+         ustringVar[0]!=0x61 ||
+         ustringVar[1]!=0x5a ||
+         ustringVar[2]!=0x30 ||
 -- 
 1.7.10.4
 
