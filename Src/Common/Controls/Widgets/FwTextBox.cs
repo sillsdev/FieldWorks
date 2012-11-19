@@ -2721,6 +2721,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
+				if (WordWrap)
+				{
+					if (RootBox != null)
+						return GetAvailWidth(RootBox) + 4;
+				}
 				CheckDisposed();
 				bool fOldSaveSize = m_vc.SaveSize;
 				try
