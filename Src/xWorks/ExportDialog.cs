@@ -643,7 +643,12 @@ namespace SIL.FieldWorks.XWorks
 			ProcessStartInfo processInfo = null;
 			if (Environment.OSVersion.Platform == PlatformID.Unix)
 			{
-				if (File.Exists("/usr/bin/nautilus"))
+				// if it exists, xdg-open uses the user's preference for opening directories
+				if (File.Exists("/usr/bin/xdg-open"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/xdg-open", String.Format("\"{0}\"", sDirectory));
+				}
+				else if (File.Exists("/usr/bin/nautilus"))
 				{
 					processInfo = new ProcessStartInfo("/usr/bin/nautilus", String.Format("\"{0}\"", sDirectory));
 				}
@@ -653,7 +658,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (File.Exists("/usr/bin/pcmanfm"))
 				{
-					processInfo = new ProcessStartInfo("/usr/bin/nautilus", String.Format("\"{0}\"", sDirectory));
+					processInfo = new ProcessStartInfo("/usr/bin/pcmanfm", String.Format("\"{0}\"", sDirectory));
 				}
 				else if (File.Exists("/usr/bin/gnome-commander"))
 				{
@@ -664,15 +669,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				// REVIEW: what happens if Windows isn't installed in C:\Windows? What happens if
-				// directory or filename contain spaces?
+				// REVIEW: What happens if directory or filename contain spaces?
+				var program = Environment.ExpandEnvironmentVariables(@"%WINDIR%\explorer.exe");
+				if (program == @"\explorer.exe")
+					program = @"C:\windows\explorer.exe";
 				if (String.IsNullOrEmpty(sFileName))
 				{
-					processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sDirectory));
+					processInfo = new ProcessStartInfo(program, String.Format(" /select,{0}", sDirectory));
 				}
 				else
 				{
-					processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sFileName));
+					processInfo = new ProcessStartInfo(program, String.Format(" /select,{0}", sFileName));
 				}
 			}
 			if (processInfo != null)
