@@ -520,7 +520,7 @@ Do you want to proceed?</value>
   </data>
   <data name="ksRow" xml:space="preserve">
 	<value>row</value>
-	<comment>Used in "delete this {0}" to make it read "delete this row" in tooltip for delete button in Rapid Words view.</comment>
+	<comment>Used in "delete this {0}" to make it read "delete this row" in tooltip for delete button in Collect Words view.</comment>
   </data>
   <data name="ksPublishIn" xml:space="preserve">
 	<value>Publish In</value>
@@ -530,7 +530,7 @@ Do you want to proceed?</value>
   </data>
   <data name="ksShowEntryInLexicon" xml:space="preserve">
 	<value>Show Entry in Lexicon</value>
-	<comment>popup menu item in Rapid Words view</comment>
+	<comment>popup menu item in Collect Words view</comment>
   </data>
   <data name="ksRedoCheckAll" xml:space="preserve">
 	<value>Redo Select All</value>

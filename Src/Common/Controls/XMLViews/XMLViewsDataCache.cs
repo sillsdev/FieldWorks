@@ -353,7 +353,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public override int GetFieldType(int luFlid)
 		{
 			// This is a bit arbitrary. Technically, the form column isn't formattable, while the one shadowing
-			// Definition could be. But pretending all are Unicode just means Rapid Words can't do formatting
+			// Definition could be. But pretending all are Unicode just means Collect Words can't do formatting
 			// of definitions, while allowing it in the Form could lead to crashes when we copy to the real field.
 			if (luFlid >= XMLViewsDataCache.ktagEditColumnBase && luFlid < XMLViewsDataCache.ktagEditColumnLim)
 				return (int)CellarPropertyType.Unicode;

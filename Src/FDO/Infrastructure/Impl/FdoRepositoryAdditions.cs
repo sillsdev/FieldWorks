@@ -1364,7 +1364,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Collect all the homographs of the given form from the given list of entries.  If fMatchLexForms
 		/// is true, then match against lexeme forms even if citation forms exist.  (This behavior is needed
-		/// to fix LT-6024 for categorized entry [now called Rapid Words].)
+		/// to fix LT-6024 for categorized entry [now called Collect Words].)
 		/// </summary>
 		 List<ILexEntry> ILexEntryRepositoryInternal.CollectHomographs(string sForm, int hvo, List<ILexEntry> entries,
 														  IMoMorphType morphType, bool fMatchLexForms)
