@@ -190,6 +190,7 @@
 						<configure class="CmSemanticDomain" label="Domain" layout="classifiedDict"/>
 					</layoutType>
 				</configureLayouts>
+				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.DictionaryPublicationDecorator"/>
 			</parameters>
 		  </control>
 		</parameters>

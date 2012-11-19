@@ -79,6 +79,9 @@ namespace SIL.FieldWorks.XWorks
 		private ILexReference m_torsoParts;
 		private DictionaryPublicationDecorator m_decorator;
 
+		private ICmSemanticDomain m_domainBadWords;
+		private ICmSemanticDomain m_domainTemperature;
+
 		private ILexEntry m_ringBell;
 		private ILexEntry m_ringCircle; // don't make a headword for this.
 		private ILexEntry m_ringGold;
@@ -89,6 +92,8 @@ namespace SIL.FieldWorks.XWorks
 		private MockPublisher m_publisher;
 
 		const int kmainFlid = 89999956;
+
+		private int m_flidReferringSenses;
 
 		public override void FixtureSetup()
 		{
@@ -101,14 +106,22 @@ namespace SIL.FieldWorks.XWorks
 			m_lexRefFactory = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>();
 			m_possListFactory = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
 
+			m_flidReferringSenses = Cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses",
+				false);
 
 			UndoableUnitOfWorkHelper.Do("do", "undo", Cache.ActionHandlerAccessor,
 				() =>
 					{
+						m_domainBadWords = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+						m_domainTemperature = Cache.ServiceLocator.GetInstance<ICmSemanticDomainFactory>().Create();
+						Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(m_domainBadWords);
+						Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(m_domainTemperature);
 						m_mainDict = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 						m_blank = MakeEntry("blank", "swear word", true);
+						m_blank.SensesOS[0].SemanticDomainsRC.Add(m_domainBadWords);
 						m_hot = MakeEntry("hot", "high temperature", false);
 						m_hotTemp = m_hot.SensesOS[0];
+						m_hotTemp.SemanticDomainsRC.Add(m_domainTemperature);
 						m_trouble = MakeSense(m_hot, "trouble");
 						m_trouble.DoNotPublishInRC.Add(m_mainDict);
 						m_trouble.PicturesOS.Add(Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create());
@@ -250,16 +263,26 @@ namespace SIL.FieldWorks.XWorks
 			// and that it really is possible for more than one thing to pass the filter.
 			Assert.That(m_decorator.VecProp(m_blankSynonyms.Hvo, LexReferenceTags.kflidTargets).Length, Is.EqualTo(2));
 
-			// Todo: they should be filtered from some virtual properties.
-
 			// They should be filtered from the top-level list of entries managed by the wrapped decorator
 			var mainEntryList = m_decorator.VecProp(Cache.LangProject.LexDbOA.Hvo, ObjectListPublisher.OwningFlid);
 			Assert.That(mainEntryList.Length,
 				Is.EqualTo(Cache.LangProject.LexDbOA.Entries.Where(
 					le => le.DoNotPublishInRC.Count == 0 &&
 					le.DoNotShowMainEntryInRC.Count == 0).Count()));
+		}
 
-			// Todo: some virtual properties should give different answers because things they depend on are modified.
+		/// <summary>
+		/// Test that virtual properties are filtered. The selection of virtual properties to filter is automatic, so testing one
+		/// (that is crucial for Classified Dictionary) is sufficient. (Enhance: maybe one day test at least one of each signature class?)
+		/// Todo: some virtual properties should possibly give different answers because things they depend on are modified?
+		/// So far we are only handling properties that return objects of the type that may be excluded, and only by excluding
+		/// the unwanted objects.
+		/// </summary>
+		[Test]
+		public void VirtualPropertyFiltering()
+		{
+			Assert.That(m_decorator.VecProp(m_domainBadWords.Hvo, m_flidReferringSenses), Has.Length.EqualTo(0), "should hide the unpublished sense");
+			Assert.That(m_decorator.VecProp(m_domainTemperature.Hvo, m_flidReferringSenses), Has.Length.EqualTo(1), "should not hide the published sense");
 		}
 
 		[Test]

@@ -338,15 +338,15 @@ namespace SIL.FieldWorks.Common.Controls
 				sLayout = m_mediator.PropertyTable.GetStringProperty(sProp, null);
 			if (String.IsNullOrEmpty(sLayout))
 				sLayout = XmlUtils.GetManditoryAttributeValue(m_xnSpec, "layout");
+			ISilDataAccess sda = GetSda();
 			m_xmlVc = new XmlVc(StringTbl, sLayout, fEditable, this, m_app,
-				m_fShowFailingItems ? null : ItemDisplayCondition) {IdentifySource = true};
+				m_fShowFailingItems ? null : ItemDisplayCondition, sda) {IdentifySource = true};
 			ReadOnlyView = !fEditable;
 			if (!fEditable)
 				rootb.MaxParasToScan = 0;
 			m_xmlVc.Cache = m_fdoCache;
 			m_xmlVc.MainSeqFlid = m_mainFlid;
 
-			ISilDataAccess sda = GetSda();
 			rootb.DataAccess = sda;
 			m_xmlVc.DataAccess = sda;
 

@@ -132,7 +132,7 @@
 	<string id="MoForm-Plural" txt="Allomorphs"/>
 	<string id="ReversalIndexEntry-Plural" txt="Reversal Entries"/>
 	<string id="ReversalIndex-Plural" txt="Reversals"/>
-	<string id="LexSense-Classified" txt="Classified Dictionary"/>
+	<string id="LexSense-Classified" txt="Classified Dictionary ({SelectedPublication})"/> <!-- Do not translate the {SelectedPublication}-->
 	<string id="AllEntryRefs" txt="Complex or Variant Entry References"/>
 	<string id="LexEntryRef-Plural" txt="Complex or Variant Entry References"/>
 <!-- Lexicon Reversal -->
