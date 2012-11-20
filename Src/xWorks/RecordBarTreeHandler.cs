@@ -42,24 +42,20 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public abstract class RecordBarHandler : IFWDisposable
 	{
-		protected XCore.Mediator m_mediator;
+		protected Mediator m_mediator;
 		protected FdoCache m_cache; // initialized with mediator.
 		protected bool m_expand;
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
 		protected string m_bestWS;
+
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
 		protected bool m_fOutOfDate = false;
 
-		static public RecordBarHandler Create(XCore.Mediator mediator, XmlNode toolConfiguration)
+		static public RecordBarHandler Create(Mediator mediator, XmlNode toolConfiguration)
 		{
 			RecordBarHandler handler = null;
 			XmlNode node = toolConfiguration.SelectSingleNode("treeBarHandler");
-			//if (node != null)
-			//{
-			//    handler = (TreeBarHandler)DynamicLoader.CreateObject(node);
-			//    handler.Init(mediator, node);
-			//}
 			if (node == null)
 				handler = new RecordBarListHandler();
 			else
@@ -165,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		internal virtual void  Init(XCore.Mediator mediator, XmlNode node)
+		internal virtual void  Init(Mediator mediator, XmlNode node)
 		{
 			CheckDisposed();
 
@@ -230,6 +226,26 @@ namespace SIL.FieldWorks.XWorks
 				else
 					return base.GetDisplayPropertyName;
 			}
+		}
+
+		public override void PopulateRecordBar(RecordList list)
+		{
+			base.PopulateRecordBar(list);
+			UpdateHeaderVisibility();
+		}
+
+		/// <summary>
+		/// It's possible that another tree bar handler recently turned over control of the RecordBar
+		/// to us, if so, we want to make sure they didn't leave the optional info bar visible.
+		/// </summary>
+		protected virtual void UpdateHeaderVisibility()
+		{
+			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			if (window == null || window.IsDisposed)
+				return;
+
+			if (IsShowing)
+				window.TreeBarControl.HideHeaderControl();
 		}
 
 		/// <summary>
@@ -318,34 +334,9 @@ namespace SIL.FieldWorks.XWorks
 				newIndex++;
 			UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem,
 				m_cache.ActionHandlerAccessor,
-				() =>
-					{
-						m_cache.DomainDataByFlid.MoveOwnSeq(hvoOwner, (int) ownFlid, oldIndex, oldIndex, hvoOwner,
-														  (int) ownFlid, newIndex);
-					});
+				() => m_cache.DomainDataByFlid.MoveOwnSeq(
+					hvoOwner, ownFlid, oldIndex, oldIndex, hvoOwner, ownFlid, newIndex));
 		}
-	}
-
-	/// <summary>
-	/// A trivial override to use a special method to get the names of items.
-	/// For semantic domain in this tool we want to display a sense count (if non-zero).
-	/// Note: this class is instantiated by reflection, based on the setting of the treeBarHandler in the
-	/// SemanticDomainList clerk in the RDE toolConfiguration.xml.
-	/// </summary>
-	public class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
-	{
-		protected override string GetTreeNodeLabel(ICmObject obj, out Font font)
-		{
-			var baseName = base.GetTreeNodeLabel(obj, out font);
-			var sd = obj as ICmSemanticDomain;
-			if (sd == null)
-				return baseName; // pathological defensive programming
-			int senseCount = (from item in sd.ReferringObjects where item is ILexSense select item).Count();
-			if (senseCount == 0)
-				return baseName;
-			return baseName + " (" + senseCount + ")";
-		}
-
 	}
 
 	public class TreeBarHandler : RecordBarHandler

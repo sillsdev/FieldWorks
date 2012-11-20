@@ -200,13 +200,10 @@ namespace FwBuildTasks
 						case "COMInterfaces":
 							bldr.Append(";mktlbs");
 							break;
-						case "xWorksTests":
-							// The xWorksTests require us to have built on of the adapters, typically FlexUIAdapter.dll.
-							// However, we don't discover that dependency, because it is invoked by reflection (in xCore) and neither xWorks
-							// nor xCore references it. Nor can we fix it by adding a reference, because (a) this would break the aimed-for
-							// independence of xCore from a particular adapter, and (b) for some bizarre historical reason, the project that
-							// builds FlexUIAdapter.dll is called XCoreAdapterSilSidePane. We may eventually get around to fixing the latter
-							// problem and decide to sacrifice the independence of xCore, but for now, it's simplest to patch the target generation.
+						case "xWorks":
+							// xWorks now references FlexUIAdapter.dll.
+							// But, we don't discover that dependency, because for some bizarre
+							// historical reason, the project that builds FlexUIAdapter.dll is called XCoreAdapterSilSidePane.
 							bldr.Append(";XCoreAdapterSilSidePane");
 							break;
 						case "TeImportExportTests":

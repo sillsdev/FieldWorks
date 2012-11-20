@@ -152,6 +152,7 @@
 	<string id="FsFeatStrucType-Plural" txt="Feature Types"/>
 	<string id="complexEntryType" txt="Complex Form Type"/>
 	<string id="variantType" txt="Variant Type"/>
+	<string id="SemanticDomain-Plural" txt="Semantic Domains"/>
   </group>   <!-- end <group id="AlternativeTitles"> -->
   <group id="EmptyTitles">
 <!-- Grammar Browse Views -->

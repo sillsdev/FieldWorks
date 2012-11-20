@@ -388,14 +388,6 @@ namespace SIL.FieldWorks.XWorks
 			if (m_clerkProvidingRootObject == null)
 			{
 				m_recordBarHandler = RecordBarHandler.Create(m_mediator, clerkConfiguration);//,m_flid);
-				//if (m_list is PossibilityRecordList)
-				//{
-				//	m_recordBarHandler = TreeBarHandler.Create(m_mediator, clerkConfiguration);//,m_flid);
-				//}
-				//else
-				//{
-				//	// Don't use a RecordBarHandler for non-PossibilityRecordList. Use RecordBrowseView instead.
-				//}
 			}
 			else
 			{
