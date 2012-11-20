@@ -53,9 +53,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.displayUsagePanel.SuspendLayout();
 			this.buttonPanel.SuspendLayout();
 			this.SuspendLayout();
-			//
+			// 
 			// editDomainsLinkPanel
-			//
+			// 
+			this.editDomainsLinkPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.editDomainsLinkPanel.AutoSize = true;
 			this.editDomainsLinkPanel.Controls.Add(this.editDomainsLinkPic);
 			this.editDomainsLinkPanel.Controls.Add(this.editDomainslinklabel);
@@ -64,15 +66,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.editDomainsLinkPanel.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
 			this.editDomainsLinkPanel.Size = new System.Drawing.Size(305, 40);
 			this.editDomainsLinkPanel.TabIndex = 5;
-			//
+			// 
 			// imageList
-			//
+			// 
 			this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
 			this.imageList.TransparentColor = System.Drawing.Color.Magenta;
 			this.imageList.Images.SetKeyName(0, "GoToArrow.bmp");
-			//
+			// 
 			// editDomainsLinkPic
-			//
+			// 
 			this.editDomainsLinkPic.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.editDomainsLinkPic.BackColor = System.Drawing.SystemColors.Control;
 			this.editDomainsLinkPic.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -82,9 +84,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.editDomainsLinkPic.Size = new System.Drawing.Size(16, 16);
 			this.editDomainsLinkPic.TabIndex = 5;
 			this.editDomainsLinkPic.TabStop = false;
-			//
+			// 
 			// editDomainslinklabel
-			//
+			// 
 			this.editDomainslinklabel.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.editDomainslinklabel.AutoSize = true;
 			this.editDomainslinklabel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -97,26 +99,34 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.editDomainslinklabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.editDomainslinklabel.VisitedLinkColor = System.Drawing.Color.Blue;
 			this.editDomainslinklabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.OnEditDomainsLinkClicked);
-			//
+			// 
 			// domainTree
-			//
+			// 
+			this.domainTree.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.domainTree.CheckBoxes = true;
 			this.domainTree.Location = new System.Drawing.Point(8, 34);
 			this.domainTree.Name = "domainTree";
 			this.domainTree.Size = new System.Drawing.Size(305, 193);
 			this.domainTree.TabIndex = 6;
 			this.domainTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.OnDomainTreeCheck);
-			//
+			// 
 			// searchTextBox
-			//
+			// 
+			this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.searchTextBox.Location = new System.Drawing.Point(8, 8);
 			this.searchTextBox.Name = "searchTextBox";
 			this.searchTextBox.Size = new System.Drawing.Size(305, 20);
 			this.searchTextBox.TabIndex = 7;
 			this.searchTextBox.TextChanged += new System.EventHandler(this.OnSearchTextChanged);
-			//
+			// 
 			// domainList
-			//
+			// 
+			this.domainList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.domainList.AutoArrange = false;
 			this.domainList.CheckBoxes = true;
 			this.domainList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
@@ -132,18 +142,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.domainList.Columns.Add("dummy", "column", 275);
 			this.domainList.Visible = false;
 			this.domainList.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.OnDomainListChecked);
-			//
+			// 
 			// displayUsagePanel
-			//
+			// 
+			this.displayUsagePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.displayUsagePanel.Controls.Add(this.displayUsageCheckBox);
 			this.displayUsagePanel.Location = new System.Drawing.Point(8, 338);
 			this.displayUsagePanel.Name = "displayUsagePanel";
 			this.displayUsagePanel.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
 			this.displayUsagePanel.Size = new System.Drawing.Size(305, 23);
 			this.displayUsagePanel.TabIndex = 6;
-			//
+			// 
 			// displayUsageCheckBox
-			//
+			// 
 			this.displayUsageCheckBox.AutoSize = true;
 			this.displayUsageCheckBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.displayUsageCheckBox.Location = new System.Drawing.Point(8, 3);
@@ -153,9 +165,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.displayUsageCheckBox.Text = "Display usage figures";
 			this.displayUsageCheckBox.UseVisualStyleBackColor = true;
 			this.displayUsageCheckBox.CheckedChanged += new System.EventHandler(this.OnDisplayUsageCheckedChanged);
-			//
+			// 
 			// buttonPanel
-			//
+			// 
+			this.buttonPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonPanel.Controls.Add(this.buttonHelp);
 			this.buttonPanel.Controls.Add(this.btnCancel);
 			this.buttonPanel.Controls.Add(this.btnOK);
@@ -165,9 +179,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.buttonPanel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
 			this.buttonPanel.Size = new System.Drawing.Size(305, 34);
 			this.buttonPanel.TabIndex = 7;
-			//
+			// 
 			// buttonHelp
-			//
+			// 
 			this.buttonHelp.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.buttonHelp.Enabled = false;
 			this.buttonHelp.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -176,9 +190,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.buttonHelp.Size = new System.Drawing.Size(75, 23);
 			this.buttonHelp.TabIndex = 9;
 			this.buttonHelp.Text = "Help";
-			//
+			// 
 			// btnCancel
-			//
+			// 
 			this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.btnCancel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -187,9 +201,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.btnCancel.TabIndex = 2;
 			this.btnCancel.Text = "&Cancel";
-			//
+			// 
 			// btnOK
-			//
+			// 
 			this.btnOK.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.btnOK.ImeMode = System.Windows.Forms.ImeMode.NoControl;
@@ -199,9 +213,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.btnOK.TabIndex = 1;
 			this.btnOK.Text = "&OK";
 			this.btnOK.Click += new System.EventHandler(this.OnOk);
-			//
+			// 
 			// selectedDomainsList
-			//
+			// 
+			this.selectedDomainsList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.selectedDomainsList.AutoArrange = false;
 			this.selectedDomainsList.CheckBoxes = true;
 			this.selectedDomainsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
@@ -217,9 +233,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.selectedDomainsList.View = System.Windows.Forms.View.Details;
 			this.selectedDomainsList.Columns.Add("dummy", "column", 275);
 			this.selectedDomainsList.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.OnSelectedDomainItemChecked);
-			//
+			// 
 			// button1
-			//
+			// 
+			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
 			this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.button1.Location = new System.Drawing.Point(214, 340);
@@ -229,9 +246,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.button1.Text = "Suggest";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.OnSuggestClicked);
-			//
+			// 
 			// SemanticDomainsChooser
-			//
+			// 
 			this.AcceptButton = this.btnOK;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
