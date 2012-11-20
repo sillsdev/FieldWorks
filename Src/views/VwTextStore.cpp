@@ -2532,12 +2532,14 @@ int VwTextStore::AcpToLog(int acpReq)
 	else
 	{
 		// convert NFC offsets to internal NFD offsets
+		if (acpReq == 0)
+			return 0;
+
+		// It is important to do this AFTER the test above, since the method can be called
+		// with acpReq==0 when there is no current selection (e.g., as part of making one).
 		VwTextSelection * psel = dynamic_cast<VwTextSelection *>(m_qrootb->Selection());
 		if (!psel)
 			ThrowHr(WarnHr(E_FAIL));
-
-		if (acpReq == 0)
-			return 0;
 
 		int cch = TextLength();
 
