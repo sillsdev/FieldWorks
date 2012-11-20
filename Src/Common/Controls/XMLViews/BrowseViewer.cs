@@ -1423,11 +1423,25 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		/// <summary>
+		/// Remove items from the given dictionary if they are:
+		/// 1) "Invalid" in that their selection state does not match expectations;
+		/// 2) Not in the ObjectRepository because they have been deleted (see LTB-1650);
+		/// </summary>
+		/// <param name="items">Dictionary of items to consider</param>
+		/// <param name="fExpectToBeSelected">Expected selection state</param>
 		private void RemoveInvalidOldSelectedItems(ref IDictionary<int, object> items, bool fExpectToBeSelected)
 		{
+			var objRepo = Cache.ServiceLocator.ObjectRepository;
 			Set<int> invalidSelectedItems = new Set<int>();
 			foreach (KeyValuePair<int, object> item in items)
 			{
+				// LTB-1650 - test if item still exists:
+				if (!objRepo.IsValidObjectId(item.Key))
+				{
+					invalidSelectedItems.Add(item.Key);
+					continue;
+				}
 				bool fActuallySelected = IsItemChecked(item.Key);
 
 				if (fExpectToBeSelected && !fActuallySelected ||
