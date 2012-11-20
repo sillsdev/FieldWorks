@@ -104,6 +104,49 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			return true;
 		}
 
+		/// <summary>
+		/// All localized list files are named with this prefix followed by the IcuLocale of the writing system, then .zip.
+		/// Each file contains a single compressed XML file containing the data. It must contain nothing else.
+		/// </summary>
+		public const string LocalizedListPrefix = "LocalizedLists-";
+
+		/// <summary>
+		/// If a localizad lists file is available for the specified ws, load the information.
+		/// Note: call this only when you are sure the WS is new to this project. It takes considerable time
+		/// to run if it finds a localized list file.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <param name="cache"></param>
+		/// <param name="progress"> </param>
+		public static void ImportTranslatedListsForWs(string ws, FdoCache cache, IProgress progress)
+		{
+			string path = TranslatedListsPathForWs(ws);
+			if (File.Exists(path))
+			{
+				var instance = new XmlTranslatedLists();
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor,
+					() => instance.ImportTranslatedLists(path, cache, progress));
+			}
+		}
+
+		/// <summary>
+		/// Caption recommended for a progress dialog while running ImportTranslatedListsForWs
+		/// </summary>
+		public static string ProgressDialogCaption
+		{
+			get { return Strings.ksTransListCaption; }
+		}
+
+		/// <summary>
+		/// Call before ImportTranslatedListsForWs. Call that only if the file exists.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <returns></returns>
+		public static string TranslatedListsPathForWs(string ws)
+		{
+			return Path.Combine(DirectoryFinder.TemplateDirectory, Path.ChangeExtension(LocalizedListPrefix + ws, "zip"));
+		}
+
 		private int GetWsFromStr(string sWs)
 		{
 			int ws = m_wsf.GetWsFromStr(sWs);

@@ -31,6 +31,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
@@ -1848,7 +1849,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void ImportLocalizedLists()
 		{
-			string filePrefix = "LocalizedLists-";
+			string filePrefix = XmlTranslatedLists.LocalizedListPrefix;
 			List<string> rgsAnthroFiles = new List<string>();
 			string[] rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, filePrefix + "*.zip", SearchOption.TopDirectoryOnly);
 			string sFile;

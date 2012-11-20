@@ -947,4 +947,8 @@ If you need to make changes, tell the other users to close this project before y
     <value>Local service {0} not started. If this service has a Startup Type of Manual or Disabled, we recommend that you set it to Automatic, and then in this dialog box click Retry.</value>
     <comment>Parameter is hard-coded service name (FwRemoteDatabaseConnectorService). This is a message targeted primarily at a computer savvy person.</comment>
   </data>
+  <data name="ksTransListCaption" xml:space="preserve">
+    <value>Loading list member names</value>
+    <comment>Caption for progress dialog, when a new writing system is added</comment>
+  </data>
 </root>

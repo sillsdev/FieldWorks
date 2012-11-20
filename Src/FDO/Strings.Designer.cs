@@ -1979,6 +1979,15 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading list member names.
+        /// </summary>
+        internal static string ksTransListCaption {
+            get {
+                return ResourceManager.GetString("ksTransListCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The value is too long to store, so it has been truncated to the first {0} characters..
         /// </summary>
         internal static string ksTruncatedToXXXChars {
