@@ -229,5 +229,14 @@ namespace SIL.FieldWorks.Common.RootSites.Properties {
 				return ResourceManager.GetString("ksWarning", resourceCulture);
 			}
 		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Printing to the file {0} failed.
+		/// </summary>
+		internal static string ksPrintToFileFailed {
+			get {
+				return ResourceManager.GetString("ksPrintToFileFailed", resourceCulture);
+			}
+		}
 	}
 }

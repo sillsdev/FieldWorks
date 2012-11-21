@@ -14,6 +14,8 @@
 using System;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.IO;
+using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -188,6 +190,13 @@ namespace SIL.FieldWorks.Common.RootSites
 			pd.Print();
 			if (m_rootb != null)
 				m_rootb.Close();
+			// Check whether the printing actually worked (FWNX-759).
+			if (pd.PrinterSettings.PrintToFile && !File.Exists(pd.PrinterSettings.PrintFileName))
+			{
+				var msg = String.Format(Properties.Resources.ksPrintToFileFailed, pd.PrinterSettings.PrintFileName);
+				MessageBox.Show(msg, Properties.Resources.kstidPrintErrorCaption);
+			}
+
 #if false
 			long x2 = System.DateTime.Now.Ticks;
 			Debug.WriteLine("PrintRootSite.Print() took " + DeltaTime(x1,x2) + " seconds.");
