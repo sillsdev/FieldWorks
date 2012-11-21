@@ -17,7 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
-
+using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -54,8 +54,14 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 #endif
 			try
 			{
-				using (var reader = new StreamReader(filename, Encoding.UTF8))
-				ImportTranslatedLists(reader, cache, progress);
+				using (var inputStream = FileUtils.OpenStreamForRead(filename))
+				using (var zipReader = new ZipInputStream(inputStream))
+				{
+					var entry = zipReader.GetNextEntry(); // advances it to where we can read the one zipped file.
+
+					using (var reader = new StreamReader(zipReader, Encoding.UTF8))
+						ImportTranslatedLists(reader, cache, progress);
+				}
 			}
 			catch (Exception e)
 			{

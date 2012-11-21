@@ -1848,18 +1848,32 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void ImportLocalizedLists()
 		{
-			string sFilePattern = Path.Combine(DirectoryFinder.TemplateDirectory, "LocalizedLists-*.xml");
+			string filePrefix = "LocalizedLists-";
 			List<string> rgsAnthroFiles = new List<string>();
-			string[] rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, "LocalizedLists-*.xml", SearchOption.TopDirectoryOnly);
+			string[] rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, filePrefix + "*.zip", SearchOption.TopDirectoryOnly);
 			string sFile;
 			for (int i = 0; i < rgsXmlFiles.Length; ++i)
 			{
 				using (new WaitCursor(this))
 				{
+					string fileName = Path.GetFileNameWithoutExtension(rgsXmlFiles[i]);
+					string wsId = fileName.Substring(filePrefix.Length);
+					if (!IsWritingSystemInProject(wsId))
+						continue;
 					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
 						() => ImportTranslatedLists(rgsXmlFiles[i]));
 				}
 			}
+		}
+
+		bool IsWritingSystemInProject(string wsId)
+		{
+			foreach (var ws in Cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				if (ws.IcuLocale == wsId)
+					return true;
+			}
+			return false;
 		}
 
 		private void ImportTranslatedLists(string filename)
