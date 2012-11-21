@@ -111,9 +111,13 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		public const string LocalizedListPrefix = "LocalizedLists-";
 
 		/// <summary>
-		/// If a localizad lists file is available for the specified ws, load the information.
+		/// If a localized lists file is available for the specified ws, load the information.
 		/// Note: call this only when you are sure the WS is new to this project. It takes considerable time
 		/// to run if it finds a localized list file.
+		/// Our current strategy for loading localized lists is to have one file per localization.
+		/// It is always LocalizedLists-XX.zip, where XX is the ICU locale for the writing system.
+		/// (The zip file contains a single file, LocalizedLists-XX.xml.)
+		/// So if such a file exists for this WS, we can import lists for that writing system.
 		/// </summary>
 		/// <param name="ws"></param>
 		/// <param name="cache"></param>

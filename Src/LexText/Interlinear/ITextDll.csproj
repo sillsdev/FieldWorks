@@ -279,7 +279,9 @@
     <Compile Include="ChooseTextWritingSystemDlg.Designer.cs">
       <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConcordanceContainer.cs" />
+    <Compile Include="ConcordanceContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ConcordanceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -320,7 +322,9 @@
     <Compile Include="InterlinDocChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="InterlinearExportDialog.cs" />
+    <Compile Include="InterlinearExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="InterlinearExporter.cs" />
     <Compile Include="InterlinearImportDlg.cs">
       <SubType>Form</SubType>
@@ -328,11 +332,15 @@
     <Compile Include="InterlinearImportDlg.Designer.cs">
       <DependentUpon>InterlinearImportDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterlinDocForAnalysis.cs" />
+    <Compile Include="InterlinDocForAnalysis.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="InterlinDocForAnalysis.Designer.cs">
       <DependentUpon>InterlinDocForAnalysis.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterlinearSfmImportWizard.cs" />
+    <Compile Include="InterlinearSfmImportWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="InterlinearSfmImportWizard.Designer.cs">
       <DependentUpon>InterlinearSfmImportWizard.cs</DependentUpon>
     </Compile>
@@ -341,17 +349,25 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InterlinDocRootSiteBase.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="InterlinDocRootSiteBase.Designer.cs">
       <DependentUpon>InterlinDocRootSiteBase.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterlinMaster.cs" />
-    <Compile Include="InterlinMasterNoTitleBar.cs" />
-    <Compile Include="InterlinMasterNoTitleContent.cs" />
-    <Compile Include="InterlinPrintView.cs" />
+    <Compile Include="InterlinMaster.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InterlinMasterNoTitleBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InterlinMasterNoTitleContent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InterlinPrintView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="InterlinTaggingChild.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="InterlinPrintView.Designer.cs">
       <DependentUpon>InterlinPrintView.cs</DependentUpon>
@@ -365,7 +381,9 @@
     <Compile Include="InterlinMaster.Designer.cs">
       <DependentUpon>InterlinMaster.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterlinMasterBase.cs" />
+    <Compile Include="InterlinMasterBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="InterlinViewDataCache.cs" />
     <Compile Include="ITextStrings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -382,23 +400,33 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RawTextPane.cs" />
-    <Compile Include="Sandbox.cs" />
+    <Compile Include="RawTextPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sandbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SandboxBase.ComboHandlers.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SandboxBase.cs" />
+    <Compile Include="SandboxBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SandboxBase.designer.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
     </Compile>
     <Compile Include="SandboxBase.GetRealyAnalysisMethod.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SandboxBase.MorphemeBreaker.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SandboxBase.SandboxVc.cs">
       <DependentUpon>SandboxBase.cs</DependentUpon>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sfm2FlexText.cs" />
     <Compile Include="ShowSpaceDecorator.cs" />
@@ -409,11 +437,15 @@
       <DependentUpon>StatisticsView.cs</DependentUpon>
     </Compile>
     <Compile Include="TextsFilterItem.cs" />
-    <Compile Include="TitleContentsPane.cs" />
+    <Compile Include="TitleContentsPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="WordBreakGuesser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WordsSfmImportWizard.cs" />
+    <Compile Include="WordsSfmImportWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="WordsSfmImportWizard.Designer.cs">
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
     </Compile>

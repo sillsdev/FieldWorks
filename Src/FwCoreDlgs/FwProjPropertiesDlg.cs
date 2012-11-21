@@ -1796,7 +1796,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_fWsChanged = true;
 				foreach (var newWs in newWsIds)
 				{
-					ImportTranslatedListsForWs(newWs);
+					ProgressDialogWithTask.ImportTranslatedListsForWs(this, m_cache, newWs);
 				}
 			}
 
@@ -1807,40 +1807,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					currList.Add(ws);
 				m_fWsChanged = true;
 			}
-		}
-
-		/// <summary>
-		/// I'd like to put all this logic into XmlTranslatedLists, because it is common to each case of
-		/// calling ImportTranslatedListsForWs, which is the point of this method. Unfortunately FDO
-		/// cannot reference the DLL that has ProgressDialogWithTask.
-		/// </summary>
-		/// <param name="ws"></param>
-		private void ImportTranslatedListsForWs(string ws)
-		{
-			string path = XmlTranslatedLists.TranslatedListsPathForWs(ws);
-			if (!File.Exists(path))
-				return;
-			using (var dlg = new ProgressDialogWithTask(this, m_cache.ThreadHelper))
-			{
-				dlg.AllowCancel = true;
-				dlg.Maximum = 200;
-				dlg.Message = Path.GetFileName(path);
-				dlg.Title = XmlTranslatedLists.ProgressDialogCaption;
-				dlg.RunTask(true, ImportTranslatedListsForWs, ws);
-			}
-		}
-
-		/// <summary>
-		/// Method with required signature for ProgressDialogWithTask.RunTask, to invoke XmlTranslatedLists.ImportTranslatedListsForWs
-		/// </summary>
-		/// <param name="dlg"></param>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		private object ImportTranslatedListsForWs(IThreadedProgress dlg, object[] args)
-		{
-			var ws = (string)args[0];
-			XmlTranslatedLists.ImportTranslatedListsForWs(ws, m_cache, dlg);
-			return null;
 		}
 
 		/// ------------------------------------------------------------------------------------

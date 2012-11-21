@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
@@ -1342,6 +1343,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(ws);
 			if (addVernWss)
 				cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(ws);
+			// If the new writing system is one for which we have localized versions of lists, import them.
+			// We can't easily put up a progress dialog here, because the code is in a project we can't reference.
+			// However this routine is used in relatively long operations anyway so there should already be some kind of progress bar.
+			XmlTranslatedLists.ImportTranslatedListsForWs(identifier, cache, null);
 			return false;
 		}
 
