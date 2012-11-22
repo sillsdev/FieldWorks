@@ -3478,10 +3478,6 @@ wchar ToLower(wchar ch)
 ----------------------------------------------------------------------------------------------*/
 void GetResourceString(const wchar ** pprgch, int * pcch, int stid)
 {
-	if (stid == 25903)
-	{
-		Warn("UtilString.cpp  GetResourceStringstid == 25903");
-	}
 	AssertPtr(pprgch);
 	AssertPtr(pcch);
 #if WIN32
