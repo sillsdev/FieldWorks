@@ -353,15 +353,14 @@ DebugProcs-link:
 	$(MAKE) -C$(SRC)/DebugProcs link_check
 
 ManagedComBridge-all:
-	$(MAKE) -C$(COM_DIR)/ManagedComBridge all
-	-mkdir -p $(OUT_DIR)
-	cp -pf $(COM_DIR)/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(OUT_DIR)
-
+	$(MAKE) -C$(COM_BUILD)/ManagedComBridge all
+	@mkdir -p $(OUT_DIR)
+	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
 ManagedComBridge-clean:
-	$(MAKE) -C$(COM_DIR)/ManagedComBridge clean
+	$(MAKE) -C$(COM_BUILD)/ManagedComBridge clean
 	rm -f $(OUT_DIR)/libManagedComBridge.so
 ManagedComBridge-check:
-	# Not implemented yet
+	$(MAKE) -C$(COM_BUILD)/ManagedComBridge check
 
 COM-all:
 	-mkdir -p $(COM_BUILD)
