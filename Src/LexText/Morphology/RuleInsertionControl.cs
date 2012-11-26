@@ -97,7 +97,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_growing = true;
 					Size sz = new Size(this.Width, Int32.MaxValue);
 					sz = TextRenderer.MeasureText(this.Text, this.Font, sz, TextFormatFlags.WordBreak);
-					this.Height = sz.Height;
+					// The mono implementation chops off the bottom line of the display (FWNX-752).
+					if (MiscUtils.IsMono)
+						this.Height = sz.Height + 7;
+					else
+						this.Height = sz.Height;
 				}
 				finally
 				{
