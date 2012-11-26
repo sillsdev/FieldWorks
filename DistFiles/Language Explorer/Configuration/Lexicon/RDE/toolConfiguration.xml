@@ -37,7 +37,7 @@
 								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
 								<parameters id="wordList" clerk="RDEwords" filterBar="false" forceReloadListOnInitOrChangeRoot="true" editRowModelClass="LexSense" editRowAssembly="FDO.dll" editRowClass="SIL.FieldWorks.FDO.ILexSense" editRowSaveMethod="RDENewSense" editRowMergeMethod="RDEMergeSense" ShowOwnerShortname="true" TitleFormat="Words for {0}" treeBarAvailability="Required">
 									<!-- Note that currently the labels of these columns are known to LexSenseFactory.RDENewSense-->
-									<columns generate="childPartsForParentLayouts">
+									<columns generate="childPartsForParentLayouts" leadingUnsortedColumns="4">
 										<column label="Word (Citation Form)" width="40%" ws="$ws=vernacular" visibility="always">
 											<obj class="LexSense" field="OwningEntry" layout="empty">
 												<string field="CitationForm" ws="vernacular"/>

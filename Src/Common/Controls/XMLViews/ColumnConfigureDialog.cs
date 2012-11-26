@@ -754,7 +754,16 @@ namespace SIL.FieldWorks.Common.Controls
 		void InitCurrentList()
 		{
 			IComparer<XmlNode> columnSorter = new ColumnSorter(m_stringTbl);
-			m_possibleColumns.Sort(columnSorter); // Sort the list before it's displayed
+			int firstIndex = 0;
+			int count = m_possibleColumns.Count;
+			if (m_possibleColumns.Count > 0 && m_possibleColumns[0].ParentNode != null)
+			{
+				// The parent columns element may specify that the first few items are to be left in place and not sorted.
+				var leadingUnsortedColumns = XmlUtils.GetOptionalIntegerValue(m_possibleColumns[0].ParentNode, "leadingUnsortedColumns", 0);
+				firstIndex += leadingUnsortedColumns;
+				count -= leadingUnsortedColumns;
+			}
+			m_possibleColumns.Sort(firstIndex, count, columnSorter); // Sort the list before it's displayed
 			SafelyMakeOptionsList(optionsList);
 		}
 
