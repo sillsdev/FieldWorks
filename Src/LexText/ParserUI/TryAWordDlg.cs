@@ -546,7 +546,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				var message = (string)m_tryAWordResult.AsyncState;
 				string sOutput;
-				if (!message.StartsWith("<"))
+				if (!message.TrimStart().StartsWith("<"))
 				{
 					// It's an error message.
 					sOutput = Path.GetTempFileName();
