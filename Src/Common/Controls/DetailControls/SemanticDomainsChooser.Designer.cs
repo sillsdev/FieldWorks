@@ -120,7 +120,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.searchTextBox.Name = "searchTextBox";
 			this.searchTextBox.Size = new System.Drawing.Size(305, 20);
 			this.searchTextBox.TabIndex = 7;
-			this.searchTextBox.TextChanged += new System.EventHandler(this.OnSearchTextChanged);
 			// 
 			// domainList
 			// 

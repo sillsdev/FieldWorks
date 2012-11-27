@@ -207,6 +207,7 @@
     <Compile Include="ProjectInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SearchTimer.cs" />
     <Compile Include="SelectionEvents.cs" />
     <Compile Include="ShowHelp.cs">
       <SubType>Code</SubType>

@@ -12,7 +12,7 @@ namespace XCore
 		protected TreeView m_treeView;
 		protected ListView m_listView;
 		private ColumnHeader m_columnHeader1;
-		private Control m_optionalHeaderBar;
+		private Control m_optionalHeaderControl;
 
 		/// <summary>
 		/// Required designer variable.
@@ -83,14 +83,16 @@ namespace XCore
 			}
 		}
 
+		public bool HasHeaderControl { get { return m_optionalHeaderControl != null; } }
+
 		public void AddHeaderControl(Control c)
 		{
 			CheckDisposed();
 
-			if (c == null)
+			if (c == null || HasHeaderControl)
 				return;
 
-			m_optionalHeaderBar = c;
+			m_optionalHeaderControl = c;
 			Controls.Add(c);
 			c.Dock = DockStyle.Top;
 		}
@@ -109,10 +111,8 @@ namespace XCore
 		{
 			CheckDisposed();
 
-//			m_treeView.AfterSelect -= new TreeViewEventHandler(OnTreeBarAfterSelect);
 			TreeView.Nodes.Clear();
 			m_listView.Items.Clear();
-//			m_treeView.AfterSelect += new TreeViewEventHandler(OnTreeBarAfterSelect);
 		}
 
 		/// <summary>
@@ -186,14 +186,14 @@ namespace XCore
 
 		public void ShowHeaderControl()
 		{
-			if (m_optionalHeaderBar != null)
-				m_optionalHeaderBar.Visible = true;
+			if (HasHeaderControl)
+				m_optionalHeaderControl.Visible = true;
 		}
 
 		public void HideHeaderControl()
 		{
-			if (m_optionalHeaderBar != null)
-				m_optionalHeaderBar.Visible = false;
+			if (HasHeaderControl)
+				m_optionalHeaderControl.Visible = false;
 		}
 	}
 }

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -14,14 +15,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
 	public partial class SemanticDomainsChooser : Form
 	{
-		private IVwStylesheet _stylesheet;
-		private HashSet<ICmObject> _selectedItems = new HashSet<ICmObject>();
-		private readonly Timer myTimer = new Timer();
-		private bool myTimerTickSet;
+		private IVwStylesheet m_stylesheet;
+		private HashSet<ICmObject> m_selectedItems = new HashSet<ICmObject>();
+		private SearchTimer m_SearchTimer;
 
 		public IEnumerable<ICmObject> SemanticDomains
 		{
-			get { return _selectedItems; }
+			get { return m_selectedItems; }
 		}
 
 		public ILexSense Sense { private get; set; }
@@ -39,139 +39,39 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems)
 		{
-			_selectedItems.UnionWith(selectedItems);
+			m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(Mediator);
+			m_selectedItems.UnionWith(selectedItems);
 			UpdateDomainTreeAndListLabels(labels);
 			searchTextBox.WritingSystemFactory = Cache.LanguageWritingSystemFactoryAccessor;
-			searchTextBox.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(Mediator));
+			searchTextBox.AdjustForStyleSheet(m_stylesheet);
+			m_SearchTimer = new SearchTimer(this, 500, SearchSemDomSelection, new List<Control> {domainTree, domainList});
+			searchTextBox.TextChanged += m_SearchTimer.OnSearchTextChanged;
 		}
 
 		private void UpdateDomainTreeAndListLabels(IEnumerable<ObjectLabel> labels)
 		{
-			IVwStylesheet stylesheet = FontHeightAdjuster.StyleSheetFromMediator(Mediator);
 			domainTree.BeginUpdate();
-			domainTree.Nodes.Clear();
-			foreach (var label in labels)
+			SemanticDomainSelectionUtility.UpdateDomainTreeLabels(labels, displayUsageCheckBox.Checked, domainTree, m_stylesheet, m_selectedItems);
+			foreach (var selectedItem in m_selectedItems)
 			{
-				var x = CreateLabelNode(label, _stylesheet, _selectedItems, displayUsageCheckBox.Checked);
-				domainTree.Nodes.Add(x);
-			}
-			foreach (var selectedItem in _selectedItems)
-			{
-				selectedDomainsList.Items.Add(CreateLabelListItem(selectedItem, true, false));
+				selectedDomainsList.Items.Add(SemanticDomainSelectionUtility.CreateLabelListItem(selectedItem, true, false));
 			}
 			domainTree.EndUpdate();
-		}
-
-		/// <summary>
-		/// Creates a ListViewItem for the given ICmObject
-		/// </summary>
-		/// <param name="label">A Semantic Domain</param>
-		/// <param name="createChecked"></param>
-		/// <param name="displayUsage"></param>
-		/// <returns></returns>
-		private static ListViewItem CreateLabelListItem(ICmObject label, bool createChecked, bool displayUsage)
-		{
-			var semanticDomainItem = label as ICmSemanticDomain;
-			if(semanticDomainItem == null)
-			{
-				return new ListViewItem(DetailControlsStrings.ksSemanticDomainInvalid);
-			}
-			var text = semanticDomainItem.AbbrAndName;
-			if (displayUsage)
-			{
-				// Don't count the reference from an overlay, since we have no way to tell
-				// how many times that overlay has been used.  See FWR-1050.
-				int count = 0;
-				if (label != null && label.ReferringObjects != null)
-				{
-					count = label.ReferringObjects.Count;
-					foreach (ICmObject x in label.ReferringObjects)
-					{
-						if (x is ICmOverlay)
-							--count;
-					}
-				}
-				if (count > 0)
-					text += " (" + count + ")";
-			}
-
-			var item = new ListViewItem(text) {Checked = createChecked, Tag = label};
-			return item;
-		}
-
-		/// <summary>
-		/// Creates the label node.
-		/// </summary>
-		/// <param name="label">The label.</param>
-		/// <param name="stylesheet"></param>
-		/// <param name="selectedItems"></param>
-		/// <param name="displayUsage">if set to <c>true</c> [display usage].</param>
-		/// <returns></returns>
-		static DomainNode CreateLabelNode(ObjectLabel label, IVwStylesheet stylesheet, IEnumerable<ICmObject> selectedItems, bool displayUsage)
-		{
-			var node = new DomainNode(label, stylesheet, displayUsage);
-			node.AddChildren(true, selectedItems);
-			if(selectedItems.Contains(label.Object))
-			{
-				node.Checked = true;
-			}
-			return node;
-		}
-
-		private void AdjustTreeAndListView(object tag, bool check)
-		{
-			foreach (DomainNode node in domainTree.Nodes)
-			{
-				if (RecursivelyAdjustTreeNode(node, tag, check))
-				{
-					break;
-				}
-			}
-			foreach (ListViewItem listViewItem in domainList.Items)
-			{
-				if(listViewItem.Tag == tag)
-				{
-					listViewItem.Checked = check;
-					break;
-				}
-			}
-		}
-
-		private bool RecursivelyAdjustTreeNode(DomainNode node, object tag, bool check)
-		{
-			if ((node.Tag as ObjectLabel).Object == tag)
-			{
-				node.Checked = check;
-				return true;
-			}
-			return node.Nodes.Cast<DomainNode>().Any(child => RecursivelyAdjustTreeNode(child, tag, check));
-		}
-
-		private void TimerEventProcessor(object sender, EventArgs eventArgs)
-		{
-			var oldCursor = Cursor;
-			Cursor = Cursors.WaitCursor;
-			myTimer.Tick -= TimerEventProcessor;
-			myTimerTickSet = false;
-			domainTree.Enabled = domainList.Enabled = false;
-			SearchSemDomSelection();
-			domainTree.Enabled = domainList.Enabled = true;
-			Cursor = oldCursor;
 		}
 
 		private void SearchSemDomSelection()
 		{
 			IEnumerable<ObjectLabel> labels = new List<ObjectLabel>();
 
-			//Gordon will write a method that will return IEnumerable<ICmSemanticDomain>
-			//based on the search string we give it.
+			// The FindDomainsThatMatch method returns IEnumerable<ICmSemanticDomain>
+			// based on the search string we give it.
 			var searchString = searchTextBox.Tss;
 			if (!string.IsNullOrEmpty(searchString.Text))
 			{
 				domainList.ItemChecked -= OnDomainListChecked;
 				var semDomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 				var semDomainsToShow = semDomRepo.FindDomainsThatMatch(searchString.Text);
-				UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, "", DisplayWs));
+				SemanticDomainSelectionUtility.UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, "", DisplayWs), domainList, displayUsageCheckBox.Checked);
 				domainTree.Visible = false;
 				domainList.Visible = true;
 				domainList.ItemChecked += OnDomainListChecked;
@@ -183,49 +83,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private void UpdateDomainListLabels(IEnumerable<ObjectLabel> createObjectLabels)
+		void OnOk(object sender, EventArgs e)
 		{
-			domainList.Items.Clear();
-			foreach (var selectedItem in createObjectLabels)
-			{
-				domainList.Items.Add(CreateLabelListItem(selectedItem.Object, false, displayUsageCheckBox.Checked));
-			}
-		}
-
-		/// <summary>
-		/// When the user types in this text box seach through the Semantic Domains to find matches
-		/// and display them in the TreeView.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		protected void OnSearchTextChanged(object sender, EventArgs e)
-		{
-			if (myTimerTickSet == false)
-			{
-				// Sets the timer interval to 1/2 seconds.
-				myTimer.Interval = 500;
-				myTimer.Start();
-				myTimer.Enabled = true;
-				myTimerTickSet = true;
-				myTimer.Tick += new EventHandler(TimerEventProcessor);
-			}
-			else
-			{
-				//myTimer.Tick += new EventHandler(TimerEventProcessor);
-				myTimer.Stop();
-				myTimer.Enabled = true;
-			}
-		}
-
-		void OnOk(object sender, System.EventArgs e)
-		{
-			_selectedItems.Clear();
+			m_selectedItems.Clear();
 			foreach(ListViewItem selectedDomain in selectedDomainsList.Items)
 			{
 				var item = selectedDomain.Tag as ICmObject;
 				if(selectedDomain.Checked && item != null)
 				{
-					_selectedItems.Add(item);
+					m_selectedItems.Add(item);
 				}
 			}
 		}
@@ -238,24 +104,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var semDomainsToShow = semDomRepo.FindDomainsThatMatchWordsIn(Sense, out partialMatches);
 			foreach (var domain in semDomainsToShow)
 			{
-				AdjustSelectedDomainList(domain, true);
+				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, true, selectedDomainsList);
 			}
 			// Add all the partial matches to the list also, but do not check them by default
 			foreach (var domainMatch in partialMatches)
 			{
-				AdjustSelectedDomainList(domainMatch, false);
+				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domainMatch, false, selectedDomainsList);
 			}
 		}
 
 		private void OnSelectedDomainItemChecked(object sender, ItemCheckedEventArgs e)
 		{
-			AdjustTreeAndListView(e.Item.Tag, e.Item.Checked);
+			SemanticDomainSelectionUtility.AdjustTreeAndListView(e.Item.Tag, e.Item.Checked, domainTree, domainList);
 		}
-
 
 		private void OnDomainListChecked(object sender, ItemCheckedEventArgs e)
 		{
-			AdjustSelectedDomainList(e.Item.Tag as ICmObject, e.Item.Checked);
+			SemanticDomainSelectionUtility.AdjustSelectedDomainList(e.Item.Tag as ICmObject, e.Item.Checked, selectedDomainsList);
 		}
 
 		private void OnDomainTreeCheck(object sender, TreeViewEventArgs e)
@@ -263,7 +128,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if(e.Action != TreeViewAction.Unknown)
 			{
 				var domain = (e.Node.Tag as ObjectLabel).Object;
-				AdjustSelectedDomainList(domain, e.Node.Checked);
+				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, e.Node.Checked, selectedDomainsList);
 			}
 		}
 
@@ -287,7 +152,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				foreach (ListViewItem item in domainList.Items)
 				{
-					item.Text = CreateLabelListItem(item.Tag as ICmObject,
+					item.Text = SemanticDomainSelectionUtility.CreateLabelListItem(item.Tag as ICmObject,
 													item.Checked,
 													displayUsageCheckBox.Checked).Text;
 				}
@@ -296,13 +161,66 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		private void OnEditDomainsLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			var toolName = XmlUtils.GetAttributeValue(LinkNode, "tool");
+			Mediator.PostMessage("FollowLink", new FwUtils.FwLinkArgs(toolName, new Guid()));
+			btnCancel.PerformClick();
+		}
+
+		public System.Xml.XmlNode LinkNode { get; set; }
+	}
+
+	/// <summary>
+	/// This class contains methods that can be used for displaying the Semantic Domains in a TreeView and ListView.
+	/// These views are used in FLEX for allowing the user to select Semantic Domains.
+	/// </summary>
+	public static class SemanticDomainSelectionUtility
+	{
+		/// <summary>
+		/// Creates a ListViewItem for the given ICmObject
+		/// </summary>
+		/// <param name="label">A Semantic Domain</param>
+		/// <param name="createChecked"></param>
+		/// <param name="displayUsage"></param>
+		/// <returns></returns>
+		public static ListViewItem CreateLabelListItem(ICmObject label, bool createChecked, bool displayUsage)
+		{
+			var semanticDomainItem = label as ICmSemanticDomain;
+			if (semanticDomainItem == null)
+			{
+				return new ListViewItem(DetailControlsStrings.ksSemanticDomainInvalid);
+			}
+			var text = semanticDomainItem.AbbrAndName;
+			if (displayUsage)
+			{
+				// Don't count the reference from an overlay, since we have no way to tell
+				// how many times that overlay has been used.  See FWR-1050.
+				int count = 0;
+				if (semanticDomainItem.ReferringObjects != null)
+				{
+					count = semanticDomainItem.ReferringObjects.Count;
+					foreach (ICmObject x in semanticDomainItem.ReferringObjects)
+					{
+						if (x is ICmOverlay)
+							--count;
+					}
+				}
+				if (count > 0)
+					text += " (" + count + ")";
+			}
+
+			return new ListViewItem(text) { Checked = createChecked, Tag = semanticDomainItem.Hvo };
+		}
+
 		/// <summary>
 		/// Find the item in the selectedDomainsList if it is there and
 		/// set the checkmark accordingly, or add it and check it.
 		/// </summary>
 		/// <param name="domain"></param>
 		/// <param name="check"></param>
-		private void AdjustSelectedDomainList(ICmObject domain, bool check)
+		/// <param name="selectedDomainsList"></param>
+		public static void AdjustSelectedDomainList(ICmObject domain, bool check, ListView selectedDomainsList)
 		{
 			ListViewItem checkedItem = null;
 			foreach (ListViewItem item in selectedDomainsList.Items)
@@ -314,9 +232,108 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 				}
 			}
-			if(checkedItem == null)
+			if (checkedItem == null)
 			{
 				selectedDomainsList.Items.Add(CreateLabelListItem(domain, check, false));
+			}
+		}
+
+		/// <summary>
+		/// Creates the label node.
+		/// </summary>
+		/// <param name="label">The label.</param>
+		/// <param name="stylesheet"></param>
+		/// <param name="selectedItems"></param>
+		/// <param name="displayUsage">if set to <c>true</c> [display usage].</param>
+		/// <returns></returns>
+		private static DomainNode CreateLabelNode(ObjectLabel label, IVwStylesheet stylesheet, IEnumerable<ICmObject> selectedItems, bool displayUsage)
+		{
+			var node = new DomainNode(label, stylesheet, displayUsage);
+			node.AddChildren(true, selectedItems);
+			if (selectedItems.Contains(label.Object))
+			{
+				node.Checked = true;
+			}
+			return node;
+		}
+
+		/// <summary>
+		/// Adjust the checkbox for the nodes in the TreeView and ListView according to the 'tag' and 'check'
+		/// parameter values.
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="check"></param>
+		/// <param name="domainTree"></param>
+		/// <param name="domainList"></param>
+		public static void AdjustTreeAndListView(object tag, bool check, TreeView domainTree, ListView domainList)
+		{
+			foreach (DomainNode node in domainTree.Nodes)
+			{
+				if (RecursivelyAdjustTreeNode(node, tag, check))
+				{
+					break;
+				}
+			}
+			foreach (ListViewItem listViewItem in domainList.Items)
+			{
+				if (listViewItem.Tag == tag)
+				{
+					listViewItem.Checked = check;
+					break;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Check/Uncheck the TreeView node and recursively do this to any children nodes if the node
+		/// matches the 'tag' object.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="tag"></param>
+		/// <param name="check"></param>
+		/// <returns></returns>
+		private static bool RecursivelyAdjustTreeNode(DomainNode node, object tag, bool check)
+		{
+			if ((node.Tag as ObjectLabel).Object == tag)
+			{
+				node.Checked = check;
+				return true;
+			}
+			return node.Nodes.Cast<DomainNode>().Any(child => RecursivelyAdjustTreeNode(child, tag, check));
+		}
+
+		/// <summary>
+		/// Clear the ListView and add createObjectLabels to it. 'displayUsage' determines if the items are checked/unchecked.
+		/// </summary>
+		/// <param name="createObjectLabels"></param>
+		/// <param name="domainList"></param>
+		/// <param name="displayUsage"></param>
+		public static void UpdateDomainListLabels(IEnumerable<ObjectLabel> createObjectLabels, ListView domainList, bool displayUsage)
+		{
+			domainList.Items.Clear();
+			foreach (var selectedItem in createObjectLabels)
+			{
+				domainList.Items.Add(CreateLabelListItem(selectedItem.Object, false, displayUsage));
+			}
+		}
+
+		/// <summary>
+		/// Populate the TreeView with the labels and check/uncheck according to the selectedItems and displayUsage
+		/// parameters.
+		/// </summary>
+		/// <param name="labels"></param>
+		/// <param name="displayUsage"></param>
+		/// <param name="domainTree"></param>
+		/// <param name="stylesheet"></param>
+		/// <param name="selectedItems"></param>
+		public static void UpdateDomainTreeLabels(IEnumerable<ObjectLabel> labels, bool displayUsage, TreeView domainTree,
+			IVwStylesheet stylesheet, HashSet<ICmObject> selectedItems)
+		{
+			domainTree.Nodes.Clear();
+			foreach (var label in labels)
+			{
+				var x = CreateLabelNode(label, stylesheet, selectedItems, displayUsage);
+				domainTree.Nodes.Add(x);
 			}
 		}
 
@@ -338,14 +355,5 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return new DomainNode(nol, stylesheet, displayUsage);
 			}
 		}
-
-		private void OnEditDomainsLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			var toolName = XmlUtils.GetAttributeValue(LinkNode, "tool");
-			Mediator.PostMessage("FollowLink", new FwUtils.FwLinkArgs(toolName, new Guid()));
-			btnCancel.PerformClick();
-		}
-
-		public System.Xml.XmlNode LinkNode { get; set; }
 	}
 }

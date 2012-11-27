@@ -1189,6 +1189,9 @@ namespace SIL.FieldWorks.XWorks
 			return true;	// handled
 		}
 
+		private const string SelectedListBarNodeErrorMessage =
+			"An item stored in the Property Table under SelectedListBarNode (typically from the ListView of an xWindow's record bar) should have an Hvo stored in its Tag property.";
+
 		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
@@ -1218,7 +1221,9 @@ namespace SIL.FieldWorks.XWorks
 					var item = (ListViewItem) m_mediator.PropertyTable.GetValue(name);
 					if (item == null)
 						return;
-					hvo = (int) item.Tag;
+					if (!(item.Tag is int))
+						throw new ArgumentException(SelectedListBarNodeErrorMessage);
+					hvo = (int)item.Tag;
 					if (CurrentObjectHvo == 0 || hvo != CurrentObjectHvo)
 						JumpToRecord(hvo);
 					break;
