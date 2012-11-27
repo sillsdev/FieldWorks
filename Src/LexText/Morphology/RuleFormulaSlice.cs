@@ -62,9 +62,45 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			base.OnEnter(e);
 
 			// show the insertion control
+			int oldHeight = Height;
 			RuleFormulaControl.InsertionControl.Show();
 			Height = DesiredHeight(RuleFormulaControl.RootSite);
+			// FWNX-753 called attention to misbehavior around here.
+			if (SIL.Utils.MiscUtils.IsMono &&
+				RuleFormulaControl.Height != Height &&
+				RuleFormulaControl.Height == oldHeight)
+			{
+				SetSubcontrolHeights(this, oldHeight, Height);
+			}
 			RuleFormulaControl.PerformLayout();
+		}
+
+		/// <summary>
+		/// Set the heights of subcontrols to the new value if they're equal to the old value.
+		/// (This appears to be done automatically by the Windows .Net implementation during
+		/// the call to InsertionControl.Show(), even before the specific setting of Height in
+		/// OnEnter()!)
+		/// </summary>
+		/// <remarks>
+		/// Setting only RuleFormulaControl.Height fails, because the process of setting the
+		/// height triggers a layout, and the layout code changes the height to be no more
+		/// than that of its parent control.  There are two levels of control between
+		/// RuleFormulaSlice and RuleFormulaControl, so the heights of those controls must be
+		/// adjusted as well.
+		/// I suppose something like this could be inserted into the implementation of
+		/// Control.Height, but I'm reluctant to do so, partly because even then the behavior
+		/// would not really match that of the Windows .Net implementation.
+		/// </remarks>
+		private void SetSubcontrolHeights(Control ctrl, int oldHeight, int newHeight)
+		{
+			if (ctrl.Height == oldHeight)
+				ctrl.Height = newHeight;
+			foreach (var c in ctrl.Controls)
+			{
+				var ctl = c as Control;
+				if (ctl != null)
+					SetSubcontrolHeights(ctl, oldHeight, newHeight);
+			}
 		}
 
 		protected override void OnLeave(EventArgs e)
