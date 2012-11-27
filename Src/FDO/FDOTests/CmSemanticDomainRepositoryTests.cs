@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using NUnit.Framework;
@@ -775,11 +776,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			//Setup
 			const string searchString = "sun";
-			const string expectedNum1 = "1";     // bucket1 match 'earth', under 'Universe, creation'
+			const string expectedNum1 = "1";     // bucket1 match 'earth' from reversal, under 'Universe, creation'
 			const string expectedNum2 = "1.1";   // bucket1 match 'atmosphere', under 'Sky'
 			const string expectedNum3 = "1.1.8"; // bucket1 match 'Sun'
-			const string expectedNum4 = "4.9.6"; // bucket1 match 'Heaven, hell'
-			const string expectedNum5 = "8.3.3"; // bucket2 match 'sunshine', under 'Light'
+			const string expectedNum4 = "4.9.6"; // bucket1 match 'Heaven, hell' because hell is in name
+			const string expectedNum5 = "8.3.3"; // bucket2 match 'sunshine' from gloss sun, under 'Light'
 			IEnumerable<ICmSemanticDomain> partialMatches;
 			var entry = CreateLexEntry("soleil", searchString);
 			var sense = entry.SensesOS[0];
@@ -789,6 +790,58 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var result = m_semdomRepo.FindDomainsThatMatchWordsIn(sense, out partialMatches);
 
 			// Verification
+			var resultList = result.ToList();
+			var partialsList = partialMatches.ToList();
+			var cresult = resultList.Count;
+			var cpartials = partialsList.Count;
+			Assert.AreEqual(4, cresult, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(1, cpartials, WRONG_NUMBER_OF_MATCHES);
+			Assert.AreEqual(expectedNum1, resultList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum2, resultList[1].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum3, resultList[2].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum4, resultList[3].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+			Assert.AreEqual(expectedNum5, partialsList[0].Abbreviation.AnalysisDefaultWritingSystem.Text,
+				WRONG_SEMDOM_NUMBER);
+		}
+
+		/// <summary>
+		/// Test that we can find matches when the default analysis writing system is not the one in which the domains
+		/// and the sense have relevant information.
+		/// </summary>
+		[Test]
+		public void SenseSearch_KeysNotInFirstAnalysisWs()
+		{
+			//Setup
+			const string expectedNum1 = "1";     // bucket1 match 'earth' from reversal, under 'Universe, creation'
+			const string expectedNum2 = "1.1";   // bucket1 match 'atmosphere' from reversal, under 'Sky'
+			const string expectedNum3 = "1.1.8"; // bucket1 match 'Sun', in name and example words (but should only be found once)
+			const string expectedNum4 = "4.9.6"; // bucket1 match 'Heaven, hell' because hell is in name
+			const string expectedNum5 = "8.3.3"; // bucket2 match 'sunshine' from gloss sun, under 'Light'
+			IEnumerable<ICmSemanticDomain> partialMatches;
+			var entry = CreateLexEntry("soleil", "sun");
+			var sense = entry.SensesOS[0];
+			AddReversalsToSense(sense, new string[] { "sunset, atmosphere", "hell on earth" });
+
+			var oldWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			IWritingSystem wsFr;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out wsFr);
+			UndoableUnitOfWorkHelper.Do("Undo CreateEntry", "Redo CreateEntry", Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem = wsFr;
+			});
+
+			// SUT
+			var result = m_semdomRepo.FindDomainsThatMatchWordsIn(sense, out partialMatches);
+
+			// Verification
+			UndoableUnitOfWorkHelper.Do("Undo CreateEntry", "Redo CreateEntry", Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem = oldWs; // so we can make the tests below
+			});
 			var resultList = result.ToList();
 			var partialsList = partialMatches.ToList();
 			var cresult = resultList.Count;
