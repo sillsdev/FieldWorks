@@ -189,7 +189,7 @@ If you click No, you will see various options for starting work in Language Expl
 	<value>Transduce Citation Forms</value>
   </data>
   <data name="ksUsedForSemanticBasedEntry" xml:space="preserve">
-	<value>This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.sil.org/computing/ddp/.</value>
+	<value>This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net and http://www.sil.org/computing/ddp/.</value>
   </data>
   <data name="ksWhenToTransduceCitForms" xml:space="preserve">
 	<value>This can be used to convert Citation Forms into another writing system.</value>
