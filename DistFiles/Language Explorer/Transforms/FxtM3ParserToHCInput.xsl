@@ -23,7 +23,8 @@
 	<xsl:variable name="morphBdry" select="$charTable/BoundaryMarkers/PhBdryMarker[@Guid = $morphBdryGuid]"/>
 	<xsl:variable name="wordBdry" select="$charTable/BoundaryMarkers/PhBdryMarker[@Guid = $wordBdryGuid]"/>
 	<xsl:variable name="fNotOnClitics" select="/M3Dump/ParserParameters/ParserParameters/HC/NotOnClitics"/>
-
+	<xsl:variable name="fNoDefaultCompounding" select="/M3Dump/ParserParameters/ParserParameters/HC/NoDefaultCompounding"/>
+	
 	<xsl:key name="AffixAlloId" match="MoAffixAllomorph" use="@Id"/>
 	<xsl:key name="StemMsaId" match="MoStemMsa" use="@Id"/>
 	<xsl:key name="MsaId" match="MoStemMsa | MoDerivAffMsa | MoInflAffMsa | MoUnclassifiedAffixMsa" use="@Id"/>
@@ -122,7 +123,7 @@
 				<xsl:variable name="compRules" select="CompoundRules/MoEndoCompound | CompoundRules/MoExoCompound"/>
 				<MorphologicalRules id="mrs">
 					<xsl:choose>
-						<xsl:when test="count($compRules) = 0">
+						<xsl:when test="count($compRules) = 0 and not($fNoDefaultCompounding) or $fNoDefaultCompounding!='true'">
 							<xsl:call-template name="DefaultCompoundRules"/>
 						</xsl:when>
 						<xsl:otherwise>
