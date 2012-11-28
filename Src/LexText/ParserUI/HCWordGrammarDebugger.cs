@@ -31,6 +31,31 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			}
 		}
-
+		protected override void CreateMorphAffixAlloFeatsXmlElement(XmlNode node, XmlNode morphNode)
+		{
+			XmlNode alloid = node.SelectSingleNode("@alloid");
+			if (alloid != null)
+			{
+				XmlNode affixAlloFeatsNode = m_parseResult.SelectSingleNode("//Morph[MoForm/@DbRef='" + alloid.InnerText + "']/affixAlloFeats");
+				if (affixAlloFeatsNode != null)
+				{
+					morphNode.InnerXml += affixAlloFeatsNode.OuterXml;
+				}
+			}
+		}
+		protected override void CreateMorphShortNameXmlElement(XmlNode node, XmlNode morphNode)
+		{
+			XmlNode formNode = node.SelectSingleNode("shortName");
+			if (formNode != null)
+				morphNode.InnerXml = "<shortName>" + formNode.InnerXml + "</shortName>";
+			else
+			{
+				XmlNode alloFormNode = node.SelectSingleNode("alloform");
+				XmlNode glossNode = node.SelectSingleNode("gloss");
+				XmlNode citationFormNode = node.SelectSingleNode("citationForm");
+				if (alloFormNode != null && glossNode != null && citationFormNode != null)
+				morphNode.InnerXml = "<shortName>" + alloFormNode.InnerXml + " (" + glossNode.InnerText + "): " + citationFormNode.InnerText + "</shortName>";
+			}
+		}
 	}
 }

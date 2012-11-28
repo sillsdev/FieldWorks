@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			CreateFeatureStructureNodes(doc, inflMsaNode, inflMsa.InflFeatsOA, inflMsa.Hvo);
 			CreateProductivityRestrictionNodes(doc, inflMsaNode, inflMsa.FromProdRestrictRC, "fromProductivityRestriction");
 		}
-		protected void CreateMorphAffixAlloFeatsXmlElement(XmlNode node, XmlNode morphNode)
+		protected virtual void CreateMorphAffixAlloFeatsXmlElement(XmlNode node, XmlNode morphNode)
 		{
 			XmlNode affixAlloFeatsNode = node.SelectSingleNode("affixAlloFeats");
 			if (affixAlloFeatsNode != null)
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected abstract void CreateMorphNodes(XmlDocument doc, XmlNode seqNode, string sNodeId);
 
-		protected void CreateMorphShortNameXmlElement(XmlNode node, XmlNode morphNode)
+		protected virtual void CreateMorphShortNameXmlElement(XmlNode node, XmlNode morphNode)
 		{
 			XmlNode formNode = node.SelectSingleNode("shortName");
 			if (formNode != null)

@@ -4259,38 +4259,7 @@ ProcessInflectionalTemplatePercolationAndConstraints
 			   </xsl:element>
 			</xsl:element>
 		 </xsl:element>
-		 <xsl:comment>Check for productivity restrictions</xsl:comment>
 		 <wgd:variable name="stem" select="."/>
-		 <wgd:if test="$iPrefixSlotMorphs &gt; 0">
-			<wgd:for-each select="preceding-sibling::*[position()&lt;=$iPrefixSlotMorphs]">
-			   <wgd:call-template name="CheckInflectionalAffixProdRestrict">
-				  <wgd:with-param name="stemMorph" select="$stem"/>
-				  <wgd:with-param name="inflMorph" select="."/>
-				  <wgd:with-param name="sType" select="'prefix'"/>
-			   </wgd:call-template>
-			   <wgd:call-template name="CheckAffixAllomorphFeatures">
-				  <wgd:with-param name="sAffix" select="'inflectional'"/>
-				  <wgd:with-param name="sAttachesTo" select="'inflected form'"/>
-				  <wgd:with-param name="morph" select="."/>
-				  <wgd:with-param name="stem" select="$stem"/>
-			   </wgd:call-template>
-			</wgd:for-each>
-		 </wgd:if>
-		 <wgd:if test="$iSuffixSlotMorphs &gt; 0">
-			<wgd:for-each select="following-sibling::*[position()&lt;=$iSuffixSlotMorphs]">
-			   <wgd:call-template name="CheckInflectionalAffixProdRestrict">
-				  <wgd:with-param name="stemMorph" select="$stem"/>
-				  <wgd:with-param name="inflMorph" select="."/>
-				  <wgd:with-param name="sType" select="'suffix'"/>
-			   </wgd:call-template>
-			   <wgd:call-template name="CheckAffixAllomorphFeatures">
-				  <wgd:with-param name="sAffix" select="'inflectional'"/>
-				  <wgd:with-param name="sAttachesTo" select="'inflected form'"/>
-				  <wgd:with-param name="morph" select="."/>
-				  <wgd:with-param name="stem" select="$stem"/>
-			   </wgd:call-template>
-			</wgd:for-each>
-		 </wgd:if>
 		 <xsl:comment>Percolate features</xsl:comment>
 		 <xsl:comment>Check compatitbility of all inflection features</xsl:comment>
 		 <wgd:variable name="InflFeaturesToPercolate">
@@ -4409,7 +4378,38 @@ ProcessInflectionalTemplatePercolationAndConstraints
 			   </wgd:with-param>
 			</wgd:call-template>
 		 </wgd:variable>
-		 <wgd:if test="auto-ns1:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
+		<xsl:comment>Check for productivity restrictions and affix allomorph features</xsl:comment>
+		<wgd:if test="$iPrefixSlotMorphs &gt; 0">
+			<wgd:for-each select="preceding-sibling::*[position()&lt;=$iPrefixSlotMorphs]">
+				<wgd:call-template name="CheckInflectionalAffixProdRestrict">
+					<wgd:with-param name="stemMorph" select="$stem"/>
+					<wgd:with-param name="inflMorph" select="."/>
+					<wgd:with-param name="sType" select="'prefix'"/>
+				</wgd:call-template>
+				<wgd:call-template name="CheckAffixAllomorphFeatures">
+					<wgd:with-param name="sAffix" select="'inflectional'"/>
+					<wgd:with-param name="sAttachesTo" select="'inflected form'"/>
+					<wgd:with-param name="morph" select="."/>
+					<wgd:with-param name="stem" select="auto-ns1:node-set($InflFeaturesToPercolate)"/>
+				</wgd:call-template>
+			</wgd:for-each>
+		</wgd:if>
+		<wgd:if test="$iSuffixSlotMorphs &gt; 0">
+			<wgd:for-each select="following-sibling::*[position()&lt;=$iSuffixSlotMorphs]">
+				<wgd:call-template name="CheckInflectionalAffixProdRestrict">
+					<wgd:with-param name="stemMorph" select="$stem"/>
+					<wgd:with-param name="inflMorph" select="."/>
+					<wgd:with-param name="sType" select="'suffix'"/>
+				</wgd:call-template>
+				<wgd:call-template name="CheckAffixAllomorphFeatures">
+					<wgd:with-param name="sAffix" select="'inflectional'"/>
+					<wgd:with-param name="sAttachesTo" select="'inflected form'"/>
+					<wgd:with-param name="morph" select="."/>
+					<wgd:with-param name="stem" select="auto-ns1:node-set($InflFeaturesToPercolate)"/>
+				</wgd:call-template>
+			</wgd:for-each>
+		</wgd:if>
+		<wgd:if test="auto-ns1:node-set($InflFeaturesToPercolate)/fs/descendant::feature">
 			<wgd:copy-of select="$InflFeaturesToPercolate"/>
 		 </wgd:if>
 		 <!-- check on stem names

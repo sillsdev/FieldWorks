@@ -274,6 +274,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							m_xmlWriter.WriteAttributeString("DbRef", formIds[i]);
 							m_xmlWriter.WriteAttributeString("wordType", wordTypes[i]);
 							m_xmlWriter.WriteEndElement();
+							m_xmlWriter.WriteStartElement("props");
+							foreach (KeyValuePair<string, string> prop in allo.Properties)
+							{
+								if (prop.Key == "FeatureDescriptors")
+								{
+									m_xmlWriter.WriteString(prop.Value);
+								}
+							}
+							m_xmlWriter.WriteEndElement();
 						}
 					}
 
