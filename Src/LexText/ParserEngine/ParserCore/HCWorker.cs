@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
@@ -200,7 +201,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							wordGrammarTrace = new WordGrammarTrace(((uint)ws.GetHashCode()).ToString(), morphs, m_cache);
 							wordGrammarTraces.Add(wordGrammarTrace);
 						}
-
+						if (morphs.Count() == 1)
+						{
+							var morph = morphs.First();
+							var formid = morph.formId;
+							var forms = m_cache.LanguageProject.LexDbOA.AllAllomorphs.Where(a => a.Hvo.ToString() == formid);
+							var form = forms.First();
+							var morphtype = form.MorphTypeRA;
+							if (morphtype.IsBoundType)
+							{
+								if (wordGrammarTrace != null)
+								{
+									wordGrammarTrace.Success = false; // this is not really true; what other options are there?
+								}
+								continue;
+							}
+						}
 						WritePcPatrLexiconFile(m_patrlexPath, morphs);
 						m_patr.LoadLexiconFile(m_patrlexPath, 0);
 						string sentence = BuildPcPatrInputSentence(morphs);
