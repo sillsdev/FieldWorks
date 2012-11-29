@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.XWorks
 			m_semDomRepo = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			var treeBarControl = GetTreeBarControl(mediator);
 			SetupAndShowHeaderPanel(mediator, node, treeBarControl);
-			m_searchTimer = new SearchTimer(treeBarControl, 500, SearchSemDomSelection,
+			m_searchTimer = new SearchTimer(treeBarControl, 500, HandleChangeInSearchText,
 				new List<Control> { treeBarControl.TreeView, treeBarControl.ListView });
 			m_textSearch.TextChanged += m_searchTimer.OnSearchTextChanged;
 			m_treeView = treeBarControl.TreeView;
@@ -84,20 +84,42 @@ namespace SIL.FieldWorks.XWorks
 			return searchBox;
 		}
 
-		private void SearchSemDomSelection()
+		private void HandleChangeInSearchText()
+		{
+			var searchString = TrimSearchTextHandleEnterSpecialCase();
+			SearchSemanticDomains(searchString);
+		}
+
+		private string TrimSearchTextHandleEnterSpecialCase()
+		{
+			var searchString = m_textSearch.Tss.Text ?? string.Empty;
+			// if string is only whitespace (especially <Enter>), reset to avoid spurious searches with no results.
+			if (!string.IsNullOrEmpty(searchString) && string.IsNullOrWhiteSpace(searchString))
+			{
+				searchString = string.Empty;
+				// We must be careful about setting the textbox string, because each time you set it
+				// triggers a new search timer iteration. We want to avoid a "continual" reset.
+				// We could just ignore whitespace, but if <Enter> gets in there, somehow it makes the
+				// rest of the string invisible on the screen. So this special case is handled by resetting
+				// the search string to empty if it only contains whitespace.
+				m_textSearch.Tss = m_cache.TsStrFactory.MakeString(string.Empty, m_cache.DefaultAnalWs);
+			}
+			return searchString.Trim();
+		}
+
+		private void SearchSemanticDomains(string searchString)
 		{
 			// The FindDomainsThatMatch method returns IEnumerable<ICmSemanticDomain>
 			// based on the search string we give it.
-			var searchString = m_textSearch.Tss;
 			m_textSearch.Update();
-			if (!string.IsNullOrEmpty(searchString.Text))
+			if (!string.IsNullOrEmpty(searchString))
 			{
 				try
 				{
 					m_listView.ItemChecked -= OnDomainListChecked;
-					var semDomainsToShow = m_semDomRepo.FindDomainsThatMatch(searchString.Text);
+					var semDomainsToShow = m_semDomRepo.FindDomainsThatMatch(searchString);
 					SemanticDomainSelectionUtility.UpdateDomainListLabels(
-						ObjectLabel.CreateObjectLabels(m_cache, semDomainsToShow, "",
+						ObjectLabel.CreateObjectLabels(m_cache, semDomainsToShow, string.Empty,
 						m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs)), m_listView,
 						false);
 					m_treeView.Visible = false;

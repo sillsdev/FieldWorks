@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			UpdateDomainTreeAndListLabels(labels);
 			searchTextBox.WritingSystemFactory = Cache.LanguageWritingSystemFactoryAccessor;
 			searchTextBox.AdjustForStyleSheet(m_stylesheet);
-			m_SearchTimer = new SearchTimer(this, 500, SearchSemDomSelection, new List<Control> {domainTree, domainList});
+			m_SearchTimer = new SearchTimer(this, 500, SearchSemanticDomains, new List<Control> {domainTree, domainList});
 			searchTextBox.TextChanged += m_SearchTimer.OnSearchTextChanged;
 		}
 
@@ -59,19 +59,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			domainTree.EndUpdate();
 		}
 
-		private void SearchSemDomSelection()
+		private void SearchSemanticDomains()
 		{
 			IEnumerable<ObjectLabel> labels = new List<ObjectLabel>();
 
 			// The FindDomainsThatMatch method returns IEnumerable<ICmSemanticDomain>
 			// based on the search string we give it.
-			var searchString = searchTextBox.Tss;
-			if (!string.IsNullOrEmpty(searchString.Text))
+			var searchString = TrimmedSearchBoxText;
+			if (!string.IsNullOrEmpty(searchString))
 			{
 				domainList.ItemChecked -= OnDomainListChecked;
 				var semDomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
-				var semDomainsToShow = semDomRepo.FindDomainsThatMatch(searchString.Text);
-				SemanticDomainSelectionUtility.UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, "", DisplayWs), domainList, displayUsageCheckBox.Checked);
+				var semDomainsToShow = semDomRepo.FindDomainsThatMatch(searchString);
+				SemanticDomainSelectionUtility.UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, string.Empty, DisplayWs), domainList, displayUsageCheckBox.Checked);
 				domainTree.Visible = false;
 				domainList.Visible = true;
 				domainList.ItemChecked += OnDomainListChecked;
@@ -80,6 +80,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				domainTree.Visible = true;
 				domainList.Visible = false;
+			}
+		}
+
+		private string TrimmedSearchBoxText
+		{
+			get
+			{
+				return (searchTextBox.Tss.Text ?? string.Empty).Trim();
 			}
 		}
 
