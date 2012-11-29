@@ -20,6 +20,9 @@
 	<part id="CmPossibility-Detail-NameRDEV" type="Detail">
 		<slice field="Name" label="Vernacular" editor="string" ws="vernacular"  menu="mnuDataTree-Help"/>
 	</part>
+		<part id="CmPossibility-Detail-NameRDEA" type="Detail">
+			<slice field="Name" label="Analysis" editor="string" ws="analysis"  menu="mnuDataTree-Help"/>
+		</part>
 	  <part id="CmPossibility-Detail-AbbreviationAllA" type="Detail">
 		  <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis"  menu="mnuDataTree-Help"/>
 	  </part>

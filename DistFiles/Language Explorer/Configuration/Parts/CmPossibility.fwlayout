@@ -160,7 +160,7 @@
   </layout>
 
   <layout class="CmSemanticDomain" type="detail" name="RDE">
-	<part ref="Summary" param="NameRDEA" label="Analysis">
+	<part ref="NameRDEA" label="Analysis">
 	</part>
 	<part ref="NameRDEV">
 	</part>
