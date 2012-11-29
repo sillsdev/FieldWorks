@@ -18,6 +18,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private IVwStylesheet m_stylesheet;
 		private HashSet<ICmObject> m_selectedItems = new HashSet<ICmObject>();
 		private SearchTimer m_SearchTimer;
+		private ICmSemanticDomainRepository m_semdomRepo;
 
 		public IEnumerable<ICmObject> SemanticDomains
 		{
@@ -39,6 +40,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems)
 		{
+			m_semdomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(Mediator);
 			m_selectedItems.UnionWith(selectedItems);
 			UpdateDomainTreeAndListLabels(labels);
@@ -69,8 +71,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (!string.IsNullOrEmpty(searchString))
 			{
 				domainList.ItemChecked -= OnDomainListChecked;
-				var semDomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
-				var semDomainsToShow = semDomRepo.FindDomainsThatMatch(searchString);
+				var semDomainsToShow = m_semdomRepo.FindDomainsThatMatch(searchString);
 				SemanticDomainSelectionUtility.UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, string.Empty, DisplayWs), domainList, displayUsageCheckBox.Checked);
 				domainTree.Visible = false;
 				domainList.Visible = true;
@@ -96,10 +97,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_selectedItems.Clear();
 			foreach(ListViewItem selectedDomain in selectedDomainsList.Items)
 			{
-				var item = selectedDomain.Tag as ICmObject;
-				if(selectedDomain.Checked && item != null)
+				var hvo = (int)selectedDomain.Tag;
+				if(selectedDomain.Checked && hvo > 0)
 				{
-					m_selectedItems.Add(item);
+					m_selectedItems.Add(m_semdomRepo.GetObject(hvo));
 				}
 			}
 		}
@@ -107,9 +108,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void OnSuggestClicked(object sender, EventArgs e)
 		{
 
-			var semDomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			IEnumerable<ICmSemanticDomain> partialMatches;
-			var semDomainsToShow = semDomRepo.FindDomainsThatMatchWordsIn(Sense, out partialMatches);
+			var semDomainsToShow = m_semdomRepo.FindDomainsThatMatchWordsIn(Sense, out partialMatches);
 			foreach (var domain in semDomainsToShow)
 			{
 				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, true, selectedDomainsList);
