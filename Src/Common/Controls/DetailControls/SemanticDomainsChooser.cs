@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
@@ -17,8 +18,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		private IVwStylesheet m_stylesheet;
 		private HashSet<ICmObject> m_selectedItems = new HashSet<ICmObject>();
+		private bool m_searchIconSet = true;
 		private SearchTimer m_SearchTimer;
 		private ICmSemanticDomainRepository m_semdomRepo;
+
 
 		public IEnumerable<ICmObject> SemanticDomains
 		{
@@ -70,6 +73,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var searchString = TrimmedSearchBoxText;
 			if (!string.IsNullOrEmpty(searchString))
 			{
+				if (m_searchIconSet)
+				{
+					btnCancelSearch.Image = FieldWorks.Resources.Images.X;
+					m_searchIconSet = false;
+				}
 				domainList.ItemChecked -= OnDomainListChecked;
 				var semDomainsToShow = m_semdomRepo.FindDomainsThatMatch(searchString);
 				SemanticDomainSelectionUtility.UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, string.Empty, DisplayWs), domainList, displayUsageCheckBox.Checked);
@@ -81,6 +89,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				domainTree.Visible = true;
 				domainList.Visible = false;
+				if (!m_searchIconSet)
+				{
+					btnCancelSearch.Image = FieldWorks.Resources.Images.Search;
+					m_searchIconSet = true;
+				}
 			}
 		}
 
@@ -177,6 +190,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		public System.Xml.XmlNode LinkNode { get; set; }
+
+		private void btnCancelSearch_Click(object sender, EventArgs e)
+		{
+			searchTextBox.Text = "";
+		}
 	}
 
 	/// <summary>
@@ -199,7 +217,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				return new ListViewItem(DetailControlsStrings.ksSemanticDomainInvalid);
 			}
-			var text = semanticDomainItem.AbbrAndName;
+			var strbldr = new StringBuilder(semanticDomainItem.AbbrAndName);
+			if (semanticDomainItem.OwningPossibility != null)
+			{
+				var parentName = semanticDomainItem.OwningPossibility.Name.BestAnalysisAlternative.Text;
+				strbldr.AppendFormat(" ({0})", parentName);
+			}
 			if (displayUsage)
 			{
 				// Don't count the reference from an overlay, since we have no way to tell
@@ -215,10 +238,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				}
 				if (count > 0)
-					text += " (" + count + ")";
+				{
+					strbldr.AppendFormat(" ({0})", count);
+				}
 			}
 
-			return new ListViewItem(text) { Checked = createChecked, Tag = semanticDomainItem.Hvo };
+			return new ListViewItem(strbldr.ToString()) { Checked = createChecked, Tag = semanticDomainItem.Hvo };
 		}
 
 		/// <summary>
