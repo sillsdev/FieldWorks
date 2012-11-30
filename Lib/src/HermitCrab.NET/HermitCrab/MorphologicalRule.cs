@@ -95,8 +95,9 @@ namespace SIL.HermitCrab
 		/// <param name="input">The input word analysis.</param>
 		/// <param name="srIndex">Index of the subrule.</param>
 		/// <param name="output">All resulting word analyses.</param>
+		/// <param name="selectTraceMorphs">list of ids to be used in a selective trace</param>
 		/// <returns><c>true</c> if the subrule was successfully unapplied, otherwise <c>false</c></returns>
-		public abstract bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output);
+		public abstract bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output, string[] selectTraceMorphs);
 
 		/// <summary>
 		/// Performs any post-processing required after the unapplication of a word analysis. This must

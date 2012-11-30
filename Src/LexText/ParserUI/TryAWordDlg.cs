@@ -129,12 +129,12 @@ namespace SIL.FieldWorks.LexText.Controls
 #endif
 
 			// HermitCrab does not currently support selected tracing
-			if (m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC")
+			/*if (m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC")
 			{
 				m_parserCanDoSelectMorphs = false;
 				m_doSelectMorphsCheckBox.Enabled = false;
 			}
-
+*/
 			// No such thing as FwApp.App now: if(FwApp.App != null) // Could be null during testing
 			if (m_mediator.HelpTopicProvider != null) // trying this
 			{

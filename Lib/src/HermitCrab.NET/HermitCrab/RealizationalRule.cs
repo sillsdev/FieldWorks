@@ -31,14 +31,14 @@ namespace SIL.HermitCrab
 			return true;
 		}
 
-		public override bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output)
+		public override bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output, string[] selectTraceMorphs)
 		{
 			output = null;
 			FeatureValues rzFeats;
 			if (!RealizationalFeatures.Unify(input.RealizationalFeatures, out rzFeats))
 				return false;
 
-			if (base.Unapply(input, srIndex, out output))
+			if (base.Unapply(input, srIndex, out output, selectTraceMorphs))
 			{
 				foreach (WordAnalysis wa in output)
 					wa.RealizationalFeatures = rzFeats;

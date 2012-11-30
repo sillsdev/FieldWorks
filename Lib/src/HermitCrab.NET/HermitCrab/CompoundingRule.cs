@@ -515,7 +515,7 @@ namespace SIL.HermitCrab
 		/// <returns>
 		/// 	<c>true</c> if the subrule was successfully unapplied, otherwise <c>false</c>
 		/// </returns>
-		public override bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output)
+		public override bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output, string[] selectTraceMorphs)
 		{
 			if (m_subrules[srIndex].Unapply(input, out output))
 			{

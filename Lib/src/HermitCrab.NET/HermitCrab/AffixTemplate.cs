@@ -130,7 +130,7 @@ namespace SIL.HermitCrab
 		/// <param name="input">The input word analysis.</param>
 		/// <param name="output">The output word analyses.</param>
 		/// <returns>The resulting word analyses.</returns>
-		public bool Unapply(WordAnalysis input, out IEnumerable<WordAnalysis> output)
+		public bool Unapply(WordAnalysis input, out IEnumerable<WordAnalysis> output, string[] selectTraceMorphs)
 		{
 			Set<WordAnalysis> results = new Set<WordAnalysis>();
 			if (Morpher.TraceTemplatesAnalysis)
@@ -139,7 +139,7 @@ namespace SIL.HermitCrab
 				TemplateAnalysisTrace tempTrace = new TemplateAnalysisTrace(this, true, input.Clone());
 				input.CurrentTrace.AddChild(tempTrace);
 			}
-			UnapplySlots(input.Clone(), m_slots.Count - 1, results);
+			UnapplySlots(input.Clone(), m_slots.Count - 1, results, selectTraceMorphs);
 			foreach (WordAnalysis wa in results)
 			{
 				foreach (PartOfSpeech pos in m_requiredPOSs)
@@ -158,7 +158,7 @@ namespace SIL.HermitCrab
 			}
 		}
 
-		void UnapplySlots(WordAnalysis input, int sIndex, Set<WordAnalysis> output)
+		void UnapplySlots(WordAnalysis input, int sIndex, Set<WordAnalysis> output, string[] selectTraceMorphs)
 		{
 			for (int i = sIndex; i >= 0; i--)
 			{
@@ -170,13 +170,13 @@ namespace SIL.HermitCrab
 						for (int j = 0; j < rule.SubruleCount; j++)
 						{
 							ICollection<WordAnalysis> analyses;
-							if (rule.Unapply(input, j, out analyses))
+							if (rule.Unapply(input, j, out analyses, selectTraceMorphs))
 							{
 								ruleUnapplied = true;
 								foreach (WordAnalysis wa in analyses)
 								{
 									if (wa.Shape.Count > 2)
-										UnapplySlots(wa, i - 1, output);
+										UnapplySlots(wa, i - 1, output, selectTraceMorphs);
 								}
 							}
 						}
