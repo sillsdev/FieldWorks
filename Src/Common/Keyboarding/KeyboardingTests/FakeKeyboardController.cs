@@ -34,7 +34,6 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		#region IDisposable implementation
 		public void Dispose()
 		{
-			throw new NotImplementedException();
 		}
 		#endregion
 
