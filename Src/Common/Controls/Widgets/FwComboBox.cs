@@ -63,6 +63,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <value>The form.</value>
 		Form Form { get; }
 		/// <summary>
+		/// Gets or sets the form that the dropdown box is launched from.
+		/// </summary>
+		/// <remarks>
+		/// This is needed for PopupTree on Mono/Linux.
+		/// </remarks>
+		Form LaunchingForm { get; set; }
+		/// <summary>
 		/// Launches the drop down box.
 		/// </summary>
 		/// <param name="launcherBounds">The launcher bounds.</param>
@@ -1053,6 +1060,24 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (sz != m_dropDownBox.Form.Size)
 				m_dropDownBox.Form.Size = sz;
+#if __MonoCS__	// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
+			// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point (at
+			// least when displaying a PopupTree, where the launching form is used).  So we
+			// try another approach to finding the launching form for displaying m_dropDownBox.
+			// Note that the launching form never changes, so it needs to be set only once.
+			if (m_dropDownBox.LaunchingForm == null)
+			{
+				Control parent = this;
+				Form launcher = parent as Form;
+				while (parent != null && launcher == null)
+				{
+					parent = parent.Parent;
+					launcher = parent as Form;
+				}
+				if (launcher != null)
+					m_dropDownBox.LaunchingForm = launcher;
+			}
+#endif
 			m_dropDownBox.Launch(Parent.RectangleToScreen(Bounds), workingArea);
 
 			// for some reason, sometimes the size of the form changes after it has become visible, so
@@ -1973,6 +1998,10 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		/// <summary>
+		///  Gets or sets the form that the ComboListBox is launched from.
+		/// </summary>
+		public Form LaunchingForm { get; set; }
 		#endregion Properties
 
 		#region Construction and disposal
