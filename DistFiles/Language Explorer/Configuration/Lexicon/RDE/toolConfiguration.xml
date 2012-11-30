@@ -183,7 +183,7 @@
 		<parameters PaneBarGroupId="PaneBar-ShowFailingItems-Classified">
 		  <control>
 			<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.XmlDocView"/>
-			<parameters area="lexicon" clerk="SemanticDomainList" altTitleId="LexSense-Classified" persistContext="ClassDict" backColor="White" layout="classifiedDict" editable="false" allowInsertDeleteRecord="false" msgBoxTrigger="ClassifiedDictionary-Intro" configureObjectName="Classified Dictionary">
+			<parameters area="lexicon" clerk="SemanticDomainList" altTitleId="LexSense-Classified" persistContext="ClassDict" backColor="White" layout="classifiedDict" layoutProperty="ClassifiedDictionaryPublicationLayout" editable="false" allowInsertDeleteRecord="false" msgBoxTrigger="ClassifiedDictionary-Intro" configureObjectName="Classified Dictionary">
 				<elementDisplayCondition field="ReferringSenses" lengthatleast="1"/>
 				<configureLayouts>
 					<layoutType label="Classified Dictionary" layout="classifiedDict">

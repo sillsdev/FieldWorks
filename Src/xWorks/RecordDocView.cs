@@ -323,8 +323,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var dlg = new XmlDocConfigureDlg())
 			{
-				var sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty",
-					"DictionaryPublicationLayout");
+				// If this is optional and defaults to DictionaryPublicationLayout,
+				// it messes up our Dictionary when we make something else configurable (like Classified Dictionary).
+				var sProp = XmlUtils.GetAttributeValue(m_xnSpec, "layoutProperty");
+				Debug.Assert(sProp != null, "When making a view configurable you need to put a 'layoutProperty' in the XML configuration.");
 				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (FwStyleSheet)StyleSheet,
 					FindForm() as IMainWindowDelegateCallbacks, Mediator, sProp);
 				if (nodePath != null)
