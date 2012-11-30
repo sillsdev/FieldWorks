@@ -139,7 +139,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				var normForm = Icu.Normalize(sForm, Icu.UNormalizationMode.UNORM_NFD);
 				var result = fDoTrace ? TraceWord(normForm, sSelectTraceMorphs) : ParseWord(normForm, 0);
-				task.Details = Icu.Normalize(result, Icu.UNormalizationMode.UNORM_NFD);
+				if (fDoTrace)
+					task.Details = result;
+				else
+					task.Details = Icu.Normalize(result, Icu.UNormalizationMode.UNORM_NFD);
 			}
 		}
 

@@ -160,7 +160,8 @@ namespace SIL.HermitCrab
 			Reset();
 
 			XmlReaderSettings settings = new XmlReaderSettings();
-			settings.ProhibitDtd = false;
+			/*settings.ProhibitDtd = false;*/
+			settings.DtdProcessing = DtdProcessing.Parse;
 			if (Type.GetType ("Mono.Runtime") == null)
 			{
 				settings.ValidationType = ValidationType.DTD;

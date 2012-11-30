@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SIL.HermitCrab
 {
@@ -454,12 +455,13 @@ namespace SIL.HermitCrab
 		/// <param name="input">The input word analysis.</param>
 		/// <param name="srIndex">Index of the subrule.</param>
 		/// <param name="output">All resulting word analyses.</param>
+		/// <param name="selectTraceMorphs">list of ids to be used in a selective trace</param>
 		/// <returns>
 		/// 	<c>true</c> if the subrule was successfully unapplied, otherwise <c>false</c>
 		/// </returns>
-		public override bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output)
+		public override bool Unapply(WordAnalysis input, int srIndex, out ICollection<WordAnalysis> output, string[] selectTraceMorphs)
 		{
-			if (m_subrules[srIndex].Unapply(input, out output))
+			if (UseThisRule(selectTraceMorphs) && m_subrules[srIndex].Unapply(input, out output))
 			{
 				foreach (WordAnalysis wa in output)
 				{
@@ -494,6 +496,15 @@ namespace SIL.HermitCrab
 			return false;
 		}
 
+		bool UseThisRule(string[] selectTraceMorphs)
+		{
+			if (selectTraceMorphs != null)
+			{
+				if (!selectTraceMorphs.Contains(ID))
+					return false;
+			}
+			return true;
+		}
 		/// <summary>
 		/// Performs any post-processing required after the unapplication of a word analysis. This must
 		/// be called after a successful <c>BeginUnapplication</c> call and any <c>Unapply</c> calls.

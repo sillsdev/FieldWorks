@@ -184,6 +184,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			public override void MorphAndLookupWord(Morpher morpher, string word, bool prettyPrint, bool printTraceInputs)
 			{
+				MorphAndLookupWord(morpher, word, prettyPrint, printTraceInputs, null);
+			}
+
+			public void MorphAndLookupWord(Morpher morpher, string word, bool prettyPrint, bool printTraceInputs, string[] selectTraceMorphs)
+			{
 				try
 				{
 					ICollection<WordGrammarTrace> wordGrammarTraces = null;
@@ -191,7 +196,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						wordGrammarTraces = new HashSet<WordGrammarTrace>();
 					morpher.TraceAll = m_fDotrace;
 					WordAnalysisTrace trace;
-					ICollection<WordSynthesis> synthesisRecs = morpher.MorphAndLookupWord(word, out trace);
+					ICollection<WordSynthesis> synthesisRecs = morpher.MorphAndLookupWord(word, out trace, selectTraceMorphs);
 					foreach (WordSynthesis ws in synthesisRecs)
 					{
 						WordGrammarTrace wordGrammarTrace = null;
@@ -547,15 +552,32 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected override string ParseWord(string form, int hvoWordform)
 		{
-			return ParseWordWithHermitCrab(form, hvoWordform, false);
+			return ParseWordWithHermitCrab(form, hvoWordform, false, null);
 		}
 
 		protected override string TraceWord(string form, string selectTraceMorphs)
 		{
-			return ParseWordWithHermitCrab(form, 0, true);
+			string[] selectTraceMorphIds = null;
+			if (!String.IsNullOrEmpty(selectTraceMorphs))
+			{
+				selectTraceMorphIds = selectTraceMorphs.TrimEnd().Split(' ');
+				int i = 0;
+				foreach (var sId in selectTraceMorphIds)
+				{
+					var msas = m_cache.LanguageProject.LexDbOA.AllMSAs.Where(m => m.Hvo.ToString() == sId);
+					var msa = msas.First();
+					if (msa.ClassID == MoStemMsaTags.kClassId)
+						selectTraceMorphIds.SetValue("lex" + sId, i);
+					else
+						selectTraceMorphIds.SetValue("mrule" + sId, i);
+					i++;
+				}
+				
+			}
+			return ParseWordWithHermitCrab(form, 0, true, selectTraceMorphIds);
 		}
 
-		private string ParseWordWithHermitCrab(string form, int hvoWordform, bool fDotrace)
+		private string ParseWordWithHermitCrab(string form, int hvoWordform, bool fDotrace, string[] selectTraceMorphs)
 		{
 			if (!m_loader.IsLoaded)
 				return ParserCoreStrings.ksDidNotParse;
@@ -569,7 +591,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				writer.WriteAttributeString("Form", form);
 				var output = new FwXmlOutput(writer, fDotrace, m_patr,
 					Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"), m_cache);
-				output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, true);
+				output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, true, selectTraceMorphs);
 				writer.WriteEndElement();
 				writer.Close();
 				return sb.ToString();
