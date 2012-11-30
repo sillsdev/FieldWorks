@@ -294,6 +294,21 @@ namespace SIL.FieldWorks.XWorks.LexText
 			get { return FwSubKey.LexText; }
 		}
 
+		public bool OnDisplaySFMImport(object parameters, ref UIItemDisplayProperties display)
+		{
+			return true;
+		}
+
+		public bool OnSFMImport(object parameters)
+		{
+			Form formActive = ActiveForm;
+			FwXWindow wndActive = formActive as FwXWindow;
+			var importWizard = new LexImportWizard();
+			((IFwExtension)importWizard).Init(Cache, wndActive.Mediator);
+			importWizard.ShowDialog(formActive);
+			return true;
+		}
+
 		/// <summary>
 		/// Display the import commands only while in the appropriate area.
 		/// </summary>

@@ -117,6 +117,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="xCore">
       <Name>xCore</Name>
       <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
@@ -147,10 +148,6 @@
       <Name>MessageBoxExLib</Name>
       <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
     </Reference>
-    <Reference Include="MsHtmHstInterop">
-      <Name>MsHtmHstInterop</Name>
-      <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
-    </Reference>
     <Reference Include="Reporting">
       <Name>Reporting</Name>
       <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
@@ -162,9 +159,6 @@
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>

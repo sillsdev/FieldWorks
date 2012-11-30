@@ -55,11 +55,7 @@
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
 		</command>
 		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
-		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LexImportWizard"/>
-			</parameters>
-		</command>
+		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
 			<parameters>
 				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.DataNotebook.NotebookImportWiz"/>

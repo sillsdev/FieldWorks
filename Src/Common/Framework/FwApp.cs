@@ -890,20 +890,26 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region FieldWorks Project Dialog handlers
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays a message box asking the user whether or not he wants to open a sample DB.
 		/// </summary>
+		/// <param name="suggestedProject"></param>
 		/// <returns><c>true</c> if user consented to opening the sample database; <c>false</c>
 		/// otherwise.</returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual bool ShowFirstTimeMessageDlg()
+		public virtual string ShowFirstTimeMessageDlg(string suggestedProject)
 		{
 			string sCaption = ResourceHelper.GetResourceString("kstidTrainingAvailable");
 			string sMsg = GetResourceString("kstidOpenSampleDbMsg");
-			return (MessageBox.Show(sMsg, sCaption, MessageBoxButtons.YesNo,
+			if(MessageBox.Show(sMsg, sCaption, MessageBoxButtons.YesNo,
 				MessageBoxIcon.Question, MessageBoxDefaultButton.Button1,
-				MessageBoxOptions.DefaultDesktopOnly) == DialogResult.Yes);
+				MessageBoxOptions.DefaultDesktopOnly) == DialogResult.Yes)
+			{
+				return suggestedProject;
+			}
+			return String.Empty;
 		}
 
 		#endregion

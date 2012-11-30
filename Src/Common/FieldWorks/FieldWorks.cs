@@ -1051,58 +1051,39 @@ namespace SIL.FieldWorks
 			Justification="app is a reference")]
 		private static ProjectId DetermineProject(FwAppArgs args)
 		{
-			// Get project information from one of three places, in this order of preference:
+			// Get project information from one of four places, in this order of preference:
 			// 1. Command-line arguments
 			// 2. Sample DB (if this is the first time this app has been run)
 			// 3. Registry (if last startup was successful)
 			// 4. Ask the user
+			//
+			// Except that with the new Welcome dialog, 2 through 4 are lumped into the Welcome dialog
+			// functionality. If the user checks the "...always open the last edited project..." checkbox,
+			// we will try to do that and only show the dialog if we fail.
+			// If we try to use command-line arguments and it fails, we will use the Welcome dialog
+			// to help the user figure out what to do next.
 			ProjectId projId = new ProjectId(args.DatabaseType, args.Database, args.Server);
 			FwStartupException projectOpenError;
-			try
-			{
-				projId.AssertValid();
+			if (TryCommandLineOption(projId, out projectOpenError))
 				return projId;
-			}
-			catch (FwStartupException e)
-			{
-				projectOpenError = e;
-			}
 
 			// If this app hasn't been run before, ask user about opening sample DB.
 			FwApp app = GetOrCreateApplication(args);
 			if (!string.IsNullOrEmpty(app.SampleDatabase) && app.RegistrySettings.FirstTimeAppHasBeenRun)
 			{
 				projId = new ProjectId(app.SampleDatabase, null);
-				if (projId.IsValid && app.ShowFirstTimeMessageDlg())
-					return projId;
+				return ShowWelcomeDialog(args, app, projId, projectOpenError, true, false);
 			}
 
 			// Valid project information was not passed on the command-line, so try looking in
 			// the registry for the last-run project.
+			var previousStartupStatus = GetPreviousStartupStatus(app);
 			string latestProject = app.RegistrySettings.LatestProject;
-			StartupStatus previousStartupStatus = GetPreviousStartupStatus(app);
-			if (String.IsNullOrEmpty(projId.Name) && previousStartupStatus != StartupStatus.Failed)
+			if ((String.IsNullOrEmpty(projId.Name) || projectOpenError != null) && previousStartupStatus != StartupStatus.Failed)
 			{
-				// User didn't specify a project so open the last successfully opened project.
-				string latestServer = app.RegistrySettings.LatestServer;
-				projId = new ProjectId(latestProject, latestServer);
-				if (string.IsNullOrEmpty(latestServer))
-				{
-					// the extension we inferred from the current server type might be wrong;
-					// most likely, it might be a fwdata file that was not to be converted.
-					// An fwdb which didn't convert back is less likely but try to handle it.
-					if(!File.Exists(projId.Path))
-					{
-						string altProject;
-						if (Path.GetExtension(latestProject) == FwFileExtensions.ksFwDataXmlFileExtension)
-							altProject = Path.ChangeExtension(latestProject, FwFileExtensions.ksFwDataDb4oFileExtension);
-						else
-							altProject = Path.ChangeExtension(latestProject, FwFileExtensions.ksFwDataXmlFileExtension);
-						projId = new ProjectId(altProject, latestServer);
-					}
-				}
-				if (projId.IsValid)
-					return previousStartupStatus == StartupStatus.Successful ? projId : null;
+				// User didn't specify a project or gave bad command-line args,
+				// so set projId to the last successfully opened project.
+				projId = GetBestGuessProjectId(latestProject, app.RegistrySettings.LatestServer);
 			}
 			else if (previousStartupStatus == StartupStatus.Failed && !string.IsNullOrEmpty(latestProject))
 			{
@@ -1112,8 +1093,61 @@ namespace SIL.FieldWorks
 					latestProject));
 			}
 
+			var fShowWelcomeDialog = app.RegistrySettings.ShowWelcomeDialogSetting;
+
+			if (!fShowWelcomeDialog && projId.IsValid && projectOpenError == null
+				&& previousStartupStatus == StartupStatus.Successful)
+				return projId;
+
 			// Nothing found to open, so give user options to open/create a project.
-			return ShowWelcomeDialog(args, app, projId, projectOpenError);
+			return ShowWelcomeDialog(args, app, projId, projectOpenError, false, !fShowWelcomeDialog);
+		}
+
+		private static ProjectId GetBestGuessProjectId(string latestProject, string latestServer)
+		{
+			// From the provided server/project pair, return the best possible ProjectId object.
+			var projId = new ProjectId(latestProject, latestServer);
+			if (string.IsNullOrEmpty(latestServer))
+			{
+				// the extension we inferred from the current server type might be wrong;
+				// most likely, it might be a fwdata file that was not to be converted.
+				// An fwdb which didn't convert back is less likely but try to handle it.
+				if (!File.Exists(projId.Path))
+				{
+					string altProject;
+					if (Path.GetExtension(latestProject) == FwFileExtensions.ksFwDataXmlFileExtension)
+						altProject = Path.ChangeExtension(latestProject, FwFileExtensions.ksFwDataDb4oFileExtension);
+					else
+						altProject = Path.ChangeExtension(latestProject, FwFileExtensions.ksFwDataXmlFileExtension);
+					projId = new ProjectId(altProject, latestServer);
+				}
+			}
+			return projId;
+		}
+
+		/// <summary>
+		/// Returns true if valid command-line args created this projectId.
+		/// Returns false with no exception if no -db arg was given.
+		/// Returns false with exception if invalid args were given.
+		/// </summary>
+		/// <param name="projId"></param>
+		/// <param name="exception"></param>
+		/// <returns></returns>
+		private static bool TryCommandLineOption(ProjectId projId, out FwStartupException exception)
+		{
+			exception = null;
+			if (string.IsNullOrEmpty(projId.Name))
+				return false;
+			try
+			{
+				projId.AssertValid();
+				return true; // If valid command-line arguments are supplied, we go with that.
+			}
+			catch (FwStartupException e)
+			{
+				exception = e; // Invalid command-line arguments supplied.
+			}
+			return false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1167,7 +1201,7 @@ namespace SIL.FieldWorks
 						s_cache = null;
 					}
 					Logger.Init(FwUtils.ksSuiteName);
-					projectId = ShowWelcomeDialog(args, app, projectId, e);
+					projectId = ShowWelcomeDialog(args, app, projectId, e, false, !app.RegistrySettings.ShowWelcomeDialogSetting);
 				}
 			}
 		}
@@ -1355,9 +1389,10 @@ namespace SIL.FieldWorks
 		/// <param name="args">The command-line (probably) arguments used to launch FieldWorks</param>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
 		/// <param name="projectId">The project id (if any) of the project that we tried to
-		/// open.</param>
-		/// <param name="exception">Exception thrown if the previously requested project could
-		/// not be opened.</param>
+		/// open. Starts out as the project id of the latest edited project or the sample db.</param>
+		/// <param name="exception">Exception thrown if the previously requested project could not be opened.</param>
+		/// <param name="firstTimeRun">true if the app has never been run before</param>
+		/// <param name="openLastProjectIsChecked">true if the registry has stored that the checkbox is checked.</param>
 		/// <returns>
 		/// A ProjectId object if an option has been chosen which results in a valid
 		/// project being opened; <c>null</c> if the user chooses to exit.
@@ -1365,10 +1400,14 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="app is a reference")]
-		private static ProjectId ShowWelcomeDialog(FwAppArgs args, IHelpTopicProvider helpTopicProvider,
-			ProjectId projectId, FwStartupException exception)
+		private static ProjectId ShowWelcomeDialog(FwAppArgs args, IHelpTopicProvider helpTopicProvider, ProjectId projectId,
+			FwStartupException exception, bool firstTimeRun, bool openLastProjectIsChecked)
 		{
 			CloseSplashScreen();
+
+			// Remember last edited projectId in case we go through more than one iteration below
+			// The first time the app is run this will be the sample db; edge case.
+			var lastEditedProject = projectId;
 
 			// Continue to ask for an option until one is selected.
 			s_fWaitingForUserOrOtherFw = true;
@@ -1386,14 +1425,28 @@ namespace SIL.FieldWorks
 				if (s_noUserInterface)
 					return null;
 
-				using (WelcomeToFieldWorksDlg dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, projectId, exception))
+				// If we wiped out our projectId below and we're coming through again,
+				// reset our projectId.
+				projectId = lastEditedProject;
+
+				using (WelcomeToFieldWorksDlg dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, args.AppAbbrev, exception))
 				{
+					if (projectId == null || !projectId.IsValid)
+						dlg.HideLink();
+					else
+					{
+						dlg.ProjectLinkUiName = projectId.Name;
+						dlg.SetFirstOrLastProjectText(firstTimeRun);
+						dlg.ShowLink();
+					}
+					dlg.OpenLastProjectCheckboxIsChecked = openLastProjectIsChecked;
 					dlg.StartPosition = FormStartPosition.CenterScreen;
 					dlg.ShowDialog();
 					projectId = null;
 					exception = null;
 					// We get the app each time through the loop because a failed Restore operation can dispose it.
 					FwApp app = GetOrCreateApplication(args);
+					app.RegistrySettings.ShowWelcomeDialogSetting = !dlg.OpenLastProjectCheckboxIsChecked;
 					switch (dlg.DlgResult)
 					{
 						case WelcomeToFieldWorksDlg.ButtonPress.New:
@@ -1412,6 +1465,10 @@ namespace SIL.FieldWorks
 								exception = e;
 							}
 							break;
+						case WelcomeToFieldWorksDlg.ButtonPress.Link:
+							projectId = lastEditedProject;
+							Debug.Assert(projectId.IsValid);
+							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Restore:
 							s_allowFinalShutdown = false;
 							RestoreProject(null, app);
@@ -1421,6 +1478,36 @@ namespace SIL.FieldWorks
 						case WelcomeToFieldWorksDlg.ButtonPress.Exit:
 							app.RegistrySettings.LatestProject = string.Empty;
 							return null; // Should cause the FW process to exit later
+						case WelcomeToFieldWorksDlg.ButtonPress.Receive:
+							bool dummy;
+							string projectName;
+							var success = FLExBridgeHelper.LaunchFieldworksBridge(null, null, FLExBridgeHelper.Obtain,
+								out dummy, out projectName);
+							if (success)
+							{
+								projectId = new ProjectId(FDOBackendProviderType.kXML, projectName, null);
+							}
+							break;
+						case WelcomeToFieldWorksDlg.ButtonPress.Import:
+							projectId = CreateNewProject(dlg, app, helpTopicProvider);
+							var projectLaunched = LaunchProject(args, ref projectId);
+							if(projectLaunched)
+							{
+								var mainWindow = Form.ActiveForm;
+								if(mainWindow is IxWindow)
+								{
+									((IxWindow)mainWindow).Mediator.SendMessage("SFMImport", null);
+								}
+								else
+								{
+									return null;
+								}
+							}
+							else
+							{
+								return null;
+							}
+							break;
 					}
 				}
 			}
@@ -1467,7 +1554,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		internal static ProjectId CreateNewProject(Form dialogOwner, FwApp app, IHelpTopicProvider helpTopicProvider)
 		{
-			using (FwNewLangProject dlg = new FwNewLangProject())
+			using (var dlg = new FwNewLangProject())
 			{
 				dlg.SetDialogProperties(helpTopicProvider);
 				switch (dlg.DisplayDialog(dialogOwner))

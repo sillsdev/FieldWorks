@@ -12,7 +12,6 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -24,13 +23,15 @@ namespace SIL.FieldWorks
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Summary description for WelcomeToFieldWorksDlg.
+	/// Dialog presenting multiple options for how to begin a FLEx session
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal class WelcomeToFieldWorksDlg : Form, IFWDisposable
+	internal partial class WelcomeToFieldWorksDlg : Form, IFWDisposable
 	{
 		private string m_helpTopic = "khtpWelcomeToFieldworks";
 		private readonly HelpProvider helpProvider;
+		private string m_appAbbrev;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
@@ -46,23 +47,19 @@ namespace SIL.FieldWorks
 			Restore,
 			/// <summary></summary>
 			Exit,
+			/// <summary>
+			/// Receive a project through S/R LiftBridge or FLExBridge
+			/// </summary>
+			Receive,
+			/// <summary>
+			/// Import an SFM data set into a new FLEx project
+			/// </summary>
+			Import,
+			/// <summary>
+			/// Clicked the Sample/LastEdited project link
+			/// </summary>
+			Link,
 		}
-
-		#region Data members
-		private ButtonPress m_dlgResult = ButtonPress.Exit;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private Container components = null;
-		private Panel panelOptions;
-		private Panel panelProjectNotFound;
-		private Label m_lblChooseCommand;
-		private Label m_lblProjectLoadError;
-		private Label m_lblProjectPath;
-		private Label m_lblUnableToOpen;
-
-		IHelpTopicProvider m_helpTopicProvider = null;
-		#endregion
 
 		#region Construction, Initialization and Deconstruction
 		/// ------------------------------------------------------------------------------------
@@ -70,43 +67,31 @@ namespace SIL.FieldWorks
 		/// Initializes a new instance of the <see cref="WelcomeToFieldWorksDlg"/> class.
 		/// </summary>
 		/// <param name="helpTopicProvider">Help topic provider</param>
-		/// <param name="projectId">The project id (if any) of the project that we tried to
-		/// open.</param>
+		/// <param name="appAbbrev">Standard application abbreviation.</param>
 		/// <param name="exception">Exception that was thrown if the previously requested
 		/// project could not be opened.</param>
 		/// ------------------------------------------------------------------------------------
-		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, ProjectId projectId,
-			FwStartupException exception)
+		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, string appAbbrev, FwStartupException exception)
 		{
+			m_appAbbrev = appAbbrev;
 			InitializeComponent();
 			AccessibleName = GetType().Name;
+			var fullAppName = AppIsFlex ? Properties.Resources.kstidFLEx : Properties.Resources.kstidTE;
+			SetCheckboxText = fullAppName;  // Setter uses the app name in a format string.
 
 			if (exception == null || !exception.ReportToUser)
 			{
 				Height -= panelProjectNotFound.Height;
 				panelProjectNotFound.Visible = false;
+				Text = fullAppName;
 				Logger.WriteEvent("Opening 'Welcome to FieldWorks' dialog");
 			}
 			else
 			{
 				m_helpTopic = "khtpUnableToOpenProject";
-				FormBorderStyle = FormBorderStyle.Sizable;
-				MinimumSize = Size;
 				Text = Properties.Resources.kstidUnableToOpenProjectCaption;
-				Width = (int)(1.5 * Width);
-				if (projectId == null || projectId.Handle == null)
-				{
-					m_lblUnableToOpen.Visible = false;
-					m_lblProjectPath.Visible = false;
-					m_lblProjectLoadError.Location = new Point(0, 0);
-				}
-				else
-				{
-					m_lblProjectPath.Text = (projectId.IsLocal ? projectId.Path : projectId.UiName);
-				}
-				m_lblChooseCommand.Text = Properties.Resources.kstidChooseCommand;
 
-				int origPanelHeight = panelProjectNotFound.Height;
+				var origPanelHeight = panelProjectNotFound.Height;
 				m_lblProjectLoadError.Text = exception.Message;
 				if (panelProjectNotFound.Height > origPanelHeight)
 					Height += (panelProjectNotFound.Height - origPanelHeight);
@@ -118,6 +103,37 @@ namespace SIL.FieldWorks
 			helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+		}
+
+		public bool AppIsFlex
+		{
+			get
+			{
+				return string.IsNullOrEmpty(m_appAbbrev) || m_appAbbrev == FwUtils.ksFlexAbbrev.ToLowerInvariant();
+			}
+		}
+
+		public bool OpenLastProjectCheckboxIsChecked
+		{
+			get { return checkBox1.Checked; }
+			set { checkBox1.Checked = value; }
+		}
+
+		public void SetFirstOrLastProjectText(bool firstTimeOpening)
+		{
+			m_sampleOrLastProjectLinkLabel.Text = firstTimeOpening ? Properties.Resources.ksOpenSampleProject :
+					Properties.Resources.ksOpenLastEditedProject;
+		}
+
+		public string ProjectLinkUiName
+		{
+			get { return m_openSampleOrLastProjectLink.Text; }
+			set { m_openSampleOrLastProjectLink.Text = value; }
+		}
+
+		private string SetCheckboxText
+		{
+			set { checkBox1.Text = string.Format(Properties.Resources.ksWelcomeDialogCheckboxText, value); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -170,128 +186,6 @@ namespace SIL.FieldWorks
 				CheckDisposed();
 				return m_dlgResult;
 			}
-		}
-		#endregion
-
-		#region Windows Form Designer generated code
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		private void InitializeComponent()
-		{
-			System.Windows.Forms.Button m_btnOpen;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WelcomeToFieldWorksDlg));
-			System.Windows.Forms.Button m_btnNew;
-			System.Windows.Forms.Button m_btnRestore;
-			System.Windows.Forms.Button m_btnExit;
-			System.Windows.Forms.Button m_btnHelp;
-			this.m_lblUnableToOpen = new System.Windows.Forms.Label();
-			this.m_lblChooseCommand = new System.Windows.Forms.Label();
-			this.panelOptions = new System.Windows.Forms.Panel();
-			this.panelProjectNotFound = new System.Windows.Forms.Panel();
-			this.m_lblProjectPath = new System.Windows.Forms.Label();
-			this.m_lblProjectLoadError = new System.Windows.Forms.Label();
-			m_btnOpen = new System.Windows.Forms.Button();
-			m_btnNew = new System.Windows.Forms.Button();
-			m_btnRestore = new System.Windows.Forms.Button();
-			m_btnExit = new System.Windows.Forms.Button();
-			m_btnHelp = new System.Windows.Forms.Button();
-			this.panelOptions.SuspendLayout();
-			this.panelProjectNotFound.SuspendLayout();
-			this.SuspendLayout();
-			//
-			// m_btnOpen
-			//
-			resources.ApplyResources(m_btnOpen, "m_btnOpen");
-			m_btnOpen.Image = global::SIL.FieldWorks.Properties.Resources.OpenFile;
-			m_btnOpen.Name = "m_btnOpen";
-			m_btnOpen.Click += new System.EventHandler(this.m_btnOpen_Click);
-			//
-			// m_btnNew
-			//
-			resources.ApplyResources(m_btnNew, "m_btnNew");
-			m_btnNew.Image = global::SIL.FieldWorks.Properties.Resources.DatabaseNew;
-			m_btnNew.Name = "m_btnNew";
-			m_btnNew.Click += new System.EventHandler(this.m_btnNew_Click);
-			//
-			// m_btnRestore
-			//
-			resources.ApplyResources(m_btnRestore, "m_btnRestore");
-			m_btnRestore.Image = global::SIL.FieldWorks.Properties.Resources.Download;
-			m_btnRestore.Name = "m_btnRestore";
-			m_btnRestore.Click += new System.EventHandler(this.m_btnRestore_Click);
-			//
-			// m_btnExit
-			//
-			resources.ApplyResources(m_btnExit, "m_btnExit");
-			m_btnExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			m_btnExit.Name = "m_btnExit";
-			m_btnExit.Click += new System.EventHandler(this.m_btnExit_Click);
-			//
-			// m_btnHelp
-			//
-			resources.ApplyResources(m_btnHelp, "m_btnHelp");
-			m_btnHelp.Name = "m_btnHelp";
-			m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
-			//
-			// m_lblUnableToOpen
-			//
-			resources.ApplyResources(this.m_lblUnableToOpen, "m_lblUnableToOpen");
-			this.m_lblUnableToOpen.Name = "m_lblUnableToOpen";
-			//
-			// m_lblChooseCommand
-			//
-			resources.ApplyResources(this.m_lblChooseCommand, "m_lblChooseCommand");
-			this.m_lblChooseCommand.Name = "m_lblChooseCommand";
-			//
-			// panelOptions
-			//
-			resources.ApplyResources(this.panelOptions, "panelOptions");
-			this.panelOptions.Controls.Add(this.m_lblChooseCommand);
-			this.panelOptions.Controls.Add(m_btnRestore);
-			this.panelOptions.Controls.Add(m_btnOpen);
-			this.panelOptions.Controls.Add(m_btnHelp);
-			this.panelOptions.Controls.Add(m_btnExit);
-			this.panelOptions.Controls.Add(m_btnNew);
-			this.panelOptions.Name = "panelOptions";
-			//
-			// panelProjectNotFound
-			//
-			resources.ApplyResources(this.panelProjectNotFound, "panelProjectNotFound");
-			this.panelProjectNotFound.Controls.Add(this.m_lblProjectPath);
-			this.panelProjectNotFound.Controls.Add(this.m_lblUnableToOpen);
-			this.panelProjectNotFound.Controls.Add(this.m_lblProjectLoadError);
-			this.panelProjectNotFound.Name = "panelProjectNotFound";
-			//
-			// m_lblProjectPath
-			//
-			resources.ApplyResources(this.m_lblProjectPath, "m_lblProjectPath");
-			this.m_lblProjectPath.AutoEllipsis = true;
-			this.m_lblProjectPath.Name = "m_lblProjectPath";
-			//
-			// m_lblProjectLoadError
-			//
-			resources.ApplyResources(this.m_lblProjectLoadError, "m_lblProjectLoadError");
-			this.m_lblProjectLoadError.Name = "m_lblProjectLoadError";
-			//
-			// WelcomeToFieldWorksDlg
-			//
-			resources.ApplyResources(this, "$this");
-			this.CancelButton = m_btnExit;
-			this.Controls.Add(this.panelProjectNotFound);
-			this.Controls.Add(this.panelOptions);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "WelcomeToFieldWorksDlg";
-			this.panelOptions.ResumeLayout(false);
-			this.panelOptions.PerformLayout();
-			this.panelProjectNotFound.ResumeLayout(false);
-			this.ResumeLayout(false);
-
 		}
 		#endregion
 
@@ -375,6 +269,24 @@ namespace SIL.FieldWorks
 			Hide();
 		}
 
+		private void m_openProjectLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			m_dlgResult = ButtonPress.Link;
+			Hide();
+		}
+
+		private void Receive_Click(object sender, EventArgs e)
+		{
+			m_dlgResult = ButtonPress.Receive;
+			Hide();
+		}
+
+		private void Import_Click(object sender, EventArgs e)
+		{
+			m_dlgResult = ButtonPress.Import;
+			Hide();
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Open the context-sensitive help for this dialog.
@@ -388,5 +300,17 @@ namespace SIL.FieldWorks
 		}
 
 		#endregion
+
+		internal void HideLink()
+		{
+			m_sampleOrLastProjectLinkLabel.Visible = false;
+			m_openSampleOrLastProjectLink.Visible = false;
+		}
+
+		internal void ShowLink()
+		{
+			m_sampleOrLastProjectLinkLabel.Visible = true;
+			m_openSampleOrLastProjectLink.Visible = true;
+		}
 	}
 }

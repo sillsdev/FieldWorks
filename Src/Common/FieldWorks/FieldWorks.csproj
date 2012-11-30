@@ -208,6 +208,9 @@
     <Compile Include="LexicalProvider\ILexicalProvider.cs" />
     <Compile Include="ProjectId.cs" />
     <Compile Include="FieldWorks.cs" />
+    <Compile Include="WelcomeToFieldWorksDlg.Designer.cs">
+      <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
+    </Compile>
     <None Include="App.config" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProjectMatch.cs" />
@@ -282,6 +285,8 @@
     <None Include="Resources\OpenFile.png" />
     <None Include="Resources\DatabaseNew.png" />
     <None Include="Resources\Download.png" />
+    <None Include="Resources\chorus32x32.png" />
+    <None Include="Resources\Import32x32.PNG" />
     <Content Include="SmallBookOnCubeVersion.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

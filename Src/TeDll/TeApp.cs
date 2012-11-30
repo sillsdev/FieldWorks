@@ -182,21 +182,6 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Displays a message box asking the user whether or not he wants to open a sample DB.
-		/// </summary>
-		/// <returns><c>true</c> if user consented to opening the sample database; <c>false</c>
-		/// otherwise.</returns>
-		/// ------------------------------------------------------------------------------------
-		public override bool ShowFirstTimeMessageDlg()
-		{
-			using (TrainingAvailable dlg = new TrainingAvailable())
-			{
-				return (dlg.ShowDialog() == DialogResult.Yes);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Overridden to save the libronix setting (and the workspace).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
