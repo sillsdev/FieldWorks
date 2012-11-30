@@ -183,9 +183,6 @@ namespace XCore
 		#region Data members for Queueing
 		/// <summary>This is the message value that is used to communicate the need to process the defered mediator queue</summary>
 		public const int WM_BROADCAST_ITEM_INQUEUE = 0x8000+0x77;	// wm_app + 0x77
-		/// <summary>Included here so as to not add another common utils dependancy</summary>
-		[System.Runtime.InteropServices.DllImport("User32.dll", CharSet=System.Runtime.InteropServices.CharSet.Auto)]
-		public static extern bool PostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam);
 		private Queue<QueueItem> m_jobs = new Queue<QueueItem>();	// queue to contain the defered broadcasts
 		private Queue<QueueItem> m_pendingjobs = new Queue<QueueItem>(); // queue to contain the broadcasts until we have a main window
 		private int m_queueLastProcessed;	// size of queue the last time it was processed
@@ -523,28 +520,9 @@ namespace XCore
 				using (var process = Process.GetCurrentProcess())
 					mainWndPtr = process.MainWindowHandle;
 			}
-#if !__MonoCS__
-			PostMessage(mainWndPtr, Mediator.WM_BROADCAST_ITEM_INQUEUE, 0, 0);
-#else
-			SimulatePostMessage(mainWndPtr, Mediator.WM_BROADCAST_ITEM_INQUEUE, 0, 0);
-#endif
+			if (mainWndPtr != IntPtr.Zero)
+				Win32.PostMessage(mainWndPtr, Mediator.WM_BROADCAST_ITEM_INQUEUE, 0, 0);
 		}
-
-#if __MonoCS__
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "c is only a reference")]
-		internal static void SimulatePostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam)
-		{
-			if (hWnd != IntPtr.Zero)
-			{
-				Control c = Control.FromChildHandle(hWnd);
-				Message m = new Message();
-				m.HWnd = c.Handle;
-				m.Msg = Mediator.WM_BROADCAST_ITEM_INQUEUE;
-				(c as IRaiseASyncMessages).SimulatePostMessage(ref m);
-			}
-		}
-#endif
 
 		/// <summary>Add an item to the queue and let the app know an item is present to be processed.</summary>
 		/// <param name="item"></param>

@@ -38,9 +38,6 @@ namespace XCore
 	/// XWindow is a window which is configured with XML file.
 	/// </summary>
 	public class XWindow : Form, IFWDisposable, IxCoreColleague, IxWindow
-#if __MonoCS__
-	, IRaiseASyncMessages
-#endif
 	{
 		#region Data members
 		/// <summary>
@@ -1579,21 +1576,6 @@ namespace XCore
 
 		}
 		#endregion
-
-#if __MonoCS__
-		protected delegate void WndProcDelegate(ref Message m);
-
-		#region IRaiseASyncMessages methods
-
-		public void SimulatePostMessage(ref Message m)
-		{
-			object[] paramArray = new object[1];
-			paramArray[0] = m;
-			this.BeginInvoke(new XCore.XWindow.WndProcDelegate(WndProc), paramArray);
-		}
-
-		#endregion
-#endif
 
 		#region Overrides
 

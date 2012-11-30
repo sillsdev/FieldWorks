@@ -1161,6 +1161,31 @@ namespace SIL.Utils
 #if __MonoCS__
 // TODO-Linux: ensure all methods in this file have XML comments.
 #pragma warning disable 1591 // missing XML comment
+
+		private static Assembly s_monoWinFormsAssembly;
+		private static Assembly MonoWinFormsAssembly
+		{
+			get
+			{
+				if (s_monoWinFormsAssembly == null)
+					#pragma warning disable 0612 // Using Obsolete method LoadWithPartialName.
+					s_monoWinFormsAssembly = Assembly.LoadWithPartialName("System.Windows.Forms");
+					#pragma warning restore 0612
+				return s_monoWinFormsAssembly;
+			}
+		}
+
+		// internal mono WinForms type
+		private static Type s_xplatUIType;
+		private static Type XplatUI
+		{
+			get
+			{
+				if (s_xplatUIType == null)
+					s_xplatUIType = MonoWinFormsAssembly.GetType("System.Windows.Forms.XplatUI");
+				return s_xplatUIType;
+			}
+		}
 #endif
 		/// <summary></summary>
 #if !__MonoCS__
@@ -1451,11 +1476,16 @@ namespace SIL.Utils
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern bool PostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam);
 #else
-		// TODO-Linux: Implement if needed
+		private static MethodInfo s_postMessage;
 		public static bool PostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam)
 		{
-			Console.WriteLine("Warning using unimplemented method PostMessage");
-			return false;
+			if (s_postMessage == null)
+				s_postMessage = XplatUI.GetMethod("PostMessage",
+					System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+					null,
+					new Type[] { typeof(IntPtr), typeof(int), typeof(IntPtr), typeof(IntPtr) },
+					null);
+			return (bool)s_postMessage.Invoke(null, new object[] {hWnd, Msg, (IntPtr)wParam, (IntPtr)lParam});
 		}
 #endif
 #if !__MonoCS__
@@ -1475,11 +1505,9 @@ namespace SIL.Utils
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern bool PostMessage(IntPtr hWnd, WinMsgs Msg, int wParam, int lParam);
 #else
-		// TODO-Linux: Implement if needed
 		public static bool PostMessage(IntPtr hWnd, WinMsgs Msg, int wParam, int lParam)
 		{
-			Console.WriteLine("Warning using unimplemented method PostMessage");
-			return false;
+			return PostMessage(hWnd, (int)Msg, (uint)wParam, (uint)lParam);
 		}
 #endif
 #if !__MonoCS__
@@ -1567,24 +1595,15 @@ namespace SIL.Utils
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern IntPtr GetFocus();
 #else
-		private static Assembly monoWinFormsAssembly;
-		private static Type xplatUIX11; // internal mono WinForms type
-		private static FieldInfo focusWindow; // internal mono WinForms static instance that traces focus
-
+		private static MethodInfo s_getFocus;
 		public static IntPtr GetFocus()
 		{
-			if (monoWinFormsAssembly == null)
-			{
-#pragma warning disable 0612 // Using Obsolete method LoadWithPartialName.
-				monoWinFormsAssembly = Assembly.LoadWithPartialName("System.Windows.Forms");
-#pragma warning restore 0612
-				xplatUIX11 = monoWinFormsAssembly.GetType("System.Windows.Forms.XplatUIX11");
-				focusWindow = xplatUIX11.GetField("FocusWindow", System.Reflection.BindingFlags.NonPublic |
-System.Reflection.BindingFlags.Static );
-			}
+			if (s_getFocus == null)
+				s_getFocus = XplatUI.GetMethod("GetFocus",
+					System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static,
+					null, Type.EmptyTypes, null);
+			return (IntPtr)s_getFocus.Invoke(null, null);
 
-			// Get static field to determine Focused Window.
-			return (IntPtr)focusWindow.GetValue(null);
 		}
 #endif
 
