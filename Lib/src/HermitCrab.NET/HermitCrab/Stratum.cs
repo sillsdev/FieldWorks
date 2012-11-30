@@ -550,7 +550,7 @@ namespace SIL.HermitCrab
 					if (m_mrules[rIndex].Unapply(input, srIndex, out analyses, selectTraceMorphs))
 					{
 						foreach (WordAnalysis wa in analyses)
-							MorphologicalRuleUnapplied(wa, rIndex, srIndex, candidates, output);
+							MorphologicalRuleUnapplied(wa, rIndex, srIndex, candidates, output, selectTraceMorphs);
 
 						unapplied = true;
 					}
@@ -577,7 +577,7 @@ namespace SIL.HermitCrab
 							if (m_mrules[i].Unapply(input, j, out analyses, selectTraceMorphs))
 							{
 								foreach (WordAnalysis wa in analyses)
-									MorphologicalRuleUnapplied(wa, i, j, candidates, output);
+									MorphologicalRuleUnapplied(wa, i, j, candidates, output, selectTraceMorphs);
 
 								unapplied = true;
 							}
@@ -595,22 +595,22 @@ namespace SIL.HermitCrab
 		}
 
 		void MorphologicalRuleUnapplied(WordAnalysis ruleOutput, int rIndex, int srIndex, ICollection<WordSynthesis> candidates,
-			Set<WordAnalysis> output)
+			Set<WordAnalysis> output, string[] selectTraceMorphs)
 		{
 			if (ruleOutput.Shape.Count > 2)
 			{
 				// lookup resulting phonetic shape in lexicon
-				LexicalLookup(ruleOutput, candidates);
+				LexicalLookup(ruleOutput, candidates, selectTraceMorphs);
 
 				// recursive call so that we can cover every permutation of rule unapplication
 				switch (m_mruleOrder)
 				{
 					case MRuleOrder.LINEAR:
-						UnapplyMorphologicalRules(ruleOutput, rIndex, srIndex, candidates, output);
+						UnapplyMorphologicalRules(ruleOutput, rIndex, srIndex, candidates, output, selectTraceMorphs);
 						break;
 
 					case MRuleOrder.UNORDERED:
-						UnapplyMorphologicalRulesAndTemplates(ruleOutput, output, candidates);
+						UnapplyMorphologicalRulesAndTemplates(ruleOutput, output, candidates, selectTraceMorphs);
 						break;
 				}
 			}
