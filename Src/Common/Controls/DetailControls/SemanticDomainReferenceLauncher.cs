@@ -57,7 +57,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			var linkCommandNode = m_configurationNode.SelectSingleNode("descendant::chooserLink");
 			var chooser = new SemanticDomainsChooser
-							{Mediator = m_mediator, Cache = m_cache, DisplayWs = displayWs, Sense = sense, LinkNode = linkCommandNode};
+				{ Mediator = m_mediator, Cache = m_cache, DisplayWs = displayWs, Sense = sense,
+					LinkNode = linkCommandNode, HelpTopicProvider = m_mediator.HelpTopicProvider
+			};
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, m_obj.ReferenceTargetCandidates(m_flid),
 				m_displayNameProperty, displayWs);

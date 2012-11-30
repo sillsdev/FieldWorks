@@ -2936,4 +2936,7 @@
   <data name="khtpField-variantEntryTypeEdit-LexEntryInflType-Slots" xml:space="preserve">
 	<value>User_Interface/Field_Descriptions/Lists/Variant_Types_flds/Slots.htm</value>
   </data>
+  <data name="khtpSemanticDomainsChooser" xml:space="preserve">
+	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_semantic_domains.htm</value>
+  </data>
 </root>

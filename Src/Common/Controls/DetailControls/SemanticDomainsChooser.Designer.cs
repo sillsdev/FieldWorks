@@ -31,7 +31,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SemanticDomainsChooser));
 			this.editDomainsLinkPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.editDomainsLinkPic = new System.Windows.Forms.PictureBox();
@@ -39,6 +38,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.domainTree = new System.Windows.Forms.TreeView();
 			this.searchTextBox = new SIL.FieldWorks.Common.Widgets.FwTextBox();
 			this.domainList = new System.Windows.Forms.ListView();
+			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.displayUsagePanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.displayUsageCheckBox = new System.Windows.Forms.CheckBox();
 			this.buttonPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -46,10 +46,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.btnOK = new System.Windows.Forms.Button();
 			this.selectedDomainsList = new System.Windows.Forms.ListView();
+			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.button1 = new System.Windows.Forms.Button();
 			this.btnCancelSearch = new System.Windows.Forms.Button();
-			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.editDomainsLinkPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.editDomainsLinkPic)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.searchTextBox)).BeginInit();
@@ -118,9 +117,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.searchTextBox.controlID = null;
 			this.searchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 100F);
 			this.searchTextBox.HasBorder = true;
-			this.searchTextBox.Location = new System.Drawing.Point(8, 8);
+			this.searchTextBox.Location = new System.Drawing.Point(8, 6);
 			this.searchTextBox.Name = "searchTextBox";
-			this.searchTextBox.Size = new System.Drawing.Size(283, 20);
+			this.searchTextBox.Size = new System.Drawing.Size(306, 24);
 			this.searchTextBox.SuppressEnter = false;
 			this.searchTextBox.TabIndex = 7;
 			this.searchTextBox.WordWrap = false;
@@ -146,6 +145,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.domainList.View = System.Windows.Forms.View.Details;
 			this.domainList.Visible = false;
 			this.domainList.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.OnDomainListChecked);
+			// 
+			// columnHeader1
+			// 
+			this.columnHeader1.Width = 305;
 			// 
 			// displayUsagePanel
 			// 
@@ -187,13 +190,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// buttonHelp
 			// 
 			this.buttonHelp.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.buttonHelp.Enabled = false;
 			this.buttonHelp.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.buttonHelp.Location = new System.Drawing.Point(227, 5);
 			this.buttonHelp.Name = "buttonHelp";
 			this.buttonHelp.Size = new System.Drawing.Size(75, 23);
 			this.buttonHelp.TabIndex = 9;
 			this.buttonHelp.Text = "Help";
+			this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
 			// 
 			// btnCancel
 			// 
@@ -239,6 +242,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.selectedDomainsList.View = System.Windows.Forms.View.Details;
 			this.selectedDomainsList.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.OnSelectedDomainItemChecked);
 			// 
+			// columnHeader2
+			// 
+			this.columnHeader2.Width = 305;
+			// 
 			// button1
 			// 
 			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -254,21 +261,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// 
 			// btnCancelSearch
 			// 
-			this.btnCancelSearch.Image = global::SIL.FieldWorks.Resources.Images.Search;
+			this.btnCancelSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnCancelSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnCancelSearch.Image = ((System.Drawing.Image)(resources.GetObject("btnCancelSearch.Image")));
 			this.btnCancelSearch.Location = new System.Drawing.Point(289, 6);
 			this.btnCancelSearch.Name = "btnCancelSearch";
 			this.btnCancelSearch.Size = new System.Drawing.Size(25, 23);
 			this.btnCancelSearch.TabIndex = 11;
 			this.btnCancelSearch.UseVisualStyleBackColor = true;
 			this.btnCancelSearch.Click += new System.EventHandler(this.btnCancelSearch_Click);
-			// 
-			// columnHeader1
-			// 
-			this.columnHeader1.Width = 305;
-			// 
-			// columnHeader2
-			// 
-			this.columnHeader2.Width = 305;
 			// 
 			// SemanticDomainsChooser
 			// 

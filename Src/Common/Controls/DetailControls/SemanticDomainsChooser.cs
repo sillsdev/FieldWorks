@@ -21,12 +21,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private bool m_searchIconSet = true;
 		private SearchTimer m_SearchTimer;
 		private ICmSemanticDomainRepository m_semdomRepo;
-
+		private String m_helpTopic = "khtpSemanticDomainsChooser";
 
 		public IEnumerable<ICmObject> SemanticDomains
 		{
-			get { return m_selectedItems; }
-		}
+			get { return m_selectedItems; }}
+
+		public IHelpTopicProvider HelpTopicProvider { private get; set; }
 
 		public ILexSense Sense { private get; set; }
 
@@ -194,6 +195,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void btnCancelSearch_Click(object sender, EventArgs e)
 		{
 			searchTextBox.Text = "";
+		}
+
+		private void buttonHelp_Click(object sender, EventArgs e)
+		{
+			ShowHelp.ShowHelpTopic(HelpTopicProvider, "UserHelpFile", m_helpTopic);
 		}
 	}
 
