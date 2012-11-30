@@ -30,8 +30,8 @@
 	<commands>
 		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O"/>
 		<command id="CmdSave" label="_Save" message="SaveLangProject" icon="SaveProject" shortcut="Ctrl+S"/>
-		<command id="CmdLiftBridge" label="Send/Receive LIFT" message="LiftBridge" />
-		<command id="CmdFLExBridge" label="Send/Receive Project" message="FLExBridge" />
+		<command id="CmdLiftBridge" label="Lexicon (with programs that use LIFT)..." message="LiftBridge" />
+		<command id="CmdFLExBridge" label="Project (with other FLEx users)..." message="FLExBridge" />
 		<command id="CmdShowConflictReport" label="Conflict Report" message="ShowConflictReport" />
 		<command id="CmdClose" label="_Close" message="CloseWindow"/>
 		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord"/>
@@ -429,16 +429,18 @@
 				<item command="CmdImportLinguaLinksData"/>
 				<item command="CmdImportLiftData"/>
 				<item command="CmdImportInterlinearSfm"/>
-		<item command="CmdImportWordsAndGlossesSfm"/>
-		<item command="CmdImportInterlinearData"/>
+				<item command="CmdImportWordsAndGlossesSfm"/>
+				<item command="CmdImportInterlinearData"/>
 				<item command="CmdImportSFMNotebook"/>
 				<item command="CmdImportTranslatedLists"/>
 				<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Import']/*"/>
 			</menu>
 			<item command="CmdExport"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
-			<item command="CmdLiftBridge" />
-			<item command="CmdFLExBridge" />
+			<menu id="SendReceive" label="_Send/Receive">
+				<item command="CmdFLExBridge" />
+				<item command="CmdLiftBridge" />
+			</menu>
 			<!--item command="CmdSynch"/-->
 			<!-- needs more work to implement. -->
 			<item label="-" translate="do not translate"/>
