@@ -17,7 +17,6 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using SIL.FieldWorks.Common.COMInterfaces;

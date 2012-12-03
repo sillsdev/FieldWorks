@@ -113,13 +113,13 @@
     </Reference>
     <Reference Include="CacheLightTests, Version=1.0.4122.26663, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\..\Output\Debug\CacheLightTests.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\CacheLightTests.dll</HintPath>
     </Reference>
     <Reference Include="COMInterfaces">
       <Name>COMInterfaces</Name>
       <HintPath>..\..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
     </Reference>
@@ -137,7 +137,7 @@
     </Reference>
     <Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -157,9 +157,6 @@
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
@@ -196,21 +193,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
-	<Reference Include="SilUtils">
-	  <HintPath>..\..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
-	</Reference>
+    <Reference Include="SilUtils">
+      <HintPath>..\..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
-	<Reference Include="System.Drawing" />
-	<Reference Include="Keyboarding">
-	  <HintPath>..\..\..\..\..\Output\Debug\Keyboarding.dll</HintPath>
-	</Reference>
-	<Reference Include="KeyboardingTests">
-	  <HintPath>..\..\..\..\..\Output\Debug\KeyboardingTests.dll</HintPath>
-	</Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="Keyboarding">
+      <HintPath>..\..\..\..\..\Output\Debug\Keyboarding.dll</HintPath>
+    </Reference>
+    <Reference Include="KeyboardingTests">
+      <HintPath>..\..\..\..\..\Output\Debug\KeyboardingTests.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
+    <Compile Include="..\..\..\..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="BulkEditBarTests.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -237,7 +234,7 @@
     </Compile>
     <Compile Include="TestColumnConfigureDialog.cs" />
     <Compile Include="XmlVcTests.cs" />
-	<Compile Include="XmlBrowseViewBaseTests.cs" />
+    <Compile Include="XmlBrowseViewBaseTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

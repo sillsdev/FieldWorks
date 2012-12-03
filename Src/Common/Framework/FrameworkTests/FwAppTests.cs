@@ -16,9 +16,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using NMock;
-using NMock.Constraints;
-
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;

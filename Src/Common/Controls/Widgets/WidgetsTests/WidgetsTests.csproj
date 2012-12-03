@@ -104,6 +104,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="CacheLight, Version=1.0.4002.31848, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -111,17 +115,13 @@
       <Name>COMInterfaces</Name>
       <HintPath>..\..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="COMInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
     </Reference>
     <Reference Include="CoreImpl, Version=6.1.1.36573, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-    </Reference>
-    <Reference Include="NMock">
-      <Name>NMock</Name>
-      <HintPath>..\..\..\..\..\Bin\nmock\NMock.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
@@ -142,14 +142,8 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
     <Reference Include="TestUtils">
       <Name>TestUtils</Name>
       <HintPath>..\..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
@@ -169,6 +163,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="..\..\..\..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
+    </Compile>
     <Compile Include="FontHeightAdjusterTests.cs">
       <SubType>Code</SubType>
     </Compile>

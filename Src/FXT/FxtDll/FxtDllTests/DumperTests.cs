@@ -6,8 +6,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 
 using NUnit.Framework;
-
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;

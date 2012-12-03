@@ -17,9 +17,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 using NUnit.Framework;
-using NMock;
-using NMock.Constraints;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;

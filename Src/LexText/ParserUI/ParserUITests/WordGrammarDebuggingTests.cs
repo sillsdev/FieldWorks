@@ -18,7 +18,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Xml;
+#if __MonoCS__
 using System.Xml.Linq;
+#endif
 using System.Xml.XPath;
 using System.Xml.Xsl;
 

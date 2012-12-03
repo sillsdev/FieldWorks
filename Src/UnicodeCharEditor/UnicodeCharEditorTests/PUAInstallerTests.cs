@@ -21,7 +21,6 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using ICSharpCode.SharpZipLib.Zip;

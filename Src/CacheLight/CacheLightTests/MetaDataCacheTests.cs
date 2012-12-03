@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Xml;
 using System.IO;
 using NUnit.Framework;
@@ -6,7 +6,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
 
 namespace SIL.FieldWorks.CacheLightTests
