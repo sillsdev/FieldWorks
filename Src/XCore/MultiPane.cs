@@ -290,8 +290,6 @@ namespace XCore
 			// TODO: Things are not yet in a suitable state, hooking onto a later event should work
 			// TODO: But if you switch between tools in an area there is sometimes an extra
 			// TODO: WM_LBUTTON_DOWN event which steals focus back into the ListViewItemArea
-			// Note: The MakeSubControl calls above set the appropriate IFocusablePanePortion property
-			// which lets SetFocusInDefaultControl know who to focus.
 			SetFocusInDefaultControl();
 
 			IsInitializing = false;
@@ -408,13 +406,6 @@ namespace XCore
 				if (configuration != null)
 					parameters = configuration.SelectSingleNode("parameters");
 				((IxCoreColleague)subControl).Init(m_mediator, parameters);
-
-				//If the sub control has the focusable interface and it matches the name of the defaultFocusControl
-				//then we will set the boolean property indicating that it is the focused pane.
-				if (subControl is IFocusablePanePortion)
-				{
-					(subControl as IFocusablePanePortion).IsFocusedPane = subControl.Name == m_defaultFocusControl;
-				}
 
 				// in normal situations, colleagues add themselves to the mediator when
 				// initialized.  in this case, we don't want this colleague to add itself
@@ -649,27 +640,23 @@ namespace XCore
 		}
 
 		/// <summary>
-		/// The focus will only be set in the default control if it implements IFocusablePanePortion
+		/// The focus will only be set in the default control if it implements IFocusablePanePortion.
+		/// Note that it may BE our First or SecondPane, or it may be a child of one of those.
 		/// </summary>
 		private void SetFocusInDefaultControl()
 		{
-			var firstCtrl = FirstControl as IFocusablePanePortion;
-			var secondCtrl = SecondControl as IFocusablePanePortion;
-			Control focusedTarget = null;
-			if(firstCtrl != null && firstCtrl.IsFocusedPane)
-			{
-				firstCtrl.Focus();
-			}
-			else if (secondCtrl != null && secondCtrl.IsFocusedPane)
-			{
-				secondCtrl.Focus();
-			}
-			else if(!String.IsNullOrEmpty(m_defaultFocusControl))
-			{
-				Debug.Assert(m_defaultFocusControl == String.Empty,
+			if (String.IsNullOrEmpty(m_defaultFocusControl))
+				return;
+			var defaultFocusControl = (XWindow.FindControl(FirstControl, m_defaultFocusControl) ??
+				XWindow.FindControl(SecondControl, m_defaultFocusControl)) as IFocusablePanePortion;
+			Debug.Assert(defaultFocusControl != null,
 				"Failed to find focusable subcontrol.",
 				"This MultiPane was configured to focus {0} as a default control. But it either was not found or was not an IFocuablePanePortion",
 				m_defaultFocusControl);
+			if (defaultFocusControl != null)
+			{
+				defaultFocusControl.IsFocusedPane = true; // Lets it know it can do any special behavior (e.g., DataPane) when it is the focused child.
+				defaultFocusControl.Focus();
 			}
 		}
 	}
