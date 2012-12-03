@@ -10,9 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.Utils;
 #if __MonoCS__
 using SIL.FieldWorks.Views;
 using SIL.FieldWorks.Common.Keyboarding.Linux;

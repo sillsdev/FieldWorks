@@ -81,24 +81,29 @@
 	<Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'"/>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="AlphaOutlineTests.cs" />
-	<Compile Include="ArrayUtilsTests.cs" />
-	<Compile Include="BagTests.cs" />
-	<Compile Include="CharEnumeratorForByteArrayTests.cs" />
-	<Compile Include="ClipboardStub.cs" />
-	<Compile Include="ColorUtilTests.cs" />
-	<Compile Include="FileUtilsTest.cs" />
-	<Compile Include="ImagePictureTest.cs" />
-	<Compile Include="MessageBoxStub.cs" />
-	<Compile Include="MiscUtilsTests.cs" />
-	<Compile Include="MockFileOs.cs" />
-	<Compile Include="RecentItemsCacheTests.cs" />
-	<Compile Include="RomanNumeralsTests.cs" />
-	<Compile Include="SetTests.cs" />
-	<Compile Include="TestSmallDictionary.cs" />
-	<Compile Include="UtilsTest.cs" />
-	<None Include="App.config" />
-	<Compile Include="DisposableObjectsSetTests.cs" />
+    <Compile Include="..\..\..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
+    </Compile>
+    <Compile Include="AlphaOutlineTests.cs" />
+    <Compile Include="ArrayUtilsTests.cs" />
+    <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
+    <Compile Include="BagTests.cs" />
+    <Compile Include="CharEnumeratorForByteArrayTests.cs" />
+    <Compile Include="ClipboardStub.cs" />
+    <Compile Include="ColorUtilTests.cs" />
+    <Compile Include="FileUtilsTest.cs" />
+    <Compile Include="ImagePictureTest.cs" />
+    <Compile Include="MessageBoxStub.cs" />
+    <Compile Include="MiscUtilsTests.cs" />
+    <Compile Include="MockFileOs.cs" />
+    <Compile Include="RecentItemsCacheTests.cs" />
+    <Compile Include="RomanNumeralsTests.cs" />
+    <Compile Include="SetTests.cs" />
+    <Compile Include="SingletonsContainerTests.cs" />
+    <Compile Include="TestSmallDictionary.cs" />
+    <Compile Include="UtilsTest.cs" />
+    <None Include="App.config" />
+    <Compile Include="DisposableObjectsSetTests.cs" />
   </ItemGroup>
   <ItemGroup>
 	<Folder Include="Properties\" />

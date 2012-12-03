@@ -13,7 +13,6 @@ using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
@@ -39,7 +38,6 @@ namespace SIL.FieldWorks.TE
 		[SetUp]
 		public void SetUp()
 		{
-			BaseTest.SingletonReleasedInFixtureClass = true;
 			RegistryHelper.CompanyName = "SIL";
 			RegistryHelper.ProductName = "FieldWorks";
 
@@ -60,8 +58,6 @@ namespace SIL.FieldWorks.TE
 			FwRegistrySettings.Release();
 			ReflectionHelper.CallStaticMethod("FwResources.dll",
 				"SIL.FieldWorks.Resources.ResourceHelper", "ShutdownHelper");
-			ReflectionHelper.CallStaticMethod("CoreImpl.dll",
-				"SIL.CoreImpl.SingletonsContainer", "Release");
 			if (m_RegistryKey != null)
 				m_RegistryKey.Dispose();
 			m_RegistryKey = null;

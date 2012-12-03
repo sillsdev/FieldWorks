@@ -12,9 +12,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.COMInterfaces;
 
-namespace SIL.CoreImpl
+namespace SIL.Utils
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -22,8 +21,7 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class SingletonsContainerTests : FwCOMTestBase
-		// can't derive from BaseTest because of dependencies, but derive from FwCOMTestBase
+	public class SingletonsContainerTests // can't derive from BaseTest because of dependencies
 	{
 		#region Setup and Teardown
 		/// ------------------------------------------------------------------------------------

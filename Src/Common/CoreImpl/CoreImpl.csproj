@@ -130,7 +130,6 @@
     </Compile>
     <Compile Include="PUACharacter.cs" />
     <Compile Include="PuaCharacterFactory.cs" />
-    <Compile Include="SingletonsContainer.cs" />
     <Compile Include="StyleUtils.cs" />
     <Compile Include="TsPropsSerializer.cs" />
     <Compile Include="TsRunPart.cs" />

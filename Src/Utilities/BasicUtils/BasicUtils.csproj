@@ -77,69 +77,69 @@
 	<Reference Include="Mono.Posix" Condition="'$(OS)'=='Unix'" />
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\..\CommonAssemblyInfo.cs">
-	  <Link>Properties\CommonAssemblyInfo.cs</Link>
-	</Compile>
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="AccessibleNameCreator.cs" />
-	<Compile Include="AlphaOutline.cs" />
-	<Compile Include="ArrayUtils.cs" />
-	<Compile Include="BasicUtils.cs" />
-	<Compile Include="Benchmark.cs" />
-	<Compile Include="BidiDictionary.cs" />
-	<Compile Include="BidirHashtable.cs" />
-	<Compile Include="CharEnumeratorForByteArray.cs" />
-	<Compile Include="ClipboardUtils.cs" />
-	<Compile Include="ColorStrings.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>ColorStrings.resx</DependentUpon>
-	</Compile>
-	<Compile Include="ColorUtil.cs" />
-	<Compile Include="ConsumerThread.cs" />
-	<Compile Include="DisposableObjectsSet.cs" />
-	<Compile Include="IRefreshable.cs" />
-	<Compile Include="SimpleLogger.cs" />
-	<Compile Include="ThreadHelper.cs" />
-	<Compile Include="HiMetric.cs" />
-	<Compile Include="ImagePicture.cs" />
-	<Compile Include="IPicture.cs" />
-	<Compile Include="Logger.cs" />
-	<Compile Include="MessageBoxUtils.cs" />
-	<Compile Include="OLEConvert.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="RecentItemsCache.cs" />
-	<Compile Include="DriveUtil.cs" />
-	<Compile Include="ExceptionHelper.cs" />
-	<Compile Include="EnvVarTraceListener.cs" />
-	<Compile Include="FileUtils.cs" />
-	<Compile Include="FindFileStatusDialog.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="IdleQueue.cs" />
-	<Compile Include="IFWDisposable.cs" />
-	<Compile Include="IPersistenceProvider.cs" />
-	<Compile Include="IStorage.cs" />
-	<Compile Include="LcidHelper.cs" />
-	<Compile Include="MergeSort.cs" />
-	<Compile Include="PrinterUtils.cs" />
-	<Compile Include="PriorityQueue.cs" />
-	<Compile Include="RegistryGroup.cs" />
-	<Compile Include="TreeDictionary.cs" />
-	<Compile Include="RegistryRedirect.cs" />
-	<Compile Include="RomanNumerals.cs" />
-	<Compile Include="ScriptMaker.cs" />
-	<Compile Include="Set.cs" />
-	<Compile Include="SimpleBag.cs" />
-	<Compile Include="SmallDictionary.cs" />
-	<Compile Include="TextWriterStream.cs" />
-	<Compile Include="Unicode.cs" />
-	<Compile Include="Utils.cs" />
-	<Compile Include="ViewSizeEvents.cs" />
-	<Compile Include="LinuxPackageUtils.cs" />
-	<Compile Include="DirectoryUtils.cs" />
-	<Compile Include="StopClock.cs" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AccessibleNameCreator.cs" />
+    <Compile Include="AlphaOutline.cs" />
+    <Compile Include="ArrayUtils.cs" />
+    <Compile Include="BasicUtils.cs" />
+    <Compile Include="Benchmark.cs" />
+    <Compile Include="BidiDictionary.cs" />
+    <Compile Include="BidirHashtable.cs" />
+    <Compile Include="CharEnumeratorForByteArray.cs" />
+    <Compile Include="ClipboardUtils.cs" />
+    <Compile Include="ColorStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ColorStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ColorUtil.cs" />
+    <Compile Include="ConsumerThread.cs" />
+    <Compile Include="DisposableObjectsSet.cs" />
+    <Compile Include="IRefreshable.cs" />
+    <Compile Include="SimpleLogger.cs" />
+    <Compile Include="SingletonsContainer.cs" />
+    <Compile Include="ThreadHelper.cs" />
+    <Compile Include="HiMetric.cs" />
+    <Compile Include="ImagePicture.cs" />
+    <Compile Include="IPicture.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="MessageBoxUtils.cs" />
+    <Compile Include="OLEConvert.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RecentItemsCache.cs" />
+    <Compile Include="DriveUtil.cs" />
+    <Compile Include="ExceptionHelper.cs" />
+    <Compile Include="EnvVarTraceListener.cs" />
+    <Compile Include="FileUtils.cs" />
+    <Compile Include="FindFileStatusDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IdleQueue.cs" />
+    <Compile Include="IFWDisposable.cs" />
+    <Compile Include="IPersistenceProvider.cs" />
+    <Compile Include="IStorage.cs" />
+    <Compile Include="LcidHelper.cs" />
+    <Compile Include="MergeSort.cs" />
+    <Compile Include="PrinterUtils.cs" />
+    <Compile Include="PriorityQueue.cs" />
+    <Compile Include="RegistryGroup.cs" />
+    <Compile Include="TreeDictionary.cs" />
+    <Compile Include="RomanNumerals.cs" />
+    <Compile Include="ScriptMaker.cs" />
+    <Compile Include="Set.cs" />
+    <Compile Include="SimpleBag.cs" />
+    <Compile Include="SmallDictionary.cs" />
+    <Compile Include="TextWriterStream.cs" />
+    <Compile Include="Unicode.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="ViewSizeEvents.cs" />
+    <Compile Include="LinuxPackageUtils.cs" />
+    <Compile Include="DirectoryUtils.cs" />
+    <Compile Include="StopClock.cs" />
   </ItemGroup>
   <ItemGroup>
 	<EmbeddedResource Include="ColorStrings.resx">

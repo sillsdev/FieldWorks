@@ -9,8 +9,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Keyboarding
 {
@@ -19,10 +19,6 @@ namespace SIL.FieldWorks.Common.Keyboarding
 	/// </summary>
 	public class FakeKeyboardController: IKeyboardController, IKeyboardEventHandler, IKeyboardMethods
 	{
-		public FakeKeyboardController()
-		{
-		}
-
 		/// <summary>
 		/// Installs this fake keyboard controller instead of the real one
 		/// </summary>

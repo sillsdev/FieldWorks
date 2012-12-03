@@ -13,7 +13,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using Microsoft.Win32;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 

@@ -64,15 +64,6 @@ namespace SIL.FieldWorks.Test.TestUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets a value indicating whether the SingletonsContainer will be released in
-		/// the teardown method of a setup fixture class, or if it should be released in our
-		/// fixture teardown method.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool SingletonReleasedInFixtureClass { get; set; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Called when an unhandled exception is thrown.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
@@ -153,9 +144,6 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[TestFixtureTearDown]
 		public virtual void FixtureTeardown()
 		{
-			if (!SingletonReleasedInFixtureClass)
-				SingletonsContainer.Release();
-
 			KeyboardHelper.Release();
 
 			// FWC-16: we have to call CoFreeUnusedLibraries. This causes sqlnclir.dll to get

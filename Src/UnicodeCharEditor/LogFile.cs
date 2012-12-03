@@ -18,7 +18,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.Win32;
-using SIL.CoreImpl;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {

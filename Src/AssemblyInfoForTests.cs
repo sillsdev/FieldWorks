@@ -8,9 +8,13 @@
 // --------------------------------------------------------------------------------------------
 
 using NUnit.Framework;
+using SIL.Utils.Attributes;
 
 // On Windows we need STA because of the COM objects. On Linux the tests hang when we use
 // STA. Since we don't have a "real" COM implementation we don't really need it on Linux.
 #if !__MonoCS__
 	[assembly: RequiresSTA]
 #endif
+
+// Cleanup all singletons after running tests
+[assembly: CleanupSingletons]
