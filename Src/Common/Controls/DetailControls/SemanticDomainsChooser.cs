@@ -76,8 +76,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (m_searchIconSet)
 				{
+					// When disabled, we use a Background image rather than a regular image so that it
+					// does not gray out. When showing the search icon, the button is never enabled,
+					// so it is a shame to have it grey-out our pretty magnifying glass. The X however
+					// can work as a normal button image (which avoids needing to make it larger
+					// than the button etc. in order to avoid repeating it as wallpaper, which is how
+					// BackgroundImage works.)
 					btnCancelSearch.Image = FieldWorks.Resources.Images.X;
+					btnCancelSearch.BackgroundImage = null;
 					m_searchIconSet = false;
+					btnCancelSearch.Enabled = true;
 				}
 				domainList.ItemChecked -= OnDomainListChecked;
 				var semDomainsToShow = m_semdomRepo.FindDomainsThatMatch(searchString);
@@ -92,8 +100,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				domainList.Visible = false;
 				if (!m_searchIconSet)
 				{
-					btnCancelSearch.Image = FieldWorks.Resources.Images.Search;
+					btnCancelSearch.BackgroundImage = FieldWorks.Resources.Images.Search;
+					btnCancelSearch.Image = null;
 					m_searchIconSet = true;
+					btnCancelSearch.Enabled = false;
 				}
 			}
 		}

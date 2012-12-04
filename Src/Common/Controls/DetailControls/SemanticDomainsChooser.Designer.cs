@@ -49,11 +49,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.button1 = new System.Windows.Forms.Button();
 			this.btnCancelSearch = new System.Windows.Forms.Button();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.editDomainsLinkPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.editDomainsLinkPic)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.searchTextBox)).BeginInit();
 			this.displayUsagePanel.SuspendLayout();
 			this.buttonPanel.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// editDomainsLinkPanel
@@ -116,10 +118,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.searchTextBox.BackColor = System.Drawing.SystemColors.Window;
 			this.searchTextBox.controlID = null;
 			this.searchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 100F);
-			this.searchTextBox.HasBorder = true;
-			this.searchTextBox.Location = new System.Drawing.Point(8, 6);
+			this.searchTextBox.HasBorder = false;
+			this.searchTextBox.Location = new System.Drawing.Point(0, 1);
 			this.searchTextBox.Name = "searchTextBox";
-			this.searchTextBox.Size = new System.Drawing.Size(306, 24);
+			this.searchTextBox.Size = new System.Drawing.Size(278, 24);
 			this.searchTextBox.SuppressEnter = false;
 			this.searchTextBox.TabIndex = 7;
 			this.searchTextBox.WordWrap = false;
@@ -262,14 +264,29 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// btnCancelSearch
 			// 
 			this.btnCancelSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnCancelSearch.BackColor = System.Drawing.SystemColors.Window;
+			this.btnCancelSearch.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCancelSearch.BackgroundImage")));
+			this.btnCancelSearch.Enabled = false;
 			this.btnCancelSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnCancelSearch.Image = ((System.Drawing.Image)(resources.GetObject("btnCancelSearch.Image")));
-			this.btnCancelSearch.Location = new System.Drawing.Point(289, 6);
+			this.btnCancelSearch.ForeColor = System.Drawing.SystemColors.Window;
+			this.btnCancelSearch.Location = new System.Drawing.Point(278, 1);
 			this.btnCancelSearch.Name = "btnCancelSearch";
 			this.btnCancelSearch.Size = new System.Drawing.Size(25, 23);
 			this.btnCancelSearch.TabIndex = 11;
-			this.btnCancelSearch.UseVisualStyleBackColor = true;
+			this.btnCancelSearch.UseVisualStyleBackColor = false;
 			this.btnCancelSearch.Click += new System.EventHandler(this.btnCancelSearch_Click);
+			// 
+			// panel1
+			// 
+			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel1.Controls.Add(this.searchTextBox);
+			this.panel1.Controls.Add(this.btnCancelSearch);
+			this.panel1.Location = new System.Drawing.Point(8, 4);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(305, 26);
+			this.panel1.TabIndex = 12;
 			// 
 			// SemanticDomainsChooser
 			// 
@@ -278,11 +295,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
 			this.ClientSize = new System.Drawing.Size(322, 445);
-			this.Controls.Add(this.btnCancelSearch);
+			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.selectedDomainsList);
 			this.Controls.Add(this.domainList);
-			this.Controls.Add(this.searchTextBox);
 			this.Controls.Add(this.buttonPanel);
 			this.Controls.Add(this.displayUsagePanel);
 			this.Controls.Add(this.domainTree);
@@ -299,6 +315,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.displayUsagePanel.ResumeLayout(false);
 			this.displayUsagePanel.PerformLayout();
 			this.buttonPanel.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -323,5 +340,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private Button btnCancelSearch;
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
+		private Panel panel1;
 	}
 }
