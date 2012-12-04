@@ -413,9 +413,6 @@ namespace SIL.FieldWorks.TE.ImportTests
 		[SetCulture("en-US")]
 		public void SavingDeserializedAnnotationsToCache_InvalidResolvedAndModifiedDate()
 		{
-#if __MonoCS__ // TODO-Linux: work around [SetCulture("en-US")] being ignored on mono
-			System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
-#endif
 			DateTime now = DateTime.Now;
 			DateTime utcNow = now.ToUniversalTime();
 
@@ -424,14 +421,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 			ann.ResolutionStatus = NoteStatus.Closed;
 			ann.AnnotationTypeGuid = CmAnnotationDefnTags.kguidAnnTranslatorNote.ToString();
 			ann.DateTimeCreated = utcNow.ToString();
-Console.WriteLine("utcNow = {0}", utcNow);
-#if __MonoCS__ // work around https://bugzilla.novell.com/show_bug.cgi?id=594559
-			ann.DateTimeModified = "0009-05-02 20:00:00";
-			ann.DateTimeResolved = "0003-01-01 20:00:00";
-#else
 			ann.DateTimeModified = "0009-05-02 20:00:00.00";
 			ann.DateTimeResolved = "0003-01-01 20:00:00.00";
-#endif
 			AddParasTo(ann.Discussion, "This is my discussion");
 			AddParasTo(ann.Resolution, "This is my resolution for the note");
 			AddParasTo(ann.Quote, "This is the quoted text");

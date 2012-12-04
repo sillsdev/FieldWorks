@@ -587,12 +587,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 			XmlDocument doc = new XmlDocument();
 			ReflectionHelper.CallMethod(m_stackSectionType, "Push", "");
 			m_teImportUi.Maximum = 0;
-#if __MonoCS__
-			// TODO-Linux: work around mono difference: https://bugzilla.novell.com/show_bug.cgi?id=594628
-			doc.InnerXml = "<p><trGroup><tr>This is useful? &#x2;&#x5;&#x3;&#xA;&#xD;&#xE;&#xFFFE;</tr></trGroup></p>";
-#else
 			doc.InnerXml = "<p><trGroup><tr>This is useful? &#x2;&#x5;&#x3;&#xA;&#xD;&#xE;&#xFFFF;&#xFFFE;</tr></trGroup></p>";
-#endif
 			XmlNode paraNode = doc.SelectSingleNode("p");
 			ReflectionHelper.CallMethod(m_importer, "ProcessParagraphNode", paraNode, sect);
 
