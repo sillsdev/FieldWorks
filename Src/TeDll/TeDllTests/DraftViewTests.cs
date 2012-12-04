@@ -2522,7 +2522,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: Hangs/infinite loops in VwTextBoxes.cpp in state kzpbsAddWsRun while setting ViewConstructorWS from this method.")]
 		public void TextDirectionTest_RightToLeft()
 		{
 

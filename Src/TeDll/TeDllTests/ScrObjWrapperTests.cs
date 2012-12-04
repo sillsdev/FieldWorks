@@ -76,7 +76,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Category("LongRunning")]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void LoadP6ProjectForAnnotationOnlyImportWithOnlyScriptureProjectSet()
 		{
 			using (ScrObjWrapper wrapper = new ScrObjWrapper())
@@ -106,7 +105,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Category("LongRunning")]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void LoadP6ProjectForAnnotationOnlyImportWithOnlyBTProjectSet()
 		{
 			using (ScrObjWrapper wrapper = new ScrObjWrapper())

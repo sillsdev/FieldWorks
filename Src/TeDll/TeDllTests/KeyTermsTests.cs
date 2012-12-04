@@ -111,6 +111,7 @@ namespace SIL.FieldWorks.TE
 		private DummyDraftView m_draftView;
 		private DummyKeyTermsViewWrapper m_ktVwWrapper;
 		private IScrBook m_book;
+		private System.Reflection.MethodInfo m_miAfterSelect;
 
 		#region Setup and Teardown
 		/// ------------------------------------------------------------------------------------
@@ -204,9 +205,12 @@ namespace SIL.FieldWorks.TE
 			((DummyDraftView)m_ktVwWrapper.DraftView).MakeRoot();
 			//m_keyTermsViewWrapper.RenderingsView.MakeRoot();
 #if __MonoCS__
-			// calling Form.Show is unreliable, without a main Application loop, on with mono Winforms
-			// https://bugzilla.novell.com/show_bug.cgi?id=495562
+			// For Mono WinForms, calling Form.Show is unreliable without a main Application loop.
+			// This will not change.  See https://bugzilla.novell.com/show_bug.cgi?id=495562
 			m_draftForm.CreateControl();
+			m_miAfterSelect = m_ktVwWrapper.GetType().GetMethod("ktTree_AfterSelect",
+				System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance,
+				null, new Type[] {typeof(object), typeof(TreeViewEventArgs)}, null);
 #else
 			m_draftForm.Show();
 #endif
@@ -308,6 +312,12 @@ namespace SIL.FieldWorks.TE
 		void CheckRenderingsCount(int expectedCount, TreeNode nodeToSelect)
 		{
 			m_ktVwWrapper.KeyTermsTree.SelectedNode = nodeToSelect;
+#if __MonoCS__
+			// If the tree is not visible, then the automatic AfterSelect event handling
+			// does not occur.  So simulate it so that the test can pass.
+			if (!m_ktVwWrapper.KeyTermsTree.Visible && m_miAfterSelect != null)
+				m_miAfterSelect.Invoke(m_ktVwWrapper, new object[]{this, new TreeViewEventArgs(nodeToSelect)});
+#endif
 			KeyTermRenderingsControl renderingsControl = m_ktVwWrapper.RenderingsControl;
 			Assert.AreEqual(expectedCount, renderingsControl.ReferenceCount);
 		}
@@ -316,7 +326,7 @@ namespace SIL.FieldWorks.TE
 		/// TE-4500. Filter the terms list in the Key Terms view.
 		/// </summary>
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: failing on linux")]
+		//[Platform(Exclude = "Linux", Reason = "TODO-Linux: failing on linux")]	// verified December 3, 2012
 		public void ApplyBookFilterToKeyTermsTree()
 		{
 			// Add mark and key terms/occurrences to matthew setup.

@@ -413,7 +413,6 @@ namespace SIL.FieldWorks.TE.DraftViews
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: failing on linux")]
 		public void InsertSection_BetweenHeadingParas()
 		{
 			int nSectionsExpected = m_exodus.SectionsOS.Count;
