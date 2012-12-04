@@ -288,10 +288,14 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw" DependsOnTargets="CleanAll;Initialize;setRegistryValues;IcuData;CopyDlls;mkall"/>
+	<Target Name="remakefw" DependsOnTargets="CleanAll;Initialize;setRegistryValues;IcuData;CopyDlls;mkall">
+		<Error Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
+	</Target>
 
-	<Target Name="remakefw-hudson" DependsOnTargets="remakefw-jenkins"/>
-	<Target Name="remakefw-jenkins" DependsOnTargets="checkTLBsUpToDate;remakefw"/>
+	<Target Name="remakefw-jenkins" DependsOnTargets="checkTLBsUpToDate">
+		<!-- Jenkins looks at the test output files to see if tests failed -->
+		<CallTarget Targets="remakefw" ContinueOnError="true"/>
+	</Target>
 
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 
@@ -301,6 +305,7 @@
 		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
 		<!-- remove other directories and files created during the build process -->
 		<ForceDelete Files="@(IcuDataFiles)"/>
+		<ForceDelete Files="$(fwrt)/Bin/FieldWorks.targets"/>
 
 		<Message Text="Finished deleting the output directories!"/>
 	</Target>

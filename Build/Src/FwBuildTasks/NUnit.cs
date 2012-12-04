@@ -236,7 +236,7 @@ namespace FwBuildTasks
 		{
 			get
 			{
-				StringBuilder bldr = new StringBuilder();
+				var bldr = new StringBuilder();
 				foreach (var item in Assemblies)
 				{
 					if (bldr.Length > 0)
@@ -292,6 +292,16 @@ namespace FwBuildTasks
 					writer.WriteLine("</test-results>");
 				}
 			}
+		}
+
+		protected override void ReportFailedSuite()
+		{
+			var suites = new ITaskItem[Assemblies.Length];
+			for (int i = 0; i < Assemblies.Length; i++)
+			{
+				suites[i] = new TaskItem(Path.GetFileNameWithoutExtension(Assemblies[i].ItemSpec));
+			}
+			FailedSuites = suites;
 		}
 	}
 }

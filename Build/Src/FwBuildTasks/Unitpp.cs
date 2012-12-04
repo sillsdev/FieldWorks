@@ -275,5 +275,11 @@ namespace FwBuildTasks
 			results.AppendChild(testCase);
 			return testCase;
 		}
+
+		protected override void ReportFailedSuite()
+		{
+			FailedSuites = new ITaskItem[]
+				{ new TaskItem(Path.GetFileNameWithoutExtension(FixturePath)) };
+		}
 	}
 }

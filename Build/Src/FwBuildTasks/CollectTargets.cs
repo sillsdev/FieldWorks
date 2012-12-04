@@ -247,23 +247,28 @@ namespace FwBuildTasks
 						projectSubDir = projectSubDir.Substring(1);
 					if (Path.DirectorySeparatorChar != '/')
 						projectSubDir = projectSubDir.Replace('/', Path.DirectorySeparatorChar);
-					writer.WriteLine("\t\t         Targets=\"$(msbuild-target)\"");
-					writer.WriteLine("\t\t         Properties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0}\"",
+					writer.WriteLine("\t\t\tTargets=\"$(msbuild-target)\"");
+					writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0}\"",
 						Path.DirectorySeparatorChar, projectSubDir);
-					writer.WriteLine("\t\t         ToolsVersion=\"4.0\"/>");
+					writer.WriteLine("\t\t\tToolsVersion=\"4.0\"/>");
 					if (project.EndsWith("Tests") ||
 						project == "TestManager" ||
 						project == "ProjectUnpacker")
 					{
 						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
-						writer.WriteLine("\t\t       Assemblies=\"$(dir-outputBase)/{0}.dll\"", project);
-						writer.WriteLine("\t\t       ToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
-						writer.WriteLine("\t\t       WorkingDirectory=\"$(dir-outputBase)\"");
-						writer.WriteLine("\t\t       OutputXmlFile=\"$(dir-outputBase)/{0}.dll-nunit-output.xml\"", project);
-						writer.WriteLine("\t\t       Force32Bit=\"$(useNUnit-x86)\"");
-						writer.WriteLine("\t\t       ExcludeCategory=\"$(excludedCategories)\"");
-						writer.WriteLine("\t\t       Timeout=\"{0}\"", TimeoutForProject(project));
-						writer.WriteLine("\t\t       ContinueOnError=\"true\" />");
+						writer.WriteLine("\t\t\tAssemblies=\"$(dir-outputBase)/{0}.dll\"", project);
+						writer.WriteLine("\t\t\tToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
+						writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
+						writer.WriteLine("\t\t\tOutputXmlFile=\"$(dir-outputBase)/{0}.dll-nunit-output.xml\"", project);
+						writer.WriteLine("\t\t\tForce32Bit=\"$(useNUnit-x86)\"");
+						writer.WriteLine("\t\t\tExcludeCategory=\"$(excludedCategories)\"");
+						writer.WriteLine("\t\t\tTimeout=\"{0}\">", TimeoutForProject(project));
+						// Don't continue on error. NUnit returns 0 even if there are failed tests.
+						// A non-zero return code means a configuration error or that NUnit crashed
+						// - we shouldn't ignore those.
+						//writer.WriteLine("\t\t\tContinueOnError=\"true\" />");
+						writer.WriteLine("\t\t\t<Output TaskParameter=\"FailedSuites\" ItemName=\"FailedSuites\"/>");
+						writer.WriteLine("\t\t</NUnit>");
 						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\" Condition=\"'$(action)'!='test'\"/>", project);
 						writer.WriteLine("\t\t<Message Text=\"Finished building {0} and running tests.\" Condition=\"'$(action)'=='test'\"/>", project);
 					}

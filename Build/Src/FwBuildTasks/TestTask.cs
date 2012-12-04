@@ -27,15 +27,17 @@ namespace FwBuildTasks
 		/// </summary>
 		private static readonly object LockObject = new object();
 
-		public TestTask()
-		{
-		}
-
 		/// <summary>
 		/// Gets or sets the maximum amount of time the test is allowed to execute,
 		/// expressed in milliseconds.  The default is essentially no time-out.
 		/// </summary>
 		public int Timeout { get; set; }
+
+		/// <summary>
+		/// Contains the names of failed test suites
+		/// </summary>
+		[Output]
+		public ITaskItem[] FailedSuites { get; protected set; }
 
 		public override bool Execute()
 		{
@@ -97,13 +99,17 @@ namespace FwBuildTasks
 
 				if (fTimedOut)
 				{
-					Log.LogError("The tests in {0} did not finish in {1} milliseconds.", TestProgramName(), Timeout);
-					return false;
+					Log.LogWarning("The tests in {0} did not finish in {1} milliseconds.",
+						TestProgramName(), Timeout);
+					ReportFailedSuite();
+					return true;
 				}
 				if (process.ExitCode != 0)
 				{
-					Log.LogError("{0} returned with exit code {1}", TestProgramName(), process.ExitCode);
-					return false;
+					Log.LogWarning("{0} returned with exit code {1}", TestProgramName(),
+						process.ExitCode);
+					ReportFailedSuite();
+					return true;
 				}
 			}
 			catch (Exception e)
@@ -174,6 +180,8 @@ namespace FwBuildTasks
 		protected abstract string GetWorkingDirectory();
 
 		protected abstract string TestProgramName();
+
+		protected abstract void ReportFailedSuite();
 
 		/// <summary>
 		/// Reads from the standard output stream until the external program is ended.
