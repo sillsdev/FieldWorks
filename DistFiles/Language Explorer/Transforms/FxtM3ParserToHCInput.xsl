@@ -137,7 +137,7 @@
 				<xsl:variable name="inflClasses" select="$POSs/PartOfSpeech/InflectionClasses//MoInflClass"/>
 				<xsl:variable name="prodRestricts" select="$root/ProdRestrict/CmPossibility"/>
 				<xsl:variable name="lexEntryInflTypes" select="$root/LexEntryInflTypes/LexEntryInflType"/>
-				<xsl:if test="count($inflClasses) != 0 or count($prodRestricts) != 0">
+				<xsl:if test="count($inflClasses) != 0 or count($prodRestricts) != 0 or count($lexEntryInflTypes) != 0">
 					<MorphologicalPhonologicalRuleFeatures>
 						<xsl:apply-templates select="$inflClasses"/>
 						<xsl:apply-templates select="$prodRestricts"/>
