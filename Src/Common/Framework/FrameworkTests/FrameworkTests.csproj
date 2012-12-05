@@ -180,6 +180,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="..\..\..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
+    </Compile>
     <Compile Include="DummyFwApp.cs">
     </Compile>
     <Compile Include="FwAppTests.cs">

@@ -1,52 +1,56 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2010' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2012' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright>
 #endregion
-//
-// File: FwCOMTestBase.cs
-// Responsibility: mcconnel
-//
-// <remarks>
-// </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
-using System.Diagnostics;
 using NUnit.Framework;
-using SIL.Utils;
 
-namespace SIL.FieldWorks.Common.COMInterfaces
+namespace SIL.Utils.Attributes
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Test base class that automatically registers/unregisters the COM DLLs.
+	/// NUnit helper attribute that registers the unmanaged COM DLLs of FieldWorks before we
+	/// start running tests and optionally unregisters them afterwards.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class FwCOMTestBase
+	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class |
+		AttributeTargets.Interface)]
+	public class RegisterComDllsAttribute: Attribute, ITestAction
 	{
-		static int m_regs;
-		static ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
-		static string m_pathFwKernel;
-		static string m_pathLanguage;
-		static string m_pathViews;
-		static string m_pathGraphite;
+		private static readonly ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
+		private static string m_pathFwKernel;
+		private static string m_pathLanguage;
+		private static string m_pathViews;
+		private static string m_pathGraphite;
+
+		private readonly bool m_fUninstall;
+
+		public RegisterComDllsAttribute(): this(true)
+		{
+		}
+
+		public RegisterComDllsAttribute(bool uninstall)
+		{
+			m_fUninstall = uninstall;
+		}
+
+		#region ITestAction Members
 
 		/// <summary>
-		/// Constructor: register the COM DLLs if they exist, and haven't yet been
-		/// registered.
+		/// Register the COM dlls if they aren't registered yet
 		/// </summary>
-		public FwCOMTestBase()
+		public void BeforeTest(TestDetails testDetails)
 		{
 #if !__MonoCS__
 			// On Linux we use a different (file based) approach for accessing COM objects,
@@ -54,7 +58,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 			m_lock.EnterWriteLock();
 			try
 			{
-				Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+				var uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
 				string sBaseDir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
 				if (m_pathFwKernel == null)
 				{
@@ -92,7 +96,6 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 						Register(m_pathGraphite);
 					}
 				}
-				++m_regs;
 			}
 			finally
 			{
@@ -101,69 +104,60 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 #endif
 		}
 
-#if !__MonoCS__
 		/// <summary>
-		/// Destructor: unregister the COM DLLs.
+		/// Unregister the COM DLLs
 		/// </summary>
-		~FwCOMTestBase()
+		public void AfterTest(TestDetails testDetails)
 		{
-			// ENHANCE: doing this in the Finalizer is problematic since objects get finalized
-			// in random order, i.e. m_lock might already be finalized here.
-			// It would be better to add a SetupFixture class that registers/unregisters
-			// the COM dlls. However, we would have to add this class to each test assembly.
+#if !__MonoCS__
+			// On Linux we use a different (file based) approach for accessing COM objects,
+			// so we don't have to do this.
+
+			if (!m_fUninstall)
+				return;
+
 			m_lock.EnterWriteLock();
 			try
 			{
-				--m_regs;
-				Debug.Assert(m_regs >= 0);
-				if (m_regs <= 0)
+				if (m_pathFwKernel != null)
 				{
-					if (m_pathFwKernel != null)
-					{
-						Unregister(m_pathFwKernel);
-						m_pathFwKernel = null;
-					}
-					if (m_pathGraphite != null)
-					{
-						Unregister(m_pathGraphite);
-						m_pathGraphite = null;
-					}
-					if (m_pathLanguage != null)
-					{
-						Unregister(m_pathLanguage);
-						m_pathLanguage = null;
-					}
-					if (m_pathViews != null)
-					{
-						Unregister(m_pathViews);
-						m_pathViews = null;
-					}
+					Unregister(m_pathFwKernel);
+					m_pathFwKernel = null;
 				}
-				if (m_regs < 0)
-					m_regs = 0;
+				if (m_pathGraphite != null)
+				{
+					Unregister(m_pathGraphite);
+					m_pathGraphite = null;
+				}
+				if (m_pathLanguage != null)
+				{
+					Unregister(m_pathLanguage);
+					m_pathLanguage = null;
+				}
+				if (m_pathViews != null)
+				{
+					Unregister(m_pathViews);
+					m_pathViews = null;
+				}
 			}
 			finally
 			{
 				m_lock.ExitWriteLock();
 			}
-		}
 #endif
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// If a test overrides this, it should call this base implementation.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		/// <summary/>
-		[TestFixtureSetUp]
-		public virtual void FixtureSetup()
-		{
-			// Set stub for messagebox so that we don't pop up a message box when running tests.
-			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
 		}
+
+		/// <summary>
+		/// Run on the fixture
+		/// </summary>
+		public ActionTargets Targets
+		{
+			get { return ActionTargets.Suite; }
+		}
+
+		#endregion
 
 		// The following code was copied from RegFreeCreator.cs (under $FW/Bin/nant/src/FwTasks).
-
 		#region Imported methods to register dll
 		[DllImport("oleaut32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
 		private static extern ITypeLib LoadTypeLib(string szFile);

@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 {
 	/// <summary/>
 	[TestFixture]
-	public class VwGraphicsTests: FwCOMTestBase
+	public class VwGraphicsTests
 	{
 		internal class GraphicsObjectFromImage : IDisposable
 		{

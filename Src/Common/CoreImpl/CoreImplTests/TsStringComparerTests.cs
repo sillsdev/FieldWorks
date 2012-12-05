@@ -31,7 +31,7 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class TsStringComparerTests : FwCOMTestBase // we can't derive from BaseTest because of circular dependencies
+	public class TsStringComparerTests // we can't derive from BaseTest because of circular dependencies
 	{
 		private IWritingSystemManager m_wsManager;
 		private TsStringComparer m_comparer;

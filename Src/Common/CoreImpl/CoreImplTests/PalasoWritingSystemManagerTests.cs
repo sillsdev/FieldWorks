@@ -16,7 +16,7 @@ namespace SIL.CoreImpl
 	[SetCulture("en-US")]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
-	public class PalasoWritingSystemManagerTests : FwCOMTestBase // can't derive from BaseTest, but instantiate DebugProcs instead
+	public class PalasoWritingSystemManagerTests // can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		private DebugProcs m_DebugProcs;
 

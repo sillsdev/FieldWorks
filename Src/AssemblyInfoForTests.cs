@@ -16,5 +16,11 @@ using SIL.Utils.Attributes;
 	[assembly: RequiresSTA]
 #endif
 
+// Set stub for messagebox so that we don't pop up a message box when running tests.
+[assembly: SetMessageBoxAdapter]
+
 // Cleanup all singletons after running tests
 [assembly: CleanupSingletons]
+
+// Register the COM dlls before running tests and uninstall afterwards
+[assembly: RegisterComDlls]

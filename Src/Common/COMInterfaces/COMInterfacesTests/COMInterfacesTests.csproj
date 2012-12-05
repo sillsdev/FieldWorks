@@ -101,7 +101,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FwCOMTestBase.cs" />
+    <Compile Include="..\..\..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
+    </Compile>
     <Compile Include="MarshalExTests.cs" />
     <Compile Include="VwGraphicsTests.cs" />
     <None Include="App.config" />

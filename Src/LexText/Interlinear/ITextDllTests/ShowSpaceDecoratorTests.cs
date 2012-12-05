@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.IText
 	/// Test a class which decorates StTxtPara.Contents to make zero-width spaces visible.
 	/// </summary>
 	[TestFixture]
-	public class ShowSpaceDecoratorTests : FwCOMTestBase
+	public class ShowSpaceDecoratorTests
 	{
 		private string zws = AnalysisOccurrence.KstrZws;
 		private ITsStrFactory m_tsf;

@@ -29,7 +29,7 @@ namespace SIL.CoreImpl
 	[TestFixture]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
-	public class TsStringSerializerTests : FwCOMTestBase
+	public class TsStringSerializerTests
 		// can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		#region Member Variables

@@ -197,7 +197,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="SliceTests.cs" />
-    <Compile Include="VectorReferenceLauncherTests.cs" />
+    <Compile Include="VectorReferenceLauncherTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

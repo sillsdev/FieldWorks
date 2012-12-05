@@ -29,7 +29,7 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class DebugProcsTests : FwCOMTestBase
+	public class DebugProcsTests
 								// can't derive from BaseTest because of dependencies.
 	{							// If necessary we could explicitly instantiate a DebugProcs
 								// object but that might not be necessary because we're testing it.

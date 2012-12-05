@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.Test.TestUtils
 	/// Setup and TearDown, and than call the base methods.
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class BaseTest : SIL.FieldWorks.Common.COMInterfaces.FwCOMTestBase
+	public class BaseTest
 	{
 		/// <summary></summary>
 		protected DebugProcs m_debugProcs;
@@ -103,9 +103,8 @@ namespace SIL.FieldWorks.Test.TestUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[TestFixtureSetUp]
-		public override void FixtureSetup()
+		public virtual void FixtureSetup()
 		{
-			base.FixtureSetup();
 			m_debugProcs = new DebugProcs();
 			try
 			{
