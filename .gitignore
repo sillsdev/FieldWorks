@@ -1,33 +1,31 @@
 # Generated files
 GeneratedAssemblyInfo.cs
 Collection.cpp
-/Build/FieldWorks.targets
-/Src/Common/COMInterfaces/FwKernel.cs
-/Src/Common/COMInterfaces/Views.cs
-/Src/Common/CoreImpl/CellarPropertyType.cs
-/DistFiles/Data/
-/DistFiles/Icu40/data/
-/DistFiles/Icu40/icudt40l/
-/DistFiles/Icu50/
-/DistFiles/Languages/
-/DistFiles/Helps/
-/DistFiles/Language Explorer/Movies/
-/DistFiles/ReleaseData/
-/DistFiles/SIL/Repository/
-/Installer/
-/Lib/Debug
-/Lib/Release
-/Lib/src/icu/
-/Localizations/
-/Bld/GlobalInclude.build.xml
-/Bin/_setLatestBuildConfig.bat
-/Bin/_setroot.bat
-/Bld/pathinclude.*.xml
-/Lib/debug/DebugProcs.lib
-/Lib/debug/Generic.lib
-/DistFiles/Parts/Generated.fwlayout
-/Src/CommonAssemblyInfo.cs
-/Src/LangInst/InstallLanguageTests/timing.txt
+Build/FieldWorks.targets
+Src/Common/COMInterfaces/FwKernel.cs
+Src/Common/COMInterfaces/Views.cs
+Src/Common/CoreImpl/CellarPropertyType.cs
+DistFiles/Data/
+DistFiles/Icu40/data/
+DistFiles/Icu40/icudt40l/
+DistFiles/Icu50/
+DistFiles/Languages/
+DistFiles/Helps/
+DistFiles/Language Explorer/Movies/
+DistFiles/ReleaseData/
+DistFiles/SIL/Repository/
+Installer/
+Lib/src/icu/
+Localizations/
+Bld/GlobalInclude.build.xml
+Bin/_setLatestBuildConfig.bat
+Bin/_setroot.bat
+Bld/pathinclude.*.xml
+Lib/debug/DebugProcs.lib
+Lib/debug/Generic.lib
+DistFiles/Parts/Generated.fwlayout
+Src/CommonAssemblyInfo.cs
+Src/LangInst/InstallLanguageTests/timing.txt
 
 # other files
 *.user
@@ -50,10 +48,10 @@ _user.mak.lnx
 *.sdf
 *.opensdf
 
-/.dotest/
+.dotest/
 .depend
-/Lib/linux/Common/*.d
-/Lib/linux/Common/*.raw
+Lib/linux/Common/*.d
+Lib/linux/Common/*.raw
 [Oo]bj/
 Obj_i686/
 Obj_x86_64/
@@ -65,41 +63,47 @@ test-results/
 trash/
 UpgradeLog*.XML
 _UpgradeReport_Files/
-Debug/
-Release/
-/Output/
-/Output
-/Output_i686/
-/Output_x86_64/
-/Lib/src/unit++/autom4te.cache/
-/Lib/src/unit++/configure
-/Lib/src/Enchant/fieldworks-enchant-1.6.1/
-/Src/DbAccessFirebird/Test/temp.awk
-/Src/DbAccessFirebird/testDbAccess
-/Src/Kernel/libFwKernel
-/Src/views/libViews
-/Src/views/libVwGraphics
-/Bin/src/CodeGen/CodeGen
-/debian/
-/DistFiles/FwResources.dll
-/DistFiles/TeResources.dll
-/DistFiles/Parts/GeneratedLayouts.xml
-/DistFiles/Parts/GeneratedParts.xml
-/DistFiles/Projects/
-/Src/FDO/Infrastructure/Impl/Generated*.cs
-/Src/FDO/Generated*.cs
-/Src/FDO/DomainImpl/FDOGenerated.cs
-/Src/FDO/DomainImpl/Generated*.cs
+/Debug/
+/Release/
+Output/
+Output
+Output_i686/
+Output_x86_64/
+Lib/src/unit++/autom4te.cache/
+Lib/src/unit++/configure
+Lib/src/Enchant/fieldworks-enchant-1.6.1/
+Src/DbAccessFirebird/Test/temp.awk
+Src/DbAccessFirebird/testDbAccess
+Src/Kernel/libFwKernel
+Src/views/libViews
+Src/views/libVwGraphics
+Bin/src/CodeGen/CodeGen
+debian/
+DistFiles/FwResources.dll
+DistFiles/TeResources.dll
+DistFiles/Parts/GeneratedLayouts.xml
+DistFiles/Parts/GeneratedParts.xml
+DistFiles/Projects/
+Src/FDO/Infrastructure/Impl/Generated*.cs
+Src/FDO/Generated*.cs
+Src/FDO/DomainImpl/FDOGenerated.cs
+Src/FDO/DomainImpl/Generated*.cs
 Src/FDO/IOC/Generated*.cs
-/DistFiles/Db4objects.Db4o.dll
-/DistFiles/FirebirdSql.Data.FirebirdClient.dll
-/DistFiles/Editorial\ Checks/
-/DistFiles/Language\ Explorer/Configuration/Available\ Plugins/
-/Src/AppCore/libAppCore
-/Src/DebugProcs/libDebugProcs
-/Src/Generic/libGeneric
-/Src/Language/libLanguage
+DistFiles/Db4objects.Db4o.dll
+DistFiles/FirebirdSql.Data.FirebirdClient.dll
+DistFiles/Editorial\ Checks/
+DistFiles/Language\ Explorer/Configuration/Available\ Plugins/
+Src/AppCore/libAppCore
+Src/DebugProcs/libDebugProcs
+Src/Generic/libGeneric
+Src/Language/libLanguage
 
 DistFiles/ReleaseData/
 # Locally configurable project to run FieldWorks
 /RunFieldWorks.csproj
+
+# Exceptions
+!Lib/Windows/Debug
+!Lib/Windows/Release
+!Lib/linux/Debug
+!Lib/linux/Release
