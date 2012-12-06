@@ -529,7 +529,7 @@ STDAPI DLLEXPORT__ DllRegisterServer(void)
 	ModuleEntry::ModuleAddRef();
 	HRESULT hr = ModuleEntry::ModuleRegisterServer();
 #ifdef _MERGE_PROXYSTUB
-	if (SUCCEEDED(hr))
+	if (SUCCEEDED(hr) && !ModuleEntry::PerUserRegistration())
 		hr = PrxDllRegisterServer();
 #endif
 	ModuleEntry::ModuleRelease();
@@ -545,10 +545,13 @@ STDAPI DLLEXPORT__ DllUnregisterServer(void)
 	ModuleEntry::ModuleAddRef();
 	HRESULT hr = ModuleEntry::ModuleUnregisterServer();
 #ifdef _MERGE_PROXYSTUB
-	if (SUCCEEDED(hr))
-		hr = PrxDllRegisterServer();
-	if (SUCCEEDED(hr))
-		hr = PrxDllUnregisterServer();
+	if (!ModuleEntry::PerUserRegistration())
+	{
+		if (SUCCEEDED(hr))
+			hr = PrxDllRegisterServer();
+		if (SUCCEEDED(hr))
+			hr = PrxDllUnregisterServer();
+	}
 #endif
 	ModuleEntry::ModuleRelease();
 	return hr;
