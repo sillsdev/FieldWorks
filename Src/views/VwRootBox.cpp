@@ -4207,7 +4207,15 @@ enchant::Dict * VwRootBox::GetDictionary(const OLECHAR * pszId)
 		else
 			return NULL;
 	}
-	pdicResult = enchant::Broker::instance()->request_dict(wsId);
+	try
+	{
+		pdicResult = enchant::Broker::instance()->request_dict(wsId);
+	}
+	catch(...)
+	{
+		// If enchant throws a fit, then there's no dictionary!
+		return NULL;
+	}
 	if (!pdicResult)
 		return NULL;
 	std::string langName = pdicResult->get_lang ();

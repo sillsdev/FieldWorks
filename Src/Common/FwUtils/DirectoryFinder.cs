@@ -984,7 +984,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			if (String.IsNullOrEmpty(fullfilePath))
 				return null;
-			return fullfilePath;
+			return FixPathSlashesIfNeeded(fullfilePath);
 		}
 
 		/// <summary>
@@ -997,11 +997,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static String GetFullPathFromRelativeLFPath(string relativeLFPath, string linkedFilesRootDir)
 		{
 			if (Path.IsPathRooted(relativeLFPath))
-				return relativeLFPath;
+				return FixPathSlashesIfNeeded(relativeLFPath);
 			else
-				return Path.Combine(linkedFilesRootDir, relativeLFPath);
+				return FixPathSlashesIfNeeded(Path.Combine(linkedFilesRootDir, relativeLFPath));
 		}
 
+		/// <summary>
+		/// If a path gets stored with embedded \, fix it to work away from Windows.  (FWNX-882)
+		/// </summary>
+		internal static string FixPathSlashesIfNeeded(string path)
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+			{
+				if (path.Contains("\\"))
+					return path.Replace('\\', '/');
+			}
+			return path;
+		}
 
 		/// <summary>
 		/// If the path is relative to the project's linkedFiles path then substitute %lf%
@@ -1021,10 +1033,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var relativePath = GetRelativePathIfExists(ksLFrelPath, linkedFilesPathLowercaseRoot,
 				projectLinkedFilesPath);
 			if (!string.IsNullOrEmpty(relativePath))
-				return relativePath;
-
-
-			//Just return the complete path if we cannot find a relative path.
+				return FixPathSlashesIfNeeded(relativePath);
+			//Just return an empty path if we cannot find a relative path.
 			return string.Empty;
 		}
 
@@ -1060,7 +1070,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (relativePath[0] == Path.DirectorySeparatorChar)
 					relativePath = relativePath.Substring(1);
 			}
-			return relativePath;
+			return FixPathSlashesIfNeeded(relativePath);
 		}
 
 
@@ -1087,8 +1097,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				fullPath = GetFullPathForRelativePath(relativePath, ksMyDocsRelPath,
 					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 			if (String.IsNullOrEmpty(fullPath))
-				return relativePath;
-			return fullPath;
+				return FixPathSlashesIfNeeded(relativePath);
+			return FixPathSlashesIfNeeded(fullPath);
 		}
 
 		private static String GetFullPathForRelativePath(String relativePath, String relativePart, String fullPathReplacement)
@@ -1122,7 +1132,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var relativePath = GetRelativePathIfExists(ksProjectRelPath, linkedFilesPathLowercaseRoot,
 				projectPath);
 			if (!string.IsNullOrEmpty(relativePath))
-				return relativePath;
+				return FixPathSlashesIfNeeded(relativePath);
 			// GetRelativePathIfExists may miss a case where, say, projectPath is
 			// \\ls-thomson-0910.dallas.sil.org\Projects\MyProj, and linkedFilesFullPath is
 			// C:\Documents and settings\All Users\SIL\FieldWorks\Projects\MyProj\LinkedFiles
@@ -1142,7 +1152,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					// They ARE the same directory! (I suppose we could miss if someone wrote to it at the
 					// exact wrong moment, but we shouldn't be changing this setting while shared, anyway.)
-					return ksProjectRelPath + linkedFilesFullPath.Substring(index + match.Length);
+					return FixPathSlashesIfNeeded(ksProjectRelPath + linkedFilesFullPath.Substring(index + match.Length));
 				}
 			}
 
@@ -1154,23 +1164,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			relativePath = GetRelativePathIfExists(ksProjectsRelPath, linkedFilesPathLowercaseRoot,
 				DirectoryFinder.ProjectsDirectory);
 			if (!String.IsNullOrEmpty(relativePath))
-				return relativePath;
+				return FixPathSlashesIfNeeded(relativePath);
 
 			// Case where the user has the LinkedFiles folder in a shared folder.
 			relativePath = GetRelativePathIfExists(ksCommonAppDataRelPath,
 				linkedFilesPathLowercaseRoot, DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 			if (!string.IsNullOrEmpty(relativePath))
-				return relativePath;
+				return FixPathSlashesIfNeeded(relativePath);
 
 			// Case where the user has the LinkedFiles folder in their MyDocuments folder
 			relativePath = GetRelativePathIfExists(ksMyDocsRelPath,
 				linkedFilesPathLowercaseRoot,
 				DirectoryFinder.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 			if (!string.IsNullOrEmpty(relativePath))
-				return relativePath;
+				return FixPathSlashesIfNeeded(relativePath);
 
 			//Just return the complete path if we cannot find a relative path.
-			return linkedFilesFullPath;
+			return FixPathSlashesIfNeeded(linkedFilesFullPath);
 		}
 
 		private static string GetRelativePathIfExists(string relativePart, string fullPath,
