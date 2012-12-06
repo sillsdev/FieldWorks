@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			foreach(ListViewItem selectedDomain in selectedDomainsList.Items)
 			{
 				var hvo = (int)selectedDomain.Tag;
-				if(selectedDomain.Checked && hvo > 0)
+				if (selectedDomain.Checked && hvo > 0)
 				{
 					m_selectedItems.Add(m_semdomRepo.GetObject(hvo));
 				}
@@ -152,7 +152,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void OnDomainListChecked(object sender, ItemCheckedEventArgs e)
 		{
-			SemanticDomainSelectionUtility.AdjustSelectedDomainList(e.Item.Tag as ICmObject, e.Item.Checked, selectedDomainsList);
+			var domain = m_semdomRepo.GetObject((int)e.Item.Tag);
+			SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, e.Item.Checked, selectedDomainsList);
 		}
 
 		private void OnDomainTreeCheck(object sender, TreeViewEventArgs e)
@@ -222,13 +223,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Creates a ListViewItem for the given ICmObject
 		/// </summary>
-		/// <param name="label">A Semantic Domain</param>
+		/// <param name="semDom">A Semantic Domain</param>
 		/// <param name="createChecked"></param>
 		/// <param name="displayUsage"></param>
 		/// <returns></returns>
-		public static ListViewItem CreateLabelListItem(ICmObject label, bool createChecked, bool displayUsage)
+		public static ListViewItem CreateLabelListItem(ICmObject semDom, bool createChecked, bool displayUsage)
 		{
-			var semanticDomainItem = label as ICmSemanticDomain;
+			var semanticDomainItem = semDom as ICmSemanticDomain;
 			if (semanticDomainItem == null)
 			{
 				return new ListViewItem(DetailControlsStrings.ksSemanticDomainInvalid);
@@ -237,7 +238,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (semanticDomainItem.OwningPossibility != null)
 			{
 				var parentName = semanticDomainItem.OwningPossibility.Name.BestAnalysisAlternative.Text;
-				strbldr.AppendFormat(" ({0})", parentName);
+				strbldr.AppendFormat(" [{0}]", parentName);
 			}
 			if (displayUsage)
 			{
@@ -274,7 +275,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			ListViewItem checkedItem = null;
 			foreach (ListViewItem item in selectedDomainsList.Items)
 			{
-				if (item.Tag == domain)
+				if ((int)item.Tag == domain.Hvo)
 				{
 					checkedItem = item;
 					item.Checked = check;

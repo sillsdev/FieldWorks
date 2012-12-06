@@ -139,7 +139,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void OnDomainListChecked(object sender, ItemCheckedEventArgs e)
 		{
-			SemanticDomainSelectionUtility.AdjustSelectedDomainList(e.Item.Tag as ICmObject, e.Item.Checked, m_listView);
+			var domain = m_semDomRepo.GetObject((int) e.Item.Tag);
+			SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, e.Item.Checked, m_listView);
 		}
 
 		private void m_textSearch_GotFocus(object sender, EventArgs e)
