@@ -106,15 +106,17 @@ namespace SIL.FieldWorks.Build.Tasks
 				}
 
 				// Register all DLLs temporarily
-				using (var creator = new RegFreeCreator(doc, Log))
+				using (var regHelper = new RegHelper(Log))
 				{
+					regHelper.RedirectRegistry();
+					var creator = new RegFreeCreator(doc, Log);
 					var dllPaths = IdlImp.GetFilesFrom(Dlls);
 					foreach (string fileName in dllPaths)
 					{
 						Log.LogMessage(MessageImportance.Low, "\tRegistering library {0}", Path.GetFileName(fileName));
 						try
 						{
-							creator.Register(fileName);
+							regHelper.Register(fileName);
 						}
 						catch(Exception e)
 						{
@@ -160,7 +162,7 @@ namespace SIL.FieldWorks.Build.Tasks
 					foreach (string fileName in dllPaths)
 					{
 						Log.LogMessage(MessageImportance.Low, "\tUnregistering library {0}", Path.GetFileName(fileName));
-						creator.Unregister(fileName);
+						regHelper.Unregister(fileName);
 					}
 				}
 			}

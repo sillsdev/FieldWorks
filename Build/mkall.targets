@@ -2,6 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
 	<UsingTask TaskName="Unitpp" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp">
@@ -79,30 +80,34 @@
 
 	<Target Name="GrEngine" DependsOnTargets="GenericLib;FwKernel">
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\Graphite\GrEngine\GrEngine.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Src\Graphite\GrEngine"/>
+			Makefile="$(fwrt)\Src\Graphite\GrEngine\GrEngine.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)\Src\Graphite\GrEngine"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/Graphite/GrEngine/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
+			Makefile="$(fwrt)/Src/Graphite/GrEngine/Makefile"
+			Configuration="$(config-capital)" Target="$(make-target)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
+		<RegisterForTests Condition="'$(OS)'=='Windows_NT'"
+			Dll="$(dir-outputBase)\Graphite.dll"/>
 		<Message Text="Finished building GrEngine."/>
 	</Target>
 
 	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps">
 		<Message Text="FwKernel make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Src\Kernel"/>
+			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)\Src\Kernel"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/Kernel/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/Kernel"/>
+			Makefile="$(fwrt)/Src/Kernel/Makefile"
+			Configuration="$(config-capital)" Target="$(make-target)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Src/Kernel"/>
+		<RegisterForTests Condition="'$(OS)'=='Windows_NT'"
+			Dll="$(dir-outputBase)\FwKernel.dll"/>
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
@@ -146,15 +151,17 @@
 
 	<Target Name="Language" DependsOnTargets="GenericLib;FwKernel;ManagedLgIcuCollator;GenerateCellarConstants">
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\Language\Language.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Src\Language"/>
+			Makefile="$(fwrt)\Src\Language\Language.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)\Src\Language"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/Language/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/Language"/>
+			Makefile="$(fwrt)/Src/Language/Makefile"
+			Configuration="$(config-capital)" Target="$(make-target)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Src/Language"/>
+		<RegisterForTests Condition="'$(OS)'=='Windows_NT'"
+			Dll="$(dir-outputBase)\Language.dll"/>
 		<Message Text="Finished building Language."/>
 	</Target>
 
@@ -188,15 +195,17 @@
 
 	<Target Name="Views" DependsOnTargets="GenericLib;Language;KeyboardSwitcher;GenerateCellarConstants">
 		<Make Condition="'$(OS)'=='Windows_NT'"
-			  Makefile="$(fwrt)\Src\views\Views.mak"
-			  Configuration="$(config-capital)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)\Src\views"/>
+			Makefile="$(fwrt)\Src\views\Views.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)\Src\views"/>
 		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			  Makefile="$(fwrt)/Src/views/Makefile"
-			  Configuration="$(config-capital)" Target="$(make-target)"
-			  BuildRoot="$(fwrt)"
-			  WorkingDirectory="$(fwrt)/Src/views"/>
+			Makefile="$(fwrt)/Src/views/Makefile"
+			Configuration="$(config-capital)" Target="$(make-target)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Src/views"/>
+		<RegisterForTests Condition="'$(OS)'=='Windows_NT'"
+			Dll="$(dir-outputBase)\Views.dll"/>
 		<Message Text="Finished building Views."/>
 	</Target>
 

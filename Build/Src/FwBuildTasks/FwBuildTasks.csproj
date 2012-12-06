@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{60C33D1A-AE12-4A67-BDFA-D2B3ED8C5FB7}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>FwBuildTasks</RootNamespace>
+    <RootNamespace>SIL.FieldWorks.Build.Tasks</RootNamespace>
     <AssemblyName>FwBuildTasks</AssemblyName>
     <CodePage>65001</CodePage>
     <FileUpgradeFlags>
@@ -102,6 +102,8 @@
     <Compile Include="POString.cs" />
     <Compile Include="RegFree.cs" />
     <Compile Include="RegFreeCreator.cs" />
+    <Compile Include="RegHelper.cs" />
+    <Compile Include="RegisterForTestsTask.cs" />
     <Compile Include="Substitute.cs" />
     <Compile Include="UnzipTask.cs" />
     <Compile Include="NUnit.cs" />

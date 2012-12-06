@@ -21,6 +21,3 @@ using SIL.Utils.Attributes;
 
 // Cleanup all singletons after running tests
 [assembly: CleanupSingletons]
-
-// Register the COM dlls before running tests and uninstall afterwards
-[assembly: RegisterComDlls]

@@ -38,34 +38,20 @@ namespace SIL.FieldWorks.Build.Tasks
 	/// Creates the necessary entries that allows later to use an assembly without registering
 	/// it.
 	/// </summary>
-	/// <remarks>At the time this class gets called, the assembly needs to be registered!
-	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class RegFreeCreator: IDisposable
+	public class RegFreeCreator
 	{
 		#region Member variables
-		[DllImport("oleaut32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
-		private static extern ITypeLib LoadTypeLib(string szFile);
-
-		[DllImport("oleaut32.dll")]
-		private static extern int RegisterTypeLib(ITypeLib typeLib, string fullPath, string helpDir);
-
-		[DllImport("kernel32.dll")]
-		private static extern int GetLongPathName(string shortPath, StringBuilder longPath,
-			int longPathLength);
-
-		private bool _redirectRegistryFailed;
 		/// <summary>The directory where the type library resides</summary>
 		private string _baseDirectory;
 		private string _fileName;
 		private readonly XmlDocument _doc;
-		private TaskLoggingHelper _log;
+		public TaskLoggingHelper _log;
 		private readonly Dictionary<string, XmlElement> _files = new Dictionary<string, XmlElement>();
 		private readonly Dictionary<string, XmlElement> _coClasses = new Dictionary<string, XmlElement>();
 		private readonly Dictionary<string, XmlElement> _interfaceProxies = new Dictionary<string, XmlElement>();
 		private readonly Dictionary<Guid, string> _tlbGuids = new Dictionary<Guid, string>();
 		private readonly List<string> _nonExistingServers = new List<string>();
-		private bool _isDisposed;
 
 		private const string UrnSchema = "http://www.w3.org/2001/XMLSchema-instance";
 		private const string UrnAsmv1 = "urn:schemas-microsoft-com:asm.v1";
@@ -83,7 +69,6 @@ namespace SIL.FieldWorks.Build.Tasks
 		public RegFreeCreator(XmlDocument doc)
 		{
 			_doc = doc;
-			RedirectRegistry();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -98,57 +83,6 @@ namespace SIL.FieldWorks.Build.Tasks
 		{
 			this._log = Log;
 		}
-
-		#region IDisposable Members
-
-#if DEBUG
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="RegFreeCreator"/> is reclaimed by garbage collection.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		~RegFreeCreator()
-		{
-			Debug.Fail("Finalizer called - there is a call to Dispose() missing!");
-		}
-#endif
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting
-		/// unmanaged resources.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Releases unmanaged and - optionally - managed resources
-		/// </summary>
-		/// <param name="fDisposing"><c>true</c> to release both managed and unmanaged
-		/// resources; <c>false</c> to release only unmanaged resources.</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual void Dispose(bool fDisposing)
-		{
-			if (!_isDisposed)
-			{
-				if (!_redirectRegistryFailed)
-				{
-					EndRedirection();
-					_log.LogMessage(MessageImportance.Low, TmpRegistryKey);
-					Registry.CurrentUser.DeleteSubKeyTree(TmpRegistryKey);
-				}
-			}
-
-			_isDisposed = true;
-		}
-
-		#endregion
 
 		#endregion
 
@@ -227,7 +161,7 @@ namespace SIL.FieldWorks.Build.Tasks
 			try
 			{
 				XmlNode oldChild;
-				ITypeLib typeLib = LoadTypeLib(_fileName);
+				ITypeLib typeLib = Tasks.RegHelper.LoadTypeLib(_fileName);
 				IntPtr pLibAttr;
 				typeLib.GetLibAttr(out pLibAttr);
 				var libAttr = (TYPELIBATTR)
@@ -321,7 +255,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void ProcessClasses(XmlElement parent)
 		{
-			using (var regKeyClsid = Registry.CurrentUser.OpenSubKey(TmpRegistryKey + @"\CLSID"))
+			using (var regKeyClsid = Registry.CurrentUser.OpenSubKey(Tasks.RegHelper.TmpRegistryKey + @"\CLSID"))
 			{
 				if (regKeyClsid == null)
 				{
@@ -364,7 +298,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void ProcessInterfaces(XmlElement root)
 		{
-			using (var regKeyBase = Registry.CurrentUser.OpenSubKey(TmpRegistryKey))
+			using (var regKeyBase = Registry.CurrentUser.OpenSubKey(Tasks.RegHelper.TmpRegistryKey))
 			using (var regKeyInterfaces = regKeyBase.OpenSubKey("Interface"))
 			{
 				if (regKeyInterfaces == null)
@@ -572,7 +506,7 @@ namespace SIL.FieldWorks.Build.Tasks
 
 					// Try to get the file element for the server
 					var bldr = new StringBuilder(255);
-					GetLongPathName((string)inprocServer.GetValue(null), bldr, 255);
+					Tasks.RegHelper.GetLongPathName((string)inprocServer.GetValue(null), bldr, 255);
 					string serverFullPath = bldr.ToString();
 					string server = Path.GetFileName(serverFullPath);
 					if (!File.Exists(serverFullPath) &&
@@ -673,205 +607,6 @@ namespace SIL.FieldWorks.Build.Tasks
 			}
 			_files.Add(fileName, file);
 			return file;
-		}
-
-		#region Registry redirection
-// ReSharper disable InconsistentNaming
-		private static readonly UIntPtr HKEY_CLASSES_ROOT = new UIntPtr(0x80000000);
-		private static readonly UIntPtr HKEY_CURRENT_USER = new UIntPtr(0x80000001);
-		//private static readonly UIntPtr HKEY_LOCAL_MACHINE = new UIntPtr(0x80000002);
-// ReSharper restore InconsistentNaming
-
-		[DllImport("Advapi32.dll")]
-		private extern static int RegOverridePredefKey(UIntPtr hKey, UIntPtr hNewKey);
-
-		[DllImport("Advapi32.dll")]
-		private extern static int RegCreateKey(UIntPtr hKey, string lpSubKey, out UIntPtr phkResult);
-
-		[DllImport("Advapi32.dll")]
-		private extern static int RegCloseKey(UIntPtr hKey);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the a temporary registry key to register dlls. This registry key is process
-		/// specific, so multiple instances can run at the same time without interfering with
-		/// each other.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private static string TmpRegistryKey
-		{
-			get
-			{
-				return string.Format(@"Software\SIL\NAntBuild\tmp-{0}",
-					Process.GetCurrentProcess().Id);
-			}
-		}
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Temporarily redirects access to HKCR to a subkey under HKCU.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void RedirectRegistry()
-		{
-			try
-			{
-				UIntPtr hKey;
-				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKey, out hKey);
-				RegOverridePredefKey(HKEY_CLASSES_ROOT, hKey);
-				RegCloseKey(hKey);
-
-				// We also have to create a CLSID subkey - some DLLs expect that it exists
-				Registry.CurrentUser.CreateSubKey(TmpRegistryKey + @"\CLSID");
-			}
-			catch
-			{
-				_log.LogError("registry redirection failed.");
-				_redirectRegistryFailed = true;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Ends the redirection.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private static void EndRedirection()
-		{
-			SetDllDirectory(null);
-			RegOverridePredefKey(HKEY_CLASSES_ROOT, UIntPtr.Zero);
-		}
-		#endregion
-
-		#region Imported methods to register dll
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The LoadLibrary function maps the specified executable module into the address
-		/// space of the calling process.
-		/// </summary>
-		/// <param name="fileName">The name of the executable module (either a .dll or .exe
-		/// file).</param>
-		/// <returns>If the function succeeds, the return value is a handle to the module. If
-		/// the function fails, the return value is IntPtr.Zero.</returns>
-		/// ------------------------------------------------------------------------------------
-		[DllImport("Kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-		private static extern IntPtr LoadLibrary(string fileName);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The FreeLibrary function decrements the reference count of the loaded dynamic-link
-		/// library (DLL). When the reference count reaches zero, the module is unmapped from
-		/// the address space of the calling process and the handle is no longer valid.
-		/// </summary>
-		/// <param name="hModule">The handle to the loaded DLL module.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		private static extern int FreeLibrary(IntPtr hModule);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The GetProcAddress function retrieves the address of an exported function or
-		/// variable from the specified dynamic-link library (DLL).
-		/// </summary>
-		/// <param name="hModule">A handle to the DLL module that contains the function or
-		/// variable.</param>
-		/// <param name="lpProcName">The function or variable name, or the function's ordinal
-		/// value.</param>
-		/// <returns>If the function succeeds, the return value is the address of the exported
-		/// function or variable. If the function fails, the return value is IntPtr.Zero.</returns>
-		/// ------------------------------------------------------------------------------------
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		private static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds a directory to the search path used to locate DLLs for the application.
-		/// </summary>
-		/// <param name="pathName">The directory to be added to the search path. If this
-		/// parameter is an empty string (""), the call removes the current directory from the
-		/// default DLL search order. If this parameter is <c>null</c>, the function restores
-		/// the default search order.</param>
-		/// <returns>If the function succeeds, the return value is nonzero. If the function
-		/// fails, the return value is zero. To get extended error information, call
-		/// GetLastError.</returns>
-		/// ------------------------------------------------------------------------------------
-		[DllImport("Kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-		private static extern bool SetDllDirectory(string pathName);
-
-		// The delegate for DllRegisterServer.
-		[return: MarshalAs(UnmanagedType.Error)]
-		private delegate int DllRegisterServerFunction();
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Dynamically invokes a method in a dll.
-		/// </summary>
-		/// <param name="fileName">Name of the file.</param>
-		/// <param name="methodName">Name of the method.</param>
-		/// <returns><c>true</c> if successfully invoked method, otherwise <c>false</c>.</returns>
-		/// ------------------------------------------------------------------------------------
-		private static void ApiInvoke(string fileName, string methodName, TaskLoggingHelper Log)
-		{
-			if (!File.Exists(fileName))
-				return;
-			fileName = Path.GetFullPath(fileName);
-			IntPtr hModule = LoadLibrary(fileName);
-			if (hModule == IntPtr.Zero)
-			{
-				var errorCode = Marshal.GetLastWin32Error();
-				Log.LogError("Failed to load library {0} for {1} with error code {2}", fileName, methodName, errorCode);
-				return;
-			}
-
-			try
-			{
-				IntPtr method = GetProcAddress(hModule, methodName);
-				if (method == IntPtr.Zero)
-					return;
-
-				Marshal.GetDelegateForFunctionPointer(method,
-					typeof(DllRegisterServerFunction)).DynamicInvoke();
-			}
-			finally
-			{
-				FreeLibrary(hModule);
-			}
-		}
-		#endregion
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Temporarily registers the specified file.
-		/// </summary>
-		/// <param name="fileName">Name of the file.</param>
-		/// ------------------------------------------------------------------------------------
-		public void Register(string fileName)
-		{
-			SetDllDirectory(Path.GetDirectoryName(fileName));
-			ApiInvoke(fileName, "DllRegisterServer", _log);
-			try
-			{
-				ITypeLib typeLib = LoadTypeLib(fileName);
-				var registerResult = RegisterTypeLib(typeLib, fileName, null);
-				_log.LogMessage(MessageImportance.Low, "Registered {0} with result {1}", fileName, registerResult);
-			}
-			catch(Exception e)
-			{
-				_log.LogMessage(MessageImportance.Normal, "Failed to register {0}", fileName);
-				_log.LogMessage(MessageImportance.Normal, e.StackTrace);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Unregisters the specified file.
-		/// </summary>
-		/// <param name="fileName">Name of the file.</param>
-		/// ------------------------------------------------------------------------------------
-		public void Unregister(string fileName)
-		{
-			ApiInvoke(fileName, "DllUnregisterServer", _log);
 		}
 
 	}
