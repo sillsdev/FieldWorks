@@ -77,9 +77,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			projectName = "";
 			_projectName = "";
 			_sFwProjectName = "";
-			if (userName != null)
+			var userNameActual = userName;
+			if (string.IsNullOrEmpty(userName))
+				userNameActual = Environment.UserName; // default so we can always pass something.
+			if (userNameActual != null) // Paranoia, hopefully never null
 			{
-				AddArg(ref args, "-u", userName);
+				AddArg(ref args, "-u", userNameActual);
 			}
 			if (!String.IsNullOrEmpty(projectFolder))
 			{    // can S/R multiple projects simultaneously

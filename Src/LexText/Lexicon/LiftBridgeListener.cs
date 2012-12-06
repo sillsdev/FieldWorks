@@ -308,11 +308,29 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			_progressDlg.Position = e.Progress > nMax ? e.Progress % nMax : e.Progress;
 		}
 
+		/// <summary>
+		/// This is invoked by reflection, due to almost insuperable sphaghetti in the relevant project references,
+		/// from ChoooseLangProjectDialog.CreateProjectFromLift().
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <param name="liftPath"></param>
+		/// <param name="parentForm"></param>
+		/// <returns></returns>
+		public static bool ImportObtainedLexicon(FdoCache cache, string liftPath, Form parentForm)
+		{
+			var importer = new LiftBridgeListener();
+			importer._cache = cache;
+			importer._liftPathname = liftPath;
+			importer._parentForm = parentForm;
+			return importer.ImportCommon(FlexLiftMerger.MergeStyle.MsKeepNew); // should be a new project
+		}
+
 		private bool ImportCommon(FlexLiftMerger.MergeStyle mergeStyle)
 		{
 			using (new WaitCursor(_parentForm))
 			{
-				using (var progressDlg = new ProgressDialogWithTask(_parentForm, _cache.ThreadHelper))
+				using (var helper = new ThreadHelper()) // not _cache.ThreadHelper, which might be for a different thread
+				using (var progressDlg = new ProgressDialogWithTask(_parentForm, helper))
 				{
 					_progressDlg = progressDlg;
 					progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;

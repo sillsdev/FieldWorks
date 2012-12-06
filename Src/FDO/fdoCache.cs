@@ -160,6 +160,24 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Creates a new FdoCache from a local file. This is typically a temporary cache
+		/// (e.g., used to import lift when obtaining from a new repo).
+		/// </summary>
+		/// <param name="projectPath"></param>
+		/// <param name="userWsIcuLocale"></param>
+		/// <param name="progressDlg">The progress dialog box</param>
+		/// ------------------------------------------------------------------------------------
+		public static FdoCache CreateCacheFromLocalProjectFile(string projectPath,
+			string userWsIcuLocale, IThreadedProgress progressDlg)
+		{
+			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, projectPath);
+			return CreateCacheInternal(projectId, userWsIcuLocale, progressDlg.ThreadHelper,
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
+				cache => cache.Initialize(userWsIcuLocale));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Creates a new FdoCache that uses a specified data provider type that loads the
 		/// language project data from another FdoCache.
 		/// </summary>
