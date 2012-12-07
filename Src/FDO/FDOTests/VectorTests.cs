@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void OwningSequence_Item_Tests()
+		public void TestOwningSequenceIndexOverwriteDeletesObject()
 		{
 			var servLoc = Cache.ServiceLocator;
 			var entry = servLoc.GetInstance<ILexEntryFactory>().Create();
@@ -339,6 +339,34 @@ namespace SIL.FieldWorks.FDO.CoreTests.VectorTests
 			Assert.That(entryRef.ComponentLexemesRS[2], Is.EqualTo(the));
 
 		}
+
+		/// <summary>
+		/// Test that the replace method in the fdo vectors can be undone.
+		/// </summary>
+		[Test]
+		public void TestReplaceLastItem()
+		{
+			ILexEntry kick = null;
+			ILexEntry bucket = null;
+			ILexEntry can = null;
+			ILexEntry kickBucket = null;
+
+			kick = MakeEntryWithForm("kick");
+			bucket = MakeEntryWithForm("bucket");
+			can = MakeEntryWithForm("can");
+			kickBucket = MakeEntryWithForm("kick the bucket");
+			kickBucket.AddComponent(kick);
+			kickBucket.AddComponent(bucket);
+			var entryRef = kickBucket.EntryRefsOS[0];
+			Assert.That(entryRef.ComponentLexemesRS[0], Is.EqualTo(kick));
+			m_actionHandler.EndUndoTask();
+			UndoableUnitOfWorkHelper.Do("doit", "undoit", Cache.ActionHandlerAccessor,
+				() => entryRef.ComponentLexemesRS.Replace(0, 2, new[] { kick, can }));
+			Assert.That(entryRef.ComponentLexemesRS[1], Is.EqualTo(can)); //test that the replace made the proper order change
+			m_actionHandler.Undo();
+			Assert.That(entryRef.ComponentLexemesRS[1], Is.EqualTo(bucket)); //test that the order change was reversed
+		}
+
 		#region private support methods
 		private IMoStemAllomorph MakeLexemeForm(ILexEntry entry)
 		{

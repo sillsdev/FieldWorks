@@ -3015,22 +3015,38 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void StoreSequenceRelation(ILexRefType lrt, List<
 			PendingRelation> rgRelation)
 		{
-			if (SequenceRelationAlreadyExists(lrt, rgRelation))
+			if (IsAnExistingSequenceAnExactMatch(lrt, rgRelation))
 				return;
-			ILexReference lr = CreateNewLexReference();
-			lrt.MembersOC.Add(lr);
-			for (int i = 0; i < rgRelation.Count; ++i)
-				lr.TargetsRS.Add(GetObjectForId(rgRelation[i].TargetHvo));
+			List<ICmObject> oldItems;
+			var lr = FindExistingSequence(lrt, rgRelation, out oldItems);
+			if(lr == null) //This is a new relation, add all the targets
+			{
+				lr = CreateNewLexReference();
+				lrt.MembersOC.Add(lr);
+				for (int i = 0; i < rgRelation.Count; ++i)
+				{
+					lr.TargetsRS.Add(GetObjectForId(rgRelation[i].TargetHvo));
+				}
+			}
+			else //Reusing an old relation, replace the contents of the Targets sequence
+			{
+				var targetList = new List<ICmObject>();
+				for (int i = 0; i < rgRelation.Count; ++i)
+				{
+					targetList.Add(GetObjectForId(rgRelation[i].TargetHvo));
+				}
+				lr.TargetsRS.Replace(0, lr.TargetsRS.Count, targetList);
+			}
 			StoreRelationResidue(lr, rgRelation[0]);
 		}
 
-		private bool SequenceRelationAlreadyExists(ILexRefType lrt, List<PendingRelation> rgRelation)
+		private bool IsAnExistingSequenceAnExactMatch(ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
-			foreach (ILexReference lr in lrt.MembersOC)
+			foreach (var lr in lrt.MembersOC)
 			{
 				if (lr.TargetsRS.Count != rgRelation.Count)
 					continue;
-				bool fSame = true;
+				var fSame = true;
 				for (int i = 0; i < rgRelation.Count; ++i)
 				{
 					if (lr.TargetsRS[i].Hvo != rgRelation[i].TargetHvo)
@@ -3043,6 +3059,27 @@ namespace SIL.FieldWorks.LexText.Controls
 					return true;
 			}
 			return false;
+		}
+
+		private ILexReference FindExistingSequence(ILexRefType lrt, List<PendingRelation> rgRelation, out List<ICmObject> oldItems)
+		{
+			oldItems = new List<ICmObject>();
+			foreach (var lr in lrt.MembersOC)
+			{
+				foreach (var cmObject in lr.TargetsRS)
+				{
+					oldItems.Add(cmObject);
+				}
+				foreach (var pendingRelation in rgRelation)
+				{
+					if (oldItems.Contains(pendingRelation.Target))
+					{
+						return lr;
+					}
+				}
+			}
+			oldItems = null; // old items aren't actually old items if we didn't find a match
+			return null;
 		}
 
 		private void StoreTreeRelation(ILexRefType lrt, List<PendingRelation> rgRelation)

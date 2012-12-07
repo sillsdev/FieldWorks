@@ -2913,6 +2913,121 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, legSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of targets in the leg sense.");
 		}
 
+
+		private static string[] sequenceLiftData = new[] {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"<entry dateCreated='2012-11-05T20:39:08Z' dateModified='2012-11-05T20:40:14Z' id='cold_97b8a20d-9989-430d-8a20-2f95592d60cb' guid='97b8a20d-9989-430d-8a20-2f95592d60cb'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cold</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='57f884c0-0df2-43bf-8ba7-c70b2a208cf1'>",
+			"<gloss lang='en'><text>cold</text></gloss>",
+			"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+			"<relation type='Calendar' ref='136a83c8-dcde-4499-b645-0103b7c5763e' order='2'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-11-05T20:40:14Z' dateModified='2012-11-05T20:40:14Z' id='cool_ce707f68-2e25-4073-837f-9b4deb9e5b36' guid='ce707f68-2e25-4073-837f-9b4deb9e5b36'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cool</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='136a83c8-dcde-4499-b645-0103b7c5763e'>",
+			"<gloss lang='en'><text>cool</text></gloss>",
+			"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+			"<relation type='Calendar' ref='136a83c8-dcde-4499-b645-0103b7c5763e' order='2'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-11-05T20:44:27Z' dateModified='2012-11-05T20:44:27Z' id='cooler_e7a5b85a-2ea5-44e3-8f57-9bc2759803ca' guid='e7a5b85a-2ea5-44e3-8f57-9bc2759803ca'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cooler</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='42510a32-787c-4162-80b1-0f94ef2eb3bf'>",
+			"<gloss lang='en'><text>cooler</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		private static string[] sequenceLiftData2 = new[] {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"    </fields>",
+			"  </header>",
+			"<entry dateCreated='2012-11-05T20:39:08Z' dateModified='2012-11-05T20:50:14Z' id='cold_97b8a20d-9989-430d-8a20-2f95592d60cb' guid='97b8a20d-9989-430d-8a20-2f95592d60cb'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cold</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='57f884c0-0df2-43bf-8ba7-c70b2a208cf1'>",
+			"<gloss lang='en'><text>cold</text></gloss>",
+			"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+			"<relation type='Calendar' ref='42510a32-787c-4162-80b1-0f94ef2eb3bf' order='2'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-11-05T20:40:14Z' dateModified='2012-11-05T20:50:14Z' id='cool_ce707f68-2e25-4073-837f-9b4deb9e5b36' guid='ce707f68-2e25-4073-837f-9b4deb9e5b36'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cool</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='136a83c8-dcde-4499-b645-0103b7c5763e'>",
+			"<gloss lang='en'><text>cool</text></gloss>",
+			"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+			"<relation type='Calendar' ref='42510a32-787c-4162-80b1-0f94ef2eb3bf' order='2'/>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated='2012-11-05T20:44:27Z' dateModified='2012-11-05T20:54:27Z' id='cooler_e7a5b85a-2ea5-44e3-8f57-9bc2759803ca' guid='e7a5b85a-2ea5-44e3-8f57-9bc2759803ca'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cooler</text></form>",
+			"</lexical-unit>",
+			"<trait  name='morph-type' value='stem'/>",
+			"<sense id='42510a32-787c-4162-80b1-0f94ef2eb3bf'>",
+			"<gloss lang='en'><text>cooler</text></gloss>",
+			"<relation type='Calendar' ref='57f884c0-0df2-43bf-8ba7-c70b2a208cf1' order='1'/>",
+			"<relation type='Calendar' ref='42510a32-787c-4162-80b1-0f94ef2eb3bf' order='2'/>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		[Test]
+		public void TestImportDoesNotDuplicateSequenceRelations()
+		{
+			//This test is for the issue documented in LT-13747
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+
+			var sOrigFile = CreateInputFile(sequenceLiftData);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 3);
+			var coldSense = senseRepo.GetObject(new Guid("57f884c0-0df2-43bf-8ba7-c70b2a208cf1"));
+
+			Assert.AreEqual(1, coldSense.LexSenseReferences.Count(), "Too many LexSenseReferences, import has issues.");
+			Assert.AreEqual(2, coldSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
+
+			var sNewFile = CreateInputFile(sequenceLiftData2);
+			TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 3);
+			const string coolerGuid = "42510a32-787c-4162-80b1-0f94ef2eb3bf";
+			var coolerSense = senseRepo.GetObject(new Guid(coolerGuid));
+
+			//There should be 1 LexSenseReference representing the new cool, cooler order.
+			Assert.AreEqual(1, coldSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the relation was not merged.");
+			Assert.AreEqual(2, coldSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of references, part relations not imported correctly.");
+			Assert.AreEqual(coolerGuid, coldSense.LexSenseReferences.First().TargetsRS[1].Guid.ToString(), "Sequence incorrectly modified.");
+			Assert.AreEqual(1, coolerSense.LexSenseReferences.Count(), "Incorrect number of references in the leg sense.");
+			Assert.AreEqual(2, coolerSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of targets in the leg sense.");
+		}
+
 		private void VerifyFirstEntryStTextDataImportExact(ILexEntryRepository repoEntry, int cpara, int flidCustom)
 		{
 			ILexEntry entry1;
