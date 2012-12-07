@@ -123,14 +123,14 @@
 		<IdhFiles Include="$(fwrt)/Src/views/Views.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/views/ViewsTlb.idl"/>
 	</ItemGroup>
-	<Target Name="checkTLBsUpToDate">
+	<Target Name="checkTLBsUpToDate" Condition="'$(OS)'=='Unix'">
 		<MakeDir Directories="$(dir-fwoutput)"/><!-- just in case... -->
 		<CatenateFiles SourceFiles="@(IdhFiles)" TargetFile="$(dir-fwoutput)/idhfiles" UseUnixNewlines="true"/>
 		<Md5Checksum SourceFile="$(dir-fwoutput)/idhfiles"/>
 		<VerifyFilesIdentical FirstFile="$(dir-fwoutput)/idhfiles.MD5"
-							  SecondFile="$(fwrt)/Lib/linux/Common/idhfiles.MD5"
-							  ErrorMessage="TLB files are out of date. Please run 'nant idl'."
-							  Condition="'$(OS)'=='Unix'"/>
+			SecondFile="$(fwrt)/Lib/linux/Common/idhfiles.MD5"
+			ErrorMessage="TLB files are out of date. Please run 'nant idl'."
+			Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
 	<Target Name="setupLinuxRegistry" Condition="'$(OS)'=='Unix'">
