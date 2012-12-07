@@ -14,9 +14,16 @@ namespace FwBuildTasks
 	{
 		public override bool Execute()
 		{
-			var gen = new FwBuildTasks.CollectTargets(Log);
-			gen.Generate();
-			return true;
+			try
+			{
+				var gen = new CollectTargets(Log);
+				gen.Generate();
+				return true;
+			}
+			catch (CollectTargets.StopTaskException)
+			{
+				return false;
+			}
 		}
 	}
 
@@ -26,29 +33,21 @@ namespace FwBuildTasks
 	/// </summary>
 	public class CollectTargets
 	{
-		string m_fwroot;
-		Dictionary<string, string> m_mapProjFile = new Dictionary<string, string>();
-		Dictionary<string, List<string>> m_mapProjDepends = new Dictionary<string, List<string>>();
-
-		public CollectTargets()
+		public class StopTaskException: Exception
 		{
-			// Get the parent directory of the running program.  We assume that
-			// this is the root of the FieldWorks repository tree.
-			var fwrt = BuildUtils.GetAssemblyFolder();
-			while (!Directory.Exists(Path.Combine(fwrt, "Build")) || !Directory.Exists(Path.Combine(fwrt, "Src")))
+			public StopTaskException(Exception innerException) : base(null, innerException)
 			{
-				fwrt = Path.GetDirectoryName(fwrt);
-				if (fwrt == null)
-				{
-					Console.WriteLine("Error pulling the working folder from the running assembly.");
-					break;
-				}
 			}
-			m_fwroot = fwrt;
 		}
+
+		private string m_fwroot;
+		private Dictionary<string, string> m_mapProjFile = new Dictionary<string, string>();
+		private Dictionary<string, List<string>> m_mapProjDepends = new Dictionary<string, List<string>>();
+		private TaskLoggingHelper Log { get; set; }
 
 		public CollectTargets(TaskLoggingHelper log)
 		{
+			Log = log;
 			// Get the parent directory of the running program.  We assume that
 			// this is the root of the FieldWorks repository tree.
 			var fwrt = BuildUtils.GetAssemblyFolder();
@@ -57,7 +56,7 @@ namespace FwBuildTasks
 				fwrt = Path.GetDirectoryName(fwrt);
 				if (fwrt == null)
 				{
-					log.LogError("Error pulling the working folder from the running assembly.");
+					Log.LogError("Error pulling the working folder from the running assembly.");
 					break;
 				}
 			}
@@ -138,36 +137,54 @@ namespace FwBuildTasks
 #endif
 			if (m_mapProjFile.ContainsKey(project) || m_mapProjDepends.ContainsKey(project))
 			{
-				Console.WriteLine("Project '{0}' has already been found elsewhere!", project);
+				Log.LogWarning("Project '{0}' has already been found elsewhere!", project);
 				return;
 			}
 			m_mapProjFile.Add(project, filename);
 			List<string> dependencies = new List<string>();
 			using (var reader = new StreamReader(filename))
 			{
+				int lineNumber = 0;
 				while (!reader.EndOfStream)
 				{
+					lineNumber++;
 					var line = reader.ReadLine().Trim();
-					if (line.Contains("<Reference Include="))
+					try
 					{
-						var ref0 = line.Substring(line.IndexOf('"')+1);
-						var ref1 = ref0.Substring(0, ref0.IndexOf('"'));
-						var i0 = ref1.IndexOf(',');
-						if (i0 >= 0)
-							ref1 = ref1.Substring(0, i0);
-						//Console.WriteLine("{0} [R]: ref0 = '{1}'; ref1 = '{2}'", filename, ref0, ref1);
-						dependencies.Add(ref1);
+						if (line.Contains("<Reference Include="))
+						{
+							// line is similar to
+							// <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+							var tmp = line.Substring(line.IndexOf('"') + 1);
+							// NOTE: we assume that the name of the assembly is the same as the name of the project
+							var projectName = tmp.Substring(0, tmp.IndexOf('"'));
+							var i0 = projectName.IndexOf(',');
+							if (i0 >= 0)
+								projectName = projectName.Substring(0, i0);
+							//Console.WriteLine("{0} [R]: ref0 = '{1}'; ref1 = '{2}'", filename, ref0, ref1);
+							dependencies.Add(projectName);
+						}
+						else if (line.Contains("<ProjectReference Include="))
+						{
+							// line is similar to
+							// <ProjectReference Include="..\HermitCrab\HermitCrab.csproj">
+							var tmp = line.Substring(line.IndexOf('"') + 1);
+							// NOTE: we assume that the name of the assembly is the same as the name of the project
+							var projectName = tmp.Substring(0, tmp.IndexOf('"'));
+							var i0 = projectName.LastIndexOfAny(new[] { '\\', '/' });
+							if (i0 >= 0)
+								projectName = projectName.Substring(i0 + 1);
+							projectName = projectName.Replace(".csproj", "");
+							//Console.WriteLine("{0} [PR]: ref0 = '{1}'; ref1 = '{2}'", filename, ref0, ref1);
+							dependencies.Add(projectName);
+						}
 					}
-					else if (line.Contains("<ProjectReference Include="))
+					catch (ArgumentOutOfRangeException e)
 					{
-						var ref0 = line.Substring(line.IndexOf('"') + 1);
-						var ref1 = ref0.Substring(0, ref0.IndexOf('"'));
-						var i0 = ref1.LastIndexOfAny(new[] { '\\', '/' });
-						if (i0 >= 0)
-							ref1 = ref1.Substring(i0 + 1);
-						ref1 = ref1.Replace(".csproj", "");
-						//Console.WriteLine("{0} [PR]: ref0 = '{1}'; ref1 = '{2}'", filename, ref0, ref1);
-						dependencies.Add(ref1);
+						Log.LogError("GenerateFwTargets", null, null,
+							filename, lineNumber, 0, 0, 0,
+							"Error reading project references. Invalid XML file?");
+						throw new StopTaskException(e);
 					}
 				}
 				reader.Close();
