@@ -1093,14 +1093,14 @@ namespace SIL.FieldWorks
 					latestProject));
 			}
 
-			var fShowWelcomeDialog = app.RegistrySettings.ShowWelcomeDialogSetting;
+			var fOpenLastEditedProject = app.RegistrySettings.AutoOpenLastEditedProject;
 
-			if (!fShowWelcomeDialog && projId.IsValid && projectOpenError == null
+			if (fOpenLastEditedProject && projId.IsValid && projectOpenError == null
 				&& previousStartupStatus == StartupStatus.Successful)
 				return projId;
 
 			// Nothing found to open, so give user options to open/create a project.
-			return ShowWelcomeDialog(args, app, projId, projectOpenError, false, !fShowWelcomeDialog);
+			return ShowWelcomeDialog(args, app, projId, projectOpenError, false, fOpenLastEditedProject);
 		}
 
 		private static ProjectId GetBestGuessProjectId(string latestProject, string latestServer)
@@ -1201,7 +1201,7 @@ namespace SIL.FieldWorks
 						s_cache = null;
 					}
 					Logger.Init(FwUtils.ksSuiteName);
-					projectId = ShowWelcomeDialog(args, app, projectId, e, false, !app.RegistrySettings.ShowWelcomeDialogSetting);
+					projectId = ShowWelcomeDialog(args, app, projectId, e, false, app.RegistrySettings.AutoOpenLastEditedProject);
 				}
 			}
 		}
@@ -1446,7 +1446,7 @@ namespace SIL.FieldWorks
 					exception = null;
 					// We get the app each time through the loop because a failed Restore operation can dispose it.
 					FwApp app = GetOrCreateApplication(args);
-					app.RegistrySettings.ShowWelcomeDialogSetting = !dlg.OpenLastProjectCheckboxIsChecked;
+					app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
 					switch (dlg.DlgResult)
 					{
 						case WelcomeToFieldWorksDlg.ButtonPress.New:

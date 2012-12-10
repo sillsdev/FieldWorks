@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
@@ -50,8 +51,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			InitializeComponent();
 			optionsTooltip = new ToolTip {AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true};
-			optionsTooltip.SetToolTip(updateGlobalWS, "Consultants or people who work on several unrelated projects may want to select this.");
-			optionsTooltip.SetToolTip(groupBox1, label2.Text);
+			optionsTooltip.SetToolTip(updateGlobalWS, LexTextControls.ksUpdateGlobalWsTooltip);
+			optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
+		}
+
+		/// <summary>
+		/// We have to set the checkbox here because the mediator (needed to get the App)
+		/// is not set yet in the dialog's constructor.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
@@ -164,7 +176,25 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore = !updateGlobalWS.Checked;
 			CoreImpl.Properties.Settings.Default.Save();
+			AutoOpenLastProject = m_autoOpenCheckBox.Checked;
 			DialogResult = DialogResult.OK;
+		}
+
+		private bool AutoOpenLastProject
+		{
+			// If set to true and there is a last edited project name stored, FieldWorks will
+			// open that project automatically instead of displaying the usual Welcome dialog.
+			get
+			{
+				var app = m_mediator.PropertyTable.GetValue("App") as FwApp;
+				return app.RegistrySettings.AutoOpenLastEditedProject;
+			}
+			set
+			{
+				var app = m_mediator.PropertyTable.GetValue("App") as FwApp;
+				if (app != null)
+					app.RegistrySettings.AutoOpenLastEditedProject = value;
+			}
 		}
 
 		private void m_btnCancel_Click(object sender, EventArgs e)
