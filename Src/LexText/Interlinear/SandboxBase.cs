@@ -1028,6 +1028,32 @@ namespace SIL.FieldWorks.IText
 			ShowComboForSelection(selection, true);
 		}
 
+		/// <summary>
+		/// When a sandbox is created, inform the main window that it needs to receive
+		/// keyboard input until further notice.  (See FWNX-785.)
+		/// </summary>
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			{
+				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = this;
+			}
+		}
+
+		/// <summary>
+		/// When a sandbox is destroyed, inform the main window that it no longer
+		/// exists to receive keyboard input.  (See FWNX-785.)
+		/// </summary>
+		protected override void OnHandleDestroyed(EventArgs e)
+		{
+			base.OnHandleDestroyed(e);
+			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			{
+				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = null;
+			}
+		}
+
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
@@ -1297,7 +1323,7 @@ namespace SIL.FieldWorks.IText
 							ILexEntry possibleVariant = null;
 							if (mf != null)
 								possibleVariant = mf.Owner as ILexEntry;
-							if (possibleVariant.IsVariantOfSenseOrOwnerEntry(senseReal, out lerTest))
+							if (possibleVariant != null && possibleVariant.IsVariantOfSenseOrOwnerEntry(senseReal, out lerTest))
 							{
 								hvoLexSenseSec = m_caches.FindOrCreateSec(senseReal.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
 								CacheLexGlossWithInflTypeForAllCurrentWs(possibleVariant, hvoLexSenseSec, wsVern, cda, mb.InflTypeRA);

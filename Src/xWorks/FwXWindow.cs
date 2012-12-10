@@ -1969,7 +1969,21 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			base.WndProc (ref m);
+			// In Mono, closing a dialog invokes WM_ACTIVATE on the active form, which then selects
+			// its active control.  This swallows keyboard input.  To prevent this, we select the
+			// desired control if one has been established so that keyboard input can still be seen
+			// by that control.  (See FWNX-785.)
+			if (MiscUtils.IsMono && m.Msg == (int)Win32.WinMsgs.WM_ACTIVATE && m.HWnd == this.Handle &&
+				DesiredControl != null && !DesiredControl.IsDisposed && DesiredControl.Visible && DesiredControl.Enabled)
+			{
+				DesiredControl.Select();
+			}
 		}
+
+		/// <summary>
+		/// Gets or sets the control that needs keyboard input.  (See FWNX-785.)
+		/// </summary>
+		public Control DesiredControl { get; set; }
 
 		#region ISettings implementation
 
