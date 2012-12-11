@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.Build.Tasks
 						Log.LogMessage(MessageImportance.Low, "\tRegistering library {0}", Path.GetFileName(fileName));
 						try
 						{
-							regHelper.Register(fileName);
+							regHelper.Register(fileName, true);
 						}
 						catch(Exception e)
 						{
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.Build.Tasks
 					foreach (string fileName in dllPaths)
 					{
 						Log.LogMessage(MessageImportance.Low, "\tUnregistering library {0}", Path.GetFileName(fileName));
-						regHelper.Unregister(fileName);
+						regHelper.Unregister(fileName, true);
 					}
 				}
 			}

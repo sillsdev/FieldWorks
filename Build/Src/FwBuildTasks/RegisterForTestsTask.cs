@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Build.Tasks
 			{
 				using (var regHelper = new RegHelper(Log))
 				{
-					return regHelper.Register(Dll);
+					return regHelper.Register(Dll, false);
 				}
 			}
 

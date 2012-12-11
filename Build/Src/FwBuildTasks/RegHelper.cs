@@ -10,7 +10,7 @@ using Microsoft.Win32;
 
 namespace SIL.FieldWorks.Build.Tasks
 {
-	public class RegHelper: IDisposable
+	public class RegHelper : IDisposable
 	{
 		private TaskLoggingHelper m_Log;
 		private bool RedirectRegistryFailed { get; set; }
@@ -87,13 +87,13 @@ namespace SIL.FieldWorks.Build.Tasks
 			int longPathLength);
 
 		[DllImport("Advapi32.dll")]
-		private extern static int RegOverridePredefKey(UIntPtr hKey, UIntPtr hNewKey);
+		private static extern int RegOverridePredefKey(UIntPtr hKey, UIntPtr hNewKey);
 
 		[DllImport("Advapi32.dll")]
-		private extern static int RegCreateKey(UIntPtr hKey, string lpSubKey, out UIntPtr phkResult);
+		private static extern int RegCreateKey(UIntPtr hKey, string lpSubKey, out UIntPtr phkResult);
 
 		[DllImport("Advapi32.dll")]
-		private extern static int RegCloseKey(UIntPtr hKey);
+		private static extern int RegCloseKey(UIntPtr hKey);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -189,15 +189,54 @@ namespace SIL.FieldWorks.Build.Tasks
 		[return: MarshalAs(UnmanagedType.Error)]
 		private delegate int DllRegisterServerFunction();
 
+		[return: MarshalAs(UnmanagedType.Error)]
+		private delegate int DllInstallFunction(bool fInstall,
+			[MarshalAs(UnmanagedType.LPWStr)] string cmdLine);
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Dynamically invokes a method in a dll.
+		/// Dynamically invokes <paramref name="methodName "/> in the dll
+		/// <paramref name="fileName"/>.
 		/// </summary>
+		/// <param name="log">Log helper.</param>
 		/// <param name="fileName">Name of the file.</param>
 		/// <param name="methodName">Name of the method.</param>
 		/// <returns><c>true</c> if successfully invoked method, otherwise <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
-		internal static void ApiInvoke(string fileName, string methodName, TaskLoggingHelper Log)
+		internal static void ApiInvoke(TaskLoggingHelper log, string fileName, string methodName)
+		{
+			ApiInvoke(log, fileName, typeof(DllRegisterServerFunction), methodName);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Dynamically invokes the DllInstall method in the dll <paramref name="fileName"/>.
+		/// </summary>
+		/// <param name="log">Log helper.</param>
+		/// <param name="fileName">Name of the file.</param>
+		/// <param name="fRegister"><c>true</c> to register, <c>false</c> to unregister.</param>
+		/// <param name="inHklm"><c>true</c> to register in HKLM, otherwise in HKCU.</param>
+		/// <returns><c>true</c> if successfully invoked method, otherwise <c>false</c>.</returns>
+		/// ------------------------------------------------------------------------------------
+		internal static void ApiInvokeDllInstall(TaskLoggingHelper log, string fileName,
+			bool fRegister, bool inHklm)
+		{
+			ApiInvoke(log, fileName, typeof(DllInstallFunction), "DllInstall", fRegister,
+				inHklm ? null : "user");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Dynamically invokes <paramref name="methodName"/> in dll <paramref name="fileName"/>.
+		/// </summary>
+		/// <param name="log">Log helper</param>
+		/// <param name="fileName">Name of the dll.</param>
+		/// <param name="delegateSignatureType">Signature of the method.</param>
+		/// <param name="methodName">Name of the method</param>
+		/// <param name="args">Arguments to pass to <paramref name="methodName"/>.</param>
+		/// ------------------------------------------------------------------------------------
+		private static void ApiInvoke(TaskLoggingHelper log, string fileName,
+			Type delegateSignatureType, string methodName, params object[] args)
 		{
 			if (!File.Exists(fileName))
 				return;
@@ -206,7 +245,8 @@ namespace SIL.FieldWorks.Build.Tasks
 			if (hModule == IntPtr.Zero)
 			{
 				var errorCode = Marshal.GetLastWin32Error();
-				Log.LogError("Failed to load library {0} for {1} with error code {2}", fileName, methodName, errorCode);
+				log.LogError("Failed to load library {0} for {1} with error code {2}", fileName, methodName,
+					errorCode);
 				return;
 			}
 
@@ -216,8 +256,7 @@ namespace SIL.FieldWorks.Build.Tasks
 				if (method == IntPtr.Zero)
 					return;
 
-				Marshal.GetDelegateForFunctionPointer(method,
-					typeof(DllRegisterServerFunction)).DynamicInvoke();
+				Marshal.GetDelegateForFunctionPointer(method, delegateSignatureType).DynamicInvoke(args);
 			}
 			finally
 			{
@@ -230,17 +269,33 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// Temporarily registers the specified file.
 		/// </summary>
 		/// <param name="fileName">Name of the file.</param>
+		/// <param name="registerInHklm"><c>true</c> to register in HKLM, <c>false</c> to
+		/// register in HKCU. Passing <c>false</c> has the same effect as calling
+		/// regsvr32 with parameter /i:user.</param>
 		/// ------------------------------------------------------------------------------------
-		public bool Register(string fileName)
+		public bool Register(string fileName, bool registerInHklm)
 		{
 			SetDllDirectory(Path.GetDirectoryName(fileName));
-			ApiInvoke(fileName, "DllRegisterServer", m_Log);
+			ApiInvokeDllInstall(m_Log, fileName, true, registerInHklm);
 			try
 			{
-				ITypeLib typeLib = LoadTypeLib(fileName);
-				var registerResult = RegisterTypeLib(typeLib, fileName, null);
-				m_Log.LogMessage(MessageImportance.Low, "Registered {0} with result {1}",
-					fileName, registerResult);
+				if (registerInHklm)
+				{
+					ITypeLib typeLib = LoadTypeLib(fileName);
+					var registerResult = RegisterTypeLib(typeLib, fileName, null);
+					if (registerResult == 0)
+					{
+						m_Log.LogMessage(MessageImportance.Low, "Registered {0} with result {1}",
+							fileName, registerResult);
+					}
+					else
+					{
+						m_Log.LogWarning("Registering {0} failed with result {1}", fileName,
+							registerResult);
+					}
+				}
+				else
+					m_Log.LogMessage(MessageImportance.Low, "Registered {0}", fileName);
 			}
 			catch(Exception e)
 			{
@@ -254,10 +309,13 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// Unregisters the specified file.
 		/// </summary>
 		/// <param name="fileName">Name of the file.</param>
+		/// <param name="inHklm"><c>true</c> to unregister from HKLM, <c>false</c> to
+		/// unregister from HKCU. Passing <c>false</c> has the same effect as calling
+		/// regsvr32 with parameter /i:user.</param>
 		/// ------------------------------------------------------------------------------------
-		public void Unregister(string fileName)
+		public void Unregister(string fileName, bool inHklm)
 		{
-			ApiInvoke(fileName, "DllUnregisterServer", m_Log);
+			ApiInvokeDllInstall(m_Log, fileName, false, inHklm);
 		}
 	}
 }
