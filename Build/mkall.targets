@@ -405,6 +405,11 @@
 					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
 					   Value="$(dir-outputBase)/EC/Plugins"
 					   Condition="'$(OS)'=='Unix'"/>
+
+		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="SOFTWARE\SIL\EncodingConverterRepository\Registry"
+			Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
 	</Target>
 
 	<Target Name="allTe" DependsOnTargets="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>

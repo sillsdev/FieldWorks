@@ -134,12 +134,8 @@
 	</Target>
 
 	<Target Name="setupLinuxRegistry" Condition="'$(OS)'=='Unix'">
-		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>
 		<MakeDir Directories="$(fwrt)/DistFiles/Editorial Checks"/>
 		<!-- we use our own copy of the registry, so permissions aren't a problem -->
-		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\EncodingConverterRepository\Registry"
-					   Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\EncodingConverterRepository\MoveRepositoryTo"
 					   Value="$(fwrt)/DistFiles/MoveRepositoryTo"/>
