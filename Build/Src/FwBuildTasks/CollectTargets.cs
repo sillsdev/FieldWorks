@@ -171,6 +171,10 @@ namespace FwBuildTasks
 							var tmp = line.Substring(line.IndexOf('"') + 1);
 							// NOTE: we assume that the name of the assembly is the same as the name of the project
 							var projectName = tmp.Substring(0, tmp.IndexOf('"'));
+							// Unfortunately we can't use File.GetFileNameWithoutExtension(projectName)
+							// here: we use the same .csproj file on both Windows and Linux
+							// and so it contains backslashes in the name which is a valid
+							// character on Linux.
 							var i0 = projectName.LastIndexOfAny(new[] { '\\', '/' });
 							if (i0 >= 0)
 								projectName = projectName.Substring(i0 + 1);
