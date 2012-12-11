@@ -272,6 +272,7 @@ namespace FwBuildTasks
 						project == "TestManager" ||
 						project == "ProjectUnpacker")
 					{
+						writer.WriteLine("\t\t<Message Text=\"Running unit tests for {0}\" />", project);
 						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
 						writer.WriteLine("\t\t\tAssemblies=\"$(dir-outputBase)/{0}.dll\"", project);
 						writer.WriteLine("\t\t\tToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
