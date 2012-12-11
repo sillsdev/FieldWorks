@@ -203,7 +203,6 @@
     <Compile Include="Db4oSendReceiveDialog.Designer.cs">
       <DependentUpon>Db4oSendReceiveDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="FLExBridgeListener.cs" />
     <Compile Include="FlexHelpTopicProvider.cs" />
     <Compile Include="FlexStylesXmlAccessor.cs" />
     <Compile Include="ImageHolder.cs">

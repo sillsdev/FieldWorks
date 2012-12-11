@@ -15,19 +15,77 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public class FLExBridgeHelper
 	{
-		//public constants for the various views/actions (the -v param)
+		#region These are the available '-v' parameter options:
 		/// <summary>
-		/// constant for launching the bridge in Send and Receive mode
+		/// constant for launching the bridge in Send and Receive mode for full FLEx data set
 		/// </summary>
+		/// <remarks>
+		/// <para>The related '-p' option (required) will give the pathname of the xml fwdata file.
+		/// Flex Bridge returns 'true', if data changes came in from the S/R, otherwise, 'false' for no changes.</para>
+		/// <para>The '-u' option  (required) will give the user name.</para>
+		/// </remarks>
 		public const string SendReceive = @"send_receive";
+		/// <summary>
+		/// constant for launching the bridge in Send and Receive mode for Lift data
+		/// </summary>
+		/// <remarks>
+		/// <para>The related '-p' option (required) will give the pathname of the xml fwdata file (which may not actually exist for DB4o projects).
+		/// Flex Bridge returns 'true', if data changes came in from the S/R, otherwise, 'false' for no changes.</para>
+		/// <para>The '-u' option  (required) will give the user name.</para>
+		/// </remarks>
+		public const string SendReceiveLift = @"send_receive_lift";
+
 		/// <summary>
 		/// constant for launching the bridge in Obtain project mode
 		/// </summary>
+		/// <remarks>
+		/// <para>The related '-p' option (required) will give the path to the main projects folder where FW projects are located.</para>
+		/// <para>Returns the pathname to either the 'fwdata' xml file or the lift file, if FLEx Bridge was able to get a clone. Returns null, if no clone was created.</para>
+		/// <para>The '-u' option  (required) will give the user name.</para>
+		/// </remarks>
 		public const string Obtain = @"obtain";
+		/// <summary>
+		/// constant for launching the bridge in Obtain project mode, but only tries to get a new Lift repository for an extant FW project.
+		/// </summary>
+		/// <remarks>
+		/// <para>The related '-p' option (required) will give the path to the given (extant) FW project.</para>
+		/// <para>Returns the pathname to either the 'fwdata' xml file or the lift file, if FLEx Bridge was able to get a clone. Returns null, if no clone was created.</para>
+		/// <para>The '-u' option  (required) will give the user name.</para>
+		/// </remarks>
+		public const string ObtainLift = @"obtain_lift";
+
 		/// <summary>
 		/// constant for launching the bridge in the Conflict\Notes Viewer mode
 		/// </summary>
-		public const string ConflictViewer = @"view_notes";
+		/// <remarks>
+		/// <para>The related '-p' option (required) will give the pathname of the xml fwdata file.</para>
+		/// <para>Nothing is returned, since FLEx Bridge's notes dialog will remain open.
+		/// As the user selects some note, a call back FELx will be done, with the URL for the item to jump to.</para>
+		/// <para>The '-u' option  (required) will give the user name.</para>
+		/// </remarks>
+		public const string ConflictViewer = @"view_notes"; // REVIEW (JohnT): Do we need anohter option for viewing the lift notes 'view_notes_lift'?
+
+		/// <summary>
+		/// constant for launching the bridge in the undo export mode
+		/// </summary>
+		/// <remarks>
+		/// <para>The related '-p' option (required) will give the pathname of the xml fwdata file. Nothing is returned.</para>
+		/// <para>Flex Bridge restores the local working folder to what is in the lift repository, including deleting any new files.</para>
+		/// <para>The '-u' option  (required) will give the user name.</para>
+		/// </remarks>
+		public const string UndoExportLift = @"undo_export_lift";
+
+		#endregion End of available '-v' parameter options:
+
+		// The two paths of a path that locate the Lift repository within a FLEx project.
+		/// <summary>
+		/// constant for locating the nested lift repository (part 1 of 2)
+		/// </summary>
+		public const string OtherRepositories = @"OtherRepositories";
+		/// <summary>
+		/// constant for locating the nested lift repository (part 2 of 2)
+		/// </summary>
+		public const string LIFT = @"LIFT";
 
 		/// <summary>
 		/// Project name grafted to the pipe URI so multiple projects can S/R simultaneously

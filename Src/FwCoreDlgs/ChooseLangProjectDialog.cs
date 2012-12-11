@@ -593,11 +593,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			// this is a horrible way to invoke this, but current project organization does not allow us to reference
-			// the LexTextDll project, nor is there any straightforward way to move the code we need into some project we can
+			// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
 			// reference, or any obviously suitable project to move it to without creating other References loops.
 			// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
 			// (It puts up its own progress dialog.)
-			ReflectionHelper.CallStaticMethod(@"LexEdDll.dll", @"SIL.FieldWorks.XWorks.LexEd.LiftBridgeListener",
+			ReflectionHelper.CallStaticMethod(@"LexEdDll.dll", @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener",
 				@"ImportObtainedLexicon", cache, liftPath, this);
 
 			ProjectLockingService.UnlockCurrentProject(cache); // finish all saves and completely write the file so we can proceed to open it

@@ -1,181 +1,181 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-	Microsoft ResX Schema
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-	Version 2.0
-
-	The primary goals of this format is to allow a simple XML format
-	that is mostly human readable. The generation and parsing of the
-	various data types are done through the TypeConverter classes
-	associated with the data types.
-
-	Example:
-
-	... ado.net/XML headers & schema ...
-	<resheader name="resmimetype">text/microsoft-resx</resheader>
-	<resheader name="version">2.0</resheader>
-	<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-	<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-	<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-	<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-	<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-		<value>[base64 mime encoded serialized .NET Framework object]</value>
-	</data>
-	<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-		<comment>This is a comment</comment>
-	</data>
-
-	There are any number of "resheader" rows that contain simple
-	name/value pairs.
-
-	Each data row contains a name, and value. The row also contains a
-	type or mimetype. Type corresponds to a .NET class that support
-	text/value conversion through the TypeConverter architecture.
-	Classes that don't support this are serialized and stored with the
-	mimetype set.
-
-	The mimetype is used for serialized objects, and tells the
-	ResXResourceReader how to depersist the object. This is currently not
-	extensible. For a given mimetype the value must be set accordingly:
-
-	Note - application/x-microsoft.net.object.binary.base64 is the format
-	that the ResXResourceWriter will generate, however the reader can
-	read any of the formats listed below.
-
-	mimetype: application/x-microsoft.net.object.binary.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.soap.base64
-	value   : The object must be serialized with
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.bytearray.base64
-	value   : The object must be serialized into a byte array
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-	<xsd:element name="root" msdata:IsDataSet="true">
-	  <xsd:complexType>
-		<xsd:choice maxOccurs="unbounded">
-		  <xsd:element name="metadata">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" use="required" type="xsd:string" />
-			  <xsd:attribute name="type" type="xsd:string" />
-			  <xsd:attribute name="mimetype" type="xsd:string" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="assembly">
-			<xsd:complexType>
-			  <xsd:attribute name="alias" type="xsd:string" />
-			  <xsd:attribute name="name" type="xsd:string" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="data">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-				<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-			  <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-			  <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-			  <xsd:attribute ref="xml:space" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name="resheader">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-			  </xsd:sequence>
-			  <xsd:attribute name="name" type="xsd:string" use="required" />
-			</xsd:complexType>
-		  </xsd:element>
-		</xsd:choice>
-	  </xsd:complexType>
-	</xsd:element>
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
   </xsd:schema>
   <resheader name="resmimetype">
-	<value>text/microsoft-resx</value>
+    <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-	<value>2.0</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ksAreaXLostItsDefaultTool" xml:space="preserve">
-	<value>Your settings have developed a problem in which they don't know what tool is the default for the area {0}. Please report this problem.</value>
+    <value>Your settings have developed a problem in which they don't know what tool is the default for the area {0}. Please report this problem.</value>
   </data>
   <data name="ksCannotLaunchX" xml:space="preserve">
-	<value>Sorry, could not launch {0}.</value>
+    <value>Sorry, could not launch {0}.</value>
   </data>
   <data name="ksCannotLocateWsForX" xml:space="preserve">
-	<value>Could not locate the writing system based on the locale '{0}'.</value>
+    <value>Could not locate the writing system based on the locale '{0}'.</value>
   </data>
   <data name="ksCannotShowX" xml:space="preserve">
-	<value>Sorry, could not show {0}.</value>
+    <value>Sorry, could not show {0}.</value>
   </data>
   <data name="ksCannotUndoTransducingCitForms" xml:space="preserve">
-	<value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
+    <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
   </data>
   <data name="ksCreatingCustomGramCategory" xml:space="preserve">
-	<value>You will now be taken to a new, custom grammatical category. Enter at least the name and abbreviation for the new category. Then, click the "Back" button on the toolbar to return to where you were working. The new category will then be available for you to choose.</value>
+    <value>You will now be taken to a new, custom grammatical category. Enter at least the name and abbreviation for the new category. Then, click the "Back" button on the toolbar to return to where you were working. The new category will then be available for you to choose.</value>
   </data>
   <data name="ksCreatingCustomLexRefType" xml:space="preserve">
-	<value>You will now be taken to a new lexical reference type. Enter at least the name and abbreviation for the type. Then, click the "Back" button on the toolbar to return to where you were working. The new type will then be available for you to choose.</value>
+    <value>You will now be taken to a new lexical reference type. Enter at least the name and abbreviation for the type. Then, click the "Back" button on the toolbar to return to where you were working. The new type will then be available for you to choose.</value>
   </data>
   <data name="ksCreatingWindowForX" xml:space="preserve">
-	<value>Creating window for {0} Project...</value>
+    <value>Creating window for {0} Project...</value>
   </data>
   <data name="ksDemoOfUsingPython" xml:space="preserve">
-	<value>This is a trivial demonstration of using Python to generate the contents of a field. It is extremely limited.  It grabs the default vernacular alternative of the citation form of every entry, runs it through a Python script that you supply, and then places the output in a different writing system alternative of the citation form. It is currently implemented in a very inefficient way; it actually runs the Python script once for every entry in the database. This utility will run the Python script found at (your FieldWorks install directory)\Language Explorer\UserScripts\TransduceCitationForms.py (the supplied sample script will add a Spanish alternative consisting of the default alternative, but with the case of each letter swapped.) Python must be part of your 'PATH' system variable.</value>
+    <value>This is a trivial demonstration of using Python to generate the contents of a field. It is extremely limited.  It grabs the default vernacular alternative of the citation form of every entry, runs it through a Python script that you supply, and then places the output in a different writing system alternative of the citation form. It is currently implemented in a very inefficient way; it actually runs the Python script once for every entry in the database. This utility will run the Python script found at (your FieldWorks install directory)\Language Explorer\UserScripts\TransduceCitationForms.py (the supplied sample script will add a Spanish alternative consisting of the default alternative, but with the case of each letter swapped.) Python must be part of your 'PATH' system variable.</value>
   </data>
   <data name="ksError" xml:space="preserve">
-	<value>Error</value>
-	<comment>caption for message box</comment>
+    <value>Error</value>
+    <comment>caption for message box</comment>
   </data>
   <data name="ksErrorLoadingResourceStrings" xml:space="preserve">
-	<value>Error loading resource strings: {0}</value>
+    <value>Error loading resource strings: {0}</value>
   </data>
   <data name="ksErrorMsgWithStackTrace" xml:space="preserve">
-	<value>There was an error: {0}
+    <value>There was an error: {0}
 {1}</value>
-	<comment>note the newline between {0} and {1}</comment>
+    <comment>note the newline between {0} and {1}</comment>
   </data>
   <data name="ksInformation" xml:space="preserve">
-	<value>Information</value>
-	<comment>caption for message box</comment>
+    <value>Information</value>
+    <comment>caption for message box</comment>
   </data>
   <data name="ksInitializingLayouts_" xml:space="preserve">
-	<value>Initializing Layouts...</value>
+    <value>Initializing Layouts...</value>
   </data>
   <data name="ksInitializingMessageDialogs_" xml:space="preserve">
-	<value>Initializing Message Dialogs...</value>
-	<comment>message for splash screen</comment>
+    <value>Initializing Message Dialogs...</value>
+    <comment>message for splash screen</comment>
   </data>
   <data name="ksLoading_" xml:space="preserve">
-	<value>Loading...</value>
-	<comment>message for splash screen</comment>
+    <value>Loading...</value>
+    <comment>message for splash screen</comment>
   </data>
   <data name="ksShowingSemanticClassification" xml:space="preserve">
-	<value>This view shows semantic domains that have been used to classify senses, each listing the related senses. You can optionally show all semantic domains, even those that have not been used for any senses.</value>
+    <value>This view shows semantic domains that have been used to classify senses, each listing the related senses. You can optionally show all semantic domains, even those that have not been used for any senses.</value>
   </data>
   <data name="kstidOpenSampleDbMsg" xml:space="preserve">
-	<value>Do you want to study the training materials for Language Explorer?
+    <value>Do you want to study the training materials for Language Explorer?
 
 If you click Yes, the Sena 3 sample project will open. On the Help menu, point to Training and click Student Manual for a walk-through guide.
 Alternatively, point to Demo Movies and choose an option.
@@ -183,72 +183,72 @@ Alternatively, point to Demo Movies and choose an option.
 	- You may also choose specific demo movie topics.
 
 If you click No, you will see various options for starting work in Language Explorer.</value>
-	<comment>note the embedded newlines in this message.</comment>
+    <comment>note the embedded newlines in this message.</comment>
   </data>
   <data name="ksTransduceCitationForms" xml:space="preserve">
-	<value>Transduce Citation Forms</value>
+    <value>Transduce Citation Forms</value>
   </data>
   <data name="ksUsedForSemanticBasedEntry" xml:space="preserve">
-	<value>This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net and http://www.sil.org/computing/ddp/.</value>
+    <value>This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net and http://www.sil.org/computing/ddp/.</value>
   </data>
   <data name="ksWhenToTransduceCitForms" xml:space="preserve">
-	<value>This can be used to convert Citation Forms into another writing system.</value>
+    <value>This can be used to convert Citation Forms into another writing system.</value>
   </data>
   <data name="CannotFindToolNamed0" xml:space="preserve">
-	<value>Could not locate the tool named '{0}'.</value>
+    <value>Could not locate the tool named '{0}'.</value>
   </data>
   <data name="ksChartTemplateWarning" xml:space="preserve">
-	<value>This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called "Text Constituent Chart Templates". The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart.</value>
+    <value>This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called "Text Constituent Chart Templates". The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart.</value>
   </data>
   <data name="ksNewFeature" xml:space="preserve">
-	<value>New Feature</value>
+    <value>New Feature</value>
   </data>
   <data name="ksUnderDevelopment" xml:space="preserve">
-	<value>Under Development</value>
+    <value>Under Development</value>
   </data>
   <data name="ksUpgradeValidCharsWarning" xml:space="preserve">
-	<value>FieldWorks now provides a way for you to specify for each writing system which characters are found in words (word-forming) and which characters are not found in words (punctuation, symbols, spacing).
+    <value>FieldWorks now provides a way for you to specify for each writing system which characters are found in words (word-forming) and which characters are not found in words (punctuation, symbols, spacing).
 
 Before using Text or Concordance tools, we recommend you add word-forming characters so that Language Explorer does not change where it thinks the word boundaries are in your texts. If you use apostrophes, hyphens, zero-width characters, or superscript numbers within words, these should be added and specified as word-forming.
 
 Would you like to do this now?</value>
   </data>
   <data name="ksCharsWithinWords" xml:space="preserve">
-	<value>Characters within words</value>
-	<comment>Caption for message box.</comment>
+    <value>Characters within words</value>
+    <comment>Caption for message box.</comment>
   </data>
   <data name="ksErrorCannotLaunchMovies" xml:space="preserve">
-	<value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
+    <value>An error occurred trying to launch the movies. You could try to launch them yourself. They are located in this folder: {0}</value>
   </data>
   <data name="kstidSupportEmail" xml:space="preserve">
-	<value>FlexErrors@sil.org</value>
-	<comment>Email address for sending bug reports to</comment>
+    <value>FlexErrors@sil.org</value>
+    <comment>Email address for sending bug reports to</comment>
   </data>
   <data name="ksDb4oProjectNotShareableTextLine1" xml:space="preserve">
-	<value>This project is in the format that permits sharing over a network, but that format is not compatible with Send/Receive.</value>
+    <value>This project is in the format that permits sharing over a network, but that format is not compatible with Send/Receive.</value>
   </data>
   <data name="ksDb4oProjectNotShareableTitle" xml:space="preserve">
-	<value>Project format not compatible for Send/Receive</value>
+    <value>Project format not compatible for Send/Receive</value>
   </data>
   <data name="ksClickOK" xml:space="preserve">
-	<value>Click OK.</value>
+    <value>Click OK.</value>
   </data>
   <data name="ksDb4oProjectNotShareableTextLine2" xml:space="preserve">
-	<value>To change the format of your projects, use the link below and clear the checkbox labeled 'Share Projects stored on this computer'.</value>
+    <value>To change the format of your projects, use the link below and clear the checkbox labeled 'Share Projects stored on this computer'.</value>
   </data>
   <data name="ksNonAsciiProjectNameWarning" xml:space="preserve">
-	<value>The current Project name contains one or more non-ASCII characters. This currently prevents use of the Send/Receive project function.
+    <value>The current Project name contains one or more non-ASCII characters. This currently prevents use of the Send/Receive project function.
 {0} is a name that will work.
 You may choose a different project name in FieldWorks Project Properties.
 Click 'OK' to change the name of your project and continue with Send/Receive.
 Click 'Cancel' to cancel Send/Receive.</value>
-	<comment>used when non-Ascii characters are found in the project name</comment>
+    <comment>used when non-Ascii characters are found in the project name</comment>
   </data>
   <data name="ksWarning" xml:space="preserve">
-	<value>Warning</value>
-	<comment>used for dialog caption when project name has non-Ascii characters</comment>
+    <value>Warning</value>
+    <comment>used for dialog caption when project name has non-Ascii characters</comment>
   </data>
   <data name="ksExistingProjectName" xml:space="preserve">
-	<value>That project already exists. You'll need to choose a different name in Project Properties.</value>
+    <value>That project already exists. You'll need to choose a different name in Project Properties.</value>
   </data>
 </root>
