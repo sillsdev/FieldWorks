@@ -1061,8 +1061,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (sz != m_dropDownBox.Form.Size)
 				m_dropDownBox.Form.Size = sz;
 #if __MonoCS__	// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
-			// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point (at
-			// least when displaying a PopupTree, where the launching form is used).  So we
+			// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
 			// try another approach to finding the launching form for displaying m_dropDownBox.
 			// Note that the launching form never changes, so it needs to be set only once.
 			if (m_dropDownBox.LaunchingForm == null)
@@ -2106,6 +2105,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			CheckDisposed();
 
 			m_previousForm = Form.ActiveForm;
+#if __MonoCS__	// FWNX-908: Crash closing combobox.
+			// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
+			if (m_previousForm == null || m_previousForm == m_listForm)
+				m_previousForm = LaunchingForm;
+#endif
 			m_listForm.ShowInTaskbar = false; // this is mainly to prevent it showing in the task bar.
 			//Figure where to put it. First try right below the main combo box.
 			// Pathologically the list box may be bigger than the available height. If so shrink it.
