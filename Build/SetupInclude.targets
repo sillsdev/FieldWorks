@@ -437,16 +437,20 @@
 	</Otherwise>
   </Choose>
 
-  <PropertyGroup>
-	<nant-onfailure>endreportfailure</nant-onfailure>
-	<nant-onsuccess>endreportsuccess</nant-onsuccess>
-	<passbyref>fw-build-error fw-test-error fw-acceptancetest-error fw-targets-run</passbyref>
-	<!--
-	  Set to showTargetsRunInReport property to 'true' to output the C# targets built during run.
-	  Otherwise, it should be 'false'.
-	-->
-	<showTargetsRunInReport>false</showTargetsRunInReport>
-	<passbyref Condition="'$(showTargetsRunInReport)'=='true'">"$(passbyref) fw-targets-run</passbyref>
-  </PropertyGroup>
+	<PropertyGroup>
+		<nant-onfailure>endreportfailure</nant-onfailure>
+		<nant-onsuccess>endreportsuccess</nant-onsuccess>
+		<passbyref>fw-build-error fw-test-error fw-acceptancetest-error fw-targets-run</passbyref>
+		<!--
+			Set to showTargetsRunInReport property to 'true' to output the C# targets built during run.
+			Otherwise, it should be 'false'.
+		-->
+		<showTargetsRunInReport>false</showTargetsRunInReport>
+		<passbyref Condition="'$(showTargetsRunInReport)'=='true'">"$(passbyref) fw-targets-run</passbyref>
+		<!-- when building on Jenkins we shouldn't unregister the COM dlls.
+			We set both values so that we can directly use the property as argument value. -->
+		<unregisterInRegFree Condition="'$(JENKINS_URL)'==''">true</unregisterInRegFree>
+		<unregisterInRegFree Condition="'$(JENKINS_URL)'!=''">false</unregisterInRegFree>
+	</PropertyGroup>
 
 </Project>

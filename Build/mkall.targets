@@ -65,9 +65,10 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
-				 Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				 Condition="'$(OS)'=='Windows_NT'"/>
+		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe" Unregister="$(unregisterInRegFree)"
+				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
 		<Unitpp Condition="'$(action)'=='test'"
@@ -90,7 +91,7 @@
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
 		<RegisterForTests Condition="'$(OS)'=='Windows_NT'"
-			Dll="$(dir-outputBase)\Graphite.dll"/>
+			Dll="$(dir-outputBase)\Graphite.dll" RegisterTypeLibrary="false"/>
 		<Message Text="Finished building GrEngine."/>
 	</Target>
 
@@ -122,9 +123,10 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
-				 Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				 Condition="'$(OS)'=='Windows_NT'"/>
+		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe" Unregister="$(unregisterInRegFree)"
+				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
@@ -176,9 +178,10 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Language/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testLanguage.exe"
-				 Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				 Condition="'$(OS)'=='Windows_NT'"/>
+		<RegFree Executable="$(dir-outputBase)\testLanguage.exe" Unregister="$(unregisterInRegFree)"
+				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testLanguage.exe -manifest $(dir-outputBase)\testLanguage.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
@@ -220,9 +223,10 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testViews.exe"
-				 Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
-				 Condition="'$(OS)'=='Windows_NT'"/>
+		<RegFree Executable="$(dir-outputBase)\testViews.exe" Unregister="$(unregisterInRegFree)"
+				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				Condition="'$(OS)'=='Windows_NT'"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 			  Condition="'$(OS)'=='Windows_NT'"/>
 		<CreateItem Include="$(dir-outputBase)/*.compmap">

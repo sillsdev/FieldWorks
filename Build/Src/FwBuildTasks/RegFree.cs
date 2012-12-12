@@ -15,7 +15,9 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using FwBuildTasks;
 using Microsoft.Build.Framework;
@@ -42,6 +44,8 @@ namespace SIL.FieldWorks.Build.Tasks
 			Dlls = new ITaskItem[0];
 			Fragments = new ITaskItem[0];
 			AsIs = new ITaskItem[0];
+			NoTypeLib = new ITaskItem[0];
+			Unregister = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -63,10 +67,25 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Whether to unregister the processed assemblies after creating the manifest file.
+		/// Defaults to <c>true</c>.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool Unregister { get; set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets or sets the assemblies that should be processed.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ITaskItem[] Dlls { get; set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the assemblies that don't have a type lib
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public ITaskItem[] NoTypeLib { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -111,12 +130,16 @@ namespace SIL.FieldWorks.Build.Tasks
 					regHelper.RedirectRegistry();
 					var creator = new RegFreeCreator(doc, Log);
 					var dllPaths = IdlImp.GetFilesFrom(Dlls);
+					var filesToRemove = dllPaths.Cast<string>().Where(fileName => !File.Exists(fileName)).ToList();
+					foreach (var file in filesToRemove)
+						dllPaths.Remove(file);
+
 					foreach (string fileName in dllPaths)
 					{
 						Log.LogMessage(MessageImportance.Low, "\tRegistering library {0}", Path.GetFileName(fileName));
 						try
 						{
-							regHelper.Register(fileName, true);
+							regHelper.Register(fileName, true, NoTypeLib.Count(f => f.ItemSpec == fileName) == 0);
 						}
 						catch(Exception e)
 						{
@@ -159,16 +182,20 @@ namespace SIL.FieldWorks.Build.Tasks
 					}
 
 					// Unregister DLLs
-					foreach (string fileName in dllPaths)
+					if (Unregister)
 					{
-						Log.LogMessage(MessageImportance.Low, "\tUnregistering library {0}", Path.GetFileName(fileName));
-						regHelper.Unregister(fileName, true);
+						foreach (string fileName in dllPaths)
+						{
+							Log.LogMessage(MessageImportance.Low, "\tUnregistering library {0}",
+								Path.GetFileName(fileName));
+							regHelper.Unregister(fileName, true);
+						}
 					}
 				}
 			}
 			catch (Exception e)
 			{
-				Log.LogMessage(MessageImportance.High, "RegFree failed " + e.Message);
+				Log.LogErrorFromException(e, true, true, null);
 				return false;
 			}
 			return true;

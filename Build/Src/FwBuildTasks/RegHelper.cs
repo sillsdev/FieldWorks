@@ -272,14 +272,15 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// <param name="registerInHklm"><c>true</c> to register in HKLM, <c>false</c> to
 		/// register in HKCU. Passing <c>false</c> has the same effect as calling
 		/// regsvr32 with parameter /i:user.</param>
+		/// <param name="registerTypeLib"><c>true</c> to also register tye type library.</param>
 		/// ------------------------------------------------------------------------------------
-		public bool Register(string fileName, bool registerInHklm)
+		public bool Register(string fileName, bool registerInHklm, bool registerTypeLib)
 		{
 			SetDllDirectory(Path.GetDirectoryName(fileName));
 			ApiInvokeDllInstall(m_Log, fileName, true, registerInHklm);
 			try
 			{
-				if (registerInHklm)
+				if (registerInHklm && registerTypeLib)
 				{
 					ITypeLib typeLib = LoadTypeLib(fileName);
 					var registerResult = RegisterTypeLib(typeLib, fileName, null);

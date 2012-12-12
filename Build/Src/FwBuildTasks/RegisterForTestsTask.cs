@@ -21,11 +21,22 @@ namespace SIL.FieldWorks.Build.Tasks
 	/// ----------------------------------------------------------------------------------------
 	public class RegisterForTests: Task
 	{
+		public RegisterForTests()
+		{
+			RegisterTypeLibrary = true;
+		}
+
 		/// <summary>
 		/// Gets or sets the name and path of the DLL that should be registered
 		/// </summary>
 		[Required]
 		public string Dll { get; set; }
+
+		/// <summary>
+		/// Whether to process the type library in addition to the objects and interfaces.
+		/// Defaults to <c>true</c>.
+		/// </summary>
+		public bool RegisterTypeLibrary { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -40,7 +51,7 @@ namespace SIL.FieldWorks.Build.Tasks
 			{
 				using (var regHelper = new RegHelper(Log))
 				{
-					return regHelper.Register(Dll, false);
+					return regHelper.Register(Dll, false, RegisterTypeLibrary);
 				}
 			}
 

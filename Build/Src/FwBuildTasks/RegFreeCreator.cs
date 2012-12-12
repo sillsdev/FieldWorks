@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.Build.Tasks
 				}
 				if(regKeyClsid.SubKeyCount == 0)
 				{
-					_log.LogWarning("No classes were registered in the temporary key.");
+					_log.LogMessage(MessageImportance.Low, "No classes were registered in the temporary key.");
 				}
 				foreach (var clsId in regKeyClsid.GetSubKeyNames())
 				{
