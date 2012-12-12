@@ -13,6 +13,7 @@ namespace FixFwDataDllTests
 {
 	class FwDataFixerTest : BaseTest
 	{
+		private const string WordformswithsameformTestDir = "WordformsWithSameForm";
 		private List<string> errors = new List<string>();
 		private void LogErrors(string guid, string date, string message)
 		{
@@ -38,40 +39,24 @@ namespace FixFwDataDllTests
 
 		private string basePath;
 
+		private readonly string[] m_testFileDirectories =
+			{
+				"DuplicateGuid", "DanglingReference", "DuplicateWs", "SequenceFixer", "EntryWithExtraMSA",
+				"TagAndCellRefs", "GenericDates", "HomographFixer", WordformswithsameformTestDir
+			};
+
 		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 			basePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(DirectoryFinder.FwSourceDirectory, "Utilities"), "FixFwDataDll"), "FixFwDataDllTests"), "TestData");
-			var testPath = Path.Combine(basePath, "DuplicateGuid");
-			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
-			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
+			foreach (var testDir in m_testFileDirectories)
+				CopyTestData(testDir);
+		}
 
-			testPath = Path.Combine(basePath, "DanglingReference");
-			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
-			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
-
-			testPath = Path.Combine(basePath, "DuplicateWs");
-			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
-			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
-
-			testPath = Path.Combine(basePath, "SequenceFixer");
-			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
-			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
-
-			testPath = Path.Combine(basePath, "EntryWithExtraMSA");
-			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
-			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
-
-			testPath = Path.Combine(basePath, "TagAndCellRefs");
-			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
-			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
-
-			testPath = Path.Combine(basePath, "GenericDates");
-			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
-			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
-
-			testPath = Path.Combine(basePath, "HomographFixer");
+		private void CopyTestData(string testFolder)
+		{
+			var testPath = Path.Combine(basePath, testFolder);
 			File.Copy(Path.Combine(testPath, "Test.fwdata"), Path.Combine(testPath, "BasicFixup.fwdata"), true);
 			File.SetAttributes(Path.Combine(testPath, "BasicFixup.fwdata"), FileAttributes.Normal);
 		}
@@ -79,35 +64,13 @@ namespace FixFwDataDllTests
 		[TestFixtureTearDown]
 		public void AllTestTearDown()
 		{
-			var testPath = Path.Combine(basePath, "DuplicateGuid");
-			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
-			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
+			foreach (var testDir in m_testFileDirectories)
+				CleanupTestDir(testDir);
+		}
 
-			testPath = Path.Combine(basePath, "DanglingReference");
-			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
-			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
-
-			testPath = Path.Combine(basePath, "DuplicateWs");
-			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
-			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
-
-			testPath = Path.Combine(basePath, "EntryWithExtraMSA");
-			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
-			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
-
-			testPath = Path.Combine(basePath, "SequenceFixer");
-			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
-			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
-
-			testPath = Path.Combine(basePath, "TagAndCellRefs");
-			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
-			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
-
-			testPath = Path.Combine(basePath, "GenericDates");
-			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
-			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
-
-			testPath = Path.Combine(basePath, "HomographFixer");
+		private void CleanupTestDir(string testDir)
+		{
+			var testPath = Path.Combine(basePath, testDir);
 			File.Delete(Path.Combine(testPath, "BasicFixup.fwdata"));
 			File.Delete(Path.Combine(testPath, "BasicFixup.bak"));
 		}
@@ -116,6 +79,96 @@ namespace FixFwDataDllTests
 		public void Setup()
 		{
 			errors.Clear();
+		}
+
+		[Test]
+		public void DuplicateWordforms_AreMerged()
+		{
+			var testPath = Path.Combine(basePath, WordformswithsameformTestDir);
+
+			var fixedDataPath = Path.Combine(testPath, "BasicFixup.fwdata");
+			var data = new FwDataFixer(fixedDataPath, new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+
+			// Test data has:
+			// - Two wordforms with French form "dup". The second goes away, and its two analyses are moved to the first.
+			// - a wordfom with a different French form ("other"). It is unaffected.
+			// - a wordform with French form "dup", but also Spanish form "other". It is unaffected.
+			// - two wordforms  with French form "dupFr" and Spanish form "dupSp". The alternatives are in the opposite order.
+			//		Despite this they are merged, and the one Analysis of the second one is moved to the first, which
+			//		previously had none.
+			// - a segment which references one of the deleted wordforms, and is changed to reference the replacement.
+			var firstdupGuid = "64cf9708-a7d4-4e1e-a403-deec87c34455"; // First wordform with simple form "dup"
+			var secondDupGuid = "0964665E-BB56-4406-8310-ADE04A7A23C7"; // Second with simple form "dup"
+			var analysis2_1Guid = "86DB9E97-2E6C-4AAC-B78B-9EDA834254E7"; // first analysis of deleted wordform
+			var analysis2_2Guid = "BCD9971A-D871-472D-8843-9B5392AAA57F"; // second analysis of deleted wordform
+
+
+			VerifyElementCount(fixedDataPath, "WfiWordform", firstdupGuid, 1); // First "dup" should survive
+			VerifyElementCount(fixedDataPath, "WfiWordform", secondDupGuid, 0); // Second "dup" should go away
+			VerifyElementCount(fixedDataPath, "WfiWordform", "31EBCDB7-8274-4776-A6E0-1AB523AA9E1E", 1); // Non-dup should survive
+			VerifyElementCount(fixedDataPath, "WfiWordform", "D596FD07-A4E6-4ED1-A859-7601ACD2CD36", 1); // Partial duplicate should survive
+			VerifyElementCount(fixedDataPath, "WfiAnalysis", analysis2_1Guid, 1); // First analysis of deleted wordform should survive
+			VerifyElementCount(fixedDataPath, "WfiAnalysis", analysis2_2Guid, 1); // Second analysis of deleted wordform should survive
+
+			// The surviving analyses should have their owners corrected. I think it's enough to check one.
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='WfiAnalysis' and @guid='" + analysis2_2Guid + "' and @ownerguid='" + firstdupGuid + "']", 1, false);
+
+			// The merged "dup" wordform should have four analyses
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='WfiWordform' and @guid='" + firstdupGuid + "']/Analyses/objsur", 4, false);
+
+			// One of which should be the last one from the deleted wordform.
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='WfiWordform' and @guid='" + firstdupGuid + "']/Analyses/objsur[@guid='BCD9971A-D871-472D-8843-9B5392AAA57F']", 1, false);
+
+			// The segment which refers to the deleted wordform should be fixed.
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='Segment' and @guid='b405f3c0-58e1-4492-8a40-e955774a6911']/Analyses/objsur[@guid='" + firstdupGuid + "']", 1, false);
+
+			// Merging these two verifies that it does the right things when (a) the second word of a set is the only one with analyses
+			// and (b) the writing systems are in a different order
+			var firstDupFrSp = "83A4D906-3ED1-49D1-AA5D-FC2DB938B6A4";
+			VerifyElementCount(fixedDataPath, "WfiWordform", firstDupFrSp, 1); // first "dupFr/dupSp" should survive
+			var secondDupSpFr = "D8444A90-A5CF-4163-B312-AFF577B0452E";
+			VerifyElementCount(fixedDataPath, "WfiWordform", secondDupSpFr, 0); // second "dupFr/dupSp" should go away
+
+			// The second merged wordform should have one analysis
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='WfiWordform' and @guid='" + firstDupFrSp + "']/Analyses/objsur", 1, false);
+
+			// The surviving analyses should have their owners corrected. I think it's enough to check one.
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='WfiAnalysis' and @guid='AE2BA69A-42BA-4582-AFA4-B8AC3E5567C2' and @ownerguid='" + firstDupFrSp + "']", 1, false);
+
+
+			Assert.AreEqual(2, errors.Count, "Unexpected number of errors found");
+
+			Assert.That(errors[0], Is.EqualTo("Wordform with guid '" + secondDupGuid + "' has same form (fr>dup) as '" + firstdupGuid + "' and was merged"),
+				"Error message is incorrect for dup.");
+			Assert.That(errors[1], Is.EqualTo("Wordform with guid '" + secondDupSpFr + "' has same form (fr>dupFr&sp>dupSp) as '" + firstDupFrSp + "' and was merged"),
+				"Error message is incorrect for dupSpFr.");
+
+			// Check original errors. I think it's enough to verify that the two elements the merger was supposed to delete
+			// were originally present. If the properties that allowed them to be merged were missing, it wouldn't happen.
+			// If the components that get moved were not present, they would not show up in the fixed data.
+			string backupPath = Path.Combine(testPath, "BasicFixup.bak"); // the original data we corrected
+			VerifyElementCount(backupPath, "WfiWordform", secondDupGuid, 1); // Second "dup" was there originally.
+			VerifyElementCount(backupPath, "WfiWordform", secondDupSpFr, 1); // second "dupFr/dupSp" was there originally.
+		}
+
+		/// <summary>
+		/// Verify that the object with the specified class and guid occurs the expected number of times (0 or 1)
+		/// </summary>
+		/// <param name="testPath"></param>
+		/// <param name="className"></param>
+		/// <param name="guid"></param>
+		/// <param name="expectedCount"></param>
+		private static void VerifyElementCount(string testPath, string className, string guid, int expectedCount)
+		{
+			AssertThatXmlIn.File(testPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"" + className + "\" and @guid=\"" + guid + "\"]", expectedCount, false);
 		}
 
 		[Test]
