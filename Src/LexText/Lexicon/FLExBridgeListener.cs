@@ -69,6 +69,39 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region XCore message handlers
 
+		#region FLExLiftBridge Toolbar messages
+		/// <summary>
+		/// Determine whether or not to show the Send/Receive Project menu item.
+		/// </summary>
+		/// <param name="parameters"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public bool OnDisplayFLExLiftBridge(object parameters, ref UIItemDisplayProperties display)
+		{
+			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
+			display.Enabled = FileUtils.FileExists(fullName);
+			display.Visible = display.Enabled;
+
+			return true; // We dealt with it.
+		}
+
+		/// <summary>
+		/// This is the button on the toolbar for launching either FlexBridge or LiftBridge
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <returns></returns>
+		public bool OnFLExLiftBridge(object commandObject)
+		{
+			var BridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+			if (BridgeLastUsed == "FLExBridge")
+				return OnFLExBridge(commandObject);
+			else if (BridgeLastUsed == "LiftBridge")
+				return OnLiftBridge(commandObject);
+			else
+				return true;
+		}
+		#endregion FLExLiftBridge Toolbar messages
+
 		#region FLExBridge (proper) messages
 
 		/// <summary>
@@ -94,6 +127,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Justification = "newApp is a reference")]
 		public bool OnFLExBridge(object commandObject)
 		{
+			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 			if (IsDb4oProject)
 			{
 				var dlg = new Db4oSendReceiveDialog();
@@ -163,6 +197,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnLiftBridge(object argument)
 		{
+			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
+
 			// Step 1. If notifier exists, re-try import (brutal or merciful, depending on contents of it).
 			if (RepeatPriorFailedImportIfNeeded())
 				return true;
