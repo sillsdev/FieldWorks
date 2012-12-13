@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			foreach (ListViewItem listViewItem in domainList.Items)
 			{
-				if (listViewItem.Tag == tag)
+				if (listViewItem.Tag.Equals(tag))
 				{
 					listViewItem.Checked = check;
 					break;
