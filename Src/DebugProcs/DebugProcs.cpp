@@ -294,10 +294,11 @@ bool GetShowAssertMessageBox()
 		DWORD fShowAssertMessageBox = true;
 		DWORD cb = sizeof(fShowAssertMessageBox);
 		DWORD dwT;
-		::RegQueryValueEx(hk, "AssertMessageBox", NULL, &dwT, (LPBYTE)&fShowAssertMessageBox,
-			&cb);
+		LONG ret = ::RegQueryValueEx(hk, "AssertMessageBox", NULL, &dwT,
+			(LPBYTE)&fShowAssertMessageBox, &cb);
 		RegCloseKey(hk);
-		return fShowAssertMessageBox ? true : false; // otherwise we get a performance warning
+		if (ret == ERROR_SUCCESS)
+			return fShowAssertMessageBox ? true : false; // otherwise we get a performance warning
 	}
 // getenv is deprecated on Windows
 #pragma warning(push)
@@ -617,8 +618,11 @@ void __cdecl SilAssert (
 	}
 	else // !g_fShowMessageBox
 	{
-		// if we don't show a message box we should at least abort. Note that we don't call
-		// _exit(3) as above so that we can trap the signal and ignore it in unit tests
+		// if we don't show a message box we should at least abort (and output the assertion
+		// text if we haven't done that already). Note that we don't call _exit(3) as above
+		// so that we can trap the signal and ignore it in unit tests
+		if (g_ReportHook)
+			OutputDebugString(assertbuf);
 		raise(SIGABRT);
 	}
 

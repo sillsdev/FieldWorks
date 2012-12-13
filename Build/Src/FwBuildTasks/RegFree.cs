@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Xml;
 using FwBuildTasks;
 using Microsoft.Build.Framework;
@@ -45,7 +46,6 @@ namespace SIL.FieldWorks.Build.Tasks
 			Fragments = new ITaskItem[0];
 			AsIs = new ITaskItem[0];
 			NoTypeLib = new ITaskItem[0];
-			Unregister = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Whether to unregister the processed assemblies after creating the manifest file.
-		/// Defaults to <c>true</c>.
+		/// Defaults to <c>false</c>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public bool Unregister { get; set; }
@@ -102,6 +102,21 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ITaskItem[] AsIs { get; set; }
+
+		private bool? m_IsAdmin;
+		private bool UserIsAdmin
+		{
+			get
+			{
+				if (!m_IsAdmin.HasValue)
+				{
+					var id = WindowsIdentity.GetCurrent();
+					var p = new WindowsPrincipal(id);
+					m_IsAdmin = p.IsInRole(WindowsBuiltInRole.Administrator);
+				}
+				return m_IsAdmin.Value;
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -139,7 +154,7 @@ namespace SIL.FieldWorks.Build.Tasks
 						Log.LogMessage(MessageImportance.Low, "\tRegistering library {0}", Path.GetFileName(fileName));
 						try
 						{
-							regHelper.Register(fileName, true, NoTypeLib.Count(f => f.ItemSpec == fileName) == 0);
+							regHelper.Register(fileName, UserIsAdmin, NoTypeLib.Count(f => f.ItemSpec == fileName) == 0);
 						}
 						catch(Exception e)
 						{
@@ -151,6 +166,9 @@ namespace SIL.FieldWorks.Build.Tasks
 					XmlElement root = creator.CreateExeInfo(Executable);
 					foreach (string fileName in dllPaths)
 					{
+						if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)
+							continue;
+
 						Log.LogMessage(MessageImportance.Low, "\tProcessing library {0}", Path.GetFileName(fileName));
 						creator.ProcessTypeLibrary(root, fileName);
 					}
@@ -188,7 +206,7 @@ namespace SIL.FieldWorks.Build.Tasks
 						{
 							Log.LogMessage(MessageImportance.Low, "\tUnregistering library {0}",
 								Path.GetFileName(fileName));
-							regHelper.Unregister(fileName, true);
+							regHelper.Unregister(fileName, UserIsAdmin);
 						}
 					}
 				}

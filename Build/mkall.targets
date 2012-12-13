@@ -65,7 +65,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe" Unregister="$(unregisterInRegFree)"
+		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
 				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -123,7 +123,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe" Unregister="$(unregisterInRegFree)"
+		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
 				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -178,7 +178,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/Language/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testLanguage.exe" Unregister="$(unregisterInRegFree)"
+		<RegFree Executable="$(dir-outputBase)\testLanguage.exe"
 				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>
@@ -223,7 +223,7 @@
 			  Configuration="$(config-capital)" Target="$(make-target)"
 			  BuildRoot="$(fwrt)"
 			  WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
-		<RegFree Executable="$(dir-outputBase)\testViews.exe" Unregister="$(unregisterInRegFree)"
+		<RegFree Executable="$(dir-outputBase)\testViews.exe"
 				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
 				NoTypeLib="$(dir-outputBase)\Graphite.dll"
 				Condition="'$(OS)'=='Windows_NT'"/>

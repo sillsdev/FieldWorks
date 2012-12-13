@@ -16,7 +16,7 @@
 		<Fragments Include="$(OutDir)/../../DistFiles/*.fragment.manifest"/>
 	</ItemGroup>
 	<Target Name="RegFree" Condition="'$(OS)'=='Windows_NT'" Inputs="$(Executable)" Outputs="$(Executable).manifest">
-		<RegFree Executable="$(Executable)" Dlls="@(Dlls)" Fragments="@(Fragments)" Unregister="$(unregisterInRegFree)"
+		<RegFree Executable="$(Executable)" Dlls="@(Dlls)" Fragments="@(Fragments)"
 			NoTypeLib="$(OutDir)Graphite.dll" />
 		<Exec Command="mt.exe -outputresource:$(Executable) -manifest $(Executable).manifest"/>
 	</Target>

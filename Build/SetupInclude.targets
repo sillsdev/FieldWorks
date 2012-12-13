@@ -447,10 +447,6 @@
 		-->
 		<showTargetsRunInReport>false</showTargetsRunInReport>
 		<passbyref Condition="'$(showTargetsRunInReport)'=='true'">"$(passbyref) fw-targets-run</passbyref>
-		<!-- when building on Jenkins we shouldn't unregister the COM dlls.
-			We set both values so that we can directly use the property as argument value. -->
-		<unregisterInRegFree Condition="'$(JENKINS_URL)'==''">true</unregisterInRegFree>
-		<unregisterInRegFree Condition="'$(JENKINS_URL)'!=''">false</unregisterInRegFree>
 	</PropertyGroup>
 
 </Project>
