@@ -304,8 +304,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// if list of associated addresses in entry matches list of associated addresses of any item in hostsTreeView
 			// then ignore as its the same host.
-			if (m_networkNeighborhood.Nodes.Cast<TreeNode>().Any(host => Dns.GetHostEntry(host.Text).AddressList.Intersect(entry.AddressList).Count() > 0))
+			try
+			{
+				var checkDnsHostLookup = Dns.GetHostEntry(entry.HostName); //LT-13898, the DNS server was configured wrong so entry.HostName was host.wins.sil.org
+															//Calling GetHostEntry with a bad domain name will throw. The catch statement allows us to handle this
+															//SocketException gracefully.
+				foreach (TreeNode host in m_networkNeighborhood.Nodes.Cast<TreeNode>())
+				{
+					//If entry.HostName == host.Text then it is already in m_networkNeighborhood.Nodes, therefore return.
+					if (Dns.GetHostEntry(host.Text).AddressList.Intersect(entry.AddressList).Count() > 0)
+						return;
+				}
+			}
+			catch (SocketException e)
+			{
+				//This is to gracefully handle broken DNS servers.
 				return;
+			}
 
 			var node = new TreeNode(entry.HostName);
 			m_networkNeighborhood.Nodes.Add(node);
