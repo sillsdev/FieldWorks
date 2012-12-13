@@ -216,7 +216,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (string key in forms.Keys)
 			{
 				int wsHvo = GetWsFromLiftLang(key);
-				string form =  XmlUtils.DecodeXml(forms[key].Text);
+				// LiftMultiText parameter may have come in with escaped characters which need to be
+				// converted to plain text before merging with existing entries
+				string form = XmlUtils.DecodeXml(forms[key].Text);
 				if (wsHvo > 0 && !String.IsNullOrEmpty(form))
 				{
 					multi.Remove(wsHvo);
@@ -349,6 +351,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ITsString CreateTsStringFromLiftString(LiftString liftstr, int wsHvo)
 		{
 			ITsStrBldr tsb = m_cache.TsStrFactory.GetBldr();
+			// LiftString parameter may have come in with escaped characters which need to be
+			// converted to plain text before comparing with existing entries
 			var convertSafeXmlToText = XmlUtils.DecodeXml(liftstr.Text);
 			tsb.Replace(0, tsb.Length, convertSafeXmlToText, m_tpf.MakeProps(null, wsHvo, 0));
 			int wsSpan;
@@ -405,6 +409,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (wsHvo > 0)
 					{
 						multi.Remove(wsHvo);
+						// LiftMultiText parameter may have come in with escaped characters which need to be
+						// converted to plain text before merging with existing entries
 						string sText = XmlUtils.DecodeXml(forms[key].Text);
 						if (sText.Length > cchMax)
 						{
@@ -655,7 +661,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					continue;
 				if (String.IsNullOrEmpty(sNew) || (tssOld == null || tssOld.Length == 0))
 					return false;
-				string sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
+				// LiftMultiText parameter may have come in with escaped characters which need to be
+				// converted to plain text before comparing with existing entries
+				string sNewNorm = XmlUtils.DecodeXml(Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD));
 				string sOldNorm = Icu.Normalize(tssOld.Text, Icu.UNormalizationMode.UNORM_NFD);
 				if (sNewNorm != sOldNorm)
 					return false;

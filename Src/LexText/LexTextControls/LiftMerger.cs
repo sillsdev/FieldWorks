@@ -5712,7 +5712,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					sNewNorm = sNew;
 				else
 					sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
-				MuElement mue = new MuElement(ws, sNewNorm);
+				// LiftMultiText parameter may have come in with escaped characters which need to be
+				// converted to plain text before comparing with existing entries
+				MuElement mue = new MuElement(ws, XmlUtils.DecodeXml(sNewNorm));
 				if (rie == null && mapToRIEs.TryGetValue(mue, out rgrie))
 				{
 					foreach (IReversalIndexEntry rieT in rgrie)
