@@ -3028,6 +3028,100 @@ namespace LexTextControlsTests
 			Assert.AreEqual(2, coolerSense.LexSenseReferences.First().TargetsRS.Count, "Incorrect number of targets in the leg sense.");
 		}
 
+		private static string[] componentData = new[] {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"<header>",
+			"<fields></fields>",
+			"</header>",
+			"<entry dateCreated='2012-11-07T20:40:33Z' dateModified='2012-11-07T20:41:06Z' id='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' guid='d76f4068-833e-40a8-b4d5-5f4ba785bf6e'>",
+			"<lexical-unit>",
+			"<form lang='en'> <text>cold</text>",
+			"</form>",
+			"</lexical-unit>",
+			"<trait name='morph-type' value='stem' />",
+			"<relation type='Compare' ref='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' />",
+			"<relation type='Compare' ref='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' />",
+			"<sense id='e6d3dd67-27b2-4c2b-91ae-da05c740cbd7'></sense>",
+			"</entry>",
+			"<entry dateCreated='2012-11-07T20:41:06Z' dateModified='2012-11-07T20:41:06Z' id='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' guid='d5222b80-e3f2-4016-a17b-3ae13718e70d'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cool</text></form>",
+			"</lexical-unit>",
+			"<trait name='morph-type' value='stem' />",
+			"<relation type='Compare' ref='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' />",
+			"<relation type='Compare' ref='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' />",
+			"<sense id='5e9a79ee-68a4-48e2-81fc-30d9f6b11eb3'></sense>",
+			"</entry>",
+			"<entry dateCreated='2012-11-07T20:41:19Z' dateModified='2012-11-07T20:51:56Z' id='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' guid='03237d6e-a327-436b-8ae3-b84eed3549fd'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cooler</text></form>",
+			"</lexical-unit>",
+			"<trait name='morph-type' value='stem' />",
+			"<relation type='Compare' ref='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' />",
+			"<relation type='Compare' ref='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' />",
+			"<sense id='83decc9c-89d2-460f-842e-f69a84dc9dd4'></sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		private static string[] componentData2 = new[] {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41003\" version=\"0.13\">",
+			"<header>",
+			"<fields></fields>",
+			"</header>",
+			"<entry dateCreated='2012-11-07T20:40:33Z' dateModified='2012-11-07T20:45:06Z' id='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' guid='d76f4068-833e-40a8-b4d5-5f4ba785bf6e'>",
+			"<lexical-unit>",
+			"<form lang='en'> <text>cold</text>",
+			"</form>",
+			"</lexical-unit>",
+			"<trait name='morph-type' value='stem' />",
+			"<relation type='Compare' ref='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' />",
+			"<sense id='e6d3dd67-27b2-4c2b-91ae-da05c740cbd7'></sense>",
+			"</entry>",
+			"<entry dateCreated='2012-11-07T20:41:06Z' dateModified='2012-11-07T20:45:06Z' id='cool_d5222b80-e3f2-4016-a17b-3ae13718e70d' guid='d5222b80-e3f2-4016-a17b-3ae13718e70d'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cool</text></form>",
+			"</lexical-unit>",
+			"<trait name='morph-type' value='stem' />",
+			"<relation type='Compare' ref='cold_d76f4068-833e-40a8-b4d5-5f4ba785bf6e' />",
+			"<sense id='5e9a79ee-68a4-48e2-81fc-30d9f6b11eb3'></sense>",
+			"</entry>",
+			"<entry dateCreated='2012-11-07T20:41:19Z' dateModified='2012-11-07T20:55:56Z' id='cooler_03237d6e-a327-436b-8ae3-b84eed3549fd' guid='03237d6e-a327-436b-8ae3-b84eed3549fd'>",
+			"<lexical-unit>",
+			"<form lang='en'><text>cooler</text></form>",
+			"</lexical-unit>",
+			"<trait name='morph-type' value='stem' />",
+			"<sense id='83decc9c-89d2-460f-842e-f69a84dc9dd4'></sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		[Test]
+		public void TestImportRemovesItemFromComponentRelation()
+		{
+			//This test is for the issue documented in LT-13764
+			SetWritingSystems("fr");
+
+			CreateNeededStyles();
+
+			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+
+			var sOrigFile = CreateInputFile(componentData);
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 3);
+			var coldEntry = entryRepo.GetObject(new Guid("d76f4068-833e-40a8-b4d5-5f4ba785bf6e"));
+			var ler = coldEntry.LexEntryReferences;
+			Assert.AreEqual(3, coldEntry.LexEntryReferences.ElementAt(0).TargetsRS.Count, "Incorrect number of component references.");
+
+			var sNewFile = CreateInputFile(componentData2);
+			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 3);
+			const string coolerGuid = "03237d6e-a327-436b-8ae3-b84eed3549fd";
+			Assert.AreEqual(2, coldEntry.LexEntryReferences.ElementAt(0).TargetsRS.Count, "Incorrect number of component references.");
+			var coolerEntry = entryRepo.GetObject(new Guid(coolerGuid));
+			Assert.AreEqual(0, coolerEntry.LexEntryReferences.Count());
+		}
+
 		private void VerifyFirstEntryStTextDataImportExact(ILexEntryRepository repoEntry, int cpara, int flidCustom)
 		{
 			ILexEntry entry1;

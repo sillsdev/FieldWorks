@@ -2619,14 +2619,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_combinedCollections.Add(col);
 					}
 				}
-				var union = complexEntryTypes.Union(referenceCollection.AsEnumerable());
-				foreach (var lexEntryType in union)
-				{
-					if(!referenceCollection.Contains(lexEntryType))
-					{
-						referenceCollection.Add(lexEntryType);
-					}
-				}
+				referenceCollection.Replace(0, referenceCollection.Count, complexEntryTypes);
 			}
 		}
 
@@ -2951,73 +2944,89 @@ namespace SIL.FieldWorks.LexText.Controls
 				string sType = typeCollections.Key;
 				foreach (var collection in typeCollections.Value)//for each grouping of relations for that type
 				{
-					var currentRel = collection.Item1;
-					ILexRefType lrt = FindOrCreateLexRefType(sType, collection.Item2.FirstItem().IsSequence);
-					if (CollectionRelationAlreadyExists(lrt, currentRel))
+					var incomingRelationIDs = collection.Item1;
+					var incomingRelations = collection.Item2;
+					ILexRefType lrt = FindOrCreateLexRefType(sType, incomingRelations.FirstItem().IsSequence);
+					if (IsAnExistingCollectionAnExactMatch(lrt, incomingRelationIDs))
 						continue;
-					ILexReference lr = CreateNewLexReference();
-					lrt.MembersOC.Add(lr);
-					foreach (int hvo in currentRel)
-						lr.TargetsRS.Add(GetObjectForId(hvo));
-					foreach(var relMain in collection.Item2)
-						StoreRelationResidue(lr, relMain);
+					List<ICmObject> oldItems;
+					var lr = FindExistingSequence(lrt, incomingRelations, out oldItems);
+					if(lr == null)
+					{
+						lr = CreateNewLexReference();
+						lrt.MembersOC.Add(lr);
+						foreach (int hvo in incomingRelationIDs)
+							lr.TargetsRS.Add(GetObjectForId(hvo));
+						foreach (var relation in incomingRelations)
+							StoreRelationResidue(lr, relation);
+					}
+					else
+					{
+						ReplaceLexRefContents(lr, incomingRelationIDs);
+					}
 				}
 				progress.Position++;
 			}
 		}
 
 		/// <summary>
-		/// This method returns true if there is an existing collection belonging to an entry or sense
-		/// related to the given ILexRefType which is  matches the contents of the given set.
-		/// This method is to prevent duplication of sets of relations due to the fact they are replicated in
+		/// This method is necessary to prevent duplication of sets of relations due to the fact they are replicated in
 		/// all the members of the relation in the LIFT file.
 		/// </summary>
-		/// <param name="lrt">The ILexRefType to inspect</param>
-		/// <param name="setRelation">The Set of hvo's to check</param>
-		/// <returns>true if the collection has already been added.</returns>
-		private bool CollectionRelationAlreadyExists(ILexRefType lrt, Set<int> setRelation)
+		private static bool IsAnExistingCollectionAnExactMatch(ILexRefType lrt, Set<int> checkTargets)
 		{
-			//check each reference in the lexreftype
-			foreach (ILexReference lr in lrt.MembersOC)
+			foreach (var lr in lrt.MembersOC)
 			{
-				var currentSet = new List<int>();
-				var otherSet = new List<int>(setRelation);
-				//for every object in the target sequence of the LexReference
-				foreach (ICmObject cmo in lr.TargetsRS)
-				{
-					currentSet.Add(cmo.Hvo);
-				}
-				var intersectors = currentSet.Intersect(otherSet);
-				if(intersectors.Count() == 0) //the two sets share no entries
-				{
+				if(lr.TargetsRS.Count != checkTargets.Count)
 					continue;
-				}
-				//If the sets intersect, but did not have a subset-superset relationship then we might be doing
-				//something the user did not expect or want, so log it for them.
-				if(!intersectors.ContainsCollection(otherSet) && !intersectors.ContainsCollection(currentSet))
-				{
-
-					CombinedCollection conflictingData;
-					foreach(var item in currentSet)
-					{
-						if (!intersectors.Contains(item))
-						{
-							conflictingData = new CombinedCollection(GetObjectForId(intersectors.First()), m_cache, this);
-							conflictingData.TypeName = lr.TypeAbbreviation(m_cache.DefaultUserWs, GetObjectForId(item));
-							conflictingData.BadValue = GetObjectForId(item).DeletionTextTSS.Text;
-							m_combinedCollections.Add(conflictingData);
-						}
-					}
-				}
-				var otherObjects = new List<ICmObject>();
-				foreach (var hvo in otherSet)
-				{
-					otherObjects.Add(GetObjectForId(hvo));
-				}
-				AdjustCollectionContents(otherObjects, lr.TargetsRS, lr);
-				return true;
+				//build a set of the hvos in the lexical relation
+				var currentSet = lr.TargetsRS.Select(cmo => cmo.Hvo).ToList();
+				//for every object in the target sequence of the LexReference
+				return currentSet.ContainsCollection(checkTargets);
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// This method will adjust two collections (which share some content) based off new data from the lift file.
+		/// </summary>
+		/// <param name="lr">The ILexReference to adjust</param>
+		/// <param name="setRelation">The Set of hvo's to use in the adjusted reference</param>
+		private void ReplaceLexRefContents(ILexReference lr, IEnumerable<int> setRelation)
+		{
+			var currentSet = new List<int>();
+			//for every object in the target sequence of the LexReference
+			foreach (var cmo in lr.TargetsRS)
+			{
+				currentSet.Add(cmo.Hvo);
+			}
+			var intersectors = currentSet.Intersect(setRelation);
+			if(intersectors.Count() == 0) //the two sets are unrelated, and shouldn't be merged
+			{
+				return;
+			}
+			//If the sets intersect, but did not have a subset-superset relationship then we might be doing
+			//something the user did not expect or want, so log it for them.
+			if (!intersectors.ContainsCollection(setRelation) && !intersectors.ContainsCollection(currentSet))
+			{
+				CombinedCollection conflictingData;
+				foreach(var item in currentSet)
+				{
+					if (!intersectors.Contains(item))
+					{
+						conflictingData = new CombinedCollection(GetObjectForId(intersectors.First()), m_cache, this);
+						conflictingData.TypeName = lr.TypeAbbreviation(m_cache.DefaultUserWs, GetObjectForId(item));
+						conflictingData.BadValue = GetObjectForId(item).DeletionTextTSS.Text;
+						m_combinedCollections.Add(conflictingData);
+					}
+				}
+			}
+			var otherObjects = new List<ICmObject>();
+			foreach (var hvo in setRelation)
+			{
+				otherObjects.Add(GetObjectForId(hvo));
+			}
+			AdjustCollectionContents(otherObjects, lr.TargetsRS, lr);
 		}
 
 		private void StoreSequenceRelation(ILexRefType lrt, List<
@@ -3048,7 +3057,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			StoreRelationResidue(lr, rgRelation[0]);
 		}
 
-		private bool IsAnExistingSequenceAnExactMatch(ILexRefType lrt, List<PendingRelation> rgRelation)
+		/// <summary>
+		/// Tests if there is an existing sequence in the LexRefType which exactly matches the pendingRelation
+		/// in contents and order.
+		/// </summary>
+		/// <param name="lrt">the ILexRefType to check</param>
+		/// <param name="rgRelation">An ordered list of relations from the LIFT file</param>
+		/// <returns>true if this sequence already exists in the system</returns>
+		private static bool IsAnExistingSequenceAnExactMatch(ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
 			foreach (var lr in lrt.MembersOC)
 			{
@@ -3069,7 +3085,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
-		private ILexReference FindExistingSequence(ILexRefType lrt, List<PendingRelation> rgRelation, out List<ICmObject> oldItems)
+		/// <summary>
+		/// This method will find and return an ILexReference in the given LexRefType if it has any overlap with the given collection
+		/// of relations
+		/// </summary>
+		/// <param name="lrt"></param>
+		/// <param name="rgRelation"></param>
+		/// <param name="oldItems"></param>
+		/// <returns></returns>
+		private static ILexReference FindExistingSequence(ILexRefType lrt, IEnumerable<PendingRelation> rgRelation, out List<ICmObject> oldItems)
 		{
 			oldItems = new List<ICmObject>();
 			foreach (var lr in lrt.MembersOC)
@@ -3085,6 +3109,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						return lr;
 					}
 				}
+				oldItems.Clear();
 			}
 			oldItems = null; // old items aren't actually old items if we didn't find a match
 			return null;
