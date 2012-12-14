@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public override bool Execute()
 		{
-			Log.LogMessage(MessageImportance.Low, "Registering {0}", Path.GetFileName(Dll));
+			Log.LogMessage(MessageImportance.Normal, "Registering {0}", Path.GetFileName(Dll));
 
 			if (File.Exists(Dll))
 			{

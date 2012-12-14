@@ -125,7 +125,8 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public override bool Execute()
 		{
-			Log.LogMessage(MessageImportance.Low, "Processing {0}", Path.GetFileName(Executable));
+			Log.LogMessage(MessageImportance.Normal, "RegFree processing {0}",
+				Path.GetFileName(Executable));
 
 			var manifestFile = string.IsNullOrEmpty(Output) ? Executable + ".manifest" : Output;
 
