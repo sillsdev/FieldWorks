@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -78,9 +79,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnDisplayFLExLiftBridge(object parameters, ref UIItemDisplayProperties display)
 		{
-			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
-			display.Enabled = FileUtils.FileExists(fullName);
-			display.Visible = display.Enabled;
+			CheckForFlexBridgeInstalled(display);
 
 			return true; // We dealt with it.
 		}
@@ -95,10 +94,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var BridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 			if (BridgeLastUsed == "FLExBridge")
 				return OnFLExBridge(commandObject);
-			else if (BridgeLastUsed == "LiftBridge")
+
+			if (BridgeLastUsed == "LiftBridge")
 				return OnLiftBridge(commandObject);
-			else
-				return true;
+
+			return true;
 		}
 		#endregion FLExLiftBridge Toolbar messages
 
@@ -146,10 +146,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectConflicts(projectFolder);
 			string dummy;
-			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata");
+			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, Environment.UserName,
-								FLExBridgeHelper.SendReceive, out dataChanged, out dummy);
+								FLExBridgeHelper.SendReceive, null, out dataChanged, out dummy);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -193,11 +193,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Called (by xcore) to control display params of the Lift Send/Receive menu.
+		/// The method/delegate that gets invoked when File->Send/Receive Project is clicked
+		/// via the OnLiftBridge message
 		/// </summary>
+		/// <param name="argument">Includes the XML command element of the OnFLExBridge message</param>
+		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody shoudl also try to handle the message.</returns>
 		public bool OnLiftBridge(object argument)
 		{
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
+
+			// Step 0. Try to move an extant lift repo from old location to new.
+			if (!MoveOldLiftRepoIfNeeded())
+				return true;
 
 			// Step 1. If notifier exists, re-try import (brutal or merciful, depending on contents of it).
 			if (RepeatPriorFailedImportIfNeeded())
@@ -265,9 +272,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dummy1;
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + ".fwdata"),
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 								   Environment.UserName,
-								   FLExBridgeHelper.ConflictViewer, out dummy1, out dummy2);
+								   FLExBridgeHelper.ConflictViewer, null, out dummy1, out dummy2);
 			if (!success)
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
@@ -283,6 +290,51 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#region Lift methods
 
 		/// <summary>
+		/// If the repo exists in the foo\OtherRepositories\LIFT folder, then do nothing.
+		/// If the repo or the entire folder structure does not yet exist,
+		/// then ask FLEx Bridge to move the previous lift repo to the new home,
+		/// it is exists.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the call to FLEx Bridge returns the pathname to the lift file (_liftPathname), we know the move took place,
+		/// and we have the lift file that is in the repository. That lift file's name may or may not match the FW project name,
+		/// but it ought not matter if it does or does not match.</para>
+		/// <para>If the call returned null, we know the move did not take place.
+		/// In this case the caller of this method will continue on and probably create a new repository,
+		///	thus doing the equivalent of the original Lift Bridge code where there FLEx user started a S/R lift system.</para>
+		/// </remarks>
+		/// <returns>'true' if the the move succeeded, or if there was no need to do the move. The caller code will continue its work.
+		/// Return 'false', if the calling code should quit its work.</returns>
+		private bool MoveOldLiftRepoIfNeeded()
+		{
+			var projectFolder = Cache.ProjectId.ProjectFolder;
+			var liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
+			// It is fine to try the repo move if the liftProjectDir exists, but *only* if it is completely empty.
+			// Mercurial can't do a clone into a folder that has contents of any sort.
+			if (Directory.Exists(liftProjectDir) && (Directory.GetDirectories(liftProjectDir).Length > 0 || Directory.GetFiles(liftProjectDir).Length > 0))
+			{
+				return true;
+			}
+
+			bool dummyDataChanged;
+			// flexbridge -p <path to fwdata file> -u <username> -v move_lift -g Langprojguid
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(
+				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+				Environment.UserName,
+				FLExBridgeHelper.MoveLift,
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(),
+				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
+			if (!success)
+			{
+				ChooseLangProjectDialog.ReportDuplicateBridge();
+				_liftPathname = null;
+				return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
 		/// Reregisters an inport failure, if needed, otherwise clears the token.
 		/// </summary>
 		/// <returns>'true' if the import failure continues, otherwise 'false'.</returns>
@@ -292,7 +344,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
 			if (!Directory.Exists(liftProjectDir))
 				return false;
+
 			_liftPathname = GetLiftPathname(liftProjectDir);
+			if (_liftPathname == null)
+				return false;
+
 			var previousImportStatus = LiftImportFailureServices.GetFailureStatus(liftProjectDir);
 			switch (previousImportStatus)
 			{
@@ -371,9 +427,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			string dummy;
 			// flexbridge -p <path to fwdata file> -u <username> -v send_receive_lift
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
-				Path.Combine(projectFolder, Cache.ProjectId.Name + ".fwdata"),
+				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 				Environment.UserName,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
+				null,
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -383,15 +440,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return false;
 			}
 
-			_liftPathname = GetLiftPathname(liftProjectDir); // There better be one lift file in there.
+			_liftPathname = GetLiftPathname(liftProjectDir);
+
+			if (_liftPathname == null)
+			{
+				dataChanged = false; // If there is no lift file, there cannot be any new data.
+				return false;
+			}
+
 			return true;
 		}
 
 		private static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
-			var liftProjectDir = Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories,
-											  FLExBridgeHelper.LIFT);
-			return liftProjectDir;
+			return Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories, FLExBridgeHelper.LIFT);
 		}
 
 		void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
@@ -458,7 +520,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string GetLiftPathname(string liftBaseDir)
 		{
-			return Directory.GetFiles(liftBaseDir, "*.lift").First();
+			return Directory.GetFiles(liftBaseDir, "*.lift").FirstOrDefault();
 		}
 
 		/// <summary>
@@ -637,6 +699,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (!Directory.Exists(liftProjectDir))
 				{
 					Directory.CreateDirectory(liftProjectDir);
+				}
+				if (liftPathname == null)
+				{
 					liftPathname = Path.Combine(liftProjectDir, Cache.ProjectId.Name + ".lift");
 				}
 				var outPath = liftPathname + ".tmp";
@@ -684,7 +749,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, Environment.UserName,
-								FLExBridgeHelper.UndoExportLift, out dataChanged, out dummy);
+								FLExBridgeHelper.UndoExportLift, null, out dataChanged, out dummy);
 		}
 
 		#endregion
@@ -710,7 +775,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					// Continuing straight on from here renames the db on disk, but not in the cache, apparently
 					// Try a more indirect approach...
-					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + ".fwdata");
+					var fullProjectFileName = Path.Combine(projectFolder, revisedProjName + FwFileExtensions.ksFwDataXmlFileExtension);
 					var tempWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 					tempWindow.Mediator.SendMessageDefered("FLExBridge", null);
 					// to hopefully come back here after resetting things
@@ -749,7 +814,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)
 		{
-			if(File.Exists(Path.Combine(projectFolder, revisedFileName + ".fwdata")))
+			if (File.Exists(Path.Combine(projectFolder, revisedFileName + FwFileExtensions.ksFwDataXmlFileExtension)))
 			{
 				MessageBox.Show(
 					LexEdStrings.ksExistingProjectName, LexEdStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -827,7 +892,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private static bool CheckForFlexBridgeInstalled(UIItemDisplayProperties display)
 		{
 			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
-			display.Enabled = FileUtils.FileExists(fullName);
+			display.Enabled = FileUtils.FileExists(fullName) && AssemblyName.GetAssemblyName(fullName).Version.Minor >= 5;
 			display.Visible = display.Enabled;
 			return display.Visible;
 		}

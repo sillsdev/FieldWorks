@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// As the user selects some note, a call back FELx will be done, with the URL for the item to jump to.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
-		public const string ConflictViewer = @"view_notes"; // REVIEW (JohnT): Do we need anohter option for viewing the lift notes 'view_notes_lift'?
+		public const string ConflictViewer = @"view_notes"; // REVIEW (JohnT): Do we need another option for viewing the lift notes 'view_notes_lift'?
 
 		/// <summary>
 		/// constant for launching the bridge in the undo export mode
@@ -74,6 +74,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
 		public const string UndoExportLift = @"undo_export_lift";
+
+		/// <summary>
+		/// constant for launching the bridge in the move lift mode
+		/// </summary>
+		/// <remarks>
+		/// <para>Instruct FLEx Bridge to try and move an extant repository from the old location to the new,
+		/// if the old one exists. FLEx should not use this option, if the new repository already exists.</para>
+		/// <para>The related '-p' option (required) will give the pathname of the xml fwdata file. The new repository location is returned, if it was moved, other wise null is returned.</para>
+		/// <para>This option must also use the '-g' command line argument which gives FLEx Bridge the language project's guid,
+		/// which is used to find the correct lift repository.</para>
+		/// </remarks>
+		public const string MoveLift = @"move_lift";
 
 		#endregion End of available '-v' parameter options:
 
@@ -121,12 +133,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Empty is OK if not send_receive command.</param>
 		/// <param name="userName">TBD: someone should explain what this is for</param>
 		/// <param name="command">obtain, start, send_receive, view_notes</param>
+		/// <param name="projectGuid">Optional Lang Project guid, that is only used with the 'move_lift' command</param>
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
 		/// <returns>true if successful, false otherwise</returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="ServiceHost gets disposed in KillTheHost()")]
-		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command,
+		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
 			out bool changesReceived, out string projectName)
 		{
 			flexBridgeTerminated = false;
@@ -145,9 +158,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (!String.IsNullOrEmpty(projectFolder))
 			{    // can S/R multiple projects simultaneously
 				AddArg(ref args, "-p", projectFolder);
-				_sFwProjectName = Path.GetFileNameWithoutExtension(projectFolder);
+				if (projectFolder != DirectoryFinder.ProjectsDirectory)
+					_sFwProjectName = Path.GetFileNameWithoutExtension(projectFolder);
 			}
+
 			AddArg(ref args, "-v", command);
+
+			if (!String.IsNullOrEmpty(projectGuid))
+			{
+				AddArg(ref args, "-g", projectGuid);
+			}
 			if (conflictHost != null)
 			{
 				return false;

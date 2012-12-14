@@ -1481,7 +1481,7 @@ namespace SIL.FieldWorks
 						case WelcomeToFieldWorksDlg.ButtonPress.Receive:
 							bool dummy;
 							string projectName;
-							var success = FLExBridgeHelper.LaunchFieldworksBridge(null, null, FLExBridgeHelper.Obtain,
+							var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
 								out dummy, out projectName);
 							if (success)
 							{
