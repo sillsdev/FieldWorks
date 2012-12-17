@@ -11,8 +11,8 @@ ARCH=$(uname -m)
 [ -z "$MONO_PREFIX" ] && MONO_PREFIX=/usr/local
 
 # Dependency locations
-# TODO - search for xulrunner-1.9.2.* locations, (and select the latest)
-XULRUNNER=$(ls -d /usr/lib/xulrunner-1.9.2* | tail -1)
+# search for xulrunner-1.9.2*, select the latest, and add its location to LD_LIBRARY_PATH
+. ./environ-xulrunner
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 
 MONO_RUNTIME=v4.0.30319
@@ -30,7 +30,7 @@ ${LD_LIBRARY_PATH}"
 
 # Add packaged mono items to paths
 PATH="/usr/lib/fieldworks/mono/bin:${PATH}"
-LD_LIBRARY_PATH="/usr/lib/fieldworks/mono/lib:${XULRUNNER}:${LD_LIBRARY_PATH}"
+LD_LIBRARY_PATH="/usr/lib/fieldworks/mono/lib:${LD_LIBRARY_PATH}"
 PKG_CONFIG_PATH="/usr/lib/fieldworks/mono/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
 if [ "$RUNMODE" != "PACKAGE" ]
