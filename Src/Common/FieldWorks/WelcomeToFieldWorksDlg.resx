@@ -118,50 +118,23 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="receiveProjLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="receiveProjLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 47</value>
-  </data>
-  <data name="receiveProjLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>264, 47</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="receiveProjLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="receiveProjLabel.Text" xml:space="preserve">
-    <value>Receive project from a colleague...</value>
-  </data>
-  <data name="receiveProjLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;receiveProjLabel.Name" xml:space="preserve">
-    <value>receiveProjLabel</value>
-  </data>
-  <data name="&gt;&gt;receiveProjLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;receiveProjLabel.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;receiveProjLabel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="labelLayout.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="m_openSampleOrLastProjectLink.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_openSampleOrLastProjectLink.Location" type="System.Drawing.Point, System.Drawing">
-    <value>249, 0</value>
+    <value>128, 0</value>
   </data>
   <data name="m_openSampleOrLastProjectLink.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 3, 0</value>
   </data>
   <data name="m_openSampleOrLastProjectLink.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 23</value>
+    <value>162, 31</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_openSampleOrLastProjectLink.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -180,14 +153,17 @@
   <data name="&gt;&gt;m_openSampleOrLastProjectLink.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="m_sampleOrLastProjectLinkLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="m_sampleOrLastProjectLinkLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>35, 0</value>
+    <value>10, 0</value>
   </data>
   <data name="m_sampleOrLastProjectLinkLabel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 0, 0, 0</value>
   </data>
   <data name="m_sampleOrLastProjectLinkLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>214, 23</value>
+    <value>118, 23</value>
   </data>
   <data name="m_sampleOrLastProjectLinkLabel.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -214,10 +190,10 @@
     <value>RightToLeft</value>
   </data>
   <data name="labelLayout.Location" type="System.Drawing.Point, System.Drawing">
-    <value>327, 3</value>
+    <value>332, 13</value>
   </data>
   <data name="labelLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>310, 41</value>
+    <value>293, 41</value>
   </data>
   <data name="labelLayout.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -232,19 +208,34 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;labelLayout.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <data name="openButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="openButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
+  <data name="openButton.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="openButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="openButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
+    <value>18, 13</value>
   </data>
   <data name="openButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 41</value>
+    <value>300, 41</value>
   </data>
   <data name="openButton.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
+  </data>
+  <data name="openButton.Text" xml:space="preserve">
+    <value>            Open a project...</value>
+  </data>
+  <data name="openButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;openButton.Name" xml:space="preserve">
     <value>openButton</value>
@@ -256,19 +247,31 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;openButton.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="receiveButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="receiveButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
+  <data name="receiveButton.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
   <data name="receiveButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 50</value>
+    <value>18, 60</value>
   </data>
   <data name="receiveButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 41</value>
+    <value>300, 41</value>
   </data>
   <data name="receiveButton.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
+  </data>
+  <data name="receiveButton.Text" xml:space="preserve">
+    <value>            Receive project from a colleague...</value>
+  </data>
+  <data name="receiveButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;receiveButton.Name" xml:space="preserve">
     <value>receiveButton</value>
@@ -280,19 +283,31 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;receiveButton.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="createButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="createButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
+  <data name="createButton.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
   <data name="createButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 97</value>
+    <value>18, 107</value>
   </data>
   <data name="createButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 41</value>
+    <value>300, 41</value>
   </data>
   <data name="createButton.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
+  </data>
+  <data name="createButton.Text" xml:space="preserve">
+    <value>            Create a new project...</value>
+  </data>
+  <data name="createButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;createButton.Name" xml:space="preserve">
     <value>createButton</value>
@@ -304,19 +319,74 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;createButton.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="importButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="importButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
+  <data name="importButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+        1SL63nvV/y85LlfLi68kuwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="importButton.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
   <data name="importButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 144</value>
+    <value>18, 154</value>
   </data>
   <data name="importButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 41</value>
+    <value>300, 41</value>
   </data>
   <data name="importButton.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
+  </data>
+  <data name="importButton.Text" xml:space="preserve">
+    <value>            Import Standard Format data into a new project...</value>
+  </data>
+  <data name="importButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;importButton.Name" xml:space="preserve">
     <value>importButton</value>
@@ -328,19 +398,72 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;importButton.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="restoreButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="restoreButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
+  </data>
+  <data name="restoreButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+</value>
+  </data>
+  <data name="restoreButton.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
   <data name="restoreButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 191</value>
+    <value>18, 201</value>
   </data>
   <data name="restoreButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 41</value>
+    <value>300, 41</value>
   </data>
   <data name="restoreButton.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
+  </data>
+  <data name="restoreButton.Text" xml:space="preserve">
+    <value>            Restore a project from a backup file...</value>
+  </data>
+  <data name="restoreButton.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;restoreButton.Name" xml:space="preserve">
     <value>restoreButton</value>
@@ -352,31 +475,7 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;restoreButton.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="checkBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 238</value>
-  </data>
-  <data name="checkBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>573, 29</value>
-  </data>
-  <data name="checkBox1.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="checkBox1.Text" xml:space="preserve">
-    <value>When I start {0}, always open the last edited project automatically.</value>
-  </data>
-  <data name="&gt;&gt;checkBox1.Name" xml:space="preserve">
-    <value>checkBox1</value>
-  </data>
-  <data name="&gt;&gt;checkBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBox1.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;checkBox1.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>5</value>
   </data>
   <data name="buttonLayout.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -385,7 +484,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>232, 3</value>
+    <value>215, 3</value>
   </data>
   <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -412,7 +511,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="closeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>151, 3</value>
+    <value>134, 3</value>
   </data>
   <data name="closeButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -439,10 +538,10 @@
     <value>RightToLeft</value>
   </data>
   <data name="buttonLayout.Location" type="System.Drawing.Point, System.Drawing">
-    <value>327, 273</value>
+    <value>332, 283</value>
   </data>
   <data name="buttonLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>310, 33</value>
+    <value>293, 33</value>
   </data>
   <data name="buttonLayout.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -457,133 +556,46 @@
     <value>tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;buttonLayout.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>6</value>
   </data>
-  <data name="openProjLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
+  <data name="checkBox1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
-  <data name="openProjLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 0</value>
+  <data name="checkBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>18, 248</value>
   </data>
-  <data name="openProjLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>264, 47</value>
+  <data name="checkBox1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>8, 0, 0, 0</value>
   </data>
-  <data name="openProjLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
+  <data name="checkBox1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>607, 29</value>
   </data>
-  <data name="openProjLabel.Text" xml:space="preserve">
-    <value>Open a project...</value>
+  <data name="checkBox1.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
   </data>
-  <data name="openProjLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
+  <data name="checkBox1.Text" xml:space="preserve">
+    <value>When I start {0}, always open the last edited project automatically.</value>
   </data>
-  <data name="&gt;&gt;openProjLabel.Name" xml:space="preserve">
-    <value>openProjLabel</value>
+  <data name="&gt;&gt;checkBox1.Name" xml:space="preserve">
+    <value>checkBox1</value>
   </data>
-  <data name="&gt;&gt;openProjLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;checkBox1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;openProjLabel.Parent" xml:space="preserve">
+  <data name="&gt;&gt;checkBox1.Parent" xml:space="preserve">
     <value>tableLayoutPanel</value>
   </data>
-  <data name="&gt;&gt;openProjLabel.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="createProjLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="createProjLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 94</value>
-  </data>
-  <data name="createProjLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>264, 47</value>
-  </data>
-  <data name="createProjLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="createProjLabel.Text" xml:space="preserve">
-    <value>Create a new project...</value>
-  </data>
-  <data name="createProjLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;createProjLabel.Name" xml:space="preserve">
-    <value>createProjLabel</value>
-  </data>
-  <data name="&gt;&gt;createProjLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;createProjLabel.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;createProjLabel.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="importSFMLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="importSFMLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 141</value>
-  </data>
-  <data name="importSFMLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>264, 47</value>
-  </data>
-  <data name="importSFMLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="importSFMLabel.Text" xml:space="preserve">
-    <value>Import Standard Format data into a new project...</value>
-  </data>
-  <data name="importSFMLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;importSFMLabel.Name" xml:space="preserve">
-    <value>importSFMLabel</value>
-  </data>
-  <data name="&gt;&gt;importSFMLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;importSFMLabel.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;importSFMLabel.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="restoreProjLabel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="restoreProjLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>57, 188</value>
-  </data>
-  <data name="restoreProjLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>264, 47</value>
-  </data>
-  <data name="restoreProjLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
-  </data>
-  <data name="restoreProjLabel.Text" xml:space="preserve">
-    <value>Restore a project from a backup file...</value>
-  </data>
-  <data name="restoreProjLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;restoreProjLabel.Name" xml:space="preserve">
-    <value>restoreProjLabel</value>
-  </data>
-  <data name="&gt;&gt;restoreProjLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;restoreProjLabel.Parent" xml:space="preserve">
-    <value>tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;restoreProjLabel.ZOrder" xml:space="preserve">
-    <value>12</value>
+  <data name="&gt;&gt;checkBox1.ZOrder" xml:space="preserve">
+    <value>7</value>
   </data>
   <data name="tableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 58</value>
   </data>
+  <data name="tableLayoutPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>15, 10, 0, 0</value>
+  </data>
   <data name="tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>640, 311</value>
+    <value>628, 311</value>
   </data>
   <data name="tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -601,7 +613,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="receiveProjLabel" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="labelLayout" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="openButton" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="receiveButton" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="createButton" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="importButton" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="restoreButton" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="checkBox1" Row="5" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="buttonLayout" Row="6" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="openProjLabel" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="createProjLabel" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="importSFMLabel" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="restoreProjLabel" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,54,Absolute,270,Absolute,141" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="labelLayout" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="openButton" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="receiveButton" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="createButton" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="importButton" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="restoreButton" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="buttonLayout" Row="6" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="checkBox1" Row="5" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,306,Absolute,8,Absolute,151,Absolute,20,Absolute,20" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="panelProjectNotFound.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -616,7 +628,7 @@
     <value>9, 11</value>
   </data>
   <data name="m_lblProjectLoadError.Size" type="System.Drawing.Size, System.Drawing">
-    <value>567, 35</value>
+    <value>555, 35</value>
   </data>
   <data name="m_lblProjectLoadError.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -637,7 +649,7 @@
     <value>3, 3</value>
   </data>
   <data name="panelProjectNotFound.Size" type="System.Drawing.Size, System.Drawing">
-    <value>640, 49</value>
+    <value>628, 49</value>
   </data>
   <data name="panelProjectNotFound.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -667,7 +679,7 @@
     <value>3, 3, 3, 0</value>
   </data>
   <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>650, 382</value>
+    <value>650, 372</value>
   </data>
   <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -691,7 +703,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>649, 394</value>
+    <value>649, 381</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

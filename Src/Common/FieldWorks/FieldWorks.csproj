@@ -284,9 +284,9 @@
     <Content Include="BookOnCubeVersion.ico" />
     <None Include="Resources\OpenFile.png" />
     <None Include="Resources\DatabaseNew.png" />
-    <None Include="Resources\Download.png" />
     <None Include="Resources\chorus32x32.png" />
-    <None Include="Resources\Import32x32.PNG" />
+    <Content Include="Resources\Download26x26.png" />
+    <Content Include="Resources\Import28x28.png" />
     <Content Include="SmallBookOnCubeVersion.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

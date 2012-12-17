@@ -45,11 +45,6 @@ namespace SIL.FieldWorks
 		private FlowLayoutPanel buttonLayout;
 		private Button closeButton;
 		private Button helpButton;
-		private Label receiveProjLabel;
-		private Label openProjLabel;
-		private Label createProjLabel;
-		private Label importSFMLabel;
-		private Label restoreProjLabel;
 		IHelpTopicProvider m_helpTopicProvider = null;
 		private Panel panelProjectNotFound;
 		private Label m_lblProjectLoadError;
@@ -65,7 +60,6 @@ namespace SIL.FieldWorks
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WelcomeToFieldWorksDlg));
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this.receiveProjLabel = new System.Windows.Forms.Label();
 			this.labelLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.m_openSampleOrLastProjectLink = new System.Windows.Forms.LinkLabel();
 			this.m_sampleOrLastProjectLinkLabel = new System.Windows.Forms.Label();
@@ -74,14 +68,10 @@ namespace SIL.FieldWorks
 			this.createButton = new System.Windows.Forms.Button();
 			this.importButton = new System.Windows.Forms.Button();
 			this.restoreButton = new System.Windows.Forms.Button();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.buttonLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
 			this.closeButton = new System.Windows.Forms.Button();
-			this.openProjLabel = new System.Windows.Forms.Label();
-			this.createProjLabel = new System.Windows.Forms.Label();
-			this.importSFMLabel = new System.Windows.Forms.Label();
-			this.restoreProjLabel = new System.Windows.Forms.Label();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.panelProjectNotFound = new System.Windows.Forms.Panel();
 			this.m_lblProjectLoadError = new System.Windows.Forms.Label();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -94,26 +84,16 @@ namespace SIL.FieldWorks
 			// 
 			// tableLayoutPanel
 			// 
-			this.tableLayoutPanel.Controls.Add(this.receiveProjLabel, 1, 1);
 			this.tableLayoutPanel.Controls.Add(this.labelLayout, 2, 0);
 			this.tableLayoutPanel.Controls.Add(this.openButton, 0, 0);
 			this.tableLayoutPanel.Controls.Add(this.receiveButton, 0, 1);
 			this.tableLayoutPanel.Controls.Add(this.createButton, 0, 2);
 			this.tableLayoutPanel.Controls.Add(this.importButton, 0, 3);
 			this.tableLayoutPanel.Controls.Add(this.restoreButton, 0, 4);
-			this.tableLayoutPanel.Controls.Add(this.checkBox1, 0, 5);
 			this.tableLayoutPanel.Controls.Add(this.buttonLayout, 2, 6);
-			this.tableLayoutPanel.Controls.Add(this.openProjLabel, 1, 0);
-			this.tableLayoutPanel.Controls.Add(this.createProjLabel, 1, 2);
-			this.tableLayoutPanel.Controls.Add(this.importSFMLabel, 1, 3);
-			this.tableLayoutPanel.Controls.Add(this.restoreProjLabel, 1, 4);
+			this.tableLayoutPanel.Controls.Add(this.checkBox1, 0, 5);
 			resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
 			this.tableLayoutPanel.Name = "tableLayoutPanel";
-			// 
-			// receiveProjLabel
-			// 
-			resources.ApplyResources(this.receiveProjLabel, "receiveProjLabel");
-			this.receiveProjLabel.Name = "receiveProjLabel";
 			// 
 			// labelLayout
 			// 
@@ -161,7 +141,6 @@ namespace SIL.FieldWorks
 			// importButton
 			// 
 			resources.ApplyResources(this.importButton, "importButton");
-			this.importButton.Image = global::SIL.FieldWorks.Properties.Resources.Import;
 			this.importButton.Name = "importButton";
 			this.importButton.UseVisualStyleBackColor = true;
 			this.importButton.Click += new System.EventHandler(this.Import_Click);
@@ -169,17 +148,9 @@ namespace SIL.FieldWorks
 			// restoreButton
 			// 
 			resources.ApplyResources(this.restoreButton, "restoreButton");
-			this.restoreButton.Image = global::SIL.FieldWorks.Properties.Resources.Download;
 			this.restoreButton.Name = "restoreButton";
 			this.restoreButton.UseVisualStyleBackColor = true;
 			this.restoreButton.Click += new System.EventHandler(this.m_btnRestore_Click);
-			// 
-			// checkBox1
-			// 
-			this.tableLayoutPanel.SetColumnSpan(this.checkBox1, 3);
-			resources.ApplyResources(this.checkBox1, "checkBox1");
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.UseVisualStyleBackColor = true;
 			// 
 			// buttonLayout
 			// 
@@ -202,25 +173,12 @@ namespace SIL.FieldWorks
 			this.closeButton.UseVisualStyleBackColor = true;
 			this.closeButton.Click += new System.EventHandler(this.m_btnExit_Click);
 			// 
-			// openProjLabel
+			// checkBox1
 			// 
-			resources.ApplyResources(this.openProjLabel, "openProjLabel");
-			this.openProjLabel.Name = "openProjLabel";
-			// 
-			// createProjLabel
-			// 
-			resources.ApplyResources(this.createProjLabel, "createProjLabel");
-			this.createProjLabel.Name = "createProjLabel";
-			// 
-			// importSFMLabel
-			// 
-			resources.ApplyResources(this.importSFMLabel, "importSFMLabel");
-			this.importSFMLabel.Name = "importSFMLabel";
-			// 
-			// restoreProjLabel
-			// 
-			resources.ApplyResources(this.restoreProjLabel, "restoreProjLabel");
-			this.restoreProjLabel.Name = "restoreProjLabel";
+			resources.ApplyResources(this.checkBox1, "checkBox1");
+			this.tableLayoutPanel.SetColumnSpan(this.checkBox1, 3);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.UseVisualStyleBackColor = true;
 			// 
 			// panelProjectNotFound
 			// 
