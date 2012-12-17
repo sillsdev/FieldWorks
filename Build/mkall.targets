@@ -301,13 +301,16 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw" DependsOnTargets="CleanAll;Initialize;setRegistryValues;IcuData;CopyDlls;mkall">
+	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;IcuData;CopyDlls;mkall"/>
+
+	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
 		<Error Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
 	</Target>
 
-	<Target Name="remakefw-jenkins" DependsOnTargets="checkTLBsUpToDate">
-		<!-- Jenkins looks at the test output files to see if tests failed -->
-		<CallTarget Targets="remakefw" ContinueOnError="true"/>
+	<Target Name="remakefw-jenkins" DependsOnTargets="checkTLBsUpToDate;remakefw-internal">
+		<!-- Jenkins looks at the test output files to see if tests failed, so we don't have to
+			fail on failed tests -->
+		<Warning Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
 	</Target>
 
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
