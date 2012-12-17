@@ -101,12 +101,13 @@ Last reviewed:
 #else // !WIN32
 
 #include "IcuCommon.h" // Enables general access to ICU (International Components for Unicode).
-#include "Hacks.h"
-#include "COM.h"
-#include "COMInterfaces.h"
-#include "COMInterfacesMore.h"
+#include <Hacks.h>
+#include <COM.h>
+#include <COMInterfaces.h>
+#include <COMInterfacesMore.h>
 #include <winnt.h>
-#include "WinBase.h"
+#include <WinBase.h>
+#include <WinError.h>
 
 #endif // !WIN32
 
@@ -140,6 +141,7 @@ Last reviewed:
 #include <new>
 #if !WIN32
 #include <string>
+#include <cstdlib>
 #endif // !WIN32
 
 // These are needed for the Task Scheduler section of FwExplorer.
