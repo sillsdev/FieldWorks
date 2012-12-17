@@ -16,12 +16,16 @@ Last reviewed:
 #else
 #include <COM.h>
 #include <Hacks.h>
+#include <MessageBox.h>
+#include <cstdlib>
 #include <unistd.h>
 #endif
 #include <stdio.h>
 #include <assert.h>
 #if WIN32
 #include <CrtDbg.h>
+#else
+const int _CRT_ASSERT = 2;
 #endif
 #include <signal.h>
 

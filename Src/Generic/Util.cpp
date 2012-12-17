@@ -14,11 +14,19 @@ Last reviewed:
 #pragma hdrstop
 
 #ifdef _MSC_VER
+
 #include <shlobj.h>
 #include <shobjidl.h>
 DEFINE_COM_PTR(IShellFolder);
 #include <OleDbErr.h>
+
+#else //!MSC_VER
+
+#ifndef NO_ASM
+#define NO_ASM
 #endif
+
+#endif //!MSC_VER
 
 #undef THIS_FILE
 DEFINE_THIS_FILE
