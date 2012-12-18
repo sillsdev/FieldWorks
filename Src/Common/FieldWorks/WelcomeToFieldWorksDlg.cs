@@ -80,8 +80,6 @@ namespace SIL.FieldWorks
 
 			if (exception == null || !exception.ReportToUser)
 			{
-				Height -= panelProjectNotFound.Height;
-				panelProjectNotFound.Visible = false;
 				Text = fullAppName;
 				Logger.WriteEvent("Opening 'Welcome to FieldWorks' dialog");
 			}
@@ -90,10 +88,7 @@ namespace SIL.FieldWorks
 				m_helpTopic = "khtpUnableToOpenProject";
 				Text = Properties.Resources.kstidUnableToOpenProjectCaption;
 
-				var origPanelHeight = panelProjectNotFound.Height;
 				m_lblProjectLoadError.Text = exception.Message;
-				if (panelProjectNotFound.Height > origPanelHeight)
-					Height += (panelProjectNotFound.Height - origPanelHeight);
 				Logger.WriteEvent("Opening 'Unable to Open Project' dialog");
 			}
 
@@ -114,8 +109,8 @@ namespace SIL.FieldWorks
 
 		public bool OpenLastProjectCheckboxIsChecked
 		{
-			get { return checkBox1.Checked; }
-			set { checkBox1.Checked = value; }
+			get { return alwaysOpenLastProjectCheckBox.Checked; }
+			set { alwaysOpenLastProjectCheckBox.Checked = value; }
 		}
 
 		public void SetFirstOrLastProjectText(bool firstTimeOpening)
@@ -132,7 +127,7 @@ namespace SIL.FieldWorks
 
 		private string SetCheckboxText
 		{
-			set { checkBox1.Text = string.Format(Properties.Resources.ksWelcomeDialogCheckboxText, value); }
+			set { alwaysOpenLastProjectCheckBox.Text = string.Format(Properties.Resources.ksWelcomeDialogCheckboxText, value); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -300,14 +295,16 @@ namespace SIL.FieldWorks
 
 		#endregion
 
-		internal void HideLink()
+		internal void ShowErrorLabelHideLink()
 		{
 			m_sampleOrLastProjectLinkLabel.Visible = false;
 			m_openSampleOrLastProjectLink.Visible = false;
+			m_lblProjectLoadError.Visible = true;
 		}
 
-		internal void ShowLink()
+		internal void ShowLinkHideErrorLabel()
 		{
+			m_lblProjectLoadError.Visible = false;
 			m_sampleOrLastProjectLinkLabel.Visible = true;
 			m_openSampleOrLastProjectLink.Visible = true;
 		}

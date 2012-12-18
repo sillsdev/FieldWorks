@@ -38,15 +38,11 @@ namespace SIL.FieldWorks
 		private Button createButton;
 		private Button importButton;
 		private Button restoreButton;
-		private CheckBox checkBox1;
-		private FlowLayoutPanel labelLayout;
+		private CheckBox alwaysOpenLastProjectCheckBox;
 		private Label m_sampleOrLastProjectLinkLabel;
 		private LinkLabel m_openSampleOrLastProjectLink;
-		private FlowLayoutPanel buttonLayout;
-		private Button closeButton;
-		private Button helpButton;
 		IHelpTopicProvider m_helpTopicProvider = null;
-		private Panel panelProjectNotFound;
+		private Panel topPanel;
 		private Label m_lblProjectLoadError;
 
 		#endregion
@@ -60,8 +56,9 @@ namespace SIL.FieldWorks
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WelcomeToFieldWorksDlg));
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this.labelLayout = new System.Windows.Forms.FlowLayoutPanel();
+			this.topPanel = new System.Windows.Forms.Panel();
 			this.m_openSampleOrLastProjectLink = new System.Windows.Forms.LinkLabel();
+			this.m_lblProjectLoadError = new System.Windows.Forms.Label();
 			this.m_sampleOrLastProjectLinkLabel = new System.Windows.Forms.Label();
 			this.openButton = new System.Windows.Forms.Button();
 			this.receiveButton = new System.Windows.Forms.Button();
@@ -71,36 +68,34 @@ namespace SIL.FieldWorks
 			this.buttonLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
 			this.closeButton = new System.Windows.Forms.Button();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.panelProjectNotFound = new System.Windows.Forms.Panel();
-			this.m_lblProjectLoadError = new System.Windows.Forms.Label();
+			this.alwaysOpenLastProjectCheckBox = new System.Windows.Forms.CheckBox();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel.SuspendLayout();
-			this.labelLayout.SuspendLayout();
+			this.topPanel.SuspendLayout();
 			this.buttonLayout.SuspendLayout();
-			this.panelProjectNotFound.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel
 			// 
-			this.tableLayoutPanel.Controls.Add(this.labelLayout, 2, 0);
-			this.tableLayoutPanel.Controls.Add(this.openButton, 0, 0);
-			this.tableLayoutPanel.Controls.Add(this.receiveButton, 0, 1);
-			this.tableLayoutPanel.Controls.Add(this.createButton, 0, 2);
-			this.tableLayoutPanel.Controls.Add(this.importButton, 0, 3);
-			this.tableLayoutPanel.Controls.Add(this.restoreButton, 0, 4);
-			this.tableLayoutPanel.Controls.Add(this.buttonLayout, 2, 6);
-			this.tableLayoutPanel.Controls.Add(this.checkBox1, 0, 5);
+			this.tableLayoutPanel.Controls.Add(this.topPanel, 0, 0);
+			this.tableLayoutPanel.Controls.Add(this.openButton, 0, 1);
+			this.tableLayoutPanel.Controls.Add(this.receiveButton, 0, 2);
+			this.tableLayoutPanel.Controls.Add(this.createButton, 0, 3);
+			this.tableLayoutPanel.Controls.Add(this.importButton, 0, 4);
+			this.tableLayoutPanel.Controls.Add(this.restoreButton, 0, 5);
+			this.tableLayoutPanel.Controls.Add(this.buttonLayout, 0, 7);
+			this.tableLayoutPanel.Controls.Add(this.alwaysOpenLastProjectCheckBox, 0, 6);
 			resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
 			this.tableLayoutPanel.Name = "tableLayoutPanel";
 			// 
-			// labelLayout
+			// topPanel
 			// 
-			resources.ApplyResources(this.labelLayout, "labelLayout");
-			this.labelLayout.Controls.Add(this.m_openSampleOrLastProjectLink);
-			this.labelLayout.Controls.Add(this.m_sampleOrLastProjectLinkLabel);
-			this.labelLayout.Name = "labelLayout";
+			this.topPanel.Controls.Add(this.m_openSampleOrLastProjectLink);
+			this.topPanel.Controls.Add(this.m_lblProjectLoadError);
+			this.topPanel.Controls.Add(this.m_sampleOrLastProjectLinkLabel);
+			resources.ApplyResources(this.topPanel, "topPanel");
+			this.topPanel.Name = "topPanel";
 			// 
 			// m_openSampleOrLastProjectLink
 			// 
@@ -108,6 +103,11 @@ namespace SIL.FieldWorks
 			this.m_openSampleOrLastProjectLink.Name = "m_openSampleOrLastProjectLink";
 			this.m_openSampleOrLastProjectLink.TabStop = true;
 			this.m_openSampleOrLastProjectLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_openProjectLink_LinkClicked);
+			// 
+			// m_lblProjectLoadError
+			// 
+			resources.ApplyResources(this.m_lblProjectLoadError, "m_lblProjectLoadError");
+			this.m_lblProjectLoadError.Name = "m_lblProjectLoadError";
 			// 
 			// m_sampleOrLastProjectLinkLabel
 			// 
@@ -154,9 +154,9 @@ namespace SIL.FieldWorks
 			// 
 			// buttonLayout
 			// 
-			resources.ApplyResources(this.buttonLayout, "buttonLayout");
 			this.buttonLayout.Controls.Add(this.helpButton);
 			this.buttonLayout.Controls.Add(this.closeButton);
+			resources.ApplyResources(this.buttonLayout, "buttonLayout");
 			this.buttonLayout.Name = "buttonLayout";
 			// 
 			// helpButton
@@ -173,29 +173,16 @@ namespace SIL.FieldWorks
 			this.closeButton.UseVisualStyleBackColor = true;
 			this.closeButton.Click += new System.EventHandler(this.m_btnExit_Click);
 			// 
-			// checkBox1
+			// alwaysOpenLastProjectCheckBox
 			// 
-			resources.ApplyResources(this.checkBox1, "checkBox1");
-			this.tableLayoutPanel.SetColumnSpan(this.checkBox1, 3);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.UseVisualStyleBackColor = true;
-			// 
-			// panelProjectNotFound
-			// 
-			resources.ApplyResources(this.panelProjectNotFound, "panelProjectNotFound");
-			this.panelProjectNotFound.Controls.Add(this.m_lblProjectLoadError);
-			this.panelProjectNotFound.Name = "panelProjectNotFound";
-			// 
-			// m_lblProjectLoadError
-			// 
-			resources.ApplyResources(this.m_lblProjectLoadError, "m_lblProjectLoadError");
-			this.m_lblProjectLoadError.Name = "m_lblProjectLoadError";
+			resources.ApplyResources(this.alwaysOpenLastProjectCheckBox, "alwaysOpenLastProjectCheckBox");
+			this.alwaysOpenLastProjectCheckBox.Name = "alwaysOpenLastProjectCheckBox";
+			this.alwaysOpenLastProjectCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// flowLayoutPanel1
 			// 
-			resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
-			this.flowLayoutPanel1.Controls.Add(this.panelProjectNotFound);
 			this.flowLayoutPanel1.Controls.Add(this.tableLayoutPanel);
+			resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			// 
 			// WelcomeToFieldWorksDlg
@@ -208,9 +195,8 @@ namespace SIL.FieldWorks
 			this.MinimizeBox = false;
 			this.Name = "WelcomeToFieldWorksDlg";
 			this.tableLayoutPanel.ResumeLayout(false);
-			this.labelLayout.ResumeLayout(false);
+			this.topPanel.ResumeLayout(false);
 			this.buttonLayout.ResumeLayout(false);
-			this.panelProjectNotFound.ResumeLayout(false);
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -219,5 +205,8 @@ namespace SIL.FieldWorks
 		#endregion
 
 		private FlowLayoutPanel flowLayoutPanel1;
+		private FlowLayoutPanel buttonLayout;
+		private Button helpButton;
+		private Button closeButton;
 	}
 }
