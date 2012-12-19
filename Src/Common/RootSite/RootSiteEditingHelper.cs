@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (disposing)
 			{
-				if (m_cache != null && m_cache.ActionHandlerAccessor is IActionHandlerExtensions)
+				if (m_cache != null && !m_cache.IsDisposed && m_cache.ActionHandlerAccessor is IActionHandlerExtensions)
 					((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).PropChangedCompleted -= HandleSelectionChange;
 			}
 			base.Dispose(disposing);
