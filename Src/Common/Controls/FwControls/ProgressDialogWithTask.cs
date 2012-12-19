@@ -705,6 +705,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (string.IsNullOrEmpty(Thread.CurrentThread.Name))
 				Thread.CurrentThread.Name = "Background thread";
 
+			if (MiscUtils.RunningTests)
+				ManifestHelper.CreateActivationContext();
 			m_Exception = null;
 			m_RetValue = null;
 
@@ -716,6 +718,11 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				System.Diagnostics.Debug.WriteLine("Got exception in background thread: " + ex.Message);
 				m_Exception = ex;
+			}
+			finally
+			{
+				if (MiscUtils.RunningTests)
+					ManifestHelper.DestroyActivationContext();
 			}
 		}
 

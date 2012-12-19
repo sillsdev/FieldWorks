@@ -1031,7 +1031,7 @@ namespace SIL.Utils
 		/// <summary>
 		/// Allow special case unittests to pretend they are not unit tests.
 		/// </summary>
-		private static bool? runningTests = null;
+		private static bool? runningTests;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1042,14 +1042,15 @@ namespace SIL.Utils
 		{
 			get
 			{
-				if (runningTests != null)
-					return (bool)runningTests;
-
-				// If the real application is ever installed in a path that includes nunit or
-				// jetbrains, then this will return true and the app. won't run properly. But
-				// what are the chances of that?...
-				string appPath = Application.ExecutablePath.ToLowerInvariant();
-				return (appPath.IndexOf("nunit") != -1 || appPath.IndexOf("jetbrains") != -1);
+				if (!runningTests.HasValue)
+				{
+					// If the real application is ever installed in a path that includes nunit or
+					// jetbrains, then this will return true and the app. won't run properly. But
+					// what are the chances of that?...
+					string appPath = Application.ExecutablePath.ToLowerInvariant();
+					runningTests = (appPath.IndexOf("nunit") != -1 || appPath.IndexOf("jetbrains") != -1);
+				}
+				return (bool)runningTests;
 			}
 			set
 			{

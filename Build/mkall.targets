@@ -26,6 +26,16 @@
 		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
+	<ItemGroup>
+		<Fragments Include="$(dir-fwdistfiles)/*.fragment.manifest"/>
+	</ItemGroup>
+	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;Language;GrEngine;Views"
+		AfterTargets="FwKernel;Language;GrEngine;Views" Condition="'$(OS)'=='Windows_NT'">
+		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
+			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Language.dll;$(dir-outputBase)/Graphite.dll;$(dir-outputBase)/Views.dll"
+			Fragments="@(Fragments)" NoTypeLib="$(dir-outputBase)/Graphite.dll"/>
+	</Target>
+
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			  Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
@@ -79,7 +89,7 @@
 		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
-	<Target Name="GrEngine" DependsOnTargets="GenericLib;FwKernel">
+	<Target Name="GrEngine" DependsOnTargets="GenericLib;FwKernel;Views">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\Graphite\GrEngine\GrEngine.mak"
 			Configuration="$(config-capital)"
@@ -90,8 +100,6 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
-		<RegisterForTests Condition="'$(OS)'=='Windows_NT'"
-			Dll="$(dir-outputBase)\Graphite.dll" RegisterTypeLibrary="false"/>
 		<Message Text="Finished building GrEngine."/>
 	</Target>
 
@@ -107,8 +115,6 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Kernel"/>
-		<RegisterForTests Condition="'$(OS)'=='Windows_NT'"
-			Dll="$(dir-outputBase)\FwKernel.dll"/>
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
@@ -162,8 +168,6 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Language"/>
-		<RegisterForTests Condition="'$(OS)'=='Windows_NT'"
-			Dll="$(dir-outputBase)\Language.dll"/>
 		<Message Text="Finished building Language."/>
 	</Target>
 
@@ -207,8 +211,6 @@
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/views"/>
-		<RegisterForTests Condition="'$(OS)'=='Windows_NT'"
-			Dll="$(dir-outputBase)\Views.dll"/>
 		<Message Text="Finished building Views."/>
 	</Target>
 

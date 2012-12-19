@@ -27,3 +27,6 @@ using SIL.Utils.Attributes;
 
 // Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
 [assembly: RedirectHKCU]
+
+// Allow creating COM objects from manifest file
+[assembly: CreateComObjectsFromManifest]
