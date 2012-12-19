@@ -417,6 +417,7 @@ BOOL ModuleEntry::DllMain(HMODULE hmod, DWORD dwReason)
 
 	switch (dwReason)
 	{
+#ifdef WIN32
 	case DLL_PROCESS_ATTACH:
 		s_hmod = hmod;
 		hr = ModuleProcessAttach();
@@ -452,6 +453,7 @@ BOOL ModuleEntry::DllMain(HMODULE hmod, DWORD dwReason)
 		if (FAILED(hr))
 			fRet = false;
 		break;
+#endif //WIN32
 
 	default:
 		fRet = false;
