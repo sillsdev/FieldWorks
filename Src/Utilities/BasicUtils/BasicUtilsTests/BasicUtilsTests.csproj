@@ -87,6 +87,7 @@
     <Compile Include="AlphaOutlineTests.cs" />
     <Compile Include="ArrayUtilsTests.cs" />
     <Compile Include="Attributes\CleanupSingletonsAttribute.cs" />
+    <Compile Include="Attributes\SetCompanyAndProductForTestsAttribute.cs" />
     <Compile Include="BagTests.cs" />
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="ClipboardStub.cs" />

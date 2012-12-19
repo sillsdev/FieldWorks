@@ -43,17 +43,6 @@ namespace SIL.FieldWorks.Test.TestUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Static constructor
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static BaseTest()
-		{
-			RegistryHelper.CompanyName = "SIL";
-			RegistryHelper.ProductName = "FieldWorks";
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Initializes a new instance of the <see cref="BaseTest"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
