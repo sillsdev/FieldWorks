@@ -81,10 +81,9 @@ void WINAPI DefWarnProc(const char * pszExp, const char * pszFile, int nLine, HM
 /*----------------------------------------------------------------------------------------------
 	Default Assert Proc. Sends message to debug output.
 ----------------------------------------------------------------------------------------------*/
-void WINAPI DefAssertProc(const char * pszExp, const char * pszFile, int nLine, HMODULE hmod)
+void WINAPI DefAssertProc(const char * pszExp, const char * pszFile, int nLine, HMODULE)
 {
 	SilAssert(pszExp, pszFile, nLine);
-	UNREFERENCED_PARAMETER(hmod);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -230,6 +229,7 @@ extern "C" __declspec(dllexport) _DBG_REPORT_HOOK APIENTRY DbgSetReportHook(_DBG
 	return oldHook;
 }
 
+#if WIN32
 /*----------------------------------------------------------------------------------------------
 	Handler that intercepts debug output. If a ReportHook is set it sends the output to that,
 	otherwise it outputs it with OutputDebugString and printf.
@@ -253,6 +253,7 @@ int __cdecl ReportHandler(int nReportType, char* szMsg, int* pRet)
 
 	return true;
 }
+#endif //WIN32
 
 /*----------------------------------------------------------------------------------------------
 	Sets the report hook that intercepts all debug messages

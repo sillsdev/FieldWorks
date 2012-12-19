@@ -429,6 +429,8 @@ const wchar * UnicodeHresult(HRESULT hr);
 #define ChkComBstrArgN(bstr) \
 	AssertBstrN(bstr); \
 
+#if WIN32
+
 /*----------------------------------------------------------------------------------------------
 	This class provides an IDataObject wrapper around a simple string.  This facilitates
 	passing String data via the clipboard or "drag and drop".
@@ -519,5 +521,7 @@ protected:
 	StrEnumFORMATETC();
 	~StrEnumFORMATETC();
 };
+
+#endif //WIN32
 
 #endif // !UtilCom_H

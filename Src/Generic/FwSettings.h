@@ -53,12 +53,14 @@ public:
 	static bool GetBool(const achar * pszRootKey, const achar * pszSubKey, const achar * pszValue,
 		bool * pfValue);
 
+#ifdef WIN32
 	typedef enum
 	{
 		katRead = KEY_READ,
 		katWrite = KEY_WRITE,
 		katBoth = katRead | katWrite,
 	} AccessType;
+#endif //WIN32
 
 	void RemoveAll();
 

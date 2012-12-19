@@ -133,7 +133,7 @@ public:
 		dblVal = dbl;
 	}
 
-	void SetBool(boolean f)
+	void SetBool(bool f)
 	{
 		Clear();
 		vt = VT_BOOL;
