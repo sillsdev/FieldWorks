@@ -18,13 +18,17 @@ namespace unitpp
 {
 	void GlobalSetup(bool verbose)
 	{
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
+#endif
 		CoInitialize(NULL);
 		StrUtil::InitIcuDataDir();
 	}
 	void GlobalTeardown()
 	{
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_DETACH);
+#endif
 		CoUninitialize();
 	}
 }

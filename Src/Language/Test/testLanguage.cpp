@@ -21,13 +21,17 @@ namespace unitpp
 {
 	void GlobalSetup(bool verbose)
 	{
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
+#endif
 		CheckHr(::OleInitialize(NULL));
 		StrUtil::InitIcuDataDir();	// needed for the normalize routines (ICU)
 	}
 	void GlobalTeardown()
 	{
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_DETACH);
+#endif
 		::OleUninitialize();
 	}
 }

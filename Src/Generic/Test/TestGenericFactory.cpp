@@ -114,7 +114,9 @@ int main(int argc, char** argv)
 {
 	try
 	{
+#ifdef WIN32
 		DllMain(0, DLL_PROCESS_ATTACH, 0);
+#endif
 
 		IClassFactory* pFact = 0;
 		CheckHr(DllGetClassObject(CLSID_TestGenericFactory, IID_IClassFactory, (void**)&pFact));
@@ -125,7 +127,11 @@ int main(int argc, char** argv)
 		pFact->Release();
 		pTest->Release();
 
+#ifdef WIN32
 		return DllMain(0, DLL_PROCESS_DETACH, 0) ? 0 : 1;
+#else
+		return 0;
+#endif
 	}
 	catch (Throwable& thr)
 	{
