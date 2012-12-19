@@ -1385,7 +1385,7 @@ namespace TestViews
 			m_qrootb = dynamic_cast<VwRootBox *>(qrootb.Ptr());
 			m_hdc = 0; // So we know not to release it if something goes wrong.
 			m_qvg32.CreateInstance(CLSID_VwGraphicsWin32);
-			m_hdc = ::GetDC(NULL);
+			m_hdc = GetTestDC();
 			m_qvg32->Initialize(m_hdc);
 			m_qrootb->putref_DataAccess(m_qsda);
 			m_qdrs.Attach(NewObj DummyRootSite());
@@ -1409,7 +1409,7 @@ namespace TestViews
 				m_qvg32.Clear();
 			}
 			if (m_hdc)
-				::ReleaseDC(NULL, m_hdc);
+				ReleaseTestDC(m_hdc);
 			if (m_qrootb)
 			{
 				m_qrootb->Close();

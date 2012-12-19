@@ -1376,7 +1376,7 @@ namespace TestViews
 			try
 			{
 				qvg32.CreateInstance(CLSID_VwGraphicsWin32);
-				hdc = ::GetDC(NULL);
+				hdc = GetTestDC();
 				qvg32->Initialize(hdc);
 
 				IVwViewConstructorPtr qvc;
@@ -1569,14 +1569,14 @@ namespace TestViews
 				if (qvg32)
 					qvg32->ReleaseDC();
 				if (hdc != 0)
-					::ReleaseDC(NULL, hdc);
+					ReleaseTestDC(hdc);
 				qrootb->Close();
 				throw;
 			}
 
 			// Cleanup
 			qvg32->ReleaseDC();
-			::ReleaseDC(NULL, hdc);
+			ReleaseTestDC(hdc);
 			qrootb->Close();
 		}
 

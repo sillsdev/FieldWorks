@@ -25,6 +25,34 @@ namespace TestViews
 
 	void CreateTestWritingSystemFactory();
 	void CloseTestWritingSystemFactory();
+
+	// These functions are used for test setup and teardown (only)
+
+#ifdef WIN32
+
+	inline HDC GetTestDC()
+	{
+		return ::GetDC(NULL);
+	}
+
+	inline int ReleaseTestDC(HDC hdc)
+	{
+		return ::ReleaseDC(NULL, hdc);
+	}
+
+#else //WIN32
+
+	inline HDC GetTestDC()
+	{
+		return 0; // Linux doesn't need a DC
+	}
+
+	inline int ReleaseTestDC(HDC)
+	{
+		return 0;
+	}
+
+#endif //WIN32
 };
 
 #include <unit++.h>
