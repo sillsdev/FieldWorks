@@ -24,3 +24,6 @@ using SIL.Utils.Attributes;
 
 // Override company and product names
 [assembly: SetCompanyAndProductForTests]
+
+// Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
+[assembly: RedirectHKCU]
