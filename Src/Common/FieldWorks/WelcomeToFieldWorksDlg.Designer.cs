@@ -117,6 +117,9 @@ namespace SIL.FieldWorks
 			// openButton
 			// 
 			resources.ApplyResources(this.openButton, "openButton");
+			this.openButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+			this.openButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
+			this.openButton.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlLight;
 			this.openButton.Image = global::SIL.FieldWorks.Properties.Resources.OpenFile;
 			this.openButton.Name = "openButton";
 			this.openButton.UseVisualStyleBackColor = true;
@@ -125,6 +128,9 @@ namespace SIL.FieldWorks
 			// receiveButton
 			// 
 			resources.ApplyResources(this.receiveButton, "receiveButton");
+			this.receiveButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+			this.receiveButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
+			this.receiveButton.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlLight;
 			this.receiveButton.Image = global::SIL.FieldWorks.Properties.Resources.Receive;
 			this.receiveButton.Name = "receiveButton";
 			this.receiveButton.UseVisualStyleBackColor = true;
@@ -133,6 +139,9 @@ namespace SIL.FieldWorks
 			// createButton
 			// 
 			resources.ApplyResources(this.createButton, "createButton");
+			this.createButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+			this.createButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
+			this.createButton.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlLight;
 			this.createButton.Image = global::SIL.FieldWorks.Properties.Resources.DatabaseNew;
 			this.createButton.Name = "createButton";
 			this.createButton.UseVisualStyleBackColor = true;
@@ -141,6 +150,9 @@ namespace SIL.FieldWorks
 			// importButton
 			// 
 			resources.ApplyResources(this.importButton, "importButton");
+			this.importButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+			this.importButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
+			this.importButton.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlLight;
 			this.importButton.Name = "importButton";
 			this.importButton.UseVisualStyleBackColor = true;
 			this.importButton.Click += new System.EventHandler(this.Import_Click);
@@ -148,6 +160,9 @@ namespace SIL.FieldWorks
 			// restoreButton
 			// 
 			resources.ApplyResources(this.restoreButton, "restoreButton");
+			this.restoreButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
+			this.restoreButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
+			this.restoreButton.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlLight;
 			this.restoreButton.Name = "restoreButton";
 			this.restoreButton.UseVisualStyleBackColor = true;
 			this.restoreButton.Click += new System.EventHandler(this.m_btnRestore_Click);
