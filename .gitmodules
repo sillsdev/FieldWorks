@@ -1,3 +1,6 @@
 [submodule "Lib/src/SharpZipLib"]
 	path = Lib/src/SharpZipLib
 	url = git://github.com/icsharpcode/SharpZipLib.git
+[submodule "Build/Src/msbuildtasks"]
+	path = Build/Src/msbuildtasks
+	url = git://github.com/ermshiperete/msbuildtasks.git
