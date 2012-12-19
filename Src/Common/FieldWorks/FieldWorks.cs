@@ -1067,15 +1067,10 @@ namespace SIL.FieldWorks
 			if (TryCommandLineOption(projId, out projectOpenError))
 				return projId;
 
-			// In case we need it, grab the sample db projectId
-			FwApp app = GetOrCreateApplication(args);
-			ProjectId sampleProjId = null;
-			if (!string.IsNullOrEmpty(app.SampleDatabase))
-				sampleProjId = new ProjectId(app.SampleDatabase, null);
-
 			// If this app hasn't been run before, ask user about opening sample DB.
+			var app = GetOrCreateApplication(args);
 			if (app.RegistrySettings.FirstTimeAppHasBeenRun)
-				return ShowWelcomeDialog(args, app, null, projectOpenError, false, sampleProjId);
+				return ShowWelcomeDialog(args, app, null, projectOpenError);
 
 			// Valid project information was not passed on the command-line, so try looking in
 			// the registry for the last-run project.
@@ -1096,14 +1091,21 @@ namespace SIL.FieldWorks
 					latestProject));
 			}
 
-			var fOpenLastEditedProject = app.RegistrySettings.AutoOpenLastEditedProject;
+			var fOpenLastEditedProject = GetAutoOpenRegistrySetting(app);
 
 			if (fOpenLastEditedProject && projId.IsValid && projectOpenError == null
 				&& previousStartupStatus == StartupStatus.Successful)
 				return projId;
 
-			// Nothing found to open, so give user options to open/create a project.
-			return ShowWelcomeDialog(args, app, projId, projectOpenError, fOpenLastEditedProject, sampleProjId);
+			// No valid command line args, not the first time we've run the program,
+			// and we aren't set to auto-open the last project, so give user options to open/create a project.
+			return ShowWelcomeDialog(args, app, projId, projectOpenError);
+		}
+
+		private static bool GetAutoOpenRegistrySetting(FwApp app)
+		{
+			Debug.Assert(app != null);
+			return app.RegistrySettings.AutoOpenLastEditedProject;
 		}
 
 		private static ProjectId GetBestGuessProjectId(string latestProject, string latestServer)
@@ -1204,10 +1206,7 @@ namespace SIL.FieldWorks
 						s_cache = null;
 					}
 					Logger.Init(FwUtils.ksSuiteName);
-					ProjectId sampleProjId = null;
-					if (app != null && app.SampleDatabase != null)
-						sampleProjId = new ProjectId(app.SampleDatabase, null);
-					projectId = ShowWelcomeDialog(args, app, projectId, e, app.RegistrySettings.AutoOpenLastEditedProject, sampleProjId);
+					projectId = ShowWelcomeDialog(args, app, projectId, e);
 				}
 			}
 		}
@@ -1393,26 +1392,24 @@ namespace SIL.FieldWorks
 		/// Displays fieldworks welcome dialog.
 		/// </summary>
 		/// <param name="args">The command-line (probably) arguments used to launch FieldWorks</param>
-		/// <param name="helpTopicProvider">The help topic provider.</param>
-		/// <param name="lastProjectId"> </param>
+		/// <param name="startingApp">The help topic provider and source of registry values.</param>
+		/// <param name="lastProjectId">The project stored in the registry as the last edited project.</param>
 		/// <param name="exception">Exception thrown if the previously requested project could not be opened.</param>
-		/// <param name="openLastProjectIsChecked">true if the registry has stored that the checkbox is checked.</param>
-		/// <param name="sampleProject"> </param>
 		/// <returns>
 		/// A ProjectId object if an option has been chosen which results in a valid
 		/// project being opened; <c>null</c> if the user chooses to exit.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="app is a reference")]
-		private static ProjectId ShowWelcomeDialog(FwAppArgs args, IHelpTopicProvider helpTopicProvider, ProjectId lastProjectId, FwStartupException exception, bool openLastProjectIsChecked, ProjectId sampleProject)
+			Justification="startingApp is a reference")]
+		private static ProjectId ShowWelcomeDialog(FwAppArgs args, FwApp startingApp, ProjectId lastProjectId, FwStartupException exception)
 		{
 			CloseSplashScreen();
 
-			// Remember last edited projectId in case we go through more than one iteration below
-			var lastEditedProject = lastProjectId;
+			var helpTopicProvider = startingApp as IHelpTopicProvider;
 
-			// Remember the sample projectId in case we go through more than one iteration below
+			// Use the last edited project as the base guess for which project we'll open.
+			var projectToTry = lastProjectId;
 
 			// Continue to ask for an option until one is selected.
 			s_fWaitingForUserOrOtherFw = true;
@@ -1420,8 +1417,8 @@ namespace SIL.FieldWorks
 			{
 				if (exception != null)
 				{
-					if (lastProjectId != null)
-						Logger.WriteEvent("Problem opening " + lastProjectId.UiName + ".");
+					if (projectToTry != null)
+						Logger.WriteEvent("Problem opening " + projectToTry.UiName + ".");
 					Logger.WriteError(exception);
 				}
 
@@ -1430,9 +1427,9 @@ namespace SIL.FieldWorks
 				if (s_noUserInterface)
 					return null;
 
-				// If we wiped out our projectId below and we're coming through again,
+				// If we changed our projectToTry below and we're coming through again,
 				// reset our projectId.
-				lastProjectId = lastEditedProject;
+				projectToTry = lastProjectId;
 
 				using (WelcomeToFieldWorksDlg dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, args.AppAbbrev, exception))
 				{
@@ -1442,38 +1439,37 @@ namespace SIL.FieldWorks
 					}
 					else
 					{
-						if (lastProjectId != null && lastProjectId.IsValid)
+						if (projectToTry != null && projectToTry.IsValid)
 						{
-							dlg.ProjectLinkUiName = lastProjectId.Name;
+							dlg.ProjectLinkUiName = projectToTry.Name;
 							dlg.SetFirstOrLastProjectText(false);
 						}
 						else
 						{
-							dlg.ProjectLinkUiName = sampleProject.Name;
+							dlg.ProjectLinkUiName = GetSampleProjectId(startingApp).Name;
 							dlg.SetFirstOrLastProjectText(true);
 						}
 						dlg.ShowLinkHideErrorLabel();
 					}
-					dlg.OpenLastProjectCheckboxIsChecked = openLastProjectIsChecked;
+					dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
 					dlg.StartPosition = FormStartPosition.CenterScreen;
 					dlg.ShowDialog();
-					lastProjectId = null;
 					exception = null;
 					// We get the app each time through the loop because a failed Restore operation can dispose it.
-					FwApp app = GetOrCreateApplication(args);
+					var app = GetOrCreateApplication(args);
 					app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
 					switch (dlg.DlgResult)
 					{
 						case WelcomeToFieldWorksDlg.ButtonPress.New:
-							lastProjectId = CreateNewProject(dlg, app, helpTopicProvider);
-							Debug.Assert(lastProjectId == null || lastProjectId.IsValid);
+							projectToTry = CreateNewProject(dlg, app, helpTopicProvider);
+							Debug.Assert(projectToTry == null || projectToTry.IsValid);
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Open:
-							lastProjectId = ChooseLangProject(null, helpTopicProvider);
+							projectToTry = ChooseLangProject(null, helpTopicProvider);
 							try
 							{
-								if (lastProjectId != null)
-									lastProjectId.AssertValid();
+								if (projectToTry != null)
+									projectToTry.AssertValid();
 							}
 							catch (FwStartupException e)
 							{
@@ -1481,30 +1477,30 @@ namespace SIL.FieldWorks
 							}
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Link:
-							lastProjectId = lastEditedProject;
-							Debug.Assert(lastProjectId.IsValid);
+							projectToTry = lastProjectId; // just making sure!
+							Debug.Assert(projectToTry.IsValid);
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Restore:
 							s_allowFinalShutdown = false;
 							RestoreProject(null, app);
 							s_allowFinalShutdown = true;
-							lastProjectId = s_projectId; // Restore probably used this process
+							projectToTry = s_projectId; // Restore probably used this process
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Exit:
 							return null; // Should cause the FW process to exit later
 						case WelcomeToFieldWorksDlg.ButtonPress.Receive:
 							bool dummy;
 							string projectName;
-							var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
-								out dummy, out projectName);
+							var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null,
+								FLExBridgeHelper.Obtain, null, out dummy, out projectName);
 							if (success)
 							{
-								lastProjectId = new ProjectId(FDOBackendProviderType.kXML, projectName, null);
+								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectName, null);
 							}
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Import:
-							lastProjectId = CreateNewProject(dlg, app, helpTopicProvider);
-							var projectLaunched = LaunchProject(args, ref lastProjectId);
+							projectToTry = CreateNewProject(dlg, app, helpTopicProvider);
+							var projectLaunched = LaunchProject(args, ref projectToTry);
 							if(projectLaunched)
 							{
 								var mainWindow = Form.ActiveForm;
@@ -1525,12 +1521,20 @@ namespace SIL.FieldWorks
 					}
 				}
 			}
-			while (lastProjectId == null || !lastProjectId.IsValid);
+			while (projectToTry == null || !projectToTry.IsValid);
 
-			Logger.WriteEvent("Project selected in Welcome dialog: " + lastProjectId);
+			Logger.WriteEvent("Project selected in Welcome dialog: " + projectToTry);
 
 			s_fWaitingForUserOrOtherFw = false;
-			return lastProjectId;
+			return projectToTry;
+		}
+
+		private static ProjectId GetSampleProjectId(FwApp app)
+		{
+			ProjectId sampleProjId = null;
+			if (app != null && app.SampleDatabase != null)
+				sampleProjId = new ProjectId(app.SampleDatabase, null);
+			return sampleProjId;
 		}
 
 		/// ------------------------------------------------------------------------------------
