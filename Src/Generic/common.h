@@ -176,10 +176,9 @@ Last reviewed:
 #ifdef WIN32
 // Get the MS Text Services Framework interfaces.
 #include <Msctf.h>
-#endif // WIN32
-
 // This allows us to implement IAccessible (currently only in Views DLL).
 #include <Oleacc.h>
+#endif // WIN32
 
 /***********************************************************************************************
 	Debug related definitions.
