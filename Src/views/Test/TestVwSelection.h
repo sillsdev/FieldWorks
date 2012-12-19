@@ -3878,7 +3878,7 @@ namespace TestViews
 			VwRootBox::CreateCom(NULL, CLSID_VwRootBox, (void **)&m_qrootb);
 			m_hdc = 0;
 			m_qvg32.CreateInstance(CLSID_VwGraphicsWin32);
-			m_hdc = ::GetDC(NULL);
+			m_hdc = GetTestDC();
 			m_qvg32->Initialize(m_hdc);
 			m_qrootb->putref_DataAccess(m_qsda);
 			m_qdrs.Attach(NewObj DummyRootSite());
@@ -3896,7 +3896,7 @@ namespace TestViews
 			m_qtsf.Clear();
 			m_qvc.Clear();
 			m_qvg32->ReleaseDC();
-			::ReleaseDC(NULL, m_hdc);
+			ReleaseTestDC(m_hdc);
 			m_qrootb->Close();
 			m_qrootb.Clear();
 			m_qvg32.Clear();

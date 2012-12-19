@@ -215,7 +215,6 @@ class GrEngine;
 #include "VwSynchronizer.h"
 #include "VwTextStore.h"
 #else
-#include "AfHacks.h"
 #include "StringToNumHelpers.h"
 #include "WriteXml.h"
 #include "FwStyledText.h"
