@@ -226,13 +226,14 @@ void FileStream::Init(LPCOLESTR pszFile, int grfstgm)
 }
 
 /*----------------------------------------------------------------------------------------------
-	Return the appropriate error string ID for the given error code. - WINDOWS
-	// TODO-Linux Can this be removed on Linux?
+	Return the appropriate error string ID for the given error code.
 ----------------------------------------------------------------------------------------------*/
 int FileStream::ErrorStringId(HRESULT hr)
 {
 	switch (hr)
 	{
+		case ERROR_OPEN_FAILED: 			return kstidFileErrOpenFailed;
+#ifdef WIN32
 		case ERROR_FILE_NOT_FOUND:			return kstidFileErrNotFound;
 		case ERROR_PATH_NOT_FOUND:			return kstidFileErrPathNotFound;
 		case ERROR_TOO_MANY_OPEN_FILES:		return kstidFileErrTooManyFiles;
@@ -263,12 +264,12 @@ int FileStream::ErrorStringId(HRESULT hr)
 		case ERROR_INVALID_PASSWORD: 		return kstidFileErrBadPassword;
 		case ERROR_NET_WRITE_FAULT: 		return kstidFileErrNetWriteFault;
 		case ERROR_DRIVE_LOCKED:			return kstidFileErrDriveLocked;
-		case ERROR_OPEN_FAILED: 			return kstidFileErrOpenFailed;
 		case ERROR_BUFFER_OVERFLOW: 		return kstidFileErrBufOverflow;
 		case ERROR_DISK_FULL: 				return kstidFileErrDiskFull;
 		case ERROR_INVALID_NAME: 			return kstidFileErrBadName;
 		case ERROR_NO_VOLUME_LABEL: 		return kstidFileErrNoVolLabel;
 		case ERROR_ALREADY_EXISTS: 			return kstidFileErrAlreadyExists;
+#endif
 		default:							return kstidFileErrUnknown;
 	}
 }
