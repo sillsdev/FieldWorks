@@ -181,6 +181,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\StructureMapAdapter.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization">
@@ -478,6 +479,7 @@
       <DependentUpon>ConnectionLostDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Impl\DataSortingService.cs" />
+    <Compile Include="DomainServices\Db4OPorts.cs" />
     <Compile Include="Infrastructure\Impl\FdoInvertSet.cs" />
     <Compile Include="Infrastructure\Impl\FdoRepositoryBase.cs" />
     <Compile Include="Infrastructure\Impl\FilteredScrBookRepository.cs" />
@@ -657,6 +659,9 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DomainServices\App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="MasterFieldWorksModel.xml">
       <SubType>Designer</SubType>
     </None>

@@ -242,6 +242,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="BuildInclude.targets" />
     <Content Include="buildinclude.xml">
       <SubType>Designer</SubType>
     </Content>

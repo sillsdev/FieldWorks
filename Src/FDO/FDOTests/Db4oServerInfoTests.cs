@@ -186,7 +186,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			RemotingServer.Start();
 
-			var connectString = String.Format("tcp://{0}:{1}/FwRemoteDatabaseConnector.Db4oServerInfo", "localhost", 3333);
+			var connectString = String.Format("tcp://{0}:{1}/FwRemoteDatabaseConnector.Db4oServerInfo",
+				"localhost", Db4OPorts.ServerPort);
 			m_db4OServerInfo = (Db4oServerInfo)Activator.GetObject(typeof(Db4oServerInfo), connectString);
 		}
 

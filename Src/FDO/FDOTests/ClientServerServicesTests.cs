@@ -37,7 +37,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			RemotingServer.Start();
 
-			var connectString = String.Format("tcp://{0}:{1}/FwRemoteDatabaseConnector.Db4oServerInfo", "127.0.0.1", 3333);
+			var connectString = String.Format("tcp://{0}:{1}/FwRemoteDatabaseConnector.Db4oServerInfo",
+				"127.0.0.1", Db4OPorts.ServerPort);
 			m_db4OServerInfo = (Db4oServerInfo)Activator.GetObject(typeof(Db4oServerInfo), connectString);
 
 			// Arbitrary method call to ensure db4oServerInfo is created on server.

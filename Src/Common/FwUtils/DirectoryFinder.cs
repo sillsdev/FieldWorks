@@ -281,7 +281,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string RemotingTcpServerConfigFile
 		{
-			get { return ExeOrDllPath("remoting_tcp_server.config"); }
+			get
+			{
+				if (MiscUtils.RunningTests)
+					return ExeOrDllPath("remoting_tcp_server_tests.config");
+				return ExeOrDllPath("remoting_tcp_server.config");
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -1,15 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<UsingTask TaskName="FileUpdate" AssemblyFile="../../../Build/MSBuild.Community.Tasks.dll"/>
 	<ItemGroup>
 		<remotingTcpServerConfig Include="../../Common/FwRemoteDatabaseConnectorService/remoting_tcp_server.config" />
 	</ItemGroup>
 	<Target Name="AfterClean">
 		<Message Importance="high" Text="Delete: %(remotingTcpServerConfig.FullPath)" />
 		<Delete Files="@(remotingTcpServerConfig -&gt; '$(OutDir)/%(Identity)')" ContinueOnError="true" />
+		<Delete Files="$(OutDir)remoting_tcp_server_tests.config" ContinueOnError="true" />
 	</Target>
 	<Target Name="BeforeBuild">
 		<!-- whatever commands we need to run before the rest of the build-->
-		<Message Importance="high" Text="Copying %(remotingTcpServerConfig.FullPath) to $(OutDir)" />
-		<Copy SourceFiles="@(remotingTcpServerConfig)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" />
+		<Message Importance="high" Text="Copying %(remotingTcpServerConfig.FullPath) to $(OutDir)remoting_tcp_server_tests.config" />
+		<Copy SourceFiles="@(remotingTcpServerConfig)" DestinationFiles="$(OutDir)remoting_tcp_server_tests.config"
+			OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" />
+		<!--EXECUTOR_NUMBER is defined in Jenkins builds (see https://jenkins.lsdev.sil.org/env-vars.html).
+			On Jenkins builds we use ports 33330 - 33339 instead of 3333 and 33340 - 33349 instead of
+			3334 to allow to run multiple builds in parallel. -->
+		<!-- TODO-Mono: xbuild doesn't support relational operator Greater. -->
+		<Error Text="This code can't deal with more than 10 executors."
+			Condition="'$(OS)' != 'Unix' And $(EXECUTOR_NUMBER) != '' And $(EXECUTOR_NUMBER) &gt; 9"/>
+		<FileUpdate Files="$(OutDir)remoting_tcp_server_tests.config" Regex='port="3333"'
+			ReplacementText='port="3333$(EXECUTOR_NUMBER)"' />
+	</Target>
+	<Target Name='AfterBuild'>
+		<FileUpdate Files="$(OutDir)FDO.dll.config" Regex='value="3333"'
+			ReplacementText='value="3333$(EXECUTOR_NUMBER)"' />
+		<FileUpdate Files="$(OutDir)FDO.dll.config" Regex='value="3334"'
+			ReplacementText='value="3334$(EXECUTOR_NUMBER)"' />
 	</Target>
 </Project>
