@@ -14,6 +14,7 @@ Last reviewed:
 #define INITGUID
 #endif
 #include "testViews.h"
+#include "RedirectHKCU.h"
 
 #ifndef WIN32
 // These define GUIDs that we need to define globally somewhere
@@ -29,6 +30,7 @@ namespace unitpp
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
 #endif
 		::OleInitialize(NULL);
+		RedirectRegistry();
 		StrUtil::InitIcuDataDir();
 
 	}

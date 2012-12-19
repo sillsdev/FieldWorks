@@ -153,6 +153,7 @@
     <ClInclude Include="Mutex.h" />
     <ClInclude Include="OleStringLiteral.h" />
     <ClInclude Include="proxystub.h" />
+    <ClInclude Include="RedirectHKCU.h" />
     <ClInclude Include="ResourceStrm.h" />
     <ClInclude Include="Set.h" />
     <ClInclude Include="SmartBstr.h" />

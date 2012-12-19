@@ -11,6 +11,7 @@ Last reviewed:
 	Global initialization/cleanup for unit testing the Language DLL classes.
 -------------------------------------------------------------------------------*//*:End Ignore*/
 #include "testLanguage.h"
+#include "RedirectHKCU.h"
 
 #ifndef WIN32
 #include <fstream>
@@ -25,6 +26,7 @@ namespace unitpp
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
 #endif
 		CheckHr(::OleInitialize(NULL));
+		RedirectRegistry();
 		StrUtil::InitIcuDataDir();	// needed for the normalize routines (ICU)
 	}
 	void GlobalTeardown()
