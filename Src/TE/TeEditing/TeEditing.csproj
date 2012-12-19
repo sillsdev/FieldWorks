@@ -268,9 +268,6 @@
 	  <Install>false</Install>
 	</BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-	<None Include="buildinclude.xml" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
 	<PreBuildEvent>

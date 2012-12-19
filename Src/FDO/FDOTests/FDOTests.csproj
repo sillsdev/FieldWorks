@@ -396,7 +396,6 @@
     <None Include="BuildInclude.targets">
       <SubType>Designer</SubType>
     </None>
-    <None Include="buildinclude.xml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

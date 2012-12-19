@@ -144,9 +144,9 @@
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
 	<Content Include="Itinerary.xml" />
-	<Content Include="BuildInclude.targets">
+	<None Include="BuildInclude.targets">
 	  <SubType>Designer</SubType>
-	</Content>
+	</None>
   </ItemGroup>
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">

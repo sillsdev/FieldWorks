@@ -166,7 +166,6 @@
     <None Include="BuildInclude.targets">
       <SubType>Designer</SubType>
     </None>
-    <None Include="buildinclude.xml" />
     <Compile Include="ManagedPictureFactory.cs" />
   </ItemGroup>
   <ItemGroup>

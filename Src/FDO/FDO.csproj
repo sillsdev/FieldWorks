@@ -593,7 +593,6 @@
     </Compile>
     <Compile Include="UserProfiles.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <None Include="buildinclude.xml" />
     <EmbeddedResource Include="Application\ApplicationServices\AppStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AppStrings.Designer.cs</LastGenOutput>

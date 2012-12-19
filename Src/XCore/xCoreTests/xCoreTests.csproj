@@ -191,9 +191,9 @@
     <Compile Include="XWindowTestsBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Content Include="BuildInclude.targets">
+    <None Include="BuildInclude.targets">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
     <None Include="InventoryBaseTestFiles\Base1Layouts.xml" />
     <None Include="InventoryBaseTestFiles\Base2Layouts.xml" />
     <None Include="InventoryLaterTestFiles\Override1Layouts.xml" />

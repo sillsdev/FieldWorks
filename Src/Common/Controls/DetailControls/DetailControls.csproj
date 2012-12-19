@@ -390,7 +390,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <None Include="BuildInclude.targets" />
-    <None Include="buildinclude.xml" />
     <EmbeddedResource Include="AtomicReferenceLauncher.resx">
       <DependentUpon>AtomicReferenceLauncher.cs</DependentUpon>
       <SubType>Designer</SubType>
