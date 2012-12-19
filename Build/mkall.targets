@@ -381,37 +381,37 @@
 	<Target Name="setKeysInHKCU">
 		<Message Text="Setting registry values for $(fwrt)."/>
 		<WriteRegistry Hive="CurrentUser"
-					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootCodeDir"
-					   Value="$(dir-fwdistfiles)"/>
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootCodeDir"
+			Value="$(dir-fwdistfiles)"/>
 		<WriteRegistry Hive="CurrentUser"
-					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootDataDir"
-					   Value="$(dir-fwdistfiles)"/>
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootDataDir"
+			Value="$(dir-fwdistfiles)"/>
 		<WriteRegistry Hive="CurrentUser"
-					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\ProjectsDir"
-					   Value="$(dir-fwdistfiles)\Projects"/>
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\ProjectsDir"
+			Value="$(dir-fwdistfiles)\Projects"/>
 		<WriteRegistry Hive="CurrentUser"
-					   Key="SOFTWARE\SIL\Icu50DataDir"
-					   Value="$(dir-icuData)"/>
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\Icu50DataDir"
+			Value="$(dir-icuData)"/>
 		<WriteRegistry Hive="CurrentUser"
-					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
-					   Value="$(fwrt)\DistFiles\Windows\EC Common"
-					   Condition="'$(OS)'=='Windows_NT'"/>
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
+			Value="$(fwrt)\DistFiles\Windows\EC Common"
+			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
-					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-					   Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"
-					   Condition="'$(OS)'=='Windows_NT'"/>
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+			Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"
+			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
-					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
-					   Value="$(dir-outputBase)"
-					   Condition="'$(OS)'=='Unix'"/>
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
+			Value="$(dir-outputBase)"
+			Condition="'$(OS)'=='Unix'"/>
 		<WriteRegistry Hive="CurrentUser"
-					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-					   Value="$(dir-outputBase)/EC/Plugins"
-					   Condition="'$(OS)'=='Unix'"/>
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+			Value="$(dir-outputBase)/EC/Plugins"
+			Condition="'$(OS)'=='Unix'"/>
 
 		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="SOFTWARE\SIL\EncodingConverterRepository\Registry"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\EncodingConverterRepository\Registry"
 			Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
 	</Target>
 

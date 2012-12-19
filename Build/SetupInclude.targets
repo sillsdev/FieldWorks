@@ -447,6 +447,14 @@
 		-->
 		<showTargetsRunInReport>false</showTargetsRunInReport>
 		<passbyref Condition="'$(showTargetsRunInReport)'=='true'">"$(passbyref) fw-targets-run</passbyref>
+
+		<!--
+			Property for running on build agents. The environment variable BUILDAGENT_SUBKEY
+			gets set by the Jenkins build.
+			The strings need to be in sync with BasicUtilsTests/Attributes/RedirectHKCU.cs and
+			Generic/RedirectHKCU.h
+		-->
+		<BUILDAGENT_HKCU Condition="'$(BUILDAGENT_SUBKEY)' != ''">Software\SIL\BuildAgents\$(BUILDAGENT_SUBKEY)\HKCU\</BUILDAGENT_HKCU>
 	</PropertyGroup>
 
 </Project>

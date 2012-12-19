@@ -54,7 +54,7 @@ namespace SIL.Utils.Attributes
 
 		private static string TmpRegistryKey
 		{
-			// keep in sync with Generic/RedirectHKCU.h
+			// keep in sync with Generic/RedirectHKCU.h and SetupInclude.targets
 			get { return string.Format(@"Software\SIL\BuildAgents\{0}\HKCU", KeyPart); }
 		}
 

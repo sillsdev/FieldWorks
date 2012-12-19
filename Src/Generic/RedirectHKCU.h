@@ -38,7 +38,7 @@ void RedirectRegistry()
 		return;
 	}
 
-	// keep in sync with BasicUtilsTests/Attributes/RedirectHKCU.cs
+	// keep in sync with BasicUtilsTests/Attributes/RedirectHKCU.cs and SetupInclude.targets
 	std::wstring fullkey(L"Software\\SIL\\BuildAgents\\");
 	fullkey.append(subkey);
 	fullkey.append(L"\\HKCU");
