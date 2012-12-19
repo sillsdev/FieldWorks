@@ -2555,72 +2555,7 @@ const wchar_t kchDirSep[] = L"\\";
 #else//WIN32
 const wchar_t kchDirSep[] = L"/";
 #endif//WIN32
-#ifdef WIN32
-/*----------------------------------------------------------------------------------------------
-	looks up and returns the FW ICU directory path.
-----------------------------------------------------------------------------------------------*/
-StrUni DirectoryFinder::IcuDir()
-{
-	RegKey rk;
-	StrUni stuResult(L"C:\\FieldWorks");
-	if (rk.InitLm(_T("Software\\SIL")))
-	{
-		achar rgch[MAX_PATH];
-		DWORD cb = isizeof(rgch);
-		DWORD dwT;
-		LONG nRet = ::RegQueryValueEx(rk, _T("Icu50DataDir"), NULL, &dwT, (BYTE *)rgch, &cb);
-		if (nRet == ERROR_SUCCESS)
-		{
-			Assert(dwT == REG_SZ);
-			stuResult.Assign(rgch);
-		}
-	}
-	return stuResult;
-}
-#else
 
-/*----------------------------------------------------------------------------------------------
-	looks up and returns the directory where we find Icu Languages.
-----------------------------------------------------------------------------------------------*/
-StrUni DirectoryFinder::IcuDir()
-{
-	StrUni stuResult = FwRootDataDir();
-	stuResult += kchDirSep;
-	stuResult += L"Icu50";
-	return stuResult;
-}
-
-#endif
-
-
-/*----------------------------------------------------------------------------------------------
-	looks up and returns the FW ICU directory path.
-----------------------------------------------------------------------------------------------*/
-StrUni DirectoryFinder::IcuDataDir()
-{
-#ifdef WIN32
-	RegKey rk;
-	StrUni stuResult(L"C:\\FieldWorks");
-	if (rk.InitLm(_T("Software\\SIL")))
-	{
-		achar rgch[MAX_PATH];
-		DWORD cb = isizeof(rgch);
-		DWORD dwT;
-		LONG nRet = ::RegQueryValueEx(rk, _T("Icu50DataDir"), NULL, &dwT, (BYTE *)rgch, &cb);
-		if (nRet == ERROR_SUCCESS)
-		{
-			Assert(dwT == REG_SZ);
-			stuResult.Assign(rgch);
-		}
-	}
-	return stuResult;
-#else
-	StrUni stuResult = FwRootDataDir();
-	stuResult += kchDirSep;
-	stuResult += L"Icu50/";
-	return stuResult;
-#endif
-}
 /*----------------------------------------------------------------------------------------------
 	looks up and returns the FW root data direcory path.
 ----------------------------------------------------------------------------------------------*/
@@ -2629,7 +2564,8 @@ StrUni DirectoryFinder::FwRootDataDir()
 #ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
-	if (rk.InitLm(_T("Software\\SIL\\FieldWorks\\7.0")))
+	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\7.0")) ||
+		rk.InitLm(_T("Software\\SIL\\FieldWorks\\7.0")))
 	{
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);
@@ -2665,9 +2601,6 @@ StrUni DirectoryFinder::FwRootDataDir()
 #endif//WIN32
 }
 
-
-
-
 /*----------------------------------------------------------------------------------------------
 	looks up and returns the FW root code direcory path.
 ----------------------------------------------------------------------------------------------*/
@@ -2676,7 +2609,8 @@ StrUni DirectoryFinder::FwRootCodeDir()
 #ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
-	if (rk.InitLm(_T("Software\\SIL\\FieldWorks\\7.0")))
+	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\7.0")) ||
+		rk.InitLm(_T("Software\\SIL\\FieldWorks\\7.0")))
 	{
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);

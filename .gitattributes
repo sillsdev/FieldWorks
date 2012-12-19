@@ -11,3 +11,4 @@
 *.settings -whitespace
 *.ReSharper -whitespace
 *.vcxproj -whitespace
+*.vcxproj.filters -whitespace

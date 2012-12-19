@@ -47,15 +47,6 @@
 	<ClInclude Include="TestLgIcuCollator.h">
 	  <Filter>Header Files</Filter>
 	</ClInclude>
-	<ClInclude Include="TestLgWritingSystem.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
-	<ClInclude Include="TestLgWritingSystemFactory.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
-	<ClInclude Include="TestLgWritingSystemFactoryBuilder.h">
-	  <Filter>Header Files</Filter>
-	</ClInclude>
 	<ClInclude Include="TestRegexMatcher.h">
 	  <Filter>Header Files</Filter>
 	</ClInclude>
