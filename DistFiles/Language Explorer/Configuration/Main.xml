@@ -125,6 +125,7 @@
 		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
 		<command id="CmdHelpAbout" label="_About Language Explorer..." message="HelpAbout"/>
+		<command id="CmdHelpAboutFLEXBridge" label="About FLEX Bridge..." icon="syncSendReceive" message="AboutFlexBridge"/>
 		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
 		<command id="CmdHelpDemoMovies" label="_Demo Movies..." message="HelpDemoMovies"/>
 		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem"/>
@@ -434,7 +435,7 @@
 			</menu>
 			<item command="CmdExport"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
-			<menu id="SendReceive" label="_Send/Receive">
+			<menu id="SendReceive" icon="syncSendReceive" label="_Send/Receive">
 				<item command="CmdFLExBridge" />
 				<item command="CmdLiftBridge" />
 			</menu>
@@ -603,6 +604,7 @@
 			<item command="CmdHelpMakeSuggestion"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdHelpAbout"/>
+			<item command="CmdHelpAboutFLEXBridge"/>
 		</menu>
 	</menubar>
 	<!-- ********************************************************** -->

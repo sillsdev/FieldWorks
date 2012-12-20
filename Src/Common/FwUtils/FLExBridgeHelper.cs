@@ -87,6 +87,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </remarks>
 		public const string MoveLift = @"move_lift";
 
+		/// <summary>
+		/// constant for launching the bridge in the About FLEx Bridge mode
+		/// </summary>
+		/// <remarks>
+		/// <para>Instruct FLEx Bridge to show its "About" information.</para>
+		/// </remarks>
+		public const string AboutFLExBridge = @"about_flex_bridge";
+
 		#endregion End of available '-v' parameter options:
 
 		// The two paths of a path that locate the Lift repository within a FLEx project.

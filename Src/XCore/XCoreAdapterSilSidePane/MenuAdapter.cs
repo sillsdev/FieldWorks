@@ -185,6 +185,10 @@ namespace XCore
 								Tag = item,
 								Text = label
 							};
+						if (display.ImageLabel != "default")
+						{
+							submenu.Image = m_smallImages.GetImage(display.ImageLabel);
+						}
 						submenu.AccessibilityObject.Name = item.Id;
 						// Have the submenu display characteristics behave as desired.  See FWR-3104.
 						submenu.Visible = display.Visible;

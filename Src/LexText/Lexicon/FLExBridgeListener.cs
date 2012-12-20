@@ -232,6 +232,39 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#endregion LiftBridge messages
 
+		#region AboutFlexBridge Toolbar messages
+
+		/// <summary>
+		/// Called (by xcore) to control display params of the Help->About FLEx Bridge menu.
+		/// </summary>
+		public bool OnDisplayAboutFlexBridge(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalled(display);
+
+			return true; // We dealt with it.
+		}
+
+		/// <summary>
+		/// The method/delegate that gets invoked when Help->About FLEx Bridge is clicked.
+		/// </summary>
+		/// <param name="argument">Includes the XML command element of the OnAboutFlexBridge message</param>
+		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody shoudl also try to handle the message.</returns>
+		public bool OnAboutFlexBridge(object argument)
+		{
+			bool dummy1;
+			string dummy2;
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(
+				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+				Environment.UserName,
+				FLExBridgeHelper.AboutFLExBridge,
+				null,
+				out dummy1, out dummy2);
+
+			return true;
+		}
+
+		#endregion AboutFlexBridge Toolbar messages
+
 		#region ShowConflictReport (for full FLEx data only) messages
 
 		/// <summary>
