@@ -61,11 +61,6 @@
 	</Target>
 
 	<Target Name="iculibs" Condition="!Exists('$(icu_lib)')">
-		<!-- unzip icu file -->
-		<!-- NOTE: we can't use the Unzip task since we have to adjust the line endings,
-			 especially for Makefiles and shell scripts (option -a). -->
-		<Exec Command="unzip -qq -a -u Icu50src.zip -d .."
-			  WorkingDirectory="$(fwrt)/Lib/src/Icu4C" Condition="'$(action)'!='clean'"/>
 		<Exec Command="chmod +x runConfigureICU configure install-sh"
 			  WorkingDirectory="$(fwrt)/Lib/src/icu/source" Condition="'$(action)'!='clean'"/>
 		<!-- build icu -->

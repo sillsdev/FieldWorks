@@ -15,7 +15,6 @@ DistFiles/Language Explorer/Movies/
 DistFiles/ReleaseData/
 DistFiles/SIL/Repository/
 Installer/
-Lib/src/icu/
 Localizations/
 Bld/GlobalInclude.build.xml
 Bin/_setLatestBuildConfig.bat

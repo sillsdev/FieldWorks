@@ -4,3 +4,6 @@
 [submodule "Build/Src/msbuildtasks"]
 	path = Build/Src/msbuildtasks
 	url = git://github.com/ermshiperete/msbuildtasks.git
+[submodule "Lib/src/icu"]
+	path = Lib/src/icu
+	url = git://github.com/sillsdev/icu4c.git
