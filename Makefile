@@ -44,13 +44,11 @@ externaltargets: \
 	COM-all \
 	COM-install \
 	Win32More \
-	ManagedComBridge-all \
 
 externaltargets-test: \
 	Win32Base-check \
 	COM-check \
 	Win32More-check \
-	ManagedComBridge-check \
 
 nativetargets: \
 	externaltargets \
@@ -155,7 +153,6 @@ setup:
 
 
 clean: \
-	ManagedComBridge-clean \
 	COM-clean \
 	COM-uninstall \
 	COM-distclean \
@@ -305,10 +302,9 @@ uninstall-menuentries:
 
 install-COM:
 	mkdir -p $(COM_DIR)/installer$(ARCH)
-	(cd $(COM_DIR)/installer$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=/usr; true)
+	-(cd $(COM_DIR)/installer$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && \
+		../configure --prefix=/usr/lib/fieldworks --libdir=/usr/lib/fieldworks)
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) install
-	install -d $(DESTDIR)/usr/lib/fieldworks
-	install $(COM_DIR)/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(DESTDIR)/usr/lib/fieldworks
 
 uninstall-COM:
 	[ -e $(COM_DIR)/installer$(ARCH)/Makefile ] && \
@@ -352,27 +348,20 @@ DebugProcs-clean:
 DebugProcs-link:
 	$(MAKE) -C$(SRC)/DebugProcs link_check
 
-ManagedComBridge-all:
-	$(MAKE) -C$(COM_BUILD)/ManagedComBridge all
-	@mkdir -p $(OUT_DIR)
-	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
-ManagedComBridge-clean:
-	$(MAKE) -C$(COM_BUILD)/ManagedComBridge clean
-	rm -f $(OUT_DIR)/libManagedComBridge.so
-ManagedComBridge-check:
-	$(MAKE) -C$(COM_BUILD)/ManagedComBridge check
-
 COM-all:
 	-mkdir -p $(COM_BUILD)
 	(cd $(COM_BUILD) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=`abs.py .`; true)
 	REMOTE_WIN32_DEV_HOST=$(REMOTE_WIN32_DEV_HOST) $(MAKE) -C$(COM_BUILD) all
 COM-install:
 	$(MAKE) -C$(COM_BUILD) install
+	@mkdir -p $(OUT_DIR)
+	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
 COM-check:
 	$(MAKE) -C$(COM_BUILD) check
 COM-uninstall:
 	[ -e $(COM_BUILD)/Makefile ] && \
 	$(MAKE) -C$(COM_BUILD) uninstall || true
+	rm -f $(OUT_DIR)/libManagedComBridge.so
 COM-clean:
 	[ -e $(COM_BUILD)/Makefile ] && \
 	$(MAKE) -C$(COM_BUILD) clean || true
