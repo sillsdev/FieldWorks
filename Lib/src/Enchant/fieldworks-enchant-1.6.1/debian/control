@@ -2,7 +2,7 @@ Source: fieldworks-enchant
 Section: unknown
 Priority: extra
 Maintainer: Stephen McConnel <stephen_mcconnel@sil.org>
-Build-Depends: debhelper (>= 7.0.50~), autotools-dev, hspell (>= 0.7-2), libdbus-1-dev, libdbus-glib-1-dev, libhunspell-dev (>= 1.1.5-2), libpspell-dev (>= 0.60.3-3), libglib2.0-dev, libvoikko-dev, libz-dev, chrpath
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, automake, libtool, hspell (>= 0.7-2), libdbus-1-dev, libdbus-glib-1-dev, libhunspell-dev (>= 1.1.5-2), libpspell-dev (>= 0.60.3-3), libglib2.0-dev, libvoikko-dev, libz-dev, chrpath
 Standards-Version: 3.8.4
 Homepage: http://www.abisource.com/projects/enchant/
 #Vcs-Git: git://git.debian.org/collab-maint/fieldworks-enchant.git
@@ -11,7 +11,7 @@ Homepage: http://www.abisource.com/projects/enchant/
 Package: fieldworks-libenchant-dev
 Section: libdevel
 Architecture: any
-Depends: ${misc:Depends}, fieldworks-libenchant1c2a (= ${binary:Version}), libglib2.0-dev
+Depends: ${misc:Depends}, fieldworks-libenchant (= ${binary:Version}), libglib2.0-dev
 Description: a wrapper library for various spell checker engines (development)
  A specially patched version of enchant from upstream source repos,
  to support FieldWorks. Not intended for general use.
@@ -25,12 +25,10 @@ Description: a wrapper library for various spell checker engines (development)
  .
  This package contains files needed for development with Enchant.
 
-Package: fieldworks-libenchant1c2a
+Package: fieldworks-libenchant
 Section: libs
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
-Conflicts: libenchant1, libenchant1c2
-Replaces: libenchant-dev (<< 1.1.1++cvs.2003.11.08), libenchant1, libenchant1c2
 Suggests: fieldworks-libenchant-voikko
 Description: a wrapper library for various spell checker engines
  A specially patched version of enchant from upstream source repos,
@@ -49,8 +47,6 @@ Package: fieldworks-libenchant-voikko
 Section: libs
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
-Conflicts: libenchant1c2a (= 1.4.2-3)
-Replaces: libenchant1c2a (= 1.4.2-3)
 Description: Voikko spell-checker libenchant plugin
  A specially patched version of enchant from upstream source repos,
  to support FieldWorks. Not intended for general use.

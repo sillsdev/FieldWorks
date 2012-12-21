@@ -1230,12 +1230,12 @@ Index: src/bindings/Enchant.Net/Enchant.Net.csproj
 -﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
    <PropertyGroup>
-	 <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	 <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 @@ -10,6 +10,11 @@
-	 <RootNamespace>Enchant</RootNamespace>
-	 <AssemblyName>Enchant.Net</AssemblyName>
-	 <RunPostBuildEvent>Always</RunPostBuildEvent>
+     <RootNamespace>Enchant</RootNamespace>
+     <AssemblyName>Enchant.Net</AssemblyName>
+     <RunPostBuildEvent>Always</RunPostBuildEvent>
 +    <FileUpgradeFlags>
 +    </FileUpgradeFlags>
 +    <OldToolsVersion>2.0</OldToolsVersion>
@@ -1243,89 +1243,41 @@ Index: src/bindings/Enchant.Net/Enchant.Net.csproj
 +    </UpgradeBackupLocation>
    </PropertyGroup>
    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	 <DebugSymbols>true</DebugSymbols>
+     <DebugSymbols>true</DebugSymbols>
 Index: src/myspell/libenchant_myspell.rc
 ===================================================================
---- src/myspell/libenchant_myspell.rc	(revision 0)
-+++ src/myspell/libenchant_myspell.rc	(revision 0)
-@@ -0,0 +1,32 @@
-+#include <winver.h>
-+// John Thomson: added this to produce a version number in the Windows DLL.
-+// At least the minor version number should be incremented each released build.
-+VS_VERSION_INFO VERSIONINFO
-+  FILEVERSION 1,6,2
-+  PRODUCTVERSION 1,6,2
-+  FILEFLAGSMASK 0
-+  FILEFLAGS 0
-+  FILEOS VOS__WINDOWS32
-+  FILETYPE VFT_DLL
-+  FILESUBTYPE VFT2_UNKNOWN
-+  BEGIN
-+    BLOCK "StringFileInfo"
-+    BEGIN
-+      BLOCK "040904B0"
-+      BEGIN
-+	VALUE "CompanyName", "none"
-+	VALUE "FileDescription", "libenchant_myspell"
-+	VALUE "FileVersion", "1.6.2"
-+	VALUE "InternalName", "libenchant_myspell-1.6"
-+	VALUE "LegalCopyright", "Copyright (C) 2002-2007 Dom Lachowicz"
-+	VALUE "OriginalFilename", "libenchant_myspell-1.6.dll"
-+	VALUE "ProductName", "libenchant_myspell"
-+	VALUE "ProductVersion", "1.6.2"
-+      END
-+    END
-+    BLOCK "VarFileInfo"
-+    BEGIN
-+      VALUE "Translation", 0x409, 1200
-+    END
-+  END
-+
-Index: src/pwl.c
-===================================================================
---- src/pwl.c	(revision 29482)
-+++ src/pwl.c	(working copy)
-@@ -626,23 +626,24 @@
-	if(exists)
-		return 0;
-
--	if(enchant_is_title_case(word, len) || (isAllCaps = enchant_is_all_caps(word, len)))
--		{
--			char * lower_case_word = g_utf8_strdown(word, len);
--			exists = enchant_pwl_contains(pwl, lower_case_word, strlen(lower_case_word));
--			g_free(lower_case_word);
--			if(exists)
--				return 0;
-+	// Don't want title-case and all-caps smarts in FieldWorks.
-+	//if(enchant_is_title_case(word, len) || (isAllCaps = enchant_is_all_caps(word, len)))
-+	//	{
-+	//		char * lower_case_word = g_utf8_strdown(word, len);
-+	//		exists = enchant_pwl_contains(pwl, lower_case_word, strlen(lower_case_word));
-+	//		g_free(lower_case_word);
-+	//		if(exists)
-+	//			return 0;
-
--			if(isAllCaps)
--			{
--				char * title_case_word = enchant_utf8_strtitle(word, len);
--				exists = enchant_pwl_contains(pwl, title_case_word, strlen(title_case_word));
--				g_free(title_case_word);
--				if(exists)
--					return 0;
--			}
--		}
-+	//		if(isAllCaps)
-+	//		{
-+	//			char * title_case_word = enchant_utf8_strtitle(word, len);
-+	//			exists = enchant_pwl_contains(pwl, title_case_word, strlen(title_case_word));
-+	//			g_free(title_case_word);
-+	//			if(exists)
-+	//				return 0;
-+	//		}
-+	//	}
-
-	return 1; /* not found */
- }
+--- src/myspell/libenchant_myspell.rc	(revision 29930)
++++ src/myspell/libenchant_myspell.rc	(working copy)
+@@ -2,8 +2,8 @@
+ LANGUAGE 0, 0
+ 
+ 10 VERSIONINFO
+- FILEVERSION 1,0,0,1
+- PRODUCTVERSION 1,0,0,1
++ FILEVERSION 1,6,2,0
++ PRODUCTVERSION 1,6,2,0
+  FILEFLAGSMASK 0x3fL
+ #ifdef _DEBUG
+  FILEFLAGS 0x1L
+@@ -20,14 +20,14 @@
+         BEGIN
+             VALUE "CompanyName", "\0"
+             VALUE "FileDescription", "Libenchant Myspell module\0"
+-            VALUE "FileVersion", "1, 7, 0, 1\0"
+-            VALUE "InternalName", "libenchant_myspell\0"
++            VALUE "FileVersion", "1, 6, 2, 0\0"
++            VALUE "InternalName", "libenchant_myspell-1.6\0"
+             VALUE "LegalCopyright", "Copyright \xA9 2003-2011 Joan Moratinos, Dom Lachowicz et al.\0"
+             VALUE "LegalTrademarks", "\0"
+-            VALUE "OriginalFilename", "libenchant_myspell.dll\0"
++            VALUE "OriginalFilename", "libenchant_myspell-1.6.dll\0"
+             VALUE "PrivateBuild", "Dev version\0"
+             VALUE "ProductName", "libenchant\0"
+-            VALUE "ProductVersion", "1, 7, 0\0"
++            VALUE "ProductVersion", "1, 6, 2\0"
+         END
+     END
+     BLOCK "VarFileInfo"
 Index: unittests/Enchant.Net.Tests/Enchant.Net.Tests.csproj
 ===================================================================
 --- unittests/Enchant.Net.Tests/Enchant.Net.Tests.csproj	(revision 29482)
@@ -1334,12 +1286,12 @@ Index: unittests/Enchant.Net.Tests/Enchant.Net.Tests.csproj
 -﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 +﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
    <PropertyGroup>
-	 <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	 <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 @@ -9,6 +9,11 @@
-	 <AppDesignerFolder>Properties</AppDesignerFolder>
-	 <RootNamespace>Enchant.Tests</RootNamespace>
-	 <AssemblyName>Enchant.Net.Tests</AssemblyName>
+     <AppDesignerFolder>Properties</AppDesignerFolder>
+     <RootNamespace>Enchant.Tests</RootNamespace>
+     <AssemblyName>Enchant.Net.Tests</AssemblyName>
 +    <FileUpgradeFlags>
 +    </FileUpgradeFlags>
 +    <OldToolsVersion>2.0</OldToolsVersion>
@@ -1347,7 +1299,7 @@ Index: unittests/Enchant.Net.Tests/Enchant.Net.Tests.csproj
 +    </UpgradeBackupLocation>
    </PropertyGroup>
    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	 <DebugSymbols>true</DebugSymbols>
+     <DebugSymbols>true</DebugSymbols>
 Index: unittests/EnchantBrokerTestFixture.h
 ===================================================================
 --- unittests/EnchantBrokerTestFixture.h	(revision 29482)

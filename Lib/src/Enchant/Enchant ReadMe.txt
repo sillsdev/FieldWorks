@@ -1,8 +1,6 @@
 JohnT: This file contains some information on building the Enchant DLLs which we use in FieldWorks. I am not at all happy with the current state of things, but it is the best I have had time to do.
 
-To build the version we are using as of March 10 2011, you start by getting the enchant source from its SVN repository at http://svn.abisource.com/enchant/trunk.
-
-Next apply the patch "Enchant patch.patch" from this directory. This patch is currently based on revision 29482; if the trunk of Enchant has moved on, you may need to get that exact revision, or you may want to try and see whether the patch works on the latest version. (TortoiseSVN has a mechanism to make and apply patches like this.) If you come up with a working patch based on a later revision of Enchant, please update the patch and this file.
+To build the current version of Enchant on Windows (the same as the one we build for Linux), start by executing ExtractSourcesAndApplyWindowsPatches.sh in a git bash window.  This will extract the pristine sources in fieldworks_1.6.1.orig.tar.gz to a subdirectory named x/fieldworks-1.6.1 and then apply both the Windows specific patches found in "Enchant patch.patch", and the common patches found in fieldworks-1.6.1/debian/patches.
 
 Once you have that source, you can find a file I have updated under msvc/Build.win32.readme. (The same information can be read at the start of the patch file.) This gives somewhat involved instructions for getting, patching, and building glib, a library on which enchant depends, and then Enchant itself. Unfortunately, based on an earlier version of the readme, it may be essential to build glib with the exact same version of the C libraries as Enchant, so you can't just get a binary. I don't know for sure whether this is still true. If you can find the glib repository and make your changes relative to that and produce a patch file, please check it in and update these instructions!
 

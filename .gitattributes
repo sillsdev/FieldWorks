@@ -11,3 +11,5 @@
 *.settings -whitespace
 *.ReSharper -whitespace
 *.vcxproj -whitespace
+*.patch -whitespace
+changelog -whitespace
