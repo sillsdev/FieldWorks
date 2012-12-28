@@ -200,7 +200,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private readonly DisposableObjectsSet<RecordSorter> m_SortersToDispose = new DisposableObjectsSet<RecordSorter>();
 		private FdoCache m_cache;
 		private XmlNode m_nodeSpec;
-		private DhListView m_lvHeader;
+		/// <summary/>
+		protected DhListView m_lvHeader;
 		private RecordSorter m_sorter;
 		/// <summary>
 		/// Required designer variable.
@@ -226,10 +227,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected int m_icolCurrent = 0;
 //		bool m_doHScroll = false;
-		private Button m_configureButton;
+		/// <summary/>
+		protected Button m_configureButton;
 		private Button m_checkMarkButton;
-		private BrowseViewScroller m_scrollContainer = null;
-		private ScrollBar m_scrollBar;
+		/// <summary/>
+		protected BrowseViewScroller m_scrollContainer = null;
+		/// <summary/>
+		protected ScrollBar m_scrollBar;
 		private ToolTip m_tooltip;
 		private bool m_listModificationInProgress;
 		private bool m_fFilterInitializationComplete = false;
@@ -1150,7 +1154,8 @@ namespace SIL.FieldWorks.Common.Controls
 			return new BulkEditBar(bv, spec, mediator, cache);
 		}
 
-		private void AddControl(Control control)
+		/// <summary/>
+		protected void AddControl(Control control)
 		{
 			m_scrollContainer.Controls.Add(control);
 		}
@@ -1664,8 +1669,6 @@ namespace SIL.FieldWorks.Common.Controls
 #endif
 		}
 
-		const int ScrollLineHeight = 16;
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adjusts the controls.
@@ -1673,6 +1676,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		protected void AdjustControls()
 		{
+			CheckDisposed();
 			if (m_configureButton == null)
 				return;		// layout hasn't actually occurred yet -- see FWNX-733.
 			m_lastLayoutWidth = Width;
@@ -1695,18 +1699,14 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			m_scrollBar.Height = sbHeight;
 			m_scrollBar.Location = new Point(Width - m_scrollBar.Width, m_configureButton.Height);
-			m_scrollBar.Minimum = 0;
-			m_scrollBar.LargeChange = Math.Max(Height - ScrollLineHeight, ScrollLineHeight);
-			m_scrollBar.SmallChange = ScrollLineHeight;
-			//m_scrollBar.Maximum = m_xbv.AutoScrollMinSize.Height;
-			//m_scrollBar.Value = -m_xbv.AutoScrollPosition.Y;
+			if (m_xbv != null)
+				m_xbv.SetScrollBarParameters(m_scrollBar);
+
 			m_scrollContainer.Location = new Point(0,0);
 			m_scrollContainer.Height = scrollContHeight;
 			EnsureScrollContainerIsCorrectWidth();
-
 		}
 
-		/// <summary></summary>
 		internal void EnsureScrollContainerIsCorrectWidth()
 		{
 			if (m_scrollContainer == null)
@@ -1758,7 +1758,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// enough of the view present to fix yet.
 			AdjustColumnWidths(false);
 			m_lvHeader.PerformLayout();
-			m_scrollBar.LargeChange = Math.Max(m_xbv.Height - ScrollLineHeight, ScrollLineHeight);
+			m_xbv.SetScrollBarParameters(m_scrollBar);
 		}
 
 		/// <summary>

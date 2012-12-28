@@ -1698,7 +1698,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				// possibly causes other unit test issues
 				// Don't adjust this unless it's needed.  See FWNX-561.
 				AutoScrollMinSize = value - new Size(VScroll ? SystemInformation.VerticalScrollBarWidth : 0,
-													 HScroll ? SystemInformation.HorizontalScrollBarHeight : 0);
+					HScroll ? SystemInformation.HorizontalScrollBarHeight : 0);
 #endif
 
 #if !__MonoCS__
@@ -1717,7 +1717,6 @@ namespace SIL.FieldWorks.Common.RootSites
 					// it should possibly set it to Minimun value instead.
 					// Currently occurs when dropping down scrollbars in Flex.
 				}
-
 #endif
 			}
 		}
@@ -5575,7 +5574,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Gets the scroll ranges in both directions.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		protected Size ScrollRange
+		protected virtual Size ScrollRange
 		{
 			get
 			{

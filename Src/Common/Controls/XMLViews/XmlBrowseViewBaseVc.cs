@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.Common.Controls
 			: base(table)
 		{
 
-			Debug.Assert(xbv.Mediator.FeedbackInfoProvider != null);
+			Debug.Assert(xbv.Mediator.FeedbackInfoProvider != null, "No FeedbackInfoProvider");
 
 			MApp = xbv.Mediator.FeedbackInfoProvider as IApp;
 			XmlBrowseViewBaseVcInit(xbv.Cache, xbv.DataAccess, table);

@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Common.Controls
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	///
+	/// Control to show rows of data
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public class XmlBrowseViewBase : RootSite, IVwNotifyChange, IPostLayoutInit, IClearValues
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary></summary>
 		protected XmlNode m_nodeSpec;
 		/// <summary></summary>
-		protected BrowseViewer m_bv;
+		internal protected BrowseViewer m_bv;
 		/// <summary> record list supplying browse view content </summary>
 		protected ISortItemProvider m_sortItemProvider;
 		/// <summary></summary>
@@ -270,7 +270,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Return the number of rows in the view.
 		/// </summary>
-		internal int RowCount
+		internal virtual int RowCount
 		{
 			get
 			{
@@ -1254,24 +1254,67 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-//		Size m_minSize = new Size(0,0);
 		/// <summary>
 		/// The scroll range can't be stored in the AutoScrollMinSize like we'd like,
 		/// because setting that turns on the view's own scroll bar.
+		///
+		/// This is the requested maximum range of the scrollbar.
+		/// MSDN says of AutoScrollMinSize "A Size that determines the minimum size of the virtual area through which the user can scroll."
 		/// </summary>
 		public override Size ScrollMinSize
 		{
 			set
 			{
 				CheckDisposed();
+				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
 
-//				m_minSize = value;
 				if (m_bv != null && m_bv.ScrollBar != null)
 					m_bv.ScrollBar.Maximum = value.Height;
+
+				// A new rootbox height will lead to a new MeanRowHeight, so ScrollBar.LargeChange and .SmallChange need
+				// to be updated.
+				SetScrollBarParameters(m_bv.ScrollBar);
 			}
 		}
 
-		Point m_ScrollPosition = new Point(0,0);
+		/// <summary>
+		/// Zero if no rows or null RootBox.
+		/// </summary>
+		public int MeanRowHeight
+		{
+			get
+			{
+				CheckDisposed();
+				if (RootBox == null)
+					return 0;
+				if (RowCount == 0)
+					return 0;
+				return RootBox.Height / RowCount;
+			}
+		}
+
+		/// <summary>
+		/// The amount of content that the user can scroll through within the content display area.
+		/// This height, the maximum value that a user can reach through the UI, is different than the ScrollBar.Maximum
+		/// amount (see http://msdn.microsoft.com/en-us/library/vstudio/system.windows.forms.scrollbar.maximum).
+		/// Upper boundary on ScrollPosition.
+		/// </summary>
+		public int ScrollPositionMaxUserReachable
+		{
+			get
+			{
+				CheckDisposed();
+				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
+				int contentHeight = RootBox.Height;
+				int desiredMaxUserReachable = contentHeight - ClientHeight;
+				if (desiredMaxUserReachable < 0)
+					desiredMaxUserReachable = 0;
+				return desiredMaxUserReachable;
+			}
+		}
+
+		private Point m_ScrollPosition = new Point(0,0);
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Because we turn AutoScroll off to suppress the scroll bars, we need our own
@@ -1287,29 +1330,65 @@ namespace SIL.FieldWorks.Common.Controls
 				CheckDisposed();
 				return m_ScrollPosition;
 			}
+
 			set
 			{
 				CheckDisposed();
 
-				Point newPos = new Point(-value.X, -value.Y);
-				if (newPos != m_ScrollPosition)
-				{
-					// Achieve the scroll by just invalidating. We'd like to optimize this sometime...
-					m_ScrollPosition = newPos;
-					Invalidate();
-					// to minimise recursive calls, don't set the scroll bar unless it's wrong.
-					if (value.Y != m_bv.ScrollBar.Value)
-					{
-						// The assignment to 'Value' can (and was LT-3091) throw an exception
-						if (value.Y > m_bv.ScrollBar.Maximum)
-							value.Y = m_bv.ScrollBar.Maximum;
-						else if (value.Y < m_bv.ScrollBar.Minimum)
-							value.Y = m_bv.ScrollBar.Minimum;
-						m_bv.ScrollBar.Value = value.Y;
-					}
-				}
+				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
+
+				int newValue = value.Y;
+
+				int minValue = 0;
+				int maxValue = ScrollPositionMaxUserReachable;
+
+				if (newValue < minValue)
+					newValue = minValue;
+
+				// Don't scroll so far down so you can't see any rows.
+				if (newValue > maxValue)
+					newValue = maxValue;
+
+				m_ScrollPosition.Y = -newValue;
+				Debug.Assert(m_bv.ScrollBar.Maximum >= 0, "ScrollBar.Maximum is unexpectedly a negative value");
+				// The assignment to 'Value' can (and was LT-3091) throw an exception
+				Debug.Assert(m_bv.ScrollBar.Minimum <= minValue, "minValue setting could allow attempt to set out of bounds");
+				Debug.Assert(m_bv.ScrollBar.Maximum >= maxValue, "maxValue setting could allow attempt to set out of bounds");
+				// to minimise recursive calls, don't set the scroll bar unless it's wrong.
+				if (m_bv.ScrollBar.Value != newValue)
+					m_bv.ScrollBar.Value = newValue;
+
+				// Achieve the scroll by just invalidating. We'd like to optimize this sometime...
+				Invalidate();
 			}
 		}
+
+		/// <returns>
+		/// Desired scrollbar LargeChange value
+		/// </returns>
+		public int DesiredScrollBarLargeChange
+		{
+			get
+			{
+				CheckDisposed();
+				var desiredLargeChange = ClientHeight - MeanRowHeight;
+				if (desiredLargeChange < 0)
+					desiredLargeChange = 0;
+				return desiredLargeChange;
+			}
+		}
+
+		/// <summary>
+		/// Set a controlling scrollbar's parameters using information this object owns.
+		/// </summary>
+		public void SetScrollBarParameters(ScrollBar scrollBar)
+		{
+			CheckDisposed();
+			scrollBar.Minimum = 0;
+			scrollBar.SmallChange = MeanRowHeight;
+			scrollBar.LargeChange = DesiredScrollBarLargeChange;
+		}
+
 		/// <summary>
 		/// True if the control is being scrolled and should have its ScrollMinSize
 		/// adjusted and its AutoScrollPosition modified. An XmlBrowseViewBase
@@ -1981,13 +2060,23 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// <summary>
-		/// Makes scroll range big enough so user can scroll to last record in list, to fix LT-13765.
-		/// </summary>
-		protected override int ScrollRangeFudgeFactor {
-			get {
-				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
-				return 3 * SystemInformation.HorizontalScrollBarHeight - base.ScrollRangeFudgeFactor;
+		/// <remarks>
+		/// The ScrollBar.Maximum is equal to the maxUserReachable + ScrollBar.LargeChange - 1, which
+		/// in this implementation is also equal to RootBox.Height - MeanRowHeight - 1 in cases
+		/// where RootBox.Height > ClientHeight.
+		///
+		/// Because ScrollBar.LargeChange.get is partly bounded by ScrollBar.Maximum, we can't reliably set and use
+		/// ScrollBar.LargeChange before setting ScrollBar.Maximum. But we can know the value of what ScrollBar.LargeChange
+		/// should be from DesiredScrollBarLargeChange.
+		/// </remarks>
+		protected override Size ScrollRange
+		{
+			get
+			{
+				int desiredMaxUserReachable = ScrollPositionMaxUserReachable;
+				// http://msdn.microsoft.com/en-us/library/vstudio/system.windows.forms.scrollbar.maximum
+				int desiredMaxScrollbarHeight = desiredMaxUserReachable + DesiredScrollBarLargeChange - 1;
+				return new Size(base.Width, desiredMaxScrollbarHeight);
 			}
 		}
 		#endregion
