@@ -254,6 +254,7 @@
     <Compile Include="ItemClickedTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="MacroListenerTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="XmlDocConfigureDlgTests.cs" />
     <Compile Include="XWorksAppTestBase.cs">

@@ -300,6 +300,7 @@
     </Compile>
     <Compile Include="IDictConfigPresenter.cs" />
     <Compile Include="IDictConfigViewer.cs" />
+    <Compile Include="IFlexMacro.cs" />
     <Compile Include="ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -314,6 +315,7 @@
     <Compile Include="LinkListener.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MacroListener.cs" />
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -134,6 +134,7 @@
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
+    <Compile Include="DynamicLoaderTests.cs" />
     <Compile Include="ErrorReporterTests.cs">
       <SubType>Code</SubType>
     </Compile>
