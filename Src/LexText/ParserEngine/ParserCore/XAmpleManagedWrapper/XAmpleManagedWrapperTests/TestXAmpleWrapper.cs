@@ -3,7 +3,6 @@ using XAmpleManagedWrapper;
 
 namespace XAmpleManagedWrapperTests
 {
-
 	[TestFixture]
 	public class TestXAmpleWrapper: SIL.FieldWorks.Test.TestUtils.BaseTest
 	{
@@ -23,7 +22,7 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		public void TestInit ()
+		public void TestInit()
 		{
 			using (var wrapper = InitHelper())
 				Assert.IsNotNull(wrapper);
@@ -34,11 +33,11 @@ namespace XAmpleManagedWrapperTests
 		{
 			using (var xAmple = InitHelper())
 			{
-			LoadFilesHelper(xAmple);
-			string parsedWord = xAmple.ParseWord("Hello");
-			Assert.IsNotNull(parsedWord);
-			Assert.IsNotEmpty(parsedWord);
-		}
+				LoadFilesHelper(xAmple);
+				string parsedWord = xAmple.ParseWord("Hello");
+				Assert.IsNotNull(parsedWord);
+				Assert.IsNotEmpty(parsedWord);
+			}
 		}
 
 		[Test]
@@ -46,25 +45,25 @@ namespace XAmpleManagedWrapperTests
 		{
 			using (var xAmple = InitHelper())
 			{
-			LoadFilesHelper(xAmple);
-			string tracedWord = xAmple.TraceWord("Hello", "Hello");
-			Assert.IsNotNull(tracedWord);
-			Assert.IsNotEmpty(tracedWord);
-		}
+				LoadFilesHelper(xAmple);
+				string tracedWord = xAmple.TraceWord("Hello", "Hello");
+				Assert.IsNotNull(tracedWord);
+				Assert.IsNotEmpty(tracedWord);
+			}
 		}
 
 		[Test]
 		public void TestLoadFiles()
 		{
 			using (var xAmple = InitHelper())
-			LoadFilesHelper(xAmple);
+				LoadFilesHelper(xAmple);
 		}
 
 		[Test]
 		public void TestSetParameter()
 		{
 			using (var xAmple = InitHelper())
-			xAmple.SetParameter("MaxAnalysesToReturn", "3");
+				xAmple.SetParameter("MaxAnalysesToReturn", "3");
 		}
 
 		[Test]
@@ -73,11 +72,11 @@ namespace XAmpleManagedWrapperTests
 			using (var xAmple = InitHelper())
 			{
 #if __MonoCS__
-			Assert.AreEqual(0, xAmple.AmpleThreadId);
+				Assert.AreEqual(0, xAmple.AmpleThreadId);
 #else
-			Assert.AreNotEqual(0, xAmple.AmpleThreadId);
+				Assert.AreNotEqual(0, xAmple.AmpleThreadId);
 #endif
+			}
 		}
 	}
-}
 }

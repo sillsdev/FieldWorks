@@ -24,31 +24,31 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		public void TestInit ()
+		public void TestInit()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
 				Assert.IsNotNull(wrapper);
 		}
 
 		[Test]
-		public void TestLoadFiles ()
+		public void TestLoadFiles()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-			LoadFilesHelper(wrapper);
+				LoadFilesHelper(wrapper);
 		}
 
 		[Test]
 		public void TestSetParameter()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-			wrapper.SetParameter("MaxAnalysesToReturn", "3");
+				wrapper.SetParameter("MaxAnalysesToReturn", "3");
 		}
 
 		[Test]
 		public void TestGetSetup()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-			Assert.AreNotEqual(IntPtr.Zero, wrapper.GetSetup());
+				Assert.AreNotEqual(IntPtr.Zero, wrapper.GetSetup());
 		}
 
 		[Test]
@@ -56,7 +56,7 @@ namespace XAmpleManagedWrapperTests
 		public void TestSetLogFile()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-			wrapper.SetLogFile(Path.GetTempFileName());
+				wrapper.SetLogFile(Path.GetTempFileName());
 		}
 
 		[Test]
@@ -64,13 +64,13 @@ namespace XAmpleManagedWrapperTests
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
 			{
-			int threadId = wrapper.GetAmpleThreadId();
+				int threadId = wrapper.GetAmpleThreadId();
 #if __MonoCS__
-			Assert.AreEqual(0, threadId);
+				Assert.AreEqual(0, threadId);
 #else
-			Assert.AreNotEqual(0, threadId);
+				Assert.AreNotEqual(0, threadId);
 #endif
-		}
+			}
 		}
 
 		[Test]
@@ -79,11 +79,11 @@ namespace XAmpleManagedWrapperTests
 
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
 			{
-			LoadFilesHelper(wrapper);
-			string parsedString = wrapper.ParseString("Hello");
-			Assert.IsNotEmpty(parsedString);
-			Assert.IsNotNull(parsedString);
-		}
+				LoadFilesHelper(wrapper);
+				string parsedString = wrapper.ParseString("Hello");
+				Assert.IsNotEmpty(parsedString);
+				Assert.IsNotNull(parsedString);
+			}
 		}
 
 		[Test]
@@ -91,11 +91,11 @@ namespace XAmpleManagedWrapperTests
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
 			{
-			LoadFilesHelper(wrapper);
-			string tracedString = wrapper.TraceString("Hello", "Hello");
-			Assert.IsNotEmpty(tracedString);
-			Assert.IsNotNull(tracedString);
+				LoadFilesHelper(wrapper);
+				string tracedString = wrapper.TraceString("Hello", "Hello");
+				Assert.IsNotEmpty(tracedString);
+				Assert.IsNotNull(tracedString);
+			}
 		}
-	}
 	}
 }
