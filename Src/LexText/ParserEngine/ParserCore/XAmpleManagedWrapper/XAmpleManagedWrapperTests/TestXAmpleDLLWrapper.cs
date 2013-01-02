@@ -5,12 +5,9 @@ using XAmpleManagedWrapper;
 
 namespace XAmpleManagedWrapperTests
 {
-
-
 	[TestFixture]
 	public class TestXAmpleDLLWrapper
 	{
-
 		protected XAmpleDLLWrapper CreateXAmpleDllWrapper()
 		{
 			var xAmple = new XAmpleDLLWrapper();
@@ -27,8 +24,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestInit ()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
@@ -36,8 +31,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestLoadFiles ()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
@@ -45,8 +38,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestSetParameter()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
@@ -54,8 +45,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestGetSetup()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
@@ -63,8 +52,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		[ExpectedException(typeof(NotImplementedException))]
 		public void TestSetLogFile()
 		{
@@ -73,8 +60,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void GetAmpleThreadId()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
@@ -89,8 +74,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestParseString()
 		{
 
@@ -104,8 +87,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestTraceString()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())

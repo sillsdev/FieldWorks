@@ -23,8 +23,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestInit ()
 		{
 			using (var wrapper = InitHelper())
@@ -32,8 +30,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestParseWord()
 		{
 			using (var xAmple = InitHelper())
@@ -46,8 +42,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestTraceWord()
 		{
 			using (var xAmple = InitHelper())
@@ -60,8 +54,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestLoadFiles()
 		{
 			using (var xAmple = InitHelper())
@@ -69,8 +61,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestSetParameter()
 		{
 			using (var xAmple = InitHelper())
@@ -78,8 +68,6 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		// FWNX-556 Reenable after upgrade Linux build machine
-		[Category("ByHand")]
 		public void TestAmpleThreadId()
 		{
 			using (var xAmple = InitHelper())
