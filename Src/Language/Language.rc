@@ -23,7 +23,7 @@ Description:
 // bin\mkverrsc.exe from within the bin\mk*.bat file. The major and minor version
 // numbers are hard-coded in mk*.bat.
 #if WIN32
-#include "..\..\..\Output\Common\bldinc.h"
+#include "..\..\Output\Common\bldinc.h"
 #endif
 VS_VERSION_INFO VERSIONINFO
 // NOTE: These defines are in bldinc.h.

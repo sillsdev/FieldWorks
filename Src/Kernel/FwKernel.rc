@@ -25,7 +25,7 @@ Description:
 // why it has extra dots. bldinc.h holds the current version number and it is created
 // by executing bin\mkverrsc.exe from within the bin\mkfwk.bat file. The major and minor
 // version numbers are hard-coded in mkfwk.bat.
-#include "..\..\..\Output\Common\bldinc.h"
+#include "..\..\Output\Common\bldinc.h"
 VS_VERSION_INFO VERSIONINFO
 // NOTE: These defines are in bldinc.h.
  FILEVERSION MAJOR_VERSION,MINOR_VERSION,SUITE_REVISION,NUMBER_OF_DAYS
