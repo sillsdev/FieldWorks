@@ -14,9 +14,9 @@
 	<ProjectName>TestGeneric</ProjectName>
 	<ProjectGuid>{C644C392-FB14-4DF1-9989-897E182D3849}</ProjectGuid>
 	<RootNamespace>TestGeneric</RootNamespace>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>.</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<SccProjectName></SccProjectName>
+	<SccLocalPath></SccLocalPath>
+	<SccProvider></SccProvider>
 	<Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

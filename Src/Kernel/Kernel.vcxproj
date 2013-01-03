@@ -14,9 +14,9 @@
 	<ProjectName>FwKernel</ProjectName>
 	<ProjectGuid>{6396B488-4D34-48B2-8639-EEB90707405B}</ProjectGuid>
 	<RootNamespace>FwKernel</RootNamespace>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>..\..</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<SccProjectName></SccProjectName>
+	<SccLocalPath></SccLocalPath>
+	<SccProvider></SccProvider>
 	<Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

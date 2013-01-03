@@ -17,9 +17,9 @@
   <PropertyGroup Label="Globals">
 	<ProjectGuid>{4EA3EFBD-B4D5-4BFA-B8BE-51453AB5DE39}</ProjectGuid>
 	<RootNamespace>GrCompiler</RootNamespace>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>.</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<SccProjectName></SccProjectName>
+	<SccLocalPath></SccLocalPath>
+	<SccProvider></SccProvider>
 	<Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
