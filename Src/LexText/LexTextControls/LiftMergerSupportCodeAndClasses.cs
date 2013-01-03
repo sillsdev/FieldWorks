@@ -2982,7 +2982,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				//build a set of the hvos in the lexical relation
 				var currentSet = lr.TargetsRS.Select(cmo => cmo.Hvo).ToList();
 				//for every object in the target sequence of the LexReference
-				return currentSet.ContainsCollection(checkTargets);
+				if (currentSet.ContainsCollection(checkTargets))
+					return true; // got an exact match. If not, keep trying.
 			}
 			return false;
 		}

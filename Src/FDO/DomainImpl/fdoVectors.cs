@@ -991,7 +991,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return fluffed;
 			}
 			fluffed = (T)fluffee.GetObject(m_mainObject.Cache.ServiceLocator.ObjectRepository);
-			FluffUpObjectIfNeeded(fluffed);
+			// This side effect call IS needed, even though the local method does nothing.
+			// It has an important override in ReferenceSequence.
+			// See the unit test FdoMainVectorTests.FluffIngRefSeq_EstablishesBackref.
+			FluffUpSideEffects(fluffed);
 			return fluffed;
 		}
 
