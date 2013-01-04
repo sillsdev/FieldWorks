@@ -423,6 +423,21 @@ namespace FixFwDataDllTests
 			const string lexEntry_dinding1Guid = "a39f2112-b82c-46ba-9f69-6b46e45efff4";
 			const string lexEntry_dinding2Guid = "b35e8d52-e74d-47b4-b300-82e8c45cdfb7";
 
+			// Verification of input.
+			var testFile = Path.Combine(testPath, "BasicFixup.fwdata");
+			// It's important that one of the entries needing a non-zero number does not have one at all to begin with.
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding1Guid + "\" and not(HomographNumber)]", 1, false);
+			// It's also important that one of them has allmorphs
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding2Guid + "\" and AlternateForms/objsur/@guid='bb464c5d-de15-494b-bc05-1ee92c3028e6']", 1, false);
+
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + lexEntry_dinding1Guid + "']", 1, false);
+
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + "08fc938e-110e-44f4-8660-165d26030124" + "']", 1, false);
+
 			Assert.DoesNotThrow(() =>
 			{
 				var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(),
@@ -431,17 +446,6 @@ namespace FixFwDataDllTests
 				// SUT
 				data.FixErrorsAndSave();
 			}, "Exception running the data fixer on the sequence test data.");
-
-			// Verification
-			// check the LexEntries are there.
-			var testFile = Path.Combine(testPath, "BasicFixup.fwdata");
-			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding1Guid + "\"]", 1, false);
-			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\" and @guid=\"" + lexEntry_dinding2Guid + "\"]", 1, false);
-
-			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class='LexEntry' and @guid='" + lexEntry_dinding1Guid + "']", 1, false);
 
 			var xmlDoc = GetResult(testFile);
 			var entries = VerifyEntryExists(xmlDoc, "//rt[@class='LexEntry' and @guid='" + lexEntry_dinding1Guid + "']");
@@ -462,6 +466,33 @@ namespace FixFwDataDllTests
 			var homographVal2 = homographAttribute.Value;
 
 			Assert.That((homographVal1 == "1" && homographVal2 == "2") || (homographVal1 == "2" && homographVal2 == "1"),"The homograph numbers were both zero for these LexEntries and should now be 1 and 2");
+
+			// Non-homograph should have HN corrected to zero.
+			VerifyHn(xmlDoc, "08fc938e-110e-44f4-8660-165d26030124", "0");
+			// Set of messed up homographs should be fixed, and as far as possible, existing HNs should be preserved.
+			// Technically, other outcomes are valid besides the one indicated here: the other entry that was previously 2 could keep that number,
+			// and either the old zero or the other old 2 could be assigned 3 (and the other 4). But this is what currently happens.
+			// Any changed algorithm should minimally (a) not change HN1; (b) keep HN2 for at least one of the entries that initially has it;
+			// (c) produce HNs 1,2,3, and 4.
+			VerifyHn(xmlDoc, "bb42e0a5-2131-4e2b-9c96-19a11c5a5081", "2"); // homo that was previously 2 should still be
+			VerifyHn(xmlDoc, "bb4042c7-47b2-422f-ae66-a09293d16ed8", "1"); // homo that was previously 1 should still be
+			VerifyHn(xmlDoc, "bb3d3349-5cea-4920-a2bc-672d5d927875", "3"); // homo that was previously 0 should take next value
+			VerifyHn(xmlDoc, "bb3be3bc-e4e6-4e72-9b1b-d81c0298b4e7", "4"); // homo that was previously the second 2 should be changed
+		}
+
+		private void VerifyHn(XmlDocument xmlDoc, string guid, string expectedHn)
+		{
+			XmlNodeList entries;
+			XmlNode entry;
+			XmlNode homographEl;
+			XmlAttribute homographAttribute;
+			entries = VerifyEntryExists(xmlDoc, "//rt[@class='LexEntry' and @guid='" + guid + "']");
+			entry = entries[0];
+			homographEl = entry.SelectSingleNode("HomographNumber");
+			Assert.IsNotNull(homographEl);
+			homographAttribute = homographEl.Attributes[0];
+			Assert.That(homographAttribute.Name, Is.EqualTo("val"));
+			Assert.That(homographAttribute.Value, Is.EqualTo(expectedHn));
 		}
 	}
 }

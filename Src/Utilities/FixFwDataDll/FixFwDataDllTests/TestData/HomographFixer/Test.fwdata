@@ -2,7 +2,6 @@
 <languageproject version="7000051">
 
 <rt class="LexEntry" guid="a39f2112-b82c-46ba-9f69-6b46e45efff4">
-<HomographNumber val="0" />
 <LexemeForm>
 <objsur guid="4cf67a75-0ed2-4e15-bff2-c950bfc961d4" t="o" />
 </LexemeForm>
@@ -22,6 +21,10 @@
 <LexemeForm>
 <objsur guid="36488d03-d35e-4def-b01a-ba507768211b" t="o" />
 </LexemeForm>
+	<!--We don't directly use this in the test, but it is important to verify that an alternate form with the same form does not crash things (LT-13940)-->
+	<AlternateForms>
+		<objsur guid="bb464c5d-de15-494b-bc05-1ee92c3028e6" t="o" />
+	</AlternateForms>
 </rt>
 
 <rt class="MoStemAllomorph" guid="36488d03-d35e-4def-b01a-ba507768211b" ownerguid="b35e8d52-e74d-47b4-b300-82e8c45cdfb7">
@@ -32,6 +35,95 @@
 <objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
 </MorphType>
 </rt>
+
+	<rt class="MoStemAllomorph" guid="bb464c5d-de15-494b-bc05-1ee92c3028e6" ownerguid="b35e8d52-e74d-47b4-b300-82e8c45cdfb7">
+		<Form>
+			<AUni ws="fr">dinding</AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="08fc938e-110e-44f4-8660-165d26030124">
+		<HomographNumber val="1" />
+		<LexemeForm>
+			<objsur guid="bb43dd40-35b7-4bae-a566-466e2480d266" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="bb43dd40-35b7-4bae-a566-466e2480d266" ownerguid="08fc938e-110e-44f4-8660-165d26030124">
+		<Form>
+			<AUni ws="fr">simple</AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="bb3d3349-5cea-4920-a2bc-672d5d927875">
+		<HomographNumber val="0" />
+		<LexemeForm>
+			<objsur guid="bb3c5526-32fd-4af7-8cc6-bb8f446b8f35" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="bb3c5526-32fd-4af7-8cc6-bb8f446b8f35" ownerguid="bb3d3349-5cea-4920-a2bc-672d5d927875">
+		<Form>
+			<AUni ws="fr">homo</AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="bb42e0a5-2131-4e2b-9c96-19a11c5a5081">
+		<HomographNumber val="2" />
+		<LexemeForm>
+			<objsur guid="bb41a0f3-ec56-4f6c-80e5-b091bd99ab6d" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="bb41a0f3-ec56-4f6c-80e5-b091bd99ab6d" ownerguid="bb42e0a5-2131-4e2b-9c96-19a11c5a5081">
+		<Form>
+			<AUni ws="fr">homo</AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="bb4042c7-47b2-422f-ae66-a09293d16ed8">
+		<HomographNumber val="1" />
+		<LexemeForm>
+			<objsur guid="bb3dd1a9-9a21-4933-b849-80f812eae6b0" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="bb3dd1a9-9a21-4933-b849-80f812eae6b0" ownerguid="bb4042c7-47b2-422f-ae66-a09293d16ed8">
+		<Form>
+			<AUni ws="fr">homo</AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="bb3be3bc-e4e6-4e72-9b1b-d81c0298b4e7">
+		<HomographNumber val="2" />
+		<LexemeForm>
+			<objsur guid="bb3b81f1-329a-4929-bc89-3c1461463772" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="bb3b81f1-329a-4929-bc89-3c1461463772" ownerguid="bb3be3bc-e4e6-4e72-9b1b-d81c0298b4e7">
+		<Form>
+			<AUni ws="fr">homo</AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
 
 <rt class="MoMorphType" guid="d7f713e8-e8cf-11d3-9764-00c04f186933" >
 <SecondaryOrder val="0" />

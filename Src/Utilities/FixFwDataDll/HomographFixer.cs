@@ -32,7 +32,9 @@ namespace SIL.FieldWorks.FixData
 	internal class HomographFixer : RtFixer
 	{
 		Dictionary<Guid, XElement> m_MoStemAllomorph = new Dictionary<Guid, XElement>();
-		Dictionary<String, List<Guid>> m_Homographs = new Dictionary<String, List<Guid>>();
+		Dictionary<Guid, string> m_oldHomographNumbers = new Dictionary<Guid, string>();
+		HashSet<Guid> m_firstAllomorphs = new HashSet<Guid>();
+			Dictionary<String, List<Guid>> m_Homographs = new Dictionary<String, List<Guid>>();
 		Dictionary<Guid, String> m_LexEntryHomographNumbers = new Dictionary<Guid, String>();
 		const string kUnknown = "<unknown>";
 
@@ -46,8 +48,32 @@ namespace SIL.FieldWorks.FixData
 				return;
 			switch (className)
 			{
+					// Enhance JohnT: can't affixes have homographs??
 				case "MoStemAllomorph":
 					m_MoStemAllomorph.Add(guid, rt);
+					break;
+				case "LexEntry":
+					var homographElement = rt.Element("HomographNumber");
+					string homographVal = "0";
+					if (homographElement != null)
+					{
+						var homographAttribue = homographElement.Attribute("val");
+						if (homographAttribue != null)
+							homographVal = homographAttribue.Value;
+					}
+					m_oldHomographNumbers[guid] = homographVal;
+
+					var lf = rt.Element("LexemeForm");
+					if (lf != null)
+					{
+						var os = lf.Element("objsur");
+						if (os != null)
+						{
+							var lfGuid = new Guid(os.Attribute("guid").Value);
+							m_firstAllomorphs.Add(lfGuid);
+						}
+					}
+					// Enhance JohnT: possibly we should consider AlternateForms, if no LexemeForm?
 					break;
 				default:
 					break;
@@ -62,12 +88,15 @@ namespace SIL.FieldWorks.FixData
 
 			// Create a dictionary with the Form and MorphType guid as the key and a list of ownerguid's as the value.  This
 			// will show us which LexEntries should have homograph numbers.  If the list of ownerguids has only one entry then
-			// it's homograph number should be kept as zero. If the list of owerguids has more than one guid then the LexEntries
+			// it's homograph number should be zero. If the list of owerguids has more than one guid then the LexEntries
 			// associated with those guids are homographs and will require unique homograph numbers.
-			//
-			foreach (var msa in m_MoStemAllomorph)
+			foreach (var morphKvp in m_MoStemAllomorph)
 			{
-				var rtElem = msa.Value;
+				var rtElem = morphKvp.Value;
+				var morphGuid = new Guid(rtElem.Attribute("guid").Value);
+				// We don't assign homographs based on allomorphs.
+				if (!m_firstAllomorphs.Contains(morphGuid))
+					continue;
 				var rtForm = rtElem.Element("Form");
 				if (rtForm == null)
 					continue;
@@ -103,8 +132,41 @@ namespace SIL.FieldWorks.FixData
 			{
 				if (lexEntryGuids.Count > 1)
 				{
+					var orderedGuids = new Guid[lexEntryGuids.Count];
+					var mustChange = new List<Guid>();
+					foreach (var guid in lexEntryGuids)
+					{
+						// if it can keep its current HN, put it in orderedGuids at the correct position to give it that HN.
+						// otherwise, remember that it must be put somewhere else.
+						string oldHn;
+						if (!m_oldHomographNumbers.TryGetValue(guid, out oldHn))
+							oldHn = "0";
+						int index;
+						if (int.TryParse(oldHn, out index) && index > 0 && index <= orderedGuids.Length &&
+							orderedGuids[index - 1] == Guid.Empty)
+						{
+							orderedGuids[index - 1] = guid;
+						}
+						else
+						{
+							mustChange.Add(guid);
+						}
+					}
+					// The ones that have to change get slotted into whatever slots are still empty.
+					// There must be enough slots because we made the array just big enough.
+					foreach (var guid in mustChange)
+					{
+						for (int j = 0; j < orderedGuids.Length; j++)
+						{
+							if (orderedGuids[j] == Guid.Empty)
+							{
+								orderedGuids[j] = guid;
+								break;
+							}
+						}
+					}
 					var i = 1;
-					foreach (var lexEntryGuid in lexEntryGuids)
+					foreach (var lexEntryGuid in orderedGuids)
 					{
 						m_LexEntryHomographNumbers.Add(lexEntryGuid, i.ToString());
 						i++;
@@ -124,14 +186,16 @@ namespace SIL.FieldWorks.FixData
 			{
 				case "LexEntry":
 					string homographNum;
-					if (m_LexEntryHomographNumbers.TryGetValue(guid, out homographNum))
+					if (!m_LexEntryHomographNumbers.TryGetValue(guid, out homographNum))
+						homographNum = "0"; // If it's not a homograph, its HN must be zero.
+					var homographElement = rt.Element("HomographNumber");
+					if (homographElement == null)
 					{
-						var homographElement = rt.Element("HomographNumber");
-						Debug.Assert(homographElement != null, "HomographNumber element of LexEntry should never be null.");
-						var homographAttribue = homographElement.Attribute("val");
-						Debug.Assert(homographAttribue != null, "HomographNumber element val attribute should never be null.");
-						homographAttribue.Value = homographNum;
+						if (homographNum != "0") // no need to make a change if already implicitly zero.
+							rt.Add(new XElement("HomographNumber", new XAttribute("val", homographNum)));
+						break;
 					}
+					homographElement.SetAttributeValue("val", homographNum);
 					break;
 				default:
 					break;
