@@ -21,7 +21,20 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class MacroListenerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		[Test] public void InitMacro_PutsItemAtProperPosition()
+		private Mediator m_Mediator;
+
+		public override void TestTearDown()
+		{
+			if (m_Mediator != null)
+			{
+				m_Mediator.Dispose();
+				m_Mediator = null;
+			}
+			base.TestTearDown();
+		}
+
+		[Test]
+		public void InitMacro_PutsItemAtProperPosition()
 		{
 			var ml = new MacroListener();
 			var macroImplementors = new List<IFlexMacro>(new IFlexMacro[] {new MacroF4()});
@@ -75,10 +88,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private MacroListener MakeMacroListenerWithCache()
 		{
-			var mediator = new Mediator();
-			mediator.PropertyTable.SetProperty("cache", Cache);
+			m_Mediator = new Mediator();
+			m_Mediator.PropertyTable.SetProperty("cache", Cache);
 			var ml = new MacroListener();
-			ml.Init(mediator, null);
+			ml.Init(m_Mediator, null);
 			return ml;
 		}
 

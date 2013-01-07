@@ -329,7 +329,7 @@ namespace XCore
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
-			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
+			Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
 			// Can be called more than once, but not run more than once.
 			if (m_isDisposed)
 				return;
@@ -364,8 +364,6 @@ namespace XCore
 				copyOfColleagues.Clear();
 				if (m_propertyTable != null)
 					m_propertyTable.Dispose();
-				if (m_commandSet != null)
-					m_commandSet.Dispose();
 				if (m_pathVariables != null)
 					m_pathVariables.Clear();
 				if (m_disposedColleagues != null)
