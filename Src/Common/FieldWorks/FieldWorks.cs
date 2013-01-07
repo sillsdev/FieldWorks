@@ -1446,10 +1446,24 @@ namespace SIL.FieldWorks
 						}
 						else
 						{
-							dlg.ProjectLinkUiName = GetSampleProjectId(startingApp).Name;
-							dlg.SetFirstOrLastProjectText(true);
+							var sampleProjId = GetSampleProjectId(startingApp);
+							if (sampleProjId != null)
+							{
+								dlg.ProjectLinkUiName = sampleProjId.Name;
+								dlg.SetFirstOrLastProjectText(true);
+								// LT-13943 - forgot to set this variable, which made it not be able to open
+								// the sample db.
+								projectToTry = new ProjectId(startingApp.SampleDatabase, null);
+							}
+							else // user didn't install Sena 3!
+							{
+								projectToTry = null;
+							}
 						}
-						dlg.ShowLinkHideErrorLabel();
+						if (projectToTry != null)
+							dlg.ShowLinkHideErrorLabel();
+						else
+							dlg.ShowErrorLabelHideLink();
 					}
 					dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
 					dlg.StartPosition = FormStartPosition.CenterScreen;
@@ -1477,7 +1491,10 @@ namespace SIL.FieldWorks
 							}
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Link:
-							projectToTry = lastProjectId; // just making sure!
+							// LT-13943 - this guard keeps the projectToTry from getting blasted by a null when it has
+							// a useful projectId (like the initial sample db the first time FLEx is run).
+							if (lastProjectId != null && !lastProjectId.Equals(projectToTry))
+								projectToTry = lastProjectId; // just making sure!
 							Debug.Assert(projectToTry.IsValid);
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Restore:
@@ -1534,6 +1551,8 @@ namespace SIL.FieldWorks
 			ProjectId sampleProjId = null;
 			if (app != null && app.SampleDatabase != null)
 				sampleProjId = new ProjectId(app.SampleDatabase, null);
+			if (sampleProjId == null || !sampleProjId.IsValid)
+				return null;
 			return sampleProjId;
 		}
 
