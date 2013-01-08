@@ -419,6 +419,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						string lastFeatDesc = "";
 						string combinedCFPFeatDescs = "";
 						string[] featDescs = morph.featureDescriptors.Split(' ');
+						if (featDescs.Any())
+							writer.Write("\\f");
 						foreach (string featDesc in featDescs)
 						{
 							if (featDesc.StartsWith("CFP"))
@@ -428,12 +430,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 								continue;
 							}
 							if (lastFeatDesc.StartsWith("CFP"))
-								writer.WriteLine("\\f {0}", combinedCFPFeatDescs);
-							writer.WriteLine("\\f {0}", featDesc);
+								writer.Write(" {0}", combinedCFPFeatDescs);
+							writer.Write(" {0}", featDesc);
 						}
 						if (lastFeatDesc.StartsWith("CFP"))
-							writer.WriteLine("\\f {0}", combinedCFPFeatDescs);
+							writer.Write(" {0}", combinedCFPFeatDescs);
 					}
+					writer.WriteLine();
 					writer.WriteLine();
 				}
 				writer.Close();
