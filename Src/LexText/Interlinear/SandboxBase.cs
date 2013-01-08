@@ -16,6 +16,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.IText
@@ -4391,9 +4392,11 @@ namespace SIL.FieldWorks.IText
 		private int GetMostPromisingEntry()
 		{
 			ITsString wordform = m_caches.DataAccess.get_MultiStringAlt(kSbWord, ktagSbWordForm, RawWordformWs);
-			List<ILexEntry> homographs =
+			List<ILexEntry> homographs = null;
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, () => { homographs =
 				Cache.ServiceLocator.GetInstance<ILexEntryRepository>().CollectHomographs(wordform.Text,
 					Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem));
+				});
 			if (homographs.Count == 0)
 				return 0;
 			else
