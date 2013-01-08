@@ -30,8 +30,8 @@
 	<commands>
 		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O"/>
 		<command id="CmdSave" label="_Save" message="SaveLangProject" icon="SaveProject" shortcut="Ctrl+S"/>
-		<command id="CmdLiftBridge" label="Lexicon (with programs that use LIFT)..." message="LiftBridge" />
-		<command id="CmdFLExBridge" label="Project (with other FLEx users)..." message="FLExBridge" />
+		<command id="CmdLiftBridge" label="_Lexicon (with programs that use LIFT)..." message="LiftBridge" />
+		<command id="CmdFLExBridge" label="_Project (with other FLEx users)..." message="FLExBridge" />
 		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" />
 		<command id="CmdShowConflictReport" label="Conflict Report" message="ShowConflictReport" />
 		<command id="CmdClose" label="_Close" message="CloseWindow"/>
