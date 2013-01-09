@@ -233,6 +233,7 @@
 	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="IInheritableFwControl.cs" />
+	<Compile Include="ObtainProjectMethod.cs" />
 	<Compile Include="TextsTriStateTreeView.cs">
 	  <SubType>Component</SubType>
 	</Compile>

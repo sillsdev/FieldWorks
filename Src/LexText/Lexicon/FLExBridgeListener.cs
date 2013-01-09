@@ -359,7 +359,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
-				ChooseLangProjectDialog.ReportDuplicateBridge();
+				ReportDuplicateBridge();
 				_liftPathname = null;
 				return false;
 			}
@@ -467,7 +467,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				out dataChanged, out dummy);
 			if (!success)
 			{
-				ChooseLangProjectDialog.ReportDuplicateBridge();
+				ReportDuplicateBridge();
 				dataChanged = false;
 				_liftPathname = null;
 				return false;
@@ -830,7 +830,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static void ReportDuplicateBridge()
 		{
-			ChooseLangProjectDialog.ReportDuplicateBridge();
+			ObtainProjectMethod.ReportDuplicateBridge();
 		}
 
 		// currently duplicated in MorphologyListener, to avoid an assembly dependency.

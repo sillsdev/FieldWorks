@@ -1506,11 +1506,8 @@ namespace SIL.FieldWorks
 						case WelcomeToFieldWorksDlg.ButtonPress.Exit:
 							return null; // Should cause the FW process to exit later
 						case WelcomeToFieldWorksDlg.ButtonPress.Receive:
-							bool dummy;
-							string projectName;
-							var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null,
-								FLExBridgeHelper.Obtain, null, out dummy, out projectName);
-							if (success)
+							var projectName = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm); // Hard to say what Form.ActiveForm is here. The spalsh and welcome dlgs are both gone.
+							if (!string.IsNullOrEmpty(projectName))
 							{
 								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectName, null);
 							}

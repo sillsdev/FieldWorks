@@ -958,8 +958,4 @@ The error was:
     <value>The Project name you have entered contains one or more non-ASCII characters. If you use this name for your project, you will be unable to use the Send/Receive project function. Click 'OK' to continue with this project name or 'Cancel' to enter a different name.</value>
     <comment>Used to warn the user of a project name that will make Send/Receive not work for this project.</comment>
   </data>
-  <data name="ksCreatingLiftProject" xml:space="preserve">
-    <value>Creating a project to import LIFT data into</value>
-    <comment>Displayed in a progress dialog when getting a LIFT repository to make a new local project</comment>
-  </data>
 </root>

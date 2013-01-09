@@ -255,7 +255,6 @@
     <Compile Include="..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
       <Link>FwSetupFixtureClass.cs</Link>
     </Compile>
-    <Compile Include="ChooseLangProjectDialogTests.cs" />
     <Compile Include="CnvtrPropertiesCtrlTests.cs">
       <SubType>Form</SubType>
     </Compile>
