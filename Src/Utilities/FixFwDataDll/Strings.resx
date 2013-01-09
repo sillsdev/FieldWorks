@@ -183,4 +183,7 @@
     <value>Wordform with guid '{0}' has same form ({1}) as '{2}' and was merged</value>
     <comment>{0} and {2} are Wordform guids. {1} is an assembly of the writing systems and forms, like kal&gt;like&amp;kal_IPA&gt;laik. Typically only one.</comment>
   </data>
+  <data name="ksRemovingUndefinedCustomProperty" xml:space="preserve">
+    <value>Removing undefined custom property '{0}' from class='{1}', guid='{2}'.</value>
+  </data>
 </root>

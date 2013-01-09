@@ -91,7 +91,9 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CustomPropertyFixer.cs" />
     <Compile Include="DuplicateWordformFixer.cs" />
+    <Compile Include="GrammaticalSenseFixer.cs" />
     <Compile Include="HomographFixer.cs" />
     <Compile Include="SequenceFixer.cs" />
     <Compile Include="FixErrorsDlg.cs">

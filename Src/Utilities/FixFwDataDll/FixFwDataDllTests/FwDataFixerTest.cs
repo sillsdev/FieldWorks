@@ -41,8 +41,9 @@ namespace FixFwDataDllTests
 
 		private readonly string[] m_testFileDirectories =
 			{
-				"DuplicateGuid", "DanglingReference", "DuplicateWs", "SequenceFixer", "EntryWithExtraMSA",
-				"TagAndCellRefs", "GenericDates", "HomographFixer", WordformswithsameformTestDir
+				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
+				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "TagAndCellRefs", "GenericDates",
+				"HomographFixer", WordformswithsameformTestDir
 			};
 
 		[TestFixtureSetUp]
@@ -232,6 +233,65 @@ namespace FixFwDataDllTests
 				"//rt[@class=\"LexSense\" and @ownerguid=\"" + lexEntryGuid + "\"]", 2, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
+		}
+
+		[Test]
+		public void TestDanglingCustomListReferences()
+		{
+			var testPath = Path.Combine(basePath, "DanglingCustomListReference");
+			// This test checks that dangling reference guids left by an edit/delete conflict
+			// when a custom list item is deleted are identified and removed
+			// and that an error message is produced for them.
+			const string custItem1Guid = "ee90ab2a-cf14-47e4-b49d-83d967447b65"; // the dangler
+			const string custItem2Guid = "0f2d36b5-504b-462a-9004-4ded018a89d1";
+			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + custItem1Guid + "\"]", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + custItem2Guid + "\"]", 1, false);
+			Assert.AreEqual(1, errors.Count, "Unexpected number of errors found.");
+			Assert.True(errors[0].StartsWith("Removing dangling link to '" + custItem1Guid + "' (class='LexEntry'"),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
+
+			// Check original errors
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + custItem1Guid + "\"]", 1, false);
+		}
+
+		[Test]
+		public void TestDanglingCustomProperty()
+		{
+			var testPath = Path.Combine(basePath, "DanglingCustomProperty");
+			// This test checks that dangling custom properties left by an edit/delete conflict
+			// when a custom list is deleted are identified and removed
+			// and that an error message is produced for them.
+			const string danglingPropertyName = "Nonexistent";
+			const string custItem1Guid = "ee90ab2a-cf14-47e4-b49d-83d967447b65"; // guid referenced inside the dangler
+			const string custItem2Guid = "0f2d36b5-504b-462a-9004-4ded018a89d1";
+			const string entryGuid = "c5e6aab3-4236-43b4-998e-d41ff26eba7b"; // dangler should be removed from this rt element
+			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/Custom[@name=\"" + danglingPropertyName + "\"]", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + custItem2Guid + "\"]", 1, false);
+			Assert.AreEqual(2, errors.Count, "Unexpected number of errors found.");
+			Assert.True(errors[0].StartsWith("Removing dangling link to '" + custItem1Guid + "' (class='LexEntry'"),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
+			Assert.True(errors[1].StartsWith("Removing undefined custom property '" + danglingPropertyName +
+				"' from class='LexEntry', guid='" + entryGuid + "'."),
+				"Error message is incorrect."); // CustomPropertyFixer--ksRemovingUndefinedCustomProperty
+
+			// Check original errors
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//objsur[@guid=\"" + custItem1Guid + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/Custom[@name=\"" + danglingPropertyName + "\"]", 1, false);
 		}
 
 		[Test]

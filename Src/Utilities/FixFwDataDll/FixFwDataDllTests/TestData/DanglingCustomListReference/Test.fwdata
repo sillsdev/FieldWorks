@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000061">
+<AdditionalFields>
+	<CustomField class="LexEntry" destclass="27" listRoot="5250350b-83fb-432b-a24f-a8dad580d350" name="Test Prop" type="RC" wsSelector="-1" />
+</AdditionalFields>
+
+<rt class="LexEntry" guid="c5e6aab3-4236-43b4-998e-d41ff26eba7b">
+	<Custom name="Test Prop">
+		<objsur guid="ee90ab2a-cf14-47e4-b49d-83d967447b65" t="r" /> <!-- dangler -->
+	</Custom>
+</rt>
+
+<rt class="CmPossibilityList" guid="5250350b-83fb-432b-a24f-a8dad580d350">
+	<ItemClsid val="27" />
+	<Name>
+		<AUni ws="en">Custom test list</AUni>
+	</Name>
+	<Possibilities>
+		<objsur guid="0f2d36b5-504b-462a-9004-4ded018a89d1" t="o" />
+	</Possibilities>
+</rt>
+<rt class="CmCustomItem" guid="0f2d36b5-504b-462a-9004-4ded018a89d1" ownerguid="5250350b-83fb-432b-a24f-a8dad580d350">
+	<Name>
+		<AUni ws="en">X2</AUni>
+	</Name>
+</rt>
+</languageproject>
