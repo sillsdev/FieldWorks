@@ -295,6 +295,7 @@
     <Compile Include="CreateAllomorphTypeMismatchDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DuplicateAnalysisFixer.cs" />
     <Compile Include="DuplicateWordformFixer.cs" />
     <Compile Include="EditMorphBreaksDlg.cs">
       <SubType>Form</SubType>

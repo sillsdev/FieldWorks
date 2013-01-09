@@ -22,6 +22,8 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
+using SIL.FieldWorks.FDO.DomainImpl;
+using Sharpen.Util;
 
 namespace SIL.FieldWorks.FDO.DomainServices
 {
@@ -270,6 +272,95 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (failures.Count == 0)
 				return "";
 			return failures.OrderBy(x=>x).Aggregate((x,y) => x + " " + y);
+		}
+
+		/// <summary>
+		/// Merge duplicate analyses on all wordforms. (Also merges duplicate WfiGlosses.)
+		/// </summary>
+		/// <returns></returns>
+		public static void MergeDuplicateAnalyses(FdoCache cache, ProgressBar progressBar)
+		{
+			var wfiWordforms = cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances().ToList();
+			progressBar.Minimum = 0;
+			progressBar.Maximum = wfiWordforms.Count;
+			progressBar.Step = 1;
+			foreach (var wf in wfiWordforms)
+			{
+				progressBar.PerformStep();
+				var analyses = wf.AnalysesOC.ToList();
+				for (int i = 0; i < analyses.Count; i++)
+				{
+					var waKeep = analyses[i];
+					for (int j = analyses.Count - 1; j > i; j--)
+					{
+						var waDup = analyses[j];
+						if (DuplicateAnalyses(waKeep, waDup))
+						{
+							foreach (var wg in waDup.MeaningsOC)
+								waKeep.MeaningsOC.Add(wg);
+							CmObject.ReplaceReferences(cache, waDup, waKeep);
+							waDup.Delete();
+							analyses.RemoveAt(j);
+						}
+					}
+					MergeDuplicateGlosses(waKeep);
+				}
+			}
+		}
+
+		private static void MergeDuplicateGlosses(IWfiAnalysis wa)
+		{
+			var glosses = wa.MeaningsOC.ToList();
+			for (int i = 0; i < glosses.Count; i++)
+			{
+				var wgKeep = glosses[i];
+				for (int j = glosses.Count - 1; j > i; j--)
+				{
+					var wgDup = glosses[j];
+					if (DuplicateGlosses(wgKeep, wgDup))
+					{
+						CmObject.ReplaceReferences(wa.Cache, wgDup, wgKeep);
+						wgDup.Delete();
+						glosses.RemoveAt(j);
+					}
+				}
+			}
+		}
+
+		private static bool DuplicateGlosses(IWfiGloss wg1, IWfiGloss wg2)
+		{
+			return
+				wg1.Form.AvailableWritingSystemIds.Union(wg2.Form.AvailableWritingSystemIds)
+				   .All(ws => wg1.Form.get_String(ws).Equals(wg2.Form.get_String(ws)));
+		}
+
+		private static bool DuplicateAnalyses(IWfiAnalysis wa1, IWfiAnalysis wa2)
+		{
+			if (wa1.MorphBundlesOS.Count != wa2.MorphBundlesOS.Count)
+				return false;
+			for (int i = 0; i < wa1.MorphBundlesOS.Count; i++)
+			{
+				if (!DuplicateBundles(wa1.MorphBundlesOS[i], wa2.MorphBundlesOS[i]))
+					return false;
+			}
+			// The following fields are currently unused, but play safe and don't merge if at some point they have data.
+			// Ideally this merge code should be suitably enhanced if we start using these fields.
+			if (wa1.CompoundRuleAppsRS.Count > 0 || wa2.CompoundRuleAppsRS.Count > 0 ||
+				wa1.InflTemplateAppsRS.Count > 0 || wa2.InflTemplateAppsRS.Count > 0 ||
+				wa1.StemsRC.Count > 0 || wa2.StemsRC.Count > 0 ||
+				wa1.DerivationOA != null || wa2.DerivationOA != null ||
+				wa1.MsFeaturesOA != null || wa2.MsFeaturesOA != null)
+				return false;
+			return wa1.CategoryRA == wa2.CategoryRA;
+		}
+
+		private static bool DuplicateBundles(IWfiMorphBundle bundle1, IWfiMorphBundle bundle2)
+		{
+			if (bundle1.SenseRA != bundle2.SenseRA || bundle1.MsaRA != bundle2.MsaRA || bundle1.MorphRA != bundle2.MorphRA)
+				return false;
+			return
+				bundle1.Form.AvailableWritingSystemIds.Union(bundle2.Form.AvailableWritingSystemIds)
+					.All(ws => bundle1.Form.get_String(ws).Equals(bundle2.Form.get_String(ws)));
 		}
 
 		/// <summary>
