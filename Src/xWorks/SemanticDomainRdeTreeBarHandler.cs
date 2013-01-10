@@ -79,6 +79,7 @@ namespace SIL.FieldWorks.XWorks
 			searchBox.AdjustStringHeight = true;
 			searchBox.HasBorder = true;
 			searchBox.BorderStyle = BorderStyle.Fixed3D;
+			searchBox.SuppressEnter = true;
 			searchBox.Enabled = true;
 			searchBox.GotFocus += new EventHandler(m_textSearch_GotFocus);
 			return searchBox;
