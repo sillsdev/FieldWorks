@@ -185,7 +185,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				foreach (ListViewItem item in domainList.Items)
 				{
-					item.Text = SemanticDomainSelectionUtility.CreateLabelListItem(item.Tag as ICmObject,
+					var domain = m_semdomRepo.GetObject((int)item.Tag);
+					item.Text = SemanticDomainSelectionUtility.CreateLabelListItem(domain,
 													item.Checked,
 													displayUsageCheckBox.Checked).Text;
 				}
