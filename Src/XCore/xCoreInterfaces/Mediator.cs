@@ -364,6 +364,8 @@ namespace XCore
 				copyOfColleagues.Clear();
 				if (m_propertyTable != null)
 					m_propertyTable.Dispose();
+				if (m_commandSet != null)
+					m_commandSet.Dispose();
 				if (m_pathVariables != null)
 					m_pathVariables.Clear();
 				if (m_disposedColleagues != null)

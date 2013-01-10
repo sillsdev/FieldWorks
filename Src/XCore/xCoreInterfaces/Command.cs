@@ -28,7 +28,7 @@ namespace XCore
 	/// </summary>
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
 		Justification = "variable is a reference; it is owned by parent")]
-	public class CommandSet : Hashtable
+	public class CommandSet : Hashtable, IFWDisposable
 	{
 		protected Mediator m_mediator;
 		/// -----------------------------------------------------------------------------------
@@ -41,11 +41,110 @@ namespace XCore
 			m_mediator = mediator;
 		}
 
+		#region IDisposable & Co. implementation
+		// Region last reviewed: never
+
+		/// <summary>
+		/// Check to see if the object has been disposed.
+		/// All public Properties and Methods should call this
+		/// before doing anything else.
+		/// </summary>
+		public void CheckDisposed()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		/// <summary>
+		/// True, if the object has been disposed.
+		/// </summary>
+		private bool m_isDisposed = false;
+
+		/// <summary>
+		/// See if the object has been disposed.
+		/// </summary>
+		public bool IsDisposed
+		{
+			get { return m_isDisposed; }
+		}
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// </summary>
+		/// <remarks>
+		/// In case some clients forget to dispose it directly.
+		/// </remarks>
+		~CommandSet()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks>Must not be virtual.</remarks>
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <param name="disposing"></param>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the bug.
+		///
+		/// If subclasses override this method, they should call the base implementation.
+		/// </remarks>
+		protected virtual void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			// Must not be run more than once.
+			if (m_isDisposed)
+				return;
+
+			if (disposing)
+			{
+				// Dispose managed resources here.
+				foreach (Command cmd in Values)
+					cmd.Dispose();
+				Clear();
+			}
+
+			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_mediator = null;
+
+			m_isDisposed = true;
+		}
+
+		#endregion IDisposable & Co. implementation
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "command is added to collection and disposed there")]
 		public void Init(XmlNode windowNode)
 		{
+			CheckDisposed();
 			XmlNodeList commands =windowNode.SelectNodes("commands/command");
 			foreach (XmlNode node in commands)
 			{
@@ -122,7 +221,7 @@ namespace XCore
 
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
 		Justification = "variable is a reference; it is owned by parent")]
-	public class Command : ICommandUndoRedoText
+	public class Command : IFWDisposable, ICommandUndoRedoText
 	{
 		#region Fields
 		protected Mediator m_mediator;
@@ -145,12 +244,20 @@ namespace XCore
 		#region Properties
 		public string Id
 		{
-			get { return m_id; }
+			get
+			{
+				CheckDisposed();
+				return m_id;
+			}
 		}
 
 		public string Label
 		{
-			get { return m_label; }
+			get
+			{
+				CheckDisposed();
+				return m_label;
+			}
 		}
 
 		public string Message
@@ -158,7 +265,7 @@ namespace XCore
 			get { return m_messageString; }
 		}
 
-		public bool OneAtATime { get { return m_oneAtATime; } }
+		public bool OneAtATime { get { CheckDisposed(); return m_oneAtATime; } }
 
 		/// <summary>
 		/// A string to be inserted later into a toolTip associated with the command.
@@ -166,8 +273,16 @@ namespace XCore
 		/// </summary>
 		public string ToolTipInsert
 		{
-			get { return m_toolTipInsert; }
-			set { m_toolTipInsert = value; }
+			get
+			{
+				CheckDisposed();
+				return m_toolTipInsert;
+			}
+			set
+			{
+				CheckDisposed();
+				m_toolTipInsert = value;
+			}
 		}
 
 
@@ -178,6 +293,7 @@ namespace XCore
 		{
 			get
 			{
+				CheckDisposed();
 				if (String.IsNullOrEmpty(m_tooltip) && !String.IsNullOrEmpty(m_label))
 				{
 					// generate a tooltip from the label.
@@ -228,29 +344,46 @@ namespace XCore
 		/// </summary>
 		public XmlNode ConfigurationNode
 		{
-			get { return m_configurationNode; }
+			get
+			{
+				CheckDisposed();
+				return m_configurationNode;
+			}
 		}
 
 		public string ValueString
 		{
-			get { return m_valueString; }
+			get
+			{
+				CheckDisposed();
+				return m_valueString;
+			}
 		}
 		public string IconName
 		{
-			get { return  XmlUtils.GetAttributeValue(m_configurationNode, "icon"); }
+			get
+			{
+				CheckDisposed();
+				return  XmlUtils.GetAttributeValue(m_configurationNode, "icon");
+			}
 		}
 		//used for choice lists
 
 		//used for command items
 		public string MessageString
 		{
-			get { return m_messageString; }
+			get
+			{
+				CheckDisposed();
+				return m_messageString;
+			}
 		}
 
 		public System.Windows.Forms.Keys Shortcut
 		{
 			get
 			{
+				CheckDisposed();
 				if(m_configurationNode==null)
 					return Keys.None;
 
@@ -399,12 +532,126 @@ namespace XCore
 
 		#endregion
 
+		#region IDisposable & Co. implementation
+		// Region last reviewed: never
+
+		/// <summary>
+		/// Check to see if the object has been disposed.
+		/// All public Properties and Methods should call this
+		/// before doing anything else.
+		/// </summary>
+		public void CheckDisposed()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		/// <summary>
+		/// True, if the object has been disposed.
+		/// </summary>
+		private bool m_isDisposed = false;
+
+		/// <summary>
+		/// See if the object has been disposed.
+		/// </summary>
+		public bool IsDisposed
+		{
+			get { return m_isDisposed; }
+		}
+
+		/// <summary>
+		/// Finalizer, in case client doesn't dispose it.
+		/// Force Dispose(false) if not already called (i.e. m_isDisposed is true)
+		/// </summary>
+		/// <remarks>
+		/// In case some clients forget to dispose it directly.
+		/// </remarks>
+		~Command()
+		{
+			Trace.WriteLineIf(m_traceCMDSwitch.TraceVerbose, BuildDebugMsg("~Destructor"), m_traceCMDSwitch.DisplayName);
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <remarks>Must not be virtual.</remarks>
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary>
+		/// Executes in two distinct scenarios.
+		///
+		/// 1. If disposing is true, the method has been called directly
+		/// or indirectly by a user's code via the Dispose method.
+		/// Both managed and unmanaged resources can be disposed.
+		///
+		/// 2. If disposing is false, the method has been called by the
+		/// runtime from inside the finalizer and you should not reference (access)
+		/// other managed objects, as they already have been garbage collected.
+		/// Only unmanaged resources can be disposed.
+		/// </summary>
+		/// <param name="disposing"></param>
+		/// <remarks>
+		/// If any exceptions are thrown, that is fine.
+		/// If the method is being done in a finalizer, it will be ignored.
+		/// If it is thrown by client code calling Dispose,
+		/// it needs to be handled by fixing the bug.
+		///
+		/// If subclasses override this method, they should call the base implementation.
+		///
+		/// IMPORTANT NOTE!
+		/// If CommandSets and Commands are not disposed of by the Mediator they will cause crashes
+		/// when the Mediator Dispose is called during the execution of the Command. This Dispose method is
+		/// needed for those edge cases. e.g. OnFLExBridge when it calls RefreshCacheWindowAndAll
+		/// </remarks>
+		protected virtual void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			// Must not be run more than once.
+			if (m_isDisposed)
+				return;
+
+			Trace.WriteLineIf(m_traceCMDSwitch.TraceVerbose, BuildDebugMsg("Dispose"), m_traceCMDSwitch.DisplayName);
+
+			if (disposing)
+			{
+				// Dispose managed resources here.
+			}
+
+			// Dispose unmanaged resources here, whether disposing is true or false.
+			m_mediator = null;
+			m_id = null;
+			m_label = null;
+			m_shortcut = null;
+			m_valueString = null;
+			m_messageString = null;
+			m_configurationNode = null;
+
+			m_isDisposed = true;
+		}
+
+		#endregion IDisposable & Co. implementation
+
 		/// <summary>
 		/// a list of child elements of the command element.
 		/// </summary>
 		public XmlNodeList Parameters
 		{
-			get { return m_configurationNode.ChildNodes; }
+			get
+			{
+				CheckDisposed();
+				return m_configurationNode.ChildNodes;
+			}
 		}
 
 		/// <summary>
@@ -417,6 +664,7 @@ namespace XCore
 		/// <remarks> this version allows you to use any element names you want.</remarks>
 		public string GetParameter(string elementName, string attributeName, string defaultValue)
 		{
+			CheckDisposed();
 			foreach(XmlNode element in Parameters)
 			{
 				if (element.Name==elementName)
@@ -435,6 +683,7 @@ namespace XCore
 		///<remarks> this version assumes the element containing attribute is named "parameters"</remarks>
 		public string GetParameter(string attributeName, string defaultValue)
 		{
+			CheckDisposed();
 			return GetParameter("parameters", attributeName, defaultValue);
 		}
 
@@ -447,6 +696,7 @@ namespace XCore
 		///<remarks> this version assumes the element containing attribute is named "parameters"</remarks>
 		public string GetParameter(string attributeName)
 		{
+			CheckDisposed();
 			string result = GetParameter(attributeName, null);
 			if (result == null)
 				throw new ConfigurationException("The command '"+this.Id+"' must have a parameter attribute named '"+attributeName +"'.",this.ConfigurationNode);
@@ -457,6 +707,7 @@ namespace XCore
 		{
 			Trace.WriteLineIf(m_traceCMDSwitch.TraceInfo, BuildDebugMsg("InvokeCommand-Start"), m_traceCMDSwitch.DisplayName);
 
+			CheckDisposed();
 			//if (m_mediator.AllowCommandsToExecute == false)
 			//{
 			//	Trace.WriteLineIf(m_traceCMDSwitch.TraceInfo, BuildDebugMsg("InvokeCommand-Mediator not allowing commands"), m_traceCMDSwitch.DisplayName);

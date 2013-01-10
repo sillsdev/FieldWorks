@@ -84,6 +84,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(entry.Restrictions.AnalysisDefaultWritingSystem.Text, Is.EqualTo("test succeeded"));
 			Assert.That(m_actionHandler.GetUndoText(), Is.EqualTo("Undo F4test"));
+			command.Dispose();
 		}
 
 		private MacroListener MakeMacroListenerWithCache()
@@ -172,6 +173,7 @@ namespace SIL.FieldWorks.XWorks
 			var command = GetF4CommandObject();
 			ml.DoDisplayMacro(command, props, null);
 			Assert.That(props.Visible, Is.False); // no implementation of F4, hide it altogether.
+			command.Dispose();
 		}
 
 		[Test]
@@ -185,6 +187,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(props.Visible, Is.True);
 			Assert.That(props.Enabled, Is.False); // can't do it without a selection
 			Assert.That(props.Text, Is.EqualTo("F4test"));
+			command.Dispose();
 		}
 
 		[Test]
@@ -208,6 +211,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(props.Visible, Is.True);
 			Assert.That(props.Enabled, Is.False); // can't do it if the macro says no good.
 			Assert.That(props.Text, Is.EqualTo("F4test"));
+			command.Dispose();
 		}
 	}
 
