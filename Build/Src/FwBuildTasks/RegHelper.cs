@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the a temporary registry key to register dlls. This registry key is process
+		/// Gets a temporary registry key to register dlls. This registry key is process
 		/// specific, so multiple instances can run at the same time without interfering with
 		/// each other.
 		/// </summary>
