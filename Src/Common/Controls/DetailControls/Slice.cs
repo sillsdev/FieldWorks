@@ -911,7 +911,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal void SetSplitPosition()
 		{
 			SplitContainer sc = SplitCont;
-			if (sc.IsSplitterFixed)
+			Debug.Assert(sc != null, "LT-13912 -- Need to determine why the SplitContainer is null here.");
+			if (sc == null || sc.IsSplitterFixed) // LT-13912 apparently sc comes out null sometimes.
 				return;
 
 			int valueSansLabelindent = ContainingDataTree.SliceSplitPositionBase;
