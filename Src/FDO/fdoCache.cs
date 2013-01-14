@@ -317,30 +317,15 @@ namespace SIL.FieldWorks.FDO
 						updatedInUseWSs.Append(ws.DisplayLabel);
 					}
 				}
-				if (CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore)
+				// We will update the global writing system manager with any changes we found if
+				//  - the only changes are to WSs the user is not using and probably not even aware of,
+				//  - or if a setting tells us to do this always,
+				//  - or if we ask the user and he says to go ahead.
+				if (!IsUpdatedWsInUse(updatedInUseWSs) ||
+					CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore ||
+					NewerWritingSystemFound(updatedInUseWSs.ToString(), ProjectId.UiName))
 				{
-					if (!String.IsNullOrEmpty(updatedInUseWSs.ToString()))
-					{
-
-							//Ask the user if they want to update to the global version for their writing systems
-							if (NewerWritingSystemFound(updatedInUseWSs.ToString(), ProjectId.UiName))
-							{
-								//If they said yes, update all the writing systems which have newer versions
-								//even the ones we didn't ask about, since they don't even really know they are there.
-								foreach (var ws in writingSystemsWithNewerGlobalVersions)
-								{
-									writingSystemManager.Replace(ws);
-								}
-							}
-					}
-					else
-					{
-						// None of them is in use...go ahead and update them all
-						foreach (var ws in writingSystemsWithNewerGlobalVersions)
-						{
-							writingSystemManager.Replace(ws);
-						}
-					}
+					UpdateGlobalWsMgr(writingSystemsWithNewerGlobalVersions, writingSystemManager);
 				}
 			}
 			writingSystemManager.Save();
@@ -359,6 +344,19 @@ namespace SIL.FieldWorks.FDO
 			NonUndoableUnitOfWorkHelper.Do(ActionHandlerAccessor, () =>
 				DataStoreInitializationServices.PrepareCache(this));
 		}
+
+		private static void UpdateGlobalWsMgr(List<IWritingSystem> writingSystemsWithNewerGlobalVersions,
+												IWritingSystemManager writingSystemManager)
+		{
+			foreach (var ws in writingSystemsWithNewerGlobalVersions)
+				writingSystemManager.Replace(ws);
+		}
+
+		private static bool IsUpdatedWsInUse(StringBuilder updatedWssInUseBuilder)
+		{
+			return !String.IsNullOrEmpty(updatedWssInUseBuilder.ToString());
+		}
+
 		#endregion
 
 		#region Methods for creating a new language project
