@@ -826,6 +826,53 @@ namespace LexTextControlsTests
 			return s_LiftData3a.Concat(new[] {modString}).Concat(s_LiftData3c).ToArray();
 		}
 
+		private string[] tabInput = new string[] {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355401\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>\thombre</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"root\"></trait>",
+			"<pronunciation>",
+			"<form lang=\"fr\"><text>ombre\t1</text></form>",
+			"<media href=\"\t\tSleep Away.mp3\">",
+			"</media>",
+			"</pronunciation>",
+			"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>\t\tman</text></gloss>",
+			"<definition>",
+			"<form lang=\"en\"><text>",
+			"\tmale adult\thuman\t<span href=\"file://others/SomeFile.txt\" class=\"Hyperlink\">link</span></text></form>",
+			"</definition>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		[Test]
+		public void LiftDoesNotImportTabs()
+		{
+			string sOrigFile = CreateInputFile(tabInput);
+			string logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			Assert.IsNotNull(logFile);
+			File.Delete(logFile);
+			File.Delete(sOrigFile);
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			ILexEntry entry;
+			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355401"), out entry));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("hombre"));
+
+			Assert.That(entry.SensesOS[0].Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("  man"));
+			Assert.That(entry.SensesOS[0].Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("\u2028 male adult human link"));
+		}
+
 		[Test]
 		public void LiftDataImportDoesNotDuplicateVariants()
 		{

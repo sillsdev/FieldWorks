@@ -933,22 +933,33 @@ namespace SIL.FieldWorks.LexText.Controls
 				foreach (LiftSpan span in str.Spans)
 				{
 					if (idxPrev < span.Index)
-						bldr.Append(XmlUtils.ConvertMultiparagraphToSafeXml(
+						bldr.Append(ConvertToSafeFieldXmlContent(
 							str.Text.Substring(idxPrev, span.Index - idxPrev)));
 					// TODO: handle nested spans.
 					bool fSpan = AppendSpanElementIfNeeded(bldr, span, lang);
-					bldr.Append(XmlUtils.ConvertMultiparagraphToSafeXml(
+					bldr.Append(ConvertToSafeFieldXmlContent(
 						str.Text.Substring(span.Index, span.Length)));
 					if (fSpan)
 						bldr.Append("</span>");
 					idxPrev = span.Index + span.Length;
 				}
 				if (idxPrev < str.Text.Length)
-					bldr.Append(XmlUtils.ConvertMultiparagraphToSafeXml(
+					bldr.Append(ConvertToSafeFieldXmlContent(
 						str.Text.Substring(idxPrev, str.Text.Length - idxPrev)));
 				bldr.AppendFormat("</text></{0}>", tagXml);
 				bldr.AppendLine();
 			}
+		}
+
+		/// <summary>
+		/// Lift import may contain tabs, newlines, or characters that need escaping to be valid XML.
+		/// newlines are converted to \u2028, tabs to spaces.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		internal static string ConvertToSafeFieldXmlContent(string input)
+		{
+			return XmlUtils.ConvertMultiparagraphToSafeXml(input.Replace('\t', ' '));
 		}
 
 		private bool AppendSpanElementIfNeeded(StringBuilder bldr, LiftSpan span, string lang)

@@ -961,7 +961,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (multiText == null)
 				return null;
 			foreach (var lg in multiText.Keys)
-				multiText[lg].Text = XmlUtils.ConvertMultiparagraphToSafeXml(multiText[lg].Text);
+				multiText[lg].Text = ConvertToSafeFieldXmlContent(multiText[lg].Text);
 			return multiText;
 		}
 
