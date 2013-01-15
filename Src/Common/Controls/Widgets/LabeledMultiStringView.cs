@@ -1670,7 +1670,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		internal static void HandleUpDownArrows(KeyEventArgs e, IVwRootBox rootBox, SelectionHelper curSel, List<IWritingSystem> wsList, int flid)
 		{
-			if (!curSel.IsValid)
+			if (curSel == null || !curSel.IsValid) // LT-13805: sometimes selection was null
 				return;
 			var index = GetCurrentSelectionIndex(curSel, wsList);
 			if (index < 0)
