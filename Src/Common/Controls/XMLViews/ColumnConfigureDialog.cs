@@ -1126,7 +1126,7 @@ namespace SIL.FieldWorks.Common.Controls
 			AddCurrentItem(item).Selected = true;
 
 			while ((HasDuplicateColumns() && DuplicateIsReleventForItem(item, GetDuplicateColumns()))
-				&& (wsCombo.SelectedIndex < wsCombo.Items.Count))
+				&& (wsCombo.SelectedIndex < wsCombo.Items.Count) && wsCombo.Items.Count > 0)
 			{
 				if (wsCombo.SelectedIndex.Equals(wsCombo.Items.Count - 1))
 				{
