@@ -261,6 +261,41 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			Assert.AreEqual(1, KeyboardController.ErrorKeyboards.Count);
 			Assert.AreEqual("Fake", KeyboardController.ErrorKeyboards[0].Details);
 		}
+
+		/// <summary/>
+		[Test]
+		public void ActivateKeyboard_FirstTime_NotCrash()
+		{
+			XklEngineResponder.SetGroupNames = new string[] { KeyboardUSA };
+
+			XkbKeyboardAdaptor.SetXklEngineType<XklEngineResponder>();
+			var adaptor = new XkbKeyboardAdaptor();
+			KeyboardController.Manager.SetKeyboardAdaptors(new [] { adaptor });
+
+			var keyboards = KeyboardController.InstalledKeyboards;
+
+			adaptor.ActivateKeyboard(keyboards[0], null);
+		}
+
+		/// <summary>
+		/// FWNX-895
+		/// </summary>
+		[Test]
+		public void ActivateKeyboard_SecondTime_NotCrash()
+		{
+			XklEngineResponder.SetGroupNames = new string[] { KeyboardUSA };
+			XkbKeyboardAdaptor.SetXklEngineType<XklEngineResponder>();
+
+			var adaptor = new XkbKeyboardAdaptor();
+			KeyboardController.Manager.SetKeyboardAdaptors(new [] { adaptor });
+			var keyboards = KeyboardController.InstalledKeyboards;
+			adaptor.ActivateKeyboard(keyboards[0], null);
+
+			adaptor = new XkbKeyboardAdaptor();
+			KeyboardController.Manager.SetKeyboardAdaptors(new [] { adaptor });
+			keyboards = KeyboardController.InstalledKeyboards;
+			adaptor.ActivateKeyboard(keyboards[0], null);
+		}
 	}
 }
 #endif
