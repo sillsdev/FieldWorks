@@ -814,6 +814,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// <summary>
+		/// Returns ALL ComplexForms referring to this entry as one of its ComponentLexemes.
+		/// ComponentLexemes is a superset of PrimaryLexemes, so the ComplexForms data entry field
+		/// needs to show references to all ComponentLexemes that are ComplexForms.
+		/// </summary>
+		internal IEnumerable<ILexEntryRef> ComplexFormRefsWithThisComponentEntry
+		{
+			get
+			{
+				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexEntryRefTags.kflidComponentLexemes);
+				foreach (var item in m_incomingRefs)
+				{
+					var sequence = item as FdoReferenceSequence<ICmObject>;
+					if (sequence == null)
+						continue;
+					if (sequence.Flid == LexEntryRefTags.kflidComponentLexemes &&
+						(sequence.MainObject as ILexEntryRef).RefType == LexEntryRefTags.krtComplexForm)
+					{
+						yield return sequence.MainObject as ILexEntryRef;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Returns all ComplexForms that will be listed as subentries for this entry.
+		/// </summary>
 		internal IEnumerable<ILexEntryRef> ComplexFormRefsWithThisPrimaryEntry
 		{
 			get
@@ -2352,7 +2379,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// in the complex forms list for this entry in data entry view.
 		/// This is a backreference (virtual) property.  It returns the list of ids for all the
 		/// LexEntry objects that own a LexEntryRef that refers to this LexEntry in its
-		/// ComponentLexemes field and that is a complex entry type.
+		/// ComponentLexemes field and that has a RefType=1 (ComplexForm).
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexEntry")]
 		public IEnumerable<ILexEntry> ComplexFormEntries
@@ -2956,9 +2983,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
 		public IEnumerable<ICmObject> PrimaryComponentLexemes
 		{
-			get { var ler = ComplexFormEntryRefs.FirstOrDefault();
-			if (ler == null)
-				return new ICmObject[0];
+			get
+			{
+				var ler = ComplexFormEntryRefs.FirstOrDefault();
+				if (ler == null)
+					return new ICmObject[0];
 				return ler.PrimaryLexemesRS;
 			}
 		}
@@ -3587,6 +3616,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// <summary>
+		/// Returns ALL ComplexForms referring to this sense as one of its ComponentLexemes.
+		/// ComponentLexemes is a superset of PrimaryLexemes, so the ComplexForms data entry field
+		/// needs to show references to all ComponentLexemes that are ComplexForms.
+		/// </summary>
+		internal IEnumerable<ILexEntryRef> ComplexFormRefsWithThisComponentSense
+		{
+			get
+			{
+				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexEntryRefTags.kflidComponentLexemes);
+				foreach (var item in m_incomingRefs)
+				{
+					var sequence = item as FdoReferenceSequence<ICmObject>;
+					if (sequence == null)
+						continue;
+					if (sequence.Flid == LexEntryRefTags.kflidComponentLexemes &&
+						(sequence.MainObject as ILexEntryRef).RefType == LexEntryRefTags.krtComplexForm)
+					{
+						yield return sequence.MainObject as ILexEntryRef;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Returns all ComplexForms that will be listed as subentries for this sense.
+		/// </summary>
 		internal IEnumerable<ILexEntryRef> ComplexFormRefsWithThisPrimarySense
 		{
 			get

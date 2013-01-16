@@ -1158,9 +1158,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var entry = mainEntryOrSense as LexEntry;
 			IEnumerable<ILexEntryRef> candidates;
 			if (entry != null)
-				candidates = entry.ComplexFormRefsWithThisPrimaryEntry;
+				candidates = entry.ComplexFormRefsWithThisComponentEntry;
 			else
-				candidates = ((LexSense) mainEntryOrSense).ComplexFormRefsWithThisPrimarySense;
+				candidates = ((LexSense) mainEntryOrSense).ComplexFormRefsWithThisComponentSense;
 			var retval = new Set<ILexEntry>();
 			foreach (ILexEntryRef ler in candidates)
 			{

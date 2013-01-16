@@ -398,6 +398,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem)),
 				"a complex form cannot be a root");
 		}
+
 		/// <summary>
 		/// Tests adding a component to an entry that already has it.
 		/// </summary>
@@ -428,6 +429,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem)),
 				"a complex form cannot be a root");
 		}
+
 		/// <summary>
 		/// Tests adding a component to an entry that already has components.
 		/// </summary>
@@ -448,6 +450,38 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					complex.AddComponent(component);
 				});
 			Assert.That(complex.EntryRefsOS.Count, Is.EqualTo(1));
+			var entryRef = complex.EntryRefsOS[0];
+			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtComplexForm));
+			Assert.That(entryRef.ComponentLexemesRS.Count, Is.EqualTo(2));
+			Assert.That(entryRef.ComponentLexemesRS[0], Is.EqualTo(oldComponent));
+			Assert.That(entryRef.ComponentLexemesRS[1], Is.EqualTo(component));
+			Assert.That(entryRef.PrimaryLexemesRS.Count, Is.EqualTo(1)); // unchanged, since it already had one.
+			Assert.That(entryRef.PrimaryLexemesRS[0], Is.EqualTo(oldComponent));
+			Assert.That(entryRef.HideMinorEntry, Is.EqualTo(0));
+		}
+
+		/// <summary>
+		/// Tests the method that determines what displays in the Complex Forms field of an entry.
+		/// This should depend on the Components field of LexEntry, NOT the PrimaryLexemes field.
+		/// </summary>
+		[Test]
+		public void ComplexFormRefsWithComponent()
+		{
+			ILexEntry oldComponent = null;
+			ILexEntry component = null;
+			ILexEntry complex = null;
+			UndoableUnitOfWorkHelper.Do("doit", "undoit", Cache.ActionHandlerAccessor,
+				() =>
+				{
+					oldComponent = MakeEntryWithForm("dog");
+					component = MakeEntryWithForm("food");
+					complex = MakeEntryWithForm("dogfood");
+					complex.AddComponent(oldComponent);
+					complex.EntryRefsOS[0].HideMinorEntry = 0;
+					complex.AddComponent(component);
+				});
+			Assert.That(oldComponent.ComplexFormEntries.Count(), Is.EqualTo(1));
+			Assert.That(component.ComplexFormEntries.Count(), Is.EqualTo(1));
 			var entryRef = complex.EntryRefsOS[0];
 			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtComplexForm));
 			Assert.That(entryRef.ComponentLexemesRS.Count, Is.EqualTo(2));
