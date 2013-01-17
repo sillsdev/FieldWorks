@@ -97,6 +97,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;n/a&gt;.
+        /// </summary>
+        internal static string ks_DontCare_ {
+            get {
+                return ResourceManager.GetString("ks_DontCare_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Fills Slot:.
         /// </summary>
         internal static string ks_FillsSlot {
@@ -589,6 +598,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string ksChooseMorphAndGramInfo {
             get {
                 return ResourceManager.GetString("ksChooseMorphAndGramInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose phonological features.
+        /// </summary>
+        internal static string ksChoosePhonFeats {
+            get {
+                return ResourceManager.GetString("ksChoosePhonFeats", resourceCulture);
             }
         }
         
@@ -2425,6 +2443,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo selection of Phonological Features.
+        /// </summary>
+        internal static string ksRedoSelectionOfPhonologicalFeatures {
+            get {
+                return ResourceManager.GetString("ksRedoSelectionOfPhonologicalFeatures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redo Set {0}.
         /// </summary>
         internal static string ksRedoSetX {
@@ -2457,6 +2484,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string ksRelationType {
             get {
                 return ResourceManager.GetString("ksRelationType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove this feature.
+        /// </summary>
+        internal static string ksRemoveThisFeature {
+            get {
+                return ResourceManager.GetString("ksRemoveThisFeature", resourceCulture);
             }
         }
         
@@ -2952,6 +2988,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string ksUndoMergeEntry {
             get {
                 return ResourceManager.GetString("ksUndoMergeEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo selection of Phonological Features.
+        /// </summary>
+        internal static string ksUndoSelectionOfPhonologicalFeatures {
+            get {
+                return ResourceManager.GetString("ksUndoSelectionOfPhonologicalFeatures", resourceCulture);
             }
         }
         

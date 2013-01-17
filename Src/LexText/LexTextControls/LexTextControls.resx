@@ -1311,4 +1311,20 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksUserInterfaceTooltip" xml:space="preserve">
     <value>You can add other language options by running the installer, using Modify, and choosing to install Language Packs. See Help for details.</value>
   </data>
+  <data name="ksChoosePhonFeats" xml:space="preserve">
+    <value>Choose phonological features</value>
+  </data>
+  <data name="ksRedoSelectionOfPhonologicalFeatures" xml:space="preserve">
+    <value>Redo selection of Phonological Features</value>
+  </data>
+  <data name="ksUndoSelectionOfPhonologicalFeatures" xml:space="preserve">
+    <value>Undo selection of Phonological Features</value>
+  </data>
+  <data name="ks_DontCare_" xml:space="preserve">
+    <value>&lt;n/a&gt;</value>
+  </data>
+  <data name="ksRemoveThisFeature" xml:space="preserve">
+    <value>Remove this feature</value>
+    <comment>Used in phoneme bulk edit for assigning phonological features to phonemes; when selected, the feature will be removed from the list of features used by this phoneme.</comment>
+  </data>
 </root>

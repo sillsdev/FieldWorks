@@ -59,15 +59,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// field which is in m_listChoiceTargetCombo
 		/// </summary>
 		private FwOverrideComboBox m_listChoiceChangeToCombo;
-		private Control m_listChoiceControl;
+		/// <summary>
+		///
+		/// </summary>
+		protected Control m_listChoiceControl;
 		private System.ComponentModel.IContainer components;
 
 		Mediator m_mediator;
 		XmlNode m_configurationNode = null;
-		BrowseViewer m_bv;
 		/// <summary>
-		///
+		/// Browse viewer
 		/// </summary>
+		protected BrowseViewer m_bv;
+		/// <summary/>
 		protected BulkEditItem[] m_beItems;
 		FdoCache m_cache;
 		const int m_colOffset = 1;
@@ -102,7 +106,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label12;
-		private System.Windows.Forms.TabPage m_deleteTab;
+		/// <summary/>
+		protected System.Windows.Forms.TabPage m_deleteTab;
 		private System.Windows.Forms.Label label13;
 		private FwOverrideComboBox m_bulkCopySourceCombo;
 		private FwOverrideComboBox m_bulkCopyTargetCombo;
@@ -1563,9 +1568,7 @@ namespace SIL.FieldWorks.Common.Controls
 						{
 							if (m_itemIndex >= 0)
 							{
-								BulkEditItem bei = m_beItems[m_itemIndex];
-								bei.BulkEditControl.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
-															 XMLViewsDataCache.ktagItemEnabled, state);
+								ShowPreviewItems(state);
 								newCol = m_itemIndex + 1;
 							}
 						}
@@ -1631,6 +1634,17 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 				}
 			} // End using(ReconstructPreservingBVScrollPosition) [Does RootBox.Reconstruct() here.]
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="state"></param>
+		protected virtual void ShowPreviewItems(ProgressState state)
+		{
+			BulkEditItem bei = m_beItems[m_itemIndex];
+			bei.BulkEditControl.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
+										 XMLViewsDataCache.ktagItemEnabled, state);
 		}
 
 		private void ClearPreviewState()
@@ -1768,7 +1782,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="fOnlyIfSelected"></param>
 		/// <returns></returns>
-		internal IEnumerable<int> ItemsToChange(bool fOnlyIfSelected)
+		protected internal IEnumerable<int> ItemsToChange(bool fOnlyIfSelected)
 		{
 			var result = ItemsToChangeSet(fOnlyIfSelected);
 			if (!fOnlyIfSelected)
@@ -2411,7 +2425,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Enables the preview apply for list choice.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void EnablePreviewApplyForListChoice()
+		protected void EnablePreviewApplyForListChoice()
 		{
 			if (m_beItems == null ||
 				m_itemIndex < 0 || m_itemIndex >= m_beItems.Length ||
@@ -3912,6 +3926,49 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				return m_expectedListItemsClassId;
 			}
+		}
+
+		/// <summary>
+		/// Get the list choice tab page
+		/// </summary>
+		public TabPage ListChoiceTab
+		{
+			get { return m_listChoiceTab; }
+		}
+		/// <summary>
+		/// Get the bulk copy tab page
+		/// </summary>
+		public TabPage BulkCopyTab
+		{
+			get { return m_bulkCopyTab; }
+		}
+		/// <summary>
+		/// Get the click copy tab page
+		/// </summary>
+		public TabPage ClickCopyTab
+		{
+			get { return m_clickCopyTab; }
+		}
+		/// <summary>
+		/// Get the transduce tab page
+		/// </summary>
+		public TabPage TransduceTab
+		{
+			get { return m_transduceTab; }
+		}
+		/// <summary>
+		/// Get the find/replace tab page
+		/// </summary>
+		public TabPage FindReplaceTab
+		{
+			get { return m_findReplaceTab; }
+		}
+		/// <summary>
+		/// Get the delete tab page
+		/// </summary>
+		public TabPage DeleteTab
+		{
+			get { return m_deleteTab; }
 		}
 
 		/// <summary>
@@ -7162,5 +7219,4 @@ namespace SIL.FieldWorks.Common.Controls
 			base.SetNewValue(firstSeqObj, tss);
 		}
 	}
-
 }

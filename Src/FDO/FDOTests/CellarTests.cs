@@ -443,6 +443,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 				Assert.AreEqual("Gen", cv.FeatureRA.Abbreviation.AnalysisDefaultWritingSystem.Text, "Expect to have Gen feature name");
 				Assert.AreEqual("Neut", cv.ValueRA.Abbreviation.AnalysisDefaultWritingSystem.Text, "Expect to have Neut feature value");
 			}
+			// Keep a copy of this feature structure for testing merge method later
+			pos.InherFeatValOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			IFsFeatStruc featStrucGenNeut = pos.InherFeatValOA;
+			featStrucGenNeut.AddFeatureFromXml(itemNeut, msfs);
 			// Now add a feature that differs only in value; it should override the old one
 			featStruct.AddFeatureFromXml(itemFem, msfs);
 			Assert.AreEqual("Agr", featStruct.TypeRA.Abbreviation.AnalysisDefaultWritingSystem.Text, "Expect type Agr");
@@ -465,6 +469,15 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			Assert.AreEqual("Fem", featStruct.ShortName, "Incorrect ShortName for closed");
 			// Check for correct LongName string in complex
 			Assert.AreEqual("[Gen:Fem]", featStruct.LongName, "Incorrect LongName for closed");
+			// Now merge in a feature structure
+			featStruct.PriorityUnion(featStrucGenNeut);
+			Assert.AreEqual("Agr", featStruct.TypeRA.Abbreviation.AnalysisDefaultWritingSystem.Text, "Expect type Agr");
+			Assert.AreEqual(1, featStruct.FeatureSpecsOC.Count, "should have one feature spec");
+			foreach (IFsClosedValue cv in featStruct.FeatureSpecsOC)
+			{
+				Assert.AreEqual("Gen", cv.FeatureRA.Abbreviation.AnalysisDefaultWritingSystem.Text, "Expect to have Gen feature name");
+				Assert.AreEqual("Neut", cv.ValueRA.Abbreviation.AnalysisDefaultWritingSystem.Text, "Expect to have Neut feature value");
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -659,6 +672,21 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 			Assert.AreEqual("aor 1 f", featStruct.ShortName, "Incorrect ShortName for complex");
 			// Check for correct LongName
 			Assert.AreEqual("[asp:aor sbj:[pers:1 gen:f]]", featStruct.LongName, "Incorrect LongName for complex and closed");
+			// Now create another feature structure with different values and merge it into the first feature structure
+			pos.InherFeatValOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			IFsFeatStruc featStruct2 = pos.InherFeatValOA;
+			featStruct2.AddFeatureFromXml(itemNeut, msfs);
+			sFile = Path.Combine(sFileDir, "FeatureSystem2.xml");
+			doc = null;
+			doc = new XmlDocument();
+			doc.Load(sFile);
+			XmlNode itemSg = doc.SelectSingleNode("//item[@id='vSg']");
+			msfs.AddFeatureFromXml(itemSg);
+			featStruct2.AddFeatureFromXml(itemSg, msfs);
+			featStruct.PriorityUnion(featStruct2);
+			// Check for correct LongName
+			Assert.AreEqual("[asp:aor sbj:[pers:1 gen:n num:sg]]", featStruct.LongName, "Incorrect LongName for merged feature struture");
+			Assert.AreEqual("[asp:aor sbj:[gen:n num:sg pers:1]]", featStruct.LongNameSorted, "Incorrect LongNameSorted for merged feature struture");
 		}
 
 		/// <summary>

@@ -1718,7 +1718,13 @@
 			<string field="ShortNameTSS"/>
 		</part>
 		<part id="FsFeatStruc-Jt-Long" type="jtview">
-			<string field="LongNameTSS"/>
+			<string field="LongNameSortedTSS"/>
+		</part>
+		<!-- Following generates multiple instances of this part, substituting a value for $fieldName.
+			See PartGenerator.GeneratePartsFromLayouts()
+		-->
+		<part id="FsFeatStruc-Jt-PhonFeats_$fieldName" type="jtview">
+			<computedString method="GetFeatureValueTSS" argument="$fieldName"/>
 		</part>
 	</bin>
 	<bin class="FsFeatureSpecification">
@@ -2491,7 +2497,7 @@
 	</part>
 	<part id="PhPhoneme-Detail-Features" type="Detail">
 	  <slice field="Features" label="Phonological Features" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.PhonologicalFeatureListDlgLauncherSlice">
-		  <deParams ws="best vernacular"/>
+		  <deParams ws="best vernacular" displayProperty="LongName"/>
 		<chooserInfo text="The following phonological features have been defined for {0}." textparam="VernWs" guicontrol="PhonologicalFeaturesFlatList">
 		  <chooserLink type="goto" label="Edit the Phonological Features" tool="phonologicalFeaturesAdvancedEdit"/>
 		</chooserInfo>
@@ -2499,7 +2505,16 @@
 	</part>
 	<part id="PhPhoneme-Detail-RepresentationsSection" type="Detail" paramType="LiteralString">
 			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
-		</part>
+	</part>
+	<part id="PhPhoneme-Jt-PhonologicalFeaturesForPhonemes" type="jtview">
+		<obj class="PhPhoneme" field="Features" layout="PhonFeats"/>
+	</part>
+	<!-- Following generates multiple instances of this part, substituting a value for $fieldName.
+		See PartGenerator.GeneratePartsFromLayouts()
+	-->
+	<part id="PhPhoneme-Jt-CustomMultiStringForFeatureDefn_$fieldName" type="jtview">
+		<obj class="PhPhoneme" field="Features" layout="PhonFeats_$fieldName"/>
+	</part>
 	</bin>
 	<bin class="PhNaturalClass">
 		<part id="PhNaturalClass-Detail-NameAllA" type="Detail">

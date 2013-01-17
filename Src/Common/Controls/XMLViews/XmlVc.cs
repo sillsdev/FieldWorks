@@ -1218,6 +1218,30 @@ namespace SIL.FieldWorks.Common.Controls
 							}
 							break;
 						}
+					case "computedString":
+						{
+							// For example:
+							// <part id="FsFeatStruc-Jt-PhonFeats_$fieldName" type="jtview">
+							//   <computedString method="GetFeatureValueTSS" argument="$fieldName"/>
+							// </part>
+							var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+							string method = XmlUtils.GetAttributeValue(frag, "method");
+							if (!String.IsNullOrEmpty(method))
+							{
+								Type objType = obj.GetType();
+								System.Reflection.MethodInfo mi = objType.GetMethod(method);
+								if (mi != null)
+								{
+									string argument = XmlUtils.GetAttributeValue(frag, "argument");
+									if (!String.IsNullOrEmpty(argument))
+									{
+										var value = (ITsString)mi.Invoke(obj, new object[] {argument});
+										vwenv.AddString(value);
+									}
+								}
+							}
+							break;
+						}
 					case "configureMlString":
 						{
 							int hvoTarget = hvo;

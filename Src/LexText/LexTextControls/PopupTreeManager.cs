@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// True, if the object has been disposed.
 		/// </summary>
-		private bool m_isDisposed = false;
+		protected bool m_isDisposed = false;
 
 		/// <summary>
 		/// See if the object has been disposed.

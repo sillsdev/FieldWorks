@@ -262,6 +262,10 @@
     <Compile Include="ConfigureHomographDlg.designer.cs">
       <DependentUpon>ConfigureHomographDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="PhonologicalFeatureChooserDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PhonologicalFeaturePopupTreeManager.cs" />
     <Compile Include="SfmToTextsAndWordsMappingBaseDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -412,6 +416,9 @@
       <DependentUpon>LexTextControls.resx</DependentUpon>
     </Compile>
     <Compile Include="Sfm2FlexTextWords.cs" />
+    <EmbeddedResource Include="PhonologicalFeatureChooserDlg.resx">
+      <DependentUpon>PhonologicalFeatureChooserDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SfmToTextsAndWordsMappingBaseDlg.resx">
       <DependentUpon>SfmToTextsAndWordsMappingBaseDlg.cs</DependentUpon>
       <SubType>Designer</SubType>

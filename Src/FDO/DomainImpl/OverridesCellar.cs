@@ -2534,6 +2534,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// A sorted bracketed form e.g. [NounAgr:[Gen:Masc]]
+		/// </summary>
+		public string LongNameSorted
+		{
+			get { return LongNameSortedTSS.Text; }
+		}
+
+		/// <summary>
+		/// A sorted bracketed form e.g. [NounAgr:[Gen:Masc]]
+		/// </summary>
+		public ITsString LongNameSortedTSS
+		{
+			get
+			{
+				return GetFeatureValueStringSorted();
+			}
+		}
+		/// <summary>
 		/// The shortest, non abbreviated label for the content of this object.
 		/// </summary>
 		public override string ShortName
@@ -2561,6 +2579,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var sValue = GetValueString(fLongForm);
 			tisb.Append(sFeature);
 			tisb.Append(sValue);
+			return tisb.GetString();
+		}
+
+		private ITsString GetFeatureValueStringSorted()
+		{
+			var tisb = TsIncStrBldrClass.Create();
+			tisb.SetIntPropValues((int)FwTextPropType.ktptWs,
+				0, Cache.DefaultAnalWs);
+			var sFeature = GetFeatureString(true);
+			tisb.Append(sFeature);
+			tisb.AppendTsString((ValueOA as FsFeatStruc).GetFeatureValueStringSorted());
 			return tisb.GetString();
 		}
 
@@ -3763,6 +3792,35 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Get the value, if any, for the specifed feature name
+		/// </summary>
+		/// <param name="featureName"></param>
+		/// <returns></returns>
+		public ITsString GetFeatureValueTSS(string featureName)
+		{
+			var tisb = TsIncStrBldrClass.Create();
+			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, Cache.DefaultUserWs);
+
+			var features = from s in FeatureSpecsOC
+						  where s.FeatureRA.Abbreviation.BestAnalysisAlternative.Text == featureName
+						  select s;
+			if (features.Any())
+			{
+				var feature = features.First();
+				if (feature != null)
+				{
+					var closedValue = feature as FsClosedValue;
+					if (closedValue != null)
+					{
+
+						tisb.AppendTsString(closedValue.ValueRA.Abbreviation.BestAnalysisAlternative);
+					}
+				}
+			}
+			return tisb.GetString();
+		}
+
+		/// <summary>
 		/// A bracketed form prefixed by the Type (abbreviation) in braces.
 		/// </summary>
 		public string LiftName
@@ -3797,6 +3855,25 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// <summary>
+		/// A bracketed form sorted at each level e.g. [Asp:Aor NounAgr:[Gen:Masc Num:Sg Pers:1]]
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.String)]
+		public ITsString LongNameSortedTSS
+		{
+			get
+			{
+				return GetFeatureValueStringSorted();
+			}
+		}
+		/// <summary>
+		/// A bracketed form sorted at each level e.g. [Asp:Aor NounAgr:[Gen:Masc Num:Sg Pers:1]]
+		/// </summary>
+		public string LongNameSorted
+		{
+			get { return LongNameSortedTSS.Text; }
+		}
+
 		protected override void AddObjectSideEffectsInternal(AddObjectEventArgs e)
 		{
 			switch (e.Flid)
@@ -3825,6 +3902,61 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService.RegisterVirtualAsModified(this, flid, bldr.GetString(), tssLongNameTSS);
 		}
 
+		/// <summary>
+		/// Perform a priority union operation:
+		/// Priority union is the same as unification except for handling conflicts and storing results.
+		/// In unification, a conflict causes the operation to fail. In priority union, a conflict is resolved
+		/// by taking the value in the argument feature structure. In unification, both the current feature
+		/// structure and the argument feature structure are replaced by the unified result.
+		/// In priority union, only the current feature structure is replaced by the result.
+		/// The argument feature structure is not changed.
+		/// </summary>
+		/// <param name="fsNew">the argument feature structure</param>
+		public void PriorityUnion(IFsFeatStruc fsNew)
+		{
+			var commonFeatures = from newItem in fsNew.FeatureSpecsOC
+								 from myitem in FeatureSpecsOC
+								 where (newItem is IFsClosedValue && (newItem as IFsClosedValue).FeatureRA.Name == myitem.FeatureRA.Name) ||
+								 (newItem is IFsComplexValue && (newItem as IFsComplexValue).FeatureRA.Name == myitem.FeatureRA.Name)
+								 select newItem;
+			var nonCommonFeatures = from newItem in fsNew.FeatureSpecsOC
+									where !commonFeatures.Contains(newItem)
+									select newItem;
+			foreach (var spec in commonFeatures)
+			{
+				IFsFeatureSpecification spec1 = spec;
+				var myFeatureValues = from v in FeatureSpecsOC
+									  where v.FeatureRA.Name == spec1.FeatureRA.Name
+									  select v;
+				var closed = myFeatureValues.First() as IFsClosedValue;
+				if (closed != null)
+				{
+					var newClosedValue = spec as IFsClosedValue;
+					if (newClosedValue != null)
+						closed.ValueRA = newClosedValue.ValueRA;
+				}
+				else
+				{
+					var complex = myFeatureValues.First() as IFsComplexValue;
+					if (complex != null)
+					{
+						var newComplexValue = spec as IFsComplexValue;
+						if (newComplexValue != null)
+						{
+							var fs = complex.ValueOA as IFsFeatStruc;
+							if (fs != null)
+								fs.PriorityUnion((spec as IFsComplexValue).ValueOA as IFsFeatStruc);
+						}
+					}
+				}
+			}
+			foreach (var spec in nonCommonFeatures)
+			{
+				CopyObject<IFsFeatureSpecification>.CloneFdoObject(spec,
+						newSpec => FeatureSpecsOC.Add(newSpec));
+			}
+
+		}
 		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
 		{
 			switch (e.Flid)
@@ -3931,13 +4063,63 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return tisb.GetString();
 		}
 
+		internal ITsString GetFeatureValueStringSorted()
+		{
+			var tisb = TsIncStrBldrClass.Create();
+			var iCount = FeatureSpecsOC.Count;
+			if (iCount > 0)
+			{
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
+					m_cache.DefaultAnalWs);
+				tisb.Append("[");
+			}
+			var count = 0;
+			var sortedSpecs = from s in FeatureSpecsOC
+							  orderby s.FeatureRA.Name.BestAnalysisAlternative.Text
+							  select s;
+			foreach (var spec in sortedSpecs)
+			{
+				if (count++ > 0)
+				{
+					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
+						m_cache.DefaultAnalWs);
+					tisb.Append(" "); // insert space except for first item
+				}
+				var cv = spec as IFsClosedValue;
+				if (cv != null)
+				{
+						tisb.AppendTsString((cv as FsClosedValue).LongNameTSS);
+				}
+				else
+				{
+					var complex = spec as IFsComplexValue;
+					if (complex != null)
+					{
+							tisb.AppendTsString((complex as FsComplexValue).LongNameSortedTSS);
+					}
+				}
+			}
+			if (iCount > 0)
+			{
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
+					m_cache.DefaultAnalWs);
+				tisb.Append("]");
+			}
+			if (tisb.Text == null)
+			{
+				// Ensure that we have a ws for the empty string!  See FWR-1122.
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault,
+					m_cache.DefaultAnalWs);
+			}
+			return tisb.GetString();
+		}
 		/// <summary>
 		/// Provide a "Name" for this (is a long name)
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return LongName;
+			return LongNameSorted;
 		}
 
 		/// <summary>

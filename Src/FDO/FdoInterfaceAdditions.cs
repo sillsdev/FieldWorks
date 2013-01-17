@@ -2114,6 +2114,13 @@ namespace SIL.FieldWorks.FDO
 		{
 			get;
 		}
+		/// <summary>
+		///
+		/// </summary>
+		string LongNameSorted
+		{
+			get;
+		}
 
 		/// <summary>
 		/// Adds additional information to LongName for LIFT export purposes.
@@ -2130,6 +2137,20 @@ namespace SIL.FieldWorks.FDO
 		{
 			get;
 		}
+		/// <summary>
+		///
+		/// </summary>
+		ITsString LongNameSortedTSS
+		{
+			get;
+		}
+
+		/// <summary>
+		/// Merge one feature structure into another;
+		/// when the new has the same feature as the old, use the new
+		/// </summary>
+		/// <param name="fsNew">the new feature structure</param>
+		void PriorityUnion(IFsFeatStruc fsNew);
 	}
 
 	/// <summary>

@@ -33,19 +33,38 @@ namespace SIL.FieldWorks.Common.Controls
 		/// which is OK because a line in LoadDataFor makes sure there is a value cached for any item that is visible.
 		/// </summary>
 		public const int ktagItemSelected = 90000000;
-		internal const int ktagItemEnabled = 90000001;
+
+		/// <summary>
+		/// This is used to store a flag indicating whether a preview should be shown for a given root object if it is selected:
+		/// that is, it is true if bulk edit is allowed to change this item and the current settings will actually change it.
+		/// It is not used in multi-column previews, since currently in that mode we may presume that a preview should be shown
+		/// if a non-empty alternate value is stored.
+		/// </summary>
+		public const int ktagItemEnabled = 90000001;
 		// if ktagActiveColumn has a value for m_hvoRoot, then if the check box is on
 		// for a given row, the indicated cell is highlighted with a pale blue
 		// background, and the ktagAlternateValue property is displayed for those cells.
 		// So that no action is required for default behavior, ktagActiveColumn uses
 		// 1-based indexing, so zero means no active column.
 		internal const int ktagActiveColumn = 90000002;
-		internal const int ktagAlternateValue = 90000003;
+		/// <summary>
+		///This is the tag that is used to store and retrieve the value of the property being bulk edited that should be shown
+		/// in the Preview, when not doing a multi-column preview.
+		/// </summary>
+		public const int ktagAlternateValue = 90000003;
 		internal const int ktagTagMe = 90000004;
 
 		// This group support Rapid Data Entry views (XmlBrowseRDEView).
 		internal const int ktagEditColumnBase = 91000000;
 		internal const int ktagEditColumnLim = 91000100;  // arbitrary max
+
+		/// <summary>
+		/// Used for multi column preview such as in assigning phonological features to phonemes.
+		/// A preview may be stored for each column using ktagAlternateValueMultiBase + column index.
+		/// Don't use values between this and the limit for other things.
+		/// </summary>
+		public const int ktagAlternateValueMultiBase = 92000000;
+		internal const int ktagAlternateValueMultiBaseLim = 92000100;
 
 		// Stores override values (when value is different from DefaultSelected) for ktagItemSelected.
 		private readonly Dictionary<int, int> m_selectedCache;
@@ -199,6 +218,8 @@ namespace SIL.FieldWorks.Common.Controls
 					{
 							return true;
 					}
+					if (tag >= ktagAlternateValueMultiBase && tag < ktagAlternateValueMultiBaseLim)
+						return m_stringCache.ContainsKey(new HvoFlidKey(hvo, tag));
 					return base.get_IsPropInCache(hvo, tag, cpt, ws);
 				case ktagTagMe:
 					return true; // hvo can always be itself.
@@ -266,7 +287,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public override ITsString get_StringProp(int hvo, int tag)
 		{
-			if (tag == ktagAlternateValue)
+			if ((tag == ktagAlternateValue) || (tag >= ktagAlternateValueMultiBase && tag < ktagAlternateValueMultiBaseLim))
 			{
 				ITsString result;
 				if (m_stringCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
@@ -306,7 +327,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public override void SetString(int hvo, int tag, ITsString _tss)
 		{
-			if (tag == ktagAlternateValue)
+			if ((tag == ktagAlternateValue) || (tag >= ktagAlternateValueMultiBase && tag < ktagAlternateValueMultiBaseLim))
 			{
 				int oldLen = 0;
 				ITsString oldVal;
@@ -317,6 +338,16 @@ namespace SIL.FieldWorks.Common.Controls
 				return;
 			}
 			base.SetString(hvo, tag, _tss);
+		}
+
+		/// <summary>
+		/// Remove any ktagAlternateValueMultiBase values for this hvo
+		/// </summary>
+		/// <param name="hvo"></param>
+		/// <param name="tag"></param>
+		public void RemoveMultiBaseStrings(int hvo, int tag)
+		{
+			m_stringCache.Remove(new HvoFlidKey(hvo, tag));
 		}
 
 	}
@@ -347,6 +378,8 @@ namespace SIL.FieldWorks.Common.Controls
 			// Paste operations currently require the column to have some name.
 			if (flid >= XMLViewsDataCache.ktagEditColumnBase && flid < XMLViewsDataCache.ktagEditColumnLim)
 				return "RdeColumn" + (flid - XMLViewsDataCache.ktagEditColumnBase);
+			if (flid >= XMLViewsDataCache.ktagAlternateValueMultiBase && flid < XMLViewsDataCache.ktagAlternateValueMultiBaseLim)
+				return "PhonFeatColumn" + (flid - XMLViewsDataCache.ktagAlternateValueMultiBase);
 			return base.GetFieldName(flid);
 		}
 

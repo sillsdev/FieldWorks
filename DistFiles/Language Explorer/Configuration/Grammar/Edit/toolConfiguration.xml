@@ -110,41 +110,85 @@
 				</parameters>
 			</control>
 		</tool>
-	<tool label="Phonological Features" value="phonologicalFeaturesAdvancedEdit" icon="SideBySideView">
-	  <control>
-		<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
-		<parameters area="grammar" id="PhonologicalFeatureItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
-		  <!-- this will fill the pane on the left -->
-		  <control>
-			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
-			<parameters id="PhonologicalFeaturesList">
-			  <control>
-				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-				<parameters id="PhonologicalFeaturesList" filterBar="true" editable="false" clerk="phonologicalfeatures" altTitleId="FsFeatDefn-Phonological">
-				  <columns>
-					<column label="Name" width="13%" layout="Name" ws="$ws=best analysis" field="Name"/>
-					<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
-					<column label="Description" width="77%" layout="Description" ws="$ws=best analysis" field="Description"/>
-					<column label="Values" width="24%" multipara="true" layout="TypeOrValues" visibility="menu"/>
-				  </columns>
+		<tool label="Phonological Features" value="phonologicalFeaturesAdvancedEdit" icon="SideBySideView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+				<parameters area="grammar" id="PhonologicalFeatureItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
+					<!-- this will fill the pane on the left -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters id="PhonologicalFeaturesList">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+								<parameters id="PhonologicalFeaturesList" filterBar="true" editable="false" clerk="phonologicalfeatures" altTitleId="FsFeatDefn-Phonological">
+									<columns>
+										<column label="Name" width="13%" layout="Name" ws="$ws=best analysis" field="Name"/>
+										<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation"/>
+										<column label="Description" width="77%" layout="Description" ws="$ws=best analysis" field="Description"/>
+										<column label="Values" width="24%" multipara="true" layout="TypeOrValues" visibility="menu"/>
+									</columns>
+								</parameters>
+							</control>
+						</parameters>
+					</control>
+					<!-- this will fill the pane on the right -->
+					<control>
+						<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+						<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" collapse="144000">
+							<control>
+								<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
+								<parameters area="grammar" clerk="phonologicalfeatures" layout="PhonEdit" treeBarAvailability="NotAllowed" altTitleId="FsFeatDefn-PhonologicalValues" emptyTitleId="No-FsFeatDefn-Phonological"/>
+							</control>
+						</parameters>
+					</control>
 				</parameters>
-			  </control>
-			</parameters>
-		  </control>
-		  <!-- this will fill the pane on the right -->
-		  <control>
-			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
-			<parameters PaneBarGroupId="PaneBar-ShowHiddenFields-phonologicalFeaturesAdvancedEdit" collapse="144000">
-			  <control>
-				<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordEditView"/>
-				<parameters area="grammar" clerk="phonologicalfeatures" layout="PhonEdit" treeBarAvailability="NotAllowed" altTitleId="FsFeatDefn-PhonologicalValues" emptyTitleId="No-FsFeatDefn-Phonological"/>
-			  </control>
-			</parameters>
-		  </control>
-		</parameters>
-	  </control>
-	</tool>
-	<tool id="NaturalClassesEdit" label="Natural Classes" value="naturalClassedit" icon="SideBySideView">
+			</control>
+		</tool>
+		<tool label="Assign Features to Phonemes" value="toolBulkEditPhonemes" icon="BrowseView">
+			<control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="PhonemesBulkEdit">
+					<control>
+						<dynamicloaderinfo assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AssignFeaturesToPhonemes"/>
+						<parameters area="grammar" id="PhonemesBulkEdit" clerk="phonemes" convertDummiesSelected="true" treeBarAvailability="NotAllowed" filterBar="true" bulkEdit="true" bulkEditListItemsClasses="PhPhoneme" selectColumn="true" altTitleId="PhPhoneme-Plural">
+							<enableBulkEditTabs enableBEListChoice="true" enableBEBulkCopy="false" enableBEClickCopy="false" enableBEProcess="false" enableBEFindReplace="false" enableBEOther="false" bulkEditListItemsGhostFields="PhonFeats" bulkEditListItemsClasses="PhPhoneme"/>
+							<!--<include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='wordListColumns']/columns">-->
+							<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
+							<!--								<overrides>-->
+							<columns generate="objectValuePartsForParentLayouts">
+								<column label="Refer to as" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
+								<!-- Phonological Feature Defns (generated)-->
+								<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
+									<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%">
+										<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
+											<args>
+												<arg name="xpathToConfigurationNode" value="ancestor::column"/>
+											</args>
+										</dynamicloaderinfo>
+									</column>
+								</generate>
+<!--								<column label="Phonological Features" multipara="true" width="67%" bulkEdit="external" editable="false" visibility="dialog" displayWs="best analysis" layout="PhonologicalFeaturesForPhonemes">
+									<dynamicloaderinfo assemblyPath="FdoUi.dll" class="SIL.FieldWorks.FdoUi.PhonologicalFeatureEditor">
+										<args>
+											<arg name="xpathToConfigurationNode" value="ancestor::column"/>
+										</args>
+									</dynamicloaderinfo>
+									<!-\-<span>
+										<obj field="Features" layout="PhonFeats"/>
+									</span>-\->
+								</column>-->
+								<column label="Description" width="33%" layout="Description" ws="$ws=best analysis" field="Description" visibility="menu"/>
+								<column label="Graphemes" width="34%" multipara="true" layout="Codes" visibility="menu"/>
+								<column label="IPA Symbol" width="33%" layout="BasicIPASymbol" visibility="menu"/>
+							</columns>
+							<!--								</overrides>-->
+							<!--							</include>-->
+						</parameters>
+					</control>
+				</parameters>
+			</control>
+		</tool>
+		<tool id="NaturalClassesEdit" label="Natural Classes" value="naturalClassedit" icon="SideBySideView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
 				<parameters area="grammar" id="NaturalClassItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -315,7 +359,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool label='Exception "Features"' value="ProdRestrictEdit" icon="SideBySideView">
+		<tool label="Exception &quot;Features&quot;" value="ProdRestrictEdit" icon="SideBySideView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
 				<parameters area="grammar" id="ProductivityRestrictionItemsAndDetailMultiPane" splitterBarOrientation="vertical" firstLabel="Browse" secondLabel="Details">
@@ -357,7 +401,7 @@
 						<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.GrammarSketchDataRetriever"/>
 					</retriever>
 					<transforms>
-						<transform progressPrompt="Processing data, step 1 of 2" file="FxtM3MorphologySketch.xsl" ext="xml" saveResult="true" saveResultPrompt="Also save as an XLingPaper file" replaceDOCTYPE='lingPaper PUBLIC "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd"'>
+						<transform progressPrompt="Processing data, step 1 of 2" file="FxtM3MorphologySketch.xsl" ext="xml" saveResult="true" saveResultPrompt="Also save as an XLingPaper file" replaceDOCTYPE="lingPaper PUBLIC &quot;-//XMLmind//DTD XLingPap//EN&quot; &quot;XLingPap.dtd&quot;">
 							<xsltParameters>
 								<!-- the value of "TransformDirectory" is a special key the FxtViewer.dll knows about -->
 								<param name="sWordWorksTransformPath" value="TransformDirectory"/>

@@ -46,6 +46,7 @@ _user.mak.lnx
 *.vshost.exe*
 *.sdf
 *.opensdf
+app.config
 
 .dotest/
 .depend
@@ -96,6 +97,7 @@ Src/AppCore/libAppCore
 Src/DebugProcs/libDebugProcs
 Src/Generic/libGeneric
 Src/Language/libLanguage
+Lib/src/HermitCrab.NET/HermitCrabExe/bin
 
 DistFiles/ReleaseData/
 # Locally configurable project to run FieldWorks

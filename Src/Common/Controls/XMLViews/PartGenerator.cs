@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -114,6 +115,8 @@ namespace SIL.FieldWorks.Common.Controls
 					return true;
 				case "customOnly":
 					return ((IFwMetaDataCacheManaged) m_mdc).IsCustom(flid);
+				case "featureDefns":
+					return flid == FsFeatureSystemTags.kflidFeatures;
 			}
 			return true;
 		}
@@ -122,7 +125,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Get an array of unsigned integers, the ids of the fields generated (that pass the
 		/// restrictions).
 		/// </summary>
-		List<int> FieldIds
+		protected List<int> FieldIds
 		{
 			get
 			{
@@ -205,7 +208,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Generate the nodes that the constructor arguments indicate.
 		/// </summary>
 		/// <returns></returns>
-		public XmlNode[] Generate()
+		public virtual XmlNode[] Generate()
 		{
 			List<int> ids = FieldIds;
 			var result = new XmlNode[ids.Count];
@@ -263,7 +266,15 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private void ReplaceParamsInAttributes(XmlNode output, string labelName, string fieldName, int customFieldId, string className)
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="output"></param>
+		/// <param name="labelName"></param>
+		/// <param name="fieldName"></param>
+		/// <param name="customFieldId"></param>
+		/// <param name="className"></param>
+		protected void ReplaceParamsInAttributes(XmlNode output, string labelName, string fieldName, int customFieldId, string className)
 		{
 			SetupWsParams(output, customFieldId);
 			ReplaceSubstringInAttr visitorFn = new ReplaceSubstringInAttr("$fieldName", fieldName);
@@ -523,7 +534,11 @@ namespace SIL.FieldWorks.Common.Controls
 					continue;
 				}
 
-				PartGenerator generator = new PartGenerator(cache, child, vc, rootClassId);
+				PartGenerator generator;
+				if (generateModeForColumns == "objectValuePartsForParentLayouts")
+					generator = new ObjectValuePartGenerator(cache, child, vc, rootClassId);
+				else
+					generator = new PartGenerator(cache, child, vc, rootClassId);
 				foreach (XmlNode genNode in generator.Generate())
 				{
 					bool match = false;
@@ -608,4 +623,58 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 	}
 
+	/// <summary>
+	/// Generate parts for each value of an object
+	/// </summary>
+	/// <remarks>Currently this has only been implemented for the phonological features in a phoneme bulk edit.
+	/// That is, it generates a part based on a single layout for each item in LangProject.PhFeatureSystemOA.FeaturesOC.
+	///  </remarks>
+	internal class ObjectValuePartGenerator : PartGenerator
+	{
+		private IFdoOwningCollection<IFsFeatDefn> m_collectionToGeneratePartsFrom;
+		private IOrderedEnumerable<IFsFeatDefn> m_sortedCollection;
+		private string m_objectPath;
+
+		public ObjectValuePartGenerator(FdoCache cache, XmlNode input, XmlVc vc, int rootClassId)
+			: base(cache, input, vc, rootClassId)
+		{
+			m_objectPath = XmlUtils.GetAttributeValue(input, "objectPath");
+			if (m_objectPath == null)
+				throw new ArgumentException("ObjectValuePartGenerator expects input to have objectPath attribute.");
+			// Enhance: generalize this
+			if (m_objectPath == "PhFeatureSystem.Features")
+			{
+				m_collectionToGeneratePartsFrom = cache.LangProject.PhFeatureSystemOA.FeaturesOC;
+				m_sortedCollection = from s in m_collectionToGeneratePartsFrom
+								 orderby s.Abbreviation.BestAnalysisAlternative.Text
+								 select s;
+			}
+		}
+		/// <summary>
+		/// Generate the nodes that the constructor arguments indicate.
+		/// </summary>
+		/// <returns></returns>
+		public override XmlNode[] Generate()
+		{
+			List<int> ids = FieldIds;
+			var result = new XmlNode[m_collectionToGeneratePartsFrom.Count];
+			int iresult = 0;
+			int fieldId = ids[iresult];
+			// Enhance: generalize this
+			foreach (var fsFeatDefn in m_sortedCollection)
+			{
+				XmlNode output = m_source.Clone();
+				result[iresult] = output;
+				string fieldName = fsFeatDefn.Abbreviation.BestAnalysisAlternative.Text;
+				string className = fsFeatDefn.ClassName;
+				string labelName = fieldName;
+				// generate parts for any given custom layout
+				// TODO: generalize the field ids
+				GeneratePartsFromLayouts(m_rootClassId, fieldName, PhPhonemeTags.kflidFeatures, ref output);
+				ReplaceParamsInAttributes(output, labelName, fieldName, FsFeatDefnTags.kflidName, className);
+				iresult++;
+			}
+			return result;
+		}
+	}
 }

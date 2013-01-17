@@ -114,6 +114,8 @@ namespace SIL.FieldWorks.Common.Controls
 		protected bool m_fShowColumnsRTL;
 
 		private static bool s_haveShownDefaultColumnMessage;
+
+		private bool m_fMultiColumnPreview = false;
 		#endregion Data Members
 
 		#region Construction and initialization
@@ -978,7 +980,12 @@ namespace SIL.FieldWorks.Common.Controls
 				// The display depends on which column is active and whether the current row is selected.
 				vwenv.NoteDependency(new int[] { hvoRoot, hvo, hvo }, new int[] { XMLViewsDataCache.ktagActiveColumn, XMLViewsDataCache.ktagItemSelected, XMLViewsDataCache.ktagItemEnabled }, 3);
 				// We're doing the active column thing.
-				if (icol == icolActive)
+				if (MultiColumnPreview)
+				{
+					fIsCellActive = vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemSelected) != 0
+									&& vwenv.DataAccess.get_StringProp(hvo, XMLViewsDataCache.ktagAlternateValueMultiBase + icol).Length > 0;
+				}
+				else if (icol == icolActive)
 				{
 					fIsCellActive = vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemSelected) != 0
 						&& vwenv.DataAccess.get_IntProp(hvo, XMLViewsDataCache.ktagItemEnabled) != 0;
@@ -1066,7 +1073,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			vwenv.CloseInnerPile();			//		</InnerPile>
 			if (fIsCellActive)
-				AddPreviewPiles(vwenv, node);
+				AddPreviewPiles(vwenv, node, icol);
 			vwenv.CloseParagraph();			// </Paragraph>
 			vwenv.CloseTableCell();
 			m_wsBest = 0;
@@ -1159,7 +1166,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private void AddPreviewPiles(IVwEnv vwenv, XmlNode node)
+		private void AddPreviewPiles(IVwEnv vwenv, XmlNode node, int icol)
 			{
 			// add padding to separate PreviewArrow from other cell contents.
 			vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing,
@@ -1173,7 +1180,7 @@ namespace SIL.FieldWorks.Common.Controls
 			vwenv.CloseInnerPile();
 			vwenv.OpenInnerPile();
 			{
-				AddAlternateCellContents(vwenv);
+				AddAlternateCellContents(vwenv, icol);
 			}
 			vwenv.CloseInnerPile();
 		}
@@ -1192,10 +1199,14 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// </summary>
 		/// <param name="vwenv"></param>
-		private void AddAlternateCellContents(IVwEnv vwenv)
+		/// <param name="icol"></param>
+		private void AddAlternateCellContents(IVwEnv vwenv, int icol)
 		{
 			vwenv.OpenParagraph();
-			vwenv.AddStringProp(XMLViewsDataCache.ktagAlternateValue, this);
+			if (MultiColumnPreview)
+				vwenv.AddStringProp(XMLViewsDataCache.ktagAlternateValueMultiBase + icol, this);
+			else
+				vwenv.AddStringProp(XMLViewsDataCache.ktagAlternateValue, this);
 			vwenv.CloseParagraph();
 		}
 
@@ -1276,7 +1287,8 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					if (!HasPreviewArrow)
 						PreviewArrow = BulkEditBar.PreviewArrowStatic;
-					AddPreviewPiles(vwenv, frag);
+					Debug.Assert(!MultiColumnPreview, "Expect only single column preview, not multi-column preview");
+					AddPreviewPiles(vwenv, frag, 0);
 				}
 			}
 			else
@@ -1597,6 +1609,12 @@ namespace SIL.FieldWorks.Common.Controls
 				m_fInOnPaint = value;
 			}
 		}
+
+		/// <summary>
+		/// True if the preview is for multiple columns
+		/// </summary>
+		public bool MultiColumnPreview { get; set; }
+
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

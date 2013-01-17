@@ -10,6 +10,7 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.MorphologyEditor;
 using SIL.Utils;
 using XCore;
+using PhonologicalFeatureChooserDlg = SIL.FieldWorks.LexText.Controls.PhonologicalFeatureChooserDlg;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
