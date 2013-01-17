@@ -684,8 +684,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private bool IsWritingSystemHidden(IWritingSystem ws)
 		{
-			IWritingSystem origWs = m_tempWritingSystems[ws];
-			if (origWs == null)
+			// Fix FWNX-563
+			IWritingSystem origWs;
+			if (!m_tempWritingSystems.TryGetValue(ws, out origWs) || origWs == null)
 				return false;
 
 			return !m_wsContainer.AllWritingSystems.Contains(origWs);
@@ -1485,34 +1486,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
-		#region Helper methods to avoid bugs on mono.
-
-		private void SuspendHandlersOnMono()
-		{
-			if (MiscUtils.IsDotNet)
-				return;
-
-			// on mono m_listBoxRelatedWSs.Items.Remove(ws) is generating a SelectedIndexChanged changed event.
-			// so explicitly prevent this.
-			m_listBoxRelatedWSs.SelectedIndexChanged -= m_listBoxRelatedWSs_SelectedIndexChanged;
-			// Also stop DrawItemEvents being handled (to fix FWNX-563).
-			m_listBoxRelatedWSs.DrawItem -= m_listBoxRelatedWSs_DrawItem;
-
-		}
-
-		private void ResumeHandlersOnMono()
-		{
-			if (MiscUtils.IsDotNet)
-				return;
-
-			m_listBoxRelatedWSs.SelectedIndexChanged += m_listBoxRelatedWSs_SelectedIndexChanged;
-			m_listBoxRelatedWSs.DrawItem += m_listBoxRelatedWSs_DrawItem;
-
-			m_listBoxRelatedWSs.Invalidate();
-		}
-
-		#endregion
-
 		#region Button click handlers
 
 		private void btnEncodingConverter_Click(object sender, EventArgs e)
@@ -1799,10 +1772,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_listBoxRelatedWSs.SelectedIndex - 1 : m_listBoxRelatedWSs.SelectedIndex;
 			IWritingSystem ws = CurrentWritingSystem;
 			IWritingSystem origWs = m_tempWritingSystems[ws];
-			SuspendHandlersOnMono();
 			m_tempWritingSystems.Remove(ws);
 			m_listBoxRelatedWSs.Items.Remove(ws);
-			ResumeHandlersOnMono();
 			m_listBoxRelatedWSs.SelectedIndex = indexNext;
 		}
 
@@ -1863,10 +1834,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				m_fSkipCheckOkToChangeContext = true;
 
-				SuspendHandlersOnMono(); // fixed FWNX-563
 				m_listBoxRelatedWSs.Items.Add(tempWs);
 				m_tempWritingSystems[tempWs] = origWs;
-				ResumeHandlersOnMono();
 				m_listBoxRelatedWSs.SelectedItem = tempWs;
 				if (fSwitchToGeneralTab)
 					SwitchTab(kWsGeneral);
@@ -2240,8 +2209,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void m_listBoxRelatedWSs_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (m_prevSelectedWritingSystem != null && m_prevSelectedWritingSystem == CurrentWritingSystem)
+			// CurrentWritingSystem can be null when we remove a WS from the list when running on Mono
+			if (CurrentWritingSystem == null || m_prevSelectedWritingSystem == CurrentWritingSystem)
+			{
 				return;
+			}
 			// While we are editing this writing system we can't enforce valid tags; the user may temporarily
 			// do something invalid, or we may even go through an invalid state while changing two properties
 			// at once. It will become true again at latest when we close the dialog and try to save changes.
@@ -2260,7 +2232,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					var prevSelWs = m_prevSelectedWritingSystem;
 					m_prevSelectedWritingSystem = null; // prevents this check firing if we switch back.
 					m_overrideCurrentWritingSystem = prevSelWs;
-					var newItem = m_listBoxRelatedWSs.SelectedItem;
 					if (!CheckOkToChangeContext())
 					{
 						m_overrideCurrentWritingSystem = null; // override not be in force while changing back.

@@ -204,6 +204,16 @@ namespace SIL.CoreImpl
 		}
 
 		/// <summary>
+		/// This is a new required interface member. We don't use it, and I hope we don't use anything which uses it!
+		/// </summary>
+		/// <param name="wsToConflate"></param>
+		/// <param name="wsToConflateWith"></param>
+		public void Conflate(string wsToConflate, string wsToConflateWith)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Removes the writing system with the specified Store ID from the store.
 		/// </summary>
 		public void Remove(string identifier)
@@ -264,6 +274,8 @@ namespace SIL.CoreImpl
 		/// Event raised when writing system is deleted. Required for interface defn,  dubious implementstion.
 		/// </summary>
 		public event WritingSystemDeleted WritingSystemDeleted;
+
+		public event WritingSystemConflatedEventHandler WritingSystemConflated;
 
 		/// <summary>
 		/// Returns a list of all writing system definitions in the store. (Obsolete)

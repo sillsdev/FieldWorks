@@ -289,7 +289,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal DialogResult DoExpectedMsgBoxResult(ShowMsgBoxStatus encountered, string origWsId)
 		{
 			// we always expect message boxes.
-			Assert.Less(0, m_expectedMsgBoxes.Count);
+			Assert.Greater(m_expectedMsgBoxes.Count, 0,
+				string.Format("Didn't expect dialog {0}", encountered));
 			Assert.AreEqual(m_expectedMsgBoxes[0], encountered);
 			m_expectedMsgBoxes.RemoveAt(0);
 			DialogResult result = m_resultsToEnforce[0];
