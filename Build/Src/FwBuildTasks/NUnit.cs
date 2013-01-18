@@ -133,6 +133,7 @@ namespace FwBuildTasks
 			if (!String.IsNullOrEmpty(mono))
 			{
 				EnsureToolPath();
+				bldr.Append("--debug "); // cause Mono to show filenames in stack trace
 				if (Force32Bit)
 					bldr.Append(Path.Combine(ToolPath, "nunit-console-x86.exe"));
 				else
