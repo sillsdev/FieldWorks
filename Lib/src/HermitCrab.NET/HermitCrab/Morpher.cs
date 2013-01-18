@@ -980,7 +980,7 @@ namespace SIL.HermitCrab
 
 				foreach (WordSynthesis ws in outSynthesis)
 				{
-					if (ws.IsValid)
+					if (ws.IsValid && SurfaceStratum.CharacterDefinitionTable.IsMatch(word, ws.Shape))
 						allValidSyntheses.Add(ws);
 				}
 			}
@@ -996,9 +996,8 @@ namespace SIL.HermitCrab
 			{
 				// enforce the disjunctive property of allomorphs by ensuring that this word synthesis
 				// has the highest order of precedence for its allomorphs while also allowing for free
-				// fluctuation, also check that the phonetic shape matches the original input word
-				if ((prevValidSynthesis == null || AreAllomorphsNondisjunctive(cur, prevValidSynthesis))
-					&& SurfaceStratum.CharacterDefinitionTable.IsMatch(word, cur.Shape))
+				// fluctuation
+				if (prevValidSynthesis == null || AreAllomorphsNondisjunctive(cur, prevValidSynthesis))
 				{
 					if (m_traceSuccess)
 						// create the report a success output trace record for the output analysis
