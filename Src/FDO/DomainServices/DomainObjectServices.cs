@@ -1973,6 +1973,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	public static class DomainObjectServices
 	{
 		/// <summary>
+		/// Common code used by LexSense and LexEntry
+		/// </summary>
+		/// <param name="incomingRefs"></param>
+		/// <returns></returns>
+		internal static List<ILexReference> ExtractMinimalLexReferences(SimpleBag<IReferenceSource> incomingRefs)
+		{
+			var references = (from collection in incomingRefs.OfType<FdoReferenceSequence<ICmObject>>()
+							  where collection.Flid == LexReferenceTags.kflidTargets
+							  select collection.MainObject as ILexReference).ToList();
+			return LexReference.ExtractMinimalLexReferences(references);
+		}
+
+		/// <summary>
 		///
 		/// </summary>
 		/// <typeparam name="TObj"></typeparam>

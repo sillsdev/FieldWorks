@@ -2361,16 +2361,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Get the minimal set of LexReferences for this entry.
+		/// This is a virtual, backreference property.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.ReferenceCollection, "MinimalLexReferences")]
 		public List<ILexReference> MinimalLexReferences
 		{
 			get
 			{
-				var targets =
-					Cache.ServiceLocator.GetInstance<ILexReferenceRepository>().AllInstances().Where(
-						lexRef => lexRef.TargetsRS.Contains(this));
-				return LexReference.ExtractMinimalLexReferences(targets);
+				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
+					LexReferenceTags.kflidTargets);
+				return DomainObjectServices.ExtractMinimalLexReferences(m_incomingRefs);
 			}
 		}
 
@@ -4578,20 +4578,27 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
-				tisb.AppendTsString(OwnerOutlineName);
-				tisb.Append(" ");
-				// Add Sense POS and gloss info, as per LT-3811.
-				if (MorphoSyntaxAnalysisRA != null)
-				{
-					ITsStrBldr tsb = MorphoSyntaxAnalysisRA.ChooserNameTS.GetBldr();
-					tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptItalic,
-						(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
-					tisb.AppendTsString(tsb.GetString());
-					tisb.Append(" ");
-				}
-				tisb.AppendTsString(Gloss.BestAnalysisAlternative);
+				GetFullReferenceName(tisb);
 				return tisb.GetString();
 			}
+		}
+
+		/// <summary>
+		/// Refactored to allow Lexical Relations FullDisplayText to only create
+		/// one TsIncStrBldr (Performance benefits; LT-13728)
+		/// </summary>
+		/// <param name="tisb"></param>
+		internal void GetFullReferenceName(ITsIncStrBldr tisb)
+		{
+			AddOwnerOutlineName(tisb, Entry.HomographNumber, Cache.DefaultVernWs, HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
+			tisb.Append(" ");
+			// Add Sense POS and gloss info, as per LT-3811.
+			if (MorphoSyntaxAnalysisRA != null)
+			{
+				((MoMorphSynAnalysis)MorphoSyntaxAnalysisRA).AddChooserNameInItalics(tisb);
+				tisb.Append(" ");
+			}
+			tisb.AppendTsString(Gloss.BestAnalysisAlternative);
 		}
 
 		/// <summary>
@@ -5099,20 +5106,32 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public ITsString OwnerOutlineNameForWs(int wsVern, int hn,  HomographConfiguration.HeadwordVariant hv)
 		{
 			ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+			AddOwnerOutlineName(tisb, hn, wsVern, hv);
+			return tisb.GetString();
+		}
+
+		/// <summary>
+		/// Refactored to allow Lexical Relations FullDisplayText to only create
+		/// one TsIncStrBldr (Performance benefits; LT-13728)
+		/// </summary>
+		/// <param name="tisb"></param>
+		/// <param name="hn"></param>
+		/// <param name="wsVern"></param>
+		/// <param name="hv"></param>
+		private void AddOwnerOutlineName(ITsIncStrBldr tisb, int hn, int wsVern, HomographConfiguration.HeadwordVariant hv)
+		{
 			var lexEntry = Entry;
-			tisb.AppendTsString(StringServices.HeadWordForWsAndHn(lexEntry, wsVern, hn, "", hv));
+			StringServices.AddHeadWordForWsAndHn(tisb, lexEntry, wsVern, hn, "", hv);
 			var hc = Services.GetInstance<HomographConfiguration>();
 			if (hc.ShowSenseNumber(hv) && lexEntry.HasMoreThanOneSense)
 			{
 				// These int props may not be needed, but they're safe.
-				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0,
-									  Cache.DefaultAnalWs);
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, Cache.DefaultAnalWs);
 				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
-									  HomographConfiguration.ksSenseReferenceNumberStyle);
+					HomographConfiguration.ksSenseReferenceNumberStyle);
 				tisb.Append(" ");
 				tisb.Append(SenseNumber);
 			}
-			return tisb.GetString();
 		}
 
 		/// <summary>
@@ -5188,17 +5207,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Get the minimal set of LexReferences for this entry.
+		/// Get the minimal set of LexReferences for this sense.
+		/// This is a virtual, backreference property.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.ReferenceCollection, "MinimalLexReferences")]
 		public List<ILexReference> MinimalLexReferences
 		{
 			get
 			{
-				var targets =
-					Cache.ServiceLocator.GetInstance<ILexReferenceRepository>().AllInstances().Where(
-						target => target.TargetsRS.Contains(this));
-				return LexReference.ExtractMinimalLexReferences(targets);
+				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(
+					LexReferenceTags.kflidTargets);
+				return DomainObjectServices.ExtractMinimalLexReferences(m_incomingRefs);
 			}
 		}
 
@@ -7581,40 +7600,22 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// This supports a virtual property for displaying lexical references in a browse column.
 		/// See LT-4859 for justification.
+		/// Refactored to only create one TsIncStrBldr (Performance benefits; LT-13728).
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.String)]
 		public ITsString FullDisplayText
 		{
 			get
 			{
-				/* This XML fragment was the prototype for this property:
-					<obj field="OwnerHVO" layout="empty">
-						<span>
-							<properties>
-								<bold value="on"/>
-							</properties>
-							<string field="Abbreviation" ws="best analysis"/>
-							<if field="MappingType" intmemberof="2,3,7,8,12,13">
-								<lit>-</lit>
-								<string field="ReverseAbbreviation" ws="best analysis"/>
-							</if>
-							<lit>:  </lit>
-						</span>
-					</obj>
-					<seq field="Targets" layout="empty" sep=", ">
-						<if is="LexEntry">
-							<string field="HeadWord"/>
-						</if>
-						<if is="LexSense">
-							<string field="FullReferenceName"/>
-						</if>
-					</seq>
-				 */
-				LexRefType lrtOwner = this.Owner as LexRefType;
+				var lrtOwner = this.Owner as LexRefType;
+				var analWs = Cache.DefaultAnalWs;
 				ITsStrFactory tsf = TsStrFactoryClass.Create();
-				ITsStrBldr tsb = TsStrBldrClass.Create();
-				tsb.ReplaceTsString(0, tsb.Length,
-					lrtOwner.Abbreviation.BestAnalysisAlternative);
+				ITsIncStrBldr tisb = TsIncStrBldrClass.Create();
+				tisb.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum,
+					(int)FwTextToggleVal.kttvForceOn);
+				// AppendSimpleTsString modifies the TsIncStrBldr passed to it.
+				AppendSimpleTsString(tisb, lrtOwner.Abbreviation.BestAnalysisAlternative);
+				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, analWs);
 				switch (lrtOwner.MappingType)
 				{
 					case (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair:
@@ -7623,36 +7624,47 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					case (int)LexRefTypeTags.MappingTypes.kmtEntryTree:
 					case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair:
 					case (int)LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
-						tsb.ReplaceTsString(tsb.Length, tsb.Length,
-							tsf.MakeString("-", Cache.DefaultAnalWs));
-						tsb.ReplaceTsString(tsb.Length, tsb.Length,
-							lrtOwner.ReverseAbbreviation.BestAnalysisAlternative);
+						tisb.Append("-");
+						// AppendSimpleTsString modifies the TsIncStrBldr passed to it.
+						AppendSimpleTsString(tisb, lrtOwner.ReverseAbbreviation.BestAnalysisAlternative);
 						break;
 				}
-				tsb.ReplaceTsString(tsb.Length, tsb.Length,
-					tsf.MakeString(":  ", Cache.DefaultAnalWs));
-				tsb.SetIntPropValues(0, tsb.Length,
-					(int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum,
-					(int)FwTextToggleVal.kttvForceOn);
-				ITsString tsSep = tsf.MakeString(", ", Cache.DefaultAnalWs);
+				tisb.Append(":  ");
+				tisb.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum,
+					(int)FwTextToggleVal.kttvOff);
+				ITsString tsSep = tsf.MakeString(", ", analWs);
 				for (int i = 0; i < TargetsRS.Count; ++i)
 				{
 					if (i > 0)
-						tsb.ReplaceTsString(tsb.Length, tsb.Length, tsSep);
-					LexEntry le = TargetsRS[i] as LexEntry;
+						tisb.AppendTsString(tsSep);
+					var le = TargetsRS[i] as LexEntry;
 					if (le != null)
 					{
-						tsb.ReplaceTsString(tsb.Length, tsb.Length, le.HeadWord);
+						tisb.AppendTsString(le.HeadWord);
 					}
 					else
 					{
-						LexSense ls = TargetsRS[i] as LexSense;
+						var ls = TargetsRS[i] as LexSense;
 						if (ls != null)
-							tsb.ReplaceTsString(tsb.Length, tsb.Length, ls.FullReferenceName);
+							ls.GetFullReferenceName(tisb); // adds the reference name to the TsIncStrBldr
 					}
 				}
-				return tsb.GetString();
+				return tisb.GetString();
 			}
+		}
+
+		/// <summary>
+		/// Appends a single run TsString to an existing TsIncStrBldr.
+		/// This method assumes that there is only one run in this TsString.
+		/// </summary>
+		/// <param name="tisb"></param>
+		/// <param name="tsStringToAppend"></param>
+		private static void AppendSimpleTsString(ITsIncStrBldr tisb, ITsString tsStringToAppend)
+		{
+			Debug.Assert(tsStringToAppend.RunCount == 1, "This method assumes only one Run!");
+			var ws = tsStringToAppend.get_WritingSystem(0); // assumes only one run!
+			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
+			tisb.Append(tsStringToAppend.Text);
 		}
 	}
 

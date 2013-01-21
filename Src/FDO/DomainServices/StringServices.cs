@@ -239,12 +239,40 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static ITsString HeadWordForWsAndHn(ILexEntry entry, int wsVern, int nHomograph, string defaultCf,
 			HomographConfiguration.HeadwordVariant hv)
 		{
-			var hc = entry.Services.GetInstance<HomographConfiguration>();
 			var citationForm = CitationFormWithAffixTypeStaticForWs(entry, wsVern, defaultCf);
 			if (String.IsNullOrEmpty(citationForm))
 				return entry.Cache.TsStrFactory.EmptyString(wsVern);
 			var tisb = TsIncStrBldrClass.Create();
+			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm);
+			return tisb.GetString();
+		}
+
+		/// <summary>
+		/// This method should have the same logic as the (above) HeadWordForWsAndHn().
+		/// </summary>
+		/// <param name="tisb"></param>
+		/// <param name="entry"></param>
+		/// <param name="wsVern"></param>
+		/// <param name="nHomograph"></param>
+		/// <param name="defaultCf"></param>
+		/// <param name="hv"></param>
+		internal static void AddHeadWordForWsAndHn(ITsIncStrBldr tisb, ILexEntry entry, int wsVern, int nHomograph, string defaultCf,
+	HomographConfiguration.HeadwordVariant hv)
+		{
+			var citationForm = CitationFormWithAffixTypeStaticForWs(entry, wsVern, defaultCf);
+			if (String.IsNullOrEmpty(citationForm))
+			{
+				tisb.AppendTsString(entry.Cache.TsStrFactory.EmptyString(wsVern)); // avoids COM Exception!
+				return;
+			}
+			AddHeadwordForWsAndHn(entry, wsVern, nHomograph, hv, tisb, citationForm);
+		}
+
+		private static void AddHeadwordForWsAndHn(ILexEntry entry, int wsVern, int nHomograph,
+			HomographConfiguration.HeadwordVariant hv, ITsIncStrBldr tisb, string citationForm)
+		{
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsVern);
+			var hc = entry.Services.GetInstance<HomographConfiguration>();
 			if (hc.HomographNumberBefore)
 				InsertHomographNumber(tisb, nHomograph, hc, hv);
 			tisb.Append(citationForm);
@@ -259,10 +287,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 
 			if (!hc.HomographNumberBefore)
 				InsertHomographNumber(tisb, nHomograph, hc, hv);
-			return tisb.GetString();
 		}
 
-		private static void InsertHomographNumber(TsIncStrBldr tisb, int nHomograph, HomographConfiguration hc,
+		private static void InsertHomographNumber(ITsIncStrBldr tisb, int nHomograph, HomographConfiguration hc,
 			HomographConfiguration.HeadwordVariant hv)
 		{
 			if (nHomograph > 0 && hc.ShowHomographNumber(hv))

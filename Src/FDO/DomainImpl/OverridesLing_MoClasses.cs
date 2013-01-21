@@ -59,6 +59,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// This method will be overridden in common subtypes (like MoStemMsa)
+		/// to use the TsIncStrBldr passed to it instead of creating another builder.
+		/// (See LT-13728 for performance issues.)
+		/// </summary>
+		/// <param name="tisb"></param>
+		internal virtual void AddChooserNameInItalics(ITsIncStrBldr tisb)
+		{
+			ITsStrBldr tsb = ChooserNameTS.GetBldr();
+			tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptItalic,
+									(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+			tisb.AppendTsString(tsb.GetString());
+		}
+
+		/// <summary>
 		///
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.String)]
@@ -1059,6 +1073,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// This method is overridden in order to use the TsIncStrBldr passed
+		/// to it instead of creating another builder. (See LT-13728 for performance issues.)
+		/// </summary>
+		/// <param name="tisb"></param>
+		internal override void AddChooserNameInItalics(ITsIncStrBldr tisb)
+		{
+			tisb.SetIntPropValues((int)FwTextPropType.ktptItalic,
+				(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+			AddChooserName(tisb);
+		}
+
+		/// <summary>
 		///
 		/// </summary>
 		public override ITsString ExceptionFeaturesTSS
@@ -1235,16 +1261,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				var tisb = TsIncStrBldrClass.Create();
-				var tsf = Cache.TsStrFactory;
-				var analWs = Cache.DefaultAnalWs;
-				var pos = PartOfSpeechRA;
-				if (pos != null)
-					tisb.AppendTsString(pos.Abbreviation.AnalysisDefaultWritingSystem);
-				else
-					tisb.AppendTsString(tsf.MakeString(Strings.ksQuestions, analWs));
+				AddChooserName(tisb);
 
 				return tisb.GetString();
 			}
+		}
+
+		private void AddChooserName(ITsIncStrBldr tisb)
+		{
+			var analWs = Cache.DefaultAnalWs;
+			var pos = PartOfSpeechRA;
+			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, analWs);
+			if (pos != null)
+				tisb.Append(pos.Abbreviation.AnalysisDefaultWritingSystem.Text);
+			else
+				tisb.Append(Strings.ksQuestions);
 		}
 
 		/// <summary>
