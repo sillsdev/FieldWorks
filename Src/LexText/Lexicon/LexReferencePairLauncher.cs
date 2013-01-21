@@ -1,18 +1,11 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Reflection;
 using System.Diagnostics;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -54,9 +47,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				(lr as ILexReference).UpdateTargetTimestamps();
 				(co as ICmObject).UpdateTimestampForVirtualChange();
 #endif
-				if (index < lr.TargetsRS.Count)
-					lr.TargetsRS.RemoveAt(index);
-				lr.TargetsRS.Insert(index, value);
+				// LT-13729: Remove old and then Insert new might cause the deletion of the lr, then the insert fails.
+				lr.TargetsRS.Replace(index, (index < lr.TargetsRS.Count) ? 1 : 0, new List<ICmObject>() { value });
 			}
 		}
 
