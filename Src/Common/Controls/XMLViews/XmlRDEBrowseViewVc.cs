@@ -371,6 +371,61 @@ namespace SIL.FieldWorks.Common.Controls
 			SetCellEditability(vwenv, m_editableHvos.Contains(hvo));
 		}
 
+		/// <summary>
+		/// Override to support different content in edit row (or if a certain column is visible).
+		/// This is used so that a Definition can be shown if Gloss is blank and only that column is shown,
+		/// and similarly for Lexeme form and Citation form.
+		/// </summary>
+		/// <param name="frag"></param>
+		/// <param name="vwenv"></param>
+		/// <param name="hvo"></param>
+		/// <param name="fEditable"></param>
+		/// <param name="caller"></param>
+		public override void ProcessFrag(XmlNode frag, IVwEnv vwenv, int hvo, bool fEditable, XmlNode caller)
+		{
+			switch (frag.Name)
+			{
+				case @"editrow":
+					// Special keyword for rapid data entry: may have different content in edit row (or if a particular column is displayed)
+					bool wantYesChild = ShouldSuppressNoForOtherColumn(frag) || InEditableRow(vwenv);
+					string wantChild = wantYesChild ? @"yes" : @"no";
+					foreach (XmlNode clause in frag.ChildNodes)
+					{
+						if (clause.Name == wantChild)
+						{
+							ProcessChildren(clause, vwenv, hvo, caller);
+							break;
+						}
+					}
+					break;
+				default:
+					base.ProcessFrag(frag, vwenv, hvo, fEditable, caller);
+					break;
+			}
+		}
+
+		private bool ShouldSuppressNoForOtherColumn(XmlNode frag)
+		{
+			var suppressNoForColumn = XmlUtils.GetOptionalAttributeValue(frag, @"suppressNoForColumn");
+			if (!string.IsNullOrEmpty(suppressNoForColumn))
+			{
+				// If the column that suppresses the "no" special behavior is present, we don't want the "no" child
+				foreach (var col in m_columns)
+				{
+					if (XmlUtils.GetOptionalAttributeValue(col, @"label") == suppressNoForColumn)
+						return true;
+				}
+			}
+			return false;
+		}
+
+		private bool InEditableRow(IVwEnv vwenv)
+		{
+			int hvoTop, tag, ihvo;
+			vwenv.GetOuterObject(1, out hvoTop, out tag, out ihvo);
+			return m_editableHvos.Contains(hvoTop);
+		}
+
 
 		internal override int SelectedRowBackgroundColor(int hvo)
 		{

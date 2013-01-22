@@ -40,21 +40,89 @@
 									<columns generate="childPartsForParentLayouts" leadingUnsortedColumns="4">
 										<column label="Word (Citation Form)" width="40%" ws="$ws=vernacular" visibility="always">
 											<obj class="LexSense" field="OwningEntry" layout="empty">
-												<string field="CitationForm" ws="vernacular"/>
+												<editrow suppressNoForColumn="Word (Lexeme Form)">
+													<no>
+														<choice>
+															<where field="CitationForm" stringaltequals="" ws="vernacular">
+																<obj field="LexemeForm" layout="empty">
+																	<lit>(</lit>
+																	<string field="Form" ws="vernacular"/>
+																	<lit>)</lit>
+																</obj>
+															</where>
+															<otherwise>
+																<string field="CitationForm" ws="vernacular"/>
+															</otherwise>
+														</choice>
+													</no>
+													<yes>
+														<string field="CitationForm" ws="vernacular"/>
+													</yes>
+												</editrow>
 											</obj>
 										</column>
 										<column label="Word (Lexeme Form)" width="40%" ws="$ws=vernacular" visibility="menu">
 											<obj class="LexSense" field="OwningEntry" layout="empty">
-												<obj field="LexemeForm" layout="empty">
-													<string field="Form" ws="vernacular"/>
-												</obj>
+												<editrow suppressNoForColumn="Word (Citation Form)">
+													<no>
+														<choice>
+															<where field="LexemeForm/Form" stringaltequals="" ws="vernacular">
+																<lit>(</lit>
+																<string field="CitationForm" ws="vernacular"/>
+																<lit>)</lit>
+															</where>
+															<otherwise>
+																<obj field="LexemeForm" layout="empty">
+																	<string field="Form" ws="vernacular"/>
+																</obj>
+															</otherwise>
+														</choice>
+													</no>
+													<yes>
+														<obj field="LexemeForm" layout="empty">
+															<string field="Form" ws="vernacular"/>
+														</obj>
+													</yes>
+												</editrow>
 											</obj>
 										</column>
 										<column label="Meaning (Gloss)" width="60%" ws="$ws=analysis" visibility="menu">
-											<string class="LexSense" field="Gloss" ws="analysis"/>
+											<editrow suppressNoForColumn="Meaning (Definition)">
+												<no>
+													<choice>
+														<where field="Gloss" stringaltequals="" ws="analysis">
+															<lit>(</lit>
+															<string class="LexSense" field="Definition" ws="analysis"/>
+															<lit>)</lit>
+														</where>
+														<otherwise>
+															<string field="Gloss" ws="analysis"/>
+														</otherwise>
+													</choice>
+												</no>
+												<yes>
+													<string field="Gloss" ws="analysis"/>
+												</yes>
+											</editrow>
 										</column>
 										<column label="Meaning (Definition)" width="60%" ws="$ws=analysis" visibility="always">
-											<string class="LexSense" field="Definition" ws="analysis"/>
+											<editrow suppressNoForColumn="Meaning (Gloss)">
+												<no>
+													<choice>
+														<where field="Definition" stringaltequals="" ws="analysis">
+															<lit>(</lit>
+															<string class="LexSense" field="Gloss" ws="analysis"/>
+															<lit>)</lit>
+														</where>
+														<otherwise>
+															<string field="Definition" ws="analysis"/>
+														</otherwise>
+													</choice>
+												</no>
+												<yes>
+													<string field="Definition" ws="analysis"/>
+												</yes>
+											</editrow>
 										</column>
 										<column layout="MorphTypeForEntry" label="Morph Type" visibility="dialog" editable="false"/>
 										<column layout="PublishAsHeadword" multipara="true" label="Show As Headword In" width="72000"
