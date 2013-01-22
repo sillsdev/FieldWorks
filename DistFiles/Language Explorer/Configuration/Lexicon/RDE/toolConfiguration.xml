@@ -50,10 +50,10 @@
 												</obj>
 											</obj>
 										</column>
-										<column label="Meaning (Gloss)" width="60%" ws="$ws=analysis" visibility="always">
+										<column label="Meaning (Gloss)" width="60%" ws="$ws=analysis" visibility="menu">
 											<string class="LexSense" field="Gloss" ws="analysis"/>
 										</column>
-										<column label="Meaning (Definition)" width="60%" ws="$ws=analysis" visibility="menu">
+										<column label="Meaning (Definition)" width="60%" ws="$ws=analysis" visibility="always">
 											<string class="LexSense" field="Definition" ws="analysis"/>
 										</column>
 										<column layout="MorphTypeForEntry" label="Morph Type" visibility="dialog" editable="false"/>
