@@ -7347,11 +7347,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (entry != null)
 					entry.DateModified = DateTime.Now;
 
-				if (TargetsRS.Count == 1)
-				//in this situation there is only 1 or 0 items left in this lexical Relation so
-				//we need to delete the relation in the other Lexicon entries.
+				if (!m_cache.ObjectsBeingDeleted.Contains(this))
 				{
-					m_cache.DomainDataByFlid.DeleteObj(Hvo);
+					if (TargetsRS.Count == 1)
+					//in this situation there is only 1 or 0 items left in this lexical Relation so
+					//we need to delete the relation in the other Lexicon entries.
+					{
+						m_cache.DomainDataByFlid.DeleteObj(Hvo);
+					}
 				}
 			}
 

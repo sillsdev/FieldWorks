@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests.CellarTests;
 using SIL.FieldWorks.FDO.Infrastructure;
@@ -1402,6 +1403,112 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a suprafix morph type.");
 			}
+		}
+
+		private ILexEntry MakeEntry(string lf, string gloss)
+		{
+			ILexEntry entry = null;
+			entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var form = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entry.LexemeFormOA = form;
+			form.Form.VernacularDefaultWritingSystem =
+				Cache.TsStrFactory.MakeString(lf, Cache.DefaultVernWs);
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			sense.Gloss.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(gloss, Cache.DefaultAnalWs);
+			return entry;
+		}
+
+		private ILexRefType MakeLexRefType(string name)
+		{
+			ILexRefType result = null;
+			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			result = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(result);
+			result.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseTree;
+			result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(name, Cache.DefaultAnalWs);
+			return result;
+		}
+
+		private ILexReference MakeLexReference(ILexRefType owner, ILexSense firstTarget)
+		{
+			ILexReference result = null;
+			result = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			owner.MembersOC.Add(result);
+			result.TargetsRS.Add(firstTarget);
+			return result;
+		}
+
+		/// <summary>
+		/// Set up a LexReference (Part/Whole) and delete the LexReference.
+		/// </summary>
+		[Test]
+		public void LexReferenceDeleteLexReferences()
+		{
+			var entry1 = MakeEntry("food", "stuff to eat that is nutritional");
+			var sense1 = entry1.SensesOS[0];
+			var entry2 = MakeEntry("dog food", "food for dogs");
+			var sense2 = entry2.SensesOS[0];
+			var lexRefType1 = MakeLexRefType("TestRelationPartWhole");
+			var lexRef1 = MakeLexReference(lexRefType1, sense1);  //first add the current sense as the part
+			lexRef1.TargetsRS.Insert(1, sense2);
+
+			Assert.AreEqual(0, (entry1 as LexEntry).MinimalLexReferences.Count,
+							"entry1 has one MinimalLexReference after creating LexReference with entry1");
+			Assert.AreEqual(1, (sense1 as LexSense).MinimalLexReferences.Count,
+							"sense1 has no MinimalLexReferences after creating LexReference with entry1");
+			Assert.AreEqual(0, (entry2 as LexEntry).MinimalLexReferences.Count,
+							"entry2 has no MinimalLexReferences after creating LexReference with entry1");
+			Assert.AreEqual(1, (sense2 as LexSense).MinimalLexReferences.Count,
+							"sense2 has no MinimalLexReferences after creating LexReference with entry1");
+
+			Cache.DomainDataByFlid.DeleteObj(lexRef1.Hvo);
+
+			Assert.AreEqual(0, (entry1 as LexEntry).MinimalLexReferences.Count,
+							"entry1 has one MinimalLexReference after creating LexReference with entry1");
+			Assert.AreEqual(0, (sense1 as LexSense).MinimalLexReferences.Count,
+							"sense1 has no MinimalLexReferences after creating LexReference with entry1");
+			Assert.AreEqual(0, (entry2 as LexEntry).MinimalLexReferences.Count,
+							"entry2 has no MinimalLexReferences after creating LexReference with entry1");
+			Assert.AreEqual(0, (sense2 as LexSense).MinimalLexReferences.Count,
+							"sense2 has no MinimalLexReferences after creating LexReference with entry1");
+		}
+
+		/// <summary>
+		/// Set up a LexReference (Part/Whole). Delete one of the references. This simulates the user deleting
+		/// one either the whole or part sense by selecting the item in the slice and pressing the delete key.
+		/// </summary>
+		[Test]
+		public void LexReferenceRemoveAllReferences()
+		{
+			var entry1 = MakeEntry("food", "stuff to eat that is nutritional");
+			var sense1 = entry1.SensesOS[0];
+			var entry2 = MakeEntry("dog food", "food for dogs");
+			var sense2 = entry2.SensesOS[0];
+			var lexRefType1 = MakeLexRefType("TestRelationPartWhole");
+			var lexRef1 = MakeLexReference(lexRefType1, sense1);  //first add the current sense as the part
+			lexRef1.TargetsRS.Insert(1, sense2);
+
+			Assert.AreEqual(0, (entry1 as LexEntry).MinimalLexReferences.Count,
+							"entry1 has one MinimalLexReference after creating LexReference with entry1");
+			Assert.AreEqual(1, (sense1 as LexSense).MinimalLexReferences.Count,
+							"sense1 has no MinimalLexReferences after creating LexReference with entry1");
+			Assert.AreEqual(0, (entry2 as LexEntry).MinimalLexReferences.Count,
+							"entry2 has no MinimalLexReferences after creating LexReference with entry1");
+			Assert.AreEqual(1, (sense2 as LexSense).MinimalLexReferences.Count,
+							"sense2 has no MinimalLexReferences after creating LexReference with entry1");
+
+			lexRef1.TargetsRS.RemoveAt(1);
+
+			Assert.AreEqual(0, (entry1 as LexEntry).MinimalLexReferences.Count,
+							"entry1 has one MinimalLexReference after creating LexReference with entry1");
+			Assert.AreEqual(0, (sense1 as LexSense).MinimalLexReferences.Count,
+							"sense1 has no MinimalLexReferences after creating LexReference with entry1");
+			Assert.AreEqual(0, (entry2 as LexEntry).MinimalLexReferences.Count,
+							"entry2 has no MinimalLexReferences after creating LexReference with entry1");
+			Assert.AreEqual(0, (sense2 as LexSense).MinimalLexReferences.Count,
+							"sense2 has no MinimalLexReferences after creating LexReference with entry1");
 		}
 	}
 
