@@ -103,6 +103,16 @@ namespace SIL.FieldWorks.Common.Widgets
 				return this;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the form the PopupTree is launched from.
+		/// </summary>
+		public Form LaunchingForm
+		{
+			get { return m_launchForm; }
+			set { m_launchForm = value; }
+		}
+
 		/// <summary>
 		/// Hide the window that shows the popup tree (and activate the parent window, if known).
 		/// </summary>
@@ -547,7 +557,10 @@ namespace SIL.FieldWorks.Common.Widgets
 				popupBounds.Offset(screenBounds.Left - popupBounds.Left, 0);
 			}
 			this.Location = new Point(popupBounds.Left, popupBounds.Top);
-			m_launchForm = Form.ActiveForm;
+			// Once the launching form has been set, it should never need to be changed.
+			// See FWNX-748 for an example of things going wrong (at least on Mono).
+			if (m_launchForm == null)
+				m_launchForm = Form.ActiveForm;
 			Debug.Assert(m_launchForm != this);
 
 #if __MonoCS__ // FWNX-520: avoid a weird mono problem
