@@ -1249,6 +1249,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		}
 
 		/// <summary>
+		/// Clear the cache so we can simulate (in tests) what happens if it has not been created and there are existing objects.
+		/// </summary>
+		internal void ClearHomographInfoCache()
+		{
+			m_homographInfo = null;
+		}
+
+		/// <summary>
 		/// Return a list of all the homographs of the specified form.
 		/// </summary>
 		/// <param name="sForm">This form must come from LexEntry.HomographFormKey</param>
@@ -1269,7 +1277,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						// may be a little large, but most usually not homographs?
 					foreach (var entry in instances)
 					{
-						entry.HomographNumber = 0;
 						AddToHomographDict(entry);
 					}
 				}
