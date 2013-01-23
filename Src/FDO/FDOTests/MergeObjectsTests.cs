@@ -21,6 +21,7 @@ using System;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -202,6 +203,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.That(other.AlternateFormsOS[0], Is.EqualTo(kickLf));
 		}
 
+		ILexEntry MakeEntry(string form, string gloss)
+		{
+			var result = MakeEntry(form);
+			var sense = MakeSense(result, gloss);
+			return result;
+		}
+
 		private ILexEntry MakeEntry(string form)
 		{
 			var result = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
@@ -320,6 +328,35 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			amKeeper.Form.set_String(engWs, oldForm);
 			lmeKeeper.MergeObject(lmeSrc, true);
 			Assert.AreEqual(oldForm, amKeeper.Form.get_String(engWs).Text);
+		}
+
+		/// <summary>Regression test for an aspect of LT-14018, where merging entries would set ALL homograph numbers to zero.</summary>
+		[Test]
+		public void OtherLexEntryHomographs_AreNotAffectedByMerge()
+		{
+			var bankRiver = MakeEntry("bank", "side of river");
+			var bankMoney = MakeEntry("bank", "place for money");
+			var rightDirection = MakeEntry("right", "not left");
+			var rightCorrect = MakeEntry("right", "correct");
+			Assert.That(bankRiver.HomographNumber, Is.EqualTo(1));
+			Assert.That(bankMoney.HomographNumber, Is.EqualTo(2));
+			Assert.That(rightDirection.HomographNumber, Is.EqualTo(1));
+			Assert.That(rightCorrect.HomographNumber, Is.EqualTo(2));
+
+			// The cache that we use in renumbering homographs will have been created when we made the first lex entry.
+			// To properly simulate the conditions for the problem we are guarding against, we need the cache to
+			// be created while the objects already exist, as would normally happen if they are loaded in from disk.
+			((LexEntryRepository)Cache.ServiceLocator.GetInstance<ILexEntryRepository>()).ClearHomographInfoCache();
+
+			bankMoney.MergeObject(bankRiver, true);
+
+			Assert.That(bankMoney.HomographNumber, Is.EqualTo(0));
+			Assert.That(bankRiver.IsValidObject, Is.False);
+			Assert.That(bankMoney.SensesOS.Count, Is.EqualTo(2));
+
+			// These are the main point.
+			Assert.That(rightDirection.HomographNumber, Is.EqualTo(1), "merging entries should not have changed homograph number on unrelated entries");
+			Assert.That(rightCorrect.HomographNumber, Is.EqualTo(2), "merging entries should not have changed homograph number on unrelated entries");
 		}
 
 		private void AssertEqualTss(ITsString tss1, ITsString tss2)
