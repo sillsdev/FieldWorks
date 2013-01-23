@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using XCore;
 
@@ -97,6 +98,8 @@ namespace SIL.FieldWorks
 			helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+			receiveButton.Enabled = ClientServerServices.Current.Local.DefaultBackendType !=
+								FDOBackendProviderType.kDb4oClientServer;
 		}
 
 		public bool AppIsFlex

@@ -13,7 +13,6 @@
 // ---------------------------------------------------------------------------------------------
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 

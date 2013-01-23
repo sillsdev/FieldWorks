@@ -575,6 +575,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// If the FLExBridge image is not displayed, collapse its panel.
 			OpenBridgeProjectContainer.Panel1Collapsed = !pictureBox1.Visible;
+			if (ClientServerServices.Current.Local.DefaultBackendType == FDOBackendProviderType.kDb4oClientServer &&
+				m_linkOpenBridgeProject.Visible)
+			{
+				m_linkOpenBridgeProject.Enabled = false;
+			}
 		}
 		#endregion
 	}
