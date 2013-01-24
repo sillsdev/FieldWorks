@@ -136,6 +136,9 @@
 	<None Include="Resources\cc.png" />
 	<Content Include="Usage.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
 	<PreBuildEvent>
