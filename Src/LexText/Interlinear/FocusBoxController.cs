@@ -425,7 +425,15 @@ namespace SIL.FieldWorks.IText
 
 		private void btnUndoChanges_Click(object sender, EventArgs e)
 		{
+			// LT-14001 the only time we don't want the sandbox changed event to fire
+			// and update the undo button state is when we're actually processing
+			// the undo! Other changes to the sandbox need to update the undo button state.
+			var sandbox = m_sandbox as SandboxBase;
+			if (sandbox != null)
+				sandbox.SandboxChangedEvent -= m_sandbox_SandboxChangedEvent;
 			InterlinWordControl.Undo();
+			if (sandbox != null)
+				sandbox.SandboxChangedEvent += m_sandbox_SandboxChangedEvent;
 			UpdateButtonState();
 		}
 
