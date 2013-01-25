@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using Palaso.Lift;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
 using Palaso.Xml;
@@ -728,16 +729,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				var projectFolder = Cache.ProjectId.ProjectFolder;
 				var liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
-				var liftPathname = _liftPathname;
 				if (!Directory.Exists(liftProjectDir))
 				{
 					Directory.CreateDirectory(liftProjectDir);
 				}
-				if (liftPathname == null)
+				if (_liftPathname == null)
 				{
-					liftPathname = Path.Combine(liftProjectDir, Cache.ProjectId.Name + ".lift");
+					_liftPathname = Path.Combine(liftProjectDir, Cache.ProjectId.Name + ".lift");
 				}
-				var outPath = liftPathname + ".tmp";
 				progressDialog.Message = String.Format(ResourceHelper.GetResourceString("kstidExportingEntries"),
 					Cache.LangProject.LexDbOA.Entries.Count());
 				progressDialog.Minimum = 0;
@@ -749,29 +748,27 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				exporter.UpdateProgress += OnDumperUpdateProgress;
 				exporter.SetProgressMessage += OnDumperSetProgressMessage;
 				exporter.ExportPicturesAndMedia = true;
-				using (TextWriter textWriter = new StreamWriter(outPath))
+				using (TextWriter textWriter = new StreamWriter(_liftPathname))
 				{
-					exporter.ExportLift(textWriter, Path.GetDirectoryName(outPath));
+					exporter.ExportLift(textWriter, Path.GetDirectoryName(_liftPathname));
 				}
+				LiftSorter.SortLiftFile(_liftPathname);
 
 				//Output the Ranges file
-				var pathWithFilename = outPath.Substring(0, outPath.Length - @".lift.tmp".Length);
-				var outPathRanges = Path.ChangeExtension(pathWithFilename, @"lift-ranges");
+				var outPathRanges = Path.ChangeExtension(_liftPathname, @"lift-ranges");
 				using (var stringWriter = new StringWriter(new StringBuilder()))
 				{
 					exporter.ExportLiftRanges(stringWriter);
-					using (var xmlWriter = XmlWriter.Create(outPathRanges, CanonicalXmlSettings.CreateXmlWriterSettings()))
-					{
-						var doc = new XmlDocument();
-						doc.LoadXml(stringWriter.ToString());
-						doc.WriteContentTo(xmlWriter);
-					}
-					return outPath;
+					File.WriteAllText(outPathRanges, stringWriter.ToString());
 				}
+				LiftSorter.SortLiftRangesFile(outPathRanges);
+
+				return _liftPathname;
 			}
 			catch
 			{
-				return null;
+				_liftPathname = null;
+				return _liftPathname;
 			}
 		}
 
