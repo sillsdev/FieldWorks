@@ -197,12 +197,6 @@
     <value>Searching Scripture for occurrences of the word</value>
     <comment>longer explanation goes with ksFindingOccurrences</comment>
   </data>
-  <data name="ksPhonologicalFeatures" xml:space="preserve">
-    <value>Phonological Features</value>
-  </data>
-  <data name="ksPhonologicalFeaturesAdd" xml:space="preserve">
-    <value>The phonological feature I need is not shown here.  Add a new phonological feature.</value>
-  </data>
   <data name="ks_DontCare_" xml:space="preserve">
     <value>&lt;n/a&gt;</value>
   </data>
@@ -458,5 +452,11 @@
   <data name="ksAssignFeaturesToPhonemes" xml:space="preserve">
     <value>Assign Features to Phonemes</value>
     <comment>Replaces the list choice tab label</comment>
+  </data>
+  <data name="ksPhonologicalFeatures" xml:space="preserve">
+    <value>Phonological Features</value>
+  </data>
+  <data name="ksPhonologicalFeaturesAdd" xml:space="preserve">
+    <value>The phonological feature I need is not shown here.  Add a new phonological feature.</value>
   </data>
 </root>

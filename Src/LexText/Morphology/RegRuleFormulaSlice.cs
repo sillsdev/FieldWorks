@@ -79,11 +79,5 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
-		public bool OnContextSetVariables(object args)
-		{
-			CheckDisposed();
-			RegRuleFormulaControl.SetContextVariables();
-			return true;
-		}
 	}
 }

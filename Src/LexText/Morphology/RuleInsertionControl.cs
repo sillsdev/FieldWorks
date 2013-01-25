@@ -351,30 +351,83 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case RuleInsertType.FEATURES:
 					using (var featChooser = new PhonologicalFeatureChooserDlg())
 					{
-						featChooser.SetDlgInfo(m_cache, m_mediator);
-						if (this.Parent is SIL.FieldWorks.XWorks.MorphologyEditor.RegRuleFormulaControl)
+						RegRuleFormulaControl ruleControl = null;
+						IPhNCFeatures natClass = null;
+						if (Parent is RegRuleFormulaControl)
+						{
+							featChooser.ShowFeatureConstraintValues = true;
+							ruleControl = Parent as RegRuleFormulaControl;
+							IPhSimpleContextNC ctxt = null;
+							UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+							{
+								// create an empty natural class assuming user will fill it
+								natClass = CreatePhNcFeaturesForAContext();
+								// Now we need to insert the (empty) natural class into a context
+								// and remember that we did it (via a non-null data variable)
+								data = natClass;
+								Insert(this, new RuleInsertEventArgs(type, data, undo, redo));
+								// Now we can use the context
+								ctxt = ruleControl.CurrentContext as IPhSimpleContextNC;
+								ctxt.FeatureStructureRA = natClass;
+							});
+							var rule = ruleControl.RHS;
+							featChooser.SetDlgInfo(m_cache, m_mediator, natClass.FeaturesOA, rule.OwningRule, ctxt);
+							featChooser.Title = MEStrings.ksRuleFeatsChooserTitle;
 							featChooser.SetHelpTopic("khtpChoose-Grammar-PhonFeats-RegRuleFormulaControl");
-						else if (this.Parent is SIL.FieldWorks.XWorks.MorphologyEditor.MetaRuleFormulaControl)
+						}
+						else if (Parent is MetaRuleFormulaControl)
+						{
+							featChooser.SetDlgInfo(m_cache, m_mediator);
 							featChooser.SetHelpTopic("khtpChoose-Grammar-PhonFeats-MetaRuleFormulaControl");
-						else if (this.Parent is SIL.FieldWorks.XWorks.MorphologyEditor.AffixRuleFormulaControl)
+						}
+						else if (Parent is AffixRuleFormulaControl)
+						{
+							featChooser.SetDlgInfo(m_cache, m_mediator);
 							featChooser.SetHelpTopic("khtpChoose-LexiconEdit-PhonFeats-AffixRuleFormulaControl");
+						}
 						DialogResult res = featChooser.ShowDialog();
 						if (res == DialogResult.OK)
 						{
 							UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
 							{
-								var featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
-								m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
-								featNC.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCFeatsName, m_ruleName));
-								featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-								featChooser.FS = featNC.FeaturesOA;
-								featChooser.UpdateFeatureStructure();
-								data = featNC;
+								if (Parent is RegRuleFormulaControl)
+								{
+									if (data != null)
+									{   // we had to create a dummy natural class to create the context
+										// so we do not need to insert anything but we do need to redraw
+										data = null;
+										if (ruleControl != null)
+											ruleControl.RootSite.RootBox.Reconstruct();
+									}
+									else
+										data = featChooser.NaturalClassFeatures;
+								}
+								else
+								{
+									var featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
+									m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
+									featNC.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCFeatsName, m_ruleName));
+									featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+									featChooser.FS = featNC.FeaturesOA;
+									featChooser.UpdateFeatureStructure();
+									data = featNC;
+								}
 							});
 						}
-						else if (res != DialogResult.Cancel)
+						else
 						{
-							featChooser.HandleJump();
+							if (data != null)
+							{
+								// we had to create a temporary natural class;  it is no longer needed
+								UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+								{
+									var phonData = natClass.Owner as IPhPhonData;
+									phonData.NaturalClassesOS.Remove(natClass);
+									data = null; // no insertion is needed
+								});
+							}
+							if (res != DialogResult.Cancel)
+								featChooser.HandleJump();
 						}
 					}
 					break;
@@ -397,6 +450,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// (such as inserting X Variable, LT-11136) need the event even if data is empty, and the empty UOW
 			// is discarded harmlessly.
 			Insert(this, new RuleInsertEventArgs(type, data, undo, redo));
+		}
+
+		private IPhNCFeatures CreatePhNcFeaturesForAContext()
+		{
+			IPhNCFeatures natClass;
+			natClass = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
+			m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(natClass);
+			natClass.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCFeatsName, m_ruleName));
+			natClass.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			return natClass;
 		}
 
 		internal ICmObject DisplayChooser(string fieldName, string linkText, string toolName, string guiControl,

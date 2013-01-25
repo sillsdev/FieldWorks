@@ -756,7 +756,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			UndoableUnitOfWorkHelper.Do(MEStrings.ksAffixRuleUndoSetMappingFeatures,
 				MEStrings.ksAffixRuleRedoSetMappingFeatures, m_cache.ActionHandlerAccessor, () =>
 			{
-				using (var featChooser = new PhonologicalFeatureChooserDlg())
+				using (var featChooser = new LexText.Controls.PhonologicalFeatureChooserDlg())
 				{
 					var obj = CurrentObject;
 					switch (obj.ClassID)

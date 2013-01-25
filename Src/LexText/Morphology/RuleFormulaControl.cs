@@ -149,6 +149,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				CheckDisposed();
 				var obj = CurrentObject;
+				if (obj == null)
+					return null;
 				if (obj.ClassID == PhIterationContextTags.kClassId)
 				{
 					var iterCtxt = obj as IPhIterationContext;
@@ -782,27 +784,36 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			bool reconstruct = false;
 
-			UndoableUnitOfWorkHelper.Do(MEStrings.ksRuleUndoSetFeatures, MEStrings.ksRuleRedoSetFeatures, m_cache.ActionHandlerAccessor, () =>
+			using (var featChooser = new LexText.Controls.PhonologicalFeatureChooserDlg())
 			{
-				using (var featChooser = new PhonologicalFeatureChooserDlg())
+				var ctxt = CurrentContext as IPhSimpleContextNC;
+				IPhNCFeatures natClass = ctxt.FeatureStructureRA as IPhNCFeatures;
+				featChooser.Title = MEStrings.ksRuleFeatsChooserTitle;
+				if (m_obj is IPhSegRuleRHS)
 				{
-					var ctxt = CurrentContext as IPhSimpleContextNC;
-					IPhNCFeatures natClass = ctxt.FeatureStructureRA as IPhNCFeatures;
-					featChooser.Title = MEStrings.ksRuleFeatsChooserTitle;
-
+					featChooser.ShowFeatureConstraintValues = true;
+					if (natClass.FeaturesOA != null)
+					{
+						var rule = m_obj as IPhSegRuleRHS;
+						featChooser.SetDlgInfo(m_cache, Mediator, natClass.FeaturesOA, rule.OwningRule, ctxt);
+					}
+					else
+						featChooser.SetDlgInfo(m_cache, Mediator, natClass, PhNCFeaturesTags.kflidFeatures);
+				}
+				else
+				{
 					if (natClass.FeaturesOA != null)
 						featChooser.SetDlgInfo(m_cache, Mediator, natClass.FeaturesOA);
 					else
-						featChooser.SetDlgInfo(m_cache, Mediator, natClass, PhNCFeaturesTags.kflidFeatures);
-
-					// FWR-2405: Setting the Help topic requires that the Mediator be already set!
-					featChooser.SetHelpTopic("khtpChoose-Grammar-PhonRules-SetPhonologicalFeatures");
-					DialogResult res = featChooser.ShowDialog();
-					if (res != DialogResult.Cancel)
-						featChooser.HandleJump();
-					reconstruct = res == DialogResult.OK;
+						featChooser.SetDlgInfo(m_cache, Mediator);
 				}
-			});
+				// FWR-2405: Setting the Help topic requires that the Mediator be already set!
+				featChooser.SetHelpTopic("khtpChoose-Grammar-PhonRules-SetPhonologicalFeatures");
+				DialogResult res = featChooser.ShowDialog();
+				if (res != DialogResult.Cancel)
+					featChooser.HandleJump();
+				reconstruct = res == DialogResult.OK;
+			}
 
 			m_view.Select();
 			if (reconstruct)

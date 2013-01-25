@@ -36,7 +36,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_menuId = "mnuPhRegularRule";
 		}
 
-		IPhSegRuleRHS RHS
+		/// <summary>
+		/// the right hand side
+		/// </summary>
+		public IPhSegRuleRHS RHS
 		{
 			get
 			{
@@ -812,33 +815,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		/// <summary>
-		/// Sets the alpha variables on the currently selected natural class simple context.
-		/// </summary>
-		public void SetContextVariables()
-		{
-			var sel = SelectionHelper.Create(m_view);
-			bool reconstruct = false;
-			UndoableUnitOfWorkHelper.Do(MEStrings.ksRegRuleUndoSetVariables, MEStrings.ksRegRuleRedoSetVariables, RHS, () =>
-			{
-				using (var featChooser = new FeatureConstraintChooserDlg())
-				{
-					var ctxt = CurrentContext as IPhSimpleContextNC;
-					featChooser.SetDlgInfo(m_cache, Mediator, RHS.OwningRule, ctxt);
-					DialogResult res = featChooser.ShowDialog();
-					if (res != DialogResult.Cancel)
-						featChooser.HandleJump();
-					reconstruct = res == DialogResult.OK;
-				}
-			});
-
-			m_view.Select();
-			if (reconstruct)
-			{
-				m_view.RootBox.Reconstruct();
-				sel.RestoreSelectionAndScrollPos();
-			}
-		}
 
 		protected override void OnSizeChanged(EventArgs e)
 		{

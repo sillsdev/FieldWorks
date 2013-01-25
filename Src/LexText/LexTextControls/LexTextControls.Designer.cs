@@ -1025,6 +1025,24 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;agree&gt;.
+        /// </summary>
+        internal static string ksFeatConstrAgree {
+            get {
+                return ResourceManager.GetString("ksFeatConstrAgree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;disagree&gt;.
+        /// </summary>
+        internal static string ksFeatConstrDisagree {
+            get {
+                return ResourceManager.GetString("ksFeatConstrDisagree", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Features for {0}:.
         /// </summary>
         internal static string ksFeaturesForX {

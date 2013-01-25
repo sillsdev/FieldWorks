@@ -81,7 +81,6 @@
 		</command>
 		<command id="CmdCtxtSetOccur" label="Set occurrence (min. and max.)..." message="ContextSetOccurrence"/>
 		<command id="CmdCtxtSetFeatures" label="Set Phonological Features..." message="ContextSetFeatures"/>
-		<command id="CmdCtxtSetVariables" label="Set Feature Variables..." message="ContextSetVariables"/>
 		<command id="CmdCtxtJumpToNC" label="Show in Natural Classes list" message="ContextJumpToNaturalClass"/>
 		<command id="CmdCtxtJumpToPhoneme" label="Show in Phonemes list" message="ContextJumpToPhoneme"/>
 
@@ -117,9 +116,16 @@
 								hscroll="true" editable="false" selectColumn="false">
 			  <columns>
 				<column label="Value" width="20%">
-				  <obj class="FsClosedFeature" field="DummyValue" layout="empty">
-					<string field="Abbreviation" ws="$ws=best analysis"/>
-				  </obj>
+					<choice>
+						<where class="FsClosedFeature" field="DummyPolarity" stringequals="">
+							<obj class="FsClosedFeature" field="DummyValue" layout="empty">
+								<string field="Abbreviation" ws="$ws=best analysis"/>
+							</obj>
+						</where>
+						<otherwise>
+							<string field="DummyPolarity"/>
+						</otherwise>
+					</choice>
 				</column>
 				<column label="Abbreviation" width="10%" layout="Abbreviation" ws="$ws=best analysis" field="Abbreviation" visibility="menu"/>
 				<column label="Name" width="80%" layout="Name" ws="$ws=best analysis" field="Name"/>
@@ -308,7 +314,6 @@
 			<item command="CmdCtxtSetOccur"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdCtxtSetFeatures"/>
-			<item command="CmdCtxtSetVariables"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdCtxtJumpToNC"/>
 			<item command="CmdCtxtJumpToPhoneme"/>

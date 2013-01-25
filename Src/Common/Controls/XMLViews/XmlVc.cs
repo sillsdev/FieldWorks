@@ -3490,7 +3490,10 @@ namespace SIL.FieldWorks.Common.Controls
 					int var;
 					int realWs = tsString.get_Properties(0).GetIntPropValues((int) FwTextPropType.ktptWs, out var);
 					ITsStrFactory tsf = TsStrFactoryClass.Create();
-					vwenv.NoteStringValDependency(hvo, flid, realWs, tsf.MakeString(value, realWs));
+					// Third argument must be 0 to indicate a non-multistring.
+					// Fourth argument is the TsString version of the string we are testing against.
+					// The display will update for a change in whether it is true that sda.get_StringProp(hvo, flid) is equal to arg4
+					vwenv.NoteStringValDependency(hvo, flid, 0, tsf.MakeString(stringValue, realWs));
 					value = tsString.Text;
 				} // otherwise we don't have an object, and will treat the current value as null.
 				if (value == null && stringValue == "")
