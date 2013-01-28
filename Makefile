@@ -44,6 +44,7 @@ externaltargets: \
 	COM-all \
 	COM-install \
 	Win32More \
+	installable-COM-all \
 
 externaltargets-test: \
 	Win32Base-check \
@@ -157,6 +158,7 @@ clean: \
 	COM-uninstall \
 	COM-distclean \
 	COM-autodegen \
+	installable-COM-clean \
 	Cellar-clean \
 	Generic-clean \
 	views-clean \
@@ -300,16 +302,21 @@ uninstall-menuentries:
 	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-{te,flex}.png
 	rm -f $(DESTDIR)/usr/share/applications/fieldworks-{te,flex}.desktop
 
-install-COM:
+installable-COM-all:
 	mkdir -p $(COM_DIR)/installer$(ARCH)
 	-(cd $(COM_DIR)/installer$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && \
 		../configure --prefix=/usr/lib/fieldworks --libdir=/usr/lib/fieldworks)
+	$(MAKE) -C$(COM_DIR)/installer$(ARCH) all
+
+installable-COM-clean:
+	$(RM) -r $(COM_DIR)/installer$(ARCH)
+
+install-COM: installable-COM-all
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) install
 
 uninstall-COM:
 	[ -e $(COM_DIR)/installer$(ARCH)/Makefile ] && \
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) uninstall || true
-	rm -rf $(COM_DIR)/installer$(ARCH)
 
 ##########
 
