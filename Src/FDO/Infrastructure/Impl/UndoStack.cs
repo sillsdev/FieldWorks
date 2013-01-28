@@ -16,6 +16,7 @@ using System.Linq;
 using System.Threading;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
+using SIL.Utils;
 using System.Diagnostics;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
@@ -695,7 +696,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (m_uowService.CurrentProcessingState != UnitOfWorkService.FdoBusinessTransactionState.ProcessingDataChanges)
 				throw new InvalidOperationException("Rollback not supported in the current state.");
 
-			m_uowService.m_lock.ExitWriteLock();
+			Debug.Assert(m_uowService.m_lock.IsWriteLockHeld, "Trying Rollback without write lock!");
+			if (m_uowService.m_lock.IsWriteLockHeld)
+				m_uowService.m_lock.ExitWriteLock();
+			else
+				Logger.WriteEvent("Trying to rollback without write lock!");
 
 			m_currentBundle.Rollback();
 			m_currentBundle = null;
