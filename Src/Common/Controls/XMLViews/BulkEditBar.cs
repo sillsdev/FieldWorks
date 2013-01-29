@@ -645,8 +645,12 @@ namespace SIL.FieldWorks.Common.Controls
 				colName = XmlUtils.GetManditoryAttributeValue(colSpec, "label");
 			return colName;
 		}
-
-		BulkEditItem MakeItem(XmlNode colSpec)
+		/// <summary>
+		/// Make an item
+		/// </summary>
+		/// <param name="colSpec"></param>
+		/// <returns></returns>
+		protected virtual BulkEditItem MakeItem(XmlNode colSpec)
 		{
 			string beSpec = XmlUtils.GetOptionalAttributeValue(colSpec, "bulkEdit", "");
 			IBulkEditSpecControl besc = null;
@@ -3934,6 +3938,34 @@ namespace SIL.FieldWorks.Common.Controls
 		public TabPage ListChoiceTab
 		{
 			get { return m_listChoiceTab; }
+		}
+		/// <summary>
+		/// Get the bulk edit operation label
+		/// </summary>
+		public Label BulkEditOperationLabel
+		{
+			get { return m_bulkEditOperationLabel; }
+		}
+		/// <summary>
+		/// Get label2 (the target field)
+		/// </summary>
+		public Label TargetFieldLabel
+		{
+			get { return label2; }
+		}
+		/// <summary>
+		/// Get the operation label
+		/// </summary>
+		public Label OperationLabel
+		{
+			get { return m_operationLabel; }
+		}
+		/// <summary>
+		/// Get the list choice target combo
+		/// </summary>
+		public FwOverrideComboBox TargetCombo
+		{
+			get { return m_listChoiceTargetCombo; }
 		}
 		/// <summary>
 		/// Get the bulk copy tab page

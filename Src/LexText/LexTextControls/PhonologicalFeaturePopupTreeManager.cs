@@ -130,7 +130,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							if (dlg.FS != null)
 							{
 								var sFeatures = dlg.FS.LongName;
-								if (!pt.Nodes.ContainsKey(sFeatures))
+								if (string.IsNullOrEmpty(sFeatures))
+									;  // user did not select anything in chooser; nothing to do
+								else if (!pt.Nodes.ContainsKey(sFeatures))
 								{
 									var newSelectedNode = new HvoTreeNode(fs.LongNameTSS, fs.Hvo);
 									pt.Nodes.Add(newSelectedNode);

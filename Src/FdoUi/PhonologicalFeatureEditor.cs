@@ -41,6 +41,7 @@ namespace SIL.FieldWorks.FdoUi
 		private IFsClosedFeature m_closedFeature;
 		private string m_featDefnAbbr;
 		public event FwSelectionChangedEventHandler ValueChanged;
+		public event EventHandler<TargetFeatureEventArgs> EnableTargetFeatureCombo;
 
 		public PhonologicalFeatureEditor()
 		{
@@ -284,6 +285,8 @@ namespace SIL.FieldWorks.FdoUi
 					{
 						SelectedHvo = ptm.ClosedFeature.Hvo;
 						SelectedLabel = FdoUiStrings.ksRemoveThisFeature;
+						if (EnableTargetFeatureCombo != null)
+							EnableTargetFeatureCombo(this, new TargetFeatureEventArgs(true));
 					}
 				}
 				else
@@ -293,17 +296,25 @@ namespace SIL.FieldWorks.FdoUi
 					{
 						SelectedHvo = hvo;
 						SelectedLabel = e.Node.Text;
+						if (EnableTargetFeatureCombo != null)
+							// since we're using the phonological feature chooser, disable the
+							// Target Feature combo (it's no longer relevant)
+							EnableTargetFeatureCombo(this, new TargetFeatureEventArgs(false));
 					}
 					else if (obj is IFsSymFeatVal)
 					{
 						SelectedHvo = hvo;
 						SelectedLabel = e.Node.Text;
+						if (EnableTargetFeatureCombo != null)
+							EnableTargetFeatureCombo(this, new TargetFeatureEventArgs(true));
 					}
 					else
 					{
 						SelectedHvo = 0;
 						SelectedLabel = "";
 						m_tree.Text = "";
+						if (EnableTargetFeatureCombo != null)
+							EnableTargetFeatureCombo(this, new TargetFeatureEventArgs(true));
 					}
 				}
 			}
@@ -625,6 +636,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public class BulkEditBarPhonologicalFeatures : BulkEditBar
 	{
+		public event EventHandler<TargetFeatureEventArgs> EnableTargetFeatureCombo;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create one
@@ -643,8 +655,26 @@ namespace SIL.FieldWorks.FdoUi
 			m_operationsTabControl.Controls.Remove(FindReplaceTab);
 			m_operationsTabControl.Controls.Remove(TransduceTab);
 			m_operationsTabControl.Controls.Remove(DeleteTab);
-			m_listChoiceControl.Text = "";
+			if (m_listChoiceControl != null)
+				m_listChoiceControl.Text = "";
 			EnablePreviewApplyForListChoice();
+		}
+
+		void BulkEditBarPhonologicalFeatures_EnableTargetFeatureCombo(object sender, TargetFeatureEventArgs e)
+		{
+			TargetCombo.Enabled = e.Enable;
+		}
+
+		protected override BulkEditItem MakeItem(XmlNode colSpec)
+		{
+			BulkEditItem bei = base.MakeItem(colSpec);
+			if (bei == null)
+				return null;
+			var besc = bei.BulkEditControl as PhonologicalFeatureEditor;
+			if (besc != null)
+				besc.EnableTargetFeatureCombo +=
+					new EventHandler<TargetFeatureEventArgs>(BulkEditBarPhonologicalFeatures_EnableTargetFeatureCombo);
+			return bei;
 		}
 
 		protected override void ShowPreviewItems(ProgressState state)
@@ -704,6 +734,28 @@ namespace SIL.FieldWorks.FdoUi
 				}
 			}
 		}
+		protected override void Dispose(bool disposing)
+		{
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+			{
+				foreach (BulkEditItem bei in m_beItems)
+				{
+					if (bei != null)
+					{
+						var besc = bei.BulkEditControl as PhonologicalFeatureEditor;
+						if (besc != null)
+							besc.EnableTargetFeatureCombo -=
+								new EventHandler<TargetFeatureEventArgs>(BulkEditBarPhonologicalFeatures_EnableTargetFeatureCombo);
+					}
+				}
+			}
+
+			base.Dispose(disposing);
+		}
+
 	}
 	/// <summary>
 	/// Browse viewer used for assigning phonolgical features to phonemes
@@ -739,5 +791,14 @@ namespace SIL.FieldWorks.FdoUi
 			return new BulkEditBarPhonologicalFeatures(bv, spec, mediator, cache);
 		}
 
+	}
+	public class TargetFeatureEventArgs : EventArgs
+	{
+		public TargetFeatureEventArgs(bool enable)
+		{
+			Enable = enable;
+		}
+
+		public bool Enable { get; private set; }
 	}
 }
