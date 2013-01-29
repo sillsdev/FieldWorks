@@ -231,6 +231,53 @@ namespace SIL.FieldWorks.FDO
 	}
 
 	/// <summary>
+	/// Methods added for importing objects with known/fixed guids.
+	/// </summary>
+	public partial interface IFsFeatStrucTypeFactory
+	{
+		/// <summary>
+		/// Create a new instance with the given guid and owner.
+		/// It will be added to the end of the owner's TypesOC.
+		/// </summary>
+		IFsFeatStrucType Create(Guid guid, IFsFeatureSystem owner);
+	}
+
+	/// <summary>
+	/// Methods added for importing objects with known/fixed guids.
+	/// </summary>
+	public partial interface IFsClosedFeatureFactory
+	{
+		/// <summary>
+		/// Create a new instance with the given guid and owner.
+		/// It will be added to the end of the owner's FeaturesOC.
+		/// </summary>
+		IFsClosedFeature Create(Guid guid, IFsFeatureSystem owner);
+	}
+
+	/// <summary>
+	/// Methods added for importing objects with known/fixed guids.
+	/// </summary>
+	public partial interface IFsComplexFeatureFactory
+	{
+		/// <summary>
+		/// Create a new instance with the given guid and owner.
+		/// It will be added to the end of the owner's FeaturesOC.
+		/// </summary>
+		IFsComplexFeature Create(Guid guid, IFsFeatureSystem owner);
+	}
+
+	/// <summary>
+	/// Methods added for importing objects with known/fixed guids.
+	/// </summary>
+	public partial interface IFsSymFeatValFactory
+	{
+		/// <summary>
+		/// Create a new instance with the given guid and owner.
+		/// It will be added to the end of the owner's ValuesOC.
+		/// </summary>
+		IFsSymFeatVal Create(Guid guid, IFsClosedFeature owner);
+	}
+	/// <summary>
 	/// IMoMorphType factory additions.
 	/// </summary>
 	public partial interface IMoMorphTypeFactory

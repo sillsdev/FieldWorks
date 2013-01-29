@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><!-- XMLMind XML Editor template file for Feature Catalog -->
+﻿<?xml version="1.0" encoding="UTF-8"?><!-- XMLMind XML Editor template file for Feature Catalog -->
 
 <!DOCTYPE FeatureCatalog
   SYSTEM  "FeatureCatalog.dtd">
 <FeatureCatalog afterSeparator="." complexNameFirst="yes" complexNameSeparator=":"><!--FieldWorks Language Explorer Feature Catalog content.-->
-   <item id="gAdjective" posid="Adjective" status="visible" type="group">
+   <item id="gAdjective" posid="Adjective" guid="32367b32-b93c-403e-a305-997e54e96289" status="visible" type="group">
 	  <Languages>
 		 <Language>
 			<LangCode>en</LangCode>
@@ -13,7 +13,7 @@
 			<Citations/>
 		 </Language>
 	  </Languages>
-	  <item id="fDeg" type="feature">
+	  <item id="fDeg" guid="b2646044-b47e-46d7-8dd3-d57c079e7b5f" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -23,7 +23,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item id="vPositive" type="value">
+		 <item id="vPositive" guid="a2c5215b-86f7-4851-ac71-ab04c47137cf" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -34,7 +34,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vComp" type="value">
+		 <item id="vComp" guid="05c3dd95-8ec3-4b13-bd18-734705b00cf7" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -45,7 +45,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vSup" type="value">
+		 <item id="vSup" guid="cc1dcb22-77fb-4709-8171-828646b697f0" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -57,7 +57,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="tAdjAgr" type="fsType">
+	  <item id="tAdjAgr" guid="3293182e-dbf8-460f-a1db-947a5a7bb03b" type="fsType">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -67,7 +67,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item carry="no" embed="tCommonAgr tCaseAgr" id="cAdjAgr" type="complex">
+		 <item carry="no" embed="tCommonAgr tCaseAgr" id="cAdjAgr" guid="58a4cedb-7ed8-4548-8dae-770294804ec9" type="complex">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -80,7 +80,7 @@
 		 </item>
 	  </item>
    </item>
-   <item id="gArticle" posid="Determiner" status="visible" type="group">
+   <item id="gArticle" posid="Determiner" guid="23bf4b3a-6b9b-40b9-af7f-62b1f17e68e7" status="visible" type="group">
 	  <Languages>
 		 <Language>
 			<LangCode>en</LangCode>
@@ -90,7 +90,7 @@
 			<Citations/>
 		 </Language>
 	  </Languages>
-	  <item id="tArtAgr" type="fsType">
+	  <item id="tArtAgr" guid="6c533244-37a5-4e7f-ac17-9527e4c89207" type="fsType">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -100,7 +100,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item carry="no" embed="tCommonAgr tCaseAgr" id="cArtAgr" type="complex">
+		 <item carry="no" embed="tCommonAgr tCaseAgr" id="cArtAgr" guid="a770c9f8-fb09-4e64-b4f9-dc3aedc6506d" type="complex">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -112,7 +112,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fArtSubtype" type="feature">
+	  <item id="fArtSubtype" guid="c4554028-7be9-4bd9-9264-fb831e78547a" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -122,7 +122,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item id="vArtDem" type="value">
+		 <item id="vArtDem" guid="16a7675c-2f4f-4e4a-8be0-31dc9e936d4d" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -135,7 +135,7 @@
 		 </item>
 	  </item>
    </item>
-   <item id="gPronoun" posid="Pronoun" status="visible" type="group">
+   <item id="gPronoun" posid="Pronoun" guid="0c149a94-247a-46a2-a38e-2d26f3012dfa" status="visible" type="group">
 	  <Languages>
 		 <Language>
 			<LangCode>en</LangCode>
@@ -145,7 +145,7 @@
 			<Citations/>
 		 </Language>
 	  </Languages>
-	  <item id="tProAgr" type="fsType">
+	  <item id="tProAgr" guid="218d231a-6247-45a0-b9ee-82d6d5c70a25" type="fsType">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -155,7 +155,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item carry="no" embed="tPersonAgr tCommonAgr tCaseAgr" id="cProAgr" type="complex">
+		 <item carry="no" embed="tPersonAgr tCommonAgr tCaseAgr" id="cProAgr" guid="6ad140c4-54b4-463d-9f9a-210a7c779578" type="complex">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -167,7 +167,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fProSubtype" type="feature">
+	  <item id="fProSubtype" guid="00e226d2-743b-4e71-8663-98224b36596d" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -177,7 +177,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item id="vPoss" type="value">
+		 <item id="vPoss" guid="3f8de858-beeb-4232-9bf7-e8fc9b0a67ee" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -188,7 +188,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDem" type="value">
+		 <item id="vDem" guid="b7c19058-2860-42c4-9528-68d821dd3cce" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -199,7 +199,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vRefl" type="value">
+		 <item id="vRefl" guid="f2e04237-d7cb-4faa-96bf-017c6de9d851" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -210,7 +210,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vRecip" type="value">
+		 <item id="vRecip" guid="b50bb816-73d8-45af-b548-1466b3d96024" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -223,7 +223,7 @@
 		 </item>
 	  </item>
    </item>
-   <item id="gNoun" posid="Noun" status="visible" type="group">
+   <item id="gNoun" posid="Noun" guid="43785017-9e86-4250-9405-9ccd0dca5c05" status="visible" type="group">
 	  <Languages>
 		 <Language>
 			<LangCode>en</LangCode>
@@ -233,7 +233,7 @@
 			<Citations/>
 		 </Language>
 	  </Languages>
-	  <item id="tNounAgr" type="fsType">
+	  <item id="tNounAgr" guid="0a6c2f79-e440-4524-bd07-91bbe2b314bb" type="fsType">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -243,7 +243,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item carry="no" embed="tCommonAgr tCaseAgr" id="cNounAgr" type="complex">
+		 <item carry="no" embed="tCommonAgr tCaseAgr" id="cNounAgr" guid="df4a248b-747a-4240-9618-0e1f77059de7" type="complex">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -255,7 +255,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fDefiniteness" type="feature">
+	  <item id="fDefiniteness" guid="4508d5fa-681e-4f22-ad40-b95d35878694" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -265,7 +265,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item id="vDefIdent" type="value">
+		 <item id="vDefIdent" guid="85f11237-9fb7-4d18-8298-29c913470d5b" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -282,7 +282,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vGenTerm" type="value">
+		 <item id="vGenTerm" guid="963f5458-2a16-4c2c-b2aa-10aa50481cee" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -297,7 +297,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vIndef" type="value">
+		 <item id="vIndef" guid="6fdc52dd-b1a0-420b-a1c0-dcc4b2c46863" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -314,7 +314,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vNonSpec" type="value">
+		 <item id="vNonSpec" guid="c8efc558-8d43-4aef-97bb-e41bfe5ee51b" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -328,7 +328,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vSpec" type="value">
+		 <item id="vSpec" guid="6350cab9-8c4f-40a1-b50b-619f620c6351" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -343,7 +343,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fSemanticRole" type="feature">
+	  <item id="fSemanticRole" guid="195961fb-0573-4834-bdfd-3528364fe24d" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -353,7 +353,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item id="vAccomp" type="value">
+		 <item id="vAccomp" guid="e266dd18-d1cb-4358-ae93-0d087c97b665" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -364,7 +364,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vAgt" type="value">
+		 <item id="vAgt" guid="ae3819b7-0d06-45fb-b412-7284de7b6ad7" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -375,7 +375,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBenefic" type="value">
+		 <item id="vBenefic" guid="db943d5f-06e1-4844-b570-77761cb03acd" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -386,7 +386,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vCauser" type="value">
+		 <item id="vCauser" guid="23f729e3-6607-467a-9e3e-0610a5640959" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -397,7 +397,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vCounterAgt" type="value">
+		 <item id="vCounterAgt" guid="fe076c48-e247-4dd6-8038-9da013504e3a" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -408,7 +408,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDatRole" type="value">
+		 <item id="vDatRole" guid="f09c2f4c-744f-42aa-ba8e-8dc6f8af6924" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -419,7 +419,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vExp" type="value">
+		 <item id="vExp" guid="70eaeb32-8801-4d4c-aa04-85442d2b3bef" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -430,7 +430,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vFact" type="value">
+		 <item id="vFact" guid="0cd33f55-31fb-4db2-95d6-7d50a20fbf77" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -441,7 +441,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vGoal" type="value">
+		 <item id="vGoal" guid="e43f8f15-b593-4364-8dd8-0450e3cfa245" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -452,7 +452,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vInstRole" type="value">
+		 <item id="vInstRole" guid="8aecc682-f082-40fa-81b0-b3313365ff04" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -463,7 +463,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vLocRole" type="value">
+		 <item id="vLocRole" guid="b59d0c39-37c3-424e-9ccb-62ec0093ed2f" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -474,7 +474,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vManner" type="value">
+		 <item id="vManner" guid="65dec354-8bfc-4242-bb47-73761a28921e" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -485,7 +485,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vMeas" type="value">
+		 <item id="vMeas" guid="4ebc6aab-679f-405b-82ab-a06823494fa0" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -496,7 +496,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPath" type="value">
+		 <item id="vPath" guid="fdda99a0-4139-4a21-a0b1-1d5ae9ef7043" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -507,7 +507,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPat" type="value">
+		 <item id="vPat" guid="31cdf4bb-380f-4246-bec0-ebbe796404e6" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -518,7 +518,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vRange" type="value">
+		 <item id="vRange" guid="56a89761-b82f-49b5-adf1-a527acafd1b3" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -529,7 +529,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vResult" type="value">
+		 <item id="vResult" guid="2ccfac1e-b950-4e2e-adc6-9fed467bfb25" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -540,7 +540,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vSrc" type="value">
+		 <item id="vSrc" guid="b74940b2-dddc-487b-b2c7-5cc0705c03ca" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -551,7 +551,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vTime" type="value">
+		 <item id="vTime" guid="5bf0124c-0065-4d77-b65f-e9eb1d9882bf" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -563,7 +563,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="tPossessorAgr" type="fsType">
+	  <item id="tPossessorAgr" guid="a0985e3e-8a82-4ed0-a9f0-65181d501302" type="fsType">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -573,7 +573,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item carry="no" embed="tPersonAgr tCommonAgr" id="cPossessorAgr" type="complex">
+		 <item carry="no" embed="tPersonAgr tCommonAgr" id="cPossessorAgr" guid="a949ac25-b288-4e3a-90b1-62b4340cc91b" type="complex">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -586,7 +586,7 @@
 		 </item>
 	  </item>
    </item>
-   <item id="gVerb" posid="Verb" status="visible" type="group">
+   <item id="gVerb" posid="Verb" guid="7dbce066-5f6e-4ccc-9961-6c09c34966ca" status="visible" type="group">
 	  <Languages>
 		 <Language>
 			<LangCode>en</LangCode>
@@ -596,7 +596,7 @@
 			<Citations/>
 		 </Language>
 	  </Languages>
-	  <item id="fAspect" type="feature">
+	  <item id="fAspect" guid="b7923e72-034a-4170-a57c-585b78993173" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -616,7 +616,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="xAor" target="vPerfv" type="xref">
+		 <item id="xAor" guid="f63c5bac-4bb8-435f-bca5-542af54c9ec2" target="vPerfv" type="xref">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -627,7 +627,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vAtelic" type="value">
+		 <item id="vAtelic" guid="e74cf921-e506-45ee-8f66-a8d537e299a3" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -640,7 +640,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vAtten" type="value">
+		 <item id="vAtten" guid="fae68f27-bbe7-4603-8a1f-e9e539295260" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -653,7 +653,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vCess" type="value">
+		 <item id="vCess" guid="57d927bb-5310-47ac-9a6b-ef6260e8cb70" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -669,7 +669,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="xCompl" target="vTelic" type="xref">
+		 <item id="xCompl" guid="0841520d-5ca8-4a61-94da-d8810cdc9e3c" target="vTelic" type="xref">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -680,7 +680,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vCont" type="value">
+		 <item id="vCont" guid="9a8ff6c8-8e9a-4d08-89e8-66187cd17d2f" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -695,7 +695,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDist" type="value">
+		 <item id="vDist" guid="36efc86f-64bf-4905-bade-a663964d3604" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -709,7 +709,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDur" target="vCont" type="xref">
+		 <item id="vDur" guid="bff94e40-5826-408d-be00-80bfa59b0242" target="vCont" type="xref">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -722,7 +722,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vFreq" type="value">
+		 <item id="vFreq" guid="4937c47c-25df-4d56-bfef-cd9a59d18d14" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -735,7 +735,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vHab" type="value">
+		 <item id="vHab" guid="28be379b-6c18-41f5-99b1-d1d4bdfc1a8d" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -751,7 +751,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vImpfv" type="value">
+		 <item id="vImpfv" guid="46a75311-c162-4653-b9d7-492db3793b72" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -768,7 +768,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="xIncep" target="vInchoa" type="xref">
+		 <item id="xIncep" guid="89c17f96-4a71-446c-a616-1d660bde3475" target="vInchoa" type="xref">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -781,7 +781,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vInchoa" type="value">
+		 <item id="vInchoa" guid="fae45e52-9338-4583-a00a-d26b77df125a" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -798,7 +798,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vIter" type="value">
+		 <item id="vIter" guid="a993ff60-74b5-4b57-a056-2e1f71022f8e" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -813,7 +813,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPerfv" type="value">
+		 <item id="vPerfv" guid="f1fb79ed-18cb-4029-bef4-40788642de4b" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -833,7 +833,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vProg" type="value">
+		 <item id="vProg" guid="75dc1a15-2d59-41a1-8f4f-3c2d07b34d47" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -850,7 +850,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="xPunct" target="vPerfv" type="xref">
+		 <item id="xPunct" guid="50177bc7-7ea0-4be5-b3b0-f5af32de194e" target="vPerfv" type="xref">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -861,7 +861,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vResultative" type="value">
+		 <item id="vResultative" guid="91af60a1-4d72-4dec-b4b1-7b3f2c222d40" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -874,7 +874,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="xStv" target="vPerfv" type="xref">
+		 <item id="xStv" guid="7b2ee61f-9632-4d1a-b724-83e74c1f71ef" target="vPerfv" type="xref">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -887,7 +887,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vTelic" type="value">
+		 <item id="vTelic" guid="a0db2254-e1bd-487f-9137-f36a4880e30f" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -901,7 +901,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fMood" type="feature">
+	  <item id="fMood" guid="415f2efc-4cb2-4a3e-b689-e028516bbc02" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -921,7 +921,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vAleth" type="value">
+		 <item id="vAleth" guid="cac4f32d-ee2d-4b27-b2f6-0246907e1e7c" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -936,7 +936,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vAssump" type="value">
+		 <item id="vAssump" guid="ced18a06-d396-462b-a4e4-ce981d5de869" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -947,7 +947,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vAudit" type="value">
+		 <item id="vAudit" guid="b4d829c0-0c61-4fb1-a37d-3e80989ce3f3" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -958,7 +958,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vCommis" type="value">
+		 <item id="vCommis" guid="c00455d4-d8dd-4424-93b1-e1b054e9b7b0" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -969,7 +969,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vCond" type="value">
+		 <item id="vCond" guid="a603d3cd-c3d8-4572-86e0-90e06a138062" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -982,7 +982,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDecl" type="value">
+		 <item id="vDecl" guid="8b966129-dd7f-4be3-b7df-ccac5056b456" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1002,7 +1002,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDeduct" type="value">
+		 <item id="vDeduct" guid="e98e977e-2948-46a8-b04f-e847dd41c4c2" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1013,7 +1013,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDelib" type="value">
+		 <item id="vDelib" guid="fa2cec93-aa99-4f42-b94d-a004f8d05b7a" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1027,7 +1027,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDeon" type="value">
+		 <item id="vDeon" guid="44c27bbc-d7c4-472b-9e8e-d0bfb31102ea" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1042,7 +1042,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDirectiv" type="value">
+		 <item id="vDirectiv" guid="55f44e34-d506-4f3a-9959-24018f16debb" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1057,7 +1057,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDubit" type="value">
+		 <item id="vDubit" guid="3371819c-5d3b-4965-b6b5-012289cd13bb" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1071,7 +1071,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vEpis" type="value">
+		 <item id="vEpis" guid="7636544d-30e7-4d63-ab6a-1545266e63cf" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1087,7 +1087,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vEvi" type="value">
+		 <item id="vEvi" guid="416965ea-8510-4335-8041-c27959a120bb" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1102,7 +1102,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vHypo" type="value">
+		 <item id="vHypo" guid="ec61a342-f108-4147-b437-f78fea6323ee" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1117,7 +1117,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vImmImpv" type="value">
+		 <item id="vImmImpv" guid="8753d71b-17dc-403a-9f65-6eecbc7f8c36" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1131,7 +1131,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vImpv" type="value">
+		 <item id="vImpv" guid="fc709372-1928-44f0-90eb-e8a551c68813" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1150,7 +1150,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vImprec" type="value">
+		 <item id="vImprec" guid="8dfb250a-db93-4934-9c13-0afa8d904ef7" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1163,7 +1163,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vIndic" type="value">
+		 <item id="vIndic" guid="39dadf56-29ca-470a-a313-ae6b34d36a86" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1176,7 +1176,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vInterog" type="value">
+		 <item id="vInterog" guid="4d48f080-05e1-49aa-a776-78ad5ce76e1c" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1190,7 +1190,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vIrrealis" type="value">
+		 <item id="vIrrealis" guid="dc487961-8267-430b-90dc-0cc2e75cad23" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1204,7 +1204,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vJudg" type="value">
+		 <item id="vJudg" guid="ae386125-6c40-4a34-8fba-45630a5ff446" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1215,7 +1215,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vJuss" type="value">
+		 <item id="vJuss" guid="a689f651-2802-48ee-a18f-84b25817b3b7" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1231,7 +1231,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vNec" type="value">
+		 <item id="vNec" guid="a4121e9f-2126-4d26-9e52-7e5c6f21bc68" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1245,7 +1245,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vNonvis" type="value">
+		 <item id="vNonvis" guid="b860145e-6b17-4b75-8eea-8cb550c3eaa1" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1256,7 +1256,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vOblig" type="value">
+		 <item id="vOblig" guid="a42a925c-2de0-4eb6-86a1-8d409bc42f90" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1272,7 +1272,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vOpt" type="value">
+		 <item id="vOpt" guid="eff15741-a455-4419-b3f4-cf0d30c8b763" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1292,7 +1292,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPermis" type="value">
+		 <item id="vPermis" guid="cfb65ccd-b902-439b-94bc-aa285776cbb8" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1306,7 +1306,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPossbl" type="value">
+		 <item id="vPossbl" guid="f7ffc223-2dec-44e8-8dae-0b1b42d76dc8" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1321,7 +1321,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPrec" type="value">
+		 <item id="vPrec" guid="0d3350be-0893-41ae-9e09-347c78f6fa71" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1335,7 +1335,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vProhib" type="value">
+		 <item id="vProhib" guid="fcebedb9-d930-456a-adb5-591d5fd55624" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1351,7 +1351,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vQuot" type="value">
+		 <item id="vQuot" guid="5e3da1e7-bdc5-47f9-9a5a-38440d709815" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1368,7 +1368,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vReal" type="value">
+		 <item id="vReal" guid="45d943f4-1e0b-4412-bec7-9337ac53129d" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1385,7 +1385,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vSensor" type="value">
+		 <item id="vSensor" guid="53a8a7ed-6c4b-48ee-9fdd-e189353084c2" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1396,7 +1396,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vSpecu" type="value">
+		 <item id="vSpecu" guid="e8a070ae-2320-49b3-835d-c5563b826831" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1407,7 +1407,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vSubjnct" type="value">
+		 <item id="vSubjnct" guid="4e660aa6-2338-47c7-b9a0-30be374352fe" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1426,7 +1426,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vVis" type="value">
+		 <item id="vVis" guid="f4fa2b81-fc5e-43e7-905e-1a82b635833b" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1437,7 +1437,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vVolit" type="value">
+		 <item id="vVolit" guid="9c1926e7-6991-4fb5-ab92-7a2592afac85" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1452,7 +1452,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="gAgreement" type="group">
+	  <item id="gAgreement" guid="726992fb-2e0b-4f35-ba53-b90767246b49" type="group">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -1462,7 +1462,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item id="tSubjAgr" type="fsType">
+		 <item id="tSubjAgr" guid="2b491f35-aa10-49cb-afb2-facce7f5155f" type="fsType">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1472,7 +1472,7 @@
 				  <Citations/>
 			   </Language>
 			</Languages>
-			<item carry="no" embed="tPersonAgr tCommonAgr" id="cSubjAgr" type="complex">
+			<item carry="no" embed="tPersonAgr tCommonAgr" id="cSubjAgr" guid="49eaca04-afbf-46ba-b55c-5399c7e96088" type="complex">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1484,7 +1484,7 @@
 			   </Languages>
 			</item>
 		 </item>
-		 <item id="tObjAgr" type="fsType">
+		 <item id="tObjAgr" guid="4901227e-2ff3-4593-a3e9-dad496f20edc" type="fsType">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1494,7 +1494,7 @@
 				  <Citations/>
 			   </Language>
 			</Languages>
-			<item carry="no" embed="tPersonAgr tCommonAgr" id="cObjAgr" type="complex">
+			<item carry="no" embed="tPersonAgr tCommonAgr" id="cObjAgr" guid="1861cbf3-f02b-41cb-b9f5-7d5acc57323b" type="complex">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1506,7 +1506,7 @@
 			   </Languages>
 			</item>
 		 </item>
-		 <item id="tErgAgr" type="fsType">
+		 <item id="tErgAgr" guid="cc552306-39b5-41f3-abfd-b863a689d2fe" type="fsType">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1516,7 +1516,7 @@
 				  <Citations/>
 			   </Language>
 			</Languages>
-			<item carry="no" embed="tPersonAgr tCommonAgr" id="cErgAgr" type="complex">
+			<item carry="no" embed="tPersonAgr tCommonAgr" id="cErgAgr" guid="075ffcaf-2800-4dca-9503-0e7e5a829b21" type="complex">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1528,7 +1528,7 @@
 			   </Languages>
 			</item>
 		 </item>
-		 <item id="tAbsAgr" type="fsType">
+		 <item id="tAbsAgr" guid="f8872d2c-6643-4786-9e71-96fe65893ec5" type="fsType">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1538,7 +1538,7 @@
 				  <Citations/>
 			   </Language>
 			</Languages>
-			<item carry="no" embed="tPersonAgr tCommonAgr" id="cAbsAgr" type="complex">
+			<item carry="no" embed="tPersonAgr tCommonAgr" id="cAbsAgr" guid="2ed4a704-06ac-410d-a044-b90242578686" type="complex">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1551,7 +1551,7 @@
 			</item>
 		 </item>
 	  </item>
-	  <item id="fPolarity" type="feature">
+	  <item id="fPolarity" guid="974d2ec1-579b-4483-91da-0d22295742dd" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -1564,7 +1564,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vPlus" type="value">
+		 <item id="vPlus" guid="2a33c8a0-f253-4656-b23f-b0087f2d67dc" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1575,7 +1575,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vMinus" type="value">
+		 <item id="vMinus" guid="89f2d2c2-8577-4739-a0ba-67d5ee992fdb" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1587,7 +1587,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fSwitchRef" type="feature">
+	  <item id="fSwitchRef" guid="8d12932f-72c7-48d2-aab9-e657e5777c01" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -1599,7 +1599,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vDiffSubjMrkr" type="value">
+		 <item id="vDiffSubjMrkr" guid="3a5a7944-cbef-4130-b137-b972b4f199dc" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1613,7 +1613,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vSameSubjMrkr" type="value">
+		 <item id="vSameSubjMrkr" guid="dcf25a7a-796f-43d0-bba2-26c36e58f7e9" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1628,7 +1628,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fTense" type="feature">
+	  <item id="fTense" guid="b82f4eea-fcf7-4e3a-9fe5-7737916fcb89" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -1645,7 +1645,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="gTense" type="group">
+		 <item id="gTense" guid="833d061d-c424-4520-ae5d-1507310be47f" type="group">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1655,7 +1655,7 @@
 				  <Citations/>
 			   </Language>
 			</Languages>
-			<item id="vCloseFut" type="value">
+			<item id="vCloseFut" guid="f65d4fb4-0c82-4774-a116-4b93587d7e83" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1669,7 +1669,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vFut" type="value">
+			<item id="vFut" guid="4cbef8b1-a46d-415d-a25e-10056f93b57f" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1683,7 +1683,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vHestPst" type="value">
+			<item id="vHestPst" guid="90f6afbb-a9db-4b6e-8979-251006010972" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1697,7 +1697,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vHodFut" type="value">
+			<item id="vHodFut" guid="cd8bc102-579d-45a7-8acc-51c1201e875c" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1708,7 +1708,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vHodPst" type="value">
+			<item id="vHodPst" guid="1524a1c1-d386-482a-87f0-86648cd42d59" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1722,7 +1722,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vImmPst" type="value">
+			<item id="vImmPst" guid="997ab0c9-b165-4a15-a6eb-9b4d43bc4863" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1733,7 +1733,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vNonFut" type="value">
+			<item id="vNonFut" guid="1f7e2bc6-04bb-4272-a51c-cd9d87188e3e" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1744,7 +1744,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vNonPst" type="value">
+			<item id="vNonPst" guid="c156ea73-7cfd-4eae-8dce-8026fb50ff0d" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1758,7 +1758,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vNonRecPst" type="value">
+			<item id="vNonRecPst" guid="4cfd9278-6d42-47ba-a941-f5965d3b2637" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1769,7 +1769,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vNonRemPst" type="value">
+			<item id="vNonRemPst" guid="3dc4cae4-9398-4410-a17a-fcb12184d70a" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1780,7 +1780,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vNotYet" type="value">
+			<item id="vNotYet" guid="5aa97a12-6337-4da3-9abd-db74f8edee9b" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1791,7 +1791,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vPst" type="value">
+			<item id="vPst" guid="7d569cd5-f3fe-400d-bc70-9df5a35e151e" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1806,7 +1806,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vPostHodFut" type="value">
+			<item id="vPostHodFut" guid="aac24933-f009-420b-9475-4f6d66029be8" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1817,7 +1817,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vPredFut" type="value">
+			<item id="vPredFut" guid="7bdb6b7a-3f91-4da3-b609-73a3997aa8e3" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1828,7 +1828,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vPreHestPst" type="value">
+			<item id="vPreHestPst" guid="894e5f26-2701-4c8d-a402-2c24bfd6a651" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1839,7 +1839,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vPreHodPst" type="value">
+			<item id="vPreHodPst" guid="968e3b17-da2a-458f-b134-e26b7c0c434c" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1850,7 +1850,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vPres" type="value">
+			<item id="vPres" guid="0775e316-388d-40ed-b334-73694ce17d5a" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1865,7 +1865,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vPret" type="value">
+			<item id="vPret" guid="d092ee53-fe1a-4a96-a5e9-4e4addb73acc" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1881,7 +1881,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vRecPst" type="value">
+			<item id="vRecPst" guid="ac65e415-f9a6-477e-8c23-1bd3e802794f" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1895,7 +1895,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vRemFut" type="value">
+			<item id="vRemFut" guid="cd504349-067f-49fe-bfb1-7427fe67ed4f" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1909,7 +1909,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vRemPst" type="value">
+			<item id="vRemPst" guid="4080a1f1-8b10-42a3-b906-9f2ccabb3989" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1923,7 +1923,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vStill" type="value">
+			<item id="vStill" guid="95847ef7-d05a-4df7-b184-c2bcbdb6002e" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1935,7 +1935,7 @@
 			   </Languages>
 			</item>
 		 </item>
-		 <item id="gAbsoluteRelativeTense" type="group">
+		 <item id="gAbsoluteRelativeTense" guid="1cc1e376-2937-4b92-a2f5-b429891878ee" type="group">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -1945,7 +1945,7 @@
 				  <Citations/>
 			   </Language>
 			</Languages>
-			<item id="vFutPerf" type="value">
+			<item id="vFutPerf" guid="86effc9a-a94b-49d1-b884-5837320219b5" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1959,7 +1959,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vFutInFut" type="value">
+			<item id="vFutInFut" guid="026dcfbf-8c57-4945-a6e4-16b17474213a" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1970,7 +1970,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vFutInPst" type="value">
+			<item id="vFutInPst" guid="7dd1ef45-365e-428b-9c00-55a7f2e6e38c" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1981,7 +1981,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vFutPerfInPst" type="value">
+			<item id="vFutPerfInPst" guid="8f7a8261-33d8-4354-9138-bced3adbc810" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -1992,7 +1992,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vPstPerf" type="value">
+			<item id="vPstPerf" guid="e2ea8d19-257c-4e17-89c3-70b130e13941" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2008,7 +2008,7 @@
 			   </Languages>
 			</item>
 		 </item>
-		 <item id="gRelativeTense" type="group">
+		 <item id="gRelativeTense" guid="9dd580cd-ee2b-4906-84f3-bb1afc96490c" type="group">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2018,7 +2018,7 @@
 				  <Citations/>
 			   </Language>
 			</Languages>
-			<item id="vRelFut" type="value">
+			<item id="vRelFut" guid="96dfda42-4224-4fde-9323-81b6b17f80ec" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2029,7 +2029,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vRelNonFut" type="value">
+			<item id="vRelNonFut" guid="5d2edfdc-9b56-49f7-9da1-011eb2d685ea" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2040,7 +2040,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vRelNonPst" type="value">
+			<item id="vRelNonPst" guid="fa2ab0dc-db6a-407e-8062-4a4091cf4ed6" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2051,7 +2051,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vRelPst" type="value">
+			<item id="vRelPst" guid="9447fd74-13d0-4ab9-8185-35054bd585bf" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2062,7 +2062,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vRelPres" type="value">
+			<item id="vRelPres" guid="0cc16442-12e7-4c21-af34-8f8bc05042ea" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2075,7 +2075,7 @@
 			</item>
 		 </item>
 	  </item>
-	  <item id="fTransitivity" type="feature">
+	  <item id="fTransitivity" guid="05fa63ce-90bc-43e1-8a15-c2013cc40c60" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -2085,7 +2085,7 @@
 			   <Citations/>
 			</Language>
 		 </Languages>
-		 <item id="vDiTrans" type="value">
+		 <item id="vDiTrans" guid="86a30f22-b044-4426-914d-29a8f617b0ad" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2096,7 +2096,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vInTrans" type="value">
+		 <item id="vInTrans" guid="0be9c961-b8c0-4b8b-9088-41f5434fafef" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2107,7 +2107,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vTrans" type="value">
+		 <item id="vTrans" guid="ad58de88-ee4a-4bcd-a8fe-c63aa0f808fc" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2119,7 +2119,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fVoice" type="feature">
+	  <item id="fVoice" guid="08e7a26a-ccb6-4e8b-a657-4887cce73623" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -2138,7 +2138,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vAct" type="value">
+		 <item id="vAct" guid="a09ca858-5e17-464f-bf6e-ee7e34d50569" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2155,7 +2155,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vAntiPass" type="value">
+		 <item id="vAntiPass" guid="5403dd46-d4f9-4ce5-932b-651c7d076681" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2166,7 +2166,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vImpersPass" type="value">
+		 <item id="vImpersPass" guid="88f15cfe-640a-4876-9aee-5befd62af429" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2177,7 +2177,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vMedPass" type="value">
+		 <item id="vMedPass" guid="a505d8ef-9ab5-4425-907e-b1810c4a8b3f" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2188,7 +2188,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vMid" type="value">
+		 <item id="vMid" guid="06c87682-6ca9-45ea-b69b-bf83b6ef444f" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2206,7 +2206,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPass" type="value">
+		 <item id="vPass" guid="fe871e64-3ef5-466c-954f-f52d3046eea1" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2224,7 +2224,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPersPass" type="value">
+		 <item id="vPersPass" guid="8bc5b452-d74d-4f10-9e62-44e1964351f5" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2235,7 +2235,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vSynthPass" type="value">
+		 <item id="vSynthPass" guid="a563adb2-4fbe-4c49-9657-f0411e0f3da0" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2247,7 +2247,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fFocus" type="feature">
+	  <item id="fFocus" guid="256bbfac-4d57-437f-af78-c9f4d5959df4" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -2259,7 +2259,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vAF" type="value">
+		 <item id="vAF" guid="df10189f-bfbb-4cee-b972-6ce31dc439ed" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2270,7 +2270,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vGF" type="value">
+		 <item id="vGF" guid="54aa41d2-66ec-4312-b276-7425d93fa76f" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2281,7 +2281,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vIF" type="value">
+		 <item id="vIF" guid="dee5dd6f-5858-4cf2-9024-ab83b842b6c9" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2292,7 +2292,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPF" type="value">
+		 <item id="vPF" guid="bca41dad-d04d-40dd-ab97-664f39321952" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2305,7 +2305,7 @@
 		 </item>
 	  </item>
    </item>
-   <item id="tCaseAgr" status="hidden" type="fsType">
+   <item id="tCaseAgr" guid="f1b3d5af-2dc9-4de4-bbd7-b910ac2d8304" status="hidden" type="fsType">
 	  <Languages>
 		 <Language>
 			<LangCode>en</LangCode>
@@ -2315,7 +2315,7 @@
 			<Citations/>
 		 </Language>
 	  </Languages>
-	  <item id="fCase" type="feature">
+	  <item id="fCase" guid="355e91ca-a06b-4a1d-8c6a-d3f3a20c1fd8" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -2332,7 +2332,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vAbl" type="value">
+		 <item id="vAbl" guid="9d974164-6546-4571-9c3e-0b702f8f2531" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2349,7 +2349,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vAbs" type="value">
+		 <item id="vAbs" guid="da829cbc-09ab-4df3-8d63-e6dfac166694" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2364,7 +2364,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vAcc" type="value">
+		 <item id="vAcc" guid="83b78f5d-b95e-440e-b92a-88ee525d4aad" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2381,7 +2381,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vAll" type="value">
+		 <item id="vAll" guid="f31c381d-90c1-4515-9c3c-495313ba66d6" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2397,7 +2397,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBen" type="value">
+		 <item id="vBen" guid="a7bef323-0c0b-4378-b4fc-05c33a1a59fc" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2411,7 +2411,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDat" type="value">
+		 <item id="vDat" guid="7243604f-8808-4f83-b05b-da14cdc5a80e" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2425,7 +2425,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vErg" type="value">
+		 <item id="vErg" guid="0659ff71-b681-4ed3-8c42-0be6921a1d76" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2441,7 +2441,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vGen" type="value">
+		 <item id="vGen" guid="9c4338e3-79a7-4a9e-bd7a-2b20a8b5a04f" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2459,7 +2459,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vIll" type="value">
+		 <item id="vIll" guid="a9573cf3-d8c8-4ace-bf3b-fd7d195d6c51" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2474,7 +2474,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vInst" type="value">
+		 <item id="vInst" guid="704b6c36-8bc9-49ea-874d-6c21d2b236a9" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2489,7 +2489,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vLoc" type="value">
+		 <item id="vLoc" guid="0799fd1b-c3f7-4a1c-a579-c8fbec190443" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2506,7 +2506,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vNom" type="value">
+		 <item id="vNom" guid="512d7a86-0dab-4575-922b-bfde64d419cb" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2522,7 +2522,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vObl" type="value">
+		 <item id="vObl" guid="fd2397a7-143a-48f2-920b-a5758208bcb6" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2535,7 +2535,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vVoc" type="value">
+		 <item id="vVoc" guid="67372b69-3646-4bd9-b9fe-59e7aebea493" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2550,7 +2550,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="gLessCommonCasesGroup" type="group">
+		 <item id="gLessCommonCasesGroup" guid="9f2f515b-16d8-440f-a30d-53c31c486e84" type="group">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2560,7 +2560,7 @@
 				  <Citations/>
 			   </Language>
 			</Languages>
-			<item id="vAbess" type="value">
+			<item id="vAbess" guid="27d3b021-6bfb-435a-a8c8-0de2392dd78f" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2574,7 +2574,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vCausCase" type="value">
+			<item id="vCausCase" guid="603a1c06-2a70-4026-8b16-dff4326a78e8" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2589,7 +2589,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vComit" type="value">
+			<item id="vComit" guid="333f7839-b360-4b89-91ca-129fa68155d3" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2605,7 +2605,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vDel" type="value">
+			<item id="vDel" guid="11f7addb-6dab-468a-8703-d4eecd1304e2" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2619,7 +2619,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vElat" type="value">
+			<item id="vElat" guid="f87f5906-3d48-44e7-b764-a4718b9fed22" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2635,7 +2635,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vEqua" type="value">
+			<item id="vEqua" guid="07acacd6-a421-4406-9e78-085d9d02b1ed" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2646,7 +2646,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vEss" type="value">
+			<item id="vEss" guid="0933a90d-6032-4560-98c9-34ecc514ad0b" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2661,7 +2661,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vIness" type="value">
+			<item id="vIness" guid="e8fc6cd1-a797-4dea-8a37-f2d3ec7a5385" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2676,7 +2676,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vLat" type="value">
+			<item id="vLat" guid="b06ef113-71ad-41b6-9b87-e6bf5bf5087b" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2689,7 +2689,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vParti" type="value">
+			<item id="vParti" guid="029b7416-1491-4984-b27a-81b64331a04d" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2706,7 +2706,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vProlat" type="value">
+			<item id="vProlat" guid="aa946e4d-5c9d-4940-9374-1ee93ab17cbb" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2723,7 +2723,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vSuperEss" type="value">
+			<item id="vSuperEss" guid="bada0fdc-b98d-43c7-9d1c-31d569688b42" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2737,7 +2737,7 @@
 				  </Language>
 			   </Languages>
 			</item>
-			<item id="vTranslat" type="value">
+			<item id="vTranslat" guid="e1d2791f-99b6-4973-bcf1-f236e0fe3080" type="value">
 			   <Languages>
 				  <Language>
 					 <LangCode>en</LangCode>
@@ -2756,7 +2756,7 @@
 		 </item>
 	  </item>
    </item>
-   <item id="tPersonAgr" status="hidden" type="fsType">
+   <item id="tPersonAgr" guid="dc7e2565-09ab-482d-b934-924b1dd91b2f" status="hidden" type="fsType">
 	  <Languages>
 		 <Language>
 			<LangCode>en</LangCode>
@@ -2766,7 +2766,7 @@
 			<Citations/>
 		 </Language>
 	  </Languages>
-	  <item id="fPers" type="feature">
+	  <item id="fPers" guid="55706aa1-2381-45a6-bba2-ea489bb4a636" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -2781,7 +2781,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item afterSeparator="" id="v1" type="value">
+		 <item afterSeparator="" id="v1" guid="87395a09-b451-4311-b6df-7e14656dfd11" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2798,7 +2798,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item afterSeparator="" id="v1Ex" type="value">
+		 <item afterSeparator="" id="v1Ex" guid="f02e42fc-5879-4b30-86a3-dbd2be2d01af" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2812,7 +2812,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item afterSeparator="" id="v1Incl" type="value">
+		 <item afterSeparator="" id="v1Incl" guid="e4e59ee4-e911-49be-8cc3-69bd29ff8755" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2826,7 +2826,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item afterSeparator="" id="v2" type="value">
+		 <item afterSeparator="" id="v2" guid="ea52556d-38fc-4008-8bf7-cc365f80364f" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2843,7 +2843,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item afterSeparator="" id="v3" type="value">
+		 <item afterSeparator="" id="v3" guid="ae25891f-076a-4376-87f3-0863a0fe0166" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2861,7 +2861,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item afterSeparator="" id="v3Obv" type="value">
+		 <item afterSeparator="" id="v3Obv" guid="39c60287-e282-47a0-a9ef-a0bf5c4f2b26" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2872,7 +2872,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item afterSeparator="" id="v3Prox" type="value">
+		 <item afterSeparator="" id="v3Prox" guid="130d874c-932d-4ab3-9454-2a865196f5ea" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2885,7 +2885,7 @@
 		 </item>
 	  </item>
    </item>
-   <item id="tCommonAgr" status="hidden" type="fsType">
+   <item id="tCommonAgr" guid="1daf24e9-d773-4979-9a24-527ea304ce40" status="hidden" type="fsType">
 	  <Languages>
 		 <Language>
 			<LangCode>en</LangCode>
@@ -2895,7 +2895,7 @@
 			<Citations/>
 		 </Language>
 	  </Languages>
-	  <item id="fGender" type="feature">
+	  <item id="fGender" guid="a5895ac5-7555-4a99-bd08-6b1136677ec5" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -2912,7 +2912,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vMasc" type="value">
+		 <item id="vMasc" guid="625351e4-bcb7-45ea-886a-02fa6354ac90" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2926,7 +2926,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vFem" type="value">
+		 <item id="vFem" guid="3f27d4cb-cae0-47a5-84d2-74a6bc685574" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2940,7 +2940,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vNeut" type="value">
+		 <item id="vNeut" guid="ea7f77d8-04fa-44e5-b034-8a170b3bc99e" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2955,7 +2955,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fNum" type="feature">
+	  <item id="fNum" guid="bd1d7f21-7cf2-44c9-a952-69d218bc1028" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -2969,7 +2969,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vSg" type="value">
+		 <item id="vSg" guid="690b6e79-e6cf-4f86-87d1-8d4008c77efc" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2983,7 +2983,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPl" type="value">
+		 <item id="vPl" guid="d95676b2-3b38-401e-bdfa-e8f076b3394d" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -2999,7 +2999,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vDual" type="value">
+		 <item id="vDual" guid="7187a38f-d5f3-43cb-b36d-3fe3de866fd9" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3010,7 +3010,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vTrial" type="value">
+		 <item id="vTrial" guid="206dc2b0-cf97-47b4-b1f0-3b4dc684b081" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3024,7 +3024,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vPaucal" type="value">
+		 <item id="vPaucal" guid="7f1bad44-1276-42cd-b813-7a04a4795740" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3038,7 +3038,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fClass" type="feature">
+	  <item id="fClass" guid="baeb784c-093b-4ebc-99ca-92808089604a" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -3051,7 +3051,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vAnim" type="value">
+		 <item id="vAnim" guid="0712b638-7064-4fb6-a50b-189096883570" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3062,7 +3062,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vHum" type="value">
+		 <item id="vHum" guid="e51e0fee-369b-4930-b7f2-19a723ab6929" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3077,7 +3077,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vInanim" type="value">
+		 <item id="vInanim" guid="e6c117b5-688d-4c16-a4aa-22b733e07864" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3089,7 +3089,7 @@
 			</Languages>
 		 </item>
 	  </item>
-	  <item id="fBantuClass" type="feature">
+	  <item id="fBantuClass" guid="e49c7be8-7055-4905-b993-861ef0576b4c" type="feature">
 		 <Languages>
 			<Language>
 			   <LangCode>en</LangCode>
@@ -3104,7 +3104,7 @@
 			   </Citations>
 			</Language>
 		 </Languages>
-		 <item id="vBantuGender1.2" type="value">
+		 <item id="vBantuGender1.2" guid="d8ae9c89-d4cf-4717-931e-2dc1bcf8d73f" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3119,7 +3119,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender1a" type="value">
+		 <item id="vBantuGender1a" guid="a39886e4-f20b-4f0a-a8dc-0df7cf683252" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3133,7 +3133,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender3.4" type="value">
+		 <item id="vBantuGender3.4" guid="22773e31-8a64-4f31-ae1d-18b0a50c03f7" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3148,7 +3148,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender5.6" type="value">
+		 <item id="vBantuGender5.6" guid="f0679814-9055-4043-9cde-a4ac1d43bc00" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3163,7 +3163,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender6a" type="value">
+		 <item id="vBantuGender6a" guid="2cd58950-aa3a-4a10-a87c-a29d3b187ef3" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3177,7 +3177,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender7.8" type="value">
+		 <item id="vBantuGender7.8" guid="2490b741-1b29-4e41-a5b9-385f189563f4" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3192,7 +3192,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender9.10" type="value">
+		 <item id="vBantuGender9.10" guid="c3a91c71-4e69-432f-ba84-754ed637accb" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3207,7 +3207,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender11.10" type="value">
+		 <item id="vBantuGender11.10" guid="57f5aeaa-9e06-4fd0-83bf-3cafd081b71d" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3222,7 +3222,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender12.13" type="value">
+		 <item id="vBantuGender12.13" guid="3accf6a6-e450-412b-84ba-6b0d4f736a27" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3237,7 +3237,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender14.6" type="value">
+		 <item id="vBantuGender14.6" guid="ba0d6900-0804-41ed-9473-653a6663d5ff" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3252,7 +3252,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender14" type="value">
+		 <item id="vBantuGender14" guid="89023636-6efa-461e-8e99-e0bd9424b91d" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3267,7 +3267,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender15.6" type="value">
+		 <item id="vBantuGender15.6" guid="604866d3-6f3f-4bf3-8b75-00d0bf65eeac" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3282,7 +3282,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender15" type="value">
+		 <item id="vBantuGender15" guid="dc1f6cb4-3b77-471f-80cb-27aecc7c9270" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3297,7 +3297,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender19.13" type="value">
+		 <item id="vBantuGender19.13" guid="10aa723f-89da-4457-8f28-995a36f14bfa" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3312,7 +3312,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender16" type="value">
+		 <item id="vBantuGender16" guid="66a4baad-9f53-46de-add0-d0e2e352e3dd" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3327,7 +3327,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender17" type="value">
+		 <item id="vBantuGender17" guid="584d71d4-5f87-4b2d-a70a-89a9820ff947" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>
@@ -3342,7 +3342,7 @@
 			   </Language>
 			</Languages>
 		 </item>
-		 <item id="vBantuGender18" type="value">
+		 <item id="vBantuGender18" guid="4eaeb2c0-5761-4b86-bd6d-b62d608eb869" type="value">
 			<Languages>
 			   <Language>
 				  <LangCode>en</LangCode>

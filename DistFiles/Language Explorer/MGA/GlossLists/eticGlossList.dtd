@@ -11,6 +11,7 @@
 <!ELEMENT item (abbrev*, term+, def*, abbrev*, term*, citation*, fs?, item*)>
 <!ATTLIST item
 	id ID #IMPLIED
+	guid CDATA #IMPLIED
 	type (complex | feature | fsType | group | value | deriv | xref) #IMPLIED
 	status (hidden | proxy | visible) #IMPLIED
 	target IDREF #IMPLIED

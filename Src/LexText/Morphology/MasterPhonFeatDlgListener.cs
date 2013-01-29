@@ -115,7 +115,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						//m_mediator.SendMessage("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
 						// This is the equivalent functionality, but is deferred processing.
 						// This is done so that the JumpToRecord can be processed last.
-						m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
+						if (dlg.SelectedFeatDefn != null)
+							m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
 						// LT-6412: this call will now cause the Mediator to be disposed while it is busy processing
 						// this call, so there is code in the Mediator to handle in the middle of a msg the case
 						// where the object is nolonger valid.  This has happend before and was being handled, this

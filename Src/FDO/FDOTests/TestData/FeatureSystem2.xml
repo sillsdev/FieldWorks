@@ -1,23 +1,23 @@
-<item id="tSubjAgr" type="fsType">
+﻿<item id="tSubjAgr" guid="51cf26f7-f2f3-46c8-9c4c-5f36a6b10690" type="fsType">
    <abbrev ws="en">sbj</abbrev>
    <term ws="en">Subject agreement</term>
    <def ws="en">Features common to subject agreement on verbs.</def>
-   <item id="cSubjAgr" type="complex">
+   <item id="cSubjAgr" guid="3e71cd7c-15ad-438a-bb45-b97130c217ef" type="complex">
 	  <abbrev ws="en">sbj</abbrev>
 	  <term ws="en">subject agreement</term>
 	  <def ws="en">This contains the set of features used in subject agreement.</def>
-	  <item status="proxy" target="tPersonAgr" id="tPersonAgr" type="fsType">
+	  <item status="proxy" target="tPersonAgr" id="tPersonAgr" guid="3a0c4662-0abf-4dbd-8a5a-6d892536b473" type="fsType">
 		 <abbrev ws="en">agr</abbrev>
 		 <term ws="en">person agreement</term>
-		 <item status="proxy" target="fPers" id="fPers" type="feature">
+		 <item status="proxy" target="fPers" id="fPers" guid="b89695ad-b409-4f0a-9dcf-47b2bfa15ebe" type="feature">
 			<abbrev ws="en">pers</abbrev>
 			<term ws="en">person</term>
-			<item status="proxy" target="v1" id="v1" type="value">
+			<item status="proxy" target="v1" id="v1" guid="a7c8b611-7458-4371-b561-926a7a1a2804" type="value">
 			   <abbrev ws="en">1</abbrev>
 			   <term ws="en">first person</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="pers">
 						   <sym value="1"/>
 						</f>
@@ -31,12 +31,12 @@
 			   <citation>Levinson 1983:62</citation>
 			   <citation>Fleming 1988:322</citation>
 			</item>
-			<item status="proxy" target="v1Ex" id="v1Ex" type="value">
+			<item status="proxy" target="v1Ex" id="v1Ex" guid="5beee0c5-87ac-42e3-893d-e6c2da93672d" type="value">
 			   <abbrev ws="en">1excl</abbrev>
 			   <term ws="en">first person exclusive</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="pers">
 						   <sym value="1excl"/>
 						</f>
@@ -47,12 +47,12 @@
 			   <citation>Crystal 1980:182</citation>
 			   <citation>Pei and Gaynor 1954:69</citation>
 			</item>
-			<item status="proxy" target="v1Incl" id="v1Incl" type="value">
+			<item status="proxy" target="v1Incl" id="v1Incl" guid="3e67bd0b-d0c2-4862-86d3-8f69a931d893" type="value">
 			   <abbrev ws="en">1incl</abbrev>
 			   <term ws="en">first person inclusive</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="pers">
 						   <sym value="1incl"/>
 						</f>
@@ -63,12 +63,12 @@
 			   <citation>Crystal 1980:182</citation>
 			   <citation>Pei and Gaynor 1954:98</citation>
 			</item>
-			<item status="proxy" target="v2" id="v2" type="value">
+			<item status="proxy" target="v2" id="v2" guid="da3efb62-a25e-40ad-8622-ee54b2f5c20b" type="value">
 			   <abbrev ws="en">2</abbrev>
 			   <term ws="en">second person</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="pers">
 						   <sym value="2"/>
 						</f>
@@ -82,12 +82,12 @@
 			   <citation>Levinson 1983:62</citation>
 			   <citation>Fleming 1988:322</citation>
 			</item>
-			<item status="proxy" target="v3" id="v3" type="value">
+			<item status="proxy" target="v3" id="v3" guid="4dc1310e-2cf8-44e9-8afb-b9722fbdcd63" type="value">
 			   <abbrev ws="en">3</abbrev>
 			   <term ws="en">third person</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="pers">
 						   <sym value="3"/>
 						</f>
@@ -102,12 +102,12 @@
 			   <citation>Anderson and Keenan 1985:261-262</citation>
 			   <citation>Fleming 1988:322</citation>
 			</item>
-			<item status="proxy" target="v3Obv" id="v3Obv" type="value">
+			<item status="proxy" target="v3Obv" id="v3Obv" guid="405e628b-1861-482f-bd83-3aef62e41a51" type="value">
 			   <abbrev ws="en">3obv</abbrev>
 			   <term ws="en">obviative person</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="pers">
 						   <sym value="3obv"/>
 						</f>
@@ -116,12 +116,12 @@
 			   </fs>
 			   <def ws="en">Obviative person deixis is third person deixis that distinguishes a less important referent in the present stage of the discourse from a referent that is more important.</def>
 			</item>
-			<item status="proxy" target="v3Prox" id="v3Prox" type="value">
+			<item status="proxy" target="v3Prox" id="v3Prox" guid="dc06f4c5-6c2f-49f1-b0d1-d2650271ddf2" type="value">
 			   <abbrev ws="en">3prox</abbrev>
 			   <term ws="en">proximate person</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="pers">
 						   <sym value="3prox"/>
 						</f>
@@ -130,12 +130,12 @@
 			   </fs>
 			   <def ws="en">Proximate person deixis is a third person deixis that distinguishes a referent that is more important at the present stage of the discourse from a referent that is less important.</def>
 			</item>
-			<item status="proxy" target="vUnknownfPers" id="vUnknownfPers" type="value">
+			<item status="proxy" target="vUnknownfPers" id="vUnknownfPers" guid="554bf39f-6a9f-4170-9a55-bbe526043968" type="value">
 			   <abbrev ws="en">?</abbrev>
 			   <term ws="en">unknown person</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="pers">
 						   <unknown/>
 						</f>
@@ -150,18 +150,18 @@
 			<citation>Mish et al. 1990:877</citation>
 		 </item>
 	  </item>
-	  <item status="proxy" target="tCommonAgr" id="tCommonAgr" type="fsType">
+	  <item status="proxy" target="tCommonAgr" id="tCommonAgr" guid="cfda17cf-194b-4a8b-be47-7ad66b246a2f" type="fsType">
 		 <abbrev ws="en">agr</abbrev>
 		 <term ws="en">common agreement</term>
-		 <item status="proxy" target="fGender" id="fGender" type="feature">
+		 <item status="proxy" target="fGender" id="fGender" guid="bdee0068-fa12-4032-a732-61401a5f557f" type="feature">
 			<abbrev ws="en">gen</abbrev>
 			<term ws="en">gender</term>
-			<item status="proxy" target="vMasc" id="vMasc" type="value">
+			<item status="proxy" target="vMasc" id="vMasc" guid="37bc6104-74c1-4f07-980f-20a01814968f" type="value">
 			   <abbrev ws="en">m</abbrev>
 			   <term ws="en">masculine gender</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gen">
 						   <sym value="m"/>
 						</f>
@@ -172,12 +172,12 @@
 			   <citation>Hartmann and Stork 1972:93</citation>
 			   <citation>Mish et al. 1990:730</citation>
 			</item>
-			<item status="proxy" target="vFem" id="vFem" type="value">
+			<item status="proxy" target="vFem" id="vFem" guid="8f392b74-1324-4af9-a385-962fefcbcbd5" type="value">
 			   <abbrev ws="en">f</abbrev>
 			   <term ws="en">feminine gender</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gen">
 						   <sym value="f"/>
 						</f>
@@ -188,12 +188,12 @@
 			   <citation>Hartmann and Stork 1972:93</citation>
 			   <citation>Mish et al. 1990:456</citation>
 			</item>
-			<item status="proxy" target="vNeut" id="vNeut" type="value">
+			<item status="proxy" target="vNeut" id="vNeut" guid="612aba20-6a3b-45e2-86cd-b1c67f49ee58" type="value">
 			   <abbrev ws="en">n</abbrev>
 			   <term ws="en">neuter gender</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gen">
 						   <sym value="n"/>
 						</f>
@@ -204,12 +204,12 @@
 			   <citation>Hartmann and Stork 1972:93</citation>
 			   <citation>Mish et al. 1990:795</citation>
 			</item>
-			<item status="proxy" target="vUnknownfGender" id="vUnknownfGender" type="value">
+			<item status="proxy" target="vUnknownfGender" id="vUnknownfGender" guid="a3652c1b-22f5-451b-95ef-f3bc78915508" type="value">
 			   <abbrev ws="en">?</abbrev>
 			   <term ws="en">unknown gender</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gen">
 						   <unknown/>
 						</f>
@@ -225,15 +225,15 @@
 			<citation>Dixon, R. 1968:105</citation>
 			<citation>Quirk, et al. 1985:314</citation>
 		 </item>
-		 <item status="proxy" target="fNum" id="fNum" type="feature">
+		 <item status="proxy" target="fNum" id="fNum" guid="29ac47b2-d44a-4c44-b074-2c3bda27f5cd" type="feature">
 			<abbrev ws="en">num</abbrev>
 			<term ws="en">number</term>
-			<item status="proxy" target="vSg" id="vSg" type="value">
+			<item status="proxy" target="vSg" id="vSg" guid="ceee34e3-7f99-4a7a-9034-88cbe514a519" type="value">
 			   <abbrev ws="en">sg</abbrev>
 			   <term ws="en">singular number</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="num">
 						   <sym value="sg"/>
 						</f>
@@ -244,12 +244,12 @@
 			   <citation>Crystal 1980:245</citation>
 			   <citation>Hartmann and Stork 1972:210</citation>
 			</item>
-			<item status="proxy" target="vPl" id="vPl" type="value">
+			<item status="proxy" target="vPl" id="vPl" guid="7ecb262a-2f03-4ffe-9040-242f01760513" type="value">
 			   <abbrev ws="en">pl</abbrev>
 			   <term ws="en">plural number</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="num">
 						   <sym value="pl"/>
 						</f>
@@ -262,12 +262,12 @@
 			   <citation>Crystal 1987:428</citation>
 			   <citation>Mish et al. 1990:906</citation>
 			</item>
-			<item status="proxy" target="vDual" id="vDual" type="value">
+			<item status="proxy" target="vDual" id="vDual" guid="b54d8a4e-d380-4ef9-b9f9-2deb35ded751" type="value">
 			   <abbrev ws="en">du</abbrev>
 			   <term ws="en">dual number</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="num">
 						   <sym value="du"/>
 						</f>
@@ -276,12 +276,12 @@
 			   </fs>
 			   <def ws="en">Dual number is number which refers to two members of the class identified by the noun.</def>
 			</item>
-			<item status="proxy" target="vTrial" id="vTrial" type="value">
+			<item status="proxy" target="vTrial" id="vTrial" guid="3d34420d-3c3d-44f4-9a08-ad95f79f0d1d" type="value">
 			   <abbrev ws="en">trial</abbrev>
 			   <term ws="en">trial number</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="num">
 						   <sym value="trial"/>
 						</f>
@@ -292,12 +292,12 @@
 			   <citation>Pei and Gaynor 1954:220</citation>
 			   <citation>Gove, et al. 1966:2439</citation>
 			</item>
-			<item status="proxy" target="vPaucal" id="vPaucal" type="value">
+			<item status="proxy" target="vPaucal" id="vPaucal" guid="24eff4e9-b69c-4149-bc86-1306a897f926" type="value">
 			   <abbrev ws="en">paucal</abbrev>
 			   <term ws="en">paucal number</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="num">
 						   <sym value="paucal"/>
 						</f>
@@ -307,12 +307,12 @@
 			   <def ws="en">few</def>
 			   <citation>Crystal 1997:265</citation>
 			</item>
-			<item status="proxy" target="vUnknownfNum" id="vUnknownfNum" type="value">
+			<item status="proxy" target="vUnknownfNum" id="vUnknownfNum" guid="816b2a38-1ccf-4811-ae63-6371802fbc6a" type="value">
 			   <abbrev ws="en">?</abbrev>
 			   <term ws="en">unknown number</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="num">
 						   <unknown/>
 						</f>
@@ -325,15 +325,15 @@
 			<citation>Hartmann and Stork 1972:155</citation>
 			<citation>Mish et al. 1990:811</citation>
 		 </item>
-		 <item status="proxy" target="fClass" id="fClass" type="feature">
+		 <item status="proxy" target="fClass" id="fClass" guid="8ca96650-1661-41c8-ac3d-b2617198b8b0" type="feature">
 			<abbrev ws="en">class</abbrev>
 			<term ws="en">noun class</term>
-			<item status="proxy" target="vAnim" id="vAnim" type="value">
+			<item status="proxy" target="vAnim" id="vAnim" guid="81aa35f0-8186-4906-89f2-e7f269062a5f" type="value">
 			   <abbrev ws="en">anim</abbrev>
 			   <term ws="en">animate class</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="class">
 						   <sym value="anim"/>
 						</f>
@@ -342,12 +342,12 @@
 			   </fs>
 			   <def ws="en">An animate class is a category of nouns having human or animal referents.</def>
 			</item>
-			<item status="proxy" target="vHum" id="vHum" type="value">
+			<item status="proxy" target="vHum" id="vHum" guid="bc1c6e59-bad8-48ee-aead-98297f096065" type="value">
 			   <abbrev ws="en">hum</abbrev>
 			   <term ws="en">human class</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="class">
 						   <sym value="hum"/>
 						</f>
@@ -359,12 +359,12 @@
 			   <citation>Andrews, Avery 1985:77</citation>
 			   <citation>Bolinger 1968:114-115</citation>
 			</item>
-			<item status="proxy" target="vInanim" id="vInanim" type="value">
+			<item status="proxy" target="vInanim" id="vInanim" guid="dd885c07-4b12-4d0c-b91d-7c63a0e1fcb0" type="value">
 			   <abbrev ws="en">inan</abbrev>
 			   <term ws="en">inanimate class</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="class">
 						   <sym value="inan"/>
 						</f>
@@ -373,12 +373,12 @@
 			   </fs>
 			   <def ws="en">An inanimate class is a category of nouns that do not have human or animal referents.</def>
 			</item>
-			<item status="proxy" target="vUnknownfClass" id="vUnknownfClass" type="value">
+			<item status="proxy" target="vUnknownfClass" id="vUnknownfClass" guid="38e8838e-ea65-438c-963b-06c02e398779" type="value">
 			   <abbrev ws="en">?</abbrev>
 			   <term ws="en">unknown noun class</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="class">
 						   <unknown/>
 						</f>
@@ -390,15 +390,15 @@
 			<citation>Dixon, R. 1968:105</citation>
 			<citation>Dixon, R. 1986:105-111</citation>
 		 </item>
-		 <item status="proxy" target="fBantuClass" id="fBantuClass" type="feature">
+		 <item status="proxy" target="fBantuClass" id="fBantuClass" guid="9c3e25e2-0879-48c8-a908-058faf2a6b04" type="feature">
 			<abbrev ws="en">gender</abbrev>
 			<term ws="en">Bantu noun class</term>
-			<item status="proxy" target="vBantuGender1.2" id="vBantuGender1.2" type="value">
+			<item status="proxy" target="vBantuGender1.2" id="vBantuGender1.2" guid="f2abc599-2309-4b44-b56e-17305a909489" type="value">
 			   <abbrev ws="en">1/2</abbrev>
 			   <term ws="en">Gender 1/2</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="1/2"/>
 						</f>
@@ -410,12 +410,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender1a" id="vBantuGender1a" type="value">
+			<item status="proxy" target="vBantuGender1a" id="vBantuGender1a" guid="42558fc6-bd5e-463d-b228-30295a194cdc" type="value">
 			   <abbrev ws="en">1a</abbrev>
 			   <term ws="en">Gender 1a</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="1a"/>
 						</f>
@@ -426,12 +426,12 @@
 			   <citation>Katamba 2003:114ff;</citation>
 			   <citation>Hinnebusch 1989:466-467.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender3.4" id="vBantuGender3.4" type="value">
+			<item status="proxy" target="vBantuGender3.4" id="vBantuGender3.4" guid="3ab0b654-003c-4160-9f07-57f9358510d7" type="value">
 			   <abbrev ws="en">3/4</abbrev>
 			   <term ws="en">Gender 3/4</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="3/4"/>
 						</f>
@@ -443,12 +443,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender5.6" id="vBantuGender5.6" type="value">
+			<item status="proxy" target="vBantuGender5.6" id="vBantuGender5.6" guid="392003e1-1404-49a1-b010-0b595d3a03af" type="value">
 			   <abbrev ws="en">5/6</abbrev>
 			   <term ws="en">Gender 5/6</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="5/6"/>
 						</f>
@@ -460,12 +460,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender6a" id="vBantuGender6a" type="value">
+			<item status="proxy" target="vBantuGender6a" id="vBantuGender6a" guid="5df9fc45-aae6-4136-87e1-35f104e3b442" type="value">
 			   <abbrev ws="en">6a</abbrev>
 			   <term ws="en">Gender 6a</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="6a"/>
 						</f>
@@ -476,12 +476,12 @@
 			   <citation>Katamba 2003:114ff;</citation>
 			   <citation>Hinnebusch 1989:466-467.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender7.8" id="vBantuGender7.8" type="value">
+			<item status="proxy" target="vBantuGender7.8" id="vBantuGender7.8" guid="84ee6fed-1f15-4ad0-9a63-d7f8f84ae533" type="value">
 			   <abbrev ws="en">7/8</abbrev>
 			   <term ws="en">Gender 7/8</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="7/8"/>
 						</f>
@@ -493,12 +493,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender9.10" id="vBantuGender9.10" type="value">
+			<item status="proxy" target="vBantuGender9.10" id="vBantuGender9.10" guid="13ceeeae-78b2-44d4-9d18-fd4623ea585e" type="value">
 			   <abbrev ws="en">9/10</abbrev>
 			   <term ws="en">Gender 9/10</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="9/10"/>
 						</f>
@@ -510,12 +510,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender11.10" id="vBantuGender11.10" type="value">
+			<item status="proxy" target="vBantuGender11.10" id="vBantuGender11.10" guid="cd1b802f-2e9e-4557-ae87-9ca1a1e81463" type="value">
 			   <abbrev ws="en">11/10</abbrev>
 			   <term ws="en">Gender 11/10</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="11/10"/>
 						</f>
@@ -527,12 +527,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender12.13" id="vBantuGender12.13" type="value">
+			<item status="proxy" target="vBantuGender12.13" id="vBantuGender12.13" guid="c202b3e3-a665-41d0-b824-2ae81b7cb547" type="value">
 			   <abbrev ws="en">12/13</abbrev>
 			   <term ws="en">Gender 12/13</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="12/13"/>
 						</f>
@@ -544,12 +544,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender14.6" id="vBantuGender14.6" type="value">
+			<item status="proxy" target="vBantuGender14.6" id="vBantuGender14.6" guid="6e896428-031a-4a80-ad98-14370af7af0a" type="value">
 			   <abbrev ws="en">14/6</abbrev>
 			   <term ws="en">Gender 14/6</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="14/6"/>
 						</f>
@@ -561,12 +561,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender14" id="vBantuGender14" type="value">
+			<item status="proxy" target="vBantuGender14" id="vBantuGender14" guid="fd954852-9ec2-45cb-b9a1-d7775ee4b821" type="value">
 			   <abbrev ws="en">14</abbrev>
 			   <term ws="en">Gender 14</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="14"/>
 						</f>
@@ -578,12 +578,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender15.6" id="vBantuGender15.6" type="value">
+			<item status="proxy" target="vBantuGender15.6" id="vBantuGender15.6" guid="fdf984ec-7be2-4a25-a609-852dceeba148" type="value">
 			   <abbrev ws="en">15/6</abbrev>
 			   <term ws="en">Gender 15/6</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="15/6"/>
 						</f>
@@ -595,12 +595,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender15" id="vBantuGender15" type="value">
+			<item status="proxy" target="vBantuGender15" id="vBantuGender15" guid="cb2d71f6-ee59-4e85-a335-dc898b0c5bfb" type="value">
 			   <abbrev ws="en">15</abbrev>
 			   <term ws="en">Gender 15</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="15"/>
 						</f>
@@ -612,12 +612,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender19.13" id="vBantuGender19.13" type="value">
+			<item status="proxy" target="vBantuGender19.13" id="vBantuGender19.13" guid="2585e5cf-d0c2-49e3-910f-8d07683dce31" type="value">
 			   <abbrev ws="en">19/13</abbrev>
 			   <term ws="en">Gender 19/13</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="19/13"/>
 						</f>
@@ -629,12 +629,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender16" id="vBantuGender16" type="value">
+			<item status="proxy" target="vBantuGender16" id="vBantuGender16" guid="46375087-1247-4700-a3ee-2075a7f680ed" type="value">
 			   <abbrev ws="en">16</abbrev>
 			   <term ws="en">Gender 16</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="16"/>
 						</f>
@@ -646,12 +646,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender17" id="vBantuGender17" type="value">
+			<item status="proxy" target="vBantuGender17" id="vBantuGender17" guid="4c3c7960-de58-4d4b-b544-662044d9aa41" type="value">
 			   <abbrev ws="en">17</abbrev>
 			   <term ws="en">Gender 17</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="17"/>
 						</f>
@@ -663,12 +663,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vBantuGender18" id="vBantuGender18" type="value">
+			<item status="proxy" target="vBantuGender18" id="vBantuGender18" guid="3e7e8e42-4a49-4a3d-b4c1-bc8954da8f4e" type="value">
 			   <abbrev ws="en">18</abbrev>
 			   <term ws="en">Gender 18</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <sym value="18"/>
 						</f>
@@ -680,12 +680,12 @@
 			   <citation>Hinnebusch 1989:466-467,</citation>
 			   <citation>Gardner 2005:54.</citation>
 			</item>
-			<item status="proxy" target="vUnknownfBantuClass" id="vUnknownfBantuClass" type="value">
+			<item status="proxy" target="vUnknownfBantuClass" id="vUnknownfBantuClass" guid="86df74a0-854a-4c12-9a26-bb78138d5958" type="value">
 			   <abbrev ws="en">?</abbrev>
 			   <term ws="en">unknown Bantu noun class</term>
-			   <fs type="tSubjAgr">
+			   <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 				  <f name="sbj">
-					 <fs type="tSubjAgr">
+					 <fs type="tSubjAgr" typeguid="ae07ddd0-f67c-47d5-9f6b-14d3d6adbcb4">
 						<f name="gender">
 						   <unknown/>
 						</f>

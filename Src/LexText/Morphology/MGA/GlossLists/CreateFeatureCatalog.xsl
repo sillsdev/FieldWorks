@@ -167,6 +167,9 @@ Embed complex nodes
 		 <xsl:attribute name="id">
 			<xsl:value-of select="@id"/>
 		 </xsl:attribute>
+		 <xsl:attribute name="guid">
+			<xsl:value-of select="@guid"/>
+		 </xsl:attribute>
 		 <xsl:attribute name="type">complex</xsl:attribute>
 		 <xsl:for-each select="Languages/Language">
 			   <xsl:apply-templates select="Abbreviation"/>
@@ -211,6 +214,9 @@ AncestorType
 	  <xsl:variable name="sAncestorType">
 		 <xsl:value-of select="ancestor::item[@type='fsType']/@id"/>
 	  </xsl:variable>
+	  <xsl:variable name="sAncestorTypeGuid">
+		   <xsl:value-of select="ancestor::item[@type='fsType']/@guid"/>
+	  </xsl:variable>
 	  <xsl:variable name="sType">
 		 <xsl:choose>
 			<xsl:when test="string-length($sAncestorType) != 0">
@@ -219,9 +225,20 @@ AncestorType
 			<xsl:otherwise>Infl</xsl:otherwise>
 		 </xsl:choose>
 	  </xsl:variable>
+	  <xsl:variable name="sTypeGuid">
+		   <xsl:choose>
+			   <xsl:when test="string-length($sAncestorTypeGuid) != 0">
+				   <xsl:value-of select="$sAncestorTypeGuid"/>
+			   </xsl:when>
+			   <xsl:otherwise>f1a078e1-4991-4eab-a4e8-cffac73e0ea0</xsl:otherwise>
+		   </xsl:choose>
+	  </xsl:variable>
 	  <xsl:attribute name="type">
 		 <xsl:value-of select="$sType"/>
 	  </xsl:attribute>
+	   <xsl:attribute name="typeguid">
+		   <xsl:value-of select="$sTypeGuid"/>
+	   </xsl:attribute>
    </xsl:template>
    <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

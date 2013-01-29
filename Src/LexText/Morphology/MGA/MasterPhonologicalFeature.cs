@@ -46,34 +46,13 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				return; // It's already in the database, so nothing more can be done.
 
 			string sType = XmlUtils.GetManditoryAttributeValue(m_node, "type");
-			if (sType == "feature")
+			if (sType == "value")
 			{
 				UndoableUnitOfWorkHelper.Do(MGAStrings.ksUndoCreatePhonologicalFeature, MGAStrings.ksRedoCreatePhonologicalFeature,
 					cache.ActionHandlerAccessor, () =>
-				{
-					var lp = cache.LangProject;
-					var featsys = lp.PhFeatureSystemOA;
-					// Since phonological features in the chooser only have features and no values,
-					// we need to create the positive and negative value nodes
-					string sName = XmlUtils.GetManditoryAttributeValue(m_node, "id");
-					const string sTemplate =
-						"<item id='v{0}Positive' type='value'><abbrev ws='en'>+</abbrev><term ws='en'>positive</term>" +
-						"<fs id='v{0}PositiveFS' type='Phon'><f name='{0}'><sym value='+'/></f></fs></item>" +
-						"<item id='v{0}Negative' type='value'><abbrev ws='en'>-</abbrev><term ws='en'>negative</term>" +
-						"<fs id='v{0}NegativeFS' type='Phon'><f name='{0}'><sym value='-'/></f></fs></item>";
-					StringBuilder sb = new StringBuilder();
-					sb.AppendFormat(sTemplate, sName.Substring(1));
-					m_node.InnerXml += sb.ToString();
-					// have to use a ndw document or, for some odd reason, it keeps on using an old value and not the new one...
-					XmlDocument doc = new XmlDocument();
-					doc.LoadXml(m_node.OuterXml);
-					// add positive value; note that the FsFeatDefn will be the same for both
-					XmlNode valueNode = doc.SelectSingleNode("//item[contains(@id,'Positive')]");
-					m_featDefn = featsys.AddFeatureFromXml(valueNode);
-					// add negative value
-					valueNode = doc.SelectSingleNode("//item[contains(@id,'Negative')]");
-					m_featDefn = featsys.AddFeatureFromXml(valueNode);
-				});
+					{
+						m_featDefn = cache.LangProject.PhFeatureSystemOA.AddFeatureFromXml(m_node);
+					});
 			}
 		}
 

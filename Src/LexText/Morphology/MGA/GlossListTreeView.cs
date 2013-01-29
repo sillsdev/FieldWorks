@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
@@ -495,6 +496,9 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				idAttr.Value = sTarget;
 				idAttr.Value = sTarget;
 				currentNode.Attributes.Append(idAttr);
+				var guidAttr = (XmlAttribute) xn.SelectSingleNode("@guid");
+				Debug.Assert(guidAttr != null, "guid is a required attribute for items with ids");
+				currentNode.Attributes.Append((XmlAttribute)guidAttr.Clone());
 				XmlAttribute typeAttr = (XmlAttribute)xn.SelectSingleNode("@type");
 				if (typeAttr != null)
 					currentNode.Attributes.Append((XmlAttribute)typeAttr.Clone());

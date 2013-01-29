@@ -14,3 +14,4 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("Controls for Lexicon")]
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
+[assembly: InternalsVisibleTo("LexTextControlsTests")]

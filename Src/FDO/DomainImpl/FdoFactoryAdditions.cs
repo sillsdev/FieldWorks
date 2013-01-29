@@ -1073,6 +1073,66 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 	#endregion
 
+	internal partial class FsFeatStrucTypeFactory : IFsFeatStrucTypeFactory
+	{
+		IFsFeatStrucType IFsFeatStrucTypeFactory.Create(Guid guid, IFsFeatureSystem owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int flid = m_cache.MetaDataCache.GetFieldId("FsFeatureSystem", "Types", false);
+
+			var retval = new FsFeatStrucType(m_cache, hvo, guid);
+			owner.TypesOC.Add(retval);
+			return retval;
+		}
+	}
+
+	internal partial class FsClosedFeatureFactory : IFsClosedFeatureFactory
+	{
+		IFsClosedFeature IFsClosedFeatureFactory.Create(Guid guid, IFsFeatureSystem owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int flid = m_cache.MetaDataCache.GetFieldId("FsFeatureSystem", "Features", false);
+
+			var retval = new FsClosedFeature(m_cache, hvo, guid);
+			owner.FeaturesOC.Add(retval);
+			return retval;
+		}
+	}
+
+	internal partial class FsComplexFeatureFactory : IFsComplexFeatureFactory
+	{
+		IFsComplexFeature IFsComplexFeatureFactory.Create(Guid guid, IFsFeatureSystem owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int flid = m_cache.MetaDataCache.GetFieldId("FsFeatureSystem", "Features", false);
+
+			var retval = new FsComplexFeature(m_cache, hvo, guid);
+			owner.FeaturesOC.Add(retval);
+			return retval;
+		}
+	}
+
+	internal partial class FsSymFeatValFactory : IFsSymFeatValFactory
+	{
+		IFsSymFeatVal IFsSymFeatValFactory.Create(Guid guid, IFsClosedFeature owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int flid = m_cache.MetaDataCache.GetFieldId("FsClosedFeature", "Values", false);
+
+			var retval = new FsSymFeatVal(m_cache, hvo, guid);
+			owner.ValuesOC.Add(retval);
+			return retval;
+		}
+	}
+
 	#region CmPossibilityFactory class
 	/// <summary>
 	/// Add ICmPossibilityFactoryInternal impl.  Also add methods added to ICmPossibilityFactory.

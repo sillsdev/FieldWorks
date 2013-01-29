@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <eticPOSList xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#">
    <source>This was originally based on the 2005-06-03 GOLD xml version at <link>http://www.linguistics-ontology.org/ns/gold/0.2/gold-pos.owl</link>, but has been modified by hand.</source>
-   <item type="category" id="Adjective">
+   <item type="category" id="Adjective" guid="30d07580-5052-4d91-bc24-469b8b2d7df9">
 	  <abbrev ws="en">adj</abbrev>
 	  <abbrev ws="es">adj</abbrev>
 	  <abbrev ws="fr">adj</abbrev>
@@ -30,7 +30,7 @@
 	  <citation ws="en">Mish et al. 1990:56</citation>
 	  <citation ws="en">Payne 1997:63</citation>
    </item>
-   <item type="category" id="Adposition">
+   <item type="category" id="Adposition" guid="ae115ea8-2cd7-4501-8ae7-dc638e4f17c5">
 	  <abbrev ws="en">adp</abbrev>
 	  <abbrev ws="es">adpos</abbrev>
 	  <abbrev ws="fr">adpos</abbrev>
@@ -59,7 +59,7 @@
 	  <citation ws="en">Crystal 1997: 305</citation>
 	  <citation ws="en">Mish et al. 1990:929</citation>
 	  <citation ws="en">Payne 1997:86</citation>
-	  <item type="category" id="Postposition">
+	  <item type="category" id="Postposition" guid="18f1b2b8-0ce3-4889-90e9-003fed6a969f">
 		 <abbrev ws="en">post</abbrev>
 		 <abbrev ws="es">post</abbrev>
 		 <abbrev ws="fr">post</abbrev>
@@ -87,7 +87,7 @@
 		 <citation ws="en">Crystal 1997:300</citation>
 		 <citation ws="en">Payne 1997:86</citation>
 	  </item>
-	  <item type="category" id="Preposition">
+	  <item type="category" id="Preposition" guid="923e5aed-d84a-48b0-9b7a-331c1336864a">
 		 <abbrev ws="en">prep</abbrev>
 		 <abbrev ws="es">prep</abbrev>
 		 <abbrev ws="fr">prép</abbrev>
@@ -117,7 +117,7 @@
 		 <citation ws="en">Payne 1997:86</citation>
 	  </item>
    </item>
-   <item type="category" id="Adverb">
+   <item type="category" id="Adverb" guid="46e4fe08-ffa0-4c8b-bf98-2c56f38904d9">
 	  <abbrev ws="en">adv</abbrev>
 	  <abbrev ws="es">adv</abbrev>
 	  <abbrev ws="fr">adv</abbrev>
@@ -146,7 +146,7 @@
 	  <citation ws="en">Mish et al. 1990:59</citation>
 	  <citation ws="en">Payne 1997:69</citation>
    </item>
-   <item type="category" id="Classifier">
+   <item type="category" id="Classifier" guid="31616603-aadd-47af-a710-cb565fbbbd57">
 	  <abbrev ws="en">clf</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr">class</abbrev>
@@ -174,7 +174,7 @@
 	  <citation ws="en">Crystal 1997:61</citation>
 	  <citation ws="en">Mish et al. 1990:246</citation>
 	  <citation ws="en">Payne 1997:107</citation>
-	  <item type="category" id="NounClassifier">
+	  <item type="category" id="NounClassifier" guid="131209ac-b8f1-44aa-b4f0-9a983e3d5bad">
 		 <abbrev ws="en">nclf</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">class.nom</abbrev>
@@ -204,7 +204,7 @@
 		 <citation ws="en">Payne 1997:107</citation>
 	  </item>
    </item>
-   <item type="category" id="Connective">
+   <item type="category" id="Connective" guid="6e0682a7-efd4-43c9-b083-22c4ce245419">
 	  <abbrev ws="en">conn</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr">conn</abbrev>
@@ -231,7 +231,7 @@
 	  <def ws="id"/>
 	  <citation ws="en">Crystal 1997:81</citation>
 	  <citation ws="en">Mish et al. 1990:277-278</citation>
-	  <item type="category" id="CoordinatingConnective">
+	  <item type="category" id="CoordinatingConnective" guid="75ac4332-a445-4ce8-918e-b27b04073745">
 		 <abbrev ws="en">coordconn</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">conn.coord</abbrev>
@@ -258,7 +258,7 @@
 		 <def ws="id"/>
 		 <citation ws="en">Crystal 1997:93</citation>
 		 <citation ws="en">Mish et al. 1990:288</citation>
-		 <item type="category" id="CorrelativeConnective">
+		 <item type="category" id="CorrelativeConnective" guid="2d7a5bc6-bbc7-4be9-a036-3d046dbc65f7">
 			<abbrev ws="en">correlconn</abbrev>
 			<abbrev ws="es"/>
 			<abbrev ws="fr">conn.corrél</abbrev>
@@ -287,7 +287,7 @@
 			<citation ws="en">Mish et al. 1990:293</citation>
 		 </item>
 	  </item>
-	  <item type="category" id="SubordinatingConnective">
+	  <item type="category" id="SubordinatingConnective" guid="09052f32-bf65-400a-8179-6a1c54ef30c9">
 		 <abbrev ws="en">subordconn</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">conn.subord</abbrev>
@@ -314,7 +314,7 @@
 		 <def ws="id"/>
 		 <citation ws="en">Crystal 1997:370</citation>
 		 <citation ws="en">Mish et al. 1990:1175</citation>
-		 <item type="category" id="Adverbializer">
+		 <item type="category" id="Adverbializer" guid="a0a9906d-d987-42cb-8a65-f549462b16fc">
 			<abbrev ws="en">advlizer</abbrev>
 			<abbrev ws="es"/>
 			<abbrev ws="fr">adverbialisateur</abbrev>
@@ -340,7 +340,7 @@
 			<def ws="ru"/>
 			<def ws="id"/>
 		 </item>
-		 <item type="category" id="Complementizer">
+		 <item type="category" id="Complementizer" guid="8f7ba502-e7c9-4bc4-a881-b0cb1b630466">
 			<abbrev ws="en">comp</abbrev>
 			<abbrev ws="es"/>
 			<abbrev ws="fr">compltr</abbrev>
@@ -367,7 +367,7 @@
 			<def ws="id"/>
 			<citation ws="en">Crystal 1997:75</citation>
 		 </item>
-		 <item type="category" id="Relativizer">
+		 <item type="category" id="Relativizer" guid="c5f222a3-e1aa-4250-b196-d94f0eb0d47b">
 			<abbrev ws="en">rel</abbrev>
 			<abbrev ws="es"/>
 			<abbrev ws="fr">relativis</abbrev>
@@ -396,7 +396,7 @@
 		 </item>
 	  </item>
    </item>
-   <item type="category" id="Determiner">
+   <item type="category" id="Determiner" guid="6df1c8ee-5530-4180-99e8-be2afab0f60d">
 	  <abbrev ws="en">det</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr">dét</abbrev>
@@ -423,7 +423,7 @@
 	  <def ws="id"/>
 	  <citation ws="en">Crystal 1997:112</citation>
 	  <citation ws="en">Mish et al. 1990:346</citation>
-	  <item type="category" id="Article">
+	  <item type="category" id="Article" guid="af3f65de-b0d5-4243-a196-53b67bd6a4df">
 		 <abbrev ws="en">art</abbrev>
 		 <abbrev ws="es">art</abbrev>
 		 <abbrev ws="fr">art</abbrev>
@@ -450,7 +450,7 @@
 		 <def ws="id"/>
 		 <citation ws="en">Crystal 1997:26</citation>
 		 <citation ws="en">Mish et al. 1990:105</citation>
-		 <item type="category" id="DefiniteArticle">
+		 <item type="category" id="DefiniteArticle" guid="92ab3e14-e1af-4e7f-8492-e37a1f386e3f">
 			<abbrev ws="en">def</abbrev>
 			<abbrev ws="es">déf</abbrev>
 			<abbrev ws="fr">art.déf</abbrev>
@@ -477,7 +477,7 @@
 			<def ws="id"/>
 			<citation ws="en">Crystal 1997:107</citation>
 		 </item>
-		 <item type="category" id="IndefiniteArticle">
+		 <item type="category" id="IndefiniteArticle" guid="d07c625d-ff8b-4c4e-99be-e32b2924626e">
 			<abbrev ws="en">indf</abbrev>
 			<abbrev ws="es">indf</abbrev>
 			<abbrev ws="fr">art.indéf</abbrev>
@@ -505,7 +505,7 @@
 			<citation ws="en">Crystal 1997:193</citation>
 		 </item>
 	  </item>
-	  <item type="category" id="Demonstrative">
+	  <item type="category" id="Demonstrative" guid="093264d7-06c3-42e1-bc4d-5a965ce63887">
 		 <abbrev ws="en">dem</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">dém</abbrev>
@@ -533,7 +533,7 @@
 		 <citation ws="en">Crystal 1997:312</citation>
 		 <citation ws="en">Mish et al. 1990:338</citation>
 	  </item>
-	  <item type="category" id="Quantifier">
+	  <item type="category" id="Quantifier" guid="a4a759b4-5a10-4d7a-80a3-accf5bd840b1">
 		 <abbrev ws="en">quant</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">quant</abbrev>
@@ -560,7 +560,7 @@
 		 <def ws="id"/>
 		 <citation ws="en">Crystal 1997:317</citation>
 		 <citation ws="en">Mish et al. 1990:963</citation>
-		 <item type="category" id="Numeral">
+		 <item type="category" id="Numeral" guid="e680330e-2b41-4bec-b96b-514743c47cae">
 			<abbrev ws="en">num</abbrev>
 			<abbrev ws="es"/>
 			<abbrev ws="fr">num</abbrev>
@@ -587,7 +587,7 @@
 			<def ws="id"/>
 			<citation ws="en">Hartmann and Stork 1972:155</citation>
 			<citation ws="en">Pei and Gaynor 1954:149</citation>
-			<item type="category" id="CardinalNumeral">
+			<item type="category" id="CardinalNumeral" guid="a5311f3b-ff98-47d2-8ece-b1aca03a8bbd">
 			   <abbrev ws="en">cardnum</abbrev>
 			   <abbrev ws="es"/>
 			   <abbrev ws="fr">num.card</abbrev>
@@ -615,7 +615,7 @@
 			   <citation ws="en">Crystal 1997:52</citation>
 			   <citation ws="en">Mish et al. 1990:207</citation>
 			</item>
-			<item type="category" id="DistributiveNumeral">
+			<item type="category" id="DistributiveNumeral" guid="b330eb7d-f43d-4531-846e-5cd5820851ad">
 			   <abbrev ws="en">distrnum</abbrev>
 			   <abbrev ws="es"/>
 			   <abbrev ws="fr">num.distr</abbrev>
@@ -641,7 +641,7 @@
 			   <def ws="ru">Разделительное числительное - это числительное, которое выражает группу указанного числа.</def>
 			   <def ws="id"/>
 			</item>
-			<item type="category" id="MultiplicativeNumeral">
+			<item type="category" id="MultiplicativeNumeral" guid="1c030229-affa-4729-9773-878100c1fd28">
 			   <abbrev ws="en">multipnum</abbrev>
 			   <abbrev ws="es"/>
 			   <abbrev ws="fr">num.mult</abbrev>
@@ -669,7 +669,7 @@
 			   <citation ws="en">Pei and Gaynor 1954:149</citation>
 			   <citation ws="en">Hartmann and Stork 1972:147</citation>
 			</item>
-			<item type="category" id="OrdinalNumeral">
+			<item type="category" id="OrdinalNumeral" guid="3d9d43d6-527c-4e79-be00-82cf2d0fd9bd">
 			   <abbrev ws="en">ordnum</abbrev>
 			   <abbrev ws="es"/>
 			   <abbrev ws="fr">num.ord</abbrev>
@@ -697,7 +697,7 @@
 			   <citation ws="en">Crystal 1997:272</citation>
 			   <citation ws="en">Mish et al. 1990:831</citation>
 			</item>
-			<item type="category" id="PartitiveNumeral">
+			<item type="category" id="PartitiveNumeral" guid="0e652cc3-ef08-4cb1-8b73-a68ebd8e7c04">
 			   <abbrev ws="en">partnum</abbrev>
 			   <abbrev ws="es"/>
 			   <abbrev ws="fr">num.fract</abbrev>
@@ -728,7 +728,7 @@
 		 </item>
 	  </item>
    </item>
-   <item type="category" id="ExistentialMarker">
+   <item type="category" id="ExistentialMarker" guid="25b2ef8c-d87e-4868-898c-8f5375afeeb3">
 	  <abbrev ws="en">existmrkr</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr">marq.exist</abbrev>
@@ -755,7 +755,7 @@
 	  <def ws="id"/>
 	  <citation ws="en">Crystal 1997:142</citation>
    </item>
-   <item type="category" id="Expletive">
+   <item type="category" id="Expletive" guid="cc60cb18-5067-442b-a740-d3b913b2610a">
 	  <abbrev ws="en">expl</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr">expl</abbrev>
@@ -783,7 +783,7 @@
 	  <citation ws="en">Crystal 1997:127</citation>
 	  <citation ws="en">Mish et al. 1990:437</citation>
    </item>
-   <item type="category" id="Interjection">
+   <item type="category" id="Interjection" guid="d32dff62-4117-4762-a887-96478406769b">
 	  <abbrev ws="en">interj</abbrev>
 	  <abbrev ws="es">interj</abbrev>
 	  <abbrev ws="fr">interj</abbrev>
@@ -810,7 +810,7 @@
 	  <def ws="id"/>
 	  <citation ws="en">Crystal 1997:200</citation>
    </item>
-   <item type="category" id="Noun">
+   <item type="category" id="Noun" guid="a8e41fd3-e343-4c7c-aa05-01ea3dd5cfb5">
 	  <abbrev ws="en">n</abbrev>
 	  <abbrev ws="es">sus</abbrev>
 	  <abbrev ws="fr">n</abbrev>
@@ -837,7 +837,7 @@
 	  <def ws="id">Nomina adalah kelas kata yang mencakup benda, tempat, orang, dan binatang. Termasuk juga banyak konsep abstrak, mis. kehidupan, perkiraan, pembunuhan. Juga disebut kata nama atau kata benda.</def>
 	  <citation ws="en">Crystal 1997:371</citation>
 	  <citation ws="en">Mish et al. 1990:1176</citation>
-	  <item type="category" id="Nominal">
+	  <item type="category" id="Nominal" guid="085360ef-166c-4324-a5c4-5f4d8eabf75a">
 		 <abbrev ws="en">nom</abbrev>
 		 <abbrev ws="es">nom</abbrev>
 		 <abbrev ws="fr">nom</abbrev>
@@ -864,7 +864,7 @@
 		 <def ws="id"/>
 		 <citation ws="en">Crystal 1997:260</citation>
 		 <citation ws="en">Mish et al. 1990:801</citation>
-		 <item type="category" id="Gerund">
+		 <item type="category" id="Gerund" guid="18b523c8-7dca-4361-93d8-6d039335f26d">
 			<abbrev ws="en">ger</abbrev>
 			<abbrev ws="es"/>
 			<abbrev ws="fr">ger</abbrev>
@@ -892,7 +892,7 @@
 			<citation ws="en">Crystal 1997: 279</citation>
 		 </item>
 	  </item>
-	  <item type="category" id="ProperNoun">
+	  <item type="category" id="ProperNoun" guid="a8d31dff-1cdd-4bc7-ab3a-befef67711c2">
 		 <abbrev ws="en">nprop</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">n.pr</abbrev>
@@ -919,7 +919,7 @@
 		 <def ws="id"/>
 		 <citation ws="en">Payne 1997:39</citation>
 	  </item>
-	  <item type="category" id="Substantive">
+	  <item type="category" id="Substantive" guid="584412e9-3a96-4251-99e2-438f1394432e">
 		 <abbrev ws="en">subs</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">subst</abbrev>
@@ -950,7 +950,7 @@
 		 <citation ws="en">Payne 1997:33</citation>
 	  </item>
    </item>
-   <item type="category" id="Participle">
+   <item type="category" id="Participle" guid="83fdec31-e15b-40e7-bcd2-69134c5a0fcd">
 	  <abbrev ws="en">ptcp</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr">part</abbrev>
@@ -977,7 +977,7 @@
 	  <def ws="id"/>
 	  <citation ws="en">Crystal 2008:352</citation>
    </item>
-   <item type="category" id="Particle">
+   <item type="category" id="Particle" guid="6e758bbc-2b40-427d-b79f-bf14a7c96c6a">
 	  <abbrev ws="en">prt</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr">partic</abbrev>
@@ -1002,7 +1002,7 @@
 	  <def ws="fa"/>
 	  <def ws="ru">Частица - это часть речи, члены которой не относятся к одному из главных классов слов, не имеют словоизменения, и обычно имеют грамматическое или прагматическое значение.</def>
 	  <def ws="id"/>
-	  <item type="category" id="NominalParticle">
+	  <item type="category" id="NominalParticle" guid="c6853f58-a74c-483e-9494-732002a7ab5b">
 		 <abbrev ws="en">nomprt</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">partic.nom</abbrev>
@@ -1028,7 +1028,7 @@
 		 <def ws="ru">Номинативная частица - слен замкнутого класса частиц, которые встерчаются с существительными.</def>
 		 <def ws="id"/>
 	  </item>
-	  <item type="category" id="QuestionParticle">
+	  <item type="category" id="QuestionParticle" guid="07455e91-118a-4d7d-848c-39bedd355a3d">
 		 <abbrev ws="en">q</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">partic.interr</abbrev>
@@ -1055,7 +1055,7 @@
 		 <def ws="id"/>
 		 <citation ws="en">Payne 1997:296</citation>
 	  </item>
-	  <item type="category" id="VerbalParticle">
+	  <item type="category" id="VerbalParticle" guid="12435333-c423-43d7-acf9-6028e3d20a42">
 		 <abbrev ws="en">verbprt</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">partic.verb</abbrev>
@@ -1082,7 +1082,7 @@
 		 <def ws="id"/>
 	  </item>
    </item>
-   <item type="category" id="Prenoun">
+   <item type="category" id="Prenoun" guid="f1ac9eab-5f8c-41cf-b234-e53405aaaac5">
 	  <abbrev ws="en">prenoun</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr"/>
@@ -1109,7 +1109,7 @@
 	  <def ws="id"/>
 	  <citation ws="en">Valentine 2001: 152-154</citation>
    </item>
-   <item type="category" id="Preverb">
+   <item type="category" id="Preverb" guid="4e676ad2-542d-461d-9d78-1dbcb55ec456">
 	  <abbrev ws="en">preverb</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr"/>
@@ -1136,7 +1136,7 @@
 	  <def ws="id"/>
 	  <citation ws="en">Valentine 2001: 154-158</citation>
    </item>
-   <item type="category" id="Pro-form">
+   <item type="category" id="Pro-form" guid="a4fc78d6-7591-4fb3-8edd-82f10ae3739d">
 	  <abbrev ws="en">pro-form</abbrev>
 	  <abbrev ws="es"/>
 	  <abbrev ws="fr">proforme</abbrev>
@@ -1163,7 +1163,7 @@
 	  <def ws="id"/>
 	  <citation ws="en">Schachter 1985:24-25</citation>
 	  <citation ws="en">Crystal 1997:310</citation>
-	  <item type="category" id="InterrogativeProform">
+	  <item type="category" id="InterrogativeProform" guid="e5e7d0cb-36c5-497d-831c-cb614e283d7c">
 		 <abbrev ws="en">interrog</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">pron.int</abbrev>
@@ -1189,7 +1189,7 @@
 		 <def ws="ru">Вопросительное местоименное слово - это местоименное слово, которое используется в вопросительных предложениях, заменяя элемент, о котором задаётся вопрос.</def>
 		 <def ws="id"/>
 	  </item>
-	  <item type="category" id="Pro-adjective">
+	  <item type="category" id="Pro-adjective" guid="e28bb667-fcaa-4c6e-944b-9b90683a2570">
 		 <abbrev ws="en">pro-adj</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr"/>
@@ -1215,7 +1215,7 @@
 		 <def ws="ru"/>
 		 <def ws="id"/>
 	  </item>
-	  <item type="category" id="Pro-adverb">
+	  <item type="category" id="Pro-adverb" guid="d599dd69-b445-4627-a7f3-b9647abdb905">
 		 <abbrev ws="en">pro-adv</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr"/>
@@ -1241,7 +1241,7 @@
 		 <def ws="ru"/>
 		 <def ws="id"/>
 	  </item>
-	  <item type="category" id="Pronoun">
+	  <item type="category" id="Pronoun" guid="a3274cfd-225f-45fd-8851-a7b1a1e1037a">
 		 <abbrev ws="en">pro</abbrev>
 		 <abbrev ws="es">pro</abbrev>
 		 <abbrev ws="fr">pron</abbrev>
@@ -1268,7 +1268,7 @@
 		 <def ws="id">Pronomina adalah kelas kata yang menggantikan nomina atau frasa nomina dalam kalimat. Juga disebut kata ganti (orang). Contoh: "dia", "saya", "mereka".</def>
 		 <citation ws="en">Crystal 1997:312</citation>
 		 <citation ws="en">Mish et al. 1990:942</citation>
-		 <item type="category" id="IndefinitePronoun">
+		 <item type="category" id="IndefinitePronoun" guid="b5d9ab85-fa93-4d6a-892b-837efb299ef7">
 			<abbrev ws="en">indfpro</abbrev>
 			<abbrev ws="es">indf</abbrev>
 			<abbrev ws="fr">pron.indéf</abbrev>
@@ -1296,7 +1296,7 @@
 			<citation ws="en">Crystal 1997: 312</citation>
 			<citation ws="en">Mish et al. 1990:612</citation>
 		 </item>
-		 <item type="category" id="PersonalPronoun">
+		 <item type="category" id="PersonalPronoun" guid="2fad3a89-47d7-472a-a8cc-270e7e3e0239">
 			<abbrev ws="en">pers</abbrev>
 			<abbrev ws="es">pers</abbrev>
 			<abbrev ws="fr">pron.pers</abbrev>
@@ -1322,7 +1322,7 @@
 			<def ws="ru">Личное местоимение - это местоимение, которое выражает отличие в дейксисе лица.</def>
 			<def ws="id"/>
 			<citation ws="en">Mish et al. 1990:878</citation>
-			<item type="category" id="EmphaticPronoun">
+			<item type="category" id="EmphaticPronoun" guid="98f5507f-bf51-43e4-8e08-e066c36c6d6e">
 			   <abbrev ws="en">emph</abbrev>
 			   <abbrev ws="es"/>
 			   <abbrev ws="fr">pron.emph</abbrev>
@@ -1348,7 +1348,7 @@
 			   <def ws="ru">Эмфатическое местоимение - это личное местоимение, которое используется для акцентирования его референта.</def>
 			   <def ws="id"/>
 			</item>
-			<item type="category" id="PossessivePronoun">
+			<item type="category" id="PossessivePronoun" guid="64e3b502-90f5-4df0-9212-65f6e5c96c30">
 			   <abbrev ws="en">poss</abbrev>
 			   <abbrev ws="es">pos</abbrev>
 			   <abbrev ws="fr">pron.poss</abbrev>
@@ -1376,7 +1376,7 @@
 			   <citation ws="en">Crystal 1997:312</citation>
 			   <citation ws="en">Mish et al. 1990:918</citation>
 			</item>
-			<item type="category" id="ReflexivePronoun">
+			<item type="category" id="ReflexivePronoun" guid="605c54f9-a81f-4bca-8d8c-a6fb08c29676">
 			   <abbrev ws="en">refl</abbrev>
 			   <abbrev ws="es">pro.refl</abbrev>
 			   <abbrev ws="fr">pron.réfl</abbrev>
@@ -1404,7 +1404,7 @@
 			   <citation ws="en">Mish et al. 1990:990</citation>
 			</item>
 		 </item>
-		 <item type="category" id="ReciprocalPronoun">
+		 <item type="category" id="ReciprocalPronoun" guid="d9a90c6c-3575-4937-bfaf-b3585a1954a9">
 			<abbrev ws="en">recp</abbrev>
 			<abbrev ws="es"/>
 			<abbrev ws="fr">pron.réc</abbrev>
@@ -1432,7 +1432,7 @@
 			<citation ws="en">Crystal 1997:323</citation>
 			<citation ws="en">Mish et al. 1990:982</citation>
 		 </item>
-		 <item type="category" id="RelativePronoun">
+		 <item type="category" id="RelativePronoun" guid="3f9bffe2-da9b-42fa-afbd-d7ca8bca7d4a">
 			<abbrev ws="en">relpro</abbrev>
 			<abbrev ws="es">rel</abbrev>
 			<abbrev ws="fr">pron.rel</abbrev>
@@ -1461,7 +1461,7 @@
 		 </item>
 	  </item>
    </item>
-   <item type="category" id="Verb">
+   <item type="category" id="Verb" guid="86ff66f6-0774-407a-a0dc-3eeaf873daf7">
 	  <abbrev ws="en">v</abbrev>
 	  <abbrev ws="es">v</abbrev>
 	  <abbrev ws="fr">v</abbrev>
@@ -1491,7 +1491,7 @@
 	  <citation ws="en">Givon 1984:52</citation>
 	  <citation ws="en">Payne 1997:47</citation>
 	  <citation ws="es">Alvarez 1905:103</citation>
-	  <item type="category" id="Copulative">
+	  <item type="category" id="Copulative" guid="55f2a00e-5f07-4ace-8a44-8794ed1a38a8">
 		 <abbrev ws="en">cop</abbrev>
 		 <abbrev ws="es"/>
 		 <abbrev ws="fr">v.cop</abbrev>
@@ -1517,7 +1517,7 @@
 		 <def ws="ru">Тип глагола, например, 'казаться' и 'появляться'</def>
 		 <def ws="id"/>
 	  </item>
-	  <item type="category" id="DitransitiveVerb">
+	  <item type="category" id="DitransitiveVerb" guid="efadf1d3-580a-4e4b-a94c-3f1d6e59c5fc">
 		 <abbrev ws="en">vd</abbrev>
 		 <abbrev ws="es">vb</abbrev>
 		 <abbrev ws="fr">v.bi-tr</abbrev>
@@ -1544,7 +1544,7 @@
 		 <def ws="id"/>
 		 <citation ws="en">Crystal 1997:397</citation>
 	  </item>
-	  <item type="category" id="IntransitiveVerb">
+	  <item type="category" id="IntransitiveVerb" guid="4459ff09-9ee0-4b50-8787-ae40fd76d3b7">
 		 <abbrev ws="en">vi</abbrev>
 		 <abbrev ws="es">vi</abbrev>
 		 <abbrev ws="fr">v.i</abbrev>
@@ -1572,7 +1572,7 @@
 		 <citation ws="en">Crystal 1997:397</citation>
 		 <citation ws="en">Payne 1997:171</citation>
 	  </item>
-	  <item type="category" id="TransitiveVerb">
+	  <item type="category" id="TransitiveVerb" guid="54712931-442f-42d5-8634-f12bd2e310ce">
 		 <abbrev ws="en">vt</abbrev>
 		 <abbrev ws="es">vt</abbrev>
 		 <abbrev ws="fr">v.tr</abbrev>

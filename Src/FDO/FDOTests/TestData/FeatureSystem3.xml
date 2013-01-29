@@ -1,4 +1,4 @@
-<item id="fAspect" type="feature">
+﻿<item id="fAspect" guid="afc7f09f-8bc4-47dd-aef3-8670f82cd270" type="feature">
    <abbrev ws="en">asp</abbrev>
    <term ws="en">aspect</term>
    <def ws="en">Aspect is a grammatical category associated with verbs that expresses a temporal view of the event or state expressed by the verb.</def>
@@ -11,38 +11,38 @@
    <citation>Hartmann and Stork 1972:20</citation>
    <citation>Crystal 1987:415</citation>
    <citation>Mish et al. 1990:108</citation>
-   <item id="xAor" target="vPerfv" type="xref">
+   <item id="xAor" guid="568eaf9e-a4c4-43ea-91ae-53e72bf55d42" target="vPerfv" type="xref">
 	  <abbrev ws="en">aor</abbrev>
 	  <term ws="en">aorist aspect</term>
-	  <fs id="xAorFS" type="Infl">
+	  <fs id="xAorFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="aor"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vAtelic" type="value">
+   <item id="vAtelic" guid="55e3c46a-43a7-4a1f-91de-d81fff9ab833" type="value">
 	  <abbrev ws="en">atelic</abbrev>
 	  <term ws="en">atelic aspect</term>
 	  <def ws="en">A term used in the grammatical analysis of aspect, to refer to an event where the activity has no clear terminal point. They contrast with telic verbs.</def>
 	  <citation>Crystal 1997:33</citation>
-	  <fs id="vAtelicFS" type="Infl">
+	  <fs id="vAtelicFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="atelic"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vAtten" type="value">
+   <item id="vAtten" guid="99025eb1-d2a4-4acc-8596-99fe6a36350a" type="value">
 	  <abbrev ws="en">atten</abbrev>
 	  <term ws="en">attenuative aspect</term>
 	  <def ws="en">A term sometimes used in grammar and semantics, referring to a reduced quality or quantity of the state or activity expressed by the verb ('a little', 'less'). In some languages (e.g., Hungarian) the contrast is a formal part of the aspect system.</def>
 	  <citation>Crystal 1997:33</citation>
-	  <fs id="vAttenFS" type="Infl">
+	  <fs id="vAttenFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="atten"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vCess" type="value">
+   <item id="vCess" guid="195448c4-f161-4dea-a9d7-d1460a388e0b" type="value">
 	  <abbrev ws="en">cess</abbrev>
 	  <term ws="en">cessative aspect</term>
 	  <def ws="en">Cessative aspect is aspect that expresses the cessation of an event or state.</def>
@@ -50,69 +50,69 @@
 	  <citation>Nida 1949:168</citation>
 	  <citation>Elson and Pickett 1988:28</citation>
 	  <citation>Anderson, Judi Lynn 1989:12</citation>
-	  <fs id="vCessFS" type="Infl">
+	  <fs id="vCessFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="cess"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="xCompl" target="vTelic" type="xref">
+   <item id="xCompl" guid="38615bbe-2385-4200-9834-58214dc5b765" target="vTelic" type="xref">
 	  <abbrev ws="en">compl</abbrev>
 	  <term ws="en">completive aspect</term>
-	  <fs id="xComplFS" type="Infl">
+	  <fs id="xComplFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="compl"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vCont" type="value">
+   <item id="vCont" guid="674a5177-bf37-47ec-a459-85f1d1af1f86" type="value">
 	  <abbrev ws="en">cont</abbrev>
 	  <term ws="en">continuous aspect</term>
 	  <def ws="en">Continuous aspect is an imperfective aspect that expresses an ongoing, but not habitual, occurrence of the state or event expressed by the verb.</def>
 	  <citation>Comrie 1976a:12,26</citation>
 	  <citation>Dahl 1985:94</citation>
 	  <citation>Bills, Vallejo, and Troike 1969:21</citation>
-	  <fs id="vContFS" type="Infl">
+	  <fs id="vContFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="cont"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vDist" type="value">
+   <item id="vDist" guid="676a742a-714a-4951-aa22-837f015926b6" type="value">
 	  <abbrev ws="en">distr</abbrev>
 	  <term ws="en">distributive aspect</term>
 	  <def ws="en">Distributive aspect is an iterative aspect which expresses that an event is applied to members of a group one after another. These members are typically the referents named by (1) the subject of an intransitive verb, or (2) the object of a transitive verb.</def>
 	  <citation>Pei and Gaynor 1954:59</citation>
 	  <citation>Comrie 1985a:344</citation>
-	  <fs id="vDistFS" type="Infl">
+	  <fs id="vDistFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="distr"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vDur" target="vCont" type="xref">
+   <item id="vDur" guid="03e165bd-d45d-495c-bc2b-97f0ad9fd48f" target="vCont" type="xref">
 	  <abbrev ws="en">dur</abbrev>
 	  <term ws="en">durative aspect</term>
 	  <def ws="en">Used in grammatical analysis of aspect, to refer to an event involving a period of time (cf. 'continuous', 'progressive'); it contrasts with 'non-durative' or 'punctual'.</def>
 	  <citation>Crystal 1997:128</citation>
-	  <fs id="vDurFS" type="Infl">
+	  <fs id="vDurFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="dur"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vFreq" type="value">
+   <item id="vFreq" guid="1a965131-9103-48e2-b932-69aa4aa41634" type="value">
 	  <abbrev ws="en">freq</abbrev>
 	  <term ws="en">frequentative aspect</term>
 	  <def ws="en">Used in the grammatical classification of verbs to refer to the expression of repeated action. In some languages (e.g. Russian) the class may be marked morphologically, but in English the meaning is normally expressed through adverbials of frequency, e.g. again, regularly, often.</def>
 	  <citation>Crystal 1997:159</citation>
-	  <fs id="vFreqFS" type="Infl">
+	  <fs id="vFreqFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="freq"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vHab" type="value">
+   <item id="vHab" guid="c9750574-2527-498a-b408-37c06a656a3c" type="value">
 	  <abbrev ws="en">hab</abbrev>
 	  <term ws="en">habitual aspect</term>
 	  <def ws="en">Habitual aspect is an imperfective aspect that expresses the occurrence of an event or state as characteristic of a period of time.</def>
@@ -120,13 +120,13 @@
 	  <citation>Dahl 1985:97</citation>
 	  <citation>Hartmann and Stork 1972:21</citation>
 	  <citation>Crystal 1987:422</citation>
-	  <fs id="vHabFS" type="Infl">
+	  <fs id="vHabFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="hab"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vImpfv" type="value">
+   <item id="vImpfv" guid="a8d7d764-3880-4993-8ea1-a7498314dd0c" type="value">
 	  <abbrev ws="en">ipfv</abbrev>
 	  <term ws="en">imperfective aspect</term>
 	  <def ws="en">Imperfective aspect is an aspect that expresses an event or state, with respect to its internal structure, instead of expressing it as a simple whole.</def>
@@ -135,24 +135,24 @@
 	  <citation>Comrie 1976a:24-25,41-42</citation>
 	  <citation>Crystal 1985:153</citation>
 	  <citation>Mish et al. 1990:604</citation>
-	  <fs id="vImpfvFS" type="Infl">
+	  <fs id="vImpfvFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="ipfv"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="xIncep" target="vInchoa" type="xref">
+   <item id="xIncep" guid="2a02acf1-c35d-432f-b9ef-c780c006e187" target="vInchoa" type="xref">
 	  <abbrev ws="en">incep</abbrev>
 	  <term ws="en">inceptive aspect</term>
 	  <def ws="en">Used to refer to a type of aspectual relationship in which the beginning of an action is specified. Same as 'inchoative'.</def>
 	  <citation>Crystal 1997:192</citation>
-	  <fs id="xIncepFS" type="Infl">
+	  <fs id="xIncepFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="incep"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vInchoa" type="value">
+   <item id="vInchoa" guid="f6132fac-4f9d-4b78-8daf-4396ab4074f1" type="value">
 	  <abbrev ws="en">inchoa</abbrev>
 	  <term ws="en">inchoative aspect</term>
 	  <def ws="en">Inchoative aspect is an aspect that expresses the beginning of an event or state.</def>
@@ -161,26 +161,26 @@
 	  <citation>Nida 1949:168</citation>
 	  <citation>Bybee 1985:147-148</citation>
 	  <citation>Mish et al. 1990:608-609</citation>
-	  <fs id="vInchoaFS" type="Infl">
+	  <fs id="vInchoaFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="inchoa"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vIter" type="value">
+   <item id="vIter" guid="9f46a43a-503c-4cbb-a3bf-63cc57393280" type="value">
 	  <abbrev ws="en">iter</abbrev>
 	  <term ws="en">iterative aspect</term>
 	  <def ws="en">Iterative aspect is an aspect that expresses the repetition of an event or state.</def>
 	  <citation>Comrie 1985a:343</citation>
 	  <citation>Mish et al. 1990:643</citation>
 	  <citation>Crystal 1985:167</citation>
-	  <fs id="vIterFS" type="Infl">
+	  <fs id="vIterFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="iter"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vPerfv" type="value">
+   <item id="vPerfv" guid="d08daacc-5c6a-41ca-bdea-608782756440" type="value">
 	  <abbrev ws="en">pfv</abbrev>
 	  <term ws="en">perfective aspect</term>
 	  <def ws="en">Perfective aspect is an aspect that expresses a temporal view of an event or state as a simple whole, apart from the consideration of the internal structure of the time in which it occurs.</def>
@@ -192,13 +192,13 @@
 	  <citation>Elson and Pickett 1988:28</citation>
 	  <citation>Crystal 1985:224</citation>
 	  <citation>Mish et al. 1990:872</citation>
-	  <fs id="vPerfvFS" type="Infl">
+	  <fs id="vPerfvFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="pfv"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vProg" type="value">
+   <item id="vProg" guid="9dddafc9-c5d7-41c3-b08e-891ee76462f7" type="value">
 	  <abbrev ws="en">prog</abbrev>
 	  <term ws="en">progressive aspect</term>
 	  <def ws="en">Progressive aspect is a continuous aspect that expresses processes, not states.</def>
@@ -207,58 +207,58 @@
 	  <citation>Comrie 1976a:12,33-36</citation>
 	  <citation>Crystal 1987:428</citation>
 	  <citation>Mish et al. 1990:940</citation>
-	  <fs id="vProgFS" type="Infl">
+	  <fs id="vProgFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="prog"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="xPunct" target="vPerfv" type="xref">
+   <item id="xPunct" guid="d0c7c06d-5534-43d3-8302-846d4c4f2577" target="vPerfv" type="xref">
 	  <abbrev ws="en">punc</abbrev>
 	  <term ws="en">punctual aspect</term>
 	  <def ws="en">Used in analysis of aspect to refer to a momentary event, thought of as having no temporal duration; it thus contrasts with durative or continuous events, where a period of time is involved.</def>
-	  <fs id="xPunctFS" type="Infl">
+	  <fs id="xPunctFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="punc"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vResultative" type="value">
+   <item id="vResultative" guid="1b91b909-7a04-40a9-bd66-e3ee09480931" type="value">
 	  <abbrev ws="en">res</abbrev>
 	  <term ws="en">resultative aspect</term>
 	  <def ws="en">A term used in grammatical analysis of aspect, to express consequence or effect.</def>
 	  <citation>Crystal 1997:332</citation>
-	  <fs id="vResultativeFS" type="Infl">
+	  <fs id="vResultativeFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="res"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="xStv" target="vPerfv" type="xref">
+   <item id="xStv" guid="02ad275e-5ec7-4485-a448-f0db23a3a2ef" target="vPerfv" type="xref">
 	  <abbrev ws="en">stv</abbrev>
 	  <term ws="en">stative</term>
 	  <citation>Crystal 1997:361-2</citation>
-	  <fs id="xStvFS" type="Infl">
+	  <fs id="xStvFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="stv"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vTelic" type="value">
+   <item id="vTelic" guid="99a14f6e-701f-4f05-951c-cf464e053f3b" type="value">
 	  <abbrev ws="en">telic</abbrev>
 	  <term ws="en">telic aspect</term>
 	  <def ws="en">A term used in grammatical analysis of aspect, to refer to an event where the activity has a clear terminal point. These verbs contrast with atelic verbs.</def>
 	  <citation>Crystal 1997:348</citation>
-	  <fs id="vTelicFS" type="Infl">
+	  <fs id="vTelicFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="telic"/>
 		 </f>
 	  </fs>
    </item>
-   <item id="vUnknownfAspect" type="value">
+   <item id="vUnknownfAspect" guid="676eb2c2-8390-472b-bb4e-09bc069e228f" type="value">
 	  <abbrev ws="en">?</abbrev>
 	  <term ws="en">unknown aspect</term>
-	  <fs id="vUnknownfAspectFS" type="Infl">
+	  <fs id="vUnknownfAspectFS" type="Infl" typeguid="f315a31f-3151-4924-837a-cdc7de41693d">
 		 <f name="asp">
 			<sym value="?"/>
 		 </f>

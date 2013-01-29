@@ -1991,8 +1991,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var symFV = GetSymbolicValue(id.InnerText);
 			if (symFV == null)
 			{
-				symFV = Services.GetInstance<IFsSymFeatValFactory>().Create();
-				ValuesOC.Add(symFV);
+				// The XML is from a file shipped with FieldWorks. It is quite likely multiple users
+				// of a project could independently add the same items, so we create them with fixed guids
+				// so merge will recognize them as the same objects.
+				var guid = new Guid(feature.SelectSingleNode("ancestor::item[@id][position()=1]/@guid").InnerText);
+				symFV = Services.GetInstance<IFsSymFeatValFactory>().Create(guid, this);
 				symFV.CatalogSourceId = id.InnerText;
 				var abbr = item.SelectSingleNode("abbrev");
 				FsFeatureSystem.SetInnerText(m_cache, symFV.Abbreviation, abbr);
@@ -2774,8 +2777,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var fst = GetFeatureType(type);
 			if (fst == null)
 			{
-				fst = Services.GetInstance<IFsFeatStrucTypeFactory>().Create();
-				TypesOC.Add(fst);
+				// The XML is from a file shipped with FieldWorks. It is quite likely multiple users
+				// of a project could independently add the same items, so we create them with fixed guids
+				// so merge will recognize them as the same objects.
+				string guid = XmlUtils.GetAttributeValue(item.SelectSingleNode("fs"), "typeguid");
+				fst = Services.GetInstance<IFsFeatStrucTypeFactory>().Create(new Guid(guid), this);
 				fst.CatalogSourceId = type;
 
 				var parentFsType = item.SelectSingleNode("ancestor::item[@type='fsType' and not(@status)]");
@@ -2820,8 +2826,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var complex = GetFeature(id.InnerText) as IFsComplexFeature;
 			if (complex == null)
 			{
-				complex = Services.GetInstance<IFsComplexFeatureFactory>().Create();
-				FeaturesOC.Add(complex);
+				// The XML is from a file shipped with FieldWorks. It is quite likely multiple users
+				// of a project could independently add the same items, so we create them with fixed guids
+				// so merge will recognize them as the same objects.
+				var guid = new Guid(item.SelectSingleNode("../../../@guid").InnerText);
+				complex = Services.GetInstance<IFsComplexFeatureFactory>().Create(guid, this);
 
 				complex.CatalogSourceId = id.InnerText;
 				var abbr = item.SelectSingleNode("../../../abbrev");
@@ -2849,7 +2858,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var closed = GetFeature(id.InnerText) as IFsClosedFeature;
 			if (closed == null)
 			{
-				closed = Services.GetInstance<IFsClosedFeatureFactory>().Create();
+				// The XML is from a file shipped with FieldWorks. It is quite likely multiple users
+				// of a project could independently add the same items, so we create them with fixed guids
+				// so merge will recognize them as the same objects.
+				var guid = new Guid(item.ParentNode.Attributes["guid"].Value);
+				closed = Services.GetInstance<IFsClosedFeatureFactory>().Create(guid, this);
 				FeaturesOC.Add(closed);
 
 				closed.CatalogSourceId = id.InnerText;

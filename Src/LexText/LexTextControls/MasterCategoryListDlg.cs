@@ -683,31 +683,31 @@ namespace SIL.FieldWorks.LexText.Controls
 				out int newOwningFlid, out int insertLocation)
 			{
 				int newOwner;
-				// This is the index of the new object in the list.  See LT-5608.
+				// The XML node is from a file shipped with FieldWorks. It is quite likely multiple users
+				// of a project could independently add the same items, so we create them with fixed guids
+				// so merge will recognize them as the same objects.
+				var guid = new Guid(XmlUtils.GetAttributeValue(m_node, "guid"));
 				var posFactory = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
 				if (subItemOwner != null)
 				{
 					newOwner = subItemOwner.Hvo;
 					newOwningFlid = CmPossibilityTags.kflidSubPossibilities;
 					insertLocation = subItemOwner.SubPossibilitiesOS.Count;
-					m_pos = posFactory.Create();
-					subItemOwner.SubPossibilitiesOS.Add(m_pos);
+					m_pos = posFactory.Create(guid, subItemOwner);
 				}
 				else if (parent != null && parent.m_pos != null)
 				{
 					newOwner = parent.m_pos.Hvo;
 					newOwningFlid = CmPossibilityTags.kflidSubPossibilities;
 					insertLocation = parent.m_pos.SubPossibilitiesOS.Count;
-					m_pos = posFactory.Create();
-					parent.m_pos.SubPossibilitiesOS.Add(m_pos);
+					m_pos = posFactory.Create(guid, parent.m_pos);
 				}
 				else
 				{
 					newOwner = posList.Hvo;
 					newOwningFlid = CmPossibilityListTags.kflidPossibilities;
 					insertLocation = posList.PossibilitiesOS.Count;
-					m_pos = posFactory.Create();
-					posList.PossibilitiesOS.Add(m_pos);
+					m_pos = posFactory.Create(guid,posList); // automatically adds to parent.
 				}
 				return newOwner;
 			}

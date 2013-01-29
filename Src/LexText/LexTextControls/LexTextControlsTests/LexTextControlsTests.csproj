@@ -173,6 +173,7 @@
     </Compile>
     <Compile Include="LiftExportTests.cs" />
     <Compile Include="LiftMergerTests.cs" />
+    <Compile Include="MasterCategoryTests.cs" />
     <Compile Include="MsaInflectionFeatureListDlgTests.cs">
       <SubType>Code</SubType>
     </Compile>
