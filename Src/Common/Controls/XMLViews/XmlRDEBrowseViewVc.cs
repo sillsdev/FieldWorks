@@ -409,10 +409,11 @@ namespace SIL.FieldWorks.Common.Controls
 			var suppressNoForColumn = XmlUtils.GetOptionalAttributeValue(frag, @"suppressNoForColumn");
 			if (!string.IsNullOrEmpty(suppressNoForColumn))
 			{
-				// If the column that suppresses the "no" special behavior is present, we don't want the "no" child
+				// If the column that suppresses the "no" special behavior is present, we don't want the "no" child.
+				// That includes if a ws-specific column which includes that label is present.
 				foreach (var col in m_columns)
 				{
-					if (XmlUtils.GetOptionalAttributeValue(col, @"label") == suppressNoForColumn)
+					if (XmlUtils.GetOptionalAttributeValue(col, @"label").Contains(suppressNoForColumn))
 						return true;
 				}
 			}

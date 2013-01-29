@@ -38,89 +38,119 @@
 								<parameters id="wordList" clerk="RDEwords" filterBar="false" forceReloadListOnInitOrChangeRoot="true" editRowModelClass="LexSense" editRowAssembly="FDO.dll" editRowClass="SIL.FieldWorks.FDO.ILexSense" editRowSaveMethod="RDENewSense" editRowMergeMethod="RDEMergeSense" ShowOwnerShortname="true" TitleFormat="Words for {0}" treeBarAvailability="Required">
 									<!-- Note that currently the labels of these columns are known to LexSenseFactory.RDENewSense-->
 									<columns generate="childPartsForParentLayouts" leadingUnsortedColumns="4">
-										<column label="Word (Citation Form)" width="40%" ws="$ws=vernacular" visibility="always">
+										<column label="Word (Citation Form)" width="144000" ws="$ws=vernacular" visibility="always">
 											<obj class="LexSense" field="OwningEntry" layout="empty">
 												<editrow suppressNoForColumn="Word (Lexeme Form)">
 													<no>
 														<choice>
-															<where field="CitationForm" stringaltequals="" ws="vernacular">
-																<obj field="LexemeForm" layout="empty">
-																	<lit>(</lit>
-																	<string field="Form" ws="vernacular"/>
-																	<lit>)</lit>
-																</obj>
+															<where field="CitationForm" stringaltequals="" ws="$ws=vernacular">
+																<choice>
+																	<where field="LexemeForm/Form" stringaltequals="" ws="$ws=vernacular">
+																		<string field="CitationForm" ws="$ws=vernacular"/>
+																	</where>
+																	<otherwise>
+																		<obj field="LexemeForm" layout="empty">
+																			<lit>(</lit>
+																			<string field="Form" ws="$ws=vernacular"/>
+																			<lit>)</lit>
+																		</obj>
+																	</otherwise>
+																</choice>
 															</where>
 															<otherwise>
-																<string field="CitationForm" ws="vernacular"/>
+																<string field="CitationForm" ws="$ws=vernacular"/>
 															</otherwise>
 														</choice>
 													</no>
 													<yes>
-														<string field="CitationForm" ws="vernacular"/>
+														<string field="CitationForm" ws="$ws=vernacular"/>
 													</yes>
 												</editrow>
 											</obj>
 										</column>
-										<column label="Word (Lexeme Form)" width="40%" ws="$ws=vernacular" visibility="menu">
+										<column label="Word (Lexeme Form)" width="144000" ws="$ws=vernacular" visibility="menu">
 											<obj class="LexSense" field="OwningEntry" layout="empty">
 												<editrow suppressNoForColumn="Word (Citation Form)">
 													<no>
 														<choice>
-															<where field="LexemeForm/Form" stringaltequals="" ws="vernacular">
-																<lit>(</lit>
-																<string field="CitationForm" ws="vernacular"/>
-																<lit>)</lit>
+															<where field="LexemeForm/Form" stringaltequals="" ws="$ws=vernacular">
+																<choice>
+																	<where field="CitationForm" stringaltequals="" ws="$ws=vernacular">
+																		<obj field="LexemeForm" layout="empty">
+																			<string field="Form" ws="$ws=vernacular"/>
+																		</obj>
+																	</where>
+																	<otherwise>
+																		<lit>(</lit>
+																		<string field="CitationForm" ws="$ws=vernacular"/>
+																		<lit>)</lit>
+																	</otherwise>
+																</choice>
 															</where>
 															<otherwise>
 																<obj field="LexemeForm" layout="empty">
-																	<string field="Form" ws="vernacular"/>
+																	<string field="Form" ws="$ws=vernacular"/>
 																</obj>
 															</otherwise>
 														</choice>
 													</no>
 													<yes>
 														<obj field="LexemeForm" layout="empty">
-															<string field="Form" ws="vernacular"/>
+															<string field="Form" ws="$ws=vernacular"/>
 														</obj>
 													</yes>
 												</editrow>
 											</obj>
 										</column>
-										<column label="Meaning (Gloss)" width="60%" ws="$ws=analysis" visibility="menu">
+										<column label="Meaning (Gloss)" width="144000" ws="$ws=analysis" visibility="menu">
 											<editrow suppressNoForColumn="Meaning (Definition)">
 												<no>
 													<choice>
-														<where field="Gloss" stringaltequals="" ws="analysis">
-															<lit>(</lit>
-															<string class="LexSense" field="Definition" ws="analysis"/>
-															<lit>)</lit>
+														<where field="Gloss" stringaltequals="" ws="$ws=analysis">
+															<choice>
+																<where field="Definition" stringaltequals="" ws="$ws=analysis">
+																	<string field="Gloss" ws="$ws=analysis"/>
+																</where>
+																<otherwise>
+																	<lit>(</lit>
+																	<string class="LexSense" field="Definition" ws="$ws=analysis"/>
+																	<lit>)</lit>
+																</otherwise>
+															</choice>
 														</where>
 														<otherwise>
-															<string field="Gloss" ws="analysis"/>
+															<string field="Gloss" ws="$ws=analysis"/>
 														</otherwise>
 													</choice>
 												</no>
 												<yes>
-													<string field="Gloss" ws="analysis"/>
+													<string field="Gloss" ws="$ws=analysis"/>
 												</yes>
 											</editrow>
 										</column>
-										<column label="Meaning (Definition)" width="60%" ws="$ws=analysis" visibility="always">
+										<column label="Meaning (Definition)" width="144000" ws="$ws=analysis" visibility="always">
 											<editrow suppressNoForColumn="Meaning (Gloss)">
 												<no>
 													<choice>
-														<where field="Definition" stringaltequals="" ws="analysis">
-															<lit>(</lit>
-															<string class="LexSense" field="Gloss" ws="analysis"/>
-															<lit>)</lit>
+														<where field="Definition" stringaltequals="" ws="$ws=analysis">
+															<choice>
+																<where field="Gloss" stringaltequals="" ws="$ws=analysis">
+																	<string field="Definition" ws="$ws=analysis"/>
+																</where>
+																<otherwise>
+																	<lit>(</lit>
+																	<string class="LexSense" field="Gloss" ws="$ws=analysis"/>
+																	<lit>)</lit>
+																</otherwise>
+															</choice>
 														</where>
 														<otherwise>
-															<string field="Definition" ws="analysis"/>
+															<string field="Definition" ws="$ws=analysis"/>
 														</otherwise>
 													</choice>
 												</no>
 												<yes>
-													<string field="Definition" ws="analysis"/>
+													<string field="Definition" ws="$ws=analysis"/>
 												</yes>
 											</editrow>
 										</column>

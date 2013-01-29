@@ -234,7 +234,9 @@
     </Compile>
     <Compile Include="TestColumnConfigureDialog.cs" />
     <Compile Include="XmlVcTests.cs" />
-    <Compile Include="XmlBrowseViewBaseTests.cs" />
+    <Compile Include="XmlBrowseViewBaseTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
