@@ -737,10 +737,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			//Setup
 			const string searchString = "sky, God";
-			const string expectedNum1 = "1.1";   // bucket1 match 'sky'
-			const string expectedNum2 = "1.1.8"; // bucket1 match 'solar', under 'Sun'
-			const string expectedNum3 = "4.9.6"; // bucket1 match 'God', under 'Heaven, Hell'
-			const string expectedNum4 = "8.3.3"; // bucket1 match 'Light'
+			const string expectedNum1 = "1.1";   // bucket0 match 'sky'
+			const string expectedNum2 = "8.3.3"; // bucket0 match 'Light'
+			const string expectedNum3 = "1.1.8"; // bucket1 match 'solar', under 'Sun'  This does not exist
+			const string expectedNum4 = "4.9.6"; // bucket1 match 'God', under 'Heaven, Hell'
+
 			IEnumerable<ICmSemanticDomain> partialMatches;
 			var entry = CreateLexEntry("waas", searchString);
 			var sense = entry.SensesOS[0];
@@ -776,11 +777,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			//Setup
 			const string searchString = "sun";
-			const string expectedNum1 = "1";     // bucket1 match 'earth' from reversal, under 'Universe, creation'
-			const string expectedNum2 = "1.1";   // bucket1 match 'atmosphere', under 'Sky'
-			const string expectedNum3 = "1.1.8"; // bucket1 match 'Sun'
-			const string expectedNum4 = "4.9.6"; // bucket1 match 'Heaven, hell' because hell is in name
-			const string expectedNum5 = "8.3.3"; // bucket2 match 'sunshine' from gloss sun, under 'Light'
+			const string expectedNum1 = "1.1.8"; // bucket0 match 'Sun'
+			const string expectedNum2 = "4.9.6"; // bucket0 match 'Heaven, hell' because hell is in name
+			const string expectedNum3 = "1";     // bucket1 match 'earth' from reversal, under 'Universe, creation'
+			const string expectedNum4 = "1.1";   // bucket1 match 'atmosphere', under 'Sky'
+			const string expectedNum5 = "8.3.3"; // bucket3 match 'sunshine' from gloss sun, under 'Light'
 			IEnumerable<ICmSemanticDomain> partialMatches;
 			var entry = CreateLexEntry("soleil", searchString);
 			var sense = entry.SensesOS[0];
@@ -816,11 +817,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void SenseSearch_KeysNotInFirstAnalysisWs()
 		{
 			//Setup
-			const string expectedNum1 = "1";     // bucket1 match 'earth' from reversal, under 'Universe, creation'
-			const string expectedNum2 = "1.1";   // bucket1 match 'atmosphere' from reversal, under 'Sky'
-			const string expectedNum3 = "1.1.8"; // bucket1 match 'Sun', in name and example words (but should only be found once)
-			const string expectedNum4 = "4.9.6"; // bucket1 match 'Heaven, hell' because hell is in name
-			const string expectedNum5 = "8.3.3"; // bucket2 match 'sunshine' from gloss sun, under 'Light'
+			const string expectedNum1 = "1.1.8"; // bucket0 match 'Sun', in name and example words (but should only be found once)
+			const string expectedNum2 = "4.9.6"; // bucket0 match 'Heaven, hell' because hell is in name
+			const string expectedNum3 = "1";     // bucket1 match 'earth' from reversal, under 'Universe, creation'
+			const string expectedNum4 = "1.1";   // bucket1 match 'atmosphere' from reversal, under 'Sky'
+			const string expectedNum5 = "8.3.3"; // bucket3 match 'sunshine' from gloss sun, under 'Light'
 			IEnumerable<ICmSemanticDomain> partialMatches;
 			var entry = CreateLexEntry("soleil", "sun");
 			var sense = entry.SensesOS[0];

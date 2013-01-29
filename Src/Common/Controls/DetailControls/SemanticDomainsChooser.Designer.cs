@@ -238,7 +238,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.selectedDomainsList.Name = "selectedDomainsList";
 			this.selectedDomainsList.ShowGroups = false;
 			this.selectedDomainsList.Size = new System.Drawing.Size(305, 98);
-			this.selectedDomainsList.Sorting = System.Windows.Forms.SortOrder.Ascending;
 			this.selectedDomainsList.TabIndex = 9;
 			this.selectedDomainsList.UseCompatibleStateImageBehavior = false;
 			this.selectedDomainsList.View = System.Windows.Forms.View.Details;

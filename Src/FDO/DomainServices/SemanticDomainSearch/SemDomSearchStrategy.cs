@@ -52,8 +52,34 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		/// </summary>
 		protected virtual void SetupSearchResults()
 		{
-			SearchResults = new SemDomSearchResults(2);
+			SearchResults = new SemDomSearchResults(4);
 		}
+
+		///
+		/// There are four buckets for matches:
+		/// bucket 0   This is the bucket for whole word matches found in the DomainNameString
+		/// bucket 1   This is the bucket for whole word matches found in the ExampleWordsString
+		/// bucket 2   This is the bucket for partial word matches found in the DomainNameString
+		/// bucket 3   This is the bucket for partial word matches found in the ExampleWordsString
+		/// Note: The order of these buckets is very important due to the behavior found in the method AddResultToBucketX
+		///
+		/// <summary>
+		/// Subclass can override to return a different index into the search results bucket list
+		/// that specifies where to put whole word matches found in the DomainNameString.
+		/// </summary>
+		protected virtual int WholeWordBucketIndex { get { return 0; } }
+
+		/// <summary>
+		/// Subclass can override to return a different index into the search results bucket list
+		/// that specifies where to put whole word matches found in the ExampleWordsString.
+		/// </summary>
+		protected virtual int WholeWordExamplesBucketIndex { get { return 1; } }
+
+		/// <summary>
+		/// Subclass can override to return a different relative index into the search results bucket list
+		/// that specifies where to put partial word matches found in the DomainNameString or ExampleWordsString.
+		/// </summary>
+		protected virtual int PartialMatchRelativeIndex { get { return 2; } }
 
 		/// <summary>
 		/// Subclasses can override this method to change how Semantic Domains are compared
@@ -66,18 +92,12 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		internal virtual void PutDomainInDesiredBucket(ICmSemanticDomain domain)
 		{
 			// Check for whole word and partial matches in Name first
-			if (!CollectPossibleMatchIn(GetDomainNameString(domain), domain))
+			if (!CollectPossibleMatchIn(GetDomainNameString(domain), domain, WholeWordBucketIndex))
 			{
 				// If no whole word match in Name, look in Example Words too.
-				CollectPossibleMatchIn(GetExampleWordsString(domain.QuestionsOS), domain);
+				CollectPossibleMatchIn(GetExampleWordsString(domain.QuestionsOS), domain, WholeWordExamplesBucketIndex);
 			}
 		}
-
-		/// <summary>
-		/// Subclass can override to return a different index into the search results bucket list
-		/// that specifies where to put whole word matches.
-		/// </summary>
-		protected virtual int WholeWordBucketIndex { get { return 0; } }
 
 		/// <summary>
 		/// Take a string to look in (from a domain's Name or ExampleWords) and try to find
@@ -85,8 +105,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		/// </summary>
 		/// <param name="searchIn"></param>
 		/// <param name="domain"></param>
+		/// <param name="wholeWordBucket"></param>
 		/// <returns></returns>
-		protected bool CollectPossibleMatchIn(string searchIn, ICmSemanticDomain domain)
+		protected bool CollectPossibleMatchIn(string searchIn, ICmSemanticDomain domain, int wholeWordBucket)
 		{
 			if (string.IsNullOrEmpty(searchIn))
 				return false;
@@ -94,11 +115,11 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 			switch (DoesInputMatchWord(wordsToLookIn))
 			{
 				case MatchingResult.WholeWordMatch:
-					SearchResults.AddResultToBucketX(WholeWordBucketIndex, domain);
+					SearchResults.AddResultToBucketX(wholeWordBucket, domain);
 					return true;
 				case MatchingResult.StartOfWordMatch:
-					SearchResults.AddResultToBucketX(WholeWordBucketIndex + 1, domain);
-					break;
+					SearchResults.AddResultToBucketX(wholeWordBucket + PartialMatchRelativeIndex, domain);
+					return true;
 				case MatchingResult.NoMatch:
 					// do nothing
 					break;

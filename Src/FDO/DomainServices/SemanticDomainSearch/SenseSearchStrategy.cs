@@ -74,13 +74,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		/// A list of semantic domains where one of the search keys matched the first part of
 		/// one of the words in the Name or Example Words fields.
 		/// </summary>
-		public IEnumerable<ICmSemanticDomain> PartialMatches { get { return SearchResults.SortedBucketX(1); } }
+		public IEnumerable<ICmSemanticDomain> PartialMatches { get { return SearchResults.SortedBucketX(WholeWordBucketIndex + PartialMatchRelativeIndex).Concat(SearchResults.SortedBucketX(WholeWordExamplesBucketIndex + PartialMatchRelativeIndex)); } }
 
 		/// <summary>
 		/// A list of semantic domains where one of the search keys completely matched
 		/// one of the words in the Name or Example Words fields.
 		/// </summary>
-		public IEnumerable<ICmSemanticDomain> FindResults { get { return SearchResults.SortedBucketX(0); } }
+		public IEnumerable<ICmSemanticDomain> FindResults { get { return SearchResults.SortedBucketX(WholeWordBucketIndex).Concat(SearchResults.SortedBucketX(WholeWordExamplesBucketIndex)); } }
 
 		/// <summary>
 		/// The writing system we currently want to get domain names etc in.

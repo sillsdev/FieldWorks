@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 	/// Search strategy for when the user types a string and we need to search the Semantic Domain list
 	/// for matches of that string.
 	/// </summary>
-	public class PartialNameMatchPrioritySearchStrategy : SemDomSearchStrategy
+	public class WholeAndPartialNameMatchSearchStrategy : SemDomSearchStrategy
 	{
 		#region Member Variables
 
@@ -20,18 +20,21 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 
 		/// <summary>
 		/// Semantic Domain Search Strategy for finding:
-		///   1) Partial or complete matches, left to right of Abbreviation (hierarchical number)
-		///   2) Partial or complete matches, from the beginning of Name
-		///   3) Whole word matches of Name or ExampleWords
-		///   4) Partial matches (from the beginning of words) elsewhere in Name and ExampleWords
-		/// N.B. 1 and (2,3,4) are mutually exclusive depending on the first character of the search string.
-		///   1 and 2 go into first bucket
-		///   3 goes into second bucket
-		///   4 goes into third bucket
+		///   1) bucket 0 will contain: Partial or complete matches, left to right of Abbreviation (hierarchical number)
+		///				Note when matches are found for this then the other buckets should be empty because this is a number vs alphabet
+		///
+		///	  2a) bucket 0  This is the bucket for an EXACT match found for the DomainNameString
+		///   2a) bucket 1   This is the bucket for whole word matches found in the DomainNameString
+		///   2b) bucket 2   This is the bucket for whole word matches found in the ExampleWordsString
+		///   2c) bucket 3   This is the bucket for partial(StartsWith) word matches found in the DomainNameString
+		///   2d) bucket 4   This is the bucket for partial(StartsWith) word matches found in the ExampleWordsString
+		///
+		/// Note: The order of these buckets is very important due to the behavior found in the method AddResultToBucketX
+		///
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="searchKey">This strategy expects to only have one search key string.</param>
-		public PartialNameMatchPrioritySearchStrategy(FdoCache cache, string searchKey)
+		public WholeAndPartialNameMatchSearchStrategy(FdoCache cache, string searchKey)
 			: base(cache)
 		{
 			m_fnumeric = Char.IsDigit(searchKey[0]);
@@ -45,8 +48,21 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		/// </summary>
 		protected override void SetupSearchResults()
 		{
-			SearchResults = new SemDomSearchResults(3);
+			SearchResults = new SemDomSearchResults(5);
 		}
+
+		/// <summary>
+		/// Subclass can override to return a different index into the search results bucket list
+		/// that specifies where to put whole word matches.
+		/// This strategy puts a priority on exact DomainNameString matches and puts them in bucket[0],
+		/// so WholeWord matches found somewhere else in the DomainNameString after that go into bucket[1].
+		/// </summary>
+		protected override int WholeWordBucketIndex { get { return 1; } }
+
+		/// <summary>
+		/// This specifies where to put whole word matches found in the ExampleWordsString.
+		/// </summary>
+		protected override int WholeWordExamplesBucketIndex { get { return 2; } }
 
 		/// <summary>
 		/// The results of this strategy are 3 groups of matches concatenated together, each group sorted
@@ -54,7 +70,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 		/// </summary>
 		public IEnumerable<ICmSemanticDomain> FindResults
 		{
-			get { return SearchResults.SortedBucketX(0).Concat(SearchResults.SortedBucketX(1).Concat(SearchResults.SortedBucketX(2))); }
+			get { return SearchResults.SortedBucketX(0).Concat(SearchResults.SortedBucketX(1).Concat(SearchResults.SortedBucketX(2).Concat(SearchResults.SortedBucketX(3).Concat(SearchResults.SortedBucketX(4))))); }
 		}
 
 		/// <summary>
@@ -77,24 +93,17 @@ namespace SIL.FieldWorks.FDO.DomainServices.SemanticDomainSearch
 				return;
 			}
 
-			// Check to see if this domain is a first bucket match
-			// Boolean param in StartsWith() ignores case
+			// Check to see if this domain is an exact match
+			// Boolean param in Compare() ignores case
 			// N.B.: WritingSystem check should be the same as what's displayed in the UI!
-			if (domain.Name.BestAnalysisAlternative.Text.StartsWith(m_searchString, true, AppropriateCulture))
+			if (String.Compare(domain.Name.BestAnalysisAlternative.Text, m_searchString, true, AppropriateCulture) == 0)
 			{
 				SearchResults.AddResultToBucketX(0, domain);
 				return;
 			}
+
 			base.PutDomainInDesiredBucket(domain);
 		}
-
-		/// <summary>
-		/// Subclass can override to return a different index into the search results bucket list
-		/// that specifies where to put whole word matches.
-		/// This strategy puts a priority on partial Name matches and puts them in bucket[0],
-		/// so WholeWord matches after that go into bucket[1].
-		/// </summary>
-		protected override int WholeWordBucketIndex { get { return 1; } }
 
 		private void SearchInAbbreviationForMatches(ICmSemanticDomain domain)
 		{

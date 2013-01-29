@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (string.IsNullOrEmpty(searchString1))
 				return new List<ICmSemanticDomain>();
 
-			var strategy = new PartialNameMatchPrioritySearchStrategy(Cache, searchString1);
+			var strategy = new WholeAndPartialNameMatchSearchStrategy(Cache, searchString1);
 			var engine = new SemDomSearchEngine(Cache);
 			engine.WalkDomains(strategy);
 
