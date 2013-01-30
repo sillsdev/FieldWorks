@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="DownloadFile.cs" />
     <Compile Include="FdoGenerate\Base.cs" />
     <Compile Include="FdoGenerate\CellarModule.cs" />
     <Compile Include="FdoGenerate\Class.cs" />

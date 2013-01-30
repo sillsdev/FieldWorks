@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using Palaso.Lift;
@@ -149,7 +150,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			string dummy;
 			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
 			bool dataChanged;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, Environment.UserName,
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 								FLExBridgeHelper.SendReceive, null, out dataChanged, out dummy);
 			if (!success)
 			{
@@ -256,7 +257,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			string dummy2;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
-				Environment.UserName,
+				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
 				null,
 				out dummy1, out dummy2);
@@ -307,7 +308,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
-								   Environment.UserName,
+								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer, null, out dummy1, out dummy2);
 			if (!success)
 			{
@@ -354,7 +355,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// flexbridge -p <path to fwdata file> -u <username> -v move_lift -g Langprojguid
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
-				Environment.UserName,
+				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
 				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(),
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
@@ -446,6 +447,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
+		/// The user that we want FLExBridge (and QuestionSlice) to consider to be the current user,
+		/// for the purposes of identifying the source of Send/Receive changes and Notes.
+		/// (Note that FlexBridge may override this with the name the user said to use for S/R.
+		/// We don't have easy access to that information, which is stored in the Mercurial INI file.
+		/// This unmodified version is an initial default, and also the only value available to QuestionSlice.
+		/// We may be able to reunite the two notions when FlexBridge is merged.)
+		/// </summary>
+		public static string SendReceiveUser
+		{
+			get { return Environment.UserName; }
+		}
+
+		/// <summary>
 		/// Do the S/R. This *may* actually create the Lift repository, if it doesn't exist, or it may do a more normal S/R
 		/// </summary>
 		/// <returns>'true' if the S/R succeed, otherwise 'false'.</returns>
@@ -462,7 +476,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// flexbridge -p <path to fwdata file> -u <username> -v send_receive_lift
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
-				Environment.UserName,
+				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
 				null,
 				out dataChanged, out dummy);
@@ -615,6 +629,24 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
+		/// This is the file that our Question slice is configured to look for in the root project folder.
+		/// The actual Lexicon.fwstub doesn't contain anything.
+		/// Lexicon.fwstub.ChorusNotes contains notes about lexical entries.
+		/// </summary>
+		public const string FakeLexiconFileName = "Lexicon.fwstub";
+		/// <summary>
+		/// This is the file that actually holds the chorus notes for the lexicon.
+		/// </summary>
+		public const string FlexLexiconNotesFileName = FakeLexiconFileName + "." + kChorusNotesExtension;
+		public string FlexNotesPath
+		{
+			get { return Path.Combine(Cache.ProjectId.ProjectFolder, FlexLexiconNotesFileName); }
+		}
+		public string LiftNotesPath
+		{
+			get { return _liftPathname + "." + kChorusNotesExtension; }
+		}
+		/// <summary>
 		/// Import the LIFT file into FieldWorks.
 		/// </summary>
 		/// <returns>the name of the exported LIFT file if successful, or null if an error occurs.</returns>
@@ -633,6 +665,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			progressDialog.Maximum = 100;
 			progressDialog.Position = 0;
 			string sLogFile = null;
+
+			if (File.Exists(LiftNotesPath))
+			{
+
+				using (var reader = new StreamReader(LiftNotesPath, Encoding.UTF8))
+				using (var writer = new StreamWriter(FlexNotesPath, false, Encoding.UTF8))
+				{
+					ConvertLiftNotesToFlex(reader, writer, Path.GetFileName(_liftPathname));
+				}
+			}
 
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
@@ -716,6 +758,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
+		private const string kChorusNotesExtension = "ChorusNotes";
+
 		/// <summary>
 		/// Export the contents of the lift lexicon.
 		/// </summary>
@@ -763,6 +807,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				LiftSorter.SortLiftRangesFile(outPathRanges);
 
+				if (File.Exists(FlexNotesPath))
+				{
+
+					using (var reader = new StreamReader(FlexNotesPath, Encoding.UTF8))
+					using (var writer = new StreamWriter(LiftNotesPath, false, Encoding.UTF8))
+					{
+						ConvertFlexNotesToLift(reader, writer, Path.GetFileName(_liftPathname));
+					}
+				}
+
 				return _liftPathname;
 			}
 			catch
@@ -772,13 +826,79 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
+		/// <summary>
+		/// Convert FLEx ChorusNotes file referencing lex entries to LIFT notes by adjusting the "ref" attributes.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <param name="writer"></param>
+		/// <param name="liftFileName"></param>
+		static internal void ConvertFlexNotesToLift(TextReader reader, TextWriter writer, string liftFileName)
+		{
+			// Typical input is something like
+			// silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=bab7776e-531b-4ce1-997f-fa638c09e381&amp;tag=&amp;id=bab7776e-531b-4ce1-997f-fa638c09e381&amp;label=Entry &quot;pintu&quot;
+			var reRef = new Regex(".*guid=([^&]*)&.*label=(.*)");
+			//produce: lift://John.lift?type=entry&amp;label=fox&amp;id=f3093b9b-ea2f-422b-86b6-0defaa4646fe
+			var outputTemplate = "lift://{0}?type=entry&amp;label={1}&amp;id={2}";
+			ConvertRefAttrs(reader, writer, liftFileName, outputTemplate);
+		}
+
+		/// <summary>
+		/// Convert LIFT ChorusNotes file to FLEx notes by adjusting the "ref" attributes.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <param name="writer"></param>
+		/// <param name="liftFileName"></param>
+		static internal void ConvertLiftNotesToFlex(TextReader reader, TextWriter writer, string liftFileName)
+		{
+			// Typical input is something like lift://John.lift?type=entry&amp;label=fox&amp;id=f3093b9b-ea2f-422b-86b6-0defaa4646fe
+			var reRef = new Regex(".*id=([^&]*)&.*label=(.*)");
+			//produce:
+			// silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=bab7776e-531b-4ce1-997f-fa638c09e381&amp;tag=&amp;id=bab7776e-531b-4ce1-997f-fa638c09e381&amp;label=Entry &quot;pintu&quot;
+			var outputTemplate = "silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid={2}&amp;tag=&amp;id={2}&amp;label={1}";
+			ConvertRefAttrs(reader, writer, "", outputTemplate);
+		}
+
+		private static void ConvertRefAttrs(TextReader reader, TextWriter writer, string liftFileName, string outputTemplate)
+		{
+			// Typical input is something like
+			// silfw://localhost/link?app=flex&amp;database=current&amp;server=&amp;tool=default&amp;guid=bab7776e-531b-4ce1-997f-fa638c09e381&amp;tag=&amp;id=bab7776e-531b-4ce1-997f-fa638c09e381&amp;label=Entry &quot;pintu&quot;
+			// or: lift://John.lift?type=entry&amp;label=fox&amp;id=f3093b9b-ea2f-422b-86b6-0defaa4646fe
+			// both contain id=...&amp; and label=...&amp. One may be at the end without following &amp;.
+			// Note that the ? is essential to prevent the greedy match including multiple parameters.
+			// A label may contain things like &quot; so we can't just search for [^&]*.
+			var reOuter = new Regex("ref=\\\"([^\\\"]*)\"");
+			var reLabel = new Regex("label=(.*?)(&amp;|$)");
+			var reId = new Regex("id=(.*?)(&amp;|$)");
+			string line;
+			while ((line = reader.ReadLine()) != null)
+			{
+				var matchLine = reOuter.Match(line);
+				if (matchLine.Success)
+				{
+					var input = matchLine.Groups[1].Value;
+					var matchLabel = reLabel.Match(input);
+					var matchId = reId.Match(input);
+					if (matchLabel.Success && matchId.Success)
+					{
+						var guid = matchId.Groups[1].Value;
+						var label = matchLabel.Groups[1].Value;
+						var output = string.Format(outputTemplate,
+							liftFileName, label, guid);
+						writer.WriteLine(line.Replace(input, output));
+						continue;
+					}
+				}
+				writer.WriteLine(line);
+			}
+		}
+
 		private void UndoExport()
 		{
 			bool dataChanged;
 			string dummy;
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
-			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, Environment.UserName,
+			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
 								FLExBridgeHelper.UndoExportLift, null, out dataChanged, out dummy);
 		}
 

@@ -103,6 +103,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Chorus, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\..\Output\Debug\Chorus.exe</HintPath>
+    </Reference>
     <Reference Include="COMInterfaces">
       <Name>COMInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
@@ -161,6 +166,10 @@
     <Reference Include="LexTextControls">
       <Name>LexTextControls</Name>
       <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
+    </Reference>
+    <Reference Include="LibChorus, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\LibChorus.dll</HintPath>
     </Reference>
     <Reference Include="MessageBoxExLib">
       <Name>MessageBoxExLib</Name>
@@ -385,6 +394,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PhonologicalFeatureListDlgLauncherView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="QuestionSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="RecordReferenceVectorLauncher.cs">

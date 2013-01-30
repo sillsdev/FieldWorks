@@ -14,3 +14,5 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("Lexical Editor Code")]
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
+
+[assembly: InternalsVisibleTo("LexEdDllTests")]
