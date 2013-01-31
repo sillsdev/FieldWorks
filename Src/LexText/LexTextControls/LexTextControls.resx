@@ -1333,4 +1333,8 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksFeatConstrDisagree" xml:space="preserve">
     <value>&lt;disagree&gt;</value>
   </data>
+  <data name="ks_Ignore_" xml:space="preserve">
+    <value>&lt;ignore&gt;</value>
+    <comment>Used in phonological feature chooser in the Assign Features to Phonemes tool</comment>
+  </data>
 </root>

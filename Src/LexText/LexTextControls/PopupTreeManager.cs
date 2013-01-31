@@ -553,6 +553,15 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
+		/// Make sure the combo text has correct value
+		/// </summary>
+		protected void SetComboTextToLastConfirmedSelection()
+		{
+			if (m_lastConfirmedNode != null)
+				m_treeCombo.Tss = m_lastConfirmedNode.Tss;
+		}
+
+		/// <summary>
 		/// Sometimes we need to revert to the previous selection, so save it just in case.
 		/// (See FWR-3082.)
 		/// </summary>

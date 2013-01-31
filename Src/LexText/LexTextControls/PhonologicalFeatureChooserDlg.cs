@@ -454,7 +454,10 @@ namespace SIL.FieldWorks.LexText.Controls
 				Debug.Assert(comboSelectedIndex == index);
 			}
 			//m_valuesCombo.Items.Add(m_cache.TsStrFactory.MakeString(LexTextControls.ks_DontCare_, m_cache.DefaultUserWs));
-			m_valuesCombo.Items.Add(LexTextControls.ks_DontCare_);
+			if (ShowIgnoreInsteadOfDontCare)
+				m_valuesCombo.Items.Add(LexTextControls.ks_Ignore_);
+			else
+				m_valuesCombo.Items.Add(LexTextControls.ks_DontCare_);
 			m_valuesCombo.SelectedIndex = comboSelectedIndex;
 			if (!Controls.Contains(m_valuesCombo))
 				Controls.Add(m_valuesCombo);
@@ -688,7 +691,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					return m_ctxt.FeatureStructureRA as IPhNCFeatures;
 				return null;
 			}
-		}		
+		}
 		/// <summary>
 		/// Get/Set prompt text
 		/// </summary>
@@ -713,6 +716,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Get/Set whether to include feature constraint values (agree/disagree) in value combos
 		/// </summary>
 		public bool ShowFeatureConstraintValues { get; set; }
+		/// <summary>
+		/// Get/Set whether to include feature constraint values (agree/disagree) in value combos
+		/// </summary>
+		public bool ShowIgnoreInsteadOfDontCare { get; set; }
 		/// <summary>
 		/// Get/Set dialog title text
 		/// </summary>

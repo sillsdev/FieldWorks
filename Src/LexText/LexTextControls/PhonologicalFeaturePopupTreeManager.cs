@@ -117,12 +117,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					// This will effectively revert the list selection to a previous confirmed state.
 					// Whatever happens below, we don't want to actually leave the "Choose phonological features" node selected!
 					// This is at least required if the user selects "Cancel" from the dialog below.
+					// N.B. the above does not seem to be true; therefore we check for cancel and an empty result
+					// and force the combo text to be what it should be.
 					pt.Hide();
 					using (PhonologicalFeatureChooserDlg dlg = new PhonologicalFeatureChooserDlg())
 					{
 						Cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertPhonologicalFeature, LexTextControls.ksRedoInsertPhonologicalFeature);
 						var fs = CreateEmptyFeatureStructureInAnnotation(null);
 						dlg.SetDlgInfo(Cache, m_mediator, fs);
+						dlg.ShowIgnoreInsteadOfDontCare = true;
 
 						DialogResult result = dlg.ShowDialog(ParentForm);
 						if (result == DialogResult.OK)
@@ -131,7 +134,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							{
 								var sFeatures = dlg.FS.LongName;
 								if (string.IsNullOrEmpty(sFeatures))
-									;  // user did not select anything in chooser; nothing to do
+								{
+									// user did not select anything in chooser; we want to show the last known node
+									// in the dropdown, not "choose phonological feature".
+									SetComboTextToLastConfirmedSelection();
+								}
 								else if (!pt.Nodes.ContainsKey(sFeatures))
 								{
 									var newSelectedNode = new HvoTreeNode(fs.LongNameTSS, fs.Hvo);
@@ -144,6 +151,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						else if (result != DialogResult.Cancel)
 						{
 							dlg.HandleJump();
+						}
+						else if (result == DialogResult.Cancel)
+						{
+							// The user canceled out of the chooser; we want to show the last known node
+							// in the dropdown, not "choose phonological feature".
+							SetComboTextToLastConfirmedSelection();
 						}
 						Cache.DomainDataByFlid.EndUndoTask();
 					}
