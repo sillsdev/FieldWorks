@@ -142,11 +142,11 @@ namespace SIL.FieldWorks.LexText.Controls
 					switch (dlg.ShowDialog(ParentForm))
 					{
 						case DialogResult.OK:
-						{
 							LoadPopupTree(dlg.SelectedPOS.Hvo);
-							// everything should be setup with new node selected, so return.
-							return;
-						}
+							// everything should be setup with new node selected, but now we need to trigger
+							// any side effects, as if we had selected that item by mouse. So go ahead and
+							// call the base method to do this. (LT-14062)
+							break;
 						case DialogResult.Yes:
 						{
 							// Post a message so that we jump to Grammar(area)/Categories tool.
