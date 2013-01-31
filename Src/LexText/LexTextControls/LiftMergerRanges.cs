@@ -33,6 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		readonly List<ICmPossibility> m_rgnewCondition = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewAnthroCode = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewDomainType = new List<ICmPossibility>();
+		readonly List<ICmPossibility> m_rgnewPublicationType = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewSenseType = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewStatus = new List<ICmPossibility>();
 		readonly List<ICmPossibility> m_rgnewUsageType = new List<ICmPossibility>();
@@ -72,6 +73,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		readonly Dictionary<string, ICmPossibility> m_dictLexRefTypes = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictRevLexRefTypes = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictExceptFeats = new Dictionary<string, ICmPossibility>();
+		readonly Dictionary<string, ICmPossibility> m_dictPublicationTypes = new Dictionary<string, ICmPossibility>();
 
 		//New
 		readonly Dictionary<string, ICmPossibility> m_dictAffixCategories = new Dictionary<string, ICmPossibility>();
@@ -403,6 +405,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			return loc;
 		}
 
+		private ICmPossibility FindOrCreatePublicationType(string traitValue)
+		{
+			ICmPossibility poss;
+			if (m_dictPublicationTypes.TryGetValue(traitValue, out poss) ||
+				m_dictPublicationTypes.TryGetValue(traitValue.ToLowerInvariant(), out poss))
+			{
+				return poss;
+			}
+			poss = CreateNewCmPossibility();
+			m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Add(poss);
+			poss.Abbreviation.set_String(m_cache.DefaultAnalWs, traitValue);
+			poss.Name.set_String(m_cache.DefaultAnalWs, traitValue);
+			m_dictPublicationTypes.Add(traitValue, poss);
+			m_rgnewPublicationType.Add(poss);
+			return poss;
+		}
+
 		#endregion // Methods to find or create list items
 
 		//===========================================================================
@@ -459,6 +478,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ListNewInflectionalFeatures(writer, LexTextControls.ksInflectionFeaturesAdded, m_rgnewFeatDefn);
 				ListNewFeatureTypes(writer, LexTextControls.ksFeatureTypesAdded, m_rgnewFeatStrucType);
 				ListNewStemNames(writer, LexTextControls.ksStemNamesAdded, m_rgnewStemName);
+				ListNewPossibilities(writer, LexTextControls.ksPublicationTypesAdded, m_rgnewPublicationType);
 				ListNewCustomFields(writer, LexTextControls.ksCustomFieldsAdded, m_rgnewCustomFields);
 				ListConflictsFound(writer, LexTextControls.ksConflictsResultedInDup, m_rgcdConflicts);
 				ListInvalidData(writer);
@@ -955,7 +975,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			AddListNameAndGuid(m_cache.LangProject.LexDbOA.MorphTypesOA, RangeNames.sDbMorphTypesOAold);
 			AddListNameAndGuid(m_cache.LangProject.LexDbOA.MorphTypesOA, RangeNames.sDbMorphTypesOA);
 
-			AddListNameAndGuid(m_cache.LangProject.LexDbOA.PublicationTypesOA, "publishin");
+			AddListNameAndGuid(m_cache.LangProject.LexDbOA.PublicationTypesOA, RangeNames.sDbPublicationTypesOA);
+			AddListNameAndGuid(m_cache.LangProject.LexDbOA.PublicationTypesOA, RangeNames.sDbPublicationTypesOAold);
 
 			AddListNameAndGuid(m_cache.LangProject.LexDbOA.ReferencesOA, "references");
 
@@ -1273,7 +1294,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					//xxx============================================xxx
 
 					//New
+				case RangeNames.sDbPublicationTypesOAold:
 				case RangeNames.sDbPublicationTypesOA:
+					ProcessPossibility(id, guidAttr, parent, newDesc, newLabel, newAbbrev,
+									   m_dictPublicationTypes, m_rgnewPublicationType, m_cache.LangProject.LexDbOA.PublicationTypesOA);
 					break;
 
 					//xxx============================================xxx

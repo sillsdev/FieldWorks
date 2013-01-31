@@ -270,6 +270,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			//<booleanElement name="ExcludeAsHeadword" simpleProperty="ExcludeAsHeadword" optional="true" writeAsTrait="true"/>
 			foreach (var pron in entry.PronunciationsOS)
 				WritePronunciation(w, pron);
+			foreach (var publication in entry.DoNotPublishInRC)
+				WritePossibilityLiftTrait(RangeNames.sDbPublicationTypesOA, w, publication.Hvo);
 			WriteCustomFields(w, entry);
 			WriteLiftResidue(w, entry);
 			foreach (var sense in entry.SensesOS)
@@ -762,6 +764,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			WriteAllForms(w, null, null, "gloss", sense.Gloss);
 			WriteAllForms(w, "definition", null, "form", sense.Definition);
+			foreach (var publication in sense.DoNotPublishInRC)
+				WritePossibilityLiftTrait(RangeNames.sDbPublicationTypesOA, w, publication.Hvo);
 			foreach (var example in sense.ExamplesOS)
 				WriteExampleSentence(w, example);
 			foreach (var sem in sense.SemanticDomainsRC)
@@ -926,6 +930,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (var trans in example.TranslationsOC)
 				WriteTranslation(w, trans);
 			WriteString(w, "note", "type=\"reference\"", "form", example.Reference);
+			foreach (var publication in example.DoNotPublishInRC)
+				WritePossibilityLiftTrait(RangeNames.sDbPublicationTypesOA, w, publication.Hvo);
 			WriteCustomFields(w, example);
 			WriteLiftResidue(w, example);
 			w.WriteLine("</example>");
@@ -2539,7 +2545,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		public const string sDbMorphTypesOA = "morph-type";
 
 		/// <summary> </summary>
-		public const string sDbPublicationTypesOA = "publishin";
+		public const string sDbPublicationTypesOA = "do-not-publish-in";
+		/// <summary> </summary>
+		public const string sDbPublicationTypesOAold = "publishin";
 
 		/// <summary> </summary>
 		public const string sDbReferencesOAold = "lexical-relations";
@@ -2708,6 +2716,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case sDbMorphTypesOAold:
 				case sDbMorphTypesOA:
 				case sDbPublicationTypesOA:
+				case sDbPublicationTypesOAold:
 				case sDbReferencesOAold:
 				case sDbReferencesOA:
 				case sDbSenseTypesOA:

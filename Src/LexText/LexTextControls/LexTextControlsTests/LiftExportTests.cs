@@ -354,6 +354,28 @@ namespace LexTextControlsTests
 			"</PartsOfSpeech>" + Environment.NewLine +
 			"</LangProject>" + Environment.NewLine;
 
+		private static readonly string s_sPublications =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Environment.NewLine +
+			"<LexDb>" + Environment.NewLine +
+			"<PublicationTypes>" + Environment.NewLine +
+			"<CmPossibilityList>" + Environment.NewLine +
+			"<Depth><Integer val=\"1\"/></Depth>" + Environment.NewLine +
+			"<IsSorted><Boolean val=\"true\"/></IsSorted>" + Environment.NewLine +
+			"<ItemClsid><Integer val=\"7\"/></ItemClsid>" + Environment.NewLine +
+			"<WsSelector><Integer val=\"0\"/></WsSelector>" + Environment.NewLine +
+			"<Name><AUni ws=\"en\">Publications</AUni></Name>" + Environment.NewLine +
+			"<Possibilities>" + Environment.NewLine +
+				// Main Dictionary is already there and doesn't need to be added
+
+				"<CmPossibility>" + Environment.NewLine +
+				"<Name><AUni ws=\"en\">School</AUni></Name>" + Environment.NewLine +
+				"<Abbreviation><AUni ws=\"en\">Sch</AUni></Abbreviation>" + Environment.NewLine +
+				"</CmPossibility>" + Environment.NewLine +
+			"</Possibilities>" + Environment.NewLine +
+			"</CmPossibilityList>" + Environment.NewLine +
+			"</PublicationTypes>" + Environment.NewLine +
+			"</LexDb>" + Environment.NewLine;
+
 		private static readonly string s_sAcademicDomains =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + Environment.NewLine +
 			"<LexDb>" + Environment.NewLine +
@@ -443,6 +465,8 @@ namespace LexTextControlsTests
 			new Dictionary<string, IPartOfSpeech>();
 		private readonly Dictionary<string, ICmPossibility> m_mapAcademicDomains =
 			new Dictionary<string, ICmPossibility>();
+		private readonly Dictionary<string, ICmPossibility> m_mapPublications =
+			new Dictionary<string, ICmPossibility>();
 
 		private string MockProjectFolder { get; set; }
 		private string MockLinkedFilesFolder { get; set; }
@@ -461,6 +485,7 @@ namespace LexTextControlsTests
 			m_mapSemanticDomains.Clear();
 			m_mapPartsOfSpeech.Clear();
 			m_mapAcademicDomains.Clear();
+			m_mapPublications.Clear();
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
@@ -489,6 +514,7 @@ namespace LexTextControlsTests
 
 			CreatePartsOfSpeechPossibilityList();
 			CreateAcademicDomainsPossibilityList();
+			CreatePublicationsList();
 
 			AddLexEntries();
 		}
@@ -501,6 +527,16 @@ namespace LexTextControlsTests
 			var repoPos = m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>();
 			foreach (var pos in repoPos.AllInstances())
 				m_mapPartsOfSpeech.Add(pos.ShortName.ToLowerInvariant(), pos);
+		}
+
+		private void CreatePublicationsList()
+		{
+			var publicationList = new XmlList();
+			using (var reader = new StringReader(s_sPublications))
+				publicationList.ImportList(m_cache.LangProject.LexDbOA, "PublicationTypes", reader, null);
+			var repoPub = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>();
+			foreach (var publication in m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS)
+				m_mapPublications.Add(publication.Name.AnalysisDefaultWritingSystem.Text, publication);
 		}
 
 		private void CreateAcademicDomainsPossibilityList()
@@ -560,6 +596,7 @@ namespace LexTextControlsTests
 														m_cache.DefaultAnalWs);
 					m_entryTest.SummaryDefinition.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("In summary dot dot dot.", m_cache.DefaultAnalWs);
+					m_entryTest.DoNotPublishInRC.Add(m_mapPublications["Main Dictionary"]);
 
 					var tssDefn = m_cache.TsStrFactory.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
 					var bldr = tssDefn.GetBldr();
@@ -570,33 +607,34 @@ namespace LexTextControlsTests
 					var mockStyle = new MockStyle() { Name = "hyperlink" };
 					StringServices.MarkTextInBldrAsHyperlink(bldr, len - 4, len, otherFilePath, mockStyle, MockLinkedFilesFolder);
 
-					m_entryTest.SensesOS[0].Definition.AnalysisDefaultWritingSystem = bldr.GetString();
-					m_entryTest.SensesOS[0].AnthroNote.AnalysisDefaultWritingSystem =
+					var ls = m_entryTest.SensesOS[0];
+					ls.Definition.AnalysisDefaultWritingSystem = bldr.GetString();
+					ls.AnthroNote.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("Anthro Note.", m_cache.DefaultAnalWs);
-					m_entryTest.SensesOS[0].Bibliography.AnalysisDefaultWritingSystem =
+					ls.Bibliography.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense Bibliography", m_cache.DefaultAnalWs);
-					m_entryTest.SensesOS[0].DiscourseNote.AnalysisDefaultWritingSystem =
+					ls.DiscourseNote.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense Discoursing away...", m_cache.DefaultAnalWs);
-					m_entryTest.SensesOS[0].EncyclopedicInfo.AnalysisDefaultWritingSystem =
+					ls.EncyclopedicInfo.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense EncyclopedicInfo", m_cache.DefaultAnalWs);
-					m_entryTest.SensesOS[0].GeneralNote.AnalysisDefaultWritingSystem =
+					ls.GeneralNote.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense GeneralNote", m_cache.DefaultAnalWs);
-					m_entryTest.SensesOS[0].GrammarNote.AnalysisDefaultWritingSystem =
+					ls.GrammarNote.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense GrammarNote", m_cache.DefaultAnalWs);
-					m_entryTest.SensesOS[0].PhonologyNote.AnalysisDefaultWritingSystem =
+					ls.PhonologyNote.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense PhonologyNote", m_cache.DefaultAnalWs);
-					m_entryTest.SensesOS[0].Restrictions.AnalysisDefaultWritingSystem =
+					ls.Restrictions.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense Restrictions", m_cache.DefaultAnalWs);
-					m_entryTest.SensesOS[0].SemanticsNote.AnalysisDefaultWritingSystem =
+					ls.SemanticsNote.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense SemanticsNote", m_cache.DefaultAnalWs);
-					m_entryTest.SensesOS[0].SocioLinguisticsNote.AnalysisDefaultWritingSystem =
+					ls.SocioLinguisticsNote.AnalysisDefaultWritingSystem =
 						m_cache.TsStrFactory.MakeString("sense SocioLinguisticsNote", m_cache.DefaultAnalWs);
+					ls.DoNotPublishInRC.Add(m_mapPublications["School"]);
 					m_entryTest.LiftResidue =
 						"<lift-residue id=\"songanganya & nganga_63698066-52d6-46bd-8438-64ce2a820dc6\" dateCreated=\"2008-04-27T22:41:26Z\" dateModified=\"2007-07-02T17:00:00Z\"></lift-residue>";
 
 					//Add an academic domain to the sense.
 					ICmPossibility possibility;
-					var ls = m_entryTest.SensesOS[0];
 					AddAcademicDomain(ls, "rhetoric");
 					AddAcademicDomain(ls, "computer science");
 					AddAcademicDomain(ls, "medicine");
@@ -658,6 +696,7 @@ namespace LexTextControlsTests
 
 					var otherFolderPath = Path.Combine(MockLinkedFilesFolder, "Others");
 
+					// one of these is an example and won't be published in either Publication
 					AddCustomFields();
 				});
 		}
@@ -872,12 +911,16 @@ namespace LexTextControlsTests
 
 		private void AddCustomFieldsInExampleSentence()
 		{
-			//Create and Example Sentence
+			//Create an Example Sentence
 			var exampleFact = m_cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
 			var exampleSentence = exampleFact.Create();
 			m_entryTest.SensesOS[0].ExamplesOS.Add(exampleSentence);
 			exampleSentence.Example.VernacularDefaultWritingSystem =
 				m_cache.TsStrFactory.MakeString("sense ExampleSentence", m_cache.DefaultVernWs);
+
+			// Use this opportunity to also test LexExampleSentence Publish settings export
+			exampleSentence.DoNotPublishInRC.Add(m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0]);
+			exampleSentence.DoNotPublishInRC.Add(m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[1]);
 
 			// create new custom field LexExampleSentence in LexSense
 			var fd = MakeCustomField("CustomField1-Example", LexExampleSentenceTags.kClassId,
@@ -1053,6 +1096,7 @@ namespace LexTextControlsTests
 			var acDomItem4 = acDomItem2.SubPossibilitiesOS[1];
 
 			var acDomItem5 = acaDomList.FindOrCreatePossibility("medicine", m_cache.DefaultAnalWs);
+
 			XmlNode xDomainTypesList = null;
 			foreach (XmlNode range in ranges)
 			{
@@ -1076,6 +1120,31 @@ namespace LexTextControlsTests
 			VerifyExportRangeElement(rangeElements[3], acDomItem3);
 			VerifyExportRangeElement(rangeElements[4], acDomItem4);
 			VerifyExportRangeElement(rangeElements[5], acDomItem5);
+
+			// Verify Publication Types were output
+			var publicationList = m_cache.LangProject.LexDbOA.PublicationTypesOA;
+			var publicItem0 = publicationList.FindOrCreatePossibility("Main Dictionary", m_cache.DefaultAnalWs);
+			var publicItem1 = publicationList.FindOrCreatePossibility("School", m_cache.DefaultAnalWs);
+
+			XmlNode xPublicationTypesList = null;
+			foreach (XmlNode range in ranges)
+			{
+				var xrangeId = XmlUtils.GetOptionalAttributeValue(range, "id");
+				if (xrangeId == "do-not-publish-in")
+				{
+					xPublicationTypesList = range;
+					break;
+				}
+			}
+			Assert.IsNotNull(xPublicationTypesList);
+			var xPublicationTypesListId = XmlUtils.GetOptionalAttributeValue(xPublicationTypesList, "id");
+			Assert.AreEqual("do-not-publish-in", xPublicationTypesListId);
+
+			rangeElements = xPublicationTypesList.ChildNodes;
+			Assert.IsNotNull(rangeElements);
+			Assert.IsTrue(rangeElements.Count == 2);
+			VerifyExportRangeElement(rangeElements[0], publicItem0);
+			VerifyExportRangeElement(rangeElements[1], publicItem1);
 		}
 
 		private void VerifyExportRangeElement(XmlNode rangeElement1, ICmPossibility item1)
@@ -1092,18 +1161,17 @@ namespace LexTextControlsTests
 		{
 			var repoEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			Assert.IsNotNull(repoEntry, "Should have a lex entry repository");
-			Assert.AreEqual(7, repoEntry.Count, "Should have 3 lex entries");
+			Assert.AreEqual(7, repoEntry.Count, "Should have 7 lex entries");
 			var repoSense = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.IsNotNull(repoSense);
-			Assert.AreEqual(7, repoSense.Count, "Each entry has one sense for a total of 3");
+			Assert.AreEqual(7, repoSense.Count, "Each entry has one sense for a total of 7");
 			var entries = xdoc.SelectNodes("//entry");
 			Assert.IsNotNull(entries);
-			Assert.AreEqual(7, entries.Count, "LIFT file should contain 3 entries");
+			Assert.AreEqual(7, entries.Count, "LIFT file should contain 7 entries");
 			var formats = new string[] { "yyyy-MM-ddTHH:mm:sszzzz", "yyyy-MM-ddTHH:mm:ssZ", "yyyy-MM-dd" };
 			VerifyCustomLists(xdoc);
 			foreach (XmlNode xentry in entries)
 			{
-				ILexEntry entry;
 				var sCreated = XmlUtils.GetOptionalAttributeValue(xentry, "dateCreated");
 				Assert.IsNotNull(sCreated, "an LIFT <entry> should have a dateCreated attribute");
 				var dtCreated = DateTime.ParseExact(sCreated, formats, new DateTimeFormatInfo(),
@@ -1123,6 +1191,7 @@ namespace LexTextControlsTests
 				var sGuid = XmlUtils.GetOptionalAttributeValue(xentry, "guid");
 				Assert.IsNotNull(sGuid, "an LIFT <entry> should have a guid attribute");
 				var guid = new Guid(sGuid);
+				ILexEntry entry;
 				Assert.IsTrue(repoEntry.TryGetObject(guid, out entry));
 				var xform = xentry.SelectSingleNode("lexical-unit/form");
 				Assert.IsNotNull(xform);
@@ -1134,10 +1203,16 @@ namespace LexTextControlsTests
 				var traitlist = xentry.SelectNodes("trait");
 				Assert.IsNotNull(traitlist);
 				if (entry == m_entryTest)
-					Assert.AreEqual(7, traitlist.Count);
+				{
+					Assert.AreEqual(8, traitlist.Count);
+					VerifyPublishInExport(xentry);
+				}
 				else
+				{
 					Assert.AreEqual(1, traitlist.Count);
-				 var xtrait = traitlist[0];
+					VerifyEmptyPublishIn(xentry);
+				}
+				var xtrait = traitlist[0];
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
 				Assert.AreEqual("morph-type", sName);
 				var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
@@ -1176,6 +1251,43 @@ namespace LexTextControlsTests
 				if (entry == m_entryUnbelieving)
 					VerifyLexEntryRefs(entry, xentry);
 			}
+		}
+
+		private void VerifyEmptyPublishIn(XmlNode xentry)
+		{
+			var dnpiXpath = "trait[@name = 'do-not-publish-in']";
+			var dnpiNodes = xentry.SelectNodes(dnpiXpath);
+			Assert.AreEqual(0, dnpiNodes.Count, "Should not contain any 'do-not-publish-in' nodes!");
+			var senseNodes = xentry.SelectNodes("sense");
+			Assert.AreEqual(1, senseNodes.Count, "Should have one sense");
+			dnpiNodes = senseNodes[0].SelectNodes(dnpiXpath);
+			Assert.AreEqual(0, dnpiNodes.Count, "Should not contain any sense-level 'do-not-publish-in' nodes!");
+		}
+
+		private void VerifyPublishInExport(XmlNode xentry)
+		{
+			var dnpiXpath = "trait[@name = 'do-not-publish-in']";
+
+			// Verify LexEntry level
+			var dnpiNodes = xentry.SelectNodes(dnpiXpath);
+			Assert.AreEqual(1, dnpiNodes.Count, "Should contain Main Dictionary");
+			Assert.AreEqual("Main Dictionary", XmlUtils.GetAttributeValue(dnpiNodes[0], "value"), "Wrong publication!");
+
+			// Verify LexSense level
+			var senseNodes = xentry.SelectNodes("sense");
+			Assert.AreEqual(1, senseNodes.Count, "Should have one sense");
+			var xsense = senseNodes[0];
+			dnpiNodes = xsense.SelectNodes(dnpiXpath);
+			Assert.AreEqual(1, dnpiNodes.Count, "Should contain School");
+			Assert.AreEqual("School", XmlUtils.GetAttributeValue(dnpiNodes[0], "value"), "Wrong publication!");
+
+			// Verify LexExampleSentence level
+			var exampleNodes = xsense.SelectNodes("example");
+			Assert.AreEqual(1, exampleNodes.Count, "Should have one example sentence");
+			dnpiNodes = exampleNodes[0].SelectNodes(dnpiXpath);
+			Assert.AreEqual(2, dnpiNodes.Count, "Should contain both publications");
+			Assert.AreEqual("Main Dictionary", XmlUtils.GetAttributeValue(dnpiNodes[0], "value"), "Wrong publication!");
+			Assert.AreEqual("School", XmlUtils.GetAttributeValue(dnpiNodes[1], "value"), "Wrong publication!");
 		}
 
 		/// <summary>
@@ -1496,7 +1608,7 @@ namespace LexTextControlsTests
 			//<trait name="CustomField2-LexSense Integer" value="5"></trait>
 			var xtraits = xsense.SelectNodes("trait");
 			Assert.IsNotNull(xtraits);
-			Assert.AreEqual(4, xtraits.Count);
+			Assert.AreEqual(5, xtraits.Count); // 4 custom field traits + 1 DoNotPublishIn trait
 
 			int listIndex = 0;
 			var mdc = m_cache.DomainDataByFlid.MetaDataCache;
@@ -1510,6 +1622,10 @@ namespace LexTextControlsTests
 				{
 					var intVal = m_cache.DomainDataByFlid.get_IntProp(sense.Hvo, m_customFieldSenseIds[1]);
 					VerifyInteger(xtrait, intVal);
+				}
+				else if (sName == "do-not-publish-in")
+				{
+					continue; // already verified elsewhere
 				}
 				else if (sName == "domain-type")
 				{

@@ -2362,6 +2362,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following Publication Types were added to the language project:.
+        /// </summary>
+        internal static string ksPublicationTypesAdded {
+            get {
+                return ResourceManager.GetString("ksPublicationTypesAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} records created by import.
         /// </summary>
         internal static string ksRecordsCreatedByImport {

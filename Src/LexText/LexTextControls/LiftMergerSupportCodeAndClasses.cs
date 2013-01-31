@@ -63,6 +63,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_cache.LangProject.LexDbOA.DomainTypesOA != null)
 				InitializePossibilityMap(m_cache.LangProject.LexDbOA.DomainTypesOA.PossibilitiesOS,
 										 m_dictDomainType);
+			if (m_cache.LangProject.LexDbOA.PublicationTypesOA != null)
+				InitializePossibilityMap(m_cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
+										m_dictPublicationTypes);
 			if (m_cache.LangProject.LexDbOA.SenseTypesOA != null)
 				InitializePossibilityMap(m_cache.LangProject.LexDbOA.SenseTypesOA.PossibilitiesOS,
 										 m_dictSenseType);

@@ -2082,6 +2082,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void ProcessEntryTraits(ILexEntry le, CmLiftEntry entry)
 		{
+			// If we're keeping only the imported data, erase any existing data first.
+			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			{
+				le.DoNotPublishInRC.Clear();
+			}
 			foreach (LiftTrait lt in entry.Traits)
 			{
 				switch (lt.Name.ToLowerInvariant())
@@ -2094,6 +2099,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					case RangeNames.sDbMorphTypesOAold:	// original FLEX export = MorphType
 					case RangeNames.sDbMorphTypesOA:
 						ProcessEntryMorphType(le, lt.Value);
+						break;
+					case RangeNames.sDbPublicationTypesOAold:
+					case RangeNames.sDbPublicationTypesOA:
+						ProcessEntryPublicationSettings(le, lt.Value);
 						break;
 					case "minorentrycondition":		// original FLEX export = MinorEntryCondition
 					case "minor-entry-condition":
@@ -2115,6 +2124,16 @@ namespace SIL.FieldWorks.LexText.Controls
 						break;
 				}
 			}
+		}
+
+		private void ProcessEntryPublicationSettings(ILexEntry le, string traitValue)
+		{
+			// This does fine adding places to not publish an entry,
+			// what about removing such exclusions?
+			var publication = FindOrCreatePublicationType(traitValue);
+
+			if (!le.DoNotPublishInRC.Contains(publication))
+				le.DoNotPublishInRC.Add(publication);
 		}
 
 		private void ProcessUnknownTrait(LiftObject liftObject, LiftTrait lt, ICmObject cmo)
@@ -4170,10 +4189,21 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void ProcessExampleTraits(ILexExampleSentence lexExmp, CmLiftExample example)
 		{
+			// If we're keeping only the imported data, erase any existing data first.
+			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			{
+				lexExmp.DoNotPublishInRC.Clear();
+			}
 			foreach (LiftTrait lt in example.Traits)
 			{
 				switch (lt.Name.ToLowerInvariant())
 				{
+					case RangeNames.sDbPublicationTypesOAold:
+					case RangeNames.sDbPublicationTypesOA:
+						var poss = FindOrCreatePublicationType(lt.Value);
+						if (!lexExmp.DoNotPublishInRC.Contains(poss))
+							lexExmp.DoNotPublishInRC.Add(poss);
+						break;
 					default:
 						ProcessUnknownTrait(example, lt, lexExmp);
 						break;
@@ -6170,6 +6200,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				ls.SenseTypeRA = null;
 				ls.StatusRA = null;
 				ls.UsageTypesRC.Clear();
+				ls.DoNotPublishInRC.Clear();
 			}
 			ICmPossibility poss;
 			foreach (LiftTrait lt in sense.Traits)
@@ -6194,6 +6225,12 @@ namespace SIL.FieldWorks.LexText.Controls
 						poss = FindOrCreateDomainType(lt.Value);
 						if (!ls.DomainTypesRC.Contains(poss))
 							ls.DomainTypesRC.Add(poss);
+						break;
+					case RangeNames.sDbPublicationTypesOAold:
+					case RangeNames.sDbPublicationTypesOA:
+						poss = FindOrCreatePublicationType(lt.Value);
+						if (!ls.DoNotPublishInRC.Contains(poss))
+							ls.DoNotPublishInRC.Add(poss);
 						break;
 					case RangeNames.sDbSenseTypesOAold1: // original FLEX export = SenseType
 					case RangeNames.sDbSenseTypesOA:

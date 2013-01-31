@@ -1750,12 +1750,10 @@ namespace LexTextControlsTests
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
-				"<ranges>",
+			"<ranges>",
 				"<range id=\"semantic-domain-ddp4\" href=\"file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LIFT-CustomFlds New/LIFT-CustomFlds New.lift-ranges\"/>",
-
-					"<range id=\"CustomCmPossibiltyList\" href=\"file://C:/Users/maclean/Documents/My FieldWorks/LIFT Export customList/LIFT Export customList.lift-ranges\"/>",
-					"<range id=\"CustomList Number2 \" href=\"file://C:/Users/maclean/Documents/My FieldWorks/LIFT Export customList/LIFT Export customList.lift-ranges\"/>",
-
+				"<range id=\"CustomCmPossibiltyList\" href=\"file://C:/Users/maclean/Documents/My FieldWorks/LIFT Export customList/LIFT Export customList.lift-ranges\"/>",
+				"<range id=\"CustomList Number2 \" href=\"file://C:/Users/maclean/Documents/My FieldWorks/LIFT Export customList/LIFT Export customList.lift-ranges\"/>",
 			"</ranges>",
 			"<fields>",
 			"<field tag=\"cv-pattern\">",
@@ -3584,17 +3582,155 @@ namespace LexTextControlsTests
 			Assert.IsTrue(attr.Value.Equals("x-kal"), "Variante type attribute should be 'x-kal'.");
 		}
 
-		private static void PrepareStore(string path)
+		private static readonly string[] s_PublicationLiftRangeData = new[]
 		{
-			if (Directory.Exists(path))
-			{
-				foreach (string file in Directory.GetFiles(path))
-					File.Delete(file);
-			}
-			else
-			{
-				Directory.CreateDirectory(path);
-			}
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
+			"<lift-ranges>",
+
+			"<range id=\"morph-type\">",
+			"<range-element id=\"stem\" guid=\"d7f713e8-e8cf-11d3-9764-00c04f186933\">",
+			"<label>",
+			"<form lang=\"en\"><text>stem</text></form>",
+			"</label>",
+			"<abbrev>",
+			"<form lang=\"en\"><text>u stem</text></form>",
+			"</abbrev>",
+			"<description>",
+			"<form lang=\"en\"><text>A stem is...</text></form>",
+			"</description>",
+			"</range-element>",
+			"</range>",
+
+			"<range id=\"do-not-publish-in\" guid=\"fc769efe-efd8-4e44-981e-9a07e343bb64\">",
+
+			"<range-element id=\"Main Dictionary\" guid=\"70c0a758-5901-4884-b992-94ca31087607\">",
+			"<label>",
+			"<form lang=\"en\"><text>Main Dictionary</text></form>",
+			"</label>",
+			"<abbrev>",
+			"<form lang=\"en\"><text>Main</text></form>",
+			"<form lang=\"fr\"><text>Principal</text></form>",
+			"</abbrev>",
+			"</range-element>",
+			"<range-element id=\"Pocket\" guid=\"9f699508-3773-4889-87ee-ca0dbd9e3736\">",
+			"<label>",
+			"<form lang=\"en\"><text>Pocket</text></form>",
+			"<form lang=\"fr\"><text>Poche</text></form>",
+			"</label>",
+			"</range-element>",
+
+			"</range>",
+
+			"</lift-ranges>"
+		};
+
+		static private readonly string[] s_PublicationTestData = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+			"<header>",
+			"<ranges>",
+			"<range id=\"do-not-publish-in\" href=\"\"/>",
+			"</ranges>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_f8506500-d17c-4c1b-b05d-ea57f562cb1c\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>baba</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"/>",
+			"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
+			"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>dad</text></gloss>",
+			"<gloss lang=\"fr\"><text>papi</text></gloss>",
+			"<definition>",
+			"<form lang=\"en\"><text>male parent</text></form>",
+			"<form lang=\"fr\"><text>parent masculin</text></form>",
+			"</definition>",
+			"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
+			"<example>",
+			"<form lang=\"en\"><text>Example Sentence</text></form>",
+			"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
+			"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
+			"</example>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  test import of Publish In data in entries, senses and example sentences.
+		/// Also test the import of the Publications list.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImportOfPublicationSettings()
+		{
+			SetWritingSystems("fr");
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(0, repoSense.Count);
+
+			// This one should always be there (and the merging one has a different guid!)
+			var originalMainDictPubGuid = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0].Guid;
+			var importedPocketPubGuid = new Guid("9f699508-3773-4889-87ee-ca0dbd9e3736");
+
+			//Creat the LIFT data file
+			var sOrigFile = CreateInputFile(s_PublicationTestData);
+			//Create the LIFT ranges file
+			var sOrigRangesFile = CreateInputRangesFile(s_PublicationLiftRangeData);
+
+			// SUT
+			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
+			File.Delete(sOrigFile);
+			File.Delete(sOrigRangesFile);
+
+			// Verification
+			Assert.IsNotNull(logFile);
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+
+			ILexEntry entry;
+			Assert.IsTrue(repoEntry.TryGetObject(new Guid("f8506500-d17c-4c1b-b05d-ea57f562cb1c"), out entry));
+			Assert.AreEqual(1, entry.SensesOS.Count);
+			var sense0 = entry.SensesOS[0];
+			Assert.AreEqual(sense0.Guid, new Guid("62fc5222-aa72-40bb-b3f1-24569bb94042"));
+			Assert.AreEqual(1, sense0.ExamplesOS.Count);
+			var example0 = sense0.ExamplesOS[0];
+
+			Assert.IsNotNull(entry.LexemeFormOA);
+			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.AreEqual("baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+
+			// Verify specific Publication stuff
+			Assert.AreEqual(1, entry.DoNotPublishInRC.Count,
+				"Entry has wrong number of Publication settings");
+			var mainDictPub = entry.DoNotPublishInRC.First();
+			Assert.AreEqual("Main Dictionary", mainDictPub.Name.AnalysisDefaultWritingSystem.Text,
+				"Entry has wrong Publish In setting");
+			Assert.AreEqual(originalMainDictPubGuid, mainDictPub.Guid,
+				"Entry has Main Dictionary, but not the one we started out with (different Guid)!");
+			Assert.AreEqual(1, sense0.DoNotPublishInRC.Count,
+				"Sense has wrong number of Publication settings");
+			var sensePub = sense0.DoNotPublishInRC.First();
+			Assert.AreEqual("Pocket", sensePub.Name.AnalysisDefaultWritingSystem.Text,
+				"Sense has wrong Publish In setting");
+			Assert.AreEqual(importedPocketPubGuid, sensePub.Guid,
+				"Sense Publish In setting has wrong guid");
+			Assert.AreEqual(2, example0.DoNotPublishInRC.Count,
+				"Example has wrong number of Publication settings");
+			var examplePublications = (from pub in example0.DoNotPublishInRC
+										  select pub.Name.AnalysisDefaultWritingSystem.Text).ToList();
+			Assert.IsTrue(examplePublications.Contains("Main Dictionary"));
+			Assert.IsTrue(examplePublications.Contains("Pocket"));
 		}
 	}
 
