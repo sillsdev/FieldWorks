@@ -332,20 +332,23 @@ namespace SIL.FieldWorks.Discourse
 
 		private void SetHeaderColAndButtonWidths()
 		{
-			m_fInColWidthChanged = true;
-			try
+			if (m_columnPositions != null)
 			{
-				//GetColumnWidths();
-				for (int i = 0; i < m_headerMainCols.Columns.Count; i++)
+				m_fInColWidthChanged = true;
+				try
 				{
-					int width = m_columnPositions[i + 1] - m_columnPositions[i];
-					if (m_headerMainCols.Columns[i].Width != width)
-						m_headerMainCols.Columns[i].Width = width;
+					//GetColumnWidths();
+					for (int i = 0; i < m_headerMainCols.Columns.Count; i++)
+					{
+						int width = m_columnPositions[i + 1] - m_columnPositions[i];
+						if (m_headerMainCols.Columns[i].Width != width)
+							m_headerMainCols.Columns[i].Width = width;
+					}
 				}
-			}
-			finally
-			{
-				m_fInColWidthChanged = false;
+				finally
+				{
+					m_fInColWidthChanged = false;
+				}
 			}
 			ComputeButtonWidths();
 			if (m_columnWidths != null)

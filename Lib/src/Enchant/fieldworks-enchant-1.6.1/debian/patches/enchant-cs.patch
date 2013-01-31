@@ -91,7 +91,7 @@ Index: fieldworks-enchant-1.6.1/src/ispell/Makefile.am
 +libenchant_ispell_la_LIBADD= $(ENCHANT_LIBS) $(top_builddir)/src/libenchant-cs.la
  libenchant_ispell_la_LDFLAGS = -module -avoid-version -no-undefined
  libenchant_ispell_la_SOURCES =	\
-	correct.cpp		\
+ 	correct.cpp		\
 Index: fieldworks-enchant-1.6.1/src/voikko/Makefile.am
 ===================================================================
 --- enchant-1.6.1/src/voikko/Makefile.am
@@ -265,14 +265,14 @@ Index: fieldworks-enchant-1.6.1/Makefile.am
 +pkgconfig_DATA = enchant-cs.pc
 
  EXTRA_DIST =		\
-	autogen.sh	\
+ 	autogen.sh	\
 -	enchant.pc.in	\
 -	enchant-uninstalled.pc.in \
 +	enchant-cs.pc.in	\
 +	enchant-cs-uninstalled.pc.in \
-	enchant.spec.in	\
-	enchant.spec	\
-	lt-compile-resource \
+ 	enchant.spec.in	\
+ 	enchant.spec	\
+ 	lt-compile-resource \
 Index: fieldworks-enchant-1.6.1/enchant-cs.pc.in
 ===================================================================
 --- /dev/null

@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 # debian/rules that uses debhelper.
-# (based on sample GNU copyright 1997 to 1999 by Joey Hess.)
+# (based on sample file GNU copyright 1997 to 1999 by Joey Hess.)
 
 # Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
@@ -23,17 +23,23 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
 
-# shared library versions
+# shared library versions, option 1
 version=2.0.5
 major=2
+# option 2, assuming the library is created as src/.libs/libfoo.so.2.0.5 or so
+#version=`ls src/.libs/lib*.so.* | \
+# awk '{if (match($$0,/[0-9]+\.[0-9]+\.[0-9]+$$/)) print substr($$0,RSTART)}'`
+#major=`ls src/.libs/lib*.so.* | \
+# awk '{if (match($$0,/\.so\.[0-9]+$$/)) print substr($$0,RSTART+4)}'`
 
 config.status: configure
 	dh_testdir
 	# commands to configure the package.
-	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) \
-	--prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info \
+	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info \
 	--with-ispell-dir=/usr/lib/ispell --with-myspell-dir=/usr/share/hunspell --disable-zemberek
 
+configure: autogen.sh
+	./autogen.sh --no-configure
 
 build: build-stamp
 build-stamp:  config.status
@@ -86,10 +92,10 @@ binary-arch: build install
 	dh_movefiles -Nfieldworks-libenchant-voikko
 	dh_installchangelogs ChangeLog
 	dh_installdocs
-	  install -m 644 $(CURDIR)/src/aspell/README $(CURDIR)/debian/fieldworks-libenchant1c2a/usr/share/doc/fieldworks-libenchant1c2a/aspell
-	  install -m 644 $(CURDIR)/src/ispell/README $(CURDIR)/debian/fieldworks-libenchant1c2a/usr/share/doc/fieldworks-libenchant1c2a/ispell
-	  install -m 644 $(CURDIR)/src/uspell/README $(CURDIR)/debian/fieldworks-libenchant1c2a/usr/share/doc/fieldworks-libenchant1c2a/uspell
-	install -m 644 $(CURDIR)/debian/enchant.ordering $(CURDIR)/debian/fieldworks-libenchant1c2a/usr/share/enchant-cs/enchant.ordering
+	  install -m 644 $(CURDIR)/src/aspell/README $(CURDIR)/debian/fieldworks-libenchant/usr/share/doc/fieldworks-libenchant/aspell
+	  install -m 644 $(CURDIR)/src/ispell/README $(CURDIR)/debian/fieldworks-libenchant/usr/share/doc/fieldworks-libenchant/ispell
+	  install -m 644 $(CURDIR)/src/uspell/README $(CURDIR)/debian/fieldworks-libenchant/usr/share/doc/fieldworks-libenchant/uspell
+	install -m 644 $(CURDIR)/debian/enchant.ordering $(CURDIR)/debian/fieldworks-libenchant/usr/share/enchant-cs/enchant.ordering
 	dh_installexamples
 #	dh_install
 #	dh_installmenu
@@ -102,7 +108,7 @@ binary-arch: build install
 #	dh_installcron
 #	dh_installinfo
 	  sed -f $(CURDIR)/debian/manpage.sed doc/enchant.1 >doc/enchant-cs.1
-	dh_installman -pfieldworks-libenchant1c2a doc/enchant-cs.1
+	dh_installman -pfieldworks-libenchant doc/enchant-cs.1
 	  rm doc/enchant-cs.1
 	dh_link
 	dh_strip
