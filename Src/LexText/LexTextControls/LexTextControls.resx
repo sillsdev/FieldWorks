@@ -1336,6 +1336,7 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ks_Ignore_" xml:space="preserve">
     <value>&lt;ignore&gt;</value>
     <comment>Used in phonological feature chooser in the Assign Features to Phonemes tool</comment>
+  </data>
   <data name="ksPublicationTypesAdded" xml:space="preserve">
     <value>The following Publication Types were added to the language project:</value>
   </data>
