@@ -2310,7 +2310,11 @@ STDMETHODIMP VwTextStore::OnEndComposition(ITfCompositionView * pComposition)
 				m_fDoingRecommit = true;
 				try
 				{
+					StrUni stuUndoDeleteRange(L"Undo typing");
+					StrUni stuRedoDeleteRange(L"Redo typing");
+					CheckHr(m_qrootb->GetDataAccess()->BeginUndoTask(stuUndoDeleteRange.Bstr(), stuRedoDeleteRange.Bstr()));
 					CheckHr(psel->CommitAndNotify(ksctSamePara, m_qrootb));
+					CheckHr(m_qrootb->GetDataAccess()->EndUndoTask());
 				}
 				catch(...)
 				{

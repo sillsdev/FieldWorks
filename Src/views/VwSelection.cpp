@@ -7339,8 +7339,8 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 	if (pvvcEdit &&
 		vnp != kvnpStringProp && vnp != kvnpStringAltMember && vnp != kvnpUnicodeProp)
 	{
-		// The view constructor will handle the update. It is responsible to begin/end
-		// a transaction if anything changed, and update timestamp on objects.
+		// The view constructor will handle the update. It is responsible to update timestamp on objects.
+		// Note that a transaction should already be surrounding this method, so the VC should NOT do one.
 		ITsStringPtr qtssFixedVal;
 		CheckHr(pvvcEdit->UpdateProp(this, hvo, tag, fragEdit,
 			qtssNewSub, &qtssFixedVal));	// ERRORJOHN
