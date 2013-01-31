@@ -42,7 +42,7 @@ namespace FixFwDataDllTests
 		private readonly string[] m_testFileDirectories =
 			{
 				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
-				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "TagAndCellRefs", "GenericDates",
+				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "TagAndCellRefs", "GenericDates",
 				"HomographFixer", WordformswithsameformTestDir
 			};
 
@@ -398,6 +398,26 @@ namespace FixFwDataDllTests
 				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1, false);
+		}
+
+		[Test]
+		public void TestEntryWithMsaAndNoSenses()
+		{
+			var testPath = Path.Combine(basePath, "EntryWithMsaAndNoSenses");
+			Assert.DoesNotThrow(() =>
+			{
+				var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(),
+										   LogErrors);
+
+				// SUT
+				data.FixErrorsAndSave();
+			}, "Exception running the data fixer on the entry with MSA and no senses test data.");
+			// check that the msa was there originally
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1, false);
+			// And that it was deleted.
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 0, false);
 		}
 
 		[Test]

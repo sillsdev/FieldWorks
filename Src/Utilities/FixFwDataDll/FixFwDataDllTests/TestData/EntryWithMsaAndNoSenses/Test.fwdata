@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000059">
+
+<rt class="MoStemMsa" guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
+</rt>
+
+<rt class="LexEntry" guid="5206535c-d93d-4129-8fce-9e93d8970aec">
+<MorphoSyntaxAnalyses>
+<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="o" />
+</MorphoSyntaxAnalyses>
+</rt>
+
+</languageproject>

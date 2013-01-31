@@ -111,7 +111,11 @@ namespace SIL.FieldWorks.FixData
 				{
 					foreach (var item in MSAs.Descendants("objsur"))
 					{
-						if (!entryToMSA[guid.Value].Contains(item.Attribute("guid").Value))
+						// the guid may not be in the dictionary, if the entry has NO senses. In that case,
+						// all the MSAs will be rejected. If it's in the dictionary, the value is a list of msas that some sense
+						// uses; if this one isn't used by a sense, it's a reject.
+						HashSet<string> msasUsedBySomeSense;
+						if (!entryToMSA.TryGetValue(guid.Value, out msasUsedBySomeSense) || !msasUsedBySomeSense.Contains(item.Attribute("guid").Value))
 						{
 							rejects.Add(item);
 						}
