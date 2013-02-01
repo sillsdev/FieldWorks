@@ -29,6 +29,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"de-NO");
 			Assert.That(Cache.LangProject.AnalysisWss, Is.EqualTo("fr en qaa-x-kal"));
 		}
+
 		/// <summary>
 		/// What it says
 		/// </summary>
@@ -293,6 +294,22 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			UndoableUnitOfWorkHelper.Do("doit", "undoit", m_actionHandler,
 				() => WritingSystemServices.MergeWritingSystems(Cache, fromWs, toWs));
 			Assert.That(entry1.LiftResidue.Contains("lang=\"en-SO\""));
+		}
+
+
+		/// <summary>
+		/// What it says
+		/// </summary>
+		[Test]
+		public void CollatorSort_DoesNotThrow()
+		{
+			Assert.DoesNotThrow(() =>
+				{
+					IWritingSystem fromWs;
+					WritingSystemServices.FindOrCreateWritingSystem(Cache, "sen", false, true, out fromWs);
+					Cache.LangProject.DefaultVernacularWritingSystem = fromWs;
+					fromWs.Collator.GetSortKey("boom");
+				});
 		}
 	}
 }
