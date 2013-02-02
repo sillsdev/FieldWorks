@@ -96,7 +96,7 @@
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="IDLImporter">
-	  <HintPath>..\..\..\IDLImporter.dll</HintPath>
+	  <HintPath>..\..\bin\extensions\common\neutral\FwTasks\IDLImporter.dll</HintPath>
 	</Reference>
 	<Reference Include="NAnt.Contrib.Tasks">
 	  <HintPath>..\..\bin\extensions\common\neutral\NAntContrib\NAnt.Contrib.Tasks.dll</HintPath>
