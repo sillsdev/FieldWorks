@@ -1468,6 +1468,9 @@ namespace SIL.FieldWorks.Common.Controls
 				case "toolBulkEditWordforms":
 					helpTopic = "khtpBulkEditBarWordforms";
 					break;
+				case "toolBulkEditPhonemes":
+					helpTopic = "khtpBulkEditBarPhonemes";
+					break;
 			}
 
 			if(helpTopic != "")

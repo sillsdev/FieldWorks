@@ -126,6 +126,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						var fs = CreateEmptyFeatureStructureInAnnotation(null);
 						dlg.SetDlgInfo(Cache, m_mediator, fs);
 						dlg.ShowIgnoreInsteadOfDontCare = true;
+						dlg.SetHelpTopic("khtptoolBulkEditPhonemesChooserDlg");
 
 						DialogResult result = dlg.ShowDialog(ParentForm);
 						if (result == DialogResult.OK)

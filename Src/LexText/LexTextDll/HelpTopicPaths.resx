@@ -2940,6 +2940,27 @@
     <value>User_Interface/Menus/Tools/Configure_Classified_Dictionary/Manage_Classified_Dictionary_Views.htm</value>
   </data>
   <data name="khtpSemanticDomainsChooser" xml:space="preserve">
-	<value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_semantic_domains.htm</value>
+    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_semantic_domains.htm</value>
+  </data>
+  <data name="khtpBulkEditBarPhonemes" xml:space="preserve">
+    <value>Using_Tools/Grammar_tools/Assign_Features_to_Phonemes/Assign_Features_to_Phonemes_overview.htm</value>
+  </data>
+  <data name="khtpChoose-naturalClassedit-PhNCSegments-Phonemes" xml:space="preserve">
+    <value>Using_Tools/Grammar_tools/Natural_Classes/Choose_phonological_features(NC).htm</value>
+  </data>
+  <data name="khtpField-lexiconEdit-LexEntry-Questions" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Questions_field.htm</value>
+  </data>
+  <data name="khtpField-WordsAndGlossesSfmImportWizard-Step1" xml:space="preserve">
+    <value>/Beginning_Tasks/Importing_Data/Import_SFM_Words_and_Glosses/Step_1_of_3_Import_Files_Words_and_Glosses.htm</value>
+  </data>
+  <data name="khtpField-WordsAndGlossesSfmImportWizard-Step2" xml:space="preserve">
+    <value>/Beginning_Tasks/Importing_Data/Import_SFM_Words_and_Glosses/Step_2_of_3_Field_Mapping_Words_and_Glosses.htm</value>
+  </data>
+  <data name="khtpField-WordsAndGlossesSfmImportWizard-Step3" xml:space="preserve">
+    <value>/Beginning_Tasks/Importing_Data/Import_SFM_Words_and_Glosses/Step_3_of_3_Ready_to_Import_Words_and_Glosses.htm</value>
+  </data>
+  <data name="khtptoolBulkEditPhonemesChooserDlg" xml:space="preserve">
+    <value>Using_Tools/Grammar_tools/Assign_Features_to_Phonemes/Choose_phonological_features_(Assign).htm</value>
   </data>
 </root>

@@ -132,10 +132,19 @@ namespace SIL.FieldWorks.Common.Controls
 				new ResourceManager("SIL.FieldWorks.Common.Controls.FwControls",
 				System.Reflection.Assembly.GetExecutingAssembly());
 
-			m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step" + (m_CurrentStepNumber + 1.ToString()).TrimStart('0');
+			HelpTopicIdPrefix = "khtpField-InterlinearSfmImportWizard-Step";
+			SetInitialHelpTopicID();
 			m_NextText = resources.GetString("kstidWizForwardButtonText");
 			m_FinishText = resources.GetString("kstidWizFinishButtonText");;
 			m_StepIndicatorFormat = resources.GetString("kstidWizStepLabel");;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		public void SetInitialHelpTopicID()
+		{
+			m_helpTopicID = HelpTopicIdPrefix + (m_CurrentStepNumber + 1.ToString()).TrimStart('0');
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -637,6 +646,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get { return panSteps; }
 		}
+
+		/// <summary>
+		/// Set the HelpTopicPrefix with this.
+		/// </summary>
+		public string HelpTopicIdPrefix { get; set; }
+
 		#endregion
 
 		/// -----------------------------------------------------------------------------------
@@ -877,7 +892,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected virtual void OnNextButton()
 		{
 			m_CurrentStepNumber++;
-			m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step" + (m_CurrentStepNumber + 1).ToString().TrimStart('0');
+			m_helpTopicID = HelpTopicIdPrefix + (m_CurrentStepNumber + 1).ToString().TrimStart('0');
 			tabSteps.SelectedIndex++;
 		}
 
@@ -889,7 +904,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected virtual void OnBackButton()
 		{
 			m_CurrentStepNumber--;
-			m_helpTopicID = "khtpField-InterlinearSfmImportWizard-Step" + (m_CurrentStepNumber + 1).ToString().TrimStart('0');
+			m_helpTopicID = HelpTopicIdPrefix + (m_CurrentStepNumber + 1).ToString().TrimStart('0');
 			tabSteps.SelectedIndex--;
 		}
 

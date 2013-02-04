@@ -17,6 +17,8 @@ namespace SIL.FieldWorks.IText
 		public WordsSfmImportWizard()
 		{
 			InitializeComponent();
+			HelpTopicIdPrefix = "khtpField-WordsAndGlossesSfmImportWizard-Step";
+			SetInitialHelpTopicID();
 		}
 
 		protected override void SetDialogTitle()
