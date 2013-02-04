@@ -1001,7 +1001,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				// (which should be an empty string). m_innerFwTextBox.Text will return an
 				// empty string if it hasn't already been set, and comparing the value to that
 				// would skip this block, and hence our code in Tss that makes a selection in the string.
-				if (m_innerFwTextBox.Tss.Text != value)
+				if (!DesignMode && m_innerFwTextBox.Tss.Text != value)
 				{
 					m_innerFwTextBox.Text = value;
 					OnTextChanged(new EventArgs());

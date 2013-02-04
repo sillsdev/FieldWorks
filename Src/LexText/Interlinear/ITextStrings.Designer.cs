@@ -322,6 +322,105 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cat.
+        /// </summary>
+        internal static string ksComplexConcCategory {
+            get {
+                return ResourceManager.GetString("ksComplexConcCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entry.
+        /// </summary>
+        internal static string ksComplexConcEntry {
+            get {
+                return ResourceManager.GetString("ksComplexConcEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Form.
+        /// </summary>
+        internal static string ksComplexConcForm {
+            get {
+                return ResourceManager.GetString("ksComplexConcForm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gloss.
+        /// </summary>
+        internal static string ksComplexConcGloss {
+            get {
+                return ResourceManager.GetString("ksComplexConcGloss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Any&gt;.
+        /// </summary>
+        internal static string ksComplexConcInflFeatAny {
+            get {
+                return ResourceManager.GetString("ksComplexConcInflFeatAny", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Infl.
+        /// </summary>
+        internal static string ksComplexConcInflFeatures {
+            get {
+                return ResourceManager.GetString("ksComplexConcInflFeatures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Morph.
+        /// </summary>
+        internal static string ksComplexConcMorph {
+            get {
+                return ResourceManager.GetString("ksComplexConcMorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tag.
+        /// </summary>
+        internal static string ksComplexConcTag {
+            get {
+                return ResourceManager.GetString("ksComplexConcTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        internal static string ksComplexConcType {
+            get {
+                return ResourceManager.GetString("ksComplexConcType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Word.
+        /// </summary>
+        internal static string ksComplexConcWord {
+            get {
+                return ResourceManager.GetString("ksComplexConcWord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Word Boundary.
+        /// </summary>
+        internal static string ksComplexConcWordBoundary {
+            get {
+                return ResourceManager.GetString("ksComplexConcWordBoundary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to concordance.
         /// </summary>
         internal static string ksConcordance {
@@ -975,6 +1074,15 @@ namespace SIL.FieldWorks.IText {
         internal static string ksInvalidLLFile {
             get {
                 return ResourceManager.GetString("ksInvalidLLFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A valid tag must be selected..
+        /// </summary>
+        internal static string ksInvalidTagMsg {
+            get {
+                return ResourceManager.GetString("ksInvalidTagMsg", resourceCulture);
             }
         }
         

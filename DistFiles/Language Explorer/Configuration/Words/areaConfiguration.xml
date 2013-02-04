@@ -122,6 +122,19 @@
 			<parameters field="Analyses" className="WfiAnalysis"/>
 		</command>
 		<command id="CmdRespeller" label="Change Spelling..." message="LaunchRespellerDlg"/>
+
+		<command id="CmdPatternNodeOccurOnce" label="Occurs exactly once" message="PatternNodeSetOccurrence">
+			<parameters min="1" max="1"/>
+		</command>
+		<command id="CmdPatternNodeOccurZeroMore" label="Occurs zero or more times" message="PatternNodeSetOccurrence">
+			<parameters min="0" max="-1"/>
+		</command>
+		<command id="CmdPatternNodeOccurOneMore" label="Occurs one or more times" message="PatternNodeSetOccurrence">
+			<parameters min="1" max="-1"/>
+		</command>
+		<command id="CmdPatternNodeSetOccur" label="Set occurrence (min. and max.)..." message="PatternNodeSetOccurrence"/>
+		<command id="CmdPatternNodeSetCriteria" label="Set criteria..." message="PatternNodeSetCriteria"/>
+		<command id="CmdPatternNodeGroup" label="Group" message="PatternNodeGroup"/>
 	</commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
@@ -478,6 +491,16 @@
 		<menu id="mnuDataTree-WordGloss-Hotlinks">
 			<item command="CmdDataTree-Insert-WordGloss"/>
 		</menu>-->
+
+		<menu id="mnuComplexConcordance">
+			<item command="CmdPatternNodeOccurOnce"/>
+			<item command="CmdPatternNodeOccurZeroMore"/>
+			<item command="CmdPatternNodeOccurOneMore"/>
+			<item command="CmdPatternNodeSetOccur"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdPatternNodeSetCriteria"/>
+			<item command="CmdPatternNodeGroup"/>
+		</menu>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/contextMenus/*"/>
 	</contextMenus>
 	<!-- ********************************************************** -->

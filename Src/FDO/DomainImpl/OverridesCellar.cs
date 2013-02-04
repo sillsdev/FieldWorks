@@ -4586,6 +4586,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return offsetList[iAnalysis].Item2;
 		}
 
+		/// <summary>
+		/// Return a list of all the analyses in the segment, with their begin and end offsets (relative to the paragraph).
+		/// </summary>
+		/// <returns></returns>
+		public IList<Tuple<IAnalysis, int, int>> GetAnalysesAndOffsets()
+		{
+			return new ParsedParagraphOffsetsMethod(this).GetAnalysesAndOffsets();
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Answer an array of count (located) occurrences of the specified IAnalysis (and, optionally, its children).
@@ -5032,16 +5041,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Return a list of all the analyses in the segment, with their begin offsets.
+		/// Return a list of all the analyses in the segment, with their begin and end offsets.
 		/// </summary>
-		public List<Tuple<IAnalysis, int>> GetAnalysesAndOffsets()
+		public List<Tuple<IAnalysis, int, int>> GetAnalysesAndOffsets()
 		{
 			AdvanceToAnalysis();
-			var result = new List<Tuple<IAnalysis, int>>(m_segment.AnalysesRS.Count);
+			var result = new List<Tuple<IAnalysis, int, int>>(m_segment.AnalysesRS.Count);
 			while (m_ianalysis < m_segment.AnalysesRS.Count)
 			{
-				result.Add(new Tuple<IAnalysis, int>(m_segment.AnalysesRS[m_ianalysis], m_ich + m_segment.BeginOffset));
+				int begin = m_ich + m_segment.BeginOffset;
+				IAnalysis analysis = m_segment.AnalysesRS[m_ianalysis];
 				AdvancePastWord();
+				result.Add(new Tuple<IAnalysis, int, int>(analysis, begin, m_ich + m_segment.BeginOffset));
 				AdvanceToAnalysis();
 			}
 			return result;

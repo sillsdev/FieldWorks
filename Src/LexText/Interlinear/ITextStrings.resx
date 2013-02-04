@@ -905,4 +905,40 @@
   <data name="ksUseMergeAnalysesWhen" xml:space="preserve">
     <value>Use this when you discover (e.g., in Words/Analyses) that you have more than one copy of the same analysis of the same wordform. It is especially helpful when you have many instances of this, for example, as a result of merging work done in multiple places.</value>
   </data>
+  <data name="ksComplexConcGloss" xml:space="preserve">
+    <value>Gloss</value>
+  </data>
+  <data name="ksComplexConcEntry" xml:space="preserve">
+    <value>Entry</value>
+  </data>
+  <data name="ksComplexConcForm" xml:space="preserve">
+    <value>Form</value>
+  </data>
+  <data name="ksComplexConcMorph" xml:space="preserve">
+    <value>Morph</value>
+  </data>
+  <data name="ksComplexConcTag" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="ksComplexConcType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ksComplexConcWordBoundary" xml:space="preserve">
+    <value>Word Boundary</value>
+  </data>
+  <data name="ksComplexConcCategory" xml:space="preserve">
+    <value>Cat</value>
+  </data>
+  <data name="ksComplexConcInflFeatAny" xml:space="preserve">
+    <value>&lt;Any&gt;</value>
+  </data>
+  <data name="ksComplexConcInflFeatures" xml:space="preserve">
+    <value>Infl</value>
+  </data>
+  <data name="ksComplexConcWord" xml:space="preserve">
+    <value>Word</value>
+  </data>
+  <data name="ksInvalidTagMsg" xml:space="preserve">
+    <value>A valid tag must be selected.</value>
+  </data>
 </root>

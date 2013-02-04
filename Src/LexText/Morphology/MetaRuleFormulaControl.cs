@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
@@ -8,6 +9,7 @@ using System.Runtime.InteropServices;
 
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -27,7 +29,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public MetaRuleFormulaControl(XmlNode configurationNode)
 			: base(configurationNode)
 		{
-			m_menuId = "mnuPhMetathesisRule";
 		}
 
 		public override bool SliceIsCurrent
@@ -56,17 +57,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_view.Init(mediator, obj, this, new MetaRuleFormulaVc(cache, mediator), MetaRuleFormulaVc.kfragRule);
 
-			m_insertionControl.Initialize(cache, mediator, persistProvider, Rule.Name.BestAnalysisAlternative.Text);
-			m_insertionControl.AddOption(RuleInsertType.PHONEME, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.NATURAL_CLASS, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.FEATURES, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.WORD_BOUNDARY, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.MORPHEME_BOUNDARY, DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.WordBoundary), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
 			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
-		bool DisplayOption(RuleInsertType type)
+		private bool DisplayOption(object option)
 		{
+			RuleInsertType type = ((InsertOption) option).Type;
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			int cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
@@ -77,26 +78,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case PhMetathesisRuleTags.kidxLeftSwitch:
 					switch (type)
 					{
-						case RuleInsertType.WORD_BOUNDARY:
+						case RuleInsertType.WordBoundary:
 							return false;
 
-						case RuleInsertType.MORPHEME_BOUNDARY:
+						case RuleInsertType.MorphemeBoundary:
 							if (Rule.LeftSwitchIndex == -1 || Rule.MiddleIndex != -1 || sel.IsRange)
 								return false;
-							else
-								return GetInsertionIndex(Rule.StrucDescOS.ToArray(), sel) == Rule.LeftSwitchIndex + 1;
+							return GetInsertionIndex(Rule.StrucDescOS.Cast<ICmObject>().ToArray(), sel) == Rule.LeftSwitchIndex + 1;
 
 						default:
 							if (Rule.LeftSwitchIndex == -1)
 							{
 								return true;
 							}
-							else if (sel.IsRange)
+							if (sel.IsRange)
 							{
 								var beginObj = GetItem(sel, SelectionHelper.SelLimitType.Top);
 								var endObj = GetItem(sel, SelectionHelper.SelLimitType.Bottom);
 
-								IPhSimpleContext lastCtxt = null;
+								IPhSimpleContext lastCtxt;
 								if (Rule.MiddleIndex != -1 && Rule.IsMiddleWithLeftSwitch)
 									lastCtxt = Rule.StrucDescOS[Rule.MiddleLimit - 1];
 								else
@@ -110,26 +110,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case PhMetathesisRuleTags.kidxRightSwitch:
 					switch (type)
 					{
-						case RuleInsertType.WORD_BOUNDARY:
+						case RuleInsertType.WordBoundary:
 							return false;
 
-						case RuleInsertType.MORPHEME_BOUNDARY:
+						case RuleInsertType.MorphemeBoundary:
 							if (Rule.RightSwitchIndex == -1 || Rule.MiddleIndex != -1 || sel.IsRange)
 								return false;
-							else
-								return GetInsertionIndex(Rule.StrucDescOS.ToArray(), sel) == Rule.RightSwitchIndex;
+							return GetInsertionIndex(Rule.StrucDescOS.Cast<ICmObject>().ToArray(), sel) == Rule.RightSwitchIndex;
 
 						default:
 							if (Rule.RightSwitchIndex == -1)
 							{
 								return true;
 							}
-							else if (sel.IsRange)
+							if (sel.IsRange)
 							{
 								var beginObj = GetItem(sel, SelectionHelper.SelLimitType.Top);
 								var endObj = GetItem(sel, SelectionHelper.SelLimitType.Bottom);
 
-								IPhSimpleContext firstCtxt = null;
+								IPhSimpleContext firstCtxt;
 								if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
 									firstCtxt = Rule.StrucDescOS[Rule.MiddleIndex];
 								else
@@ -141,32 +140,28 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 
 				case PhMetathesisRuleTags.kidxLeftEnv:
-					IPhSimpleContext[] leftCtxts = Rule.StrucDescOS.ToArray();
+					ICmObject[] leftCtxts = Rule.StrucDescOS.Cast<ICmObject>().ToArray();
 					IPhSimpleContext first = null;
 					if (Rule.StrucDescOS.Count > 0)
 						first = Rule.StrucDescOS[0];
 
-					if (type == RuleInsertType.WORD_BOUNDARY)
+					if (type == RuleInsertType.WordBoundary)
 					{
 						// only display the word boundary option if we are at the beginning of the left context and
 						// there is no word boundary already inserted
 						if (sel.IsRange)
 							return GetIndicesToRemove(leftCtxts, sel)[0] == 0;
-						else
-							return GetInsertionIndex(leftCtxts, sel) == 0 && !IsWordBoundary(first);
+						return GetInsertionIndex(leftCtxts, sel) == 0 && !IsWordBoundary(first);
 					}
-					else
-					{
-						// we cannot insert anything to the left of a word boundary in the left context
-						return sel.IsRange || GetInsertionIndex(leftCtxts, sel) != 0 || !IsWordBoundary(first);
-					}
+					// we cannot insert anything to the left of a word boundary in the left context
+					return sel.IsRange || GetInsertionIndex(leftCtxts, sel) != 0 || !IsWordBoundary(first);
 
 				case PhMetathesisRuleTags.kidxRightEnv:
-					IPhSimpleContext[] rightCtxts = Rule.StrucDescOS.ToArray();
+					ICmObject[] rightCtxts = Rule.StrucDescOS.Cast<ICmObject>().ToArray();
 					IPhSimpleContext last = null;
 					if (Rule.StrucDescOS.Count > 0)
 						last = Rule.StrucDescOS[Rule.StrucDescOS.Count - 1];
-					if (type == RuleInsertType.WORD_BOUNDARY)
+					if (type == RuleInsertType.WordBoundary)
 					{
 						// only display the word boundary option if we are at the end of the right context and
 						// there is no word boundary already inserted
@@ -175,22 +170,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							int[] indices = GetIndicesToRemove(rightCtxts, sel);
 							return indices[indices.Length - 1] == rightCtxts.Length - 1;
 						}
-						else
-						{
-							return GetInsertionIndex(rightCtxts, sel) == rightCtxts.Length && !IsWordBoundary(last);
-						}
+						return GetInsertionIndex(rightCtxts, sel) == rightCtxts.Length && !IsWordBoundary(last);
 					}
-					else
-					{
-						// we cannot insert anything to the right of a word boundary in the right context
-						return sel.IsRange || GetInsertionIndex(rightCtxts, sel) != rightCtxts.Length || !IsWordBoundary(last);
-					}
+					// we cannot insert anything to the right of a word boundary in the right context
+					return sel.IsRange || GetInsertionIndex(rightCtxts, sel) != rightCtxts.Length || !IsWordBoundary(last);
 			}
 
 			return false;
 		}
 
-		string DisplayNoOptsMsg()
+		private string DisplayNoOptsMsg()
 		{
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			int cellId = GetCell(sel);
@@ -205,6 +194,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					return MEStrings.ksRuleWordBdryNoOptsMsg;
 			}
 			return null;
+		}
+
+		protected override string FeatureChooserHelpTopic
+		{
+			get { return "khtpChoose-Grammar-PhonFeats-MetaRuleFormulaControl"; }
+		}
+
+		protected override string RuleName
+		{
+			get { return Rule.Name.BestAnalysisAlternative.Text; }
+		}
+
+		protected override string ContextMenuID
+		{
+			get { return "mnuPhMetathesisRule"; }
 		}
 
 		protected override int GetNextCell(int cellId)
@@ -344,44 +348,36 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case PhMetathesisRuleTags.kidxLeftEnv:
 					if (Rule.LeftEnvIndex == -1)
 						return 0;
-					else
-						return Rule.LeftEnvLimit;
+					return Rule.LeftEnvLimit;
 
 				case PhMetathesisRuleTags.kidxLeftSwitch:
 					if (Rule.LeftSwitchIndex == -1)
 					{
 						return 0;
 					}
-					else
+					int leftMidCount = 0;
+					if (Rule.MiddleIndex != -1 && Rule.IsMiddleWithLeftSwitch)
 					{
-						int middleCount = 0;
-						if (Rule.MiddleIndex != -1 && Rule.IsMiddleWithLeftSwitch)
-						{
-							middleCount = Rule.MiddleLimit - Rule.MiddleIndex;
-						}
-						return (Rule.LeftSwitchLimit - Rule.LeftSwitchIndex) + middleCount;
+						leftMidCount = Rule.MiddleLimit - Rule.MiddleIndex;
 					}
+					return (Rule.LeftSwitchLimit - Rule.LeftSwitchIndex) + leftMidCount;
 
 				case PhMetathesisRuleTags.kidxRightSwitch:
 					if (Rule.RightSwitchIndex == -1)
 					{
 						return 0;
 					}
-					else
+					int rightMidCount = 0;
+					if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
 					{
-						int middleCount = 0;
-						if (Rule.MiddleIndex != -1 && !Rule.IsMiddleWithLeftSwitch)
-						{
-							middleCount = Rule.MiddleLimit - Rule.MiddleIndex;
-						}
-						return (Rule.RightSwitchLimit - Rule.RightSwitchIndex) + middleCount;
+						rightMidCount = Rule.MiddleLimit - Rule.MiddleIndex;
 					}
+					return (Rule.RightSwitchLimit - Rule.RightSwitchIndex) + rightMidCount;
 
 				case PhMetathesisRuleTags.kidxRightEnv:
 					if (Rule.RightEnvIndex == -1)
 						return 0;
-					else
-						return Rule.RightEnvLimit - Rule.RightEnvIndex;
+					return Rule.RightEnvLimit - Rule.RightEnvIndex;
 			}
 			return 0;
 		}
@@ -418,11 +414,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return cellId;
 		}
 
-		protected override int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex)
+		protected override int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex, out IPhSimpleContextNC ctxt)
 		{
-			var ncCtxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
-			var cellId = InsertContext(ncCtxt, sel, out cellIndex);
-			ncCtxt.FeatureStructureRA = nc;
+			ctxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
+			var cellId = InsertContext(ctxt, sel, out cellIndex);
+			ctxt.FeatureStructureRA = nc;
 			return cellId;
 		}
 
@@ -448,9 +444,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					case PhMetathesisRuleTags.kidxLeftSwitch:
 						if (Rule.MiddleIndex != -1)
 							return Rule.MiddleIndex;
-						else if (Rule.RightSwitchIndex != -1)
+						if (Rule.RightSwitchIndex != -1)
 							return Rule.RightSwitchIndex;
-						else if (Rule.RightEnvIndex != -1)
+						if (Rule.RightEnvIndex != -1)
 							return Rule.RightEnvIndex;
 						break;
 
@@ -461,10 +457,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 				return objs.Length;
 			}
-			else
-			{
-				return base.GetInsertionIndex(objs, sel);
-			}
+			return base.GetInsertionIndex(objs, sel);
 		}
 
 		protected override int RemoveItems(SelectionHelper sel, bool forward, out int cellIndex)

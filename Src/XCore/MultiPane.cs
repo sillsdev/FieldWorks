@@ -659,7 +659,7 @@ namespace XCore
 			if (defaultFocusControl != null)
 			{
 				defaultFocusControl.IsFocusedPane = true; // Lets it know it can do any special behavior (e.g., DataPane) when it is the focused child.
-				defaultFocusControl.Focus();
+				BeginInvoke((MethodInvoker) (() => defaultFocusControl.Focus()));
 			}
 		}
 	}

@@ -23,29 +23,18 @@ using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks;
 using XCore;
-using SIL.FieldWorks.FDO.Application;
 
 
 namespace SIL.FieldWorks.IText
 {
-	public partial class ConcordanceControl : UserControl, IxCoreContentControl, IFWDisposable
+	public partial class ConcordanceControl : ConcordanceControlBase
 	{
-		Mediator m_mediator;
-		XmlNode m_configurationParameters;
-		protected FdoCache m_cache;
-		protected OccurrencesOfSelectedUnit m_clerk;
 		private RegexHelperMenu m_regexContextMenu;
 		private IVwPattern m_vwPattern;
 		private bool m_fObjectConcorded = false;
 		private int m_hvoMatch = 0;
 		private int m_backupHvo = 0;
-		private IHelpTopicProvider m_helpTopicProvider;
 		private POSPopupTreeManager m_pOSPopupTreeManager;
-
-		// True after the first time we do it.
-		internal bool HasLoadedMatches { get; private set; }
-		// True while loading matches, to prevent recursive call.
-		internal bool IsLoadingMatches { get; private set; }
 
 		public ConcordanceControl()
 		{
@@ -59,24 +48,10 @@ namespace SIL.FieldWorks.IText
 
 		#region IxCoreColleague Members
 
-		public IxCoreColleague[] GetMessageTargets()
+		public override void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();
-			return new IxCoreColleague[] { this };
-		}
-
-		public void Init(Mediator mediator, XmlNode configurationParameters)
-		{
-			CheckDisposed();
-			m_mediator = mediator;
-			m_helpTopicProvider = m_mediator.HelpTopicProvider;
-			m_configurationParameters = configurationParameters;
-			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			string name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
-			m_clerk = (OccurrencesOfSelectedUnit)m_mediator.PropertyTable.GetValue(name);
-			if (m_clerk == null)
-				m_clerk = RecordClerkFactory.CreateClerk(m_mediator, m_configurationParameters, true) as OccurrencesOfSelectedUnit;
-			m_clerk.ConcordanceControl = this;
+			base.Init(mediator, configurationParameters);
 
 			m_tbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_tbSearchText.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
@@ -122,14 +97,6 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Should not be called if disposed.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return IsDisposed; }
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -159,7 +126,7 @@ namespace SIL.FieldWorks.IText
 		{
 			string sLine = m_mediator.PropertyTable.GetStringProperty("ConcordanceLine", "kBaseline",
 						 PropertyTable.SettingsGroup.LocalSettings);
-			ConcordanceLines line = ConcordanceLines.kBaseline;
+			ConcordanceLines line;
 			try
 			{
 				line = (ConcordanceLines)Enum.Parse(typeof(ConcordanceLines), sLine);
@@ -276,7 +243,7 @@ namespace SIL.FieldWorks.IText
 
 		#region IXCoreUserControl Members
 
-		public string AccName
+		public override string AccName
 		{
 			get
 			{
@@ -287,46 +254,8 @@ namespace SIL.FieldWorks.IText
 
 		#endregion
 
-		#region IFWDisposable Members
-
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-		}
-
-		#endregion
-
 
 		#region IxCoreContentControl Members
-
-		public string AreaName
-		{
-			get
-			{
-				CheckDisposed();
-				return XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "area", "unknown");
-			}
-		}
-
-		public bool OnPrepareToRefresh(object args)
-		{
-			// we want to reload our list after a refresh, if our last load was requested.
-			// otherwise, the user will have to do the search over again explicitly if they expect new results.
-			// LT-6967.
-			return false;
-		}
-
-		/// <summary>
-		/// This is called on a MasterRefresh
-		/// </summary>
-		/// <returns></returns>
-		public bool PrepareToGoAway()
-		{
-			CheckDisposed();
-			SaveSettings();
-			return true;
-		}
 
 		/// <summary>
 		/// This is called when the main window is closing.
@@ -342,26 +271,8 @@ namespace SIL.FieldWorks.IText
 
 		#endregion
 
-		#region IxCoreCtrlTabProvider Members
-
-		public Control PopulateCtrlTabTargetCandidateList(List<Control> targetCandidates)
-		{
-			CheckDisposed();
-			if (targetCandidates == null)
-				throw new ArgumentNullException("'targetCandidates' is null.");
-			targetCandidates.Add(this);
-			return ContainsFocus ? this : null;
-		}
-
-		#endregion
-
 		#region Overrides
 
-		protected override void OnHandleCreated(EventArgs e)
-		{
-			base.OnHandleCreated(e);
-			((PaneBarContainer) Parent).PaneBar.Text = ITextStrings.ksSpecifyConcordanceCriteria;
-		}
 
 		protected override void OnLeave(EventArgs e)
 		{
@@ -673,44 +584,7 @@ namespace SIL.FieldWorks.IText
 			LoadMatches(false);
 		}
 
-		/// <summary>
-		/// Load the matches based upon the state of the ConcordanceControl.
-		/// </summary>
-		internal protected void LoadMatches()
-		{
-			LoadMatches(true);
-		}
-
-		internal protected virtual void LoadMatches(bool fLoadVirtualProperty)
-		{
-			var occurrences = SearchForMatches();
-			var decorator = (ConcDecorator) ((DomainDataByFlidDecoratorBase)m_clerk.VirtualListPublisher).BaseSda;
-			// Set this BEFORE we start loading, otherwise, calls to ReloadList triggered here just make it empty.
-			HasLoadedMatches = true;
-			IsLoadingMatches = true;
-			try
-			{
-				m_clerk.OwningObject = m_cache.LangProject;
-				decorator.SetOccurrences(m_cache.LangProject.Hvo, occurrences);
-				m_clerk.UpdateList(true);
-			}
-			finally
-			{
-				IsLoadingMatches = false;
-			}
-		}
-
-		/// <summary>
-		/// If asked to Refresh, update your results list.
-		/// </summary>
-		public bool RefreshDisplay()
-		{
-			LoadMatches(true);
-			//I claim that all descendants which are refreshable have been refreshed -naylor
-			return true;
-		}
-
-		internal protected virtual List<IParaFragment> SearchForMatches()
+		protected override List<IParaFragment> SearchForMatches()
 		{
 			if (m_fObjectConcorded)
 				return FindMatchingItems();
@@ -1302,7 +1176,7 @@ namespace SIL.FieldWorks.IText
 
 		private ConcDecorator GetConcDecorator()
 		{
-			return (m_clerk.VirtualListPublisher as ObjectListPublisher).BaseSda as ConcDecorator;
+			return ((ObjectListPublisher) m_clerk.VirtualListPublisher).BaseSda as ConcDecorator;
 		}
 
 		private void AddUnparsedParagraphs(IStText text, List<IStTxtPara> collectUnparsed, HashSet<IStTxtPara> collectUsefulParas)
@@ -1368,7 +1242,7 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_rbtnUseRegExp.Checked || !m_chkMatchCase.Checked)
 				return "%";		// can we do better?
-			StringBuilder sb = new StringBuilder(sMatch);
+			var sb = new StringBuilder(sMatch);
 			if (!m_chkMatchDiacritics.Checked)
 			{
 				// Allow any number of diacritics (or other chars for that matter, alas) between
@@ -1763,7 +1637,7 @@ namespace SIL.FieldWorks.IText
 						}
 						break;
 					default:
-						if (m_cache.ClassIsOrInheritsFrom((int)clid, (int)MoFormTags.kClassId))
+						if (m_cache.ClassIsOrInheritsFrom(clid, MoFormTags.kClassId))
 							InitializeConcordanceSearch(target);
 						break;
 				}
@@ -1781,9 +1655,9 @@ namespace SIL.FieldWorks.IText
 
 	public class OccurrencesOfSelectedUnit : InterlinearTextsRecordClerk
 	{
-		ConcordanceControl m_concordanceControl = null;
+		ConcordanceControlBase m_concordanceControl = null;
 
-		internal ConcordanceControl ConcordanceControl
+		internal ConcordanceControlBase ConcordanceControl
 		{
 			get { return m_concordanceControl; }
 			set
@@ -1825,7 +1699,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class MatchingConcordanceItems : RecordList
 	{
-		internal ConcordanceControl OwningControl { get; set; }
+		internal ConcordanceControlBase OwningControl { get; set; }
 
 		public override void Init(FdoCache cache, Mediator mediator, XmlNode recordListNode)
 		{
@@ -1856,7 +1730,7 @@ namespace SIL.FieldWorks.IText
 			else
 			{
 				// It's in a disposed state...make it empty for now.
-				(VirtualListPublisher as ObjectListPublisher).SetOwningPropValue(new int[0]);
+				((ObjectListPublisher) VirtualListPublisher).SetOwningPropValue(new int[0]);
 				ConcDecorator concSda = GetConcDecorator();
 				if (concSda != null)
 					concSda.UpdateOccurrences(new int[0]);
@@ -1866,7 +1740,7 @@ namespace SIL.FieldWorks.IText
 
 		private ConcDecorator GetConcDecorator()
 		{
-			return (VirtualListPublisher as ObjectListPublisher).BaseSda as ConcDecorator;
+			return ((ObjectListPublisher) VirtualListPublisher).BaseSda as ConcDecorator;
 		}
 	}
 

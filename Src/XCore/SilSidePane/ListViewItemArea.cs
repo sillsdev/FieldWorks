@@ -122,7 +122,36 @@ namespace SIL.SilSidePane
 			var item = widget.Tag as Item;
 
 			_currentItem = item;
-			ItemClicked(item);
+			if (!_clicked)
+				ItemClicked(item);
+		}
+
+		private bool _clicked;
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			base.OnMouseDown(e);
+			_clicked = true;
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			base.OnMouseUp(e);
+			if (_clicked)
+			{
+				ItemClicked(_currentItem);
+				_clicked = false;
+			}
+		}
+
+		protected override void OnMouseLeave(System.EventArgs e)
+		{
+			base.OnMouseLeave(e);
+			if (_clicked)
+			{
+				ItemClicked(_currentItem);
+				_clicked = false;
+			}
 		}
 	}
 }

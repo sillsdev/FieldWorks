@@ -455,6 +455,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 				m_useVisualStyleBackColor = value;
+				if (value)
+					m_comboTextBox.BackColor = Color.Transparent;
 			}
 		}
 
@@ -682,7 +684,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				CheckDisposed();
 
-				m_comboTextBox.Text = value;
+				if (!DesignMode)
+					m_comboTextBox.Text = value;
 			}
 		}
 

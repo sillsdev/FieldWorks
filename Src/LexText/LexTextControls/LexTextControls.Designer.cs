@@ -737,6 +737,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minimum must be less than or equal to maximum.
+        /// </summary>
+        internal static string ksContextOccurrenceDlgError {
+            get {
+                return ResourceManager.GetString("ksContextOccurrenceDlgError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not all validation errors prevent successful importing.  Do you want to continue with the LIFT import?.
         /// </summary>
         internal static string ksContinueLiftImportQuestion {

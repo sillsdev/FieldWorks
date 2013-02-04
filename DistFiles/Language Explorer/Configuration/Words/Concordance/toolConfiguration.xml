@@ -63,6 +63,51 @@
 		</parameters>
 	  </control>
 	</tool>
+	<tool label="Complex Concordance" value="complexConcordance" icon="SideBySideView">
+	  <control>
+		<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ConcordanceContainer"/>
+		<parameters area="textsWords" id="WordsAndOccurrencesMultiPane" splitterBarOrientation="vertical" defaultPrintPane="wordOccurrenceList" defaultFocusControl="ComplexConcControl">
+		  <!--this will fill the pane on the left -->
+		  <control>
+			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>
+			<parameters area="textsWords" id="PatternAndTextMultiPane" splitterBarOrientation="horizontal" defaultFixedPaneSizePoints="50%">
+			  <!-- this will fill the top of the left side -->
+			  <control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="complexConcordanceControl" collapse="110000">
+				  <control>
+					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ComplexConcControl"/>
+					<parameters id="complexConcordanceControl" clerk="OccurrencesOfSelectedUnit"/>
+				  </control>
+				</parameters>
+			  </control>
+			  <!-- this will fill the bottom of the left side -->
+			  <control>
+				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+				<parameters id="wordOccurrenceList" collapse="180000">
+				  <control>
+					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
+					<parameters id="wordOccurrenceList" editable="false" clerk="OccurrencesOfSelectedUnit" filterBar="true" altTitleId="Concordance-Matches">
+					  <include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
+					</parameters>
+				  </control>
+				</parameters>
+			  </control>
+			</parameters>
+		  </control>
+		  <!-- this will fill the pane on the right -->
+		  <control>
+			<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
+			<parameters id="ITextControl" collapse="144000">
+			  <control>
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMasterNoTitleBar"/>
+				<parameters id="ITextControl" editable="true" clerk="OccurrencesOfSelectedUnit" treeBarAvailability="NotAllowed" hideTitleContents="true" suppressAutoCreate="true" altTitleId="Concordance-Context"/>
+			  </control>
+			</parameters>
+		  </control>
+		</parameters>
+	  </control>
+	</tool>
 	<tool label="Word List Concordance" value="wordListConcordance" icon="SideBySideView">
 	  <control>
 		<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.MultiPane"/>

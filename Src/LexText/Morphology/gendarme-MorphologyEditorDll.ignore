@@ -15,7 +15,6 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.AnalysisInterlinearRs::MakeRoot()
 M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice::FinishInit()
 M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.InterlinearSlice::FinishInit()
-M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.RuleInsertionControl::UpdateOptionsDisplay()
 
 # Disposed in Dispose(bool) method
 M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.ConcordanceDlg::Init(XCore.Mediator,System.Xml.XmlNode,SIL.FieldWorks.FDO.ICmObject)

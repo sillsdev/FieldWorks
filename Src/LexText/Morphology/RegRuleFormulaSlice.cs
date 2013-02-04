@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FdoUi;
-using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -16,10 +10,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// </summary>
 	public class RegRuleFormulaSlice : RuleFormulaSlice
 	{
-		public RegRuleFormulaSlice()
-		{
-		}
-
 		public override void FinishInit()
 		{
 			CheckDisposed();
@@ -47,7 +37,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 
-			XCore.Command cmd = args as XCore.Command;
+			var cmd = (XCore.Command) args;
 			if (cmd.Parameters.Count > 0)
 			{
 				string minStr = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "min");
@@ -60,8 +50,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				int min, max;
 				RegRuleFormulaControl.GetContextOccurrence(out min, out max);
-				using (ContextOccurrenceDlg dlg = new ContextOccurrenceDlg(
-					m_mediator.HelpTopicProvider, min, max))
+				using (var dlg = new OccurrenceDlg(m_mediator.HelpTopicProvider, min, max, false))
 				{
 					if (dlg.ShowDialog((XCore.XWindow)Mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
 						RegRuleFormulaControl.SetContextOccurrence(dlg.Minimum, dlg.Maximum);

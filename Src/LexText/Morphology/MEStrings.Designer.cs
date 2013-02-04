@@ -241,15 +241,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum must be less than or equal to maximum.
-        /// </summary>
-        internal static string ksContextOccurrenceDlgError {
-            get {
-                return ResourceManager.GetString("ksContextOccurrenceDlgError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Copy any approved analyses to the new spelling.
         /// </summary>
         internal static string ksCopyApprovedAnalysesToNewSpelling {

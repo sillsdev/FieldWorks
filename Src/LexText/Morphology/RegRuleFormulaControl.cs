@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Xml;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-
+using System.Linq;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.FdoUi;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -33,17 +26,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public RegRuleFormulaControl(XmlNode configurationNode)
 			: base(configurationNode)
 		{
-			m_menuId = "mnuPhRegularRule";
 		}
 
 		/// <summary>
 		/// the right hand side
 		/// </summary>
-		public IPhSegRuleRHS RHS
+		public IPhSegRuleRHS Rhs
 		{
 			get
 			{
-				return m_obj as IPhSegRuleRHS;
+				return (IPhSegRuleRHS) m_obj;
 			}
 		}
 
@@ -68,7 +60,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			XCore.Mediator mediator, string displayNameProperty, string displayWs)
+			Mediator mediator, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
@@ -76,17 +68,32 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_view.Init(mediator, obj, this, new RegRuleFormulaVc(cache, mediator), RegRuleFormulaVc.kfragRHS);
 
-			m_insertionControl.Initialize(cache, mediator, persistProvider, RHS.OwningRule.Name.BestAnalysisAlternative.Text);
-			m_insertionControl.AddOption(RuleInsertType.PHONEME, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.NATURAL_CLASS, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.FEATURES, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.WORD_BOUNDARY, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.MORPHEME_BOUNDARY, DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.WordBoundary), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
 			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
-		bool DisplayOption(RuleInsertType type)
+		protected override string FeatureChooserHelpTopic
 		{
+			get { return "khtpChoose-Grammar-PhonFeats-RegRuleFormulaControl"; }
+		}
+
+		protected override string RuleName
+		{
+			get { return Rhs.OwningRule.Name.BestAnalysisAlternative.Text; }
+		}
+
+		protected override string ContextMenuID
+		{
+			get { return "mnuPhRegularRule"; }
+		}
+
+		private bool DisplayOption(object option)
+		{
+			var opt = (InsertOption) option;
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			int cellId = GetCell(sel);
 			if (cellId < 0)
@@ -95,59 +102,55 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			switch (cellId)
 			{
 				case PhSegRuleRHSTags.kflidLeftContext:
-					if (RHS.LeftContextOA == null)
+					if (Rhs.LeftContextOA == null)
 						return true;
 
-					IPhPhonContext[] leftCtxts = null;
+					ICmObject[] leftCtxts;
 					IPhPhonContext first = null;
-					if (RHS.LeftContextOA.ClassID != PhSequenceContextTags.kClassId)
+					if (Rhs.LeftContextOA.ClassID != PhSequenceContextTags.kClassId)
 					{
-						leftCtxts = new IPhPhonContext[] { RHS.LeftContextOA };
-						first = RHS.LeftContextOA;
+						leftCtxts = new ICmObject[] { Rhs.LeftContextOA };
+						first = Rhs.LeftContextOA;
 					}
 					else
 					{
-						var seqCtxt = RHS.LeftContextOA as IPhSequenceContext;
+						var seqCtxt = (IPhSequenceContext) Rhs.LeftContextOA;
 						if (seqCtxt.MembersRS.Count > 0)
 							first = seqCtxt.MembersRS[0];
-						leftCtxts = seqCtxt.MembersRS.ToArray();
+						leftCtxts = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 					}
 
-					if (type == RuleInsertType.WORD_BOUNDARY)
+					if (opt.Type == RuleInsertType.WordBoundary)
 					{
 						// only display the word boundary option if we are at the beginning of the left context and
 						// there is no word boundary already inserted
 						if (sel.IsRange)
 							return GetIndicesToRemove(leftCtxts, sel)[0] == 0;
-						else
-							return GetInsertionIndex(leftCtxts, sel) == 0 && !IsWordBoundary(first);
+						return GetInsertionIndex(leftCtxts, sel) == 0 && !IsWordBoundary(first);
 					}
-					else
-					{
-						// we cannot insert anything to the left of a word boundary in the left context
-						return sel.IsRange || GetInsertionIndex(leftCtxts, sel) != 0 || !IsWordBoundary(first);
-					}
+					// we cannot insert anything to the left of a word boundary in the left context
+					return sel.IsRange || GetInsertionIndex(leftCtxts, sel) != 0 || !IsWordBoundary(first);
 
 				case PhSegRuleRHSTags.kflidRightContext:
-					if (RHS.RightContextOA == null || sel.IsRange)
+					if (Rhs.RightContextOA == null || sel.IsRange)
 						return true;
 
-					IPhPhonContext[] rightCtxts = null;
+					ICmObject[] rightCtxts;
 					IPhPhonContext last = null;
-					if (RHS.RightContextOA.ClassID != PhSequenceContextTags.kClassId)
+					if (Rhs.RightContextOA.ClassID != PhSequenceContextTags.kClassId)
 					{
-						rightCtxts = new IPhPhonContext[] { RHS.RightContextOA };
-						last = RHS.RightContextOA;
+						rightCtxts = new ICmObject[] { Rhs.RightContextOA };
+						last = Rhs.RightContextOA;
 					}
 					else
 					{
-						IPhSequenceContext seqCtxt = RHS.RightContextOA as IPhSequenceContext;
+						var seqCtxt = (IPhSequenceContext) Rhs.RightContextOA;
 						if (seqCtxt.MembersRS.Count > 0)
 							last = seqCtxt.MembersRS[seqCtxt.MembersRS.Count - 1];
-						rightCtxts = seqCtxt.MembersRS.ToArray();
+						rightCtxts = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 					}
 
-					if (type == RuleInsertType.WORD_BOUNDARY)
+					if (opt.Type == RuleInsertType.WordBoundary)
 					{
 						// only display the word boundary option if we are at the end of the right context and
 						// there is no word boundary already inserted
@@ -156,23 +159,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							int[] indices = GetIndicesToRemove(rightCtxts, sel);
 							return indices[indices.Length - 1] == rightCtxts.Length - 1;
 						}
-						else
-						{
-							return GetInsertionIndex(rightCtxts, sel) == rightCtxts.Length && !IsWordBoundary(last);
-						}
+						return GetInsertionIndex(rightCtxts, sel) == rightCtxts.Length && !IsWordBoundary(last);
 					}
-					else
-					{
-						// we cannot insert anything to the right of a word boundary in the right context
-						return sel.IsRange || GetInsertionIndex(rightCtxts, sel) != rightCtxts.Length || !IsWordBoundary(last);
-					}
+					// we cannot insert anything to the right of a word boundary in the right context
+					return sel.IsRange || GetInsertionIndex(rightCtxts, sel) != rightCtxts.Length || !IsWordBoundary(last);
 
 				default:
-					return type != RuleInsertType.WORD_BOUNDARY;
+					return opt.Type != RuleInsertType.WordBoundary;
 			}
 		}
 
-		string DisplayNoOptsMsg()
+		private string DisplayNoOptsMsg()
 		{
 			return MEStrings.ksRuleWordBdryNoOptsMsg;
 		}
@@ -184,17 +181,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			string leftEnv = envStr.Substring(0, index).Trim();
 			string rightEnv = envStr.Substring(index + 1).Trim();
 
-			if (RHS.LeftContextOA != null)
+			if (Rhs.LeftContextOA != null)
 			{
-				RHS.LeftContextOA.PreRemovalSideEffects();
-				RHS.LeftContextOA = null;
+				Rhs.LeftContextOA.PreRemovalSideEffects();
+				Rhs.LeftContextOA = null;
 			}
 			InsertContextsFromEnv(leftEnv, PhSegRuleRHSTags.kflidLeftContext, null);
 
-			if (RHS.RightContextOA != null)
+			if (Rhs.RightContextOA != null)
 			{
-				RHS.RightContextOA.PreRemovalSideEffects();
-				RHS.RightContextOA = null;
+				Rhs.RightContextOA.PreRemovalSideEffects();
+				Rhs.RightContextOA = null;
 			}
 			InsertContextsFromEnv(rightEnv, PhSegRuleRHSTags.kflidRightContext, null);
 
@@ -206,9 +203,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// based off of the environment. This is called recursively.
 		/// </summary>
 		/// <param name="envStr">The environment string.</param>
-		/// <param name="leftEnv">if <c>true</c> insert in the left context, otherwise the right context.</param>
+		/// <param name="flid"></param>
 		/// <param name="iterCtxt">The iteration context to insert into.</param>
-		void InsertContextsFromEnv(string envStr, int flid, IPhIterationContext iterCtxt)
+		private void InsertContextsFromEnv(string envStr, int flid, IPhIterationContext iterCtxt)
 		{
 			int i = 0;
 			while (i < envStr.Length)
@@ -265,7 +262,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						break;
 
 					default:
-						int nextIndex = envStr.IndexOfAny(new char[] { '[', ' ', '#', '(' }, i + 1);
+						int nextIndex = envStr.IndexOfAny(new[] { '[', ' ', '#', '(' }, i + 1);
 						if (nextIndex == -1)
 							nextIndex = envStr.Length;
 						int len = nextIndex - i;
@@ -313,15 +310,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			switch (flid)
 			{
 				case PhSegRuleRHSTags.kflidLeftContext:
-					if (RHS.LeftContextOA == null)
-						RHS.LeftContextOA = ctxt;
+					if (Rhs.LeftContextOA == null)
+						Rhs.LeftContextOA = ctxt;
 					else
 						seqCtxt = CreateSeqCtxt(flid);
 					break;
 
 				case PhSegRuleRHSTags.kflidRightContext:
-					if (RHS.RightContextOA == null)
-						RHS.RightContextOA = ctxt;
+					if (Rhs.RightContextOA == null)
+						Rhs.RightContextOA = ctxt;
 					else
 						seqCtxt = CreateSeqCtxt(flid);
 					break;
@@ -410,7 +407,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected override int GetItemCellIndex(int cellId, ICmObject obj)
 		{
-			int index = -1;
+			int index;
 			if (cellId == PhSegmentRuleTags.kflidStrucDesc || cellId == PhSegRuleRHSTags.kflidStrucChange)
 			{
 				index = obj.IndexInOwner;
@@ -418,12 +415,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 			{
 				bool leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
-				var ctxt = leftEnv ? RHS.LeftContextOA : RHS.RightContextOA;
+				var ctxt = leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA;
 
 				if (ctxt.ClassID == PhSequenceContextTags.kClassId)
 				{
-					var seqCtxt = ctxt as IPhSequenceContext;
-					index = seqCtxt.MembersRS.IndexOf(obj as IPhPhonContext);
+					var seqCtxt = (IPhSequenceContext) ctxt;
+					index = seqCtxt.MembersRS.IndexOf((IPhPhonContext) obj);
 				}
 				else
 				{
@@ -465,7 +462,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case PhSegRuleRHSTags.kflidLeftContext:
 				case PhSegRuleRHSTags.kflidRightContext:
 					bool leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
-					var ctxt = leftEnv ? RHS.LeftContextOA : RHS.RightContextOA;
+					var ctxt = leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA;
 					if (ctxt != null)
 					{
 						switch (ctxt.ClassID)
@@ -505,21 +502,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			switch (cellId)
 			{
 				case PhSegmentRuleTags.kflidStrucDesc:
-					return RHS.OwningRule.StrucDescOS.Count;
+					return Rhs.OwningRule.StrucDescOS.Count;
 
 				case PhSegRuleRHSTags.kflidStrucChange:
-					return RHS.StrucChangeOS.Count;
+					return Rhs.StrucChangeOS.Count;
 
 				case PhSegRuleRHSTags.kflidLeftContext:
 				case PhSegRuleRHSTags.kflidRightContext:
 					bool leftEnv = cellId == PhSegRuleRHSTags.kflidLeftContext;
-					var ctxt = leftEnv ? RHS.LeftContextOA : RHS.RightContextOA;
+					var ctxt = leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA;
 					if (ctxt == null)
 						return 0;
-					else if (ctxt.ClassID != PhSequenceContextTags.kClassId)
+					if (ctxt.ClassID != PhSequenceContextTags.kClassId)
 						return 1;
-					else
-						return (ctxt as IPhSequenceContext).MembersRS.Count;
+					return ((IPhSequenceContext) ctxt).MembersRS.Count;
 			}
 			return 0;
 		}
@@ -545,11 +541,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return cellId;
 		}
 
-		protected override int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex)
+		protected override int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex, out IPhSimpleContextNC ctxt)
 		{
-			var ncCtxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
-			var cellId = InsertContext(ncCtxt, sel, out cellIndex);
-			ncCtxt.FeatureStructureRA = nc;
+			ctxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
+			var cellId = InsertContext(ctxt, sel, out cellIndex);
+			ctxt.FeatureStructureRA = nc;
 			return cellId;
 		}
 
@@ -560,23 +556,23 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			switch (cellId)
 			{
 				case PhSegmentRuleTags.kflidStrucDesc:
-					cellIndex = InsertContextInto(ctxt, sel, RHS.OwningRule.StrucDescOS);
+					cellIndex = InsertContextInto(ctxt, sel, Rhs.OwningRule.StrucDescOS);
 					break;
 
 				case PhSegRuleRHSTags.kflidStrucChange:
-					cellIndex = InsertContextInto(ctxt, sel, RHS.StrucChangeOS);
+					cellIndex = InsertContextInto(ctxt, sel, Rhs.StrucChangeOS);
 					break;
 
 				case PhSegRuleRHSTags.kflidLeftContext:
-					if (RHS.LeftContextOA == null)
-						RHS.LeftContextOA = ctxt;
+					if (Rhs.LeftContextOA == null)
+						Rhs.LeftContextOA = ctxt;
 					else
 						cellIndex = InsertContextInto(ctxt, sel, CreateSeqCtxt(cellId));
 					break;
 
 				case PhSegRuleRHSTags.kflidRightContext:
-					if (RHS.RightContextOA == null)
-						RHS.RightContextOA = ctxt;
+					if (Rhs.RightContextOA == null)
+						Rhs.RightContextOA = ctxt;
 					else
 						cellIndex = InsertContextInto(ctxt, sel, CreateSeqCtxt(cellId));
 					break;
@@ -587,19 +583,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		IPhSequenceContext CreateSeqCtxt(int flid)
 		{
 			bool leftEnv = flid == PhSegRuleRHSTags.kflidLeftContext;
-			var ctxt = leftEnv ? RHS.LeftContextOA : RHS.RightContextOA;
+			var ctxt = leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA;
 			if (ctxt == null)
 				return null;
 
-			IPhSequenceContext seqCtxt = null;
+			IPhSequenceContext seqCtxt;
 			if (ctxt.ClassID != PhSequenceContextTags.kClassId)
 			{
 				m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(ctxt);
 				seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
 				if (leftEnv)
-					RHS.LeftContextOA = seqCtxt;
+					Rhs.LeftContextOA = seqCtxt;
 				else
-					RHS.RightContextOA = seqCtxt;
+					Rhs.RightContextOA = seqCtxt;
 				seqCtxt.MembersRS.Add(ctxt);
 			}
 			else
@@ -617,39 +613,39 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			switch (cellId)
 			{
 				case PhSegmentRuleTags.kflidStrucDesc:
-					if (!RemoveContextsFrom(forward, sel, RHS.OwningRule.StrucDescOS, true, out cellIndex))
+					if (!RemoveContextsFrom(forward, sel, Rhs.OwningRule.StrucDescOS, true, out cellIndex))
 						cellId = -1;
 					break;
 
 				case PhSegRuleRHSTags.kflidStrucChange:
-					if (RHS.StrucChangeOS == null)
+					if (Rhs.StrucChangeOS == null)
 					{
 						cellId = -1;
 						break;
 					}
-					if (!RemoveContextsFrom(forward, sel, RHS.StrucChangeOS, true, out cellIndex))
+					if (!RemoveContextsFrom(forward, sel, Rhs.StrucChangeOS, true, out cellIndex))
 						cellId = -1;
 					break;
 
 				case PhSegRuleRHSTags.kflidLeftContext:
-					if (RHS.LeftContextOA == null)
+					if (Rhs.LeftContextOA == null)
 					{
 						cellId = -1;
 						break;
 					}
-					if (RHS.LeftContextOA.ClassID == PhSequenceContextTags.kClassId)
+					if (Rhs.LeftContextOA.ClassID == PhSequenceContextTags.kClassId)
 					{
-						var seqCtxt = RHS.LeftContextOA as IPhSequenceContext;
+						var seqCtxt = Rhs.LeftContextOA as IPhSequenceContext;
 						if (!RemoveContextsFrom(forward, sel, seqCtxt, true, out cellIndex))
 							cellId = -1;
 					}
 					else
 					{
-						int idx = GetIndexToRemove(new IPhPhonContext[] { RHS.LeftContextOA }, sel, forward);
+						int idx = GetIndexToRemove(new ICmObject[] { Rhs.LeftContextOA }, sel, forward);
 						if (idx > -1)
 						{
-							RHS.LeftContextOA.PreRemovalSideEffects();
-							RHS.LeftContextOA = null;
+							Rhs.LeftContextOA.PreRemovalSideEffects();
+							Rhs.LeftContextOA = null;
 						}
 						else
 						{
@@ -659,24 +655,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					break;
 
 				case PhSegRuleRHSTags.kflidRightContext:
-					if (RHS.RightContextOA == null)
+					if (Rhs.RightContextOA == null)
 					{
 						cellId = -1;
 						break;
 					}
-					if (RHS.RightContextOA.ClassID == PhSequenceContextTags.kClassId)
+					if (Rhs.RightContextOA.ClassID == PhSequenceContextTags.kClassId)
 					{
-						var seqCtxt = RHS.RightContextOA as IPhSequenceContext;
+						var seqCtxt = Rhs.RightContextOA as IPhSequenceContext;
 						if (!RemoveContextsFrom(forward, sel, seqCtxt, true, out cellIndex))
 							cellId = -1;
 					}
 					else
 					{
-						int idx = GetIndexToRemove(new IPhPhonContext[] { RHS.RightContextOA }, sel, forward);
+						int idx = GetIndexToRemove(new ICmObject[] { Rhs.RightContextOA }, sel, forward);
 						if (idx > -1)
 						{
-							RHS.RightContextOA.PreRemovalSideEffects();
-							RHS.RightContextOA = null;
+							Rhs.RightContextOA.PreRemovalSideEffects();
+							Rhs.RightContextOA = null;
 						}
 						else
 						{
@@ -687,6 +683,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 
 			return cellId;
+		}
+
+		protected override void SetupPhonologicalFeatureChoooserDlg(PhonologicalFeatureChooserDlg featChooser)
+		{
+			featChooser.ShowFeatureConstraintValues = true;
+			featChooser.SetDlgInfo(m_cache, m_mediator, Rhs.OwningRule);
 		}
 
 		/// <summary>
@@ -700,14 +702,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var sel = SelectionHelper.Create(m_view);
 			var cellId = GetCell(sel);
 			var obj = GetItem(sel, SelectionHelper.SelLimitType.Anchor);
-			var ctxt = obj as IPhPhonContext;
+			var ctxt = (IPhPhonContext) obj;
 			int index = -1;
 			UndoableUnitOfWorkHelper.Do(MEStrings.ksRegRuleUndoSetOccurrence, MEStrings.ksRegRuleRedoSetOccurrence, ctxt, () =>
 			{
 				if (ctxt.ClassID == PhIterationContextTags.kClassId)
 				{
 					// if there is an existing iteration context, just update it or remove it if it can occur only once
-					var iterCtxt = ctxt as IPhIterationContext;
+					var iterCtxt = (IPhIterationContext) ctxt;
 					if (min == 1 && max == 1)
 					{
 						// We want to replace the iteration context with the original (simple?) context which it
@@ -740,7 +742,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			if (index == -1)
 			{
-				var envCtxt = cellId == PhSegRuleRHSTags.kflidLeftContext ? RHS.LeftContextOA : RHS.RightContextOA;
+				var envCtxt = cellId == PhSegRuleRHSTags.kflidLeftContext ? Rhs.LeftContextOA : Rhs.RightContextOA;
 				IPhSequenceContext seqCtxt;
 				index = GetIndex(ctxt, envCtxt, out seqCtxt);
 			}
@@ -751,7 +753,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		int OverwriteContext(IPhPhonContext src, IPhPhonContext dest, bool leftEnv, bool preserveDest)
 		{
 			IPhSequenceContext seqCtxt;
-			int index = GetIndex(dest, leftEnv ? RHS.LeftContextOA : RHS.RightContextOA, out seqCtxt);
+			int index = GetIndex(dest, leftEnv ? Rhs.LeftContextOA : Rhs.RightContextOA, out seqCtxt);
 			if (index != -1)
 			{
 				if (!src.IsValidObject)
@@ -767,14 +769,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				if (leftEnv)
 				{
 					if (preserveDest)
-						m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(RHS.LeftContextOA);
-					RHS.LeftContextOA = src;
+						m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(Rhs.LeftContextOA);
+					Rhs.LeftContextOA = src;
 				}
 				else
 				{
 					if (preserveDest)
-						m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(RHS.RightContextOA);
-					RHS.RightContextOA = src;
+						m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(Rhs.RightContextOA);
+					Rhs.RightContextOA = src;
 				}
 			}
 			return index;
@@ -784,7 +786,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			if (envCtxt.ClassID == PhSequenceContextTags.kClassId)
 			{
-				seqCtxt = envCtxt as IPhSequenceContext;
+				seqCtxt = (IPhSequenceContext) envCtxt;
 				return seqCtxt.MembersRS.IndexOf(ctxt);
 			}
 
@@ -804,7 +806,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var obj = GetItem(sel, SelectionHelper.SelLimitType.Anchor);
 			if (obj.ClassID == PhIterationContextTags.kClassId)
 			{
-				var iterCtxt = obj as IPhIterationContext;
+				var iterCtxt = (IPhIterationContext) obj;
 				min = iterCtxt.Minimum;
 				max = iterCtxt.Maximum;
 			}
@@ -833,16 +835,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public const int kfragRHS = 100;
 		public const int kfragRule = 101;
 
-		ITsTextProps m_ctxtProps;
-		ITsTextProps m_charProps;
+		private readonly ITsTextProps m_ctxtProps;
+		private readonly ITsTextProps m_charProps;
 
-		ITsString m_arrow;
-		ITsString m_slash;
-		ITsString m_underscore;
+		private readonly ITsString m_arrow;
+		private readonly ITsString m_slash;
+		private readonly ITsString m_underscore;
 
-		IPhSegRuleRHS m_rhs = null;
+		private IPhSegRuleRHS m_rhs;
 
-		public RegRuleFormulaVc(FdoCache cache, XCore.Mediator mediator)
+		public RegRuleFormulaVc(FdoCache cache, Mediator mediator)
 			: base(cache, mediator)
 		{
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();

@@ -245,9 +245,6 @@
   <data name="ksRuleNCFeatsName" xml:space="preserve">
     <value>Created automatically for rule "{0}"</value>
   </data>
-  <data name="ksContextOccurrenceDlgError" xml:space="preserve">
-    <value>Minimum must be less than or equal to maximum</value>
-  </data>
   <data name="ksRuleRedoInsert" xml:space="preserve">
     <value>Redo Insert {0}</value>
   </data>

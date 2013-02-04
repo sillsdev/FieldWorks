@@ -178,14 +178,11 @@ namespace SIL.FieldWorks.IText
 			// m_cbSearchText
 			//
 			this.m_cbSearchText.AdjustStringHeight = true;
-			this.m_cbSearchText.BackColor = System.Drawing.SystemColors.Window;
 			this.m_cbSearchText.DropDownWidth = 120;
 			this.m_cbSearchText.DroppedDown = false;
-			this.m_cbSearchText.HasBorder = true;
 			resources.ApplyResources(this.m_cbSearchText, "m_cbSearchText");
 			this.m_cbSearchText.Name = "m_cbSearchText";
 			this.helpProvider.SetShowHelp(this.m_cbSearchText, ((bool)(resources.GetObject("m_cbSearchText.ShowHelp"))));
-			this.m_cbSearchText.UseVisualStyleBackColor = true;
 			//
 			// m_fwtbItem
 			//
@@ -261,17 +258,5 @@ namespace SIL.FieldWorks.IText
 		private System.Windows.Forms.LinkLabel m_lnkSpecify;
 		protected System.Windows.Forms.ComboBox m_cbWritingSystem;
 		protected SIL.FieldWorks.Common.Widgets.TreeCombo m_cbSearchText;
-
-		#region Implementation of IxCoreColleague
-
-		/// <summary>
-		/// Mediator message handling Priority
-		/// </summary>
-		public int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		#endregion
 	}
 }

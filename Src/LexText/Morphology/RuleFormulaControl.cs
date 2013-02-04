@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Xml;
-using System.Diagnostics;
-using System.Windows.Forms;
 using System.Linq;
-
+using System.Xml;
+using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.FDO.DomainServices;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -32,9 +30,72 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// </summary>
 	public class RuleFormulaControl : ButtonLauncher
 	{
-		protected RuleInsertionControl m_insertionControl;
+		protected enum RuleInsertType
+		{
+			Phoneme,
+			NaturalClass,
+			WordBoundary,
+			MorphemeBoundary,
+			Features,
+			Variable,
+			Index,
+			Column
+		};
+
+		private static string GetOptionString(RuleInsertType type)
+		{
+			switch (type)
+			{
+				case RuleInsertType.MorphemeBoundary:
+					return MEStrings.ksRuleMorphBdryOpt;
+
+				case RuleInsertType.NaturalClass:
+					return MEStrings.ksRuleNCOpt;
+
+				case RuleInsertType.Phoneme:
+					return MEStrings.ksRulePhonemeOpt;
+
+				case RuleInsertType.WordBoundary:
+					return MEStrings.ksRuleWordBdryOpt;
+
+				case RuleInsertType.Features:
+					return MEStrings.ksRuleFeaturesOpt;
+
+				case RuleInsertType.Variable:
+					return MEStrings.ksRuleVarOpt;
+
+				case RuleInsertType.Index:
+					return MEStrings.ksRuleIndexOpt;
+
+				case RuleInsertType.Column:
+					return MEStrings.ksRuleColOpt;
+			}
+
+			return null;
+		}
+
+		protected class InsertOption
+		{
+			private readonly RuleInsertType m_type;
+
+			public InsertOption(RuleInsertType type)
+			{
+				m_type = type;
+			}
+
+			public RuleInsertType Type
+			{
+				get { return m_type; }
+			}
+
+			public override string ToString()
+			{
+				return GetOptionString(m_type);
+			}
+		}
+
+		protected InsertionControl m_insertionControl;
 		protected RuleFormulaView m_view;
-		protected string m_menuId;
 
 		public RuleFormulaControl()
 		{
@@ -56,7 +117,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		public RuleInsertionControl InsertionControl
+		public InsertionControl InsertionControl
 		{
 			get
 			{
@@ -76,7 +137,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		protected override XCore.Mediator Mediator
+		protected override Mediator Mediator
 		{
 			get
 			{
@@ -95,7 +156,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				var ctxt = CurrentContext;
 				if (ctxt  != null && ctxt.ClassID == PhSimpleContextNCTags.kClassId)
 				{
-					var ncCtxt = ctxt as IPhSimpleContextNC;
+					var ncCtxt = (IPhSimpleContextNC) ctxt;
 					if (ncCtxt.FeatureStructureRA != null)
 						return ncCtxt.FeatureStructureRA.ClassID == PhNCFeaturesTags.kClassId;
 				}
@@ -114,7 +175,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				var ctxt = CurrentContext;
 				if (ctxt != null && ctxt.ClassID == PhSimpleContextNCTags.kClassId)
 				{
-					var ncCtxt = ctxt as IPhSimpleContextNC;
+					var ncCtxt = (IPhSimpleContextNC) ctxt;
 					return ncCtxt.FeatureStructureRA != null;
 				}
 				return false;
@@ -132,7 +193,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				var ctxt = CurrentContext;
 				if (ctxt != null && ctxt.ClassID == PhSimpleContextSegTags.kClassId)
 				{
-					var segCtxt = ctxt as IPhSimpleContextSeg;
+					var segCtxt = (IPhSimpleContextSeg) ctxt;
 					return segCtxt.FeatureStructureRA != null;
 				}
 				return false;
@@ -153,13 +214,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					return null;
 				if (obj.ClassID == PhIterationContextTags.kClassId)
 				{
-					var iterCtxt = obj as IPhIterationContext;
+					var iterCtxt = (IPhIterationContext) obj;
 					return iterCtxt.MemberRA as IPhSimpleContext;
 				}
-				else
-				{
-					return obj as IPhSimpleContext;
-				}
+				return obj as IPhSimpleContext;
 			}
 		}
 
@@ -184,18 +242,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			if (disposing)
 			{
-				m_insertionControl.Insert -= new EventHandler<RuleInsertEventArgs>(m_insertionControl_Insert);
+				m_insertionControl.Insert -= m_insertionControl_Insert;
 			}
 
 			m_insertionControl = null;
 			m_view = null;
-			m_menuId = null;
 
 			base.Dispose(disposing);
 		}
 
 		public override void Initialize(FdoCache cache, ICmObject obj, int flid, string fieldName, IPersistenceProvider persistProvider,
-			XCore.Mediator mediator, string displayNameProperty, string displayWs)
+			Mediator mediator, string displayNameProperty, string displayWs)
 		{
 			CheckDisposed();
 
@@ -203,7 +260,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_mainControl = m_view;
 
-			m_insertionControl.Insert += new EventHandler<RuleInsertEventArgs>(m_insertionControl_Insert);
+			m_insertionControl.Insert += m_insertionControl_Insert;
 		}
 
 		/// <summary>
@@ -282,16 +339,23 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			throw new NotImplementedException();
 		}
 
+		private int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex)
+		{
+			IPhSimpleContextNC ctxt;
+			return InsertNC(nc, sel, out cellIndex, out ctxt);
+		}
+
 		/// <summary>
 		/// Inserts an item from a natural class.
 		/// </summary>
 		/// <param name="nc">The natural class.</param>
 		/// <param name="sel">The selection.</param>
 		/// <param name="cellIndex">Index of the new item.</param>
+		/// <param name="ctxt">The new context.</param>
 		/// <returns>
 		/// The ID of the cell that the item was inserted into
 		/// </returns>
-		protected virtual int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex)
+		protected virtual int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex, out IPhSimpleContextNC ctxt)
 		{
 			throw new NotImplementedException();
 		}
@@ -389,6 +453,30 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			throw new NotImplementedException();
 		}
 
+		protected virtual string FeatureChooserHelpTopic
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		protected virtual string RuleName
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		protected virtual string ContextMenuID
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
 		/// <summary>
 		/// Gets the ID of the selected cell.
 		/// </summary>
@@ -474,54 +562,112 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Handles the Insert event of the m_insertionControl control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="SIL.FieldWorks.XWorks.MorphologyEditor.RuleInsertEventArgs"/> instance containing the event data.</param>
-		void m_insertionControl_Insert(object sender, RuleInsertEventArgs e)
+		/// <param name="e">The <see cref="InsertEventArgs"/> instance containing the event data.</param>
+		private void m_insertionControl_Insert(object sender, InsertEventArgs e)
 		{
-			m_view.Select();
+			var option = (InsertOption) e.Option;
+
+			var undo = string.Format(MEStrings.ksRuleUndoInsert, option);
+			var redo = string.Format(MEStrings.ksRuleRedoInsert, option);
 
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			int cellId = -1;
 			int cellIndex = -1;
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(e.UndoMsg, e.RedoMsg, m_cache.ActionHandlerAccessor, () =>
-				{
-			switch (e.Type)
+			switch (option.Type)
 			{
-				case RuleInsertType.PHONEME:
-					var phoneme = e.Data as IPhPhoneme;
+				case RuleInsertType.Phoneme:
+					IEnumerable<IPhPhoneme> phonemes = m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC;
+					ICmObject phonemeObj = DisplayChooser(MEStrings.ksRulePhonemeOpt, MEStrings.ksRulePhonemeChooserLink,
+						"phonemeEdit", "RulePhonemeFlatList", phonemes);
+					var phoneme = phonemeObj as IPhPhoneme;
 					if (phoneme == null)
 						return;
-					cellId = InsertPhoneme(phoneme, sel, out cellIndex);
+					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+						{
+							cellId = InsertPhoneme(phoneme, sel, out cellIndex);
+						});
 					break;
 
-				case RuleInsertType.FEATURES:
-				case RuleInsertType.NATURAL_CLASS:
-					var nc = e.Data as IPhNaturalClass;
+				case RuleInsertType.NaturalClass:
+					IEnumerable<IPhNaturalClass> natClasses = m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS;
+					ICmObject ncObj = DisplayChooser(MEStrings.ksRuleNCOpt, MEStrings.ksRuleNCChooserLink,
+						"naturalClassedit", "RuleNaturalClassFlatList", natClasses);
+					var nc = ncObj as IPhNaturalClass;
 					if (nc == null)
 						return;
-					cellId = InsertNC(nc, sel, out cellIndex);
+					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+						{
+							cellId = InsertNC(nc, sel, out cellIndex);
+						});
 					break;
 
-				case RuleInsertType.MORPHEME_BOUNDARY:
-				case RuleInsertType.WORD_BOUNDARY:
-					var bdry = e.Data as IPhBdryMarker;
-					if (bdry == null)
-						return;
-					cellId = InsertBdry(bdry, sel, out cellIndex);
+				case RuleInsertType.Features:
+					using (var featChooser = new PhonologicalFeatureChooserDlg())
+					{
+						SetupPhonologicalFeatureChoooserDlg(featChooser);
+						featChooser.SetHelpTopic(FeatureChooserHelpTopic);
+						DialogResult res = featChooser.ShowDialog();
+						if (res == DialogResult.OK)
+						{
+							UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+								{
+									IPhNCFeatures featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
+									m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
+									featNC.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCFeatsName, RuleName));
+									featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+									IPhSimpleContextNC ctxt;
+									cellId = InsertNC(featNC, sel, out cellIndex, out ctxt);
+									featChooser.Context = ctxt;
+									featChooser.UpdateFeatureStructure();
+								});
+						}
+						else if (res != DialogResult.Cancel)
+						{
+							featChooser.HandleJump();
+						}
+					}
 					break;
 
-				case RuleInsertType.COLUMN:
-					cellId = InsertColumn(sel);
+				case RuleInsertType.WordBoundary:
+					IPhBdryMarker wordBdry = m_cache.ServiceLocator.GetInstance<IPhBdryMarkerRepository>().GetObject(LangProjectTags.kguidPhRuleWordBdry);
+					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+						{
+							cellId = InsertBdry(wordBdry, sel, out cellIndex);
+						});
 					break;
 
-				case RuleInsertType.INDEX:
-					cellId = InsertIndex((int)e.Data, sel, out cellIndex);
+				case RuleInsertType.MorphemeBoundary:
+					IPhBdryMarker morphBdry = m_cache.ServiceLocator.GetInstance<IPhBdryMarkerRepository>().GetObject(LangProjectTags.kguidPhRuleMorphBdry);
+					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+						{
+							cellId = InsertBdry(morphBdry, sel, out cellIndex);
+						});
 					break;
 
-				case RuleInsertType.VARIABLE:
-					cellId = InsertVariable(sel, out cellIndex);
+				case RuleInsertType.Index:
+					// put the clicked index in the data field
+					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+						{
+							cellId = InsertIndex((int) e.Suboption, sel, out cellIndex);
+						});
+					break;
+
+				case RuleInsertType.Column:
+					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+						{
+							cellId = InsertColumn(sel);
+						});
+					break;
+
+				case RuleInsertType.Variable:
+					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+						{
+							cellId = InsertVariable(sel, out cellIndex);
+						});
 					break;
 			}
-				});
+
+			m_view.Select();
 			if (cellId != -1)
 			{
 				// reconstruct the view and place the cursor after the newly added item
@@ -529,9 +675,43 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
+		protected virtual void SetupPhonologicalFeatureChoooserDlg(PhonologicalFeatureChooserDlg featChooser)
+		{
+			featChooser.SetDlgInfo(m_cache, m_mediator);
+		}
+
+		protected ICmObject DisplayChooser(string fieldName, string linkText, string toolName, string guiControl, IEnumerable<ICmObject> candidates)
+		{
+			ICmObject obj = null;
+
+			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates);
+
+			using (var chooser = new SimpleListChooser(m_persistProvider, labels, fieldName, m_mediator.HelpTopicProvider))
+			{
+				chooser.Cache = m_cache;
+				chooser.TextParamHvo = m_cache.LangProject.PhonologicalDataOA.Hvo;
+				Guid guidTextParam = m_cache.LangProject.PhonologicalDataOA.Guid;
+				chooser.AddLink(linkText, ReallySimpleListChooser.LinkType.kGotoLink,
+					new FwLinkArgs(toolName, guidTextParam));
+				chooser.ReplaceTreeView(m_mediator, guiControl);
+				chooser.SetHelpTopic(FeatureChooserHelpTopic);
+
+				DialogResult res = chooser.ShowDialog();
+				if (res != DialogResult.Cancel)
+				{
+					chooser.HandleAnyJump();
+
+					if (chooser.ChosenOne != null)
+						obj = chooser.ChosenOne.Object;
+				}
+			}
+
+			return obj;
+		}
+
 		protected int InsertContextInto(IPhSimpleContext ctxt, SelectionHelper sel, IFdoOwningSequence<IPhSimpleContext> seq)
 		{
-			var ctxts = seq.ToArray();
+			ICmObject[] ctxts = seq.Cast<ICmObject>().ToArray();
 			int index = GetInsertionIndex(ctxts, sel);
 			// if the current selection is a range remove the items we are overwriting
 			if (sel.IsRange)
@@ -539,8 +719,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				var indices = GetIndicesToRemove(ctxts, sel);
 				foreach (int idx in indices)
 				{
-					ctxts[idx].PreRemovalSideEffects();
-					seq.Remove(ctxts[idx]);
+					var c = (IPhSimpleContext) ctxts[idx];
+					c.PreRemovalSideEffects();
+					seq.Remove(c);
 				}
 			}
 			seq.Insert(index, ctxt);
@@ -551,7 +732,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			m_cache.LangProject.PhonologicalDataOA.ContextsOS.Add(ctxt);
 
-			var ctxts = seqCtxt.MembersRS.ToArray();
+			ICmObject[] ctxts = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 			int index = GetInsertionIndex(ctxts, sel);
 			seqCtxt.MembersRS.Insert(index, ctxt);
 			// if the current selection is a range remove the items we are overwriting
@@ -560,8 +741,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				var indices = GetIndicesToRemove(ctxts, sel);
 				foreach (int idx in indices)
 				{
-					ctxts[idx].PreRemovalSideEffects();
-					m_cache.LangProject.PhonologicalDataOA.ContextsOS.Remove(ctxts[idx]);
+					var c = (IPhPhonContext) ctxts[idx];
+					c.PreRemovalSideEffects();
+					m_cache.LangProject.PhonologicalDataOA.ContextsOS.Remove(c);
 				}
 			}
 			return index;
@@ -573,20 +755,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				return 0;
 			}
-			else
+			var curObj = GetItem(sel, SelectionHelper.SelLimitType.Top);
+			int ich = sel.GetIch(SelectionHelper.SelLimitType.Top);
+			for (int i = 0; i < objs.Length; i++)
 			{
-				var curObj = GetItem(sel, SelectionHelper.SelLimitType.Top);
-				int ich = sel.GetIch(SelectionHelper.SelLimitType.Top);
-				for (int i = 0; i < objs.Length; i++)
-				{
-					// if the current ich is 0, then we can safely assume we are at the beginning of
-					// the current item, so insert before it, otherwise we are in the middle in which
-					// case the entire item is selected or at the end, so we insert after
-					if (objs[i] == curObj)
-						return ich == 0 ? i : i + 1;
-				}
-				return objs.Length;
+				// if the current ich is 0, then we can safely assume we are at the beginning of
+				// the current item, so insert before it, otherwise we are in the middle in which
+				// case the entire item is selected or at the end, so we insert after
+				if (objs[i] == curObj)
+					return ich == 0 ? i : i + 1;
 			}
+			return objs.Length;
 		}
 
 		/// <summary>
@@ -617,7 +796,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			index = -1;
 			bool reconstruct = true;
-			var ctxts = seq.ToArray();
+			ICmObject[] ctxts = seq.Cast<ICmObject>().ToArray();
 			// if the selection is a range remove all items in the selection
 			if (sel.IsRange)
 			{
@@ -652,15 +831,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return reconstruct;
 		}
 
-		private void ProcessIndicesSimpleContext(IFdoOwningSequence<IPhSimpleContext> seq, IPhSimpleContext[] ctxts, bool preRemovalSideEffects,
+		private void ProcessIndicesSimpleContext(IFdoOwningSequence<IPhSimpleContext> seq, ICmObject[] ctxts, bool preRemovalSideEffects,
 			int idx)
 		{
 			if (ctxts == null || idx > ctxts.Length - 1 || idx < 0)
 				return;
 
+			var c = (IPhSimpleContext) ctxts[idx];
 			if (preRemovalSideEffects)
-				ctxts[idx].PreRemovalSideEffects();
-			seq.Remove(ctxts[idx]);
+				c.PreRemovalSideEffects();
+			seq.Remove(c);
 		}
 
 		protected bool RemoveContextsFrom(bool forward, SelectionHelper sel, IPhSequenceContext seqCtxt,
@@ -668,7 +848,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			index = -1;
 			bool reconstruct = true;
-			var ctxts = seqCtxt.MembersRS.ToArray();
+			ICmObject[] ctxts = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 			// if the selection is a range remove all items in the selection
 			if (sel.IsRange)
 			{
@@ -678,10 +858,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					index = indices[0] - 1;
 
 				foreach (int idx in indices)
+				{
 					// Sometimes when deleting a range, DeleteUnderlyingObject() takes out
 					// parts of the rule before this loop gets to it. [LT-9775]
 					if (ctxts[idx].IsValidObject)
 						ProcessIndicesSeqContext(ctxts, preRemovalSideEffects, idx);
+					}
 			}
 			else
 			{
@@ -703,14 +885,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return reconstruct;
 		}
 
-		private void ProcessIndicesSeqContext(IPhPhonContext[] ctxts, bool preRemovalSideEffects, int idx)
+		private void ProcessIndicesSeqContext(ICmObject[] ctxts, bool preRemovalSideEffects, int idx)
 		{
 			if (ctxts == null || idx > ctxts.Length - 1 || idx < 0)
 				return;
 
+			var c = (IPhPhonContext) ctxts[idx];
 			if (preRemovalSideEffects)
-				ctxts[idx].PreRemovalSideEffects();
-			m_cache.LangProject.PhonologicalDataOA.ContextsOS.Remove(ctxts[idx]);
+				c.PreRemovalSideEffects();
+			m_cache.LangProject.PhonologicalDataOA.ContextsOS.Remove(c);
 		}
 
 		protected int[] GetIndicesToRemove(ICmObject[] objs, SelectionHelper sel)
@@ -718,7 +901,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var beginObj = GetItem(sel, SelectionHelper.SelLimitType.Top);
 			var endObj = GetItem(sel, SelectionHelper.SelLimitType.Bottom);
 
-			List<int> remove = new List<int>();
+			var remove = new List<int>();
 			bool inRange = false;
 			for (int i = 0; i < objs.Length; i++)
 			{
@@ -759,16 +942,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					{
 						if (forward)
 							return i == objs.Length ? -1 : i + 1;
-						else
-							return i;
+						return i;
 					}
-					else
-					{
-						if (forward)
-							return i == objs.Length ? -1 : i;
-						else
-							return i - 1;
-					}
+					if (forward)
+						return i == objs.Length ? -1 : i;
+					return i - 1;
 				}
 			}
 
@@ -786,8 +964,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			using (var featChooser = new LexText.Controls.PhonologicalFeatureChooserDlg())
 			{
-				var ctxt = CurrentContext as IPhSimpleContextNC;
-				IPhNCFeatures natClass = ctxt.FeatureStructureRA as IPhNCFeatures;
+				var ctxt = (IPhSimpleContextNC) CurrentContext;
+				var natClass = (IPhNCFeatures) ctxt.FeatureStructureRA;
 				featChooser.Title = MEStrings.ksRuleFeatsChooserTitle;
 				if (m_obj is IPhSegRuleRHS)
 				{
@@ -795,7 +973,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					if (natClass.FeaturesOA != null)
 					{
 						var rule = m_obj as IPhSegRuleRHS;
-						featChooser.SetDlgInfo(m_cache, Mediator, natClass.FeaturesOA, rule.OwningRule, ctxt);
+						featChooser.SetDlgInfo(m_cache, Mediator, rule.OwningRule, ctxt);
 					}
 					else
 						featChooser.SetDlgInfo(m_cache, Mediator, natClass, PhNCFeaturesTags.kflidFeatures);
@@ -831,13 +1009,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (obj != null)
 			{
 				// we only bother to display the context menu if an item is selected
-				using (CmObjectUi ui = new CmObjectUi(obj))
-					return ui.HandleRightClick(Mediator, this, true, m_menuId);
+				using (var ui = new CmObjectUi(obj))
+					return ui.HandleRightClick(Mediator, this, true, ContextMenuID);
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 
 		/// <summary>
@@ -860,7 +1035,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						// ensure that a range selection only occurs within one cell
 						int topCellId = GetCell(sel, SelectionHelper.SelLimitType.Top);
 						int bottomCellId = GetCell(sel, SelectionHelper.SelLimitType.Bottom);
-						SelectionHelper.SelLimitType limit = SelectionHelper.SelLimitType.Top;
+						var limit = SelectionHelper.SelLimitType.Top;
 						if (topCellId != -1 && topCellId != -2)
 						{
 							limit = SelectionHelper.SelLimitType.Top;
@@ -976,7 +1151,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					SelectLeftBoundary(cellId, cellIndex, true);
 					return false;
 				}
-				else if (curIch == curTss.Length && curTag == RuleFormulaVc.ktagLeftNonBoundary)
+				if (curIch == curTss.Length && curTag == RuleFormulaVc.ktagLeftNonBoundary)
 				{
 					// the cursor has been moved to the left from the left boundary, so move the
 					// cursor to the previous item in the cell or the previous cell
@@ -995,14 +1170,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 					return false;
 				}
-				else if (curIch == curTss.Length && curTag == RuleFormulaVc.ktagRightNonBoundary)
+				if (curIch == curTss.Length && curTag == RuleFormulaVc.ktagRightNonBoundary)
 				{
 					// the cursor is at a non-selectable right edge of an item, so move to the
 					// selectable right edge
 					SelectRightBoundary(cellId, cellIndex, true);
 					return false;
 				}
-				else if (curIch == 0 && curTag == RuleFormulaVc.ktagRightNonBoundary)
+				if (curIch == 0 && curTag == RuleFormulaVc.ktagRightNonBoundary)
 				{
 					// the cursor has been moved to the right from the right boundary, so move the
 					// cursor to the next item in the cell or the next cell
@@ -1021,7 +1196,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 					return false;
 				}
-				else if (!sel.Selection.IsEditable)
+				if (!sel.Selection.IsEditable)
 				{
 					//SelectAt(cellId, cellIndex, true, true, true);
 					return false;
@@ -1090,9 +1265,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			SelectAt(cellId, cellIndex, initial, true, true);
 		}
 
-		IVwSelection SelectLeftBoundary(int cellId, int cellIndex, bool install)
+		private void SelectLeftBoundary(int cellId, int cellIndex, bool install)
 		{
-			List<SelLevInfo> levels = new List<SelLevInfo>(GetLevelInfo(cellId, cellIndex));
+			var levels = new List<SelLevInfo>(GetLevelInfo(cellId, cellIndex));
 			// if the current item is an iteration context, include the extra level
 			//if (m_cache.GetClassOfObject(hvo) == PhIterationContext.kclsidPhIterationContext)
 			//{
@@ -1102,26 +1277,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			//}
 			try
 			{
-				return m_view.RootBox.MakeTextSelection(0, levels.Count, levels.ToArray(), RuleFormulaVc.ktagLeftBoundary, 0, 0, 0,
+				m_view.RootBox.MakeTextSelection(0, levels.Count, levels.ToArray(), RuleFormulaVc.ktagLeftBoundary, 0, 0, 0,
 					0, false, -1, null, install);
 			}
 			catch (Exception)
 			{
-				return null;
 			}
 		}
 
-		IVwSelection SelectRightBoundary(int cellId, int cellIndex, bool install)
+		private void SelectRightBoundary(int cellId, int cellIndex, bool install)
 		{
 			SelLevInfo[] levels = GetLevelInfo(cellId, cellIndex);
 			try
 			{
-				return m_view.RootBox.MakeTextSelection(0, levels.Length, levels, RuleFormulaVc.ktagRightBoundary, 0, 1, 1,
+				m_view.RootBox.MakeTextSelection(0, levels.Length, levels, RuleFormulaVc.ktagRightBoundary, 0, 1, 1,
 					0, false, -1, null, install);
 			}
 			catch (Exception)
 			{
-				return null;
 			}
 		}
 
@@ -1142,14 +1315,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				int count = GetCellCount(cellId);
 				if (count == 0)
 				{
-					SelectionHelper newSel = new SelectionHelper();
+					var newSel = new SelectionHelper();
 					newSel.SetTextPropId(SelectionHelper.SelLimitType.Anchor, GetFlid(cellId));
 					return newSel.SetSelection(m_view, install, false);
 				}
-				else
-				{
-					levels = GetLevelInfo(cellId, initial ? 0 : count - 1);
-				}
+				levels = GetLevelInfo(cellId, initial ? 0 : count - 1);
 			}
 
 			return m_view.RootBox.MakeTextSelInObj(0, levels.Length, levels, 0, null, initial, editable, false, false, install);
@@ -1167,7 +1337,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			if (ctxt.ClassID == PhSimpleContextBdryTags.kClassId)
 			{
-				var bdryCtxt = ctxt as IPhSimpleContextBdry;
+				var bdryCtxt = (IPhSimpleContextBdry) ctxt;
 				if (bdryCtxt.FeatureStructureRA.Guid == LangProjectTags.kguidPhRuleWordBdry)
 					return true;
 			}
@@ -1181,17 +1351,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			if (ctxt.ClassID == PhSimpleContextBdryTags.kClassId)
 			{
-				var bdryCtxt = ctxt as IPhSimpleContextBdry;
+				var bdryCtxt = (IPhSimpleContextBdry) ctxt;
 				if (bdryCtxt.FeatureStructureRA.Guid == LangProjectTags.kguidPhRuleMorphBdry)
 					return true;
 			}
 			return false;
 		}
 
+		#region Component Designer generated code
+
 		private void InitializeComponent()
 		{
 			this.m_view = new SIL.FieldWorks.XWorks.MorphologyEditor.RuleFormulaView();
-			this.m_insertionControl = new SIL.FieldWorks.XWorks.MorphologyEditor.RuleInsertionControl();
+			this.m_insertionControl = new InsertionControl();
 			this.m_panel.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -1247,5 +1419,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			this.ResumeLayout(false);
 
 		}
+
+		#endregion
 	}
 }

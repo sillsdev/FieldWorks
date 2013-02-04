@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System;
 using System.Windows.Forms;
-using System.Globalization;
-using System.ComponentModel;
-
-using SIL.Utils;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.Utils;
 using XCore;
 
-namespace SIL.FieldWorks.XWorks.MorphologyEditor
+namespace SIL.FieldWorks.LexText.Controls
 {
-	public class ContextOccurrenceDlg : Form, IFWDisposable
+	public class OccurrenceDlg : Form, IFWDisposable
 	{
 		const string s_helpTopic = "khtpCtxtOccur";
 
-	private IHelpTopicProvider m_helpTopicProvider;
+		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private Label m_lblMin;
 		private Label m_lblMax;
 		private Button m_btnOK;
@@ -27,12 +21,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private Label m_bracketLabel;
 		private ComboBox m_cboMin;
 
-		public ContextOccurrenceDlg(IHelpTopicProvider helpTopicProvider, int min, int max)
+		public OccurrenceDlg(IHelpTopicProvider helpTopicProvider, int min, int max, bool paren)
 		{
 			InitializeComponent();
+
+			if (paren)
+				m_bracketLabel.Text = ")";
+
 			AccessibleName = GetType().Name;
 
-		m_helpTopicProvider = helpTopicProvider;
+			m_helpTopicProvider = helpTopicProvider;
 			m_cboMin.SelectedIndex = min;
 			m_cboMax.SelectedIndex = max == -1 ? 0 : max;
 
@@ -86,9 +84,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			base.Dispose(disposing);
 		}
 
+		#region Windows Form Designer generated code
+
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ContextOccurrenceDlg));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OccurrenceDlg));
 			this.m_lblMin = new System.Windows.Forms.Label();
 			this.m_lblMax = new System.Windows.Forms.Label();
 			this.m_btnOK = new System.Windows.Forms.Button();
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			resources.ApplyResources(this.m_bracketLabel, "m_bracketLabel");
 			this.m_bracketLabel.Name = "m_bracketLabel";
 			//
-			// ContextOccurrenceDlg
+			// OccurrenceDlg
 			//
 			resources.ApplyResources(this, "$this");
 			this.Controls.Add(this.m_btnHelp);
@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "ContextOccurrenceDlg";
+			this.Name = "OccurrenceDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.ResumeLayout(false);
@@ -194,12 +194,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		}
 
+		#endregion
+
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			if (Maximum == -1 || Minimum <= Maximum)
 				DialogResult = DialogResult.OK;
 			else
-				MessageBox.Show(MEStrings.ksContextOccurrenceDlgError);
+				MessageBox.Show(LexTextControls.ksContextOccurrenceDlgError);
 		}
 
 		private void m_btnCancel_Click(object sender, EventArgs e)

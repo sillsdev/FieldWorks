@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Drawing;
 using System.Windows.Forms;
@@ -22,12 +23,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	public class AffixRuleFormulaControl : RuleFormulaControl
 	{
 		// column that is scheduled to be removed
-		IPhContextOrVar m_removeCol = null;
+		private IPhContextOrVar m_removeCol;
 
 		public AffixRuleFormulaControl(XmlNode configurationNode)
 			: base(configurationNode)
 		{
-			m_menuId = "mnuMoAffixProcess";
 		}
 
 		public override bool SliceIsCurrent
@@ -52,15 +52,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				var obj = CurrentObject;
 				if (obj.ClassID == MoCopyFromInputTags.kClassId)
 				{
-					var copy = obj as IMoCopyFromInput;
+					var copy = (IMoCopyFromInput) obj;
 					// we don't want to change a MoCopyFromInput to a MoModifyFromInput if it is pointing to
 					// a variable
 					return copy.ContentRA.ClassID != PhVariableTags.kClassId;
 				}
-				else
-				{
-					return obj.ClassID == MoModifyFromInputTags.kClassId;
-				}
+				return obj.ClassID == MoModifyFromInputTags.kClassId;
 			}
 		}
 
@@ -107,19 +104,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_view.Init(mediator, obj, this, new AffixRuleFormulaVc(cache, mediator), AffixRuleFormulaVc.kfragRule);
 
-			m_insertionControl.Initialize(cache, mediator, persistProvider, Rule.Form.BestVernacularAnalysisAlternative.Text);
-			m_insertionControl.AddOption(RuleInsertType.PHONEME, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.NATURAL_CLASS, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.FEATURES, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.MORPHEME_BOUNDARY, DisplayOption);
-			m_insertionControl.AddOption(RuleInsertType.VARIABLE, DisplayVariableOption);
-			m_insertionControl.AddOption(RuleInsertType.COLUMN, DisplayColumnOption);
-			m_insertionControl.AddIndexOption(DisplayOption, DisplayIndices);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Variable), DisplayVariableOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Column), DisplayColumnOption);
+			m_insertionControl.AddMultiOption(new InsertOption(RuleInsertType.Index), DisplayOption, DisplayIndices);
 			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
-		bool DisplayOption(RuleInsertType type)
+		private bool DisplayOption(object option)
 		{
+			RuleInsertType type = ((InsertOption) option).Type;
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			int cellId = GetCell(sel);
 			if (cellId == -1 || cellId == -2)
@@ -129,20 +126,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 				case AffixRuleFormulaVc.ktagRightEmpty:
-					return type != RuleInsertType.INDEX;
+					return type != RuleInsertType.Index;
 
 				case MoAffixProcessTags.kflidOutput:
-					return type == RuleInsertType.INDEX || type == RuleInsertType.PHONEME || type == RuleInsertType.MORPHEME_BOUNDARY;
+					return type == RuleInsertType.Index || type == RuleInsertType.Phoneme || type == RuleInsertType.MorphemeBoundary;
 
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhVariableTags.kClassId)
 						return false;
-					return type != RuleInsertType.INDEX;
+					return type != RuleInsertType.Index;
 			}
 		}
 
-		bool DisplayVariableOption(RuleInsertType type)
+		private bool DisplayVariableOption(object option)
 		{
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			int cellId = GetCell(sel);
@@ -162,7 +159,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhSequenceContextTags.kClassId)
 					{
-						var seqCtxt = ctxtOrVar as IPhSequenceContext;
+						var seqCtxt = (IPhSequenceContext) ctxtOrVar;
 						if (seqCtxt.MembersRS.Count == 0)
 							return true;
 					}
@@ -170,7 +167,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		bool DisplayColumnOption(RuleInsertType type)
+		private bool DisplayColumnOption(object option)
 		{
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			if (sel.IsRange)
@@ -191,21 +188,36 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		int[] DisplayIndices()
+		private IEnumerable<object> DisplayIndices()
 		{
-			int[] indices = new int[Rule.InputOS.Count];
+			var indices = new int[Rule.InputOS.Count];
 			for (int i = 0; i < indices.Length; i++)
 				indices[i] = i + 1;
-			return indices;
+			return indices.Cast<object>();
 		}
 
-		string DisplayNoOptsMsg()
+		private string DisplayNoOptsMsg()
 		{
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			int cellId = GetCell(sel);
 			if (cellId == -1 || cellId == 2)
 				return null;
 			return MEStrings.ksAffixRuleNoOptsMsg;
+		}
+
+		protected override string FeatureChooserHelpTopic
+		{
+			get { return "khtpChoose-LexiconEdit-PhonFeats-AffixRuleFormulaControl"; }
+		}
+
+		protected override string RuleName
+		{
+			get { return Rule.Form.BestVernacularAnalysisAlternative.Text; }
+		}
+
+		protected override string ContextMenuID
+		{
+			get { return "mnuMoAffixProcess"; }
 		}
 
 		protected override int GetCell(SelectionHelper sel, SelectionHelper.SelLimitType limit)
@@ -223,7 +235,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				if (level.tag == MoAffixProcessTags.kflidOutput)
 					return level.tag;
-				else if (level.tag == MoAffixProcessTags.kflidInput)
+				if (level.tag == MoAffixProcessTags.kflidInput)
 					return level.hvo;
 			}
 
@@ -261,7 +273,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (obj.ClassID == PhSequenceContextTags.kClassId)
 					{
-						var seqCtxt = ctxtOrVar as IPhSequenceContext;
+						var seqCtxt = (IPhSequenceContext) ctxtOrVar;
 						return seqCtxt.MembersRS.IndexOf(obj as IPhPhonContext);
 					}
 					return -1;
@@ -322,9 +334,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhSequenceContextTags.kClassId)
-						return (ctxtOrVar as IPhSequenceContext).MembersRS.Count;
-					else
-						return 1;
+						return ((IPhSequenceContext) ctxtOrVar).MembersRS.Count;
+					return 1;
 			}
 		}
 
@@ -346,8 +357,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					int index = ctxtOrVar.IndexInOwner;
 					if (index == Rule.InputOS.Count - 1)
 						return AffixRuleFormulaVc.ktagRightEmpty;
-					else
-						return Rule.InputOS[index + 1].Hvo;
+					return Rule.InputOS[index + 1].Hvo;
 			}
 		}
 
@@ -369,8 +379,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					int index = ctxtOrVar.IndexInOwner;
 					if (index == 0)
 						return AffixRuleFormulaVc.ktagLeftEmpty;
-					else
-						return Rule.InputOS[index - 1].Hvo;
+					return Rule.InputOS[index - 1].Hvo;
 			}
 		}
 
@@ -424,24 +433,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return cellId;
 		}
 
-		protected override int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex)
+		protected override int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex, out IPhSimpleContextNC ctxt)
 		{
-			var ncCtxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
-			var cellId = InsertContext(ncCtxt, sel, out cellIndex);
-			ncCtxt.FeatureStructureRA = nc;
+			ctxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
+			var cellId = InsertContext(ctxt, sel, out cellIndex);
+			ctxt.FeatureStructureRA = nc;
 			return cellId;
 		}
 
 		int InsertIntoOutput(IMoRuleMapping mapping, SelectionHelper sel)
 		{
-			var mappings = Rule.OutputOS.ToArray();
+			ICmObject[] mappings = Rule.OutputOS.Cast<ICmObject>().ToArray();
 			int index = GetInsertionIndex(mappings, sel);
 			Rule.OutputOS.Insert(index, mapping);
 			if (sel.IsRange)
 			{
 				IEnumerable<int> indices = GetIndicesToRemove(mappings, sel);
 				foreach (int idx in indices)
-					Rule.OutputOS.Remove(mappings[idx]);
+					Rule.OutputOS.Remove((IMoRuleMapping) mappings[idx]);
 			}
 			return index;
 		}
@@ -473,18 +482,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						cellIndex = -1;
 						return ctxtOrVar.Hvo;
 					}
-					else
-					{
-						var seqCtxt = CreateSeqCtxt(cellCtxtOrVar as IPhPhonContext);
-						cellIndex = InsertContextInto(ctxtOrVar as IPhSimpleContext, sel, seqCtxt);
-						return seqCtxt.Hvo;
-					}
+					var seqCtxt = CreateSeqCtxt(cellCtxtOrVar as IPhPhonContext);
+					cellIndex = InsertContextInto(ctxtOrVar as IPhSimpleContext, sel, seqCtxt);
+					return seqCtxt.Hvo;
 			}
 		}
 
-		IPhSequenceContext CreateSeqCtxt(IPhPhonContext ctxt)
+		private IPhSequenceContext CreateSeqCtxt(IPhPhonContext ctxt)
 		{
-			IPhSequenceContext seqCtxt = null;
+			IPhSequenceContext seqCtxt;
 			if (ctxt.ClassID != PhSequenceContextTags.kClassId)
 			{
 				int index = ctxt.IndexInOwner;
@@ -515,16 +521,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (hvo <= 0)
 				return -1;
 
-			IPhContextOrVar[] ctxtOrVars = null;
+			ICmObject[] ctxtOrVars;
 			var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(hvo);
 			if (ctxtOrVar.ClassID != PhSequenceContextTags.kClassId)
 			{
-				ctxtOrVars = new IPhContextOrVar[] { ctxtOrVar };
+				ctxtOrVars = new ICmObject[] { ctxtOrVar };
 			}
 			else
 			{
-				IPhSequenceContext seqCtxt = ctxtOrVar as IPhSequenceContext;
-				ctxtOrVars = seqCtxt.MembersRS.ToArray();
+				var seqCtxt = (IPhSequenceContext) ctxtOrVar;
+				ctxtOrVars = seqCtxt.MembersRS.Cast<ICmObject>().ToArray();
 			}
 			if (ctxtOrVars.Length == 0)
 				return -1;
@@ -580,7 +586,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhSequenceContextTags.kClassId)
 					{
-						var seqCtxt = ctxtOrVar as IPhSequenceContext;
+						var seqCtxt = (IPhSequenceContext) ctxtOrVar;
 						if (seqCtxt.MembersRS.Count == 0 && forward)
 						{
 							// remove an empty column
@@ -589,35 +595,26 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							Rule.InputOS.Remove(seqCtxt);
 							return prevCellId;
 						}
-						else
-						{
-							bool reconstruct = RemoveContextsFrom(forward, sel, seqCtxt, false, out cellIndex);
-							// if the column is empty, schedule it to be removed when the selection has changed
-							if (seqCtxt.MembersRS.Count == 0)
-								m_removeCol = seqCtxt;
-							return reconstruct ? seqCtxt.Hvo : -1;
-						}
-					}
-					else
-					{
-						int idx = GetIndexToRemove(new ICmObject[] { ctxtOrVar }, sel, forward);
-						if (idx > -1 && !IsLastVariable(ctxtOrVar))
-						{
-							var seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
-							Rule.InputOS.Insert(ctxtOrVar.IndexInOwner, seqCtxt);
-							// if the column is empty, schedule it to be removed when the selection has changed
+						bool reconstruct = RemoveContextsFrom(forward, sel, seqCtxt, false, out cellIndex);
+						// if the column is empty, schedule it to be removed when the selection has changed
+						if (seqCtxt.MembersRS.Count == 0)
 							m_removeCol = seqCtxt;
-							UpdateMappings(ctxtOrVar, seqCtxt);
-
-							ctxtOrVar.PreRemovalSideEffects();
-							Rule.InputOS.Remove(ctxtOrVar);
-							return seqCtxt.Hvo;
-						}
-						else
-						{
-							return -1;
-						}
+						return reconstruct ? seqCtxt.Hvo : -1;
 					}
+					int idx = GetIndexToRemove(new ICmObject[] { ctxtOrVar }, sel, forward);
+					if (idx > -1 && !IsLastVariable(ctxtOrVar))
+					{
+						var seqCtxt = m_cache.ServiceLocator.GetInstance<IPhSequenceContextFactory>().Create();
+						Rule.InputOS.Insert(ctxtOrVar.IndexInOwner, seqCtxt);
+						// if the column is empty, schedule it to be removed when the selection has changed
+						m_removeCol = seqCtxt;
+						UpdateMappings(ctxtOrVar, seqCtxt);
+
+						ctxtOrVar.PreRemovalSideEffects();
+						Rule.InputOS.Remove(ctxtOrVar);
+						return seqCtxt.Hvo;
+					}
+					return -1;
 			}
 		}
 
@@ -639,7 +636,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			if (mapping.ClassID == MoCopyFromInputTags.kClassId)
 			{
-				var copy = mapping as IMoCopyFromInput;
+				var copy = (IMoCopyFromInput) mapping;
 				if (IsLastVariable(copy.ContentRA))
 					return true;
 			}
@@ -665,22 +662,22 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Updates the context that the mappings point to. This is used when the context changes
 		/// from a single context to a sequence context.
 		/// </summary>
-		/// <param name="oldHvo">The old hvo.</param>
-		/// <param name="newHvo">The new hvo.</param>
-		void UpdateMappings(IPhContextOrVar oldCtxtOrVar, IPhContextOrVar newCtxtOrVar)
+		/// <param name="oldCtxtOrVar"></param>
+		/// <param name="newCtxtOrVar"></param>
+		private void UpdateMappings(IPhContextOrVar oldCtxtOrVar, IPhContextOrVar newCtxtOrVar)
 		{
 			foreach (var mapping in Rule.OutputOS)
 			{
 				switch (mapping.ClassID)
 				{
 					case MoCopyFromInputTags.kClassId:
-						var copy = mapping as IMoCopyFromInput;
+						var copy = (IMoCopyFromInput) mapping;
 						if (copy.ContentRA == oldCtxtOrVar)
 							copy.ContentRA = newCtxtOrVar;
 						break;
 
 					case MoModifyFromInputTags.kClassId:
-						var modify = mapping as IMoModifyFromInput;
+						var modify = (IMoModifyFromInput) mapping;
 						if (modify.ContentRA == oldCtxtOrVar)
 							modify.ContentRA = newCtxtOrVar;
 						break;
@@ -692,7 +689,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			index = -1;
 			bool reconstruct = false;
-			IMoRuleMapping[] mappings = Rule.OutputOS.ToArray();
+			ICmObject[] mappings = Rule.OutputOS.Cast<ICmObject>().ToArray();
 			if (sel.IsRange)
 			{
 				int[] indices = GetIndicesToRemove(mappings, sel);
@@ -702,9 +699,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				foreach (int idx in indices)
 				{
-					if (!IsFinalLastVariableMapping(mappings[idx]))
+					var mapping = (IMoRuleMapping) mappings[idx];
+					if (!IsFinalLastVariableMapping(mapping))
 					{
-						Rule.OutputOS.Remove(mappings[idx]);
+						Rule.OutputOS.Remove(mapping);
 						reconstruct = true;
 					}
 				}
@@ -714,10 +712,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				int idx = GetIndexToRemove(mappings, sel, forward);
 				if (idx > -1)
 				{
+					var mapping = (IMoRuleMapping) mappings[idx];
 					index = idx - 1;
-					if (!IsFinalLastVariableMapping(mappings[idx]))
+					if (!IsFinalLastVariableMapping(mapping))
 					{
-						Rule.OutputOS.Remove(mappings[idx]);
+						Rule.OutputOS.Remove(mapping);
 						reconstruct = true;
 					}
 				}
@@ -774,7 +773,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 								featChooser.FS = featNC.FeaturesOA;
 								featChooser.UpdateFeatureStructure();
 
-								var copy = obj as IMoCopyFromInput;
+								var copy = (IMoCopyFromInput) obj;
 								var newModify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
 								Rule.OutputOS.Insert(copy.IndexInOwner, newModify);
 								newModify.ModificationRA = featNC;
@@ -787,7 +786,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							break;
 
 						case MoModifyFromInputTags.kClassId:
-							var modify = obj as IMoModifyFromInput;
+							var modify = (IMoModifyFromInput) obj;
 							featChooser.SetDlgInfo(m_cache, m_mediator, modify.ModificationRA.FeaturesOA);
 							if (featChooser.ShowDialog() == DialogResult.OK)
 							{
@@ -826,7 +825,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				if (nc.ClassID == PhNCFeaturesTags.kClassId)
 					natClasses.Add(nc);
 			}
-			var selectedNc = m_insertionControl.DisplayChooser(MEStrings.ksRuleNCOpt, MEStrings.ksRuleNCChooserLink,
+			var selectedNc = DisplayChooser(MEStrings.ksRuleNCOpt, MEStrings.ksRuleNCChooserLink,
 				"naturalClassedit", "RuleNaturalClassFlatList", natClasses) as IPhNCFeatures;
 			m_view.Select();
 			if (selectedNc != null)
@@ -839,7 +838,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					switch (curObj.ClassID)
 					{
 						case MoCopyFromInputTags.kClassId:
-							var copy = curObj as IMoCopyFromInput;
+							var copy = (IMoCopyFromInput) curObj;
 							var newModify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
 							Rule.OutputOS.Insert(copy.IndexInOwner, newModify);
 							newModify.ModificationRA = selectedNc;
@@ -850,7 +849,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							break;
 
 						case MoModifyFromInputTags.kClassId:
-							var modify = curObj as IMoModifyFromInput;
+							var modify = (IMoModifyFromInput) curObj;
 							modify.ModificationRA = selectedNc;
 							index = modify.IndexInOwner;
 							break;
@@ -1008,8 +1007,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					leftEmptyLen.unit = VwUnit.kunPoint1000;
 					inputLen.nVal += leftEmptyLen.nVal;
 
-					VwLength[] ctxtLens = new VwLength[m_rule.InputOS.Count];
-					vwenv.NoteDependency(new int[] {m_rule.Hvo}, new int[] {MoAffixProcessTags.kflidInput}, 1 );
+					var ctxtLens = new VwLength[m_rule.InputOS.Count];
+					vwenv.NoteDependency(new[] {m_rule.Hvo}, new[] {MoAffixProcessTags.kflidInput}, 1 );
 					for (int i = 0; i < m_rule.InputOS.Count; i++)
 					{
 						int idxWidth = GetStrWidth(tsf.MakeString(Convert.ToString(i + 1), userWs), m_indexProps, vwenv);
@@ -1166,7 +1165,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					switch (mapping.ClassID)
 					{
 						case MoCopyFromInputTags.kClassId:
-							var copy = mapping as IMoCopyFromInput;
+							var copy = (IMoCopyFromInput) mapping;
 							OpenIndexPile(vwenv);
 							if (copy.ContentRA == null)
 								vwenv.AddProp(ktagIndex, this, 0);
@@ -1182,7 +1181,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							break;
 
 						case MoModifyFromInputTags.kClassId:
-							var modify = mapping as IMoModifyFromInput;
+							var modify = (IMoModifyFromInput) mapping;
 							var numLines = modify.ModificationRA.FeaturesOA.FeatureSpecsOC.Count;
 							// left bracket pile
 							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginLeading, (int)FwTextPropVar.ktpvMilliPoint, PILE_MARGIN);
@@ -1268,16 +1267,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// pass the index in the frag argument
 				return m_cache.TsStrFactory.MakeString(Convert.ToString(frag), m_cache.DefaultUserWs);
 			}
-			else
+			switch (frag)
 			{
-				switch (frag)
-				{
-					case kfragSpace:
-						return m_space;
+				case kfragSpace:
+					return m_space;
 
-					default:
-						return base.DisplayVariant(vwenv, tag, frag);
-				}
+				default:
+					return base.DisplayVariant(vwenv, tag, frag);
 			}
 		}
 

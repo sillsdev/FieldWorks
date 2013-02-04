@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Updates the feature constraints in the context.
 		/// </summary>
-		void UpdateFeatureConstraints()
+		private void UpdateFeatureConstraints()
 		{
 			CheckDisposed();
 
@@ -115,10 +115,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				string str = m_sda.get_UnicodeProp(feat.Hvo, PhonologicalFeaturePublisher.PolarityFlid);
 				if (String.IsNullOrEmpty(str))
 				{
-					IPhFeatureConstraint removedConstr = RemoveFeatureConstraint(m_ctxt.PlusConstrRS, feat);
-					if (removedConstr == null)
-						removedConstr = RemoveFeatureConstraint(m_ctxt.MinusConstrRS, feat);
-
+					IPhFeatureConstraint removedConstr = RemoveFeatureConstraint(m_ctxt.PlusConstrRS, feat) ?? RemoveFeatureConstraint(m_ctxt.MinusConstrRS, feat);
 					if (removedConstr != null)
 					{
 						if (!m_rule.FeatureConstraints.Contains(removedConstr))
@@ -155,7 +152,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		IPhFeatureConstraint RemoveFeatureConstraint(IFdoReferenceSequence<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
+		private IPhFeatureConstraint RemoveFeatureConstraint(IFdoReferenceSequence<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
 		{
 			var constrToRemove = GetFeatureConstraint(featConstrs, feat);
 			if (constrToRemove != null)
@@ -163,7 +160,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return constrToRemove;
 		}
 
-		IPhFeatureConstraint GetFeatureConstraint(IEnumerable<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
+		private IPhFeatureConstraint GetFeatureConstraint(IEnumerable<IPhFeatureConstraint> featConstrs, IFsFeatDefn feat)
 		{
 			foreach (var curConstr in featConstrs)
 			{
@@ -189,7 +186,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -211,29 +208,27 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Init the dialog with an existing FS.
+		/// Init the dialog with an existing context.
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
-		/// <param name="fs"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		/// <param name="rule"></param>
+		/// <param name="ctxt"></param>
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPhRegularRule rule, IPhSimpleContextNC ctxt)
 		{
 			CheckDisposed();
 
-			m_fs = fs;
-			m_owningFlid = fs.OwningFlid;
-			m_hvoOwner = fs.Owner.Hvo;
-			m_rule = rule;
-			m_ctxt = ctxt;
-			Mediator = mediator;
-			m_cache = cache;
-			m_valuesCombo.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_valuesCombo.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-
-			LoadPhonFeats(fs);
-			BuildInitialBrowseView(mediator);
-			
+			IFsFeatStruc fs = ((IPhNCFeatures) ctxt.FeatureStructureRA).FeaturesOA;
+			SetDlgInfo(cache, mediator, ctxt.FeatureStructureRA.Hvo, PhNCFeaturesTags.kflidFeatures, fs, rule, ctxt);
 		}
+
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, IPhRegularRule rule)
+		{
+			CheckDisposed();
+
+			SetDlgInfo(cache, mediator, 0, 0, null, rule, null);
+		}
+
 		/// <summary>
 		/// Init the dialog with an existing FS.
 		/// </summary>
@@ -242,64 +237,47 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="fs"></param>
 		public void SetDlgInfo(FdoCache cache, Mediator mediator, IFsFeatStruc fs)
 		{
-			SetDlgInfo(cache, mediator, fs, null, null);
+			SetDlgInfo(cache, mediator, fs.Owner.Hvo, fs.OwningFlid, fs, null, null);
 		}
 
 		/// <summary>
-		/// Init the dialog with a simple context.
+		/// Init the dialog with a PhPhoneme (or PhNCFeatures) and flid that does not yet contain a feature structure.
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="mediator"></param>
-		/// <param name="rule"></param>
-		/// <param name="ctxt"></param>
-		public void SetDlgInfo(FdoCache cache, XCore.Mediator mediator, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		/// <param name="cobj"></param>
+		/// <param name="owningFlid"></param>
+		public void SetDlgInfo(FdoCache cache, Mediator mediator, ICmObject cobj, int owningFlid)
 		{
 			CheckDisposed();
 
+			SetDlgInfo(cache, mediator, cobj.Hvo, owningFlid, null, null, null);
+		}
+
+		public void SetDlgInfo(FdoCache cache, Mediator mediator)
+		{
+			CheckDisposed();
+
+			SetDlgInfo(cache, mediator, 0, 0, null, null, null);
+		}
+
+		private void SetDlgInfo(FdoCache cache, Mediator mediator, int hvoOwner, int owningFlid, IFsFeatStruc fs, IPhRegularRule rule, IPhSimpleContextNC ctxt)
+		{
+			m_fs = fs;
+			m_owningFlid = owningFlid;
+			m_hvoOwner = hvoOwner;
 			m_rule = rule;
 			m_ctxt = ctxt;
 			Mediator = mediator;
 			m_cache = cache;
-
 			m_valuesCombo.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
 			m_valuesCombo.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			m_valuesCombo.WritingSystemCode = m_cache.DefaultUserWs;
-			m_valuesCombo.Items.Add(LexTextControls.ksFeatConstrAgree);
-			m_valuesCombo.Items.Add(LexTextControls.ksFeatConstrDisagree);
-			m_valuesCombo.Items.Add(LexTextControls.ks_DontCare_);
 
-			var feats = new HashSet<IFsFeatDefn>();
-			var natClass = m_ctxt.FeatureStructureRA as IPhNCFeatures;
-			foreach (var feat in m_cache.LangProject.PhFeatureSystemOA.FeaturesOC)
-			{
-				if (natClass.FeaturesOA == null || natClass.FeaturesOA.GetValue(feat as IFsClosedFeature) == null)
-					feats.Add(feat);
-			}
-			LoadPhonFeats(feats);
-			BuildInitialBrowseView(mediator, feats);
+			LoadPhonFeats(m_fs);
+			BuildInitialBrowseView(mediator);
 		}
 
-		/// <summary>
-		/// Load the tree items if the starting point is a simple context.
-		/// </summary>
-		/// <param name="features"></param>
-		private void LoadPhonFeats(IEnumerable<IFsFeatDefn> features)
-		{
-			m_sda = new PhonologicalFeaturePublisher(m_cache.DomainDataByFlid as ISilDataAccessManaged, m_cache);
-			foreach (var feat in features)
-			{
-				string str = null;
-				if (ContainsFeature(m_ctxt.PlusConstrRS, feat))
-					str = LexTextControls.ksFeatConstrAgree;
-				else if (ContainsFeature(m_ctxt.MinusConstrRS, feat))
-					str = LexTextControls.ksFeatConstrDisagree;
-				else
-					str = "";
-				if (!string.IsNullOrEmpty(str))
-					m_sda.SetUnicode(feat.Hvo, PhonologicalFeaturePublisher.PolarityFlid, str, str.Length);
-			}
-		}
-		bool ContainsFeature(IEnumerable<IPhFeatureConstraint> vars, IFsFeatDefn feat)
+		private bool ContainsFeature(IEnumerable<IPhFeatureConstraint> vars, IFsFeatDefn feat)
 		{
 			foreach (IPhFeatureConstraint var in vars)
 			{
@@ -318,41 +296,6 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_helpTopic = helpTopic;
 			m_helpProvider.SetHelpKeyword(this, m_mediator.HelpTopicProvider.GetHelpString(helpTopic));
-		}
-
-		/// <summary>
-		/// Init the dialog with a PhPhoneme (or PhNCFeatures) and flid that does not yet contain a feature structure.
-		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
-		/// <param name="cobj"></param>
-		/// <param name="owningFlid"></param>
-		public void SetDlgInfo(FdoCache cache, Mediator mediator, ICmObject cobj, int owningFlid)
-		{
-			CheckDisposed();
-
-			m_fs = null;
-			m_owningFlid = owningFlid;
-			m_hvoOwner = cobj.Hvo;
-			Mediator = mediator;
-			m_cache = cache;
-			m_valuesCombo.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_valuesCombo.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			LoadPhonFeats((IFsFeatStruc)null);
-			BuildInitialBrowseView(mediator);
-		}
-
-		public void SetDlgInfo(FdoCache cache, Mediator mediator)
-		{
-			CheckDisposed();
-
-			m_fs = null;
-			Mediator = mediator;
-			m_cache = cache;
-			m_valuesCombo.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_valuesCombo.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			LoadPhonFeats(m_fs);
-			BuildInitialBrowseView(mediator);
 		}
 
 		public void HandleJump()
@@ -441,7 +384,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				string str = m_sda.get_UnicodeProp(hvoSel, PhonologicalFeaturePublisher.PolarityFlid);
 				for (int i = feat.ValuesOC.Count; i < m_valuesCombo.Items.Count; i++)
 				{
-					string comboStr = m_valuesCombo.Items[i] as string;
+					var comboStr = m_valuesCombo.Items[i] as string;
 					if (str == comboStr || (String.IsNullOrEmpty(str) && comboStr == LexTextControls.ks_DontCare_))
 					{
 						comboSelectedIndex = i;
@@ -454,11 +397,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				comboSelectedIndex = feat.ValuesOC.Count + (ShowFeatureConstraintValues ? 2 : 0);
 				Debug.Assert(comboSelectedIndex == index);
 			}
-			//m_valuesCombo.Items.Add(m_cache.TsStrFactory.MakeString(LexTextControls.ks_DontCare_, m_cache.DefaultUserWs));
-			if (ShowIgnoreInsteadOfDontCare)
-				m_valuesCombo.Items.Add(LexTextControls.ks_Ignore_);
-			else
-				m_valuesCombo.Items.Add(LexTextControls.ks_DontCare_);
+			m_valuesCombo.Items.Add(ShowIgnoreInsteadOfDontCare ? LexTextControls.ks_Ignore_ : LexTextControls.ks_DontCare_);
 			m_valuesCombo.SelectedIndex = comboSelectedIndex;
 			if (!Controls.Contains(m_valuesCombo))
 				Controls.Add(m_valuesCombo);
@@ -480,7 +419,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (ShowFeatureConstraintValues)
 				{
 					// make sure the dummy value reflects the selected value
-					string str = m_valuesCombo.SelectedItem as string;
+					var str = m_valuesCombo.SelectedItem as string;
 					if (str != null)
 					{
 						if (str == LexTextControls.ks_DontCare_)
@@ -528,31 +467,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_listPanel.ResumeLayout(false);
 		}
 
-		private void BuildInitialBrowseView(XCore.Mediator mediator, IEnumerable<IFsFeatDefn> features)
-		{
-			XmlNode configurationParameters = (XmlNode)mediator.PropertyTable.GetValue("WindowConfiguration");
-			XmlNode toolNode = configurationParameters.SelectSingleNode("controls/parameters/guicontrol[@id='FeatureConstraintFlatList']/parameters");
-
-			m_listPanel.SuspendLayout();
-			var hvos = (from feat in features
-						select feat.Hvo).ToArray();
-			m_sda.CacheVecProp(m_cache.LangProject.Hvo, hvos);
-			m_bvList = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, PhonologicalFeaturePublisher.ListFlid, m_cache, mediator, null, m_sda);
-			m_bvList.SelectionChanged += new FwSelectionChangedEventHandler(m_bvList_SelectionChanged);
-			m_bvList.ScrollBar.ValueChanged += new EventHandler(ScrollBar_ValueChanged);
-			m_bvList.Scroller.Scroll += new ScrollEventHandler(ScrollBar_Scroll);
-			m_bvList.ColumnsChanged += new EventHandler(BrowseViewer_ColumnsChanged);
-			m_bvList.Resize += new EventHandler(m_bvList_Resize);
-			m_bvList.TabStop = true;
-			m_bvList.StyleSheet = FontHeightAdjuster.StyleSheetFromMediator(mediator);
-			m_bvList.Dock = DockStyle.Fill;
-			m_bvList.BackColor = SystemColors.Window;
-			m_listPanel.Controls.Add(m_bvList);
-			m_listPanel.ResumeLayout(false);
-		}
-
-
-
 		void ScrollBar_Scroll(object sender, ScrollEventArgs e)
 		{
 			PositionValuesCombo();
@@ -586,7 +500,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					object szWnd = m_mediator.PropertyTable.GetValue("phonFeatListDlgSize");
 					if (locWnd != null && szWnd != null)
 					{
-						Rectangle rect = new Rectangle((Point) locWnd, (Size) szWnd);
+						var rect = new Rectangle((Point) locWnd, (Size) szWnd);
 						ScreenUtils.EnsureVisibleRect(ref rect);
 						DesktopBounds = rect;
 						StartPosition = FormStartPosition.Manual;
@@ -622,7 +536,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					{  
 						if (m_ctxt != null && ShowFeatureConstraintValues)
 						{
-							string str = null;
+							string str;
 							if (ContainsFeature(m_ctxt.PlusConstrRS, feat))
 								str = LexTextControls.ksFeatConstrAgree;
 							else if (ContainsFeature(m_ctxt.MinusConstrRS, feat))
@@ -658,7 +572,17 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				return m_ctxt;
 			}
+
+			set
+			{
+				CheckDisposed();
+
+				m_ctxt = value;
+				m_fs = ((IPhNCFeatures) m_ctxt.FeatureStructureRA).FeaturesOA;
+			}
 		}
+
+
 
 		/// <summary>
 		/// Get Feature Structure resulting from dialog operation
@@ -679,20 +603,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_fs = value;
 			}
 		}
-		/// <summary>
-		/// Get Feature Structure of natural class resulting from dialog operation
-		/// </summary>
-		public IPhNCFeatures NaturalClassFeatures
-		{
-			get
-			{
-				CheckDisposed();
 
-				if (m_ctxt != null)
-					return m_ctxt.FeatureStructureRA as IPhNCFeatures;
-				return null;
-			}
-		}
 		/// <summary>
 		/// Get/Set prompt text
 		/// </summary>
@@ -876,8 +787,6 @@ namespace SIL.FieldWorks.LexText.Controls
 							m_fs.FeatureSpecsOC.Clear();
 							UpdateFeatureStructure();
 						}
-						if (ShowFeatureConstraintValues)
-							UpdateFeatureConstraints();
 					});
 				}
 			}
@@ -926,6 +835,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					closedVal.ValueRA = val;
 				}
 			}
+
+			if (ShowFeatureConstraintValues)
+				UpdateFeatureConstraints();
 		}
 
 		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -960,7 +872,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_cache = cache;
 				m_objProps = new Dictionary<int, int>();
 				m_unicodeProps = new Dictionary<int, string>();
-				SetOverrideMdc(new PhonologicalFeatureMdc(MetaDataCache as IFwMetaDataCacheManaged));
+				SetOverrideMdc(new PhonologicalFeatureMdc((IFwMetaDataCacheManaged) MetaDataCache));
 			}
 
 			public override int get_ObjectProp(int hvo, int tag)

@@ -240,6 +240,7 @@
     </Compile>
     <Compile Include="AddWordsToLexiconTests.cs">
     </Compile>
+    <Compile Include="ComplexConcPatternModelTests.cs" />
     <Compile Include="ImportInterlinearAnalysesTests.cs" />
     <Compile Include="InterlinearExporterTests.cs" />
     <Compile Include="BIRDFormatImportTests.cs" />

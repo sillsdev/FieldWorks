@@ -612,6 +612,12 @@ namespace SIL.FieldWorks.FDO
 		int GetAnalysisBeginOffset(int iAnalysis);
 
 		/// <summary>
+		/// Return a list of all the analyses in the segment, with their begin and end offsets (relative to the paragraph).
+		/// </summary>
+		/// <returns></returns>
+		IList<Tuple<IAnalysis, int, int>> GetAnalysesAndOffsets();
+
+		/// <summary>
 		/// Find the analysis closest to the specified range of characters (relative to the segment), prefering
 		/// the following word if ambiguous.
 		/// </summary>

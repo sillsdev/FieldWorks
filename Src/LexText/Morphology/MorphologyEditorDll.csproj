@@ -286,9 +286,6 @@
     <Compile Include="ConcordanceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ContextOccurrenceDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -366,9 +363,6 @@
     <Compile Include="RuleFormulaView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RuleInsertionControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="WordformGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -388,9 +382,6 @@
       <DependentUpon>ConcordanceDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ContextOccurrenceDlg.resx">
-      <DependentUpon>ContextOccurrenceDlg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ImageHolder.resx">
       <DependentUpon>ImageHolder.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -408,9 +399,6 @@
     <EmbeddedResource Include="RespellerDlg.resx">
       <DependentUpon>RespellerDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="RuleInsertionControl.resx">
-      <DependentUpon>RuleInsertionControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WordformGoDlg.resx">
       <DependentUpon>WordformGoDlg.cs</DependentUpon>

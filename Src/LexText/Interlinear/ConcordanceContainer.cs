@@ -1,7 +1,5 @@
-using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
@@ -18,7 +16,7 @@ namespace SIL.FieldWorks.IText
 			Justification="ReCurseControls() returns a reference")]
 		public bool RefreshDisplay()
 		{
-			ConcordanceControl concordanceControl = ReCurseControls(this);
+			ConcordanceControlBase concordanceControl = ReCurseControls(this);
 			if (concordanceControl != null)
 			{
 				concordanceControl.RefreshDisplay();
@@ -37,14 +35,14 @@ namespace SIL.FieldWorks.IText
 		/// of the other views will be inconsistant with the ConcordanceControl and will lead to crashes or incorrect display behavior.
 		/// </summary>
 		/// <param name="parentControl">The control to Recurse</param>
-		private ConcordanceControl ReCurseControls(Control parentControl)
+		private ConcordanceControlBase ReCurseControls(Control parentControl)
 		{
-			ConcordanceControl concordanceControl = null;
+			ConcordanceControlBase concordanceControl = null;
 			foreach (Control control in parentControl.Controls)
 			{
-				if (control is ConcordanceControl)
+				if (control is ConcordanceControlBase)
 				{
-					concordanceControl = control as ConcordanceControl;
+					concordanceControl = control as ConcordanceControlBase;
 					continue;
 				}
 				var cv = control as IClearValues;

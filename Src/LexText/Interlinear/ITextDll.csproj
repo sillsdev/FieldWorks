@@ -89,6 +89,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Aga.Controls">
+      <HintPath>..\..\..\DistFiles\Aga.Controls.dll</HintPath>
+    </Reference>
     <Reference Include="COMInterfaces, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -143,6 +146,14 @@
     </Reference>
     <Reference Include="Sfm2Xml, Version=1.0.4246.16219, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Lib\debug\SIL.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Lib\debug\SIL.Machine.dll</HintPath>
     </Reference>
     <Reference Include="SimpleRootSite, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
@@ -224,6 +235,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ComplexConcControl.resx">
+      <DependentUpon>ComplexConcControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComplexConcMorphDlg.resx">
+      <DependentUpon>ComplexConcMorphDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComplexConcTagDlg.resx">
+      <DependentUpon>ComplexConcTagDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComplexConcWordDlg.resx">
+      <DependentUpon>ComplexConcWordDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WordsSfmImportWizard.resx">
       <DependentUpon>WordsSfmImportWizard.cs</DependentUpon>
     </EmbeddedResource>
@@ -243,6 +266,33 @@
     <Compile Include="ChooseTextWritingSystemDlg.Designer.cs">
       <DependentUpon>ChooseTextWritingSystemDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClosedFeatureValue.cs" />
+    <Compile Include="ComplexConcOrNode.cs" />
+    <Compile Include="ComplexConcPatternModel.cs" />
+    <Compile Include="ComplexConcTagNode.cs" />
+    <Compile Include="ComplexConcWordBdryNode.cs" />
+    <Compile Include="ComplexConcWordNode.cs" />
+    <Compile Include="ComplexConcControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ComplexConcControl.Designer.cs">
+      <DependentUpon>ComplexConcControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComplexConcGroupNode.cs" />
+    <Compile Include="ComplexConcLeafNode.cs" />
+    <Compile Include="ComplexConcMorphDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComplexConcMorphNode.cs" />
+    <Compile Include="ComplexConcPatternNode.cs" />
+    <Compile Include="ComplexConcPatternSda.cs" />
+    <Compile Include="ComplexConcTagDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComplexConcWordDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComplexFeatureNode.cs" />
     <Compile Include="ConcordanceContainer.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -251,6 +301,13 @@
     </Compile>
     <Compile Include="ConcordanceControl.Designer.cs">
       <DependentUpon>ConcordanceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConcordanceControlBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ComplexConcPatternVc.cs" />
+    <Compile Include="ComplexConcPatternView.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ConcordanceWordList.cs" />
     <Compile Include="ConfigureInterlinDialog.cs">
@@ -265,6 +322,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Content Include="FlexInterlinModel\FlexInterlinear-generated.cs" />
+    <Compile Include="ClosedFeatureNode.cs" />
     <Compile Include="FlexInterlinModel\FlexInterlinear.cs" />
     <Compile Include="FocusBoxController.ApproveAndMove.cs">
       <DependentUpon>FocusBoxController.cs</DependentUpon>
@@ -279,6 +337,7 @@
     <Compile Include="ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="InflFeatureTreeModel.cs" />
     <Compile Include="InfoPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -358,6 +417,8 @@
     <Compile Include="LinguaLinksImportDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PossibilityComboController.cs" />
+    <Compile Include="ComplexConcParagraphData.cs" />
     <Compile Include="ParseIsCurrentFixer.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -400,6 +461,7 @@
     <Compile Include="StatisticsView.Designer.cs">
       <DependentUpon>StatisticsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="SymbolicValue.cs" />
     <Compile Include="TextsFilterItem.cs" />
     <Compile Include="TitleContentsPane.cs">
       <SubType>UserControl</SubType>
