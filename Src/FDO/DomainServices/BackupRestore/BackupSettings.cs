@@ -166,6 +166,16 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			get { return Path.Combine(m_projectsRootFolder, ProjectName); }
 		}
 
+		private const string s_chorusNotesFilename = "Lexicon.fwstub.ChorusNotes";
+
+		/// <summary>
+		/// This is the name of the ChorusNotes file that implements the Questions slice.
+		/// </summary>
+		public string QuestionNotesFilename
+		{
+			get { return s_chorusNotesFilename; }
+		}
+
 		/// <summary>
 		/// Directory where Flex Configuration Files are stored.
 		/// </summary>

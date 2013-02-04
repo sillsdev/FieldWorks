@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					File.Delete(sortSeqFile);
 			}
 
-			UncompressDataFile();
+			UncompressDataFiles();
 
 			// We can't use Path.Combine here, because the zip files stores all file paths with '/'s
 			UncompressFilesMatchingPath(DirectoryFinder.ksWritingSystemsDir + "/", m_restoreSettings.WritingSystemStorePath);
@@ -304,10 +304,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Uncompress the FieldWorks project data file.
+		/// Uncompress the FieldWorks project data file and the Questions files.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void UncompressDataFile()
+		private void UncompressDataFiles()
 		{
 			using (var zipIn = OpenFWBackupZipfile())
 			{
@@ -316,12 +316,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				{
 					var fileName = Path.GetFileName(entry.Name);
 					if (fileName == DirectoryFinder.GetXmlDataFileName(m_restoreSettings.Backup.ProjectName))
-					{
-						UnzipFileToRestoreFolder(zipIn, m_restoreSettings.DbFilename, entry.Size, m_restoreSettings.ProjectPath, entry.DateTime);
-						break;
-					}
+						UnzipFileToRestoreFolder(zipIn, m_restoreSettings.DbFilename, entry.Size,
+							m_restoreSettings.ProjectPath, entry.DateTime);
+					if (fileName == m_restoreSettings.QuestionNotesFilename)
+						UnzipFileToRestoreFolder(zipIn, m_restoreSettings.QuestionNotesFilename, entry.Size,
+							m_restoreSettings.ProjectPath, entry.DateTime);
 				}
-			string bakFile = Path.Combine(m_restoreSettings.ProjectPath, m_restoreSettings.ProjectName) + FwFileExtensions.ksFwDataFallbackFileExtension;
+				string bakFile = Path.Combine(m_restoreSettings.ProjectPath, m_restoreSettings.ProjectName)
+					+ FwFileExtensions.ksFwDataFallbackFileExtension;
 				if (FileUtils.TrySimilarFileExists(bakFile, out bakFile))
 				{
 					FileUtils.Delete(bakFile); // TODO: do something about the .Lock file.......

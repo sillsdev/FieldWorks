@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
@@ -181,6 +180,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			//Add BackupSettings file
 			filesToBackup.Add(m_settings.BackupSettingsFile);
+
+			// Add Questions file
+			filesToBackup.Add(Path.Combine(m_settings.DatabaseFolder, m_settings.QuestionNotesFilename));
 
 			//Add Writing Systems
 			filesToBackup.UnionWith(AllFilesInADirectory(m_settings.WritingSystemStorePath));

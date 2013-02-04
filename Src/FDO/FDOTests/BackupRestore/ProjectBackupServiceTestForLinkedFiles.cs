@@ -15,15 +15,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
-using ICSharpCode.SharpZipLib.Zip;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 {
@@ -123,7 +118,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 
 			VerifyLinkedFilesInCmFilesAreIncluded(filesHashset);
 
-			Assert.True(filesHashset.Count() == 10, "The number of files to be backed up is incorrect.");
+			Assert.True(filesHashset.Count() == 11, "The number of files to be backed up is incorrect.");
 		}
 
 		//--------------------------------------------------------------------------------------------------------------

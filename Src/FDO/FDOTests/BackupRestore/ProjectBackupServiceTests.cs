@@ -15,13 +15,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
@@ -196,7 +193,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			var filesToBackup = m_backupProjectService.CreateListOfFilesToZip();
 
 			VerifyCoreFilesAreIncluded(filesToBackup);
-			Assert.True(filesToBackup.Count() == 6, "The number of files to be backed up is incorrect.");
+			Assert.True(filesToBackup.Count() == 7, "The number of files to be backed up is incorrect.");
 		}
 
 		/// <summary>
@@ -215,7 +212,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			//This group of files should be 14 files
 			VerifyConfigurationSettingsFiles(filesToBackup);
 
-			Assert.True(filesToBackup.Count() == 20, "The number of files to be backed up is incorrect.");
+			Assert.True(filesToBackup.Count() == 21, "The number of files to be backed up is incorrect.");
 		}
 
 		/// <summary>
@@ -240,7 +237,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 
 			VerifyMediaFilesAreIncluded(filesToBackup);
 
-			Assert.True(filesToBackup.Count() == 27, "The number of files to be backed up is incorrect.");
+			Assert.True(filesToBackup.Count() == 28, "The number of files to be backed up is incorrect.");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -261,7 +258,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			//check on media files in test
 			VerifyMediaFilesAreIncluded(filesToBackup);
 
-			Assert.AreEqual(9, filesToBackup.Count(), "The number of files to be backed up is incorrect.");
+			Assert.AreEqual(10, filesToBackup.Count(), "The number of files to be backed up is incorrect.");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -282,7 +279,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			//There are an additional 4 fonts and keyboards
 			VerifySupportingFilesAreIncluded(filesToBackup);
 
-			Assert.AreEqual(10, filesToBackup.Count(), "The number of files to be backed up is incorrect.");
+			Assert.AreEqual(11, filesToBackup.Count(), "The number of files to be backed up is incorrect.");
 		}
 
 		private void VerifyDateTimeOfFileMatchesThatOnDisk(ZipFile zip, String fileNameAndPath)
