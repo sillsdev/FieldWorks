@@ -22,6 +22,8 @@ Bin/_setroot.bat
 Bld/pathinclude.*.xml
 Lib/debug/DebugProcs.lib
 Lib/debug/Generic.lib
+Lib/release/DebugProcs.lib
+Lib/release/Generic.lib
 DistFiles/Parts/Generated.fwlayout
 Src/CommonAssemblyInfo.cs
 Src/LangInst/InstallLanguageTests/timing.txt
