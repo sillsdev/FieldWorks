@@ -2946,7 +2946,7 @@
     <value>Using_Tools/Grammar_tools/Assign_Features_to_Phonemes/Assign_Features_to_Phonemes_overview.htm</value>
   </data>
   <data name="khtpChoose-naturalClassedit-PhNCSegments-Phonemes" xml:space="preserve">
-    <value>Using_Tools/Grammar_tools/Natural_Classes/Choose_phonological_features(NC).htm</value>
+    <value>Using_Tools/Grammar_tools/Natural_Classes/Choose_Phonemes_for_Natural_Class.htm</value>
   </data>
   <data name="khtpField-lexiconEdit-LexEntry-Questions" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Questions_field.htm</value>
@@ -2962,5 +2962,8 @@
   </data>
   <data name="khtptoolBulkEditPhonemesChooserDlg" xml:space="preserve">
     <value>Using_Tools/Grammar_tools/Assign_Features_to_Phonemes/Choose_phonological_features_(Assign).htm</value>
+  </data>
+  <data name="khtpChoose-Grammar-NaturalClasses-SetPhonologicalFeatures" xml:space="preserve">
+    <value>Using_Tools/Grammar_tools/Natural_Classes/Choose_phonological_features(NC).htm</value>
   </data>
 </root>

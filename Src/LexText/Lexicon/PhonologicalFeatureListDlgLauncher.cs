@@ -76,6 +76,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				else
 					dlg.SetDlgInfo(m_cache, m_mediator, originalFs);
 
+				dlg.SetHelpTopic("khtpChoose-Grammar-NaturalClasses-SetPhonologicalFeatures");
 				DialogResult result = dlg.ShowDialog(parentSlice.FindForm());
 				if (result == DialogResult.OK)
 				{
