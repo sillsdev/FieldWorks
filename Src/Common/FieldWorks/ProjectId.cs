@@ -342,15 +342,14 @@ namespace SIL.FieldWorks
 		{
 			get
 			{
-				try
-				{
-					AssertValid();
+				var ex = GetExceptionIfInvalid();
+				if (ex == null)
 					return true;
-				}
-				catch (FwStartupException)
-				{
+				if (ex is FwStartupException)
 					return false;
-				}
+				// something totally unexpected that we don't know how to handle happened.
+				// Don't suppress it.
+				throw ex;
 			}
 		}
 
@@ -377,8 +376,9 @@ namespace SIL.FieldWorks
 		#region Public Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determines if this ProjectId is valid. This means it represents what could be a
-		/// FieldWorks project. No checking to see if the project is openable is actually done
+		/// Throws an exception if this ProjectId is not valid. Avoid using this and catching
+		/// the exception when in doubt...use only when it is really an error for it to be invalid.
+		///
 		/// here.
 		/// </summary>
 		/// <exception cref="FwStartupException">If invalid (e.g., project Name is not set, the
@@ -386,8 +386,23 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		public void AssertValid()
 		{
+			var ex = GetExceptionIfInvalid();
+			if (ex == null)
+				return;
+			throw ex;
+		}
+
+		/// <summary>
+		/// Return an appropriate exception to throw if the project is expected to be valid and
+		/// is not. This is a basic test for what could reasonably be a
+		/// FieldWorks project. No checking to see if the project is openable is actually done.
+		/// (For example, the file must exist, but it's contents are not checked.)
+		/// </summary>
+		/// <returns></returns>
+		internal Exception GetExceptionIfInvalid()
+		{
 			if (string.IsNullOrEmpty(Name))
-				throw new FwStartupException(Properties.Resources.kstidNoProjectName, false);
+				return new FwStartupException(Properties.Resources.kstidNoProjectName, false);
 
 			switch (Type)
 			{
@@ -398,23 +413,28 @@ namespace SIL.FieldWorks
 					}
 					catch (SocketException e)
 					{
-						throw new FwStartupException(String.Format(Properties.Resources.kstidInvalidServer, ServerName, e.Message), e);
+						return new FwStartupException(String.Format(Properties.Resources.kstidInvalidServer, ServerName, e.Message), e);
+					}
+					catch (Exception ex)
+					{
+						return ex;
 					}
 					break;
 				case FDOBackendProviderType.kXML:
 					if (!FileUtils.SimilarFileExists(Path))
-						throw new FwStartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
+						return new FwStartupException(string.Format(Properties.Resources.kstidFileNotFound, Path));
 					break;
 				case FDOBackendProviderType.kInvalid:
-					throw new FwStartupException(Properties.Resources.kstidInvalidFwProjType);
+					return new FwStartupException(Properties.Resources.kstidInvalidFwProjType);
 				default:
-					throw new NotImplementedException("Unknown type of project.");
+					return new NotImplementedException("Unknown type of project.");
 			}
 
 			// Check this after checking for other valid information (e.g. if the server is
 			// not available, we want to show that error, not this error).
 			if (!FileUtils.DirectoryExists(SharedProjectFolder))
-				throw new FwStartupException(String.Format(Properties.Resources.kstidCannotAccessProjectPath, SharedProjectFolder));
+				return new FwStartupException(String.Format(Properties.Resources.kstidCannotAccessProjectPath, SharedProjectFolder));
+			return null; // valid
 		}
 
 		/// ------------------------------------------------------------------------------------

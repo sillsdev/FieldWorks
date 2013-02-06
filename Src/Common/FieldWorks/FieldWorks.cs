@@ -1143,16 +1143,15 @@ namespace SIL.FieldWorks
 			exception = null;
 			if (string.IsNullOrEmpty(projId.Name))
 				return false;
-			try
+			var ex = projId.GetExceptionIfInvalid();
+			if (ex is FwStartupException)
 			{
-				projId.AssertValid();
+				exception = (FwStartupException) ex;
+				return false; // Invalid command-line arguments supplied.
+			}
+			if (ex == null)
 				return true; // If valid command-line arguments are supplied, we go with that.
-			}
-			catch (FwStartupException e)
-			{
-				exception = e; // Invalid command-line arguments supplied.
-			}
-			return false;
+			throw ex; // Something totally unexpected happened, don't suppress it.
 		}
 
 		/// ------------------------------------------------------------------------------------
