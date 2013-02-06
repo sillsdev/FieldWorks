@@ -182,7 +182,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			filesToBackup.Add(m_settings.BackupSettingsFile);
 
 			// Add Questions file
-			filesToBackup.Add(Path.Combine(m_settings.DatabaseFolder, m_settings.QuestionNotesFilename));
+			var questionFile = Path.Combine(m_settings.ProjectPath, m_settings.QuestionNotesFilename);
+			filesToBackup.Add(questionFile);
 
 			//Add Writing Systems
 			filesToBackup.UnionWith(AllFilesInADirectory(m_settings.WritingSystemStorePath));
