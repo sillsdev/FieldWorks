@@ -470,6 +470,7 @@ namespace SIL.FieldWorks.XWorks
 							realTool = "lexiconEdit";
 							break;
 						case ScriptureTags.kClassId:
+							ShowCantJumpMessage(xWorksStrings.ksCantJumpToScripture);
 							return false; // Todo: don't know how to handle this yet.
 							//app = FwUtils.ksTeAbbrev;
 							//realTool = "reversalToolEditComplete";
@@ -494,8 +495,14 @@ namespace SIL.FieldWorks.XWorks
 							// Enhance JohnT: do something to make it switch to Discourse tab
 							break;
 						case LexDbTags.kClassId: // other things owned by this??
+						case LangProjectTags.kClassId:
+							ShowCantJumpMessage(xWorksStrings.ksCantJumpToLangProj);
+							return false;
 						default:
-							return false; // can't jump to it...should we put up a message?
+							var msg = string.Format(xWorksStrings.ksCantJumpToObject,
+								cache.MetaDataCacheAccessor.GetClassName(majorObject.ClassID));
+							ShowCantJumpMessage(msg);
+							return false; // can't jump to it.
 					}
 					m_lnkActive = new FwLinkArgs(realTool, realTarget.Guid);
 					// Todo JohnT: need to do something special here if we c
@@ -553,6 +560,25 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 			return true;	//we handled this.
+		}
+
+		private void ShowCantJumpMessage(string msg)
+		{
+			var activeFlexWindow = ActiveFlexWindow();
+			if (activeFlexWindow == null)
+				activeFlexWindow = Form.ActiveForm;
+			if (activeFlexWindow == null)
+				MessageBox.Show(activeFlexWindow, msg, xWorksStrings.ksCantJumpCaption);
+			else
+			{
+				activeFlexWindow.Invoke(
+					(Action) (() => MessageBox.Show(activeFlexWindow, msg, xWorksStrings.ksCantJumpCaption)));
+			}
+		}
+
+		private Form ActiveFlexWindow()
+		{
+			return m_mediator.PropertyTable.GetValue("window") as Form;
 		}
 
 		/// <summary>

@@ -759,4 +759,20 @@ Do you want to continue with the export?</value>
     <value>Undo {0}</value>
     <comment>{0} will be the name of a macro</comment>
   </data>
+  <data name="ksCantJumpCaption" xml:space="preserve">
+    <value>Cannot follow link</value>
+    <comment>Caption for any of the ksCantJump message boxes</comment>
+  </data>
+  <data name="ksCantJumpToLangProj" xml:space="preserve">
+    <value>You are trying to follow a link to one of the root objects representing the whole project. Sorry, but FLEx does not know how to take you to a more specific place within it.</value>
+    <comment>Displayed when following a hot link, e.g., from a conflict report about a property of LangProject or LexDb (suc as one about conflicting changes to active writing systems).</comment>
+  </data>
+  <data name="ksCantJumpToObject" xml:space="preserve">
+    <value>Sorry, FLEx does not know how to jump to this kind of object (a {0}).</value>
+    <comment>Displayed when following a hot link (e.g., from a conflict report).</comment>
+  </data>
+  <data name="ksCantJumpToScripture" xml:space="preserve">
+    <value>Sorry, FLEx does not yet know how to jump to a particular location in Scripture.</value>
+    <comment>Displayed when following a hot link to somewhere in Scripture. Not sure this can actually happen.</comment>
+  </data>
 </root>

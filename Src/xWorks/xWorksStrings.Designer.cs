@@ -510,6 +510,42 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot follow link.
+        /// </summary>
+        internal static string ksCantJumpCaption {
+            get {
+                return ResourceManager.GetString("ksCantJumpCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are trying to follow a link to one of the root objects representing the whole project. Sorry, but FLEx does not know how to take you to a more specific place within it..
+        /// </summary>
+        internal static string ksCantJumpToLangProj {
+            get {
+                return ResourceManager.GetString("ksCantJumpToLangProj", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, FLEx does not know how to jump to this kind of object (a {0})..
+        /// </summary>
+        internal static string ksCantJumpToObject {
+            get {
+                return ResourceManager.GetString("ksCantJumpToObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, FLEx does not yet know how to jump to a particular location in Scripture..
+        /// </summary>
+        internal static string ksCantJumpToScripture {
+            get {
+                return ResourceManager.GetString("ksCantJumpToScripture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all..
         /// </summary>
         internal static string ksCantPromoteGroupToTemplate {
