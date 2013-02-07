@@ -106,10 +106,6 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="AxInterop.SHDocVw">
-      <Name>AxInterop.SHDocVw</Name>
-      <HintPath>..\..\Bin\AxInterop.SHDocVw.dll</HintPath>
-    </Reference>
     <Reference Include="COMInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\COMInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -154,22 +150,12 @@
       <HintPath>..\..\Output\Debug\FxtDll.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Interop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Bin\Interop.SHDocVw.dll</HintPath>
-    </Reference>
     <Reference Include="LexTextControls, Version=7.1.0.28634, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="MessageBoxExLib, Version=1.0.3685.30408, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="MsHtmHstInterop, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Bin\MsHtmHstInterop.dll</HintPath>
     </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -193,9 +179,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="xCore, Version=6.1.1.30414, Culture=neutral, PublicKeyToken=null">
@@ -218,17 +202,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptureUtils, Version=6.1.1.30328, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
-    </Reference>
     <Reference Include="FwCoreDlgControls, Version=6.1.1.30432, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
-    </Reference>
-    <Reference Include="ScrUtilsInterfaces, Version=6.1.1.30324, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

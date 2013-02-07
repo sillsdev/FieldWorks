@@ -98,10 +98,6 @@
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.SHDocVw">
-      <Name>AxInterop.SHDocVw</Name>
-      <HintPath>..\..\..\Bin\AxInterop.SHDocVw.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
@@ -141,10 +137,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.SHDocVw">
-      <Name>Interop.SHDocVw</Name>
-      <HintPath>..\..\..\Bin\Interop.SHDocVw.dll</HintPath>
-    </Reference>
     <Reference Include="ITextDll, Version=4.3.0.26896, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ITextDll.dll</HintPath>
@@ -152,10 +144,6 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="MsHtmHstInterop">
-      <Name>MsHtmHstInterop</Name>
-      <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
     </Reference>
     <Reference Include="ParserCore">
       <Name>ParserCore</Name>
@@ -209,10 +197,6 @@
     <Reference Include="xWorks">
       <Name>xWorks</Name>
       <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
-    </Reference>
-    <Reference Include="Skybound.Gecko, Version=1.9.2.0, Culture=neutral, PublicKeyToken=3209ac31600d1857">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Skybound.Gecko.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils">
       <SpecificVersion>False</SpecificVersion>

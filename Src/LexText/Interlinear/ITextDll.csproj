@@ -89,9 +89,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accessibility">
-      <Name>Accessibility</Name>
-    </Reference>
     <Reference Include="COMInterfaces, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -128,17 +125,9 @@
       <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="FxtDll, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Output\Debug\FxtDll.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="LexTextControls, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="LiftIO, Version=1.0.2547.19639, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Extensions\Flex.LiftImport\lib\LiftIO.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -147,14 +136,6 @@
     <Reference Include="ParatextShared, Version=7.2.8.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\ParatextShared.dll</HintPath>
-    </Reference>
-    <Reference Include="ParserCore, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Output\Debug\ParserCore.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Reporting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="RootSite, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
@@ -171,9 +152,6 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -182,9 +160,6 @@
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="AxInterop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Bin\AxInterop.SHDocVw.dll</HintPath>
     </Reference>
     <Reference Include="BasicUtils, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -198,10 +173,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Enchant.Net, Version=1.4.2.1, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Enchant.Net.dll</HintPath>
-    </Reference>
     <Reference Include="FwCoreDlgControls, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
@@ -213,13 +184,6 @@
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Lib\debug\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Bin\Interop.SHDocVw.dll</HintPath>
-    </Reference>
-    <Reference Include="MessageBoxExLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\MessageBoxExLib.dll</HintPath>
     </Reference>
     <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485">
       <SpecificVersion>False</SpecificVersion>

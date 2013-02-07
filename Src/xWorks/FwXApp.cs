@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.IO;
 
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;

@@ -16,10 +16,6 @@
 // </remarks>
 // ------------------- -------------------------------------------------------------------------
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -28,7 +24,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using XCore;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks

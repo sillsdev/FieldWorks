@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.FwUtils;
+﻿using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 using XCore;
-using SIL.FieldWorks.Common.Framework;
-using Skybound.Gecko;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

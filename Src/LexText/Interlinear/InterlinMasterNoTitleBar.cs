@@ -1,19 +1,4 @@
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Data;
 using System.Diagnostics;
-using System.Reflection;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.XWorks;
-using SIL.FieldWorks.FdoUi;
-using SIL.Utils;
-using XCore;
 
 namespace SIL.FieldWorks.IText
 {

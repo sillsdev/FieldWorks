@@ -16,13 +16,8 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Diagnostics;
 using MsHtmHstInterop;
 using System.Runtime.InteropServices;
 #if __MonoCS__

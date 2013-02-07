@@ -328,7 +328,10 @@ namespace FwBuildTasks
 						project == "FxtExe" ||					// These projects weren't built by nant normally.
 						project == "FixFwData" ||
 						project.StartsWith("LinuxSmokeTest") ||
-						project.EndsWith("Tests"))				// These are tests.
+						project.EndsWith("Tests") ||			// These are tests.
+						project == "TestUtils" ||				// This is a test.
+						project == "TestManager" ||				// This is a test.
+						project == "ProjectUnpacker")			// This is only used in tests.
 					{
 						continue;
 					}
