@@ -133,6 +133,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\xWorks.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtils">
+      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
@@ -142,6 +145,7 @@
     <Compile Include="ConstChartRowDecoratorTests.cs">
     </Compile>
     <Compile Include="ConstituentChartDatabaseTests.cs" />
+    <Compile Include="ConstituentChartTests.cs" />
     <Compile Include="DiscourseExportTests.cs" />
     <Compile Include="InMemoryMovedTextTests.cs" />
     <Compile Include="DiscourseTestHelper.cs" />

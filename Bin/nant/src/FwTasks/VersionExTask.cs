@@ -148,10 +148,13 @@ namespace SIL.FieldWorks.Build.Tasks
 						hashOfOldFile = ComputeHash(oldFileStream);
 					}
 				}
+
+				var encoding = new UTF8Encoding(true); // With BOM
+
 				// Modify file only if content really changed.
 				using (MemoryStream memoryStream = new MemoryStream())
 				{
-					StreamWriter outStream = new StreamWriter(memoryStream);
+					StreamWriter outStream = new StreamWriter(memoryStream, encoding);
 					outStream.Write(fileContents);
 
 					// Calculate hash
@@ -163,7 +166,7 @@ namespace SIL.FieldWorks.Build.Tasks
 						Log(Level.Info, "Generating {0} from {1}", OutputFile.Name,
 							Path.GetFileName(template));
 
-						StreamWriter outFileStream = new StreamWriter(OutputFile.FullName);
+						StreamWriter outFileStream = new StreamWriter(OutputFile.FullName, false, encoding);
 						outFileStream.Write(fileContents);
 						outFileStream.Close();
 					}

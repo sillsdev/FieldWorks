@@ -105,6 +105,7 @@ namespace SIL.FieldWorks.Discourse
 			base.OnLoad(e);
 			// We don't want to know about column width changes until after we're initialized and have restored original widths.
 			m_headerMainCols.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged;
+			m_headerMainCols.ColumnWidthChanging += m_headerMainCols_ColumnWidthChanging;
 		}
 
 		private void BuildTopStuffUI()
@@ -278,6 +279,16 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
+		/// <summary>
+		/// Whether or not Layout events for m_headerMainCols should be ignored. See FWNX-945.
+		/// </summary>
+		bool m_fIgnoreLayout;
+
+		void m_headerMainCols_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+		{
+			m_fIgnoreLayout = true;
+		}
+
 		void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
 		{
 			if (m_fInColWidthChanged)
@@ -318,6 +329,7 @@ namespace SIL.FieldWorks.Discourse
 			// Now adjust everything else
 			ComputeButtonWidths();
 			m_body.SetColWidths(m_columnWidths);
+			m_fIgnoreLayout = false;
 		}
 
 		void m_headerMainCols_SizeChanged(object sender, EventArgs e)
@@ -327,10 +339,15 @@ namespace SIL.FieldWorks.Discourse
 
 		void m_headerMainCols_Layout(object sender, LayoutEventArgs e)
 		{
+			// Unlike .NET, Mono fires Layout during column resizing. Ignore it. FWNX-945.
+			if (m_fIgnoreLayout)
+				return;
+
 			SetHeaderColAndButtonWidths();
 		}
 
-		private void SetHeaderColAndButtonWidths()
+		/// <summary/>
+		protected virtual void SetHeaderColAndButtonWidths()
 		{
 			if (m_columnPositions != null)
 			{
