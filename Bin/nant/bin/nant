@@ -1,4 +1,0 @@
-#!/bin/sh
-export FRAMEWORK_VERSION=--runtime=v4.0.30319
-export MONO_FRAMEWORK=-t:mono-4.0
-exec mono $FRAMEWORK_VERSION --debug ${0%/*}/NAnt.exe $MONO_FRAMEWORK "$@"

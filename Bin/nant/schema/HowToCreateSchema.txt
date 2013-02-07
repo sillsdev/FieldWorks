@@ -1,7 +1,0 @@
-The file fwnant.xsd is a schema file for all tasks included in NAnt, NAntContrib and FwTasks.
-
-After checking in a  new version of any of those projects a new fwnant schema should be generated.
-
-This can be done by calling (in <fw>\bld): nant create-nantschema
-
-The advantage of specifying a schema in the build files is that this adds Intellisense support while editing the build files in VS. To benefit from it you have to go to the properties of the build file and select the fwnant.xsd as Schemas file.
