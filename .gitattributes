@@ -14,4 +14,5 @@
 *.vcxproj.filters -whitespace
 *.patch -whitespace
 *.svg -whitespace
+*.xml -whitespace
 changelog -whitespace
