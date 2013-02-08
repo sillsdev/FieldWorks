@@ -185,11 +185,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ServiceHost host = null;
 			try
 			{
+				var hostPipeBinding = new NetNamedPipeBinding { ReceiveTimeout = TimeSpan.MaxValue };
 				host = new ServiceHost(typeof (FLExBridgeService),
 										new[] {new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _sFwProjectName)});
 
 				//open host ready for business
-				host.AddServiceEndpoint(typeof (IFLExBridgeService), new NetNamedPipeBinding(), "FLExPipe");
+				host.AddServiceEndpoint(typeof(IFLExBridgeService), hostPipeBinding, "FLExPipe");
 				host.Open();
 			}
 			catch (InvalidOperationException) // Can happen if Conflict Report is open and we try to run FLExBridge again.
@@ -234,7 +235,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static void KillTheHost(ServiceHost host)
 		{
 			// Let the service host cleanup happen in another thread so the user can get on with life.
-			Thread letTheHostDie = new Thread(() =>
+			var letTheHostDie = new Thread(() =>
 												{
 													try
 													{
@@ -258,8 +259,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static void BeginEmergencyExitChute()
 		{
+			var clientPipeBinding = new NetNamedPipeBinding {ReceiveTimeout = TimeSpan.MaxValue};
 			var factory = new ChannelFactory<IFLExServiceChannel>
-				(new NetNamedPipeBinding(), new EndpointAddress("net.pipe://localhost/FLExEndpoint" + _sFwProjectName + "/FLExPipe"));
+				(clientPipeBinding, new EndpointAddress("net.pipe://localhost/FLExEndpoint" + _sFwProjectName + "/FLExPipe"));
 			var channelClient = factory.CreateChannel();
 			channelClient.OperationTimeout = TimeSpan.MaxValue;
 			channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
