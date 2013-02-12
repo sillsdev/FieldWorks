@@ -903,7 +903,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			: base(cache, mediator)
 		{
 			ITsPropsBldr tpb = TsPropsBldrClass.Create();
-			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Arial");
+			tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			tpb.SetIntPropValues((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault,
 				(int)ColorUtil.ConvertColorToBGR(Color.Gray));

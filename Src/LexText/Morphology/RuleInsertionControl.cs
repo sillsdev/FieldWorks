@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_insertPanel.SuspendLayout();
 			SuspendLayout();
 			m_insertPanel.Controls.Clear();
-			Font f = new Font("Arial", 10);
+			Font f = new Font(MiscUtils.StandardSansSerif, 10);
 			bool displayingOpts = false;
 			foreach (InsertOption opt in m_options)
 			{

@@ -313,15 +313,15 @@ namespace SIL.FieldWorks.IText
 			AddItem(wa, MakeSimpleString(ITextStrings.ksNewWordGloss), false, WfiGlossTags.kClassId);
 		}
 
-		protected ITsString MakeSimpleString (String str)
+		protected ITsString MakeSimpleString(String str)
 		{
 			ITsStrBldr builder = TsStrBldrClass.Create();
 			ITsPropsBldr bldr = TsPropsBldrClass.Create();
 			bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
 				(int)FwTextPropVar.ktpvDefault, m_cache.DefaultUserWs);
-			bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize ,
+			bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
 				(int)FwTextPropVar.ktpvMilliPoint, s_baseFontSize * 800);
-			bldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, "Arial");
+			bldr.SetStrPropValue((int)FwTextStringProp.kstpFontFamily, MiscUtils.StandardSansSerif);
 			builder.Replace(0,0,str , bldr.GetTextProps());
 			return builder.GetString();
 		}

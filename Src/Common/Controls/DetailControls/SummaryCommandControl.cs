@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			InitializeComponent();
 
 			m_slice = slice;
-			m_hotLinkFont = new Font("Arial" /*"Times New Roman"*/, (float)10.0, FontStyle.Underline);
+			m_hotLinkFont = new Font(MiscUtils.StandardSansSerif, (float)10.0, FontStyle.Underline);
 			m_timer = new System.Windows.Forms.Timer();
 			m_timer.Interval = 400; // ms
 			m_timer.Tick += new EventHandler(m_timer_Tick);

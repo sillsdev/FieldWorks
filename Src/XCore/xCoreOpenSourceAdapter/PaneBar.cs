@@ -27,7 +27,9 @@ namespace XCore
 			InitializeComponent();
 
 			// TODO: Add any initialization after the InitializeComponent call
-
+			if (SIL.Utils.MiscUtils.IsUnix)
+				label1.Font = new Font(SIL.Utils.MiscUtils.StandardSansSerif, 14.25F,
+					System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (System.Byte)0);
 		}
 
 		/// <summary>

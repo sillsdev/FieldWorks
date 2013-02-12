@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected string m_strLabel;
 		protected string m_strAbbr;
 		protected bool m_isHighlighted = false;
-		protected Font m_fontLabel = new Font("Arial", 10);
+		protected Font m_fontLabel = new Font(MiscUtils.StandardSansSerif, 10);
 		protected XmlNode m_configurationNode; // If this slice was generated from an XmlNode, store it here.
 		protected XmlNode m_callerNode;	// This stores the layout time caller for menu processing
 		protected Point m_location;

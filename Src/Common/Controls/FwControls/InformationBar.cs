@@ -54,6 +54,12 @@ namespace SIL.FieldWorks.Common.Controls
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
+			// The font size below looks random, but is used in InitializeComponent for the
+			// corresponding font assignment.  I didn't want to change it here.
+			if (MiscUtils.IsUnix)
+				InfoBarLabel.Font = new System.Drawing.Font(MiscUtils.StandardSansSerif, 8.861538F,
+					System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (System.Byte)0);
+
 			// TODO: Add any initialization after the InitForm call
 			m_buttonWidth = 17;
 			DockPadding.All = 5;

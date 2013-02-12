@@ -255,7 +255,7 @@ install-tree:
 	install Lib/src/icu/install$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install Lib/src/icu/source/build$(ARCH)/bin/* $(DESTDIR)/usr/lib/fieldworks/icu-bin
 	install Lib/linux/fieldworks-{te,flex} $(DESTDIR)/usr/bin
-	install Lib/linux/{cpol-action,run-app} $(DESTDIR)/usr/lib/fieldworks
+	install Lib/linux/{cpol-action,run-app,extract-userws.xsl} $(DESTDIR)/usr/lib/fieldworks
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
 	install Lib/linux/ShareFwProjects $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/linux/ShareFwProjects.desktop $(DESTDIR)/usr/share/fieldworks

@@ -813,7 +813,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				using (Graphics g = form.CreateGraphics())
 				{
-					using (Font font = new Font("Arial", 12.0F))
+					using (Font font = new Font(MiscUtils.StandardSansSerif, 12.0F))
 					{
 						StringMeasureEnv env = new StringMeasureEnv(null, m_sda,
 							hvo, g, font);

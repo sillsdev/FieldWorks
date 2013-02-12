@@ -310,8 +310,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Debug.Assert(m_wordform != null);
 			Debug.Assert(sourceObject != null);
 
-			tvSource.Font = new Font("Arial", 9);
-			tvTarget.Font = new Font("Arial", 9);
+			tvSource.Font = new Font(MiscUtils.StandardSansSerif, 9);
+			tvTarget.Font = new Font(MiscUtils.StandardSansSerif, 9);
 
 			var srcTnWf = new TreeNode();
 			var tarTnWf = new TreeNode();

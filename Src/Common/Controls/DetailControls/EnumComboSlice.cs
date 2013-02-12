@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_combo = (ComboBox)this.Control;
 			m_combo.DropDownStyle = ComboBoxStyle.DropDownList;
 			//note: no exception is thrown if it can't find it.
-			m_combo.Font = new System.Drawing.Font("Arial Unicode MS", 10);
+			m_combo.Font = new System.Drawing.Font(MiscUtils.StandardSansSerif, 10);
 			SetForeColor(parameters);
 			m_combo.SelectedValueChanged += new EventHandler(this.SelectionChanged);
 			m_combo.GotFocus += new EventHandler(m_combo_GotFocus);

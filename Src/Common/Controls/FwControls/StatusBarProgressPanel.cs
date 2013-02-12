@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.Controls
 			_endPoint = 100;
 
 			_showText = true;
-			_textFont = new Font("Arial", 8);
+			_textFont = new Font(MiscUtils.StandardSansSerif, 8);
 			_textBrush = SystemBrushes.ControlText;
 
 			_progressBrush = SystemBrushes.Highlight;
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.Common.Controls
 			this.StartPoint = ((long)(0));
 			this.StepSize = ((long)(10));
 			this.Style = System.Windows.Forms.StatusBarPanelStyle.OwnerDraw;
-			this.TextFont = new System.Drawing.Font("Arial", 8F);
+			this.TextFont = new System.Drawing.Font(MiscUtils.StandardSansSerif, 8F);
 
 			const int TIMER_INTERVAL = 1000; //1000 milliseconds
 			timer1.Interval = TIMER_INTERVAL;

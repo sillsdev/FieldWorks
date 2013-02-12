@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				//					47 + (255 * 256 + 96) * 256);
 				// And this makes it 8 point.
 				tpb.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 8000);
-				tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Arial");//JH added to get sans serif
+				tpb.SetStrPropValue((int)FwTextPropType.ktptFontFamily, MiscUtils.StandardSansSerif);//JH added to get sans serif
 				tpb.SetIntPropValues((int)FwTextPropType.ktptBold,	//JH added so it's not bold on citation form
 					(int)FwTextPropVar.ktpvEnum,
 					(int)FwTextToggleVal.kttvOff);

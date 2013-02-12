@@ -1143,9 +1143,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				// TODO: This option won't set the font, so it uses Arial, which isn't right.
-				m_fontName = "Arial";
-				// Only other current option is to specify an ordinary property (or a virtual one0.
+				// We don't know which font to use, so choose a standard one for now.
+				m_fontName = MiscUtils.StandardSansSerif;
+				// Only other current option is to specify an ordinary property (or a virtual one).
 				m_flid = VirtualListPublisher.MetaDataCache.GetFieldId(
 					XmlUtils.GetManditoryAttributeValue(recordListNode, "class"),
 					XmlUtils.GetManditoryAttributeValue(recordListNode, "field"), true);

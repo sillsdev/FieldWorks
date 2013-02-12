@@ -1099,5 +1099,35 @@ namespace SIL.Utils
 			}
 			return false;
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the standard sans serif font.  This is preferable to using a fixed name because
+		/// it may depend on the system.
+		/// </summary>
+		/// <remarks>
+		/// Arial is not normally found on Linux systems, and when it is found, it isn't changed
+		/// to anything useful when localization is in effect.  Chinese text in Arial will
+		/// display as boxes on Linux, but is properly handled on Windows.  With the generic
+		/// sans-serif font, Chinese text displays okay on Linux, and a standard Linux
+		/// sans-serif font is used for displaying English (or other European languages).  See
+		/// FWNX-947 for more messy details.
+		/// </remarks>
+		/// ------------------------------------------------------------------------------------
+		public static string StandardSansSerif
+		{
+			get { return IsUnix ? "sans-serif" : "Arial"; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the standard serif font.  This is preferable to using a fixed name because
+		/// it may depend on the system.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string StandardSerif
+		{
+			get { return IsUnix ? "serif" : "Times New Roman"; }
+		}
 	}
 }

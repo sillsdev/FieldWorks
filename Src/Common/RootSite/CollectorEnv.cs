@@ -2664,7 +2664,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (ws == 0)
 			{
 				// create a font ex-nihilo
-				string fontName = "Arial";
+				string fontName = MiscUtils.StandardSansSerif;
 				int fontSize = 14;
 				font = new System.Drawing.Font(fontName, fontSize);
 				m_wsToFont.Add(0, font);

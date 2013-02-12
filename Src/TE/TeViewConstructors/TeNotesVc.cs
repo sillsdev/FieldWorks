@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.TE
 				//}
 
 				// Draw the ellipsis on the button.
-				using (Font fnt = new Font("Arial", 9, FontStyle.Bold))
+				using (Font fnt = new Font(MiscUtils.StandardSansSerif, 9, FontStyle.Bold))
 				{
 					TextRenderer.DrawText(g, "...", fnt, rc,
 						SystemColors.ControlDarkDark, TextFormatFlags.HorizontalCenter |
