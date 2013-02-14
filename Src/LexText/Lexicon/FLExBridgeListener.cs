@@ -129,6 +129,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Justification = "newApp is a reference")]
 		public bool OnFLExBridge(object commandObject)
 		{
+			StopParser();
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 			if (IsDb4oProject)
 			{
@@ -460,11 +461,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
+		/// We don't want the parser running, and perhaps making changes in the background, during any kind of S/R.
+		/// </summary>
+		private void StopParser()
+		{
+			if (_mediator != null)
+				_mediator.SendMessage("StopParser", null);
+		}
+
+		/// <summary>
 		/// Do the S/R. This *may* actually create the Lift repository, if it doesn't exist, or it may do a more normal S/R
 		/// </summary>
 		/// <returns>'true' if the S/R succeed, otherwise 'false'.</returns>
 		private bool DoSendReceiveForLift(out bool dataChanged)
 		{
+			StopParser();
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var liftProjectDir = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
 			if (!Directory.Exists(liftProjectDir))
