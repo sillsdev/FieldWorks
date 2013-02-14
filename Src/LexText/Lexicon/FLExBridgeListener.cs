@@ -501,7 +501,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
-			return Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories, FLExBridgeHelper.LIFT);
+			var flexProjName = Path.GetFileName(projectFolder);
+			return Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}
 
 		void OnDumperSetProgressMessage(object sender, ProgressMessageArgs e)
