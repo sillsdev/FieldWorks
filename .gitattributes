@@ -12,3 +12,5 @@
 *.ReSharper -whitespace
 *.vcxproj -whitespace
 *.vcxproj.filters -whitespace
+*.patch -whitespace
+changelog -whitespace

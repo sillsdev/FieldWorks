@@ -19,6 +19,8 @@ Original location: Src/views/lib/VwGraphics.cpp
 	Include files
 ***********************************************************************************************/
 
+#define GLIB_VERSION_MIN_REQUIRED GLIB_VERSION_2_26
+
 // Fieldworks includes
 #include "Main.h"
 #include "UnicodeString8.h"

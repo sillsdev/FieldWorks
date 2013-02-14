@@ -27,6 +27,7 @@ Description:
 #ifndef WIN32
 #include <sys/prctl.h>
 #include <sys/types.h>
+#include <unistd.h>
 #endif
 #pragma hdrstop
 #undef THIS_FILE

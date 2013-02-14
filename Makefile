@@ -44,13 +44,12 @@ externaltargets: \
 	COM-all \
 	COM-install \
 	Win32More \
-	ManagedComBridge-all \
+	installable-COM-all \
 
 externaltargets-test: \
 	Win32Base-check \
 	COM-check \
 	Win32More-check \
-	ManagedComBridge-check \
 
 nativetargets: \
 	externaltargets \
@@ -155,11 +154,11 @@ setup:
 
 
 clean: \
-	ManagedComBridge-clean \
 	COM-clean \
 	COM-uninstall \
 	COM-distclean \
 	COM-autodegen \
+	installable-COM-clean \
 	Cellar-clean \
 	Generic-clean \
 	views-clean \
@@ -242,7 +241,7 @@ install-tree:
 	# Install libraries and their support files
 	install -m 644 $(OUT_DIR)/*.so $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/*.{dll,dll.config,mdb} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 environ $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 environ{,-xulrunner} $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/*.so $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/*.{dll,so,dll.config} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
@@ -303,17 +302,21 @@ uninstall-menuentries:
 	rm -f $(DESTDIR)/usr/share/pixmaps/fieldworks-{te,flex}.png
 	rm -f $(DESTDIR)/usr/share/applications/fieldworks-{te,flex}.desktop
 
-install-COM:
+installable-COM-all:
 	mkdir -p $(COM_DIR)/installer$(ARCH)
-	(cd $(COM_DIR)/installer$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=/usr; true)
+	-(cd $(COM_DIR)/installer$(ARCH) && [ ! -e Makefile ] && autoreconf -isf .. && \
+		../configure --prefix=/usr/lib/fieldworks --libdir=/usr/lib/fieldworks)
+	$(MAKE) -C$(COM_DIR)/installer$(ARCH) all
+
+installable-COM-clean:
+	$(RM) -r $(COM_DIR)/installer$(ARCH)
+
+install-COM: installable-COM-all
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) install
-	install -d $(DESTDIR)/usr/lib/fieldworks
-	install $(COM_DIR)/ManagedComBridge/build$(ARCH)/libManagedComBridge.so $(DESTDIR)/usr/lib/fieldworks
 
 uninstall-COM:
 	[ -e $(COM_DIR)/installer$(ARCH)/Makefile ] && \
 	$(MAKE) -C$(COM_DIR)/installer$(ARCH) uninstall || true
-	rm -rf $(COM_DIR)/installer$(ARCH)
 
 ##########
 
@@ -352,27 +355,20 @@ DebugProcs-clean:
 DebugProcs-link:
 	$(MAKE) -C$(SRC)/DebugProcs link_check
 
-ManagedComBridge-all:
-	$(MAKE) -C$(COM_BUILD)/ManagedComBridge all
-	@mkdir -p $(OUT_DIR)
-	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
-ManagedComBridge-clean:
-	$(MAKE) -C$(COM_BUILD)/ManagedComBridge clean
-	rm -f $(OUT_DIR)/libManagedComBridge.so
-ManagedComBridge-check:
-	$(MAKE) -C$(COM_BUILD)/ManagedComBridge check
-
 COM-all:
 	-mkdir -p $(COM_BUILD)
 	(cd $(COM_BUILD) && [ ! -e Makefile ] && autoreconf -isf .. && ../configure --prefix=`abs.py .`; true)
 	REMOTE_WIN32_DEV_HOST=$(REMOTE_WIN32_DEV_HOST) $(MAKE) -C$(COM_BUILD) all
 COM-install:
 	$(MAKE) -C$(COM_BUILD) install
+	@mkdir -p $(OUT_DIR)
+	cp -pf $(COM_BUILD)/ManagedComBridge/libManagedComBridge.so $(OUT_DIR)/
 COM-check:
 	$(MAKE) -C$(COM_BUILD) check
 COM-uninstall:
 	[ -e $(COM_BUILD)/Makefile ] && \
 	$(MAKE) -C$(COM_BUILD) uninstall || true
+	rm -f $(OUT_DIR)/libManagedComBridge.so
 COM-clean:
 	[ -e $(COM_BUILD)/Makefile ] && \
 	$(MAKE) -C$(COM_BUILD) clean || true

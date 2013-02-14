@@ -58,7 +58,19 @@ FW_SHARE=$scriptdir
 		mono "${WRITEKEY}" LM "Software/SIL" "InitIcu" "1"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" "${FW_DATA}/Projects"
+
+		mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
+		mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
+
+	# anyone with a 7.0.6 beta or RC1 installation may have most of the previous, but not the following.
+	elif [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil/silencconverters40" ]; then
+		echo "# Updating encoding converters configuration"
+		cd "$FW_LIB"; RUNMODE="INSTALLED" . environ; cd "$OLDPWD"
+		WRITEKEY="${FW_LIB}/WriteKey.exe"
+		mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
+		mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
 	fi
+
 ) | zenity --progress \
 	--title="User specific setup" \
 	--percentage=0 \

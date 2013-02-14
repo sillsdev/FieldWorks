@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------------------------
+﻿/*----------------------------------------------------------------------------------------------
 Copyright (C) 2007 SIL International. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
