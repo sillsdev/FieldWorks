@@ -1,6 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <languageproject version="7000051">
 
+	<rt class="LangProject" guid="7b3a3472-7730-474e-b3d2-06779fd751e8">
+		<HomographWs>
+			<Uni>fr</Uni>
+		</HomographWs>
+	</rt>
 <rt class="LexEntry" guid="a39f2112-b82c-46ba-9f69-6b46e45efff4">
 <LexemeForm>
 <objsur guid="4cf67a75-0ed2-4e15-bff2-c950bfc961d4" t="o" />
@@ -119,6 +124,108 @@
 	<rt class="MoStemAllomorph" guid="bb3b81f1-329a-4929-bc89-3c1461463772" ownerguid="bb3be3bc-e4e6-4e72-9b1b-d81c0298b4e7">
 		<Form>
 			<AUni ws="fr">homo</AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="2B5C8394-A9BD-4873-8D7D-25C97DF72ACD">
+		<HomographNumber val="1" />
+		<LexemeForm>
+			<objsur guid="C2109D80-E9B7-4370-9ED7-6FC20C7649C9" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="C2109D80-E9B7-4370-9ED7-6FC20C7649C9" ownerguid="2B5C8394-A9BD-4873-8D7D-25C97DF72ACD">
+		<Form>
+			<AUni ws="fr"></AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="49E8B5A0-3D68-4544-BBB6-195EEC5CA367">
+		<HomographNumber val="2" />
+		<LexemeForm>
+			<objsur guid="63687DCC-A587-429C-B392-2E15F810CC32" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="63687DCC-A587-429C-B392-2E15F810CC32" ownerguid="49E8B5A0-3D68-4544-BBB6-195EEC5CA367">
+		<Form>
+			<AUni ws="fr"></AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="1ABB7D7B-86C1-4811-B5AD-6A776AD1BADF">
+		<HomographNumber val="3" />
+	</rt>
+
+	<rt class="LexEntry" guid="984DBC2D-B482-4A91-B250-DC0858DF14FD">
+		<LexemeForm>
+			<objsur guid="FB3A7135-E10E-4A19-8870-0FC05FEBD68A" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="FB3A7135-E10E-4A19-8870-0FC05FEBD68A" ownerguid="984DBC2D-B482-4A91-B250-DC0858DF14FD">
+		<Form>
+			<AUni ws="fr"></AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="972EAFEA-49D6-40D7-A848-6E658C1A2A79">
+		<HomographNumber val="0" />
+		<LexemeForm>
+			<objsur guid="0F4FB8BF-AA48-4315-A244-B3B367DD0159" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="0F4FB8BF-AA48-4315-A244-B3B367DD0159" ownerguid="972EAFEA-49D6-40D7-A848-6E658C1A2A79">
+		<Form>
+			<AUni ws="de">homo</AUni>
+			<AUni ws="fr">something</AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="9BE4E7C0-BDF2-40A5-98E3-70E42D955C49">
+		<HomographNumber val="0" />
+		<LexemeForm>
+			<objsur guid="AF2154B3-493E-47A7-B58F-285E2C39A16A" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="AF2154B3-493E-47A7-B58F-285E2C39A16A" ownerguid="9BE4E7C0-BDF2-40A5-98E3-70E42D955C49">
+		<Form>
+			<AUni ws="de">homo</AUni>
+			<AUni ws="fr">else</AUni>
+		</Form>
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="LexEntry" guid="A42984AA-EEA0-4204-AC81-9B9B115E9785">
+		<HomographNumber val="0" />
+		<LexemeForm>
+			<objsur guid="F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" ownerguid="A42984AA-EEA0-4204-AC81-9B9B115E9785">
+		<Form>
+			<AUni ws="de">irrelevant</AUni>
+			<AUni ws="fr">else</AUni>
 		</Form>
 		<MorphType>
 			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />

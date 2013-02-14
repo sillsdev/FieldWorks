@@ -502,6 +502,13 @@ namespace FixFwDataDllTests
 			// LexEntries needing homograph number set to 1 or 2
 			const string lexEntry_dinding1Guid = "a39f2112-b82c-46ba-9f69-6b46e45efff4";
 			const string lexEntry_dinding2Guid = "b35e8d52-e74d-47b4-b300-82e8c45cdfb7";
+			const string emptyEntry1Guid = "2B5C8394-A9BD-4873-8D7D-25C97DF72ACD";
+			const string emptyEntry2Guid = "49E8B5A0-3D68-4544-BBB6-195EEC5CA367";
+			const string emptyEntry3Guid = "1ABB7D7B-86C1-4811-B5AD-6A776AD1BADF";
+			const string emptyEntry4Guid = "984DBC2D-B482-4A91-B250-DC0858DF14FD";
+			const string homoSomethingGuid = "972EAFEA-49D6-40D7-A848-6E658C1A2A79"; // homo in de, something in fr
+			const string homoElseGuid = "9BE4E7C0-BDF2-40A5-98E3-70E42D955C49"; // homo in de, else in fr
+			const string irrelevantElseGuid = "A42984AA-EEA0-4204-AC81-9B9B115E9785"; // irrelevant in de, else in fr
 
 			// Verification of input.
 			var testFile = Path.Combine(testPath, "BasicFixup.fwdata");
@@ -517,6 +524,36 @@ namespace FixFwDataDllTests
 
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class='LexEntry' and @guid='" + "08fc938e-110e-44f4-8660-165d26030124" + "']", 1, false);
+
+			// Group of four entries that have empty lexeme form. We want them to end up with no homograph numbers.
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry1Guid + "']/HomographNumber[@val='1']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry2Guid + "']/HomographNumber[@val='2']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry3Guid + "']/HomographNumber[@val='3']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry4Guid + "']", 1, false);
+			// The third has no LexemeForm field at all.
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry3Guid + "']/LexemeForm", 0, false);
+			// The fourth has no homograph number field at all.
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + emptyEntry4Guid + "']/HomographNumber", 0, false);
+
+			// stems for multilingual ones:
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='" + "F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" + "']/Form/AUni[@ws='de' and text()='irrelevant']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='" + "F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" + "']/Form/AUni[@ws='fr' and text()='else']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='" + "AF2154B3-493E-47A7-B58F-285E2C39A16A" + "']/Form/AUni[@ws='de' and text()='homo']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='" + "AF2154B3-493E-47A7-B58F-285E2C39A16A" + "']/Form/AUni[@ws='fr' and text()='else']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='" + "0F4FB8BF-AA48-4315-A244-B3B367DD0159" + "']/Form/AUni[@ws='de' and text()='homo']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='" + "0F4FB8BF-AA48-4315-A244-B3B367DD0159" + "']/Form/AUni[@ws='fr' and text()='something']", 1, false);
 
 			Assert.DoesNotThrow(() =>
 			{
@@ -558,6 +595,13 @@ namespace FixFwDataDllTests
 			VerifyHn(xmlDoc, "bb4042c7-47b2-422f-ae66-a09293d16ed8", "1"); // homo that was previously 1 should still be
 			VerifyHn(xmlDoc, "bb3d3349-5cea-4920-a2bc-672d5d927875", "3"); // homo that was previously 0 should take next value
 			VerifyHn(xmlDoc, "bb3be3bc-e4e6-4e72-9b1b-d81c0298b4e7", "4"); // homo that was previously the second 2 should be changed
+			VerifyHn(xmlDoc, emptyEntry1Guid, "0"); // entry with empty LF should have no HN
+			VerifyHn(xmlDoc, emptyEntry2Guid, "0"); // entry with empty LF should have no HN
+			VerifyHn(xmlDoc, emptyEntry3Guid, "0"); // entry with no LF should have no HN
+			VerifyHn(xmlDoc, emptyEntry4Guid, null); // entry with empty LF and no previous HN element should still have none
+			VerifyHn(xmlDoc, homoSomethingGuid, "0"); // not a homograph in french, though it is in the first AUni ws
+			VerifyHn(xmlDoc, homoElseGuid, "1"); // a homograph in french
+			VerifyHn(xmlDoc, irrelevantElseGuid, "2"); // a homograph in french (though not in the first AUni ws)
 		}
 
 		private void VerifyHn(XmlDocument xmlDoc, string guid, string expectedHn)
@@ -569,6 +613,11 @@ namespace FixFwDataDllTests
 			entries = VerifyEntryExists(xmlDoc, "//rt[@class='LexEntry' and @guid='" + guid + "']");
 			entry = entries[0];
 			homographEl = entry.SelectSingleNode("HomographNumber");
+			if (expectedHn == null)
+			{
+				Assert.That(homographEl, Is.Null);
+				return;
+			}
 			Assert.IsNotNull(homographEl);
 			homographAttribute = homographEl.Attributes[0];
 			Assert.That(homographAttribute.Name, Is.EqualTo("val"));

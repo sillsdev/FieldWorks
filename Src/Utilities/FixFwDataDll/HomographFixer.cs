@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace SIL.FieldWorks.FixData
@@ -37,6 +38,7 @@ namespace SIL.FieldWorks.FixData
 			Dictionary<String, List<Guid>> m_Homographs = new Dictionary<String, List<Guid>>();
 		Dictionary<Guid, String> m_LexEntryHomographNumbers = new Dictionary<Guid, String>();
 		const string kUnknown = "<unknown>";
+		private string m_homographWs = null;
 
 		internal override void InspectElement(XElement rt)
 		{
@@ -75,6 +77,15 @@ namespace SIL.FieldWorks.FixData
 					}
 					// Enhance JohnT: possibly we should consider AlternateForms, if no LexemeForm?
 					break;
+				case "LangProject":
+					var homoWsElt = rt.Element("HomographWs");
+					if (homoWsElt == null)
+						break;
+					var uniElt = homoWsElt.Element("Uni");
+					if (uniElt == null)
+						break;
+					m_homographWs = uniElt.Value;
+					break;
 				default:
 					break;
 			}
@@ -100,7 +111,12 @@ namespace SIL.FieldWorks.FixData
 				var rtForm = rtElem.Element("Form");
 				if (rtForm == null)
 					continue;
-				var rtFormText = rtForm.Element("AUni").Value;
+				var rtFormAlt = rtForm.Elements("AUni").FirstOrDefault(form => form.Attribute("ws") != null && form.Attribute("ws").Value == m_homographWs);
+				if (rtFormAlt == null)
+					continue; // no data in relevant ws for homographs.
+				var rtFormText = rtFormAlt.Value;
+				if (rtFormText == null || rtFormText.Trim().Length == 0)
+					continue; // entries with no lexeme form are not considered homographs.
 
 				var rtMorphType = rtElem.Element("MorphType");
 				if (rtMorphType == null)
