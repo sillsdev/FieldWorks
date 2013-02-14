@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Neil Mayhew <neil_mayhew@sil.org>
+Submitted-by: MarkS <marksvc@gmail.com>
+Submitted-at: Thu, 14 Feb 2013 16:29:29 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/677
+Project: FieldWorks
+Branch: refs/heads/release/7.3-gial-Linux
