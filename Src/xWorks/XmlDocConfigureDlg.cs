@@ -1010,14 +1010,16 @@ namespace SIL.FieldWorks.XWorks
 				firstAtSet.Add(first.Attributes[i].Name, first.Attributes[i].Value);
 				secondAtSet.Add(second.Attributes[i].Name, second.Attributes[i].Value);
 			}
-			var firstIter = firstAtSet.GetEnumerator();
-			var secondIter = secondAtSet.GetEnumerator();
-			for(;firstIter.MoveNext() && secondIter.MoveNext();)
+			using (var firstIter = firstAtSet.GetEnumerator())
+			using (var secondIter = secondAtSet.GetEnumerator())
 			{
-				if(!firstIter.Current.Equals(secondIter.Current))
-					return false;
+				for(;firstIter.MoveNext() && secondIter.MoveNext();)
+				{
+					if(!firstIter.Current.Equals(secondIter.Current))
+						return false;
+				}
+				return true;
 			}
-			return true;
 		}
 
 		/// <summary>
@@ -1037,14 +1039,16 @@ namespace SIL.FieldWorks.XWorks
 				firstAtSet.Add(firstNodeList[i].Name, firstNodeList[i]);
 				secondAtSet.Add(secondNodeList[i].Name, secondNodeList[i]);
 			}
-			var firstIter = firstAtSet.GetEnumerator();
-			var secondIter = secondAtSet.GetEnumerator();
-			for (; firstIter.MoveNext() && secondIter.MoveNext(); )
+			using (var firstIter = firstAtSet.GetEnumerator())
+			using (var secondIter = secondAtSet.GetEnumerator())
 			{
-				if (!NodesMatch(firstIter.Current.Value, secondIter.Current.Value))
-					return false;
+				for (; firstIter.MoveNext() && secondIter.MoveNext(); )
+				{
+					if (!NodesMatch(firstIter.Current.Value, secondIter.Current.Value))
+						return false;
+				}
+				return true;
 			}
-			return true;
 		}
 
 		/// <summary>

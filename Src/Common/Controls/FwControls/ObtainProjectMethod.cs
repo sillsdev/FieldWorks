@@ -109,13 +109,16 @@ namespace SIL.FieldWorks.Common.Controls
 		private static void RetrieveDefaultWritingSystemsFromLift(string liftPath, out IWritingSystem wsVern,
 			out IWritingSystem wsAnalysis)
 		{
-			var liftReader = new StreamReader(liftPath, Encoding.UTF8);
-			string vernWsId, analysisWsId;
-			using (var reader = XmlReader.Create(liftReader))
-				RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWsId, out analysisWsId);
-			var wsManager = new PalasoWritingSystemManager(new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory));
-			wsManager.GetOrSet(vernWsId, out wsVern);
-			wsManager.GetOrSet(analysisWsId, out wsAnalysis);
+			using (var liftReader = new StreamReader(liftPath, Encoding.UTF8))
+			{
+				string vernWsId, analysisWsId;
+				using (var reader = XmlReader.Create(liftReader))
+					RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWsId, out analysisWsId);
+				var wsManager = new PalasoWritingSystemManager(
+					new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory));
+				wsManager.GetOrSet(vernWsId, out wsVern);
+				wsManager.GetOrSet(analysisWsId, out wsAnalysis);
+			}
 		}
 
 		/// <summary>

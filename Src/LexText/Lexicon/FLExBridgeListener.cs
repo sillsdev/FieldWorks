@@ -297,13 +297,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (IsDb4oProject)
 			{
-				var dlg = new Db4oSendReceiveDialog();
-				if (dlg.ShowDialog() == DialogResult.Abort)
+				using (var dlg = new Db4oSendReceiveDialog())
 				{
-					// User clicked on link
-					_mediator.SendMessage("FileProjectSharingLocation", null);
+					if (dlg.ShowDialog() == DialogResult.Abort)
+					{
+						// User clicked on link
+						_mediator.SendMessage("FileProjectSharingLocation", null);
+					}
+					return true;
 				}
-				return true;
 			}
 			bool dummy1;
 			string dummy2;
@@ -569,13 +571,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public static bool ImportObtainedLexicon(FdoCache cache, string liftPath, Form parentForm)
 		{
-			var importer = new FLExBridgeListener
-				{
-					Cache = cache,
-					_liftPathname = liftPath,
-					_parentForm = parentForm
-				};
-			return importer.ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepNew); // should be a new project
+			using (var importer = new FLExBridgeListener())
+			{
+				importer.Cache = cache;
+				importer._liftPathname = liftPath;
+				importer._parentForm = parentForm;
+				return importer.ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepNew); // should be a new project
+			}
 		}
 
 		private static string GetLiftPathname(string liftBaseDir)
@@ -916,6 +918,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#endregion
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="tempWindow is a reference")]
 		private bool ChangeProjectNameIfNeeded()
 		{
 			ProjectLockingService.UnlockCurrentProject(Cache);
@@ -1077,7 +1081,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary/>
-		private void Dispose(bool fDisposing)
+		protected virtual void Dispose(bool fDisposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
 			if (fDisposing && !IsDisposed)

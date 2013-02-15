@@ -552,13 +552,15 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// It's an error message.
 					sOutput = Path.GetTempFileName();
-					var writer = new StreamWriter(sOutput);
-					writer.WriteLine("<!DOCTYPE html>");
-					writer.WriteLine("<body>");
-					writer.WriteLine(message);
-					writer.WriteLine("</body>");
-					writer.WriteLine("</html>");
-					writer.Close();
+					using (var writer = new StreamWriter(sOutput))
+					{
+						writer.WriteLine("<!DOCTYPE html>");
+						writer.WriteLine("<body>");
+						writer.WriteLine(message);
+						writer.WriteLine("</body>");
+						writer.WriteLine("</html>");
+						writer.Close();
+					}
 				}
 				else
 				{

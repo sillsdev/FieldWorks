@@ -100,19 +100,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns>true if there are chorus notes for this object; false otherwise</returns>
 		public static bool ShowSliceForVisibleIfData(XmlNode node, ICmObject obj)
 		{
-			var chorusSystem = new ChorusSystem(obj.Cache.ProjectId.ProjectFolder);
-			chorusSystem.InitWithoutHg(SendReceiveUser);
-			// This is a required object for CreateNotesBar. It specifies delegates for getting the information
-			// the bar requires about the current object. For this model the FunctionToGetCurrentUrlForNewNotes will not be used.
-			var notesToRecordMapping = new NotesToRecordMapping()
+			using (var chorusSystem = new ChorusSystem(obj.Cache.ProjectId.ProjectFolder))
 			{
-				FunctionToGetCurrentUrlForNewNotes = DummyGetCurrentUrlForNewNotes,
-				FunctionToGoFromObjectToItsId = GetIdForObject
-			};
-			var dataFilePath = GetDataFilePath(obj.Cache);
-			var notesmodel = chorusSystem.WinForms.CreateNotesBarModel(dataFilePath, notesToRecordMapping, new NullProgress());
-			notesmodel.SetTargetObject(obj);
-			return notesmodel.GetAnnotationsToShow().Any();
+				chorusSystem.InitWithoutHg(SendReceiveUser);
+				// This is a required object for CreateNotesBar. It specifies delegates for getting the information
+				// the bar requires about the current object. For this model the FunctionToGetCurrentUrlForNewNotes will not be used.
+				var notesToRecordMapping = new NotesToRecordMapping()
+				{
+					FunctionToGetCurrentUrlForNewNotes = DummyGetCurrentUrlForNewNotes,
+					FunctionToGoFromObjectToItsId = GetIdForObject
+				};
+				var dataFilePath = GetDataFilePath(obj.Cache);
+				var notesmodel = chorusSystem.WinForms.CreateNotesBarModel(dataFilePath, notesToRecordMapping, new NullProgress());
+				notesmodel.SetTargetObject(obj);
+				return notesmodel.GetAnnotationsToShow().Any();
+			}
 		}
 	}
 }

@@ -7942,13 +7942,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						string exceptionStr;
 						if (entry.ShortName == "???")
 						{
-							exceptionStr = String.Format("components can't have circular references. \n See entry in lift file with LIFTId:     {0}\n",
-							entry.LIFTid);
+							exceptionStr = String.Format("components can't have circular references. {1} See entry in lift file with LIFTId:     {0}{1}",
+								entry.LIFTid, System.Environment.NewLine);
 						}
 						else
 						{
-							exceptionStr = String.Format("components can't have circular references. \n See entry in lift file with LIFTId:     {0}\nand Form:     {1}",
-							entry.LIFTid, entry.ShortName);
+							exceptionStr = String.Format("components can't have circular references. {2} See entry in lift file with LIFTId:     {0}{2}and Form:     {1}",
+								entry.LIFTid, entry.ShortName, System.Environment.NewLine);
 						}
 						throw new ArgumentException(exceptionStr);
 					}

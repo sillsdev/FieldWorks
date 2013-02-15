@@ -303,9 +303,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			Form formActive = ActiveForm;
 			FwXWindow wndActive = formActive as FwXWindow;
-			var importWizard = new LexImportWizard();
-			((IFwExtension)importWizard).Init(Cache, wndActive.Mediator);
-			importWizard.ShowDialog(formActive);
+			using (var importWizard = new LexImportWizard())
+			{
+				((IFwExtension)importWizard).Init(Cache, wndActive.Mediator);
+				importWizard.ShowDialog(formActive);
+			}
 			return true;
 		}
 

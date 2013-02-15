@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -257,6 +257,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="REVIEW: It is unclear if disposing the ChannelFactory affects channelClient.")]
 		private static void BeginEmergencyExitChute()
 		{
 			var clientPipeBinding = new NetNamedPipeBinding {ReceiveTimeout = TimeSpan.MaxValue};

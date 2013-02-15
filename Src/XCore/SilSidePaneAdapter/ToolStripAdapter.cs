@@ -97,7 +97,6 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		protected RegistryKey m_appsRegKeyPath;
 		protected Dictionary<ToolStripItem, ToolStripSeparator> m_separators = new Dictionary<ToolStripItem, ToolStripSeparator>();
 		protected Dictionary<ToolStrip, Point> m_barLocations = new Dictionary<ToolStrip, Point>();
-		// TODO: need to dispose m_tmItems, m_bars, m_toolBarMenuMap, m_contextMenus and possibly others
 		protected Dictionary<string, ToolStripItem> m_tmItems = new Dictionary<string, ToolStripItem>();
 		protected Dictionary<string, ToolStrip> m_bars = new Dictionary<string, ToolStrip>();
 
@@ -170,6 +169,16 @@ namespace SIL.FieldWorks.Common.UIAdapters
 			GC.SuppressFinalize(this);
 		}
 
+		private void DisposeCollection(IEnumerable enumerable)
+		{
+			foreach (var obj in enumerable)
+			{
+				var disposable = obj as IDisposable;
+				if (disposable != null)
+					disposable.Dispose();
+			}
+		}
+
 		/// <summary/>
 		protected virtual void Dispose(bool fDisposing)
 		{
@@ -181,7 +190,32 @@ namespace SIL.FieldWorks.Common.UIAdapters
 				if (disposable != null)
 					disposable.Dispose();
 
+				// REVIEW: what else do we have to dispose?
+				if (m_tmItems != null)
+				{
+					DisposeCollection(m_tmItems);
+					m_tmItems.Clear();
+				}
+				if (m_bars != null)
+				{
+					DisposeCollection(m_bars);
+					m_bars.Clear();
+				}
+				if (m_toolBarMenuMap != null)
+				{
+					DisposeCollection(m_toolBarMenuMap);
+					m_toolBarMenuMap.Clear();
+				}
+				if (m_contextMenus != null)
+				{
+					DisposeCollection(m_contextMenus);
+					m_contextMenus.Clear();
+				}
 			}
+			m_tmItems = null;
+			m_bars = null;
+			m_toolBarMenuMap = null;
+			m_contextMenus = null;
 			IsDisposed = true;
 		}
 		#endregion
@@ -1142,16 +1176,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 			}
 
 			ToolStripItem refItem;
-			if (!m_tmItems.TryGetValue(refItemName, out refItem))
-			{
-				return;
-#if !__MonoCS__ // TODO-Linux FWNX-314: this can currently happen because of incomplete UIAdapters-SilSidePane.dll - remove this !Mono block when FWNX-236 is completed
-				//throw new ArgumentException("Referenced item '" + refItemName +
-				//	"' not found trying to insert item '" + item.Name + "'.", "refItemName");
-#endif
-			}
-
-			ToolStripItemExtender.InsertItemBefore(refItem, item);
+			if (m_tmItems.TryGetValue(refItemName, out refItem))
+				ToolStripItemExtender.InsertItemBefore(refItem, item);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1780,9 +1806,6 @@ namespace SIL.FieldWorks.Common.UIAdapters
 				m_windowListItem.Text = "&1 " + text;
 				m_windowListItem.Checked = (wndListInfo.CheckedItemIndex == 0);
 			}
-
-			// Get the index of the first item in the window list.
-			int wndListIndex = wndListParent.DropDownItems.IndexOf(m_windowListItem);
 
 			// Add the rest of the window list items, up to kMaxWindowListItems - 1 more.
 			for (int i = 1; i < wndList.Count && i < kMaxWindowListItems; i++)

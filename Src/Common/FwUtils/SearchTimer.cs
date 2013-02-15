@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -9,7 +10,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// of user input and then doing some search function after either a pause or a
 	/// change in the text box.
 	/// </summary>
-	public class SearchTimer
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="m_owningControl is a reference.")]
+	public class SearchTimer: IDisposable
 	{
 		private readonly Timer m_timer;
 		private bool m_fTimerTickSet;
@@ -18,6 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private List<Control> m_controlsToDisable;
 
 		private readonly Searcher m_searcher;
+
 		/// <summary>
 		/// Signature for a method to be run when the Timer elapses or the TextChanged event occurs.
 		/// </summary>
@@ -54,6 +58,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_interval = interval;
 			m_searcher = searcher;
 		}
+
+		#region Disposable stuff
+#if DEBUG
+		/// <summary/>
+		~SearchTimer()
+		{
+			Dispose(false);
+		}
+#endif
+
+		/// <summary/>
+		public bool IsDisposed { get; private set; }
+
+		/// <summary/>
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		/// <summary/>
+		protected virtual void Dispose(bool fDisposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+			if (fDisposing && !IsDisposed)
+			{
+				// dispose managed and unmanaged objects
+				m_timer.Dispose();
+			}
+			IsDisposed = true;
+		}
+		#endregion
 
 		/// <summary>
 		/// When the timer interval elapses, this method runs the search function.
