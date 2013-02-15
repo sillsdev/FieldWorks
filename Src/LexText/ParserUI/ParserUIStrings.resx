@@ -149,31 +149,31 @@
   </data>
   <data name="ksMaxAnalysesToReturn" xml:space="preserve">
     <value>MaxAnalysesToReturn</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...</comment>
+    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
   </data>
   <data name="ksMaxInfixes" xml:space="preserve">
     <value>MaxInfixes</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...</comment>
+    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
   </data>
   <data name="ksMaxInterfixes" xml:space="preserve">
     <value>MaxInterfixes</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...</comment>
+    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
   </data>
   <data name="ksMaxNulls" xml:space="preserve">
     <value>MaxNulls</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...</comment>
+    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
   </data>
   <data name="ksMaxPrefixes" xml:space="preserve">
     <value>MaxPrefixes</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...</comment>
+    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
   </data>
   <data name="ksMaxRoots" xml:space="preserve">
     <value>MaxRoots</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...</comment>
+    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
   </data>
   <data name="ksMaxSuffixes" xml:space="preserve">
     <value>MaxSuffixes</value>
-    <comment>column header, must be unique; Max is short for Maximum number of ...</comment>
+    <comment>column header, must be unique; Max is short for Maximum number of ...  (Do Not Localize)</comment>
   </data>
   <data name="ksNoFiles" xml:space="preserve">
     <value>No files</value>
@@ -222,6 +222,7 @@
   </data>
   <data name="ksMaxDelReapps" xml:space="preserve">
     <value>DelReapps</value>
+    <comment>(Do Not Localize)</comment>
   </data>
   <data name="ksUndoEditingParserParameters" xml:space="preserve">
     <value>Undo Editing Parser Parameters</value>
@@ -244,7 +245,7 @@
   </data>
   <data name="ksRulesDoNotApplyOnClitics" xml:space="preserve">
     <value>NotOnClitics</value>
-    <comment>If true, the set of phonological rules will not be applied to clitics; if false, the rules will be applied to clitics.  (This value defaults to true, so we have to use this negative sense to get the default to be 'rules do not apply to clitics' because that was how Hermit Crab worked before we made this parameter available.)</comment>
+    <comment>If true, the set of phonological rules will not be applied to clitics; if false, the rules will be applied to clitics.  (This value defaults to true, so we have to use this negative sense to get the default to be 'rules do not apply to clitics' because that was how Hermit Crab worked before we made this parameter available.)  (Do Not Localize)</comment>
   </data>
   <data name="ksSlotNameSeparator" xml:space="preserve">
     <value>, </value>
@@ -256,6 +257,6 @@
   </data>
   <data name="ksDoNotUseDefaultCompoundRules" xml:space="preserve">
     <value>NoDefaultCompounding</value>
-    <comment>If true, no default compounding rules will be used.</comment>
+    <comment>If true, no default compounding rules will be used.  (Do Not Localize)</comment>
   </data>
 </root>
