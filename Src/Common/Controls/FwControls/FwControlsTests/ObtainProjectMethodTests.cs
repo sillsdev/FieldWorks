@@ -46,12 +46,15 @@ namespace SIL.FieldWorks.Common.Controls
 		</sense>
 	</entry>
 </lift>";
-			XmlReader reader = XmlReader.Create(new StringReader(input));
-			string vernWs, analysisWs;
-			ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
-			reader.Close();
-			Assert.That(vernWs, Is.EqualTo("mfo"));
-			Assert.That(analysisWs, Is.EqualTo("sp"));
+			using (var stringReader = new StringReader(input))
+			using (XmlReader reader = XmlReader.Create(stringReader))
+			{
+				string vernWs, analysisWs;
+				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
+				reader.Close();
+				Assert.That(vernWs, Is.EqualTo("mfo"));
+				Assert.That(analysisWs, Is.EqualTo("sp"));
+			}
 		}
 
 		/// <summary>
@@ -90,12 +93,15 @@ namespace SIL.FieldWorks.Common.Controls
 		</sense>
 	</entry>
 </lift>";
-			XmlReader reader = XmlReader.Create(new StringReader(input));
-			string vernWs, analysisWs;
-			ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
-			reader.Close();
-			Assert.That(vernWs, Is.EqualTo("xyz"));
-			Assert.That(analysisWs, Is.EqualTo("qed"));
+			using (var stringReader = new StringReader(input))
+			using (XmlReader reader = XmlReader.Create(stringReader))
+			{
+				string vernWs, analysisWs;
+				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
+				reader.Close();
+				Assert.That(vernWs, Is.EqualTo("xyz"));
+				Assert.That(analysisWs, Is.EqualTo("qed"));
+			}
 		}
 
 		/// <summary>
@@ -109,12 +115,15 @@ namespace SIL.FieldWorks.Common.Controls
 	version='0.13'
 	producer='SIL.FLEx 7.2.5.41073'>
 </lift>";
-			XmlReader reader = XmlReader.Create(new StringReader(input));
-			string vernWs, analysisWs;
-			ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
-			reader.Close();
-			Assert.That(vernWs, Is.EqualTo("fr"));
-			Assert.That(analysisWs, Is.EqualTo("en"));
+			using (var stringReader = new StringReader(input))
+			using (XmlReader reader = XmlReader.Create(stringReader))
+			{
+				string vernWs, analysisWs;
+				ObtainProjectMethod.RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWs, out analysisWs);
+				reader.Close();
+				Assert.That(vernWs, Is.EqualTo("fr"));
+				Assert.That(analysisWs, Is.EqualTo("en"));
+			}
 		}
 	}
 }

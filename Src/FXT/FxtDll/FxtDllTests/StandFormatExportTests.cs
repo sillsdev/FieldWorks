@@ -97,21 +97,22 @@ namespace SIL.FieldWorks.Common.FXT
 
 		public void CheckFilesEqual(string sAnswerPath, string outputPath)
 		{
-			StreamReader test;
-			test = new StreamReader(outputPath);
-			StreamReader control = new StreamReader(sAnswerPath);
-			string testResult = test.ReadToEnd();
-			string expected = control.ReadToEnd();
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
+			using (StreamReader test = new StreamReader(outputPath))
+			using (StreamReader control = new StreamReader(sAnswerPath))
 			{
-				// The xslt processor on linux inserts a BOM at the beginning, and writes \r\n for newlines.
-				int iBegin = testResult.IndexOf("\\lx ");
-				if (iBegin > 0 && iBegin < 6)
-					testResult = testResult.Substring(iBegin);
-				testResult = testResult.Replace("\r\n", "\n");
+				string testResult = test.ReadToEnd();
+				string expected = control.ReadToEnd();
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+				{
+					// The xslt processor on linux inserts a BOM at the beginning, and writes \r\n for newlines.
+					int iBegin = testResult.IndexOf("\\lx ");
+					if (iBegin > 0 && iBegin < 6)
+						testResult = testResult.Substring(iBegin);
+					testResult = testResult.Replace("\r\n", "\n");
+				}
+				Assert.AreEqual(expected, testResult,
+					"FXT Output Differs. If you have done a model change, you can update the 'correct answer' xml files by runing fw\\bin\\FxtAnswersUpdate.bat.");
 			}
-			Assert.AreEqual(expected, testResult,
-				"FXT Output Differs. If you have done a model change, you can update the 'correct answer' xml files by runing fw\\bin\\FxtAnswersUpdate.bat.");
 		}
 
 	}

@@ -81,7 +81,9 @@ namespace SIL.FieldWorks.IText
 			const bool omitXmlDeclaration = true;
 			string xslt = File.ReadAllText(fileXsl);
 			var xform = new XslCompiledTransform(false);
-			xform.Load(XmlReader.Create(new StringReader(xslt)));
+			using (var stringReader = new StringReader(xslt))
+				using (var xmlReader = XmlReader.Create(stringReader))
+					xform.Load(xmlReader);
 
 			using (var stream = createStream())
 			{
@@ -89,11 +91,12 @@ namespace SIL.FieldWorks.IText
 				writerSettings.OmitXmlDeclaration = omitXmlDeclaration;
 				if (writerSettings.OmitXmlDeclaration)
 					writerSettings.ConformanceLevel = ConformanceLevel.Auto;
-				var xmlWriter = XmlWriter.Create(stream, writerSettings);
-
-				xform.Transform(usxDocument.CreateNavigator(), new XsltArgumentList(), xmlWriter);
-				xmlWriter.Flush();
-				extractStream(stream);
+				using (var xmlWriter = XmlWriter.Create(stream, writerSettings))
+				{
+					xform.Transform(usxDocument.CreateNavigator(), new XsltArgumentList(), xmlWriter);
+					xmlWriter.Flush();
+					extractStream(stream);
+				}
 			}
 		}
 

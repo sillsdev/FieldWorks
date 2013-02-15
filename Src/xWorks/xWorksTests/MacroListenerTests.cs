@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -19,6 +20,8 @@ namespace SIL.FieldWorks.XWorks
 	/// to support mocking.
 	/// </summary>
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_Mediator gets disposed in TestTearDown method")]
 	public class MacroListenerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private Mediator m_Mediator;
@@ -78,13 +81,13 @@ namespace SIL.FieldWorks.XWorks
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			m_actionHandler.EndUndoTask(); // running macro wants to make a new one.
 			var sel = GetValidMockSelection(entry);
-			var command = GetF4CommandObject();
+			using (var command = GetF4CommandObject())
+			{
+				ml.DoMacro(command, sel);
 
-			ml.DoMacro(command, sel);
-
-			Assert.That(entry.Restrictions.AnalysisDefaultWritingSystem.Text, Is.EqualTo("test succeeded"));
-			Assert.That(m_actionHandler.GetUndoText(), Is.EqualTo("Undo F4test"));
-			command.Dispose();
+				Assert.That(entry.Restrictions.AnalysisDefaultWritingSystem.Text, Is.EqualTo("test succeeded"));
+				Assert.That(m_actionHandler.GetUndoText(), Is.EqualTo("Undo F4test"));
+			}
 		}
 
 		private MacroListener MakeMacroListenerWithCache()
@@ -170,10 +173,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var props = new UIItemDisplayProperties(null, "SomeMacro", true, null, false);
 			var ml = new MacroListener();
-			var command = GetF4CommandObject();
-			ml.DoDisplayMacro(command, props, null);
-			Assert.That(props.Visible, Is.False); // no implementation of F4, hide it altogether.
-			command.Dispose();
+			using (var command = GetF4CommandObject())
+			{
+				ml.DoDisplayMacro(command, props, null);
+				Assert.That(props.Visible, Is.False); // no implementation of F4, hide it altogether.
+			}
 		}
 
 		[Test]
@@ -182,12 +186,13 @@ namespace SIL.FieldWorks.XWorks
 			var props = new UIItemDisplayProperties(null, "SomeMacro", true, null, false);
 			var ml = new MacroListener();
 			SetupF4Implementation(ml);
-			var command = GetF4CommandObject();
-			ml.DoDisplayMacro(command, props, null);
-			Assert.That(props.Visible, Is.True);
-			Assert.That(props.Enabled, Is.False); // can't do it without a selection
-			Assert.That(props.Text, Is.EqualTo("F4test"));
-			command.Dispose();
+			using (var command = GetF4CommandObject())
+			{
+				ml.DoDisplayMacro(command, props, null);
+				Assert.That(props.Visible, Is.True);
+				Assert.That(props.Enabled, Is.False); // can't do it without a selection
+				Assert.That(props.Text, Is.EqualTo("F4test"));
+			}
 		}
 
 		[Test]
@@ -198,20 +203,20 @@ namespace SIL.FieldWorks.XWorks
 			var macro = SetupF4Implementation(ml);
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var sel = GetValidMockSelection(entry);
-			var command = GetF4CommandObject();
+			using (var command = GetF4CommandObject())
+			{
+				ml.DoDisplayMacro(command, props, sel);
+				Assert.That(props.Visible, Is.True);
+				Assert.That(props.Enabled, Is.True);
+				Assert.That(props.Text, Is.EqualTo("F4test"));
 
-			ml.DoDisplayMacro(command, props, sel);
-			Assert.That(props.Visible, Is.True);
-			Assert.That(props.Enabled, Is.True);
-			Assert.That(props.Text, Is.EqualTo("F4test"));
-
-			props = new UIItemDisplayProperties(null, "SomeMacro", true, null, false);
-			macro.BeEnabled = false;
-			ml.DoDisplayMacro(command, props, sel);
-			Assert.That(props.Visible, Is.True);
-			Assert.That(props.Enabled, Is.False); // can't do it if the macro says no good.
-			Assert.That(props.Text, Is.EqualTo("F4test"));
-			command.Dispose();
+				props = new UIItemDisplayProperties(null, "SomeMacro", true, null, false);
+				macro.BeEnabled = false;
+				ml.DoDisplayMacro(command, props, sel);
+				Assert.That(props.Visible, Is.True);
+				Assert.That(props.Enabled, Is.False); // can't do it if the macro says no good.
+				Assert.That(props.Text, Is.EqualTo("F4test"));
+			}
 		}
 	}
 
