@@ -608,6 +608,11 @@ namespace XCore
 		/// it needs to be handled by fixing the bug.
 		///
 		/// If subclasses override this method, they should call the base implementation.
+		///
+		/// IMPORTANT NOTE!
+		/// If CommandSets and Commands are not disposed of by the Mediator they will cause crashes
+		/// when the Mediator Dispose is called during the execution of the Command. This Dispose method is
+		/// needed for those edge cases. e.g. OnFLExBridge when it calls RefreshCacheWindowAndAll
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
