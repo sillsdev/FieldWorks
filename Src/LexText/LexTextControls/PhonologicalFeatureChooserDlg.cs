@@ -864,6 +864,7 @@ namespace SIL.FieldWorks.LexText.Controls
 								// or collection.
 								var hvoFs = m_cache.DomainDataByFlid.MakeNewObject(FsFeatStrucTags.kClassId, m_hvoOwner, m_owningFlid, -2);
 								m_fs = m_cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(hvoFs);
+								UpdateFeatureStructure();
 							}
 						}
 						else
