@@ -8,7 +8,7 @@
 
 <!-- Remove unwanted element levels. -->
 
-<xsl:template match="Paragraph|ReversalIndexEntry_Hvo|LexSenseLink_OwningEntry">
+<xsl:template match="Paragraph|ReversalIndexEntry_Hvo|LexSenseLink_OwningEntry|ReversalIndexEntry_Self">
   <xsl:apply-templates/>
 </xsl:template>
 
@@ -23,7 +23,7 @@
 
 <xsl:template match="ReversalIndexEntry_ReversalForm">
   <xsl:copy>
-	<xsl:text>&#13;&#10;  LT-12599  </xsl:text>
+	<xsl:text>&#13;&#10;        </xsl:text>
 	<AUni>
 	  <xsl:attribute name="ws"><xsl:value-of select="AStr/@ws"/></xsl:attribute>
 	  <xsl:value-of select="AStr/Run"/>
