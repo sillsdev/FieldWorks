@@ -535,6 +535,10 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (disposing)
 			{
+				// In Mono, DisposeSoundControls() causes a layout, which then crashes
+				// nicely when called from here.  See FWNX-967.  Since we'll be
+				// disposed, there's no point in resuming layout later...
+				SuspendLayout();
 				// Dispose managed resources here.
 				DisposeSoundControls();
 			}
