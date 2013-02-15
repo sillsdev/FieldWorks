@@ -1238,7 +1238,7 @@ namespace SILUBS.PhraseTranslationHelper
 						phrase.InsertedPhraseBefore = dlg.NewQuestion;
 					else
 						phrase.AddedPhraseAfter = dlg.NewQuestion;
-					string sRef = phrase.Reference;
+					//string sRef = phrase.Reference;
 
 					Reload(true, dlg.NewQuestion, dataGridUns.CurrentRow.Index);
 				}

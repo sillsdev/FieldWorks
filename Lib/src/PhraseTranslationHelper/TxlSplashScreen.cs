@@ -29,7 +29,9 @@ namespace SILUBS.PhraseTranslationHelper
 		private delegate void SetStringPropDelegate(string value);
 		private delegate string GetStringPropDelegate();
 
+#if !__MonoCS__
 		private Thread m_thread;
+#endif
 		private RealSplashScreen m_splashScreen;
 		internal EventWaitHandle m_waitHandle;
 		Screen m_displayToUse;
@@ -81,8 +83,10 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		public void Show(Screen display)
 		{
+#if !__MonoCS__
 			if (m_thread != null)
 				return;
+#endif
 
 			m_displayToUse = display;
 			m_waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);

@@ -275,7 +275,10 @@ namespace SIL.CoreImpl
 		/// </summary>
 		public event WritingSystemDeleted WritingSystemDeleted;
 
+#pragma warning disable 67	// WritingSystemConflated is never used, but part of interface IWritingSystemRepository
+		/// <summary/>
 		public event WritingSystemConflatedEventHandler WritingSystemConflated;
+#pragma warning restore 67
 
 		/// <summary>
 		/// Returns a list of all writing system definitions in the store. (Obsolete)

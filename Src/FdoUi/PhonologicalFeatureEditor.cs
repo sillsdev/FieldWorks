@@ -639,7 +639,6 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public class BulkEditBarPhonologicalFeatures : BulkEditBar
 	{
-		public event EventHandler<TargetFeatureEventArgs> EnableTargetFeatureCombo;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create one

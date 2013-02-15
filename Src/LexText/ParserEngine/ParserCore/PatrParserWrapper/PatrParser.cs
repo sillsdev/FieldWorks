@@ -30,7 +30,6 @@ namespace PatrParserWrapper
 		private List<bool> m_pbAnaLexFile;
 		private uint m_uiLexFileCount;
 		private string m_pszLogFile;
-		private string m_pszError;
 		private Encoding m_encoding;
 		// default to true (in orignal c++ code this variable was potentially uninialized)
 		private bool m_bWriteAmpleParses = true;
@@ -101,8 +100,6 @@ namespace PatrParserWrapper
 
 			m_uiLexFileCount = 0;
 			m_pszLogFile = null;
-
-			m_pszError = null;
 
 			m_encoding = Encoding.Default;
 		}
@@ -524,7 +521,6 @@ namespace PatrParserWrapper
 				throw new ArgumentNullException();
 
 			string psz;
-			uint linenum = 1;
 			uint cSentences = 0;
 			int cAmbiguity;
 			int i;

@@ -308,7 +308,6 @@ namespace SIL.ObjectBrowser
 
 			for (irow = 0; irow < m_list.Count; irow++)
 			{
-				IInspectorObject io = m_list[irow];
 				int index = expandedObjects.IndexOf(irow);
 				if (index >= 0)
 				{

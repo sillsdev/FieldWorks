@@ -31,7 +31,7 @@ namespace FwRemoteDatabaseConnectorService
 				while (m_clientListenerSocket != null)
 				{
 					var data = new byte[1024];
-					int recv = m_clientListenerSocket.ReceiveFrom(data, ref ep);
+					m_clientListenerSocket.ReceiveFrom(data, ref ep);
 					Reply((IPEndPoint)ep);
 				}
 			}

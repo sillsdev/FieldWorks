@@ -1190,7 +1190,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase tp2 = new TranslatablePhrase("Wuzzee!");
 			TranslatablePhrase tp3 = new TranslatablePhrase("As a man thinks in his heart, how is he?");
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+			new PhraseTranslationHelper(new[] {
 				tp1,
 				tp2,
 				tp3},
@@ -1223,7 +1223,7 @@ namespace SILUBS.PhraseTranslationHelper
 			TranslatablePhrase tp4 = new TranslatablePhrase("Wunkers wuzzee!");
 			TranslatablePhrase tp5 = new TranslatablePhrase("A dude named punkers?");
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+			new PhraseTranslationHelper(new[] {
 				tp1,
 				tp2,
 				tp3,

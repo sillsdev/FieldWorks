@@ -20,7 +20,6 @@ namespace SIL.ObjectBrowser
 		/// <summary></summary>
 		public event ColorPickedHandler ColorPicked;
 
-		private List<ToolStripButton> m_buttons;
 		private Dictionary<Color, ToolStripButton> m_colorButtons;
 		private Color m_clrSelected;
 
@@ -33,7 +32,6 @@ namespace SIL.ObjectBrowser
 		{
 			InitializeComponent();
 
-			m_buttons = new List<ToolStripButton>();
 			tsColors.Height = Height + 2;
 
 			List<Color> colors = new List<Color>();
