@@ -16,9 +16,9 @@ FW_SHARE=$scriptdir
 (
 	if [ ! -d "${FW_CONFIG}/" ]; then
 		echo "# Finishing user specific setup"
-		mkdir -p "${FW_CONFIG}/Icu40/"
-		cp -R "${FW_SHARE}/Icu40/icudt40l" "${FW_CONFIG}/Icu40/"
-		cp -R "${FW_SHARE}/Icu40/data" "${FW_CONFIG}/Icu40/"
+		mkdir -p "${FW_CONFIG}/Icu50/"
+		cp -R "${FW_SHARE}/Icu40/icudt50l" "${FW_CONFIG}/Icu50/"
+		cp -R "${FW_SHARE}/Icu50/data" "${FW_CONFIG}/Icu50/"
 		cp -R "${FW_SHARE}/SIL" "${FW_CONFIG}/"
 		mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
 		mkdir -p "${FW_DATA}/Projects"
@@ -47,9 +47,9 @@ FW_SHARE=$scriptdir
 
 		WRITEKEY="${FW_LIB}/WriteKey.exe"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootDataDir" "${FW_CONFIG}/"
-		mono "${WRITEKEY}" LM "Software/SIL" "Icu40DataDir" "${FW_CONFIG}/Icu40/icudt40l"
+		mono "${WRITEKEY}" LM "Software/SIL" "Icu50DataDir" "${FW_CONFIG}/Icu50/icudt50l"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootCodeDir" "${FW_SHARE}"
-		mono "${WRITEKEY}" LM "Software/SIL" "Icu40Dir" "${FW_CONFIG}/Icu40"
+		mono "${WRITEKEY}" LM "Software/SIL" "Icu50Dir" "${FW_CONFIG}/Icu50"
 
 		# REVIEW these were taken from nant setup registry may not be correct for an install.
 		mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
