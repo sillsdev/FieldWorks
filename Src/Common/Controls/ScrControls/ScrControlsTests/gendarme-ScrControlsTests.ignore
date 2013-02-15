@@ -4,4 +4,4 @@
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # Unit test. Objects disposed in tear down method
-T: SIL.FieldWorks.Common.Controls.FwControls.ScrPassageControlTest
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.Common.Controls.FwControls.ScrPassageControlTest

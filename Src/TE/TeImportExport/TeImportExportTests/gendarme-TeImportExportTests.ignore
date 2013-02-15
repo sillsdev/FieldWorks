@@ -16,4 +16,4 @@ T: SIL.FieldWorks.TE.ImportComponentsTests.ImportWizardTests
 T: SIL.FieldWorks.TE.ImportComponentsTests.ScrImportSetMessageTest
 
 # reference only
-T: SIL.FieldWorks.TE.ImportTests.MockScrObjWrapper
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.TE.ImportTests.MockScrObjWrapper

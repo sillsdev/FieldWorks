@@ -13,13 +13,13 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Collections;
-using System.Diagnostics;
 using XCore;
-using System.Collections.Generic;
 using SIL.SilSidePane;
 
 namespace SIL.FieldWorks.Common.UIAdapters
@@ -60,6 +60,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 	/// Sidebar/Information Bar Adapter originally was an ISIBInterface adapter to DotNetBar.
 	/// Now it adapts to SilSidePane.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="Fields are references")]
 	public class SIBAdapter : ISIBInterface, IxCoreColleague, IDisposable
 	{
 		private Mediator m_mediator;
@@ -476,6 +478,10 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// <param name="insertBeforeItem">Name of the menu item before which the sidebar
 		/// menus will be added.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="objects get added to collection and disposed there")]
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="We're replacing newline characters with spaces")]
 		public void SetupViewMenuForSideBarTabs(ITMAdapter adapter, string insertBeforeItem)
 		{
 			TMAdapter silAdapter = adapter as TMAdapter;

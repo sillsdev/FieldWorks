@@ -23,7 +23,7 @@ M: System.Boolean SIL.FieldWorks.XWorks.MorphologyEditor.RespellerDlg::SetDlgInf
 
 # Reference only
 M: System.Boolean SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateControl::OnRightMouseUp(System.Drawing.Point,System.Drawing.Rectangle,System.Drawing.Rectangle)
-M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.PhEnvStrRepresentationSlice/StringRepSliceView::set_SliceIsCurrent(System.Boolean)
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.PhEnvStrRepresentationSlice/StringRepSliceView::set_SliceIsCurrent(System.Boolean)
 
 # reference/disposed in finally block
 M: System.Void SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicLauncher::HandleChooser()

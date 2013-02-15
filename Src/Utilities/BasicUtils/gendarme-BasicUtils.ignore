@@ -4,7 +4,6 @@
 R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
 
 # reference only, we don't create the object
-T: SIL.Utils.WaitCursor
 T: SIL.Utils.RegistryGroup
 
 # Dispose is called, but there's no implicit Dispose() method
@@ -22,10 +21,6 @@ M: System.Void SIL.Utils.Logger::InitializeTextWriter()
 
 # Reference
 M: System.Boolean SIL.Utils.ScriptMaker::PreFilterMessage(System.Windows.Forms.Message&)
-M: System.Int32 SIL.Utils.Win32::MessageBox(System.IntPtr,System.String,System.String,System.UInt32)
-M: System.IntPtr SIL.Utils.Win32::GetParent(System.IntPtr)
-M: System.Boolean SIL.Utils.Win32::SetForegroundWindow(System.IntPtr)
-M: System.Boolean SIL.Utils.Win32::GetWindowRect(System.IntPtr,SIL.Utils.Rect&)
 M: System.Collections.IEnumerator SIL.Utils.LinuxPackageUtils/<FindInstalledPackages>d__5::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRange>d__4::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeAbove>d__c::System.Collections.IEnumerable.GetEnumerator()
@@ -43,6 +38,9 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # reference only, m_writer is passed in
 T: SIL.Utils.TextWriterStream
+
+# By design. m_lock is disposed in DisposeSingletons()
+T: SIL.Utils.SingletonsContainer/SingletonsContainerImpl
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.BadPractice.OnlyUseDisposeForIDisposableTypesRule

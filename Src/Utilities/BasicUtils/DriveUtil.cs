@@ -36,6 +36,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management;
 
@@ -97,6 +98,8 @@ namespace SIL.Utils
 		/// 'x', 'x:' or 'x:\' (where 'x' is the drive letter)</param>
 		/// <returns>A value indicating the type of the drive specified.</returns>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "Offending code compiles only on Windows")]
 		static public DriveTypes GetLogicalDriveType(string drive)
 		{
 			try

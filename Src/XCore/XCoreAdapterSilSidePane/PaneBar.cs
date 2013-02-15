@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Data;
@@ -133,6 +134,8 @@ namespace XCore
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="button added to collection")]
 		protected  void  AddHotlink(XCore.ChoiceBase choice)
 		{
 			PanelButton button = new PanelButton(choice, m_smallImages);
@@ -143,7 +146,9 @@ namespace XCore
 			WatchPropertyOfButton(button);
 		}
 
-		protected  void  AddMenu(ChoiceGroup choice)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="button and spacer added to collection")]
+		protected void AddMenu(ChoiceGroup choice)
 		{
 			bool fAlignmentLeft = GetOptionalMenuAlignment(choice);
 
@@ -151,22 +156,22 @@ namespace XCore
 			button.AccessibilityObject.Name = choice.Id;
 			button.Dock = fAlignmentLeft ? DockStyle.Left : DockStyle.Right;
 
-			var s = new Spacer();
-			s.AccessibilityObject.Name = choice.Id;
-			s.Dock = DockStyle.Left;
-			s.Width = 10;
+			var spacer = new Spacer();
+			spacer.AccessibilityObject.Name = choice.Id;
+			spacer.Dock = DockStyle.Left;
+			spacer.Width = 10;
 
 			if (fAlignmentLeft)
 			{
-				m_panelMain.Controls.Add(s);
+				m_panelMain.Controls.Add(spacer);
 				m_panelMain.Controls.Add(button);
 			}
 			else
 			{
-				s.Dock = DockStyle.Right;
-				s.Width = 10;
+				spacer.Dock = DockStyle.Right;
+				spacer.Width = 10;
 				m_panelMain.Controls.Add(button);
-				m_panelMain.Controls.Add(s);
+				m_panelMain.Controls.Add(spacer);
 			}
 		}
 

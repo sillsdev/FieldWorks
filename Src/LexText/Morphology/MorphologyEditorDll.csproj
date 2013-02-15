@@ -452,4 +452,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-MorphologyEditorDll.ignore" />
+  </ItemGroup>
 </Project>

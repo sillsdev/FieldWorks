@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,6 +18,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// <summary>
 	/// Summary description for LexEntryTypeConverter.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_dlg and m_cache are references")]
 	public abstract class LexEntryTypeConverters : IUtility
 	{
 		protected UtilityDlg m_dlg;
@@ -116,6 +119,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 										 mediator.HelpTopicProvider);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="m_dlg.FindForm() returns a reference")]
 		protected void ShowDialogAndConvert(int targetClassId)
 		{
 			// maybe there's a better way, but

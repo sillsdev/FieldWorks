@@ -4,4 +4,4 @@
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # object is added to collection and disposed there
-M: System.Void SIL.FieldWorks.Common.Widgets.FwMultilingualPropViewTests/DummyFwMultilingualPropViewDataSource::AddColumn(System.String,System.Int32)
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Common.Widgets.FwMultilingualPropViewTests/DummyFwMultilingualPropViewDataSource::AddColumn(System.String,System.Int32)

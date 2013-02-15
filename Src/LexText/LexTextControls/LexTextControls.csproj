@@ -676,4 +676,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-LexTextControls.ignore" />
+  </ItemGroup>
 </Project>

@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
@@ -63,6 +64,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="m_cache is a reference and disposed in the parent class")]
 		class WordGrammarTrace
 		{
 			private readonly IEnumerable<PcPatrMorph> m_morphs;

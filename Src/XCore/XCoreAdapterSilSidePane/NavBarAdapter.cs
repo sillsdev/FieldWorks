@@ -13,13 +13,12 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Xml;
-using System.Drawing;
-using System.Windows.Forms;  //for ImageList
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;  //for ImageList
+using System.Xml;
 
 using SIL.Utils; // for ImageCollection
 using SIL.SilSidePane;
@@ -374,6 +373,8 @@ namespace XCore
 		/// make a control to show, for example, the list of tools, or the list of filters.
 		/// </summary>
 		/// <param name="group"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="We're still using the ListView")]
 		protected void MakeListControl(ChoiceGroup group)
 		{
 			ListView list= new ListView();
@@ -385,6 +386,7 @@ namespace XCore
 			list.SmallImageList = m_smallImages.ImageList;
 			list.LargeImageList = m_largeImages.ImageList;
 			list.HideSelection = false;
+			// REVIEW: how does the list get disposed?
 			group.ReferenceWidget = list;
 			//			foreach(ChoiceRelatedClass choice in group)
 			//			{

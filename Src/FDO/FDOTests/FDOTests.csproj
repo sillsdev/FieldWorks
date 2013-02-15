@@ -398,6 +398,7 @@
     <None Include="BuildInclude.targets">
       <SubType>Designer</SubType>
     </None>
+    <None Include="gendarme-FDOTests.ignore" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

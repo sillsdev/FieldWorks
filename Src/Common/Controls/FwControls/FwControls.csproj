@@ -1,548 +1,523 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.30729</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{2322C388-DD81-466A-B079-956B5524B9A9}</ProjectGuid>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ApplicationIcon>
-	</ApplicationIcon>
-	<AssemblyKeyContainerName>
-	</AssemblyKeyContainerName>
-	<AssemblyName>FwControls</AssemblyName>
-	<AssemblyOriginatorKeyFile>
-	</AssemblyOriginatorKeyFile>
-	<DefaultClientScript>JScript</DefaultClientScript>
-	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-	<DefaultTargetSchema>IE50</DefaultTargetSchema>
-	<DelaySign>false</DelaySign>
-	<OutputType>Library</OutputType>
-	<RootNamespace>SIL.FieldWorks.Common.Controls</RootNamespace>
-	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-	<StartupObject>
-	</StartupObject>
-	<FileUpgradeFlags>
-	</FileUpgradeFlags>
-	<UpgradeBackupLocation>
-	</UpgradeBackupLocation>
-	<OldToolsVersion>3.5</OldToolsVersion>
-	<SccAuxPath>
-	</SccAuxPath>
-	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-	<PublishUrl>publish\</PublishUrl>
-	<Install>true</Install>
-	<InstallFrom>Disk</InstallFrom>
-	<UpdateEnabled>false</UpdateEnabled>
-	<UpdateMode>Foreground</UpdateMode>
-	<UpdateInterval>7</UpdateInterval>
-	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-	<UpdatePeriodically>false</UpdatePeriodically>
-	<UpdateRequired>false</UpdateRequired>
-	<MapFileExtensions>true</MapFileExtensions>
-	<ApplicationRevision>0</ApplicationRevision>
-	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<UseApplicationTrust>false</UseApplicationTrust>
-	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkProfile />
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2322C388-DD81-466A-B079-956B5524B9A9}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>FwControls</AssemblyName>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SIL.FieldWorks.Common.Controls</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <SccAuxPath>
+    </SccAuxPath>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
-	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-	<BaseAddress>285212672</BaseAddress>
-	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>..\..\..\..\Output\Debug\FwControls.xml</DocumentationFile>
-	<DebugSymbols>true</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<NoStdLib>false</NoStdLib>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<Optimize>false</Optimize>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<PlatformTarget>x86</PlatformTarget>
+    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\..\..\..\Output\Debug\FwControls.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
-	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-	<BaseAddress>285212672</BaseAddress>
-	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>TRACE</DefineConstants>
-	<DocumentationFile>
-	</DocumentationFile>
-	<DebugSymbols>true</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<NoStdLib>false</NoStdLib>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<Optimize>true</Optimize>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-	<PlatformTarget>x86</PlatformTarget>
+    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="Accessibility">
-	  <Name>Accessibility</Name>
-	</Reference>
-	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfaces">
-	  <Name>COMInterfaces</Name>
-	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="Controls.Design">
-	  <Name>Controls.Design</Name>
-	  <HintPath>..\..\..\..\Output\Debug\Controls.Design.dll</HintPath>
-	</Reference>
-	<Reference Include="CoreImpl, Version=6.1.0.26994, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-	</Reference>
-	<Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\Ethnologue.dll</HintPath>
-	</Reference>
-	<Reference Include="FDO, Version=7.0.1.26814, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="FwResources, Version=5.3.0.27327, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
-	</Reference>
-	<Reference Include="FwUtils, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
-	<Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\DistFiles\Palaso.dll</HintPath>
-	</Reference>
-	<Reference Include="ParatextShared, Version=7.2.8.0, Culture=neutral, processorArchitecture=x86">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\DistFiles\ParatextShared.dll</HintPath>
-	</Reference>
-	<Reference Include="ScrUtilsInterfaces, Version=5.3.0.15528, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="SharedScrUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="System">
-	  <Name>System</Name>
-	</Reference>
-	<Reference Include="System.Data">
-	  <Name>System.Data</Name>
-	</Reference>
-	<Reference Include="System.Drawing">
-	  <Name>System.Drawing</Name>
-	</Reference>
-	<Reference Include="System.Windows.Forms">
-	  <Name>System.Windows.Forms</Name>
-	</Reference>
-	<Reference Include="System.Xml">
-	  <Name>System.XML</Name>
-	</Reference>
-	<Reference Include="xCore, Version=7.2.0.17521, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="xCoreInterfaces, Version=7.2.0.40833, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="XMLUtils">
-	  <Name>XMLUtils</Name>
-	  <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-	</Reference>
+    <Reference Include="Accessibility">
+      <Name>Accessibility</Name>
+    </Reference>
+    <Reference Include="COMInterfaces">
+      <Name>COMInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Controls.Design">
+      <Name>Controls.Design</Name>
+      <HintPath>..\..\..\..\Output\Debug\Controls.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="FDO, Version=7.0.1.26814, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="xCore, Version=7.2.0.17521, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="xCoreInterfaces, Version=7.2.0.40833, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="XMLUtils">
+      <Name>XMLUtils</Name>
+      <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="BasicUtils">
+      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImpl">
+      <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="Ethnologue">
+      <HintPath>..\..\..\..\Output\Debug\Ethnologue.dll</HintPath>
+    </Reference>
+    <Reference Include="FwResources">
+      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso">
+      <HintPath>..\..\..\..\DistFiles\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="ParatextShared">
+      <HintPath>..\..\..\..\DistFiles\ParatextShared.dll</HintPath>
+    </Reference>
+    <Reference Include="ScrUtilsInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedScrUtils">
+      <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils">
+      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\..\..\CommonAssemblyInfo.cs">
-	  <Link>CommonAssemblyInfo.cs</Link>
-	</Compile>
-	<Compile Include="AssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="CharacterGrid.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="CharacterInfoToolTip.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="CollapsibleSplitter.cs">
-	</Compile>
-	<Compile Include="ColorPickerDropDown.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="ColorPickerMatrix.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="ColorPickerMatrix.Designer.cs">
-	  <DependentUpon>ColorPickerMatrix.cs</DependentUpon>
-	</Compile>
-	<Compile Include="ColorPickerStrings.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>ColorPickerStrings.resx</DependentUpon>
-	</Compile>
-	<Compile Include="CaseSensitiveListBox.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="DataUpDown.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="DockExtender\DockExtender.cs" />
-	<Compile Include="DockExtender\Floaty.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="DockExtender\IFloaty.cs" />
-	<Compile Include="DockExtender\Overlay.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="ExplorerBarItem.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FilterAllTextsDialog.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="FilterTextsDialog.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="IFilterTextsDialog.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="IInheritableFwControl.cs" />
-	<Compile Include="ObtainProjectMethod.cs" />
-	<Compile Include="TextsTriStateTreeView.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FwBasicGrid.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FwButton.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FwColorButton.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FwColorCombo.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="FwColorPicker.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="FwContainer.cs" />
-	<Compile Include="FwControls.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>FwControls.resx</DependentUpon>
-	</Compile>
-	<Compile Include="FwHelpButton.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="FwHelpButton.Designer.cs">
-	  <DependentUpon>FwHelpButton.cs</DependentUpon>
-	</Compile>
-	<Compile Include="FwOverrideComboBox.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FwDrawing.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FwListView.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FwPanel.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FwPopup.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="FwPopup.designer.cs">
-	  <DependentUpon>FwPopup.cs</DependentUpon>
-	</Compile>
-	<Compile Include="FwSplitContainer.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="FwSplitContainer.Designer.cs">
-	  <DependentUpon>FwSplitContainer.cs</DependentUpon>
-	</Compile>
-	<Compile Include="FwTextPanel.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="HeaderLabel.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="IFwMainWndSettings.cs" />
-	<Compile Include="InformationBar.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="InformationBarButton.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="InformationBarButtonCollection.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="LanguageSetup.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LineControl.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="LineControl.Designer.cs">
-	  <DependentUpon>LineControl.cs</DependentUpon>
-	</Compile>
-	<Compile Include="OptionListBox.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="Persistence.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="PredictiveProgressState.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="ProgressDialogWorkingOn.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="ProgressLine.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="ProgressLine.Designer.cs">
-	  <DependentUpon>ProgressLine.cs</DependentUpon>
-	</Compile>
-	<Compile Include="ProgressState.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="ProgressDialogImpl.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="ProgressDialogImpl.Designer.cs">
-	  <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
-	</Compile>
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	</Compile>
-	<Compile Include="ScrollListBox.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="SimpleExplorerBar.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="SizingLine.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="StatusBarProgressPanel.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="StatusBarTextBox.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="ProgressDialogWithTask.cs" />
-	<Compile Include="TriStateTreeView.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="WizardDialog.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="WizardStepPanel.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="WSChooser.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="XButton.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<EmbeddedResource Include="CharacterGrid.resx">
-	  <DependentUpon>CharacterGrid.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ColorPickerDropDown.resx">
-	  <DependentUpon>ColorPickerDropDown.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ColorPickerMatrix.resx">
-	  <DependentUpon>ColorPickerMatrix.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ColorPickerStrings.resx">
-	  <SubType>Designer</SubType>
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>ColorPickerStrings.Designer.cs</LastGenOutput>
-	</EmbeddedResource>
-	<EmbeddedResource Include="DockExtender\Floaty.resx">
-	  <DependentUpon>Floaty.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FilterAllTextsDialog.resx">
-	  <DependentUpon>FilterAllTextsDialog.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FilterTextsDialog.resx">
-	  <DependentUpon>FilterTextsDialog.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="TextsTriStateTreeView.resx">
-	  <DependentUpon>TextsTriStateTreeView.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FwButton.resx">
-	  <DependentUpon>FwButton.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FwColorButton.resx">
-	  <DependentUpon>FwColorButton.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FwColorCombo.resx">
-	  <DependentUpon>FwColorCombo.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FwColorPicker.resx">
-	  <DependentUpon>FwColorPicker.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FwControls.resx">
-	  <SubType>Designer</SubType>
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>FwControls.Designer.cs</LastGenOutput>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FwDrawing.resx">
-	  <DependentUpon>FwDrawing.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FwHelpButton.resx">
-	  <SubType>Designer</SubType>
-	  <DependentUpon>FwHelpButton.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FwListView.resx">
-	  <DependentUpon>FwListView.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="FwPopup.resx">
-	  <DependentUpon>FwPopup.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="InformationBar.resx">
-	  <DependentUpon>InformationBar.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="InformationBarButton.resx">
-	  <DependentUpon>InformationBarButton.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="LanguageSetup.resx">
-	  <DependentUpon>LanguageSetup.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="LineControl.resx">
-	  <SubType>Designer</SubType>
-	  <DependentUpon>LineControl.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="Persistence.resx">
-	  <DependentUpon>Persistence.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ProgressDialogImpl.resx">
-	  <SubType>Designer</SubType>
-	  <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ProgressDialogWorkingOn.resx">
-	  <DependentUpon>ProgressDialogWorkingOn.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ProgressLine.resx">
-	  <DependentUpon>ProgressLine.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="resources\BorderDrawing.bmp" />
-	<EmbeddedResource Include="resources\HelpButton.ICO" />
-	<EmbeddedResource Include="resources\InformationBar.ico" />
-	<EmbeddedResource Include="resources\Persistence.bmp" />
-	<EmbeddedResource Include="resources\SelectedOption.bmp" />
-	<EmbeddedResource Include="resources\UnSelectedOption.bmp" />
-	<EmbeddedResource Include="resources\WhatsThisHelpProvider.bmp" />
-	<EmbeddedResource Include="ScrollListBox.resx">
-	  <DependentUpon>ScrollListBox.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="StatusBarProgressPanel.resx">
-	  <DependentUpon>StatusBarProgressPanel.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="TriStateTreeView.resx">
-	  <DependentUpon>TriStateTreeView.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="WizardDialog.resx">
-	  <DependentUpon>WizardDialog.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="WizardStepPanel.resx">
-	  <DependentUpon>WizardStepPanel.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="WSChooser.resx">
-	  <DependentUpon>WSChooser.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<Content Include="resources\Checked.bmp" />
-	<None Include="ClassDiagram1.cd" />
-	<None Include="resources\ExplorerBar_Collapse_Glyph.png" />
-	<None Include="resources\ExplorerBar_Epand_Glyph.png" />
-	<Content Include="resources\FWButtonMenuArrow.bmp" />
-	<Content Include="resources\GreyChecked.bmp" />
-	<None Include="resources\MissingGlyph.png" />
-	<Content Include="resources\Unchecked.bmp" />
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+      <Link>CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CharacterGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CharacterInfoToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CollapsibleSplitter.cs">
+    </Compile>
+    <Compile Include="ColorPickerDropDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ColorPickerMatrix.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ColorPickerMatrix.Designer.cs">
+      <DependentUpon>ColorPickerMatrix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ColorPickerStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ColorPickerStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CaseSensitiveListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DataUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DockExtender\DockExtender.cs" />
+    <Compile Include="DockExtender\Floaty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DockExtender\IFloaty.cs" />
+    <Compile Include="DockExtender\Overlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExplorerBarItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FilterAllTextsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilterTextsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IFilterTextsDialog.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IInheritableFwControl.cs" />
+    <Compile Include="ObtainProjectMethod.cs" />
+    <Compile Include="TextsTriStateTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwBasicGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwColorButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwColorCombo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwColorPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwContainer.cs" />
+    <Compile Include="FwControls.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FwControls.resx</DependentUpon>
+    </Compile>
+    <Compile Include="FwHelpButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwHelpButton.Designer.cs">
+      <DependentUpon>FwHelpButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwOverrideComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwDrawing.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwPopup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwPopup.designer.cs">
+      <DependentUpon>FwPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwSplitContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwSplitContainer.Designer.cs">
+      <DependentUpon>FwSplitContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwTextPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HeaderLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IFwMainWndSettings.cs" />
+    <Compile Include="InformationBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InformationBarButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InformationBarButtonCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LanguageSetup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LineControl.Designer.cs">
+      <DependentUpon>LineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Persistence.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PredictiveProgressState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogWorkingOn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressLine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProgressLine.Designer.cs">
+      <DependentUpon>ProgressLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProgressState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogImpl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogImpl.Designer.cs">
+      <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ScrollListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SimpleExplorerBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SizingLine.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StatusBarProgressPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StatusBarTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogWithTask.cs" />
+    <Compile Include="TriStateTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WizardDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WizardStepPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WSChooser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="XButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <EmbeddedResource Include="CharacterGrid.resx">
+      <DependentUpon>CharacterGrid.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorPickerDropDown.resx">
+      <DependentUpon>ColorPickerDropDown.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorPickerMatrix.resx">
+      <DependentUpon>ColorPickerMatrix.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorPickerStrings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ColorPickerStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DockExtender\Floaty.resx">
+      <DependentUpon>Floaty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterAllTextsDialog.resx">
+      <DependentUpon>FilterAllTextsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterTextsDialog.resx">
+      <DependentUpon>FilterTextsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextsTriStateTreeView.resx">
+      <DependentUpon>TextsTriStateTreeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwButton.resx">
+      <DependentUpon>FwButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwColorButton.resx">
+      <DependentUpon>FwColorButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwColorCombo.resx">
+      <DependentUpon>FwColorCombo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwColorPicker.resx">
+      <DependentUpon>FwColorPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwControls.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FwControls.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwDrawing.resx">
+      <DependentUpon>FwDrawing.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwHelpButton.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FwHelpButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwListView.resx">
+      <DependentUpon>FwListView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwPopup.resx">
+      <DependentUpon>FwPopup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InformationBar.resx">
+      <DependentUpon>InformationBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InformationBarButton.resx">
+      <DependentUpon>InformationBarButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LanguageSetup.resx">
+      <DependentUpon>LanguageSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LineControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Persistence.resx">
+      <DependentUpon>Persistence.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressDialogImpl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressDialogWorkingOn.resx">
+      <DependentUpon>ProgressDialogWorkingOn.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressLine.resx">
+      <DependentUpon>ProgressLine.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\BorderDrawing.bmp" />
+    <EmbeddedResource Include="resources\HelpButton.ICO" />
+    <EmbeddedResource Include="resources\InformationBar.ico" />
+    <EmbeddedResource Include="resources\Persistence.bmp" />
+    <EmbeddedResource Include="resources\SelectedOption.bmp" />
+    <EmbeddedResource Include="resources\UnSelectedOption.bmp" />
+    <EmbeddedResource Include="resources\WhatsThisHelpProvider.bmp" />
+    <EmbeddedResource Include="ScrollListBox.resx">
+      <DependentUpon>ScrollListBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusBarProgressPanel.resx">
+      <DependentUpon>StatusBarProgressPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TriStateTreeView.resx">
+      <DependentUpon>TriStateTreeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WizardDialog.resx">
+      <DependentUpon>WizardDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WizardStepPanel.resx">
+      <DependentUpon>WizardStepPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WSChooser.resx">
+      <DependentUpon>WSChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="resources\Checked.bmp" />
+    <None Include="resources\ExplorerBar_Collapse_Glyph.png" />
+    <None Include="resources\ExplorerBar_Epand_Glyph.png" />
+    <Content Include="resources\FWButtonMenuArrow.bmp" />
+    <Content Include="resources\GreyChecked.bmp" />
+    <None Include="resources\MissingGlyph.png" />
+    <Content Include="resources\Unchecked.bmp" />
+    <None Include="gendarme-FwControls.ignore" />
   </ItemGroup>
   <ItemGroup>
-	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-	  <Visible>False</Visible>
-	  <ProductName>Windows Installer 3.1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-	<PreBuildEvent>
-	</PreBuildEvent>
-	<PostBuildEvent>
-	</PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

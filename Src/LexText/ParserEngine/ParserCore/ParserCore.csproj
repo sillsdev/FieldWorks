@@ -238,4 +238,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-ParserCore.ignore" />
+  </ItemGroup>
 </Project>

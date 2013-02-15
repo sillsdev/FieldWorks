@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
@@ -182,6 +183,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// This class maintains a cache allowing possibility item display names to be looked up rather than computed after the
 		/// first time they are used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="Cache is a reference and will be disposed in parent class")]
 		internal class SdaDecorator : DomainDataByFlidDecoratorBase
 		{
 			private FdoCache Cache { get; set; }

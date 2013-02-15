@@ -307,4 +307,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-ParserUI.ignore" />
+  </ItemGroup>
 </Project>

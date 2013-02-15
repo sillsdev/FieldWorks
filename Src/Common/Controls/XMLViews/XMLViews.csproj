@@ -425,4 +425,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-XMLViews.ignore" />
+  </ItemGroup>
 </Project>

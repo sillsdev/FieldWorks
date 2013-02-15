@@ -1,6 +1,8 @@
 ﻿// This really needs to be refactored with MasterCategoryListDlg.cs
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
@@ -16,7 +18,6 @@ using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
-using System.Diagnostics;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -763,6 +764,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhonologicalFeatureChooserDlg));
@@ -938,6 +941,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="m_cache is a reference and will be disposed in parent class")]
 		class PhonologicalFeaturePublisher : ObjectListPublisher
 		{
 			public const int ListFlid = 89999988;

@@ -23,6 +23,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Image is a reference")]
 	public class CommandInfo
 	{
 		internal string Message = null;
@@ -49,6 +51,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 	/// The main class from which DotNetBar MenuAdapter and ToolBarAdapter classes are derived.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="Fields are either references or add to parent's Control collection and disposed there")]
 	public class TMAdapter : ITMAdapter, IDisposable
 	{
 		#region Member variables
@@ -431,6 +435,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// Initialize list of available toolbars.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem is added to DropDownItems collection and disposed there")]
 		private void BuildToolbarList()
 		{
 			m_toolBarMenuMap.Clear();
@@ -756,6 +762,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// </summary>
 		/// <param name="node"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="images is a referenec")]
 		private void ReadImagesResources(XmlNode node)
 		{
 			string assemblyPath = GetAttributeValue(node, "assemblyPath");
@@ -1009,6 +1017,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// </summary>
 		/// <param name="node"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="cmnu is added to m_contextMenus and disposed there")]
 		private void ReadContextMenus(XmlNode node)
 		{
 			m_readingContextMenuDef = true;
@@ -1208,6 +1218,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="As part of creation bar gets added to collection and disposed there")]
 		private void ReadSingleToolbarDef(XmlNode node)
 		{
 			string barName = GetAttributeValue(node, "name");
@@ -1222,6 +1234,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripItem and CustomDropDown are references")]
 		private void ReadToolbarItems(XmlNode node, object parentItem)
 		{
 			while (node != null)
@@ -1721,6 +1735,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// Handles the building window list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to collection and disposed there")]
 		void HandleBuildingWindowList(object sender, CancelEventArgs e)
 		{
 			string message = GetItemsCommandMessage(m_windowListItem);
@@ -2345,6 +2361,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// <param name="insertBeforeItem">Name of the submenu item before which the new
 		/// menu item will be added.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to collection and disposed there")]
 		public void AddMenuItem(TMItemProperties itemProps, string parentItemName,
 			string insertBeforeItem)
 		{
@@ -2420,6 +2438,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 		/// ------------------------------------------------------------------------------------
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification="See TODO-Linux comment")]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to collection and disposed there; items is reference")]
 		public void AddContextMenuItem(TMItemProperties itemProps, string contextMenuName,
 			string parentMenuName, string insertBeforeItem)
 		{
@@ -2436,7 +2456,7 @@ namespace SIL.FieldWorks.Common.UIAdapters
 			if (contextMenuName != parentMenuName)
 			{
 				// Get the menu under which the new menu item will be added.
-				// TODO-Linux: Find doesn' use the searchAllChildren paramter on Mono.
+				// TODO-Linux: Find doesn't use the searchAllChildren parameter on Mono.
 				ToolStripItem[] items = cmnu.Items.Find(parentMenuName, true);
 				Debug.Assert(items.Length == 1);
 				Debug.Assert(items[0] is ToolStripDropDownItem);
@@ -2957,6 +2977,8 @@ namespace SIL.FieldWorks.Common.UIAdapters
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="m_tsItem is a reference")]
 	public class ToolStripItemExtender: IDisposable
 	{
 		private static Dictionary<ToolStripItem, ToolStripItemExtender> s_extenders =

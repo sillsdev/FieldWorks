@@ -23,6 +23,8 @@
 	/// Generated implementation of: I${className}$classSfx
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache is a reference and will be disposed in parent class.")]
 	internal partial class ${className}$classSfx : I${className}$classSfx, IFdoFactoryInternal
 	{
 		private readonly FdoCache m_cache;

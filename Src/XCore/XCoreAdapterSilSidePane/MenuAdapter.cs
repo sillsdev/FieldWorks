@@ -13,10 +13,11 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;  //for ImageList
-using System.Diagnostics;
 using Microsoft.Win32;
 using System.ComponentModel;//registrykey
 
@@ -35,6 +36,8 @@ namespace XCore
 		/// <summary>
 		/// Override, so it can create the main menu bar. There is to be only one of these.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="MenuStrip is added to collection and disposed there")]
 		protected override MenuStrip MyMenuStrip
 		{
 			get
@@ -67,9 +70,11 @@ namespace XCore
 		/// Create a menu, but not its items.
 		/// </summary>
 		/// <param name="groupCollection">Collection of menu definitions to create.</param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to collection and disposed there")]
 		public override void CreateUIForChoiceGroupCollection(ChoiceGroupCollection groupCollection)
 		{
-			MenuStrip s = MyMenuStrip;
+			MenuStrip myMenuStrip = MyMenuStrip;
 			//s.MouseEnter += s_MouseEnter;
 				//new MouseEventHandler(s_MouseEnter);
 			//s.MouseLeave +=s_MouseLeave;
@@ -86,7 +91,7 @@ namespace XCore
 				item.Tag = group;
 				group.ReferenceWidget = item;
 
-				s.Items.Add(item);
+				myMenuStrip.Items.Add(item);
 
 				// This next line deals with the chicken and egg problem of
 				// the dynamic dropdown menus.  Although we don't yet
@@ -128,6 +133,8 @@ namespace XCore
 		/// This is called by the OnDisplay() method of some ChoiceGroup
 		/// </summary>
 		/// <param name="group">The group that defines this menu item.</param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Objects get added to collection and disposed there")]
 		public override void CreateUIForChoiceGroup(ChoiceGroup group)
 		{
 			//m_control.SuspendLayout();//doesn't help
@@ -288,6 +295,8 @@ namespace XCore
 		/// <param name="location"></param>
 		/// <param name="temporaryColleagueParam"></param>
 		/// <param name="sequencer"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Context menu intentionally not disposed; ToolStripMenuItem added to collection")]
 		public void ShowContextMenu(ChoiceGroup group, Point location,
 			TemporaryColleagueParameter temporaryColleagueParam,
 			MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu)

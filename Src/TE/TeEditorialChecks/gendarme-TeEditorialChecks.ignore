@@ -8,7 +8,7 @@ M: System.Void SIL.FieldWorks.TE.TeEditorialChecks.CheckControl::InitializeCompo
 M: System.Void SIL.FieldWorks.TE.TeEditorialChecks.CheckControl::AddToolStripButton(System.Int32,System.Drawing.Image,System.String)
 M: System.Void SIL.FieldWorks.TE.TeEditorialChecks.CheckingErrorCommentDlg::InitializeComponent()
 M: System.Void SIL.FieldWorks.TE.TeEditorialChecks.ChecksViewWrapper::Initialize()
-M: System.Void SIL.FieldWorks.TE.TeEditorialChecks.EditorialChecksGrid::OnCellFormatting(System.Windows.Forms.DataGridViewCellFormattingEventArgs)
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.TE.TeEditorialChecks.EditorialChecksGrid::OnCellFormatting(System.Windows.Forms.DataGridViewCellFormattingEventArgs)
 
 # Reference only
 M: System.Void SIL.FieldWorks.TE.TeEditorialChecks.ChecksViewWrapper::OnHandleCreated(System.EventArgs)

@@ -4,5 +4,5 @@
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # added to control and disposed there
-M: System.Void SIL.FieldWorks.Common.Controls.FilterScriptureDialog::InitializeComponent()
-M: System.Void SIL.FieldWorks.Common.Controls.ScrPassageControl::DisplayDropDown()
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Common.Controls.FilterScriptureDialog::InitializeComponent()
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Common.Controls.ScrPassageControl::DisplayDropDown()

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Linq;
@@ -102,6 +103,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="pt is a reference")]
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			HvoTreeNode selectedNode = e.Node as HvoTreeNode;

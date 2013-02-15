@@ -229,6 +229,7 @@
     <Compile Include="WelcomeToFieldWorksDlg.cs">
       <SubType>Form</SubType>
     </Compile>
+    <None Include="gendarme-FieldWorks.ignore" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

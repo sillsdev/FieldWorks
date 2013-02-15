@@ -39,7 +39,7 @@ M: System.Void SIL.FieldWorks.FwCoreDlgs.FwUserProperties::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.LanguageSelectionDlg::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.MissingOldFieldWorksDlg::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.PicturePropertiesDialog::InitializeComponent()
-M: System.Void SIL.FieldWorks.FwCoreDlgs.RealSplashScreen::InitializeComponent()
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.FwCoreDlgs.RealSplashScreen::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.BackupRestore.RestoreProjectDlg::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.BackupRestore.RestoreProjectDlg::PopulateProjectList(System.String)
 M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog::btnAdd_Click(System.Object,System.EventArgs)
@@ -50,7 +50,7 @@ M: System.Windows.Forms.DialogResult SIL.FieldWorks.FwCoreDlgs.PictureProperties
 M: System.Void SIL.FieldWorks.FwCoreDlgs.ValidCharactersDlg::HandleTreatAsClick(System.Object,System.EventArgs)
 
 # Objects are disposed in Dispose() method
-M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog::m_fwTextBoxTestWs_Enter(System.Object,System.EventArgs)
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog::m_fwTextBoxTestWs_Enter(System.Object,System.EventArgs)
 
 # GetEnumerator() returns a reference
 M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ChooserTreeView/<get_SelectedPossibilities>d__0::System.Collections.IEnumerable.GetEnumerator()

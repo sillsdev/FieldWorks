@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
@@ -236,6 +237,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <summary>
 		/// Updates the options display.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "TODO-Linux: LinkLabel.TabStop is missing from Mono")]
 		public void UpdateOptionsDisplay()
 		{
 			CheckDisposed();

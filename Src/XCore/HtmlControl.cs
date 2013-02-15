@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
@@ -120,6 +121,8 @@ namespace XCore
 		/// Initializes a new instance of the <see cref="HtmlControl"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "The offending code compiles only on Windows")]
 		public HtmlControl()
 		{
 			// This call is required by the Windows.Forms Form Designer.
@@ -280,6 +283,8 @@ namespace XCore
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "The offending code compiles only on Windows")]
 		private void InitializeComponent()
 		{
 //			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(HtmlControl));

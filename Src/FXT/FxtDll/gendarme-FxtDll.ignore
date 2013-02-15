@@ -4,5 +4,5 @@
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # Reference only
-T: SIL.FieldWorks.Common.FXT.XDumper/SingleLexReference
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.Common.FXT.XDumper/SingleLexReference
 T: SIL.FieldWorks.Common.FXT.XDumper

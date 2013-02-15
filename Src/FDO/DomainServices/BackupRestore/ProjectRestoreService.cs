@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -651,6 +652,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// <param name="filezsize"></param>
 		/// <param name="restoreDirectory"></param>
 		/// <param name="fileDateTime">We want this set to the value stored in the zipfile.</param>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "See TODO-Linux comment")]
 		private void UnzipFileToRestoreFolder(ZipInputStream zipIn, string fileName,
 			long filezsize, string restoreDirectory, DateTime fileDateTime)
 		{
@@ -680,6 +683,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					GC.Collect();
 #if !__MonoCS__
 					// on mono WaitForFullGCComplete is incorrectly a .net 4 method.
+					// TODO-Linux: System.GC::WaitForFullGCComplete() is not implemented or marked with MonoTODO
 					GC.WaitForFullGCComplete();
 #endif
 				}

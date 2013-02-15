@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -119,6 +120,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		public string Count;
 	}
 
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_writer is disposed at end of method that creates it")]
 	public class Sfm2FlexTextBase<TMapping> where TMapping : Sfm2FlexTextMappingBase
 	{
 		protected Dictionary<string, TMapping> m_mappings = new Dictionary<string, TMapping>();

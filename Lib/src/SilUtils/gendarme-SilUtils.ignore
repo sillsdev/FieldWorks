@@ -17,6 +17,9 @@ R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
 # Dispose is implemented explicit, at least on Mono
 T: SIL.Utils.RegistrySetting`1
 
+# m_oldCursor and m_parent are references; we don't create the object
+T: SIL.Utils.WaitCursor
+
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.MonoCompatibilityReviewRule
 

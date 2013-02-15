@@ -6,7 +6,7 @@ R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
 # Variable is a reference, will be disposed by parent
 T: SIL.FieldWorks.Common.RootSites.ActiveViewHelper
 T: SIL.FieldWorks.Common.RootSites.EditingHelper
-T: SIL.FieldWorks.Common.RootSites.GraphicsManager
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.Common.RootSites.GraphicsManager
 T: SIL.FieldWorks.Common.RootSites.SelectionRestorer
 T: SIL.FieldWorks.Common.RootSites.HoldGraphics
 
@@ -22,7 +22,7 @@ M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::Draw(System.Windo
 M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::CloseRootBox()
 M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSite::RegisterForInputLanguageChanges()
 # Linux:
-M: System.Void SIL.FieldWorks.Common.RootSites.VwSelectionBasedControl`1::<SetFocus>m__F()
+M: System.Void SIL.FieldWorks.Common.RootSites.VwSelectionBasedControl`1::<SetFocus>m__13()
 # Windows:
 M: System.Void SIL.FieldWorks.Common.RootSites.VwSelectionBasedControl`1::<SetFocus>b__2()
 

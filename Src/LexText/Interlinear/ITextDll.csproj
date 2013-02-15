@@ -312,7 +312,6 @@
     <Compile Include="FocusBoxController.Designer.cs">
       <DependentUpon>FocusBoxController.cs</DependentUpon>
     </Compile>
-    <None Include="ClassDiagram1.cd" />
     <Compile Include="ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -575,4 +574,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-ITextDll.ignore" />
+  </ItemGroup>
 </Project>

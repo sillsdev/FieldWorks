@@ -490,4 +490,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-xWorks.ignore" />
+  </ItemGroup>
 </Project>

@@ -25,11 +25,11 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 M: System.Boolean SIL.FieldWorks.FDO.Application.ApplicationServices.XmlImportData::ImportData(System.IO.TextReader,System.IO.TextWriter,SIL.FieldWorks.Common.FwUtils.IProgress)
 
 # Disposed in finally block
-M: System.Void SIL.FieldWorks.FDO.DomainServices.DataMigration.DataMigration7000019::PerformMigration(SIL.FieldWorks.FDO.DomainServices.DataMigration.IDomainObjectDTORepository)
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.FDO.DomainServices.DataMigration.DataMigration7000019::PerformMigration(SIL.FieldWorks.FDO.DomainServices.DataMigration.IDomainObjectDTORepository)
 M: System.Void SIL.FieldWorks.FDO.DomainServices.BackupRestore.ProjectRestoreService::UnzipFileToRestoreFolder(ICSharpCode.SharpZipLib.Zip.ZipInputStream,System.String,System.Int64,System.String,System.DateTime)
 
 # Disposed by StructureMap
-M: System.Void SIL.FieldWorks.FDO.Infrastructure.Impl.FDOBackendProvider::InitializeWritingSystemManager()
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.FDO.Infrastructure.Impl.FDOBackendProvider::InitializeWritingSystemManager()
 M: Microsoft.Practices.ServiceLocation.IServiceLocator SIL.FieldWorks.FDO.IOC.FdoServiceLocatorFactory::CreateServiceLocator()
 
 # Disposed in StopServer()
@@ -38,19 +38,24 @@ M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::StartServer(System.S
 
 # Ext() returns a reference.
 # Linux:
-M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>m__203(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
+M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>m__210(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
 # Windows:
 M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>b__9(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
 
 # GetEnumerator() returns a reference
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.FdoVectorUtils/<ConvertCmObjectsToHvos>d__0`1::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.Scripture/<get_StTexts>d__a::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.Scripture/<get_StTexts>d__18::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.ScrTxtPara/OwningSequenceWrapper`2::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_EntryRefsWithThisMainEntry>d__3::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisPrimaryEntry>d__a::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ReferringLexReferences>d__11::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisPrimaryEntry>d__53::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsVisibleInThisEntry>d__5a::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsVisibleInThisSense>d__61::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ReferringLexReferences>d__68::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ReferringLexReferences>d__61::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_EntryRefsWithThisMainSense>d__0::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisPrimarySense>d__7::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisPrimarySense>d__5a::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisComponentEntry>d__4c::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisComponentSense>d__53::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ReferringLexReferences>d__e::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetAllSlots>d__0::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetSomeSlots>d__7::System.Collections.IEnumerable.GetEnumerator()
@@ -87,7 +92,7 @@ M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.Identit
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoInvertSet`1::System.Collections.IEnumerable.GetEnumerator()
 
 # The Registry will dispose the PalasoWritingSystemManager (singleton).
-M: SIL.CoreImpl.IWritingSystemManager SIL.FieldWorks.FDO.IOC.FdoServiceLocatorFactory::<CreateServiceLocator>b__a()
+##Commented by AutoUpdateIgnore## M: SIL.CoreImpl.IWritingSystemManager SIL.FieldWorks.FDO.IOC.FdoServiceLocatorFactory::<CreateServiceLocator>b__a()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule
@@ -117,171 +122,6 @@ T: SIL.FieldWorks.FDO.Application.ApplicationServices.XmlList
 T: SIL.FieldWorks.FDO.Application.ApplicationServices.XmlTranslatedLists
 T: SIL.FieldWorks.FDO.FieldDescription
 T: SIL.FieldWorks.FDO.DomainImpl.CmObject
-T: SIL.FieldWorks.FDO.DomainImpl.LexSenseFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexExampleSentenceFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexEntryFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoAffixAllomorphFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmBaseAnnotationFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmIndirectAnnotationFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ConstChartTagFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ConstChartClauseMarkerFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ConstChartMovedTextMarkerFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ConstChartWordGroupFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ConstChartRowFactory
-T: SIL.FieldWorks.FDO.DomainImpl.DsConstChartFactory
-T: SIL.FieldWorks.FDO.DomainImpl.TextTagFactory
-T: SIL.FieldWorks.FDO.DomainImpl.WfiWordformFactory
-T: SIL.FieldWorks.FDO.DomainImpl.WfiAnalysisFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoMorphTypeFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexEntryTypeFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmPossibilityFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmAnthroItemFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmSemanticDomainFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PartOfSpeechFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmAnnotationDefnFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmPossibilityListFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmAgentFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmTranslationFactory
-T: SIL.FieldWorks.FDO.DomainImpl.StStyleFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoStemMsaFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoDerivAffMsaFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoInflAffMsaFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoUnclassifiedAffixMsaFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmPictureFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrFootnoteFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrDraftFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrBookFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrTxtParaFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrRefSystemFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScriptureFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrSectionFactory
-T: SIL.FieldWorks.FDO.DomainImpl.RnGenericRecFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmFolderFactory
-T: SIL.FieldWorks.FDO.DomainImpl.NoteFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsComplexFeatureFactory
-T: SIL.FieldWorks.FDO.DomainImpl.SegmentFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmFilterFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmRowFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmCellFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmLocationFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmPersonFactory
-T: SIL.FieldWorks.FDO.DomainImpl.StTextFactory
-T: SIL.FieldWorks.FDO.DomainImpl.StTxtParaFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmOverlayFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmCustomItemFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CrossReferenceFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmAgentEvaluationFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmMediaAnnotationFactory
-T: SIL.FieldWorks.FDO.DomainImpl.StFootnoteFactory
-T: SIL.FieldWorks.FDO.DomainImpl.UserConfigAcctFactory
-T: SIL.FieldWorks.FDO.DomainImpl.UserAppFeatActFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PublicationFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PubDivisionFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PubPageLayoutFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PubHFSetFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PubHeaderFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmFileFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsFeatureSystemFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsClosedFeatureFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsClosedValueFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsComplexValueFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsDisjunctiveValueFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsFeatStrucFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsFeatStrucDisjFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsFeatStrucTypeFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsNegatedValueFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsOpenFeatureFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsOpenValueFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsSharedValueFactory
-T: SIL.FieldWorks.FDO.DomainImpl.FsSymFeatValFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmDomainQFactory
-T: SIL.FieldWorks.FDO.DomainImpl.StJournalTextFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmMediaFactory
-T: SIL.FieldWorks.FDO.DomainImpl.CmResourceFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrBookRefFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrImportSetFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrDifferenceFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrImportP6ProjectFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrImportSFFilesFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrMarkerMappingFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrBookAnnotationsFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrScriptureNoteFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ScrCheckRunFactory
-T: SIL.FieldWorks.FDO.DomainImpl.RnResearchNbkFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ReminderFactory
-T: SIL.FieldWorks.FDO.DomainImpl.RnRoledParticFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexDbFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PunctuationFormFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexPronunciationFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoAffixProcessFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoDerivStepMsaFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoEndoCompoundFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoExoCompoundFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoInflAffixSlotFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplateFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoInflClassFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoMorphDataFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoReferralRuleFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoStemAllomorphFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexAppendixFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoStemNameFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoStratumFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ReversalIndexFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ReversalIndexEntryFactory
-T: SIL.FieldWorks.FDO.DomainImpl.TextFactory
-T: SIL.FieldWorks.FDO.DomainImpl.WfiGlossFactory
-T: SIL.FieldWorks.FDO.DomainImpl.WordFormLookupFactory
-T: SIL.FieldWorks.FDO.DomainImpl.WordformLookupListFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoInsertPhonesFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoInsertNCFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoModifyFromInputFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoCompoundRuleAppFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoDerivAffAppFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoInflAffixSlotAppFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoInflTemplateAppFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoPhonolRuleAppFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoStratumAppFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhIterationContextFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhSequenceContextFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhSimpleContextBdryFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhSimpleContextNCFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhSimpleContextSegFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhVariableFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhPhonemeSetFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhBdryMarkerFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhPhonemeFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhNCFeaturesFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhNCSegmentsFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhFeatureConstraintFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhEnvironmentFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhCodeFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhPhonDataFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoDerivFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoAlloAdhocProhibFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoMorphAdhocProhibFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoCopyFromInputFactory
-T: SIL.FieldWorks.FDO.DomainImpl.WfiWordSetFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoBinaryCompoundRuleFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoCoordinateCompoundFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoGlossSystemFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoGlossItemFactory
-T: SIL.FieldWorks.FDO.DomainImpl.MoAdhocProhibGrFactory
-T: SIL.FieldWorks.FDO.DomainImpl.WfiMorphBundleFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexEtymologyFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ChkRefFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexRefTypeFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexReferenceFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ChkSenseFactory
-T: SIL.FieldWorks.FDO.DomainImpl.DsDiscourseDataFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ChkTermFactory
-T: SIL.FieldWorks.FDO.DomainImpl.ChkRenderingFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LexEntryRefFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhSegmentRuleFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhRegularRuleFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhMetathesisRuleFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhSegRuleRHSFactory
-T: SIL.FieldWorks.FDO.DomainImpl.PhPhonRuleFeatFactory
-T: SIL.FieldWorks.FDO.DomainImpl.LangProjectFactory
 T: SIL.FieldWorks.FDO.DomainServices.AnalysisGuessServices
 T: SIL.FieldWorks.FDO.DomainServices.BaseStyleInfo
 T: SIL.FieldWorks.FDO.DomainServices.BtConverter
@@ -309,5 +149,5 @@ T: SIL.FieldWorks.FDO.Infrastructure.Impl.ChangeReconciler
 T: SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectSurrogateTypeHandler
 T: SIL.FieldWorks.FDO.DomainServices.StTxtParaBldr
 T: SIL.FieldWorks.FDO.SaveEventArgs
-T: SIL.FieldWorks.FDO.DomainServices.Paratext6Proxy
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.FDO.DomainServices.Paratext6Proxy
 T: SIL.FieldWorks.FDO.DomainServices.DataMigration.ImportFrom6_0

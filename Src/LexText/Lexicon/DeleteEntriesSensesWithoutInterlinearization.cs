@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -17,6 +18,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	// This class is used in Tools...Utilities to delete all entries and senses that do not have
 	// analyzed occurrences in the interesting list of interlinear texts. It warns the user prior
 	// to actually deleting the entries and senses.
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_dlg is a reference")]
 	class DeleteEntriesSensesWithoutInterlinearization : IUtility
 	{
 		public string Label

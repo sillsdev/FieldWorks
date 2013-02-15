@@ -22,4 +22,4 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 T: SIL.FieldWorks.IText.AddWordsToLexiconTests
 T: SIL.FieldWorks.IText.FocusBoxControllerTests
 T: SIL.FieldWorks.IText.InterlinTaggingTests
-T: SIL.FieldWorks.IText.SandboxEntryComboHandlerLogicTests
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.IText.SandboxEntryComboHandlerLogicTests

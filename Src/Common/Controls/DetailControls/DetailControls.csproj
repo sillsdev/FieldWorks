@@ -476,6 +476,7 @@
     <EmbeddedResource Include="VectorReferenceView.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="gendarme-DetailControls.ignore" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -4,4 +4,4 @@
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # Disposed in FixtureTearDown method
-T: SIL.Utils.OpenFileDialogLinuxTests
+##Commented by AutoUpdateIgnore## T: SIL.Utils.OpenFileDialogLinuxTests

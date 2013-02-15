@@ -8,7 +8,7 @@ M: System.Boolean SIL.FieldWorks.Common.RootSites.SpellCheckHelper::ShowContextM
 M: System.Int32 SIL.FieldWorks.Common.RootSites.SpellCheckHelper::MakeSpellCheckMenuOptions(System.Drawing.Point,SIL.FieldWorks.Common.RootSites.SimpleRootSite,System.Windows.Forms.ContextMenuStrip)
 
 # object is disposed in finally block
-M: System.Void SIL.FieldWorks.Common.RootSites.FwBaseVc::DisplayEmbeddedObject(SIL.FieldWorks.Common.COMInterfaces.IVwEnv,System.Int32)
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Common.RootSites.FwBaseVc::DisplayEmbeddedObject(SIL.FieldWorks.Common.COMInterfaces.IVwEnv,System.Int32)
 
 # returns a reference
 M: System.Collections.IEnumerator SIL.FieldWorks.Common.RootSites.CollectorEnvServices/<CollectEditableSelectionPoints>d__0::System.Collections.IEnumerable.GetEnumerator()

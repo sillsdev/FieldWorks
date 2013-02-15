@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Drawing;
 using SIL.Utils; // for ImageCollection
@@ -48,6 +49,8 @@ namespace XCore
 			return choice.BoolPropertyName == name;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Controls added to collection")]
 		private void SetLabel()
 		{
 			XCore.ChoiceRelatedClass choice = (XCore.ChoiceRelatedClass)this.Tag;

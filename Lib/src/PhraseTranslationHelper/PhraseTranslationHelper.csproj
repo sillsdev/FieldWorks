@@ -1,289 +1,286 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>9.0.30729</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}</ProjectGuid>
-	<OutputType>Library</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>SILUBS.PhraseTranslationHelper</RootNamespace>
-	<AssemblyName>PhraseTranslationHelper</AssemblyName>
-	<FileAlignment>512</FileAlignment>
-	<FileUpgradeFlags>
-	</FileUpgradeFlags>
-	<OldToolsVersion>3.5</OldToolsVersion>
-	<UpgradeBackupLocation />
-	<PublishUrl>publish\</PublishUrl>
-	<Install>true</Install>
-	<InstallFrom>Disk</InstallFrom>
-	<UpdateEnabled>false</UpdateEnabled>
-	<UpdateMode>Foreground</UpdateMode>
-	<UpdateInterval>7</UpdateInterval>
-	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-	<UpdatePeriodically>false</UpdatePeriodically>
-	<UpdateRequired>false</UpdateRequired>
-	<MapFileExtensions>true</MapFileExtensions>
-	<ApplicationRevision>0</ApplicationRevision>
-	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<UseApplicationTrust>false</UseApplicationTrust>
-	<BootstrapperEnabled>true</BootstrapperEnabled>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SILUBS.PhraseTranslationHelper</RootNamespace>
+    <AssemblyName>PhraseTranslationHelper</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<OutputPath>..\..\..\Output\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<OutputPath>..\..\..\Output\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Drawing" />
-	<Reference Include="System.Windows.Forms" />
-	<Reference Include="System.Xml.Linq">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Data.DataSetExtensions">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Data" />
-	<Reference Include="System.Xml" />
-	<Reference Include="System.Drawing.Html">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Bin\System.Drawing.Html.dll</HintPath>
-	</Reference>
-	<Reference Include="SharedScrControls">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SharedScrControls.dll</HintPath>
-	</Reference>
-	<Reference Include="SharedScrUtils">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="SilUtils">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
-	</Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Drawing.Html">
+      <HintPath>..\..\..\Bin\System.Drawing.Html.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedScrControls">
+      <HintPath>..\..\..\Output\Debug\SharedScrControls.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedScrUtils">
+      <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils">
+      <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\..\..\Src\CommonAssemblyInfo.cs">
-	  <Link>Properties\CommonAssemblyInfo.cs</Link>
-	</Compile>
-	<Compile Include="AddRenderingDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="AddRenderingDlg.Designer.cs">
-	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="ComprehensionCheckingSettings.cs" />
-	<Compile Include="HelpAboutDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="HelpAboutDlg.Designer.cs">
-	  <DependentUpon>HelpAboutDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="RealSplashScreen.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="TxlInfo.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="TxlInfo.Designer.cs">
-	  <DependentUpon>TxlInfo.cs</DependentUpon>
-	</Compile>
-	<Compile Include="TxlSplashScreen.cs" />
-	<Compile Include="QuestionKey.cs" />
-	<Compile Include="NewQuestionDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="NewQuestionDlg.Designer.cs">
-	  <DependentUpon>NewQuestionDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="QuestionAlternativeOverrides.cs" />
-	<Compile Include="QuestionSections.cs" />
-	<Compile Include="Question.cs" />
-	<Compile Include="QuestionSfmFileAccessor.cs" />
-	<Compile Include="EditQuestionDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="EditQuestionDlg.Designer.cs">
-	  <DependentUpon>EditQuestionDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="PhraseCustomization.cs" />
-	<Compile Include="QuestionProvider.cs" />
-	<Compile Include="RulesWizardDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="RulesWizardDlg.Designer.cs">
-	  <DependentUpon>RulesWizardDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="RenderingSelectionRule.cs" />
-	<Compile Include="RenderingSelectionRulesDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="RenderingSelectionRulesDlg.Designer.cs">
-	  <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="KeyTermRenderingInfo.cs" />
-	<Compile Include="ITermRenderingInfo.cs" />
-	<Compile Include="ScrReferenceFilterDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="ScrReferenceFilterDlg.Designer.cs">
-	  <DependentUpon>ScrReferenceFilterDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="Substitution.cs" />
-	<Compile Include="PhraseSubstitutionsDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="PhraseSubstitutionsDlg.Designer.cs">
-	  <DependentUpon>PhraseSubstitutionsDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="GenerateTemplateDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="GenerateTemplateDlg.Designer.cs">
-	  <DependentUpon>GenerateTemplateDlg.cs</DependentUpon>
-	</Compile>
-	<Compile Include="KeyTermMatch.cs" />
-	<Compile Include="KeyTermMatchBuilder.cs" />
-	<Compile Include="KeyTermRules.cs" />
-	<Compile Include="PhraseParser.cs" />
-	<Compile Include="Properties\Resources.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>Resources.resx</DependentUpon>
-	</Compile>
-	<Compile Include="TermRenderingCtrl.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="TermRenderingCtrl.Designer.cs">
-	  <DependentUpon>TermRenderingCtrl.cs</DependentUpon>
-	</Compile>
-	<Compile Include="UNSQuestionsDialog.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="UNSQuestionsDialog.Designer.cs">
-	  <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>
-	</Compile>
-	<Compile Include="Word.cs" />
-	<Compile Include="IKeyTerm.cs" />
-	<Compile Include="Part.cs" />
-	<Compile Include="PhraseTranslationHelper.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="TranslatablePhrase.cs" />
-	<Compile Include="XmlTranslation.cs" />
+    <Compile Include="..\..\..\Src\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AddRenderingDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddRenderingDlg.Designer.cs">
+      <DependentUpon>AddRenderingDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComprehensionCheckingSettings.cs" />
+    <Compile Include="HelpAboutDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HelpAboutDlg.Designer.cs">
+      <DependentUpon>HelpAboutDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RealSplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TxlInfo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TxlInfo.Designer.cs">
+      <DependentUpon>TxlInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TxlSplashScreen.cs" />
+    <Compile Include="QuestionKey.cs" />
+    <Compile Include="NewQuestionDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewQuestionDlg.Designer.cs">
+      <DependentUpon>NewQuestionDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QuestionAlternativeOverrides.cs" />
+    <Compile Include="QuestionSections.cs" />
+    <Compile Include="Question.cs" />
+    <Compile Include="QuestionSfmFileAccessor.cs" />
+    <Compile Include="EditQuestionDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditQuestionDlg.Designer.cs">
+      <DependentUpon>EditQuestionDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PhraseCustomization.cs" />
+    <Compile Include="QuestionProvider.cs" />
+    <Compile Include="RulesWizardDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RulesWizardDlg.Designer.cs">
+      <DependentUpon>RulesWizardDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RenderingSelectionRule.cs" />
+    <Compile Include="RenderingSelectionRulesDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RenderingSelectionRulesDlg.Designer.cs">
+      <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KeyTermRenderingInfo.cs" />
+    <Compile Include="ITermRenderingInfo.cs" />
+    <Compile Include="ScrReferenceFilterDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScrReferenceFilterDlg.Designer.cs">
+      <DependentUpon>ScrReferenceFilterDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Substitution.cs" />
+    <Compile Include="PhraseSubstitutionsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PhraseSubstitutionsDlg.Designer.cs">
+      <DependentUpon>PhraseSubstitutionsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GenerateTemplateDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GenerateTemplateDlg.Designer.cs">
+      <DependentUpon>GenerateTemplateDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KeyTermMatch.cs" />
+    <Compile Include="KeyTermMatchBuilder.cs" />
+    <Compile Include="KeyTermRules.cs" />
+    <Compile Include="PhraseParser.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TermRenderingCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TermRenderingCtrl.Designer.cs">
+      <DependentUpon>TermRenderingCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UNSQuestionsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UNSQuestionsDialog.Designer.cs">
+      <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Word.cs" />
+    <Compile Include="IKeyTerm.cs" />
+    <Compile Include="Part.cs" />
+    <Compile Include="PhraseTranslationHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TranslatablePhrase.cs" />
+    <Compile Include="XmlTranslation.cs" />
   </ItemGroup>
   <ItemGroup>
-	<EmbeddedResource Include="AddRenderingDlg.resx">
-	  <DependentUpon>AddRenderingDlg.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="HelpAboutDlg.resx">
-	  <DependentUpon>HelpAboutDlg.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="NewQuestionDlg.resx">
-	  <DependentUpon>NewQuestionDlg.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="EditQuestionDlg.resx">
-	  <DependentUpon>EditQuestionDlg.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="RealSplashScreen.resx">
-	  <DependentUpon>RealSplashScreen.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="RulesWizardDlg.resx">
-	  <DependentUpon>RulesWizardDlg.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="RenderingSelectionRulesDlg.resx">
-	  <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ScrReferenceFilterDlg.resx">
-	  <DependentUpon>ScrReferenceFilterDlg.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="PhraseSubstitutionsDlg.resx">
-	  <DependentUpon>PhraseSubstitutionsDlg.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="GenerateTemplateDlg.resx">
-	  <DependentUpon>GenerateTemplateDlg.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="Properties\Resources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="TermRenderingCtrl.resx">
-	  <DependentUpon>TermRenderingCtrl.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="TxlInfo.resx">
-	  <DependentUpon>TxlInfo.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="UNSQuestionsDialog.resx">
-	  <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
+    <EmbeddedResource Include="AddRenderingDlg.resx">
+      <DependentUpon>AddRenderingDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HelpAboutDlg.resx">
+      <DependentUpon>HelpAboutDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewQuestionDlg.resx">
+      <DependentUpon>NewQuestionDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditQuestionDlg.resx">
+      <DependentUpon>EditQuestionDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RealSplashScreen.resx">
+      <DependentUpon>RealSplashScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RulesWizardDlg.resx">
+      <DependentUpon>RulesWizardDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RenderingSelectionRulesDlg.resx">
+      <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScrReferenceFilterDlg.resx">
+      <DependentUpon>ScrReferenceFilterDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PhraseSubstitutionsDlg.resx">
+      <DependentUpon>PhraseSubstitutionsDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GenerateTemplateDlg.resx">
+      <DependentUpon>GenerateTemplateDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TermRenderingCtrl.resx">
+      <DependentUpon>TermRenderingCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TxlInfo.resx">
+      <DependentUpon>TxlInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UNSQuestionsDialog.resx">
+      <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\check-circle.png" />
+    <None Include="gendarme-PhraseTranslationHelper.ignore" />
+    <None Include="Properties\check-circle.png" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\Filtered.bmp" />
+    <None Include="Properties\Filtered.bmp" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\Copy.bmp" />
+    <None Include="Properties\Copy.bmp" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\Paste.bmp" />
+    <None Include="Properties\Paste.bmp" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\1321385905_dialog-close.png" />
+    <None Include="Properties\1321385905_dialog-close.png" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\1321382935_plus.png" />
+    <None Include="Properties\1321382935_plus.png" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\1330980033_search_button.png" />
+    <None Include="Properties\1330980033_search_button.png" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\wait22trans.gif" />
+    <None Include="Properties\wait22trans.gif" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="Properties\Transcelerator.png" />
+    <None Include="Properties\Transcelerator.png" />
   </ItemGroup>
   <ItemGroup>
-	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5 SP1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-	  <Visible>False</Visible>
-	  <ProductName>Windows Installer 3.1</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

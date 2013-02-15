@@ -313,4 +313,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-FdoUi.ignore" />
+  </ItemGroup>
 </Project>

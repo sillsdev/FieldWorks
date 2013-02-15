@@ -20,14 +20,13 @@ M: System.Collections.Generic.List`1<System.Diagnostics.Process> SIL.FieldWorks.
 M: System.Void SIL.FieldWorks.FieldWorks::FollowLink(SIL.FieldWorks.Common.FwUtils.FwAppArgs)
 M: System.Boolean SIL.FieldWorks.FieldWorks::CreateAndInitNewMainWindow(SIL.FieldWorks.Common.Framework.FwApp,System.Boolean,System.Windows.Forms.Form,System.Boolean)
 # Linux:
-M: System.Void SIL.FieldWorks.FieldWorks/<KickOffAppFromOtherProcess>c__AnonStorey10::<>m__F()
+M: System.Void SIL.FieldWorks.FieldWorks/<KickOffAppFromOtherProcess>c__AnonStorey1D::<>m__34()
+M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<ShowEntry>c__AnonStorey0::<>m__0()
+M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<ShowRelatedWords>c__AnonStorey1::<>m__1()
 # Windows:
-M: System.Void SIL.FieldWorks.FieldWorks/<>c__DisplayClass36::<KickOffAppFromOtherProcess>b__35()
+M: System.Void SIL.FieldWorks.FieldWorks/<>c__DisplayClass38::<KickOffAppFromOtherProcess>b__37()
 M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<>c__DisplayClass1::<ShowEntry>b__0()
 M: System.Void SIL.FieldWorks.LexicalProvider.LexicalProviderImpl/<>c__DisplayClass4::<ShowRelatedWords>b__3()
 
 M: System.Void SIL.FieldWorks.FieldWorks::ExecuteWithAppsShutDown(System.String,System.Func`1<SIL.FieldWorks.ProjectId>)
 M: System.Boolean SIL.FieldWorks.FieldWorks::RenameProject(System.String,SIL.FieldWorks.Common.Framework.FwApp)
-
-# Object added to control and disposed there
-M: System.Void SIL.FieldWorks.WelcomeToFieldWorksDlg::InitializeComponent()

@@ -1,7 +1,1 @@
 # Gendarme filter file to suppress reporting of defects
-
-#-----------------------------------------------------------------------------------------------
-R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
-
-# foreBrush is disposed
-M: System.Void SIL.FieldWorks.Common.Controls.Design.ProgressLineDesigner::OnPaintAdornments(System.Windows.Forms.PaintEventArgs)

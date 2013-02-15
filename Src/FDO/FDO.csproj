@@ -640,6 +640,7 @@
     <None Include="FDOGenerate\HandGenerated.xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="gendarme-FDO.ignore" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FDOGenerate\IntPropTypeOverrides.xml" />

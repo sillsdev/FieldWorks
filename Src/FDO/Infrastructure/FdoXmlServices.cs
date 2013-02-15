@@ -12,6 +12,7 @@
 // Responsibility: Randy Regnier
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -122,6 +123,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <summary>
 		/// Common settings for XML BEP reader.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "TODO-Linux: XmlReaderSettings.DtdProcessing is missing from Mono")]
 		private static XmlReaderSettings ReaderSettings
 		{
 			get

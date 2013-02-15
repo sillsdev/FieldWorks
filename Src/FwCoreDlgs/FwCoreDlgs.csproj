@@ -620,6 +620,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="gendarme-FwCoreDlgs.ignore" />
     <None Include="Resources\FwCopyRight.png" />
   </ItemGroup>
   <ItemGroup>

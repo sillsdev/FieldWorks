@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -84,6 +85,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// </summary>
 		/// <returns>The root node</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "TODO-Linux: XmlReaderSettings.DtdProcessing is missing from Mono")]
 		protected override XmlNode LoadDoc()
 		{
 			string sXmlFilePath = DirectoryFinder.FWCodeDirectory + ResourceFilePathFromFwInstall;

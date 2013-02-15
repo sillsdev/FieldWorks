@@ -17,17 +17,17 @@ T: SIL.FieldWorks.FDO.FDOTests.InterlinearTestBase/TextBuilder
 # Unit test. Object will be disposed in teardown method
 T: SIL.FieldWorks.FDO.FDOTests.CollectSegmentsTests
 T: SIL.FieldWorks.FDO.FDOTests.FdoTestBase
-T: SIL.FieldWorks.FDO.FDOTests.FieldDescriptionTests
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.FDO.FDOTests.FieldDescriptionTests
 T: SIL.FieldWorks.FDO.FDOTests.XmlImportDataTests
 T: SIL.FieldWorks.FDO.FDOTests.XmlListTests
 T: SIL.FieldWorks.FDO.FDOTests.XmlTranslatedListsTests
-T: SIL.FieldWorks.FDO.FDOTests.ClientServerServicesTests
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.FDO.FDOTests.ClientServerServicesTests
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # Will be disposed by PalasoWritingSystemManager
-M: System.Void SIL.FieldWorks.FDO.FDOTests.DataMigrationTests.DataMigrationTests7000019::DataMigration7000019Test()
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.FDO.FDOTests.DataMigrationTests.DataMigrationTests7000019::DataMigration7000019Test()
 
 # Unit tests testing dispose functionality. Object usually disposed in test
 M: System.Void SIL.FieldWorks.FDO.CoreTests.FdoCacheTests.FdoCacheDisposedTests::CacheCheckDisposedTest()

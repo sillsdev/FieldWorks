@@ -105,6 +105,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpProvider = new HelpProvider();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "Code in question is only compiled on Windows")]
 		public void SetDlgInfo(Mediator mediator, IWfiWordform wordform, ParserListener parserListener)
 		{
 			m_mediator = mediator;

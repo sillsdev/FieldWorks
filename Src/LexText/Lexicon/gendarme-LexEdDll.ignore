@@ -41,6 +41,6 @@ M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.LexEd.ReversalEntryGoDlg
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # Reference only
-T: SIL.FieldWorks.XWorks.LexEd.AddComponentChooserCommand
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.XWorks.LexEd.AddComponentChooserCommand
 T: SIL.FieldWorks.XWorks.LexEd.HomographResetter
-T: SIL.FieldWorks.XWorks.LexEd.LiftBridgeListener
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.XWorks.LexEd.LiftBridgeListener

@@ -14,6 +14,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;  //for ImageList
 using System.Collections.Generic;
@@ -192,6 +193,8 @@ namespace XCore
 		/// Helper method Creates all the ToolStrips based upon m_choiceGroupCollection
 		/// And adds them to m_toolStripManager
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStrip added to collection")]
 		protected void InitializeToolStrips()
 		{
 			if (m_window == null)
@@ -375,6 +378,8 @@ namespace XCore
 		/// <summary>
 		/// returns true if it made any changes.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Controls added to collection")]
 		private void FillToolbar(ChoiceGroup choiceGroup, ToolStrip toolStrip)
 		{
 			bool wantsSeparatorBefore = false;

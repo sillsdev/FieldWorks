@@ -181,4 +181,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <None Include="gendarme-BasicUtils.ignore" />
+  </ItemGroup>
 </Project>

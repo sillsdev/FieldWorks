@@ -19,7 +19,7 @@ M: System.Void SIL.FieldWorks.Discourse.ConstituentChartLogic::MakeMoveItems(SIL
 M: System.Void SIL.FieldWorks.Discourse.ConstituentChartLogic::MakePreposedOrPostPosedMenuItem(System.Windows.Forms.ContextMenuStrip,SIL.FieldWorks.Discourse.ChartLocation,System.Int32,System.Int32,System.String,System.Boolean)
 
 # variable ch added to Columns and disposed there
-M: System.Void SIL.FieldWorks.Discourse.ConstituentChartLogic::MakeMainHeaderCols(System.Windows.Forms.ListView)
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Discourse.ConstituentChartLogic::MakeMainHeaderCols(System.Windows.Forms.ListView)
 
 # TODO: I'm not sure if/how this gets properly disposed
 #M: System.Void SIL.FieldWorks.Discourse.ConstituentChart::btnContextMenu_Click(System.Object,System.EventArgs)

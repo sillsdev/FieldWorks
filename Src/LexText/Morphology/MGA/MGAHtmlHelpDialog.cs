@@ -46,6 +46,8 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		/// <summary>
 		/// Constructor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "Offending code is compiled only on Windows")]
 		public MGAHtmlHelpDialog(FdoCache cache, Mediator mediator, string sMorphemeForm) : base(cache, mediator, sMorphemeForm)
 		{
 #if __MonoCS__

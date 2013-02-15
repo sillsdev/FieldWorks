@@ -15,7 +15,7 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 # added to control and disposed there
 M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::ContructorSurrogate(System.Xml.XmlNode,System.Int32,System.Int32,SIL.FieldWorks.FDO.FdoCache,XCore.Mediator,SIL.FieldWorks.Common.Controls.ISortItemProvider,SIL.FieldWorks.FDO.Application.ISilDataAccessManaged)
 M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::HandleConfigIconClick(SIL.FieldWorks.Common.Controls.ConfigIconClickEventArgs)
-M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::RebuildHeaderColumns(System.Collections.Generic.List`1<System.Xml.XmlNode>)
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::RebuildHeaderColumns(System.Collections.Generic.List`1<System.Xml.XmlNode>)
 M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::InsertColumn(System.Xml.XmlNode,System.Int32)
 M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::MakeItems()
 M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeCombo(SIL.FieldWorks.Common.Controls.FilterSortItem)

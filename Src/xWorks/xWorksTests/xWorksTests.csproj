@@ -303,4 +303,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-xWorksTests.ignore" />
+  </ItemGroup>
 </Project>

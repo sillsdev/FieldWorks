@@ -4,7 +4,7 @@
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # Variable added to Controls collection and disposed there
-M: System.Void SIL.Utils.ErrorReporter::InitializeComponent()
+##Commented by AutoUpdateIgnore## M: System.Void SIL.Utils.ErrorReporter::InitializeComponent()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule

@@ -28,13 +28,13 @@ M: ControlExtenders.IFloaty ControlExtenders.DockExtender::Attach(System.Windows
 
 # we are calling Dispose(), gendarme doesn't recognize it
 M: System.Void SIL.FieldWorks.Common.Controls.ExplorerBarItem::DrawButtonBackground(System.Drawing.Graphics)
-M: System.Void SIL.FieldWorks.Common.Controls.ProgressDialogWithTask::InitOnOwnerThread()
+##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Common.Controls.ProgressDialogWithTask::InitOnOwnerThread()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.BadPractice.OnlyUseDisposeForIDisposableTypesRule
 
 # extension method that implements Dispose
-T: SIL.FieldWorks.Common.Controls.FilterScrSectionDialogExtensions
+##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.Common.Controls.FilterScrSectionDialogExtensions
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

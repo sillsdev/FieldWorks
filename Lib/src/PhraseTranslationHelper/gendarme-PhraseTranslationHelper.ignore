@@ -3,12 +3,11 @@
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
-# caller responsible to call Dispose on enumerator
-# Windows
-M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.Part/<GetSubWords>d__0::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.PhraseParser/<Parse>d__0::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.QuestionProvider/<GetPhrases>d__6::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.QuestionProvider/<GetPhraseCustomizations>d__1d::System.Collections.IEnumerable.GetEnumerator()
+# Reference
 M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.QuestionSfmFileAccessor/<SourceLines>d__4::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.QuestionSfmFileAccessor/<SourceFields>d__a::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.QuestionProvider/<GetPhrases>d__6::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.QuestionProvider/<GetPhraseCustomizations>d__1d::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.PhraseParser/<Parse>d__0::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.UNSQuestionsDialog/<get_AvailableBookIds>d__5::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SILUBS.PhraseTranslationHelper.Part/<GetSubWords>d__0::System.Collections.IEnumerable.GetEnumerator()

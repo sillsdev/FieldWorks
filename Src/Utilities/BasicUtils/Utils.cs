@@ -614,6 +614,8 @@ namespace SIL.Utils
 			/// </summary>
 			/// <param name="stateInfo">The state info.</param>
 			/// --------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+				Justification = "Offending code compiles only on Windows")]
 			public void GetPhysicalMemoryBytes(object stateInfo)
 			{
 				m_Memory = 0;

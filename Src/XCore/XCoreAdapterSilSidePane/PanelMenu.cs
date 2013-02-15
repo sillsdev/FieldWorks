@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using System.Drawing;
 using SIL.Utils; // for ImageCollection
@@ -53,6 +54,8 @@ namespace XCore
 			return choice.BoolPropertyName == name;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Image is a reference")]
 		private void Display()
 		{
 			UIItemDisplayProperties display = m_group.GetDisplayProperties();

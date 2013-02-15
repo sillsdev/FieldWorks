@@ -254,6 +254,9 @@
     <Compile Include="IIBusCommunicator.cs" />
     <Compile Include="IBusCommunicator.cs" />
     <Compile Include="ViewInputManager.cs" />
+    <Compile Include="VwSelectionBasedControl.cs" />
+    <Compile Include="BaseFragmentProvider.cs" />
+    <Compile Include="SimpleRootSiteTextRangeProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\HORIZONTAL_IBEAM.CUR" />
@@ -283,4 +286,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="gendarme-SimpleRootSite.ignore" />
+  </ItemGroup>
 </Project>

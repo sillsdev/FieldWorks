@@ -16,6 +16,7 @@
 // If we need the other methods we should copy the interface definitions from
 // stdole to COMInterfaces/ComWrapper.cs since stdole isn't available on Linux.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.Utils.ComTypes;
@@ -31,6 +32,8 @@ namespace SIL.Utils
 		: AxHost
 #endif
 	{
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "Offending code compiles only on Windows")]
 		private OLECvt()
 #if !__MonoCS__
 			: base("")
@@ -55,6 +58,8 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="image"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "Offending code compiles only on Windows")]
 		public static IPictureDisp ToOLE_IPictureDisp(Image image)
 		{
 #if !__MonoCS__

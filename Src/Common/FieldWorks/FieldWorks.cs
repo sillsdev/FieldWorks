@@ -131,6 +131,8 @@ namespace SIL.FieldWorks
 		/// </summary>
 		/// <param name="rgArgs">The command line arguments.</param>
 		/// ----------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "See TODO-Linux")]
 		[STAThread]
 		static int Main(string[] rgArgs)
 		{

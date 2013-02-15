@@ -1,6 +1,7 @@
 //#define TraceMouseCalls		// uncomment this line to trace mouse messages
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -4264,6 +4265,8 @@ namespace SIL.FieldWorks.IText
 			return tagRightClickTextProp;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="CmObjectUi.HandleCtrlClick disposes itself when its done")]
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			base.OnMouseUp(e);

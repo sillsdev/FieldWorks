@@ -18,6 +18,7 @@ using SIL.Utils;
 using XCore;
 using System.Reflection;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -1067,6 +1068,8 @@ namespace SIL.FieldWorks.Common.Controls
 			Controls.Add(combo);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="dict is a reference; FilterComboItem disposed as part of Items collection")]
 		private void AddSpellingErrorsIfAppropriate(FilterSortItem item, FwComboBox combo, int ws)
 		{
 			// LT-9047 For certain fields, filtering on Spelling Errors just doesn't make sense.

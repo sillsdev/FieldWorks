@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using SIL.FieldWorks.Common.Keyboarding.Interfaces;
 using SIL.Utils;
@@ -17,11 +18,13 @@ namespace SIL.FieldWorks.Common.Keyboarding
 	/// <summary>
 	/// Implements a fake do-nothing keyboard controller.
 	/// </summary>
-	public class FakeKeyboardController: IKeyboardController, IKeyboardEventHandler, IKeyboardMethods
+	public sealed class FakeKeyboardController: IKeyboardController, IKeyboardEventHandler, IKeyboardMethods
 	{
 		/// <summary>
 		/// Installs this fake keyboard controller instead of the real one
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FakeKeboardController is a Singleton")]
 		public static void Install()
 		{
 			SingletonsContainer.Add(typeof(IKeyboardController).FullName, new FakeKeyboardController());

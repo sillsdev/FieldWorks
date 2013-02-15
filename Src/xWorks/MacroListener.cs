@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,6 +21,8 @@ namespace SIL.FieldWorks.XWorks
 	/// To create a macro, make an Assembly with a name starting with "Macro" that implements IFlexMacro, build it,
 	/// and drop the DLL in the FieldWorks root directory.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_mediator is a reference")]
 	public class MacroListener : IxCoreColleague
 	{
 		private Mediator m_mediator;
