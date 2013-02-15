@@ -19,6 +19,7 @@
   <UsingTask TaskName="Md5Checksum" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="VerifyFilesIdentical" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="WriteRegistry" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="Gendarme" AssemblyFile="Gendarme.MsBuild/Gendarme.MsBuild.dll"/>
 
   <Import Project="GlobalInclude.properties"/>
   <Import Project="SetupInclude.targets"/>

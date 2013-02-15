@@ -7,3 +7,6 @@
 [submodule "Lib/src/icu"]
 	path = Lib/src/icu
 	url = git://github.com/sillsdev/icu4c.git
+[submodule "Build/Src/Gendarme.MsBuild"]
+	path = Build/Src/Gendarme.MsBuild
+	url = git://github.com/sillsdev/Gendarme.MsBuild.git

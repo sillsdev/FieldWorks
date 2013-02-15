@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -44,6 +45,8 @@ namespace FwBuildTasks
 		private Dictionary<string, string> m_mapProjFile = new Dictionary<string, string>();
 		private Dictionary<string, List<string>> m_mapProjDepends = new Dictionary<string, List<string>>();
 		private TaskLoggingHelper Log { get; set; }
+		private XmlDocument m_csprojFile;
+		private XmlNamespaceManager m_namespaceMgr;
 
 		public CollectTargets(TaskLoggingHelper log)
 		{
@@ -196,6 +199,63 @@ namespace FwBuildTasks
 			m_mapProjDepends.Add(project, dependencies);
 		}
 
+		private void LoadProjectFile(string projectFile)
+		{
+			m_csprojFile = new XmlDocument();
+			m_csprojFile.Load(projectFile);
+			m_namespaceMgr = new XmlNamespaceManager(m_csprojFile.NameTable);
+			m_namespaceMgr.AddNamespace("c", "http://schemas.microsoft.com/developer/msbuild/2003");
+		}
+
+		/// <summary>
+		/// Gets the name of the assembly as defined in the .csproj file.
+		/// </summary>
+		/// <returns>The assembly name with extension.</returns>
+		private string AssemblyName
+		{
+			get
+			{
+				var name = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:AssemblyName",
+					m_namespaceMgr);
+				var type = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:OutputType",
+					m_namespaceMgr);
+				string extension = ".dll";
+				if (type.InnerText == "WinExe" || type.InnerText == "Exe")
+					extension = ".exe";
+				return name.InnerText + extension;
+			}
+		}
+
+		/// <summary>
+		/// Gets property groups for the different configurations from the project file
+		/// </summary>
+		private XmlNodeList ConfigNodes
+		{
+			get
+			{
+				return m_csprojFile.SelectNodes("/c:Project/c:PropertyGroup[c:DefineConstants]",
+					m_namespaceMgr);
+			}
+		}
+
+		private string GetProjectSubDir(string project)
+		{
+			var projectSubDir = Path.GetDirectoryName(m_mapProjFile[project]);
+			projectSubDir = projectSubDir.Substring(m_fwroot.Length);
+			projectSubDir = projectSubDir.Replace("\\", "/");
+			if (projectSubDir.StartsWith("/Src/"))
+				projectSubDir = projectSubDir.Substring(5);
+			else
+				if (projectSubDir.StartsWith("/Lib/src/"))
+					projectSubDir = projectSubDir.Substring(9);
+				else
+					if (projectSubDir.StartsWith("/"))
+						projectSubDir = projectSubDir.Substring(1);
+			if (Path.DirectorySeparatorChar != '/')
+				projectSubDir = projectSubDir.Replace('/', Path.DirectorySeparatorChar);
+			return projectSubDir;
+		}
+
 		/// <summary>
 		/// Used the collected information to write the needed target files.
 		/// </summary>
@@ -213,6 +273,41 @@ namespace FwBuildTasks
 				writer.WriteLine();
 				foreach (var project in m_mapProjFile.Keys)
 				{
+					LoadProjectFile(m_mapProjFile[project]);
+
+					var isTestProject = project.EndsWith("Tests") ||
+						project == "TestManager" ||
+						project == "ProjectUnpacker";
+
+					// <Choose> to define DefineConstants
+					writer.WriteLine("\t<Choose>");
+					var otherwiseBldr = new StringBuilder();
+					var otherwiseAdded = false;
+					foreach (XmlNode node in ConfigNodes)
+					{
+						var condition = node.Attributes["Condition"].InnerText;
+						writer.WriteLine("\t\t<When Condition=\"{0}\">", condition);
+						writer.WriteLine("\t\t\t<PropertyGroup>");
+						writer.WriteLine("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
+							project,
+							node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "));
+						writer.WriteLine("\t\t\t</PropertyGroup>");
+						writer.WriteLine("\t\t</When>");
+						if (condition.Contains("Debug") && !otherwiseAdded)
+						{
+							otherwiseBldr.AppendLine("\t\t<Otherwise>");
+							otherwiseBldr.AppendLine("\t\t\t<PropertyGroup>");
+							otherwiseBldr.AppendLine(string.Format("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
+								project,
+								node.SelectSingleNode("c:DefineConstants",m_namespaceMgr).InnerText.Replace(";", " ")));
+							otherwiseBldr.AppendLine("\t\t\t</PropertyGroup>");
+							otherwiseBldr.AppendLine("\t\t</Otherwise>");
+							otherwiseAdded = true;
+						}
+					}
+					writer.WriteLine(otherwiseBldr.ToString());
+					writer.WriteLine("\t</Choose>");
+
 					writer.Write("\t<Target Name=\"{0}\"", project);
 					var bldr = new StringBuilder();
 					bldr.Append("Initialize");	// ensure the output directories and version files exist.
@@ -242,8 +337,7 @@ namespace FwBuildTasks
 						if (m_mapProjFile.ContainsKey(dep))
 							bldr.AppendFormat(";{0}", dep);
 					}
-					var dependencyList = bldr.ToString();
-					writer.Write(" DependsOnTargets=\"{0}\"", dependencyList);
+					writer.Write(" DependsOnTargets=\"{0}\"", bldr.ToString());
 
 					if (project == "MigrateSqlDbs")
 					{
@@ -256,26 +350,27 @@ namespace FwBuildTasks
 						writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
 					}
 					writer.WriteLine(">");
+
+					// <MsBuild> task
 					writer.WriteLine("\t\t<MSBuild Projects=\"{0}\"", m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)"));
-					var projectSubDir = Path.GetDirectoryName(m_mapProjFile[project]);
-					projectSubDir = projectSubDir.Substring(m_fwroot.Length);
-					projectSubDir = projectSubDir.Replace("\\", "/");
-					if (projectSubDir.StartsWith("/Src/"))
-						projectSubDir = projectSubDir.Substring(5);
-					else if (projectSubDir.StartsWith("/Lib/src/"))
-						projectSubDir = projectSubDir.Substring(9);
-					else if (projectSubDir.StartsWith("/"))
-						projectSubDir = projectSubDir.Substring(1);
-					if (Path.DirectorySeparatorChar != '/')
-						projectSubDir = projectSubDir.Replace('/', Path.DirectorySeparatorChar);
 					writer.WriteLine("\t\t\tTargets=\"$(msbuild-target)\"");
-					writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0}\"",
-						Path.DirectorySeparatorChar, projectSubDir);
+					writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4\"",
+						Path.DirectorySeparatorChar, GetProjectSubDir(project), project);
 					writer.WriteLine("\t\t\tToolsVersion=\"4.0\"/>");
-					if (project.EndsWith("Tests") ||
-						project == "TestManager" ||
-						project == "ProjectUnpacker")
+
+					// <Gendarme> verification task
+					writer.WriteLine("\t\t<Gendarme ConfigurationFile=\"$(fwrt)/Build/Gendarme.MsBuild/fw-gendarme-rules.xml\"");
+					writer.WriteLine("\t\t\tRuleSet=\"$({1})\" Assembly=\"$(dir-outputBase)/{0}\"",
+						AssemblyName, isTestProject ? "verifyset-test" : "verifyset");
+					writer.WriteLine("\t\t\tLogType=\"Html\" LogFile=\"$(dir-outputBase){0}{1}-gendarme.html\"", Path.DirectorySeparatorChar, project);
+					writer.WriteLine("\t\t\tIgnoreFile=\"{0}/gendarme-{1}.ignore\"",
+						Path.GetDirectoryName(m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)")),
+						project);
+					writer.WriteLine("\t\t\tAutoUpdateIgnores=\"$(autoUpdateIgnores)\" VerifyFail=\"$(verifyFail)\"/>");
+
+					if (isTestProject)
 					{
+						// <NUnit> task
 						writer.WriteLine("\t\t<Message Text=\"Running unit tests for {0}\" />", project);
 						writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
 						writer.WriteLine("\t\t\tAssemblies=\"$(dir-outputBase)/{0}.dll\"", project);

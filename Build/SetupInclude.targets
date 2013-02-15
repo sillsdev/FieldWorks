@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<UsingTask TaskName="Substitute" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="FwBuildTasks.dll"/>
 
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
 	<!-- if the user gives it lowercase, fix it to be capitalized -->
@@ -224,10 +225,6 @@
 	  <Output TaskParameter="Value" PropertyName="dir-nunitreport"/>
 	</CreateProperty>
 
-	<!-- Copy updated definitions file for Gendarme -->
-<!--	<copy todir="${environment::get-folder-path('LocalApplicationData')}/Gendarme"-->
-<!--		file="${fwrt}/Bin/nant/bin/extensions/common/neutral/Gendarme.NAnt/definitions-2.9.zip"/>-->
-<!---->
 <!--	<if test="${not platform::is-unix()}">-->
 		<!-- replace c:\fw\DistFiles in the current path with the right fwrt directory -->
 		<!-- We have to use the original value from the registry, so that we get the path that
@@ -354,7 +351,6 @@
 	<platform Condition="'$(platform)'=='' And '$(OS)'=='Windows_NT'">WIN32</platform>
 	<UseVsPath Condition="'$(UseVsPath)'==''"></UseVsPath>
 	<forcetests Condition="'$(forcetests)'==''">false</forcetests>
-	<showTargetsRunInReport Condition="'$(showTargetsRunInReport)'==''">false</showTargetsRunInReport>
 	<clean Condition="'$(clean)'==''">false</clean>
 	<deleteOutput Condition="'$(deleteOutput)'==''">true</deleteOutput>
 	<nobuild Condition="'$(nobuild)'==''">false</nobuild>
@@ -371,58 +367,53 @@
 	<remake-failonerror Condition="'$(remake-failonerror)'==''">true</remake-failonerror>
 	<buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
 	<build4ux Condition="'$(build4ux)'==''"></build4ux>
-	<!-- Gendarme rule set. See Bin/nant/bin/extensions/common/neutral/Gendarme.NAnt/fw-gendarme-rules.xml -->
-	<!-- for possible values. -->
+	<!-- Gendarme rule set. See Build/Gendarme.MsBuild/fw-gendarme-rules.xml for possible values. -->
 	<verifyset Condition="'$(verifyset)'==''">dispose</verifyset>
+	<verifyset-test Condition="'$(verifyset-test)'==''">dispose-test</verifyset-test>
 	<verifyfail Condition="'$(verifyfail)'==''">true</verifyfail>
 	<autoUpdateIgnores Condition="'$(autoUpdateIgnores)'==''">false</autoUpdateIgnores>
+	<warningsAsErrors Condition="'$(warningsAsErrors)'==''">TreatWarningsAsErrors=true</warningsAsErrors>
   </PropertyGroup>
 
   <Choose>
 	<When Condition="'$(action)'=='build'">
 	  <PropertyGroup>
 		<msbuild-target>Build</msbuild-target>
+		<make-target>all</make-target>
 	  </PropertyGroup>
 	</When>
 	<When Condition="'$(action)'=='clean'">
 	  <PropertyGroup>
 		<msbuild-target>Clean</msbuild-target>
-	  </PropertyGroup>
-	</When>
-	<When Condition="'$(action)'=='rebuild'">
-	  <PropertyGroup>
-		<msbuild-target>Rebuild</msbuild-target>
-	  </PropertyGroup>
-	</When>
-	<Otherwise>
-	  <PropertyGroup>
-		<msbuild-target>Build</msbuild-target>
-	  </PropertyGroup>
-	</Otherwise>
-  </Choose>
-
-  <Choose>
-	<When Condition="'$(action)'=='build'">
-	  <PropertyGroup>
-		<make-target>all</make-target>
-	  </PropertyGroup>
-	</When>
-	<When Condition="'$(action)'=='clean'">
-	  <PropertyGroup>
 		<make-target>clean</make-target>
 	  </PropertyGroup>
 	</When>
 	<When Condition="'$(action)'=='rebuild'">
 	  <PropertyGroup>
+		<msbuild-target>Rebuild</msbuild-target>
 		<make-target>clean all</make-target>
 	  </PropertyGroup>
 	</When>
 	<Otherwise>
 	  <PropertyGroup>
+		<msbuild-target>Build</msbuild-target>
 		<make-target>all</make-target>
 	  </PropertyGroup>
 	</Otherwise>
   </Choose>
+
+	<Choose>
+		<When Condition="'$(config-lower)'=='release'">
+			<PropertyGroup>
+				<defines>TRACE;CODE_ANALYSIS</defines>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<defines>DEBUG;TRACE;CODE_ANALYSIS</defines>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
 
   <Choose>
 	<When Condition="'$(OS)'=='Windows_NT'">
@@ -438,16 +429,6 @@
   </Choose>
 
 	<PropertyGroup>
-		<nant-onfailure>endreportfailure</nant-onfailure>
-		<nant-onsuccess>endreportsuccess</nant-onsuccess>
-		<passbyref>fw-build-error fw-test-error fw-acceptancetest-error fw-targets-run</passbyref>
-		<!--
-			Set to showTargetsRunInReport property to 'true' to output the C# targets built during run.
-			Otherwise, it should be 'false'.
-		-->
-		<showTargetsRunInReport>false</showTargetsRunInReport>
-		<passbyref Condition="'$(showTargetsRunInReport)'=='true'">"$(passbyref) fw-targets-run</passbyref>
-
 		<!--
 			Property for running on build agents. The environment variable BUILDAGENT_SUBKEY
 			gets set by the Jenkins build.

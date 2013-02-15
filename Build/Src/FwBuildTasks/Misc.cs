@@ -136,4 +136,25 @@ namespace FwBuildTasks
 			return true;
 		}
 	}
+
+	/// <summary>
+	/// Gets the path to a special folder.
+	/// </summary>
+	/// <remarks>In theory we could use $([System.Environment]::GetFolderPath(SpecialFolder.LocalApplicationData))
+	/// instead. However, property functions aren't implemented in xbuild yet.</remarks>
+	public class GetSpecialFolderPath: Task
+	{
+		[Required]
+		public string Folder { get; set; }
+
+		[Output]
+		public string Path { get; set; }
+
+		public override bool Execute()
+		{
+			var folder = (Environment.SpecialFolder)Enum.Parse(typeof(Environment.SpecialFolder), Folder);
+			Path = Environment.GetFolderPath(folder);
+			return true;
+		}
+	}
 }
