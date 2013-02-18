@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.XWorks
 		private SearchTimer m_searchTimer;
 		private TreeView m_treeView;
 		private ListView m_listView;
+		private IVwStylesheet m_stylesheet;
 		private ICmSemanticDomainRepository m_semDomRepo;
 
 		/// <summary>
@@ -44,6 +45,7 @@ namespace SIL.FieldWorks.XWorks
 			base.Init(mediator, node);
 
 			m_semDomRepo = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
+			m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(m_mediator);
 			var treeBarControl = GetTreeBarControl(mediator);
 			SetupAndShowHeaderPanel(mediator, node, treeBarControl);
 			m_searchTimer = new SearchTimer(treeBarControl, 500, HandleChangeInSearchText,
@@ -70,7 +72,7 @@ namespace SIL.FieldWorks.XWorks
 				m_textSearch = CreateSearchBox();
 				m_textSearch.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
 				headerPanel.Controls.Add(m_textSearch);
-				m_textSearch.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
+				m_textSearch.AdjustForStyleSheet(m_stylesheet);
 				headerPanel.Height = SetHeaderPanelHeight();
 				treeBarControl.AddHeaderControl(headerPanel);
 				// Keep the text box from covering the cancel search button
@@ -138,8 +140,8 @@ namespace SIL.FieldWorks.XWorks
 					var semDomainsToShow = m_semDomRepo.FindDomainsThatMatch(searchString);
 					SemanticDomainSelectionUtility.UpdateDomainListLabels(
 						ObjectLabel.CreateObjectLabels(m_cache, semDomainsToShow, string.Empty,
-						m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs)), m_listView,
-						true);
+							m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs)),
+						m_stylesheet, m_listView, true);
 					m_treeView.Visible = false;
 					m_listView.Visible = true;
 					m_btnCancelSearch.SearchIsActive = true;
@@ -160,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 		private void OnDomainListChecked(object sender, ItemCheckedEventArgs e)
 		{
 			var domain = m_semDomRepo.GetObject((int) e.Item.Tag);
-			SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, e.Item.Checked, m_listView);
+			SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, m_stylesheet, e.Item.Checked, m_listView);
 		}
 
 		private void m_textSearch_GotFocus(object sender, EventArgs e)

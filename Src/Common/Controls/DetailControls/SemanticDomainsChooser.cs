@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -47,6 +48,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			m_semdomRepo = Cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			m_stylesheet = FontHeightAdjuster.StyleSheetFromMediator(Mediator);
+			selectedDomainsList.Font = FontHeightAdjuster.GetFontForNormalStyle(
+				Cache.DefaultAnalWs, m_stylesheet, Cache);
 			m_selectedItems.UnionWith(selectedItems);
 			UpdateDomainTreeAndListLabels(labels);
 			searchTextBox.WritingSystemFactory = Cache.LanguageWritingSystemFactoryAccessor;
@@ -69,7 +72,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			SemanticDomainSelectionUtility.UpdateDomainTreeLabels(labels, displayUsageCheckBox.Checked, domainTree, m_stylesheet, m_selectedItems);
 			foreach (var selectedItem in m_selectedItems)
 			{
-				selectedDomainsList.Items.Add(SemanticDomainSelectionUtility.CreateLabelListItem(selectedItem, true, false));
+				selectedDomainsList.Items.Add(SemanticDomainSelectionUtility.CreateLabelListItem(selectedItem, m_stylesheet, true, false));
 			}
 			domainTree.EndUpdate();
 		}
@@ -86,7 +89,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				btnCancelSearch.SearchIsActive = true;
 				domainList.ItemChecked -= OnDomainListChecked;
 				var semDomainsToShow = m_semdomRepo.FindDomainsThatMatch(searchString);
-				SemanticDomainSelectionUtility.UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, string.Empty, DisplayWs), domainList, displayUsageCheckBox.Checked);
+				SemanticDomainSelectionUtility.UpdateDomainListLabels(
+					ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, string.Empty, DisplayWs),
+					m_stylesheet, domainList, displayUsageCheckBox.Checked);
 				domainTree.Visible = false;
 				domainList.Visible = true;
 				domainList.ItemChecked += OnDomainListChecked;
@@ -127,12 +132,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var semDomainsToShow = m_semdomRepo.FindDomainsThatMatchWordsIn(Sense, out partialMatches);
 			foreach (var domain in semDomainsToShow)
 			{
-				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, true, selectedDomainsList);
+				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, m_stylesheet, true, selectedDomainsList);
 			}
 			// Add all the partial matches to the list also, but do not check them by default
 			foreach (var domainMatch in partialMatches)
 			{
-				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domainMatch, false, selectedDomainsList);
+				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domainMatch, m_stylesheet, false, selectedDomainsList);
 			}
 		}
 
@@ -144,7 +149,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void OnDomainListChecked(object sender, ItemCheckedEventArgs e)
 		{
 			var domain = m_semdomRepo.GetObject((int)e.Item.Tag);
-			SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, e.Item.Checked, selectedDomainsList);
+			SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, m_stylesheet, e.Item.Checked, selectedDomainsList);
 		}
 
 		private void OnDomainTreeCheck(object sender, TreeViewEventArgs e)
@@ -152,7 +157,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if(e.Action != TreeViewAction.Unknown)
 			{
 				var domain = (e.Node.Tag as ObjectLabel).Object;
-				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, e.Node.Checked, selectedDomainsList);
+				SemanticDomainSelectionUtility.AdjustSelectedDomainList(domain, m_stylesheet, e.Node.Checked, selectedDomainsList);
 			}
 		}
 
@@ -177,9 +182,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				foreach (ListViewItem item in domainList.Items)
 				{
 					var domain = m_semdomRepo.GetObject((int)item.Tag);
-					item.Text = SemanticDomainSelectionUtility.CreateLabelListItem(domain,
-													item.Checked,
-													displayUsageCheckBox.Checked).Text;
+					item.Text = SemanticDomainSelectionUtility.CreateLabelListItem(domain, m_stylesheet,
+						item.Checked, displayUsageCheckBox.Checked).Text;
 				}
 				domainTree.EndUpdate();
 				domainList.EndUpdate();
@@ -216,10 +220,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Creates a ListViewItem for the given ICmObject
 		/// </summary>
 		/// <param name="semDom">A Semantic Domain</param>
+		/// <param name="stylesheet"></param>
 		/// <param name="createChecked"></param>
 		/// <param name="displayUsage"></param>
 		/// <returns></returns>
-		public static ListViewItem CreateLabelListItem(ICmObject semDom, bool createChecked, bool displayUsage)
+		public static ListViewItem CreateLabelListItem(ICmObject semDom, IVwStylesheet stylesheet, bool createChecked, bool displayUsage)
 		{
 			var semanticDomainItem = semDom as ICmSemanticDomain;
 			if (semanticDomainItem == null)
@@ -239,7 +244,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					strbldr.AppendFormat(" ({0})", count);
 			}
 
-			return new ListViewItem(strbldr.ToString()) { Checked = createChecked, Tag = semanticDomainItem.Hvo };
+			var item = new ListViewItem(strbldr.ToString()) { Checked = createChecked, Tag = semanticDomainItem.Hvo };
+			var cache = semDom.Cache;
+			item.Font = FontHeightAdjuster.GetFontForNormalStyle(cache.DefaultAnalWs, stylesheet, cache);
+			return item;
 		}
 
 		/// <summary>
@@ -263,9 +271,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// set the checkmark accordingly, or add it and check it.
 		/// </summary>
 		/// <param name="domain"></param>
+		/// <param name="stylesheet"></param>
 		/// <param name="check"></param>
 		/// <param name="selectedDomainsList"></param>
-		public static void AdjustSelectedDomainList(ICmObject domain, bool check, ListView selectedDomainsList)
+		public static void AdjustSelectedDomainList(ICmObject domain, IVwStylesheet stylesheet, bool check, ListView selectedDomainsList)
 		{
 			ListViewItem checkedItem = null;
 			foreach (ListViewItem item in selectedDomainsList.Items)
@@ -279,7 +288,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			if (checkedItem == null)
 			{
-				selectedDomainsList.Items.Add(CreateLabelListItem(domain, check, false));
+				selectedDomainsList.Items.Add(CreateLabelListItem(domain, stylesheet, check, false));
 			}
 		}
 
@@ -351,15 +360,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Clear the ListView and add createObjectLabels to it. 'displayUsage' determines if the items are checked/unchecked.
 		/// </summary>
 		/// <param name="createObjectLabels"></param>
+		/// <param name="stylesheet"></param>
 		/// <param name="domainList"></param>
 		/// <param name="displayUsage"></param>
-		public static void UpdateDomainListLabels(IEnumerable<ObjectLabel> createObjectLabels, ListView domainList, bool displayUsage)
+		public static void UpdateDomainListLabels(IEnumerable<ObjectLabel> createObjectLabels, IVwStylesheet stylesheet, ListView domainList, bool displayUsage)
 		{
 			domainList.Items.Clear();
+			if (createObjectLabels.Any())
+				domainList.Font = GetFontForFormFromObjectLabels(createObjectLabels, stylesheet);
+
 			foreach (var selectedItem in createObjectLabels)
 			{
-				domainList.Items.Add(CreateLabelListItem(selectedItem.Object, false, displayUsage));
+				domainList.Items.Add(CreateLabelListItem(selectedItem.Object, stylesheet, false, displayUsage));
 			}
+		}
+
+		private static Font GetFontForFormFromObjectLabels(IEnumerable<ObjectLabel> labelList, IVwStylesheet stylesheet)
+		{
+			var cache = labelList.First().Object.Cache;
+			return FontHeightAdjuster.GetFontForNormalStyle(cache.DefaultAnalWs, stylesheet, cache);
 		}
 
 		/// <summary>
@@ -375,6 +394,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			IVwStylesheet stylesheet, HashSet<ICmObject> selectedItems)
 		{
 			domainTree.Nodes.Clear();
+			if (labels.Any())
+				domainTree.Font = GetFontForFormFromObjectLabels(labels, stylesheet);
+
 			foreach (var label in labels)
 			{
 				var x = CreateLabelNode(label, stylesheet, selectedItems, displayUsage);
