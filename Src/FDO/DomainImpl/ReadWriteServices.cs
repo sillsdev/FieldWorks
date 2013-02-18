@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Write out one object reference (owing or real reference).
+		/// Write out one object reference (owning or real reference).
 		/// </summary>
 		internal static void WriteObjectReference(XmlWriter writer, Guid propertyGuid, ObjectPropertyType propertyType)
 		{

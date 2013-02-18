@@ -343,6 +343,17 @@ namespace SIL.FieldWorks.FDO
 
 			NonUndoableUnitOfWorkHelper.Do(ActionHandlerAccessor, () =>
 				DataStoreInitializationServices.PrepareCache(this));
+
+			if (!WriteAllObjectsAtEndOfInitialize)
+				return;
+
+			var bep = (IDataStorer)m_serviceLocator.DataSetup;
+			bep.Commit(new HashSet<ICmObjectOrSurrogate>(),
+						new HashSet<ICmObjectOrSurrogate>(from obj in m_serviceLocator.ObjectRepository.AllInstances() select (ICmObjectOrSurrogate)obj),
+						new HashSet<ICmObjectId>());
+			bep.CompleteAllCommits();
+
+			WriteAllObjectsAtEndOfInitialize = false;
 		}
 
 		private static void UpdateGlobalWsMgr(List<IWritingSystem> writingSystemsWithNewerGlobalVersions,
@@ -1359,6 +1370,26 @@ namespace SIL.FieldWorks.FDO
 		#region Internal interface
 
 		#region Internal Properties
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Indicates whether the data in a newly initialized cache needs to be fully rewritten
+		/// to ensure all value type data properties are included in the xml.
+		///
+		/// The expectation is that this will only be done one time,
+		/// when the current data set is being upgraded through Data Migration 7000064.
+		/// That is, if the data set is less than 7000064, then this will be set to 'true'
+		/// by FDOBackendProvider. Otherwise, it will always be set to false, so the update
+		/// won't be done.
+		/// </summary>
+		/// <remarks>
+		/// Data that comes out of FW6 and that has never been modified will
+		/// not have these property elements for default values of the respective
+		/// value data type (e.g.: booleans that were 'false' will not have a property element
+		/// in the current xml.
+		/// </remarks>
+		/// ------------------------------------------------------------------------------------
+		internal static bool WriteAllObjectsAtEndOfInitialize { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -353,23 +353,25 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (currentDataStoreVersion > ModelVersion)
 				throw new FwNewerVersionException(Properties.Resources.kstidProjectIsForNewerVersionOfFw);
 
-			if (currentDataStoreVersion != ModelVersion)
+			if (currentDataStoreVersion == ModelVersion)
+				return;
+
+			FdoCache.WriteAllObjectsAtEndOfInitialize = (currentDataStoreVersion < 7000064);
+
+			// See if migration involves real data migration(s).
+			// If it does not, just update the stored version number, and keep going.
+			if (!m_dataMigrationManager.NeedsRealMigration(currentDataStoreVersion, ModelVersion))
 			{
-				// See if migration involves real data migration(s).
-				// If it does not, just update the stored version number, and keep going.
-				if (!m_dataMigrationManager.NeedsRealMigration(currentDataStoreVersion, ModelVersion))
-				{
-					if (currentDataStoreVersion != ModelVersion)
-						UpdateVersionNumber(); // Only update it, if they are different.
-					// One part of the registration has been done, but do the rest now.
-					// Pass an empty set to indicate that there are no deleted objects we know about.
-					m_identityMap.FinishRegisteringAfterDataMigration(new HashSet<ICmObjectId>());
-				}
-				else
-				{
-					// Get going the hard way with the data migration.
-					DoMigration(currentDataStoreVersion, progressDlg);
-				}
+				if (currentDataStoreVersion != ModelVersion)
+					UpdateVersionNumber(); // Only update it, if they are different.
+				// One part of the registration has been done, but do the rest now.
+				// Pass an empty set to indicate that there are no deleted objects we know about.
+				m_identityMap.FinishRegisteringAfterDataMigration(new HashSet<ICmObjectId>());
+			}
+			else
+			{
+				// Get going the hard way with the data migration.
+				DoMigration(currentDataStoreVersion, progressDlg);
 			}
 		}
 

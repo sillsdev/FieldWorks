@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		#endregion
 
-		#region IMultiStringAccessor emplementation
+		#region IMultiStringAccessor implementation
 
 		/// <summary>
 		/// The field for which it is an accessor.
@@ -298,7 +298,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get { return GetBest(WritingSystemServices.kwsFirstVernOrAnal); }
 		}
 
-		#endregion IMultiStringAccessor emplementation
+		#endregion IMultiStringAccessor implementation
 
 		private ITsString GetBest(int ws)
 		{
