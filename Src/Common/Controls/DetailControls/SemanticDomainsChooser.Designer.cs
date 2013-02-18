@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.selectedDomainsList = new System.Windows.Forms.ListView();
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.button1 = new System.Windows.Forms.Button();
-			this.btnCancelSearch = new System.Windows.Forms.Button();
+			this.btnCancelSearch = new SIL.FieldWorks.Common.Framework.DetailControls.FwCancelSearchButton();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.editDomainsLinkPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.editDomainsLinkPic)).BeginInit();
@@ -262,17 +262,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// 
 			// btnCancelSearch
 			// 
-			this.btnCancelSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnCancelSearch.BackColor = System.Drawing.SystemColors.Window;
-			this.btnCancelSearch.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCancelSearch.BackgroundImage")));
-			this.btnCancelSearch.Enabled = false;
-			this.btnCancelSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnCancelSearch.ForeColor = System.Drawing.SystemColors.Window;
 			this.btnCancelSearch.Location = new System.Drawing.Point(278, 1);
 			this.btnCancelSearch.Name = "btnCancelSearch";
-			this.btnCancelSearch.Size = new System.Drawing.Size(25, 23);
 			this.btnCancelSearch.TabIndex = 11;
-			this.btnCancelSearch.UseVisualStyleBackColor = false;
 			this.btnCancelSearch.Click += new System.EventHandler(this.btnCancelSearch_Click);
 			// 
 			// panel1
@@ -336,7 +328,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected System.Windows.Forms.Button btnOK;
 		private System.Windows.Forms.ListView selectedDomainsList;
 		private System.Windows.Forms.Button button1;
-		private Button btnCancelSearch;
+		private FwCancelSearchButton btnCancelSearch;
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
 		private Panel panel1;

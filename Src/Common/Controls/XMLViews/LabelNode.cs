@@ -74,27 +74,38 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void SetNodeText()
 		{
-			ObjectLabel label = Label;
 			string text = BasicNodeString;
 			if (m_displayUsage)
 			{
-				// Don't count the reference from an overlay, since we have no way to tell
-				// how many times that overlay has been used.  See FWR-1050.
-				int count = 0;
-				// I think only label.Object is likely to be null, but let's prevent crashes thoroughly.
-				if (label != null && label.Object != null && label.Object.ReferringObjects != null)
-				{
-					count = label.Object.ReferringObjects.Count;
-					foreach (ICmObject x in label.Object.ReferringObjects)
-					{
-						if (x is ICmOverlay)
-							--count;
-					}
-				}
+				var count = CountUsages();
 				if (count > 0)
 					text += " (" + count + ")";
 			}
 			Text = text;
+		}
+
+		/// <summary>
+		/// Count how many references this item has. Virtual so a subclass can use a different
+		/// algorithm (c.f. SemanticDomainsChooser's DomainNode).
+		/// </summary>
+		/// <returns></returns>
+		protected virtual int CountUsages()
+		{
+			// Don't count the reference from an overlay, since we have no way to tell
+			// how many times that overlay has been used.  See FWR-1050.
+			ObjectLabel label = Label;
+			int count = 0;
+			// I think only label.Object is likely to be null, but let's prevent crashes thoroughly.
+			if (label != null && label.Object != null && label.Object.ReferringObjects != null)
+			{
+				count = label.Object.ReferringObjects.Count;
+				foreach (ICmObject x in label.Object.ReferringObjects)
+				{
+					if (x is ICmOverlay)
+						--count;
+				}
+			}
+			return count;
 		}
 
 		private static bool HasVernacularText(ITsString tss, IEnumerable<int> vernWses, out int wsVern)

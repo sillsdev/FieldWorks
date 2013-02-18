@@ -233,6 +233,9 @@
     <Compile Include="FieldSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="FwCancelSearchButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SemanticDomainsChooser.cs">
       <SubType>Form</SubType>
     </Compile>

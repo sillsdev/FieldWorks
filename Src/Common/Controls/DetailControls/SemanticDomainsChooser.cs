@@ -40,6 +40,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public SemanticDomainsChooser()
 		{
 			InitializeComponent();
+			btnCancelSearch.Init();
 		}
 
 		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems)
@@ -52,6 +53,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			searchTextBox.AdjustForStyleSheet(m_stylesheet);
 			m_SearchTimer = new SearchTimer(this, 500, SearchSemanticDomains, new List<Control> {domainTree, domainList});
 			searchTextBox.TextChanged += m_SearchTimer.OnSearchTextChanged;
+		}
+
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+
+			// Make sure cursor is in the search box
+			searchTextBox.Select();
 		}
 
 		private void UpdateDomainTreeAndListLabels(IEnumerable<ObjectLabel> labels)
@@ -74,19 +83,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var searchString = TrimmedSearchBoxText;
 			if (!string.IsNullOrEmpty(searchString))
 			{
-				if (m_searchIconSet)
-				{
-					// When disabled, we use a Background image rather than a regular image so that it
-					// does not gray out. When showing the search icon, the button is never enabled,
-					// so it is a shame to have it grey-out our pretty magnifying glass. The X however
-					// can work as a normal button image (which avoids needing to make it larger
-					// than the button etc. in order to avoid repeating it as wallpaper, which is how
-					// BackgroundImage works.)
-					btnCancelSearch.Image = FieldWorks.Resources.Images.X;
-					btnCancelSearch.BackgroundImage = null;
-					m_searchIconSet = false;
-					btnCancelSearch.Enabled = true;
-				}
+				btnCancelSearch.SearchIsActive = true;
 				domainList.ItemChecked -= OnDomainListChecked;
 				var semDomainsToShow = m_semdomRepo.FindDomainsThatMatch(searchString);
 				SemanticDomainSelectionUtility.UpdateDomainListLabels(ObjectLabel.CreateObjectLabels(Cache, semDomainsToShow, string.Empty, DisplayWs), domainList, displayUsageCheckBox.Checked);
@@ -98,13 +95,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				domainTree.Visible = true;
 				domainList.Visible = false;
-				if (!m_searchIconSet)
-				{
-					btnCancelSearch.BackgroundImage = FieldWorks.Resources.Images.Search;
-					btnCancelSearch.Image = null;
-					m_searchIconSet = true;
-					btnCancelSearch.Enabled = false;
-				}
+				btnCancelSearch.SearchIsActive = false;
 			}
 		}
 
@@ -243,25 +234,28 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			if (displayUsage)
 			{
-				// Don't count the reference from an overlay, since we have no way to tell
-				// how many times that overlay has been used.  See FWR-1050.
-				int count = 0;
-				if (semanticDomainItem.ReferringObjects != null)
-				{
-					count = semanticDomainItem.ReferringObjects.Count;
-					foreach (ICmObject x in semanticDomainItem.ReferringObjects)
-					{
-						if (x is ICmOverlay)
-							--count;
-					}
-				}
+				var count = SenseReferenceCount(semanticDomainItem);
 				if (count > 0)
-				{
 					strbldr.AppendFormat(" ({0})", count);
-				}
 			}
 
 			return new ListViewItem(strbldr.ToString()) { Checked = createChecked, Tag = semanticDomainItem.Hvo };
+		}
+
+		/// <summary>
+		/// Don't count references to Semantic Domains from other Semantic Domains.
+		/// The user only cares about how many times in the lexicon the Semantic Domain is used.
+		/// </summary>
+		/// <param name="domain"></param>
+		/// <returns></returns>
+		public static int SenseReferenceCount(ICmSemanticDomain domain)
+		{
+			int count = 0;
+			if (domain.ReferringObjects != null)
+				count = (from item in domain.ReferringObjects
+						 where item is ILexSense
+						 select item).Count();
+			return count;
 		}
 
 		/// <summary>
@@ -400,6 +394,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 
 			protected override string BasicNodeString { get { return (Label.Object as ICmSemanticDomain).AbbrAndName; } }
+
+			protected override int CountUsages()
+			{
+				return SenseReferenceCount(Label.Object as ICmSemanticDomain);
+			}
 
 			protected override LabelNode Create(ObjectLabel nol, IVwStylesheet stylesheet, bool displayUsage)
 			{

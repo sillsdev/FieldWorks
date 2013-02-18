@@ -23,6 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		private PaneBar m_titleBar;
 		private Panel m_headerPanel;
 		private FwTextBox m_textSearch;
+		private FwCancelSearchButton m_btnCancelSearch;
 		private SearchTimer m_searchTimer;
 		private TreeView m_treeView;
 		private ListView m_listView;
@@ -57,13 +58,19 @@ namespace SIL.FieldWorks.XWorks
 				m_titleBar = new PaneBar { Dock = DockStyle.Top };
 				var headerPanel = new Panel { Visible = false };
 				headerPanel.Controls.Add(m_titleBar);
+				m_btnCancelSearch = new FwCancelSearchButton();
+				m_btnCancelSearch.Init();
+				m_btnCancelSearch.Click += new EventHandler(m_btnCancelSearch_Click);
+				headerPanel.Controls.Add(m_btnCancelSearch);
 				m_textSearch = CreateSearchBox();
-				//m_textSearch.Dock = DockStyle.Fill;
-				m_textSearch.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+				m_textSearch.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
 				headerPanel.Controls.Add(m_textSearch);
 				m_textSearch.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
 				headerPanel.Height = SetHeaderPanelHeight();
 				treeBarControl.AddHeaderControl(headerPanel);
+				// Keep the text box from covering the cancel search button
+				m_textSearch.Width = headerPanel.Width - m_btnCancelSearch.Width;
+				m_btnCancelSearch.Location = new Point(headerPanel.Width - m_btnCancelSearch.Width, m_textSearch.Location.Y);
 				SetInfoBarText(node, m_titleBar);
 			}
 			treeBarControl.ShowHeaderControl();
@@ -77,12 +84,17 @@ namespace SIL.FieldWorks.XWorks
 			searchBox.Location = new Point(0, 25);
 			searchBox.Size = new Size(305, 20);
 			searchBox.AdjustStringHeight = true;
-			searchBox.HasBorder = true;
+			searchBox.HasBorder = false;
 			searchBox.BorderStyle = BorderStyle.Fixed3D;
 			searchBox.SuppressEnter = true;
 			searchBox.Enabled = true;
 			searchBox.GotFocus += new EventHandler(m_textSearch_GotFocus);
 			return searchBox;
+		}
+
+		private void m_btnCancelSearch_Click(object sender, EventArgs e)
+		{
+			m_textSearch.Text = "";
 		}
 
 		private void HandleChangeInSearchText()
@@ -122,9 +134,10 @@ namespace SIL.FieldWorks.XWorks
 					SemanticDomainSelectionUtility.UpdateDomainListLabels(
 						ObjectLabel.CreateObjectLabels(m_cache, semDomainsToShow, string.Empty,
 						m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs)), m_listView,
-						false);
+						true);
 					m_treeView.Visible = false;
 					m_listView.Visible = true;
+					m_btnCancelSearch.SearchIsActive = true;
 				}
 				finally
 				{
@@ -135,6 +148,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_treeView.Visible = true;
 				m_listView.Visible = false;
+				m_btnCancelSearch.SearchIsActive = false;
 			}
 		}
 
@@ -188,7 +202,10 @@ namespace SIL.FieldWorks.XWorks
 				return;
 
 			if (IsShowing)
+			{
 				window.TreeBarControl.ShowHeaderControl();
+				HandleChangeInSearchText(); // in case we already have a search active when we enter
+			}
 		}
 
 		/// <summary>
@@ -204,7 +221,7 @@ namespace SIL.FieldWorks.XWorks
 			var sd = obj as ICmSemanticDomain;
 			if (sd == null)
 				return baseName; // pathological defensive programming
-			int senseCount = (from item in sd.ReferringObjects where item is ILexSense select item).Count();
+			int senseCount = SemanticDomainSelectionUtility.SenseReferenceCount(sd);
 			if (senseCount == 0)
 				return baseName;
 			return baseName + " (" + senseCount + ")";
