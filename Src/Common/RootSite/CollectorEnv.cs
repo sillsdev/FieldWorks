@@ -2716,7 +2716,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// This subclass is used to test whether the call to Display produces anything.
 	/// Adding literals doesn't count.
 	/// </summary>
-	public class TestCollectorEnv : CollectorEnv
+	public class TestCollectorEnv : CollectorEnv, ICollectPicturePathsOnly
 	{
 		private bool m_fNonEmpty = false;
 		private bool m_fNoteEmptyDependencies = false;
@@ -2889,6 +2889,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			NoteDependency(new int[] { m_hvoCurr }, new int[] { tag }, 1);
 		}
+
+		/// <summary>
+		/// The only thing a test envirnoment cares about pictures is that we got one, so it is not empty.
+		/// </summary>
+		public void APictureIsBeingAdded()
+		{
+			m_fNonEmpty = true;
+		}
 	}
 	#endregion // TestCollectorEnv
 
@@ -3011,4 +3019,16 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 	}
 	#endregion // TsStringCollectorEnv
+
+	/// <summary>
+	/// Interface that a collector environment may implement if it only wants picture paths,
+	/// not the pictures themselves.
+	/// </summary>
+	public interface ICollectPicturePathsOnly
+	{
+		/// <summary>
+		/// This should be called in place of AddPicture.
+		/// </summary>
+		void APictureIsBeingAdded();
+	}
 }

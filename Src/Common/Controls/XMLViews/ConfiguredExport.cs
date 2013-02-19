@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// <summary>
 	/// Summary description for ConfiguredExport.
 	/// </summary>
-	public class ConfiguredExport : CollectorEnv
+	public class ConfiguredExport : CollectorEnv, ICollectPicturePathsOnly
 	{
 		private TextWriter m_writer = null;
 		private FdoCache m_cache = null;
@@ -1285,5 +1285,13 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		#endregion
+
+		/// <summary>
+		/// This class does not care about pictures being added at all. It implements the interface just to
+		/// save memory by not having the caller create the pictures.
+		/// </summary>
+		public void APictureIsBeingAdded()
+		{
+		}
 	}
 }

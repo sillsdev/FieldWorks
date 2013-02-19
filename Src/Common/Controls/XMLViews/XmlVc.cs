@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -1782,6 +1783,19 @@ namespace SIL.FieldWorks.Common.Controls
 							string imagePath = picture.PictureFileRA.AbsoluteInternalPath;
 							if (String.IsNullOrEmpty(imagePath))
 								break;
+							var picturePathCollector = vwenv as ICollectPicturePathsOnly;
+							if (picturePathCollector != null)
+							{
+								if (File.Exists(FileUtils.ActualFilePath(imagePath)))
+								{
+									picturePathCollector.APictureIsBeingAdded();
+								}
+								// for export, we want the path, but not for these other cases.  (LT-5326)
+								// There might be a more efficient way to do this, e.g., by adding to ICollectPicturePathsOnly.
+								int fragId = GetSubFragId(frag, caller);
+								vwenv.AddObjProp(CmPictureTags.kflidPictureFile, this, fragId);
+								break; // whether it exists or not, don't actually make the picture. This can run us out of memory on export (LT-13704)
+							}
 							IPicture comPicture = GetComPicture(imagePath);
 							if (comPicture != null)
 							{
@@ -1790,13 +1804,7 @@ namespace SIL.FieldWorks.Common.Controls
 								int width = XmlUtils.GetOptionalIntegerValue(frag, "width", 0);
 								vwenv.AddPicture(comPicture, 1, width, height);
 							}
-							int fragId = 0;
-							// for export, we want the path, but not for these other cases.  (LT-5326)
-							if (vwenv is ConfiguredExport || vwenv is TestCollectorEnv)
-							{
-								fragId = GetSubFragId(frag, caller);
-								vwenv.AddObjProp(CmPictureTags.kflidPictureFile, this, fragId);
-							}
+
 						}
 						break;
 					// A generate node may occur in a layout element, but doesn't do anything when executed.
@@ -1855,10 +1863,6 @@ namespace SIL.FieldWorks.Common.Controls
 			catch { }
 		}
 
-		// Enhance JohnT: possibly the cache should be flushed in some circumstance to guard against stale pictures?
-		// WARNING: When this class is disposed it will call ReleaseComObject on the picture
-		// retrieved by this method. Attempting to use it after that will cause a crash.
-		// You should not use the picture returned by this method after the XmlVc object is disposed.
 		private IPicture GetComPicture(string imagePath)
 		{
 			if (SuppressPictures)
