@@ -3,6 +3,11 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FdoUi;
 using XCore;
+#if __MonoCS__
+using System;
+using System.Windows.Forms;
+using Skybound.Gecko;
+#endif
 
 namespace SIL.FieldWorks.LexText.Controls
 {
