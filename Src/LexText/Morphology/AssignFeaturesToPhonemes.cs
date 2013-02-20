@@ -55,9 +55,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 			var bulkEditBar = m_browseViewer.BulkEditBar;
 			// We want a custom name for the tab, the operation label, and the target item
-			bulkEditBar.ListChoiceTab.Text = MEStrings.ksAssignFeaturesToPhonemes;
+			// Now we use good old List Choice.  bulkEditBar.ListChoiceTab.Text = MEStrings.ksAssignFeaturesToPhonemes;
 			bulkEditBar.OperationLabel.Text = MEStrings.ksListChoiceDesc;
 			bulkEditBar.TargetFieldLabel.Text = MEStrings.ksTargetFeature;
+			bulkEditBar.ChangeToLabel.Text = MEStrings.ksChangeTo;
 		}
 
 	#endregion

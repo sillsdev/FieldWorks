@@ -144,7 +144,7 @@
 				</parameters>
 			</control>
 		</tool>
-		<tool label="Assign Features to Phonemes" value="toolBulkEditPhonemes" icon="BrowseView">
+		<tool label="Bulk Edit Phoneme Features" value="toolBulkEditPhonemes" icon="BrowseView">
 			<control>
 				<dynamicloaderinfo assemblyPath="xCore.dll" class="XCore.PaneBarContainer"/>
 				<parameters id="PhonemesBulkEdit">
@@ -156,7 +156,7 @@
 							<!-- NOTE Overrides syntax: override nodes that have children replace entire target (included) node -->
 							<!--								<overrides>-->
 							<columns generate="objectValuePartsForParentLayouts">
-								<column label="Refer to as" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
+								<column label="Phoneme" width="5%" layout="Name" ws="$ws=best vernacular" field="Name"/>
 								<!-- Phonological Feature Defns (generated)-->
 								<generate class="FsFeatureSystem" fieldType="vector" restrictions="featureDefns" objectPath="PhFeatureSystem.Features">
 									<column layout="CustomMultiStringForFeatureDefn_$fieldName" label="$label" bulkEdit="external" common="true" ws="$ws=best analysis" cansortbylength="true" visibility="always" width="4%">

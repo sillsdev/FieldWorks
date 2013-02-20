@@ -449,10 +449,6 @@
   <data name="ksUndoEditAnalysis" xml:space="preserve">
     <value>Undo Edit Analysis</value>
   </data>
-  <data name="ksAssignFeaturesToPhonemes" xml:space="preserve">
-    <value>Assign Features to Phonemes</value>
-    <comment>Replaces the list choice tab label</comment>
-  </data>
   <data name="ksPhonologicalFeatures" xml:space="preserve">
     <value>Phonological Features</value>
   </data>
@@ -460,9 +456,13 @@
     <value>The phonological feature I need is not shown here.  Add a new phonological feature.</value>
   </data>
   <data name="ksListChoiceDesc" xml:space="preserve">
-    <value>Either select the target feature and a value to change it to or choose phonological features</value>
+    <value>Select a feature and a value to change it to</value>
   </data>
   <data name="ksTargetFeature" xml:space="preserve">
-    <value>Target Feature</value>
+    <value>Choose Feature:</value>
+    <comment>:</comment>
+  </data>
+  <data name="ksChangeTo" xml:space="preserve">
+    <value>Choose Value:</value>
   </data>
 </root>

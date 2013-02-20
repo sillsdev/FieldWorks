@@ -1324,7 +1324,7 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>&lt;n/a&gt;</value>
   </data>
   <data name="ksRemoveThisFeature" xml:space="preserve">
-    <value>Remove this feature</value>
+    <value>Blank</value>
     <comment>Used in phoneme bulk edit for assigning phonological features to phonemes; when selected, the feature will be removed from the list of features used by this phoneme.</comment>
   </data>
   <data name="ksFeatConstrAgree" xml:space="preserve">

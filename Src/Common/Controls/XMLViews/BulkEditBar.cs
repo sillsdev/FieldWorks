@@ -3950,6 +3950,13 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_bulkEditOperationLabel; }
 		}
 		/// <summary>
+		/// Get label3 (the change to field)
+		/// </summary>
+		public Label ChangeToLabel
+		{
+			get { return label3; }
+		}
+		/// <summary>
 		/// Get label2 (the target field)
 		/// </summary>
 		public Label TargetFieldLabel

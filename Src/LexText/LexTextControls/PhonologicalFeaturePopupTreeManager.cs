@@ -83,7 +83,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			if (ClosedFeature != null)
 			{
-				foreach (var closedValue in ClosedFeature.ValuesOC)
+				var sortedVaues = from v in ClosedFeature.ValuesOC
+								  orderby v.Abbreviation.BestAnalysisAlternative.Text
+								  select v;
+				foreach (var closedValue in sortedVaues)
 				{
 					HvoTreeNode node = new HvoTreeNode(closedValue.Abbreviation.BestAnalysisAlternative, closedValue.Hvo);
 					popupTree.Nodes.Add(node);
@@ -95,9 +98,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			popupTree.Nodes.Add(new HvoTreeNode(
 					Cache.TsStrFactory.MakeString(LexTextControls.ksRemoveThisFeature, Cache.WritingSystemFactory.UserWs),
 					kRemoveThisFeature));
-			popupTree.Nodes.Add(new HvoTreeNode(
+			/* Trying this now without using the phonological feature chooser; if users ask for it, will reconsider.
+			 * popupTree.Nodes.Add(new HvoTreeNode(
 					Cache.TsStrFactory.MakeString(LexTextControls.ksChoosePhonFeats, Cache.WritingSystemFactory.UserWs),
-					kChoosePhonologicaFeatures));
+					kChoosePhonologicaFeatures));*/
 
 			return match;
 

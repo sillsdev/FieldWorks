@@ -2524,7 +2524,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove this feature.
+        ///   Looks up a localized string similar to Blank.
         /// </summary>
         internal static string ksRemoveThisFeature {
             get {
