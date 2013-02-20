@@ -52,14 +52,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.selectedDomainsList = new System.Windows.Forms.ListView();
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.button1 = new System.Windows.Forms.Button();
-			this.btnCancelSearch = new SIL.FieldWorks.Common.Framework.DetailControls.FwCancelSearchButton();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.btnCancelSearch = new SIL.FieldWorks.Common.Framework.DetailControls.FwCancelSearchButton();
 			this.editDomainsLinkPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.editDomainsLinkPic)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.searchTextBox)).BeginInit();
 			this.displayUsagePanel.SuspendLayout();
 			this.buttonPanel.SuspendLayout();
 			this.panel1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+			this.splitContainer1.Panel1.SuspendLayout();
+			this.splitContainer1.Panel2.SuspendLayout();
+			this.splitContainer1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// editDomainsLinkPanel
@@ -107,9 +112,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.domainTree.CheckBoxes = true;
-			this.domainTree.Location = new System.Drawing.Point(8, 34);
+			this.domainTree.Location = new System.Drawing.Point(0, 0);
 			this.domainTree.Name = "domainTree";
-			this.domainTree.Size = new System.Drawing.Size(305, 193);
+			this.domainTree.Size = new System.Drawing.Size(304, 148);
 			this.domainTree.TabIndex = 6;
 			this.domainTree.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.OnDomainTreeCheck);
 			// 
@@ -141,11 +146,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
             this.columnHeader1});
 			this.domainList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
 			this.domainList.LabelWrap = false;
-			this.domainList.Location = new System.Drawing.Point(8, 35);
+			this.domainList.Location = new System.Drawing.Point(0, 0);
 			this.domainList.MultiSelect = false;
 			this.domainList.Name = "domainList";
 			this.domainList.ShowGroups = false;
-			this.domainList.Size = new System.Drawing.Size(305, 192);
+			this.domainList.Size = new System.Drawing.Size(304, 148);
 			this.domainList.TabIndex = 8;
 			this.domainList.UseCompatibleStateImageBehavior = false;
 			this.domainList.View = System.Windows.Forms.View.Details;
@@ -229,7 +234,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// 
 			// selectedDomainsList
 			// 
-			this.selectedDomainsList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.selectedDomainsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.selectedDomainsList.AutoArrange = false;
 			this.selectedDomainsList.CheckBoxes = true;
@@ -237,11 +243,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
             this.columnHeader2});
 			this.selectedDomainsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
 			this.selectedDomainsList.LabelWrap = false;
-			this.selectedDomainsList.Location = new System.Drawing.Point(8, 234);
+			this.selectedDomainsList.Location = new System.Drawing.Point(0, 0);
 			this.selectedDomainsList.MultiSelect = false;
 			this.selectedDomainsList.Name = "selectedDomainsList";
 			this.selectedDomainsList.ShowGroups = false;
-			this.selectedDomainsList.Size = new System.Drawing.Size(305, 98);
+			this.selectedDomainsList.Size = new System.Drawing.Size(304, 146);
 			this.selectedDomainsList.TabIndex = 9;
 			this.selectedDomainsList.UseCompatibleStateImageBehavior = false;
 			this.selectedDomainsList.View = System.Windows.Forms.View.Details;
@@ -264,13 +270,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.OnSuggestClicked);
 			// 
-			// btnCancelSearch
-			// 
-			this.btnCancelSearch.Location = new System.Drawing.Point(278, 1);
-			this.btnCancelSearch.Name = "btnCancelSearch";
-			this.btnCancelSearch.TabIndex = 11;
-			this.btnCancelSearch.Click += new System.EventHandler(this.btnCancelSearch_Click);
-			// 
 			// panel1
 			// 
 			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -283,6 +282,37 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.panel1.Size = new System.Drawing.Size(305, 26);
 			this.panel1.TabIndex = 12;
 			// 
+			// splitContainer1
+			// 
+			this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.splitContainer1.Location = new System.Drawing.Point(8, 34);
+			this.splitContainer1.Name = "splitContainer1";
+			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			// 
+			// splitContainer1.Panel1
+			// 
+			this.splitContainer1.Panel1.Controls.Add(this.domainList);
+			this.splitContainer1.Panel1.Controls.Add(this.domainTree);
+			// 
+			// splitContainer1.Panel2
+			// 
+			this.splitContainer1.Panel2.Controls.Add(this.selectedDomainsList);
+			this.splitContainer1.Size = new System.Drawing.Size(307, 298);
+			this.splitContainer1.SplitterDistance = 148;
+			this.splitContainer1.TabIndex = 13;
+			// 
+			// btnCancelSearch
+			// 
+			this.btnCancelSearch.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCancelSearch.BackgroundImage")));
+			this.btnCancelSearch.Location = new System.Drawing.Point(278, 1);
+			this.btnCancelSearch.Name = "btnCancelSearch";
+			this.btnCancelSearch.SearchIsActive = false;
+			this.btnCancelSearch.Size = new System.Drawing.Size(75, 23);
+			this.btnCancelSearch.TabIndex = 11;
+			this.btnCancelSearch.Click += new System.EventHandler(this.btnCancelSearch_Click);
+			// 
 			// SemanticDomainsChooser
 			// 
 			this.AcceptButton = this.btnOK;
@@ -290,16 +320,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
 			this.ClientSize = new System.Drawing.Size(322, 445);
+			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.button1);
-			this.Controls.Add(this.selectedDomainsList);
-			this.Controls.Add(this.domainList);
 			this.Controls.Add(this.buttonPanel);
 			this.Controls.Add(this.displayUsagePanel);
-			this.Controls.Add(this.domainTree);
 			this.Controls.Add(this.editDomainsLinkPanel);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(338, 483);
 			this.Name = "SemanticDomainsChooser";
 			this.ShowIcon = false;
 			this.Text = "Choose Semantic Domains";
@@ -311,6 +340,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			this.displayUsagePanel.PerformLayout();
 			this.buttonPanel.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
+			this.splitContainer1.Panel1.ResumeLayout(false);
+			this.splitContainer1.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+			this.splitContainer1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -336,5 +369,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private ColumnHeader columnHeader1;
 		private ColumnHeader columnHeader2;
 		private Panel panel1;
+		private SplitContainer splitContainer1;
 	}
 }

@@ -42,6 +42,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			InitializeComponent();
 			btnCancelSearch.Init();
+			editDomainsLinkPic.Image = DetailControlsStrings.gotoLinkPic;
 		}
 
 		public void Initialize(IEnumerable<ObjectLabel> labels, IEnumerable<ICmObject> selectedItems)
@@ -55,7 +56,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			searchTextBox.WritingSystemFactory = Cache.LanguageWritingSystemFactoryAccessor;
 			searchTextBox.AdjustForStyleSheet(m_stylesheet);
 			m_SearchTimer = new SearchTimer(this, 500, SearchSemanticDomains, new List<Control> {domainTree, domainList});
-			searchTextBox.TextChanged += m_SearchTimer.OnSearchTextChanged;
+			searchTextBox.TextChanged += OnSearchTextChanged;
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -64,6 +65,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			// Make sure cursor is in the search box
 			searchTextBox.Select();
+		}
+
+		public bool SearchInProgress { get; set; }
+
+		public void OnSearchTextChanged(object sender, EventArgs e)
+		{
+			SearchInProgress = true;
+			m_SearchTimer.OnSearchTextChanged(sender, e);
 		}
 
 		private void UpdateDomainTreeAndListLabels(IEnumerable<ObjectLabel> labels)
@@ -102,6 +111,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				domainList.Visible = false;
 				btnCancelSearch.SearchIsActive = false;
 			}
+			SearchInProgress = false;
 		}
 
 		private string TrimmedSearchBoxText
@@ -112,8 +122,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+		{
+			if (SearchInProgress)
+				e.Cancel = true; // Currently searching... don't respond to <Enter> or OK click.
+			base.OnClosing(e);
+		}
+
 		void OnOk(object sender, EventArgs e)
 		{
+			if (SearchInProgress)
+				return; // Currently searching... don't respond to <Enter> or OK click.
 			m_selectedItems.Clear();
 			foreach(ListViewItem selectedDomain in selectedDomainsList.Items)
 			{
