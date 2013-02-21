@@ -14,3 +14,4 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("FieldWorks")]
 [assembly: ComVisible(false)]
+[assembly: InternalsVisibleTo("FieldWorksTests")]
