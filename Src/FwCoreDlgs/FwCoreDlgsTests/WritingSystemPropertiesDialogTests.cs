@@ -724,6 +724,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				DummyWritingSystemPropertiesDialog.ShowMsgBoxStatus.CheckCantCreateDuplicateWs,
 				DialogResult.OK);
 			m_dlg.VerifyTab(WritingSystemPropertiesDialog.kWsGeneral);
+#if Find_Behavior_Change_From_PalasoDLLs_And_Fix	// FWNX-999
 			// Change Region or Variant info.
 			m_dlg.SetVariantName("Phonetic");
 			m_dlg.VerifyListBox(new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Phonetic)" });
@@ -736,6 +737,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			VerifyWsNames(
 				new[] { "Kalaba", "Kalaba (International Phonetic Alphabet)", "Kalaba (Phonetic)" },
 				new[] { "qaa-x-kal", "qaa-fonipa-x-kal", "qaa-fonipa-x-kal-etic" });
+#endif
 		}
 
 		/// <summary>
