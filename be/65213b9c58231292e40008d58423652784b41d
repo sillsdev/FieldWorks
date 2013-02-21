@@ -1,0 +1,10 @@
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Jason Naylor <jason.naylor@gmail.com>
+Code-Review+1: Stephen McConnel <stephen_mcconnel@sil.org>
+Verified+1: Stephen McConnel <stephen_mcconnel@sil.org>
+Verified-Linux+1: Stephen McConnel <stephen_mcconnel@sil.org>
+Submitted-by: Stephen McConnel <stephen_mcconnel@sil.org>
+Submitted-at: Thu, 21 Feb 2013 23:19:15 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/733
+Project: FieldWorks
+Branch: refs/heads/release/7.3-gial-Linux
