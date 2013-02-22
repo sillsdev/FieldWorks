@@ -137,7 +137,7 @@
       <Name>XMLUtils</Name>
       <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ManagedLgIcuCollator">
+    <Reference Include="ManagedLgIcuCollator" Condition="'$(OS)'=='Unix'">
       <Name>ManagedLgIcuCollator</Name>
       <HintPath>..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
     </Reference>
