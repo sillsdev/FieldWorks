@@ -18,19 +18,19 @@
 			<term ws="en">consonantal</term>
 			<def ws="en">“Consonantal segments are produced with an audible constriction in the vocal tract, like plosives, affricates, fricatives, nasals, laterals and [r]. Vowels, glides and laryngeal segments are not consonantal.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPAConsonantalPositive' guid="ec5800b4-52a8-4859-a976-f3005c53bd5f" type='value'>
+			 <item id='vPAConsonantalPositive' guid="ec5800b4-52a8-4859-a976-f3005c53bd5f" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAConsonantalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAConsonantalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAConsonantal'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAConsonantalNegative' guid="81c50b82-83ff-4f73-8e27-6ff9217b810a" type='value'>
+			 <item id='vPAConsonantalNegative' guid="81c50b82-83ff-4f73-8e27-6ff9217b810a" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAConsonantalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAConsonantalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAConsonantal'>
 						 <sym value='-'/>
 					 </f>
@@ -42,19 +42,19 @@
 			<term ws="en">sonorant</term>
 			<def ws="en">“This feature describes the type of oral constriction that can occur in the vocal tract. [+son] designates the vowels and sonorant consonants, which are produced without the imbalance of air pressure in the vocal tract that might cause turbulence. [-son] alternatively describes the obstruents, articulated with a noticeable turbulence caused by an imbalance of air pressure in the vocal tract.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPASonorantPositive' guid="d190d8a1-f058-4a9c-b16e-f16b525b041c" type='value'>
+			 <item id='vPASonorantPositive' guid="d190d8a1-f058-4a9c-b16e-f16b525b041c" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPASonorantPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPASonorantPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPASonorant'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPASonorantNegative' guid="ff4a2434-54e9-4e3d-bf11-cadfedef1765" type='value'>
+			 <item id='vPASonorantNegative' guid="ff4a2434-54e9-4e3d-bf11-cadfedef1765" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPASonorantNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPASonorantNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPASonorant'>
 						 <sym value='-'/>
 					 </f>
@@ -66,19 +66,19 @@
 			<term ws="en">syllabic</term>
 			<def ws="en">“Syllabic segments may function as the nucleus of a syllable, while their counterparts, the [-syl] segments, may not.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPASyllabicPositive' guid="31929bd3-e2f8-4ea7-beed-527404d34e74" type='value'>
+			 <item id='vPASyllabicPositive' guid="31929bd3-e2f8-4ea7-beed-527404d34e74" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPASyllabicPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPASyllabicPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPASyllabic'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPASyllabicNegative' guid="73a064b8-21f0-479a-b5d2-142f30297ffa" type='value'>
+			 <item id='vPASyllabicNegative' guid="73a064b8-21f0-479a-b5d2-142f30297ffa" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPASyllabicNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPASyllabicNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPASyllabic'>
 						 <sym value='-'/>
 					 </f>
@@ -96,19 +96,19 @@
 			<term ws="en">voice</term>
 			<def ws="en">“This feature indicates whether vibration of the vocal folds occurs with the articulation of the segment.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPAVoicePositive' guid="78666c7c-b4c6-4a8a-af50-a0775b497b99" type='value'>
+			 <item id='vPAVoicePositive' guid="78666c7c-b4c6-4a8a-af50-a0775b497b99" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAVoicePositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAVoicePositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAVoice'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAVoiceNegative' guid="b1c76326-d9cf-4233-ae83-52fd46abe469" type='value'>
+			 <item id='vPAVoiceNegative' guid="b1c76326-d9cf-4233-ae83-52fd46abe469" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAVoiceNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAVoiceNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAVoice'>
 						 <sym value='-'/>
 					 </f>
@@ -120,19 +120,19 @@
 			<term ws="en">spread glottis</term>
 			<def ws="en">“Used to indicate the aspiration of a segment, this feature denotes the openness of the glottis. For [+sg] the vocal folds are spread apart wide enough for frication to occur; for [-sg] there is not the same friction-inducing spreading.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPASpreadGlottisPositive' guid="3cdc4e25-3d3b-46fc-b2b1-e6491a5541f4" type='value'>
+			 <item id='vPASpreadGlottisPositive' guid="3cdc4e25-3d3b-46fc-b2b1-e6491a5541f4" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPASpreadGlottisPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPASpreadGlottisPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPASpreadGlottis'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPASpreadGlottisNegative' guid="7025b20a-9086-4a3b-817b-8c569d9aaed0" type='value'>
+			 <item id='vPASpreadGlottisNegative' guid="7025b20a-9086-4a3b-817b-8c569d9aaed0" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPASpreadGlottisNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPASpreadGlottisNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPASpreadGlottis'>
 						 <sym value='-'/>
 					 </f>
@@ -144,19 +144,19 @@
 			<term ws="en">constricted glottis</term>
 			<def ws="en">“The constricted glottis features denotes the degree of closure of the glottis. [+cg] implies that the vocal folds are held closely together, enough so that air cannot pass through momentarily. [-cg] implies the opposite.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPAConstrictedGlottisPositive' guid="082c11a2-ada0-41e4-926d-e1efb238dd46" type='value'>
+			 <item id='vPAConstrictedGlottisPositive' guid="082c11a2-ada0-41e4-926d-e1efb238dd46" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAConstrictedGlottisPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAConstrictedGlottisPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAConstrictedGlottis'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAConstrictedGlottisNegative' guid="ca0fbc96-5d68-4e26-a48d-29dc3cd2d207" type='value'>
+			 <item id='vPAConstrictedGlottisNegative' guid="ca0fbc96-5d68-4e26-a48d-29dc3cd2d207" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAConstrictedGlottisNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAConstrictedGlottisNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAConstrictedGlottis'>
 						 <sym value='-'/>
 					 </f>
@@ -174,19 +174,19 @@
 			<term ws="en">continuant</term>
 			<def ws="en">“Continuant features describe the passage of air through the vocal tract. [+cont] segments are produced without any significant obstruction in the tract, and so air passes through in a continuous stream. [-cont] segments on the other hand have such an obstruction, and so occlude the air flow at some point of articulation.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPAContinuantPositive' guid="7d5b8f7a-0ff0-44f7-83d4-ffd2b8d9b6e0" type='value'>
+			 <item id='vPAContinuantPositive' guid="7d5b8f7a-0ff0-44f7-83d4-ffd2b8d9b6e0" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAContinuantPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAContinuantPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAContinuant'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAContinuantNegative' guid="b5d47794-508b-488a-961b-86d9becf3bd9" type='value'>
+			 <item id='vPAContinuantNegative' guid="b5d47794-508b-488a-961b-86d9becf3bd9" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAContinuantNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAContinuantNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAContinuant'>
 						 <sym value='-'/>
 					 </f>
@@ -198,19 +198,19 @@
 			<term ws="en">nasal</term>
 			<def ws="en">“This feature describes the position of the velum. [+nas] segments are produced by lowering the velum so that air can pass through the nasal tract. [-nas] segments conversely are produced with a raised velum, blocking the passages of air to the nasal tract and shunting it to the oral tract.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPANasalPositive' guid="a8ab1fa1-2c7b-4e19-98a5-096e1154f6dd" type='value'>
+			 <item id='vPANasalPositive' guid="a8ab1fa1-2c7b-4e19-98a5-096e1154f6dd" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPANasalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPANasalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPANasal'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPANasalNegative' guid="fc2a5cfd-7ab7-487d-a380-ebc97b118f1e" type='value'>
+			 <item id='vPANasalNegative' guid="fc2a5cfd-7ab7-487d-a380-ebc97b118f1e" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPANasalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPANasalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPANasal'>
 						 <sym value='-'/>
 					 </f>
@@ -222,19 +222,19 @@
 			<term ws="en">strident</term>
 			<def ws="en">“The strident feature applies to obstruents only and refers to a type of friction that is noisier that [sic] usual. This is caused by high energy white noise.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPAStridentPositive' guid="9981fe23-e339-4257-9a13-a55701a5013f" type='value'>
+			 <item id='vPAStridentPositive' guid="9981fe23-e339-4257-9a13-a55701a5013f" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAStridentPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAStridentPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAStrident'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAStridentNegative' guid="d1e2be43-162e-40ed-b522-b21b42387c5e" type='value'>
+			 <item id='vPAStridentNegative' guid="d1e2be43-162e-40ed-b522-b21b42387c5e" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAStridentNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAStridentNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAStrident'>
 						 <sym value='-'/>
 					 </f>
@@ -246,19 +246,19 @@
 			<term ws="en">lateral</term>
 			<def ws="en">“This feature designates the shape and positioning of the tongue with respect to the oral tract. [+lat] segments are produced as the center of the tongue rises to contact the roof of the mouth, thereby blocking air from flowing centrally through the oral tract and instead forcing more lateral flow along the lowered side(s) of the tongue.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPALateralPositive' guid="7f0eb2a6-20b8-48b3-8d9b-4667c4450fde" type='value'>
+			 <item id='vPALateralPositive' guid="7f0eb2a6-20b8-48b3-8d9b-4667c4450fde" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPALateralPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALateralPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALateral'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPALateralNegative' guid="35e4ae7e-7840-42dc-a16c-7e620c6866c9" type='value'>
+			 <item id='vPALateralNegative' guid="35e4ae7e-7840-42dc-a16c-7e620c6866c9" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPALateralNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALateralNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALateral'>
 						 <sym value='-'/>
 					 </f>
@@ -270,19 +270,19 @@
 			<term ws="en">delayed release</term>
 			<def ws="en">“This feature distinguishes stops from affricates. Affricates are designated [+dr].”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPADelayedReleasePositive' guid="1dd2569f-afc7-4ac8-a13c-08fe6092c924" type='value'>
+			 <item id='vPADelayedReleasePositive' guid="1dd2569f-afc7-4ac8-a13c-08fe6092c924" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPADelayedReleasePositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPADelayedReleasePositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPADelayedRelease'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPADelayedReleaseNegative' guid="12e7a7ab-ae06-4708-b6de-aed422bf3d5a" type='value'>
+			 <item id='vPADelayedReleaseNegative' guid="12e7a7ab-ae06-4708-b6de-aed422bf3d5a" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPADelayedReleaseNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPADelayedReleaseNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPADelayedRelease'>
 						 <sym value='-'/>
 					 </f>
@@ -294,19 +294,19 @@
 			<term ws="en">approximant</term>
 			<def ws="en">A “[f]rictionless continuant. [A] consonantal sound articulated in a manner involving an opening in the oral tract not radical enough to produce audible friction.”</def>
 			<citation>Pullum &amp; Ladusaw (1986:233)</citation>
-			 <item id='vfPAApproximantPositive' guid="d397c8d2-c81d-4db5-a28b-79dc88f1e5a8" type='value'>
+			 <item id='vPAApproximantPositive' guid="d397c8d2-c81d-4db5-a28b-79dc88f1e5a8" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAApproximantPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAApproximantPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAApproximant'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAApproximantNegative' guid="d22aac0e-0b98-432a-81e9-984aa4f8436f" type='value'>
+			 <item id='vPAApproximantNegative' guid="d22aac0e-0b98-432a-81e9-984aa4f8436f" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAApproximantNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAApproximantNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAApproximant'>
 						 <sym value='-'/>
 					 </f>
@@ -318,19 +318,19 @@
 			<term ws="en">implosive</term>
 			<def ws="en">“Stop consonant formed with a glottalic ingressive airstream, tat is, with inflowing release of air using suction developed by downward movement of the larynx while another complete obstruction is maintained further forward in the oral tract.”</def>
 			<citation>Pullum &amp; Ladusaw (1986;236)</citation>
-			 <item id='vfPAImplosivePositive' guid="c78dbacc-8136-4cca-a01c-d95e696b74ae" type='value'>
+			 <item id='vPAImplosivePositive' guid="c78dbacc-8136-4cca-a01c-d95e696b74ae" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAImplosivePositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAImplosivePositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAImplosive'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAImplosiveNegative' guid="db82a05e-8f80-4d88-9841-33c75e902b57" type='value'>
+			 <item id='vPAImplosiveNegative' guid="db82a05e-8f80-4d88-9841-33c75e902b57" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAImplosiveNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAImplosiveNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAImplosive'>
 						 <sym value='-'/>
 					 </f>
@@ -348,19 +348,19 @@
 			<term ws="en">labial</term>
 			<def ws="en">“Labial segments are articulated with the lips.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPALabialPositive' guid="f94212e5-0c35-469a-ae01-0b43f4da3538" type='value'>
+			 <item id='vPALabialPositive' guid="f94212e5-0c35-469a-ae01-0b43f4da3538" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPALabialPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALabialPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALabial'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPALabialNegative' guid="756c0934-8822-4d9c-a894-dd459aff5077" type='value'>
+			 <item id='vPALabialNegative' guid="756c0934-8822-4d9c-a894-dd459aff5077" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPALabialNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALabialNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALabial'>
 						 <sym value='-'/>
 					 </f>
@@ -372,19 +372,19 @@
 			<term ws="en">labio-dental</term>
 			<def ws="en">“Articulated by bringing the lower lip into contact with the upper teeth.”</def>
 			<citation>Pullum &amp; Ladusaw (1986:237)</citation>
-			 <item id='vfPALabioDentalPositive' guid="4317602c-ab65-49fa-a84f-d78afa51029d" type='value'>
+			 <item id='vPALabioDentalPositive' guid="4317602c-ab65-49fa-a84f-d78afa51029d" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPALabioDentalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALabioDentalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALabioDental'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPALabioDentalNegative' guid="b653f06d-9c85-4a28-bb2c-830d3d77d240" type='value'>
+			 <item id='vPALabioDentalNegative' guid="b653f06d-9c85-4a28-bb2c-830d3d77d240" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPALabioDentalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALabioDentalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALabioDental'>
 						 <sym value='-'/>
 					 </f>
@@ -396,19 +396,19 @@
 			<term ws="en">round</term>
 			<def ws="en">“[+round] are produced with lip rounding. [-round] are not.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPARoundPositive' guid="c8523095-c9b3-4a64-912f-f27dedb9651a" type='value'>
+			 <item id='vPARoundPositive' guid="c8523095-c9b3-4a64-912f-f27dedb9651a" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPARoundPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPARoundPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPARound'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPARoundNegative' guid="b4ce070d-08cd-4138-a3ac-7691343835eb" type='value'>
+			 <item id='vPARoundNegative' guid="b4ce070d-08cd-4138-a3ac-7691343835eb" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPARoundNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPARoundNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPARound'>
 						 <sym value='-'/>
 					 </f>
@@ -420,19 +420,19 @@
 			<term ws="en">coronal</term>
 			<def ws="en">“Coronal sounds are articulated with the tip and/or blade of the tongue.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPACoronalPositive' guid="2388314e-c6db-4383-9a77-f73f0f745690" type='value'>
+			 <item id='vPACoronalPositive' guid="2388314e-c6db-4383-9a77-f73f0f745690" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPACoronalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPACoronalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPACoronal'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPACoronalNegative' guid="5873d0ca-2db9-4d85-bc8e-4de3b3c7ff4a" type='value'>
+			 <item id='vPACoronalNegative' guid="5873d0ca-2db9-4d85-bc8e-4de3b3c7ff4a" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPACoronalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPACoronalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPACoronal'>
 						 <sym value='-'/>
 					 </f>
@@ -444,19 +444,19 @@
 			<term ws="en">anterior</term>
 			<def ws="en">“Anterior segments are articulated with the tip or blade of the tongue at or in front of the alveolar ridge.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPAAnteriorPositive' guid="2278d52c-2b4c-4a79-b737-a5bfbe25a7ec" type='value'>
+			 <item id='vPAAnteriorPositive' guid="2278d52c-2b4c-4a79-b737-a5bfbe25a7ec" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAAnteriorPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAAnteriorPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAAnterior'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAAnteriorNegative' guid="f7aa3b2e-f72a-4e9e-a662-fe8fe74cd1dc" type='value'>
+			 <item id='vPAAnteriorNegative' guid="f7aa3b2e-f72a-4e9e-a662-fe8fe74cd1dc" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAAnteriorNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAAnteriorNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAAnterior'>
 						 <sym value='-'/>
 					 </f>
@@ -468,19 +468,19 @@
 			<term ws="en">distributed</term>
 			<def ws="en">“For [+dist] segments the tongue is extended for some distance in the mouth.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPADistributedPositive' guid="210f5c25-44e0-4fe9-935d-d98d89a9fccb" type='value'>
+			 <item id='vPADistributedPositive' guid="210f5c25-44e0-4fe9-935d-d98d89a9fccb" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPADistributedPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPADistributedPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPADistributed'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPADistributedNegative' guid="f57920ef-ad05-4af2-a366-5bfb952d3205" type='value'>
+			 <item id='vPADistributedNegative' guid="f57920ef-ad05-4af2-a366-5bfb952d3205" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPADistributedNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPADistributedNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPADistributed'>
 						 <sym value='-'/>
 					 </f>
@@ -492,19 +492,19 @@
 			<term ws="en">dorsal</term>
 			<def ws="en">“Dorsal sounds are articulated by raising the dorsum of the tongue. All vowels are DORSAL sounds.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPADorsalPositive' guid="3ae65a81-7a69-4be7-83e2-b69e12cd046c" type='value'>
+			 <item id='vPADorsalPositive' guid="3ae65a81-7a69-4be7-83e2-b69e12cd046c" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPADorsalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPADorsalPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPADorsal'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPADorsalNegative' guid="ef8544a9-ad6e-4827-8874-f9916e043c9d" type='value'>
+			 <item id='vPADorsalNegative' guid="ef8544a9-ad6e-4827-8874-f9916e043c9d" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPADorsalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPADorsalNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPADorsal'>
 						 <sym value='-'/>
 					 </f>
@@ -516,19 +516,19 @@
 			<term ws="en">high</term>
 			<def ws="en">“[+high] segments raise the dorsum close to the palate. [-high] segments do not.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPAHighPositive' guid="2a75a948-1cc2-4d60-bb5b-333b693d72e4" type='value'>
+			 <item id='vPAHighPositive' guid="2a75a948-1cc2-4d60-bb5b-333b693d72e4" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAHighPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAHighPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAHigh'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAHighNegative' guid="00e4f6d0-4519-4ee1-990a-d0cfd0dbd50b" type='value'>
+			 <item id='vPAHighNegative' guid="00e4f6d0-4519-4ee1-990a-d0cfd0dbd50b" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAHighNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAHighNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAHigh'>
 						 <sym value='-'/>
 					 </f>
@@ -540,19 +540,19 @@
 			<term ws="en">low</term>
 			<def ws="en">“[+low] segments bunch the dorsum to a position low in the mouth.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPALowPositive' guid="b5e7b951-6e3b-4a2e-a233-f59d4cdfc228" type='value'>
+			 <item id='vPALowPositive' guid="b5e7b951-6e3b-4a2e-a233-f59d4cdfc228" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPALowPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALowPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALow'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPALowNegative' guid="3bb64970-19d5-474a-9833-cb5e0caa2eeb" type='value'>
+			 <item id='vPALowNegative' guid="3bb64970-19d5-474a-9833-cb5e0caa2eeb" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPALowNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALowNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALow'>
 						 <sym value='-'/>
 					 </f>
@@ -564,19 +564,19 @@
 			<term ws="en">front</term>
 			<def ws="en">“(Of vowels) Articulated with the highest point of the tongue in the front region of the mouth, i.e. below the hard palate.”</def>
 			<citation>Pullum &amp; Ladusaw (1986:236)</citation>
-			 <item id='vfPAFrontPositive' guid="d75b25d3-2894-40dc-8866-57e327c91d7a" type='value'>
+			 <item id='vPAFrontPositive' guid="d75b25d3-2894-40dc-8866-57e327c91d7a" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAFrontPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAFrontPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAFront'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAFrontNegative' guid="123272aa-dd31-434d-9e34-4f1fd6c6f293" type='value'>
+			 <item id='vPAFrontNegative' guid="123272aa-dd31-434d-9e34-4f1fd6c6f293" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAFrontNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAFrontNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAFront'>
 						 <sym value='-'/>
 					 </f>
@@ -588,19 +588,19 @@
 			<term ws="en">back</term>
 			<def ws="en">“[+back] segments are produced with the tongue dorsum bunched and retracted slightly to the back of the mouth. [-back] segments are bunched and extended slightly forward.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPABackPositive' guid="af81521d-5ea6-46e4-8d0b-503703dd455b" type='value'>
+			 <item id='vPABackPositive' guid="af81521d-5ea6-46e4-8d0b-503703dd455b" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPABackPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPABackPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPABack'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPABackNegative' guid="62245b04-b269-43ff-9bb8-7e2a784e4755" type='value'>
+			 <item id='vPABackNegative' guid="62245b04-b269-43ff-9bb8-7e2a784e4755" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPABackNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPABackNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPABack'>
 						 <sym value='-'/>
 					 </f>
@@ -612,19 +612,19 @@
 			<term ws="en">tense</term>
 			<def ws="en">“This feature (mainly) applies to the position of the root of the tongue when articulating vowels. [+tense] vowels have an advanced tongue root. In fact, this feature is often referred to as Advanced tongue root, though there is a debate on whether tense and ATR are same or different features.”</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature] Date accessed: 12-Feb-2009</citation>
-			 <item id='vfPATensePositive' guid="4f22849b-b260-4296-87c7-f906b34053a6" type='value'>
+			 <item id='vPATensePositive' guid="4f22849b-b260-4296-87c7-f906b34053a6" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPATensePositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPATensePositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPATense'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPATenseNegative' guid="e8137bba-f7d8-4c19-b514-64034fba94d8" type='value'>
+			 <item id='vPATenseNegative' guid="e8137bba-f7d8-4c19-b514-64034fba94d8" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPATenseNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPATenseNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPATense'>
 						 <sym value='-'/>
 					 </f>
@@ -636,19 +636,19 @@
 			<term ws="en">advanced tongue root</term>
 			<def ws="en">“This feature (mainly) applies to the position of the root of the tongue when articulating vowels.” See also tense.</def>
 			<citation>[http://en.wikipedia.org/wiki/Distinctive_feature]</citation>
-			 <item id='vfPAATRPositive' guid="d5e5bc7d-03b4-496b-8ef0-93bedaad63e9" type='value'>
+			 <item id='vPAATRPositive' guid="d5e5bc7d-03b4-496b-8ef0-93bedaad63e9" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAATRPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAATRPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAATR'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAATRNegative' guid="3d814873-db74-4906-bb72-a6de264c9206" type='value'>
+			 <item id='vPAATRNegative' guid="3d814873-db74-4906-bb72-a6de264c9206" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAATRNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAATRNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAATR'>
 						 <sym value='-'/>
 					 </f>
@@ -660,19 +660,19 @@
 			<term ws="en">retracted tongue root</term>
 			<def ws="en">Possibly related to ATR and tense. “[+ATR] involves a forward position of the tongue body, with concomitant enlargement of the pharynx, while [+RTR] involves a retraction and lowering of the tongue body, with concomitant narrowing of the pharynx.”</def>
 			<citation>Gussenhoven &amp; Jacobs (2005:69)</citation>
-			 <item id='vfPARTRPositive' guid="f0fd85d1-7f35-47e8-b045-ab7f1e07f93e" type='value'>
+			 <item id='vPARTRPositive' guid="f0fd85d1-7f35-47e8-b045-ab7f1e07f93e" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPARTRPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPARTRPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPARTR'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPARTRNegative' guid="95a19c00-ce73-419c-b5a5-8357d0e25b41" type='value'>
+			 <item id='vPARTRNegative' guid="95a19c00-ce73-419c-b5a5-8357d0e25b41" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPARTRNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPARTRNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPARTR'>
 						 <sym value='-'/>
 					 </f>
@@ -684,19 +684,19 @@
 			<term ws="en">pharyngeal</term>
 			<def ws="en">"Pharyngeals are formed by a constiction at the back wall of the pharynx with the root of the tongue.”</def>
 			<citation>Kenstowicz (1994:32)</citation>
-			 <item id='vfPAPharyngealPositive' guid="995b12fd-9bed-4c93-96e8-99a3b1cc79cb" type='value'>
+			 <item id='vPAPharyngealPositive' guid="995b12fd-9bed-4c93-96e8-99a3b1cc79cb" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPAPharyngealPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAPharyngealPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAPharyngeal'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPAPharyngealNegative' guid="5f9f7f4c-822d-4850-9307-94c28fdba38f" type='value'>
+			 <item id='vPAPharyngealNegative' guid="5f9f7f4c-822d-4850-9307-94c28fdba38f" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPAPharyngealNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPAPharyngealNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPAPharyngeal'>
 						 <sym value='-'/>
 					 </f>
@@ -714,19 +714,19 @@
 			<term ws="en">long</term>
 			<def ws="en">“This feature applies to long vs. short segments and is often in competition with [+/-tense].”</def>
 			<citation>Durand, Jacques (1990:58)</citation>
-			 <item id='vfPALongPositive' guid="15798439-0219-4ce2-88cd-e44d5c0f2bdd" type='value'>
+			 <item id='vPALongPositive' guid="15798439-0219-4ce2-88cd-e44d5c0f2bdd" type='value'>
 				 <abbrev ws='en'>+</abbrev>
 				 <term ws='en'>positive</term>
-				 <fs id='vfPALongPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALongPositiveFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALong'>
 						 <sym value='+'/>
 					 </f>
 				 </fs>
 			 </item>
-			 <item id='vfPALongNegative' guid="aa2d5f2b-a584-49d0-9314-ec9db0bfceaf" type='value'>
+			 <item id='vPALongNegative' guid="aa2d5f2b-a584-49d0-9314-ec9db0bfceaf" type='value'>
 				 <abbrev ws='en'>-</abbrev>
 				 <term ws='en'>negative</term>
-				 <fs id='vfPALongNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
+				 <fs id='vPALongNegativeFS' type='Phon' typeguid="0ea53dd6-79f5-4fac-a672-f2f7026d8d15">
 					 <f name='fPALong'>
 						 <sym value='-'/>
 					 </f>
