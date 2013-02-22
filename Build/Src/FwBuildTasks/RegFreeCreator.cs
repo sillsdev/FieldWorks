@@ -160,6 +160,7 @@ namespace SIL.FieldWorks.Build.Tasks
 
 			try
 			{
+				_log.LogMessage(MessageImportance.Low, "\tProcessing type library {0}", fileName);
 				XmlNode oldChild;
 				ITypeLib typeLib;
 				RegHelper.LoadTypeLib(_fileName, out typeLib);
@@ -205,6 +206,7 @@ namespace SIL.FieldWorks.Build.Tasks
 					libAttr.guid, libAttr.wMajorVerNum, libAttr.wMinorVerNum, flags));
 
 				int count = typeLib.GetTypeInfoCount();
+				_log.LogMessage(MessageImportance.Low, "\t\tTypelib has {0} types", count);
 				for (int i = 0; i < count; i++)
 				{
 					ITypeInfo typeInfo;
@@ -265,7 +267,7 @@ namespace SIL.FieldWorks.Build.Tasks
 				}
 				if(regKeyClsid.SubKeyCount == 0)
 				{
-					_log.LogMessage(MessageImportance.Low, "No classes were registered in the temporary key.");
+					_log.LogMessage(MessageImportance.Normal, "No classes were registered in the temporary key.");
 				}
 				foreach (var clsId in regKeyClsid.GetSubKeyNames())
 				{

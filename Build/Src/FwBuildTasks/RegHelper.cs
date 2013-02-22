@@ -71,7 +71,8 @@ namespace SIL.FieldWorks.Build.Tasks
 				if (IsRedirected && !RedirectRegistryFailed)
 				{
 					EndRedirection();
-					m_Log.LogMessage(MessageImportance.Low, TmpRegistryKey);
+					m_Log.LogMessage(MessageImportance.Low, "Deleting {0} in RegHelper.Dispose",
+						TmpRegistryKey);
 					Registry.CurrentUser.DeleteSubKeyTree(TmpRegistryKey);
 				}
 			}
@@ -120,9 +121,12 @@ namespace SIL.FieldWorks.Build.Tasks
 					TmpRegistryKeyHKCR = TmpRegistryKey;
 					TmpRegistryKeyHKLM = TmpRegistryKey;
 				}
+				m_Log.LogMessage(MessageImportance.Low, "Redirecting HKCR to {0}", TmpRegistryKeyHKCR);
 				UIntPtr hKey;
 				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKeyHKCR, out hKey);
-				RegOverridePredefKey(HKEY_CLASSES_ROOT, hKey);
+				int ret = RegOverridePredefKey(HKEY_CLASSES_ROOT, hKey);
+				if (ret != 0)
+					m_Log.LogError("Redirecting HKCR failed with {0}", ret);
 				RegCloseKey(hKey);
 
 				// We also have to create a CLSID subkey - some DLLs expect that it exists
@@ -130,8 +134,11 @@ namespace SIL.FieldWorks.Build.Tasks
 
 				if (redirectLocalMachine)
 				{
+					m_Log.LogMessage(MessageImportance.Low, "Redirecting HKLM to {0}", TmpRegistryKeyHKLM);
 					RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKeyHKLM, out hKey);
-					RegOverridePredefKey(HKEY_LOCAL_MACHINE, hKey);
+					ret = RegOverridePredefKey(HKEY_LOCAL_MACHINE, hKey);
+					if (ret != 0)
+						m_Log.LogError("Redirecting HKLM failed with {0}", ret);
 					RegCloseKey(hKey);
 				}
 			}
@@ -147,8 +154,9 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// Ends the redirection.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void EndRedirection()
+		private void EndRedirection()
 		{
+			m_Log.LogMessage(MessageImportance.Low, "Ending registry redirection");
 			SetDllDirectory(null);
 			RegOverridePredefKey(HKEY_CLASSES_ROOT, UIntPtr.Zero);
 			RegOverridePredefKey(HKEY_LOCAL_MACHINE, UIntPtr.Zero);
@@ -280,6 +288,11 @@ namespace SIL.FieldWorks.Build.Tasks
 					return;
 
 				Marshal.GetDelegateForFunctionPointer(method, delegateSignatureType).DynamicInvoke(args);
+			}
+			catch (Exception e)
+			{
+				log.LogError("RegHelper.ApiInvoke failed getting function pointer for {0}: {1}",
+					methodName, e);
 			}
 			finally
 			{
