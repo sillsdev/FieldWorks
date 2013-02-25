@@ -110,7 +110,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					if (dlg.SelectedObject != null)
 					{
 						AddItem(dlg.SelectedObject);
-						m_atomicRefView.RootBox.Reconstruct(); // view is somehow too complex for auto-update.
+						// it is possible that the previous update has caused the data tree to refresh
+						if (!IsDisposed)
+							m_atomicRefView.RootBox.Reconstruct(); // view is somehow too complex for auto-update.
 					}
 				}
 			}
