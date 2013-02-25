@@ -283,30 +283,49 @@ namespace FwBuildTasks
 					writer.WriteLine("\t<Choose>");
 					var otherwiseBldr = new StringBuilder();
 					var otherwiseAdded = false;
+					var configs = new Dictionary<string, string>();
 					foreach (XmlNode node in ConfigNodes)
 					{
 						var condition = node.Attributes["Condition"].InnerText;
-						writer.WriteLine("\t\t<When Condition=\"{0}\">", condition);
+						var tmp = condition.Substring(condition.IndexOf("==") + 2).Trim().Trim('\'');
+						var configuration = tmp.Substring(0, tmp.IndexOf("|"));
+
+						// Add configuration only once even if same configuration is contained
+						// for multiple platforms, e.g. for AnyCpu and x64.
+						if (configs.ContainsKey(configuration))
+						{
+							if (configs[configuration] !=
+								node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "))
+							{
+								Log.LogError("Configuration {0} for project {1} is defined several times " +
+											"but contains differing values for DefineConstants.", configuration, project);
+							}
+							continue;
+						}
+						configs.Add(configuration, node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "));
+
+						writer.WriteLine("\t\t<When Condition=\" '$(Configuration)' == '{0}' \">", configuration);
 						writer.WriteLine("\t\t\t<PropertyGroup>");
 						writer.WriteLine("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
-							project,
-							node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "));
+							project, configs[configuration]);
 						writer.WriteLine("\t\t\t</PropertyGroup>");
 						writer.WriteLine("\t\t</When>");
 						if (condition.Contains("Debug") && !otherwiseAdded)
 						{
 							otherwiseBldr.AppendLine("\t\t<Otherwise>");
 							otherwiseBldr.AppendLine("\t\t\t<PropertyGroup>");
-							otherwiseBldr.AppendLine(string.Format("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
-								project,
-								node.SelectSingleNode("c:DefineConstants",m_namespaceMgr).InnerText.Replace(";", " ")));
+							otherwiseBldr.AppendLine(
+								string.Format("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
+									project,
+									node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " ")));
 							otherwiseBldr.AppendLine("\t\t\t</PropertyGroup>");
 							otherwiseBldr.AppendLine("\t\t</Otherwise>");
 							otherwiseAdded = true;
 						}
 					}
-					writer.WriteLine(otherwiseBldr.ToString());
+					writer.Write(otherwiseBldr.ToString());
 					writer.WriteLine("\t</Choose>");
+					writer.WriteLine();
 
 					writer.Write("\t<Target Name=\"{0}\"", project);
 					var bldr = new StringBuilder();
