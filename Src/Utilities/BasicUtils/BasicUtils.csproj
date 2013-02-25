@@ -39,7 +39,7 @@
     <Optimize>false</Optimize>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WIN32</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DocumentationFile>..\..\..\Output\Debug\BasicUtils.xml</DocumentationFile>
     <ErrorReport>prompt</ErrorReport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
