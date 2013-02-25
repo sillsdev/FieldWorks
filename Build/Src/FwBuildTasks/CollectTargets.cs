@@ -304,7 +304,7 @@ namespace FwBuildTasks
 						}
 						configs.Add(configuration, node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "));
 
-						writer.WriteLine("\t\t<When Condition=\" '$(Configuration)' == '{0}' \">", configuration);
+						writer.WriteLine("\t\t<When Condition=\" '$(config-capital)' == '{0}' \">", configuration);
 						writer.WriteLine("\t\t\t<PropertyGroup>");
 						writer.WriteLine("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>",
 							project, configs[configuration]);
@@ -385,7 +385,8 @@ namespace FwBuildTasks
 					writer.WriteLine("\t\t\tIgnoreFile=\"{0}/gendarme-{1}.ignore\"",
 						Path.GetDirectoryName(m_mapProjFile[project].Replace(m_fwroot, "$(fwrt)")),
 						project);
-					writer.WriteLine("\t\t\tAutoUpdateIgnores=\"$(autoUpdateIgnores)\" VerifyFail=\"$(verifyFail)\"/>");
+					writer.WriteLine("\t\t\tAutoUpdateIgnores=\"$(autoUpdateIgnores)\" VerifyFail=\"$(verifyFail)\"");
+					writer.WriteLine("\t\t\tCondition=\"'$(config-capital)'=='Debug'\" />");
 
 					if (isTestProject)
 					{

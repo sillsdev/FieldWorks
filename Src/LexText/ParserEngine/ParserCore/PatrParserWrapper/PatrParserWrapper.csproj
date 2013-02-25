@@ -56,6 +56,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>649</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
