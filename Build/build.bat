@@ -36,5 +36,8 @@ for /f "tokens=2,*" %%a in ('reg query %KEY_NAME% /v %VALUE_NAME% ^| findstr %VA
 )
 call "%INSTALL_DIR%\..\..\VC\vcvarsall.bat"
 
+REM allow typelib registration in redirected registry key even with limited permissions
+set OAPERUSERTLIBREG=1
+
 msbuild /t:refreshTargets
 msbuild %*
