@@ -117,14 +117,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						var newHvo = m_analysisMorphs[imorph];
 						if (oldHvo != newHvo)
 						{
-							if (newHvo == 0 && oldHvo != 0)
+							if (newHvo == 0)
 							{
 								// Change to 'unknown'. Will no longer be able to use the morph property to get
 								// at the actual form, so reinstate it in the bundle.
 								foreach (IWritingSystem ws in mb.Cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 									mb.Form.set_String(ws.Handle, mb.Cache.MainCacheAccessor.get_MultiStringAlt(oldHvo, MoFormTags.kflidForm, ws.Handle));
+								mb.MorphRA = null; // See LT-13878 for 'unrelated' crash reported by Santhosh
 							}
-							mb.MorphRA = m_moFormRepos.GetObject(newHvo);
+							else
+							{
+								mb.MorphRA = m_moFormRepos.GetObject(newHvo);
+							}
 							isDirty = true;
 						}
 
@@ -133,7 +137,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						newHvo = m_analysisSenses[imorph];
 						if (oldHvo != newHvo)
 						{
-							mb.SenseRA = m_senseRepos.GetObject(newHvo);
+							mb.SenseRA = newHvo == 0 ? null : m_senseRepos.GetObject(newHvo);
 							isDirty = true;
 						}
 
@@ -142,7 +146,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						newHvo = m_analysisMsas[imorph];
 						if (oldHvo == newHvo)
 							continue;
-						mb.MsaRA = m_msaRepos.GetObject(newHvo);
+						mb.MsaRA = newHvo == 0 ? null : m_msaRepos.GetObject(newHvo);
 						isDirty = true;
 					}
 				}
