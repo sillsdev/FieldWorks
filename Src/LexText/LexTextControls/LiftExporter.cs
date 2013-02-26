@@ -311,7 +311,7 @@ namespace SIL.FieldWorks.LexText.Controls
 									var internalPath = tssString.Text;
 									// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 									var exportedForm = ExportFile(internalPath,
-										Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+										Path.Combine(DirectoryFinder.GetMediaDir(m_cache.GetValidLinkedFilesFolder()), internalPath),
 										"audio");
 									if (internalPath != exportedForm)
 										tssString = m_cache.TsStrFactory.MakeString(exportedForm, ws);
@@ -1345,7 +1345,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var internalPath = sForm;
 					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 					sForm = ExportFile(internalPath,
-						Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+						Path.Combine(DirectoryFinder.GetMediaDir(m_cache.GetValidLinkedFilesFolder()), internalPath),
 						"audio");
 				}
 				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
@@ -1396,7 +1396,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var internalPath = alt.Form.get_String(ws).Text;
 				// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 				var writePath = ExportFile(internalPath,
-					Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+					Path.Combine(DirectoryFinder.GetMediaDir(m_cache.GetValidLinkedFilesFolder()), internalPath),
 					"audio");
 				return writePath;
 			}
@@ -1463,7 +1463,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var internalPath = tssVal.Text == null ? "" : tssVal.Text;
 					// usually this will be unchanged, but it is pathologically possible that the file name conflicts.
 					var writePath = ExportFile(internalPath,
-						Path.Combine(DirectoryFinder.GetMediaDir(m_cache.LangProject.LinkedFilesRootDir), internalPath),
+						Path.Combine(DirectoryFinder.GetMediaDir(m_cache.GetValidLinkedFilesFolder()), internalPath),
 						"audio");
 					return XmlUtils.MakeSafeXml(writePath);
 				}

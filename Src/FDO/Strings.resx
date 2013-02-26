@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -950,5 +950,13 @@ If you need to make changes, tell the other users to close this project before y
   <data name="ksTransListCaption" xml:space="preserve">
     <value>Loading list member names</value>
     <comment>Caption for progress dialog, when a new writing system is added</comment>
+  </data>
+  <data name="ksLinkedFilesFolder" xml:space="preserve">
+    <value>Linked Files Folder</value>
+    <comment>Caption for folder dialog, when setting a new LangProject.LinkedFilesRootDir value</comment>
+  </data>
+  <data name="ksInvalidLinkedFilesFolder" xml:space="preserve">
+    <value>{0} is not a valid directory for linked files.</value>
+    <comment>Error message for accessing an invalid LangProject.LinkedFilesRootDir value</comment>
   </data>
 </root>
