@@ -4277,6 +4277,8 @@ namespace SIL.FieldWorks.IText
 				IVwSelection sel = GetSelectionAtPoint(new Point(e.X, e.Y), false);
 				int hvoTarget;
 				GetInfoForJumpToTool(sel, out hvoTarget);
+				if (hvoTarget == 0)
+					return; // LT-13878: User may have 'Ctrl+Click'ed on an arrow or off in space somewhere
 				CmObjectUi targetUiObj = CmObjectUi.MakeUi(Cache, hvoTarget);
 				targetUiObj.HandleCtrlClick(Mediator, this);
 			}
