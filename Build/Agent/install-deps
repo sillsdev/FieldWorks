@@ -1,0 +1,30 @@
+#!/bin/bash
+# Install required dependencies for building FieldWorks
+
+# get packages from config file listed in the variable $1
+getPackages()
+{
+	packages=$(git config -f $(dirname "$0")/dependencies.config --get "$1" 2>/dev/null)
+	if [ "${packages:0:1}" = "@" ]; then
+		getPackages "${packages:1}"
+	else
+		echo $packages
+	fi
+}
+
+# Install packages $@
+install()
+{
+	if [ $# -gt 0 ]; then
+		sudo apt-get install -y "$@"
+	fi
+}
+
+version=$(lsb_release -c -s)
+arch=$(dpkg --print-architecture)
+
+sudo apt-get update
+install $(getPackages common.any)
+install $(getPackages common.$arch)
+install $(getPackages $version.any)
+install $(getPackages $version.$arch)
