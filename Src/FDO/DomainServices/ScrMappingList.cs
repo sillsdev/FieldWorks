@@ -428,6 +428,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// Read the TEStyles.xml file to get the default marker mappings
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static void ReadDefaultMappings()
 		{
 			XmlDocument doc = new XmlDocument();

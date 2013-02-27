@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.IO;
@@ -466,6 +467,8 @@ namespace SIL.FieldWorks.IText
 			}
 
 			[Test]
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			public void ExportVariantTypeInformation_LT9374_xml2OO_multipleWss()
 			{
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
@@ -663,6 +666,8 @@ namespace SIL.FieldWorks.IText
 			}
 
 			[Test]
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend_xml2OO_multipleWss()
 			{
 				var wsfr = Cache.ServiceLocator.WritingSystemManager.Get("fr");
@@ -725,6 +730,8 @@ namespace SIL.FieldWorks.IText
 			/// however, I (EricP) got tired of making so many tests, so lumped it all into one.
 			/// </summary>
 			[Test]
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend_varianttypes_xml2Word_multipleWss()
 			{
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
@@ -786,6 +793,8 @@ namespace SIL.FieldWorks.IText
 			/// however, I (EricP) got tired of making so many tests, so lumped it all into one.
 			/// </summary>
 			[Test]
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			public void ExportIrrInflVariantTypeInformation_LT7581_glsAppend_varianttypes_xml2Word2007_multipleWss()
 			{
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");
@@ -840,10 +849,10 @@ namespace SIL.FieldWorks.IText
 				Assert.That(transformedDocWord.SelectNodes("//w:rStyle[starts-with(@w:val, '\n') or starts-with(@w:val, ' ')]", nsmgr), Has.Count.EqualTo(0), "style values should not start with whitespace");
 			}
 
-
-
 			[Test]
 			[Ignore("This is a bug that might need to be fixed if users notice it. low priority since the user could just not display lines with same ws")]
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			public void ExportIrrInflVariantTypeInformation_LT7581_gls_multiEngWss()
 			{
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get("qaa-x-kal");

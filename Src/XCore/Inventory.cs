@@ -15,6 +15,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.Diagnostics;
@@ -305,6 +306,8 @@ namespace XCore
 		///   corresponding layoutType node with a layout name that ends with "#Foo".
 		/// </summary>
 		/// <param name="element"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void PersistOverrideElement(XmlNode element)
 		{
 			string[] keyAttrs = m_keyAttrs[element.Name];
@@ -452,6 +455,8 @@ namespace XCore
 		/// <summary>
 		/// Add (or replace) the given layout type in the inventory.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void AddLayoutTypeToInventory(XmlNode layoutType)
 		{
 			Debug.Assert(m_mainDoc != null);
@@ -478,6 +483,8 @@ namespace XCore
 		/// <summary>
 		/// Return the list of layout types that the inventory knows about.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public List<XmlNode> GetLayoutTypes()
 		{
 			Debug.Assert(m_mainDoc != null);
@@ -999,6 +1006,8 @@ namespace XCore
 		/// </summary>
 		/// <param name="inventoryFilePath"></param>
 		/// <param name="newData"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void RefreshOneInventoryFile(string inventoryFilePath, List<XmlNode> newData)
 		{
 			XmlDocument xdoc = new XmlDocument();
@@ -1062,6 +1071,8 @@ namespace XCore
 		/// </summary>
 		/// <param name="filePaths">Collection of pathnames to individual XDE template files.</param>
 		/// <param name="loadUserOverRides">set to true if the version attribute needs to be added to elements in the configuration file.</param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void AddElementsFromFiles(IEnumerable<string> filePaths, int version, bool loadUserOverRides)
 		{
 			Debug.Assert(filePaths != null);
@@ -1086,6 +1097,8 @@ namespace XCore
 		/// <summary>
 		/// Collect all of the elements up from a string input (used in testing).
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void AddElementsFromString(string input, int version)
 		{
 			Debug.Assert(m_mainDoc != null);

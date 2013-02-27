@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -27,6 +28,9 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		{
 			m_citations = new List<MasterItemCitation>();
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public MasterItem(XmlNode node, GlossListTreeView.ImageKind kind, string sTerm)
 		{
 			m_node = node;

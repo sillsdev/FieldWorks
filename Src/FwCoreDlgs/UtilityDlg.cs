@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -180,6 +181,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="mediator"></param>
 		/// <param name="configurationParameters"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void SetDlgInfo(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();

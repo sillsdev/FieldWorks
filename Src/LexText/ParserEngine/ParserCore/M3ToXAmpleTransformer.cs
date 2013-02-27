@@ -13,6 +13,7 @@
 // Responsibility: John Hatton
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.IO;
@@ -55,6 +56,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		internal void PrepareTemplatesForXAmpleFiles(ref XmlDocument domModel, XmlDocument domTemplate)
 		{
 			using (var task = new TaskReport(ParserCoreStrings.ksPreparingTemplatesForXAmple, m_taskUpdateHandler))
@@ -73,6 +76,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void InsertOrderclassInfo(ref XmlDocument domModel, string sResultFile)
 		{
 			// Check for a valid filename (see LT-6472).

@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows.Forms;
 using System.IO;
@@ -66,6 +67,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;

@@ -15,6 +15,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 
 using NUnit.Framework;
@@ -120,6 +121,8 @@ namespace LexTextDllTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void AddListToXmlConfig()
 		{
 			// Setup

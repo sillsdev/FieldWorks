@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.Diagnostics;
@@ -1179,6 +1180,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return paraNode;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal IStTxtPara BuildParagraphContent(XmlNode paraDefn)
 			{
 				if (paraDefn.Name != "StTxtPara")
@@ -1206,6 +1209,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return m_para;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal ITsString RebuildParagraphContentFromStrings()
 			{
 				try
@@ -1332,6 +1337,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// analysis glosses.
 			/// </summary>
 			/// <returns></returns>
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal ITsString GenerateParaContentFromAnnotations()
 			{
 				m_expectedWordformsAndOccurrences = new Dictionary<string, int>();
@@ -1544,6 +1551,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				HaveParsed = true;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			XmlNode SegmentNode(int iSegment)
 			{
 				XmlNodeList cbaSegmentNodes = SegmentNodeList();
@@ -1570,6 +1579,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return cbaSegFormNodes;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal XmlNode SegmentFormNode(int iSegment, int iSegForm)
 			{
 				XmlNodeList cbaSegFormNodes = SegmentFormNodeList(iSegment);
@@ -1585,21 +1596,29 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// Get a list of the XmlNodes (CmBaseAnnotations in the Segments16 property) of the input XmlNode,
 			/// which represents an StTxtPara in our test data.
 			/// </summary>
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			static internal List<XmlNode> SegmentNodes(XmlNode paraDefn)
 			{
 				return NodeListToNodes(SegmentNodeList(paraDefn));
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal List<XmlNode> SegmentNodes()
 			{
 				return NodeListToNodes(SegmentNodeList());
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			static internal List<XmlNode> SegmentFormNodes(XmlNode segment)
 			{
 				return NodeListToNodes(SegmentFormNodeList(segment));
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal XmlNode GetSegmentFormInfo(string wordform, int iOccurrenceInParagraph, out int iSegment, out int iSegForm)
 			{
 				XmlNodeList cbaSegFormNodes = m_paraDefn.SelectNodes("./Segments16/CmBaseAnnotation/SegmentForms37/CmBaseAnnotation[StringValue37='" + wordform + "']");
@@ -1708,6 +1727,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return newSegment;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal XmlElement CreateSegmentForms()
 			{
 				Debug.Assert(m_paraDefn.SelectNodes(".//Segments16/CmBaseAnnotation").Count == 1);
@@ -1741,6 +1762,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return NeedToRebuildParagraphContentFromAnnotations;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal bool DeleteSegmentBreak(int iSegment, int iSegForm)
 			{
 				// get first segment
@@ -1916,6 +1939,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				m_cache = cache;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal FDO.IText BuildText(XmlNode textDefn)
 			{
 				if (textDefn.Name != "Text")
@@ -2138,6 +2163,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				return newParaDefn;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal void DeleteParagraphBreak(XmlNode paraNodeToDelBreak)
 			{
 				int iParaToDeleteBreak = XmlUtils.GetIndexAmongSiblings(paraNodeToDelBreak);
@@ -2213,6 +2240,9 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			/// The node we have selected as a "cursor" position for editing.
 			/// </summary>
 			XmlNode m_selectedNode = null;
+
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			internal XmlNode SelectedNode
 			{
 				get

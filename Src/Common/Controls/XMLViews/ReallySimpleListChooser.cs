@@ -838,6 +838,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="configNode"></param>
 		/// <param name="mediator"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void InitializeExtras(XmlNode configNode, Mediator mediator)
 		{
 			CheckDisposed();
@@ -954,6 +956,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// for my liking, but it's the only way I could think of to make this adaptable to
 		/// ongoing growth of the system.
 		/// </remarks>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private XmlNode GenerateChooserInfoForCustomNode(XmlNode configNode)
 		{
 			string editor = XmlUtils.GetAttributeValue(configNode, "editor");
@@ -1016,6 +1020,8 @@ namespace SIL.FieldWorks.Common.Controls
 			return chooserNode;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private string ScanToolsAndClerks(XmlNode windowConfig, string listOwnerClass, string listField)
 		{
 			foreach (XmlNode xnItem in windowConfig.SelectNodes("/window/lists/list/item"))

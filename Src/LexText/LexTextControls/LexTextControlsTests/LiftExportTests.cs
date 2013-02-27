@@ -870,6 +870,8 @@ namespace LexTextControlsTests
 			return customPossibilityList;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyCustomLists(XmlDocument xdoc)
 		{
 			var repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
@@ -1056,6 +1058,8 @@ namespace LexTextControlsTests
 			VerifyExportRanges(xdocRangeFile);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyExportRanges(XmlDocument xdoc)
 		{
 			var repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
@@ -1157,6 +1161,8 @@ namespace LexTextControlsTests
 			Assert.AreEqual(item1.Name.BestAnalysisVernacularAlternative.Text, rangeElementFormText);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyExport(XmlDocument xdoc)
 		{
 			var repoEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -1253,6 +1259,8 @@ namespace LexTextControlsTests
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyEmptyPublishIn(XmlNode xentry)
 		{
 			var dnpiXpath = "trait[@name = 'do-not-publish-in']";
@@ -1264,6 +1272,8 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, dnpiNodes.Count, "Should not contain any sense-level 'do-not-publish-in' nodes!");
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyPublishInExport(XmlNode xentry)
 		{
 			var dnpiXpath = "trait[@name = 'do-not-publish-in']";
@@ -1310,6 +1320,8 @@ namespace LexTextControlsTests
 		/// </relation>
 		/// </code>
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyLexEntryRefs(ILexEntry entryUnbelieving, XmlNode xentry)
 		{
 			var relations = xentry.SelectNodes("relation");
@@ -1320,7 +1332,9 @@ namespace LexTextControlsTests
 			VerifyRelation(relations[3], "BaseForm", "BaseForm", true, "believe");
 		}
 
-		void VerifyRelation(XmlNode relation, string type, string complexFormType, bool isPrimary, string target)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
+		private void VerifyRelation(XmlNode relation, string type, string complexFormType, bool isPrimary, string target)
 		{
 			Assert.That(relation.Attributes["type"].Value, Is.EqualTo(type));
 			var traitType = relation.SelectNodes("trait[@name='complex-form-type']");
@@ -1340,6 +1354,8 @@ namespace LexTextControlsTests
 			Assert.That(relatedEntry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo(target));
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyEntryExtraStuff(ILexEntry entry, XmlNode xentry)
 		{
 			var citations = xentry.SelectNodes("citation");
@@ -1384,6 +1400,8 @@ namespace LexTextControlsTests
 			VerifyAudio(kcitationFormFileName);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyEntryCustomFields(XmlNode xentry, ILexEntry entry)
 		{
 			var xfields = xentry.SelectNodes("field");
@@ -1469,6 +1487,8 @@ namespace LexTextControlsTests
 			Assert.AreEqual(liftGenDate.Day, genDate.Day);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyAllomorphCustomFields(XmlNode xentry, ILexEntry entry)
 		{
 			//<variant>
@@ -1497,6 +1517,8 @@ namespace LexTextControlsTests
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyExtraSenseStuff(ILexSense sense, XmlNode xsense)
 		{
 			var xdefs = xsense.SelectNodes("definition");
@@ -1553,6 +1575,8 @@ namespace LexTextControlsTests
 			Assert.IsTrue(File.Exists(Path.Combine(liftAudioFolder, audioFileName)));
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyPictures(XmlNode xsense, ILexSense sense)
 		{
 			var pictureNodes = xsense.SelectNodes("illustration");
@@ -1588,6 +1612,8 @@ namespace LexTextControlsTests
 			Assert.IsTrue(File.Exists(Path.Combine(liftPicsFolder, fourthPicName)));
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifySenseCustomFields(XmlNode xsense, ILexSense sense)
 		{
 			var xfields = xsense.SelectNodes("field");
@@ -1648,6 +1674,8 @@ namespace LexTextControlsTests
 			Assert.AreEqual(sValue, intVal.ToString());
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyExampleSentenceCustomFields(XmlNode xsense, ILexSense sense)
 		{
 			//<example>
@@ -1691,6 +1719,8 @@ namespace LexTextControlsTests
 		private bool DontExpectNewlinesCorrected;
 		private string m_tempPictureFilePath;
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyTsString(XmlNode xitem, int wsItem, ITsString tssText)
 		{
 			var xforms = xitem.SelectNodes("form");
@@ -1701,6 +1731,8 @@ namespace LexTextControlsTests
 			VerifyForm(xforms[0], tssText);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyMultiStringAlt(XmlNode xitem, int wsItem, int wsCount, ITsString tssText)
 		{
 			var xforms = xitem.SelectNodes("form");
@@ -1728,6 +1760,8 @@ namespace LexTextControlsTests
 			Assert.AreEqual(expected, sText);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyMultiStringAnalVern(XmlNode xitem, ITsMultiString tssMultiString, bool expectCustom)
 		{
 			var xforms = xitem.SelectNodes("form");
@@ -1829,6 +1863,8 @@ namespace LexTextControlsTests
 			text.ParagraphsOS.Add(paraInEntryThis2);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyCustomStText(XmlDocument xdoc)
 		{
 			var repoEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -1852,6 +1888,8 @@ namespace LexTextControlsTests
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyCustomStTextForEntryThisAndAllOthers(XmlNode xentry)
 		{
 			var xcustoms = xentry.SelectNodes("field[@type=\"Long Text\"]");
@@ -1859,6 +1897,8 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, xcustoms.Count, "We should have zero \"Long Text\" fields for this entry.");
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyCustomStTextForEntryTest(XmlNode xentry)
 		{
 			var xcustoms = xentry.SelectNodes("field[@type=\"Long Text\"]");

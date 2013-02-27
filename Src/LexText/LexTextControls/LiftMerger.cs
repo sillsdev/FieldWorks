@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -379,6 +380,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void LoadCategoryCatalog()
 		{
 			string sPath = System.IO.Path.Combine(DirectoryFinder.FWCodeDirectory,
@@ -398,6 +401,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void LoadCategoryNode(XmlNode node, string id, string parent)
 		{
 			var cat = new EticCategory {Id = id, ParentId = parent};
@@ -724,6 +729,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					relationTypeName, targetId, extensible.GetType().Name));
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static void FillInExtensibleElementsFromRawXml(LiftObject obj, string rawXml)
 		{
 			if (rawXml.IndexOf("<trait") > 0 ||
@@ -770,6 +777,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftField CreateLiftFieldFromXml(XmlNode node)
 		{
 			string fieldType = XmlUtils.GetManditoryAttributeValue(node, "type");
@@ -802,6 +811,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftMultiText CreateLiftMultiTextFromXml(XmlNode node)
 		{
 			LiftMultiText text = new LiftMultiText();
@@ -843,6 +854,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftTrait CreateLiftTraitFromXml(XmlNode node)
 		{
 			LiftTrait trait = new LiftTrait();
@@ -1003,6 +1016,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return ety;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureDefinition(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml,
 			IFsFeatureSystem featSystem)
@@ -1233,6 +1248,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void MergeInMultiUnicode(IMultiUnicode mu, XmlNode xnField)
 		{
 			int ws = 0;
@@ -1318,6 +1335,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return Guid.Empty;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureStrucType(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml,
 			IFsFeatureSystem featSystem)
@@ -1399,6 +1418,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureValue(string range, string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml)
 		{
@@ -1599,6 +1620,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessStemName(string range, string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev, string rawXml)
 		{

@@ -20,6 +20,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -194,6 +195,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			ConvertEntities(ksSEC_ST, doc);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ConvertEntities(string sTestName, XmlDocument doc)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -212,6 +215,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ConvertNaturalClasses(string sTestName, XmlDocument doc, bool fTesting)
 		{
 			StringBuilder sbXPath = new StringBuilder();
@@ -287,6 +292,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			ConvertAdHocFailures(doc, fTesting, ancc);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ConvertAdHocFailures(XmlDocument doc, bool fTesting, AdhocTraceTest tt)
 		{
 			string sXPath = "//failure[contains(@test,'" + tt.Name +
@@ -333,6 +340,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ConvertWordGrammarFailures(XmlDocument doc, bool fTesting)
 		{
 			string sXPath = "//failure[contains(@test,'PC-PATR')]";

@@ -141,6 +141,9 @@ namespace XCore
 			Populate ();
 			m_adapter.CreateUIForChoiceGroupCollection(this);
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected override void Populate()
 		{
 			XmlNodeList groups =m_configurationNode.SelectNodes(NodeSelector);
@@ -531,7 +534,9 @@ namespace XCore
 			}
 		}
 
-		protected  void Populate(XmlNode node)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
+		protected void Populate(XmlNode node)
 		{
 			Debug.Assert( node != null);
 			XmlNodeList items =node.SelectNodes("item | menu | group");

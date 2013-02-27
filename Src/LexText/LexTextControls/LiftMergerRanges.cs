@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -1116,6 +1117,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="nodesWithForms"></param>
 		/// <param name="text"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ReadFormNodes(XmlNodeList nodesWithForms, LiftMultiText text)
 		{
 			foreach (XmlNode formNode in nodesWithForms)

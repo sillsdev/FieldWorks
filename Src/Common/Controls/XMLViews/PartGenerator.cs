@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -303,6 +304,8 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static void AppendClassAttribute(XmlNode output, string fieldName, string className)
 		{
 			// Desired node may be a child of a child...  (See LT-6447.)

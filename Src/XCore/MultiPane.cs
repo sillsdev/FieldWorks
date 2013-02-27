@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
@@ -217,6 +218,8 @@ namespace XCore
 		/// <summary>
 		/// Initialize this has an IxCoreColleague
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();

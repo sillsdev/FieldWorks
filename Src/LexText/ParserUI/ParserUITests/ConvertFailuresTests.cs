@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
@@ -56,6 +57,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ConvertANCCFailureStrings()
 		{
 			XmlNodeList nl = m_doc.SelectNodes("//failure[contains(@test,'ANCC_FT')]");
@@ -80,6 +83,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ConvertMCCFailureStrings()
 		{
 			XmlNodeList nl = m_doc.SelectNodes("//failure[contains(@test,'MCC_FT')]");
@@ -104,6 +109,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ConvertSECFailureStrings()
 		{
 			XmlNodeList nl = m_doc.SelectNodes("//failure[contains(@test,'SEC_ST') and contains(@test,'[')]");
@@ -145,6 +152,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void ConvertInfixEnvironmentFailureStrings()
 		{
 			XmlNodeList nl = m_doc.SelectNodes("//failure[contains(@test,'InfixEnvironment') and contains(@test,'[')]");

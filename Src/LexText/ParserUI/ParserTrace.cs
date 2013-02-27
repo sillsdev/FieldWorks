@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -145,6 +146,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return sb.ToString();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void ConvertMorphs(XmlDocument doc, string sNodeListToFind, bool fIdsInAttribute)
 		{
 			XmlNodeList nl = doc.SelectNodes(sNodeListToFind);
@@ -420,6 +423,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				CreateNotAffixAlloFeatsElement(doc, node, tempNode);
 			}
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void AddMsaNodes(bool fIsTrace)
 		{
 			string sXPath;

@@ -38,6 +38,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -3371,6 +3372,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Make up for weakness of XmlNode.SelectSingleNode.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static XmlNode FindClerkNode(XmlNode parameterNode, string clerk)
 		{
 			foreach (XmlNode node in parameterNode.SelectNodes("ancestor::parameters/clerks/clerk"))

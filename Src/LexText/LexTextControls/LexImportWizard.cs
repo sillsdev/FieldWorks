@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -3314,6 +3315,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private int ProcessErrorLogErrors(System.Xml.XmlDocument xmlMap, ref string sHtml)
 		{
 			int errorCount = 0;
@@ -3410,6 +3413,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return errorCount;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private int ProcessErrorLogWarnings(System.Xml.XmlDocument xmlMap, ref string sHtml)
 		{
 			int warningCount = 0;
@@ -3453,6 +3458,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return warningCount;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessErrorLogCautions(System.Xml.XmlDocument xmlMap, ref string sHtmlOUT)
 		{
 			string fileName = m_processedInputFile;
@@ -3582,6 +3589,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			sHtmlOUT += sHtml.ToString();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessErrorLogSfmInfo(System.Xml.XmlDocument xmlMap, ref string sHtml)
 		{
 			System.Xml.XmlNode infoNode =

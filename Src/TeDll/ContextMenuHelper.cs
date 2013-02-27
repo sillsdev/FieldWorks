@@ -20,6 +20,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Resources;
 using System.Text;
@@ -101,6 +102,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="generalFile">FieldWorks general configuration file</param>
 		/// <param name="specificFile">application specific configuration file</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void InitializeContextMenus(string generalFile, string specificFile)
 		{
 			XmlDocument xdocGeneral = new XmlDocument();

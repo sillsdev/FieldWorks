@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -611,6 +612,8 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void HandleOwningVectorDeletions(XmlDocument fxtResult, XmlNode resultNode, List<int> hvosResult, List<int> hvosDatabase, int flid)
 		{
 			// if the item is no longer in the database, need to remove it from the fxt result
@@ -678,6 +681,8 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void HandleDaughterDeletions(XmlNode resultNode, XmlDocument fxtResult, List<int[]> listOfFlids)
 		{
 			if (listOfFlids.Count == 0 || resultNode.ChildNodes.Count == 0)
@@ -773,6 +778,8 @@ namespace SIL.FieldWorks.Common.FXT
 			return false;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void HandleReferenceVectorDeletions(XmlDocument fxtResult, XmlNode resultNode, List<int> hvosResult, List<int> hvosDatabase)
 		{
 			// if the item is no longer in the database, need to remove it from the fxt result
@@ -792,7 +799,8 @@ namespace SIL.FieldWorks.Common.FXT
 			}
 		}
 
-
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private List<int> GetHvosInFxtResult(XmlNode resultNode, string sFxtItemLabel, XmlNode fxtNode)
 		{
 			XmlNodeList resultNodes;
@@ -949,6 +957,8 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <param name="searchPropsFound">The search props found.</param>
 		/// <param name="sAttrValueFound">The search attribute value found.</param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private XmlNode GetFxtFieldNode(string sClassName, List<FXTElementSearchProperties> searchProps, out string sResultOwningElementName,
 			out FXTElementSearchProperties searchPropsFound, out string sAttrValueFound)
 		{

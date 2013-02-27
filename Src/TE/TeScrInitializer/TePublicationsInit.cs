@@ -12,6 +12,7 @@
 // Responsibility: FieldWorks Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -159,6 +160,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <returns>List of names of factory Header/Footer sets</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public static List<string> FactoryHeaderFooterSets
 		{
 			get
@@ -196,6 +199,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="progressDlg">Progress dialog</param>
 		/// <param name="rootNode">The XmlNode from which to read the publication info</param>
 		/// -------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected void CreatePublicationInfo(IProgress progressDlg, XmlNode rootNode)
 		{
 			// init static stuff we may need
@@ -245,6 +250,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="publicationNodes">the xml nodes to read</param>
 		/// <param name="hfSetNodes">The header/footer set nodes.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void CreatePublications(IProgress progressDlg, XmlNodeList publicationNodes,
 			XmlNodeList hfSetNodes)
 		{
@@ -495,6 +502,8 @@ namespace SIL.FieldWorks.TE
 		/// <remarks>If the node is null, the header/footer will be initialized to empty
 		/// strings.</remarks>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ReadHeaderOrFooter(IPubHeader headerFooter, XmlNode hfNode)
 		{
 			//Set defaults, in case any nodes are missing
@@ -714,6 +723,8 @@ namespace SIL.FieldWorks.TE
 		/// publication.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected List<PubPageInfo> GetPubPageSizes(XmlNode pubsRootNode,
 			string publicationName, string wsId)
 		{

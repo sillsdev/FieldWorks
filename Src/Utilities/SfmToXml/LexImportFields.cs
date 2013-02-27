@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Collections;
 using System.Xml;	// XmlNode
@@ -349,6 +350,8 @@ namespace Sfm2Xml
 		/// </summary>
 		/// <param name="xmlFileName"></param>
 		/// <returns>true if successfull</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public bool ReadLexImportFields(string xmlFileName)
 		{
 			bool success = true;
@@ -406,6 +409,8 @@ namespace Sfm2Xml
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private bool ReadAClassNode(System.Xml.XmlNode node)
 		{
 			bool success = true;

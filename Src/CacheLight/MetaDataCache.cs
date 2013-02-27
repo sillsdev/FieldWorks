@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Specialized; // Needed for StringCollection.
 using System.Collections.Generic; // Needed for Dictionary.
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices; // needed for Marshal
 using System.Xml;
 using SIL.CoreImpl;
@@ -148,6 +149,8 @@ namespace SIL.FieldWorks.CacheLight
 		/// See Ling.cm or xmi2cellar3.xml for supported XML data formats.
 		/// Note: This may also be used to load persisted custom fields.
 		/// </remarks>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void InitXml(string pathname, bool clearPrevCache)
 		{
 			if (pathname == null)

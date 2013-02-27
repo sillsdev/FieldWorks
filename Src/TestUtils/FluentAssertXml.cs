@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using NUnit.Framework;
 using Palaso.Xml;
@@ -115,6 +116,8 @@ namespace Palaso.TestUtilities
 		/// <summary>
 		/// Will honor default namespace
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void HasSpecifiedNumberOfMatchesForXpath(string xpath, int count)
 		{
 			var nodes = NodeOrDom.SafeSelectNodes(xpath);
@@ -134,6 +137,8 @@ namespace Palaso.TestUtilities
 		/// <summary>
 		/// Will honor default namespace
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void HasSpecifiedNumberOfMatchesForXpath(string xpath, int count, bool print)
 		{
 			var nodes = NodeOrDom.SafeSelectNodes(xpath);

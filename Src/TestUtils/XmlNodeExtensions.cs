@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using Palaso.Code;
@@ -24,6 +25,8 @@ namespace Palaso.Xml
 		/// <summary>
 		/// honors default namespace and will return an empty list rather than null
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public static XmlNodeList SafeSelectNodes(this XmlNode node, string path)
 		{
 			Guard.AgainstNull(node, "SafeSelectNodes(node,"+path+"): node was null");
@@ -38,6 +41,8 @@ namespace Palaso.Xml
 			return x;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public static string SelectTextPortion(this XmlNode node, string path, params object[] args)
 		{
 			var x = node.SelectNodes(string.Format(path, args));
@@ -81,6 +86,8 @@ namespace Palaso.Xml
 		/// </summary>
 		/// <param name="doc"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public static XmlNamespaceManager LoadNsmgrForDoc(XmlDocument doc)
 		{
 			var rootNode = doc.DocumentElement;

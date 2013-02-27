@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Linq;
 using NUnit.Framework;
@@ -1292,6 +1293,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void TestReadHfElementsWithORCs()
 		{
 			XmlDocument doc = new XmlDocument();
@@ -1633,6 +1636,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void OverwriteExistingHfSets()
 		{
 			XmlDocument doc = new XmlDocument();

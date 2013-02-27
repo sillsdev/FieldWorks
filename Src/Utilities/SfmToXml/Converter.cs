@@ -661,6 +661,9 @@ namespace Sfm2Xml
 		{
 			return ReadAndOutputSettings(xmlMap, null);
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private bool ReadAndOutputSettings(System.Xml.XmlDocument xmlMap, System.Xml.XmlTextWriter xmlOutput)
 		{
 			int numFound = 0;
@@ -703,6 +706,8 @@ namespace Sfm2Xml
 			return true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected bool ReadLanguages(System.Xml.XmlDocument xmlMap)
 		{
 			bool success = true;
@@ -760,6 +765,8 @@ namespace Sfm2Xml
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected bool ReadHierarchy(System.Xml.XmlDocument xmlMap)
 		{
 			bool success = true;
@@ -946,6 +953,8 @@ namespace Sfm2Xml
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected bool ReadInFieldMarkers(System.Xml.XmlDocument xmlMap)
 		{
 			bool success = true;
@@ -1063,6 +1072,9 @@ namespace Sfm2Xml
 			// passing null as the XmlTextWriter causes the output to not happen
 			return ReadAndOutputFieldDescriptions(xmlMap, null);
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private bool ReadAndOutputFieldDescriptions(System.Xml.XmlDocument xmlMap, System.Xml.XmlTextWriter xmlOutput)
 		{
 			bool success = true;
@@ -1147,6 +1159,9 @@ namespace Sfm2Xml
 		{
 			return ReadAndOutputCustomFieldDescriptions(xmlMap, null);
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private bool ReadAndOutputCustomFieldDescriptions(System.Xml.XmlDocument xmlMap, System.Xml.XmlTextWriter xmlOutput)
 		{
 			bool success = true;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
@@ -495,6 +496,8 @@ namespace FixFwDataDllTests
 		/// LT-13509 Identical entries homograph numbering inconsistency.
 		/// </summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public void TestForHomographNumberInconsistency()
 		{
 			// Setup
@@ -604,6 +607,8 @@ namespace FixFwDataDllTests
 			VerifyHn(xmlDoc, irrelevantElseGuid, "2"); // a homograph in french (though not in the first AUni ws)
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void VerifyHn(XmlDocument xmlDoc, string guid, string expectedHn)
 		{
 			XmlNodeList entries;

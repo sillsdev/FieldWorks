@@ -619,6 +619,8 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns>Zero-based Index of Node in ParentNode.ChildNodes. -1, if node has no parent.</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public static int GetIndexAmongSiblings(XmlNode node)
 		{
 			XmlNode parent = node.ParentNode;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
@@ -80,6 +81,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return doc.InnerXml;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected override void CreateMorphNodes(XmlDocument doc, XmlNode seqNode, string sNodeId)
 		{
 			string s = "//WordGrammarAttempt[Id=\"" + sNodeId + "\"]";

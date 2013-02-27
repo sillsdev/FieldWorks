@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -3276,6 +3277,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <remarks>Made virtual to facilitate testing</remarks>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		protected virtual void LoadStyleTables()
 		{
 			XmlDocument doc = new XmlDocument();

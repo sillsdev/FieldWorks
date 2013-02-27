@@ -2424,6 +2424,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// gives the object hvo hat should be the target of Delete, copy, etc. for menus operating on this slice label.
 		/// </summary>
 		/// <returns>return 0 if this slice is supposed to operate on an atomic field which is currently empty.</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public ICmObject GetObjectForMenusToOperateOn()
 		{
 			CheckDisposed();

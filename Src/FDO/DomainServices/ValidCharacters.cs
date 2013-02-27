@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.IO;
 using System.Xml;
@@ -863,6 +864,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// in to a list of character strings.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		public static List<string> ParseLegacyWordFormingCharOverrides(string path)
 		{
 			if (!File.Exists(path))

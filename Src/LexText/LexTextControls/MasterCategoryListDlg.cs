@@ -194,6 +194,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				AddNode(posSet, node, treeNodes, cache);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void AddNode(Set<IPartOfSpeech> posSet, XmlNode node, TreeNodeCollection treeNodes, FdoCache cache)
 		{
 			if (node.Attributes["id"].InnerText == "PartOfSpeechValue")
@@ -546,6 +548,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			private IPartOfSpeech m_pos;
 			private XmlNode m_node; // need to remember the node so can put info for *all* writing systems into databas
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 			public static MasterCategory Create(Set<IPartOfSpeech> posSet, XmlNode node, FdoCache cache)
 			{
 				/*
