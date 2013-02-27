@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # Install required dependencies for building FieldWorks
 
 # get packages from config file listed in the variable $1
