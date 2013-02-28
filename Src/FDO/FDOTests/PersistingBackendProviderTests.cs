@@ -498,21 +498,32 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 	[TestFixture]
 	public sealed class Db4oCSTests : PersistingBackendProviderTestBase
 	{
+		private String _projectDir;
+		private String _randomProjectName;
 		/// <summary>
 		/// Override to create and load a very basic cache.
 		/// </summary>
 		/// <returns>An FdoCache that has only the basic data in it.</returns>
 		protected override FdoCache CreateCache()
 		{
-			const string projectName = "TestLangProjCS";
-
-			var projectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, projectName);
-			//var fullname = String.Format("{0}{1}{2}{1}{3}", DirectoryFinder.ProjectsDirectory, Path.DirectorySeparatorChar, dirname, filename);
-
-			if (!m_internalRestart && Directory.Exists(projectDir))
-				Directory.Delete(projectDir, true);
-
-			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kDb4oClientServer, projectName), m_loadType);
+			if (String.IsNullOrEmpty(_randomProjectName))
+			{
+				//Create a unique folder and project name for this run of the tests. This is done in case
+				//the build machine is running multiple builds of Flex in parallel. We don't want the multiple
+				//parallel renditions to clobber each other's text folders
+				//This project/folder is used for all the texts in this class. Then deleted after they are all run.
+				while (true)
+				{
+					_randomProjectName = "TestLangProjCS" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+					var projectDir = Path.Combine(DirectoryFinder.ProjectsDirectory, _randomProjectName);
+					if (!Directory.Exists(projectDir))
+					{
+						_projectDir = projectDir;
+						break;
+					}
+				}
+			}
+			return BootstrapSystem(new TestProjectId(FDOBackendProviderType.kDb4oClientServer, _randomProjectName), m_loadType);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -534,6 +545,9 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
+			//Only delete the folder when we are really done with it. This method is called by RestartCache.
+			if (!m_internalRestart && Directory.Exists(_projectDir))
+				Directory.Delete(_projectDir, true);
 			RemotingServer.Stop();
 		}
 
