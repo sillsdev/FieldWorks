@@ -1870,6 +1870,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_listBoxRelatedWSs.SelectedItem = tempWs;
 				if (fSwitchToGeneralTab)
 					SwitchTab(kWsGeneral);
+				// A revised Palaso WritingSystem implementation changed some message handling
+				// related to changing indexes and the like.  So we now need to explicitly set the
+				// subcontrol's writing system.  See FWNX-999 for details of what went wrong (test
+				// failure and buggy dialog behavior).  The following line is the the primary fix
+				// for this change.
+				Set_regionVariantControl(CurrentWritingSystem);
 			}
 			finally
 			{
