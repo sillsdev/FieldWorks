@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 			{
 				filesHashset.Add(file);
 			}
-			//This should check for 6 files.
+			//This should check for 9 files.
 			VerifyCoreFilesAreIncluded(filesHashset);
 
 			VerifyLinkedFilesInCmFilesAreIncluded(filesHashset);
@@ -148,6 +148,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 				"Project File should be included in the backup.");
 			Assert.True(filesToBackup.Contains(m_backupSettings.BackupSettingsFile),
 				"BackupSettings.xml should be included in the backup.");
+			Assert.True(filesToBackup.Contains(Path.Combine(m_backupSettings.ProjectPath, m_backupSettings.QuestionNotesFilename)),
+				"Lexicon.fwstub.ChorusNotes should be included in the backup.");
 			Assert.True(!filesToBackup.Contains(Path.Combine(m_backupSettings.ProjectPath, m_backupSettings.DbFilename) + ".bak"),
 				"Project .bak file should not be included in the backup.");
 			Assert.True(filesToBackup.Contains(m_backupSettings.BackupSettingsFile),

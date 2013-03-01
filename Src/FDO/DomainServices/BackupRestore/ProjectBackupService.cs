@@ -183,7 +183,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			// Add Questions file
 			var questionFile = Path.Combine(m_settings.ProjectPath, m_settings.QuestionNotesFilename);
-			filesToBackup.Add(questionFile);
+			if (File.Exists(questionFile)) // LT-14136 stub file doesn't exist until migration or LexEntry creation
+				filesToBackup.Add(questionFile);
 
 			//Add Writing Systems
 			filesToBackup.UnionWith(AllFilesInADirectory(m_settings.WritingSystemStorePath));
