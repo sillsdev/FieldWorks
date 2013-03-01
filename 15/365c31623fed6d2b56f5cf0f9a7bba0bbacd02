@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: MarkS <marksvc@gmail.com>
+Submitted-by: Brent McCarthy <brent_mccarthy@sil.org>
+Submitted-at: Fri, 01 Mar 2013 18:18:46 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/777
+Project: FieldWorks
+Branch: refs/heads/release/7.3-gial-Linux
