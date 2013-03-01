@@ -15,15 +15,15 @@ using SIL.FieldWorks.FDO;
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	/// <summary>
-	/// This slice supports showing the Chorus notes questions for a particular entry.
+	/// This slice supports showing the Chorus notes messages for a particular entry.
 	/// </summary>
-	public class QuestionSlice : Slice
+	public class MessageSlice : Slice
 	{
 		private ChorusSystem m_chorusSystem;
 		NotesBarView m_notesBar;
 
 		/// <summary>
-		/// The user that we want QuestionSlice (and FLExBridge) to consider to be the current user,
+		/// The user that we want MessageSlice (and FLExBridge) to consider to be the current user,
 		/// for the purposes of identifying the source of Send/Receive changes and Notes.
 		/// Enhance JohnT: We would like to get the current user name stored in the Mercurial INI file
 		/// (see HgRepository.SetUserNameInIni/GetUserNameFromIni). But until we merge FlexBridge,

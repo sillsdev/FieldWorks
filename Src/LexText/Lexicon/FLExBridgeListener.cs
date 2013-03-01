@@ -450,11 +450,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The user that we want FLExBridge (and QuestionSlice) to consider to be the current user,
+		/// The user that we want FLExBridge (and MessageSlice) to consider to be the current user,
 		/// for the purposes of identifying the source of Send/Receive changes and Notes.
 		/// (Note that FlexBridge may override this with the name the user said to use for S/R.
 		/// We don't have easy access to that information, which is stored in the Mercurial INI file.
-		/// This unmodified version is an initial default, and also the only value available to QuestionSlice.
+		/// This unmodified version is an initial default, and also the only value available to MessageSlice.
 		/// We may be able to reunite the two notions when FlexBridge is merged.)
 		/// </summary>
 		public static string SendReceiveUser
@@ -643,7 +643,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// This is the file that our Question slice is configured to look for in the root project folder.
+		/// This is the file that our Message slice is configured to look for in the root project folder.
 		/// The actual Lexicon.fwstub doesn't contain anything.
 		/// Lexicon.fwstub.ChorusNotes contains notes about lexical entries.
 		/// </summary>

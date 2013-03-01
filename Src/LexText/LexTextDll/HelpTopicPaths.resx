@@ -2948,8 +2948,8 @@
   <data name="khtpChoose-naturalClassedit-PhNCSegments-Phonemes" xml:space="preserve">
     <value>Using_Tools/Grammar_tools/Natural_Classes/Choose_Phonemes_for_Natural_Class.htm</value>
   </data>
-  <data name="khtpField-lexiconEdit-LexEntry-Questions" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Questions_field.htm</value>
+  <data name="khtpField-LexEntry-Messages" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Messages_field.htm</value>
   </data>
   <data name="khtpField-WordsAndGlossesSfmImportWizard-Step1" xml:space="preserve">
     <value>/Beginning_Tasks/Importing_Data/Import_SFM_Words_and_Glosses/Step_1_of_3_Import_Files_Words_and_Glosses.htm</value>

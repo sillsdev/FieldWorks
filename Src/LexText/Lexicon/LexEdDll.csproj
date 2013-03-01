@@ -396,7 +396,7 @@
     <Compile Include="PhonologicalFeatureListDlgLauncherView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="QuestionSlice.cs">
+    <Compile Include="MessageSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="RecordReferenceVectorLauncher.cs">

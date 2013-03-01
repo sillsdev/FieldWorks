@@ -24,8 +24,8 @@
 			<slice field="Restrictions" label="Restrictions" editor="multistring" ws="all analysis"
 				   menu="mnuDataTree-Help" />
 		</part>
-		<part id="LexEntry-Detail-Questions" type="detail">
-			<slice field="Self" label="Questions" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.QuestionSlice" menu="mnuDataTree-Help"/>
+		<part id="LexEntry-Detail-Messages" type="detail">
+			<slice field="Self" label="Messagess" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MessageSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntry-Messages"  />
 		</part>
 	<part id ="LexEntry-Detail-EntryRefsGhostComponents" type="detail">
 	  <if field="ComplexFormEntryRefs" lengthatmost="0">

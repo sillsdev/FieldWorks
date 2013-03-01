@@ -25,7 +25,7 @@
 	<part ref="ImportResidue" label="Import Residue" visibility="ifdata"/>
 	<part ref="DateCreatedAllA"  visibility="never"/>
 	<part ref="DateModifiedAllA"  visibility="never"/>
-	<part ref="Questions" visibility="always"/>
+	<part ref="Messages" visibility="always"/>
 	  <part ref="Senses" param="Normal" expansion="expanded"/>
 	<part ref="VariantFormsSection" expansion="expanded" label="Variants" menu="mnuDataTree-VariantForms" hotlinks="mnuDataTree-VariantForms-Hotlinks">
 		<indent>
