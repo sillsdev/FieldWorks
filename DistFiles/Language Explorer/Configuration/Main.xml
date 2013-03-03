@@ -30,10 +30,19 @@
 	<commands>
 		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O"/>
 		<command id="CmdSave" label="_Save" message="SaveLangProject" icon="SaveProject" shortcut="Ctrl+S"/>
-		<command id="CmdLiftBridge" label="_Lexicon (with programs that use LIFT)..." message="LiftBridge" />
+
+		<!-- Send/Receive commands. See "ContextHelp.xml" file for corresponding tooltips. -->
 		<command id="CmdFLExBridge" label="_Project (with other FLEx users)..." message="FLExBridge" />
-		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" />
-		<command id="CmdShowConflictReport" label="Conflict Report" message="ShowConflictReport" />
+		<command id="CmdViewMessages" label="_View Project Messages..." message="ViewMessages" />
+		<command id="CmdLiftBridge" label="_Lexicon (with programs that use LIFT)..." message="LiftBridge" />
+		<command id="CmdViewLiftMessages" label="Vie_w Lexicon Messages..." message="ViewLiftMessages" />
+		<command id="CmdObtainAnyFlexBridgeProject" label="_Get Project from Colleague..." message="ObtainAnyFlexBridgeProject" />
+		<command id="CmdObtainLiftProject" label="Get and _Merge Lexicon with this Project..." message="ObtainLiftProject" />
+		<command id="CmdHelpChorus" label="_Help..." message="ShowChorusHelp" />
+		<command id="CmdCheckForFlexBridgeUpdates" label="Check for _Updates..." message="CheckForFlexBridgeUpdates" />
+		<command id="CmdHelpAboutFLEXBridge" label="_About..." icon="syncSendReceive" message="AboutFlexBridge"/>
+		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" shortcut="Ctrl+R" />
+
 		<command id="CmdClose" label="_Close" message="CloseWindow"/>
 		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord"/>
 		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
@@ -125,7 +134,6 @@
 		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
 		<command id="CmdHelpAbout" label="_About Language Explorer..." message="HelpAbout"/>
-		<command id="CmdHelpAboutFLEXBridge" label="About FLEx Bridge..." icon="syncSendReceive" message="AboutFlexBridge"/>
 		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
 		<command id="CmdHelpDemoMovies" label="_Demo Movies..." message="HelpDemoMovies"/>
 		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem"/>
@@ -467,10 +475,6 @@
 			</menu>
 			<item command="CmdExport"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
-			<menu id="SendReceive" icon="syncSendReceive" label="_Send/Receive">
-				<item command="CmdFLExBridge" />
-				<item command="CmdLiftBridge" />
-			</menu>
 			<!--item command="CmdSynch"/-->
 			<!-- needs more work to implement. -->
 			<item label="-" translate="do not translate"/>
@@ -479,6 +483,19 @@
 				</menu>-->
 
 			<item command="CmdClose"/>
+		</menu>
+		<menu id="SendReceive" label="_Send/Receive" b4InsertMenu="true">
+			<item command="CmdFLExBridge" />
+			<item command="CmdViewMessages"/>
+			<item command="CmdLiftBridge" />
+			<item command="CmdViewLiftMessages"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdObtainAnyFlexBridgeProject"/>
+			<item command="CmdObtainLiftProject"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdHelpChorus"/>
+			<item command="CmdCheckForFlexBridgeUpdates"/>
+			<item command="CmdHelpAboutFLEXBridge"/>
 		</menu>
 		<menu id="Edit" label="_Edit" b4InsertMenu="true">
 			<item command="CmdUndo"/>
@@ -522,8 +539,6 @@
 			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-			<item label="-" translate="do not translate"/>
-			<item command="CmdShowConflictReport" defaultVisible="false"/>
 		</menu>
 
 		<!--<menu id="Areas" label="_Areas" list="AreasList" behavior="singlePropertyAtomicValue"
@@ -646,7 +661,6 @@
 			<item command="CmdHelpMakeSuggestion"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdHelpAbout"/>
-			<item command="CmdHelpAboutFLEXBridge"/>
 		</menu>
 	</menubar>
 	<!-- ********************************************************** -->

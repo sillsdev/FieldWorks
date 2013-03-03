@@ -1222,7 +1222,7 @@ namespace SIL.FieldWorks
 		/// <param name="appName">The application name (either Translation Editor or
 		/// Language Explorer).</param>
 		/// ------------------------------------------------------------------------------------
-		internal static bool OpenNewProject(ProjectId projectId, string appName)
+		public static bool OpenNewProject(ProjectId projectId, string appName)
 		{
 			if (projectId == null)
 				throw new ArgumentNullException("projectId");
@@ -1507,10 +1507,10 @@ namespace SIL.FieldWorks
 						case WelcomeToFieldWorksDlg.ButtonPress.Exit:
 							return null; // Should cause the FW process to exit later
 						case WelcomeToFieldWorksDlg.ButtonPress.Receive:
-							var projectName = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm); // Hard to say what Form.ActiveForm is here. The spalsh and welcome dlgs are both gone.
-							if (!string.IsNullOrEmpty(projectName))
+							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm); // Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
+							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
-								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectName, null);
+								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectDataPathname, null);
 							}
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Import:

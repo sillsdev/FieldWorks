@@ -7,11 +7,9 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Xml;
 using Palaso.Lift;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
-using Palaso.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
@@ -20,7 +18,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FixData;
-using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
@@ -31,7 +28,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 {
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
 		Justification="_mediator is a reference")]
-	class FLExBridgeListener : IxCoreColleague, IFWDisposable
+	sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable
 	{
 		private Mediator _mediator;
 		private Form _parentForm;
@@ -74,7 +71,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#region FLExLiftBridge Toolbar messages
 		/// <summary>
-		/// Determine whether or not to show the Send/Receive Project menu item.
+		/// Determine whether or not to show the S/R toolbar icon.
 		/// </summary>
 		/// <param name="parameters"></param>
 		/// <param name="display"></param>
@@ -87,27 +84,95 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// This is the button on the toolbar for launching either FlexBridge or LiftBridge
+		/// This is the button on the toolbar for FlexBridge and doing the last type of S/R (Flex or Lift)
 		/// </summary>
 		/// <param name="commandObject"></param>
 		/// <returns></returns>
 		public bool OnFLExLiftBridge(object commandObject)
 		{
-			var BridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
-			if (BridgeLastUsed == "FLExBridge")
+			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+			if (bridgeLastUsed == "FLExBridge")
 				return OnFLExBridge(commandObject);
 
-			if (BridgeLastUsed == "LiftBridge")
+			if (bridgeLastUsed == "LiftBridge")
 				return OnLiftBridge(commandObject);
 
 			return true;
 		}
 		#endregion FLExLiftBridge Toolbar messages
 
-		#region FLExBridge (proper) messages
+		#region Obtain a Flex or Lift repo and create a new FW project
 
 		/// <summary>
-		/// Determine whether or not to show the Send/Receive Project menu item.
+		/// Determine whether or not to show/enable the Send/Receive "_Get Project from Colleague" menu item.
+		/// </summary>
+		public bool OnDisplayObtainAnyFlexBridgeProject(object parameters, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalled(display);
+
+			return true; // We dealt with it.
+		}
+
+		/// <summary>
+		/// Handle the S/R "_Get Project from Colleague" menu option.
+		/// </summary>
+		public bool OnObtainAnyFlexBridgeProject(object commandObject)
+		{
+			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm);
+			if (string.IsNullOrEmpty(newprojectPathname))
+				return true;
+
+			FieldWorks.OpenNewProject(new ProjectId(FDOBackendProviderType.kXML, newprojectPathname, null), FwUtils.ksFlexAppName);
+
+			return true;
+		}
+
+		#endregion Obtain a Flex or Lift repo and create a new FW project
+
+		#region Obtain a Lift repo and do merciful import into current project
+
+		/// <summary>
+		/// Determine whether or not to show the Send/Receive "Get and _Merge Lexicon with this Project" menu item.
+		/// </summary>
+		public bool OnDisplayObtainLiftProject(object parameters, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalled(display);
+
+			// Disable, if current project already has a lift repo.
+			var liftProjectFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
+			display.Enabled = display.Enabled && !Directory.Exists(liftProjectFolder);
+
+			return true; // We dealt with it.
+		}
+
+		/// <summary>
+		/// Handles the "Get and _Merge Lexicon with this Projec" menu item.
+		/// </summary>
+		public bool OnObtainLiftProject(object commandObject)
+		{
+			StopParser();
+			bool dummy;
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
+				out dummy, out _liftPathname);
+
+			if (!success || string.IsNullOrEmpty(_liftPathname))
+			{
+				_liftPathname = null;
+				return true;
+			}
+			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepNew); // Do merciful import.
+			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
+			_mediator.BroadcastMessage("MasterRefresh", null);
+
+			return true;
+		}
+
+		#endregion Obtain a Lift repo and do merciful import into current project
+
+		#region FLExBridge S/R messages
+
+		/// <summary>
+		/// Determine whether or not to show the Send/Receive "_Project (with other FLEx users)" menu item.
 		/// </summary>
 		/// <param name="parameters"></param>
 		/// <param name="display"></param>
@@ -120,8 +185,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The method/delegate that gets invoked when File->Send/Receive Project is clicked
-		/// via the OnFLExBridge message
+		/// The method/delegate that gets invoked when Send/Receive "_Project (with other FLEx users)" menu is clicked.
 		/// </summary>
 		/// <param name="commandObject">Includes the XML command element of the OnFLExBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
@@ -147,7 +211,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			string url;
 			var projectFolder = Cache.ProjectId.ProjectFolder;
-			var savedState = PrepareToDetectConflicts(projectFolder);
+			var savedState = PrepareToDetectMainConflicts(projectFolder);
 			string dummy;
 			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
 			bool dataChanged;
@@ -181,12 +245,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
-		#endregion FLExBridge (proper) messages
+		#endregion FLExBridge S/R messages
 
-		#region LiftBridge messages
+		#region LiftBridge S/R messages
 
 		/// <summary>
-		/// Called (by xcore) to control display params of the Lift Send/Receive menu.
+		/// Called (by xcore) to control display params of the Send/Receive "_Lexicon (with programs that use LIFT)" menu.
 		/// </summary>
 		public bool OnDisplayLiftBridge(object commandObject, ref UIItemDisplayProperties display)
 		{
@@ -196,11 +260,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The method/delegate that gets invoked when File->Send/Receive Project is clicked
-		/// via the OnLiftBridge message
+		/// The method/delegate that gets invoked when Send/Receive "_Lexicon (with programs that use LIFT)" menu is clicked.
 		/// </summary>
-		/// <param name="argument">Includes the XML command element of the OnFLExBridge message</param>
-		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody shoudl also try to handle the message.</returns>
+		/// <param name="argument">Includes the XML command element of the OnLiftBridge message</param>
+		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody should also try to handle the message.</returns>
 		public bool OnLiftBridge(object argument)
 		{
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
@@ -233,12 +296,45 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; // We dealt with it.
 		}
 
-		#endregion LiftBridge messages
+		#endregion LiftBridge S/R messages
 
-		#region AboutFlexBridge Toolbar messages
+		#region CheckForFlexBridgeUpdates messages
 
 		/// <summary>
-		/// Called (by xcore) to control display params of the Help->About FLEx Bridge menu.
+		/// Called (by xcore) to control display params of the Send/Receive->"Check for _Updates..." menu.
+		/// </summary>
+		public bool OnDisplayCheckForFlexBridgeUpdates(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalled(display);
+
+			return true; // We dealt with it.
+		}
+
+		/// <summary>
+		/// The method/delegate that gets invoked when Send/Receive->"Check for _Updates..." menu is clicked.
+		/// </summary>
+		/// <param name="argument">Includes the XML command element of the OnAboutFlexBridge message</param>
+		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody shoudl also try to handle the message.</returns>
+		public bool OnCheckForFlexBridgeUpdates(object argument)
+		{
+			bool dummy1;
+			string dummy2;
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(
+				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+				SendReceiveUser,
+				FLExBridgeHelper.CheckForUpdates,
+				null,
+				out dummy1, out dummy2);
+
+			return true;
+		}
+
+		#endregion CheckForFlexBridgeUpdates messages
+
+		#region AboutFlexBridge messages
+
+		/// <summary>
+		/// Called (by xcore) to control display params of the Send/Receive->"About" menu.
 		/// </summary>
 		public bool OnDisplayAboutFlexBridge(object commandObject, ref UIItemDisplayProperties display)
 		{
@@ -248,7 +344,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The method/delegate that gets invoked when Help->About FLEx Bridge is clicked.
+		/// The method/delegate that gets invoked when Send/Receive->"About" menu is clicked.
 		/// </summary>
 		/// <param name="argument">Includes the XML command element of the OnAboutFlexBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody shoudl also try to handle the message.</returns>
@@ -266,34 +362,31 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
-		#endregion AboutFlexBridge Toolbar messages
+		#endregion AboutFlexBridge messages
 
-		#region ShowConflictReport (for full FLEx data only) messages
+		#region ViewMessages (for full FLEx data only) messages
 
 		/// <summary>
-		/// Determine whether or not to display the View Conflict Report menu item.
+		/// Determine whether or not to display the Send/Receive->"View Messages" menu item.
 		/// </summary>
 		/// <param name="parameters"></param>
 		/// <param name="display"></param>
 		/// <returns></returns>
-		public bool OnDisplayShowConflictReport(object parameters, ref UIItemDisplayProperties display)
+		public bool OnDisplayViewMessages(object parameters, ref UIItemDisplayProperties display)
 		{
-			if (CheckForFlexBridgeInstalled(display))
-			{
-				display.Enabled = NotesFileIsPresent(Cache);
-				display.Visible = display.Enabled;
-			}
+			CheckForFlexBridgeInstalled(display);
+
+			display.Enabled = display.Enabled && NotesFileIsPresent(Cache, false);
 
 			return true;
 		}
 
 		/// <summary>
-		/// The method/delegate that gets invoked when View->Conflict Report is clicked
-		/// via the OnShowConflictReport message
+		/// The method/delegate that gets invoked when Send/Receive->View Messages is clicked
 		/// </summary>
-		/// <param name="commandObject">Includes the XML command element of the OnShowConflictReport message</param>
+		/// <param name="commandObject">Includes the XML command element of the OnViewMessages message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
-		public bool OnShowConflictReport(object commandObject)
+		public bool OnViewMessages(object commandObject)
 		{
 			if (IsDb4oProject)
 			{
@@ -321,7 +414,97 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
-		#endregion ShowConflictReport (for full FLEx data only) messages
+		#endregion View Messages (for full FLEx data only) messages
+
+		#region View Lexicon Messages (for Lift data only) messages
+
+		/// <summary>
+		/// Determine whether or not to display the Send/Receive->"View Lexicon Messages" menu item.
+		/// </summary>
+		/// <param name="parameters"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public bool OnDisplayViewLiftMessages(object parameters, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalled(display);
+
+			display.Enabled = display.Enabled && NotesFileIsPresent(Cache, true);
+
+			return true;
+		}
+
+		/// <summary>
+		/// The method/delegate that gets invoked when Send/Receive->"View Lexicon Messages" is clicked
+		/// </summary>
+		/// <param name="commandObject">Includes the XML command element of the OnViewLiftMessages message</param>
+		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
+		public bool OnViewLiftMessages(object commandObject)
+		{
+			bool dummy1;
+			string dummy2;
+			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
+								   SendReceiveUser,
+								   FLExBridgeHelper.LiftConflictViewer, null, out dummy1, out dummy2);
+			if (!success)
+			{
+				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
+				ReportDuplicateBridge();
+			}
+			return true;
+		}
+
+		#endregion View Messages (for full FLEx data only) messages
+
+		#region Chorus Help messages
+
+		/// <summary>
+		/// Checks if the Send/Receive->"_Help..." menu is to be enabled.
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public bool OnDisplayShowChorusHelp(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckForFlexBridgeInstalled(display);
+
+			display.Enabled = display.Enabled && File.Exists(ChorusHelpFile);
+
+			return true; // We dealt with it.
+		}
+
+		/// <summary>
+		/// Handles the OnShowChorusHelp Mediator message for the Send/Receive->"_About..." menu.
+		/// </summary>
+		/// <param name="argument"></param>
+		/// <returns></returns>
+		public bool OnShowChorusHelp(object argument)
+		{
+			if (MiscUtils.IsUnix)
+			{
+				ShowHelp.ShowHelpTopic_Linux(ChorusHelpFile, null);
+			}
+			else
+			{
+				try
+				{
+					// When the help window is closed it will return focus to the window that opened it (see MSDN
+					// documentation for HtmlHelp()). We don't want to use the main window as the parent, because if
+					// a modal dialog is visible, it will still return focus to the main window, allowing the main window
+					// to perform some behaviors (such as refresh by pressing F5) while the modal dialog is visible,
+					// which can be bad. So, we just create a dummy control and pass that in as the parent.
+					Help.ShowHelp(new Control(), ChorusHelpFile);
+				}
+				catch (Exception)
+				{
+					MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, ChorusHelpFile), LexTextStrings.ksError);
+				}
+			}
+
+			return true; // We dealt with it.
+		}
+
+		#endregion Chorus Help messages
 
 		#endregion
 
@@ -484,7 +667,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				Directory.CreateDirectory(liftProjectDir);
 			}
-			var savedState = PrepareToDetectConflicts(liftProjectDir);
+			var savedState = PrepareToDetectLiftConflicts(liftProjectDir);
 			string dummy;
 			// flexbridge -p <path to fwdata file> -u <username> -v send_receive_lift
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
@@ -918,6 +1101,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		#endregion
 
+		private string ChorusHelpFile
+		{
+			get
+			{
+				return Path.Combine(Path.GetDirectoryName(FLExBridgeHelper.FullFieldWorksBridgePath()), "Chorus_Help.chm");
+			}
+		}
+
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="tempWindow is a reference")]
 		private bool ChangeProjectNameIfNeeded()
@@ -952,13 +1143,38 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Returns true if there is any Chorus Notes to view.
+		/// Returns true if there are any Chorus Notes to view in the main FW repo or in the Lift repo.
 		/// </summary>
 		/// <param name="cache"></param>
-		/// <returns></returns>
-		private static bool NotesFileIsPresent(FdoCache cache)
+		/// <param name="checkForLiftNotes">
+		/// When 'false', then don't consider any Lift notes files in considering those present.
+		/// When 'true', then skip any Flex notes, and only consider the Lift notes.
+		/// </param>
+		/// <returns>'true' if there are any Chorus Notes files at the given level. Otherwise, it returns 'false'.</returns>
+		private static bool NotesFileIsPresent(FdoCache cache, bool checkForLiftNotes)
 		{
-			return cache.ProjectId.ProjectFolder != null;
+			// Default to look for notes in the main FW repo.
+			var folderToSearchIn = cache.ProjectId.ProjectFolder;
+			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(folderToSearchIn);
+			if (checkForLiftNotes)
+			{
+				if (!Directory.Exists(liftFolder))
+					return false; // If the folder doesn't even exist, there can't be any lift notes.
+
+				// Switch to look for note files in the Lift repo.
+				folderToSearchIn = liftFolder;
+			}
+			foreach (string notesPathname in Directory.GetFiles(folderToSearchIn, "*.ChorusNotes", SearchOption.AllDirectories))
+			{
+				if (checkForLiftNotes)
+					return true;
+
+				if (!notesPathname.Contains(liftFolder)) // Skip any lift ones down in a nested repo.
+					return true;
+
+				// Must be a nested lift one to get here, so try another one.
+			}
+			return false;
 		}
 
 		private static void ReportDuplicateBridge()
@@ -1030,15 +1246,34 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return false; // no conflicts added.
 		}
 
-		private static Dictionary<string, long> PrepareToDetectConflicts(string path)
+		/// <summary>
+		/// This is only used for the main FW repo, so it excludes any notes in a lower level repo.
+		/// </summary>
+		/// <param name="projectFolder"></param>
+		/// <returns></returns>
+		private static Dictionary<string, long> PrepareToDetectMainConflicts(string projectFolder)
 		{
 			var result = new Dictionary<string, long>();
-			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
+			foreach (var file in Directory.GetFiles(projectFolder, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
-				// TODO: Test to see if one conflict tool can do both FLEx and LIFT conflicts.
 				if (file.Contains(FLExBridgeHelper.OtherRepositories))
 					continue; // Skip them, since they are part of some other repository.
 
+				result[file] = new FileInfo(file).Length;
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// This is only used for the Lift repo folder.
+		/// </summary>
+		/// <param name="liftPath"></param>
+		/// <returns></returns>
+		private static Dictionary<string, long> PrepareToDetectLiftConflicts(string liftPath)
+		{
+			var result = new Dictionary<string, long>();
+			foreach (var file in Directory.GetFiles(liftPath, "*.ChorusNotes", SearchOption.AllDirectories))
+			{
 				result[file] = new FileInfo(file).Length;
 			}
 			return result;
@@ -1055,12 +1290,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		private static bool CheckForFlexBridgeInstalled(UIItemDisplayProperties display)
+		private static void CheckForFlexBridgeInstalled(UIItemDisplayProperties display)
 		{
 			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
 			display.Enabled = FileUtils.FileExists(fullName) && AssemblyName.GetAssemblyName(fullName).Version.Minor >= 5;
-			display.Visible = display.Enabled;
-			return display.Visible;
+			display.Visible = true; // Always visible. Cf. LT-13885
 		}
 
 		#region IDisposable implementation
@@ -1081,15 +1315,25 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		private void Dispose(bool fDisposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
-			if (fDisposing && !IsDisposed)
+
+			if (IsDisposed)
+				return;
+
+			if (fDisposing)
 			{
 				// dispose managed and unmanaged objects
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
-				_mediator.RemoveColleague(this);
+				if (_mediator != null) // Fixes LT-14201
+					_mediator.RemoveColleague(this);
 			}
+			_liftPathname = null;
+			_mediator = null;
+			_parentForm = null;
+			_progressDlg = null;
+
 			IsDisposed = true;
 		}
 		#endregion

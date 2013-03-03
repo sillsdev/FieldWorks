@@ -129,6 +129,11 @@
       <Name>FdoUi</Name>
       <HintPath>..\..\..\Output\Debug\FdoUi.dll</HintPath>
     </Reference>
+    <Reference Include="FieldWorks, Version=7.3.2.30113, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\..\Output\Debug\FieldWorks.exe</HintPath>
+    </Reference>
     <Reference Include="Filters, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\Filters.dll</HintPath>

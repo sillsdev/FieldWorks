@@ -46,6 +46,16 @@
 	<item id="CmdCreateProjectShortcut">Create a desktop shortcut to this project.</item>
 	<!-- What is this?                <item id="CmdMainObjectProperties"/> -->
 	<item id="CmdProjectProperties">Edit the special properties of this FieldWorks project (such as name and writing systems).</item>
+	<!-- Send/Receive menu -->
+	<item id="CmdFLExBridge">Send/Receive this project</item>
+	<item id="CmdViewMessages">View project questions, merge conflicts, and notifications</item>
+	<item id="CmdLiftBridge">Send/Receive the Lexicon in this project</item>
+	<item id="CmdViewLiftMessages">View lexicon questions, merge conflicts, and notifications</item>
+	<item id="CmdObtainAnyFlexBridgeProject">Receive a project or lexicon from a colleague for the first time</item>
+	<item id="CmdObtainLiftProject">Receive a lexicon for the first time and merge it into the current project</item>
+	<item id="CmdHelpChorus">Help for using Chorus-enabled features</item>
+	<item id="CmdCheckForFlexBridgeUpdates">Check for FLEx Bridge updates</item>
+	<item id="CmdHelpAboutFLEXBridge">Display information about FLEx Bridge</item>
 	<!--
 		  Edit menu
 		  -->

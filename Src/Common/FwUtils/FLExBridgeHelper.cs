@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// <remarks>
 		/// <para>The related '-p' option (required) will give the path to the given (extant) FW project.</para>
-		/// <para>Returns the pathname to either the 'fwdata' xml file or the lift file, if FLEx Bridge was able to get a clone. Returns null, if no clone was created.</para>
+		/// <para>Returns the pathname to the lift file, if FLEx Bridge was able to get a clone. Returns null, if no clone was created.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
 		public const string ObtainLift = @"obtain_lift";
@@ -60,10 +60,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <remarks>
 		/// <para>The related '-p' option (required) will give the pathname of the xml fwdata file.</para>
 		/// <para>Nothing is returned, since FLEx Bridge's notes dialog will remain open.
-		/// As the user selects some note, a call back FELx will be done, with the URL for the item to jump to.</para>
+		/// As the user selects some note, a call back to FLEx will be done, with the URL for the item to jump to.</para>
 		/// <para>The '-u' option  (required) will give the user name.</para>
 		/// </remarks>
-		public const string ConflictViewer = @"view_notes"; // REVIEW (JohnT): Do we need another option for viewing the lift notes 'view_notes_lift'?
+		public const string ConflictViewer = @"view_notes";
+
+		/// <summary>
+		/// constant for launching the bridge in the Lift Conflict\Notes Viewer mode
+		/// </summary>
+		/// <remarks>
+		/// <para>The related '-p' option (required) will give the pathname of the xml fwdata file.</para>
+		/// <para>Nothing is returned, since FLEx Bridge's notes dialog will remain open.
+		/// As the user selects some note, a call back to FLEx will be done, with the URL for the item to jump to.</para>
+		/// <para>The '-u' option  (required) will give the user name.</para>
+		/// </remarks>
+		public const string LiftConflictViewer = @"view_notes_lift";
 
 		/// <summary>
 		/// constant for launching the bridge in the undo export mode
@@ -88,7 +99,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string MoveLift = @"move_lift";
 
 		/// <summary>
-		/// constant for launching the bridge in the About FLEx Bridge mode
+		/// constant for launching the bridge in the "Check for Updates" mode
+		/// </summary>
+		/// <remarks>
+		/// <para>Instruct FLEx Bridge to show its "Check for Updates" information.</para>
+		/// </remarks>
+		public const string CheckForUpdates = @"check_for_updates";
+
+		/// <summary>
+		/// constant for launching the bridge in the "About FLEx Bridge" mode
 		/// </summary>
 		/// <remarks>
 		/// <para>Instruct FLEx Bridge to show its "About" information.</para>
@@ -316,7 +335,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public void BridgeWorkComplete(bool changesReceived)
 			{
 				_receivedChanges = changesReceived;
-				AlertFLEx();
+				AlertFlex();
 				if (conflictHost != null)
 				{
 					KillTheHost((ServiceHost) conflictHost);
@@ -347,7 +366,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// <summary>
 			/// Acquire the lock on, and then pulse the wait object
 			/// </summary>
-			private void AlertFLEx()
+			private static void AlertFlex()
 			{
 				Monitor.Enter(waitObject); //acquire the lock on the waitObject
 				flexBridgeTerminated = true;
