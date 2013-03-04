@@ -25,7 +25,7 @@
 				   menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexEntry-Detail-Messages" type="detail">
-			<slice field="Self" label="Messagess" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MessageSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntry-Messages"  />
+			<slice field="Self" label="Messages" editor="Custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MessageSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-LexEntry-Messages"  />
 		</part>
 	<part id ="LexEntry-Detail-EntryRefsGhostComponents" type="detail">
 	  <if field="ComplexFormEntryRefs" lengthatmost="0">
