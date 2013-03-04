@@ -58,6 +58,8 @@ namespace SIL.FieldWorks.FixData
 			m_progress.Message = String.Format(Strings.ksReadingTheInputFile, m_filename);
 			m_crt = 0;
 			// The following fixers will be run on each rt element during FixErrorsAndSave()
+			// Note: every change to the file MUST log an error. This is used in FixFwData to set a return code indicating whether anything changed.
+			// This in turn is used in Send/Receive to determine whether we need to re-split the file before committing.
 			// N.B.: Order is important here!!!!!!!
 			m_rtLevelFixers.Add(new OriginalFixer());
 			m_rtLevelFixers.Add(new CustomPropertyFixer());

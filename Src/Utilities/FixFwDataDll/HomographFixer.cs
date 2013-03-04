@@ -195,7 +195,8 @@ namespace SIL.FieldWorks.FixData
 		//For each LexEntry element, set the homograph number as determined in the FinalFixerInitialization method.
 		internal override bool FixElement(XElement rt, FwDataFixer.ErrorLogger logger)
 		{
-			var guid = new Guid(rt.Attribute("guid").Value);
+			var guidString = rt.Attribute("guid").Value;
+			var guid = new Guid(guidString);
 			var xaClass = rt.Attribute("class");
 			var className = xaClass == null ? kUnknown : xaClass.Value;
 			switch (className)
@@ -208,10 +209,17 @@ namespace SIL.FieldWorks.FixData
 					if (homographElement == null)
 					{
 						if (homographNum != "0") // no need to make a change if already implicitly zero.
+						{
 							rt.Add(new XElement("HomographNumber", new XAttribute("val", homographNum)));
+							logger(guidString, DateTime.Now.ToShortDateString(), Strings.ksAdjustedHomograph);
+						}
 						break;
 					}
-					homographElement.SetAttributeValue("val", homographNum);
+					if (homographElement.Attribute("val") == null || homographElement.Attribute("val").Value != homographNum)
+					{
+						homographElement.SetAttributeValue("val", homographNum);
+						logger(guidString, DateTime.Now.ToShortDateString(), Strings.ksAdjustedHomograph);
+					}
 					break;
 				default:
 					break;

@@ -422,7 +422,6 @@ namespace FwBuildTasks
 				{
 					if (project.StartsWith("SharpViews") ||		// These projects are experimental.
 						project == "FxtExe" ||					// These projects weren't built by nant normally.
-						project == "FixFwData" ||
 						project.StartsWith("LinuxSmokeTest"))
 					{
 						continue;

@@ -70,6 +70,15 @@ namespace SIL.FieldWorks.FixData {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adjusted homograph number.
+        /// </summary>
+        internal static string ksAdjustedHomograph {
+            get {
+                return ResourceManager.GetString("ksAdjustedHomograph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Adjusting reference to missing Segment by changing analysis object guid=&apos;{0}&apos;, class=&apos;{1}&apos;, field=&apos;{2}&apos;..
         /// </summary>
         internal static string ksAdjustingAnalysisRefObj {
@@ -156,6 +165,15 @@ namespace SIL.FieldWorks.FixData {
         internal static string ksReadingTheInputFile {
             get {
                 return ResourceManager.GetString("ksReadingTheInputFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing unused MorphoSyntaxAnalysis.
+        /// </summary>
+        internal static string ksRemovedUnusedMsa {
+            get {
+                return ResourceManager.GetString("ksRemovedUnusedMsa", resourceCulture);
             }
         }
         

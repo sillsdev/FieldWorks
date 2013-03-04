@@ -386,6 +386,7 @@ namespace FixFwDataDllTests
 		public void TestEntryWithExtraMSA()
 		{
 			var testPath = Path.Combine(basePath, "EntryWithExtraMSA");
+			errors.Clear();
 			Assert.DoesNotThrow(() =>
 			{
 				var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(),
@@ -394,6 +395,9 @@ namespace FixFwDataDllTests
 				// SUT
 				data.FixErrorsAndSave();
 			}, "Exception running the data fixer on the entry with extra MSA test data.");
+
+			Assert.That(errors.Count, Is.GreaterThan(0), "fixing anything should log an error");
+
 			// check that the clause marker was there originally
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2, false);
@@ -405,6 +409,7 @@ namespace FixFwDataDllTests
 		public void TestEntryWithMsaAndNoSenses()
 		{
 			var testPath = Path.Combine(basePath, "EntryWithMsaAndNoSenses");
+			errors.Clear();
 			Assert.DoesNotThrow(() =>
 			{
 				var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(),
@@ -413,6 +418,8 @@ namespace FixFwDataDllTests
 				// SUT
 				data.FixErrorsAndSave();
 			}, "Exception running the data fixer on the entry with MSA and no senses test data.");
+			Assert.That(errors.Count, Is.GreaterThan(0), "fixing anything should log an error");
+
 			// check that the msa was there originally
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1, false);
@@ -486,7 +493,9 @@ namespace FixFwDataDllTests
 		{
 			var fileLoc = Path.Combine(Path.Combine(basePath, "GenericDates"), "BasicFixup.fwdata");
 			var data = new FwDataFixer(fileLoc, new DummyProgressDlg(), LogErrors);
+			errors.Clear();
 			data.FixErrorsAndSave();
+			Assert.That(errors.Count, Is.GreaterThan(0), "fixing anything should log an error");
 
 			AssertThatXmlIn.File(fileLoc).HasSpecifiedNumberOfMatchesForXpath("//rt[@class='RnGenericRec']/DateOfEvent", 3);
 			AssertThatXmlIn.File(fileLoc).HasAtLeastOneMatchForXpath("//rt[@class='RnGenericRec']/DateOfEvent[@val='0']");
@@ -558,6 +567,7 @@ namespace FixFwDataDllTests
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class='MoStemAllomorph' and @guid='" + "0F4FB8BF-AA48-4315-A244-B3B367DD0159" + "']/Form/AUni[@ws='fr' and text()='something']", 1, false);
 
+			errors.Clear();
 			Assert.DoesNotThrow(() =>
 			{
 				var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(),
@@ -566,6 +576,8 @@ namespace FixFwDataDllTests
 				// SUT
 				data.FixErrorsAndSave();
 			}, "Exception running the data fixer on the sequence test data.");
+
+			Assert.That(errors.Count, Is.GreaterThan(0), "fixing anything should log an error");
 
 			var xmlDoc = GetResult(testFile);
 			var entries = VerifyEntryExists(xmlDoc, "//rt[@class='LexEntry' and @guid='" + lexEntry_dinding1Guid + "']");

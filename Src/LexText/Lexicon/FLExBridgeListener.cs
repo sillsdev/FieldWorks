@@ -226,8 +226,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (dataChanged)
 			{
-				var fixer = new FwDataFixer(Cache.ProjectId.Path, new StatusBarProgressHandler(null, null), logger);
-				fixer.FixErrorsAndSave();
+				// Now done within FlexBridge
+				//var fixer = new FwDataFixer(Cache.ProjectId.Path, new StatusBarProgressHandler(null, null), logger);
+				//fixer.FixErrorsAndSave();
+
 				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);

@@ -122,6 +122,7 @@ namespace SIL.FieldWorks.FixData
 					}
 					foreach (var reject in rejects)
 					{
+						logger(guid.Value, DateTime.Now.ToShortDateString(), Strings.ksRemovedUnusedMsa);
 						reject.Remove();
 					}
 				}

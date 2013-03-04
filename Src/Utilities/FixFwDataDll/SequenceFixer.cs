@@ -276,6 +276,7 @@ namespace SIL.FieldWorks.FixData
 					if (!m_rowsToDelete.TryGetValue(guid, out danglingRefList))
 						return true; // this chart has no rows to delete.
 
+					// Report not needed: we will report deleting the row in case ConstChartRow
 					rt.Descendants("objsur").Where(
 						objsur => danglingRefList.Contains(GetObjsurGuid(objsur))).Remove();
 					break;
@@ -283,6 +284,7 @@ namespace SIL.FieldWorks.FixData
 					// Check for cell refs to delete and remove reference.
 					if (m_ownerThatWillLoseOwnee.TryGetValue(guid, out danglingRefList))
 					{
+						// Report not needed: we will report deleting the row in case TextTag or similar
 						rt.Descendants("objsur").Where(
 							objsur => danglingRefList.Contains(GetObjsurGuid(objsur))).Remove();
 					}
