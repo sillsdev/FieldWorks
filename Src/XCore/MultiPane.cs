@@ -656,7 +656,9 @@ namespace XCore
 				"Failed to find focusable subcontrol.",
 				"This MultiPane was configured to focus {0} as a default control. But it either was not found or was not an IFocuablePanePortion",
 				m_defaultFocusControl);
-			if (defaultFocusControl != null)
+			// LT-14222...can't do BeginInvoke until our handle is created...we attempt this multiple times since it is hard
+			// to find the right time to do it. If we can't do it yet hope we can do it later.
+			if (defaultFocusControl != null && this.IsHandleCreated)
 			{
 				defaultFocusControl.IsFocusedPane = true; // Lets it know it can do any special behavior (e.g., DataPane) when it is the focused child.
 				BeginInvoke((MethodInvoker) (() => defaultFocusControl.Focus()));
