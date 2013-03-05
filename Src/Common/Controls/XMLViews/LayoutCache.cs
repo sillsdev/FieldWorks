@@ -63,10 +63,10 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Layout Version Number (last updated by JohnT, 17 Sep 2012, to fix LT-13588).
+		/// Layout Version Number (last updated by JohnT, 5 Mar 2013, to fix LT-14137).
 		/// </summary>
 		/// <remarks>Note: often we also want to update BrowseViewer.kBrowseViewVersion.</remarks>
-		public static readonly int LayoutVersionNumber = 21;
+		public static readonly int LayoutVersionNumber = 22;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
