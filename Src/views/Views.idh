@@ -3644,11 +3644,7 @@ Last reviewed:
 
 		@h3{Hungarian: vwsel}
 	*******************************************************************************************/
-#ifdef WIN32
-	DeclareDualInterface2(VwSelection, 44C4944C-3F50-4202-94C3-183CC63AC23C)
-#else
 	DeclareInterface(VwSelection, Unknown, 4F8B678D-C5BA-4a2f-B9B3-2780956E3616)
-#endif
 	{
 		// Answer true if the selection is a range (as opposed to an insertion point).
 		[propget] HRESULT IsRange(

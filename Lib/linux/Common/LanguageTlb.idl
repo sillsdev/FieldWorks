@@ -1,4 +1,4 @@
-#line 1 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Language\\LanguageTlb.idl"
+#line 1 "d:\\fwrepo\\fw\\Src\\Language\\LanguageTlb.idl"
 
 
 
@@ -20,7 +20,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Generic\\common.idh"
+#line 1 "d:\\fwrepo\\fw\\Src\\Generic\\common.idh"
 
 
 
@@ -124,16 +124,14 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
-
-
-#line 23 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Language\\LanguageTlb.idl"
+#line 23 "d:\\fwrepo\\fw\\Src\\Language\\LanguageTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("b80ee180-c0f1-11d2-8078-0000c0fb81b5") cpp_quote(",") cpp_quote("LanguageLib") cpp_quote(");") [ uuid(b80ee180-c0f1-11d2-8078-0000c0fb81b5), version(1.0), helpstring("Language 1.0 Type Library") ] library LanguageLib
-#line 26 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Language\\LanguageTlb.idl"
+#line 26 "d:\\fwrepo\\fw\\Src\\Language\\LanguageTlb.idl"
 {
 	interface IOleDbEncap;
 
-	#line 1 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\src\\Kernel\\FwKernel.idh"
+	#line 1 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernel.idh"
 
 
 
@@ -452,7 +450,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("6A46D810-7F14-4151-80F5-0B13
 {
 	interface IActionHandler;
 };
-#line 320 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\src\\Kernel\\FwKernel.idh"
+#line 320 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernel.idh"
 
 
 
@@ -839,9 +837,9 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("24636FD1-DB8D-4b2c-B4C0-44C2
 {
 	interface IDebugReport;
 };
-#line 707 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\src\\Kernel\\FwKernel.idh"
+#line 707 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernel.idh"
 
-#line 709 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\src\\Kernel\\FwKernel.idh"
+#line 709 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernel.idh"
 
 
 
@@ -882,7 +880,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IUndoGrouper") cpp_
 
 
 
-#line 750 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\src\\Kernel\\FwKernel.idh"
+#line 750 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernel.idh"
 
 
 
@@ -903,10 +901,10 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
-#line 771 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\src\\Kernel\\FwKernel.idh"
+#line 771 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernel.idh"
 
-#line 30 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Language\\LanguageTlb.idl"
-	#line 1 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\src\\Kernel\\TextServ.idh"
+#line 30 "d:\\fwrepo\\fw\\Src\\Language\\LanguageTlb.idl"
+	#line 1 "d:\\fwrepo\\fw\\src\\Kernel\\TextServ.idh"
 
 
 
@@ -2383,11 +2381,11 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 {
 	interface ITsMultiString;
 };
-#line 1478 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\src\\Kernel\\TextServ.idh"
+#line 1478 "d:\\fwrepo\\fw\\src\\Kernel\\TextServ.idh"
 
-#line 31 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Language\\LanguageTlb.idl"
+#line 31 "d:\\fwrepo\\fw\\Src\\Language\\LanguageTlb.idl"
 
-	#line 1 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\language\\Render.idh"
+	#line 1 "d:\\fwrepo\\fw\\src\\language\\Render.idh"
 
 
 
@@ -2878,7 +2876,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	{
 		interface IVwGraphicsWin32;
 	};
-	#line 492 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\language\\Render.idh"
+	#line 492 "d:\\fwrepo\\fw\\src\\language\\Render.idh"
 
 
 
@@ -3031,7 +3029,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	{
 		interface IVwJustifier;
 	};
-	#line 645 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\language\\Render.idh"
+	#line 645 "d:\\fwrepo\\fw\\src\\language\\Render.idh"
 
 
 
@@ -3504,7 +3502,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	{
 		interface IRenderEngine;
 	};
-	#line 1118 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\language\\Render.idh"
+	#line 1118 "d:\\fwrepo\\fw\\src\\language\\Render.idh"
 
 
 
@@ -3590,7 +3588,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	{
 		interface IJustifyingRenderer;
 	};
-	#line 1204 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\language\\Render.idh"
+	#line 1204 "d:\\fwrepo\\fw\\src\\language\\Render.idh"
 
 
 
@@ -3638,10 +3636,10 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 
 
 
-#line 1252 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\language\\Render.idh"
+#line 1252 "d:\\fwrepo\\fw\\src\\language\\Render.idh"
 
-#line 33 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Language\\LanguageTlb.idl"
-	#line 1 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\language\\Language.idh"
+#line 33 "d:\\fwrepo\\fw\\Src\\Language\\LanguageTlb.idl"
+	#line 1 "d:\\fwrepo\\fw\\src\\language\\Language.idh"
 
 
 
@@ -4138,7 +4136,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("7A1B89C0-C2D6-11d3-9BB7-0040
 	{
 		interface ILgFontManager;
 	};
-	#line 498 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\language\\Language.idh"
+	#line 498 "d:\\fwrepo\\fw\\src\\language\\Language.idh"
 
 
 
@@ -5764,7 +5762,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 2124 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\language\\Language.idh"
+#line 2124 "d:\\fwrepo\\fw\\src\\language\\Language.idh"
 
-#line 34 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Language\\LanguageTlb.idl"
+#line 34 "d:\\fwrepo\\fw\\Src\\Language\\LanguageTlb.idl"
 };
