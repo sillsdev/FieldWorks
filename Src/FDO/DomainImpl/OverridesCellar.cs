@@ -2007,6 +2007,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			return symFV;
 		}
+
+		/// <summary>
+		/// This is a virtual property.  It returns the sorted list of FsSymFeatVal objects
+		/// belonging to this FsClosedFeature.  They are sorted by Name.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.OwningCollection, "FsSymFeatVal")]
+		public IEnumerable<IFsSymFeatVal> ValuesSorted
+		{
+			get
+			{
+				var sortedVaues = from v in ValuesOC
+								  orderby v.Name.BestAnalysisAlternative.Text
+								  select v;
+				return sortedVaues;
+			}
+		}
+
 	}
 	#endregion
 

@@ -1848,7 +1848,7 @@
 				   helpTopicID="khtpField-featuresAdvancedEdit-FsSymFeatVal-ValuesSection"/>
 		</part>
 	<part id="FsClosedFeature-Detail-Values" type="Detail">
-	  <seq field="Values" layout="EditValue"/>
+	  <seq field="ValuesSorted" layout="EditValue"/>
 	</part>
 	<part id="FsClosedFeature-Detail-PhonValues" type="Detail">
 	  <seq field="Values" layout="PhonEditValue"/>
@@ -1857,7 +1857,7 @@
 			<lit>Feature</lit>
 		</part>
 		<part id="FsClosedFeature-Jt-TypeOrValues" type="jtview">
-			<seq field="Values" layout="FsSymFeatValBrowsePara"/>
+			<seq field="ValuesSorted" layout="FsSymFeatValBrowsePara"/>
 		</part>
 	</bin>
 	<bin class="FsSymFeatVal">

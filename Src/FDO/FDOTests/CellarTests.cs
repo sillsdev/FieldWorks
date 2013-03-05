@@ -427,6 +427,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.CellarTests
 						cv.Name.AnalysisDefaultWritingSystem.Text != "feminine gender")
 						Assert.Fail("Unexpected value found: {0}", cv.Name.AnalysisDefaultWritingSystem.Text);
 				}
+				var sortedValues = closed.ValuesSorted;
+				Assert.AreEqual(2,sortedValues.Count());
+				Assert.AreEqual("feminine gender", sortedValues.First().Name.AnalysisDefaultWritingSystem.Text);
+				Assert.AreEqual("neuter gender", sortedValues.Last().Name.AnalysisDefaultWritingSystem.Text);
 			}
 
 			// now add to feature structure

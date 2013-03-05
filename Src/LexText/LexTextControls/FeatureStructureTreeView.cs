@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.LexText.Controls
 																	  closed.Hvo, FeatureTreeNodeInfo.NodeKind.Closed);
 					InsertNode(newNode, parentNode);
 
-					foreach (var val in closed.ValuesOC)
+					foreach (var val in closed.ValuesSorted)
 					{
 						AddNode(val, newNode);
 					}

@@ -38,7 +38,7 @@ M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::StartServer(System.S
 
 # Ext() returns a reference.
 # Linux:
-M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>m__210(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
+M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>m__211(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
 # Windows:
 M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>b__9(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
 

@@ -5477,6 +5477,13 @@ namespace SIL.FieldWorks.FDO
 		/// FsSymFeatVal corresponding to the feature
 		/// </returns>
 		IFsSymFeatVal GetOrCreateSymbolicValueFromXml(XmlNode feature, XmlNode item);
+
+		/// <summary>
+		/// This is a virtual property.  It returns the sorted list of FsSymFeatVal objects
+		/// belonging to this FsClosedFeature.  They are sorted by Name.
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<IFsSymFeatVal> ValuesSorted { get; }
 	}
 
 	/// <summary>
