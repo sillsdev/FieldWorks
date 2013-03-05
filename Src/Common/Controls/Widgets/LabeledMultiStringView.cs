@@ -101,14 +101,21 @@ namespace SIL.FieldWorks.Common.Widgets
 				var ws = WsForSoundField(control, out wsIndex);
 				if (ws != null)
 				{
-					var sel = MultiStringSelectionUtils.GetSelAtStartOfWs(m_rootb, m_flid, wsIndex, ws);
-					Rectangle selRect;
-					bool fEndBeforeAnchor; // not used
-					using (new HoldGraphics(this))
-						SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
 					control.Left = indent;
 					control.Width = Width - indent;
-					control.Top = selRect.Top;
+					var sel = MultiStringSelectionUtils.GetSelAtStartOfWs(m_rootb, m_flid, wsIndex, ws);
+					if (sel != null)
+					{
+						// not sure how it could be null, but see LT-13984. Most likely we are doing it too
+						// soon, perhaps before the root box is even constructed.
+						// Leave control.Top zero and hope layout gets called again when we can make
+						// the selection successfully.
+						Rectangle selRect;
+						bool fEndBeforeAnchor; // not used
+						using (new HoldGraphics(this))
+							SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
+						control.Top = selRect.Top;
+					}
 				}
 			}
 		}
