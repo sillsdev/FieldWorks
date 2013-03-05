@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
+	<UsingTask TaskName="ExtractIIDs" AssemblyFile="FwBuildTasks.dll"/>
+
 	<PropertyGroup Condition="'$(OS)'=='Unix'">
 		<build4ux>1</build4ux>
 	</PropertyGroup>
 
 	<!-- call preparatory Linux targets -->
-	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="Initialize;unitpp;tlbs-copy;teckit;iculibs;linuxLibs;checkTLBsUpToDate;setupLinuxRegistry"
+	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="Initialize;unitpp;tlbs-copy;teckit;iculibs;linuxLibs;ensureTLBsUpToDate;setupLinuxRegistry"
 			Inputs="$(dir-fwdistfiles)/strings-en.txt" Outputs="$(dir-outputBase)/strings-en.txt">
 		<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt"
 			  DestinationFolder="$(dir-outputBase)"
@@ -117,15 +119,65 @@
 		<IdhFiles Include="$(fwrt)/Src/SharpViews/FwComponents/FwComponents.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/views/Views.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/views/ViewsTlb.idl"/>
+		<FilesToDeleteInOutputCommon Include="$(dir-fwoutputcommon)/*.*" Exclude="$(dir-fwoutputcommon)/bldinc.h"/>
 	</ItemGroup>
-	<Target Name="checkTLBsUpToDate" Condition="'$(OS)'=='Unix'">
+	<PropertyGroup>
+		<ContinueIfOutOfDate Condition="!$(buildtlb)">false</ContinueIfOutOfDate>
+		<ContinueIfOutOfDate Condition="$(buildtlb) Or '$(OS)'!='Unix'">true</ContinueIfOutOfDate>
+	</PropertyGroup>
+	<Target Name="ensureTLBsUpToDate">
 		<MakeDir Directories="$(dir-fwoutput)"/><!-- just in case... -->
 		<CatenateFiles SourceFiles="@(IdhFiles)" TargetFile="$(dir-fwoutput)/idhfiles" UseUnixNewlines="true"/>
 		<Md5Checksum SourceFile="$(dir-fwoutput)/idhfiles"/>
 		<VerifyFilesIdentical FirstFile="$(dir-fwoutput)/idhfiles.MD5"
 			SecondFile="$(fwrt)/Lib/linux/Common/idhfiles.MD5"
-			ErrorMessage="TLB files are out of date. Please run 'nant idl'."
-			Condition="'$(OS)'=='Unix'"/>
+			ErrorMessage="TLB files are out of date. Please run 'xbuild /t:generateLinuxIdlFiles'."
+			ContinueOnError="$(ContinueIfOutOfDate)">
+			<Output TaskParameter="Result" PropertyName="VerifyFilesIdentical"/>
+		</VerifyFilesIdentical>
+		<CallTarget Targets="generateLinuxIdlFiles" Condition="!$(VerifyFilesIdentical)"/>
+	</Target>
+
+	<Target Name="generateLinuxIdlFiles" DependsOnTargets="generateLinuxIdlFiles-Linux;generateLinuxIdlFiles-Windows">
+		<!-- It would be nice to use <ItemGroup> in here directly (which is supported in
+			.NET >= 3.5), but unfortunately it isn't implemented in Mono's xbuild yet. -->
+		<CreateItem Include="$(dir-fwoutputcommon)/*Tlb.h;$(dir-fwoutputcommon)/*Tlb.idl;$(dir-fwoutputcommon)/*Tlb.tlb">
+			<Output TaskParameter="Include" ItemName="TlbFiles"/>
+		</CreateItem>
+
+		<!-- The new idl related files got built by the generateLinuxIdlFiles-* targets
+			(without WIN32 defined). The thing left to do is to copy them to the right
+			directory. -->
+		<Copy SourceFiles="@(TlbFiles)" DestinationFolder="$(fwrt)/Lib/linux/Common"/>
+
+		<!--We also need to extract the interface GUIDs for Linux -->
+		<Message Text="Extracting iids for use on Linux..."/>
+		<ExtractIIDs Input="$(dir-fwoutputcommon)/FwKernelTlb.h" Output="$(fwrt)/Src/Kernel/FwKernel_GUIDs.cpp"/>
+		<ExtractIIDs Input="$(dir-fwoutputcommon)/LanguageTlb.h" Output="$(fwrt)/Src/Language/Language_GUIDs.cpp"/>
+		<ExtractIIDs Input="$(dir-fwoutputcommon)/ViewsTlb.h" Output="$(fwrt)/Src/views/Views_GUIDs.cpp"
+			LinesToInsertAtTop='#include "FwKernelTlb.h"'/>
+		<Copy SourceFiles="$(dir-fwoutput)/idhfiles.MD5" DestinationFolder="$(fwrt)/Lib/linux/Common"/>
+
+		<!-- Above we generated special IDL related files in Output/Common to save for linux.
+			We delete them here so that later in the build the ordinary Windows ones will
+			be built. -->
+		<Delete Files="FilesToDeleteInOutputCommon"  Condition="'$(OS)'!='Unix'"/>
+	</Target>
+
+	<!-- Build TLB files on a Windows machine for use on Linux -->
+	<Target Name="generateLinuxIdlFiles-Linux" Condition="'$(OS)'=='Unix'">
+		<!-- on Linux we run 'make idl' which calls remote-midl on a Windows machine -->
+		<Make ToolPath="/usr/bin"
+			Makefile="$(fwrt)/Makefile" Target="idl"
+			Configuration="$(config-capital)"
+			WorkingDirectory="$(fwrt)"/>
+	</Target>
+	<Target Name="generateLinuxIdlFiles-Windows" Condition="'$(OS)'!='Unix'">
+		<!-- on Windows we can directly create the necessary files. We pass
+			the property build4ux=1 so that we don't define WIN32. -->
+		<Delete Files="@(FilesToDeleteInOutputCommon)" />
+		<MSBuild Projects="$(MSBuildProjectFile)" Targets="mktlbs"
+			Properties="build4ux=1" BuildInParallel="false"/>
 	</Target>
 
 	<Target Name="setupLinuxRegistry" Condition="'$(OS)'=='Unix'">

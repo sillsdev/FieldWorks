@@ -366,7 +366,6 @@
 	<doTest Condition="'$(doTest)'==''">true</doTest>
 	<remake-failonerror Condition="'$(remake-failonerror)'==''">true</remake-failonerror>
 	<buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
-	<build4ux Condition="'$(build4ux)'==''"></build4ux>
 	<!-- Gendarme rule set. See Build/Gendarme.MsBuild/fw-gendarme-rules.xml for possible values. -->
 	<verifyset Condition="'$(verifyset)'==''">dispose</verifyset>
 	<verifyset-test Condition="'$(verifyset-test)'==''">dispose-test</verifyset-test>

@@ -212,18 +212,11 @@ tools: \
 tools-clean: \
 	Unit++-clean \
 
-idl: idl-do regen-GUIDs
+idl: idl-do
+# extracting the GUIDs is now done with a xbuild target, please run 'xbuild /t:generateLinuxIdlFiles'
 
 idl-do:
 	$(MAKE) -C$(SRC)/Common/COMInterfaces -f IDLMakefile all
-
-regen-GUIDs: $(BUILD_ROOT)/Lib/linux/Common/FwKernelTlb.h $(BUILD_ROOT)/Lib/linux/Common/LanguageTlb.h $(BUILD_ROOT)/Lib/linux/Common/ViewsTlb.h
-	$(MAKE) tlbs-clean
-	$(MAKE) tlbs-copy
-	(cd $(COM_OUT_DIR)  && $(COM_DIR)/test/extract_iids.sh FwKernelTlb.h > $(SRC)/Kernel/FwKernel_GUIDs.cpp)
-	(cd $(COM_OUT_DIR)  && $(COM_DIR)/test/extract_iids.sh LanguageTlb.h > $(SRC)/Language/Language_GUIDs.cpp)
-	echo '#include "FwKernelTlb.h"' > $(SRC)/views/Views_GUIDs.cpp
-	(cd $(COM_OUT_DIR)  && $(COM_DIR)/test/extract_iids.sh ViewsTlb.h >> $(SRC)/views/Views_GUIDs.cpp)
 
 idl-clean:
 	$(MAKE) -C$(SRC)/Common/COMInterfaces -f IDLMakefile clean

@@ -17,10 +17,26 @@ namespace FwBuildTasks
 
 		public string ErrorMessage { get; set; }
 
+		[Output]
+		public bool Result { get; set; }
+
 		public override bool Execute()
 		{
 			try
 			{
+				Log.LogMessage(MessageImportance.Low, "Comparing {0} with {1}", FirstFile, SecondFile);
+				if (!File.Exists(FirstFile))
+				{
+					Log.LogMessage(MessageImportance.Normal, "File {0} doesn't exist.", FirstFile);
+					Result = false;
+					return false;
+				}
+				if (!File.Exists(SecondFile))
+				{
+					Log.LogMessage(MessageImportance.Normal, "File {0} doesn't exist.", SecondFile);
+					Result = false;
+					return false;
+				}
 				string firstContent;
 				string secondContent;
 				using (var reader = new StreamReader(FirstFile))
@@ -32,15 +48,28 @@ namespace FwBuildTasks
 					secondContent = reader.ReadToEnd();
 				}
 				if (firstContent == secondContent)
-					return true;
-				if (!String.IsNullOrEmpty(ErrorMessage))
-					Log.LogError(ErrorMessage);
+				{
+					Log.LogMessage(MessageImportance.Low, "Files {0} and {1} are identical", FirstFile,
+						SecondFile);
+					Result = true;
+				}
+				else
+				{
+					Log.LogMessage(MessageImportance.Normal, "Files {0} and {1} are different", FirstFile,
+						SecondFile);
+					Result = false;
+				}
 			}
 			catch (Exception ex)
 			{
 				Log.LogErrorFromException(ex);
 			}
-			return false;
+			finally
+			{
+				if (!Result && !String.IsNullOrEmpty(ErrorMessage) && !BuildEngine.ContinueOnError)
+					Log.LogError(ErrorMessage);
+			}
+			return !Log.HasLoggedErrors;
 		}
 	}
 }
