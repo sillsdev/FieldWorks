@@ -1516,9 +1516,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 								if (mb == null || mb.MorphRA == null)
 									continue;
 								if (mb.MorphRA == LexemeFormOA)
+								{
 									mb.MorphRA = leNew.LexemeFormOA;
+								}
 								else // point to the corresponding allomorph
-									mb.MorphRA = leNew.AlternateFormsOS[AlternateFormsOS.IndexOf(mb.MorphRA)];
+								{
+									//if the referringObject is a variant then index will be -1
+									var index = AlternateFormsOS.IndexOf(mb.MorphRA);
+									if (index >= 0)
+										mb.MorphRA = leNew.AlternateFormsOS[index];
+									else
+									{
+										//Clear out the morph bundle where the morph was pointing to a variant
+										//that references the old entry which no longer holds this sense.
+										mb.MorphRA = null;
+										mb.MsaRA = null;
+										mb.SenseRA = null;
+									}
+								}
 							}
 						}
 						leNew.SensesOS.Add(ls); // moves it
