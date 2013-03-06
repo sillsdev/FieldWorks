@@ -62,7 +62,9 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			((PaneBarContainer) Parent).PaneBar.Text = ITextStrings.ksSpecifyConcordanceCriteria;
+			var paneBarContainer = Parent as PaneBarContainer;
+			if (paneBarContainer != null)
+				paneBarContainer.PaneBar.Text = ITextStrings.ksSpecifyConcordanceCriteria;
 		}
 
 		public int Priority

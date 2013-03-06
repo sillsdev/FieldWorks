@@ -34,6 +34,8 @@ namespace SIL.FieldWorks.IText
 			this.m_view = new SIL.FieldWorks.IText.ComplexConcPatternView();
 			this.m_insertControl = new SIL.FieldWorks.LexText.Controls.InsertionControl();
 			this.m_searchButton = new System.Windows.Forms.Button();
+			this.m_panel = new System.Windows.Forms.TableLayoutPanel();
+			this.m_panel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_view
@@ -72,14 +74,21 @@ namespace SIL.FieldWorks.IText
 			this.m_searchButton.UseVisualStyleBackColor = true;
 			this.m_searchButton.Click += new System.EventHandler(this.m_searchButton_Click);
 			// 
-			// ComplexConcordanceControl
+			// m_panel
+			// 
+			resources.ApplyResources(this.m_panel, "m_panel");
+			this.m_panel.Controls.Add(this.m_view, 0, 0);
+			this.m_panel.Controls.Add(this.m_insertControl, 0, 1);
+			this.m_panel.Controls.Add(this.m_searchButton, 1, 0);
+			this.m_panel.Name = "m_panel";
+			// 
+			// ComplexConcControl
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.m_searchButton);
-			this.Controls.Add(this.m_insertControl);
-			this.Controls.Add(this.m_view);
+			this.Controls.Add(this.m_panel);
 			this.Name = "ComplexConcControl";
+			this.m_panel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -89,5 +98,6 @@ namespace SIL.FieldWorks.IText
 		private ComplexConcPatternView m_view;
 		private InsertionControl m_insertControl;
 		private System.Windows.Forms.Button m_searchButton;
+		private System.Windows.Forms.TableLayoutPanel m_panel;
 	}
 }

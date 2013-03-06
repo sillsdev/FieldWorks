@@ -245,7 +245,9 @@ namespace SIL.FieldWorks.IText
 					if (closedVal != null)
 					{
 						var symFeat = featSys.GetFeature<SymbolicFeature>(closedVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture));
-						featStruct.AddValue(symFeat, symFeat.PossibleSymbols[closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture)]);
+						FeatureSymbol symbol;
+						if (symFeat.PossibleSymbols.TryGetValue(closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture), out symbol))
+							featStruct.AddValue(symFeat, symbol);
 					}
 				}
 			}
