@@ -18,7 +18,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Enchant;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -245,7 +244,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			int hvoObj, tag, wsAlt, wsText;
 			string word;
-			Dictionary dict;
+			ISpellEngine dict;
 			bool nonSpellingError;
 			ICollection<SpellCorrectMenuItem> suggestions = SpellCheckHelper.GetSuggestions(mousePos, rootsite,
 				out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
@@ -380,14 +379,14 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Return the enchant dictionary which should be used for the specified writing system.
+		/// Return the dictionary which should be used for the specified writing system.
 		/// </summary>
 		/// <param name="ws"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public Dictionary GetDictionary(int ws)
+		public ISpellEngine GetDictionary(int ws)
 		{
-			return EnchantHelper.GetDictionary(ws, WritingSystemFactory);
+			return SpellingHelper.GetSpellChecker(ws, WritingSystemFactory);
 		}
 
 		/// ------------------------------------------------------------------------------------

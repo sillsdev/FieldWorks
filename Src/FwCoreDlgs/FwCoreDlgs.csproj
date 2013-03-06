@@ -117,10 +117,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Enchant.Net, Version=1.4.2.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Enchant.Net.dll</HintPath>
-    </Reference>
     <Reference Include="Ethnologue, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Ethnologue.dll</HintPath>
@@ -292,9 +288,7 @@
     <Compile Include="ChooseLangProjectDialog.Designer.cs">
       <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ChooserTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ChooserTreeView.cs" />
     <Compile Include="CnvtrPropertiesCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>

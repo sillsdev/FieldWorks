@@ -96,6 +96,53 @@ Last reviewed:
 			[in] int cvDel);
 	};
 
+	/*******************************************************************************************
+		Interface ICheckWord
+		This interface is implemented by a Views Client which wishes to have the Views code
+		perform spell-checking. It is passed a word and indicates whether it is correct.
+
+		@h3{When to implement}
+		Implement this to enable spell-checking.
+
+		@h3{When to use}
+		You will not use this directly.
+
+		@h3{How to obtain an instance}
+		You must provide one
+
+		@h3{Hungarian: cw}
+	*******************************************************************************************/
+	DeclareInterface(CheckWord, Unknown, 69F4D944-C786-47EC-94F7-15193EED6758)
+	{
+		HRESULT Check(
+			[in] LPCOLESTR pszWord,
+			[out, retval] ComBool * pfCorrect);
+	}
+
+	/*******************************************************************************************
+		Interface IGetSpellChecker
+		This interface is implemented by a Views Client which wishes to have the Views code
+		perform spell-checking. It is passed a dictionary identifier and returns an ICheckWord
+		if spell-checking should be performed for that identifier.
+
+		@h3{When to implement}
+		Implement this to enable spell-checking. Pass an instance to VwRootbox::SetSpellingRepository().
+
+		@h3{When to use}
+		You will not use this directly.
+
+		@h3{How to obtain an instance}
+		You must provide one.
+
+		@h3{Hungarian: gsp}
+	*******************************************************************************************/
+	DeclareInterface(GetSpellChecker, Unknown, F0A60670-D280-45EA-A5C5-F0B84C027EFC)
+	{
+		HRESULT GetChecker(
+			[in] LPCOLESTR pszDictId,
+			[out, retval] ICheckWord ** pcw);
+	}
+
 	// A set of special character codes that are conveniently declared here to be shared by
 	// the code that implements them in Views and the code that transmits them in AfVwWnd.
 	// @h3{Hungarian sc}
@@ -2347,6 +2394,10 @@ Last reviewed:
 
 		// Restart the spell-checking process (e.g., when turning spelling on or off).
 		HRESULT RestartSpellChecking();
+
+		// Pass in the repository that will be used to get spell-checkers.
+		HRESULT SetSpellingRepository(
+			[in] IGetSpellChecker * pgsp);
 	}
 
 #ifndef NO_COCLASSES

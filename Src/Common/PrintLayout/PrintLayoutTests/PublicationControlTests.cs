@@ -441,6 +441,10 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			throw new NotImplementedException();
 		}
 
+		public void SetSpellingRepository(IGetSpellChecker _gsp)
+		{
+		}
+
 		#endregion
 	}
 	#endregion

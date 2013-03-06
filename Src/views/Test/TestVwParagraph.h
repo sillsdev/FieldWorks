@@ -30,25 +30,55 @@ Last reviewed:
 #define kfragBase 50
 #define kfragContents 51
 
-// needs to be in the enchant namespace because it needs to be a friend of enchant::Dict
-// and it's bad enough that class needs to know about the class name without trying to
-// make it aware of the namespace TestViews.
-namespace enchant
-{
-	class MockDict : public enchant::Dict
-	{
-		uint m_badLen;
-	public:
-		MockDict(int badLen) : Dict()
-		{
-			m_badLen = badLen;
-		}
-		virtual bool check (const std::string & utf8word) {
-			return utf8word.length() != m_badLen;
-		}
 
-	};
-}
+class MockDict : public ICheckWord
+{
+	uint m_badLen;
+	long m_cref;
+public:
+	MockDict(int badLen)
+	{
+		m_cref = 1;
+		m_badLen = badLen;
+	}
+	STDMETHOD(Check)(LPCOLESTR pszWord, ComBool * pfGood) {
+		*pfGood = wcslen(pszWord) != m_badLen;
+		return S_OK;
+	}
+
+	STDMETHOD(QueryInterface)(REFIID riid, void ** ppv)
+	{
+		AssertPtr(ppv);
+		if (!ppv)
+			return WarnHr(E_POINTER);
+		*ppv = NULL;
+
+		if (riid == IID_IUnknown)
+			*ppv = static_cast<IUnknown *>(this);
+		else if (riid == IID_ICheckWord)
+			*ppv = static_cast<ICheckWord *>(this);
+		else
+			return E_NOINTERFACE;
+
+		AddRef();
+		return NOERROR;
+	}
+
+	STDMETHOD_(UCOMINT32, AddRef)(void)
+	{
+		return InterlockedIncrement(&m_cref);
+	}
+
+	STDMETHOD_(UCOMINT32, Release)(void)
+	{
+		long cref = InterlockedDecrement(&m_cref);
+		if (cref == 0) {
+			m_cref = 1;
+			delete this;
+		}
+		return cref;
+	}
+};
 
 namespace TestViews
 {
@@ -218,12 +248,12 @@ namespace TestViews
 	class MockDictRootBox : public VwRootBox
 	{
 	public:
-		enchant::Dict * GetDictionary(const OLECHAR * pszId)
+		void GetDictionary(const OLECHAR * pszId, ICheckWord ** ppcw)
 		{
 			if (!wcscmp(pszId, OleStringLiteral(L"en")))
-				return new enchant::MockDict(8);
+				*ppcw = new MockDict(8);
 			else
-				return new enchant::MockDict(7);
+				*ppcw = new MockDict(7);
 		}
 	};
 
@@ -607,14 +637,6 @@ namespace TestViews
 		// test spell checking
 		void testSpellCheck()
 		{
-			//std::string wsId("en_US");
-			// reinstate this if things change so that it is *supposed* to be possible to have
-			// more than one Dict instance in existence at the same time. If that happens we should also
-			// reinstate the code that hangs on to them.
-			//enchant::Dict * pdic1 = enchant::Broker::instance()->request_dict(wsId);
-			//enchant::Dict * pdic2 = enchant::Broker::instance()->request_dict(wsId);
-			//delete pdic1;
-			//delete pdic2;
 			IVwCacheDaPtr qcda;
 			qcda.CreateInstance(CLSID_VwCacheDa);
 			ISilDataAccessPtr qsda;

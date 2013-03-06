@@ -192,13 +192,9 @@
     </Compile>
     <Compile Include="PageTests.cs" />
     <Compile Include="PrintLayoutTestBase.cs" />
-    <Compile Include="PrintLayoutTests.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="PrintLayoutTests.cs" />
     <Compile Include="PublicationControlTests.cs" />
-    <Compile Include="PubTestsNoDb.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="PubTestsNoDb.cs" />
     <Compile Include="TwoColumnPrintLayoutTests.cs" />
   </ItemGroup>
   <ItemGroup>

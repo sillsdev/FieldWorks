@@ -255,9 +255,7 @@
     <Compile Include="MorphemeBreakerTests.cs" />
     <Compile Include="SandboxBaseTests.cs" />
     <Compile Include="ShowSpaceDecoratorTests.cs" />
-    <Compile Include="TestTaggingChild.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="TestTaggingChild.cs" />
     <Compile Include="WordBreakGuesserTests.cs" />
   </ItemGroup>
   <ItemGroup>

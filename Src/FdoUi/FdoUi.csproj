@@ -234,9 +234,7 @@
     <Compile Include="PartOfSpeechUi.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PhonologicalFeatureEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="PhonologicalFeatureEditor.cs" />
     <Compile Include="RelatedWords.cs">
       <SubType>Form</SubType>
     </Compile>

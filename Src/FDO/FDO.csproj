@@ -181,9 +181,6 @@
     <Reference Include="StructureMapAdapter">
       <HintPath>..\..\DistFiles\StructureMapAdapter.dll</HintPath>
     </Reference>
-    <Reference Include="Enchant.Net">
-      <HintPath>..\..\DistFiles\Enchant.Net.dll</HintPath>
-    </Reference>
     <Reference Include="Palaso">
       <HintPath>..\..\DistFiles\Palaso.dll</HintPath>
     </Reference>

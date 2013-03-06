@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Filters
 			Justification="GetDictionary() returns a reference")]
 		public override bool Matches(SIL.FieldWorks.Common.COMInterfaces.ITsString arg)
 		{
-			var dict = EnchantHelper.GetDictionary(m_ws, WritingSystemFactory);
+			var dict = SpellingHelper.GetSpellChecker(m_ws, WritingSystemFactory);
 			return new SpellCheckMethod(arg, dict, m_ws, WritingSystemFactory.get_CharPropEngine(m_ws)).Run();
 		}
 
@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.Filters
 		string m_text; // to check, text of m_tss.
 		int m_cch; // total count of characters in source.
 		ILgCharacterPropertyEngine m_cpe;
-		Enchant.Dictionary m_dict;
+		ISpellEngine m_dict;
 		int m_ws; // only text in this language is checked.
 
 		/// <summary>
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.Filters
 		/// <param name="tss"></param>
 		/// <param name="dict"></param>
 		/// <param name="ws"></param>
-		public SpellCheckMethod(ITsString tss, Enchant.Dictionary dict, int ws, ILgCharacterPropertyEngine cpe)
+		public SpellCheckMethod(ITsString tss, ISpellEngine dict, int ws, ILgCharacterPropertyEngine cpe)
 		{
 			m_tss = tss;
 			m_text = tss.Text;

@@ -13,3 +13,6 @@
 [submodule "Lib/src/Machine"]
 	path = Lib/src/Machine
 	url = https://github.com/sillsdev/machine.git
+[submodule "Lib/src/hunspell"]
+	path = Lib/src/hunspell
+	url = git://github.com/sillsdev/hunspell.git

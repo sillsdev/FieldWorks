@@ -19,7 +19,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Enchant;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -85,7 +84,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			int hvoObj, tag, wsAlt, wsText;
 			string word;
-			Dictionary dict;
+			ISpellEngine dict;
 			bool nonSpellingError;
 			ICollection<SpellCorrectMenuItem> suggestions = GetSuggestions(pt, rootsite,
 				out hvoObj, out tag, out wsAlt, out wsText, out word, out dict, out nonSpellingError);
@@ -190,7 +189,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// text he might be trying to correct. The other output arguments indicate which WS
 		/// (wasAlt -- 0 for simple string) of which property (tag) of which object (hvoObj)
 		/// is affected by the change, the ws of the mis-spelled word, and the corresponding
-		/// Enchant dictionary. Much of this information is already known to the
+		/// spelling engine. Much of this information is already known to the
 		/// SpellCorrectMenuItems returned, but some clients use it in creating other menu options.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -198,7 +197,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Justification="we store a reference to SpellCorrectMenuItem for later use. REVIEW: we never dispose it.")]
 		public ICollection<SpellCorrectMenuItem> GetSuggestions(Point mousePos,
 			SimpleRootSite rootsite, out int hvoObj, out int tag, out int wsAlt, out int wsText,
-			out string word, out Dictionary dict, out bool nonSpellingError)
+			out string word, out ISpellEngine dict, out bool nonSpellingError)
 		{
 			hvoObj = tag = wsAlt = wsText = 0; // make compiler happy for early returns
 			word = null;
@@ -267,7 +266,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Determine whether it is a spelling problem.
 			wsText = TsStringUtils.GetWsOfRun(tssWord, 0);
-			dict = EnchantHelper.GetDictionary(wsText, wsf);
+			dict = SpellingHelper.GetSpellChecker(wsText, wsf);
 			if (dict == null)
 				return null;
 			word = tssWord.get_NormalizedForm(FwNormalizationMode.knmNFC).Text;
@@ -700,7 +699,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// ------------------------------------------------------------------------------------
 	public class AddToDictMenuItem : ToolStripMenuItem
 	{
-		private readonly Dictionary m_dict;
+		private readonly ISpellEngine m_dict;
 		private readonly string m_word;
 		private readonly IVwRootBox m_rootb;
 		private readonly int m_hvoObj;
@@ -714,7 +713,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Constructor
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal AddToDictMenuItem(Dictionary dict, string word, IVwRootBox rootb,
+		internal AddToDictMenuItem(ISpellEngine dict, string word, IVwRootBox rootb,
 			int hvoObj, int tag, int wsAlt, int wsText, string text, FdoCache cache)
 			: base(text)
 		{
@@ -774,9 +773,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="word"></param>
 		/// <param name="ws"></param>
 		/// ------------------------------------------------------------------------------------
-		private void AddToSpellDict(Dictionary dict, string word, int ws)
+		private void AddToSpellDict(ISpellEngine dict, string word, int ws)
 		{
-			dict.Add(word);
+			dict.SetStatus(word, true);
 
 			if (m_cache == null)
 				return; // bizarre, but means we just can't do it.
@@ -840,7 +839,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		public bool Redo()
 		{
-			EnchantHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, true);
+			SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, true);
 			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
 			return true;
 		}
@@ -852,7 +851,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		public bool Undo()
 		{
-			EnchantHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, false);
+			SpellingHelper.SetSpellingStatus(m_word, m_wsText, m_rootb.DataAccess.WritingSystemFactory, false);
 			m_rootb.PropChanged(m_hvoObj, m_tag, m_wsAlt, 1, 1);
 			return true;
 		}

@@ -5620,7 +5620,7 @@ namespace SIL.FieldWorks.TE
 					itemProps.Checked = false;
 					itemProps.Checked = TeProjectSettings.ShowSpellingErrors;
 
-					//itemProps.Checked = EnchantHelper.DictionaryExists(m_cache.DefaultVernWs, m_cache.LanguageWritingSystemFactoryAccessor);
+					//itemProps.Checked = SpellingHelper.DictionaryExists(m_cache.DefaultVernWs, m_cache.LanguageWritingSystemFactoryAccessor);
 					itemProps.Update = true;
 					return true;
 				}

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -114,10 +114,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
-    <Reference Include="Enchant.Net, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Enchant.Net.dll</HintPath>
-    </Reference>
     <Reference Include="FwResources">
       <Name>FwResources</Name>
       <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
@@ -179,9 +175,9 @@
     <Compile Include="FLExBridgeHelper.cs" />
     <Compile Include="IFocusablePanePortion.cs" />
     <Compile Include="IProjectIdentifier.cs" />
+    <Compile Include="ISpellEngine.cs" />
     <Compile Include="IThreadedProgress.cs" />
     <Compile Include="DirectoryFinder.cs" />
-    <Compile Include="EnchantHelper.cs" />
     <Compile Include="FwLinkArgs.cs" />
     <Compile Include="FwRegistryHelper.cs" />
     <Compile Include="FwStartupException.cs" />
@@ -213,6 +209,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SilTime.cs" />
+    <Compile Include="SpellEngine.cs" />
+    <Compile Include="SpellingHelper.cs" />
     <Compile Include="StringIgnoreCaseComparer.cs" />
     <Compile Include="StringSearcher.cs" />
     <Compile Include="ValidationProgress.cs" />

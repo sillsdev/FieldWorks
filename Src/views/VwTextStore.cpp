@@ -873,7 +873,7 @@ void VwTextStore::NormalizeText(StrUni & stuText, WCHAR* pchPlain, ULONG cchPlai
 	StrUtil::NormalizeStrUni(stuText, UNORM_NFC);
 	*pcchPlainOut = min(cchPlainReq, (ULONG)stuText.Length());
 	Assert(cchPlainReq >= (ULONG)stuText.Length());
-	wcscpy(pchPlain, stuText.Chars());
+	wcscpy_s(pchPlain, cchPlainReq, stuText.Chars());
 
 	if (ulRunInfoReq > 0)
 		*pulRunInfoOut = SetOrAppendRunInfo(prgRunInfo, ulRunInfoReq, 0, TS_RT_PLAIN, *pcchPlainOut);

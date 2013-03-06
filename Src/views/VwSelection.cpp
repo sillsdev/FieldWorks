@@ -7455,7 +7455,7 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 			if (cch >= 50)
 				cch = 49;
 
-			wcsncpy(buf, pch, cch);
+			wcsncpy_s(buf, cch, pch, cch);
 
 			buf[49] = 0; // in case there really were 50 + chars
 #ifdef WIN32

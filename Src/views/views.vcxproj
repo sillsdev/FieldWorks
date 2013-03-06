@@ -93,9 +93,6 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="lib\enchant++.h" />
-    <ClInclude Include="lib\enchant.h" />
-    <ClInclude Include="lib\EnchantWinconfig.h" />
     <ClInclude Include="lib\FwGr.h" />
     <ClInclude Include="lib\GrGraphics.h" />
     <ClInclude Include="lib\GrJustifier.h" />

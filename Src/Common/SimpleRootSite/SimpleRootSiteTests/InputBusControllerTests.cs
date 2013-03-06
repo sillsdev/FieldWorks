@@ -1805,6 +1805,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			throw new System.NotImplementedException();
 		}
 
+		public void SetSpellingRepository(IGetSpellChecker _gsp)
+		{
+		}
+
 		public ISilDataAccess DataAccess
 		{
 			get

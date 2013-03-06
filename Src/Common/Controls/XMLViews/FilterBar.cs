@@ -1085,7 +1085,7 @@ namespace SIL.FieldWorks.Common.Controls
 				case "CVPattern":
 					break;
 				default:
-					Enchant.Dictionary dict = m_bv.BrowseView.RootSiteEditingHelper.GetDictionary(ws);
+					var dict = m_bv.BrowseView.RootSiteEditingHelper.GetDictionary(ws);
 					if (dict != null)
 					{
 						combo.Items.Add(new FilterComboItem(MakeLabel(XMLViewsStrings.ksSpellingErrors),

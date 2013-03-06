@@ -5177,11 +5177,15 @@ namespace SIL.FieldWorks.Common.Controls
 				if (TryGetOriginalListValue(sda, hvoItem, out valOld) && valOld == val)
 					continue;
 				UpdateListItemToNewValue(sda, hvoItem, val, valOld);
-				// Enhance JohnT: maybe eventually we will want to make a more general mechanism for doing this,
-				// e.g., specify a method to call using the XML configuration for the column?
-				if (m_flid == WfiWordformTags.kflidSpellingStatus)
-					FixSpellingStatus(hvoItem, val);
 			}
+			// Enhance JohnT: maybe eventually we will want to make a more general mechanism for doing this,
+			// e.g., specify a method to call using the XML configuration for the column?
+			// Note that resetting them all at the end of the edit is much more efficient than
+			// adding an override for each word, which rewrites the exceptions file each time.
+			// (This code runs before the code at the end of the UOW which also tries to update the spelling
+			// status. That code will find it is already correct and not write the exc file.)
+			if (m_flid == WfiWordformTags.kflidSpellingStatus)
+				WfiWordformServices.ConformOneSpellingDictToWordforms(m_cache.DefaultVernWs, m_cache);
 			m_cache.DomainDataByFlid.EndUndoTask();
 		}
 
@@ -5214,7 +5218,7 @@ namespace SIL.FieldWorks.Common.Controls
 				defVernWS);
 			if (tss == null || tss.Length == 0)
 				return; // probably can't happen?
-			EnchantHelper.SetSpellingStatus(tss.Text,
+			SpellingHelper.SetSpellingStatus(tss.Text,
 				defVernWS,
 				m_cache.WritingSystemFactory,
 				((int)val == (int)SpellingStatusStates.correct));

@@ -336,7 +336,7 @@ int VwPropertyStore::AdjustedLineHeight(VwPropertyStore * pzvpsLeaf, int * pdymp
 	lf.lfClipPrecision = CLIP_DEFAULT_PRECIS; // ??
 	lf.lfQuality = DRAFT_QUALITY; // I (JohnT) don't think this matters for TrueType fonts.
 	lf.lfPitchAndFamily = 0; // must be zero for EnumFontFamiliesEx
-	wcscpy_s(lf.lfFaceName, pchrp->szFaceName);
+	wcscpy_s(lf.lfFaceName, LF_FACESIZE, pchrp->szFaceName);
 	qzvpsWithWsAndFont->Unlock();
 
 	HFONT hfont;
@@ -471,7 +471,7 @@ void VwPropertyStore::InitChrp()
 			// Got no useable font name. Substitute <default> and let the WS
 			// find a useable font.
 			static OleStringLiteral defaultName(L"<default>");
-			wcscpy(m_chrp.szFaceName, defaultName); // TODO: should this use FwStyledText::FontDefaultMarkup()?
+			wcscpy_s(m_chrp.szFaceName, LF_FACESIZE, defaultName); // TODO: should this use FwStyledText::FontDefaultMarkup()?
 
 			break;
 		}
@@ -480,7 +480,7 @@ void VwPropertyStore::InitChrp()
 		int cchCopy = pch - pchStartName;
 		if (cchCopy > 31)
 			cchCopy = 31;
-		wcsncpy(m_chrp.szFaceName, pchStartName, cchCopy);
+		wcsncpy_s(m_chrp.szFaceName, 32, pchStartName, cchCopy);
 		m_chrp.szFaceName[cchCopy] = 0; // ensure null termination
 		break;
 	}
@@ -1527,7 +1527,7 @@ STDMETHODIMP VwPropertyStore::put_StringProperty(int sp, BSTR bstrValue)
 			int ichComma = stuTmp.FindCh(L',', 0);
 			stuTmp = stuTmp.Right(stuTmp.Length() - ichComma - 1);
 		}
-		wcscpy(m_chrp.szFontVar, stuTmp.Chars());
+		wcscpy_s(m_chrp.szFontVar, 64, stuTmp.Chars());
 		break;
 	case ktptTags:
 		m_stuTags = bstrValue;
@@ -1796,7 +1796,7 @@ void VwPropertyStore::CopyInheritedFrom(VwPropertyStore* pzvpsParent)
 		int ichComma = stuTmp.FindCh(L',', 0);
 		stuTmp = stuTmp.Right(stuTmp.Length() - ichComma - 1);
 	}
-	wcscpy(m_chrp.szFontVar, stuTmp.Chars());
+	wcscpy_s(m_chrp.szFontVar, 64, stuTmp.Chars());
 	m_chrp.clrFore = pzvpsParent->m_chrp.clrFore;
 	m_clrBorderColor = pzvpsParent->m_clrBorderColor;
 	m_nMaxLines = pzvpsParent->m_nMaxLines;

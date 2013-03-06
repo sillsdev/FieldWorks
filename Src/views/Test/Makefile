@@ -23,7 +23,7 @@ LANGUAGETEST_SRC = $(LANGUAGE_SRC)/Test
 DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING \
 	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1 -D_DEBUG
 
-PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid enchant
+PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
 
 INCLUDES := -I$(VIEWS_SRC) -I$(VIEWS_SRC)/lib -I$(VIEWS_SRC)/Test \
 		-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(CELLAR_SRC) -I$(KERNEL_SRC) \
@@ -92,7 +92,6 @@ VIEWS_OBJS = \
 	$(VIEWS_LIB)/VwColor.o \
 	$(VIEWS_LIB)/VwJustifier.o \
 	$(VIEWS_LIB)/VwUndo.o \
-	$(VIEWS_LIB)/Enchant.o \
 	$(GENERIC_OBJ)/ModuleEntry.o \
 
 DEPS = $(PRECOMPS:%.gch=%.d)

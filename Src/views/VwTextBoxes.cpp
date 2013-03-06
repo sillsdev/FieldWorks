@@ -8432,7 +8432,7 @@ class SpellCheckMethod
 	PropOverrideVec m_vdp;
 	ITsTextPropsPtr m_qttpSquiggle;
 	StrUni m_stuDictId; // last ID requested.
-	enchant::Dict * m_pdict; // last dict obtained.
+	ICheckWordPtr m_qcw; // last dict obtained.
 	ILgWritingSystemFactoryPtr m_qwsf;
 	int m_ws; // ws to which m_qcpe applies.
 	ILgCharacterPropertyEnginePtr m_qcpe; // valid for chars from m_ich to m_ichLimRun
@@ -8448,14 +8448,11 @@ public:
 			m_psrc = m_qsotsOverride->EmbeddedSrc();
 		m_ich = 0;
 		m_cch = m_psrc->CchRen();
-		m_pdict = NULL;
 		m_pvpbox->GetWritingSystemFactory(&m_qwsf);
 	}
 
 	~SpellCheckMethod()
 	{
-		//if (m_pdict != NULL)
-		//	delete m_pdict;
 	}
 
 	void EnsureRightCpe()
@@ -8522,10 +8519,8 @@ public:
 	{
 		if (wcscmp(m_stuDictId.Chars(), pchId) == 0)
 			return;
-		//if (m_pdict)
-		//	delete m_pdict;
 		m_stuDictId.Assign(pchId);
-		m_pdict = m_pvpbox->Root()->GetDictionary(pchId);
+		m_pvpbox->Root()->GetDictionary(pchId, &m_qcw);
 	}
 
 	// Answer true if the character at ich should be spell-checked, at least in so far as this is controlled
@@ -8596,17 +8591,14 @@ public:
 		}
 
 		// Actually check the spelling of the word at the current boundaries; it's all in one writing system.
-		StrUni word16 = m_text.Mid(ichMinWord, ichLimWord - ichMinWord);
-		UnicodeString ucInput(word16.Chars(), word16.Length());
+		StrUni word = m_text.Mid(ichMinWord, ichLimWord - ichMinWord);
+		UnicodeString ucInput(word.Chars(), word.Length());
 		UnicodeString ucOutput;
 		UErrorCode uerr = U_ZERO_ERROR;
 		Normalizer::normalize(ucInput, (UNormalizationMode)knmNFC, 0, ucOutput, uerr);
 		if (U_FAILURE(uerr)) // may get warnings, like not terminated.
 			return; // give up if we can't normalize.
-		word16.Assign(ucOutput.getBuffer(), ucOutput.length());
-
-		StrAnsi word8;
-		StrAnsi::AssignViaCodePage(word16, word8, CP_UTF8);
+		word.Assign(ucOutput.getBuffer(), ucOutput.length());
 
 		SmartBstr sbstrWsId;
 		ILgWritingSystemPtr qwse;
@@ -8617,10 +8609,11 @@ public:
 		if (sbstrWsId.Length() == 0)
 			return;
 		GetDictionary(sbstrWsId.Chars());
-		if (m_pdict == NULL)
+		if (!m_qcw)
 			return; // can't check this language.
-		std::string word(word8.Chars());
-		if (m_pdict->check(word))
+		ComBool fOk;
+		CheckHr(m_qcw->Check(const_cast<OLECHAR *>(word.Chars()), &fOk));
+		if (fOk)
 			return; // all is well
 		int isbt;
 		int irun = 0;

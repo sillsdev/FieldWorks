@@ -156,10 +156,6 @@ typedef ComMultiMap<HVO, VwAbstractNotifier> ObjNoteMap; // Hungarian mmhvoqnote
 // that relate to structured text.
 #include "CellarConstants.h"
 
-// The Enchant spelling checker interfaces.
-#include "enchant++.h"
-
-
 //:>**********************************************************************************
 //:>	Implementations.
 //:>**********************************************************************************

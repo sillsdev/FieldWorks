@@ -68,6 +68,5 @@ template class GpHashMap<int, VwPage>;
 template class MultiMap<VwBox *, int>; // BoxIntMultiMap; // Hungarian mmbi;
 template class Vector<VwPage *>;
 template class Vector<VwMoveablePileBox *>;
-template class HashMapStrUni<enchant::Dict *>;
 template class Vector<PageLine>; // PageLineVec; // Hungarian vln;
 template class Vector<Rect>;

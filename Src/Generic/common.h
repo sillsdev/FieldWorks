@@ -423,4 +423,8 @@ template<typename T> inline T * GetPtr(void *pv, int ib)
 #include "UtilSil.h"
 #include "FwSettings.h"
 
+#ifndef LF_FACESIZE // isn't defined on Linux
+#define LF_FACESIZE 32
+#endif
+
 #endif // !_COMMON_H_

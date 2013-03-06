@@ -114,10 +114,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\CoreImpl.dll</HintPath>
     </Reference>
-    <Reference Include="Enchant.Net, Version=1.4.2.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\DistFiles\Enchant.Net.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="FwUtils, Version=1.2.0.9, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
@@ -160,7 +156,6 @@
     <Compile Include="DirectoryFinderTests.cs" />
     <Compile Include="DummyCharPropEngine.cs" />
     <Compile Include="DummyICU.cs" />
-    <Compile Include="EnchantHelperTests.cs" />
     <Compile Include="ExemplarCharactersHelperTests.cs" />
     <Compile Include="FwLinkArgsTests.cs" />
     <Compile Include="FwRegistryHelperTests.cs" />
@@ -169,6 +164,7 @@
     <Compile Include="MoreStringUtilsTests.cs" />
     <Compile Include="ParagraphCorrelationTests.cs" />
     <Compile Include="ParatextHelperTests.cs" />
+    <Compile Include="SpellingHelperTests.cs" />
     <Compile Include="StringSearcherTests.cs" />
     <Compile Include="ShowHelpTests.cs" />
     <Compile Include="TestProjectId.cs" />

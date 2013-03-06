@@ -1,143 +1,134 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-	<Filter Include="lib">
-	  <UniqueIdentifier>{93082814-1f92-4f0a-8d50-4986e93800bb}</UniqueIdentifier>
-	</Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{93082814-1f92-4f0a-8d50-4986e93800bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-	<ClInclude Include="lib\enchant++.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\enchant.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\EnchantWinconfig.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\FwGr.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\GrGraphics.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\GrJustifier.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\GrResult.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\GrTxtSrc.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\IGrGraphics.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\IGrGraphicsDrawing.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\IGrGraphicsFont.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\VwBaseDataAccess.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\VwBaseVc.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\VwCacheDa.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\VwGraphics.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\VwJustifier.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="lib\VwUndo.h">
-	  <Filter>lib</Filter>
-	</ClInclude>
-	<ClInclude Include="Main.h" />
-	<ClInclude Include="lib\UtilView.h" />
-	<ClInclude Include="VwAccessRoot.h" />
-	<ClInclude Include="VwEnv.h" />
-	<ClInclude Include="VwInvertedViews.h" />
-	<ClInclude Include="VwLayoutStream.h" />
-	<ClInclude Include="VwLazyBox.h" />
-	<ClInclude Include="VwNotifier.h" />
-	<ClInclude Include="VwOverlay.h" />
-	<ClInclude Include="VwPattern.h" />
-	<ClInclude Include="VwPrintContext.h" />
-	<ClInclude Include="VwPropertyStore.h" />
-	<ClInclude Include="VwRootBox.h" />
-	<ClInclude Include="VwSelection.h" />
-	<ClInclude Include="VwSimpleBoxes.h" />
-	<ClInclude Include="VwSynchronizer.h" />
-	<ClInclude Include="VwTableBox.h" />
-	<ClInclude Include="VwTextBoxes.h" />
-	<ClInclude Include="VwTextStore.h" />
-	<ClInclude Include="VwTxtSrc.h" />
+    <ClInclude Include="lib\FwGr.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\GrGraphics.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\GrJustifier.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\GrResult.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\GrTxtSrc.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\IGrGraphics.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\IGrGraphicsDrawing.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\IGrGraphicsFont.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\VwBaseDataAccess.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\VwBaseVc.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\VwCacheDa.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\VwGraphics.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\VwJustifier.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\VwUndo.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Main.h" />
+    <ClInclude Include="lib\UtilView.h" />
+    <ClInclude Include="VwAccessRoot.h" />
+    <ClInclude Include="VwEnv.h" />
+    <ClInclude Include="VwInvertedViews.h" />
+    <ClInclude Include="VwLayoutStream.h" />
+    <ClInclude Include="VwLazyBox.h" />
+    <ClInclude Include="VwNotifier.h" />
+    <ClInclude Include="VwOverlay.h" />
+    <ClInclude Include="VwPattern.h" />
+    <ClInclude Include="VwPrintContext.h" />
+    <ClInclude Include="VwPropertyStore.h" />
+    <ClInclude Include="VwRootBox.h" />
+    <ClInclude Include="VwSelection.h" />
+    <ClInclude Include="VwSimpleBoxes.h" />
+    <ClInclude Include="VwSynchronizer.h" />
+    <ClInclude Include="VwTableBox.h" />
+    <ClInclude Include="VwTextBoxes.h" />
+    <ClInclude Include="VwTextStore.h" />
+    <ClInclude Include="VwTxtSrc.h" />
   </ItemGroup>
   <ItemGroup>
-	<ClCompile Include="lib\GrGraphics.cpp">
-	  <Filter>lib</Filter>
-	</ClCompile>
-	<ClCompile Include="lib\GrJustifier.cpp">
-	  <Filter>lib</Filter>
-	</ClCompile>
-	<ClCompile Include="lib\GrTxtSrc.cpp">
-	  <Filter>lib</Filter>
-	</ClCompile>
-	<ClCompile Include="lib\VwBaseDataAccess.cpp">
-	  <Filter>lib</Filter>
-	</ClCompile>
-	<ClCompile Include="lib\VwBaseVc.cpp">
-	  <Filter>lib</Filter>
-	</ClCompile>
-	<ClCompile Include="lib\VwCacheDa.cpp">
-	  <Filter>lib</Filter>
-	</ClCompile>
-	<ClCompile Include="lib\VwGraphics.cpp">
-	  <Filter>lib</Filter>
-	</ClCompile>
-	<ClCompile Include="lib\VwJustifier.cpp">
-	  <Filter>lib</Filter>
-	</ClCompile>
-	<ClCompile Include="lib\VwUndo.cpp">
-	  <Filter>lib</Filter>
-	</ClCompile>
-	<ClCompile Include="dlldatax.c" />
-	<ClCompile Include="ExplicitInstantiation.cpp" />
-	<ClCompile Include="VwAccessRoot.cpp" />
-	<ClCompile Include="VwEnv.cpp" />
-	<ClCompile Include="VwInvertedViews.cpp" />
-	<ClCompile Include="VwLayoutStream.cpp" />
-	<ClCompile Include="VwLazyBox.cpp" />
-	<ClCompile Include="VwNotifier.cpp" />
-	<ClCompile Include="VwOverlay.cpp" />
-	<ClCompile Include="VwPattern.cpp" />
-	<ClCompile Include="VwPrintContext.cpp" />
-	<ClCompile Include="VwPropertyStore.cpp" />
-	<ClCompile Include="VwRootBox.cpp" />
-	<ClCompile Include="VwSelection.cpp" />
-	<ClCompile Include="VwSimpleBoxes.cpp" />
-	<ClCompile Include="VwSynchronizer.cpp" />
-	<ClCompile Include="VwTableBox.cpp" />
-	<ClCompile Include="VwTextBoxes.cpp" />
-	<ClCompile Include="VwTextStore.cpp" />
-	<ClCompile Include="VwTxtSrc.cpp" />
+    <ClCompile Include="lib\GrGraphics.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\GrJustifier.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\GrTxtSrc.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\VwBaseDataAccess.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\VwBaseVc.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\VwCacheDa.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\VwGraphics.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\VwJustifier.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\VwUndo.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="dlldatax.c" />
+    <ClCompile Include="ExplicitInstantiation.cpp" />
+    <ClCompile Include="VwAccessRoot.cpp" />
+    <ClCompile Include="VwEnv.cpp" />
+    <ClCompile Include="VwInvertedViews.cpp" />
+    <ClCompile Include="VwLayoutStream.cpp" />
+    <ClCompile Include="VwLazyBox.cpp" />
+    <ClCompile Include="VwNotifier.cpp" />
+    <ClCompile Include="VwOverlay.cpp" />
+    <ClCompile Include="VwPattern.cpp" />
+    <ClCompile Include="VwPrintContext.cpp" />
+    <ClCompile Include="VwPropertyStore.cpp" />
+    <ClCompile Include="VwRootBox.cpp" />
+    <ClCompile Include="VwSelection.cpp" />
+    <ClCompile Include="VwSimpleBoxes.cpp" />
+    <ClCompile Include="VwSynchronizer.cpp" />
+    <ClCompile Include="VwTableBox.cpp" />
+    <ClCompile Include="VwTextBoxes.cpp" />
+    <ClCompile Include="VwTextStore.cpp" />
+    <ClCompile Include="VwTxtSrc.cpp" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="..\..\bin\mkvw.bat" />
-	<None Include="Views.def" />
-	<None Include="Views.idh" />
-	<None Include="Views.mak" />
+    <None Include="..\..\bin\mkvw.bat" />
+    <None Include="Views.def" />
+    <None Include="Views.idh" />
+    <None Include="Views.mak" />
   </ItemGroup>
   <ItemGroup>
-	<ResourceCompile Include="Views.rc" />
+    <ResourceCompile Include="Views.rc" />
   </ItemGroup>
   <ItemGroup>
-	<Midl Include="ViewsPs.idl" />
-	<Midl Include="ViewsTlb.idl" />
+    <Midl Include="ViewsPs.idl" />
+    <Midl Include="ViewsTlb.idl" />
   </ItemGroup>
 </Project>

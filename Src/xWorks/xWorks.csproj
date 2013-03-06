@@ -268,9 +268,7 @@
     <Compile Include="FwXApp.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FwXWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FwXWindow.cs" />
     <Compile Include="GeneratedHtmlViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -302,27 +300,19 @@
     <Compile Include="RecordBarTreeHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="RecordBrowseView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="RecordBrowseView.cs" />
     <Compile Include="RecordClerk.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RecordClerkImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RecordDocView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RecordEditView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="RecordDocView.cs" />
+    <Compile Include="RecordEditView.cs" />
     <Compile Include="RecordList.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="RecordView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="RecordView.cs" />
     <Compile Include="SubitemRecordClerk.cs" />
     <Compile Include="TextListeners.cs">
       <SubType>Code</SubType>
@@ -334,17 +324,13 @@
     <Compile Include="XmlDocConfigureDlg.Designer.cs">
       <DependentUpon>XmlDocConfigureDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="XmlDocView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="XmlDocView.cs" />
     <Compile Include="xWorksStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>xWorksStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="XWorksViewBase.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="XWorksViewBase.cs" />
     <EmbeddedResource Include="AddCustomFieldDlg.resx">
       <DependentUpon>AddCustomFieldDlg.cs</DependentUpon>
       <SubType>Designer</SubType>

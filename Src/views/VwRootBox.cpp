@@ -289,6 +289,17 @@ STDMETHODIMP VwRootBox::SetSite(IVwRootSite * pvrs)
 }
 
 /*----------------------------------------------------------------------------------------------
+	Pass in the repository that will be used to get spell-checkers.
+----------------------------------------------------------------------------------------------*/
+STDMETHODIMP VwRootBox::SetSpellingRepository(IGetSpellChecker * pgsp)
+{
+	BEGIN_COM_METHOD;
+	ChkComArgPtr(pgsp);
+	m_qgspCheckerRepository = pgsp;
+	END_COM_METHOD(g_fact, IID_IVwRootBox);
+}
+
+/*----------------------------------------------------------------------------------------------
 	Use if the view contains one or more independent objects, which the corresponding
 	view constructor sets up using Display. The corresponding fragment is used for each.
 	You may also supply a style sheet (may be null) that will modify the standard
@@ -2620,16 +2631,6 @@ void VwRootBox::ClearNotifiers()
 	m_mmboxqnote.Clear();
 }
 
-void ClearSpellingDict(HashMapStrUni<enchant::Dict *> & hmDict)
-{
-	HashMapStrUni<enchant::Dict *>::iterator it;
-	for(it = hmDict.Begin(); it != hmDict.End(); ++it)
-	{
-		delete it->GetValue();
-	}
-	hmDict.Clear();
-}
-
 /*----------------------------------------------------------------------------------------------
 	Clean out everything and rebuild the view from scratch. Selections are lost. This is a last
 	resort if some property changed and we are not sure what the consequences should be.
@@ -2639,8 +2640,6 @@ void ClearSpellingDict(HashMapStrUni<enchant::Dict *> & hmDict)
 ----------------------------------------------------------------------------------------------*/
 void VwRootBox::Reconstruct(bool fCheckForSync)
 {
-	ClearSpellingDict(m_hmDict); // may be reconstructing to account for created or destroyed dictionary.
-
 	if (m_qsync && fCheckForSync)
 	{
 		m_qsync->Reconstruct();
@@ -3158,7 +3157,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 					strcat(buf2, buf3);
 #endif //WIN32
 					StrUni stuConv = buf2;
-					wcscpy(buf, stuConv.Chars());
+					wcscpy_s(buf, 200, stuConv.Chars());
 					cchSpecial = 7; // delete 7 chars for &[date]
 				}
 				else
@@ -3182,7 +3181,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 						strftime(buf2, 12, "%X %p", stim);
 #endif //WIN32
 						StrUni stuConv = buf2;
-						wcscpy(buf, stuConv.Chars());
+						wcscpy_s(buf, 200, stuConv.Chars());
 						cchSpecial = 7; // delete 7 chars for &[time]
 					}
 					else
@@ -3741,7 +3740,6 @@ STDMETHODIMP VwRootBox::Close()
 	ClearNotifiers();
 	NotifierVec vpanoteDelDummy; // required argument, but all gone already.
 	DeleteContents(this, vpanoteDelDummy);
-	ClearSpellingDict(m_hmDict);
 
 	m_fConstructed = false;
 
@@ -4154,7 +4152,6 @@ STDMETHODIMP VwRootBox::RestartSpellChecking()
 {
 	BEGIN_COM_METHOD;
 	ResetSpellCheck();
-	m_hmDict.Clear();
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }
 
@@ -4164,96 +4161,19 @@ struct NamePair
 	std::string targetName;
 };
 
-void EnchantCallback(const char * const lang_tag,
-					   const char * const provider_name,
-					   const char * const provider_desc,
-					   const char * const provider_file,
-					   void * user_data)
-{
-	NamePair * pnames = (NamePair *) user_data;
-	/* Return the first dictionary Enchant knows about for this language */
-	if (pnames->extendedName.length() == 0 &&
-		strncmp(pnames->targetName.c_str(), lang_tag, pnames->targetName.length()) == 0)
-	{
-		pnames->extendedName.assign(lang_tag);
-	}
-}
-
 /*----------------------------------------------------------------------------------------------
-	Get a dictionary; having gotten it, hold it until destructed. If no suitable dictionary
+	Get a dictionary, assigning a ref count on it. If no suitable dictionary
 	exists, return null.
-	Holding is not currently used, as having multiple instances of the same dictionary produces crashes
-	when later ones are deleted.
 ----------------------------------------------------------------------------------------------*/
-enchant::Dict * VwRootBox::GetDictionary(const OLECHAR * pszId)
+void VwRootBox::GetDictionary(const OLECHAR * pszId, ICheckWord ** ppcw)
 {
-	StrUni key(pszId);
-	enchant::Dict * pdicResult;
-	if (m_hmDict.Retrieve(key, &pdicResult))
-		return pdicResult;
+	*ppcw = NULL;
+	if (!m_qgspCheckerRepository)
+		return;
 	static const OleStringLiteral literalNone = L"<None>";
 	if (wcscmp(pszId, literalNone) == 0)
-		return NULL;
-	StrAnsi staId;
-	StrAnsi::AssignViaCodePage(key, staId, CP_UTF8);
-	std::string wsId(staId.Chars());
-	if (!enchant::Broker::instance()->dict_exists(wsId))
-	{
-		NamePair names;
-		names.targetName.assign(staId);
-		enchant::Broker::instance()->list_dicts(EnchantCallback, &names);
-		if (names.extendedName.length() > 0)
-			wsId.assign(names.extendedName);
-		else
-			return NULL;
-	}
-	try
-	{
-		pdicResult = enchant::Broker::instance()->request_dict(wsId);
-	}
-	catch(...)
-	{
-		// If enchant throws a fit, then there's no dictionary!
-		return NULL;
-	}
-	if (!pdicResult)
-		return NULL;
-	std::string langName = pdicResult->get_lang ();
-	if (strcmp(staId.Chars(), langName.c_str()))
-	{
-#if WIN32
-		// It's an approximate name...see if it's a private dictionary.
-		// This duplicates the algorithm in EnchantHelper.IsPrivateDictionary().
-		OLECHAR rgchAppData[MAX_PATH];
-		if (::SHGetSpecialFolderPath(NULL, rgchAppData, CSIDL_APPDATA, false))
-		{
-			StrUni path = rgchAppData;
-			path.Append(L"\\enchant\\myspell\\");
-			path.Append(langName.c_str());
-			path.Append(L".dic");
-			HANDLE hFile = CreateFile(path,           // file to open
-							   GENERIC_READ,          // open for reading
-							   FILE_SHARE_READ,       // share for reading
-							   NULL,                  // default security
-							   OPEN_EXISTING,         // existing file only
-							   FILE_ATTRIBUTE_NORMAL, // normal file
-							   NULL);                 // no attr. template
-
-			if (hFile != INVALID_HANDLE_VALUE)
-			{
-				// The file that would exist for a private dictionary exists...
-				LARGE_INTEGER size;
-				::GetFileSizeEx(hFile, &size);
-				if (size.QuadPart <= 3)
-					return NULL; // no content (except "0"), it's a private dictionary, don't return it.
-			}
-		}
-#else
-	// TODO-Linux: port
-#endif
-	}
-	m_hmDict.Insert(key, pdicResult);
-	return pdicResult;
+		return;
+	CheckHr(m_qgspCheckerRepository->GetChecker(const_cast<OLECHAR *>(pszId), ppcw));
 }
 
 

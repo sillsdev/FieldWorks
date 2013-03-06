@@ -130,30 +130,42 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// Force a dictionary to exist for the default vernacular writing system.
 			IFdoServiceLocator servloc = cache.ServiceLocator;
 			var lgwsFactory = servloc.GetInstance<ILgWritingSystemFactory>();
-			using (EnchantHelper.EnsureDictionary(cache.DefaultVernWs, lgwsFactory))
-			{
-			}
+			SpellingHelper.EnsureDictionary(cache.DefaultVernWs, lgwsFactory);
 
 			// Make all existing spelling dictionaries give as nearly as possible the right answers.
 			foreach (IWritingSystem wsObj in cache.ServiceLocator.WritingSystems.VernacularWritingSystems)
 			{
 				int ws = wsObj.Handle;
-				using (var dict = EnchantHelper.GetDictionary(ws, lgwsFactory))
+				ConformOneSpellingDictToWordforms(ws, cache);
+			}
+		}
+
+		/// <summary>
+		/// Make an individual spelling dictionary conform as closely as possible to the spelling status
+		/// recorded in Wordforms.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <param name="cache"></param>
+		public static void ConformOneSpellingDictToWordforms(int ws, FdoCache cache)
+		{
+			IFdoServiceLocator servloc = cache.ServiceLocator;
+			var lgwsFactory = servloc.GetInstance<ILgWritingSystemFactory>();
+			var dict = SpellingHelper.GetSpellChecker(ws, lgwsFactory);
+			if (dict == null)
+				return;
+			// we only force one to exist for the default, others might not have one.
+			var words = new List<string>();
+			foreach (IWfiWordform wf in servloc.GetInstance<IWfiWordformRepository>().AllInstances())
+			{
+				if (wf.SpellingStatus != (int)SpellingStatusStates.correct)
+					continue; // don't put it in the list of correct words
+				string wordform = wf.Form.get_String(ws).Text;
+				if (!string.IsNullOrEmpty(wordform))
 				{
-					if (dict == null)
-						continue;
-					// we only force one to exist for the default, others might not have one.
-					foreach (IWfiWordform wf in servloc.GetInstance<IWfiWordformRepository>().AllInstances())
-					{
-						string wordform = wf.Form.get_String(ws).Text;
-						if (!string.IsNullOrEmpty(wordform))
-						{
-							EnchantHelper.SetSpellingStatus(wordform,
-								wf.SpellingStatus == (int)SpellingStatusStates.correct, dict);
-						}
-					}
+					words.Add(wordform);
 				}
 			}
+			SpellingHelper.ResetDictionary(SpellingHelper.DictionaryId(ws, lgwsFactory), words);
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			{
 				UncompressFilesMatchingPath(BackupSettings.ksSpellingDictionariesDir + "/", m_restoreSettings.SpellingDictionariesPath);
 
-				CopySpellingOverrideFilesFromBackupToEnchant();
+				CopySpellingOverrideFilesFromBackupToLocal();
 			}
 		}
 
@@ -293,14 +293,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Copies the spelling override files from the restore location to the place where
-		/// Enchant expects to fnd them.
+		/// our spelling engine expects to find them.
 		/// REVIEW: Should this be a move instead of a copy?
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void CopySpellingOverrideFilesFromBackupToEnchant()
+		private void CopySpellingOverrideFilesFromBackupToLocal()
 		{
 			foreach (var file in Directory.GetFiles(m_restoreSettings.SpellingDictionariesPath))
-				EnchantHelper.AddReplaceSpellingOverrideFile(file);
+				SpellingHelper.AddReplaceSpellingOverrideFile(file);
 		}
 
 		/// ------------------------------------------------------------------------------------

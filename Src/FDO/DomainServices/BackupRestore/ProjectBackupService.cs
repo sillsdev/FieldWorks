@@ -222,8 +222,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 		private IEnumerable<String> GetSpellingDictionaryFilesList()
 		{
-			var enchantDictionaryFiles = new HashSet<String>();
-			var enchantDictionaryList =  EnchantHelper.GetEnchantDictionaryList();
+			var dictionaryFiles = new HashSet<String>();
 
 			var wsManager = m_cache.ServiceLocator.WritingSystemManager;
 
@@ -233,33 +232,18 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				if (string.IsNullOrEmpty(spellCheckingDictionary) || spellCheckingDictionary == "<None>")
 					continue; // no spelling dictionary for WS
 
-				foreach (var languageId in enchantDictionaryList)
+				if (SpellingHelper.DictionaryExists(spellCheckingDictionary))
 				{
-					if (languageId.StartsWith(spellCheckingDictionary) || spellCheckingDictionary.StartsWith(languageId))
-					{
-						if (EnchantHelper.OverrideSpellingsExist(languageId))
-						{
-							var dictionaryPath = EnchantHelper.GetOverrideDictionaryPath(languageId);
-							if (!String.IsNullOrEmpty(dictionaryPath))
-								enchantDictionaryFiles.Add(dictionaryPath);
-							//Also include the other file which we think is for spellings the user is excluding
-							//but which are in the main enchant dictionary file for this language.
-							//At this point in time July 2010 FieldWorks does not add anything to this file but
-							//we are backing it up anyway in case FW does in the future make changes to this file
-							//or if the user manually edits this file.
-							var excludedSpellingsFile = Path.ChangeExtension(dictionaryPath, ".exc");
-							if (!String.IsNullOrEmpty(excludedSpellingsFile) && File.Exists(excludedSpellingsFile))
-								enchantDictionaryFiles.Add(excludedSpellingsFile);
-						}
-					}
+					foreach (var path in SpellingHelper.PathsToBackup(spellCheckingDictionary))
+						dictionaryFiles.Add(path);
 				}
 			}
-			//Now that we have the list of Enchant files
+			//Now that we have the list of spelling files
 			if (!Directory.Exists(m_settings.SpellingDictionariesPath))
 				Directory.CreateDirectory(m_settings.SpellingDictionariesPath);
 			else
 				RemoveAllFilesFromFolder(m_settings.SpellingDictionariesPath);
-			CopyAllFilesToFolder(enchantDictionaryFiles, m_settings.SpellingDictionariesPath);
+			CopyAllFilesToFolder(dictionaryFiles, m_settings.SpellingDictionariesPath);
 			return AllFilesInADirectory(m_settings.SpellingDictionariesPath);
 		}
 

@@ -244,9 +244,7 @@
     <Compile Include="FwRegistrySettings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FwRootSite.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="FwRootSite.cs" />
     <Compile Include="IFieldWorksManager.cs" />
     <Compile Include="IFwMainWnd.cs" />
     <Compile Include="MainWindowDelegate.cs">

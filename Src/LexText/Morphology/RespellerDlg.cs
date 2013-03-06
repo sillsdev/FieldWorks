@@ -505,7 +505,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		private void SetSuggestions()
 		{
-			var dict = EnchantHelper.GetDictionary(m_vernWs, m_cache.LanguageWritingSystemFactoryAccessor);
+			var dict = SpellingHelper.GetSpellChecker(m_vernWs, m_cache.LanguageWritingSystemFactoryAccessor);
 			if (dict == null)
 				return;
 			var suggestions = dict.Suggest(m_cbNewSpelling.Text);
@@ -1607,7 +1607,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				UpdateProgress(progress);
 				if (AllChanged)
 				{
-					EnchantHelper.SetSpellingStatus(m_oldSpelling, m_vernWs,
+					SpellingHelper.SetSpellingStatus(m_oldSpelling, m_vernWs,
 						m_cache.LanguageWritingSystemFactoryAccessor, false);
 					if (wfOld.IsValidObject)
 						ProcessAnalysesAndLexEntries(progress, wfOld, wfNew);
@@ -1695,7 +1695,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void SetSpellingStatus(IWfiWordform wfNew)
 		{
 			wfNew.SpellingStatus = (int)SpellingStatusStates.correct;
-			EnchantHelper.SetSpellingStatus(NewSpelling, m_vernWs,
+			SpellingHelper.SetSpellingStatus(NewSpelling, m_vernWs,
 				m_cache.LanguageWritingSystemFactoryAccessor, true);
 		}
 
@@ -1905,11 +1905,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			////// This MIGHT only be needed during testing (when a test has created a dummy in the process of verifying the Undo),
 			////// but it makes the shipping code more robust, too.
 			////m_cache.LangProject.WordformInventoryOA.UpdateConcWordform(m_newSpelling, m_vernWs, m_hvoNewWf);
-			//EnchantHelper.SetSpellingStatus(m_newSpelling, m_vernWs,
+			//SpellingHelper.SetSpellingStatus(m_newSpelling, m_vernWs,
 			//    m_cache.LanguageWritingSystemFactoryAccessor, true);
 			//if (AllChanged)
 			//{
-			//    EnchantHelper.SetSpellingStatus(m_oldSpelling, m_vernWs,
+			//    SpellingHelper.SetSpellingStatus(m_oldSpelling, m_vernWs,
 			//        m_cache.LanguageWritingSystemFactoryAccessor, false);
 			//    SendAnalysisVirtualPropChanged(m_hvoNewWf);
 			//    SendAnalysisVirtualPropChanged(m_hvoOldWf);
@@ -1936,9 +1936,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			//    pair.Value.SetString(m_cache, pair.Value.OldContents, !fRefreshPending);
 			//}
 			//UpdateInstanceOf(m_hvoOldWf);
-			//EnchantHelper.SetSpellingStatus(m_newSpelling, m_vernWs,
+			//SpellingHelper.SetSpellingStatus(m_newSpelling, m_vernWs,
 			//    m_cache.LanguageWritingSystemFactoryAccessor, m_fWasNewSpellingCorrect);
-			//EnchantHelper.SetSpellingStatus(m_oldSpelling, m_vernWs,
+			//SpellingHelper.SetSpellingStatus(m_oldSpelling, m_vernWs,
 			//    m_cache.LanguageWritingSystemFactoryAccessor, m_fWasOldSpellingCorrect);
 			//RespellSda.ReplaceOccurrences(m_hvoOldWf, m_oldOccurrencesOldWf);
 			//RespellSda.ReplaceOccurrences(m_hvoNewWf, m_oldOccurrencesNewWf);

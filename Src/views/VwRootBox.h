@@ -204,6 +204,8 @@ public:
 	STDMETHOD(get_IsPropChangedInProgress)(ComBool * pfInProgress);
 	STDMETHOD(RestartSpellChecking)();
 
+	STDMETHOD(SetSpellingRepository)(IGetSpellChecker * pgsp);
+
 	// IServiceProvider methods
 	STDMETHOD(QueryService)(REFGUID guidService, REFIID riid, void ** ppv);
 
@@ -482,9 +484,9 @@ protected:
 	// next paragraph box to spell-check.
 	VwParagraphBox * m_pvpboxNextSpellCheck;
 	bool m_fCompletedSpellCheck; // true when we reach the end.
-	HashMapStrUni<enchant::Dict *> m_hmDict;
 	void FindBreak(VwPrintInfo * pvpi, Rect rcSrc, Rect rcDst, int ysStart, int * pysEnd);
 	bool OnMouseEvent(int xd, int yd, RECT rcSrc, RECT rcDst, VwMouseEvent me);
+	IGetSpellCheckerPtr m_qgspCheckerRepository;
 
 public:
 	bool FixSelectionsForStringReplacement(VwTxtSrc * psrcModify, int itssMin, int itssLim,
@@ -494,7 +496,7 @@ public:
 	Point DpiSrc() { return m_ptDpiSrc; }
 	virtual void SendPageNotifications(VwBox * pbox) {}; // See VwLayoutStream override.
 	void ResetSpellCheck();
-	virtual enchant::Dict * GetDictionary(const OLECHAR * pszId);
+	virtual void GetDictionary(const OLECHAR * pszId, ICheckWord ** ppcw);
 };
 DEFINE_COM_PTR(VwRootBox);
 

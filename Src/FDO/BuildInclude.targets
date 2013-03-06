@@ -46,7 +46,6 @@
 		<LinuxFilesSub Include="libTECkit_x86_64.so" Condition="'$(OS)'=='Unix'"/>
 	</ItemGroup>
 	<ItemGroup>
-		<LinuxFilesDist Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<LinuxFilesDist Include="icu.net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<LinuxFilesDist Include="icu.net.dll" Condition="'$(OS)'=='Unix'"/>
 	</ItemGroup>

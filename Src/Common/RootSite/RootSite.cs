@@ -35,6 +35,7 @@ using System.Windows.Automation.Provider;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
@@ -245,7 +246,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		#region Properties
 		/// <summary>
 		/// Set to true if this view should be spell-checked. For now this just displays the red
-		/// squiggle if Enchant thinks a word is mis-spelled.
+		/// squiggle if our spelling checker thinks a word is mis-spelled.
 		/// </summary>
 		public bool DoSpellCheck
 		{
@@ -839,6 +840,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			if (m_fDoSpellCheck && m_rootb != null)
 			{
+				m_rootb.SetSpellingRepository(SpellingHelper.GetCheckerInstance);
 				if (!m_rootb.IsSpellCheckComplete() && m_mediator != null)
 					m_mediator.IdleQueue.Add(IdleQueuePriority.Low, SpellCheckOnIdle);
 			}

@@ -1863,9 +1863,9 @@ void VwOverrideTxtSrc::Merge(LgCharRenderProps * pchrpOrig, LgCharRenderProps & 
 	if (pchrpOverride.dympHeight > -1)
 		pchrpOrig->dympHeight = pchrpOverride.dympHeight;
 	if (pchrpOverride.szFaceName != NULL && wcslen(pchrpOverride.szFaceName) != 0)
-		wcscpy(pchrpOrig->szFaceName, pchrpOverride.szFaceName);
+		wcscpy_s(pchrpOrig->szFaceName, LF_FACESIZE, pchrpOverride.szFaceName);
 	if (pchrpOverride.szFontVar != NULL && wcslen(pchrpOverride.szFontVar) != 0)
-		wcscpy(pchrpOrig->szFontVar, pchrpOverride.szFontVar);
+		wcscpy_s(pchrpOrig->szFontVar, 64, pchrpOverride.szFontVar);
 }
 
 /*----------------------------------------------------------------------------------------------

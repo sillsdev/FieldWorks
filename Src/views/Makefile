@@ -13,7 +13,7 @@ TLB_SRC        = $(OUTPUT)/Common
 
 # -I$(AFCORE_SRC)
 
-PACKAGES = gdk-2.0 gtkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid enchant
+PACKAGES = gdk-2.0 gtkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
 
 DEFINES  = -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DWIN32_KEY_VALUES=1
 
@@ -94,7 +94,6 @@ OBJS = \
 	$(INT_DIR)/lib/VwGraphicsCairo.o \
 	$(INT_DIR)/lib/VwJustifier.o \
 	$(INT_DIR)/lib/VwUndo.o \
-	$(INT_DIR)/lib/Enchant.o \
 	$(INT_DIR)/lib/DisplayCapsInfo.o \
 
 VWG_OBJS = \

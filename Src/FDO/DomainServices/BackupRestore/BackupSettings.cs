@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 	public abstract class BackupSettings : IBackupSettings
 	{
 		#region Constants
-		/// <summary>Temp folder where Enchant spelling dictionary files are copied</summary>
+		/// <summary>Temp folder where spelling dictionary files are copied</summary>
 		internal const string ksSpellingDictionariesDir = "SpellingDictionaries";
 
 		/// <summary>

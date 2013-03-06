@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				string text = wf.Form.VernacularDefaultWritingSystem.Text;
 				if (!string.IsNullOrEmpty(text))
 				{
-					EnchantHelper.SetSpellingStatus(text, m_cache.DefaultVernWs,
+					SpellingHelper.SetSpellingStatus(text, m_cache.DefaultVernWs,
 													m_cache.LanguageWritingSystemFactoryAccessor,
 													wf.SpellingStatus == (int)SpellingStatusStates.correct);
 				}
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 
 			display.Enabled = display.Visible = Cache != null;
-			bool checking = EnchantHelper.DictionaryExists(Cache.DefaultVernWs, Cache.LanguageWritingSystemFactoryAccessor);
+			bool checking = SpellingHelper.DictionaryExists(Cache.DefaultVernWs, Cache.LanguageWritingSystemFactoryAccessor);
 			// Make sure the property value is consistent. It can get off, e.g., if the value FLEx remembers from its
 			// last run is not consistent with what TE stored in the database.
 			m_mediator.PropertyTable.SetProperty("UseVernSpellingDictionary", checking);

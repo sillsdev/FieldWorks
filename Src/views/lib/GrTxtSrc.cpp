@@ -44,7 +44,7 @@ GrSimpleTextSource::GrSimpleTextSource(gr::utf16 * pszText,
 	memcpy(m_prgchText, pszText, isizeof(gr::utf16) * m_cchLength);
 	m_prgchText[m_cchLength] = 0; // zero-terminate
 
-	wcscpy(m_szFaceName, szFaceName);
+	wcscpy_s(m_szFaceName, 32, szFaceName);
 	m_pointSize = pointSize;
 	m_fBold = fBold;
 	m_fItalic = fItalic;

@@ -36,7 +36,7 @@ PATH=$(COM_OUT_DIR);$(PATH)
 
 RCFILE=Views.rc
 DEFFILE=Views.def
-LINK_LIBS= Generic.lib libenchant.lib $(LINK_LIBS)
+LINK_LIBS= Generic.lib $(LINK_LIBS)
 
 # === Object Lists ===
 
@@ -44,7 +44,6 @@ LINK_LIBS= Generic.lib libenchant.lib $(LINK_LIBS)
 # a DLL version of it, others an EXE version.
 OBJ_VIEWS=\
 	$(INT_DIR)\autopch\ViewsGlobals.obj\
-	$(INT_DIR)\autopch\Enchant.obj\
 	$(INT_DIR)\autopch\VwInvertedViews.obj\
 	$(INT_DIR)\autopch\VwAccessRoot.obj\
 	$(INT_DIR)\autopch\VwOverlay.obj\

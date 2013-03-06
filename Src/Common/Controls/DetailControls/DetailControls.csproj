@@ -193,9 +193,7 @@
     <Compile Include="AtomicReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AtomicReferenceView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="AtomicReferenceView.cs" />
     <Compile Include="AtomicRefTypeAheadSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -272,9 +270,7 @@
     <Compile Include="MorphTypeAtomicReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MorphTypeChooser.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="MorphTypeChooser.cs" />
     <Compile Include="MSAReferenceComboBoxSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -293,9 +289,7 @@
     <Compile Include="PhoneEnvReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PhoneEnvReferenceView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="PhoneEnvReferenceView.cs" />
     <Compile Include="PictureSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -305,9 +299,7 @@
     <Compile Include="PossibilityAtomicReferenceSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PossibilityAtomicReferenceView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="PossibilityAtomicReferenceView.cs" />
     <Compile Include="PossibilityAutoComplete.cs" />
     <Compile Include="PossibilityReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
@@ -315,9 +307,7 @@
     <Compile Include="PossibilityVectorReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PossibilityVectorReferenceView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="PossibilityVectorReferenceView.cs" />
     <Compile Include="ReferenceComboBoxSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -330,9 +320,7 @@
     <Compile Include="ReferenceVectorSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ReferenceViewBase.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="ReferenceViewBase.cs" />
     <Compile Include="SemanticDomainReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -342,9 +330,7 @@
     <Compile Include="SimpleComparer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SimpleListChooser.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="SimpleListChooser.cs" />
     <Compile Include="Slice.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -383,9 +369,7 @@
     <Compile Include="VectorReferenceLauncher.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="VectorReferenceView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="VectorReferenceView.cs" />
     <Compile Include="ViewPropertySlice.cs">
       <SubType>UserControl</SubType>
     </Compile>

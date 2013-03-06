@@ -493,6 +493,12 @@ namespace XMLViewsTests
 			{
 				throw new NotImplementedException();
 			}
+
+			/// <summary/>
+			public void SetSpellingRepository(IGetSpellChecker _gsp)
+			{
+			}
+
 			#endregion IVwRootBox methods
 		}
 	}

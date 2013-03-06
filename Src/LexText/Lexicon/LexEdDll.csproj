@@ -286,21 +286,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FLExBridgeListener.cs" />
-    <Compile Include="GhostLexRefSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="GhostLexRefSlice.cs" />
     <Compile Include="CreateReversalIndexDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="CreateReversalIndexDlg.Designer.cs">
       <DependentUpon>CreateReversalIndexDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="EntrySequenceReferenceLauncher.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="EntrySequenceReferenceSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="EntrySequenceReferenceLauncher.cs" />
+    <Compile Include="EntrySequenceReferenceSlice.cs" />
     <Compile Include="FindExampleSentenceDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -325,54 +319,22 @@
     <Compile Include="LexEntryMenuHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LexReferenceCollectionLauncher.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceCollectionSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceCollectionView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceMultiSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferencePairLauncher.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferencePairSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferencePairView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceSequenceLauncher.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceSequenceSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceSequenceView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceTreeBranchesLauncher.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceTreeBranchesSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceTreeBranchesView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceTreeRootLauncher.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceTreeRootSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LexReferenceTreeRootView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="LexReferenceCollectionLauncher.cs" />
+    <Compile Include="LexReferenceCollectionSlice.cs" />
+    <Compile Include="LexReferenceCollectionView.cs" />
+    <Compile Include="LexReferenceMultiSlice.cs" />
+    <Compile Include="LexReferencePairLauncher.cs" />
+    <Compile Include="LexReferencePairSlice.cs" />
+    <Compile Include="LexReferencePairView.cs" />
+    <Compile Include="LexReferenceSequenceLauncher.cs" />
+    <Compile Include="LexReferenceSequenceSlice.cs" />
+    <Compile Include="LexReferenceSequenceView.cs" />
+    <Compile Include="LexReferenceTreeBranchesLauncher.cs" />
+    <Compile Include="LexReferenceTreeBranchesSlice.cs" />
+    <Compile Include="LexReferenceTreeBranchesView.cs" />
+    <Compile Include="LexReferenceTreeRootLauncher.cs" />
+    <Compile Include="LexReferenceTreeRootSlice.cs" />
+    <Compile Include="LexReferenceTreeRootView.cs" />
     <Compile Include="LiftImportFailureServices.cs" />
     <Compile Include="MSADlgLauncher.cs">
       <SubType>UserControl</SubType>
@@ -420,28 +382,20 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ReversalEntryBulkEdit.cs" />
-    <Compile Include="ReversalEntryGoDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="ReversalEntryGoDlg.cs" />
     <Compile Include="ReversalEntryPOS.cs" />
     <Compile Include="ReversalIndexEntryChangeHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ReversalIndexEntryFormSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="ReversalIndexEntryFormSlice.cs" />
     <Compile Include="ReversalIndexEntryMenuHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ReversalIndexEntrySlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="ReversalIndexEntrySlice.cs" />
     <Compile Include="ReversalListener.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="RoledParticipantsSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="RoledParticipantsSlice.cs" />
     <Compile Include="SwapLexemeWithAllomorphDlg.cs">
       <SubType>Form</SubType>
     </Compile>

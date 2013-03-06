@@ -629,10 +629,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			bool fDictionaryExistsForLanguage = false;
 			bool fAlternateDictionaryExistsForLanguage = false;
 			string selectComboItem = "<None>";
-			foreach (var languageId in EnchantHelper.GetEnchantDictionaryList().OrderBy(di => GetDictionaryName(di)))
+			foreach (var languageId in SpellingHelper.GetDictionaryIds().OrderBy(di => GetDictionaryName(di)))
 			{
 				dictionaries.Add(new { Name = GetDictionaryName(languageId), Id = languageId });
-				//If this WS.SpellCheckingDictionary matches an Enchant Dictionary then
+				//If this WS.SpellCheckingDictionary matches a known Dictionary then
 				//ensure the comboBox has that item selected.
 				if (spellCheckingDictionary == languageId)
 				{
@@ -642,15 +642,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				else if (!fDictionaryExistsForLanguage && !fAlternateDictionaryExistsForLanguage)
 				{
 					// The first half of the OR handles things like choosing the dictionary for 'en_US' when seeking one
-					// for 'en', as in our extension to Enchant in EnchantHelper.DictionaryId. The second branch of the OR
-					// handles Enchant's built-in behavior of returning the 'en' dictionary when asked for the 'en_US' one
+					// for 'en', as in our extension SpellingHelper. The second branch of the OR is unused at present
+					// but will help if we extend SpellingHelper to the 'en' dictionary when asked for the 'en_US' one
 					// (when it can't find an exact match).
 					if (spellCheckingDictionary != null &&
 						(languageId.StartsWith(spellCheckingDictionary) || spellCheckingDictionary.StartsWith(languageId)))
 					{
-						// Private dictionaries may only be used if they match the requested ID exactly.
-						// See EnchantHelper.GetDictionary().
-						if (!EnchantHelper.IsPrivateDictionary(languageId))
+						// Vernacular dictionaries may only be used if they match the requested ID exactly.
+						if (!SpellingHelper.IsVernacular(languageId))
 						{
 							selectComboItem = languageId;
 							fAlternateDictionaryExistsForLanguage = true;

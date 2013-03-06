@@ -39,14 +39,13 @@ PATH=$(COM_OUT_DIR);$(PATH)
 
 LINK_OPTS=$(LINK_OPTS:/subsystem:windows=/subsystem:console) /LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)"
 CPPUNIT_LIBS=unit++.lib
-LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib libenchant.lib $(LINK_LIBS)
+LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib $(LINK_LIBS)
 
 # === Object Lists ===
 
 OBJ_VIEWSTESTSUITE=\
 	$(INT_DIR)\genpch\testViews.obj\
 	$(INT_DIR)\genpch\Collection.obj\
-	$(INT_DIR)\autopch\Enchant.obj\
 	$(INT_DIR)\autopch\ModuleEntry.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwAccessRoot.obj\
 	$(BUILD_ROOT)\Obj\$(BUILD_CONFIG)\Views\autopch\VwOverlay.obj\
