@@ -1,0 +1,10 @@
+Code-Review-1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Brent McCarthy <brent_mccarthy@sil.org>
+Code-Review+1: Stephen McConnel <stephen_mcconnel@sil.org>
+Verified+1: Stephen McConnel <stephen_mcconnel@sil.org>
+Submitted-by: Automatic Submission <gerrit@sil.org>
+Submitted-at: Thu, 07 Mar 2013 23:16:05 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/806
+Project: FieldWorks
+Branch: refs/heads/release/7.3-gial-Linux
