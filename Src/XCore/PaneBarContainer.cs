@@ -167,6 +167,15 @@ namespace XCore
 				mp.ParentSizeHint = ParentSizeHint;
 			}*/
 			(mainControl as IxCoreColleague).Init(m_mediator, mainControlNode.SelectSingleNode("parameters"));
+#if __MonoCS__
+			// At least one IPaneBarUser main control disposes of its MainPaneBar.  This can
+			// cause the program to hang later on.  See FWNX-1036 for details.
+			if ((m_paneBar as Control).IsDisposed)
+			{
+				Controls.Remove(m_paneBar as Control);
+				m_paneBar = null;
+			}
+#endif
 			Controls.Add(mainControl);
 			if (mainControl is MultiPane)
 			{
