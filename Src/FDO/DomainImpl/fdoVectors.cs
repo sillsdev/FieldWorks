@@ -380,7 +380,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			// Must do actual deletion after everything else; only does stuff in owning props.
 			foreach (var goner in goners)
-				DeleteObject(goner);
+			{
+				//LT-13718 there can be situations where the Hvo can be -2 which will cause a crash.
+				if (goner.Hvo > -2)
+					DeleteObject(goner);
+			}
 		}
 
 		/// <summary>
