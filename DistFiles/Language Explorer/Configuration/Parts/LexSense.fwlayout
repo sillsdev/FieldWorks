@@ -121,6 +121,24 @@
 		<part ref="DomainTypesConfig" label="Academic Domains" before="ac. domains: " after=" " visibility="never" sep=", " param="publishCdDomainType" css="domain-types"/>
 		<part ref="UsageTypesConfig" label="Usages" before="{" after="} " visibility="never" sep=", " param="publishCdUsageType" css="usage-types"/>
 		<part ref="StatusConfig" label="Status" before=" status " after=" " visibility="never" param="publishCdStatus" css="status"/>
+		<!-- entry fields-->
+		<part ref="OwningEntry" hideConfig="true" label ="Lexeme Form" before ="" after=" " visibility="ifdata" param="publishLfCd" css="sense-lf-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Homograph Number" before ="" after=" " visibility="ifdata" param="publishHnCd" css="sense-hn-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Pronunciations" before ="" after=" " visibility="ifdata" param="publishPronCd" css="sense-pron-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Variant Forms" before ="" after=" " visibility="ifdata" param="publishVfCd" css="sense-vf-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Etymology" before ="" after=" " visibility="ifdata" param="publishEtymologyCd" css="sense-et-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Cross References" before ="" after=" " visibility="ifdata" param="publishCrossRefsCd" css="sense-crossrefs-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Component References" before ="" after=" " visibility="ifdata" param="publishComponentsCd" css="sense-components-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Citation form" before ="" after=" " visibility="ifdata" param="publishCfCd" css="sense-cf-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Summary Defn" before ="" after=" " visibility="ifdata" param="publishSummaryDefnCd" css="sense-summarydefn-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Restrictions (Entry)" before ="" after=" " visibility="ifdata" param="publishRestrictCd" css="sense-restrict-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Bibliography (Entry)" before ="" after=" " visibility="ifdata" param="publishBiblioCd" css="sense-biblio-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Note" before ="" after=" " visibility="ifdata" param="publishCommentCd" css="sense-note-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Literal Meaning" before ="" after=" " visibility="ifdata" param="publishLitMeanCd" css="sense-lm-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Allomorphs" before ="" after=" " visibility="ifdata" param="publishAltFormsCd" css="sense-af-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Date Created" before ="" after=" " visibility="ifdata" param="publishDateCreatedCd" css="sense-dc-cd"/>
+		<part ref="OwningEntry" hideConfig="true" label ="Date Modified" before ="" after=" " visibility="ifdata" param="publishDateModifiedCd" css="sense-dm-cd"/>
+
 		<generate class="LexSense" fieldType="mlstring" restrictions="customOnly">
 			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" sep=" " showLabels="false">
 				<configureMlString field="$fieldName" />
@@ -154,6 +172,50 @@
 		<generate class="LexSense" fieldType="owningatom" restrictions="customOnly">
 			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
 				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
+
+		<!--generated parts of owning entry-->
+		<generate class="LexEntry" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<obj field="OwningEntry" layout="empty">
+					<configureMlString field="$fieldName" />
+				</obj>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="OwningEntry" layout="empty">
+					<string field="$fieldName" />
+				</obj>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="OwningEntry" layout="empty">
+					<obj field="$fieldName" layout="Name"/>
+				</obj>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<obj field="OwningEntry" layout="empty">
+					<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+				</obj>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="OwningEntry" layout="empty">
+					<int field="$fieldName"/>
+				</obj>
+			</part>
+		</generate>
+		<generate class="LexEntry" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="OwningEntry" layout="empty">
+					<gendate field="$fieldName" format="short"/>
+				</obj>
 			</part>
 		</generate>
 		<part ref="StemComplexFormsConfig" label="Referenced Complex Forms" param="publishCdSenseComplexFormRef" visibility="never" before="" after=" " sep=" " css="sense-complexformrefs" showasindentedpara="no"/>
@@ -926,7 +988,10 @@
 		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref-sub"/>
 		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
 	 </layout>
-
+	<layout class="LexSense" type="jtview" name="publishCdCrossRef">
+		<part ref="OwnerOutlinePub" label="Referenced Sense Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="sense-crossref"/>
+		<part ref="GlossPub" label="Gloss" before=" " after="" visibility="never" ws="all analysis" sep=" " showLabels="false"/>
+	</layout>
 
 	 <layout class="LexSense" type="jtview" name="publishStemComponentTarget">
 		<part ref="OwnerOutlinePub" label="Referenced Sense" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>

@@ -489,6 +489,13 @@
 		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary"/>
 		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemVariantRef" hideConfig="true"/>
 	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishCd">
+		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemVariantType" before="" after=" " sep=", " visibility="ifdata" css="variantref-entry-type"/>
+		<part ref="VariantHeadwordConfig" param="publishHeadwordForStemVariantRef" hideConfig="true"/>
+		<part ref="VariantPronunciationsConfig" param="publishPronunForStemVariantRef" hideConfig="true"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="never" ws="analysis" wsType="analysis" css="variantref-entry-summary"/>
+		<part ref="SummaryDefinitionConfig" param="publishSummaryDefForStemVariantRef" hideConfig="true"/>
+	</layout>
 	<layout class="LexEntryRef" type="jtview" name="publishStemSenseVariantRef">
 		<part ref="VariantEntryTypeConfig" label="Variant Type" param="publishStemSenseVariantType" before="" after=" " sep=", " visibility="ifdata" css="sense-variantref-entry-type"/>
 		<part ref="VariantHeadwordConfig" param="publishHeadwordForStemSenseVariantRef" hideConfig="true"/>
@@ -680,6 +687,11 @@
 		<part ref="ComponentHeadwordsConfig" label="Primary Entry (all)" param="publishRootSubComponentTarget" before="" after=" " sep=", " visibility="ifdata" css="entryref-component-sub"/>
 		<part ref="PrimaryHeadwordsConfig" label="Primary Entry (subentry under)" param="publishRootSubPrimaryTarget" before=" " after="" sep=", " visibility="never" css="entryref-primary-sub"/>
 		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="entryref-summary-sub"/>
+	</layout>
+	<layout class="LexEntryRef" type="jtview" name="publishStemCd">
+		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemEntryType" before="" after=" " sep=", " visibility="ifdata" css="entryref-type"/>
+		<part ref="ComponentHeadwordsConfig" label="Components" param="publishStemComponentTarget" before="" after="" sep=", " visibility="ifdata" css="entryref-component"/>
+		<part ref="SummaryPub" label="Comment" before=" " after="" visibility="ifdata" ws="analysis" wsType="analysis" css="entryref-summary"/>
 	</layout>
 
 	<layout class="LexEntryRef" type="jtview" name="publishStemComplexFormRef">
@@ -920,7 +932,10 @@
 		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="crossref-sub"/>
 		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
 	</layout>
-
+	<layout class="LexEntry" type="jtview" name="publishCdCrossRef">
+		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences" css="crossref"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
+	</layout>
 
 	<layout class="LexEntry" type="jtview" name="publishStemComponentTarget">
 		<part ref="HeadWordRef" label="Referenced Headword" before="" after="" visibility="ifdata" ws="vernacular" sep=" " showLabels="false" style="Dictionary-CrossReferences"/>
@@ -1003,6 +1018,56 @@
 		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before=" " after="" ws="analysis"/>
 	</layout>
 
+	<!-- for classified dictionary-->
+	<layout class="LexEntry" type="jtview" name="publishCfCd">
+		<part ref="CitationFormPub" label="Citation form" visibility="never" before="" after=" " ws="vernacular" css="entry-cf-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishHnCd">
+		<part ref="HomographNumber" label="Homograph Number" visibility="never" before="" after=" " ws="analysis" css="entry-hn-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishPronCd">
+		<part ref="PronunciationsConfig" label="Pronunciations" visibility="never" before="" after=" " ws="analysis" param="publishCd" css="entry-pron-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishVfCd">
+		<part ref="VariantFormsConfig" label="Variant Forms" visibility="never" before="" after=" " ws="analysis"  param="publishCd" css="entry-vf-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishEtymologyCd">
+		<part ref="EtymologyConfig" label="Etymology" visibility="never" before="" after=" " ws="analysis" param="publishCd" css="entry-et-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishCrossRefsCd">
+		<part ref="LexReferencesConfig" label="Cross References" visibility="never" before="" after=" " ws="analysis" param="publishCd" css="entry-crossrefs-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishComponentsCd">
+		<part ref="StemMainEntryConfig" label="Component References" param="publishStemCd" visibility="ifdata" before="(" after=") " sep=", " css="entry-components-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishSummaryDefnCd">
+		<part ref="SummaryDefinitionPub" label="Summary Definition" visibility="never" before="" after=" " ws="analysis" css="entry-summarydefn-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishRestrictCd">
+		<part ref="RestrictionsEntryPub" label="Restrictions (Entry)" visibility="never" before="" after=" " ws="analysis" css="entry-restrict-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishBiblioCd">
+		<part ref="BibliographyPub" label="Bibliography (Entry)" visibility="never" before="" after=" " ws="analysis" css="entry-biblio-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishCommentCd">
+		<part ref="CommentPub" label="Note" visibility="never" before="" after=" " ws="analysis" css="entry-note-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishLitMeanCd">
+		<part ref="LiteralMeaningPub" label="Literal Meaning" visibility="never" before="" after=" " ws="analysis" css="entry-lm-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishLfCd">
+		<part ref="LexemeFormConfig" hideConfig="true" param="publishLexemeFormCd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishAltFormsCd">
+		<part ref="AlternateFormsConfig" label="Allomorphs" before="" after=" " sep=", " visibility="never" param="publishStemCd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishDateCreatedCd">
+		<part ref="DateCreated" label="Date Created" before="modified on: " after=" " visibility="never" css="entry-dc-cd"/>
+	</layout>
+	<layout class="LexEntry" type="jtview" name="publishDateModifiedCd">
+		<part ref="DateModified" label="Date Modified" before="modified on: " after=" " visibility="never" css="entry-dm-cd"/>
+	</layout>
+
 	<layout class="LexPronunciation" type="jtview" name="publishStemForLexEntry">
 		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false" css="pronunciation"/>
 		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
@@ -1076,6 +1141,17 @@
 		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishStemVariantLocation"/>
 	</layout>
 	<layout class="CmLocation" type="jtview" name="publishStemVariantLocation">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
+		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
+	</layout>
+
+	<layout class="LexPronunciation" type="jtview" name="publishCd">
+		<part ref="FormPub" label="Pronunciation" before="[" after="]" visibility="ifdata" ws="pronunciation" sep=" " showLabels="false" css="pronunciation"/>
+		<part ref="CVPattern" label="CV Pattern" before="" after=" " visibility="never" />
+		<part ref="Tone" label="Tone" before="" after=" " visibility="never"/>
+		<part ref="LocationConfig" label="Location" before="" after=" " visibility="never" style="Dictionary-Contrasting" param="publishCd"/>
+	</layout>
+	<layout class="CmLocation" type="jtview" name="publishCd">
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after=" " ws="analysis" wsType="vernacular analysis" visibility="ifdata"/>
 		<part ref="NamePub" label="Name" before="" after=" " visibility="never" ws="analysis" wsType="vernacular analysis" />
 	</layout>
@@ -1253,6 +1329,12 @@
 		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment-sub"/>
 		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
 	</layout>
+	<layout class="LexEtymology" type="jtview" name="publishCd">
+		<part ref="FormPub" label="Etymological Form" before="" after=" " visibility="ifdata" ws="best vernoranal" wsType="vernacular analysis" css="etymology-form"/>
+		<part ref="GlossPub" label="Gloss" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-gloss"/>
+		<part ref="CommentPub" label="Comment" before="" after=" " visibility="ifdata" ws="analysis" wsType="analysis" css="etymology-comment"/>
+		<part ref="SourcePub" label="Source" before="" after=" " visibility="never"/>
+	</layout>
 
 	<layout class="LexReference" type="jtview" name="publishStemEntry">
 		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type"/>
@@ -1283,6 +1365,11 @@
 		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type-sub"/>
 		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
 		<part ref="EntryTargetsConfig" label="Targets" sep=", " visibility="ifdata" param="publishRootSubCrossRef" css="crossref-targets-sub"/>
+	</layout>
+	<layout class="LexReference" type="jtview" name="publishCd">
+		<part ref="AbbreviationPub" label="Relation Abbreviation" before="" after=": " ws="analysis" wsType="analysis" visibility="ifdata" style="Dictionary-Contrasting" css="crossref-type"/>
+		<part ref="NamePub" label="Relation Name" before="" after=": " visibility="never" ws="analysis" wsType="analysis" style="Dictionary-Contrasting"/>
+		<part ref="EntryTargetsConfig" label="Targets" sep=", " before="" after="" visibility="ifdata" param="publishCdCrossRef" css="crossref-targets"/>
 	</layout>
 
 <!--
@@ -1489,6 +1576,10 @@
 		<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishRootSubMorphType"/>
 		<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
 	</layout>
+	<layout class="MoForm" type="jtview" name="publishStemCd">
+		<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishStemCd"/>
+		<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
 
 	<layout class="MoForm" type="jtview" name="publishStemLexemeForm">
 		<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular"/>
@@ -1507,6 +1598,9 @@
 	</layout>
 	<layout class="MoForm" type="jtview" name="publishRootMinorSubLexemeForm">
 		<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+	</layout>
+	<layout class="MoForm" type="jtview" name="publishLexemeFormCd">
+		<part ref="FormPub" label="Lexeme Form" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular"/>
 	</layout>
 
 	<layout class="MoMorphType" type="jtview" name="publishStemMorphType">
@@ -1533,7 +1627,10 @@
 		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never"/>
 		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" />
 	</layout>
-
+	<layout class="MoMorphType" type="jtview" name="publishStemCd">
+		<part ref="AbbreviationPub" label="Abbreviation" before="" after="" ws="analysis" visibility="never"/>
+		<part ref="NamePub" label="Name" before="" after="" visibility="never" ws="analysis" />
+	</layout>
 
 	<layout class="LexDb" type="jtview" name="publishFound">
 		<part ref="EntriesFound" param="publishStem"/>

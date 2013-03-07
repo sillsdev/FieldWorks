@@ -27,6 +27,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public void Dispose()
 			{
 				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
 
 			private void Dispose(bool disposing)

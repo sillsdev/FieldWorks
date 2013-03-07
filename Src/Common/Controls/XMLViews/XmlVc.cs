@@ -4754,6 +4754,13 @@ namespace SIL.FieldWorks.Common.Controls
 			vc.ProcessChildren(node, vwenv, hvo);
 			--MainCallerDisplayCommand.displayLevel;
 		}
+
+		internal virtual void ProcessChildren(int fragId, XmlVc vc, IVwEnv vwenv, XmlNode node, int hvo, XmlNode caller)
+		{
+			++MainCallerDisplayCommand.displayLevel;
+			vc.ProcessChildren(node, vwenv, hvo, caller);
+			--MainCallerDisplayCommand.displayLevel;
+		}
 		// Gather up info about what fields are needed for the specified node.
 		internal void DetermineNeededFieldsForChildren(XmlVc vc, XmlNode node, XmlNode caller,
 			NeededPropertyInfo info)
@@ -5054,7 +5061,7 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// no flow/style specified
 					PrintNodeTreeStep(hvo, node);
-					ProcessChildren(fragId, vc, vwenv, node, hvo);
+					ProcessChildren(fragId, vc, vwenv, node, hvo, Caller);
 				}
 			}
 			finally
