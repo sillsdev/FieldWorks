@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000051">
+
+	<rt class="LexEntry" guid="64cf9708-a7d4-4e1e-a403-deec87c34455">
+		<MorphoSyntaxAnalyses>
+			<objsur guid="408ba7ca-e15a-448e-a618-3855f93bd3c2" t="o" />
+			<objsur guid="aaaaaaaa-e15a-448e-a618-3855f93bd3c2" t="o" /> <!-- dangler -->
+		</MorphoSyntaxAnalyses>
+		<Senses>
+			<objsur guid="3110cf83-ad6c-47fe-91f8-8bf789473792" t="o" />
+		</Senses>
+		<LexemeForm>
+			<objsur guid="088acc75-a0ef-4020-be47-2cbef3bccca8" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="LexSense" guid="3110cf83-ad6c-47fe-91f8-8bf789473792" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455">
+		<MorphoSyntaxAnalysis>
+			<objsur guid="408ba7ca-e15a-448e-a618-3855f93bd3c2" t="r" />
+		</MorphoSyntaxAnalysis>
+	</rt>
+
+	<rt class="MoStemMsa" guid="408ba7ca-e15a-448e-a618-3855f93bd3c2" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455" />
+	<rt class="MoStemAllomorph" guid="088acc75-a0ef-4020-be47-2cbef3bccca8" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455" />
+
+	<rt class="WfiWordform" guid ="31c5a1c0-270e-4edf-9406-4ed445bd27c4">
+		<Analyses>
+			<objsur guid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d" type="o"/>
+		</Analyses>
+	</rt>
+	<rt class="WfiAnalysis" guid ="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d" ownerguid="31c5a1c0-270e-4edf-9406-4ed445bd27c4">
+		<MorphBundles>
+			<objsur guid="10f3db1e-33db-4d9d-9a06-e0a8e1ed8a92" type="o"/>
+		</MorphBundles>
+	</rt>
+	<rt class="WfiMorphBundle" guid ="10f3db1e-33db-4d9d-9a06-e0a8e1ed8a92" ownerguid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d">
+		<Msa>
+			<objsur guid="aaaaaaaa-e15a-448e-a618-3855f93bd3c2" t="r" /> <!-- dangler, repairable by msa of sense -->
+		</Msa>
+		<Sense>
+			<objsur guid="3110cf83-ad6c-47fe-91f8-8bf789473792" t="r" />
+		</Sense>
+	</rt>
+	<rt class="WfiMorphBundle" guid ="d70b57bc-ecfe-4e32-a590-f2852bce69fc" ownerguid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d">
+		<Msa>
+			<objsur guid="aaaaaaaa-e15a-448e-a618-3855f93bd3c2" t="r" /> <!-- dangler, can't repair. -->
+		</Msa>
+	</rt>
+	<rt class="WfiMorphBundle" guid ="e4396e8e-b7d2-43ba-93bd-104cf2011aaf" ownerguid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d">
+		<Msa>
+			<objsur guid="aaaaaaaa-e15a-448e-a618-3855f93bd3c2" t="r" /> <!-- dangler, repairable by only (surviving) msa of entry -->
+		</Msa>
+		<Morph>
+			<objsur guid="088acc75-a0ef-4020-be47-2cbef3bccca8" t="r" />
+		</Morph>
+	</rt>
+
+	<rt class="LexEntry" guid="1301c0a6-6f5d-4ee1-9b24-b4548028b37f">
+		<MorphoSyntaxAnalyses>
+			<objsur guid="26ae3989-d424-4dd2-a32d-c556c6985a99" t="o" />
+			<objsur guid="63d132a9-4a41-43bb-a395-a6ad7f3ae7e2" t="o" />
+			<!-- dangler -->
+		</MorphoSyntaxAnalyses>
+		<Senses>
+			<objsur guid="931a6d71-e143-4b8c-abf6-33d2d8c8984d" t="o" />
+		</Senses>
+		<LexemeForm>
+			<objsur guid="8056c7d9-70ea-41b9-89e9-de28f7d686a7" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="LexSense" guid="931a6d71-e143-4b8c-abf6-33d2d8c8984d" ownerguid="1301c0a6-6f5d-4ee1-9b24-b4548028b37f">
+		<MorphoSyntaxAnalysis>
+			<objsur guid="26ae3989-d424-4dd2-a32d-c556c6985a99" t="r" />
+		</MorphoSyntaxAnalysis>
+	</rt>
+
+	<rt class="MoStemMsa" guid="26ae3989-d424-4dd2-a32d-c556c6985a99" ownerguid="1301c0a6-6f5d-4ee1-9b24-b4548028b37f" />
+	<rt class="MoStemMsa" guid="63d132a9-4a41-43bb-a395-a6ad7f3ae7e2" ownerguid="1301c0a6-6f5d-4ee1-9b24-b4548028b37f" /> <!-- will delete-->
+	<rt class="MoStemAllomorph" guid="8056c7d9-70ea-41b9-89e9-de28f7d686a7" ownerguid="1301c0a6-6f5d-4ee1-9b24-b4548028b37f" />
+
+	<rt class="WfiMorphBundle" guid ="cb941dc9-6f6e-44b2-97f2-07854e164b4e" ownerguid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d">
+		<Msa>
+			<objsur guid="63d132a9-4a41-43bb-a395-a6ad7f3ae7e2" t="r" /> <!-- dangler, repairable by only (surviving) msa of entry -->
+		</Msa>
+		<Morph>
+			<objsur guid="8056c7d9-70ea-41b9-89e9-de28f7d686a7" t="r" />
+		</Morph>
+	</rt>
+
+	<rt class="WfiMorphBundle" guid ="9665bf3b-2aab-4f7f-88a9-4ca738b75110" ownerguid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d">
+		<Sense>
+			<objsur guid="931a6d71-e143-4b8c-abf6-33d2d8c8984d" t="r" />
+		</Sense>
+		<Morph>
+			<objsur guid="aaaaaaaa-e15a-448e-a618-3855f93bd3c2" t="r" /> <!--dangler, repairable from sense-->
+		</Morph>
+	</rt>
+
+	<rt class="WfiMorphBundle" guid ="5752ed24-40e1-4282-9ba0-d82c89592432" ownerguid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d">
+		<Morph>
+			<objsur guid="aaaaaaaa-e15a-448e-a618-3855f93bd3c2" t="r" /> <!--dangler, not repairable-->
+		</Morph>
+	</rt>
+
+	<rt class="LexEntry" guid="8e793ea4-b4ba-4232-bdfb-cc08c3b851b8">
+		<MorphoSyntaxAnalyses>
+			<objsur guid="67a7fef0-8b18-4ab3-ac40-e4df2a476bcf" t="o" />
+			<!-- dangler -->
+		</MorphoSyntaxAnalyses>
+		<Senses>
+			<objsur guid="73d5cba0-f824-4f1b-a7cc-120b501615c5" t="o" />
+		</Senses>
+		<LexemeForm>
+			<objsur guid="0fc4aab9-ce63-43e5-a028-ad3951067b33" t="o" />
+		</LexemeForm>
+		<AlternateForms>
+			<objsur guid="18038c63-449f-45f1-9d54-c7ad84d99b09" t="o" />
+		</AlternateForms>
+	</rt>
+
+	<rt class="LexSense" guid="73d5cba0-f824-4f1b-a7cc-120b501615c5" ownerguid="8e793ea4-b4ba-4232-bdfb-cc08c3b851b8">
+		<MorphoSyntaxAnalysis>
+			<objsur guid="67a7fef0-8b18-4ab3-ac40-e4df2a476bcf" t="r" />
+		</MorphoSyntaxAnalysis>
+	</rt>
+	<rt class="MoStemMsa" guid="67a7fef0-8b18-4ab3-ac40-e4df2a476bcf" ownerguid="8e793ea4-b4ba-4232-bdfb-cc08c3b851b8" />
+	<rt class="MoStemAllomorph" guid="0fc4aab9-ce63-43e5-a028-ad3951067b33" ownerguid="8e793ea4-b4ba-4232-bdfb-cc08c3b851b8" />
+	<rt class="MoStemAllomorph" guid="18038c63-449f-45f1-9d54-c7ad84d99b09" ownerguid="8e793ea4-b4ba-4232-bdfb-cc08c3b851b8" />
+
+	<rt class="WfiMorphBundle" guid ="1f568cae-b0f8-413d-84a6-41cbd90923e9" ownerguid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d">
+		<Sense>
+			<objsur guid="73d5cba0-f824-4f1b-a7cc-120b501615c5" t="r" />
+		</Sense>
+		<Morph>
+			<objsur guid="aaaaaaaa-e15a-448e-a618-3855f93bd3c2" t="r" /> <!--dangler, can't repair despite sense because entry has multiple forms-->
+		</Morph>
+	</rt>
+</languageproject>

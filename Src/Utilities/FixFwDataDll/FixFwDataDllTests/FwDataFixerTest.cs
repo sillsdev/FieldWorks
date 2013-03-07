@@ -44,7 +44,7 @@ namespace FixFwDataDllTests
 			{
 				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
 				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "TagAndCellRefs", "GenericDates",
-				"HomographFixer", WordformswithsameformTestDir
+				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems"
 			};
 
 		[TestFixtureSetUp]
@@ -234,6 +234,90 @@ namespace FixFwDataDllTests
 				"//rt[@class=\"LexSense\" and @ownerguid=\"" + lexEntryGuid + "\"]", 2, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
+		}
+
+		/// <summary>
+		/// This test checks that when a WfiMorphBundle has a dangling MSA pointer
+		///		- if it has a sense that has an MSA, the MSA is fixed to point to it.
+		///		- if it has a morph that points to a valid entry that has only one MSA, the MSA is fixed to point to it.
+		/// Also, if it has a dangling Morph pointer,
+		///		- if it has a sense that belongs to an entry with only a LexemeForm and no allomorphs,
+		///			the Morph is fixed to point to that Lexeme form.
+		/// If a good fix cannot be made the objsur should be removed.
+		/// Also verifies that we correctly fix an MSA pointer that is not originally dangling, but will become so
+		/// because the MSA will be deleted for lack of any referring senses.
+		/// </summary>
+		[Test]
+		public void TestDanglingWordformLinks()
+		{
+			var testPath = Path.Combine(basePath, "MorphBundleProblems");
+			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+			var danglingMsaGuid = "aaaaaaaa-e15a-448e-a618-3855f93bd3c2"; // nonexistent 'msa'
+			var repairableBundleGuid = "10f3db1e-33db-4d9d-9a06-e0a8e1ed8a92";
+			var unrepairableBundleGuid = "d70b57bc-ecfe-4e32-a590-f2852bce69fc";
+			var repairOnlyMsaBundleGuid = "e4396e8e-b7d2-43ba-93bd-104cf2011aaf";
+			var repairForWillDeleteMsa = "cb941dc9-6f6e-44b2-97f2-07854e164b4e";
+			var willDeleteMsaGuid = "63d132a9-4a41-43bb-a395-a6ad7f3ae7e2";
+			var danglingMorphGoodSenseGuid = "9665bf3b-2aab-4f7f-88a9-4ca738b75110";
+			var danglingMorphNoRepairGuid = "5752ed24-40e1-4282-9ba0-d82c89592432";
+			var danglingMorphNoRepairAfGuid = "1f568cae-b0f8-413d-84a6-41cbd90923e9";
+
+			// Verify initial state.
+			// We start out with morph bundles that have broken links.
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairableBundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + unrepairableBundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairOnlyMsaBundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+			// This one is not obviously broken, but the grammatical sense fixer will kill its target.
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairForWillDeleteMsa + "\"]/Msa/objsur[@guid=\"" + willDeleteMsaGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"MoStemMsa\" and @guid=\"" + willDeleteMsaGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphGoodSenseGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairAfGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+
+			// Check errors
+			Assert.AreEqual(9, errors.Count, "Unexpected number of errors found.");
+			Assert.True(errors[0].StartsWith("Removing dangling link to '" + danglingMsaGuid + "' (class='LexEntry'"),
+				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
+			Assert.That(errors[1], Is.EqualTo("Fixing link to MSA based on Sense MSA (class='WfiMorphBundle', guid='" + repairableBundleGuid + "')."),
+				"Error message is incorrect."); // MorphBundleFixer--ksRepairingMorphBundleFromSense
+			Assert.That(errors[2], Is.EqualTo("Removing dangling link to MSA '" + danglingMsaGuid + "' for WfiMorphBundle '" + unrepairableBundleGuid + "'."),
+				"Error message is incorrect."); // MorphBundleFixer--ksRemovingDanglingMsa
+			Assert.That(errors[3], Is.EqualTo("Fixing link to MSA based on only MSA of entry for WfiMorphBundle '" + repairOnlyMsaBundleGuid + "'."),
+				"Error message is incorrect."); // MorphBundleFixer--ksRepairingMorphBundleFromEntry
+			// 4 is removing the unused MSA. Not interesting here.
+			Assert.That(errors[5], Is.EqualTo("Fixing link to MSA based on only MSA of entry for WfiMorphBundle '" + repairForWillDeleteMsa + "'."),
+				"Error message is incorrect."); // MorphBundleFixer--ksRepairingMorphBundleFromEntry
+			Assert.That(errors[6], Is.EqualTo("Fixing link to Form based on only Form of entry for WfiMorphBundle '" + danglingMorphGoodSenseGuid + "'."),
+				"Error message is incorrect."); // MorphBundleFixer--ksRemovingDanglingMsa
+			Assert.That(errors[7], Is.EqualTo("Removing dangling link to Form '" + danglingMsaGuid + "' for WfiMorphBundle '" + danglingMorphNoRepairGuid + "'."),
+				"Error message is incorrect."); // MorphBundleFixer--ksRemovingDanglingMorph
+			Assert.That(errors[8], Is.EqualTo("Removing dangling link to Form '" + danglingMsaGuid + "' for WfiMorphBundle '" + danglingMorphNoRepairAfGuid + "'."),
+				"Error message is incorrect."); // MorphBundleFixer--ksRemovingDanglingMorph
+
+			// Check file repair
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairableBundleGuid + "\"]/Msa/objsur[@guid=\"408ba7ca-e15a-448e-a618-3855f93bd3c2\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + unrepairableBundleGuid + "\"]/Msa/objsur", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairOnlyMsaBundleGuid + "\"]/Msa/objsur[@guid=\"408ba7ca-e15a-448e-a618-3855f93bd3c2\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + repairForWillDeleteMsa + "\"]/Msa/objsur[@guid=\"26ae3989-d424-4dd2-a32d-c556c6985a99\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphGoodSenseGuid + "\"]/Morph/objsur[@guid=\"8056c7d9-70ea-41b9-89e9-de28f7d686a7\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairGuid + "\"]/Morph/objsur", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairAfGuid + "\"]/Morph/objsur", 0, false);
 		}
 
 		[Test]

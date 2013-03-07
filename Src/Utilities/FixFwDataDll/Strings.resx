@@ -192,4 +192,19 @@
   <data name="ksRemovedUnusedMsa" xml:space="preserve">
     <value>Removing unused MorphoSyntaxAnalysis</value>
   </data>
+  <data name="ksRemovingDanglingMorph" xml:space="preserve">
+    <value>Removing dangling link to Form '{0}' for WfiMorphBundle '{1}'.</value>
+  </data>
+  <data name="ksRemovingDanglingMsa" xml:space="preserve">
+    <value>Removing dangling link to MSA '{0}' for WfiMorphBundle '{1}'.</value>
+  </data>
+  <data name="ksRepairingBundleFormFromEntry" xml:space="preserve">
+    <value>Fixing link to Form based on only Form of entry for WfiMorphBundle '{0}'.</value>
+  </data>
+  <data name="ksRepairingMorphBundleFromEntry" xml:space="preserve">
+    <value>Fixing link to MSA based on only MSA of entry for WfiMorphBundle '{0}'.</value>
+  </data>
+  <data name="ksRepairingMorphBundleFromSense" xml:space="preserve">
+    <value>Fixing link to MSA based on Sense MSA (class='WfiMorphBundle', guid='{0}').</value>
+  </data>
 </root>

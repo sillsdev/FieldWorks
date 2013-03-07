@@ -63,7 +63,9 @@ namespace SIL.FieldWorks.FixData
 			// N.B.: Order is important here!!!!!!!
 			m_rtLevelFixers.Add(new OriginalFixer());
 			m_rtLevelFixers.Add(new CustomPropertyFixer());
-			m_rtLevelFixers.Add(new GrammaticalSenseFixer());
+			var senseFixer = new GrammaticalSenseFixer();
+			m_rtLevelFixers.Add(senseFixer);
+			m_rtLevelFixers.Add(new MorphBundleFixer(senseFixer)); // after we've possibly removed MSAs in GrammaticalSenseFixer
 			m_rtLevelFixers.Add(new SequenceFixer());
 			m_rtLevelFixers.Add(new HomographFixer());
 			m_rtLevelFixers.Add(new DuplicateWordformFixer());
@@ -231,6 +233,16 @@ namespace SIL.FieldWorks.FixData
 					Guid guidObj = new Guid(xaGuidObj.Value);
 					if (!m_guids.Contains(guidObj))
 					{
+						// MSAs and morphs of morph bundles are handled (later) by MorphBundleFixer, which can often do something smarter.
+						if (className == "WfiMorphBundle")
+						{
+							switch (objsur.Parent.Name.LocalName)
+							{
+								case "Msa":
+								case "Morph":
+									continue;
+							}
+						}
 						errorLogger(guid.ToString(), DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingLinkToNonexistingObject,
 							guidObj, className, guid, objsur.Parent.Name));
 						m_danglingLinks.Add(objsur);

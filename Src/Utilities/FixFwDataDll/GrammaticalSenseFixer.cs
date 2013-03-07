@@ -24,14 +24,14 @@ namespace SIL.FieldWorks.FixData
 	/// </summary>
 	internal class GrammaticalSenseFixer : RtFixer
 	{
-		private Dictionary<string, HashSet<string>> senseToMSA = new Dictionary<string, HashSet<string>>();
+		private Dictionary<string, string> senseToMSA = new Dictionary<string, string>();
 		private Dictionary<string, HashSet<string>> entryToMSA = new Dictionary<string, HashSet<string>>();
 		private Dictionary<string, HashSet<string>> entryToSense = new Dictionary<string, HashSet<string>>();
+		private HashSet<string> goodMsas = new HashSet<string>();
 
 		internal override void InspectElement(XElement rt)
 		{
 			base.InspectElement(rt);
-			var elementGuids = new HashSet<string>();
 			var senseGuids = new HashSet<string>();
 			string rtClass = rt.Attribute("class").Value;
 			string rtGuid = rt.Attribute("guid").Value;
@@ -45,21 +45,31 @@ namespace SIL.FieldWorks.FixData
 						if (senses != null)
 						{
 							foreach (var sense in senses.Descendants("objsur"))
-							{
-								if (sense.Name.LocalName == "objsur")
-								{
-									senseGuids.Add(sense.Attribute("guid").Value);
-								}
-							}
-							entryToSense.Add(rtGuid, senseGuids);
+								senseGuids.Add(sense.Attribute("guid").Value);
 						}
+						entryToSense.Add(rtGuid, senseGuids); // even if it has no senses, we want to know about it.
+						var msas = rt.Element("MorphoSyntaxAnalyses");
+						var msaGuids = new HashSet<string>();
+						if (msas != null)
+						{
+							foreach (var msa in msas.Descendants("objsur"))
+							{
+								msaGuids.Add(msa.Attribute("guid").Value);
+							}
+						}
+						entryToMSA.Add(rtGuid, msaGuids);
 					}
 					break;
 				case "LexSense":
 					if (!senseToMSA.ContainsKey(rtGuid))
 					{
-						senseToMSA.Add(rtGuid, elementGuids);
-						AddElementGuids(rt, "MorphoSyntaxAnalysis", elementGuids);
+						var msa = rt.Element("MorphoSyntaxAnalysis");
+						if (msa == null)
+							break;
+						var objsur = msa.Element("objsur");
+						if (objsur == null || objsur.Attribute("guid") == null)
+							break;
+						senseToMSA[rtGuid] = objsur.Attribute("guid").Value;
 					}
 					break;
 				default:
@@ -67,32 +77,24 @@ namespace SIL.FieldWorks.FixData
 			}
 		}
 
-		private static void AddElementGuids(XElement rt, string elementName, HashSet<string> elementGuids)
-		{
-			var analyses = rt.Element(elementName);
-			if (analyses == null)
-				return;
-			foreach (var xElement in analyses.Descendants("objsur"))
-			{
-				elementGuids.Add(xElement.Attribute("guid").Value);
-			}
-		}
-
 		internal override void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)
 		{
 			base.FinalFixerInitialization(owners, guids);
 			//Go through the maps and find out if any references to MSAs ought to be dropped by the entry
-			var finalEntryToMSA = new Dictionary<string, HashSet<string>>();
 			foreach (var entry in entryToSense)
 			{
-				var actualMSAs = new HashSet<string>();
-				finalEntryToMSA.Add(entry.Key, actualMSAs);
+				var keepMSAs = new HashSet<string>();
 				foreach (var senseGuid in entry.Value)
 				{
-					actualMSAs.UnionWith(senseToMSA[senseGuid]);
+					string msaGuid;
+					if (senseToMSA.TryGetValue(senseGuid, out msaGuid))
+						keepMSAs.Add(msaGuid);
 				}
+				// If by any chance some of the senses are pointing at other entry's msas, that does NOT
+				// make them keepers.
+				keepMSAs.IntersectWith(entryToMSA[entry.Key]);
+				goodMsas.UnionWith(keepMSAs);
 			}
-			entryToMSA = finalEntryToMSA;
 		}
 
 		//Go through the list of MSA references in the file and remove those which do not occur in any sense
@@ -109,25 +111,28 @@ namespace SIL.FieldWorks.FixData
 				var rejects = new List<XNode>();
 				if (MSAs != null)
 				{
-					foreach (var item in MSAs.Descendants("objsur"))
+					var entryGuidString = guid.Value;
+					foreach (var objsur in MSAs.Descendants("objsur"))
 					{
-						// the guid may not be in the dictionary, if the entry has NO senses. In that case,
-						// all the MSAs will be rejected. If it's in the dictionary, the value is a list of msas that some sense
-						// uses; if this one isn't used by a sense, it's a reject.
-						HashSet<string> msasUsedBySomeSense;
-						if (!entryToMSA.TryGetValue(guid.Value, out msasUsedBySomeSense) || !msasUsedBySomeSense.Contains(item.Attribute("guid").Value))
+						if (IsRejectedMsa(objsur))
 						{
-							rejects.Add(item);
+							rejects.Add(objsur);
 						}
 					}
 					foreach (var reject in rejects)
 					{
-						logger(guid.Value, DateTime.Now.ToShortDateString(), Strings.ksRemovedUnusedMsa);
+						logger(entryGuidString, DateTime.Now.ToShortDateString(), Strings.ksRemovedUnusedMsa);
 						reject.Remove();
 					}
 				}
 			}
 			return true;
+		}
+
+		// Determine whether a particular objsur should be rejected.
+		internal bool IsRejectedMsa(XElement objsur)
+		{
+			return !goodMsas.Contains(objsur.Attribute("guid").Value);
 		}
 	}
 }

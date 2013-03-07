@@ -187,6 +187,24 @@ namespace SIL.FieldWorks.FixData {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Removing dangling link to Form &apos;{0}&apos; for WfiMorphBundle &apos;{1}&apos;..
+        /// </summary>
+        internal static string ksRemovingDanglingMorph {
+            get {
+                return ResourceManager.GetString("ksRemovingDanglingMorph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing dangling link to MSA &apos;{0}&apos; for WfiMorphBundle &apos;{1}&apos;..
+        /// </summary>
+        internal static string ksRemovingDanglingMsa {
+            get {
+                return ResourceManager.GetString("ksRemovingDanglingMsa", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Removed alternative {0} from {1} of {2} because it has the same writing system as {3}.
         /// </summary>
         internal static string ksRemovingDuplicateAlternative {
@@ -255,6 +273,33 @@ namespace SIL.FieldWorks.FixData {
         internal static string ksRemovingUndefinedCustomProperty {
             get {
                 return ResourceManager.GetString("ksRemovingUndefinedCustomProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fixing link to Form based on only Form of entry for WfiMorphBundle &apos;{0}&apos;..
+        /// </summary>
+        internal static string ksRepairingBundleFormFromEntry {
+            get {
+                return ResourceManager.GetString("ksRepairingBundleFormFromEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fixing link to MSA based on only MSA of entry for WfiMorphBundle &apos;{0}&apos;..
+        /// </summary>
+        internal static string ksRepairingMorphBundleFromEntry {
+            get {
+                return ResourceManager.GetString("ksRepairingMorphBundleFromEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fixing link to MSA based on Sense MSA (class=&apos;WfiMorphBundle&apos;, guid=&apos;{0}&apos;)..
+        /// </summary>
+        internal static string ksRepairingMorphBundleFromSense {
+            get {
+                return ResourceManager.GetString("ksRepairingMorphBundleFromSense", resourceCulture);
             }
         }
         
