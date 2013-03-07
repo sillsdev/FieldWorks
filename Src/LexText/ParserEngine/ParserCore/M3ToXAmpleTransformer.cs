@@ -28,32 +28,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// Given an XML file representing an instance of a M3 grammar model,
 	/// transforms it into the format needed by XAmple.
 	/// </summary>
-	internal class M3ToXAmpleTransformer
+	internal class M3ToXAmpleTransformer : M3ToParserTransformerBase
 	{
-		private readonly string m_outputDirectory;
-		private readonly string m_database;
-		private readonly Action<TaskReport> m_taskUpdateHandler;
-		private readonly TraceSwitch m_tracingSwitch = new TraceSwitch("ParserCore.TracingSwitch", "Just regular tracking", "Off");
-
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="M3ToXAmpleTransformer"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public M3ToXAmpleTransformer(string database, Action<TaskReport> taskUpdateHandler)
+			: base(database, taskUpdateHandler)
 		{
-			m_database = database;
-			m_taskUpdateHandler = taskUpdateHandler;
-			m_outputDirectory = Path.GetTempPath();
-		}
-
-		protected void TransformDomToFile(string transformName, XmlDocument inputDOM, string outputName, TaskReport task)
-		{
-			using (task.AddSubTask(String.Format(ParserCoreStrings.ksCreatingX, outputName)))
-			{
-				XmlUtils.TransformDomToFile(Path.Combine(DirectoryFinder.FWCodeDirectory + "/Language Explorer/Transforms/", transformName),
-					inputDOM, Path.Combine(m_outputDirectory, outputName));
-			}
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",

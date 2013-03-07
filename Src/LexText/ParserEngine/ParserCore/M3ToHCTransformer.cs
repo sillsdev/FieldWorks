@@ -26,12 +26,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// Given an XML file representing an instance of a M3 grammar model,
 	/// transforms it into the format needed by a parser.
 	/// </summary>
-	internal class M3ToHCTransformer
+	internal class M3ToHCTransformer : M3ToParserTransformerBase
 	{
-		private readonly string m_outputDirectory;
-		private readonly string m_database;
-		private readonly Action<TaskReport> m_taskUpdateHandler;
-		private readonly TraceSwitch m_tracingSwitch = new TraceSwitch("ParserCore.TracingSwitch", "Just regular tracking", "Off");
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -39,19 +35,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public M3ToHCTransformer(string database, Action<TaskReport> taskUpdateHandler)
+			: base(database, taskUpdateHandler)
 		{
-			m_database = database;
-			m_taskUpdateHandler = taskUpdateHandler;
-			m_outputDirectory = Path.GetTempPath();
-		}
-
-		protected void TransformDomToFile(string transformName, XmlDocument inputDOM, string outputName, TaskReport task)
-		{
-			using (task.AddSubTask(String.Format(ParserCoreStrings.ksCreatingX, outputName)))
-		{
-				XmlUtils.TransformDomToFile(Path.Combine(DirectoryFinder.FWCodeDirectory + @"/Language Explorer/Transforms/", transformName),
-					inputDOM, Path.Combine(m_outputDirectory, outputName));
-			}
 		}
 
 		public void MakeHCFiles(ref XmlDocument model)

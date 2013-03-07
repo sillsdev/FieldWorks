@@ -202,6 +202,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="M3ToHCTransformer.cs" />
+    <Compile Include="M3ToParserTransformerBase.cs" />
     <Compile Include="M3ToXAmpleTransformer.cs">
       <SubType>Code</SubType>
     </Compile>
