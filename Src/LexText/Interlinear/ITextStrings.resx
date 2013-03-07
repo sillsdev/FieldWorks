@@ -886,7 +886,7 @@
     <value>words and glosses</value>
   </data>
   <data name="ksMergeAnalysesAttemptsTo" xml:space="preserve">
-    <value>This utility finds groups of analyses that have the same word category and morpological analysis. It merges such groups into a single analysis. It keeps all the glosses, except that if some glosses are duplicates (in all writing systems) such groups will also be merged. Analyzed texts which use any of the merged analyses will be made to use the merged one.</value>
+    <value>This utility finds groups of analyses that have the same word category and morphological analysis. It merges such groups into a single analysis. It keeps all the glosses, except that if some glosses are duplicates (in all writing systems) such groups will also be merged. Analyzed texts which use any of the merged analyses will be made to use the merged one.</value>
     <comment>Help information for the Merge Duplicate Analyses item in Tools/Utilities.</comment>
   </data>
   <data name="ksMergeAnalysesWarning" xml:space="preserve">
@@ -903,7 +903,7 @@
     <value>Undo Merge Analyses</value>
   </data>
   <data name="ksUseMergeAnalysesWhen" xml:space="preserve">
-    <value>Use this when you discover (e.g., in Words/Analyses) that you have more than one copy of the same analysis of the same wordform. It is especially helpful when you have many instances of this, for example, as a result of merging work done in multiple places.</value>
+    <value>Use this when you discover (e.g., in Word Analyses) that you have more than one copy of the same analysis of the same wordform. It is especially helpful when you have many instances of this, for example, as a result of merging work done in multiple places.</value>
   </data>
   <data name="ksComplexConcGloss" xml:space="preserve">
     <value>Gloss</value>

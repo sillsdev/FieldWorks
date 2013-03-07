@@ -578,6 +578,7 @@
   </data>
   <data name="m_openSampleOrLastProjectLink.Text" xml:space="preserve">
     <value>SampleDb</value>
+	<comment>Do not localize</comment>
   </data>
   <data name="&gt;&gt;m_openSampleOrLastProjectLink.Name" xml:space="preserve">
     <value>m_openSampleOrLastProjectLink</value>
