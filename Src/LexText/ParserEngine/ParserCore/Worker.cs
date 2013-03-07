@@ -36,6 +36,7 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 */
 using System;
 using System.Diagnostics;
+using System.Text;
 using System.Xml;
 
 using CodeProject.ReiMiyasaka;
@@ -72,9 +73,38 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_cache = cache;
 			m_taskUpdateHandler = taskUpdateHandler;
 			m_parseFiler = new ParseFiler(cache, taskUpdateHandler, idleQueue, agent);
-			m_projectName = cache.ProjectId.Name;
+			// N.B. m_projectName here is only used to create temporary files for the parser to load.
+			// We convert the name to use strictly ANSI characters so that the parsers (which are or involve
+			// legacy C programs) can read the file names.
+			m_projectName = ConvertNameToUseANSICharacters(cache.ProjectId.Name);
 			m_retriever = new M3ParserModelRetriever(m_cache, m_taskUpdateHandler);
 			Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "ParserWorker(): CurrentThreadId = " + Win32.GetCurrentThreadId());
+		}
+
+		/// <summary>
+		/// Convert any characters in the name which are higher than 0x00FF to hex.
+		/// Neither XAmple nor PC-PATR can read a file name containing letters above 0x00FF.
+		/// </summary>
+		/// <param name="originalName">The original name to be converted</param>
+		/// <returns>Converted name</returns>
+		public static string ConvertNameToUseANSICharacters(string originalName)
+		{
+			StringBuilder sb = new StringBuilder();
+			char[] letters = originalName.ToCharArray();
+			foreach (var letter in letters)
+			{
+				int value = Convert.ToInt32(letter);
+				if (value > 255)
+				{
+					string hex = value.ToString("X4");
+					sb.Append(hex);
+				}
+				else
+				{
+					sb.Append(letter);
+				}
+			}
+			return sb.ToString();
 		}
 
 		protected override void DisposeManagedResources()
