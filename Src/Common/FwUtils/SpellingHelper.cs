@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// to occur. It's purpose is to serve as a prototype for the /C flags, so that it can be used
 		/// to indicate that other words should be keep-case also.
 		/// </summary>
-		internal const string PrototypeWord = "zzyyaamktdfg";
+		internal const string PrototypeWord = "XXPatternWordDoNotDeleteXX";
 		private const string keepCaseFlag = "C";
 
 		internal static void EnsureDictionary(string dictId)
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				writer.WriteLine(Math.Max(10, words.Count()).ToString());
 				writer.WriteLine(PrototypeWord + "/" + keepCaseFlag);
 				foreach (var word in words)
-					writer.WriteLine(word);
+					writer.WriteLine(Icu.Normalize(word, Icu.UNormalizationMode.UNORM_NFC));
 			}
 		}
 

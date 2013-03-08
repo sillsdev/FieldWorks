@@ -78,6 +78,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			dict.SetStatus("world", true);
 			Assert.That(dict.Check("world"), Is.True);
 
+			// Check normalization
+			dict.SetStatus("w\x00f4rld", true); // o with cicrumflex (composed)
+			Assert.That(dict.Check("w\x00f4rld"), Is.True);
+			Assert.That(dict.Check("wo\x0302rld"), Is.True); // decomposed form.
+			dict.SetStatus("bo\x0302lt", true); // set decomposed
+			Assert.That(dict.Check("bo\x0302lt"), Is.True);
+			Assert.That(dict.Check("b\x00f4lt"), Is.True); // composed form.
+
+
 			// Check that results were persisted.
 			SpellingHelper.ClearAllDictionaries();
 			dict = SpellingHelper.GetSpellChecker(dictId);
@@ -160,12 +169,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			dict.SetStatus("old", true);
 			Assert.That(dict.Check("old"), Is.True);
 
-			SpellingHelper.ResetDictionary(id, new[] {"hello", "world", "this", "is", "a", "test"});
+			SpellingHelper.ResetDictionary(id, new[] {"hello", "wo\x0302rld", "this", "is", "a", "test"});
 			dict = SpellingHelper.GetSpellChecker(id);
 
 			Assert.That(dict.Check("old"), Is.False);
 			Assert.That(dict.Check("hello"), Is.True);
-			Assert.That(dict.Check("world"), Is.True);
+			Assert.That(dict.Check("w\x00f4rld"), Is.True);
+			Assert.That(dict.Check("wo\x0302rld"), Is.True); // decomposed form.
 			Assert.That(dict.Check("is"), Is.True);
 			Assert.That(dict.Check("a"), Is.True);
 			Assert.That(dict.Check("test"), Is.True);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -19,7 +20,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			try
 			{
-				m_hunspellHandle = hunspell_initialize(affixPath, dictPath);
+				m_hunspellHandle = hunspell_initialize(MarshallAsUtf8Bytes(affixPath), MarshallAsUtf8Bytes(dictPath));
 				ExceptionPath = exceptionPath;
 				if (File.Exists(exceptionPath))
 				{
@@ -53,10 +54,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		private IntPtr m_hunspellHandle;
-		//private Hunspell m_dict;
+
 		public bool Check(string word)
 		{
-			return hunspell_spell(m_hunspellHandle, word) != 0;
+			return hunspell_spell(m_hunspellHandle, MarshallAsUtf8Bytes(word)) != 0;
+		}
+
+		/// <summary>
+		/// We can't declare these arguments (char * in C++) as [MarshalAs(UnmanagedType.LPStr)] string, because that
+		/// unconditionally coverts the string to bytes using the current system code page, which is never what we want.
+		/// So we declare them as byte[] and marshal like this. The C++ code requires null termination so add a null
+		/// before converting. (This doesn't seem to be necessary, but better safe than sorry.)
+		/// </summary>
+		/// <param name="word"></param>
+		/// <returns></returns>
+		private static byte[] MarshallAsUtf8Bytes(string word)
+		{
+			return Encoding.UTF8.GetBytes(Icu.Normalize(word, Icu.UNormalizationMode.UNORM_NFC) + "\0");
 		}
 
 		private bool m_isVernacular;
@@ -87,14 +101,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public ICollection<string> Suggest(string badWord)
 		{
 			IntPtr pointerToAddressStringArray;
-			int resultCount = hunspell_suggest(m_hunspellHandle, badWord, out pointerToAddressStringArray);
+			int resultCount = hunspell_suggest(m_hunspellHandle, MarshallAsUtf8Bytes(badWord), out pointerToAddressStringArray);
 			var results = MarshalUnmananagedStrArray2ManagedStrArray(pointerToAddressStringArray, resultCount);
 			hunspell_free_list(m_hunspellHandle, ref pointerToAddressStringArray, resultCount);
 			return results;
 		}
 
-		public void SetStatus(string word, bool isCorrect)
+		public void SetStatus(string word1, bool isCorrect)
 		{
+			var word = Icu.Normalize(word1, Icu.UNormalizationMode.UNORM_NFC);
 			if (Check(word) == isCorrect)
 				return; // nothing to do.
 			// Review: any IO exceptions we should handle? How??
@@ -150,18 +165,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					// Custom vernacular-only dictionary.
 					// want it 'affixed' like the prototype, which has been marked to suppress other-case matches
-					hunspell_add_with_affix(m_hunspellHandle, word, SpellingHelper.PrototypeWord);
+					hunspell_add_with_affix(m_hunspellHandle, MarshallAsUtf8Bytes(word), MarshallAsUtf8Bytes(SpellingHelper.PrototypeWord));
 				}
 				else
 				{
 					// not our custom dictionary, some majority language, we can't (and probably don't want)
 					// to be restrictive about case.
-					hunspell_add(m_hunspellHandle, word);
+					hunspell_add(m_hunspellHandle, MarshallAsUtf8Bytes(word));
 				}
 			}
 			else
 			{
-				hunspell_remove(m_hunspellHandle, word);
+				hunspell_remove(m_hunspellHandle, MarshallAsUtf8Bytes(word));
 			}
 		}
 
@@ -224,8 +239,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		[DllImport(klibHunspell, EntryPoint = "hunspell_initialize",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern IntPtr hunspell_initialize([MarshalAs(UnmanagedType.LPStr)] string aff_file,
-			[MarshalAs(UnmanagedType.LPStr)] string dict_file);
+		private static extern IntPtr hunspell_initialize(byte[] aff_file,
+			byte[] dict_file);
 
 		[DllImport(klibHunspell, EntryPoint = "hunspell_uninitialize",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
@@ -233,23 +248,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		[DllImport(klibHunspell, EntryPoint = "hunspell_spell",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_spell(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string word);
+		private static extern int hunspell_spell(IntPtr handle, byte[] word);
 
 		[DllImport(klibHunspell, EntryPoint = "hunspell_add",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_add(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string word);
+		private static extern int hunspell_add(IntPtr handle, byte[] word);
 
 		[DllImport(klibHunspell, EntryPoint = "hunspell_add_with_affix",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_add_with_affix(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string word, [MarshalAs(UnmanagedType.LPStr)] string example);
+		private static extern int hunspell_add_with_affix(IntPtr handle, byte[] word, byte[] example);
 
 		[DllImport(klibHunspell, EntryPoint = "hunspell_remove",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_remove(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string word);
+		private static extern int hunspell_remove(IntPtr handle, byte[] word);
 
 		[DllImport(klibHunspell, EntryPoint = "hunspell_suggest",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_suggest(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string word, out IntPtr suggestions);
+		private static extern int hunspell_suggest(IntPtr handle, byte[] word, out IntPtr suggestions);
 
 		[DllImport(klibHunspell, EntryPoint = "hunspell_free_list",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
