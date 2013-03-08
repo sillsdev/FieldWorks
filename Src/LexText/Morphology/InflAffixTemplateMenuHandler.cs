@@ -20,6 +20,7 @@ using System.Xml;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 using XCore;
 using SIL.Utils;
@@ -372,6 +373,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification="Dispose not used elsewhere for creating XCore.Command objects")]
 		internal virtual void HandleFwMenuSelection(object sender, EventArgs ea)
 		{
 			CheckDisposed();
@@ -382,10 +385,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			FwMenuItem fmi = FindEnabledItem(iSel);
 			if (fmi == null)
 				return;
-			using (var command = new XCore.Command(m_mediator, fmi.ConfigurationNode))
-			{
-				m_mediator.SendMessage(fmi.Message, command);
-			}
+			var command = new XCore.Command(m_mediator, fmi.ConfigurationNode);
+			m_mediator.SendMessage(fmi.Message, command);
 		}
 
 		private FwMenuItem FindEnabledItem(int iSel)

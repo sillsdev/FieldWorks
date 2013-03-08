@@ -100,6 +100,9 @@ namespace SIL.FieldWorks
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			receiveButton.Enabled = ClientServerServices.Current.Local.DefaultBackendType !=
 								FDOBackendProviderType.kDb4oClientServer;
+			// Disable button for unimplemented feature. FWNX-991.
+			if (MiscUtils.IsUnix)
+				receiveButton.Enabled = false;
 		}
 
 		public bool AppIsFlex

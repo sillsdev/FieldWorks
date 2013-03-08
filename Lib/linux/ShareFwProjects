@@ -6,7 +6,7 @@
 
 LIBDIR=/usr/lib/fieldworks
 DAEMON=$LIBDIR/FwRemoteDatabaseConnectorService.exe
-MONOSERVICE=$LIBDIR/mono/bin/mono-service2
+MONOSERVICE=$LIBDIR/mono/bin/mono-service
 
 /usr/bin/test -x $DAEMON || exit 0
 /usr/bin/test -x $MONOSERVICE || exit 0

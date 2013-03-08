@@ -9,47 +9,58 @@ scriptdir="$(dirname "$0")"
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 FW_DATA="${XDG_DATA_HOME}/fieldworks"
 FW_CONFIG="${XDG_CONFIG_HOME}/fieldworks"
-FW_SAMPLES=${FW_SAMPLES:-/usr/share/fieldworks-examples}
 FW_LIB=$prefix/lib/fieldworks
-FW_SHARE=$scriptdir
+FW_SHARE=$prefix/share/fieldworks
+FW_SAMPLES=${FW_SAMPLES:-$FW_SHARE-examples}
 
 (
-	if [ ! -d "${FW_CONFIG}/" ]; then
-		echo "# Finishing user specific setup"
-		mkdir -p "${FW_CONFIG}/Icu40/"
-		cp -R "${FW_SHARE}/Icu40/icudt40l" "${FW_CONFIG}/Icu40/"
-		cp -R "${FW_SHARE}/Icu40/data" "${FW_CONFIG}/Icu40/"
-		cp -R "${FW_SHARE}/SIL" "${FW_CONFIG}/"
-		mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
-		mkdir -p "${FW_DATA}/Projects"
-		mkdir -p "${XDG_CONFIG_HOME}/autostart"
+	if [ ! -d "${FW_CONFIG}/Icu50/" ]; then
+		echo "# Copying ICU data"
+		mkdir -p "${FW_CONFIG}/Icu50/"
+		cp -a "${FW_SHARE}/Icu50/icudt50l" "${FW_CONFIG}/Icu50/"
+		cp -a "${FW_SHARE}/Icu50/data" "${FW_CONFIG}/Icu50/"
+	fi
 
-		# copy sample databases
-		if [ -d ${FW_SAMPLES}/ReleaseData ]; then
-			for db in ${FW_SAMPLES}/ReleaseData/*; do
+	if [ ! -d "${FW_CONFIG}/SIL/" ]; then
+		echo "# Copying encoding converter registry"
+		mkdir -p "${FW_CONFIG}/"
+		cp -a "${FW_SHARE}/SIL" "${FW_CONFIG}/"
+	fi
+
+	# Copy sample databases
+	if [ ! -d "${FW_DATA}/Projects/" ]; then
+		mkdir -p "${FW_DATA}/Projects/"
+		if [ -d "${FW_SAMPLES}"/ReleaseData ]; then
+			for db in "${FW_SAMPLES}"/ReleaseData/*; do
 				dbname=$(basename "$db")
 				echo "# Copying sample database $dbname"
-				cp -r "$db" "${FW_DATA}/Projects/"
+				cp -a "$db" "${FW_DATA}/Projects/"
 				chmod -R gu+w "${FW_DATA}/Projects/$dbname"
 			done
 		fi
 	fi
+
 	# if we haven't setup running the remote access daemon yet, set it up and start it.
-	if [ ! -f ${XDG_CONFIG_HOME}/autostart/ShareFwProjects.desktop ]; then
-		cp "${FW_SHARE}/ShareFwProjects.desktop" "${XDG_CONFIG_HOME}/autostart"
-		/usr/lib/fieldworks/ShareFwProjects
+	if [ ! -f "${XDG_CONFIG_HOME}/autostart/ShareFwProjects.desktop" ]; then
+		echo "# Starting remote access"
+		mkdir -p "${XDG_CONFIG_HOME}/autostart"
+		cp -a "${FW_SHARE}/ShareFwProjects.desktop" "${XDG_CONFIG_HOME}/autostart"
+		${FW_LIB}/ShareFwProjects
 	fi
 
+	mkdir -p "${FW_CONFIG}/SIL/Repository"
+	mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
+
+	# Set registry keys
+
+	cd "$FW_LIB"; RUNMODE="INSTALLED" . environ; cd "$OLDPWD"
+	WRITEKEY="${FW_LIB}/WriteKey.exe"
+
 	if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil" ]; then
-		echo "# Updating configuration"
+		echo "# Setting configuration"
 
-		cd "$FW_LIB"; RUNMODE="INSTALLED" . environ; cd "$OLDPWD"
-
-		WRITEKEY="${FW_LIB}/WriteKey.exe"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootDataDir" "${FW_CONFIG}/"
-		mono "${WRITEKEY}" LM "Software/SIL" "Icu40DataDir" "${FW_CONFIG}/Icu40/icudt40l"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootCodeDir" "${FW_SHARE}"
-		mono "${WRITEKEY}" LM "Software/SIL" "Icu40Dir" "${FW_CONFIG}/Icu40"
 
 		# REVIEW these were taken from nant setup registry may not be correct for an install.
 		mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
@@ -58,18 +69,19 @@ FW_SHARE=$scriptdir
 		mono "${WRITEKEY}" LM "Software/SIL" "InitIcu" "1"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" "${FW_DATA}/Projects"
-
-		mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
-		mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
-
-	# anyone with a 7.0.6 beta or RC1 installation may have most of the previous, but not the following.
-	elif [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil/silencconverters40" ]; then
-		echo "# Updating encoding converters configuration"
-		cd "$FW_LIB"; RUNMODE="INSTALLED" . environ; cd "$OLDPWD"
-		WRITEKEY="${FW_LIB}/WriteKey.exe"
-		mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
-		mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
 	fi
+
+	# Set values unconditionally, to take care of upgrades
+	# TODO: implement a WriteKey option to only set and not overwrite values
+	# TODO: implement batch load/dump in WriteKey similar to dconf
+
+	echo "# Updating configuration"
+
+	mono "${WRITEKEY}" LM "Software/SIL" "Icu50DataDir" "${FW_CONFIG}/Icu50/icudt50l"
+	mono "${WRITEKEY}" LM "Software/SIL" "Icu50Dir" "${FW_CONFIG}/Icu50"
+
+	mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
+	mono "${WRITEKEY}" LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
 
 ) | zenity --progress \
 	--title="User specific setup" \

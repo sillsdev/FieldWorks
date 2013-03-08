@@ -526,6 +526,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_timer_Tick(object sender, EventArgs e)
 		{
+			if (m_parserListener == null)
+				return;
+
 			m_statusLabel.Text = m_parserListener.ParserActivityString;
 
 			if (m_parserListener.Connection == null)

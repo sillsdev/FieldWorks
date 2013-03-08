@@ -157,6 +157,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			m_soundControls.Clear();
 		}
 
+
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="soundFieldControl gets disposed in Dispose method")]
 		private void SetupSoundControls()
@@ -188,7 +189,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 				else
 				{
-					var mediaDir = DirectoryFinder.GetMediaDir(m_fdoCache.LangProject.LinkedFilesRootDir);
+					var mediaDir = DirectoryFinder.GetMediaDir(m_fdoCache.GetValidLinkedFilesFolder());
 					Directory.CreateDirectory(mediaDir); // Palaso media library does not cope if it does not exist.
 					path = Path.Combine(mediaDir, filename.Normalize(NormalizationForm.FormC));
 
@@ -325,7 +326,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		private string CreateNewSoundFilename(out string path)
 		{
 			var obj = m_fdoCache.ServiceLocator.GetObject(m_hvoObj);
-			var mediaDir = DirectoryFinder.GetMediaDir(m_fdoCache.LangProject.LinkedFilesRootDir);
+			var mediaDir = DirectoryFinder.GetMediaDir(m_fdoCache.GetValidLinkedFilesFolder());
 			Directory.CreateDirectory(mediaDir); // Palaso media library does not cope if it does not exist.
 			// Make up a unique file name for the new recording. It starts with the shortname of the object
 			// so as to somewhat link them together, then adds a unique timestamp, then if by any chance
@@ -542,6 +543,10 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (disposing)
 			{
+				// In Mono, DisposeSoundControls() causes a layout, which then crashes
+				// nicely when called from here.  See FWNX-967.  Since we'll be
+				// disposed, there's no point in resuming layout later...
+				SuspendLayout();
 				// Dispose managed resources here.
 				DisposeSoundControls();
 			}

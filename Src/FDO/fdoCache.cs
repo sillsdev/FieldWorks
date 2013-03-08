@@ -1363,6 +1363,34 @@ namespace SIL.FieldWorks.FDO
 			}
 			return 450; // current general default.
 		}
+
+		/// <summary>
+		/// Ensure a valid folder for LangProject.LinkedFilesRootDir.  When moving projects
+		/// between systems, the stored value may become hopelessly invalid.  See FWNX-1005
+		/// for an example of the havoc than can ensue.
+		/// </summary>
+		public string GetValidLinkedFilesFolder()
+		{
+			var linkedFilesFolder = this.LangProject.LinkedFilesRootDir;
+			if (!Directory.Exists(linkedFilesFolder))
+			{
+				System.Windows.Forms.MessageBox.Show(String.Format(Strings.ksInvalidLinkedFilesFolder, linkedFilesFolder), Strings.ksErrorCaption);
+				while (!Directory.Exists(linkedFilesFolder))
+				{
+					using (var folderBrowserDlg = new SIL.Utils.FileDialog.FolderBrowserDialogAdapter())
+					{
+						folderBrowserDlg.Description = Strings.ksLinkedFilesFolder;
+						folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+						folderBrowserDlg.SelectedPath = DirectoryFinder.GetDefaultLinkedFilesDir(this.ProjectId.ProjectFolder);
+						if (folderBrowserDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+							linkedFilesFolder = folderBrowserDlg.SelectedPath;
+					}
+				}
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(this.ActionHandlerAccessor, () =>
+					{ this.LangProject.LinkedFilesRootDir = linkedFilesFolder; });
+			}
+			return linkedFilesFolder;
+		}
 		#endregion Public methods
 
 		#endregion Public interface

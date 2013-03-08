@@ -957,7 +957,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 		private void m_variantCode_TextChanged(object sender, EventArgs e)
 		{
-			OnScriptRegionVariantChanged(EventArgs.Empty);
+			// If it's too early, don't fire the handler.  (See FWNX-999 for why this
+			// is needed.)
+			if (m_enableLangTagSideEffects)
+				OnScriptRegionVariantChanged(EventArgs.Empty);
 		}
 
 		/// <summary>

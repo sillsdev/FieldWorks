@@ -433,6 +433,5 @@ namespace SIL.CoreImpl
 		{
 			get { return WritingSystemCompatibility.Strict; }
 		}
-
 	}
 }
