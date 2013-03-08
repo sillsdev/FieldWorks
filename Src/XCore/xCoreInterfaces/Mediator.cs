@@ -47,7 +47,11 @@ namespace XCore
 			int c = x.Item1 - y.Item1;
 			if (c != 0)
 				return c;
-			return x.Item2.GetHashCode() - y.Item2.GetHashCode();
+			// Avoid possible overflow in the subtraction.  See FWNX-896.  I'm not sure why
+			// this affects only Linux/Mono unless the Windows/.Net default implementation
+			// returns hash codes that are always positive integers.
+			Int64 val1 = (Int64)x.Item2.GetHashCode() - (Int64)y.Item2.GetHashCode();
+			return (int)(val1 / 2L);
 		}
 
 		#endregion
