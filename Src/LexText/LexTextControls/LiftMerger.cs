@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Palaso.Lift;
@@ -65,6 +66,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_fCreatingNewSense = false;
 
 		// save field specification information from the header.
+		// LiftMultiTexts are in Xml-safe format (See MakeSafeLiftMultiText)
 		readonly Dictionary<string, LiftMultiText> m_dictFieldDef = new Dictionary<string, LiftMultiText>();
 
 		readonly Dictionary<string, IFsFeatDefn> m_mapIdFeatDefn = new Dictionary<string, IFsFeatDefn>();
@@ -566,6 +568,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			return sub;
 		}
 
+		/// <summary>
+		/// contents must be in non-Xml-safe format
+		/// </summary>
+		/// <param name="entry"></param>
+		/// <param name="contents"></param>
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MergeInCitationForm(
 			CmLiftEntry entry, LiftMultiText contents)
 		{
@@ -576,6 +583,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				MergeLiftMultiTexts(entry.CitationForm, newContents);
 		}
 
+		/// <summary>
+		/// Called from Chorus?
+		/// </summary>
+		/// <param name="sense"></param>
+		/// <param name="contents">non-safe-XML</param>
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MergeInDefinition(
 			CmLiftSense sense, LiftMultiText contents)
 		{
@@ -586,6 +598,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				MergeLiftMultiTexts(sense.Definition, newContents);
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="example"></param>
+		/// <param name="contents">non-safe XML</param>
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MergeInExampleForm(
 			CmLiftExample example, LiftMultiText contents)
 		{
@@ -615,6 +632,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			extensible.Fields.Add(field);
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="sense"></param>
+		/// <param name="contents">non-safe-XML</param>
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MergeInGloss(
 			CmLiftSense sense, LiftMultiText contents)
 		{
@@ -629,7 +651,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Only Sense and Reversal have grammatical information.
 		/// </summary>
 		/// <param name="obj"></param>
-		/// <param name="val"></param>
+		/// <param name="val">non-safe-XML</param>
 		/// <param name="traits"></param>
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MergeInGrammaticalInfo(
 			LiftObject obj, string val, List<Trait> traits)
@@ -649,6 +671,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				(obj as CmLiftReversal).GramInfo = graminfo;
 		}
 
+		/// <summary>
+		/// Invoked from Chorus?
+		/// </summary>
+		/// <param name="entry"></param>
+		/// <param name="contents">non-safe-XML</param>
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MergeInLexemeForm(
 			CmLiftEntry entry, LiftMultiText contents)
 		{
@@ -659,6 +686,13 @@ namespace SIL.FieldWorks.LexText.Controls
 				MergeLiftMultiTexts(entry.LexicalForm, newContents);
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="extensible"></param>
+		/// <param name="type"></param>
+		/// <param name="contents">non-safe XML</param>
+		/// <param name="rawXml"></param>
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MergeInNote(
 			LiftObject extensible, string type, LiftMultiText contents, string rawXml)
 		{
@@ -776,7 +810,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Adapted from LiftParser.ReadExtensibleElementDetails()
 		/// </summary>
 		/// <param name="node"></param>
-		/// <returns></returns>
+		/// <returns>lift field with contents safe-XML</returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftField CreateLiftFieldFromXml(XmlNode node)
@@ -810,7 +844,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Adapted from LiftParser.ReadFormNodes()
 		/// </summary>
 		/// <param name="node"></param>
-		/// <returns></returns>
+		/// <returns>safe-XML</returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private static LiftMultiText CreateLiftMultiTextFromXml(XmlNode node)
@@ -969,6 +1003,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			return var;
 		}
 
+		/// <summary>
+		/// Convert a multitext into 'safe' format suitable for storing in XML files.
+		/// </summary>
+		/// <param name="multiText"></param>
+		/// <remarks>JohnT: this is slightly bizarre, since LiftMerger is an IMPORT function and for the most part,
+		/// we are not creating XML files. Most of the places we want to put this text, in FDO objects, we end up
+		/// Decoding it again. Worth considering refactoring so that this method (renamed) just deals with characters
+		/// we don't want in FDO objects, like tab and newline, and leaves the XML reserved characters alone. Then
+		/// we could get rid of a lot of Decode statements also.
+		/// Steve says one place we do need to make encoded XML is in the content of Residue fields.</remarks>
+		/// <returns></returns>
 		private static LiftMultiText MakeSafeLiftMultiText(LiftMultiText multiText)
 		{
 			if (multiText == null)
@@ -978,6 +1023,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			return multiText;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="parent"></param>
+		/// <param name="contents">non-safe-XML</param>
+		/// <param name="type"></param>
+		/// <returns></returns>
 		LiftObject ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.GetOrMakeParentReversal(
 			LiftObject parent, LiftMultiText contents, string type)
 		{
@@ -990,6 +1042,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			return rev;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="sense"></param>
+		/// <param name="parent"></param>
+		/// <param name="contents">non-Safe-XML</param>
+		/// <param name="type"></param>
+		/// <param name="rawXml"></param>
+		/// <returns></returns>
 		LiftObject ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MergeInReversal(
 			CmLiftSense sense, LiftObject parent, LiftMultiText contents, string type, string rawXml)
 		{
@@ -1003,6 +1064,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			return rev;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="entry"></param>
+		/// <param name="source"></param>
+		/// <param name="type"></param>
+		/// <param name="form">non-safe-XML</param>
+		/// <param name="gloss"></param>
+		/// <param name="rawXml"></param>
+		/// <returns></returns>
 		LiftObject ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.MergeInEtymology(
 			CmLiftEntry entry, string source, string type, LiftMultiText form, LiftMultiText gloss,
 			string rawXml)
@@ -1016,6 +1087,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			return ety;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="guidAttr"></param>
+		/// <param name="parent"></param>
+		/// <param name="description">safe-XML</param>
+		/// <param name="label">safe-XML</param>
+		/// <param name="abbrev">safe-xml</param>
+		/// <param name="rawXml"></param>
+		/// <param name="featSystem"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureDefinition(string id, string guidAttr, string parent,
@@ -1335,6 +1417,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			return Guid.Empty;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="guidAttr"></param>
+		/// <param name="parent"></param>
+		/// <param name="description">safe-XML</param>
+		/// <param name="label">safe-XML</param>
+		/// <param name="abbrev">safe-XML</param>
+		/// <param name="rawXml"></param>
+		/// <param name="featSystem"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureStrucType(string id, string guidAttr, string parent,
@@ -1418,6 +1511,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="range"></param>
+		/// <param name="id"></param>
+		/// <param name="guidAttr"></param>
+		/// <param name="parent"></param>
+		/// <param name="description">safe-XML</param>
+		/// <param name="label">safe-XML</param>
+		/// <param name="abbrev">safe-XML</param>
+		/// <param name="rawXml"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessFeatureValue(string range, string id, string guidAttr, string parent,
@@ -1467,6 +1571,17 @@ namespace SIL.FieldWorks.LexText.Controls
 				sCatalogId, fShowInGloss, featClosed, sFeatId);
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="description">safe-XML</param>
+		/// <param name="label">safe-XML</param>
+		/// <param name="abbrev">safe-XML</param>
+		/// <param name="sCatalogId"></param>
+		/// <param name="fShowInGloss"></param>
+		/// <param name="featClosed"></param>
+		/// <param name="featId"></param>
 		private void StoreSymFeatValInClosedFeature(string id, LiftMultiText description,
 			LiftMultiText label, LiftMultiText abbrev, string sCatalogId, bool fShowInGloss,
 			IFsClosedFeature featClosed, string featId)
@@ -1620,6 +1735,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="range"></param>
+		/// <param name="id"></param>
+		/// <param name="guidAttr"></param>
+		/// <param name="parent"></param>
+		/// <param name="description">safe-XML</param>
+		/// <param name="label">safe-XML</param>
+		/// <param name="abbrev">safe-XML</param>
+		/// <param name="rawXml"></param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ProcessStemName(string range, string id, string guidAttr, string parent,
@@ -1675,6 +1801,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="description">non-safe-XML</param>
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.ProcessFieldDefinition(
 			string tag, LiftMultiText description)
 		{
@@ -1696,7 +1827,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// the typeFlid out parameter.
 		/// </summary>
 		/// <param name="tag"></param>
-		/// <param name="description"></param>
+		/// <param name="description">non-safe XML</param>
 		/// <param name="typeFlid"></param>
 		/// <returns></returns>
 		private bool IsCustomField(string tag, LiftMultiText description, out int typeFlid)
@@ -2031,6 +2162,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="form">non-safe-XML</param>
+		/// <param name="clsid"></param>
+		/// <param name="guidEntry"></param>
+		/// <param name="flid"></param>
+		/// <returns></returns>
 		private IMoMorphType FindMorphType(ref string form, out int clsid, Guid guidEntry, int flid)
 		{
 			string fullForm = form;
@@ -2057,7 +2196,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				int clsid = 0;
 				if (mf == null)
 				{
-					string form = entry.LexicalForm.FirstValue.Value.Text;
+					string form = Icu.Normalize(XmlUtils.DecodeXml(entry.LexicalForm.FirstValue.Value.Text), Icu.UNormalizationMode.UNORM_NFD);
 					IMoMorphType mmt = FindMorphType(ref form, out clsid,
 						le.Guid, LexEntryTags.kflidLexemeForm);
 					if (mmt.IsAffixType)
@@ -2162,7 +2301,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void ProcessUnknownTrait(LiftObject liftObject, LiftTrait lt, ICmObject cmo)
 		{
 			int clid = cmo.ClassID;
-			LiftMultiText desc = null;
+			LiftMultiText desc = null; // safe-XML
 			var sType = lt.Name;
 			if (!m_dictFieldDef.TryGetValue(m_cache.DomainDataByFlid.MetaDataCache.GetClassId(cmo.ClassName) + lt.Name, out desc))
 			{
@@ -2439,6 +2578,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="hvo"></param>
+		/// <param name="flid"></param>
+		/// <param name="contents">safe-XML</param>
 		private void ProcessCustomFieldData(int hvo, int flid, LiftMultiText contents)
 		{
 			CellarPropertyType type = (CellarPropertyType)m_cache.MetaDataCacheAccessor.GetFieldType(flid);
@@ -2477,6 +2622,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			public ITsString Contents { get; set; }
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="hvoOwner"></param>
+		/// <param name="flid"></param>
+		/// <param name="contents">safe XML</param>
 		private void ProcessStTextField(int hvoOwner, int flid, LiftMultiText contents)
 		{
 			var hvoText = m_cache.DomainDataByFlid.get_ObjectProp(hvoOwner, flid);
@@ -2611,6 +2762,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="contents">safe XML</param>
+		/// <returns></returns>
 		private List<ParaData> ParseMultipleParagraphs(LiftMultiText contents)
 		{
 			var paras = new List<ParaData>();
@@ -2622,7 +2778,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (lang == null)
 				return paras;
 			var wsText = GetWsFromLiftLang(lang);
-			var text = contents[lang];
+			var text = contents[lang]; // safe XML
 			if (text.Text == null)
 				return paras;
 			var ich = 0;
@@ -2640,7 +2796,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// text before this span.
 					var len = span.Index - ich;
-					var data = text.Text.Substring(ich, len);
+					var data = text.Text.Substring(ich, len); // safeXML
 					if (data.Replace("\u2028", "").Replace(" ", "").Replace("\t", "") == "\u2029")
 					{
 						fNewPara = true;
@@ -2649,7 +2805,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsText);
 						tisb.SetStrPropValue((int) FwTextPropType.ktptNamedStyle, null);
-						tisb.Append(data);
+						tisb.Append(XmlUtils.DecodeXml(data));
 					}
 				}
 				if (fNewPara)
@@ -2683,14 +2839,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (span.Spans.Count > 0)
 					ProcessNestedSpans(text, span, wsCurrent, styleCurrent, tisb);
 				else
-					tisb.Append(text.Text.Substring(span.Index, span.Length));
+					tisb.Append(XmlUtils.DecodeXml(text.Text.Substring(span.Index, span.Length)));
 				ich = span.Index + span.Length;
 			}
 			if (ich < text.Text.Length)
 			{
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsText);
 				tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, null);
-				tisb.Append(text.Text.Substring(ich, text.Text.Length - ich));
+				tisb.Append(XmlUtils.DecodeXml(text.Text.Substring(ich, text.Text.Length - ich)));
 			}
 			if (tisb.Text.Length > 0)
 			{
@@ -2778,6 +2934,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="hvo"></param>
+		/// <param name="flid"></param>
+		/// <param name="contents">safe-XML</param>
+		/// <returns></returns>
 		private bool CustomFieldDataConflicts(int hvo, int flid, LiftMultiText contents)
 		{
 			CellarPropertyType type = (CellarPropertyType)m_cache.MetaDataCacheAccessor.GetFieldType(flid);
@@ -2866,6 +3029,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="mf"></param>
+		/// <param name="forms">safe XML</param>
+		/// <param name="tssForm"></param>
+		/// <param name="mmt"></param>
+		/// <param name="realForm"></param>
+		/// <param name="guidEntry"></param>
+		/// <param name="flid"></param>
 		private void FinishMoForm(IMoForm mf, LiftMultiText forms, ITsString tssForm, IMoMorphType mmt,
 			string realForm, Guid guidEntry, int flid)
 		{
@@ -3221,7 +3394,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// TODO-Linux: this looks suspicious
 				sFile = sFile.Replace('/', '\\');
 				int ws;
-				string sLabel;
+				string sLabel; // safe-XML
 				if (uref.Label != null && !uref.Label.IsEmpty)
 				{
 					ws = GetWsFromLiftLang(uref.Label.FirstValue.Key);
@@ -3241,7 +3414,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					try
 					{
 						if (!String.IsNullOrEmpty(sLabel))
-							media.Label.set_String(ws, sLabel);
+							media.Label.set_String(ws, XmlUtils.DecodeXml(sLabel));
 						if (!String.IsNullOrEmpty(sPath))
 						{
 							ICmFolder cmfMedia = null;
@@ -3309,6 +3482,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="rgmedia"></param>
+		/// <param name="sFile"></param>
+		/// <param name="lmtLabel">safe-XML</param>
+		/// <returns></returns>
 		private ICmMedia FindMatchingMedia(IFdoOwningSequence<ICmMedia> rgmedia, string sFile,
 			LiftMultiText lmtLabel)
 		{
@@ -4583,6 +4763,19 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Find or create an IMoDerivAffMsa which matches the given values.
 		/// </summary>
+		/// <param name="le"></param>
+		/// <param name="pos"></param>
+		/// <param name="sFromPOS">non-safe-XML</param>
+		/// <param name="dictPosSlots"></param>
+		/// <param name="dictPosInflClasses"></param>
+		/// <param name="dictPosFromInflClasses"></param>
+		/// <param name="rgpossProdRestrict"></param>
+		/// <param name="rgpossFromProdRestrict"></param>
+		/// <param name="sInflectionFeature"></param>
+		/// <param name="sFromInflFeature"></param>
+		/// <param name="sFromStemName"></param>
+		/// <param name="rgsResidue"></param>
+		/// <param name="msaSense"></param>
 		/// <returns>true if the desired MSA is newly created, false if it already exists</returns>
 		private bool FindOrCreateDerivAffixMSA(ILexEntry le, IPartOfSpeech pos, string sFromPOS,
 			Dictionary<string, List<string>> dictPosSlots,
@@ -5602,6 +5795,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="rgpictures"></param>
+		/// <param name="sFile"></param>
+		/// <param name="lmtLabel">safe-XML</param>
+		/// <returns></returns>
 		private ICmPicture FindPicture(IFdoOwningSequence<ICmPicture> rgpictures, string sFile,
 			LiftMultiText lmtLabel)
 		{
@@ -5748,6 +5948,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			return rie;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="form">safe XML</param>
+		/// <param name="mapToRIEs"></param>
+		/// <param name="entriesOC"></param>
+		/// <returns></returns>
 		private IReversalIndexEntry FindOrCreateMatchingReversal(LiftMultiText form,
 			Dictionary<MuElement, List<IReversalIndexEntry>> mapToRIEs,
 			IFdoOwningCollection<IReversalIndexEntry> entriesOC)
@@ -5759,15 +5966,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (string key in form.Keys)
 			{
 				int ws = GetWsFromLiftLang(key);
-				string sNew = form[key].Text;
-				string sNewNorm;
+				string sNew = form[key].Text; // safe XML
+				string sNewNorm; // safe XML (NFD)
 				if (String.IsNullOrEmpty(sNew))
 					sNewNorm = sNew;
 				else
 					sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
 				// LiftMultiText parameter may have come in with escaped characters which need to be
 				// converted to plain text before comparing with existing entries
-				MuElement mue = new MuElement(ws, XmlUtils.DecodeXml(sNewNorm));
+				MuElement mue = new MuElement(ws, Icu.Normalize(XmlUtils.DecodeXml(sNewNorm), Icu.UNormalizationMode.UNORM_NFD));
 				if (rie == null && mapToRIEs.TryGetValue(mue, out rgrie))
 				{
 					foreach (IReversalIndexEntry rieT in rgrie)
@@ -5791,6 +5998,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			return rie;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="contents">safe XML</param>
+		/// <param name="type"></param>
+		/// <returns></returns>
 		private IReversalIndex FindOrCreateReversalIndex(LiftMultiText contents, string type)
 		{
 			IReversalIndex riOwning = null;
@@ -5801,9 +6014,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (contents == null || contents.Keys.Count == 0)
 					return null;
 				if (contents.Keys.Count == 1)
-					sWs = contents.FirstValue.Key;
+					sWs = XmlUtils.DecodeXml(contents.FirstValue.Key);
 				else
-					sWs = contents.FirstValue.Key.Split(new char[] { '_', '-' })[0];
+					sWs = XmlUtils.DecodeXml(contents.FirstValue.Key.Split(new char[] { '_', '-' })[0]);
 			}
 			AddNewWsToAnalysis();
 			int ws = GetWsFromStr(sWs);
@@ -6122,7 +6335,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			else
 			{
-				LiftMultiText desc = null;
+				LiftMultiText desc = null; // safe XML
 				if (!m_dictFieldDef.TryGetValue(m_cache.DomainDataByFlid.MetaDataCache.GetClassId(co.ClassName) + sType, out desc))
 				{
 					m_dictFieldDef.TryGetValue(sOldPrefix + sType, out desc);
@@ -6144,6 +6357,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="fCreatingNew"></param>
+		/// <param name="tssOld"></param>
+		/// <param name="lmt">safe XML</param>
+		/// <returns></returns>
 		private ITsString StoreTsStringValue(bool fCreatingNew, ITsString tssOld, LiftMultiText lmt)
 		{
 			// If we're keeping only the imported data, erase any existing data first.

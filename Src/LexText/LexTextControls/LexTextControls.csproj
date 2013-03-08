@@ -332,7 +332,9 @@
     <Compile Include="DataNotebook\StringFieldOptions.Designer.cs">
       <DependentUpon>StringFieldOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataNotebook\NotebookImportWiz.cs" />
+    <Compile Include="DataNotebook\NotebookImportWiz.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DataNotebook\NotebookImportWiz.Designer.cs">
       <DependentUpon>NotebookImportWiz.cs</DependentUpon>
     </Compile>
@@ -390,7 +392,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LexImport.cs" />
-    <Compile Include="LexImportWizard.cs" />
+    <Compile Include="LexImportWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="LexImportWizardCharMarkerDlg.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		// Maps for quick lookup of list items. These are populated when importing the .lift-ranges file.
 		// The quick lookup is used when importing data from the .lift file.
+		// Keys are NFC-normalized versions of the values of possibilities in the corresponding lists (non-safe-XML).
 		readonly Dictionary<string, ICmPossibility> m_dictPos = new Dictionary<string, ICmPossibility>();
 		readonly Dictionary<string, ICmPossibility> m_dictMmt = new Dictionary<string, ICmPossibility>(19);
 		readonly Dictionary<string, ICmPossibility> m_dictComplexFormType = new Dictionary<string, ICmPossibility>();
@@ -95,6 +96,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		readonly Dictionary<string, Guid> m_CustomFieldNamesToPossibilityListGuids = new Dictionary<string, Guid>();
 		//============================================================================
 		#region Methods to find or create list items
+		/// <summary>
+		///word
+		/// </summary>
+		/// <param name="val">non-safe-XML</param>
+		/// <returns></returns>
 		private IPartOfSpeech FindOrCreatePartOfSpeech(string val)
 		{
 			ICmPossibility poss;
@@ -118,6 +124,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			return pos;
 		}
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="val">non-safe-XML</param>
+		/// <returns></returns>
 		private EticCategory FindMatchingEticCategory(string val)
 		{
 			string sVal = val.ToLowerInvariant();
@@ -1043,12 +1054,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			string guidAttr;
 			string parent;
-			LiftMultiText description;
-			LiftMultiText label;
-			LiftMultiText abbrev;
+			LiftMultiText description; // non-safe-XML
+			LiftMultiText label; // non-safe-XML
+			LiftMultiText abbrev; // non-safe-XML
 			string id = GetRangeElementDetails(xnElem, out guidAttr, out parent, out description, out label, out abbrev);
 
-			ProcessPossibility(id, guidAttr, parent, description, label, abbrev,
+			ProcessPossibility(id, guidAttr, parent, MakeSafeLiftMultiText(description), MakeSafeLiftMultiText(label), MakeSafeLiftMultiText(abbrev),
 							   dictCustomList, rgnewCustom, possList);
 		}
 
@@ -1056,18 +1067,26 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			string guidAttr;
 			string parent;
-			LiftMultiText description;
-			LiftMultiText label;
-			LiftMultiText abbrev;
+			LiftMultiText description; // non-safe-XML
+			LiftMultiText label; // non-safe-XML
+			LiftMultiText abbrev; // non-safe-XML
 			var id = GetRangeElementDetails(xnElem, out guidAttr, out parent, out description, out label,
 				out abbrev);
 			(this as ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>).ProcessRangeElement(
 				range, id, guidAttr, parent, description, label, abbrev, xnElem.OuterXml);
 		}
 
+
 		/// <summary>
 		/// Duplicates code in Palaso.LiftParser, but that doesn't read external range files, so...
 		/// </summary>
+		/// <param name="xnElem"></param>
+		/// <param name="guidAttr"></param>
+		/// <param name="parent"></param>
+		/// <param name="description">non-safe-XML (read from XmlNode without re-escaping)</param>
+		/// <param name="label">non-safe-XML</param>
+		/// <param name="abbrev">non-safe-XML</param>
+		/// <returns></returns>
 		private string GetRangeElementDetails(XmlNode xnElem, out string guidAttr, out string parent, out LiftMultiText description, out LiftMultiText label, out LiftMultiText abbrev)
 		{
 			var id = XmlUtils.GetAttributeValue(xnElem, "id");
@@ -1105,6 +1124,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// because only OriginalOuterXml is assigned too.
 		/// </summary>
 		/// <param name="node"></param>
+		/// <returns>non-safe XML (read from XmlNode without re-escaping)</returns>
 		internal LiftMultiText ReadMultiText(XmlNode node)
 		{
 			LiftMultiText text = new LiftMultiText();
@@ -1116,7 +1136,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// NOTE:  This method needs to be removed. The Palaso library (ListParser and LiftMultiText) need to be refactored.
 		/// </summary>
 		/// <param name="nodesWithForms"></param>
-		/// <param name="text"></param>
+		/// <param name="text">text to add material to. Material is from XmlNode, hence non-safe XML (read from XmlNode without re-escaping).</param>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void ReadFormNodes(XmlNodeList nodesWithForms, LiftMultiText text)
@@ -1168,6 +1188,17 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#endregion //Import Ranges File
 
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="range"></param>
+		/// <param name="id"></param>
+		/// <param name="guidAttr"></param>
+		/// <param name="parent"></param>
+		/// <param name="description">non-safe-XML</param>
+		/// <param name="label">non-safe-XML</param>
+		/// <param name="abbrev">non-safe-XML</param>
+		/// <param name="rawXml"></param>
 		void ILexiconMerger<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>.ProcessRangeElement(
 				string range, string id, string guidAttr, string parent,
 				LiftMultiText description, LiftMultiText label, LiftMultiText abbrev,

@@ -504,6 +504,19 @@ namespace SIL.Utils
 			return sOutput;
 		}
 
+		/// <summary>
+		/// Convert a possibly multiparagraph string to a form that is safe to store both in an XML file. Also deals
+		/// with some characters that are not safe to put in an FDO field, which is more to the point since that's
+		/// where most of this data is heading.
+		/// </summary>
+		/// <remarks>JohnT: escaping the XML characters is slightly bizarre, since LiftMerger is an IMPORT function and for the most part,
+		/// we are not creating XML files. Most of the places we want to put this text, in FDO objects, we end up
+		/// Decoding it again. Worth considering refactoring so that this method (renamed) just deals with characters
+		/// we don't want in FDO objects, like tab and newline, and leaves the XML reserved characters alone. Then
+		/// we could get rid of a lot of Decode statements also.
+		/// Steve says one place we do need to make encoded XML is in the content of Residue fields.</remarks>
+		/// <param name="sInput"></param>
+		/// <returns></returns>
 		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
 			Justification="Replacing new line characters")]
 		public static string ConvertMultiparagraphToSafeXml(string sInput)
