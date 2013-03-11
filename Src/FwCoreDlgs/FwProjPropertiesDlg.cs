@@ -1328,6 +1328,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						list.Items.Add(newWs, true);
 				}
 				list.Invalidate();
+				//LT-13893   Make sure that the HomographWs still matches the DefaultVernacularWritingSystem in case it was changed.
+				if (!m_cache.LanguageProject.DefaultVernacularWritingSystem.Id.Equals(m_cache.LanguageProject.HomographWs))
+				{
+					UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+						"Undo HomographWs", "Redo HomographWs",
+						m_cache.ActionHandlerAccessor,
+						() =>
+						{
+							m_cache.LanguageProject.HomographWs = m_cache.LanguageProject.DefaultVernacularWritingSystem.Id;
+						});
+				}
 			}
 		}
 
