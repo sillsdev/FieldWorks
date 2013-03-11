@@ -77,7 +77,6 @@ LINK_LIBS := \
 all: $(OUT_DIR)/testLanguage
 
 FWLANG_OBJ := \
-	$(LANGUAGE_OBJ)/LgIcuCollator.o \
 	$(LANGUAGE_OBJ)/LgUnicodeCollater.o \
 	$(LANGUAGE_OBJ)/RomRenderEngine.o \
 	$(LANGUAGE_OBJ)/RomRenderSegment.o \

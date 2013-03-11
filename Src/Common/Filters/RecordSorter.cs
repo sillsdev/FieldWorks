@@ -28,9 +28,10 @@ using System.Windows.Forms;
 using System.Xml;
 using Palaso.WritingSystems.Collation;
 using SIL.CoreImpl;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.Language;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Filters
 {
@@ -2010,11 +2011,7 @@ namespace SIL.FieldWorks.Filters
 		{
 			if (m_lce == null)
 			{
-#if __MonoCS__
-				m_lce = new SIL.FieldWorks.Language.ManagedLgIcuCollator();
-#else
-				m_lce = LgIcuCollatorClass.Create();
-#endif
+				m_lce = new ManagedLgIcuCollator();
 			}
 			else
 			{
