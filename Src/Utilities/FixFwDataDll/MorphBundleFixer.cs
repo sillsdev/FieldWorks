@@ -149,10 +149,10 @@ namespace SIL.FieldWorks.FixData
 					return;
 				}
 			}
-			// If we can't fix it nicely, just clobber it.
+			// If we can't fix it nicely, just clobber it (and its parent, since this is an atomic property).
 			logger(guidString, DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingDanglingMsa,
 				destGuidString, guidString));
-			objsur.Remove();
+			objsur.Parent.Remove();
 		}
 
 		/// <summary>
@@ -184,10 +184,10 @@ namespace SIL.FieldWorks.FixData
 					return;
 				}
 			}
-			// If we can't fix it nicely, just clobber it.
+			// If we can't fix it nicely, just clobber it (and its parent, since this is an atomic property).
 			logger(guidString, DateTime.Now.ToShortDateString(), String.Format(Strings.ksRemovingDanglingMorph,
 				destGuidString, guidString));
-			objsur.Remove();
+			objsur.Parent.Remove();
 		}
 
 		/// <summary>

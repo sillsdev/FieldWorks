@@ -10,6 +10,12 @@
 	</Custom>
 </rt>
 
+<rt class="LexEntry" guid="efc0f898-7a52-4fe4-b827-f87a348e1b4b">
+	<Custom name="Nonexistent"><!-- dangler -->
+		<objsur guid="0f2d36b5-504b-462a-9004-4ded018a89d1" t="r" />
+	</Custom>
+</rt>
+
 <rt class="CmPossibilityList" guid="5250350b-83fb-432b-a24f-a8dad580d350">
 	<ItemClsid val="27" />
 	<Name>

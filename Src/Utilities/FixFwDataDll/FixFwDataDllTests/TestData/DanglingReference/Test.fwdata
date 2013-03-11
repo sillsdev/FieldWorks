@@ -20,6 +20,9 @@
 
 <rt class="LexSense" guid="3110cf83-ad6c-47fe-91f8-8bf789473792" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455">
 <MorphoSyntaxAnalysis />
+	<SenseType>
+		<objsur guid="408ba7ca-e15a-448e-aaaa-3855f93bd3c2" t="r" /> <!-- dangler -->
+	</SenseType>
 </rt>
 
 <rt class="MoStemMsa" guid="408ba7ca-e15a-448e-a618-3855f93bd3c2" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455" />

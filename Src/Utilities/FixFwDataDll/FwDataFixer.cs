@@ -263,7 +263,19 @@ namespace SIL.FieldWorks.FixData
 					}
 				}
 				foreach (var objsur in m_danglingLinks)
+				{
+					var parent = objsur.Parent;
 					objsur.Remove();
+					if (!parent.Elements().Any())
+					{
+						// LT-14189: don't keep empty atomic ref property elements.
+						// Removing empty sequence and collection property elements is less necessary, but generally
+						// desirable, since we don't normally write them out empty, so it reduces diffs for Send/Receive.
+						// The parent of an objsur is always a property, and we never want those elements if they
+						// are empty.
+						parent.Remove();
+					}
+				}
 				m_danglingLinks.Clear();
 
 				foreach (var run in rt.Descendants("Run"))
