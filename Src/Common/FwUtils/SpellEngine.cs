@@ -102,6 +102,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			IntPtr pointerToAddressStringArray;
 			int resultCount = hunspell_suggest(m_hunspellHandle, MarshallAsUtf8Bytes(badWord), out pointerToAddressStringArray);
+			if (pointerToAddressStringArray == IntPtr.Zero)
+				return new string[0];
 			var results = MarshalUnmananagedStrArray2ManagedStrArray(pointerToAddressStringArray, resultCount);
 			hunspell_free_list(m_hunspellHandle, ref pointerToAddressStringArray, resultCount);
 			return results;
