@@ -318,6 +318,13 @@
 
 	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
 
+	<ItemGroup>
+		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp"/>
+		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log"/>
+		<GeneratedFiles Include="$(fwrt)/Src/Common/COMInterfaces/FwKernel.cs"/>
+		<GeneratedFiles Include="$(fwrt)/Src/Common/COMInterfaces/Views.cs"/>
+	</ItemGroup>
+
 	<Target Name="CleanAll">
 		<!-- remove the Obj and Output directories -->
 		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)"/>
@@ -325,6 +332,7 @@
 		<!-- remove other directories and files created during the build process -->
 		<ForceDelete Files="@(IcuDataFiles)"/>
 		<ForceDelete Files="$(fwrt)/Bin/FieldWorks.targets"/>
+		<ForceDelete Files="@(GeneratedFiles)"/>
 
 		<Message Text="Finished deleting the output directories!"/>
 	</Target>
