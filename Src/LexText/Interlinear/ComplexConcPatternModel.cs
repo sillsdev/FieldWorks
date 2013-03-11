@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using SIL.CoreImpl;
@@ -12,13 +13,16 @@ using SIL.Machine.Matching;
 
 namespace SIL.FieldWorks.IText
 {
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache is a reference")]
 	public class ComplexConcPatternModel
 	{
 		private readonly ComplexConcPatternNode m_root;
 		private readonly ComplexConcPatternSda m_sda;
-		private readonly FeatureSystem m_featSys;
 		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private Matcher<ComplexConcParagraphData, ShapeNode> m_matcher;
+		private readonly FdoCache m_cache;
+		private FeatureSystem m_featSys;
 
 		public ComplexConcPatternModel(FdoCache cache)
 			: this(cache, new ComplexConcGroupNode())
@@ -27,59 +31,9 @@ namespace SIL.FieldWorks.IText
 
 		public ComplexConcPatternModel(FdoCache cache, ComplexConcPatternNode root)
 		{
+			m_cache = cache;
 			m_root = root;
 			m_spanFactory = new ShapeSpanFactory();
-			m_featSys = new FeatureSystem
-				{
-					new SymbolicFeature("type",
-						new FeatureSymbol("bdry", "Boundary"),
-						new FeatureSymbol("word", "Word"),
-						new FeatureSymbol("morph", "Morph"),
-						new FeatureSymbol("ttag", "Text Tag")) {Description = "Type"},
-					new SymbolicFeature("anchorType",
-						new FeatureSymbol("paraBdry", "Paragraph"),
-						new FeatureSymbol("segBdry", "Segment"),
-						new FeatureSymbol("wordBdry", "Word"))
-				};
-			foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
-			{
-				m_featSys.Add(new StringFeature(string.Format("entry-{0}", ws.Handle)) {Description = string.Format("Entry-{0}", ws.Abbreviation)});
-				m_featSys.Add(new StringFeature(string.Format("form-{0}", ws.Handle)) {Description = string.Format("Form-{0}", ws.Abbreviation)});
-			}
-
-			foreach (IWritingSystem ws in cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
-				m_featSys.Add(new StringFeature(string.Format("gloss-{0}", ws.Handle)) {Description = string.Format("Gloss-{0}", ws.Abbreviation)});
-
-			m_featSys.Add(new SymbolicFeature("cat", cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().AllInstances()
-				.Select(pos => new FeatureSymbol(pos.Hvo.ToString(CultureInfo.InvariantCulture), pos.Abbreviation.BestAnalysisAlternative.Text)))
-				{
-					Description = "Category"
-				});
-
-			m_featSys.Add(new SymbolicFeature("tag", cache.LangProject.TextMarkupTagsOA.PossibilitiesOS
-				.SelectMany(poss => poss.SubPossibilitiesOS, (category, tag) => new FeatureSymbol(tag.Hvo.ToString(CultureInfo.InvariantCulture), tag.Abbreviation.BestAnalysisAlternative.Text)))
-				{
-					Description = "Tag"
-				});
-
-			m_featSys.Add(new ComplexFeature("infl") {Description = "Infl"});
-			foreach (IFsFeatDefn feature in cache.LangProject.MsFeatureSystemOA.FeaturesOC)
-			{
-				var complexFeat = feature as IFsComplexFeature;
-				if (complexFeat != null)
-				{
-					m_featSys.Add(new ComplexFeature(complexFeat.Hvo.ToString(CultureInfo.InvariantCulture)) {Description = complexFeat.Abbreviation.BestAnalysisAlternative.Text});
-				}
-				else
-				{
-					var closedFeat = (IFsClosedFeature) feature;
-					m_featSys.Add(new SymbolicFeature(closedFeat.Hvo.ToString(CultureInfo.InvariantCulture), closedFeat.ValuesOC.Select(sym =>
-						new FeatureSymbol(sym.Hvo.ToString(CultureInfo.InvariantCulture), sym.Abbreviation.BestAnalysisAlternative.Text)))
-						{
-							Description = closedFeat.Abbreviation.BestAnalysisAlternative.Text
-						});
-				}
-			}
 			m_sda = new ComplexConcPatternSda((ISilDataAccessManaged) cache.DomainDataByFlid, m_root);
 		}
 
@@ -105,6 +59,58 @@ namespace SIL.FieldWorks.IText
 
 		public void Compile()
 		{
+			m_featSys = new FeatureSystem
+				{
+					new SymbolicFeature("type",
+						new FeatureSymbol("bdry", "Boundary"),
+						new FeatureSymbol("word", "Word"),
+						new FeatureSymbol("morph", "Morph"),
+						new FeatureSymbol("ttag", "Text Tag")) {Description = "Type"},
+					new SymbolicFeature("anchorType",
+						new FeatureSymbol("paraBdry", "Paragraph"),
+						new FeatureSymbol("segBdry", "Segment"),
+						new FeatureSymbol("wordBdry", "Word"))
+				};
+			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
+			{
+				m_featSys.Add(new StringFeature(string.Format("entry-{0}", ws.Handle)) {Description = string.Format("Entry-{0}", ws.Abbreviation)});
+				m_featSys.Add(new StringFeature(string.Format("form-{0}", ws.Handle)) {Description = string.Format("Form-{0}", ws.Abbreviation)});
+			}
+
+			foreach (IWritingSystem ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				m_featSys.Add(new StringFeature(string.Format("gloss-{0}", ws.Handle)) {Description = string.Format("Gloss-{0}", ws.Abbreviation)});
+
+			m_featSys.Add(new SymbolicFeature("cat", m_cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().AllInstances()
+				.Select(pos => new FeatureSymbol(pos.Hvo.ToString(CultureInfo.InvariantCulture), pos.Abbreviation.BestAnalysisAlternative.Text)))
+				{
+					Description = "Category"
+				});
+
+			m_featSys.Add(new SymbolicFeature("tag", m_cache.LangProject.TextMarkupTagsOA.PossibilitiesOS
+				.SelectMany(poss => poss.SubPossibilitiesOS, (category, tag) => new FeatureSymbol(tag.Hvo.ToString(CultureInfo.InvariantCulture), tag.Abbreviation.BestAnalysisAlternative.Text)))
+				{
+					Description = "Tag"
+				});
+
+			m_featSys.Add(new ComplexFeature("infl") {Description = "Infl"});
+			foreach (IFsFeatDefn feature in m_cache.LangProject.MsFeatureSystemOA.FeaturesOC)
+			{
+				var complexFeat = feature as IFsComplexFeature;
+				if (complexFeat != null)
+				{
+					m_featSys.Add(new ComplexFeature(complexFeat.Hvo.ToString(CultureInfo.InvariantCulture)) {Description = complexFeat.Abbreviation.BestAnalysisAlternative.Text});
+				}
+				else
+				{
+					var closedFeat = (IFsClosedFeature) feature;
+					m_featSys.Add(new SymbolicFeature(closedFeat.Hvo.ToString(CultureInfo.InvariantCulture), closedFeat.ValuesOC.Select(sym =>
+						new FeatureSymbol(sym.Hvo.ToString(CultureInfo.InvariantCulture), sym.Abbreviation.BestAnalysisAlternative.Text)))
+						{
+							Description = closedFeat.Abbreviation.BestAnalysisAlternative.Text
+						});
+				}
+			}
+
 			var pattern = new Pattern<ComplexConcParagraphData, ShapeNode>();
 			pattern.Children.Add(m_root.GeneratePattern(m_featSys));
 			m_matcher = new Matcher<ComplexConcParagraphData, ShapeNode>(m_spanFactory, pattern);

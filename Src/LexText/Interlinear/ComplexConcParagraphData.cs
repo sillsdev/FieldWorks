@@ -84,7 +84,9 @@ namespace SIL.FieldWorks.IText
 
 							if (mb.MsaRA != null && mb.MsaRA.ComponentsRS != null)
 							{
-								morphFS.AddValue(catFeat, GetHvoOfMsaPartOfSpeech(mb.MsaRA).Select(hvo => catFeat.PossibleSymbols[hvo.ToString(CultureInfo.InvariantCulture)]));
+								FeatureSymbol[] catSymbols = GetHvoOfMsaPartOfSpeech(mb.MsaRA).Select(hvo => catFeat.PossibleSymbols[hvo.ToString(CultureInfo.InvariantCulture)]).ToArray();
+								if (catSymbols.Length > 0)
+									morphFS.AddValue(catFeat, catSymbols);
 								var inflFS = GetFeatureStruct(featSys, mb.MsaRA);
 								if (inflFS != null)
 								{
@@ -221,7 +223,7 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			if (fs != null && fs.FeatureSpecsOC.Count > 0)
+			if (fs != null && !fs.IsEmpty)
 			{
 				return GetFeatureStruct(featSys, fs);
 			}
@@ -237,12 +239,14 @@ namespace SIL.FieldWorks.IText
 				var complexVal = featSpec as IFsComplexValue;
 				if (complexVal != null)
 				{
-					featStruct.AddValue(featSys.GetFeature(complexVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture)), GetFeatureStruct(featSys, (IFsFeatStruc) complexVal.ValueOA));
+					var cfs = complexVal.ValueOA as IFsFeatStruc;
+					if (complexVal.FeatureRA != null && cfs != null && !cfs.IsEmpty)
+						featStruct.AddValue(featSys.GetFeature(complexVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture)), GetFeatureStruct(featSys, cfs));
 				}
 				else
 				{
 					var closedVal = featSpec as IFsClosedValue;
-					if (closedVal != null)
+					if (closedVal != null && closedVal.FeatureRA != null)
 					{
 						var symFeat = featSys.GetFeature<SymbolicFeature>(closedVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture));
 						FeatureSymbol symbol;
