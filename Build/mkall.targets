@@ -364,13 +364,9 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/libhunspell.dll" DestinationFolder="$(dir-outputBase)"
 				  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 
-		<Copy SourceFiles="$(fwrt)/DistFiles/glib-2-vs10.dll" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/icutu50.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Windows/gennorm2.exe" DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/gmodule-2-vs10.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<!-- Chorus dlls. bt228 specifies the WeSay1.4 branch. Update when appropriate. -->
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt228/.lastSuccessful/Autofac.dll" LocalFilename="$(dir-outputBase)/Autofac.dll" />
