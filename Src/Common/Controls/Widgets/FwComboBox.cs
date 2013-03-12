@@ -2184,10 +2184,14 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		private static void ShowInactiveTopmost(Form owner, Form frm)
 		{
+#if __MonoCS__
+			// TODO:  Implement something comparable on Linux/Mono if possible.
+#else
 			if (owner != null)
 				SetWindowLong(frm.Handle, GWL_HWNDPARENT, owner.Handle.ToInt32());
 			ShowWindow(frm.Handle, SW_SHOWNOACTIVATE);
 			SetWindowPos(frm.Handle.ToInt32(), HWND_TOPMOST, frm.Left, frm.Top, frm.Width, frm.Height, SWP_NOACTIVATE);
+#endif
 		}
 
 		/// <summary>
