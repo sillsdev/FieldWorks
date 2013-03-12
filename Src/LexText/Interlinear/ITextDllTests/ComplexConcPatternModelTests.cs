@@ -194,58 +194,58 @@ namespace SIL.FieldWorks.IText
 
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_verb});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcTagNode {Tag = m_np});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 12, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 12, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordNode());
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 12, 15, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 12, 15, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Form = MakeVernString("him")});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Entry = MakeVernString("ra")});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Gloss = MakeAnalysisString("1SgPoss")});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_adj, NegateCategory = true});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_adj, NegateCategory = true, Form = MakeVernString("him"), Entry = MakeVernString("him"), Gloss = MakeAnalysisString("3SgObj")});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_adj, NegateCategory = true, Form = MakeVernString("him"), Entry = MakeVernString("hin"), Gloss = MakeAnalysisString("3SgObj")});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.Empty);
+			Assert.That(model.Search(m_text.ContentsOA), Is.Empty);
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordNode());
 			model.Root.Children.Add(new ComplexConcTagNode());
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
 		}
 
 		[Test]
@@ -258,19 +258,19 @@ namespace SIL.FieldWorks.IText
 
 			model.Root.Children.Add(new ComplexConcMorphNode {Form = MakeVernString("bili")});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Root.Children.Add(new ComplexConcMorphNode {Form = MakeVernString("bili")});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.Empty);
+			Assert.That(model.Search(m_text.ContentsOA), Is.Empty);
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Form = MakeVernString("bili")});
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.Empty);
+			Assert.That(model.Search(m_text.ContentsOA), Is.Empty);
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
@@ -278,40 +278,40 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.Empty);
-
-			model.Root.Children.Clear();
-			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_adj});
-			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
-			model.Compile();
-			Assert.That(model.Search(m_text), Is.Empty);
+			Assert.That(model.Search(m_text.ContentsOA), Is.Empty);
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_adj});
-			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 12, 22, null)}).Using(m_fragmentComparer));
-
-			model.Root.Children.Clear();
-			model.Root.Children.Add(new ComplexConcWordBdryNode());
-			model.Compile();
-			Assert.That(model.Search(m_text), Is.Empty);
+			Assert.That(model.Search(m_text.ContentsOA), Is.Empty);
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_adj});
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
+			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
+			model.Compile();
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 12, 22, null)}).Using(m_fragmentComparer));
+
+			model.Root.Children.Clear();
+			model.Root.Children.Add(new ComplexConcWordBdryNode());
+			model.Compile();
+			Assert.That(model.Search(m_text.ContentsOA), Is.Empty);
+
+			model.Root.Children.Clear();
+			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_adj});
+			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.Empty);
+			Assert.That(model.Search(m_text.ContentsOA), Is.Empty);
 		}
 
 		[Test]
@@ -324,41 +324,41 @@ namespace SIL.FieldWorks.IText
 
 			model.Root.Children.Add(new ComplexConcWordNode {Minimum = 0, Maximum = -1});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_noun});
 			model.Root.Children.Add(new ComplexConcWordNode {Minimum = 0, Maximum = -1});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcMorphNode {Gloss = MakeAnalysisString("1SgSubj")});
 			model.Root.Children.Add(new ComplexConcMorphNode {Minimum = 1, Maximum = -1});
 			model.Root.Children.Add(new ComplexConcMorphNode {Form = MakeVernString("ra")});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_verb});
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_adj, Minimum = 0, Maximum = 1});
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_noun});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_verb, Minimum = 1, Maximum = 3});
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.Empty);
+			Assert.That(model.Search(m_text.ContentsOA), Is.Empty);
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_verb, Minimum = 1, Maximum = 4});
 			model.Root.Children.Add(new ComplexConcWordBdryNode());
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null)}).Using(m_fragmentComparer));
 		}
 
 		[Test]
@@ -373,7 +373,7 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(new ComplexConcOrNode());
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_verb});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_noun});
@@ -381,7 +381,7 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_verb});
 			model.Root.Children.Add(new ComplexConcOrNode());
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcGroupNode {Children =
@@ -393,7 +393,7 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(new ComplexConcOrNode());
 			model.Root.Children.Add(new ComplexConcMorphNode {Gloss = MakeAnalysisString("green")});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 12, 15, null),  new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 12, 15, null),  new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcTagNode {Tag = m_np});
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(new ComplexConcOrNode());
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_noun});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 12, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 12, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_noun});
@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(new ComplexConcOrNode());
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_verb});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 		}
 
 		[Test]
@@ -429,7 +429,7 @@ namespace SIL.FieldWorks.IText
 				}});
 			model.Root.Children.Add(new ComplexConcWordNode {Category = m_noun});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
 
 			model.Root.Children.Clear();
 			model.Root.Children.Add(new ComplexConcGroupNode {Minimum = 1, Maximum = -1, Children =
@@ -443,7 +443,7 @@ namespace SIL.FieldWorks.IText
 						}},
 				}});
 			model.Compile();
-			Assert.That(model.Search(m_text), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 22, null)}).Using(m_fragmentComparer));
 		}
 
 		private class ParaFragmentEqualityComparer : IEqualityComparer<IParaFragment>

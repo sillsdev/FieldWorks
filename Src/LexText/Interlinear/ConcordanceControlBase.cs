@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
@@ -120,6 +122,11 @@ namespace SIL.FieldWorks.IText
 			{
 				IsLoadingMatches = false;
 			}
+		}
+
+		protected ConcDecorator ConcDecorator
+		{
+			get { return ((ObjectListPublisher) m_clerk.VirtualListPublisher).BaseSda as ConcDecorator; }
 		}
 
 		protected virtual List<IParaFragment> SearchForMatches()

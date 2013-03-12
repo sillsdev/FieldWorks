@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -263,22 +264,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static bool IsUnsupportedCultureException(Exception e)
 		{
-#if !__MonoCS__
-			if (e is ArgumentException)
-			{
-				Type cultureTableRecordType =
-					Type.GetType("System.Globalization.CultureTableRecord");
-				MethodInfo getCultureTableRecord =
-					cultureTableRecordType.GetMethod("GetCultureTableRecord",
-					BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
-					null, new Type[] { typeof(Int32), typeof(bool) }, null);
-				if (e.TargetSite == getCultureTableRecord)
-					return true;
-			}
-#else
-			// TODO-Linux: implement?
-#endif
-			return false;
+			return e is CultureNotFoundException;
 		}
 
 		/// ------------------------------------------------------------------------------------

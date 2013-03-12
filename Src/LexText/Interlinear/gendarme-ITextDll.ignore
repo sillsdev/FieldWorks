@@ -24,7 +24,7 @@ M: System.Int32 SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::RunAddNewSenseD
 M: System.Void SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::OnSelectVariantOf(System.Object,System.EventArgs)
 M: System.Void SIL.FieldWorks.IText.SandboxBase/IhMissingEntry::RunAddNewAllomorphDlg()
 # Linux
-M: System.Boolean SIL.FieldWorks.IText.InterlinearTextsRecordClerk/<Import>c__AnonStorey13::<>m__3C()
+M: System.Boolean SIL.FieldWorks.IText.InterlinearTextsRecordClerk/<Import>c__AnonStorey14::<>m__3F()
 # Windows
 M: System.Boolean SIL.FieldWorks.IText.InterlinearTextsRecordClerk/<>c__DisplayClass4::<Import>b__2()
 
@@ -36,7 +36,7 @@ M: System.Void SIL.FieldWorks.IText.InterlinDocForAnalysis::InterlinDocForAnalys
 
 # GetEnumerator() returns an object
 M: System.Collections.IEnumerator SIL.FieldWorks.IText.InterlinMaster/<FindControls>d__2`1::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.IText.ComplexConcControl/<GetAllNodes>d__4::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.IText.ComplexConcControl/<GetAllNodes>d__c::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

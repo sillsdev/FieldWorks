@@ -7,7 +7,9 @@ using System.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 using XCore;
@@ -195,6 +197,21 @@ namespace SIL.FieldWorks.IText
 			return parent.Children[index - 1] is ComplexConcMorphNode && parent.Children[index] is ComplexConcMorphNode;
 		}
 
+		private void ParseUnparsedParagraphs()
+		{
+			var concDecorator = ConcDecorator;
+			IStTxtPara[] needsParsing = concDecorator.InterestingTexts.SelectMany(txt => txt.ParagraphsOS).Cast<IStTxtPara>().Where(para => !para.ParseIsCurrent).ToArray();
+			if (needsParsing.Length > 0)
+			{
+				NonUndoableUnitOfWorkHelper.DoSomehow(m_cache.ActionHandlerAccessor,
+					() =>
+					{
+						foreach (var para in needsParsing)
+							ParagraphParser.ParseParagraph(para);
+					});
+			}
+		}
+
 		protected override List<IParaFragment> SearchForMatches()
 		{
 			var matches = new List<IParaFragment>();
@@ -205,7 +222,8 @@ namespace SIL.FieldWorks.IText
 			{
 				m_patternModel.Compile();
 
-				foreach (FDO.IText text in m_cache.LangProject.Texts)
+				ParseUnparsedParagraphs();
+				foreach (IStText text in ConcDecorator.InterestingTexts)
 					matches.AddRange(m_patternModel.Search(text));
 			}
 

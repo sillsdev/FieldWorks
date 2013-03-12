@@ -37,7 +37,11 @@ namespace SIL.FieldWorks.IText
 						var wordFS = new FeatureStruct();
 						wordFS.AddValue(typeFeat, typeFeat.PossibleSymbols["word"]);
 						foreach (int ws in wordform.Form.AvailableWritingSystemIds)
-							wordFS.AddValue(featSys.GetFeature<StringFeature>(string.Format("form-{0}", ws)), wordform.Form.get_String(ws).Text);
+						{
+							StringFeature strFeat;
+							if (featSys.TryGetFeature(string.Format("form-{0}", ws), out strFeat))
+								wordFS.AddValue(strFeat, wordform.Form.get_String(ws).Text);
+						}
 						ShapeNode node = m_shape.Add(wordFS);
 						node.Annotation.Data = analysis;
 						annotations.Add(node.Annotation);
@@ -56,6 +60,10 @@ namespace SIL.FieldWorks.IText
 							morphFS.AddValue(typeFeat, typeFeat.PossibleSymbols["morph"]);
 							foreach (int ws in mb.Form.AvailableWritingSystemIds.Union(mb.MorphRA == null ? Enumerable.Empty<int>() : mb.MorphRA.Form.AvailableWritingSystemIds))
 							{
+								StringFeature strFeat;
+								if (!featSys.TryGetFeature(string.Format("form-{0}", ws), out strFeat))
+									continue;
+
 								IEnumerable<string> forms = Enumerable.Empty<string>();
 								ITsString mbForm = mb.Form.StringOrNull(ws);
 								if (mbForm != null)
@@ -67,19 +75,27 @@ namespace SIL.FieldWorks.IText
 										forms = forms.Concat(morphForm.Text);
 								}
 
-								morphFS.AddValue(featSys.GetFeature<StringFeature>(string.Format("form-{0}", ws)), forms.Distinct());
+								morphFS.AddValue(strFeat, forms.Distinct());
 							}
 							if (mb.SenseRA != null)
 							{
 								foreach (int ws in mb.SenseRA.Gloss.AvailableWritingSystemIds)
-									morphFS.AddValue(featSys.GetFeature<StringFeature>(string.Format("gloss-{0}", ws)), mb.SenseRA.Gloss.get_String(ws).Text);
+								{
+									StringFeature strFeat;
+									if (featSys.TryGetFeature(string.Format("gloss-{0}", ws), out strFeat))
+										morphFS.AddValue(strFeat, mb.SenseRA.Gloss.get_String(ws).Text);
+								}
 							}
 
 							if (mb.MorphRA != null)
 							{
 								var entry = (ILexEntry) mb.MorphRA.Owner;
 								foreach (int ws in entry.LexemeFormOA.Form.AvailableWritingSystemIds)
-									morphFS.AddValue(featSys.GetFeature<StringFeature>(string.Format("entry-{0}", ws)), entry.LexemeFormOA.Form.get_String(ws).Text);
+								{
+									StringFeature strFeat;
+									if (featSys.TryGetFeature(string.Format("entry-{0}", ws), out strFeat))
+										morphFS.AddValue(strFeat, entry.LexemeFormOA.Form.get_String(ws).Text);
+								}
 							}
 
 							if (mb.MsaRA != null && mb.MsaRA.ComponentsRS != null)
@@ -111,12 +127,20 @@ namespace SIL.FieldWorks.IText
 							wordFS.AddValue(inflFeat, wordInflFS);
 						wordform = wanalysis.Wordform;
 						foreach (int ws in wordform.Form.AvailableWritingSystemIds)
-							wordFS.AddValue(featSys.GetFeature<StringFeature>(string.Format("form-{0}", ws)), wordform.Form.get_String(ws).Text);
+						{
+							StringFeature strFeat;
+							if (featSys.TryGetFeature(string.Format("form-{0}", ws), out strFeat))
+								wordFS.AddValue(strFeat, wordform.Form.get_String(ws).Text);
+						}
 						var gloss = analysis.Item1 as IWfiGloss;
 						if (gloss != null)
 						{
 							foreach (int ws in gloss.Form.AvailableWritingSystemIds)
-								wordFS.AddValue(featSys.GetFeature<StringFeature>(string.Format("gloss-{0}", ws)), gloss.Form.get_String(ws).Text);
+							{
+								StringFeature strFeat;
+								if (featSys.TryGetFeature(string.Format("gloss-{0}", ws), out strFeat))
+									wordFS.AddValue(strFeat, gloss.Form.get_String(ws).Text);
+							}
 						}
 						Annotation<ShapeNode> ann = m_shape.Annotations.Add(analysisStart, m_shape.Last, wordFS);
 						ann.Data = analysis;

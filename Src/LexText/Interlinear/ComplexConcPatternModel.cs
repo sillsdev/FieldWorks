@@ -116,19 +116,26 @@ namespace SIL.FieldWorks.IText
 			m_matcher = new Matcher<ComplexConcParagraphData, ShapeNode>(m_spanFactory, pattern);
 		}
 
-		public IEnumerable<IParaFragment> Search(FDO.IText text)
+		public IEnumerable<IParaFragment> Search(IStText text)
 		{
 			if (IsPatternEmpty)
 				return Enumerable.Empty<IParaFragment>();
 
 			var matches = new List<IParaFragment>();
-			foreach (IStTxtPara para in text.ContentsOA.ParagraphsOS)
+			foreach (IStTxtPara para in text.ParagraphsOS)
 			{
 				IParaFragment lastFragment = null;
 				var data = new ComplexConcParagraphData(m_spanFactory, m_featSys, para);
 				Match<ComplexConcParagraphData, ShapeNode> match = m_matcher.Match(data);
 				while (match.Success)
 				{
+					if (match.Span.Start == match.Span.End
+						&& ((FeatureSymbol) match.Span.Start.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
+					{
+						match = match.NextMatch();
+						continue;
+					}
+
 					ShapeNode startNode = match.Span.Start;
 					if (((FeatureSymbol) startNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
 						startNode = startNode.Next;

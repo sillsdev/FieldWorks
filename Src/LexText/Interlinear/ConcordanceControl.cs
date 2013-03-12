@@ -1148,13 +1148,13 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Get the paragraphs we are interested in concording.
 		/// </summary>
-		HashSet<IStTxtPara> ParagraphsToSearch
+		private HashSet<IStTxtPara> ParagraphsToSearch
 		{
 			get
 			{
 				var result = new HashSet<IStTxtPara>();
 				var needsParsing = new List<IStTxtPara>();
-				var concDecorator = GetConcDecorator();
+				var concDecorator = ConcDecorator;
 				foreach (var sttext in concDecorator.InterestingTexts)
 					AddUnparsedParagraphs(sttext, needsParsing, result);
 				if (needsParsing.Count > 0)
@@ -1172,11 +1172,6 @@ namespace SIL.FieldWorks.IText
 				}
 				return result;
 			}
-		}
-
-		private ConcDecorator GetConcDecorator()
-		{
-			return ((ObjectListPublisher) m_clerk.VirtualListPublisher).BaseSda as ConcDecorator;
 		}
 
 		private void AddUnparsedParagraphs(IStText text, List<IStTxtPara> collectUnparsed, HashSet<IStTxtPara> collectUsefulParas)
