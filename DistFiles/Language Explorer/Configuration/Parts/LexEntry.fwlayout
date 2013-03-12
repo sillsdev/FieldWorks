@@ -1579,6 +1579,42 @@
 	<layout class="MoForm" type="jtview" name="publishStemCd">
 		<part ref="MorphTypeConfig" label="Morph Type" before="" after=" " visibility="never" ws="analysis" wsType="analysis" param="publishStemCd"/>
 		<part ref="FormPub" label="Allomorph" before="" after=" " visibility="never" ws="vernacular" wsType="vernacular" />
+		<part ref="FormEnvPub" label="Environments" after=" " visibility="never" sep=", "/>
+		<generate class="MoForm" fieldType="mlstring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" ws="$wsName" wsType="analysis vernacular" sep=" " showLabels="false">
+				<configureMlString field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="simplestring" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<string field="$fieldName" />
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="refatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<obj field="$fieldName" layout="Name"/>
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="vector" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" sep=", ">
+				<seq field="$fieldName" layout="Name" inheritSeps="true"/>
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="integer" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<int field="$fieldName"/>
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="gendate" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never">
+				<gendate field="$fieldName" format="short"/>
+			</part>
+		</generate>
+		<generate class="MoForm" fieldType="owningatom" restrictions="customOnly">
+			<part ref="$child" label="$label" before="" after=" " visibility="never" flowType="divInPara">
+				<obj field="$fieldName" layout="publishFullTextInParas"/>
+			</part>
+		</generate>
 	</layout>
 
 	<layout class="MoForm" type="jtview" name="publishStemLexemeForm">

@@ -501,10 +501,17 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				titleStr = String.Format(xWorksStrings.ksPublicationEntries,
-					Publication.Name.BestAnalysisAlternative.Text, titleStr);
+					GetPublicationName(), titleStr);
 				titleStr = TrimToMaxPixelWidth(maxPublicationTitleWidth, titleStr);
 			}
 			return titleStr;
+		}
+
+		private string GetPublicationName()
+		{
+			if (Publication == null || Publication.Name == null || Publication.Name.BestAnalysisAlternative == null)
+				return "***"; // what we show in the menu for a pub with no name in any language.
+			return Publication.Name.BestAnalysisAlternative.Text;
 		}
 
 		private int GetWidthOfStringInPixels(string sInput)
