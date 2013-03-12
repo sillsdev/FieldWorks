@@ -8,9 +8,9 @@ namespace SIL.FieldWorks.LexText.Controls
 {
 	public class OccurrenceDlg : Form, IFWDisposable
 	{
-		const string s_helpTopic = "khtpCtxtOccur";
+		private string s_helpTopic = "khtpCtxtOccur";
 
-		private readonly IHelpTopicProvider m_helpTopicProvider;
+		private IHelpTopicProvider m_helpTopicProvider;
 		private Label m_lblMin;
 		private Label m_lblMax;
 		private Button m_btnOK;
@@ -35,8 +35,24 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cboMax.SelectedIndex = max == -1 ? 0 : max;
 
 			m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
-			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+			InitHelpTopic();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+		}
+
+		/// <summary>
+		/// Sets the help topic ID for the window.  This is used in both the Help button and when the user hits F1
+		/// </summary>
+		public void SetHelpTopic(string helpTopic)
+		{
+			CheckDisposed();
+
+			s_helpTopic = helpTopic;
+			InitHelpTopic();
+		}
+
+		private void InitHelpTopic()
+		{
+			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 		}
 
 		public int Minimum

@@ -2966,4 +2966,16 @@
   <data name="khtpChoose-Grammar-NaturalClasses-SetPhonologicalFeatures" xml:space="preserve">
     <value>Using_Tools/Grammar_tools/Natural_Classes/Choose_phonological_features(NC).htm</value>
   </data>
+  <data name="khtpComplexConcMorphDlg" xml:space="preserve">
+    <value>Using_Tools/Texts_&amp;_Words_tools/Complex_Concordance/Set_Morph_Criteria.htm</value>
+  </data>
+  <data name="khtpComplexConcTagDlg" xml:space="preserve">
+    <value>Using_Tools/Texts_&amp;_Words_tools/Complex_Concordance/Select_Tag.htm</value>
+  </data>
+  <data name="khtpComplexConcWordDlg" xml:space="preserve">
+    <value>Using_Tools/Texts_&amp;_Words_tools/Complex_Concordance/Set_Word_Criteria.htm</value>
+  </data>
+  <data name="khtpCtxtOccurComplexConcordance" xml:space="preserve">
+    <value>Using_Tools/Texts_&amp;_Words_tools/Complex_Concordance/Set_Occurrence_(Complex_Concordance).htm</value>
+  </data>
 </root>

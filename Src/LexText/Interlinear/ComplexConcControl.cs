@@ -861,6 +861,7 @@ namespace SIL.FieldWorks.IText
 				}
 				using (var dlg = new OccurrenceDlg(m_mediator.HelpTopicProvider, min, max, paren))
 				{
+					dlg.SetHelpTopic("khtpCtxtOccurComplexConcordance");
 					if (dlg.ShowDialog((XWindow) m_mediator.PropertyTable.GetValue("window")) == DialogResult.OK)
 					{
 						min = dlg.Minimum;

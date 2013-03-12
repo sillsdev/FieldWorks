@@ -9,7 +9,7 @@ namespace SIL.FieldWorks.IText
 {
 	public class ComplexConcTagDlg : Form
 	{
-		const string s_helpTopic = "khtpNoHelpTopic";
+		const string s_helpTopic = "khtpComplexConcTagDlg";
 
 		private Button m_btnHelp;
 		private Button m_btnCancel;
