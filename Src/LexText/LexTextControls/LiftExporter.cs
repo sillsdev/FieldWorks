@@ -858,9 +858,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="actualPath"></param>
 		/// <param name="liftFolderName"></param>
 		/// <returns></returns>
-		private string ExportFile(string writePath, string actualPath, string liftFolderName)
+		private string ExportFile(string writePath1, string actualPath1, string liftFolderName)
 		{
-			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && File.Exists(actualPath))
+			// We are going to export the text of this to XML as NFC, so we want to write the file using a matching NFC name.
+			var writePath = Icu.Normalize(writePath1, Icu.UNormalizationMode.UNORM_NFC);
+			// Use as source any similar file that exists.
+			var actualPath = FileUtils.ActualFilePath(actualPath1);
+			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && FileUtils.FileExists(actualPath))
 			{
 				var destFolder = Path.Combine(FolderPath, liftFolderName);
 				Directory.CreateDirectory(destFolder);
