@@ -1164,7 +1164,7 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 			cch = min( kcch1, (ULONG)wcslen(s_rgpsz1[0]));
-			LockGetText lgt1(m_qtxs, 0, -1, rgch1, kcch1, &tri, 1);
+			LockGetText lgt1(m_qtxs, 0, -1, rgch1, kcch1 + 1, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt1.m_hrLock);
 			unitpp::assert_eq("GetText(0,-1) lim ichNext", (LONG)cch, lgt1.m_ichNext);
 			unitpp::assert_true("GetText(0,-1) lim rgch1",
@@ -1383,7 +1383,7 @@ namespace TestViews
 			MakeSelLong();
 			stu.Assign(s_rgpsz2[0]);
 			cch = stu.Length();
-			LockGetText lgt9(m_qtxs, 0, s_cchPara1 + s_cchParaBreak + 10, rgch2, cch, &tri, 1);
+			LockGetText lgt9(m_qtxs, 0, s_cchPara1 + s_cchParaBreak + 10, rgch2, cch + 1, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt9.m_hrLock);
 			unitpp::assert_eq("GetText(MakeSelLong) short ichNext", (LONG)cch, lgt9.m_ichNext);
 			unitpp::assert_true("GetText(MakeSelLong) short text",
@@ -1409,7 +1409,7 @@ namespace TestViews
 			StrUni stu;
 			MakeSelLong();
 			LockGetText lgt10(m_qtxs, s_cchPara1, s_cchPara1 + s_cchParaBreak + 10, rgch2,
-				s_cchParaBreak, &tri, 1);
+				s_cchParaBreak + 1, &tri, 1);
 			unitpp::assert_eq("Should succeed", S_OK, lgt10.m_hrLock);
 			unitpp::assert_eq("GetText(MakeSelLong) crlf ichNext",
 				(LONG)s_cchPara1 + s_cchParaBreak, lgt10.m_ichNext);
@@ -2265,7 +2265,7 @@ namespace TestViews
 			int cch = min(stu.Length(), cchBuf);
 			//prgch[cch] = chBound;
 			TS_RUNINFO tri;
-			LockGetText lgt(m_qtxs, 7, -1, prgch, cchBuf, &tri, 1);
+			LockGetText lgt(m_qtxs, 7, -1, prgch, cchBuf + 1, &tri, 1);
 			StrAnsi staMsg;
 			staMsg.Format("GetText(%s) [bufsize=%d] ichNext", pszMsg, cchBuf);
 			unitpp::assert_eq(staMsg.Chars(), (LONG)cch + 7, lgt.m_ichNext);

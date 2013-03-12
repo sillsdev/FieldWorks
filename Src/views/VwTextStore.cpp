@@ -871,9 +871,9 @@ void VwTextStore::NormalizeText(StrUni & stuText, WCHAR* pchPlain, ULONG cchPlai
 	ULONG * pcchPlainOut, TS_RUNINFO * prgRunInfo, ULONG ulRunInfoReq, ULONG * pulRunInfoOut)
 {
 	StrUtil::NormalizeStrUni(stuText, UNORM_NFC);
-	*pcchPlainOut = min(cchPlainReq, (ULONG)stuText.Length());
-	Assert(cchPlainReq >= (ULONG)stuText.Length());
-	wcscpy_s(pchPlain, cchPlainReq, stuText.Chars());
+	// we need space for the terminating NULL character
+	*pcchPlainOut = min(cchPlainReq - 1, (ULONG)stuText.Length());
+	wcsncpy_s(pchPlain, cchPlainReq, stuText.Chars(), _TRUNCATE);
 
 	if (ulRunInfoReq > 0)
 		*pulRunInfoOut = SetOrAppendRunInfo(prgRunInfo, ulRunInfoReq, 0, TS_RT_PLAIN, *pcchPlainOut);
