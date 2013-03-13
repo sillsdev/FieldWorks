@@ -1,0 +1,9 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+1: Jason Naylor <jason.naylor@gmail.com>
+Code-Review+2: John Thomson <john.thomson7540@gmail.com>
+Submitted-by: Damien Daspit <damien_daspit@sil.org>
+Submitted-at: Wed, 13 Mar 2013 16:36:05 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/819
+Project: FieldWorks
+Branch: refs/heads/develop
