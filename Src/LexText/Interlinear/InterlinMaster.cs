@@ -875,6 +875,17 @@ namespace SIL.FieldWorks.IText
 				m_tabCtrl.SelectedTab.Controls[0].Focus();
 		}
 
+		/// <summary>
+		/// Save any intermediate analysis information on validation requests
+		/// note: this is triggered before a Send/Receive operation
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
+		{
+			base.OnValidating(e);
+			SaveWorkInProgress();
+		}
+
 		protected override void ShowRecord()
 		{
 			SaveWorkInProgress();

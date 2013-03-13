@@ -194,6 +194,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnFLExBridge(object commandObject)
 		{
 			StopParser();
+			SaveAllDataToDisk();
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 			if (IsDb4oProject)
 			{
@@ -268,6 +269,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody should also try to handle the message.</returns>
 		public bool OnLiftBridge(object argument)
 		{
+			SaveAllDataToDisk();
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
 
 			// Step 0. Try to move an extant lift repo from old location to new.
@@ -296,6 +298,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				_mediator.BroadcastMessage("MasterRefresh", null);
 
 			return true; // We dealt with it.
+		}
+
+		private void SaveAllDataToDisk()
+		{
+			//Give all forms the opportunity to save any uncommitted data
+			//(important for analysis sandboxes)
+			var activeForm = _mediator.PropertyTable.GetValue("window") as Form;
+			if (activeForm != null)
+			{
+				activeForm.ValidateChildren(ValidationConstraints.Enabled);
+			}
+			//Commit all the data in the cache and save to disk
+			ProjectLockingService.UnlockCurrentProject(Cache);
 		}
 
 		#endregion LiftBridge S/R messages
@@ -1115,7 +1130,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Justification="tempWindow is a reference")]
 		private bool ChangeProjectNameIfNeeded()
 		{
-			ProjectLockingService.UnlockCurrentProject(Cache);
 			// Enhance GJM: When Hg is upgraded to work with non-Ascii filenames, this section can be removed.
 			if (Unicode.CheckForNonAsciiCharacters(Cache.ProjectId.Name))
 			{
