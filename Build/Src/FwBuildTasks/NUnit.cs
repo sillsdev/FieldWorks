@@ -88,14 +88,14 @@ namespace FwBuildTasks
 		public string ProjectConfiguration { get; set; }
 
 		// make this nullable so we have a third state, not set
-		private bool? _testInNewThread = null;
+		private bool? _testInNewThread;
 
 		/// <summary>
 		/// Allows tests to be run in a new thread, allowing you to take advantage of ApartmentState and ThreadPriority settings in the config file.
 		/// </summary>
 		public bool TestInNewThread
 		{
-			get { return _testInNewThread.HasValue ? _testInNewThread.Value : true; }
+			get { return !_testInNewThread.HasValue || _testInNewThread.Value; }
 			set { _testInNewThread = value; }
 		}
 
@@ -114,16 +114,30 @@ namespace FwBuildTasks
 		/// </summary>
 		public string ToolPath { get; set; }
 
+		/// <summary>
+		/// Gets the name of the NUnit executable. When running on Mono this is
+		/// different from ProgramName() which returns the executable we'll start.
+		/// </summary>
+		private string RealProgramName
+		{
+			get
+			{
+				return Path.Combine(ToolPath, Force32Bit ? "nunit-console-x86.exe" : "nunit-console.exe");
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the executable to start.
+		/// </summary>
+		/// <returns>The name of the NUnit executable when run on .NET, or
+		/// the name of the Mono runtime executable when run on Mono.</returns>
 		protected override string ProgramName()
 		{
 			var mono = Environment.GetEnvironmentVariable("MONO_RUNTIME_EXECUTABLE_PATH");
 			if (!String.IsNullOrEmpty(mono))
 				return mono;
 			EnsureToolPath();
-			if (Force32Bit)
-				return Path.Combine(ToolPath, "nunit-console-x86.exe");
-			else
-				return Path.Combine(ToolPath, "nunit-console.exe");
+			return RealProgramName;
 		}
 
 		protected override string ProgramArguments()
@@ -134,10 +148,7 @@ namespace FwBuildTasks
 			{
 				EnsureToolPath();
 				bldr.Append("--debug "); // cause Mono to show filenames in stack trace
-				if (Force32Bit)
-					bldr.Append(Path.Combine(ToolPath, "nunit-console-x86.exe"));
-				else
-					bldr.Append(Path.Combine(ToolPath, "nunit-console.exe"));
+				bldr.Append(RealProgramName);
 			}
 			foreach (var item in Assemblies)
 			{
@@ -228,9 +239,9 @@ namespace FwBuildTasks
 			ToolPath = ".";
 		}
 
-		protected override string TestProgramName()
+		protected override string TestProgramName
 		{
-			return String.Format("NUnit ({0})", FixturePath);
+			get { return String.Format("NUnit ({0})", FixturePath); }
 		}
 
 		private string FixturePath
@@ -253,9 +264,9 @@ namespace FwBuildTasks
 			var lines = new List<string>();
 			foreach (var line in m_TestLog)
 			{
-				var trim = line.Trim();
-				if (trim.StartsWith("***** "))
-					lines.Add(trim);
+				var trimmedLine = line.Trim();
+				if (trimmedLine.StartsWith("***** "))
+					lines.Add(trimmedLine);
 				else
 					Log.LogMessage(MessageImportance.Normal, line);
 			}
@@ -295,14 +306,17 @@ namespace FwBuildTasks
 			}
 		}
 
-		protected override void ReportFailedSuite()
+		protected override ITaskItem[] FailedSuiteNames
 		{
-			var suites = new ITaskItem[Assemblies.Length];
-			for (int i = 0; i < Assemblies.Length; i++)
+			get
 			{
-				suites[i] = new TaskItem(Path.GetFileNameWithoutExtension(Assemblies[i].ItemSpec));
+				var suites = new ITaskItem[Assemblies.Length];
+				for (int i = 0; i < Assemblies.Length; i++)
+				{
+					suites[i] = new TaskItem(Path.GetFileNameWithoutExtension(Assemblies[i].ItemSpec));
+				}
+				return suites;
 			}
-			FailedSuites = suites;
 		}
 	}
 }

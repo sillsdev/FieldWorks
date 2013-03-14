@@ -39,12 +39,18 @@ namespace FwBuildTasks
 		[Output]
 		public ITaskItem[] FailedSuites { get; protected set; }
 
+		/// <summary>
+		/// Contains the names of test suites that got a timeout or that crashed
+		/// </summary>
+		[Output]
+		public ITaskItem[] AbandondedSuites { get; protected set; }
+
 		public override bool Execute()
 		{
 			if (Timeout == Int32.MaxValue)
-				Log.LogMessage(MessageImportance.Normal, "Running {0}", TestProgramName());
+				Log.LogMessage(MessageImportance.Normal, "Running {0}", TestProgramName);
 			else
-				Log.LogMessage(MessageImportance.Normal, "Running {0} (timeout = {1} seconds)", TestProgramName(), ((double)Timeout/1000.0).ToString("F1"));
+				Log.LogMessage(MessageImportance.Normal, "Running {0} (timeout = {1} seconds)", TestProgramName, ((double)Timeout/1000.0).ToString("F1"));
 
 			Thread outputThread = null;
 			Thread errorThread = null;
@@ -85,7 +91,7 @@ namespace FwBuildTasks
 				}
 
 				TimeSpan delta = DateTime.Now - dtStart;
-				Log.LogMessage(MessageImportance.Normal, "Total time for running {0} = {1}", TestProgramName(), delta);
+				Log.LogMessage(MessageImportance.Normal, "Total time for running {0} = {1}", TestProgramName, delta);
 
 				try
 				{
@@ -97,25 +103,22 @@ namespace FwBuildTasks
 					//Console.WriteLine("STACK: {0}", e.StackTrace);
 				}
 
-				if (fTimedOut)
-				{
-					Log.LogWarning("The tests in {0} did not finish in {1} milliseconds.",
-						TestProgramName(), Timeout);
-					ReportFailedSuite();
-					return true;
-				}
 				if (process.ExitCode != 0)
 				{
-					Log.LogWarning("{0} returned with exit code {1}", TestProgramName(),
+					Log.LogError("{0} returned with exit code {1}", TestProgramName,
 						process.ExitCode);
-					ReportFailedSuite();
-					return true;
+					FailedSuites = FailedSuiteNames;
+				}
+				else if (fTimedOut)
+				{
+					Log.LogWarning("The tests in {0} did not finish in {1} milliseconds.",
+						TestProgramName, Timeout);
+					FailedSuites = FailedSuiteNames;
 				}
 			}
 			catch (Exception e)
 			{
 				Log.LogErrorFromException(e, true);
-				return false;
 			}
 			finally
 			{
@@ -130,7 +133,7 @@ namespace FwBuildTasks
 					errorThread.Abort();
 				}
 			}
-			return true;
+			return !Log.HasLoggedErrors;
 		}
 
 		/// <summary>
@@ -179,9 +182,9 @@ namespace FwBuildTasks
 
 		protected abstract string GetWorkingDirectory();
 
-		protected abstract string TestProgramName();
+		protected abstract string TestProgramName { get; }
 
-		protected abstract void ReportFailedSuite();
+		protected abstract ITaskItem[] FailedSuiteNames { get; }
 
 		/// <summary>
 		/// Reads from the standard output stream until the external program is ended.

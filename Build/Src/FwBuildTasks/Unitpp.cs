@@ -46,9 +46,9 @@ namespace FwBuildTasks
 			return Path.GetFullPath(Path.GetDirectoryName(FixturePath));
 		}
 
-		protected override string TestProgramName()
+		protected override string TestProgramName
 		{
-			return Path.GetFileName(FixturePath);
+			get { return Path.GetFileName(FixturePath); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -276,10 +276,9 @@ namespace FwBuildTasks
 			return testCase;
 		}
 
-		protected override void ReportFailedSuite()
+		protected override ITaskItem[] FailedSuiteNames
 		{
-			FailedSuites = new ITaskItem[]
-				{ new TaskItem(Path.GetFileNameWithoutExtension(FixturePath)) };
+			get { return new ITaskItem[] { new TaskItem(Path.GetFileNameWithoutExtension(FixturePath)) }; }
 		}
 	}
 }
