@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
 namespace FwBuildTasks
@@ -569,9 +571,63 @@ namespace FwBuildTasks
 		}
 	}
 
+	class MockBuildEngine : IBuildEngine
+	{
+		#region IBuildEngine Members
+
+		public bool BuildProjectFile(string projectFileName, string[] targetNames, System.Collections.IDictionary globalProperties, System.Collections.IDictionary targetOutputs)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int ColumnNumberOfTaskNode
+		{
+			get { return 0; }
+		}
+
+		public bool ContinueOnError
+		{
+			get { return false; }
+		}
+
+		public int LineNumberOfTaskNode
+		{
+			get { return 0; }
+		}
+
+		public void LogCustomEvent(CustomBuildEventArgs e)
+		{
+		}
+
+		public void LogErrorEvent(BuildErrorEventArgs e)
+		{
+		}
+
+		public void LogMessageEvent(BuildMessageEventArgs e)
+		{
+		}
+
+		public void LogWarningEvent(BuildWarningEventArgs e)
+		{
+		}
+
+		public string ProjectFileOfTaskNode
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		#endregion
+	}
+
+
 	class InstrumentedLocalizeFieldWorks : LocalizeFieldWorks
 	{
 		public string ErrorMessages = "";
+
+		public InstrumentedLocalizeFieldWorks()
+		{
+			BuildEngine = new MockBuildEngine();
+		}
 
 		/// <summary>
 		/// In normal operation, this is the same as RootDirectory. In test, we find the real one, to allow us to

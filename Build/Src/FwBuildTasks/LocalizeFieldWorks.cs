@@ -32,7 +32,7 @@ namespace FwBuildTasks
 	/// - First we generate a lookup table (for an XSLT) which contains a transformation of the .PO file, Output/[locale].xml, e.g., Output/fr.xml.
 	/// - For each non-test project,
 	///     - for each .resx file in the project folder or a direct subfolder
-	///         - apply an xslt, Bld/LocalizeResx.xsl, to [path]/File.resx, producing Output[path]/[namespace].File.Strings.[locale].resx. (resx files are internally xml)
+	///         - apply an xslt, Build/LocalizeResx.xsl, to [path]/File.resx, producing Output[path]/[namespace].File.Strings.[locale].resx. (resx files are internally xml)
 	///             (LocalizeResx.xsl includes the Output/fr.xml file created in the first step and uses it to translate appropriate items in the resx.)
 	///             (Namespace is the fully qualified namespace of the project, which is made part of the filename.)
 	///         - run an external program, resgen, which converts the resx to a .resources file in the same location, with otherwise the same name.
@@ -70,7 +70,7 @@ namespace FwBuildTasks
 		internal static readonly string ConfigFolderName = "Configuration";
 		internal static readonly string OutputFolderName = "Output";
 		internal static readonly string SrcFolderName = "Src";
-		internal static readonly string BldFolderName = "Bld";
+		internal static readonly string BldFolderName = "Build";
 
 		internal static readonly string AssemblyInfoName = "CommonAssemblyInfo.cs";
 
