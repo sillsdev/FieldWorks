@@ -4,9 +4,17 @@
 		<clerk id="OccurrencesOfSelectedUnit" allowDeletions="false">
 			<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit"/>
 			<recordList class="LangProject" field="ConcOccurrences">
-		<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems"/>
-		<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
-	  </recordList>
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems"/>
+				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+			</recordList>
+			<sortMethods/>
+		</clerk>
+		<clerk id="complexConcOccurrencesOfSelectedUnit" allowDeletions="false">
+			<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.OccurrencesOfSelectedUnit"/>
+			<recordList class="LangProject" field="ConcOccurrences">
+				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.MatchingConcordanceItems"/>
+				<decoratorClass assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.ConcDecorator"/>
+			</recordList>
 			<sortMethods/>
 		</clerk>
 		<clerk id="OccurrencesOfSelectedWordform" clerkProvidingOwner="concordanceWords">
@@ -77,7 +85,7 @@
 				<parameters id="complexConcordanceControl" collapse="110000">
 				  <control>
 					<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.ComplexConcControl"/>
-					<parameters id="complexConcordanceControl" clerk="OccurrencesOfSelectedUnit"/>
+					<parameters id="complexConcordanceControl" clerk="complexConcOccurrencesOfSelectedUnit"/>
 				  </control>
 				</parameters>
 			  </control>
@@ -87,7 +95,7 @@
 				<parameters id="wordOccurrenceList" collapse="180000">
 				  <control>
 					<dynamicloaderinfo assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordBrowseView"/>
-					<parameters id="wordOccurrenceList" editable="false" clerk="OccurrencesOfSelectedUnit" filterBar="true" altTitleId="Concordance-Matches">
+					<parameters id="wordOccurrenceList" editable="false" clerk="complexConcOccurrencesOfSelectedUnit" filterBar="true" altTitleId="Concordance-Matches">
 					  <include path="../reusableBrowseControlConfiguration.xml" query="reusableControls/control[@id='concordanceColumns']/columns"/>
 					</parameters>
 				  </control>
@@ -101,7 +109,7 @@
 			<parameters id="ITextControl" collapse="144000">
 			  <control>
 				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinMasterNoTitleBar"/>
-				<parameters id="ITextControl" editable="true" clerk="OccurrencesOfSelectedUnit" treeBarAvailability="NotAllowed" hideTitleContents="true" suppressAutoCreate="true" altTitleId="Concordance-Context"/>
+				<parameters id="ITextControl" editable="true" clerk="complexConcOccurrencesOfSelectedUnit" treeBarAvailability="NotAllowed" hideTitleContents="true" suppressAutoCreate="true" altTitleId="Concordance-Context"/>
 			  </control>
 			</parameters>
 		  </control>

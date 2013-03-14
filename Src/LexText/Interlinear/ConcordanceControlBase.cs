@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.IText
 			m_helpTopicProvider = m_mediator.HelpTopicProvider;
 			m_configurationParameters = configurationParameters;
 			m_cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
-			string name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
+			string name = RecordClerk.GetCorrespondingPropertyName(XmlUtils.GetAttributeValue(configurationParameters, "clerk"));
 			m_clerk = (OccurrencesOfSelectedUnit) m_mediator.PropertyTable.GetValue(name) ?? (OccurrencesOfSelectedUnit) RecordClerkFactory.CreateClerk(m_mediator, m_configurationParameters, true);
 			m_clerk.ConcordanceControl = this;
 		}

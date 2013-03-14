@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -153,6 +154,8 @@ namespace SIL.FieldWorks.IText
 					Annotation<ShapeNode> endAnn = endNode.Annotation;
 					if (((FeatureSymbol) endAnn.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "morph")
 						endAnn = endAnn.Parent;
+
+					Debug.Assert(startNode.CompareTo(endNode) <= 0);
 
 					var endAnalysis = (Tuple<IAnalysis, int, int>) endAnn.Data;
 

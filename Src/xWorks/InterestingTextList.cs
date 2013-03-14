@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 		/// (LT-13217)
 		/// So if one changes this list of texts, the other's sort sequence file will be deleted.
 		/// </summary>
-		private static string[] RelatedClerkIds = { "interlinearTexts", "concordanceWords", "OccurrencesOfSelectedUnit" };
+		private static string[] RelatedClerkIds = { "interlinearTexts", "concordanceWords", "OccurrencesOfSelectedUnit", "complexConcOccurrencesOfSelectedUnit"};
 
 		/// <summary>
 		/// Used by InvalidateRelatedSortSequences()

@@ -121,7 +121,9 @@ namespace SIL.FieldWorks.IText
 			IMoForm form;
 			IMoMorphSynAnalysis msa = GetMsaAndMoForm(entry, slotType, pos, out form);
 			entry.LexemeFormOA = form;
-			form.Form.VernacularDefaultWritingSystem = MakeVernString(lf.Trim('-'));
+			string trimmed = lf.Trim('-');
+			form.Form.VernacularDefaultWritingSystem = MakeVernString(trimmed);
+			form.Form.AnalysisDefaultWritingSystem = MakeAnalysisString(trimmed);
 			form.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(slotType);
 			// Bare bones of Sense
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
@@ -312,6 +314,13 @@ namespace SIL.FieldWorks.IText
 			model.Root.Children.Add(new ComplexConcMorphNode {Category = m_noun});
 			model.Compile();
 			Assert.That(model.Search(m_text.ContentsOA), Is.Empty);
+
+			model.Root.Children.Clear();
+			model.Root.Children.Add(new ComplexConcWordBdryNode());
+			model.Root.Children.Add(new ComplexConcMorphNode {Minimum = 0, Maximum = -1});
+			model.Compile();
+			Assert.That(model.Search(m_text.ContentsOA), Is.EquivalentTo(new IParaFragment[] {new ParaFragment(seg, 0, 11, null),
+				new ParaFragment(seg, 12, 15, null), new ParaFragment(seg, 16, 22, null)}).Using(m_fragmentComparer));
 		}
 
 		[Test]
