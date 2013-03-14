@@ -23,7 +23,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using System.Windows.Forms;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Application.ApplicationServices
@@ -3002,7 +3001,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		}
 
 		Dictionary<WsString, IReversalIndexEntry> m_mapFormReversal = null;
-		IReversalIndexFactory m_factIndex;
+		IReversalIndexRepository m_repoIndex;
 		ICmPossibilityListFactory m_factList;
 		IReversalIndexEntryFactory m_factRevEntry;
 
@@ -3033,21 +3032,13 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 			}
 			if (riWs == null)
 			{
-				IWritingSystem ws = m_wsManager.Get(wsHvo);
-				if (m_factIndex == null)
-					m_factIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
-				riWs = m_factIndex.Create();
-				m_cache.LangProject.LexDbOA.ReversalIndexesOC.Add(riWs);
-				riWs.WritingSystem = ws.Id;
-				if (m_factList == null)
-					m_factList = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>();
-				riWs.PartsOfSpeechOA = m_factList.Create();
-				riWs.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
-				string sLangName = ws.DisplayLabel;
-				riWs.Name.set_String(m_cache.DefaultUserWs, m_cache.TsStrFactory.MakeString(sLangName, m_cache.DefaultUserWs));
+				var ws = m_wsManager.Get(wsHvo);
+				if (m_repoIndex == null)
+					m_repoIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+				riWs = m_repoIndex.FindOrCreateIndexForWs(ws.Handle);
 				IncrementCreatedClidCount(ReversalIndexTags.kClassId);
 				IncrementCreatedClidCount(CmPossibilityListTags.kClassId);
-				string sMsg = String.Format(AppStrings.ksCreatingReversalIndex, sLangName, ws.Id);
+				var sMsg = String.Format(AppStrings.ksCreatingReversalIndex, ws.DisplayLabel, ws.Id);
 				LogMessage(sMsg, 0);
 			}
 			if (m_factRevEntry == null)

@@ -209,9 +209,9 @@ namespace SIL.FieldWorks.FDO
 			if (providerType == FDOBackendProviderType.kXMLWithMemoryOnlyWsMgr)
 				providerType = FDOBackendProviderType.kXML;
 
-			FdoServiceLocatorFactory iocFactory = new FdoServiceLocatorFactory(providerType);
-			IFdoServiceLocator servLoc = (IFdoServiceLocator)iocFactory.CreateServiceLocator();
-			FdoCache createdCache = servLoc.GetInstance<FdoCache>();
+			var iocFactory = new FdoServiceLocatorFactory(providerType);
+			var servLoc = (IFdoServiceLocator)iocFactory.CreateServiceLocator();
+			var createdCache = servLoc.GetInstance<FdoCache>();
 			createdCache.m_serviceLocator = servLoc;
 			createdCache.m_lgwsFactory = servLoc.GetInstance<ILgWritingSystemFactory>();
 			createdCache.m_threadHelper = threadHelper;
@@ -391,14 +391,14 @@ namespace SIL.FieldWorks.FDO
 		{
 			if (parameters == null || parameters.Length < 2)
 				throw new ArgumentException("Parameters must include at least a project name and the ThreadHelper");
-			string projectName = (string)parameters[0];
+			var projectName = (string)parameters[0];
 			if (string.IsNullOrEmpty(projectName))
 				throw new ArgumentNullException("projectName", "Can not be null or empty");
-			ThreadHelper threadHelper = (ThreadHelper)parameters[1];
+			var threadHelper = (ThreadHelper)parameters[1];
 			IWritingSystem analWrtSys = (parameters.Length > 2) ? (IWritingSystem)parameters[2] : null;
 			IWritingSystem vernWrtSys = (parameters.Length > 3) ? (IWritingSystem)parameters[3] : null;
 			// REVIEW: It looks like previously we just didn't set the UI WS if we got a null here. Is that what we want?
-			string userIcuLocale = (parameters.Length > 4) ? (string)parameters[4] : "en";
+			var userIcuLocale = (parameters.Length > 4) ? (string)parameters[4] : "en";
 			const int nMax = 10;
 			if (progressDlg != null)
 			{
@@ -407,7 +407,7 @@ namespace SIL.FieldWorks.FDO
 				progressDlg.Message = Properties.Resources.kstidCreatingDB;
 			}
 
-			string dbFileName = CreateNewDbFile(ref projectName);
+			var dbFileName = CreateNewDbFile(ref projectName);
 			Debug.Assert(DirectoryFinder.IsSubFolderOfProjectsDirectory(Path.GetDirectoryName(dbFileName)),
 				"new projects should always be created in the current projects directory");
 
@@ -418,8 +418,8 @@ namespace SIL.FieldWorks.FDO
 			}
 			Guid guidLp;
 
-			SimpleProjectId projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
-			using (FdoCache cache = CreateCacheInternal(projectId,
+			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, dbFileName);
+			using (var cache = CreateCacheInternal(projectId,
 				userIcuLocale, threadHelper, dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg)))
 			{
 				if (progressDlg != null)
@@ -442,23 +442,20 @@ namespace SIL.FieldWorks.FDO
 				if (progressDlg != null)
 					progressDlg.Step(0);
 
-				HashSet<IWritingSystem> additionalAnalysisWss = (parameters.Length > 5)
-																	? (HashSet<IWritingSystem>)parameters[5]
-																	: new HashSet<IWritingSystem>();
+				var additionalAnalysisWss = (parameters.Length > 5)
+												? (HashSet<IWritingSystem>)parameters[5]
+												: new HashSet<IWritingSystem>();
 				foreach (var additionalWs in additionalAnalysisWss)
 					CreateAnalysisWritingSystem(cache, additionalWs, false);
-				HashSet<IWritingSystem> additionalVernWss = (parameters.Length > 6)
-																	? (HashSet<IWritingSystem>)parameters[6]
-																	: new HashSet<IWritingSystem>();
+				var additionalVernWss = (parameters.Length > 6)
+											? (HashSet<IWritingSystem>)parameters[6]
+											: new HashSet<IWritingSystem>();
 				foreach (var additionalWs in additionalVernWss)
 					CreateVernacularWritingSystem(cache, additionalWs, false);
 
 				// Create a reversal index for the original default analysis writing system. (LT-4480)
-				IReversalIndex newIdx = cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
-				cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(newIdx);
-				IWritingSystem wsAnalysis = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-				newIdx.WritingSystem = wsAnalysis.Id;
-				newIdx.Name.SetAnalysisDefaultWritingSystem(wsAnalysis.DisplayLabel);
+				var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+				riRepo.FindOrCreateIndexForWs(cache.DefaultAnalWs);
 				if (progressDlg != null)
 					progressDlg.Step(0);
 

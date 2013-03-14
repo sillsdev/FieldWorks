@@ -169,15 +169,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							UndoableUnitOfWorkHelper.Do(LexEdStrings.ksUndoCreateReversalIndex, LexEdStrings.ksRedoCreateReversalIndex,
 								m_cache.ActionHandlerAccessor,
 								() =>
-									{
-										IReversalIndex newIdx = m_cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
-										m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(newIdx);
-										newIdx.WritingSystem = wsObj.Id;
-										// TODO WS: should we use the DisplayLabel here?
-										newIdx.Name.SetAnalysisDefaultWritingSystem(wsObj.DisplayLabel);
-										newIdx.PartsOfSpeechOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-										m_hvoRevIdx = newIdx.Hvo;
-									});
+								{
+									var riRepo = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+									m_hvoRevIdx = riRepo.FindOrCreateIndexForWs(wsObj.Handle).Hvo;
+								});
 						}
 						break;
 					}

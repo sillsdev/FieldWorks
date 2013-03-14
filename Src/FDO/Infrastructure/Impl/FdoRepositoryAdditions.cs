@@ -745,6 +745,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							IWritingSystem wsObj = m_cache.ServiceLocator.WritingSystemManager.Get(ws);
 							revIndex.WritingSystem = wsObj.Id;
 							revIndex.Name.SetUserWritingSystem(wsObj.DisplayLabel);
+							revIndex.PartsOfSpeechOA = m_cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+							revIndex.PartsOfSpeechOA.Name.set_String(ws, m_cache.TsStrFactory.MakeString(
+								String.Format(Strings.ksReversalIndexPOSListName, wsObj.DisplayLabel), ws));
+							revIndex.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
+							//revIndex.PartsOfSpeechOA.IsSorted = true;
 						});
 			}
 			return revIndex;

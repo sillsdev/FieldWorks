@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		IMoInflAffMsaFactory m_factMoInflAffMsa;
 		ICmPictureFactory m_factCmPicture;
 		IReversalIndexEntryFactory m_factReversalIndexEntry;
-		IReversalIndexFactory m_factReversalIndex;
+		IReversalIndexRepository m_repoReversalIndex;
 		IPartOfSpeechFactory m_factPartOfSpeech;
 		IMoMorphTypeFactory m_factMoMorphType;
 		IPhEnvironmentFactory m_factPhEnvironment;
@@ -6026,23 +6026,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (GetWsFromStr(sWs) == 0)
 					sWs = GetExistingWritingSystem(ws).Id;	// Must be old-style ICU Locale.
 			}
-			// A linear search should be safe here, because we don't expect more than 2 or 3
-			// reversal indexes in any given project.
-			foreach (IReversalIndex ri in m_cache.LangProject.LexDbOA.ReversalIndexesOC)
-			{
-				if (ri.WritingSystem == sWs)
-				{
-					riOwning = ri;
-					break;
-				}
-			}
-			if (riOwning == null)
-			{
-				riOwning = CreateNewReversalIndex();
-				m_cache.LangProject.LexDbOA.ReversalIndexesOC.Add(riOwning);
-				riOwning.WritingSystem = GetExistingWritingSystem(ws).Id;
-			}
-			return riOwning;
+			return FindOrCreateReversalIndex(ws);
 		}
 
 		private void ProcessReversalGramInfo(IReversalIndexEntry rie, LiftGrammaticalInfo gram)

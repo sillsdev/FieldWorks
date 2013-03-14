@@ -747,15 +747,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				// Big trouble ensues if we don't have any reversal indexes at all, so ...
 				// Create a reversal index for the current default analysis writing system.
-				newIdx = cache.ServiceLocator.GetInstance<IReversalIndexFactory>().Create();
-				cache.LanguageProject.LexDbOA.ReversalIndexesOC.Add(newIdx);
-				IWritingSystem wsAnalysis = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-				newIdx.WritingSystem = wsAnalysis.Id;
-				// The above line 'appears' to set the Analysis ws Name, but apparently doesn't really.
-				// TODO WS: is the DisplayLabel the correct thing to use here?
-				newIdx.Name.SetAnalysisDefaultWritingSystem(wsAnalysis.DisplayLabel);
-				newIdx.PartsOfSpeechOA = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-				newIdx.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
+				var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+				newIdx = riRepo.FindOrCreateIndexForWs(cache.DefaultAnalWs);
 
 				cobjNew = 1;
 			}

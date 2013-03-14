@@ -959,4 +959,7 @@ If you need to make changes, tell the other users to close this project before y
     <value>{0} is not a valid directory for linked files.</value>
     <comment>Error message for accessing an invalid LangProject.LinkedFilesRootDir value</comment>
   </data>
+  <data name="ksReversalIndexPOSListName" xml:space="preserve">
+    <value>Parts of Speech for {0} Reversal Index</value>
+  </data>
 </root>

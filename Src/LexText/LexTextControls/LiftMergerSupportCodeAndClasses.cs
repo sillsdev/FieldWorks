@@ -4011,11 +4011,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			return m_factReversalIndexEntry.Create();
 		}
 
-		internal IReversalIndex CreateNewReversalIndex()
+		internal IReversalIndex FindOrCreateReversalIndex(int ws)
 		{
-			if (m_factReversalIndex == null)
-				m_factReversalIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
-			return m_factReversalIndex.Create();
+			if (m_repoReversalIndex == null)
+				m_repoReversalIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			return m_repoReversalIndex.FindOrCreateIndexForWs(ws);
 		}
 
 		internal IPartOfSpeech CreateNewPartOfSpeech()
