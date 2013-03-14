@@ -289,23 +289,20 @@ namespace SIL.FieldWorks.Common.Controls
 							target = "<column label=\"Glosses\" multipara=\"true\" editable=\"false\" width=\"96000\"><seq field=\"Senses\" layout=\"empty\"><para><properties><editable value=\"false\"/></properties><string field=\"Gloss\" ws=\"$ws=analysis\"/></para></seq></column>";
 							if (savedCols.IndexOf(target) > -1)
 								savedCols = savedCols.Replace(target, "<column label=\"Glosses\" editable=\"false\" width=\"96000\" ws=\"$ws=analysis\" layout=\"GlossesForFindEntry\"/>");
-							savedCols = RemoveWeatherColumn(savedCols);
-							savedCols = FixVersion15Columns(savedCols);
-							savedCols = savedCols.Replace("root version=\"12\"", "root version=\"15\"");
-							mediator.PropertyTable.SetProperty(colListId, savedCols);
-							doc.LoadXml(savedCols);
-							break;
+							savedCols = savedCols.Replace("root version=\"12\"", "root version=\"13\"");
+							goto case 13;
 						case 13:
 							savedCols = RemoveWeatherColumn(savedCols);
-							savedCols = FixVersion15Columns(savedCols);
-							savedCols = savedCols.Replace("root version=\"13\"", "root version=\"15\"");
-							mediator.PropertyTable.SetProperty(colListId, savedCols);
-							doc.LoadXml(savedCols);
-							break;
+							savedCols = savedCols.Replace("root version=\"13\"", "root version=\"14\"");
+							goto case 14;
 						case 14:
 							savedCols = FixVersion15Columns(savedCols);
-							mediator.PropertyTable.SetProperty(colListId, savedCols);
 							savedCols = savedCols.Replace("root version=\"14\"", "root version=\"15\"");
+							goto case 15;
+						case 15:
+							savedCols = FixVersion16Columns(savedCols);
+							savedCols = savedCols.Replace("root version=\"15\"", "root version=\"16\"");
+							mediator.PropertyTable.SetProperty(colListId, savedCols);
 							doc.LoadXml(savedCols);
 							break;
 						default:
@@ -329,6 +326,37 @@ namespace SIL.FieldWorks.Common.Controls
 				doc = null;
 			}
 			return doc;
+		}
+
+		/// <summary>
+		/// Handles the changes we made to browse columns (other than additions) between roughly 7.2 (April 20, 2011) and
+		/// 7.3 (version 16, March 12, 2013).
+		/// </summary>
+		/// <param name="savedColsInput"></param>
+		/// <returns></returns>
+		internal static string FixVersion16Columns(string savedColsInput)
+		{
+			var savedCols = savedColsInput;
+			savedCols = ChangeAttrValue(savedCols, "CVPattern", "ws", "pronunciation", "$ws=pronunciation");
+			savedCols = ChangeAttrValue(savedCols, "Tone", "ws", "pronunciation", "$ws=pronunciation");
+			savedCols = ChangeAttrValue(savedCols, "ScientificNameForSense", "ws", "analysis", "$ws=analysis");
+			savedCols = ChangeAttrValue(savedCols, "SourceForSense", "ws", "analysis", "$ws=analysis");
+
+			savedCols = AppendAttrValue(savedCols, "CustomPossAtomForEntry", true, "displayNameProperty", "ShortNameTSS");
+			savedCols = AppendAttrValue(savedCols, "CustomPossAtomForSense", true, "displayNameProperty", "ShortNameTSS");
+			savedCols = AppendAttrValue(savedCols, "CustomPossAtomForAllomorph", true, "displayNameProperty", "ShortNameTSS");
+			savedCols = AppendAttrValue(savedCols, "CustomPossAtomForExample", true, "displayNameProperty", "ShortNameTSS");
+
+			savedCols = ChangeAttrValue(savedCols, "ComplexEntryTypesBrowse", "ws", "\\$ws=analysis", "$ws=best analysis");
+			savedCols = ChangeAttrValue(savedCols, "VariantEntryTypesBrowse", "ws", "\\$ws=analysis", "$ws=best analysis");
+			savedCols = ChangeAttrValue(savedCols, "ComplexEntryTypesBrowse", "originalWs", "\\$ws=analysis", "$ws=best analysis");
+			savedCols = ChangeAttrValue(savedCols, "VariantEntryTypesBrowse", "originalWs", "\\$ws=analysis", "$ws=best analysis");
+
+			savedCols = AppendAttrValue(savedCols, "EtymologyGloss", "transduce", "LexEntry.Etymology.Gloss");
+			savedCols = AppendAttrValue(savedCols, "EtymologySource", "transduce", "LexEntry.Etymology.Source");
+			savedCols = AppendAttrValue(savedCols, "EtymologyForm", "transduce", "LexEntry.Etymology.Form");
+			savedCols = AppendAttrValue(savedCols, "EtymologyComment", "transduce", "LexEntry.Etymology.Comment");
+			return savedCols;
 		}
 
 		private static string FixVersion15Columns(string savedColsInput)
@@ -374,7 +402,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (match.Success)
 			{
 				int index = match.Groups[1].Index;
-				savedCols = savedCols.Substring(0, index) + replaceWith + savedCols.Substring(index + attrValue.Length);
+				// It is better to use Groups(1).Length here rather than attrValue.Length, because there may be some RE pattern
+				// in attrValue (e.g., \\$) which would make a discrepancy.
+				savedCols = savedCols.Substring(0, index) + replaceWith + savedCols.Substring(index +match.Groups[1].Length);
 			}
 			return savedCols;
 		}
@@ -394,7 +424,11 @@ namespace SIL.FieldWorks.Common.Controls
 			if (match.Success)
 			{
 				int index = match.Index + match.Length - 2; // just before closing />
-				savedCols = savedCols.Substring(0, index) + " " + attrName + "=\"" + attrValue + "\"" + savedCols.Substring(index);
+				var leadIn = savedCols.Substring(0, index);
+				var gap = " "; // for neatness don't put an extra space if we already have one.
+				if (leadIn.EndsWith(" "))
+					gap = "";
+				savedCols = leadIn + gap + attrName + "=\"" + attrValue + "\"" + savedCols.Substring(index);
 			}
 			return savedCols;
 		}
