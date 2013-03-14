@@ -11,13 +11,11 @@ using Palaso.Lift;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FixData;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
@@ -217,7 +215,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
-								FLExBridgeHelper.SendReceive, null, out dataChanged, out dummy);
+																  FLExBridgeHelper.SendReceive,
+																  null,
+																  out dataChanged, out dummy);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -422,7 +422,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
-								   FLExBridgeHelper.ConflictViewer, null, out dummy1, out dummy2);
+								   FLExBridgeHelper.ConflictViewer,
+								   null,
+								   out dummy1, out dummy2);
 			if (!success)
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
@@ -462,7 +464,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
-								   FLExBridgeHelper.LiftConflictViewer, null, out dummy1, out dummy2);
+								   FLExBridgeHelper.LiftConflictViewer,
+								   null,
+								   out dummy1, out dummy2);
 			if (!success)
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
@@ -1113,7 +1117,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-								FLExBridgeHelper.UndoExportLift, null, out dataChanged, out dummy);
+													FLExBridgeHelper.UndoExportLift, null,
+													out dataChanged, out dummy);
 		}
 
 		#endregion

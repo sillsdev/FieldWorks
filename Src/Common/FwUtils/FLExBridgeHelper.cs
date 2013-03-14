@@ -150,6 +150,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static object conflictHost;
 		private static bool _receivedChanges; // true if changes merged via FLExBridgeService.BridgeWorkComplete()
 		private static string _projectName; // fw proj path via FLExBridgeService.InformFwProjectName()
+		private static string _pipeID;
 
 		/// <summary>
 		/// Launches the FLExBridge application with the given commands and locks out the FLEx interface until the bridge
@@ -158,7 +159,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="projectFolder">The entire FieldWorks project folder path.
 		/// Must include the project folder and project name with "fwdata" extension.
 		/// Empty is OK if not send_receive command.</param>
-		/// <param name="userName">TBD: someone should explain what this is for</param>
+		/// <param name="userName">the username to use in Chorus commits</param>
 		/// <param name="command">obtain, start, send_receive, view_notes</param>
 		/// <param name="projectGuid">Optional Lang Project guid, that is only used with the 'move_lift' command</param>
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
@@ -169,9 +170,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
 			out bool changesReceived, out string projectName)
 		{
+			_pipeID = string.Format(@"SendReceive{0}{1}", projectFolder, command);
 			flexBridgeTerminated = false;
 			changesReceived = false;
-			string args = "";
+			var args = "";
 			projectName = "";
 			_projectName = "";
 			_sFwProjectName = "";
@@ -199,6 +201,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return false;
 			}
+			AddArg(ref args, "-pipeID", _pipeID);
 
 			// make a new FLExBridge
 			ServiceHost host = null;
@@ -206,7 +209,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				var hostPipeBinding = new NetNamedPipeBinding { ReceiveTimeout = TimeSpan.MaxValue };
 				host = new ServiceHost(typeof (FLExBridgeService),
-										new[] {new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _sFwProjectName)});
+										new[] { new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _pipeID) });
 
 				//open host ready for business
 				host.AddServiceEndpoint(typeof(IFLExBridgeService), hostPipeBinding, "FLExPipe");
@@ -278,11 +281,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="REVIEW: It is unclear if disposing the ChannelFactory affects channelClient.")]
-		private static void BeginEmergencyExitChute()
+		private static void BeginEmergencyExitChute(string pipeID)
 		{
 			var clientPipeBinding = new NetNamedPipeBinding {ReceiveTimeout = TimeSpan.MaxValue};
 			var factory = new ChannelFactory<IFLExServiceChannel>
-				(clientPipeBinding, new EndpointAddress("net.pipe://localhost/FLExEndpoint" + _sFwProjectName + "/FLExPipe"));
+				(clientPipeBinding, new EndpointAddress("net.pipe://localhost/FLExEndpoint" + pipeID + "/FLExPipe"));
 			var channelClient = factory.CreateChannel();
 			channelClient.OperationTimeout = TimeSpan.MaxValue;
 			channelClient.BeginBridgeWorkOngoing(WorkDoneCallback, channelClient);
@@ -345,7 +348,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			public void BridgeReady()
 			{
-				BeginEmergencyExitChute();
+				BeginEmergencyExitChute(_pipeID);
 			}
 
 			public void InformFwProjectName(string fwProjectName)
