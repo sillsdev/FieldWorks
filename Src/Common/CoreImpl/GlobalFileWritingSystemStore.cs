@@ -81,7 +81,14 @@ namespace SIL.CoreImpl
 				var adaptor = new FwLdmlAdaptor();
 				try
 				{
-					adaptor.Write(writingSystemFilePath, ws, oldData);
+					// Provides FW on Linux multi-user access. Overrides the system
+					// umask and creates the files with the permissions "775".
+					// The "fieldworks" group was created outside the app during
+					// configuration of the package which allows group access.
+					using (new FileModeOverride())
+					{
+						adaptor.Write(writingSystemFilePath, ws, oldData);
+					}
 				}
 				catch (UnauthorizedAccessException)
 				{
