@@ -49,7 +49,10 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						if (analysis.Item1 is IPunctuationForm)
+						{
+							annotations.Add(null);
 							continue;
+						}
 
 						FeatureStruct wordInflFS = null;
 						IWfiAnalysis wanalysis = analysis.Item1.Analysis;
