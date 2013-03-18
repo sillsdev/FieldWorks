@@ -300,6 +300,7 @@
     <None Include="Resources\chorus32x32.png" />
     <Content Include="Resources\Download26x26.png" />
     <Content Include="Resources\Import28x28.png" />
+    <None Include="Resources\SendReceiveGetArrow32x32.png" />
     <Content Include="SmallBookOnCubeVersion.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

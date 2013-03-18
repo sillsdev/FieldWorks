@@ -552,5 +552,12 @@ namespace SIL.FieldWorks.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        internal static System.Drawing.Bitmap SendReceiveGetArrow32x32 {
+            get {
+                object obj = ResourceManager.GetObject("SendReceiveGetArrow32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

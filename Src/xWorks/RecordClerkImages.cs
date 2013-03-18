@@ -101,7 +101,8 @@ namespace SIL.FieldWorks.XWorks
 			this.buttonImages.Images.SetKeyName(1, "");
 			this.buttonImages.Images.SetKeyName(2, "");
 			this.buttonImages.Images.SetKeyName(3, "");
-			this.buttonImages.Images.SetKeyName(4, "chorus16.png");
+			this.buttonImages.Images.SetKeyName(4, "sendReceive16x16.png");
+			this.buttonImages.Images.SetKeyName(5, "SendReceiveGetArrow16x16.png");
 			//
 			// RecordClerkImages
 			//

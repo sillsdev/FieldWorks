@@ -134,7 +134,7 @@ namespace SIL.FieldWorks
 			this.receiveButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
 			this.receiveButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.ControlDark;
 			this.receiveButton.FlatAppearance.MouseOverBackColor = System.Drawing.SystemColors.ControlLight;
-			this.receiveButton.Image = global::SIL.FieldWorks.Properties.Resources.Receive;
+			this.receiveButton.Image = global::SIL.FieldWorks.Properties.Resources.SendReceiveGetArrow32x32;
 			this.receiveButton.Name = "receiveButton";
 			this.receiveButton.UseVisualStyleBackColor = true;
 			this.receiveButton.Click += new System.EventHandler(this.Receive_Click);
