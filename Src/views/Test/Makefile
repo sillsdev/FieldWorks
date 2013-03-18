@@ -21,7 +21,14 @@ GRFW    = $(SRC)/Graphite/FwOnly
 LANGUAGETEST_SRC = $(LANGUAGE_SRC)/Test
 
 DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING \
-	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1 -D_DEBUG
+	-D_VW_GRAPHICS_DEBUG -DVIEWSTEST -DWIN32_KEY_VALUES=1
+
+ifeq ($(BUILD_CONFIG),Debug)
+	DEFINES  := $(DEFINES) -D_DEBUG
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
+endif
 
 PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
 
@@ -52,7 +59,7 @@ LDLIBS := \
 	-lexpat\
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O0 -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror -Waddress -Warray-bounds -Wmissing-field-initializers -Wclobbered -Wreturn-type -fstack-protector-all
 LDFLAGS = -g -z muldefs
 
 PRECOMPS = $(VIEWS_OBJ)/Main.h.gch

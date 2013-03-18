@@ -15,7 +15,14 @@ include $(BUILD_ROOT)/Bld/_init.mak.lnx
 UNIT = $(FWINCLUDE)/unit++
 LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
-DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -D_DEBUG
+DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING
+
+ifeq ($(BUILD_CONFIG),Debug)
+	DEFINES  := $(DEFINES) -D_DEBUG
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
+endif
 
 PACKAGES = gdk-2.0 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4
 
@@ -47,7 +54,7 @@ LDLIBS := \
 	-luuid -lexpat \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O0 -fvisibility=hidden -Werror
+CXXFLAGS = -g $(OPTIMIZATIONS) -fvisibility=hidden -Werror
 LDFLAGS = -g -z muldefs
 
 RCFILE = $(KERNEL_SRC)/FwKernel.rc

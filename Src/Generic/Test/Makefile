@@ -11,7 +11,14 @@ include $(BUILD_ROOT)/Bld/_init.mak.lnx
 INC_UNIT = $(FWINCLUDE)/unit++
 LIB_UNIT  = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
-DEFINES := -DGR_FW -DSUPPRESS_FW_EXCEPTION_HANDLING -D_DEBUG
+DEFINES := -DGR_FW -DSUPPRESS_FW_EXCEPTION_HANDLING
+
+ifeq ($(BUILD_CONFIG),Debug)
+	DEFINES  := $(DEFINES) -D_DEBUG
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
+endif
 
 PACKAGES = gtkmm-2.4
 
@@ -40,7 +47,7 @@ LDLIBS := \
 	-lexpat\
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O0 -fPIC -fvisibility=hidden -Werror
+CXXFLAGS = -g $(OPTIMIZATIONS) -fPIC -fvisibility=hidden -Werror
 LDFLAGS = -g -z muldefs
 
 PRECOMPS = $(GENERIC_OBJ)/Main.h.gch

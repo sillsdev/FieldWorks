@@ -21,8 +21,15 @@ GR_LIB_OBJ = $(OBJ_DIR)/$(BUILD_CONFIG)/Graphite/lib
 GRAPHITE_FW = $(GRAPHITE_SRC)/FwOnly
 VIEWS_LIB = $(VIEWS_SRC)/lib
 
-DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -D_DEBUG
+DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING
 PACKAGES = gdk-2.0 gtkmm-2.4 cairomm-1.0 pangomm-1.4
+
+ifeq ($(BUILD_CONFIG),Debug)
+	DEFINES  := $(DEFINES) -D_DEBUG
+	OPTIMIZATIONS = -O0
+else
+	OPTIMIZATIONS = -O3
+endif
 
 # Make sure Lang is first, as we want to get the Main.h from there,
 # not any of the others (e.g., in Views)
@@ -55,7 +62,7 @@ LDLIBS = \
 
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
-CXXFLAGS = -g -O0 -fvisibility=hidden -Werror
+CXXFLAGS = -g $(OPTIMIZATIONS) -fvisibility=hidden -Werror
 
 RCFILE = $(LANGUAGE_SRC)/FwLanguage.rc
 DEFFILE = $(LANGUAGE_SRC)/FwLanguage.def
