@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Palaso.Reporting;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
@@ -48,6 +49,11 @@ using SIL.FieldWorks.LexicalProvider;
 using SIL.Utils;
 using XCore;
 using SIL.CoreImpl;
+using ConfigurationException = SIL.Utils.ConfigurationException;
+using ExceptionHelper = SIL.Utils.ExceptionHelper;
+using Logger = SIL.Utils.Logger;
+using SIL.CoreImpl.Properties;
+
 #if __MonoCS__
 using Skybound.Gecko;
 #endif
@@ -219,6 +225,38 @@ namespace SIL.FieldWorks
 				FwAppArgs appArgs = new FwAppArgs(rgArgs);
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
+				var reportingSettings = Settings.Default.Reporting;
+				if (reportingSettings == null)
+				{
+					reportingSettings = new ReportingSettings();
+					Settings.Default.Reporting = reportingSettings;
+					using (var dialog = new DeveloperReportingWarningDialog())
+					{
+						if (dialog.ShowDialog() != DialogResult.OK)
+							reportingSettings.OkToPingBasicUsageData = false; // true by default.
+					}
+					Settings.Default.Save();
+				}
+				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
+				// This is probably slightly different from its intent, which I think is to control whether we
+				// send more detailed info. Other options seem less desirable to me at present:
+				// -- add OkToPingAtAll to Palaso.ReportingSettings: this would be my preferred solution, but I am
+				// unsure how it would affect existing persisted ReportingSettings objects. Also, code to support
+				// it should then be in Palaso, and the implications for other clients would have to be negotiated.
+				// -- subclass Palaso.ReportingSettings and add OkToPingAtAll: I really don't like adding something
+				// in a private subclass which ought to be in the shared base class.
+				// -- record OkToPingAtAll separately: this has similar objections to subclassing, plus complicating
+				// the persistence picture.
+				if (reportingSettings.OkToPingBasicUsageData)
+				{
+					UsageReporter.Init(reportingSettings, "flex.palaso.org", "UA-39238981-3",
+#if DEBUG
+						true
+#else
+						false
+#endif
+						);
+				}
 
 				if (appArgs.ShowHelp)
 				{

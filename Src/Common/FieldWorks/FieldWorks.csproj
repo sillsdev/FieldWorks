@@ -115,6 +115,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Palaso, Version=2.0.33.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
+    </Reference>
     <Reference Include="PaToFdoInterfaces, Version=1.0.4031.20876, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\PaToFdoInterfaces.dll</HintPath>
@@ -180,6 +184,12 @@
     </Compile>
     <Compile Include="ApplicationBusyDialog.Designer.cs">
       <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeveloperReportingWarningDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeveloperReportingWarningDialog.Designer.cs">
+      <DependentUpon>DeveloperReportingWarningDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="FieldWorksManager.cs" />
     <Compile Include="FwRestoreProjectSettings.cs" />
@@ -261,6 +271,9 @@
     <EmbeddedResource Include="ApplicationBusyDialog.resx">
       <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeveloperReportingWarningDialog.resx">
+      <DependentUpon>DeveloperReportingWarningDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MoveProjectsDlg.resx">
       <DependentUpon>MoveProjectsDlg.cs</DependentUpon>

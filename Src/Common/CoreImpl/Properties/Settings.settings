@@ -2,8 +2,11 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SIL.CoreImpl.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-	<Setting Name="UpdateGlobalWSStore" Type="System.Boolean" Scope="User">
-	  <Value Profile="(Default)">True</Value>
-	</Setting>
+    <Setting Name="UpdateGlobalWSStore" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Reporting" Type="Palaso.Reporting.ReportingSettings" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

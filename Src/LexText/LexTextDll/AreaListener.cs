@@ -4,10 +4,13 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
+using Palaso.Reporting;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using XCore;
+using ConfigurationException = SIL.Utils.ConfigurationException;
+using Logger = SIL.Utils.Logger;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -142,6 +145,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 			m_ccustomLists = 0;
 		}
 
+		private DateTime m_lastToolChange = DateTime.MinValue;
+		HashSet<string> m_toolsReportedToday = new HashSet<string>();
+
 		public void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
@@ -160,6 +166,19 @@ namespace SIL.FieldWorks.XWorks.LexText
 					var c = (IxCoreContentControl)m_mediator.PropertyTable.GetValue("currentContentControlObject");
 					m_mediator.PropertyTable.SetProperty("ToolForAreaNamed_" + c.AreaName, toolName);
 					Logger.WriteEvent("Switched to " + toolName);
+					// Should we report a tool change?
+					if (m_lastToolChange.Date != DateTime.Now.Date)
+					{
+						// new day has dawned (or just started up). Reset tool reporting.
+						m_toolsReportedToday.Clear();
+						m_lastToolChange = DateTime.Now;
+					}
+					string areaNameForReport = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
+					if (!string.IsNullOrWhiteSpace(areaNameForReport) && !m_toolsReportedToday.Contains(toolName))
+					{
+						m_toolsReportedToday.Add(toolName);
+						UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaNameForReport, toolName);
+					}
 					break;
 
 				case "areaChoice":

@@ -230,7 +230,7 @@ always open the last edited project automatically</value>
     <value>m_userInterfaceChooser</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=7.3.0.19235, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=7.3.2.19305, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Parent" xml:space="preserve">
     <value>groupBox1</value>
@@ -416,7 +416,7 @@ always open the last edited project automatically</value>
     <value>3, 3, 3, 3</value>
   </data>
   <data name="m_tabPlugins.Size" type="System.Drawing.Size, System.Drawing">
-    <value>353, 195</value>
+    <value>351, 195</value>
   </data>
   <data name="m_tabPlugins.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -435,6 +435,57 @@ always open the last edited project automatically</value>
   </data>
   <data name="&gt;&gt;m_tabPlugins.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="m_okToPingCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_okToPingCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 24</value>
+  </data>
+  <data name="m_okToPingCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>312, 17</value>
+  </data>
+  <data name="m_okToPingCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_okToPingCheckBox.Text" xml:space="preserve">
+    <value>Allow FLEx to send data about how I use it to the developers</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.Name" xml:space="preserve">
+    <value>m_okToPingCheckBox</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.Parent" xml:space="preserve">
+    <value>m_tabPrivacy</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_tabPrivacy.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tabPrivacy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>351, 195</value>
+  </data>
+  <data name="m_tabPrivacy.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_tabPrivacy.Text" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="&gt;&gt;m_tabPrivacy.Name" xml:space="preserve">
+    <value>m_tabPrivacy</value>
+  </data>
+  <data name="&gt;&gt;m_tabPrivacy.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabPrivacy.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;m_tabPrivacy.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 13</value>

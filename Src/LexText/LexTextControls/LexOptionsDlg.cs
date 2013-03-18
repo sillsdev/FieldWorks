@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
+using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -65,12 +66,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
+			m_okToPingCheckBox.Checked = Settings.Default.Reporting.OkToPingBasicUsageData;
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification = "In .NET 4.5 XmlNodeList implements IDisposable, but not in 4.0.")]
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
+			var reportingSettings = Settings.Default.Reporting;
+			reportingSettings.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
+			Settings.Default.Save();
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != m_sNewUserWs)
 			{

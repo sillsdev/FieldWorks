@@ -47,10 +47,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
+			this.m_tabPrivacy = new System.Windows.Forms.TabPage();
+			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
 			this.tabControl1.SuspendLayout();
 			this.m_tabInterface.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.m_tabPlugins.SuspendLayout();
+			this.m_tabPrivacy.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tabControl1
@@ -58,6 +61,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.tabControl1, "tabControl1");
 			this.tabControl1.Controls.Add(this.m_tabInterface);
 			this.tabControl1.Controls.Add(this.m_tabPlugins);
+			this.tabControl1.Controls.Add(this.m_tabPrivacy);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			// 
@@ -173,6 +177,19 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
 			// 
+			// m_tabPrivacy
+			// 
+			this.m_tabPrivacy.Controls.Add(this.m_okToPingCheckBox);
+			resources.ApplyResources(this.m_tabPrivacy, "m_tabPrivacy");
+			this.m_tabPrivacy.Name = "m_tabPrivacy";
+			this.m_tabPrivacy.UseVisualStyleBackColor = true;
+			// 
+			// m_okToPingCheckBox
+			// 
+			resources.ApplyResources(this.m_okToPingCheckBox, "m_okToPingCheckBox");
+			this.m_okToPingCheckBox.Name = "m_okToPingCheckBox";
+			this.m_okToPingCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// LexOptionsDlg
 			// 
 			this.AcceptButton = this.m_btnOK;
@@ -194,6 +211,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.groupBox1.ResumeLayout(false);
 			this.m_tabPlugins.ResumeLayout(false);
 			this.m_tabPlugins.PerformLayout();
+			this.m_tabPrivacy.ResumeLayout(false);
+			this.m_tabPrivacy.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -217,5 +236,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.CheckBox m_autoOpenCheckBox;
+		private System.Windows.Forms.TabPage m_tabPrivacy;
+		private System.Windows.Forms.CheckBox m_okToPingCheckBox;
 	}
 }
