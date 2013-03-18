@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000064">
+	<rt class="LexDb" guid="907fe4d7-b5d1-418a-b2cc-252827a08b5b">
+		<ReversalIndexes>
+			<objsur guid="66b37dff-779c-4d81-b359-f5878b5c69f0" t="o" />
+			<objsur guid="91b26b43-7be7-4503-a2a4-56ad623b226e" t="o" />
+		</ReversalIndexes>
+	</rt>
+	<rt class="ReversalIndex" guid="66b37dff-779c-4d81-b359-f5878b5c69f0" ownerguid="907fe4d7-b5d1-418a-b2cc-252827a08b5b">
+		<Name>
+			<AUni ws="en">English</AUni>
+		</Name>
+		<PartsOfSpeech>
+			<objsur t="o" guid="83825da9-a4ed-4dcc-bef9-abd67c33d5c4" />
+		</PartsOfSpeech>
+		<WritingSystem>
+			<Uni>x-kal</Uni>
+		</WritingSystem>
+	</rt>
+	<rt class="CmPossibilityList" guid="83825da9-a4ed-4dcc-bef9-abd67c33d5c4" ownerguid="66b37dff-779c-4d81-b359-f5878b5c69f0">
+		<Name>
+			<AUni ws="en">RandomEnglish</AUni>
+		</Name>
+		<Depth val="1" />
+		<IsSorted val="False"/>
+		<ItemClsid val="5049"/>
+		<WsSelector val="0" />
+	</rt>
+	<rt class="ReversalIndex" guid="91b26b43-7be7-4503-a2a4-56ad623b226e" ownerguid="907fe4d7-b5d1-418a-b2cc-252827a08b5b">
+		<Name>
+			<AUni ws="en">French</AUni>
+			<AUni ws="ge">German</AUni>
+		</Name>
+		<PartsOfSpeech>
+			<objsur t="o" guid="ec44996d-db53-4c89-8713-393a98478f6b" />
+		</PartsOfSpeech>
+		<WritingSystem>
+			<Uni>x-kal</Uni>
+		</WritingSystem>
+	</rt>
+	<rt class="CmPossibilityList" guid="ec44996d-db53-4c89-8713-393a98478f6b" ownerguid="91b26b43-7be7-4503-a2a4-56ad623b226e">
+		<!-- No Name, the migration should insert Parts Of Speech-French -->
+		<!-- No ItemClsid, the migration should insert val="5049" -->
+		<Depth val="1" />
+		<IsSorted val="False"/>
+		<WsSelector val="0" />
+	</rt>
+</languageproject>

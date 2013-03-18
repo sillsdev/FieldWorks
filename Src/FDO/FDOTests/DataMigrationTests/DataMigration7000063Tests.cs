@@ -8,13 +8,11 @@
 // </copyright>
 #endregion
 //
-// File: DataMigrationTests7000063.cs
+// File: DataMigration7000063Tests.cs
 // Responsibility: lastufka
 // ---------------------------------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
@@ -25,7 +23,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 	/// Test framework for migration from version 7000062 to 7000063.
 	/// </summary>
 	[TestFixture]
-	public sealed class DataMigrationTests7000063 : DataMigrationTestsBase
+	public sealed class DataMigration7000063Tests : DataMigrationTestsBase
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -40,7 +38,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			mockMdc.AddClass(2, "LangProject", "CmObject", new List<string>());
 
 			var dtos = DataMigrationTestServices.ParseProjectFile("DataMigration7000063.xml");
-			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000061, dtos, mockMdc, null);
+			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000062, dtos, mockMdc, null);
 
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000063, new DummyProgressDlg());
 

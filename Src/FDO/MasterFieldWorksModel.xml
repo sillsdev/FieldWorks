@@ -33,6 +33,8 @@ The original version number was: 7000000. Be sure it has the right number of zer
 editing it.
 
 Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+  15 March 2013 (7000065): Add a valid Name to each Reversal Index's PartOfSpeech possibility list.
+	This allows merge conflicts when users add to these lists to have a better 'address'.
   15 February 2013 (7000064): Do nothing DM that will trigger a rewrite of all CmoObjects.
   15 October 2012 (7000063): Added LangProject property HomographWs (#57) so the ws used homogragh numbering is persisted.
   12 October 2012 (7000062): No actual model change, but a data migration to:
@@ -181,7 +183,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000064" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000065" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>

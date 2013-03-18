@@ -749,7 +749,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 							revIndex.PartsOfSpeechOA.Name.set_String(ws, m_cache.TsStrFactory.MakeString(
 								String.Format(Strings.ksReversalIndexPOSListName, wsObj.DisplayLabel), ws));
 							revIndex.PartsOfSpeechOA.ItemClsid = PartOfSpeechTags.kClassId;
-							//revIndex.PartsOfSpeechOA.IsSorted = true;
+							revIndex.PartsOfSpeechOA.IsSorted = true;
+							revIndex.PartsOfSpeechOA.Depth = 127;
 						});
 			}
 			return revIndex;
