@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -20,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			try
 			{
-				m_hunspellHandle = hunspell_initialize(MarshallAsUtf8Bytes(affixPath), MarshallAsUtf8Bytes(dictPath));
+				m_hunspellHandle = Hunspell_initialize(MarshallAsUtf8Bytes(affixPath), MarshallAsUtf8Bytes(dictPath));
 				ExceptionPath = exceptionPath;
 				if (File.Exists(exceptionPath))
 				{
@@ -41,11 +42,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
+				Debug.WriteLine("Initializing Hunspell: {0} exception: {1} ", e.GetType(), e.Message);
 				if (m_hunspellHandle != IntPtr.Zero)
 				{
-					hunspell_uninitialize(m_hunspellHandle);
+					Hunspell_uninitialize(m_hunspellHandle);
 					m_hunspellHandle = IntPtr.Zero;
 					throw;
 				}
@@ -57,7 +59,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		public bool Check(string word)
 		{
-			return hunspell_spell(m_hunspellHandle, MarshallAsUtf8Bytes(word)) != 0;
+			return Hunspell_spell(m_hunspellHandle, MarshallAsUtf8Bytes(word)) != 0;
 		}
 
 		/// <summary>
@@ -101,11 +103,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public ICollection<string> Suggest(string badWord)
 		{
 			IntPtr pointerToAddressStringArray;
-			int resultCount = hunspell_suggest(m_hunspellHandle, MarshallAsUtf8Bytes(badWord), out pointerToAddressStringArray);
+			int resultCount = Hunspell_suggest(m_hunspellHandle, MarshallAsUtf8Bytes(badWord), out pointerToAddressStringArray);
 			if (pointerToAddressStringArray == IntPtr.Zero)
 				return new string[0];
 			var results = MarshalUnmananagedStrArray2ManagedStrArray(pointerToAddressStringArray, resultCount);
-			hunspell_free_list(m_hunspellHandle, ref pointerToAddressStringArray, resultCount);
+			Hunspell_free_list(m_hunspellHandle, ref pointerToAddressStringArray, resultCount);
 			return results;
 		}
 
@@ -167,18 +169,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					// Custom vernacular-only dictionary.
 					// want it 'affixed' like the prototype, which has been marked to suppress other-case matches
-					hunspell_add_with_affix(m_hunspellHandle, MarshallAsUtf8Bytes(word), MarshallAsUtf8Bytes(SpellingHelper.PrototypeWord));
+					Hunspell_add_with_affix(m_hunspellHandle, MarshallAsUtf8Bytes(word), MarshallAsUtf8Bytes(SpellingHelper.PrototypeWord));
 				}
 				else
 				{
 					// not our custom dictionary, some majority language, we can't (and probably don't want)
 					// to be restrictive about case.
-					hunspell_add(m_hunspellHandle, MarshallAsUtf8Bytes(word));
+					Hunspell_add(m_hunspellHandle, MarshallAsUtf8Bytes(word));
 				}
 			}
 			else
 			{
-				hunspell_remove(m_hunspellHandle, MarshallAsUtf8Bytes(word));
+				Hunspell_remove(m_hunspellHandle, MarshallAsUtf8Bytes(word));
 			}
 		}
 
@@ -203,7 +205,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			if (m_hunspellHandle != IntPtr.Zero)
 			{
-				hunspell_uninitialize(m_hunspellHandle);
+				Hunspell_uninitialize(m_hunspellHandle);
 				m_hunspellHandle = IntPtr.Zero;
 			}
 		}
@@ -239,38 +241,51 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private const string klibHunspell = "libhunspell";
 
-		[DllImport(klibHunspell, EntryPoint = "hunspell_initialize",
+#if __MonoCS__
+		// Hunspell on Linux uses methods that start with uppercase Hunspell and has
+		// different methods for (un-)initializing.
+		private const string klibHunspellCtor = "Hunspell_create";
+		private const string klibHunspellDtor = "Hunspell_destroy";
+		private const string klibHunspellPrefix = "Hunspell_";
+#else
+		// Hunspell on Windows uses different methods that start with lowercase hunspell!
+		private const string klibHunspellCtor = "hunspell_initialize";
+		private const string klibHunspellDtor = "hunspell_uninitialize";
+		private const string klibHunspellPrefix = "hunspell_";
+#endif
+
+		[DllImport(klibHunspell, EntryPoint = klibHunspellCtor,
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern IntPtr hunspell_initialize(byte[] aff_file,
+		private static extern IntPtr Hunspell_initialize(byte[] aff_file,
 			byte[] dict_file);
 
-		[DllImport(klibHunspell, EntryPoint = "hunspell_uninitialize",
+		[DllImport(klibHunspell, EntryPoint = klibHunspellDtor,
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern void hunspell_uninitialize(IntPtr handle);
+		private static extern void Hunspell_uninitialize(IntPtr handle);
 
-		[DllImport(klibHunspell, EntryPoint = "hunspell_spell",
+		[DllImport(klibHunspell, EntryPoint = klibHunspellPrefix + "spell",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_spell(IntPtr handle, byte[] word);
+		private static extern int Hunspell_spell(IntPtr handle, byte[] word);
 
-		[DllImport(klibHunspell, EntryPoint = "hunspell_add",
+		[DllImport(klibHunspell, EntryPoint = klibHunspellPrefix + "add",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_add(IntPtr handle, byte[] word);
+		private static extern int Hunspell_add(IntPtr handle, byte[] word);
 
-		[DllImport(klibHunspell, EntryPoint = "hunspell_add_with_affix",
+		[DllImport(klibHunspell, EntryPoint = klibHunspellPrefix + "add_with_affix",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_add_with_affix(IntPtr handle, byte[] word, byte[] example);
+		private static extern int Hunspell_add_with_affix(IntPtr handle, byte[] word, byte[] example);
 
-		[DllImport(klibHunspell, EntryPoint = "hunspell_remove",
+		[DllImport(klibHunspell, EntryPoint = klibHunspellPrefix + "remove",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_remove(IntPtr handle, byte[] word);
+		private static extern int Hunspell_remove(IntPtr handle, byte[] word);
 
-		[DllImport(klibHunspell, EntryPoint = "hunspell_suggest",
+		[DllImport(klibHunspell, EntryPoint = klibHunspellPrefix + "suggest",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int hunspell_suggest(IntPtr handle, byte[] word, out IntPtr suggestions);
+		private static extern int Hunspell_suggest(IntPtr handle, byte[] word, out IntPtr suggestions);
 
-		[DllImport(klibHunspell, EntryPoint = "hunspell_free_list",
+		[DllImport(klibHunspell, EntryPoint = klibHunspellPrefix + "free_list",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern void hunspell_free_list(IntPtr handle, ref IntPtr list, int count);
+		private static extern void Hunspell_free_list(IntPtr handle, ref IntPtr list, int count);
 
 	}
 }
