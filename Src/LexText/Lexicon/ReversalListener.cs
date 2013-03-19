@@ -430,6 +430,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				ResetListSorter(ri);
 
+				var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
+				m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName);
+
 				ICmObject newOwningObj = NewOwningObject(ri);
 				if (newOwningObj != OwningObject)
 				{
