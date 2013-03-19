@@ -21,7 +21,6 @@
 		<Name>
 			<AUni ws="en">RandomEnglish</AUni>
 		</Name>
-		<Depth val="1" />
 		<IsSorted val="False"/>
 		<ItemClsid val="5049"/>
 		<WsSelector val="0" />

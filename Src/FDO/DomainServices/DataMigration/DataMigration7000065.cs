@@ -63,7 +63,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 
 				// Check for the right Depth, ItemClsid and IsSorted values
 				var depthElt = listElt.Element(DepthProp);
-				depthElt.Remove(); // Don't want the old one, it was wrong!
+				if (depthElt != null)
+					depthElt.Remove(); // Don't want the old one, it was wrong!
 				// Replace with a new Property
 				var sbDepth = new StringBuilder();
 				sbDepth.Append(OpenCloseTagWithValAttr(DepthProp, "127"));
