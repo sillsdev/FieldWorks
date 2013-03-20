@@ -296,7 +296,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						{
 							m_xmlWriter.WriteStartElement("MoForm");
 							m_xmlWriter.WriteAttributeString("DbRef", formIds[i]);
-							m_xmlWriter.WriteAttributeString("wordType", wordTypes[i]);
+							int wordTypeIndex = WordTypeIndex(i, wordTypes.Count());
+							m_xmlWriter.WriteAttributeString("wordType", wordTypes[wordTypeIndex]);
 							m_xmlWriter.WriteEndElement();
 							m_xmlWriter.WriteStartElement("props");
 							foreach (KeyValuePair<string, string> prop in allo.Properties)
@@ -375,12 +376,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					else
 					{
 						PcPatrMorph oldMorph = ppMorph;
+						int wordTypeIndex = WordTypeIndex(oldMorph.formIndex + 1, wordTypes.Count());
 						ppMorph = new PcPatrMorph
 									{
 										formIndex = oldMorph.formIndex + 1,
 										formId = formIds[oldMorph.formIndex + 1],
 										form = form,
-										wordType = wordTypes[oldMorph.formIndex + 1]
+										wordType = wordTypes[wordTypeIndex]
 									};
 					}
 
@@ -406,6 +408,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					}
 				}
 				return result;
+			}
+
+			static int WordTypeIndex(int expectedindex, int wordTypesCount)
+			{
+				int wordTypeIndex = expectedindex;
+				if (wordTypeIndex + 1 > wordTypesCount)
+				{
+					// something is wrong (perhaps a missing suffix slot for a circumfix)
+					// we'll use the same as last time, hoping for a parse failure
+					wordTypeIndex = wordTypeIndex - 1;
+				}
+				return wordTypeIndex;
 			}
 
 			static void WritePcPatrLexiconFile(string path, IEnumerable<PcPatrMorph> morphs)

@@ -33,6 +33,7 @@
 	<xsl:key name="StemAlloId" match="MoStemAllomorph" use="@Id"/>
 	<xsl:key name="AlloId" match="MoAffixAllomorph | MoStemAllomorph | MoAffixProcess" use="@Id"/>
 	<xsl:key name="SlotId" match="MoInflAffixSlot" use="@Id"/>
+	<xsl:key name="PrefixSlots" match="PrefixSlots" use="@dst"/>
 	<xsl:key name="POSId" match="PartOfSpeech" use="@Id"/>
 	<xsl:key name="NCAbbr" match="PhNCSegments | PhNCFeatures" use="Abbreviation"/>
 	<xsl:key name="EnvId" match="PhEnvironment" use="@Id"/>
@@ -2605,9 +2606,23 @@
 						<xsl:when test="$morphType = $sProclitic">
 							<xsl:text>proclitic</xsl:text>
 						</xsl:when>
-						<xsl:when test="not(boolean($form2)) and name($msa) = 'MoInflAffMsa'">
-							<xsl:variable name="slots" select="$msa/Slots"/>
+						<xsl:when test="name($msa) = 'MoInflAffMsa'">
+								<xsl:variable name="slots" select="$msa/Slots"/>
 							<xsl:choose>
+								<xsl:when test="count($slots)=2">
+									<xsl:choose>
+										<xsl:when test="key('PrefixSlots',$slots[1]/@dst)">
+											<xsl:value-of select="$slots[1]/@dst"/>
+											<xsl:text> </xsl:text>
+											<xsl:value-of select="$slots[2]/@dst"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="$slots[2]/@dst"/>
+											<xsl:text> </xsl:text>
+											<xsl:value-of select="$slots[1]/@dst"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:when>
 								<xsl:when test="count($slots) != 0">
 									<xsl:for-each select="$slots">
 										<xsl:value-of select="@dst"/>
