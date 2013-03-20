@@ -1041,9 +1041,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private List<string> GetDuplicateColumns()
 		{
-			// Make sure the ws and label of the current column are accurate (necessary when this is called in addButton_Click()).
-			UpdateWsAndLabelOfCurrentColumn();
-
 			var duplicateColumnLabels = new List<string>();
 
 			for (int i = 0; i < CurrentSpecs.Count; i++)
@@ -1118,14 +1115,17 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void addButton_Click(object sender, System.EventArgs e)
 		{
-			XmlNode item = m_possibleColumns[optionsList.SelectedIndices[0]];
-			m_currentColumns.Add(item);
+			XmlNode columnBeingAdded = m_possibleColumns[optionsList.SelectedIndices[0]];
+			m_currentColumns.Add(columnBeingAdded);
+
 			int index = CurrentListIndex;
 			if (index >= 0)
 				currentList.Items[index].Selected = false;
-			AddCurrentItem(item).Selected = true;
+			AddCurrentItem(columnBeingAdded).Selected = true;
 
-			while ((HasDuplicateColumns() && DuplicateIsReleventForItem(item, GetDuplicateColumns()))
+			//When adding the columnBeingAdded, try to adjust the label so that it is unique. This happens when
+			//the column is already one that exists in the list of currentColumns.
+			while ((ColumnHasWsParam(columnBeingAdded) && ColumnHasAsDuplicate(columnBeingAdded))
 				&& (wsCombo.SelectedIndex < wsCombo.Items.Count) && wsCombo.Items.Count > 0)
 			{
 				if (wsCombo.SelectedIndex.Equals(wsCombo.Items.Count - 1))
@@ -1137,21 +1137,27 @@ namespace SIL.FieldWorks.Common.Controls
 				wsCombo.SelectedIndex++;
 			}
 
-			if (HasDuplicateColumns())
+			//Warn the user if the column being added has a duplicate in the currentColumns list and it was not
+			//possible to create a unique label for it.
+			if (ColumnHasAsDuplicate(columnBeingAdded))
 			{
-				List<string> duplicates = GetDuplicateColumns();
-				if (DuplicateIsReleventForItem(item, duplicates))
-				{
-					ShowDuplicatesWarning(duplicates);
-				}
+				ShowDuplicatesWarning(GetDuplicateColumns());
 			}
 
 			currentList.Focus();
 		}
 
-		private bool DuplicateIsReleventForItem(XmlNode item, List<string> duplicateColumnLabels)
+		//Some fields such as Sense have no $ws attribute. Other fields such as Form do have this attribute.
+		//This information is used to determine if a unique column label should be created.
+		private static bool ColumnHasWsParam(XmlNode columnBeingAdded)
 		{
-			return duplicateColumnLabels.Contains(item.Attributes.GetNamedItem("label").Value);
+			return !String.IsNullOrEmpty(XmlViewsUtils.FindWsParam(columnBeingAdded));
+		}
+
+		private bool ColumnHasAsDuplicate(XmlNode colSpec)
+		{
+			List<string> duplicateColumnLabels = GetDuplicateColumns();
+			return duplicateColumnLabels.Contains(colSpec.Attributes.GetNamedItem("label").Value);
 		}
 
 		private void removeButton_Click(object sender, System.EventArgs e)
@@ -1481,12 +1487,14 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					// Try to use the abbreviation of the language name, not its ICU locale
 					// name.
-					IWritingSystem ws = cache.ServiceLocator.WritingSystemManager.Get(newWs);
-					extra = ws.Abbreviation;
+					IWritingSystem ws;
+					if (cache.ServiceLocator.WritingSystemManager.TryGet(newWs, out ws))
+						extra = ws.Abbreviation;
 					if (string.IsNullOrEmpty(extra))
 						extra = newWs;	// but if all else fails...
 				}
-				label += " (" + extra + ")";
+				if (!string.IsNullOrEmpty(extra))
+					label += " (" + extra + ")";
 			}
 
 			XmlUtils.AppendAttribute(colSpec, "label", label);
