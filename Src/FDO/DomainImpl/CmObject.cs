@@ -2968,15 +2968,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// When deleting several custom fields at once, races can occur...
 				if (!mdc.FieldExists(flid) || !mdc.IsCustom(flid))
 					continue;
+
+				var dataType = (CellarPropertyType)mdc.GetFieldType(flid);
 				var key = new Tuple<ICmObject, int>(this, flid);
 				object data;
-				if (!m_cache.CustomProperties.TryGetValue(key, out data) || data == null)
+				if (!m_cache.CustomProperties.TryGetValue(key, out data) && !FdoMetaDataCacheDecoratorBase.IsValueType(dataType))
 					continue; // could have this property, but don't.
+				if (data == null)
+					data = GetDefaultValueData(dataType);
 
 				// Write the custom field.
 				writer.WriteStartElement("Custom");
 
-				var dataType = (CellarPropertyType)mdc.GetFieldType(flid);
 				var fieldname = mdc.GetFieldName(flid);
 				writer.WriteAttributeString("name", fieldname);
 				switch (dataType)
@@ -3019,6 +3022,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						writer.WriteRaw(TsStringUtils.GetXmlRep(tsString, wsf, wsHvo));
 						break;
 					case CellarPropertyType.Binary:
+						// Currently no Custom fields use Binary; The model uses it for StStyle.Rules and StPara.StyleRules
 						var byteArray = "";
 						foreach (byte val in (byte[])data)
 						{
@@ -3051,6 +3055,27 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 
 				writer.WriteEndElement(); // End Custom element.
+			}
+		}
+
+		private object GetDefaultValueData(CellarPropertyType dataType)
+		{
+			switch (dataType)
+			{
+				default:
+					throw new InvalidOperationException("GetDefaultValueData only handles Value types.");
+				case CellarPropertyType.Guid:
+					return Guid.Empty;
+				case CellarPropertyType.Binary:
+					return new byte[0];
+				case CellarPropertyType.Boolean:
+					return false;
+				case CellarPropertyType.Integer:
+					return 0;
+				case CellarPropertyType.GenDate:
+					return new GenDate();
+				case CellarPropertyType.Time:
+					return new DateTime();
 			}
 		}
 
