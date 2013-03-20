@@ -503,6 +503,7 @@ namespace FwBuildTasks
 				case "TePrintLayoutComponentsTests":	// ~17 sec
 				case "FwControlsTests":					// ~19 sec
 				case "XMLViewsTests":					// ~15 sec (Mono 2/8/2013)
+				case "FwCoreDlgControlsTests":			// ~14 sec (overnight build machine 3-20-2013)
 					return 30000;
 				case "PhraseTranslationHelperTests":	// ~8 sec
 				case "CoreImplTests":					// ~9 sec
