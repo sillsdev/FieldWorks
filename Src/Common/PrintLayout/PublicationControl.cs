@@ -2570,6 +2570,18 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			return dist;
 		}
 
+		/// <summary>
+		/// Converts the vertical or horizontal measure in printer pixels to target device pixels.
+		/// </summary>
+		/// <param name="dp">Measure in printer pixels</param>
+		/// <param name="dpiTarget">DPI setting for the target device.</param>
+		/// <param name="dpiPrinter">DPI setting for the printer.</param>
+		/// <returns>The measure in target device pixels.</returns>
+		private int ConvertPrintDistanceToTarget(int dp, float dpiTarget, float dpiPrinter)
+		{
+			return (int)Math.Round(dp * dpiTarget / dpiPrinter * Zoom, MidpointRounding.AwayFromZero);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Convert the horizontal measure in printer pixels to target device pixels.
@@ -2585,7 +2597,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			// For some reason this version seems to be even worse for computing rectangles to invalidate.
 			//			int dpiX = (int)(dpiTargetX * Zoom); // need to round the same way the View code does
 			//			return dxp * dpiX / (int) DpiXPrinter;
-			return (int)(dxp * dpiTargetX / DpiXPrinter * Zoom);
+			return ConvertPrintDistanceToTarget(dxp, dpiTargetX, DpiXPrinter);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2616,8 +2628,9 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		{
 			CheckDisposed();
 
-			return (int)(dyp * dpiTargetY / DpiYPrinter * Zoom);
+			return ConvertPrintDistanceToTarget(dyp, dpiTargetY, DpiYPrinter);
 		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Convert from screen resolution to printer (layout). Rounding errors are likely,

@@ -308,7 +308,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 						}
 						else
 						{
-							Assert.AreEqual((int)(m_pub.DpiYPrinter * 5.25), pe.LocationOnPage.Y,
+							Assert.AreEqual(Math.Round(m_pub.DpiYPrinter * 5.25, MidpointRounding.AwayFromZero),
+								pe.LocationOnPage.Y,
 								"Found element that isn't in the correct header or footer position");
 							Assert.AreEqual(m_pub.DpiYPrinter * 3 / 4, pe.LocationOnPage.Height,
 								"Footer element height should have been limited to 3/4 inch");

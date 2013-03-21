@@ -777,7 +777,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// have been laid out at the given width, this should return the actual height.
 		/// </summary>
 		/// <remarks>Made virtual for testing</remarks>
-		/// <param name="dxpWidth">Width of one column in pixels</param>
+		/// <param name="dxpWidth">Width of one column in printer pixels</param>
 		/// ------------------------------------------------------------------------------------
 		public virtual int EstimateHeight(int dxpWidth)
 		{
@@ -791,11 +791,11 @@ namespace SIL.FieldWorks.Common.PrintLayout
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a current best estimate of the total height of the data in the main and any
-		/// subordinate views, given the specified width in pixels. When all pages have been
-		/// laid out at the given width, this should return the actual height.
+		/// Gets a current best estimate of the total height of the data in printer pixels in
+		/// the main and any subordinate views, given the specified width in pixels. When all
+		/// pages have been laid out at the given width, this should return the actual height.
 		/// </summary>
-		/// <param name="dxpWidth">Width of one column</param>
+		/// <param name="dxpWidth">Width of one column in printer pixels</param>
 		/// ------------------------------------------------------------------------------------
 		protected int GetEstimatedHeight(int dxpWidth)
 		{

@@ -379,8 +379,20 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			DivisionLayoutMgr div, DateTime printDateTime, bool fApplyStyleOverrides)
 			: base(div, stylesheet, pub, printDateTime, fApplyStyleOverrides, false, null)
 		{
-			m_printerDpiX = 720.0f;
-			m_printerDpiY = 1440.0f;
+			// If we use 720 and 1440 as DPI we get a more realistic test; however, we run into
+			// rounding problems on different platforms. Therefore we use a hack
+			// and handcraft the dpi. The tests use Times New Roman font which has a value of
+			// 2048 as unit per em (can be seen e.g. on Linux by running ttx Times_New_Roman.ttf).
+			// The font height gets calculated (in VwGraphics.cpp) as
+			// heightInMilliPoints * dpiY / 72000 with heightInMilliPoints=10000. If we
+			// want to eliminate rounding errors we need to use a font height that is a multiple
+			// of unitPerEm. This leads us to the value of 14745.6f for printerDpiY.
+			// Because this changes the font size the width will also be different, so we also
+			// need to adjust printerDpiX.
+			//m_printerDpiX = 720.0f;
+			//m_printerDpiY = 1440.0f;
+			m_printerDpiY = 14746.0f; // Math.Round(2048.0f / 10000 * 72000);
+			m_printerDpiX = 7373.0f; // 14746 / 1440 * 720.0f;
 		}
 		#endregion
 
@@ -498,7 +510,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		{
 			get
 			{
-				return (int)base.DpiXPrinter;
+				return (int)Math.Round(base.DpiXPrinter);
 			}
 		}
 
@@ -512,7 +524,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		{
 			get
 			{
-				return (int)base.DpiYPrinter;
+				return (int)Math.Round(base.DpiYPrinter);
 			}
 		}
 
@@ -657,17 +669,6 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		#region Exposed methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Exposes GetEstimatedHeight.
-		/// </summary>
-		/// <param name="dxpWidth">Width of one column.</param>
-		/// ------------------------------------------------------------------------------------
-		public int CallGetEstimatedHeight(int dxpWidth)
-		{
-			return GetEstimatedHeight(dxpWidth);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Exposes the CreateHeaderOrFooter method
 		/// </summary>
 		/// <param name="vc">The view constructor used to lay out the header or footer stream</param>
@@ -739,6 +740,21 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			{
 				return false;
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Returns a current best estimate of the total height in pixels of the data in the
+		/// main and any subordinate views, given the specified width in pixels. When all pages
+		/// have been laid out at the given width, this should return the actual height.
+		/// </summary>
+		/// <param name="dxpWidthInPrinterPixels">Width of one column in printer pixels</param>
+		/// ------------------------------------------------------------------------------------
+		public override int EstimateHeight(int dxpWidthInPrinterPixels)
+		{
+			// We directly call the base class to circumvent the assertion that dxpWidth
+			// equals the stream column width. This simplifies some tests.
+			return base.GetEstimatedHeight(dxpWidthInPrinterPixels);
 		}
 		#endregion
 
@@ -981,10 +997,10 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		[Test]
 		public void EstimateDivisionHeight()
 		{
-			int dypThinHeight = m_firstDivision.CallGetEstimatedHeight(1500);
+			int dypThinHeight = m_firstDivision.EstimateHeight(1500);
 			Assert.IsTrue(dypThinHeight > 0);
-			int dypMediumHeight = m_firstDivision.CallGetEstimatedHeight(2000);
-			int dypWideHeight = m_firstDivision.CallGetEstimatedHeight(2500);
+			int dypMediumHeight = m_firstDivision.EstimateHeight(2000);
+			int dypWideHeight = m_firstDivision.EstimateHeight(2500);
 			Assert.IsTrue(dypThinHeight > dypMediumHeight);
 			Assert.IsTrue(dypMediumHeight > dypWideHeight);
 		}
@@ -1022,20 +1038,22 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			m_firstDivision.InsideMargin = 9000; // 1/8 inch
 			m_firstDivision.OutsideMargin = 4500; // 1/16 inch
 
-			Assert.AreEqual(90, m_firstDivision.InsideMarginInPrinterPixels);
-			Assert.AreEqual(45, m_firstDivision.OutsideMarginInPrinterPixels);
+			float insideMargin = 9000 * m_pub.DpiXPrinter / 72000;
+			float outsideMargin = 4500 * m_pub.DpiXPrinter / 72000;
+			Assert.AreEqual(insideMargin, m_firstDivision.InsideMarginInPrinterPixels);
+			Assert.AreEqual(outsideMargin, m_firstDivision.OutsideMarginInPrinterPixels);
 
 			// Test left-bound (default)
-			Assert.AreEqual(90, m_firstDivision.LeftMarginInPrinterPixels(5)); // 5 => Odd page
-			Assert.AreEqual(45, m_firstDivision.LeftMarginInPrinterPixels(10)); // 10 => Even page
-			Assert.AreEqual(45, m_firstDivision.RightMarginInPrinterPixels(15)); // 15 => Odd page
-			Assert.AreEqual(90, m_firstDivision.RightMarginInPrinterPixels(20)); // 20 => Even page
+			Assert.AreEqual(insideMargin, m_firstDivision.LeftMarginInPrinterPixels(5)); // 5 => Odd page
+			Assert.AreEqual(outsideMargin, m_firstDivision.LeftMarginInPrinterPixels(10)); // 10 => Even page
+			Assert.AreEqual(outsideMargin, m_firstDivision.RightMarginInPrinterPixels(15)); // 15 => Odd page
+			Assert.AreEqual(insideMargin, m_firstDivision.RightMarginInPrinterPixels(20)); // 20 => Even page
 
 			m_pub.IsLeftBound = false;
-			Assert.AreEqual(45, m_firstDivision.LeftMarginInPrinterPixels(17)); // 17 => Odd page
-			Assert.AreEqual(90, m_firstDivision.LeftMarginInPrinterPixels(2)); // 2 => Even page
-			Assert.AreEqual(90, m_firstDivision.RightMarginInPrinterPixels(17)); // 17 => Odd page
-			Assert.AreEqual(45, m_firstDivision.RightMarginInPrinterPixels(2)); // 2 => Even page
+			Assert.AreEqual(outsideMargin, m_firstDivision.LeftMarginInPrinterPixels(17)); // 17 => Odd page
+			Assert.AreEqual(insideMargin, m_firstDivision.LeftMarginInPrinterPixels(2)); // 2 => Even page
+			Assert.AreEqual(insideMargin, m_firstDivision.RightMarginInPrinterPixels(17)); // 17 => Odd page
+			Assert.AreEqual(outsideMargin, m_firstDivision.RightMarginInPrinterPixels(2)); // 2 => Even page
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1048,9 +1066,11 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		public void PageSizeInPrinterPixels()
 		{
 			m_pub.PageWidth = MiscUtils.kdzmpInch * 17 / 2; // 8.5 inches, US Letter
-			Assert.AreEqual(6120, m_pub.PageWidthInPrinterPixels, "incorrect page width"); // 8.5 * 720
+			Assert.AreEqual((int)(8.5 * m_pub.DpiXPrinter) /*62670*/, m_pub.PageWidthInPrinterPixels,
+				"incorrect page width");
 			m_pub.PageHeight = MiscUtils.kdzmpInch * 21 / 2; // 10.5 inches
-			Assert.AreEqual(15120, m_pub.PageHeightInPrinterPixels, "incorrect page height"); // 10.5 * 1440
+			Assert.AreEqual((int)(10.5 * m_pub.DpiYPrinter) /*154833*/, m_pub.PageHeightInPrinterPixels,
+				"incorrect page height");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1182,35 +1202,40 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		[Test]
 		public void CalcPageElementWindowRectangle()
 		{
+			int dpiScreen = 96;
+			int dpiXPrinter = m_pub.DpiXPrinter;
+			int pdiYPrinter = m_pub.DpiYPrinter;
 			m_pub.PageHeight = (int)(11 * MiscUtils.kdzmpInch);
 			m_pub.PageWidth = (int)(8.5 * MiscUtils.kdzmpInch);
-			m_pub.Width = (int)(8.5 * 96);
+			m_pub.Width = (int)(8.5 * dpiScreen);
 			Assert.AreEqual(1, m_pub.Zoom, "Physical Page and window should both be 8.5 inches wide");
 
-			using (PageElement element = new PageElement(m_firstDivision, null, false, new Rectangle(720, 1440,
-				(int)(6.5 * 720), (int)(9 * 1440)), 0, true, 1, 1, 0, 9 * 1440,0, false))
+			using (PageElement element = new PageElement(m_firstDivision, null, false,
+				new Rectangle(dpiXPrinter, pdiYPrinter,
+				(int)(6.5 * dpiXPrinter), (int)(9 * pdiYPrinter)),
+				0, true, 1, 1, 0, 9 * pdiYPrinter,0, false))
 			{
-			Rectangle expected = new Rectangle(96, 96, (int)(6.5 * 96), (int)(9 * 96));
-			int pageIndex = 0;
-			Assert.AreEqual(expected, element.PositionInLayoutForScreen(pageIndex, m_pub, 96, 96));
+				Rectangle expected = new Rectangle(dpiScreen, dpiScreen, (int)(6.5 * dpiScreen), (int)(9 * dpiScreen));
+				int pageIndex = 0;
+				Assert.AreEqual(expected, element.PositionInLayoutForScreen(pageIndex, m_pub, dpiScreen, dpiScreen));
 
-			pageIndex = 1;
-			expected.Location = new Point(expected.Left, expected.Top + (int)(11 * 96) + m_pub.Gap);
-			Assert.AreEqual(expected, element.PositionInLayoutForScreen(pageIndex, m_pub, 96, 96));
+				pageIndex = 1;
+				expected.Location = new Point(expected.Left, expected.Top + (int)(11 * dpiScreen) + m_pub.Gap);
+				Assert.AreEqual(expected, element.PositionInLayoutForScreen(pageIndex, m_pub, dpiScreen, dpiScreen));
 
-			// Can't seem to test this because we can't adjust the scroll position, even
-			// though we set the AutoScrollMinSize, tried showing m_pub, gave it a Height, ...
-			//			m_pub.AutoScrollPosition = new Point(50, 100);
-			//			expected.Location = new Point(expected.Left - 50, expected.Top - 100);
-			//			Assert.AreEqual(expected, element.PositionInWindow(pageIndex, m_pub));
+				// Can't seem to test this because we can't adjust the scroll position, even
+				// though we set the AutoScrollMinSize, tried showing m_pub, gave it a Height, ...
+				//			m_pub.AutoScrollPosition = new Point(50, 100);
+				//			expected.Location = new Point(expected.Left - 50, expected.Top - 100);
+				//			Assert.AreEqual(expected, element.PositionInWindow(pageIndex, m_pub));
 
-			m_pub.Width = (int)(4.25 * 96);
-			// Now we should be zoomed to 50%, so each real-world inch is now only a half-inch
-			// on the screen.
-			Assert.AreEqual(0.5, m_pub.Zoom);
-			expected = new Rectangle(48, (int)(12 * 48) + m_pub.Gap, (int)(6.5 * 48), (int)(9 * 48));
-			Assert.AreEqual(expected, element.PositionInLayoutForScreen(pageIndex, m_pub, 96, 96));
-		}
+				m_pub.Width = (int)(4.25 * dpiScreen);
+				// Now we should be zoomed to 50%, so each real-world inch is now only a half-inch
+				// on the screen.
+				Assert.AreEqual(0.5, m_pub.Zoom);
+				expected = new Rectangle(48, (int)(12 * 48) + m_pub.Gap, (int)(6.5 * 48), (int)(9 * 48));
+				Assert.AreEqual(expected, element.PositionInLayoutForScreen(pageIndex, m_pub, dpiScreen, dpiScreen));
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1232,8 +1257,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Check that val is close to target. It should be greater than or equal, and off by
-		/// no more than 3.
+		/// Check that val is close to target. It should be greater than or equal target-1, and
+		/// off by no more than 3.
 		/// </summary>
 		/// <param name="target">The target.</param>
 		/// <param name="val">The val.</param>
@@ -1241,15 +1266,17 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// ------------------------------------------------------------------------------------
 		void CheckRangeH(int target, int val, string comment)
 		{
-			Assert.IsTrue(val >= target && val <= target + 3,
-				string.Format("{0}, Expected: {1} <= {3} <= {2}", comment, target,
+			// we use target - 1 to adjust for rounding errors when converting from printer
+			// pixels to screen pixels
+			Assert.IsTrue(val >= target - 1 && val <= target + 3,
+				string.Format("{0}, Expected: {1} <= {3} <= {2}", comment, target - 1,
 				target + 3, val));
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Check that val is close to target. It should be less than or equal, and off by
-		/// no more than 3.
+		/// Check that val is close to target. It should be less than or equal target+1, and
+		/// off by no more than 3.
 		/// </summary>
 		/// <param name="target">The target.</param>
 		/// <param name="val">The val.</param>
@@ -1257,9 +1284,11 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// ------------------------------------------------------------------------------------
 		void CheckRangeL(int target, int val, string comment)
 		{
-			Assert.IsTrue(val <= target && val >= target - 3,
+			// we use target + 1 to adjust for rounding errors when converting from printer
+			// pixels to screen pixels
+			Assert.IsTrue(val <= target + 1 && val >= target - 3,
 				string.Format("{0}, Expected: {1} <= {3} <= {2}", comment, target - 3,
-				target, val));
+				target + 1, val));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1288,10 +1317,10 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			Page page0 = m_pub.Pages[0];
 			// Printer pixels relative to top of (each)page.
 			Rectangle rect0 = page0.GetFirstElementForStream(m_firstDivision.MainLayoutStream).LocationOnPage;
-			// Test 1: a small rectangle at the top of the document, no scrolling.
+			// Test 1: a small rectangle at the top of the document, no scrolling (t:0, l:1/10,.h: 4/10, w: 2/10)
 			List<Rect> list1 = m_pub.InvalidRects(
 				m_firstDivision.MainLayoutStream as IVwRootBox,
-				72, 0, 2 * 72, 4 * 144, new Point(0, 0));
+				m_pub.DpiXPrinter / 10, 0, m_pub.DpiXPrinter * 2 / 10, m_pub.DpiYPrinter * 4 / 10, new Point(0, 0));
 			Assert.AreEqual(1, list1.Count, "small invalid rect should intersect only one page");
 			Rectangle result1 = (Rectangle)list1[0];
 			CheckRangeL(96 / 2, result1.Top, "rect at top of doc is top margin from top of window");
@@ -1303,7 +1332,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			// because it's not otherwise easily predictable how much of page 0 was used for
 			// footnotes.
 			List<Rect> list2 = m_pub.InvalidRects(m_firstDivision.MainLayoutStream as IVwRootBox,
-				72, rect0.Height + 144 * 3, 2 * 72, 4 * 144, new Point(0, 0));
+				m_pub.DpiXPrinter / 10, rect0.Height + m_pub.DpiYPrinter / 10 * 3, 2 * m_pub.DpiXPrinter / 10, 4 * m_pub.DpiYPrinter / 10, new Point(0, 0));
 			Assert.AreEqual(1, list2.Count, "2nd small invalid rect should intersect only one page");
 			Rectangle result2 = (Rectangle)list2[0];
 			CheckRangeL(m_pub.PageHeightPlusGapInScreenPixels + 96 / 2 + 96 * 3 / 10,
@@ -1314,33 +1343,33 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			CheckRangeH(96 / 16 + 96 * 3 / 10, result2.Right, "rect2 right is outside margin plus 3/10 inch");
 
 			// Now one that spans the pages.
-			int top = 144 * 2;
-			int height = 1440 * 4;
+			int top = m_pub.DpiYPrinter / 10 * 2;
+			int height = m_pub.DpiYPrinter * 4;
 			List<Rect> list3 = m_pub.InvalidRects(m_firstDivision.MainLayoutStream as IVwRootBox,
-				72, top, 2 * 72, height, new Point(0, 0));
+				m_pub.DpiXPrinter / 10, top, 2 * m_pub.DpiXPrinter / 10, height, new Point(0, 0));
 			Assert.AreEqual(2, list3.Count, "large invalid rect should intersect two pages");
 			Rectangle result3 = (Rectangle)list3[0];
-			CheckRangeL(top * 96 / 1440 + pageTopMargin, result3.Top, "top of rectangle on page 1");
+			CheckRangeL(top * 96 / m_pub.DpiYPrinter + pageTopMargin, result3.Top, "top of rectangle on page 1");
 			CheckRangeL(96 / 8 + 96 / 10, result3.Left, "rect3 left is inside margin plus 1/10 inch");
-			CheckRangeH((top + height) * 96 / 1440 + pageTopMargin,
+			CheckRangeH((top + height) * 96 / m_pub.DpiYPrinter + pageTopMargin,
 				result3.Bottom, "bottom of rect 3 is bottom of element");
 			CheckRangeH(96 / 8 + 96 * 3 / 10, result3.Right, "rect3 right is inside margin plus 3/10 inch");
 
 			Rectangle result4 = (Rectangle)list3[1];
-			CheckRangeL((top - rect0.Height) * 96 / 1440 + pageTopMargin +
+			CheckRangeL((top - rect0.Height) * 96 / m_pub.DpiYPrinter + pageTopMargin +
 				m_pub.PageHeightPlusGapInScreenPixels,
 				result4.Top, "top of rect4 is at top margin of page 2");
 			CheckRangeL(96 / 16 + 96 / 10, result2.Left, "rect4 left is outside margin plus 1/10 inch");
 			// Page one plus margin of page 2 plus height of invalid rectangle in screen pixels
 			// minus amount of it that fit on page 1.
-			CheckRangeH((top - rect0.Height + height) * 96 / 1440 + pageTopMargin +
+			CheckRangeH((top - rect0.Height + height) * 96 / m_pub.DpiYPrinter + pageTopMargin +
 				m_pub.PageHeightPlusGapInScreenPixels,
 				result4.Bottom, "bottom of rect4");
-			CheckRangeH(96 / 16 + 96 * 3 / 10, result4.Right, "rect2 right is outside margin plus 3/10 inch");
+			CheckRangeH(96 / 16 + 96 * 3 / 10, result4.Right, "rect4 right is outside margin plus 3/10 inch");
 
 			// Now repeat test 2, but with a simulated scroll offset.
 			List<Rect> list5 = m_pub.InvalidRects(m_firstDivision.MainLayoutStream as IVwRootBox,
-				72, rect0.Height + 144 * 3, 2 * 72, 4 * 144, new Point(-10, -20));
+				m_pub.DpiXPrinter / 10, rect0.Height + m_pub.DpiYPrinter / 10 * 3, 2 * m_pub.DpiXPrinter / 10, 4 * m_pub.DpiYPrinter / 10, new Point(-10, -20));
 			Assert.AreEqual(1, list5.Count, "small scroll offset should not affect page");
 			Rectangle result5 = (Rectangle)list5[0];
 			Assert.AreEqual(result2.Left - 10, result5.Left, "horizontal scroll affects left");
@@ -2043,7 +2072,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 
 			Assert.IsNotNull(foundPage, "should find a page!");
 			Assert.AreEqual(2, foundPage.PageNumber);
-			Assert.AreEqual((int)(m_firstDivision.TopMarginInPrinterPixels * dpiRatio), dyPageScreen);
+			Assert.AreEqual(m_firstDivision.TopMarginInPrinterPixels * dpiRatio, dyPageScreen);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2154,12 +2183,11 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			secondDiv.OutsideMargin = m_firstDivision.OutsideMargin = 36000; // 1/2 inch
 
 			// If div height is greater than page - then this unit test is wrong.
-			if (m_firstDivision.CallGetEstimatedHeight(
-				(m_firstDivision.AvailableMainStreamColumWidthInPrinterPixels) * 72000) +
-				m_firstDivision.BottomMargin + m_firstDivision.TopMargin >= m_pub.PageHeight)
-			{
-				Assert.Fail("Div height on this system means this test is invalid. Consider increasing page Height.");
-			}
+			int estimatedHeightInPrinterPixels = m_firstDivision.EstimateHeight(
+				m_firstDivision.AvailableMainStreamColumWidthInPrinterPixels) +
+				m_firstDivision.BottomMarginInPrinterPixels + m_firstDivision.TopMarginInPrinterPixels;
+			Assert.That(estimatedHeightInPrinterPixels, Is.LessThan(m_pub.PageHeightInPrinterPixels),
+				"Div height on this system means this test is invalid. Consider increasing page Height.");
 
 			m_pub.CreatePages();
 			Assert.AreEqual(2, m_pub.Pages.Count);
@@ -2391,7 +2419,6 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude="Linux", Reason="This test is too dependent on the divs being the same pixel height on different platforms.")]
 		public void Pub_ThreeDivisions_EachDivStartsNewPage()
 		{
 			DummyDivision secondDiv = new DummyDivision(
@@ -2533,7 +2560,7 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			m_pub.AddDivision(secondDiv);
 			m_pub.AddDivision(thirdDiv);
 
-			m_pub.PageHeight = 72000 * 13; // 13 inches
+			m_pub.PageHeight = 72000 * 12; // 12 inches
 			m_pub.PageWidth = 72000 * 9; // 9 inches
 			thirdDiv.TopMargin = secondDiv.TopMargin = m_firstDivision.TopMargin = 36000; // Half inch
 			thirdDiv.BottomMargin = secondDiv.BottomMargin = m_firstDivision.BottomMargin = 36000; // 1/2 inch
@@ -2584,12 +2611,11 @@ namespace SIL.FieldWorks.Common.PrintLayout
 			thirdDiv.OutsideMargin = secondDiv.OutsideMargin = m_firstDivision.OutsideMargin = 36000; // 1/2 inch
 
 			// If div height is greater than page - then this unit test is wrong.
-			if (m_firstDivision.CallGetEstimatedHeight(
-				(m_firstDivision.AvailableMainStreamColumWidthInPrinterPixels) * 72000) +
-				m_firstDivision.BottomMargin + m_firstDivision.TopMargin >= m_pub.PageHeight)
-			{
-				Assert.Fail("Div height on this system means this test is invalid. Consider increasing page Height.");
-			}
+			int estimatedHeightInPrinterPixels = m_firstDivision.EstimateHeight(
+				m_firstDivision.AvailableMainStreamColumWidthInPrinterPixels) +
+				m_firstDivision.BottomMarginInPrinterPixels + m_firstDivision.TopMarginInPrinterPixels;
+			Assert.That(estimatedHeightInPrinterPixels, Is.LessThan(m_pub.PageHeightInPrinterPixels),
+				"Div height on this system means this test is invalid. Consider increasing page Height.");
 
 			m_pub.CreatePages();
 			Assert.AreEqual(3, m_pub.Pages.Count); // this is just an estimate
