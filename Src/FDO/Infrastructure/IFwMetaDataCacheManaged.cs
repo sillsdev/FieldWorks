@@ -12,6 +12,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 	public interface IFwMetaDataCacheManaged : IFwMetaDataCache
 	{
 		/// <summary>
+		/// Returns true for Binary, Boolean, GenDate, Integer and Time
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		bool IsValueType(CellarPropertyType type);
+
+		/// <summary>
 		/// Gets the list of field identification numbers (in no particular order).
 		/// </summary>
 		int[] GetFieldIds();

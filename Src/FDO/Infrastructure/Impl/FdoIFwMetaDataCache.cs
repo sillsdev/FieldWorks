@@ -1326,6 +1326,26 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_nameToFlid[MakeFlidKey(clid, fieldName)] = flid;
 		}
 
+		private static readonly HashSet<CellarPropertyType> PropertyTypesForValueTypeData = new HashSet<CellarPropertyType>()
+		{
+			CellarPropertyType.Binary,
+			CellarPropertyType.Boolean,
+			CellarPropertyType.GenDate,
+			CellarPropertyType.Guid,
+			CellarPropertyType.Integer,
+			CellarPropertyType.Time
+		};
+
+		/// <summary>
+		/// Returns true for Binary, Boolean, GenDate, Integer and Time
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public bool IsValueType(CellarPropertyType type)
+		{
+			return PropertyTypesForValueTypeData.Contains(type);
+		}
+
 		private static bool IsObjectFieldType(CellarPropertyType type)
 		{
 			var isObjectFieldType = false;

@@ -35,19 +35,14 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 			m_metaDataCache = metaDataCache;
 		}
 
-		private static readonly HashSet<CellarPropertyType> PropertyTypesForValueTypeData = new HashSet<CellarPropertyType>()
-			{
-				CellarPropertyType.Binary,
-				CellarPropertyType.Boolean,
-				CellarPropertyType.GenDate,
-				CellarPropertyType.Guid,
-				CellarPropertyType.Integer,
-				CellarPropertyType.Time
-			};
-
-		internal static bool IsValueType(CellarPropertyType type)
+		/// <summary>
+		/// Returns true for Binary, Boolean, GenDate, Integer and Time
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public bool IsValueType(CellarPropertyType type)
 		{
-			return PropertyTypesForValueTypeData.Contains(type);
+			return m_metaDataCache.IsValueType(type);
 		}
 
 		#region Implementation of IFwMetaDataCache

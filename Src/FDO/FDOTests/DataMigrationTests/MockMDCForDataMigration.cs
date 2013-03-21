@@ -443,6 +443,16 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		#region Implementation of IFwMetaDataCacheManaged
 
 		/// <summary>
+		/// Should return true for value types; but not implemented
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public bool IsValueType(CellarPropertyType type)
+		{
+			throw new NotSupportedException();
+		}
+
+		/// <summary>
 		/// Gets the list of field identification numbers (in no particular order).
 		/// </summary>
 		public int[] GetFieldIds()

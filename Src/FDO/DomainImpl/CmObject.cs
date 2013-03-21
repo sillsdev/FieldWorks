@@ -2972,7 +2972,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var dataType = (CellarPropertyType)mdc.GetFieldType(flid);
 				var key = new Tuple<ICmObject, int>(this, flid);
 				object data;
-				if (!m_cache.CustomProperties.TryGetValue(key, out data) && !FdoMetaDataCacheDecoratorBase.IsValueType(dataType))
+				if (!m_cache.CustomProperties.TryGetValue(key, out data) && !mdc.IsValueType(dataType))
 					continue; // could have this property, but don't.
 				if (data == null)
 					data = GetDefaultValueData(dataType);
