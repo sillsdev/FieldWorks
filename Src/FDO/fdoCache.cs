@@ -19,6 +19,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -155,7 +156,7 @@ namespace SIL.FieldWorks.FDO
 		{
 			return CreateCacheInternal(projectId, userWsIcuLocale, progressDlg.ThreadHelper,
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
-				cache => cache.Initialize(userWsIcuLocale));
+				cache => cache.Initialize(userWsIcuLocale, progressDlg));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -173,7 +174,7 @@ namespace SIL.FieldWorks.FDO
 			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, projectPath);
 			return CreateCacheInternal(projectId, userWsIcuLocale, progressDlg.ThreadHelper,
 				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
-				cache => cache.Initialize(userWsIcuLocale));
+				cache => cache.Initialize(userWsIcuLocale, progressDlg));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -283,7 +284,7 @@ namespace SIL.FieldWorks.FDO
 		/// Initializes this cache (called whenever the cache is created).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void Initialize(string userWsIcuLocale)
+		private void Initialize(string userWsIcuLocale, IThreadedProgress progressDlg)
 		{
 			// check for updated global writing systems and ask the user if they want to use it
 			var writingSystemsWithNewerGlobalVersions = new List<IWritingSystem>();
@@ -346,14 +347,20 @@ namespace SIL.FieldWorks.FDO
 
 			if (!WriteAllObjectsAtEndOfInitialize)
 				return;
+			progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+			progressDlg.Message = AppStrings.InitializeSavingMigratedDataProgressMessage;
+			progressDlg.RunTask(delegate
+				{
+					var bep = (IDataStorer) m_serviceLocator.DataSetup;
+					bep.Commit(new HashSet<ICmObjectOrSurrogate>(),
+							   new HashSet<ICmObjectOrSurrogate>(from obj in m_serviceLocator.ObjectRepository.AllInstances()
+																 select (ICmObjectOrSurrogate) obj),
+							   new HashSet<ICmObjectId>());
+					bep.CompleteAllCommits();
 
-			var bep = (IDataStorer)m_serviceLocator.DataSetup;
-			bep.Commit(new HashSet<ICmObjectOrSurrogate>(),
-						new HashSet<ICmObjectOrSurrogate>(from obj in m_serviceLocator.ObjectRepository.AllInstances() select (ICmObjectOrSurrogate)obj),
-						new HashSet<ICmObjectId>());
-			bep.CompleteAllCommits();
-
-			WriteAllObjectsAtEndOfInitialize = false;
+					WriteAllObjectsAtEndOfInitialize = false;
+					return null;
+				});
 		}
 
 		private static void UpdateGlobalWsMgr(List<IWritingSystem> writingSystemsWithNewerGlobalVersions,

@@ -296,4 +296,8 @@
   <data name="ksRestoreDidNotSucceed" xml:space="preserve">
 	<value>Restore Failed</value>
   </data>
+	<data name="InitializeSavingMigratedDataProgressMessage" xml:space="preserve">
+    <value>Saving migrated data before loading.</value>
+    <comment>Message on a progress dialog. Appears after a data migration has completed and before the project is opened by FLEx.</comment>
+  </data>
 </root>
