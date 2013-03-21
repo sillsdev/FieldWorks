@@ -11,24 +11,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Tests (for now pretty incomplete) of the SpellingHelper class.
 	/// </summary>
+	/// <remarks>If you get failing tests on Linux make sure that Hunspell package is installed
+	/// (currently libhunspell-dev, but eventually we'll need a custom package for FW)</remarks>
 	[TestFixture]
-	[Platform(Exclude = "Linux", Reason = "need to get slightly modified libhunspell.dll; may need something in place of DllImport code?")]
 	public class SpellingHelperTests
 	{
+		// TODO-Linux: need slightly modified hunspell package installed!
+
 		/// <summary>
 		/// Check how spelling status is set and cleared.
 		/// </summary>
 		[Test]
 		public void BasicSpellingStatus()
 		{
-#if __MonoCS__
-			// Change this to some way of checking we have Hunspell.
-			// On Windows, we would check for libhunspell.dll in the FW code directory..
-			if (!File.Exists("/usr/lib/libhunspell.so")) // probably not this but some special location for the modified FW version?
-			{
-				Assert.Ignore("The fieldworks-hunspell package must be installed on this computer for SpellingHelperTests.BasicSpellingStatus to work!");
-			}
-#endif
 			var dictId = MakeEmptyFooDictionary();
 			var dict = SpellingHelper.GetSpellChecker(dictId);
 			Assert.That(dict, Is.Not.Null);

@@ -279,9 +279,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
 		private static extern int Hunspell_remove(IntPtr handle, byte[] word);
 
+#if __MonoCS__
 		[DllImport(klibHunspell, EntryPoint = klibHunspellPrefix + "suggest",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-		private static extern int Hunspell_suggest(IntPtr handle, byte[] word, out IntPtr suggestions);
+		private static extern int Hunspell_suggest_Impl(IntPtr handle, out IntPtr suggestions, byte[] word);
+#else
+		[DllImport(klibHunspell, EntryPoint = klibHunspellPrefix + "suggest",
+			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+		private static extern int Hunspell_suggest_Impl(IntPtr handle, byte[] word, out IntPtr suggestions);
+#endif
+		private static int Hunspell_suggest(IntPtr handle, byte[] word, out IntPtr suggestions)
+		{
+#if __MonoCS__
+			return Hunspell_suggest_Impl(handle, out suggestions, word);
+#else
+			return Hunspell_suggest_Impl(handle, word, out suggestions);
+#endif
+		}
 
 		[DllImport(klibHunspell, EntryPoint = klibHunspellPrefix + "free_list",
 			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
