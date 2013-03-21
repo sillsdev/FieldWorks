@@ -185,12 +185,6 @@
     <Compile Include="ApplicationBusyDialog.Designer.cs">
       <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="DeveloperReportingWarningDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DeveloperReportingWarningDialog.Designer.cs">
-      <DependentUpon>DeveloperReportingWarningDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="FieldWorksManager.cs" />
     <Compile Include="FwRestoreProjectSettings.cs" />
     <Compile Include="LexicalProvider\LexicalProviderImpl.cs" />
@@ -272,9 +266,6 @@
       <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DeveloperReportingWarningDialog.resx">
-      <DependentUpon>DeveloperReportingWarningDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MoveProjectsDlg.resx">
       <DependentUpon>MoveProjectsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -301,6 +292,7 @@
     <Content Include="Resources\Download26x26.png" />
     <Content Include="Resources\Import28x28.png" />
     <None Include="Resources\SendReceiveGetArrow32x32.png" />
+    <None Include="Resources\Info.png" />
     <Content Include="SmallBookOnCubeVersion.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

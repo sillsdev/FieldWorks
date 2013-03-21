@@ -44,11 +44,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_lvPlugins = new System.Windows.Forms.ListView();
 			this.m_chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.m_chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.m_tabPrivacy = new System.Windows.Forms.TabPage();
+			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
-			this.m_tabPrivacy = new System.Windows.Forms.TabPage();
-			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
+			this.PrivacyText = new System.Windows.Forms.TextBox();
 			this.tabControl1.SuspendLayout();
 			this.m_tabInterface.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -155,6 +156,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			// 
 			resources.ApplyResources(this.m_chDescription, "m_chDescription");
 			// 
+			// m_tabPrivacy
+			// 
+			this.m_tabPrivacy.Controls.Add(this.PrivacyText);
+			this.m_tabPrivacy.Controls.Add(this.m_okToPingCheckBox);
+			resources.ApplyResources(this.m_tabPrivacy, "m_tabPrivacy");
+			this.m_tabPrivacy.Name = "m_tabPrivacy";
+			this.m_tabPrivacy.UseVisualStyleBackColor = true;
+			// 
+			// m_okToPingCheckBox
+			// 
+			resources.ApplyResources(this.m_okToPingCheckBox, "m_okToPingCheckBox");
+			this.m_okToPingCheckBox.Name = "m_okToPingCheckBox";
+			this.m_okToPingCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// m_btnOK
 			// 
 			resources.ApplyResources(this.m_btnOK, "m_btnOK");
@@ -177,18 +192,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
 			// 
-			// m_tabPrivacy
+			// PrivacyText
 			// 
-			this.m_tabPrivacy.Controls.Add(this.m_okToPingCheckBox);
-			resources.ApplyResources(this.m_tabPrivacy, "m_tabPrivacy");
-			this.m_tabPrivacy.Name = "m_tabPrivacy";
-			this.m_tabPrivacy.UseVisualStyleBackColor = true;
-			// 
-			// m_okToPingCheckBox
-			// 
-			resources.ApplyResources(this.m_okToPingCheckBox, "m_okToPingCheckBox");
-			this.m_okToPingCheckBox.Name = "m_okToPingCheckBox";
-			this.m_okToPingCheckBox.UseVisualStyleBackColor = true;
+			this.PrivacyText.BackColor = System.Drawing.SystemColors.Window;
+			this.PrivacyText.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this.PrivacyText, "PrivacyText");
+			this.PrivacyText.Name = "PrivacyText";
+			this.PrivacyText.ReadOnly = true;
 			// 
 			// LexOptionsDlg
 			// 
@@ -238,5 +248,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.CheckBox m_autoOpenCheckBox;
 		private System.Windows.Forms.TabPage m_tabPrivacy;
 		private System.Windows.Forms.CheckBox m_okToPingCheckBox;
+		private System.Windows.Forms.TextBox PrivacyText;
 	}
 }

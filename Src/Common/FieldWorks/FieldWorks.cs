@@ -225,18 +225,20 @@ namespace SIL.FieldWorks
 				FwAppArgs appArgs = new FwAppArgs(rgArgs);
 				s_noUserInterface = appArgs.NoUserInterface;
 				s_appServerMode = appArgs.AppServerMode;
+
+				if (Settings.Default.CallUpgrade)
+				{
+					Settings.Default.Upgrade();
+					Settings.Default.CallUpgrade = false;
+				}
 				var reportingSettings = Settings.Default.Reporting;
 				if (reportingSettings == null)
 				{
 					reportingSettings = new ReportingSettings();
 					Settings.Default.Reporting = reportingSettings;
-					using (var dialog = new DeveloperReportingWarningDialog())
-					{
-						if (dialog.ShowDialog() != DialogResult.OK)
-							reportingSettings.OkToPingBasicUsageData = false; // true by default.
-					}
 					Settings.Default.Save();
 				}
+
 				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
 				// This is probably slightly different from its intent, which I think is to control whether we
 				// send more detailed info. Other options seem less desirable to me at present:
@@ -247,7 +249,7 @@ namespace SIL.FieldWorks
 				// in a private subclass which ought to be in the shared base class.
 				// -- record OkToPingAtAll separately: this has similar objections to subclassing, plus complicating
 				// the persistence picture.
-				if (reportingSettings.OkToPingBasicUsageData)
+				if (reportingSettings != null && reportingSettings.OkToPingBasicUsageData)
 				{
 					UsageReporter.Init(reportingSettings, "flex.palaso.org", "UA-39238981-3",
 #if DEBUG

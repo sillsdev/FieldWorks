@@ -81,6 +81,13 @@ namespace SIL.FieldWorks.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Info {
+            get {
+                object obj = ResourceManager.GetObject("Info", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Do you want to continue with the restore?.
         /// </summary>

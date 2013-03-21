@@ -12,12 +12,15 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
-
+using Palaso.Reporting;
+using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using XCore;
+using Logger = SIL.Utils.Logger;
 
 namespace SIL.FieldWorks
 {
@@ -91,6 +94,14 @@ namespace SIL.FieldWorks
 
 				m_lblProjectLoadError.Text = exception.Message;
 				Logger.WriteEvent("Opening 'Unable to Open Project' dialog");
+			}
+
+			var reportingSettings = Settings.Default.Reporting;
+			if (reportingSettings != null)
+			{
+				var reportingInfoRow = tableLayoutPanel.GetRow(reportingInfoLayout);
+				Debug.Assert(reportingInfoRow >= 0, @"Refactoring or the designer has broken behavior here.");
+				tableLayoutPanel.RowStyles[reportingInfoRow].Height = 0;
 			}
 
 			m_helpTopicProvider = helpTopicProvider;

@@ -12,6 +12,7 @@
 // Responsibility: naylor
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using SIL.Utils;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -68,28 +69,34 @@ namespace SIL.FieldWorks
 			this.createButton = new System.Windows.Forms.Button();
 			this.importButton = new System.Windows.Forms.Button();
 			this.restoreButton = new System.Windows.Forms.Button();
+			this.alwaysOpenLastProjectCheckBox = new System.Windows.Forms.CheckBox();
+			this.reportingInfoLayout = new System.Windows.Forms.FlowLayoutPanel();
+			this.infoIcon = new System.Windows.Forms.PictureBox();
+			this.reportingInfoLabel = new System.Windows.Forms.TextBox();
 			this.buttonLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
 			this.closeButton = new System.Windows.Forms.Button();
-			this.alwaysOpenLastProjectCheckBox = new System.Windows.Forms.CheckBox();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel.SuspendLayout();
 			this.topPanel.SuspendLayout();
+			this.reportingInfoLayout.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.infoIcon)).BeginInit();
 			this.buttonLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel
 			// 
+			resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
 			this.tableLayoutPanel.Controls.Add(this.topPanel, 0, 0);
 			this.tableLayoutPanel.Controls.Add(this.openButton, 0, 1);
 			this.tableLayoutPanel.Controls.Add(this.receiveButton, 0, 2);
 			this.tableLayoutPanel.Controls.Add(this.createButton, 0, 3);
 			this.tableLayoutPanel.Controls.Add(this.importButton, 0, 4);
 			this.tableLayoutPanel.Controls.Add(this.restoreButton, 0, 5);
-			this.tableLayoutPanel.Controls.Add(this.buttonLayout, 0, 7);
 			this.tableLayoutPanel.Controls.Add(this.alwaysOpenLastProjectCheckBox, 0, 6);
-			resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
+			this.tableLayoutPanel.Controls.Add(this.reportingInfoLayout, 0, 7);
+			this.tableLayoutPanel.Controls.Add(this.buttonLayout, 0, 8);
 			this.tableLayoutPanel.Name = "tableLayoutPanel";
 			// 
 			// topPanel
@@ -170,6 +177,32 @@ namespace SIL.FieldWorks
 			this.restoreButton.UseVisualStyleBackColor = true;
 			this.restoreButton.Click += new System.EventHandler(this.m_btnRestore_Click);
 			// 
+			// alwaysOpenLastProjectCheckBox
+			// 
+			resources.ApplyResources(this.alwaysOpenLastProjectCheckBox, "alwaysOpenLastProjectCheckBox");
+			this.alwaysOpenLastProjectCheckBox.Name = "alwaysOpenLastProjectCheckBox";
+			this.alwaysOpenLastProjectCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// reportingInfoLayout
+			// 
+			resources.ApplyResources(this.reportingInfoLayout, "reportingInfoLayout");
+			this.reportingInfoLayout.Controls.Add(this.infoIcon);
+			this.reportingInfoLayout.Controls.Add(this.reportingInfoLabel);
+			this.reportingInfoLayout.Name = "reportingInfoLayout";
+			// 
+			// infoIcon
+			// 
+			resources.ApplyResources(this.infoIcon, "infoIcon");
+			this.infoIcon.Name = "infoIcon";
+			this.infoIcon.TabStop = false;
+			// 
+			// reportingInfoLabel
+			// 
+			this.reportingInfoLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this.reportingInfoLabel, "reportingInfoLabel");
+			this.reportingInfoLabel.Name = "reportingInfoLabel";
+			this.reportingInfoLabel.ReadOnly = true;
+			// 
 			// buttonLayout
 			// 
 			this.buttonLayout.Controls.Add(this.helpButton);
@@ -191,16 +224,10 @@ namespace SIL.FieldWorks
 			this.closeButton.UseVisualStyleBackColor = true;
 			this.closeButton.Click += new System.EventHandler(this.m_btnExit_Click);
 			// 
-			// alwaysOpenLastProjectCheckBox
-			// 
-			resources.ApplyResources(this.alwaysOpenLastProjectCheckBox, "alwaysOpenLastProjectCheckBox");
-			this.alwaysOpenLastProjectCheckBox.Name = "alwaysOpenLastProjectCheckBox";
-			this.alwaysOpenLastProjectCheckBox.UseVisualStyleBackColor = true;
-			// 
 			// flowLayoutPanel1
 			// 
-			this.flowLayoutPanel1.Controls.Add(this.tableLayoutPanel);
 			resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
+			this.flowLayoutPanel1.Controls.Add(this.tableLayoutPanel);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			// 
 			// WelcomeToFieldWorksDlg
@@ -214,9 +241,14 @@ namespace SIL.FieldWorks
 			this.Name = "WelcomeToFieldWorksDlg";
 			this.tableLayoutPanel.ResumeLayout(false);
 			this.topPanel.ResumeLayout(false);
+			this.reportingInfoLayout.ResumeLayout(false);
+			this.reportingInfoLayout.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.infoIcon)).EndInit();
 			this.buttonLayout.ResumeLayout(false);
 			this.flowLayoutPanel1.ResumeLayout(false);
+			this.flowLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -224,7 +256,10 @@ namespace SIL.FieldWorks
 
 		private FlowLayoutPanel flowLayoutPanel1;
 		private FlowLayoutPanel buttonLayout;
+		private FlowLayoutPanel reportingInfoLayout;
 		private Button helpButton;
 		private Button closeButton;
+		private PictureBox infoIcon;
+		private TextBox reportingInfoLabel;
 	}
 }

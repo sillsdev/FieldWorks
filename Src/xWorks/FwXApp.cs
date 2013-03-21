@@ -357,10 +357,11 @@ namespace SIL.FieldWorks.XWorks
 			if (FwUtils.IsTEInstalled)
 				ScrReference.InitializeVersification(DirectoryFinder.TeFolder, false);
 
-			//usage report
-			UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, xWorksStrings.ThankYouForCheckingOutFlex, false, 1);
-			UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, xWorksStrings.HaveLaunchedFLEXTenTimes, true, 10);
-			UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, xWorksStrings.HaveLaunchedFLEXFortyTimes, true, 40);
+			//usage report - Unnecessary now that we are doing Google Analytics reporting
+			//Improvement idea: should we do a special analytics ping for the 10 or 40 launches?
+			//UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, xWorksStrings.ThankYouForCheckingOutFlex, false, 1);
+			//UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, xWorksStrings.HaveLaunchedFLEXTenTimes, true, 10);
+			//UsageEmailDialog.DoTrivialUsageReport(ApplicationName, SettingsKey, FeedbackEmailAddress, xWorksStrings.HaveLaunchedFLEXFortyTimes, true, 40);
 		}
 		#endregion // Other methods
 	}
