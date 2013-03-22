@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,14 +19,75 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// A Palaso-based writing system manager.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_renderEngines is a singleton and gets disposed by SingletonsContainer")]
 	public class PalasoWritingSystemManager : IWritingSystemManager
 	{
+		#region DisposableRenderEngineWrapper class
+		private class DisposableRenderEngineWrapper: IDisposable, IComponent
+		{
+			public IRenderEngine RenderEngine { get; private set;}
+
+			public DisposableRenderEngineWrapper(IRenderEngine renderEngine)
+			{
+				RenderEngine = renderEngine;
+			}
+
+			#region Disposable stuff
+			#if DEBUG
+			/// <summary/>
+			~DisposableRenderEngineWrapper()
+			{
+				Dispose(false);
+			}
+			#endif
+
+			/// <summary/>
+			public bool IsDisposed { get; private set; }
+
+			/// <summary/>
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			/// <summary/>
+			protected virtual void Dispose(bool fDisposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
+				if (fDisposing && !IsDisposed)
+				{
+					// dispose managed and unmanaged objects
+
+					// The render engines hold a reference to the PalasoWritingSystemManager.
+					// Things work better if we call release (FWNX-837).
+					if (Marshal.IsComObject(RenderEngine))
+						Marshal.ReleaseComObject(RenderEngine);
+					RenderEngine = null;
+
+					if (Disposed != null)
+						Disposed(this, EventArgs.Empty);
+				}
+				IsDisposed = true;
+			}
+			#endregion
+
+			#region IComponent implementation
+
+			public event EventHandler Disposed;
+
+			public ISite Site { get; set; }
+
+			#endregion
+		}
+		#endregion
+
 		private IFwWritingSystemStore m_localStore;
 		private IFwWritingSystemStore m_globalStore;
 		private readonly Dictionary<int, PalasoWritingSystem> m_handleWss = new Dictionary<int, PalasoWritingSystem>();
-		// List of render engines that get created during our lifetime. On Dispose we have to
-		// call Release on them because they hold a reference to us. See FWNX-837.
-		private readonly List<IRenderEngine> m_renderEngines = new List<IRenderEngine>();
+		// List of render engines that get created during our lifetime.
+		private readonly Container m_renderEngines = SingletonsContainer.Get<Container>("RenderEngineContainer");
 
 		private PalasoWritingSystem m_userWritingSystem;
 		private int m_nextHandle = 999000001;
@@ -69,9 +132,11 @@ namespace SIL.CoreImpl
 		/// <summary>
 		/// Registers a render engine. This should be called after creating a new render engine.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="DisposableRenderEngineWrapper object gets added to m_renderEngines singleton and disposed there.")]
 		internal void RegisterRenderEngine(IRenderEngine engine)
 		{
-			m_renderEngines.Add(engine);
+			m_renderEngines.Add(new DisposableRenderEngineWrapper(engine));
 		}
 
 		/// <summary>
