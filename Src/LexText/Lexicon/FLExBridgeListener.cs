@@ -237,8 +237,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 				if (conflictOccurred)
 				{
-					//send a message for the reopened instance to display the conflict report, we have been disposed by now
-					newAppWindow.Mediator.SendMessage("ShowConflictReport", null);
+					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
+					// we have been disposed by now
+					newAppWindow.Mediator.SendMessage("ViewMessages", null);
 				}
 			}
 			else //Re-lock project if we aren't trying to close the app
@@ -403,6 +404,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="commandObject">Includes the XML command element of the OnViewMessages message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
+		/// <remarks>If you change the name of this method, you need to check for calls to SendMessage("ViewMessages").</remarks>
 		public bool OnViewMessages(object commandObject)
 		{
 			if (IsDb4oProject)
@@ -642,10 +644,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 								if (conflictOccurred)
 								{
-									// TODO: send a message for the reopened instance to display the conflict report, we have been disposed by now
+									// TODO: send a message for the reopened instance to display the message report, we have been disposed by now
 									// TODO: Need a new message for Lift conflicts.
 									// TODO: Even more importantly, the URLs in the lift notes files aren't compatible with what comes in for regular FW conflict reports
-									//newAppWindow.Mediator.SendMessage("ShowConflictReport", null);
+									//newAppWindow.Mediator.SendMessage("ViewLiftMessages", null);
 								}
 				*/
 			}
