@@ -29,6 +29,137 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// ----------------------------------------------------------------------------------------
 	public static class FwRegistryHelper
 	{
+		private static IFwRegistryHelper RegistryHelperImpl = new FwRegistryHelperImpl();
+
+		/// <summary/>
+		public static class Manager
+		{
+			/// <summary>
+			/// Resets the registry helper. NOTE: should only be used from unit tests!
+			/// </summary>
+			public static void Reset()
+			{
+				RegistryHelperImpl = new FwRegistryHelperImpl();
+			}
+
+			/// <summary>
+			/// Sets the registry helper. NOTE: Should only be used from unit tests!
+			/// </summary>
+			public static void SetRegistryHelper(IFwRegistryHelper helper)
+			{
+				RegistryHelperImpl = helper;
+			}
+		}
+
+		/// <summary>Default implementation of registry helper</summary>
+		private class FwRegistryHelperImpl: IFwRegistryHelper
+		{
+			/// ------------------------------------------------------------------------------------
+			/// <summary>
+			/// Gets the read-only local machine Registry key for FieldWorks.
+			/// NOTE: This key is not opened for write access because it will fail on
+			/// non-administrator logins.
+			/// </summary>
+			/// ------------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "We're returning an object")]
+			public RegistryKey FieldWorksRegistryKeyLocalMachine
+			{
+				get
+				{
+					return RegistryHelper.SettingsKeyLocalMachine(FieldWorksRegistryKeyName);
+				}
+			}
+
+			/// ------------------------------------------------------------------------------------
+			/// <summary>
+			/// Gets the read-only local machine Registry key for FieldWorksBridge.
+			/// NOTE: This key is not opened for write access because it will fail on
+			/// non-administrator logins.
+			/// </summary>
+			/// ------------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "We're returning an object")]
+			public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
+			{
+				get
+				{
+					return Registry.LocalMachine.OpenSubKey("Software\\SIL\\FLEx Bridge\\7");
+				}
+			}
+
+			private static string FieldWorksRegistryKeyName
+			{
+				get { return string.Format("{0}.0", FwUtils.SuiteVersion); }
+			}
+
+			/// ------------------------------------------------------------------------------------
+			/// <summary>
+			/// Gets the local machine Registry key for FieldWorks.
+			/// NOTE: This will throw with non-administrative logons! Be ready for that.
+			/// </summary>
+			/// ------------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "We're returning an object")]
+			public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
+			{
+				get
+				{
+					return RegistryHelper.SettingsKeyLocalMachineForWriting(FieldWorksRegistryKeyName);
+				}
+			}
+
+			/// ------------------------------------------------------------------------------------
+			/// <summary>
+			/// Gets the default (current user) Registry key for FieldWorks.
+			/// </summary>
+			/// ------------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "We're returning an object")]
+			public RegistryKey FieldWorksRegistryKey
+			{
+				get { return RegistryHelper.SettingsKey(FieldWorksRegistryKeyName); }
+			}
+
+			/// <summary>
+			/// The value we look up in the FieldWorksRegistryKey to get(or set) the persisted user locale.
+			/// </summary>
+			public string UserLocaleValueName
+			{
+				get
+				{
+					return "UserWs";
+				}
+			}
+
+			/// ------------------------------------------------------------------------------------
+			/// <summary>
+			/// Determines the installation or absence of the Paratext program by checking for the
+			/// existence of the registry key that that application uses to store its program files
+			/// directory in the local machine settings.
+			/// This is 'HKLM\Software\ScrChecks\1.0\Program_Files_Directory_Ptw(7,8,9)'
+			/// NOTE: This key is not opened for write access because it will fail on
+			/// non-administrator logins.
+			///
+			/// </summary>
+			/// ------------------------------------------------------------------------------------
+			public bool Paratext7orLaterInstalled()
+			{
+				using (RegistryKey ParatextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
+				{
+					if (ParatextKey == null)
+						return false;
+					for (var i = 7; i < 10; i++) // Check for Paratext version 7, 8, or 9
+					{
+						object dummy;
+						if (RegistryHelper.KeyExists(ParatextKey, "Program_Files_Directory_Ptw" + i))
+							return true;
+					}
+					return false;
+				}
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the read-only local machine Registry key for FieldWorks.
@@ -36,14 +167,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// non-administrator logins.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public static RegistryKey FieldWorksRegistryKeyLocalMachine
 		{
-			get
-			{
-				return RegistryHelper.SettingsKeyLocalMachine(FieldWorksRegistryKeyName);
-			}
+			get { return RegistryHelperImpl.FieldWorksRegistryKeyLocalMachine; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -53,19 +179,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// non-administrator logins.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public static RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
 		{
-			get
-			{
-				return Registry.LocalMachine.OpenSubKey("Software\\SIL\\FLEx Bridge\\7");
-			}
-		}
-
-		private static string FieldWorksRegistryKeyName
-		{
-			get { return string.Format("{0}.0", FwUtils.SuiteVersion); }
+			get { return RegistryHelperImpl.FieldWorksBridgeRegistryKeyLocalMachine; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -74,20 +190,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// NOTE: This will throw with non-administrative logons! Be ready for that.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public static RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
 		{
-			get
-			{
-				return RegistryHelper.SettingsKeyLocalMachineForWriting(FieldWorksRegistryKeyName);
-			}
+			get { return RegistryHelperImpl.FieldWorksRegistryKeyLocalMachineForWriting; }
 		}
 
 		/// <summary>
-		/// Write a registry key to somewhere in HKLM hopfully with eleverating privileges.
-		/// This method can cause the UAC dialog to be shown to the user (on Vista or later).
-		/// Can Throws SecurityException on permissions problems.
+		/// Extension method to write a registry key to somewhere in HKLM hopfully with
+		/// eleverating privileges. This method can cause the UAC dialog to be shown to the user
+		/// (on Vista or later).
+		/// Can throw SecurityException on permissions problems.
 		/// </summary>
 		public static void SetValueAsAdmin(this RegistryKey key, string name, string value)
 		{
@@ -142,17 +254,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the default (current user) Registry key for FieldWorks.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning an object")]
 		public static RegistryKey FieldWorksRegistryKey
 		{
-			get { return RegistryHelper.SettingsKey(string.Format("{0}.0", FwUtils.SuiteVersion)); }
+			get { return RegistryHelperImpl.FieldWorksRegistryKey; }
 		}
 
 		/// <summary>
@@ -160,10 +269,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string UserLocaleValueName
 		{
-			get
-			{
-				return "UserWs";
-			}
+			get { return RegistryHelperImpl.UserLocaleValueName; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -179,18 +285,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static bool Paratext7orLaterInstalled()
 		{
-			using (RegistryKey ParatextKey = Registry.LocalMachine.OpenSubKey("Software\\ScrChecks\\1.0"))
-			{
-				if (ParatextKey == null)
-					return false;
-				for (var i = 7; i < 10; i++) // Check for Paratext version 7, 8, or 9
-				{
-					object dummy;
-					if (RegistryHelper.KeyExists(ParatextKey, "Program_Files_Directory_Ptw" + i))
-						return true;
-				}
-				return false;
-			}
+			return RegistryHelperImpl.Paratext7orLaterInstalled();
 		}
 	}
 

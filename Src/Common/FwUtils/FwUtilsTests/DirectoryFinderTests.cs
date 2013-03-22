@@ -15,8 +15,10 @@
 //--------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using Microsoft.Win32;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -32,6 +34,71 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[TestFixture]
 	public class DirectoryFinderTests : BaseTest
 	{
+		#region DummyFwRegistryHelper class
+		private class DummyFwRegistryHelper: IFwRegistryHelper
+		{
+			#region IFwRegistryHelper implementation
+
+			public bool Paratext7orLaterInstalled()
+			{
+				throw new NotImplementedException();
+			}
+
+			public RegistryKey FieldWorksRegistryKeyLocalMachine
+			{
+				get
+				{
+					throw new NotImplementedException();
+				}
+			}
+
+			public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
+			{
+				get
+				{
+					throw new NotImplementedException();
+				}
+			}
+
+			public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
+			{
+				get
+				{
+					throw new NotImplementedException();
+				}
+			}
+
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification="We're returning a reference")]
+			public RegistryKey FieldWorksRegistryKey
+			{
+				get
+				{
+					return Registry.CurrentUser.CreateSubKey(
+						@"Software\SIL\FieldWorks\UnitTests\DirectoryFinderTests");
+				}
+			}
+
+			public string UserLocaleValueName
+			{
+				get
+				{
+					throw new NotImplementedException();
+				}
+			}
+			#endregion
+		}
+		#endregion
+
+		/// <summary>
+		/// Resets the registry helper
+		/// </summary>
+		[TearDown]
+		public void TearDown()
+		{
+			FwRegistryHelper.Manager.Reset();
+		}
+
 		///-------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the directory where the Utils assembly is
@@ -269,17 +336,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Tests the DefaultBackupDirectory property for use on Windows
-		/// This test validates that the a machine's backup directory is the same as the default, which is not a valid assumption.  LT-13019.
+		/// Tests the DefaultBackupDirectory property for use on Windows.
 		/// </summary>
-		///[Test]
-		///[Platform(Exclude="Linux", Reason="Test is Windows specific")]
-		///public void DefaultBackupDirectory_Windows()
-		///{
-		///	Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-		///		Path.Combine("My FieldWorks", "Backups")), DirectoryFinder.DefaultBackupDirectory);
-		///}
-		///
+		[Test]
+		[Platform(Exclude="Linux", Reason="Test is Windows specific")]
+		public void DefaultBackupDirectory_Windows()
+		{
+			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				Path.Combine("My FieldWorks", "Backups")), DirectoryFinder.DefaultBackupDirectory);
+		}
+
 		/// <summary>
 		/// Tests the DefaultBackupDirectory property for use on Linux
 		/// </summary>
@@ -287,6 +353,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Platform(Include="Linux", Reason="Test is Linux specific")]
 		public void DefaultBackupDirectory_Linux()
 		{
+			FwRegistryHelper.Manager.SetRegistryHelper(new DummyFwRegistryHelper());
+
 			// SpecialFolder.MyDocuments returns $HOME on Linux!
 			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
 				"Documents/fieldworks/backups"), DirectoryFinder.DefaultBackupDirectory);

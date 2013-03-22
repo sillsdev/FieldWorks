@@ -221,6 +221,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FwUtilsStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Compile Include="IFwRegistryHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
