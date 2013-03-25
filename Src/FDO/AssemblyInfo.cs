@@ -14,3 +14,5 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("FDOTests")]
 [assembly: InternalsVisibleTo("FDOBrowser")]
 [assembly: InternalsVisibleTo("fwdb2xml")]
+[assembly: InternalsVisibleTo("FwControls")] // To get at FDOBackendProvider.ModelVersion
+[assembly: InternalsVisibleTo("LexEdDll")] // To get at FDOBackendProvider.ModelVersion

@@ -7,6 +7,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -26,7 +27,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null, FDOBackendProvider.ModelVersion, "0.13",
 				out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{

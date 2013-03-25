@@ -163,12 +163,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="userName">the username to use in Chorus commits</param>
 		/// <param name="command">obtain, start, send_receive, view_notes</param>
 		/// <param name="projectGuid">Optional Lang Project guid, that is only used with the 'move_lift' command</param>
+		/// <param name="liftModelVersionNumber">Version of LIFT schema that is supported by FLEx.</param>
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
+		/// <param name="fwmodelVersionNumber">Current FDO model version number</param>
 		/// <returns>true if successful, false otherwise</returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="ServiceHost gets disposed in KillTheHost()")]
-		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
+		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid, int fwmodelVersionNumber, string liftModelVersionNumber,
 			out bool changesReceived, out string projectName)
 		{
 			_pipeID = string.Format(@"SendReceive{0}{1}", projectFolder, command);
@@ -203,6 +205,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				AddArg(ref args, "-g", projectGuid);
 			}
+
+			// Add two paths: to FW projDir & FW apps folder. Then, FB won't have to look in a zillion registry entries
+			AddArg(ref args, "-projDir", DirectoryFinder.ProjectsDirectory);
+			AddArg(ref args, "-fwAppsDir", FieldWorksAppsDir);
+			// Tell Flex Bridge which model version of data are expected by FLEx.
+			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
+			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
+
 			if (conflictHost != null)
 			{
 				return false;
@@ -341,17 +351,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Returns the full path and filename of the FieldWorksBridge executable
+		/// Returns the full path and filename of the FixFwData executable
 		/// </summary>
 		/// <returns></returns>
 		public static string FixItAppPathname
 		{
 			get
 			{
-				const string fixitAppName = "FixFwData.exe";
-				var codeBasePath = FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase);
-				var baseDir = Path.GetDirectoryName(codeBasePath);
-				return Path.Combine(baseDir, fixitAppName);
+				return Path.Combine(FieldWorksAppsDir, "FixFwData.exe");
+			}
+		}
+
+		/// <summary>
+		/// Returns the full path to where the FieldWorks running apps are located
+		/// </summary>
+		/// <returns></returns>
+		public static string FieldWorksAppsDir
+		{
+			get
+			{
+				return Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 			}
 		}
 

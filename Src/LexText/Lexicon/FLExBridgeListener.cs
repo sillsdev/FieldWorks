@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -16,6 +15,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			StopParser();
 			bool dummy;
-			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null, FDOBackendProvider.ModelVersion, "0.13",
 				out dummy, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 																  FLExBridgeHelper.SendReceive,
-																  null,
+																  null, FDOBackendProvider.ModelVersion, "0.13",
 																  out dataChanged, out dummy);
 			if (!success)
 			{
@@ -350,7 +350,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
-				null,
+				null, FDOBackendProvider.ModelVersion, "0.13",
 				out dummy1, out dummy2);
 
 			return true;
@@ -383,7 +383,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
-				null,
+				null, FDOBackendProvider.ModelVersion, "0.13",
 				out dummy1, out dummy2);
 
 			return true;
@@ -434,7 +434,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
-								   null,
+								   null, FDOBackendProvider.ModelVersion, "0.13",
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -476,7 +476,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.LiftConflictViewer,
-								   null,
+								   null, FDOBackendProvider.ModelVersion, "0.13",
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -575,7 +575,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(),
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13",
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
@@ -706,7 +706,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null,
+				null, FDOBackendProvider.ModelVersion, "0.13",
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -1128,7 +1128,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-													FLExBridgeHelper.UndoExportLift, null,
+													FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13",
 													out dataChanged, out dummy);
 		}
 
