@@ -74,7 +74,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_radioFRAME.Name = "m_radioFRAME";
 			this.m_radioFRAME.TabStop = true;
 			this.m_radioFRAME.UseVisualStyleBackColor = true;
-			this.m_radioFRAME.CheckedChanged += new System.EventHandler(this.m_radioFRAME_CheckedChanged);
 			//
 			// m_radioOCM
 			//
@@ -82,7 +81,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_radioOCM.Name = "m_radioOCM";
 			this.m_radioOCM.TabStop = true;
 			this.m_radioOCM.UseVisualStyleBackColor = true;
-			this.m_radioOCM.CheckedChanged += new System.EventHandler(this.m_radioOCM_CheckedChanged);
 			//
 			// m_radioCustom
 			//
@@ -90,7 +88,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_radioCustom.Name = "m_radioCustom";
 			this.m_radioCustom.TabStop = true;
 			this.m_radioCustom.UseVisualStyleBackColor = true;
-			this.m_radioCustom.CheckedChanged += new System.EventHandler(this.m_radioCustom_CheckedChanged);
 			//
 			// m_btnOK
 			//
@@ -112,7 +109,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_radioOther.Name = "m_radioOther";
 			this.m_radioOther.TabStop = true;
 			this.m_radioOther.UseVisualStyleBackColor = true;
-			this.m_radioOther.CheckedChanged += new System.EventHandler(this.m_radioOther_CheckedChanged);
 			//
 			// m_cbOther
 			//
@@ -128,7 +124,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.textBox2.Name = "textBox2";
 			this.textBox2.ReadOnly = true;
 			this.textBox2.TabStop = false;
-			this.textBox2.Click += new System.EventHandler(this.textBox2_Click);
+			this.textBox2.Click += new System.EventHandler(this.CustomTextClick);
 			//
 			// textBox3
 			//
@@ -137,7 +133,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.textBox3.Name = "textBox3";
 			this.textBox3.ReadOnly = true;
 			this.textBox3.TabStop = false;
-			this.textBox3.Click += new System.EventHandler(this.textBox3_Click);
+			this.textBox3.Click += new System.EventHandler(this.OcmTextClick);
 			//
 			// textBox4
 			//
@@ -146,7 +142,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.textBox4.Name = "textBox4";
 			this.textBox4.ReadOnly = true;
 			this.textBox4.TabStop = false;
-			this.textBox4.Click += new System.EventHandler(this.textBox4_Click);
+			this.textBox4.Click += new System.EventHandler(this.FrameTextClick);
 			//
 			// FwCheckAnthroListDlg
 			//

@@ -24,6 +24,7 @@ using System.Xml;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Xml.Linq;
+using SIL.CoreImpl.Properties;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -35,6 +36,8 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using SIL.Utils.FileDialog;
+using Sharpen.Util;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -443,6 +446,14 @@ namespace SIL.FieldWorks.FDO
 				foreach (var additionalWs in additionalVernWss)
 					CreateVernacularWritingSystem(cache, additionalWs, false);
 
+				if (parameters.Length > 9)
+				{
+					InitializeOCMData(cache.LangProject,
+									  cache.WritingSystemFactory.GetWsFromStr(analWrtSys != null ? analWrtSys.IcuLocale : userIcuLocale),
+									 (string)parameters[7], (string)parameters[8], (string)parameters[9]);
+					ImportLocalizedLists(cache, progressDlg);
+				}
+
 				// Create a reversal index for the original default analysis writing system. (LT-4480)
 				var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 				riRepo.FindOrCreateIndexForWs(cache.DefaultAnalWs);
@@ -509,6 +520,102 @@ namespace SIL.FieldWorks.FDO
 				progressDlg.RunTask(cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork, cache.m_serviceLocator.ObjectRepository.AllInstances().ToList());
 			}
 			return ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, dbFileName);
+		}
+
+		private static void InitializeOCMData(ILangProject proj, int defaultWs, string ocmFile, string listName, string listAbbrev)
+		{
+			// Load the selected list, or initialize properly for a User-defined (empty) list.
+
+			if (String.IsNullOrEmpty(ocmFile))
+			{
+				proj.AnthroListOA.Name.set_String(defaultWs, listName);
+				proj.AnthroListOA.Abbreviation.set_String(defaultWs, listAbbrev);
+				proj.AnthroListOA.ItemClsid = CmAnthroItemTags.kClassId;
+				proj.AnthroListOA.Depth = 127;
+			}
+			else
+			{
+				var xlist = new XmlList();
+				xlist.ImportList(proj, @"AnthroList", ocmFile, null);
+			}
+
+			// create the corresponding overlays if the list is not empty.
+
+			ICmOverlay over = null;
+			foreach (ICmOverlay x in proj.OverlaysOC)
+			{
+				if (x.PossListRA == proj.AnthroListOA)
+				{
+					over = x;
+					break;
+				}
+			}
+			if (over != null)
+			{
+				foreach (var poss in proj.AnthroListOA.PossibilitiesOS)
+				{
+					over.PossItemsRC.Add(poss);
+					AddSubPossibilitiesToOverlay(over, poss);
+				}
+			}
+		}
+
+		private static void AddSubPossibilitiesToOverlay(ICmOverlay over, ICmPossibility poss)
+		{
+			foreach (var sub in poss.SubPossibilitiesOS)
+			{
+				over.PossItemsRC.Add(sub);
+				AddSubPossibilitiesToOverlay(over, sub);
+			}
+		}
+
+		/// <summary>
+		/// Check for any localized lists files using pattern Templates\LocalizedLists-*.xml.
+		/// If found, load each one into the project.
+		/// </summary>
+		private static void ImportLocalizedLists(FdoCache cache, IThreadedProgress progress)
+		{
+			var filePrefix = XmlTranslatedLists.LocalizedListPrefix;
+			var rgsAnthroFiles = new List<string>();
+			var rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, filePrefix + "*.zip", SearchOption.TopDirectoryOnly);
+			string sFile;
+			for (var i = 0; i < rgsXmlFiles.Length; ++i)
+			{
+				string fileName = Path.GetFileNameWithoutExtension(rgsXmlFiles[i]);
+				string wsId = fileName.Substring(filePrefix.Length);
+				if (!IsWritingSystemInProject(wsId, cache))
+					continue;
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor,
+					() => ImportTranslatedLists(progress, new object[] {
+																		  rgsXmlFiles[i],
+																		  cache
+																	   }
+												));
+			}
+		}
+
+		private static bool IsWritingSystemInProject(string wsId, FdoCache cache)
+		{
+			foreach (var ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				if (ws.IcuLocale == wsId)
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Import a file contained translated strings for one or more lists, using the
+		/// given progress dialog.
+		/// </summary>
+		public static object ImportTranslatedLists(IThreadedProgress dlg, object[] parameters)
+		{
+			Debug.Assert(parameters.Length == 2);
+			Debug.Assert(parameters[0] is string);
+			var filename = (string)parameters[0];
+			var cache = (FdoCache) parameters[1];
+			var xtrans = new XmlTranslatedLists();
+			return xtrans.ImportTranslatedLists(filename, cache, dlg);
 		}
 
 		/// <summary>

@@ -16,7 +16,6 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
 
@@ -658,16 +657,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				using (var progressDlg = new ProgressDialogWithTask(this, null))
 				{
 					progressDlg.Title = string.Format(FwCoreDlgs.kstidCreateLangProjCaption, ProjectName);
-
+					string anthroFile = null;
+					if (DisplayUi) //Dirty testing hack
+					{
+						anthroFile = FwCheckAnthroListDlg.PickAnthroList(progressDlg.Form, null, m_helpTopicProvider);
+					}
 					using (new WaitCursor())
 					{
 						RemoveWs(m_newVernWss, m_cbVernWrtSys.SelectedItem); // just keep additional ones
 						RemoveWs(m_newAnalysisWss, m_cbAnalWrtSys.SelectedItem); // just keep additional ones
 						using (var threadHelper = new ThreadHelper())
 						{
-							m_dbFile = (string)progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
-								ProjectName, threadHelper, m_cbAnalWrtSys.SelectedItem, m_cbVernWrtSys.SelectedItem,
-								m_wsManager.UserWritingSystem.IcuLocale, m_newAnalysisWss, m_newVernWss);
+							m_dbFile = (string) progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
+																	ProjectName, threadHelper, m_cbAnalWrtSys.SelectedItem,
+																	m_cbVernWrtSys.SelectedItem,
+																	m_wsManager.UserWritingSystem.IcuLocale, m_newAnalysisWss, m_newVernWss,
+																	anthroFile, FwCoreDlgs.ksAnthropologyCategories, FwCoreDlgs.ksAnth);
 						}
 					}
 				}

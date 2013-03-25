@@ -379,16 +379,6 @@ namespace SIL.FieldWorks.XWorks
 			* // Reload additional property settings that depend on knowing the database name.
 			* m_viewHelper = new ActiveViewHelper(this);
 			*/
-			// We have to check for the anthopology list before we load up the UI from the
-			// configuration file.  See FWR-3281.
-			FwCheckAnthroList1 fcal = new FwCheckAnthroList1();
-			fcal.Description = xWorksStrings.ksChooseAnthroCatStartingList;
-			bool bFirst = fcal.CheckAnthroList(Cache.LangProject, null, Cache.DefaultUserWs, Mediator.HelpTopicProvider);
-			// If we've initialized anthro list, then also check to load any localized lists.
-			if (bFirst == true)
-			{
-				ImportLocalizedLists();
-			}
 
 			m_viewHelper = new ActiveViewHelper(this);
 			LoadUI(configFile);
@@ -1843,40 +1833,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		/// <summary>
-		/// Check for any localized lists files using pattern Templates\LocalizedLists-*.xml.
-		/// If found, load each one into the project.
-		/// </summary>
-		private void ImportLocalizedLists()
-		{
-			string filePrefix = XmlTranslatedLists.LocalizedListPrefix;
-			List<string> rgsAnthroFiles = new List<string>();
-			string[] rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, filePrefix + "*.zip", SearchOption.TopDirectoryOnly);
-			string sFile;
-			for (int i = 0; i < rgsXmlFiles.Length; ++i)
-			{
-				using (new WaitCursor(this))
-				{
-					string fileName = Path.GetFileNameWithoutExtension(rgsXmlFiles[i]);
-					string wsId = fileName.Substring(filePrefix.Length);
-					if (!IsWritingSystemInProject(wsId))
-						continue;
-					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
-						() => ImportTranslatedLists(rgsXmlFiles[i]));
-				}
-			}
-		}
-
-		bool IsWritingSystemInProject(string wsId)
-		{
-			foreach (var ws in Cache.ServiceLocator.WritingSystems.AllWritingSystems)
-			{
-				if (ws.IcuLocale == wsId)
-					return true;
-			}
-			return false;
-		}
-
 		private void ImportTranslatedLists(string filename)
 		{
 			using (var dlg = new ProgressDialogWithTask(this, Cache.ThreadHelper))
@@ -1884,22 +1840,10 @@ namespace SIL.FieldWorks.XWorks
 				dlg.AllowCancel = true;
 				dlg.Maximum = 200;
 				dlg.Message = filename;
-				dlg.RunTask(true, ImportTranslatedLists, filename);
+				dlg.RunTask(true, FdoCache.ImportTranslatedLists, filename, Cache);
 			}
 		}
 
-		/// <summary>
-		/// Import a file contained translated strings for one or more lists, using the
-		/// given progress dialog.
-		/// </summary>
-		public object ImportTranslatedLists(IThreadedProgress dlg, object[] parameters)
-		{
-			Debug.Assert(parameters.Length == 1);
-			Debug.Assert(parameters[0] is string);
-			var filename = (string)parameters[0];
-			var xtrans = new FDO.Application.ApplicationServices.XmlTranslatedLists();
-			return xtrans.ImportTranslatedLists(filename, Cache, dlg);
-		}
 		#endregion // XCore Message Handlers
 
 		/// <summary>

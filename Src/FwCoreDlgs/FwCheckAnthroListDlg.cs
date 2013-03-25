@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using System.IO;
 using SIL.Utils;
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FwCheckAnthroListDlg"/> class.
+		/// Initializes a new instance of the <see cref="FwCheckAnthroListDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public FwCheckAnthroListDlg()
@@ -67,24 +67,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_radioFRAME.Enabled = fHaveFRAME;
 			m_helpTopicProvider = helpTopicProvider;
 
-			if (m_radioFRAME.Enabled)
-			{
-				m_radioFRAME.Checked = true;
-				m_radioOCM.Checked = false;
-				m_radioCustom.Checked = false;
-			}
-			else if (m_radioOCM.Enabled)
-			{
-				m_radioFRAME.Checked = false;
-				m_radioOCM.Checked = true;
-				m_radioCustom.Checked = false;
-			}
-			else
-			{
-				m_radioFRAME.Checked = false;
-				m_radioOCM.Checked = false;
-				m_radioCustom.Checked = true;
-			}
 			m_radioOther.Checked = false;
 			if (rgsAnthroFiles.Count == 0)
 			{
@@ -92,8 +74,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_radioOther.Visible = false;
 				m_cbOther.Enabled = false;
 				m_cbOther.Visible = false;
-				int diff = m_btnOK.Location.Y - m_cbOther.Location.Y;
-				this.Size = new Size(this.Width, this.Height - diff);
+				var diff = m_btnOK.Location.Y - m_cbOther.Location.Y;
+				Size = new Size(Width, Height - diff);
 			}
 			else
 			{
@@ -145,46 +127,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private void m_radioFRAME_CheckedChanged(object sender, EventArgs e)
-		{
-			if (m_radioFRAME.Checked)
-			{
-				m_radioOCM.Checked = false;
-				m_radioCustom.Checked = false;
-				m_radioOther.Checked = false;
-			}
-		}
-
-		private void m_radioOCM_CheckedChanged(object sender, EventArgs e)
-		{
-			if (m_radioOCM.Checked)
-			{
-				m_radioFRAME.Checked = false;
-				m_radioCustom.Checked = false;
-				m_radioOther.Checked = false;
-			}
-		}
-
-		private void m_radioCustom_CheckedChanged(object sender, EventArgs e)
-		{
-			if (m_radioCustom.Checked)
-			{
-				m_radioFRAME.Checked = false;
-				m_radioOCM.Checked = false;
-				m_radioOther.Checked = false;
-			}
-		}
-
-		private void m_radioOther_CheckedChanged(object sender, EventArgs e)
-		{
-			if (m_radioOther.Checked)
-			{
-				m_radioFRAME.Checked = false;
-				m_radioOCM.Checked = false;
-				m_radioCustom.Checked = false;
-			}
-		}
-
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			this.DialogResult = DialogResult.OK;
@@ -196,75 +138,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "UserHelpFile", m_helpTopic);
 		}
 
-		private void textBox4_Click(object sender, EventArgs e)
+		private void FrameTextClick(object sender, EventArgs e)
 		{
 			m_radioFRAME.Checked = true;
-			m_radioFRAME_CheckedChanged(sender, e);
 		}
 
-		private void textBox3_Click(object sender, EventArgs e)
+		private void OcmTextClick(object sender, EventArgs e)
 		{
 			m_radioOCM.Checked = true;
-			m_radioOCM_CheckedChanged(sender, e);
 		}
 
-		private void textBox2_Click(object sender, EventArgs e)
+		private void CustomTextClick(object sender, EventArgs e)
 		{
 			m_radioCustom.Checked = true;
-			m_radioCustom_CheckedChanged(sender, e);
-		}
-	}
-
-	/// <summary>
-	/// This replaces C++ code that checks for the existence of the anthropology list,
-	/// and initializes it if it's not there.
-	/// </summary>
-	public class FwCheckAnthroList1
-	{
-		string m_sDescription = null;
-
-		/// <summary>
-		/// Set the description for the dialog, if a dialog is needed.
-		/// </summary>
-		public string Description
-		{
-			set { m_sDescription = value; }
 		}
 
 		/// <summary>
-		/// Check whether the anthropology list exists.  If not, initialize it, popping
-		/// up a dialog to ask the user how he wants it done.
-		/// Returning true indicates an anthro list was actually loaded during first-time initialization.
+		/// Pops up a dialog to ask the user how they want to initialize their anthro lists.
+		/// Returns a string indicating what file to load, or null if the user selected the custom (make your own) option
 		/// </summary>
-		public bool CheckAnthroList(ILangProject proj, Form parent, int wsDefault, IHelpTopicProvider helpTopicProvider)
+		public static string PickAnthroList(Form parent, string description, IHelpTopicProvider helpTopicProvider)
 		{
-			// Don't bother loading the list into a memory-only project.  These are used for
-			// testing, and don't want to be slowed down by disk accesses.
-			if (proj.Cache.ProjectId.Type == FDOBackendProviderType.kMemoryOnly)
-				return false;
+			// Figure out what lists are available (in {FW}/Templates/*.xml).
 
-			// 1. Determine whether or not the Anthropology List has been initialized.
-			if (proj.AnthroListOA != null && proj.AnthroListOA.Name.StringCount > 0)
-			{
-				if (proj.AnthroListOA.ItemClsid == 0 || proj.AnthroListOA.Depth == 0)
-				{
-					proj.Cache.DomainDataByFlid.BeginNonUndoableTask();
-					proj.AnthroListOA.ItemClsid = CmAnthroItemTags.kClassId;
-					proj.AnthroListOA.Depth = 127;
-					proj.Cache.DomainDataByFlid.EndNonUndoableTask();
-				}
-				return false;
-				// The Anthropology List may still be empty, but it's initialized!
-			}
-			// 2. Figure out what lists are available (in {FW}/Templates/*.xml).
-
-			string sFilePattern = Path.Combine(DirectoryFinder.TemplateDirectory, "*.xml");
-			bool fHaveOCM = false;
-			bool fHaveFRAME = false;
-			List<string> rgsAnthroFiles = new List<string>();
-			string[] rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, "*.xml", SearchOption.TopDirectoryOnly);
+			var sFilePattern = Path.Combine(DirectoryFinder.TemplateDirectory, "*.xml");
+			var fHaveOCM = false;
+			var fHaveFRAME = false;
+			var rgsAnthroFiles = new List<string>();
+			var rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, "*.xml", SearchOption.TopDirectoryOnly);
 			string sFile;
-			for (int i = 0; i < rgsXmlFiles.Length; ++i)
+			for (var i = 0; i < rgsXmlFiles.Length; ++i)
 			{
 				sFile = Path.GetFileName(rgsXmlFiles[i]);
 				if (Path.GetFileName(sFile) == "OCM.xml")
@@ -275,7 +178,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					rgsAnthroFiles.Add(sFile);
 			}
 
-			// 3. display a dialog for the user to select a list.
+			// display a dialog for the user to select a list.
 
 			sFile = null;
 			if (fHaveOCM || fHaveFRAME || rgsAnthroFiles.Count > 0)
@@ -283,8 +186,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				using (FwCheckAnthroListDlg dlg = new FwCheckAnthroListDlg())
 				{
 					dlg.SetValues(fHaveOCM, fHaveFRAME, rgsAnthroFiles, helpTopicProvider);
-					if (!String.IsNullOrEmpty(m_sDescription))
-						dlg.SetDescription(m_sDescription);
+					if (!String.IsNullOrEmpty(description))
+						dlg.SetDescription(description);
 					//EnableRelatedWindows(hwnd, false);
 					DialogResult res = dlg.ShowDialog(parent);
 					//EnableRelatedWindows(hwnd, true);
@@ -293,12 +196,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						int nChoice = dlg.GetChoice();
 						switch (nChoice)
 						{
-							case FwCheckAnthroListDlg.kralUserDef:
+							case kralUserDef:
 								break;
-							case FwCheckAnthroListDlg.kralOCM:
+							case kralOCM:
 								sFile = Path.Combine(DirectoryFinder.TemplateDirectory, "OCM.xml");
 								break;
-							case FwCheckAnthroListDlg.kralFRAME:
+							case kralFRAME:
 								sFile = Path.Combine(DirectoryFinder.TemplateDirectory, "OCM-Frame.xml");
 								break;
 							default:
@@ -310,80 +213,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 
-			// 4. Load the selected list, or initialize properly for a User-defined (empty) list.
-
-			using (new WaitCursor(parent))
-			{
-				if (String.IsNullOrEmpty(sFile))
-				{
-					proj.Cache.DomainDataByFlid.BeginNonUndoableTask();
-					proj.AnthroListOA.Name.set_String(wsDefault, FwCoreDlgs.ksAnthropologyCategories);
-					proj.AnthroListOA.Abbreviation.set_String(wsDefault, FwCoreDlgs.ksAnth);
-					proj.AnthroListOA.ItemClsid = CmAnthroItemTags.kClassId;
-					proj.AnthroListOA.Depth = 127;
-					proj.Cache.DomainDataByFlid.EndNonUndoableTask();
-				}
-				else
-				{
-					XmlList xlist = new XmlList();
-					xlist.ImportList(proj, "AnthroList", sFile, null);
-				}
-			}
-
-			// 5. create the corresponding overlays if the list is not empty.
-
-			ICmOverlay over = null;
-			foreach (ICmOverlay x in proj.OverlaysOC)
-			{
-				if (x.PossListRA == proj.AnthroListOA)
-				{
-					over = x;
-					break;
-				}
-			}
-			if (over != null)
-			{
-				proj.Cache.DomainDataByFlid.BeginNonUndoableTask();
-				foreach (ICmPossibility poss in proj.AnthroListOA.PossibilitiesOS)
-				{
-					over.PossItemsRC.Add(poss);
-					AddSubPossibilitiesToOverlay(over, poss);
-				}
-				proj.Cache.DomainDataByFlid.EndNonUndoableTask();
-			}
-			return true;
+			return sFile;
 		}
 
-		private void AddSubPossibilitiesToOverlay(ICmOverlay over, ICmPossibility poss)
-		{
-			foreach (ICmPossibility sub in poss.SubPossibilitiesOS)
-			{
-				over.PossItemsRC.Add(sub);
-				AddSubPossibilitiesToOverlay(over, sub);
-			}
-		}
-
-		private bool IsAnthroList(string sFilePath)
+		private static bool IsAnthroList(string sFilePath)
 		{
 			if (!File.Exists(sFilePath))
 				return false;
 			using (TextReader rdr = new StreamReader(sFilePath, Encoding.UTF8))
 			{
-			try
-			{
-				for (int i = 0; i < 5; ++i)
+				try
 				{
-					string sLine = rdr.ReadLine();
-					if (sLine == null)
-						break;
-					if (sLine.Contains("<AnthroList>"))
-						return true;
+					for (int i = 0; i < 5; ++i)
+					{
+						string sLine = rdr.ReadLine();
+						if (sLine == null)
+							break;
+						if (sLine.Contains("<AnthroList>"))
+							return true;
+					}
 				}
-			}
-			catch
-			{
-				// must not have been UTF-8...
-			}
+				catch
+				{
+					// must not have been UTF-8...
+				}
 				return false;
 			}
 		}

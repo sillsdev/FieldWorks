@@ -288,7 +288,9 @@
     <Compile Include="ChooseLangProjectDialog.Designer.cs">
       <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ChooserTreeView.cs" />
+    <Compile Include="ChooserTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CnvtrPropertiesCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
