@@ -77,6 +77,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayFLExLiftBridge(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalled(display);
+			var bridgeLastUsed = _mediator.PropertyTable.GetStringProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+			if (bridgeLastUsed == "FLExBridge")
+			{
+				// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
+				display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists;
+			}
 
 			return true; // We dealt with it.
 		}
@@ -178,6 +184,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public bool OnDisplayFLExBridge(object parameters, ref UIItemDisplayProperties display)
 		{
 			CheckForFlexBridgeInstalled(display);
+
+			// If Fix it app does not exist, then disable main FLEx S/R, since FB needs to call it, after a merge.
+			display.Enabled = display.Enabled && FLExBridgeHelper.FixItAppExists;
 
 			return true; // We dealt with it.
 		}
@@ -1316,7 +1325,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private static void CheckForFlexBridgeInstalled(UIItemDisplayProperties display)
 		{
 			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
-			display.Enabled = FileUtils.FileExists(fullName) && AssemblyName.GetAssemblyName(fullName).Version.Minor >= 5;
+			display.Enabled = FileUtils.FileExists(fullName);
 			display.Visible = true; // Always visible. Cf. LT-13885
 		}
 

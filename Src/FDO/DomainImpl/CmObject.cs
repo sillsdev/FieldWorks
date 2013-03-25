@@ -2765,7 +2765,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						break;
 				}
 
-				// Add it to Distionary for next time.
+				// Add it to Dictionary for next time.
 				m_cache.CustomProperties[key] = retval;
 			}
 			else

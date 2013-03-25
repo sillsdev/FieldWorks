@@ -65,9 +65,21 @@ namespace SIL.CoreImpl
 		AllString = AllMulti | AllSimpleString,
 
 		/// <summary></summary>
-		Integer = 1 << CellarPropertyType.Integer,
+		Boolean = 1 << CellarPropertyType.Boolean,
 		/// <summary></summary>
 		GenDate = 1 << CellarPropertyType.GenDate,
+		/// <summary></summary>
+		Guid = 1 << CellarPropertyType.Guid,
+		/// <summary>Float is not used in the model, as of 23 March 2013.</summary>
+		Float = 1 << CellarPropertyType.Float,
+		/// <summary>Numeric is not used in the model, as of 23 March 2013.</summary>
+		Numeric = 1 << CellarPropertyType.Numeric,
+		/// <summary></summary>
+		Integer = 1 << CellarPropertyType.Integer,
+		/// <summary></summary>
+		Time = 1 << CellarPropertyType.Time,
+		/// <summary></summary>
+		AllBasic = Boolean | GenDate | Guid | Float | Numeric | Integer | Time,
 
 		///// <summary>special virtual bits</summary>
 		//kcptVirtualBit = 0xe0,

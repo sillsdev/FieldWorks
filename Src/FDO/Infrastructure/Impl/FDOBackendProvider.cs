@@ -356,8 +356,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			if (currentDataStoreVersion == ModelVersion)
 				return;
 
-			FdoCache.WriteAllObjectsAtEndOfInitialize = (currentDataStoreVersion < 7000064);
-
 			// See if migration involves real data migration(s).
 			// If it does not, just update the stored version number, and keep going.
 			if (!m_dataMigrationManager.NeedsRealMigration(currentDataStoreVersion, ModelVersion))

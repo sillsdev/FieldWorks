@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			internal CellarPropertyType m_cpt;
 			internal int m_destClsid;
 			internal bool m_fCustom;
+			internal bool m_isVirtual;
 			internal string m_fieldHelp;
 			internal int m_fieldWs;
 			internal Guid m_fieldListRoot;
@@ -54,6 +55,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 					m_cpt = cpt,
 					m_destClsid = destClsid,
 					m_fCustom = false,
+					m_isVirtual = false,
 					m_fieldHelp = null,
 					m_fieldWs = WritingSystemServices.kwsAnal,
 					m_fieldListRoot = Guid.Empty
@@ -222,7 +224,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <returns>Points to the output field type.</returns>
 		public int GetFieldType(int luFlid)
 		{
-			throw new NotImplementedException();
+			return (int)(m_fieldsById[luFlid].m_cpt);
 		}
 
 		/// <summary>
@@ -287,7 +289,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// this corresponds to the "Base" column in the Class$ table.</returns>
 		public int GetBaseClsId(int luClid)
 		{
-			throw new NotImplementedException();
+			return m_superclassById.ContainsKey(luClid) ? m_classesByName[m_superclassById[luClid]] : 0;
 		}
 
 		/// <summary> Gets the name of the base class for a given class. </summary>
@@ -415,7 +417,27 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <param name='type'> </param>
 		public void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
 		{
-			throw new NotSupportedException();
+			var clsid = luFlid / 1000;
+			var mfi = new MockFieldInfo
+			{
+				m_flid = luFlid,
+				m_name = bstrField,
+				m_cpt = (CellarPropertyType)type,
+				m_destClsid = 0,
+				m_fCustom = false,
+				m_fieldHelp = null,
+				m_fieldWs = WritingSystemServices.kwsAnal,
+				m_fieldListRoot = Guid.Empty,
+				m_isVirtual = true
+			};
+			m_fieldsById.Add(luFlid, mfi);
+			List<MockFieldInfo> list;
+			if (!m_fieldsByClassId.TryGetValue(clsid, out list))
+			{
+				list = new List<MockFieldInfo>();
+				m_fieldsByClassId.Add(clsid, list);
+			}
+			list.Add(mfi);
 		}
 
 		/// <summary> </summary>
@@ -423,7 +445,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <returns></returns>
 		public bool get_IsVirtual(int luFlid)
 		{
-			throw new NotSupportedException();
+			return m_fieldsById[luFlid].m_isVirtual;
 		}
 
 		/// <summary> Gets the name of a field. </summary>
@@ -481,15 +503,38 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <returns>The field Ids.</returns>
 		public int[] GetFields(int clid, bool includeSuperclasses, int fieldTypes)
 		{
-			if (fieldTypes != (int)CellarPropertyTypeFilter.AllAtomic)
-				throw new NotSupportedException();
-			if (!m_fieldsByClassId.ContainsKey(clid))
-				return new List<int>().ToArray();
+			if ((fieldTypes != (int)CellarPropertyTypeFilter.AllAtomic) && (fieldTypes != (int)CellarPropertyTypeFilter.AllBasic))
+				throw new NotSupportedException("The 'GetFields' current;y only supports 'CellarPropertyTypeFilter.AllAtomic' and 'CellarPropertyTypeFilter.AllBasic' types of fields");
 
-			var matchingFields = m_fieldsByClassId[clid].Where(
-				propInfo =>
-				propInfo.m_cpt == CellarPropertyType.OwningAtomic || propInfo.m_cpt == CellarPropertyType.ReferenceAtomic);
-			return matchingFields.Select(match => match.m_flid).ToArray();
+			var matches = new HashSet<int>();
+			List<MockFieldInfo> allPropInfo;
+			if (m_fieldsByClassId.TryGetValue(clid, out allPropInfo))
+			{
+				var matchingFields = new List<MockFieldInfo>(allPropInfo.Where(propInfo => IsSupportedFieldType(propInfo.m_cpt)));
+				matches.UnionWith(matchingFields.Select(match => match.m_flid));
+			}
+
+			if (includeSuperclasses && m_classesById[clid] != "CmObject")
+				matches.UnionWith(GetFields(GetBaseClsId(clid), true, fieldTypes));
+			return matches.ToArray();
+		}
+
+		private bool IsSupportedFieldType(CellarPropertyType fieldType)
+		{
+			switch (fieldType)
+			{
+				case CellarPropertyType.OwningAtomic:
+				case CellarPropertyType.ReferenceAtomic:
+				case CellarPropertyType.Boolean:
+				//case CellarPropertyType.Float: // Not yet supported (as of 23 march 2013)
+				case CellarPropertyType.GenDate:
+				case CellarPropertyType.Guid:
+				case CellarPropertyType.Integer:
+				//case CellarPropertyType.Numeric: // Not yet supported (as of 23 march 2013)
+				case CellarPropertyType.Time:
+					return true;
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -519,7 +564,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <param name="fieldName">Field name for the custom field.</param>
 		/// <param name="fieldType">Data type for the custom field.</param>
 		/// <param name="destinationClass">Class Id for object type custom properties</param>
-		/// <returns>The Id for tne new custom field.</returns>
+		/// <returns>The Id for the new custom field.</returns>
 		/// <exception cref="KeyNotFoundException">
 		/// Thrown if 'fieldType' is an object type (owning/reference and atomic/collection/sequence) property,
 		/// but 'destinationClass' does not match a class in the model.
@@ -538,7 +583,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// </remarks>
 		public int AddCustomField(string className, string fieldName, CellarPropertyType fieldType, int destinationClass)
 		{
-			throw new NotImplementedException();
+			return AddCustomField(className, fieldName, fieldType, destinationClass, null, 0, Guid.Empty);
 		}
 
 		/// <summary>Check if the given flid is Custom, or not.</summary>
@@ -562,7 +607,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 					var flidMax = flid - 1;
 					foreach (MockFieldInfo mfi in list)
 					{
-						if (mfi.m_fCustom && mfi.m_flid > flid)
+						if (mfi.m_fCustom && mfi.m_flid >= flid)
 							flidMax = mfi.m_flid;
 					}
 					flid = flidMax + 1;

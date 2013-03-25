@@ -1326,20 +1326,30 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_nameToFlid[MakeFlidKey(clid, fieldName)] = flid;
 		}
 
-		private static readonly HashSet<CellarPropertyType> PropertyTypesForValueTypeData = new HashSet<CellarPropertyType>()
+		/// <summary>
+		/// Set of all basic (C# value types) data types.
+		/// </summary>
+		/// <remarks>
+		/// Float and Numeric are not used in the model as of 23 March 2013.
+		/// </remarks>
+		public static readonly HashSet<CellarPropertyType> PropertyTypesForValueTypeData = new HashSet<CellarPropertyType>()
 		{
-			CellarPropertyType.Binary,
 			CellarPropertyType.Boolean,
 			CellarPropertyType.GenDate,
 			CellarPropertyType.Guid,
 			CellarPropertyType.Integer,
+			CellarPropertyType.Float,
+			CellarPropertyType.Numeric,
 			CellarPropertyType.Time
 		};
 
 		/// <summary>
-		/// Returns true for Binary, Boolean, GenDate, Integer and Time
+		/// Returns true for Boolean, GenDate, Guid, Integer, Float, Numeric, and Time
 		/// </summary>
 		/// <param name="type"></param>
+		/// <remarks>
+		/// Float and Numeric are not used in the model, as of 23 March 2013.
+		/// </remarks>
 		/// <returns></returns>
 		public bool IsValueType(CellarPropertyType type)
 		{

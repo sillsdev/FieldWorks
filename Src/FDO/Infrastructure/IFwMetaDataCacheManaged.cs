@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 		/// <param name="fieldName">Field name for the custom field.</param>
 		/// <param name="fieldType">Data type for the custom field.</param>
 		/// <param name="destinationClass">Class Id for object type custom properties</param>
-		/// <returns>The Id for tne new custom field.</returns>
+		/// <returns>The Id for the new custom field.</returns>
 		/// <exception cref="KeyNotFoundException">
 		/// Thrown if 'fieldType' is an object type (owning/reference and atomic/collection/sequence) property,
 		/// but 'destinationClass' does not match a class in the model.

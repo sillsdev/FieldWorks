@@ -35,6 +35,7 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using Sharpen.Util;
 
 namespace SIL.FieldWorks.FDO
 {
@@ -344,23 +345,6 @@ namespace SIL.FieldWorks.FDO
 
 			NonUndoableUnitOfWorkHelper.Do(ActionHandlerAccessor, () =>
 				DataStoreInitializationServices.PrepareCache(this));
-
-			if (!WriteAllObjectsAtEndOfInitialize)
-				return;
-			progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
-			progressDlg.Message = AppStrings.InitializeSavingMigratedDataProgressMessage;
-			progressDlg.RunTask(delegate
-				{
-					var bep = (IDataStorer) m_serviceLocator.DataSetup;
-					bep.Commit(new HashSet<ICmObjectOrSurrogate>(),
-							   new HashSet<ICmObjectOrSurrogate>(from obj in m_serviceLocator.ObjectRepository.AllInstances()
-																 select (ICmObjectOrSurrogate) obj),
-							   new HashSet<ICmObjectId>());
-					bep.CompleteAllCommits();
-
-					WriteAllObjectsAtEndOfInitialize = false;
-					return null;
-				});
 		}
 
 		private static void UpdateGlobalWsMgr(List<IWritingSystem> writingSystemsWithNewerGlobalVersions,
@@ -519,8 +503,36 @@ namespace SIL.FieldWorks.FDO
 					cache.LangProject.DateModified = cache.LangProject.DateCreated;
 				});
 				cache.ActionHandlerAccessor.Commit();
+
+				// Rewrite all objects to make sure they all have all of the basic properties.
+				progressDlg.ProgressBarStyle = ProgressBarStyle.Marquee;
+				progressDlg.Message = AppStrings.InitializeSavingMigratedDataProgressMessage;
+				progressDlg.RunTask(cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork, cache.m_serviceLocator.ObjectRepository.AllInstances().ToList());
 			}
 			return ClientServerServices.Current.Local.ConvertToDb4oBackendIfNeeded(progressDlg, dbFileName);
+		}
+
+		/// <summary>
+		/// Rewrites the given collection of ICmObjects to get the new xml for each.
+		/// </summary>
+		/// <param name="progressDlg"></param>
+		/// <param name="parameters"></param>
+		/// <remarks>
+		/// This method does not use a UOW, so think about not using it.
+		/// </remarks>
+		public object SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork(IProgress progressDlg, params object[] parameters)
+		{
+			var dirtballs = new HashSet<ICmObjectOrSurrogate>();
+			foreach (var dirtball in (List<ICmObject>)parameters[0])
+			{
+				dirtballs.Add((ICmObjectOrSurrogate)dirtball);
+			}
+			var bep = (IDataStorer)m_serviceLocator.DataSetup;
+			bep.Commit(new HashSet<ICmObjectOrSurrogate>(),
+					   dirtballs,
+					   new HashSet<ICmObjectId>());
+			bep.CompleteAllCommits();
+			return null;
 		}
 
 		/// <summary>
@@ -1402,26 +1414,6 @@ namespace SIL.FieldWorks.FDO
 		#region Internal interface
 
 		#region Internal Properties
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Indicates whether the data in a newly initialized cache needs to be fully rewritten
-		/// to ensure all value type data properties are included in the xml.
-		///
-		/// The expectation is that this will only be done one time,
-		/// when the current data set is being upgraded through Data Migration 7000064.
-		/// That is, if the data set is less than 7000064, then this will be set to 'true'
-		/// by FDOBackendProvider. Otherwise, it will always be set to false, so the update
-		/// won't be done.
-		/// </summary>
-		/// <remarks>
-		/// Data that comes out of FW6 and that has never been modified will
-		/// not have these property elements for default values of the respective
-		/// value data type (e.g.: booleans that were 'false' will not have a property element
-		/// in the current xml.
-		/// </remarks>
-		/// ------------------------------------------------------------------------------------
-		internal static bool WriteAllObjectsAtEndOfInitialize { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

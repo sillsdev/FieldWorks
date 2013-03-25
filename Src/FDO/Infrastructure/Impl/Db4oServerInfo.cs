@@ -416,9 +416,16 @@ namespace FwRemoteDatabaseConnector
 		/// to prevent any possible bad performance.
 		/// </summary>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Ext() returns a reference")]
 		public string[] ListConnectedClients()
 		{
-			var ports = m_runningServers.Where(pair => pair.Value.m_objectServer.Ext().ClientCount() > 0).Select(pair => pair.Value.m_port);
+			var ports = new List<int>();
+			foreach (var port in m_runningServers.Values)
+			{
+				if (port.m_objectServer.Ext().ClientCount() > 0)
+					ports.Add(port.m_port);
+			}
 			return ListUniqueAddressConnectedToPorts(ports);
 		}
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
@@ -193,6 +194,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			AddArg(ref args, "-v", command);
 
+			if (command == SendReceive && FixItAppExists)
+			{
+				AddArg(ref args, "-f", FixItAppPathname);
+			}
+
 			if (!String.IsNullOrEmpty(projectGuid))
 			{
 				AddArg(ref args, "-g", projectGuid);
@@ -319,6 +325,34 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string FullFieldWorksBridgePath()
 		{
 			return Path.Combine(DirectoryFinder.FlexBridgeFolder, FLExBridgeName);
+		}
+
+		/// <summary>
+		/// Returns the full path and filename of the FieldWorksBridge executable
+		/// </summary>
+		/// <returns></returns>
+		public static bool FixItAppExists
+		{
+			get
+			{
+				var fixitAppPathname = FixItAppPathname;
+				return !string.IsNullOrEmpty(fixitAppPathname) && File.Exists(fixitAppPathname);
+			}
+		}
+
+		/// <summary>
+		/// Returns the full path and filename of the FieldWorksBridge executable
+		/// </summary>
+		/// <returns></returns>
+		public static string FixItAppPathname
+		{
+			get
+			{
+				const string fixitAppName = "FixFwData.exe";
+				var codeBasePath = FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase);
+				var baseDir = Path.GetDirectoryName(codeBasePath);
+				return Path.Combine(baseDir, fixitAppName);
+			}
 		}
 
 		#region Service classes and methods For Bridge calls to FLEx

@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Xml;
 
 using SIL.FieldWorks.Common.FwUtils;
@@ -229,6 +230,8 @@ namespace SIL.FieldWorks.Common.Framework
 			m_progressDlg = progressDlg;
 
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, CreateStyles);
+
+			m_cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork(m_progressDlg, m_databaseStyles.Objects.ToList());
 
 			return null;
 		}

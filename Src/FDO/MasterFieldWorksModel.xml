@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
+  WARNING 0: If you add any C# value data type property (int, bool, GenDate, DateTime, etc) to any class (new or old), you **must** make sure
+	you also add an explicit xml element in a DM to every instance that gains the new property, with the C# default (e.g., 'false' for boolean),
+	or another domain driven default.
+
   WARNING 1: Don't even think of not bumping up the version number,
 	unless you are ONLY doing one, or more, of the following three exceptions.
 	ALL other changes to this file REQUIRE a change of the 'version' attribute of the main "EntireModel" element
@@ -32,7 +36,8 @@
 The original version number was: 7000000. Be sure it has the right number of zeros after
 editing it.
 
-Change History: (Be sure to update the 'version' attribut in the EntireModel, when needed. (Almost always.))
+Change History: (Be sure to update the 'version' attribute in the EntireModel, when needed. (Almost always.))
+  22 March 2013 (7000066): Redux of DM64, but with real DM code.
   15 March 2013 (7000065): Add a valid Name to each Reversal Index's PartOfSpeech possibility list.
 	This allows merge conflicts when users add to these lists to have a better 'address'.
   15 February 2013 (7000064): Do nothing DM that will trigger a rewrite of all CmoObjects.
@@ -183,7 +188,7 @@ Change History: (Be sure to update the 'version' attribut in the EntireModel, wh
 	2 September 2009 (NA): Add schema and optional 'singleton' and 'owner' attributes to <class> element. [Nothing at all for data migration.]
 	8 August 2009 (7000000): Original file created
 -->
-<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000065" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
+<EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="7000066" xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
   <CellarModule id="Cellar" num="0">
 	<class num="0" id="CmObject" abstract="false" abbr="obj">
 	  <props/>

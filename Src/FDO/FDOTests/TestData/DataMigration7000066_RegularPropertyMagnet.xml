@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000065">
+	<rt class="RegularPropertyMagnet" guid="c1ee311a-e382-11de-8a39-0800200c9a66">
+		<ExtantBooleanProperty val="True" />
+		<ExtantGenDateProperty val="-201303233" />
+		<ExtantGuidProperty val="c1ee311b-e382-11de-8a39-0800200c9a66" />
+		<ExtantIntegerProperty val="1" />
+		<ExtantTimeProperty val="2006-3-12 18:19:46.87" />
+		<ExtantOwningAtomic>
+			<objsur guid="e268fe80-5d9d-4f6b-a68f-37db8218b15d" t="o" />
+		</ExtantOwningAtomic>
+	</rt>
+</languageproject>
