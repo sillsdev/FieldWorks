@@ -313,6 +313,15 @@ namespace SIL.FieldWorks.FixData {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Removing unused rt element. (class=&apos;{0}&apos;, guid=&apos;{1}&apos;)..
+        /// </summary>
+        internal static string ksUnusedRtElement {
+            get {
+                return ResourceManager.GetString("ksUnusedRtElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use this when a project is throwing exceptions such as &quot;Key 62c22e20-8d8a-42bf-a54c-e21529284f2d not found in identity map...&quot;, and you suspect the data has been corrupted somehow..
         /// </summary>
         internal static string ksUseThisWhen {

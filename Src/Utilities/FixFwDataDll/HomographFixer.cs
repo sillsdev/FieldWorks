@@ -91,9 +91,10 @@ namespace SIL.FieldWorks.FixData
 			}
 		}
 
-		internal override void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)
+		internal override void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids,
+			Dictionary<string, HashSet<string>> parentToOwnedObjsur, HashSet<string> rtElementsToDelete)
 		{
-			base.FinalFixerInitialization(owners, guids); // Sets base class member variables
+			base.FinalFixerInitialization(owners, guids, parentToOwnedObjsur, rtElementsToDelete); // Sets base class member variables
 
 			List<Guid> guidsForHomograph = new List<Guid>();
 

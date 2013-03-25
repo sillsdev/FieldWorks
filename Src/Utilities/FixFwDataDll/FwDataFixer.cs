@@ -43,6 +43,10 @@ namespace SIL.FieldWorks.FixData
 		List<XElement> m_dupGuidElements = new List<XElement>();
 		List<XElement> m_dupOwnedElements = new List<XElement>();
 
+		//This structure is used for the deletion of rt elements
+		Dictionary<string, HashSet<string>> m_parentToOwnedObjsur = new Dictionary<string, HashSet<string>>();
+		private HashSet<string> m_rtElementsToDelete = new HashSet<string>();
+
 		/// <summary>
 		/// Constructor.  Reads the file and stores any data needed for corrections later on.
 		/// </summary>
@@ -89,7 +93,7 @@ namespace SIL.FieldWorks.FixData
 				{
 					string rtXml = xrdr.ReadOuterXml();
 					XElement rt = XElement.Parse(rtXml);
-					StoreGuidInfo(rt, errorLogger);
+					StoreGuidInfoAndOwnership(rt, errorLogger);
 					// Give each fixer a chance to gather data on the first pass,
 					// if it needs two passes to fix its sort of problem.
 					foreach (var fixer in m_rtLevelFixers)
@@ -102,7 +106,7 @@ namespace SIL.FieldWorks.FixData
 						m_progress.Step(1);
 				}
 				foreach (var fixer in m_rtLevelFixers)
-					fixer.FinalFixerInitialization(m_owners, m_guids);
+					fixer.FinalFixerInitialization(m_owners, m_guids, m_parentToOwnedObjsur, m_rtElementsToDelete);
 				xrdr.Close();
 			}
 		}
@@ -146,14 +150,24 @@ namespace SIL.FieldWorks.FixData
 						// set flag to false if we don't want to write out this rt element, i.e. delete it!
 						// N.B.: Any deleting of owned objects requires two passes, so that the reference
 						// to the object being deleted can be cleaned up too!
-						var fwrite = true;
-						foreach (var fixer in m_rtLevelFixers)
+						var guid = rt.Attribute("guid").Value;
+						if (!m_rtElementsToDelete.Contains(guid))
 						{
-							if (!fixer.FixElement(rt, errorLogger))
-								fwrite = false;
+							var fwrite = true;
+							foreach (var fixer in m_rtLevelFixers)
+							{
+								if (!fixer.FixElement(rt, errorLogger))
+									fwrite = false;
+							}
+							if (fwrite)
+								rt.WriteTo(xw);
 						}
-						if (fwrite)
-							rt.WriteTo(xw);
+						else
+						{
+							var className = rt.Attribute("class").Value;
+							var errorMessage = String.Format(Strings.ksUnusedRtElement, className, guid);
+							errorLogger(guid, DateTime.Now.ToShortDateString(), errorMessage);
+						}
 						xrdr.MoveToContent();
 						m_progress.Step(1);
 					}
@@ -304,7 +318,7 @@ namespace SIL.FieldWorks.FixData
 			}
 		}
 
-		private void StoreGuidInfo(XElement rt, ErrorLogger errorLogger)
+		private void StoreGuidInfoAndOwnership(XElement rt, ErrorLogger errorLogger)
 		{
 			Guid guid = new Guid(rt.Attribute("guid").Value);
 			if (m_guids.Contains(guid))
@@ -316,6 +330,7 @@ namespace SIL.FieldWorks.FixData
 			{
 				m_guids.Add(guid);
 			}
+			var objsurGuids = new HashSet<string>();
 			foreach (var objsur in rt.Descendants("objsur"))
 			{
 				XAttribute xaType = objsur.Attribute("t");
@@ -333,7 +348,12 @@ namespace SIL.FieldWorks.FixData
 				{
 					m_owners.Add(guidObj, guid);
 				}
+				objsurGuids.Add(objsur.Attribute("guid").Value);
 			}
+			//Now that all we have collected all the objects owned by the current rt element store it for later use.
+			//There is no need to store this information if the rt element does not own anything.
+			if (objsurGuids.Count > 0)
+				m_parentToOwnedObjsur.Add(rt.Attribute("guid").Value, objsurGuids);
 		}
 
 		internal static void FixGenericDate(string fieldName, XElement rt, string className, Guid guid, ErrorLogger errorLogger)
@@ -403,11 +423,16 @@ namespace SIL.FieldWorks.FixData
 	{
 		protected HashSet<Guid> m_guids = new HashSet<Guid>();
 		protected Dictionary<Guid, Guid> m_owners = new Dictionary<Guid, Guid>();
+		protected Dictionary<string, HashSet<string>> m_parentToOwnedObjsur = new Dictionary<string, HashSet<string>>();
+		protected HashSet<string> m_rtElementsToDelete = new HashSet<string>();
 
-		internal virtual void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)
+		internal virtual void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids,
+			Dictionary<string, HashSet<string>> parentToOwnedObjsur, HashSet<string> rtElementsToDelete)
 		{
 			m_owners = owners;
 			m_guids = guids;
+			m_parentToOwnedObjsur = parentToOwnedObjsur;
+			m_rtElementsToDelete = rtElementsToDelete;
 		}
 
 		/// <summary>
@@ -437,6 +462,23 @@ namespace SIL.FieldWorks.FixData
 		internal virtual void InspectElement(XElement rt)
 		{
 			// Base class does nothing.
+		}
+
+		//Delete an object and recursively find and delete all owned decendants of the object.
+		internal void MarkObjForDeletionAndDecendants(string rtElementGuid)
+		{
+			m_rtElementsToDelete.Add(rtElementGuid);
+
+			//If the element has any owned decendants then mark those for deletion also.
+			HashSet<string> ownedObjsurs;
+			m_parentToOwnedObjsur.TryGetValue(rtElementGuid, out ownedObjsurs);
+			if (ownedObjsurs != null)
+			{
+				foreach (var ownedObj in ownedObjsurs)
+				{
+					MarkObjForDeletionAndDecendants(ownedObj);
+				}
+			}
 		}
 	}
 }

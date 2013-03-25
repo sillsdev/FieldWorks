@@ -27,6 +27,15 @@
 
 <rt class="MoStemMsa" guid="408ba7ca-e15a-448e-a618-3855f93bd3c2" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455" />
 
-<rt class="MoStemMsa" guid="508ba7ca-e15a-448e-a618-3855f93bd3c2" ownerguid="dddddddd-a7d4-4e1e-a403-deec87c34455" />
+	<rt class="PartOfSpeech" guid="4c90d669-cc98-49ea-8c9c-a739253336ed" ownerguid="8e45de56-5105-48dc-b302-05985432e1e7"> <!--Owner does not exist-->
+		<Abbreviation>
+			<AUni ws="en">Vsub</AUni>
+			<AUni ws="pt">Vsub</AUni>
+		</Abbreviation>
+		<Name>
+			<AUni ws="en">Subjunctive Verb</AUni>
+			<AUni ws="pt">Verbo Conjuntivo</AUni>
+		</Name>
+	</rt>
 
 </languageproject>

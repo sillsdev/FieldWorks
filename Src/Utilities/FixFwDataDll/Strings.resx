@@ -207,4 +207,7 @@
   <data name="ksRepairingMorphBundleFromSense" xml:space="preserve">
     <value>Fixing link to MSA based on Sense MSA (class='WfiMorphBundle', guid='{0}').</value>
   </data>
+  <data name="ksUnusedRtElement" xml:space="preserve">
+    <value>Removing unused rt element. (class='{0}', guid='{1}').</value>
+  </data>
 </root>

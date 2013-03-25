@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.FixData
 		private Dictionary<string, HashSet<string>> entryToMSA = new Dictionary<string, HashSet<string>>();
 		private Dictionary<string, HashSet<string>> entryToSense = new Dictionary<string, HashSet<string>>();
 		private HashSet<string> goodMsas = new HashSet<string>();
+		private HashSet<string> allMsas = new HashSet<string>();
 
 		internal override void InspectElement(XElement rt)
 		{
@@ -72,14 +73,25 @@ namespace SIL.FieldWorks.FixData
 						senseToMSA[rtGuid] = objsur.Attribute("guid").Value;
 					}
 					break;
+				case "MoStemMsa":
+				case "MoDerivAffMsa":
+				case "MoInflAffMsa":
+				case "MoUnclassifiedAffixMsa":
+				case "MoDerivStepMsa":
+					if (!allMsas.Contains(rtGuid))
+					{
+						allMsas.Add(rtGuid);
+					}
+					break;
 				default:
 					break;
 			}
 		}
 
-		internal override void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)
+		internal override void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids,
+			Dictionary<string, HashSet<string>> parentToOwnedObjsur, HashSet<string> rtElementsToDelete)
 		{
-			base.FinalFixerInitialization(owners, guids);
+			base.FinalFixerInitialization(owners, guids, parentToOwnedObjsur, rtElementsToDelete);
 			//Go through the maps and find out if any references to MSAs ought to be dropped by the entry
 			foreach (var entry in entryToSense)
 			{
@@ -94,6 +106,14 @@ namespace SIL.FieldWorks.FixData
 				// make them keepers.
 				keepMSAs.IntersectWith(entryToMSA[entry.Key]);
 				goodMsas.UnionWith(keepMSAs);
+			}
+
+			foreach (var msa in allMsas)
+			{
+				if (IsRejectedMsa(msa))
+				{
+					MarkObjForDeletionAndDecendants(msa);
+				}
 			}
 		}
 
@@ -130,9 +150,15 @@ namespace SIL.FieldWorks.FixData
 		}
 
 		// Determine whether a particular objsur should be rejected.
-		internal bool IsRejectedMsa(XElement objsur)
+		// This can also be used when examining a MoStemMsa to determine if it should be deleted.
+		internal bool IsRejectedMsa(XElement elementWithMsaGuid)
 		{
-			return !goodMsas.Contains(objsur.Attribute("guid").Value);
+			return !goodMsas.Contains(elementWithMsaGuid.Attribute("guid").Value);
+		}
+
+		internal bool IsRejectedMsa(String guid)
+		{
+			return !goodMsas.Contains(guid);
 		}
 	}
 }

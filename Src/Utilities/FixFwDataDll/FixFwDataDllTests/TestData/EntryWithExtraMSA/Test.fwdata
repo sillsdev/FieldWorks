@@ -8,6 +8,9 @@
 </rt>
 
 <rt class="MoStemMsa" guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
+	<PartOfSpeech>
+		<objsur guid="3ecbfcc8-76d7-43bc-a5ff-3c47fabf355c" t="r" /> <!--This reference is dangling. Let's see if it is removed-->
+	</PartOfSpeech>
 </rt>
 
 <rt class="MoStemMsa" guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
@@ -15,12 +18,62 @@
 
 <rt class="LexEntry" guid="5206535c-d93d-4129-8fce-9e93d8970aec">
 <MorphoSyntaxAnalyses>
-<objsur guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" t="o" />
-<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="o" />
+	<objsur guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" t="o" />
+	<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="o" />
+	<objsur guid="007cdfc9-bdff-4e88-b17d-13d40cbd2bc6" t="o" />
 </MorphoSyntaxAnalyses>
 <Senses>
 <objsur guid="155c0e55-2428-49a1-8957-57df676886cd" t="o" />
 </Senses>
 </rt>
+
+<!--Note LT-14310: we want to test for the deletion of an MoStemMsa that is referenced by a LexEntry but has no LexSense referenceing it.
+	We need a good example where the MoStemMsa has references to an object that is owns. This test originally only confirmed that the owning
+	reference in the LexEntry was removed but did not actually delete the MoStemMsa.
+-->
+	<rt class="MoStemMsa" guid="007cdfc9-bdff-4e88-b17d-13d40cbd2bc6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
+		<MsFeatures>
+			<objsur guid="3b68c45a-b997-4ce2-af67-874141be6178" t="o" />
+		</MsFeatures>
+		<PartOfSpeech>
+			<objsur guid="3ecbfcc8-76d7-43bc-a5ff-3c47fabf355c" t="r" />
+		</PartOfSpeech>
+	</rt>
+
+	<rt class="FsFeatStruc" guid="3b68c45a-b997-4ce2-af67-874141be6178" ownerguid="007cdfc9-bdff-4e88-b17d-13d40cbd2bc6">
+		<FeatureSpecs>
+			<objsur guid="afa5aa8e-7d20-4e06-bef8-6761949fdcd3" t="o" />
+		</FeatureSpecs>
+		<Type>
+			<objsur guid="1828a080-11b7-46ec-8c87-b07b426fbe52" t="r" />
+		</Type>
+	</rt>
+
+	<rt class="FsComplexValue" guid="afa5aa8e-7d20-4e06-bef8-6761949fdcd3" ownerguid="3b68c45a-b997-4ce2-af67-874141be6178">
+		<Feature>
+			<objsur guid="61a6ab39-7b9e-4ab1-9766-4c142b05eaf3" t="r" />
+		</Feature>
+		<Value>
+			<objsur guid="2dde77d7-0178-4eaf-b04e-61c80c76eda6" t="o" />
+		</Value>
+	</rt>
+
+	<rt class="FsFeatStruc" guid="2dde77d7-0178-4eaf-b04e-61c80c76eda6" ownerguid="afa5aa8e-7d20-4e06-bef8-6761949fdcd3">
+		<FeatureSpecs>
+			<objsur guid="94fd74a1-80f6-409c-9527-60bd0683a87c" t="o" />
+		</FeatureSpecs>
+		<Type>
+			<objsur guid="cc64bf42-a64b-4d57-b14a-504e7d89ebc0" t="r" />
+		</Type>
+	</rt>
+
+	<rt class="FsClosedValue" guid="94fd74a1-80f6-409c-9527-60bd0683a87c" ownerguid="2dde77d7-0178-4eaf-b04e-61c80c76eda6">
+		<Feature>
+			<objsur guid="586ef9dd-4ee8-492f-b478-69a98d126081" t="r" />
+		</Feature>
+		<Value>
+			<objsur guid="76d9640d-f5f8-4a54-b169-238bcc0ad3a5" t="r" />
+		</Value>
+	</rt>
 
 </languageproject>

@@ -196,29 +196,25 @@ namespace FixFwDataDllTests
 			var testPath = Path.Combine(basePath, "DanglingReference");
 			// This test checks that dangling references guids are identified and removed
 			// and that an error message is produced for them.
-			string testGuid = "dddddddd-a7d4-4e1e-a403-deec87c34455";
 			string testObjsurGuid = "aaaaaaaa-e15a-448e-a618-3855f93bd3c2";
 			string lexSenseGuid = "2210cf83-ad6c-47fe-91f8-8bf789473792";
 			string lexEntryGuid = "64cf9708-a7d4-4e1e-a403-deec87c34455";
 			string testChangeGuid = "cccccccc-a7d4-4e1e-a403-deec87c34455";
-			string moStemMsaGuid = "508ba7ca-e15a-448e-a618-3855f93bd3c2";
 			string secondDangler = "408ba7ca-e15a-448e-aaaa-3855f93bd3c2";
+			string partOfSpeechGuid = "4c90d669-cc98-49ea-8c9c-a739253336ed";
+			string parfOfSpeechOwnerGuid = "8e45de56-5105-48dc-b302-05985432e1e7";
 			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
 			data.FixErrorsAndSave();
-			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexSense\" and @ownerguid=\"" + testGuid + "\"]", 0, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 0, false);
 			Assert.AreEqual(4, errors.Count, "Unexpected number of errors found.");
 			Assert.True(errors[0].StartsWith("Removing dangling link to '" + testObjsurGuid + "' (class='LexEntry'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
-
 			Assert.True(errors[1].StartsWith("Changing ownerguid value from '" + testChangeGuid + "' to '" + lexEntryGuid
 				+ "' (class='LexSense', guid='" + lexSenseGuid),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
-
-			Assert.True(errors[3].EndsWith("Removing link to nonexistent ownerguid='" + testGuid
-				+ "' (class='MoStemMsa', guid='" + moStemMsaGuid + "')."),
+			Assert.True(errors[3].EndsWith("Removing link to nonexistent ownerguid='" + parfOfSpeechOwnerGuid
+				+ "' (class='PartOfSpeech', guid='" + partOfSpeechGuid + "')."),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistentOwner
 			Assert.True(errors[2].StartsWith("Removing dangling link to '" + secondDangler + "' (class='LexSense'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
@@ -228,14 +224,14 @@ namespace FixFwDataDllTests
 
 			// Check original errors
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"MoStemMsa\" and @ownerguid=\"" + testGuid + "\"]", 1, false);
+				"//rt[@class=\"PartOfSpeech\" and @ownerguid=\"" + parfOfSpeechOwnerGuid + "\"]", 1, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"LexSense\" and @ownerguid=\"" + testChangeGuid + "\"]", 1, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
 				"//objsur[@guid=\"" + testObjsurGuid + "\"]", 1, false);
 			// Check that they were fixed
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"MoStemMsa\" and @ownerguid=\"" + testGuid + "\"]", 0, false);
+				"//rt[@class=\"PartOfSpeech\" and @ownerguid=\"" + parfOfSpeechOwnerGuid + "\"]", 0, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"LexSense\" and @ownerguid=\"" + lexEntryGuid + "\"]", 2, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
@@ -292,7 +288,7 @@ namespace FixFwDataDllTests
 				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairAfGuid + "\"]/Morph/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
 
 			// Check errors
-			Assert.AreEqual(9, errors.Count, "Unexpected number of errors found.");
+			Assert.AreEqual(10, errors.Count, "Unexpected number of errors found.");
 			Assert.True(errors[0].StartsWith("Removing dangling link to '" + danglingMsaGuid + "' (class='LexEntry'"),
 				"Error message is incorrect."); // OriginalFixer--ksRemovingLinkToNonexistingObject
 			Assert.That(errors[1], Is.EqualTo("Fixing link to MSA based on Sense MSA (class='WfiMorphBundle', guid='" + repairableBundleGuid + "')."),
@@ -301,14 +297,15 @@ namespace FixFwDataDllTests
 				"Error message is incorrect."); // MorphBundleFixer--ksRemovingDanglingMsa
 			Assert.That(errors[3], Is.EqualTo("Fixing link to MSA based on only MSA of entry for WfiMorphBundle '" + repairOnlyMsaBundleGuid + "'."),
 				"Error message is incorrect."); // MorphBundleFixer--ksRepairingMorphBundleFromEntry
-			// 4 is removing the unused MSA. Not interesting here.
-			Assert.That(errors[5], Is.EqualTo("Fixing link to MSA based on only MSA of entry for WfiMorphBundle '" + repairForWillDeleteMsa + "'."),
+			// 4 is removing the unused MSA reference. Not interesting here.
+			// 5 is removing the unused rt MSA element. Not interesting here.
+			Assert.That(errors[6], Is.EqualTo("Fixing link to MSA based on only MSA of entry for WfiMorphBundle '" + repairForWillDeleteMsa + "'."),
 				"Error message is incorrect."); // MorphBundleFixer--ksRepairingMorphBundleFromEntry
-			Assert.That(errors[6], Is.EqualTo("Fixing link to Form based on only Form of entry for WfiMorphBundle '" + danglingMorphGoodSenseGuid + "'."),
+			Assert.That(errors[7], Is.EqualTo("Fixing link to Form based on only Form of entry for WfiMorphBundle '" + danglingMorphGoodSenseGuid + "'."),
 				"Error message is incorrect."); // MorphBundleFixer--ksRemovingDanglingMsa
-			Assert.That(errors[7], Is.EqualTo("Removing dangling link to Form '" + danglingMsaGuid + "' for WfiMorphBundle '" + danglingMorphNoRepairGuid + "'."),
+			Assert.That(errors[8], Is.EqualTo("Removing dangling link to Form '" + danglingMsaGuid + "' for WfiMorphBundle '" + danglingMorphNoRepairGuid + "'."),
 				"Error message is incorrect."); // MorphBundleFixer--ksRemovingDanglingMorph
-			Assert.That(errors[8], Is.EqualTo("Removing dangling link to Form '" + danglingMsaGuid + "' for WfiMorphBundle '" + danglingMorphNoRepairAfGuid + "'."),
+			Assert.That(errors[9], Is.EqualTo("Removing dangling link to Form '" + danglingMsaGuid + "' for WfiMorphBundle '" + danglingMorphNoRepairAfGuid + "'."),
 				"Error message is incorrect."); // MorphBundleFixer--ksRemovingDanglingMorph
 
 			// Check file repair
@@ -499,9 +496,26 @@ namespace FixFwDataDllTests
 
 			// check that the clause marker was there originally
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2, false);
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 3, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"MoStemMsa\"]", 3, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"FsFeatStruc\"]", 2, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"FsComplexValue\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"FsClosedValue\"]", 1, false);
+
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"MoStemMsa\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"FsFeatStruc\"]", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"FsComplexValue\"]", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"FsClosedValue\"]", 0, false);
 		}
 
 		[Test]

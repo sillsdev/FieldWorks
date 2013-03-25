@@ -116,9 +116,10 @@ namespace SIL.FieldWorks.FixData
 			return xeProperty == null || !(xeProperty.Descendants("objsur").Any());
 		}
 
-		internal override void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids)
+		internal override void FinalFixerInitialization(Dictionary<Guid, Guid> owners, HashSet<Guid> guids,
+			Dictionary<string, HashSet<string>> parentToOwnedObjsur, HashSet<string> rtElementsToDelete)
 		{
-			base.FinalFixerInitialization(owners, guids); // Sets base class member variables
+			base.FinalFixerInitialization(owners, guids, parentToOwnedObjsur, rtElementsToDelete); // Sets base class member variables
 
 			// Find references to non-existent Segments
 			foreach (KeyValuePair<Guid, XElement> keyValuePair in m_candidateForRefAdjustment)
