@@ -40,7 +40,7 @@
 		<command id="CmdObtainLiftProject" label="Get and _Merge Lexicon with this Project..." icon="syncObtain" message="ObtainLiftProject" />
 		<command id="CmdHelpChorus" label="_Help..." message="ShowChorusHelp" />
 		<command id="CmdCheckForFlexBridgeUpdates" label="Check for _Updates..." message="CheckForFlexBridgeUpdates" />
-		<command id="CmdHelpAboutFLEXBridge" label="_About..." icon="syncSendReceive" message="AboutFlexBridge"/>
+		<command id="CmdHelpAboutFLEXBridge" label="_About..." icon="chorus" message="AboutFlexBridge"/>
 		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" shortcut="Ctrl+R" />
 
 		<command id="CmdClose" label="_Close" message="CloseWindow"/>
@@ -914,7 +914,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallImages" size="small" labels="BrowseView, EditView, DocumentView, NoFilter, SimpleFilter, DefaultSort, GenericTool, Delete, SpecialCharacter, ExternalLink, SideBySideView"/>
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallCommandImages" size="small" labels="NewProject, OpenProject, SaveProject, historyBack, historyForward, Refresh, MenuWidget, Undo, Redo, Cut, Copy, Paste, MoveUp, MoveRight, MoveDown, MoveLeft, columnChooser"/>
 		<imageList assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryImages" field="buttonImages" size="small" labels="majorEntry, minorEntry, subentry, goToEntry, reversalEntry, gotoReversalEntry"/>
-		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain"/>
+		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive, syncObtain, chorus"/>
 		<imageList assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.DataTreeImages" field="nodeImages" size="small" labels="sequence, collection, atomic"/>
 		<imageList assemblyPath="LexTextDll.dll" class=" SIL.FieldWorks.XWorks.LexText.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right"/>
 		<imageList assemblyPath="LexTextDll.dll" class=" SIL.FieldWorks.XWorks.LexText.ImageHolder" field="smallCommandImages" size="small" labels="findWordform, addNewAnalysis"/>

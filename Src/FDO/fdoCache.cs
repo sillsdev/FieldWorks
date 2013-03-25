@@ -35,7 +35,6 @@ using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
-using Sharpen.Util;
 
 namespace SIL.FieldWorks.FDO
 {
