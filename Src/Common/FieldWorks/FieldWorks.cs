@@ -122,6 +122,9 @@ namespace SIL.FieldWorks
 		private static string s_LinkDirChangedTo;
 		private static TcpChannel s_serviceChannel = null;
 		private static int s_servicePort;
+		// true if we have no previous reporting settings, typically the first time a version of FLEx that
+		// supports usage reporting has been run.
+		private static bool s_noPreviousReportingSettings;
 		#endregion
 
 		#region Main Method and Initialization Methods
@@ -234,21 +237,24 @@ namespace SIL.FieldWorks
 				var reportingSettings = Settings.Default.Reporting;
 				if (reportingSettings == null)
 				{
+					// Note: to simulate this, currently it works to delete all subfolders of
+					// (e.g.) C:\Users\thomson\AppData\Local\SIL\FieldWorks.exe_Url_tdkbegygwiuamaf3mokxurci022yv1kn
+					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
+					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
 					Settings.Default.Reporting = reportingSettings;
 					Settings.Default.Save();
 				}
 
 				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
-				// This is probably slightly different from its intent, which I think is to control whether we
-				// send more detailed info. Other options seem less desirable to me at present:
-				// -- add OkToPingAtAll to Palaso.ReportingSettings: this would be my preferred solution, but I am
-				// unsure how it would affect existing persisted ReportingSettings objects. Also, code to support
-				// it should then be in Palaso, and the implications for other clients would have to be negotiated.
-				// -- subclass Palaso.ReportingSettings and add OkToPingAtAll: I really don't like adding something
-				// in a private subclass which ought to be in the shared base class.
-				// -- record OkToPingAtAll separately: this has similar objections to subclassing, plus complicating
-				// the persistence picture.
+				// Despite its name, Cambell says this is the original intent (I think there may have been
+				// some thought of adding flags one day to control sending more detailed info, but if 'basic
+				// navigation' is suppressed nothing is sent). May want to consider renaming to something like
+				// OkToPingAtAll, but that affects other Palaso clients.
+				// The usage reporter does not currently send anything at all if the flag is false, but to make
+				// sure, we don't even initialize reporting if it is false.
+				// (Note however that it starts out true. Thus, typically a few pings will be sent
+				// on the very first startup, before the user gets a chance to disable it.)
 				if (reportingSettings != null && reportingSettings.OkToPingBasicUsageData)
 				{
 					UsageReporter.Init(reportingSettings, "flex.palaso.org", "UA-39238981-3",
@@ -1472,7 +1478,7 @@ namespace SIL.FieldWorks
 				// reset our projectId.
 				projectToTry = lastProjectId;
 
-				using (WelcomeToFieldWorksDlg dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, args.AppAbbrev, exception))
+				using (WelcomeToFieldWorksDlg dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, args.AppAbbrev, exception, s_noPreviousReportingSettings))
 				{
 					if (exception != null)
 					{

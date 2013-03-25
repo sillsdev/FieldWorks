@@ -21,7 +21,7 @@ namespace SIL.FieldWorks
 		[Test]
 		public void Basic()
 		{
-			using (var dlg = new WelcomeToFieldWorksDlg(new FlexHelpTopicProvider(), null, null))
+			using (var dlg = new WelcomeToFieldWorksDlg(new FlexHelpTopicProvider(), null, null, false))
 			{
 				Assert.That(dlg, Is.Not.Null);
 			}
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks
 		[Platform(Include="Linux", Reason="Linux specific")]
 		public void ReceiveButtonIsDisabled()
 		{
-			using (var dlg = new WelcomeToFieldWorksDlg(new FlexHelpTopicProvider(), null, null))
+			using (var dlg = new WelcomeToFieldWorksDlg(new FlexHelpTopicProvider(), null, null, false))
 			{
 				var receiveButton = ReflectionHelper.GetField(dlg, "receiveButton") as Button;
 				Assert.That(receiveButton.Enabled, Is.False);

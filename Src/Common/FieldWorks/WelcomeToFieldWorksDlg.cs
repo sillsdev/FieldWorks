@@ -65,6 +65,7 @@ namespace SIL.FieldWorks
 		}
 
 		#region Construction, Initialization and Deconstruction
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WelcomeToFieldWorksDlg"/> class.
@@ -73,8 +74,10 @@ namespace SIL.FieldWorks
 		/// <param name="appAbbrev">Standard application abbreviation.</param>
 		/// <param name="exception">Exception that was thrown if the previously requested
 		/// project could not be opened.</param>
+		/// <param name="showReportingRow">True (usually only on the first run) when we want to show the first-time warning about
+		/// sending google analytics information</param>
 		/// ------------------------------------------------------------------------------------
-		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, string appAbbrev, FwStartupException exception)
+		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, string appAbbrev, FwStartupException exception, bool showReportingRow)
 		{
 			m_appAbbrev = appAbbrev;
 			InitializeComponent();
@@ -96,8 +99,7 @@ namespace SIL.FieldWorks
 				Logger.WriteEvent("Opening 'Unable to Open Project' dialog");
 			}
 
-			var reportingSettings = Settings.Default.Reporting;
-			if (reportingSettings != null)
+			if (!showReportingRow)
 			{
 				var reportingInfoRow = tableLayoutPanel.GetRow(reportingInfoLayout);
 				Debug.Assert(reportingInfoRow >= 0, @"Refactoring or the designer has broken behavior here.");
