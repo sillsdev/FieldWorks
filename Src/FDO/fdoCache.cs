@@ -446,14 +446,6 @@ namespace SIL.FieldWorks.FDO
 				foreach (var additionalWs in additionalVernWss)
 					CreateVernacularWritingSystem(cache, additionalWs, false);
 
-				if (parameters.Length > 9)
-				{
-					InitializeOCMData(cache.LangProject,
-									  cache.WritingSystemFactory.GetWsFromStr(analWrtSys != null ? analWrtSys.IcuLocale : userIcuLocale),
-									 (string)parameters[7], (string)parameters[8], (string)parameters[9]);
-					ImportLocalizedLists(cache, progressDlg);
-				}
-
 				// Create a reversal index for the original default analysis writing system. (LT-4480)
 				var riRepo = cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
 				riRepo.FindOrCreateIndexForWs(cache.DefaultAnalWs);
@@ -501,6 +493,16 @@ namespace SIL.FieldWorks.FDO
 				AddMissingWritingSystems(Path.Combine(DirectoryFinder.TemplateDirectory, "POS.xml"),
 					cache.ServiceLocator.WritingSystemManager);
 				cache.ServiceLocator.WritingSystemManager.Save();
+
+				if (parameters.Length > 9)
+				{
+					cache.ActionHandlerAccessor.BeginNonUndoableTask();
+					InitializeOCMData(cache.LangProject,
+									  cache.WritingSystemFactory.GetWsFromStr(analWrtSys != null ? analWrtSys.IcuLocale : userIcuLocale),
+									 (string)parameters[7], (string)parameters[8], (string)parameters[9]);
+					ImportLocalizedLists(cache, progressDlg);
+					cache.ActionHandlerAccessor.EndNonUndoableTask();
+				}
 
 				NonUndoableUnitOfWorkHelper.Do(cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
