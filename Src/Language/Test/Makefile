@@ -12,13 +12,13 @@ include $(BUILD_ROOT)/Bld/_names.mak
 BUILD_PRODUCT = $(LANGUAGE_NAME)Test
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 
-UNIT = $(BUILD_ROOT)/Include/unit++
+UNIT = $(FWINCLUDE)/unit++
 LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
-GRAPHITE = $(SRC)/Graphite
-GR_LIB_SRC = $(GRAPHITE)/lib
+GRAPHITE_SRC = $(SRC)/Graphite
+GR_LIB_SRC = $(GRAPHITE_SRC)/lib
 GR_LIB_OBJ = $(OBJ_DIR)/$(BUILD_CONFIG)/Graphite/lib
-GRAPHITE_FW = $(GRAPHITE)/FwOnly
+GRAPHITE_FW = $(GRAPHITE_SRC)/FwOnly
 VIEWS_LIB = $(VIEWS_SRC)/lib
 
 DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -D_DEBUG
@@ -36,17 +36,17 @@ INCLUDES := \
 	-I$(FWINCLUDE) \
 	-I$(UNIT) -I$(LIB_UNIT) \
 	-I$(COM_OUT_DIR) \
-	-I$(LIBRARIES)/Win32More/include \
-	-I$(LIBRARIES)/COM/include \
-	-I$(LIBRARIES)/Win32Base/include \
+	-I$(WIN32MORE_INC) \
+	-I$(COM_INC) \
+	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 #`	-L$(FWKERNEL_SRC) -lFwKernel
 
 LDLIBS = \
-	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
-	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(WIN32MORE_LIB) -lWin32More \
+	-L$(COM_LIB) -lcom \
+	-L$(WIN32BASE_LIB) -lWin32Base \
 	-L$(OUT_DIR) -lDebugProcs \
 	-L$(LIB_UNIT) -lunit++ \
 	$(shell pkg-config --libs $(PACKAGES)) \
@@ -65,7 +65,7 @@ LINK_LIBS := \
 	$(OUT_DIR)/libDebugProcs.a \
 	$(COM_OUT_DIR)/libGraphiteTlb.a \
 	$(COM_OUT_DIR)/libViewsTlb.a \
-	$(COM_OUT_DIR)/libFwKernelTlb.a
+	$(COM_OUT_DIR)/libLanguageTlb.a
 
 all: $(OUT_DIR)/testLanguage
 
@@ -119,7 +119,7 @@ $(INT_DIR)/Collection.cpp: testLanguage.h \
 	TestRomRenderEngine.h \
 	RenderEngineTestBase.h
 	@echo Collecting tests for testLanguage
-	$(COLLECT) $^ >$@
+	$(COLLECT) $^ $@
 
 #	TestLgWritingSystemFactoryBuilder.h \
 #	RenderEngineTestBase.h \

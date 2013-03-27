@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.IText
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			m_text0 = textFactory.Create();
-			Cache.LangProject.TextsOC.Add(m_text0);
+			//Cache.LangProject.TextsOC.Add(m_text0);
 			m_stText0 = stTextFactory.Create();
 			m_text0.ContentsOA = m_stText0;
 			m_para0_0 = m_stText0.AddNewTextPara(null);
@@ -344,6 +344,17 @@ namespace SIL.FieldWorks.IText
 		internal TestableFocusBox()
 		{
 			m_mediator = new Mediator();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (m_mediator != null)
+					m_mediator.Dispose();
+			}
+			m_mediator = null;
+			base.Dispose(disposing);
 		}
 
 		internal override IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)

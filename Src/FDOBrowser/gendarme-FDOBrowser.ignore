@@ -1,0 +1,16 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Reference only
+M: System.Void FDOBrowser.FDOBrowserForm::TstxtGuidSrchKeyPress(System.Object,System.Windows.Forms.KeyPressEventArgs)
+
+# Disposed in finally block
+M: System.Void FDOBrowser.Db4oToXmlConverter::db4o2xml(System.String,System.String,System.Boolean)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: FDOBrowser.FdoInspectorList

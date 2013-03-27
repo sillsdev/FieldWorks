@@ -19,10 +19,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using System.Diagnostics;
 using System.Text;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -40,14 +41,17 @@ namespace SIL.FieldWorks.Common.Controls
 {
 
 	/// <summary>
-	/// This class is the arguments for a ClickCopyEventHandler.
+	/// This class is the arguments for a CheckBoxChangedEventHandler.
 	/// </summary>
 	public class CheckBoxChangedEventArgs : EventArgs
 	{
-		int[] m_hvoChanged;
+		/// <summary>
+		///
+		/// </summary>
+		protected int[] m_hvoChanged;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:CheckBoxChangedEventArgs"/> class.
+		/// Initializes a new instance of the <see><cref>T:CheckBoxChangedEventArgs</cref></see> class.
 		/// </summary>
 		/// <param name="hvosChanged">The hvos changed.</param>
 		public CheckBoxChangedEventArgs(int[] hvosChanged)
@@ -66,11 +70,54 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_hvoChanged; }
 		}
 	}
+	/// <summary>
+	/// This class is the arguments for a ClickCopyEventHandler.
+	/// </summary>
+	public class CheckBoxActiveChangedEventArgs : CheckBoxChangedEventArgs
+	{
+		private string m_redoMessage;
+		private string m_undoMessage;
 
+		/// <summary>
+		/// Initializes a new instance of the <see><cref>T:CheckBoxChangedEventArgs</cref></see> class.
+		/// </summary>
+		/// <param name="hvosChanged">The hvos changed.</param>
+		/// <param name="undoMessage">The message to use in any undo message</param>
+		/// <param name="redoMessage">The message to use in any redo message</param>
+		public CheckBoxActiveChangedEventArgs(int[] hvosChanged, string undoMessage, string redoMessage)
+			: base(hvosChanged)
+		{
+			m_undoMessage = undoMessage;
+			m_redoMessage = redoMessage;
+		}
+
+
+		/// <summary>
+		///
+		/// </summary>
+		public string UndoMessage
+		{
+			get { return m_undoMessage; }
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		public string RedoMessage
+		{
+			get { return m_redoMessage; }
+		}
+	}
 	/// <summary>
 	/// This is used for a slice to ask the data tree to display a context menu.
 	/// </summary>
 	public delegate void CheckBoxChangedEventHandler(object sender, CheckBoxChangedEventArgs e);
+	/// <summary>
+	///
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	public delegate void CheckBoxActiveChangedEventHandler(object sender, CheckBoxActiveChangedEventArgs e);
 
 	#region ISortItemProvider declaration
 	/// <summary>
@@ -133,10 +180,20 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Check state for items (check and uncheck only).
 		/// </summary>
-		private enum CheckState
+
+		internal protected enum CheckState
 		{
+			/// <summary>
+			///
+			/// </summary>
 			ToggleAll,
+			/// <summary>
+			///
+			/// </summary>
 			UncheckAll,
+			/// <summary>
+			///
+			/// </summary>
 			CheckAll
 		}
 
@@ -265,6 +322,17 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
+		/// calls Focus on the important child control
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnGotFocus(EventArgs e)
+		{
+			base.OnGotFocus(e);
+			if (m_xbv != null && !m_xbv.Focused)
+				m_xbv.Focus();
+		}
+
+		/// <summary>
 		/// This supports external clients using the Bulk Edit Preview functionality.
 		/// To turn on, set to the index of the column that should have the preview
 		/// (zero based, not counting the check box column). To turn off, set to -1.
@@ -329,13 +397,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Receive a notification that a mouse-up has completed in the browse view.
 		/// </summary>
-		internal void BrowseViewMouseUp(MouseEventArgs e)
+		internal virtual void BrowseViewMouseUp(MouseEventArgs e)
 		{
 			CheckDisposed();
 
-			if (m_xbv.Vc.HasSelectColumn && e.X < m_xbv.Vc.SelectColumnWidth)
+			int dpiX = GetDpiX();
+			int selColWidth = m_xbv.Vc.SelectColumnWidth * dpiX / 72000;
+			if (m_xbv.Vc.HasSelectColumn && e.X < selColWidth)
 			{
-				int[] hvosChanged = new[] {m_xbv.SelectedObject};
+				int[] hvosChanged = new[] { m_xbv.SelectedObject };
 				// we've changed the state of a check box.
 				OnCheckBoxChanged(hvosChanged);
 			}
@@ -343,8 +413,11 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_bulkEditBar != null && m_bulkEditBar.Visible)
 				m_bulkEditBar.UpdateEnableItems(m_xbv.SelectedObject);
 		}
-
-		private void OnCheckBoxChanged(int[] hvosChanged)
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="hvosChanged"></param>
+		protected virtual void OnCheckBoxChanged(int[] hvosChanged)
 		{
 			try
 			{
@@ -988,39 +1061,14 @@ namespace SIL.FieldWorks.Common.Controls
 			AutoScroll = true;
 			VScroll = false;
 			HScroll = true;
-//			m_doHScroll = true;
 			m_scrollContainer.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
-#if false // CS0169
-		/// <summary>
-		/// Indicates the state of the checkboxes for all displayed items.
-		/// </summary>
-		enum CheckedStatus
-		{
-			NoItemsAreChecked,
-			MixedCheckedStatus,
-			AllItemsAreChecked
-		}
-
-		private CheckedStatus GetAllItemsCheckedStatus()
-		{
-			List<int> allItems = AllItems;
-			List<int> checkedItems = CheckedItems;
-
-			if (checkedItems.Count == 0)
-				return CheckedStatus.NoItemsAreChecked;
-			if (checkedItems.Count == allItems.Count)
-				return CheckedStatus.AllItemsAreChecked;
-			return CheckedStatus.MixedCheckedStatus;
-		}
-#endif
-
 		/// <summary>
 		/// indicates the last class of items that the user selected something.
 		/// </summary>
-		private int m_lastChangedSelectionListItemsClass = 0;
+		protected int m_lastChangedSelectionListItemsClass = 0;
 
 		private XmlNode m_modifiedColumn;
 
@@ -1081,7 +1129,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// UpdateCheckedItems() uses this information to put the next list items
 		/// in the proper state.
 		/// </summary>
-		private void OnListItemsAboutToChange(IList<int> selectionItemsToSave)
+		protected void OnListItemsAboutToChange(IList<int> selectionItemsToSave)
 		{
 			if (!m_fIsInitialized)
 				return;
@@ -1375,11 +1423,25 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		/// <summary>
+		/// Remove items from the given dictionary if they are:
+		/// 1) "Invalid" in that their selection state does not match expectations;
+		/// 2) Not in the ObjectRepository because they have been deleted (see LTB-1650);
+		/// </summary>
+		/// <param name="items">Dictionary of items to consider</param>
+		/// <param name="fExpectToBeSelected">Expected selection state</param>
 		private void RemoveInvalidOldSelectedItems(ref IDictionary<int, object> items, bool fExpectToBeSelected)
 		{
+			var objRepo = Cache.ServiceLocator.ObjectRepository;
 			Set<int> invalidSelectedItems = new Set<int>();
 			foreach (KeyValuePair<int, object> item in items)
 			{
+				// LTB-1650 - test if item still exists:
+				if (!objRepo.IsValidObjectId(item.Key))
+				{
+					invalidSelectedItems.Add(item.Key);
+					continue;
+				}
 				bool fActuallySelected = IsItemChecked(item.Key);
 
 				if (fExpectToBeSelected && !fActuallySelected ||
@@ -1792,8 +1854,11 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return width;
 		}
-
-		private int GetDpiX()
+		/// <summary>
+		/// Get current DPI in the X coordinate
+		/// </summary>
+		/// <returns></returns>
+		protected int GetDpiX()
 		{
 			using (Graphics g = CreateGraphics())
 			{
@@ -2545,9 +2610,9 @@ namespace SIL.FieldWorks.Common.Controls
 				InitSorter(Sorter);
 			}
 			else if (fOrderChanged)
-			{
-				SyncSortArrows(Sorter);
-			}
+				{
+					SyncSortArrows(Sorter);
+				}
 			// The record list will take care of triggering any needed layout or refresh.
 			// Trying to do it explicitly here led to LT-8090 and other problems.
 
@@ -2555,6 +2620,8 @@ namespace SIL.FieldWorks.Common.Controls
 			m_scrollContainer.PerformLayout();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ch gets added to Columns collection and disposed there")]
 		private void RebuildHeaderColumns(List<XmlNode> colSpecs, Dictionary<XmlNode, int> widths)
 		{
 			m_lvHeader.BeginUpdate();
@@ -3159,7 +3226,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Receives the broadcast message "PropertyChanged".  This message results from left clicking
 		/// in the context menu generated by a right mouse button click in the column headers.
 		/// </summary>
-		public void OnPropertyChanged(string name)
+		public virtual void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
 
@@ -3185,7 +3252,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="mediator"></param>
 		/// <param name="configurationParameters"></param>
-		public void Init(Mediator mediator, XmlNode configurationParameters)
+		public virtual void Init(Mediator mediator, XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -3349,7 +3416,10 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		private bool m_fIsInitialized = false;
-		private bool m_fInUpdateCheckedItems = false;
+		/// <summary>
+		///
+		/// </summary>
+		protected bool m_fInUpdateCheckedItems = false;
 		/// <summary>
 		/// this is somewhat of a kludge, since there is kind of a circular dependency
 		/// between checked items in a browse viewer (e.g. when in bulk edit Delete tab)
@@ -3415,7 +3485,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="hvoItem"></param>
 		/// <returns></returns>
-		internal int GetCheckState(int hvoItem)
+		internal virtual int GetCheckState(int hvoItem)
 		{
 			return m_specialCache.get_IntProp(hvoItem, XMLViewsDataCache.ktagItemSelected);
 		}
@@ -3432,7 +3502,28 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="newState">The new state.</param>
 		/// ------------------------------------------------------------------------------------
-		private void ResetAll(CheckState newState)
+		internal virtual void ResetAll(CheckState newState)
+		{
+			var changedHvos = ResetAllCollectChangedHvos(newState);
+			ResetAllHandleBulkEditBar();
+			OnCheckBoxChanged(changedHvos.ToArray());
+			ResetAllHandleReconstruct();
+		}
+		/// <summary>
+		///
+		/// </summary>
+		protected void ResetAllHandleReconstruct()
+		{
+			using (new ReconstructPreservingBVScrollPosition(this))
+			{
+			}
+		}
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="newState"></param>
+		/// <returns></returns>
+		protected List<int> ResetAllCollectChangedHvos(CheckState newState)
 		{
 			int chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
 			int[] contents;
@@ -3463,12 +3554,15 @@ namespace SIL.FieldWorks.Common.Controls
 				if (currentValue != newVal)
 					changedHvos.Add(hvoItem);
 			}
+			return changedHvos;
+		}
+		/// <summary>
+		///
+		/// </summary>
+		protected void ResetAllHandleBulkEditBar()
+		{
 			if (m_bulkEditBar != null && m_bulkEditBar.Visible)
 				m_bulkEditBar.SetEnabledIfShowing();
-			OnCheckBoxChanged(changedHvos.ToArray());
-			using (new ReconstructPreservingBVScrollPosition(this))
-			{
-			}
 		}
 
 		internal void SetItemCheckedState(int hvoItem, bool selectItem, bool propertyDidChange)
@@ -3973,4 +4067,201 @@ namespace SIL.FieldWorks.Common.Controls
 	}
 
 	#endregion BrowseViewer class
+
+	/// <summary>
+	/// A browse viewer which has the select column hooked to an Active boolean
+	///  (which is the UI name of the Disabled property of phonological rules,
+	///   compound rules, ad hoc rules, and inflectional affix templates).  We
+	///  only use this viewer with phonological rules and compound rules.
+	/// </summary>
+	public class BrowseActiveViewer : BrowseViewer, IVwNotifyChange
+	{
+		/// <summary>
+		/// Invoked when check box status alters. Typically there is only one item changed
+		/// (the one the user clicked on); in this case, client should generate PropChanged as needed
+		/// to update the display. When the user does something like CheckAll, a list is sent; in this case,
+		/// AFTER invoking the event, the browse view does a Reconstruct, so generating PropChanged is not
+		/// necessary (or helpul, unless some other view also needs updating).
+		/// </summary>
+		public event CheckBoxActiveChangedEventHandler CheckBoxActiveChanged;
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see><cref>T:BrowseActiveViewer</cref></see> class.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public BrowseActiveViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid,
+								  FdoCache cache, Mediator mediator, ISortItemProvider sortItemProvider,
+								  ISilDataAccessManaged sda)
+			: base(nodeSpec, hvoRoot, fakeFlid, cache, mediator, sortItemProvider, sda)
+		{
+
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Actually checks if val is 1, unchecks if val is 0.
+		/// Toggles if value is -1
+		/// </summary>
+		/// <param name="newState">The new state.</param>
+		/// ------------------------------------------------------------------------------------
+		internal override void ResetAll(CheckState newState)
+		{
+			var changedHvos = ResetAllCollectChangedHvos(newState);
+			ResetAllHandleBulkEditBar();
+			string undoMessage = XMLViewsStrings.ksUndoToggle;
+			string redoMessage = XMLViewsStrings.ksRedoToggle;
+			if (newState == CheckState.UncheckAll)
+			{
+				undoMessage = XMLViewsStrings.ksUndoUncheckAll;
+				redoMessage = XMLViewsStrings.ksRedoUncheckAll;
+			}
+			else if (newState == CheckState.CheckAll)
+			{
+				undoMessage = XMLViewsStrings.ksUndoCheckAll;
+				redoMessage = XMLViewsStrings.ksRedoCheckAll;
+			}
+			OnCheckBoxActiveChanged(changedHvos.ToArray(), undoMessage, redoMessage);
+			ResetAllHandleReconstruct();
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="hvosChanged"></param>
+		/// <param name="undoMessage"> </param>
+		/// <param name="redoMessage"> </param>
+		protected void OnCheckBoxActiveChanged(int[] hvosChanged, string undoMessage, string redoMessage)
+		{
+			try
+			{
+				if (CheckBoxActiveChanged == null)
+					return;
+				CheckBoxActiveChanged(this, new CheckBoxActiveChangedEventArgs(hvosChanged, undoMessage, redoMessage));
+			}
+			finally
+			{
+				// if a check box has changed by user, clear any record of preserving for a mixed class,
+				// since we always want to try to stay consistent with the user's choice in checkbox state.
+				if (!m_fInUpdateCheckedItems)
+				{
+					m_lastChangedSelectionListItemsClass = 0;
+					OnListItemsAboutToChange(hvosChanged);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Receive a notification that a mouse-up has completed in the browse view.
+		/// </summary>
+		internal override void BrowseViewMouseUp(MouseEventArgs e)
+		{
+			CheckDisposed();
+
+			int dpiX = GetDpiX();
+			int selColWidth = m_xbv.Vc.SelectColumnWidth * dpiX / 72000;
+			if (m_xbv.Vc.HasSelectColumn && e.X < selColWidth)
+			{
+				int[] hvosChanged = new[] { m_xbv.SelectedObject };
+				// we've changed the state of a check box.
+				OnCheckBoxActiveChanged(hvosChanged, XMLViewsStrings.ksUndoToggle, XMLViewsStrings.ksRedoToggle);
+			}
+
+			if (m_bulkEditBar != null && m_bulkEditBar.Visible)
+				m_bulkEditBar.UpdateEnableItems(m_xbv.SelectedObject);
+		}
+
+		/// <summary>
+		/// Determine whether the specified item is currently considered to be checked.
+		/// </summary>
+		/// <param name="hvoItem"></param>
+		/// <returns></returns>
+		internal override int GetCheckState(int hvoItem)
+		{
+			bool fDisabled = false;
+			ICmObject obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem);
+			switch (obj.ClassID)
+			{
+				case FDO.PhRegularRuleTags.kClassId: // fall through
+				case FDO.PhMetathesisRuleTags.kClassId:
+					fDisabled = SpecialCache.get_BooleanProp(hvoItem, FDO.PhSegmentRuleTags.kflidDisabled);
+					break;
+				case FDO.MoEndoCompoundTags.kClassId: // fall through
+				case FDO.MoExoCompoundTags.kClassId:
+					fDisabled = SpecialCache.get_BooleanProp(hvoItem, FDO.MoCompoundRuleTags.kflidDisabled);
+					break;
+			}
+			return (fDisabled ? 0 : 1);
+		}
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			// Must not be run more than once.
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+			{
+				SpecialCache.RemoveNotification(this);
+				base.Dispose(disposing);
+			}
+		}
+
+		#region IxCoreColleague Members
+
+		/// <summary>
+		/// Initialize as an xCore colleague. Currently this just passes the information on to the
+		/// main XmlBrowseView.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="configurationParameters"></param>
+		public override void Init(Mediator mediator, XmlNode configurationParameters)
+		{
+			base.Init(mediator, configurationParameters);
+
+			// Set the initial value
+			int chvo = SpecialCache.get_VecSize(RootObjectHvo, MainTag);
+			int[] contents;
+			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+			{
+				SpecialCache.VecProp(RootObjectHvo, MainTag, chvo, out chvo, arrayPtr);
+				contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+			}
+
+			foreach (int hvoItem in contents)
+			{
+				int currentValue = GetCheckState(hvoItem);
+				SetItemCheckedState(hvoItem, currentValue, false);
+			}
+			using (new ReconstructPreservingBVScrollPosition(this))
+			{
+			}
+			SpecialCache.AddNotification(this);
+		}
+
+		#endregion
+
+		#region IVwNotifyChange implementation
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="hvo"></param>
+		/// <param name="tag"></param>
+		/// <param name="ivMin"></param>
+		/// <param name="cvIns"></param>
+		/// <param name="cvDel"></param>
+		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+			if (tag == FDO.PhSegmentRuleTags.kflidDisabled || tag == FDO.MoCompoundRuleTags.kflidDisabled)
+			{
+				int currentValue = GetCheckState(hvo);
+				SetItemCheckedState(hvo, currentValue, false);
+			}
+		}
+
+		#endregion
+	}
 }

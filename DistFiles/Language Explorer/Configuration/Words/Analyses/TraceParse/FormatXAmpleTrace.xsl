@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes"/>
+	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" media-type="text/html; charset=utf-8"/>
 	<!--
 ================================================================
 Format the xml returned from XAmple for user display.
@@ -94,8 +94,13 @@ Main template
 		<html>
 			<head>
 				<xsl:call-template name="Script"/>
-				<style type="text/css"> .interblock { display: -moz-inline-box; display:
-					inline-block; vertical-align: top; } </style>
+				<style type="text/css">
+					.interblock {
+						display: -moz-inline-box;
+						display:
+						inline-block;
+						vertical-align: top;
+					}</style>
 			</head>
 			<body style="font-family:Times New Roman">
 				<h1>
@@ -107,7 +112,7 @@ Main template
 							<xsl:text>; font-family:</xsl:text>
 							<xsl:value-of select="$prmVernacularFont"/>
 						</xsl:attribute>
-					   <xsl:value-of select="translate(//form,'.',' ')"/>
+						<xsl:value-of select="translate(//form,'.',' ')"/>
 					</span>
 					<xsl:text>.</xsl:text>
 				</h1>
@@ -140,9 +145,7 @@ ConvertToAdHocCoprohibition
 			<xsl:text>~_</xsl:text>
 		</xsl:param>
 		<xsl:variable name="sKeyItem">
-			<xsl:value-of
-				select="substring-before(substring-after(@test,concat($sTestName,':')), $sEnvironmentMarker)"
-			/>
+			<xsl:value-of select="substring-before(substring-after(@test,concat($sTestName,':')), $sEnvironmentMarker)"/>
 		</xsl:variable>
 		<xsl:variable name="sRestContent">
 			<xsl:value-of select="substring-after(@test, $sEnvironmentMarker)"/>
@@ -156,12 +159,10 @@ ConvertToAdHocCoprohibition
 				<xsl:when test="contains(substring-after($sRestContent, $sEnvironmentBar), '...')">
 					<xsl:text>somewhere before (or maybe anywhere around)</xsl:text>
 				</xsl:when>
-				<xsl:when
-					test="string-length(substring-before($sRestContent, $sEnvironmentBar)) &gt; 1">
+				<xsl:when test="string-length(substring-before($sRestContent, $sEnvironmentBar)) &gt; 1">
 					<xsl:text>adjacent after</xsl:text>
 				</xsl:when>
-				<xsl:when
-					test="string-length(substring-after($sRestContent, $sEnvironmentBar)) &gt; 1">
+				<xsl:when test="string-length(substring-after($sRestContent, $sEnvironmentBar)) &gt; 1">
 					<xsl:text>adjacent before</xsl:text>
 				</xsl:when>
 			</xsl:choose>
@@ -228,8 +229,7 @@ OutputExceptionFeatureReason
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="OutputExceptionFeatureReason">
-		<xsl:variable name="sMorphId"
-			select="substring-before(substring-after(substring-after(@test,':'), '_'), '_')"/>
+		<xsl:variable name="sMorphId" select="substring-before(substring-after(substring-after(@test,':'), '_'), '_')"/>
 		<xsl:variable name="morph" select="//morph[@morphname=$sMorphId]"/>
 		<xsl:text>The affix '</xsl:text>
 		<xsl:value-of select="$morph/shortName"/>
@@ -252,8 +252,7 @@ OutputInflectionClassReason
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="OutputInflectionClassReason">
-		<xsl:variable name="sMorphId"
-			select="substring-before(substring-after(substring-after(@test,':'), '_'), '_')"/>
+		<xsl:variable name="sMorphId" select="substring-before(substring-after(substring-after(@test,':'), '_'), '_')"/>
 		<xsl:variable name="morph" select="//morph[@morphname=$sMorphId]"/>
 		<xsl:text>The affix '</xsl:text>
 		<span>
@@ -279,8 +278,7 @@ OutputStemNameReason
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="OutputStemNameReason">
-		<xsl:variable name="sMorphId"
-			select="substring-before(substring-after(substring-after(@test,':'), '_'), '_')"/>
+		<xsl:variable name="sMorphId" select="substring-before(substring-after(substring-after(@test,':'), '_'), '_')"/>
 		<xsl:variable name="morph" select="//morph[@morphname=$sMorphId]"/>
 		<xsl:text>The allomorph '</xsl:text>
 		<span>
@@ -308,8 +306,7 @@ OutputStemNameReason
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
 	<xsl:template name="OutputStemNameDerivAffixReason">
-		<xsl:variable name="sMorphId"
-			select="substring-before(substring-after(substring-after(@test,':'), '_'), '_')"/>
+		<xsl:variable name="sMorphId" select="substring-before(substring-after(substring-after(@test,':'), '_'), '_')"/>
 		<xsl:variable name="morph" select="//morph[@morphname=$sMorphId]"/>
 		<xsl:text>The entry '</xsl:text>
 		<span>
@@ -565,8 +562,7 @@ ShowAnyFailure
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="ShowAnyFailure">
-		<xsl:for-each
-			select="failure | continuation/parseNode[endOfWord]/failure | leftover | maxReached">
+		<xsl:for-each select="failure | continuation/parseNode[endOfWord]/failure | leftover | maxReached">
 			<span style="unicode-bidi:embed">
 				<xsl:attribute name="style">
 					<xsl:text>color:</xsl:text>
@@ -586,8 +582,7 @@ ShowAnyFailure
 					</xsl:when>
 					<xsl:when test="contains(@test,'PC-PATR word parse')">
 						<xsl:text>Word grammar failed&#xa0;&#xa0;</xsl:text>
-						<input type="button" value="Tell me more" name="BWGDetails"
-							id="ShowWGDetailsButton" style="width: 100px; height: 26px">
+						<input type="button" value="Tell me more" name="BWGDetails" id="ShowWGDetailsButton" style="width: 100px; height: 26px">
 							<xsl:attribute name="onclick">
 								<xsl:text>ButtonShowWGDetails(</xsl:text>
 								<xsl:choose>
@@ -625,11 +620,13 @@ ShowAnyFailure
 							<xsl:when test="contains(@test,'StemName')">
 								<xsl:call-template name="OutputStemNameDerivAffixReason"/>
 							</xsl:when>
+							<xsl:when test="contains(@test,'IrregInflForm')">
+								<xsl:text>There was at least one automatically generated null affix for an irregularly inflected form, but the stem was not for that irregularly inflected form.</xsl:text>
+							</xsl:when>
 							<xsl:when test="not(contains(@test,'~_'))">
 								<!-- is circumfix -->
 								<xsl:text>Only found one member of circumfix (</xsl:text>
-								<xsl:value-of
-									select="substring-before(substring-after(@test,':  '), '   +/')"/>
+								<xsl:value-of select="substring-before(substring-after(@test,':  '), '   +/')"/>
 								<xsl:text>).  Both the left and the right members of a circumfix must be present.</xsl:text>
 							</xsl:when>
 							<xsl:otherwise>
@@ -661,37 +658,25 @@ ShowAnyFailure
 						</xsl:choose>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sCategory)">
-						<xsl:value-of
-							select="concat('A particle must stand alone or a compound linker was not in a compound', substring-after(@test,$sCategory))"
-						/>
+						<xsl:value-of select="concat('A particle must stand alone or a compound linker was not in a compound', substring-after(@test,$sCategory))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sInterfixType_ST)">
 						<xsl:text>A prefixing interfix was found before a suffixing interfix.  Prefixing interfixes may only follow suffixing interfixes.</xsl:text>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sOrderFinal_FT)">
-						<xsl:value-of
-							select="concat('Affix ordering was incorrect somewhere in the word', substring-after(@test,$sOrderFinal_FT))"
-						/>
+						<xsl:value-of select="concat('Affix ordering was incorrect somewhere in the word', substring-after(@test,$sOrderFinal_FT))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sOrderIfx_ST)">
-						<xsl:value-of
-							select="concat('Affix ordering was incorrect for a prefix/infix pair', substring-after(@test,$sOrderIfx_ST))"
-						/>
+						<xsl:value-of select="concat('Affix ordering was incorrect for a prefix/infix pair', substring-after(@test,$sOrderIfx_ST))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sOrderPfx_ST)">
-						<xsl:value-of
-							select="concat('Affix ordering was incorrect for a prefix/infix pair', substring-after(@test,$sOrderPfx_ST))"
-						/>
+						<xsl:value-of select="concat('Affix ordering was incorrect for a prefix/infix pair', substring-after(@test,$sOrderPfx_ST))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sOrderSfx_ST)">
-						<xsl:value-of
-							select="concat('Affix ordering was incorrect for a suffix pair', substring-after(@test,$sOrderSfx_ST))"
-						/>
+						<xsl:value-of select="concat('Affix ordering was incorrect for a suffix pair', substring-after(@test,$sOrderSfx_ST))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sROOTS_ST)">
-						<xsl:value-of
-							select="concat('A compound linker was not properly in a compound or there was an attempt to compound using a particle or clitic', substring-after(@test,$sROOTS_ST))"
-						/>
+						<xsl:value-of select="concat('A compound linker was not properly in a compound or there was an attempt to compound using a particle or clitic', substring-after(@test,$sROOTS_ST))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sBoundStemRoot)">
 						<xsl:text>A bound stem or root was found completely by itself.  These must have at least one other morpheme present.</xsl:text>
@@ -707,14 +692,10 @@ ShowAnyFailure
 						<xsl:text>.&#xa0;&#xa0;You may need to edit the Parser Parameters.</xsl:text>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sInfixEnvironment)">
-						<xsl:value-of
-							select="concat('Infix position environment incorrect', substring-after(@test,$sInfixEnvironment))"
-						/>
+						<xsl:value-of select="concat('Infix position environment incorrect', substring-after(@test,$sInfixEnvironment))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sInfixType)">
-						<xsl:value-of
-							select="concat('Either there are no positions specified in the lexicon for this infix or the insertion type is incorrect', substring-after(@test,$sInfixEnvironment))"
-						/>
+						<xsl:value-of select="concat('Either there are no positions specified in the lexicon for this infix or the insertion type is incorrect', substring-after(@test,$sInfixEnvironment))"/>
 					</xsl:when>
 				</xsl:choose>
 				<xsl:text>)</xsl:text>
@@ -761,8 +742,7 @@ ShowIcon
 	<xsl:template name="ShowIcon">
 		<xsl:variable name="sIcon">
 			<xsl:choose>
-				<xsl:when
-					test="failure or leftover or maxReached or $selectedMorphs or count(continuation/parseNode) = 1 and continuation/parseNode[endOfWord]">
+				<xsl:when test="failure or leftover or maxReached or $selectedMorphs or count(continuation/parseNode) = 1 and continuation/parseNode[endOfWord]">
 					<xsl:choose>
 						<xsl:when test="position()=1 and position()=last()">
 							<xsl:text>singleminus</xsl:text>
@@ -836,139 +816,139 @@ ShowMsaInfo
 	<xsl:template name="ShowMsaInfo">
 		<xsl:param name="morph"/>
 		<xsl:for-each select="$morph">
-			<span>
-				<xsl:attribute name="style">
-					<xsl:text>; font-size:smaller</xsl:text>
-				</xsl:attribute>
-				<xsl:choose>
-					<xsl:when test="@wordType='root'">
-						<xsl:text>Category = </xsl:text>
-						<span>
-							<xsl:attribute name="style">
-								<xsl:call-template name="GetAnalysisFont"/>
-							</xsl:attribute>
-							<xsl:value-of select="stemMsa/@catAbbr"/>
-						</span>
-						<xsl:if test="stemMsa/@inflClassAbbr != ''">
-							<xsl:text>; Inflection class = </xsl:text>
-							<span>
-								<xsl:attribute name="style">
-									<xsl:call-template name="GetAnalysisFont"/>
-								</xsl:attribute>
-								<xsl:value-of select="stemMsa/@inflClassAbbr"/>
-							</span>
-						</xsl:if>
-					</xsl:when>
-					<xsl:when test="contains(@wordType,'deriv')">
-						<xsl:text>From category = </xsl:text>
-						<span>
-							<xsl:attribute name="style">
-								<xsl:call-template name="GetAnalysisFont"/>
-							</xsl:attribute>
-							<xsl:value-of select="derivMsa/@fromCatAbbr"/>
-						</span>
-						<xsl:text>; To category = </xsl:text>
-						<span>
-							<xsl:attribute name="style">
-								<xsl:call-template name="GetAnalysisFont"/>
-							</xsl:attribute>
-							<xsl:value-of select="derivMsa/@toCatAbbr"/>
-						</span>
-						<xsl:if test="derivMsa/@toInflClassAbbr!=''">
-							<xsl:text>; To inflection class = </xsl:text>
-							<span>
-								<xsl:attribute name="style">
-									<xsl:call-template name="GetAnalysisFont"/>
-								</xsl:attribute>
-								<xsl:value-of select="derivMsa/@toInflClassAbbr"/>
-							</span>
-						</xsl:if>
-					</xsl:when>
-					<xsl:when test="@wordType='prefix' or @wordType='suffix'">
-						<xsl:text>unclassified affix</xsl:text>
-						<xsl:if test="unclassMsa/@fromCatAbbr">
-							<span>
-								<xsl:attribute name="style">
-									<xsl:call-template name="GetAnalysisFont"/>
-								</xsl:attribute>
-								<xsl:value-of select="unclassMsa/@fromCatAbbr"/>
-							</span>
-						</xsl:if>
-					</xsl:when>
-					<xsl:when test="@wordType='proclitic' or @wordType='enclitic'">
-						<xsl:value-of select="@wordType"/>
-						<xsl:if test="stemMsa/@cat!=0">
-							<xsl:text>; Category = </xsl:text>
-							<span>
-								<xsl:attribute name="style">
-									<xsl:call-template name="GetAnalysisFont"/>
-								</xsl:attribute>
-								<xsl:value-of select="stemMsa/@catAbbr"/>
-								<xsl:text>; Attaches to: </xsl:text>
-								<xsl:variable name="fromPOSes" select="stemMsa/fromPartsOfSpeech"/>
-								<xsl:choose>
-									<xsl:when test="$fromPOSes">
-										<xsl:for-each select="$fromPOSes">
-											<xsl:if test="position() &gt; 1">
-												<xsl:text>, </xsl:text>
-												<xsl:if test="position() = last()">
-												  <xsl:text>or </xsl:text>
-												</xsl:if>
-											</xsl:if>
-											<xsl:value-of select="@fromCatAbbr"/>
-										</xsl:for-each>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:text>Any category</xsl:text>
-									</xsl:otherwise>
-								</xsl:choose>
-							</span>
-						</xsl:if>
-					</xsl:when>
-					<xsl:when test="@wordType='clitic'">
-						<xsl:text>clitic</xsl:text>
-						<xsl:if test="stemMsa/@cat!=0">
-							<xsl:text>; Category = </xsl:text>
+				<span>
+					<xsl:attribute name="style">
+						<xsl:text>; font-size:smaller</xsl:text>
+					</xsl:attribute>
+					<xsl:choose>
+						<xsl:when test="@wordType='root'">
+							<xsl:text>Category = </xsl:text>
 							<span>
 								<xsl:attribute name="style">
 									<xsl:call-template name="GetAnalysisFont"/>
 								</xsl:attribute>
 								<xsl:value-of select="stemMsa/@catAbbr"/>
 							</span>
-						</xsl:if>
-					</xsl:when>
-					<xsl:otherwise>
-						<!-- an inflectional affix -->
-						<xsl:text>Category = </xsl:text>
-						<span>
-							<xsl:attribute name="style">
-								<xsl:call-template name="GetAnalysisFont"/>
-							</xsl:attribute>
-							<xsl:value-of select="inflMsa/@catAbbr"/>
-						</span>
-						<xsl:text>; Slot = </xsl:text>
-						<xsl:choose>
-							<xsl:when test="inflMsa/@slotAbbr!='??'">
-								<xsl:if test="inflMsa/@slotOptional='true'">
-									<xsl:text>(</xsl:text>
-								</xsl:if>
+							<xsl:if test="stemMsa/@inflClassAbbr != ''">
+								<xsl:text>; Inflection class = </xsl:text>
 								<span>
 									<xsl:attribute name="style">
 										<xsl:call-template name="GetAnalysisFont"/>
 									</xsl:attribute>
-									<xsl:value-of select="inflMsa/@slotAbbr"/>
+									<xsl:value-of select="stemMsa/@inflClassAbbr"/>
 								</span>
-								<xsl:if test="inflMsa/@slotOptional='true'">
-									<xsl:text>)</xsl:text>
-								</xsl:if>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:text>; Unspecified slot or category</xsl:text>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:otherwise>
-				</xsl:choose>
-			</span>
+							</xsl:if>
+						</xsl:when>
+						<xsl:when test="contains(@wordType,'deriv')">
+							<xsl:text>From category = </xsl:text>
+							<span>
+								<xsl:attribute name="style">
+									<xsl:call-template name="GetAnalysisFont"/>
+								</xsl:attribute>
+								<xsl:value-of select="derivMsa/@fromCatAbbr"/>
+							</span>
+							<xsl:text>; To category = </xsl:text>
+							<span>
+								<xsl:attribute name="style">
+									<xsl:call-template name="GetAnalysisFont"/>
+								</xsl:attribute>
+								<xsl:value-of select="derivMsa/@toCatAbbr"/>
+							</span>
+							<xsl:if test="derivMsa/@toInflClassAbbr!=''">
+								<xsl:text>; To inflection class = </xsl:text>
+								<span>
+									<xsl:attribute name="style">
+										<xsl:call-template name="GetAnalysisFont"/>
+									</xsl:attribute>
+									<xsl:value-of select="derivMsa/@toInflClassAbbr"/>
+								</span>
+							</xsl:if>
+						</xsl:when>
+						<xsl:when test="@wordType='prefix' or @wordType='suffix'">
+							<xsl:text>unclassified affix</xsl:text>
+							<xsl:if test="unclassMsa/@fromCatAbbr">
+								<span>
+									<xsl:attribute name="style">
+										<xsl:call-template name="GetAnalysisFont"/>
+									</xsl:attribute>
+									<xsl:value-of select="unclassMsa/@fromCatAbbr"/>
+								</span>
+							</xsl:if>
+						</xsl:when>
+						<xsl:when test="@wordType='proclitic' or @wordType='enclitic'">
+							<xsl:value-of select="@wordType"/>
+							<xsl:if test="stemMsa/@cat!=0">
+								<xsl:text>; Category = </xsl:text>
+								<span>
+									<xsl:attribute name="style">
+										<xsl:call-template name="GetAnalysisFont"/>
+									</xsl:attribute>
+									<xsl:value-of select="stemMsa/@catAbbr"/>
+									<xsl:text>; Attaches to: </xsl:text>
+									<xsl:variable name="fromPOSes" select="stemMsa/fromPartsOfSpeech"/>
+									<xsl:choose>
+										<xsl:when test="$fromPOSes">
+											<xsl:for-each select="$fromPOSes">
+												<xsl:if test="position() &gt; 1">
+													<xsl:text>, </xsl:text>
+													<xsl:if test="position() = last()">
+														<xsl:text>or </xsl:text>
+													</xsl:if>
+												</xsl:if>
+												<xsl:value-of select="@fromCatAbbr"/>
+											</xsl:for-each>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:text>Any category</xsl:text>
+										</xsl:otherwise>
+									</xsl:choose>
+								</span>
+							</xsl:if>
+						</xsl:when>
+						<xsl:when test="@wordType='clitic'">
+							<xsl:text>clitic</xsl:text>
+							<xsl:if test="stemMsa/@cat!=0">
+								<xsl:text>; Category = </xsl:text>
+								<span>
+									<xsl:attribute name="style">
+										<xsl:call-template name="GetAnalysisFont"/>
+									</xsl:attribute>
+									<xsl:value-of select="stemMsa/@catAbbr"/>
+								</span>
+							</xsl:if>
+						</xsl:when>
+						<xsl:otherwise>
+							<!-- an inflectional affix -->
+							<xsl:text>Category = </xsl:text>
+							<span>
+								<xsl:attribute name="style">
+									<xsl:call-template name="GetAnalysisFont"/>
+								</xsl:attribute>
+								<xsl:value-of select="inflMsa/@catAbbr"/>
+							</span>
+							<xsl:text>; Slot = </xsl:text>
+							<xsl:choose>
+								<xsl:when test="inflMsa/@slotAbbr!='??'">
+									<xsl:if test="inflMsa/@slotOptional='true'">
+										<xsl:text>(</xsl:text>
+									</xsl:if>
+									<span>
+										<xsl:attribute name="style">
+											<xsl:call-template name="GetAnalysisFont"/>
+										</xsl:attribute>
+										<xsl:value-of select="inflMsa/@slotAbbr"/>
+									</span>
+									<xsl:if test="inflMsa/@slotOptional='true'">
+										<xsl:text>)</xsl:text>
+									</xsl:if>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:text>; Unspecified slot or category</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:otherwise>
+					</xsl:choose>
+				</span>
 		</xsl:for-each>
 	</xsl:template>
 	<!--
@@ -1036,7 +1016,15 @@ ShowMorph
 							</xsl:if>
 							<xsl:call-template name="GetAnalysisFont"/>
 						</xsl:attribute>
-						<xsl:value-of select="morph/gloss"/>
+						<xsl:variable name="sGloss" select="morph/gloss"/>
+						<xsl:choose>
+							<xsl:when test="string-length($sGloss) &gt; 0">
+								<xsl:value-of select="$sGloss"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>&#xa0;</xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
 					</td>
 				</tr>
 				<tr>
@@ -1067,9 +1055,14 @@ ShowPreviousMorph
 			</xsl:call-template>
 		</xsl:if>
 		<xsl:for-each select="$current[morph]">
-			<td valign="top">
-				<xsl:call-template name="ShowMorph"/>
-			</td>
+			<xsl:if test="not(morph/lexEntryInflType)">
+				<!-- This is one of the null allomorphs we create when building the
+					input for the parser in order to still get the Word Grammar to have something in any
+					required slots in affix templates. -->
+				<td valign="top">
+					<xsl:call-template name="ShowMorph"/>
+				</td>
+			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
 	<!--
@@ -1155,12 +1148,14 @@ ShowTracePath
 							</a>
 							<div>
 								<xsl:attribute name="style">
-								<xsl:choose>
-									<xsl:when test="$selectedMorphs">
-										<xsl:text>display:block</xsl:text>
-									</xsl:when>
-									<xsl:otherwise><xsl:text>display:none</xsl:text></xsl:otherwise>
-								</xsl:choose>
+									<xsl:choose>
+										<xsl:when test="$selectedMorphs">
+											<xsl:text>display:block</xsl:text>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:text>display:none</xsl:text>
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:attribute>
 								<xsl:call-template name="ShowTracePath">
 									<xsl:with-param name="parseNodes" select="continuation"/>
@@ -1212,7 +1207,9 @@ TraceSection
 			</p>
 			<p>Click on the box by a morpheme to follow a path.  When the mouse icon turns to the hand symbol, you can click to bring up that item in Language Explorer.</p>
 			<xsl:if test="$selectedMorphs">
-				<div><p>NOTE: The information shown below is limited to the morphemes you selected above.</p></div>
+				<div>
+					<p>NOTE: The information shown below is limited to the morphemes you selected above.</p>
+				</div>
 			</xsl:if>
 			<div>
 				<xsl:if test="$prmVernacularRTL='Y'">
@@ -1239,26 +1236,7 @@ UseShowDetailsButton
 -->
 	<xsl:template name="UseShowDetailsButton">
 		<p style="margin-left:.5in">
-			<input type="button" value="Hide Details" name="BDetails" id="ShowDetailsButton"
-				onclick="ButtonShowDetails()" style="width: 88px; height: 24px"/>
+			<input type="button" value="Hide Details" name="BDetails" id="ShowDetailsButton" onclick="ButtonShowDetails()" style="width: 88px; height: 24px"/>
 		</p>
 	</xsl:template>
 </xsl:stylesheet>
-<!--
-================================================================
-Revision History
-- - - - - - - - - - - - - - - - - - -
-21-Feb-2006  Andy Black  Add inflection class MEC and exceptoin feature MCC handling.
-02-Nov-2005  Andy Black  Add msa info to clitics.
-20-May-2005  Andy Black  Add msa info and split alloform into its components;  add analysis font as a parameter.
-12-Apr-2005  Andy Black  Use window.external to hook JavaScript calls to C# code
-02-Mar-2005  Andy Black  Handle infix environment failure.
-24-Feb-2005  Andy Black  Handle interfix type test failure.
-03-Feb-2005  Andy Black  Handle maxReached elements; add vernacular font.
-02-Feb-2005  Andy Black  Handle leftover elements.
-02-Dec-2004  Andy Black  Fix a typo.
-24-Nov-2004  Andy Black  Add a show/.hide details button and add a "successful parse" notice.
-03-Aug-2004  Andy Black  Convert text of MCC and ANCC to adhoc coprohibitoin language
-30-Jul-2004	Andy Black	Initial Draft
-================================================================
--->

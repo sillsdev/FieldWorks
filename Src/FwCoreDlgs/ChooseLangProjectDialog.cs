@@ -20,11 +20,17 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Remoting;
+using System.Text;
 using System.Windows.Forms;
+using System.Xml;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -87,6 +93,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ChooseLangProjectDialog()
 		{
 			InitializeComponent();
+			//hide the FLExBridge related link and image if unavailable
+			m_linkOpenBridgeProject.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
+			pictureBox1.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -123,7 +132,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// TODO-Linux: FWNX-606: remove workaround when mono bug is fixed.
 			m_tblLayoutOuter.LayoutSettings.SetColumnSpan(m_splitContainer, 4);
 #endif
-
 			if (helpTopicProvider == null)
 				m_btnHelp.Enabled = false;
 
@@ -134,6 +142,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_lblChoosePrj.Font = SystemFonts.IconTitleFont;
 			m_lblLookIn.Font = SystemFonts.IconTitleFont;
 			m_linkOpenFwDataProject.Font = SystemFonts.IconTitleFont;
+			m_linkOpenBridgeProject.Font = SystemFonts.IconTitleFont;
 			m_lstLanguageProjects.Font = SystemFonts.IconTitleFont;
 			m_hostsTreeView.Font = SystemFonts.IconTitleFont;
 		}
@@ -295,8 +304,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// if list of associated addresses in entry matches list of associated addresses of any item in hostsTreeView
 			// then ignore as its the same host.
-			if (m_networkNeighborhood.Nodes.Cast<TreeNode>().Any(host => Dns.GetHostEntry(host.Text).AddressList.Intersect(entry.AddressList).Count() > 0))
+			try
+			{
+				var checkDnsHostLookup = Dns.GetHostEntry(entry.HostName); //LT-13898, the DNS server was configured wrong so entry.HostName was host.wins.sil.org
+															//Calling GetHostEntry with a bad domain name will throw. The catch statement allows us to handle this
+															//SocketException gracefully.
+				foreach (TreeNode host in m_networkNeighborhood.Nodes.Cast<TreeNode>())
+				{
+					//If entry.HostName == host.Text then it is already in m_networkNeighborhood.Nodes, therefore return.
+					if (Dns.GetHostEntry(host.Text).AddressList.Intersect(entry.AddressList).Count() > 0)
+						return;
+				}
+			}
+			catch (SocketException e)
+			{
+				//This is to gracefully handle broken DNS servers.
 				return;
+			}
 
 			var node = new TreeNode(entry.HostName);
 			m_networkNeighborhood.Nodes.Add(node);
@@ -404,6 +428,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ClientServerServices.Current.BeginFindProjects(host, AddProject,
 				HandleProjectFindingExceptions, showLocalProjects);
 		}
+
 		#endregion
 
 		#region Event handlers
@@ -450,7 +475,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the click event for the OK button.
+		/// Handles the click event for the Open button.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void OkButtonClick(object sender, EventArgs e)
@@ -513,7 +538,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void OpenFwDataProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			// Use 'el cheapo' .Net dlg to find LangProj.
-			using (var dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				Hide();
 				dlg.CheckFileExists = true;
@@ -528,6 +553,181 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		private void OpenBridgeProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			bool dummy;
+			string projectName;
+			var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
+				out dummy, out projectName);
+			if (!success)
+			{
+				ReportDuplicateBridge();
+				Project = "";
+			}
+			if (string.IsNullOrWhiteSpace(projectName))
+				return; // user canceled.
+			if (projectName.EndsWith("lift"))
+			{
+				Project = CreateProjectFromLift(projectName);
+			}
+			else
+			{
+				Project = projectName;
+			}
+			Server = null;
+			if (String.IsNullOrEmpty(Project))
+				return; // Don't close the Open project dialog yet (LT-13187)
+			// Apparently setting the DialogResult to something other than 'None' is what tells
+			// the model dialog that it can close.
+			DialogResult =  DialogResult.OK;
+			OkButtonClick(null, null);
+		}
+
+
+		/// <summary>
+		/// Create a new Fieldworks project and import a lift file into it. Return the .fwdata path.
+		/// </summary>
+		/// <param name="liftPath"></param>
+		public string CreateProjectFromLift(string liftPath)
+		{
+			var projectName = Path.GetFileNameWithoutExtension(liftPath);
+			var parentFolder = Path.GetDirectoryName(liftPath);
+			string flexFolderName = Path.Combine(DirectoryFinder.ProjectsDirectory, projectName);
+			if (!Directory.Exists(flexFolderName))
+				throw new ArgumentException("The lift file is not in a folder within the corresponding Project folder");
+			string projectPath;
+			FdoCache cache;
+			using (var helper = new ThreadHelper())
+			using (var progressDlg = new ProgressDialogWithTask(this, helper))
+			{
+				progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
+				progressDlg.Title = FwCoreDlgs.ksCreatingLiftProject;
+				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
+				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask, new object[] { liftPath, projectName, helper, cacheReceiver });
+				cache = cacheReceiver[0];
+			}
+
+			// this is a horrible way to invoke this, but current project organization does not allow us to reference
+			// the LexEdDll project, nor is there any straightforward way to move the code we need into some project we can
+			// reference, or any obviously suitable project to move it to without creating other References loops.
+			// One nasty reflection call seems less technical debt than creating an otherwise unnecessary project.
+			// (It puts up its own progress dialog.)
+			ReflectionHelper.CallStaticMethod(@"LexEdDll.dll", @"SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener",
+				@"ImportObtainedLexicon", cache, liftPath, this);
+
+			ProjectLockingService.UnlockCurrentProject(cache); // finish all saves and completely write the file so we can proceed to open it
+			cache.Dispose();
+
+			return projectPath;
+		}
+
+		/// <summary>
+		/// Method with signature required by ProgressDialogWithTask.RunTask to create the project (and a cache for it)
+		/// as a background task while showing the dialog.
+		/// </summary>
+		/// <param name="progress"></param>
+		/// <param name="parameters">A specific list is required...see the first few lines of the method.</param>
+		/// <returns></returns>
+		private static object CreateProjectTask(IThreadedProgress progress, object[] parameters)
+		{
+			// Get required parameters. Ideally these would just be the signature of the method, but RunTask requires object[].
+			string liftPath = (string) parameters[0];
+			string projectName = (string) parameters[1];
+			var helper = (ThreadHelper)parameters[2];
+			var cacheReceiver = (FdoCache[]) parameters[3];
+
+			IWritingSystem wsVern, wsAnalysis;
+			RetrieveDefaultWritingSystemsFromLift(liftPath, out wsVern, out wsAnalysis);
+
+			string projectPath = FdoCache.CreateNewLangProj(progress, projectName, helper, wsAnalysis, wsVern);
+
+			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
+			// user WS. So create it as "English". Put it in the array to return to the caller.
+			cacheReceiver[0] = FdoCache.CreateCacheFromLocalProjectFile(projectPath, "en", progress);
+			return projectPath;
+		}
+
+		private static void RetrieveDefaultWritingSystemsFromLift(string liftPath, out IWritingSystem wsVern,
+			out IWritingSystem wsAnalysis)
+		{
+			var liftReader = new StreamReader(liftPath, Encoding.UTF8);
+			string vernWsId, analysisWsId;
+			using (var reader = XmlReader.Create(liftReader))
+				RetrieveDefaultWritingSystemIdsFromLift(reader, out vernWsId, out analysisWsId);
+			var wsManager =
+				new PalasoWritingSystemManager(new GlobalFileWritingSystemStore(DirectoryFinder.GlobalWritingSystemStoreDirectory));
+			wsManager.GetOrSet(vernWsId, out wsVern);
+			wsManager.GetOrSet(analysisWsId, out wsAnalysis);
+		}
+
+		/// <summary>
+		/// Figure out the best default vernacular and analysis writing systems to use for the input, presumed to represent a LIFT file.
+		/// We get the vernacular WS from the first form element nested in a lexical-unit with a lang attribute,
+		/// and the analysis WS form the first form element nested in a definition or gloss with a lang attribute.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <param name="vernWs"></param>
+		/// <param name="analysisWs"></param>
+		/// <returns></returns>
+		public static void RetrieveDefaultWritingSystemIdsFromLift(XmlReader reader, out string vernWs, out string analysisWs)
+		{
+			vernWs = analysisWs = null;
+			bool inLexicalUnit = false;
+			bool inDefnOrGloss = false;
+			while (reader.Read())
+			{
+				switch (reader.NodeType)
+				{
+					case XmlNodeType.Element:
+						switch (reader.Name)
+						{
+							case "lexical-unit":
+								inLexicalUnit = true;
+								break;
+							case "definition":
+							case "gloss":
+								inDefnOrGloss = true;
+								break;
+							case "form":
+								if (inLexicalUnit && string.IsNullOrWhiteSpace(vernWs))
+									vernWs = reader.GetAttribute("lang"); // pathologically may leave it null, if so keep trying.
+								if (inDefnOrGloss && string.IsNullOrWhiteSpace(analysisWs))
+									analysisWs = reader.GetAttribute("lang"); // pathologically may leave it null, if so keep trying.
+								if (!string.IsNullOrWhiteSpace(vernWs) && !string.IsNullOrWhiteSpace(analysisWs))
+									return; // got all we need, skip rest of file.
+							break;
+						}
+						break;
+						case XmlNodeType.EndElement:
+						switch (reader.Name)
+						{
+							case "lexical-unit":
+								inLexicalUnit = false;
+								break;
+							case "definition":
+							case "gloss":
+								inDefnOrGloss = false;
+								break;
+						}
+						break;
+				}
+			}
+			if (string.IsNullOrWhiteSpace(vernWs))
+				vernWs = "fr"; // Arbitrary default (consistent with default creation of new project) if we don't find an entry
+			if (string.IsNullOrWhiteSpace(analysisWs))
+				analysisWs = "en"; // Arbitrary default if we don't find a sense
+		}
+
+		/// <summary>
+		/// Reports to the user that a copy of FLExBridge is already running.
+		/// NB. Also used by LexTextDll.FLExBridgeListener.
+		/// </summary>
+		public static void ReportDuplicateBridge()
+		{
+			MessageBox.Show(FWCoreDlgsErrors.kBridgeAlreadyRunning, FWCoreDlgsErrors.kFlexBridge,
+				MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+		}
+
 		private void HelpButtonClick(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpChooseLangProjectDialog");
@@ -536,6 +736,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_txtAddHost_TextChanged(object sender, EventArgs e)
 		{
 			m_btnAddHost.Enabled = !String.IsNullOrEmpty(m_txtAddHost.Text);
+		}
+
+		private void ChooseLangProjectDialog_Load(object sender, EventArgs e)
+		{
+			// If the FLExBridge image is not displayed, collapse its panel.
+			OpenBridgeProjectContainer.Panel1Collapsed = !pictureBox1.Visible;
 		}
 		#endregion
 	}

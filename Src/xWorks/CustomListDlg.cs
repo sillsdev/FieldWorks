@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_finSetup = true;
 			InitializeComponent();
+			StartPosition = FormStartPosition.CenterParent;
 			m_mediator = mediator;
 			m_btnOK.Enabled = false;
 

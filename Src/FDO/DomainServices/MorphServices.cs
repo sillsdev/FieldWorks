@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -14,6 +16,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	/// </summary>
 	public static class MorphServices
 	{
+
+		///<summary>
+		/// Default Separator for LexEntryInflType GlossAppend or GlossPrepend.
+		///</summary>
+		public const string kDefaultSeparatorLexEntryInflTypeGlossAffix = ".";
+		/// <summary>
+		///  Default group Separator for LexEntryType ReverseAbbr
+		/// </summary>
+		private const string kDefaultBeginSeparatorLexEntryTypeReverseAbbr = "+";
+		/// <summary>
+		/// Default series Separator for LexEntryType ReverseAbbr
+		/// </summary>
+		private const string kDefaultSeriesSeparatorLexEntryTypeReverseAbbr = ",";
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find an allomorph with the specified form, if any. Searches both LexemeForm and
@@ -76,7 +92,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static void GetMatchingMonomorphemicMorphs(FdoCache cache, Dictionary<ITsString, IMoStemAllomorph> formCollector)
 		{
 			var wss = (from key in formCollector.Keys select TsStringUtils.GetWsAtOffset(key, 0)).Distinct().ToArray();
-			var morphRepo = (Infrastructure.Impl.MoStemAllomorphRepository)cache.ServiceLocator.GetInstance<IMoStemAllomorphRepository>();
+			var morphRepo = (MoStemAllomorphRepository)cache.ServiceLocator.GetInstance<IMoStemAllomorphRepository>();
 			var morphData = morphRepo.MonomorphemicMorphData();
 			foreach (var key in formCollector.Keys.ToArray())
 			{
@@ -600,6 +616,249 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static bool IsSuffixishType(FdoCache cache, int hvoMorphType)
 		{
 			return cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(hvoMorphType).IsSuffixishType;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="variantRef"></param>
+		/// <returns></returns>
+		public static ILexSense GetMainOrFirstSenseOfVariant(ILexEntryRef variantRef)
+		{
+			var mainEntryOrSense = variantRef.ComponentLexemesRS[0] as IVariantComponentLexeme;
+			// find first gloss
+			ILexEntry mainEntry;
+			ILexSense mainOrFirstSense;
+			GetMainEntryAndSenseStack(mainEntryOrSense, out mainEntry, out mainOrFirstSense);
+			return mainOrFirstSense;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="mainEntryOrSense"></param>
+		/// <param name="mainEntry"></param>
+		/// <param name="mainOrFirstSense"></param>
+		public static void GetMainEntryAndSenseStack(IVariantComponentLexeme mainEntryOrSense, out ILexEntry mainEntry, out ILexSense mainOrFirstSense)
+		{
+			if (mainEntryOrSense is ILexEntry)
+			{
+				mainEntry = mainEntryOrSense as ILexEntry;
+				mainOrFirstSense = mainEntry.SensesOS.Count > 0 ? mainEntry.SensesOS[0] : null;
+			}
+			else if (mainEntryOrSense is ILexSense)
+			{
+				mainOrFirstSense = mainEntryOrSense as ILexSense;
+				mainEntry = mainOrFirstSense.Entry;
+			}
+			else
+			{
+				mainEntry = null;
+				mainOrFirstSense = null;
+			}
+		}
+
+		///<summary>
+		///</summary>
+		///<param name="sb"></param>
+		///<param name="tssGlossAffix"></param>
+		///<param name="prepend"></param>
+		///<param name="sSeparator"></param>
+		///<param name="wsUser"></param>
+		private static void AppendGlossAffix(ITsIncStrBldr sb, ITsString tssGlossAffix, bool prepend, string sSeparator, IWritingSystem wsUser)
+		{
+			if (prepend)
+				sb.AppendTsString(tssGlossAffix);
+			string extractedSeparator = ExtractDivider(tssGlossAffix.Text, prepend ? -1 : 0);
+			if (String.IsNullOrEmpty(extractedSeparator))
+				sb.AppendTsString(TsStringUtils.MakeTss(sSeparator, wsUser.Handle));
+			if (!prepend)
+				sb.AppendTsString(tssGlossAffix);
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="s"></param>
+		/// <param name="startingChr">0, for starting at the beginning, otherwise search from the end.</param>
+		/// <returns></returns>
+		internal static string ExtractDivider(string s, int startingChr)
+		{
+			if (String.IsNullOrEmpty(s))
+				return "";
+			string extracted = "";
+			if (startingChr == 0)
+			{
+				var match = Regex.Match(s, @"^\W+");
+				extracted = match.Value;
+			}
+			else
+			{
+				var match = Regex.Match(s, @"\W+$");
+				extracted = match.Value;
+			}
+			return extracted;
+		}
+
+		/// <summary>
+		/// Filters LexEntryInflType items from the given variantEntryTypesRs list and joins the GlossPrepend and GlossAppend strings
+		/// according to the given wsGloss in a format like ("pl.pst." for GlossPrepend  and ".pl.pst" for GlossAppend).
+		/// </summary>
+		/// <param name="variantEntryTypesRs"></param>
+		/// <param name="wsGloss"></param>
+		/// <param name="sbJoinedGlossPrepend"></param>
+		/// <param name="sbJoinedGlossAppend"></param>
+		public static void JoinGlossAffixesOfInflVariantTypes(IEnumerable<ILexEntryType> variantEntryTypesRs, IWritingSystem wsGloss,
+												out ITsIncStrBldr sbJoinedGlossPrepend,
+												out ITsIncStrBldr sbJoinedGlossAppend)
+		{
+			sbJoinedGlossPrepend = TsIncStrBldrClass.Create();
+			sbJoinedGlossAppend = TsIncStrBldrClass.Create();
+
+			const string sSeparator = kDefaultSeparatorLexEntryInflTypeGlossAffix;
+
+			foreach (var leit in variantEntryTypesRs.Where(let => (let as ILexEntryInflType) != null)
+				.Select(let => (let as ILexEntryInflType)))
+			{
+				var cache = leit.Cache;
+				var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+				int wsActual1;
+				ITsString tssGlossPrepend =
+					leit.GlossPrepend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
+				if (tssGlossPrepend.Length != 0)
+				{
+					AppendGlossAffix(sbJoinedGlossPrepend, tssGlossPrepend, true, sSeparator, wsUser);
+				}
+
+				ITsString tssGlossAppend =
+					leit.GlossAppend.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
+				if (tssGlossAppend.Length != 0)
+				{
+					AppendGlossAffix(sbJoinedGlossAppend, tssGlossAppend, false, sSeparator, wsUser);
+				}
+			}
+		}
+
+		///<summary>
+		///</summary>
+		///<param name="gloss"></param>
+		///<param name="wsGloss"></param>
+		///<param name="variantEntryTypes"></param>
+		///<returns></returns>
+		public static ITsString MakeGlossWithReverseAbbrs(IMultiStringAccessor gloss, IWritingSystem wsGloss, IList<ILexEntryType> variantEntryTypes)
+		{
+			if (variantEntryTypes == null || variantEntryTypes.Count() == 0 || variantEntryTypes.First() == null)
+				return GetTssGloss(gloss, wsGloss);
+			var cache = variantEntryTypes.First().Cache;
+			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+			IList<IMultiUnicode> reverseAbbrs = (from variantType in variantEntryTypes
+												 select variantType.ReverseAbbr).ToList();
+			var sb = TsIncStrBldrClass.Create();
+			AddGloss(sb, gloss, wsGloss);
+			const string sBeginSeparator = kDefaultBeginSeparatorLexEntryTypeReverseAbbr;
+			if (reverseAbbrs.Count() > 0)
+				sb.AppendTsString(TsStringUtils.MakeTss(sBeginSeparator, wsUser.Handle));
+			AddVariantTypeGlossInfo(sb, wsGloss, reverseAbbrs, wsUser);
+			return sb.Text.Length > 0 ? sb.GetString() : null;
+		}
+
+		/// <summary>
+		/// </summary>
+		/// <param name="variantEntryType"></param>
+		/// <param name="gloss"></param>
+		/// <param name="wsGloss"></param>
+		/// <returns></returns>
+		public static ITsString MakeGlossOptionWithInflVariantTypes(ILexEntryType variantEntryType, IMultiStringAccessor gloss, IWritingSystem wsGloss)
+		{
+			var inflVariantEntryType = variantEntryType as ILexEntryInflType;
+			if (gloss == null || inflVariantEntryType == null)
+				return null;
+
+			int wsActual2;
+			ITsString tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual2);
+			if (tssGloss.Length == 0)
+				tssGloss = gloss.NotFoundTss;
+
+			var sb = TsIncStrBldrClass.Create();
+			var cache = inflVariantEntryType.Cache;
+			var wsUser = cache.ServiceLocator.WritingSystemManager.UserWritingSystem;
+
+			ITsString tssGlossPrepend = AddTssGlossAffix(sb, inflVariantEntryType.GlossPrepend, wsGloss, wsUser);
+
+			sb.AppendTsString(tssGloss);
+			if (sb.Text.Length == 0)
+				return null; // TODO: add default value for gloss?
+
+			ITsString tssGlossAppend = AddTssGlossAffix(sb, inflVariantEntryType.GlossAppend, wsGloss, wsUser);
+
+			if ((tssGlossPrepend == null || tssGlossPrepend.Length == 0) &&
+				(tssGlossAppend == null || tssGlossAppend.Length == 0))
+			{
+				return MakeGlossWithReverseAbbrs(gloss, wsGloss, new[] { variantEntryType });
+			}
+
+			return sb.GetString();
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="sb"></param>
+		/// <param name="glossAffixAccessor">GlossPrepend or GlossAppend</param>
+		/// <param name="wsGloss"></param>
+		/// <param name="wsUser"></param>
+		/// <returns></returns>
+		public static ITsString AddTssGlossAffix(TsIncStrBldr sb, IMultiUnicode glossAffixAccessor,
+			IWritingSystem wsGloss, IWritingSystem wsUser)
+		{
+			if (sb == null)
+				sb = TsIncStrBldrClass.Create();
+			int wsActual1;
+			ITsString tssGlossPrepend = glossAffixAccessor.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual1);
+			if (tssGlossPrepend != null && tssGlossPrepend.Length != 0)
+			{
+				bool isPrepend = (glossAffixAccessor.Flid == LexEntryInflTypeTags.kflidGlossPrepend);
+				AppendGlossAffix(sb, tssGlossPrepend, isPrepend, kDefaultSeparatorLexEntryInflTypeGlossAffix, wsUser);
+			}
+			return tssGlossPrepend;
+		}
+
+		private static void AddGloss(TsIncStrBldr sb, IMultiStringAccessor gloss, IWritingSystem wsGloss)
+		{
+			ITsString tssGloss = GetTssGloss(gloss, wsGloss);
+			sb.AppendTsString(tssGloss);
+		}
+
+		private static ITsString GetTssGloss(IMultiStringAccessor gloss, IWritingSystem wsGloss)
+		{
+			int wsActual;
+			var tssGloss = gloss.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual);
+			if (tssGloss == null || tssGloss.Length == 0)
+				tssGloss = gloss.NotFoundTss;
+			return tssGloss;
+		}
+
+		private static void AddVariantTypeGlossInfo(TsIncStrBldr sb, IWritingSystem wsGloss, IList<IMultiUnicode> multiUnicodeAccessors, IWritingSystem wsUser)
+		{
+			const string sSeriesSeparator = kDefaultSeriesSeparatorLexEntryTypeReverseAbbr;
+			var fBeginSeparator = true;
+			foreach (var multiUnicodeAccessor in multiUnicodeAccessors)
+			{
+				int wsActual2;
+				var tssVariantTypeInfo = multiUnicodeAccessor.GetAlternativeOrBestTss(wsGloss.Handle, out wsActual2);
+				// just concatenate them together separated by comma.
+				if (tssVariantTypeInfo == null || tssVariantTypeInfo.Length <= 0) continue;
+				if (!fBeginSeparator)
+					sb.AppendTsString(TsStringUtils.MakeTss(sSeriesSeparator, wsUser.Handle));
+				sb.AppendTsString((tssVariantTypeInfo));
+				fBeginSeparator = false;
+			}
+
+			// Handle the special case where no reverse abbr was found.
+			if (fBeginSeparator && multiUnicodeAccessors.Count > 0)
+			{
+				sb.AppendTsString(multiUnicodeAccessors.ElementAt(0).NotFoundTss);
+			}
 		}
 	}
 }

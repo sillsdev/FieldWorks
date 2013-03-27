@@ -1,6 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -186,6 +187,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			this.m_variantName.Name = "m_variantName";
 			this.m_helpProvider.SetShowHelp(this.m_variantName, ((bool)(resources.GetObject("m_variantName.ShowHelp"))));
 			this.m_variantName.Sorted = true;
+			this.m_variantName.SelectedIndexChanged += m_variantName_TextChanged;
 			this.m_variantName.TextChanged += new System.EventHandler(this.m_variantName_TextChanged);
 			//
 			// m_regionName
@@ -565,6 +567,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		/// to the user and return false. This should prevent the user from closing the
 		/// containing form using OK, but not from cancelling.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public bool CheckValid()
 		{
 			CheckDisposed();
@@ -811,7 +815,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			}
 			VariantName = variantName;
 
-			#region Deal with the special Audio handling here.
+			HandleAudioVariant();
+			m_enableLangTagSideEffects = true;
+			OnScriptRegionVariantChanged(EventArgs.Empty);
+		}
+
+		/// <summary>Deal with special Audio handling</summary>
+		private void HandleAudioVariant()
+		{
 			if (VariantSubtag != null && VariantSubtag.Code.Equals(ksAudioVariant, StringComparison.OrdinalIgnoreCase))
 			{
 				if (m_ws is WritingSystemDefinition)
@@ -855,11 +866,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				m_ws.VariantSubtag = VariantSubtag;
 
 				m_scriptName.Enabled = true;
-
 			}
-			#endregion
-			m_enableLangTagSideEffects = true;
-			OnScriptRegionVariantChanged(EventArgs.Empty);
 		}
 
 		/// <summary>

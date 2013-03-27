@@ -185,6 +185,10 @@ namespace XCore
 								Tag = item,
 								Text = label
 							};
+						if (display.ImageLabel != "default")
+						{
+							submenu.Image = m_smallImages.GetImage(display.ImageLabel);
+						}
 						submenu.AccessibilityObject.Name = item.Id;
 						// Have the submenu display characteristics behave as desired.  See FWR-3104.
 						submenu.Visible = display.Visible;
@@ -263,7 +267,7 @@ namespace XCore
 			SendMessage(c.Handle, WM_CHANGEUISTATE, UISF_HIDEACCEL << 16 | UIS_CLEAR, 0);
 		}
 
-		/// <summary>
+				/// <summary>
 		///
 		/// </summary>
 		/// <param name="group"></param>
@@ -273,6 +277,20 @@ namespace XCore
 		public void ShowContextMenu(ChoiceGroup group, Point location,
 			TemporaryColleagueParameter temporaryColleagueParam,
 			MessageSequencer sequencer)
+		{
+			ShowContextMenu(group, location, temporaryColleagueParam, sequencer, null);
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="group"></param>
+		/// <param name="location"></param>
+		/// <param name="temporaryColleagueParam"></param>
+		/// <param name="sequencer"></param>
+		public void ShowContextMenu(ChoiceGroup group, Point location,
+			TemporaryColleagueParameter temporaryColleagueParam,
+			MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu)
 		{
 			// Store optional parameter values.
 			m_TemporaryColleagueParameter = temporaryColleagueParam; // Nulls are just fine.
@@ -286,7 +304,7 @@ namespace XCore
 			// menu items to. It is not added to the shown contextMenu.
 			ToolStripMenuItem item = new ToolStripMenuItem();
 			item.AccessibilityObject.Name = group.Id;
-				//item.GetType().Name;
+			//item.GetType().Name;
 			item.Tag = group;
 			group.ReferenceWidget = item;
 			group.PopulateNow();
@@ -295,18 +313,19 @@ namespace XCore
 			bool menuOK = false;
 			foreach (var menuItem in item.DropDown.Items)
 			{
-				if(menuItem is ToolStripMenuItem)
+				if (menuItem is ToolStripMenuItem)
 				{
-					if(((ToolStripMenuItem) menuItem).Text == "Show in Word Analyses")
+					if (((ToolStripMenuItem)menuItem).Text == "Show in Word Analyses")
 					{
 						menuOK = true;
 						break;
 					}
 				}
 			}
-			if(!menuOK)
+			if (!menuOK)
 			{
-				Debug.Print("Show in Word Analyses is missing: \r\n" +  m_mediator.GetColleaguesDumpString());
+				Debug.WriteLine("Show in Word Analyses is missing:");
+				Debug.WriteLine(m_mediator.GetColleaguesDumpString());
 			}
 			// NOTE: we intentionally leave contextMenu undisposed. If we dispose it after
 			// contextMenu.Show then the mouse clicks on the menu items don't get handled.
@@ -332,6 +351,8 @@ namespace XCore
 				contextMenu.Items.Add(menuItem);
 			}
 			MakeAcceleratorsVisible(contextMenu);
+			if (adjustMenu != null)
+				adjustMenu(contextMenu);
 			contextMenu.Show(location);
 		}
 
@@ -376,23 +397,24 @@ namespace XCore
 
 		static public string GetStringRegistryValue(string key, string defaultValue)
 		{
-			using (RegistryKey company = Registry.CurrentUser.OpenSubKey("Software", false).OpenSubKey(Application.CompanyName, false))
+			using (var software = Registry.CurrentUser.OpenSubKey("Software", false))
+			using (var company = software.OpenSubKey(Application.CompanyName, false))
 			{
-			if( company != null )
-			{
+				if (company != null)
+				{
 					using (RegistryKey application = company.OpenSubKey(Application.ProductName, false))
 					{
-				if( application != null )
-				{
-					foreach(string sKey in application.GetValueNames())
-					{
-						if( sKey == key )
+						if (application != null)
 						{
-							return (string)application.GetValue(sKey);
+							foreach (string sKey in application.GetValueNames())
+							{
+								if (sKey == key)
+								{
+									return (string)application.GetValue(sKey);
+								}
+							}
 						}
 					}
-				}
-			}
 				}
 			}
 			return defaultValue;

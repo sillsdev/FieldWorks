@@ -383,7 +383,7 @@
 			<seq field="Senses" indent="true" />
 		</part>
 		<part id="LexSense-Detail-UsageTypes" type="Detail">
-			<slice field="UsageTypes" label="Usages" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="UsageTypes" label="Usages" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the list of Usages." tool="usageTypeEdit" />
@@ -395,7 +395,7 @@
 				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-Help" />
 		</part>
 		<part id="LexSense-Detail-SenseType" type="Detail">
-			<slice field="SenseType" label="Sense Type" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="SenseType" label="Sense Type" editor="possAtomicReference" menu="mnuDataTree-Help">
 				<deParams ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Sense Types" tool="senseTypeEdit" />
@@ -403,7 +403,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-DomainTypes" type="Detail">
-			<slice field="DomainTypes" label="Academic Domains" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="DomainTypes" label="Academic Domains" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams displayProperty="ShortName" ws="best analysis" />
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Academic Domains" tool="domainTypeEdit" />
@@ -411,7 +411,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-SemanticDomains" type="Detail">
-			<slice field="SemanticDomains" label="Semantic Domains" editor="defaultVectorReference"
+			<slice field="SemanticDomains" label="Semantic Domains" editor="SemDomVectorReference"
 				menu="mnuDataTree-Help">
 				<deParams displayProperty="AbbrAndNameTSS" ws="best analysis" />
 				<chooserInfo>
@@ -429,7 +429,7 @@
 			</slice>
 		</part>
 		<part id="LexSense-Detail-AnthroCodes" type="Detail">
-			<slice field="AnthroCodes" label="Anthropology Categories" editor="defaultVectorReference"
+			<slice field="AnthroCodes" label="Anthropology Categories" editor="possVectorReference"
 				menu="mnuDataTree-Help">
 				<deParams displayProperty="LongName" ws="best analysis" />
 				<chooserInfo>
@@ -438,7 +438,7 @@
 			</slice>
 		</part>
 		><part id="LexSense-Detail-Status" type="Detail">
-			<slice field="Status" label="Status" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Status" label="Status" editor="possAtomicReference" menu="mnuDataTree-Help">
 				<deParams ws="best analysis" />
 				<chooserInfo title="Choose Status">
 					<chooserLink type="goto" label="Edit the Status list" tool="statusEdit" />

@@ -152,6 +152,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 		private IWfiWordformFactory m_factWfiWordForm;
 		private ICmBaseAnnotationFactory m_factCmBaseAnnotation;
 		private ICmIndirectAnnotationFactory m_factCmIndirectAnnotation;
+		private ITextFactory m_factText;
 		private string m_sFilename = "data stream";
 
 		private Dictionary<string, Guid> m_mapIdGuid = new Dictionary<string, Guid>();
@@ -620,16 +621,13 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 						fHandled = true;
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						tss = sda.get_StringProp(cmoOld.Hvo, flid);
 						if (tss != null && tss.Text != null)
 							sda.SetString(cmoNew.Hvo, flid, tss);
 						fHandled = true;
 						break;
 					case CellarPropertyType.MultiString:
-					case CellarPropertyType.MultiBigString:
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiBigUnicode:
 						ITsMultiString tms = sda.get_MultiStringProp(cmoOld.Hvo, flid);
 						for (int i = 0; i < tms.StringCount; ++i)
 						{
@@ -641,7 +639,6 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 						fHandled = true;
 						break;
 					case CellarPropertyType.Unicode:
-					case CellarPropertyType.BigUnicode:
 						s = sda.get_UnicodeProp(cmoOld.Hvo, flid);
 						if (!String.IsNullOrEmpty(s))
 							sda.SetUnicode(cmoNew.Hvo, flid, s, s.Length);
@@ -1054,6 +1051,11 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 								cmo = m_factLexEntry.Create();
 								m_nHomograph = 0;
 								break;
+							case TextTags.kClassId:
+								if (m_factText == null)
+									m_factText = m_cache.ServiceLocator.GetInstance<ITextFactory>();
+								cmo = m_factText.Create();
+								break;
 							default:
 								string sMsg = AppStrings.ksUnrecognizedOwnerlessObjectClass;
 								LogMessage(sMsg, LineNumber(xrdr));
@@ -1263,22 +1265,18 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 						ReadGenDateValue(xrdr, fi);
 						break;
 					case CellarPropertyType.Unicode:
-					case CellarPropertyType.BigUnicode:
 						ReadUnicodeValue(xrdr, fi);
 						break;
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiBigUnicode:
 						do
 						{
 							ReadMultiUnicodeValue(xrdr, fi);
 						} while (xrdr.Depth > nDepthField);
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						ReadTsStringValue(xrdr, fi);
 						break;
 					case CellarPropertyType.MultiString:
-					case CellarPropertyType.MultiBigString:
 						do
 						{
 							ReadMultiTsStringValue(xrdr, fi);

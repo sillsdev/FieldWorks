@@ -16,40 +16,44 @@ Preamble
 	<!-- Parameters that can be set by user.  -->
 	<!-- none now -->
 	<!-- Using keys instead of IDs (so no DTD or XSD required) -->
-	<xsl:key name="AffixAlloID" match="//MoAffixAllomorph" use="@Id"/>
-	<xsl:key name="AlloID" match="//MoAffixAllomorph | //MoStemAllomorph" use="@Id"/>
-	<xsl:key name="DerivMsaID" match="//MoDerivAffMsa" use="@Id"/>
-	<xsl:key name="InflClassID" match="//MoInflClass" use="@Id"/>
-	<xsl:key name="InflMsaID" match="//MoInflAffMsa" use="@Id"/>
-	<xsl:key name="UnclassifiedMsaID" match="//MoUnclassifiedAffixMsa" use="@Id"/>
-	<xsl:key name="LexSenseID" match="//LexSense" use="@Id"/>
-	<xsl:key name="MorphTypeID" match="//MoMorphType" use="@Id"/>
-	<xsl:key name="POSID" match="//PartOfSpeech" use="@Id"/>
-	<xsl:key name="PhEnvID" match="//PhEnvironment" use="@Id"/>
-	<xsl:key name="PhContextID" match="//PhSimpleContextNC | //PhSimpleContextSeg | //PhSimpleContextBdry | //PhIterationContext | PhSequenceContext" use="@Id"/>
-	<xsl:key name="PhBdryID" match="//PhBdryMarker" use="@Id"/>
-	<xsl:key name="PhonemeID" match="//PhPhoneme" use="@Id"/>
-	<xsl:key name="StemAlloID" match="//MoStemAllomorph" use="@Id"/>
-	<xsl:key name="StemMsaID" match="//MoStemMsa" use="@Id"/>
-	<xsl:key name="ToMsaDst" match="//ToMsa" use="@dst"/>
-	<xsl:key name="NatClassAbbr" match="//PhNCSegments/Abbreviation" use="."/>
+	<xsl:key name="AffixAlloID" match="MoAffixAllomorph" use="@Id"/>
+	<xsl:key name="AffixSlotsID" match="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixSlots/MoInflAffixSlot" use="@Id"/>
+	<xsl:key name="AlloID" match="MoAffixAllomorph | MoStemAllomorph" use="@Id"/>
+	<xsl:key name="DerivMsaID" match="MoDerivAffMsa" use="@Id"/>
+	<xsl:key name="InflClassID" match="MoInflClass" use="@Id"/>
+	<xsl:key name="InflMsaID" match="MoInflAffMsa" use="@Id"/>
+	<xsl:key name="UnclassifiedMsaID" match="MoUnclassifiedAffixMsa" use="@Id"/>
+	<xsl:key name="LexEntryID" match="LexEntry" use="@Id"/>
+	<xsl:key name="LexEntryInflTypeSlots" match="LexEntryInflType/Slots" use="@dst"/>
+	<xsl:key name="LexSenseID" match="LexSense" use="@Id"/>
+	<xsl:key name="MorphTypeID" match="MoMorphType" use="@Id"/>
+	<xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
+	<xsl:key name="PhEnvID" match="PhEnvironment" use="@Id"/>
+	<xsl:key name="PhContextID" match="PhSimpleContextNC | PhSimpleContextSeg | PhSimpleContextBdry | PhIterationContext | PhSequenceContext" use="@Id"/>
+	<xsl:key name="PhBdryID" match="PhBdryMarker" use="@Id"/>
+	<xsl:key name="PhonemeID" match="PhPhoneme" use="@Id"/>
+	<xsl:key name="StemAlloID" match="MoStemAllomorph" use="@Id"/>
+	<xsl:key name="StemMsaID" match="MoStemMsa" use="@Id"/>
+	<xsl:key name="ToMsaDst" match="ToMsa" use="@dst"/>
+	<xsl:key name="NatClassAbbr" match="PhNCSegments/Abbreviation" use="."/>
 	<!-- various global variables to make searching faster -->
-	<xsl:variable name="AllAffixTemplates" select="//MoInflAffixTemplate"/>
-	<xsl:variable name="AllPrefixSlots" select="//PrefixSlots"/>
-	<xsl:variable name="AllSuffixSlots" select="//SuffixSlots"/>
-	<xsl:variable name="InflAffixSlots" select="//MoInflAffixSlot"/>
-	<xsl:variable name="LexEntries" select="//LexEntry"/>
-	<xsl:variable name="MoStemMsas" select="//MoStemMsa"/>
-	<xsl:variable name="MoInflAffMsas" select="//MoInflAffMsa"/>
-	<xsl:variable name="MoDerivAffMsas" select="//MoDerivAffMsa"/>
-	<xsl:variable name="MoUnclassifiedAffixMsas" select="//MoUnclassifiedAffixMsa"/>
-	<xsl:variable name="MoAffixAllomorphs" select="//MoAffixAllomorph"/>
-	<xsl:variable name="MoStemAllomorphs" select="//MoStemAllomorph"/>
-	<xsl:variable name="CompoundRules" select="//MoEndoCompound | //MoExoCompound"/>
-	<xsl:variable name="PartsOfSpeech" select="//PartOfSpeech"/>
+	<xsl:variable name="AllAffixTemplates" select="MoInflAffixTemplate"/>
+	<xsl:variable name="AllPrefixSlots" select="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixTemplates/MoInflAffixTemplate/PrefixSlots"/>
+	<xsl:variable name="AllSuffixSlots" select="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixTemplates/MoInflAffixTemplate/SuffixSlots"/>
+	<xsl:variable name="InflAffixSlots" select="/M3Dump/PartsOfSpeech/PartOfSpeech/AffixSlots/MoInflAffixSlot"/>
+	<xsl:variable name="LexEntries" select="/M3Dump/Lexicon/Entries/LexEntry"/>
+	<xsl:variable name="MoStemMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoStemMsa"/>
+	<xsl:variable name="MoInflAffMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoInflAffMsa"/>
+	<xsl:variable name="MoDerivAffMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoDerivAffMsa"/>
+	<xsl:variable name="MoUnclassifiedAffixMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoUnclassifiedAffixMsa"/>
+	<xsl:variable name="MoAffixAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph"/>
+	<xsl:variable name="MoStemAllomorphs" select="/M3Dump/Lexicon/Allomorphs//MoStemAllomorph"/>
+	<xsl:variable name="CompoundRules" select="/M3Dump/CompoundRules/MoEndoCompound | /M3Dump/CompoundRules/MoExoCompound"/>
+	<xsl:variable name="PartsOfSpeech" select="/M3Dump/PartsOfSpeech/PartOfSpeech"/>
 	<!-- included stylesheets (i.e. things common to other style sheets) -->
 	<xsl:include href="MorphTypeGuids.xsl"/>
 	<xsl:include href="XAmpleTemplateVariables.xsl"/>
+	<xsl:include href="FxtM3ParserCommon.xsl"/>
 	<!-- following is used for writing inflection class MECs -->
 	<xsl:variable name="sExocentricToInflectionClasses">
 		<!-- will use a delimeter to guarantee uniqueness of the class name -->
@@ -65,10 +69,11 @@ Preamble
 		</xsl:for-each>
 	</xsl:variable>
 	<!-- following is a way to deal with iteration contexts -->
-	<xsl:variable name="PhIters" select="//PhIters"/>
+	<xsl:variable name="PhIters" select="/M3Dump/PhPhonData/PhIters"/>
 	<!-- following is for full reduplication -->
 	<xsl:variable name="sFullRedupPattern" select="'[...]'"/>
 	<xsl:variable name="sPosIdDivider" select="'|'"/>
+
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Main template
@@ -76,6 +81,7 @@ Main template
 -->
 	<xsl:template match="/">
 		<xsl:apply-templates select="$LexEntries"/>
+		<xsl:apply-templates select="$LexEntryInflTypeSlots"/>
 		<!-- commented off since we're not using linkers right now
 		<xsl:for-each select="//MoEndoCompound | //MoExoCompound">
 			<xsl:if test="Linker[@dst!=0]">
@@ -95,10 +101,10 @@ Main template
 		-->
 	</xsl:template>
 	<!--
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- A new lexical entry
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- -->
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		A new lexical entry
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
 	<xsl:template match="LexEntry">
 		<!-- skip phrases -->
 		<xsl:variable name="sLexemeFormTypeGuid" select="key('MorphTypeID', LexemeForm/@MorphType)/@Guid"/>
@@ -108,20 +114,57 @@ Main template
 			</xsl:variable>
 			<xsl:if test="$bIsAbstractOnly!='Y'">
 				<xsl:variable name="lexEntry" select="."/>
-				<xsl:for-each select="MorphoSyntaxAnalysis">
-					<xsl:variable name="thisMsa" select="@dst"/>
-					<xsl:text>
+				<xsl:choose>
+					<xsl:when test="MorphoSyntaxAnalysis">
+						<xsl:for-each select="MorphoSyntaxAnalysis">
+							<xsl:variable name="thisMsa" select="@dst"/>
+							<xsl:text>
 \lx </xsl:text>
-					<xsl:value-of select="$thisMsa"/>
-					<xsl:apply-templates select="key('StemMsaID', $thisMsa) | key('InflMsaID', $thisMsa) | key('DerivMsaID', $thisMsa) | key('UnclassifiedMsaID', $thisMsa)">
-						<xsl:with-param name="lexEntry" select="$lexEntry"/>
-						<xsl:with-param name="allos" select="$lexEntry/AlternateForms | $lexEntry/LexemeForm"/>
-						<xsl:with-param name="gloss" select="key('LexSenseID',../Sense[1]/@dst)/Gloss"/>
-					</xsl:apply-templates>
-					<!--            Ensure Final Newline-->
-					<xsl:text>
+							<xsl:value-of select="$thisMsa"/>
+							<xsl:apply-templates select="key('StemMsaID', $thisMsa) | key('InflMsaID', $thisMsa) | key('DerivMsaID', $thisMsa) | key('UnclassifiedMsaID', $thisMsa)">
+								<xsl:with-param name="lexEntry" select="$lexEntry"/>
+								<xsl:with-param name="allos" select="$lexEntry/AlternateForms | $lexEntry/LexemeForm"/>
+								<xsl:with-param name="gloss" select="key('LexSenseID',../Sense[1]/@dst)/Gloss"/>
+							</xsl:apply-templates>
+							<!--            Ensure Final Newline-->
+							<xsl:text>
 &#x20;</xsl:text>
-				</xsl:for-each>
+						</xsl:for-each>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:for-each select="LexEntryRef">
+							<xsl:variable name="lexEntryRef" select="."/>
+							<xsl:for-each select="ComponentLexeme">
+								<xsl:variable name="componentLexEntry" select="key('LexEntryID',@dst)"/>
+								<xsl:choose>
+									<xsl:when test="$componentLexEntry">
+										<xsl:for-each select="$componentLexEntry/MorphoSyntaxAnalysis">
+											<xsl:variable name="stemMsa" select="key('StemMsaID',@dst)"/>
+											<xsl:call-template name="OutputIrregularlyInflectedFormEntry">
+												<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
+												<xsl:with-param name="lexEntry" select="$lexEntry"/>
+												<xsl:with-param name="componentLexEntry" select="$componentLexEntry"/>
+												<xsl:with-param name="sVariantOfGloss" select="key('LexSenseID',$componentLexEntry/Sense[1]/@dst)/Gloss"/>
+												<xsl:with-param name="stemMsa" select="$stemMsa"/>
+											</xsl:call-template>
+										</xsl:for-each>
+									</xsl:when>
+									<xsl:otherwise>
+										<!-- the component must refer to a sense -->
+										<xsl:variable name="componentSense" select="key('LexSenseID',@dst)"/>
+										<xsl:variable name="stemMsa" select="key('StemMsaID',$componentSense/@Msa)"/>
+										<xsl:call-template name="OutputIrregularlyInflectedFormEntry">
+											<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
+											<xsl:with-param name="lexEntry" select="$lexEntry"/>
+											<xsl:with-param name="sVariantOfGloss" select="$componentSense/Gloss"/>
+											<xsl:with-param name="stemMsa" select="$stemMsa"/>
+										</xsl:call-template>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:for-each>
+						</xsl:for-each>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:if>
 		</xsl:if>
 	</xsl:template>
@@ -395,8 +438,8 @@ Main template
 		</xsl:choose>
 	</xsl:template>
 	<!--
-	  MoStemMsa
-   -->
+		MoStemMsa
+	-->
 	<xsl:template match="MoStemMsa">
 		<xsl:param name="lexEntry"/>
 		<xsl:param name="stemMsa" select="."/>
@@ -420,7 +463,7 @@ Main template
 		</xsl:variable>
 		<!--
 			process any roots
-		 -->
+		-->
 		<xsl:if test="contains($sTypes,'Root')">
 			<!-- both types use the same gloss -->
 			<xsl:call-template name="Gloss">
@@ -436,80 +479,13 @@ Main template
 \wc </xsl:text>
 			<xsl:if test="$stemMsa/@Components">Stem</xsl:if>
 			<xsl:if test="not($stemMsa/@Components)">root</xsl:if>
-			<xsl:if test="$stemMsa/@PartOfSpeech">
-				<xsl:text>
-\mp </xsl:text>
-				<xsl:value-of select="$sRootPOS"/>
-				<xsl:value-of select="$stemMsa/@PartOfSpeech"/>
-			</xsl:if>
-			<xsl:if test="$stemMsa/@InflectionClass!='0'">
-				<xsl:text>
-\mp </xsl:text>
-				<xsl:value-of select="$sInflClass"/>
-				<xsl:value-of select="$stemMsa/@InflectionClass"/>
-			</xsl:if>
-			<xsl:if test="$stemMsa/@InflectionClass='0'">
-				<!-- need to look at ancestor POSes, too -->
-				<xsl:variable name="default">
-					<xsl:call-template name="NestedPOSDefaultInflectionClass">
-						<xsl:with-param name="pos" select="key('POSID',$stemMsa/@PartOfSpeech)"/>
-					</xsl:call-template>
-				</xsl:variable>
-				<xsl:if test="$default!=''">
-					<xsl:text>
-\mp </xsl:text>
-					<xsl:value-of select="$sInflClass"/>
-					<xsl:value-of select="$default"/>
-				</xsl:if>
-			</xsl:if>
-			<xsl:if test="$stemMsa/InflectionFeatures/FsFeatStruc">
-				<xsl:text>
-\fd </xsl:text>
-				<xsl:value-of select="$sMSFS"/>
-				<xsl:value-of select="$stemMsa/InflectionFeatures/FsFeatStruc/@Id"/>
-			</xsl:if>
-			<xsl:for-each select="$stemMsa/ProdRestrict">
-				<xsl:text>
-\mp </xsl:text>
-				<xsl:value-of select="$sExceptionFeature"/>
-				<xsl:value-of select="@dst"/>Plus</xsl:for-each>
-			<!-- need lex entry for stem name processing -->
-			<!-- collect stem names used so we can output any default stem name allomorph properties -->
-			<xsl:variable name="stemallos" select="key('StemAlloID', $allos/@dst)[@IsAbstract='0' and @MorphType!=$sDiscontiguousPhrase and @StemName!='0']"/>
-			<xsl:variable name="sStemNamesUsedAll">
-				<xsl:for-each select="$stemallos">
-					<xsl:sort select="@StemName"/>
-					<xsl:text>StemName</xsl:text>
-					<xsl:value-of select="@StemName"/>
-					<xsl:text>;</xsl:text>
-				</xsl:for-each>
-			</xsl:variable>
-			<xsl:variable name="sStemNamesUsed">
-				<xsl:call-template name="OutputUniqueStrings">
-					<xsl:with-param name="sList" select="$sStemNamesUsedAll"/>
-				</xsl:call-template>
-			</xsl:variable>
-			<xsl:for-each select="$allos">
-				<xsl:variable name="thisAllomorph" select="."/>
-				<xsl:for-each select="key('StemAlloID',@dst)[@IsAbstract='0']">
-					<xsl:variable name="sMorphType">
-						<xsl:value-of select="key('MorphTypeID', @MorphType)/@Guid"/>
-					</xsl:variable>
-					<xsl:if test="$sMorphType=$sRoot or $sMorphType=$sStem or $sMorphType=$sBoundRoot or $sMorphType=$sBoundStem or $sMorphType=$sParticle or $sMorphType=$sPhrase">
-						<xsl:call-template name="AlloForm">
-							<xsl:with-param name="bAffix" select="'N'"/>
-							<xsl:with-param name="sStemNamesUsed" select="$sStemNamesUsed"/>
-							<xsl:with-param name="sGuid" select="$sMorphType"/>
-						</xsl:call-template>
-						<xsl:for-each select="$thisAllomorph">
-							<xsl:call-template name="GenerateAnyNegSECs">
-								<xsl:with-param name="currentAllomorph" select="."/>
-								<xsl:with-param name="sType" select="$sMorphType"/>
-							</xsl:call-template>
-						</xsl:for-each>
-					</xsl:if>
-				</xsl:for-each>
-			</xsl:for-each>
+			<xsl:call-template name="DoStemMsaProperties">
+				<xsl:with-param name="stemMsa" select="$stemMsa"/>
+				<xsl:with-param name="allos" select="$allos"/>
+			</xsl:call-template>
+			<xsl:call-template name="DoStemMsaStemNamesAndAllos">
+				<xsl:with-param name="allos" select="$allos"/>
+			</xsl:call-template>
 		</xsl:if>
 		<!--
 			process any clitics
@@ -583,6 +559,77 @@ Main template
 				<xsl:with-param name="lexEntry" select="$lexEntry"/>
 				<xsl:with-param name="allos" select="$allos"/>
 			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+	<!--
+		Slots
+	-->
+	<xsl:template match="Slots">
+		<xsl:variable name="slot" select="key('AffixSlotsID',@dst)"/>
+		<xsl:if test="$slot/@Optional='false'">
+			<!-- for each required slot, create a null entry so the template will still pass -->
+			<xsl:text>
+
+\lx </xsl:text>
+			<xsl:value-of select="../@Id"/>
+			<xsl:variable name="sGloss">
+				<xsl:text>IrregInflFormInSlot</xsl:text>
+				<xsl:value-of select="@dst"/>
+			</xsl:variable>
+			<xsl:call-template name="Gloss">
+				<xsl:with-param name="gloss" select="$sGloss"/>
+			</xsl:call-template>
+			<xsl:text>
+\c W/W
+\wc </xsl:text>
+			<xsl:value-of select="@dst"/>
+			<xsl:text>
+\a 0 {</xsl:text>
+			<xsl:value-of select="../@Id"/>
+			<xsl:text>}
+\eType </xsl:text>
+			<xsl:variable name="fIsPrefix">
+				<xsl:choose>
+					<xsl:when test="key('PrefixSlotsID',@dst)">
+						<xsl:text>Y</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>N</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="$fIsPrefix='Y'">
+					<xsl:text>prefix</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>suffix</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:if test="../InflectionFeatures/FsFeatStruc">
+				<xsl:text>
+\fd </xsl:text>
+				<xsl:value-of select="$sMSFS"/>
+				<xsl:value-of select="../InflectionFeatures/FsFeatStruc/@Id"/>
+			</xsl:if>
+			<xsl:text>
+\mcc </xsl:text>
+			<xsl:value-of select="../@Id"/>
+			<xsl:choose>
+				<xsl:when test="$fIsPrefix='Y'">
+					<xsl:text> +/ ... _ {</xsl:text>
+					<xsl:value-of select="$sIrregularlyInflectedForm"/>
+					<xsl:value-of select="../@Id"/>
+					<xsl:text>}</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text> +/ {</xsl:text>
+					<xsl:value-of select="$sIrregularlyInflectedForm"/>
+					<xsl:value-of select="../@Id"/>
+					<xsl:text>} ... _ </xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:text>&#xa;</xsl:text>
 		</xsl:if>
 	</xsl:template>
 	<!--
@@ -1216,6 +1263,18 @@ DoDerivAffix
 				<!-- is really an inflectional affix -->
 				<xsl:for-each select="$Slot">
 					<xsl:value-of select="@Id"/>
+					<xsl:variable name="slotsInLexEntryInflType" select="key('LexEntryInflTypeSlots',@Id)"/>
+					<xsl:if test="$slotsInLexEntryInflType">
+						<xsl:for-each select="$slotsInLexEntryInflType">
+							<xsl:text>
+\mcc </xsl:text>
+							<xsl:value-of select="$inflMsa/@Id"/>
+							<xsl:text> +/ {</xsl:text>
+							<xsl:value-of select="$sIrregularlyInflectedForm"/>
+							<xsl:value-of select="../@Id"/>
+							<xsl:text>} ... ~_</xsl:text>
+						</xsl:for-each>
+					</xsl:if>
 				</xsl:for-each>
 			</xsl:when>
 			<xsl:otherwise>
@@ -1287,6 +1346,99 @@ DoInflAffixMsaStemName
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:for-each>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		DoStemMsaProperties
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="DoStemMsaProperties">
+		<xsl:param name="stemMsa"/>
+		<xsl:param name="allos"/>
+		<xsl:if test="$stemMsa/@PartOfSpeech">
+			<xsl:text>
+\mp </xsl:text>
+			<xsl:value-of select="$sRootPOS"/>
+			<xsl:value-of select="$stemMsa/@PartOfSpeech"/>
+		</xsl:if>
+		<xsl:if test="$stemMsa/@InflectionClass!='0'">
+			<xsl:text>
+\mp </xsl:text>
+			<xsl:value-of select="$sInflClass"/>
+			<xsl:value-of select="$stemMsa/@InflectionClass"/>
+		</xsl:if>
+		<xsl:if test="$stemMsa/@InflectionClass='0'">
+			<!-- need to look at ancestor POSes, too -->
+			<xsl:variable name="default">
+				<xsl:call-template name="NestedPOSDefaultInflectionClass">
+					<xsl:with-param name="pos" select="key('POSID',$stemMsa/@PartOfSpeech)"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:if test="$default!=''">
+				<xsl:text>
+\mp </xsl:text>
+				<xsl:value-of select="$sInflClass"/>
+				<xsl:value-of select="$default"/>
+			</xsl:if>
+		</xsl:if>
+		<xsl:if test="$stemMsa/InflectionFeatures/FsFeatStruc">
+			<xsl:text>
+\fd </xsl:text>
+			<xsl:value-of select="$sMSFS"/>
+			<xsl:value-of select="$stemMsa/InflectionFeatures/FsFeatStruc/@Id"/>
+		</xsl:if>
+		<xsl:for-each select="$stemMsa/ProdRestrict">
+			<xsl:text>
+\mp </xsl:text>
+			<xsl:value-of select="$sExceptionFeature"/>
+			<xsl:value-of select="@dst"/>Plus</xsl:for-each>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		DoStemMsaStemNamesAndAllos
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="DoStemMsaStemNamesAndAllos">
+		<xsl:param name="allos"/>
+		<!-- need lex entry for stem name processing -->
+		<!-- collect stem names used so we can output any default stem name allomorph properties -->
+		<xsl:variable name="stemallos" select="key('StemAlloID', $allos/@dst)[@IsAbstract='0' and @MorphType!=$sDiscontiguousPhrase and @StemName!='0']"/>
+		<xsl:variable name="sStemNamesUsedAll">
+			<xsl:for-each select="$stemallos">
+				<xsl:sort select="@StemName"/>
+				<xsl:text>StemName</xsl:text>
+				<xsl:value-of select="@StemName"/>
+				<xsl:text>;</xsl:text>
+			</xsl:for-each>
+		</xsl:variable>
+		<xsl:variable name="sStemNamesUsed">
+			<xsl:call-template name="OutputUniqueStrings">
+				<xsl:with-param name="sList" select="$sStemNamesUsedAll"/>
+			</xsl:call-template>
+		</xsl:variable>
+
+		<xsl:for-each select="$allos">
+			<xsl:variable name="thisAllomorph" select="."/>
+			<xsl:for-each select="key('StemAlloID',@dst)[@IsAbstract='0']">
+				<xsl:variable name="sMorphType">
+					<xsl:value-of select="key('MorphTypeID', @MorphType)/@Guid"/>
+				</xsl:variable>
+				<xsl:if test="$sMorphType=$sRoot or $sMorphType=$sStem or $sMorphType=$sBoundRoot or $sMorphType=$sBoundStem or $sMorphType=$sParticle or $sMorphType=$sPhrase">
+					<xsl:call-template name="AlloForm">
+						<xsl:with-param name="bAffix" select="'N'"/>
+						<xsl:with-param name="sStemNamesUsed" select="$sStemNamesUsed"/>
+						<xsl:with-param name="sGuid" select="$sMorphType"/>
+					</xsl:call-template>
+					<xsl:for-each select="$thisAllomorph">
+						<xsl:call-template name="GenerateAnyNegSECs">
+							<xsl:with-param name="currentAllomorph" select="."/>
+							<xsl:with-param name="sType" select="$sMorphType"/>
+						</xsl:call-template>
+					</xsl:for-each>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:for-each>
+
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1777,7 +1929,7 @@ InflClass
 					   for that inflection class.  In the latter case, we do not create any MECs for those inflection classes and their subclasses. -->
 						<xsl:call-template name="OutputInflectionSubclassAffixMECs">
 							<xsl:with-param name="sTypes" select="$sTypes"/>
-							<xsl:with-param name="class" select="key('InflClassID',@dst)/MoInflClass"/>
+							<xsl:with-param name="class" select="key('InflClassID',@dst)/Subclasses/MoInflClass"/>
 							<xsl:with-param name="sInflectonClassesOfOtherFormsInEntry" select="$sInflectonClassesOfOtherFormsInEntry"/>
 						</xsl:call-template>
 					</xsl:if>
@@ -1837,11 +1989,64 @@ InflClass
 				</xsl:call-template>
 				<xsl:call-template name="OutputInflectionSubclassAffixMECs">
 					<xsl:with-param name="sTypes" select="$sTypes"/>
-					<xsl:with-param name="class" select="MoInflClass"/>
+					<xsl:with-param name="class" select="Subclasses/MoInflClass"/>
 					<xsl:with-param name="sInflectonClassesOfOtherFormsInEntry" select="$sInflectonClassesOfOtherFormsInEntry"/>
 				</xsl:call-template>
 			</xsl:if>
 		</xsl:for-each>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputIrregularlyInflectedFormEntry
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputIrregularlyInflectedFormEntry">
+		<xsl:param name="lexEntryRef"/>
+		<xsl:param name="lexEntry"/>
+		<xsl:param name="sVariantOfGloss"/>
+		<xsl:param name="stemMsa"/>
+		<xsl:if test="$lexEntryRef/LexEntryInflType">
+			<xsl:text>
+
+\lx </xsl:text>
+			<xsl:call-template name="IdOfIrregularlyInflectedFormEntry">
+				<xsl:with-param name="lexEntry" select="$lexEntry"/>
+				<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
+			</xsl:call-template>
+			<xsl:variable name="gloss">
+				<xsl:call-template name="GlossOfIrregularlyInflectedForm">
+					<xsl:with-param name="lexEntryRef" select="$lexEntryRef"/>
+					<xsl:with-param name="sVariantOfGloss" select="$sVariantOfGloss"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:call-template name="Gloss">
+				<xsl:with-param name="gloss" select="$gloss"/>
+			</xsl:call-template>
+			<xsl:text>
+\c W
+\wc root</xsl:text>
+			<xsl:variable name="allos" select="$lexEntry/AlternateForms | $lexEntry/LexemeForm"/>
+			<xsl:call-template name="DoStemMsaProperties">
+				<xsl:with-param name="stemMsa" select="$stemMsa"/>
+				<xsl:with-param name="allos" select="$allos"/>
+			</xsl:call-template>
+			<xsl:call-template name="DoStemMsaStemNamesAndAllos">
+				<xsl:with-param name="allos" select="$allos"/>
+			</xsl:call-template>
+			<xsl:for-each select="$lexEntryRef/LexEntryInflType">
+				<xsl:variable name="lexEnryInflType" select="key('LexEntryInflTypeID',@dst)"/>
+				<xsl:if test="not($lexEnryInflType/Slots) and $lexEnryInflType/InflectionFeatures/FsFeatStruc">
+					<xsl:text>
+\fd </xsl:text>
+					<xsl:value-of select="$sMSFS"/>
+					<xsl:value-of select="$lexEnryInflType/InflectionFeatures/FsFeatStruc/@Id"/>
+				</xsl:if>
+				<xsl:text>
+\mp </xsl:text>
+				<xsl:value-of select="$sIrregularlyInflectedForm"/>
+				<xsl:value-of select="$lexEnryInflType/@Id"/>
+			</xsl:for-each>
+		</xsl:if>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1974,6 +2179,7 @@ OutputUnclassifiedOrderClass
 		================================================================
 		Revision History
 		- - - - - - - - - - - - - - - - - - -
+		27-Mar-2012     Steve McConnel  Tweak for effiency in libxslt based processing.
 		21-Feb-2006	    Andy Black	Use MECs for inflection classes and MCC for exception features
 		09-Feb-2006	    Andy Black	Allow ^0 and &0 for null as well as *0 and the empty set character
 		06-Feb-2006	    Andy Black	Allow for full reduplication

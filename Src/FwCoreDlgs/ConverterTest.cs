@@ -1,22 +1,23 @@
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Text;
-using System.Windows.Forms;
 using System.IO;
-using System.Resources;
 using System.Reflection;
-using System.Text;
-using System.Diagnostics;
+using System.Resources;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
+using ECInterfaces;
 using SIL.CoreImpl;
-using SIL.Utils;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using ECInterfaces;
-using SilEncConverters40;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
+using SIL.Utils;
+using SIL.Utils.FileDialog;
+using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -39,20 +40,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 	/// -----------------------------------------------------------------------------------------
 	/// <summary>
-	/// ConverterTest class.
+	/// Allows the user to test the converters. Despite its name, this is not a unit testing
+	/// class!
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
 	internal class ConverterTest : UserControl, IFWDisposable
 	{
 		private FwOverrideComboBox outputFontCombo;
-		private System.Windows.Forms.OpenFileDialog ofDlg;
+		private OpenFileDialogAdapter ofDlg;
 		private string m_mapname; // name of the conversion to apply when convert is pressed.
 		private StringBuilder m_savedOutput; // saves the converted data for saving to a file
 		private EncConverters m_encConverters;
 		private SampleView m_svOutput;
 		private bool m_fHasOutput;
 		private System.Windows.Forms.Panel OutputPanel;
-		private System.Windows.Forms.SaveFileDialog saveFileDialog;
+		private SaveFileDialogAdapter saveFileDialog;
 //		private string m_sOrigMapfile;
 		private System.Windows.Forms.TextBox txtInputFile;
 		private System.Windows.Forms.ToolTip toolTipInputFile;
@@ -91,8 +93,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-			ofDlg.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(ofDlg.Filter);
-			saveFileDialog.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(saveFileDialog.Filter);
+			ofDlg = new OpenFileDialogAdapter();
+			ofDlg.DefaultExt = "txt";
+			ofDlg.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(FwCoreDlgs.ofDlg_Filter);
+
+			saveFileDialog = new SaveFileDialogAdapter();
+			saveFileDialog.DefaultExt = "txt";
+			saveFileDialog.RestoreDirectory = true;
+			saveFileDialog.Filter = ofDlg.Filter;
 
 			if (DesignMode)
 				return;
@@ -115,21 +123,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
 
-			if( disposing )
+			if (disposing && !IsDisposed)
 			{
-				if(components != null)
+				if (components != null)
 				{
 					components.Dispose();
 				}
+
+				saveFileDialog.Dispose();
+				ofDlg.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code
@@ -149,9 +157,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.convertButton = new System.Windows.Forms.Button();
 			this.OutputPanel = new System.Windows.Forms.Panel();
 			this.saveFileButton = new System.Windows.Forms.Button();
-			this.ofDlg = new System.Windows.Forms.OpenFileDialog();
 			this.txtInputFile = new System.Windows.Forms.TextBox();
-			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.toolTipInputFile = new System.Windows.Forms.ToolTip(this.components);
 			selectFileButton = new System.Windows.Forms.Button();
 			label2 = new System.Windows.Forms.Label();
@@ -214,11 +220,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			helpProvider1.SetShowHelp(this.saveFileButton, ((bool)(resources.GetObject("saveFileButton.ShowHelp"))));
 			this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
 			//
-			// ofDlg
-			//
-			this.ofDlg.DefaultExt = "txt";
-			resources.ApplyResources(this.ofDlg, "ofDlg");
-			//
 			// txtInputFile
 			//
 			resources.ApplyResources(this.txtInputFile, "txtInputFile");
@@ -228,12 +229,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.txtInputFile.ReadOnly = true;
 			helpProvider1.SetShowHelp(this.txtInputFile, ((bool)(resources.GetObject("txtInputFile.ShowHelp"))));
 			this.txtInputFile.TabStop = false;
-			//
-			// saveFileDialog
-			//
-			this.saveFileDialog.DefaultExt = "txt";
-			resources.ApplyResources(this.saveFileDialog, "saveFileDialog");
-			this.saveFileDialog.RestoreDirectory = true;
 			//
 			// ConverterTest
 			//
@@ -263,8 +258,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		void InputArgsChanged()
 		{
-			convertButton.Enabled = (ofDlg.FileName != null && ofDlg.FileName != "" &&
-				m_mapname != null && m_mapname != "");
+			convertButton.Enabled = !string.IsNullOrEmpty(ofDlg.FileName) &&
+				!string.IsNullOrEmpty(m_mapname);
 			m_savedOutput = null;
 			saveFileButton.Enabled = false;
 		}
@@ -716,6 +711,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);

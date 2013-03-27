@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -80,6 +81,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 		// We want to emulate what ReferenceLauncher does, but without the object being created
 		// until the user clicks OK in the simple list chooser.
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			// YAGNI: may eventually need to make configurable how it comes up with the list of candidates.
@@ -134,15 +137,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						// perhaps by indicating in the configuration node what class of object to create
 						// and so forth, or perhaps by just putting a "doWhat" attribute on the configuration node
 						// and making a switch here to control what is done. For now this slice is only used
-						// in one situation, where we need to create a notebook record, move the current object to
-						// it, and add the values to it.
-						((IText)m_obj).MoveToNotebook(false);
-						var recHvo = m_obj.Owner.Hvo;
+						// in one situation, where we need to create a notebook record, associate the current object
+						// with it, and add the values to it.
+						((IText)m_obj).AssociateWithNotebook(false);
+						IRnGenericRec notebookRec;
+						DataTree.NotebookRecordRefersToThisText(m_obj as IText, out notebookRec);
+						var recHvo = notebookRec.Hvo;
 						var values = (from obj in chooser.ChosenObjects select obj.Hvo).ToArray();
 						var listFlid = m_flid;
 						if (m_flid == RnGenericRecTags.kflidParticipants)
 						{
-							var defaultRoledParticipant = ((IRnGenericRec)m_obj.Owner).MakeDefaultRoledParticipant();
+							var defaultRoledParticipant = notebookRec.MakeDefaultRoledParticipant();
 							recHvo = defaultRoledParticipant.Hvo;
 							listFlid = RnRoledParticTags.kflidParticipants;
 						}

@@ -1876,27 +1876,6 @@ namespace SIL.FieldWorks.TE
 				DeletePicture();
 		}
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Return true if the deleting of text (or a picture) is possible.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public override bool CanDelete()
-		{
-			if (!base.CanDelete())
-				return false;
-			if (Callbacks.EditedRootBox.Selection.SelType != VwSelType.kstPicture)
-				return true;
-
-			if (ContentType != StVc.ContentTypes.kctNormal)
-				return false; // can't delete pictures in BT views.
-
-			// Also can't delete in BT side of parallel side-by-side view.
-			SelLevInfo info;
-			return (!CurrentSelection.GetLevelInfoForTag(StTxtParaTags.kflidSegments,
-				SelectionHelper.SelLimitType.Anchor, out info));
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Deletes a footnote when the selection is on a footnote marker.
@@ -2362,13 +2341,7 @@ namespace SIL.FieldWorks.TE
 				catch (InvalidStructureException e)
 				{
 					// Cancel the request if chapter or verse numbers are present.
-					// display message box if not running in a test
-					if (!MiscUtils.RunningTests)
-					{
-						MessageBox.Show(Control,
-							TeResourceHelper.GetResourceString("kstidParaHasNumbers"),
-							m_app.ApplicationName, MessageBoxButtons.OK);
-					}
+					DisplayMessage(TeResourceHelper.GetResourceString("kstidParaHasNumbers"));
 					return;
 				}
 
@@ -2380,6 +2353,18 @@ namespace SIL.FieldWorks.TE
 					true, true, selHelper.AssocPrev);
 			}
 			return;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Method to display a simple application message to the user.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public override void DisplayMessage(string message)
+		{
+			// display message box if not running in a test
+			if (!MiscUtils.RunningTests)
+				MessageBox.Show(Control, message, m_app.ApplicationName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -4695,48 +4680,71 @@ namespace SIL.FieldWorks.TE
 		#region Goto Footnote methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Go to next footnote.
+		/// Sets the selection at the marker of the next footnote in the Scripture, starting
+		/// from the bottome of the current selection. (This currently only works well in the
+		/// vernacular -- See TE-9528.)
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>The footnote, if one is found</returns>
 		/// ------------------------------------------------------------------------------------
 		public virtual IScrFootnote GoToNextFootnote()
 		{
 			CheckDisposed();
 
+			FootnoteLocationInfo info = FindNextVernFootnote();
+			if (info == null)
+				return null;
+
+			// Set the IP
+			SetInsertionPoint(info.m_tag, info.m_iBook, info.m_iSection, info.m_iPara, info.m_ich, false);
+			return info.m_footnote;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the next vernacular footnote starting from the bottom of the current selection
+		/// (presumed to be in the vernacular) location, and returns an object that holds all
+		/// the necessary info to locate the footnote marker in the vernacular text.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public FootnoteLocationInfo FindNextVernFootnote()
+		{
 			SelectionHelper selHelper = GetSelectionReducedToIp(SelectionHelper.SelLimitType.Bottom);
 			if (selHelper == null)
 				return null;
 			// Get the information needed from the current selection
 			int paraLev = selHelper.GetLevelForTag(StTextTags.kflidParagraphs);
 			SelLevInfo[] levels = selHelper.LevelInfo;
-			int iBook = ((ITeView)Control).LocationTracker.GetBookIndex(
-				selHelper, SelectionHelper.SelLimitType.Anchor);
-			int tag = levels[paraLev + 1].tag;
-			int iSection = ((ITeView)Control).LocationTracker.GetSectionIndexInBook(
-				selHelper, SelectionHelper.SelLimitType.Anchor);
-			int iPara = levels[paraLev].ihvo;
-			int ich = selHelper.IchAnchor;
+			int iBook = ((ITeView)Control).LocationTracker.GetBookIndex(selHelper, SelectionHelper.SelLimitType.Anchor);
+			int iSection = ((ITeView)Control).LocationTracker.GetSectionIndexInBook(selHelper, SelectionHelper.SelLimitType.Anchor);
 
 			// Look for the next footnote
-			IScrFootnote footnote = BookFilter.GetBook(iBook).FindNextFootnote(
-				ref iSection, ref iPara, ref ich, ref tag);
+			return FindNextVernFootnote(iBook, iSection, levels[paraLev].ihvo, selHelper.IchAnchor,
+				levels[paraLev + 1].tag);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the next vernacular footnote starting from the position indicated by the given
+		/// indices and tag, and returns an object that references the footnote and holds all
+		/// the necessary info to locate the footnote marker in the vernacular text.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public FootnoteLocationInfo FindNextVernFootnote(int iBook, int iSection, int iPara, int ich, int tag)
+		{
+			FootnoteLocationInfo info;
 
 			// If we didn't find a footnote in the current book then go through the rest of the
 			// books until we find one or we run out of books.
-			while (footnote == null && iBook < BookFilter.BookCount - 1)
+			while ((info = BookFilter.GetBook(iBook).FindNextFootnote(iSection, iPara, ich, tag)) == null &&
+				iBook < BookFilter.BookCount - 1)
 			{
 				tag = ScrBookTags.kflidTitle;
 				iBook++;
 				iPara = iSection = ich = 0;
-				footnote = BookFilter.GetBook(iBook).FindNextFootnote(ref iSection,
-					ref iPara, ref ich, ref tag);
 			}
-
-			// Set the IP
-			if (footnote != null)
-				SetInsertionPoint(tag, iBook, iSection, iPara, ich, false);
-
-			return footnote;
+			if (info != null)
+				info.m_iBook = iBook; // set to index in filter rather than absolute index.
+			return info;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -5566,28 +5574,13 @@ namespace SIL.FieldWorks.TE
 			SelLevInfo[] levInfo = helper.GetLevelInfo(SelectionHelper.SelLimitType.Top);
 			if (levInfo[0].tag != StTextTags.kflidParagraphs)
 				return false;
-
-			ILocationTracker tracker = ((ITeView)Control).LocationTracker;
-			IScrBook book = tracker.GetBook(helper, SelectionHelper.SelLimitType.Anchor);
-
-			SelLevInfo tmpInfo;
 			IStText text;
-			if (helper.GetLevelInfoForTag(ScrBookTags.kflidTitle, out tmpInfo))
-				text = book.TitleOA;
-			else
-			{
-				IScrSection section = tracker.GetSection(
-					helper, SelectionHelper.SelLimitType.Anchor);
-
-				text = (levInfo[1].tag == ScrSectionTags.kflidHeading ?
-					section.HeadingOA : text = section.ContentOA);
-			}
-
-			int iPara = helper.GetLevelInfoForTag(StTextTags.kflidParagraphs).ihvo;
-			IStTxtPara currPara = text[iPara];
-			ITsStrBldr bldr;
+			int iPara;
+			int tag;
+			IStTxtPara currPara = GetPara(helper, out text, out iPara, out tag);
 
 			// Backspace at beginning of paragraph
+			ITsStrBldr bldr;
 			if (dpt == VwDelProbType.kdptBsAtStartPara)
 			{
 				if (iPara <= 0)
@@ -5640,6 +5633,42 @@ namespace SIL.FieldWorks.TE
 				helper.SetSelection(true);
 			}
 			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets an StTxtPara representing the paragraph of the given selection.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private IStTxtPara GetPara(SelectionHelper helper, out IStText text, out int iPara, out int tag)
+		{
+			SelLevInfo paraLevInfo;
+			if (!helper.GetLevelInfoForTag(StTextTags.kflidParagraphs, out paraLevInfo))
+			{
+				text = null;
+				iPara = tag = -1;
+				return null;
+			}
+			iPara = paraLevInfo.ihvo;
+
+			ILocationTracker tracker = ((ITeView)Control).LocationTracker;
+			IScrBook book = tracker.GetBook(helper, SelectionHelper.SelLimitType.Top);
+
+			IScrSection section = tracker.GetSection(helper, SelectionHelper.SelLimitType.Top);
+
+			if (section == null)
+			{
+				text = book.TitleOA;
+				tag = ScrBookTags.kflidTitle;
+			}
+			else
+			{
+				tag = (helper.GetLevelForTag(ScrSectionTags.kflidContent) >= 0 ?
+					ScrSectionTags.kflidContent : ScrSectionTags.kflidHeading);
+				text = (tag == ScrSectionTags.kflidHeading ? section.HeadingOA : section.ContentOA);
+			}
+
+			return text[iPara];
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -6807,10 +6836,16 @@ namespace SIL.FieldWorks.TE
 			string redo;
 			TeResourceHelper.MakeUndoRedoLabels("kstidDeletePicture", out undo, out redo);
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(undo, redo,
-				m_cache.ServiceLocator.GetInstance<IActionHandler>(), ()=>
+				m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
 				DeletePicture(CurrentSelection, CurrentSelection.LevelInfo[0].hvo);
 			});
+
+			if (Callbacks != null && Callbacks.EditedRootBox != null) // may not exist in tests.
+			{
+				Callbacks.EditedRootBox.Site.ScrollSelectionIntoView(
+					Callbacks.EditedRootBox.Selection, VwScrollSelOpts.kssoNearTop);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -6822,40 +6857,58 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		protected void DeletePicture(SelectionHelper helper, int hvoPic)
 		{
-			int paraHvo = helper.GetLevelInfoForTag(StTextTags.kflidParagraphs).hvo;
+			SelLevInfo info = helper.GetLevelInfoForTag(StTextTags.kflidParagraphs);
+			int paraHvo = info.hvo;
 			Debug.Assert(paraHvo != 0);
-
-			int iBook, iSection;
-
-			iBook = ((ITeView)Control).LocationTracker.GetBookIndex(helper,
-				SelectionHelper.SelLimitType.Anchor);
-
-			iSection = ((ITeView)Control).LocationTracker.GetSectionIndexInBook(helper,
-				SelectionHelper.SelLimitType.Anchor);
-
+			int iPara = info.ihvo;
 			IStTxtPara para = m_repoScrTxtPara.GetObject(paraHvo);
+			int tag, hvo;
+			bool fGotSelectedScrElement = GetSelectedScrElement(out tag, out hvo);
+			Debug.Assert(fGotSelectedScrElement);
 
-			// Find the ORC and delete it from the paragraph
-			ITsString contents = para.Contents;
-			int startOfRun = 0;
-			for (int i = 0; i < contents.RunCount; i++)
+			int iBook = ((ITeView)Control).LocationTracker.GetBookIndex(helper,
+			SelectionHelper.SelLimitType.Anchor);
+
+			int iSection = ((ITeView)Control).LocationTracker.GetSectionIndexInBook(helper,
+			SelectionHelper.SelLimitType.Anchor);
+
+			int ichOrc = -1;
+			int iSegment = -1;
+
+			if (IsBackTranslation)
 			{
-				string str = contents.get_Properties(i).GetStrPropValue(
-					(int)FwTextPropType.ktptObjData);
-
-				if (str != null)
+				ICmPictureRepository repo = Cache.ServiceLocator.GetInstance<ICmPictureRepository>();
+				ISegment segment;
+				if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
 				{
-					Guid guid = MiscUtils.GetGuidFromObjData(str.Substring(1));
-					if (m_repoCmObject.GetObject(guid).Hvo == hvoPic)
+					segment = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
+					iSegment = segment.IndexInOwner;
+				}
+				else
+					segment = para.GetSegmentForOffsetInFreeTranslation(helper.GetIch(SelectionHelper.SelLimitType.Top), RootVcDefaultWritingSystem);
+				ITsString contents = segment.FreeTranslation.get_String(RootVcDefaultWritingSystem);
+				Guid guidPic = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(hvoPic).Guid;
+				for (int i = 0; i < contents.RunCount; i++)
+				{
+					string str = contents.get_Properties(i).GetStrPropValue((int)FwTextPropType.ktptObjData);
+
+					if (str != null && MiscUtils.GetGuidFromObjData(str.Substring(1)) == guidPic)
 					{
+						ichOrc = contents.get_MinOfRun(i);
+						int limOfRun = contents.get_LimOfRun(i);
 						ITsStrBldr bldr = contents.GetBldr();
-						startOfRun = contents.get_MinOfRun(i);
-						bldr.Replace(startOfRun, contents.get_LimOfRun(i), string.Empty, null);
-						para.Contents = bldr.GetString();
+						bldr.Replace(ichOrc, limOfRun, string.Empty, null);
+						segment.FreeTranslation.set_String(RootVcDefaultWritingSystem, bldr.GetString());
+						if (ContentType == StVc.ContentTypes.kctSimpleBT)
+							ichOrc += para.GetOffsetInFreeTranslationForStartOfSegment(segment, RootVcDefaultWritingSystem);
 						break;
 					}
 				}
 			}
+			else
+				ichOrc = para.DeletePicture(hvoPic);
+
+			Debug.Assert(ichOrc >= 0);
 
 			// TODO (TE-4967): do a prop change that actually works.
 			//			m_cache.DomainDataByFlid.PropChanged(null, (int)PropChangeType.kpctNotifyAll,
@@ -6864,35 +6917,8 @@ namespace SIL.FieldWorks.TE
 			if (m_app != null)
 				m_app.RefreshAllViews();
 
-			// REVIEW: Isn't there another way to delete pictures in the new FDO?
-			// They don't have an owner!!!!
-			m_cache.DomainDataByFlid.DeleteObj(hvoPic);
-
-			// TODO (TimS): This code to create a selection in the paragraph the picture was
-			// in probably won't work when deleting a picture in back translation
-			// material (which isn't possible to insert yet).
-
-			((ITeView)Control).LocationTracker.SetBookAndSection(helper,
-				SelectionHelper.SelLimitType.Anchor, iBook, iSection);
-
-			helper.RemoveLevel(StTxtParaTags.kflidContents);
-
-			if (Callbacks != null && Callbacks.EditedRootBox != null) // may not exist in tests.
-			{
-				try
-				{
-					MakeSimpleTextSelection(helper.LevelInfo, StTxtParaTags.kflidContents, startOfRun);
-				}
-				catch
-				{
-					// If we couldn't make the selection in the contents, it's probably because
-					// we are in a user prompt, so try that instead.
-					MakeSimpleTextSelection(helper.LevelInfo, SimpleRootSite.kTagUserPrompt, startOfRun);
-				}
-
-				Callbacks.EditedRootBox.Site.ScrollSelectionIntoView(
-					Callbacks.EditedRootBox.Selection, VwScrollSelOpts.kssoNearTop);
-			}
+			SelectRangeOfChars(iBook, iSection, tag, iPara, iSegment, ichOrc, ichOrc, true, true,
+				true, VwScrollSelOpts.kssoDefault);
 		}
 		#endregion
 
@@ -6934,7 +6960,7 @@ namespace SIL.FieldWorks.TE
 			if (propTag == StTxtParaTags.kflidContents)
 			{
 				// selection is in a vernacular paragraph
-				Debug.Assert(wsAlt == 0, "wsAlt should be 0 for a bigString");
+				Debug.Assert(wsAlt == 0, "wsAlt should be 0 for a string");
 				wsAlt = 0; // Some code depends on this being zero to indicate we are in vernacular
 				// Adjust the insertion position to the beginning of a word - not in the middle
 				ich = tss.FindWordBoundary(ich, UnicodeCharProps, ScrStyleNames.ChapterAndVerse);
@@ -6961,7 +6987,7 @@ namespace SIL.FieldWorks.TE
 				if (propTag == CmTranslationTags.kflidTranslation)
 				{
 					// selection is in a back translation
-					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiBigString alt");
+					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiString alt");
 				}
 				else if (propTag == RootSite.kTagUserPrompt)
 				{
@@ -6970,7 +6996,7 @@ namespace SIL.FieldWorks.TE
 					// get writing system from zero-width space in run 0 of the user prompt
 					wsAlt = tss.get_Properties(0).GetIntPropValues(
 						(int)FwTextPropType.ktptWs, out nVar);
-					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiBigString alt");
+					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiString alt");
 					Debug.Assert(tss.get_Properties(0).GetIntPropValues(SimpleRootSite.ktptUserPrompt, out nVar) == 1);
 
 					// Replace the TextSelInfo with stuff we can use
@@ -7265,13 +7291,13 @@ namespace SIL.FieldWorks.TE
 			if (propTag == StTxtParaTags.kflidContents)
 			{
 				// selection is in a vernacular paragraph
-				Debug.Assert(wsAlt == 0, "wsAlt should be 0 for a bigString");
+				Debug.Assert(wsAlt == 0, "wsAlt should be 0 for a string");
 				wsAlt = 0; // Some code depends on this being zero to indicate we are in vernacular
 			}
 			else if (propTag == CmTranslationTags.kflidTranslation || propTag == SegmentTags.kflidFreeTranslation)
 			{
 				// selection is in a back translation
-				Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiBigString alt");
+				Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiString alt");
 			}
 			else if (propTag == SimpleRootSite.kTagUserPrompt)
 			{
@@ -7290,7 +7316,7 @@ namespace SIL.FieldWorks.TE
 				else
 				{
 					// Get writing system from zero-width space in run 0 of the user prompt
-					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiBigString alt");
+					Debug.Assert(wsAlt > 0, "wsAlt should be a valid WS for Translation multiString alt");
 					propTag = Options.UseInterlinearBackTranslation ?
 						SegmentTags.kflidFreeTranslation : CmTranslationTags.kflidTranslation;
 				}
@@ -7961,6 +7987,130 @@ namespace SIL.FieldWorks.TE
 			return prevFootnote;
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Attempts to navigate to a position in the back translation that closely corresponds
+		/// to a place in the verncaular that has a footnote whose marker has not been inserted
+		/// into the back translation.
+		/// </summary>
+		/// <param name="activeEditingHelper">Editing helper from the active draft view (could
+		/// be either the vern or BT)</param>
+		/// <returns>A value indicating whether or not it found a place to move to.</returns>
+		/// ------------------------------------------------------------------------------------
+		public bool GoToNextMissingBtFootnoteMkr(TeEditingHelper activeEditingHelper)
+		{
+			int iBook, iSection, iPara, ich, tag;
+			if (!GetVernPosition(activeEditingHelper, out iBook, out iSection, out iPara,
+				out ich, out tag))
+			{
+				return false;
+			}
+
+			int wsBt = IsBackTranslation ? ViewConstructorWS : ((IBtAwareView)Control).BackTranslationWS;
+			FootnoteLocationInfo info;
+
+			do
+			{
+				info = FindNextVernFootnote(iBook, iSection, iPara, ich, tag);
+				if (info == null)
+					return false;
+				IScrBook book = BookFilter.GetBook(info.m_iBook);
+				IStText stText;
+				switch (info.m_tag)
+				{
+					case ScrBookTags.kflidTitle:
+						stText = book.TitleOA;
+						break;
+					case ScrSectionTags.kflidContent:
+						stText = book.SectionsOS[info.m_iSection].ContentOA;
+						break;
+					case ScrSectionTags.kflidHeading:
+						stText = book.SectionsOS[info.m_iSection].HeadingOA;
+						break;
+					default:
+						throw new Exception("Unexpected tag.");
+				}
+
+				IScrTxtPara para = (IScrTxtPara)stText.ParagraphsOS[info.m_iPara];
+				bool missingBtOrc = true;
+				ICmTranslation trans = para.GetBT();
+				ITsString tssBt;
+				if (trans != null && (tssBt = trans.Translation.get_String(wsBt)) != null)
+				{
+					int iRun = 0;
+					int runCount = tssBt.RunCount;
+					while (iRun < runCount)
+					{
+						if (TsStringUtils.GetHotObjectGuidFromProps(tssBt.get_Properties(iRun++)) == info.m_footnote.Guid)
+						{
+							missingBtOrc = false;
+							break;
+						}
+					}
+				}
+
+				if (missingBtOrc)
+				{
+					if (InSegmentedBt)
+					{
+						int iSegment = GetBtSegIndexForVernChar(para, info.m_ich, wsBt);
+						SelectRangeOfChars(info.m_iBook, info.m_iSection, info.m_tag, info.m_iPara, iSegment,
+							0, 0, true, true, false, VwScrollSelOpts.kssoDefault);
+					}
+					else
+					{
+						ich = para.GetBtPosition(info.m_ich, wsBt);
+						SelectRangeOfChars(info.m_iBook, info.m_iSection, info.m_tag, info.m_iPara, ich, ich, true, true, false);
+					}
+					Control.Focus();
+					return true;
+				}
+
+				iBook = info.m_iBook;
+				iSection = info.m_iSection;
+				iPara = info.m_iPara;
+				ich = info.m_ich;
+				tag = info.m_tag;
+
+			} while (true);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a non-range selection (i.e., a simple IP) in the vernacular corresponding to
+		/// the current active selection. If the current selection is in the back translation,
+		/// the position in the vernacular will be the begining of the current segment (in the
+		/// vernacular). If the current selection is in a BT but not in a paragraph, this will
+		/// return null.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private static bool GetVernPosition(TeEditingHelper activeEditingHelper, out int iBook,
+			out int iSection, out int iPara, out int ich, out int tag)
+		{
+			SelectionHelper selHelper = activeEditingHelper.GetSelectionReducedToIp(
+				SelectionHelper.SelLimitType.Bottom);
+
+			ILocationTracker tracker = ((ITeView)activeEditingHelper.Control).LocationTracker;
+			iBook = tracker.GetBookIndex(selHelper, SelectionHelper.SelLimitType.Anchor);
+			iSection = tracker.GetSectionIndexInBook(selHelper, SelectionHelper.SelLimitType.Anchor);
+			ich = selHelper.IchAnchor;
+			IStText text;
+			IStTxtPara para = activeEditingHelper.GetPara(selHelper, out text, out iPara, out tag);
+			if (para == null)
+				return false;
+
+			if (activeEditingHelper.IsBackTranslation)
+			{
+				if (activeEditingHelper.InSegmentedBt)
+					ich = para.SegmentsOS[selHelper.LevelInfo[0].ihvo].BeginOffset;
+				else
+				{
+					ISegment seg = para.GetSegmentForOffsetInFreeTranslation(ich, selHelper.Ws);
+					ich = (seg == null ? 0 : seg.BeginOffset);
+				}
+			}
+			return true;
+		}
 		#endregion
 
 		#region Methods to support inserting annotations

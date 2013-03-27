@@ -2,20 +2,20 @@
 <word>
   <form>kat</form>
   <seq step="Try to build a Stem node on a root.">
-	<stem syncat="0" syncatAbbr="" inflClass="0" inflClassAbbr="" requiresInfl="-">
-	  <failure>A stem requires an overt category, but this root has an unmarked category.</failure>
-	  <morph wordType="root">
-		<shortName>kat (feline): kat</shortName>
-		<stemMsa cat="0" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</stem>
+    <stem syncat="0" syncatAbbr="" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <failure>A stem requires an overt category, but this root has an unmarked category.</failure>
+      <morph wordType="root">
+        <shortName>kat (feline): kat</shortName>
+        <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+      </morph>
+    </stem>
   </seq>
   <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
-	<partial syncat="0" syncatAbbr="">
-	  <morph wordType="root">
-		<shortName>kat (feline): kat</shortName>
-		<stemMsa cat="0" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</partial>
+    <partial syncat="0" syncatAbbr="">
+      <morph wordType="root">
+        <shortName>kat (feline): kat</shortName>
+        <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+      </morph>
+    </partial>
   </seq>
 </word>

@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 2001-2008 IBM and others. All rights reserved.
+*   Copyright (C) 2001-2011 IBM and others. All rights reserved.
 **********************************************************************
 *   Date        Name        Description
 *  06/28/2001   synwee      Creation.
@@ -13,6 +13,7 @@
 
 #if !UCONFIG_NO_COLLATION && !UCONFIG_NO_BREAK_ITERATION
 
+#include "unicode/localpointer.h"
 #include "unicode/ucol.h"
 #include "unicode/ucoleitr.h"
 #include "unicode/ubrk.h"
@@ -156,10 +157,17 @@ typedef enum {
 	/** Option for overlapping matches */
 	USEARCH_OVERLAP,
 	/**
-	Option for canonical matches. option 1 in header documentation.
-	The default value will be USEARCH_OFF
-	*/
+	 * Option for canonical matches. option 1 in header documentation.
+	 * The default value will be USEARCH_OFF
+	 */
 	USEARCH_CANONICAL_MATCH,
+	/**
+	 * Option to control how collation elements are compared.
+	 * The default value will be USEARCH_STANDARD_ELEMENT_COMPARISON.
+	 * @stable ICU 4.4
+	 */
+	USEARCH_ELEMENT_COMPARISON,
+
 	USEARCH_ATTRIBUTE_COUNT
 } USearchAttribute;
 
@@ -167,12 +175,48 @@ typedef enum {
 * @stable ICU 2.4
 */
 typedef enum {
-	/** default value for any USearchAttribute */
+	/** Default value for any USearchAttribute */
 	USEARCH_DEFAULT = -1,
-	/** value for USEARCH_OVERLAP and USEARCH_CANONICAL_MATCH */
+	/** Value for USEARCH_OVERLAP and USEARCH_CANONICAL_MATCH */
 	USEARCH_OFF,
-	/** value for USEARCH_OVERLAP and USEARCH_CANONICAL_MATCH */
+	/** Value for USEARCH_OVERLAP and USEARCH_CANONICAL_MATCH */
 	USEARCH_ON,
+	/**
+	 * Value (default) for USEARCH_ELEMENT_COMPARISON;
+	 * standard collation element comparison at the specified collator
+	 * strength.
+	 * @stable ICU 4.4
+	 */
+	USEARCH_STANDARD_ELEMENT_COMPARISON,
+	/**
+	 * Value for USEARCH_ELEMENT_COMPARISON;
+	 * collation element comparison is modified to effectively provide
+	 * behavior between the specified strength and strength - 1. Collation
+	 * elements in the pattern that have the base weight for the specified
+	 * strength are treated as "wildcards" that match an element with any
+	 * other weight at that collation level in the searched text. For
+	 * example, with a secondary-strength English collator, a plain 'e' in
+	 * the pattern will match a plain e or an e with any diacritic in the
+	 * searched text, but an e with diacritic in the pattern will only
+	 * match an e with the same diacritic in the searched text.
+	 * @stable ICU 4.4
+	 */
+	USEARCH_PATTERN_BASE_WEIGHT_IS_WILDCARD,
+	/**
+	 * Value for USEARCH_ELEMENT_COMPARISON.
+	 * collation element comparison is modified to effectively provide
+	 * behavior between the specified strength and strength - 1. Collation
+	 * elements in either the pattern or the searched text that have the
+	 * base weight for the specified strength are treated as "wildcards"
+	 * that match an element with any other weight at that collation level.
+	 * For example, with a secondary-strength English collator, a plain 'e'
+	 * in the pattern will match a plain e or an e with any diacritic in the
+	 * searched text, but an e with diacritic in the pattern will only
+	 * match an e with the same diacritic or a plain e in the searched text.
+	 * @stable ICU 4.4
+	 */
+	USEARCH_ANY_BASE_WEIGHT_IS_WILDCARD,
+
 	USEARCH_ATTRIBUTE_VALUE_COUNT
 } USearchAttributeValue;
 
@@ -248,6 +292,25 @@ U_STABLE UStringSearch * U_EXPORT2 usearch_openFromCollator(
 * @stable ICU 2.4
 */
 U_STABLE void U_EXPORT2 usearch_close(UStringSearch *searchiter);
+
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUStringSearchPointer
+ * "Smart pointer" class, closes a UStringSearch via usearch_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUStringSearchPointer, UStringSearch, usearch_close);
+
+U_NAMESPACE_END
+
+#endif
 
 /* get and set methods -------------------------------------------------- */
 
@@ -523,8 +586,8 @@ U_STABLE int32_t U_EXPORT2 usearch_first(UStringSearch *strsrch,
 										   UErrorCode    *status);
 
 /**
-* Returns the first index greater than <tt>position</tt> at which the string
-* text
+* Returns the first index equal or greater than <tt>position</tt> at which
+* the string text
 * matches the search pattern. The iterator is adjusted so that its current
 * index (as returned by <tt>usearch_getOffset</tt>) is the match position if
 * one was found.
@@ -575,7 +638,12 @@ U_STABLE int32_t U_EXPORT2 usearch_last(UStringSearch *strsrch,
 * <p>
 * Search positions that may render incorrect results are highlighted in the
 * header comments. If position is less than or greater than the text range
-* for searching, an U_INDEX_OUTOFBOUNDS_ERROR will be returned
+* for searching, an U_INDEX_OUTOFBOUNDS_ERROR will be returned.
+* <p>
+* When <tt>USEARCH_OVERLAP</tt> option is off, the last index of the
+* result match is always less than <tt>position</tt>.
+* When <tt>USERARCH_OVERLAP</tt> is on, the result match may span across
+* <tt>position</tt>.
 * @param strsrch search iterator data struct
 * @param position index position the search is to begin at
 * @param status for errors if it occurs
@@ -641,6 +709,7 @@ U_STABLE int32_t U_EXPORT2 usearch_previous(UStringSearch *strsrch,
 */
 U_STABLE void U_EXPORT2 usearch_reset(UStringSearch *strsrch);
 
+#ifndef U_HIDE_INTERNAL_API
 /**
   *  Simple forward search for the pattern, starting at a specified index,
   *     and using using a default set search options.
@@ -760,6 +829,7 @@ U_INTERNAL UBool U_EXPORT2 usearch_searchBackwards(UStringSearch *strsrch,
 												   int32_t        *matchStart,
 												   int32_t        *matchLimit,
 												   UErrorCode     *status);
+#endif  /* U_HIDE_INTERNAL_API */
 
 #endif /* #if !UCONFIG_NO_COLLATION  && !UCONFIG_NO_BREAK_ITERATION */
 

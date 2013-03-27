@@ -17,6 +17,27 @@ namespace Reflector.UserInterface
 		{
 		}
 
+		protected override void Dispose(bool fDisposing)
+		{
+			if (fDisposing)
+			{
+				if (items != null)
+				{
+					// Disposing the item might remove it from the collection, so we better work on
+					// a copy of the collection.
+					var copiedItems = new CommandBarItem[items.Count];
+					items.CopyTo(copiedItems, 0);
+					foreach (var item in copiedItems)
+						item.Dispose();
+
+					items.Clear();
+				}
+			}
+			items = null;
+
+			base.Dispose(fDisposing);
+		}
+
 		public CommandBarItemCollection Items
 		{
 			get { return this.items; }

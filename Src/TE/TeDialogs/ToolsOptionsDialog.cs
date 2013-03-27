@@ -513,6 +513,7 @@ namespace SIL.FieldWorks.TE
 			//
 			this.AcceptButton = this.btnOK;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
 			this.Controls.Add(btnHelp);
 			this.Controls.Add(btnCancel);
@@ -657,11 +658,11 @@ namespace SIL.FieldWorks.TE
 				CultureInfo ci = MiscUtils.GetCultureForWs(sNewUserWs);
 				if (ci != null)
 				{
-#if !__MonoCS__
 					FormLanguageSwitchSingleton.Instance.ChangeCurrentThreadUICulture(ci);
 					FormLanguageSwitchSingleton.Instance.ChangeLanguage(this);
-#else
-					// TODO-Linux: Investigate FormLanguageSwitchSingleton
+#if __MonoCS__
+					// Mono leaves the wait cursor on, unlike .Net itself.
+					Cursor.Current = Cursors.Default;
 #endif
 				}
 				Options.UserInterfaceWritingSystem = sNewUserWs;

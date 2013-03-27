@@ -1268,9 +1268,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// and the given stylesheet.
 		/// </summary>
 		/// <param name="sOutputFile"></param>
+		/// <param name="allowDictionaryParagraphIndent">See comments on this property of XhtmlHelper</param>
 		/// <param name="vss"></param>
-		public void WriteCssFile(string sOutputFile, IVwStylesheet vss)
+		public void WriteCssFile(string sOutputFile, IVwStylesheet vss, bool allowDictionaryParagraphIndent)
 		{
+			m_xhtml.AllowDictionaryParagraphIndent = allowDictionaryParagraphIndent;
 			m_xhtml.WriteCssFile(sOutputFile, vss, m_cssType, null);
 		}
 

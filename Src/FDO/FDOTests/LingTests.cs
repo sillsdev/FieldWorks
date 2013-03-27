@@ -18,11 +18,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.FDOTests.CellarTests;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.Validation;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
@@ -871,6 +874,82 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// test creating PhPhonData.PhonRuleFeats
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void RebuildPhonRuleFeats()
+		{
+			// exception "features"
+			var restrictionsList = Cache.LangProject.MorphologicalDataOA.ProdRestrictOA;
+			if (restrictionsList == null)
+			{
+				restrictionsList = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			}
+			var prodRestrict1 = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			restrictionsList.PossibilitiesOS.Add(prodRestrict1);
+			var wsBestAnalysis = WritingSystemServices.InterpretWsLabel(Cache, "best analysis", null, 0, 0, null);
+			prodRestrict1.Name.set_String(wsBestAnalysis, "Exception feature the first");
+			var prodRestrict2 = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			restrictionsList.PossibilitiesOS.Add(prodRestrict2);
+			var prodRestrict3 = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			restrictionsList.PossibilitiesOS.Add(prodRestrict3);
+			var prodRestrict4 = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create();
+			restrictionsList.PossibilitiesOS.Add(prodRestrict4);
+			restrictionsList.PossibilitiesOS.Remove(prodRestrict4);  // testing removal when there are no PhonRuleFeats yet
+			// inflection classes
+			IPartOfSpeech pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
+			IMoInflClass moInflClass1 = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			pos.InflectionClassesOC.Add(moInflClass1);
+			moInflClass1.Name.set_String(wsBestAnalysis, "Inflection class the first");
+			IMoInflClass moInflClass2 = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			pos.InflectionClassesOC.Add(moInflClass2);
+			IMoInflClass moInflClass3 = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			pos.InflectionClassesOC.Add(moInflClass3);
+			IMoInflClass moInflClass4 = Cache.ServiceLocator.GetInstance<IMoInflClassFactory>().Create();
+			pos.InflectionClassesOC.Add(moInflClass4);
+			pos.InflectionClassesOC.Remove(moInflClass4);  // testing removal when there are no PhonRuleFeats yet
+			// Collect up exception features and inflection classes
+			var result = new List<ICmObject>();
+			var prodRestricts = Cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Cast<ICmObject>();
+			result.AddRange(prodRestricts);
+			var inflClasses = pos.AllInflectionClasses;
+			result.AddRange(inflClasses);
+
+			var phonRuleFeats = Cache.LangProject.PhonologicalDataOA.PhonRuleFeatsOA;
+			Assert.AreEqual(0, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should be empty");
+			Cache.LangProject.PhonologicalDataOA.RebuildPhonRuleFeats(result);
+			Assert.AreEqual(6, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should have six items");
+			string sExceptionFeatureNewName = "Exception feature one";
+			prodRestrict1.Name.set_String(wsBestAnalysis, sExceptionFeatureNewName);
+			string sInflClassNewName = "Inflection class one";
+			moInflClass1.Name.set_String(wsBestAnalysis, sInflClassNewName);
+			result = new List<ICmObject>();
+			prodRestricts = Cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Cast<ICmObject>();
+			result.AddRange(prodRestricts);
+			inflClasses = pos.AllInflectionClasses;
+			result.AddRange(inflClasses);
+			Cache.LangProject.PhonologicalDataOA.RebuildPhonRuleFeats(result);
+			Assert.AreEqual(6, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should have six items after exception feature rename and after inflection class rename");
+			var sFirstOnesName = phonRuleFeats.PossibilitiesOS.First().Name.get_String(wsBestAnalysis);
+			Assert.AreEqual(sExceptionFeatureNewName, sFirstOnesName.Text,
+				"PhonRuleFeats should reflect a name change for exception features");
+			sFirstOnesName = phonRuleFeats.PossibilitiesOS.ElementAt(3).Name.get_String(wsBestAnalysis);
+			Assert.AreEqual(sInflClassNewName, sFirstOnesName.Text,
+				"PhonRuleFeats should reflect a name change for inflection classes");
+			restrictionsList.PossibilitiesOS.Remove(prodRestrict2);
+			Assert.AreEqual(5, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should have five items after deleting one productivity restriction");
+			pos.InflectionClassesOC.Remove(moInflClass2);
+			Assert.AreEqual(4, phonRuleFeats.PossibilitiesOS.Count,
+				"PhonRuleFeats should have four items after deleting one inflection class");
+		}
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// test that ShortName for optional slots have parentheses and non-optional do not.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1017,18 +1096,22 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			ILexEntry entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			IMoAffixAllomorph allomorph = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
 			entry.AlternateFormsOS.Add(allomorph);
-			Assert.IsFalse(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses),
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			Assert.IsFalse(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses, propsToMonitor),
 				"InflectionClass should not be relevant until an inflectional affix MSA with a category has been added.");
+			Assert.That(propsToMonitor, Is.Empty);
 			IMoInflAffMsa orange = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
 			entry.MorphoSyntaxAnalysesOC.Add(orange);
-			Assert.IsFalse(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses),
+			Assert.IsFalse(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses, propsToMonitor),
 				"InflectionClass should not be relevant until an inflectional affix MSA with a category has been added.");
+			// Review JohnT: should this result in monitoring any properties?
 			IPartOfSpeech pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
 			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
 			orange.PartOfSpeechRA = pos;
-			Assert.IsTrue(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses),
+			propsToMonitor.Clear();
+			Assert.IsTrue(allomorph.IsFieldRelevant(MoAffixFormTags.kflidInflectionClasses, propsToMonitor),
 				"InflectionClass should now be relevant since an inflectional affix MSA with a category has been added.");
-
+			Assert.That(propsToMonitor, Is.Empty);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1052,6 +1135,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Assert.AreEqual("Stem/root of unknown category; takes any affix", msa.LongNameTs.Text);
 		}
 
+		void VerifyPropsToMonitor(HashSet<Tuple<int, int>> propsToMonitor, Tuple<int, int>[] expected)
+		{
+			Assert.That(propsToMonitor.Count, Is.EqualTo(expected.Length));
+			foreach (var item in expected)
+				Assert.That(propsToMonitor.Contains(item));
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// test the method which tells us whether the inflection classes field is relevant
@@ -1066,62 +1156,80 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			IMoStemMsa msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 			entry.MorphoSyntaxAnalysesOC.Add(msa);
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphStem);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
+			var initialPropsToMonitor = new[]
+				{
+					new Tuple<int, int>(allomorph.Hvo, MoFormTags.kflidMorphType),
+					new Tuple<int, int>(entry.Hvo, LexEntryTags.kflidLexemeForm),
+					new Tuple<int, int>(entry.Hvo, LexEntryTags.kflidAlternateForms)
+				};
+			VerifyPropsToMonitor(propsToMonitor, initialPropsToMonitor);
+			propsToMonitor.Clear();
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphProclitic);
-			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should now be relevant since the entry has a proclitic.");
+			VerifyPropsToMonitor(propsToMonitor, initialPropsToMonitor);
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphEnclitic);
-			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should now be relevant since the entry has an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphClitic);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphBoundRoot);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphBoundStem);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphCircumfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphDiscontiguousPhrase);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphInfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphInfixingInterfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphParticle);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphPhrase);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphPrefix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphPrefixingInterfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphRoot);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphSimulfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphSuffix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphSuffixingInterfix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
 			SetMorphType(allomorph, MoMorphTypeTags.kguidMorphSuprafix);
-			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech),
+			Assert.IsFalse(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
 				"FromPartsOfSpeech should not be relevant until the entry contains a proclitic or an enclitic.");
+
+			IMoStemAllomorph lf = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entry.LexemeFormOA = lf;
+			SetMorphType(lf, MoMorphTypeTags.kguidMorphProclitic);
+			propsToMonitor.Clear();
+			Assert.IsTrue(msa.IsFieldRelevant(MoStemMsaTags.kflidFromPartsOfSpeech, propsToMonitor),
+				"FromPartsOfSpeech should now be relevant since the entry has a proclitic.");
+			VerifyPropsToMonitor(propsToMonitor, initialPropsToMonitor.Concat(new [] {new Tuple<int, int>(lf.Hvo, MoFormTags.kflidMorphType)}).ToArray());
 		}
 
 		private void SetMorphType(IMoStemAllomorph allomorph, Guid guidType)
@@ -1146,16 +1254,17 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			compound.RightMsaOA = msaRight;
 			IMoStemMsa msaTo = factStemMsa.Create();
 			compound.ToMsaOA = msaTo;
-			Assert.IsFalse(msaLeft.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass),
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			Assert.IsFalse(msaLeft.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass, propsToMonitor),
 				"Inflection Class should not be relevant for LeftMsa.");
-			Assert.IsFalse(msaRight.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass),
+			Assert.IsFalse(msaRight.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass, propsToMonitor),
 				"Inflection Class should not be relevant for RightMsa.");
-			Assert.IsFalse(msaTo.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass),
+			Assert.IsFalse(msaTo.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass, propsToMonitor),
 				"Inflection Class should not be relevant for ToMsa if it does not have a category.");
 			IPartOfSpeech pos = new PartOfSpeech();
 			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
 			msaTo.PartOfSpeechRA = pos;
-			Assert.IsTrue(msaTo.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass),
+			Assert.IsTrue(msaTo.IsFieldRelevant(MoStemMsaTags.kflidInflectionClass, propsToMonitor),
 				"Inflection Class should be relevant for ToMsa when it has a category.");
 		}
 
@@ -1225,67 +1334,72 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			ILexEntry stemEntry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			IMoStemAllomorph stemAllomorph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			stemEntry.LexemeFormOA = stemAllomorph;
-			Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 				"Stem allomorph stem name should not be relevant when there is no morph type.");
 			foreach (IMoMorphType mmt in Cache.LangProject.LexDbOA.MorphTypesOA.PossibilitiesOS)
 			{
 				stemAllomorph.MorphTypeRA = mmt;
 				if (mmt.Guid == MoMorphTypeTags.kguidMorphRoot)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+				{
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a root morph type.");
+					VerifyPropsToMonitor(propsToMonitor,
+						new[] {new Tuple<int, int>(stemAllomorph.Hvo, MoFormTags.kflidMorphType)});
+				}
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphBoundRoot)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a bound root morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphStem)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a stem morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphBoundStem)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a bound stem morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphCircumfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a circumfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphDiscontiguousPhrase)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a discontiguous phrasemorph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphClitic)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a clitic morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphEnclitic)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for an enclitic morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphInfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for an infix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphInfixingInterfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for an infixing interfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphParticle)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a particle morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphPhrase)
-					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsTrue(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should be relevant for a phrase morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphPrefix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a prefix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphPrefixingInterfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a prefixing interfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphProclitic)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a proclitic morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphSimulfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a simulfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphSuffix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a suffix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphSuffixingInterfix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a suffixing interfix morph type.");
 				else if (mmt.Guid == MoMorphTypeTags.kguidMorphSuprafix)
-					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName),
+					Assert.IsFalse(stemAllomorph.IsFieldRelevant(MoStemAllomorphTags.kflidStemName, propsToMonitor),
 						"Stem allomorph stem name should not be relevant for a suprafix morph type.");
 			}
 		}
@@ -2020,6 +2134,115 @@ namespace SIL.FieldWorks.FDO.FDOTests.LingTests
 			Cache.ActionHandlerAccessor.EndUndoTask(); // terminate the one started in the setup code.
 			var publicationTypes = Cache.LangProject.LexDbOA.PublicationTypesOA;
 			Assert.That(publicationTypes, Is.Not.Null);
+		}
+		/// <summary>
+		/// Test conversion of LexEntryType to LexEntryInflType.
+		/// </summary>
+		[Test]
+		public void ConvertLexEntryInflTypes()
+		{
+			var variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
+			Assert.That(variantEntryTypes, Is.Not.Null);
+			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			var letFactory = Cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
+			var lexEntryType1 = variantEntryTypes.PossibilitiesOS[0] as ILexEntryType;
+			var lexEntryType2 = variantEntryTypes.PossibilitiesOS[1] as ILexEntryType;
+			var lexEntryType1Sub1 = letFactory.Create();
+			lexEntryType1.SubPossibilitiesOS.Add(lexEntryType1Sub1);
+
+			var leFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var lerFactory = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>();
+
+			var entry1 = leFactory.Create();
+			var ler1 = lerFactory.Create();
+			entry1.EntryRefsOS.Add(ler1);
+			ler1.VariantEntryTypesRS.Add(lexEntryType1);
+			ler1.VariantEntryTypesRS.Add(lexEntryType2);
+
+			var entry2 = leFactory.Create();
+			var ler2 = lerFactory.Create();
+			entry2.EntryRefsOS.Add(ler2);
+			ler2.VariantEntryTypesRS.Add(lexEntryType1);
+
+			var progressBar = new ProgressBar();
+			var itemsToChange = new List<ILexEntryType>();
+			itemsToChange.Add(lexEntryType1);
+			itemsToChange.Add(lexEntryType1Sub1);
+
+			Cache.LangProject.LexDbOA.ConvertLexEntryInflTypes(progressBar, itemsToChange);
+			var leit1 = ler1.VariantEntryTypesRS[0];
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, leit1.ClassID, "first lex entry type of first entry should be irregularly inflected form");
+			leit1 = ler1.VariantEntryTypesRS[1];
+			Assert.AreEqual(LexEntryTypeTags.kClassId, leit1.ClassID, "second lex entry type of first entry should be variant");
+			leit1 = ler2.VariantEntryTypesRS[0];
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, leit1.ClassID, "first lex entry type of second entry should be irregularly inflected form");
+
+			variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
+			Assert.That(variantEntryTypes, Is.Not.Null);
+			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+
+			lexEntryType1 = variantEntryTypes.PossibilitiesOS[0] as ILexEntryType;
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1.ClassID, "first type should be irregularly inflected form");
+			lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, lexEntryType1Sub1.ClassID, "first sub-type of first type should be irregularly inflected form");
+
+		}
+		/// <summary>
+		/// Test conversion of LexEntryInflType to LexEntryType.
+		/// </summary>
+		[Test]
+		public void ConvertLexEntryTypes()
+		{
+			var variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
+			Assert.That(variantEntryTypes, Is.Not.Null);
+			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+			var leitFactory = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>();
+			var lexEntryInflType1 = variantEntryTypes.PossibilitiesOS[3] as ILexEntryInflType;
+			var lexEntryInflType2 = variantEntryTypes.PossibilitiesOS[4] as ILexEntryInflType;
+			var lexEntryInflType1Sub1 = leitFactory.Create();
+			lexEntryInflType1.SubPossibilitiesOS.Insert(0, lexEntryInflType1Sub1);
+
+			var leFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var lerFactory = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>();
+
+			var entry1 = leFactory.Create();
+			var ler1 = lerFactory.Create();
+			entry1.EntryRefsOS.Add(ler1);
+			ler1.VariantEntryTypesRS.Add(lexEntryInflType1);
+			ler1.VariantEntryTypesRS.Add(lexEntryInflType2);
+
+			var entry2 = leFactory.Create();
+			var ler2 = lerFactory.Create();
+			entry2.EntryRefsOS.Add(ler2);
+			ler2.VariantEntryTypesRS.Add(lexEntryInflType1);
+
+			var progressBar = new ProgressBar();
+			var itemsToChange = new List<ILexEntryType>();
+			itemsToChange.Add(lexEntryInflType1);
+			itemsToChange.Add(lexEntryInflType1Sub1);
+
+			Cache.LangProject.LexDbOA.ConvertLexEntryTypes(progressBar, itemsToChange);
+			var let1 = ler1.VariantEntryTypesRS[0];
+			Assert.AreEqual(LexEntryTypeTags.kClassId, let1.ClassID, "first lex entry type of first entry should be variant");
+			let1 = ler1.VariantEntryTypesRS[1];
+			Assert.AreEqual(LexEntryInflTypeTags.kClassId, let1.ClassID, "second lex entry type of first entry should be irregularly inflected form");
+			let1 = ler2.VariantEntryTypesRS[0];
+			Assert.AreEqual(LexEntryTypeTags.kClassId, let1.ClassID, "first lex entry type of second entry should be variant");
+
+			variantEntryTypes = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
+			Assert.That(variantEntryTypes, Is.Not.Null);
+			Assert.That(variantEntryTypes, Is.EqualTo(Cache.LangProject.LexDbOA.VariantEntryTypesOA), "should not make a new one each time!");
+			Assert.That(variantEntryTypes.PossibilitiesOS.Count, Is.EqualTo(6));
+
+			var lexEntryType1 = variantEntryTypes.PossibilitiesOS[3] as ILexEntryType;
+			Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1.ClassID, "third type should be variant");
+			var lexEntryType1Sub1 = lexEntryType1.SubPossibilitiesOS[0] as ILexEntryType;
+			Assert.AreEqual(LexEntryTypeTags.kClassId, lexEntryType1Sub1.ClassID, "third's first type should be variant");
+
 		}
 	}
 }

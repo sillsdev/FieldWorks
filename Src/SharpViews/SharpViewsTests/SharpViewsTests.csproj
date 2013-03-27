@@ -1,140 +1,171 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5" DefaultTargets="Build">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Build">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>9.0.21022</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{3CEECEA1-7D8C-4C70-A363-4BB9334FDB5D}</ProjectGuid>
-	<OutputType>Library</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>SIL.FieldWorks.SharpViews.SharpViewsTests</RootNamespace>
-	<AssemblyName>SharpViewsTests</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-	<FileAlignment>512</FileAlignment>
-	<SccProjectName>SAK</SccProjectName>
-	<SccLocalPath>SAK</SccLocalPath>
-	<SccAuxPath>SAK</SccAuxPath>
-	<SccProvider>SAK</SccProvider>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3CEECEA1-7D8C-4C70-A363-4BB9334FDB5D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SIL.FieldWorks.SharpViews.SharpViewsTests</RootNamespace>
+    <AssemblyName>SharpViewsTests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<OutputPath>..\..\..\Output\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<OutputPath>bin\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="BasicUtils, Version=5.3.0.17734, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfaces, Version=5.3.0.36628, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
-	</Reference>
-	<Reference Include="FDO, Version=5.3.0.34951, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
-	</Reference>
-	<Reference Include="FDOTests, Version=6.1.1.35265, Culture=neutral, processorArchitecture=x86">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FDOTests.dll</HintPath>
-	</Reference>
-	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-	</Reference>
-	<Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
-	</Reference>
-	<Reference Include="SilUtils, Version=7.1.0.20945, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Drawing" />
-	<Reference Include="System.Windows.Forms" />
-	<Reference Include="System.Xml.Linq">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Data.DataSetExtensions">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Data" />
-	<Reference Include="System.Xml" />
-	<Reference Include="TestUtils, Version=6.1.1.26285, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
-	</Reference>
+    <Reference Include="BasicUtils, Version=5.3.0.17734, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfaces, Version=5.3.0.36628, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FDO, Version=5.3.0.34951, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
+    <Reference Include="FDOTests, Version=6.1.1.35265, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FDOTests.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils, Version=7.1.0.20945, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="TestUtils, Version=6.1.1.26285, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpViews">
+      <Name>SharpViews</Name>
+      <HintPath>..\..\..\Output\Debug\SharpViews.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="AssembledStylesTests.cs" />
-	<Compile Include="BoxTests.cs" />
-	<Compile Include="CopyPasteTests.cs" />
-	<Compile Include="DragAndDropTests.cs" />
-	<Compile Include="FakeRenderEngine.cs" />
-	<Compile Include="FlowTests.cs" />
-	<Compile Include="GraphicsTestBase.cs" />
-	<Compile Include="HookupTests.cs" />
-	<Compile Include="InsertionPointTests.cs" />
-	<Compile Include="LayoutCallbacksTests.cs" />
-	<Compile Include="LayoutTransformTests.cs" />
-	<Compile Include="LazinessTests.cs" />
-	<Compile Include="MarginsAndBorders.cs" />
-	<Compile Include="MockData1.cs" />
-	<Compile Include="MockGraphics.cs" />
-	<Compile Include="MockRenderEngine.cs" />
-	<Compile Include="MockRendererFactory.cs" />
-	<Compile Include="MockSegment.cs" />
-	<Compile Include="MockSite.cs" />
-	<Compile Include="MockStylesheet.cs" />
-	<Compile Include="MockWsf.cs" />
-	<Compile Include="ModifiedMonitoredListTests.cs" />
-	<Compile Include="ParaBuilderTests.cs" />
-	<Compile Include="ParagraphOperationsTests.cs" />
-	<Compile Include="ParaTests.cs" />
-	<Compile Include="PileTests.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="RangeTests.cs" />
-	<Compile Include="RootBoxTests.cs" />
-	<Compile Include="DoubleClickTests.cs" />
-	<Compile Include="RowTests.cs" />
-	<Compile Include="SharpViewControlTests.cs" />
-	<Compile Include="SimpleBoxTests.cs" />
-	<None Include="SvFdoTestBase.cs" />
-	<Compile Include="StTextTests.cs" />
-	<Compile Include="TextSourceTests.cs" />
-	<Compile Include="TripleTest.cs" />
+    <Compile Include="..\..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
+    </Compile>
+    <Compile Include="AssembledStylesTests.cs" />
+    <Compile Include="BoxTests.cs" />
+    <Compile Include="CopyPasteTests.cs" />
+    <Compile Include="DragAndDropTests.cs" />
+    <Compile Include="FakeRenderEngine.cs" />
+    <Compile Include="FlowTests.cs" />
+    <Compile Include="GraphicsTestBase.cs" />
+    <Compile Include="HookupTests.cs" />
+    <Compile Include="InsertionPointTests.cs" />
+    <Compile Include="LayoutCallbacksTests.cs" />
+    <Compile Include="LayoutTransformTests.cs" />
+    <Compile Include="LazinessTests.cs" />
+    <Compile Include="MarginsAndBorders.cs" />
+    <Compile Include="MockData1.cs" />
+    <Compile Include="MockGraphics.cs" />
+    <Compile Include="MockRenderEngine.cs" />
+    <Compile Include="MockRendererFactory.cs" />
+    <Compile Include="MockSegment.cs" />
+    <Compile Include="MockSite.cs" />
+    <Compile Include="MockStylesheet.cs" />
+    <Compile Include="MockWsf.cs" />
+    <Compile Include="ModifiedMonitoredListTests.cs" />
+    <Compile Include="ParaBuilderTests.cs" />
+    <Compile Include="ParagraphOperationsTests.cs" />
+    <Compile Include="ParaTests.cs" />
+    <Compile Include="PileTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RangeTests.cs" />
+    <Compile Include="RootBoxTests.cs" />
+    <Compile Include="DoubleClickTests.cs" />
+    <Compile Include="RowTests.cs" />
+    <Compile Include="SharpViewControlTests.cs" />
+    <Compile Include="SimpleBoxTests.cs" />
+    <None Include="SvFdoTestBase.cs" />
+    <Compile Include="StTextTests.cs" />
+    <Compile Include="TextSourceTests.cs" />
+    <Compile Include="TripleTest.cs" />
   </ItemGroup>
   <ItemGroup>
-	<ProjectReference Include="..\SharpViews\SharpViews.csproj">
-	  <Project>{DE6F45DA-35BD-469C-90D2-B7918D2BC01F}</Project>
-	  <Name>SharpViews</Name>
-	</ProjectReference>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="App.config" />
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -352,7 +352,7 @@
 	<value>3</value>
   </data>
   <data name="lblBackup.Text" xml:space="preserve">
-	<value>Backup Recommendation</value>
+	<value>Backup recommendation</value>
   </data>
   <data name="&gt;&gt;lblBackup.Name" xml:space="preserve">
 	<value>lblBackup</value>
@@ -1973,7 +1973,7 @@ To begin importing, click Finish.</value>
 	<value>3</value>
   </data>
   <data name="lblReadyToImport.Text" xml:space="preserve">
-	<value>Ready to Import</value>
+	<value>Ready to import</value>
   </data>
   <data name="&gt;&gt;lblReadyToImport.Name" xml:space="preserve">
 	<value>lblReadyToImport</value>
@@ -2117,10 +2117,10 @@ To begin importing, click Finish.</value>
 	<value>640, 473</value>
   </data>
   <data name="$this.StepNames" xml:space="preserve">
-	<value>Overview &amp; backup</value>
+	<value>Overview &amp; Backup</value>
   </data>
   <data name="$this.StepNames1" xml:space="preserve">
-	<value>File &amp; settings</value>
+	<value>File &amp; Settings</value>
   </data>
   <data name="$this.StepNames2" xml:space="preserve">
 	<value>Language mapping</value>
@@ -2138,7 +2138,7 @@ To begin importing, click Finish.</value>
 	<value>Readiness</value>
   </data>
   <data name="$this.StepNames7" xml:space="preserve">
-	<value>Ready To Import</value>
+	<value>Ready to import</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
 	<value>Import Standard Format lexical data</value>

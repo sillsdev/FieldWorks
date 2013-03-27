@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,6 +30,7 @@ using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 using System.Text;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -37,6 +39,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// Export the lexicon as a LIFT file.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache is a reference")]
 	public class LiftExporter
 	{
 		/// <summary></summary>
@@ -58,8 +62,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly IWritingSystemManager m_wsManager;
 		private readonly int m_wsEn;
 		private readonly int m_wsBestAnalVern;
-		private Dictionary<Guid, String> m_CmPossibilityListsReferencedByFields = new Dictionary<Guid, String>();
-		private Dictionary<Guid, String> m_ListsGuidToRangeName = new Dictionary<Guid, String>();
+		private Dictionary<Guid, string> m_CmPossibilityListsReferencedByFields = new Dictionary<Guid, string>();
+		private Dictionary<Guid, string> m_ListsGuidToRangeName = new Dictionary<Guid, string>();
 		private readonly ICmPossibilityListRepository m_repoCmPossibilityLists;
 		private readonly ISilDataAccessManaged m_sda;
 
@@ -118,6 +122,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				var ma = new ProgressMessageArgs { Max = cEntries, MessageId = "ksExportingLift" };
 				SetProgressMessage(this, ma);
 			}
+
+			// pre-emtively delete the audio folder so files of deleted/changed references
+			// won't be orphaned
+			if (Directory.Exists(Path.Combine(FolderPath,"audio")))
+				Directory.Delete(Path.Combine(FolderPath, "audio"), true);
+
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
 			w.WriteLine("<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->");
 			w.WriteLine("<lift producer=\"SIL.FLEx {0}\" version=\"0.13\">", GetVersion());
@@ -199,7 +209,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			var wss = new HashSet<IWritingSystem>(m_cache.ServiceLocator.WritingSystems.AllWritingSystems);
 			wss.UnionWith(from index in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
-						  where !string.IsNullOrEmpty(index.WritingSystem)
+						  where !String.IsNullOrEmpty(index.WritingSystem)
 						  select m_cache.ServiceLocator.WritingSystemManager.Get(index.WritingSystem));
 
 			var writerSettings = new XmlWriterSettings
@@ -223,7 +233,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var dateCreated = entry.DateCreated.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ");
 			var dateModified = entry.DateModified.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ");
 			var sGuid = entry.Guid.ToString();
-			var sId = XmlUtils.MakeSafeXmlAttribute(entry.LIFTid);
+			var sId = MakeSafeAndNormalizedAttribute(entry.LIFTid);
 			if (entry.HomographNumber != 0)
 			{
 				w.WriteLine("<entry dateCreated=\"{0}\" dateModified=\"{1}\" id=\"{2}\" guid=\"{3}\" order=\"{4}\">",
@@ -291,7 +301,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						var tssMultiString = m_cache.DomainDataByFlid.get_MultiStringProp(obj.Hvo, flid);
 						if (tssMultiString.StringCount > 0)
 						{
-							w.WriteLine("<field type=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(fieldName));
+							w.WriteLine("<field type=\"{0}\">", MakeSafeAndNormalizedAttribute(fieldName));
 							for (var i = 0; i < tssMultiString.StringCount; ++i)
 							{
 								tssString = tssMultiString.GetStringFromIndex(i, out ws);
@@ -311,8 +321,6 @@ namespace SIL.FieldWorks.LexText.Controls
 							w.WriteLine("</field>");
 						}
 						break;
-					case CellarPropertyType.MultiBigString:
-					case CellarPropertyType.MultiBigUnicode:
 					case CellarPropertyType.MultiString:
 						break;
 					case CellarPropertyType.ReferenceAtomic:
@@ -340,7 +348,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						tssString = m_cache.DomainDataByFlid.get_StringProp(obj.Hvo, flid);
 						if (!String.IsNullOrEmpty(tssString.Text))
 						{
-							w.WriteLine("<field type=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(fieldName));
+							w.WriteLine("<field type=\"{0}\">", MakeSafeAndNormalizedAttribute(fieldName));
 							ws = tssString.get_WritingSystem(0);
 							WriteFormElement(w, ws, tssString);
 							w.WriteLine("</field>");
@@ -354,8 +362,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						var intVal = m_cache.DomainDataByFlid.get_IntProp(obj.Hvo, flid);
 						if (intVal != 0)
 						{
-							var str = String.Format("<trait name=\"{0}\" value=\"{1}\"/>", XmlUtils.MakeSafeXmlAttribute(fieldName),
-												XmlUtils.MakeSafeXmlAttribute(intVal.ToString()));
+							var str = String.Format("<trait name=\"{0}\" value=\"{1}\"/>", MakeSafeAndNormalizedAttribute(fieldName),
+												MakeSafeAndNormalizedAttribute(intVal.ToString()));
 							w.WriteLine(str);
 						}
 
@@ -400,10 +408,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			if (allParasAreEmpty)
 				return;
-			w.WriteLine("<field type=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(fieldName));
+			w.WriteLine("<field type=\"{0}\">", MakeSafeAndNormalizedAttribute(fieldName));
 			var ws = TsStringUtils.GetWsOfRun(para1.Contents, 0);
 			var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-			w.Write("<form lang=\"{0}\"><text>", XmlUtils.MakeSafeXmlAttribute(sLang));
+			w.Write("<form lang=\"{0}\"><text>", MakeSafeAndNormalizedAttribute(sLang));
 			var fFirstPara = true;
 			foreach (var para in paras.OfType<IStTxtPara>())
 			{
@@ -412,7 +420,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				else
 					w.Write("\u2029");	// flag end of preceding paragraph with 'Paragraph Separator'.
 				if (!String.IsNullOrEmpty(para.StyleName))
-					w.Write("<span class=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(para.StyleName));
+					w.Write("<span class=\"{0}\">", MakeSafeAndNormalizedAttribute(para.StyleName));
 				WriteTsStringContent(w, para.Contents);
 				if (!String.IsNullOrEmpty(para.StyleName))
 					w.Write("</span>");
@@ -430,9 +438,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				var ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out nvar);
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 				var style = ttp.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
-				w.Write("<span lang=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(sLang));
+				w.Write("<span lang=\"{0}\"", MakeSafeAndNormalizedAttribute(sLang));
 				if (!String.IsNullOrEmpty(style))
-					w.Write(" class=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(style));
+					w.Write(" class=\"{0}\"", MakeSafeAndNormalizedAttribute(style));
 				w.Write(">{0}</span>", tss.get_RunText(irun));
 			}
 		}
@@ -442,8 +450,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (possibilityHvo == 0)
 				return;
 			var tss = GetPossibilityBestAlternative(possibilityHvo, m_cache);
-			var str = String.Format("<trait name=\"{0}\" value=\"{1}\"/>", XmlUtils.MakeSafeXmlAttribute(labelName),
-									XmlUtils.MakeSafeXmlAttribute(tss));
+			var str = String.Format("<trait name=\"{0}\" value=\"{1}\"/>", MakeSafeAndNormalizedAttribute(labelName),
+									MakeSafeAndNormalizedAttribute(tss));
 			w.WriteLine(str);
 		}
 
@@ -464,7 +472,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var str =
 					String.Format(
 						"<trait name=\"{0}\" value=\"{1}\"/>",
-						XmlUtils.MakeSafeXmlAttribute(fieldName),
+						MakeSafeAndNormalizedAttribute(fieldName),
 						XmlUtils.MakeSafeXmlAttribute(genDateAttr));
 				w.WriteLine(str);
 			}
@@ -475,7 +483,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var genDateStr = "0";
 			if (!dataProperty.IsEmpty)
 			{
-				genDateStr = string.Format("{0}{1:0000}{2:00}{3:00}{4}", dataProperty.IsAD ? "" : "-", dataProperty.Year,
+				genDateStr = String.Format("{0}{1:0000}{2:00}{3:00}{4}", dataProperty.IsAD ? "" : "-", dataProperty.Year,
 					dataProperty.Month, dataProperty.Day, (int)dataProperty.Precision);
 			}
 			return genDateStr;
@@ -505,7 +513,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 			w.WriteLine("<form lang=\"{0}\"><text>{1}</text></form>",
-						XmlUtils.MakeSafeXmlAttribute(sLang), XmlUtils.MakeSafeXml(tss.Text));
+						MakeSafeAndNormalizedAttribute(sLang), MakeSafeAndNormalizedXml(tss.Text));
 		}
 
 		private void WritePronunciation(TextWriter w, ILexPronunciation pron)
@@ -520,7 +528,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteString(w, "field", "type=\"tone\"", "form", pron.Tone);
 			if (pron.LocationRA != null)
 				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>",
-					RangeNames.sLocationsOA, XmlUtils.MakeSafeXmlAttribute(pron.LocationRA.Name.BestAnalysisVernacularAlternative.Text));
+					RangeNames.sLocationsOA, MakeSafeAndNormalizedAttribute(pron.LocationRA.Name.BestAnalysisVernacularAlternative.Text));
 			WriteLiftResidue(w, pron);
 			w.WriteLine("</pronunciation>");
 		}
@@ -560,8 +568,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				slr.CrossRefHvo = target.Hvo;
 				w.Write("<relation");
 				WriteLiftDates(w, lref);
-				w.Write(" type=\"{0}\"",
-						slr.TypeName((int)SpecialWritingSystemCodes.BestAnalysisOrVernacular, lexItem.Hvo));
+				var typeName = slr.TypeName((int)SpecialWritingSystemCodes.BestAnalysisOrVernacular, lexItem.Hvo);
+				w.Write(" type=\"{0}\"", MakeSafeAndNormalizedAttribute(typeName));
 				w.Write(" ref=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(slr.RefLIFTid));
 				var refOrder = slr.RefOrder;
 				if (!String.IsNullOrEmpty(refOrder))
@@ -590,6 +598,22 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		private static string MakeSafeAndNormalizedXml(string inputString)
+		{
+			if (string.IsNullOrEmpty(inputString))
+				return inputString;
+			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
+			return XmlUtils.MakeSafeXml(normalizedString);
+		}
+
+		private static string MakeSafeAndNormalizedAttribute(string inputString)
+		{
+			if (string.IsNullOrEmpty(inputString))
+				return inputString;
+			var normalizedString = Icu.Normalize(inputString, Icu.UNormalizationMode.UNORM_NFC);
+			return XmlUtils.MakeSafeXmlAttribute(normalizedString);
+		}
+
 		private void WriteLexEntryRef(TextWriter w, ILexEntryRef ler)
 		{
 			var typeString = "_component-lexeme";
@@ -600,7 +624,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (var obj in ler.ComponentLexemesRS)
 			{
 				w.WriteLine("<relation type=\"" + typeString + "\" ref=\"{0}\" order=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(GetProperty(obj, "LIFTid").ToString()), order);
+					MakeSafeAndNormalizedAttribute(GetProperty(obj, "LIFTid").ToString()), order);
 				if (ler.PrimaryLexemesRS.Contains(obj))
 					w.WriteLine("<trait name=\"is-primary\" value=\"true\"/>");
 				WriteLexEntryRefBasics(w, ler);
@@ -642,8 +666,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			w.Write("<etymology");
 			WriteLiftDates(w, ety);
-			w.Write(" type=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(GetProperty(ety, "LiftType").ToString()));
-			w.Write(" source=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(GetProperty(ety, "LiftSource").ToString()));
+			w.Write(" type=\"{0}\"", MakeSafeAndNormalizedAttribute(GetProperty(ety, "LiftType").ToString()));
+			w.Write(" source=\"{0}\"", MakeSafeAndNormalizedAttribute(GetProperty(ety, "LiftSource").ToString()));
 			w.WriteLine(">");
 			WriteAllForms(w, null, null, "form", ety.Form);
 			WriteAllForms(w, null, null, "gloss", ety.Gloss);
@@ -664,7 +688,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						Debug.Assert(stemAllo != null);
 						var refer = GetProperty(alt, "LiftRefAttribute") as string;
 						if (!String.IsNullOrEmpty(refer))
-							w.Write(" ref=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(refer));
+							w.Write(" ref=\"{0}\"", MakeSafeAndNormalizedAttribute(refer));
 						w.WriteLine(">");
 						WriteAllFormsWithMarkers(w, null, null, "form", alt);
 						foreach (var env in stemAllo.PhoneEnvRC)
@@ -677,7 +701,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						Debug.Assert(affixAllo != null);
 						var refer = GetProperty(alt, "LiftRefAttribute") as string;
 						if (!String.IsNullOrEmpty(refer))
-							w.Write(" ref=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(refer));
+							w.Write(" ref=\"{0}\"", MakeSafeAndNormalizedAttribute(refer));
 						w.WriteLine(">");
 						WriteAllFormsWithMarkers(w, null, null, "form", alt);
 						foreach (var env in affixAllo.PhoneEnvRC)
@@ -743,7 +767,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (var sem in sense.SemanticDomainsRC)
 			{
 				var val = GetProperty(sem, "LiftAbbrAndName") as string;
-				w.WriteLine("<trait name =\"{0}\" value=\"{1}\"/>", RangeNames.sSemanticDomainListOA, XmlUtils.MakeSafeXmlAttribute(val));
+				w.WriteLine("<trait name =\"{0}\" value=\"{1}\"/>", RangeNames.sSemanticDomainListOA, MakeSafeAndNormalizedAttribute(val));
 			}
 			WriteAllForms(w, "note", "type=\"anthropology\"", "form", sense.AnthroNote);
 			WriteAllForms(w, "note", "type=\"bibliography\"", "form", sense.Bibliography);
@@ -802,7 +826,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private string ExportFile(string internalPath, string actualPath, string liftFolderName, string expectRootFolder)
 		{
-			if (string.IsNullOrEmpty(internalPath))
+			if (String.IsNullOrEmpty(internalPath))
 				return null;
 			// Typically internalPath is something like "Pictures\MyFile.jpg".
 			// If it starts with the expected folder, we want to make the LIFT path omit that element.
@@ -832,7 +856,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns></returns>
 		private string ExportFile(string writePath, string actualPath, string liftFolderName)
 		{
-			if (ExportPicturesAndMedia && !string.IsNullOrEmpty(FolderPath) && File.Exists(actualPath))
+			if (ExportPicturesAndMedia && !String.IsNullOrEmpty(FolderPath) && File.Exists(actualPath))
 			{
 				var destFolder = Path.Combine(FolderPath, liftFolderName);
 				Directory.CreateDirectory(destFolder);
@@ -858,12 +882,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void ExportFile(TextWriter w, string internalPath, string actualPath, string liftFolderName, string expectRootFolder)
 		{
 			var writePath = ExportFile(internalPath, actualPath, liftFolderName, expectRootFolder);
-			w.Write(XmlUtils.MakeSafeXmlAttribute(writePath)); // write the name we actually used to copy the file.
+			w.Write(MakeSafeAndNormalizedAttribute(writePath)); // write the name we actually used to copy the file.
 		}
 
 		private void WriteReversal(TextWriter w, IReversalIndexEntry reversal)
 		{
-			w.Write("<reversal type=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(reversal.ReversalIndex.WritingSystem));
+			w.Write("<reversal type=\"{0}\">", MakeSafeAndNormalizedAttribute(reversal.ReversalIndex.WritingSystem));
 			WriteAllForms(w, null, null, "form", reversal.ReversalForm);
 			if (reversal.PartOfSpeechRA != null)
 				w.WriteLine("<grammatical-info value=\"{0}\"/>", BestAlternative(reversal.PartOfSpeechRA.Name, m_wsEn));
@@ -888,7 +912,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var tss = multi.BestAnalysisVernacularAlternative;
 			if (tss.Text == "***")
 				tss = multi.get_String(wsDefault);
-			return XmlUtils.MakeSafeXmlAttribute(tss.Text);
+			return MakeSafeAndNormalizedAttribute(tss.Text);
 		}
 
 		private void WriteExampleSentence(TextWriter w, ILexExampleSentence example)
@@ -896,7 +920,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.Write("<example");
 			WriteLiftDates(w, example);
 			if (example.Reference != null && example.Reference.Length > 0)
-				w.Write(" source=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(example.Reference.Text));
+				w.Write(" source=\"{0}\"", MakeSafeAndNormalizedAttribute(example.Reference.Text));
 			w.WriteLine(">");
 			WriteAllForms(w, null, null, "form", example.Example);
 			foreach (var trans in example.TranslationsOC)
@@ -929,17 +953,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (String.IsNullOrEmpty(msa.PosFieldName))
 				w.WriteLine("<grammatical-info value=\"\">");
 			else
-				w.WriteLine("<grammatical-info value=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(msa.PosFieldName));
+				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
 			if (msa.InflectionClassRA != null)
 			{
 				w.Write("<trait name=\"{0}-infl-class\" value=\"{1}\"/>",
-					XmlUtils.MakeSafeXmlAttribute(msa.InflectionClassRA.Owner.ShortName),
+					MakeSafeAndNormalizedAttribute(msa.InflectionClassRA.Owner.ShortName),
 					BestAlternative(msa.InflectionClassRA.Name, m_wsEn));
 			}
 			foreach (var pos in msa.FromPartsOfSpeechRC)
 				WriteTrait(w, RangeNames.sPartsOfSpeechOAold1, pos.Name, m_wsBestAnalVern);
 			if (msa.MsFeaturesOA != null && !msa.MsFeaturesOA.IsEmpty)
-				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sMSAinflectionFeature, XmlUtils.MakeSafeXmlAttribute(msa.MsFeaturesOA.LiftName));
+				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sMSAinflectionFeature, MakeSafeAndNormalizedAttribute(msa.MsFeaturesOA.LiftName));
 			foreach (var restrict in msa.ProdRestrictRC)
 				WriteTrait(w, RangeNames.sProdRestrictOA, restrict.Name, m_wsBestAnalVern);
 			WriteLiftResidue(w, msa);
@@ -954,7 +978,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (String.IsNullOrEmpty(msa.PosFieldName))
 				w.WriteLine("<grammatical-info value=\"\">");
 			else
-				w.WriteLine("<grammatical-info value=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(msa.PosFieldName));
+				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
 			w.WriteLine("<trait name=\"type\" value=\"affix\"/>");
 			WriteLiftResidue(w, msa);
 			w.WriteLine("</grammatical-info>");
@@ -965,15 +989,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (String.IsNullOrEmpty(msa.PosFieldName))
 				w.WriteLine("<grammatical-info value=\"\">");
 			else
-				w.WriteLine("<grammatical-info value=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(msa.PosFieldName));
+				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
 			w.WriteLine("<trait name=\"type\" value=\"inflAffix\"/>");
 			foreach (var slot in msa.SlotsRC)
 			{
 				w.Write("<trait name=\"{0}-slot\" value=\"{1}\"/>",
-					XmlUtils.MakeSafeXmlAttribute(slot.Owner.ShortName), BestAlternative(slot.Name, m_wsEn));
+					MakeSafeAndNormalizedAttribute(slot.Owner.ShortName), BestAlternative(slot.Name, m_wsEn));
 			}
 			if (msa.InflFeatsOA != null && !msa.InflFeatsOA.IsEmpty)
-				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sMSAinflectionFeature, XmlUtils.MakeSafeXmlAttribute(msa.InflFeatsOA.LiftName));
+				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sMSAinflectionFeature, MakeSafeAndNormalizedAttribute(msa.InflFeatsOA.LiftName));
 			foreach (var restrict in msa.FromProdRestrictRC)
 				WriteTrait(w, RangeNames.sProdRestrictOA, restrict.Name, m_wsBestAnalVern);
 			WriteLiftResidue(w, msa);
@@ -985,7 +1009,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (String.IsNullOrEmpty(msa.PosFieldName))
 				w.WriteLine("<grammatical-info value=\"\">");
 			else
-				w.WriteLine("<grammatical-info value=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(msa.PosFieldName));
+				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
 			w.WriteLine("<trait name=\"type\" value=\"derivAffix\"/>");
 			if (msa.FromPartOfSpeechRA != null)
 			{
@@ -994,7 +1018,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (msa.FromInflectionClassRA != null)
 			{
 				w.WriteLine("<trait name=\"from-{0}-infl-class\" value=\"{1}\"/>",
-							XmlUtils.MakeSafeXmlAttribute(msa.FromInflectionClassRA.Owner.ShortName),
+							MakeSafeAndNormalizedAttribute(msa.FromInflectionClassRA.Owner.ShortName),
 							BestAlternative(msa.FromInflectionClassRA.Name, m_wsEn));
 			}
 			foreach (var restrict in msa.FromProdRestrictRC)
@@ -1004,7 +1028,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (msa.FromMsFeaturesOA != null && !msa.FromMsFeaturesOA.IsEmpty)
 			{
 				w.WriteLine("<trait name=\"from-inflection-feature\" value=\"{0}\"/>",
-							XmlUtils.MakeSafeXmlAttribute(msa.FromMsFeaturesOA.LiftName));
+							MakeSafeAndNormalizedAttribute(msa.FromMsFeaturesOA.LiftName));
 			}
 			if (msa.FromStemNameRA != null)
 			{
@@ -1013,7 +1037,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (msa.ToInflectionClassRA != null)
 			{
 				w.WriteLine("<trait name=\"{0}-infl-class\" value=\"{1}\"/>",
-							XmlUtils.MakeSafeXmlAttribute(msa.ToInflectionClassRA.Owner.ShortName),
+							MakeSafeAndNormalizedAttribute(msa.ToInflectionClassRA.Owner.ShortName),
 							BestAlternative(msa.ToInflectionClassRA.Name, m_wsEn));
 			}
 			foreach (var restrict in msa.ToProdRestrictRC)
@@ -1023,7 +1047,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (msa.ToMsFeaturesOA != null && !msa.ToMsFeaturesOA.IsEmpty)
 			{
 				w.WriteLine("<trait name=\"{0}\" value=\"{1}\"/>", RangeNames.sMSAinflectionFeature,
-							XmlUtils.MakeSafeXmlAttribute(msa.ToMsFeaturesOA.LiftName));
+							MakeSafeAndNormalizedAttribute(msa.ToMsFeaturesOA.LiftName));
 			}
 			WriteLiftResidue(w, msa);
 			w.WriteLine("</grammatical-info>");
@@ -1034,7 +1058,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (String.IsNullOrEmpty(msa.PosFieldName))
 				w.WriteLine("<grammatical-info value=\"\">");
 			else
-				w.WriteLine("<grammatical-info value=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(msa.PosFieldName));
+				w.WriteLine("<grammatical-info value=\"{0}\">", MakeSafeAndNormalizedAttribute(msa.PosFieldName));
 			w.WriteLine("<trait name=\"type\" value=\"derivStepAffix\"/>");
 			WriteLiftResidue(w, msa);
 			w.WriteLine("</grammatical-info>");
@@ -1114,7 +1138,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				String rangeName;
 				var haveValue = m_CmPossibilityListsReferencedByFields.TryGetValue(posList.Key, out rangeName);
 				w.WriteLine("<range id=\"{0}\" href=\"file://{1}\"/>",
-				XmlUtils.MakeSafeXmlAttribute(rangeName), sRangesFile);
+				MakeSafeAndNormalizedAttribute(rangeName), sRangesFile);
 			}
 		}
 
@@ -1123,7 +1147,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (pos.InflectionClassesOC.Count > 0)
 			{
 				w.WriteLine("<range id=\"{0}-infl-class\" href=\"file://{1}\"/>",
-					XmlUtils.MakeSafeXmlAttribute(pos.Name.BestAnalysisVernacularAlternative.Text),
+					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text),
 					sRangesFile);
 			}
 		}
@@ -1133,7 +1157,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (pos.StemNamesOC.Count > 0)
 			{
 				w.WriteLine("<range id=\"{0}-stem-name\" href=\"file://{1}\"/>",
-					XmlUtils.MakeSafeXmlAttribute(pos.Name.BestAnalysisVernacularAlternative.Text),
+					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text),
 					sRangesFile);
 			}
 		}
@@ -1143,7 +1167,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (pos.AffixSlotsOC.Count > 0)
 			{
 				w.WriteLine("<range id=\"{0}-slot\" href=\"file://{1}\"/>",
-					XmlUtils.MakeSafeXmlAttribute(pos.Name.BestAnalysisVernacularAlternative.Text),
+					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text),
 					sRangesFile);
 			}
 		}
@@ -1155,7 +1179,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (featDefn.ValuesOC.Count > 0)
 				{
 					w.WriteLine("<range id=\"{0}-feature-value\" href=\"file://{1}\"/>",
-						XmlUtils.MakeSafeXmlAttribute(featDefn.Abbreviation.BestAnalysisVernacularAlternative.Text),
+						MakeSafeAndNormalizedAttribute(featDefn.Abbreviation.BestAnalysisVernacularAlternative.Text),
 						sRangesFile);
 				}
 			}
@@ -1210,9 +1234,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				var fieldName = m_mdc.GetFieldName(flid);
 				var sHelp = m_mdc.GetFieldHelp(flid);
 				var sSpec = GetCustomFieldDefinition(className, flid);
-				w.WriteLine("<field tag=\"{0}\">", XmlUtils.MakeSafeXmlAttribute(fieldName));
-				w.WriteLine("<form lang=\"en\"><text>{0}</text></form>", XmlUtils.MakeSafeXmlAttribute(sHelp));
-				w.WriteLine("<form lang=\"qaa-x-spec\"><text>{0}</text></form>", XmlUtils.MakeSafeXmlAttribute(sSpec));
+				w.WriteLine("<field tag=\"{0}\">", MakeSafeAndNormalizedAttribute(fieldName));
+				w.WriteLine("<form lang=\"en\"><text>{0}</text></form>", MakeSafeAndNormalizedAttribute(sHelp));
+				w.WriteLine("<form lang=\"qaa-x-spec\"><text>{0}</text></form>", MakeSafeAndNormalizedAttribute(sSpec));
 				w.WriteLine("</field>");
 			}
 		}
@@ -1288,7 +1312,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var attributes = assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
 				sVersion = (attributes.Length > 0) ?
 					((AssemblyFileVersionAttribute)attributes[0]).Version :
-					System.Windows.Forms.Application.ProductVersion;
+					Application.ProductVersion;
 			}
 			if (String.IsNullOrEmpty(sVersion))
 				sVersion = "???";
@@ -1325,8 +1349,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						"audio");
 				}
 				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
-					XmlUtils.MakeSafeXmlAttribute(sLang),
-					XmlUtils.MakeSafeXml(sForm.Replace("\x2028", Environment.NewLine)));
+					MakeSafeAndNormalizedAttribute(sLang),
+					MakeSafeAndNormalizedXml(sForm.Replace("\x2028", Environment.NewLine)));
 			}
 			if (!String.IsNullOrEmpty(wrappingElementName))
 				w.WriteLine("</{0}>", wrappingElementName);
@@ -1350,8 +1374,13 @@ namespace SIL.FieldWorks.LexText.Controls
 				int ws;
 				var tssForm = alt.Form.GetStringFromIndex(i, out ws);
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
-				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
-					XmlUtils.MakeSafeXmlAttribute(sLang), XmlUtils.MakeSafeXml(GetFormWithMarkers(alt, ws)));
+				var internalPath = alt.Form.get_String(ws).Text;
+				// a deleted audio link can leave an empty string - it's the file path
+				// Chorus sometimes tells users "Report this problem to the developers" when missing this element
+				// Users should refresh and try to send/receive again.
+				if (!String.IsNullOrEmpty(internalPath))
+					w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
+						MakeSafeAndNormalizedAttribute(sLang), MakeSafeAndNormalizedXml(GetFormWithMarkers(alt, ws)));
 			}
 			if (!String.IsNullOrEmpty(wrappingElementName))
 				w.WriteLine("</{0}>", wrappingElementName);
@@ -1392,7 +1421,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var tssForm = multi.GetStringFromIndex(i, out ws);
 				var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
-					XmlUtils.MakeSafeXmlAttribute(sLang),
+					MakeSafeAndNormalizedAttribute(sLang),
 					ConvertTsStringToLiftXml(tssForm, ws));
 			}
 			if (!String.IsNullOrEmpty(wrappingElementName))
@@ -1414,7 +1443,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			var ws = TsStringUtils.GetWsAtOffset(tssForm, 0);
 			var sLang = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 			w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
-				XmlUtils.MakeSafeXmlAttribute(sLang),
+				MakeSafeAndNormalizedAttribute(sLang),
 				ConvertTsStringToLiftXml(tssForm, ws));
 			if (!String.IsNullOrEmpty(wrappingElementName))
 				w.WriteLine("</{0}>", wrappingElementName);
@@ -1472,7 +1501,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						switch (tpt)
 						{
 							case (int)FwTextPropType.ktptNamedStyle:
-								bldr.AppendFormat(" class=\"{0}\"", XmlUtils.MakeSafeXmlAttribute(sProp));
+								bldr.AppendFormat(" class=\"{0}\"", MakeSafeAndNormalizedAttribute(sProp));
 								break;
 							case (int)FwTextPropType.ktptObjData:
 								AddObjPropData(bldr, sProp);
@@ -1482,9 +1511,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					bldr.Append(">");
 				}
 				var sRun = tssVal.get_RunText(irun);
-				if (sRun != null)
-					sRun = Icu.Normalize(sRun.Replace("\x2028", Environment.NewLine), Icu.UNormalizationMode.UNORM_NFC);
-				bldr.Append(XmlUtils.MakeSafeXml(sRun));
+				bldr.Append(MakeSafeAndNormalizedXml(sRun.Replace("\x2028", Environment.NewLine)));
 				if (fSpan)
 					bldr.Append("</span>");
 			}
@@ -1532,7 +1559,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				sValue = multi.BestAnalysisVernacularAlternative.Text;
 			if (sValue == "***" && wsWant <= 0)
 				sValue = multi.get_String(m_wsEn).Text;
-			w.WriteLine("<trait  name=\"{0}\" value=\"{1}\"/>", sName, XmlUtils.MakeSafeXmlAttribute(sValue));
+			w.WriteLine("<trait  name=\"{0}\" value=\"{1}\"/>", sName, MakeSafeAndNormalizedAttribute(sValue));
 		}
 
 		private void WriteLiftDates(TextWriter w, ICmObject obj)
@@ -1583,7 +1610,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			catch (Exception error)
 			{
-				throw new ApplicationException(string.Format("There was an error while trying to get the property {0}. One thing that has caused this in the past has been a database which was not migrated properly.", property), error);
+				throw new ApplicationException(String.Format("There was an error while trying to get the property {0}. One thing that has caused this in the past has been a database which was not migrated properly.", property), error);
 			}
 			return result;
 		}
@@ -1668,7 +1695,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var liftIdOwner = ((IPartOfSpeech)(pos.Owner)).Name.BestAnalysisVernacularAlternative.Text;
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
 					XmlUtils.MakeSafeXmlAttribute(liftId), pos.Guid,
-					XmlUtils.MakeSafeXmlAttribute(liftIdOwner));
+					MakeSafeAndNormalizedAttribute(liftIdOwner));
 			}
 			else
 			{
@@ -1739,7 +1766,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var liftIdOwner = ((ILexRefType)refer.Owner).Name.BestAnalysisVernacularAlternative.Text;
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
 					XmlUtils.MakeSafeXmlAttribute(liftId), refer.Guid,
-					XmlUtils.MakeSafeXmlAttribute(liftIdOwner));
+					MakeSafeAndNormalizedAttribute(liftIdOwner));
 			}
 			else
 			{
@@ -1942,7 +1969,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (String.IsNullOrEmpty(guid))					//only output the guid for custom lists
 				w.WriteLine("<range id=\"{0}\">", rangeId);
 			else
-				w.WriteLine("<range id=\"{0}\" guid=\"{1}\">", rangeId, XmlUtils.MakeSafeXmlAttribute(guid));
+				w.WriteLine("<range id=\"{0}\" guid=\"{1}\">", rangeId, MakeSafeAndNormalizedAttribute(guid));
 			foreach (var poss in list.ReallyReallyAllPossibilities)
 			{
 				var liftId = poss.Name.BestAnalysisVernacularAlternative.Text;
@@ -1959,13 +1986,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (poss.OwningFlid == CmPossibilityTags.kflidSubPossibilities)
 			{
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), poss.Guid,
-					XmlUtils.MakeSafeXmlAttribute(liftIdParent));
+					MakeSafeAndNormalizedAttribute(liftId), poss.Guid,
+					MakeSafeAndNormalizedAttribute(liftIdParent));
 			}
 			else
 			{
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(liftId), poss.Guid);
+					MakeSafeAndNormalizedAttribute(liftId), poss.Guid);
 			}
 			WriteAllForms(w, "label", null, "form", poss.Name);
 			WriteAllForms(w, "abbrev", null, "form", poss.Abbreviation);
@@ -2044,7 +2071,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (var featDefn in m_cache.LangProject.MsFeatureSystemOA.FeaturesOC)
 			{
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(featDefn.Abbreviation.BestAnalysisVernacularAlternative.Text),
+					MakeSafeAndNormalizedAttribute(featDefn.Abbreviation.BestAnalysisVernacularAlternative.Text),
 					featDefn.Guid);
 				WriteAllForms(w, "label", null, "form", featDefn.Name);
 				WriteAllForms(w, "abbrev", null, "form", featDefn.Abbreviation);
@@ -2052,7 +2079,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				WriteAllForms(w, "field", "type=\"gloss-abbreviation\"", "form", featDefn.GlossAbbreviation);
 				WriteAllForms(w, "field", "type=\"right-gloss-sep\"", "form", featDefn.RightGlossSep);
 				w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>",
-					XmlUtils.MakeSafeXmlAttribute(featDefn.CatalogSourceId));
+					MakeSafeAndNormalizedAttribute(featDefn.CatalogSourceId));
 				w.WriteLine("<trait name=\"display-to-right\" value=\"{0}\"/>", featDefn.DisplayToRightOfValues);
 				w.WriteLine("<trait name=\"show-in-gloss\" value=\"{0}\"/>", featDefn.ShowInGloss);
 				switch (featDefn.ClassID)
@@ -2096,17 +2123,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (var type in m_cache.LangProject.MsFeatureSystemOA.TypesOC)
 			{
 				w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(type.Abbreviation.BestAnalysisVernacularAlternative.Text),
+					MakeSafeAndNormalizedAttribute(type.Abbreviation.BestAnalysisVernacularAlternative.Text),
 					type.Guid);
 				WriteAllForms(w, "label", null, "form", type.Name);
 				WriteAllForms(w, "abbrev", null, "form", type.Abbreviation);
 				WriteAllForms(w, "description", null, "form", type.Description);
 				w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>",
-					XmlUtils.MakeSafeXmlAttribute(type.CatalogSourceId));
+					MakeSafeAndNormalizedAttribute(type.CatalogSourceId));
 				foreach (var feat in type.FeaturesRS)
 				{
 					w.WriteLine("<trait name=\"feature\" value=\"{0}\"/>",
-						XmlUtils.MakeSafeXmlAttribute(feat.Abbreviation.BestAnalysisVernacularAlternative.Text));
+						MakeSafeAndNormalizedAttribute(feat.Abbreviation.BestAnalysisVernacularAlternative.Text));
 				}
 				w.WriteLine("</range-element>");
 			}
@@ -2158,12 +2185,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (feat.ValuesOC.Count == 0)
 					continue;
 				w.WriteLine("<range id=\"{0}-feature-value\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(feat.Abbreviation.BestAnalysisVernacularAlternative.Text),
+					MakeSafeAndNormalizedAttribute(feat.Abbreviation.BestAnalysisVernacularAlternative.Text),
 					feat.Guid);
 				foreach (var value in feat.ValuesOC)
 				{
 					w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-						XmlUtils.MakeSafeXmlAttribute(value.Abbreviation.BestAnalysisVernacularAlternative.Text),
+						MakeSafeAndNormalizedAttribute(value.Abbreviation.BestAnalysisVernacularAlternative.Text),
 						value.Guid);
 					WriteAllForms(w, "label", null, "form", value.Name);
 					WriteAllForms(w, "abbrev", null, "form", value.Abbreviation);
@@ -2171,7 +2198,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					WriteAllForms(w, "field", "type=\"gloss-abbrev\"", "form", value.GlossAbbreviation);
 					WriteAllForms(w, "field", "type=\"right-gloss-sep\"", "form", value.RightGlossSep);
 					w.WriteLine("<trait name=\"catalog-source-id\" value=\"{0}\"/>",
-						XmlUtils.MakeSafeXmlAttribute(value.CatalogSourceId));
+						MakeSafeAndNormalizedAttribute(value.CatalogSourceId));
 					w.WriteLine("<trait name=\"show-in-gloss\" value=\"{0}\"/>", value.ShowInGloss);
 					w.WriteLine("</range-element>");
 				}
@@ -2186,11 +2213,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (pos.AffixSlotsOC.Count == 0)
 					continue;
 				w.WriteLine("<range id=\"{0}-slot\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
+					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
 				foreach (var slot in pos.AffixSlotsOC)
 				{
 					w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-						XmlUtils.MakeSafeXmlAttribute(slot.Name.BestAnalysisVernacularAlternative.Text), slot.Guid);
+						MakeSafeAndNormalizedAttribute(slot.Name.BestAnalysisVernacularAlternative.Text), slot.Guid);
 					WriteAllForms(w, "label", null, "form", slot.Name);
 					WriteAllForms(w, "description", null, "form", slot.Description);
 					if (slot.Optional)
@@ -2208,7 +2235,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (pos.InflectionClassesOC.Count == 0)
 					continue;
 				w.WriteLine("<range id=\"{0}-infl-class\" guid=\"{1}\">",
-					XmlUtils.MakeSafeXmlAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
+					MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
 				foreach (var inflClass in pos.InflectionClassesOC)
 				{
 					var liftId = inflClass.Name.BestAnalysisVernacularAlternative.Text;
@@ -2216,13 +2243,13 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						var liftIdParent = ((IMoInflClass)(inflClass.Owner)).Name.BestAnalysisVernacularAlternative.Text;
 						w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\" parent=\"{2}\">",
-							XmlUtils.MakeSafeXmlAttribute(liftId), inflClass.Guid,
-							XmlUtils.MakeSafeXmlAttribute(liftIdParent));
+							MakeSafeAndNormalizedAttribute(liftId), inflClass.Guid,
+							MakeSafeAndNormalizedAttribute(liftIdParent));
 					}
 					else
 					{
 						w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-							XmlUtils.MakeSafeXmlAttribute(liftId), inflClass.Guid);
+							MakeSafeAndNormalizedAttribute(liftId), inflClass.Guid);
 					}
 					WriteAllForms(w, "label", null, "form", inflClass.Name);
 					WriteAllForms(w, "abbrev", null, "form", inflClass.Abbreviation);
@@ -2240,11 +2267,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (pos.StemNamesOC.Count == 0)
 					continue;
 				w.WriteLine("<range id=\"{0}-stem-name\" guid=\"{1}\">",
-							XmlUtils.MakeSafeXmlAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
+							MakeSafeAndNormalizedAttribute(pos.Name.BestAnalysisVernacularAlternative.Text), pos.Guid);
 				foreach (var stem in pos.StemNamesOC)
 				{
 					w.WriteLine("<range-element id=\"{0}\" guid=\"{1}\">",
-						XmlUtils.MakeSafeXmlAttribute(stem.Name.BestAnalysisVernacularAlternative.Text), stem.Guid);
+						MakeSafeAndNormalizedAttribute(stem.Name.BestAnalysisVernacularAlternative.Text), stem.Guid);
 					WriteAllForms(w, "label", null, "form", stem.Name);
 					WriteAllForms(w, "abbrev", null, "form", stem.Abbreviation);
 					WriteAllForms(w, "description", null, "form", stem.Description);
@@ -2259,9 +2286,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private Dictionary<Guid, String> GetCmPossibilityListsReferencedByFields(IEnumerable<ILexEntry> entries)
+		private Dictionary<Guid, string> GetCmPossibilityListsReferencedByFields(IEnumerable<ILexEntry> entries)
 		{
-			var cmPossibilityListsReferenced = new Dictionary<Guid, String>();
+			var cmPossibilityListsReferenced = new Dictionary<Guid, string>();
 
 			foreach (var entry in entries)
 			{
@@ -2299,7 +2326,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						{
 							var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, possList);
 							if (!cmPossibilityListsReferenced.ContainsKey(possList.Guid))
-								cmPossibilityListsReferenced.Add(possList.Guid, XmlUtils.MakeSafeXml(rangeName));
+								cmPossibilityListsReferenced.Add(possList.Guid, MakeSafeAndNormalizedXml(rangeName));
 						}
 						break;
 					default:
@@ -2309,7 +2336,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return cmPossibilityListsReferenced;
 		}
 
-		private void GetListsNotAddedYet(ICmObject obj, Dictionary<Guid, String> cmPossibilityListsReferenced)
+		private void GetListsNotAddedYet(ICmObject obj, Dictionary<Guid, string> cmPossibilityListsReferenced)
 		{
 			var cmPossibilityListGuidsTemp = GetCmPossibiityListsObjectReferences(obj);
 			foreach (var possList in cmPossibilityListGuidsTemp)
@@ -2321,9 +2348,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private Dictionary<Guid, String> GetCmPossibiityListsObjectReferences(ICmObject obj)
+		private Dictionary<Guid, string> GetCmPossibiityListsObjectReferences(ICmObject obj)
 		{
-			var cmPossibilityListsReferencedByFields = new Dictionary<Guid, String>();
+			var cmPossibilityListsReferencedByFields = new Dictionary<Guid, string>();
 			foreach (var flid in m_mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				var type = (CellarPropertyType) m_mdc.GetFieldType(flid);
@@ -2378,12 +2405,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				var rangeName = RangeNames.GetRangeNameForLiftExport(m_mdc, possList);
 				if (!cmPossibilityListsReferencedByFields.ContainsKey(possListGuid))
 				{
-					cmPossibilityListsReferencedByFields.Add(possListGuid, XmlUtils.MakeSafeXml(rangeName));
+					cmPossibilityListsReferencedByFields.Add(possListGuid, MakeSafeAndNormalizedXml(rangeName));
 				}
 			}
 		}
 
-		private void MapCmPossibilityListGuidsToLiftRangeNames(Dictionary<Guid, String> cmPossibilityListsReferencedByFields)
+		private void MapCmPossibilityListGuidsToLiftRangeNames(Dictionary<Guid, string> cmPossibilityListsReferencedByFields)
 		{
 			MapGuidsToStandardLiftRanges();
 
@@ -2401,7 +2428,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			//by a custom field and which are not already included yet.
 			foreach (var list in cmPossibilityListsReferencedByFields)
 			{
-				m_ListsGuidToRangeName.Add(list.Key, XmlUtils.MakeSafeXml(list.Value));
+				m_ListsGuidToRangeName.Add(list.Key, MakeSafeAndNormalizedXml(list.Value));
 			}
 		}
 

@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private readonly RegistryBoolSetting m_firstTimeAppHasBeenRun;
 		private readonly RegistryBoolSetting m_showSideBar;
 		private readonly RegistryBoolSetting m_showStatusBar;
+		private readonly RegistryBoolSetting m_openLastEditedProject;
 		private readonly RegistryIntSetting m_loadingProcessId;
 		private readonly RegistryIntSetting m_numberOfLaunches;
 		private readonly RegistryIntSetting m_numberOfSeriousCrashes;
@@ -81,6 +82,7 @@ namespace SIL.FieldWorks.Common.Framework
 			m_firstTimeAppHasBeenRun = new RegistryBoolSetting(app.SettingsKey, "FirstTime", true);
 			m_showSideBar = new RegistryBoolSetting(app.SettingsKey, "ShowSideBar", true);
 			m_showStatusBar = new RegistryBoolSetting(app.SettingsKey, "ShowStatusBar", true);
+			m_openLastEditedProject = new RegistryBoolSetting(app.SettingsKey, "OpenLastEditedProject", false);
 			m_loadingProcessId = new RegistryIntSetting(app.SettingsKey, "LoadingProcessId", 0);
 			m_numberOfLaunches = new RegistryIntSetting(app.SettingsKey, "launches", 0);
 			m_numberOfSeriousCrashes = new RegistryIntSetting(app.SettingsKey, "NumberOfSeriousCrashes", 0);
@@ -121,6 +123,7 @@ namespace SIL.FieldWorks.Common.Framework
 				m_firstTimeAppHasBeenRun.Dispose();
 				m_showSideBar.Dispose();
 				m_showStatusBar.Dispose();
+				m_openLastEditedProject.Dispose();
 				m_loadingProcessId.Dispose();
 				m_numberOfLaunches.Dispose();
 				m_numberOfSeriousCrashes.Dispose();
@@ -275,6 +278,18 @@ namespace SIL.FieldWorks.Common.Framework
 			get {return m_showStatusBar.Value;}
 			set {m_showStatusBar.Value = value;}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the value in the registry for whether to show the Welcome dialog, or
+		/// just automatically open the latest successfully opened project.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool AutoOpenLastEditedProject
+		{
+			get { return m_openLastEditedProject.Value; }
+			set { m_openLastEditedProject.Value = value; }
+		}
 		#endregion
 
 		#region Static Properties
@@ -319,6 +334,7 @@ namespace SIL.FieldWorks.Common.Framework
 			ErrorReporter.AddProperty("LoadingProcessId", LoadingProcessId.ToString());
 			ErrorReporter.AddProperty("ShowSideBarSetting", ShowSideBarSetting.ToString());
 			ErrorReporter.AddProperty("ShowStatusBarSetting", ShowStatusBarSetting.ToString());
+			ErrorReporter.AddProperty("AutoOpenLastEditedProjectSetting", AutoOpenLastEditedProject.ToString());
 			ErrorReporter.AddProperty("DisableSplashScreenSetting", DisableSplashScreenSetting.ToString());
 			ErrorReporter.AddProperty("MeasurementUnitSetting", ((MsrSysType)MeasurementUnitSetting).ToString());
 			ErrorReporter.AddProperty("BackupDirectorySetting", DirectoryFinder.DefaultBackupDirectory);

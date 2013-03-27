@@ -526,28 +526,31 @@ namespace SIL.Utils
 			CheckDisposed();
 			if (m_out != null)
 			{
-				IntPtr mainWndHandle = Process.GetCurrentProcess().MainWindowHandle;
-				int handleInfo = mainWndHandle != IntPtr.Zero ? mainWndHandle.ToInt32() : 0;
-				// We don't want to indent the date...
-				m_out.Write(string.Format("{0} [0x{1:x}]\t", Now, handleInfo));
-
-				// ...but we want to indent all following lines (note: the first (current) line
-				// won't be indented)
-				m_out.Indent++;
-				if (message != null)
+				using (var process = Process.GetCurrentProcess())
 				{
-					string[] lines = message.Split(new string[] { Environment.NewLine, "\n" },
+					IntPtr mainWndHandle = process.MainWindowHandle;
+					int handleInfo = mainWndHandle != IntPtr.Zero ? mainWndHandle.ToInt32() : 0;
+					// We don't want to indent the date...
+					m_out.Write(string.Format("{0} [0x{1:x}]\t", Now, handleInfo));
+
+					// ...but we want to indent all following lines (note: the first (current) line
+					// won't be indented)
+					m_out.Indent++;
+					if (message != null)
+					{
+						string[] lines = message.Split(new string[] { Environment.NewLine, "\n" },
 						StringSplitOptions.None);
-					foreach (string line in lines)
-						m_out.WriteLine(line);
-				}
-				else
-				{
-					m_out.WriteLine("Unknown event");
-				}
+						foreach (string line in lines)
+							m_out.WriteLine(line);
+					}
+					else
+					{
+						m_out.WriteLine("Unknown event");
+					}
 
-				m_out.Indent--;
-				m_out.Flush(); //in case we crash
+					m_out.Indent--;
+					m_out.Flush(); //in case we crash
+				}
 			}
 		}
 

@@ -12,15 +12,14 @@ include $(BUILD_ROOT)/Bld/_names.mak
 BUILD_PRODUCT = $(KERNEL_NAME)Test
 include $(BUILD_ROOT)/Bld/_init.mak.lnx
 
-UNIT = $(BUILD_ROOT)/Include/unit++
+UNIT = $(FWINCLUDE)/unit++
 LIB_UNIT = $(BUILD_ROOT)/Lib/src/unit++/build$(ARCH)
 
 DEFINES := -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -D_DEBUG
 
 PACKAGES = gdk-2.0 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4
 
-DEBUGPROCS_SRC = $(SRC)/DebugProcs
-LANGUAGETEST_SRC=$(SRC)/Language/Test
+LANGUAGETEST_SRC = $(LANGUAGE_SRC)/Test
 
 INCLUDES := -I$(KERNEL_SRC) -I$(KERNEL_SRC)/Test -I$(CELLAR_SRC) \
 	-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
@@ -31,18 +30,18 @@ INCLUDES := \
 	-I$(FWINCLUDE) \
 	-I$(UNIT) -I$(LIB_UNIT) \
 	-I$(COM_OUT_DIR) \
-	-I$(LIBRARIES)/Win32More/include \
-	-I$(LIBRARIES)/COM/include \
-	-I$(LIBRARIES)/Win32Base/include \
+	-I$(WIN32MORE_INC) \
+	-I$(COM_INC) \
+	-I$(WIN32BASE_INC) \
 	-I$(LANGUAGETEST_SRC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
 LDLIBS := \
 	$(shell icu-config --ldflags) \
 	-L$(FWINCLUDE) \
-	-L$(LIBRARIES)/Win32More/src/build$(ARCH) -lWin32More \
-	-L$(LIBRARIES)/COM/build$(ARCH)/src/.libs -lcom \
-	-L$(LIBRARIES)/Win32Base/src/build$(ARCH) -lWin32Base \
+	-L$(WIN32MORE_LIB) -lWin32More \
+	-L$(COM_LIB) -lcom \
+	-L$(WIN32BASE_LIB) -lWin32Base \
 	-L$(OUT_DIR) -lDebugProcs \
 	$(shell pkg-config --libs $(PACKAGES)) \
 	-luuid -lexpat \
@@ -110,4 +109,4 @@ $(INT_DIR)/Collection.cpp: testFwKernel.h \
 	TestTsPropsBldr.h \
 	TestTsTextProps.h
 	@echo Collecting tests for testFwKernel
-	$(COLLECT) $^ >$@
+	$(COLLECT) $^ $@

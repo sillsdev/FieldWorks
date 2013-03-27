@@ -17,18 +17,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.AccessControl;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
-using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using ECInterfaces;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.IText.FlexInterlinModel;
 using SilEncConverters40;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
@@ -211,9 +211,38 @@ namespace SIL.FieldWorks.IText
 			WordGloss
 		}
 
+		public void ImportWordsFrag(Func<Stream> createWordsFragDocStream, ImportAnalysesLevel analysesLevel)
+		{
+			using (var stream = createWordsFragDocStream.Invoke())
+			{
+				var serializer = new XmlSerializer(typeof(WordsFragDocument));
+				var wordsFragDoc = (WordsFragDocument)serializer.Deserialize(stream);
+				NormalizeWords(wordsFragDoc.Words);
+				ImportWordsFrag(wordsFragDoc.Words, analysesLevel);
+			}
+		}
+
+		internal void ImportWordsFrag(Word[] words, ImportAnalysesLevel analysesLevel)
+		{
+			s_importOptions = new ImportInterlinearOptions {AnalysesLevel = analysesLevel};
+			var tsStrFactory = m_cache.ServiceLocator.GetInstance<ITsStrFactory>();
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				foreach (var word in words)
+				{
+					CreateWordAnalysisStack(m_cache, word, tsStrFactory);
+				}
+			});
+		}
+
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="BirdData is a reference")]
 		public class ImportInterlinearOptions
 		{
 			public IThreadedProgress Progress;
+			/// <summary>
+			/// The bird data. NOTE: caller is responsible for disposing stream!
+			/// </summary>
 			public Stream BirdData;
 			public int AllottedProgress;
 			public Func<FdoCache, Interlineartext, ILgWritingSystemFactory, IThreadedProgress, bool> CheckAndAddLanguages;
@@ -291,7 +320,8 @@ namespace SIL.FieldWorks.IText
 							{
 								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create(m_cache, new Guid(interlineartext.guid));
 								//must be added for the cache to be initialized which is necessary for its population
-								langProject.TextsOC.Add(newText);
+								// GJM 30 May 2012: No longer true as Texts are unowned
+								//langProject.TextsOC.Add(newText);
 
 								if (!PopulateTextFromBIRDDoc(ref newText, new TextCreationParams
 									{
@@ -302,14 +332,16 @@ namespace SIL.FieldWorks.IText
 										Version = version
 									})) //if the user aborted this text
 								{
-									langProject.TextsOC.Remove(newText); //remove it from the list
+									newText.Delete(); //remove it from the list
 								}
 							}
 							else //user said do not merge.
 							{
 								//ignore the Guid, we shouldn't have two texts with the same guid
 								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-								langProject.TextsOC.Add(newText);
+								//must be added for the cache to be initialized which is necessary for its population
+								// GJM 30 May 2012: No longer true as Texts are unowned
+								//langProject.TextsOC.Add(newText);
 								if (!PopulateTextFromBIRDDoc(ref newText,
 									new TextCreationParams
 									{
@@ -320,7 +352,7 @@ namespace SIL.FieldWorks.IText
 										Version = version
 									})) //if the user aborted this text
 								{
-									langProject.TextsOC.Remove(newText);  //remove it from the list
+									newText.Delete();  //remove it from the list
 								}
 
 							}
@@ -329,7 +361,9 @@ namespace SIL.FieldWorks.IText
 						{
 							newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 							//must be added for the cache to be initialized which is necessary for its population
-							langProject.TextsOC.Add(newText);
+							//must be added for the cache to be initialized which is necessary for its population
+							// GJM 30 May 2012: No longer true as Texts are unowned
+							//langProject.TextsOC.Add(newText);
 
 							if (!PopulateTextFromBIRDDoc(ref newText,
 								new TextCreationParams
@@ -341,7 +375,7 @@ namespace SIL.FieldWorks.IText
 									Version = version
 								})) //if the user aborted this text
 							{
-								langProject.TextsOC.Remove(newText); //remove it from the list
+								newText.Delete(); //remove it from the list
 							}
 						}
 						progress.Position = initialProgress + allottedProgress / 2 + allottedProgress * step / 2 / doc.interlineartext.Length;
@@ -369,7 +403,7 @@ namespace SIL.FieldWorks.IText
 		/// We want everything to be NFD, particularly so we match wordforms correctly.
 		/// </summary>
 		/// <param name="doc"></param>
-		private void Normalize(BIRDDocument doc)
+		private static void Normalize(BIRDDocument doc)
 		{
 			foreach (var text in doc.interlineartext)
 			{
@@ -385,12 +419,18 @@ namespace SIL.FieldWorks.IText
 							NormalizeItems(phrase.Items);
 							if (phrase.WordsContent == null || phrase.WordsContent.Words == null)
 								continue;
-							foreach (var word in phrase.WordsContent.Words)
-								NormalizeItems(word.Items);
+							var words = phrase.WordsContent.Words;
+							NormalizeWords(words);
 						}
 					}
 				}
 			}
+		}
+
+		private static void NormalizeWords(IEnumerable<Word> words)
+		{
+			foreach (var word in words)
+				NormalizeItems(word.Items);
 		}
 
 		private static void NormalizeItems(item[] items)

@@ -132,7 +132,7 @@
 	<string id="MoForm-Plural" txt="Allomorphs"/>
 	<string id="ReversalIndexEntry-Plural" txt="Reversal Entries"/>
 	<string id="ReversalIndex-Plural" txt="Reversals"/>
-	<string id="LexSense-Classified" txt="Classified Senses"/>
+	<string id="LexSense-Classified" txt="Classified Dictionary ({SelectedPublication})"/> <!-- Do not translate the {SelectedPublication}-->
 	<string id="AllEntryRefs" txt="Complex or Variant Entry References"/>
 	<string id="LexEntryRef-Plural" txt="Complex or Variant Entry References"/>
 <!-- Lexicon Reversal -->
@@ -152,6 +152,7 @@
 	<string id="FsFeatStrucType-Plural" txt="Feature Types"/>
 	<string id="complexEntryType" txt="Complex Form Type"/>
 	<string id="variantType" txt="Variant Type"/>
+	<string id="SemanticDomain-Plural" txt="Semantic Domains"/>
   </group>   <!-- end <group id="AlternativeTitles"> -->
   <group id="EmptyTitles">
 <!-- Grammar Browse Views -->
@@ -279,6 +280,8 @@
 		<string id="InflectionFeatureTitle" txt="Choose Inflection Features"/>
 		<string id="InflectionFeaturePrompt" txt="Inflection features for {0}:"/>
 		<string id="InflectionFeatureLink" txt="The inflection feature I need is not shown here.  Add inflection features to {0}."/>
+		<string id="InflectionFeaturesPrompt" txt="All inflection features:"/>
+		<string id="InflectionFeaturesLink" txt="The inflection feature I need is not shown here.  Add inflection features."/>
 	  </group>
 	  <group id="MGA">
 		<string id="ItemConflictDlgMessage" txt="Sorry, but the selected gloss conflicts with '{0}' which has already been inserted."/>

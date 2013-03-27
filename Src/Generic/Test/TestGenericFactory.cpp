@@ -26,7 +26,7 @@ public:
 
 #define CLSID_TestGenericFactory __uuidof(TestGenericFactory)
 
-template<> const GUID CLSID_TestGenericFactory("b670f879-f7c3-44c4-94aa-572c955a5320");
+DEFINE_UUIDOF(TestGenericFactory,0xb670f879,0xf7c3,0x44c4,0x94,0xaa,0x57,0x2c,0x95,0x5a,0x53,0x20);
 
 static GenericFactory g_fact(
 	_T("SIL.Generic.TestGenericFactory"),
@@ -114,7 +114,9 @@ int main(int argc, char** argv)
 {
 	try
 	{
+#ifdef WIN32
 		DllMain(0, DLL_PROCESS_ATTACH, 0);
+#endif
 
 		IClassFactory* pFact = 0;
 		CheckHr(DllGetClassObject(CLSID_TestGenericFactory, IID_IClassFactory, (void**)&pFact));
@@ -125,7 +127,11 @@ int main(int argc, char** argv)
 		pFact->Release();
 		pTest->Release();
 
+#ifdef WIN32
 		return DllMain(0, DLL_PROCESS_DETACH, 0) ? 0 : 1;
+#else
+		return 0;
+#endif
 	}
 	catch (Throwable& thr)
 	{

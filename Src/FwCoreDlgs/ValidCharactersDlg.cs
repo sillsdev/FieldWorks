@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
@@ -35,6 +36,7 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SILUBS.SharedScrUtils;
 using XCore;
 
@@ -576,6 +578,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// Handles the click on one of the "Treat as..." context menu items.
 			/// </summary>
 			/// ---------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification="MoveSelectedChars() returns a reference.")]
 			private void HandleTreatAsClick(object sender, EventArgs e)
 			{
 				MoveSelectedChars();
@@ -662,7 +666,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// dispose</summary>
 		private bool m_fDisposeWsManager;
 
-		CheckBoxColumnHeaderHandler m_chkBoxColHdrHandler;
+		private OpenFileDialogAdapter m_openFileDialog;
+		private CheckBoxColumnHeaderHandler m_chkBoxColHdrHandler;
 
 		#endregion
 
@@ -678,6 +683,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			InitializeComponent();
 			AccessibleName = GetType().Name;
+
+			m_openFileDialog = new OpenFileDialogAdapter();
+			m_openFileDialog.DefaultExt = "lds";
+			m_openFileDialog.InitialDirectory = ParatextHelper.ProjectsDirectory;
+			m_openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
 
 			splitContainerOuter.Panel2MinSize = splitValidCharsOuter.Left +
 				(btnTreatAsWrdForming.Right - btnTreatAsPunct.Left);
@@ -783,6 +793,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Debug.WriteLineIf(!disposing, "********** Missing Dispose() call for " + GetType().Name + ". **********");
 			if (disposing)
 			{
+				if (m_openFileDialog != null)
+					m_openFileDialog.Dispose();
+
 				if (m_fDisposeWsManager)
 				{
 					var disposable = m_wsManager as IDisposable;
@@ -804,13 +817,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Marshal.ReleaseComObject(m_chrPropEng);
 					m_chrPropEng = null;
 				}
+				if (m_openFileDialog != null)
+					m_openFileDialog.Dispose();
 				if (components != null)
 					components.Dispose();
 			}
 
+			m_openFileDialog = null;
 			m_validCharsGridMngr = null;
 			m_chkBoxColHdrHandler = null;
 			m_inventoryCharComparer = null;
+			m_openFileDialog = null;
 
 			base.Dispose(disposing);
 
@@ -1418,19 +1435,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (m_validCharsGridMngr != null)	// Can happen in tests.
 				btnRemoveChar.Enabled = !string.IsNullOrEmpty(m_validCharsGridMngr.CurrentCharacter);
 		}
-
-#if false // CS0169
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles one of the character grids in the explorer bar expanding or collapsing.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void HandleCharGridCharExplorerItemStateChanged(SimpleExplorerBar expBar,
-			ExplorerBarItem item)
-		{
-			btnRemoveChar.Enabled = !string.IsNullOrEmpty(m_validCharsGridMngr.CurrentCharacter);
-		}
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

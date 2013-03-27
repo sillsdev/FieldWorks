@@ -1981,6 +1981,15 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		/// <summary>
+		/// Makes scroll range big enough so user can scroll to last record in list, to fix LT-13765.
+		/// </summary>
+		protected override int ScrollRangeFudgeFactor {
+			get {
+				Debug.Assert(!IsVertical, "Unexpected vertical XmlBrowseViewBase");
+				return 3 * SystemInformation.HorizontalScrollBarHeight - base.ScrollRangeFudgeFactor;
+			}
+		}
 		#endregion
 
 		#region XCore Colleague overrides

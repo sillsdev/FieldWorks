@@ -87,6 +87,13 @@
 		</part>
 
 	</bin>
+	<bin class="CmSemanticDomain>">
+		<part id="CmSemanticDomain-Jt-ConfigureAbbrCd" type="jtview">
+			<configureMlString field="Abbreviation"/>
+		</part>
+		<part id="CmSemanticDomain-Jt-ConfigureNameCd" type="jtview">
+			<configureMlString field="Name"/>
+		</part>	</bin>
 	<bin class="CmObject">
 	<!-- a trivial part that just inserts a literal space -->
 		<part id="CmObject-Jt-Space" type="jtview">
@@ -180,7 +187,7 @@
 			<slice label="Comment" editor="multistring" ws="analysis vernacular" field="Description" menu="mnuDataTree-Help"/>
 		</part>
 		<part id="Text-Detail-Genres" type="Detail">
-			<slice field="Genres" label="Genres" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="Genres" label="Genres" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analysis"/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Genres" tool="genresEdit" />
@@ -193,10 +200,10 @@
 		<part id="Text-Detail-NotebookSection" type="Detail" paramType="LiteralString">
 			<slice editor="summary" layout="default" editable="no" weight="heavy" header="true" skipSpacerLine="true" menu="mnuTextInfo-Notebook"/>
 		</part>
-		<part id="Text-Detail-NotebookFields" type="Detail" >
+		  <part id="Text-Detail-NotebookFields" type="Detail" >
 			<choice>
-				<where target="owner" is="RnGenericRec">
-					<obj field="Owner" layout="TextInfoFields"/>
+				<where target="AssociatedNotebookRecord" is="RnGenericRec">
+					<obj field="AssociatedNotebookRecord" layout="TextInfoFields"/>
 				</where>
 				<otherwise>
 					<slice editor="ghostvector" ghostClass="RnGenericRec" ghostField="Researchers" label="Researchers">

@@ -1,6 +1,9 @@
 using System.Diagnostics;
+using System.Linq;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -69,6 +72,28 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			Debug.Assert(m_dlg != null);
 			var cache = (FdoCache)m_dlg.Mediator.PropertyTable.GetValue("cache");
+			var homographWsId = cache.LanguageProject.HomographWs;
+			var homographWs = cache.ServiceLocator.WritingSystems.AllWritingSystems.Where(ws => ws.Id == homographWsId);
+			var homographWsLabel = homographWs.First().DisplayLabel;
+			var defaultVernacularWs = cache.LanguageProject.DefaultVernacularWritingSystem;
+			var defaultVernacularWsId = defaultVernacularWs.Id;
+			var changeWs = false;
+			if (homographWsId != defaultVernacularWsId)
+			{
+				var caution = string.Format(LexEdStrings.ksReassignHomographsCaution, homographWsLabel, defaultVernacularWs.DisplayLabel);
+				if (MessageBox.Show(caution, LexEdStrings.ksReassignHomographs, MessageBoxButtons.YesNo) == DialogResult.Yes)
+					changeWs = true;
+			}
+			if (changeWs)
+			{
+				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+					LexEdStrings.ksUndoHomographWs, LexEdStrings.ksRedoHomographWs,
+					cache.ActionHandlerAccessor,
+					() =>
+					{
+						cache.LanguageProject.HomographWs = defaultVernacularWsId;
+					});
+			}
 			cache.LanguageProject.LexDbOA.ResetHomographNumbers(m_dlg.ProgressBar);
 		}
 

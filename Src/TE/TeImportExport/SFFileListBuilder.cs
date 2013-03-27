@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -28,6 +29,7 @@ using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using Microsoft.Win32;
@@ -66,7 +68,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		protected IScrImportSet m_ImportSettings;
 
-		private OpenFileDialog m_OpenFileDlg;
+		private OpenFileDialogAdapter m_OpenFileDlg;
 		/// <summary>
 		/// Indicates whether an item is being removed from the file list
 		/// </summary>
@@ -126,7 +128,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-			m_OpenFileDlg = new OpenFileDialog();
+			m_OpenFileDlg = new OpenFileDialogAdapter();
 			m_OpenFileDlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllScriptureStandardFormat,
 				FileFilterType.AllFiles);
 
@@ -173,21 +175,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Clean up any resources being used.
 		/// </summary>
 		/// -------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
 
-			if( disposing )
+			if (disposing && !IsDisposed)
 			{
-				if(components != null)
+				if (components != null)
 				{
 					components.Dispose();
 				}
+				m_OpenFileDlg.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 		#endregion
 
@@ -690,10 +690,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="filename"></param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		protected virtual void ShowBadFileMessage(string filename)
 		{
 			string message = string.Format(TeResourceHelper.GetResourceString("kstidImportFileNoBooks"),
 				filename);
+			// TODO-Linux: Help is not implemented in Mono
 			MessageBox.Show(message, ResourceHelper.GetResourceString("kstidImportFileNoBookCaption"),
 				MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, m_helpTopicProvider.HelpFile,
 				HelpNavigator.Topic, ResourceHelper.GetHelpString("kstidImportFileNoBookTopic"));

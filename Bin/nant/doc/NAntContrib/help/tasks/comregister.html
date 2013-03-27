@@ -20,7 +20,7 @@
 		  <a href="../tasks/index.html">Task Reference</a>
 		  <img alt="-&gt;" src="../images/arrow.gif" /> &lt;comregister&gt;</td>
 		<td class="NavBar-Cell" align="right">
-						v0.85</td>
+						v0.91</td>
 	  </tr>
 	</table>
 	<h1>&lt;comregister&gt;</h1>
@@ -92,32 +92,32 @@
 	  <li>
 		<p>Register a single dll server.</p>
 		<pre class="code">
-&lt;comregister file="myComServer.dll" /&gt;
-	</pre>
+			&lt;comregister file="myComServer.dll" /&gt;
+				</pre>
 	  </li>
 	  <li>
 		<p>Register a single exe server </p>
 		<pre class="code">
-&lt;comregister file="myComServer.exe" /&gt;
-	</pre>
+			&lt;comregister file="myComServer.exe" /&gt;
+				</pre>
 	  </li>
 	  <li>
 		<p>Register a set of COM files at once.</p>
 		<pre class="code">
-&lt;comregister unregister="false"&gt;
-	&lt;fileset&gt;
-		&lt;include name="an_ExeServer.exe" /&gt;
-		&lt;include name="a_TypeLibrary.tlb" /&gt;
-		&lt;include name="a_DllServer.dll" /&gt;
-		&lt;include name="an_OcxServer.ocx" /&gt;
-	&lt;/fileset&gt;
-&lt;/comregister&gt;
-	</pre>
+			&lt;comregister unregister="false"&gt;
+				&lt;fileset&gt;
+					&lt;include name="an_ExeServer.exe" /&gt;
+					&lt;include name="a_TypeLibrary.tlb" /&gt;
+					&lt;include name="a_DllServer.dll" /&gt;
+					&lt;include name="an_OcxServer.ocx" /&gt;
+				&lt;/fileset&gt;
+			&lt;/comregister&gt;
+				</pre>
 	  </li>
 	</ul>
 	<h3>Requirements</h3>
 	<div style="margin-left: 20px;">
-	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.85.2479.0)
+	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.91.4312.0)
 			</div>
   </body>
 </html>

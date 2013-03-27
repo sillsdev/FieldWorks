@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.MultiFooTests
 		protected override void CreateTestData()
 		{
 			m_text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(m_text);
+			//Cache.LangProject.TextsOC.Add(m_text);
 			IStText stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			m_text.ContentsOA = stText;
 			m_multi = stText.Title;

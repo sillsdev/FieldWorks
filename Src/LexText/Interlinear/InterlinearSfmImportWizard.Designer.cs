@@ -45,12 +45,13 @@
 			this.m_modifyMappingButton = new System.Windows.Forms.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.m_mappingsList = new System.Windows.Forms.ListView();
-			this.Marker = new System.Windows.Forms.ColumnHeader();
-			this.Counts = new System.Windows.Forms.ColumnHeader();
-			this.Destination = new System.Windows.Forms.ColumnHeader();
-			this.WritingSystem = new System.Windows.Forms.ColumnHeader();
-			this.Converter = new System.Windows.Forms.ColumnHeader();
+			this.Marker = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.Counts = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.Destination = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.WritingSystem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.Converter = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.numberOfTextsLabel = new System.Windows.Forms.Label();
 			this.secretShiftText = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.m_browseSaveSettingsFileButon = new System.Windows.Forms.Button();
@@ -58,7 +59,6 @@
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
-			this.numberOfTextsLabel = new System.Windows.Forms.Label();
 			this.tabSteps.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -248,6 +248,11 @@
 			this.tabPage4.Name = "tabPage4";
 			this.tabPage4.UseVisualStyleBackColor = true;
 			//
+			// numberOfTextsLabel
+			//
+			resources.ApplyResources(this.numberOfTextsLabel, "numberOfTextsLabel");
+			this.numberOfTextsLabel.Name = "numberOfTextsLabel";
+			//
 			// secretShiftText
 			//
 			resources.ApplyResources(this.secretShiftText, "secretShiftText");
@@ -287,11 +292,6 @@
 			resources.ApplyResources(this.label9, "label9");
 			this.label9.Name = "label9";
 			//
-			// numberOfTextsLabel
-			//
-			resources.ApplyResources(this.numberOfTextsLabel, "numberOfTextsLabel");
-			this.numberOfTextsLabel.Name = "numberOfTextsLabel";
-			//
 			// InterlinearSfmImportWizard
 			//
 			resources.ApplyResources(this, "$this");
@@ -319,7 +319,6 @@
 		#endregion
 
 		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button m_browseLoadSettingsFileButon;
 		private System.Windows.Forms.TextBox m_loadSettingsFileBox;
@@ -346,7 +345,8 @@
 		private System.Windows.Forms.TextBox m_saveSettingsFileBox;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label secretShiftText;
-		private System.Windows.Forms.LinkLabel m_useDefaultSettingsLink;
 		private System.Windows.Forms.Label numberOfTextsLabel;
+		protected System.Windows.Forms.Label label2;
+		private System.Windows.Forms.LinkLabel m_useDefaultSettingsLink;
 	}
 }

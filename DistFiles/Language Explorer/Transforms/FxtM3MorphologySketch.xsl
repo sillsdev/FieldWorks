@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XML Spy v4.3 (http://www.xmlspy.com) by Gary Simons (SIL International) -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:msxslt="urn:schemas-microsoft-com:xslt" xmlns:saxon="http://icl.com/saxon" exclude-result-prefixes="saxon msxslt">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+ xmlns:msxslt="urn:schemas-microsoft-com:xslt"
+ xmlns:saxon="http://icl.com/saxon"
+ xmlns:exsl="http://exslt.org/common"
+ exclude-result-prefixes="exsl saxon msxslt">
 	<xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes"/>
 	<!--
 ================================================================
@@ -16,33 +19,34 @@ Preamble
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
 	<!-- Using keys instead of IDs (so no DTD or XSD required) -->
-	<xsl:key name="AdhocGroup" match="//MoAdhocProhibGr/Members" use="@dst"/>
-	<xsl:key name="BearableFeaturesID" match="//FsClosedFeature" use="@Id"/>
-	<xsl:key name="BoundaryMarkersID" match="//PhBdryMarker" use="@Id"/>
-	<xsl:key name="ContextsID" match="//PhSequenceContext | //PhIterationContext | PhSimpleContextBdry | PhSimpleContextSeg | PhSimpleContextNC" use="@Id"/>
-	<xsl:key name="FsClosedFeaturesID" match="//FsClosedFeature" use="@Id"/>
-	<xsl:key name="FsComplexFeaturesID" match="//FsComplexFeature" use="@Id"/>
-	<xsl:key name="FsFeatStrucsID" match="//FsFeatStruc" use="@Id"/>
-	<xsl:key name="FsSymFeatValsID" match="//FsSymFeatVal" use="@Id"/>
-	<xsl:key name="ExceptionFeaturesID" match="//ProdRestrict/CmPossibility" use="@Id"/>
-	<xsl:key name="InflectableFeatsID" match="//FsClosedFeature | //FsComplexFeature" use="@Id"/>
-	<xsl:key name="InflectionClassesID" match="//MoInflClass" use="@Id"/>
-	<xsl:key name="InflAffixMsaID" match="//MoInflAffMsa" use="@Id"/>
-	<xsl:key name="LexAllos" match="//LexEntry/AlternateForms | //LexEntry/LexemeForm" use="@dst"/>
-	<xsl:key name="LexEntryMsa" match="//LexEntry/MorphoSyntaxAnalysis" use="@dst"/>
-	<xsl:key name="LexEntrySense" match="//LexEntry/Sense" use="@dst"/>
-	<xsl:key name="MoFormsID" match="//MoAffixAllomorph | // MoStemAllomorph" use="@Id"/>
-	<xsl:key name="MorphTypeID" match="//MoMorphType" use="@Id"/>
-	<xsl:key name="MsaID" match="//MoStemMsa | //MoInflAffMsa | //MoDerivAffMsa | //MoUnclassifiedAffixMsa " use="@Id"/>
-	<xsl:key name="NaturalClassesID" match="//PhNCSegments | //PhNCFeatures" use="@Id"/>
-	<xsl:key name="POSID" match="//PartOfSpeech" use="@Id"/>
-	<xsl:key name="PhEnvironmentsID" match="//PhEnvironment" use="@Id"/>
-	<xsl:key name="PhFeatureConstraintsID" match="//PhFeatureConstraint" use="@Id"/>
-	<xsl:key name="PhonemesID" match="//PhPhoneme" use="@Id"/>
-	<xsl:key name="SensesID" match="//LexSense" use="@Id"/>
-	<xsl:key name="SensesMsa" match="//LexSense" use="@Msa"/>
-	<xsl:key name="SlotsID" match="//MoInflAffixSlot" use="@Id"/>
-	<xsl:key name="StemNamesID" match="//MoStemName" use="@Id"/>
+	<xsl:key name="AdhocGroup" match="MoAdhocProhibGr/Members" use="@dst"/>
+	<xsl:key name="BearableFeaturesID" match="FsClosedFeature" use="@Id"/>
+	<xsl:key name="BoundaryMarkersID" match="PhBdryMarker" use="@Id"/>
+	<xsl:key name="ContextsID" match="PhSequenceContext | PhIterationContext | PhSimpleContextBdry | PhSimpleContextSeg | PhSimpleContextNC" use="@Id"/>
+	<xsl:key name="FsClosedFeaturesID" match="FsClosedFeature" use="@Id"/>
+	<xsl:key name="FsComplexFeaturesID" match="FsComplexFeature" use="@Id"/>
+	<xsl:key name="FsFeatStrucsID" match="FsFeatStruc" use="@Id"/>
+	<xsl:key name="FsSymFeatValsID" match="FsSymFeatVal" use="@Id"/>
+	<xsl:key name="ExceptionFeaturesID" match="ProdRestrict/CmPossibility" use="@Id"/>
+	<xsl:key name="InflectableFeatsID" match="FsClosedFeature | FsComplexFeature" use="@Id"/>
+	<xsl:key name="InflectionClassesID" match="MoInflClass" use="@Id"/>
+	<xsl:key name="InflAffixMsaID" match="MoInflAffMsa" use="@Id"/>
+	<xsl:key name="LexAllos" match="LexEntry/AlternateForms | LexEntry/LexemeForm" use="@dst"/>
+	<xsl:key name="LexEntryMsa" match="LexEntry/MorphoSyntaxAnalysis" use="@dst"/>
+	<xsl:key name="LexEntrySense" match="LexEntry/Sense" use="@dst"/>
+	<xsl:key name="MoFormsID" match="MoAffixAllomorph |  MoStemAllomorph" use="@Id"/>
+	<xsl:key name="MorphTypeID" match="MoMorphType" use="@Id"/>
+	<xsl:key name="MsaID" match="MoStemMsa | MoInflAffMsa | MoDerivAffMsa | MoUnclassifiedAffixMsa " use="@Id"/>
+	<xsl:key name="NaturalClassesID" match="PhNCSegments | PhNCFeatures" use="@Id"/>
+	<xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
+	<xsl:key name="PhEnvironmentsID" match="PhEnvironment" use="@Id"/>
+	<xsl:key name="PhFeatureConstraintsID" match="PhFeatureConstraint" use="@Id"/>
+	<xsl:key name="PhonemesID" match="PhPhoneme" use="@Id"/>
+	<xsl:key name="PhonRuleFeatsID" match="PhonRuleFeat" use="@Id"/>
+	<xsl:key name="SensesID" match="LexSense" use="@Id"/>
+	<xsl:key name="SensesMsa" match="LexSense" use="@Msa"/>
+	<xsl:key name="SlotsID" match="MoInflAffixSlot" use="@Id"/>
+	<xsl:key name="StemNamesID" match="MoStemName" use="@Id"/>
 	<!-- Using a parameter to set language of sketch; default is English (en)  -->
 	<xsl:param name="sSketchLangICULocale">
 		<xsl:text>en</xsl:text>
@@ -62,41 +66,41 @@ Preamble
 	<!-- need to set analysis/gloss font size, especially for non-roman scripts -->
 	<xsl:param name="prmGlossFontSize"/>
 	<!--		<xsl:text>740664001</xsl:text>-->
-	<xsl:variable name="bVernRightToLeft" select="//VernWss/WritingSystem/@RightToLeft"/>
-	<xsl:variable name="bGlossRightToLeft" select="//AnalysisWss/WritingSystem/@RightToLeft"/>
+	<xsl:variable name="bVernRightToLeft" select="/M3Dump/LangProject/VernWss/WritingSystem/@RightToLeft"/>
+	<xsl:variable name="bGlossRightToLeft" select="/M3Dump/LangProject/AnalysisWss/WritingSystem/@RightToLeft"/>
 	<xsl:param name="sWordWorksTransformPath">
 		<xsl:text>C:/fw/DistFiles/Language Explorer/Transforms</xsl:text>
 	</xsl:param>
 	<xsl:variable name="sEnvironmentPositionTag" select="'.Position'"/>
-	<xsl:variable name="POSes" select="//PartOfSpeech"/>
-	<xsl:variable name="PartsOfSpeech" select="//PartsOfSpeech"/>
+	<xsl:variable name="PartsOfSpeech" select="/M3Dump/PartsOfSpeech"/>
+	<xsl:variable name="POSes" select="$PartsOfSpeech//PartOfSpeech"/>
 	<xsl:variable name="toplevelPOSes" select="$PartsOfSpeech/PartOfSpeech[not($POSes/SubPossibilities/@dst=@Id)]"/>
-	<xsl:variable name="MoInflAffixTemplates" select="//MoInflAffixTemplate"/>
-	<xsl:variable name="MorphoSyntaxAnalyses" select="//MorphoSyntaxAnalyses"/>
-	<xsl:variable name="LexEntries" select="//LexEntry"/>
-	<xsl:variable name="MoMorphTypes" select="//MoMorphType"/>
-	<xsl:variable name="MoStemAllomorphs" select="//MoStemAllomorph"/>
-	<xsl:variable name="MoAffixAllomorphs" select="//MoAffixAllomorph"/>
-	<xsl:variable name="PhoneEnvs" select="//PhoneEnv"/>
-	<xsl:variable name="Positions" select="//Position"/>
-	<xsl:variable name="MoInflAffMsas" select="//MoInflAffMsa"/>
-	<xsl:variable name="MoDerivAffMsas" select="//MoDerivAffMsa"/>
-	<xsl:variable name="MoInflClasses" select="//MoInflClass"/>
-	<xsl:variable name="MoStemNames" select="//MoStemName"/>
-	<xsl:variable name="MoAdhocProhibGrs" select="//MoAdhocProhibGr"/>
-	<xsl:variable name="MoMorphAdhocProhibs" select="//MoMorphAdhocProhib"/>
-	<xsl:variable name="MoAlloAdhocProhibs" select="//MoAlloAdhocProhib"/>
-	<xsl:variable name="FsFeatStrucTypes" select="//FsFeatStrucType[Name!='Phon']"/>
-	<xsl:variable name="ProdRestricts" select="//ProdRestrict"/>
-	<xsl:variable name="InflectionClasses" select="//InflectionClasses"/>
-	<xsl:variable name="PhEnvironments" select="//PhEnvironment"/>
-	<xsl:variable name="PhPhonemes" select="//PhPhoneme"/>
+	<xsl:variable name="MoInflAffixTemplates" select="$POSes/AffixTemplates/MoInflAffixTemplate"/>
+	<xsl:variable name="MorphoSyntaxAnalyses" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses"/>
+	<xsl:variable name="LexEntries" select="/M3Dump/Lexicon/Entries/LexEntry"/>
+	<xsl:variable name="MoMorphTypes" select="/M3Dump/MoMorphTypes/MoMorphType"/>
+	<xsl:variable name="MoStemAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoStemAllomorph"/>
+	<xsl:variable name="MoAffixAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph"/>
+	<xsl:variable name="PhoneEnvs" select="/M3Dump/Lexicon/Allomorphs//PhoneEnv"/>
+	<xsl:variable name="Positions" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph/Position"/>
+	<xsl:variable name="MoInflAffMsas" select="$MorphoSyntaxAnalyses/MoInflAffMsa"/>
+	<xsl:variable name="MoDerivAffMsas" select="$MorphoSyntaxAnalyses/MoDerivAffMsa"/>
+	<xsl:variable name="MoInflClasses" select="$POSes/InflectionClasses//MoInflClass"/>
+	<xsl:variable name="MoStemNames" select="$POSes/StemNames/MoStemName"/>
+	<xsl:variable name="MoAdhocProhibGrs" select="/M3Dump/MoMorphData/AdhocCoProhibitions//MoAdhocProhibGr"/>
+	<xsl:variable name="MoMorphAdhocProhibs" select="/M3Dump/MoMorphData/AdhocCoProhibitions/MoMorphAdhocProhib"/>
+	<xsl:variable name="MoAlloAdhocProhibs" select="/M3Dump/MoMorphData/AdhocCoProhibitions/MoAlloAdhocProhib"/>
+	<xsl:variable name="FsFeatStrucTypes" select="/M3Dump//Types/FsFeatStrucType[Name!='Phon']"/>
+	<xsl:variable name="ProdRestricts" select="/M3Dump//ProdRestrict"/>
+	<xsl:variable name="InflectionClasses" select="/M3Dump//InflectionClasses"/>
+	<xsl:variable name="PhEnvironments" select="/M3Dump/PhPhonData/Environments/PhEnvironment"/>
+	<xsl:variable name="PhPhonemes" select="/M3Dump/PhPhonData/PhonemeSets/PhPhonemeSet/Phonemes/PhPhoneme"/>
 	<!-- variable used to tell if the Feature System section should be included or not.  May need to add check for other types of features. -->
-	<xsl:variable name="FeatureSystem" select="//FeatureSystem/Features/FsClosedFeature | //FeatureSystem/Features/FsComplexFeature"/>
+	<xsl:variable name="FeatureSystem" select="/M3Dump/FeatureSystem/Features/FsClosedFeature | /M3Dump/FeatureSystem/Features/FsComplexFeature"/>
 	<!-- variable used to tell if the Phonological Rules section should be included or not. -->
-	<xsl:variable name="PhonologicalRules" select="//PhonRules/PhRegularRule | //PhonRules/PhMetathesisRule"/>
+	<xsl:variable name="PhonologicalRules" select="/M3Dump/PhPhonData/PhonRules/PhRegularRule | //PhonRules/PhMetathesisRule"/>
 	<!-- variable used to tell if the Phonological Feature System section should be included or not. -->
-	<xsl:variable name="PhonologicalFeatureSystem" select="//PhFeatureSystem/Features/FsClosedFeature"/>
+	<xsl:variable name="PhonologicalFeatureSystem" select="/M3Dump/PhFeatureSystem/Features/FsClosedFeature"/>
 	<!-- variable used to tell if the exception "features" section should be included or not. -->
 	<xsl:variable name="ProdRestrict" select="$ProdRestricts/CmPossibility"/>
 	<!-- included stylesheets (i.e. things common to other style sheets) -->
@@ -444,9 +448,9 @@ Main template
 					<xsl:variable name="iSubcats" select="count($POSes/PartOfSpeech)"/>
 					<xsl:value-of select="count($POSes) - $iSubcats"/>
 					<xsl:if test="$iSubcats > 0">
-						<xsl:text> major </xsl:text>
+						<xsl:text> major</xsl:text>
 					</xsl:if>
-					<xsl:text>syntactic categories for words.  </xsl:text>
+					<xsl:text> syntactic categories for words.  </xsl:text>
 					<xsl:if test="$iSubcats > 0">
 						<xsl:text>Some of these in turn have subcategories. </xsl:text>
 					</xsl:if>
@@ -559,7 +563,7 @@ Main template
 						</dl>
 					</xsl:otherwise>
 				</xsl:choose>
-				<xsl:if test="//MoInflAffixSlot/@Optional = '1'">
+				<xsl:if test="$POSes/AffixSlots/MoInflAffixSlot/@Optional = 'true'">
 					<p>In the inflectional templates expressed below, parentheses indicate that a slot is optional.</p>
 				</xsl:if>
 				<xsl:for-each select="$toplevelPOSes">
@@ -968,7 +972,7 @@ Main template
 			</section1>
 			<section1 id="sCompounding" type="tH1">
 				<secTitle>Compounding</secTitle>
-				<xsl:variable name="CompoundRules" select="//MoEndoCompound | //MoExoCompound"/>
+				<xsl:variable name="CompoundRules" select="/M3Dump/MoMorphData/CompoundRules/MoEndoCompound | /M3Dump/MoMorphData/CompoundRules/MoExoCompound"/>
 				<p>
 					<xsl:text>In this analysis of  </xsl:text>
 					<xsl:value-of select="$sLangName"/>
@@ -1235,7 +1239,7 @@ Main template
 									</xsl:call-template>
 								</p>
 							</xsl:if>
-							<xsl:variable name="stems" select="//MoStemMsa[ProdRestrict/@dst=$prodRest]"/>
+							<xsl:variable name="stems" select="$MorphoSyntaxAnalyses/MoStemMsa[ProdRestrict/@dst=$prodRest]"/>
 							<xsl:choose>
 								<xsl:when test="$stems">
 									<xsl:variable name="iCount" select="count($stems)"/>
@@ -1548,7 +1552,7 @@ Main template
 										<xsl:text> shown in the following table.  </xsl:text>
 										<xsl:if test="SubPossibilities">
 											<xsl:call-template name="OutputListOfSubcategories">
-												<xsl:with-param name="sText">
+												<xsl:with-param name="sText1">
 													<xsl:text>  Any stem names shown here are valid for not only the </xsl:text>
 												</xsl:with-param>
 												<xsl:with-param name="pos" select="."/>
@@ -1673,8 +1677,8 @@ Main template
 			</section1>
 			<section1 id="sNaturalClasses" type="tH1">
 				<secTitle>Natural Classes</secTitle>
-				<xsl:variable name="NCSegments" select="//PhNCSegments"/>
-				<xsl:variable name="NCFeatures" select="//PhNCFeatures[Name[not(contains(.,'Created automatically'))]]"/>
+				<xsl:variable name="NCSegments" select="/M3Dump/PhPhonData/NaturalClasses/PhNCSegments"/>
+				<xsl:variable name="NCFeatures" select="/M3Dump/PhPhonData/NaturalClasses/PhNCFeatures[Name[not(contains(.,'Created automatically'))]]"/>
 				<xsl:variable name="iCountSegments" select="count($NCSegments)"/>
 				<xsl:variable name="iCountFeatures" select="count($NCFeatures)"/>
 				<xsl:variable name="iCount" select="$iCountSegments + $iCountFeatures"/>
@@ -1802,6 +1806,47 @@ Main template
 										<xsl:text>has simultaneous application.</xsl:text>
 									</xsl:otherwise>
 								</xsl:choose>
+								<xsl:variable name="requiredCategories" select="RightHandSides/PhSegRuleRHS/InputPOSes/RequiredPOS"/>
+								<xsl:variable name="requiredRuleFeats" select="RightHandSides/PhSegRuleRHS/ReqRuleFeats/RuleFeat"/>
+								<xsl:variable name="excludedRuleFeats" select="RightHandSides/PhSegRuleRHS/ExclRuleFeats/RuleFeat"/>
+								<xsl:if test="$requiredCategories or $requiredRuleFeats or $excludedRuleFeats">
+									<xsl:text>  It also only applies </xsl:text>
+									<xsl:if test="$requiredCategories">
+										<xsl:text>when the category of the stem is </xsl:text>
+									   <xsl:call-template name="OutputPhonologicalRuleRequiredPOSes">
+										   <xsl:with-param name="requiredCategories" select="$requiredCategories"/>
+									   </xsl:call-template>
+									</xsl:if>
+									<xsl:if test="$requiredRuleFeats">
+										<xsl:if test="$requiredCategories">
+											<xsl:text>; </xsl:text>
+											<xsl:if test="not($excludedRuleFeats)">
+												<xsl:text>and </xsl:text>
+											</xsl:if>
+										</xsl:if>
+										<xsl:text>when the stem has all of the following properties: </xsl:text>
+										<xsl:for-each select="$requiredRuleFeats">
+											<xsl:value-of select="key('PhonRuleFeatsID', @dst)/Name"/>
+											<xsl:call-template name="OutputListPunctuation">
+												<xsl:with-param name="sFinalPunctuation" select="''"/>
+											</xsl:call-template>
+										</xsl:for-each>
+									</xsl:if>
+									<xsl:if test="$excludedRuleFeats">
+										<xsl:if test="$requiredCategories or $requiredRuleFeats">
+											<xsl:text>; and </xsl:text>
+										</xsl:if>
+										<xsl:text>when the stem has none of the following properties: </xsl:text>
+										<xsl:for-each select="$excludedRuleFeats">
+											<xsl:value-of select="key('PhonRuleFeatsID', @dst)/Name"/>
+											<xsl:call-template name="OutputListPunctuation">
+												<xsl:with-param name="sConjunction" select="' or '"/>
+												<xsl:with-param name="sFinalPunctuation" select="''"/>
+											</xsl:call-template>
+										</xsl:for-each>
+									</xsl:if>
+									<xsl:text>.  </xsl:text>
+								 </xsl:if>
 							</p>
 						</section2>
 					</xsl:for-each>
@@ -2414,7 +2459,7 @@ Main template
 						</xsl:attribute>
 					</xsl:if>
 					<xsl:attribute name="font-family">
-						<xsl:value-of select="//VernWss/WritingSystem/DefaultFont"/>
+						<xsl:value-of select="/M3Dump/LangProject/VernWss/WritingSystem/DefaultFont"/>
 					</xsl:attribute>
 					<xsl:attribute name="font-weight">bold</xsl:attribute>
 					<xsl:attribute name="color">blue</xsl:attribute>
@@ -2429,7 +2474,7 @@ Main template
 						</xsl:attribute>
 					</xsl:if>
 					<xsl:attribute name="font-family">
-						<xsl:value-of select="//AnalysisWss/WritingSystem/DefaultFont"/>
+						<xsl:value-of select="/M3Dump/LangProject/AnalysisWss/WritingSystem/DefaultFont"/>
 					</xsl:attribute>
 				</language>
 				<language id="lIPA" name="IPA">
@@ -2440,6 +2485,71 @@ Main template
 			</languages>
 			<xsl:call-template name="DoTypes"/>
 		</lingPaper>
+	</xsl:template>
+	<xsl:template name="OutputPhonologicalRuleRequiredPOSes">
+		<xsl:param name="requiredCategories"/>
+		<xsl:for-each select="key('POSID',$requiredCategories/@dst)">
+			<xsl:if test="position()=last() and count($requiredCategories) &gt; 1">
+				<xsl:text>or </xsl:text>
+			</xsl:if>
+			<genericRef>
+				<xsl:attribute name="gref">
+					<xsl:text>sCat.</xsl:text>
+					<xsl:value-of select="@Id"/>
+				</xsl:attribute>
+				<xsl:value-of select="Name"/>
+			</genericRef>
+			<xsl:variable name="subcats">
+				<xsl:call-template name="GetAnyNestedCategoriesForListing">
+					<xsl:with-param name="pos" select="."/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="function-available('saxon:node-set')">
+					<xsl:if test="saxon:node-set($subcats)/subcat">
+						<xsl:text> or its </xsl:text>
+						<xsl:choose>
+							<xsl:when test="saxon:node-set($subcats)[count(subcat) &gt; 1]">subcategories: </xsl:when>
+							<xsl:otherwise>subcategory </xsl:otherwise>
+						</xsl:choose>
+						<xsl:for-each select="saxon:node-set($subcats)/subcat">
+							<xsl:sort select="name"/>
+							<xsl:call-template name="OutputSubcategoryNameAsList">
+								<xsl:with-param name="sConjunction" select="' or '"/>
+								<xsl:with-param name="sFinalPunctuation" select="''"/>
+							</xsl:call-template>
+						</xsl:for-each>
+					</xsl:if>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:if test="msxslt:node-set($subcats)/subcat">
+						<xsl:text> or  its </xsl:text>
+						<xsl:choose>
+							<xsl:when test="msxslt:node-set($subcats)[count(subcat) &gt; 1]">subcategories: </xsl:when>
+							<xsl:otherwise>subcategory </xsl:otherwise>
+						</xsl:choose>
+						<xsl:for-each select="msxslt:node-set($subcats)/subcat">
+							<xsl:sort select="name"/>
+							<xsl:call-template name="OutputSubcategoryNameAsList">
+								<xsl:with-param name="sConjunction" select="' or '"/>
+								<xsl:with-param name="sFinalPunctuation" select="''"/>
+							</xsl:call-template>
+						</xsl:for-each>
+					</xsl:if>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:if test="position()!=last()">
+				<xsl:choose>
+					<xsl:when test="count($requiredCategories) &gt; 2">
+						<xsl:text>, </xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>&#x20;</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:if>
+		</xsl:for-each>
+
 	</xsl:template>
 	<xsl:template name="OutputPhonemeCount">
 		<xsl:param name="sLangName"/>
@@ -2528,7 +2638,7 @@ Main template
 					<th>Phonological Features</th>
 				</xsl:if>
 			</tr>
-			<xsl:for-each select="//Representation">
+			<xsl:for-each select="/M3Dump/PhPhonData/PhonemeSets/PhPhonemeSet//Codes/PhCode/Representation">
 				<xsl:sort select="."/>
 				<xsl:variable name="phoneme" select="ancestor::PhPhoneme"/>
 				<xsl:if test="$phoneme">
@@ -3327,7 +3437,7 @@ CalculateUnusedBearableFeatures
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="CalculateUnusedBearableFeatures">
-		<xsl:for-each select="//BearableFeature">
+		<xsl:for-each select="$POSes/BearableFeatures/BearableFeature">
 			<xsl:sort select="../../Name"/>
 			<xsl:variable name="pos">
 				<xsl:value-of select="../../@Id"/>
@@ -3341,7 +3451,7 @@ CalculateUnusedBearableFeatures
 				<xsl:value-of select="$idFeature"/>
 				<xsl:text>;</xsl:text>
 			</xsl:variable>
-			<xsl:variable name="values" select="//FsClosedValue[@Feature=$idFeature] | //FsNegatedValue[@Feature=$idFeature]"/>
+			<xsl:variable name="values" select="//FsFeatStruc/FsClosedValue[@Feature=$idFeature] | //FsFeatStruc/FsNegatedValue[@Feature=$idFeature]"/>
 			<xsl:choose>
 				<xsl:when test="count($values)=0">
 					<!-- there are none at all; remember POS id and bearable feature dst -->
@@ -3469,7 +3579,7 @@ CalculateUnusedInflectionClassesStems
 			<xsl:variable name="idInflClass">
 				<xsl:value-of select="@Id"/>
 			</xsl:variable>
-			<xsl:if test="count(//MoStemMsa[@InflectionClass=$idInflClass]) + count($MoDerivAffMsas[@ToInflectionClass=$idInflClass])=0">
+			<xsl:if test="count($MorphoSyntaxAnalyses/MoStemMsa[@InflectionClass=$idInflClass]) + count($MoDerivAffMsas[@ToInflectionClass=$idInflClass])=0">
 				<xsl:value-of select="$idInflClass"/>
 				<xsl:text>,</xsl:text>
 			</xsl:if>
@@ -3483,7 +3593,7 @@ CalculateUnusedInflectionClassesStems
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
 	<xsl:template name="CalculateUnusedSlots">
-		<xsl:for-each select="//MoInflAffixSlot">
+		<xsl:for-each select="$POSes/AffixSlots/MoInflAffixSlot">
 			<xsl:variable name="idSlot">
 				<xsl:value-of select="@Id"/>
 			</xsl:variable>
@@ -4083,7 +4193,7 @@ GetSlotName
 		<xsl:variable name="bOptional">
 			<xsl:value-of select="$Slot/@Optional"/>
 		</xsl:variable>
-		<xsl:if test="$bOptional='1'">
+		<xsl:if test="$bOptional='true'">
 			<xsl:text>(</xsl:text>
 		</xsl:if>
 		<xsl:call-template name="Capitalize">
@@ -4091,7 +4201,7 @@ GetSlotName
 				<xsl:value-of select="$sSlotName"/>
 			</xsl:with-param>
 		</xsl:call-template>
-		<xsl:if test="$bOptional='1'">
+		<xsl:if test="$bOptional='true'">
 			<xsl:text>)</xsl:text>
 		</xsl:if>
 	</xsl:template>
@@ -4110,6 +4220,12 @@ GetSlotName
 			</xsl:call-template>
 		</xsl:variable>
 		<xsl:choose>
+			<xsl:when test="function-available('exsl:node-set')">
+				<xsl:for-each select="exsl:node-set($subcatItems)/subcat">
+					<xsl:sort select="name"/>
+					<xsl:call-template name="OutputSubcategoryNameAsList"/>
+				</xsl:for-each>
+			</xsl:when>
 			<xsl:when test="function-available('saxon:node-set')">
 				<xsl:for-each select="saxon:node-set($subcatItems)/subcat">
 					<xsl:sort select="name"/>
@@ -4653,7 +4769,7 @@ OutputInflectionalAffixTemplate
 			</xsl:choose>
 			<xsl:if test="../../PartOfSpeech">
 				<xsl:call-template name="OutputListOfSubcategories">
-					<xsl:with-param name="sText">
+					<xsl:with-param name="sText1">
 						<xsl:text>  This template is valid for not only the </xsl:text>
 					</xsl:with-param>
 					<xsl:with-param name="pos" select="../.."/>
@@ -4825,15 +4941,18 @@ OutputListPunctuation
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
 	<xsl:template name="OutputListPunctuation">
+		<xsl:param name="sConjunction" select="' and '"/>
+		<xsl:param name="sFinalPunctuation" select="'.'"/>
 		<xsl:choose>
 			<xsl:when test="position()='1' and position()=last()-1">
-				<xsl:text> and </xsl:text>
+				<xsl:value-of select="$sConjunction"/>
 			</xsl:when>
 			<xsl:when test="position()=last()-1">
-				<xsl:text>, and </xsl:text>
+				<xsl:text>,</xsl:text>
+				<xsl:value-of select="$sConjunction"/>
 			</xsl:when>
 			<xsl:when test="position()=last()">
-				<xsl:text>.</xsl:text>
+				<xsl:value-of select="$sFinalPunctuation"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>, </xsl:text>
@@ -5155,7 +5274,10 @@ OutputListOfSubcategories
 -->
 	<xsl:template name="OutputListOfSubcategories">
 		<xsl:param name="pos" select="."/>
-		<xsl:param name="sText"/>
+		<xsl:param name="sText1"/>
+		<xsl:param name="sText2" select="' category, but also '"/>
+		<xsl:param name="sText3plural" select="'all of its subcategories: '"/>
+		<xsl:param name="sText3singular" select="'its subcategory: '"/>
 		<xsl:variable name="subcatItems">
 			<xsl:call-template name="GetAnyNestedCategoriesForListing">
 				<xsl:with-param name="pos" select="$pos"/>
@@ -5163,6 +5285,9 @@ OutputListOfSubcategories
 		</xsl:variable>
 		<xsl:variable name="iSubcatCount">
 			<xsl:choose>
+				<xsl:when test="function-available('exsl:node-set')">
+					<xsl:value-of select="count(exsl:node-set($subcatItems)/subcat)"/>
+				</xsl:when>
 				<xsl:when test="function-available('saxon:node-set')">
 					<xsl:value-of select="count(saxon:node-set($subcatItems)/subcat)"/>
 				</xsl:when>
@@ -5171,7 +5296,7 @@ OutputListOfSubcategories
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:value-of select="$sText"/>
+		<xsl:value-of select="$sText1"/>
 		<genericRef>
 			<xsl:attribute name="gref">
 				<xsl:text>sCat.</xsl:text>
@@ -5179,13 +5304,13 @@ OutputListOfSubcategories
 			</xsl:attribute>
 			<xsl:value-of select="$pos/Name"/>
 		</genericRef>
-		<xsl:text> category, but also </xsl:text>
+		<xsl:value-of select="$sText2"/>
 		<xsl:choose>
 			<xsl:when test="$iSubcatCount > 1">
-				<xsl:text>all of its subcategories: </xsl:text>
+				<xsl:value-of select="$sText3plural"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:text>its subcategory: </xsl:text>
+				<xsl:value-of select="$sText3singular"/>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:call-template name="HandleOutputtingListOfSubcatNames">
@@ -5417,6 +5542,20 @@ OutputSlotsAndFillersForPOS
 						</xsl:variable>
 						<xsl:text>  Its templates, however, may use </xsl:text>
 						<xsl:choose>
+							<xsl:when test="function-available('exsl:node-set')">
+								<xsl:choose>
+									<xsl:when test="exsl:node-set($higherSlots)[count(affixslot) &gt; 1]">
+										<xsl:text>any of these slots: </xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text>the slot </xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+								<xsl:for-each select="exsl:node-set($higherSlots)/affixslot">
+									<xsl:sort select="name"/>
+									<xsl:call-template name="OutputInflectionalSlotAsList"/>
+								</xsl:for-each>
+							</xsl:when>
 							<xsl:when test="function-available('saxon:node-set')">
 								<xsl:choose>
 									<xsl:when test="saxon:node-set($higherSlots)[count(affixslot) &gt; 1]">
@@ -5481,6 +5620,16 @@ OutputSlotsAndFillersForPOS
 							</xsl:for-each>
 						</xsl:variable>
 						<xsl:choose>
+							<xsl:when test="function-available('exsl:node-set')">
+								<xsl:choose>
+									<xsl:when test="exsl:node-set($subcats)[count(subcat) &gt; 1]">these subcategories: </xsl:when>
+									<xsl:otherwise>the subcategory </xsl:otherwise>
+								</xsl:choose>
+								<xsl:for-each select="exsl:node-set($subcats)/subcat">
+									<xsl:sort select="name"/>
+									<xsl:call-template name="OutputSubcategoryNameAsList"/>
+								</xsl:for-each>
+							</xsl:when>
 							<xsl:when test="function-available('saxon:node-set')">
 								<xsl:choose>
 									<xsl:when test="saxon:node-set($subcats)[count(subcat) &gt; 1]">these subcategories: </xsl:when>
@@ -5638,6 +5787,8 @@ OutputSlotsAndFillersForPOS
 						- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 					-->
 	<xsl:template name="OutputSubcategoryNameAsList">
+		<xsl:param name="sConjunction" select="' and '"/>
+		<xsl:param name="sFinalPunctuation" select="'.'"/>
 		<genericRef>
 			<xsl:attribute name="gref">
 				<xsl:text>sCat.</xsl:text>
@@ -5645,7 +5796,10 @@ OutputSlotsAndFillersForPOS
 			</xsl:attribute>
 			<xsl:value-of select="name"/>
 		</genericRef>
-		<xsl:call-template name="OutputListPunctuation"/>
+		<xsl:call-template name="OutputListPunctuation">
+			<xsl:with-param name="sConjunction" select="$sConjunction"/>
+			<xsl:with-param name="sFinalPunctuation" select="$sFinalPunctuation"/>
+		</xsl:call-template>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -6190,6 +6344,12 @@ ProcessInflAffixTemplatesForPOS
 								</xsl:call-template>
 							</xsl:variable>
 							<xsl:choose>
+								<xsl:when test="function-available('exsl:node-set')">
+									<xsl:for-each select="exsl:node-set($subcatItems)/subcat">
+										<xsl:sort select="name"/>
+										<xsl:call-template name="OutputInflectionalTemplateNameAsList"/>
+									</xsl:for-each>
+								</xsl:when>
 								<xsl:when test="function-available('saxon:node-set')">
 									<xsl:for-each select="saxon:node-set($subcatItems)/subcat">
 										<xsl:sort select="name"/>
@@ -6653,7 +6813,7 @@ ProcessSlotName
 			<xsl:variable name="bOptional">
 				<xsl:value-of select="$Slot/@Optional"/>
 			</xsl:variable>
-			<xsl:if test="$bOptional='1'">
+			<xsl:if test="$bOptional='true'">
 				<xsl:text>(</xsl:text>
 			</xsl:if>
 			<genericRef>
@@ -6667,7 +6827,7 @@ ProcessSlotName
 					</xsl:with-param>
 				</xsl:call-template>
 			</genericRef>
-			<xsl:if test="$bOptional='1'">
+			<xsl:if test="$bOptional='true'">
 				<xsl:text>)</xsl:text>
 			</xsl:if>
 		</th>

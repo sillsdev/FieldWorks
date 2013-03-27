@@ -12,13 +12,13 @@
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
 using System;
-using NUnit.Framework;
-using SIL.FieldWorks.Test.TestUtils;
-using System.IO;
-using SIL.FieldWorks.FDO.Infrastructure;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using System.Collections.Generic;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using NUnit.Framework;
+using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 
@@ -639,6 +639,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// Setup method: create a memory-only mock cache and empty language project.
 		/// </summary>
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ThreadHelper is disposed in DestroyMockCache()")]
 		public void CreateMockCache()
 		{
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(

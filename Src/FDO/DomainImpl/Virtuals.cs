@@ -186,6 +186,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl // TODO: Move this to DomainServices
 				return m_lexEntryVisibleComplexFormBackRefs;
 			}
 		}
+
 		private int m_lexSenseVisibleComplexFormBackRefs;
 
 		/// <summary>
@@ -198,6 +199,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl // TODO: Move this to DomainServices
 				if (m_lexSenseVisibleComplexFormBackRefs == 0)
 					m_lexSenseVisibleComplexFormBackRefs = m_mdc.GetFieldId2(LexSenseTags.kClassId, "VisibleComplexFormBackRefs", false);
 				return m_lexSenseVisibleComplexFormBackRefs;
+			}
+		}
+
+		private int m_langProjTexts;
+
+		/// <summary>
+		/// The Flid for the LangProject.Texts virtual property.
+		/// </summary>
+		public int LangProjTexts
+		{
+			get
+			{
+				if (m_langProjTexts == 0)
+					m_langProjTexts = m_mdc.GetFieldId2(LangProjectTags.kClassId, "Texts", false);
+				return m_langProjTexts;
 			}
 		}
 	}

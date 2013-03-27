@@ -1,0 +1,9 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Object is disposed in tear down method
+T: SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControlTests
+T: SIL.FieldWorks.FwCoreDlgControls.FwFontTabTests
+T: SIL.FieldWorks.FwCoreDlgControls.StylesComboTests

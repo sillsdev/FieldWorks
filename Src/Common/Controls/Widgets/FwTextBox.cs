@@ -107,6 +107,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Since the TE team put a limit on the text height based on the control's Font,
 			// we want a default font size that is big enough never to limit things.
 			Font = new Font(Font.Name, 100.0f);
+
+			// We don't want to auto scale because that messes up selections. You can see this
+			// by commenting this line. If FwFindReplaceDlg.AutoScaleMode is set to Font the test
+			// SIL.FieldWorks.FwCoreDlgs.FwFindReplaceDlgTests.ApplyWS_ToSelectedString will
+			// fail because it didn't make a range selection.
+			AutoScaleMode = AutoScaleMode.None;
 		}
 
 		Rectangle ContentRectangle
@@ -120,6 +126,36 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					var renderer = new VisualStyleRenderer(VisualStyleElement.TextBox.TextEdit.Normal);
 					return renderer.GetBackgroundContentRectangle(g, ClientRectangle);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Adjust the height of the text box appropriately for the given stylesheet.
+		/// This version moves any controls below the text box, but does not adjust the size of the parent control.
+		/// </summary>
+		/// <param name="ss"></param>
+		public void AdjustForStyleSheet(IVwStylesheet ss)
+		{
+			int oldHeight = Height;
+			StyleSheet = ss;
+			int newHeight = Math.Max(oldHeight, PreferredHeight);
+			int delta = newHeight - oldHeight;
+			if (delta == 0)
+				return;
+			Height = newHeight;
+			// Need to get the inner box's height adjusted BEFORE we fix the string.
+			PerformLayout();
+			Tss = FontHeightAdjuster.GetUnadjustedTsString(Tss);
+			foreach (Control c in this.Parent.Controls)
+			{
+				if (c == this)
+					continue;
+				bool anchorTop = ((((int)c.Anchor) & ((int)AnchorStyles.Top)) != 0);
+				if (c.Top > this.Top && anchorTop)
+				{
+					// Anchored at the top and below our control: move it down
+					c.Top += delta;
 				}
 			}
 		}
@@ -2526,6 +2562,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <summary>
 		/// Gets a rectangle that encloses the text.
 		/// </summary>
+		/// <remarks>
+		/// The width is likely to be bogus for a multiline textbox, but the height should be
+		/// okay regardless.
+		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		public Rectangle TextRect
 		{
@@ -2620,7 +2660,9 @@ namespace SIL.FieldWorks.Common.Widgets
 				// when converted to pixels can often get rounded down), so we add one extra pixel
 				// to be sure there is enough room to fit the text properly so that even if AdjustHeight is
 				// set to true, it will not have to adjust the font size to fit.
-				return TextHeight + 1;
+				// Note that if WordWrap is true, multiple lines are expected, and if it is false,
+				// only one line is expected (which is what TextHeight assumes).
+				return WordWrap ? TextRect.Height + 1 : TextHeight + 1;
 			}
 		}
 
@@ -2679,6 +2721,11 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
+				if (WordWrap)
+				{
+					if (RootBox != null)
+						return GetAvailWidth(RootBox) + 4;
+				}
 				CheckDisposed();
 				bool fOldSaveSize = m_vc.SaveSize;
 				try

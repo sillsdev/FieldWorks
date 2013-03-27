@@ -17,7 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
-
+using ICSharpCode.SharpZipLib.Zip;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
@@ -54,8 +54,14 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 #endif
 			try
 			{
-				using (var reader = new StreamReader(filename, Encoding.UTF8))
-				ImportTranslatedLists(reader, cache, progress);
+				using (var inputStream = FileUtils.OpenStreamForRead(filename))
+				using (var zipReader = new ZipInputStream(inputStream))
+				{
+					var entry = zipReader.GetNextEntry(); // advances it to where we can read the one zipped file.
+
+					using (var reader = new StreamReader(zipReader, Encoding.UTF8))
+						ImportTranslatedLists(reader, cache, progress);
+				}
 			}
 			catch (Exception e)
 			{
@@ -96,6 +102,53 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				return false;
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// All localized list files are named with this prefix followed by the IcuLocale of the writing system, then .zip.
+		/// Each file contains a single compressed XML file containing the data. It must contain nothing else.
+		/// </summary>
+		public const string LocalizedListPrefix = "LocalizedLists-";
+
+		/// <summary>
+		/// If a localized lists file is available for the specified ws, load the information.
+		/// Note: call this only when you are sure the WS is new to this project. It takes considerable time
+		/// to run if it finds a localized list file.
+		/// Our current strategy for loading localized lists is to have one file per localization.
+		/// It is always LocalizedLists-XX.zip, where XX is the ICU locale for the writing system.
+		/// (The zip file contains a single file, LocalizedLists-XX.xml.)
+		/// So if such a file exists for this WS, we can import lists for that writing system.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <param name="cache"></param>
+		/// <param name="progress"> </param>
+		public static void ImportTranslatedListsForWs(string ws, FdoCache cache, IProgress progress)
+		{
+			string path = TranslatedListsPathForWs(ws);
+			if (File.Exists(path))
+			{
+				var instance = new XmlTranslatedLists();
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(cache.ActionHandlerAccessor,
+					() => instance.ImportTranslatedLists(path, cache, progress));
+			}
+		}
+
+		/// <summary>
+		/// Caption recommended for a progress dialog while running ImportTranslatedListsForWs
+		/// </summary>
+		public static string ProgressDialogCaption
+		{
+			get { return Strings.ksTransListCaption; }
+		}
+
+		/// <summary>
+		/// Call before ImportTranslatedListsForWs. Call that only if the file exists.
+		/// </summary>
+		/// <param name="ws"></param>
+		/// <returns></returns>
+		public static string TranslatedListsPathForWs(string ws)
+		{
+			return Path.Combine(DirectoryFinder.TemplateDirectory, Path.ChangeExtension(LocalizedListPrefix + ws, "zip"));
 		}
 
 		private int GetWsFromStr(string sWs)

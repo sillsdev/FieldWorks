@@ -11,6 +11,7 @@
 // File: FilterAllTextsDialog.cs
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
@@ -65,6 +66,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="m_btnCancel and m_btnHelp get added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

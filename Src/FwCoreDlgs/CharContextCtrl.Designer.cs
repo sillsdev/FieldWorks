@@ -1,4 +1,4 @@
-﻿
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -17,16 +17,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				if (m_openFileDialog != null)
+					m_openFileDialog.Dispose();
 
 				if (m_charPropEng != null && Marshal.IsComObject(m_charPropEng))
-				{
 					Marshal.ReleaseComObject(m_charPropEng);
-					m_charPropEng = null;
-				}
 			}
+			components = null;
+			m_openFileDialog = null;
+			m_charPropEng = null;
 			base.Dispose(disposing);
 		}
 
@@ -36,6 +39,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		// TODO-Linux: VirtualMode is not supported on Mono (gridContext.VirtualMode); TabStops
+		// are not implemented on Mono.
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -57,7 +64,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.colContextItem = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.colContextAfter = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.pnlScan = new System.Windows.Forms.Panel();
-			this.m_openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.m_cmnuScan = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.cmnuScanScripture = new System.Windows.Forms.ToolStripMenuItem();
 			this.cmnuScanFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -216,11 +222,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.pnlScan, "pnlScan");
 			this.pnlScan.Name = "pnlScan";
 			//
-			// m_openFileDialog
-			//
-			this.m_openFileDialog.DefaultExt = "lds";
-			resources.ApplyResources(this.m_openFileDialog, "m_openFileDialog");
-			//
 			// m_cmnuScan
 			//
 			this.m_cmnuScan.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -278,6 +279,5 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.DataGridViewTextBoxColumn colContextBefore;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colContextItem;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colContextAfter;
-		private System.Windows.Forms.OpenFileDialog m_openFileDialog;
 	}
 }

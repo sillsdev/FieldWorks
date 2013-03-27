@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1996-2006, International Business Machines
+*   Copyright (C) 1996-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -40,6 +40,8 @@
  * \file
  * \brief C++ API: Locale ID object.
  */
+
+U_NAMESPACE_BEGIN
 
 /**
  * A <code>Locale</code> object represents a specific geographical, political,
@@ -177,9 +179,10 @@
  * @stable ICU 2.0
  * @see ResourceBundle
  */
-U_NAMESPACE_BEGIN
 class U_COMMON_API Locale : public UObject {
 public:
+	/** Useful constant for the Root locale. @stable ICU 4.4 */
+	static const Locale &U_EXPORT2 getRoot(void);
 	/** Useful constant for this language. @stable ICU 2.0 */
 	static const Locale &U_EXPORT2 getEnglish(void);
 	/** Useful constant for this language. @stable ICU 2.0 */
@@ -319,6 +322,7 @@ public:
 	 */
 	Locale *clone() const;
 
+#ifndef U_HIDE_SYSTEM_API
 	/**
 	 * Common methods of getting the current default Locale. Used for the
 	 * presentation: menus, dialogs, etc. Generally set once when your applet or
@@ -350,6 +354,7 @@ public:
 	 */
 	static void U_EXPORT2 setDefault(const Locale& newLocale,
 									 UErrorCode&   success);
+#endif  /* U_HIDE_SYSTEM_API */
 
 	/**
 	 * Creates a locale which has had minimal canonicalization
@@ -425,36 +430,52 @@ public:
 	/**
 	 * Gets the list of keywords for the specified locale.
 	 *
-	 * @return pointer to StringEnumeration class. Client must dispose of it by calling delete.
-	 * @param status Returns any error information while performing this operation.
+	 * @param status the status code
+	 * @return pointer to StringEnumeration class, or NULL if there are no keywords.
+	 * Client must dispose of it by calling delete.
 	 * @stable ICU 2.8
 	 */
 	StringEnumeration * createKeywords(UErrorCode &status) const;
 
 	/**
-	 * Get the value for a keyword.
+	 * Gets the value for a keyword.
 	 *
 	 * @param keywordName name of the keyword for which we want the value. Case insensitive.
-	 * @param status Returns any error information while performing this operation.
 	 * @param buffer The buffer to receive the keyword value.
 	 * @param bufferCapacity The capacity of receiving buffer
-	 * @return the length of keyword value
+	 * @param status Returns any error information while performing this operation.
+	 * @return the length of the keyword value
 	 *
 	 * @stable ICU 2.8
 	 */
 	int32_t getKeywordValue(const char* keywordName, char *buffer, int32_t bufferCapacity, UErrorCode &status) const;
 
+#ifndef U_HIDE_DRAFT_API
+	/**
+	 * Sets the value for a keyword.
+	 *
+	 * @param keywordName name of the keyword to be set. Case insensitive.
+	 * @param keywordValue value of the keyword to be set. If 0-length or
+	 *  NULL, will result in the keyword being removed. No error is given if
+	 *  that keyword does not exist.
+	 * @param status Returns any error information while performing this operation.
+	 *
+	 * @draft ICU 49
+	 */
+	void setKeywordValue(const char* keywordName, const char* keywordValue, UErrorCode &status);
+#endif  /* U_HIDE_DRAFT_API */
+
 	/**
 	 * returns the locale's three-letter language code, as specified
 	 * in ISO draft standard ISO-639-2.
-	 * @return      An alias to the code, or NULL
+	 * @return      An alias to the code, or an empty string
 	 * @stable ICU 2.0
 	 */
 	const char * getISO3Language() const;
 
 	/**
 	 * Fills in "name" with the locale's three-letter ISO-3166 country code.
-	 * @return      An alias to the code, or NULL
+	 * @return      An alias to the code, or an empty string
 	 * @stable ICU 2.0
 	 */
 	const char * getISO3Country() const;
@@ -633,7 +654,7 @@ public:
 	static const Locale* U_EXPORT2 getAvailableLocales(int32_t& count);
 
 	/**
-	 * Gets a list of all available 2-letter country codes defined in ISO 639.  This is a
+	 * Gets a list of all available 2-letter country codes defined in ISO 3166.  This is a
 	 * pointer to an array of pointers to arrays of char.  All of these pointers are
 	 * owned by ICU-- do not delete them, and do not write through them.  The array is
 	 * terminated with a null pointer.
@@ -667,11 +688,13 @@ public:
 	virtual UClassID getDynamicClassID() const;
 
 protected: /* only protected for testing purposes. DO NOT USE. */
+#ifndef U_HIDE_INTERNAL_API
 	/**
 	 * Set this from a single POSIX style locale string.
 	 * @internal
 	 */
 	void setFromPOSIXID(const char *posixID);
+#endif  /* U_HIDE_INTERNAL_API */
 
 private:
 	/**
@@ -679,6 +702,7 @@ private:
 	 * Was deprecated - used in implementation - moved internal
 	 *
 	 * @param cLocaleID The new locale name.
+	 * @param canonicalize whether to call uloc_canonicalize on cLocaleID
 	 */
 	Locale& init(const char* cLocaleID, UBool canonicalize);
 
@@ -745,7 +769,8 @@ Locale::getScript() const
 inline const char *
 Locale::getVariant() const
 {
-	return &fullName[variantBegin];
+	getBaseName(); // lazy init
+	return &baseName[variantBegin];
 }
 
 inline const char *

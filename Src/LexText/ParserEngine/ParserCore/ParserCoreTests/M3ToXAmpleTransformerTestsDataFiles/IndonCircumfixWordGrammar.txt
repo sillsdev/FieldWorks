@@ -162,7 +162,7 @@ rule {Stem with a derivational prefix}
 		<Stem_2 stemName>         = <derivPfx stemName>
 		<Stem_2 exception>        = <derivPfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivPfx fromCat>
 		<Stem_2 synCat>           = <derivPfx envCat>
 	  }
@@ -189,7 +189,7 @@ rule {Stem with a derivational suffix}
 		<Stem_2 stemName>         = <derivSfx stemName>
 		<Stem_2 exception>        = <derivSfx fromException>
 		{
-
+		
 		<Stem_2 synCat>           = <derivSfx fromCat>
 		<Stem_2 synCat>           = <derivSfx envCat>
 	  }
@@ -225,13 +225,13 @@ rule {Stem with a derivational circumfix}
 		 <Stem_2 exception>        = <derivCircumPfx fromException>
 		 <Stem_2 exception>        = <derivCircumSfx fromException>
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx envCat>
 		<Stem_2 synCat>           = <derivCircumSfx fromCat>
 		<Stem_2 synCat>           = <derivCircumSfx envCat>
 	  }
-
+	  
 rule {Stem with a derivational circumfix where the rightmost part is an infix (and so may end up as a prefix}
 		 Stem_1 = derivCircumPfx_1 derivCircumPfx_2 Stem_2
 		 | percolation
@@ -266,13 +266,13 @@ rule {Stem with a derivational circumfix where the rightmost part is an infix (a
 		 | rightmost "prefix" must be an infix
 		 <derivCircumPfx_2> == [morphType : infix]
 	  {
-
+	  
 		<Stem_2 synCat>           = <derivCircumPfx_1 fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx_1 envCat>
 		<Stem_2 synCat>           = <derivCircumPfx_2 fromCat>
 		<Stem_2 synCat>           = <derivCircumPfx_2 envCat>
 	  }
-
+	  
 | ------------------------------------------------------------
 |                PARTIALLY ANALYZED WORD PORTION
 | ------------------------------------------------------------
@@ -363,9 +363,9 @@ rule {One or more unanalyzed prefixes and suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
 		<Full synCat>           = <Suffixes synCat>
@@ -378,9 +378,9 @@ rule {One or more unanalyzed prefixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Prefixes synCat>
 		<Full synCat>           = <Prefixes envCat>
   }
@@ -391,9 +391,9 @@ rule {One or more unanalyzed suffixes on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <Suffixes synCat>
 		<Full synCat>           = <Suffixes envCat>
   }
@@ -404,9 +404,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem}
   <Partial inflected> = <Full inflected>
   <Partial synCat> = <Full synCat>
 								| constraints
-
+  
   {
-
+  
 		<Full synCat>           = <circumPfx synCat>
 		<Full synCat>           = <circumPfx envCat>
 		<Full synCat>           = <circumSfx synCat>
@@ -421,9 +421,9 @@ rule {Unanalyzed circumfix on a fully analyzed stem where second is an infix}
 								 | constraints
 								 | rightmost "prefix" must be an infix
 	<circumPfx_2> == [morphType : infix]
-
+	  
 	  {
-
+	  
 		<Full synCat>           = <circumPfx_1 synCat>
 		<Full synCat>           = <circumPfx_1 envCat>
 		<Full synCat>           = <circumPfx_2 synCat>
@@ -502,9 +502,9 @@ rule {An unanalyzed prefix added to a sequence of prefixes}
 								| percolation
   <Prefixes_1 synCat> = <prefix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Prefixes_2 synCat>           = <prefix fromCat>
   }
 
@@ -514,7 +514,7 @@ rule {A derivational prefix added to a sequence of prefixes; the derivational ca
   <Prefixes_1 synCat> = <derivPfx toCat>
 								| constraints
   {
-
+  
 		<Prefixes_2 synCat>           = <derivPfx fromCat>
   }
 
@@ -523,9 +523,9 @@ rule {An unanalyzed suffix added to a sequence of suffixes}
 								| percolation
   <Suffixes_1 synCat> = <suffix fromCat>  | keep the same category
 								| constraints
-
+  
   {
-
+  
 		<Suffixes_2 synCat>           = <suffix fromCat>
   }
 
@@ -535,7 +535,7 @@ rule {A derivational suffix added to a sequence of suffixes; the derivational ca
   <Suffixes_1 synCat> = <derivSfx toCat>
 								| constraints
   {
-
+  
 		<Suffixes_2 synCat>           = <derivSfx fromCat>
   }
 
@@ -545,14 +545,14 @@ rule {Partially analyzed stem with inflectional template  16113}
 														 | percolation
   <Partial_1 synCat>       = <Partial_2 synCat>
 														 | constraints
-  <Partial_2 synCat>       = 12
+  <Partial_2 synCat>       = 12 
 
   <Partial_1 morphoSyntax>    = <16114_0 morphoSyntax>
   <Partial_1 morphoSyntax>    = <16115_0 morphoSyntax>
 														 | constraint
   <Partial_1 inflected> = +
   <Partial_2 inflected> = -
-
+		
 		| if there are no compound rules, use the remaining rules:
 			| these allow derivational affixes next to the stem
 rule {Totally unanalyzed form with one or more prefixes and suffixes; no compound rules}
@@ -610,7 +610,7 @@ rule {A sequence of two or more interfixes; no compound rules}
 
 rule {An interfix; no compound rules}
   Interfixes = interfix
-
+  
 | ------------------------------------------------------------
 |                TEMPLATES
 | ------------------------------------------------------------
@@ -622,8 +622,8 @@ Let Proclitic be []
 Let Enclitic be []
 Let Bound be []
 
-Let RootPOS0 be [rootCat:unknown]
-Let CliticPOS0 be [rootCat:unknown]
+Let RootPOS0 be [rootCat:unknown] 
+Let CliticPOS0 be [rootCat:unknown] 
 Let RootPOS3 be [rootCat:3
 	requiresInflection : -]
 Let MSEnvPOS3 be {[envCat:3]}
@@ -659,10 +659,10 @@ Let FromPOS12 be [fromCat:12]
 Let ToPOS12 be [toCat:12
 	requiresInflection : +]
 Let CliticPOS12 be {[rootCat:12]}
-Let CFP12 be {[fromCat:12]}
-
-
-
+Let CFP12 be {[fromCat:12]} 
+ 
+ 
+ 
 
 Let Infix be [morphType:infix]
 Let prefixinginterfix be {[cat:prefix]

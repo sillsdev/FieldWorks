@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_rule = rule;
 			m_ctxt = ctxt;
-			Mediator = mediator;
+		Mediator = mediator;
 			m_cache = cache;
 
 			m_valuesCombo.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;

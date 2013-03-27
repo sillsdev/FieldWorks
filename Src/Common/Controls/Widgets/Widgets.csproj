@@ -1,13 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>9.0.21022</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{C39FF7C2-A408-45A8-A400-3C2EF3220195}</ProjectGuid>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>..\..\..\..</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ApplicationIcon>
@@ -30,7 +27,9 @@
 	</FileUpgradeFlags>
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
-	<OldToolsVersion>2.0</OldToolsVersion>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -43,10 +42,9 @@
 	<MapFileExtensions>true</MapFileExtensions>
 	<ApplicationRevision>0</ApplicationRevision>
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
@@ -56,7 +54,7 @@
 	<ConfigurationOverrideFile>
 	</ConfigurationOverrideFile>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>..\..\..\..\Output\Debug\Widgets.XML</DocumentationFile>
+	<DocumentationFile>..\..\..\..\Output\Debug\Widgets.xml</DocumentationFile>
 	<DebugSymbols>true</DebugSymbols>
 	<FileAlignment>4096</FileAlignment>
 	<NoStdLib>false</NoStdLib>
@@ -68,6 +66,8 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
@@ -90,6 +90,8 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="Accessibility">
@@ -154,9 +156,6 @@
 	  <Name>System</Name>
 	</Reference>
 	<Reference Include="System.Configuration" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
 	<Reference Include="System.Data">
 	  <Name>System.Data</Name>
 	</Reference>
@@ -178,9 +177,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="..\..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
+	</Compile>
 	<Compile Include="DataGridView\FwTextBoxCell.cs" />
 	<Compile Include="DataGridView\FwTextBoxColumn.cs" />
 	<Compile Include="DataGridView\FwTextBoxControl.cs">
@@ -209,9 +211,6 @@
 	</Compile>
 	<Compile Include="FwTextBox.cs">
 	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="GeneratedAssemblyInfo.cs">
-	  <SubType>Code</SubType>
 	</Compile>
 	<Compile Include="HvoTreeNode.cs">
 	  <SubType>Code</SubType>
@@ -284,6 +283,11 @@
 	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
 	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
 	  <Visible>False</Visible>
 	  <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
@@ -297,6 +301,11 @@
 	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
 	  <Visible>False</Visible>
 	  <ProductName>.NET Framework 3.5</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
 	  <Install>false</Install>
 	</BootstrapperPackage>
   </ItemGroup>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="xhtml" type="classified" datatype="html" xslt="ClassifiedDictXhtml.xsl">
+	<FxtDocumentDescription dataLabel="Classified Dictionary" formatLabel="XHTML" defaultExtension="xhtml" filter="XHTML files (*.xhtml)|*.xhtml|All files (*.*)|*.*">
+Export the Classified Dictionary view to XHTML following the current configuration for layout, filters, and sorts.
+	</FxtDocumentDescription>
+</template>

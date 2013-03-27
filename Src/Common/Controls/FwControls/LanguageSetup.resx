@@ -642,9 +642,6 @@
   <data name="cboLookup.HelpString" xml:space="preserve">
 	<value>Specifies what you are searching for in the Ethnologue.</value>
   </data>
-  <data name="cboLookup.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="cboLookup.Items" xml:space="preserve">
 	<value>Language Name</value>
   </data>

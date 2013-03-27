@@ -21,7 +21,7 @@ namespace SIL.Utils
 		/// <returns>
 		/// Returns a collection of KeyValuePair's (Name, Version)
 		/// </returns>
-		public static IEnumerable<System.Collections.Generic.KeyValuePair<string, string>>
+		public static IEnumerable<KeyValuePair<string, string>>
 			FindInstalledPackages(string search)
 		{
 			bool processError = false;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
@@ -1341,6 +1343,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(ws);
 			if (addVernWss)
 				cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(ws);
+			// If the new writing system is one for which we have localized versions of lists, import them.
+			// We can't easily put up a progress dialog here, because the code is in a project we can't reference.
+			// However this routine is used in relatively long operations anyway so there should already be some kind of progress bar.
+			XmlTranslatedLists.ImportTranslatedListsForWs(identifier, cache, null);
 			return false;
 		}
 
@@ -1990,6 +1996,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		private readonly int m_flid;
 
 		/// <summary>
+		/// Event fired when the contents of the list changes.
+		/// </summary>
+		public event EventHandler<EventArgs> Changed;
+
+		internal void RaiseChanged()
+		{
+			if (Changed != null)
+				Changed(this, new EventArgs());
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="WritingSystemCollection"/> class.
 		/// </summary>
 		/// <param name="obj">The obj.</param>
@@ -2026,6 +2043,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
 		/// </returns>
 		/// <filterpriority>2</filterpriority>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
@@ -2047,6 +2066,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				wsIds.Add(item.Id);
 				WsIds = wsIds;
 			}
+			RaiseChanged();
 		}
 
 		/// <summary>
@@ -2055,6 +2075,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public void Clear()
 		{
 			Wss = string.Empty;
+			RaiseChanged();
 		}
 
 		/// <summary>
@@ -2117,6 +2138,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					newWsIds.Add(wsId);
 			}
 			WsIds = newWsIds;
+			RaiseChanged();
 			return removed;
 		}
 
@@ -2158,6 +2180,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			set
 			{
 				m_obj.Cache.DomainDataByFlid.SetUnicode(m_obj.Hvo, m_flid, value, value.Length);
+				RaiseChanged();
 			}
 		}
 
@@ -2187,6 +2210,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					first = false;
 				}
 				Wss = sb.ToString();
+				RaiseChanged();
 			}
 		}
 	}
@@ -2219,6 +2243,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			else
 				wss += " " + item.Id;
 			Wss = wss;
+			RaiseChanged();
 		}
 
 		#region Implementation of IList<WritingSystem>
@@ -2257,6 +2282,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			if (index == wsIds.Count)
 				newWsIds.Add(item.Id);
 			WsIds = newWsIds;
+			RaiseChanged();
 		}
 
 		/// <summary>
@@ -2277,6 +2303,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					newWsIds.Add(wsIds[i]);
 			}
 			WsIds = newWsIds;
+			RaiseChanged();
 		}
 
 		/// <summary>
@@ -2305,6 +2332,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				var newWsIds = new List<string>(wsIds);
 				newWsIds[index] = value.Id;
 				WsIds = newWsIds;
+				RaiseChanged();
 			}
 		}
 

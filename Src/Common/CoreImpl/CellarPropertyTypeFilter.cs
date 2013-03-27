@@ -46,10 +46,6 @@ namespace SIL.CoreImpl
 		MultiString = 1 << CellarPropertyType.MultiString,
 		/// <summary> </summary>
 		MultiUnicode = 1 << CellarPropertyType.MultiUnicode,
-		/// <summary> </summary>
-		MultiBigString = 1 << CellarPropertyType.MultiBigString,
-		/// <summary> </summary>
-		MultiBigUnicode = 1 << CellarPropertyType.MultiBigUnicode,
 
 		/// <summary>All atomic types</summary>
 		AllAtomic = OwningAtomic | ReferenceAtomic,
@@ -60,15 +56,11 @@ namespace SIL.CoreImpl
 		String = 1 << CellarPropertyType.String,
 		/// <summary> </summary>
 		Unicode = 1 << CellarPropertyType.Unicode,
-		/// <summary> </summary>
-		BigString = 1 << CellarPropertyType.BigString,
-		/// <summary> </summary>
-		BigUnicode = 1 << CellarPropertyType.BigUnicode,
 
 		/// <summary> All multilingual string types</summary>
-		AllMulti = MultiString | MultiUnicode | MultiBigString | MultiBigUnicode,
+		AllMulti = MultiString | MultiUnicode,
 		/// <summary> All non-multilingual string types</summary>
-		AllSimpleString = String | Unicode | BigString | BigUnicode,
+		AllSimpleString = String | Unicode,
 		/// <summary> All string types, plain and multilingual</summary>
 		AllString = AllMulti | AllSimpleString,
 

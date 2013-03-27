@@ -161,13 +161,13 @@ namespace PatrParserWrapper
 
 		#region PInvokes
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void initPATRSentenceFinalPunctuation(ref PATRData p);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void	markPATRParseGarbage (ref PATRData pPATR_io);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern IntPtr /*PATRWord* */ convertSentenceToPATRWords(
 			IntPtr pszSentence_in,
 			IntPtr pOutputFP_in,
@@ -176,18 +176,18 @@ namespace PatrParserWrapper
 			ref PATRData pPATR_in,
 			ref int piErrors);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void	collectPATRParseGarbage (ref PATRData pPATR_io);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void	freeMemory(IntPtr pBlock_io);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern IntPtr /*PATREdgeList* */ 	parseWithPATR(IntPtr /*PATRWord **/ pSentence_in,
 						  ref int /*int * */      piStage_out,
 						  ref PATRData /*PATRData **/ pPATR_io);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void	writePATRParses(IntPtr /* PATREdgeList **/ pParses_in,
 					   IntPtr /*FILE **/         pOutputFP_in,
 					   IntPtr /* WordTemplate ***/ ppWords_in,
@@ -195,37 +195,37 @@ namespace PatrParserWrapper
 					   uint uiSentenceCount_in,
 					   ref PATRData  /*PATRData **/     pPATR_in);
 
-		[DllImport("Patr100.dll", CharSet = CharSet.Ansi)]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		internal static extern int stringifyPATRParses (
 				  IntPtr /*PATREdgeList **/ pParses_in,
 				  ref PATRData /*PATRData **/     pPATR_in,
 				  string /*const char **/   pszSentence_in,
 				  ref IntPtr /*char ***/ ppszBuffer_out);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int	loadPATRGrammar(IntPtr /*const char **/ pszGrammarFile_in,
 				   ref PATRData   pPATR_io);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void	freePATRGrammar(ref PATRData pPATR_io);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void	freePATRLexicon(ref PATRData pPATR_io);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int loadPATRLexiconFromAmple(
 						  IntPtr /*const char **/  pszAnalysisFile_in,
 						  ref TextControl pTextControl_in,
 						  ref PATRData pPATR_in);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int loadPATRLexicon(IntPtr /*const char **/ pszLexiconFile_in,
 				   ref PATRData pPATR_io);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void	freePATRInternalMemory(ref PATRData pPATR_in);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern IntPtr /*WordTemplate ** */ readSentenceOfTemplates(
 						 IntPtr /*FILE * */              pInputFP_in,
 						 IntPtr /*const char * */        pszAnaFile_in,
@@ -233,7 +233,7 @@ namespace PatrParserWrapper
 						 ref TextControl pTextCtl_in,
 						 IntPtr /*FILE * */	         pLogFP_in);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int parseAmpleSentenceWithPATR(
 					  IntPtr /* WordTemplate ** */ pWords_in,
 					  IntPtr /* FILE * */ pOutputFP_in,
@@ -245,13 +245,13 @@ namespace PatrParserWrapper
 					  ref TextControl   pTextControl_in,
 					  ref PATRData      pPATR_in);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void	clearPATRSentenceFinalPunctuation(ref PATRData pPATR_io);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void addPATRSentenceFinalPunctuation(ref PATRData pPATR_io, IntPtr pszChar_in);
 
-		[DllImport("Patr100.dll", CharSet = CharSet.Ansi)]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		internal static extern int	parseWithPATRLexicon(
 			string           pszSentence_in,
 			IntPtr /*FILE **/           pOutputFP_in,
@@ -259,7 +259,7 @@ namespace PatrParserWrapper
 			int              bWarnUnusedFd_in,
 			ref PATRData pPATR_in);
 
-		[DllImport("Patr100.dll", CharSet = CharSet.Ansi)]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		internal static extern void  display_header (IntPtr /* FILE * */ pOutFL_in);
 
 #if !__MonoCS__
@@ -268,13 +268,13 @@ namespace PatrParserWrapper
 		/// that Patr100.dll uses.
 		/// This could be done by adding wrappedfopen and a wrappedfclose to Patr100.dll
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr wrappedfopen(string filename, string mode);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void wrappedfclose(IntPtr fp);
 
-		[DllImport("Patr100.dll")]
+		[DllImport("Patr100.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void wrappedfree(IntPtr mem);
 #else
 

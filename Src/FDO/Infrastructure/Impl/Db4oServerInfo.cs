@@ -17,6 +17,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -84,6 +85,10 @@ namespace FwRemoteDatabaseConnector
 		/// <summary></summary>
 		public Db4oServerInfo()
 		{
+			// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
+			// The default without this would be HKLM\Software\SIL\SIL FieldWorks,
+			// which breaks FwRemoteDatabaseConnectorService.exe.
+			SIL.Utils.RegistryHelper.ProductName = "FieldWorks";
 			RemotingServer.ServerObject = this;
 		}
 
@@ -282,6 +287,8 @@ namespace FwRemoteDatabaseConnector
 		/// </summary>
 		/// <param name="projectName"></param>
 		/// <returns>a compressed memory block of all the CmObjectSurroagates raw data.</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Ext() returns a reference")]
 		public byte[] GetCmObjectSurrogates(string projectName)
 		{
 			RunningServerInfo info;
@@ -323,6 +330,8 @@ namespace FwRemoteDatabaseConnector
 		/// returns true if server has stopped or is already stopped.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Ext() returns a reference")]
 		public bool StopServer(string projectName)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(projectName) && projectName == Path.GetFileName(projectName));
@@ -381,21 +390,23 @@ namespace FwRemoteDatabaseConnector
 		/// Gets a value indicating whether projects are shared.
 		/// </summary>
 		/// <remarks>Internal method to facilitate testing. Tests can't use public setter
-		/// because that would actually do the conversion.</remarks>
+		/// because that would actually do the conversion. Since this value is used only
+		/// temporarily during a test, there is no point in trying to set it on HKLM;
+		/// that only causes confusion if tests are sometimes run with admin privilege
+		/// and sometimes not.</remarks>
 		/// ------------------------------------------------------------------------------------
 		internal static bool AreProjectsShared_Internal
 		{
 			get
 			{
 				bool result;
-				string value = (string)FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue(
-					ksSharedProjectKey, "false");
-				return (bool.TryParse(value, out result) && result);
+				var value = FwRegistryHelper.FieldWorksRegistryKey.GetValue(ksSharedProjectKey, "false");
+				return (bool.TryParse((string)value, out result) && result);
 			}
 			set
 			{
-				FwRegistryHelper.FieldWorksRegistryKeyLocalMachineForWriting.SetValue(
-					ksSharedProjectKey, value);
+					FwRegistryHelper.FieldWorksRegistryKey.SetValue(
+						ksSharedProjectKey, value);
 			}
 		}
 
@@ -451,6 +462,8 @@ namespace FwRemoteDatabaseConnector
 		/// any possible bad performance.</remarks>
 		/// <param name="projectName">Name of the db4o project.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Ext() returns a reference")]
 		public string[] ListConnectedClients(string projectName)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(projectName) && projectName == Path.GetFileName(projectName));
@@ -511,6 +524,8 @@ namespace FwRemoteDatabaseConnector
 		/// <summary>
 		/// Start an instance of the .NET remoting server.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="Added TODO-Linux")]
 		public static void Start()
 		{
 			// check if we are already running.
@@ -537,6 +552,7 @@ namespace FwRemoteDatabaseConnector
 			}
 
 			// TODO: currently running with no security
+			// TODO-Linux: security support has not been implemented in Mono
 			RemotingConfiguration.Configure(DirectoryFinder.RemotingTcpServerConfigFile, false);
 		}
 

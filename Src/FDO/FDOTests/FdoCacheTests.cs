@@ -16,7 +16,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Remoting;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Test.TestUtils;
@@ -32,10 +34,17 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 	[TestFixture]
 	public class FdoCacheTests : MemoryOnlyBackendProviderTestBase
 	{
+		private string m_oldProjectDirectory;
+
 		/// <summary>Setup for db4o client server tests.</summary>
-		[TestFixtureSetUp]
-		public void Init()
+		public override void FixtureSetup()
 		{
+			base.FixtureSetup();
+
+			m_oldProjectDirectory = DirectoryFinder.ProjectsDirectory;
+			DirectoryFinder.ProjectsDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+			Directory.CreateDirectory(DirectoryFinder.ProjectsDirectory);
+
 			try
 			{
 				// Allow db4o client server unit test to work without running the window service.
@@ -51,10 +60,12 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 		}
 
 		/// <summary>Stop db4o client server.</summary>
-		[TestFixtureTearDown]
-		public void UnInit()
+		public override void FixtureTeardown()
 		{
 			FwRemoteDatabaseConnector.RemotingServer.Stop();
+			Directory.Delete(DirectoryFinder.ProjectsDirectory, true);
+			DirectoryFinder.ProjectsDirectory = m_oldProjectDirectory;
+			base.FixtureTeardown();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -155,6 +166,125 @@ namespace SIL.FieldWorks.FDO.CoreTests.FdoCacheTests
 			}
 		}
 		#endregion
+
+		/// <summary>
+		/// What it says.
+		/// </summary>
+		[Test]
+		public void ChangingLangProjDefaultVernWs_ChangesCacheDefaultVernWs()
+		{
+			using (var threadHelper = new ThreadHelper())
+			using (
+				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
+																	 "en", "fr", "en", threadHelper))
+			{
+				var wsFr = cache.DefaultVernWs;
+				Assert.That(cache.LangProject.DefaultVernacularWritingSystem.Handle, Is.EqualTo(wsFr));
+				IWritingSystem wsObjGerman = null;
+				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
+					() =>
+					{
+						WritingSystemServices.FindOrCreateWritingSystem(cache, "de", false, true, out wsObjGerman);
+						Assert.That(cache.DefaultVernWs, Is.EqualTo(wsFr));
+						cache.LangProject.DefaultVernacularWritingSystem = wsObjGerman;
+						Assert.That(cache.DefaultVernWs, Is.EqualTo(wsObjGerman.Handle));
+					});
+				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
+				   () =>
+				   {
+					   cache.LangProject.CurVernWss = "fr";
+					   Assert.That(cache.DefaultVernWs, Is.EqualTo(wsFr));
+				   });
+				cache.ActionHandlerAccessor.Undo();
+				Assert.That(cache.DefaultVernWs, Is.EqualTo(wsObjGerman.Handle));
+				cache.ActionHandlerAccessor.Redo();
+				Assert.That(cache.DefaultVernWs, Is.EqualTo(wsFr));
+			}
+		}
+		/// <summary>
+		/// What it says.
+		/// </summary>
+		[Test]
+		public void ChangingLangProjDefaultAnalysisWs_ChangesCacheDefaultAnalWs()
+		{
+			using (var threadHelper = new ThreadHelper())
+			using (
+				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
+																	 "en", "fr", "en", threadHelper))
+			{
+				var wsEn = cache.DefaultAnalWs;
+				Assert.That(cache.LangProject.DefaultAnalysisWritingSystem.Handle, Is.EqualTo(wsEn));
+				IWritingSystem wsObjGerman = null;
+				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
+					() =>
+					{
+						WritingSystemServices.FindOrCreateWritingSystem(cache, "de", true, false, out wsObjGerman);
+						Assert.That(cache.DefaultAnalWs, Is.EqualTo(wsEn));
+						cache.LangProject.DefaultAnalysisWritingSystem = wsObjGerman;
+						Assert.That(cache.DefaultAnalWs, Is.EqualTo(wsObjGerman.Handle));
+					});
+				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
+				   () =>
+				   {
+					   cache.LangProject.CurAnalysisWss = "en";
+					   Assert.That(cache.DefaultAnalWs, Is.EqualTo(wsEn));
+				   });
+				cache.ActionHandlerAccessor.Undo();
+				Assert.That(cache.DefaultAnalWs, Is.EqualTo(wsObjGerman.Handle));
+				cache.ActionHandlerAccessor.Redo();
+				Assert.That(cache.DefaultAnalWs, Is.EqualTo(wsEn));
+			}
+		}
+
+		/// <summary>
+		/// What it says.
+		/// </summary>
+		[Test]
+		public void ChangingLangProjDefaultPronunciationWs_ChangesCacheDefaultPronunciationWs()
+		{
+			using (var threadHelper = new ThreadHelper())
+			using (
+				var cache = FdoCache.CreateCacheWithNewBlankLangProj(new TestProjectId(FDOBackendProviderType.kMemoryOnly, null),
+																	 "en", "fr", "en", threadHelper))
+			{
+				var wsFr = cache.DefaultPronunciationWs;
+				Assert.That(cache.LangProject.DefaultPronunciationWritingSystem.Handle, Is.EqualTo(wsFr));
+				IWritingSystem wsObjGerman = null;
+				IWritingSystem wsObjSpanish = null;
+				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
+					() =>
+					{
+						WritingSystemServices.FindOrCreateWritingSystem(cache, "de", false, true, out wsObjGerman);
+						Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsFr));
+						cache.LangProject.DefaultVernacularWritingSystem = wsObjGerman;
+						cache.LangProject.CurrentPronunciationWritingSystems.Clear();
+						// Now it re-evaluates to the new default vernacular.
+						Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsObjGerman.Handle));
+
+						// This no longer works..._IPA does not make a valid WS ID.
+						//IWritingSystem wsObjGermanIpa;
+						//WritingSystemServices.FindOrCreateWritingSystem(cache, "de__IPA", false, true, out wsObjGermanIpa);
+						//cache.LangProject.CurrentPronunciationWritingSystems.Clear();
+						//// Once there is an IPA one, we should prefer that
+						//Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsObjGermanIpa.Handle));
+
+						// Unless we clear the list it does not regenerate.
+						WritingSystemServices.FindOrCreateWritingSystem(cache, "es", false, true, out wsObjSpanish);
+						// Once we've found a real pronunciation WS, changing the default vernacular should not change it.
+						Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsObjGerman.Handle));
+					});
+				UndoableUnitOfWorkHelper.Do("undoit", "redoit", cache.ActionHandlerAccessor,
+				   () =>
+				   {
+					   cache.LangProject.CurPronunWss = "es";
+					   Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsObjSpanish.Handle));
+				   });
+				cache.ActionHandlerAccessor.Undo();
+				Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsObjGerman.Handle));
+				cache.ActionHandlerAccessor.Redo();
+				Assert.That(cache.DefaultPronunciationWs, Is.EqualTo(wsObjSpanish.Handle));
+			}
+		}
 	}
 
 	/// ----------------------------------------------------------------------------------------

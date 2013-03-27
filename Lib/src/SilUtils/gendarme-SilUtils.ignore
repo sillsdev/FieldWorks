@@ -1,0 +1,25 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Factory method; caller responsible to call Dispose
+M: Microsoft.Win32.RegistryKey SIL.Utils.RegistryHelper::get_CompanyKey()
+M: Microsoft.Win32.RegistryKey SIL.Utils.RegistryHelper::get_CompanyKeyLocalMachine()
+M: Microsoft.Win32.RegistryKey SIL.Utils.RegistryHelper::get_CompanyKeyLocalMachineForWriting()
+
+# Added to collection
+M: System.Void SIL.Utils.FileDialog.Linux.FileDialogLinux::ApplyFilter(Gtk.FileChooserDialog)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Dispose is implemented explicit, at least on Mono
+T: SIL.Utils.RegistrySetting`1
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.MonoCompatibilityReviewRule
+
+# visual difference. Added TODO-Linux comment.
+M: System.Void SIL.Utils.PaintingHelper::DrawCustomBorder(System.Windows.Forms.Control)
+M: System.Void SIL.Utils.PaintingHelper::DrawHotBackground(System.Drawing.Graphics,System.Drawing.Rectangle,SIL.Utils.PaintState)

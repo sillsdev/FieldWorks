@@ -792,8 +792,13 @@ namespace SIL.FieldWorks.TE
 		/// Change the contents of the rendering view (by resetting it's root object) whenever
 		/// a different node is selected in the tree.
 		/// </summary>
+		/// <remarks>
+		/// Making this protected instead of private allows test code running on Mono to access
+		/// this method.  See TeDllTests/KeyTermsTests.cs for more information about why this
+		/// is necessary.
+		/// </remarks>
 		/// ------------------------------------------------------------------------------------
-		private void ktTree_AfterSelect(object sender, TreeViewEventArgs e)
+		protected void ktTree_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			KeyTermsControl ktCtrl = (KeyTermsControl)m_treeContainer;
 

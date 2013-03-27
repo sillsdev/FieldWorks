@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.ServiceProcess;
 using System.Threading;
 using FwRemoteDatabaseConnector;
+using SIL.FieldWorks.FDO.DomainServices;
 
 namespace FwRemoteDatabaseConnectorService
 {
@@ -23,9 +24,9 @@ namespace FwRemoteDatabaseConnectorService
 			{
 				m_clientListenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-				IPEndPoint iep = new IPEndPoint(IPAddress.Any, 3333);
+				var iep = new IPEndPoint(IPAddress.Any, Db4OPorts.ServerPort);
 				m_clientListenerSocket.Bind(iep);
-				EndPoint ep = (EndPoint)iep;
+				var ep = (EndPoint)iep;
 
 				while (m_clientListenerSocket != null)
 				{
@@ -45,7 +46,7 @@ namespace FwRemoteDatabaseConnectorService
 			using (var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
 			{
 				sock.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);
-				var iep = new IPEndPoint(ep.Address, 3334);
+				var iep = new IPEndPoint(ep.Address, Db4OPorts.ReplyPort);
 				sock.SendTo(new byte[] { 0 }, iep);
 			}
 		}

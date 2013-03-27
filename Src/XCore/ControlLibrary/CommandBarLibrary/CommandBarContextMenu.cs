@@ -7,6 +7,7 @@
 namespace Reflector.UserInterface
 {
 	using System;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Drawing;
 	using System.Drawing.Imaging;
 	using System.ComponentModel;
@@ -24,6 +25,33 @@ namespace Reflector.UserInterface
 		public CommandBarItemCollection Items
 		{
 			get { return this.items; }
+		}
+
+		public bool IsDisposed { get; private set; }
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			if (disposing && !IsDisposed)
+			{
+				// Base class doesn't dispose menu items, so we do it here
+				ClearMenuItems(MenuItems);
+				IsDisposed = true;
+			}
+			base.Dispose(disposing);
+		}
+
+		private static void ClearMenuItems(MenuItemCollection menuItemCollection)
+		{
+			if (menuItemCollection == null || menuItemCollection.Count == 0)
+				return;
+
+			// it's possible that menuItem.Dispose() removes menuItem from MenuItem, therefore
+			// we better work with a copy.
+			var menuItems = new MenuItem[menuItemCollection.Count];
+			menuItemCollection.CopyTo(menuItems, 0);
+			foreach (var menuItem in menuItems)
+				menuItem.Dispose();
+			menuItemCollection.Clear();
 		}
 
 		protected override void OnPopup(EventArgs e)
@@ -49,11 +77,13 @@ namespace Reflector.UserInterface
 			return base.ProcessCmdKey(ref message, keyData);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Add to MenuItems and disposed in Dispose")]
 		private void UpdateItems()
 		{
 			this.selectedMenuItem = null;
 
-			this.MenuItems.Clear();
+			ClearMenuItems(MenuItems);
 
 			Size imageSize = GetImageSize(this.items);
 			foreach (CommandBarItem item in this.items)
@@ -124,6 +154,19 @@ namespace Reflector.UserInterface
 				this.UpdateItems();
 			}
 
+			public bool IsDisposed { get; private set; }
+
+			protected override void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+				if (disposing && !IsDisposed)
+				{
+					CommandBarContextMenu.ClearMenuItems(MenuItems);
+					IsDisposed = true;
+				}
+				base.Dispose(disposing);
+			}
+
 			protected override void OnPopup(EventArgs e)
 			{
 				CommandBarMenu menu = this.item as CommandBarMenu;
@@ -136,6 +179,8 @@ namespace Reflector.UserInterface
 				this.UpdateItems();
 			}
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification="Add to MenuItems and disposed in Dispose")]
 			private void UpdateItems()
 			{
 				this.OwnerDraw = true;
@@ -153,7 +198,7 @@ namespace Reflector.UserInterface
 				CommandBarMenu menu = this.item as CommandBarMenu;
 				if (menu != null)
 				{
-					this.MenuItems.Clear();
+					CommandBarContextMenu.ClearMenuItems(MenuItems);
 
 					Size imageSize = GetImageSize(menu.Items);
 

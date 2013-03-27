@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
+
+	<!-- Localize all resx files -->
+	<Target Name="localize" DependsOnTargets="zipLocalizedLists;processLanguages"/>
+
+
+	<!-- Copy LocalizedList-*.xml files from Localizations to distfiles -->
+	<ItemGroup>
+		<LocalizedListFiles Include="$(fwrt)/Localizations/LocalizedLists-*.xml"/>
+	</ItemGroup>
+	<Target Name="zipLocalizedLists">
+		<Zip Source="@(LocalizedListFiles)" Destination="$(fwrt)/DistFiles/Templates" />
+	</Target>
+
+	<!-- Main target for processing all .po files -->
+	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
+	<Target Name="processLanguages">
+		<LocalizeFieldWorks RootDirectory="$(fwrt)" Config="$(config-capital)"/>
+	</Target>
+
+</Project>

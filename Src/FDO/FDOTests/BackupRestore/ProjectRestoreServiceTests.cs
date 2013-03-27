@@ -245,19 +245,19 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		{
 			var restoreConfigurationFilesDir = m_restoreSettings.FlexConfigurationSettingsPath;
 
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "CmPicture_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "CmPossibility_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "CmSemanticDomain_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexEntry_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexEntryRef_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexEntryType_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexEtymology_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexReference_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexSense_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoForm_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoInflAffixSlot_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoMorphSynAnalysis_Layouts.xml");
-			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoMorphType_Layouts.xml");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "CmPicture.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "CmPossibility.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "CmSemanticDomain.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexEntry.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexEntryRef.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexEntryType.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexEtymology.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexReference.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "LexSense.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoForm.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoInflAffixSlot.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoMorphSynAnalysis.fwlayout");
+			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "MoMorphType.fwlayout");
 			VerifyFileWasUnzippedThenDeleteIt(restoreConfigurationFilesDir, "Settings.xml");
 
 			//finally delete the restore subfolder for ConfigurationFiles

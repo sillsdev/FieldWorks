@@ -20,7 +20,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
-using System.Windows.Forms;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using ICSharpCode.SharpZipLib.Zip;
@@ -40,7 +40,8 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	{
 		const int kChar1 = 0xE000;	// unused PUA char.
 		const int kChar2 = 0xE001;	// unused PUA char.
-		const int kChar3 = 0xD7D7;	// unused char.
+		const int kChar3 = 0xD7FD;	// unused char (as of 6.2).
+		private const string kChar3S = "D7FD"; // keep in sync with kChar3.
 		const int kChar4 = 0xDDDDD;	// unused char. (0xEEEEE fails in running genprops)
 
 		string m_sCustomCharsFile;
@@ -89,15 +90,15 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			VerifyNonexistentChars();
 			Assert.IsTrue(Icu.IsCustomUse("E000"));
 			Assert.IsTrue(Icu.IsCustomUse("E001"));
-			Assert.IsFalse(Icu.IsCustomUse("D7D7"));
+			Assert.IsFalse(Icu.IsCustomUse(kChar3S));
 			Assert.IsFalse(Icu.IsCustomUse("DDDDD"));
 			Assert.IsTrue(Icu.IsPrivateUse("E000"));
 			Assert.IsTrue(Icu.IsPrivateUse("E001"));
-			Assert.IsFalse(Icu.IsPrivateUse("D7D7"));
+			Assert.IsFalse(Icu.IsPrivateUse(kChar3S));
 			Assert.IsFalse(Icu.IsPrivateUse("DDDDD"));
 			Assert.IsTrue(Icu.IsValidCodepoint("E000"));
 			Assert.IsTrue(Icu.IsValidCodepoint("E001"));
-			Assert.IsTrue(Icu.IsValidCodepoint("D7D7"));
+			Assert.IsTrue(Icu.IsValidCodepoint(kChar3S));
 			Assert.IsTrue(Icu.IsValidCodepoint("DDDDD"));
 
 			// Create our own CustomChars.xml file with test data in it, and install it.
@@ -187,7 +188,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			Assert.IsNull(prettyName);
 			prettyName = Icu.GetPrettyICUCharName("\xE001");
 			Assert.IsNull(prettyName);
-			prettyName = Icu.GetPrettyICUCharName("\xD7D7");
+			prettyName = Icu.GetPrettyICUCharName(kChar3S);
 			Assert.IsNull(prettyName);
 			prettyName = Icu.GetPrettyICUCharName("\xDDDDD");
 			Assert.IsNull(prettyName);
@@ -254,16 +255,22 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			Assert.AreEqual("[none]", numericType.Description);
 			numericType = Icu.GetNumericType(kChar3);
 			Assert.AreEqual("[none]", numericType.Description);
-			numericType = Icu.GetNumericType(kChar4);
-			Assert.AreEqual("Decimal Digit", numericType.Description);
-			var prettyName = Icu.GetPrettyICUCharName("\xE000");
-			Assert.AreEqual("My Special Character", prettyName);
-			prettyName = Icu.GetPrettyICUCharName("\xE001");
-			Assert.AreEqual("My Uppercase Character", prettyName);
-			prettyName = Icu.GetPrettyICUCharName("\xD7D7");
-			Assert.AreEqual("New Punctuation Mark", prettyName);
-			var rawName = Icu.GetCharName(kChar4);	// can't pass large character code as 16-bit char.
-			Assert.AreEqual("NEW DIGIT NINE", rawName);
+
+			// Current implementation (as of ICU50) is not overriding numeric type since we don't use it anywhere.
+			// Enhance silmods.c in icu patch if needed.
+			//numericType = Icu.GetNumericType(kChar4);
+			//Assert.AreEqual("Decimal Digit", numericType.Description);
+
+			// Current implementation (as of ICU50) is not overriding character names since we don't use them anywhere.
+			// Enhance silmods.c in icu patch if needed.
+			//var prettyName = Icu.GetPrettyICUCharName("\xE000");
+			//Assert.AreEqual("My Special Character", prettyName);
+			//prettyName = Icu.GetPrettyICUCharName("\xE001");
+			//Assert.AreEqual("My Uppercase Character", prettyName);
+			//prettyName = Icu.GetPrettyICUCharName(kChar3S);
+			//Assert.AreEqual("New Punctuation Mark", prettyName);
+			//var rawName = Icu.GetCharName(kChar4);	// can't pass large character code as 16-bit char.
+			//Assert.AreEqual("NEW DIGIT NINE", rawName);
 		}
 
 		private static void CreateAndInstallOurCustomChars(string sCustomCharsFile)
@@ -274,7 +281,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				writer.WriteLine("<PuaDefinitions>");
 				writer.WriteLine("<CharDef code=\"E000\" data=\"MY SPECIAL CHARACTER;Ll;0;R;;;;;N;;;E001;;\"/>");
 				writer.WriteLine("<CharDef code=\"E001\" data=\"MY UPPERCASE CHARACTER;Lu;0;R;;;;;N;;;;E000;\"/>");
-				writer.WriteLine("<CharDef code=\"D7D7\" data=\"NEW PUNCTUATION MARK;Po;0;ON;;;;;N;;;;;\"/>");
+				writer.WriteLine("<CharDef code=\"" + kChar3S + "\" data=\"NEW PUNCTUATION MARK;Po;0;ON;;;;;N;;;;;\"/>");
 				writer.WriteLine("<CharDef code=\"DDDDD\" data=\"NEW DIGIT NINE;Nd;0;EN;;9;9;9;N;;;;;\"/>");
 				writer.WriteLine("</PuaDefinitions>");
 				writer.Close();
@@ -306,7 +313,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				try
 				{
 					var baseDir = DirectoryFinder.FWDataDirectory;
-					zipIn = new ZipInputStream(File.OpenRead(Path.Combine(baseDir, "Icu40.zip")));
+					zipIn = new ZipInputStream(File.OpenRead(Path.Combine(baseDir, "Icu50.zip")));
 				}
 				catch (Exception e1)
 				{
@@ -330,6 +337,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				while ((entry = zipIn.GetNextEntry()) != null)
 				{
 					var dirName = Path.GetDirectoryName(entry.Name);
+					var match = new Regex(@"^ICU\d\d[\\/]?(.*)$").Match(dirName);
+					if (match.Success) // Zip file was built in a way that includes the root directory name.
+						dirName = match.Groups[1].Value; // Strip it off. May leave empty string.
 					var fileName = Path.GetFileName(entry.Name);
 					var fOk = UnzipFile(zipIn, fileName, entry.Size, Path.Combine(icuDir, dirName));
 					if (!fOk)

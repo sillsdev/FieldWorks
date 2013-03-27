@@ -647,11 +647,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 
 			// None of the options are checked initially and the More pane should be hidden
+			// Except now the MatchDiacritics defaults to checked (LT-8191)
 			ITsString tss;
 			selInitial.GetSelectionString(out tss, string.Empty);
 			AssertEx.AreTsStringsEqual(tss, m_dlg.FindText);
 			Assert.IsFalse(m_dlg.MatchWsCheckboxChecked);
-			Assert.IsFalse(m_dlg.MatchDiacriticsCheckboxChecked);
+			Assert.IsTrue(m_dlg.MatchDiacriticsCheckboxChecked);
 			Assert.IsFalse(m_dlg.MatchWholeWordCheckboxChecked);
 			Assert.IsFalse(m_dlg.MatchCaseCheckboxChecked);
 			Assert.IsFalse(m_dlg.MoreControlsPanelVisible);
@@ -804,7 +805,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked, "WS Checkbox should be checked after reopening dialog");
 			Assert.AreEqual("German", m_dlg.FindFormatTextLabel.Text);
 
-			Assert.IsFalse(m_dlg.MatchDiacriticsCheckboxChecked);
+			// Match diacritics now defaults to checked (LT-8191)
+			Assert.IsTrue(m_dlg.MatchDiacriticsCheckboxChecked);
 			Assert.IsFalse(m_dlg.MatchWholeWordCheckboxChecked);
 			Assert.IsFalse(m_dlg.MatchCaseCheckboxChecked);
 			Assert.IsFalse(m_dlg.MoreControlsPanelVisible);
@@ -816,6 +818,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void LastTextBoxInFocus()
 		{
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, true, false,

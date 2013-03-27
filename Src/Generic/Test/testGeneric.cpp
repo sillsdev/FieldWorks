@@ -11,18 +11,24 @@ Last reviewed:
 	Global initialization/cleanup for unit testing the Language DLL classes.
 -------------------------------------------------------------------------------*//*:End Ignore*/
 #include "testGenericLib.h"
+#include "RedirectHKCU.h"
 
 namespace unitpp
 {
 	void GlobalSetup(bool verbose)
 	{
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
+#endif
 		::OleInitialize(NULL);
+		RedirectRegistry();
 		StrUtil::InitIcuDataDir();
 	}
 	void GlobalTeardown()
 	{
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_DETACH);
+#endif
 		::OleUninitialize();
 	}
 }

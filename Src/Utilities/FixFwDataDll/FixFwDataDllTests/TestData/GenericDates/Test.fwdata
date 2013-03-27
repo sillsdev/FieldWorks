@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000051">
+
+<rt class="RnGenericRec" guid="cd396c4a-ffc7-4c62-8676-76a2c2e97755" >
+<DateOfEvent val="-003800001"/>
+</rt>
+
+<rt class="RnGenericRec" guid="CCCCCCCC-ffc7-4c62-8676-76a2c2e97755" >
+<DateOfEvent val="201207011" />
+</rt>
+
+<rt class="RnGenericRec" guid="DDDDDDDD-ffc7-4c62-8676-76a2c2e97755" >
+<DateOfEvent val="invalid date" />
+</rt>
+
+</languageproject>

@@ -16,6 +16,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Widgets;
 using XCore;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.IText
@@ -98,6 +99,8 @@ namespace SIL.FieldWorks.IText
 		//internal const int ktagSbMorphClsid = 6902018;
 		// This is true if the named object is a guess.
 		internal const int ktagSbNamedObjGuess = 6903019;
+		// This is used to store an object corresponding to WfiMorphBundle.InflType.
+		internal const int ktagSbNamedObjInflType = 6903020;
 
 
 		// This group identify the pull-down icons. They must be the only tags in the range
@@ -444,7 +447,6 @@ namespace SIL.FieldWorks.IText
 			{
 				CheckDisposed();
 
-				// ISilDataAccess sda = m_caches.DataAccess; // CS0219
 				int chvo = MorphCount;
 				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 				{
@@ -1027,6 +1029,32 @@ namespace SIL.FieldWorks.IText
 			ShowComboForSelection(selection, true);
 		}
 
+		/// <summary>
+		/// When a sandbox is created, inform the main window that it needs to receive
+		/// keyboard input until further notice.  (See FWNX-785.)
+		/// </summary>
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			{
+				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = this;
+			}
+		}
+
+		/// <summary>
+		/// When a sandbox is destroyed, inform the main window that it no longer
+		/// exists to receive keyboard input.  (See FWNX-785.)
+		/// </summary>
+		protected override void OnHandleDestroyed(EventArgs e)
+		{
+			base.OnHandleDestroyed(e);
+			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			{
+				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = null;
+			}
+		}
+
 		protected override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged(e);
@@ -1109,7 +1137,6 @@ namespace SIL.FieldWorks.IText
 		/// <returns>true if any guessing is involved.</returns>
 		private bool LoadRealDataIntoSec1(int hvoSbWord, bool fLookForDefaults, bool fAdjustCase)
 		{
-			// int wsAnalysis = m_caches.MainCache.DefaultAnalWs; // CS0219
 			ITsStrFactory tsf = TsStrFactoryClass.Create();
 			IVwCacheDa cda = (IVwCacheDa)m_caches.DataAccess;
 			if (CurrentAnalysisTree.Analysis == null)
@@ -1291,10 +1318,33 @@ namespace SIL.FieldWorks.IText
 						if (senseReal != null) // either all-the-way real, or default.
 						{
 							// Create the corresponding dummy.
-							int hvoSense = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, senseReal.Hvo,
-																		 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda, tsf);
-							cda.CacheObjProp(hvoMbSec, ktagSbMorphGloss, hvoSense);
-							cda.CacheIntProp(hvoSense, ktagSbNamedObjGuess, fGuessing);
+							int hvoLexSenseSec;
+							// Add any irregularly inflected form type info to the LexGloss.
+							ILexEntryRef lerTest;
+							ILexEntry possibleVariant = null;
+							if (mf != null)
+								possibleVariant = mf.Owner as ILexEntry;
+							if (possibleVariant != null && possibleVariant.IsVariantOfSenseOrOwnerEntry(senseReal, out lerTest))
+							{
+								hvoLexSenseSec = m_caches.FindOrCreateSec(senseReal.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
+								CacheLexGlossWithInflTypeForAllCurrentWs(possibleVariant, hvoLexSenseSec, wsVern, cda, mb.InflTypeRA);
+							}
+							else
+							{
+								// add normal LexGloss without variant info
+								hvoLexSenseSec = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, senseReal.Hvo,
+											 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda, tsf);
+							}
+							cda.CacheObjProp(hvoMbSec, ktagSbMorphGloss, hvoLexSenseSec);
+							cda.CacheIntProp(hvoLexSenseSec, ktagSbNamedObjGuess, fGuessing);
+
+							int hvoInflType = 0;
+							if (mb.InflTypeRA != null)
+							{
+								hvoInflType = m_caches.FindOrCreateSec(mb.InflTypeRA.Hvo,
+														 kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
+							}
+							cda.CacheObjProp(hvoMbSec, ktagSbNamedObjInflType, hvoInflType);
 						}
 
 						// Get the MSA, if any.
@@ -1401,13 +1451,13 @@ namespace SIL.FieldWorks.IText
 			MoveSelectionIcon(new SelLevInfo[0], tag);
 		}
 
-		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoCategory, int flidMain, int hvoSbWord,
+		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoMain, int flidMain, int hvoSbWord,
 			ISilDataAccess sdaMain, IVwCacheDa cda, ITsStrFactory tsf)
 		{
-			int hvoWordPos = m_caches.FindOrCreateSec(hvoCategory,
+			int hvoSec = m_caches.FindOrCreateSec(hvoMain,
 				kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
-			CopyStringsToSecondary(flidChoices, sdaMain, hvoCategory, flidMain, cda, hvoWordPos, ktagSbNamedObjName, tsf);
-			return hvoWordPos;
+			CopyStringsToSecondary(flidChoices, sdaMain, hvoMain, flidMain, cda, hvoSec, ktagSbNamedObjName, tsf);
+			return hvoSec;
 		}
 
 		private int CreateSecondaryAndCopyStrings(int flidChoices, int hvoMain, int flidMain)
@@ -1511,12 +1561,27 @@ namespace SIL.FieldWorks.IText
 		private static void CacheStringAltForAllCurrentWs(IEnumerable<int> currentWsList, IVwCacheDa cda, int hvoSec, int flidSec,
 			ISilDataAccess sdaMain, int hvoMain, int flidMain)
 		{
+			CacheStringAltForAllCurrentWs(currentWsList, cda, hvoSec, flidSec,
+				delegate(int ws1)
+				{
+					ITsString tssMain;
+					if (hvoMain != 0)
+						tssMain = sdaMain.get_MultiStringAlt(hvoMain, flidMain, ws1);
+					else
+						tssMain = TsStringUtils.MakeTss("", ws1);
+					return tssMain;
+				});
+		}
+
+		private static void CacheStringAltForAllCurrentWs(IEnumerable<int> currentWsList, IVwCacheDa cda, int hvoSec, int flidSec,
+			Func<int, ITsString> createStringAlt)
+		{
 			foreach (int ws1 in currentWsList)
 			{
-				ITsString tssMain;
-				if (hvoMain != 0)
-					tssMain = sdaMain.get_MultiStringAlt(hvoMain, flidMain, ws1);
-				else
+				ITsString tssMain = null;
+				if (createStringAlt != null)
+					tssMain = createStringAlt(ws1);
+				if (tssMain == null)
 					tssMain = TsStringUtils.MakeTss("", ws1);
 				cda.CacheStringAlt(hvoSec, flidSec, ws1, tssMain);
 			}
@@ -1674,6 +1739,25 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		private void CacheLexGlossWithInflTypeForAllCurrentWs(ILexEntry possibleVariant, int hvoLexSenseSec, int wsVern, IVwCacheDa cda,
+			ILexEntryInflType inflType)
+		{
+			IList<int> currentAnalysisWsList = m_caches.MainCache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(wsObj => wsObj.Handle).ToArray();
+			CacheStringAltForAllCurrentWs(currentAnalysisWsList, cda, hvoLexSenseSec, ktagSbNamedObjName,
+				delegate(int wsLexGloss)
+					{
+						var hvoSenseReal = m_caches.RealHvo(hvoLexSenseSec);
+						var sense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSenseReal);
+						var spec = m_choices.CreateSpec(InterlinLineChoices.kflidLexGloss, wsLexGloss);
+						var choices = new InterlinLineChoices(Cache, m_choices.m_wsDefVern,
+															m_choices.m_wsDefAnal);
+						choices.Add(spec);
+						ITsString tssResult;
+						return InterlinVc.TryGetLexGlossWithInflTypeTss(possibleVariant, sense, spec, choices, wsVern, inflType, out tssResult) ?
+									tssResult : null;
+					});
+		}
+
 		/// <summary>
 		/// return the wordform that corresponds to the given form, or zero if none.
 		/// </summary>
@@ -1824,7 +1908,7 @@ namespace SIL.FieldWorks.IText
 			m_caches.Map(hvoFormSec, defFormReal.Hvo);
 			// This takes too long! Wait at least for a click in the bundle.
 			//SetSelectedEntry(hvoEntryReal);
-			EstablishDefaultSense(hvoMorph, le, null);
+			EstablishDefaultSense(hvoMorph, le, null, null);
 		}
 
 		/// <summary>
@@ -1870,8 +1954,9 @@ namespace SIL.FieldWorks.IText
 		/// The real database id of the sense to use.  If zero, use the first sense of the entry
 		/// (if there is one) as a default.
 		/// </param>
+		/// <param name="inflType"></param>
 		/// <returns>default (real) sense if we found one, null otherwise.</returns>
-		private ILexSense EstablishDefaultSense(int hvoMorph, ILexEntry entryReal, ILexSense senseReal)
+		private ILexSense EstablishDefaultSense(int hvoMorph, ILexEntry entryReal, ILexSense senseReal, ILexEntryInflType inflType)
 		{
 			CheckDisposed();
 
@@ -1879,8 +1964,16 @@ namespace SIL.FieldWorks.IText
 			// If the entry has no sense we can't do anything.
 			if (entryReal.SensesOS.Count == 0)
 			{
-				Debug.Assert(senseReal == null);
-				variantSense = GetSenseForVariantIfPossible(entryReal);
+				if (senseReal != null)
+				{
+					//if ((entryReal as ILexEntry).IsVariantOfSenseOrOwnerEntry(senseReal, out ler))
+					variantSense = senseReal;
+				}
+				else
+				{
+					variantSense = GetSenseForVariantIfPossible(entryReal);
+				}
+
 				if (variantSense == null)
 					return null; // nothing useful we can do.
 			}
@@ -1899,9 +1992,26 @@ namespace SIL.FieldWorks.IText
 				else
 					defSenseReal = senseReal;
 			}
-			// string gloss = defSenseReal.Gloss.get_String(m_caches.MainCache.DefaultAnalWs).Text; // CS0219
-			int hvoDefSense = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, defSenseReal.Hvo,
-				LexSenseTags.kflidGloss);
+			int hvoDefSense;
+			if (variantSense != null && defSenseReal == variantSense)
+			{
+				hvoDefSense = m_caches.FindOrCreateSec(defSenseReal.Hvo, kclsidSbNamedObj, kSbWord, ktagSbWordDummy);
+				var cda = (IVwCacheDa)m_caches.DataAccess;
+				int wsVern = RawWordformWs;
+				CacheLexGlossWithInflTypeForAllCurrentWs(entryReal, hvoDefSense, wsVern, cda, inflType);
+				int hvoInflType = 0;
+				if (inflType != null)
+					hvoInflType = m_caches.FindOrCreateSec(inflType.Hvo, kclsidSbNamedObj, kSbWord, ktagSbWordDummy);
+				cda.CacheObjProp(hvoMorph, ktagSbNamedObjInflType, hvoInflType);
+				m_caches.DataAccess.PropChanged(m_rootb, (int)PropChangeType.kpctNotifyAll,
+						hvoMorph, ktagSbNamedObjInflType, 0, 1, 0);
+			}
+			else
+			{
+				// add normal LexGloss without variant info
+				hvoDefSense = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, defSenseReal.Hvo,
+					LexSenseTags.kflidGloss);
+			}
 
 			// We're guessing the gloss if we just took the first sense, but if the user chose
 			// one it is definite.
@@ -2735,7 +2845,7 @@ namespace SIL.FieldWorks.IText
 				try
 				{
 					//Debug.WriteLine("hvoReal=" + hvoReal.ToString() + " " + ui.Object.ShortName + "  " + ui.Object.ToString());
-					return rightClickUiObj.HandleRightClick(Mediator, this, true);
+					return rightClickUiObj.HandleRightClick(Mediator, this, true, CmObjectUi.MarkCtrlClickItem);
 				}
 				finally
 				{
@@ -3061,19 +3171,6 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
-// CS0169
-#if false
-		/// <summary>
-		/// Make a selection at the end of the indicated morpheme in the morphs line.
-		/// That is, at the end of the postfix if there is one, otherwise, the end of the form.
-		/// </summary>
-		/// <param name="index"></param>
-		private void SelectAtEndOfMorph(int index)
-		{
-			SelectAtEndOfMorph(index, 0);
-		}
-#endif
-
 		private void SelectAtEndOfMorph(int index, int cPrevOccurrences)
 		{
 			ISilDataAccess sda = m_caches.DataAccess;
@@ -3372,7 +3469,7 @@ namespace SIL.FieldWorks.IText
 		/// the original m_hvoAnalysis. May become zero, if the user chooses an alternate case form
 		/// that currently does not exist as a WfiWordform.
 		/// </summary>
-		AnalysisTree CurrentAnalysisTree
+		internal AnalysisTree CurrentAnalysisTree
 		{
 			get; set;
 		}
@@ -4081,7 +4178,6 @@ namespace SIL.FieldWorks.IText
 				int ihvoEnd;
 				ITsTextProps ttpBogus;
 				// Main array of information retrived from sel that made combo.
-				// SelLevInfo[] rgvsli = // CS0219
 				SelLevInfo.AllTextSelInfo(sel, cvsli,
 					out ihvoRoot, out tagRightClickTextProp, out cpropPrevious, out ichAnchor, out ichEnd,
 					out ws, out fAssocPrev, out ihvoEnd, out ttpBogus);
@@ -4092,37 +4188,8 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					ITsString tss;
-					int ichAnchorDum;
-					int hvoRightClickObject = 0;
-					sel.TextSelInfo(false, out tss, out ichAnchorDum, out fAssocPrev,
-						out hvoRightClickObject, out tagRightClickTextProp, out ws);
-					switch (tagRightClickTextProp)
-					{
-						case ktagSbMorphPrefix:
-						case ktagSbMorphPostfix:
-							m_hvoRightClickMorph = hvoRightClickObject;
-							// Pretend we clicked on the morph form.  (See LT-7590.)
-							hvoRightClickObject = Caches.DataAccess.get_ObjectProp(hvoRightClickObject, ktagSbMorphForm);
-							break;
-						case ktagSbNamedObjName:
-							if (sel.CLevels(false) < 2)
-								break;
-							int hvoOuterObj, tagOuter, ihvoOuter, cpropPreviousOuter;
-							IVwPropertyStore vpsDummy;
-							sel.PropInfo(false, 1, out hvoOuterObj, out tagOuter, out ihvoOuter, out cpropPreviousOuter, out vpsDummy);
-							if (tagOuter == ktagSbMorphGloss || tagOuter == ktagSbMorphPos || tagOuter == ktagSbMorphForm
-								|| tagOuter == ktagSbMorphEntry)
-							{
-								m_hvoRightClickMorph = hvoOuterObj;
-							}
-							break;
-						default:
-							m_hvoRightClickMorph = 0;
-							break;
-					}
-
-					int hvoReal = m_caches.RealHvo(hvoRightClickObject);
+					int hvoReal;
+					tagRightClickTextProp = GetInfoForJumpToTool(sel, out hvoReal);
 					if (hvoReal != 0)
 					{
 						//IxCoreColleague spellingColleague = null;
@@ -4149,6 +4216,67 @@ namespace SIL.FieldWorks.IText
 			}
 			//			}
 			return base.OnRightMouseUp(pt, rcSrcRoot, rcDstRoot);
+		}
+
+		/// <summary>
+		/// Given a selection (typically from a click), determine the object that should be the target for jumping to,
+		/// and return the property that was clicked (which in the case of a right-click may generate a spelling menu instead).
+		/// </summary>
+		/// <param name="sel"></param>
+		/// <param name="hvoReal"></param>
+		/// <returns></returns>
+		private int GetInfoForJumpToTool(IVwSelection sel, out int hvoReal)
+		{
+			int ws;
+			int tagRightClickTextProp;
+			bool fAssocPrev;
+			ITsString tss;
+			int ichAnchorDum;
+			int hvoRightClickObject = 0;
+			sel.TextSelInfo(false, out tss, out ichAnchorDum, out fAssocPrev,
+				out hvoRightClickObject, out tagRightClickTextProp, out ws);
+			switch (tagRightClickTextProp)
+			{
+				case ktagSbMorphPrefix:
+				case ktagSbMorphPostfix:
+					m_hvoRightClickMorph = hvoRightClickObject;
+					// Pretend we clicked on the morph form.  (See LT-7590.)
+					hvoRightClickObject = Caches.DataAccess.get_ObjectProp(hvoRightClickObject, ktagSbMorphForm);
+					break;
+				case ktagSbNamedObjName:
+					if (sel.CLevels(false) < 2)
+						break;
+					int hvoOuterObj, tagOuter, ihvoOuter, cpropPreviousOuter;
+					IVwPropertyStore vpsDummy;
+					sel.PropInfo(false, 1, out hvoOuterObj, out tagOuter, out ihvoOuter, out cpropPreviousOuter, out vpsDummy);
+					if (tagOuter == ktagSbMorphGloss || tagOuter == ktagSbMorphPos || tagOuter == ktagSbMorphForm
+						|| tagOuter == ktagSbMorphEntry)
+					{
+						m_hvoRightClickMorph = hvoOuterObj;
+					}
+					break;
+				default:
+					m_hvoRightClickMorph = 0;
+					break;
+			}
+
+			hvoReal = m_caches.RealHvo(hvoRightClickObject);
+			return tagRightClickTextProp;
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			base.OnMouseUp(e);
+			if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+			{
+				// Control-click: take the first jump-to-tool command from the right-click menu for this location.
+				// Create a selection where we right clicked
+				IVwSelection sel = GetSelectionAtPoint(new Point(e.X, e.Y), false);
+				int hvoTarget;
+				GetInfoForJumpToTool(sel, out hvoTarget);
+				CmObjectUi targetUiObj = CmObjectUi.MakeUi(Cache, hvoTarget);
+				targetUiObj.HandleCtrlClick(Mediator, this);
+			}
 		}
 
 		public virtual bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
@@ -4264,9 +4392,11 @@ namespace SIL.FieldWorks.IText
 		private int GetMostPromisingEntry()
 		{
 			ITsString wordform = m_caches.DataAccess.get_MultiStringAlt(kSbWord, ktagSbWordForm, RawWordformWs);
-			List<ILexEntry> homographs =
+			List<ILexEntry> homographs = null;
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, () => { homographs =
 				Cache.ServiceLocator.GetInstance<ILexEntryRepository>().CollectHomographs(wordform.Text,
 					Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem));
+				});
 			if (homographs.Count == 0)
 				return 0;
 			else

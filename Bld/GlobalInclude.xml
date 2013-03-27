@@ -4,13 +4,13 @@
 <include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
 	<pre-init>
 		<property name="FWMAJOR" value="7"/>
-		<property name="FWMINOR" value="2"/>
-		<property name="FWREVISION" value="7"/>
+		<property name="FWMINOR" value="3"/>
+		<property name="FWREVISION" value="1"/>
 		<property name="TEVERSION" value="7"/>
-		<property name="TEMILESTONE" value="2"/>
-		<property name="TEREVISION" value="7"/>
+		<property name="TEMILESTONE" value="3"/>
+		<property name="TEREVISION" value="1"/>
 		<property name="LTMAJOR" value="7"/>
-		<property name="LTMINOR" value="2"/>
-		<property name="LTREVISION" value="7"/>
+		<property name="LTMINOR" value="3"/>
+		<property name="LTREVISION" value="1"/>
 	</pre-init>
 </include>

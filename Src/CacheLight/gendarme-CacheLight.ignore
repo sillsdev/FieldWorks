@@ -1,0 +1,7 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Variable is disposed in Dispose()
+M: SIL.FieldWorks.Common.COMInterfaces.ISilDataAccess SIL.FieldWorks.CacheLight.RealCacheLoader::LoadCache(System.String,System.String,System.Collections.Generic.Dictionary`2<System.Int32,System.Int32>)

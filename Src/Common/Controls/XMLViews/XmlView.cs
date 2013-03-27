@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.Common.Controls
 			IApp app = null;
 			if (m_mediator != null && m_mediator.PropertyTable != null)
 				app = m_mediator.PropertyTable.GetValue("App") as IApp;
-			m_xmlVc = new XmlVc(StringTbl, m_layoutName, m_fEditable, this, app);
+			m_xmlVc = new XmlVc(StringTbl, m_layoutName, m_fEditable, this, app, m_sda);
 			m_xmlVc.Cache = m_fdoCache;
 			m_xmlVc.DataAccess = m_sda; // let it use the decorator if any.
 

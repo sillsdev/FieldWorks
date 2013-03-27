@@ -233,8 +233,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwUserProperties));
 			System.Windows.Forms.Button btnCancel;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FwUserProperties));
 			System.Windows.Forms.Label lblConfirmPwd2;
 			System.Windows.Forms.Label lblPassword;
 			System.Windows.Forms.Label lblDescription;
@@ -292,23 +292,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.grpDataDescription.SuspendLayout();
 			this.SuspendLayout();
 			//
-			// btnOk
-			//
-			resources.ApplyResources(this.btnOk, "btnOk");
-			this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.btnOk.Name = "btnOk";
-			this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
-			//
 			// btnCancel
 			//
 			resources.ApplyResources(btnCancel, "btnCancel");
 			btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			btnCancel.Name = "btnCancel";
-			//
-			// lblMaintenanceAccess
-			//
-			resources.ApplyResources(this.lblMaintenanceAccess, "lblMaintenanceAccess");
-			this.lblMaintenanceAccess.Name = "lblMaintenanceAccess";
 			//
 			// lblConfirmPwd2
 			//
@@ -319,11 +307,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			resources.ApplyResources(lblPassword, "lblPassword");
 			lblPassword.Name = "lblPassword";
-			//
-			// lblPasswordGroup
-			//
-			resources.ApplyResources(this.lblPasswordGroup, "lblPasswordGroup");
-			this.lblPasswordGroup.Name = "lblPasswordGroup";
 			//
 			// lblDescription
 			//
@@ -361,6 +344,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(btnHelp, "btnHelp");
 			btnHelp.Name = "btnHelp";
 			btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+			//
+			// btnOk
+			//
+			resources.ApplyResources(this.btnOk, "btnOk");
+			this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.btnOk.Name = "btnOk";
+			this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+			//
+			// lblMaintenanceAccess
+			//
+			resources.ApplyResources(this.lblMaintenanceAccess, "lblMaintenanceAccess");
+			this.lblMaintenanceAccess.Name = "lblMaintenanceAccess";
+			//
+			// lblPasswordGroup
+			//
+			resources.ApplyResources(this.lblPasswordGroup, "lblPasswordGroup");
+			this.lblPasswordGroup.Name = "lblPasswordGroup";
 			//
 			// FaceImages
 			//
@@ -469,12 +469,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// lblSelectFeatures
 			//
+			this.lblSelectFeatures.AccessibleDescription = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			resources.ApplyResources(this.lblSelectFeatures, "lblSelectFeatures");
 			this.lblSelectFeatures.Name = "lblSelectFeatures";
 			this.lblSelectFeatures.Tag = "Select the features to make available for {0}.";
 			//
 			// cboApplication
 			//
+			this.cboApplication.AllowSpaceInEditBox = false;
 			this.cboApplication.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this.cboApplication.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			resources.ApplyResources(this.cboApplication, "cboApplication");
@@ -550,12 +552,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.lvwUsers.Sorting = System.Windows.Forms.SortOrder.Ascending;
 			this.lvwUsers.UseCompatibleStateImageBehavior = false;
 			this.lvwUsers.View = System.Windows.Forms.View.Details;
-			this.lvwUsers.SelectedIndexChanged += new System.EventHandler(this.lvwUsers_SelectedIndexChanged);
 			this.lvwUsers.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lvwUsers_AfterLabelEdit);
+			this.lvwUsers.SelectedIndexChanged += new System.EventHandler(this.lvwUsers_SelectedIndexChanged);
 			this.lvwUsers.Leave += new System.EventHandler(this.lvwUsers_Leave);
 			//
 			// user
 			//
+			this.user.Text = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			resources.ApplyResources(this.user, "user");
 			//
 			// btnDelete
@@ -568,6 +571,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.btnOk;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
 			this.Controls.Add(btnHelp);
 			this.Controls.Add(lblUsers);

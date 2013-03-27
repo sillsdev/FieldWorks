@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 
 namespace SIL.Utils
 {
@@ -41,5 +42,25 @@ namespace SIL.Utils
 				};
 			}
 		}
+
+		/// <summary>
+		/// Check for non-Ascii characters in a string. Returns 'true' if it finds any
+		/// characters outside of the normal Ascii range.
+		/// </summary>
+		public static bool CheckForNonAsciiCharacters(string inputString)
+		{
+			return Regex.IsMatch(inputString, @"[^\u0000-\u007F]");
+		}
+
+		/// <summary>
+		/// Removes any non-Ascii characters from a string. Returns the resulting string.
+		/// </summary>
+		public static string RemoveNonAsciiCharsFromString(string inputString)
+		{
+			if (string.IsNullOrEmpty(inputString))
+				return string.Empty;
+			return Regex.Replace(inputString, @"[^\u0000-\u007F]", string.Empty, RegexOptions.CultureInvariant);
+		}
+
 	}
 }

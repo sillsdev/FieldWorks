@@ -270,8 +270,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		}
 
 		/// <summary>
-		/// Test undo/redo for normal unicode properties
-		/// (kcptUnicode or kcptBigUnicode).
+		/// Test undo/redo for normal unicode properties (kcptUnicode).
 		/// </summary>
 		[Test]
 		public void kcptUnicodeTests()
@@ -600,8 +599,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		}
 
 		/// <summary>
-		/// Test undo/redo for normal ITsString properties
-		/// (kcptString or kcptBigString).
+		/// Test undo/redo for normal ITsString properties (kcptString).
 		/// </summary>
 		[Test]
 		public void kcptStringTests()
@@ -1645,7 +1643,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 			UndoableUnitOfWorkHelper.Do("Undo create text", "Redo create text", m_actionHandler, () =>
 			{
 				text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-				lp.TextsOC.Add(text);
+				//lp.TextsOC.Add(text);
 				stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				text.ContentsOA = stText;
 				para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
@@ -2014,7 +2012,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 				() =>
 				{
 					text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-					Cache.LangProject.TextsOC.Add(text);
+					//Cache.LangProject.TextsOC.Add(text);
 					 stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 					text.ContentsOA = stText;
 				   var paraFactory = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>();

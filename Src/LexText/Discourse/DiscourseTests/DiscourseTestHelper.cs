@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Discourse
 			#endregion
 
 			m_text = m_servLoc.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(m_text);
+			//Cache.LangProject.TextsOC.Add(m_text);
 			m_stText = m_servLoc.GetInstance<IStTextFactory>().Create();
 			m_text.ContentsOA = m_stText;
 			m_allOccurrences = new Dictionary<IStTxtPara, AnalysisOccurrence[]>();
@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var servLoc = Cache.ServiceLocator;
 			var mainTextObj = servLoc.GetInstance<ITextFactory>().Create();
-			Cache.LanguageProject.TextsOC.Add(mainTextObj);
+			//Cache.LanguageProject.TextsOC.Add(mainTextObj);
 			var strangeText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			mainTextObj.ContentsOA = strangeText;
 			return strangeText;

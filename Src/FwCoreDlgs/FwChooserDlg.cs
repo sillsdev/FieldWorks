@@ -15,6 +15,7 @@ using System;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Controls;
@@ -237,6 +238,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.btnOk;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
 			this.Controls.Add(this.lblInfo);
 			this.Controls.Add(this.btnHelp);
@@ -350,12 +352,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Get the registry key for this dialog.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public virtual RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return m_projSettingsKey.ProjectSpecificSettingsKey.CreateSubKey(@"List Chooser");
+				using (var regKey = m_projSettingsKey.ProjectSpecificSettingsKey)
+				{
+					return regKey.CreateSubKey(@"List Chooser");
+				}
 			}
 		}
 

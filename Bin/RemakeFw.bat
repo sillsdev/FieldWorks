@@ -1,6 +1,6 @@
 rem Completely rebuild FieldWorks (Bounds, Debug, or Release version) and test databases
 rem First parameter is build configuration: d (default), b, r
-rem Second parameter is build action: buildtest (default), build, test, clean, register, unregister, forcetests, cc, i
+rem Second parameter is build action: build (default), test, clean
 
 @if "%_echo%"=="" echo off
 set FW_BUILD_ERROR=0
@@ -9,20 +9,16 @@ if not "%OS%"=="" setlocal
 call %0\..\_EnsureRoot.bat
 
 set CONFIG=
-if "%1"=="" set CONFIG=debug
-if "%1"=="b" set CONFIG=bounds
-if "%1"=="d" set CONFIG=debug
-if "%1"=="r" set CONFIG=release
+if "%1"=="b" set CONFIG=/property:config=bounds
+if "%1"=="r" set CONFIG=/property:config=release
 
-set ACTION=%2
-if "%2"=="" set ACTION=buildtest
-
-rem Can't call vcvars32.bat because it gives wrong order for include files.
-rem call vcvars32.bat
+set ACTION=
+if "%2"=="test" set ACTION=/property:action=test
+if "%2"=="clean" set ACTION=/property:action=clean
 
 rem Delete WhatsThisHelp from GAC
 gacutil /u WhatsThisHelp
 
-cd %FWROOT%\Bld
+cd %FWROOT%\Build
 
-%FWROOT%\bin\nant\bin\nant -t:net-3.5 %CONFIG% %ACTION% remakefw
+msbuild.exe /t:remakefw %CONFIG% %ACTION%

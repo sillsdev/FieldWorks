@@ -33,7 +33,7 @@ namespace XMLViewsTests
 				FieldDescription custom = new FieldDescription(Cache);
 				custom.Class = LexEntryTags.kClassId;
 				custom.Name = "MyRestrictions";
-				custom.Type = CellarPropertyType.MultiBigString;
+				custom.Type = CellarPropertyType.MultiString;
 				custom.WsSelector = (int)WritingSystemServices.kwsAnalVerns;
 				custom.Userlabel = "MyRestrictions";
 				custom.UpdateCustomField();

@@ -932,6 +932,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case kfragRHS:
 					m_rhs = m_cache.ServiceLocator.GetInstance<IPhSegRuleRHSRepository>().GetObject(hvo);
 					var rule = m_rhs.OwningRule;
+					if (rule.Disabled)
+					{
+						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, "Disabled Text");
+					}
 
 					int arrowWidth, slashWidth, underscoreWidth, charHeight;
 					vwenv.get_StringWidth(m_arrow, m_charProps, out arrowWidth, out charHeight);

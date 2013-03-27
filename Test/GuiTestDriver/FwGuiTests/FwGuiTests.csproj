@@ -4,9 +4,6 @@
 	<ProductVersion>8.0.50727</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{5E44AEC0-9E5E-47D5-9B0F-F14F3F465FA1}</ProjectGuid>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>.</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ApplicationIcon>

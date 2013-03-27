@@ -34,6 +34,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using System.Reflection;
 using System.Globalization;
 using SIL.FieldWorks.Common.RootSites;
@@ -68,8 +69,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		private IStTxtParaFactory m_factPara;
 		private ICmPossibilityListRepository m_repoList;
 
-		bool m_fCanceling = false;
-		bool m_fDirtySettings = false;
+		private bool m_fCanceling = false;
+		private bool m_fDirtySettings = false;
+		private OpenFileDialogAdapter openFileDialog;
 
 		/// <summary>
 		/// This class defines an encapsulation of factories for ICmPossibility and its
@@ -702,6 +704,9 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		public NotebookImportWiz()
 		{
 			InitializeComponent();
+
+			openFileDialog = new OpenFileDialogAdapter();
+
 			m_sStdImportMap = String.Format(DirectoryFinder.FWCodeDirectory +
 				"{0}Language Explorer{0}Import{0}NotesImport.map", Path.DirectorySeparatorChar);
 			m_ExtraButtonLeft = m_btnBack.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
@@ -710,6 +715,11 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			m_btnQuickFinish.Left = m_OriginalCancelButtonLeft;
 			m_btnCancel.Visible = true;
 			m_sFmtEncCnvLabel = lblMappingLanguagesInstructions.Text;
+
+			// Need to align SaveMapFile and QuickFinish to top of other dialog buttons (FWNX-833)
+			int normalDialogButtonTop = m_btnHelp.Top;
+			m_btnQuickFinish.Top = normalDialogButtonTop;
+			m_btnSaveMapFile.Top = normalDialogButtonTop;
 
 			// Disable all buttons that are enabled only by a selection being made in a list
 			// view.
@@ -1041,12 +1051,16 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			base.OnResize(e);
 			// The wizard base class redraws the controls, so move the cancel button after it's
 			// done ...
+			m_OriginalCancelButtonLeft = m_btnHelp.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
 			if (m_btnQuickFinish != null && m_btnBack != null && m_btnCancel != null &&
 				m_OriginalCancelButtonLeft != 0)
 			{
 				m_ExtraButtonLeft = m_btnBack.Left - (m_btnCancel.Width + kdxpCancelHelpButtonGap);
 				if (m_btnQuickFinish.Visible)
+				{
+					m_btnQuickFinish.Left = m_OriginalCancelButtonLeft;
 					m_btnCancel.Left = m_ExtraButtonLeft;
+				}
 				else
 					m_btnCancel.Left = m_OriginalCancelButtonLeft;
 			}
@@ -1503,18 +1517,14 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							break;
 					}
 					return SfFieldType.Invalid;
-				case CellarPropertyType.MultiBigString:
-				case CellarPropertyType.MultiBigUnicode:
 				case CellarPropertyType.MultiString:
 				case CellarPropertyType.MultiUnicode:
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					return SfFieldType.String;
 				case CellarPropertyType.GenDate:
 				case CellarPropertyType.Time:
 					return SfFieldType.DateTime;
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigUnicode:
 				case CellarPropertyType.Binary:
 				case CellarPropertyType.Image:
 				case CellarPropertyType.Boolean:
@@ -1590,6 +1600,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			}
 			NextButtonEnabled = true;	// make sure it's enabled if we go back from generated report
 			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
+			OnResize(null);
 		}
 
 		protected override void OnNextButton()
@@ -1600,6 +1611,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 			PrepareForNextTab(CurrentStepNumber);
 			NextButtonEnabled = EnableNextButton();
 			AllowQuickFinishButton();		// make it visible if needed, or hidden if not
+			OnResize(null);
 		}
 
 		private void PrepareForNextTab(int nCurrent)
@@ -2153,11 +2165,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							clidDest = m_mdc.GetDstClsId(sfm.m_flid);
 							Debug.Assert(clidDest == RnGenericRecTags.kClassId);
 							break;
-						case CellarPropertyType.MultiBigString:
-						case CellarPropertyType.MultiBigUnicode:
 						case CellarPropertyType.MultiString:
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.BigString:
 						case CellarPropertyType.String:
 							foreach (XmlNode xn in xnMarker.SelectNodes("./StringWrtSys"))
 							{
@@ -2165,7 +2174,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							}
 							break;
 						// The following types do not occur in RnGenericRec fields.
-						case CellarPropertyType.BigUnicode:
 						case CellarPropertyType.Binary:
 						case CellarPropertyType.Boolean:
 						case CellarPropertyType.Float:
@@ -2348,9 +2356,15 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			if (m_viewProcess == null || m_viewProcess.HasExited)
 			{
-				m_viewProcess = Process.Start(
-					Path.Combine(DirectoryFinder.FWCodeDirectory, "ZEdit.exe"),
-					m_sSfmDataFile);
+				if (MiscUtils.IsUnix)
+					// Open SFM file from users default text editor (FWNX-834)
+					m_viewProcess = Process.Start(
+						"xdg-open",
+						m_sSfmDataFile);
+				else
+					m_viewProcess = Process.Start(
+						Path.Combine(DirectoryFinder.FWCodeDirectory, "ZEdit.exe"),
+						m_sSfmDataFile);
 			}
 		}
 
@@ -2466,7 +2480,11 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					m_sLogFile = (string)progressDlg.RunTask(true, ImportStdFmtFile,
 						m_sSfmDataFile);
 					if (m_chkDisplayImportReport.Checked && !String.IsNullOrEmpty(m_sLogFile))
-						Process.Start(m_sLogFile);
+					{
+						using (Process.Start(m_sLogFile))
+						{
+						}
+					}
 				}
 			}
 		}
@@ -2591,11 +2609,8 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 								}
 								break;
 							case CellarPropertyType.MultiString:
-							case CellarPropertyType.MultiBigString:
 							case CellarPropertyType.MultiUnicode:
-							case CellarPropertyType.MultiBigUnicode:
 							case CellarPropertyType.String:
-							case CellarPropertyType.BigString:
 								SetStringValue(rec, rsf, field, cpt);
 								break;
 							case CellarPropertyType.GenDate:
@@ -2605,7 +2620,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 								SetDateTimeValue(rec, rsf, field);
 								break;
 							case CellarPropertyType.Unicode:
-							case CellarPropertyType.BigUnicode:
 							case CellarPropertyType.Binary:
 							case CellarPropertyType.Image:
 							case CellarPropertyType.Boolean:
@@ -3200,13 +3214,10 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					switch (cpt)
 					{
 						case CellarPropertyType.MultiString:
-						case CellarPropertyType.MultiBigString:
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiBigUnicode:
 							m_cache.DomainDataByFlid.SetMultiStringAlt(rec.Hvo, rsf.m_flid, rsf.m_sto.m_ws.Handle, tss);
 							break;
 						case CellarPropertyType.String:
-						case CellarPropertyType.BigString:
 							m_cache.DomainDataByFlid.SetString(rec.Hvo, rsf.m_flid, tss);
 							break;
 					}

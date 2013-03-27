@@ -14,7 +14,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
-
+using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SILUBS.SharedScrUtils;
@@ -262,10 +262,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				return ((IScrBook)section.Owner).FindPrevFootnote(ref iSection, ref iPara,
 					ref ich, ref flid);
 			}
-			else if (text.Owner is IScrBook) // Title of a book
-				return (IScrFootnote)text.FindPreviousFootnote(ref iPara, ref ich, true);
-			else
-				throw new InvalidOperationException("Footnotes should only be found in Scripture Book titles, section heads, and contents");
+
+			if (text.Owner is IScrBook) // Title of a book
+				return text.FindPreviousFootnote(ref iPara, ref ich, true);
+
+			throw new InvalidOperationException("Footnotes should only be found in Scripture Book titles, section heads, and contents");
 		}
 		#endregion
 
@@ -2070,7 +2071,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// If there's no (vernacular) paragraph with an ORC that references this
 				// footnote, there can't be a translation either.
 				if (para != null && para.IsValidObject)
-					para.DeleteAnyBtMarkersForFootnote(footnote.Guid);
+					para.DeleteAnyBtMarkersForObject(footnote.Guid);
 				book.FootnotesOS.Remove(footnote);
 			}
 		}
@@ -2100,6 +2101,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <returns>An enumerator for getting the verses from this paragraph</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public virtual IEnumerator GetEnumerator()
 		{
 			return new ScrVerseSet(this, true);

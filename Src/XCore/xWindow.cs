@@ -16,20 +16,21 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml;
-using System.IO;
-using System.Reflection;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-
-using SIL.Utils;
+using System.Xml;
 using Microsoft.Win32;
+using SIL.Utils;
+
 
 namespace XCore
 {
@@ -37,10 +38,6 @@ namespace XCore
 	/// XWindow is a window which is configured with XML file.
 	/// </summary>
 	public class XWindow : Form, IFWDisposable, IxCoreColleague, IxWindow
-#if __MonoCS__
-	, IRaiseASyncMessages
-#endif
-
 	{
 		#region Data members
 		/// <summary>
@@ -968,10 +965,24 @@ namespace XCore
 			TemporaryColleagueParameter temporaryColleagueParam,
 			MessageSequencer sequencer)
 		{
+			ShowContextMenu(menuId, location, temporaryColleagueParam, sequencer, null);
+		}
+
+		/// <summary>
+		/// Get a context menu for the specified menu id, and in addition.
+		/// </summary>
+		/// <param name="menuId"></param>
+		/// <param name="group"></param>
+		/// <param name="actModal">don't return until the popup is closed</param>
+		/// <returns></returns>
+		public void ShowContextMenu(string menuId, Point location,
+			TemporaryColleagueParameter temporaryColleagueParam,
+			MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu)
+		{
 			CheckDisposed();
 
 			ChoiceGroup group = GetChoiceGroupForMenu(menuId);
-			((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer);
+			((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer, adjustMenu);
 		}
 
 		/// <summary>
@@ -1459,6 +1470,8 @@ namespace XCore
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="TabStop is not implemented on Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
@@ -1543,8 +1556,7 @@ namespace XCore
 			this.AccessibleDescription = "The main window";
 			this.AccessibleName = "The Window";
 			this.AccessibleRole = System.Windows.Forms.AccessibleRole.Window;
-			//this.AutoScaleMode = AutoScaleMode.None;
-			this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(873, 569);
 			this.Controls.Add(this.m_mainSplitContainer);
 			this.KeyPreview = true;
@@ -1564,21 +1576,6 @@ namespace XCore
 
 		}
 		#endregion
-
-#if __MonoCS__
-		protected delegate void WndProcDelegate(ref Message m);
-
-		#region IRaiseASyncMessages methods
-
-		public void SimulatePostMessage(ref Message m)
-		{
-			object[] paramArray = new object[1];
-			paramArray[0] = m;
-			this.BeginInvoke(new XCore.XWindow.WndProcDelegate(WndProc), paramArray);
-		}
-
-		#endregion
-#endif
 
 		#region Overrides
 
@@ -1816,6 +1813,8 @@ namespace XCore
 			//m_mediator.AllowCommandsToExecute = true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public void SynchronizedOnIdleTime()
 		{
 			CheckDisposed();

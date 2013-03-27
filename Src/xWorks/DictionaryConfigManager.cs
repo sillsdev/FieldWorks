@@ -36,9 +36,6 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly IDictConfigViewer m_viewer;
 
-		private readonly Mediator m_mediator;
-		private readonly FdoCache m_cache;
-
 		private Inventory m_layouts;
 		private Inventory m_parts;
 		protected Dictionary<string, DictConfigItem> m_configList;

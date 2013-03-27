@@ -1,153 +1,183 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>9.0.30729</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{FDC406A8-7208-4EE2-BABF-BF2EBC9B9F55}</ProjectGuid>
-	<OutputType>Library</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>SIL.FieldWorks.TE.TePrintLayoutComponents</RootNamespace>
-	<AssemblyName>TePrintLayoutComponentsTests</AssemblyName>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>..\..</SccLocalPath>
-	<SccAuxPath>
-	</SccAuxPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
-	<FileUpgradeFlags>
-	</FileUpgradeFlags>
-	<OldToolsVersion>2.0</OldToolsVersion>
-	<UpgradeBackupLocation>
-	</UpgradeBackupLocation>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FDC406A8-7208-4EE2-BABF-BF2EBC9B9F55}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SIL.FieldWorks.TE.TePrintLayoutComponents</RootNamespace>
+    <AssemblyName>TePrintLayoutComponentsTests</AssemblyName>
+    <SccProjectName></SccProjectName>
+    <SccLocalPath></SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider></SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>..\..\..\..\Output\Debug\TePrintLayoutComponentsTests.xml</DocumentationFile>
-	<ErrorReport>prompt</ErrorReport>
-	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\..\..\..\Output\Debug\TePrintLayoutComponentsTests.xml</DocumentationFile>
+    <ErrorReport>prompt</ErrorReport>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<WarningLevel>4</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="BasicUtils, Version=4.2.1.16134, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfaces, Version=4.2.1.14991, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfacesTests, Version=6.1.1.14450, Culture=neutral, processorArchitecture=x86">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
-	</Reference>
-	<Reference Include="FDO, Version=4.2.1.19785, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
-	</Reference>
-	<Reference Include="FDOTests, Version=4.2.1.23844, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
-	</Reference>
-	<Reference Include="Framework, Version=4.3.0.29859, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
-	</Reference>
-	<Reference Include="FwControls, Version=4.2.1.19780, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>
-	</Reference>
-	<Reference Include="FwCoreDlgControls, Version=4.2.1.25327, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
-	</Reference>
-	<Reference Include="FwPrintLayoutComponents, Version=4.3.0.25598, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\FwPrintLayoutComponents.dll</HintPath>
-	</Reference>
-	<Reference Include="FwResources, Version=4.2.1.19071, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
-	</Reference>
-	<Reference Include="FwUtils, Version=6.1.0.36722, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-	</Reference>
-	<Reference Include="PrintLayout, Version=4.2.1.25392, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\PrintLayout.dll</HintPath>
-	</Reference>
-	<Reference Include="RootSite, Version=6.1.1.30071, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
-	</Reference>
-	<Reference Include="SilUtils, Version=6.9.5.32037, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="SimpleRootSite, Version=6.1.1.19011, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-	</Reference>
-	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Data" />
-	<Reference Include="System.Drawing" />
-	<Reference Include="System.Windows.Forms" />
-	<Reference Include="System.Xml" />
-	<Reference Include="nunit.framework">
-	  <Name>nunit.framework</Name>
-	  <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
-	</Reference>
-	<Reference Include="TePrintLayoutComponents, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\TePrintLayoutComponents.dll</HintPath>
-	</Reference>
-	<Reference Include="TeRegistrySettings, Version=6.9.5.32380, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="TeResources, Version=4.2.1.25375, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\TeResources.dll</HintPath>
-	</Reference>
-	<Reference Include="TestUtils, Version=4.2.1.19776, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="xCoreInterfaces, Version=6.1.1.29568, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-	</Reference>
+    <Reference Include="BasicUtils, Version=4.2.1.16134, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfaces, Version=4.2.1.14991, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfacesTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+    </Reference>
+    <Reference Include="FDO, Version=4.2.1.19785, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
+    <Reference Include="FDOTests, Version=4.2.1.23844, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FDOTests.dll</HintPath>
+    </Reference>
+    <Reference Include="Framework, Version=4.3.0.29859, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="FwControls, Version=4.2.1.19780, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwControls.dll</HintPath>
+    </Reference>
+    <Reference Include="FwCoreDlgControls, Version=4.2.1.25327, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwCoreDlgControls.dll</HintPath>
+    </Reference>
+    <Reference Include="FwPrintLayoutComponents, Version=4.3.0.25598, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwPrintLayoutComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="FwResources, Version=4.2.1.19071, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils, Version=6.1.0.36722, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="RootSite, Version=6.1.1.30071, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils, Version=6.9.5.32037, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="SimpleRootSite, Version=6.1.1.19011, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="nunit.framework">
+      <Name>nunit.framework</Name>
+      <HintPath>..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="TePrintLayoutComponents, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\TePrintLayoutComponents.dll</HintPath>
+    </Reference>
+    <Reference Include="TeRegistrySettings, Version=6.9.5.32380, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="TestUtils, Version=4.2.1.19776, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\TestUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="xCoreInterfaces, Version=6.1.1.29568, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="App.config" />
-	<Compile Include="..\..\TeViewConstructors\TeViewConstructorsTests\SetupFixtureClass.cs">
-	  <Link>SetupFixtureClass.cs</Link>
-	</Compile>
-	<Compile Include="TePageDialogTests.cs">
-	  <SubType>Form</SubType>
-	</Compile>
+    <None Include="App.config" />
+    <Compile Include="..\..\..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfoForTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\TeViewConstructors\TeViewConstructorsTests\SetupFixtureClass.cs">
+      <Link>SetupFixtureClass.cs</Link>
+    </Compile>
+    <Compile Include="TePageDialogTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

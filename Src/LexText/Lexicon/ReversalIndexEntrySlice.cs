@@ -250,6 +250,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					menu.Show(this, e.MouseLocation);
 				}
 
+			protected override void OnMouseUp(MouseEventArgs e)
+			{
+				base.OnMouseUp(e);
+				if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+				{
+					// Control-click: go straight to the indicated object.
+					OnShowInReversalIndex(this, new EventArgs());
+				}
+			}
+
 			private void OnShowInReversalIndex(object sender, EventArgs e)
 			{
 				TextSelInfo tsi = new TextSelInfo(m_rootb);

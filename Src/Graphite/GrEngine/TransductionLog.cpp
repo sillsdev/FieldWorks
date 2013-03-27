@@ -297,7 +297,7 @@ void GrTableManager::LogUnderlying(std::ostream & strmOut, GrCharStream * pchstr
 			default: chw = 0;
 			}
 			if (chw == 0)
-				strmOut << "       ";
+				strmOut << ".      ";
 			else
 				LogHexInTable(strmOut, chw);
 		}
@@ -315,7 +315,7 @@ void GrTableManager::LogUnderlying(std::ostream & strmOut, GrCharStream * pchstr
 			strmOut << "|" << crun << ((crun < 10) ? "     " : "    ");
 		}
 		else
-			strmOut << "       ";
+			strmOut << ".      ";
 	}
 	strmOut << "\n";
 
@@ -594,7 +594,7 @@ void GrTableManager::LogPassOutput(std::ostream & strmOut, int ipass, int cslotS
 			if (pslotTmp->GlyphID() != pslotTmp->ActualGlyphForOutput(this))
 				LogHexInTable(strmOut, pslotTmp->ActualGlyphForOutput(this));
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -714,7 +714,7 @@ void PassState::LogInsertionsAndDeletions(std::ostream & strmOut, GrSlotStream *
 				strmOut << "  DEL  ";
 		}
 		else
-			strmOut << "       ";
+			strmOut << ".      ";
 	}
 
 	strmOut << "\n";
@@ -771,7 +771,7 @@ void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
 		strmOut << "\n";
 
 		//	Log final direction level for bidi pass.
-		strmOut << "dir level      ";
+		strmOut << "dir level:     ";
 		for (islot = 0; islot < psstrm->WritePos(); islot++)
 		{
 			GrSlotState * pslot = psstrm->SlotAt(islot);
@@ -841,6 +841,8 @@ void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
 					break;
 				case kslatShiftX:		strmOut << "shift.x        "; break;
 				case kslatShiftY:		strmOut << "shift.y        "; break;
+				case kslatSegsplit:		strmOut << "segsplit       "; break;
+
 				default:
 					if (kslatUserDefn <= slat &&
 						slat < kslatUserDefn + NumUserDefn())
@@ -912,7 +914,7 @@ void GrTableManager::LogAttributes(std::ostream & strmOut, int ipass,
 			if (pslot->m_islotTmpIn != pslot->m_islotTmpOut)
 				LogInTable(strmOut, pslot->m_islotTmpIn);
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 
 		strmOut << "\n";
@@ -930,26 +932,26 @@ void GrTableManager::LogFinalPositions(std::ostream & strmOut)
 {
 	GrSlotStream * psstrm = OutputStream(m_cpass - 1);
 
-	strmOut << "x position     ";
+	strmOut << "x position:    ";
 	for (int islot = 0; islot < psstrm->WritePos(); islot++)
 	{
 		GrSlotState * pslot = psstrm->SlotAt(islot);
 		if (pslot->IsLineBreak(LBGlyphID()))
 		{
-			strmOut << "       ";
+			strmOut << ".      ";
 			continue;
 		}
 		LogInTable(strmOut, pslot->XPosition());
 	}
 	strmOut << "\n";
 
-	strmOut << "y position     ";
+	strmOut << "y position:    ";
 	for (int islot = 0; islot < psstrm->WritePos(); islot++)
 	{
 		GrSlotState * pslot = psstrm->SlotAt(islot);
 		if (pslot->IsLineBreak(LBGlyphID()))
 		{
-			strmOut << "       ";
+			strmOut << ".      ";
 			continue;
 		}
 		LogInTable(strmOut, pslot->YPosition());
@@ -1037,7 +1039,7 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 		if (rgcchwRaw[ichw] == 1 && chwNext == 0 && chw < 0x0100) // ANSI
 			strmOut << (char)chw << "      ";	// 6 spaces
 		else
-			strmOut << "       "; // 7 spaces
+			strmOut << ".      "; // 7 spaces
 		if (chwNext == 0)
 			inUtf32++;
 	}
@@ -1070,7 +1072,7 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 	{
 		if (rgcchwRaw[ichw] > 1)
 			// continuation of Unicode codepoint
-			strmOut << "       ";
+			strmOut << ".      ";
 		else if (m_prgisloutBefore[ichw] == kNegInfinity)
 			strmOut << "<--    ";
 		else if (m_prgisloutBefore[ichw] == kPosInfinity)
@@ -1090,13 +1092,13 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 		{
 			std::vector<int> * pvislout = m_prgpvisloutAssocs[ichw];
 			if (pvislout == NULL)
-				strmOut << "       ";
+				strmOut << ".      ";
 			else if (signed(pvislout->size()) <= ix)
-				strmOut << "       ";
+				strmOut << ".      ";
 			else if ((*pvislout)[ix] != m_prgisloutAfter[ichw])
 				ptman->LogInTable(strmOut, (*pvislout)[ix]);
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -1106,7 +1108,7 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 	{
 		if (rgcchwRaw[ichw] > 1)
 			// continuation of Unicode codepoint
-			strmOut << "       ";
+			strmOut << ".      ";
 		else if (m_prgisloutAfter[ichw] == kNegInfinity)
 			strmOut << "<--    ";
 		else if (m_prgisloutAfter[ichw] == kPosInfinity)
@@ -1123,11 +1125,11 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 		{
 			if (rgcchwRaw[ichw] > 1)
 				// continuation of Unicode codepoint
-				strmOut << "       ";
+				strmOut << ".      ";
 			else if (m_prgisloutLigature[ichw] != kNegInfinity)
 				ptman->LogInTable(strmOut, m_prgisloutLigature[ichw]);
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 
@@ -1136,11 +1138,11 @@ void Segment::LogUnderlyingToSurface(GrTableManager * ptman, std::ostream & strm
 		{
 			if (rgcchwRaw[ichw] > 1)
 				// continuation of Unicode codepoint
-				strmOut << "       ";
+				strmOut << ".      ";
 			else if (m_prgisloutLigature[ichw] != kNegInfinity)
 				ptman->LogInTable(strmOut, m_prgiComponent[ichw] + 1);	// 1-based
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -1161,7 +1163,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 
 	int ccomp = 0;
 
-	strmOut << "Glyph IDs:     ";
+	strmOut << "Glyph IDs      ";
 	int islout;
 	for (islout = 0; islout < m_cslout; islout++)
 	{
@@ -1170,6 +1172,23 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
 		{
 			strmOut << "#      ";
+		}
+		else
+		{
+			ptman->LogDecimalInTable(strmOut, psloutTmp->GlyphID());
+			ccomp = max(ccomp, psloutTmp->NumberOfComponents());
+		}
+	}
+	strmOut << "\n";
+
+	strmOut << "      - hex    ";
+	for (islout = 0; islout < m_cslout; islout++)
+	{
+		GrSlotOutput * psloutTmp = m_prgslout + islout;
+		if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
+			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
+		{
+			strmOut << ".      ";
 		}
 		else
 		{
@@ -1198,7 +1217,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 			if (psloutTmp->GlyphID() != psloutTmp->ActualGlyphForOutput(ptman))
 				ptman->LogHexInTable(strmOut, psloutTmp->ActualGlyphForOutput(ptman));
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -1210,7 +1229,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 		if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
 			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
 		{
-			strmOut << "       ";
+			strmOut << ".      ";
 		}
 		else
 			ptman->LogInTable(strmOut, psloutTmp->BeforeAssoc());
@@ -1224,7 +1243,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 		if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
 			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
 		{
-			strmOut << "       ";
+			strmOut << ".      ";
 		}
 		else
 			ptman->LogInTable(strmOut, psloutTmp->AfterAssoc());
@@ -1241,7 +1260,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 			if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
 				psloutTmp->SpecialSlotFlag() == kspslLbFinal)
 			{
-				strmOut << "       ";
+				strmOut << ".      ";
 			}
 			else if (icomp < psloutTmp->NumberOfComponents())
 			{
@@ -1270,7 +1289,7 @@ void Segment::LogSurfaceToUnderlying(GrTableManager * ptman, std::ostream & strm
 					ptman->LogInTable(strmOut, psloutTmp->FirstUnderlyingComponent(icomp)); // $$$$$
 			}
 			else
-				strmOut << "       ";
+				strmOut << ".      ";
 		}
 		strmOut << "\n";
 	}
@@ -1399,13 +1418,24 @@ void GrTableManager::LogSlotHeader(std::ostream & strmOut, int islotLim,
 ----------------------------------------------------------------------------------------------*/
 void GrTableManager::LogSlotGlyphs(std::ostream & strmOut, GrSlotStream * psstrm)
 {
-	strmOut << "Glyph IDs:     ";
+	strmOut << "Glyph IDs      ";
 	int islot;
 	for (islot = 0; islot < psstrm->WritePos(); islot++)
 	{
 		GrSlotState * pslotTmp = psstrm->SlotAt(islot);
 		if (pslotTmp->IsLineBreak(LBGlyphID()))
 			strmOut << "#      ";
+		else
+			LogDecimalInTable(strmOut, pslotTmp->GlyphID());
+	}
+	strmOut << "\n";
+
+	strmOut << "      - hex    ";
+	for (islot = 0; islot < psstrm->WritePos(); islot++)
+	{
+		GrSlotState * pslotTmp = psstrm->SlotAt(islot);
+		if (pslotTmp->IsLineBreak(LBGlyphID()))
+			strmOut << ".      ";
 		else
 			LogHexInTable(strmOut, pslotTmp->GlyphID());
 	}
@@ -1632,7 +1662,7 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 {
 	if (m_ipassModified != ipass && !fPreJust && !fPostJust)
 	{
-		strmOut << "       ";
+		strmOut << ".      ";
 		return;
 	}
 
@@ -1851,7 +1881,7 @@ void GrSlotState::LogSlotAttribute(GrTableManager * ptman,
 			gAssert(false);
 	}
 
-	strmOut << "       ";
+	strmOut << ".      ";
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -1862,7 +1892,7 @@ void GrSlotState::LogAssociation(GrTableManager * ptman,
 {
 	if (m_ipassModified != ipass )
 	{
-		strmOut << "       ";
+		strmOut << ".      ";
 		return;
 	}
 
@@ -1946,7 +1976,7 @@ void GrSlotState::LogAssociation(GrTableManager * ptman,
 			strmOut << "??     ";
 	}
 	else
-		strmOut << "       ";
+		strmOut << ".      ";
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -2055,6 +2085,25 @@ void GrTableManager::LogHexInTable(std::ostream & strmOut, utf16 chw, bool fPlus
 		strmOut << "+ ";
 	else
 		strmOut << "  ";
+}
+
+/*----------------------------------------------------------------------------------------------
+	Write a decimal value (a glyphID or Unicode codepoint) into the table.
+----------------------------------------------------------------------------------------------*/
+void GrTableManager::LogDecimalInTable(std::ostream & strmOut, utf16 chw)
+{
+	//char rgch[20];
+	int nSp = SP_PER_SLOT - 6;
+	if (chw < 100000) nSp++;
+	if (chw < 10000) nSp++;
+	if (chw < 1000) nSp++;
+	if (chw < 100) nSp++;
+	if (chw < 10) nSp++;
+
+	strmOut << std::dec << chw;
+
+	for (int i = 0; i < nSp; i++)
+		strmOut << " ";
 }
 
 /*----------------------------------------------------------------------------------------------

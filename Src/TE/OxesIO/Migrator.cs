@@ -81,19 +81,23 @@ namespace SIL.OxesIO
 			using (Stream xslstream = Assembly.GetExecutingAssembly().GetManifestResourceStream(xslName))
 			{
 				XslCompiledTransform xsl = new XslCompiledTransform();
-				xsl.Load(new XmlTextReader(xslstream));
-				using (TextReader tr = FileUtils.OpenFileForRead(migrationSourcePath, Encoding.UTF8))
+				using (var textReader = new XmlTextReader(xslstream))
 				{
-					using (TextWriter tw = FileUtils.OpenFileForWrite(migrationTargetPath, Encoding.UTF8))
+					xsl.Load(textReader);
+					using (TextReader tr = FileUtils.OpenFileForRead(migrationSourcePath, Encoding.UTF8))
 					{
-						try
+						using (TextWriter tw = FileUtils.OpenFileForWrite(migrationTargetPath, Encoding.UTF8))
 						{
-							xsl.Transform(XmlReader.Create(tr), XmlWriter.Create(tw));
-						}
-						catch (XmlException)
-						{
-							// XSLTransform crashes when the XML contains bad characters, so we cleanup.
-							CleanupXmlAndTryAgain(xsl, migrationSourcePath, migrationTargetPath);
+							try
+							{
+								using (var xmlwriter = XmlWriter.Create(tw))
+									xsl.Transform(XmlReader.Create(tr), xmlwriter);
+							}
+							catch (XmlException)
+							{
+								// XSLTransform crashes when the XML contains bad characters, so we cleanup.
+								CleanupXmlAndTryAgain(xsl, migrationSourcePath, migrationTargetPath);
+							}
 						}
 					}
 				}

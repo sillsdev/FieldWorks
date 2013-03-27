@@ -128,7 +128,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 			// If node has children, figure what to do with them...
-			//XmlNodeList children = node.ChildNodes; // CS0219
 
 			// It's important to initialize m_refs here rather than in FinishInit, because we need it
 			// to be updated when the slice is reused in a regenerate.
@@ -836,13 +835,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							{
 								//If the user selected Yes, then we need to delete 'this' sense or entry
 								lr.TargetsRS.Remove(m_obj);
-
-								if (lr.TargetsRS.Count < 2)
-								//in this situation there is only 1 or 0 items left in this lexical Relation so
-								//we need to delete the relation in the other Lexicon entries.
-								{
-									m_cache.DomainDataByFlid.DeleteObj(lr.Hvo);
-								}
 							});
 							//Update the display because we have removed this slice from the Lexical entry.
 							UpdateForDelete(lr);

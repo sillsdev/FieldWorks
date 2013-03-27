@@ -1,0 +1,13 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# Searching for characters
+M: System.Int32 Sfm2Xml.Converter::SearchForEndOfWord(System.Byte[],System.Int32)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Disposed in finally block (if creation succeeded)
+M: System.UInt32 Sfm2Xml.CRC::FileCRC(System.String)

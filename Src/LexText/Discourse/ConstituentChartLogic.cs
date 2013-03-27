@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.FDO.DomainServices;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Windows.Forms;
+using System.Xml;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.IText;
-using SIL.FieldWorks.FDO.Application;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Discourse
@@ -3054,6 +3055,8 @@ namespace SIL.FieldWorks.Discourse
 
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to menu.Items collection and disposed there.")]
 		private void GeneratePlMenuItems(ContextMenuStrip menu, ICmPossibilityList list,
 			EventHandler clickHandler, ChartLocation cell)
 		{
@@ -4057,6 +4060,8 @@ namespace SIL.FieldWorks.Discourse
 			view.ResumeLayout();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private static void MakeNotesColumnHeader(ListView view)
 		{
 			// Add one more column for notes.
@@ -4065,6 +4070,8 @@ namespace SIL.FieldWorks.Discourse
 			view.Columns.Add(ch);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private void MakeTemplateColumnHeaders(ListView view)
 		{
 			foreach (var col in AllMyColumns)
@@ -4081,6 +4088,8 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ColumnHeader gets added to the Columns collection and disposed there")]
 		private static void MakeRowNumberColumnHeader(ListView view)
 		{
 			var ch = new ColumnHeader();

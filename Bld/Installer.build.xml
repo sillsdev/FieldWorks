@@ -90,6 +90,10 @@
 	</target>
 
 	<target name="FwWixCompile" description="Compile the FW WIX sources." depends="TestWixPresent,FwWixPreprocess">
+		<call target="FwWixCompile-nodep"/>
+	</target>
+
+	<target name="FwWixCompile-nodep" description="Directly compile the FW WIX sources.">
 		<echo message="Deleting previous FW WIX compiled objects..."/>
 		<delete failonerror="false">
 			<fileset basedir="${fwroot}/Installer">
@@ -140,6 +144,10 @@
 	</target>
 
 	<target name="BuildFwInstaller" description="Build the FW installer" depends="TestWixPresent,FwWixCompile,BuildFwMergeModules">
+		<call target="LinkFwInstaller"/>
+	</target>
+
+	<target name="BuildFwInstaller-nodep" description="Compile and link the FW installer" depends="FwWixCompile-nodep">
 		<call target="LinkFwInstaller"/>
 	</target>
 
@@ -297,7 +305,7 @@
 
 	<target name="BuildAllMergeModules"
 					description="Build the FW and SEC merge modules"
-					depends="BuildEcOnlyMergeModules,BuildFwOnlyMergeModules,BuildFwEcSharedMergeModules">
+					depends="BuildEcOnlyMergeModules,BuildFwEcSharedMergeModules">
 		<echo message="Built all merge modules."/>
 	</target>
 
@@ -309,7 +317,7 @@
 
 	<target name="BuildFwMergeModules"
 					description="Build the FW merge modules"
-					depends="BuildFwOnlyMergeModules,BuildFwEcSharedMergeModules">
+					depends="BuildFwEcSharedMergeModules">
 		<echo message="Built FW merge modules."/>
 	</target>
 
@@ -341,27 +349,6 @@
 		<property name="MergeModule" value="SEC_PythonEC"/>
 		<call target="BuildMergeModule"/>
 
-	</target>
-
-	<target name="BuildFwOnlyMergeModules" description="Build the merge modules used exclusively in FW installer.">
-
-		<echo message="Building merge modules exclusive to FW."/>
-
-		<!--EncConverter specifics for FW-->
-		<property name="MergeModule" value="FW_EC_40"/>
-		<call target="BuildMergeModule"/>
-
-		<!--ICU specifics for FW-->
-		<property name="MergeModule" value="FW_ICU40"/>
-		<call target="BuildMergeModule"/>
-
-		<!--Perl specifics for FW-->
-		<property name="MergeModule" value="FW_PerlEC"/>
-		<call target="BuildMergeModule"/>
-
-		<!--Python specifics for FW-->
-		<property name="MergeModule" value="FW_PythonEC"/>
-		<call target="BuildMergeModule"/>
 	</target>
 
 	<target name="BuildFwEcSharedMergeModules" description="Build the merge modules shared by both SEC and FW installers.">

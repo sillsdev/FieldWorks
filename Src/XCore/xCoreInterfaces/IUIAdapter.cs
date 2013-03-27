@@ -13,6 +13,7 @@
 // Last reviewed:
 // --------------------------------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Drawing;
 using System.Windows.Forms;  //for ImageList
@@ -93,6 +94,18 @@ namespace XCore
 		void ShowContextMenu(ChoiceGroup group, Point location,
 			TemporaryColleagueParameter temporaryColleagueParam,
 			MessageSequencer sequencer);
+
+		/// <summary>
+		/// This is similar except that an action may be supplied to tweak the choice group after populating it.
+		/// </summary>
+		/// <param name="group"></param>
+		/// <param name="location"></param>
+		/// <param name="temporaryColleagueParam"></param>
+		/// <param name="sequencer"></param>
+		/// <param name="adjustAfterPopulate"></param>
+		void ShowContextMenu(ChoiceGroup group, Point location,
+			TemporaryColleagueParameter temporaryColleagueParam,
+			MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu);
 	}
 
 	/// <summary>
@@ -106,6 +119,8 @@ namespace XCore
 	/// Both the Mediator and the colleague are required in order to meet both expectations,
 	/// so an exception is thrown if either Constructor parameter is null.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "variable is a reference; it is owned by parent")]
 	public class TemporaryColleagueParameter
 	{
 		private Mediator m_mediator;

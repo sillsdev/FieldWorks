@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (C) 2007-2008, International Business Machines Corporation and
+* Copyright (C) 2007-2011, International Business Machines Corporation and
 * others. All Rights Reserved.
 *******************************************************************************
 *
@@ -30,6 +30,7 @@ class FormatParser;
 class DateTimeMatcher;
 class DistanceInfo;
 class PatternMap;
+class PtnSkeleton;
 
 /**
  * This class provides flexible generation of date format patterns, like "yy-MM-dd".
@@ -43,7 +44,7 @@ class PatternMap;
  * <p><i>Issue: may be useful to also have a function that returns the list of
  * fields in a pattern, in order, since we have that internally.
  * That would be useful for getting the UI order of field elements.</i>
- * @stable ICU 4.0
+ * @stable ICU 3.8
 **/
 class U_I18N_API DateTimePatternGenerator : public UObject {
 public:
@@ -51,7 +52,7 @@ public:
 	 * Construct a flexible generator according to default locale.
 	 * @param status  Output param set to success/failure code on exit,
 	 *               which must not indicate a failure before the function call.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	static DateTimePatternGenerator* U_EXPORT2 createInstance(UErrorCode& status);
 
@@ -60,7 +61,7 @@ public:
 	 * @param uLocale
 	 * @param status  Output param set to success/failure code on exit,
 	 *               which must not indicate a failure before the function call.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	static DateTimePatternGenerator* U_EXPORT2 createInstance(const Locale& uLocale, UErrorCode& status);
 
@@ -68,20 +69,20 @@ public:
 	 * Create an empty generator, to be constructed with addPattern(...) etc.
 	 * @param status  Output param set to success/failure code on exit,
 	 *               which must not indicate a failure before the function call.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	 static DateTimePatternGenerator* U_EXPORT2 createEmptyInstance(UErrorCode& status);
 
 	/**
 	 * Destructor.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	virtual ~DateTimePatternGenerator();
 
 	/**
 	 * Clone DateTimePatternGenerator object. Clients are responsible for
 	 * deleting the DateTimePatternGenerator object cloned.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	DateTimePatternGenerator* clone() const;
 
@@ -90,7 +91,7 @@ public:
 	  *
 	  * @param other    the DateTimePatternGenerator object to be compared with.
 	  * @return         true if other is semantically equal to this.
-	  * @stable ICU 4.0
+	  * @stable ICU 3.8
 	  */
 	UBool operator==(const DateTimePatternGenerator& other) const;
 
@@ -99,7 +100,7 @@ public:
 	 *
 	 * @param other    the DateTimePatternGenerator object to be compared with.
 	 * @return         true if other is semantically unequal to this.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	UBool operator!=(const DateTimePatternGenerator& other) const;
 
@@ -111,7 +112,7 @@ public:
 	 * @param status  Output param set to success/failure code on exit,
 	 *                  which must not indicate a failure before the function call.
 	 * @return skeleton such as "MMMdd"
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	UnicodeString getSkeleton(const UnicodeString& pattern, UErrorCode& status);
 
@@ -126,7 +127,7 @@ public:
 	 * @param status  Output param set to success/failure code on exit,
 	 *               which must not indicate a failure before the function call.
 	 * @return base skeleton, such as "Md"
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	UnicodeString getBaseSkeleton(const UnicodeString& pattern, UErrorCode& status);
 
@@ -148,7 +149,7 @@ public:
 	 *               which must not indicate a failure before the function call.
 	 * @return conflicting status.  The value could be UDATPG_NO_CONFLICT,
 	 *                             UDATPG_BASE_CONFLICT or UDATPG_CONFLICT.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	UDateTimePatternConflict addPattern(const UnicodeString& pattern,
 										UBool override,
@@ -171,7 +172,7 @@ public:
 	 *
 	 * @param field  such as UDATPG_ERA_FIELD.
 	 * @param value  pattern, such as "{0}, {1}"
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	void setAppendItemFormat(UDateTimePatternField field, const UnicodeString& value);
 
@@ -181,7 +182,7 @@ public:
 	 *
 	 * @param  field  such as UDATPG_ERA_FIELD.
 	 * @return append pattern for field
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	const UnicodeString& getAppendItemFormat(UDateTimePatternField field) const;
 
@@ -194,7 +195,7 @@ public:
 	 *
 	 * @param field   such as UDATPG_ERA_FIELD.
 	 * @param value   name of the field
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	void setAppendItemName(UDateTimePatternField field, const UnicodeString& value);
 
@@ -204,7 +205,7 @@ public:
 	 *
 	 * @param field  such as UDATPG_ERA_FIELD.
 	 * @return name for field
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	const UnicodeString& getAppendItemName(UDateTimePatternField field) const;
 
@@ -225,14 +226,14 @@ public:
 	 * @param dateTimeFormat
 	 *            message format pattern, here {0} will be replaced by the date
 	 *            pattern and {1} will be replaced by the time pattern.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	void setDateTimeFormat(const UnicodeString& dateTimeFormat);
 
 	/**
 	 * Getter corresponding to setDateTimeFormat.
 	 * @return DateTimeFormat.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	const UnicodeString& getDateTimeFormat() const;
 
@@ -247,9 +248,33 @@ public:
 	 *               which must not indicate a failure before the function call.
 	 * @return bestPattern
 	 *            The best pattern found from the given skeleton.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	 UnicodeString getBestPattern(const UnicodeString& skeleton, UErrorCode& status);
+
+
+	/**
+	 * Return the best pattern matching the input skeleton. It is guaranteed to
+	 * have all of the fields in the skeleton.
+	 *
+	 * @param skeleton
+	 *            The skeleton is a pattern containing only the variable fields.
+	 *            For example, "MMMdd" and "mmhh" are skeletons.
+	 * @param options
+	 *            Options for forcing the length of specified fields in the
+	 *            returned pattern to match those in the skeleton (when this
+	 *            would not happen otherwise). For default behavior, use
+	 *            UDATPG_MATCH_NO_OPTIONS.
+	 * @param status
+	 *            Output param set to success/failure code on exit,
+	 *            which must not indicate a failure before the function call.
+	 * @return bestPattern
+	 *            The best pattern found from the given skeleton.
+	 * @stable ICU 4.4
+	 */
+	 UnicodeString getBestPattern(const UnicodeString& skeleton,
+								  UDateTimePatternMatchOptions options,
+								  UErrorCode& status);
 
 
 	/**
@@ -266,10 +291,37 @@ public:
 	 * @param status  Output param set to success/failure code on exit,
 	 *               which must not indicate a failure before the function call.
 	 * @return pattern adjusted to match the skeleton fields widths and subtypes.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	 UnicodeString replaceFieldTypes(const UnicodeString& pattern,
 									 const UnicodeString& skeleton,
+									 UErrorCode& status);
+
+	/**
+	 * Adjusts the field types (width and subtype) of a pattern to match what is
+	 * in a skeleton. That is, if you supply a pattern like "d-M H:m", and a
+	 * skeleton of "MMMMddhhmm", then the input pattern is adjusted to be
+	 * "dd-MMMM hh:mm". This is used internally to get the best match for the
+	 * input skeleton, but can also be used externally.
+	 *
+	 * @param pattern Input pattern
+	 * @param skeleton
+	 *            The skeleton is a pattern containing only the variable fields.
+	 *            For example, "MMMdd" and "mmhh" are skeletons.
+	 * @param options
+	 *            Options controlling whether the length of specified fields in the
+	 *            pattern are adjusted to match those in the skeleton (when this
+	 *            would not happen otherwise). For default behavior, use
+	 *            UDATPG_MATCH_NO_OPTIONS.
+	 * @param status
+	 *            Output param set to success/failure code on exit,
+	 *            which must not indicate a failure before the function call.
+	 * @return pattern adjusted to match the skeleton fields widths and subtypes.
+	 * @stable ICU 4.4
+	 */
+	 UnicodeString replaceFieldTypes(const UnicodeString& pattern,
+									 const UnicodeString& skeleton,
+									 UDateTimePatternMatchOptions options,
 									 UErrorCode& status);
 
 	/**
@@ -281,7 +333,7 @@ public:
 	 *               which must not indicate a failure before the function call.
 	 * @return StringEnumeration with the skeletons.
 	 *         The caller must delete the object.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	 StringEnumeration* getSkeletons(UErrorCode& status) const;
 
@@ -289,7 +341,7 @@ public:
 	  * Get the pattern corresponding to a given skeleton.
 	  * @param skeleton
 	  * @return pattern corresponding to a given skeleton.
-	  * @stable ICU 4.0
+	  * @stable ICU 3.8
 	  */
 	 const UnicodeString& getPatternForSkeleton(const UnicodeString& skeleton) const;
 
@@ -300,10 +352,11 @@ public:
 	 *               which must not indicate a failure before the function call.
 	 * @return a StringEnumeration with the base skeletons.
 	 *         The caller must delete the object.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	 StringEnumeration* getBaseSkeletons(UErrorCode& status) const;
 
+#ifndef U_HIDE_INTERNAL_API
 	 /**
 	  * Return a list of redundant patterns are those which if removed, make no
 	  * difference in the resulting getBestPattern values. This method returns a
@@ -317,6 +370,7 @@ public:
 	  * @internal ICU 3.8
 	  */
 	 StringEnumeration* getRedundants(UErrorCode& status);
+#endif  /* U_HIDE_INTERNAL_API */
 
 	/**
 	 * The decimal value is used in formatting fractions of seconds. If the
@@ -327,55 +381,55 @@ public:
 	 * "H:mm:ss,SSSS"
 	 *
 	 * @param decimal
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	void setDecimal(const UnicodeString& decimal);
 
 	/**
 	 * Getter corresponding to setDecimal.
 	 * @return UnicodeString corresponding to the decimal point
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	const UnicodeString& getDecimal() const;
 
 	/**
 	 * ICU "poor man's RTTI", returns a UClassID for the actual class.
 	 *
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	virtual UClassID getDynamicClassID() const;
 
 	/**
 	 * ICU "poor man's RTTI", returns a UClassID for this class.
 	 *
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	static UClassID U_EXPORT2 getStaticClassID(void);
 
 private:
 	/**
 	 * Constructor.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	DateTimePatternGenerator(UErrorCode & status);
 
 	/**
 	 * Constructor.
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	DateTimePatternGenerator(const Locale& locale, UErrorCode & status);
 
 	/**
 	 * Copy constructor.
 	 * @param other DateTimePatternGenerator to copy
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	DateTimePatternGenerator(const DateTimePatternGenerator& other);
 
 	/**
 	 * Default assignment operator.
 	 * @param other DateTimePatternGenerator to copy
-	 * @stable ICU 4.0
+	 * @stable ICU 3.8
 	 */
 	DateTimePatternGenerator& operator=(const DateTimePatternGenerator& other);
 
@@ -392,24 +446,24 @@ private:
 	Hashtable *fAvailableFormatKeyHash;
 	UnicodeString hackPattern;
 	UnicodeString emptyString;
-	UBool chineseMonthHack;
+	UChar fDefaultHourFormatChar;
 
 	void initData(const Locale &locale, UErrorCode &status);
 	void addCanonicalItems();
 	void addICUPatterns(const Locale& locale, UErrorCode& status);
 	void hackTimes(const UnicodeString& hackPattern, UErrorCode& status);
-	void addCLDRData(const Locale& locale);
+	void addCLDRData(const Locale& locale, UErrorCode& status);
+	UDateTimePatternConflict addPatternWithSkeleton(const UnicodeString& pattern, const UnicodeString * skeletonToUse, UBool override, UnicodeString& conflictingPattern, UErrorCode& status);
 	void initHashtable(UErrorCode& status);
 	void setDateTimeFromCalendar(const Locale& locale, UErrorCode& status);
 	void setDecimalSymbols(const Locale& locale, UErrorCode& status);
-	UnicodeString getCJKPattern(const UnicodeString& patternForm);
 	UDateTimePatternField getAppendFormatNumber(const char* field) const;
 	UDateTimePatternField getAppendNameNumber(const char* field) const;
 	void getAppendName(UDateTimePatternField field, UnicodeString& value);
 	int32_t getCanonicalIndex(const UnicodeString& field);
-	const UnicodeString* getBestRaw(DateTimeMatcher& source, int32_t includeMask, DistanceInfo* missingFields);
-	UnicodeString adjustFieldTypes(const UnicodeString& pattern, UBool fixFractionalSeconds);
-	UnicodeString getBestAppending(int32_t missingFields);
+	const UnicodeString* getBestRaw(DateTimeMatcher& source, int32_t includeMask, DistanceInfo* missingFields, const PtnSkeleton** specifiedSkeletonPtr = 0);
+	UnicodeString adjustFieldTypes(const UnicodeString& pattern, const PtnSkeleton* specifiedSkeleton, UBool fixFractionalSeconds, UDateTimePatternMatchOptions options = UDATPG_MATCH_NO_OPTIONS);
+	UnicodeString getBestAppending(int32_t missingFields, UDateTimePatternMatchOptions options = UDATPG_MATCH_NO_OPTIONS);
 	int32_t getTopBitNumber(int32_t foundMask);
 	void setAvailableFormat(const UnicodeString &key, UErrorCode& status);
 	UBool isAvailableFormatSet(const UnicodeString &key) const;

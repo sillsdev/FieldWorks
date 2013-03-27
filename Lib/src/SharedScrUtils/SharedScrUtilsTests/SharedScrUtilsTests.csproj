@@ -9,10 +9,6 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>SILUBS.SharedScrUtils</RootNamespace>
 	<AssemblyName>SharedScrUtilsTests</AssemblyName>
-	<SccProjectName>SAK</SccProjectName>
-	<SccLocalPath>SAK</SccLocalPath>
-	<SccAuxPath>SAK</SccAuxPath>
-	<SccProvider>SAK</SccProvider>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
 	<OldToolsVersion>2.0</OldToolsVersion>
@@ -33,7 +29,7 @@
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>

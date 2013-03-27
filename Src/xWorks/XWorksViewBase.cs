@@ -557,7 +557,6 @@ namespace SIL.FieldWorks.XWorks
 			// but in some contexts in switching tools in the Lexicon area, the config file was for the dictionary preview
 			// control, which was set to 'false'. That makes sense, since the view itself isn't editable.
 			// No: if (areaChoice == "lexicon" && fEditable && (m_vectorName == "entries" || m_vectorName == "AllSenses"))
-			// RecordClerk clerk = Clerk; // CS0219
 			string toolChoice = m_mediator.PropertyTable.GetStringProperty("currentContentControl", string.Empty);
 			string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", string.Empty);
 			bool inFriendlyTerritory = false;
@@ -600,7 +599,7 @@ namespace SIL.FieldWorks.XWorks
 					break;
 			}
 			using (var dlg = new AddCustomFieldDlg(m_mediator, locationType))
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 
 			return true;	// handled
 		}
@@ -629,7 +628,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (Clerk != null && Clerk.OwningObject != null && (Clerk.OwningObject is ICmPossibilityList))
 				using (var dlg = new ConfigureListDlg(m_mediator, (ICmPossibilityList) Clerk.OwningObject))
-					dlg.ShowDialog();
+					dlg.ShowDialog(this);
 
 			return true;	// handled
 		}
@@ -657,7 +656,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			using (var dlg = new AddListDlg(m_mediator))
-				dlg.ShowDialog();
+				dlg.ShowDialog(this);
 
 			return true;	// handled
 		}

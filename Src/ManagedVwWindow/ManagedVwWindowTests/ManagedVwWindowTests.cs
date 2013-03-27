@@ -1,7 +1,6 @@
 using System.Drawing;
 using NUnit.Framework;
 using System;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Views;
 using System.Windows.Forms;
 using SIL.Utils;

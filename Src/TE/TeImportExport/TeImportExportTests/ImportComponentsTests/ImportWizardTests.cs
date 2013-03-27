@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -436,7 +437,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 	public class ImportWizardTests: ScrInMemoryFdoTestBase
 	{
 		#region Data members
-		private readonly MockParatextHelper m_ptHelper = new MockParatextHelper();
+		private MockParatextHelper m_ptHelper;
 		private IScrImportSet m_settings;
 		private ImportWizardWrapper m_importWizard;
 		private FwStyleSheet m_styleSheet;
@@ -453,6 +454,7 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
+			m_ptHelper = new MockParatextHelper();
 			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
 		}
 
@@ -463,8 +465,10 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 		/// ------------------------------------------------------------------------------------
 		public override void FixtureTeardown()
 		{
-			base.FixtureTeardown();
+			m_ptHelper.Dispose();
+			m_ptHelper = null;
 			ParatextHelper.Manager.Reset();
+			base.FixtureTeardown();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -773,7 +777,10 @@ namespace SIL.FieldWorks.TE.ImportComponentsTests
 			// Set the combobox index to the second Paratext project in the list (NSF).
 			ComboBox cbo = ReflectionHelper.GetField(m_importWizard, "cboPTLangProj") as ComboBox;
 			// We have to manually add the projects because they could not be loaded.
-			cbo.Items.AddRange(new object[] { m_ptHelper.AddProject("NEC"), m_ptHelper.AddProject("NSF") });
+			m_ptHelper.AddProject("NEC");
+			m_ptHelper.AddProject("NSF");
+			cbo.Items.AddRange(new object[] { m_ptHelper.Projects.Where(x => x.Name == "NEC").Single(),
+				m_ptHelper.Projects.Where(x => x.Name == "NSF").Single() });
 
 			cbo.SelectedIndex = 1;
 

@@ -325,8 +325,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		}
 
 		/// <summary>
-		/// Test the get/set accessors for normal ITsString properties
-		/// (kcptString or kcptBigString).
+		/// Test the get/set accessors for normal ITsString properties (kcptString).
 		/// </summary>
 		[Test]
 		public void kcptStringTests()
@@ -385,8 +384,7 @@ namespace SIL.FieldWorks.FDO.CoreTests
 		}
 
 		/// <summary>
-		/// Test the get/set accessors for normal unicode properties
-		/// (kcptUnicode or kcptBigUnicode).
+		/// Test the get/set accessors for normal unicode properties (kcptUnicode).
 		/// </summary>
 		[Test]
 		public void kcptUnicodeTests()

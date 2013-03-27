@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace SIL.CoreImpl
 	/// <summary>
 	/// A file-based global writing system store.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_mutex is a singleton; will be disposed by SingletonsContainer")]
 	public class GlobalFileWritingSystemStore : IFwWritingSystemStore
 	{
 		private readonly string m_path;

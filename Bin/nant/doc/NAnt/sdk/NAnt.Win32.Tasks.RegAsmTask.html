@@ -1,0 +1,80 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>RegAsmTask Class</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">RegAsmTask Class</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Registers an assembly, or set of assemblies for use from COM clients. </p>
+	  <p>For a list of all members of this type, see <a href="NAnt.Win32.Tasks.RegAsmTaskMembers.html">RegAsmTask Members</a>.</p>
+	  <p>
+		<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">System.Object</a>
+		<br />   <a href="NAnt.Core.Element.html">NAnt.Core.Element</a><br />      <a href="NAnt.Core.Task.html">NAnt.Core.Task</a><br />         <a href="NAnt.Core.Tasks.ExternalProgramBase.html">NAnt.Core.Tasks.ExternalProgramBase</a><br />            <b>NAnt.Win32.Tasks.RegAsmTask</b></p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;TaskName(Name:="regasm"), _
+ ProgramLocation(LocationType:=LocationType.FrameworkDir)&gt;</div>Public Class RegAsmTask<div>    Inherits <a href="NAnt.Core.Tasks.ExternalProgramBase.html">ExternalProgramBase</a></div></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[TaskName(Name="regasm")]</div>
+		<div class="attribute">[ProgramLocation(LocationType=LocationType.FrameworkDir)]</div>
+		<div>public class RegAsmTask<b> : <a href="NAnt.Core.Tasks.ExternalProgramBase.html">ExternalProgramBase</a></b></div>
+	  </div>
+	  <H4 class="dtH4">Thread Safety</H4>
+	  <P>Public static (<b>Shared</b> in Visual Basic) members of this type are
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
+				thread-safe.</P>
+	  <h4 class="dtH4">Remarks</h4>
+			  <p> Refer to the <a href="ms-help://MS.VSCC/MS.MSDNVS/cptools/html/cpgrfassemblyregistrationtoolregasmexe.htm">Regasm</a> documentation for more information on the regasm tool. </p>
+			<h4 class="dtH4">Example</h4><p>
+			  <p> Register types in a single assembly. </p>
+			  <pre class="code">
+
+			&lt;regasm assembly="myAssembly.dll" /&gt;
+
+			  </pre>
+
+			  <p> Register types of an assembly and generate a type library containing definitions of accessible types defined within the assembly. </p>
+			  <pre class="code">
+
+			&lt;regasm assembly="myAssembly.dll" typelib="myAssembly.tlb" /&gt;
+
+			  </pre>
+
+			  <p> Register types of set of assemblies at once, while specifying a set of reference assemblies. </p>
+			  <pre class="code">
+
+			&lt;regasm codebase="true"&gt;
+				&lt;assemblies&gt;
+					&lt;include name="OutlookAddin.dll" /&gt;
+					&lt;include name="OfficeCoreAddin.dll" /&gt;
+				&lt;/assemblies&gt;
+				&lt;references&gt;
+					&lt;include name="CommonTypes.dll" /&gt;
+				&lt;/references&gt;
+			&lt;/regasm&gt;
+
+			  </pre>
+			</p><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="NAnt.Win32.Tasks.html">NAnt.Win32.Tasks</a></p><p><b>Assembly: </b>NAnt.Win32Tasks (in NAnt.Win32Tasks.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.Win32.Tasks.RegAsmTaskMembers.html">RegAsmTask Members</a> | <a href="NAnt.Win32.Tasks.html">NAnt.Win32.Tasks Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="RegAsmTask class, about RegAsmTask class"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

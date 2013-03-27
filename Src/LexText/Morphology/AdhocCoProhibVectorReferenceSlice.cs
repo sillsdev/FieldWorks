@@ -15,4 +15,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 		}
 	}
+	public class AdhocCoProhibVectorReferenceDisabledSlice : AdhocCoProhibVectorReferenceSlice
+	{
+		public AdhocCoProhibVectorReferenceDisabledSlice()
+			: base()
+		{
+		}
+		public override void FinishInit()
+		{
+			CheckDisposed();
+			base.FinishInit();
+			var arl = (VectorReferenceLauncher)Control;
+			var view = (VectorReferenceView)arl.MainControl;
+			view.FinishInit(ConfigurationNode);
+		}
+	}
+
 }

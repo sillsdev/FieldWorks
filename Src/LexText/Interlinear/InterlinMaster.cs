@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.IText
 	/// InterlinDocChild. Eventually it may also show a SandBox, and perhaps a
 	/// segment of a lexicon! This comment is way out-of-date!
 	/// </summary>
-	public partial class InterlinMaster : InterlinMasterBase
+	public partial class InterlinMaster : InterlinMasterBase, IFocusablePanePortion
 	{
 		// Controls
 		protected IVwStylesheet m_styleSheet;
@@ -1278,6 +1278,7 @@ namespace SIL.FieldWorks.IText
 				FwLinkArgs link = new FwLinkArgs(toolName, guid, InterlinearTab.ToString());
 				link.PropertyTableEntries.Add(new XCore.Property("InterlinearTab",
 					InterlinearTab.ToString()));
+				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
 				m_mediator.SendMessage("AddContextToHistory", link, false);
 			}
 		}
@@ -1408,6 +1409,13 @@ namespace SIL.FieldWorks.IText
 					SaveBookMark();
 			}
 		}
+
+		/// <summary>
+		/// Required member for IFocusablePanePortion. We must implement this so focus can be set here
+		/// through XML configuration of a multipane. But we don't need to do anything because MultiPane
+		/// doesn't do anything dangerous when it is not the focused pane of a multipane.
+		/// </summary>
+		public bool IsFocusedPane { get; set; }
 	}
 
 	public interface IHandleBookmark

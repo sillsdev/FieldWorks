@@ -14,6 +14,7 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 namespace SIL.FieldWorks.TE.TeEditorialChecks
 {
 	partial class EditorialChecksRenderingsControl
@@ -29,6 +30,8 @@ namespace SIL.FieldWorks.TE.TeEditorialChecks
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="TODO-Linux: VirtualMode is not supported in Mono")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

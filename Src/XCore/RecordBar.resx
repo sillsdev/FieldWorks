@@ -179,10 +179,10 @@
   <data name="&gt;&gt;m_treeView.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <data name="columnHeader1.Text" xml:space="preserve">
+  <data name="m_columnHeader1.Text" xml:space="preserve">
 	<value>Records</value>
   </data>
-  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
+  <data name="m_columnHeader1.Width" type="System.Int32, mscorlib">
 	<value>1988</value>
   </data>
   <data name="m_listView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -218,10 +218,10 @@
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
 	<value>2000, 312</value>
   </data>
-  <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
-	<value>columnHeader1</value>
+  <data name="&gt;&gt;m_columnHeader1.Name" xml:space="preserve">
+	<value>m_columnHeader1</value>
   </data>
-  <data name="&gt;&gt;columnHeader1.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_columnHeader1.Type" xml:space="preserve">
 	<value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

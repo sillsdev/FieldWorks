@@ -16,7 +16,9 @@
 // ---------------------------------------------------------------------------------------------
 using NAnt.Core.Attributes;
 using NAnt.DotNet.Tasks;
+using System;
 using System.IO;
+using System.Diagnostics;
 
 namespace SIL.FieldWorks.Build.Tasks
 {
@@ -30,6 +32,7 @@ namespace SIL.FieldWorks.Build.Tasks
 	public class ResGenTaskEx : ResGenTask
 	{
 		private DirectoryInfo m_baseDirectory;
+		string m_exepath;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -39,36 +42,81 @@ namespace SIL.FieldWorks.Build.Tasks
 		[TaskAttribute("basedir", Required = false)]
 		public string BaseDir
 		{
-			get { return m_baseDirectory.FullName; }
+			get { return m_baseDirectory == null ? null : m_baseDirectory.FullName; }
 			set { m_baseDirectory = new System.IO.DirectoryInfo(value); }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the working directory for the application.
+		/// Get the name of the program executed by this task.  On Linux, only the full pathname
+		/// seems to work.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override DirectoryInfo BaseDirectory
+		public override string ExeName
 		{
 			get
 			{
-				if (m_baseDirectory == null)
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
 				{
-					return base.BaseDirectory;
+					if (m_exepath == null)
+						ComputeResGenPath();
+					return m_exepath;
 				}
-				return m_baseDirectory;
+				else
+				{
+					return "resgen";
+				}
 			}
-			set { m_baseDirectory = value; }
+		}
+
+		/// <summary>
+		/// Get the full path to the resgen program.
+		/// </summary>
+		private void ComputeResGenPath()
+		{
+			string path = Environment.GetEnvironmentVariable("PATH");
+			if (!String.IsNullOrEmpty(path))
+			{
+				var dirs = path.Split(new char[] { Path.PathSeparator });
+				for (int i = 0; i < dirs.Length; ++i)
+				{
+					var f = Path.Combine(dirs[i], "resgen");
+					if (File.Exists(f))
+					{
+						// Check for executable?
+						m_exepath = f;
+						return;
+					}
+				}
+			}
+			m_exepath = "resgen";
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// The name of the task.
+		/// Get the name of this task.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public override string Name
 		{
-			get { return "resgen"; }
+			get
+			{
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+					return "resgenex";
+				else
+					return "resgen";
+			}
+		}
+
+		/// <summary>
+		/// Set the working directory for the process to our very own basedir task attribute.
+		/// </summary>
+		protected override void PrepareProcess(Process process)
+		{
+			base.PrepareProcess(process);
+			var dir = BaseDir;
+			if (dir != null && Directory.Exists(dir))
+				process.StartInfo.WorkingDirectory = dir;
 		}
 	}
 }

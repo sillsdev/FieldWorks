@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			keyAttrs["part"] = new string[] {"ref"};
 
 			var layouts = new Inventory(new string[] {partDirectory},
-				"*Layouts.xml", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", "ProjectPath");
+				"*.fwlayout", "/LayoutInventory/*", keyAttrs, "DetailTreeTests", "ProjectPath");
 
 			return layouts;
 		}

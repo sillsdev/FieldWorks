@@ -96,30 +96,32 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// A text in langproject can be moved to a new notebook record.
 		/// </summary>
 		[Test]
+		[Ignore("Texts no longer have owners")]
 		public void MoveToNotebook_MovesLangProjText()
 		{
-			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
-			m_actionHandler.EndUndoTask();
-			text.MoveToNotebook(true);
-			Assert.That(text.Owner, Is.InstanceOf(typeof(RnGenericRec)));
+			//var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+			////Cache.LangProject.TextsOC.Add(text);
+			//m_actionHandler.EndUndoTask();
+			//text.AssociateWithNotebook(true);
+			//Assert.That(text.Owner, Is.InstanceOf(typeof(RnGenericRec)));
 		}
 
 		/// <summary>
 		/// A text already in notebook cannot be moved to a new notebook record.
 		/// </summary>
 		[Test]
+		[Ignore("Texts no longer have owners")]
 		public void MoveToNotebook_DoesNotMoveNotebookText()
 		{
-			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			var rec = Cache.ServiceLocator.GetInstance<RnGenericRecFactory>().Create();
-			if (Cache.LangProject.ResearchNotebookOA == null)
-				Cache.LangProject.ResearchNotebookOA = Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
-			Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(rec);
-			rec.TextOA = text;
-			m_actionHandler.EndUndoTask();
-			text.MoveToNotebook(true);
-			Assert.That(text.Owner, Is.EqualTo(rec));
+			//var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+			//var rec = Cache.ServiceLocator.GetInstance<RnGenericRecFactory>().Create();
+			//if (Cache.LangProject.ResearchNotebookOA == null)
+			//    Cache.LangProject.ResearchNotebookOA = Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
+			//Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(rec);
+			//rec.TextOA = text;
+			//m_actionHandler.EndUndoTask();
+			//text.AssociateWithNotebook(true);
+			//Assert.That(text.Owner, Is.EqualTo(rec));
 		}
 
 		/// <summary>
@@ -131,7 +133,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Setup
 			var lp = Cache.LangProject;
 			var servLoc = Cache.ServiceLocator;
-			var cLPTextsBefore = Cache.LangProject.TextsOC.Count;
+			var cLPTextsBefore = lp.Texts.Count;
 			if (lp.ResearchNotebookOA == null)
 				lp.ResearchNotebookOA = servLoc.GetInstance<IRnResearchNbkFactory>().Create();
 			var rec = servLoc.GetInstance<RnGenericRecFactory>().Create();
@@ -144,16 +146,16 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			// Verification
 			Assert.That(rec.Hvo, Is.EqualTo((int)SpecialHVOValues.kHvoObjectDeleted),
 				"Notebook record should be deleted.");
-			Assert.That(cLPTextsBefore + 1, Is.EqualTo(Cache.LangProject.TextsOC.Count),
-				"Should have changed ownership of the Text to the Language Project.");
+			Assert.That(cLPTextsBefore + 1, Is.EqualTo(lp.Texts.Count),
+				"Should have added one text to the project.");
 			Assert.That(text.Hvo, Is.Not.EqualTo((int)SpecialHVOValues.kHvoObjectDeleted));
-			Assert.That(lp.TextsOC.Contains(text), Is.True);
+			Assert.That(lp.Texts.Contains(text), Is.True);
 		}
 
 		private static IText MakeATextWith2Paragraphs(IServiceLocator servLoc, IRnGenericRec owner)
 		{
 			var result = servLoc.GetInstance<ITextFactory>().Create();
-			owner.TextOA = result;
+			owner.TextRA = result;
 			var stText = servLoc.GetInstance<IStTextFactory>().Create();
 			result.ContentsOA = stText;
 			var paraFact = servLoc.GetInstance<IStTxtParaFactory>();

@@ -17,12 +17,15 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
-
+#if __MonoCS__
+using Skybound.Gecko;
+#endif
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using XCore;
@@ -31,13 +34,31 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 {
 	public class MGAHtmlHelpDialog : MGADialog
 	{
+#if __MonoCS__
+		private GeckoWebBrowser m_browser;
+#else
 		private readonly WebBrowser m_webBrowserInfo;
+#endif
 		private XslCompiledTransform m_xslShowInfoTransform;
 		private XmlDocument m_xmlShowInfoDoc;
 		private readonly string m_sHelpHtm = Path.Combine(DirectoryFinder.FWCodeDirectory, String.Format("Language Explorer{0}MGA{0}Help.htm", Path.DirectorySeparatorChar));
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public MGAHtmlHelpDialog(FdoCache cache, Mediator mediator, string sMorphemeForm) : base(cache, mediator, sMorphemeForm)
 		{
+#if __MonoCS__
+			m_browser = new GeckoWebBrowser
+						{
+							Dock = DockStyle.Fill,
+							Location = new Point(0, 0),
+							TabIndex = 1,
+							MinimumSize = new Size(20, 20),
+							NoDefaultContextMenu = true
+						};
+			splitContainerHorizontal.Panel2.Controls.Add(m_browser);
+#else
 			m_webBrowserInfo = new WebBrowser
 								{
 									Dock = DockStyle.Fill,
@@ -50,6 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 								};
 
 			splitContainerHorizontal.Panel2.Controls.Add(m_webBrowserInfo);
+#endif
 		}
 
 		protected override void SetupInitialState()
@@ -62,15 +84,25 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			// init XmlDoc, too
 			m_xmlShowInfoDoc = new XmlDocument();
 
-			splitContainerHorizontal.Panel2Collapsed = false;
+			ShowInfoPane();
 			buttonInfo.Visible = true;
 
+#if __MonoCS__
+			if (m_browser.Handle != IntPtr.Zero)
+				m_browser.Navigate(m_sHelpHtm);
+#else
 			m_webBrowserInfo.Navigate(m_sHelpHtm);
+#endif
 		}
 
 		protected override void DisplayHelpInfo(XmlNode node)
 		{
+#if __MonoCS__
+			var tempfile = Path.Combine(Path.GetTempPath(), "temphelp.htm");
+			using (var w = new StreamWriter(tempfile, false))
+#else
 			using (var w = new StringWriter())
+#endif
 			using (var tw = new XmlTextWriter(w))
 			{
 				m_xmlShowInfoDoc.LoadXml(node.OuterXml); // N.B. LoadXml requires UTF-16 or UCS-2 encodings
@@ -78,8 +110,13 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 				var args = new XsltArgumentList();
 				args.AddParam("sHelpFile", "", m_sHelpHtm);
 				m_xslShowInfoTransform.Transform(m_xmlShowInfoDoc, args, tw);
+#if !__MonoCS__
 				m_webBrowserInfo.DocumentText = w.GetStringBuilder().ToString();
+#endif
 			}
+#if __MonoCS__
+			m_browser.Navigate(tempfile);
+#endif
 		}
 
 	}

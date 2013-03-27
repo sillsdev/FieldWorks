@@ -14,6 +14,7 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.IO;
 using NAnt.Core.Attributes;
 using NAnt.Core.Types;
@@ -32,10 +33,10 @@ namespace SIL.FieldWorks.Build.Tasks
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// The name of the task.
+		/// Get the name of the program executed by this task.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override string Name
+		public override string ExeName
 		{
 			get { return "al"; }
 		}

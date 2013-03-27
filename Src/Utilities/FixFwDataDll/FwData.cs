@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.FixData
 				if (!File.Exists(oldLdmlFile))
 				{
 					if (oldTag.StartsWith("cmn"))
-						oldLdmlFile = Path.Combine(wsDirectory, oldTag.Remove(0,3).Insert(0,"zh") + ".ldml");
+						oldLdmlFile = Path.Combine(wsDirectory, oldTag.Remove(0, 3).Insert(0, "zh") + ".ldml");
 					else
 						oldLdmlFile = newLdmlFile;
 					if (!File.Exists(oldLdmlFile))
@@ -215,9 +215,11 @@ namespace SIL.FieldWorks.FixData
 							Indent = true,
 							IndentChars = "\t"
 						};
-					var writer = XmlWriter.Create(outFile, settings);
-					xeLdml.WriteTo(writer);
-					writer.Close();
+					using (var writer = XmlWriter.Create(outFile, settings))
+					{
+						xeLdml.WriteTo(writer);
+						writer.Close();
+					}
 				}
 			}
 		}
@@ -311,7 +313,7 @@ namespace SIL.FieldWorks.FixData
 						if (guidStored != guid)
 						{
 							m_errors.Add(String.Format(Strings.ksRemovingMultipleOwnershipLink,
-								guidObj, className, guid, objsur.Parent.Name));
+								guidObj, className, objsur.Parent.Name));
 							m_danglingLinks.Add(objsur);	// excessive ownership
 						}
 					}
@@ -344,8 +346,6 @@ namespace SIL.FieldWorks.FixData
 			{
 				FixWsAttributeIfNeeded(auni);
 			}
-			FixDuplicateWritingSystems(rt, guid, "AUni");
-			FixDuplicateWritingSystems(rt,guid, "AStr");
 			switch (className)
 			{
 				case "LangProject":
@@ -386,80 +386,6 @@ namespace SIL.FieldWorks.FixData
 						}
 					}
 					break;
-				case "RnGenericRec":
-					FixGenericDate("DateOfEvent", rt, className, guid);
-					break;
-				case "CmPerson":
-					FixGenericDate("DateOfBirth", rt, className, guid);
-					FixGenericDate("DateOfDeath", rt, className, guid);
-					break;
-			}
-		}
-
-		/// <summary>
-		/// Fix any cases where a multistring has duplicate writing systems.
-		/// </summary>
-		/// <param name="eltName"></param>
-		private void FixDuplicateWritingSystems(XElement rt, Guid guid, string eltName)
-		{
-			// Get all the alternatives of the given type.
-			var alternatives = rt.Descendants(eltName);
-			// group them by parent
-			var groups = new Dictionary<XElement, List<XElement>>();
-			foreach (var item in alternatives)
-			{
-				List<XElement> children;
-				if (!groups.TryGetValue(item.Parent, out children))
-				{
-					children = new List<XElement>();
-					groups[item.Parent] = children;
-				}
-				children.Add(item);
-			}
-			foreach (var kvp in groups)
-			{
-				var list = kvp.Value;
-				list.Sort((x, y) => x.Attribute("ws").Value.CompareTo(y.Attribute("ws").Value));
-				for (int i = 0; i < list.Count - 1; i++)
-				{
-					if (list[i].Attribute("ws").Value == list[i+1].Attribute("ws").Value)
-					{
-						m_errors.Add(string.Format(Strings.ksRemovingDuplicateAlternative, list[i + 1], kvp.Key.Name.LocalName, guid, list[i]));
-						list[i+1].Remove();
-						// Note that we did not remove it from the LIST, only from its parent.
-						// It is still available to be compared to the NEXT item, which might also have the same WS.
-					}
-				}
-			}
-		}
-
-		private void FixGenericDate(string fieldName, XElement rt, string className, Guid guid)
-		{
-			foreach (var xeGenDate in rt.Descendants(fieldName).ToList()) // ToList because we may modify things and mess up iterator.
-			{
-				var genDateAttr = xeGenDate.Attribute("val");
-				if (genDateAttr == null)
-					continue;
-				var genDateStr = genDateAttr.Value;
-				GenDate someDate;
-				if (GenDate.TryParse(genDateStr, out someDate))
-					continue; // all is well, valid GenDate
-				xeGenDate.Remove();
-				m_errors.Add(string.Format(Strings.ksRemovingGenericDate, genDateStr, fieldName, className, guid));
-				// possible enhancement: take it apart like this and see whether swapping month and day makes it valid.
-				//var ad = true;
-				//if (genDateStr.StartsWith("-"))
-				//{
-				//    ad = false;
-				//    genDateStr = genDateStr.Substring(1);
-				//}
-				//genDateStr = genDateStr.PadLeft(9, '0');
-				//var year = Convert.ToInt32(genDateStr.Substring(0, 4));
-				//var month = Convert.ToInt32(genDateStr.Substring(4, 2));
-				//var day = Convert.ToInt32(genDateStr.Substring(6, 2));
-				//var precision = (GenDate.PrecisionType)Convert.ToInt32(genDateStr.Substring(8, 1));
-				//return new GenDate(precision, month, day, year, ad);
-
 			}
 		}
 
@@ -539,8 +465,6 @@ namespace SIL.FieldWorks.FixData
 			}
 			if (wsVal.StartsWith("pes"))
 				return wsVal.Remove(0, 3).Insert(0, "fa");
-			if (wsVal.StartsWith("zlm"))
-				return wsVal.Remove(0, 3).Insert(0, "ms");
 			if (wsVal.StartsWith("arb"))
 				return wsVal.Remove(2, 1);	// change arb to ar
 			return wsVal;

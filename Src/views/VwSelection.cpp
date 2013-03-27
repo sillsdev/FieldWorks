@@ -23,12 +23,6 @@ Description:
 DEFINE_THIS_FILE
 #define EDITABLE_SELECTIONS_ONLY 1
 
-#ifndef WIN32
-// GUID attachments
-template<> const GUID __uuidof(VwTextSelection)("102AACD1-AE7E-11d3-9BAF-00400541F9E9");
-template<> const GUID __uuidof(VwPictureSelection)("6AFD893B-6336-48a8-953A-3A6C2879F721");
-#endif //!WIN32
-
 using namespace std;
 
 enum CharacterType { kSpace, kPunc, kAlpha };
@@ -1759,7 +1753,6 @@ bool OkToApplyPropsToField(ISilDataAccess * psda, PropTag tagEdit)
 	{
 		// These three field types don't support storing style information, so don't make changes to them.
 	case kcptMultiUnicode:
-	case kcptMultiBigUnicode:
 	case kcptUnicode:
 		return false;
 	}
@@ -6321,9 +6314,16 @@ protected:
 			{
 				VwTableCellBox * ptcboxCurr =
 					dynamic_cast<VwTableCellBox *>(pvpboxCurr->Container());
-				if (ptcboxCurr && ptcboxPrev->Container() == ptcboxCurr->Container())
+				if (ptcboxCurr == ptcboxPrev)
 				{
-					// Two cells in the same row: separate with tab.
+					// Two different paragraphs in the same cell. We want to use newline if the WHOLE selection
+					// is in that cell, otherwise, vertical bar
+					if (m_pvwsel->m_pvpbox->Container() != ptcboxCurr || (m_pvpboxLast != NULL && m_pvpboxLast->Container() != ptcboxCurr))
+						stubsSep = L"|";
+				}
+				else if (ptcboxCurr && ptcboxPrev->Container() == ptcboxCurr->Container())
+				{
+					// Two (different) cells in the same row: separate with tab.
 					stubsSep = L"\t";
 				}
 			}
@@ -7461,11 +7461,10 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 #ifdef WIN32
 			nVal = _wtoi(buf);
 #else
-			// TODO-Linux: REVIEW
-			// TODO-P4CL23677-Merge
 			{
 				UErrorCode status = U_ZERO_ERROR;
-				Formattable result(-999);
+				// value should be 0 if we encounter an error
+				Formattable result(0);
 				NumberFormat* nf = NumberFormat::createInstance(status);
 				nf->parse(buf, result, status);
 				nVal = result.getLong();

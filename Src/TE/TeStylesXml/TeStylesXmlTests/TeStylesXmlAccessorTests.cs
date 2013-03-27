@@ -604,13 +604,13 @@ namespace SIL.FieldWorks.TE
 				"<markup version=\"78A16A60-5644-48e8-9B77-A1F65A9EA253\">" + Environment.NewLine +
 				// Chapter Number (must have non-real context, structure, use, etc. to test the
 				// creation of internal styles)
-				"<tag userlevel=\"0\" id=\"Chapter_Number\" structure=\"heading\" use=\"verse\" context=\"backTranslation\" type=\"paragraph\">" + Environment.NewLine +
+				"<tag guid=\"0f4ee4e0-6954-4e1d-8a9a-b36346e6fa33\" userlevel=\"0\" id=\"Chapter_Number\" structure=\"heading\" use=\"verse\" context=\"backTranslation\" type=\"paragraph\">" + Environment.NewLine +
 				"<sfm>\\c</sfm>" + Environment.NewLine +
 				"<usage wsId=\"en\">Start of chapter</usage>" + Environment.NewLine +
 				"<font size=\"20 pt\" bold=\"false\" italic=\"false\" color=\"black\" superscript=\"false\" dropCap=\"2 lines\"/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
 				// Hebrew Title
-				"<tag userlevel=\"1\" id=\"Hebrew_Title\" structure=\"heading\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
+				"<tag guid=\"d8a64396-aa10-4662-9348-5fa4f9e725e8\" userlevel=\"1\" id=\"Hebrew_Title\" structure=\"heading\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
 				"<sfm>\\d</sfm>" + Environment.NewLine +
 				"<usage wsId=\"es\">Título hebreo</usage>" + Environment.NewLine +
 				"<font size=\"10 pt\" bold=\"false\" italic=\"false\" color=\"black\" superscript=\"false\" dropCap=\"false\"/>" + Environment.NewLine +
@@ -618,7 +618,7 @@ namespace SIL.FieldWorks.TE
 				"</tag>" + Environment.NewLine +
 				// Paragraph (must have non-real context, structure, use, etc. to test the
 				// creation of internal styles)
-				"<tag userlevel=\"0\" id=\"Paragraph\" structure=\"heading\" use=\"list\" context=\"general\" type=\"character\">" + Environment.NewLine +
+				"<tag guid=\"5c246da3-8e17-4e80-832a-e43576802dd0\" userlevel=\"0\" id=\"Paragraph\" structure=\"heading\" use=\"list\" context=\"general\" type=\"character\">" + Environment.NewLine +
 				"<usage wsId=\"en\">Generic prose paragraph</usage>" + Environment.NewLine +
 				"<usage wsId=\"es\">Un párrafo general</usage>" + Environment.NewLine +
 				"<sfm>\\p</sfm>" + Environment.NewLine +
@@ -785,32 +785,32 @@ namespace SIL.FieldWorks.TE
 				"<Styles>" + Environment.NewLine +
 				"<markup version=\"2D065FD9-0F30-4104-8246-52F7103AC78F\">" + Environment.NewLine +
 				// Chapter Number
-				"<tag userlevel=\"0\" id=\"Chapter_Number\" structure=\"body\" use=\"chapter\" context=\"text\" type=\"character\">" + Environment.NewLine +
+				"<tag guid=\"0f4ee4e0-6954-4e1d-8a9a-b36346e6fa33\" userlevel=\"0\" id=\"Chapter_Number\" structure=\"body\" use=\"chapter\" context=\"text\" type=\"character\">" + Environment.NewLine +
 				"<sfm>\\c</sfm>" + Environment.NewLine +
 				"<usage wsId=\"en\">Start of chapter</usage>" + Environment.NewLine +
 				"<font type=\"heading\" size=\"20 pt\" bold=\"false\" italic=\"false\" color=\"black\" superscript=\"false\" dropCap=\"2 lines\"/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
 				// Hebrew Title
-				"<tag userlevel=\"0\" id=\"Hebrew_Title\" structure=\"heading\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
+				"<tag guid=\"d8a64396-aa10-4662-9348-5fa4f9e725e8\" userlevel=\"0\" id=\"Hebrew_Title\" structure=\"heading\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
 				"<sfm>\\d</sfm>" + Environment.NewLine +
 				"<usage wsId=\"es\">Título hebreo</usage>" + Environment.NewLine +
 				"<font size=\"10 pt\" bold=\"false\" italic=\"false\" color=\"black\" superscript=\"false\" dropCap=\"false\"/>" + Environment.NewLine +
 				"<paragraph basedOn=\"Paragraph\" next=\"Paragraph\" alignment=\"center\" background=\"white\" indentLeft=\"0\" indentRight=\"0\" firstLine=\"8 pt\" spaceBefore=\"0\" spaceAfter=\"0\" border=\"top\"/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
 				// Unused Replaced Style
-				"<tag userlevel=\"2\" id=\"Unused_Replaced_Style\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
+				"<tag guid=\"5c246da3-8e17-4e80-832a-e43576802dd0\" userlevel=\"2\" id=\"Unused_Replaced_Style\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
 				"<usage wsId=\"en\">This unused style shouldn't show up in replacement list</usage>" + Environment.NewLine +
 				"<font/>" + Environment.NewLine +
 				"<paragraph basedOn=\"Paragraph\" next=\"Paragraph\"/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
 				// Unused Deleted Style
-				"<tag userlevel=\"1\" id=\"Unused_Deleted_Style\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
+				"<tag guid=\"1808b50f-5ad7-43c1-bdbf-9fc1fe3c1d5c\" userlevel=\"1\" id=\"Unused_Deleted_Style\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
 				"<usage wsId=\"en\">This unused style shouldn't show up in deleted list</usage>" + Environment.NewLine +
 				"<font/>" + Environment.NewLine +
 				"<paragraph basedOn=\"Paragraph\" next=\"Paragraph\"/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
 				// Paragraph
-				"<tag userlevel=\"0\" id=\"Paragraph\" structure=\"body\" use=\"prose\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
+				"<tag guid=\"45193615-3eac-4c57-980a-2bba7fe4dd08\" userlevel=\"0\" id=\"Paragraph\" structure=\"body\" use=\"prose\" context=\"text\" type=\"paragraph\">" + Environment.NewLine +
 				"<usage wsId=\"en\">Generic prose paragraph</usage>" + Environment.NewLine +
 				"<usage wsId=\"es\">Un párrafo general</usage>" + Environment.NewLine +
 				"<sfm>\\p</sfm>" + Environment.NewLine +
@@ -818,12 +818,12 @@ namespace SIL.FieldWorks.TE
 				"<paragraph next=\"Paragraph\" firstLine=\"8 pt\" basedOn=\"Normal\"/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
 				// Delete Me
-				"<tag userlevel=\"0\" id=\"Delete_Me\" context=\"general\" type=\"character\">" + Environment.NewLine +
+				"<tag guid=\"12640d9e-6cea-492c-a97b-daa83a6b75d8\" userlevel=\"0\" id=\"Delete_Me\" context=\"general\" type=\"character\">" + Environment.NewLine +
 				"<usage wsId=\"en\">Junk</usage>" + Environment.NewLine +
 				"<font/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
 				// Normal
-				"<tag userlevel=\"0\" id=\"Normal\" context=\"internal\" type=\"paragraph\">" + Environment.NewLine +
+				"<tag guid=\"914dcc30-e2ca-4042-ae91-a5d30e3ca13e\" userlevel=\"0\" id=\"Normal\" context=\"internal\" type=\"paragraph\">" + Environment.NewLine +
 				"<font size=\"10 pt\" bold=\"false\" italic=\"false\" color=\"black\" superscript=\"false\"/>" + Environment.NewLine +
 				"<paragraph next=\"Paragraph\" alignment=\"left\" background=\"white\" indentLeft=\"0\" indentRight=\"0\" firstLine=\"0 pt\" spaceBefore=\"0\" spaceAfter=\"0\"/>" + Environment.NewLine +
 				"</tag>" + Environment.NewLine +
@@ -845,6 +845,7 @@ namespace SIL.FieldWorks.TE
 
 			// Add a new character style
 			XmlNode styleNode = doc.CreateNode(XmlNodeType.Element, "tag", null);
+			styleNode.Attributes.Append(NewAttribute(doc, "guid", "ac9282df-3426-43c6-a2c7-0fbdfb323a82"));
 			styleNode.Attributes.Append(NewAttribute(doc, "userlevel", "2"));
 			styleNode.Attributes.Append(NewAttribute(doc, "id", "MyNewCharStyle"));
 			styleNode.Attributes.Append(NewAttribute(doc, "structure", "body"));
@@ -857,6 +858,7 @@ namespace SIL.FieldWorks.TE
 
 			// Replace a paragraph style with a new one
 			styleNode = doc.CreateNode(XmlNodeType.Element, "tag", null);
+			styleNode.Attributes.Append(NewAttribute(doc, "guid", "797d2f7d-576f-49ee-b7fd-ab5bfcf251a3"));
 			styleNode.Attributes.Append(NewAttribute(doc, "userlevel", "1"));
 			styleNode.Attributes.Append(NewAttribute(doc, "id", "MyNewParaStyle"));
 			styleNode.Attributes.Append(NewAttribute(doc, "context", "text"));

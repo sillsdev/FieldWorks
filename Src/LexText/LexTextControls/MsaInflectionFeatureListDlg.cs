@@ -1,6 +1,7 @@
 // This really needs to be refactored with MasterCategoryListDlg.cs
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -21,7 +22,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class MsaInflectionFeatureListDlg : Form, IFWDisposable
 	{
 		private Mediator m_mediator;
-		private FdoCache m_cache;
+		protected FdoCache m_cache;
 		// The dialog can be initialized with an existing feature structure,
 		// or just with an owning object and flid in which to create one.
 		private IFsFeatStruc m_fs;
@@ -35,11 +36,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Button m_btnCancel;
 		private Button m_bnHelp;
 		private PictureBox pictureBox1;
-		private LinkLabel linkLabel1;
+		protected LinkLabel linkLabel1;
 		private ImageList m_imageList;
 		private ImageList m_imageListPictures;
-		private FeatureStructureTreeView m_tvMsaFeatureList;
-		private Label labelPrompt;
+		protected FeatureStructureTreeView m_tvMsaFeatureList;
+		protected Label labelPrompt;
 		private System.ComponentModel.IContainer components;
 
 		private const string m_helpTopic = "khtpChoose-lexiconEdit-InflFeats";
@@ -87,19 +88,22 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
+				if (components != null)
 				{
 					components.Dispose();
 				}
+
+				if (helpProvider != null)
+					helpProvider.Dispose();
 			}
 			m_cache = null;
 			m_fs = null;
@@ -107,8 +111,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_poses = null;
 			m_mediator = null;
 			m_cache = null;
+			helpProvider = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -165,11 +170,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetDlgInfo(cache, mediator, pos, PartOfSpeechTags.kflidReferenceForms);
 		}
 
-		private void EnableLink()
+		protected virtual void EnableLink()
 		{
 			linkLabel1.Enabled = m_highestPOS != null;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="helpProvider gets disposed in Dispose()")]
 		private Mediator Mediator
 		{
 			set
@@ -202,7 +209,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Load the tree items if the starting point is a feature structure.
 		/// </summary>
 		/// <param name="fs"></param>
-		private void LoadInflFeats(IFsFeatStruc fs)
+		protected virtual void LoadInflFeats(IFsFeatStruc fs)
 		{
 			var cobj = fs.Owner;
 			switch(cobj.ClassID)
@@ -225,7 +232,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="cobj"></param>
 		/// <param name="owningFlid"></param>
-		private void LoadInflFeats(ICmObject cobj, int owningFlid)
+		protected virtual void LoadInflFeats(ICmObject cobj, int owningFlid)
 		{
 			switch(cobj.ClassID)
 			{
@@ -257,7 +264,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// After populating the tree with items, expand them, sort them, and select one.
 		/// </summary>
-		private void FinishLoading()
+		protected void FinishLoading()
 		{
 			m_tvMsaFeatureList.ExpandAll();
 			m_tvMsaFeatureList.Sort();
@@ -354,7 +361,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Get/Set prompt text
 		/// </summary>
-		public string Prompt
+		public virtual string Prompt
 		{
 			get
 			{
@@ -408,7 +415,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Get/Set link text
 		/// </summary>
-		public string LinkText
+		public virtual string LinkText
 		{
 			get
 			{
@@ -714,7 +721,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 			}
 		}
-		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		protected virtual void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			if (m_highestPOS == null)
 				return;  // nowhere to go
@@ -727,5 +734,110 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
 		}
+	}
+	public class FeatureSystemInflectionFeatureListDlg : MsaInflectionFeatureListDlg
+	{
+		public FeatureSystemInflectionFeatureListDlg()
+			: base()
+		{
+		}
+
+		protected override void EnableLink()
+		{
+			linkLabel1.Enabled = true;
+		}
+		protected override void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			// code in the launcher handles the jump
+			DialogResult = DialogResult.Yes;
+			Close();
+		}
+		/// <summary>
+		/// Get/Set prompt text
+		/// </summary>
+		public override string Prompt
+		{
+			get
+			{
+				CheckDisposed();
+
+				return labelPrompt.Text;
+			}
+			set
+			{
+				CheckDisposed();
+
+				labelPrompt.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// Get/Set link text
+		/// </summary>
+		public override string LinkText
+		{
+			get
+			{
+				CheckDisposed();
+
+				return linkLabel1.Text;
+			}
+			set
+			{
+				CheckDisposed();
+
+				linkLabel1.Text = value;
+			}
+		}
+		/// <summary>
+		/// Load the tree items if the starting point is a feature structure.
+		/// </summary>
+		/// <param name="fs"></param>
+		protected override void LoadInflFeats(IFsFeatStruc fs)
+		{
+			PopulateTreeFromFeatureSystem();
+			m_tvMsaFeatureList.PopulateTreeFromFeatureStructure(fs);
+			FinishLoading();
+		}
+
+		/// <summary>
+		/// Load the tree items if the starting point is an owning MSA and flid.
+		/// </summary>
+		/// <param name="cobj"></param>
+		/// <param name="owningFlid"></param>
+		protected override void LoadInflFeats(ICmObject cobj, int owningFlid)
+		{
+			PopulateTreeFromFeatureSystem();
+			FinishLoading();
+		}
+
+		/// <summary>
+		/// Get the top level complex features
+		/// Also get top level closed features which are not used by any complex feature
+		/// (to tell, we have to look at the types)
+		/// </summary>
+		private void PopulateTreeFromFeatureSystem()
+		{
+			var featureSystem = m_cache.LangProject.MsFeatureSystemOA;
+			var topLevelComplexFeatureDefinitions =
+				featureSystem.FeaturesOC.Where(fd => fd.ClassID == FsComplexFeatureTags.kClassId);
+			m_tvMsaFeatureList.PopulateTreeFromInflectableFeats(topLevelComplexFeatureDefinitions);
+			var topLevelClosedFeatureDefinitions =
+				featureSystem.FeaturesOC.Where(fd => fd.ClassID == FsClosedFeatureTags.kClassId);
+			foreach (var closedFeatureDefinition in topLevelClosedFeatureDefinitions)
+			{
+				var typeUsedByComplexFormForThisClosedFeature =
+					topLevelComplexFeatureDefinitions.Cast<IFsComplexFeature>().Select(cx => cx.TypeRA).Where(
+						t => t.FeaturesRS.Contains(closedFeatureDefinition));
+				if (!typeUsedByComplexFormForThisClosedFeature.Any())
+					m_tvMsaFeatureList.PopulateTreeFromInflectableFeat(closedFeatureDefinition);
+			}
+		}
+
+		public FeatureStructureTreeView TreeView
+		{
+			get { return m_tvMsaFeatureList; }
+		}
+
 	}
 }

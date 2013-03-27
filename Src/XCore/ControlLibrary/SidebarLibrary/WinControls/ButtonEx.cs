@@ -64,7 +64,7 @@ namespace SidebarLibrary.WinControls
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			base.OnMouseDown(e);
+		base.OnMouseDown(e);
 			mouseDown = true;
 			Invalidate();
 		}

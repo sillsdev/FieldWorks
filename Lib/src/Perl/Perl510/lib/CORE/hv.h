@@ -1,7 +1,7 @@
 /*    hv.h
  *
  *    Copyright (C) 1991, 1992, 1993, 1996, 1997, 1998, 1999,
- *    2000, 2001, 2002, 2003, 2005, 2006, 2007, by Larry Wall and others
+ *    2000, 2001, 2002, 2003, 2005, 2006, 2007, 2008, by Larry Wall and others
  *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.
@@ -41,18 +41,32 @@ struct shared_he {
    Use the funcs in mro.c
 */
 
-
-/* structure may change, so not public yet */
-struct mro_alg;
+struct mro_alg {
+	AV *(*resolve)(pTHX_ HV* stash, U32 level);
+	const char *name;
+	U16 length;
+	U16	kflags;	/* For the hash API - set HVhek_UTF8 if name is UTF-8 */
+	U32 hash; /* or 0 */
+};
 
 struct mro_meta {
-	AV      *mro_linear_dfs; /* cached dfs @ISA linearization */
-	AV      *mro_linear_c3;  /* cached c3 @ISA linearization */
+	/* a hash holding the different MROs private data.  */
+	HV      *mro_linear_all;
+	/* a pointer directly to the current MROs private data.  If mro_linear_all
+	   is NULL, this owns the SV reference, else it is just a pointer to a
+	   value stored in and owned by mro_linear_all.  */
+	SV      *mro_linear_current;
 	HV      *mro_nextmethod; /* next::method caching */
 	U32     cache_gen;       /* Bumping this invalidates our method cache */
 	U32     pkg_gen;         /* Bumps when local methods/@ISA change */
 	const struct mro_alg *mro_which; /* which mro alg is in use? */
+	HV      *isa;            /* Everything this class @ISA */
 };
+
+#define MRO_GET_PRIVATE_DATA(smeta, which)		   \
+	(((smeta)->mro_which && (which) == (smeta)->mro_which) \
+	 ? (smeta)->mro_linear_current			   \
+	 : Perl_mro_get_private_data(aTHX_ (smeta), (which)))
 
 /* Subject to change.
    Don't access this directly.
@@ -69,53 +83,13 @@ struct xpvhv_aux {
 /* hash structure: */
 /* This structure must match the beginning of struct xpvmg in sv.h. */
 struct xpvhv {
-	union {
-	NV	xnv_nv;		/* numeric value, if any */
-	HV *	xgv_stash;
-	struct {
-		U32	xlow;
-		U32	xhigh;
-	}	xpad_cop_seq;	/* used by pad.c for cop_sequence */
-	struct {
-		U32 xbm_previous;	/* how many characters in string before rare? */
-		U8	xbm_flags;
-		U8	xbm_rare;	/* rarest character in string */
-	}	xbm_s;		/* fields from PVBM */
-	}		xnv_u;
-	STRLEN	xhv_fill;	/* how full xhv_array currently is */
-	STRLEN	xhv_max;	/* subscript of last element of xhv_array */
-	union {
-	IV	xivu_iv;	/* integer value or pv offset */
-	UV	xivu_uv;
-	void *	xivu_p1;
-	I32	xivu_i32;
-	HEK *	xivu_namehek;
-	}		xiv_u;
-	union {
-	MAGIC*	xmg_magic;	/* linked list of magicalness */
-	HV*	xmg_ourstash;	/* Stash for our (when SvPAD_OUR is true) */
-	} xmg_u;
-	HV*		xmg_stash;	/* class package */
+	union _xnvu xnv_u;
+	STRLEN      xhv_fill;       /* how full xhv_array currently is */
+	STRLEN      xhv_max;        /* subscript of last element of xhv_array */
+	_XPVMG_HEAD;
 };
 
 #define xhv_keys xiv_u.xivu_iv
-
-typedef struct {
-	STRLEN	xhv_fill;	/* how full xhv_array currently is */
-	STRLEN	xhv_max;	/* subscript of last element of xhv_array */
-	union {
-	IV	xivu_iv;	/* integer value or pv offset */
-	UV	xivu_uv;
-	void *	xivu_p1;
-	I32	xivu_i32;
-	HEK *	xivu_namehek;
-	}		xiv_u;
-	union {
-	MAGIC*	xmg_magic;	/* linked list of magicalness */
-	HV*	xmg_ourstash;	/* Stash for our (when SvPAD_OUR is true) */
-	} xmg_u;
-	HV*		xmg_stash;	/* class package */
-} xpvhv_allocated;
 
 /* hash a key */
 /* FYI: This is the "One-at-a-Time" algorithm by Bob Jenkins
@@ -191,6 +165,8 @@ is to be expected. (For information only--not to be used).
 =for apidoc AmU||Nullhv
 Null HV pointer.
 
+(deprecated - use C<(HV *)NULL> instead)
+
 =head1 Hash Manipulation Functions
 
 =for apidoc Am|char*|HvNAME|HV* stash
@@ -224,7 +200,18 @@ variable C<PL_na>, though this is rather less efficient than using a local
 variable.  Remember though, that hash keys in perl are free to contain
 embedded nulls, so using C<strlen()> or similar is not a good way to find
 the length of hash keys. This is very similar to the C<SvPV()> macro
-described elsewhere in this document.
+described elsewhere in this document. See also C<HeUTF8>.
+
+If you are using C<HePV> to get values to pass to C<newSVpvn()> to create a
+new SV, you should consider using C<newSVhek(HeKEY_hek(he))> as it is more
+efficient.
+
+=for apidoc Am|char*|HeUTF8|HE* he
+Returns whether the C<char *> value returned by C<HePV> is encoded in UTF-8,
+doing any necessary dereferencing of possibly C<SV*> keys.  The value returned
+will be 0 or non-0, not necessarily 1 (or even a value with any low bits set),
+so B<do not> blindly assign this to a C<bool> variable, as C<bool> may be a
+typedef for C<char>.
 
 =for apidoc Am|SV*|HeSVKEY|HE* he
 Returns the key as an C<SV*>, or C<NULL> if the hash entry does not
@@ -245,18 +232,19 @@ C<SV*>.
 /* these hash entry flags ride on hent_klen (for use only in magic/tied HVs) */
 #define HEf_SVKEY	-2	/* hent_key is an SV* */
 
-
-#define Nullhv Null(HV*)
+#ifndef PERL_CORE
+#  define Nullhv Null(HV*)
+#endif
 #define HvARRAY(hv)	((hv)->sv_u.svu_hash)
 #define HvFILL(hv)	((XPVHV*)  SvANY(hv))->xhv_fill
 #define HvMAX(hv)	((XPVHV*)  SvANY(hv))->xhv_max
 /* This quite intentionally does no flag checking first. That's your
    responsibility.  */
 #define HvAUX(hv)	((struct xpvhv_aux*)&(HvARRAY(hv)[HvMAX(hv)+1]))
-#define HvRITER(hv)	(*Perl_hv_riter_p(aTHX_ (HV*)(hv)))
-#define HvEITER(hv)	(*Perl_hv_eiter_p(aTHX_ (HV*)(hv)))
-#define HvRITER_set(hv,r)	Perl_hv_riter_set(aTHX_ (HV*)(hv), r)
-#define HvEITER_set(hv,e)	Perl_hv_eiter_set(aTHX_ (HV*)(hv), e)
+#define HvRITER(hv)	(*Perl_hv_riter_p(aTHX_ MUTABLE_HV(hv)))
+#define HvEITER(hv)	(*Perl_hv_eiter_p(aTHX_ MUTABLE_HV(hv)))
+#define HvRITER_set(hv,r)	Perl_hv_riter_set(aTHX_ MUTABLE_HV(hv), r)
+#define HvEITER_set(hv,e)	Perl_hv_eiter_set(aTHX_ MUTABLE_HV(hv), e)
 #define HvRITER_get(hv)	(SvOOK(hv) ? HvAUX(hv)->xhv_riter : -1)
 #define HvEITER_get(hv)	(SvOOK(hv) ? HvAUX(hv)->xhv_eiter : NULL)
 #define HvNAME(hv)	HvNAME_get(hv)
@@ -265,7 +253,7 @@ C<SV*>.
    caller's responsibility */
 #define HvMROMETA(hv) (HvAUX(hv)->xhv_mro_meta \
 					   ? HvAUX(hv)->xhv_mro_meta \
-					   : mro_meta_init(hv))
+					   : Perl_mro_meta_init(aTHX_ hv))
 
 /* FIXME - all of these should use a UTF8 aware API, which should also involve
    getting the length. */
@@ -287,9 +275,9 @@ C<SV*>.
 #define HvKEYS(hv)		HvUSEDKEYS(hv)
 #define HvUSEDKEYS(hv)		(HvTOTALKEYS(hv) - HvPLACEHOLDERS_get(hv))
 #define HvTOTALKEYS(hv)		XHvTOTALKEYS((XPVHV*)  SvANY(hv))
-#define HvPLACEHOLDERS(hv)	(*Perl_hv_placeholders_p(aTHX_ (HV*)hv))
-#define HvPLACEHOLDERS_get(hv)	(SvMAGIC(hv) ? Perl_hv_placeholders_get(aTHX_ (HV*)hv) : 0)
-#define HvPLACEHOLDERS_set(hv,p)	Perl_hv_placeholders_set(aTHX_ (HV*)hv, p)
+#define HvPLACEHOLDERS(hv)	(*Perl_hv_placeholders_p(aTHX_ MUTABLE_HV(hv)))
+#define HvPLACEHOLDERS_get(hv)	(SvMAGIC(hv) ? Perl_hv_placeholders_get(aTHX_ (const HV *)hv) : 0)
+#define HvPLACEHOLDERS_set(hv,p)	Perl_hv_placeholders_set(aTHX_ MUTABLE_HV(hv), p)
 
 #define HvSHAREKEYS(hv)		(SvFLAGS(hv) & SVphv_SHAREKEYS)
 #define HvSHAREKEYS_on(hv)	(SvFLAGS(hv) |= SVphv_SHAREKEYS)
@@ -315,7 +303,9 @@ C<SV*>.
 #define HvREHASH_on(hv)		(SvFLAGS(hv) |= SVphv_REHASH)
 #define HvREHASH_off(hv)	(SvFLAGS(hv) &= ~SVphv_REHASH)
 
-#define Nullhe Null(HE*)
+#ifndef PERL_CORE
+#  define Nullhe Null(HE*)
+#endif
 #define HeNEXT(he)		(he)->hent_next
 #define HeKEY_hek(he)		(he)->hent_hek
 #define HeKEY(he)		HEK_KEY(HeKEY_hek(he))
@@ -331,6 +321,9 @@ C<SV*>.
 #define HePV(he,lp)		((HeKLEN(he) == HEf_SVKEY) ?		\
 				 SvPV(HeKEY_sv(he),lp) :		\
 				 ((lp = HeKLEN(he)), HeKEY(he)))
+#define HeUTF8(he)		((HeKLEN(he) == HEf_SVKEY) ?		\
+				 SvUTF8(HeKEY_sv(he)) :			\
+				 (U32)HeKUTF8(he))
 
 #define HeSVKEY(he)		((HeKEY(he) && 				\
 				  HeKLEN(he) == HEf_SVKEY) ?		\
@@ -339,12 +332,14 @@ C<SV*>.
 #define HeSVKEY_force(he)	(HeKEY(he) ?				\
 				 ((HeKLEN(he) == HEf_SVKEY) ?		\
 				  HeKEY_sv(he) :			\
-				  sv_2mortal(newSVpvn(HeKEY(he),	\
-							 HeKLEN(he)))) :	\
+				  newSVpvn_flags(HeKEY(he),		\
+						 HeKLEN(he), SVs_TEMP)) : \
 				 &PL_sv_undef)
 #define HeSVKEY_set(he,sv)	((HeKLEN(he) = HEf_SVKEY), (HeKEY_sv(he) = sv))
 
-#define Nullhek Null(HEK*)
+#ifndef PERL_CORE
+#  define Nullhek Null(HEK*)
+#endif
 #define HEK_BASESIZE		STRUCT_OFFSET(HEK, hek_key[0])
 #define HEK_HASH(hek)		(hek)->hek_hash
 #define HEK_LEN(hek)		(hek)->hek_len
@@ -358,6 +353,9 @@ C<SV*>.
 #define HVhek_FREEKEY	0x100 /* Internal flag to say key is malloc()ed.  */
 #define HVhek_PLACEHOLD	0x200 /* Internal flag to create placeholder.
 							   * (may change, but Storable is a core module) */
+#define HVhek_KEYCANONICAL 0x400 /* Internal flag - key is in canonical form.
+					If the string is UTF-8, it cannot be
+					converted to bytes. */
 #define HVhek_MASK	0xFF
 
 /* Which flags enable HvHASKFLAGS? Somewhat a hack on a hack, as
@@ -398,7 +396,7 @@ C<SV*>.
 #define HV_ITERNEXT_WANTPLACEHOLDERS	0x01	/* Don't skip placeholders.  */
 
 #define hv_iternext(hv)	hv_iternext_flags(hv, 0)
-#define hv_magic(hv, gv, how) sv_magic((SV*)(hv), (SV*)(gv), how, NULL, 0)
+#define hv_magic(hv, gv, how) sv_magic(MUTABLE_SV(hv), MUTABLE_SV(gv), how, NULL, 0)
 
 /* available as a function in hv.c */
 #define Perl_sharepvn(sv, len, hash) HEK_KEY(share_hek(sv, len, hash))
@@ -411,42 +409,42 @@ C<SV*>.
 	->shared_he_he.he_valu.hent_refcount),				\
 	 hek)
 
-#define hv_store_ent(zlonk, awk, touche, zgruppp)			\
-	((HE *) hv_common((zlonk), (awk), NULL, 0, 0, HV_FETCH_ISSTORE,	\
-			  (touche), (zgruppp)))
+#define hv_store_ent(hv, keysv, val, hash)				\
+	((HE *) hv_common((hv), (keysv), NULL, 0, 0, HV_FETCH_ISSTORE,	\
+			  (val), (hash)))
 
-#define hv_exists_ent(zlonk, awk, zgruppp)				\
-	(hv_common((zlonk), (awk), NULL, 0, 0, HV_FETCH_ISEXISTS, 0, (zgruppp))\
+#define hv_exists_ent(hv, keysv, hash)					\
+	(hv_common((hv), (keysv), NULL, 0, 0, HV_FETCH_ISEXISTS, 0, (hash))	\
 	 ? TRUE : FALSE)
-#define hv_fetch_ent(zlonk, awk, touche, zgruppp)			\
-	((HE *) hv_common((zlonk), (awk), NULL, 0, 0,			\
-			  ((touche) ? HV_FETCH_LVALUE : 0), NULL, (zgruppp)))
-#define hv_delete_ent(zlonk, awk, touche, zgruppp)			\
-	((SV *) hv_common((zlonk), (awk), NULL, 0, 0, (touche) | HV_DELETE,	\
-			  NULL, (zgruppp)))
+#define hv_fetch_ent(hv, keysv, lval, hash)				\
+	((HE *) hv_common((hv), (keysv), NULL, 0, 0,			\
+			  ((lval) ? HV_FETCH_LVALUE : 0), NULL, (hash)))
+#define hv_delete_ent(hv, key, flags, hash)				\
+	(MUTABLE_SV(hv_common((hv), (key), NULL, 0, 0, (flags) | HV_DELETE,	\
+			  NULL, (hash))))
 
-#define hv_store_flags(urkk, zamm, clunk, thwape, sploosh, eee_yow)	\
-	((SV**) hv_common((urkk), NULL, (zamm), (clunk), (eee_yow),		\
-			  (HV_FETCH_ISSTORE|HV_FETCH_JUST_SV), (thwape),	\
-			  (sploosh)))
+#define hv_store_flags(hv, key, klen, val, hash, flags)			\
+	((SV**) hv_common((hv), NULL, (key), (klen), (flags),		\
+			  (HV_FETCH_ISSTORE|HV_FETCH_JUST_SV), (val),	\
+			  (hash)))
 
-#define hv_store(urkk, zamm, clunk, thwape, sploosh)			\
-	((SV**) hv_common_key_len((urkk), (zamm), (clunk),			\
+#define hv_store(hv, key, klen, val, hash)				\
+	((SV**) hv_common_key_len((hv), (key), (klen),			\
 				  (HV_FETCH_ISSTORE|HV_FETCH_JUST_SV),	\
-				  (thwape), (sploosh)))
+				  (val), (hash)))
 
-#define hv_exists(urkk, zamm, clunk)					\
-	(hv_common_key_len((urkk), (zamm), (clunk), HV_FETCH_ISEXISTS, NULL, 0) \
+#define hv_exists(hv, key, klen)					\
+	(hv_common_key_len((hv), (key), (klen), HV_FETCH_ISEXISTS, NULL, 0) \
 	 ? TRUE : FALSE)
 
-#define hv_fetch(urkk, zamm, clunk, pam)				\
-	((SV**) hv_common_key_len((urkk), (zamm), (clunk), (pam)		\
+#define hv_fetch(hv, key, klen, lval)					\
+	((SV**) hv_common_key_len((hv), (key), (klen), (lval)		\
 				  ? (HV_FETCH_JUST_SV | HV_FETCH_LVALUE)	\
 				  : HV_FETCH_JUST_SV, NULL, 0))
 
-#define hv_delete(urkk, zamm, clunk, pam)				\
-	((SV*) hv_common_key_len((urkk), (zamm), (clunk),			\
-				 (pam) | HV_DELETE, NULL, 0))
+#define hv_delete(hv, key, klen, flags)					\
+	(MUTABLE_SV(hv_common_key_len((hv), (key), (klen),			\
+				  (flags) | HV_DELETE, NULL, 0)))
 
 /* This refcounted he structure is used for storing the hints used for lexical
    pragmas. Without threads, it's basically struct he + refcount.
@@ -526,6 +524,16 @@ struct refcounted_he {
 #define HV_FETCH_LVALUE		0x10
 #define HV_FETCH_JUST_SV	0x20
 #define HV_DELETE		0x40
+
+/*
+=for apidoc newHV
+
+Creates a new HV.  The reference count is set to 1.
+
+=cut
+*/
+
+#define newHV()	MUTABLE_HV(newSV_type(SVt_PVHV))
 
 /*
  * Local variables:

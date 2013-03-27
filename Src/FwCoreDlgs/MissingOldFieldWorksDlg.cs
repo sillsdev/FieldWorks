@@ -79,14 +79,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		// REVIEW-Linux: does this work on Linux?
 		private void m_lnkFw60_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start("http://downloads.sil.org/FieldWorks/OldSQLMigration/FW6Lite.exe");
+			using (Process.Start("http://downloads.sil.org/FieldWorks/OldSQLMigration/FW6Lite.exe"))
+			{
+			}
 		}
 
 		private void m_lnkSqlSvr_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Process.Start("http://downloads.sil.org/FieldWorks/OldSQLMigration/SQL4FW.exe");
+			using (Process.Start("http://downloads.sil.org/FieldWorks/OldSQLMigration/SQL4FW.exe"))
+			{
+			}
 		}
 	}
 }

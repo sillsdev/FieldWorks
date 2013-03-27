@@ -466,19 +466,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// For character styles, hide the "Paragraph", "Bullets", and "Border" tabs
 			if (styleInfo.IsCharacterStyle)
 			{
-				// deselect tab before removing. This is needed on mono.
-				// see bug: https://bugzilla.novell.com/show_bug.cgi?id=613765
-				if (m_tabControl.SelectedTab == m_tbBorder ||
-					m_tabControl.SelectedTab == m_tbBullets ||
-					m_tabControl.SelectedTab == m_tbParagraph)
-				{
-					// LT-12119: Switching to General tab will cause "current" tab to save data to
-					// "current" style, but the two are currently out of sync! So prevent the save:
-					m_fOkToSaveTabsToStyle = false;
-					m_tabControl.SelectedTab = m_tbGeneral;
-					m_fOkToSaveTabsToStyle = true;
-				}
-
 				RemoveParagraphStyleTabs();
 			}
 			else if (styleInfo.IsParagraphStyle)

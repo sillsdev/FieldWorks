@@ -52,7 +52,8 @@ namespace SIL.OxesIO
 		public void OxesVersion_MatchesEmbeddedSchemaVersion()
 		{
 			XmlDocument doc = new XmlDocument();
-			doc.Load(typeof(OxesIO.Validator).Assembly.GetManifestResourceStream("SIL.OxesIO.oxes.rng"));
+			using (var stream = typeof(OxesIO.Validator).Assembly.GetManifestResourceStream("SIL.OxesIO.oxes.rng"))
+				doc.Load(stream);
 			string sNamespace = String.Format("http://www.wycliffe.net/scripture/namespace/version_{0}", Validator.OxesVersion);
 			string query = String.Format("/x:grammar/@ns[.='{0}']", sNamespace);
 			XmlNamespaceManager m = new XmlNamespaceManager(doc.NameTable);

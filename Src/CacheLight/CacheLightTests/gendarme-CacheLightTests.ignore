@@ -1,0 +1,13 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Unit test. Variable disposed in FixtureTeardown
+M: System.Void SIL.FieldWorks.CacheLightTests.RealDataCacheBase::FixtureSetup()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Variable disposed in FixtureTeardown
+T: SIL.FieldWorks.CacheLightTests.RealDataCacheBase

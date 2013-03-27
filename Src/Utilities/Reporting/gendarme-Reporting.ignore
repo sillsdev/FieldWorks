@@ -1,0 +1,19 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Variable added to Controls collection and disposed there
+M: System.Void SIL.Utils.ErrorReporter::InitializeComponent()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# searching for possible newlines
+M: System.Boolean SIL.Utils.ErrorReporter::ReportException(System.Exception,Microsoft.Win32.RegistryKey,System.String,System.Windows.Forms.Form,System.Boolean)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.MonoCompatibilityReviewRule
+
+# added TODO-Linux comment
+M: System.Boolean SIL.Utils.ErrorReporter::ReportException(System.Exception,Microsoft.Win32.RegistryKey,System.String,System.Windows.Forms.Form,System.Boolean)

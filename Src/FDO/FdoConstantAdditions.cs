@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>Free Variant item in LexEntry Types list</summary>
 		public const string kguidLexTypFreeVar = "4343b1ef-b54f-4fa4-9998-271319a6d74c";
 		/// <summary>Inflectional Variant item in LexEntry Types list</summary>
-		public const string kguidLexTypIrregInflectionVar = "f01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c";
+		public const string kguidLexTypIrregInflectionVar = "01d4fbc1-3b0c-4f52-9163-7ab0d4f4711c";
 		/// <summary>Plural Variant item in LexEntry Types list</summary>
 		public const string kguidLexTypPluralVar = "a32f1d1c-4832-46a2-9732-c2276d6547e8";
 		/// <summary>Past Variant item in LexEntry Types list</summary>

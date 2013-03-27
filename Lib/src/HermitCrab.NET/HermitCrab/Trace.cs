@@ -49,6 +49,14 @@ namespace SIL.HermitCrab
 			/// </summary>
 			PHONOLOGICAL_RULE_SYNTHESIS,
 			/// <summary>
+			/// Phonological rule synthesis trace, required POSes not met
+			/// </summary>
+			PHONOLOGICAL_RULE_SYNTHESIS_REQUIREDPOS,
+			/// <summary>
+			/// Phonological rule synthesis trace, required or excluded MPR features not met
+			/// </summary>
+			PHONOLOGICAL_RULE_SYNTHESIS_MPRFEATURES,
+			/// <summary>
 			/// Affix template analysis trace
 			/// </summary>
 			TEMPLATE_ANALYSIS,
@@ -706,6 +714,152 @@ namespace SIL.HermitCrab
 					m_output == null ? HCStrings.kstidTraceNoOutput
 					: m_output.Stratum.CharacterDefinitionTable.ToString(m_output.Shape, ModeType.SYNTHESIS, true));
 			}
+		}
+	}
+	/// <summary>
+	/// This is used to represent information resulting from when a phonological rule is not applicable
+	/// during synthesis due to the part of speech of the stem not being one of the required parts of speech
+	/// for the rule. This trace record is produced every time a phonological rule is not applied during
+	/// word synthesis because of a mismatch in part of speech.
+	/// </summary>
+	public class PhonologicalRuleSynthesisRequiredPOSTrace : Trace
+	{
+		private PartOfSpeech m_partOfSpeech;
+		private HCObjectSet<PartOfSpeech> m_requiredPOSs;
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BlockingTrace"/> class.
+		/// </summary>
+		/// <param name="pos">The part of speech of the stem.</param>
+		/// <param name="requiredPOSs">The set of parts of speech this rule requires.</param>
+		internal PhonologicalRuleSynthesisRequiredPOSTrace(PartOfSpeech pos, HCObjectSet<PartOfSpeech> requiredPOSs)
+		{
+			PartOfSpeech = pos;
+			RequiredPOSs = requiredPOSs;
+		}
+
+		/// <summary>
+		/// Gets the trace record type.
+		/// </summary>
+		/// <value>The trace record type.</value>
+		public override TraceType Type
+		{
+			get
+			{
+				return TraceType.PHONOLOGICAL_RULE_SYNTHESIS_REQUIREDPOS;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the part of speech of the stem
+		/// </summary>
+		/// <value>The part of speech of the stem</value>
+		public PartOfSpeech PartOfSpeech
+		{
+			get { return m_partOfSpeech; }
+			set { m_partOfSpeech = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the required parts of speech
+		/// </summary>
+		/// <value>The set of parts of speech the stem must have in order for the phonological rule to be applicable</value>
+		public HCObjectSet<PartOfSpeech> RequiredPOSs
+		{
+			get { return m_requiredPOSs; }
+			set { m_requiredPOSs = value; }
+		}
+
+		public override string ToString(bool includeInputs)
+		{
+			return string.Format(HCStrings.kstidTracePhonologicalRuleSynthesisRequiredPOS, m_partOfSpeech.ToString(), m_requiredPOSs.ToString());
+		}
+	}
+
+	/// <summary>
+	/// This is used to represent information resulting from the blocking of word synthesis by a lexical
+	/// entry during synthesis. This trace record is produced every time a word synthesis is blocked.
+	/// </summary>
+	public class PhonologicalRuleSynthesisMPRFeaturesTrace : Trace
+	{
+		/// <summary>
+		/// The block type
+		/// </summary>
+		public enum PhonologicalRuleSynthesisMPRFeaturesTraceType { REQUIRED, EXCLUDED }
+
+		PhonologicalRuleSynthesisMPRFeaturesTraceType m_mprFeatureType;
+		private MPRFeatureSet m_mprFeatures;
+		private MPRFeatureSet m_constrainingMPRFeatures;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BlockingTrace"/> class.
+		/// </summary>
+		/// <param name="mprFeatureType">Type: required or excluded.</param>
+		/// <param name="mprFeatures">The set of MPR features the form has.</param>
+		/// <param name="constrainingMPRFeatures">The set of MPR features the form must have (required) or must not have (excluded).</param>
+		internal PhonologicalRuleSynthesisMPRFeaturesTrace(PhonologicalRuleSynthesisMPRFeaturesTraceType mprFeatureType,
+			MPRFeatureSet mprFeatures, MPRFeatureSet constrainingMPRFeatures)
+		{
+			m_mprFeatureType = mprFeatureType;
+			m_mprFeatures = mprFeatures;
+			m_constrainingMPRFeatures = constrainingMPRFeatures;
+		}
+
+		/// <summary>
+		/// Gets the trace record type.
+		/// </summary>
+		/// <value>The trace record type.</value>
+		public override TraceType Type
+		{
+			get
+			{
+				return TraceType.PHONOLOGICAL_RULE_SYNTHESIS_MPRFEATURES;
+			}
+		}
+
+		/// <summary>
+		/// Gets the type of the checking.
+		/// </summary>
+		/// <value>The type of the checking.</value>
+		public PhonologicalRuleSynthesisMPRFeaturesTraceType MPRFeatureType
+		{
+			get
+			{
+				return m_mprFeatureType;
+			}
+		}
+		/// <summary>
+		/// Gets the set of MPR features of the form.
+		/// </summary>
+		/// <value>The MPR features of the form.</value>
+		public MPRFeatureSet MPRFeatures
+		{
+			get { return m_mprFeatures; }
+		}
+
+		/// <summary>
+		/// Gets the set of required or excluded MPR features.
+		/// </summary>
+		/// <value>The set of required or excluded MPR features.</value>
+		public MPRFeatureSet ConstrainingMPRFeatures
+		{
+			get { return m_constrainingMPRFeatures; }
+		}
+
+		public override string ToString(bool includeInputs)
+		{
+			string format = null;
+			switch (m_mprFeatureType)
+			{
+				case PhonologicalRuleSynthesisMPRFeaturesTraceType.REQUIRED:
+					format = HCStrings.kstidTracePhonologicalRuleSynthesisRequiredMPRFeatures;
+					break;
+
+				case PhonologicalRuleSynthesisMPRFeaturesTraceType.EXCLUDED:
+					format = HCStrings.kstidTracePhonologicalRuleSynthesisExcludedMPRFeatures;
+					break;
+			}
+
+			return string.Format(format, MPRFeatures, ConstrainingMPRFeatures);
 		}
 	}
 

@@ -1,33 +1,33 @@
 <word>
   <form>pengetikan</form>
   <seq>
-	<morph wordType="derivCircumPfx">
-	  <shortName>peng- (NMLZR): peN- ... -an</shortName>
-	  <alloform>peng-</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="root">
-	  <shortName>etik (type): ketik</shortName>
-	  <alloform>etik</alloform>
-	  <gloss>(type):</gloss>
-	  <citationForm>ketik</citationForm>
-	  <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
-	</morph>
-	<morph wordType="derivCircumSfx">
-	  <shortName>-an (NMLZR): peN- ... -an</shortName>
-	  <alloform>-an</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="derivCircumPfx">
+      <shortName>peng- (NMLZR): peN- ... -an</shortName>
+      <alloform>peng-</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="root">
+      <shortName>etik (type): ketik</shortName>
+      <alloform>etik</alloform>
+      <gloss>(type):</gloss>
+      <citationForm>ketik</citationForm>
+      <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
+    </morph>
+    <morph wordType="derivCircumSfx">
+      <shortName>-an (NMLZR): peN- ... -an</shortName>
+      <alloform>-an</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
 </word>

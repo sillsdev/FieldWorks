@@ -15,6 +15,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -247,6 +248,8 @@ namespace SIL.FieldWorks.TE
 		/// focus.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetControl() returns a reference")]
 		public bool FootnoteViewFocused
 		{
 			set
@@ -286,7 +289,13 @@ namespace SIL.FieldWorks.TE
 
 			// show or hide the style pane in each of the views
 			m_grid.Columns[kStyleColumn].Visible = fShow;
-
+#if __MonoCS__
+			// Tickle m_grid into refreshing itself, overcoming a Mono DataGridView bug.
+			// (See FWNX-467.)  Note that m_grid.Refresh() does nothing.
+			var w = m_grid.Width;
+			m_grid.Width = w - 1;
+			m_grid.Width = w;
+#endif
 			// save a value to the registry
 			m_stylePaneWidth.Value = fShow ? m_grid.Columns[kStyleColumn].Width : 0;
 
@@ -421,6 +430,8 @@ namespace SIL.FieldWorks.TE
 		/// Hides the footnote view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetControl() returns a reference")]
 		public virtual void HideFootnoteView()
 		{
 			CheckDisposed();

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright © 2002-2004, SIL International. All Rights Reserved.
+#region // Copyright (C) 2002-2004, SIL International. All Rights Reserved.
 // <copyright from='2002' to='2004' company='SIL International'>
-//		Copyright © 2002-2004, SIL International. All Rights Reserved.
+//		Copyright (C) 2002-2004, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -245,6 +245,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// RealSplashScreen
 			//
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
 			this.ControlBox = false;
 			this.Controls.Add(this.m_panel);

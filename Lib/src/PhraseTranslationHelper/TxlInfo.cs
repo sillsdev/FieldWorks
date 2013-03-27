@@ -77,6 +77,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
 			{
 				if (components != null)
@@ -134,7 +135,7 @@ namespace SILUBS.PhraseTranslationHelper
 #if !__MonoCS__
 					Invoke(new Action(ScrollCredits));
 #else // Windows have to be on the main thread on mono.
-					UpdateDisplay();
+					ScrollCredits();
 					Application.DoEvents(); // force a paint
 #endif
 				}

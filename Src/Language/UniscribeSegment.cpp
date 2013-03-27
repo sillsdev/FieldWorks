@@ -42,10 +42,6 @@ UniscribeSegment::FwScriptCache UniscribeSegment::g_fsc;
 ScrItemVec UniscribeSegment::g_vscri; // vector of script items from ScriptItemize.
 int UniscribeSegment::g_cscri; // number of valid items in ScriptItemize.
 
-#if !WIN32
-template<> const GUID __uuidof(UniscribeSegment)("61299C3B-54D6-4c46-ACE5-72B9128F2048");
-#endif
-
 //:>********************************************************************************************
 //:>	   UniscribeRunInfo
 //:>********************************************************************************************

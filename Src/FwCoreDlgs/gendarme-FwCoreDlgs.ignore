@@ -1,0 +1,72 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Added to collection and disposed there
+T: SIL.FieldWorks.FwCoreDlgs.ValidCharactersDlg/ValidCharGridsManager
+
+# Gendarme bug. Objects are disposed
+T: SIL.FieldWorks.FwCoreDlgs.FwSplashScreen
+
+# Reference only. Parent will dispose.
+T: SIL.FieldWorks.FwCoreDlgs.CheckBoxColumnHeaderHandler
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Added to collection and disposed there
+M: System.Void SIL.FieldWorks.FwCoreDlgs.AddCnvtrDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.AddNewUserDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.AdvancedEncProps::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.ConverterTest::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.DuplicateProjectFoundDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.ErrorMessageHandler::AddStar(System.Windows.Forms.TextBox)
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwApplyStyleDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwDeleteProjectDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwFindReplaceDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwFindReplaceDlg::PopulateWritingSystemMenu()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwFindReplaceDlg::PopulateStyleMenu()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwFontDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwHelpAbout::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwNewLangProject::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwProjPropertiesDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwProjPropertiesDlg::PopulateWsContextMenu(System.Windows.Forms.ContextMenuStrip,System.Collections.Generic.IEnumerable`1<SIL.CoreImpl.IWritingSystem>,System.Windows.Forms.ListBox,System.EventHandler,System.EventHandler,System.EventHandler,SIL.CoreImpl.IWritingSystem)
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwProjPropertiesDlg::AddExistingWssToContextMenu(System.Windows.Forms.ContextMenuStrip,System.Collections.Generic.IEnumerable`1<SIL.CoreImpl.IWritingSystem>,System.Windows.Forms.ListBox,System.EventHandler)
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwStylesDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwUpdateReportDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwUserProperties::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.LanguageSelectionDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.MissingOldFieldWorksDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.PicturePropertiesDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.RealSplashScreen::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.BackupRestore.RestoreProjectDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.BackupRestore.RestoreProjectDlg::PopulateProjectList(System.String)
+M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog::btnAdd_Click(System.Object,System.EventArgs)
+
+# reference only
+M: System.Void SIL.FieldWorks.FwCoreDlgs.FwProjPropertiesDlg::ShowAddWsContextMenu(System.Windows.Forms.ContextMenuStrip,System.Collections.Generic.IEnumerable`1<SIL.CoreImpl.IWritingSystem>,System.Windows.Forms.ListBox,System.Windows.Forms.Button,System.EventHandler,System.EventHandler,System.EventHandler,SIL.CoreImpl.IWritingSystem)
+M: System.Windows.Forms.DialogResult SIL.FieldWorks.FwCoreDlgs.PicturePropertiesDialog::ShowChoosePictureDlg()
+M: System.Void SIL.FieldWorks.FwCoreDlgs.ValidCharactersDlg::HandleTreatAsClick(System.Object,System.EventArgs)
+
+# Objects are disposed in Dispose() method
+M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog::m_fwTextBoxTestWs_Enter(System.Object,System.EventArgs)
+
+# GetEnumerator() returns a reference
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ChooserTreeView/<get_SelectedPossibilities>d__0::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ChooserTreeView/<GetSelectedPossibilites>d__a::System.Collections.IEnumerable.GetEnumerator()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# comparing characters
+M: System.Void SIL.FieldWorks.FwCoreDlgs.ValidCharactersDlg::FillInventoryGrid(System.Collections.Generic.List`1<SILUBS.SharedScrUtils.TextTokenSubstring>)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.FwCoreDlgs.ErrorMessageHandler
+T: SIL.FieldWorks.FwCoreDlgs.SearchKiller
+T: SIL.FieldWorks.FwCoreDlgs.BackupRestore.BackupProjectPresenter
+T: SIL.FieldWorks.FwCoreDlgs.BackupRestore.RestoreProjectPresenter

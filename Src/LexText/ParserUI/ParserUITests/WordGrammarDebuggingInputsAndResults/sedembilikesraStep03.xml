@@ -2,342 +2,342 @@
 <word>
   <form>sedembilikesra</form>
   <resultSoFar>
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial inflected="-" syncat="167" syncatAbbr="trans">
-	  <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
-		<stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>*bili (to.see): himbilira</shortName>
-			<stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </full>
-	  <morph wordType="suffix">
-		<shortName>-kes (???): kes</shortName>
-		<unclassMsa fromCat="145" fromCatAbbr="v" />
-	  </morph>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial inflected="-" syncat="167" syncatAbbr="trans">
+      <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+        <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>*bili (to.see): himbilira</shortName>
+            <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+          </morph>
+        </stem>
+      </full>
+      <morph wordType="suffix">
+        <shortName>-kes (???): kes</shortName>
+        <unclassMsa fromCat="145" fromCatAbbr="v" />
+      </morph>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </resultSoFar>
   <seq step="Try to build a Word analysis node on a Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<word syncat="167" syncatAbbr="trans">
-	  <partial inflected="-" syncat="167" syncatAbbr="trans">
-		<full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
-		  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-			<morph wordType="root">
-			  <shortName>*bili (to.see): himbilira</shortName>
-			  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-			</morph>
-		  </stem>
-		</full>
-		<morph wordType="suffix">
-		  <shortName>-kes (???): kes</shortName>
-		  <unclassMsa fromCat="145" fromCatAbbr="v" />
-		</morph>
-	  </partial>
-	</word>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <word syncat="167" syncatAbbr="trans">
+      <partial inflected="-" syncat="167" syncatAbbr="trans">
+        <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+          <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+            <morph wordType="root">
+              <shortName>*bili (to.see): himbilira</shortName>
+              <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+            </morph>
+          </stem>
+        </full>
+        <morph wordType="suffix">
+          <shortName>-kes (???): kes</shortName>
+          <unclassMsa fromCat="145" fromCatAbbr="v" />
+        </morph>
+      </partial>
+    </word>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'noun'. The result will be another Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial syncat="81" syncatAbbr="n" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'common noun'. The result will be another Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial syncat="82" syncatAbbr="comm" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'concrete noun'. The result will be another Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial syncat="85" syncatAbbr="conc" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'nominal'. The result will be another Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial syncat="88" syncatAbbr="nom" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'possessive noun'. The result will be another Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial syncat="91" syncatAbbr="poss" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun' on a Partial analysis node.  Apply it for category 'proper noun'. The result will be another Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial syncat="94" syncatAbbr="prop" requiresInfl="-" inflected="+"><partial inflected="-" syncat="167" syncatAbbr="trans"><full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-"><stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+"><morph wordType="root"><shortName>*bili (to.see): himbilira</shortName><stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" /></morph></stem></full><morph wordType="suffix"><shortName>-kes (???): kes</shortName><unclassMsa fromCat="145" fromCatAbbr="v" /></morph></partial></partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Intransitive verb' on a Partial analysis node.  Apply it for category 'intransitive verb'. The result will be another Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
-	  <partial inflected="-" syncat="167" syncatAbbr="trans">
-		<full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
-		  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-			<morph wordType="root">
-			  <shortName>*bili (to.see): himbilira</shortName>
-			  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-			</morph>
-		  </stem>
-		</full>
-		<morph wordType="suffix">
-		  <shortName>-kes (???): kes</shortName>
-		  <unclassMsa fromCat="145" fromCatAbbr="v" />
-		</morph>
-	  </partial>
-	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial syncat="152" syncatAbbr="intrans" requiresInfl="-" inflected="+">
+      <partial inflected="-" syncat="167" syncatAbbr="trans">
+        <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+          <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+            <morph wordType="root">
+              <shortName>*bili (to.see): himbilira</shortName>
+              <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+            </morph>
+          </stem>
+        </full>
+        <morph wordType="suffix">
+          <shortName>-kes (???): kes</shortName>
+          <unclassMsa fromCat="145" fromCatAbbr="v" />
+        </morph>
+      </partial>
+      <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Stative verb' on a Partial analysis node.  Apply it for category 'stative'. The result will be another Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
-	  <partial inflected="-" syncat="167" syncatAbbr="trans">
-		<full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
-		  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-			<morph wordType="root">
-			  <shortName>*bili (to.see): himbilira</shortName>
-			  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-			</morph>
-		  </stem>
-		</full>
-		<morph wordType="suffix">
-		  <shortName>-kes (???): kes</shortName>
-		  <unclassMsa fromCat="145" fromCatAbbr="v" />
-		</morph>
-	  </partial>
-	  <morph wordType="166">
-		<shortName>-ra (Pres): ra</shortName>
-		<inflClasses>
-		  <inflClass hvo="177" abbr="1" />
-		</inflClasses>
-		<inflMsa slot="0" slotAbbr="??" />
-	  </morph>
-	</partial>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial syncat="162" syncatAbbr="sta" requiresInfl="-" inflected="+">
+      <partial inflected="-" syncat="167" syncatAbbr="trans">
+        <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+          <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+            <morph wordType="root">
+              <shortName>*bili (to.see): himbilira</shortName>
+              <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+            </morph>
+          </stem>
+        </full>
+        <morph wordType="suffix">
+          <shortName>-kes (???): kes</shortName>
+          <unclassMsa fromCat="145" fromCatAbbr="v" />
+        </morph>
+      </partial>
+      <morph wordType="166">
+        <shortName>-ra (Pres): ra</shortName>
+        <inflClasses>
+          <inflClass hvo="177" abbr="1" />
+        </inflClasses>
+        <inflMsa slot="0" slotAbbr="??" />
+      </morph>
+    </partial>
   </seq>
   <seq step="Try to apply inflectional template 'Transitive verb' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
-	<partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
-	  <morph wordType="180">
-		<shortName>se- (2PlSubj): se</shortName>
-		<inflMsa slot="0" slotAbbr="??" />
-	  </morph>
-	  <morph wordType="181">
-		<shortName>dem- (3PlObj): deN</shortName>
-		<inflMsa slot="0" slotAbbr="??" />
-	  </morph>
-	  <partial inflected="-" syncat="167" syncatAbbr="trans">
-		<full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
-		  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-			<morph wordType="root">
-			  <shortName>*bili (to.see): himbilira</shortName>
-			  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-			</morph>
-		  </stem>
-		</full>
-		<morph wordType="suffix">
-		  <shortName>-kes (???): kes</shortName>
-		  <unclassMsa fromCat="145" fromCatAbbr="v" />
-		</morph>
-	  </partial>
-	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <partial syncat="167" syncatAbbr="trans" requiresInfl="-" inflected="+">
+      <morph wordType="180">
+        <shortName>se- (2PlSubj): se</shortName>
+        <inflMsa slot="0" slotAbbr="??" />
+      </morph>
+      <morph wordType="181">
+        <shortName>dem- (3PlObj): deN</shortName>
+        <inflMsa slot="0" slotAbbr="??" />
+      </morph>
+      <partial inflected="-" syncat="167" syncatAbbr="trans">
+        <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+          <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+            <morph wordType="root">
+              <shortName>*bili (to.see): himbilira</shortName>
+              <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+            </morph>
+          </stem>
+        </full>
+        <morph wordType="suffix">
+          <shortName>-kes (???): kes</shortName>
+          <unclassMsa fromCat="145" fromCatAbbr="v" />
+        </morph>
+      </partial>
+      <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Non-final Transitive' on a Partial analysis node.  Apply it for category 'transitive verb'. The result will be another Partial analysis node.">
-	<morph wordType="180">
-	  <shortName>se- (2PlSubj): se</shortName>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
-	<partial syncat="167" syncatAbbr="trans" requiresInfl="" inflected="-" blocksInflection="+">
-	  <morph wordType="181">
-		<shortName>dem- (3PlObj): deN</shortName>
-		<inflMsa slot="0" slotAbbr="??" />
-	  </morph>
-	  <partial inflected="-" syncat="167" syncatAbbr="trans">
-		<full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
-		  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-			<morph wordType="root">
-			  <shortName>*bili (to.see): himbilira</shortName>
-			  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-			</morph>
-		  </stem>
-		</full>
-		<morph wordType="suffix">
-		  <shortName>-kes (???): kes</shortName>
-		  <unclassMsa fromCat="145" fromCatAbbr="v" />
-		</morph>
-	  </partial></partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <morph wordType="180">
+      <shortName>se- (2PlSubj): se</shortName>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
+    <partial syncat="167" syncatAbbr="trans" requiresInfl="" inflected="-" blocksInflection="+">
+      <morph wordType="181">
+        <shortName>dem- (3PlObj): deN</shortName>
+        <inflMsa slot="0" slotAbbr="??" />
+      </morph>
+      <partial inflected="-" syncat="167" syncatAbbr="trans">
+        <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+          <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+            <morph wordType="root">
+              <shortName>*bili (to.see): himbilira</shortName>
+              <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+            </morph>
+          </stem>
+        </full>
+        <morph wordType="suffix">
+          <shortName>-kes (???): kes</shortName>
+          <unclassMsa fromCat="145" fromCatAbbr="v" />
+        </morph>
+      </partial></partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Bitransitive verb' on a Partial analysis node.  Apply it for category 'bitransitive verb'. The result will be another Partial analysis node.">
-	<partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
-	  <morph wordType="180">
-		<shortName>se- (2PlSubj): se</shortName>
-		<inflMsa slot="0" slotAbbr="??" />
-	  </morph>
-	  <morph wordType="181">
-		<shortName>dem- (3PlObj): deN</shortName>
-		<inflMsa slot="0" slotAbbr="??" />
-	  </morph>
-	  <partial inflected="-" syncat="167" syncatAbbr="trans">
-		<full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
-		  <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
-			<morph wordType="root">
-			  <shortName>*bili (to.see): himbilira</shortName>
-			  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-			</morph>
-		  </stem>
-		</full>
-		<morph wordType="suffix">
-		  <shortName>-kes (???): kes</shortName>
-		  <unclassMsa fromCat="145" fromCatAbbr="v" />
-		</morph>
-	  </partial>
-	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="0" slotAbbr="??" />
-	</morph>
+    <partial syncat="171" syncatAbbr="bitrans" requiresInfl="-" inflected="+">
+      <morph wordType="180">
+        <shortName>se- (2PlSubj): se</shortName>
+        <inflMsa slot="0" slotAbbr="??" />
+      </morph>
+      <morph wordType="181">
+        <shortName>dem- (3PlObj): deN</shortName>
+        <inflMsa slot="0" slotAbbr="??" />
+      </morph>
+      <partial inflected="-" syncat="167" syncatAbbr="trans">
+        <full syncat="167" syncatAbbr="trans" requiresInfl="+" inflected="-">
+          <stem syncat="167" syncatAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+">
+            <morph wordType="root">
+              <shortName>*bili (to.see): himbilira</shortName>
+              <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+            </morph>
+          </stem>
+        </full>
+        <morph wordType="suffix">
+          <shortName>-kes (???): kes</shortName>
+          <unclassMsa fromCat="145" fromCatAbbr="v" />
+        </morph>
+      </partial>
+      <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="0" slotAbbr="??" />
+    </morph>
   </seq>
 </word>

@@ -1,0 +1,2 @@
+*.patch -whitespace
+*.txt whitespace=blank-at-eol,space-before-tab,blank-at-eof,tabwidth=4

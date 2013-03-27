@@ -20,12 +20,12 @@
 		  <a href="../tasks/index.html">Task Reference</a>
 		  <img alt="-&gt;" src="../images/arrow.gif" /> &lt;choose&gt;</td>
 		<td class="NavBar-Cell" align="right">
-						v0.85</td>
+						v0.91</td>
 	  </tr>
 	</table>
 	<h1>&lt;choose&gt;</h1>
 	<p>
-	  <p> Executes an alternate set of tasks depending on conditions that are individually set on each group of tasks. </p>
+	  <p> Executes an alternate set of task or type definition depending on conditions that are individually set on each group. </p>
 	</p>
 	<p> The <a href="../tasks/choose.html">&lt;choose&gt;</a> task selects one among a number of possible alternatives. It consists of a sequence of <code>&lt;when&gt;</code> elements followed by an optional <code>&lt;otherwise&gt;</code> element. </p>
 	<p> Each <code>&lt;when&gt;</code> element has a single attribute, test, which specifies an expression. The content of the <code>&lt;when&gt;</code> and <code>&lt;otherwise&gt;</code> elements is a set of nested tasks. </p>
@@ -110,10 +110,31 @@
 &lt;/choose&gt;
 	</pre>
 	  </li>
+	  <li>
+		<p> Define a <code>sources</code> patternset holding an alternate set of patterns depending on the configuration being built. </p>
+		<pre class="code">
+&lt;choose&gt;
+	&lt;when test="${build.config == 'Debug'}"&gt;
+		&lt;patternset id="sources"&gt;
+			&lt;include name="**/*.cs" /&gt;
+		&lt;/patternset&gt;
+	&lt;/when&gt;
+	&lt;when test="${build.config == 'Release'}"&gt;
+		&lt;patternset id="sources"&gt;
+			&lt;include name="**/*.cs" /&gt;
+			&lt;exclude name="**/Instrumentation/*.cs" /&gt;
+		&lt;/patternset&gt;
+	&lt;/when&gt;
+	&lt;otherwise&gt;
+		&lt;fail&gt;Build configuration '${build.config}' is not supported!&lt;/fail&gt;
+	&lt;/otherwise&gt;
+&lt;/choose&gt;
+	</pre>
+	  </li>
 	</ul>
 	<h3>Requirements</h3>
 	<div style="margin-left: 20px;">
-	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.85.2479.0)
+	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.91.4312.0)
 			</div>
   </body>
 </html>

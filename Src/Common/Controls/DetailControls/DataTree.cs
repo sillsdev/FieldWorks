@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -2043,11 +2044,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						string key = classname + "-Detail-" + partName;
 						part = m_partInventory.GetElement("part", new[] {key});
 
-						// temp not used CS0103
-						// int temp = 0;
-						// if (part != null)
-						//	temp = part.GetHashCode();
-
 						if (part != null)
 							break;
 						if (classId == 0) // we've just tried CmObject.
@@ -2191,7 +2187,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 				if (m_sliceFilter != null &&
 					flid != 0 &&
-					!m_sliceFilter.IncludeSlice(node, obj, flid))
+					!m_sliceFilter.IncludeSlice(node, obj, flid, m_monitoredProps))
 				{
 					return NodeTestResult.kntrNothing;
 				}
@@ -2628,23 +2624,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						Debug.Assert(type == CellarPropertyType.Unicode);
 						break;
 					case CellarPropertyType.MultiString:
-					case CellarPropertyType.MultiBigString:
 						label = Cache.DomainDataByFlid.get_MultiStringAlt(owner.Hvo,
 							flidSubfield,
 							Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Text;
 						break;
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiBigUnicode:
 						label = Cache.DomainDataByFlid.get_MultiStringAlt(owner.Hvo,
 							flidSubfield,
 							Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle).Text;
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						label = Cache.DomainDataByFlid.get_StringProp(owner.Hvo, flidSubfield).Text;
 						break;
 					case CellarPropertyType.Unicode:
-					case CellarPropertyType.BigUnicode:
 						label = Cache.DomainDataByFlid.get_UnicodeProp(owner.Hvo, flidSubfield);
 						break;
 					}
@@ -2713,8 +2705,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							// interpret their ws parameter. Don't see how to avoid it, though, without creating the slices even if not needed.
 						case CellarPropertyType.MultiString:
 						case CellarPropertyType.MultiUnicode:
-						case CellarPropertyType.MultiBigString:
-						case CellarPropertyType.MultiBigUnicode:
 							string ws = XmlUtils.GetOptionalAttributeValue(node, "ws", null);
 							switch (ws)
 							{
@@ -2761,12 +2751,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							}
 							break;
 						case CellarPropertyType.String:
-						case CellarPropertyType.BigString:
 							if (realSda.get_StringProp(obj.Hvo, flid).Length == 0)
 								return NodeTestResult.kntrNothing;
 							break;
 						case CellarPropertyType.Unicode:
-						case CellarPropertyType.BigUnicode:
 							string val = realSda.get_UnicodeProp(obj.Hvo, flid);
 							if (string.IsNullOrEmpty(val))
 								return NodeTestResult.kntrNothing;
@@ -3434,6 +3422,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		//	@param nInd The indent level we want.
 		//	@param idfe An index to the current field. We start looking at the next field.
 		//	@return The index of the next field or 0 if none.
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() returns a reference")]
 		public int NextFieldAtIndent(int nInd, int iStart)
 		{
 			CheckDisposed();
@@ -3458,6 +3448,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		//	@param nInd The indent level we want.
 		//	@param idfe An index to the current field. We start looking at the previous field.
 		//	@return The index of the desired field or 0 if none.
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() returns a reference")]
 		public int PrevFieldAtIndent(int nInd, int iStart)
 		{
 			CheckDisposed();
@@ -3949,14 +3941,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						return owner.Guid;
 					if (CurrentSlice.Object is IText)
 					{
-						// Text is not already owned by a notebook record. So there's nothing yet to jump to.
+						IRnGenericRec referringRecord;
+						if (NotebookRecordRefersToThisText(CurrentSlice.Object as IText, out referringRecord))
+							return referringRecord.Guid;
+
+						// Text is not already associated with a notebook record. So there's nothing yet to jump to.
 						// If the user is really doing the jump we need to make it now.
 						// Otherwise we just need to return something non-null to indicate the jump
 						// is possible (though this is not currently used).
 						if (forEnableOnly)
 							return CurrentSlice.Object.Guid;
-						((IText) CurrentSlice.Object).MoveToNotebook(true);
-						return CurrentSlice.Object.Owner.Guid;
+						// User is really making the jump. Create a notebook record, associate it, and jump.
+						var newNotebookRec = CreateAndAssociateNotebookRecord();
+						return newNotebookRec.Guid;
 					}
 					// Try TargetId by default
 				}
@@ -3970,6 +3967,31 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			return cmd.TargetId;
 		}
+
+		private IRnGenericRec CreateAndAssociateNotebookRecord()
+		{
+			if (!(CurrentSlice.Object is IText))
+				throw new ArgumentException("CurrentSlice.Object ought to be a Text object.");
+
+			IText textObj = CurrentSlice.Object as IText;
+			// Create new Notebook record
+
+			((IText)CurrentSlice.Object).AssociateWithNotebook(true);
+			IRnGenericRec referringRecord;
+			NotebookRecordRefersToThisText(CurrentSlice.Object as IText, out referringRecord);
+			return referringRecord;
+		}
+
+		internal static bool NotebookRecordRefersToThisText(IText text, out IRnGenericRec referringRecord)
+		{
+			referringRecord = null;
+			if (text == null)
+				throw new ArgumentException("Don't call this unless the CurrentSlice.Object is a Text.");
+
+			referringRecord = text.AssociatedNotebookRecord;
+			return referringRecord != null;
+		}
+
 		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
@@ -4109,6 +4131,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Invoked by a slice when the user does something to bring up a context menu
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="See TODO comment.")]
 		public void OnShowContextMenu(object sender, TreeNodeEventArgs e)
 		{
 			CheckDisposed();
@@ -4118,6 +4142,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Debug.Assert(ShowContextMenuEvent != null, "this should always be set to something");
 			CurrentSlice = e.Slice;
 			var args = new SliceMenuRequestArgs(e.Slice, false);
+			// TODO: ShowContextMenuEvent returns a ContextMenu that we should dispose. However,
+			// we can't do that right here (because that destroys the menu before being shown).
+			// Ideally we would store the context menu in a member variable and dispose this later
+			// on. However, it is unlikely that not disposing this context menu will cause any
+			// problems, so we leave it as is for now.
 			ShowContextMenuEvent(sender, args);
 			//			ContextMenu menu = ShowContextMenuEvent(sender, args);
 			//			menu.Show(e.Context, e.Location);
@@ -4220,7 +4249,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Focus the first slice that can take focus.
 		/// </summary>
-		protected Slice FocusFirstPossibleSlice()
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() and FieldAt() return a reference.")]
+		protected bool FocusFirstPossibleSlice()
 		{
 			int cslice = Slices.Count;
 			// If we have a descendant that isn't the root, try to focus one of its slices.
@@ -4243,7 +4274,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (m_descendant != DescendantForSlice(slice))
 						continue;
 					if (slice.TakeFocus(false))
-						return slice;
+						return true;
 				}
 			}
 			// If that didn't work or we don't have a distinct descendant, just focus the first thing we can.
@@ -4251,9 +4282,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				var slice = Slices[islice];
 				if (slice.TakeFocus(false))
-					return slice;
+					return true;
 			}
-			return null;
+			return false;
 		}
 
 		#endregion IxCoreColleague message handlers
@@ -4574,7 +4605,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int ihvo = m_ihvoMin;
 			for (int islice = index - 1; islice >= 0 && ContainingDataTree.Slices[islice] == this; islice--)
 				ihvo++;
-			// string mode = XmlUtils.GetOptionalAttributeValue(m_node, "mode"); //CS0219
 			int hvo = m_cache.DomainDataByFlid.get_VecItem(m_obj.Hvo, m_flid, ihvo);
 			// In the course of becoming real, we may get disposed. That clears m_path, which
 			// has various bad effects on called objects that are trying to use it, as well as

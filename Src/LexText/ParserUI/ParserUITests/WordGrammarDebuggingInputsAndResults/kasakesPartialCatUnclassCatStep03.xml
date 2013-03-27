@@ -2,51 +2,51 @@
 <word>
   <form>kasakes</form>
   <resultSoFar>
-	<full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
-	  <stem syncat="81" syncatAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>kasa (house): kasa</shortName>
-		  <stemMsa cat="81" catAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+" />
-		</morph>
-	  </stem>
-	</full>
-	<morph wordType="suffix">
-	  <shortName>-kes (???): kes</shortName>
-	  <unclassMsa fromCat="145" fromCatAbbr="v" />
-	</morph>
+    <full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
+      <stem syncat="81" syncatAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>kasa (house): kasa</shortName>
+          <stemMsa cat="81" catAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+" />
+        </morph>
+      </stem>
+    </full>
+    <morph wordType="suffix">
+      <shortName>-kes (???): kes</shortName>
+      <unclassMsa fromCat="145" fromCatAbbr="v" />
+    </morph>
   </resultSoFar>
   <seq step="Try to build a Word analysis node on a Full analysis node.">
-	<word syncat="81" syncatAbbr="n">
-	  <failure>The category 'n' requires inflection, but there was no inflection.</failure>
-	  <full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
-		<stem syncat="81" syncatAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>kasa (house): kasa</shortName>
-			<stemMsa cat="81" catAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </full>
-	</word>
-	<morph wordType="suffix">
-	  <shortName>-kes (???): kes</shortName>
-	  <unclassMsa fromCat="145" fromCatAbbr="v" />
-	</morph>
+    <word syncat="81" syncatAbbr="n">
+      <failure>The category 'n' requires inflection, but there was no inflection.</failure>
+      <full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
+        <stem syncat="81" syncatAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>kasa (house): kasa</shortName>
+            <stemMsa cat="81" catAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+" />
+          </morph>
+        </stem>
+      </full>
+    </word>
+    <morph wordType="suffix">
+      <shortName>-kes (???): kes</shortName>
+      <unclassMsa fromCat="145" fromCatAbbr="v" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a Full analysis node with sequences of affixes not labeled as either derivational or inflectional (the sequence may also include derivational affixes).">
-	<failure>In attaching an unclassified suffix: The category (v) of the unclassified suffix "-kes (???): kes" is incompatible with the category (n) of the stem.</failure>
-	<partial inflected="-" syncat="81" syncatAbbr="n">
-	  <full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
-		<stem syncat="81" syncatAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+">
-		  <morph wordType="root">
-			<shortName>kasa (house): kasa</shortName>
-			<stemMsa cat="81" catAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </full>
-	  <morph wordType="suffix">
-		<shortName>-kes (???): kes</shortName>
-		<unclassMsa fromCat="145" fromCatAbbr="v" />
-	  </morph>
-	</partial>
+    <failure>In attaching an unclassified suffix: The category (v) of the unclassified suffix "-kes (???): kes" is incompatible with the category (n) of the stem.</failure>
+    <partial inflected="-" syncat="81" syncatAbbr="n">
+      <full syncat="81" syncatAbbr="n" requiresInfl="+" inflected="-">
+        <stem syncat="81" syncatAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+">
+          <morph wordType="root">
+            <shortName>kasa (house): kasa</shortName>
+            <stemMsa cat="81" catAbbr="n" inflClass="100" inflClassAbbr="II" requiresInfl="+" />
+          </morph>
+        </stem>
+      </full>
+      <morph wordType="suffix">
+        <shortName>-kes (???): kes</shortName>
+        <unclassMsa fromCat="145" fromCatAbbr="v" />
+      </morph>
+    </partial>
   </seq>
 </word>

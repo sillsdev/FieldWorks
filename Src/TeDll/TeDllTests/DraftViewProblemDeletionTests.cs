@@ -1635,7 +1635,6 @@ namespace SIL.FieldWorks.TE.DraftViews
 		/// </remarks>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: failing on linux - SectionIndex returing 2 after OnProblemDeletion")]
 		public void BkspAtStartOfContentWithMissingSectionHeadParagraphs()
 		{
 			// Prepare test by emptying out the section head contents

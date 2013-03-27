@@ -197,6 +197,15 @@ namespace SIL.FieldWorks.FdoUi
 			ITsIncStrBldr tisb3 = TsIncStrBldrClass.Create();
 			tisb3.AppendTsString(obj.Object.DeletionTextTSS);
 			m_descriptionBox3.Tss = tisb3.GetString();
+			// Adjust the dialog size if needed to display the message (FWNX-857).
+			int deltaY = m_descriptionBox3.PreferredHeight - m_descriptionBox3.Height;
+			if (deltaY > 0)
+			{
+				this.Height += deltaY;
+				this.Width += 4;		// Make it marginally wider as well for good measure.
+				// Reinitialize the string.  Otherwise only the first line is displayed for some reason.
+				m_descriptionBox3.Tss = tisb3.GetString();
+			}
 
 			m_descriptionBox4.WritingSystemFactory = m_cache.WritingSystemFactory;
 			m_descriptionBox4.WritingSystemCode = defUserWs;

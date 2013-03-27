@@ -1,11 +1,11 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2002-2005, International Business Machines
+*   Copyright (C) 2002-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
-*   file name:  utf.h
+*   file name:  utf_old.h
 *   encoding:   US-ASCII
 *   tab size:   8 (not used)
 *   indentation:4
@@ -27,9 +27,6 @@
  * Almost all of the old "UTF macros" are at least renamed.
  * If you are looking for a new equivalent to an old macro, please see the
  * comment at the old one.
- *
- * utf_old.h is included by utf.h after unicode/umachine.h
- * and some common definitions, to not break old code.
  *
  * Brief summary of reasons for deprecation:
  * - Switch on UTF_SIZE (selection of UTF-8/16/32 default string processing)
@@ -148,10 +145,9 @@
 
 #ifndef U_HIDE_DEPRECATED_API
 
-/* utf.h must be included first. */
-#ifndef __UTF_H__
-#   include "unicode/utf.h"
-#endif
+#include "unicode/utf.h"
+#include "unicode/utf8.h"
+#include "unicode/utf16.h"
 
 /* Formerly utf.h, part 1 --------------------------------------------------- */
 
@@ -182,14 +178,16 @@ typedef int32_t UTextOffset;
 #undef UTF_STRICT
 
 /**
- * <p>UTF8_ERROR_VALUE_1 and UTF8_ERROR_VALUE_2 are special error values for UTF-8,
- * which need 1 or 2 bytes in UTF-8:<br>
- * U+0015 = NAK = Negative Acknowledge, C0 control character<br>
- * U+009f = highest C1 control character</p>
+ * UTF8_ERROR_VALUE_1 and UTF8_ERROR_VALUE_2 are special error values for UTF-8,
+ * which need 1 or 2 bytes in UTF-8:
+ * \code
+ * U+0015 = NAK = Negative Acknowledge, C0 control character
+ * U+009f = highest C1 control character
+ * \endcode
  *
- * <p>These are used by UTF8_..._SAFE macros so that they can return an error value
+ * These are used by UTF8_..._SAFE macros so that they can return an error value
  * that needs the same number of code units (bytes) as were seen by
- * a macro. They should be tested with UTF_IS_ERROR() or UTF_IS_VALID().</p>
+ * a macro. They should be tested with UTF_IS_ERROR() or UTF_IS_VALID().
  *
  * @deprecated ICU 2.4. Obsolete, see utf_old.h.
  */
@@ -300,7 +298,7 @@ typedef int32_t UTextOffset;
  * Code point comparisons need to be in uint32_t because UChar32
  * may be a signed type, and negative values must be recognized.
  *
- * @deprecated ICU 2.4. Use U8_LENGTH instead, see utf_old.h.
+ * @deprecated ICU 2.4. Use U8_LENGTH instead, see utf.h.
  */
 #if 1
 #   define UTF8_CHAR_LENGTH(c) \

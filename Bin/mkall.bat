@@ -55,4 +55,4 @@ if "%BUILD_EXTRA%"=="unregister" set ACTION=%ACTION% unregister
 
 cd %FWROOT%\Bld
 
-%FWROOT%\bin\nant\bin\nant -t:net-3.5 %BUILD_CONFIG% %ACTION% mkall
+%FWROOT%\bin\nant\bin\nant %BUILD_CONFIG% %ACTION% mkall

@@ -1,0 +1,24 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Unit test. Object is disposed in teardown method
+M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSiteDataProviderTestsBase::FixtureSetup()
+
+# Unit test. Object is disposed in tear down method
+M: System.Void SIL.FieldWorks.Common.RootSites.RootsiteDummyViewTestsBase::TestSetup()
+
+# Object is disposed in Dispose()
+M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<PictureCollectorEnv_OnePicture>b__8()
+M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<ImageControl_OnePicture>b__a()
+M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<ImageAndEditControls>b__10()
+M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<ButtonUIA_OnePicture>b__16()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Object is disposed in tear down method
+T: SIL.FieldWorks.Common.RootSites.BasicViewTestsBase
+T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteDataProviderTestsBase
+T: SIL.FieldWorks.Common.RootSites.RootsiteDummyViewTestsBase

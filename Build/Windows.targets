@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+	<UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
+
+	<!-- call preparatory Windows targets -->
+	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
+			DependsOnTargets="Initialize;EncConvertersDlls">
+	</Target>
+
+	<!-- Copy the EncodingConverters files, registering them on Windows -->
+	<ItemGroup>
+		<EncConverterSources Include="..\DistFiles\Windows\EC\**\*.*"/>
+
+		<EncConverterDllInputs Include="..\DistFiles\Windows\EC\ECInterfaces.dll"/>
+		<EncConverterDllInputs Include="..\DistFiles\Windows\EC\SilEncConverters40.dll"/>
+
+		<EncConverterDllOutputs Include="..\Output\$(config-capital)\ECInterfaces.dll"/>
+		<EncConverterDllOutputs Include="..\Output\$(config-capital)\SilEncConverters40.dll"/>
+	</ItemGroup>
+
+	<Target Name="CheckAdminPrivilege" Condition="'$(OS)'=='Windows_NT'">
+		<CheckAdminPrivilege>
+			<Output TaskParameter="UserIsAdmin" PropertyName="UserIsAdmin"/>
+		</CheckAdminPrivilege>
+	</Target>
+
+	<Target Name="EncConvertersDlls" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CheckAdminPrivilege"
+			Inputs="@(EncConverterDllInputs)" Outputs="@(EncConverterDllOutputs)">
+		<Copy SourceFiles="@(EncConverterSources)"
+			  DestinationFolder="$(dir-outputBase)\%(RecursiveDir)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
+		<Exec Command="regasm.exe /codebase /silent $(dir-outputBase)\SilEncConverters40.dll" IgnoreExitCode="true"
+			  Condition="'$(action)'!='clean' AND '$(UserIsAdmin)'=='True'" />
+		<Exec Command="regasm.exe /unregister /silent $(dir-outputBase)\SilEncConverters40.dll" IgnoreExitCode="true"
+			  Condition="'$(action)'=='clean' AND '$(UserIsAdmin)'=='True'" />
+		<Exec Command="regsvr32.exe /s $(fwrt)\DistFiles\Windows\EC\IcuEC40b.dll" IgnoreExitCode="true"
+			  Condition="'$(action)'!='clean' AND '$(UserIsAdmin)'=='True'" />
+		<Exec Command="regsvr32.exe /u /s $(fwrt)\DistFiles\Windows\EC\IcuEC40b.dll" IgnoreExitCode="true"
+			  Condition="'$(action)'=='clean' AND '$(UserIsAdmin)'=='True'" />
+		<Message Text="You must (un)register $(dir-outputBase)\SilEncConverters40.dll manually." Condition="'$(UserIsAdmin)'!='True'"/>
+		<Message Text="You must (un)register $(fwrt)\DistFiles\Windows\EC\IcuEC40b.dll manually." Condition="'$(UserIsAdmin)'!='True'"/>
+<!--
+		  <property name="dir" value="${config}" if="${user::is-admin()}"/>
+		  <property name="dir" value="release" unless="${user::is-admin()}"/>
+		  <choose>
+			  <when test="${user::is-admin()}">
+				  <regasm unregister="${clean}" codebase="true" verbose="${verbose}" failonerror="false">
+					  <assemblies>
+						  <include name="${dir.outputBase}/SilEncConverters40.dll"/>
+					  </assemblies>
+				  </regasm>
+				  <exec program="regsvr32.exe" commandline="/s ${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll" failonerror="false" unless="${clean}" verbose="true"/>
+				  <exec program="regsvr32.exe" commandline="/u /s ${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll" failonerror="false" if="${clean}"/>
+			  </when>
+			  <otherwise>
+				  <regasm assembly="${dir.outputBase}\SilEncConverters40.dll"
+						  regfile="${dir.outputBase}\SilEncConverters40.reg" unregister="false" failonerror="false"/>
+				  <importregistry regfile="${dir.outputBase}\SilEncConverters40.reg"
+								  unregister="false" peruser="true" failonerror="false"/>
+				  <delete file="${dir.outputBase}\SilEncConverters40.reg" failonerror="false"/>
+				  <!- - IcuEC40b.dll tries to put some files under HKLM so we can't use regsvrex.exe - ->
+				  <exec program="${nant::get-base-directory()}/tasks/elevator.exe"
+						commandline="regsvr32.exe /u /s ${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll"
+						failonerror="false" if="${clean}"/>
+				  <if test="${not clean}">
+					  <copy file="${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll" todir="${path::get-temp-path()}"/>
+					  <checksum algorithm="MD5">
+						  <fileset>
+							  <include name="${path::combine(path::get-temp-path(), 'IcuEC40b.dll')}"/>
+						  </fileset>
+					  </checksum>
+					  <property name="IcuEcChanged" value="true"/>
+					  <if test="${file::exists(fwroot + '\Lib\' + dir + '\IcuEC40b.dll.MD5')}">
+						  <loadfile property="newIcuEc" file="${path::combine(path::get-temp-path(), 'IcuEC40b.dll')}"/>
+						  <loadfile property="oldIcuEc" file="${fwroot}\Lib\${dir}\IcuEC40b.dll.MD5" />
+						  <property name="IcuEcChanged" value="${newIcuEc != oldIcuEc}"/>
+					  </if>
+					  <!- - If IcuEC40a didn't change then we have nothing to do. Otherwise we register with admin privileges - ->
+					  <if test="${IcuEcChanged}">
+						  <echo message="Register IcuEC40b.dll file with admin privileges"/>
+						  <exec program="${nant::get-base-directory()}/tasks/elevator.exe"
+								commandline="regsvr32.exe /s ${fwroot}/DistFiles/Windows/EC/IcuEC40b.dll" failonerror="false"/>
+						  <copy file="${path::combine(path::get-temp-path(), 'IcuEC40b.dll.MD5')}" todir="${fwroot}/DistFiles/Windows/EC"/>
+					  </if>
+				  </if>
+			  </otherwise>
+		  </choose>
+-->
+	</Target>
+
+</Project>

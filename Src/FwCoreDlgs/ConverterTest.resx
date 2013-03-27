@@ -213,9 +213,6 @@
   <data name="outputFontCombo.HelpString" xml:space="preserve">
 	<value>Specify a font in order to display the output text in the ‘Converted’ preview window.</value>
   </data>
-  <data name="outputFontCombo.ItemHeight" type="System.Int32, mscorlib">
-	<value>13</value>
-  </data>
   <data name="outputFontCombo.Location" type="System.Drawing.Point, System.Drawing">
 	<value>72, 48</value>
   </data>
@@ -387,12 +384,6 @@
   <data name="&gt;&gt;saveFileButton.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <metadata name="ofDlg.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-	<value>17, 17</value>
-  </metadata>
-  <data name="ofDlg.Filter" xml:space="preserve">
-	<value>Text Files (*.txt)|*.txt|All Files (*.*)|*.*</value>
-  </data>
   <data name="txtInputFile.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
 	<value>Top, Left, Right</value>
   </data>
@@ -423,12 +414,6 @@
   <data name="&gt;&gt;txtInputFile.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
-  <metadata name="saveFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-	<value>214, 17</value>
-  </metadata>
-  <data name="saveFileDialog.Filter" xml:space="preserve">
-	<value>Text Files (*.txt)|*.txt|All Files (*.*)|*.*</value>
-  </data>
   <metadata name="toolTipInputFile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>336, 17</value>
   </metadata>
@@ -444,23 +429,11 @@
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
 	<value>456, 344</value>
   </data>
-  <data name="&gt;&gt;ofDlg.Name" xml:space="preserve">
-	<value>ofDlg</value>
-  </data>
-  <data name="&gt;&gt;ofDlg.Type" xml:space="preserve">
-	<value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;helpProvider1.Name" xml:space="preserve">
 	<value>helpProvider1</value>
   </data>
   <data name="&gt;&gt;helpProvider1.Type" xml:space="preserve">
 	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;saveFileDialog.Name" xml:space="preserve">
-	<value>saveFileDialog</value>
-  </data>
-  <data name="&gt;&gt;saveFileDialog.Type" xml:space="preserve">
-	<value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolTipInputFile.Name" xml:space="preserve">
 	<value>toolTipInputFile</value>

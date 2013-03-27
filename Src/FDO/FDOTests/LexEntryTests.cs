@@ -17,6 +17,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.CoreTests;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -397,6 +398,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem)),
 				"a complex form cannot be a root");
 		}
+
 		/// <summary>
 		/// Tests adding a component to an entry that already has it.
 		/// </summary>
@@ -427,6 +429,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem)),
 				"a complex form cannot be a root");
 		}
+
 		/// <summary>
 		/// Tests adding a component to an entry that already has components.
 		/// </summary>
@@ -447,6 +450,38 @@ namespace SIL.FieldWorks.FDO.FDOTests
 					complex.AddComponent(component);
 				});
 			Assert.That(complex.EntryRefsOS.Count, Is.EqualTo(1));
+			var entryRef = complex.EntryRefsOS[0];
+			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtComplexForm));
+			Assert.That(entryRef.ComponentLexemesRS.Count, Is.EqualTo(2));
+			Assert.That(entryRef.ComponentLexemesRS[0], Is.EqualTo(oldComponent));
+			Assert.That(entryRef.ComponentLexemesRS[1], Is.EqualTo(component));
+			Assert.That(entryRef.PrimaryLexemesRS.Count, Is.EqualTo(1)); // unchanged, since it already had one.
+			Assert.That(entryRef.PrimaryLexemesRS[0], Is.EqualTo(oldComponent));
+			Assert.That(entryRef.HideMinorEntry, Is.EqualTo(0));
+		}
+
+		/// <summary>
+		/// Tests the method that determines what displays in the Complex Forms field of an entry.
+		/// This should depend on the Components field of LexEntry, NOT the PrimaryLexemes field.
+		/// </summary>
+		[Test]
+		public void ComplexFormRefsWithComponent()
+		{
+			ILexEntry oldComponent = null;
+			ILexEntry component = null;
+			ILexEntry complex = null;
+			UndoableUnitOfWorkHelper.Do("doit", "undoit", Cache.ActionHandlerAccessor,
+				() =>
+				{
+					oldComponent = MakeEntryWithForm("dog");
+					component = MakeEntryWithForm("food");
+					complex = MakeEntryWithForm("dogfood");
+					complex.AddComponent(oldComponent);
+					complex.EntryRefsOS[0].HideMinorEntry = 0;
+					complex.AddComponent(component);
+				});
+			Assert.That(oldComponent.ComplexFormEntries.Count(), Is.EqualTo(1));
+			Assert.That(component.ComplexFormEntries.Count(), Is.EqualTo(1));
 			var entryRef = complex.EntryRefsOS[0];
 			Assert.That(entryRef.RefType, Is.EqualTo(LexEntryRefTags.krtComplexForm));
 			Assert.That(entryRef.ComponentLexemesRS.Count, Is.EqualTo(2));
@@ -979,6 +1014,216 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				helper.RollBack = false; // hopefully all our changes succeeded.
 			}
 		}
+
+
+		/// <summary>
+		/// Inspired by LT-13615 - tests homograph renumbering following a change in lex forms with multiple ws.
+		/// This test does not change the homograph ws when the vernacular ws changes.
+		/// </summary>
+		[Test]
+		public void HomographsWithChangingVernWs()
+		{
+			using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				Cache.LanguageProject.VernacularWritingSystems.Clear();
+				Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Clear();
+				var frWs = Cache.WritingSystemFactory.get_Engine("fr");
+				var spWs = Cache.WritingSystemFactory.get_Engine("es");
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (IWritingSystem)spWs;
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (IWritingSystem)frWs; // {fr es} order
+				int frWsId = frWs.Handle;
+				int spWsId = spWs.Handle;
+
+				// ws order is "fr es"
+				var morphTypeRepository = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+				var morphTypeRoot = morphTypeRepository.GetObject(MoMorphTypeTags.kguidMorphRoot);
+
+				// 4) Switch to 2nd vWs: 2 hw with multi vWs lf with 1st vWs empty and 2nd with same forms -> hn 0 + 0 -> 1 + 2
+				var lex1 = MakeStemEntryMultiWs("", frWsId, "k", spWsId, morphTypeRoot);
+				var lex2 = MakeStemEntryMultiWs("", frWsId, "k", spWsId, morphTypeRoot);
+				Assert.AreEqual(0, lex1.HomographNumber,
+								"4) first entry should have homograph number 0.");
+				Assert.AreEqual(0, lex2.HomographNumber,
+								"4) second entry should have homograph number 0.");
+				SwapVernWs(false); // ws order is now "es fr", but hgws is still "fr"
+				Assert.AreEqual(0, lex1.HomographNumber,
+								"4) first entry should have homograph number 0.");
+				Assert.AreEqual(0, lex2.HomographNumber,
+								"4) second entry should have homograph number 0.");
+
+				// 5) Switch to 1st vWs: 2 hw with multi vWs lf with 1st vWs empty and 2nd with same forms -> hn 1 + 2 -> 0 + 0
+				SwapVernWs(false); // ws order is now "fr es", and hgws is still "fr"
+				Assert.AreEqual(0, lex1.HomographNumber,
+								"5) first entry should have homograph number 0.");
+				Assert.AreEqual(0, lex2.HomographNumber,
+								"5) second entry should have homograph number 0.");
+
+				// 6) Switch to 2nd vWs: 4 hw with multi vWs lf with 1st vWs same and 2nd with 2 diff forms, 2 same -> hn 1234 -> 0012
+				lex1 = MakeStemEntryMultiWs("x", frWsId, "s", spWsId, morphTypeRoot);
+				lex2 = MakeStemEntryMultiWs("x", frWsId, "t", spWsId, morphTypeRoot);
+				var lex3 = MakeStemEntryMultiWs("x", frWsId, "u", spWsId, morphTypeRoot);
+				var lex4 = MakeStemEntryMultiWs("x", frWsId, "u", spWsId, morphTypeRoot);
+				Assert.AreEqual(1, lex1.HomographNumber,
+								"6) first entry should have homograph number 1.");
+				Assert.AreEqual(2, lex2.HomographNumber,
+								"6) second entry should have homograph number 2.");
+				Assert.AreEqual(3, lex3.HomographNumber,
+								"6) third entry should have homograph number 3.");
+				Assert.AreEqual(4, lex4.HomographNumber,
+								"6) fourth entry should have homograph number 4.");
+				SwapVernWs(false); // hgws is still "fr"
+				Assert.AreEqual(1, lex1.HomographNumber,
+								"6) first entry should have homograph number 1.");
+				Assert.AreEqual(2, lex2.HomographNumber,
+								"6) second entry should have homograph number 2.");
+				Assert.AreEqual(3, lex3.HomographNumber,
+								"6) third entry should have homograph number 3.");
+				Assert.AreEqual(4, lex4.HomographNumber,
+								"6) fourth entry should have homograph number 4.");
+
+				helper.RollBack = false; // hopefully all our changes succeeded.
+			}
+		}
+
+		/// <summary>
+		/// Inspired by LT-13615 - tests homograph renumbering following a change in lex forms with multiple ws.
+		/// This test changes the homograph ws when the vernacular ws changes.
+		/// </summary>
+		[Test]
+		public void HomographsChangingHgWs()
+		{
+			using (var helper = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				Cache.LanguageProject.VernacularWritingSystems.Clear();
+				Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Clear();
+				var frWs = Cache.WritingSystemFactory.get_Engine("fr");
+				var spWs = Cache.WritingSystemFactory.get_Engine("es");
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (IWritingSystem)spWs;
+				Cache.LanguageProject.DefaultVernacularWritingSystem = (IWritingSystem)frWs; // {fr es} order
+				int frWsId = frWs.Handle;
+				int spWsId = spWs.Handle;
+
+				// ws order is "fr es"
+				var morphTypeRepository = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+				var morphTypeRoot = morphTypeRepository.GetObject(MoMorphTypeTags.kguidMorphRoot);
+
+				// 1) Normal case: 2 hw with multi vWs lf with 1st vWs same forms and 2nd with diff forms -> hn 1 + 2
+				var lex1 = MakeStemEntryMultiWs("a", frWsId, "b", spWsId, morphTypeRoot);
+				var lex2 = MakeStemEntryMultiWs("a", frWsId, "c", spWsId, morphTypeRoot);
+				Assert.AreEqual(1, lex1.HomographNumber,
+								"1) first entry should have homograph number 1.");
+				Assert.AreEqual(2, lex2.HomographNumber,
+								"1) second entry should have homograph number 2.");
+
+				// 2) Empty case: both lf 1st vWs -> no hns 0 + 0
+				lex1 = MakeStemEntryMultiWs("", frWsId, "b", spWsId, morphTypeRoot);
+				lex2 = MakeStemEntryMultiWs("", frWsId, "c", spWsId, morphTypeRoot);
+				Assert.AreEqual(0, lex1.HomographNumber,
+								"2) first entry should have homograph number 0.");
+				Assert.AreEqual(0, lex2.HomographNumber,
+								"2) second entry should have homograph number 0.");
+
+				// 3) Edit case: Type a lf 1st vWs for both entries -> hns 1 + 2
+				lex1.LexemeFormOA.Form.set_String(frWsId, Cache.TsStrFactory.MakeString("z", frWsId));
+				lex2.LexemeFormOA.Form.set_String(frWsId, Cache.TsStrFactory.MakeString("z", frWsId));
+				Assert.AreEqual(1, lex1.HomographNumber,
+								"3) first entry should have homograph number 1.");
+				Assert.AreEqual(2, lex2.HomographNumber,
+								"3) second entry should have homograph number 2.");
+
+				// 4) Switch to 2nd vWs: 2 hw with multi vWs lf with 1st vWs empty and 2nd with same forms -> hn 0 + 0 -> 1 + 2
+				lex1 = MakeStemEntryMultiWs("", frWsId, "k", spWsId, morphTypeRoot);
+				lex2 = MakeStemEntryMultiWs("", frWsId, "k", spWsId, morphTypeRoot);
+				Assert.AreEqual(0, lex1.HomographNumber,
+								"4) first entry should have homograph number 0.");
+				Assert.AreEqual(0, lex2.HomographNumber,
+								"4) second entry should have homograph number 0.");
+				SwapVernWs(true); // ws order is now "es fr"
+				Assert.AreEqual(1, lex1.HomographNumber,
+								"4) first entry should have homograph number 1.");
+				Assert.AreEqual(2, lex2.HomographNumber,
+								"4) second entry should have homograph number 2.");
+
+				// 5) Switch to 1st vWs: 2 hw with multi vWs lf with 1st vWs empty and 2nd with same forms -> hn 1 + 2 -> 0 + 0
+				SwapVernWs(true); // ws order is now "fr es"
+				Assert.AreEqual(0, lex1.HomographNumber,
+								"5) first entry should have homograph number 0.");
+				Assert.AreEqual(0, lex2.HomographNumber,
+								"5) second entry should have homograph number 0.");
+
+				// 6) Switch to 2nd vWs: 4 hw with multi vWs lf with 1st vWs same and 2nd with 2 diff forms, 2 same -> hn 1234 -> 0012
+				lex1 = MakeStemEntryMultiWs("x", frWsId, "s", spWsId, morphTypeRoot);
+				lex2 = MakeStemEntryMultiWs("x", frWsId, "t", spWsId, morphTypeRoot);
+				var lex3 = MakeStemEntryMultiWs("x", frWsId, "u", spWsId, morphTypeRoot);
+				var lex4 = MakeStemEntryMultiWs("x", frWsId, "u", spWsId, morphTypeRoot);
+				Assert.AreEqual(1, lex1.HomographNumber,
+								"6) first entry should have homograph number 1.");
+				Assert.AreEqual(2, lex2.HomographNumber,
+								"6) second entry should have homograph number 2.");
+				Assert.AreEqual(3, lex3.HomographNumber,
+								"6) third entry should have homograph number 3.");
+				Assert.AreEqual(4, lex4.HomographNumber,
+								"6) fourth entry should have homograph number 4.");
+				SwapVernWs(true);
+				Assert.AreEqual(0, lex1.HomographNumber,
+								"6) first entry should have homograph number 0.");
+				Assert.AreEqual(0, lex2.HomographNumber,
+								"6) second entry should have homograph number 0.");
+				Assert.AreEqual(1, lex3.HomographNumber,
+								"6) third entry should have homograph number 1.");
+				Assert.AreEqual(2, lex4.HomographNumber,
+								"6) fourth entry should have homograph number 2.");
+
+				helper.RollBack = false; // hopefully all our changes succeeded.
+			}
+		}
+
+		/// <summary>
+		/// Reverses the order of the vernacular wss - the top being the default
+		/// </summary>
+		/// <param name="changeHgWs">Make the homogragh ws match the new default vern ws when true</param>
+		private void SwapVernWs(bool changeHgWs)
+		{
+			var newDvWs = Cache.LanguageProject.CurrentVernacularWritingSystems.ElementAt(1);
+			Cache.LanguageProject.DefaultVernacularWritingSystem = newDvWs;
+			if (changeHgWs)
+			{
+				Cache.LanguageProject.HomographWs = newDvWs.Id; // set homograph number ws to the new default vern ws
+				Cache.ServiceLocator.GetInstance<ILexEntryRepository>().ResetHomographs(null);
+			}
+		}
+
+		/// <summary>
+		/// Makes a lex entry with lexeme form in 2 wss
+		/// </summary>
+		/// <param name="form1"></param>
+		/// <param name="wsId1"> </param>
+		/// <param name="form2"></param>
+		/// <param name="wsId2"> </param>
+		/// <param name="mt"></param>
+		/// <returns></returns>
+		private ILexEntry MakeStemEntryMultiWs(string form1, int wsId1, string form2, int wsId2, IMoMorphType mt)
+		{
+			var result = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			result.LexemeFormOA = morph;
+			morph.MorphTypeRA = mt;
+			morph.Form.set_String(wsId1, Cache.TsStrFactory.MakeString(form1, wsId1));
+			morph.Form.set_String(wsId2, Cache.TsStrFactory.MakeString(form2, wsId2));
+			return result;
+		}
+
+		/// <summary>
+		/// Gets the ws id (int) from the ordered CurrentVernacularWritingSystems collection.
+		/// </summary>
+		/// <param name="seq">The first (0), second (1), etc..</param>
+		/// <returns>The unique integer representing the ws</returns>
+		private int GetVernWs(int seq)
+		{
+			var vernWsList = Cache.LanguageProject.CurrentVernacularWritingSystems;
+			return Cache.WritingSystemFactory.GetWsFromStr(vernWsList.ElementAt(seq).Id);
+		}
+
 		/// <summary>
 		/// Inspired by LT-13152 - tests homograph renumbering following a merge.
 		/// </summary>

@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-* Copyright (c) 1996-2008, International Business Machines Corporation and others.
+* Copyright (c) 1996-2012, International Business Machines Corporation and others.
 * All Rights Reserved.
 *******************************************************************************
 */
@@ -13,9 +13,11 @@
 #if !UCONFIG_NO_COLLATION
 
 #include "unicode/unorm.h"
+#include "unicode/localpointer.h"
 #include "unicode/parseerr.h"
 #include "unicode/uloc.h"
 #include "unicode/uset.h"
+#include "unicode/uscript.h"
 
 /**
  * \file
@@ -132,6 +134,78 @@ typedef enum {
 } UColAttributeValue;
 
 /**
+ * Enum containing the codes for reordering segments of the collation table that are not script
+ * codes. These reordering codes are to be used in conjunction with the script codes.
+ * @see ucol_getReorderCodes
+ * @see ucol_setReorderCodes
+ * @see ucol_getEquivalentReorderCodes
+ * @see UScriptCode
+ * @stable ICU 4.8
+ */
+ typedef enum {
+   /**
+	* A special reordering code that is used to specify the default
+	* reordering codes for a locale.
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_DEFAULT       = -1,
+   /**
+	* A special reordering code that is used to specify no reordering codes.
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_NONE          = USCRIPT_UNKNOWN,
+   /**
+	* A special reordering code that is used to specify all other codes used for
+	* reordering except for the codes lised as UColReorderCode values and those
+	* listed explicitly in a reordering.
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_OTHERS        = USCRIPT_UNKNOWN,
+   /**
+	* Characters with the space property.
+	* This is equivalent to the rule value "space".
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_SPACE         = 0x1000,
+   /**
+	* The first entry in the enumeration of reordering groups. This is intended for use in
+	* range checking and enumeration of the reorder codes.
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_FIRST         = UCOL_REORDER_CODE_SPACE,
+   /**
+	* Characters with the punctuation property.
+	* This is equivalent to the rule value "punct".
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_PUNCTUATION   = 0x1001,
+   /**
+	* Characters with the symbol property.
+	* This is equivalent to the rule value "symbol".
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_SYMBOL        = 0x1002,
+   /**
+	* Characters with the currency property.
+	* This is equivalent to the rule value "currency".
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_CURRENCY      = 0x1003,
+   /**
+	* Characters with the digit property.
+	* This is equivalent to the rule value "digit".
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_DIGIT         = 0x1004,
+   /**
+	* The limit of the reorder codes. This is intended for use in range checking
+	* and enumeration of the reorder codes.
+	* @stable ICU 4.8
+	*/
+	UCOL_REORDER_CODE_LIMIT         = 0x1005
+} UColReorderCode;
+
+/**
  * Base letter represents a primary difference.  Set comparison
  * level to UCOL_PRIMARY to ignore secondary and tertiary differences.
  * Use this to set the strength of a Collator object.
@@ -164,10 +238,12 @@ typedef UColAttributeValue UCollationStrength;
  * @stable ICU 2.0
  */
 typedef enum {
-	 /** Attribute for direction of secondary weights - used in French.
+	 /** Attribute for direction of secondary weights - used in Canadian French.
 	  * Acceptable values are UCOL_ON, which results in secondary weights
 	  * being considered backwards and UCOL_OFF which treats secondary
-	  * weights in the order they appear.*/
+	  * weights in the order they appear.
+	  * @stable ICU 2.0
+	  */
 	 UCOL_FRENCH_COLLATION,
 	 /** Attribute for handling variable elements.
 	  * Acceptable values are UCOL_NON_IGNORABLE (default)
@@ -176,14 +252,18 @@ typedef enum {
 	  * and UCOL_SHIFTED which causes codepoints with primary
 	  * weights that are equal or below the variable top value
 	  * to be ignored on primary level and moved to the quaternary
-	  * level.*/
+	  * level.
+	  * @stable ICU 2.0
+	  */
 	 UCOL_ALTERNATE_HANDLING,
 	 /** Controls the ordering of upper and lower case letters.
 	  * Acceptable values are UCOL_OFF (default), which orders
 	  * upper and lower case letters in accordance to their tertiary
 	  * weights, UCOL_UPPER_FIRST which forces upper case letters to
 	  * sort before lower case letters, and UCOL_LOWER_FIRST which does
-	  * the opposite. */
+	  * the opposite.
+	  * @stable ICU 2.0
+	  */
 	 UCOL_CASE_FIRST,
 	 /** Controls whether an extra case level (positioned before the third
 	  * level) is generated or not. Acceptable values are UCOL_OFF (default),
@@ -191,7 +271,9 @@ typedef enum {
 	  * level to be generated. Contents of the case level are affected by
 	  * the value of UCOL_CASE_FIRST attribute. A simple way to ignore
 	  * accent differences in a string is to set the strength to UCOL_PRIMARY
-	  * and enable case level. */
+	  * and enable case level.
+	  * @stable ICU 2.0
+	  */
 	 UCOL_CASE_LEVEL,
 	 /** Controls whether the normalization check and necessary normalizations
 	  * are performed. When set to UCOL_OFF (default) no normalization check
@@ -199,9 +281,13 @@ typedef enum {
 	  * input data is in so-called FCD form (see users manual for more info).
 	  * When set to UCOL_ON, an incremental check is performed to see whether
 	  * the input data is in the FCD form. If the data is not in the FCD form,
-	  * incremental NFD normalization is performed. */
+	  * incremental NFD normalization is performed.
+	  * @stable ICU 2.0
+	  */
 	 UCOL_NORMALIZATION_MODE,
-	 /** An alias for UCOL_NORMALIZATION_MODE attribute */
+	 /** An alias for UCOL_NORMALIZATION_MODE attribute.
+	  * @stable ICU 2.0
+	  */
 	 UCOL_DECOMPOSITION_MODE = UCOL_NORMALIZATION_MODE,
 	 /** The strength attribute. Can be either UCOL_PRIMARY, UCOL_SECONDARY,
 	  * UCOL_TERTIARY, UCOL_QUATERNARY or UCOL_IDENTICAL. The usual strength
@@ -212,16 +298,35 @@ typedef enum {
 	  * UCOL_HIRAGANA_QUATERNARY mode to on. Otherwise, quaternary level
 	  * is affected only by the number of non ignorable code points in
 	  * the string. Identical strength is rarely useful, as it amounts
-	  * to codepoints of the NFD form of the string. */
+	  * to codepoints of the NFD form of the string.
+	  * @stable ICU 2.0
+	  */
 	 UCOL_STRENGTH,
 	 /** When turned on, this attribute positions Hiragana before all
 	  * non-ignorables on quaternary level This is a sneaky way to produce JIS
-	  * sort order */
+	  * sort order.
+	  *
+	  * This attribute is an implementation detail of the CLDR Japanese tailoring.
+	  * The implementation might change to use a different mechanism
+	  * to achieve the same Japanese sort order.
+	  * Since ICU 50, this attribute is not settable any more via API functions.
+	  * @deprecated ICU 50 Implementation detail, cannot be set via API, might be removed from implementation.
+	  */
 	 UCOL_HIRAGANA_QUATERNARY_MODE,
 	 /** When turned on, this attribute generates a collation key
 	  * for the numeric value of substrings of digits.
-	  * This is a way to get '100' to sort AFTER '2'. */
+	  * This is a way to get '100' to sort AFTER '2'. Note that the longest
+	  * digit substring that can be treated as a single collation element is
+	  * 254 digits (not counting leading zeros). If a digit substring is
+	  * longer than that, the digits beyond the limit will be treated as a
+	  * separate digit substring associated with a separate collation element.
+	  * @stable ICU 2.8
+	  */
 	 UCOL_NUMERIC_COLLATION,
+	 /**
+	  * The number of UColAttribute constants.
+	  * @stable ICU 2.0
+	  */
 	 UCOL_ATTRIBUTE_COUNT
 } UColAttribute;
 
@@ -229,9 +334,19 @@ typedef enum {
  *  @stable ICU 2.0
  */
 typedef enum {
-  /** Retrieve tailoring only */
+  /**
+   * Retrieves the tailoring rules only.
+   * Same as calling the version of getRules() without UColRuleOption.
+   * @stable ICU 2.0
+   */
   UCOL_TAILORING_ONLY,
-  /** Retrieve UCA rules and tailoring */
+  /**
+   * Retrieves the "UCA rules" concatenated with the tailoring rules.
+   * The "UCA rules" are an <i>approximation</i> of the root collator's sort order.
+   * They are almost never used or useful at runtime and can be removed from the data.
+   * See http://userguide.icu-project.org/collation/customization#TOC-Building-on-Existing-Locales
+   * @stable ICU 2.0
+   */
   UCOL_FULL_RULES
 } UColRuleOption ;
 
@@ -328,6 +443,7 @@ ucol_openFromShortString( const char *definition,
 						  UParseError *parseError,
 						  UErrorCode *status);
 
+#ifndef U_HIDE_DEPRECATED_API
 /**
  * Get a set containing the contractions defined by the collator. The set includes
  * both the UCA contractions and the contractions defined by the collator. This set
@@ -345,6 +461,7 @@ U_DEPRECATED int32_t U_EXPORT2
 ucol_getContractions( const UCollator *coll,
 				  USet *conts,
 				  UErrorCode *status);
+#endif  /* U_HIDE_DEPRECATED_API */
 
 /**
  * Get a set containing the expansions defined by the collator. The set includes
@@ -375,6 +492,25 @@ ucol_getContractionsAndExpansions( const UCollator *coll,
 U_STABLE void U_EXPORT2
 ucol_close(UCollator *coll);
 
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUCollatorPointer
+ * "Smart pointer" class, closes a UCollator via ucol_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUCollatorPointer, UCollator, ucol_close);
+
+U_NAMESPACE_END
+
+#endif
+
 /**
  * Compare two strings.
  * The strings will be compared using the options already specified.
@@ -396,6 +532,33 @@ ucol_strcoll(    const    UCollator    *coll,
 		int32_t            sourceLength,
 		const    UChar        *target,
 		int32_t            targetLength);
+
+/**
+* Compare two strings in UTF-8.
+* The strings will be compared using the options already specified.
+* Note: When input string contains malformed a UTF-8 byte sequence,
+* this function treats these bytes as REPLACEMENT CHARACTER (U+FFFD).
+* @param coll The UCollator containing the comparison rules.
+* @param source The source UTF-8 string.
+* @param sourceLength The length of source, or -1 if null-terminated.
+* @param target The target UTF-8 string.
+* @param targetLength The length of target, or -1 if null-terminated.
+* @param status A pointer to an UErrorCode to receive any errors
+* @return The result of comparing the strings; one of UCOL_EQUAL,
+* UCOL_GREATER, UCOL_LESS
+* @see ucol_greater
+* @see ucol_greaterOrEqual
+* @see ucol_equal
+* @draft ICU 50
+*/
+U_DRAFT UCollationResult U_EXPORT2
+ucol_strcollUTF8(
+		const UCollator *coll,
+		const char      *source,
+		int32_t         sourceLength,
+		const char      *target,
+		int32_t         targetLength,
+		UErrorCode      *status);
 
 /**
  * Determine if one string is greater than another.
@@ -498,6 +661,90 @@ ucol_setStrength(UCollator *coll,
 				 UCollationStrength strength);
 
 /**
+ * Retrieves the reordering codes for this collator.
+ * These reordering codes are a combination of UScript codes and UColReorderCode entries.
+ * @param coll The UCollator to query.
+ * @param dest The array to fill with the script ordering.
+ * @param destCapacity The length of dest. If it is 0, then dest may be NULL and the function
+ * will only return the length of the result without writing any of the result string (pre-flighting).
+ * @param pErrorCode Must be a valid pointer to an error code value, which must not indicate a
+ * failure before the function call.
+ * @return The number of reordering codes written to the dest array.
+ * @see ucol_setReorderCodes
+ * @see ucol_getEquivalentReorderCodes
+ * @see UScriptCode
+ * @see UColReorderCode
+ * @stable ICU 4.8
+ */
+U_STABLE int32_t U_EXPORT2
+ucol_getReorderCodes(const UCollator* coll,
+					int32_t* dest,
+					int32_t destCapacity,
+					UErrorCode *pErrorCode);
+/**
+ * Sets the reordering codes for this collator.
+ * Collation reordering allows scripts and some other defined blocks of characters
+ * to be moved relative to each other as a block. This reordering is done on top of
+ * the DUCET/CLDR standard collation order. Reordering can specify groups to be placed
+ * at the start and/or the end of the collation order. These groups are specified using
+ * UScript codes and UColReorderCode entries.
+ * <p>By default, reordering codes specified for the start of the order are placed in the
+ * order given after a group of "special" non-script blocks. These special groups of characters
+ * are space, punctuation, symbol, currency, and digit. These special groups are represented with
+ * UColReorderCode entries. Script groups can be intermingled with
+ * these special non-script blocks if those special blocks are explicitly specified in the reordering.
+ * <p>The special code OTHERS stands for any script that is not explicitly
+ * mentioned in the list of reordering codes given. Anything that is after OTHERS
+ * will go at the very end of the reordering in the order given.
+ * <p>The special reorder code DEFAULT will reset the reordering for this collator
+ * to the default for this collator. The default reordering may be the DUCET/CLDR order or may be a reordering that
+ * was specified when this collator was created from resource data or from rules. The
+ * DEFAULT code <b>must</b> be the sole code supplied when it used. If not
+ * that will result in an U_ILLEGAL_ARGUMENT_ERROR being set.
+ * <p>The special reorder code NONE will remove any reordering for this collator.
+ * The result of setting no reordering will be to have the DUCET/CLDR ordering used. The
+ * NONE code <b>must</b> be the sole code supplied when it used.
+ * @param coll The UCollator to set.
+ * @param reorderCodes An array of script codes in the new order. This can be NULL if the
+ * length is also set to 0. An empty array will clear any reordering codes on the collator.
+ * @param reorderCodesLength The length of reorderCodes.
+ * @param pErrorCode Must be a valid pointer to an error code value, which must not indicate a
+ * failure before the function call.
+ * @see ucol_getReorderCodes
+ * @see ucol_getEquivalentReorderCodes
+ * @see UScriptCode
+ * @see UColReorderCode
+ * @stable ICU 4.8
+ */
+U_STABLE void U_EXPORT2
+ucol_setReorderCodes(UCollator* coll,
+					const int32_t* reorderCodes,
+					int32_t reorderCodesLength,
+					UErrorCode *pErrorCode);
+
+/**
+ * Retrieves the reorder codes that are grouped with the given reorder code. Some reorder
+ * codes will be grouped and must reorder together.
+ * @param reorderCode The reorder code to determine equivalence for.
+ * @param dest The array to fill with the script ordering.
+ * @param destCapacity The length of dest. If it is 0, then dest may be NULL and the function
+ * will only return the length of the result without writing any of the result string (pre-flighting).
+ * @param pErrorCode Must be a valid pointer to an error code value, which must not indicate
+ * a failure before the function call.
+ * @return The number of reordering codes written to the dest array.
+ * @see ucol_setReorderCodes
+ * @see ucol_getReorderCodes
+ * @see UScriptCode
+ * @see UColReorderCode
+ * @stable ICU 4.8
+ */
+U_STABLE int32_t U_EXPORT2
+ucol_getEquivalentReorderCodes(int32_t reorderCode,
+					int32_t* dest,
+					int32_t destCapacity,
+					UErrorCode *pErrorCode);
+
+/**
  * Get the display name for a UCollator.
  * The display name is suitable for presentation to a user.
  * @param objLoc The locale of the collator in question.
@@ -520,13 +767,13 @@ ucol_getDisplayName(    const    char        *objLoc,
  * Get a locale for which collation rules are available.
  * A UCollator in a locale returned by this function will perform the correct
  * collation for the locale.
- * @param index The index of the desired locale.
+ * @param localeIndex The index of the desired locale.
  * @return A locale for which collation rules are available, or 0 if none.
  * @see ucol_countAvailable
  * @stable ICU 2.0
  */
 U_STABLE const char* U_EXPORT2
-ucol_getAvailable(int32_t index);
+ucol_getAvailable(int32_t localeIndex);
 
 /**
  * Determine how many locales have collation rules available.
@@ -579,6 +826,28 @@ U_STABLE UEnumeration* U_EXPORT2
 ucol_getKeywordValues(const char *keyword, UErrorCode *status);
 
 /**
+ * Given a key and a locale, returns an array of string values in a preferred
+ * order that would make a difference. These are all and only those values where
+ * the open (creation) of the service with the locale formed from the input locale
+ * plus input keyword and that value has different behavior than creation with the
+ * input locale alone.
+ * @param key           one of the keys supported by this service.  For now, only
+ *                      "collation" is supported.
+ * @param locale        the locale
+ * @param commonlyUsed  if set to true it will return only commonly used values
+ *                      with the given locale in preferred order.  Otherwise,
+ *                      it will return all the available values for the locale.
+ * @param status error status
+ * @return a string enumeration over keyword values for the given key and the locale.
+ * @stable ICU 4.2
+ */
+U_STABLE UEnumeration* U_EXPORT2
+ucol_getKeywordValuesForLocale(const char* key,
+							   const char* locale,
+							   UBool commonlyUsed,
+							   UErrorCode* status);
+
+/**
  * Return the functionally equivalent locale for the given
  * requested locale, with respect to given keyword, for the
  * collation service.  If two locales return the same result, then
@@ -614,11 +883,11 @@ ucol_getFunctionalEquivalent(char* result, int32_t resultCapacity,
 							 UBool* isAvailable, UErrorCode* status);
 
 /**
- * Get the collation rules from a UCollator.
+ * Get the collation tailoring rules from a UCollator.
  * The rules will follow the rule syntax.
  * @param coll The UCollator to query.
  * @param length
- * @return The collation rules.
+ * @return The collation tailoring rules.
  * @stable ICU 2.0
  */
 U_STABLE const UChar* U_EXPORT2
@@ -683,6 +952,11 @@ ucol_normalizeShortDefinitionString(const char *source,
 /**
  * Get a sort key for a string from a UCollator.
  * Sort keys may be compared using <TT>strcmp</TT>.
+ *
+ * Like ICU functions that write to an output buffer, the buffer contents
+ * is undefined if the buffer capacity (resultLength parameter) is too small.
+ * Unlike ICU functions that write a string to an output buffer,
+ * the terminating zero byte is counted in the sort key length.
  * @param coll The UCollator containing the collation rules.
  * @param source The string to transform.
  * @param sourceLength The length of source, or -1 if null-terminated.
@@ -706,10 +980,10 @@ ucol_getSortKey(const    UCollator    *coll,
  *  to preserve state array between calls and to provide
  *  the same type of UCharIterator set with the same string.
  *  The destination buffer provided must be big enough to store
- *  the number of requested bytes. Generated sortkey is not
- *  compatible with sortkeys generated using ucol_getSortKey
- *  API, since we don't do any compression. If uncompressed
- *  sortkeys are required, this API can be used.
+ *  the number of requested bytes.
+ *
+ *  The generated sort key may or may not be compatible with
+ *  sort keys generated using ucol_getSortKey().
  *  @param coll The UCollator containing the collation rules.
  *  @param iter UCharIterator containing the string we need
  *              the sort key to be calculated for.
@@ -950,22 +1224,27 @@ ucol_safeClone(const UCollator *coll,
 /** default memory size for the new clone. It needs to be this large for os/400 large pointers
  * @stable ICU 2.0
  */
-#define U_COL_SAFECLONE_BUFFERSIZE 512
+#define U_COL_SAFECLONE_BUFFERSIZE 528
 
 /**
  * Returns current rules. Delta defines whether full rules are returned or just the tailoring.
  * Returns number of UChars needed to store rules. If buffer is NULL or bufferLen is not enough
  * to store rules, will store up to available space.
+ *
+ * ucol_getRules() should normally be used instead.
+ * See http://userguide.icu-project.org/collation/customization#TOC-Building-on-Existing-Locales
  * @param coll collator to get the rules from
  * @param delta one of UCOL_TAILORING_ONLY, UCOL_FULL_RULES.
  * @param buffer buffer to store the result in. If NULL, you'll get no rules.
- * @param bufferLen lenght of buffer to store rules in. If less then needed you'll get only the part that fits in.
+ * @param bufferLen length of buffer to store rules in. If less than needed you'll get only the part that fits in.
  * @return current rules
  * @stable ICU 2.0
+ * @see UCOL_FULL_RULES
  */
 U_STABLE int32_t U_EXPORT2
 ucol_getRulesEx(const UCollator *coll, UColRuleOption delta, UChar *buffer, int32_t bufferLen);
 
+#ifndef U_HIDE_DEPRECATED_API
 /**
  * gets the locale name of the collator. If the collator
  * is instantiated from the rules, then this function returns
@@ -982,7 +1261,7 @@ ucol_getRulesEx(const UCollator *coll, UColRuleOption delta, UChar *buffer, int3
  */
 U_DEPRECATED const char * U_EXPORT2
 ucol_getLocale(const UCollator *coll, ULocDataLocaleType type, UErrorCode *status);
-
+#endif  /* U_HIDE_DEPRECATED_API */
 
 /**
  * gets the locale name of the collator. If the collator
@@ -1014,6 +1293,7 @@ ucol_getLocaleByType(const UCollator *coll, ULocDataLocaleType type, UErrorCode 
 U_STABLE USet * U_EXPORT2
 ucol_getTailoredSet(const UCollator *coll, UErrorCode *status);
 
+#ifndef U_HIDE_INTERNAL_API
 /**
  * Universal attribute getter that returns UCOL_DEFAULT if the value is default
  * @param coll collator which attributes are to be changed
@@ -1086,6 +1366,7 @@ ucol_prepareShortStringOpen( const char *definition,
 						  UBool forceDefaults,
 						  UParseError *parseError,
 						  UErrorCode *status);
+#endif  /* U_HIDE_INTERNAL_API */
 
 /** Creates a binary image of a collator. This binary image can be stored and
  *  later used to instantiate a collator using ucol_openBinary.

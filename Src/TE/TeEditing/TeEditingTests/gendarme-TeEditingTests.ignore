@@ -1,0 +1,16 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Object disposed in tear down method
+T: SIL.FieldWorks.TE.FootnoteEditingHelperTests
+T: SIL.FieldWorks.TE.TeEditingHelperTestBase
+T: SIL.FieldWorks.TE.TeEditingHelperTestsWithoutCache
+T: SIL.FieldWorks.TE.TeEditingHelpers.NavigationTests
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# factory method
+M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.TE.TeEditingHelpers.TeDummyBasicView::CreateVc(System.Int32)

@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -29,6 +30,8 @@ namespace SIL.FieldWorks.TE
 	/// Manages info and stuff for doing import in such a way that it can be undone.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache is a reference")]
 	public class UndoImportManager
 	{
 		#region Data members

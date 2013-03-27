@@ -1,0 +1,17 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Reference
+M: System.Boolean SIL.FieldWorks.TE.InsertVerseMessageFilter::PreFilterMessage(System.Windows.Forms.Message&)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference
+T: SIL.FieldWorks.TE.LocationTrackerImpl
+T: SIL.FieldWorks.TE.InsertVerseMessageFilter
+T: SIL.FieldWorks.TE.ChangeSpellingInfo
+T: SIL.FieldWorks.TE.TeParaCounter
+T: SIL.FieldWorks.TE.UndoImportManager

@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void FocusedObjectPostponesWordformDeletion()
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var sttext = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = sttext;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
@@ -1478,7 +1478,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void MoveSentencesFromCompletelyUnanalyzedPara()
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = stText;
 			var para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
@@ -3328,7 +3328,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		IStText MakeStText()
 		{
 			var text = m_textFactory.Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var stText = m_stTextFactory.Create();
 			text.ContentsOA = stText;
 			var stTextPara = m_paraFactory.Create();

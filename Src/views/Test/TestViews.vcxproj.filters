@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+	<Filter Include="Source Files">
+	  <UniqueIdentifier>{9399cd57-6823-4458-8784-b31b77cd37a0}</UniqueIdentifier>
+	  <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+	</Filter>
+	<Filter Include="Header Files">
+	  <UniqueIdentifier>{6e1ad6cb-9ba0-41fd-a86b-8027cd265ce0}</UniqueIdentifier>
+	  <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+	</Filter>
+	<Filter Include="Resource Files">
+	  <UniqueIdentifier>{f2bcfdfd-c6ac-4119-b53c-d64ad4edbe5a}</UniqueIdentifier>
+	  <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+	</Filter>
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="Collection.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="testViews.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="BasicVc.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="DummyBaseVc.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="DummyRootsite.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="resource.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestAutoLoad.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestInsertDiffPara.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestLayoutPage.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestLazyBox.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestNotifier.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="testViews.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVirtualHandlers.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwEnv.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwGraphics.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwOverlay.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwParagraph.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwPattern.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwRootBox.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwSelection.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwSync.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwTableBox.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwTextBoxes.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwTextStore.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwTxtSrc.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TestVwUndoDa.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="NiceGuy.bmp">
+	  <Filter>Resource Files</Filter>
+	</None>
+	<None Include="testViews.mak">
+	  <Filter>Resource Files</Filter>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="TestViews.rc">
+	  <Filter>Resource Files</Filter>
+	</ResourceCompile>
+  </ItemGroup>
+</Project>

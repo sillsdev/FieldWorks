@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 			m_flid  = CmPossibilityListTags.kflidPossibilities;
 		}
 
-		internal static ICmObject GetListFromOwnerAndProperty(FdoCache cache, string owner, string property)
+		public static ICmObject GetListFromOwnerAndProperty(FdoCache cache, string owner, string property)
 		{
 			ICmObject obj = null;
 
@@ -228,8 +228,24 @@ namespace SIL.FieldWorks.XWorks
 			var pssl = (ICmPossibilityList)m_owningObject;
 			int possClass = pssl.ItemClsid;
 			string sPossClass = VirtualListPublisher.MetaDataCache.GetClassName(possClass);
-			if (sPossClass != className)
+			// for the special case of the VariantEntryTypes list, allow inserting a LexEntryInflType object
+			// as long as the currently selected object has a parent of that class.
+			if (PropertyName == "VariantEntryTypes")
+			{
+				// return null only if the class of the owner does not match the given className
+				// in case of owner being the list itself, use the general class for the list items.
+				var currentObjOwner = CurrentObject.Owner;
+				string classNameOfOwnerOfCurrentObject = currentObjOwner.Hvo == pssl.Hvo
+														 ? sPossClass
+														 : currentObjOwner.ClassName;
+				if (classNameOfOwnerOfCurrentObject != className)
+					return null;
+			}
+			else if (sPossClass != className)
+			{
 				return null;
+			}
+
 			foreach(ClassAndPropInfo cpi in m_insertableClasses)
 			{
 				if (cpi.signatureClassName == className)
@@ -1006,7 +1022,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Note: MUST always update this through the CurrentIndex setter, so that m_hvoCurrent
 		/// is kept in sync.
 		/// </summary>
-		protected int m_currentIndex;
+		protected int m_currentIndex = -1;
 
 		/// <summary>
 		/// Basically RootObjectAt(m_currentIndex) (unless m_currentIndex is -1, when it is zero).
@@ -2740,6 +2756,10 @@ namespace SIL.FieldWorks.XWorks
 					// Keep the current position as far as possible.
 					if (newCurrentIndex >= newSortedObjects.Count)
 						newCurrentIndex = newSortedObjects.Count - 1;
+					else
+					{
+						newCurrentIndex = GetPersistedCurrentIndex(newSortedObjects.Count);
+					}
 
 					actions = ListChangedEventArgs.ListChangedActions.Normal; // We definitely changed records
 				}
@@ -3366,6 +3386,17 @@ namespace SIL.FieldWorks.XWorks
 			return GetFlidOfVectorFromName(propertyName, owner, cache, mediator, out owningObject, ref fontName, ref typeSize);
 		}
 
+		/// <summary>
+		/// Return the Flid for the model property that this vector represents.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="owner"></param>
+		/// <param name="cache"></param>
+		/// <param name="mediator"></param>
+		/// <param name="owningObject"></param>
+		/// <param name="fontName"></param>
+		/// <param name="typeSize"></param>
+		/// <returns></returns>
 		internal int GetFlidOfVectorFromName(string name, string owner, FdoCache cache, Mediator mediator, out ICmObject owningObject, ref string fontName, ref int typeSize)
 		{
 			var defAnalWsFontName = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.DefaultFontName;
@@ -3447,7 +3478,7 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "Texts":
 					owningObject = cache.LanguageProject;
-					realFlid = LangProjectTags.kflidTexts;
+					realFlid = cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts;
 					break;
 				case "MsFeatureSystem":
 					owningObject = cache.LanguageProject;
@@ -3657,7 +3688,6 @@ namespace SIL.FieldWorks.XWorks
 				if (!IsCurrentObjectValid() || !thingToDelete.IsValidObject)
 					return;
 				m_deletingObject = true;
-				// int currentIndex = CurrentIndex; // CS0219
 				FdoCache cache = m_cache;
 				var currentObject = CurrentObject;
 				// This looks plausible; but for example IndexOf may reload the list, if a reload is pending;
@@ -3771,12 +3801,30 @@ namespace SIL.FieldWorks.XWorks
 			m_sortedObjects = items;
 			m_requestedLoadWhileSuppressed = false; // If a load was pending, we just removed the need for it.
 			if (m_currentIndex == -1 && m_sortedObjects.Count > 0)
-				CurrentIndex = 0;
+			{
+				CurrentIndex = GetPersistedCurrentIndex(m_sortedObjects.Count);
+			}
 			if (m_currentIndex > m_sortedObjects.Count)
 				CurrentIndex = m_sortedObjects.Count == 0 ? -1 : 0;
 			// Let the view update to show the restored list.
 			SendPropChangedOnListChange(m_currentIndex, m_sortedObjects, ListChangedEventArgs.ListChangedActions.Normal);
 			return true;
+		}
+
+		/// <summary>
+		/// LT-12780:  On reloading FLEX there were situtaions where it reloaded on the first element of a list instead of
+		/// the last item the user was working on before closing Flex. The CurrentIndex was being set to zero. This method
+		/// will access the prersisted index but also make sure it does not use an index which is out of range.
+		/// </summary>
+		/// <param name="numberOfObjectsInList"></param>
+		/// <returns></returns>
+		private int GetPersistedCurrentIndex(int numberOfObjectsInList)
+		{
+			var persistedCurrentIndex = m_mediator.PropertyTable.GetIntProperty(Clerk.PersistedIndexProperty, 0,
+																				PropertyTable.SettingsGroup.LocalSettings);
+			if (persistedCurrentIndex >= numberOfObjectsInList)
+				persistedCurrentIndex = numberOfObjectsInList - 1;
+			return persistedCurrentIndex;
 		}
 	}
 

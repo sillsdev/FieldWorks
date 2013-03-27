@@ -85,6 +85,10 @@ namespace SIL.Utils
 			}
 		}
 
+#if !__MonoCS__
+		// This method is currently not used anywhere. If we'll use it we have to do something
+		// on Linux since it probably won't work like this.
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// A static method returning a logical drive's type.
@@ -126,6 +130,7 @@ namespace SIL.Utils
 				return DriveTypes.Invalid;
 			}
 		}
+#endif
 
 		//--------------------------------------------------------------------------------------
 		// Removing code that is no longer used in the src base.  It was using

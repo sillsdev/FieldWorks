@@ -173,7 +173,7 @@
 			<slice label="To Inflection Features" field="ToMsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromProdRestrict" type="Detail">
-			<slice field="FromProdRestrict" label='From Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -189,7 +189,7 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-ToProdRestrict" type="Detail">
-			<slice field="ToProdRestrict" label='To Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -301,10 +301,26 @@
 				<string field="LongNameTSS"/>
 			</para>
 		</part>
+		<part id="MoForm-Jt-MoFormBrowseDisabledPara" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="GrayText"/>
+				</properties>
+				<string field="LongNameTSS"/>
+			</para>
+		</part>
 		<part id="MoForm-Jt-MoFormBrowse" type="jtview">
 			<span>
 				<properties>
 					<forecolor value="blue"/>
+				</properties>
+				<string field="LongNameTSS"/>
+			</span>
+		</part>
+		<part id="MoForm-Jt-MoFormBrowseDisabled" type="jtview">
+			<span>
+				<properties>
+					<forecolor value="GrayText"/>
 				</properties>
 				<string field="LongNameTSS"/>
 			</span>
@@ -500,7 +516,7 @@
 			<slice label="Inflection Features" field="InflFeats" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoInflAffMsa-Detail-FromProdRestrict" type="Detail">
-			<slice field="FromProdRestrict" label='From Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="FromProdRestrict" label='From Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -615,11 +631,19 @@
 				</chooserInfo>
 			</slice>
 		</part>
+		<part id="MoStemMsa-Detail-InflectionClassDisabled" type="Detail">
+			<slice field="InflectionClass" label="Inflection Class" editor="defaultAtomicReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help" chooserDlgHelpTopicID="khtpChoose-InflectionClass" >
+				<deParams ws="best analorvern"/>
+				<chooserInfo flidTextParam="5001002" text="The following inflection classes are available for the category {0}.">
+					<chooserLink type="goto" label="Edit the Inflection Classes for {0}" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
 		<part id="MoStemMsa-Detail-MsFeatures" type="Detail">
 			<slice label="Inflection Features" field="MsFeatures" weight="light" editor="custom" assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.MsaInflectionFeatureListDlgLauncherSlice"/>
 		</part>
 		<part id="MoStemMsa-Detail-ProdRestrict" type="Detail">
-			<slice field="ProdRestrict" label='Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -634,6 +658,13 @@
 		<part id="MoStemMsa-Detail-Category" type="Detail">
 			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
+			</slice>
+		</part>
+		<part id="MoStemMsa-Detail-CategoryDisabled" type="Detail">
+			<slice field="PartOfSpeech" label="Category" editor="atomicreferenceposdisabled" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern">
+					<forecolor>GrayText</forecolor>
+				</deParams>
 			</slice>
 		</part>
 		<part id="MoStemMsa-Jt-PartOfSpeech" type="jtview">
@@ -692,6 +723,14 @@
 				<string class="MoMorphSynAnalysis" field="LongNameAdHocTs"/>
 			</para>
 		</part>
+		<part id="MoMorphSynAnalysis-Jt-EntrySummaryAdHocDisabledPara" type="jtview">
+			<para>
+				<properties>
+					<forecolor value="GrayText"/>
+				</properties>
+				<string class="MoMorphSynAnalysis" field="LongNameAdHocTs"/>
+			</para>
+		</part>
 		<part id="MoMorphSynAnalysis-Jt-EntrySummary" type="jtview">
 			<span>
 				<properties>
@@ -704,6 +743,14 @@
 			<span>
 				<properties>
 					<forecolor value="green"/>
+				</properties>
+				<string class="MoMorphSynAnalysis" field="LongNameAdHocTs"/>
+			</span>
+		</part>
+		<part id="MoMorphSynAnalysis-Jt-EntrySummaryAdHocDisabled" type="jtview">
+			<span>
+				<properties>
+					<forecolor value="GrayText"/>
 				</properties>
 				<string class="MoMorphSynAnalysis" field="LongNameAdHocTs"/>
 			</span>
@@ -878,6 +925,29 @@
 				</para>
 			</cell>
 		</part>
+		<part id="MoInflAffixSlot-Jt-PrefixSlotNameDisabled" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+					<forecolor value="GrayText"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<lit>&#xA0;&#xA0;</lit>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">)</lit>
+					</if>
+					<lit translate="do not translate">-</lit>
+					<lit>&#xA0;&#xA0;</lit>
+				</para>
+			</cell>
+		</part>
 		<part id="MoInflAffixSlot-Jt-SuffixSlotName" type="jtview">
 			<cell>
 				<properties>
@@ -900,11 +970,60 @@
 				</para>
 			</cell>
 		</part>
+		<part id="MoInflAffixSlot-Jt-SuffixSlotNameDisabled" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+					<forecolor value="GrayText"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<lit>&#xA0;&#xA0;</lit>
+					<lit translate="do not translate">-</lit>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">)</lit>
+					</if>
+					<lit>&#xA0;&#xA0;</lit>
+				</para>
+			</cell>
+		</part>
 		<part id="MoInflAffixSlot-Jt-PrefixSlotNameRTL" type="jtview">
 			<cell>
 				<properties>
 					<bold value="on"/>
 					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#x200F;&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">&#x200E;)&#xA0;&#xA0;</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;-</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;-(</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-PrefixSlotNameDisabledRTL" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+					<forecolor value="GrayText"/>
 				</properties>
 				<para>
 					<lit>&#x200F;&#xA0;&#xA0;</lit>
@@ -950,11 +1069,63 @@
 				</para>
 			</cell>
 		</part>
+		<part id="MoInflAffixSlot-Jt-SuffixSlotNameDisabledRTL" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+					<forecolor value="GrayText"/>
+				</properties>
+				<para>
+					<lit>&#x200F;&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#x200E;-&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">&#x200E;)-&#xA0;&#xA0;</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;(</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
 		<part id="MoInflAffixSlot-Jt-PrefixSlotNameLTRinRTL" type="jtview">
 			<cell>
 				<properties>
 					<bold value="on"/>
 					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">-&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">)-&#xA0;&#xA0;</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-PrefixSlotNameDisabledLTRinRTL" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+					<forecolor value="GrayText"/>
 				</properties>
 				<para>
 					<lit>&#xA0;&#xA0;</lit>
@@ -1000,11 +1171,63 @@
 				</para>
 			</cell>
 		</part>
+		<part id="MoInflAffixSlot-Jt-SuffixSlotNameDisabledLTRinRTL" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+					<forecolor value="GrayText"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#xA0;&#xA0;-</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">&#xA0;&#xA0;-(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">)&#xA0;&#xA0;</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
 		<part id="MoInflAffixSlot-Jt-PrefixSlotNameRTLinLTR" type="jtview">
 			<cell>
 				<properties>
 					<bold value="on"/>
 					<bordertrailing value="3"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#xA0;&#xA0;-</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">&#xA0;&#xA0;-(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">)&#xA0;&#xA0;</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-PrefixSlotNameDisabledRTLinLTR" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+					<forecolor value="GrayText"/>
 				</properties>
 				<para>
 					<lit>&#xA0;&#xA0;</lit>
@@ -1050,10 +1273,53 @@
 				</para>
 			</cell>
 		</part>
+		<part id="MoInflAffixSlot-Jt-SuffixSlotNameDisabledRTLinLTR" type="jtview">
+			<cell>
+				<properties>
+					<bold value="on"/>
+					<bordertrailing value="3"/>
+					<forecolor value="GrayText"/>
+				</properties>
+				<para>
+					<lit>&#xA0;&#xA0;</lit>
+					<commandIcon visibility="focused"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">&#xA0;&#xA0;(</lit>
+					</if>
+					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+						<lit translate="do not translate">-&#xA0;&#xA0;</lit>
+					</if>
+					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+						<lit translate="do not translate">)-&#xA0;&#xA0;</lit>
+					</if>
+				</para>
+			</cell>
+		</part>
 		<part id="MoInflAffixSlot-Jt-SlotContents" type="jtview">
 			<cell>
 				<properties>
 					<bordertrailing value="3"/>
+				</properties>
+				<choice>
+					<where class="MoInflAffixSlot" field="Affixes" lengthatleast="1">
+						<seq class="MoInflAffixSlot" field="Affixes" layout="AffixName"/>
+					</where>
+					<otherwise>
+						<!-- the following empty literal forces a right-click to return the slot object instead of a neighboring infl affix msa in a different slot -->
+						<lit/>
+					</otherwise>
+				</choice>
+			</cell>
+		</part>
+		<part id="MoInflAffixSlot-Jt-SlotContentsDisabled" type="jtview">
+			<cell>
+				<properties>
+					<bordertrailing value="3"/>
+					<forecolor value="GrayText"/>
 				</properties>
 				<choice>
 					<where class="MoInflAffixSlot" field="Affixes" lengthatleast="1">
@@ -1072,10 +1338,20 @@
 			<lit/>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-NameAllA" type="Detail">
-			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<if field="Disabled" boolequals="true">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help"/>
+			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-DescriptionAllA" type="Detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<if field="Disabled" boolequals="true">
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help"/>
+			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-TemplateTable" type="Detail">
 			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
@@ -1083,47 +1359,91 @@
 			</slice>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
-			<slice editor="jtview" layout="default" backColor="lightYellow" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Note" />
+			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Note" />
 		</part>
 		<part id="MoInflAffixTemplate-Jt-SpecialNote" type="jtview">
-			<para>
-				<lit>To edit the template table: right-click on STEM, on a slot name, or on a morpheme.</lit>
-			</para>
+			<if field="Disabled" boolequals="true">
+				<para>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>To edit the template table: right-click on STEM, on a slot name, or on a morpheme.</lit>
+				</para>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<para>
+					<lit>To edit the template table: right-click on STEM, on a slot name, or on a morpheme.</lit>
+				</para>
+			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-Final" type="Detail">
 			<slice field="Final" label="Requires more derivation" editor="Checkbox"  toggleValue="true" />
+		</part>
+		<part id="MoInflAffixTemplate-Detail-Active" type="detail">
+			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
 		</part>
 		<part id="MoInflAffixTemplate-Jt-TemplateTabley" type="jtview">
 			<table columns="%ColumnCount">
 				<properties>
 					<borderbottom value="3"/>
 				</properties>
-				<row>
-					<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotName"/>
-					<cell>
-						<properties>
-							<bold value="on"/>
-							<bordertrailing value="3"/>
-						</properties>
-						<para>
-							<lit>&#xA0;&#xA0;</lit>
-							<commandIcon visibility="focused"/>
-							<lit>STEM</lit>
-							<lit>&#xA0;&#xA0;</lit>
-						</para>
-					</cell>
-					<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotName"/>
-				</row>
-				<row>
-					<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
-					<cell>
-						<properties>
-							<bordertrailing value="3"/>
-						</properties>
-						<lit/>
-					</cell>
-					<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
-				</row>
+					<if field="Disabled" boolequals="true">
+						<row>
+							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotNameDisabled"/>
+							<cell>
+								<properties>
+									<bold value="on"/>
+									<bordertrailing value="3"/>
+									<forecolor value="GrayText"/>
+								</properties>
+								<para>
+									<lit>&#xA0;&#xA0;</lit>
+									<commandIcon visibility="focused"/>
+									<lit>STEM</lit>
+									<lit>&#xA0;&#xA0;</lit>
+								</para>
+							</cell>
+							<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotNameDisabled"/>
+						</row>
+						<row>
+							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContentsDisabled"/>
+							<cell>
+								<properties>
+									<bordertrailing value="3"/>
+								</properties>
+								<lit/>
+							</cell>
+							<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContentsDisabled"/>
+						</row>
+					</if>
+					<if field="Disabled" boolequals="false">
+						<row>
+							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotName"/>
+						<cell>
+							<properties>
+								<bold value="on"/>
+								<bordertrailing value="3"/>
+							</properties>
+							<para>
+								<lit>&#xA0;&#xA0;</lit>
+								<commandIcon visibility="focused"/>
+								<lit>STEM</lit>
+								<lit>&#xA0;&#xA0;</lit>
+							</para>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotName"/>
+						</row>
+						<row>
+							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
+							<cell>
+								<properties>
+									<bordertrailing value="3"/>
+								</properties>
+								<lit/>
+							</cell>
+							<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
+						</row>
+					</if>
 			</table>
 		</part>
 		<!-- the display is inherently Left-To-Right: RTL vernacular scripts require reversed handling of the columns -->
@@ -1133,32 +1453,63 @@
 				<properties>
 					<borderbottom value="3"/>
 				</properties>
-				<row>
-					<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SuffixSlotNameRTL"/>
-					<cell>
-						<properties>
-							<bold value="on"/>
-							<bordertrailing value="3"/>
-						</properties>
-						<para>
-							<lit>&#xA0;&#xA0;</lit>
-							<commandIcon visibility="focused"/>
-							<lit>STEM</lit>
-							<lit>&#xA0;&#xA0;</lit>
-						</para>
-					</cell>
-					<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="PrefixSlotNameRTL"/>
-				</row>
-				<row>
-					<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SlotContents"/>
-					<cell>
-						<properties>
-							<bordertrailing value="3"/>
-						</properties>
-						<lit/>
-					</cell>
-					<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="SlotContents"/>
-				</row>
+				<if field="Disabled" boolequals="true">
+					<row>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SuffixSlotNameDisabledRTL"/>
+						<cell>
+							<properties>
+								<bold value="on"/>
+								<bordertrailing value="3"/>
+								<forecolor value="Graytext"/>
+							</properties>
+							<para>
+								<lit>&#xA0;&#xA0;</lit>
+								<commandIcon visibility="focused"/>
+								<lit>STEM</lit>
+								<lit>&#xA0;&#xA0;</lit>
+							</para>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="PrefixSlotNameDisabledRTL"/>
+					</row>
+					<row>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SlotContentsDisabled"/>
+						<cell>
+							<properties>
+								<bordertrailing value="3"/>
+							</properties>
+							<lit/>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="SlotContentsDisabled"/>
+					</row>
+				</if>
+				<if field="Disabled" boolequals="false">
+					<row>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SuffixSlotNameRTL"/>
+						<cell>
+							<properties>
+								<bold value="on"/>
+								<bordertrailing value="3"/>
+							</properties>
+							<para>
+								<lit>&#xA0;&#xA0;</lit>
+								<commandIcon visibility="focused"/>
+								<lit>STEM</lit>
+								<lit>&#xA0;&#xA0;</lit>
+							</para>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="PrefixSlotNameRTL"/>
+					</row>
+					<row>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SlotContents"/>
+						<cell>
+							<properties>
+								<bordertrailing value="3"/>
+							</properties>
+							<lit/>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="SlotContents"/>
+					</row>
+				</if>
 			</table>
 		</part>
 		<!-- the vernacular ws is RTL, but the analysis ws is LTR.  See LT-6239. -->
@@ -1167,32 +1518,63 @@
 				<properties>
 					<borderbottom value="3"/>
 				</properties>
-				<row>
-					<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SuffixSlotNameLTRinRTL"/>
-					<cell>
-						<properties>
-							<bold value="on"/>
-							<bordertrailing value="3"/>
-						</properties>
-						<para>
-							<lit>&#xA0;&#xA0;</lit>
-							<commandIcon visibility="focused"/>
-							<lit>STEM</lit>
-							<lit>&#xA0;&#xA0;</lit>
-						</para>
-					</cell>
-					<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="PrefixSlotNameLTRinRTL"/>
-				</row>
-				<row>
-					<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SlotContents"/>
-					<cell>
-						<properties>
-							<bordertrailing value="3"/>
-						</properties>
-						<lit/>
-					</cell>
-					<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="SlotContents"/>
-				</row>
+				<if field="Disabled" boolequals="true">
+					<row>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SuffixSlotNameDisabledLTRinRTL"/>
+						<cell>
+							<properties>
+								<bold value="on"/>
+								<bordertrailing value="3"/>
+								<forecolor value="Graytext"/>
+							</properties>
+							<para>
+								<lit>&#xA0;&#xA0;</lit>
+								<commandIcon visibility="focused"/>
+								<lit>STEM</lit>
+								<lit>&#xA0;&#xA0;</lit>
+							</para>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="PrefixSlotNameDisabledLTRinRTL"/>
+					</row>
+					<row>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SlotContentsDisabled"/>
+						<cell>
+							<properties>
+								<bordertrailing value="3"/>
+							</properties>
+							<lit/>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="SlotContentsDisabled"/>
+					</row>
+				</if>
+				<if field="Disabled" boolequals="false">
+					<row>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SuffixSlotNameLTRinRTL"/>
+						<cell>
+							<properties>
+								<bold value="on"/>
+								<bordertrailing value="3"/>
+							</properties>
+							<para>
+								<lit>&#xA0;&#xA0;</lit>
+								<commandIcon visibility="focused"/>
+								<lit>STEM</lit>
+								<lit>&#xA0;&#xA0;</lit>
+							</para>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="PrefixSlotNameLTRinRTL"/>
+					</row>
+					<row>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" reverse="true" layout="SlotContents"/>
+						<cell>
+							<properties>
+								<bordertrailing value="3"/>
+							</properties>
+							<lit/>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" reverse="true" layout="SlotContents"/>
+					</row>
+				</if>
 			</table>
 		</part>
 		<!-- the vernacular ws is LTR, but the analysis ws is RTL.  It could happen!  See LT-6239. -->
@@ -1201,32 +1583,63 @@
 				<properties>
 					<borderbottom value="3"/>
 				</properties>
-				<row>
-					<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotNameRTLinLTR"/>
-					<cell>
-						<properties>
-							<bold value="on"/>
-							<bordertrailing value="3"/>
-						</properties>
-						<para>
-							<lit>&#xA0;&#xA0;</lit>
-							<commandIcon visibility="focused"/>
-							<lit>STEM</lit>
-							<lit>&#xA0;&#xA0;</lit>
-						</para>
-					</cell>
-					<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotNameRTLinLTR"/>
-				</row>
-				<row>
-					<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
-					<cell>
-						<properties>
-							<bordertrailing value="3"/>
-						</properties>
-						<lit/>
-					</cell>
-					<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
-				</row>
+				<if field="Disabled" boolequals="true">
+					<row>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotNameDisabledRTLinLTR"/>
+						<cell>
+							<properties>
+								<bold value="on"/>
+								<bordertrailing value="3"/>
+								<forecolor value="GrayText"/>
+							</properties>
+							<para>
+								<lit>&#xA0;&#xA0;</lit>
+								<commandIcon visibility="focused"/>
+								<lit>STEM</lit>
+								<lit>&#xA0;&#xA0;</lit>
+							</para>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotNameDisabledRTLinLTR"/>
+					</row>
+					<row>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContentsDisabled"/>
+						<cell>
+							<properties>
+								<bordertrailing value="3"/>
+							</properties>
+							<lit/>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContentsDisabled"/>
+					</row>
+				</if>
+				<if field="Disabled" boolequals="false">
+					<row>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotNameRTLinLTR"/>
+						<cell>
+							<properties>
+								<bold value="on"/>
+								<bordertrailing value="3"/>
+							</properties>
+							<para>
+								<lit>&#xA0;&#xA0;</lit>
+								<commandIcon visibility="focused"/>
+								<lit>STEM</lit>
+								<lit>&#xA0;&#xA0;</lit>
+							</para>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotNameRTLinLTR"/>
+					</row>
+					<row>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
+						<cell>
+							<properties>
+								<bordertrailing value="3"/>
+							</properties>
+							<lit/>
+						</cell>
+						<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
+					</row>
+				</if>
 			</table>
 		</part>
 	</bin>
@@ -1303,6 +1716,9 @@
 		</part>
 		<part id="FsFeatStruc-Jt-Browse" type="jtview">
 			<string field="ShortNameTSS"/>
+		</part>
+		<part id="FsFeatStruc-Jt-Long" type="jtview">
+			<string field="LongNameTSS"/>
 		</part>
 	</bin>
 	<bin class="FsFeatureSpecification">
@@ -1468,10 +1884,20 @@
 	</bin>
 	<bin class="MoCompoundRule">
 		<part id="MoCompoundRule-Detail-NameAllA" type="Detail">
-			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<if field="Disabled" boolequals="true">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help"/>
+			</if>
 		</part>
 		<part id="MoCompoundRule-Detail-DescriptionAllA" type="Detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" />
+			<if field="Disabled" boolequals="true">
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help"/>
+			</if>
 		</part>
 		<part id="MoCompoundRule-Jt-LeftMsa" type="jtview">
 			<lit></lit><!-- Dummy part to get the C# test for valid column layout to work. (See LT-10048.) -->
@@ -1482,6 +1908,51 @@
 		<part id="MoCompoundRule-Jt-HeadednessOrResult" type="jtview">
 			<lit></lit><!-- Dummy part to get the C# test for valid column layout to work. (See LT-10048.) -->
 		</part>
+
+		<part id="MoCompoundRule-Jt-Name" type="jtview">
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<string class="MoCompoundRule" field="Name" ws="current" labelws="current"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<string class="MoCompoundRule" field="Name" ws="current" labelws="current"/>
+			</if>
+		</part>
+		<part id="MoCompoundRule-Jt-Description" type="jtview">
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<string class="MoCompoundRule" field="Description" ws="current" labelws="current"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<string class="MoCompoundRule" field="Description" ws="current" labelws="current"/>
+			</if>
+		</part>
+		<part id="MoCompoundRule-Jt-Active" type="jtview">
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>no</lit>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<lit>yes</lit>
+			</if>
+		</part>
+		<part id="MoCompoundRule-Detail-Active" type="detail">
+			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
+		</part>
+
+
 	</bin>
 	<bin class="MoBinaryCompoundRule">
 		<part id="MoBinaryCompoundRule-Detail-BlankRightMember" type="detail">
@@ -1503,27 +1974,72 @@
 			<obj field="RightMsa" label="Right MSA" layout="RightMsa"/>
 		</part>
 		<part id="MoBinaryCompoundRule-Detail-LeftMember" type="Detail">
-			<obj field="LeftMsa" label="Category" layout="Category"/>
+			<if field="Disabled" boolequals="true">
+				<obj field="LeftMsa" label="Category" layout="CategoryDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj field="LeftMsa" label="Category" layout="Category"/>
+			</if>
 		</part>
 		<part id="MoBinaryCompoundRule-Detail-RightMember" type="Detail">
-			<obj field="RightMsa" label="Category" layout="Category"/>
+			<if field="Disabled" boolequals="true">
+				<obj field="RightMsa" label="Category" layout="CategoryDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj field="RightMsa" label="Category" layout="Category"/>
+			</if>
 		</part>
 		<part id="MoBinaryCompoundRule-Jt-LeftMsa" type="jtview">
-			<obj field="LeftMsa" layout="PartOfSpeech"/>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<obj field="LeftMsa" layout="PartOfSpeech"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj field="LeftMsa" layout="PartOfSpeech"/>
+			</if>
 		</part>
 		<part id="MoBinaryCompoundRule-Jt-RightMsa" type="jtview">
-			<obj field="RightMsa" layout="PartOfSpeech"/>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<obj field="RightMsa" layout="PartOfSpeech"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj field="RightMsa" layout="PartOfSpeech"/>
+			</if>
 		</part>
 	</bin>
 	<bin class="MoExoCompound">
 		<part id="MoExoCompound-Detail-Result" type="Detail">
-			<obj label="Result" field="ToMsa" layout="Result"/>
+			<if field="Disabled" boolequals="true">
+				<obj label="Result" field="ToMsa" layout="ResultDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj label="Result" field="ToMsa" layout="Result"/>
+			</if>
 		</part>
 		<part id="MoExoCompound-Jt-HeadednessOrResult" type="jtview">
-			<obj field="ToMsa" layout="PartOfSpeechBest"/>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<obj field="ToMsa" layout="PartOfSpeechBest"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj field="ToMsa" layout="PartOfSpeechBest"/>
+			</if>
 		</part>
 		<part id="MoExoCompound-Detail-ToProdRestrict" type="Detail">
-			<slice field="ToProdRestrict" label='To Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -1533,23 +2049,45 @@
 	</bin>
 	<bin class="MoEndoCompound">
 		<part id="MoEndoCompound-Jt-HeadednessOrResult" type="jtview">
-			<choice>
-				<where field="HeadLast" boolequals="false">
-					<lit>Left headed</lit>
-				</where>
-				<otherwise>
-					<lit>Right headed</lit>
-				</otherwise>
-			</choice>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<choice>
+						<where field="HeadLast" boolequals="false">
+							<lit>Left headed</lit>
+						</where>
+						<otherwise>
+							<lit>Right headed</lit>
+						</otherwise>
+					</choice>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<choice>
+					<where field="HeadLast" boolequals="false">
+						<lit>Left headed</lit>
+					</where>
+					<otherwise>
+						<lit>Right headed</lit>
+					</otherwise>
+				</choice>
+			</if>
 		</part>
 		<part id="MoEndoCompound-Detail-OverridingMember" type="Detail">
-			<obj field="OverridingMsa" layout="Category"/>
+			<if field="Disabled" boolequals="true">
+				<obj field="OverridingMsa" layout="CategoryDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj field="OverridingMsa" layout="Category"/>
+			</if>
 		</part>
 		<part id="MoEndoCompound-Detail-OverridingMsa" type="Detail">
 			<obj field="OverridingMsa" label="Overriding MSA" layout="LeftMsa"/>
 		</part>
 		<part id="MoEndoCompound-Detail-ToProdRestrict" type="Detail">
-			<slice field="ToProdRestrict" label='To Exception "Features"' editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="ToProdRestrict" label='To Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text='The following exception "features" are available.'>
 					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
@@ -1557,7 +2095,17 @@
 			</slice>
 		</part>
 		<part id="MoEndoCompound-Jt-OverridingMsa" type="jtview">
-			<obj field="OverridingMsa" layout="PartOfSpeech"/>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<obj field="OverridingMsa" layout="PartOfSpeech"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj field="OverridingMsa" layout="PartOfSpeech"/>
+			</if>
 		</part>
 	</bin>
 	<bin class="MoAlloAdhocProhib">
@@ -1565,32 +2113,93 @@
 			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAlloAdhocProhib-Allomorph" />
 		</part>
 		<part id="MoAlloAdhocProhib-Detail-FirstAllomorph" type="Detail">
-			<slice field="FirstAllomorph" label="Key Allomorph" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
-				<deParams displayProperty="LongName" ws="vernacular"/>
-			</slice>
+			<if field="Disabled" boolequals="true">
+				<slice field="FirstAllomorph" label="Key Allomorph" textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceDisabledSlice" menu="mnuDataTree-Help">
+					<deParams displayProperty="LongName" ws="vernacular"/>
+				</slice>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="FirstAllomorph" label="Key Allomorph" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
+					<deParams displayProperty="LongName" ws="vernacular"/>
+				</slice>
+			</if>
 		</part>
 		<part id="MoAlloAdhocProhib-Detail-RestOfAllos">
-			<slice field="RestOfAllos" label="Other Allomorph(s)" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
-				<deParams displayProperty="LongName" ws="vernacular"/>
-			</slice>
+			<if field="Disabled" boolequals="true">
+				<slice field="RestOfAllos" label="Other Allomorph(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
+					<deParams displayProperty="LongName" ws="vernacular"/>
+				</slice>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="RestOfAllos" label="Other Allomorph(s)" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
+					<deParams displayProperty="LongName" ws="vernacular"/>
+				</slice>
+			</if>
+
 		</part>
 		<part id="MoAlloAdhocProhib-Jt-SpecialNote" type="jtview">
-			<para>
-				<lit>Be sure to set all three fields below.</lit>
-			</para>
+			<if field="Disabled" boolequals="true">
+				<para>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>Be sure to set all three fields below.</lit>
+				</para>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<para>
+					<lit>Be sure to set all three fields below.</lit>
+				</para>
+			</if>
 		</part>
 		<part id="MoAlloAdhocProhib-Jt-Type" type="jtview">
-			<lit>Allomorph</lit>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>Allomorph</lit>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<lit>Allomorph</lit>
+			</if>
 		</part>
 		<part id="MoAlloAdhocProhib-Jt-OtherItems" type="jtview">
-			<seq field="RestOfAllos" layout="MoFormBrowsePara"/>
+			<if field="Disabled" boolequals="true">
+				<seq field="RestOfAllos" layout="MoFormBrowseDisabledPara"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<seq field="RestOfAllos" layout="MoFormBrowsePara"/>
+			</if>
 		</part>
 		<part id="MoAlloAdhocProhib-Jt-CannotOccur" type="jtview">
-			<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
-			<stringList field="Adjacency" group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
+					<stringList field="Adjacency" group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
+				<stringList field="Adjacency" group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+			</if>
 		</part>
 		<part id="MoAlloAdhocProhib-Jt-KeyItem" type="jtview">
-			<obj field="FirstAllomorph" layout="MoFormBrowse"/>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<obj field="FirstAllomorph" layout="MoFormBrowseDisabled"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj field="FirstAllomorph" layout="MoFormBrowse"/>
+			</if>
 		</part>
 		<part id="MoAlloAdhocProhib-Jt-AlloAdhocSummary" type="jtview">
 			<lit/>
@@ -1598,12 +2207,23 @@
 	</bin>
 	<bin class="MoAdhocProhib">
 		<part id="MoAdhocProhib-Detail-Adjacency" type="Detail">
-			<slice field="Adjacency" label="Cannot Occur" editor="enumComboBox" menu="mnuDataTree-Help">
-				<deParams>
-					<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
-					<stringList group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
-				</deParams>
-			</slice>
+			<if field="Disabled" boolequals="true">
+				<slice field="Adjacency" label="Cannot Occur" editor="enumComboBox" menu="mnuDataTree-Help">
+					<deParams>
+						<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
+						<stringList group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+						<forecolor>GrayText</forecolor>
+					</deParams>
+				</slice>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Adjacency" label="Cannot Occur" editor="enumComboBox" menu="mnuDataTree-Help">
+					<deParams>
+						<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
+						<stringList group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+					</deParams>
+				</slice>
+			</if>
 		</part>
 		<!-- The next 4 parts will not be used as the code will redirect to the corresponding parts on the subclasses -->
 		<!-- but they need to exist to get the browse view to initialize properly.  See LT-8992. -->
@@ -1619,38 +2239,109 @@
 		<part id="MoAdhocProhib-Jt-KeyItem" type="jtview">
 			<lit>UNKNOWN (DO NOT TRANSLATE)</lit>
 		</part>
+		<part id="MoAdhocProhib-Jt-Active" type="jtview">
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>no</lit>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<lit>yes</lit>
+			</if>
+		</part>
+		<part id="MoAdhocProhib-Detail-Active" type="detail">
+			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
+		</part>
 	</bin>
 	<bin class="MoMorphAdhocProhib">
 		<part id="MoMorphAdhocProhib-Detail-SummaryMorpheme" type="detail" paramType="JtLayoutsOfThisClass">
 			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAlloAdhocProhib-Morpheme" />
 		</part>
 		<part id="MoMorphAdhocProhib-Jt-Type" type="jtview">
-			<lit>Morpheme</lit>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>Morpheme</lit>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<lit>Morpheme</lit>
+			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Jt-OtherItems" type="jtview">
-			<seq field="RestOfMorphs" layout="EntrySummaryAdHocPara"/>
+			<if field="Disabled" boolequals="true">
+				<seq field="RestOfMorphs" layout="EntrySummaryAdHocDisabledPara"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<seq field="RestOfMorphs" layout="EntrySummaryAdHocPara"/>
+			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Jt-CannotOccur" type="jtview">
-			<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
-			<stringList field="Adjacency" group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
+					<stringList field="Adjacency" group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<!-- N.B. The order of right/left has been swapped in the following from how it is interpreted internally.  This is to make it more perspicous to the user.  -->
+				<stringList field="Adjacency" group="Linguistics/Morphology/Adjacency" ids="Anywhere, Somewhere to right, Somewhere to left, Adjacent to right, Adjacent to left"/>
+			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Jt-KeyItem" type="jtview">
-			<obj field="FirstMorpheme" layout="EntrySummaryAdHoc"/>
+			<if field="Disabled" boolequals="true">
+				<obj field="FirstMorpheme" layout="EntrySummaryAdHocDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<obj field="FirstMorpheme" layout="EntrySummaryAdHoc"/>
+			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Detail-FirstMorpheme" type="Detail">
-			<slice field="FirstMorpheme" label="Key Morpheme" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
-				<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
-			</slice>
+			<if field="Disabled" boolequals="true">
+				<slice field="FirstMorpheme" label="Key Morpheme" textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceDisabledSlice" menu="mnuDataTree-Help">
+					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
+				</slice>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="FirstMorpheme" label="Key Morpheme" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibAtomicReferenceSlice" menu="mnuDataTree-Help">
+					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
+				</slice>
+			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Detail-RestOfMorphs">
-			<slice field="RestOfMorphs" label="Other Morpheme(s)" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
-				<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
-			</slice>
+			<if field="Disabled" boolequals="true">
+				<slice field="RestOfMorphs" label="Other Morpheme(s)" textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
+					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
+				</slice>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="RestOfMorphs" label="Other Morpheme(s)" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceSlice" menu="mnuDataTree-Help">
+					<deParams displayProperty="LongNameAdHocTs" ws="vernacular"/>
+				</slice>
+			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Jt-SpecialNote" type="jtview">
-			<para>
-				<lit>Be sure to set all three fields below.</lit>
-			</para>
+			<if field="Disabled" boolequals="true">
+				<para>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>Be sure to set all three fields below.</lit>
+				</para>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<para>
+					<lit>Be sure to set all three fields below.</lit>
+				</para>
+			</if>
 		</part>
 		<part id="MoMorphAdhocProhib-Jt-MorphAdhocSummary" type="jtview">
 			<lit/>
@@ -1658,25 +2349,80 @@
 	</bin>
 	<bin class="MoAdhocProhibGr">
 		<part id="MoAdhocProhibGr-Jt-Type" type="jtview">
-			<lit>Group</lit>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>Group</lit>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<lit>Group</lit>
+			</if>
 		</part>
 		<part id="MoAdhocProhibGr-Jt-OtherItems" type="jtview">
-			<lit>Group</lit>
+			<if field="Disabled" boolequals="true">
+				<para>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>Group</lit>
+				</para>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<lit>Group</lit>
+			</if>
 		</part>
 		<part id="MoAdhocProhibGr-Jt-CannotOccur" type="jtview">
-			<string field="Name" ws="analysis"/>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<string field="Name" ws="analysis"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<string field="Name" ws="analysis"/>
+			</if>
 		</part>
 		<part id="MoAdhocProhibGr-Jt-KeyItem" type="jtview">
-			<lit>Group</lit>
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>Group</lit>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<lit>Group</lit>
+			</if>
 		</part>
-	<part id="MoAdhocProhibGr-Detail-NestedGroupName" type="Detail">
-	  <slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-NestedGroupName"/>
+		<part id="MoAdhocProhibGr-Detail-NestedGroupName" type="Detail">
+			<if field="Disabled" boolequals="true">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-NestedGroupName"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-NestedGroupName"/>
+			</if>
 	</part>
 		<part id="MoAdhocProhibGr-Detail-Name" type="Detail">
-			<slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<if field="Disabled" boolequals="true">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help" />
+			</if>
 		</part>
 		<part id="MoAdhocProhibGr-Detail-Description" type="Detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+			<if field="Disabled" boolequals="true">
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text" menu="mnuDataTree-Help"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" menu="mnuDataTree-Help" />
+			</if>
 		</part>
 		<part id="MoAdhocProhibGr-Detail-MembersSection" type="Detail" paramType="LiteralString">
 			<slice editor="summary" layout="default" editable="no" weight="heavy" menu="mnuDataTree-Help" helpTopicID="khtpField-MoAdhocProhibGr-MembersSection" header="true"/>
@@ -1818,28 +2564,114 @@
 	</bin>
 
 	<bin class="PhSegmentRule">
+		<part id="PhSegmentRule-Jt-Name" type="jtview">
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<string class="PhSegmentRule" field="Name" ws="current" labelws="current"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<string class="PhSegmentRule" field="Name" ws="current" labelws="current"/>
+			</if>
+		</part>
+		<part id="PhSegmentRule-Jt-Description" type="jtview">
+			<if field="Disabled" boolequals="true">
+				<span>
+				<properties>
+					<forecolor value="GrayText"/>
+				</properties>
+				<string class="PhSegmentRule" field="Description" ws="current" labelws="current"/>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<string class="PhSegmentRule" field="Description" ws="current" labelws="current"/>
+			</if>
+		</part>
+		<part id="PhSegmentRule-Jt-Active" type="jtview">
+			<if field="Disabled" boolequals="true">
+				<span>
+					<properties>
+						<forecolor value="GrayText"/>
+					</properties>
+					<lit>no</lit>
+				</span>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<lit>yes</lit>
+			</if>
+		</part>
 		<part id="PhSegmentRule-Jt-Order" type="jtview">
 			<int field="OrderNumber"/>
 		</part>
 		<part id="PhSegmentRule-Detail-NameAllA" type="detail">
-			<slice field="Name" label="Name" editor="multistring" ws="all analysis"/>
+			<if field="Disabled" boolequals="true">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Disabled Text"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Name" label="Name" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters" />
+			</if>
 		</part>
 		<part id="PhSegmentRule-Detail-DescriptionAllA" type="detail">
-			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
+			<if field="Disabled" boolequals="true">
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Disabled Text"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters"/>
+			</if>
 		</part>
 		<part id="PhSegmentRule-Detail-OrderNumber" type="detail">
 			<slice field="OrderNumber" label="Order Number" editor="int"/>
 		</part>
+		<part id="PhSegmentRule-Detail-Active" type="detail">
+			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
+		</part>
 		<part id="PhSegmentRule-Detail-Direction" type="detail">
-			<slice field="Direction" label="Direction" editor="enumComboBox">
-				<deParams>
-					<stringList group="Linguistics/Morphology/RuleDirection" ids="LeftToRightIterative, RightToLeftIterative, Simultaneous"/>
-				</deParams>
-			</slice>
+			<if field="Disabled" boolequals="true">
+				<slice field="Direction" label="Direction" editor="enumComboBox">
+					<deParams>
+						<stringList group="Linguistics/Morphology/RuleDirection" ids="LeftToRightIterative, RightToLeftIterative, Simultaneous"/>
+						<forecolor>GrayText</forecolor>
+					</deParams>
+				</slice>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<slice field="Direction" label="Direction" editor="enumComboBox">
+					<deParams>
+						<stringList group="Linguistics/Morphology/RuleDirection" ids="LeftToRightIterative, RightToLeftIterative, Simultaneous"/>
+					</deParams>
+				</slice>
+			</if>
 		</part>
 	</bin>
 
 	<bin class="PhRegularRule">
+		<part id="PhSegmentRule-Detail-RequiredPOSes" type="detail">
+			<if field="Disabled" boolequals="true">
+				<seq field="RightHandSides" layout="RequiredPOSesDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<seq field="RightHandSides" layout="RequiredPOSes"/>
+			</if>
+		</part>
+		<part id="PhSegmentRule-Detail-RequiredRuleFeats" type="detail">
+			<if field="Disabled" boolequals="true">
+				<seq field="RightHandSides" layout="RequiredRuleFeatsDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<seq field="RightHandSides" layout="RequiredRuleFeats"/>
+			</if>
+		</part>
+		<part id="PhSegmentRule-Detail-ExcludedRuleFeats" type="detail">
+			<if field="Disabled" boolequals="true">
+				<seq field="RightHandSides" layout="ExcludedRuleFeatsDisabled"/>
+			</if>
+			<if field="Disabled" boolequals="false">
+				<seq field="RightHandSides" layout="ExcludedRuleFeats"/>
+			</if>
+		</part>
 		<part id="PhRegularRule-Detail-RuleFormulaSection" type="detail" paramType="LiteralString">
 			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"
 				   helpTopicID="khtpField-PhonologicalRuleEdit-PhRegularRule-RuleFormulaSection"/>
@@ -1850,6 +2682,58 @@
 	</bin>
 
 	<bin class="PhSegRuleRHS">
+		<part id="PhSegRuleRHS-Detail-RequiredPOSesDisabled" type="detail">
+			<slice field="InputPOSes" label="Required Categories" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following categories are available.">
+					<chooserLink type="goto" label="Add a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-RequiredPOSes" type="detail">
+			<slice field="InputPOSes" label="Required Categories" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text="The following categories are available.">
+					<chooserLink type="goto" label="Add a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-RequiredRuleFeatsDisabled" type="detail">
+			<slice field="ReqRuleFeats" label="Required Properties" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" and inflection classes are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+					<chooserLink type="goto" label="Add an inflection class to a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-RequiredRuleFeats" type="detail">
+			<slice field="ReqRuleFeats" label="Required Properties" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" and inflection classes are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+					<chooserLink type="goto" label="Add an inflection class to a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-ExcludedRuleFeatsDisabled" type="detail">
+			<slice field="ExclRuleFeats" label="Excluded Properties" editor="defaultVectorReferenceDisabled" textStyle="Disabled Text" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" and inflection classes are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+					<chooserLink type="goto" label="Add an inflection class to a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
+		<part id="PhSegRuleRHS-Detail-ExcludedRuleFeats" type="detail">
+			<slice field="ExclRuleFeats" label="Excluded Properties" editor="defaultVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" and inflection classes are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+					<chooserLink type="goto" label="Add an inflection class to a category" tool="posEdit"/>
+				</chooserInfo>
+			</slice>
+		</part>
 		<part id="PhSegRuleRHS-Detail-RuleFormula" type="detail">
 			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.RegRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhRegularRule-RuleFormula">
 				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="RuleEnvironmentFlatList">

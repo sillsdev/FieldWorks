@@ -1,0 +1,9 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.TE.TePublicationsInit
+T: SIL.FieldWorks.TE.TeScrBookRefsInit
+T: SIL.FieldWorks.TE.TeScrInitializer

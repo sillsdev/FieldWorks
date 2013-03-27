@@ -274,68 +274,68 @@ namespace SIL.FieldWorks.TE
 			// Reserved paragraph styles
 			m_htReservedStyles[ScrStyleNames.Normal] = new ReservedStyleInfo(ContextValues.Internal,
 				StructureValues.Undefined, FunctionValues.Prose, StyleType.kstParagraph,
-				ScrStyleNames.NormalParagraph, null);
+				ScrStyleNames.NormalParagraph, null, "E00CA746-9271-40D0-B450-10087680FC29");
 
 			m_htReservedStyles[ScrStyleNames.NormalParagraph] = new ReservedStyleInfo(
 				ContextValues.Text,	StructureValues.Body, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.NormalParagraph, ScrStyleNames.Normal);
+				StyleType.kstParagraph, ScrStyleNames.NormalParagraph, ScrStyleNames.Normal, "679AB46A-8A27-4449-91B1-EDAD14669B01");
 
 			m_htReservedStyles[ScrStyleNames.SectionHead] = new ReservedStyleInfo(
 				ContextValues.Text, StructureValues.Heading, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.NormalParagraph, ScrStyleNames.Normal);
+				StyleType.kstParagraph, ScrStyleNames.NormalParagraph, ScrStyleNames.Normal, "A5A1A249-B888-434D-A839-A2421EC50DBF");
 
 			m_htReservedStyles[ScrStyleNames.IntroParagraph] = new ReservedStyleInfo(
 				ContextValues.Intro, StructureValues.Body, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.IntroParagraph, ScrStyleNames.NormalParagraph);
+				StyleType.kstParagraph, ScrStyleNames.IntroParagraph, ScrStyleNames.NormalParagraph, "265CA52E-2543-46A3-BC8F-9B101F371EDB");
 
 			m_htReservedStyles[ScrStyleNames.IntroSectionHead] = new ReservedStyleInfo(
 				ContextValues.Intro, StructureValues.Heading, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.IntroParagraph, ScrStyleNames.SectionHead);
+				StyleType.kstParagraph, ScrStyleNames.IntroParagraph, ScrStyleNames.SectionHead, "EADB9ADE-122A-40AC-8D17-216BEA9EE98F");
 
 			m_htReservedStyles[ScrStyleNames.Remark] = new ReservedStyleInfo(
 				ContextValues.Annotation, StructureValues.Undefined, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.Remark, ScrStyleNames.Normal);
+				StyleType.kstParagraph, ScrStyleNames.Remark, ScrStyleNames.Normal, "20978416-EA15-4AB2-AED3-4CE825BB12FD");
 
 			m_htReservedStyles[ScrStyleNames.MainBookTitle] = new ReservedStyleInfo(
 				ContextValues.Title, StructureValues.Undefined, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.MainBookTitle, ScrStyleNames.SectionHead);
+				StyleType.kstParagraph, ScrStyleNames.MainBookTitle, ScrStyleNames.SectionHead, "7473C95B-26ED-4FDA-8F31-C8AA0C25F2AA");
 
 			m_htReservedStyles[ScrStyleNames.NormalFootnoteParagraph] = new ReservedStyleInfo(
 				ContextValues.Note, StructureValues.Undefined, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.NormalFootnoteParagraph, ScrStyleNames.NormalParagraph);
+				StyleType.kstParagraph, ScrStyleNames.NormalFootnoteParagraph, ScrStyleNames.NormalParagraph, "281acf34-3292-43af-8bd2-7441f3e675ec");
 			m_htReservedStyles[ScrStyleNames.CrossRefFootnoteParagraph] = new ReservedStyleInfo(
 				ContextValues.Note, StructureValues.Undefined, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.CrossRefFootnoteParagraph, ScrStyleNames.NormalFootnoteParagraph);
+				StyleType.kstParagraph, ScrStyleNames.CrossRefFootnoteParagraph, ScrStyleNames.NormalFootnoteParagraph, "98d64e6e-7862-4327-957d-f1e4a4734ad3");
 
 			m_htReservedStyles[ScrStyleNames.Figure] = new ReservedStyleInfo(
 				ContextValues.Internal, StructureValues.Undefined, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.Figure, ScrStyleNames.Normal);
+				StyleType.kstParagraph, ScrStyleNames.Figure, ScrStyleNames.Normal, "a39a474f-2ade-409d-aa11-59660fcc3e20");
 
 			m_htReservedStyles[ScrStyleNames.Header] = new ReservedStyleInfo(
 				ContextValues.Internal, StructureValues.Undefined, FunctionValues.Prose,
-				StyleType.kstParagraph, ScrStyleNames.Header, ScrStyleNames.Normal);
+				StyleType.kstParagraph, ScrStyleNames.Header, ScrStyleNames.Normal, "85324146-31B4-4FE7-BA34-F168CE97F390");
 
 			// Reserved character styles
 			m_htReservedStyles[ScrStyleNames.ChapterNumber] = new ReservedStyleInfo(
-				ContextValues.Text, StructureValues.Body, FunctionValues.Chapter);
+				ContextValues.Text, StructureValues.Body, FunctionValues.Chapter, "DBF212FE-A9EF-4CC8-A41F-7CAD28A99BD3");
 
 			m_htReservedStyles[ScrStyleNames.VerseNumber] = new ReservedStyleInfo(
-				ContextValues.Text, StructureValues.Body, FunctionValues.Verse);
+				ContextValues.Text, StructureValues.Body, FunctionValues.Verse, "674F0BDD-4240-49D7-9288-A6DCC130FF08");
 
 			m_htReservedStyles[ScrStyleNames.CanonicalRef] = new ReservedStyleInfo(
-				ContextValues.InternalMappable, StructureValues.Undefined, FunctionValues.Prose);
+				ContextValues.InternalMappable, StructureValues.Undefined, FunctionValues.Prose, "46EFE9FA-9EBA-430C-8716-8697DE190F46");
 
 			m_htReservedStyles[ScrStyleNames.FootnoteMarker] = new ReservedStyleInfo(
-				ContextValues.Internal, StructureValues.Undefined, FunctionValues.Prose);
+				ContextValues.Internal, StructureValues.Undefined, FunctionValues.Prose, "1fddd539-729e-4ad4-b904-82897567f7e2");
 
 			m_htReservedStyles[ScrStyleNames.FootnoteTargetRef] = new ReservedStyleInfo(
-				ContextValues.InternalMappable, StructureValues.Undefined, FunctionValues.Footnote);
+				ContextValues.InternalMappable, StructureValues.Undefined, FunctionValues.Footnote, "4db811b7-458c-46c7-a124-0f7815131848");
 
 			m_htReservedStyles[ScrStyleNames.UntranslatedWord] = new ReservedStyleInfo(
-				ContextValues.BackTranslation, StructureValues.Undefined, FunctionValues.Prose);
+				ContextValues.BackTranslation, StructureValues.Undefined, FunctionValues.Prose, "18F2BDA0-F1F4-4E68-B045-8FA5939C98E6");
 
 			m_htReservedStyles[ScrStyleNames.NotationTag] = new ReservedStyleInfo(
-				ContextValues.Internal, StructureValues.Undefined, FunctionValues.Prose);
+				ContextValues.Internal, StructureValues.Undefined, FunctionValues.Prose, "B25C3DA1-E828-4984-B483-B29534E0CE09");
 		}
 
 		#endregion

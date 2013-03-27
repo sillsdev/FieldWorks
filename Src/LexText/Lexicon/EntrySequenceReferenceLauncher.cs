@@ -1,20 +1,22 @@
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Windows.Forms;
+using System.Xml;
 
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.FDO.Application;
-using SIL.Utils;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.LexText.Controls;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -73,6 +75,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Override method to handle launching of a chooser for selecting lexical entries or senses.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void HandleChooser()
 		{
 			if (m_flid == LexEntryRefTags.kflidComponentLexemes)
@@ -347,6 +351,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		#endregion
 	}
 
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_parentWindow is a reference")]
 	internal class AddPrimaryLexemeChooserCommand : ChooserCommand
 	{
 		private readonly ILexEntryRef m_lexEntryRef;
@@ -412,6 +418,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	/// 1) It expects an ILexEntry instead of an ILexEntryRef;
 	/// 2) It displays the EntryGoDlg instead of the LinkEntryOrSenseDlg.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_parentWindow is a reference")]
 	internal class AddComplexFormChooserCommand : ChooserCommand
 	{
 		private readonly ILexEntry m_lexEntry;

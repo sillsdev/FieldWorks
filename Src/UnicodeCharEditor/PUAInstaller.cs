@@ -19,7 +19,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -45,10 +47,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private string m_comment;
 		string m_icuDir;
 		string m_icuDataDir;
-
-		string m_originalUnicodeData;
-		string m_originalBidiClass;
-		string m_originalNormalizationProps;
 
 		private string IcuDir
 		{
@@ -89,12 +87,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// We do this by:
 		/// 1. Maps the XML file to a list of PUACharacter objects
 		/// 2. Sorts the PUA characters
-		/// 3. Opens UnicodeData.txt for reading and writing
+		/// 3. Opens UnicodeDataOverrides.txt for reading and writing
 		/// 4. Inserts the PUA characters via their codepoints
-		/// 5. Update the DerivedBidiClass.txt file so that the bidi values match,
-		///    and update the DerivedNormalizationProps.txt file if needed
-		/// 6. Run the "genprops", "gennames", "gennorm" command to create the actual binary
-		///    files used by the ICU functions.
+		/// 5. Regenerate nfc.txt and nfkc.txt, the input files for gennorm2, which generates
+		///    the ICU custom normalization files.
+		/// 6. Run "gennorm2" to create the actual binary files used by the ICU normalization functions.
 		/// </summary>
 		/// <param name="filename">Our XML file containing our PUA Defintions</param>
 		public void InstallPUACharacters(string filename)
@@ -104,15 +101,14 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				// 0. Intro: Prepare files
 
 				// 0.1: File names
-				var unidataDir = Path.Combine(Path.Combine(IcuDir, "data"), "unidata");
-				var unicodeDataFilename = Path.Combine(unidataDir, "UnicodeData.txt");
-				var derivedBidiClassFilename = Path.Combine(unidataDir, "DerivedBidiClass.txt");
-				var derivedNormalizationPropsFilename = Path.Combine(unidataDir, "DerivedNormalizationProps.txt");
+				var unidataDir = Path.Combine(IcuDir, "data");
+				var unicodeDataFilename = Path.Combine(IcuDir, "UnicodeDataOverrides.txt");
+				var originalUnicodeDataFilename = Path.Combine(unidataDir, "UnicodeDataOverrides.txt");
+				var nfcOverridesFileName = Path.Combine(IcuDir, "nfcOverrides.txt"); // Intermediate we will generate
+				var nfkcOverridesFileName = Path.Combine(IcuDir, "nfkcOverrides.txt"); // Intermediate we will generate
 
 				// 0.2: Create a one-time backup that will not be over written if the file exists
-				m_originalUnicodeData = BackupOrig(unicodeDataFilename);
-				m_originalBidiClass = BackupOrig(derivedBidiClassFilename);
-				m_originalNormalizationProps = BackupOrig(derivedNormalizationPropsFilename);
+				BackupOrig(unicodeDataFilename);
 
 				// 0.3: Create a stack of files to restore if we encounter and error
 				//			This allows us to work with the original files
@@ -120,28 +116,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				// If we are not we call this.RestoreFiles() to restore the original files
 				//		and delete the backups
 				var unicodeDataBackup = CreateBackupFile(unicodeDataFilename);
-				var derivedBidiClassBackup = CreateBackupFile(derivedBidiClassFilename);
-				var derivedNormalizationPropsBackup = CreateBackupFile(derivedNormalizationPropsFilename);
 				AddUndoFileFrame(unicodeDataFilename, unicodeDataBackup);
-				AddUndoFileFrame(derivedBidiClassFilename, derivedBidiClassBackup);
-				AddUndoFileFrame(derivedNormalizationPropsFilename, derivedNormalizationPropsBackup);
 
 				//Initialize and populate the parser if necessary
 				// 1. Maps our XML file to a list of PUACharacter objects.
 				ParseCustomCharsFile(filename);
-
-				// Copy the original files over the current versions before installing.  This allows
-				// custom character definitions to be deleted.
-				FileCopyWithLogging(m_originalUnicodeData, unicodeDataFilename, true);
-				FileCopyWithLogging(m_originalBidiClass, derivedBidiClassFilename, true);
-				FileCopyWithLogging(m_originalNormalizationProps, derivedNormalizationPropsFilename, true);
-
-				// There are no characters to install, we are done;
-				if (m_chars == null || m_chars.Count == 0)
-				{
-					LogFile.AddLine("There are no custom characters to install");
-					return;
-				}
 
 				// (Step 1 has been moved before the "intro")
 				// 2. Sort the PUA characters
@@ -149,27 +128,64 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 				// 3. Open the file for reading and writing
 				// 4. Insert the PUA via their codepoints
-				List<IUcdCharacter> addToBidi;
-				List<IUcdCharacter> removeFromBidi;
-				List<IUcdCharacter> addToNorm;
-				List<IUcdCharacter> removeFromNorm;
-				InsertCharacters(m_chars.ToArray(), out addToBidi, out removeFromBidi,
-					out addToNorm, out removeFromNorm);
+				InsertCharacters(m_chars.ToArray(), originalUnicodeDataFilename, unicodeDataFilename);
 
-				// 5. Update the DerivedBidiClass.txt file so that the bidi values match,
-				//    and update the DerivedNormalizationProps.txt file if needed.
+				// 5. Generate the modified normalization file inputs.
+				using (var reader = new StreamReader(unicodeDataFilename, Encoding.ASCII))
+				{
+					using (var writeNfc = new StreamWriter(nfcOverridesFileName, false, Encoding.ASCII))
+					using (var writeNfkc = new StreamWriter(nfkcOverridesFileName, false, Encoding.ASCII))
+					{
+						reader.Peek(); // force autodetection of encoding.
+						try
+						{
+							string line;
+							while ((line = reader.ReadLine()) != null)
+							{
+								if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
+									continue;
+								// Extract the first, fourth, and sixth fields.
+								var match = new Regex("^([^;]*);[^;]*;[^;]*;([^;]*);[^;]*;([^;]*);").Match(line);
+								if (!match.Success)
+									continue;
+								string codePoint = match.Groups[1].Value.Trim();
+								string combiningClass = match.Groups[2].Value.Trim();
+								string decomp = match.Groups[3].Value.Trim();
+								if (!string.IsNullOrEmpty(combiningClass) && combiningClass != "0")
+								{
+									writeNfc.WriteLine(codePoint + ":" + combiningClass);
+								}
+								if (!string.IsNullOrEmpty(decomp))
+								{
+									if (decomp.StartsWith("<"))
+									{
+										int index = decomp.IndexOf(">", StringComparison.InvariantCulture);
+										if (index < 0)
+											continue; // badly formed, ignore it.
+										decomp = decomp.Substring(index + 1).Trim();
+									}
+									// otherwise we should arguably write to nfc.txt
+									// If exactly two code points write codePoint=decomp
+									// otherwise write codePoint>decomp
+									// However, we should not be modifying standard normalization.
+									// For now treat them all as compatibility only.
+									writeNfkc.WriteLine(codePoint + ">" + decomp);
+								}
+							}
 
-				var comparer = new IUCDComparer();
-				addToBidi.Sort(comparer);
-				removeFromBidi.Sort(comparer);
-				addToNorm.Sort(comparer);
-				removeFromNorm.Sort(comparer);
+						}
+						finally
+						{
+							writeNfc.Close();
+							writeNfkc.Close();
+							reader.Close();
+						}
+					}
+				}
 
-				UpdateUCDFile(addToBidi, removeFromBidi);
-				UpdateUCDFile(addToNorm, removeFromNorm);
 
-				// 6. Run the "genprops", "gennames", "gennorm" commands to write the actual files
-				RunICUTools();
+				// 6. Run the "gennorm2" commands to write the actual files
+				RunICUTools(unidataDir, nfcOverridesFileName, nfkcOverridesFileName);
 
 				RemoveBackupFiles();
 			}
@@ -284,54 +300,57 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// DerivedBidiClass.txt, as well as other *.txt files in unidata to
 		/// create <i>icuprefix/</i>uprops.icu and other binary data files.
 		/// </summary>
-		public void RunICUTools()
+		public void RunICUTools(string unidataDir, string nfcOverridesFileName, string nfkcOverridesFileName)
 		{
-			// run the following command:
+			// run commands similar to the following (with full paths in quotes)
 			//
-			//    icu\tools\genprops -u 4 -s icu\data\unidata -d icu -i icu
+			//    gennorm2 -o nfc.nrm nfc.txt nfcHebrew.txt nfcOverrides.txt
+			//    gennorm2 -o nfkc.nrm nfc.txt nfkc.txt nfcHebrew.txt nfcOverrides.txt nfkcOverrides.txt
 			//
-			// Note: this compiles UnicodeData.txt to produce icudt26l/unames.icu.
-			// Note: this compiles UnicodeData.txt, DerivedBidiClass.txt,
-			//    plus numerous other data files to produce icudt26l/uprops.icu.
+			// Note: this compiles the input files to produce the two output files, which ICU loads to customize normalization.
 
 			// Get the icu directory information
-			var icuDataDir = IcuDataDir;
-			var icuDir = IcuDir;
-			var icuBaseDataDir = icuDataDir.TrimEnd(Path.DirectorySeparatorChar);
-			var icuUnidataDir = Path.Combine(Path.Combine(IcuDir, "data"), "unidata");
+			var nfcTxtFileName = Path.Combine(unidataDir, "nfc.txt"); // Original from ICU, installed
+			var nfcHebrewFileName = Path.Combine(unidataDir, "nfcHebrew.txt"); // Original from ICU, installed
+			var nfkcTxtFileName = Path.Combine(unidataDir, "nfkc.txt"); // Original from ICU, installed
+
+			// The exact name of this directory is built into ICU and can't be changed. It must be this subdirectory
+			// relative to the IcuDir (which is the IcuDataDirectory passed to ICU).
+			var uniBinaryDataDir = Path.Combine(IcuDir, "icudt50l");
+			var nfcBinaryFileName = Path.Combine(uniBinaryDataDir, "nfc.nrm"); // Binary file generated by gennorm2
+			var nfkcBinaryFileName = Path.Combine(uniBinaryDataDir, "nfkc.nrm"); // Binary file generated by gennorm2
 
 			// Make a one-time original backup of the files we are about to generate.
-			var upropsFileName = Path.Combine(icuDataDir, "uprops.icu");
-			var unamesFileName = Path.Combine(icuDataDir, "unames.icu");
-			var unormFileName = Path.Combine(icuDataDir, "unorm.icu");
-			var ubidiFileName = Path.Combine(icuDataDir, "ubidi.icu");
-			var ucaseFileName = Path.Combine(icuDataDir, "ucase.icu");
-			BackupOrig(upropsFileName);
-			BackupOrig(unamesFileName);
-			BackupOrig(unormFileName);
-			BackupOrig(ubidiFileName);
-			BackupOrig(ucaseFileName);
-			AddUndoFileFrame(upropsFileName, CreateBackupFile(upropsFileName));
-			AddUndoFileFrame(unamesFileName, CreateBackupFile(unamesFileName));
-			AddUndoFileFrame(unormFileName, CreateBackupFile(unormFileName));
-			AddUndoFileFrame(ubidiFileName, CreateBackupFile(ubidiFileName));
-			AddUndoFileFrame(ucaseFileName, CreateBackupFile(ucaseFileName));
+			var nfcBackup = CreateBackupFile(nfcBinaryFileName);
+			var nfkcBackup = CreateBackupFile(nfkcBinaryFileName);
+			AddUndoFileFrame(nfcBinaryFileName, nfcBackup);
+			AddUndoFileFrame(nfkcBinaryFileName, nfkcBackup);
 
-			// Prepare the path arguments
-			var args = String.Format(" -u 5.1 -s \"{0}\" -d \"{1}\" -i \"{2}\"",
-				icuUnidataDir, icuBaseDataDir, icuBaseDataDir);
-			var fileName = GetIcuExecutable("genprops");
 
 			// Clean up the ICU and set the icuDatadir correctly
 			Icu.Cleanup();
-			Icu.DataDirectory = icuDir;
 
-			using (var genpropsProcess = new Process())
+			var genNorm2 = GetIcuExecutable("gennorm2");
+
+			// run it to generate the canonical binary data.
+			var args = String.Format(" -o \"{0}\" \"{1}\" \"{2}\" \"{3}\"",
+			   nfcBinaryFileName, nfcTxtFileName, nfcHebrewFileName, nfcOverridesFileName);
+			RunProcess(genNorm2, args);
+
+			// run it again to generate the non-canonical binary data.
+			args = String.Format(" -o \"{0}\" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\"",
+				nfkcBinaryFileName, nfcTxtFileName, nfkcTxtFileName, nfcHebrewFileName, nfcOverridesFileName, nfkcOverridesFileName);
+			RunProcess(genNorm2, args);
+		}
+
+		private static void RunProcess(string executable, string args)
+		{
+			using (var gennormProcess = new Process())
 			{
-				genpropsProcess.StartInfo = new ProcessStartInfo
+				gennormProcess.StartInfo = new ProcessStartInfo
 					{
-						FileName = fileName,
-						WorkingDirectory = icuBaseDataDir,
+						FileName = executable,
+						WorkingDirectory = Path.GetDirectoryName(executable), // lets it find its DLL
 						Arguments = args,
 						WindowStyle = ProcessWindowStyle.Hidden,
 						CreateNoWindow = true,
@@ -344,9 +363,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 				// Allows us to re-direct the std. output for logging.
 
-				genpropsProcess.Start();
-				genpropsProcess.WaitForExit();
-				var ret = genpropsProcess.ExitCode;
+				gennormProcess.Start();
+				gennormProcess.WaitForExit();
+				var ret = gennormProcess.ExitCode;
 
 				// If gen props doesn't run correctly, log what it displays to the standar output
 				// and throw and exception
@@ -354,151 +373,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					if (LogFile.IsLogging())
 					{
-						LogFile.AddErrorLine("Error running genprops:");
-						LogFile.AddErrorLine(genpropsProcess.StandardOutput.ReadToEnd());
-						LogFile.AddErrorLine(genpropsProcess.StandardError.ReadToEnd());
-					}
-					throw new PuaException(ErrorCodes.Genprops);
-				}
-			}
-
-			// In order to get the new names registered properly, you also need to run the
-			// following command:
-			//
-			//    icu\tools\gennames -1 -u 4 -d icu\icudt34l icu\data\unidata\UnicodeData.txt
-			//
-			// Note: this compiles UnicodeData.txt to produce icu\icudt34l\unames.icu.
-			using (var gennamesProcess = new Process())
-			{
-				gennamesProcess.StartInfo = new ProcessStartInfo
-				{
-					FileName = GetIcuExecutable("gennames"),
-					WorkingDirectory = Path.Combine(icuDir, ".."),
-					Arguments = String.Format("-1 -u 5.1 -d \"{0}\" \"{1}\"",
-						icuBaseDataDir, Path.Combine(icuUnidataDir, "UnicodeData.txt")),
-					WindowStyle = ProcessWindowStyle.Hidden,
-					CreateNoWindow = true,
-					UseShellExecute = false,
-					RedirectStandardOutput = true,
-					RedirectStandardError = true
-				};
-				// Note gennames can't take spaces in any of the path names, even if surrounded by
-				// quotes.
-				// The following StartInfo properties allows us to extract the standard output
-				gennamesProcess.Start();
-				gennamesProcess.WaitForExit();
-				if (gennamesProcess.ExitCode != 0)
-				{
-					if (LogFile.IsLogging())
-					{
-						LogFile.AddErrorLine("Error running gennames:");
-						LogFile.AddErrorLine(gennamesProcess.StandardOutput.ReadToEnd());
-						LogFile.AddErrorLine(gennamesProcess.StandardError.ReadToEnd());
-					}
-					throw new PuaException(ErrorCodes.Gennames);
-				}
-			}
-
-			// In order to get the normalization data registered properly, you also need to run
-			// the following command:
-			// This is necessary for fields 3 and 5 (Canonical combining class and the
-			// decompostion value
-			// Read source information and create a binary file with normalization data.
-			//
-			//	icu\tools\gennorm -u 4 -s icu\data\unidata -d icu\icudt34l -i icu\icudt34l
-			//
-			// Input: UnicodeData.txt, DerivedNormalizationProps.txt,
-			// Output: icu\icudt34l\unorm.icu
-
-			using (var gennormProcess = new Process())
-			{
-				gennormProcess.StartInfo = new ProcessStartInfo
-				{
-					FileName = GetIcuExecutable("gennorm"),
-					WorkingDirectory = Path.Combine(icuDir, ".."),
-					Arguments = args,
-					WindowStyle = ProcessWindowStyle.Hidden,
-					CreateNoWindow = true,
-					UseShellExecute = false,
-					RedirectStandardOutput = true,
-					RedirectStandardError = true
-				};
-				// The following StartInfo properties allows us to extract the standard output
-				gennormProcess.Start();
-				gennormProcess.WaitForExit();
-				if (gennormProcess.ExitCode != 0)
-				{
-					if (LogFile.IsLogging())
-					{
-						LogFile.AddErrorLine("Error running gennorm:");
+						LogFile.AddErrorLine("Error running gennorm2:");
 						LogFile.AddErrorLine(gennormProcess.StandardOutput.ReadToEnd());
 						LogFile.AddErrorLine(gennormProcess.StandardError.ReadToEnd());
 					}
 					throw new PuaException(ErrorCodes.Gennorm);
-				}
-			}
-
-			// We also need to run genbidi.
-			//
-			//	icu\tools\genbidi -u 4 -s icu\data\unidata -d icu\icudt34l -i icu\icudt34l
-			//
-			using (var genbidiProcess = new Process())
-			{
-				genbidiProcess.StartInfo = new ProcessStartInfo
-				{
-					FileName = GetIcuExecutable("genbidi"),
-					WorkingDirectory = Path.Combine(icuDir, ".."),
-					Arguments = args,
-					WindowStyle = ProcessWindowStyle.Hidden,
-					CreateNoWindow = true,
-					UseShellExecute = false,
-					RedirectStandardOutput = true,
-					RedirectStandardError = true
-				};
-				// The following StartInfo properties allows us to extract the standard output
-				genbidiProcess.Start();
-				genbidiProcess.WaitForExit();
-				if (genbidiProcess.ExitCode != 0)
-				{
-					if (LogFile.IsLogging())
-					{
-						LogFile.AddErrorLine("Error running genbidi:");
-						LogFile.AddErrorLine(genbidiProcess.StandardOutput.ReadToEnd());
-						LogFile.AddErrorLine(genbidiProcess.StandardError.ReadToEnd());
-					}
-					throw new PuaException(ErrorCodes.Genbidi);
-				}
-			}
-
-			// We need to run gencase.
-			//
-			//	icu\tools\gencase -u 4 -s icu\data\unidata -d icu\icudt34l -i icu\icudt34l
-			//
-			using (var gencaseProcess = new Process())
-			{
-				gencaseProcess.StartInfo = new ProcessStartInfo
-				{
-					FileName = GetIcuExecutable("gencase"),
-					WorkingDirectory = Path.Combine(icuDir, ".."),
-					Arguments = args,
-					WindowStyle = ProcessWindowStyle.Hidden,
-					CreateNoWindow = true,
-					UseShellExecute = false,
-					RedirectStandardOutput = true,
-					RedirectStandardError = true
-				};
-				// The following StartInfo properties allows us to extract the standard output
-				gencaseProcess.Start();
-				gencaseProcess.WaitForExit();
-				if (gencaseProcess.ExitCode != 0)
-				{
-					if (LogFile.IsLogging())
-					{
-						LogFile.AddErrorLine("Error running gencase:");
-						LogFile.AddErrorLine(gencaseProcess.StandardOutput.ReadToEnd());
-						LogFile.AddErrorLine(gencaseProcess.StandardError.ReadToEnd());
-					}
-					throw new PuaException(ErrorCodes.Gencase);
 				}
 			}
 		}
@@ -674,9 +553,17 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private string GetIcuExecutable(string exeName)
 		{
 #if !__MonoCS__
-			return Path.Combine(IcuDir, Path.Combine("tools", exeName + ".exe"));
+			string codeBaseUri = Assembly.GetExecutingAssembly().CodeBase;
+			string path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
+
+			var result= Path.Combine(path, exeName + ".exe");
+			if (File.Exists(result))
+				return result; // typical end-user machine
+			// developer machine, executing assembly is in output/debug.
+			return Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(path)),
+				Path.Combine("DistFiles", Path.Combine("Windows", exeName + ".exe")));
 #else
-			// TODO-Linux: Review - is the approach of expecting execuatble location to be in PATH ok?
+	// TODO-Linux: Review - is the approach of expecting execuatble location to be in PATH ok?
 			return exeName;
 #endif
 		}
@@ -715,34 +602,17 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///	else
 		///		do nothing except write	the	line
 		///</remarks>
-		/// <param name="puaDefinitions">An array of PUADefinitions to insert into UnicodeData.txt.</param>
-		///
-		///	<param name="addToBidi">A list of BidiCharacters to remove from the DerivedBidiClass.txt file</param>
-		///	<param name="removeFromBidi">A list of BidiCharacters to add to the DerivedBidiClass.txt file</param>
-		///	<param name="addToNorm"></param>
-		///	<param name="removeFromNorm"></param>
-		private void InsertCharacters(IPuaCharacter[] puaDefinitions, out List<IUcdCharacter> addToBidi,
-			out List<IUcdCharacter> removeFromBidi, out List<IUcdCharacter> addToNorm,
-			out List<IUcdCharacter> removeFromNorm)
+		/// <param name="puaDefinitions">An array of PUADefinitions to insert into UnicodeDataOverrides.txt.</param>
+		/// <param name="originalOverrides">original to merge into</param>
+		/// <param name="customOverrides">where to write output</param>
+		private void InsertCharacters(IPuaCharacter[] puaDefinitions, string originalOverrides, string customOverrides)
 		{
-			addToBidi = new List<IUcdCharacter>();
-			removeFromBidi = new List<IUcdCharacter>();
-			addToNorm = new List<IUcdCharacter>();
-			removeFromNorm = new List<IUcdCharacter>();
-
-			// Create a temporary file to write to and backup the original
-			string unidataDir = Path.Combine(Path.Combine(IcuDir, "data"), "unidata");
-			string unicodeFileName = Path.Combine(unidataDir, "UnicodeData.txt");
-			string tempUnicodeFileName = CreateTempFile(unicodeFileName);
-
-			AddTempFile(tempUnicodeFileName);
-
 			// Open the file for reading and writing
-			LogFile.AddVerboseLine("StreamReader on <" + unicodeFileName + ">");
-			using (var reader = new StreamReader(unicodeFileName, Encoding.ASCII))
+			LogFile.AddVerboseLine("StreamReader on <" + originalOverrides + ">");
+			using (var reader = new StreamReader(originalOverrides, Encoding.ASCII))
 			{
 				reader.Peek();	// force autodetection of encoding.
-				using (var writer = new StreamWriter(tempUnicodeFileName, false, Encoding.ASCII))
+				using (var writer = new StreamWriter(customOverrides, false, Encoding.ASCII))
 				{
 					try
 					{
@@ -765,66 +635,15 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 							// skip entirely blank lines
 							if (line.Length <= 0)
 								continue;
+							if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
+							{
+								writer.WriteLine(line);
+								continue;
+							}
 
 							//Grab codepoint
 							var strFileCode = line.Substring(0, line.IndexOf(';')).Trim(); // current code in file
 							var fileCode = Convert.ToInt32(strFileCode, 16);
-
-							//If it's a first tag
-							if (line.ToLowerInvariant().IndexOf("first>") != -1 && newCode >= fileCode)
-							{
-								// do the smarts necessary to insert the codepoints.
-
-								// read in the "Last" line
-								string line2 = reader.ReadLine();
-								//Grabs the codepoint on the "last" tag
-								string strEndCode = line2.Substring(0, line.IndexOf(';'));
-								int endCode = Convert.ToInt32(strEndCode, 16);
-
-								//A dynamic array that contains our range of codepoints and the
-								//properties to go with it
-								var codepointsWithinRange = new List<IPuaCharacter>();
-
-								// While newCode satisfies: fileCode <= newCode <= endCode
-								while (newCode >= fileCode && newCode <= endCode)
-								{
-									codepointsWithinRange.Add(puaDefinitions[codeIndex]);
-									//If this is the last one stop looking for more
-									if (++codeIndex >= puaDefinitions.Length)
-										break;
-									newCode = Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16);
-								}
-								//If we have codepoints to insert
-								if (codepointsWithinRange.Count > 0)
-								{
-									//Grab the block name
-									string blockName = line.Substring(line.IndexOf('<') + 1,
-										line.IndexOf(',') - line.IndexOf('<') - 1);
-
-									//Grab the data that follows the block tag
-									//Ex: ;Cs;0;L;;;;;N;;;;;
-									string data = line.Substring(line.IndexOf('>') + 1);
-									//Do lots of smart stuff to insert the PUA characters into the block
-									WriteCodepointBlock(writer, blockName, strFileCode, strEndCode, codepointsWithinRange.ToArray(),
-
-										data, addToBidi, removeFromBidi, addToNorm, removeFromNorm);
-								}
-								else
-								{
-									writer.WriteLine(line);
-									writer.WriteLine(line2);
-								}
-								//If we have no more codepoints to insert then just finish writing the
-								//file
-								if (codeIndex >= puaDefinitions.Length)
-								{
-									while ((line = reader.ReadLine()) != null)
-										writer.WriteLine(line);
-									break;
-								}
-								lastCode = endCode;
-								continue;
-							}
 
 							// If the new codepoint is greater than the last one processed in the file, but
 							// less than or equal to the current codepoint in the file.
@@ -833,10 +652,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 								while (newCode <= fileCode)
 								{
 									LogCodepoint(puaDefinitions[codeIndex].CodePoint);
-
-									// Add the PuaCharacter to the lists if it needs to be added.
-									AddToLists(line, puaDefinitions[codeIndex], addToBidi,
-										removeFromBidi, addToNorm, removeFromNorm);
 
 									// Replace the line with the new PuaDefinition
 									writer.WriteLine("{0} #{1}", puaDefinitions[codeIndex], m_comment);
@@ -872,6 +687,15 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 							}
 							lastCode = fileCode;
 						}
+						// Output any codepoints after the old end
+						while (codeIndex < puaDefinitions.Length)
+						{
+							LogCodepoint(puaDefinitions[codeIndex].CodePoint);
+
+							// Add a line with the new PuaDefinition
+							writer.WriteLine("{0} #{1}", puaDefinitions[codeIndex], m_comment);
+							codeIndex++;
+						}
 					}
 					finally
 					{
@@ -881,9 +705,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					}
 				}
 			}
-
-			// Copy the temporary file to be the original
-			FileCopyWithLogging(tempUnicodeFileName, unicodeFileName, true);
 		}
 
 		#region Temporary file processing

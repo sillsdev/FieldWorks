@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// GrowToWord causes a Char Property Engine to be created, and the test runner
 			// fails if we don't shut the factory down.
-			var disposable = m_wsManager as IDisposable;
+		var disposable = m_wsManager as IDisposable;
 			if (disposable != null)
 				disposable.Dispose();
 			m_wsManager = null;
@@ -639,7 +639,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				site.ShowForm();
 				var dataProvider = new SimpleRootSiteDataProvider(site, childNavigationProvider =>
 																			RootSiteServices.CreateUIAutomationImageControls(
-																				childNavigationProvider, site.RootBox));
+													childNavigationProvider, site.RootBox));
 				var firstChild = dataProvider.Navigate(NavigateDirection.FirstChild);
 				Assert.IsNotNull(firstChild, "firstChild");
 				Assert.IsInstanceOf<ImageControl>(firstChild);
@@ -668,7 +668,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				var dataProvider = new SimpleRootSiteDataProvider(site, childNavigationProvider =>
 																			RootSiteServices.CreateUIAutomationControls(
-																				childNavigationProvider, site.RootBox));
+													childNavigationProvider, site.RootBox));
 				var firstChild = dataProvider.Navigate(NavigateDirection.FirstChild);
 				Assert.IsNotNull(firstChild, "firstChild");
 				Assert.IsInstanceOf<ImageControl>(firstChild, "firstChild");
@@ -706,8 +706,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				bool fInvoked = false;
 				var dataProvider = new SimpleRootSiteDataProvider(site, childNavigationProvider =>
 																		RootSiteServices.CreateUIAutomationInvokeButtons(
-																			childNavigationProvider, site.RootBox,
-																			sel => { fInvoked = true; }));
+												childNavigationProvider, site.RootBox,
+												sel => { fInvoked = true; }));
 				var firstChild = dataProvider.Navigate(NavigateDirection.FirstChild);
 				Assert.IsNotNull(firstChild, "firstChild");
 				Assert.IsInstanceOf<UiaInvokeButton>(firstChild);

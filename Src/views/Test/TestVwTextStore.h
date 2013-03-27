@@ -2181,8 +2181,9 @@ namespace TestViews
 
 			VwTextStoreTestSub* ptxs = dynamic_cast<VwTextStoreTestSub*>(m_qtxs.Ptr());
 			MakeStringList(s_rgpsz3);
+			unitpp::assert_eq("AcpToLog should convert 0 even with no selection", 0, ptxs->CallAcpToLog(0));
 
-			assert_exception("Got wrong exception", E_FAIL, ptxs->CallAcpToLog(0));
+			assert_exception("Got wrong exception on non-zero AcpToLog with no selection", E_FAIL, ptxs->CallAcpToLog(1));
 		}
 
 		/*--------------------------------------------------------------------------------------

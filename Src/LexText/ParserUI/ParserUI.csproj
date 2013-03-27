@@ -1,304 +1,310 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.30729</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{E0379EF6-D959-468B-B6F3-687DC06E5071}</ProjectGuid>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>.</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ApplicationIcon>
-	</ApplicationIcon>
-	<AssemblyKeyContainerName>
-	</AssemblyKeyContainerName>
-	<AssemblyName>ParserUI</AssemblyName>
-	<AssemblyOriginatorKeyFile>
-	</AssemblyOriginatorKeyFile>
-	<DefaultClientScript>JScript</DefaultClientScript>
-	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-	<DefaultTargetSchema>IE50</DefaultTargetSchema>
-	<DelaySign>false</DelaySign>
-	<OutputType>Library</OutputType>
-	<RootNamespace>SIL.FieldWorks.LexText.Controls</RootNamespace>
-	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-	<StartupObject>
-	</StartupObject>
-	<FileUpgradeFlags>
-	</FileUpgradeFlags>
-	<UpgradeBackupLocation>
-	</UpgradeBackupLocation>
-	<OldToolsVersion>3.5</OldToolsVersion>
-	<PublishUrl>publish\</PublishUrl>
-	<Install>true</Install>
-	<InstallFrom>Disk</InstallFrom>
-	<UpdateEnabled>false</UpdateEnabled>
-	<UpdateMode>Foreground</UpdateMode>
-	<UpdateInterval>7</UpdateInterval>
-	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-	<UpdatePeriodically>false</UpdatePeriodically>
-	<UpdateRequired>false</UpdateRequired>
-	<MapFileExtensions>true</MapFileExtensions>
-	<ApplicationRevision>0</ApplicationRevision>
-	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<UseApplicationTrust>false</UseApplicationTrust>
-	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E0379EF6-D959-468B-B6F3-687DC06E5071}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>ParserUI</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SIL.FieldWorks.LexText.Controls</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<OutputPath>..\..\..\Output\Debug\</OutputPath>
-	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-	<BaseAddress>285212672</BaseAddress>
-	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>
-	</DocumentationFile>
-	<DebugSymbols>true</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<NoStdLib>false</NoStdLib>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<Optimize>false</Optimize>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport>
+    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<OutputPath>..\..\..\Output\Release\</OutputPath>
-	<AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-	<BaseAddress>285212672</BaseAddress>
-	<CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>TRACE</DefineConstants>
-	<DocumentationFile>
-	</DocumentationFile>
-	<DebugSymbols>false</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<NoStdLib>false</NoStdLib>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<Optimize>true</Optimize>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>none</DebugType>
-	<ErrorReport>prompt</ErrorReport>
+    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <OutputPath>..\..\..\Output\Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="AxInterop.SHDocVw">
-	  <Name>AxInterop.SHDocVw</Name>
-	  <HintPath>..\..\..\Bin\AxInterop.SHDocVw.dll</HintPath>
-	</Reference>
-	<Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="CoreImpl, Version=6.1.1.22192, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-	</Reference>
-	<Reference Include="FDO">
-	  <Name>FDO</Name>
-	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
-	</Reference>
-	<Reference Include="FdoUi">
-	  <Name>FdoUi</Name>
-	  <HintPath>..\..\..\Output\Debug\FdoUi.dll</HintPath>
-	</Reference>
-	<Reference Include="Framework, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
-	</Reference>
-	<Reference Include="FwControls">
-	  <Name>FwControls</Name>
-	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
-	</Reference>
-	<Reference Include="FwResources, Version=5.5.0.16216, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
-	</Reference>
-	<Reference Include="FwUtils, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="Interop.SHDocVw">
-	  <Name>Interop.SHDocVw</Name>
-	  <HintPath>..\..\..\Bin\Interop.SHDocVw.dll</HintPath>
-	</Reference>
-	<Reference Include="ITextDll, Version=4.3.0.26896, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\ITextDll.dll</HintPath>
-	</Reference>
-	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-	</Reference>
-	<Reference Include="MsHtmHstInterop">
-	  <Name>MsHtmHstInterop</Name>
-	  <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
-	</Reference>
-	<Reference Include="ParserCore">
-	  <Name>ParserCore</Name>
-	  <HintPath>..\..\..\Output\Debug\ParserCore.dll</HintPath>
-	</Reference>
-	<Reference Include="Reporting, Version=1.0.3852.22149, Culture=neutral, processorArchitecture=MSIL">
-	  <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="RootSite, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
-	</Reference>
-	<Reference Include="SilUtils, Version=7.2.0.28885, Culture=neutral, processorArchitecture=MSIL">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="SimpleRootSite">
-	  <Name>SimpleRootSite</Name>
-	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-	</Reference>
-	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Data">
-	  <Name>System.Data</Name>
-	</Reference>
-	<Reference Include="System.Drawing">
-	  <Name>System.Drawing</Name>
-	</Reference>
-	<Reference Include="System.Windows.Forms">
-	  <Name>System.Windows.Forms</Name>
-	</Reference>
-	<Reference Include="System.Xml">
-	  <Name>System.XML</Name>
-	</Reference>
-	<Reference Include="Widgets">
-	  <Name>Widgets</Name>
-	  <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
-	</Reference>
-	<Reference Include="xCore">
-	  <Name>xCore</Name>
-	  <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
-	</Reference>
-	<Reference Include="xCoreInterfaces">
-	  <Name>xCoreInterfaces</Name>
-	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="XMLUtils">
-	  <Name>XMLUtils</Name>
-	  <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="xWorks">
-	  <Name>xWorks</Name>
-	  <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
-	</Reference>
-	<Reference Include="Skybound.Gecko, Version=1.9.2.0, Culture=neutral, PublicKeyToken=3209ac31600d1857">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\DistFiles\Skybound.Gecko.dll</HintPath>
-	</Reference>
+    <Reference Include="AxInterop.SHDocVw">
+      <Name>AxInterop.SHDocVw</Name>
+      <HintPath>..\..\..\Bin\AxInterop.SHDocVw.dll</HintPath>
+    </Reference>
+    <Reference Include="BasicUtils, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfaces, Version=4.1.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImpl, Version=6.1.1.22192, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="FDO">
+      <Name>FDO</Name>
+      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+    </Reference>
+    <Reference Include="FdoUi">
+      <Name>FdoUi</Name>
+      <HintPath>..\..\..\Output\Debug\FdoUi.dll</HintPath>
+    </Reference>
+    <Reference Include="Framework, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="FwControls">
+      <Name>FwControls</Name>
+      <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+    </Reference>
+    <Reference Include="FwCoreDlgs, Version=7.0.6.19050, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="FwResources, Version=5.5.0.16216, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.SHDocVw">
+      <Name>Interop.SHDocVw</Name>
+      <HintPath>..\..\..\Bin\Interop.SHDocVw.dll</HintPath>
+    </Reference>
+    <Reference Include="ITextDll, Version=4.3.0.26896, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ITextDll.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="MsHtmHstInterop">
+      <Name>MsHtmHstInterop</Name>
+      <HintPath>..\..\..\Bin\MsHtmHstInterop.dll</HintPath>
+    </Reference>
+    <Reference Include="ParserCore">
+      <Name>ParserCore</Name>
+      <HintPath>..\..\..\Output\Debug\ParserCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Reporting, Version=1.0.3852.22149, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Output\Debug\Reporting.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="RootSite, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils, Version=7.2.0.28885, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="SimpleRootSite">
+      <Name>SimpleRootSite</Name>
+      <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="Widgets">
+      <Name>Widgets</Name>
+      <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
+    </Reference>
+    <Reference Include="xCore">
+      <Name>xCore</Name>
+      <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
+    </Reference>
+    <Reference Include="xCoreInterfaces">
+      <Name>xCoreInterfaces</Name>
+      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="XMLUtils">
+      <Name>XMLUtils</Name>
+      <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="xWorks">
+      <Name>xWorks</Name>
+      <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
+    </Reference>
+    <Reference Include="Skybound.Gecko, Version=1.9.2.0, Culture=neutral, PublicKeyToken=3209ac31600d1857">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DistFiles\Skybound.Gecko.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs">
-	  <SubType>Code</SubType>
-	</None>
-	<Compile Include="GeneratedAssemblyInfo.cs" />
-	<Compile Include="HCTrace.cs" />
-	<Compile Include="HCWordGrammarDebugger.cs" />
-	<Compile Include="ImportWordSetDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="ImportWordSetListener.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="ParserConnection.cs" />
-	<Compile Include="ParserListener.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="ParserParametersDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="ParserTrace.cs" />
-	<Compile Include="ParserTraceBase.cs" />
-	<Compile Include="ParserUIStrings.Designer.cs">
-	  <AutoGen>True</AutoGen>
-	  <DesignTime>True</DesignTime>
-	  <DependentUpon>ParserUIStrings.resx</DependentUpon>
-	</Compile>
-	<Compile Include="TryAWordDlg.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<Compile Include="TryAWordRootSite.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="TryAWordSandbox.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="WebPageInteractor.cs" />
-	<Compile Include="WordGrammarDebugger.cs" />
-	<Compile Include="WordImporter.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="XAmpleTrace.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="XAmpleWordGrammarDebugger.cs" />
-	<EmbeddedResource Include="ImportWordSetDlg.resx">
-	  <DependentUpon>ImportWordSetDlg.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ParserParametersDlg.resx">
-	  <DependentUpon>ParserParametersDlg.cs</DependentUpon>
-	  <SubType>Designer</SubType>
-	</EmbeddedResource>
-	<EmbeddedResource Include="ParserUIStrings.resx">
-	  <SubType>Designer</SubType>
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>ParserUIStrings.Designer.cs</LastGenOutput>
-	</EmbeddedResource>
-	<EmbeddedResource Include="TryAWordDlg.resx">
-	  <DependentUpon>TryAWordDlg.cs</DependentUpon>
-	</EmbeddedResource>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HCTrace.cs" />
+    <Compile Include="HCWordGrammarDebugger.cs" />
+    <Compile Include="ImportWordSetDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportWordSetListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ParserConnection.cs" />
+    <Compile Include="ParserListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ParserParametersDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ParserTrace.cs" />
+    <Compile Include="ParserTraceBase.cs" />
+    <Compile Include="ParserUIStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ParserUIStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TryAWordDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TryAWordRootSite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TryAWordSandbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebPageInteractor.cs" />
+    <Compile Include="WordGrammarDebugger.cs" />
+    <Compile Include="WordImporter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XAmpleTrace.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XAmpleWordGrammarDebugger.cs" />
+    <EmbeddedResource Include="ImportWordSetDlg.resx">
+      <DependentUpon>ImportWordSetDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ParserParametersDlg.resx">
+      <DependentUpon>ParserParametersDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ParserUIStrings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ParserUIStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TryAWordDlg.resx">
+      <DependentUpon>TryAWordDlg.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-	<ProjectReference Include="..\..\FwCoreDlgs\FwCoreDlgs.csproj">
-	  <Project>{17090FC0-6BDA-409A-A99A-5AE7F35647ED}</Project>
-	  <Name>FwCoreDlgs</Name>
-	</ProjectReference>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-	<PreBuildEvent>
-	</PreBuildEvent>
-	<PostBuildEvent>
-	</PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

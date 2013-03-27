@@ -19,7 +19,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 {
@@ -214,9 +213,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				case "MultiString":
 					flidType = CellarPropertyType.MultiString;
 					break;
-				case "MultiBigString":
-					flidType = CellarPropertyType.MultiBigString;
-					break;
 				case "Unicode":
 					flidType = CellarPropertyType.Unicode;
 					break;
@@ -286,9 +282,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					break;
 				case CellarPropertyType.MultiString:
 					retval = "MultiString";
-					break;
-				case CellarPropertyType.MultiBigString:
-					retval = "MultiBigString";
 					break;
 				case CellarPropertyType.Unicode:
 					retval = "Unicode";
@@ -961,7 +954,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// </summary>
 		/// <param name="guid">The Guid of the object to return</param>
 		/// <returns>The CmObject that has the given Guid.</returns>
-		/// <exception cref="KeyNotFoundException">Thrown when the given Guid is not in the dictionary.</exception>
+		/// <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the given Guid is not in the dictionary.</exception>
 		public ICmObject GetObject(ICmObjectId guid)
 		{
 			var obj = m_identityMap.GetObject(guid);

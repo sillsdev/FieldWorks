@@ -213,14 +213,14 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 					Comment = "Test comment",
 					IncludeSupportingFiles = true,
 					IncludeSpellCheckAdditions = true,
-					LinkedFilesPath = "%proj%\\LinkedFiles"
+					LinkedFilesPath = Path.Combine("%proj%", "LinkedFiles")
 				};
 
 			Assert.AreEqual("Test comment", backupSettings.Comment);
 			Assert.IsTrue(backupSettings.IncludeSupportingFiles);
 			Assert.IsTrue(backupSettings.IncludeSpellCheckAdditions);
 			Assert.AreEqual("FieldWorksLanguageProject", backupSettings.ProjectName);
-			Assert.AreEqual("%proj%\\LinkedFiles", backupSettings.LinkedFilesPath);
+			Assert.AreEqual(Path.Combine("%proj%", "LinkedFiles"), backupSettings.LinkedFilesPath);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 										Comment = "Test comment",
 										IncludeSupportingFiles = true,
 										IncludeSpellCheckAdditions = true,
-										LinkedFilesPath = "%proj%\\LinkedFiles"
+										LinkedFilesPath = Path.Combine("%proj%", "LinkedFiles")
 									};
 
 			using (var stream = new MemoryStream())

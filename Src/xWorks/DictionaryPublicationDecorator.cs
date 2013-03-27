@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using SIL.CoreImpl;
@@ -23,6 +24,8 @@ namespace SIL.FieldWorks.XWorks
 	/// modified answers. It implements IVwPropChanged and clears its cache when relevant properties change,
 	/// though currently we do not try to generate automatic propchanges on additional affected properties.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Cache is a reference")]
 	public class DictionaryPublicationDecorator : DomainDataByFlidDecoratorBase
 	{
 		// a set of HVOs of entries, senses, and examples that should not be displayed in the publication.

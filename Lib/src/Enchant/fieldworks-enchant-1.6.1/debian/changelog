@@ -1,0 +1,7 @@
+fieldworks-enchant (1.6.1-1) unstable; urgency=low
+
+  * Initial release (from svn r29930, version 1.6.1)
+  * Include patches needed for building on Windows in general, and for running
+	FieldWorks.
+
+ -- Stephen McConnel <stephen_mcconnel@sil.org>  Wed, 16 Nov 2011 10:52:03 -0600

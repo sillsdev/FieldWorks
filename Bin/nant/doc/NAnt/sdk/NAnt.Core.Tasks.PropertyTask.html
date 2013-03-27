@@ -1,0 +1,112 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>PropertyTask Class</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">PropertyTask Class</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Sets a property in the current project. </p>
+	  <p>For a list of all members of this type, see <a href="NAnt.Core.Tasks.PropertyTaskMembers.html">PropertyTask Members</a>.</p>
+	  <p>
+		<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">System.Object</a>
+		<br />   <a href="NAnt.Core.Element.html">NAnt.Core.Element</a><br />      <a href="NAnt.Core.Task.html">NAnt.Core.Task</a><br />         <b>NAnt.Core.Tasks.PropertyTask</b></p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;TaskName(Name:="property")&gt;</div>Public Class PropertyTask<div>    Inherits <a href="NAnt.Core.Task.html">Task</a></div></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[TaskName(Name="property")]</div>
+		<div>public class PropertyTask<b> : <a href="NAnt.Core.Task.html">Task</a></b></div>
+	  </div>
+	  <H4 class="dtH4">Thread Safety</H4>
+	  <P>Public static (<b>Shared</b> in Visual Basic) members of this type are
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
+				thread-safe.</P>
+	  <h4 class="dtH4">Remarks</h4>
+	  <p>
+			  <blockquote class="dtBlock"><b>Note</b>   NAnt uses a number of predefined properties.</blockquote>
+			</p>
+	  <h4 class="dtH4">Example</h4>
+	  <p>
+			  <p> Define a <code>debug</code> property with value <b>true</b>. </p>
+			  <pre class="code">
+
+			&lt;property name="debug" value="true" /&gt;
+
+			  </pre>
+
+			  <p> Use the user-defined <code>debug</code> property. </p>
+			  <pre class="code">
+
+			&lt;property name="trace" value="${debug}" /&gt;
+
+			  </pre>
+
+			  <p> Define a read-only property. This is just like passing in the param on the command line. </p>
+			  <pre class="code">
+
+			&lt;property name="do_not_touch_ME" value="hammer" readonly="true" /&gt;
+
+			  </pre>
+
+			  <p> Define a property, but do not overwrite the value if the property already exists (eg. it was specified on the command line). </p>
+			  <pre class="code">
+
+			&lt;project name="property-example"&gt;
+			  &lt;property name="debug" value="true" overwrite="false" /&gt;
+			  &lt;echo message="debug: ${debug}" /&gt;
+			&lt;/project&gt;
+
+			  </pre>
+			  <p> Executing this build file with the command line option <code>-D:debug=false</code>, would cause the value specified on the command line to remain unaltered. </p>
+			  <pre class="code">
+
+			[echo] debug: false
+
+			  </pre>
+			</p>
+	  <h4 class="dtH4">Requirements</h4>
+	  <p>
+		<b>Namespace: </b>
+		<a href="NAnt.Core.Tasks.html">NAnt.Core.Tasks</a>
+	  </p>
+	  <p>
+		<b>Assembly: </b>NAnt.Core (in NAnt.Core.dll)
+					</p>
+	  <h4 class="dtH4">See Also</h4>
+	  <p>
+		<a href="NAnt.Core.Tasks.PropertyTaskMembers.html">PropertyTask Members</a> | <a href="NAnt.Core.Tasks.html">NAnt.Core.Tasks Namespace</a></p>
+	  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+		<param name="Keyword" value="PropertyTask class, about PropertyTask class">
+		</param>
+	  </object>
+	  <hr />
+	  <div id="footer">
+		<p>
+		  <a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a>
+		</p>
+		<p>
+		</p>
+	  </div>
+	</div>
+  </body>
+</html>

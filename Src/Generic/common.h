@@ -101,12 +101,13 @@ Last reviewed:
 #else // !WIN32
 
 #include "IcuCommon.h" // Enables general access to ICU (International Components for Unicode).
-#include "Hacks.h"
-#include "COM.h"
-#include "COMInterfaces.h"
-#include "COMInterfacesMore.h"
+#include <Hacks.h>
+#include <COM.h>
+#include <COMInterfaces.h>
+#include <COMInterfacesMore.h>
 #include <winnt.h>
-#include "WinBase.h"
+#include <WinBase.h>
+#include <WinError.h>
 
 #endif // !WIN32
 
@@ -140,6 +141,7 @@ Last reviewed:
 #include <new>
 #if !WIN32
 #include <string>
+#include <cstdlib>
 #endif // !WIN32
 
 // These are needed for the Task Scheduler section of FwExplorer.
@@ -176,10 +178,9 @@ Last reviewed:
 #ifdef WIN32
 // Get the MS Text Services Framework interfaces.
 #include <Msctf.h>
-#endif // WIN32
-
 // This allows us to implement IAccessible (currently only in Views DLL).
 #include <Oleacc.h>
+#endif // WIN32
 
 /***********************************************************************************************
 	Debug related definitions.
@@ -372,10 +373,10 @@ template<typename T> inline T * GetPtr(void *pv, int ib)
 #include "UtilRect.h"
 #include "UtilTime.h" // Before UtilString.
 #include "GenericResource.h" // Before UtilString
-#include "UtilString.h"
 #include "Throwable.h"
-#include "UtilCom.h" // Before UtilMem.h on Linux
 #include "UtilMem.h"
+#include "UtilString.h"
+#include "UtilCom.h"
 #include "Mutex.h"
 #include "GenSmartPtr.h"
 #include "UtilSort.h"

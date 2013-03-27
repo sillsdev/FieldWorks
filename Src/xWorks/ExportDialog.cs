@@ -16,6 +16,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,7 @@ using Palaso.Lift;
 using Palaso.Lift.Validation;
 using SIL.CoreImpl;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -81,7 +83,8 @@ namespace SIL.FieldWorks.XWorks
 			kftTranslatedLists = 3,
 			kftPathway = 4,
 			kftLift = 5,
-			kftGrammarSketch
+			kftGrammarSketch,
+			kftClassifiedDict
 		}
 		// ReSharper restore InconsistentNaming
 		protected struct FxtType
@@ -185,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 				m_chkShowInFolder.Checked = false;
 
 			m_exportItems = new List<ListViewItem>();
-	}
+		}
 
 		private void InitFromMainControl(object objCurrentControl)
 		{
@@ -200,22 +203,48 @@ namespace SIL.FieldWorks.XWorks
 			var cmo = m_mediator.PropertyTable.GetValue("ActiveClerkSelectedObject", null) as ICmObject;
 			if (cmo != null)
 			{
-				// Handle LexEntries that no longer have owners.
-				if (cmo is ILexEntry)
+				int clidRoot;
+				var newHvoRoot = SetRoot(cmo, out clidRoot);
+				if (newHvoRoot > 0)
 				{
-					m_hvoRootObj = m_cache.LanguageProject.LexDbOA.Hvo;
-					m_clidRootObj = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
-				}
-				else if (cmo.Owner != null)
-				{
-					m_hvoRootObj = cmo.Owner.Hvo;
-					m_clidRootObj = cmo.Owner.ClassID;
+					m_hvoRootObj = newHvoRoot;
+					m_clidRootObj = clidRoot;
 				}
 			}
 
 			XmlBrowseView browseView = FindXmlBrowseView(objCurrentControl as Control);
 			if (browseView != null)
 				m_sda = browseView.RootBox.DataAccess;
+		}
+
+		/// <summary>
+		/// Allows process to find an appropriate root hvo and change the current root.
+		/// Subclasses (e.g. NotebookExportDialog) can override.
+		/// </summary>
+		/// <param name="cmo"></param>
+		/// <param name="clidRoot"></param>
+		/// <returns>Returns -1 if root hvo doesn't need changing.</returns>
+		protected virtual int SetRoot(ICmObject cmo, out int clidRoot)
+		{
+			clidRoot = -1;
+			var hvoRoot = -1;
+			// Handle LexEntries that no longer have owners.
+			if (cmo is ILexEntry)
+			{
+				hvoRoot = m_cache.LanguageProject.LexDbOA.Hvo;
+				clidRoot = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			}
+			else if (cmo is ICmSemanticDomain)
+			{
+				hvoRoot = cmo.OwnerOfClass<ICmPossibilityList>().Hvo;
+				clidRoot = CmPossibilityListTags.kClassId;
+			}
+			else if (cmo.Owner != null)
+			{
+				hvoRoot = cmo.Owner.Hvo;
+				clidRoot = cmo.Owner.ClassID;
+			}
+			return hvoRoot;
 		}
 
 		/// <summary>
@@ -430,6 +459,12 @@ namespace SIL.FieldWorks.XWorks
 					case FxtTypes.kftReversal:
 						tool = "reversalToolEditComplete";
 						break;
+					case FxtTypes.kftClassifiedDict:
+						// Should match the tool in DistFiles/Language Explorer/Configuration/RDE/toolConfiguration.xml, the value attribute in
+						// <tool label="Classified Dictionary" value="lexiconClassifiedDictionary" icon="DocumentView">.
+						// We use this to create that tool and base this export on its objects and saved configuration.
+						tool = "lexiconClassifiedDictionary";
+						break;
 					case FxtTypes.kftGrammarSketch:
 						area = "grammar";
 						tool = "grammarSketch";
@@ -478,7 +513,7 @@ namespace SIL.FieldWorks.XWorks
 				string sDirectory;
 				if (fLiftExport)
 				{
-					using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+					using (var dlg = new FolderBrowserDialogAdapter())
 					{
 						dlg.Tag = xWorksStrings.ksChooseLIFTFolderTitle; // can't set title !!??
 						dlg.Description = String.Format(xWorksStrings.ksChooseLIFTExportFolder,
@@ -555,7 +590,7 @@ namespace SIL.FieldWorks.XWorks
 							ProcessPathwayExport();
 							return;
 						default:
-							using (SaveFileDialog dlg = new SaveFileDialog())
+							using (var dlg = new SaveFileDialogAdapter())
 							{
 								dlg.AddExtension = true;
 								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;
@@ -605,16 +640,54 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void OpenExportFolder(string sDirectory, string sFileName)
 		{
-			ProcessStartInfo processInfo;
-			if (String.IsNullOrEmpty(sFileName))
+			ProcessStartInfo processInfo = null;
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
 			{
-				processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sDirectory));
+				// if it exists, xdg-open uses the user's preference for opening directories
+				if (File.Exists("/usr/bin/xdg-open"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/xdg-open", String.Format("\"{0}\"", sDirectory));
+				}
+				else if (File.Exists("/usr/bin/nautilus"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/nautilus", String.Format("\"{0}\"", sDirectory));
+				}
+				else if (File.Exists("/usr/bin/krusader"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/krusader", String.Format("\"{0}\"", sDirectory));
+				}
+				else if (File.Exists("/usr/bin/pcmanfm"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/pcmanfm", String.Format("\"{0}\"", sDirectory));
+				}
+				else if (File.Exists("/usr/bin/gnome-commander"))
+				{
+					processInfo = new ProcessStartInfo("/usr/bin/gnome-commander",
+						String.Format("-l \"{0}\" -r \"{1}\"", Path.GetDirectoryName(sDirectory), sDirectory));
+				}
+				// If the user doesn't have one of these programs installed, I give up!
 			}
 			else
 			{
-				processInfo = new ProcessStartInfo(@"c:\windows\explorer.exe", String.Format(" /select,{0}", sFileName));
+				// REVIEW: What happens if directory or filename contain spaces?
+				var program = Environment.ExpandEnvironmentVariables(@"%WINDIR%\explorer.exe");
+				if (program == @"\explorer.exe")
+					program = @"C:\windows\explorer.exe";
+				if (String.IsNullOrEmpty(sFileName))
+				{
+					processInfo = new ProcessStartInfo(program, String.Format(" /select,{0}", sDirectory));
+				}
+				else
+				{
+					processInfo = new ProcessStartInfo(program, String.Format(" /select,{0}", sFileName));
+				}
 			}
-			Process.Start(processInfo);
+			if (processInfo != null)
+			{
+				using (Process.Start(processInfo))
+				{
+				}
+			}
 		}
 
 		/// <summary>
@@ -665,6 +738,7 @@ namespace SIL.FieldWorks.XWorks
 								break;
 							case FxtTypes.kftConfigured:
 							case FxtTypes.kftReversal:
+							case FxtTypes.kftClassifiedDict:
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = m_seqView.ObjectCount;
 								progressDlg.AllowCancel = true;
@@ -697,7 +771,7 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.AllowCancel = true;
 								progressDlg.Restartable = true;
 								progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
-								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType);
+								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 								break;
 						}
 					}
@@ -736,8 +810,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var outPath = (string)args[0];
 			var sDataType = (string) args[1];
+			var sXslts = (string) args[2];
 			m_progressDlg = progress;
-			var parameter = new Tuple<string, string>(sDataType, outPath);
+			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
 			m_mediator.SendMessage("SaveAsWebpage", parameter);
 			m_progressDlg.Step(1000);
 			return null;
@@ -779,10 +854,12 @@ namespace SIL.FieldWorks.XWorks
 			using (var w =  new StringWriter())
 			{
 				exporter.ExportLiftRanges(w);
-				var sw = new StreamWriter(outPathRanges);
-				//actually write out to file
-				sw.Write(w.GetStringBuilder().ToString());
-				sw.Close();
+				using (var sw = new StreamWriter(outPathRanges))
+				{
+					//actually write out to file
+					sw.Write(w.GetStringBuilder().ToString());
+					sw.Close();
+				}
 			}
 #if DEBUG
 			var dtExport = DateTime.Now;
@@ -931,7 +1008,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				if (ft.m_sFormat.ToLowerInvariant() == "xhtml")
-					m_ce.WriteCssFile(Path.ChangeExtension(outPath, ".css"), vss);
+				{
+					m_ce.WriteCssFile(Path.ChangeExtension(outPath, ".css"), vss, AllowDictionaryParagraphIndent(ft));
+				}
 				m_ce = null;
 #if DEBUG
 				File.Copy(outPath, Path.Combine(dirPath, "DebugOnlyExportStage" + copyCount + ".txt"), true);
@@ -944,6 +1023,13 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
+		// Currently we allow indented paragraph styles only for classified dictionary.
+		// See the comment on XhtmlHelper.AllowDictionaryParagraphIndent for more info.
+		private static bool AllowDictionaryParagraphIndent(FxtType ft)
+		{
+			return ft.m_ft == FxtTypes.kftClassifiedDict;
+		}
+
 		private void btnCancel_Click(object sender, EventArgs e)
 		{
 			Close();
@@ -954,12 +1040,15 @@ namespace SIL.FieldWorks.XWorks
 		/// Registry key for settings for this Dialog.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object - caller responsible to dispose")]
 		public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("ExportInterlinearDialog");
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+					return regKey.CreateSubKey("ExportInterlinearDialog");
 			}
 		}
 
@@ -1071,6 +1160,9 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "configured":
 					ft.m_ft = FxtTypes.kftConfigured;
+					break;
+				case "classified":
+					ft.m_ft = FxtTypes.kftClassifiedDict;
 					break;
 				case "reversal":
 					ft.m_ft = FxtTypes.kftReversal;
@@ -1454,7 +1546,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_description_LinkClicked(object sender, LinkClickedEventArgs e)
 		{
-			Process.Start(e.LinkText);
+			using (Process.Start(e.LinkText))
+			{
+			}
 		}
 
 		/// <summary>

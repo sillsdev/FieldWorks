@@ -1,0 +1,13 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Unit test. Object disposed in tear down method.
+M: System.Void SIL.FieldWorks.WordWorks.Parser.ParseFilerProcessingTests::FixtureSetup()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Object disposed in tear down method.
+T: SIL.FieldWorks.WordWorks.Parser.ParseFilerProcessingTests

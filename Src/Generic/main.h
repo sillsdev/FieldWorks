@@ -17,8 +17,4 @@ Description:
 
 #include "common.h"
 
-#ifndef WIN32
-#include <COMLibrary.h>
-#endif
-
 #endif // !GENERICLIB_H

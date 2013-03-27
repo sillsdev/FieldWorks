@@ -1852,19 +1852,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_dictResidue.Clear();
 		}
 
-#if false // CS0169
-		private static int StartOfLiftResidue(ITsStrBldr tsb)
-		{
-			int idx = tsb.Length;
-			if (tsb.Text != null)
-			{
-				idx = tsb.Text.IndexOf("<lift-residue id=");
-				if (idx < 0)
-					idx = tsb.Length;
-			}
-			return idx;
-		}
-#endif
 		/// <summary>
 		/// Check whether an existing entry has data that conflicts with an imported entry that
 		/// has the same identity (guid).  Senses are not checked, since they can be added to
@@ -2419,18 +2406,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			switch (type)
 			{
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					ITsString tss = StoreTsStringValue(m_fCreatingNewEntry | m_fCreatingNewSense,
 						m_cache.MainCacheAccessor.get_StringProp(hvo, flid), contents);
 					m_cache.MainCacheAccessor.SetString(hvo, flid, tss);
 					break;
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 					tsm = m_cache.MainCacheAccessor.get_MultiStringProp(hvo, flid);
 					MergeInMultiString(tsm, flid, contents, cmo.Guid);
 					break;
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 					tsm = m_cache.MainCacheAccessor.get_MultiStringProp(hvo, flid);
 					MergeInMultiUnicode(tsm, flid, contents, cmo.Guid);
 					break;
@@ -2760,19 +2744,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			switch (type)
 			{
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					ITsString tss = m_cache.MainCacheAccessor.get_StringProp(hvo, flid);
 					if (StringsConflict(tss, GetFirstLiftTsString(contents)))
 						return true;
 					break;
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 					tsm = m_cache.MainCacheAccessor.get_MultiStringProp(hvo, flid);
 					if (MultiTsStringsConflict(tsm, contents))
 						return true;
 					break;
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 					tsm = m_cache.MainCacheAccessor.get_MultiStringProp(hvo, flid);
 					if (MultiUnicodeStringsConflict(tsm, contents, false, Guid.Empty, 0))
 						return true;
@@ -5731,7 +5712,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					sNewNorm = sNew;
 				else
 					sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
-				MuElement mue = new MuElement(ws, sNewNorm);
+				// LiftMultiText parameter may have come in with escaped characters which need to be
+				// converted to plain text before comparing with existing entries
+				MuElement mue = new MuElement(ws, XmlUtils.DecodeXml(sNewNorm));
 				if (rie == null && mapToRIEs.TryGetValue(mue, out rgrie))
 				{
 					foreach (IReversalIndexEntry rieT in rgrie)

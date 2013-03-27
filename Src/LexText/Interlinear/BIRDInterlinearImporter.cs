@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.IText.FlexInterlinModel;
+using SIL.FieldWorks.FDO.Application.ApplicationServices;
 
 namespace SIL.FieldWorks.IText
 {
@@ -41,6 +42,8 @@ namespace SIL.FieldWorks.IText
 				MessageBoxIcon.Warning);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="Cache is a reference")]
 		internal class TextCreationParams
 		{
 			internal Interlineartext InterlinText;
@@ -506,6 +509,8 @@ namespace SIL.FieldWorks.IText
 							{
 								//alert the user
 								cache.LanguageProject.AddToCurrentAnalysisWritingSystems((IWritingSystem)writingSystem);
+								// We already have progress indications up.
+								XmlTranslatedLists.ImportTranslatedListsForWs(writingSystem.Id, cache, null);
 							}
 							else
 							{

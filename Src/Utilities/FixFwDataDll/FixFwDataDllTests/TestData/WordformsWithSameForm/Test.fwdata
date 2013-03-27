@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000051">
+
+	<rt class="WfiWordform" guid="64cf9708-a7d4-4e1e-a403-deec87c34455">
+		<Form>
+			<AUni ws="fr">dup</AUni>
+		</Form>
+		<Analyses>
+			<objsur t="o" guid="c84614e6-168b-4304-a025-0d6ae6573086" />
+			<objsur t="o" guid="23D88C6A-B088-4506-8A8B-7CA4B391071F" />
+		</Analyses>
+	</rt>
+
+	<rt class="WfiWordform" guid="0964665E-BB56-4406-8310-ADE04A7A23C7">
+		<Form>
+			<AUni ws="fr">dup</AUni>
+		</Form>
+		<Analyses>
+			<objsur t="o" guid="86DB9E97-2E6C-4AAC-B78B-9EDA834254E7" />
+			<objsur t="o" guid="BCD9971A-D871-472D-8843-9B5392AAA57F" />
+		</Analyses>
+	</rt>
+
+	<rt class="WfiWordform" guid="31EBCDB7-8274-4776-A6E0-1AB523AA9E1E">
+		<Form>
+			<AUni ws="fr">other</AUni>
+		</Form>
+	</rt>
+
+	<rt class="WfiWordform" guid="D596FD07-A4E6-4ED1-A859-7601ACD2CD36">
+		<Form>
+			<AUni ws="fr">dup</AUni>
+			<AUni ws="sp">other</AUni>
+		</Form>
+	</rt>
+
+	<rt class="WfiWordform" guid="83A4D906-3ED1-49D1-AA5D-FC2DB938B6A4">
+		<Form>
+			<AUni ws="fr">dupFr</AUni>
+			<AUni ws="sp">dupSp</AUni>
+		</Form>
+	</rt>
+
+	<rt class="WfiWordform" guid="D8444A90-A5CF-4163-B312-AFF577B0452E">
+		<Form>
+			<AUni ws="sp">dupSp</AUni>
+			<AUni ws="fr">dupFr</AUni>
+		</Form>
+		<Analyses>
+			<objsur t="o" guid="AE2BA69A-42BA-4582-AFA4-B8AC3E5567C2" />
+		</Analyses>
+	</rt>
+
+	<rt class="WfiAnalysis" guid="c84614e6-168b-4304-a025-0d6ae6573086" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455">
+	</rt>
+	<rt class="WfiAnalysis" guid="23D88C6A-B088-4506-8A8B-7CA4B391071F" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455">
+	</rt>
+	<rt class="WfiAnalysis" guid="86DB9E97-2E6C-4AAC-B78B-9EDA834254E7" ownerguid="0964665E-BB56-4406-8310-ADE04A7A23C7">
+	</rt>
+	<rt class="WfiAnalysis" guid="BCD9971A-D871-472D-8843-9B5392AAA57F" ownerguid="0964665E-BB56-4406-8310-ADE04A7A23C7">
+	</rt>
+	<rt class="WfiAnalysis" guid="AE2BA69A-42BA-4582-AFA4-B8AC3E5567C2" ownerguid="D8444A90-A5CF-4163-B312-AFF577B0452E">
+	</rt>
+
+	<rt class="Segment" guid ="b405f3c0-58e1-4492-8a40-e955774a6911" ownerguid="a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2">
+		<Analyses>
+			<objsur guid="0964665E-BB56-4406-8310-ADE04A7A23C7" t="r" />
+			<objsur guid="31EBCDB7-8274-4776-A6E0-1AB523AA9E1E" t="r" />
+		</Analyses>
+	</rt>
+
+	<rt class="StTxtPara" guid="a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2" ownerguid="65d543ae-a904-4b10-9c8e-91169b681da6">
+		<Contents>
+			<Str>
+				<Run ws="qaa-x-kal">dup.</Run>
+			</Str>
+		</Contents>
+		<ParseIsCurrent val="True" />
+		<Segments>
+			<objsur guid="b405f3c0-58e1-4492-8a40-e955774a6911" t="o" />
+		</Segments>
+	</rt>
+
+	<rt class="StText" guid="65d543ae-a904-4b10-9c8e-91169b681da6" ownerguid="bcabf849-473c-4902-957b-8de378248b7f">
+		<Paragraphs>
+			<objsur guid="a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2" t="o" />
+		</Paragraphs>
+	</rt>
+	<rt class="Text" guid="bcabf849-473c-4902-957b-8de378248b7f">
+		<Contents>
+			<objsur guid="65d543ae-a904-4b10-9c8e-91169b681da6" t="o" />
+		</Contents>
+	</rt>
+</languageproject>

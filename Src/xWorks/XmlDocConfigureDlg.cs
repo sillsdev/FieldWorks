@@ -2586,7 +2586,16 @@ namespace SIL.FieldWorks.XWorks
 			m_cfgParentNode.Visible = true;
 			m_cfgParentNode.SetDetails(sMoreDetail, m_chkDisplayData.Checked && fEnabled, true);
 			if (m_chkDisplayData.Checked && fEnabled)
+			{
 				m_current.Expand();
+				foreach (LayoutTreeNode child in m_current.Nodes)
+				{
+					if (XmlUtils.GetOptionalBooleanAttributeValue(child.Configuration, "autoexp", false))
+					{
+						child.Expand();
+					}
+				}
+			}
 		}
 
 		private void DisplayDetailsForRecursiveNode(bool fEnabled)
@@ -3675,22 +3684,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 			}
 
-#if __MonoCS__ // work around mono bug https://bugzilla.novell.com/show_bug.cgi?id=613708
-			// Create a LayoutTreeNode from a TreeNode constructor.
-			protected LayoutTreeNode(TreeNode copyNode) : base(copyNode.Text, copyNode.ImageIndex, copyNode.SelectedImageIndex)
-			{
-				if (copyNode.Nodes != null) {
-					foreach (TreeNode child in copyNode.Nodes)
-						Nodes.Add ((TreeNode)child.Clone ());
-				}
-				this.Tag = copyNode.Tag;
-				this.Checked = copyNode.Checked;
-				this.BackColor = copyNode.BackColor;
-				this.ForeColor = copyNode.ForeColor;
-				this.NodeFont = copyNode.NodeFont;
-			}
-#endif
-
 			/// <summary>
 			/// Copies the tree node and the entire subtree rooted at this tree node.
 			/// This is a partial copy that copies references to objects rather than
@@ -3704,11 +3697,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			public override object Clone()
 			{
-#if !__MonoCS__
 				var ltn = (LayoutTreeNode)base.Clone();
-#else // work around mono bug https://bugzilla.novell.com/show_bug.cgi?id=613708
-				LayoutTreeNode ltn = new LayoutTreeNode(this);
-#endif
 				CopyValuesTo(ltn);
 				return ltn;
 			}
@@ -4162,7 +4151,6 @@ namespace SIL.FieldWorks.XWorks
 					// Now, compare our member variables to the content of m_xnConfig.
 					if (m_xnConfig.Name == "part")
 					{
-						// string sVisibility = XmlUtils.GetOptionalAttributeValue(m_xnConfig, "visibility", "always"); // CS0219
 						bool fContentVisible = m_sVisibility != "never";
 						m_fContentVisible = Checked; // in case (un)checked in treeview, but node never selected.
 						if (fContentVisible != m_fContentVisible)
@@ -4390,7 +4378,6 @@ namespace SIL.FieldWorks.XWorks
 						xnLayout.Attributes.CopyTo(rgxa, 0);
 						List<XmlNode> rgxnGen = new List<XmlNode>();
 						List<int> rgixn = new List<int>();
-						// int cChildren = xnLayout.ChildNodes.Count; // CS0219
 						for (int i = 0; i < xnLayout.ChildNodes.Count; ++i)
 						{
 							XmlNode xn = xnLayout.ChildNodes[i];
@@ -4529,7 +4516,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// probably can't happen...
 					xn.Attributes.RemoveNamedItem(sName);
-					Debug.Assert(sName == "flowType");		// only value we intentionally delete.
+					//In LayoutTreeNode(XmlNode, StringTable, string) if the flowtype is "div" we can remove "after" and "sep" attributes, so don't assert on them.
+					Debug.Assert(sName == "flowType" || xn.Attributes["flowType"] != null && xn.Attributes["flowType"].Value == "div");		// only values we intentionally delete.
 				}
 				else if (xn.OwnerDocument != null)
 				{
@@ -5086,7 +5074,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var label = XmlUtils.GetManditoryAttributeValue(xnConfig, "label");
 			var className = XmlUtils.GetManditoryAttributeValue(xnConfig.FirstChild, "class");
-			var name = String.Format("{0}_{1}_Layouts.xml", label, className);
+			var name = String.Format("{0}_{1}.fwlayout", label, className);
 			return Path.Combine(configDir, name);
 		}
 

@@ -349,39 +349,6 @@ namespace SIL.Utils
 			MiscUtils.CompareHex("34", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		}
 
-#if __MonoCS__
-		///
-		/// <summary>
-		/// Tests the // inefficient work around for mono bug https://bugzilla.novell.com/show_bug.cgi?id=596402 in ClipboardUtils.cs
-		/// Please delete test when mono bug if fixed.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void ConvertLiternalUnicodeValuesTest()
-		{
-			Assert.AreEqual(String.Empty, ClipboardUtils.ConvertLiternalUnicodeValues(String.Empty));
-			Assert.AreEqual("登入", ClipboardUtils.ConvertLiternalUnicodeValues(@"\u767b\u5165"));
-			Assert.AreEqual("登入登入登入", ClipboardUtils.ConvertLiternalUnicodeValues(@"\u767b\u5165\u767b\u5165\u767b\u5165"));
-			Assert.AreEqual(@"\b", ClipboardUtils.ConvertLiternalUnicodeValues(@"\b"));
-			Assert.AreEqual(@"\b1234", ClipboardUtils.ConvertLiternalUnicodeValues(@"\b1234"));
-			Assert.AreEqual("登HelloWorld入", ClipboardUtils.ConvertLiternalUnicodeValues(@"\u767bHelloWorld\u5165"));
-			Assert.AreEqual(@"a\b", ClipboardUtils.ConvertLiternalUnicodeValues(@"a\b"));
-			Assert.AreEqual(@"a\", ClipboardUtils.ConvertLiternalUnicodeValues(@"a\"));
-			Assert.AreEqual(@"\", ClipboardUtils.ConvertLiternalUnicodeValues(@"\"));
-			Assert.AreEqual(@"a", ClipboardUtils.ConvertLiternalUnicodeValues(@"a"));
-
-			Assert.AreEqual(@"登a\b", ClipboardUtils.ConvertLiternalUnicodeValues(@"\u767ba\b"));
-			Assert.AreEqual(@"登a\", ClipboardUtils.ConvertLiternalUnicodeValues(@"\u767ba\"));
-			Assert.AreEqual(@"登\", ClipboardUtils.ConvertLiternalUnicodeValues(@"\u767b\"));
-			Assert.AreEqual(@"登a", ClipboardUtils.ConvertLiternalUnicodeValues(@"\u767ba"));
-
-			Assert.AreEqual(@"a\b登", ClipboardUtils.ConvertLiternalUnicodeValues(@"a\b\u767b"));
-			Assert.AreEqual(@"a\登", ClipboardUtils.ConvertLiternalUnicodeValues(@"a\\u767b"));
-			Assert.AreEqual(@"\登", ClipboardUtils.ConvertLiternalUnicodeValues(@"\\u767b"));
-			Assert.AreEqual(@"a登", ClipboardUtils.ConvertLiternalUnicodeValues(@"a\u767b"));
-		}
-#endif
-
 		#region IsAlpha tests
 		/// <summary></summary>
 		[Test]
@@ -573,25 +540,31 @@ namespace SIL.Utils
 		public void RunProcess_existingCommand_noError()
 		{
 			bool errorTriggered = false;
-			MiscUtils.RunProcess("find", "blah",
-				(exception) => { errorTriggered = true; });
-			Assert.That(errorTriggered, Is.False);
+			using (MiscUtils.RunProcess("find", "blah",
+				(exception) => { errorTriggered = true; }))
+			{
+				Assert.That(errorTriggered, Is.False);
+			}
 		}
 
 		[Test]
 		public void RunProcess_nonexistentCommand_givesError()
 		{
 			bool errorTriggered = false;
-			MiscUtils.RunProcess("nonexistentCommand", "",
-				(exception) => { errorTriggered = true; });
-			Assert.That(errorTriggered, Is.True);
+			using (MiscUtils.RunProcess("nonexistentCommand", "",
+				(exception) => { errorTriggered = true; }))
+			{
+				Assert.That(errorTriggered, Is.True);
+			}
 		}
 
 		[Test]
 		public void RunProcess_allowsNullErrorHandler()
 		{
 			Assert.DoesNotThrow(() => {
-				MiscUtils.RunProcess("nonexistentCommand", "", null);
+				using (MiscUtils.RunProcess("nonexistentCommand", "", null))
+				{
+				}
 			});
 		}
 		#endregion // RunProcess tests

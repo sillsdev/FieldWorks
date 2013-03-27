@@ -11,6 +11,7 @@
 // File: ProgressDlgTests.cs
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -34,6 +35,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		public DummyProgressDlg() : base(null, new ThreadHelper())
 		{
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && !IsDisposed)
+			{
+				if (ThreadHelper != null)
+					ThreadHelper.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -69,6 +81,8 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	/// ---------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test, object is disposed in TearDown method")]
 	public class ProgressDlgTests : BaseTest
 	{
 		private DummyProgressDlg m_dlg;
@@ -80,6 +94,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Unit test, object is disposed in TearDown method")]
 		public void Setup()
 		{
 			m_dlg = new DummyProgressDlg {Maximum = 10};
@@ -165,6 +181,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void TestWithCancel()
 		{
 			StartTimer(2500);
@@ -182,6 +199,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[Category("DesktopRequired")]
 		public void TestWithoutCancel()
 		{
 			var nProgress = (int) m_dlg.RunTask(false, BackgroundTask);

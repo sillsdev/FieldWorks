@@ -1,0 +1,72 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>TlbImpTask Class</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">TlbImpTask Class</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Imports a type library to a .NET assembly (wraps Microsoft's <code>tlbimp.exe</code>). </p>
+	  <p>For a list of all members of this type, see <a href="NAnt.Win32.Tasks.TlbImpTaskMembers.html">TlbImpTask Members</a>.</p>
+	  <p>
+		<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">System.Object</a>
+		<br />   <a href="NAnt.Core.Element.html">NAnt.Core.Element</a><br />      <a href="NAnt.Core.Task.html">NAnt.Core.Task</a><br />         <a href="NAnt.Core.Tasks.ExternalProgramBase.html">NAnt.Core.Tasks.ExternalProgramBase</a><br />            <b>NAnt.Win32.Tasks.TlbImpTask</b></p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;ProgramLocation(LocationType:=LocationType.FrameworkSdkDir), _
+ TaskName(Name:="tlbimp")&gt;</div>Public Class TlbImpTask<div>    Inherits <a href="NAnt.Core.Tasks.ExternalProgramBase.html">ExternalProgramBase</a></div></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[ProgramLocation(LocationType=LocationType.FrameworkSdkDir)]</div>
+		<div class="attribute">[TaskName(Name="tlbimp")]</div>
+		<div>public class TlbImpTask<b> : <a href="NAnt.Core.Tasks.ExternalProgramBase.html">ExternalProgramBase</a></b></div>
+	  </div>
+	  <H4 class="dtH4">Thread Safety</H4>
+	  <P>Public static (<b>Shared</b> in Visual Basic) members of this type are
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
+				thread-safe.</P>
+	  <h4 class="dtH4">Remarks</h4>
+			<p> This task lets you easily create interop assemblies. By default, it will not reimport if the underlying COM TypeLib or reference has not changed. </p>
+			<p>
+			<a href="ms-help://MS.NETFrameworkSDK/cptools/html/cpgrftypelibraryimportertlbimpexe.htm">See the Microsoft.NET Framework SDK documentation for details.</a>
+			</p>
+			<h4 class="dtH4">Example</h4><p>
+			  <p>Import <code>LegacyCOM.dll</code> to <code>DotNetAssembly.dll</code>.</p>
+			  <pre class="code">
+
+			&lt;tlbimp typelib="LegacyCOM.dll" output="DotNetAssembly.dll" /&gt;
+
+			  </pre>
+
+			  <p> Generate an assembly named "Interop.MSVidCtlLib.dll" for the MS Video Control 1.0 Type Library, transforming any [out, retval] parameters of methods on dispinterfaces in the type library into return values in the managed library. </p>
+			  <pre class="code">
+
+			&lt;tlbimp typelib="msvidctl.dll" output="Interop.MSVidCtlLib.dll" transform="dispret"&gt;
+				&lt;references basedir="Interop"&gt;
+					&lt;include name="Interop.TunerLib.dll" /&gt;
+				&lt;/references&gt;
+			&lt;/tlbimp&gt;
+
+			  </pre>
+			</p><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="NAnt.Win32.Tasks.html">NAnt.Win32.Tasks</a></p><p><b>Assembly: </b>NAnt.Win32Tasks (in NAnt.Win32Tasks.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.Win32.Tasks.TlbImpTaskMembers.html">TlbImpTask Members</a> | <a href="NAnt.Win32.Tasks.html">NAnt.Win32.Tasks Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="TlbImpTask class, about TlbImpTask class"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

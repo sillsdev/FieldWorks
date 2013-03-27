@@ -1,0 +1,43 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>Root Property</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">ChangeLogTask.Root Property</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+			<p> The cvs root variable has the following components: </p>
+			<p>
+				<pre class="code">[protocol]:[username]@[servername]:[server path]</pre>
+				<ul>
+					<li>protocol: ext, pserver, ssh (sharpcvslib); if you are not using sharpcvslib consult your cvs documentation.</li>
+					<li>username: [username]</li>
+					<li>servername: cvs.sourceforge.net</li>
+					<li>server path: /cvsroot/nant</li>
+				</ul>
+			</p>
+			<p> If the cvsroot is not specified then the directory specified by the <a href="NAnt.SourceControl.Tasks.AbstractSourceControlTask.DestinationDirectory.html">DestinationDirectory</a> attribute is searched for CVS\Root. </p>
+			<div class="syntax"><span class="lang">[Visual Basic]</span><br /><div class="attribute">&lt;TaskAttribute(Name:="cvsroot", Required:=False, ExpandProperties:=True, ProcessXml:=True)&gt;</div>Overrides Public Property Root As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a></div><div class="syntax"><span class="lang">[C#]</span><br /><div class="attribute">[TaskAttribute(Name="cvsroot", Required=False, ExpandProperties=True, ProcessXml=True)]</div>public override <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> Root {get; set;}</div><p></p><h4 class="dtH4">Example</h4><p>
+			  <p>NAnt anonymous cvsroot:</p>
+			  <pre class="code">:pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant
+</pre>
+			</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.SourceControl.Tasks.ChangeLogTask.html">ChangeLogTask Class</a> | <a href="NAnt.SourceControl.Tasks.html">NAnt.SourceControl.Tasks Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="Root property"></param><param name="Keyword" value="Root property, ChangeLogTask class"></param><param name="Keyword" value="ChangeLogTask.Root property"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

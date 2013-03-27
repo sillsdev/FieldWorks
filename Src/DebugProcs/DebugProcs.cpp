@@ -16,11 +16,16 @@ Last reviewed:
 #else
 #include <COM.h>
 #include <Hacks.h>
+#include <MessageBox.h>
+#include <cstdlib>
+#include <unistd.h>
 #endif
 #include <stdio.h>
 #include <assert.h>
 #if WIN32
 #include <CrtDbg.h>
+#else
+const int _CRT_ASSERT = 2;
 #endif
 #include <signal.h>
 
@@ -80,10 +85,9 @@ void WINAPI DefWarnProc(const char * pszExp, const char * pszFile, int nLine, HM
 /*----------------------------------------------------------------------------------------------
 	Default Assert Proc. Sends message to debug output.
 ----------------------------------------------------------------------------------------------*/
-void WINAPI DefAssertProc(const char * pszExp, const char * pszFile, int nLine, HMODULE hmod)
+void WINAPI DefAssertProc(const char * pszExp, const char * pszFile, int nLine, HMODULE)
 {
 	SilAssert(pszExp, pszFile, nLine);
-	UNREFERENCED_PARAMETER(hmod);
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -229,6 +233,7 @@ extern "C" __declspec(dllexport) _DBG_REPORT_HOOK APIENTRY DbgSetReportHook(_DBG
 	return oldHook;
 }
 
+#if WIN32
 /*----------------------------------------------------------------------------------------------
 	Handler that intercepts debug output. If a ReportHook is set it sends the output to that,
 	otherwise it outputs it with OutputDebugString and printf.
@@ -252,6 +257,7 @@ int __cdecl ReportHandler(int nReportType, char* szMsg, int* pRet)
 
 	return true;
 }
+#endif //WIN32
 
 /*----------------------------------------------------------------------------------------------
 	Sets the report hook that intercepts all debug messages
@@ -293,10 +299,11 @@ bool GetShowAssertMessageBox()
 		DWORD fShowAssertMessageBox = true;
 		DWORD cb = sizeof(fShowAssertMessageBox);
 		DWORD dwT;
-		::RegQueryValueEx(hk, "AssertMessageBox", NULL, &dwT, (LPBYTE)&fShowAssertMessageBox,
-			&cb);
+		LONG ret = ::RegQueryValueEx(hk, "AssertMessageBox", NULL, &dwT,
+			(LPBYTE)&fShowAssertMessageBox, &cb);
 		RegCloseKey(hk);
-		return fShowAssertMessageBox ? true : false; // otherwise we get a performance warning
+		if (ret == ERROR_SUCCESS)
+			return fShowAssertMessageBox ? true : false; // otherwise we get a performance warning
 	}
 // getenv is deprecated on Windows
 #pragma warning(push)
@@ -616,8 +623,11 @@ void __cdecl SilAssert (
 	}
 	else // !g_fShowMessageBox
 	{
-		// if we don't show a message box we should at least abort. Note that we don't call
-		// _exit(3) as above so that we can trap the signal and ignore it in unit tests
+		// if we don't show a message box we should at least abort (and output the assertion
+		// text if we haven't done that already). Note that we don't call _exit(3) as above
+		// so that we can trap the signal and ignore it in unit tests
+		if (g_ReportHook)
+			OutputDebugString(assertbuf);
 		raise(SIGABRT);
 	}
 

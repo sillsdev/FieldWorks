@@ -12,6 +12,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.Utils;
@@ -87,6 +88,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
 			{
 				if (m_timer != null)
@@ -103,6 +105,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="marqueeGif gets added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.PictureBox marqueeGif;

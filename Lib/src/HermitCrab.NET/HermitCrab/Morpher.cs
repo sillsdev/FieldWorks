@@ -833,9 +833,13 @@ namespace SIL.HermitCrab
 
 		public ICollection<WordSynthesis> MorphAndLookupWord(string word, out WordAnalysisTrace trace)
 		{
-			return MorphAndLookupToken(word, null, null, out trace);
+			return MorphAndLookupToken(word, null, null, out trace, null);
 		}
 
+		public ICollection<WordSynthesis> MorphAndLookupWord(string word, out WordAnalysisTrace trace, string[] selectTraceMorphs)
+		{
+			return MorphAndLookupToken(word, null, null, out trace, selectTraceMorphs);
+		}
 		/// <summary>
 		/// Morphs the list of specified words.
 		/// </summary>
@@ -871,6 +875,10 @@ namespace SIL.HermitCrab
 			return results;
 		}
 
+		ICollection<WordSynthesis> MorphAndLookupToken(string word, string prev, string next, out WordAnalysisTrace trace)
+		{
+			return MorphAndLookupToken(word, prev, next, out trace, null);
+		}
 		/// <summary>
 		/// Does the real work of morphing the specified word.
 		/// </summary>
@@ -879,7 +887,7 @@ namespace SIL.HermitCrab
 		/// <param name="next">The next word.</param>
 		/// <param name="trace">The trace.</param>
 		/// <returns>All valid word synthesis records.</returns>
-		ICollection<WordSynthesis> MorphAndLookupToken(string word, string prev, string next, out WordAnalysisTrace trace)
+		ICollection<WordSynthesis> MorphAndLookupToken(string word, string prev, string next, out WordAnalysisTrace trace, string[] selectTraceMorphs)
 		{
 			// convert the word to its phonetic shape
 			PhoneticShape input = SurfaceStratum.CharacterDefinitionTable.ToPhoneticShape(word, ModeType.ANALYSIS);
@@ -913,7 +921,7 @@ namespace SIL.HermitCrab
 						StratumAnalysisTrace stratumTrace = new StratumAnalysisTrace(m_strata[i], true, wa.Clone());
 						wa.CurrentTrace.AddChild(stratumTrace);
 					}
-					foreach (WordAnalysis outWa in m_strata[i].Unapply(wa, candidates))
+					foreach (WordAnalysis outWa in m_strata[i].Unapply(wa, candidates, selectTraceMorphs))
 					{
 						// promote each analysis to the next stratum
 						if (i != 0)

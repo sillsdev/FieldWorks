@@ -75,6 +75,37 @@ namespace Palaso.Xml
 			return node.SelectSingleNode(prefixedPath, nsmgr);
 		}
 
+		/// <summary>
+		/// Search through an entire document for "xmlns" attributes that define prefixes,
+		/// returns an XmlNamespaceManager able to interpret xpath for those prefixes.
+		/// </summary>
+		/// <param name="doc"></param>
+		/// <returns></returns>
+		public static XmlNamespaceManager LoadNsmgrForDoc(XmlDocument doc)
+		{
+			var rootNode = doc.DocumentElement;
+			var nsmgr = new XmlNamespaceManager(doc.NameTable);
+			foreach (XmlNode node in rootNode.SelectNodes("//*"))
+			{
+				foreach (XmlAttribute attr in node.Attributes)
+				{
+					if (attr.Prefix != "xmlns")
+						continue;
+					var prefix = attr.LocalName;
+					var urn = attr.Value;
+					if (prefix.Length > 0)
+					{
+						var urnDefined = nsmgr.LookupNamespace(prefix);
+						if (String.IsNullOrEmpty(urnDefined))
+						{
+							nsmgr.AddNamespace(prefix, urn);
+						}
+
+					}
+				}
+			}
+			return nsmgr;
+		}
 
 		private static XmlNamespaceManager GetNsmgr(XmlNode node, string prefix)
 		{
@@ -102,7 +133,8 @@ namespace Palaso.Xml
 			}
 			catch (Exception error)
 			{
-				throw new ApplicationException("Could not create a namespace manager for the following node:\r\n"+node.OuterXml,error);
+				throw new ApplicationException("Could not create a namespace manager for the following node:" +
+					Environment.NewLine + node.OuterXml, error);
 			}
 		}
 

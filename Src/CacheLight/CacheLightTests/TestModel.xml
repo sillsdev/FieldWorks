@@ -17,7 +17,7 @@
 	<class num="15" id="ClassG" abstract="true" abbr="G" base="BaseClass" depth="0">
 	  <props>
 		<basic num="2" id="TextPropsProp7" sig="TextPropBinary"/>
-		  <basic num="68" id="BigStringProp68" sig="String" big="true"/>
+		  <basic num="68" id="StringProp68" sig="String"/>
 	  </props>
 	</class>
 	<class num="18" id="ClassH" abstract="false" abbr="H" base="BaseClass" depth="0" owner="none">
@@ -74,9 +74,9 @@
 	<class num="97" id="ClassJ" abstract="false" abbr="J" base="BaseClass" depth="0">
 	  <props>
 		<basic num="8" id="StringProp10" sig="String"/>
-		  <basic num="20" id="MultiBigStringProp20" sig="MultiString" big="true"/>
+		  <basic num="20" id="MultiStringProp20" sig="MultiString"/>
 		  <basic num="21" id="MultiStringProp21" sig="MultiString"/>
-		  <basic num="31" id="BigUnicodeProp31" sig="Unicode" big="true"/>
+		  <basic num="31" id="UnicodeProp31" sig="Unicode"/>
 	  </props>
 	</class>
 	<class num="1" id="ClassE" abstract="false" abbr="E" base="ClassB" depth="1" singleton="true" owner="none">

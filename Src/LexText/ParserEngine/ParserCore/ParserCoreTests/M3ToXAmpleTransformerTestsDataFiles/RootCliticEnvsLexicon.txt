@@ -4,8 +4,8 @@
 \c W
 \wc root
 \mp RootPOS0
-\a root {41492} / [7599]_  | / [V] _
-
+\a root {41492} / [7599]_  | / [V] _ 
+		
 
 \lx 41490
 \g delme
@@ -22,7 +22,7 @@
 \wc clitic
 \a proc {41491}
 \fd CliticPOS0
-
+ 
 \lx 6048
 \g to.see
 \c W
@@ -30,7 +30,7 @@
 \mp RootPOS168
 \mp InflClass178
 \a bili {6051} Bound
-
+ 
 \lx 6053
 \g to.sleep
 \c W
@@ -38,55 +38,55 @@
 \mp RootPOS153
 \mp InflClass178
 \a nad {6055}
-
+ 
 \lx 6057
 \g 1SgSubj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 181
 \a ni {6059}
 \eType prefix
-
+ 
 \lx 6061
 \g 3SgObj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 182
-\a hin {6064} / _ [7601]  | / _ [+cor,+vd]
-
-\a him {6065} / _ b  | / _ b
-
-
- ~/ _ [7601]  | ~/ _ [+cor,+vd]
-
-\a hiŋ {6066} / _ g  | / _ g
-
-
- ~/ _ [7601]  | ~/ _ [+cor,+vd]
-
-
- ~/ _ b  | ~/ _ b
-
+\a hin {6064} / _ [7601]  | / _ [+cor,+vd] 
+		
+\a him {6065} / _ b  | / _ b 
+		  
+ 
+ ~/ _ [7601]  | ~/ _ [+cor,+vd] 
+		
+\a hiŋ {6066} / _ g  | / _ g 
+		  
+ 
+ ~/ _ [7601]  | ~/ _ [+cor,+vd] 
+		  
+ 
+ ~/ _ b  | ~/ _ b 
+		
 \eType prefix
-
+ 
 \lx 6068
 \g Pres
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 167
 \a sa {6072} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
 \a ra {6071} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
-
+ 
 \lx 6069
 \g Pres
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 180
 \a sa {6072} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
 \a ra {6071} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
-
+ 
 \lx 6074
 \g to.think
 \c W
@@ -94,15 +94,15 @@
 \mp RootPOS168
 \mp InflClass179
 \a dok {6076} Bound
-
+ 
 \lx 6078
-\g
+\g 
 \c W
 \wc root
 \mp RootPOS168
 \mp InflClass178
 \a gabi {6080} Bound
-
+ 
 \lx 6082
 \g to.eat
 \c W
@@ -110,7 +110,7 @@
 \mp RootPOS168
 \mp InflClass179
 \a lik {6084}
-
+ 
 \lx 6086
 \g mat
 \c W
@@ -118,7 +118,7 @@
 \mp RootPOS81
 \mp InflClass99
 \a yalo {6088}
-
+ 
 \lx 6090
 \g house
 \c W
@@ -126,7 +126,7 @@
 \mp RootPOS81
 \mp InflClass100
 \a kasa {6092}
-
+ 
 \lx 6094
 \g water
 \c W
@@ -136,7 +136,7 @@
 \fd MSFS41358
 \a wet {41356}
 \a iŋ {6096}
-
+ 
 \lx 6098
 \g tree
 \c W
@@ -144,7 +144,7 @@
 \mp RootPOS81
 \mp InflClass100
 \a pal {6100}
-
+ 
 \lx 6102
 \g Caus
 \c W/W
@@ -155,7 +155,7 @@
 \fd FromPOS153
 \fd ToPOS168
 \mp ToInflClass178
-
+ 
 \lx 6103
 \g Caus
 \c W/W
@@ -166,7 +166,7 @@
 \fd FromPOS168
 \fd ToPOS172
 \mp ToInflClass178
-
+ 
 \lx 6104
 \g Caus
 \c W/W
@@ -177,7 +177,7 @@
 \fd FromPOS81
 \fd ToPOS168
 \mp ToInflClass178
-
+ 
 \lx 6108
 \g Pass
 \c W/W
@@ -188,7 +188,7 @@
 \fd FromPOS168
 \fd ToPOS153
 \mp ToInflClass179
-
+ 
 \lx 6109
 \g Pass
 \c W/W
@@ -199,7 +199,7 @@
 \fd FromPOS172
 \fd ToPOS168
 \mp ToInflClass179
-
+ 
 \lx 6113
 \g Rapidly
 \c W/W
@@ -209,7 +209,7 @@
 \eType suffix
 \fd FromPOS153
 \mp ToInflClass179
-
+ 
 \lx 6114
 \g Rapidly
 \c W/W
@@ -219,7 +219,7 @@
 \eType suffix
 \fd FromPOS168
 \mp ToInflClass179
-
+ 
 \lx 6115
 \g Rapidly
 \c W/W
@@ -229,7 +229,7 @@
 \eType suffix
 \fd FromPOS172
 \mp ToInflClass179
-
+ 
 \lx 6119
 \g Nom
 \c W/W
@@ -240,7 +240,7 @@
 \fd FromPOS146
 \fd ToPOS81
 \mp ToInflClass100
-
+ 
 \lx 6123
 \g Adverbializer
 \c W/W
@@ -250,7 +250,7 @@
 \eType suffix
 \fd FromPOS146
 \fd ToPOS73
-
+ 
 \lx 6124
 \g Adverbializer
 \c W/W
@@ -260,7 +260,7 @@
 \eType suffix
 \fd FromPOS81
 \fd ToPOS73
-
+ 
 \lx 6128
 \g ???
 \c W/W
@@ -269,217 +269,217 @@
 \a kes {6130}
 \eType suffix
 \fd FromPOS146
-
+ 
 \lx 6132
 \g 2SgSubj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 181
 \a ti {6134}
 \eType prefix
-
+ 
 \lx 6136
 \g 1PlSubj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 181
 \a mo {6138}
 \eType prefix
-
+ 
 \lx 6140
 \g 2PlSubj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 181
 \a se {6142}
 \eType prefix
-
+ 
 \lx 6144
 \g 1SgObj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 182
 \a mi {6146}
 \eType prefix
-
+ 
 \lx 6148
 \g 2SgObj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 182
 \a yu {6150}
 \eType prefix
-
+ 
 \lx 6152
 \g 1PlObj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 182
 \a us {6154}
 \eType prefix
-
+ 
 \lx 6156
 \g 2PlObj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 182
 \a yul {6158}
 \eType prefix
-
+ 
 \lx 6160
 \g 3PlObj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 182
-\a dem {6163} / _ b  | / _ b
-
-\a den {6164} / _ [7601]  | / _ [+cor,+vd]
-
-
- ~/ _ b  | ~/ _ b
-
-\a deŋ {6165} / _ g  | / _ g
-
-
- ~/ _ b  | ~/ _ b
-
-
- ~/ _ [7601]  | ~/ _ [+cor,+vd]
-
+\a dem {6163} / _ b  | / _ b 
+		
+\a den {6164} / _ [7601]  | / _ [+cor,+vd] 
+		  
+ 
+ ~/ _ b  | ~/ _ b 
+		
+\a deŋ {6165} / _ g  | / _ g 
+		  
+ 
+ ~/ _ b  | ~/ _ b 
+		  
+ 
+ ~/ _ [7601]  | ~/ _ [+cor,+vd] 
+		
 \eType prefix
-
+ 
 \lx 6167
 \g Past
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 167
 \a ko {6171} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
 \a bi {6170} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
-
+ 
 \lx 6168
 \g Past
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 180
 \a ko {6171} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
 \a bi {6170} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
-
+ 
 \lx 6173
 \g Future
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 180
 \a pe {6176} ICA179 +/ {InflClass179} ... _ +/ {ToInflClass179} ... _
 \a gu {6175} ICA178 +/ {InflClass178} ... _ +/ {ToInflClass178} ... _
 \eType suffix
-
+ 
 \lx 6178
 \g 1SgPoss
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 103
 \a zi {6181} ICA100 +/ {InflClass100} ... _ +/ {ToInflClass100} ... _
-\a a {6182} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _ / [7600]_  | / [C] _
-
-\a la {6180} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _ / [7599]_  | / [V] _
-
-
- ~/ [7600]_  | ~/ [C] _
-
+\a a {6182} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _ / [7600]_  | / [C] _ 
+		
+\a la {6180} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _ / [7599]_  | / [V] _ 
+		  
+ 
+ ~/ [7600]_  | ~/ [C] _ 
+		
 \eType suffix
-
+ 
 \lx 6184
 \g 2SgPoss
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 103
 \a fi {6187} ICA100ICA101 +/ {InflClass100} ... _ +/ {ToInflClass100} ... _ +/ {InflClass101} ... _ +/ {ToInflClass101} ... _
-\a k {6188} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _ / [7599]_  | / [V] _
-
-\a or {6186} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _ / [7600]_  | / [C] _
-
-
- ~/ [7599]_  | ~/ [V] _
-
+\a k {6188} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _ / [7599]_  | / [V] _ 
+		
+\a or {6186} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _ / [7600]_  | / [C] _ 
+		  
+ 
+ ~/ [7599]_  | ~/ [V] _ 
+		
 \eType suffix
-
+ 
 \lx 6190
 \g 3SgPoss
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 103
 \a yo {6193} ICA100 +/ {InflClass100} ... _ +/ {ToInflClass100} ... _
 \a vo {6192} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _
 \eType suffix
-
+ 
 \lx 6195
 \g 1PlPoss
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 103
 \a pa {6198} ICA100 +/ {InflClass100} ... _ +/ {ToInflClass100} ... _
 \a ni {6197} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _
 \eType suffix
-
+ 
 \lx 6200
 \g 2PlPoss
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 103
 \a go {6203} ICA100 +/ {InflClass100} ... _ +/ {ToInflClass100} ... _
 \a tu {6202} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _
 \eType suffix
-
+ 
 \lx 6205
 \g 3PlPoss
 \c W/W
-\o NaN NaN
+\o NaN NaN 
 \wc 103
 \a fo {6208} ICA100 +/ {InflClass100} ... _ +/ {ToInflClass100} ... _
 \a te {6207} ICA99 +/ {InflClass99} ... _ +/ {ToInflClass99} ... _
 \eType suffix
-
+ 
 \lx 6210
 \g slowly
 \c W
 \wc root
 \mp RootPOS73
 \a ximu {6212}
-
+ 
 \lx 6214
 \g Intensifier
 \c W/W
 \o -1
 \wc derivPfx
-\a [7599^1]t  {6218} / _ [7599^1]  | / _ [V^1]
-
-\a [7600^1][7599^1]  {6219} / _ [7600^1][7599^1]  | / _ [C^1][V^1]
-
+\a [7599^1]t  {6218} / _ [7599^1]  | / _ [V^1] 
+		
+\a [7600^1][7599^1]  {6219} / _ [7600^1][7599^1]  | / _ [C^1][V^1] 
+		
 \eType prefix
 \fd FromPOS168
-
+ 
 \lx 6215
 \g Intensifier
 \c W/W
 \o -1
 \wc derivPfx
-\a [7599^1]t  {6218} / _ [7599^1]  | / _ [V^1]
-
-\a [7600^1][7599^1]  {6219} / _ [7600^1][7599^1]  | / _ [C^1][V^1]
-
+\a [7599^1]t  {6218} / _ [7599^1]  | / _ [V^1] 
+		
+\a [7600^1][7599^1]  {6219} / _ [7600^1][7599^1]  | / _ [C^1][V^1] 
+		
 \eType prefix
 \fd FromPOS153
-
+ 
 \lx 6221
 \g 3PlSubj
 \c W/W
-\o -NaN -NaN
+\o -NaN -NaN 
 \wc 181
 \a de {6223}
 \eType prefix
-
+ 
 \lx 6225
 \g to.stand
 \c W
@@ -487,7 +487,7 @@
 \mp RootPOS153
 \mp InflClass179
 \a pone {6227}
-
+ 
 \lx 6229
 \g to.buy
 \c W
@@ -495,7 +495,7 @@
 \mp RootPOS172
 \mp InflClass178
 \a gel {6231}
-
+ 
 \lx 6233
 \g to.sell
 \c W
@@ -503,14 +503,14 @@
 \mp RootPOS172
 \mp InflClass179
 \a bako {6235}
-
+ 
 \lx 6237
 \g not
 \c Prt
 \wc root
 \mp RootPOS78
 \a dok {6239}
-
+ 
 \lx 6241
 \g Question
 \c W/W
@@ -526,7 +526,7 @@
 \wc clitic
 \a ke {6243}
 \fd CliticPOS104
-
+ 
 \lx 6245
 \g PhraseFinal
 \c W/W
@@ -542,7 +542,7 @@
 \wc clitic
 \a lo {6247}
 \fd CliticPOS104
-
+ 
 \lx 6249
 \g PhraseInitial
 \c W/W
@@ -558,7 +558,7 @@
 \wc clitic
 \a su {6251}
 \fd CliticPOS104
-
+ 
 \lx 6253
 \g RelativeClause
 \c W/W
@@ -574,7 +574,7 @@
 \wc clitic
 \a zo {6255}
 \fd CliticPOS104
-
+ 
 \lx 6257
 \g Adjectivizer
 \c W/W
@@ -582,13 +582,13 @@
 \wc derivPfx
 \a ul {6259}
 \eType infix
-\loc prefix root / _ [7599]  | / _ [V]
-
- / #[7600]_  | / #[C] _
-
+\loc prefix root / _ [7599]  | / _ [V] 
+		 
+ / #[7600]_  | / #[C] _ 
+		
 \fd FromPOS81
 \fd ToPOS70
-
+ 
 \lx 6261
 \g to.be
 \c W
@@ -596,46 +596,46 @@
 \mp RootPOS153
 \mp InflClass178
 \a kala {6263}
-
+ 
 \lx 6265
 \g to.be.3SgSubj.Present
 \c W
 \wc root
 \mp RootPOS146
 \mp InflClass178
-\a kalo {6267} / # _ #  | / # _ #
-
-
+\a kalo {6267} / # _ #  | / # _ # 
+		
+ 
 \lx 6269
 \g green
 \c W
 \wc root
 \mp RootPOS70
 \a pus {6271}
-
+ 
 \lx 6273
 \g Adverbializer2
 \c W/W
 \o 1
 \wc derivSfx
-\a 0 {6276} / [7599]_  | / [V] _
-
-\a o {6275} / [7600]_  | / [C] _
-
-
- ~/ [7599]_  | ~/ [V] _
-
+\a 0 {6276} / [7599]_  | / [V] _ 
+		
+\a o {6275} / [7600]_  | / [C] _ 
+		  
+ 
+ ~/ [7599]_  | ~/ [V] _ 
+		
 \eType suffix
 \fd FromPOS70
 \fd ToPOS73
-
+ 
 \lx 6278
 \g quick
 \c W
 \wc root
 \mp RootPOS70
 \a kola {6280}
-
+ 
 \lx 6282
 \g to.strengthen
 \c W
@@ -643,7 +643,7 @@
 \mp RootPOS168
 \mp InflClass178
 \a palti {6284}
-
+ 
 \lx 6286
 \g to.be.long
 \c W
@@ -651,7 +651,7 @@
 \mp RootPOS163
 \mp InflClass178
 \a duro {6288}
-
+ 
 \lx 6290
 \g Doctor
 \c W
@@ -659,7 +659,7 @@
 \mp RootPOS85
 \mp InflClass99
 \a dok {6292}
-
+ 
 \lx 6294
 \g cat
 \c W
@@ -667,7 +667,7 @@
 \mp RootPOS85
 \mp InflClass99
 \a pus {6296}
-
+ 
 \lx 6298
 \g blood
 \c W
@@ -675,7 +675,7 @@
 \mp RootPOS85
 \mp InflClass99
 \a pus {6300}
-
+ 
 \lx 6302
 \g who.knows
 \c W/W
@@ -684,25 +684,25 @@
 \a ni {6304}
 \eType infix
 \loc prefix root
-
+ 
 \lx 6306
 \g English gloss
 \c W
 \wc root
 \mp RootPOS81
 \mp InflClass99
-\a stem.allomorph {6318} / [7599]_  | / [V] _
-
-
+\a stem.allomorph {6318} / [7599]_  | / [V] _ 
+		
+ 
 \lx 6307
 \g English gloss
 \c W
 \wc root
 \mp RootPOS85
 \mp InflClass99
-\a stem.allomorph {6318} / [7599]_  | / [V] _
-
-
+\a stem.allomorph {6318} / [7599]_  | / [V] _ 
+		
+ 
 \lx 6321
 \g English gloss
 \c W
@@ -710,7 +710,7 @@
 \mp RootPOS81
 \mp InflClass99
 \a ztestsub {6323}
-
+ 
 \lx 6325
 \g English glos
 \c W
@@ -718,3 +718,4 @@
 \mp RootPOS168
 \mp InflClass178
 \a ztestminor {6327}
+ 

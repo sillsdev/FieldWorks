@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -78,7 +79,7 @@ namespace SIL.FieldWorks.IText
 			m_clerk.ConcordanceControl = this;
 
 			m_tbSearchText.WritingSystemFactory = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_tbSearchText.StyleSheet = Common.Widgets.FontHeightAdjuster.StyleSheetFromMediator(mediator);
+			m_tbSearchText.AdjustForStyleSheet(FontHeightAdjuster.StyleSheetFromMediator(mediator));
 			m_tbSearchText.Text = String.Empty;
 			m_tbSearchText.TextChanged += m_tbSearchText_TextChanged;
 			m_tbSearchText.KeyDown += m_tbSearchText_KeyDown;
@@ -141,11 +142,15 @@ namespace SIL.FieldWorks.IText
 					components.Dispose();
 				if (m_clerk != null)
 					m_clerk.ConcordanceControl = null;
+				if (m_pOSPopupTreeManager != null)
+					m_pOSPopupTreeManager.Dispose();
+
 				// Don't dispose of the clerk, since it can monitor relevant PropChanges
 				// that affect the NeedToReloadVirtualProperty.
 			}
 			m_clerk = null;
 			m_mediator = null;
+			m_pOSPopupTreeManager = null;
 			base.Dispose(disposing);
 		}
 
@@ -597,6 +602,8 @@ namespace SIL.FieldWorks.IText
 		/// This method will fill in the DropDownList which replaces the Textbox for searching on certain lines
 		/// </summary>
 		/// <param name="line"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="m_pOSPopupTreeManager gets disposed in Dispose()")]
 		private void FillSearchComboList(ConcordanceLines line)
 		{
 			if(m_pOSPopupTreeManager != null)
@@ -614,12 +621,12 @@ namespace SIL.FieldWorks.IText
 					break;
 				default: //Lex. Gram. Info and Word Cat. both work the same, and are handled here in the default option
 					m_pOSPopupTreeManager = new POSComboController(m_cbSearchText,
-											 m_cache,
-											 m_cache.LanguageProject.PartsOfSpeechOA,
-											 m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
-											 false,
-											 m_mediator,
-											 (Form)m_mediator.PropertyTable.GetValue("window"));
+											m_cache,
+											m_cache.LanguageProject.PartsOfSpeechOA,
+											m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle,
+											false,
+											m_mediator,
+											(Form)m_mediator.PropertyTable.GetValue("window"));
 					break;
 			}
 			m_pOSPopupTreeManager.AfterSelect += POSAfterSelect;
@@ -1479,20 +1486,6 @@ namespace SIL.FieldWorks.IText
 			return m_tbSearchText.Visible ?
 				m_tbSearchText.Tss : ((HvoTreeNode)m_cbSearchText.SelectedItem).Tss;
 		}
-
-// CS0169
-#if false
-		private IMatcher GetRegExpMatcher(int ws)
-		{
-			SetupSearchPattern(ws);
-			IMatcher matcher = new RegExpMatcher(m_vwPattern);
-			if (!matcher.IsValid())
-			{
-				ShowRegExpMatcherError(matcher);
-			}
-			return matcher;
-		}
-#endif
 
 		/// <summary>
 		/// Concordance contains all occurrences of analyses which contain the specified lex entry, in the sense

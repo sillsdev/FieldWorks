@@ -6,7 +6,6 @@ using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
 using SIL.CoreImpl;
 

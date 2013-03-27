@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		protected override string DtdRequiredVersion
 		{
-			get { return "7E9FC46B-A1F9-4e31-A548-D1FBE4232387"; }
+			get { return "B44B0AE3-416D-4616-B4CA-C1DA9A56DD7F"; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -280,6 +280,8 @@ namespace SIL.FieldWorks.Common.Framework
 			m_progressDlg.Position = 0;
 
 			// Populate hashtable with initial set of styles
+			// these are NOT from the *Styles.xml files or from TeStylesXmlAccessor.InitReservedStyles()
+			// They are from loading scripture styles in TE tests only.
 			foreach (var sty in m_databaseStyles)
 				m_htOrigStyles[sty.Name] = sty;
 
@@ -311,7 +313,9 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// You know.
+		/// Only TE currently uses "reserved" styles. For Flex m_htReservedStyles is empty.
+		/// For TE m_htReservedStyles is set in TeStylesXmlAccessor.InitReservedStyles().
+		/// You have to like this "self documenting name".
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void CreateAnyReservedStylesThatDontAlreadyHaveTheGoodFortuneOfExisting()
@@ -328,7 +332,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 					// Find the existing style if there is one; otherwise, create new style object
 					var style = FindOrCreateStyle(styleName, info.styleType, info.context,
-						info.structure, info.function);
+						info.structure, info.function, info.guid);
 
 					// Avoid nasty crashing problems and take some decently haphazard stab at
 					// getting the right "Normal" font face (all the other built-in default
@@ -404,9 +408,15 @@ namespace SIL.FieldWorks.Common.Framework
 				StyleType styleType = GetType(attributes, styleName, context);
 				StructureValues structure = GetStructure(attributes, styleName);
 				FunctionValues function = GetFunction(attributes, styleName);
+				var atGuid = attributes["guid"];
 
-				var style = FindOrCreateStyle(styleName, styleType, context, structure,
-					function);
+				if (atGuid == null || String.IsNullOrEmpty(atGuid.Value))
+				{
+					ReportInvalidInstallation(String.Format(ResourceHelper.GetResourceString("ksNoGuidOnFactoryStyle"), styleName));
+				}
+				Guid factoryGuid = new Guid(atGuid.Value);
+
+				var style = FindOrCreateStyle(styleName, styleType, context, structure, function, factoryGuid);
 
 				if (m_htReservedStyles.ContainsKey(styleName))
 				{
@@ -422,7 +432,7 @@ namespace SIL.FieldWorks.Common.Framework
 				{
 					int ws = GetWs(usage.Attributes);
 					string usageInfo = usage.InnerText;
-					if (ws > 0 && usageInfo != null && usageInfo != string.Empty)
+					if (ws > 0 && !String.IsNullOrEmpty(usageInfo))
 						style.Usage.set_String(ws, style.Cache.TsStrFactory.MakeString(usageInfo, ws));
 				}
 
@@ -483,40 +493,67 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find the existing style if there is one; otherwise, create new style object
+		/// These styles are defined in FlexStyles.xml or TeStyles.xml which have fixed guids
+		/// All guids of factory styles will change with release 7.3
 		/// </summary>
 		/// <param name="styleName">Name of style</param>
 		/// <param name="styleType">Type of style (para or char)</param>
 		/// <param name="context">Context</param>
 		/// <param name="structure">Structure</param>
 		/// <param name="function">Function</param>
+		/// <param name="factoryGuid">The guid for this factory style</param>
 		/// <returns>A new or existing style</returns>
 		/// ------------------------------------------------------------------------------------
 		private IStStyle FindOrCreateStyle(string styleName, StyleType styleType,
-			ContextValues context, StructureValues structure, FunctionValues function)
+			ContextValues context, StructureValues structure, FunctionValues function,
+			Guid factoryGuid)
 		{
 			IStStyle style;
 			bool fUsingExistingStyle = false;
 			if (m_htOrigStyles.ContainsKey(styleName))
 			{
+				// These factory styles are already in the project
 				style = m_htOrigStyles[styleName];
+				int hvo = style.Hvo;
+				if (style.Guid != factoryGuid)
+				{   // create a new style with the correct guid.
+					IStStyle oldStyle = style; // is there a copy constructor?
+					style = m_cache.ServiceLocator.GetInstance<IStStyleFactory>().Create(m_cache, factoryGuid);
+					// set properties from oldStyle
+					// Set properties not passed in as parameters
+					style.IsBuiltIn = oldStyle.IsBuiltIn;
+					style.IsModified = true;
+
+					// Set the style name, owner, type, context, structure, and function
+					style.Name = oldStyle.Name;
+					ReplaceStyleInOwner(style, oldStyle);
+					style.Type = oldStyle.Type;
+					style.Context = oldStyle.Context;
+					style.Structure = oldStyle.Structure;
+					style.Function = oldStyle.Function;
+					// any more?
+				}
 				// Make sure existing style has compatible context, structure, and function.
 				// If not, get a new StStyle object that we can define.
-				int hvo = style.Hvo;
 				style = EnsureCompatibleFactoryStyle(style, styleType, context, structure,
 					function);
-				fUsingExistingStyle = (hvo == style.Hvo);
+				fUsingExistingStyle = (hvo == style.Hvo);  // how could this be false??
 			}
 			else
 			{
-				style = m_cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+				// These factory styles aren't in the project yet.
+				// WARNING: Using this branch may create ownerless StStyle objects! Shouldn't be possible!
+				style = m_cache.ServiceLocator.GetInstance<IStStyleFactory>().Create(m_cache, factoryGuid);
 				m_databaseStyles.Add(style);
+				if (style.Owner == null)
+					throw new ApplicationException("StStyle objects must be owned!");
 			}
 
 			m_htUpdatedStyles[styleName] = style;
 
 			if (!fUsingExistingStyle)
 			{
-				// Set non-variable properties
+				// Set properties not passed in as parameters
 				style.IsBuiltIn = true;
 				style.IsModified = false;
 
@@ -528,6 +565,24 @@ namespace SIL.FieldWorks.Common.Framework
 				style.Function = function;
 			}
 			return style;
+		}
+
+		private void ReplaceStyleInOwner(IStStyle newStyle, IStStyle oldStyle)
+		{
+			var owner = oldStyle.Owner;
+			switch (owner.ClassID)
+			{
+				case ScriptureTags.kClassId:
+					((IScripture)owner).StylesOC.Remove(oldStyle);
+					((IScripture)owner).StylesOC.Add(newStyle);
+					break;
+				case LangProjectTags.kClassId:
+					((ILangProject)owner).StylesOC.Remove(oldStyle);
+					((ILangProject)owner).StylesOC.Add(newStyle);
+					break;
+				default:
+					throw new ApplicationException("StStyle should be owned!");
+			}
 		}
 
 		#region BasedOn Context, Structure, Function, and type interpreters
@@ -570,43 +625,17 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 
 			string sContext = attributes.GetNamedItem("context").Value;
-			switch(sContext)
+			// EndMarker was left out of the original conversion and would have raised an exception.
+			if (sContext == "back") sContext = "BackMatter";
+			try
+			{   // convert the string to a valid enum case insensitive
+				return (ContextValues)Enum.Parse(typeof(ContextValues), sContext, true);
+			}
+			catch (Exception ex)
 			{
-				case "annotation":
-					return ContextValues.Annotation;
-				case "back":
-					return ContextValues.BackMatter;
-				case "book":
-					return ContextValues.Book;
-				case "general":
-					return ContextValues.General;
-				case "internal":
-					return ContextValues.Internal;
-				case "internalMappable":
-					return ContextValues.InternalMappable;
-				case "intro":
-					return ContextValues.Intro;
-				case "introtitle":
-					return ContextValues.IntroTitle;
-				case "note":
-					return ContextValues.Note;
-				case "publication":
-					return ContextValues.Publication;
-				case "text":
-					return ContextValues.Text;
-				case "title":
-					return ContextValues.Title;
-				case "backTranslation":
-					return ContextValues.BackTranslation;
-				case "internalConfigureView":
-					return ContextValues.InternalConfigureView;
-				case "psuedoStyle":
-					return ContextValues.PsuedoStyle;
-
-				default:
-					Debug.Assert(false, "Unrecognized context attribute for style " + styleName +
-						" in " + ResourceFileName + ": " + sContext);
-					throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+				Debug.Assert(false, "Unrecognized context attribute for style " + styleName +
+					" in " + ResourceFileName + ": " + sContext);
+				throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
 			}
 		}
 
@@ -744,6 +773,7 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Style upgrade stuff
+
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// If existing style is NOT a factory style, we're about to "clobber" a user style. If
@@ -766,11 +796,10 @@ namespace SIL.FieldWorks.Common.Framework
 				(style.Context != context ||
 				style.Function != function) &&
 				IsValidInternalStyleContext(style, context))
-			{
-				// For now, at least, this method only deals with context changes. Theoretically,
+			{   // For now, at least, this method only deals with context changes. Theoretically,
 				// we could in the future have a function, type, or structure change that would
 				// require some special action.
-				ChangeFactoryStyleToInternal(style, context);
+				ChangeFactoryStyleToInternal(style, context); // only overridden in TeStylesXmlAccessor so far
 				if (style.Type != type)
 					style.Type = type;
 				// Structure and function are probably meaningless for internal styles, but just
@@ -803,7 +832,9 @@ namespace SIL.FieldWorks.Common.Framework
 					m_styleReplacements[style.Name] = sNewName;
 					style.Name = sNewName;
 				}
+				//The guid for this new style is going to be different.
 				var newFactoryStyle = m_cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+				// The new style is only added if its guid is different from every other known style.
 				m_databaseStyles.Add(newFactoryStyle);
 				return newFactoryStyle;
 			}
@@ -834,9 +865,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Update the style context and do any special processing needed to deal with existing
-		/// data that may be marked with the given style. (Since it was previous not an internal
+		/// data that may be marked with the given style. (Since it was previously not an internal
 		/// style, it is possible the user has used it in ways that would be incompatible with
-		/// its intended use.) Any time a factory style is changesd to an internal context,
+		/// its intended use.) Any time a factory style is changed to an internal context,
 		/// specific code must be written here to deal with it. Some possible options for dealing
 		/// with this scenario are:
 		/// * Delete any data previously marked with the style (and possibly set some other
@@ -1524,7 +1555,7 @@ namespace SIL.FieldWorks.Common.Framework
 					{
 						string sBasedOnStyleName = GetBasedOn(paraAttributes, styleName);
 
-						if (sBasedOnStyleName == null || sBasedOnStyleName == string.Empty)
+						if (String.IsNullOrEmpty(sBasedOnStyleName))
 							ReportInvalidInstallation(String.Format(
 								FrameworkStrings.ksMissingBasedOnStyle, styleName, ResourceFileName));
 
@@ -1745,6 +1776,8 @@ namespace SIL.FieldWorks.Common.Framework
 	/// ------------------------------------------------------------------------------------
 	public class ReservedStyleInfo
 	{
+		/// <summary>Factory guid</summary>
+		public Guid guid;
 		/// <summary> </summary>
 		public bool created = false;
 		/// <summary> </summary>
@@ -1772,11 +1805,13 @@ namespace SIL.FieldWorks.Common.Framework
 		/// character style</param>
 		/// <param name="basedOn">Name of base style, or null if this is info about a
 		/// character style </param>
+		/// <param name="guid">The universal identifier for this style </param>
 		/// --------------------------------------------------------------------------------
 		public ReservedStyleInfo(ContextValues context, StructureValues structure,
 			FunctionValues function, StyleType styleType, string nextStyle,
-			string basedOn)
+			string basedOn, string guid)
 		{
+			this.guid = new Guid(guid);
 			this.context = context;
 			this.structure = structure;
 			this.function = function;
@@ -1792,10 +1827,12 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="context">Context</param>
 		/// <param name="structure">Structure</param>
 		/// <param name="function">Function</param>
+		/// <param name="guid">The universal identifier for this style </param>
 		/// --------------------------------------------------------------------------------
 		public ReservedStyleInfo(ContextValues context, StructureValues structure,
-			FunctionValues function) : this(context, structure, function,
-			StyleType.kstCharacter, null, null)
+			FunctionValues function, string guid)
+			: this(context, structure, function,
+			StyleType.kstCharacter, null, null, guid)
 		{
 		}
 	}

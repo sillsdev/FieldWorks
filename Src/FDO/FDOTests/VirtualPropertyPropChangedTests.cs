@@ -785,11 +785,13 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				});
 			// The numbers added and removed here are strange, reflecting that the update code doesn't know the old
 			// value of the virtual property and pretends it was previously empty.
-			CheckChange(LexEntryTags.kClassId, entry1, "MinimalLexReferences", 0, 1, 0,
+			// When a LexReference has only two items in it, and one is removed, then the entire LexReference is deleted,
+			// therefore the MinimalLexReferences.Count for each entry should be 0.
+			CheckChange(LexEntryTags.kClassId, entry1, "MinimalLexReferences", 0, 0, 0,
 						"Removing target from LexReference should update MinimalLexReferences of unchanged target");
 			CheckChange(LexEntryTags.kClassId, entry2, "MinimalLexReferences", 0, 0, 0,
 						"Removing target from should update MinimalLexReferences of removed target");
-			Assert.AreEqual(1, (entry1 as LexEntry).MinimalLexReferences.Count,
+			Assert.AreEqual(0, (entry1 as LexEntry).MinimalLexReferences.Count,
 				"entry1 has one MinimalLexReference after removing entry2");
 			Assert.AreEqual(0, (sense1 as LexSense).MinimalLexReferences.Count,
 				"sense1 has no MinimalLexReferences after removing entry2");
@@ -799,6 +801,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"sense2 has no MinimalLexReferences after removing entry2");
 
 			PrepareToTrackPropChanged();
+			lexRef = MakeLexReference(lexRefType, entry1); //we need to create the LexReference again since the preceeding steps deleted it.
 			UndoableUnitOfWorkHelper.Do("undo add sense target", "redo", m_actionHandler,
 				() =>
 				{
@@ -1138,7 +1141,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				() =>
 				{
 					result = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-					Cache.LangProject.TextsOC.Add(result);
+					//Cache.LangProject.TextsOC.Add(result);
 					result.Name.AnalysisDefaultWritingSystem = Cache.TsStrFactory.MakeString(title, Cache.DefaultAnalWs);
 					result.ContentsOA = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				});

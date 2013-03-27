@@ -356,7 +356,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			{
 				if (!Directory.Exists(defaultLinkedFilesPath))
 					Directory.CreateDirectory(proposedDestinationLinkedFilesPath);
-				Debug.Assert(!Directory.Exists(defaultLinkedFilesPath));
 				ExternalLinksDirectoryExits(linkedFilesPathInZip, proposedDestinationLinkedFilesPath, filesContainedInLinkdFilesFolder);
 			}
 			else

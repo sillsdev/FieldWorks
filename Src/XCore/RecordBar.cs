@@ -1,11 +1,5 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
-using System.Diagnostics;
-
 using SIL.Utils;
 
 namespace XCore
@@ -15,9 +9,11 @@ namespace XCore
 	/// </summary>
 	public class RecordBar : UserControl, IFWDisposable
 	{
-		protected System.Windows.Forms.TreeView m_treeView;
-		protected System.Windows.Forms.ListView m_listView;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
+		protected TreeView m_treeView;
+		protected ListView m_listView;
+		private ColumnHeader m_columnHeader1;
+		private Control m_optionalHeaderControl;
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -31,8 +27,8 @@ namespace XCore
 			TreeView.HideSelection = false;
 			m_listView.HideSelection = false;
 
-			TreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-			m_listView.Dock = System.Windows.Forms.DockStyle.Fill;
+			TreeView.Dock = DockStyle.Fill;
+			m_listView.Dock = DockStyle.Fill;
 
 			IsFlatList = true;
 		}
@@ -48,7 +44,7 @@ namespace XCore
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
-		public System.Windows.Forms.TreeView TreeView
+		public TreeView TreeView
 		{
 			get
 			{
@@ -58,7 +54,7 @@ namespace XCore
 			}
 		}
 
-		public System.Windows.Forms.ListView ListView
+		public ListView ListView
 		{
 			get
 			{
@@ -67,6 +63,7 @@ namespace XCore
 				return m_listView;
 			}
 		}
+
 		public bool IsFlatList
 		{
 			set
@@ -86,6 +83,20 @@ namespace XCore
 			}
 		}
 
+		public bool HasHeaderControl { get { return m_optionalHeaderControl != null; } }
+
+		public void AddHeaderControl(Control c)
+		{
+			CheckDisposed();
+
+			if (c == null || HasHeaderControl)
+				return;
+
+			m_optionalHeaderControl = c;
+			Controls.Add(c);
+			c.Dock = DockStyle.Top;
+		}
+
 		public object SelectedNode
 		{
 			set
@@ -100,11 +111,10 @@ namespace XCore
 		{
 			CheckDisposed();
 
-//			m_treeView.AfterSelect -= new TreeViewEventHandler(OnTreeBarAfterSelect);
 			TreeView.Nodes.Clear();
 			m_listView.Items.Clear();
-//			m_treeView.AfterSelect += new TreeViewEventHandler(OnTreeBarAfterSelect);
 		}
+
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -135,7 +145,7 @@ namespace XCore
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordBar));
 			this.m_treeView = new System.Windows.Forms.TreeView();
 			this.m_listView = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+			this.m_columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.SuspendLayout();
 			//
 			// m_treeView
@@ -151,7 +161,7 @@ namespace XCore
 			//
 			this.m_listView.AutoArrange = false;
 			this.m_listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			this.columnHeader1});
+			this.m_columnHeader1});
 			resources.ApplyResources(this.m_listView, "m_listView");
 			this.m_listView.HideSelection = false;
 			this.m_listView.MultiSelect = false;
@@ -161,7 +171,7 @@ namespace XCore
 			//
 			// columnHeader1
 			//
-			resources.ApplyResources(this.columnHeader1, "columnHeader1");
+			resources.ApplyResources(this.m_columnHeader1, "m_columnHeader1");
 			//
 			// RecordBar
 			//
@@ -173,5 +183,17 @@ namespace XCore
 
 		}
 		#endregion
+
+		public void ShowHeaderControl()
+		{
+			if (HasHeaderControl)
+				m_optionalHeaderControl.Visible = true;
+		}
+
+		public void HideHeaderControl()
+		{
+			if (HasHeaderControl)
+				m_optionalHeaderControl.Visible = false;
+		}
 	}
 }

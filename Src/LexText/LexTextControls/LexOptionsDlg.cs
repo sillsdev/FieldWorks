@@ -20,12 +20,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Net.Sockets;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
@@ -44,12 +43,27 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string s_helpTopic = "khtpLexOptions";
 		private HelpProvider helpProvider;
 		private IHelpTopicProvider m_helpTopicProvider;
+		private ToolTip optionsTooltip;
 
 		internal bool m_failedToConnectToService;
 
 		public LexOptionsDlg()
 		{
 			InitializeComponent();
+			optionsTooltip = new ToolTip {AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true};
+			optionsTooltip.SetToolTip(updateGlobalWS, LexTextControls.ksUpdateGlobalWsTooltip);
+			optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
+		}
+
+		/// <summary>
+		/// We have to set the checkbox here because the mediator (needed to get the App)
+		/// is not set yet in the dialog's constructor.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
@@ -60,11 +74,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				CultureInfo ci = MiscUtils.GetCultureForWs(m_sNewUserWs);
 				if (ci != null)
 				{
-#if !__MonoCS__
 					FormLanguageSwitchSingleton.Instance.ChangeCurrentThreadUICulture(ci);
 					FormLanguageSwitchSingleton.Instance.ChangeLanguage(this);
-#else
-					// TODO-Linux: Investigate FormLanguageSwitchSingleton
+#if __MonoCS__
+					// Mono leaves the wait cursor on, unlike .Net itself.
+					Cursor.Current = Cursors.Default;
 #endif
 				}
 				// This needs to be consistent with Common/FieldWorks/FieldWorks.SetUICulture().
@@ -160,8 +174,27 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Leave any dlls in place since they may be shared, or in use for the moment.
 				}
 			}
-
+			CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore = !updateGlobalWS.Checked;
+			CoreImpl.Properties.Settings.Default.Save();
+			AutoOpenLastProject = m_autoOpenCheckBox.Checked;
 			DialogResult = DialogResult.OK;
+		}
+
+		private bool AutoOpenLastProject
+		{
+			// If set to true and there is a last edited project name stored, FieldWorks will
+			// open that project automatically instead of displaying the usual Welcome dialog.
+			get
+			{
+				var app = m_mediator.PropertyTable.GetValue("App") as FwApp;
+				return app.RegistrySettings.AutoOpenLastEditedProject;
+			}
+			set
+			{
+				var app = m_mediator.PropertyTable.GetValue("App") as FwApp;
+				if (app != null)
+					app.RegistrySettings.AutoOpenLastEditedProject = value;
+			}
 		}
 
 		private void m_btnCancel_Click(object sender, EventArgs e)
@@ -179,6 +212,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		void IFwExtension.Init(FdoCache cache, Mediator mediator)
 		{
+			updateGlobalWS.Checked = !CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore;
 			m_mediator = mediator;
 			m_cache = cache;
 			m_helpTopicProvider = mediator.HelpTopicProvider;
@@ -197,6 +231,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (string dir in Directory.GetDirectories(basePluginPath))
 			{
 				Debug.WriteLine(dir);
+				// Currently not offering Concorder plugin in FW7, therefore, we
+				// can remove the feature until we need to implement. (FWNX-755)
+				if(MiscUtils.IsUnix && dir == Path.Combine(basePluginPath, "Concorder"))
+					continue;
 				string managerPath = Path.Combine(dir, "ExtensionManager.xml");
 				if (File.Exists(managerPath))
 				{
@@ -237,6 +275,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		public bool PluginsUpdated
 		{
 			get { return m_pluginsUpdated; }
+		}
+
+		private void updateGlobalWS_MouseHover(object sender, EventArgs e)
+		{
+			;
 		}
 	}
 }

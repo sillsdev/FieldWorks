@@ -410,7 +410,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public ITsTextProps GetStyleRgch(int cch, string sName)
 		{
-			if (!m_StyleInfos.Contains(sName))
+			if (m_StyleInfos == null || !m_StyleInfos.Contains(sName))
 				return null;
 			return m_StyleInfos[sName].TextProps;
 			//ThrowInternalError(E_INVALIDARG);?

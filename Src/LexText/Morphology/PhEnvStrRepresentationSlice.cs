@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -18,8 +19,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// </summary>
 	public class PhEnvStrRepresentationSlice : ViewPropertySlice
 	{
-		// private int m_ws = 0; // CS0414
-
 		public PhEnvStrRepresentationSlice(ICmObject obj)
 			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
 		{
@@ -43,7 +42,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			: base(new StringRepSliceView(obj.Hvo), obj, StringRepSliceVc.Flid)
 		{
 			m_persistenceProvider = persistenceProvider;
-			// m_ws = ws; // CS0414
 		}
 
 		public PhEnvStrRepresentationSlice()
@@ -301,6 +299,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			#endregion INotifyControlInCurrentSlice implementation
 
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification="FindForm() returns a reference")]
 			private void DoValidation(bool refresh)
 			{
 				Form frm = FindForm();

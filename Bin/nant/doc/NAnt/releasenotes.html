@@ -53,6 +53,1148 @@
 				</td>
 			</tr>
 		</table>
+		<h2>0.91 (October 22, 2011)</h2>
+		<h3>Bug fixes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5><a class="heading">XmlPeek</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+				Fixed issue with XmlPeek not outputting results in xml format.
+				(bugs <a href="https://sourceforge.net/tracker/?func=detail&aid=3366107&group_id=31650&atid=402868">#3366107</a> and
+				<a href="https://sourceforge.net/tracker/?func=detail&aid=3390653&group_id=31650&atid=402868">#3390653</a>)
+				</p>
+			</div>
+			<h5><a class="heading">App.config</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+				Added necessary .NET 4.0 WPF and misc missing .NET 3.5 reference assemblies.
+				(bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=3314793&group_id=31650&atid=402868">3314793</a>)
+				</p>
+			</div>
+		</div>
+		<h2>
+			0.91-rc1 (October 8, 2011)</h2>
+		<h3>
+			Bug fixes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">App.config</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Fixed issue with NDoc when building NAnt from source.
+					(bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=3416986&group_id=31650&atid=402868">#3416986</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading">Makefile</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Fixed issue when building NAnt with older versions of GNU Make.
+				</p>
+			</div>
+		</div>
+		<h2>
+			0.91-beta1 (September 25, 2011)</h2>
+		<h3>Changes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">App.Config</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added mono-4.0 target
+				</p>
+			</div>
+			<div style="margin-left: 20px;">
+				<p>
+					Added initial support for Silverlight 3 and 4
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="http://logging.apache.org/log4net/">log4net</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Upgraded to log4net 1.2.10.
+				</p>
+			</div>
+			<h5>
+				<a class="heading">MSBuild</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added initial support for 2008/2010 MSBuild/VS.NET project files.
+				</p>
+			</div>
+		</div>
+		<h3>
+			Bug fixes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">App.config</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added WindowsBase.dll and PresentationFramework.dll to 4.0 target.
+				</p>
+			</div>
+			<h5>
+				<a class="heading">NAnt.xsd</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Changed the NAnt.Core.Tasks.DescriptionTask task to mixed.
+					(bug <a href="https://sourceforge.net/tracker/?func=detail&aid=3058913&group_id=31650&atid=402868">#3058913</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading">BuildException</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Display correct registry hives in BuildException when Registry Path not found.
+				</p>
+			</div>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">ndoc</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Fixed ndoc task to find hhc.exe for chm generation on 64 bit machines through reflection.
+				</p>
+			</div>
+		</div>
+		<h2>
+			0.91-alpha2 (August 17, 2010)</h2>
+		<h3>
+			Bug fixes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">App.config</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Fixed typo that prevented System.Management.dll from being included.
+				</p>
+			</div>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/include.html">&lt;include&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Fixed error with the &lt;include&gt; task when different build files include the same file.
+					(bug <a href="https://sourceforge.net/tracker/?func=detail&aid=3016497&group_id=31650&atid=402868">#3016497</a>).
+				</p>
+			</div>
+		</div>
+		<h4>Functions</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/functions/nant.get-assembly().html">NAnt::get-assembly()</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Using the NAnt::get-assembly() function causes an &quot;Object must implement IConvertible&quot; error.
+					(bug <a href="https://sourceforge.net/tracker/?func=detail&aid=3013492&group_id=31650&atid=402868">#3013492</a>).
+				</p>
+			</div>
+		</div>
+		<h2>
+			0.91-alpha1 (May 29, 2010)</h2>
+		<h3>
+			Framework&nbsp;support</h3>
+		<div style="margin-left: 20px;">
+			<ul>
+				<li>
+					Added support for .NET Framework 4.0 (except for <code><a href="help/tasks/solution.html">&lt;solution&gt;</a></code> task).
+				</li>
+			</ul>
+		</div>
+		<h3>
+			Bug fixes</h3>
+		<h4>Expressions</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">Coercion</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Coercion of arguments is not supported (bug <a href="http://sourceforge.net/tracker/?func=detail&amp;aid=3013492&amp;group_id=31650&amp;atid=402868">#3013492</a>).
+				</p>
+			</div>
+		</div>
+		<h3>
+			Changes</h3>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/xmlpeek.html">&lt;xmlpeek&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Enhanced the &lt;xmlpeek&gt; task to support more advanced
+					XPath functions and syntax. It is now possible to use
+					functions such as count() and to index the node using XPath
+					directly.
+					(feature request <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1560566&amp;group_id=31650&amp;atid=402871">#1560566</a>).
+				</p>
+			</div>
+		</div>
+		<h2>
+			0.90 (May 8, 2010)</h2>
+		<h3>
+			Bug fixes</h3>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/tar.html">&lt;tar&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					When the "destfile" attribute specifies a non-existent path,
+					the base directory(ies) will be created.
+					(bug <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=2997300&amp;group_id=31650&amp;atid=402868">#2997300</a>).
+				</p>
+			</div>
+		</div>
+		<h2>
+			0.90-rc1 (May 2, 2010)</h2>
+		<h3>
+			Bug fixes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">&lt;PathScanner&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Catch UnauthorizedAccessException in PathScanner to prevent
+					NAnt from crashing when using the Scan() function to search
+					for file(s) in directory with special permissions.
+				</p>
+			</div>
+		</div>
+		<h2>
+			0.90-beta1 (April 17, 2010)</h2>
+		<h3>
+			Bug fixes</h3>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/csc.html">&lt;csc&gt;</a> / <a class="heading" href="help/tasks/jsc.html">&lt;jsc&gt;</a> / <a class="heading" href="help/tasks/vbc.html">&lt;vbc&gt;</a> / <a class="heading" href="help/tasks/vjc.html">&lt;vjc&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					When the "output" attribute specifies a non-existent path,
+					the base directory(ies) will be created.
+					(bug <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=2985057&amp;group_id=31650&amp;atid=402868">#2985057</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading">ExternalProgramBase</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					For certain tasks (NDoc, Exec, MSBuild, etc) the console
+					output is unorganized and difficult to read.
+					(bug <a href="http://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=2981604&amp;group_id=31650">#2981604</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/script.html">&lt;script&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Cleanup the output to show assembly information and functions
+					only when "verbose" attribute is set to "true".
+					(bug <a href="http://sourceforge.net/tracker/?func=detail&amp;aid=2981386&amp;group_id=31650&amp;atid=402868">#2981386</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/zip.html">&lt;zip&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					When the "zipfile" attribute specifies a non-existent path,
+					the base directory(ies) will be created.
+					(bug <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=2981389&amp;group_id=31650&amp;atid=402868">#2981389</a>).
+				</p>
+			</div>
+		</div>
+		<h2>
+			0.90-alpha1 (April 1, 2010)</h2>
+		<h3>
+			Breaking changes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				Extensibility</h5>
+			<ul>
+				<li>
+					Deprecated NAnt.Core.Element.InitializeElement(XmlNode) and
+					NAnt.Core.Task.InitializeTask(XmlNode) in favor of
+					NAnt.Core.Element.Initialize(). This was done to discourage direct access to
+					the XML node that was used to initialize the construct.
+				</li>
+			</ul>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/script.html">&lt;script&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					As of this release, only the following namespaces are imported
+					by default:
+				</p>
+				<ul>
+					<li>System</li>
+					<li>System.Collections</li>
+					<li style="text-decoration: line-through">System.Collections.Specialized</li>
+					<li>System.IO</li>
+					<li>System.Text</li>
+					<li style="text-decoration: line-through">System.Text.RegularExpressions</li>
+					<li>NAnt.Core</li>
+					<li>NAnt.Core.Attributes</li>
+				</ul>
+				<p>
+					Starting from this release, only <code>NAnt.Core</code>
+					and <code>mscorlib</code> will be referenced by default.
+				</p>
+				<p>
+					In previous releases, all loaded assemblies would implicitly
+					be referenced.
+				</p>
+			</div>
+		</div>
+		<h3>
+			Bug fixes</h3>
+		<h4>Extensibility</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">DataTypeBaseBuilder / FilterBuilder / TaskBuilder</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Changes to constructors break backward compatibility (bug <a href="http://sourceforge.net/tracker/?func=detail&amp;aid=2782705&amp;group_id=31650&amp;atid=402868">2782705</a>).
+				</p>
+			</div>
+		</div>
+		<h4>Expressions</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">Identifiers</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Identifiers containing a dot or backslash are falsely rejected.
+				</p>
+			</div>
+		</div>
+		<h4>Framework&nbsp;support</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">.NET Framework (All)</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					The target framework cannot be initialized if the .NET
+					Framework SDK is not installed (bug <a href="http://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=1859708&amp;group_id=31650">#1859708</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading">.NET Framework 1.1</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added the following assemblies to the list of reference
+					assemblies:
+				</p>
+				<ul type="square">
+					<li>
+						Microsoft.VisualBasic.Compatibility.dll
+					</li>
+					<li>
+						Microsoft.VisualBasic.Compatibility.Data.dll
+					</li>
+					<li>
+						System.Data.OracleClient.dll
+					</li>
+				</ul>
+				<p>
+					Fixes bug <a href="http://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=1848648&amp;group_id=31650">#1848648</a>.
+				</p>
+			</div>
+			<h5>
+				<a class="heading">.NET Framework 3.5</a></h5>
+			<ul>
+				<li>
+				Modified version (as returned by <a href="help/functions/framework.get-version().html">framework::get-version()</a>)
+				to &quot;3.5&quot;.
+				</li>
+				<li>
+				Added support for Windows SDK 6.1 (bug <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1986551&amp;group_id=31650&amp;atid=402868">#1986551</a>).
+				</li>
+				<li>
+				Added support for Windows SDK 7.0
+				</li>
+			</ul>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/echo.html">&lt;echo&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					A newline is implicitly added when writing a message to a file
+					(bug <a href="http://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=2807728&amp;group_id=31650">#2807728</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/exec.html">&lt;echo&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					When "output" parameter is specified, standard output is redirected properly.
+					(bug <a href="https://sourceforge.net/tracker/?func=detail&aid=1010223&group_id=31650&atid=402868">#1010223</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading">ExternalProgramBase</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					The value of <code>UseRuntimeEngine</code> is not respected
+					when overriden by derived classes (bug <a href="http://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=1850383&amp;group_id=31650">#1850383</a>).
+					<a
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/move.html">&lt;move&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					When source file is newer than destination file, then an error
+					is reported if "overwrite" is not set to <b>true</b>.
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/solution.html">&lt;solution&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Solution Folders result in build failure (bug <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1732361&amp;group_id=31650&amp;atid=402868">#1732361</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/xmlpeek.html">&lt;xmlpeek&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					"verbose" feature is now worked as documented (bug <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1911292&amp;group_id=31650&amp;atid=402868">#1911292</a>).
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/zip.html">&lt;zip&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Improved backward compatibility with older unzip implementations.
+				</p>
+			</div>
+		</div>
+		<h4>Types</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/types/fileset.html">&lt;fileset&gt;</a>
+			</h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Files matching the <code>**/vssver2.scc</code> pattern are not excluded by default
+					(bug <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=2515816&amp;group_id=31650&amp;atid=402868">#2515816</a>).
+				</p>
+			</div>
+		</div>
+		<h3>Additions</h3>
+		<h4>Functions</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/functions/environment.newline().html">environment::newline()</a></h5>
+			<div style="margin-left: 20px;">
+				<p>Gets the newline string defined for this environment.</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/functions/framework.get-description().html">framework::get-description()</a></h5>
+			<div style="margin-left: 20px;">
+				<p>Gets the description of the current target framework.</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/functions/framework.get-clr-version().html">framework::get-clr-version()</a></h5>
+			<div style="margin-left: 20px;">
+				<p>Gets the CLR version of the current target framework.</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/functions/framework.get-frameworks(NAnt.Core.FrameworkTypes).html">framework::get-frameworks(NAnt.Core.FrameworkTypes)</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Gets a comma-separated list of frameworks filtered by the
+					specified <a href="help/enums/NAnt.Core.FrameworkTypes.html">FrameworkTypes</a>.
+				</p>
+				<p>For example:</p>
+				<pre class="code">
+	<span class="xmltext">&lt;</span><span class="xmlelement">target</span> <span class="xmlattribute">name</span><span class="xmltext">="build-all"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">foreach</span> <span class="xmlattribute">item</span><span class="xmltext">="String"</span> <span class="xmlattribute">in</span><span class="xmltext">="${framework::get-frameworks('installed compact')}"</span> <span class="xmlattribute">delim</span><span class="xmltext">=","</span> <span class="xmlattribute">property</span><span class="xmltext">="framework"&gt;</span>
+			<span class="xmltext">&lt;</span><span class="xmlelement">property</span> <span class="xmlattribute">name</span><span class="xmltext">="nant.settings.currentframework"</span> <span class="xmlattribute">value</span><span class="xmltext">="${framework}" /&gt;</span>
+			<span class="xmltext">&lt;</span><span class="xmlelement">call</span> <span class="xmlattribute">target</span><span class="xmltext">="${framework}" /&gt;</span>
+		<span class="xmltext">&lt;/</span><span class="xmlelement">foreach</span><span class="xmltext">&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">target</span><span class="xmltext">&gt;</span>
+
+	<span class="xmltext">&lt;</span><span class="xmlelement">target</span> <span class="xmlattribute">name</span><span class="xmltext">="build"&gt;</span>
+		...
+	<span class="xmltext">&lt;/</span><span class="xmlelement">target</span><span class="xmltext">&gt;</span>
+				</pre>
+			</div>
+			<h5>
+				<a class="heading" href="help/functions/framework.get-version().html">framework::get-version()</a></h5>
+			<div style="margin-left: 20px;">
+				<p>Gets the version of the current target framework.</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/functions/platform.is-windows().html">platform::is-windows()</a></h5>
+			<div style="margin-left: 20px;">
+				<p>Return a value indicating whether NAnt is running on Windows.</p>
+			</div>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/untar.html">&lt;untar&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>Extracts files from a tar archive.</p>
+			</div>
+		</div>
+		<h3>Changes</h3>
+		<h4>Packaging</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">pkg-config</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					When installing NAnt from source on Unix (using make install),
+					a <b>nant.pc</b> is now installed in $prefix/lib/pkgconfig.
+				</p>
+			</div>
+			<h5>
+				<a class="heading">DESTDIR</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					To allow for staged installs, our makefile now also supports
+					the <a href="http://www.gnu.org/prep/standards/html_node/DESTDIR.html">DESTDIR</a> variable:
+				</p>
+				<pre class="code">
+	$ make DESTDIR=/tmp/local install
+				</pre>
+			</div>
+		</div>
+		<h4>Functions</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/functions/platform.is-win32().html">platform::is-win32()</a></h5>
+			<div style="margin-left: 20px;">
+				<p>This function is deprecated, use <a href="help/functions/platform.is-windows().html">platform::is-windows()</a> instead.</p>
+			</div>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/csc.html">&lt;csc&gt;</a> / <a class="heading" href="help/tasks/jsc.html">&lt;jsc&gt;</a> / <a class="heading" href="help/tasks/vbc.html">&lt;vbc&gt;</a> / <a class="heading" href="help/tasks/vjc.html">&lt;vjc&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added &quot;winres&quot; attribute to specify a Win32 resource file.
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/echo.html">&lt;echo&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					The &quot;encoding&quot; attribute can be used to specify
+					the encoding when writing messages to a file.
+				</p>
+				<pre class="code">
+	<span class="xmltext">&lt;</span><span class="xmlelement">echo</span> <span class="xmlattribute">file</span><span class="xmltext">="build.cmd"</span> <span class="xmlattribute">encoding</span><span class="xmltext">="ascii"&gt;</span>...<span class="xmltext">&lt;/</span><span class="xmlelement">echo</span><span class="xmltext">&gt;</span>
+				</pre>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/link.html">&lt;link&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added &quot;moduledefinition&quot; parameter to allow the
+					name of the module definition file to be set.
+					<a
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/nunit2.html">&lt;nunit2&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Allow referenced assemblies to be specified using <span class="xmltext">&lt;</span><span class="xmlelement">references</span><span class="xmltext">&gt;</span>
+					element on <span class="xmltext">&lt;</span><span class="xmlelement">test</span><span class="xmltext">&gt;</span>:
+				</p>
+				<pre class="code">
+	<span class="xmltext">&lt;</span><span class="xmlelement">nunit2</span><span class="xmltext">&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">test</span><span class="xmltext">&gt;</span>
+			<span class="xmltext">&lt;</span><span class="xmlelement">assemblies</span> <span class="xmlattribute">basedir</span><span class="xmltext">="build/tests"&gt;</span>
+				<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="Cegeka.HealthCare.DocGen.Tests.dll" /&gt;</span>
+				<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="Cegeka.HealthCare.Util.Tests.dll" /&gt;</span>
+			<span class="xmltext">&lt;/</span><span class="xmlelement">assemblies</span><span class="xmltext">&gt;</span>
+			<span class="xmltext">&lt;</span><span class="xmlelement">references</span> <span class="xmlattribute">basedir</span><span class="xmltext">="build/lib"&gt;</span>
+				<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="Cegeka.HealthCare.Common.dll" /&gt;</span>
+				<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="Cegeka.HealthCare.DocGen.dll" /&gt;</span>
+				<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="Cegeka.HealthCare.Util.dll" /&gt;</span>
+			<span class="xmltext">&lt;/</span><span class="xmlelement">assemblies</span><span class="xmltext">&gt;</span>
+		<span class="xmltext">&lt;/</span><span class="xmlelement">test</span><span class="xmltext">&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">nunit2</span><span class="xmltext">&gt;</span>
+				</pre>
+				 Previously, all referenced assemblies needed to be either
+				 in the GAC, or in the directory containing the test
+				 assembly.
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/solution.html">&lt;solution&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Introduced support for targeting a specific platform,
+					as defined in the solution or project.
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/xmlpoke.html">&lt;xmlpoke&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added &quot;preserveWhitespace&quot; parameter to retain
+					the original format of the XML files.
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/tasks/unzip.html">&lt;unzip&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added &quot;overwrite&quot; parameter to control whether to
+					overwrite files even if they are newer than corresponding
+					entries in the archive.
+				</p>
+			</div>
+		</div>
+		<h4>Third-Party</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="http://www.icsharpcode.net/OpenSource/SharpZipLib/">#ziplib</a></h5>
+			<ul>
+				<li>
+					Upgraded to <a href="http://wiki.sharpdevelop.net/SharpZipLib_ReleaseHistory.ashx">v0.85.5.452</a>.
+				</li>
+			</ul>
+		</div>
+		<h4>Types</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/types/fileset.html">&lt;fileset&gt;</a> / <a class="heading" href="help/types/patternset.html">&lt;patternset&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					For patterns specified using <span class="xmltext">&lt;</span><span class="xmlelement">includesfile</span><span class="xmltext">&gt;</span>
+					or <span class="xmltext">&lt;</span><span class="xmlelement">excludesfile</span><span class="xmltext">&gt;</span>, lines that have a number sign (#) as the first non-blank
+					character in a line are now ignored.
+					<a
+				</p>
+			</div>
+		</div>
+		<h2>
+			0.86-beta1 (December 8, 2007)</h2>
+		<h3>
+			Breaking changes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">nant.tasks properties</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Prior to NAnt 0.85, build authors would use a &quot;nant.tasks.*&quot;
+					property to check whether a given task was available.
+				</p>
+				<p>
+					With the introduction of expression support in NAnt 0.85, we
+					provided a more powerful alternative through the
+					<a href="help/functions/task.exists(System.String).html">task::exists</a>
+					function.
+				</p>
+				<p>
+					As of this release, the &quot;nant.tasks.*&quot; properties are
+					therefore no longer set by NAnt.
+				</p>
+			</div>
+			<h5>
+				<a class="heading">nant.failure</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Removed support for the &quot;nant.failure&quot; property to
+					set the target that should be executed when the build fails.
+				</p>
+				<p>
+					This property was deprecated in NAnt 0.83 in favor of the
+					&quot;nant.onfailure&quot; attribute.
+				</p>
+				<p>
+					As of this release, setting the &quot;nant.failure&quot;
+					attribute will no longer have any effect.
+				</p>
+			</div>
+		</div>
+		<h4>Expressions</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">= operator</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					In NAnt 0.85, support for the '=' operator to check for equality was
+					deprecated in favor of the '==' operator.
+				</p>
+				<p>
+					As from this release, the '=' operator is no longer
+					recognized.
+				</p>
+			</div>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/style.html">&lt;style&gt;</a></h5>
+			<ul>
+				<li>
+					Removed support for &lt;param&gt; child element, which was
+					deprecated in NAnt 0.84 in favor of a &lt;parameters&gt;
+					element.
+				</li>
+			</ul>
+		</div>
+		<h3>
+			Bug fixes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/fundamentals/listeners.html#MailLogger">MailLogger</a></h5>
+			<ul>
+				<li>
+					If &quot;MailLogger.smtp.username&quot;, &quot;MailLogger.smtp.port&quot;
+					or &quot;MailLogger.smtp.enablessl&quot; are set, messages must be delivered
+					using the SMTP protocol over the network. [.NET 1.1 or higher]
+				</li>
+			</ul>
+			<h5>
+				<a class="heading">Response File</a></h5>
+			<ul>
+				<li>
+					Quoted arguments are not parsed correctly from response files
+					(bug <a href="https://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=1736526&amp;group_id=31650">#1736526</a>).
+				</li>
+			</ul>
+			<h5>
+				<a class="heading">Document Type Definition</a></h5>
+			<ul>
+				<li>
+					Executing a project with a DTD can lead to an internal error.
+					(bug <a href="https://sourceforge.net/tracker/?func=detail&atid=402868&aid=1809994&group_id=31650">#1809994</a>).
+				</li>
+			</ul>
+		</div>
+		<h4>Framework&nbsp;support</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">Mono/Cygwin</a></h5>
+			<ul>
+				<li>
+					In <a href="http://www.cygwin.com/">Cygwin</a>, the directory
+					containing the Mono configuration files was not correctly
+					constructed from pkg-config info, leading to errors when
+					running applications that use System.Configuration.
+				</li>
+			</ul>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/call.html">&lt;call&gt;</a></h5>
+			<ul>
+				<li>
+					Target is not re-executed if &quot;cascade&quot; is <b>false</b>
+					(bug <a href="http://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=1474159&amp;group_id=31650">#1474159</a>).
+				</li>
+			</ul>
+			<h5>
+				<a class="heading" href="help/tasks/csc.html">&lt;csc&gt;</a></h5>
+			<ul>
+				<li>
+					Satellite assemblies are not signed when signing key is
+					specified using &quot;keyfile&quot; attribute (bug <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1587739&amp;group_id=31650&amp;atid=402868">#1587739</a>).
+				</li>
+			</ul>
+			<h5>
+				<a class="heading" href="help/tasks/exec.html">&lt;exec&gt;</a></h5>
+			<ul>
+				<li>
+					Empty lines written to standard output or standard error by
+					external program are ignored.
+				</li>
+			</ul>
+			<h5>
+				<a class="heading" href="help/tasks/resgen.html">&lt;resgen&gt;</a></h5>
+			<ul>
+				<li>
+					If the embedded resource compiler for the target framework does
+					not support assembly references, then copy both the compiler
+					and related files (based on pattern matching) to the
+					intermediary compile directory
+					(bug <a href="http://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=1591991&amp;group_id=31650">#1591991</a>).
+				</li>
+			</ul>
+			<h5>
+				<a class="heading" href="help/tasks/solution.html">&lt;solution&gt;</a></h5>
+			<ul>
+				<li>
+					Visual C++
+					<div style="margin-left: 20px;">
+						<ul>
+							<li>
+								Custom build steps are not supported (bug <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1082374&amp;group_id=31650&amp;atid=402868">#1082374</a>).
+							</li>
+							<li>
+								Unexpected error when name of project configuration
+								differs from solution configuration (bug <a href="https://sourceforge.net/tracker/index.php?func=detail&amp;aid=1607209&amp;group_id=31650&amp;atid=402868">#1607209</a>).
+							</li>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<h4>Third-Party</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="http://www.icsharpcode.net/OpenSource/SharpZipLib/">#ziplib</a></h5>
+			<ul>
+				<li>
+					Files with a compressed size of over 4GB cannot be added to zip archive
+					(bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=1698336&group_id=31650&atid=402868">#1698336</a>).
+				</li>
+			</ul>
+		</div>
+		<h4>Types</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/types/fileset.html">&lt;fileset&gt;</a></h5>
+			<ul>
+				<li>
+					Case differences are not always ignored on a case-insensitive filesystem
+					(bug <a href="https://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=1776101&amp;group_id=31650">#1776101</a>).
+				</li>
+				<li>
+					Pattern mathing for files in the root directory of a volume is
+					always case-sensitive (bug <a href="https://sourceforge.net/tracker/?func=detail&amp;atid=402868&amp;aid=1761377&amp;group_id=31650">#1761377</a>).
+				</li>
+			</ul>
+		</div>
+		<h3>Additions</h3>
+		<h4>Expressions</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">Version operators</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Introduced support for <a href="help/fundamentals/expressions.html#version-operators">relational operators</a>
+					between version values.
+				</p>
+			</div>
+		</div>
+		<h4>Framework&nbsp;support</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">Tool paths</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Since NAnt 0.84, task authors have been able to specify the
+					location of the command-line tool by applying a <code>ProgramLocationAttribute</code> to
+					classes deriving from <code>ExternalProgramBase</code>.
+				</p>
+				<p>
+					The <code>ProgramLocationAttribute</code> allows task authors
+					to specify whether the tool is located in the framework directory
+					(eg. C:\WINDOWS\Microsoft.NET\Framework\v1.1.4432) or the
+					SDK directory (eg. C:\Program Files\Microsoft Visual Studio .NET 2003\SDK\v1.1)
+					without actually having to deal with the complexity of knowing
+					the actual path to these directories (for each supported framework).
+				</p>
+				<p>
+					In NAnt 0.86, we've taken this one step further. Each defined
+					framework now has a (ordered) list of directories that can be
+					scanned to locate a framework tool. The list of directories
+					can be easily tuned for each framework by modifying the
+					<span class="xmltext">&lt;</span><span class="xmlelement">tool-paths</span><span class="xmltext">&gt;</span>
+					nodes in the NAnt configuration file.
+				</p>
+				<p>An example of such a node for the Mono 3.5 profile:</p>
+				<pre class="code">
+	<span class="xmltext">&lt;</span><span class="xmlelement">tool-paths</span><span class="xmltext">&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">directory</span> <span class="xmlattribute">name</span><span class="xmltext">="${path::combine(prefix, 'lib/mono/3.5')}" /&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">directory</span> <span class="xmlattribute">name</span><span class="xmltext">="${path::combine(prefix, 'lib/mono/2.0')}" /&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">directory</span> <span class="xmlattribute">name</span><span class="xmltext">="${path::combine(prefix, 'lib/mono/1.0')}" /&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">tool-paths</span><span class="xmltext">&gt;</span>
+				</pre>
+				<p>
+					The directories configured in the <span class="xmltext">&lt;</span><span class="xmlelement">tool-paths</span><span class="xmltext">&gt;</span>
+					node of the current target framework will be scanned in the
+					order in which they are defined.
+				</p>
+				<p>
+					The tool paths are implicitly used when a given tool cannot
+					be located on the location specified by the <code>ProgramLocationAttribute</code>.
+					As such, this only applies to tasks deriving from <code>ExternalProgramBase</code>.
+				</p>
+				<p>
+					To expose this functionality to build authors, we've added a
+					<a href="help/functions/framework.get-tool-path(System.String).html">framework::get-tool-path</a>
+					function that can be used to search for a given tool.
+				</p>
+				<p>For example:</p>
+				<pre class="code">
+	<span class="xmltext">&lt;</span><span class="xmlelement">exec</span> <span class="xmlattribute">program</span><span class="xmltext">="${framework::get-tool-path('gacutil.exe')}"</span> <span class="xmlattribute">managed</span><span class="xmltext">="strict"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">arg</span> <span class="xmlattribute">value</span><span class="xmltext">="/i" /&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">arg</span> <span class="xmlattribute">file</span><span class="xmltext">="Cegeka.HealthFramework.dll" /&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">exec</span><span class="xmltext">&gt;</span>
+				</pre>
+			</div>
+			<h5>
+				<a class="heading">Strict execution</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Introduced support for forcing a managed application to run
+					on the currently targeted CLR.
+				</p>
+				<p>
+					This was previously only possible by modifying the &lt;startup&gt;
+					section of the application configuration file or by using
+					constructs specific to each CLR (eg. using <b>COMPLUS_VERSION</b>
+					environment variable for the MS CLR), which made build scripts
+					non-portable.
+				</p>
+				<p>
+					Developers extending NAnt, can now control this by setting the
+					<code>Managed</code> property for tasks deriving from
+					<code>ExternalProgramBase</code>.
+				</p>
+				<p>
+					For build authors, forcing a managed application to run on a
+					specific version of a CLR can be done by setting the
+					&quot;managed&quot; attribute of <code><a href="help/tasks/exec.html">&lt;exec&gt;</a></code>
+					to <b>strict</b>.
+				</p>
+				<p>For example:</p>
+				<pre class="code">
+	<span class="xmltext">&lt;</span><span class="xmlelement">exec</span> <span class="xmlattribute">program</span><span class="xmltext">="nunit-console.exe"</span> <span class="xmlattribute">managed</span><span class="xmltext">="strict"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">arg</span> <span class="xmlattribute">value</span><span class="xmltext">="/noshadow" /&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">arg</span> <span class="xmlattribute">file</span><span class="xmltext">="Cegeka.HealthFramework.Tests.dll" /&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">exec</span><span class="xmltext">&gt;</span>
+				</pre>
+			</div>
+			<h5>
+				<a class="heading">.NET Framework 3.5</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Support for targeting .NET Framework 3.5 and Mono 3.5
+					Profile is now available.
+				</p>
+				<p>
+					<b>Note:</b> this does not apply to the <code><a href="help/tasks/solution.html">&lt;solution&gt;</a></code>
+					task.
+				</p>
+			</div>
+			<h5>
+				<a class="heading">Silverlight 2.0</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added experimental support for targeting Silverlight 2.0
+					and Moonlight 2.0.
+				</p>
+				<p>
+					<b>Note:</b> this does not apply to the <code><a href="help/tasks/solution.html">&lt;solution&gt;</a></code>
+					task.
+				</p>
+			</div>
+		</div>
+		<h4>Types</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/types/patternset.html">&lt;patternset&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Defines a set of patterns, mostly used to include or exclude certain files.
+				</p>
+				<p>
+					Patterns can be grouped to sets, and later be referenced by their
+					<code>id</code>.
+				</p>
+				<p>For example:</p>
+				<pre class="code">
+	<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">id</span><span class="xmltext">="binaries"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="bin/**/*" /&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">exclude</span> <span class="xmlattribute">name</span><span class="xmltext">="bin/*.tmp" /&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">patternset</span><span class="xmltext">&gt;</span>
+
+	<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">id</span><span class="xmltext">="docs"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="requirements/**/*" /&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">exclude</span> <span class="xmlattribute">name</span><span class="xmltext">="design/**/*.doc" /&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">patternset</span><span class="xmltext">&gt;</span>
+
+	<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">id</span><span class="xmltext">="client.sources"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="client/**/*.cs" /&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">exclude</span> <span class="xmlattribute">name</span><span class="xmltext">="client/**/*.vb" /&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">patternset</span><span class="xmltext">&gt;</span>
+
+	<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">id</span><span class="xmltext">="server.sources"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">include</span> <span class="xmlattribute">name</span><span class="xmltext">="server/**/*.cs" /&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">exclude</span> <span class="xmlattribute">name</span><span class="xmltext">="server/**/*.vb" /&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">patternset</span><span class="xmltext">&gt;</span>
+
+	<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">id</span><span class="xmltext">="sources"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">refid</span><span class="xmltext">="client.sources" /&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">refid</span><span class="xmltext">="server.sources" /&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">patternset</span><span class="xmltext">&gt;</span>
+
+	<span class="xmltext">&lt;</span><span class="xmlelement">target</span> <span class="xmlattribute">name</span><span class="xmltext">="deploy"&gt;</span>
+		<span class="xmltext">&lt;</span><span class="xmlelement">copy</span> <span class="xmlattribute">todir</span><span class="xmltext">="${dist.path}"&gt;</span>
+			<span class="xmltext">&lt;</span><span class="xmlelement">fileset</span> <span class="xmlattribute">basedir</span><span class="xmltext">="${build.path}"&gt;</span>
+				<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">refid</span><span class="xmltext">="binaries" /&gt;</span>
+				<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">refid</span><span class="xmltext">="docs" /&gt;</span>
+				<span class="xmltext">&lt;</span><span class="xmlelement">patternset</span> <span class="xmlattribute">refid</span><span class="xmltext">="sources" /&gt;</span>
+
+				<span class="xmltext">&lt;</span><span class="xmlelement">exclude</span> <span class="xmlattribute">name</span><span class="xmltext">="**/*.sdf" /&gt;</span>
+			<span class="xmltext">&lt;/</span><span class="xmlelement">fileset</span><span class="xmltext">&gt;</span>
+		<span class="xmltext">&lt;/</span><span class="xmlelement">copy</span><span class="xmltext">&gt;</span>
+	<span class="xmltext">&lt;/</span><span class="xmlelement">target</span><span class="xmltext">&gt;</span>
+				</pre>
+			</div>
+		</div>
+		<h3>Changes</h3>
+		<h4>Core</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">Performance</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Initial start-up time and project initialization have been
+					reduced dramatically by lazy configuration of supported
+					target frameworks.
+				</p>
+			</div>
+		</div>
+		<h4>Framework&nbsp;support</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading">.NET Compact Framework 2.0</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Compiler options that were introduced in .NET Framework 2.0
+					are now also available when targeting .NET Compact Framework
+					2.0.
+				</p>
+			</div>
+		</div>
+		<h4>Tasks</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/tasks/al.html">&lt;al&gt;</a></h5>
+			<ul>
+				<li>
+					Modules to compile into an assembly can now be specified
+					using the <span class="xmltext">&lt;</span><span class="xmlelement">modules</span><span class="xmltext">&gt;</span> child element.
+				</li>
+			</ul>
+			<h5>
+				<a class="heading" href="help/tasks/csc.html">&lt;csc&gt;</a></h5>
+			<ul>
+				<li>
+					Added &quot;delaysign&quot attribute which specified whether
+					to delay sign the assembly using only the public portion of
+					the strong name key.
+				</li>
+			</ul>
+			<h5>
+				<a class="heading" href="help/tasks/exec.html">&lt;exec&gt;</a></h5>
+			<ul>
+				<li>
+					The &quot;useruntimeengine&quot; attribute has been deprecated
+					in favor of a &quot;managed&quot; attribute.
+				</li>
+			</ul>
+			<h5>
+				<a class="heading" href="help/tasks/jsc.html">&lt;jsc&gt;</a></h5>
+			<ul>
+				<li>
+					Added &quot;autoref&quot attribute to enable automatically
+					referencing of assemblies if they have the same name as an
+					imported namespace or as a type annotation when declaring a
+					variable.
+				</li>
+				<li>
+					Added &quot;nostdlib&quot attribute which instructs the
+					compiler not to import standard library.
+				</li>
+				<li>
+					Added &quot;versionsafe&quot attribute which causes the
+					compiler to generate errors for implicit method overrides.
+				</li>
+				<li>
+					Now uses <code>mjs</code> when targeting Mono.
+				</li>
+			</ul>
+			<h5>
+				<a class="heading" href="help/tasks/vbc.html">&lt;vbc&gt;</a></h5>
+			<ul>
+				<li>
+					Added &quot;delaysign&quot attribute which specified whether
+					to delay sign the assembly using only the public portion of
+					the strong name key.
+				</li>
+			</ul>
+			<h5>
+				<a class="heading" href="help/tasks/vjc.html">&lt;vjc&gt;</a></h5>
+			<ul>
+				<li>
+					Added &quot;delaysign&quot attribute which specified whether
+					to delay sign the assembly using only the public portion of
+					the strong name key.
+				</li>
+			</ul>
+		</div>
+		<h4>Third-Party</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="http://www.icsharpcode.net/OpenSource/SharpZipLib/">#ziplib</a></h5>
+			<ul>
+				<li>
+					Upgraded to v0.85.1 which, amongst other things, adds support for ZIP64.
+				</li>
+			</ul>
+		</div>
+		<h4>Types</h4>
+		<div style="margin-left: 20px;">
+			<h5>
+				<a class="heading" href="help/types/assemblyfileset.html">&lt;assemblyfileset&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					The reference assemblies of a given target framework are
+					no longer limited to the assemblies in, what is known as,
+					the framework assembly directory.
+				</p>
+				<p>
+					Instead, these are now defined using one or more <span class="xmltext">&lt;</span><span class="xmlelement">reference-assemblies</span><span class="xmltext">&gt;</span>
+					filesets in the <span class="xmltext">&lt;</span><span class="xmlelement">framework</span><span class="xmltext">&gt;</span>
+					node of the NAnt configuration file.
+				</p>
+			</div>
+			<h5>
+				<a class="heading" href="help/types/fileset.html">&lt;fileset&gt;</a></h5>
+			<div style="margin-left: 20px;">
+				<p>
+					Added a &quot;casesensitive&quot; attribute to control whether
+					pattern matching must be case-sensitive.
+				</p>
+				<p>
+					The default is <b>true</b> on Unix and <b>false</b> on on
+					other platforms.
+				</p>
+			</div>
+		</div>
 		<h2>
 			0.85 (October 14, 2006)</h2>
 		<h3>
@@ -60,7 +1202,7 @@
 		<h4>Framework&nbsp;support</h4>
 		<div style="margin-left: 20px;">
 			<h5>
-				<a class="heading" >.NET Compact Framework 2.0</a></h5>
+				<a class="heading">.NET Compact Framework 2.0</a></h5>
 			<ul>
 				<li>
 					Embedded resource files cannot be compiled when targeting
@@ -71,7 +1213,7 @@
 		<h4>Functions</h4>
 		<div style="margin-left: 20px;">
 			<h5>
-				<a class="heading" href="help/functions/file.is-assembly.html">file::is-assembly</a></h5>
+				<a class="heading" href="help/functions/file.is-assembly(System.String).html">file::is-assembly</a></h5>
 			<ul>
 				<li>
 					Function call fails when a file name that does not correspond
@@ -220,7 +1362,7 @@
 						#1191285</a>).
 				</li>
 				<li>
-					Macro definitions specified using the <code>&lt;defines&gt;</code> collection
+					Macro definitions specified using the <span class="xmltext">&lt;</span><span class="xmlelement">defines</span><span class="xmltext">&gt;</span> collection
 					are passed to the compiler, regardless of the value of the &quot;if&quot; and
 					&quot;unless&quot; attributes (bug <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1221945&amp;group_id=31650&amp;atid=402868">
 						#1221945</a>).
@@ -237,7 +1379,7 @@
 						#1195320</a>).
 				</li>
 				<li>
-					Macro definitions specified using the <code>&lt;defines&gt;</code> collection
+					Macro definitions specified using the <span class="xmltext">&lt;</span><span class="xmlelement">defines</span><span class="xmltext">&gt;</span> collection
 					are passed to the compiler, regardless of the value of the &quot;if&quot; and
 					&quot;unless&quot; attributes (bug <a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1221945&amp;group_id=31650&amp;atid=402868">
 						#1221945</a>).
@@ -855,7 +1997,7 @@
 		<h4>Functions</h4>
 		<div style="margin-left: 20px;">
 			<h5>
-				<a class="heading" href="help/functions/target.get-current-target.html">target::get-current-target()</a></h5>
+				<a class="heading" href="help/functions/target.get-current-target().html">target::get-current-target()</a></h5>
 			<ul>
 				<li>
 					Current target is incorrect after execution of target using <code><a href="help/tasks/call.html">
@@ -1374,10 +2516,12 @@
 			<a class="heading" href="help/tasks/exec.html">&lt;exec&gt;</a></h4>
 		<ul>
 			<li>
-				Fixed internal error when "program" attribute was assigned invalid file name.</li>
+				Fixed internal error when "program" attribute was assigned invalid file name.
+			</li>
 			<li>
-				Added "resultproperty", which can be set to a name of a property in which the
-				exit code of the program can be stored.</li>
+				Added &quot;resultproperty&quot; attribute, which can be set to a
+				name of a property in which the exit code of the program can be stored.
+			</li>
 			<li>
 				The <a href="help/elements/NAnt.Core.Types.Argument.html">&lt;arg&gt;</a> element
 				now supports line and PATH-like command-line arguments.

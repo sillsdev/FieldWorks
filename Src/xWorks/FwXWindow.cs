@@ -31,7 +31,9 @@ using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -737,7 +739,7 @@ namespace SIL.FieldWorks.XWorks
 			if (helper == null || !helper.CanInsertLinkToFile())
 				return false;
 			string pathname = null;
-			using (var fileDialog = new OpenFileDialog())
+			using (var fileDialog = new OpenFileDialogAdapter())
 			{
 				fileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
 				fileDialog.RestoreDirectory = true;
@@ -1812,7 +1814,7 @@ namespace SIL.FieldWorks.XWorks
 			var form = ActiveForm;
 			if (form == null)
 				form = this;
-			using (var dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.CheckFileExists = true;
 				dlg.RestoreDirectory = true;
@@ -1847,18 +1849,32 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void ImportLocalizedLists()
 		{
-			string sFilePattern = Path.Combine(DirectoryFinder.TemplateDirectory, "LocalizedLists-*.xml");
+			string filePrefix = XmlTranslatedLists.LocalizedListPrefix;
 			List<string> rgsAnthroFiles = new List<string>();
-			string[] rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, "LocalizedLists-*.xml", SearchOption.TopDirectoryOnly);
+			string[] rgsXmlFiles = Directory.GetFiles(DirectoryFinder.TemplateDirectory, filePrefix + "*.zip", SearchOption.TopDirectoryOnly);
 			string sFile;
 			for (int i = 0; i < rgsXmlFiles.Length; ++i)
 			{
 				using (new WaitCursor(this))
 				{
+					string fileName = Path.GetFileNameWithoutExtension(rgsXmlFiles[i]);
+					string wsId = fileName.Substring(filePrefix.Length);
+					if (!IsWritingSystemInProject(wsId))
+						continue;
 					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
 						() => ImportTranslatedLists(rgsXmlFiles[i]));
 				}
 			}
+		}
+
+		bool IsWritingSystemInProject(string wsId)
+		{
+			foreach (var ws in Cache.ServiceLocator.WritingSystems.AllWritingSystems)
+			{
+				if (ws.IcuLocale == wsId)
+					return true;
+			}
+			return false;
 		}
 
 		private void ImportTranslatedLists(string filename)
@@ -1953,7 +1969,21 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			base.WndProc (ref m);
+			// In Mono, closing a dialog invokes WM_ACTIVATE on the active form, which then selects
+			// its active control.  This swallows keyboard input.  To prevent this, we select the
+			// desired control if one has been established so that keyboard input can still be seen
+			// by that control.  (See FWNX-785.)
+			if (MiscUtils.IsMono && m.Msg == (int)Win32.WinMsgs.WM_ACTIVATE && m.HWnd == this.Handle &&
+				DesiredControl != null && !DesiredControl.IsDisposed && DesiredControl.Visible && DesiredControl.Enabled)
+			{
+				DesiredControl.Select();
+			}
 		}
+
+		/// <summary>
+		/// Gets or sets the control that needs keyboard input.  (See FWNX-785.)
+		/// </summary>
+		public Control DesiredControl { get; set; }
 
 		#region ISettings implementation
 

@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			m_text = textFactory.Create();
-			Cache.LangProject.TextsOC.Add(m_text);
+			//Cache.LangProject.TextsOC.Add(m_text);
 			m_stText = stTextFactory.Create();
 			m_text.ContentsOA = m_stText;
 			m_para0 = m_stText.AddNewTextPara(null);
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			var text2 = textFactory.Create();
-			Cache.LangProject.TextsOC.Add(text2);
+			//Cache.LangProject.TextsOC.Add(text2);
 			m_stText2 = stTextFactory.Create();
 			text2.ContentsOA = m_stText2;
 			m_para2 = m_stText2.AddNewTextPara(null);
@@ -716,7 +716,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			var text = textFactory.Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			var stText = stTextFactory.Create();
 			text.ContentsOA = stText;
 			var para0 = stText.AddNewTextPara(null);

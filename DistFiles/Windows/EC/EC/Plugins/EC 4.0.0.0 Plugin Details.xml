@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<EncConverterPlugins xmlns="http://www.sil.org/computing/schemas/ECPlugins.xsd">
+	<ECPluginDetails ImplementationName="SIL.comp"
+					ImplementationProgId="SilEncConverters40.CmpdEncConverter"
+					Priority="0"
+					DisplayName="Compound (daisy-chained) Converter"
+					ConfiguratorProgId="SilEncConverters40.CmpdEncConverterConfig"
+					AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+	<ECPluginDetails ImplementationName="SIL.fallback"
+					ImplementationProgId="SilEncConverters40.FallbackEncConverter"
+					Priority="0"
+					DisplayName="Primary-Fallback Converter"
+					ConfiguratorProgId="SilEncConverters40.FallbackEncConverterConfig"
+					AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+	<ECPluginDetails ImplementationName="SIL.tec"
+					ImplementationProgId="SilEncConverters40.TecEncConverter"
+					Priority="3"
+					DisplayName="TECkit map"
+					ConfiguratorProgId="SilEncConverters40.TecEncConverterConfig"
+					DefiningExtension=".tec"
+					AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+	<ECPluginDetails ImplementationName="SIL.map"
+					ImplementationProgId="SilEncConverters40.TecEncConverter"
+					Priority="4"
+					DefiningExtension=".map"
+					AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+	<ECPluginDetails ImplementationName="SIL.tecForm"
+					ImplementationProgId="SilEncConverters40.TecFormEncConverter"
+					Priority="5"
+					AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+	<ECPluginDetails ImplementationName="cp"
+					ImplementationProgId="SilEncConverters40.CpEncConverter"
+					Priority="6"
+					DisplayName="Code Page Converter"
+					DefiningProcessType="16"
+					ConfiguratorProgId="SilEncConverters40.CpEncConverterConfig"
+					AssemblyReference="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485" />
+</EncConverterPlugins>

@@ -1,13 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>9.0.30729</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{93D3BC58-E0B2-4769-88CF-3BB1CC32DB02}</ProjectGuid>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>..\..\..</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
+	<SccProjectName></SccProjectName>
+	<SccLocalPath></SccLocalPath>
+	<SccProvider></SccProvider>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<AssemblyKeyContainerName>
@@ -28,7 +28,9 @@
 	</UpgradeBackupLocation>
 	<SccAuxPath>
 	</SccAuxPath>
-	<OldToolsVersion>2.0</OldToolsVersion>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -41,10 +43,9 @@
 	<MapFileExtensions>true</MapFileExtensions>
 	<ApplicationRevision>0</ApplicationRevision>
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\Output\Debug\</OutputPath>
@@ -52,7 +53,7 @@
 	<ConfigurationOverrideFile>
 	</ConfigurationOverrideFile>
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<DocumentationFile>obj\TeDialogs.xml</DocumentationFile>
+	<DocumentationFile>..\..\..\Output\Debug\TeDialogs.xml</DocumentationFile>
 	<DebugSymbols>true</DebugSymbols>
 	<FileAlignment>4096</FileAlignment>
 	<Optimize>false</Optimize>
@@ -62,9 +63,11 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<OutputPath>bin\Release\</OutputPath>
+	<OutputPath>..\..\..\Output\Release\</OutputPath>
 	<BaseAddress>285212672</BaseAddress>
 	<ConfigurationOverrideFile>
 	</ConfigurationOverrideFile>
@@ -80,6 +83,8 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -126,10 +131,6 @@
 	  <Name>FwUtils</Name>
 	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
 	</Reference>
-	<Reference Include="MenuExtender">
-	  <Name>MenuExtender</Name>
-	  <HintPath>..\..\..\Output\Debug\MenuExtender.dll</HintPath>
-	</Reference>
 	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -168,9 +169,7 @@
 	<Reference Include="System">
 	  <Name>System</Name>
 	</Reference>
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Data">
 	  <Name>System.Data</Name>
 	</Reference>
@@ -205,6 +204,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="ArchiveDraftDialog.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -316,20 +318,38 @@
 	  <DependentUpon>ToolsOptionsDialog.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
-	<None Include="AssemblyInfo.cs">
+	<Compile Include="AssemblyInfo.cs">
 	  <SubType>Code</SubType>
-	</None>
-	<Compile Include="GeneratedAssemblyInfo.cs" />
+	</Compile>
   </ItemGroup>
   <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
 	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
 	  <Visible>False</Visible>
+	  <ProductName>
+	  </ProductName>
+	  <Install>false</Install>
 	</BootstrapperPackage>
 	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
 	  <Visible>False</Visible>
+	  <ProductName>
+	  </ProductName>
+	  <Install>false</Install>
 	</BootstrapperPackage>
 	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
 	  <Visible>False</Visible>
+	  <ProductName>
+	  </ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>false</Install>
 	</BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>

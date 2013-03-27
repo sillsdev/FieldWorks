@@ -12,6 +12,7 @@
 // Responsibility: FW Team, especially David Olson (this is of interest to PA also)
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.IO;
 using System.Configuration;
@@ -443,6 +444,8 @@ namespace SIL.Utils
 		/// specified binding.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private static object Invoke(object binding, string name, object[] args, BindingFlags flags)
 		{
 			// If binding is a Type then assume we're invoking a static method, property
@@ -453,6 +456,8 @@ namespace SIL.Utils
 			// If necessary, go up the inheritance chain until the name
 			// of the method, property or field is found.
 			Type type = (binding is Type ? binding as Type : binding.GetType());
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			while (type.GetMember(name, flags).Length == 0 && type.BaseType != null)
 				type = type.BaseType;
 

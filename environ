@@ -5,23 +5,27 @@
 # Source this file in a shell and then run "mono FieldWorks.exe -app {Te,Flex}"
 
 BASE=$(pwd)
-COM=$(dirname "${BASE}")/COM
+COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
 [ -z "$BUILD" ] && BUILD=Debug
+[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/usr/local
 
 # Dependency locations
 # TODO - search for xulrunner-1.9.2.* locations, (and select the latest)
 XULRUNNER=$(ls -d /usr/lib/xulrunner-1.9.2* | tail -1)
 GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 
+MONO_RUNTIME=v4.0.30319
+
 # Directory settings
 PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/bin:${BASE}/Lib/src/icu/source/build${ARCH}/bin:\
 ${BASE}/Bin/nant/bin:\
-$PATH"
-LD_LIBRARY_PATH="${COM}/build${ARCH}/src/.libs:${COM}/build${ARCH}/lib:\
+${COM}/build${ARCH}/bin:\
+${PATH}"
+LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${BASE}/Lib/src/icu/install${ARCH}/lib:\
-${BASE}/Output_${ARCH}/${BUILD}:\
+${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
 
 # Add packaged mono items to paths
@@ -32,9 +36,9 @@ PKG_CONFIG_PATH="/usr/lib/fieldworks/mono/lib/pkgconfig:${PKG_CONFIG_PATH}"
 if [ "$RUNMODE" != "PACKAGE" ]
 then
 	# Make locally-built software (eg mono) visible
-	PATH="/usr/local/bin:${PATH}"
-	LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
-	PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}"
+	PATH="${MONO_PREFIX}/bin:${PATH}"
+	LD_LIBRARY_PATH="${MONO_PREFIX}/lib:${LD_LIBRARY_PATH}"
+	PKG_CONFIG_PATH="${MONO_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 fi
 
 if [ "$RUNMODE" = "INSTALLED" ]
@@ -43,7 +47,7 @@ then
 	FW_ROOT="${BASE}/../../share/fieldworks"
 	FW_ROOTDATA="${HOME}/.config/fieldworks"
 	FW_ROOTCODE="${BASE}/../../share/fieldworks"
-	ICU_DATA="${HOME}/.config/fieldworks/Icu40/icudt40l"
+	ICU_DATA="${HOME}/.config/fieldworks/Icu50"
 	PATH="${BASE}/icu-bin:${PATH}"
 	LD_LIBRARY_PATH="${BASE}:${LD_LIBRARY_PATH}"
 	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
@@ -52,8 +56,14 @@ else
 	FW_ROOT="${BASE}/DistFiles"
 	FW_ROOTDATA="${BASE}/DistFiles"
 	FW_ROOTCODE="${BASE}/DistFiles"
-	ICU_DATA="${BASE}/DistFiles/Icu40/icudt40l"
+	ICU_DATA="${BASE}/DistFiles/Icu50"
 	MONO_REGISTRY_PATH="${BASE}/Output_${ARCH}/registry"
+fi
+
+if [ "$RUNMODE" != "PACKAGE" -a "$RUNMODE" != "INSTALLED" ]
+then
+	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
+	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
 fi
 
 MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}:${GDK_SHARP}"
@@ -69,7 +79,8 @@ export \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \
 	MONO_PATH MONO_REGISTRY_PATH \
-	MONO_TRACE_LISTENER MONO_IOMAP MONO_MWF_SCALING
+	MONO_RUNTIME MONO_PREFIX \
+	MONO_TRACE_LISTENER MONO_IOMAP MONO_MWF_SCALING FW_CommonAppData
 
 #DEBUG_ENABLE_PTR_VALIDATION
 

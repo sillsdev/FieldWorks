@@ -14,6 +14,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
@@ -44,6 +45,8 @@ namespace SIL.CoreImpl
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Unit tests, gets disposed in teardown method")]
 		public void TestSetup()
 		{
 			RegistryHelper.CompanyName = "SIL";
@@ -530,17 +533,13 @@ namespace SIL.CoreImpl
 						flag = (expValues[2] is byte[]);
 						break;
 					case CellarPropertyType.MultiString:
-					case CellarPropertyType.MultiBigString:
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiBigUnicode:
 						flag = (expValues[6] != null);
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						flag = (expValues[7] != null);
 						break;
 					case CellarPropertyType.Unicode:
-					case CellarPropertyType.BigUnicode:
 						flag = (expValues[8] != null);
 						break;
 					case CellarPropertyType.OwningAtomic:

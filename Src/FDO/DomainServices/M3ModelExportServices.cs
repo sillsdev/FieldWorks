@@ -36,9 +36,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					new XElement("MoMorphData",
 						ExportCompoundRules(servLoc.GetInstance<IMoEndoCompoundRepository>(),
 							servLoc.GetInstance<IMoExoCompoundRepository>(), mode),
-						ExportAdhocCoProhibitionsGrammarSketch(morphologicalData, mode),
+						ExportAdhocCoProhibitions(morphologicalData, mode),
 						ExportProdRestrict(morphologicalData, mode)),
 					ExportMorphTypes(servLoc.GetInstance<IMoMorphTypeRepository>(), mode),
+					ExportLexEntryInflTypes(servLoc.GetInstance<ILexEntryInflTypeRepository>(), mode),
 					ExportLexiconFull(servLoc, mode),
 					ExportFeatureSystem(languageProject.MsFeatureSystemOA, "FeatureSystem", mode),
 					ExportFeatureSystem(languageProject.PhFeatureSystemOA, "PhFeatureSystem", mode)
@@ -66,10 +67,10 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					ExportParserParameters(morphologicalData, mode),
 					ExportCompoundRules(servLoc.GetInstance<IMoEndoCompoundRepository>(),
 						servLoc.GetInstance<IMoExoCompoundRepository>(), mode),
-					ExportAdhocCoProhibitions(servLoc.GetInstance<IMoAlloAdhocProhibRepository>(),
-						servLoc.GetInstance<IMoMorphAdhocProhibRepository>()),
+					ExportAdhocCoProhibitions(morphologicalData, mode),
 					ExportProdRestrict(morphologicalData, mode),
 					ExportMorphTypes(servLoc.GetInstance<IMoMorphTypeRepository>(), mode),
+					ExportLexEntryInflTypes(servLoc.GetInstance<ILexEntryInflTypeRepository>(), mode),
 					ExportLexiconFull(servLoc, mode),
 					ExportFeatureSystem(languageProject.MsFeatureSystemOA, "FeatureSystem", mode),
 					ExportFeatureSystem(languageProject.PhFeatureSystemOA, "PhFeatureSystem", mode)
@@ -121,6 +122,8 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// </summary>
 		static bool IsValidTemplate(IMoInflAffixTemplate template)
 		{
+			if (template.Disabled)
+				return false;
 			return
 				(from affixSlot in template.PrefixSlotsRS.Concat(template.SuffixSlotsRS)
 				 where IsValidSlot(affixSlot)
@@ -188,6 +191,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			return new XElement("CompoundRules",
 				from endoCompound in endoCmpRepository.AllInstances()
+				where !endoCompound.Disabled
 				select new XElement("MoEndoCompound",
 					new XAttribute("Id", endoCompound.Hvo),
 					new XAttribute("HeadLast", endoCompound.HeadLast ? 1 : 0),
@@ -199,6 +203,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					select ExportItemAsReference(prod, "ToProdRestrict"),
 					ExportItemAsReference(endoCompound.OverridingMsaOA, "OverridingMsa")),
 				from exoCompound in exoCmpRepository.AllInstances()
+				where !exoCompound.Disabled
 				select new XElement("MoExoCompound",
 					new XAttribute("Id", exoCompound.Hvo),
 					ExportBestAnalysis(exoCompound.Name, "Name", mode),
@@ -210,19 +215,11 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					ExportItemAsReference(exoCompound.ToMsaOA, "ToMsa")));
 		}
 
-		private static XElement ExportAdhocCoProhibitions(IRepository<IMoAlloAdhocProhib> alloRepository, IRepository<IMoMorphAdhocProhib> morphRepository)
-		{
-			return new XElement("AdhocCoProhibitions",
-				from allo in alloRepository.AllInstances()
-				select ExportAlloAdhocCoProhibition(allo),
-				from morph in morphRepository.AllInstances()
-				select ExportMorphAdhocCoProhibition(morph));
-		}
-
-		private static XElement ExportAdhocCoProhibitionsGrammarSketch(IMoMorphData morphData, Icu.UNormalizationMode mode)
+		private static XElement ExportAdhocCoProhibitions(IMoMorphData morphData, Icu.UNormalizationMode mode)
 		{
 			return new XElement("AdhocCoProhibitions",
 				from adhocCoProhib in morphData.AdhocCoProhibitionsOC
+				where !adhocCoProhib.Disabled
 				select ExportAdhocCoProhibition(adhocCoProhib, mode));
 		}
 
@@ -247,6 +244,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				ExportBestAnalysis(adhocProhibGr.Name, "Name", mode),
 				ExportBestAnalysis(adhocProhibGr.Description, "Description", mode),
 				from adhocCoProhib in adhocProhibGr.MembersOC
+				where !adhocCoProhib.Disabled
 				select ExportAdhocCoProhibition(adhocCoProhib, mode));
 		}
 
@@ -280,7 +278,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					ExportBestAnalysis(restriction.Description, "Description", mode),
 					ExportBestAnalysis(restriction.Abbreviation, "Abbreviation", mode)));
 		}
-
 		private static XElement ExportMorphTypes(IRepository<IMoMorphType> morphTypeRepository, Icu.UNormalizationMode mode)
 		{
 			return new XElement("MoMorphTypes",
@@ -294,6 +291,24 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					new XElement("NumberOfLexEntries", morphType.NumberOfLexEntries)));
 		}
 
+		private static XElement ExportLexEntryInflTypes(IRepository<ILexEntryInflType> irregularlyInflectedFormTypeRepository, Icu.UNormalizationMode mode)
+		{
+			return new XElement("LexEntryInflTypes",
+								from irregularlyInflectedForm in irregularlyInflectedFormTypeRepository.AllInstances()
+								select new XElement("LexEntryInflType",
+													new XAttribute("Id", irregularlyInflectedForm.Hvo),
+													new XAttribute("Guid", irregularlyInflectedForm.Guid.ToString()),
+													ExportBestAnalysis(irregularlyInflectedForm.Name, "Name", mode),
+													ExportBestAnalysis(irregularlyInflectedForm.Abbreviation, "Abbreviation",
+																	   mode),
+													ExportBestAnalysis(irregularlyInflectedForm.Description, "Description", mode),
+													ExportBestAnalysis(irregularlyInflectedForm.GlossPrepend, "GlossPrepend", mode),
+													ExportBestAnalysis(irregularlyInflectedForm.GlossAppend, "GlossAppend", mode),
+													from slot in irregularlyInflectedForm.SlotsRC
+													select ExportItemAsReference(slot, "Slots"),
+													new XElement("InflectionFeatures",
+																 ExportFeatureStructure(irregularlyInflectedForm.InflFeatsOA))));
+		}
 		/// <summary>
 		/// Export the full lexicon when exporting both grammar and lexicon.
 		/// </summary>
@@ -322,7 +337,13 @@ namespace SIL.FieldWorks.FDO.DomainServices
 						from sense in entry.AllSenses
 						select ExportItemAsReference(sense, "Sense"),
 						from msa in entry.MorphoSyntaxAnalysesOC
-						select ExportItemAsReference(msa, "MorphoSyntaxAnalysis")));
+						select ExportItemAsReference(msa, "MorphoSyntaxAnalysis"),
+						from lexEntryRef in entry.VariantEntryRefs
+						 select new XElement("LexEntryRef",
+							 from componentLexemes in lexEntryRef.ComponentLexemesRS
+							 select ExportItemAsReference(componentLexemes, "ComponentLexeme"),
+						from lexEntryInflType in lexEntryRef.VariantEntryTypesRS
+							select ExportItemAsReference(lexEntryInflType, "LexEntryInflType"))));
 		}
 
 		private static XElement ExportMSAs(IServiceLocator servLoc)
@@ -454,6 +475,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 																 select ExportFeatureConstraint(featureConstraint)),
 								new XElement("PhonRules", from phonRule in phonologicalData.PhonRulesOS
 														   select ExportPhonRule(phonRule, mode)),
+								ExportPhonRuleFeats(phonologicalData, mode),
 							   new XElement("PhIters"),
 							   new XElement("PhIters"),
 							   new XElement("PhIters"),
@@ -462,9 +484,27 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							   new XElement("PhIters"));
 		}
 
+		private static XElement ExportPhonRuleFeats(IPhPhonData phonData, Icu.UNormalizationMode mode)
+		{
+			return new XElement("PhonRuleFeats",
+				from phonRuleFeat in phonData.PhonRuleFeatsOA.ReallyReallyAllPossibilities
+				select ExportPhonRuleFeat(phonRuleFeat as IPhPhonRuleFeat, mode));
+		}
+
+		private static XElement ExportPhonRuleFeat(IPhPhonRuleFeat phonRuleFeat, Icu.UNormalizationMode mode)
+		{
+			return new XElement("PhonRuleFeat",
+								new XAttribute("Id", phonRuleFeat.Hvo),
+								ExportBestAnalysis(phonRuleFeat.Name, "Name", mode),
+								new XElement("Item",
+								phonRuleFeat.ItemRA != null ? new XAttribute("itemRef", phonRuleFeat.ItemRA.Hvo) : new XAttribute("missing", 1)));
+		}
+
 		private static XElement ExportPhonRule(IPhSegmentRule phonRule, Icu.UNormalizationMode mode)
 		{
 			XElement retVal = null;
+			if (phonRule.Disabled)
+				return retVal;
 			switch (phonRule.ClassName)
 			{
 				case "PhMetathesisRule":
@@ -490,13 +530,19 @@ namespace SIL.FieldWorks.FDO.DomainServices
 							ExportContextList(phonRule.StrucDescOS)),
 						from constraint in constraints
 						select ExportItemAsReference(constraint, constraints.IndexOf(constraint), "FeatureConstraints"),
-						 new XElement("RightHandSides", from rhs in asRegularRule.RightHandSidesOS
+							new XElement("RightHandSides", from rhs in asRegularRule.RightHandSidesOS
 														select new XElement("PhSegRuleRHS",
-															 new XAttribute("Id", rhs.Hvo),
-															 new XElement("StrucChange", from structChange in rhs.StrucChangeOS
-															  select ExportContext(structChange)),
-															  new XElement("LeftContext", ExportContext(rhs.LeftContextOA)),
-															  new XElement("RightContext", ExportContext(rhs.RightContextOA)))));
+							new XAttribute("Id", rhs.Hvo),
+							new XElement("StrucChange", from structChange in rhs.StrucChangeOS
+															select ExportContext(structChange)),
+							new XElement("InputPOSes", from pos in rhs.InputPOSesRC
+															select ExportItemAsReference(pos, "RequiredPOS")),
+							new XElement("ReqRuleFeats", from rrf in rhs.ReqRuleFeatsRC
+															select ExportItemAsReference(rrf, "RuleFeat")),
+							new XElement("ExclRuleFeats", from erf in rhs.ExclRuleFeatsRC
+															select ExportItemAsReference(erf, "RuleFeat")),
+							new XElement("LeftContext", ExportContext(rhs.LeftContextOA)),
+							new XElement("RightContext", ExportContext(rhs.RightContextOA)))));
 					break;
 				case "PhSegmentRule":
 					retVal = new XElement("PhSegmentRule",

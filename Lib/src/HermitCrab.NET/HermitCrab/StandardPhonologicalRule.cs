@@ -655,15 +655,41 @@ namespace SIL.HermitCrab
 			/// Determines whether this subrule is applicable to the specified word analysis.
 			/// </summary>
 			/// <param name="input">The word analysis.</param>
+			/// <param name="trace"> </param>
 			/// <returns>
 			/// 	<c>true</c> if this subrule is applicable, otherwise <c>false</c>.
 			/// </returns>
-			public bool IsApplicable(WordSynthesis input)
+			public bool IsApplicable(WordSynthesis input, Trace trace)
 			{
 				// check part of speech and MPR features
-				return ((m_requiredPOSs == null || m_requiredPOSs.Count == 0 || m_requiredPOSs.Contains(input.POS))
-					&& (m_requiredMPRFeatures == null || m_requiredMPRFeatures.Count == 0 || m_requiredMPRFeatures.IsMatch(input.MPRFeatures))
-					&& (m_excludedMPRFeatures == null || m_excludedMPRFeatures.Count == 0 || !m_excludedMPRFeatures.IsMatch(input.MPRFeatures)));
+				bool fRequiredPOSMet = m_requiredPOSs == null || m_requiredPOSs.Count == 0 || m_requiredPOSs.Contains(input.POS);
+				bool fRequiredMPRFeaturesMet = m_requiredMPRFeatures == null || m_requiredMPRFeatures.Count == 0 || m_requiredMPRFeatures.IsMatch(input.MPRFeatures);
+				bool fExcludedMPRFeaturesMet = m_excludedMPRFeatures == null || m_excludedMPRFeatures.Count == 0 || !m_excludedMPRFeatures.IsMatch(input.MPRFeatures);
+				if (trace != null)
+				{
+					if (!fRequiredPOSMet)
+					{
+						var badPosTrace = new PhonologicalRuleSynthesisRequiredPOSTrace(input.POS, m_requiredPOSs);
+						trace.AddChild(badPosTrace);
+					}
+					if (!fRequiredMPRFeaturesMet)
+					{
+						var badRequiredMPRFeaturesTrace =
+							new PhonologicalRuleSynthesisMPRFeaturesTrace(
+								PhonologicalRuleSynthesisMPRFeaturesTrace.PhonologicalRuleSynthesisMPRFeaturesTraceType.REQUIRED,
+								input.MPRFeatures, m_requiredMPRFeatures);
+						trace.AddChild(badRequiredMPRFeaturesTrace);
+					}
+					if (!fExcludedMPRFeaturesMet)
+					{
+						var badExcludedMPRFeaturesTrace =
+							new PhonologicalRuleSynthesisMPRFeaturesTrace(
+								PhonologicalRuleSynthesisMPRFeaturesTrace.PhonologicalRuleSynthesisMPRFeaturesTraceType.EXCLUDED,
+								input.MPRFeatures, m_excludedMPRFeatures);
+						trace.AddChild(badExcludedMPRFeaturesTrace);
+					}
+				}
+				return (fRequiredPOSMet && fRequiredMPRFeaturesMet && fExcludedMPRFeaturesMet);
 			}
 		}
 
@@ -790,7 +816,7 @@ namespace SIL.HermitCrab
 			List<Subrule> subrules = new List<Subrule>();
 			foreach (Subrule sr in m_subrules)
 			{
-				if (sr.IsApplicable(input))
+				if (sr.IsApplicable(input, trace))
 					subrules.Add(sr);
 			}
 

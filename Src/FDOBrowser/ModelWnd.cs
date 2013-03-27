@@ -249,33 +249,17 @@ namespace FDOBrowser
 								type = "Basic";
 								signature = "String";
 								break;
-							case (int) CellarPropertyType.BigString:
-								type = "Basic";
-								signature = "String (big)";
-								break;
 							case (int) CellarPropertyType.MultiString:
 								type = "Basic";
 								signature = "MultiString";
-								break;
-							case (int) CellarPropertyType.MultiBigString:
-								type = "Basic";
-								signature = "MultiString (big)";
 								break;
 							case (int) CellarPropertyType.Unicode:
 								type = "Basic";
 								signature = "Unicode";
 								break;
-							case (int) CellarPropertyType.BigUnicode:
-								type = "Basic";
-								signature = "Unicode (big)";
-								break;
 							case (int) CellarPropertyType.MultiUnicode:
 								type = "Basic";
 								signature = "MultiUnicode";
-								break;
-							case (int) CellarPropertyType.MultiBigUnicode:
-								type = "Basic";
-								signature = "MultiUnicode (big)";
 								break;
 
 								// CmObjects.

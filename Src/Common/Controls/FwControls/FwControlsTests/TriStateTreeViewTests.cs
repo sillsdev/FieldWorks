@@ -15,6 +15,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.Utils;
@@ -51,6 +52,8 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test, object is disposed in TearDown method")]
 	public class TriStateTreeViewTests: SIL.FieldWorks.Test.TestUtils.BaseTest
 	{
 		private TriStateTreeView m_treeView;

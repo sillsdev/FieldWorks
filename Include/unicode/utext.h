@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 2004-2008, International Business Machines
+*   Copyright (C) 2004-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -136,7 +136,9 @@
 
 
 #include "unicode/utypes.h"
-#ifdef XP_CPLUSPLUS
+#include "unicode/uchar.h"
+#if U_SHOW_CPLUSPLUS_API
+#include "unicode/localpointer.h"
 #include "unicode/rep.h"
 #include "unicode/unistr.h"
 #include "unicode/chariter.h"
@@ -179,6 +181,24 @@ typedef struct UText UText; /**< C typedef for struct UText. @stable ICU 3.6 */
 U_STABLE UText * U_EXPORT2
 utext_close(UText *ut);
 
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUTextPointer
+ * "Smart pointer" class, closes a UText via utext_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUTextPointer, UText, utext_close);
+
+U_NAMESPACE_END
+
+#endif
 
 /**
  * Open a read-only UText implementation for UTF-8 strings.
@@ -223,7 +243,7 @@ U_STABLE UText * U_EXPORT2
 utext_openUChars(UText *ut, const UChar *s, int64_t length, UErrorCode *status);
 
 
-#ifdef XP_CPLUSPLUS
+#if U_SHOW_CPLUSPLUS_API
 /**
  * Open a writable UText for a non-const UnicodeString.
  *
@@ -237,7 +257,7 @@ utext_openUChars(UText *ut, const UChar *s, int64_t length, UErrorCode *status);
  * @stable ICU 3.4
  */
 U_STABLE UText * U_EXPORT2
-utext_openUnicodeString(UText *ut, U_NAMESPACE_QUALIFIER UnicodeString *s, UErrorCode *status);
+utext_openUnicodeString(UText *ut, icu::UnicodeString *s, UErrorCode *status);
 
 
 /**
@@ -253,7 +273,7 @@ utext_openUnicodeString(UText *ut, U_NAMESPACE_QUALIFIER UnicodeString *s, UErro
  * @stable ICU 3.4
  */
 U_STABLE UText * U_EXPORT2
-utext_openConstUnicodeString(UText *ut, const U_NAMESPACE_QUALIFIER UnicodeString *s, UErrorCode *status);
+utext_openConstUnicodeString(UText *ut, const icu::UnicodeString *s, UErrorCode *status);
 
 
 /**
@@ -269,7 +289,7 @@ utext_openConstUnicodeString(UText *ut, const U_NAMESPACE_QUALIFIER UnicodeStrin
  * @stable ICU 3.4
  */
 U_STABLE UText * U_EXPORT2
-utext_openReplaceable(UText *ut, U_NAMESPACE_QUALIFIER Replaceable *rep, UErrorCode *status);
+utext_openReplaceable(UText *ut, icu::Replaceable *rep, UErrorCode *status);
 
 /**
  * Open a  UText implementation over an ICU CharacterIterator.
@@ -284,7 +304,7 @@ utext_openReplaceable(UText *ut, U_NAMESPACE_QUALIFIER Replaceable *rep, UErrorC
  * @stable ICU 3.4
  */
 U_STABLE UText * U_EXPORT2
-utext_openCharacterIterator(UText *ut, U_NAMESPACE_QUALIFIER CharacterIterator *ic, UErrorCode *status);
+utext_openCharacterIterator(UText *ut, icu::CharacterIterator *ci, UErrorCode *status);
 
 #endif
 
@@ -655,6 +675,7 @@ utext_extract(UText *ut,
 			 UErrorCode *status);
 
 
+
 /************************************************************************************
  *
  *  #define inline versions of selected performance-critical text access functions
@@ -669,6 +690,21 @@ utext_extract(UText *ut,
  *          because there is no fully portable way to do inline functions in plain C.
  *
  ************************************************************************************/
+
+#ifndef U_HIDE_INTERNAL_API
+/**
+ * inline version of utext_current32(), for performance-critical situations.
+ *
+ * Get the code point at the current iteration position of the UText.
+ * Returns U_SENTINEL (-1) if the position is at the end of the
+ * text.
+ *
+ * @internal ICU 4.4 technology preview
+ */
+#define UTEXT_CURRENT32(ut)  \
+	((ut)->chunkOffset < (ut)->chunkLength && ((ut)->chunkContents)[(ut)->chunkOffset]<0xd800 ? \
+	((ut)->chunkContents)[((ut)->chunkOffset)] : utext_current32(ut))
+#endif  /* U_HIDE_INTERNAL_API */
 
 /**
  * inline version of utext_next32(), for performance-critical situations.
@@ -726,7 +762,7 @@ utext_extract(UText *ut,
   * If the index is out of range, it will be pinned to be within
   * the range of the input text.
   *
-  * @stable ICU 4.0
+  * @stable ICU 3.8
   */
 #define UTEXT_SETNATIVEINDEX(ut, ix)                       \
 	{ int64_t __offset = (ix) - (ut)->chunkNativeStart; \
@@ -1272,8 +1308,8 @@ struct UTextFuncs {
 	  * (private)  Spare function pointer
 	  * @internal
 	  */
-
 	UTextClose  *spare1;
+
 	/**
 	  * (private)  Spare function pointer
 	  * @internal
@@ -1517,6 +1553,7 @@ struct UText {
 U_STABLE UText * U_EXPORT2
 utext_setup(UText *ut, int32_t extraSpace, UErrorCode *status);
 
+#ifndef U_HIDE_INTERNAL_API
 /**
   * @internal
   *  Value used to help identify correctly initialized UText structs.
@@ -1525,6 +1562,7 @@ utext_setup(UText *ut, int32_t extraSpace, UErrorCode *status);
 enum {
 	UTEXT_MAGIC = 0x345ad82c
 };
+#endif  /* U_HIDE_INTERNAL_API */
 
 /**
  * initializer to be used with local (stack) instances of a UText

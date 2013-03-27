@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.IO;
@@ -92,11 +93,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// create member variables
 			m_mediator = mediator;
-			m_cache = (FdoCache) m_mediator.PropertyTable.GetValue("cache");
+			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			m_layouts = Inventory.GetInventory("layouts", m_cache.ProjectId.Name);
 
 			InitializeComponent();		// form required method
 			AccessibleName = GetType().Name;
+			StartPosition = FormStartPosition.CenterParent;
 
 			m_fieldsLabel.Tag = m_fieldsLabel.Text;	// Localizes Tag!
 
@@ -628,6 +630,13 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 			}
 
+			if (new Regex(@"\p{P}").IsMatch(fieldName))
+			{
+				string msg = string.Format(xWorksStrings.PunctInFieldNameError, fieldName);
+				MessageBox.Show(this, msg, xWorksStrings.PunctInfieldNameCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return true;
+			}
+
 			foreach (FDWrapper fdw in m_customFields)
 			{
 				if (CheckForRegularFieldDuplicateName(fdw))
@@ -1069,9 +1078,9 @@ namespace SIL.FieldWorks.XWorks
 			this.m_okButton = new System.Windows.Forms.Button();
 			this.m_helpButton = new System.Windows.Forms.Button();
 			this.m_fieldsListView = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.m_groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			//

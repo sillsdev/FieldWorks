@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -58,10 +58,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			string sInput = CreateTempFile(m_sTrace, "xml");
 			m_parseResult.Save(sInput);
-			XPathDocument xpath = new XPathDocument(sInput);
 
 			TransformKind kind = (fIsTrace ? TransformKind.kcptTrace : TransformKind.kcptParse);
-			string sOutput = TransformToHtml(xpath, kind);
+			string sOutput = TransformToHtml(sInput, kind);
 			return sOutput;
 		}
 
@@ -92,7 +91,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					CreateMorphXmlElement(doc, seqNode, morph);
 				}
-
 			}
 		}
 

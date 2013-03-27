@@ -160,7 +160,6 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	[Platform(Exclude = "Linux", Reason = "TODO-Linux FWNX-409: random hang or seg faults on exit")]
 	public class TeMainWndTests : TeTestBase
 	{
 		#region Data members

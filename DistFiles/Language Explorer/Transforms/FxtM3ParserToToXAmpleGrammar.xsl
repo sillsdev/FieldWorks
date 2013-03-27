@@ -25,14 +25,16 @@ Preamble
 	<xsl:variable name="analyses" select="$lexicon/MorphoSyntaxAnalyses"/>
 	<xsl:variable name="entries" select="$lexicon/Entries"/>
 	<xsl:variable name="LexEntries" select="$entries/LexEntry"/>
+   <xsl:variable name="lexEntryInflTypes" select="$root/LexEntryInflTypes/LexEntryInflType"/>
 
    <!-- Using keys instead of IDs (so no DTD or XSD required) -->
-   <xsl:key name="FSID" match="//FS" use="@Id"/>
-   <xsl:key name="InflClassID" match="//MoInflClass" use="@Id"/>
-   <xsl:key name="POSID" match="//PartOfSpeech" use="@Id"/>
-   <xsl:key name="SlotsID" match="//MoInflAffixSlot" use="@Id"/>
-   <xsl:key name="StemMsaID" match="//MoStemMsa" use="@Id"/>
-   <xsl:key name="StemNameID" match="//MoStemName" use="@Id"/>
+   <xsl:key name="FSID" match="FS" use="@Id"/><!-- this looks like a mistake, but Andy will have to fix it. -->
+   <xsl:key name="InflClassID" match="MoInflClass" use="@Id"/>
+   <xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
+   <xsl:key name="SlotsID" match="MoInflAffixSlot" use="@Id"/>
+   <xsl:key name="StemMsaID" match="MoStemMsa" use="@Id"/>
+   <xsl:key name="StemNameID" match="MoStemName" use="@Id"/>
+   <xsl:key name="AnyId" match="*" use="@id"/>
    <!-- included stylesheets (i.e. things common to other style sheets) -->
    <xsl:include href="MorphTypeGuids.xsl"/>
    <xsl:include href="XAmpleTemplateVariables.xsl"/>
@@ -1178,6 +1180,11 @@ Let <xsl:value-of select="$sMSFS"/><xsl:value-of select="@dst"/> be <xsl:value-o
 			<xsl:with-param name="sTemplateName">MSFS</xsl:with-param>
 		 </xsl:call-template>
 	  </xsl:for-each>
+	  <xsl:for-each select="$lexEntryInflTypes/InflectionFeatures/FsFeatStruc">
+		 <xsl:call-template name="OutputFS">
+			<xsl:with-param name="sTemplateName">MSFS</xsl:with-param>
+		 </xsl:call-template>
+	  </xsl:for-each>
 	  <xsl:for-each select="$analyses/MoDerivAffMsa/FromMsFeatures/FsFeatStruc">
 		 <xsl:call-template name="OutputFS">
 			<xsl:with-param name="sTemplateName" select="$sFromMSFS"/>
@@ -1228,6 +1235,12 @@ Let&amp;</xsl:text>
 		 <xsl:with-param name="sList" select="$sAllFromPOSNames"/>
 		 <xsl:with-param name="bDoNewLine" select="'Y'"/>
 	  </xsl:call-template>
+	  <xsl:for-each select="$lexEntryInflTypes">
+		 <xsl:text>
+Let </xsl:text>
+		 <xsl:value-of select="$sIrregularlyInflectedForm"/><xsl:value-of select="@Id"/>
+		 <xsl:text> be []</xsl:text>
+	  </xsl:for-each>
 	  <!-- handling interfixes -->
 	  <xsl:text>
 Let Infix be [morphType:infix]
@@ -1300,7 +1313,7 @@ Let </xsl:text>
 		  <xsl:value-of select="$sInflClassAffix"/>
 		 <xsl:value-of select="@Id"/>
 		 <xsl:choose>
-			<xsl:when test="MoInflClass">
+			<xsl:when test="Subclasses/MoInflClass">
 			   <xsl:text> be {
 		 [inflectionClass:</xsl:text>
 			</xsl:when>
@@ -1312,7 +1325,7 @@ Let </xsl:text>
 		 <xsl:text>]
 		 </xsl:text>
 		 <xsl:call-template name="OutputInflectionSubclassTemplates"/>
-		 <xsl:if test="MoInflClass">
+		 <xsl:if test="Subclasses/MoInflClass">
 			<xsl:text>}
 			</xsl:text>
 		 </xsl:if>
@@ -1338,7 +1351,7 @@ Let&amp;</xsl:text>
 			   <xsl:text>[inflectionClass:</xsl:text>
 			   <xsl:value-of select="@dst"/>
 			   <xsl:text>]</xsl:text>
-			   <xsl:for-each select="key('InflClassID',@dst)[MoInflClass]">
+			   <xsl:for-each select="key('InflClassID',@dst)[Subclasses/MoInflClass]">
 				  <xsl:call-template name="OutputInflectionSubclassTemplates"/>
 			   </xsl:for-each>
 			</xsl:for-each>
@@ -1360,7 +1373,7 @@ Let&amp;</xsl:text>
 	  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    -->
    <xsl:template name="OutputInflectionSubclassTemplates">
-	  <xsl:for-each select="MoInflClass">
+	  <xsl:for-each select="Subclasses/MoInflClass">
 		 <xsl:text>[inflectionClass:</xsl:text>
 		 <xsl:value-of select="@Id"/>
 		  <!-- It is crucial tha the following does *not* have any whitespace in it -->
@@ -2410,6 +2423,7 @@ TemplateWithNestedPOS
 ================================================================
 Revision History
 - - - - - - - - - - - - - - - - - - -
+27-Mar-2012    Steve McConnel  Tweak for effiency in libxslt based processing.
 09-Mar-2006      Andy Black    Handle category hierarchy for unclassified affixes
 09-Dec-2005      Andy Black    Undo "use template disjunction for fromPOS, envPOS, and toPOS instead of constraint disjunction" because it was so inefficient
 23-Sep-2005	 Andy Black	Revise derivational affixation so the resulting stem defaults to the cat of the original stem and the tocat does priority union

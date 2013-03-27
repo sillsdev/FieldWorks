@@ -120,13 +120,14 @@ namespace SIL.FieldWorks.FDO
 		/// tells whether the given field is relevant given the current values of related data items
 		/// </summary>
 		/// <param name="flid"></param>
+		/// <param name="propsToMonitor">hvo, flid pairs which should be monitored, since if they change, the outcome may change</param>
 		/// <remarks>e.g. "color" would not be relevant on a part of speech, ever.
 		/// e.g.  MoAffixForm.inflection classes are only relevant if the MSAs of the
 		/// entry include an inflectional affix MSA.
 		/// </remarks>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		bool IsFieldRelevant(int flid);
+		bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor);
 
 		/// <summary>
 		/// Return true if possibleOwner is one of the owners of 'this'.
@@ -771,9 +772,13 @@ namespace SIL.FieldWorks.FDO
 		/// <returns></returns>
 		ICmPossibilityList MakeTextTagsList(string xml);
 
+		/// <summary>
+		/// Virtual list of texts. Replaces TextsOC now that Text objects are unowned.
+		/// </summary>
+		IList<IText> Texts { get; }
 
 		/// <summary>
-		/// Virtual list of texts that can be interlinearized. Combines TextsOC and Scripture
+		/// Virtual list of texts that can be interlinearized. Combines Texts and Scripture
 		/// </summary>
 		IList<IStText> InterlinearTexts { get; }
 
@@ -862,6 +867,15 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		void ResetHomographNumbers(ProgressBar progressBar);
 
+		/// <summary>
+		/// Allows user to convert LexEntryType to LexEntryInflType.
+		/// </summary>
+		void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
+
+		/// <summary>
+		/// Allows user to convert LexEntryInflType to LexEntryType.
+		/// </summary>
+		void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list);
 		/// <summary>
 		/// used when dumping the lexical database for the automated Parser
 		/// </summary>
@@ -1187,6 +1201,14 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		///
 		/// </summary>
+		string HomographFormKey
+		{
+			get;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
 		ITsString HeadWord
 		{
 			get;
@@ -1363,6 +1385,19 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		IEnumerable<ILexReference> LexEntryReferences { get; }
 	}
+
+	/// <summary>
+	/// Non-model interface additions for ILexEntryType.
+	/// </summary>
+	public partial interface ILexEntryType
+	{
+		/// <summary>
+		/// Convert one LexEntryType to another LexEntryType
+		/// </summary>
+		/// <param name="lexEntryType"> </param>
+		void ConvertLexEntryType(ILexEntryType lexEntryType);
+	}
+
 
 	/// <summary>
 	/// Non-model interface additions for IMoMorphSynAnalysis.
@@ -2841,9 +2876,14 @@ namespace SIL.FieldWorks.FDO
 	public partial interface IText
 	{
 		/// <summary>
-		/// Move the text so that its owner is a (newly created) notebook record. Does nothing if it already is.
+		/// Associate the text with a (newly created) notebook record. Does nothing if it already is.
 		/// </summary>
-		void MoveToNotebook(bool makeYourOwnUow);
+		void AssociateWithNotebook(bool makeYourOwnUow);
+
+		/// <summary>
+		/// Reports the Notebook record associated with this text, or null if there isn't one.
+		/// </summary>
+		IRnGenericRec AssociatedNotebookRecord { get; }
 	}
 
 	/// <summary>
@@ -2894,6 +2934,17 @@ namespace SIL.FieldWorks.FDO
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		List<ICmPicture> GetPictures();
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the ORC of the specified picture and deletes it from the paragraph and any
+		/// back translations and deletes the object itself.
+		/// </summary>
+		/// <param name="hvoPic">The HVO of the picture to delete</param>
+		/// <returns>The character offset of the location where the ORC was found in this
+		/// paragraph for the gievn picture. If not found, returns -1.</returns>
+		/// ------------------------------------------------------------------------------------
+		int DeletePicture(int hvoPic);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2966,6 +3017,37 @@ namespace SIL.FieldWorks.FDO
 		/// Collects the HashSet of the unique wordforms in the paragraph.
 		/// </summary>
 		void CollectUniqueWordforms(HashSet<IWfiWordform> wordforms);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the character offset in the free translation (CmTranslation) corresponding to
+		/// the start of the given segment.
+		/// </summary>
+		/// <param name="segment">The character offset in the free translation.</param>
+		/// <param name="ws">The writing system HVO.</param>
+		/// ------------------------------------------------------------------------------------
+		int GetOffsetInFreeTranslationForStartOfSegment(ISegment segment, int ws);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the segment corresponding to the given character offset in the specified free
+		/// translation.
+		/// </summary>
+		/// <param name="ich">The charcater offset.</param>
+		/// <param name="ws">The writing system HVO.</param>
+		/// ------------------------------------------------------------------------------------
+		ISegment GetSegmentForOffsetInFreeTranslation(int ich, int ws);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Given a character position in the contents of this paragraph, return a character
+		/// offset to the start of the free translation for the corresponding segment.
+		/// </summary>
+		/// <param name="ich">The ich main position.</param>
+		/// <param name="btWs">The back translation writing system HVO</param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		int GetBtPosition(int ich, int btWs);
 	}
 
 	/// <summary>
@@ -3238,12 +3320,12 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Remove all footnote reference ORCs that reference the specified footnote in all
-		/// writing systems for the back translation of the given (vernacular) paragraph.
+		/// Remove all ORCs that reference the specified object in all writing systems for the
+		/// back translation of the given (vernacular) paragraph.
 		/// </summary>
-		/// <param name="footnoteGuid">guid for the specified footnote</param>
+		/// <param name="guid">guid for the specified object</param>
 		/// ------------------------------------------------------------------------------------
-		void DeleteAnyBtMarkersForFootnote(Guid footnoteGuid);
+		void DeleteAnyBtMarkersForObject(Guid guid);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -3797,29 +3879,24 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Finds the next footnote and returns it. <paramref name="iSection"/>,
-		/// <paramref name="iParagraph"/>, <paramref name="ich"/> and <paramref name="tag"/>
-		/// reflect the position after the next footnote marker. If no footnote can be found
-		/// <paramref name="iSection"/>, <paramref name="iParagraph"/>, <paramref name="ich"/>
-		/// and <paramref name="tag"/> won't change.
+		/// Finds the next footnote and returns an object that references the footnote and holds
+		/// all the necessary info (indices and tags) to locate the footnote marker in the
+		/// vernacular text.
 		/// </summary>
 		/// <param name="iSection">Index of section to start search</param>
 		/// <param name="iParagraph">Index of paragraph to start search</param>
 		/// <param name="ich">Character index to start search</param>
 		/// <param name="tag">Flid to start search</param>
-		/// <returns>Next footnote, or <c>null</c> if there isn't a next footnote in the
-		/// current book.</returns>
+		/// <returns>Information about the next footnote, or <c>null</c> if there isn't another
+		/// footnote in the current book.</returns>
 		/// ------------------------------------------------------------------------------------
-		IScrFootnote FindNextFootnote(ref int iSection, ref int iParagraph, ref int ich,
-			ref int tag);
+		FootnoteLocationInfo FindNextFootnote(int iSection, int iParagraph, int ich, int tag);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Finds the next footnote and returns it. <paramref name="iSection"/>,
-		/// <paramref name="iParagraph"/>, <paramref name="ich"/> and <paramref name="tag"/>
-		/// reflect the position after the next footnote marker. If no footnote can be found
-		/// <paramref name="iSection"/>, <paramref name="iParagraph"/>, <paramref name="ich"/>
-		/// and <paramref name="tag"/> won't change.
+		/// Finds the next footnote and returns an object that references the footnote and holds
+		/// all the necessary info (indices and tags) to locate the footnote marker in the
+		/// vernacular text.
 		/// </summary>
 		/// <param name="iSection">Index of section to start search</param>
 		/// <param name="iParagraph">Index of paragraph to start search</param>
@@ -3827,11 +3904,11 @@ namespace SIL.FieldWorks.FDO
 		/// <param name="tag">Flid to start search</param>
 		/// <param name="fSkipCurrentPos"><c>true</c> to start search with run after ich,
 		/// <c>false</c> to start with current run.</param>
-		/// <returns>Next footnote, or <c>null</c> if there isn't a next footnote in the
-		/// current book.</returns>
+		/// <returns>Information about the next footnote, or <c>null</c> if there isn't another
+		/// footnote in the current book.</returns>
 		/// ------------------------------------------------------------------------------------
-		IScrFootnote FindNextFootnote(ref int iSection, ref int iParagraph, ref int ich,
-			ref int tag, bool fSkipCurrentPos);
+		FootnoteLocationInfo FindNextFootnote(int iSection, int iParagraph, int ich, int tag,
+			bool fSkipCurrentPos);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -5424,6 +5501,19 @@ namespace SIL.FieldWorks.FDO
 		/// default analysis writing system.
 		/// </summary>
 		List<string> AllNaturalClassAbbrs();
+
+		/// <summary>
+		/// Rebuild the list of PhonRuleFeats
+		/// </summary>
+		/// <param name="members">list of items to become PhPhonRuleFeats</param>
+		void RebuildPhonRuleFeats(IEnumerable<ICmObject> members);
+
+		/// <summary>
+		/// Remove any matching items from the PhonRuleFeats list
+		/// </summary>
+		/// <param name="obj">Object being removed</param>
+		void RemovePhonRuleFeat(ICmObject obj);
+
 	}
 
 	public partial interface IPhPhoneme

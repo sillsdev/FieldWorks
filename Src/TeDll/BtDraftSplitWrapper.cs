@@ -14,6 +14,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
@@ -321,6 +322,8 @@ namespace SIL.FieldWorks.TE
 		/// Save size of columns and rows
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetColumn() returns a reference")]
 		private void OnSaveSettings(RegistryKey key)
 		{
 			CheckDisposed();

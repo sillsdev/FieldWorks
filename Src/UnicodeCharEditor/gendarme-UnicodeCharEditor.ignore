@@ -1,0 +1,7 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# added to control and disposed there
+M: System.Void SIL.FieldWorks.UnicodeCharEditor.CustomCharDlg::InitializeComponent()

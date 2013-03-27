@@ -14,6 +14,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
@@ -426,6 +427,8 @@ namespace SIL.FieldWorks.Common.Controls
 		///		Save window position if the Window State is "Normal".
 		/// </summary>
 		///***********************************************************************************
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		private void OnMoveResize(object sender, System.EventArgs e)
 		{
 			// Save position
@@ -554,6 +557,8 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// <param name='key'>The Registry Key.</param>
 		///***********************************************************************************
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public void SaveWindowState(RegistryKey key)
 		{
 			CheckDisposed();

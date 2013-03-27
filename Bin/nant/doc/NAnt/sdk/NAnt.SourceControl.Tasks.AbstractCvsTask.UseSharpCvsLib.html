@@ -1,0 +1,32 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>UseSharpCvsLib Property</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">AbstractCvsTask.UseSharpCvsLib Property</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+			<p>
+			<b>true</b> if the SharpCvsLib binaries that come bundled with NAnt should be used to perform the cvs commands, <b>false</b> otherwise. </p>
+			<p> You may also specify an override value for all cvs tasks instead of specifying a value for each. To do this set the property <code>sourcecontrol.usesharpcvslib</code> to <b>false</b>. </p>
+			<warn> If you choose not to use SharpCvsLib to checkout from cvs you will need to include a cvs.exe binary in your path. </warn>
+			<div class="syntax"><span class="lang">[Visual Basic]</span><br /><div class="attribute">&lt;TaskAttribute(Name:="usesharpcvslib", Required:=False, ExpandProperties:=True, ProcessXml:=True)&gt;</div>Overridable Public Property UseSharpCvsLib As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemBooleanClassTopic.asp">Boolean</a></div><div class="syntax"><span class="lang">[C#]</span><br /><div class="attribute">[TaskAttribute(Name="usesharpcvslib", Required=False, ExpandProperties=True, ProcessXml=True)]</div>public virtual <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemBooleanClassTopic.asp">bool</a> UseSharpCvsLib {get; set;}</div><p></p><h4 class="dtH4">Example</h4><p> To use a cvs client in your path instead of sharpcvslib specify the property: &gt;property name="sourcecontrol.usesharpcvslib" value="false"&lt; The default settings is to use sharpcvslib and the setting closest to the task execution is used to determine which value is used to execute the process. For instance if the attribute usesharpcvslib was set to false and the global property was set to true, the usesharpcvslib is closes to the point of execution and would be used and is false. Therefore the sharpcvslib binary would NOT be used. </p><h4 class="dtH4">See Also</h4><p><a href="NAnt.SourceControl.Tasks.AbstractCvsTask.html">AbstractCvsTask Class</a> | <a href="NAnt.SourceControl.Tasks.html">NAnt.SourceControl.Tasks Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="UseSharpCvsLib property"></param><param name="Keyword" value="UseSharpCvsLib property, AbstractCvsTask class"></param><param name="Keyword" value="AbstractCvsTask.UseSharpCvsLib property"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2005' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2005' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Specialized; // for StringCollection
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -457,6 +458,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="fDisplayUi">if set to <c>true</c> shows the UI.</param>
 		/// <returns>The first reference that was imported</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private ScrReference InternalImport(IScrImportSet importSettings, bool fDisplayUi)
 		{
 			ScrReference firstImported = ScrReference.Empty;
@@ -486,10 +489,11 @@ namespace SIL.FieldWorks.TE
 			{
 				if (e.InnerException is ScriptureUtilsException)
 				{
-					var se = (ScriptureUtilsException) e.InnerException;
+					var se = (ScriptureUtilsException)e.InnerException;
 					if (m_helpTopicProvider != null)
 					{
 						string sCaption = GetDialogCaption(se.ImportErrorCodeType);
+						// TODO-Linux: Help is not implemented in Mono
 						MessageBox.Show(m_mainWnd, se.Message, sCaption, MessageBoxButtons.OK,
 							MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0, m_helpTopicProvider.HelpFile,
 							HelpNavigator.Topic, se.HelpTopic);
@@ -513,7 +517,7 @@ namespace SIL.FieldWorks.TE
 						}
 
 						MessageBoxUtils.Show(m_mainWnd, sbMsg.ToString(), sCaption, MessageBoxButtons.OK,
-							MessageBoxIcon.Error);
+						MessageBoxIcon.Error);
 					}
 				}
 				else if (!(e.InnerException is CancelException))

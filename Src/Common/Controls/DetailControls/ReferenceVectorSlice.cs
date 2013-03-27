@@ -20,6 +20,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using SIL.Utils;
@@ -176,11 +177,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetView() returns a reference")]
 		public bool OnAlphabeticalOrder(object args)
 		{
 			GetView().RemoveOrdering();
 			return true;
 		}
+
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetView() returns a reference")]
 		public virtual bool OnDisplayAlphabeticalOrder(object commandObject, ref UIItemDisplayProperties display)
 		{
 			display.Enabled = display.Visible = GetView().RootPropertySupportsVirtualOrdering();
@@ -315,4 +321,20 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			base.FinishInit();
 		}
 	}
+	public class ReferenceVectorDisabledSlice : ReferenceVectorSlice
+	{
+		public ReferenceVectorDisabledSlice(FdoCache cache, ICmObject obj, int flid)
+			: base(cache, obj, flid)
+		{
+		}
+		public override void FinishInit()
+		{
+			CheckDisposed();
+			base.FinishInit();
+			var arl = (VectorReferenceLauncher)Control;
+			var view = (VectorReferenceView)arl.MainControl;
+			view.FinishInit(ConfigurationNode);
+		}
+	}
+
 }

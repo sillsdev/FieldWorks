@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -128,12 +129,12 @@ namespace SIL.FieldWorks.LexText.Controls
 #endif
 
 			// HermitCrab does not currently support selected tracing
-			if (m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC")
+			/*if (m_cache.LangProject.MorphologicalDataOA.ActiveParser == "HC")
 			{
 				m_parserCanDoSelectMorphs = false;
 				m_doSelectMorphsCheckBox.Enabled = false;
 			}
-
+*/
 			// No such thing as FwApp.App now: if(FwApp.App != null) // Could be null during testing
 			if (m_mediator.HelpTopicProvider != null) // trying this
 			{
@@ -153,6 +154,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="TryAWordRootSite gets added to control collection and disposed there")]
 		private void SetRootSite()
 		{
 			m_rootsite = new TryAWordRootSite(m_cache, m_mediator) { Dock = DockStyle.Top };
@@ -173,6 +176,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			return m_mediator.StringTbl.GetString(id, "Linguistics/Morphology/TryAWord");
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="HtmlControl gets added to control collection and disposed there")]
 		private void InitHtmlControl()
 		{
 			m_htmlControl = new HtmlControl
@@ -539,7 +544,24 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_tryAWordResult != null && m_tryAWordResult.IsCompleted)
 			{
-				string sOutput = m_webPageInteractor.ParserTrace.CreateResultPage((string) m_tryAWordResult.AsyncState);
+				var message = (string)m_tryAWordResult.AsyncState;
+				string sOutput;
+				if (!message.TrimStart().StartsWith("<"))
+				{
+					// It's an error message.
+					sOutput = Path.GetTempFileName();
+					var writer = new StreamWriter(sOutput);
+					writer.WriteLine("<!DOCTYPE html>");
+					writer.WriteLine("<body>");
+					writer.WriteLine(message);
+					writer.WriteLine("</body>");
+					writer.WriteLine("</html>");
+					writer.Close();
+				}
+				else
+				{
+					sOutput = m_webPageInteractor.ParserTrace.CreateResultPage((string)m_tryAWordResult.AsyncState);
+				}
 				m_htmlControl.URL = sOutput;
 				m_tryAWordResult = null;
 				// got result so enable Try It button

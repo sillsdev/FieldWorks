@@ -52,7 +52,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			}
 			m_mediator = null;
-			// m_configurationParameters = null; // CS0414
 			m_cache = null;
 			m_srcwfiWordform = null;
 			m_srcClerk = null;

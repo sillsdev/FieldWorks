@@ -16,15 +16,6 @@ Last reviewed:
 #pragma once
 #include "Main.h"
 
-#ifdef WIN32
-#define GUID_TYPE GUID
-#else
-#define GUID_TYPE PlainGUID
-#endif
-#define LOCAL_DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-		EXTERN_C const GUID_TYPE name \
-				= { l, w1, w2, {b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
-
 namespace TestViews
 {
 	extern ILgWritingSystemFactoryPtr g_qwsf;
@@ -34,6 +25,34 @@ namespace TestViews
 
 	void CreateTestWritingSystemFactory();
 	void CloseTestWritingSystemFactory();
+
+	// These functions are used for test setup and teardown (only)
+
+#ifdef WIN32
+
+	inline HDC GetTestDC()
+	{
+		return ::GetDC(NULL);
+	}
+
+	inline int ReleaseTestDC(HDC hdc)
+	{
+		return ::ReleaseDC(NULL, hdc);
+	}
+
+#else //WIN32
+
+	inline HDC GetTestDC()
+	{
+		return 0; // Linux doesn't need a DC
+	}
+
+	inline int ReleaseTestDC(HDC)
+	{
+		return 0;
+	}
+
+#endif //WIN32
 };
 
 #include <unit++.h>

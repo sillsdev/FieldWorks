@@ -63,6 +63,13 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// <value>The form.</value>
 		Form Form { get; }
 		/// <summary>
+		/// Gets or sets the form that the dropdown box is launched from.
+		/// </summary>
+		/// <remarks>
+		/// This is needed for PopupTree on Mono/Linux.
+		/// </remarks>
+		Form LaunchingForm { get; set; }
+		/// <summary>
 		/// Launches the drop down box.
 		/// </summary>
 		/// <param name="launcherBounds">The launcher bounds.</param>
@@ -82,6 +89,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Find the height that will display the full height of all items.
 		/// </summary>
 		int NaturalHeight { get; }
+		/// <summary>
+		/// Returns Control's IsDisposed bool.
+		/// </summary>
+		bool IsDisposed { get; }
 	}
 
 	/// <summary>
@@ -258,7 +269,7 @@ namespace SIL.FieldWorks.Common.Widgets
 					m_comboTextBox.LostFocus -= m_comboTextBox_LostFocus;
 				}
 
-				if (m_dropDownBox != null)
+				if (m_dropDownBox != null && !m_dropDownBox.IsDisposed)
 				{
 					m_dropDownBox.Form.VisibleChanged -= Form_VisibleChanged;
 					m_dropDownBox.Dispose();
@@ -1049,6 +1060,23 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			if (sz != m_dropDownBox.Form.Size)
 				m_dropDownBox.Form.Size = sz;
+#if __MonoCS__	// FWNX-748: ensure a launching form that is not m_dropDownBox itself.
+			// In Mono, Form.ActiveForm occasionally returns m_dropDownBox at this point.  So we
+			// try another approach to finding the launching form for displaying m_dropDownBox.
+			// Note that the launching form never changes, so it needs to be set only once.
+			if (m_dropDownBox.LaunchingForm == null)
+			{
+				Control parent = this;
+				Form launcher = parent as Form;
+				while (parent != null && launcher == null)
+				{
+					parent = parent.Parent;
+					launcher = parent as Form;
+				}
+				if (launcher != null)
+					m_dropDownBox.LaunchingForm = launcher;
+			}
+#endif
 			m_dropDownBox.Launch(Parent.RectangleToScreen(Bounds), workingArea);
 
 			// for some reason, sometimes the size of the form changes after it has become visible, so
@@ -1638,7 +1666,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			// If the selection came from choosing in the list box, we need to hide the list
 			// box and focus on the text box.
 			bool fNeedFocus = false;
-			if (ListBox.Form.Visible && !ListBox.KeepDropDownListDuringSelection)
+			if (ListBox.Form != null && ListBox.Form.Visible && !ListBox.KeepDropDownListDuringSelection)
 			{
 				HideDropDownBox();
 				fNeedFocus = true;
@@ -1761,6 +1789,8 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		ComboBoxState m_state = ComboBoxState.Normal;
 
+		private bool m_activateOnShow;
+
 		#endregion Data members
 
 		#region Properties
@@ -1863,6 +1893,25 @@ namespace SIL.FieldWorks.Common.Widgets
 		}
 
 		/// <summary>
+		///
+		/// </summary>
+		public bool ActivateOnShow
+		{
+			get
+			{
+				CheckDisposed();
+				return m_activateOnShow;
+			}
+
+			set
+			{
+				CheckDisposed();
+				m_activateOnShow = value;
+				m_listForm.TopMost = value;
+			}
+		}
+
+		/// <summary>
 		/// Find the width that will display the full width of all items.
 		/// Note that if the height is set to less than the natural height,
 		/// some additional space may be wanted for a scroll bar.
@@ -1948,23 +1997,26 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 		}
 
+		/// <summary>
+		///  Gets or sets the form that the ComboListBox is launched from.
+		/// </summary>
+		public Form LaunchingForm { get; set; }
 		#endregion Properties
 
 		#region Construction and disposal
+
 
 		/// <summary>
 		/// Make one.
 		/// </summary>
 		public ComboListBox()
 		{
+			m_activateOnShow = true;
 			HasBorder = true;
 			Dock = DockStyle.Fill; // It fills the list form.
 			// Create a form to hold the list.
-			m_listForm = new Form();
-			m_listForm.Size = Size;
-			m_listForm.FormBorderStyle = FormBorderStyle.None;
+			m_listForm = new Form {Size = Size, FormBorderStyle = FormBorderStyle.None, StartPosition = FormStartPosition.Manual, TopMost = true};
 			m_listForm.Controls.Add(this);
-			m_listForm.StartPosition = FormStartPosition.Manual; // allows us to use Location.
 			m_listForm.Deactivate += m_ListForm_Deactivate;
 			Tracking = true;
 
@@ -2053,6 +2105,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			CheckDisposed();
 
 			m_previousForm = Form.ActiveForm;
+#if __MonoCS__	// FWNX-908: Crash closing combobox.
+			// Somehow on Mono, Form.ActiveForm can sometimes return m_listForm at this point.
+			if (m_previousForm == null || m_previousForm == m_listForm)
+				m_previousForm = LaunchingForm;
+#endif
 			m_listForm.ShowInTaskbar = false; // this is mainly to prevent it showing in the task bar.
 			//Figure where to put it. First try right below the main combo box.
 			// Pathologically the list box may be bigger than the available height. If so shrink it.
@@ -2080,7 +2137,11 @@ namespace SIL.FieldWorks.Common.Widgets
 				popupBounds.Offset(screenBounds.Left - popupBounds.Left, 0);
 			}
 			m_listForm.Location = new Point(popupBounds.Left, popupBounds.Top);
-			m_listForm.Show();
+
+			if (m_activateOnShow)
+				m_listForm.Show(m_previousForm);
+			else
+				ShowInactiveTopmost(m_previousForm, m_listForm);
 
 			if (m_comboMessageFilter != null)
 			{
@@ -2092,7 +2153,38 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			m_comboMessageFilter = new FwComboMessageFilter(this);
 			Application.AddMessageFilter(m_comboMessageFilter);
-			FocusAndCapture();
+			if (m_activateOnShow)
+				FocusAndCapture();
+		}
+
+		private const int SW_SHOWNOACTIVATE = 4;
+		private const int HWND_TOPMOST = -1;
+		private const uint SWP_NOACTIVATE = 0x0010;
+
+		[DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+		private static extern bool SetWindowPos(
+			 int hWnd,           // window handle
+			 int hWndInsertAfter,    // placement-order handle
+			 int X,          // horizontal position
+			 int Y,          // vertical position
+			 int cx,         // width
+			 int cy,         // height
+			 uint uFlags);       // window positioning flags
+
+		[DllImport("user32.dll")]
+		private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+		private const int GWL_HWNDPARENT = -8;
+
+		[DllImport("user32.dll")]
+		private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+		private static void ShowInactiveTopmost(Form owner, Form frm)
+		{
+			if (owner != null)
+				SetWindowLong(frm.Handle, GWL_HWNDPARENT, owner.Handle.ToInt32());
+			ShowWindow(frm.Handle, SW_SHOWNOACTIVATE);
+			SetWindowPos(frm.Handle.ToInt32(), HWND_TOPMOST, frm.Left, frm.Top, frm.Width, frm.Height, SWP_NOACTIVATE);
 		}
 
 		/// <summary>
@@ -2191,6 +2283,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					// Highlight this item
 					HighlightedItem = Items[i];
+					ScrollHighlightIntoView();
 					fFound = true;
 					break;
 				}
@@ -2492,7 +2585,7 @@ namespace SIL.FieldWorks.Common.Widgets
 							xPos > c.ClientSize.Width ||	// x is to big
 							yPos > c.ClientSize.Height)		// y is to big
 						{
-							;	// this is our exit case - event outside of client space...
+							// this is our exit case - event outside of client space...
 						}
 						else
 							return false;

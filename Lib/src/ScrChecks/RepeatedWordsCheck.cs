@@ -182,6 +182,10 @@ namespace SILUBS.ScriptureChecks
 		{
 #if DEBUG
 			List<ITextToken> AllTokens = new List<ITextToken>(tokens);
+			if (AllTokens.Count == 0)
+			{
+				// Keep the compiler from complaining about assigning to a variable, but not using it.
+			}
 #endif
 			characterCategorizer = m_checksDataSource.CharacterCategorizer;
 			// Get a string of words that may be validly repeated.

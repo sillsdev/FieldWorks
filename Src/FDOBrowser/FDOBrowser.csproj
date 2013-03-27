@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,16 +10,12 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>FDOBrowser</RootNamespace>
 	<AssemblyName>FDOBrowser</AssemblyName>
-	<SccProjectName>SAK</SccProjectName>
-	<SccLocalPath>SAK</SccLocalPath>
-	<SccAuxPath>SAK</SccAuxPath>
-	<SccProvider>SAK</SccProvider>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
-	<OldToolsVersion>2.0</OldToolsVersion>
+	<OldToolsVersion>3.5</OldToolsVersion>
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<IsWebBootstrapper>false</IsWebBootstrapper>
 	<NoWin32Manifest>true</NoWin32Manifest>
 	<PublishUrl>publish\</PublishUrl>
@@ -36,6 +32,7 @@
 	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
 	<UseApplicationTrust>false</UseApplicationTrust>
 	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -46,9 +43,10 @@
 	<DefineConstants>DEBUG;TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
-	<DocumentationFile>..\..\Output\Debug\FDOBrowser.XML</DocumentationFile>
+	<DocumentationFile>..\..\Output\Debug\FDOBrowser.xml</DocumentationFile>
 	<UseVSHostingProcess>false</UseVSHostingProcess>
 	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
@@ -60,20 +58,33 @@
 	<WarningLevel>4</WarningLevel>
 	<DocumentationFile>..\..\Output\Release\FDOBrowser.XML</DocumentationFile>
 	<PlatformTarget>x86</PlatformTarget>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="CoreImpl, Version=6.1.1.16849, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\Output\Debug\CoreImpl.dll</HintPath>
 	</Reference>
-	<Reference Include="Db4objects.Db4o, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL" />
-	<Reference Include="Db4objects.Db4o.CS, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL" />
-	<Reference Include="Db4objects.Db4o.Linq, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL" />
+	<Reference Include="Db4objects.Db4o, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\Db4objects.Db4o.dll</HintPath>
+	</Reference>
+	<Reference Include="Db4objects.Db4o.CS, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\Db4objects.Db4o.CS.dll</HintPath>
+	</Reference>
+	<Reference Include="Db4objects.Db4o.Linq, Version=7.12.132.14217, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\Db4objects.Db4o.Linq.dll</HintPath>
+	</Reference>
 	<Reference Include="DetailControls, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <HintPath>..\..\Output\Debug\DetailControls.dll</HintPath>
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="FDO, Version=7.0.4.26378, Culture=neutral, processorArchitecture=MSIL" />
+	<Reference Include="FDO, Version=7.3.0.20675, Culture=neutral, processorArchitecture=x86">
+	  <SpecificVersion>False</SpecificVersion>
+	  <HintPath>..\..\Output\Debug\FDO.dll</HintPath>
+	</Reference>
 	<Reference Include="FwControls, Version=7.0.1.24430, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
@@ -98,9 +109,7 @@
 	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
 	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Data" />
 	<Reference Include="System.Drawing" />
 	<Reference Include="System.Windows.Forms" />
@@ -131,6 +140,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="BrowserProjectId.cs" />
 	<Compile Include="CustomFields.cs" />
 	<Compile Include="Db4oToXml.cs" />
@@ -161,8 +173,7 @@
 	  <DependentUpon>ClassPropertySelector.cs</DependentUpon>
 	</Compile>
 	<Compile Include="Program.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
-	<None Include="Properties\AssemblyInfo.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
 	<EmbeddedResource Include="ClassPropertySelector.resx">
 	  <DependentUpon>ClassPropertySelector.cs</DependentUpon>
 	  <SubType>Designer</SubType>
@@ -192,6 +203,7 @@
 	  <DependentUpon>Resources.resx</DependentUpon>
 	  <DesignTime>True</DesignTime>
 	</Compile>
+	<None Include="BuildInclude.targets" />
 	<None Include="Properties\Settings.settings">
 	  <Generator>SettingsSingleFileGenerator</Generator>
 	  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -211,7 +223,7 @@
   <ItemGroup>
 	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
 	  <Visible>False</Visible>
-	  <ProductName>.NET Framework Client Profile</ProductName>
+	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
 	  <Install>false</Install>
 	</BootstrapperPackage>
 	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
@@ -242,11 +254,6 @@
 	<None Include="Properties\Show_CmObject_Properties.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-	   Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <Import Project="BuildInclude.targets" />
+  <!-- To modify your build process, change BuildInclude.targets -->
 </Project>

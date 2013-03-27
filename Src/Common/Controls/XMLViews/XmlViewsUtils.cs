@@ -697,13 +697,11 @@ namespace SIL.FieldWorks.Common.Controls
 			int flid = XmlVc.GetFlid(frag, hvoTarget, sda);
 			ITsStrFactory tsf = cache.TsStrFactory;
 			CellarPropertyType itype = (CellarPropertyType)sda.MetaDataCache.GetFieldType(flid);
-			if ((itype == CellarPropertyType.Unicode) ||
-				(itype == CellarPropertyType.BigUnicode))
+			if (itype == CellarPropertyType.Unicode)
 			{
 				return new[] { sda.get_UnicodeProp(hvoTarget, flid) };
 			}
-			else if ((itype == CellarPropertyType.String) ||
-				(itype == CellarPropertyType.BigString))
+			else if (itype == CellarPropertyType.String)
 			{
 				return new[] { sda.get_StringProp(hvoTarget, flid).Text };
 			}
@@ -724,8 +722,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (wsid == 0)
 					wsid = WritingSystemServices.GetWritingSystem(cache,
 						frag, null, WritingSystemServices.kwsAnal).Handle;
-				if ((itype == CellarPropertyType.MultiUnicode) ||
-					(itype == CellarPropertyType.MultiBigUnicode))
+				if (itype == CellarPropertyType.MultiUnicode)
 				{
 					return new[] { sep, sda.get_MultiStringAlt(hvoTarget, flid, wsid).Text };
 				}
@@ -793,8 +790,6 @@ namespace SIL.FieldWorks.Common.Controls
 						{
 							case (int) CellarPropertyType.MultiUnicode:
 							case (int) CellarPropertyType.MultiString:
-							case (int) CellarPropertyType.MultiBigUnicode:
-							case (int) CellarPropertyType.MultiBigString:
 								if (wsForce < 0)
 								{
 									int wsActual;

@@ -65,9 +65,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			var ctrl = new AnalysisInterlinearRs(m_cache, (IWfiAnalysis)Object, ConfigurationNode, StringTbl)
-						{
-							Mediator = Mediator
-						};
+					{
+						Mediator = Mediator
+					};
 			Control = ctrl;
 			//if (ctrl.RootBox == null)
 			//    ctrl.MakeRoot();

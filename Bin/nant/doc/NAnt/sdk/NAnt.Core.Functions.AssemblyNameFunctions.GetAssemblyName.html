@@ -1,0 +1,105 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>AssemblyNameFunctions.GetAssemblyName Method</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">AssemblyNameFunctions.GetAssemblyName Method </h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Gets the <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemReflectionAssemblyNameClassTopic.asp">AssemblyName</a> for a given file. </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;Function(Name:="get-assembly-name")&gt;</div>Public Function GetAssemblyName( _<br />   ByVal <i>assemblyFile</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a> _<br />) As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemReflectionAssemblyNameClassTopic.asp">AssemblyName</a></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<br />
+		<div class="attribute">[Function(Name="get-assembly-name")]</div>public <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemReflectionAssemblyNameClassTopic.asp">AssemblyName</a> GetAssemblyName(<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> <i>assemblyFile</i><br />);</div>
+	  <h4 class="dtH4">Parameters</h4>
+	  <dl>
+		<dt>
+		  <i>assemblyFile</i>
+		</dt>
+		<dd>The assembly file for which to get the <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemReflectionAssemblyNameClassTopic.asp">AssemblyName</a>.</dd>
+	  </dl>
+	  <h4 class="dtH4">Return Value</h4>
+	  <p> An <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemReflectionAssemblyNameClassTopic.asp">AssemblyName</a> object representing the given file. </p>
+	  <h4 class="dtH4">Remarks</h4>
+	  <p> The assembly is not added to this domain. </p>
+	  <h4 class="dtH4">Exceptions</h4>
+	  <div class="tablediv">
+		<table class="dtTABLE" cellspacing="0">
+		  <tr valign="top">
+			<th width="50%">Exception Type</th>
+			<th width="50%">Condition</th>
+		  </tr>
+		  <tr valign="top">
+			<td width="50%">
+			  <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemArgumentExceptionClassTopic.asp">ArgumentException</a>
+			</td>
+			<td width="50%">
+			  <i>assemblyFile</i> is an empty <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a>.</td>
+		  </tr>
+		  <tr valign="top">
+			<td width="50%">
+			  <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemIOFileNotFoundExceptionClassTopic.asp">FileNotFoundException</a>
+			</td>
+			<td width="50%">
+			  <i>assemblyFile</i> does not exist.</td>
+		  </tr>
+		  <tr valign="top">
+			<td width="50%">
+			  <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemBadImageFormatExceptionClassTopic.asp">BadImageFormatException</a>
+			</td>
+			<td width="50%">
+			  <i>assemblyFile</i> is not a valid assembly.</td>
+		  </tr>
+		</table>
+	  </div>
+	  <h4 class="dtH4">Example</h4>
+	  <p>
+			  <p> Output the full name of the <code>nunit.framework</code> assembly to the build log. </p>
+			  <pre class="code">
+&lt;echo message="${assemblyname::get-full-name(assemblyname::get-assembly-name('nunit.framework.dll'))}" /&gt;
+
+  </pre>
+			</p>
+	  <h4 class="dtH4">See Also</h4>
+	  <p>
+		<a href="NAnt.Core.Functions.AssemblyNameFunctions.html">AssemblyNameFunctions Class</a> | <a href="NAnt.Core.Functions.html">NAnt.Core.Functions Namespace</a></p>
+	  <object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;">
+		<param name="Keyword" value="GetAssemblyName method">
+		</param>
+		<param name="Keyword" value="GetAssemblyName method, AssemblyNameFunctions class">
+		</param>
+		<param name="Keyword" value="AssemblyNameFunctions.GetAssemblyName method">
+		</param>
+	  </object>
+	  <hr />
+	  <div id="footer">
+		<p>
+		  <a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a>
+		</p>
+		<p>
+		</p>
+	  </div>
+	</div>
+  </body>
+</html>

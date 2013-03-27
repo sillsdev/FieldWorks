@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -62,6 +63,8 @@ namespace SIL.FieldWorks.TE
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_treeView gets disposed in TestTearDown()")]
 	public class KeyTermsTreeTests : ScrInMemoryFdoTestBase
 	{
 		#region Member variables
@@ -81,6 +84,14 @@ namespace SIL.FieldWorks.TE
 			ICmPossibilityList dummyList = MockRepository.GenerateMock<ICmPossibilityList>();
 			dummyList.Stub(l => l.Cache).Return(Cache);
 			m_treeView = new DummyKeyTermsTree(dummyList);
+		}
+
+		/// <summary/>
+		[TearDown]
+		public override void TestTearDown()
+		{
+			m_treeView.Dispose();
+			base.TestTearDown();
 		}
 		#endregion
 

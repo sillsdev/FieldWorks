@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000059">
+
+<rt class="LexSense" guid="155c0e55-2428-49a1-8957-57df676886cd" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
+<MorphoSyntaxAnalysis>
+<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="r" />
+</MorphoSyntaxAnalysis>
+</rt>
+
+<rt class="MoStemMsa" guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
+</rt>
+
+<rt class="MoStemMsa" guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
+</rt>
+
+<rt class="LexEntry" guid="5206535c-d93d-4129-8fce-9e93d8970aec">
+<MorphoSyntaxAnalyses>
+<objsur guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" t="o" />
+<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="o" />
+</MorphoSyntaxAnalyses>
+<Senses>
+<objsur guid="155c0e55-2428-49a1-8957-57df676886cd" t="o" />
+</Senses>
+</rt>
+
+</languageproject>

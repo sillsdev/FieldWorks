@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -344,6 +345,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			});
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetPopupTree() returns a reference")]
 		private void ChooseFromMasterCategoryList()
 		{
 			PopupTree pt = GetPopupTree();
@@ -429,6 +432,8 @@ namespace SIL.FieldWorks.LexText.Controls
 	/// This is an attempt to avoid LT-11548 where the MSAPopupTreeManager was being disposed
 	/// under certain circumstances while it was still processing AfterSelect messages.
 	/// </summary>
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_parentOfPopupMgr, m_mediator, and Cache are references")]
 	public class MasterCategoryListChooserLauncher
 	{
 		private readonly ILexSense m_sense;

@@ -22,6 +22,7 @@ using System.Linq;
 using System.Windows.Forms;
 
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -215,6 +216,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						if (!m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Contains(m_wsNew))
 							m_cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Add(m_wsNew);
 					}
+					ProgressDialogWithTask.ImportTranslatedListsForWs(this.FindForm(), m_cache, m_wsNew.IcuLocale);
 				});
 				if (WritingSystemAdded != null)
 					WritingSystemAdded(this, new EventArgs());

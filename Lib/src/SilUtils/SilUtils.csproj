@@ -1,78 +1,150 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>9.0.30729</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</ProjectGuid>
-	<OutputType>Library</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace>SIL.Utils</RootNamespace>
-	<AssemblyName>SilUtils</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-	<FileAlignment>512</FileAlignment>
-	<SccProjectName>SAK</SccProjectName>
-	<SccLocalPath>SAK</SccLocalPath>
-	<SccAuxPath>SAK</SccAuxPath>
-	<SccProvider>SAK</SccProvider>
-	<FileUpgradeFlags>
-	</FileUpgradeFlags>
-	<OldToolsVersion>2.0</OldToolsVersion>
-	<UpgradeBackupLocation>
-	</UpgradeBackupLocation>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SIL.Utils</RootNamespace>
+    <AssemblyName>SilUtils</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<OutputPath>..\..\..\Output\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<OutputPath>bin\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="System" />
-	<Reference Include="System.Configuration" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Data" />
-	<Reference Include="System.Drawing" />
-	<Reference Include="System.Windows.Forms" />
-	<Reference Include="System.Xml" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" Condition="'$(OS)'=='Unix'">
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="ColorHelper.cs" />
-	<Compile Include="ComponentsExtensionMethods.cs" />
-	<Compile Include="ContinuableErrorException.cs" />
-	<Compile Include="CustomDropDown.cs">
-	  <SubType>Component</SubType>
-	</Compile>
-	<Compile Include="PorterStemmer.cs" />
-	<Compile Include="ScreenUtils.cs" />
-	<Compile Include="StringUtils.cs" />
-	<Compile Include="PaintingHelper.cs" />
-	<Compile Include="PathwayUtils.cs" />
-	<None Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
-	<Compile Include="ReflectionHelper.cs" />
-	<Compile Include="RegistryHelper.cs" />
-	<Compile Include="SilSubKey.cs" />
-	<Compile Include="ListUtils.cs" />
-	<Compile Include="Surrogates.cs" />
-	<Compile Include="TextBoxExtensions.cs" />
-	<Compile Include="WaitCursor.cs" />
-	<Compile Include="Win32Wrappers.cs" />
-	<Compile Include="XmlSerializationHelper.cs" />
+    <Compile Include="..\..\..\Src\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="ColorHelper.cs" />
+    <Compile Include="ComponentsExtensionMethods.cs" />
+    <Compile Include="ContinuableErrorException.cs" />
+    <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FileDialogStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomDropDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PorterStemmer.cs" />
+    <Compile Include="ScreenUtils.cs" />
+    <Compile Include="StringUtils.cs" />
+    <Compile Include="PaintingHelper.cs" />
+    <Compile Include="PathwayUtils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReflectionHelper.cs" />
+    <Compile Include="RegistryHelper.cs" />
+    <Compile Include="SilSubKey.cs" />
+    <Compile Include="ListUtils.cs" />
+    <Compile Include="Surrogates.cs" />
+    <Compile Include="TextBoxExtensions.cs" />
+    <Compile Include="WaitCursor.cs" />
+    <Compile Include="Win32Wrappers.cs" />
+    <Compile Include="XmlSerializationHelper.cs" />
+    <Compile Include="FileDialog\OpenFileDialogAdapter.cs" />
+    <Compile Include="FileDialog\Manager.cs" />
+    <Compile Include="FileDialog\FileDialogAdapter.cs" />
+    <Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
+    <Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
+    <None Include="FileDialog\readme.txt" />
+    <Compile Include="FileDialog\Linux\FileDialogLinux.cs" />
+    <Compile Include="FileDialog\Linux\OpenFileDialogLinux.cs" />
+    <Compile Include="FileDialog\Linux\SaveFileDialogLinux.cs" />
+    <Compile Include="FileDialog\Windows\FileDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\SaveFileDialogWindows.cs" />
+    <Compile Include="FileDialog\Interfaces\IFileDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\IFolderBrowserDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
+    <Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
+    <Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

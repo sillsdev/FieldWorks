@@ -1,24 +1,24 @@
 <word>
   <form>dembilikesgu</form>
   <seq>
-	<morph wordType="181">
-	  <shortName>dem- (3PlObj): deN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<morph wordType="root">
-	  <shortName>*bili (to.see): himbilira</shortName>
-	  <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
-	</morph>
-	<morph wordType="suffix">
-	  <shortName>-kes (???): kes</shortName>
-	  <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="179">
-	  <shortName>-gu (Future): gu</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="179" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="181">
+      <shortName>dem- (3PlObj): deN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <morph wordType="root">
+      <shortName>*bili (to.see): himbilira</shortName>
+      <stemMsa cat="167" catAbbr="trans" inflClass="177" inflClassAbbr="1" requiresInfl="+" />
+    </morph>
+    <morph wordType="suffix">
+      <shortName>-kes (???): kes</shortName>
+      <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="179">
+      <shortName>-gu (Future): gu</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="179" slotAbbr="Tense" />
+    </morph>
   </seq>
 </word>

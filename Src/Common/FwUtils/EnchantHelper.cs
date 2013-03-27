@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		internal static string GetSpellingDirectoryPath()
 		{
 			string appdataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			return Path.Combine(appdataFolder, @"enchant\myspell\");
+			return Path.Combine(Path.Combine(appdataFolder, "enchant"), "myspell");
 		}
 
 		/// <summary>

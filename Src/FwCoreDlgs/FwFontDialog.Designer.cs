@@ -210,9 +210,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private SIL.FieldWorks.FwCoreDlgControls.FwFontAttributes m_FontAttributes;
 		private System.Windows.Forms.TextBox m_tbFontName;
-		private System.Windows.Forms.ListBox m_lbFontNames;
-		private System.Windows.Forms.TextBox m_tbFontSize;
-		private System.Windows.Forms.ListBox m_lbFontSizes;
+		/// <summary/>
+		protected System.Windows.Forms.ListBox m_lbFontNames;
+		/// <summary/>
+		protected System.Windows.Forms.TextBox m_tbFontSize;
+		/// <summary/>
+		protected System.Windows.Forms.ListBox m_lbFontSizes;
 		private SIL.FieldWorks.Common.Widgets.FwLabel m_preview;
 
 	}

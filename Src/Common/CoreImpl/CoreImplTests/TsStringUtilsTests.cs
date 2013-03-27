@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using NUnit.Framework;
 using SIL.Utils;
@@ -29,7 +30,9 @@ namespace SIL.CoreImpl
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class StringUtilsTest : FwCOMTestBase
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_DebugProces gets disposed in FixtureTeardown")]
+	public class TsStringUtilsTests
 	// can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		private DebugProcs m_DebugProcs;
@@ -2285,6 +2288,8 @@ namespace SIL.CoreImpl
 		/// Test various cases of TsStringUtils.RemoveIllegalXmlChars().
 		/// </summary>
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="Unit test")]
 		public void RemoveIllegalXmlChars()
 		{
 			var tsf = TsStrFactoryClass.Create();

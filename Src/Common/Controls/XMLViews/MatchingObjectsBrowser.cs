@@ -199,6 +199,17 @@ namespace SIL.FieldWorks.Common.Controls
 			ResumeLayout(false);
 		}
 
+		private IEnumerable<SearchField> m_pendingFields;
+		private IEnumerable<ICmObject> m_pendingFilters;
+
+		private bool DoPendingSearchWhenIdle(object arg)
+		{
+			if (m_pendingFields == null)
+				return true; // just in case: somehow we got triggered again after successful completion.
+			Search(m_pendingFields, m_pendingFilters);
+			return true; // we don't need to do this again.
+		}
+
 		/// <summary>
 		/// Searches the specified fields.
 		/// </summary>
@@ -206,6 +217,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="filters">The filters.</param>
 		public void Search(IEnumerable<SearchField> fields, IEnumerable<ICmObject> filters)
 		{
+			// If we abort this search (because the user typed), but somehow the system becomes idle before we complete a new
+			// search, go ahead and complete the original one.
+			m_pendingFields = fields;
+			m_pendingFilters = filters;
+			m_mediator.IdleQueue.Add(IdleQueuePriority.High, DoPendingSearchWhenIdle);
+
 			CreateSearchers();
 
 			var results = new HashSet<ICmObject>();
@@ -249,6 +266,9 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				UpdateResults(results.Select(obj => obj.Hvo).ToArray());
 			}
+			// Completed successfully, don't want to do again.
+			m_pendingFields = null;
+			m_mediator.IdleQueue.Remove(DoPendingSearchWhenIdle);
 		}
 
 		/// <summary>

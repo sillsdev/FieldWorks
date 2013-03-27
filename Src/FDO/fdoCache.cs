@@ -160,6 +160,24 @@ namespace SIL.FieldWorks.FDO
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Creates a new FdoCache from a local file. This is typically a temporary cache
+		/// (e.g., used to import lift when obtaining from a new repo).
+		/// </summary>
+		/// <param name="projectPath"></param>
+		/// <param name="userWsIcuLocale"></param>
+		/// <param name="progressDlg">The progress dialog box</param>
+		/// ------------------------------------------------------------------------------------
+		public static FdoCache CreateCacheFromLocalProjectFile(string projectPath,
+			string userWsIcuLocale, IThreadedProgress progressDlg)
+		{
+			var projectId = new SimpleProjectId(FDOBackendProviderType.kXML, projectPath);
+			return CreateCacheInternal(projectId, userWsIcuLocale, progressDlg.ThreadHelper,
+				dataSetup => dataSetup.StartupExtantLanguageProject(projectId, true, progressDlg),
+				cache => cache.Initialize(userWsIcuLocale));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Creates a new FdoCache that uses a specified data provider type that loads the
 		/// language project data from another FdoCache.
 		/// </summary>
@@ -299,25 +317,29 @@ namespace SIL.FieldWorks.FDO
 						updatedInUseWSs.Append(ws.DisplayLabel);
 					}
 				}
-				if (!String.IsNullOrEmpty(updatedInUseWSs.ToString()))
+				if (CoreImpl.Properties.Settings.Default.UpdateGlobalWSStore)
 				{
-					//Ask the user if they want to update to the global version for their writing systems
-					if (NewerWritingSystemFound(updatedInUseWSs.ToString(), ProjectId.UiName))
+					if (!String.IsNullOrEmpty(updatedInUseWSs.ToString()))
 					{
-						//If they said yes, update all the writing systems which have newer versions
-						//even the ones we didn't ask about, since they don't even really know they are there.
+
+							//Ask the user if they want to update to the global version for their writing systems
+							if (NewerWritingSystemFound(updatedInUseWSs.ToString(), ProjectId.UiName))
+							{
+								//If they said yes, update all the writing systems which have newer versions
+								//even the ones we didn't ask about, since they don't even really know they are there.
+								foreach (var ws in writingSystemsWithNewerGlobalVersions)
+								{
+									writingSystemManager.Replace(ws);
+								}
+							}
+					}
+					else
+					{
+						// None of them is in use...go ahead and update them all
 						foreach (var ws in writingSystemsWithNewerGlobalVersions)
 						{
 							writingSystemManager.Replace(ws);
 						}
-					}
-				}
-				else
-				{
-					// None of them is in use...go ahead and update them all
-					foreach (var ws in writingSystemsWithNewerGlobalVersions)
-					{
-						writingSystemManager.Replace(ws);
 					}
 				}
 			}
@@ -637,7 +659,10 @@ namespace SIL.FieldWorks.FDO
 			// Add the writing system to the list of Vernacular writing systems and make it the
 			// first one in the list of current Vernacular writing systems.
 			if (fDefault)
+			{
 				cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem = wsVern;
+				cache.LanguageProject.HomographWs = wsVern.Id;
+			}
 			else
 				cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsVern);
 		}
@@ -859,6 +884,7 @@ namespace SIL.FieldWorks.FDO
 			}
 		}
 
+		private int m_wsDefaultAnalysis;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The default analysis writing system.
@@ -868,12 +894,17 @@ namespace SIL.FieldWorks.FDO
 		{
 			get
 			{
-				CheckDisposed();
-				IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-				return ws == null ? 0 : ws.Handle;
+				if (m_wsDefaultAnalysis == 0)
+				{
+					CheckDisposed();
+					IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+					m_wsDefaultAnalysis = (ws == null ? 0 : ws.Handle);
+				}
+				return m_wsDefaultAnalysis;
 			}
 		}
 
+		private int m_wsDefaultPron;
 		/// <summary>
 		/// The default pronunciation writing system.
 		/// </summary>
@@ -881,12 +912,17 @@ namespace SIL.FieldWorks.FDO
 		{
 			get
 			{
-				CheckDisposed();
-				IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultPronunciationWritingSystem;
-				return ws == null ? 0 : ws.Handle;
+				if (m_wsDefaultPron == 0)
+				{
+					CheckDisposed();
+					IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultPronunciationWritingSystem;
+					m_wsDefaultPron = (ws == null ? 0 : ws.Handle);
+				}
+				return m_wsDefaultPron;
 			}
 		}
 
+		private int m_wsDefaultVern;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// The default vernacular writing system.
@@ -896,10 +932,25 @@ namespace SIL.FieldWorks.FDO
 		{
 			get
 			{
-				CheckDisposed();
-				IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultVernacularWritingSystem;
-				return ws == null ? 0 : ws.Handle;
+				if (m_wsDefaultVern == 0)
+				{
+					CheckDisposed();
+					IWritingSystem ws = m_serviceLocator.WritingSystems.DefaultVernacularWritingSystem;
+					m_wsDefaultVern = (ws == null ? 0 : ws.Handle);
+				}
+				return m_wsDefaultVern;
 			}
+		}
+
+		/// <summary>
+		/// This should be called when anything changes that may make it necessary for
+		/// DefaultVernWs or DefaultAnalWs to return a different result.
+		/// </summary>
+		internal void ResetDefaultWritingSystems()
+		{
+			m_wsDefaultVern = 0;
+			m_wsDefaultAnalysis = 0;
+			m_wsDefaultPron = 0;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1231,15 +1282,11 @@ namespace SIL.FieldWorks.FDO
 			switch (itype)
 			{
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigUnicode:
 					return DomainDataByFlid.get_UnicodeProp(hvo, flid);
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					return DomainDataByFlid.get_StringProp(hvo, flid).Text;
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 					{
 						var wsid = WritingSystemServices.GetWritingSystem(this, frag, null, hvo, flid, 0).Handle;
 						return wsid == 0 ? string.Empty : DomainDataByFlid.get_MultiStringAlt(hvo, flid, wsid).Text;

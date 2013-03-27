@@ -98,8 +98,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 			base.AddObjectSideEffectsInternal(e);
 
-			if (e.Flid == StTextTags.kflidTags)
-				TextTagCollectionChanges(true, e.ObjectAdded);
+			//if (e.Flid == StTextTags.kflidTags)
+			//    TextTagCollectionChanges(true, e.ObjectAdded);
 
 			if (e.Flid == StTextTags.kflidParagraphs)
 			{
@@ -130,8 +130,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			base.RemoveObjectSideEffectsInternal(e);
 
-			if (e.Flid == StTextTags.kflidTags)
-				TextTagCollectionChanges(false, e.ObjectRemoved);
+			//if (e.Flid == StTextTags.kflidTags)
+			//    TextTagCollectionChanges(false, e.ObjectRemoved);
 
 			if (e.Flid == StTextTags.kflidParagraphs)
 			{
@@ -151,20 +151,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
-		/// <summary>
-		/// Used to register changes to a Text's list of TextTags.
-		/// Probably unnecessary due to StText.TagsOC being owned.
-		/// </summary>
-		/// <param name="fAdd">true if adding an object to AppliesTo, false if removing.</param>
-		/// <param name="modObj">object being added or removed</param>
-		private void TextTagCollectionChanges(bool fAdd, ICmObject modObj)
-		{
-			// TODO: This may be needed when we do multi-layer tagging,
-			// in the case where a tag is being deleted that is pointed to by another tag.
-			var ttag = modObj as ITextTag;
-			var newNumberOfTags = fAdd ? 1 : 0;
-			var oldNumberOfTags = fAdd ? 0 : 1;
-		}
+		///// <summary>
+		///// Used to register changes to a Text's list of TextTags.
+		///// Probably unnecessary due to StText.TagsOC being owned.
+		///// </summary>
+		///// <param name="fAdd">true if adding an object to AppliesTo, false if removing.</param>
+		///// <param name="modObj">object being added or removed</param>
+		//private void TextTagCollectionChanges(bool fAdd, ICmObject modObj)
+		//{
+		//    // TODO: This may be needed when we do multi-layer tagging,
+		//    // in the case where a tag is being deleted that is pointed to by another tag.
+		//    var ttag = modObj as ITextTag;
+		//    var newNumberOfTags = fAdd ? 1 : 0;
+		//    var oldNumberOfTags = fAdd ? 0 : 1;
+		//}
 		#endregion
 
 		#region Misc. stuff

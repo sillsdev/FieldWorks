@@ -1,0 +1,25 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Reference only
+M: System.Void SIL.SilSidePane.OutlookBar::OnMouseClick(System.Windows.Forms.MouseEventArgs)
+
+# added to collection and disposed there
+M: System.Void SIL.SilSidePane.OutlookBar::CreateContextMenu()
+M: System.Void SIL.SilSidePane.OutlookButtonPanelItemArea::Add(SIL.SilSidePane.Item)
+M: System.Void SIL.SilSidePane.SidePane::Init(System.Windows.Forms.Control)
+M: System.Void SIL.SilSidePane.SidePane::AddTab(SIL.SilSidePane.Tab)
+M: System.Void SIL.SilSidePane.OutlookButtonPanel::OverflowButton_DropDownOpening(System.Object,System.EventArgs)
+
+# Disposed in finally block
+M: System.Void SIL.SilSidePane.OutlookBarPanelRenderer::OnRenderButtonBackground(System.Windows.Forms.ToolStripItemRenderEventArgs)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.SilSidePane.Item
+T: SIL.SilSidePane.OutlookBarButtonCollection
+T: SIL.SilSidePane.Tab

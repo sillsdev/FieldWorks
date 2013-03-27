@@ -428,8 +428,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 						{
 							// This first line should generate an exception if we can't read it,
 							// which otherwise happens during CommitUpdate and wrecks everything.
-							File.OpenRead(fileName).Close();
-							zFile.Add(fileName, entryName);
+							using (File.OpenRead(fileName))
+							{
+								zFile.Add(fileName, entryName);
+							}
 						}
 						catch (UnauthorizedAccessException)
 						{

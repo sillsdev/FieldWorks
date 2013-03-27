@@ -1,0 +1,16 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Variables are references only
+T: SIL.FieldWorks.Common.UIAdapters.TMItemProperties
+T: SIL.FieldWorks.Common.UIAdapters.TMBarProperties
+T: SIL.FieldWorks.Common.UIAdapters.ToolBarPopupInfo
+T: SIL.FieldWorks.Common.UIAdapters.SBTabItemProperties
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.BadPractice.OnlyUseDisposeForIDisposableTypesRule
+
+# Not sure. Maybe derive from IDisposable
+T: SIL.FieldWorks.Common.UIAdapters.ITMAdapter

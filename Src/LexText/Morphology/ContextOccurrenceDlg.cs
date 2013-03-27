@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	{
 		const string s_helpTopic = "khtpCtxtOccur";
 
-		private IHelpTopicProvider m_helpTopicProvider;
+	private IHelpTopicProvider m_helpTopicProvider;
 		private Label m_lblMin;
 		private Label m_lblMax;
 		private Button m_btnOK;
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 
-			m_helpTopicProvider = helpTopicProvider;
+		m_helpTopicProvider = helpTopicProvider;
 			m_cboMin.SelectedIndex = min;
 			m_cboMax.SelectedIndex = max == -1 ? 0 : max;
 

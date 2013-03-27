@@ -205,7 +205,7 @@ namespace SILUBS.PhraseTranslationHelper
 			Regex regExQuestion = null;
 			try
 			{
-				regExQuestion = new Regex(string.Format(m_questionMatchingPattern, "(?i)" + term.ToString(@"\W+") + "(?-i)"), RegexOptions.CultureInvariant);
+				regExQuestion = new Regex(string.Format(m_questionMatchingPattern, "(?i:" + term.ToString(@"\W+") + ")"), RegexOptions.CultureInvariant);
 			}
 			catch (ArgumentException ex)
 			{

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 	[TestFixture]
 	public class DataMigration7000044Tests : DataMigrationTestsBase
 	{
+		/// <summary/>
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="Newline of sampleLayoutData is in source file and so will be correct according to current platform")]
+		public DataMigration7000044Tests()
+		{
+		}
+
 		private string sampleLayoutData =
 			@"<LayoutInventory>
 				<layout class='LexEntry' type='jtview' name='publishStemPara' css='$fwstyle=Dictionary-Normal' version='11'>

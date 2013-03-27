@@ -14,10 +14,14 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application.ApplicationServices;
+using System.IO;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -102,6 +106,8 @@ namespace SIL.FieldWorks.Common.Controls
 			m_worker.RunWorkerCompleted += m_worker_RunWorkerCompleted;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="m_worker gets disposed in Dispose()")]
 		private void InitOnOwnerThread(Form owner)
 		{
 			if (m_synchInvoke != null && m_synchInvoke.InvokeRequired)
@@ -630,6 +636,50 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 		#endregion
 
+		// I made this region to hold methods that perform particular tasks involving wrapping this dialog around
+		// some work.
+		#region static methods to encapsulate usages of the dialog
+		/// <summary>
+		/// I'd like to put all this logic into XmlTranslatedLists, because it is common to most cases of
+		/// calling ImportTranslatedListsForWs, which is the point of this method. Unfortunately FDO
+		/// cannot reference the DLL that has ProgressDialogWithTask. I've made it public static so that
+		/// anything that references FwControls can use it at least.
+		/// </summary>
+		/// <param name="cache"> </param>
+		/// <param name="ws"></param>
+		/// <param name="parentWindow"> </param>
+		public static void ImportTranslatedListsForWs(Form parentWindow, FdoCache cache, string ws)
+		{
+			string path = XmlTranslatedLists.TranslatedListsPathForWs(ws);
+			if (!File.Exists(path))
+				return;
+			using (var dlg = new ProgressDialogWithTask(parentWindow, cache.ThreadHelper))
+			{
+				dlg.AllowCancel = true;
+				dlg.Maximum = 200;
+				dlg.Message = Path.GetFileName(path);
+				dlg.Title = XmlTranslatedLists.ProgressDialogCaption;
+				dlg.RunTask(true, ImportTranslatedListsForWs, ws, cache);
+			}
+		}
+
+		/// <summary>
+		/// Method with required signature for ProgressDialogWithTask.RunTask, to invoke XmlTranslatedLists.ImportTranslatedListsForWs.
+		/// Should only be called by the other overload of ImportTranslatedListsForWs.
+		/// args must be a writing system identifier string and an FdoCache.
+		/// </summary>
+		/// <param name="dlg"></param>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		private static object ImportTranslatedListsForWs(IThreadedProgress dlg, object[] args)
+		{
+			var ws = (string)args[0];
+			var cache = (FdoCache) args[1];
+			XmlTranslatedLists.ImportTranslatedListsForWs(ws, cache, dlg);
+			return null;
+		}
+		#endregion
+
 		#region Misc protected/private methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -655,6 +705,8 @@ namespace SIL.FieldWorks.Common.Controls
 			if (string.IsNullOrEmpty(Thread.CurrentThread.Name))
 				Thread.CurrentThread.Name = "Background thread";
 
+			if (MiscUtils.RunningTests)
+				ManifestHelper.CreateActivationContext();
 			m_Exception = null;
 			m_RetValue = null;
 
@@ -666,6 +718,11 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				System.Diagnostics.Debug.WriteLine("Got exception in background thread: " + ex.Message);
 				m_Exception = ex;
+			}
+			finally
+			{
+				if (MiscUtils.RunningTests)
+					ManifestHelper.DestroyActivationContext();
 			}
 		}
 

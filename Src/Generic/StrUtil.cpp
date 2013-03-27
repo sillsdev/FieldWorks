@@ -19,6 +19,12 @@ Last reviewed: 27Sep99
 
 namespace StrUtil
 {
+	// On Linux, the ICU_DATA environment variable is defined to specify where to find the ICU
+	// data.  The internal ICU code also uses this environment variable to initialize where it
+	// finds its data.  So when we first try to initialize ICU in FieldWorks, it may already
+	// be halfway there.  So this variable flags that we really do need to call SilInitIcu()
+	// even though u_setDataDirectory() may have already been called.
+	static bool s_fSilIcuInitCalled = false;
 
 /*----------------------------------------------------------------------------------------------
 	Initialize the ICU Data directory based on the registry setting (or UNIX environment).  It is safe to
@@ -26,8 +32,9 @@ namespace StrUtil
 ----------------------------------------------------------------------------------------------*/
 void InitIcuDataDir()
 {
-#if WIN32
 	const char * pszDir = u_getDataDirectory();
+	char rgchDataDirectory[MAX_PATH];
+#if WIN32
 	if (!pszDir || !*pszDir)
 	{
 		// The ICU Data Directory is not yet set.  Get the root directory from the registry
@@ -37,37 +44,36 @@ void InitIcuDataDir()
 			&hk);
 		if (lRet == ERROR_SUCCESS)
 		{
-			char rgch[MAX_PATH];
-			DWORD cb = sizeof(rgch);
+			DWORD cb = sizeof(rgchDataDirectory);
 			DWORD dwT;
 			// Note: trying to refactor this using
 			// StrAnsi staIcuDir(DirectoryFinder::IcuDir());
 			// u_setDataDirectory(staIcuDir.Chars());
 			// broke Ecobj/Teso. At some point we might want to figure out how to solve the build problems.
-			lRet = ::RegQueryValueExA(hk, "Icu40DataDir", NULL, &dwT, (BYTE *)rgch, &cb);
+			lRet = ::RegQueryValueExA(hk, "Icu50DataDir", NULL, &dwT, (BYTE *)rgchDataDirectory, &cb);
 			if (lRet == ERROR_SUCCESS && dwT == REG_SZ)
 			{
 				// Remove any trailing \ from the registry value.
-				int cch = strlen(rgch);
-				if (rgch[cch - 1] == '\\')
-					rgch[cch - 1] = 0;
-				u_setDataDirectory(rgch);
+				int cch = strlen(rgchDataDirectory);
+				if (rgchDataDirectory[cch - 1] == '\\')
+					rgchDataDirectory[cch - 1] = 0;
+				u_setDataDirectory(rgchDataDirectory);
+				s_fSilIcuInitCalled = false;	// probably redundant, but to be safe ...
 			}
 			::RegCloseKey(hk);
 		}
 	}
-
-#else //WIN32
-
-	const char * pszDir = u_getDataDirectory();
+#else //not WIN32
 	if (!pszDir || !*pszDir)
 	{
 		// The ICU Data Directory is not yet set. Set it from the environment.
-		const char * desiredDir = getenv("ICUDATADIR");
-		if (NULL != desiredDir)
-			u_setDataDirectory(desiredDir);
+		pszDir = getenv("ICU_DATA");
+		if (NULL != pszDir)
+		{
+			u_setDataDirectory(pszDir);
+			s_fSilIcuInitCalled = false;	// probably redundant, but to be safe ...
+		}
 	}
-
 #endif//WIN32
 
 	// ICU docs say to do this after the directory is set, but before others are called.
@@ -78,13 +84,31 @@ void InitIcuDataDir()
 
 	if (status != U_ZERO_ERROR)
 	{
+#if WIN32
+		ThrowInternalError(E_UNEXPECTED, "Error Initalizing Icu. Check HKLM\\Software\\SIL\\Icu50DataDir is set in the registry.");
+#else
 		ThrowInternalError(E_UNEXPECTED, "Error Initalizing Icu. Check ICU_DATA is set.");
+#endif
 	}
 
 	pszDir = u_getDataDirectory();
 	if (!pszDir || !*pszDir)
 	{
+#if WIN32
+		ThrowInternalError(E_UNEXPECTED, "Error No Icu Data Directory. Check HKLM\\Software\\SIL\\Icu50DataDir is set in the registry.");
+#else
 		ThrowInternalError(E_UNEXPECTED, "Error No Icu Data Directory. Check ICU_DATA is set.");
+#endif
+	}
+
+	if (!s_fSilIcuInitCalled)
+	{
+		// This is somewhat time consuming; it has to allocate memory and read a file. Do it only once.
+		StrAnsi staPath(pszDir);
+		staPath.Append("/"); // Works on all OS's we care about, I think. Not sure about Mac OS.
+		staPath.Append("UnicodeDataOverrides.txt");
+		SilIcuInit(staPath.Chars());
+		s_fSilIcuInitCalled = true;
 	}
 }
 

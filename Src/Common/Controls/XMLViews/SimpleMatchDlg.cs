@@ -1,7 +1,4 @@
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.FDO;
@@ -9,10 +6,8 @@ using SIL.FieldWorks.Filters;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.Resources;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -24,25 +19,25 @@ namespace SIL.FieldWorks.Common.Controls
 	/// </summary>
 	public class SimpleMatchDlg : Form, IFWDisposable
 	{
-		private System.Windows.Forms.RadioButton m_anywhereButton;
-		private System.Windows.Forms.RadioButton m_atStartButton;
-		private System.Windows.Forms.RadioButton m_atEndButton;
-		private System.Windows.Forms.RadioButton m_wholeItemButton;
+		private RadioButton m_anywhereButton;
+		private RadioButton m_atStartButton;
+		private RadioButton m_atEndButton;
+		private RadioButton m_wholeItemButton;
 		private FwTextBox m_textBox;
-		private System.Windows.Forms.Button m_cancelButton;
-		private System.Windows.Forms.Button m_okButton;
-		private System.Windows.Forms.RadioButton m_regExButton;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button buttonHelp;
+		private Button m_cancelButton;
+		private Button m_okButton;
+		private RadioButton m_regExButton;
+		private Label label1;
+		private Button buttonHelp;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
 		private const string s_helpTopic = "khtpFilterFor";
-		private System.Windows.Forms.Button regexHelper;
-		private System.Windows.Forms.HelpProvider helpProvider;
-		private System.Windows.Forms.CheckBox m_MatchCasecheckBox;
+		private Button regexHelper;
+		private HelpProvider helpProvider;
+		private CheckBox m_MatchCasecheckBox;
 
 		private RegexHelperMenu regexContextMenu;
 		private CheckBox m_MatchDiacriticscheckBox;

@@ -197,6 +197,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency: ScrFDO:ScrImportSet in BooksForProject property called via new DummyImportDialog(null, Cache, m_settings) in Initialize()")]
+		[Category("DesktopRequired")]
 		public void CheckScrPsgRanges_FromCtrl()
 		{
 			m_dlg.Show();
@@ -230,6 +231,7 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency: ScrFDO:ScrImportSet in BooksForProject property called via new DummyImportDialog(null, Cache, m_settings) in Initialize()")]
+		[Category("DesktopRequired")]
 		public void CheckScrPsgRanges_ToCtrl()
 		{
 			m_dlg.Show();

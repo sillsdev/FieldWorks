@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000052">
+
+<rt class="ConstChartWordGroup" guid="3811356a-22af-4a1c-b235-676c7a55f71d" >
+</rt>
+
+<rt class="ConstChartWordGroup" guid="437cff9c-a654-48d3-9dfa-b4fcfb57c86a" >
+</rt>
+
+<rt class="ConstChartWordGroup" guid="f864b36d-ecf0-4c22-9fac-ff91b009a8f8" ownerguid="d2e52268-71bc-427e-a666-dbe66751b132">
+  <BeginSegment>
+	<objsur guid="0157b3fd-b464-4983-a865-3eb9dbc7fa72" t="r" />
+  </BeginSegment>
+  <EndSegment>
+	<objsur guid="0157b3fd-b464-4983-a865-3eb9dbc7fa72" t="r" />
+  </EndSegment>
+</rt>
+
+<rt class="StText" guid="86380548-e61e-4b51-abbf-92d44fa5c038">
+<Tags>
+<objsur guid="fa0c3376-1dbc-42c0-b4ff-cd6bf0372b13" t="o" />
+</Tags>
+</rt>
+
+<rt class="TextTag" guid="fa0c3376-1dbc-42c0-b4ff-cd6bf0372b13" ownerguid="86380548-e61e-4b51-abbf-92d44fa5c038">
+<BeginSegment>
+<objsur guid="957213db-ba4a-42d7-b365-a486b541d408" t="r" />
+</BeginSegment>
+<EndSegment>
+<objsur guid="0157b3fd-b464-4983-a865-3eb9dbc7fa72" t="r" />
+</EndSegment>
+</rt>
+
+<rt class="Segment" guid="957213db-ba4a-42d7-b365-a486b541d408">
+</rt>
+
+<rt class="ConstChartRow" guid="d2e52268-71bc-427e-a666-dbe66751b132" ownerguid="8fa53cdf-9950-4a23-ba1c-844723c2342d">
+  <Cells>
+	<objsur guid="f864b36d-ecf0-4c22-9fac-ff91b009a8f8" t="o" />
+  </Cells>
+</rt>
+
+<rt class="DsConstChart" guid="8fa53cdf-9950-4a23-ba1c-844723c2342d" >
+  <Rows>
+	<objsur guid="d2e52268-71bc-427e-a666-dbe66751b132" t="o" />
+  </Rows>
+</rt>
+
+</languageproject>

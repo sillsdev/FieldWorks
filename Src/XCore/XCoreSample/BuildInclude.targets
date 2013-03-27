@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<ItemGroup>
+		<SampleFile Include="Itinerary.xml" />
+	</ItemGroup>
+	<Target Name="AfterClean">
+		<Message Importance="high" Text="Deleting %(SampleFile.Identity) from $(OutDir)." />
+		<Delete Files="@(SampleFile -> '$(OutDir)/%(Identity)')" ContinueOnError="true" />
+	</Target>
+	<Target Name="BeforeBuild">
+		<!-- whatever commands we need to run before the rest of the build-->
+		<Message Importance="high" Text="Copying %(SampleFile.FullPath) to $(OutDir)." />
+		<Copy SourceFiles="@(SampleFile)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" />
+	</Target>
+</Project>

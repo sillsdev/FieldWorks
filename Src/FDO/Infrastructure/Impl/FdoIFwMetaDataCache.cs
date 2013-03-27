@@ -9,6 +9,7 @@
 // Last reviewed: never
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices; // Needed for Marshal
@@ -74,6 +75,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Constructor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		internal FdoMetaDataCache()
 		{
 			m_initialized = false;
@@ -85,6 +88,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var cmObjectTypes = new List<Type>();
 			foreach (var fdoType in Assembly.GetExecutingAssembly().GetTypes())
 			{
+				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
 				if (fdoType.Namespace != "SIL.FieldWorks.FDO.DomainImpl"
 					|| !fdoType.IsClass
 					|| fdoType.GetInterface("ICmObject") == null)
@@ -102,6 +107,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_initialized = true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void InitializeMetaDataCache(IEnumerable<Type> cmObjectTypes)
 		{
 			//AddClassesAndProps(cmObjectTypes);
@@ -156,6 +163,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				foreach (var pi in fdoType.GetProperties())
 				{
 					var decType = pi.DeclaringType;
+					// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+					// is marked with [MonoTODO] and might not work as expected in 4.0.
 					if (decType != fdoType) continue;
 
 					var customAttributes = pi.GetCustomAttributes(false);
@@ -404,7 +413,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <param name='flid'>Field identification number.</param>
 		/// <remarks>
 		/// This type value indicates if the field is a primitive data type
-		/// or a MultiStr/MultiBigStr/MultiTxt/MultiBigTxt value or describes the relationship
+		/// or a MultiStr/MultiTxt value or describes the relationship
 		/// between two classes (i.e. owning/reference and atomic/collection/sequence).
 		/// These numeric values are defined in the 'FWROOT\Src\Cellar\lib\CmTypes.h' file.
 		/// </remarks>
@@ -1184,9 +1193,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 						case CellarPropertyType.ReferenceCollection:
 							collData.Add(GetFieldName(propId));
 							break;
-						case CellarPropertyType.MultiBigString:
 						case CellarPropertyType.MultiString:
-						case CellarPropertyType.MultiBigUnicode:
 						case CellarPropertyType.MultiUnicode:
 							multiAltData.Add(GetFieldName(propId));
 							break;
@@ -1249,7 +1256,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			mcr.m_baseClsid = m_nameToClid[mcr.m_superclassName];
 			var mcrSuperclass = m_metaClassRecords[mcr.m_baseClsid];
 			mcrSuperclass.m_directSubclasses.Add(mcr);
-			mcr.AddSuperclassFields(mcrSuperclass);
 		}
 #endif
 

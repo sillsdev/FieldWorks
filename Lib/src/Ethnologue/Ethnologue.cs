@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -836,27 +837,31 @@ namespace SIL.Ethnologue
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the directory where the Ethnologue was installed, or the Ethnologue sub-folder
-		/// of the FWROOT environment variable, if it hasn't been installed.
+		/// Gets the directory where the Ethnologue was installed, or the DistFiles/Ethnologue
+		/// sub-folder of the FWROOT environment variable, if it hasn't been installed.
 		/// Will not return null.
 		/// </summary>
 		/// <exception cref="ApplicationException">
 		/// If the installation directory could not be found.
 		/// </exception>
 		/// ------------------------------------------------------------------------------------
-		static public string InstallFolder
+		private static string InstallFolder
 		{
 			get
 			{
-				// This allows FW developers (or any other developer who defines this envioronment
+				// This allows FW developers (or any other developer who defines this environment
 				// variable) to override the default behavior
-				string defaultDir = Path.Combine(Environment.ExpandEnvironmentVariables(@"%FWROOT%"),
-					"DistFiles");
-				string rootDir = (EthnologueRegistryKey == null) ? null :
-					EthnologueRegistryKey.GetValue("RootCodeDir", defaultDir) as string;
-				if (rootDir == null)
-					throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
-
+				string rootDir = Environment.GetEnvironmentVariable("FWROOT");
+				if (!String.IsNullOrEmpty(rootDir))
+				{
+					rootDir = Path.Combine(rootDir, "DistFiles");
+				}
+				else
+				{
+					rootDir = RootCodeDir;
+					if (rootDir == null)
+						throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
+				}
 				string path = Path.Combine(rootDir, "Ethnologue");
 				if (!Directory.Exists(path))
 					throw new ApplicationException(EthnologueStrings.kstidInvalidInstallation);
@@ -864,19 +869,27 @@ namespace SIL.Ethnologue
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the local machine Registry key for FieldWorks.
+		/// Gets the RootCodeDir from registry, either from HKCU if it exists there, or
+		/// otherwise from HKLM.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static public RegistryKey EthnologueRegistryKey
+		private static string RootCodeDir
 		{
 			get
 			{
-				// TODO: Change this when Ethnologue has its own install location.
-				// Note. We don't want to use CreateSubKey here because it will fail on
-				// non-administrator logins. The user doesn't need to modify this setting.
-				return Registry.LocalMachine.OpenSubKey(@"Software\SIL\FieldWorks\7.0");
+				return GetCodeDirFromRegistryKey(Registry.CurrentUser) ??
+					GetCodeDirFromRegistryKey(Registry.LocalMachine);
+			}
+		}
+
+		private static string GetCodeDirFromRegistryKey(RegistryKey key)
+		{
+			// TODO: Change this when Ethnologue has its own install location.
+			// Note. We don't want to use CreateSubKey here because it will fail on
+			// non-administrator logins. The user doesn't need to modify this setting.
+			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\7.0"))
+			{
+				return (regKey == null) ? null : regKey.GetValue("RootCodeDir") as string;
 			}
 		}
 	}

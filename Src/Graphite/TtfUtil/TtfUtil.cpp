@@ -11,6 +11,7 @@ Last reviewed: Not yet.
 Description:
 	Implements the methods for TtfUtil class. This file should remain portable to any C++
 	environment by only using standard C++ and the TTF structurs defined in Tt.h.
+	AW 2011-10-21: Add support for multi-level composite glyphs. Contribution by Alexey Kryukov.
 -------------------------------------------------------------------------------*//*:End Ignore*/
 
 
@@ -53,11 +54,9 @@ Likewise if numberOf_LongHorMetrics in the hhea table is wrong, this will NOT be
 which could cause a lookup in the hmtx table to exceed the table length. Of course, TTF tables
 that are completely corrupt will cause unpredictable results. */
 
-/* Note on composite glyphs: Glyphs that have components that are themselves composites
-are not supported. IsDeepComposite can be used to test for this. False is returned from many
-of the methods in this cases. It is unclear how to build composite glyphs in some cases,
-so this code represents my best guess until test cases can be found. See notes on the high-
-level GlyfPoints method. */
+/* Note on composite glyphs: It is unclear how to build composite glyphs in some cases,
+so this code represents Alan's best guess until test cases can be found. See notes on
+the high-level GlyfPoints method. */
 
 /*----------------------------------------------------------------------------------------------
 	Get offset and size of the offset table needed to find table directory
@@ -1080,7 +1079,7 @@ int TtfUtil::GlyfContourCount(const void * pSimpleGlyf)
 		False could indicate a multi-level composite glyphs.
 ----------------------------------------------------------------------------------------------*/
 bool TtfUtil::GlyfContourEndPoints(const void * pSimpleGlyf, int * prgnContourEndPoint,
-								   int cnPointsTotal, int & cnPoints)
+	int cnPointsTotal, size_t & cnPoints)
 {
 	const sfnt_GlyfHdr * pGlyph = reinterpret_cast<const sfnt_GlyfHdr *>(pSimpleGlyf);
 
@@ -1111,7 +1110,7 @@ bool TtfUtil::GlyfContourEndPoints(const void * pSimpleGlyf, int * prgnContourEn
 	TODO: implement
 ----------------------------------------------------------------------------------------------*/
 bool TtfUtil::GlyfPoints(const void * pSimpleGlyf, int * prgnX, int * prgnY,
-						 char * prgbFlag, int cnPointsTotal, int & cnPoints)
+	char * prgbFlag, int cnPointsTotal, size_t & cnPoints)
 {
 	const sfnt_GlyfHdr * pGlyph = reinterpret_cast<const sfnt_GlyfHdr *>(pSimpleGlyf);
 	int cContours = swapws(pGlyph->numberOfContours);
@@ -1448,6 +1447,7 @@ bool TtfUtil::IsSpace(int nGlyphId, const void * pLoca, long lLocaSize, const vo
 
 /*----------------------------------------------------------------------------------------------
 	Determine if a particular Glyph ID is a multi-level composite.
+	This is probably not needed since support for multi-level composites has been added.
 ----------------------------------------------------------------------------------------------*/
 bool TtfUtil::IsDeepComposite(int nGlyphId, const void * pGlyf, const void * pLoca,
 							 long lLocaSize, const void * pHead)
@@ -1500,10 +1500,10 @@ bool TtfUtil::GlyfBox(int nGlyphId, const void * pGlyf, const void * pLoca, long
 }
 
 /*----------------------------------------------------------------------------------------------
-	Get the number of contours based on the given tables and Glyph ID
+	Get the number of contours based on the given tables and Glyph ID.
 	Handles both simple and composite glyphs.
 	Return true if successful, false otherwise. On false, cnContours will be INT_MIN
-		False may indicate a white space glyph or a multi-level composite glyph.
+		False may indicate a white space glyph (or component).
 ----------------------------------------------------------------------------------------------*/
 bool TtfUtil::GlyfContourCount(int nGlyphId, const void * pGlyf, const void * pLoca,
 	size_t lLocaSize, const void * pHead, size_t & cnContours)
@@ -1524,7 +1524,7 @@ bool TtfUtil::GlyfContourCount(int nGlyphId, const void * pGlyf, const void * pL
 
 	//handle composite glyphs
 
-	int rgnCompId[kMaxGlyphComponents]; // assumes no glyph will be made of more than 8 components
+	int rgnCompId[kMaxGlyphComponents]; // assumes only a limted number of glyph components
 	int cCompIdTotal = kMaxGlyphComponents;
 	int cCompId = 0;
 
@@ -1536,11 +1536,18 @@ bool TtfUtil::GlyfContourCount(int nGlyphId, const void * pGlyf, const void * pL
 	for (int i = 0; i < cCompId; i++)
 	{
 		if (IsSpace(rgnCompId[i], pLoca, lLocaSize, pHead)) {return false;}
-		pSimpleGlyf = GlyfLookup(rgnCompId[i], pGlyf, pLoca, lLocaSize, pHead);
+		pSimpleGlyf = GlyfLookup(static_cast<gr::gid16>(rgnCompId[i]), pGlyf,
+			pLoca, lLocaSize, pHead);
 		if (pSimpleGlyf == NULL) {return false;}
-		// return false on multi-level composite
+
 		if ((cTmp = GlyfContourCount(pSimpleGlyf)) < 0)
-			return false;
+		{
+			size_t cNest = 0;
+			if (!GlyfContourCount(static_cast<gr::gid16>(rgnCompId[i]), pGlyf, pLoca, lLocaSize,
+					pHead, 	cNest))
+				return false;
+			cTmp = (int) cNest;
+		}
 		cRtnContours += cTmp;
 	}
 
@@ -1550,19 +1557,18 @@ bool TtfUtil::GlyfContourCount(int nGlyphId, const void * pGlyf, const void * pL
 
 /*----------------------------------------------------------------------------------------------
 	Get the point numbers for the end points of the glyph contours based on the given tables
-	and Glyph ID
+	and Glyph ID.
 	Handles both simple and composite glyphs.
 	cnPoints - count of contours from GlyfContourCount (same as number of end points)
 	prgnContourEndPoints - should point to a buffer large enough to hold cnPoints integers
 	Return true if successful, false otherwise. On false, all end points are INT_MIN
-		False may indicate a white space glyph or a multi-level composite glyph.
+		False may indicate a white space glyph (or component).
 ----------------------------------------------------------------------------------------------*/
 bool TtfUtil::GlyfContourEndPoints(int nGlyphId, const void * pGlyf, const void * pLoca,
-								   long lLocaSize, const void * pHead,
-								   int * prgnContourEndPoint, int cnPoints)
+	long lLocaSize, const void * pHead, int * prgnContourEndPoint, size_t & cnPoints)
 {
 	int i;
-	for (i = 0; i < cnPoints; i++)
+	for (i = 0; i < (int)cnPoints; i++)
 		prgnContourEndPoint[i] = INT_MIN;
 
 	if (IsSpace(nGlyphId, pLoca, lLocaSize, pHead)) {return false;}
@@ -1571,7 +1577,7 @@ bool TtfUtil::GlyfContourEndPoints(int nGlyphId, const void * pGlyf, const void 
 	if (pSimpleGlyf == NULL) {return false;}
 
 	int cContours = GlyfContourCount(pSimpleGlyf);
-	int cActualPts = 0;
+	size_t cActualPts = 0;
 	if (cContours > 0)
 		return GlyfContourEndPoints(pSimpleGlyf, prgnContourEndPoint, cnPoints, cActualPts);
 
@@ -1585,19 +1591,25 @@ bool TtfUtil::GlyfContourEndPoints(int nGlyphId, const void * pGlyf, const void 
 		return false;
 
 	int * prgnCurrentEndPoint = prgnContourEndPoint;
-	int cCurrentPoints = cnPoints;
+	size_t cCurrentPoints = cnPoints;
 	int nPrevPt = 0;
 	for (i = 0; i < cCompId; i++)
 	{
 		if (IsSpace(rgnCompId[i], pLoca, lLocaSize, pHead)) {return false;}
 		pSimpleGlyf = GlyfLookup(rgnCompId[i], pGlyf, pLoca, lLocaSize, pHead);
 		if (pSimpleGlyf == NULL) {return false;}
-		// returns false on multi-level composite
+
 		if (!GlyfContourEndPoints(pSimpleGlyf, prgnCurrentEndPoint, cCurrentPoints, cActualPts))
-			return false;
+		{
+			size_t cNestedPts = cCurrentPoints;
+			if (!GlyfContourEndPoints(static_cast<gr::gid16>(rgnCompId[i]), pGlyf, pLoca, lLocaSize,
+					pHead, prgnCurrentEndPoint, cNestedPts))
+				return false;
+			cActualPts = cCurrentPoints - cNestedPts;
+		}
 		// points in composite are numbered sequentially as components are added
 		//  must adjust end point numbers for new point numbers
-		for (int j = 0; j < cActualPts; j++)
+		for (size_t j = 0; j < cActualPts; j++)
 			prgnCurrentEndPoint[j] += nPrevPt;
 		nPrevPt = prgnCurrentEndPoint[cActualPts - 1] + 1;
 
@@ -1605,6 +1617,7 @@ bool TtfUtil::GlyfContourEndPoints(int nGlyphId, const void * pGlyf, const void 
 		cCurrentPoints -= cActualPts;
 	}
 
+	cnPoints = cCurrentPoints;
 	return true;
 }
 
@@ -1618,7 +1631,7 @@ bool TtfUtil::GlyfContourEndPoints(int nGlyphId, const void * pGlyf, const void 
 	prgfOnCurve - should point to a buffer a large enough to hold cnPoints bytes (bool)
 		This range is parallel to the prgnX & prgnY
 	Return true if successful, false otherwise. On false, all points may be INT_MIN
-		False may indicate a white space glyph, a multi-level composite, or a corrupt font
+		False may indicate a white space glyph (or component), or a corrupt font
 	// TODO: doesn't support composite glyphs whose components are themselves components
 		It's not clear from the TTF spec when the transforms should be applied. Should the
 		transform be done before or after attachment point calcs? (current code - before)
@@ -1631,12 +1644,11 @@ bool TtfUtil::GlyfContourEndPoints(int nGlyphId, const void * pGlyf, const void 
 		relative to current glyph).
 ----------------------------------------------------------------------------------------------*/
 bool TtfUtil::GlyfPoints(int nGlyphId, const void * pGlyf, const void * pLoca,
-						 long lLocaSize, const void * pHead, const int * prgnContourEndPoint,
-						 int cnEndPoints, int * prgnX, int * prgnY, bool * prgfOnCurve,
-						 int cnPoints)
+	long lLocaSize, const void * pHead, const int * prgnContourEndPoint,
+	int cnEndPoints, int * prgnX, int * prgnY, bool * prgfOnCurve, size_t & cnPoints)
 {
 	int i;
-	for (i = 0; i < cnPoints; i++)
+	for (i = 0; i < (int)cnPoints; i++)
 	{
 		prgnX[i] = INT_MIN;
 		prgnY[i] = INT_MIN;
@@ -1648,7 +1660,7 @@ bool TtfUtil::GlyfPoints(int nGlyphId, const void * pGlyf, const void * pLoca,
 	if (pSimpleGlyf == NULL) {return false;}
 
 	int cContours = GlyfContourCount(pSimpleGlyf);
-	int cActualPts;
+	size_t cActualPts;
 	if (cContours > 0)
 	{
 		if (!GlyfPoints(pSimpleGlyf, prgnX, prgnY, (char *)prgfOnCurve, cnPoints, cActualPts))
@@ -1679,12 +1691,29 @@ bool TtfUtil::GlyfPoints(int nGlyphId, const void * pGlyf, const void * pLoca,
 	for (i = 0; i < cCompId; i++)
 	{
 		if (IsSpace(rgnCompId[i], pLoca, lLocaSize, pHead)) {return false;}
-		void * pCompGlyf = GlyfLookup(rgnCompId[i], pGlyf, pLoca, lLocaSize, pHead);
+		void * pCompGlyf = GlyfLookup(static_cast<gr::gid16>(rgnCompId[i]), pGlyf,
+			pLoca, lLocaSize, pHead);
 		if (pCompGlyf == NULL) {return false;}
-		// returns false on multi-level composite
+
 		if (!GlyfPoints(pCompGlyf, prgnCurrentX, prgnCurrentY, prgbCurrentFlag,
-			cCurrentPoints, cActualPts))
-			return false;
+				cCurrentPoints, cActualPts))
+		{
+			size_t cNestedPts = cCurrentPoints;
+			if (!GlyfPoints(static_cast<gr::gid16>(rgnCompId[i]), pGlyf, pLoca, lLocaSize, pHead,
+				prgnContourEndPoint, cnEndPoints, prgnCurrentX, prgnCurrentY, (bool *)prgbCurrentFlag,
+				cNestedPts))
+			{
+				return false;
+			}
+			cActualPts = cCurrentPoints - cNestedPts;
+		}
+		else
+		{
+			// convert points to absolute coordinates
+			// do before transform and attachment point placement are applied
+			CalcAbsolutePoints(prgnCurrentX, prgnCurrentY, cActualPts);
+		}
+
 		if (!GetComponentPlacement(pSimpleGlyf, rgnCompId[i], fOffset, a, b))
 			return false;
 		if (!GetComponentTransform(pSimpleGlyf, rgnCompId[i],
@@ -1692,14 +1721,10 @@ bool TtfUtil::GlyfPoints(int nGlyphId, const void * pGlyf, const void * pLoca,
 			return false;
 		bool fIdTrans = flt11 == 1.0 && flt12 == 0.0 && flt21 == 0.0 && flt22 == 1.0;
 
-		// convert points to absolute coordinates
-		// do before transform and attachment point placement are applied
-		CalcAbsolutePoints(prgnCurrentX, prgnCurrentY, cActualPts);
-
 		// apply transform - see main method note above
 		// do before attachment point calcs
 		if (!fIdTrans)
-			for (int j = 0; j < cActualPts; j++)
+			for (size_t j = 0; j < cActualPts; j++)
 			{
 				int x = prgnCurrentX[j]; // store before transform applied
 				int y = prgnCurrentY[j];
@@ -1731,7 +1756,7 @@ bool TtfUtil::GlyfPoints(int nGlyphId, const void * pGlyf, const void * pLoca,
 			nXOff = prgnX[a] - prgnCurrentX[b];
 			nYOff = prgnY[a] - prgnCurrentY[b];
 		}
-		for (int j = 0; j < cActualPts; j++)
+		for (size_t j = 0; j < cActualPts; j++)
 		{
 			prgnCurrentX[j] += nXOff;
 			prgnCurrentY[j] += nYOff;
@@ -1747,6 +1772,7 @@ bool TtfUtil::GlyfPoints(int nGlyphId, const void * pGlyf, const void * pLoca,
 
 	SimplifyFlags((char *)prgfOnCurve, cnPoints);
 
+	cnPoints = cCurrentPoints;
 	return true;
 }
 

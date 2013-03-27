@@ -12,6 +12,7 @@
 // Responsibility: FW Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -864,6 +865,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (collection.Flid == LexSenseTags.kflidSemanticDomains)
 						senses.Add(collection.MainObject as ILexSense);
 				}
+				var collator = Cache.ServiceLocator.WritingSystemManager.Get(Cache.DefaultVernWs).Collator;
+				// they need to be sorted, at least for the classified dictionary view.
+				senses.Sort((x, y) => collator.Compare(((LexSense)x).OwnerOutlineName.Text ?? "", ((LexSense)y).OwnerOutlineName.Text ?? ""));
 				return senses;
 			}
 		}
@@ -1210,6 +1214,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				CacheNoteCategories(poss.SubPossibilitiesOS, ws);
 			}
 		}
+		/// <summary>
+		/// Collect the referring FsFeatureSpecification objects (already done), plus any of
+		/// their owners which would then be empty.  Then delete them.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
+		{
+			base.RemoveObjectSideEffectsInternal(e);
+			if (OwningFlid == MoMorphDataTags.kflidProdRestrict)
+			{
+				Cache.LangProject.PhonologicalDataOA.RemovePhonRuleFeat(e.ObjectRemoved);
+			}
+		}
+
 	}
 	#endregion
 
@@ -1900,6 +1918,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public ILexExampleSentence OwningExample
 		{
 			get { return (ILexExampleSentence)Owner; }
+		}
+	}
+	#endregion
+
+	#region VirtualOrdering Class
+	internal partial class VirtualOrdering
+	{
+		public override bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
+		{
+			var mdc = m_cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+			var flids = mdc.GetFields(ClassID, true, (int)CellarPropertyTypeFilter.All);
+			return flids.Contains(flid);
 		}
 	}
 	#endregion
@@ -2922,11 +2952,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public virtual bool IsEquivalent(IFsAbstractStructure other)
 		{
 			if (other == null)
 				return false;
 
+			// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			return other.GetType() == GetType();
 		}
 
@@ -2963,11 +2997,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public virtual bool IsEquivalent(IFsFeatureSpecification other)
 		{
 			if (other == null)
 				return false;
 
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (other.GetType() != GetType())
 				return false;
 
@@ -4509,33 +4547,54 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class Text
 	{
 		/// <summary>
-		/// Move the text so that its owner is a (newly created) notebook record. Does nothing if it already is.
+		/// Associate the text with a (newly created) notebook record. Does nothing if it already is.
 		/// </summary>
-		public void MoveToNotebook(bool makeYourOwnUow)
+		public void AssociateWithNotebook(bool makeYourOwnUow)
 		{
-			if (!(Owner is LangProject))
+			if(IsAlreadyAssociatedWithNotebook())
 				return;
 			if (makeYourOwnUow)
 			{
 				UndoableUnitOfWorkHelper.Do(Strings.ksUndoCreateNotebookRecord, Strings.ksRedoCreateNotebookRecord,
-					Cache.ActionHandlerAccessor, MoveToNotebook);
+					Cache.ActionHandlerAccessor, AssociateWithNotebook);
 			}
 			else
-				MoveToNotebook();
+				AssociateWithNotebook();
 		}
 
-		private void MoveToNotebook()
+		private bool IsAlreadyAssociatedWithNotebook()
+		{
+			EnsureCompleteIncomingRefs();
+			return m_incomingRefs.OfType<RnGenericRec>().Any();
+		}
+
+		private void AssociateWithNotebook()
 		{
 			var rec = Cache.ServiceLocator.GetInstance<RnGenericRecFactory>().Create();
 			if (Cache.LangProject.ResearchNotebookOA == null)
 				Cache.LangProject.ResearchNotebookOA = Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
 			Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(rec);
-			rec.TextOA = this;
+			rec.TextRA = this;
 			var cmPossibilityRepository = Services.GetInstance<ICmPossibilityRepository>();
 			ICmPossibility eventItem;
 			if (cmPossibilityRepository.TryGetObject(RnResearchNbkTags.kguidRecEvent, out eventItem)) // should succeed except in tests
 				rec.TypeRA = eventItem;
 		}
+
+		/// <summary>
+		/// Reports the Notebook record associated with this text, or null if there isn't one.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceAtomic, "Text")]
+		public IRnGenericRec AssociatedNotebookRecord
+		{
+			get
+			{
+				EnsureCompleteIncomingRefs();
+				return ReferringObjects.OfType<RnGenericRec>().Select(
+					referringObject => referringObject as IRnGenericRec).FirstOrDefault();
+			}
+		}
+
 	}
 
 	#region ParagraphAnalysisFinder class

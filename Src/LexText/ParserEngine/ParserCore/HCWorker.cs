@@ -13,6 +13,8 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
 using System.Text;
@@ -23,6 +25,7 @@ using SIL.Utils;
 using SIL.HermitCrab;
 using PatrParserWrapper;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.Validation;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -65,11 +68,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			private readonly IEnumerable<PcPatrMorph> m_morphs;
 			private bool m_fSuccess;
 			private readonly string m_id;
+			private readonly FdoCache m_cache;
 
-			public WordGrammarTrace(string id, IEnumerable<PcPatrMorph> morphs)
+			public WordGrammarTrace(string id, IEnumerable<PcPatrMorph> morphs, FdoCache cache)
 			{
 				m_id = id;
 				m_morphs = morphs;
+				m_cache = cache;
 			}
 			/// <summary>
 			/// Get/set success status of word grammar attempt
@@ -123,12 +128,37 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 					writer.WriteStartElement("alloform");
 					writer.WriteValue(morph.form);
-					writer.WriteEndElement(); // Form
+					writer.WriteEndElement(); // alloform
 					//writer.WriteStartElement("Msa");
 					//writer.WriteEndElement(); // Msa
-					writer.WriteStartElement("Gloss");
+					int hvoForm = Convert.ToInt32(morph.formId);
+					var obj = m_cache.ServiceLocator.GetObject(hvoForm);
+					var stemAllo = obj as IMoStemAllomorph;
+					if (stemAllo != null)
+					{
+						var stemName = stemAllo.StemNameRA;
+						if (stemName != null)
+						{
+							writer.WriteStartElement("stemName");
+							writer.WriteStartAttribute("id");
+							writer.WriteValue(stemName.Hvo);
+							writer.WriteEndAttribute();
+							writer.WriteValue(stemName.Name.BestAnalysisAlternative.Text);
+							writer.WriteEndElement(); // stemName
+						}
+					}
+					writer.WriteStartElement("gloss");
 					writer.WriteValue(morph.gloss);
-					writer.WriteEndElement(); // Gloss
+					writer.WriteEndElement(); // gloss
+					writer.WriteStartElement("citationForm");
+					var form = obj as IMoForm;
+					if (form != null)
+					{
+						var entry = form.Owner as ILexEntry;
+						if (entry != null)
+							writer.WriteValue(entry.HeadWord.Text);
+					}
+					writer.WriteEndElement(); // citationForm
 					writer.WriteEndElement(); // Morphs
 				}
 				writer.WriteEndElement();
@@ -141,16 +171,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			readonly bool m_fDotrace;
 			readonly PatrParser m_patr;
 			readonly string m_patrlexPath;
+			readonly FdoCache m_cache;
 
-			public FwXmlOutput(XmlWriter writer, bool fDotrace, PatrParser patr, string patrlexPath)
+			public FwXmlOutput(XmlWriter writer, bool fDotrace, PatrParser patr, string patrlexPath, FdoCache cache)
 				: base(writer)
 			{
 				m_fDotrace = fDotrace;
 				m_patr = patr;
 				m_patrlexPath = patrlexPath;
+				m_cache = cache;
 			}
 
 			public override void MorphAndLookupWord(Morpher morpher, string word, bool prettyPrint, bool printTraceInputs)
+			{
+				MorphAndLookupWord(morpher, word, prettyPrint, printTraceInputs, null);
+			}
+
+			public void MorphAndLookupWord(Morpher morpher, string word, bool prettyPrint, bool printTraceInputs, string[] selectTraceMorphs)
 			{
 				try
 				{
@@ -159,17 +196,32 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						wordGrammarTraces = new HashSet<WordGrammarTrace>();
 					morpher.TraceAll = m_fDotrace;
 					WordAnalysisTrace trace;
-					ICollection<WordSynthesis> synthesisRecs = morpher.MorphAndLookupWord(word, out trace);
+					ICollection<WordSynthesis> synthesisRecs = morpher.MorphAndLookupWord(word, out trace, selectTraceMorphs);
 					foreach (WordSynthesis ws in synthesisRecs)
 					{
 						WordGrammarTrace wordGrammarTrace = null;
 						IEnumerable<PcPatrMorph> morphs = GetMorphs(ws);
 						if (wordGrammarTraces != null)
 						{
-							wordGrammarTrace = new WordGrammarTrace(((uint)ws.GetHashCode()).ToString(), morphs);
+							wordGrammarTrace = new WordGrammarTrace(((uint)ws.GetHashCode()).ToString(), morphs, m_cache);
 							wordGrammarTraces.Add(wordGrammarTrace);
 						}
-
+						if (morphs.Count() == 1)
+						{
+							var morph = morphs.First();
+							var formid = morph.formId;
+							var forms = m_cache.LanguageProject.LexDbOA.AllAllomorphs.Where(a => a.Hvo.ToString() == formid);
+							var form = forms.First();
+							var morphtype = form.MorphTypeRA;
+							if (morphtype.IsBoundType)
+							{
+								if (wordGrammarTrace != null)
+								{
+									wordGrammarTrace.Success = false; // this is not really true; what other options are there?
+								}
+								continue;
+							}
+						}
 						WritePcPatrLexiconFile(m_patrlexPath, morphs);
 						m_patr.LoadLexiconFile(m_patrlexPath, 0);
 						string sentence = BuildPcPatrInputSentence(morphs);
@@ -242,6 +294,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							m_xmlWriter.WriteStartElement("MoForm");
 							m_xmlWriter.WriteAttributeString("DbRef", formIds[i]);
 							m_xmlWriter.WriteAttributeString("wordType", wordTypes[i]);
+							m_xmlWriter.WriteEndElement();
+							m_xmlWriter.WriteStartElement("props");
+							foreach (KeyValuePair<string, string> prop in allo.Properties)
+							{
+								if (prop.Key == "FeatureDescriptors")
+								{
+									m_xmlWriter.WriteString(prop.Value);
+								}
+							}
 							m_xmlWriter.WriteEndElement();
 						}
 					}
@@ -355,10 +416,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					writer.WriteLine("\\g {0}", morph.gloss);
 					if (!string.IsNullOrEmpty(morph.featureDescriptors))
 					{
+						string lastFeatDesc = "";
+						string combinedCFPFeatDescs = "";
 						string[] featDescs = morph.featureDescriptors.Split(' ');
+						if (featDescs.Any())
+							writer.Write("\\f");
 						foreach (string featDesc in featDescs)
-							writer.WriteLine("\\f {0}", featDesc);
+						{
+							if (featDesc.StartsWith("CFP"))
+							{
+								combinedCFPFeatDescs += featDesc;
+								lastFeatDesc = featDesc;
+								continue;
+							}
+							if (lastFeatDesc.StartsWith("CFP"))
+								writer.Write(" {0}", combinedCFPFeatDescs);
+							writer.Write(" {0}", featDesc);
+						}
+						if (lastFeatDesc.StartsWith("CFP"))
+							writer.Write(" {0}", combinedCFPFeatDescs);
 					}
+					writer.WriteLine();
 					writer.WriteLine();
 				}
 				writer.Close();
@@ -477,45 +555,95 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected override string ParseWord(string form, int hvoWordform)
 		{
-			return ParseWordWithHermitCrab(form, hvoWordform, false);
+			return ParseWordWithHermitCrab(form, hvoWordform, false, null);
 		}
 
 		protected override string TraceWord(string form, string selectTraceMorphs)
 		{
-			return ParseWordWithHermitCrab(form, 0, true);
+			string[] selectTraceMorphIds = null;
+			if (!String.IsNullOrEmpty(selectTraceMorphs))
+			{
+				selectTraceMorphIds = selectTraceMorphs.TrimEnd().Split(' ');
+				int i = 0;
+				foreach (var sId in selectTraceMorphIds)
+				{
+					var msas = m_cache.LanguageProject.LexDbOA.AllMSAs.Where(m => m.Hvo.ToString() == sId);
+					var msa = msas.First();
+					if (msa.ClassID == MoStemMsaTags.kClassId)
+						selectTraceMorphIds.SetValue("lex" + sId, i);
+					else
+						selectTraceMorphIds.SetValue("mrule" + sId, i);
+					i++;
+				}
+				
+			}
+			return ParseWordWithHermitCrab(form, 0, true, selectTraceMorphIds);
 		}
 
-		private string ParseWordWithHermitCrab(string form, int hvoWordform, bool fDotrace)
+		private string ParseWordWithHermitCrab(string form, int hvoWordform, bool fDotrace, string[] selectTraceMorphs)
 		{
-			Debug.Assert(m_loader.IsLoaded, "It looks like the calling code forgot to load HC.NET");
+			if (!m_loader.IsLoaded)
+				return ParserCoreStrings.ksDidNotParse;
 
 			var sb = new StringBuilder();
-			var settings = new XmlWriterSettings
-							{
-								OmitXmlDeclaration = true
-							};
+			var settings = new XmlWriterSettings { OmitXmlDeclaration = true };
 			using (var writer = XmlWriter.Create(sb, settings))
 			{
-			writer.WriteStartElement("Wordform");
-			writer.WriteAttributeString("DbRef", Convert.ToString(hvoWordform));
-			writer.WriteAttributeString("Form", form);
-			var output = new FwXmlOutput(writer, fDotrace, m_patr,
-				Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"));
-			output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, true);
-			writer.WriteEndElement();
-			writer.Close();
-			return sb.ToString();
+				writer.WriteStartElement("Wordform");
+				writer.WriteAttributeString("DbRef", Convert.ToString(hvoWordform));
+				writer.WriteAttributeString("Form", form);
+				var output = new FwXmlOutput(writer, fDotrace, m_patr,
+					Path.Combine(m_outputDirectory, m_projectName + "patrlex.txt"), m_cache);
+				output.MorphAndLookupWord(m_loader.CurrentMorpher, form, true, true, selectTraceMorphs);
+				writer.WriteEndElement();
+				writer.Close();
+				return sb.ToString();
+			}
 		}
+
+		public string HcInputPath
+		{
+			get { return Path.Combine(m_outputDirectory, m_projectName + "HCInput.xml"); }
+		}
+
+		public string HcGrammarPath
+		{
+			get { return Path.Combine(m_outputDirectory, m_projectName + "gram.txt"); }
 		}
 
 		protected override void LoadParser(ref XmlDocument model, XmlDocument template)
 		{
+			string hcPath = HcInputPath;
+			File.Delete(hcPath); // In case we don't produce one successfully, don't keep an old one.
+			// Check for errors that will prevent the transformations working.
+			foreach (var affix in m_cache.ServiceLocator.GetInstance<IMoAffixAllomorphRepository>().AllInstances())
+			{
+				string form = affix.Form.VernacularDefaultWritingSystem.Text;
+				if (string.IsNullOrEmpty(form) || !form.Contains("["))
+					continue;
+				string environment = "/_" + form;
+				// A form containing a reduplication expression should look like an environment
+				var validator = new PhonEnvRecognizer(
+					m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+					m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
+				if (!validator.Recognize(environment))
+				{
+					string msg = string.Format(ParserCoreStrings.ksHermitCrabReduplicationProblem, form,
+						validator.ErrorMessage);
+					m_cache.ThreadHelper.Invoke(() => // We may be running in a background thread
+						{
+							MessageBox.Show(Form.ActiveForm, msg, ParserCoreStrings.ksBadAffixForm,
+								MessageBoxButtons.OK, MessageBoxIcon.Error);
+						});
+					m_loader.Reset(); // make sure nothing thinks it is in a useful state
+					return; // We can't load the parser, hopefully our caller will realize we failed.
+				}
+			}
+
 			var transformer = new M3ToHCTransformer(m_projectName, m_taskUpdateHandler);
 			transformer.MakeHCFiles(ref model);
 
-			string gramPath = Path.Combine(m_outputDirectory, m_projectName + "gram.txt");
-			m_patr.LoadGrammarFile(gramPath);
-			string hcPath = Path.Combine(m_outputDirectory, m_projectName + "HCInput.xml");
+			m_patr.LoadGrammarFile(HcGrammarPath);
 			m_loader.Load(hcPath);
 
 			XmlNode delReappsNode = model.SelectSingleNode("/M3Dump/ParserParameters/HC/DelReapps");

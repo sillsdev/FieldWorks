@@ -46,16 +46,18 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 		internal void AddField(int flid, string fieldName, CellarPropertyType cpt, int destClsid)
 		{
-			int clsid = flid / 1000;
-			MockFieldInfo mfi = new MockFieldInfo();
-			mfi.m_flid = flid;
-			mfi.m_name = fieldName;
-			mfi.m_cpt = cpt;
-			mfi.m_destClsid = destClsid;
-			mfi.m_fCustom = false;
-			mfi.m_fieldHelp = null;
-			mfi.m_fieldWs = WritingSystemServices.kwsAnal;
-			mfi.m_fieldListRoot = Guid.Empty;
+			var clsid = flid / 1000;
+			var mfi = new MockFieldInfo
+				{
+					m_flid = flid,
+					m_name = fieldName,
+					m_cpt = cpt,
+					m_destClsid = destClsid,
+					m_fCustom = false,
+					m_fieldHelp = null,
+					m_fieldWs = WritingSystemServices.kwsAnal,
+					m_fieldListRoot = Guid.Empty
+				};
 			m_fieldsById.Add(flid, mfi);
 			List<MockFieldInfo> list;
 			if (!m_fieldsByClassId.TryGetValue(clsid, out list))
@@ -82,12 +84,12 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <param name='fClearPrevCache'> </param>
 		public void InitXml(string bstrPathname, bool fClearPrevCache)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
-		///:&gt;:&gt; Field access methods
-		///:&gt; Gets the number of "fields" defined for this conceptual model.
+		/// Field access methods
+		/// Gets the number of "fields" defined for this conceptual model.
 		///</summary>
 		/// <returns>A System.Int32 </returns>
 		public int FieldCount
@@ -104,7 +106,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <param name='rgflid'>An integer array for returning the field identification numbers. </param>
 		public void GetFieldIds(int cflid, ArrayPtr rgflid)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary> Gets the name of the class that contains this field. </summary>
@@ -209,7 +211,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 
 		/// <summary>
 		/// Gets the type of the field. This value indicates if the field is a primitive data type
-		/// or a MultiStr/MultiBigStr/MultiTxt/MultiBigTxt value or describes the relationship
+		/// or a MultiStr/MultiTxt value or describes the relationship
 		/// between two classes (i.e. owning/reference and atomic/collection/sequence). These
 		/// numeric values are defined in the <b>~FWROOT\src\cellar\lib\CmTypes.h</b> file.
 		///</summary>
@@ -237,8 +239,8 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		}
 
 		/// <summary>
-		///:&gt;:&gt; Class access methods
-		///:&gt; Gets the number of "classes" defined for this conceptual model.
+		/// Class access methods
+		/// Gets the number of "classes" defined for this conceptual model.
 		///</summary>
 		/// <returns>A System.Int32 </returns>
 		public int ClassCount
@@ -255,7 +257,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <param name='rgclid'>An integer array for returning the class identification numbers. </param>
 		public void GetClassIds(int cclid, ArrayPtr rgclid)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary> Gets the name of the class. </summary>
@@ -275,7 +277,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// "false" for concrete.</returns>
 		public bool GetAbstract(int luClid)
 		{
-			throw new NotImplementedException();
+			return false;
 		}
 
 		/// <summary> Gets the base class id for a given class. </summary>
@@ -314,11 +316,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <param name='fIncludeSuperclasses'> </param>
 		/// <param name='grfcpt'> </param>
 		/// <param name='cflidMax'> </param>
-		/// <param name='_rgflid'> </param>
+		/// <param name='rgflid'> </param>
 		/// <returns></returns>
-		public int GetFields(int luClid, bool fIncludeSuperclasses, int grfcpt, int cflidMax, ArrayPtr _rgflid)
+		public int GetFields(int luClid, bool fIncludeSuperclasses, int grfcpt, int cflidMax, ArrayPtr rgflid)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -379,13 +381,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		}
 
 		/// <summary> Gets the direct subclasses of the given class (not including itself). </summary>
-		/// <param name='luClid'> </param>
-		/// <param name='cluMax'> </param>
-		/// <param name='_cluOut'> </param>
-		/// <param name='_rgluSubclasses'> </param>
-		public void GetDirectSubclasses(int luClid, int cluMax, out int _cluOut, ArrayPtr _rgluSubclasses)
+		/// <param name='luClid'></param>
+		/// <param name='cluMax'></param>
+		/// <param name='cluOut'></param>
+		/// <param name='rgluSubclasses'></param>
+		public void GetDirectSubclasses(int luClid, int cluMax, out int cluOut, ArrayPtr rgluSubclasses)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -396,11 +398,11 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		///</summary>
 		/// <param name='luClid'> </param>
 		/// <param name='cluMax'> </param>
-		/// <param name='_cluOut'> </param>
-		/// <param name='_rgluSubclasses'> </param>
-		public void GetAllSubclasses(int luClid, int cluMax, out int _cluOut, ArrayPtr _rgluSubclasses)
+		/// <param name='cluOut'> </param>
+		/// <param name='rgluSubclasses'> </param>
+		public void GetAllSubclasses(int luClid, int cluMax, out int cluOut, ArrayPtr rgluSubclasses)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -413,7 +415,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <param name='type'> </param>
 		public void AddVirtualProp(string bstrClass, string bstrField, int luFlid, int type)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary> </summary>
@@ -421,7 +423,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <returns></returns>
 		public bool get_IsVirtual(int luFlid)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary> Gets the name of a field. </summary>
@@ -433,10 +435,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		public string GetFieldNameOrNull(int luFlid)
 		{
 			MockFieldInfo mfi;
-			if (m_fieldsById.TryGetValue(luFlid, out mfi))
-				return mfi.m_name;
-			else
-				return null;
+			return m_fieldsById.TryGetValue(luFlid, out mfi) ? mfi.m_name : null;
 		}
 
 		#endregion
@@ -472,7 +471,15 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <returns>The field Ids.</returns>
 		public int[] GetFields(int clid, bool includeSuperclasses, int fieldTypes)
 		{
-			throw new NotImplementedException();
+			if (fieldTypes != (int)CellarPropertyTypeFilter.AllAtomic)
+				throw new NotSupportedException();
+			if (!m_fieldsByClassId.ContainsKey(clid))
+				return new List<int>().ToArray();
+
+			var matchingFields = m_fieldsByClassId[clid].Where(
+				propInfo =>
+				propInfo.m_cpt == CellarPropertyType.OwningAtomic || propInfo.m_cpt == CellarPropertyType.ReferenceAtomic);
+			return matchingFields.Select(match => match.m_flid).ToArray();
 		}
 
 		/// <summary>
@@ -482,11 +489,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// <returns>An array of direct subclass class Ids.</returns>
 		public int[] GetDirectSubclasses(int clid)
 		{
-			var retval = new List<int>();
-			foreach (var className in m_subclasses[clid])
-				retval.Add(m_classesByName[className]);
-
-			return retval.ToArray();
+			return m_subclasses[clid].Select(className => m_classesByName[className]).ToArray();
 		}
 
 		/// <summary>
@@ -543,10 +546,10 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			if (m_classesByName.TryGetValue(className, out clid))
 			{
 				List<MockFieldInfo> list;
-				int flid = (clid * 1000) + 500;
+				var flid = (clid * 1000) + 500;
 				if (m_fieldsByClassId.TryGetValue(clid, out list))
 				{
-					int flidMax = flid - 1;
+					var flidMax = flid - 1;
 					foreach (MockFieldInfo mfi in list)
 					{
 						if (mfi.m_fCustom && mfi.m_flid > flid)
@@ -559,23 +562,23 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 					list = new List<MockFieldInfo>();
 					m_fieldsByClassId.Add(clid, list);
 				}
-				MockFieldInfo mfiNew = new MockFieldInfo();
-				mfiNew.m_flid = flid;
-				mfiNew.m_name = fieldName;
-				mfiNew.m_cpt = fieldType;
-				mfiNew.m_destClsid = destinationClass;
-				mfiNew.m_fCustom = true;
-				mfiNew.m_fieldHelp = fieldHelp;
-				mfiNew.m_fieldWs = fieldWs;
-				mfiNew.m_fieldListRoot = fieldListRoot;
+				var mfiNew = new MockFieldInfo
+					{
+						m_flid = flid,
+						m_name = fieldName,
+						m_cpt = fieldType,
+						m_destClsid = destinationClass,
+						m_fCustom = true,
+						m_fieldHelp = fieldHelp,
+						m_fieldWs = fieldWs,
+						m_fieldListRoot = fieldListRoot
+					};
 				list.Add(mfiNew);
 				m_fieldsById.Add(flid, mfiNew);
 				return flid;
 			}
-			else
-			{
-				return 0;
-			}
+
+			return 0;
 		}
 
 		public void DeleteCustomField(int flid)
@@ -602,9 +605,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		public bool FieldExists(string className, string fieldName, bool includeBaseClasses)
 		{
 			int clid;
-			if (m_classesByName.TryGetValue(className, out clid))
-				return FieldExists(clid, fieldName, includeBaseClasses);
-			return false;
+			return m_classesByName.TryGetValue(className, out clid) && FieldExists(clid, fieldName, includeBaseClasses);
 		}
 
 		public bool FieldExists(int classId, string fieldName, bool includeBaseClasses)
@@ -612,14 +613,13 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 			List<MockFieldInfo> list;
 			if (m_fieldsByClassId.TryGetValue(classId, out list))
 			{
-				foreach (MockFieldInfo mfi in list)
+				if (list.Any(mfi => mfi.m_name == fieldName))
 				{
-					if (mfi.m_name == fieldName)
-						return true;
+					return true;
 				}
 				if (includeBaseClasses)
 				{
-					string baseClass = m_superclassById[classId];
+					var baseClass = m_superclassById[classId];
 					if (baseClass != null)
 						return FieldExists(baseClass, fieldName, true);
 				}

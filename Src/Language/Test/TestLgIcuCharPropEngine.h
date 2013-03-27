@@ -161,17 +161,18 @@ namespace TestLanguage
 			StrAnsi staMsg;
 			HRESULT hr;
 			LgGeneralCharCategory ccT;
-			LgBidiCategory bicT;
+			//LgBidiCategory bicT;
 			SmartBstr sbstr;
 			StrAnsi sta;
 			int chT;
 			int nT = 0;
 			ComBool fRet;
-			hr = m_qpropeng->get_CharacterName(ch, &sbstr);
-			unitpp::assert_eq("get_CharacterName(ch, &sbstr) HRESULT", S_OK, hr);
-			sta.Assign(sbstr.Chars());
-			staMsg.Format("get_CharacterName(%x)", ch);
-			unitpp::assert_true(staMsg.Chars(), strcmp(pszName, sta.Chars()) == 0);
+			// The SIL/FieldWorks changes for ICU 5.0 do not support get_CharacterName.
+			//hr = m_qpropeng->get_CharacterName(ch, &sbstr);
+			//unitpp::assert_eq("get_CharacterName(ch, &sbstr) HRESULT", S_OK, hr);
+			//sta.Assign(sbstr.Chars());
+			//staMsg.Format("get_CharacterName(%x): expected = \"%s\", actual = \"%s\"", ch, pszName, sta.Chars());
+			//unitpp::assert_true(staMsg.Chars(), strcmp(pszName, sta.Chars()) == 0);
 
 			hr = m_qpropeng->get_GeneralCategory(ch, &ccT);
 			unitpp::assert_eq("get_GeneralCategory(ch, &ccT) HRESULT", S_OK, hr);
@@ -183,18 +184,20 @@ namespace TestLanguage
 			staMsg.Format("get_CombiningClass(%x)", ch);
 			unitpp::assert_eq(staMsg.Chars(), nCombiningClass, nT);
 
-			hr = m_qpropeng->get_BidiCategory(ch, &bicT);
-			unitpp::assert_eq("get_BidiCategory(ch, &bicT) HRESULT", S_OK, hr);
-			staMsg.Format("get_BidiCategory(%x)", ch);
-			unitpp::assert_eq(staMsg.Chars(), bic, bicT);
+			// The SIL/FieldWorks changes for ICU 5.0 do not support get_BidiCategory.
+			//hr = m_qpropeng->get_BidiCategory(ch, &bicT);
+			//unitpp::assert_eq("get_BidiCategory(ch, &bicT) HRESULT", S_OK, hr);
+			//staMsg.Format("get_BidiCategory(%x)", ch);
+			//unitpp::assert_eq(staMsg.Chars(), bic, bicT);
 
-			hr = m_qpropeng->get_NumericValue(ch, &nT);
-			unitpp::assert_eq("get_NumericValue(ch, &nT) HRESULT", hrNumericValue, hr);
-			if (hr == S_OK)
-			{
-				staMsg.Format("get_NumericValue(%x)", ch);
-				unitpp::assert_eq(staMsg.Chars(), nNumericValue, nT);
-			}
+			// The SIL/FieldWorks changes for ICU 5.0 do not support get_NumericValue.
+			//hr = m_qpropeng->get_NumericValue(ch, &nT);
+			//unitpp::assert_eq("get_NumericValue(ch, &nT) HRESULT", hrNumericValue, hr);
+			//if (hr == S_OK)
+			//{
+			//	staMsg.Format("get_NumericValue(%x)", ch);
+			//	unitpp::assert_eq(staMsg.Chars(), nNumericValue, nT);
+			//}
 
 			hr = m_qpropeng->get_ToLowerCh(ch, &chT);
 			unitpp::assert_eq("get_ToLowerCh(ch, &chT) HRESULT", S_OK, hr);

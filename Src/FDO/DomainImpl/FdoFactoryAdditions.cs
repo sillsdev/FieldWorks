@@ -136,48 +136,61 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// do this as part of the solution to handling duplicate columns in LT-3763.
 				XmlNode column = columns[i] as XmlNode;
 				string columnLabel = XmlUtils.GetManditoryAttributeValue(column, "label");
-				string[] columnLabelComponents = columnLabel.Split(new char[] { ' ', ':' });
-				// get column label without writing system or extraneous information.
-				string columnBasicLabel = columnLabelComponents[0];
-				if (!String.IsNullOrEmpty(columnBasicLabel) && stringTbl != null)
-					columnBasicLabel = stringTbl.LocalizeAttributeValue(columnBasicLabel);
 				ITsTextProps ttp = rgtss[i].get_PropertiesAt(0);
 				int var;
-				int ws = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+				int ws = ttp.GetIntPropValues((int) FwTextPropType.ktptWs, out var);
 				Debug.Assert(ws != 0);
 
 				ITsString tssStr = rgtss[i];
-				string sStr = tssStr.Text;
-				if (sStr == null)
-					sStr = ""; // otherwise Trim below blows up.
-				sStr = sStr.Trim();
+				string trimmedForm = tssStr.Text;
+				if (trimmedForm == null)
+					continue; // no point in setting empty field, and MakeMorph may blow up
+				trimmedForm = trimmedForm.Trim();
+				if (trimmedForm.Length == 0)
+					continue;
 
-				if (columnBasicLabel == Strings.ksWord)
+				// Note: the four column labels we check for should NOT be localized, as we are comparing with
+				// the label that appears in the original XML configuration file. Localization is not applied
+				// to that file, but using it as a base, we look up the localized string to display in the tool.
+				if (columnLabel.StartsWith(@"Word (Lexeme Form)"))
 				{
-					// This is a lexeme form.
-
 					if (morph == null)
-						morph = MorphServices.MakeMorph(le, tssStr);
-					Debug.Assert(le.LexemeFormOA != null);
-					if (morph is IMoStemAllomorph)
+						morph = MakeMorphRde(le, tssStr, ws, trimmedForm);
+					else
 					{
-						// Make sure we have a proper allomorph and MSA for this new entry and sense.
-						// (See LT-1318 for details and justification.)
-						var morphTypeRep = m_cache.ServiceLocator.GetInstance <IMoMorphTypeRepository>();
-						if (sStr.IndexOf(' ') > 0)
-							morph.MorphTypeRA = morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphPhrase);
-						else
-							morph.MorphTypeRA = morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem);
-						morph.Form.set_String(ws, sStr);
+						// The type of MoForm has been determined by a previous column, but in any case, we don't want
+						// morpheme break characters in the lexeme form.
+						morph.Form.set_String(ws, MorphServices.EnsureNoMarkers(trimmedForm, m_cache));
+					}
+					Debug.Assert(le.LexemeFormOA != null);
+				}
+				else if (columnLabel.StartsWith(@"Word (Citation Form)"))
+				{
+					if (morph == null)
+					{
+						morph = MakeMorphRde(le, tssStr, ws, trimmedForm);
+						// We'll set the value based on all the nice logic in MakeMorph for trimming morpheme-type indicators
+						le.CitationForm.set_String(ws, morph.Form.get_String(ws));
+						morph.Form.set_String(ws, ""); // and this isn't really the lexeme form, so leave that empty.
+					}
+					else
+					{
+						// The type of MoForm has been determined by a previous column, but in any case, we don't want
+						// morpheme break characters in the citation form.
+						le.CitationForm.set_String(ws, MorphServices.EnsureNoMarkers(trimmedForm, m_cache));
 					}
 				}
-				else if (columnBasicLabel == Strings.ksDefinition)
+				else if (columnLabel.StartsWith(@"Meaning (Definition)"))
 				{
-					// This is a Definition.
-					if (sStr != "")
-						ls.Definition.set_String(ws, sStr);
+					if (trimmedForm != "")
+						ls.Definition.set_String(ws, trimmedForm);
 				}
-				else
+				else if (columnLabel.StartsWith(@"Meaning (Gloss)"))
+				{
+					if (trimmedForm != "")
+						ls.Gloss.set_String(ws, trimmedForm);
+				}
+				else if (!HandleTransduceColum(ls, column, ws, tssStr))
 				{
 					Debug.Fail("column (" + columnLabel + ") not supported.");
 				}
@@ -204,6 +217,100 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// We don't want a partial MSA created, so don't bother doing anything
 			// about setting ls.MorphoSyntaxAnalysisRA
 			return ls.Hvo;
+		}
+
+		/// <summary>
+		/// Handle a column that contains a "transduce" specification indicating how to find the
+		/// field that should be filled in. Currently we support class.field, where class is
+		/// LexEntry, LexSense, LexExampleSentence, or CmTranslation, and field is one of the multilingual
+		/// or simple string fields of that class.
+		/// LexSense means set a field of the sense passed to the method; entry means its owning entry;
+		/// example means its first example, which will be created if it doesn't already have one;
+		/// and CmTranslation means the first translation of the first example (both of which will
+		/// be created if needed). (Since this is used as part of RDENewSense, the first example field
+		/// encountered will always create a new example, and the first translation field a new translation.)
+		/// enhance: also handle class.field.field, where the first field indicates an atomic object
+		/// property?
+		/// </summary>
+		/// <param name="ls"></param>
+		/// <param name="column"></param>
+		/// <param name="ws"></param>
+		/// <param name="val"></param>
+		/// <returns></returns>
+		private bool HandleTransduceColum(LexSense ls, XmlNode column, int ws, ITsString val)
+		{
+			var transduce = XmlUtils.GetOptionalAttributeValue(column, "transduce");
+			if (string.IsNullOrEmpty(transduce))
+				return false;
+			var mdc = ls.Cache.MetaDataCacheAccessor;
+			var parts = transduce.Split('.');
+			if (parts.Length == 2)
+			{
+				var className = parts[0];
+				var fieldName = parts[1];
+				int flid = mdc.GetFieldId(className, fieldName, true);
+				int hvo;
+				switch (className)
+				{
+					case "LexSense":
+						hvo = ls.Hvo;
+						break;
+					case "LexEntry":
+						hvo = ls.OwningEntry.Hvo;
+						break;
+					case "LexExampleSentence":
+						hvo = GetOrMakeFirstExample(ls).Hvo;
+						break;
+					case "CmTranslation":
+						var example = GetOrMakeFirstExample(ls);
+						hvo = GetOrMakeFirstTranslation(example).Hvo;
+						break;
+						// Enhance JohnT: handle other cases as needed.
+					default:
+						throw new ArgumentException(
+							string.Format("transduce attribute of column argument specifies an unhandled class ({0})"), className);
+				}
+				if (mdc.GetFieldType(flid) == (int)CellarPropertyType.String)
+					ls.Cache.DomainDataByFlid.SetString(hvo, flid, val);
+				else // asssume multistring
+					ls.Cache.DomainDataByFlid.SetMultiStringAlt(hvo, flid, ws, val);
+				return true;
+			}
+			throw new ArgumentException("transduce attr for column spec has wrong number of parts " + transduce + " " + column.OuterXml);
+		}
+
+		private ICmTranslation GetOrMakeFirstTranslation(ILexExampleSentence example)
+		{
+			if (example.TranslationsOC.Count == 0)
+			{
+				var cmTranslation = example.Services.GetInstance<ICmTranslationFactory>().Create(example, m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation));
+				example.TranslationsOC.Add(cmTranslation);
+			}
+			return example.TranslationsOC.ToArray()[0];
+		}
+
+		private static ILexExampleSentence GetOrMakeFirstExample(LexSense ls)
+		{
+			if (ls.ExamplesOS.Count == 0)
+				ls.ExamplesOS.Add(ls.Services.GetInstance<ILexExampleSentenceFactory>().Create());
+			return ls.ExamplesOS.ToArray()[0];
+		}
+
+		private IMoForm MakeMorphRde(ILexEntry entry, ITsString form, int ws, string trimmedForm)
+		{
+			var morph = MorphServices.MakeMorph(entry, form);
+			if (morph is IMoStemAllomorph)
+			{
+				// Make sure we have a proper allomorph and MSA for this new entry and sense.
+				// (See LT-1318 for details and justification.)
+				var morphTypeRep = m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>();
+				if (trimmedForm.IndexOf(' ') > 0)
+					morph.MorphTypeRA = morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphPhrase);
+				else
+					morph.MorphTypeRA = morphTypeRep.GetObject(MoMorphTypeTags.kguidMorphStem);
+				morph.Form.set_String(ws, trimmedForm);
+			}
+			return morph;
 		}
 
 		#endregion
@@ -1328,6 +1435,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			return retval;
 		}
 
+		/// <summary>
+		/// Create a new style with a fixed guid.
+		/// </summary>
+		/// <param name="cache">project cache</param>
+		/// <param name="guid">the factory set guid</param>
+		/// <returns>A style interface</returns>
+		public IStStyle Create(FdoCache cache, Guid guid)
+		{
+			int hvo = ((IDataReader)cache.ServiceLocator.DataSetup).GetNextRealHvo();
+			var retval = new StStyle(cache, hvo, guid);
+			return retval;
+		}
 		#endregion
 	}
 	#endregion
@@ -2381,15 +2500,16 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class TextFactory : ITextFactory, IFdoFactoryInternal
 	{
 		/// <summary>
-		/// Basic creation method for an CmMediaURI.
+		/// Basic creation method for a Text.
 		/// </summary>
-		/// <returns>A new, unowned CmMediaURI with the given guid</returns>
+		/// <returns>A new, unowned Text with the given guid</returns>
 		public IText Create(FdoCache cache, Guid guid)
 		{
 			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
 			var newby = new Text(cache, hvo, guid);
-			if (newby.OwnershipStatus != ClassOwnershipStatus.kOwnerRequired)
-				((ICmObjectInternal)newby).InitializeNewOwnerlessCmObject(m_cache);
+			// If it gets here the new unowned Text will already be initialized!
+			//if (newby.OwnershipStatus != ClassOwnershipStatus.kOwnerRequired)
+			//    ((ICmObjectInternal)newby).InitializeNewOwnerlessCmObject(m_cache);
 			return newby;
 		}
 	}

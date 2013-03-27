@@ -1,0 +1,12 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# Unit tests
+M: System.Void SIL.Utils.UtilsTest::FilterForFileName_Windows_Invalid()
+M: System.Void SIL.Utils.UtilsTest::FilterForFileName_MSDE_Invalid()
+M: System.Void SIL.Utils.UtilsTest::FilterForFileName_ProjName_Invalid()
+M: System.Void SIL.Utils.UtilsTest::IsAlpha_newline()
+M: System.Void SIL.Utils.UtilsTest::IsAlpha_newlineTerminatedString()
+M: System.Void SIL.Utils.UtilsTest::CleanupXmlString_CarriageReturnAndLinefeed()

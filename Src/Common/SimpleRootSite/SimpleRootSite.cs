@@ -11,21 +11,22 @@
 // File: SimpleRootSite.cs
 // Responsibility: FW Team
 // --------------------------------------------------------------------------------------------
-using Accessibility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-
-using SIL.Utils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using XCore;
+using System.Windows.Forms;
 using System.Windows.Automation.Provider;
+using Accessibility;
+
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -471,6 +472,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		private bool m_fDisposed;
 
 		private OrientationManager m_orientationManager;
+
+		/// <summary/>
+		protected bool IsVertical
+		{
+			get { return m_orientationManager.IsVertical; }
+		}
 
 #if __MonoCS__
 		/// <summary> manage SimpleRootSite ibus interaction </summary>
@@ -2359,6 +2366,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Note: this does not implement the lower level IPrintRootSite.Print(pd).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public virtual void Print(PrintDocument pd)
 		{
 			CheckDisposed();
@@ -2663,17 +2672,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// process just because the selection is already visible.</param>
 		/// <remarks>
 		/// Note: subclasses for which scrolling is disabled should override.
-		/// If <paramref name="vwsel"/> is null, make the current selection visible.
+		/// If the selection is invalid, return false.
 		/// </remarks>
 		/// <returns>True if the selection was made visible, false if it did nothing</returns>
 		/// -----------------------------------------------------------------------------------
 		protected virtual bool MakeSelectionVisible(IVwSelection vwsel, bool fWantOneLineSpace,
 			bool fWantBothEnds, bool fForcePrepareToDraw)
 		{
-			// TODO: LT-2268,2508 - Why is this selection going bad...?
+			// TODO: LT-2268,2508 - Why is this selection going bad...?  Also LT-13374 in the case vwsel == null.
 			// The if will handle the crash, but there is still the problem
 			// of the selections getting invalid.
-			if (!vwsel.IsValid)
+			if (vwsel == null || !vwsel.IsValid)
 				return false; // can't work with an invalid selection
 
 			if (fWantOneLineSpace && ClientHeight < LineHeight * 3)
@@ -2825,7 +2834,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				#region DoAutoHScroll
 				if (DoAutoHScroll)
 				{
-					if (m_orientationManager.IsVertical)
+					if (IsVertical)
 					{
 						// In all current vertical views we have no vertical scrolling, so only need
 						// to consider horizontal. Also we have no laziness, so no need to mess with
@@ -3489,7 +3498,9 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (procIdOld == procIdThis && m_rootb != null && EditingHelper != null)
 					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
 #else
-			 // TODO-Linux: possibly need to call SetKeyboardForSelection here
+				// REVIEW: do we have to compare the process the old and new window belongs to?
+				if (m_rootb != null && EditingHelper != null)
+					EditingHelper.SetKeyboardForSelection(m_rootb.Selection);
 #endif
 
 				// Start the blinking cursor timer here and stop it in the OnKillFocus handler later.
@@ -4451,7 +4462,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				Debug.Assert(m_graphicsManager.VwGraphics != null);
 
-				EditingHelper.OnKeyDown(e);
+				if (!e.Handled)
+					EditingHelper.OnKeyDown(e);
 			}
 		}
 
@@ -4842,6 +4854,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Set focus to our window
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		private void SwitchFocusHere()
 		{
 			if (FindForm() == Form.ActiveForm)
@@ -5548,6 +5562,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return ScrollRange; }
 		}
 
+		/// <summary>
+		/// To make sure ScrollRange is enough.
+		///
+		/// Add 8 to get well clear of the descenders of the last line;
+		/// about 4 is needed but we add a few more for good measure
+		/// </summary>
+		protected virtual int ScrollRangeFudgeFactor { get { return 8; } }
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the scroll ranges in both directions.
@@ -5574,7 +5596,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					return new Size(0, 0);
 				}
 				// Refactor JohnT: would it be clearer to extract this into a method of orientation manager?
-				if (m_orientationManager.IsVertical)
+				if (IsVertical)
 				{
 					//swap and add margins to height
 					int temp = dysHeight;
@@ -5603,12 +5625,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				result.Width = (int)((long)dxsWidth * rcDstRoot.Width / rcSrcRoot.Width);
 
-				// Add 8 to get well clear of the descenders of the last line;
-				// about 4 is needed but we add a few more for good measure
-				if (m_orientationManager.IsVertical)
-					result.Width += 8;
+				if (IsVertical)
+					result.Width += ScrollRangeFudgeFactor;
 				else
-					result.Height += 8;
+					result.Height += ScrollRangeFudgeFactor;
+
 				return result;
 			}
 		}
@@ -5654,7 +5675,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected virtual bool WantHScroll
 		{
-			get { return m_orientationManager.IsVertical; }
+			get { return IsVertical; }
 		}
 
 		/// <summary>
@@ -6101,6 +6122,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="pvo">Overlay</param>
 		/// <param name="itag">Index of tag</param>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public void ModifyOverlay(bool fApplyTag, IVwOverlay pvo, int itag)
 		{
 			CheckDisposed();
@@ -6288,7 +6311,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				SelectionRectangle(vwsel, out rcPrimary, out fEndBeforeAnchor);
 			}
-			if (m_orientationManager.IsVertical)
+			if (IsVertical)
 			{
 				// In all current vertical views we have no vertical scrolling, so only need
 				// to consider horizontal.

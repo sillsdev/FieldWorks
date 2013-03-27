@@ -20,7 +20,7 @@
 		  <a href="../tasks/index.html">Task Reference</a>
 		  <img alt="-&gt;" src="../images/arrow.gif" /> &lt;grep&gt;</td>
 		<td class="NavBar-Cell" align="right">
-						v0.85</td>
+						v0.91</td>
 	  </tr>
 	</table>
 	<h1>&lt;grep&gt;</h1>
@@ -92,33 +92,33 @@
 		<p>
 		  <i xmlns="">Path</i>, <i xmlns="">File</i> and <i xmlns="">LineNumber</i> are automatically generated elements. </p>
 		<pre class="code">
-&lt;grep output="out.xml" pattern="// (?'Type'TODO|UNDONE|HACK): (\[(?'Author'\w*),(?'Date'.*)\])? (?'Text'[^\n\r]*)"&gt;
-	&lt;fileset&gt;
-		&lt;include name="*.cs" /&gt;
-	&lt;/fileset&gt;
-&lt;/grep&gt;
-		</pre>
+			&lt;grep output="out.xml" pattern="// (?'Type'TODO|UNDONE|HACK): (\[(?'Author'\w*),(?'Date'.*)\])? (?'Text'[^\n\r]*)"&gt;
+				&lt;fileset&gt;
+					&lt;include name="*.cs" /&gt;
+				&lt;/fileset&gt;
+			&lt;/grep&gt;
+					</pre>
 		<p> The resulting XML file for a comment-tag 'TODO: [md, 14-02-2004] comment this method' will look like </p>
 		<pre class="code">
-&lt;?xml version="1.0" encoding="utf-8" ?&gt;
-&lt;Matches&gt;
-	&lt;Match&gt;
-		&lt;Type&gt;TODO&lt;/Type&gt;
-		&lt;Text&gt;comment this method&lt;/Text&gt;
-		&lt;Path&gt;C:\MyProjects\MyPath&lt;/Path&gt;
-		&lt;File&gt;MyFile.cs&lt;/Filename&gt;
-		&lt;LineNumber&gt;146&lt;/LineNumber&gt;
-		&lt;Author&gt;md&lt;/Author&gt;
-		&lt;Date&gt;14-02-2004&lt;/Date&gt;
-	&lt;/Match&gt;
-	...
-&lt;/Matches&gt;
-		</pre>
+			&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+			&lt;Matches&gt;
+				&lt;Match&gt;
+					&lt;Type&gt;TODO&lt;/Type&gt;
+					&lt;Text&gt;comment this method&lt;/Text&gt;
+					&lt;Path&gt;C:\MyProjects\MyPath&lt;/Path&gt;
+					&lt;File&gt;MyFile.cs&lt;/Filename&gt;
+					&lt;LineNumber&gt;146&lt;/LineNumber&gt;
+					&lt;Author&gt;md&lt;/Author&gt;
+					&lt;Date&gt;14-02-2004&lt;/Date&gt;
+				&lt;/Match&gt;
+				...
+			&lt;/Matches&gt;
+					</pre>
 	  </li>
 	</ul>
 	<h3>Requirements</h3>
 	<div style="margin-left: 20px;">
-	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.85.2479.0)
+	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.91.4312.0)
 			</div>
   </body>
 </html>

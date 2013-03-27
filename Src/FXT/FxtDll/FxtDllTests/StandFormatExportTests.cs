@@ -8,6 +8,7 @@
 // </copyright>
 #endregion
 //-------------------------------------------------------------------------------
+using System;
 using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using NUnit.Framework;
@@ -99,7 +100,17 @@ namespace SIL.FieldWorks.Common.FXT
 			StreamReader test;
 			test = new StreamReader(outputPath);
 			StreamReader control = new StreamReader(sAnswerPath);
-			Assert.AreEqual(control.ReadToEnd(), test.ReadToEnd(),
+			string testResult = test.ReadToEnd();
+			string expected = control.ReadToEnd();
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+			{
+				// The xslt processor on linux inserts a BOM at the beginning, and writes \r\n for newlines.
+				int iBegin = testResult.IndexOf("\\lx ");
+				if (iBegin > 0 && iBegin < 6)
+					testResult = testResult.Substring(iBegin);
+				testResult = testResult.Replace("\r\n", "\n");
+			}
+			Assert.AreEqual(expected, testResult,
 				"FXT Output Differs. If you have done a model change, you can update the 'correct answer' xml files by runing fw\\bin\\FxtAnswersUpdate.bat.");
 		}
 

@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 
@@ -62,19 +63,6 @@ namespace SIL.FieldWorks.Common.Widgets
 			InitializeTextBoxControl(ctrl, rowIndex);
 		}
 
-//		/// ------------------------------------------------------------------------------------
-//		/// <summary>
-//		/// Initializes the text box control.
-//		/// </summary>
-//		/// <param name="rowIndex">The row index.</param>
-//		/// <remarks><paramref name="rowIndex"/> is usually the same as RowIndex, except in the
-//		/// case of a shared row (in which case RowIndex is always -1).</remarks>
-//		/// ------------------------------------------------------------------------------------
-//		private void InitializeTextBoxControl(int rowIndex)
-//		{
-//			InitializeTextBoxControl(null, rowIndex);
-//		}
-//
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes the text box control.
@@ -205,5 +193,127 @@ namespace SIL.FieldWorks.Common.Widgets
 			return base.GetFormattedValue(tssValue != null ? tssValue.Text : string.Empty,
 				rowIndex, ref cellStyle, valueTypeConverter, formattedValueTypeConverter, context);
 		}
+
+#if __MonoCS__
+		/// <summary>
+		/// Paint this DataGridView cell.  Overridden to allow RightToLeft display if needed.
+		/// </summary>
+		protected override void Paint(Graphics graphics, Rectangle clipBounds, Rectangle cellBounds,
+			int rowIndex, DataGridViewElementStates cellState, object val, object formattedValue,
+			string errorText, DataGridViewCellStyle cellStyle,
+			DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
+			FwTextBoxColumn col = OwningColumn as FwTextBoxColumn;
+			if (formattedValue == null || col == null)
+			{
+				base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, val, formattedValue, errorText, cellStyle,
+					advancedBorderStyle, paintParts);
+				return;
+			}
+			// Prepaint
+			DataGridViewPaintParts pre = DataGridViewPaintParts.Background | DataGridViewPaintParts.SelectionBackground;
+			pre = pre & paintParts;
+			base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, val, formattedValue, errorText, cellStyle, advancedBorderStyle, pre);
+
+			// Paint content
+			if (!IsInEditMode && (paintParts & DataGridViewPaintParts.ContentForeground) == DataGridViewPaintParts.ContentForeground)
+			{
+				DrawFwText(graphics, cellBounds, formattedValue.ToString(), cellStyle, col);
+			}
+
+			// Postpaint
+			DataGridViewPaintParts post = DataGridViewPaintParts.Border | DataGridViewPaintParts.Focus | DataGridViewPaintParts.ErrorIcon;
+			post = post & paintParts;
+			base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, val, formattedValue, errorText, cellStyle, advancedBorderStyle, post);
+		}
+
+		/// <summary>
+		/// Draw the text using the FieldWorks IVwGraphicsWin32 interface.
+		/// </summary>
+		private void DrawFwText(Graphics graphics, Rectangle cellBounds,
+			string text, DataGridViewCellStyle cellStyle, FwTextBoxColumn col)
+		{
+			if (String.IsNullOrEmpty(text))
+				return;
+			IntPtr hdc = graphics.GetHdc();
+			IVwGraphicsWin32 vg = VwGraphicsWin32Class.Create();	// actually VwGraphicsCairo
+			try
+			{
+				vg.Initialize(hdc);
+				var renderProps = GetRenderProps(cellStyle, col);
+				vg.SetupGraphics(ref renderProps);
+				int x;
+				int y;
+				GetLocationForText(cellBounds, (col.TextBoxControl.RightToLeft == RightToLeft.Yes),
+					vg, text, out x, out y);
+				vg.PushClipRect(cellBounds);
+				vg.DrawText(x, y, text.Length, text, 0);
+				vg.PopClipRect();
+			}
+			finally
+			{
+				vg.ReleaseDC();
+				graphics.ReleaseHdc(hdc);
+			}
+		}
+
+		/// <summary>
+		/// Get the starting location for drawing the text.
+		/// </summary>
+		private void GetLocationForText(Rectangle cellBounds, bool fRightToLeft,
+			IVwGraphicsWin32 vg, string text, out int x, out int y)
+		{
+			var contentBounds = cellBounds;
+			contentBounds.Height -= 2;
+			contentBounds.Width -= 2;
+			int dx0;
+			int dy0;
+			vg.GetTextExtent(text.Length, text, out dx0, out dy0);
+			if (fRightToLeft)
+			{
+				x = contentBounds.Right - (dx0 + 4);
+			}
+			else
+			{
+				x = contentBounds.Left + 4;
+			}
+			int dy = (contentBounds.Height - dy0) / 2;
+			if (dy > 0)
+				y = contentBounds.Top + dy;
+			else
+				y = contentBounds.Top;
+		}
+
+		/// <summary>
+		/// Derive the LgCharRenderProps from the DataGridViewCellStyle and FwTextBoxColumn.
+		/// </summary>
+		private LgCharRenderProps GetRenderProps(DataGridViewCellStyle cellStyle, FwTextBoxColumn col)
+		{
+			var renderProps = new LgCharRenderProps();
+			renderProps.szFaceName = new ushort[32];	// arrays should be created in constructor, but struct doesn't have one.
+			renderProps.szFontVar = new ushort[64];
+			var foreColor = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
+			renderProps.clrFore = (uint)foreColor.ToArgb();
+			// The background behind the characters must be transparent for the correct
+			// background color to show (at least for Selected).
+			const uint transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
+			renderProps.clrBack = transparent;
+			renderProps.ws = col.TextBoxControl.WritingSystemCode;
+			renderProps.fWsRtl = (byte)(col.TextBoxControl.RightToLeft == RightToLeft.Yes ? 1 : 0);
+			var font = cellStyle.Font;
+			renderProps.dympHeight = (int)(font.SizeInPoints * 1000.0);	// size in millipoints
+			int lim = Math.Min(renderProps.szFaceName.Length, font.Name.Length);
+			for (var i = 0; i < lim; ++i)
+				renderProps.szFaceName[i] = (ushort)font.Name[i];
+			// The rest of these values are set to default values.
+			renderProps.clrUnder = 0xFFFFFF;
+			renderProps.nDirDepth = 0;
+			renderProps.ssv = 0;
+			renderProps.unt = 0;
+			renderProps.ttvBold = 0;
+			renderProps.ttvItalic = 0;
+			return renderProps;
+		}
+#endif
 	}
 }

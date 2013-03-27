@@ -52,6 +52,9 @@ namespace SIL.CoreImpl
 			this.CodePoint = codepoint.ToString("x4").ToUpperInvariant();
 		}
 
+		/// <summary/>
+		public const int ExectedPropCount = 14;
+
 		/// <summary>
 		/// Makes a PUACharcter.
 		/// </summary>
@@ -64,7 +67,7 @@ namespace SIL.CoreImpl
 			string[] dataProperties = data.Split(';');
 
 			//Check to make sure the right number of properties are passed
-			if (dataProperties.Length != 14)
+			if (dataProperties.Length != ExectedPropCount)
 			{
 				throw new ArgumentException("Wrong number of unicode data properties. There were " +
 					dataProperties.Length + " properties when there should be 14.", "data");

@@ -32,6 +32,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 using SilEncConverters40;
 
@@ -102,6 +103,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Button btnDeleteCharMapping;
 		private System.Windows.Forms.ColumnHeader columnHeaderCM4;
 		private ImageList imageList1;	// key=sfm, value=ClsAutoField
+		private OpenFileDialogAdapter openFileDialog;
 
 		private static LexImportWizard m_wizard = null;
 
@@ -164,7 +166,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Label lblReadyToImportInstructions;
 		private System.Windows.Forms.Label lblReadyToImport;
 		private System.Windows.Forms.CheckBox m_DisplayImportReport;
-		private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.Label lblTotalMarkers;
 		private System.Windows.Forms.Label lblFile;
 		private System.Windows.Forms.Label lblSettingsTag;
@@ -181,6 +182,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
+			openFileDialog = new OpenFileDialogAdapter();
 			m_crcObj = new Sfm2Xml.CRC();	// CRC Object to use for telling if the input file has changed
 			m_lastDateTime = DateTime.MinValue;
 			m_crcOfInputFile = 1;
@@ -696,14 +698,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				sbHelp.Append("</Usage>");
 			}
 			sbHelp.Append("<Settings>Set the Language Descriptor to the language of this field.</Settings>");
-			if (fd.Type == CellarPropertyType.MultiUnicode || fd.Type == CellarPropertyType.MultiBigUnicode)
+			if (fd.Type == CellarPropertyType.MultiUnicode)
 			{
 				sbHelp.Append("<Mapping>No</Mapping>");
 				sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
 				sbHelp.Append("<List>No</List>");
 				sbHelp.Append("<Multilingual>No</Multilingual>");
 			}
-			else if (fd.Type == CellarPropertyType.String || fd.Type == CellarPropertyType.BigString)
+			else if (fd.Type == CellarPropertyType.String)
 			{
 				sbHelp.Append("<Mapping>Yes</Mapping>");
 				sbHelp.Append("<Appends>Yes, appends field contents into a single field.</Appends>");
@@ -1810,7 +1812,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// make sure the file exists, otherwise the process will fail
 				if (System.IO.File.Exists(sHtmlFile))
-					System.Diagnostics.Process.Start(sHtmlFile);
+				{
+					using (System.Diagnostics.Process.Start(sHtmlFile))
+					{
+					}
+				}
 			}
 			catch (Exception e)
 			{
@@ -2520,7 +2526,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_DisplayImportReport = new System.Windows.Forms.CheckBox();
 			this.lblReadyToImportInstructions = new System.Windows.Forms.Label();
 			this.lblReadyToImport = new System.Windows.Forms.Label();
-			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.btnQuickFinish = new System.Windows.Forms.Button();
 			this.btnSaveMapFile = new System.Windows.Forms.Button();
 			this.tabSteps.SuspendLayout();
@@ -3771,7 +3776,39 @@ namespace SIL.FieldWorks.LexText.Controls
 			// I don't fully understand why, but it seems the base class does some
 			// critical repositioning of buttons. See LT-4675.
 			OnResize(e);
+#if __MonoCS__
+			// This button moving logic works on mono.  At this point, the sizes of the
+			// list views have settled down.  See FWNX-847.
+			int minY = listViewMappingLanguages.Bottom + 7;
+			if (btnAddMappingLanguage.Top < minY)
+			{
+				MoveButton(btnAddMappingLanguage, null, minY);
+				MoveButton(btnModifyMappingLanguage, btnAddMappingLanguage, minY);
+			}
+			minY = listViewContentMapping.Bottom + 7;
+			if (btnModifyContentMapping.Top < minY)
+			{
+				MoveButton(btnModifyContentMapping, null, minY);
+			}
+			minY = listViewCharMappings.Bottom + 7;
+			if (btnAddCharMapping.Top < minY)
+			{
+				MoveButton(btnAddCharMapping, null, minY);
+				MoveButton(btnModifyCharMapping, btnAddCharMapping, minY);
+				MoveButton(btnDeleteCharMapping, btnModifyCharMapping, minY);
+			}
+#endif
 		}
+
+#if __MonoCS__
+		void MoveButton(Button btn, Button btnLeft, int y)
+		{
+			if (btnLeft == null)
+				btn.Location = new Point(btn.Left, y);
+			else
+				btn.Location = new Point(btnLeft.Right + 7, y);
+		}
+#endif
 
 // This moving button logic has issues on mono.
 #if !__MonoCS__
@@ -3869,6 +3906,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			int curStep = CurrentStepNumber;
 			int curTab = tabSteps.SelectedIndex;
 
+			bool nextState = NextButtonEnabled;
 			// before saving we need to make sure all the data structures are populated
 			while (CurrentStepNumber <= 6)
 			{
@@ -3880,6 +3918,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// restore back to pre-saved state/page/tab...
 			tabSteps.SelectedIndex = curStep;
 			m_CurrentStepNumber = curTab;
+			NextButtonEnabled = nextState;
 			UpdateStepLabel();
 
 			AllowQuickFinishButton();	// make it visible if needed, or hidden if not
@@ -4130,9 +4169,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Sfm2Xml.LexImportCustomField FieldDescriptionToLexImportField(FieldDescription fd)
 		{
 			string sig = "";
-			if (fd.Type == CellarPropertyType.MultiUnicode || fd.Type == CellarPropertyType.MultiBigUnicode)
+			if (fd.Type == CellarPropertyType.MultiUnicode)
 				sig = "MultiUnicode";
-			else if (fd.Type == CellarPropertyType.String || fd.Type == CellarPropertyType.BigString)
+			else if (fd.Type == CellarPropertyType.String)
 				sig = "string";
 			else if (fd.Type == CellarPropertyType.OwningAtomic && fd.DstCls == StTextTags.kClassId)
 				sig = "text";

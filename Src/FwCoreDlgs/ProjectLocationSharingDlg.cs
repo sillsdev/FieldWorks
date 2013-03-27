@@ -12,10 +12,12 @@
 // Responsibility: FW team
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 using System.IO;
 using System.Collections.Generic;
@@ -59,7 +61,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_tbProjectsFolder.TextChanged += m_tbProjectsFolder_TextChanged;
 		}
 
-		void m_tbProjectsFolder_TextChanged(object sender, EventArgs e)
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
+		private void m_tbProjectsFolder_TextChanged(object sender, EventArgs e)
 		{
 			m_cbShareMyProjects.Enabled = false;
 			m_btnOK.Enabled = true;
@@ -126,6 +130,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						invalidPaths.Add("/tmp");
 						invalidPaths.Add("/usr");
 						invalidPaths.Add("/var");
+
+						// DriveInfo.GetDrives() is only implemented on Linux (which is ok here).
+						// TODO-Linux: IsReady always returns true on Mono.
 						foreach (DriveInfo d in DriveInfo.GetDrives())
 						{
 							if (!d.IsReady || d.AvailableFreeSpace == 0)
@@ -154,7 +161,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// check for an exception to the exceptions?)
 						foreach (string badpath in invalidPaths)
 						{
-							if (newFolder.StartsWith(badpath))
+							// DriveInfo.GetDrives() sets Name to be "/", which adds it to invalidPath.
+							// Therefore, we need another test to get the OkButton to stay enabled.
+							if (newFolder.StartsWith(badpath) && badpath != "/" || newFolder == "/")
 							{
 								m_btnOK.Enabled = false;
 								return;
@@ -206,7 +215,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			string defaultPath = DirectoryFinder.ProjectsDirectory;
 
-			using (FolderBrowserDialog fldrBrowse = new FolderBrowserDialog())
+			using (var fldrBrowse = new FolderBrowserDialogAdapter())
 			{
 				fldrBrowse.ShowNewFolderButton = true;
 				fldrBrowse.Description = FwCoreDlgs.ksChooseProjectFolder;

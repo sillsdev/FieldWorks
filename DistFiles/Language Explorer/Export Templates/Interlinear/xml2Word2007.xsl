@@ -156,6 +156,9 @@
 						</w:style>
 			<w:style w:type="character" w:styleId="Interlin Variant Types">
 			  <w:name w:val="Interlin Variant Types" />
+			  <w:rPr>
+				<w:smallCaps w:val="on"/>
+			  </w:rPr>
 			</w:style>
 			<!--Base style for things typically in the main analysis language -->
 						<w:style w:type="character" w:styleId="Interlin Analysis">
@@ -646,7 +649,7 @@
   This gets invoked only for the items of the first morph of the word. We find all the corresponding items
   in the other morphs (and this one) and output them as a matrix row.
   The homograph number item is omitted because we don't want a separate row for these.-->
-  <xsl:template match="item[@type!='hn' and @type!='variantTypes']" mode="rows" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">
+  <xsl:template match="item[@type!='hn' and @type!='variantTypes' and @type!='glsAppend']" mode="rows" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">
 	<m:mr>
 		<xsl:variable name="myType" select="@type"/>
 		<xsl:variable name="myLang" select="@lang"/>
@@ -685,14 +688,6 @@
 							<w:rtl/>
 						</xsl:if>
 					</xsl:if>
-					<xsl:if test="@type='gls'">
-						<w:rStyle>
-							<xsl:attribute name="w:val">Interlin Morpheme Gloss <xsl:value-of select="@lang"/></xsl:attribute>
-						</w:rStyle>
-						<xsl:if test="count(//language[@lang=current()/@lang and @RightToLeft='true'])">
-							<w:rtl/>
-						</xsl:if>
-					</xsl:if>
 					<xsl:if test="@type='msa'">
 						<w:rStyle w:val="Interlin Morpheme POS"/>
 					</xsl:if>
@@ -724,12 +719,17 @@
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']">
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']">
+  </xsl:template>
 
   <!-- This mode occurs within the 'cf' item to display the homograph number from the following item.-->
   <xsl:template match="morph/item[@type='hn']" mode="hn">
 	<xsl:apply-templates/>
   </xsl:template>
   <xsl:template match="morph/item[@type='variantTypes']" mode="variantTypes">
+	<xsl:apply-templates/>
+  </xsl:template>
+  <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
 	<xsl:apply-templates/>
   </xsl:template>
 
@@ -740,7 +740,12 @@
 				<m:rPr>
 					<m:nor/>
 				</m:rPr>
-				<w:rPr>
+		  <xsl:if test="//language[@vernacular='true' and @RightToLeft='true']">
+			<m:t>
+			<xsl:text>&#160;</xsl:text>
+			</m:t>
+		  </xsl:if>
+		<w:rPr>
 					<w:rStyle>
 						<xsl:attribute name="w:val">Interlin Cf <xsl:value-of select="@lang"/></xsl:attribute>
 					</w:rStyle>
@@ -749,15 +754,9 @@
 					</xsl:if>
 				</w:rPr>
 				<m:t>
-					<xsl:if test="//language[@vernacular='true' and @RightToLeft='true']">
-						<xsl:text>&#160;</xsl:text>
-					</xsl:if>
 					<xsl:apply-templates/>
-					<xsl:if test="count(//language[@vernacular='true' and @RightToLeft='true']) = 0">
-						<xsl:text>&#160;</xsl:text>
-					</xsl:if>
 				</m:t>
-				<xsl:variable name="homographNumber" select="following-sibling::item[@type='hn']"/>
+				<xsl:variable name="homographNumber" select="following-sibling::item[1][@type='hn']"/>
 				<xsl:if test="$homographNumber">
 					<w:rPr>
 						<w:rStyle w:val="Interlin Homograph"/>
@@ -766,7 +765,7 @@
 						<xsl:apply-templates select="$homographNumber" mode="hn"/>
 					</m:t>
 				</xsl:if>
-		<xsl:variable name="variantTypes" select="following-sibling::item[@type='variantTypes']"/>
+		<xsl:variable name="variantTypes" select="following-sibling::item[(count($homographNumber)+1)][@type='variantTypes']"/>
 		<xsl:if test="$variantTypes">
 		  <w:rPr>
 			<w:rStyle w:val="Interlin Variant Types"/>
@@ -775,8 +774,53 @@
 			<xsl:apply-templates select="$variantTypes" mode="variantTypes"/>
 		  </m:t>
 		</xsl:if>
+		<xsl:if test="count(//language[@vernacular='true' and @RightToLeft='true']) = 0">
+		  <m:t>
+			<xsl:text>&#160;</xsl:text>
+		  </m:t>
+		</xsl:if>
 			</m:r>
 		</m:e>
+  </xsl:template>
+
+  <xsl:template match="morph/item[@type='gls']" mode="rowItems" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">
+	<m:e>
+	  <m:r>
+		<m:rPr>
+		  <m:nor/>
+		</m:rPr>
+		<xsl:if test="//language[@vernacular='true' and @RightToLeft='true']">
+		  <m:t>
+			<xsl:text>&#160;</xsl:text>
+		  </m:t>
+		</xsl:if>
+		<w:rPr>
+		  <w:rStyle>
+			<xsl:attribute name="w:val">Interlin Morph <xsl:value-of select="@lang"/></xsl:attribute>
+		  </w:rStyle>
+		  <xsl:if test="count(//language[@lang=current()/@lang and @RightToLeft='true'])">
+			<w:rtl/>
+		  </xsl:if>
+		</w:rPr>
+		<m:t>
+		  <xsl:apply-templates/>
+		</m:t>
+		<xsl:variable name="glsAppend" select="following-sibling::item[1][@type='glsAppend']"/>
+		<xsl:if test="$glsAppend">
+		  <w:rPr>
+			<w:rStyle w:val="Interlin Variant Types"/>
+		  </w:rPr>
+		  <m:t>
+			<xsl:apply-templates select="$glsAppend" mode="glsAppend"/>
+		  </m:t>
+		</xsl:if>
+		<xsl:if test="count(//language[@vernacular='true' and @RightToLeft='true']) = 0">
+		   <m:t>
+			<xsl:text>&#160;</xsl:text>
+		  </m:t>
+		</xsl:if>
+	  </m:r>
+	</m:e>
   </xsl:template>
 
 </xsl:stylesheet>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -174,6 +175,55 @@ namespace SIL.Utils
 				throw new ConfigurationException(CouldNotCreateObjectMsg(assemblyPath, className));
 			}
 			return thing;
+		}
+
+		public static List<T> GetPlugins<T>(string pattern) where T: class
+		{
+			var codeBasePath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			return GetPlugins<T>(codeBasePath, pattern);
+		}
+		/// <summary>
+		/// Return a newly created instance of every type in every DLL in the specified directory which implements the indicated type.
+		/// Typically type is an interface, but I think it would work if it is a base class.
+		/// (Adapted from http://blogs.msdn.com/b/abhinaba/archive/2005/11/14/492458.aspx)
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="folder"></param>
+		/// <param name="pattern">Pattern for interesting DLLs in folder. Should end in .dll </param>
+		/// <returns></returns>
+		public static List<T> GetPlugins<T>(string folder, string pattern) where T : class
+		{
+			string[] files = Directory.GetFiles(folder, pattern);
+
+			var tList = new List<T>();
+
+			foreach (string file in files)
+			{
+				try
+				{
+					// We use LoadFrom rather than LoadFile so that if we have already loaded this assembly, we don't load another copy of it.
+					// This is necessary to let our test pass, since otherwise the interface is defined in one copy of the assembly, while
+					// the class we load is considered to implement the other copy of that interface in the second copy of the assembly.
+					// In real use, this would be a problem if the DLL defining the interface was also one of the ones providing implementations.
+					Assembly assembly = Assembly.LoadFrom(file);
+					foreach (Type type in assembly.GetTypes())
+					{
+						if (!type.IsClass || type.IsNotPublic)
+							continue;
+						if (typeof(T).IsAssignableFrom(type))
+						{
+							object obj = Activator.CreateInstance(type);
+							T t = (T) obj;
+							tList.Add(t);
+						}
+					}
+				}
+				catch (Exception)
+				{
+					// Maybe not a .NET DLL? Anyway just ignore it. (Enhance JohnT: any way we can predict what exceptions should be ignored here?
+				}
+			}
+			return tList;
 		}
 
 		private static string GetAssembly(string assemblyPath1, out Assembly assembly)

@@ -40,4 +40,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				fontHeight / 1000f);
 		}
 	}
+
+	public class AdhocCoProhibAtomicReferenceDisabledSlice : AdhocCoProhibAtomicReferenceSlice
+	{
+		public AdhocCoProhibAtomicReferenceDisabledSlice()
+			: base()
+		{
+		}
+		public override void FinishInit()
+		{
+			CheckDisposed();
+			base.FinishInit();
+			var arl = (AtomicReferenceLauncher)Control;
+			var view = (AtomicReferenceView)arl.MainControl;
+			view.FinishInit(ConfigurationNode);
+		}
+	}
+
 }

@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </returns>
 		/// <remarks>Corresponding C++ method is VwTextStore::MouseEvent.</remarks>
 		bool OnMouseEvent(IKeyboardCallback callback, int xd, int yd, Rectangle rcSrc,
-			Rectangle rcDst, int mouseEvent);
+			Rectangle rcDst, MouseEvent mouseEvent);
 
 		/// <summary>
 		/// Called when the layout of the view changes.

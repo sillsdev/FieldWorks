@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -43,6 +44,7 @@ namespace SIL.FieldWorks.TE
 		/// <summary>Provides an array of the Features available in TE</summary>
 		private static Feature[] s_AppFeatures;
 		private NotesMainWnd m_notesWindow;
+		FwAppArgs m_appArgs;
 
 		// TODO: test for unique GUID for each application
 		/// <summary>Unique identification for each instance of a TE application</summary>
@@ -52,16 +54,30 @@ namespace SIL.FieldWorks.TE
 		#region Construction and Initializing
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// TeApp Constructor takes command line arguments
+		/// TeApp Constructor
 		/// </summary>
 		/// <param name="fwManager">The FieldWorks manager for dealing with FieldWorks-level
 		/// stuff.</param>
 		/// <param name="helpTopicProvider">An application-specific help topic provider.</param>
 		/// ------------------------------------------------------------------------------------
 		public TeApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider)
+			:this(fwManager, helpTopicProvider, null)
+		{
+		}
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// TeApp Constructor takes command line arguments
+		/// </summary>
+		/// <param name="fwManager">The FieldWorks manager for dealing with FieldWorks-level
+		/// stuff.</param>
+		/// <param name="helpTopicProvider">An application-specific help topic provider.</param>
+		/// <param name="appArgs"></param>
+		/// ------------------------------------------------------------------------------------
+		public TeApp(IFieldWorksManager fwManager, IHelpTopicProvider helpTopicProvider, FwAppArgs appArgs)
 			: base(fwManager, helpTopicProvider)
 		{
 			Options.AddErrorReportingInfo();
+			m_appArgs = appArgs;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -108,7 +124,8 @@ namespace SIL.FieldWorks.TE
 			// find all the subkeys and delete them recursively.
 			foreach (string subKeyName in key.GetSubKeyNames())
 			{
-				DeleteRegistryKey(key.OpenSubKey(subKeyName, true));
+				using (var regKey = key.OpenSubKey(subKeyName, true))
+					DeleteRegistryKey(regKey);
 				key.DeleteSubKey(subKeyName);
 			}
 		}
@@ -161,21 +178,6 @@ namespace SIL.FieldWorks.TE
 			Cache.ServiceLocator.GetInstance<IParagraphCounterRepository>().RegisterViewTypeId<TeParaCounter>((int)TeViewGroup.Scripture);
 			Cache.ServiceLocator.GetInstance<IParagraphCounterRepository>().RegisterViewTypeId<TeParaCounter>((int)TeViewGroup.Footnote);
 			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Displays a message box asking the user whether or not he wants to open a sample DB.
-		/// </summary>
-		/// <returns><c>true</c> if user consented to opening the sample database; <c>false</c>
-		/// otherwise.</returns>
-		/// ------------------------------------------------------------------------------------
-		public override bool ShowFirstTimeMessageDlg()
-		{
-			using (TrainingAvailable dlg = new TrainingAvailable())
-			{
-				return (dlg.ShowDialog() == DialogResult.Yes);
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -300,12 +302,17 @@ namespace SIL.FieldWorks.TE
 		/// The RegistryKey for this application.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		override public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return base.SettingsKey.CreateSubKey(FwSubKey.TE);
+				using (var regKey = base.SettingsKey)
+				{
+					return regKey.CreateSubKey(FwSubKey.TE);
+				}
 			}
 		}
 
@@ -414,7 +421,7 @@ namespace SIL.FieldWorks.TE
 		protected virtual TeMainWnd NewTeMainWnd(Form wndCopyFrom)
 		{
 			Logger.WriteEvent(string.Format("Creating new TeMainWnd for {0}", Cache.ProjectId.Name));
-			return new TeMainWnd(this, wndCopyFrom);
+			return new TeMainWnd(this, wndCopyFrom, m_appArgs.HasLinkInformation ? m_appArgs.CopyLinkArgs() : null);
 		}
 
 
@@ -436,6 +443,67 @@ namespace SIL.FieldWorks.TE
 		#endregion
 
 		#region Miscellaneous Methods
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Attempt to show the most appropriate passage for the object indicated in the link.
+		/// </summary>
+		/// <param name="link"></param>
+		/// ------------------------------------------------------------------------------------
+		public override void HandleIncomingLink(FwLinkArgs link)
+		{
+			ICmObject target;
+			if (!Cache.ServiceLocator.ObjectRepository.TryGetObject(link.TargetGuid, out target))
+				return; // can't even get the target object!
+
+			var targetRef = GetTargetRef(target);
+			if (targetRef == null)
+				return; // don't know how to go there yet.
+
+			var mainWnd = this.ActiveMainWindow as TeMainWnd;
+			if (mainWnd == null)
+			{
+				throw new Exception("life stinks");
+			}
+			mainWnd.GotoVerse(targetRef);
+		}
+
+		/// <summary>
+		/// Get a reference we should jump to in order to show the specified object.
+		/// </summary>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		internal ScrReference GetTargetRef(ICmObject target)
+		{
+			BCVRef targetRef;
+			var para = target as IScrTxtPara;
+			if (para == null)
+				para = target.OwnerOfClass<IStTxtPara>() as IScrTxtPara;
+			if (para != null)
+			{
+				BCVRef end;
+				para.GetRefsAtPosition(0, out targetRef, out end);
+				return new ScrReference(targetRef, Cache.LangProject.TranslatedScriptureOA.Versification);
+			}
+			// Not a paragraph or owned by one. Try for a section.
+			var section = target as IScrSection;
+			if (section == null)
+				section = target.OwnerOfClass<IScrSection>();
+			if (section == null)
+			{
+				// Failing that the first section of some book...
+				var book = target as IScrBook;
+				if (book == null)
+					book = target.OwnerOfClass<IScrBook>();
+				if (book != null && book.SectionsOS.Count > 0)
+					section = book.SectionsOS[0];
+			}
+			if (section != null)
+				return new ScrReference(section.VerseRefMin, Cache.LangProject.TranslatedScriptureOA.Versification);
+			// Enhance JohnT: possibly we can do better for footnotes, notes, other Scripture-related objects?
+			return null;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// This provides a hook for any kind of app that wants to configure the dialog

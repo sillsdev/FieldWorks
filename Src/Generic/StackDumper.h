@@ -19,8 +19,9 @@ typedef char SDCHAR;
 #else
 typedef const char SDCHAR;
 typedef ComSmartPtr<IErrorInfo> IErrorInfoPtr;
-// we don't use CONTEXT on Linux, so defined to anything to make compiler happy
+// We don't use CONTEXT on Linux, but it gets passed around by value in function arguments
 struct CONTEXT {};
+struct EXCEPTION_POINTERS;
 #endif
 
 // Generate a stack dump, with the given message as header.

@@ -17,7 +17,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class AtomicRefTypeAheadSlice : ViewPropertySlice
 	{
-		//int m_ws = -1;
 		public AtomicRefTypeAheadSlice(ICmObject obj, int flid) : base(new AtomicRefTypeAheadView(obj.Hvo, flid), obj, flid)
 		{
 		}
@@ -26,12 +25,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public class AtomicRefTypeAheadVc : FwBaseVc
 		{
-			// int m_flid; // CS0414
 			TypeAheadSupportVc m_tasvc;
 
 			public AtomicRefTypeAheadVc(int flid, FdoCache cache)
 			{
-				// m_flid = flid; // CS0414
 				m_tasvc = new TypeAheadSupportVc(flid, cache);
 			}
 

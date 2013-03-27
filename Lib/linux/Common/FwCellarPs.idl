@@ -220,10 +220,6 @@ typedef [v1_enum] enum CellarModuleDefns
 	kcptMultiString = 14,
 	kcptUnicode = 15,
 	kcptMultiUnicode = 16,
-	kcptBigString = 17,
-	kcptMultiBigString = 18,
-	kcptBigUnicode = 19,
-	kcptMultiBigUnicode = 20,
 
 	kcptMinObj = 23,
 	kcptOwningAtom = 23,

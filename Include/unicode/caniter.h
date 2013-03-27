@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
- * Copyright (C) 1996-2006, International Business Machines Corporation and    *
- * others. All Rights Reserved.                                                *
+ * Copyright (C) 1996-2011, International Business Machines Corporation and
+ * others. All Rights Reserved.
  *******************************************************************************
  */
 
@@ -31,6 +31,8 @@
 U_NAMESPACE_BEGIN
 
 class Hashtable;
+class Normalizer2;
+class Normalizer2Impl;
 
 /**
  * This class allows one to iterate through all the strings that are canonically equivalent to a given
@@ -114,6 +116,7 @@ public:
 	 */
 	void setSource(const UnicodeString &newSource, UErrorCode &status);
 
+#ifndef U_HIDE_INTERNAL_API
 	/**
 	 * Dumb recursive implementation of permutation.
 	 * TODO: optimize
@@ -124,6 +127,7 @@ public:
 	 * @internal
 	 */
 	static void U_EXPORT2 permute(UnicodeString &source, UBool skipZeros, Hashtable *result, UErrorCode &status);
+#endif  /* U_HIDE_INTERNAL_API */
 
 	/**
 	 * ICU "poor man's RTTI", returns a UClassID for this class.
@@ -173,6 +177,9 @@ private:
 
 	// transient fields
 	UnicodeString buffer;
+
+	const Normalizer2 &nfd;
+	const Normalizer2Impl &nfcImpl;
 
 	// we have a segment, in NFD. Find all the strings that are canonically equivalent to it.
 	UnicodeString *getEquivalents(const UnicodeString &segment, int32_t &result_len, UErrorCode &status); //private String[] getEquivalents(String segment)

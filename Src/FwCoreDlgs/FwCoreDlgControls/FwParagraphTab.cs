@@ -52,6 +52,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private const int kAtLeastIndex = 4;
 		private const int kExactlyIndex = 5;
 
+		// Indices into the indentation combo box.
+		private const int kFirstLineIndex = 2;
+		private const int kHangingIndex = 3;
+
 		private bool m_DefaultTextDirectionRtoL = false;
 		private bool m_fShowBiDiLabels = false;
 		private bool m_dontUpdateInheritance = true;
@@ -164,17 +168,26 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					m_nudSpacingAt.MeasureMin = 0;
 				else if (m_cboLineSpacing.AdjustedSelectedIndex == kExactlyIndex)
 					m_nudSpacingAt.MeasureMin = 1000;
+
+				//Enable/Disable the line spacing size combo box
+				//when the appropriate kind of line spacing is selected in the m_cboLineSpacing combobox
+				var index = m_cboLineSpacing.AdjustedSelectedIndex;
+				m_nudSpacingAt.Enabled = (index == kAtLeastIndex || index == kExactlyIndex) &&
+					!IsInherited(m_cboLineSpacing);
 			}
 			else if (sender == m_cboDirection)
 			{
 				ChangeDirectionLabels(
 					(TriStateBool)m_cboDirection.AdjustedSelectedIndex == TriStateBool.triTrue);
 			}
-
-			int index = m_cboLineSpacing.AdjustedSelectedIndex;
-			m_nudSpacingAt.Enabled = (index == kAtLeastIndex || index == kExactlyIndex) &&
-				!IsInherited(m_cboLineSpacing);
-			m_nudIndentBy.Enabled = (index != 1) && !IsInherited(m_cboSpecialIndentation);
+			else if (sender == m_cboSpecialIndentation)
+			{
+				//Enable/Disable the indentation size combo box when the appropriate kind of indentation
+				// is selected in the m_cboSpecialIndentation combobox.  If (unspecified) is selected
+				// then m_cboSpecialIndentation is Inherited and thus we want the size comboBox disabled.
+				var index = m_cboSpecialIndentation.AdjustedSelectedIndex;
+				m_nudIndentBy.Enabled = (index == kFirstLineIndex || index == kHangingIndex) && !IsInherited(m_cboSpecialIndentation);
+			}
 			m_pnlPreview.Refresh();
 		}
 
@@ -206,7 +219,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		public void UpdateForStyle(StyleInfo styleInfo)
 		{
 			CheckDisposed();
-
+#if __MonoCS__
+			// On Mono, the sequence of events when changing styles can cause this to be
+			// called even when switching to a character style.  See FWNX-870.
+			if (!styleInfo.IsParagraphStyle)
+				return;
+#endif
 			// Don't allow controls to undo their inherited state while filling in
 			m_dontUpdateInheritance = true;
 			m_currentStyleInfo = styleInfo;

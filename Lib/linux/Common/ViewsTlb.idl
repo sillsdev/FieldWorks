@@ -1,4 +1,4 @@
-#line 1 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\Src\\Views\\ViewsTlb.idl"
+#line 1 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Views\\ViewsTlb.idl"
 
 
 
@@ -18,7 +18,7 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
-#line 1 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\Src\\Generic\\common.idh"
+#line 1 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Generic\\common.idh"
 
 
 
@@ -124,15 +124,15 @@ cpp_quote("#endif")
 cpp_quote("")
 
 
-#line 21 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\Src\\Views\\ViewsTlb.idl"
+#line 21 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Views\\ViewsTlb.idl"
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000c0fb81b5") cpp_quote(",") cpp_quote("Views") cpp_quote(");") [ uuid(f6d10640-c00c-11d2-8078-0000c0fb81b5), version(1.0), helpstring("Views 1.0 Type Library") ] library Views
-#line 24 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\Src\\Views\\ViewsTlb.idl"
+#line 24 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Views\\ViewsTlb.idl"
 {
 
 	importlib("FwKernelTlb.tlb");
 
-	#line 1 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 1 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -1469,7 +1469,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwCacheDa;
 		interface IStructuredTextDataAccess;
 	};
-	#line 1338 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 1338 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -1683,7 +1683,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 
-#line 1552 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+#line 1552 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -2493,7 +2493,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwRootBox;
 	};
-#line 2362 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+#line 2362 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -3783,7 +3783,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 	cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwSelection") cpp_quote(",") cpp_quote("4F8B678D-C5BA-4a2f-B9B3-2780956E3616") cpp_quote(");") [ uuid("4F8B678D-C5BA-4a2f-B9B3-2780956E3616"), object, pointer_default(unique) ] interface IVwSelection : IUnknown
-#line 3652 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+#line 3652 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 	{
 
 		[propget] HRESULT IsRange(
@@ -4340,14 +4340,14 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 
 
 
-#line 4209 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+#line 4209 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 	};
 
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A") cpp_quote(",") cpp_quote("VwStylesheet") cpp_quote(");") [ uuid(CCE2A7ED-464C-4ec7-A0B0-E3C1F6B94C5A) ] coclass VwStylesheet
 	{
 		interface IVwStylesheet;
 	};
-#line 4216 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+#line 4216 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -4424,7 +4424,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPropertyStore;
 	};
-	#line 4293 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 4293 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 	typedef [v1_enum] enum VwOverlayFlags
@@ -4708,7 +4708,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwOverlay;
 	};
-	#line 4577 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 4577 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -4920,7 +4920,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPrintContext;
 	};
-	#line 4789 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 4789 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -5231,7 +5231,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwPattern;
 	};
-	#line 5100 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 5100 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -5265,7 +5265,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit2;
 		interface IVwTextSource;
 	};
-	#line 5134 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 5134 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -5297,7 +5297,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 		interface IVwTxtSrcInit;
 		interface IVwTextSource;
 	};
-	#line 5166 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 5166 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -5339,7 +5339,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSearchKiller;
 	};
-	#line 5208 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 5208 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -5419,7 +5419,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwDrawRootBuffered;
 	};
-	#line 5288 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 5288 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -5467,7 +5467,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("f6d10640-c00c-11d2-8078-0000
 	{
 		interface IVwSynchronizer;
 	};
-	#line 5336 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 5336 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -5636,7 +5636,7 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("1CD09E06-6978-4969-A1FC-4627
 {
 	interface IVwLayoutStream;
 };
-#line 5505 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+#line 5505 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -5773,7 +5773,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IIMEKeyboardSwitche
 	{
 		interface IPictureFactory;
 	};
-#line 5642 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+#line 5642 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 
@@ -6007,7 +6007,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IIMEKeyboardSwitche
 	{
 		interface IVwWindow;
 	};
-	#line 5876 "d:\\jenkins\\jobs\\fieldworks-calgary-ww-build-tlb\\workspace\\src\\views\\Views.idh"
+	#line 5876 "d:\\jenkins\\workspace\\fieldworks-ww-build-tlb\\src\\views\\Views.idh"
 
 
 typedef [v1_enum] enum VwMouseEvent
@@ -6081,7 +6081,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IViewInputMgr") cpp
 }
 
 
-#line 29 "D:\\jenkins\\jobs\\FieldWorks-Calgary-WW-build-tlb\\workspace\\Src\\Views\\ViewsTlb.idl"
+#line 29 "d:\\jenkins\\workspace\\FieldWorks-WW-build-tlb\\Src\\Views\\ViewsTlb.idl"
 
 
 

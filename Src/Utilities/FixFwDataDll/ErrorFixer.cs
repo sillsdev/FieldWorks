@@ -12,6 +12,7 @@
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 using SIL.FieldWorks.FwCoreDlgs;
@@ -114,7 +115,10 @@ namespace SIL.FieldWorks.FixData
 								{
 									string fixes = (string)progressDlg.RunTask(true, FixDataFile, pathname);
 									if (fixes.Length > 0)
+									{
 										MessageBox.Show(fixes, Strings.ksErrorsFoundOrFixed);
+										File.WriteAllText(pathname.Replace(Resources.FwFileExtensions.ksFwDataXmlFileExtension, "fixes"), fixes);
+									}
 								}
 							}
 						}
@@ -131,12 +135,18 @@ namespace SIL.FieldWorks.FixData
 			string pathname = parameters[0] as string;
 			StringBuilder bldr = new StringBuilder();
 
-			FwData data = new FwData(pathname, progressDlg);
+			FwDataFixer data = new FwDataFixer(pathname, progressDlg, LogErrors);
 			data.FixErrorsAndSave();
 
-			foreach (var err in data.Errors)
+			foreach (var err in errors)
 				bldr.AppendLine(err);
 			return bldr.ToString();
+		}
+
+		private List<string> errors = new List<string>();
+		private void LogErrors(string guid, string date, string message)
+		{
+			errors.Add(message);
 		}
 
 		#endregion

@@ -557,16 +557,13 @@ namespace SIL.FieldWorks.XWorks
 					case CellarPropertyType.GenDate:
 						break;
 					case CellarPropertyType.String:
-					case CellarPropertyType.BigString:
 						tss = sda.get_StringProp(record.Hvo, flid);
 						if (tss != null && tss.Text != null)
 							ExportString(writer, tss, fieldName);
 						fHandled = true;
 						break;
 					case CellarPropertyType.MultiString:
-					case CellarPropertyType.MultiBigString:
 					case CellarPropertyType.MultiUnicode:
-					case CellarPropertyType.MultiBigUnicode:
 						ITsMultiString tms = sda.get_MultiStringProp(record.Hvo, flid);
 						int cch = 0;
 						for (int i = 0; i < tms.StringCount; ++i)
@@ -586,8 +583,7 @@ namespace SIL.FieldWorks.XWorks
 								tss = tms.GetStringFromIndex(i, out ws);
 								if (tss != null && tss.Length > 0)
 								{
-									if (cpt == CellarPropertyType.MultiString ||
-										cpt == CellarPropertyType.MultiBigString)
+									if (cpt == CellarPropertyType.MultiString)
 									{
 										writer.WriteLine(TsStringUtils.GetXmlRep(tss,
 											m_cache.WritingSystemFactory, ws, true));
@@ -605,7 +601,6 @@ namespace SIL.FieldWorks.XWorks
 						fHandled = true;
 						break;
 					case CellarPropertyType.Unicode:
-					case CellarPropertyType.BigUnicode:
 						break;
 					case CellarPropertyType.ReferenceAtomic:
 					case CellarPropertyType.ReferenceCollection:
@@ -723,7 +718,7 @@ namespace SIL.FieldWorks.XWorks
 					bldr.AppendFormat("{0} - ", tss.Text);
 			}
 			if (rec.Title != null && rec.Title.Length > 0)
-				bldr.Append(rec.Title.Text);
+				bldr.Append(TsStringUtils.GetXmlRep(rec.Title, m_cache.WritingSystemFactory, 0, true));
 			if (!rec.DateOfEvent.IsEmpty)
 				bldr.AppendFormat(" - {0}", rec.DateOfEvent.ToXMLExportShortString());
 			return bldr.ToString();
@@ -825,6 +820,27 @@ namespace SIL.FieldWorks.XWorks
 				writer.WriteLine("</StTxtPara>");
 			}
 			writer.WriteLine("</Field>");
+		}
+
+		/// <summary>
+		/// Allows process to find an appropriate root hvo and change the current root.
+		/// Subclasses (like this one) can override.
+		/// </summary>
+		/// <param name="cmo"></param>
+		/// <param name="clidRoot"></param>
+		/// <returns>Returns -1 if root hvo doesn't need changing.</returns>
+		protected override int SetRoot(ICmObject cmo, out int clidRoot)
+		{
+			if (cmo is IRnGenericRec) // this ought to be the case
+			{
+				var hvoRoot = -1;
+				// Need to find the main notebook object.
+				var notebk = m_cache.LanguageProject.ResearchNotebookOA;
+				clidRoot = notebk.ClassID;
+				return notebk.Hvo;
+			}
+			// just for saftey
+			return base.SetRoot(cmo, out clidRoot);
 		}
 	}
 }

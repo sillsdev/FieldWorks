@@ -1,28 +1,29 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Security;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Runtime.InteropServices;
-
+using System.Security;
+using System.Windows.Forms;
 
 using SidebarLibrary.General;
 using SidebarLibrary.Win32;
-
 
 namespace SidebarLibrary.WinControls
 {
 
 	#region Helper Classes
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="comboBox is a reference")]
 	internal class EditCtrlHook : System.Windows.Forms.NativeWindow
 	{
 
 		#region Class Variables
-		ComboBoxBase comboBox = null;
-		bool ignoreNextPaintMessage = false;
+		private ComboBoxBase comboBox;
+		private bool ignoreNextPaintMessage;
 		#endregion
 
 		#region Constructors

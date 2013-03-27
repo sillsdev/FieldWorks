@@ -1,0 +1,9 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# Stripping/splitting characters
+M: System.String PatrParserWrapper.PatrParser::ParseString(System.String)
+M: System.Void PatrParserWrapper.PatrParser::ParseFile(System.String,System.String)
+M: System.Void PatrParserWrapper.PatrParser::set_SentenceFinalPunctuation(System.String)

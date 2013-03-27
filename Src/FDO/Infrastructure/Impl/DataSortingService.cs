@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -256,14 +257,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		{
 			var path = Path.GetTempFileName();
 			m_files.Add(path);
-			var writer = new BinaryWriter(File.Open(path, FileMode.Create));
-			foreach (var kvp in m_sortedObjects)
+			using (var writer = new BinaryWriter(File.Open(path, FileMode.Create)))
 			{
-				writer.Write(kvp.Key);
-				writer.Write(kvp.Value.Length);
-				writer.Write(kvp.Value);
+				foreach (var kvp in m_sortedObjects)
+				{
+					writer.Write(kvp.Key);
+					writer.Write(kvp.Value.Length);
+					writer.Write(kvp.Value);
+				}
+				writer.Close();
 			}
-			writer.Close();
 		}
 
 		/// <summary>
@@ -320,8 +323,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			public abstract void Advance();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="See TODO comment")]
 		class FileInputItem : InputItem
 		{
+			// TODO: Should dispose Reader
 			public BinaryReader Reader;
 			public override void Advance()
 			{
@@ -340,8 +346,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		}
 
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="See TODO comment")]
 		class MemoryInputItem : InputItem
 		{
+			// TODO: we should dispose Enumerator
 			// We MUST use an enumerator. Keeping the collection and 'indexing' it with Linq's ElementAt is disastrously slow.
 			private SortedDictionary<string, byte[]>.Enumerator Enumerator;
 

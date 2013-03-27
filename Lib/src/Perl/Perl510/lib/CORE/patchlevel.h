@@ -1,7 +1,7 @@
 /*    patchlevel.h
  *
- *    Copyright (C) 1993, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
- *    2002, 2003, 2004, 2005, 2006, 2007, by Larry Wall and others
+ *    Copyright (C) 1993, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
+ *    2003, 2004, 2005, 2006, 2007, 2008, 2009, by Larry Wall and others
  *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.
@@ -16,8 +16,8 @@
  * exactly on the third column */
 
 #define PERL_REVISION	5		/* age */
-#define PERL_VERSION	10		/* epoch */
-#define PERL_SUBVERSION	0		/* generation */
+#define PERL_VERSION	12		/* epoch */
+#define PERL_SUBVERSION	4		/* generation */
 
 /* The following numbers describe the earliest compatible version of
    Perl ("compatibility" here being defined as sufficient binary/API
@@ -33,7 +33,7 @@
    to include in @INC.  See INSTALL for how this works.
 */
 #define PERL_API_REVISION	5	/* Adjust manually as needed.  */
-#define PERL_API_VERSION	10	/* Adjust manually as needed.  */
+#define PERL_API_VERSION	12	/* Adjust manually as needed.  */
 #define PERL_API_SUBVERSION	0	/* Adjust manually as needed.  */
 /*
    XXX Note:  The selection of non-default Configure options, such
@@ -94,6 +94,8 @@ my $seen=0;
 while (<PLIN>) {
 	if (/\t,NULL/ and $seen) {
 	   while (my $c = shift @ARGV){
+		$c =~ s|\\|\\\\|g;
+		$c =~ s|"|\\"|g;
 			print PLOUT qq{\t,"$c"\n};
 	   }
 	}
@@ -118,21 +120,30 @@ hunk.
  */
 
 #if !defined(PERL_PATCHLEVEL_H_IMPLICIT) && !defined(LOCAL_PATCH_COUNT)
+#  if defined(PERL_IS_MINIPERL)
+#    define PERL_PATCHNUM "UNKNOWN-miniperl"
+#    define PERL_GIT_UNPUSHED_COMMITS /*leave-this-comment*/
+#  elif defined(PERL_MICRO)
+#    define PERL_PATCHNUM "UNKNOWN-microperl"
+#    define PERL_GIT_UNPUSHED_COMMITS /*leave-this-comment*/
+#  else
+#include "git_version.h"
+#  endif
 static const char * const local_patches[] = {
 	NULL
+#ifdef PERL_GIT_UNCOMMITTED_CHANGES
+	,"uncommitted-changes"
+#endif
+	PERL_GIT_UNPUSHED_COMMITS    	/* do not remove this line */
 	,ACTIVEPERL_LOCAL_PATCHES_ENTRY
-#  if defined(WIN32)
-		,"f7bbab select() generates 'Invalid parameter' messages on Windows Vista."
-		,"8dc00b fix buffer overflow in win32_select()"
-		,"36f064 do/require don't treat '.\foo' or '..\foo' as absolute paths on Windows"
-		,"287a96 fix -p function and Fcntl::S_IFIFO constant under Microsoft VC compiler"
-#  endif
-		,"406878 avoids segfaults invoking S_raise_signal() (on Linux)"
-#  if defined(WIN32)
-		,"40c7cc Win32 process ids can have more than 16 bits"
-#  endif
-		,"37589e Load 'loadable object' with non-default file extension"
-		,"d374f9 64-bit fix for Time::Local"
+	,"c6fbf28 [perl #71806] perldb does not setup %dbline with the shebang option -d"
+	,"1fd8fa4 Add Wolfram Humann to AUTHORS"
+	,"f120055 make string-append on win32 100 times faster"
+	,"a2a8d15 Define _USE_32BIT_TIME_T for VC6 and VC7"
+	,"007cfe1 Don't pretend to support really old VC++ compilers"
+	,"6d8f7c9 Get rid of obsolete PerlCRT.dll support"
+	,"d956618 Make Term::ReadLine::findConsole fall back to STDIN if /dev/tty can't be opened"
+	,"321e50c Escape patch strings before embedding them in patchlevel.h"
 	,NULL
 };
 

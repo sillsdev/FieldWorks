@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+	<Filter Include="Source Files">
+	  <UniqueIdentifier>{398036a2-f52a-482d-9525-33c8406a59a6}</UniqueIdentifier>
+	  <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+	</Filter>
+	<Filter Include="Header Files">
+	  <UniqueIdentifier>{7bf8133d-ca9d-4250-a953-2eb94f681dd8}</UniqueIdentifier>
+	  <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+	</Filter>
+	<Filter Include="Resource Files">
+	  <UniqueIdentifier>{81fdee2e-c415-401f-80ec-58de44941b8a}</UniqueIdentifier>
+	  <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+	</Filter>
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="ActionHandler.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="DebugReport.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="dlldatax.c">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="TextServ.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="TsMultiStr.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="TsPropsFactory.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="TsStrFactory.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="TsString.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="TsTextProps.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="FwKernel.def">
+	  <Filter>Source Files</Filter>
+	</None>
+	<None Include="FwKernel.idh" />
+	<None Include="FwKernel.mak" />
+	<None Include="TextServ.idh" />
+  </ItemGroup>
+  <ItemGroup>
+	<Midl Include="FwKernelPs.idl">
+	  <Filter>Source Files</Filter>
+	</Midl>
+	<Midl Include="FwKernelTlb.idl">
+	  <Filter>Source Files</Filter>
+	</Midl>
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="ActionHandler.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="DebugReport.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="IcuCleanupManager.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="Main.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TextServ.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TsMultiStr.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TsPropsFactory.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TsStrFactory.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TsString.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="TsTextProps.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="FwKernel.rc">
+	  <Filter>Resource Files</Filter>
+	</ResourceCompile>
+  </ItemGroup>
+</Project>

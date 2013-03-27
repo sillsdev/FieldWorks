@@ -24,6 +24,7 @@
 using System;
 using System.Xml;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -131,6 +132,8 @@ namespace XCore
 		/// </summary>
 		/// <param name="includeNode">include" node, possibly containing "overrides" nodes</param>
 		/// <returns>true if we processed an "overrides" node.</returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private static bool HandleIncludeOverrides(XmlNode includeNode)
 		{
 			XmlNode parentNode = includeNode.ParentNode;
@@ -139,6 +142,8 @@ namespace XCore
 			foreach (XmlNode childNode in includeNode.ChildNodes)
 			{
 				// first skip over any XmlComment nodes.
+				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
 				if (childNode.GetType() == typeof(XmlComment))
 					continue;
 				if (childNode != null && childNode.Name == "overrides")
@@ -151,12 +156,14 @@ namespace XCore
 			// and subsequent attributes as subsitutions.
 			foreach (XmlNode overrideNode in overridesNode.ChildNodes)
 			{
+				// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+				// is marked with [MonoTODO] and might not work as expected in 4.0.
 				if (overrideNode.GetType() == typeof(XmlComment))
 					continue;
 				string elementKey = overrideNode.Name;
 				string firstAttributeKey = overrideNode.Attributes[0].Name;
 				string firstAttributeValue = overrideNode.Attributes[0].Value;
-				string xPathToModifyElement = String.Format("//{0}[@{1}='{2}']", elementKey, firstAttributeKey, firstAttributeValue);
+				string xPathToModifyElement = String.Format(".//{0}[@{1}='{2}']", elementKey, firstAttributeKey, firstAttributeValue);
 				XmlNode elementToModify = parentNode.SelectSingleNode(xPathToModifyElement);
 				Debug.Assert(elementToModify != null && elementToModify != overrideNode, "Could not find included node '" + xPathToModifyElement + "' to apply override");
 				if (elementToModify != null && elementToModify != overrideNode)

@@ -3,7 +3,7 @@
 # Run a FieldWorks application
 
 scriptdir=$(dirname "$0")
-prefix=$(readlink -en "$scriptdir/../..")
+prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 lib=$prefix/lib/fieldworks
 share=$prefix/share/fieldworks
 sharedWs=/var/lib/fieldworks/SIL/WritingSystemStore
@@ -31,6 +31,6 @@ $sharedWs."
 	exit 1
 fi
 
-cd "$lib"; RUNMODE="INSTALLED" source environ; cd -
+cd "$lib"; RUNMODE="INSTALLED" . environ; cd $OLDPWD
 cd "$share" # Temporary
-exec mono --debug "$lib/FieldWorks.exe" -app "$@"
+exec mono --debug "$lib"/"$@"

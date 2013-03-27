@@ -12,6 +12,7 @@
 // Responsibility: FW Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -53,6 +54,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="image gets disposed in finally block")]
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private IPicture LoadPicture()
 		{
 			IPicture picture;
@@ -84,6 +89,8 @@ namespace SIL.FieldWorks.Common.RootSites
 					{
 						image.Save(imageStream, ImageFormat.Png);
 						image.Dispose();
+						// TODO-Linux: useEmbeddedColorManagement parameter is not supported
+						// on Mono
 						image = Image.FromStream(imageStream, true);
 					}
 					picture = (IPicture)OLECvt.ToOLE_IPictureDisp(image);

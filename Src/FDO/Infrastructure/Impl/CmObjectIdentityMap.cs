@@ -249,7 +249,21 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				// Optimize (JohnT): could we first test this outside the syncroot?
 				// I don't think so, because one thread (say) growing the dictionary while another tries a lookup
 				// is probably bad.
-				ICmObjectOrId objOrId = m_extantObjectsByHvo[hvo];
+				ICmObjectOrId objOrId;
+				var hvoPresent = m_extantObjectsByHvo.TryGetValue(hvo, out objOrId);
+				if(!hvoPresent)
+				{
+					// The purpose of the following section is to try and display as much useful information
+					// as we can think of in the case of an unexpected crash. Many crashes which source from
+					// this code are irreproducible or require extremely picky steps.
+
+					// display information about the hvo we looked up and the next available hvo.
+					// If the object is newly created it hints at a race condition.
+					var message = String.Format("Internal timing or data error [Unable to find hvo {0} in the object dictionary. {1} is the next available hvo]",
+													hvo, m_nextHvo);
+					throw new KeyNotFoundException(message);
+				}
+
 				// It's tempting to put this logic in a method of ICmObjectOrIdInternal,
 				// with different implemetations in the concrete subclasses, but that
 				// doesn't fit well with updating the map if we do have to go get a real

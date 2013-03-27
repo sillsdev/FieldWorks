@@ -443,7 +443,7 @@ namespace SIL.FieldWorks.IText
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
-				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
@@ -486,7 +486,7 @@ namespace SIL.FieldWorks.IText
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
-				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
@@ -540,7 +540,7 @@ namespace SIL.FieldWorks.IText
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
-				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current; // why is this null?!
@@ -580,7 +580,7 @@ namespace SIL.FieldWorks.IText
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
-				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
@@ -617,7 +617,7 @@ namespace SIL.FieldWorks.IText
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
-				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
@@ -640,7 +640,7 @@ namespace SIL.FieldWorks.IText
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
-				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.IText
 			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
-				using (var firstEntry = Cache.LanguageProject.TextsOC.GetEnumerator())
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();
 					var imported = firstEntry.Current;
@@ -702,7 +702,7 @@ namespace SIL.FieldWorks.IText
 				{
 					li.ImportInterlinear(new DummyProgressDlg(), secondStream, 0, ref text);
 					Assert.True(text.Guid.ToString().ToUpper().Equals("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"), "Guid not maintained during import.");
-					Assert.True(Cache.LanguageProject.TextsOC.Count == 1, "Second text not merged with the first.");
+					Assert.True(Cache.LanguageProject.Texts.Count == 1, "Second text not merged with the first.");
 					Assert.True(text.ContentsOA.ParagraphsOS.Count == 1 && text.ContentsOA[0].SegmentsOS.Count == 1, "Segments from second import not merged with the first.");
 					VerifyMediaLink(text);
 				}

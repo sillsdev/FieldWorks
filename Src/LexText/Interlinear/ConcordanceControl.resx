@@ -112,19 +112,19 @@
 	<value>2.0</value>
   </resheader>
   <resheader name="reader">
-	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="m_lblTop.AccessibleName" xml:space="preserve">
 	<value>label1</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_lblTop.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_lblTop.Location" type="System.Drawing.Point, System.Drawing">
 	<value>8, 8</value>
   </data>
@@ -141,7 +141,7 @@
 	<value>m_lblTop</value>
   </data>
   <data name="&gt;&gt;m_lblTop.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lblTop.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -168,7 +168,7 @@
 	<value>label2</value>
   </data>
   <data name="&gt;&gt;label2.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;label2.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -195,7 +195,7 @@
 	<value>m_searchContentLabel</value>
   </data>
   <data name="&gt;&gt;m_searchContentLabel.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_searchContentLabel.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -204,7 +204,7 @@
 	<value>13</value>
   </data>
   <data name="m_cbLine.Location" type="System.Drawing.Point, System.Drawing">
-	<value>128, 36</value>
+	<value>141, 33</value>
   </data>
   <data name="m_cbLine.MaxDropDownItems" type="System.Int32, mscorlib">
 	<value>9</value>
@@ -219,7 +219,7 @@
 	<value>m_cbLine</value>
   </data>
   <data name="&gt;&gt;m_cbLine.Type" xml:space="preserve">
-	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_cbLine.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -231,7 +231,7 @@
 	<value>Microsoft Sans Serif, 100pt</value>
   </data>
   <data name="m_tbSearchText.Location" type="System.Drawing.Point, System.Drawing">
-	<value>128, 94</value>
+	<value>141, 94</value>
   </data>
   <data name="m_tbSearchText.Size" type="System.Drawing.Size, System.Drawing">
 	<value>200, 28</value>
@@ -243,7 +243,7 @@
 	<value>m_tbSearchText</value>
   </data>
   <data name="&gt;&gt;m_tbSearchText.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.2.0.29677, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.3.0.23921, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_tbSearchText.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -267,7 +267,7 @@
 	<value>m_btnRegExp</value>
   </data>
   <data name="&gt;&gt;m_btnRegExp.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_btnRegExp.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -278,12 +278,12 @@
   <data name="m_chkMatchDiacritics.AutoSize" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_chkMatchDiacritics.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
 	<value>NoControl</value>
   </data>
   <data name="m_chkMatchDiacritics.Location" type="System.Drawing.Point, System.Drawing">
-	<value>482, 35</value>
+	<value>374, 56</value>
   </data>
   <data name="m_chkMatchDiacritics.Size" type="System.Drawing.Size, System.Drawing">
 	<value>100, 17</value>
@@ -298,7 +298,7 @@
 	<value>m_chkMatchDiacritics</value>
   </data>
   <data name="&gt;&gt;m_chkMatchDiacritics.Type" xml:space="preserve">
-	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_chkMatchDiacritics.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -322,7 +322,7 @@
 	<value>m_btnHelp</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -346,7 +346,7 @@
 	<value>m_btnSearch</value>
   </data>
   <data name="&gt;&gt;m_btnSearch.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_btnSearch.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -373,7 +373,7 @@
 	<value>label4</value>
   </data>
   <data name="&gt;&gt;label4.Type" xml:space="preserve">
-	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;label4.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -382,7 +382,7 @@
 	<value>7</value>
   </data>
   <data name="m_cbWritingSystem.Location" type="System.Drawing.Point, System.Drawing">
-	<value>128, 65</value>
+	<value>141, 66</value>
   </data>
   <data name="m_cbWritingSystem.Size" type="System.Drawing.Size, System.Drawing">
 	<value>219, 21</value>
@@ -394,7 +394,7 @@
 	<value>m_cbWritingSystem</value>
   </data>
   <data name="&gt;&gt;m_cbWritingSystem.Type" xml:space="preserve">
-	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_cbWritingSystem.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -421,7 +421,7 @@
 	<value>m_rbtnAnywhere</value>
   </data>
   <data name="&gt;&gt;m_rbtnAnywhere.Type" xml:space="preserve">
-	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rbtnAnywhere.Parent" xml:space="preserve">
 	<value>groupBox1</value>
@@ -448,7 +448,7 @@
 	<value>m_rbtnWholeItem</value>
   </data>
   <data name="&gt;&gt;m_rbtnWholeItem.Type" xml:space="preserve">
-	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rbtnWholeItem.Parent" xml:space="preserve">
 	<value>groupBox1</value>
@@ -475,7 +475,7 @@
 	<value>m_rbtnAtEnd</value>
   </data>
   <data name="&gt;&gt;m_rbtnAtEnd.Type" xml:space="preserve">
-	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rbtnAtEnd.Parent" xml:space="preserve">
 	<value>groupBox1</value>
@@ -505,7 +505,7 @@
 	<value>m_rbtnAtStart</value>
   </data>
   <data name="&gt;&gt;m_rbtnAtStart.Type" xml:space="preserve">
-	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rbtnAtStart.Parent" xml:space="preserve">
 	<value>groupBox1</value>
@@ -535,7 +535,7 @@
 	<value>m_rbtnUseRegExp</value>
   </data>
   <data name="&gt;&gt;m_rbtnUseRegExp.Type" xml:space="preserve">
-	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rbtnUseRegExp.Parent" xml:space="preserve">
 	<value>groupBox1</value>
@@ -550,7 +550,7 @@
 	<value>NoControl</value>
   </data>
   <data name="m_chkMatchCase.Location" type="System.Drawing.Point, System.Drawing">
-	<value>366, 35</value>
+	<value>374, 33</value>
   </data>
   <data name="m_chkMatchCase.Size" type="System.Drawing.Size, System.Drawing">
 	<value>82, 17</value>
@@ -565,7 +565,7 @@
 	<value>m_chkMatchCase</value>
   </data>
   <data name="&gt;&gt;m_chkMatchCase.Type" xml:space="preserve">
-	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_chkMatchCase.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -573,12 +573,12 @@
   <data name="&gt;&gt;m_chkMatchCase.ZOrder" xml:space="preserve">
 	<value>4</value>
   </data>
-  <metadata name="helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
+	<value>366, 79</value>
+  </data>
+  <metadata name="helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>17, 17</value>
   </metadata>
-  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
-	<value>358, 58</value>
-  </data>
   <data name="groupBox1.ShowHelp" type="System.Boolean, mscorlib">
 	<value>True</value>
   </data>
@@ -592,7 +592,7 @@
 	<value>groupBox1</value>
   </data>
   <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
-	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -600,9 +600,30 @@
   <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
 	<value>3</value>
   </data>
-  <metadata name="helpProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-	<value>17, 17</value>
-  </metadata>
+  <data name="m_cbSearchText.Location" type="System.Drawing.Point, System.Drawing">
+	<value>141, 100</value>
+  </data>
+  <data name="m_cbSearchText.ShowHelp" type="System.Boolean, mscorlib">
+	<value>True</value>
+  </data>
+  <data name="m_cbSearchText.Size" type="System.Drawing.Size, System.Drawing">
+	<value>219, 21</value>
+  </data>
+  <data name="m_cbSearchText.TabIndex" type="System.Int32, mscorlib">
+	<value>23</value>
+  </data>
+  <data name="&gt;&gt;m_cbSearchText.Name" xml:space="preserve">
+	<value>m_cbSearchText</value>
+  </data>
+  <data name="&gt;&gt;m_cbSearchText.Type" xml:space="preserve">
+	<value>SIL.FieldWorks.Common.Widgets.TreeCombo, Widgets, Version=7.3.0.23921, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;m_cbSearchText.Parent" xml:space="preserve">
+	<value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_cbSearchText.ZOrder" xml:space="preserve">
+	<value>0</value>
+  </data>
   <data name="m_fwtbItem.AccessibleName" xml:space="preserve">
 	<value>fwtbItem</value>
   </data>
@@ -625,7 +646,7 @@
 	<value>m_fwtbItem</value>
   </data>
   <data name="&gt;&gt;m_fwtbItem.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.2.0.29677, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=7.3.0.23921, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_fwtbItem.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -661,7 +682,7 @@
 	<value>m_lnkSpecify</value>
   </data>
   <data name="&gt;&gt;m_lnkSpecify.Type" xml:space="preserve">
-	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lnkSpecify.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -669,31 +690,7 @@
   <data name="&gt;&gt;m_lnkSpecify.ZOrder" xml:space="preserve">
 	<value>1</value>
   </data>
-  <data name="m_cbSearchText.Location" type="System.Drawing.Point, System.Drawing">
-	<value>127, 97</value>
-  </data>
-  <data name="m_cbSearchText.ShowHelp" type="System.Boolean, mscorlib">
-	<value>True</value>
-  </data>
-  <data name="m_cbSearchText.Size" type="System.Drawing.Size, System.Drawing">
-	<value>219, 21</value>
-  </data>
-  <data name="m_cbSearchText.TabIndex" type="System.Int32, mscorlib">
-	<value>23</value>
-  </data>
-  <data name="&gt;&gt;m_cbSearchText.Name" xml:space="preserve">
-	<value>m_cbSearchText</value>
-  </data>
-  <data name="&gt;&gt;m_cbSearchText.Type" xml:space="preserve">
-	<value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_cbSearchText.Parent" xml:space="preserve">
-	<value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_cbSearchText.ZOrder" xml:space="preserve">
-	<value>0</value>
-  </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
@@ -706,12 +703,12 @@
 	<value>helpProvider</value>
   </data>
   <data name="&gt;&gt;helpProvider.Type" xml:space="preserve">
-	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.HelpProvider, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
 	<value>ConcordanceControl</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	<value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

@@ -4334,6 +4334,7 @@ namespace SIL.FieldWorks.TE
 		/// Get or set the wrapper object for TE, Paratext scripture objects to read in the
 		/// data.
 		/// </summary>
+		/// <remarks>This class (TeSfmImporter) is responsible for disposing ScrObjWrapper!</remarks>
 		/// ------------------------------------------------------------------------------------
 		protected ScrObjWrapper SOWrapper
 		{
@@ -4343,6 +4344,8 @@ namespace SIL.FieldWorks.TE
 			}
 			set
 			{
+				if (m_SOWrapper != null)
+					m_SOWrapper.Dispose();
 				m_SOWrapper = value;
 			}
 		}
@@ -4550,6 +4553,8 @@ namespace SIL.FieldWorks.TE
 			if (disposing)
 			{
 				// Dispose managed resources here.
+				if (m_SOWrapper != null)
+					m_SOWrapper.Dispose();
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.

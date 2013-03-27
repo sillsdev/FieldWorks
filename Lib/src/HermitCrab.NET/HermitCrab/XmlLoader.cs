@@ -160,7 +160,8 @@ namespace SIL.HermitCrab
 			Reset();
 
 			XmlReaderSettings settings = new XmlReaderSettings();
-			settings.ProhibitDtd = false;
+			/*settings.ProhibitDtd = false;*/
+			settings.DtdProcessing = DtdProcessing.Parse;
 			if (Type.GetType ("Mono.Runtime") == null)
 			{
 				settings.ValidationType = ValidationType.DTD;
@@ -971,10 +972,10 @@ namespace SIL.HermitCrab
 				throw le;
 			}
 
-			sr.RequiredPOSs = LoadPOSs(psubruleNode.GetAttribute("requiredPartsOfSpeech"));
+			sr.RequiredPOSs = LoadPOSs(structElem.GetAttribute("requiredPartsOfSpeech"));
 
-			sr.RequiredMPRFeatures = LoadMPRFeatures(psubruleNode.GetAttribute("requiredMPRFeatures"));
-			sr.ExcludedMPRFeatures = LoadMPRFeatures(psubruleNode.GetAttribute("excludedMPRFeatures"));
+			sr.RequiredMPRFeatures = LoadMPRFeatures(structElem.GetAttribute("requiredMPRFeatures"));
+			sr.ExcludedMPRFeatures = LoadMPRFeatures(structElem.GetAttribute("excludedMPRFeatures"));
 
 			prule.AddSubrule(sr);
 		}

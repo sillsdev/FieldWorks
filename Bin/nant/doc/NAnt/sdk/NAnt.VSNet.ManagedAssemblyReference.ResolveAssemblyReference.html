@@ -1,0 +1,68 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>ManagedAssemblyReference.ResolveAssemblyReference Method</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">ManagedAssemblyReference.ResolveAssemblyReference Method </h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Resolves an assembly reference. </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />Overrides Protected Function ResolveAssemblyReference() As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<br />protected override <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> ResolveAssemblyReference();</div>
+	  <h4 class="dtH4">Return Value</h4>
+	  <p> The full path to the resolved assembly, or a null reference
+				  (<b>Nothing</b> in Visual Basic) if the assembly reference could not be resolved. </p>
+	  <h4 class="dtH4">Remarks</h4>
+			<p> Visual Studio .NET uses the following search mechanism : </p>
+			<ol><li>
+					 The project directory.
+				</li><li>
+					 The directories specified in the "ReferencePath" property, which is stored in the .USER file.
+				</li><li>
+					 The .NET Framework directory (see KB306149)
+				</li><li>
+
+						<p> The directories specified under the following registry keys: </p>
+						<ul type="disc"><li>
+								 HKLM\SOFTWARE\Microsoft\.NETFramework\AssemblyFolders
+							</li><li>
+								 HKCU\SOFTWARE\Microsoft\.NETFramework\AssemblyFolders
+							</li><li>
+								 HKLM\SOFTWARE\Microsoft\VisualStudio\&lt;major version&gt;.&lt;minor version&gt;\AssemblyFolders
+							</li><li>
+								 HKCU\SOFTWARE\Microsoft\VisualStudio\&lt;major version&gt;.&lt;minor version&gt;\AssemblyFolders
+							</li></ul>
+						<p> Future versions of Visual Studio .NET will also check in: </p>
+						<ul type="disc"><li>
+								 HKLM\SOFTWARE\Microsoft\.NETFramework\AssemblyFoldersEx
+							</li><li>
+								 HKCU\SOFTWARE\Microsoft\.NETFramework\AssemblyFoldersEx
+							</li></ul>
+
+				</li><li>
+					 The HintPath.
+				</li></ol>
+			<h4 class="dtH4">See Also</h4><p><a href="NAnt.VSNet.ManagedAssemblyReference.html">ManagedAssemblyReference Class</a> | <a href="NAnt.VSNet.html">NAnt.VSNet Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="ResolveAssemblyReference method"></param><param name="Keyword" value="ResolveAssemblyReference method, ManagedAssemblyReference class"></param><param name="Keyword" value="ManagedAssemblyReference.ResolveAssemblyReference method"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

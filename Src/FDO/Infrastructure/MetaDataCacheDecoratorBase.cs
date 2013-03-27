@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure
 
 		/// <summary>
 		/// Gets the type of the field. This value indicates if the field is a primitive data type
-		/// or a MultiStr/MultiBigStr/MultiTxt/MultiBigTxt value or describes the relationship
+		/// or a MultiStr/MultiTxt value or describes the relationship
 		/// between two classes (i.e. owning/reference and atomic/collection/sequence). These
 		/// numeric values are defined in the <b>~FWROOT\src\cellar\lib\CmTypes.h</b> file.
 		///</summary>

@@ -129,7 +129,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		[TearDown]
 		public override void TestTearDown()
 		{
-			m_importer.UndoInfo.DoneImportingFiles(true);
+			if (m_actionHandler.CurrentDepth > 0)
+				m_importer.UndoInfo.DoneImportingFiles(true);
 			m_importer.Dispose();
 			m_importer = null;
 			m_styleSheet = null;

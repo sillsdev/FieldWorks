@@ -974,8 +974,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_regionVariantControl
 			//
-			this.m_regionVariantControl.BackColor = System.Drawing.Color.Transparent;
 			resources.ApplyResources(this.m_regionVariantControl, "m_regionVariantControl");
+			this.m_regionVariantControl.BackColor = System.Drawing.Color.Transparent;
 			this.m_regionVariantControl.Name = "m_regionVariantControl";
 			this.helpProvider.SetShowHelp(this.m_regionVariantControl, ((bool)(resources.GetObject("m_regionVariantControl.ShowHelp"))));
 			this.m_regionVariantControl.WritingSystem = null;
@@ -1054,14 +1054,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_fwTextBoxTestWs
 			//
+			this.m_fwTextBoxTestWs.AcceptsReturn = false;
 			this.m_fwTextBoxTestWs.AdjustStringHeight = true;
-			this.m_fwTextBoxTestWs.WordWrap = true;
 			this.m_fwTextBoxTestWs.BackColor = System.Drawing.SystemColors.Window;
 			this.m_fwTextBoxTestWs.controlID = null;
 			resources.ApplyResources(this.m_fwTextBoxTestWs, "m_fwTextBoxTestWs");
 			this.m_fwTextBoxTestWs.HasBorder = true;
 			this.m_fwTextBoxTestWs.Name = "m_fwTextBoxTestWs";
 			this.helpProvider.SetShowHelp(this.m_fwTextBoxTestWs, ((bool)(resources.GetObject("m_fwTextBoxTestWs.ShowHelp"))));
+			this.m_fwTextBoxTestWs.SuppressEnter = false;
+			this.m_fwTextBoxTestWs.WordWrap = true;
 			this.m_fwTextBoxTestWs.Enter += new System.EventHandler(this.m_fwTextBoxTestWs_Enter);
 			//
 			// m_lblKeyboardTestInstr
@@ -1225,16 +1227,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_sortRulesTextBox
 			//
-			this.m_sortRulesTextBox.AutoScroll = true;
 			this.m_sortRulesTextBox.AcceptsReturn = true;
 			this.m_sortRulesTextBox.AdjustStringHeight = false;
-			this.m_sortRulesTextBox.WordWrap = true;
 			resources.ApplyResources(this.m_sortRulesTextBox, "m_sortRulesTextBox");
 			this.m_sortRulesTextBox.BackColor = System.Drawing.SystemColors.Window;
 			this.m_sortRulesTextBox.controlID = null;
 			this.m_sortRulesTextBox.HasBorder = true;
 			this.m_sortRulesTextBox.Name = "m_sortRulesTextBox";
 			this.helpProvider.SetShowHelp(this.m_sortRulesTextBox, ((bool)(resources.GetObject("m_sortRulesTextBox.ShowHelp"))));
+			this.m_sortRulesTextBox.SuppressEnter = false;
+			this.m_sortRulesTextBox.WordWrap = true;
 			this.m_sortRulesTextBox.TextChanged += new System.EventHandler(this.m_sortRulesTextBox_TextChanged);
 			//
 			// m_sortingHelpLabel
@@ -1434,6 +1436,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.btnOk;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
 			this.Controls.Add(this.lblHiddenWss);
 			this.Controls.Add(this.m_writingSystemsFor);
@@ -2096,7 +2099,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void linkToEthnologue_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			string targetURL = String.Format("http://www.ethnologue.com/show_language.asp?code={0}", m_LanguageCode.Text);
-			Process.Start(targetURL);
+			using (Process.Start(targetURL))
+			{
+			}
 		}
 
 		private void m_linkWindowsKeyboard_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -2113,7 +2118,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				arguments ="input.dll";
 			}
 			var processInfo = new ProcessStartInfo(program, arguments);
-			Process.Start(processInfo);
+			using (Process.Start(processInfo))
+			{
+			}
 		}
 
 		private void m_linkKeymanConfiguration_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -2146,8 +2153,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					string param = "";
 					if (version > 6)
 						param = "-c";
-					Process.Start(keyman, param);
-					return;
+					using (Process.Start(keyman, param))
+					{
+						return;
+					}
 				}
 			}
 			MessageBox.Show("Keyman 5.0 or later is not Installed.");

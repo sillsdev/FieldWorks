@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -35,6 +36,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing && (components != null))
 			{
 				components.Dispose();
@@ -49,6 +51,11 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Forms designer method
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Controls get added to Controls collection and disposed there")]
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
+		// TODO-Linux: VirtualMode is not supported on Mono
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();

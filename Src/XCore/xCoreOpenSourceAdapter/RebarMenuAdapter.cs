@@ -1,4 +1,4 @@
-	// --------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
 #region // Copyright (c) 2003, SIL International. All Rights Reserved.
 // <copyright from='2003' to='2003' company='SIL International'>
 //		Copyright (c) 2003, SIL International. All Rights Reserved.
@@ -16,15 +16,15 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System. Collections;
-using System.Windows.Forms;
-using System.  Drawing;
-using System.  Diagnostics;
-using Reflector.UserInterface;//commandbar
-using SIL.Utils;
-
+using System.Collections;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Security;
 using System.Security.Permissions;
+using System.Windows.Forms;
+using Reflector.UserInterface; //commandbar
+using SIL.Utils;
 
 namespace XCore
 {
@@ -42,6 +42,17 @@ namespace XCore
 		/// -----------------------------------------------------------------------------------
 		public MenuAdapter()
 		{
+		}
+
+		protected override void Dispose(bool fDisposing)
+		{
+			if (fDisposing)
+			{
+				if (m_menuBar != null)
+					m_menuBar.Dispose();
+			}
+			m_menuBar = null;
+			base.Dispose(fDisposing);
 		}
 
 		public System.Windows.Forms.Control Init (System.Windows.Forms.Form window,  ImageCollection smallImages, ImageCollection largeImages, Mediator mediator)
@@ -68,7 +79,8 @@ namespace XCore
 			return m_commandBarManager.HandleAltKey(e, wasDown);
 		}
 
-
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="CommandBarItem added to m_menuBar and disposed in Dispose()")]
 		public void CreateUIForChoiceGroupCollection(ChoiceGroupCollection groupCollection)
 		{
 			bool weCreatedTheBarManager = GetCommandBarManager();
@@ -115,12 +127,13 @@ namespace XCore
 		//			}
 		//		}
 
-
 		/// <summary>
 		/// Populate a normal menu, directly contained by the m_menuBar.
 		/// This is called by the OnDisplay() method of some ChoiceGroup
 		/// </summary>
 		/// <param name="group">The group that is the basis for this menu</param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Items get added to menu and hopefully disposed there")]
 		public void CreateUIForChoiceGroup (ChoiceGroup group)
 		{
 			if(group.ReferenceWidget is ContextMenu)
@@ -129,6 +142,8 @@ namespace XCore
 				return;
 			}
 			CommandBarMenu menu = (CommandBarMenu) group.ReferenceWidget;
+			foreach (CommandBarItem item in menu.Items)
+				item.Dispose();
 			menu.Items.Clear();
 
 			foreach(ChoiceRelatedClass item in group)
@@ -169,9 +184,13 @@ namespace XCore
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Items get added to menu and hopefully disposed there")]
 		public void CreateContextMenuUIForChoiceGroup (ChoiceGroup group)
 		{
 			CommandBarContextMenu menu = (CommandBarContextMenu) group.ReferenceWidget;
+			foreach (CommandBarItem item in menu.Items)
+				item.Dispose();
 			menu.Items.Clear();
 
 			foreach(ChoiceRelatedClass item in group)
@@ -237,6 +256,11 @@ namespace XCore
 			}
 		}
 
+		public void ShowContextMenu(ChoiceGroup @group, Point location, TemporaryColleagueParameter temporaryColleagueParam, MessageSequencer sequencer, Action<ContextMenuStrip> adjustMenu)
+		{
+			throw new NotImplementedException();
+		}
+
 		protected CommandBarItem MakeMenu (CommandBar parent, ChoiceGroup group)
 		{
 			string label = group.Label.Replace("_", "&");
@@ -295,11 +319,12 @@ namespace XCore
 		/// </summary>
 		public void OnIdle()
 		{
-
 		}
 
 		#region ITestableUIAdapter
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Reference only")]
 		public int GetItemCountOfGroup (string groupId)
 		{
 			CommandBarMenu menu = GetMenu(groupId);
@@ -308,10 +333,7 @@ namespace XCore
 			//method, but the latter is one step closer to reality.
 			((ChoiceGroup)menu.Tag).OnDisplay(null, null);
 			return menu.Items.Count;
-
 		}
-
-
 
 		protected CommandBarMenu GetMenu(string groupId)
 		{
@@ -326,7 +348,7 @@ namespace XCore
 					((ChoiceGroup)menu.Tag).OnDisplay(null, null);
 
 					//note that some of these may be set menus, others are just items; we don't bother checking
-					foreach(CommandBarItem x in  menu.Items)
+					foreach(CommandBarItem x in menu.Items)
 					{
 
 						if (x.Tag!=null //separators don't have tags
@@ -360,7 +382,9 @@ namespace XCore
 		/// </summary>
 		/// <param name="groupId">The id of the menu</param>
 		/// <param name="itemId">the id of the item.  As of this writing, this often defaults to the label without the "_"</param>
-		public  void ClickItem (string groupId, string itemId)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetMenu() returns a reference")]
+		public void ClickItem (string groupId, string itemId)
 		{
 			CommandBarMenu menu = GetMenu(groupId);
 			if(menu == null)
@@ -372,6 +396,8 @@ namespace XCore
 			OnClick(item, null);
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetMenu() returns a reference")]
 		public bool IsItemEnabled(string groupId, string itemId)
 		{
 			CommandBarMenu menu = GetMenu(groupId);
@@ -381,6 +407,8 @@ namespace XCore
 			return item.IsEnabled;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetMenu() returns a reference")]
 		public bool HasItem(string groupId, string itemId)
 		{
 			CommandBarMenu menu = GetMenu(groupId);

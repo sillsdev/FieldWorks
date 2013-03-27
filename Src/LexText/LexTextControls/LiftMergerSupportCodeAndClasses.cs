@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using Palaso.Lift.Parsing;
 using Palaso.WritingSystems;
@@ -215,7 +216,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (string key in forms.Keys)
 			{
 				int wsHvo = GetWsFromLiftLang(key);
-				string form =  XmlUtils.DecodeXml(forms[key].Text);
+				// LiftMultiText parameter may have come in with escaped characters which need to be
+				// converted to plain text before merging with existing entries
+				string form = XmlUtils.DecodeXml(forms[key].Text);
 				if (wsHvo > 0 && !String.IsNullOrEmpty(form))
 				{
 					multi.Remove(wsHvo);
@@ -348,6 +351,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ITsString CreateTsStringFromLiftString(LiftString liftstr, int wsHvo)
 		{
 			ITsStrBldr tsb = m_cache.TsStrFactory.GetBldr();
+			// LiftString parameter may have come in with escaped characters which need to be
+			// converted to plain text before comparing with existing entries
 			var convertSafeXmlToText = XmlUtils.DecodeXml(liftstr.Text);
 			tsb.Replace(0, tsb.Length, convertSafeXmlToText, m_tpf.MakeProps(null, wsHvo, 0));
 			int wsSpan;
@@ -404,6 +409,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (wsHvo > 0)
 					{
 						multi.Remove(wsHvo);
+						// LiftMultiText parameter may have come in with escaped characters which need to be
+						// converted to plain text before merging with existing entries
 						string sText = XmlUtils.DecodeXml(forms[key].Text);
 						if (sText.Length > cchMax)
 						{
@@ -654,7 +661,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					continue;
 				if (String.IsNullOrEmpty(sNew) || (tssOld == null || tssOld.Length == 0))
 					return false;
-				string sNewNorm = Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD);
+				// LiftMultiText parameter may have come in with escaped characters which need to be
+				// converted to plain text before comparing with existing entries
+				string sNewNorm = XmlUtils.DecodeXml(Icu.Normalize(sNew, Icu.UNormalizationMode.UNORM_NFD));
 				string sOldNorm = Icu.Normalize(tssOld.Text, Icu.UNormalizationMode.UNORM_NFD);
 				if (sNewNorm != sOldNorm)
 					return false;
@@ -1457,12 +1466,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 				case CellarPropertyType.String:
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigString:
-				case CellarPropertyType.BigUnicode:
 				case CellarPropertyType.MultiString:
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigString:
-				case CellarPropertyType.MultiBigUnicode:
 					if (wsSelector == 0)
 						wsSelector = WritingSystemServices.kwsAnalVerns;		// we need a WsSelector value!
 					clidDst = -1;
@@ -1520,22 +1525,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private static bool CheckForCompatibleTypes(CellarPropertyType type, FieldDescription fd)
 		{
 			if (fd.Type == type)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiString && type == CellarPropertyType.MultiBigString)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiBigString && type == CellarPropertyType.MultiString)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiUnicode && type == CellarPropertyType.MultiBigUnicode)
-				return true;
-			if (fd.Type == CellarPropertyType.MultiBigUnicode && type == CellarPropertyType.MultiUnicode)
-				return true;
-			if (fd.Type == CellarPropertyType.String && type == CellarPropertyType.BigString)
-				return true;
-			if (fd.Type == CellarPropertyType.BigString && type == CellarPropertyType.String)
-				return true;
-			if (fd.Type == CellarPropertyType.Unicode && type == CellarPropertyType.BigUnicode)
-				return true;
-			if (fd.Type == CellarPropertyType.BigUnicode && type == CellarPropertyType.Unicode)
 				return true;
 			if (fd.Type == CellarPropertyType.Binary && type == CellarPropertyType.Image)
 				return true;
@@ -2423,6 +2412,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			ILexEntry le = null;
 			ICmObject target = null;
+			//"main" is no longer used as a relationType in LIFT export but is handled here in case
+			//an older LIFT file is being imported.
+			//The current LIFT export will have rgRefs[0].RelationType == "_component-lexeme"
 			if (rgRefs.Count == 1 && rgRefs[0].RelationType == "main")
 			{
 				target = rgRefs[0].CmObject;
@@ -2460,21 +2452,53 @@ namespace SIL.FieldWorks.LexText.Controls
 			for (int i = 0; i < rgRefs.Count; ++i)
 			{
 				PendingLexEntryRef pend = rgRefs[i];
+				//This is handling the historical LIFT export data where relationType was "main"
 				if (pend.RelationType == "main" && i == 0 && target != null)
 				{
 					componentLexemes.Add(target);
 					primaryLexemes.Add(target);
 				}
 				else if (pend.Target != null)
+					// pend.RelationType == "_component-lexeme" is now the default and there should be a non-null Target, however
+					//when the LIFT file was produced by a partial export vs. full export the compontent/variant contained
+					//in the lexEntry might be referencing another lexEntry that was not part of the export. In this case Target will be null.
 				{
 					componentLexemes.Add(pend.Target);
+					//With compontents, for example a compound word, often one of the components is considered the
+					//primary lexeme and the others are not.
 					if (pend.IsPrimary || pend.RelationType == "main")
 						primaryLexemes.Add(pend.Target);
 				}
 				else
+					// pend.Target == null
+					//If there is a partial LIFT export "Filtered Lexicon LIFT 0.13 XML" we can encounter a LexEntryRef that has a null target.
+					//For example if the word 'unbelieving' has Components un- believe -ing then these three components will be included
+					//in the <entry> 'unbelieving' as relations <relation type="_component-lexeme".../> when doing a LIFT export.
+					//However, for a partial export where'un-' 'believe' and '-ing' are not included in the export, the reference	s to these found in
+					//the lexEntry 'unbelieving' are invalid and therefore pend.Target will be null for each of these.
+					//Therefore they are removed from this lexEntry on importing the LIFT file.
+					//We should however warn the user that this data is not being imported and that they should do a FULL export to ensure this data
+					//is imported correctly.
 				{
-					Debug.Assert(rgRefs.Count == 1);
-					Debug.Assert(!pend.IsPrimary);
+					var bldr = new StringBuilder();
+					bldr.Append("The LIFT file you are importing has entries with 'Component' or 'Variant' references to lexical entries that ");
+					bldr.Append("were not exorted to the LIFT file. ");
+					bldr.Append("Therefore, these references (components or variants) will being excluded from this import.  ");
+					bldr.AppendLine();
+					bldr.AppendLine();
+					bldr.Append("This is probably a result of doing a Filtered Lexicon LIFT export. Instead, a Full Lexicon LIFT export should been done ");
+					bldr.Append("to correct this problem, followed by another LIFT import.  ");
+					bldr.AppendLine();
+					bldr.AppendLine();
+					bldr.AppendFormat("The LIFT reference has TargetId: {0}", pend.TargetId);
+					bldr.AppendLine();
+					if (rgRefs[0].LexemeForm != null)
+					{
+						bldr.AppendFormat("The entry CmLiftEntry.LexicalForm is:    {0}", rgRefs[0].LexemeForm.FirstValue.Value.Text);
+						bldr.AppendLine();
+					}
+					MessageBox.Show(bldr.ToString(), LexTextControls.ksProblemImporting,
+									MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 			if (complexEntryTypes.Count == 0 && variantEntryTypes.Count == 0 && rgRefs[0].RelationType == "BaseForm" && componentLexemes.Count == 1
@@ -2511,10 +2535,30 @@ namespace SIL.FieldWorks.LexText.Controls
 					ler.ComplexEntryTypesRS.Add(item);
 				foreach (var item in variantEntryTypes)
 					ler.VariantEntryTypesRS.Add(item);
-				foreach (var item in componentLexemes)
-					ler.ComponentLexemesRS.Add(item);
-				foreach (var item in primaryLexemes)
-					ler.PrimaryLexemesRS.Add(item);
+				try
+				{
+					foreach (var item in componentLexemes)
+						ler.ComponentLexemesRS.Add(item);
+					foreach (var item in primaryLexemes)
+						ler.PrimaryLexemesRS.Add(item);
+				}
+				catch (Exception error)
+				{
+					var bldr = new StringBuilder();
+					bldr.Append("Something went wrong while FieldWorks was attempting to import the LIFT file.");
+					bldr.AppendLine();
+					bldr.Append(error.Message);
+					bldr.AppendLine();
+					if (rgRefs[0].LexemeForm != null)
+					{
+						bldr.AppendFormat("CmLiftEntry.LexicalForm is:    {0}", rgRefs[0].LexemeForm.FirstValue.Value.Text);
+						bldr.AppendLine();
+						bldr.AppendFormat("RelationType is:     {0}", rgRefs[0].RelationType);
+					}
+					MessageBox.Show(bldr.ToString(), LexTextControls.ksProblemImporting,
+									MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+
 				ler.HideMinorEntry = rgRefs[0].HideMinorEntry;
 				AddNewWsToAnalysis();
 				if (summary != null)
@@ -2575,14 +2619,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_combinedCollections.Add(col);
 					}
 				}
-				var union = complexEntryTypes.Union(referenceCollection.AsEnumerable());
-				foreach (var lexEntryType in union)
-				{
-					if(!referenceCollection.Contains(lexEntryType))
-					{
-						referenceCollection.Add(lexEntryType);
-					}
-				}
+				referenceCollection.Replace(0, referenceCollection.Count, complexEntryTypes);
 			}
 		}
 
@@ -2907,94 +2944,134 @@ namespace SIL.FieldWorks.LexText.Controls
 				string sType = typeCollections.Key;
 				foreach (var collection in typeCollections.Value)//for each grouping of relations for that type
 				{
-					var currentRel = collection.Item1;
-					ILexRefType lrt = FindOrCreateLexRefType(sType, collection.Item2.FirstItem().IsSequence);
-					if (CollectionRelationAlreadyExists(lrt, currentRel))
+					var incomingRelationIDs = collection.Item1;
+					var incomingRelations = collection.Item2;
+					ILexRefType lrt = FindOrCreateLexRefType(sType, incomingRelations.FirstItem().IsSequence);
+					if (IsAnExistingCollectionAnExactMatch(lrt, incomingRelationIDs))
 						continue;
-					ILexReference lr = CreateNewLexReference();
-					lrt.MembersOC.Add(lr);
-					foreach (int hvo in currentRel)
-						lr.TargetsRS.Add(GetObjectForId(hvo));
-					foreach(var relMain in collection.Item2)
-						StoreRelationResidue(lr, relMain);
+					List<ICmObject> oldItems;
+					var lr = FindExistingSequence(lrt, incomingRelations, out oldItems);
+					if(lr == null)
+					{
+						lr = CreateNewLexReference();
+						lrt.MembersOC.Add(lr);
+						foreach (int hvo in incomingRelationIDs)
+							lr.TargetsRS.Add(GetObjectForId(hvo));
+						foreach (var relation in incomingRelations)
+							StoreRelationResidue(lr, relation);
+					}
+					else
+					{
+						ReplaceLexRefContents(lr, incomingRelationIDs);
+					}
 				}
 				progress.Position++;
 			}
 		}
 
 		/// <summary>
-		/// This method returns true if there is an existing collection belonging to an entry or sense
-		/// related to the given ILexRefType which is  matches the contents of the given set.
-		/// This method is to prevent duplication of sets of relations due to the fact they are replicated in
+		/// This method is necessary to prevent duplication of sets of relations due to the fact they are replicated in
 		/// all the members of the relation in the LIFT file.
 		/// </summary>
-		/// <param name="lrt">The ILexRefType to inspect</param>
-		/// <param name="setRelation">The Set of hvo's to check</param>
-		/// <returns>true if the collection has already been added.</returns>
-		private bool CollectionRelationAlreadyExists(ILexRefType lrt, Set<int> setRelation)
+		private static bool IsAnExistingCollectionAnExactMatch(ILexRefType lrt, Set<int> checkTargets)
 		{
-			//check each reference in the lexreftype
-			foreach (ILexReference lr in lrt.MembersOC)
+			foreach (var lr in lrt.MembersOC)
 			{
-				var currentSet = new List<int>();
-				var otherSet = new List<int>(setRelation);
-				//for every object in the target sequence of the LexReference
-				foreach (ICmObject cmo in lr.TargetsRS)
-				{
-					currentSet.Add(cmo.Hvo);
-				}
-				var intersectors = currentSet.Intersect(otherSet);
-				if(intersectors.Count() == 0) //the two sets share no entries
-				{
+				if(lr.TargetsRS.Count != checkTargets.Count)
 					continue;
-				}
-				//If the sets intersect, but did not have a subset-superset relationship then we might be doing
-				//something the user did not expect or want, so log it for them.
-				if(!intersectors.ContainsCollection(otherSet) && !intersectors.ContainsCollection(currentSet))
-				{
-
-					CombinedCollection conflictingData;
-					foreach(var item in currentSet)
-					{
-						if (!intersectors.Contains(item))
-						{
-							conflictingData = new CombinedCollection(GetObjectForId(intersectors.First()), m_cache, this);
-							conflictingData.TypeName = lr.TypeAbbreviation(m_cache.DefaultUserWs, GetObjectForId(item));
-							conflictingData.BadValue = GetObjectForId(item).DeletionTextTSS.Text;
-							m_combinedCollections.Add(conflictingData);
-						}
-					}
-				}
-				var otherObjects = new List<ICmObject>();
-				foreach (var hvo in otherSet)
-				{
-					otherObjects.Add(GetObjectForId(hvo));
-				}
-				AdjustCollectionContents(otherObjects, lr.TargetsRS, lr);
-				return true;
+				//build a set of the hvos in the lexical relation
+				var currentSet = lr.TargetsRS.Select(cmo => cmo.Hvo).ToList();
+				//for every object in the target sequence of the LexReference
+				if (currentSet.ContainsCollection(checkTargets))
+					return true; // got an exact match. If not, keep trying.
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// This method will adjust two collections (which share some content) based off new data from the lift file.
+		/// </summary>
+		/// <param name="lr">The ILexReference to adjust</param>
+		/// <param name="setRelation">The Set of hvo's to use in the adjusted reference</param>
+		private void ReplaceLexRefContents(ILexReference lr, IEnumerable<int> setRelation)
+		{
+			var currentSet = new List<int>();
+			//for every object in the target sequence of the LexReference
+			foreach (var cmo in lr.TargetsRS)
+			{
+				currentSet.Add(cmo.Hvo);
+			}
+			var intersectors = currentSet.Intersect(setRelation);
+			if(intersectors.Count() == 0) //the two sets are unrelated, and shouldn't be merged
+			{
+				return;
+			}
+			//If the sets intersect, but did not have a subset-superset relationship then we might be doing
+			//something the user did not expect or want, so log it for them.
+			if (!intersectors.ContainsCollection(setRelation) && !intersectors.ContainsCollection(currentSet))
+			{
+				CombinedCollection conflictingData;
+				foreach(var item in currentSet)
+				{
+					if (!intersectors.Contains(item))
+					{
+						conflictingData = new CombinedCollection(GetObjectForId(intersectors.First()), m_cache, this);
+						conflictingData.TypeName = lr.TypeAbbreviation(m_cache.DefaultUserWs, GetObjectForId(item));
+						conflictingData.BadValue = GetObjectForId(item).DeletionTextTSS.Text;
+						m_combinedCollections.Add(conflictingData);
+					}
+				}
+			}
+			var otherObjects = new List<ICmObject>();
+			foreach (var hvo in setRelation)
+			{
+				otherObjects.Add(GetObjectForId(hvo));
+			}
+			AdjustCollectionContents(otherObjects, lr.TargetsRS, lr);
 		}
 
 		private void StoreSequenceRelation(ILexRefType lrt, List<
 			PendingRelation> rgRelation)
 		{
-			if (SequenceRelationAlreadyExists(lrt, rgRelation))
+			if (IsAnExistingSequenceAnExactMatch(lrt, rgRelation))
 				return;
-			ILexReference lr = CreateNewLexReference();
-			lrt.MembersOC.Add(lr);
-			for (int i = 0; i < rgRelation.Count; ++i)
-				lr.TargetsRS.Add(GetObjectForId(rgRelation[i].TargetHvo));
+			List<ICmObject> oldItems;
+			var lr = FindExistingSequence(lrt, rgRelation, out oldItems);
+			if(lr == null) //This is a new relation, add all the targets
+			{
+				lr = CreateNewLexReference();
+				lrt.MembersOC.Add(lr);
+				for (int i = 0; i < rgRelation.Count; ++i)
+				{
+					lr.TargetsRS.Add(GetObjectForId(rgRelation[i].TargetHvo));
+				}
+			}
+			else //Reusing an old relation, replace the contents of the Targets sequence
+			{
+				var targetList = new List<ICmObject>();
+				for (int i = 0; i < rgRelation.Count; ++i)
+				{
+					targetList.Add(GetObjectForId(rgRelation[i].TargetHvo));
+				}
+				lr.TargetsRS.Replace(0, lr.TargetsRS.Count, targetList);
+			}
 			StoreRelationResidue(lr, rgRelation[0]);
 		}
 
-		private bool SequenceRelationAlreadyExists(ILexRefType lrt, List<PendingRelation> rgRelation)
+		/// <summary>
+		/// Tests if there is an existing sequence in the LexRefType which exactly matches the pendingRelation
+		/// in contents and order.
+		/// </summary>
+		/// <param name="lrt">the ILexRefType to check</param>
+		/// <param name="rgRelation">An ordered list of relations from the LIFT file</param>
+		/// <returns>true if this sequence already exists in the system</returns>
+		private static bool IsAnExistingSequenceAnExactMatch(ILexRefType lrt, List<PendingRelation> rgRelation)
 		{
-			foreach (ILexReference lr in lrt.MembersOC)
+			foreach (var lr in lrt.MembersOC)
 			{
 				if (lr.TargetsRS.Count != rgRelation.Count)
 					continue;
-				bool fSame = true;
+				var fSame = true;
 				for (int i = 0; i < rgRelation.Count; ++i)
 				{
 					if (lr.TargetsRS[i].Hvo != rgRelation[i].TargetHvo)
@@ -3007,6 +3084,36 @@ namespace SIL.FieldWorks.LexText.Controls
 					return true;
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// This method will find and return an ILexReference in the given LexRefType if it has any overlap with the given collection
+		/// of relations
+		/// </summary>
+		/// <param name="lrt"></param>
+		/// <param name="rgRelation"></param>
+		/// <param name="oldItems"></param>
+		/// <returns></returns>
+		private static ILexReference FindExistingSequence(ILexRefType lrt, IEnumerable<PendingRelation> rgRelation, out List<ICmObject> oldItems)
+		{
+			oldItems = new List<ICmObject>();
+			foreach (var lr in lrt.MembersOC)
+			{
+				foreach (var cmObject in lr.TargetsRS)
+				{
+					oldItems.Add(cmObject);
+				}
+				foreach (var pendingRelation in rgRelation)
+				{
+					if (oldItems.Contains(pendingRelation.Target))
+					{
+						return lr;
+					}
+				}
+				oldItems.Clear();
+			}
+			oldItems = null; // old items aren't actually old items if we didn't find a match
+			return null;
 		}
 
 		private void StoreTreeRelation(ILexRefType lrt, List<PendingRelation> rgRelation)
@@ -4279,6 +4386,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			readonly List<string> m_rgsVariantTypes = new List<string>();
 			bool m_fIsPrimary;
 			int m_nHideMinorEntry;
+			private LiftMultiText m_lexemeForm;
 
 			string m_sResidue;
 			// preserve trait values from older LIFT files based on old FieldWorks model
@@ -4302,6 +4410,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					m_sMinorEntryCondition = entry.MinorEntryCondition;
 					m_fExcludeAsHeadword = entry.ExcludeAsHeadword;
 					ProcessRelationData();
+					m_lexemeForm = entry.LexicalForm;
 				}
 			}
 
@@ -4438,6 +4547,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			public LiftField Summary
 			{
 				get { return m_summary; }
+			}
+
+			/// <summary>
+			/// This is used to better error reporting to the user when the default vernacular of the LIFT import file
+			/// does not match the project doing the import.
+			/// </summary>
+			public LiftMultiText LexemeForm
+			{
+				get { return m_lexemeForm; }
 			}
 		}
 		readonly List<PendingLexEntryRef> m_rgPendingLexEntryRefs = new List<PendingLexEntryRef>();

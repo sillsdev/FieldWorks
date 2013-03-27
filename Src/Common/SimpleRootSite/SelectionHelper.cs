@@ -1060,6 +1060,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_selInfo[iEnd] = new SelInfo(m_selInfo[iAnchor]);
 			}
 
+			// This change was proposed in change set 37331 but it's not clear what crash sometimes happens if it's not done.
+			// Apparently it doesn't always crash because some TeDllTests fail if we do this.
+			// Don't make a selection if the property indicates not to: see comment about -2 in InterlinDocForAnalysis.HandleSelectionChange
+			//if (m_selInfo[iAnchor].tagTextProp == -2)
+			//    return null;  // crashes if allowed to continue
+
 			// we want to pass fInstall=false to MakeTextSelection so that it doesn't notify
 			// the RootSite of the selection change.
 			IVwSelection vwSelAnchor;
@@ -1072,7 +1078,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					m_selInfo[iAnchor].ws, m_selInfo[iAnchor].fAssocPrev, m_selInfo[iAnchor].ihvoEnd,
 					null, false);
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 				Debug.Assert(m_selInfo[iEnd].rgvsli.Length > 0 || m_selInfo[iAnchor].rgvsli.Length == 0,
 					"Making the anchor selection failed, this is probably an empty editable field.");

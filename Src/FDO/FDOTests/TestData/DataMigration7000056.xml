@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languageproject version="7000055">
+	<rt class="PhPhonData" guid="be765e3e-ea5e-11de-9d42-0013722f8dec" ownerguid="af1d4e34-ea5e-11de-8ec5-0013722f8dec">
+		<NaturalClasses>
+			<objsur guid="d69c7174-ea5e-11de-9a7d-0013722f8dec" t="o" />
+			<objsur guid="d6a85d2c-ea5e-11de-83f4-0013722f8dec" t="o" />
+		</NaturalClasses>
+		<PhonemeSets>
+			<objsur guid="be7fe79c-ea5e-11de-8151-0013722f8dec" t="o" />
+		</PhonemeSets>
+	</rt>
+</languageproject>

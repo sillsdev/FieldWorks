@@ -812,7 +812,7 @@ namespace SIL.FieldWorks.TE
 				int iSectionFrom = 0;
 				for (int iSection = 0; iSection < book.SectionsOS.Count; ++iSection, prevSect = sect)
 				{
-					sect = book.SectionsOS[iSection] as IScrSection;
+					sect = book.SectionsOS[iSection];
 					sect.GetDisplayRefs(out startRef, out endRef);
 
 					if (sect.HeadingOA != null)

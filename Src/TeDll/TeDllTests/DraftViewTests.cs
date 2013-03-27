@@ -1202,8 +1202,8 @@ namespace SIL.FieldWorks.TE
 			// Load larger picture from resources and save it to file.
 			Image resImage = SimpleRootSite.ImageNotFoundX;
 			fileNameString = Guid.NewGuid() + ".bmp";
-			resImage.Save(FileUtils.OpenFileForBinaryWrite(fileNameString, Encoding.Default).BaseStream,
-				ImageFormat.Bmp);
+			using (var writer = FileUtils.OpenFileForBinaryWrite(fileNameString, Encoding.Default))
+				resImage.Save(writer.BaseStream, ImageFormat.Bmp);
 
 			ITsStrFactory factory = TsStrFactoryClass.Create();
 			return Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(fileNameString,
@@ -1368,7 +1368,7 @@ namespace SIL.FieldWorks.TE
 			IStTxtPara para;
 			int insertPos;
 			return InsertTestFootnote(howfar, ScrStyleNames.NormalFootnoteParagraph,
-				true, out book, out para, out insertPos);
+				out book, out para, out insertPos);
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1381,19 +1381,16 @@ namespace SIL.FieldWorks.TE
 		/// paragraph and zero would put it at the beginning.</param>
 		/// <param name="footnoteMarker">The footnote marker to assign the inserted
 		/// footnote.</param>
-		/// <param name="updateAutoMarkers">True to update the auto numbered footnotes, false
-		/// otherwise</param>
 		/// <param name="book">Returns the first IScrBook.</param>
 		/// <returns>The inserted footnote</returns>
 		/// ------------------------------------------------------------------------------------
 		private IScrFootnote InsertTestFootnote(int howfar, string footnoteMarker,
-			bool updateAutoMarkers, out IScrBook book)
+			out IScrBook book)
 		{
 			IStTxtPara para;
 			int insertPos;
 			IScrFootnote footnote = InsertTestFootnote(howfar,
-				ScrStyleNames.NormalFootnoteParagraph, updateAutoMarkers,
-				out book, out para, out insertPos);
+				ScrStyleNames.NormalFootnoteParagraph, out book, out para, out insertPos);
 			ITsStrFactory strFactory = TsStrFactoryClass.Create();
 			footnote.FootnoteMarker = strFactory.MakeString(footnoteMarker, Cache.DefaultVernWs);
 			return footnote;
@@ -1406,19 +1403,17 @@ namespace SIL.FieldWorks.TE
 		/// <param name="howfar">How far (as a percentage) the insertion point should be
 		/// located into the paragraph. 100 would put the insertion point at the end of the
 		/// paragraph and zero would put it at the beginning.</param>
-		/// <param name="updateAutoMarkers">True to update the auto numbered footnotes, false
-		/// otherwise</param>
 		/// <param name="book">Returns the first IScrBook</param>
 		/// <param name="para">Returns paragraph containing footnote</param>
 		/// <param name="insertPos">Returns position in paragraph where footnote
 		/// was inserted</param>
 		/// <returns>The inserted footnote</returns>
 		/// ------------------------------------------------------------------------------------
-		private IScrFootnote InsertTestFootnote(int howfar,
-			bool updateAutoMarkers, out IScrBook book, out IStTxtPara para, out int insertPos)
+		private IScrFootnote InsertTestFootnote(int howfar, out IScrBook book,
+			out IStTxtPara para, out int insertPos)
 		{
 			return InsertTestFootnote(howfar, ScrStyleNames.NormalFootnoteParagraph,
-				updateAutoMarkers, out book, out para, out insertPos);
+				out book, out para, out insertPos);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1436,27 +1431,7 @@ namespace SIL.FieldWorks.TE
 			IStTxtPara para;
 			int insertPos;
 			return InsertTestFootnote(howfar, ScrStyleNames.CrossRefFootnoteParagraph,
-				false, out book, out para, out insertPos);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Inserts a cross-reference into the book of Exodus, in the first section, first paragraph.
-		/// </summary>
-		/// <param name="howfar">How far (as a percentage) the insertion point should be
-		/// located into the paragraph. 100 would put the insertion point at the end of the
-		/// paragraph and zero would put it at the beginning.</param>
-		/// <param name="book">Returns the first IScrBook</param>
-		/// <param name="para">Returns paragraph containing cross-reference</param>
-		/// <param name="insertPos">Returns position in paragraph where cross-reference
-		/// was inserted</param>
-		/// <returns>The inserted cross-reference</returns>
-		/// ------------------------------------------------------------------------------------
-		private IScrFootnote InsertTestCrossRef(int howfar, out IScrBook book, out IStTxtPara para,
-			out int insertPos)
-		{
-			return InsertTestFootnote(howfar, ScrStyleNames.CrossRefFootnoteParagraph,
-				false, out book, out para, out insertPos);
+				out book, out para, out insertPos);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1468,8 +1443,6 @@ namespace SIL.FieldWorks.TE
 		/// located into the paragraph. 100 would put the insertion point at the end of the
 		/// paragraph and zero would put it at the beginning.</param>
 		/// <param name="footnoteParaStyleId">The paragraph style name</param>
-		/// <param name="updateAutoMarkers">True to update the auto numbered footnotes, false
-		/// otherwise</param>
 		/// <param name="book">Returns the first IScrBook</param>
 		/// <param name="para">Returns paragraph containing footnote</param>
 		/// <param name="insertPos">Returns position in paragraph where footnote
@@ -1477,12 +1450,12 @@ namespace SIL.FieldWorks.TE
 		/// <returns>The inserted footnote</returns>
 		/// ------------------------------------------------------------------------------------
 		private IScrFootnote InsertTestFootnote(int howfar, string footnoteParaStyleId,
-			bool updateAutoMarkers, out IScrBook book, out IStTxtPara para, out int insertPos)
+			out IScrBook book, out IStTxtPara para, out int insertPos)
 		{
 			//Exodus - book 0, doesn't have footnotes. This method will add one to it.
 			book = m_scr.ScriptureBooksOS[0];
 			IScrSection section = book.SectionsOS[0];
-			para = (IStTxtPara)section.ContentOA[0];
+			para = section.ContentOA[0];
 
 			insertPos = (int) (para.Contents.Length * ((double)howfar / 100));
 
@@ -1508,7 +1481,7 @@ namespace SIL.FieldWorks.TE
 			int insertPos;
 
 			// Insert a footnote at the end of the paragraph.
-			IScrFootnote footnote1 = InsertTestFootnote(100, true, out book, out contentPara, out insertPos);
+			IScrFootnote footnote1 = InsertTestFootnote(100, out book, out contentPara, out insertPos);
 
 			Assert.AreEqual(1, book.FootnotesOS.Count);
 			Assert.IsNotNull(book.FootnotesOS[0]);
@@ -2154,7 +2127,7 @@ namespace SIL.FieldWorks.TE
 			IScrBook book;
 			IStTxtPara para;
 			int inpos;
-			InsertTestFootnote(0, true, out book, out para, out inpos);
+			InsertTestFootnote(0, out book, out para, out inpos);
 			int cRun = para.Contents.RunCount;
 			m_draftView.SetInsertionPoint(0, 0, 0, 0, false);
 			m_draftView.EditingHelper.OnKeyPress(new KeyPressEventArgs('E'), Keys.None);
@@ -2176,7 +2149,7 @@ namespace SIL.FieldWorks.TE
 			IScrBook book;
 			IStTxtPara para;
 			int inpos;
-			InsertTestFootnote(0, true, out book, out para, out inpos);
+			InsertTestFootnote(0, out book, out para, out inpos);
 			Assert.IsTrue(para.Contents.RunCount > 1);
 			ITsString beforeTss = para.Contents;
 			m_draftView.SetInsertionPoint(0, 0, 0, 0, false);
@@ -2549,7 +2522,6 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: Hangs/infinite loops in VwTextBoxes.cpp in state kzpbsAddWsRun while setting ViewConstructorWS from this method.")]
 		public void TextDirectionTest_RightToLeft()
 		{
 

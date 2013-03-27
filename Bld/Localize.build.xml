@@ -25,7 +25,7 @@
 
 	<target name="processLanguages" description="Main target for processing all .po files">
 		<tstamp/>
-		<exec program="ProcessLanguagesBld.exe"
+		<exec program="${fwroot}/Bin/ProcessLanguagesBld.exe"
 			commandline='${config} ${fwroot} ${dir.fwoutput}'
 			failonerror="true" verbose="${verbose}"/>
 		<tstamp/>
@@ -33,6 +33,7 @@
 
 	<target name="buildLocalizedDlls"
 		description="Executes all of the command files built for a language">
+		<echo message="Building DLLs for language '${language}'"/>
 		<mkdir dir="${dir.outputBase}/${language}"/>
 		<!-- ensure any prior localization include files are wiped out -->
 		<delete failonerror="false">
@@ -40,6 +41,8 @@
 				<include name="${dir.outputBase}/${language}/**/*.include"/>
 			</fileset>
 		</delete>
+		<property name="JavaExeName" value="java.exe" unless="${platform::is-unix()}"/>
+		<property name="JavaExeName" value="java" if="${platform::is-unix()}"/>
 		<!-- Loop over all folders in src directory that contain .resx files -->
 		<foreach item="Folder" property="folder">
 			<in>
@@ -76,10 +79,10 @@
 							<echo message="No .csproj file in directory ${folder} and parent directory."/>
 						</if>
 						<property name="isSubdir" value="true"/>
-						<regex pattern="^.*Src\\.+\\(?'subFolder'[^/]+)$" input="${folder}"/>
+						<regex pattern="^.*Src[/\\].+[/\\](?'subFolder'[^/]+)$" input="${folder}"/>
 					</if>
 					<if test="${fileset::get-file-count('CsProjFiles') &gt; 0}">
-						<regex pattern="^.*Src\\(?'projDir'.+)\\(?'projName'[^/]+)\.[Cc][Ss][Pp][Rr][Oo][Jj]$" input="${csproj}" />
+						<regex pattern="^.*Src[/\\](?'projDir'.+)[/\\](?'projName'[^/]+)\.[Cc][Ss][Pp][Rr][Oo][Jj]$" input="${csproj}" />
 						<!-- Need to get assembly name and root name space from .csproj file -->
 						<xmlpeek file="${csproj}" property="AssemblyName" nodeindex="0"
 								 xpath="ms:Project/ms:PropertyGroup/ms:AssemblyName">
@@ -125,18 +128,21 @@
 							</in>
 							<do>
 								<echo message="Creating ${language} version of ${resxFile}" if="${verbose}"/>
-								<regex pattern="^.*Src\\(?'partialDir'.+)\\(?'fileName'[^/]+)\.[rR][eE][sS][xX]$" input="${resxFile}" />
+								<regex pattern="^.*Src[/\\](?'partialDir'.+)[/\\](?'fileName'[^/]+)\.[rR][eE][sS][xX]$" input="${resxFile}" />
 								<!-- Couldn't get the style task to work, the validating XML reader it uses rejects the .resx file -->
 								<property name="resBaseName" value="${RootNamespace}.${fileName}.${language}"/>
 								<property name="resBaseName" value="${RootNamespace}.${subFolder}.${fileName}.${language}" if="${bool::parse(isSubdir)==true}"/>
-								<exec program="java.exe"
-									  commandline="-Xmx128m -jar ${fwroot}/Bin/saxon/saxon.jar -o ${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resx ${resxFile} LocalizeResx.xsl lang=${language}"/>
+								<!-- The following launch of Java has a separate version for Windows and Linux, because running the Linux version on Windows takes 4 times longer. -->
+								<exec program="${JavaExeName}" unless="${platform::is-unix()}"
+									commandline="-Xmx128m -jar ${fwroot}/Bin/saxon/saxon.jar -o ${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resx ${resxFile} LocalizeResx.xsl lang=${language}"/>
+								<exec program="xsltproc" if="${platform::is-unix()}"
+									commandline="--stringparam lang ${language} --stringparam outputdir ${dir.fwoutput} -o ${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resx LocalizeResx.xsl ${resxFile}"/>
 								<echo file="${dir.fwoutput}/${language}/${projDir}/${projName}.include" append="true">${dir.fwoutput}/${language}/${partialDir}/${resBaseName}.resources
 								</echo>
 							</do>
 						</foreach>
 
-						<cd dir="${folder}"/>
+						<echo message="about to execute resgenex task in nant" if="${verbose}"/>
 						<resgenex todir="${dir.fwoutput}/${language}/${partialDir}" verbose="${verbose}"
 								basedir="${folder}">
 							<resources basedir="${dir.fwoutput}/${language}/${partialDir}">
@@ -150,6 +156,7 @@
 
 						<if test="${bool::parse(isSubdir) == false}">
 							<!-- build dll -->
+							<echo message="about to execute alex task in nant" if="${verbose}"/>
 							<alex output="${dir.outputBase}/${language}/${AssemblyName}.resources.dll"
 								target="lib" culture="${language}" verbose="${verbose}"
 								fileversion="${FileVersion}" productversion="${InformationalVersion}"

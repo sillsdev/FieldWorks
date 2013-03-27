@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			if (m_fAutoClose)
 				m_btnClose.Text = Properties.Resources.ksSkip;
 			this.Text = String.Format(this.Text, version);
-			foreach (string proj in projects)
+			foreach (string proj in m_projects)
 			{
 				if (proj == ImportFrom6_0.TempDatabaseName)
 				{
@@ -302,19 +302,21 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 
 			using (SqlConnection sqlConnection = new SqlConnection(
 				string.Format("Server={0}\\SILFW; Database={1}; User ID = sa; Password=inscrutable;" +
-					   "Connect Timeout = 30; Pooling=false;", Environment.MachineName, dbName)))
+					"Connect Timeout = 30; Pooling=false;", Environment.MachineName, dbName)))
 			{
-				SqlDataReader sqlreader = null;
 				try
 				{
 					sqlConnection.Open();
-					SqlCommand sqlComm = sqlConnection.CreateCommand();
-
-					string sSql = "select DbVer from Version$";
-					sqlComm.CommandText = sSql;
-					sqlreader = sqlComm.ExecuteReader(System.Data.CommandBehavior.SingleResult);
-					if (sqlreader.Read())
-						version = sqlreader.GetInt32(0);
+					using (SqlCommand sqlComm = sqlConnection.CreateCommand())
+					{
+						string sSql = "select DbVer from Version$";
+						sqlComm.CommandText = sSql;
+						using (var sqlreader = sqlComm.ExecuteReader(System.Data.CommandBehavior.SingleResult))
+						{
+							if (sqlreader.Read())
+								version = sqlreader.GetInt32(0);
+						}
+					}
 				}
 				catch
 				{
@@ -322,8 +324,6 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				}
 				finally
 				{
-					if (sqlreader != null)
-						sqlreader.Close();
 					sqlConnection.Close();
 				}
 			}

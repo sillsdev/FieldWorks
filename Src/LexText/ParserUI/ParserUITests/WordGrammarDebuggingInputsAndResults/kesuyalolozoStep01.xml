@@ -2,52 +2,52 @@
 <word>
   <form>kesuyalolozo</form>
   <seq step="Try to build a Stem node on a root.">
-	<morph wordType="proclitic">
-	  <shortName>ke= (Question): ke</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="proclitic">
-	  <shortName>su= (PhraseInitial): su</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
-	<stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
-	  <morph wordType="root">
-		<shortName>yalo (mat): yalo</shortName>
-		<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<morph wordType="enclitic">
-	  <shortName>=lo (PhraseFinal): lo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="enclitic">
-	  <shortName>=zo (RelativeClause): zo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="proclitic">
+      <shortName>ke= (Question): ke</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="proclitic">
+      <shortName>su= (PhraseInitial): su</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
+    <stem syncat="81" syncatAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+">
+      <morph wordType="root">
+        <shortName>yalo (mat): yalo</shortName>
+        <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+      </morph>
+    </stem>
+    <morph wordType="enclitic">
+      <shortName>=lo (PhraseFinal): lo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="enclitic">
+      <shortName>=zo (RelativeClause): zo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
-	<morph wordType="proclitic">
-	  <shortName>ke= (Question): ke</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="proclitic">
-	  <shortName>su= (PhraseInitial): su</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
-	<partial syncat="81" syncatAbbr="n">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
-	  <morph wordType="root">
-		<shortName>yalo (mat): yalo</shortName>
-		<stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
-	  </morph>
-	</partial>
-	<morph wordType="enclitic">
-	  <shortName>=lo (PhraseFinal): lo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="enclitic">
-	  <shortName>=zo (RelativeClause): zo</shortName>
-	  <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="proclitic">
+      <shortName>ke= (Question): ke</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="proclitic">
+      <shortName>su= (PhraseInitial): su</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
+    <partial syncat="81" syncatAbbr="n">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
+      <morph wordType="root">
+        <shortName>yalo (mat): yalo</shortName>
+        <stemMsa cat="81" catAbbr="n" inflClass="99" inflClassAbbr="I" requiresInfl="+" />
+      </morph>
+    </partial>
+    <morph wordType="enclitic">
+      <shortName>=lo (PhraseFinal): lo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="enclitic">
+      <shortName>=zo (RelativeClause): zo</shortName>
+      <stemMsa cat="103" catAbbr="part" inflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
 </word>

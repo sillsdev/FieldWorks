@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.Controls
 			keyAttrs["part"] = new[] {"ref"};
 
 			var layoutInventory = new Inventory(new[] {partDirectory},
-				"*Layouts.xml", "/LayoutInventory/*", keyAttrs, app.ApplicationName, projectPath);
+				"*.fwlayout", "/LayoutInventory/*", keyAttrs, app.ApplicationName, projectPath);
 
 			layoutInventory.Merger = new LayoutMerger();
 			// Holding shift key means don't use extant preference file, no matter what.

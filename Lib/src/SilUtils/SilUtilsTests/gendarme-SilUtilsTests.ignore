@@ -1,0 +1,7 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Disposed in FixtureTearDown method
+T: SIL.Utils.OpenFileDialogLinuxTests

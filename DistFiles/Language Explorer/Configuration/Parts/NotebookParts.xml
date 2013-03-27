@@ -39,14 +39,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-SubRecords" type="detail">
-			<choice>
-				<where target="owner" is="RnGenericRec">
-					<seq field="SubRecords" indent="true" layout="SubRecord"/>
-				</where>
-				<otherwise>
-					<seq field="SubRecords" indent="true" layout="SubRecord"/>
-				</otherwise>
-			</choice>
+			<seq field="SubRecords" indent="true" layout="SubRecord"/>
 		</part>
 
 		<part id="RnGenericRec-Detail-HeavySummary" type="detail" paramType="JtLayoutsOfThisClass">
@@ -63,7 +56,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-AnthroCodes" type="Detail">
-			<slice field="AnthroCodes" label="Anthropology Categories" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="AnthroCodes" label="Anthropology Categories" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analysis" displayProperty="AbbrAndNameTSS"/>
 				<chooserInfo helpBrowser="true">
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
@@ -73,7 +66,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Confidence" type="Detail">
-			<slice field="Confidence" label="Confidence" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Confidence" label="Confidence" editor="possAtomicReference" menu="mnuDataTree-Help">
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the list of Confidence Levels" tool="confidenceEdit" />
 				</chooserInfo>
@@ -81,7 +74,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Locations" type="Detail">
-			<slice field="Locations" label="Locations" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="Locations" label="Locations" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo>
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
@@ -91,7 +84,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Researchers" type="Detail">
-			<slice field="Researchers" label="Researchers" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="Researchers" label="Researchers" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo>
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
@@ -101,7 +94,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Restrictions" type="Detail">
-			<slice field="Restrictions" label="Restrictions" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="Restrictions" label="Restrictions" editor="possVectorReference" menu="mnuDataTree-Help">
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the list of Restrictions" tool="restrictionsEdit" />
 				</chooserInfo>
@@ -109,7 +102,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Sources" type="Detail">
-			<slice field="Sources" label="Sources" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="Sources" label="Sources" editor="possVectorReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
 				<chooserInfo>
 					<!-- Duplicates info in Text-Detail-NotebookFields-->
@@ -119,7 +112,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Status" type="Detail">
-			<slice field="Status" label="Status" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Status" label="Status" editor="possAtomicReference" menu="mnuDataTree-Help">
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Status list" tool="statusEdit" />
 				</chooserInfo>
@@ -127,7 +120,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-TimeOfEvent" type="Detail">
-			<slice field="TimeOfEvent" label="Time of Event" editor="defaultVectorReference" menu="mnuDataTree-Help">
+			<slice field="TimeOfEvent" label="Time of Event" editor="possVectorReference" menu="mnuDataTree-Help">
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Time of Day list" tool="timeOfDayEdit" />
 				</chooserInfo>
@@ -135,7 +128,7 @@
 		</part>
 
 		<part id="RnGenericRec-Detail-Type" type="Detail">
-			<slice field="Type" label="Record Type" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="Type" label="Record Type" editor="possAtomicReference" menu="mnuDataTree-Help">
 				<deParams nullLabel=""/>
 				<chooserInfo>
 					<chooserLink type="goto" label="Edit the Record Types" tool="recTypeEdit" />

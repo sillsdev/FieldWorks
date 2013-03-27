@@ -98,7 +98,7 @@ namespace XCore
 		protected Set<string> m_inventoryPaths;
 		// The pattern used to find files to load into the inventory in a directory.
 		// PersistOverrideElement assumes that it can strip off one character to get a useful
-		// suffix for a file name (e.g., '*Layouts.xml' is a typical pattern).
+		// suffix for a file name (e.g., '*.fwlayout' is a typical pattern).
 		protected string m_filePattern;
 		protected string m_sDatabase = null;
 		protected string m_projectPath;
@@ -267,7 +267,7 @@ namespace XCore
 				{
 					// LT-11193 Don't delete user overrides if they are new dictionary views
 					// (from the Manage Views dialog)
-					if(sFilename.Split(new[] {ksUnderscore}, StringSplitOptions.RemoveEmptyEntries).Length > 2)
+					if(sFilename.Split(new[] {ksUnderscore}, StringSplitOptions.RemoveEmptyEntries).Length > 1)
 						continue;
 
 					File.Delete(sFilename);
@@ -296,8 +296,8 @@ namespace XCore
 		///    attributes. For example, if we have
 		/// 			keyAttrs["layout"] = new string[] {"class", "type", "name" };
 		///    and an element layout class="LexEntry" type="Detail" name="Full"
-		///    and our m_filePattern is "Layouts.xml"
-		///    we want to make a file LexEntry_Layouts.xml.
+		///    and our m_filePattern is ".fwlayout"
+		///    we want to make a file LexEntry.fwlayout.
 		///   If this file already exists, we replace or append the element that matches
 		///   the one we're given according to our key attributes.
 		///
@@ -350,7 +350,7 @@ namespace XCore
 			if (String.IsNullOrEmpty(name))
 				name = XmlUtils.GetManditoryAttributeValue(element, keyAttrs[0]);
 			string sDatabase = String.IsNullOrEmpty(m_sDatabase) ? "default$$" : "";
-			string fileName = sDatabase + name + ksUnderscore + m_filePattern.Substring(1); // strip off leading *
+			string fileName = sDatabase + name + m_filePattern.Substring(1); // strip off leading *
 			string path = Path.Combine(UserOverrideConfigurationSettingsPath, fileName);
 			CreateDirectoryIfNonexistant(UserOverrideConfigurationSettingsPath);
 			XmlDocument doc = null;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,8 @@ namespace XMLViewsTests
 	/// Test (some aspects of) XmlVc
 	/// </summary>
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_sda gets disposed in FixtureTeardown()")]
 	public class XmlVcTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private RealDataCache m_sda;
@@ -92,7 +95,7 @@ namespace XMLViewsTests
 			keyAttrs["layout"] = new[] { "class", "type", "name", "choiceGuid" };
 			keyAttrs["group"] = new[] { "label" };
 			keyAttrs["part"] = new[] { "ref" };
-			var layoutInventory = new Inventory("*Layouts.xml", "/LayoutInventory/*", keyAttrs, "test", "nowhere");
+			var layoutInventory = new Inventory("*.fwlayout", "/LayoutInventory/*", keyAttrs, "test", "nowhere");
 			layoutInventory.LoadElements(Resources.Layouts_xml, 1);
 
 			keyAttrs = new Dictionary<string, string[]>();
@@ -143,18 +146,20 @@ namespace XMLViewsTests
 		[Test]
 		public void StringPropIsMarked()
 		{
-			var view = new XmlView(m_hvoLexDb, "root", null, true, m_sda);
-			var vc = new XmlVc(null, "root", true, view , null);
-			vc.IdentifySource = true;
-			vc.SetCache(Cache);
-			vc.m_layouts = m_layouts;
-			vc.DataAccess = m_sda;
-			var testEnv = new MockEnv() {DataAccess = m_sda, OpenObject = m_hvoLexDb};
-			vc.Display(testEnv, m_hvoLexDb, XmlVc.kRootFragId);
-			VerifySourceIdentified(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, "Entry:basic:Headword:HeadwordL");
-			VerifyLabel(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, 1, ")", "Entry:basic:Headword:HeadwordL");
-			VerifyLabel(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, -2, "head(", "Entry:basic:Headword:HeadwordL");
-			VerifySourceIdentified(testEnv.EventHistory, m_hvoKick, kflidEntry_Summary, "Entry:basic:Summary:Sum.");
+			using (var view = new XmlView(m_hvoLexDb, "root", null, true, m_sda))
+			{
+				var vc = new XmlVc(null, "root", true, view, null, m_sda);
+				vc.IdentifySource = true;
+				vc.SetCache(Cache);
+				vc.m_layouts = m_layouts;
+				vc.DataAccess = m_sda;
+				var testEnv = new MockEnv() {DataAccess = m_sda, OpenObject = m_hvoLexDb};
+				vc.Display(testEnv, m_hvoLexDb, XmlVc.kRootFragId);
+				VerifySourceIdentified(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, "Entry:basic:Headword:HeadwordL");
+				VerifyLabel(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, 1, ")", "Entry:basic:Headword:HeadwordL");
+				VerifyLabel(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, -2, "head(", "Entry:basic:Headword:HeadwordL");
+				VerifySourceIdentified(testEnv.EventHistory, m_hvoKick, kflidEntry_Summary, "Entry:basic:Summary:Sum.");
+			}
 		}
 
 		private void VerifySourceIdentified(List<Object> events, int hvo, int tag, int ws, string expected)

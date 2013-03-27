@@ -547,13 +547,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_obj = m_fdoCache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_hvoObj);
 
 				CellarPropertyType type = (CellarPropertyType)m_fdoCache.DomainDataByFlid.MetaDataCache.GetFieldType(m_flid);
-				if (type == CellarPropertyType.Unicode
-					|| type == CellarPropertyType.BigUnicode)
+				if (type == CellarPropertyType.Unicode)
 				{
 					m_vc = new UnicodeStringSliceVc(m_flid, m_ws, m_fdoCache);
 				}
-				else if (type == CellarPropertyType.String
-					|| type == CellarPropertyType.BigString)
+				else if (type == CellarPropertyType.String)
 				{
 					// Even if we were given a writing system, we must not use it if not a multistring,
 					// otherwise the VC crashes when it tries to read the property as multilingual.

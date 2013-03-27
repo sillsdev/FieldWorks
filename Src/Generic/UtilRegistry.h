@@ -56,6 +56,16 @@ public:
 			== ERROR_SUCCESS;
 	}
 
+	// Initialize the RegKey (after closing any old one) with the specified path on the
+	// current user. Uses common defaults for other parameters and returns true if
+	// successful.
+	bool InitCu(achar * pszPath)
+	{
+		Close();
+		return ::RegOpenKeyEx(HKEY_CURRENT_USER, pszPath, 0, KEY_QUERY_VALUE, &m_hkey)
+			== ERROR_SUCCESS;
+	}
+
 	// Cast operator.
 	operator HKEY (void) {
 		return m_hkey;
@@ -86,8 +96,6 @@ public:
 	static StrUni FwRootDataDir();
 	static StrUni FwRootCodeDir();
 	static StrUni FwTemplateDir();
-	static StrUni IcuDir();
-	static StrUni IcuDataDir();
 };
 
 #endif //!UTILREGISTRY_H

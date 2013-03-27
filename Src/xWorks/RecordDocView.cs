@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
@@ -270,6 +271,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="rcDstRoot"></param>
 		/// <returns></returns>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to m_contextMenu.Items and disposed there")]
 		protected override bool DoContextMenu(IVwSelection sel, Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			int hvo, tag, ihvo, cpropPrevious;
@@ -320,8 +323,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (var dlg = new XmlDocConfigureDlg())
 			{
-				var sProp = XmlUtils.GetOptionalAttributeValue(m_xnSpec, "layoutProperty",
-					"DictionaryPublicationLayout");
+				// If this is optional and defaults to DictionaryPublicationLayout,
+				// it messes up our Dictionary when we make something else configurable (like Classified Dictionary).
+				var sProp = XmlUtils.GetAttributeValue(m_xnSpec, "layoutProperty");
+				Debug.Assert(sProp != null, "When making a view configurable you need to put a 'layoutProperty' in the XML configuration.");
 				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (FwStyleSheet)StyleSheet,
 					FindForm() as IMainWindowDelegateCallbacks, Mediator, sProp);
 				if (nodePath != null)

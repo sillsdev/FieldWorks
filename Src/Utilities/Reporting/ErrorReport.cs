@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -144,6 +145,8 @@ namespace SIL.Utils
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Variables added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ErrorReporter));
@@ -271,6 +274,7 @@ namespace SIL.Utils
 			this.MinimizeBox = false;
 			this.Name = "ErrorReporter";
 			this.ShowIcon = false;
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -342,6 +346,7 @@ namespace SIL.Utils
 
 				string caption = ReportingStrings.kstidFieldWorksErrorCaption;
 				string appExit = ReportingStrings.kstidFieldWorksErrorExitInfo;
+				// TODO-Linux: MessageBox.Show doesn't implement help
 				MessageBox.Show(parent, error.Message.Substring(0, lengthOfBasicMessage) + Environment.NewLine + appExit,
 					caption, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, 0,
 					sHelpFile, HelpNavigator.Topic, sHelpTopic);
@@ -364,6 +369,8 @@ namespace SIL.Utils
 		/// Invoked by a menu command, allows the user to report a problem that didn't crash the program,
 		/// complete with all the context information we attach to crashes (except a stack dump).
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void ReportProblem(RegistryKey applicationKey, string emailAddress, Form parent)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress);
@@ -372,7 +379,7 @@ namespace SIL.Utils
 			e.Closed += ModelessClosed;
 		}
 
-		static void ModelessClosed(object sender, EventArgs e)
+		private static void ModelessClosed(object sender, EventArgs e)
 		{
 			((ErrorReporter)sender).Dispose();
 		}
@@ -381,6 +388,8 @@ namespace SIL.Utils
 		/// Invoked by a menu command, allows the user to make a suggestion,
 		/// complete with all the context information we attach to crashes (except a stack dump).
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ErrorReporter dialog gets disposed in ModelessClosed method")]
 		public static void MakeSuggestion(RegistryKey applicationKey, string emailAddress, Form parent)
 		{
 			ErrorReporter e = new ErrorReporter(false, emailAddress);
@@ -453,12 +462,12 @@ namespace SIL.Utils
 			//
 			InitializeComponent();
 
+			SetDialogStringsSoLocatilizationWorks();
+
 			m_viewDetailsOriginalText = viewDetailsLink.Text;
 			m_originalHeightWithoutDetails = Height - m_details.Height - 10;
 			m_originalHeight = Height;
 			m_originalMinSize = MinimumSize;
-
-			SetDialogStringsSoLocatilizationWorks();
 
 			if (m_fUserReport)
 			{
@@ -484,9 +493,7 @@ namespace SIL.Utils
 				btnClose.Enabled = false;
 			}
 
-			var show = s_showDetails; // should it be showing?
 			s_showDetails = true; // the resource-file state of the dialog is showing.
-			ShowDetails(show); // put everything in the desired state.
 
 			if (m_emailAddress == null)
 			{
@@ -534,7 +541,7 @@ namespace SIL.Utils
 			}
 
 			detailsText.AppendLine("Additional information about the computer and project:");
-			foreach(string label in s_properties.Keys )
+			foreach (string label in s_properties.Keys)
 				detailsText.AppendLine(label + ": " + s_properties[label]);
 
 			if (innerMostException != null)
@@ -620,6 +627,14 @@ namespace SIL.Utils
 		private bool m_fSuggestion;
 
 		#region Event Handlers
+		/// <summary/>
+		protected override void OnShown(EventArgs e)
+		{
+			base.OnShown(e);
+			// Initially hide the details
+			ShowDetails(false);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
@@ -631,7 +646,7 @@ namespace SIL.Utils
 		{
 			var body = GatherData();
 
-			if(radEmail.Checked)
+			if (radEmail.Checked)
 			{
 				var emailProvider = EmailProviderFactory.PreferredEmailProvider();
 				var emailMessage = emailProvider.CreateMessage();
@@ -650,32 +665,10 @@ namespace SIL.Utils
 					radSelf.Checked = true;
 					return;
 				}
-
-				//try
-				//{
-				//    // WARNING! This currently does not work. The main issue seems to be the length of the error report. mailto
-				//    // apparently has some limit on the length of the message, and we are exceeding that.
-				//    //make it safe, but does too much (like replacing spaces with +'s)
-				//    //string s = System.Web.HttpUtility.UrlPathEncode( m_details.Text);
-				//    string body = m_details.Text.Replace(Environment.NewLine, "%0A").Replace("\"", "%22").Replace("&", "%26");
-
-				//    Process p = new Process();
-				//    p.StartInfo.FileName = String.Format("mailto:{0}?subject={1}&body={2}", m_emailAddress, s_emailSubject, body);
-				//    p.Start();
-				//}
-				//catch(Exception)
-				//{
-				//    //swallow it
-				//}
-//				catch(Exception ex)
-//				{
-//					System.Diagnostics.Debug.WriteLine(ex.Message);
-//					System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-//				}
 			}
-			else if(radSelf.Checked)
+			else if (radSelf.Checked)
 			{
-				if(m_emailAddress != null)
+				if (m_emailAddress != null)
 				{
 					if (m_fUserReport)
 					{
@@ -691,12 +684,27 @@ namespace SIL.Utils
 				// Copying to the clipboard works only if thread is STA which is not the case if
 				// called from the Finalizer thread
 				if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+				{
+#if __MonoCS__
+					// Workaround for Xamarin bug #4959. I had a mono fix for that bug
+					// but that doesn't work with FW - I couldn't figure out why not.
+					// This is a dirty hack but at least works :-)
+					var clipboardAtom = gdk_atom_intern("CLIPBOARD", true);
+					var clipboard = gtk_clipboard_get(clipboardAtom);
+					if (clipboard != IntPtr.Zero)
+					{
+						gtk_clipboard_set_text(clipboard, body, -1);
+						gtk_clipboard_store(clipboard);
+					}
+#else
 					ClipboardUtils.SetDataObject(body, true);
+#endif
+				}
 				else
 					Logger.WriteEvent(body);
 			}
 
-			if(!m_isLethal || ModifierKeys.Equals(Keys.Shift))
+			if (!m_isLethal || ModifierKeys.Equals(Keys.Shift))
 			{
 				Logger.WriteEvent("Continuing...");
 				Close();
@@ -707,6 +715,22 @@ namespace SIL.Utils
 			Logger.WriteEvent("Exiting...");
 			Application.Exit();
 		}
+
+#if __MonoCS__
+		// Workaround for Xamarin bug #4959
+
+		[DllImport("libgdk-x11-2.0")]
+		internal extern static IntPtr gdk_atom_intern(string atomName, bool onlyIfExists);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static IntPtr gtk_clipboard_get(IntPtr atom);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static void gtk_clipboard_store(IntPtr clipboard);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static void gtk_clipboard_set_text(IntPtr clipboard, [MarshalAs(UnmanagedType.LPStr)] string text, int len);
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -769,24 +793,13 @@ namespace SIL.Utils
 			ShowDetails(!s_showDetails);
 		}
 
-		void ShowDetails(bool show)
+		private void ShowDetails(bool show)
 		{
 			viewDetailsLink.Text = show ? ReportingStrings.ksHideDetails : m_viewDetailsOriginalText;
 			if (s_showDetails == show)
 				return; // already in desired state!
 			s_showDetails = show;
 			m_details.Visible = show;
-			// Not currently necessary, all the relevant controls are anchored bottom.
-			//foreach (Control c in Controls)
-			//{
-			//    if (c.Top > m_details.Top)
-			//    {
-			//        if (show)
-			//            c.Top += m_details.Height;
-			//        else
-			//            c.Top -= m_details.Height;
-			//    }
-			//}
 			if (show)
 			{
 				Height = m_originalHeight;

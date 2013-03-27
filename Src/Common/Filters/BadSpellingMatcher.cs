@@ -1,6 +1,7 @@
 using System;
 using System.Xml;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
@@ -33,6 +34,8 @@ namespace SIL.FieldWorks.Filters
 		/// </summary>
 		/// <param name="arg"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetDictionary() returns a reference")]
 		public override bool Matches(SIL.FieldWorks.Common.COMInterfaces.ITsString arg)
 		{
 			var dict = EnchantHelper.GetDictionary(m_ws, WritingSystemFactory);

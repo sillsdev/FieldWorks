@@ -49,7 +49,6 @@
 		<xs:group ref="documentation"/>
 	  </xs:sequence>
 	  <xs:attributeGroup ref="coreGroup"/>
-	  <xs:attribute name="big" type="xs:boolean"/>
 	  <xs:attribute name="max" type="xs:integer"/>
 	  <xs:attribute name="min" type="xs:integer"/>
 	</xs:complexType>

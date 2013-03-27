@@ -17,10 +17,14 @@
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (m_openFileDlg != null)
+					m_openFileDlg.Dispose();
+				if (components != null)
+					components.Dispose();
 			}
+			m_openFileDlg = null;
 			base.Dispose(disposing);
 		}
 

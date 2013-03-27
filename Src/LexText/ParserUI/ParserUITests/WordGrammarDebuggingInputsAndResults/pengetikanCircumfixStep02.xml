@@ -2,277 +2,277 @@
 <word>
   <form>pengetikan</form>
   <seq step="Try to build a Stem node by prepending a derivational circumfix-prefix and, at the same time, appending a derivational circumfix-suffix to another Stem node.">
-	<stem syncat="6" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="-" blocksInfl="-">
-	  <morph wordType="derivCircumPfx">
-		<shortName>peng- (NMLZR): peN- ... -an</shortName>
-		<alloform>peng-</alloform>
-		<gloss>(NMLZR): peN- ...</gloss>
-		<citationForm>-an</citationForm>
-		<derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	  </morph>
-	  <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>etik (type): ketik</shortName>
-		  <alloform>etik</alloform>
-		  <gloss>(type):</gloss>
-		  <citationForm>ketik</citationForm>
-		  <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <morph wordType="derivCircumSfx">
-		<shortName>-an (NMLZR): peN- ... -an</shortName>
-		<alloform>-an</alloform>
-		<gloss>(NMLZR): peN- ...</gloss>
-		<citationForm>-an</citationForm>
-		<derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	  </morph>
-	</stem>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <stem syncat="6" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="-" blocksInfl="-">
+      <morph wordType="derivCircumPfx">
+        <shortName>peng- (NMLZR): peN- ... -an</shortName>
+        <alloform>peng-</alloform>
+        <gloss>(NMLZR): peN- ...</gloss>
+        <citationForm>-an</citationForm>
+        <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+      </morph>
+      <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>etik (type): ketik</shortName>
+          <alloform>etik</alloform>
+          <gloss>(type):</gloss>
+          <citationForm>ketik</citationForm>
+          <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
+        </morph>
+      </stem>
+      <morph wordType="derivCircumSfx">
+        <shortName>-an (NMLZR): peN- ... -an</shortName>
+        <alloform>-an</alloform>
+        <gloss>(NMLZR): peN- ...</gloss>
+        <citationForm>-an</citationForm>
+        <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+      </morph>
+    </stem>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to build a Full analysis node on an uninflected Stem node.">
-	<morph wordType="derivCircumPfx">
-	  <shortName>peng- (NMLZR): peN- ... -an</shortName>
-	  <alloform>peng-</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<full syncat="12" syncatAbbr="v" requiresInfl="+" inflected="-">
-	  <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>etik (type): ketik</shortName>
-		  <alloform>etik</alloform>
-		  <gloss>(type):</gloss>
-		  <citationForm>ketik</citationForm>
-		  <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
-		</morph>
-	  </stem>
-	</full>
-	<morph wordType="derivCircumSfx">
-	  <shortName>-an (NMLZR): peN- ... -an</shortName>
-	  <alloform>-an</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="derivCircumPfx">
+      <shortName>peng- (NMLZR): peN- ... -an</shortName>
+      <alloform>peng-</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <full syncat="12" syncatAbbr="v" requiresInfl="+" inflected="-">
+      <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>etik (type): ketik</shortName>
+          <alloform>etik</alloform>
+          <gloss>(type):</gloss>
+          <citationForm>ketik</citationForm>
+          <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
+        </morph>
+      </stem>
+    </full>
+    <morph wordType="derivCircumSfx">
+      <shortName>-an (NMLZR): peN- ... -an</shortName>
+      <alloform>-an</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Possessed noun'.  The result will be a Full analysis node.">
-	<morph wordType="derivCircumPfx">
-	  <shortName>peng- (NMLZR): peN- ... -an</shortName>
-	  <alloform>peng-</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
-	  <failure>The  category (n) of the inflectional template "Possessed noun" is incompatible with the category (v) of the stem.</failure><stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+"><morph wordType="root"><shortName>etik (type): ketik</shortName><alloform>etik</alloform><gloss>(type):</gloss><citationForm>ketik</citationForm><stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" /></morph></stem></full>
-	<morph wordType="derivCircumSfx">
-	  <shortName>-an (NMLZR): peN- ... -an</shortName>
-	  <alloform>-an</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="derivCircumPfx">
+      <shortName>peng- (NMLZR): peN- ... -an</shortName>
+      <alloform>peng-</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
+      <failure>The  category (n) of the inflectional template "Possessed noun" is incompatible with the category (v) of the stem.</failure><stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+"><morph wordType="root"><shortName>etik (type): ketik</shortName><alloform>etik</alloform><gloss>(type):</gloss><citationForm>ketik</citationForm><stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" /></morph></stem></full>
+    <morph wordType="derivCircumSfx">
+      <shortName>-an (NMLZR): peN- ... -an</shortName>
+      <alloform>-an</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Intransitive verb'.  The result will be a Full analysis node.">
-	<morph wordType="derivCircumPfx">
-	  <shortName>peng- (NMLZR): peN- ... -an</shortName>
-	  <alloform>peng-</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
-	  <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (v) of the stem.</failure>
-	  <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>etik (type): ketik</shortName>
-		  <alloform>etik</alloform>
-		  <gloss>(type):</gloss>
-		  <citationForm>ketik</citationForm>
-		  <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
-	<morph wordType="derivCircumSfx">
-	  <shortName>-an (NMLZR): peN- ... -an</shortName>
-	  <alloform>-an</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="derivCircumPfx">
+      <shortName>peng- (NMLZR): peN- ... -an</shortName>
+      <alloform>peng-</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
+      <failure>The  category (intrans) of the inflectional template "Intransitive verb" is incompatible with the category (v) of the stem.</failure>
+      <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>etik (type): ketik</shortName>
+          <alloform>etik</alloform>
+          <gloss>(type):</gloss>
+          <citationForm>ketik</citationForm>
+          <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Intransitive verb' for category 'intransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
+    <morph wordType="derivCircumSfx">
+      <shortName>-an (NMLZR): peN- ... -an</shortName>
+      <alloform>-an</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Stative verb'.  The result will be a Full analysis node.">
-	<morph wordType="derivCircumPfx">
-	  <shortName>peng- (NMLZR): peN- ... -an</shortName>
-	  <alloform>peng-</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
-	  <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (v) of the stem.</failure>
-	  <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>etik (type): ketik</shortName>
-		  <alloform>etik</alloform>
-		  <gloss>(type):</gloss>
-		  <citationForm>ketik</citationForm>
-		  <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
-	<morph wordType="derivCircumSfx">
-	  <shortName>-an (NMLZR): peN- ... -an</shortName>
-	  <alloform>-an</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="derivCircumPfx">
+      <shortName>peng- (NMLZR): peN- ... -an</shortName>
+      <alloform>peng-</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
+      <failure>The  category (sta) of the inflectional template "Stative verb" is incompatible with the category (v) of the stem.</failure>
+      <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>etik (type): ketik</shortName>
+          <alloform>etik</alloform>
+          <gloss>(type):</gloss>
+          <citationForm>ketik</citationForm>
+          <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Stative verb' for category 'stative' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
+    <morph wordType="derivCircumSfx">
+      <shortName>-an (NMLZR): peN- ... -an</shortName>
+      <alloform>-an</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Transitive verb'.  The result will be a Full analysis node.">
-	<morph wordType="derivCircumPfx">
-	  <shortName>peng- (NMLZR): peN- ... -an</shortName>
-	  <alloform>peng-</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
-	  <failure>The  category (trans) of the inflectional template "Transitive verb" is incompatible with the category (v) of the stem.</failure>
-	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>etik (type): ketik</shortName>
-		  <alloform>etik</alloform>
-		  <gloss>(type):</gloss>
-		  <citationForm>ketik</citationForm>
-		  <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
-	<morph wordType="derivCircumSfx">
-	  <shortName>-an (NMLZR): peN- ... -an</shortName>
-	  <alloform>-an</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="derivCircumPfx">
+      <shortName>peng- (NMLZR): peN- ... -an</shortName>
+      <alloform>peng-</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
+      <failure>The  category (trans) of the inflectional template "Transitive verb" is incompatible with the category (v) of the stem.</failure>
+      <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>etik (type): ketik</shortName>
+          <alloform>etik</alloform>
+          <gloss>(type):</gloss>
+          <citationForm>ketik</citationForm>
+          <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Transitive verb' for category 'transitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
+    <morph wordType="derivCircumSfx">
+      <shortName>-an (NMLZR): peN- ... -an</shortName>
+      <alloform>-an</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Non-final Transitive '.  The result will be a Full analysis node.">
-	<morph wordType="derivCircumPfx">
-	  <shortName>peng- (NMLZR): peN- ... -an</shortName>
-	  <alloform>peng-</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<stem syncat="12" syncatAbbr="v" requiresInfl="+" inflected="-" blocksInflection="+">
-	  <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (v) of the stem.</failure>
-	  <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>etik (type): ketik</shortName>
-		  <alloform>etik</alloform>
-		  <gloss>(type):</gloss>
-		  <citationForm>ketik</citationForm>
-		  <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
-		</morph>
-	  </stem></stem>
-	<morph wordType="derivCircumSfx">
-	  <shortName>-an (NMLZR): peN- ... -an</shortName>
-	  <alloform>-an</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="derivCircumPfx">
+      <shortName>peng- (NMLZR): peN- ... -an</shortName>
+      <alloform>peng-</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <stem syncat="12" syncatAbbr="v" requiresInfl="+" inflected="-" blocksInflection="+">
+      <failure>The  category (trans) of the inflectional template "Non-final Transitive " is incompatible with the category (v) of the stem.</failure>
+      <failure>The inflectional template named 'Non-final Transitive ' for category 'transitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>etik (type): ketik</shortName>
+          <alloform>etik</alloform>
+          <gloss>(type):</gloss>
+          <citationForm>ketik</citationForm>
+          <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
+        </morph>
+      </stem></stem>
+    <morph wordType="derivCircumSfx">
+      <shortName>-an (NMLZR): peN- ... -an</shortName>
+      <alloform>-an</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply inflectional template 'Bitransitive verb'.  The result will be a Full analysis node.">
-	<morph wordType="derivCircumPfx">
-	  <shortName>peng- (NMLZR): peN- ... -an</shortName>
-	  <alloform>peng-</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
-	  <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (v) of the stem.</failure>
-	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
-	  <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
-		<morph wordType="root">
-		  <shortName>etik (type): ketik</shortName>
-		  <alloform>etik</alloform>
-		  <gloss>(type):</gloss>
-		  <citationForm>ketik</citationForm>
-		  <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
-	</full>
-	<morph wordType="derivCircumSfx">
-	  <shortName>-an (NMLZR): peN- ... -an</shortName>
-	  <alloform>-an</alloform>
-	  <gloss>(NMLZR): peN- ...</gloss>
-	  <citationForm>-an</citationForm>
-	  <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="derivCircumPfx">
+      <shortName>peng- (NMLZR): peN- ... -an</shortName>
+      <alloform>peng-</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <full syncat="12" syncatAbbr="v" requiresInfl="-" inflected="+">
+      <failure>The  category (bitrans) of the inflectional template "Bitransitive verb" is incompatible with the category (v) of the stem.</failure>
+      <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required prefix slot 'Object' was not found.</failure>
+      <stem syncat="12" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <morph wordType="root">
+          <shortName>etik (type): ketik</shortName>
+          <alloform>etik</alloform>
+          <gloss>(type):</gloss>
+          <citationForm>ketik</citationForm>
+          <stemMsa cat="12" catAbbr="v" inflClass="0" requiresInfl="+" />
+        </morph>
+      </stem>
+      <failure>The inflectional template named 'Bitransitive verb' for category 'bitransitive verb' failed because the required suffix slot 'Tense' was not found.</failure>
+    </full>
+    <morph wordType="derivCircumSfx">
+      <shortName>-an (NMLZR): peN- ... -an</shortName>
+      <alloform>-an</alloform>
+      <gloss>(NMLZR): peN- ...</gloss>
+      <citationForm>-an</citationForm>
+      <derivMsa fromCat="12" fromCatAbbr="v" toCat="6" toCatAbbr="n" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (FakeForTestingCircumfix word grammar debugging): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>(FakeForTestingCircumfix word grammar debugging):</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="9" fromCatAbbr="pro" toCat="3" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
 </word>

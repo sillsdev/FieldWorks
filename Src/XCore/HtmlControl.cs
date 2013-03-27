@@ -24,7 +24,9 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using MsHtmHstInterop;
 using System.Runtime.InteropServices;
+#if __MonoCS__
 using Skybound.Gecko;
+#endif
 
 namespace XCore
 {
@@ -152,7 +154,6 @@ namespace XCore
 		{
 			CheckDisposed();
 
-#if !__MonoCS__ // FWNX-254
 			try
 			{
 				m_browser.GoBack();
@@ -161,7 +162,6 @@ namespace XCore
 			{
 				m_browser.Refresh();
 			}
-#endif
 		}
 		/// <summary>
 		/// Invoke "go forward" in browser history
@@ -170,7 +170,6 @@ namespace XCore
 		{
 			CheckDisposed();
 
-#if !__MonoCS__ // FWNX-254
 			try
 			{
 				m_browser.GoForward();
@@ -179,7 +178,6 @@ namespace XCore
 			{
 				m_browser.Refresh();
 			}
-#endif
 		}
 		//note: this old version of before navigate is being used because of a bug in the.net framework.
 		//win this bug is fixed, we should look at switching to using BeforeNavigate2

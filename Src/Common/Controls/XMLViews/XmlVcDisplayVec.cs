@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -33,6 +34,8 @@ namespace SIL.FieldWorks.Common.Controls
 	/// object whose primary purpose is to allow refactoring of this huge method.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="m_cache is a reference")]
 	public class XmlVcDisplayVec
 	{
 		#region Member Variables

@@ -70,13 +70,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <returns></returns>
 		internal IList<IRawElementProviderFragment> CreateUIAutomationEditControls(IChildControlNavigation fragmentRoot)
 		{
-			return RootSiteServices.CreateUIAutomationEditControls(fragmentRoot, RootBox, Vc, Cache, m_hvoRoot,
-															SimpleRootSiteDataProviderBaseVc.kfragRoot);
+		return RootSiteServices.CreateUIAutomationEditControls(fragmentRoot, RootBox, Vc, Cache, m_hvoRoot,
+														SimpleRootSiteDataProviderBaseVc.kfragRoot);
 		}
 
 		internal IList<IVwSelection> CollectEditableStringPropSelections()
 		{
-			return CollectorEnvServices.CollectEditableSelectionPoints(RootBox).ToList();
+		return CollectorEnvServices.CollectEditableSelectionPoints(RootBox).ToList();
 		}
 	}
 

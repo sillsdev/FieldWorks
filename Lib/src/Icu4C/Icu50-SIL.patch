@@ -1,0 +1,1268 @@
+From addf1132b9b1d6d352cb3e7bb0bf782d759b9058 Mon Sep 17 00:00:00 2001
+From: John Thomson <john_thomson@sil.org>
+Date: Fri, 16 Nov 2012 10:38:44 -0600
+Subject: [PATCH 1/2] SIL modifications
+
+---
+ source/common/Makefile.in                     |    2 +-
+ source/common/common.vcxproj                  |    6 +-
+ source/common/common.vcxproj.filters          |    4 +-
+ source/common/silmods.c                       |  568 +++++++++++++++++++++++++
+ source/common/silmods.h                       |   37 ++
+ source/common/ucase.cpp                       |   26 +-
+ source/common/uchar.c                         |   20 +-
+ source/test/cintltst/Makefile.in              |    2 +-
+ source/test/cintltst/calltest.c               |   11 +-
+ source/test/cintltst/cintltst.vcxproj         |    3 +-
+ source/test/cintltst/cintltst.vcxproj.filters |    3 +-
+ source/test/cintltst/sil_override_tst.c       |  234 ++++++++++
+ 12 files changed, 903 insertions(+), 13 deletions(-)
+ create mode 100644 source/common/silmods.c
+ create mode 100644 source/common/silmods.h
+ create mode 100644 source/test/cintltst/sil_override_tst.c
+
+diff --git a/source/common/Makefile.in b/source/common/Makefile.in
+index f8efcf9..c606105 100644
+--- a/source/common/Makefile.in
++++ b/source/common/Makefile.in
+@@ -104,7 +104,7 @@ rbbi.o rbbidata.o rbbinode.o rbbirb.o rbbiscan.o rbbisetb.o rbbistbl.o rbbitblb.
+ serv.o servnotf.o servls.o servlk.o servlkf.o servrbf.o servslkf.o \
+ uidna.o usprep.o uts46.o punycode.o \
+ util.o util_props.o parsepos.o locbased.o cwchar.o wintz.o mutex.o dtintrv.o ucnvsel.o propsvec.o \
+-ulist.o uloc_tag.o icudataver.o icuplug.o listformatter.o
++ulist.o uloc_tag.o icudataver.o icuplug.o listformatter.o silmods.o
+ 
+ ## Header files to install
+ HEADERS = $(srcdir)/unicode/*.h
+diff --git a/source/common/common.vcxproj b/source/common/common.vcxproj
+index 4088fce..b1b266b 100644
+--- a/source/common/common.vcxproj
++++ b/source/common/common.vcxproj
+@@ -1,4 +1,4 @@
+-<?xml version="1.0" encoding="utf-8"?>
++﻿<?xml version="1.0" encoding="utf-8"?>
+ <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <ItemGroup Label="ProjectConfigurations">
+     <ProjectConfiguration Include="Debug|Win32">
+@@ -232,6 +232,7 @@
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
++    <ClCompile Include="silmods.c" />
+     <ClCompile Include="ubidi.c" />
+     <ClCompile Include="ubidi_props.c" />
+     <ClCompile Include="ubidiln.c" />
+@@ -457,6 +458,7 @@
+     <ClInclude Include="localsvc.h" />
+     <ClInclude Include="msvcres.h" />
+     <ClInclude Include="propname_data.h" />
++    <ClInclude Include="silmods.h" />
+     <ClInclude Include="ubidi_props.h" />
+     <ClInclude Include="ubidiimp.h" />
+     <CustomBuild Include="unicode\ushape.h">
+@@ -1707,4 +1709,4 @@
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+   <ImportGroup Label="ExtensionTargets">
+   </ImportGroup>
+-</Project>
++</Project>
+\ No newline at end of file
+diff --git a/source/common/common.vcxproj.filters b/source/common/common.vcxproj.filters
+index d46101f..75761ab 100644
+--- a/source/common/common.vcxproj.filters
++++ b/source/common/common.vcxproj.filters
+@@ -536,6 +536,7 @@
+     <ClCompile Include="ucharstriebuilder.cpp" />
+     <ClCompile Include="ucharstrieiterator.cpp" />
+     <ClCompile Include="listformatter.cpp" />
++    <ClCompile Include="silmods.c" />
+   </ItemGroup>
+   <ItemGroup>
+     <ClInclude Include="ubidi_props.h">
+@@ -808,6 +809,7 @@
+     <ClInclude Include="uchar_props_data.h">
+       <Filter>properties &amp; sets</Filter>
+     </ClInclude>
++    <ClInclude Include="silmods.h" />
+   </ItemGroup>
+   <ItemGroup>
+     <ResourceCompile Include="common.rc">
+@@ -1045,4 +1047,4 @@
+     <CustomBuild Include="unicode\ustringtrie.h" />
+     <CustomBuild Include="unicode\listformatter.h" />
+   </ItemGroup>
+-</Project>
++</Project>
+\ No newline at end of file
+diff --git a/source/common/silmods.c b/source/common/silmods.c
+new file mode 100644
+index 0000000..0dad07c
+--- /dev/null
++++ b/source/common/silmods.c
+@@ -0,0 +1,568 @@
++#include "unicode/uchar.h"
++#include "utrie2.h"
++#include "silmods.h"
++#ifndef _MSC_VER
++#include <errno.h>
++#endif
++#include <stdio.h>
++#include <malloc.h>
++#include <string.h> // for strncmp
++#include <stdlib.h> // for atoi
++#include "uprops.h" // for UPROPS_ALPHABETIC and similar...may be able to remove if we implement all properties.
++#include "ucase.h" // for constants used in SIL_ucase_getType
++
++// The data we keep about one character.
++typedef struct
++{
++	uint32_t props;  // corresponds to the value stored in propsTrie. The low bits store the character category, high ones store numeric value (not implemented).
++	// correspond to the three values stored in propsVectors at the index looked up in propsVectorTrie.
++	// See "Properties in vector word 0" and similar comments in source/common/uprops.h.
++	uint32_t words[3];
++	// case equivalents; 0 if none.
++	UChar32 upper;
++	UChar32 lower;
++	UChar32 title;
++	// Todo:  a pointer to the character name?
++} cdata;
++
++// The data for a block of characters.
++typedef struct block
++{
++	UChar32 first; // first character in the block
++	int count; // number of characters
++	cdata** propData; // data about the characters in the block; items may be null if not overridden.
++	struct block * nextBlock;
++} block;
++
++static block * firstBlock;
++
++/* Convert one hex digit to a numeric value 0..F, or -1 on failure */
++static int8_t _digit16(char c) {
++    if (c >= 0x0030 && c <= 0x0039) { // 0-9
++        return (int8_t)(c - 0x0030);
++    }
++    if (c >= 0x0041 && c <= 0x0046) { // A-F
++        return (int8_t)(c - (0x0041 - 10));
++    }
++    if (c >= 0x0061 && c <= 0x0066) { // a-f
++        return (int8_t)(c - (0x0061 - 10));
++    }
++    return -1;
++}
++
++// Return the leading characters of the line as a unicode value
++UChar32 ParseHexChar(char * line)
++{
++	int result = 0;
++	char * pch = line;
++	int val;
++	while ((val = _digit16(*pch++)) >= 0)
++		result = (result << 4) + val;
++	return result;
++}
++
++char * nextItem(char * start)
++{
++	char *pch = start;
++	for (; *pch; pch++)
++	{
++		if (*pch == ';')
++			return pch + 1;
++	}
++	return pch;
++}
++
++int GetCategory(char * pch)
++{
++	switch (*pch)
++	{
++	case 'L':
++		switch (*(pch+1))
++		{
++		case 'u': return U_UPPERCASE_LETTER;
++		case 'l': return U_LOWERCASE_LETTER;
++		case 't': return U_TITLECASE_LETTER;
++		case 'm': return U_MODIFIER_LETTER;
++		case 'o': return U_OTHER_LETTER;
++		default: return -1;
++		}
++	case 'M':
++		switch (*(pch+1))
++		{
++		case 'n': return U_NON_SPACING_MARK;
++		case 'e': return U_ENCLOSING_MARK;
++		case 'c': return U_COMBINING_SPACING_MARK;
++		default: return -1;
++		}
++	case 'N':
++		switch (*(pch+1))
++		{
++		case 'd': return U_DECIMAL_DIGIT_NUMBER;
++		case 'l': return U_LETTER_NUMBER;
++		case 'o': return U_OTHER_NUMBER;
++		default: return -1;
++		}
++	case 'Z':
++		switch (*(pch+1))
++		{
++		case 's': return U_SPACE_SEPARATOR;
++		case 'l': return U_LINE_SEPARATOR;
++		case 'p': return U_PARAGRAPH_SEPARATOR;
++		default: return -1;
++		}
++	case 'C':
++		switch (*(pch+1))
++		{
++		case 'n': return U_GENERAL_OTHER_TYPES;
++		case 'c': return U_CONTROL_CHAR;
++		case 'f': return U_FORMAT_CHAR;
++		case 'o': return U_PRIVATE_USE_CHAR;
++		case 's': return U_SURROGATE;
++		default: return -1;
++		}
++	case 'P':
++		switch (*(pch+1))
++		{
++		case 'd': return U_DASH_PUNCTUATION;
++		case 's': return U_START_PUNCTUATION;
++		case 'e': return U_END_PUNCTUATION;
++		case 'c': return U_CONNECTOR_PUNCTUATION;
++		case 'o': return U_OTHER_PUNCTUATION;
++		case 'i': return U_INITIAL_PUNCTUATION;
++		case 'f': return U_FINAL_PUNCTUATION;
++		default: return -1;
++		}
++	case 'S':
++		switch (*(pch+1))
++		{
++		case 'm': return U_MATH_SYMBOL;
++		case 'c': return U_CURRENCY_SYMBOL;
++		case 'k': return U_MODIFIER_SYMBOL;
++		case 'o': return U_OTHER_SYMBOL;
++		default: return -1;
++		}
++	default:
++		return -1;
++	}
++}
++
++int MakePropsWord(char * pch)
++{
++	// Enhance JohnT: the high 10 bits of the props word are supposed to be the numeric value;
++	// I think we would get the right result by passing in pchNumericValue and
++	// returning GetCategory(pch) | (atoi(pchNumericValue) << 10).
++	// I haven't done this or written tests for it because I don't think FW uses the numeric value for anything.
++	// In essence, the numeric value for any character we override is zero.
++	return GetCategory(pch); // Todo: error handling; high bits (numeric value);
++}
++
++void FreeBlocks()
++{
++	block * currentBlock = firstBlock;
++	block * nextBlock;
++	cdata ** pdata;
++	while (currentBlock != NULL)
++	{
++		nextBlock = currentBlock->nextBlock;
++		if (firstBlock->propData != NULL)
++		{
++			for (pdata = currentBlock->propData; pdata < currentBlock->propData + currentBlock->count; pdata++)
++			{
++				if (*pdata != NULL)
++					free(*pdata);
++			}
++			free(currentBlock->propData);
++		}
++		free(currentBlock);
++		currentBlock = nextBlock;
++	}
++	firstBlock = NULL;
++}
++
++block * InitBlock(int charCount, UChar32 firstChar)
++{
++	cdata ** pdata;
++	block * newBlock = (block *)malloc(sizeof(block));
++	newBlock->count = charCount;
++	newBlock->first = firstChar;
++	newBlock->nextBlock = NULL;
++	newBlock->propData = (cdata **)malloc(charCount * sizeof(cdata *));
++	for (pdata = newBlock->propData; pdata < newBlock->propData + charCount; pdata++)
++		*pdata = NULL;
++	return newBlock;
++}
++
++void ProcessLine(char * line, cdata * newData)
++{
++	uint32_t overrideProps;
++	char * pchName = nextItem(line);
++	char * pchCategory = nextItem(pchName);
++	char * pchCombiningClass = nextItem(pchCategory);
++	char * pchBidiCategory = nextItem(pchCombiningClass);
++	char * pchDecomposition = nextItem(pchBidiCategory);
++	char * pchDecimalDigitValue = nextItem(pchDecomposition);
++	char * pchDigitValue = nextItem(pchDecimalDigitValue);
++	char * pchNumericValue = nextItem(pchDigitValue);
++	char * pchMirrored = nextItem(pchNumericValue);
++	char * pchUnicode1Name = nextItem(pchMirrored);
++	char * pchComment = nextItem(pchUnicode1Name);
++	char * pchUcEquivalent = nextItem(pchComment);
++	char * pchLcEquivalent = nextItem(pchUcEquivalent);
++	char * pchTcEquivalent= nextItem(pchLcEquivalent);
++
++	int word1 = 0;
++	int category = GetCategory(pchCategory);
++	// This is the definition of 'alphabetic' given in http://pic.dhe.ibm.com/infocenter/tivihelp/v15r1/index.jsp?topic=%2Fcom.ibm.itm.doc_6.2.2fp2%2Ficu-regular-expressions.htm
++	// as the definition of \w in a regular expression. It's only a guess that this is what the flag is supposed to be.
++	if (category == U_LOWERCASE_LETTER || category == U_UPPERCASE_LETTER || category == U_TITLECASE_LETTER || category == U_OTHER_LETTER || category == U_DECIMAL_DIGIT_NUMBER)
++		word1 |= U_MASK(UPROPS_ALPHABETIC);
++	// This is the definition of white space given at the same URL for \s in regular expressions.
++	if (category == U_SPACE_SEPARATOR || category == U_LINE_SEPARATOR || category ==  U_PARAGRAPH_SEPARATOR)
++		word1 |= U_MASK(UPROPS_WHITE_SPACE);
++	overrideProps = MakePropsWord(pchCategory);
++	newData->props = overrideProps;
++
++	newData->words[0] = newData->words[2] = 0;
++	newData->words[1] = word1;
++
++	newData->lower = ParseHexChar(pchLcEquivalent);
++	newData->upper = ParseHexChar(pchUcEquivalent);
++	newData->title = ParseHexChar(pchTcEquivalent);}
++
++#define DEFAULTBLOCKSIZE 256
++#define MAXBLOCKSIZE 4096
++#define MAXLINE 2000
++// Initialize our private data structures with the specified data.
++U_CAPI UBool U_EXPORT2 SilIcuInit(const char * dataPath)
++{
++	char line[MAXLINE];
++	FILE * reader = fopen(dataPath, "r");
++	block * currentBlock = NULL;
++	block * lastBlock;
++	int index;
++	cdata * newData;
++	int blockSize = DEFAULTBLOCKSIZE;
++	UChar32 c;
++
++	FreeBlocks();
++
++	if (reader == NULL)
++	{
++#ifdef _MSC_VER
++		int error;
++		_get_errno(&error);
++		//int doserror;
++		//_get_doserrno(&doserror);
++#endif
++		return FALSE;
++	}
++
++	fgets(line, MAXLINE, reader); // skip one line, typically labels.
++	while (fgets(line, MAXLINE, reader))
++	{
++		if (strncmp(line, "block:", 6) == 0)
++		{
++			blockSize = atoi(line + 6);
++			if (blockSize <= 0 || blockSize >= MAXBLOCKSIZE)
++				blockSize = DEFAULTBLOCKSIZE;
++			continue;
++		}
++		c = ParseHexChar(line); // Todo: error handling...
++		if (firstBlock == NULL)
++		{
++			firstBlock = currentBlock = InitBlock(blockSize, c);
++		}
++		index = c- currentBlock->first;
++		if (index >= currentBlock->count)
++		{
++			lastBlock = currentBlock;
++			currentBlock = InitBlock(blockSize, c);
++			lastBlock->nextBlock = currentBlock;
++			index = c- currentBlock->first;
++		}
++		currentBlock->propData[index] = newData = (cdata*)malloc(sizeof(cdata));
++		ProcessLine(line, newData);
++	}
++	fclose(reader);
++	return TRUE;
++}
++
++cdata * GetOverrides(UChar32 c)
++{
++	block * currentBlock;
++	int index;
++	for (currentBlock = firstBlock; currentBlock != NULL; currentBlock = currentBlock->nextBlock)
++	{
++		if (c < currentBlock->first)
++			return NULL;
++		if (c >= currentBlock->first + currentBlock->count)
++			continue;
++		index = c - currentBlock->first;
++		// If it is in this block but has no cdata, it definitely has no override; go to the default behavior.
++		if (currentBlock->propData[index] == NULL)
++			return NULL;
++		return currentBlock->propData[index];
++	}
++	return NULL;
++}
++
++uint32_t Sil_GET_PROPS(const UTrie2 * trie, UChar32 c)
++{
++	cdata * overrideData = GetOverrides(c);
++	if (overrideData != NULL)
++		return overrideData->props;
++
++	return UTRIE2_GET16(trie, c);
++}
++
++typedef struct enumRangeParams
++{
++	UTrie2EnumValue *enumValue;
++	UTrie2EnumRange *enumRange;
++	const void *context;
++	const uint32_t * propsVectors; // if non-null, indicates usage by SIL_enumPropsVecRanges. The array in which we look up word1,2,3
++} enumRangeParams;
++
++
++
++typedef struct enumRangeState
++{
++	enumRangeParams * params;
++	int startRemaining; // must output chars from startRemaining to end using the original or overridden value.
++	int end;
++	int doubtful; // character we have not yet determined output for.
++	int currentValue; // if doubtful > startRemaining, this value must be output for chars from startRemaining to doubtful-1
++	block * currentBlock;
++	// used only from SIL_enumPropsVecRanges
++	int word0, word1, word2;  // indicate the values for the three property words for the chars from startRemaining to doubtful-1
++
++} enumRangeState;
++
++UBool EnumFinished(enumRangeState * state)
++{
++	// We are finished if we have output all the characters.
++	return state->startRemaining > state->end;
++}
++
++UBool EnumNoMoreRelevantBlocks(enumRangeState * state)
++{
++	// There are no more relevant blocks if there are none at all, or all the remain affect characters after the end.
++	return state->currentBlock == NULL || state->currentBlock->first > state->end;
++}
++
++// If there is pending output (chars between startRemaining and doubtful), output them, and adjust the state.
++UBool EnumOutputPending(enumRangeState * state)
++{
++	if (state->doubtful <= state->startRemaining)
++		return TRUE; // nothing to output.
++	if (!state->params->enumRange(state->params->context, state->startRemaining, state->doubtful - 1, state->currentValue))
++		return FALSE;
++	state->startRemaining = state->doubtful;
++	return TRUE;
++}
++
++// The current block is not relevant if we have determined the correct value to output for all the
++// characters it contains data about. The last of these is block->first + block->count-1.
++// This should be called only after determining that there is a currentBlock.
++UBool EnumCurrentBlockIsNotRelevant(enumRangeState * state)
++{
++	return state->doubtful >= state->currentBlock->first + state->currentBlock->count;
++}
++
++// So far the only bits we control (in Word1) are the alphabetic one.
++#define OURBITS (U_MASK(UPROPS_ALPHABETIC) | U_MASK(UPROPS_WHITE_SPACE))
++
++uint32_t GetOverrideForWord1(uint32_t defaultVal, cdata * overrideData)
++{
++	return (defaultVal & !OURBITS) | (overrideData->words[1] & OURBITS);
++}
++
++void EnumNextValue(enumRangeState * state, uint32_t defaultValue, uint32_t * values)
++{
++	int index;
++	cdata * data;
++	// Set default result;
++	values[0] = defaultValue;
++	if (state->params->propsVectors)
++	{
++		values[1] = state->params->propsVectors[defaultValue];
++		values[2] = state->params->propsVectors[defaultValue + 1];
++		values[3] = state->params->propsVectors[defaultValue + 2];
++	}
++	else
++		values[1]=values[2]=values[3]=0;
++
++	// determine the value for the next doubtful character.
++	// it must be before the end of currentBlock.
++	if (state->doubtful < state->currentBlock->first)
++	{
++		// before the range this block overrides.
++		return;
++	}
++	index = state->doubtful - state->currentBlock->first;
++	data = state->currentBlock->propData[index];
++	if (data == NULL)
++	{
++		// we don't have an override for this particular one.
++		return;
++	}
++	// We have an override. Currently only word1 is affected.
++	if (state->params->propsVectors)
++	{
++		values[2] = GetOverrideForWord1(values[2], data);
++	}
++	else
++	{
++		if (state->params->enumValue == NULL)
++			values[0] = data->props; // no converter, use the value itself.
++		else
++			values[0] = state->params->enumValue(state->params->context, data->props);
++	}
++}
++
++// Return true if there are values we need to output between startRemaining and doubtful, and the values in
++// newValue are different.
++UBool EnumDifferentValues(enumRangeState * state, uint32_t * newValues)
++{
++	if (state->startRemaining >= state->doubtful)
++		return FALSE; // nothing to output
++	if(state->currentValue != newValues[0])
++		return TRUE;
++	if (!state->params->propsVectors)
++		return FALSE; // other fields don't matter
++	return state->word0 != newValues[1] || state->word1 != newValues[2] || state->word2 != newValues[3];
++}
++
++
++// Call the original enumRange for contiguous ranges within the start...end range
++// as modified by our tables.
++static UBool U_CALLCONV
++SIL_UTrie2EnumRange(const void *params1, UChar32 start, UChar32 end, uint32_t value)
++{
++	uint32_t nextValue[4];
++
++	enumRangeParams * params = (enumRangeParams *) params1;
++	enumRangeState state;
++	state.params = params;
++	state.startRemaining = state.doubtful = start;
++	state.end = end;
++	state.currentBlock = firstBlock;
++	while (!EnumFinished(&state))
++	{
++		if (EnumNoMoreRelevantBlocks(&state))
++		{
++			if (state.currentValue != value)
++			{
++				if (!EnumOutputPending(&state)) // may do nothing, if no range.
++					return FALSE; // enumeration cancelled.
++			}
++			if (state.startRemaining <= end)
++				params->enumRange(params->context, state.startRemaining, end, value);
++			return TRUE;
++		}
++		if (EnumCurrentBlockIsNotRelevant(&state))
++		{
++			state.currentBlock = state.currentBlock->nextBlock;
++			continue; // to check we still have a relevant current block.
++		}
++
++		// At this point we have a relevant currentBlock, that is, one that may override some value in the range.
++		EnumNextValue(&state, value, nextValue);
++		if (EnumDifferentValues(&state, nextValue)) // currentValue may not be meaningful, but if so, output pending does nothing so it doesn't matter.
++		{
++			if (!EnumOutputPending(&state))
++				return FALSE;
++		}
++		state.currentValue = nextValue[0];
++		state.word0 = nextValue[1];
++		state.word1 = nextValue[2];
++		state.word2 = nextValue[3];
++		state.doubtful++; // one (or one more) character should eventually be output with the current value.
++	}
++	return TRUE;
++}
++
++void SIL_utrie2_enum(const UTrie2 *trie, UTrie2EnumValue *enumValue, UTrie2EnumRange *enumRange, const void *context)
++{
++	enumRangeParams params;
++	params.context = context;
++	params.enumRange = enumRange;
++	params.enumValue = enumValue;
++	params.propsVectors = NULL;
++	utrie2_enum(trie, enumValue, SIL_UTrie2EnumRange, &params);
++}
++
++uint32_t SIL_getUnicodeProperties(uint32_t defaultVal, UChar32 c, int32_t column)
++{
++	cdata * overrideData = GetOverrides(c);
++	if (overrideData != NULL)
++	{
++		// This is what we'd ideally do if we had implemented all the fields.
++		//return overrideData->words[column];
++		switch(column)
++		{
++		case 0:
++		case 2:
++			return defaultVal; // We have not yet implemented initializing these.
++		case 1:
++			return GetOverrideForWord1(defaultVal, overrideData);
++		}
++	}
++	return defaultVal;
++}
++
++// We want to invoke the function enumRange for each range of characters for which we get a different
++// set of the three words stored (usually) in propsVectors and indexed by the value in propsVectorsTrie,
++// and which are overridden in the words array of our cdata.
++// Theoretically we should pass a different value of the index looked up in the trie each time, but in fact,
++// the method that is invoked by this only uses the start-of-range value.
++void SIL_enumPropsVecRanges(const UTrie2 *trie, UTrie2EnumRange *enumRange, const void *context, const uint32_t * propsVectors)
++{
++	enumRangeParams params;
++	params.context = context;
++	params.enumRange = enumRange;
++	params.enumValue = NULL;
++	params.propsVectors = propsVectors;
++	utrie2_enum(trie, NULL, SIL_UTrie2EnumRange, &params);
++}
++
++U_CAPI UBool U_EXPORT2 SIL_tolower(UChar32 * pch)
++{
++	cdata * overrideData = GetOverrides(*pch);
++	if (overrideData == NULL || overrideData->lower == 0)
++		return FALSE;
++	*pch = overrideData->lower;
++	return TRUE;
++}
++
++U_CAPI UBool U_EXPORT2 SIL_toupper(UChar32 * pch)
++{
++	cdata * overrideData = GetOverrides(*pch);
++	if (overrideData == NULL || overrideData->upper == 0)
++		return FALSE;
++	*pch = overrideData->upper;
++	return TRUE;
++}
++
++U_CAPI UBool U_EXPORT2 SIL_totitle(UChar32 * pch)
++{
++	cdata * overrideData = GetOverrides(*pch);
++	if (overrideData == NULL || overrideData->title == 0)
++		return FALSE;
++	*pch = overrideData->title;
++	return TRUE;
++}
++
++U_CAPI int32_t U_EXPORT2 SIL_ucase_getType(UChar32 c)
++{
++	cdata * overrideData = GetOverrides(c);
++	if (overrideData == NULL)
++		return -1;
++	switch(GET_CATEGORY(overrideData->props))
++	{
++	case U_UPPERCASE_LETTER: return UCASE_UPPER;
++	case U_LOWERCASE_LETTER: return UCASE_LOWER;
++	case U_TITLECASE_LETTER: return UCASE_TITLE;
++	default: return UCASE_NONE;
++	}
++}
+diff --git a/source/common/silmods.h b/source/common/silmods.h
+new file mode 100644
+index 0000000..c3e4d18
+--- /dev/null
++++ b/source/common/silmods.h
+@@ -0,0 +1,37 @@
++#ifndef SILMODS_H
++#define SILMODS_H
++
++// All our modifications (even in this file) should be controlled by this #ifdef.
++#define SIL_MODIFICATIONS
++
++#ifdef SIL_MODIFICATIONS
++
++// Initialize the SIL overrides. Return TRUE if successful, otherwise FALSE.
++U_CAPI UBool U_EXPORT2 SilIcuInit(const char * dataPath);
++
++// Override function replaces GET_PROPS in uchar.c
++uint32_t Sil_GET_PROPS(const UTrie2 * trie, UChar32 c);
++
++// Function is called for start of each range of characters with different properties.
++// As far as I can tell, it isn't critical that they be called in order, nor is it disastrous to call
++// it for more code points than necessary.
++// Essentially we want to call enumRange(context, start, end, enumValue(context, propsWord)) for each range of code points where the enumValue
++// gives a different result than for the previous code point.
++void InvokeForStartOfEachPropRange(UTrie2EnumValue *enumValue, UTrie2EnumRange *enumRange, const void *context);
++
++// Override of utrie2_enum, called only when the trie is propsTrie, the one our character properties override.
++void SIL_utrie2_enum(const UTrie2 *trie, UTrie2EnumValue *enumValue, UTrie2EnumRange *enumRange, const void *context);
++
++// Override of u_getUnicodeProperties.
++uint32_t SIL_getUnicodeProperties(uint32_t defaultVal, UChar32 c, int32_t column);
++
++// Used to patch
++void SIL_enumPropsVecRanges(const UTrie2 *trie, UTrie2EnumRange *enumRange, const void *context, const uint32_t * propsVectors);
++
++// Used to patch case functions
++U_CAPI UBool U_EXPORT2 SIL_tolower(UChar32 * pch);
++U_CAPI UBool U_EXPORT2 SIL_toupper(UChar32 * pch);
++U_CAPI UBool U_EXPORT2 SIL_totitle(UChar32 * pch);
++U_CAPI int32_t U_EXPORT2 SIL_ucase_getType(UChar32 c);
++#endif
++#endif
+diff --git a/source/common/ucase.cpp b/source/common/ucase.cpp
+index da71169..3b83868 100644
+--- a/source/common/ucase.cpp
++++ b/source/common/ucase.cpp
+@@ -30,6 +30,7 @@
+ #include "utrie2.h"
+ #include "ucase.h"
+ #include "ucln_cmn.h"
++#include "silmods.h" // defines SIL_MODIFICATIONS; including this is an SIL modification.
+ 
+ struct UCaseProps {
+     UDataMemory *mem;
+@@ -133,7 +134,11 @@ static const uint8_t flagsOffset[256]={
+ 
+ U_CAPI UChar32 U_EXPORT2
+ ucase_tolower(const UCaseProps *csp, UChar32 c) {
+-    uint16_t props=UTRIE2_GET16(&csp->trie, c);
++#ifdef SIL_MODIFICATIONS
++	if (SIL_tolower(&c))
++		return c;
++#endif
++	uint16_t props=UTRIE2_GET16(&csp->trie, c);
+     if(!PROPS_HAS_EXCEPTION(props)) {
+         if(UCASE_GET_TYPE(props)>=UCASE_UPPER) {
+             c+=UCASE_GET_DELTA(props);
+@@ -150,7 +155,11 @@ ucase_tolower(const UCaseProps *csp, UChar32 c) {
+ 
+ U_CAPI UChar32 U_EXPORT2
+ ucase_toupper(const UCaseProps *csp, UChar32 c) {
+-    uint16_t props=UTRIE2_GET16(&csp->trie, c);
++#ifdef SIL_MODIFICATIONS
++	if (SIL_toupper(&c))
++		return c;
++#endif
++	uint16_t props=UTRIE2_GET16(&csp->trie, c);
+     if(!PROPS_HAS_EXCEPTION(props)) {
+         if(UCASE_GET_TYPE(props)==UCASE_LOWER) {
+             c+=UCASE_GET_DELTA(props);
+@@ -167,7 +176,11 @@ ucase_toupper(const UCaseProps *csp, UChar32 c) {
+ 
+ U_CAPI UChar32 U_EXPORT2
+ ucase_totitle(const UCaseProps *csp, UChar32 c) {
+-    uint16_t props=UTRIE2_GET16(&csp->trie, c);
++#ifdef SIL_MODIFICATIONS
++	if (SIL_totitle(&c))
++		return c;
++#endif
++	uint16_t props=UTRIE2_GET16(&csp->trie, c);
+     if(!PROPS_HAS_EXCEPTION(props)) {
+         if(UCASE_GET_TYPE(props)==UCASE_LOWER) {
+             c+=UCASE_GET_DELTA(props);
+@@ -430,7 +443,12 @@ U_NAMESPACE_END
+ /** @return UCASE_NONE, UCASE_LOWER, UCASE_UPPER, UCASE_TITLE */
+ U_CAPI int32_t U_EXPORT2
+ ucase_getType(const UCaseProps *csp, UChar32 c) {
+-    uint16_t props=UTRIE2_GET16(&csp->trie, c);
++#ifdef SIL_MODIFICATIONS
++	int32_t result = SIL_ucase_getType(c);
++	if (result >= 0)
++		return result;
++#endif
++	uint16_t props=UTRIE2_GET16(&csp->trie, c);
+     return UCASE_GET_TYPE(props);
+ }
+ 
+diff --git a/source/common/uchar.c b/source/common/uchar.c
+index 9a285cc..ddd761e 100644
+--- a/source/common/uchar.c
++++ b/source/common/uchar.c
+@@ -30,6 +30,7 @@
+ #include "udataswp.h"
+ #include "uprops.h"
+ #include "ustr_imp.h"
++#include "silmods.h" // defines SIL_MODIFICATIONS; including this is an SIL modification.
+ 
+ #define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof((array)[0]))
+ 
+@@ -40,7 +41,11 @@
+ /* constants and macros for access to the data ------------------------------ */
+ 
+ /* getting a uint32_t properties word from the data */
++#ifdef SIL_MODIFICATIONS
++#define GET_PROPS(c, result) ((result)=Sil_GET_PROPS(&propsTrie, c));
++#else
+ #define GET_PROPS(c, result) ((result)=UTRIE2_GET16(&propsTrie, c));
++#endif
+ 
+ U_CFUNC UBool
+ uprv_haveProperties(UErrorCode *pErrorCode) {
+@@ -522,8 +527,13 @@ u_getUnicodeProperties(UChar32 c, int32_t column) {
+     if(column>=propsVectorsColumns) {
+         return 0;
+     } else {
+-        uint16_t vecIndex=UTRIE2_GET16(&propsVectorsTrie, c);
++#ifdef SIL_MODIFICATIONS
++		uint16_t vecIndex=UTRIE2_GET16(&propsVectorsTrie, c);
++        return SIL_getUnicodeProperties(propsVectors[vecIndex+column], c, column);
++#else
++	    uint16_t vecIndex=UTRIE2_GET16(&propsVectorsTrie, c);
+         return propsVectors[vecIndex+column];
++#endif
+     }
+ }
+ 
+@@ -660,7 +670,11 @@ uchar_addPropertyStarts(const USetAdder *sa, UErrorCode *pErrorCode) {
+     }
+ 
+     /* add the start code point of each same-value range of the main trie */
++#ifdef SIL_MODIFICATIONS
++    SIL_utrie2_enum(&propsTrie, NULL, _enumPropertyStartsRange, sa);
++#else
+     utrie2_enum(&propsTrie, NULL, _enumPropertyStartsRange, sa);
++#endif
+ 
+     /* add code points with hardcoded properties, plus the ones following them */
+ 
+@@ -722,6 +736,10 @@ upropsvec_addPropertyStarts(const USetAdder *sa, UErrorCode *pErrorCode) {
+     /* add the start code point of each same-value range of the properties vectors trie */
+     if(propsVectorsColumns>0) {
+         /* if propsVectorsColumns==0 then the properties vectors trie may not be there at all */
++#ifdef SIL_MODIFICATIONS
++		SIL_enumPropsVecRanges(&propsVectorsTrie, _enumPropertyStartsRange, sa, propsVectors);
++#else
+         utrie2_enum(&propsVectorsTrie, NULL, _enumPropertyStartsRange, sa);
++#endif
+     }
+ }
+diff --git a/source/test/cintltst/Makefile.in b/source/test/cintltst/Makefile.in
+index 1bf67ce..1d3775d 100644
+--- a/source/test/cintltst/Makefile.in
++++ b/source/test/cintltst/Makefile.in
+@@ -50,7 +50,7 @@ stdnmtst.o usrchtst.o custrtrn.o sorttest.o trietest.o trie2test.o usettest.o \
+ uenumtst.o utmstest.o currtest.o \
+ idnatest.o nfsprep.o spreptst.o sprpdata.o \
+ hpmufn.o tracetst.o reapits.o utexttst.o ucsdetst.o spooftest.o \
+-cgendtst.o
++cgendtst.o sil_override_tst.o
+ 
+ DEPS = $(OBJECTS:.o=.d)
+ 
+diff --git a/source/test/cintltst/calltest.c b/source/test/cintltst/calltest.c
+index a2e60c6..05bf3d4 100644
+--- a/source/test/cintltst/calltest.c
++++ b/source/test/cintltst/calltest.c
+@@ -42,10 +42,18 @@ void addUSpoofTest(TestNode** root);
+ #if !UCONFIG_NO_FORMATTING
+ void addGendInfoForTest(TestNode** root);
+ #endif
++#define SIL_MODIFICATIONS
++#ifdef SIL_MODIFICATIONS
++void addSilSetTest(TestNode** root);
++#endif
+ 
+ void addAllTests(TestNode** root)
+ {
+-    addCnvSelTest(root);
++#ifdef SIL_MODIFICATIONS
++    // If the SIL test is run, it can change the results for other tests.
++    addSilSetTest(root);
++#else
++	addCnvSelTest(root);
+     addUDataTest(root);
+     addHeapMutexTest(root);
+     addUTF16Test(root);
+@@ -85,4 +93,5 @@ void addAllTests(TestNode** root)
+ #if !UCONFIG_NO_FORMATTING
+     addGendInfoForTest(root);
+ #endif
++#endif
+ }
+diff --git a/source/test/cintltst/cintltst.vcxproj b/source/test/cintltst/cintltst.vcxproj
+index 15286c6..2de1a48 100644
+--- a/source/test/cintltst/cintltst.vcxproj
++++ b/source/test/cintltst/cintltst.vcxproj
+@@ -245,6 +245,7 @@
+     <ClCompile Include="colutil.c" />
+     <ClCompile Include="cturtst.c" />
+     <ClCompile Include="encoll.c" />
++    <ClCompile Include="sil_override_tst.c" />
+     <ClCompile Include="usrchdat.c">
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+@@ -377,4 +378,4 @@
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+   <ImportGroup Label="ExtensionTargets">
+   </ImportGroup>
+-</Project>
++</Project>
+\ No newline at end of file
+diff --git a/source/test/cintltst/cintltst.vcxproj.filters b/source/test/cintltst/cintltst.vcxproj.filters
+index db1ec5a..466e62b 100644
+--- a/source/test/cintltst/cintltst.vcxproj.filters
++++ b/source/test/cintltst/cintltst.vcxproj.filters
+@@ -297,6 +297,7 @@
+     <ClCompile Include="spooftest.c">
+       <Filter>spoof</Filter>
+     </ClCompile>
++    <ClCompile Include="sil_override_tst.c" />
+   </ItemGroup>
+   <ItemGroup>
+     <ClInclude Include="cbiditst.h">
+@@ -405,4 +406,4 @@
+       <Filter>sprep &amp; idna</Filter>
+     </ClInclude>
+   </ItemGroup>
+-</Project>
++</Project>
+\ No newline at end of file
+diff --git a/source/test/cintltst/sil_override_tst.c b/source/test/cintltst/sil_override_tst.c
+new file mode 100644
+index 0000000..cd56b1c
+--- /dev/null
++++ b/source/test/cintltst/sil_override_tst.c
+@@ -0,0 +1,234 @@
++/*
++**********************************************************************
++* Copyright (c) 2002-2009, International Business Machines
++* Corporation and others.  All Rights Reserved.
++**********************************************************************
++*/
++#include "unicode/uset.h"
++#include "unicode/ustring.h"
++#include "cintltst.h"
++#include <stdlib.h>
++#include <string.h>
++#include "unicode/uchar.h" // required before silmods.h
++#include "utrie2.h" // required before silmods.h
++#include "silmods.h"
++#include "unicode/uregex.h"
++#include "ucase.h"
++#include "unicode/unorm.h"
++
++#define LENGTHOF(array) (int32_t)(sizeof(array)/sizeof((array)[0]))
++
++#define TEST(x) addTest(root, &x, "SIL ext/" # x)
++
++static void TestCharProps(void);
++static void TestRegexProps(void);
++static void TestIsAlphabetic(void);
++static void TestCaseMapping(void);
++static void TestCaseType(void);
++static void TestIsSpace(void);
++static void TestNormalization(void);
++
++void addSilSetTest(TestNode** root);
++
++static void expect(const USet* set,
++                   const char* inList,
++                   const char* outList,
++                   UErrorCode* ec);
++static void expectContainment(const USet* set,
++                              const char* list,
++                              UBool isIn);
++static char oneUCharToChar(UChar32 c);
++static void expectItems(const USet* set,
++                        const char* items);
++
++void
++addSilSetTest(TestNode** root) {
++    TEST(TestCharProps);
++    TEST(TestRegexProps);
++    TEST(TestIsAlphabetic);
++    TEST(TestCaseMapping);
++    TEST(TestCaseType);
++    TEST(TestIsSpace);
++    TEST(TestNormalization);
++}
++
++/*------------------------------------------------------------------
++ * Helper functions
++ *------------------------------------------------------------------*/
++static int assertIntegersEqual(const char* message, const int expected,
++                           const int actual) {
++    if (expected != actual) {
++        log_err("FAIL: %s; got \"%d\"; expected \"%d\"\n",
++                message, actual, expected);
++        return FALSE;
++
++    }
++    return TRUE;
++}
++
++/*------------------------------------------------------------------
++ * Tests
++ *------------------------------------------------------------------*/
++
++static void TestCharProps() {
++    SilIcuInit("SilPropsTestData.txt");
++    if (!assertIntegersEqual("F130 char should be So", U_OTHER_SYMBOL, u_charType((UChar32)L'\uF130')))
++        return;
++    if (!assertIntegersEqual("F131 char should be So", U_OTHER_SYMBOL, u_charType((UChar32)L'\uF131')))
++        return;
++    if (!assertIntegersEqual("F136 (non-override PUA char) should be U_PRIVATE_USE_CHAR", U_PRIVATE_USE_CHAR, u_charType((UChar32)L'\uF136')))
++        return;
++    // Tests character in second block.
++    if (!assertIntegersEqual("F170 char should be Mn", U_NON_SPACING_MARK, u_charType((UChar32)L'\uF170')))
++        return;
++    if (!assertIntegersEqual("F32D char should be Ll", U_LOWERCASE_LETTER, u_charType((UChar32)L'\uF32D')))
++        return;
++}
++
++static void TestIsAlphabetic()
++{
++    SilIcuInit("SilPropsTestData.txt");
++    if (!assertTrue("PUA override char of type Ll should be alphabetic", u_isUAlphabetic(L'\uF32D')))
++        return;
++    if (!assertTrue("PUA override char of type So should not be alphabetic", !u_isUAlphabetic(L'\uF132')))
++        return;
++}
++
++static void TestIsSpace()
++{
++    SilIcuInit("SilPropsTestData.txt");
++    if (!assertTrue("Comma should not be white space", !u_isspace(L',')))
++        return;
++    if (!assertTrue("Space should be white space", u_isspace(L' ')))
++        return;
++    if (!assertTrue("PUA override char of type Ll should not be space", !u_isspace(L'\uF32D')))
++        return;
++    if (!assertTrue("PUA override char of type Zs should be space", u_isspace(L'\uF304')))
++        return;
++}
++static void TestRegexProps()
++{
++    UErrorCode ecode = U_ZERO_ERROR;
++    URegularExpression * handle;
++
++    // Note that L"" is implemented by wchar_t[], and sizeof(wchar_t) can be either 2 or 4.
++    // sizeof(UChar) is carefully defined to be 2 regardless of system or compiler.
++    UChar pattern1[7] = {'\\','p','{','L','l','}',0};   // L"\\p{Ll}"
++    UChar pattern2[3] = {'\\','w',0};                   // L"\\w"
++    UChar pattern3[3] = {'\\','s',0};                   // L"\\s"
++    UChar pattern4[3] = {'\\','d',0};                   // L"\\d"
++    UChar text_Ll[2] = {0xF32D,0};                      // L"\uF32D"
++    UChar text_So[2] = {0xF132,0};                      // L"\uF132"
++    UChar text_Zs[2] = {0xF304,0};                      // L"\uF304"
++    UChar text_Nd[2] = {0xF305,0};                      // L"\uF305"
++
++    SilIcuInit("SilPropsTestData.txt");
++
++    handle = uregex_open(pattern1, -1, 0, NULL, &ecode);
++    uregex_setText(handle, text_Ll, -1, &ecode);
++    if (!assertTrue("\\p{Ll} should match PUA override of type Ll", uregex_matches(handle, 0, &ecode)))
++        return;
++
++    handle = uregex_open(pattern2, -1, 0, NULL, &ecode);
++    uregex_setText(handle, text_Ll, -1, &ecode);
++    if (!assertTrue("\\w should match PUA override of type Ll", uregex_matches(handle, 0, &ecode)))
++        return;
++    uregex_setText(handle, text_So, -1, &ecode);
++    if (!assertTrue("\\w should not match PUA override of type So", !uregex_matches(handle, 0, &ecode)))
++        return;
++
++    handle = uregex_open(pattern3, -1, 0, NULL, &ecode);
++    uregex_setText(handle, text_Zs, -1, &ecode);
++    if (!assertTrue("\\s should match PUA override of type Zs", uregex_matches(handle, 0, &ecode)))
++        return;
++    uregex_setText(handle, text_So, -1, &ecode);
++    if (!assertTrue("\\s should not match PUA override of type So", !uregex_matches(handle, 0, &ecode)))
++        return;
++
++    handle = uregex_open(pattern4, -1, 0, NULL, &ecode);
++    uregex_setText(handle, text_Nd, -1, &ecode);
++    if (!assertTrue("\\d should match PUA override of type Nd", uregex_matches(handle, 0, &ecode)))
++        return;
++    uregex_setText(handle, text_So, -1, &ecode);
++    if (!assertTrue("\\d should not match PUA override of type So", !uregex_matches(handle, 0, &ecode)))
++        return;
++}
++
++static void TestCaseMapping()
++{
++    SilIcuInit("SilPropsTestData.txt");
++
++    if (!assertIntegersEqual("F208 should convert to lower-case 0251", L'\u0251', u_tolower(L'\uF208')))
++        return;
++    if (!assertIntegersEqual("F207 should not change when converted to lower case", L'\uF207', u_tolower(L'\uF207')))
++        return;
++
++    if (!assertIntegersEqual("F208 should not change when converted to upper case", L'\uF208', u_toupper(L'\uF208')))
++        return;
++    if (!assertIntegersEqual("F207 should not change when converted to upper case", L'\uF207', u_toupper(L'\uF207')))
++        return;
++    if (!assertIntegersEqual("F20E should convert to upper-case F20F", L'\uF20F', u_toupper(L'\uF20E')))
++        return;
++
++    if (!assertIntegersEqual("F208 should not change when converted to title case", L'\uF208', u_totitle(L'\uF208')))
++        return;
++    if (!assertIntegersEqual("F207 should not change when converted to title case", L'\uF207', u_totitle(L'\uF207')))
++        return;
++    if (!assertIntegersEqual("F20E should convert to title-case F20F", L'\uF20F', u_totitle(L'\uF20E')))
++        return;
++    // I put in a phony character just to prove that we really can get a different answer for upper and title.
++    if (!assertIntegersEqual("F306 (phony) should convert to title-case F304", L'\uF304', u_totitle(L'\uF306')))
++        return;
++    if (!assertIntegersEqual("F306 (phony) should convert to upper-case F305", L'\uF305', u_toupper(L'\uF306')))
++        return;
++}
++
++static void TestCaseType()
++{
++    SilIcuInit("SilPropsTestData.txt");
++
++    if (!assertTrue("F208 should not be LC", !u_isULowercase(L'\uF208')))
++        return;
++    if (!assertTrue("F208 should be UC", u_isUUppercase(L'\uF208')))
++        return;
++
++    if (!assertTrue("F1F9 (non-letter) should not be LC", !u_isULowercase(L'\uF1F9')))
++        return;
++    if (!assertTrue("F1F9 (non-letter) should not be UC", !u_isUUppercase(L'\uF1F9')))
++        return;
++
++    if (!assertTrue("F20E should be LC", u_isULowercase(L'\uF20E')))
++        return;
++    if (!assertTrue("F20E should not be UC", !u_isUUppercase(L'\uF20E')))
++        return;
++    // And a phone title case character F307
++    if (!assertTrue("F307 (TC) should not be LC", !u_isULowercase(L'\uF307')))
++        return;
++    if (!assertTrue("F307 should not be UC", !u_isUUppercase(L'\uF307')))
++        return;
++}
++
++static void TestNormalization()
++{
++    UErrorCode ecode = U_ZERO_ERROR;
++    // Note that L"" is implemented by wchar_t[], and sizeof(wchar_t) can be either 2 or 4.
++    // sizeof(UChar) is carefully defined to be 2 regardless of system or compiler.
++    UChar input[2] = {0xF1BE,0};    // L"\uF1BE"
++    UChar output[50];
++
++    SilIcuInit("SilPropsTestData.txt");
++    // look in the test source (./icudt50l/nfkc.nrm) for custom normalization data for testing.
++    // This file is generated using a command like
++    // (You may need to "mkdir C:\icu\icu\source\test\cintltst\icudt50l" first.)
++    // gennorm2 -o C:\icu\icu\source\test\cintltst\icudt50l\nfkc.nrm C:\icu\icu\source\data\unidata\norm2\nfc.txt C:\icu\icu\source\data\unidata\norm2\nfkc.txt C:\icu\icu\source\test\cintltst\nfkcOverridesTest.txt
++    u_setDataDirectory(".");
++
++    if (!assertIntegersEqual("Normalizing F1BE should yield one character", 1, unorm_normalize(input,-1, UNORM_NFKD, 0, output, 50, &ecode)))
++        return;
++    if (!assertIntegersEqual("Normalizing F1BE should succeed", U_ZERO_ERROR, ecode))
++        return;
++    if (!assertIntegersEqual("Normalizing F1BE should yield F22A", L'\uF22A', output[0]))
++        return;
++}
++
++/*eof*/
+-- 
+1.7.10.4
+
+
+From 14ae48169b479b52bd670a2305b088939c76bb89 Mon Sep 17 00:00:00 2001
+From: Neil Mayhew <neil_mayhew@sil.org>
+Date: Mon, 19 Nov 2012 11:01:15 -0700
+Subject: [PATCH 2/2] Fix link errors with newer compilers
+
+Without this change, ICU 5.0 uses the C++11 type char16_t in its C++
+APIs. This requires client programs to be compiled with the same
+options (eg -std=c++11 for g++) which typically enables the whole of
+C++11 and is currently undesirable.
+
+The problem doesn't occur with g++ versions less than 4.7 because they
+don't have -std=c++11. However, 4.7 has now arrived in Debian wheezy
+and Ubuntu quantal.
+
+This change is a cherry-pick of r32780 from upstream svn.
+---
+ source/common/unicode/platform.h |    4 ++--
+ source/common/unicode/umachine.h |   10 +++++-----
+ source/common/unicode/ustring.h  |    2 +-
+ source/test/intltest/strtest.cpp |    4 ++--
+ 4 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/source/common/unicode/platform.h b/source/common/unicode/platform.h
+index 94769d6..46b8d5c 100644
+--- a/source/common/unicode/platform.h
++++ b/source/common/unicode/platform.h
+@@ -664,9 +664,9 @@
+      * does not support u"abc" string literals.
+      * gcc 4.4 defines the __CHAR16_TYPE__ macro to a usable type but
+      * does not support u"abc" string literals.
+-     * C++11 requires support for UTF-16 literals
++     * C++11 and C11 require support for UTF-16 literals
+      */
+-#   if (defined(__cplusplus) && __cplusplus >= 201103L)
++#   if (defined(__cplusplus) && __cplusplus >= 201103L) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
+ #       define U_HAVE_CHAR16_T 1
+ #   else
+ #       define U_HAVE_CHAR16_T 0
+diff --git a/source/common/unicode/umachine.h b/source/common/unicode/umachine.h
+index 6dd6a8e..d1102f4 100644
+--- a/source/common/unicode/umachine.h
++++ b/source/common/unicode/umachine.h
+@@ -256,7 +256,7 @@ typedef int8_t UBool;
+ 
+ /**
+  * \var UChar
+- * Define UChar to be char16_t, if available,
++ * Define UChar to be UCHAR_TYPE, if that is #defined (for example, to char16_t),
+  * or wchar_t if that is 16 bits wide; always assumed to be unsigned.
+  * If neither is available, then define UChar to be uint16_t.
+  *
+@@ -266,10 +266,10 @@ typedef int8_t UBool;
+  *
+  * @stable ICU 4.4
+  */
+-
+-/* Define UChar to be compatible with char16_t or wchar_t if possible. */
+-#if U_HAVE_CHAR16_T
+-    typedef char16_t UChar;
++#if defined(UCHAR_TYPE)
++    typedef UCHAR_TYPE UChar;
++/* Not #elif U_HAVE_CHAR16_T -- because that is type-incompatible with pre-C++11 callers
++    typedef char16_t UChar;  */
+ #elif U_SIZEOF_WCHAR_T==2
+     typedef wchar_t UChar;
+ #elif defined(__CHAR16_TYPE__)
+diff --git a/source/common/unicode/ustring.h b/source/common/unicode/ustring.h
+index c577431..d2ea31c 100644
+--- a/source/common/unicode/ustring.h
++++ b/source/common/unicode/ustring.h
+@@ -939,7 +939,7 @@ u_memrchr32(const UChar *s, UChar32 c, int32_t count);
+  * @stable ICU 2.0
+  */
+ #if defined(U_DECLARE_UTF16)
+-#   define U_STRING_DECL(var, cs, length) static const UChar var[(length)+1]=U_DECLARE_UTF16(cs)
++#   define U_STRING_DECL(var, cs, length) static const UChar *var=(const UChar *)U_DECLARE_UTF16(cs)
+     /**@stable ICU 2.0 */
+ #   define U_STRING_INIT(var, cs, length)
+ #elif U_SIZEOF_WCHAR_T==U_SIZEOF_UCHAR && (U_CHARSET_FAMILY==U_ASCII_FAMILY || (U_SIZEOF_UCHAR == 2 && defined(U_WCHAR_IS_UTF16)))
+diff --git a/source/test/intltest/strtest.cpp b/source/test/intltest/strtest.cpp
+index 1f7c81d..2081454 100644
+--- a/source/test/intltest/strtest.cpp
++++ b/source/test/intltest/strtest.cpp
+@@ -1,6 +1,6 @@
+ /********************************************************************
+  * COPYRIGHT: 
+- * Copyright (c) 1997-2011, International Business Machines Corporation and
++ * Copyright (c) 1997-2012, International Business Machines Corporation and
+  * others. All Rights Reserved.
+  ********************************************************************/
+ /*   file name:  strtest.cpp
+@@ -94,7 +94,7 @@ U_STRING_DECL(ustringVar, "aZ0 -", 5);
+ void
+ StringTest::Test_U_STRING() {
+     U_STRING_INIT(ustringVar, "aZ0 -", 5);
+-    if( sizeof(ustringVar)/sizeof(*ustringVar)!=6 ||
++    if( u_strlen(ustringVar)!=5 ||
+         ustringVar[0]!=0x61 ||
+         ustringVar[1]!=0x5a ||
+         ustringVar[2]!=0x30 ||
+-- 
+1.7.10.4
+

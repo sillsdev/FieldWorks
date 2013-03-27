@@ -19,6 +19,7 @@
 
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using XCore;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,24 +42,20 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public abstract class RecordBarHandler : IFWDisposable
 	{
-		protected XCore.Mediator m_mediator;
+		protected Mediator m_mediator;
 		protected FdoCache m_cache; // initialized with mediator.
 		protected bool m_expand;
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
 		protected string m_bestWS;
+
 		// This gets set when we skipped populating the tree bar because it wasn't visible.
 		protected bool m_fOutOfDate = false;
 
-		static public RecordBarHandler Create(XCore.Mediator mediator, XmlNode toolConfiguration)
+		static public RecordBarHandler Create(Mediator mediator, XmlNode toolConfiguration)
 		{
 			RecordBarHandler handler = null;
 			XmlNode node = toolConfiguration.SelectSingleNode("treeBarHandler");
-			//if (node != null)
-			//{
-			//    handler = (TreeBarHandler)DynamicLoader.CreateObject(node);
-			//    handler.Init(mediator, node);
-			//}
 			if (node == null)
 				handler = new RecordBarListHandler();
 			else
@@ -164,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion IDisposable & Co. implementation
 
-		internal virtual void  Init(XCore.Mediator mediator, XmlNode node)
+		internal virtual void  Init(Mediator mediator, XmlNode node)
 		{
 			CheckDisposed();
 
@@ -231,6 +228,26 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		public override void PopulateRecordBar(RecordList list)
+		{
+			base.PopulateRecordBar(list);
+			UpdateHeaderVisibility();
+		}
+
+		/// <summary>
+		/// It's possible that another tree bar handler recently turned over control of the RecordBar
+		/// to us, if so, we want to make sure they didn't leave the optional info bar visible.
+		/// </summary>
+		protected virtual void UpdateHeaderVisibility()
+		{
+			var window = (XWindow)m_mediator.PropertyTable.GetValue("window");
+			if (window == null || window.IsDisposed)
+				return;
+
+			if (IsShowing)
+				window.TreeBarControl.HideHeaderControl();
+		}
+
 		/// <summary>
 		/// add any subitems to the tree. Note! This assumes that the list has been preloaded
 		/// (e.g., using PreLoadList), so it bypasses normal load operations for speed purposes.
@@ -290,6 +307,12 @@ namespace SIL.FieldWorks.XWorks
 		void MoveItem(int distance)
 		{
 			int hvoMove = ClickObject;
+
+			if (hvoMove == 0)
+			{
+				return;
+			}
+
 			var column = m_possRepo.GetObject(hvoMove);
 			if (column.CheckAndReportProtectedChartColumn())
 				return;
@@ -311,11 +334,8 @@ namespace SIL.FieldWorks.XWorks
 				newIndex++;
 			UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem,
 				m_cache.ActionHandlerAccessor,
-				() =>
-					{
-						m_cache.DomainDataByFlid.MoveOwnSeq(hvoOwner, (int) ownFlid, oldIndex, oldIndex, hvoOwner,
-														  (int) ownFlid, newIndex);
-					});
+				() => m_cache.DomainDataByFlid.MoveOwnSeq(
+					hvoOwner, ownFlid, oldIndex, oldIndex, hvoOwner, ownFlid, newIndex));
 		}
 	}
 
@@ -333,11 +353,6 @@ namespace SIL.FieldWorks.XWorks
 		int m_typeSize;		// font size for the tree's fonts.
 		// map from writing system to font.
 		Dictionary<int, Font> m_dictFonts = new Dictionary<int, Font>();
-
-		// int id; // CS0414
-		// static int nextID = 1234; // CS0414
-		// int treeHash; // CS0414
-
 
 		//must have a constructor with no parameters, to use with the dynamic loader.
 		protected TreeBarHandler()
@@ -482,8 +497,6 @@ namespace SIL.FieldWorks.XWorks
 				if (m_tree != null && !m_expand)
 					GetExpandedItems(m_tree.Nodes, expandedItems);
 				m_tree = tree;
-				// id = nextID++; // CS0414
-				// treeHash = m_tree.GetHashCode(); // CS0414
 
 				// Removing the handlers first seems to be necessary because multiple tree handlers are
 				// working with one treeview. Only this active one should have handlers connected.

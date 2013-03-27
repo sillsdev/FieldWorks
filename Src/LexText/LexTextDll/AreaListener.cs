@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
@@ -344,6 +345,45 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true;
 		}
 
+		/// <summary>
+		/// This method is called BY REFLECTION through the mediator from LinkListener.FollowActiveLink, because the assembly dependencies
+		/// are in the wrong direction. It finds the name of the tool we need to invoke to edit a given list.
+		/// </summary>
+		/// <param name="parameters"></param>
+		/// <returns></returns>
+		public bool OnGetToolForList(object parameters)
+		{
+			var realParams = (object[]) parameters;
+			var list = (ICmPossibilityList)realParams[0];
+			var windowConfiguration = (XmlNode)m_mediator.PropertyTable.GetValue("WindowConfiguration");
+			foreach (XmlNode tool in windowConfiguration.SelectSingleNode(GetListToolsXPath()).ChildNodes)
+			{
+				var toolName = XmlUtils.GetManditoryAttributeValue(tool, "value");
+				var paramsNode = tool.SelectSingleNode(".//control/parameters[@clerk]");
+				if (paramsNode == null)
+					continue;
+				var clerkNode = ToolConfiguration.GetClerkNodeFromToolParamsNode(paramsNode);
+				if (clerkNode == null)
+					continue;
+				var listNode = clerkNode.SelectSingleNode("recordList");
+				if (listNode == null)
+					continue;
+				var owner = XmlUtils.GetOptionalAttributeValue(listNode, "owner");
+				var listName = XmlUtils.GetOptionalAttributeValue(listNode, "property");
+				if (string.IsNullOrEmpty(owner) || string.IsNullOrEmpty(listName))
+					continue;
+				var possibleList = PossibilityRecordList.GetListFromOwnerAndProperty(list.Cache, owner, listName);
+				if (possibleList == list)
+				{
+					realParams[1] = toolName;
+					return true;
+				}
+			}
+			// If it's not a known list, try custom.
+			realParams[1] = GetCustomListToolName(list);
+			return true;
+		}
+
 		#region Custom List Methods
 
 		private static void AddToolNodeToDisplay(ICmPossibilityListRepository possRepo, FdoCache cache,
@@ -577,6 +617,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 			//display.List.Add(label, value, sbsview, importedToolNode.SelectSingleNode("control"));
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="see REVIEW comment - code is possibly wrong")]
 		private void AddClerkToConfigForList(ICmPossibilityList curList, XmlNode windowConfig)
 		{
 			// Put the clerk node in the window configuration for this list
@@ -589,6 +631,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			XmlNode x = windowConfig.SelectSingleNode(toolParamNodeXPath);
 			if (x == null)
 				x = FindToolParamNode(windowConfig, curList);
+			// REVIEW: I'm not sure where the created RecordClerk gets disposed
 			RecordClerkFactory.CreateClerk(m_mediator, x, true);
 		}
 
@@ -1010,6 +1053,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 				return "textsWords";
 			if (IsToolInArea(toolName, "lists", windowConfiguration))
 				return "lists";
+			if (IsToolInArea(toolName, "notebook", windowConfiguration))
+				return "notebook";
 			return null;
 		}
 	}

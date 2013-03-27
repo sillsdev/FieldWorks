@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-   <xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes"/>
+   <xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" media-type="text/html; charset=utf-8"/>
    <!--
 ================================================================
 Format the resulting state of an application of the Word Grammar (for debugging)

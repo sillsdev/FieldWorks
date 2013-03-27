@@ -141,10 +141,11 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				using (var dlg = new OverwriteExistingProject(m_restoreProjectView.Settings.ProjectName,
 					m_restoreProjectView.HelpTopicProvider))
 				{
-				if (dlg.ShowDialog() == DialogResult.No)
-					return false;
-				m_restoreProjectView.Settings.BackupOfExistingProjectRequested = dlg.BackupBeforeOverwritting;
-			}
+					var result = dlg.ShowDialog();
+					if (result == DialogResult.No || result == DialogResult.Cancel)
+						return false;
+					m_restoreProjectView.Settings.BackupOfExistingProjectRequested = dlg.BackupBeforeOverwritting;
+				}
 			}
 
 			return true;

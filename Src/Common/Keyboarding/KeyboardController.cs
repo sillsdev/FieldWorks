@@ -10,9 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Keyboarding.Interfaces;
+using SIL.Utils;
 #if __MonoCS__
 using SIL.FieldWorks.Views;
 using SIL.FieldWorks.Common.Keyboarding.Linux;
@@ -40,7 +39,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			/// </summary>
 			public static void SetKeyboardAdaptors(IKeyboardAdaptor[] adaptors)
 			{
-				if (SingletonsContainer.Contains<KeyboardControllerImpl>())
+				if (SingletonsContainer.Contains<IKeyboardController>())
 				{
 					// we're modifying an existent KeyboardController.
 					Instance.Keyboards.Clear();
@@ -92,22 +91,24 @@ namespace SIL.FieldWorks.Common.Keyboarding
 			/// <param name='description'>Keyboard description object</param>
 			public static void RegisterKeyboard(int lcid, IKeyboardDescription description)
 			{
-				Debug.Assert(!Instance.Keyboards.ContainsKey(lcid));
+				Debug.Assert(!Instance.Keyboards.ContainsKey(lcid),
+					String.Format("KeyboardController.Manager.RegisterKeyboard called with duplicate keyboard lcid '{0}', with description '{1}'.", lcid, description));
+
 				Instance.Keyboards[lcid] = description;
 			}
 		}
 		#endregion
 
 		#region Class KeyboardControllerImpl
-		private class KeyboardControllerImpl: ILgTextServices, IDisposable
+		private class KeyboardControllerImpl: IKeyboardController, IDisposable
 		{
-			internal Dictionary<int, IKeyboardDescription> Keyboards =
-				new Dictionary<int, IKeyboardDescription>();
-			internal IKeyboardEventHandler InternalEventHandler { get; set; }
-			internal IKeyboardMethods InternalMethods { get; set; }
+			public Dictionary<int, IKeyboardDescription> Keyboards { get; private set; }
+			public IKeyboardEventHandler InternalEventHandler { get; set; }
+			public IKeyboardMethods InternalMethods { get; set; }
 
 			public KeyboardControllerImpl()
 			{
+				Keyboards = new Dictionary<int, IKeyboardDescription>();
 			}
 
 			#region Disposable stuff
@@ -178,7 +179,6 @@ namespace SIL.FieldWorks.Common.Keyboarding
 				return GetKeyboard(null, otherImKeyboard);
 			}
 
-			#region ILgTextServices implementation
 			/// <summary>
 			/// Sets the keyboard.
 			/// </summary>
@@ -197,7 +197,6 @@ namespace SIL.FieldWorks.Common.Keyboarding
 				activeOtherImKeyboard = otherImKeyboard;
 				fSelectLangPending = true;
 			}
-			#endregion
 
 			/// <summary>
 			/// Gets the installed keyboard layouts/languages.
@@ -229,7 +228,11 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		#endregion
 
 		#region Static methods and properties
-		private static KeyboardControllerImpl Create()
+		/// <summary>
+		/// Create an instance of IKeyboardController. This gets called if SingletonsContainer
+		/// doesn't contain already one.
+		/// </summary>
+		private static IKeyboardController Create()
 		{
 			var controller = new KeyboardControllerImpl();
 			if (Adaptors == null)
@@ -249,7 +252,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// <summary>
 		/// Gets the current keyboard controller singleton.
 		/// </summary>
-		private static KeyboardControllerImpl Instance
+		private static IKeyboardController Instance
 		{
 			get
 			{

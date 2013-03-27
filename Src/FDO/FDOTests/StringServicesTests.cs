@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IStText MakeText(ITsString[] paragraphs, string[] styles)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			IStText sttext = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = sttext;
 			var paraFactory = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>();
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		private IStTxtPara MakeSimpleText(string content)
 		{
 			var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			IStText sttext = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 			text.ContentsOA = sttext;
 			var paraFactory = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>();

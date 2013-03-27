@@ -11,7 +11,7 @@
 <!ELEMENT Styles (markup, replacements, ImportMappingSets)>
 <!ATTLIST Styles
 	date CDATA #REQUIRED
-	DTDver (7E9FC46B-A1F9-4e31-A548-D1FBE4232387) #REQUIRED
+	DTDver (B44B0AE3-416D-4616-B4CA-C1DA9A56DD7F) #REQUIRED
 	label CDATA #IMPLIED
 >
 <!ELEMENT markup (tag+)>
@@ -21,6 +21,7 @@
 <!ELEMENT tag (sfm*, sfmchar?, usage*, help?, font, paragraph?)>
 <!ATTLIST tag
 	id ID #REQUIRED
+	guid CDATA #REQUIRED
 	userlevel (0 | 1 | 2 | 3 | 4 | 5) #REQUIRED
 	context (annotation | back | backTranslation | book | general | internal | internalMappable | intro | introtitle | note | publication | text | title | internalConfigureView | psuedoStyle) #REQUIRED
 	structure (body | heading) #IMPLIED

@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+	<UsingTask TaskName="Unitpp" AssemblyFile="FwBuildTasks.dll"/>
+	<UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
+
+	<!-- Make all of FieldWorks. -->
+	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp">
+		<Message Text="Finished mkall Target."/>
+		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
+			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
+		</CreateItem>
+		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
+	</Target>
+
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;testFwKernel;Language;testLanguage;Views;testViews;GrEngine">
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
+	</Target>
+	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Language;Views;GrEngine">
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
+	</Target>
+
+	<ItemGroup>
+		<Fragments Include="$(dir-fwdistfiles)/*.fragment.manifest"/>
+	</ItemGroup>
+	<Target Name="regFreeCpp" DependsOnTargets="FwKernel;Language;GrEngine;Views"
+		AfterTargets="FwKernel;Language;GrEngine;Views" Condition="'$(OS)'=='Windows_NT'">
+		<RegFree Executable="$(dir-outputBase)/FwKernel.dll" Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
+			Dlls="$(dir-outputBase)/FwKernel.dll;$(dir-outputBase)/Language.dll;$(dir-outputBase)/Graphite.dll;$(dir-outputBase)/Views.dll"
+			Fragments="@(Fragments)" NoTypeLib="$(dir-outputBase)/Graphite.dll"/>
+	</Target>
+
+	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			  Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
+			  Configuration="$(config-capital)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)\Src\DebugProcs"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			  Makefile="$(fwrt)/Src/DebugProcs/Makefile"
+			  Configuration="$(config-capital)" Target="$(make-target)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)/Src/DebugProcs"/>
+		<Message Text="Finished building DebugProcs."/>
+	</Target>
+
+	<Target Name="GenericLib" DependsOnTargets="DebugProcs">
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			  Makefile="$(fwrt)\Src\Generic\GenericLib.mak"
+			  Configuration="$(config-capital)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)\Src\Generic"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			  Makefile="$(fwrt)/Src/Generic/Makefile"
+			  Configuration="$(config-capital)" Target="$(make-target)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)/Src/Generic"/>
+		<Message Text="Finished building GenericLib."/>
+	</Target>
+
+	<Target Name="testGenericLib" DependsOnTargets="GenericLib">
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			  Makefile="$(fwrt)\Src\Generic\Test\testGenericLib.mak"
+			  Configuration="$(config-capital)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)\Bin"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			  Makefile="$(fwrt)/Src/Generic/Test/Makefile"
+			  Configuration="$(config-capital)" Target="$(make-target)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
+		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
+				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				Condition="'$(OS)'=='Windows_NT'"/>
+		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testGenericLib.exe -manifest $(dir-outputBase)\testGenericLib.exe.manifest"
+			  Condition="'$(OS)'=='Windows_NT'"/>
+		<Unitpp Condition="'$(action)'=='test'"
+				FixturePath="$(dir-outputBase)/testGenericLib"
+				Timeout="60000"
+				ContinueOnError="true" />
+		<Message Text="Finished building testGenericLib." Condition="'$(action)'!='test'"/>
+		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="GrEngine" DependsOnTargets="GenericLib;FwKernel;Views">
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			Makefile="$(fwrt)\Src\Graphite\GrEngine\GrEngine.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)\Src\Graphite\GrEngine"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			Makefile="$(fwrt)/Src/Graphite/GrEngine/Makefile"
+			Configuration="$(config-capital)" Target="$(make-target)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Src/Graphite/GrEngine"/>
+		<Message Text="Finished building GrEngine."/>
+	</Target>
+
+	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps">
+		<Message Text="FwKernel make-target='$(make-target)'"/>
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)\Src\Kernel"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			Makefile="$(fwrt)/Src/Kernel/Makefile"
+			Configuration="$(config-capital)" Target="$(make-target)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Src/Kernel"/>
+		<Message Text="Finished building FwKernel."/>
+	</Target>
+
+	<Target Name="testFwKernel" DependsOnTargets="GenericLib;FwKernel">
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			  Makefile="$(fwrt)\Src\Kernel\Test\testFwKernel.mak"
+			  Configuration="$(config-capital)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)\Bin"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			  Makefile="$(fwrt)/Src/Kernel/Test/Makefile"
+			  Configuration="$(config-capital)" Target="$(make-target)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)/Src/Kernel/Test" ContinueOnError="true"/>
+		<RegFree Executable="$(dir-outputBase)\testFwKernel.exe"
+				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				Condition="'$(OS)'=='Windows_NT'"/>
+		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testFwKernel.exe -manifest $(dir-outputBase)\testFwKernel.exe.manifest"
+			  Condition="'$(OS)'=='Windows_NT'"/>
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="KernelCompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(KernelCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
+		<Unitpp Condition="'$(action)'=='test'"
+				FixturePath="$(dir-outputBase)/testFwKernel"
+				Timeout="60000"
+				ContinueOnError="true" />
+		<Message Text="Finished building testFwKernel." Condition="'$(action)'!='test'"/>
+		<Message Text="Finished building testFwKernel and running tests." Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="AppCore" DependsOnTargets="DebugProcs;GenericLib">
+		<Message Text="AppCore make-target='$(make-target)'"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			  Makefile="$(fwrt)/Src/AppCore/Makefile"
+			  Configuration="$(config-capital)" Target="$(make-target)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)/Src/AppCore"/>
+		<Message Text="Finished building AppCore."/>
+	</Target>
+
+	<Target Name="Language" DependsOnTargets="GenericLib;FwKernel;ManagedLgIcuCollator;GenerateCellarConstants">
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			Makefile="$(fwrt)\Src\Language\Language.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)\Src\Language"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			Makefile="$(fwrt)/Src/Language/Makefile"
+			Configuration="$(config-capital)" Target="$(make-target)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Src/Language"/>
+		<Message Text="Finished building Language."/>
+	</Target>
+
+	<Target Name="testLanguage" DependsOnTargets="GenericLib;Language;FwKernel;Views;GrEngine">
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			  Makefile="$(fwrt)\Src\Language\Test\testLanguage.mak"
+			  Configuration="$(config-capital)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)\Bin"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			  Makefile="$(fwrt)/Src/Language/Test/Makefile"
+			  Configuration="$(config-capital)" Target="$(make-target)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)/Src/Language/Test" ContinueOnError="true"/>
+		<RegFree Executable="$(dir-outputBase)\testLanguage.exe"
+				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				Condition="'$(OS)'=='Windows_NT'"/>
+		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testLanguage.exe -manifest $(dir-outputBase)\testLanguage.exe.manifest"
+			  Condition="'$(OS)'=='Windows_NT'"/>
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="LanguageCompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(LanguageCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
+		<Unitpp Condition="'$(action)'=='test'"
+				FixturePath="$(dir-outputBase)/testLanguage"
+				Timeout="60000"
+				ContinueOnError="true" />
+		<Message Text="Finished building testLanguage." Condition="'$(action)'!='test'"/>
+		<Message Text="Finished building testLanguage and running tests." Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<Target Name="Views" DependsOnTargets="GenericLib;Language;KeyboardSwitcher;GenerateCellarConstants">
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			Makefile="$(fwrt)\Src\views\Views.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)\Src\views"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			Makefile="$(fwrt)/Src/views/Makefile"
+			Configuration="$(config-capital)" Target="$(make-target)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Src/views"/>
+		<Message Text="Finished building Views."/>
+	</Target>
+
+	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite">
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			  Makefile="$(fwrt)\Src\views\Test\testViews.mak"
+			  Configuration="$(config-capital)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)\Bin"/>
+		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
+			  Makefile="$(fwrt)/Src/views/Test/Makefile"
+			  Configuration="$(config-capital)" Target="$(make-target)"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
+		<RegFree Executable="$(dir-outputBase)\testViews.exe"
+				Dlls="$(dir-outputBase)\Language.dll;$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Graphite.dll;$(dir-outputBase)\Views.dll"
+				NoTypeLib="$(dir-outputBase)\Graphite.dll"
+				Condition="'$(OS)'=='Windows_NT'"/>
+		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
+			  Condition="'$(OS)'=='Windows_NT'"/>
+		<CreateItem Include="$(dir-outputBase)/*.compmap">
+			<Output TaskParameter="Include" ItemName="ViewsCompMapFiles"/>
+		</CreateItem>
+		<CatenateFiles SourceFiles="@(ViewsCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
+		<Unitpp Condition="'$(action)'=='test'"
+				FixturePath="$(dir-outputBase)/testViews"
+				Timeout="60000"
+				ContinueOnError="true" />
+		<Message Text="Finished building testViews." Condition="'$(action)'!='test'"/>
+		<Message Text="Finished building testViews and running tests." Condition="'$(action)'=='test'"/>
+	</Target>
+
+	<ItemGroup>
+		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"/>
+		<CellarConstantsInputs Include="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"/>
+		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h"/>
+	</ItemGroup>
+
+	<Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants"
+			Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
+		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
+		<FdoGenerate XmlFile="$(fwrt)/Src/FDO/MasterFieldWorksModel.xml"
+					 OutputDir="$(dir-fwoutputCommon)"
+					 OutputFile="CellarConstants.h"
+					 TemplateFile="$(fwrt)/Src/FDO/FDOGenerate/CellarConstants.vm.h"
+					 WorkingDirectory="$(fwrt)/Src/FDO"
+					 Condition="'$(action)'!='clean'"/>
+	</Target>
+
+	<Target Name="CopyCellarBaseConstants" Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h" Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h">
+		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'"/>
+		<Copy SourceFiles="$(fwrt)/Src/Kernel/CellarBaseConstants.h"
+			  DestinationFolder="$(fwrt)/Output/Common"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
+	</Target>
+
+	<PropertyGroup>
+		<Original-OBJ_DIR>$(OBJ_DIR)</Original-OBJ_DIR>
+		<Original-BUILD4UX>$(BUILD4UX)</Original-BUILD4UX>
+		<Original-ANAL_TYPE>$(ANAL_TYPE)</Original-ANAL_TYPE>
+	</PropertyGroup>
+
+	<Target Name="mktlbs" DependsOnTargets="GenerateCellarConstants">
+		<SetEnvVar Variable="BUILD_OUTPUT" Value="$(dir-fwoutput)" />
+		<SetEnvVar Variable="OBJ_DIR" Value="$(dir-fwobj)" />
+		<SetEnvVar Variable="BUILD4UX" Value="$(build4ux)"/>
+		<SetEnvVar Variable="ANAL_TYPE" Value="performance" Condition="'$(performance)'=='true'"/>
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			  Makefile="$(fwrt)\Src\Language\Language.mak"
+			  Configuration="$(config-capital)"
+			  Target="dirs $(dir-fwoutputCommon)\LanguageTlb.tlb"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)"/>
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			  Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
+			  Configuration="$(config-capital)"
+			  Target="dirs $(dir-fwoutputCommon)\FwKernelTlb.tlb"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)"/>
+		<Make Condition="'$(OS)'=='Windows_NT'"
+			  Makefile="$(fwrt)\Src\views\Views.mak"
+			  Configuration="$(config-capital)"
+			  Target="dirs $(dir-fwoutputCommon)\ViewsTlb.tlb"
+			  BuildRoot="$(fwrt)"
+			  WorkingDirectory="$(fwrt)"/>
+		<SetEnvVar Variable="BUILD_OUTPUT" Value="$(Original-BUILD_OUTPUT)" />
+		<SetEnvVar Variable="OBJ_DIR" Value="$(Original-OBJ_DIR)" />
+		<SetEnvVar Variable="BUILD4UX" Value="$(Original-BUILD4UX)" />
+		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
+	</Target>
+
+	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;setRegistryValues;IcuData;CopyDlls;mkall"/>
+
+	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
+		<Error Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
+	</Target>
+
+	<Target Name="remakefw-jenkins" DependsOnTargets="checkTLBsUpToDate;remakefw-internal">
+		<!-- Jenkins looks at the test output files to see if tests failed, so we don't have to
+			fail on failed tests -->
+		<Warning Condition="'@(FailedSuites)'!=''" Text="The following projects had failing tests: @(FailedSuites)" />
+	</Target>
+
+	<UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
+
+	<Target Name="CleanAll">
+		<!-- remove the Obj and Output directories -->
+		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)"/>
+		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'"/>
+		<!-- remove other directories and files created during the build process -->
+		<ForceDelete Files="@(IcuDataFiles)"/>
+		<ForceDelete Files="$(fwrt)/Bin/FieldWorks.targets"/>
+
+		<Message Text="Finished deleting the output directories!"/>
+	</Target>
+
+	<Target Name="CopyDlls">
+		<!-- .Net assemblies -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/LinqBridge.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/log4net.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(fwrt)/Lib/Common/Interop.ResourceDriver.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<!-- Linux shared libraries -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/libxample32.so" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/libxample64.so" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
+		<!-- Windows dynamically loaded libraries -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/xample.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/Patr100.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- Needed for at least one set of unit tests. Since the installer combines distfiles with output/release, probably not necessary otherwise.
+		Possibly could be moved into a buildInclude for projects that need it. Old version did not copy for remakele-->
+		<Copy SourceFiles="$(fwrt)/DistFiles/Utilities.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<!-- ICU50 dlls -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/icudt50.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/icuin50.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/icuuc50.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/icu.net.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<!-- Enchant dlls -->
+		<Copy SourceFiles="$(fwrt)/DistFiles/libenchant.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/glib-2-vs10.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="$(fwrt)/DistFiles/gmodule-2-vs10.dll" DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+	</Target>
+
+	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKLM;setKeysInHKCU"/>
+
+	<!-- This target only has an effect on Windows machines, and should be removed once encoding converters are updated to look in HKCU by default -->
+	<Target Name="setKeysInHKLM" Condition="'$(UserIsAdmin)'=='True'">
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
+					   Value="$(fwrt)\DistFiles\Windows\EC Common"/>
+		<WriteRegistry Hive="LocalMachine"
+					   Key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+					   Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"/>
+	</Target>
+
+	<Target Name="setKeysInHKCU">
+		<Message Text="Setting registry values for $(fwrt)."/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootCodeDir"
+			Value="$(dir-fwdistfiles)"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootDataDir"
+			Value="$(dir-fwdistfiles)"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\ProjectsDir"
+			Value="$(dir-fwdistfiles)\Projects"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\Icu50DataDir"
+			Value="$(dir-icuData)"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
+			Value="$(fwrt)\DistFiles\Windows\EC Common"
+			Condition="'$(OS)'=='Windows_NT'"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+			Value="$(fwrt)\DistFiles\Windows\EC\EC\Plugins"
+			Condition="'$(OS)'=='Windows_NT'"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
+			Value="$(dir-outputBase)"
+			Condition="'$(OS)'=='Unix'"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+			Value="$(dir-outputBase)/EC/Plugins"
+			Condition="'$(OS)'=='Unix'"/>
+
+		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\EncodingConverterRepository\Registry"
+			Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
+	</Target>
+
+	<Target Name="allTe" DependsOnTargets="BasicUtils,ZipUtils,Design,FwControls,ScriptureUtils,TeExe,ScrChecks,SharedScrUtils,FwRemoteDatabaseConnectorService"/>
+
+</Project>

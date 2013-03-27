@@ -2,11 +2,13 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;		// controls and etc...
 using System.Windows.Forms.VisualStyles;
+using System.Xml;
 using Palaso.Media;
 using Palaso.WritingSystems;
 using SIL.CoreImpl;
@@ -40,6 +42,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		List<IWritingSystem> m_rgwsToDisplay;
 		LabeledMultiStringVc m_vc = null;
 		private List<Palaso.Media.ShortSoundFieldControl> m_soundControls = new List<ShortSoundFieldControl>();
+		private string m_textStyle;
 
 		/// <summary>
 		/// This event is triggered at the start of the Display() method of the VC.
@@ -96,26 +99,17 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				int wsIndex;
 				var ws = WsForSoundField(control, out wsIndex);
-				var sel = GetSelAtStartOfWs(wsIndex, ws);
-				Rectangle selRect;
-				bool fEndBeforeAnchor; // not used
-				using (new HoldGraphics(this))
-					SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
-				control.Left = indent;
-				control.Width = Width - indent;
-				control.Top = selRect.Top;
-			}
-		}
-
-		private IVwSelection GetSelAtStartOfWs(int wsIndex, IWritingSystem ws)
-		{
-			try
-			{
-				return m_rootb.MakeTextSelection(0, 0, null, m_flid, wsIndex, 0, 0, ws.Handle, false, -1, null, false);
-			}
-			catch (COMException)
-			{
-				return null; // can fail if we are hiding an empty WS.
+				if (ws != null)
+				{
+					var sel = MultiStringSelectionUtils.GetSelAtStartOfWs(m_rootb, m_flid, wsIndex, ws);
+					Rectangle selRect;
+					bool fEndBeforeAnchor; // not used
+					using (new HoldGraphics(this))
+						SelectionRectangle(sel, out selRect, out fEndBeforeAnchor);
+					control.Left = indent;
+					control.Width = Width - indent;
+					control.Top = selRect.Top;
+				}
 			}
 		}
 
@@ -151,10 +145,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			foreach (var sc in m_soundControls)
 			{
 				Controls.Remove(sc);
+				sc.Dispose();
 			}
 			m_soundControls.Clear();
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="soundFieldControl gets disposed in Dispose method")]
 		private void SetupSoundControls()
 		{
 			if (m_rgws == null)
@@ -166,8 +163,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				index++;
 				var pws = ws as WritingSystemDefinition;
-				if (pws == null || !pws.IsVoice || GetSelAtStartOfWs(index, ws) == null)
+				if (pws == null || !pws.IsVoice ||
+					MultiStringSelectionUtils.GetSelAtStartOfWs(m_rootb, m_flid, index, ws) == null)
+				{
 					continue;
+				}
 				var soundFieldControl = new ShortSoundFieldControl();
 				m_soundControls.Add(soundFieldControl); // todo: one for each audio one
 				soundFieldControl.Visible = true;
@@ -211,12 +211,19 @@ namespace SIL.FieldWorks.Common.Widgets
 			var sc = (ShortSoundFieldControl)sender;
 			int dummy;
 			var ws = WsForSoundField(sc, out dummy);
+			var handle = ws == null ? 0 : ws.Handle;
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_fdoCache.ActionHandlerAccessor,
 				() =>
-					m_fdoCache.DomainDataByFlid.SetMultiStringAlt(m_hvoObj, m_flid, ws.Handle,
-						m_fdoCache.TsStrFactory.MakeString("", ws.Handle)));
+					m_fdoCache.DomainDataByFlid.SetMultiStringAlt(m_hvoObj, m_flid, handle,
+						m_fdoCache.TsStrFactory.MakeString("", handle)));
 		}
 
+		/// <summary>
+		/// If we're shutting down, this might return null
+		/// </summary>
+		/// <param name="sc"></param>
+		/// <param name="wsIndex"></param>
+		/// <returns></returns>
 		IWritingSystem WsForSoundField(ShortSoundFieldControl sc, out int wsIndex)
 		{
 			int index = m_soundControls.IndexOf(sc);
@@ -231,7 +238,8 @@ namespace SIL.FieldWorks.Common.Widgets
 					return ws;
 				index--;
 			}
-			throw new InvalidOperationException("trying to get WS for sound field failed");
+			return null;
+			//throw new InvalidOperationException("trying to get WS for sound field failed");
 		}
 
 		/// <summary>
@@ -243,6 +251,41 @@ namespace SIL.FieldWorks.Common.Widgets
 			if (m_rootb != null)
 			{
 				m_rootb.SetRootObject(m_hvoObj, m_vc, 1, m_styleSheet);
+			}
+		}
+		/// <summary>
+		/// Get any text styles from configuration node (which is now available; it was not at construction)
+		/// </summary>
+		/// <param name="configurationNode"></param>
+		public void FinishInit(XmlNode configurationNode)
+		{
+			if (configurationNode.Attributes != null)
+			{
+				var textStyle = configurationNode.Attributes["textStyle"];
+				if (textStyle != null)
+				{
+					TextStyle = textStyle.Value;
+				}
+			}
+			FinishInit();
+		}
+
+		/// <summary>
+		/// Get or set the text style name
+		/// </summary>
+		public string TextStyle
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(m_textStyle))
+				{
+					m_textStyle = "Default Paragraph Characters";
+				}
+				return m_textStyle;
+			}
+			set
+			{
+				m_textStyle = value;
 			}
 		}
 
@@ -280,13 +323,18 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Make up a unique file name for the new recording. It starts with the shortname of the object
 			// so as to somewhat link them together, then adds a unique timestamp, then if by any chance
 			// that exists it keeps trying.
+			var baseNameForFile = obj.ShortName;
+			// LT-12926: Path.ChangeExtension checks for invalid filename chars,
+			// so we need to fix the filename before calling it.
+			foreach (var c in Path.GetInvalidFileNameChars())
+				baseNameForFile = baseNameForFile.Replace(c, '_');
+			// WeSay and most other programs use NFC for file names, so we'll standardize on this.
+			baseNameForFile = baseNameForFile.Normalize(NormalizationForm.FormC);
 			string filename;
 			do
 			{
-				//WeSay and most other programs use NFC for file names, so we'll standardize on this.
-				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + obj.ShortName.Normalize(NormalizationForm.FormC), "wav");
-				foreach (var c in Path.GetInvalidFileNameChars())
-					filename = filename.Replace(c, '_');
+				filename = baseNameForFile;
+				filename = Path.ChangeExtension(DateTime.UtcNow.Ticks + filename, "wav");
 				path = Path.Combine(mediaDir, filename);
 
 			} while (File.Exists(path));
@@ -345,7 +393,21 @@ namespace SIL.FieldWorks.Common.Widgets
 			catch
 			{
 				e.Handled = true;
+			}
 		}
+
+		/// <summary>
+		/// Override to handle KeyUp/KeyDown within a multi-string field -- LT-13334
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			base.OnKeyDown(e);
+			if (!e.Handled && (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down))
+			{
+				MultiStringSelectionUtils.HandleUpDownArrows(e, m_rootb, RootSiteEditingHelper.CurrentSelection,
+					WritingSystemsToDisplay, m_flid);
+			}
 		}
 
 		static bool s_fProcessingSelectionChanged = false;
@@ -1243,6 +1305,10 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			if (!m_editingHelper.HandleOnKeyDown(e))
 				base.OnKeyDown(e);
+			if (!e.Handled && (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down))
+			{
+				MultiStringSelectionUtils.HandleUpDownArrows(e, RootBox, EditingHelper.CurrentSelection, WritingSystems, kflid);
+			}
 		}
 
 		internal ITsString Value(int ws)
@@ -1285,6 +1351,26 @@ namespace SIL.FieldWorks.Common.Widgets
 			//				// Get the properties of the "Language Code" style for the writing system
 			//				// which corresponds to the user's environment.
 			//				qtpf->MakeProps(stuLangCodeStyle.Bstr(), ???->UserWs(), 0, &qttp);
+		}
+
+		public virtual string TextStyle
+		{
+			get
+			{
+
+				string sTextStyle = "Default Paragraph Characters";
+/*
+				if (m_view != null)
+				{
+					sTextStyle = m_view.TextStyle;
+				}
+*/
+				return sTextStyle;
+			}
+			set
+			{
+				/*m_textStyle = value;*/
+			}
 		}
 
 		public void Reuse(int flid, List<IWritingSystem> rgws, bool editable)
@@ -1408,6 +1494,11 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 				else
 				{
+					if (!string.IsNullOrEmpty(TextStyle))
+					{
+						vwenv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, TextStyle);
+
+					}
 					vwenv.AddStringAltMember(m_flid, m_rgws[i].Handle, this);
 				}
 				vwenv.CloseTableCell();
@@ -1491,6 +1582,26 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			return false;
 		}
+		public override string TextStyle
+		{
+			get
+			{
+				string sTextStyle = "Default Paragraph Characters";
+				if (m_view != null)
+				{
+					sTextStyle = m_view.TextStyle;
+				}
+				return sTextStyle;
+			}
+			set
+			{
+				if (m_view != null)
+				{
+					m_view.TextStyle = value;
+				}
+			}
+		}
+
 	}
 
 	/// <summary>
@@ -1519,6 +1630,70 @@ namespace SIL.FieldWorks.Common.Widgets
 		public IVwEnv Environment
 		{
 			get { return m_env; }
+		}
+	}
+
+	/// <summary>
+	/// A start at refactoring two similar, but different classes to use some shared code.
+	/// 1. LabeledMultiStringView is a RootSiteControl
+	/// 2. InnerLabeledMultiStringControl is a SimpleRootSite
+	///    but which is wrapped in a LabeledMultiStringControl (used in InsertEntryDlg), which is a UserControl.
+	/// </summary>
+	internal static class MultiStringSelectionUtils
+	{
+		internal static IVwSelection GetSelAtStartOfWs(IVwRootBox rootBox, int flid, int wsIndex, IWritingSystem ws)
+		{
+			try
+			{
+				return rootBox.MakeTextSelection(0, 0, null, flid, wsIndex, 0, 0, (ws == null) ? 0 : ws.Handle, false, -1, null, false);
+			}
+			catch (COMException)
+			{
+				return null; // can fail if we are hiding an empty WS.
+			}
+		}
+
+		internal static int GetCurrentSelectionIndex(SelectionHelper curSel, List<IWritingSystem> writingSystems)
+		{
+			var ws = curSel.SelProps.GetWs();
+			int index = -1;
+			for (var i = 0; i < writingSystems.Count; i++)
+			{
+				if (writingSystems[i].Handle == ws)
+				{
+					index = i;
+					break;
+				}
+			}
+			return index;
+		}
+
+		internal static void HandleUpDownArrows(KeyEventArgs e, IVwRootBox rootBox, SelectionHelper curSel, List<IWritingSystem> wsList, int flid)
+		{
+			if (curSel == null || !curSel.IsValid) // LT-13805: sometimes selection was null
+				return;
+			var index = GetCurrentSelectionIndex(curSel, wsList);
+			if (index < 0)
+				return;
+			var maxWsIndex = wsList.Count - 1;
+			if (e.KeyCode == Keys.Up)
+			{
+				// Handle Up arrow
+				if ((index - 1) < 0)
+					return;
+				index--;
+			}
+			else
+			{
+				// Handle Down arrow
+				if ((index + 1) > maxWsIndex)
+					return;
+				index++;
+			}
+			// make new selection at index
+			var newSelection = GetSelAtStartOfWs(rootBox, flid, index, wsList[index]);
+			newSelection.Install();
+			e.Handled = true;
 		}
 	}
 }

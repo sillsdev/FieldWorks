@@ -1,0 +1,27 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only
+T: SIL.FieldWorks.LexText.Controls.ImportWordSetListener
+T: SIL.FieldWorks.LexText.Controls.ParserParametersListener
+T: SIL.FieldWorks.LexText.Controls.ParserListener
+
+# REVIEW: TryAWordDlg is a singleton which doesn't get disposed!
+T: SIL.FieldWorks.LexText.Controls.TryAWordDialogLauncher
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# added to control and disposed there
+M: System.Void SIL.FieldWorks.LexText.Controls.ParserParametersDlg::SetDlgInfo(System.String,System.String,System.String)
+M: System.Void SIL.FieldWorks.LexText.Controls.ParserParametersDlg::PopulateDataGrid(System.Windows.Forms.DataGrid,System.String)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# reference only
+T: SIL.FieldWorks.LexText.Controls.ParserTraceBase
+T: SIL.FieldWorks.LexText.Controls.WebPageInteractor
+T: SIL.FieldWorks.LexText.Controls.WordImporter

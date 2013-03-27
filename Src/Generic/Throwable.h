@@ -67,15 +67,16 @@ inline void AssertNoErrorInfo()
 
 	if(pIErrorInfo != NULL)
 	{
-		BSTR bstr;
-		hr = pIErrorInfo->GetDescription(&bstr);
+		BSTR dscr = NULL;
+		hr = pIErrorInfo->GetDescription(&dscr);
 		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
-		hr = pIErrorInfo->GetSource(&bstr);
+		::OutputDebugString(dscr);
+		::SysFreeString(dscr);
+		BSTR src = NULL;
+		hr = pIErrorInfo->GetSource(&src);
 		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
+		::OutputDebugString(src);
+		::SysFreeString(src);
 		pIErrorInfo->Release();
 	}
 #else
@@ -110,15 +111,16 @@ inline void ClearErrorInfo()
 	Assert(SUCCEEDED(hr));
 	if(pIErrorInfo != NULL)
 	{
-		BSTR bstr;
-		hr = pIErrorInfo->GetDescription(&bstr);
+		BSTR dscr = NULL;
+		hr = pIErrorInfo->GetDescription(&dscr);
 		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
-		hr = pIErrorInfo->GetSource(&bstr);
+		::OutputDebugString(dscr);
+		::SysFreeString(dscr);
+		BSTR src = NULL;
+		hr = pIErrorInfo->GetSource(&src);
 		Assert(SUCCEEDED(hr));
-		::OutputDebugString(bstr);
-		::SysFreeString(bstr);
+		::OutputDebugString(src);
+		::SysFreeString(src);
 		pIErrorInfo->Release();
 	}
 #else
@@ -165,23 +167,13 @@ void ThrowHr(HRESULT hr, const wchar * pszMsg = NULL, int hHelpId = 0, IErrorInf
 #else
 template<class ZChar>
 void ThrowHr(HRESULT hr, const ZChar * pszMsg = NULL, int hHelpId = 0, IErrorInfo* pErrInfo = NULL); // now in StackDumper.h
+inline void ThrowHr(HRESULT hr);
 #endif
-
-StrUni ConvertException(DWORD dwExcept);
 
 // Use ThrowHrEx() instead of ThrowHr() when you want to throw a COM error, but the reason
 // for the error is a failed Win-API method call. This version gets the information associated
 // with the Windows error as description.
-inline void ThrowHrEx(HRESULT hr, int hHelpId = 0)
-{
-#if WIN32
-	StrUni msg = ConvertException(::GetLastError());
-#else
-	// TODO-Linux: port
-	StrUni msg("Not implemented yet");
-#endif
-	ThrowHr(hr, msg.Chars(), hHelpId);
-}
+void ThrowHrEx(HRESULT hr, int hHelpId = 0);
 
 // Use ReturnHr() instead of a "return WarnHr()" in case of an user error. This will
 // set up ErrorInfo and thus can be handled properly in C#. (TE-4716)

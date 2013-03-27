@@ -39,10 +39,11 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Generic;
-
+using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Framework;
 using SIL.Utils;
 using SIL.FieldWorks.FDO;
@@ -387,14 +388,6 @@ namespace SIL.FieldWorks.XWorks
 			if (m_clerkProvidingRootObject == null)
 			{
 				m_recordBarHandler = RecordBarHandler.Create(m_mediator, clerkConfiguration);//,m_flid);
-				//if (m_list is PossibilityRecordList)
-				//{
-				//	m_recordBarHandler = TreeBarHandler.Create(m_mediator, clerkConfiguration);//,m_flid);
-				//}
-				//else
-				//{
-				//	// Don't use a RecordBarHandler for non-PossibilityRecordList. Use RecordBrowseView instead.
-				//}
 			}
 			else
 			{
@@ -707,6 +700,7 @@ namespace SIL.FieldWorks.XWorks
 					// reset this property.
 					m_mediator.PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", "",
 						PropertyTable.SettingsGroup.LocalSettings);
+					m_mediator.PropertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 
 			}
@@ -1139,6 +1133,32 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private bool AreCustomFieldsAProblem(int[] clsids)
+		{
+			var mdc = (IFwMetaDataCacheManaged) Cache.MetaDataCacheAccessor;
+			var rePunct = new Regex(@"\p{P}");
+			foreach (var clsid in clsids)
+			{
+				var flids = mdc.GetFields(clsid, true, (int) CellarPropertyTypeFilter.All);
+				foreach (var flid in flids)
+				{
+					if (!mdc.IsCustom(flid))
+						continue;
+					string name = mdc.GetFieldName(flid);
+					if (rePunct.IsMatch(name))
+					{
+						var msg = string.Format(xWorksStrings.PunctInFieldNameWarning, name);
+						// The way this is worded, 'Yes' means go on with the export. We won't bother them reporting
+						// other messed-up fields. a 'no' answer means don't continue, which means it's a problem.
+						return (MessageBox.Show(Form.ActiveForm, msg, xWorksStrings.PunctInfieldNameCaption,
+							MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+							!= DialogResult.Yes);
+					}
+				}
+			}
+			return false; // no punctuation in custom fields.
+		}
+
 		public bool OnExport(object argument)
 		{
 			CheckDisposed();
@@ -1146,6 +1166,8 @@ namespace SIL.FieldWorks.XWorks
 			string areaChoice = m_mediator.PropertyTable.GetStringProperty("areaChoice", null);
 			if (areaChoice == "notebook")
 			{
+				if (AreCustomFieldsAProblem(new int[] { RnGenericRecTags.kClassId}))
+					return true;
 				using (var dlg = new NotebookExportDialog(m_mediator))
 				{
 					dlg.ShowDialog();
@@ -1153,6 +1175,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
+				// It's somewhat unfortunate that this bit of code knows what classes can have custom fields.
+				// However, we put in code to prevent punctuation in custom field names at the same time as this check (which is therefore
+				// for the benefit of older projects), so it should not be necessary to check any additional classes we allow to have them.
+				if (AreCustomFieldsAProblem(new int[] { LexEntryTags.kClassId, LexSenseTags.kClassId, LexExampleSentenceTags.kClassId, MoFormTags.kClassId }))
+					return true;
 				using (var dlg = new ExportDialog(m_mediator))
 				{
 					dlg.ShowDialog();
@@ -1161,6 +1188,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return true;	// handled
 		}
+
+		private const string SelectedListBarNodeErrorMessage =
+			"An item stored in the Property Table under SelectedListBarNode (typically from the ListView of an xWindow's record bar) should have an Hvo stored in its Tag property.";
 
 		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
@@ -1191,7 +1221,9 @@ namespace SIL.FieldWorks.XWorks
 					var item = (ListViewItem) m_mediator.PropertyTable.GetValue(name);
 					if (item == null)
 						return;
-					hvo = (int) item.Tag;
+					if (!(item.Tag is int))
+						throw new ArgumentException(SelectedListBarNodeErrorMessage);
+					hvo = (int)item.Tag;
 					if (CurrentObjectHvo == 0 || hvo != CurrentObjectHvo)
 						JumpToRecord(hvo);
 					break;

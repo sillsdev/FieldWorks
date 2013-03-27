@@ -1,288 +1,306 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-	<ProjectType>Local</ProjectType>
-	<ProductVersion>9.0.21022</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{671001CD-EA95-4BE7-9BEA-AF79E4D2F6A3}</ProjectGuid>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>..\..\..</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<AssemblyKeyContainerName>
-	</AssemblyKeyContainerName>
-	<AssemblyName>xWorksTests</AssemblyName>
-	<DefaultClientScript>JScript</DefaultClientScript>
-	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-	<DefaultTargetSchema>IE50</DefaultTargetSchema>
-	<DelaySign>false</DelaySign>
-	<OutputType>Library</OutputType>
-	<RootNamespace>SIL.FieldWorks.XWorks</RootNamespace>
-	<RunPostBuildEvent>Always</RunPostBuildEvent>
-	<FileUpgradeFlags>
-	</FileUpgradeFlags>
-	<UpgradeBackupLocation>
-	</UpgradeBackupLocation>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-	<SccAuxPath>
-	</SccAuxPath>
-	<OldToolsVersion>3.5</OldToolsVersion>
-	<PublishUrl>publish\</PublishUrl>
-	<Install>true</Install>
-	<InstallFrom>Disk</InstallFrom>
-	<UpdateEnabled>false</UpdateEnabled>
-	<UpdateMode>Foreground</UpdateMode>
-	<UpdateInterval>7</UpdateInterval>
-	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-	<UpdatePeriodically>false</UpdatePeriodically>
-	<UpdateRequired>false</UpdateRequired>
-	<MapFileExtensions>true</MapFileExtensions>
-	<ApplicationRevision>0</ApplicationRevision>
-	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<UseApplicationTrust>false</UseApplicationTrust>
-	<BootstrapperEnabled>true</BootstrapperEnabled>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{671001CD-EA95-4BE7-9BEA-AF79E4D2F6A3}</ProjectGuid>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>xWorksTests</AssemblyName>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SIL.FieldWorks.XWorks</RootNamespace>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SccAuxPath>
+    </SccAuxPath>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+    <AppConfig>..\..\AppForTests.config</AppConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<OutputPath>..\..\..\Output\Debug\</OutputPath>
-	<BaseAddress>285212672</BaseAddress>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>DEBUG</DefineConstants>
-	<DocumentationFile>
-	</DocumentationFile>
-	<DebugSymbols>true</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<Optimize>false</Optimize>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport>
-	<PlatformTarget>x86</PlatformTarget>
+    <OutputPath>..\..\..\Output\Debug\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<OutputPath>..\..\..\Output\Release\xCoreTests\</OutputPath>
-	<BaseAddress>285212672</BaseAddress>
-	<ConfigurationOverrideFile>
-	</ConfigurationOverrideFile>
-	<DefineConstants>TRACE</DefineConstants>
-	<DocumentationFile>
-	</DocumentationFile>
-	<DebugSymbols>true</DebugSymbols>
-	<FileAlignment>4096</FileAlignment>
-	<NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-	<Optimize>true</Optimize>
-	<RegisterForComInterop>false</RegisterForComInterop>
-	<RemoveIntegerChecks>false</RemoveIntegerChecks>
-	<WarningLevel>4</WarningLevel>
-	<DebugType>full</DebugType>
-	<ErrorReport>prompt</ErrorReport>
+    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="COMInterfaces, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="DetailControls, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\DetailControls.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="FDO, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="Framework, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="FwControls, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="FwCoreDlgs, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="nunit.framework, Version=2.5.8.10295, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-	  <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="RootSite, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="System">
-	  <Name>System</Name>
-	</Reference>
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Data">
-	  <Name>System.Data</Name>
-	</Reference>
-	<Reference Include="System.Drawing">
-	  <Name>System.Drawing</Name>
-	</Reference>
-	<Reference Include="System.Windows.Forms">
-	  <Name>System.Windows.Forms</Name>
-	</Reference>
-	<Reference Include="System.Xml">
-	  <Name>System.XML</Name>
-	</Reference>
-	<Reference Include="AxInterop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Bin\AxInterop.SHDocVw.dll</HintPath>
-	</Reference>
-	<Reference Include="BasicUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="COMInterfacesTests, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
-	</Reference>
-	<Reference Include="CoreImpl, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
-	</Reference>
-	<Reference Include="FDOTests, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FDOTests.dll</HintPath>
-	</Reference>
-	<Reference Include="Filters, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\Filters.dll</HintPath>
-	</Reference>
-	<Reference Include="FwUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="Interop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Bin\Interop.SHDocVw.dll</HintPath>
-	</Reference>
-	<Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
-	</Reference>
-	<Reference Include="NMock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Bin\nmock\NMock.dll</HintPath>
-	</Reference>
-	<Reference Include="ScrUtilsInterfaces, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
-	</Reference>
-	<Reference Include="SharedScrUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="SilUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="SimpleRootSite, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-	</Reference>
-	<Reference Include="TestManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\TestManager.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="TestUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
-	</Reference>
-	<Reference Include="Widgets, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
-	</Reference>
-	<Reference Include="xCore, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="xCoreInterfaces, Version=6.9.5.40562, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="XMLUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="XMLViews, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\XMLViews.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
-	<Reference Include="xWorks, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
-	  <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
-	</Reference>
+    <Reference Include="BasicUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\BasicUtilsTests.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfaces, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\COMInterfaces.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="DetailControls, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\DetailControls.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="FDO, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\FDO.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Framework, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\Framework.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="FwControls, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\FwControls.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="FwCoreDlgs, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="NMock, Version=1.0.4428.35173, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\NMock.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.5.8.10295, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <HintPath>..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="RootSite, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="AxInterop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Bin\AxInterop.SHDocVw.dll</HintPath>
+    </Reference>
+    <Reference Include="BasicUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\BasicUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="COMInterfacesTests, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\COMInterfacesTests.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreImpl, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\CoreImpl.dll</HintPath>
+    </Reference>
+    <Reference Include="FDOTests, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FDOTests.dll</HintPath>
+    </Reference>
+    <Reference Include="Filters, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Filters.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Bin\Interop.SHDocVw.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="ScrUtilsInterfaces, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ScrUtilsInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedScrUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SilUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleRootSite, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="TestManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\TestManager.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="TestUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\TestUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Widgets, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
+    </Reference>
+    <Reference Include="xCore, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="xCoreInterfaces, Version=6.9.5.40562, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="XMLUtils, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\XMLUtils.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="XMLViews, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\XMLViews.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="xWorks, Version=6.9.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\Output\Debug\xWorks.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-	<None Include="App.config" />
-	<Compile Include="..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
-	  <Link>FwSetupFixtureClass.cs</Link>
-	</Compile>
-	<Compile Include="AddCustomFieldDialogTests.cs" />
-	<Compile Include="BulkEditBarTests.cs">
-	</Compile>
-	<Compile Include="CustomListDlgTests.cs">
-	  <SubType>Form</SubType>
-	</Compile>
-	<None Include="DataTreeSmokeTests.cs">
-	  <SubType>Code</SubType>
-	</None>
-	<Compile Include="DeleteCustomListTests.cs" />
-	<Compile Include="DictionaryConfigManagerTests.cs" />
-	<Compile Include="DictionaryConfigViewerStub.cs" />
-	<Compile Include="DictionaryPublicationDecoratorTests.cs" />
-	<Compile Include="ExportDialogTests.cs" />
-	<Compile Include="GenericUITests.cs">
-	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="InterestingTextsTests.cs" />
-	<None Include="RecordClerkTests.cs">
-	  <SubType>Code</SubType>
-	</None>
-	<Compile Include="ItemClickedTests.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
-	<Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
-	<Compile Include="XmlDocConfigureDlgTests.cs" />
-	<Compile Include="XWorksAppTestBase.cs">
-	  <SubType>Form</SubType>
-	</Compile>
+    <Compile Include="..\..\FDO\FDOTests\FwSetupFixtureClass.cs">
+      <Link>FwSetupFixtureClass.cs</Link>
+    </Compile>
+    <Compile Include="AddCustomFieldDialogTests.cs" />
+    <Compile Include="BulkEditBarTests.cs">
+    </Compile>
+    <Compile Include="CustomListDlgTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeleteCustomListTests.cs" />
+    <Compile Include="DictionaryConfigManagerTests.cs" />
+    <Compile Include="DictionaryConfigViewerStub.cs" />
+    <Compile Include="DictionaryPublicationDecoratorTests.cs" />
+    <Compile Include="ExportDialogTests.cs" />
+    <Compile Include="GenericUITests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InterestingTextsTests.cs" />
+    <Compile Include="ItemClickedTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MacroListenerTests.cs" />
+    <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
+    <Compile Include="XmlDocConfigureDlgTests.cs" />
+    <Compile Include="XWorksAppTestBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\..\AssemblyInfoForTests.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-	  <Install>true</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
-	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-	  <Visible>False</Visible>
-	  <ProductName>.NET Framework 3.5</ProductName>
-	  <Install>false</Install>
-	</BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-	<Content Include="strings-en.xml" />
-	<Content Include="strings-es-MX.xml" />
-	<Content Include="strings-fr.xml" />
+    <Content Include="strings-en.xml" />
+    <Content Include="strings-es-MX.xml" />
+    <Content Include="strings-fr.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-	<PreBuildEvent>
-	</PreBuildEvent>
-	<PostBuildEvent>
-	</PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

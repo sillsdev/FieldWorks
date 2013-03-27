@@ -14,6 +14,7 @@
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 using SIL.FieldWorks.TE.TeEditorialChecks;
 namespace SIL.FieldWorks.TE
 {
@@ -30,6 +31,8 @@ namespace SIL.FieldWorks.TE
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="TODO-Linux: VirtualMode is not supported in Mono")]
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();

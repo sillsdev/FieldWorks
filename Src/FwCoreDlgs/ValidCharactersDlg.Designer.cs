@@ -1,4 +1,4 @@
-﻿
+﻿using System.Diagnostics.CodeAnalysis;
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	partial class ValidCharactersDlg
@@ -14,17 +14,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		// TODO-Linux: VirtualMode is not supported on Mono. TabStop is not implemented.
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ValidCharactersDlg));
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -35,7 +38,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.btnHelp = new System.Windows.Forms.Button();
-			this.m_openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.m_lblWsName = new System.Windows.Forms.Label();
 			this.splitContainerOuter = new System.Windows.Forms.SplitContainer();
@@ -158,8 +160,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// dataGridViewTextBoxColumn4
 			//
 			this.dataGridViewTextBoxColumn4.DataPropertyName = "Reference";
-			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle8;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle1;
 			this.dataGridViewTextBoxColumn4.HeaderText = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
 			this.dataGridViewTextBoxColumn4.ReadOnly = true;
@@ -169,8 +171,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.dataGridViewTextBoxColumn5.DataPropertyName = "Before";
-			dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle9;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle2;
 			this.dataGridViewTextBoxColumn5.HeaderText = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
 			this.dataGridViewTextBoxColumn5.ReadOnly = true;
@@ -179,9 +181,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.dataGridViewTextBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.dataGridViewTextBoxColumn6.DataPropertyName = "Character";
-			dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-			this.dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle10;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+			this.dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle3;
 			this.dataGridViewTextBoxColumn6.HeaderText = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
 			this.dataGridViewTextBoxColumn6.ReadOnly = true;
@@ -191,8 +193,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.dataGridViewTextBoxColumn7.DataPropertyName = "After";
-			dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle11;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle4;
 			this.dataGridViewTextBoxColumn7.HeaderText = global::SIL.FieldWorks.FwCoreDlgs.FwCoreDlgs.kstidOpen;
 			this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
 			this.dataGridViewTextBoxColumn7.ReadOnly = true;
@@ -216,12 +218,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.btnHelp, "btnHelp");
 			this.btnHelp.Name = "btnHelp";
 			this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
-			//
-			// m_openFileDialog
-			//
-			this.m_openFileDialog.DefaultExt = "lds";
-			this.m_openFileDialog.InitialDirectory = "c:\\My Paratext Projects";
-			resources.ApplyResources(this.m_openFileDialog, "m_openFileDialog");
 			//
 			// panel2
 			//
@@ -635,14 +631,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.chrGridWordForming.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.chrGridWordForming.ColumnHeadersVisible = false;
 			this.chrGridWordForming.Cursor = System.Windows.Forms.Cursors.Default;
-			dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.chrGridWordForming.DefaultCellStyle = dataGridViewCellStyle12;
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.chrGridWordForming.DefaultCellStyle = dataGridViewCellStyle5;
 			this.chrGridWordForming.LoadCharactersFromFont = false;
 			this.chrGridWordForming.MultiSelect = false;
 			this.chrGridWordForming.Name = "chrGridWordForming";
@@ -687,14 +683,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.chrGridOther.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.chrGridOther.ColumnHeadersVisible = false;
 			this.chrGridOther.Cursor = System.Windows.Forms.Cursors.Default;
-			dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.chrGridOther.DefaultCellStyle = dataGridViewCellStyle13;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.chrGridOther.DefaultCellStyle = dataGridViewCellStyle6;
 			this.chrGridOther.LoadCharactersFromFont = false;
 			this.chrGridOther.MultiSelect = false;
 			this.chrGridOther.Name = "chrGridOther";
@@ -762,14 +758,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.chrGridNumbers.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.chrGridNumbers.ColumnHeadersVisible = false;
 			this.chrGridNumbers.Cursor = System.Windows.Forms.Cursors.Default;
-			dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.chrGridNumbers.DefaultCellStyle = dataGridViewCellStyle14;
+			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.chrGridNumbers.DefaultCellStyle = dataGridViewCellStyle7;
 			this.chrGridNumbers.LoadCharactersFromFont = false;
 			this.chrGridNumbers.MultiSelect = false;
 			this.chrGridNumbers.Name = "chrGridNumbers";
@@ -833,9 +829,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// ValidCharactersDlg
 			//
 			this.AcceptButton = this.btnOk;
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-			this.CancelButton = this.btnCancel;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.btnCancel;
 			this.Controls.Add(this.m_lblWsName);
 			this.Controls.Add(this.splitContainerOuter);
 			this.Controls.Add(this.panel2);
@@ -901,7 +897,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.TextBox txtLanguageFile;
 		private System.Windows.Forms.RadioButton rdoLanguageFile;
 		private System.Windows.Forms.RadioButton rdoSimilarWs;
-		private System.Windows.Forms.OpenFileDialog m_openFileDialog;
 		private System.Windows.Forms.Button btnBrowseLangFile;
 		private System.Windows.Forms.Button btnRemoveAll;
 		private System.Windows.Forms.Button btnAddCharacters;

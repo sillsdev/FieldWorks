@@ -26,16 +26,16 @@ Responsibility:
 namespace TestViews
 {
 	// {8D159FEC-73AE-48da-AB76-A1CFC247E43D}
-	LOCAL_DEFINE_GUID(kguidDummyFootnote1,
+	DEFINE_GUID(kguidDummyFootnote1,
 		0x8d159fec, 0x73ae, 0x48da, 0xab, 0x76, 0xa1, 0xcf, 0xc2, 0x47, 0xe4, 0x3d);
 	// {94F992EA-3F9A-4d51-B081-189BAF57FBC7}
-	LOCAL_DEFINE_GUID(kguidDummyFootnote2,
+	DEFINE_GUID(kguidDummyFootnote2,
 		0x94f992ea, 0x3f9a, 0x4d51, 0xb0, 0x81, 0x18, 0x9b, 0xaf, 0x57, 0xfb, 0xc7);
 	// {1A4EA9B7-4D65-4e21-AE2D-EDB5BD9E0937}
-	LOCAL_DEFINE_GUID(kguidDummyFootnote3,
+	DEFINE_GUID(kguidDummyFootnote3,
 		0x1a4ea9b7, 0x4d65, 0x4e21, 0xae, 0x2d, 0xed, 0xb5, 0xbd, 0x9e, 0x9, 0x37);
 	// {8C282EEF-D50B-4743-A8DF-8FE38F41070C}
-	LOCAL_DEFINE_GUID(kguidDummyFootnote4,
+	DEFINE_GUID(kguidDummyFootnote4,
 		0x8c282eef, 0xd50b, 0x4743, 0xa8, 0xdf, 0x8f, 0xe3, 0x8f, 0x41, 0x7, 0xc);
 
 	const HVO hvoRoot = 101;
@@ -1894,7 +1894,7 @@ text so that it continues on the next page.");
 			m_qlay.Attach(NewObj VwLayoutStream());
 			m_hdc = 0;
 			m_qvg32.CreateInstance(CLSID_VwGraphicsWin32);
-			m_hdc = ::GetDC(NULL);
+			m_hdc = GetTestDC();
 			m_qvg32->Initialize(m_hdc);
 			m_qlay->putref_DataAccess(m_qsda);
 			m_qdrs.Attach(NewObj DummyRootSite());
@@ -1911,7 +1911,7 @@ text so that it continues on the next page.");
 			m_qtsf.Clear();
 			m_qvc.Clear();
 			m_qvg32->ReleaseDC();
-			::ReleaseDC(NULL, m_hdc);
+			ReleaseTestDC(m_hdc);
 			m_qlay->Close();
 			m_qlay.Clear();
 			m_qvg32.Clear();

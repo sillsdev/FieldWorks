@@ -240,6 +240,38 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Verifies the requested back translation (segmented) selection.
+		/// </summary>
+		/// <param name="iBook">The expected book index.</param>
+		/// <param name="iSection">The expected section index.</param>
+		/// <param name="flidSectionText">ScrSectionTags.kflidHeading or
+		/// ScrSectionTags.kflidContent</param>
+		/// <param name="iPara">The expected paragraph index.</param>
+		/// <param name="iSegment">The expected segment index.</param>
+		/// <param name="ichAnchor">The character offset.</param>
+		/// ------------------------------------------------------------------------------------
+		protected void VerifyRequestedSegmentedBTSelection(int iBook, int iSection, int flidSectionText,
+			int iPara, int iSegment, int ichAnchor)
+		{
+			SelectionHelper helper = m_draftView.RequestedSelectionAtEndOfUow;
+			Assert.IsNotNull(helper);
+			Assert.IsFalse(helper.IsRange, "Selection should not be a range.");
+			Assert.AreEqual(5, helper.NumberOfLevels, "Unexpected number of levels");
+			Assert.AreEqual(iBook, helper.LevelInfo[4].ihvo, "Unexpected book"); // Book
+			Assert.AreEqual(ScrBookTags.kflidSections, helper.LevelInfo[3].tag, "Unexpected tag for book");
+			Assert.AreEqual(iSection, helper.LevelInfo[3].ihvo, "Unexpected section");
+			Assert.AreEqual(flidSectionText, helper.LevelInfo[2].tag, "Unexpected tag for section");
+			Assert.AreEqual(StTextTags.kflidParagraphs, helper.LevelInfo[1].tag, "Unexpected tag for para");
+			Assert.AreEqual(iPara, helper.LevelInfo[1].ihvo, "Unexpected para index");
+			Assert.AreEqual(iSegment, helper.LevelInfo[0].ihvo, "Unexpected segment index");
+			Assert.AreEqual(StTxtParaTags.kflidSegments, helper.LevelInfo[0].tag, "Unexpected tag for translations");
+			Assert.AreEqual(SegmentTags.kflidFreeTranslation, helper.TextPropId);
+			Assert.AreEqual(ichAnchor, helper.IchAnchor, "Unexpected character index");
+			m_draftView.RequestedSelectionAtEndOfUow = null; // Needs to be clear for the next time
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Verifies that the requested selection is at the start of the first book's title.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

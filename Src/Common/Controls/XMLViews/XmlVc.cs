@@ -192,10 +192,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="fEditable">if set to <c>true</c> [f editable].</param>
 		/// <param name="rootSite">The root site.</param>
 		/// <param name="app">The application.</param>
+		/// <param name="sda">Data access (possibly a decorator for the rootSite's cache's one)</param>
 		/// ------------------------------------------------------------------------------------
 		public XmlVc(StringTable stringTable, string rootLayoutName, bool fEditable,
-			SimpleRootSite rootSite, IApp app)
-			: this(stringTable, rootLayoutName, fEditable, rootSite, app, null)
+			SimpleRootSite rootSite, IApp app, ISilDataAccess sda)
+			: this(stringTable, rootLayoutName, fEditable, rootSite, app, null, sda)
 		{
 		}
 
@@ -210,13 +211,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rootSite">The root site.</param>
 		/// <param name="app">The application.</param>
 		/// <param name="condition">The condition.</param>
+		/// <param name="sda">Data access (possibly a decorator for the rootSite's cache's one)</param>
 		/// ------------------------------------------------------------------------------------
 		public XmlVc(StringTable stringTable, string rootLayoutName, bool fEditable,
-			SimpleRootSite rootSite, IApp app, XmlNode condition) : this(stringTable)
+			SimpleRootSite rootSite, IApp app, XmlNode condition, ISilDataAccess sda) : this(stringTable)
 		{
 			m_rootLayoutName = rootLayoutName;
 			m_fEditable = fEditable;
 			MApp = app;
+			m_sda = sda; // BEFORE we make the root command, which uses it.
 			MakeRootCommand(rootSite, condition);
 		}
 
@@ -316,7 +319,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (condition == null)
 					dc = new ReadOnlyRootDisplayCommand(m_rootLayoutName, rootSite);
 				else
-					dc = new ReadOnlyConditionalRootDisplayCommand(m_rootLayoutName, rootSite, condition);
+					dc = new ReadOnlyConditionalRootDisplayCommand(m_rootLayoutName, rootSite, condition, m_sda);
 			}
 			m_idToDisplayCommand[kRootFragId] = dc;
 			m_rootSite = rootSite;
@@ -1172,8 +1175,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 							int itype = m_sda.MetaDataCache.GetFieldType(flid);
 							itype = itype & (int)CellarPropertyTypeFilter.VirtualMask;
-							if ((itype == (int)CellarPropertyType.Unicode) ||
-								(itype == (int)CellarPropertyType.BigUnicode))
+							if (itype == (int)CellarPropertyType.Unicode)
 							{
 								int wsForUnicode = GetWritingSystemForObject(frag,
 									hvo,
@@ -1181,8 +1183,7 @@ namespace SIL.FieldWorks.Common.Controls
 									m_wsReversal == 0 ? m_cache.DefaultUserWs : m_wsReversal);
 								vwenv.AddUnicodeProp(flid, wsForUnicode, this);
 							}
-							else if ((itype == (int)CellarPropertyType.String) ||
-								(itype == (int)CellarPropertyType.BigString))
+							else if (itype == (int)CellarPropertyType.String)
 							{
 								MarkSource(vwenv, caller);
 								vwenv.AddStringProp(flid, this);
@@ -2100,9 +2101,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 							int itype = m_sda.MetaDataCache.GetFieldType(flid);
 							itype = itype & (int)CellarPropertyTypeFilter.VirtualMask;
-							if ((itype == (int)CellarPropertyType.MultiBigString) ||
-								(itype == (int)CellarPropertyType.MultiBigUnicode) ||
-								(itype == (int)CellarPropertyType.MultiString) ||
+							if ((itype == (int)CellarPropertyType.MultiString) ||
 								(itype == (int)CellarPropertyType.MultiUnicode))
 							{
 								if (s_cwsMulti > 1)
@@ -2737,8 +2736,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			int flid = GetFlid(frag, hvoTarget);
 			CellarPropertyType itype = (CellarPropertyType)m_sda.MetaDataCache.GetFieldType(flid);
-			if ((itype == CellarPropertyType.Unicode) ||
-				(itype == CellarPropertyType.BigUnicode))
+			if (itype == CellarPropertyType.Unicode)
 			{
 				int fragId = GetId(new DisplayUnicodeCommand(
 					flid,
@@ -2747,8 +2745,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_displayCommandToId);
 				vwenv.AddObj(hvoTarget, this, fragId);
 			}
-			else if ((itype == CellarPropertyType.String) ||
-				(itype == CellarPropertyType.BigString))
+			else if (itype == CellarPropertyType.String)
 			{
 				int fragId = GetId(new DisplayStringCommand(flid), m_idToDisplayCommand, m_displayCommandToId);
 				vwenv.AddObj(hvoTarget, this, fragId);
@@ -3550,8 +3547,9 @@ namespace SIL.FieldWorks.Common.Controls
 					// Not an exact match, if excluding subclasses, condition fails.
 					if (XmlUtils.GetOptionalBooleanAttributeValue(frag, "excludesubclasses", false))
 						return false;
+					//if the uclsidObj is 0, then the target we are investigating is probably null, this counts as failure in my book.
+					int uclsid = uclsidObj != 0 ? mdc.GetBaseClsId(uclsidObj) : 0;
 					// Otherwise OK if clsidObj is a subclass of clsidArg
-					int uclsid = mdc.GetBaseClsId(uclsidObj);
 					while (uclsid != 0)
 					{
 						if (uclsid == uclsidArg)
@@ -5143,7 +5141,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return base.GetHashCode() + m_stackPartRef.Sum(node => node.GetHashCode());
+			return base.GetHashCode() +
+				m_stackPartRef.Aggregate(0, (sum, node) => (sum + node.GetHashCode()) % Int32.MaxValue);
 		}
 
 		/// <summary>
@@ -5247,15 +5246,17 @@ namespace SIL.FieldWorks.Common.Controls
 	internal class ReadOnlyConditionalRootDisplayCommand : ReadOnlyRootDisplayCommand
 	{
 		XmlNode m_condition;
-		public ReadOnlyConditionalRootDisplayCommand(string rootLayoutName, SimpleRootSite rootSite, XmlNode condition)
+		private ISilDataAccess m_sda;
+		public ReadOnlyConditionalRootDisplayCommand(string rootLayoutName, SimpleRootSite rootSite, XmlNode condition, ISilDataAccess sda)
 			: base(rootLayoutName, rootSite)
 		{
 			m_condition = condition;
 			Debug.Assert(rootSite is RootSite, "conditional display requires real rootsite with cache");
+			m_sda = sda;
 		}
 		internal override void PerformDisplay(XmlVc vc, int fragId, int hvo, IVwEnv vwenv)
 		{
-			if (XmlVc.ConditionPasses(m_condition, hvo, (m_rootSite as RootSite).Cache))
+			if (XmlVc.ConditionPasses(m_condition, hvo, (m_rootSite as RootSite).Cache, m_sda))
 			{
 				base.PerformDisplay(vc, fragId, hvo, vwenv);
 			}

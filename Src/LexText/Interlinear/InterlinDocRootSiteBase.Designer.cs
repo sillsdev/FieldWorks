@@ -24,8 +24,12 @@
 					m_sda.RemoveNotification(this);
 				if (m_vc != null)
 					m_vc.Dispose();
+
+				if (m_contextButton != null && !Controls.Contains(m_contextButton))
+					m_contextButton.Dispose();
 			}
 			m_vc = null;
+			m_contextButton = null;
 			base.Dispose(disposing);
 		}
 

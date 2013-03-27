@@ -863,19 +863,31 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// When we delete an MoForm, and don't replace it with something else, we want to restore the form of the
-		/// bundle so that the morpheme does not seem to disappear from the bundle (LT-11591, LT-11281)
+		/// Any time we update the the MorphRA to something different, we want to retain the MoForm.Form data
+		/// by copying it into the WfiMorphBundle.Form alternatives. This will help make sure that
+		/// whenever the MorphRA link is broken to the MoForm (e.g. by deleting the MoForm),
+		/// the morpheme does not seem to disappear from the bundle (LT-11591, LT-11281).
 		/// </summary>
 		partial void MorphRASideEffects(IMoForm oldForm, IMoForm newForm)
 		{
-			if (newForm == null)
-			{
-				foreach (var ws in oldForm.Form.AvailableWritingSystemIds)
-				{
-					Form.set_String(ws, oldForm.Form.get_String(ws));
-				}
-			}
+			if (newForm != null)
+				SetMorphBundleFormAlternatives(newForm);
+		}
 
+		private void SetMorphBundleFormAlternatives(IMoForm mf)
+		{
+			// first empty out the current form to take care of any PropChanges
+			// but no need to empty alternatives for which we'll be providing new strings afterwards.
+			var wssToChange = mf.Form.AvailableWritingSystemIds;
+			foreach (var ws in Form.AvailableWritingSystemIds)
+			{
+				if (!Enumerable.Contains(wssToChange, ws))
+					Form.set_String(ws, Cache.TsStrFactory.EmptyString(ws));
+			}
+			// ideally we'd populate the new Form with only the ws's of the MoForm.Form.
+			// but there may be someone holding on to the old MultiString accessor, so don't
+			// set m_Form = null here.
+			Form.CopyAlternatives(mf.Form);
 		}
 
 		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
@@ -1271,6 +1283,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				if (annotationCount > 0)
 				{
 					tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_cache.DefaultUserWs);
+					tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "UiElement");
 					tisb.Append("\x2028\x2028");
 					tisb.Append(Strings.ksWarningDelAnalysis);
 					tisb.Append("\x2028");
@@ -1634,14 +1647,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (ContentsOA != null)
 						InternalServices.UnitOfWorkService.RegisterVirtualAsModified(ContentsOA, "Title", alternativeWs.Handle);
 					break; // still do the default thing, base class has this property too.
-				case TextTags.kflidDescription:
+				case CmMajorObjectTags.kflidDescription:
 					if (ContentsOA != null)
 						InternalServices.UnitOfWorkService.RegisterVirtualAsModified(ContentsOA, "Comment", alternativeWs.Handle);
-					return; // still do the default thing, base class has this property too.
+					break; // still do the default thing, base class has this property too.
 				case TextTags.kflidAbbreviation:
 					if (ContentsOA != null)
 						InternalServices.UnitOfWorkService.RegisterVirtualAsModified(ContentsOA, "TitleAbbreviation", alternativeWs.Handle);
-					return; // still do the default thing, base class has this property too.
+					return; // We don't need the default thing, this is not a base class property.
 			}
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 		}
@@ -1684,6 +1697,54 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService.RegisterVirtualAsModified(langProj, flid,
 																												 oldGuids.ToArray(),
 																												 newGuids.ToArray());
+		}
+
+		/// <summary>
+		/// This registers LangProjTexts for undo/redo propchanges during creation
+		/// so InterestingTexts.PropChanged gets called to add the text to the record list.
+		/// </summary>
+		/// <param name="uow"></param>
+		internal override void RegisterVirtualsModifiedForObjectCreation(IUnitOfWorkService uow)
+		{
+			base.RegisterVirtualsModifiedForObjectCreation(uow);
+			var cache = Cache; // need to make the Func use this local variable, because on Undo, Cache may return null.
+			uow.RegisterVirtualCollectionAsModified(Cache.LangProject,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts,
+				() => cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances(),
+				new[] { this }, new IText[0]);
+		}
+
+		/// <summary>
+		/// This needs to be here to call RegisterVirtualsModifiedForObjectCreation()
+		/// </summary>
+		protected override void SetDefaultValuesAfterInit()
+		{
+			base.SetDefaultValuesAfterInit();
+			RegisterVirtualsModifiedForObjectCreation(((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService);
+		}
+
+		/// <summary>
+		/// This needs to be here to call RegisterVirtualsModifiedForObjectDeletion().
+		/// </summary>
+		protected override void OnBeforeObjectDeleted()
+		{
+			RegisterVirtualsModifiedForObjectDeletion(((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService);
+			base.OnBeforeObjectDeleted();
+		}
+
+		/// <summary>
+		/// This registers LangProjTexts for undo/redo propchanges during deletion
+		/// so InterestingTexts.PropChanged gets called to remove the text from the record list.
+		/// </summary>
+		/// <param name="uow"></param>
+		internal override void RegisterVirtualsModifiedForObjectDeletion(IUnitOfWorkService uow)
+		{
+			var cache = Cache; // need to make the Func use this local variable, because on Redo, Cache may return null.
+			uow.RegisterVirtualCollectionAsModified(Cache.LangProject,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts,
+				() => cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances(),
+				new IText[0], new[] { this });
+			base.RegisterVirtualsModifiedForObjectDeletion(uow);
 		}
 	}
 }

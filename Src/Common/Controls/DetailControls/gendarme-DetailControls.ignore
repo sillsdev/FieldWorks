@@ -1,0 +1,49 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# added to control and disposed there
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.AutoDataTreeMenuHandler::Initialize()
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.AutoDataTreeMenuHandler/ContextMenuHelper::SetupDeleteMenu(System.Windows.Forms.MenuItem)
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.DataTree::MakeGhostSlice(System.Collections.ArrayList,System.Xml.XmlNode,SIL.FieldWorks.Common.Framework.DetailControls.ObjSeqHashMap,SIL.FieldWorks.FDO.ICmObject,SIL.FieldWorks.Common.Framework.DetailControls.Slice,System.Int32,System.Xml.XmlNode,System.Int32,System.Int32&)
+M: SIL.FieldWorks.Common.Framework.DetailControls.DataTree/NodeTestResult SIL.FieldWorks.Common.Framework.DetailControls.DataTree::AddSeqNode(System.Collections.ArrayList,System.Xml.XmlNode,SIL.FieldWorks.Common.Framework.DetailControls.ObjSeqHashMap,System.Int32,SIL.FieldWorks.FDO.ICmObject,SIL.FieldWorks.Common.Framework.DetailControls.Slice,System.Int32,System.Int32&,System.Boolean,System.String,System.Boolean,System.Xml.XmlNode)
+M: SIL.FieldWorks.Common.Framework.DetailControls.DataTree/NodeTestResult SIL.FieldWorks.Common.Framework.DetailControls.DataTree::AddSimpleNode(System.Collections.ArrayList,System.Xml.XmlNode,SIL.FieldWorks.Common.Framework.DetailControls.ObjSeqHashMap,System.String,System.Int32,SIL.FieldWorks.FDO.ICmObject,SIL.FieldWorks.Common.Framework.DetailControls.Slice,System.Int32,System.Int32&,System.Boolean,System.Boolean,System.Xml.XmlNode)
+M: System.Int32 SIL.FieldWorks.Common.Framework.DetailControls.DataTree::HandleLayout1(System.Boolean,System.Drawing.Rectangle)
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.DataTree::MakeSliceRealAt(System.Int32)
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.MorphTypeChooser::InitMorphTypeForm(System.String)
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.Slice::Install(SIL.FieldWorks.Common.Framework.DetailControls.DataTree)
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.StringSlice::CreateView()
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.SummarySlice::FinishInit()
+
+# Reference only
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.AutoDataTreeMenuHandler::HandleCreateMenuItem(System.Object,System.EventArgs)
+M: XCore.IxWindow SIL.FieldWorks.Common.Framework.DetailControls.DataTree::ContainingXWindow()
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.DataTree::RefreshList(System.Boolean)
+M:System.Boolean SIL.FieldWorks.Common.Framework.DetailControls.DataTree::GotoNextSliceAfterIndex(System.Int32)
+M: System.Boolean SIL.FieldWorks.Common.Framework.DetailControls.DataTree::GotoPreviousSliceBeforeIndex(System.Int32)
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.DataTree::SetDefaultCurrentSlice(System.Boolean)
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.PhoneEnvReferenceView::ConnectToRealCache()
+M: System.Void SIL.FieldWorks.Common.Framework.DetailControls.Slice::DrawLabel(System.Int32,System.Int32,System.Drawing.Graphics,System.Int32)
+M: System.Int32 SIL.FieldWorks.Common.Framework.DetailControls.Slice::InsertObject(System.Int32,System.Int32)
+
+# Gendarme bug. Disposed in Dispose method.
+M: System.Windows.Forms.ToolTip SIL.FieldWorks.Common.Framework.DetailControls.DataTree::get_ToolTip()
+
+# Returns object
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Framework.DetailControls.ObjSeqHashMap/<get_Values>d__0::System.Collections.IEnumerable.GetEnumerator()
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Reference only
+T: SIL.FieldWorks.Common.Framework.DetailControls.AutoDataTreeMenuHandler/ContextMenuHelper
+T: SIL.FieldWorks.Common.Framework.DetailControls.TreeNodeEventArgs
+T: SIL.FieldWorks.Common.Framework.DetailControls.SliceMenuRequestArgs
+T: SIL.FieldWorks.Common.Framework.DetailControls.StringSlice/StringSliceVc
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# Reference only
+T: SIL.FieldWorks.Common.Framework.DetailControls.AutoDataTreeMenuHandler

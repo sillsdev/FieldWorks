@@ -18,6 +18,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -28,7 +30,6 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using System.Diagnostics;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 
@@ -534,13 +535,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// tells whether the given field is relevant given the current values of related data items
 		/// </summary>
 		/// <param name="flid"></param>
+		/// <param name="propsToMonitor"></param>
 		/// <remarks>e.g. "color" would not be relevant on a part of speech, ever.
 		/// e.g.  MoAffixForm.inflection classes are only relevant if the MSAs of the
 		/// entry include an inflectional affix MSA.
 		/// </remarks>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual bool IsFieldRelevant(int flid)
+		public virtual bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			return true;//it is up to subclasses to override and return false where needed.
 		}
@@ -691,6 +693,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <param name="fLoseNoStringData"></param>
 		/// <param name="flidList">List of property flids to consider for merging</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public void MergeSelectedPropertiesOfObject(ICmObject objSrc, bool fLoseNoStringData, int[] flidList)
 		{
 			IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;
@@ -782,17 +786,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					switch (nType)
 					{
 						case (int)CellarPropertyType.String:
-						case (int)CellarPropertyType.BigString:
 							myCurrentValue = m_cache.DomainDataByFlid.get_StringProp(Hvo, flid);
 							srcCurrentValue = m_cache.DomainDataByFlid.get_StringProp(objSrc.Hvo, flid);
 							break;
 						case (int)CellarPropertyType.MultiString:
-						case (int)CellarPropertyType.MultiBigString:
 							myCurrentValue = new MultiStringAccessor(this, flid);
 							srcCurrentValue = new MultiStringAccessor(objSrc, flid);
 							break;
 						case (int)CellarPropertyType.MultiUnicode:
-						case (int)CellarPropertyType.MultiBigUnicode:
 							myCurrentValue = new MultiUnicodeAccessor(this, flid);
 							srcCurrentValue = new MultiUnicodeAccessor(objSrc, flid);
 							break;
@@ -914,8 +915,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						}
 
 					/* 13 -> 20 */
-					case (int)CellarPropertyType.String: // 13 Fall through
-					case (int)CellarPropertyType.BigString: // 17
+					case (int)CellarPropertyType.String: // 13
 						{
 							if (MergeStringProp((int)flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
 								break;
@@ -928,8 +928,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							break;
 						}
 
-					case (int)CellarPropertyType.MultiString: // 14 Fall through.
-					case (int)CellarPropertyType.MultiBigString: // 18
+					case (int)CellarPropertyType.MultiString: // 14
 						{
 							if (MergeStringProp((int)flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
 								break;
@@ -938,8 +937,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							break;
 						}
 
-					case (int)CellarPropertyType.Unicode: // 15 Fall through.
-					case (int)CellarPropertyType.BigUnicode: // 19
+					case (int)CellarPropertyType.Unicode: // 15
 						{
 							if (MergeStringProp((int)flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
 								break;
@@ -966,8 +964,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							break;
 						}
 
-					case (int)CellarPropertyType.MultiUnicode: // 16 Fall through
-					case (int)CellarPropertyType.MultiBigUnicode: // 20 This one isn't actually used yet, but I hope it is the same as the small MultiUnicode
+					case (int)CellarPropertyType.MultiUnicode: // 16
 						{
 							if (MergeStringProp((int)flid, nType, objSrc, fLoseNoStringData, myCurrentValue, srcCurrentValue))
 								break;
@@ -995,6 +992,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 								}
 								break;
 							}
+							// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+							// is marked with [MonoTODO] and might not work as expected in 4.0.
 							else if (fLoseNoStringData && nType == (int)CellarPropertyType.OwningAtomic && srcObj != null
 								&& currentObj.GetType() == srcObj.GetType())
 							{
@@ -1049,13 +1048,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case (int)CellarPropertyType.Image: // 7 Fall through.
 				case (int)CellarPropertyType.Binary: // 8
 					break;
-				case (int)CellarPropertyType.String: // 13 Fall through
-				case (int)CellarPropertyType.BigString: // 17
+				case (int)CellarPropertyType.String: // 13
 					ITsString tss = (ITsString)newValue;
 					m_cache.DomainDataByFlid.SetString(this.Hvo, flid, tss);
 					break;
-				case (int)CellarPropertyType.Unicode: // 15 Fall through.
-				case (int)CellarPropertyType.BigUnicode: // 19
+				case (int)CellarPropertyType.Unicode: // 15
 					string sValue = (string)newValue;
 					m_cache.DomainDataByFlid.SetUnicode(this.Hvo, flid, sValue, sValue.Length);
 					break;
@@ -1203,12 +1200,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case CellarPropertyType.Float: // Fall through.
 				case CellarPropertyType.Unicode: // Fall through.
 				case CellarPropertyType.String: // Fall through.
-				case CellarPropertyType.BigString: // Fall through.
 				case CellarPropertyType.MultiString: // Fall through.
-				case CellarPropertyType.MultiBigString: // Fall through.
 				case CellarPropertyType.MultiUnicode: // Fall through.
-				case CellarPropertyType.MultiBigUnicode: // Fall through.
-				case CellarPropertyType.BigUnicode: // Fall through.
 				case CellarPropertyType.OwningAtomic: // Fall through.
 				case CellarPropertyType.ReferenceAtomic:
 					// All non-vectors.
@@ -2616,12 +2609,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				case CellarPropertyType.Float: // Fall through.
 				case CellarPropertyType.Unicode: // Fall through.
 				case CellarPropertyType.String: // Fall through.
-				case CellarPropertyType.BigString: // Fall through.
 				case CellarPropertyType.MultiString: // Fall through.
-				case CellarPropertyType.MultiBigString: // Fall through.
 				case CellarPropertyType.MultiUnicode: // Fall through.
-				case CellarPropertyType.MultiBigUnicode:
-				case CellarPropertyType.BigUnicode:
 					// Do nothing.
 					break;
 				case CellarPropertyType.OwningAtomic:
@@ -2744,12 +2733,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						// Use 0 for null object prop, but do NOT put it in the cache, which should contain
 						// null or a CmObject.
 						return 0;
-					case CellarPropertyType.MultiString: // Fall through.
-					case CellarPropertyType.MultiBigString:
+					case CellarPropertyType.MultiString:
 						retval = new MultiStringAccessor(this, flid);
 						break;
-					case CellarPropertyType.MultiUnicode: // Fall through.
-					case CellarPropertyType.MultiBigUnicode:
+					case CellarPropertyType.MultiUnicode:
 						retval = new MultiUnicodeAccessor(this, flid);
 						break;
 					case CellarPropertyType.OwningCollection:
@@ -2922,9 +2909,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					}
 					break;
 				case CellarPropertyType.MultiString: // Fall through.
-				case CellarPropertyType.MultiBigString: // Fall through.
 				case CellarPropertyType.MultiUnicode: // Fall through.
-				case CellarPropertyType.MultiBigUnicode: // Fall through.
 				case CellarPropertyType.OwningCollection: // Fall through.
 				case CellarPropertyType.OwningSequence: // Fall through.
 				case CellarPropertyType.ReferenceCollection: // Fall through.
@@ -3052,9 +3037,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						id.Id.ToXMLString(dataType == CellarPropertyType.OwningAtomic, writer);
 						break;
 					case CellarPropertyType.MultiString: // Fall through.
-					case CellarPropertyType.MultiBigString: // Fall through.
-					case CellarPropertyType.MultiUnicode: // Fall through.
-					case CellarPropertyType.MultiBigUnicode:
+					case CellarPropertyType.MultiUnicode:
 						var multiAccessor = (MultiAccessor)data;
 						multiAccessor.ToXMLString(writer);
 						break;
@@ -3162,13 +3145,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					case CellarPropertyType.ReferenceAtomic:
 						data = surrRepos.GetId(customPropertyElement.Element("objsur"));
 						break;
-					case CellarPropertyType.MultiString: // Fall through.
-					case CellarPropertyType.MultiBigString:
+					case CellarPropertyType.MultiString:
 						data = new MultiStringAccessor(this, flid);
 						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf, tsf);
 						break;
-					case CellarPropertyType.MultiUnicode: // Fall through.
-					case CellarPropertyType.MultiBigUnicode:
+					case CellarPropertyType.MultiUnicode:
 						data = new MultiUnicodeAccessor(this, flid);
 						((MultiAccessor)data).LoadFromDataStoreInternal(customPropertyElement, wsf, tsf);
 						break;
@@ -3407,7 +3388,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		bool IReferenceSource.RefersTo(ICmObject target, int flid)
 		{
-			return (this as ICmObjectInternal).GetObjectProperty(flid) == target.Hvo;
+			// Always ensure the flid is valid.
+			var propsToMonitor = new HashSet<Tuple<int, int>>();
+			return ( IsFieldRelevant(flid, propsToMonitor) && ((this as ICmObjectInternal).GetObjectProperty(flid) == target.Hvo) );
 		}
 
 		#endregion

@@ -961,18 +961,14 @@ namespace SIL.FieldWorks.FDO.Application.Impl
 					break;
 
 					// String types.
-				case CellarPropertyType.BigUnicode: // Fall through.
 				case CellarPropertyType.Unicode:
 					retval = obj.GetStringProperty(tag);
 					break;
-				case CellarPropertyType.String: // Fall through.
-				case CellarPropertyType.BigString:
+				case CellarPropertyType.String:
 					retval = obj.GetITsStringProperty(tag);
 					break;
 				case CellarPropertyType.MultiString: // Fall through.
-				case CellarPropertyType.MultiBigString: // Fall through.
-				case CellarPropertyType.MultiUnicode: // Fall through.
-				case CellarPropertyType.MultiBigUnicode:
+				case CellarPropertyType.MultiUnicode:
 					retval = get_MultiStringProp(hvo, tag);
 					break;
 

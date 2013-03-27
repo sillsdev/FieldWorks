@@ -446,6 +446,63 @@ namespace SIL.FieldWorks.XWorks
 			{
 				//Debug.Assert(!(m_lnkActive is FwAppArgs), "Beware: This will not handle link requests for other databases/applications." +
 				//	" To handle other databases or applications, pass the FwAppArgs to the IFieldWorksManager.HandleLinkRequest method.");
+				if (m_lnkActive.ToolName == "default")
+				{
+					// Need some smarts here. The link creator was not sure what tool to use.
+					// The object may also be a child we don't know how to jump to directly.
+					var cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
+					ICmObject target;
+					if (!cache.ServiceLocator.ObjectRepository.TryGetObject(m_lnkActive.TargetGuid, out target))
+						return false; // or message?
+					var realTarget = GetObjectToShowInTool(target);
+					string realTool;
+					var majorObject = realTarget.Owner ?? realTarget;
+					var app = FwUtils.ksFlexAbbrev;
+					switch (majorObject.ClassID)
+					{
+						case ReversalIndexTags.kClassId:
+							realTool = "reversalToolEditComplete";
+							break;
+						case TextTags.kClassId:
+							realTool = "interlinearEdit";
+							break;
+						case LexEntryTags.kClassId:
+							realTool = "lexiconEdit";
+							break;
+						case ScriptureTags.kClassId:
+							return false; // Todo: don't know how to handle this yet.
+							//app = FwUtils.ksTeAbbrev;
+							//realTool = "reversalToolEditComplete";
+							//break;
+						case CmPossibilityListTags.kClassId:
+							// The area listener knows about the possible list tools.
+							// Unfortunately AreaListener is in an assembly we can't reference.
+							// But there may be custom ones, so just listing them all here does not seem to be an option,
+							// and anyway it would be hard to maintain.
+							// Thus we've created this method (on AreaListener) which we call awkwardly throught the mediator.
+							var parameters = new object[2];
+							parameters[0] = majorObject;
+							m_mediator.SendMessage("GetToolForList", parameters);
+							realTool = (string)parameters[1];
+							break;
+						case RnResearchNbkTags.kClassId:
+							realTool = "notebookEdit";
+							break;
+						case DsConstChartTags.kClassId:
+							realTarget = ((IDsConstChart) majorObject).BasedOnRA;
+							realTool = "interlinearEdit";
+							// Enhance JohnT: do something to make it switch to Discourse tab
+							break;
+						case LexDbTags.kClassId: // other things owned by this??
+						default:
+							return false; // can't jump to it...should we put up a message?
+					}
+					m_lnkActive = new FwLinkArgs(realTool, realTarget.Guid);
+					// Todo JohnT: need to do something special here if we c
+				}
+				// It's important to do this AFTER we set the real tool name if it is "default". Otherwise, the code that
+				// handles the jump never realizes we have reached the desired tool (as indicated by the value of
+				// SuspendLoadingRecordUntilOnJumpToRecord) and we stop recording context history and various similar problems.
 				if (m_lnkActive.TargetGuid != Guid.Empty)
 				{
 					// allow tools to skip loading a record if we're planning to jump to one.
@@ -453,6 +510,7 @@ namespace SIL.FieldWorks.XWorks
 					m_mediator.PropertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord",
 						m_lnkActive.ToolName + "," + m_lnkActive.TargetGuid.ToString(),
 						PropertyTable.SettingsGroup.LocalSettings);
+					m_mediator.PropertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
 				m_mediator.SendMessage("SetToolFromName", m_lnkActive.ToolName);
 				// Note: It can be Guid.Empty in cases where it was never set,
@@ -495,6 +553,23 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 			return true;	//we handled this.
+		}
+
+		/// <summary>
+		/// Get the object we want to point our tool at. This is typically the one that is one level down from
+		/// a CmMajorObject.
+		/// </summary>
+		/// <param name="start"></param>
+		/// <returns></returns>
+		ICmObject GetObjectToShowInTool(ICmObject start)
+		{
+			for(var current = start;;current = current.Owner)
+			{
+				if (current.Owner == null)
+					return current;
+				if (current.Owner is ICmMajorObject)
+					return current;
+			}
 		}
 	}
 }

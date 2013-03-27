@@ -11,9 +11,10 @@
 // File: PhraseSubstitutionsDlgTests.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
-using System.Collections.Generic;
 
 namespace SILUBS.PhraseTranslationHelper
 {
@@ -70,6 +71,8 @@ namespace SILUBS.PhraseTranslationHelper
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_dlg gets disposed in Teardown(); m_textBox is a reference")]
 	public class PhraseSubstitutionsDlgTests
 	{
 		#region Data Members

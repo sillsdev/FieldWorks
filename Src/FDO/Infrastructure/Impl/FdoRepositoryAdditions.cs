@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.DomainImpl;
@@ -1157,9 +1158,9 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			var entry = mainEntryOrSense as LexEntry;
 			IEnumerable<ILexEntryRef> candidates;
 			if (entry != null)
-				candidates = entry.ComplexFormRefsWithThisPrimaryEntry;
+				candidates = entry.ComplexFormRefsWithThisComponentEntry;
 			else
-				candidates = ((LexSense) mainEntryOrSense).ComplexFormRefsWithThisPrimarySense;
+				candidates = ((LexSense) mainEntryOrSense).ComplexFormRefsWithThisComponentSense;
 			var retval = new Set<ILexEntry>();
 			foreach (ILexEntryRef ler in candidates)
 			{
@@ -1239,8 +1240,27 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		Dictionary<string, object> m_homographInfo;
 
 		/// <summary>
+		/// Clear the list of homograph information
+		/// </summary>
+		public void ResetHomographs(ProgressBar progressBar)
+		{
+			m_homographInfo = null; // GetHomographs() will rebuild the homograph list
+			Cache.LanguageProject.LexDbOA.ResetHomographNumbers(progressBar);
+		}
+
+		/// <summary>
+		/// Clear the cache so we can simulate (in tests) what happens if it has not been created and there are existing objects.
+		/// </summary>
+		internal void ClearHomographInfoCache()
+		{
+			m_homographInfo = null;
+		}
+
+		/// <summary>
 		/// Return a list of all the homographs of the specified form.
 		/// </summary>
+		/// <param name="sForm">This form must come from LexEntry.HomographFormKey</param>
+		/// <returns></returns>
 		public List<ILexEntry> GetHomographs(string sForm)
 		{
 			lock (SyncRoot)
@@ -1287,7 +1307,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 		private void AddToHomographDict(ILexEntry entry)
 		{
-			string key = entry.HomographForm;
+			string key = entry.HomographFormKey;
 			object oldVal;
 			if (m_homographInfo.TryGetValue(key, out oldVal))
 			{
@@ -1351,7 +1371,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// <summary>
 		/// Collect all the homographs of the given form from the given list of entries.  If fMatchLexForms
 		/// is true, then match against lexeme forms even if citation forms exist.  (This behavior is needed
-		/// to fix LT-6024 for categorized entry.)
+		/// to fix LT-6024 for categorized entry [now called Collect Words].)
 		/// </summary>
 		 List<ILexEntry> ILexEntryRepositoryInternal.CollectHomographs(string sForm, int hvo, List<ILexEntry> entries,
 														  IMoMorphType morphType, bool fMatchLexForms)
@@ -1369,7 +1389,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 
 			foreach (var le in entries)
 				{
-					var homographForm = le.HomographForm;
+					var homographForm = le.HomographFormKey;
 					var lexemeHomograph = homographForm;
 					if (fMatchLexForms)
 						lexemeHomograph = StringServices.LexemeFormStatic(le);

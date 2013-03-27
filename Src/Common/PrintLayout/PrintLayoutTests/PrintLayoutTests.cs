@@ -18,20 +18,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 
 using NUnit.Framework;
 
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.Utils;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.FDOTests;
+using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.PrintLayout
 {
@@ -1269,6 +1269,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetFirstElementForStream() returns a reference")]
 		public void InvalidRects()
 		{
 			m_pub.PageHeight = 288000; // 4 inches
@@ -2051,6 +2053,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// <param name="iPage">The index of the page.</param>
 		/// <returns>Height of the first page element</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetFirstElementForStream() returns a reference")]
 		private int GetHeightOfFirstPageElement(int iPage)
 		{
 			return m_pub.Pages[iPage].GetFirstElementForStream(m_firstDivision.MainLayoutStream).

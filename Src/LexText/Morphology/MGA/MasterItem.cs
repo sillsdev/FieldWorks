@@ -114,15 +114,15 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 
 		public override string ToString()
 		{
-			if (InDatabase)
-				return String.Format(MGAStrings.ksX_InFwProject, m_term);
-			else
-				return m_term;
+		if (InDatabase)
+			return String.Format(MGAStrings.ksX_InFwProject, m_term);
+		else
+			return m_term;
 		}
 
 		public void ResetDescription(RichTextBox rtbDescription)
 		{
-			rtbDescription.Clear();
+		rtbDescription.Clear();
 
 			var doubleNewLine = Environment.NewLine + Environment.NewLine;
 

@@ -1,0 +1,12 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# Unit test. Variable disposed in Teardown method
+T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests.ScrollTestsBase
+T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests.SimpleRootsiteTestsBase
+T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests.InputBusControllerTests
+
+# reference only
+T: SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests.DummyRootBox

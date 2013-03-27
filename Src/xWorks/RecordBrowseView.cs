@@ -27,6 +27,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Application;
+using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Filters;
 using SIL.Utils;
@@ -37,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// RecordBrowseView is a table oriented view of the collection
 	/// </summary>
-	public class RecordBrowseView : RecordView, ISnapSplitPosition, IPostLayoutInit
+	public class RecordBrowseView : RecordView, ISnapSplitPosition, IPostLayoutInit, IFocusablePanePortion
 	{
 		public event CheckBoxChangedEventHandler CheckBoxChanged;
 
@@ -448,7 +449,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			bool fBaseCalled = false;
-			if (titleStr == string.Empty)
+			if (String.IsNullOrEmpty(titleStr))
 			{
 				base.SetInfoBarText();
 				fBaseCalled = true;
@@ -833,6 +834,63 @@ namespace SIL.FieldWorks.XWorks
 		public void PostLayoutInit()
 		{
 			m_browseViewer.PostLayoutInit();
+		}
+
+		public bool IsFocusedPane
+		{
+			get; set;
+		}
+	}
+	/// <summary>
+	/// A browse view which has the select column hooked to an Active boolean
+	///  (which is the UI name of the Disabled property of phonological rules,
+	///   compound rules, ad hoc rules, and inflectional affix templates).  We
+	///  only use this view with phonological rules and compound rules.
+	/// </summary>
+	public class RecordBrowseActiveView : RecordBrowseView
+	{
+
+		protected override BrowseViewer CreateBrowseViewer(XmlNode nodeSpec, int hvoRoot, int fakeFlid, FdoCache cache, Mediator mediator,
+					ISortItemProvider sortItemProvider, ISilDataAccessManaged sda)
+		{
+			var viewer = new BrowseActiveViewer(nodeSpec,
+						 hvoRoot, fakeFlid,
+						 cache, mediator, sortItemProvider, sda);
+			viewer.CheckBoxActiveChanged += OnCheckBoxActiveChanged;
+			return viewer;
+		}
+
+		/// <summary>
+		/// Event handler, which makes any changes to the Active flag.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		public void OnCheckBoxActiveChanged(object sender, CheckBoxActiveChangedEventArgs e)
+		{
+			base.OnCheckBoxChanged(sender, e);
+			var changedHvos = e.HvosChanged;
+			UndoableUnitOfWorkHelper.Do(e.UndoMessage, e.RedoMessage, Cache.ActionHandlerAccessor, () =>
+				ChangeAnyDisabledFlags(changedHvos));
+		}
+		private void ChangeAnyDisabledFlags(int[] changedHvos)
+		{
+			foreach (var hvo in changedHvos)
+			{
+				ICmObject obj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+				switch (obj.ClassID)
+				{
+					case FDO.PhRegularRuleTags.kClassId: // fall through
+					case FDO.PhMetathesisRuleTags.kClassId:
+						var segmentRule = obj as FDO.IPhSegmentRule;
+						segmentRule.Disabled = !segmentRule.Disabled;
+						break;
+					case FDO.MoEndoCompoundTags.kClassId: // fall through
+					case FDO.MoExoCompoundTags.kClassId:
+						var compoundRule = obj as FDO.IMoCompoundRule;
+						compoundRule.Disabled = !compoundRule.Disabled;
+						break;
+				}
+			}
 		}
 	}
 }

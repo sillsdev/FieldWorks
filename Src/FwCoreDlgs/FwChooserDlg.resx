@@ -145,7 +145,7 @@
 	<value>tvPossibilities</value>
   </data>
   <data name="&gt;&gt;tvPossibilities.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.ChooserTreeView, FwCoreDlgs, Version=5.5.0.20388, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.ChooserTreeView, FwCoreDlgs, Version=7.0.6.26928, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;tvPossibilities.Parent" xml:space="preserve">
 	<value>$this</value>
@@ -249,8 +249,8 @@
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 	<value>True</value>
   </metadata>
-  <data name="$this.AutoScaleBaseSize" type="System.Drawing.Size, System.Drawing">
-	<value>5, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+	<value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
 	<value>370, 470</value>
@@ -301,7 +301,7 @@
 	<value>m_persistence</value>
   </data>
   <data name="&gt;&gt;m_persistence.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.Common.Controls.Persistence, FwControls, Version=5.5.0.19036, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.Common.Controls.Persistence, FwControls, Version=7.0.6.21968, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
 	<value>FwChooserDlg</value>

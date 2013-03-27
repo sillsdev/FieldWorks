@@ -579,6 +579,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				case kfragRule:
 					m_rule = m_cache.ServiceLocator.GetInstance<IPhMetathesisRuleRepository>().GetObject(hvo);
+					if (m_rule.Disabled)
+					{
+						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, "Disabled Text");
+					}
 
 					VwLength tableLen;
 					tableLen.nVal = 10000;

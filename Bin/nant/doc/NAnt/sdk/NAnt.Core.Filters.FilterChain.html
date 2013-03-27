@@ -1,0 +1,79 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>FilterChain Class</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">FilterChain Class</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Represent a chain of NAnt filters that can be applied to a <a href="NAnt.Core.Task.html">Task</a>. </p>
+	  <p>For a list of all members of this type, see <a href="NAnt.Core.Filters.FilterChainMembers.html">FilterChain Members</a>.</p>
+	  <p>
+		<a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemObjectClassTopic.asp">System.Object</a>
+		<br />   <a href="NAnt.Core.Element.html">NAnt.Core.Element</a><br />      <a href="NAnt.Core.DataTypeBase.html">NAnt.Core.DataTypeBase</a><br />         <b>NAnt.Core.Filters.FilterChain</b></p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;Serializable, _
+ Serializable, _
+ ElementName(Name:="filterchain")&gt;</div>Public Class FilterChain<div>    Inherits <a href="NAnt.Core.DataTypeBase.html">DataTypeBase</a></div></div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[Serializable]</div>
+		<div class="attribute">[Serializable]</div>
+		<div class="attribute">[ElementName(Name="filterchain")]</div>
+		<div>public class FilterChain<b> : <a href="NAnt.Core.DataTypeBase.html">DataTypeBase</a></b></div>
+	  </div>
+	  <H4 class="dtH4">Thread Safety</H4>
+	  <P>Public static (<b>Shared</b> in Visual Basic) members of this type are
+				safe for multithreaded operations. Instance members are <b>not</b> guaranteed to be
+				thread-safe.</P>
+	  <h4 class="dtH4">Remarks</h4>
+			<p> A FilterChain represents a collection of one or more filters that can be appled to a <a href="NAnt.Core.Task.html">Task</a> such as the <a href="NAnt.Core.Tasks.CopyTask.html">CopyTask</a>. In the case of the <b>CopyTask</b>, the contents of the copied files are filtered through each filter specified in the filter chain. Filtering occurs in the order the filters are specified with filtered output of one filter feeding into another. </p>
+			<p> :--------:---&gt;:----------:---&gt;:----------: ... :----------:---&gt;:--------:<br /> :.Source.:---&gt;:.Filter 1.:---&gt;:.Filter 2.: ... :.Filter n.:---&gt;:.target.:<br /> :--------:---&gt;:----------:---&gt;:----------: ... :----------:---&gt;:--------:<br />
+			</p>
+			<p> A list of all filters that come with NAnt is available <a href="../filters/index.html">here</a>. </p>
+			<p> The following tasks support filtering with a FilterChain: </p>
+			<ul type="disc"><li>
+				<b>CopyTask</b>
+			  </li><li>
+				<a href="NAnt.Core.Tasks.MoveTask.html">MoveTask</a>
+			  </li></ul>
+			<h4 class="dtH4">Example</h4><p>
+			  <p> Replace all occurrences of @NOW@ with the current date/time and replace tabs with spaces in all copied files. </p>
+			  <pre class="code">
+&lt;property name="NOW" value="${datetime::now()}" /&gt;
+&lt;copy todir="out"&gt;
+	&lt;fileset basedir="in"&gt;
+		&lt;include name="**/*" /&gt;
+	&lt;/fileset&gt;
+	&lt;filterchain&gt;
+		&lt;replacetokens&gt;
+			&lt;token key="NOW" value="${TODAY}" /&gt;
+		&lt;/replacetokens&gt;
+		&lt;tabstospaces /&gt;
+	&lt;/filterchain&gt;
+&lt;/copy&gt;
+
+  </pre>
+			</p><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="NAnt.Core.Filters.html">NAnt.Core.Filters</a></p><p><b>Assembly: </b>NAnt.Core (in NAnt.Core.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.Core.Filters.FilterChainMembers.html">FilterChain Members</a> | <a href="NAnt.Core.Filters.html">NAnt.Core.Filters Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="FilterChain class, about FilterChain class"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

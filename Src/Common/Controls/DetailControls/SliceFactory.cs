@@ -128,13 +128,37 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				case "defaultvectorreference": // second most common.
 					{
-						ReferenceVectorSlice rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorSlice") as ReferenceVectorSlice;
+						var rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorSlice") as ReferenceVectorSlice;
 						if (rvSlice == null)
 							slice = new ReferenceVectorSlice(cache, obj, flid);
 						else
 						{
 							slice = rvSlice;
 							rvSlice.Reuse(obj, flid);
+						}
+						break;
+					}
+				case "possvectorreference":
+					{
+						var prvSlice = reuseMap.GetSliceToReuse("PossibilityReferenceVectorSlice") as PossibilityReferenceVectorSlice;
+						if (prvSlice == null)
+							slice = new PossibilityReferenceVectorSlice(cache, obj, flid);
+						else
+						{
+							slice = prvSlice;
+							prvSlice.Reuse(obj, flid);
+						}
+						break;
+					}
+				case "semdomvectorreference":
+					{
+						var prvSlice = reuseMap.GetSliceToReuse("SemanticDomainReferenceVectorSlice") as SemanticDomainReferenceVectorSlice;
+						if (prvSlice == null)
+							slice = new SemanticDomainReferenceVectorSlice(cache, obj, flid);
+						else
+						{
+							slice = prvSlice;
+							prvSlice.Reuse(obj, flid);
 						}
 						break;
 					}
@@ -226,6 +250,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					slice = new CheckboxSlice(cache, obj, flid, node);
 					break;
 				}
+				case "checkboxwithrefresh":
+				{
+					slice = new CheckboxRefreshSlice(cache, obj, flid, node);
+					break;
+				}
 				case "time":
 				{
 					slice = new DateSlice(cache, obj, flid);
@@ -255,10 +284,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					slice = new AtomicReferencePOSSlice(cache, obj, flid, persistenceProvider, mediator);
 					break;
 				}
+				case "possatomicreference":
+				{
+					slice = new PossibilityAtomicReferenceSlice(cache, obj, flid);
+					break;
+				}
+				case "atomicreferenceposdisabled":
+				{
+					slice = new AutomicReferencePOSDisabledSlice(cache, obj, flid, persistenceProvider, mediator);
+					break;
+				}
 
 				case "defaultatomicreference":
 				{
 					slice = new AtomicReferenceSlice(cache, obj, flid);
+					break;
+				}
+				case "defaultatomicreferencedisabled":
+				{
+					slice = new AtomicReferenceDisabledSlice(cache, obj, flid);
 					break;
 				}
 
@@ -324,6 +368,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (slice == null)
 						return null;
 					break;
+				case "defaultvectorreferencedisabled": // second most common.
+					{
+						ReferenceVectorDisabledSlice rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorDisabledSlice") as ReferenceVectorDisabledSlice;
+						if (rvSlice == null)
+							slice = new ReferenceVectorDisabledSlice(cache, obj, flid);
+						else
+						{
+							slice = rvSlice;
+							rvSlice.Reuse(obj, flid);
+						}
+						break;
+					}
 				default:
 				{
 					//Since the editor has not been implemented yet,
@@ -356,15 +412,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (flid == 0)
 				return null;
 			Slice slice = null;
-			CellarPropertyType type = (CellarPropertyType)mdc.GetFieldType(flid);
+			var type = (CellarPropertyType) mdc.GetFieldType(flid);
 			switch (type)
 			{
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 				case CellarPropertyType.MultiUnicode:
-				case CellarPropertyType.MultiBigUnicode:
 				case CellarPropertyType.MultiString:
-				case CellarPropertyType.MultiBigString:
 					int ws = mdc.GetFieldWs(flid);
 					switch (ws)
 					{

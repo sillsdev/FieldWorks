@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 using NUnit.Framework;
@@ -820,6 +821,8 @@ namespace SIL.FieldWorks.TE.ImportTests
 		/// Initialize a dummy scripture object wrapper.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="DummyScrObjWrapper is assigned to SOWrapper and disposed in Dispose()")]
 		protected override void InitScriptureObject()
 		{
 			// The tests that use this DummyTeImporter do not utilize a scr obj to read real

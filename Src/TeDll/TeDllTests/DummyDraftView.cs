@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2002' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2002' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -12,6 +12,7 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
@@ -203,6 +204,8 @@ namespace SIL.FieldWorks.TE
 		/// Creates a view constructor suitable for this kind of view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		protected override TeStVc CreateViewConstructor()
 		{
 			CheckDisposed();
@@ -655,26 +658,35 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		///
+		/// Exposes the OnBackTranslationNextUnfinished method
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void CallNextUnfinishedBackTrans()
 		{
 			CheckDisposed();
-
 			OnBackTranslationNextUnfinished(null);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		///
+		/// Exposes the OnBackTranslationPrevUnfinished method
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void CallPrevUnfinishedBackTrans()
 		{
 			CheckDisposed();
-
 			OnBackTranslationPrevUnfinished(null);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Exposes the OnBackTranslationNextMissingBtFootnoteMkr method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public void CallNextMissingBtFootnoteMarker()
+		{
+			CheckDisposed();
+			TeEditingHelper.GoToNextMissingBtFootnoteMkr(TeEditingHelper);
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+	<Filter Include="Source Files">
+	  <UniqueIdentifier>{34c79448-fd96-4cf0-bcb0-b790c6e44482}</UniqueIdentifier>
+	</Filter>
+	<Filter Include="Header Files">
+	  <UniqueIdentifier>{a8973d29-377a-432b-9f26-031d3482ba39}</UniqueIdentifier>
+	</Filter>
+	<Filter Include="Resource Files">
+	  <UniqueIdentifier>{77d2899b-67de-4b65-9d4b-1bc25b534ce6}</UniqueIdentifier>
+	</Filter>
+	<Filter Include="lib">
+	  <UniqueIdentifier>{64b4bbf4-6106-466e-b961-2b7b932e32a9}</UniqueIdentifier>
+	</Filter>
+	<Filter Include="Extra">
+	  <UniqueIdentifier>{dfb0a61f-dbfb-49ff-8a82-a515379e1a26}</UniqueIdentifier>
+	</Filter>
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="FileInput.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="Font.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="FontCache.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="FontFace.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="FwGr.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="FwGrEngine.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="FwGrSegment.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrCharStream.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrClassTable.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrEngine.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrFeature.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrFSM.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrGlyphTable.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrPass.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrPassActionCode.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrSegmentPlatform.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrSlotState.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrSlotStream.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="GrTableManager.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="Segment.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="SegmentAux.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="SegmentPainter.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="TransductionLog.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="WinFont.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="WinSegmentPainter.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="..\lib\FwGraphiteProcess.cpp">
+	  <Filter>lib</Filter>
+	</ClCompile>
+	<ClCompile Include="..\lib\GrPlatform.cpp">
+	  <Filter>lib</Filter>
+	</ClCompile>
+	<ClCompile Include="..\lib\GrUtil.cpp">
+	  <Filter>lib</Filter>
+	</ClCompile>
+	<ClCompile Include="explicit_instantiations.cpp">
+	  <Filter>Extra</Filter>
+	</ClCompile>
+	<ClCompile Include="TestFSM.cpp">
+	  <Filter>Extra</Filter>
+	</ClCompile>
+	<ClCompile Include="TestPasses.cpp">
+	  <Filter>Extra</Filter>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="..\..\..\..\silgraphite_2_0\graphite\include\GrMstypes.h">
+	  <Filter>Source Files</Filter>
+	</ClInclude>
+	<ClInclude Include="FileInput.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="Font.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="FontCache.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="FontFace.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="FwGrEngine.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="FwGrSegment.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrCharStream.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrClassTable.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrConstants.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrEngine.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrEngineDebug.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrFeature.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrFeatureValues.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrFSM.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrGlyphTable.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrPass.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrPseudoMap.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrSegmentDebug.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrSegmentPlatform.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrSlotState.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrSlotStream.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="GrTableManager.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="Segment.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="SegmentAux.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="SegmentPainter.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="WinFont.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="WinSegmentPainter.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="resource.h">
+	  <Filter>Resource Files</Filter>
+	</ClInclude>
+	<ClInclude Include="..\lib\FwGraphiteProcess.h">
+	  <Filter>lib</Filter>
+	</ClInclude>
+	<ClInclude Include="..\lib\GraphiteProcess.h">
+	  <Filter>lib</Filter>
+	</ClInclude>
+	<ClInclude Include="..\lib\GrPlatform.h">
+	  <Filter>lib</Filter>
+	</ClInclude>
+	<ClInclude Include="..\lib\GrUtil.h">
+	  <Filter>lib</Filter>
+	</ClInclude>
+	<ClInclude Include="IGrDebug.h">
+	  <Filter>Extra</Filter>
+	</ClInclude>
+	<ClInclude Include="ITraceControl.h">
+	  <Filter>Extra</Filter>
+	</ClInclude>
+	<ClInclude Include="Main.h">
+	  <Filter>Extra</Filter>
+	</ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="Graphite.rc">
+	  <Filter>Resource Files</Filter>
+	</ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="..\..\..\output\debug\graphite.bsc" />
+	<None Include="Graphite.def" />
+	<None Include="GrEngine.mak" />
+	<None Include="overview.txt" />
+  </ItemGroup>
+</Project>

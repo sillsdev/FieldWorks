@@ -17,7 +17,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Media;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Paratext;
@@ -445,6 +447,7 @@ namespace SIL.FieldWorks.TE
 		private RegistryFloatSetting m_footnoteViewZoomSettingAlternate;
 		private const string kComprehensionCheckingToolSubKey = "ComprehensionCheckingTool";
 		private const string kCCSettings = "Settings";
+		FwLinkArgs m_startupLink;
 		#endregion
 
 		#region TeMainWnd Constructors, Initializers, Cleanup
@@ -475,10 +478,24 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <param name="app"></param>
 		/// <param name="wndCopyFrom"></param>
+		/// <param name="startupLink">Optional link to jump to in OnFinishedInit</param>
 		/// -----------------------------------------------------------------------------------
-		public TeMainWnd(FwApp app, Form wndCopyFrom) : base(app, wndCopyFrom)
+		public TeMainWnd(FwApp app, Form wndCopyFrom, FwLinkArgs startupLink)
+			: base(app, wndCopyFrom)
 		{
+			m_startupLink = startupLink;
 			Init();
+		}
+
+		/// -----------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the TeMainWnd class
+		/// </summary>
+		/// <param name="app"></param>
+		/// <param name="wndCopyFrom"></param>
+		/// -----------------------------------------------------------------------------------
+		public TeMainWnd(FwApp app, Form wndCopyFrom) : this(app, wndCopyFrom, null)
+		{
 		}
 
 		#region IDisposable override
@@ -1481,6 +1498,8 @@ namespace SIL.FieldWorks.TE
 		/// </summary>
 		/// <returns>True if successful; false if user chooses to exit app</returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="REVIEW: ParatextHelper.GetAssociatedProject returns a reference (?)")]
 		public override bool OnFinishedInit()
 		{
 			CheckDisposed();
@@ -1499,10 +1518,18 @@ namespace SIL.FieldWorks.TE
 			// If there are books in the project...
 			if (m_cache.LangProject.TranslatedScriptureOA.ScriptureBooksOS.Count > 0)
 			{
-				// When the TE window first opens, check if a book filter was enabled when
-				// the user last closed TE. If so, then show the user the book filter dialog.
-				if (TeProjectSettings.BookFilterEnabled)
-					OnBookFilter(null);
+				if (m_startupLink != null)
+				{
+					// This should automatically disabled any problem filters.
+					m_app.HandleIncomingLink(m_startupLink);
+				}
+				else
+				{
+					// When the TE window first opens, check if a book filter was enabled when
+					// the user last closed TE. If so, then show the user the book filter dialog.
+					if (TeProjectSettings.BookFilterEnabled)
+						OnBookFilter(null);
+				}
 
 				if (!ActiveViewHelper.IsViewVisible(ActiveView) && SIBAdapter != null)
 				{
@@ -1976,7 +2003,7 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the editing helper associatied with the active view
+		/// Gets the editing helper associated with the active view
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public virtual TeEditingHelper ActiveEditingHelper
@@ -1984,11 +2011,8 @@ namespace SIL.FieldWorks.TE
 			get
 			{
 				CheckDisposed();
-
-				if (ActiveView == null || ActiveView.EditingHelper == null)
-					return null;
-				else
-					return ActiveView.EditingHelper.CastAs<TeEditingHelper>();
+				return ActiveView == null || ActiveView.EditingHelper == null ? null :
+					ActiveView.EditingHelper.CastAs<TeEditingHelper>();
 			}
 		}
 
@@ -2989,6 +3013,38 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handles the BackTranslationNextMissingBtFootnoteMkr command by attempting to
+		/// navigate to a position in the back translation that closely corresponds to a place
+		/// in the verncaular that has a footnote whose marker has not been inserted into the
+		/// back translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnUpdateBackTranslationNextMissingBtFootnoteMkr(object args)
+		{
+			TMItemProperties itemProps = args as TMItemProperties;
+
+			if (itemProps == null)
+				return false;
+
+			itemProps.Update = true;
+			itemProps.Enabled = false;
+			if (m_bookFilter.BookCount == 0 ||
+				ActiveEditingHelper == null ||
+				ActiveEditingHelper.CurrentSelection == null)
+			{
+				return true;
+			}
+
+			TeEditingHelper btDraftEditingHelper = ((TheBTSplitWrapper != null &&
+				(ActiveView == TheBTSplitWrapper.DraftView || ActiveView == TheBTSplitWrapper.BTDraftView)) ?
+				TheBTSplitWrapper.BTDraftView.TeEditingHelper : null);
+			itemProps.Enabled = (btDraftEditingHelper != null && btDraftEditingHelper.CurrentSelection != null);
+
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Called when updating the enabled status of Go To Prev: Book submenu item..
 		/// </summary>
 		/// <returns></returns>
@@ -3800,7 +3856,7 @@ namespace SIL.FieldWorks.TE
 						int hvoSelection;
 						ActiveEditingHelper.GetSelectedScrElement(out tagSelection, out hvoSelection);
 						itemProps.Enabled = (SelectionInEditableScripture &&
-							!ActiveEditingHelper.IsBackTranslation && tagSelection != 0 &&
+							tagSelection != 0 &&
 							tagSelection != ScrBookTags.kflidFootnotes &&
 							!ActiveEditingHelper.IsPictureSelected);
 					}
@@ -4286,6 +4342,8 @@ namespace SIL.FieldWorks.TE
 		/// <param name="args"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="REVIEW: ParatextHelper.GetAssociatedProject returns a reference (?)")]
 		protected bool OnFileExportUsfmParatext(object args)
 		{
 			AdjustScriptureAnnotations();
@@ -5752,40 +5810,54 @@ namespace SIL.FieldWorks.TE
 		protected bool OnInsertPictureDialog(object args)
 		{
 			Debug.Assert(m_cache != null);
-			if (ActiveEditingHelper == null)
+			FwEditingHelper editHelper = ActiveEditingHelper;
+			if (editHelper == null)
 				return false;
 
-			using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(m_cache, null,
-				m_app, m_app))
+			if (editHelper.IsBackTranslation)
 			{
-				// Don't allow inserting an empty picture, so don't check for result of Initialize()
-				if (dlg.Initialize())
+				SelectionHelper helper = editHelper.CurrentSelection;
+				ICmPictureRepository repo = Cache.ServiceLocator.GetInstance<ICmPictureRepository>();
+				SelLevInfo info;
+				ISegment segment;
+				if (helper.GetLevelInfoForTag(StTxtParaTags.kflidSegments, out info))
+					segment = m_cache.ServiceLocator.GetInstance<ISegmentRepository>().GetObject(info.hvo);
+				else
 				{
-					if (dlg.ShowDialog() == DialogResult.OK)
-						InsertThePicture(null, dlg);
+					SelLevInfo paraLevInfo;
+					helper.GetLevelInfoForTag(StTextTags.kflidParagraphs, out paraLevInfo);
+					IStTxtPara para = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(paraLevInfo.hvo);
+					segment = para.GetSegmentForOffsetInFreeTranslation(helper.GetIch(SelectionHelper.SelLimitType.Top), helper.Ws);
+				}
+				ITsString tssVernSegment = segment.BaselineText;
+				Guid guidNextPicNotInBt = tssVernSegment.GetAllEmbeddedObjectGuids(FwObjDataTypes.kodtGuidMoveableObjDisp).FirstOrDefault(g =>
+					!segment.FreeTranslation.get_String(helper.Ws).GetAllEmbeddedObjectGuids(FwObjDataTypes.kodtGuidMoveableObjDisp).Contains(g));
+				if (guidNextPicNotInBt == Guid.Empty)
+					return false;
+				ICmPicture pict = repo.GetObject(guidNextPicNotInBt);
+				string undo;
+				string redo;
+				TeResourceHelper.MakeUndoRedoLabels("kstidInsertPicture", out undo, out redo);
+				using (UndoTaskHelper undoTaskHelper = new UndoTaskHelper(m_cache.ActionHandlerAccessor,
+						  editHelper.EditedRootBox.Site, undo, redo))
+				{
+					editHelper.InsertPicture(pict);
+					undoTaskHelper.RollBack = false;
 				}
 			}
-
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles the clicking on the "Delete Picture" context menu.
-		/// </summary>
-		/// <param name="args"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		protected bool OnDeletePicture(object args)
-		{
-			if (ActiveEditingHelper == null)
+			else
 			{
-				return false;
+				using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(m_cache, null,
+					m_app, m_app))
+				{
+					// Don't allow inserting an empty picture, so don't check for result of Initialize()
+					if (dlg.Initialize())
+					{
+						if (dlg.ShowDialog() == DialogResult.OK)
+							InsertThePicture(null, dlg);
+					}
+				}
 			}
-
-			if (ActiveEditingHelper.IsPictureSelected)
-				ActiveEditingHelper.DeletePicture();
-
 			return true;
 		}
 
@@ -6143,12 +6215,16 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		private void OpenTrainingDoc(string folder, string document)
 		{
-			string path = Path.Combine(Path.Combine(DirectoryFinder.TeFolder, folder), document);
+			string helpTeFolder = String.Format(DirectoryFinder.FWCodeDirectory +
+				"{0}Helps{0}Translation Editor", Path.DirectorySeparatorChar);
+			string path = Path.Combine(Path.Combine(helpTeFolder, folder), document);
 			ProcessStartInfo processInfo = new ProcessStartInfo(path);
 			processInfo.UseShellExecute = true;
 			try
 			{
-				Process.Start(processInfo);
+				using (Process.Start(processInfo))
+				{
+				}
 			}
 			catch
 			{
@@ -7086,6 +7162,26 @@ namespace SIL.FieldWorks.TE
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Handles the BackTranslationNextMissingBtFootnoteMkr command by attempting to
+		/// navigate to a position in the back translation that closely corresponds to a place
+		/// in the verncaular that has a footnote whose marker has not been inserted into the
+		/// back translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnBackTranslationNextMissingBtFootnoteMkr(object args)
+		{
+			// Move to the next paragraph corresponding to a vernacular paragraph which has a
+			// footnote that has not been inserted into this BT
+			using (new WaitCursor(this))
+			{
+				if (!TheBTSplitWrapper.BTDraftView.TeEditingHelper.GoToNextMissingBtFootnoteMkr(ActiveEditingHelper))
+					SystemSounds.Beep.Play();
+			}
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Navigate to the previous Scripture book
 		/// </summary>
 		/// <param name="args"></param>
@@ -7850,7 +7946,9 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		internal int GetBackTranslationWsForView(string viewName)
 		{
-			string icuLocale = GetBtWsRegistrySetting(viewName).Value;
+			string icuLocale;
+			using (var setting = GetBtWsRegistrySetting(viewName))
+				icuLocale = setting.Value;
 			int ws = string.IsNullOrEmpty(icuLocale) ? -1 :
 				Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(icuLocale);
 			return ws > 0 ? ws : m_defaultBackTranslationWs;

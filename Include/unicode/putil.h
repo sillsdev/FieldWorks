@@ -1,7 +1,7 @@
 /*
 ******************************************************************************
 *
-*   Copyright (C) 1997-2008, International Business Machines
+*   Copyright (C) 1997-2011, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 ******************************************************************************
@@ -30,12 +30,6 @@
   * \brief C API: Platform Utilities
   */
 
-/* Define this to 1 if your platform supports IEEE 754 floating point,
-   to 0 if it does not. */
-#ifndef IEEE_754
-#   define IEEE_754 1
-#endif
-
 /*==========================================================================*/
 /* Platform utilities                                                       */
 /*==========================================================================*/
@@ -58,7 +52,11 @@
  *    If u_setDataDirectory() has been called, that is it, otherwise
  *    if the ICU_DATA environment variable is set, use that, otherwise
  *    If a data directory was specifed at ICU build time
- *      <code>( #define ICU_DATA_DIR "path" )</code>, use that,
+ *      <code>
+ * \code
+ *        #define ICU_DATA_DIR "path"
+ * \endcode
+ * </code> use that,
  *    otherwise no data directory is available.
  *
  * @return the data directory, or an empty string ("") if no data directory has
@@ -90,39 +88,19 @@ U_STABLE const char* U_EXPORT2 u_getDataDirectory(void);
 U_STABLE void U_EXPORT2 u_setDataDirectory(const char *directory);
 
 /**
- * Please use ucnv_getDefaultName() instead.
- * Return the default codepage for this platform and locale.
- * This function can call setlocale() on Unix platforms. Please read the
- * platform documentation on setlocale() before calling this function.
- * @return the default codepage for this platform
- * @internal
- */
-U_INTERNAL const char*  U_EXPORT2 uprv_getDefaultCodepage(void);
-
-/**
- * Please use uloc_getDefault() instead.
- * Return the default locale ID string by querying ths system, or
- *     zero if one cannot be found.
- * This function can call setlocale() on Unix platforms. Please read the
- * platform documentation on setlocale() before calling this function.
- * @return the default locale ID string
- * @internal
- */
-U_INTERNAL const char*  U_EXPORT2 uprv_getDefaultLocaleID(void);
-
-/**
+ * @{
  * Filesystem file and path separator characters.
  * Example: '/' and ':' on Unix, '\\' and ';' on Windows.
  * @stable ICU 2.0
  */
-#ifdef XP_MAC
+#if U_PLATFORM == U_PF_CLASSIC_MACOS
 #   define U_FILE_SEP_CHAR ':'
 #   define U_FILE_ALT_SEP_CHAR ':'
 #   define U_PATH_SEP_CHAR ';'
 #   define U_FILE_SEP_STRING ":"
 #   define U_FILE_ALT_SEP_STRING ":"
 #   define U_PATH_SEP_STRING ";"
-#elif defined(U_WINDOWS)
+#elif U_PLATFORM_USES_ONLY_WIN32_API
 #   define U_FILE_SEP_CHAR '\\'
 #   define U_FILE_ALT_SEP_CHAR '/'
 #   define U_PATH_SEP_CHAR ';'
@@ -137,6 +115,8 @@ U_INTERNAL const char*  U_EXPORT2 uprv_getDefaultLocaleID(void);
 #   define U_FILE_ALT_SEP_STRING "/"
 #   define U_PATH_SEP_STRING ":"
 #endif
+
+/** @} */
 
 /**
  * Convert char characters to UChar characters.

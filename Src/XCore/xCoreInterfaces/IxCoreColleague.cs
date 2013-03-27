@@ -139,18 +139,4 @@ namespace XCore
 			get;
 		}
 	}
-
-#if __MonoCS__
-	/// <summary>
-	/// This is an interface implemented by xWindow
-	/// Allows Simulation of PostMessages on Non Windows Platforms.
-	/// </summary>
-	public interface IRaiseASyncMessages
-	{
-		/// <summary>
-		/// Call this method to send an asynchronous message to the XWindow WndProc.
-		/// </summary>
-		void SimulatePostMessage(ref Message m);
-	}
-#endif
 }

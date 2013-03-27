@@ -43,9 +43,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private string m_sHelpTopic = "khtpUnicodeEditorCharTab";
 		bool m_fDirty;
-		readonly Dictionary<int, PUACharacter> m_dictPuaChars = new Dictionary<int, PUACharacter>();
-		readonly Dictionary<int, PUACharacter> m_dictStdChars = new Dictionary<int, PUACharacter>();
+		// Characters that have overrides by this user (from CustomChars.xml)
 		readonly Dictionary<int, PUACharacter> m_dictCustomChars = new Dictionary<int, PUACharacter>();
+		// Characters that have overrides from standard Unicode (from UnicodeDataOverrides.txt)
+		readonly Dictionary<int, PUACharacter> m_dictModifiedChars = new Dictionary<int, PUACharacter>();
 
 		internal class PuaListItem : ListViewItem
 		{
@@ -137,10 +138,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			var icuDir = Icu.DefaultDirectory;
 			if (string.IsNullOrEmpty(icuDir))
 				throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
-			var unidataDir = Path.Combine(Path.Combine(icuDir, "data"), "unidata");
-			var unicodeDataFilename = Path.Combine(unidataDir, "UnicodeData.txt");
-			var derivedBidiClassFilename = Path.Combine(unidataDir, "DerivedBidiClass.txt");
-			var derivedNormalizationPropsFilename = Path.Combine(unidataDir, "DerivedNormalizationProps.txt");
+			var unicodeDataFilename = Path.Combine(icuDir, "UnicodeDataOverrides.txt");
+			if (!File.Exists(unicodeDataFilename))
+				return;
 			using (var reader = File.OpenText(unicodeDataFilename))
 			{
 				while (reader.Peek() >= 0)
@@ -163,133 +163,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						continue;
 					if (code != codeMax)
 						continue;
+					string[] dataProperties = sProps.Split(';');
+					if (dataProperties.Length == PUACharacter.ExectedPropCount + 1)
+					{
+						// One extra is OK...I think it comes from a comment in the SIL PUA properties.
+						// But the PUACharacter contsructor doesn't like it, so strip it off.
+						int ich = sProps.LastIndexOf(';');
+						sProps = sProps.Substring(0, ich);
+					}
 					var charSpec = new PUACharacter(sCode, sProps);
-					if (IsPUA(code) && codeMax == code)
-						m_dictPuaChars.Add(code, charSpec);
-					else
-						m_dictStdChars.Add(code, charSpec);
-				}
-			}
-			using (var reader = File.OpenText(derivedBidiClassFilename))
-			{
-				while (reader.Peek() >= 0)
-				{
-					var sLine = ReadLineAndRemoveComment(reader);
-					if (String.IsNullOrEmpty(sLine))
-						continue;
-					var rgsFields = sLine.Split(new[] { ';' }, StringSplitOptions.None);
-					// get the information from the other field(s)
-					if (rgsFields.Length != 2)
-						continue;
-					if (rgsFields[1] == null)
-						continue;
-					int code;
-					int codeMax;
-					if (!ParseCodeField(rgsFields[0], out code, out codeMax))
-						continue;
-					if (IsPUA(code) && (codeMax == code || IsPUA(codeMax)))
-					{
-						string sBidiClass = rgsFields[1].Trim();
-						if (String.IsNullOrEmpty(sBidiClass))
-							continue;
-						for (var charCode = code; charCode <= codeMax; ++charCode)
-						{
-							PUACharacter spec;
-							if (m_dictPuaChars.TryGetValue(code, out spec))
-							{
-							}
-						}
-					}
-				}
-			}
-			using (var reader = File.OpenText(derivedNormalizationPropsFilename))
-			{
-				while (reader.Peek() >= 0)
-				{
-					var sLine = ReadLineAndRemoveComment(reader);
-					if (String.IsNullOrEmpty(sLine))
-						continue;
-					var rgsFields = sLine.Split(new[] { ';' }, StringSplitOptions.None);
-					if (rgsFields.Length < 2)
-						continue;
-					if (rgsFields[1] == null)
-						continue;
-					int code;
-					int codeMax;
-					if (!ParseCodeField(rgsFields[0], out code, out codeMax))
-						continue;
-					if (IsPUA(code) && (codeMax == code || IsPUA(codeMax)))
-					{
-						// get the information from the other field(s)
-						var sProperty = rgsFields[1].Trim();
-						if (String.IsNullOrEmpty(sProperty))
-							continue;
-						for (var charCode = code; charCode <= codeMax; ++charCode)
-						{
-							PUACharacter spec;
-							if (m_dictPuaChars.TryGetValue(code, out spec))
-							{
-								//switch (sProperty)
-								//{
-								//    case "Full_Composition_Exclusion":
-								//        spec.FullCompositionExclusion = true;
-								//        break;
-								//    case "Expands_On_NFC":
-								//        spec.ExpandsOnNFC = true;
-								//        break;
-								//    case "Expands_On_NFD":
-								//        spec.ExpandsOnNFD = true;
-								//        break;
-								//    case "Expands_On_NFKC":
-								//        spec.ExpandsOnNFKC = true;
-								//        break;
-								//    case "Expands_On_NFKD":
-								//        spec.ExpandsOnNFKD = true;
-								//        break;
-								//    case "FC_NFKC":
-								//        if (rgsFields.Length == 3 && rgsFields[2] != null)
-								//        {
-								//            var sFoldChars = rgsFields[2].Trim();
-								//            if (!String.IsNullOrEmpty(sFoldChars))
-								//                spec.FoldCharsNFKC = sFoldChars;
-								//        }
-								//        break;
-								//    case "NFD_Quick_Check":
-								//        if (rgsFields.Length == 3 && rgsFields[2] != null)
-								//        {
-								//            var sQuickCheck = rgsFields[2].Trim();
-								//            if (!String.IsNullOrEmpty(sQuickCheck))
-								//                spec.NFDQuickCheck = sQuickCheck;
-								//        }
-								//        break;
-								//    case "NFKD_Quick_Check":
-								//        if (rgsFields.Length == 3 && rgsFields[2] != null)
-								//        {
-								//            var sQuickCheck = rgsFields[2].Trim();
-								//            if (!String.IsNullOrEmpty(sQuickCheck))
-								//                spec.NFKDQuickCheck = sQuickCheck;
-								//        }
-								//        break;
-								//    case "NFC_Quick_Check":
-								//        if (rgsFields.Length == 3 && rgsFields[2] != null)
-								//        {
-								//            var sQuickCheck = rgsFields[2].Trim();
-								//            if (!String.IsNullOrEmpty(sQuickCheck))
-								//                spec.NFCQuickCheck = sQuickCheck;
-								//        }
-								//        break;
-								//    case "NFKC_Quick_Check":
-								//        if (rgsFields.Length == 3 && rgsFields[2] != null)
-								//        {
-								//            var sQuickCheck = rgsFields[2].Trim();
-								//            if (!String.IsNullOrEmpty(sQuickCheck))
-								//                spec.NFKCQuickCheck = sQuickCheck;
-								//        }
-								//        break;
-								//}
-							}
-						}
-					}
+					m_dictModifiedChars.Add(code, charSpec);
 				}
 			}
 		}
@@ -472,34 +355,26 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				PUACharacter charSpec;
 				if (m_dictCustomChars.TryGetValue(code, out charSpec))
 					return charSpec;
-				if (m_dictStdChars.TryGetValue(code, out charSpec))
+				if (m_dictModifiedChars.TryGetValue(code, out charSpec))
 					return charSpec;
-				if (m_dictPuaChars.TryGetValue(code, out charSpec))
-					return charSpec;
+				charSpec = new PUACharacter(code);
+				if (charSpec.RefreshFromIcu(true))
+					return charSpec; // known character we have no overrides for
 			}
 			return null;
 		}
 
-		internal bool IsDefinedPuaCharacter(string sCode)
+		/// <summary>
+		/// Is this a character for which the user has already recorded a private override?
+		/// </summary>
+		/// <param name="sCode"></param>
+		/// <returns></returns>
+		internal bool IsCustomChar(string sCode)
 		{
 			int code;
 			if (Int32.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
-				return m_dictPuaChars.ContainsKey(code) || m_dictCustomChars.ContainsKey(code);
+				return m_dictCustomChars.ContainsKey(code);
 			return false;
-		}
-
-		internal PUACharacter GetDefinedPuaCharacter(string sCode)
-		{
-			int code;
-			if (Int32.TryParse(sCode, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out code))
-			{
-				PUACharacter charSpec;
-				if (m_dictCustomChars.TryGetValue(code, out charSpec))
-					return charSpec;
-				if (m_dictPuaChars.TryGetValue(code, out charSpec))
-					return charSpec;
-			}
-			return null;
 		}
 
 		private void m_lvCharSpecs_MouseDoubleClick(object sender, MouseEventArgs e)

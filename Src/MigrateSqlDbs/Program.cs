@@ -16,17 +16,23 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using SIL.FieldWorks.FDO.DomainServices.DataMigration;
-using SIL.Utils;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Controls;
+using System.Reflection;
+using System.Windows.Forms;
 using Palaso.WritingSystems.Migration;
 using Palaso.WritingSystems.Migration.WritingSystemsLdmlV0To1Migration;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO.DomainServices.DataMigration;
+using SIL.Utils;
+
+// we can't use an exit code < -1 on Linux. However, this app won't work on Linux anyways
+// since we don't have MS SQL Server there.
+[assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
+		Justification="Not intended to be run on Linux")]
 
 namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 {
@@ -76,15 +82,17 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				{
 					string location = Assembly.GetExecutingAssembly().Location;
 					string program = Path.Combine(Path.GetDirectoryName(location), "UnicodeCharEditor.exe");
-					Process proc = Process.Start(program, "-i");
-					proc.WaitForExit();
+					using (Process proc = Process.Start(program, "-i"))
+					{
+						proc.WaitForExit();
+					}
 				}
 				catch (Exception e)
 				{
 					if (s_fDebug)
 					{
-						var msg = String.Format("Cannot migrate the custom character definitions:\r\n{0}",
-							e.Message);
+						var msg = String.Format("Cannot migrate the custom character definitions:{1}{0}",
+							e.Message, Environment.NewLine);
 						MessageBox.Show(msg);
 					}
 				}
@@ -107,7 +115,10 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				List<string> projects = GetProjectList();
 				if (projects.Count > 0)
 				{
-					Application.Run(new MigrateProjects(importer, version, projects, s_fAutoClose));
+					using (var migrateProjects = new MigrateProjects(importer, version, projects, s_fAutoClose))
+					{
+						Application.Run(migrateProjects);
+					}
 				}
 				else if (s_fDebug)
 				{
@@ -120,31 +131,27 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 		private static List<string> GetProjectList()
 		{
 			List<string> projects = new List<string>();
-			SqlConnection connection = null;
 			try
 			{
 				string sSql = String.Format("Server={0}\\SILFW; Database=master; User ID=FWDeveloper;" +
 					" Password=careful; Pooling=false;", Environment.MachineName);
-				connection = new SqlConnection(sSql);
-				connection.Open();
-				SqlCommand commandProjectList = connection.CreateCommand();
-				commandProjectList.CommandText = "exec master..sp_GetFWDBs";
-				SqlDataReader readerProjectList = null;
-				try
+				using (var connection = new SqlConnection(sSql))
 				{
-					readerProjectList =
-						commandProjectList.ExecuteReader(System.Data.CommandBehavior.SingleResult);
-					// Loop through the databases and add them to the projectList
-					while (readerProjectList.Read())
+					connection.Open();
+					using (SqlCommand commandProjectList = connection.CreateCommand())
 					{
-						string proj =  readerProjectList.GetString(0);
-						projects.Add(proj);
+						commandProjectList.CommandText = "exec master..sp_GetFWDBs";
+						using (SqlDataReader readerProjectList =
+							commandProjectList.ExecuteReader(System.Data.CommandBehavior.SingleResult))
+						{
+							// Loop through the databases and add them to the projectList
+							while (readerProjectList.Read())
+							{
+								string proj = readerProjectList.GetString(0);
+								projects.Add(proj);
+							}
+						}
 					}
-				}
-				finally
-				{
-					if (readerProjectList != null)
-						readerProjectList.Close();
 				}
 			}
 			catch (Exception e)
@@ -152,16 +159,11 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 				if (s_fDebug)
 				{
 					string msg = String.Format(
-						"An exception was thrown while trying to get the list of projects:\r\n{0}",
-						e.Message);
+						"An exception was thrown while trying to get the list of projects:{1}{0}",
+						e.Message, Environment.NewLine);
 					MessageBox.Show(msg, "DEBUG!");
 				}
 				projects.Clear();
-			}
-			finally
-			{
-				if (connection != null)
-					connection.Close();
 			}
 			return projects;
 		}

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+	<Filter Include="Source Files">
+	  <UniqueIdentifier>{4ed3816e-e695-441a-8280-1a8fc51a04d9}</UniqueIdentifier>
+	  <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+	</Filter>
+	<Filter Include="Header Files">
+	  <UniqueIdentifier>{45fa0330-9fee-4b72-9208-b14095468eb3}</UniqueIdentifier>
+	  <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+	</Filter>
+	<Filter Include="Resource Files">
+	  <UniqueIdentifier>{6775f841-ab98-4947-bfe9-040b8c934820}</UniqueIdentifier>
+	  <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+	</Filter>
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="stdafx.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="XAmpleCOMWrapper.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="XAmpleWrapper.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+	<ClCompile Include="XAmpleWrapperCore.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="Resource.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="stdafx.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="XAmpleWrapper.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+	<ClInclude Include="XAmpleWrapperCore.h">
+	  <Filter>Header Files</Filter>
+	</ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="XAmpleCOMWrapper.rc">
+	  <Filter>Resource Files</Filter>
+	</ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="XAmpleCOMWrapper.rgs">
+	  <Filter>Resource Files</Filter>
+	</None>
+  </ItemGroup>
+  <ItemGroup>
+	<CustomBuildStep Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>

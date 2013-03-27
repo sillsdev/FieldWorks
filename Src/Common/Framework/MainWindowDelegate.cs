@@ -939,13 +939,13 @@ namespace SIL.FieldWorks.Common.Framework
 			string iconPath = null;
 			if (m_app.ApplicationName == FwUtils.FwUtils.ksTeAppName)
 			{
-				applicationExecutablePath = "/usr/bin/fieldworks-te";
-				iconPath = "/usr/share/pixmaps/fieldworks-te.png";
+				applicationExecutablePath = "fieldworks-te";
+				iconPath = "fieldworks-te";
 			}
-			if (m_app.ApplicationName == FwUtils.FwUtils.ksFlexAppName)
+			else if (m_app.ApplicationName == FwUtils.FwUtils.ksFlexAppName)
 			{
-				applicationExecutablePath = "/usr/bin/fieldworks-flex";
-				iconPath = "/usr/share/pixmaps/fieldworks-flex.png";
+				applicationExecutablePath = "fieldworks-flex";
+				iconPath = "fieldworks-flex";
 			}
 			if (string.IsNullOrEmpty(applicationExecutablePath))
 				return false;

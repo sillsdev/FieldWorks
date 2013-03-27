@@ -13,7 +13,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using Microsoft.Win32;
-using SIL.CoreImpl;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.Utils;
 
@@ -29,7 +28,7 @@ namespace SIL.FieldWorks.TE
 		#region TeProjectSettingsImpl class
 		// ReSharper disable MemberHidesStaticFromOuterClass
 
-		private class TeProjectSettingsImpl : IDisposable
+		private sealed class TeProjectSettingsImpl : IDisposable
 		{
 			/// <summary/>
 			public RegistryBoolSetting SendSyncMessages { get; private set; }

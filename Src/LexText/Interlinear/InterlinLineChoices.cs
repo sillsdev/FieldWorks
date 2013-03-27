@@ -40,17 +40,27 @@ namespace SIL.FieldWorks.IText
 		{
 		}
 
-		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
+		public InterlinLineChoices(FdoCache cache, int defaultVernacularWs, int defaultAnalysisWs)
+			: this(cache, defaultVernacularWs, defaultAnalysisWs, InterlinMode.Analyze)
+		{
+		}
+
+		public InterlinLineChoices(FdoCache cache, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
 		{
 			this.Mode = mode;
 			InitFieldNames(mode);
-			m_proj = proj;
-			m_cache = proj.Cache;
+			m_cache = cache;
 			m_wsDefVern = defaultVernacularWs;
 			if (defaultAnalysisWs == WritingSystemServices.kwsAnal)
 				m_wsDefAnal = m_cache.DefaultAnalWs;
 			else
 				m_wsDefAnal = defaultAnalysisWs;
+		}
+
+		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
+			: this(proj.Cache, defaultVernacularWs, defaultAnalysisWs, mode)
+		{
+			m_proj = proj; // Not used any more. TODO: remove, and modify callers.
 		}
 
 		/// <summary>
@@ -378,14 +388,6 @@ namespace SIL.FieldWorks.IText
 		{
 			return m_fieldNames[flid];
 		}
-
-// CS0169
-#if false
-		private Color LabelColorFor(int choiceIndex)
-		{
-			return LabelColorFor(this[choiceIndex]);
-		}
-#endif
 
 		internal int LabelRGBFor(int choiceIndex)
 		{

@@ -64,9 +64,9 @@
 		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\Icu40DataDir"
 			value="${targetdir}\Icu40\icudt40l" />
 		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir"
-			value="${fwroot}\lib\release\" />
+			value="${fwroot}\DistFiles\Windows\EC Common\" />
 		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-			value="${fwroot}\lib\release\EC\Plugins" />
+			value="${fwroot}\DistFiles\Windows\EC\EC\Plugins" />
 	</target>
 
 	<target name="copy">
@@ -132,9 +132,9 @@
 		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\Icu40Dir" value="${targetdir}\Icu40" />
 		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\Icu40DataDir" value="${targetdir}\Icu40\icudt40l" />
 		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\RootDir"
-			value="${fwroot}\lib\release\" />
+			value="${fwroot}\DistFiles\Windows\EC Common" />
 		<writeregistry hive="LocalMachine" key="SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-			value="${fwroot}\lib\release\EC\Plugins" />
+			value="${fwroot}\DistFiles\Windows\EC\EC\Plugins" />
 		<writeregistry hive="CurrentUser" key="Software\SIL\Fieldworks\Translation Editor\LatestProjectName"
 			value="DEB-Debug"/>
 		<writeregistry hive="CurrentUser" key="Software/SIL/Fieldworks/Translation Editor/LatestDatabaseName"

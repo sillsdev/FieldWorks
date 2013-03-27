@@ -116,6 +116,15 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		void RestoreProject(FwApp fwApp, Form dialogOwner);
 
+
+		/// <summary>
+		/// Reopens the given FLEx project. This may be necessary if some external process modified the project data.
+		/// Currently used when FLExBridge modifies our project during a Send/Receive
+		/// </summary>
+		/// <param name="project">The project name to re-open</param>
+		/// <param name="app"></param>
+		FwApp ReopenProject(string project, FwAppArgs app);
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///

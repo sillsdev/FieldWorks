@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -9,6 +10,8 @@ using SIL.Utils;
 namespace SIL.CoreImpl
 {
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_DebugProces gets disposed in FixtureTeardown")]
 	public class PalasoWritingSystemTests// can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		private DebugProcs m_DebugProcs;

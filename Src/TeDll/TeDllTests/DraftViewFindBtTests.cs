@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2005, SIL International. All Rights Reserved.
-// <copyright from='2005' to='2005' company='SIL International'>
-//		Copyright (c) 2005, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2005' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -9,26 +9,19 @@
 #endregion
 //
 // File: DraftViewFindBtTests.cs
-// Responsibility:
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 // --------------------------------------------------------------------------------------------
-using System;
-
 using NUnit.Framework;
-
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.TE;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.CoreImpl;
 
 namespace SIL.FieldWorks.TE.DraftViews
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Summary description for DraftViewFindBtTests.
+	/// Test for methods that find next and previous unfinished back translation.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
@@ -88,8 +81,7 @@ namespace SIL.FieldWorks.TE.DraftViews
 		[Test]
 		public void FindPrevBackTrans_SectionHeadToTitle()
 		{
-			m_draftView.SetInsertionPoint(ScrSectionTags.kflidHeading,
-				0, 0, 0);
+			m_draftView.SetInsertionPoint(ScrSectionTags.kflidHeading, 0, 0, 0);
 
 			m_draftView.CallPrevUnfinishedBackTrans();
 			SelectionHelper helper = m_draftView.EditingHelper.CurrentSelection;
@@ -113,8 +105,7 @@ namespace SIL.FieldWorks.TE.DraftViews
 			ICmTranslation trans = m_exodus.TitleOA[0].GetOrCreateBT();
 			m_draftView.SetTransStatus(trans, BackTranslationStatus.Finished);
 
-			m_draftView.SetInsertionPoint(ScrSectionTags.kflidHeading,
-				0, 0, 0);
+			m_draftView.SetInsertionPoint(ScrSectionTags.kflidHeading, 0, 0, 0);
 
 			m_draftView.CallPrevUnfinishedBackTrans();
 			SelectionHelper helper = m_draftView.EditingHelper.CurrentSelection;
@@ -139,8 +130,7 @@ namespace SIL.FieldWorks.TE.DraftViews
 			ICmTranslation trans = m_exodus.TitleOA[0].GetOrCreateBT();
 			m_draftView.SetTransStatus(trans, BackTranslationStatus.Checked);
 
-			m_draftView.SetInsertionPoint(ScrSectionTags.kflidHeading,
-				0, 0, 0);
+			m_draftView.SetInsertionPoint(ScrSectionTags.kflidHeading, 0, 0, 0);
 
 			m_draftView.CallPrevUnfinishedBackTrans();
 			SelectionHelper helper = m_draftView.EditingHelper.CurrentSelection;
@@ -597,6 +587,136 @@ namespace SIL.FieldWorks.TE.DraftViews
 			Assert.AreEqual(ScrSectionTags.kflidHeading,
 				m_draftView.EditingHelper.CurrentSelection.LevelInfo[2].tag);
 			Assert.IsFalse(m_draftView.TeEditingHelper.InBookTitle);
+		}
+		#endregion
+
+		#region FindNextMissingBtFootnoteMarker
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests trying to go to the next footnote that does not have a marker (ORC) in the
+		/// back translation when we are in a Scripture section head and the first content para
+		/// has a footnote in the first verse of the vernacular that does not have an ORC in the
+		/// BT.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void FindNextMissingBtFootnoteMarker_BtSectionHeadToContent()
+		{
+			IScrSection section = m_exodus.SectionsOS[1];
+
+			ITsStrFactory strfact = TsStrFactoryClass.Create();
+			IStTxtPara contentPara = section.ContentOA[0];
+			ITsStrBldr strBldr = contentPara.Contents.GetBldr();
+			IStFootnote foot = m_exodus.InsertFootnoteAt(0, strBldr, 7);
+			contentPara.Contents = strBldr.GetString();
+			IScrTxtPara footPara = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
+				foot, ScrStyleNames.NormalFootnoteParagraph);
+			footPara.Contents = strfact.MakeString("This is footnote text for footnote", Cache.DefaultVernWs);
+
+			ICmTranslation trans = contentPara.GetOrCreateBT();
+
+			m_draftView.SetInsertionPoint(ScrSectionTags.kflidHeading, 0, 1, 0);
+
+			m_draftView.CallNextMissingBtFootnoteMarker();
+
+			SelectionHelper helper = m_draftView.EditingHelper.CurrentSelection;
+			Assert.AreEqual(2, helper.IchAnchor, "IP should be after chapter and verse number.");
+			Assert.AreEqual(0, m_draftView.TeEditingHelper.BookIndex);
+			Assert.AreEqual(1, m_draftView.TeEditingHelper.SectionIndex);
+			Assert.AreEqual(0, m_draftView.ParagraphIndex);
+			Assert.AreEqual(ScrSectionTags.kflidContent,
+				m_draftView.EditingHelper.CurrentSelection.LevelInfo[2].tag);
+			Assert.IsTrue(m_draftView.TeEditingHelper.IsBackTranslation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests trying to go to the next footnote that does not have a marker (ORC) in the
+		/// back translation when we are in a Scripture section head and the only footnote does
+		/// have an ORC in the BT, so we just beep or whatever.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void FindNextMissingBtFootnoteMarker_BtSectionHeadToNowhere()
+		{
+			IScrSection section = m_exodus.SectionsOS[1];
+
+			ITsStrFactory strfact = TsStrFactoryClass.Create();
+			IStTxtPara contentPara = section.ContentOA[0];
+			ITsStrBldr strBldr = contentPara.Contents.GetBldr();
+			IStFootnote foot = m_exodus.InsertFootnoteAt(0, strBldr, 7);
+			contentPara.Contents = strBldr.GetString();
+			IScrTxtPara footPara = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
+				foot, ScrStyleNames.NormalFootnoteParagraph);
+			footPara.Contents = strfact.MakeString("This is footnote text for footnote", Cache.DefaultVernWs);
+
+			ICmTranslation trans = contentPara.GetOrCreateBT();
+			ITsStrBldr bldr = trans.Translation.get_String(Cache.DefaultAnalWs).GetBldr();
+			TsStringUtils.InsertOrcIntoPara(foot.Guid, FwObjDataTypes.kodtNameGuidHot, bldr, 2, 2, Cache.DefaultAnalWs);
+			trans.Translation.set_String(Cache.DefaultAnalWs, bldr.GetString());
+
+			m_draftView.SetInsertionPoint(ScrSectionTags.kflidHeading, 0, 1, 0);
+
+			m_draftView.CallNextMissingBtFootnoteMarker();
+
+			SelectionHelper helper = m_draftView.EditingHelper.CurrentSelection;
+			Assert.AreEqual(0, helper.IchAnchor);
+			Assert.AreEqual(0, m_draftView.TeEditingHelper.BookIndex);
+			Assert.AreEqual(1, m_draftView.TeEditingHelper.SectionIndex);
+			Assert.AreEqual(0, m_draftView.ParagraphIndex);
+			Assert.AreEqual(ScrSectionTags.kflidHeading, m_draftView.EditingHelper.CurrentSelection.LevelInfo[2].tag);
+			Assert.IsTrue(m_draftView.TeEditingHelper.IsBackTranslation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests trying to go to the next footnote that does not have a marker (ORC) in the
+		/// back translation when we are in a Scripture section head and the first footnote does
+		/// have an ORC in the BT, so we keep looking and find one in the next paragraph.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void FindNextMissingBtFootnoteMarker_BtSectionHeadToFootnoteInSecondParaAfterSkippingOne()
+		{
+			IScrSection section = m_exodus.SectionsOS[1];
+
+			ITsStrFactory strfact = TsStrFactoryClass.Create();
+			IStTxtPara contentPara = section.ContentOA[0];
+			ITsStrBldr strBldr = contentPara.Contents.GetBldr();
+			IStFootnote foot = m_exodus.InsertFootnoteAt(0, strBldr, 7);
+			contentPara.Contents = strBldr.GetString();
+			IScrTxtPara footPara = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
+				foot, ScrStyleNames.NormalFootnoteParagraph);
+			footPara.Contents = strfact.MakeString("This is footnote text for footnote 1", Cache.DefaultVernWs);
+
+			ICmTranslation trans = contentPara.GetOrCreateBT();
+			strBldr = trans.Translation.get_String(Cache.DefaultAnalWs).GetBldr();
+			TsStringUtils.InsertOrcIntoPara(foot.Guid, FwObjDataTypes.kodtNameGuidHot, strBldr, 2, 2, Cache.DefaultAnalWs);
+			trans.Translation.set_String(Cache.DefaultAnalWs, strBldr.GetString());
+
+			contentPara = section.ContentOA[1];
+			strBldr = contentPara.Contents.GetBldr();
+			foot = m_exodus.InsertFootnoteAt(0, strBldr, 6);
+			contentPara.Contents = strBldr.GetString();
+			footPara = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
+				foot, ScrStyleNames.NormalFootnoteParagraph);
+			footPara.Contents = strfact.MakeString("This is footnote text for footnote 2", Cache.DefaultVernWs);
+
+			trans = contentPara.GetOrCreateBT();
+			AddRunToMockedTrans(trans, Cache.DefaultAnalWs, "3", ScrStyleNames.ChapterNumber);
+			AddRunToMockedTrans(trans, Cache.DefaultAnalWs, "BT Verse three.", null);
+
+			m_draftView.SetInsertionPoint(ScrSectionTags.kflidHeading, 0, 1, 0);
+
+			m_draftView.CallNextMissingBtFootnoteMarker();
+
+			SelectionHelper helper = m_draftView.EditingHelper.CurrentSelection;
+			Assert.AreEqual(1, helper.IchAnchor, "IP should be after verse number.");
+			Assert.AreEqual(0, m_draftView.TeEditingHelper.BookIndex);
+			Assert.AreEqual(1, m_draftView.TeEditingHelper.SectionIndex);
+			Assert.AreEqual(1, m_draftView.ParagraphIndex);
+			Assert.AreEqual(ScrSectionTags.kflidContent, m_draftView.EditingHelper.CurrentSelection.LevelInfo[2].tag);
+			Assert.IsTrue(m_draftView.TeEditingHelper.IsBackTranslation);
 		}
 		#endregion
 	}

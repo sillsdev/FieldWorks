@@ -16,8 +16,10 @@
 // Helper class to display a wait cursor
 // </remarks>
 // --------------------------------------------------------------------------------------------
+//#define DEBUG_WAITCURSOR
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 namespace SIL.Utils
@@ -37,9 +39,13 @@ namespace SIL.Utils
 	/// This displays the wait cursor inside of the using block.
 	/// </example>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
+		Justification="m_oldCursor and m_parent are references; we don't create the object")]
 	public class WaitCursor : IDisposable
 	{
+#if DEBUG_WAITCURSOR
 		static int s_depth = 0;		// counter used for debugging/tracing nested uses.
+#endif
 		private Cursor m_oldCursor;
 		private Control m_parent;
 		private bool m_fOldWaitCursor;
@@ -108,9 +114,11 @@ namespace SIL.Utils
 				// This appears to be true.  (A related post used the Win32 API SendMessage to achieve this.)
 				Cursor.Position = Cursor.Position;
 			}
+#if DEBUG_WAITCURSOR
 			++s_depth;
 			Debug.WriteLine(String.Format("{0}: WaitCursor.Create({1}): m_parent={2}; m_oldCursor={3}; m_fOldWaitCursor={4}",
 				s_depth, showBusyCursor, m_parent, m_oldCursor, m_fOldWaitCursor));
+#endif
 		}
 
 		#region IDisposable & Co. implementation
@@ -226,9 +234,11 @@ namespace SIL.Utils
 				return;
 			}
 
+#if DEBUG_WAITCURSOR
 			Debug.WriteLine(String.Format("{0}: WaitCursor.Dispose(): m_parent={1}; m_oldCursor={2}; m_fOldWaitCursor={3}",
 				s_depth, m_parent, m_oldCursor, m_fOldWaitCursor));
 			--s_depth;
+#endif
 			if (m_oldCursor != null)
 			{
 				m_parent.Cursor = m_oldCursor;

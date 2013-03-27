@@ -53,6 +53,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private GenDateChooserDlg()
 		{
 			InitializeComponent();
+
+#if __MonoCS__
+			// FWNX-817:
+			// center calendar on Form. This is necessary because it has a different size
+			// on Linux
+			m_calendar.Left = (ClientRectangle.Width - m_calendar.Width) / 2;
+			// make the empty calender box the same size as calendar
+			var oriEmptyCalendarSize = m_emptyCalendar.Size;
+			m_emptyCalendar.Size = m_calendar.Size;
+			m_emptyCalendar.Location = m_calendar.Location;
+			// resize "No Calendar Available" label.
+			label1.Size = m_emptyCalendar.Size - (oriEmptyCalendarSize - label1.Size);
+#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -486,6 +499,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//
 			// GenDateChooserDlg
 			//
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.AcceptButton = this.m_okButton;
 			resources.ApplyResources(this, "$this");
 			this.CancelButton = this.m_cancelButton;

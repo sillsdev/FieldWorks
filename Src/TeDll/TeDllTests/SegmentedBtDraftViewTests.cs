@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2006' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2006' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -13,11 +13,13 @@
 // ---------------------------------------------------------------------------------------------
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.CoreImpl;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.TE
 {
@@ -101,6 +103,7 @@ namespace SIL.FieldWorks.TE
 			int iBtFootnote1;
 			m_draftView.TeEditingHelper.InsertFootnote(ScrStyleNames.NormalFootnoteParagraph, out iBtFootnote1);
 			Assert.AreEqual(0, iBtFootnote1);
+			VerifyRequestedSegmentedBTSelection(0, 0, ScrSectionTags.kflidContent, 0, 1, 4);
 			m_draftView.RefreshDisplay();
 
 			m_draftView.TeEditingHelper.SelectRangeOfChars(0, 0, ScrSectionTags.kflidContent, 0, 3, 3, 3,
@@ -108,6 +111,7 @@ namespace SIL.FieldWorks.TE
 			int iBtFootnote2;
 			m_draftView.TeEditingHelper.InsertFootnote(ScrStyleNames.NormalFootnoteParagraph, out iBtFootnote2);
 			Assert.AreEqual(1, iBtFootnote2);
+			VerifyRequestedSegmentedBTSelection(0, 0, ScrSectionTags.kflidContent, 0, 3, 4);
 
 			// Confirm that the footnote callers were inserted in the correct locations.
 			VerifySegment(para, 1, "one" + StringUtils.kChObject, Cache.DefaultAnalWs);
@@ -148,7 +152,7 @@ namespace SIL.FieldWorks.TE
 			ISegment segment = para.SegmentsOS[kiSegmentWithFn];
 			ITsString tssSegment = segment.FreeTranslation.get_String(wsBt);
 			ITsStrBldr bldr = tssSegment.GetBldr();
-			StringUtils.InsertOrcIntoPara(footnote1.Guid, FwObjDataTypes.kodtNameGuidHot, bldr,
+			TsStringUtils.InsertOrcIntoPara(footnote1.Guid, FwObjDataTypes.kodtNameGuidHot, bldr,
 				bldr.Length, bldr.Length, wsBt);
 			segment.FreeTranslation.set_String(wsBt, bldr.GetString());
 			m_draftView.RefreshDisplay();
@@ -197,7 +201,7 @@ namespace SIL.FieldWorks.TE
 			ISegment segment = para.SegmentsOS[kiSegmentWithFn];
 			ITsString tssSegment = segment.FreeTranslation.get_String(wsBt);
 			ITsStrBldr bldr = tssSegment.GetBldr();
-			StringUtils.InsertOrcIntoPara(footnote1.Guid, FwObjDataTypes.kodtNameGuidHot, bldr,
+			TsStringUtils.InsertOrcIntoPara(footnote1.Guid, FwObjDataTypes.kodtNameGuidHot, bldr,
 				bldr.Length, bldr.Length, wsBt);
 			segment.FreeTranslation.set_String(wsBt, bldr.GetString());
 			m_draftView.RefreshDisplay();
@@ -254,6 +258,7 @@ namespace SIL.FieldWorks.TE
 			int iBtFootnote1;
 			m_draftView.TeEditingHelper.InsertFootnote(ScrStyleNames.NormalFootnoteParagraph, out iBtFootnote1);
 			Assert.AreEqual(0, iBtFootnote1);
+			VerifyRequestedSegmentedBTSelection(0, 0, ScrSectionTags.kflidContent, 0, 1, 18);
 			m_draftView.RefreshDisplay();
 
 			m_draftView.TeEditingHelper.SelectRangeOfChars(0, 0, ScrSectionTags.kflidContent, 0, 1, 14, 14,
@@ -261,6 +266,7 @@ namespace SIL.FieldWorks.TE
 			int iBtFootnote2;
 			m_draftView.TeEditingHelper.InsertFootnote(ScrStyleNames.NormalFootnoteParagraph, out iBtFootnote2);
 			Assert.AreEqual(1, iBtFootnote2);
+			VerifyRequestedSegmentedBTSelection(0, 0, ScrSectionTags.kflidContent, 0, 1, 15);
 			m_draftView.RefreshDisplay();
 
 			m_draftView.TeEditingHelper.SelectRangeOfChars(0, 0, ScrSectionTags.kflidContent, 0, 1, 11, 11,
@@ -268,6 +274,7 @@ namespace SIL.FieldWorks.TE
 			int iBtFootnote3;
 			m_draftView.TeEditingHelper.InsertFootnote(ScrStyleNames.NormalFootnoteParagraph, out iBtFootnote3);
 			Assert.AreEqual(2, iBtFootnote3);
+			VerifyRequestedSegmentedBTSelection(0, 0, ScrSectionTags.kflidContent, 0, 1, 12);
 			m_draftView.RefreshDisplay();
 
 			m_draftView.TeEditingHelper.SelectRangeOfChars(0, 0, ScrSectionTags.kflidContent, 0, 1, 2, 2,
@@ -275,6 +282,7 @@ namespace SIL.FieldWorks.TE
 			int iBtFootnote4;
 			m_draftView.TeEditingHelper.InsertFootnote(ScrStyleNames.NormalFootnoteParagraph, out iBtFootnote4);
 			Assert.AreEqual(3, iBtFootnote4);
+			VerifyRequestedSegmentedBTSelection(0, 0, ScrSectionTags.kflidContent, 0, 1, 3);
 			m_draftView.RefreshDisplay();
 
 			m_draftView.TeEditingHelper.SelectRangeOfChars(0, 0, ScrSectionTags.kflidContent, 0, 1, 7, 7,
@@ -282,6 +290,7 @@ namespace SIL.FieldWorks.TE
 			int iBtFootnote5;
 			m_draftView.TeEditingHelper.InsertFootnote(ScrStyleNames.NormalFootnoteParagraph, out iBtFootnote5);
 			Assert.AreEqual(4, iBtFootnote5);
+			VerifyRequestedSegmentedBTSelection(0, 0, ScrSectionTags.kflidContent, 0, 1, 8);
 			m_draftView.RefreshDisplay();
 
 			// Confirm that the footnote callers were inserted in the correct locations.
@@ -334,12 +343,14 @@ namespace SIL.FieldWorks.TE
 			int iBtFootnote1;
 			m_draftView.TeEditingHelper.InsertFootnote(ScrStyleNames.NormalFootnoteParagraph, out iBtFootnote1);
 			Assert.AreEqual(0, iBtFootnote1);
+			VerifyRequestedSegmentedBTSelection(0, 0, ScrSectionTags.kflidContent, 0, 1, 4);
 			m_draftView.RefreshDisplay();
 
 			m_draftView.TeEditingHelper.SelectRangeOfChars(0, 0, ScrSectionTags.kflidContent, 0, 3, 3, 0,
 				true, false, true, VwScrollSelOpts.kssoDefault); // select the word "two" -- end before anchor
 			int iBtFootnote2;
 			m_draftView.TeEditingHelper.InsertFootnote(ScrStyleNames.NormalFootnoteParagraph, out iBtFootnote2);
+			VerifyRequestedSegmentedBTSelection(0, 0, ScrSectionTags.kflidContent, 0, 3, 4);
 			Assert.AreEqual(1, iBtFootnote2);
 
 			// Confirm that the footnote callers were inserted in the correct locations.
@@ -372,6 +383,137 @@ namespace SIL.FieldWorks.TE
 			ISegment segment = para.SegmentsOS[iSeg];
 			foreach (int ws in wss)
 				Assert.AreEqual(expectedFt, segment.FreeTranslation.get_String(ws).Text);
+		}
+		#endregion
+
+		#region FindNextMissingBtFootnoteMarker
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests trying to go to the next footnote that does not have a marker (ORC) in the
+		/// back translation when we are in a Scripture section head and the first content para
+		/// has a footnote in the first verse of the vernacular that does not have an ORC in the
+		/// BT.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void FindNextMissingBtFootnoteMarker_BtSectionHeadToContent()
+		{
+			IScrSection section = m_exodus.SectionsOS[1];
+
+			ITsStrFactory strfact = TsStrFactoryClass.Create();
+			IStTxtPara contentPara = section.ContentOA[0];
+			ITsStrBldr strBldr = contentPara.Contents.GetBldr();
+			IStFootnote foot = m_exodus.InsertFootnoteAt(0, strBldr, 7);
+			contentPara.Contents = strBldr.GetString();
+			IScrTxtPara footPara = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
+				foot, ScrStyleNames.NormalFootnoteParagraph);
+			footPara.Contents = strfact.MakeString("This is footnote text for footnote", Cache.DefaultVernWs);
+
+			m_draftView.TeEditingHelper.SelectRangeOfChars(0, 0, ScrSectionTags.kflidHeading,
+				0, 1, 0, 0, true, true, false, VwScrollSelOpts.kssoDefault);
+
+			m_draftView.CallNextMissingBtFootnoteMarker();
+
+			SelectionHelper helper = m_draftView.EditingHelper.CurrentSelection;
+			Assert.IsFalse(helper.IsRange);
+			Assert.AreEqual(1, helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor)[0].ihvo, "IP should be in first non-label segment.");
+			Assert.AreEqual(0, helper.IchAnchor, "IP should be at start of segment.");
+			Assert.AreEqual(0, m_draftView.TeEditingHelper.BookIndex);
+			Assert.AreEqual(1, m_draftView.TeEditingHelper.SectionIndex);
+			Assert.AreEqual(0, m_draftView.ParagraphIndex);
+			Assert.AreEqual(ScrSectionTags.kflidContent,
+				m_draftView.EditingHelper.CurrentSelection.LevelInfo[2].tag);
+			Assert.IsTrue(m_draftView.TeEditingHelper.IsBackTranslation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests trying to go to the next footnote that does not have a marker (ORC) in the
+		/// back translation when we are in a Scripture section head and the only footnote does
+		/// have an ORC in the BT, so we just beep or whatever.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void FindNextMissingBtFootnoteMarker_BtSectionHeadToNowhere()
+		{
+			IScrSection section = m_exodus.SectionsOS[1];
+
+			ITsStrFactory strfact = TsStrFactoryClass.Create();
+			IStTxtPara contentPara = section.ContentOA[0];
+			ITsStrBldr strBldr = contentPara.Contents.GetBldr();
+			IStFootnote foot = m_exodus.InsertFootnoteAt(0, strBldr, 7);
+			contentPara.Contents = strBldr.GetString();
+			IScrTxtPara footPara = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
+				foot, ScrStyleNames.NormalFootnoteParagraph);
+			footPara.Contents = strfact.MakeString("This is footnote text for footnote", Cache.DefaultVernWs);
+
+			IMultiString trans = contentPara.SegmentsOS[1].FreeTranslation;
+			ITsStrBldr bldr = trans.get_String(Cache.DefaultAnalWs).GetBldr();
+			TsStringUtils.InsertOrcIntoPara(foot.Guid, FwObjDataTypes.kodtNameGuidHot, bldr, 0, 0, Cache.DefaultAnalWs);
+			trans.set_String(Cache.DefaultAnalWs, bldr.GetString());
+
+			m_draftView.TeEditingHelper.SelectRangeOfChars(0, 0, ScrSectionTags.kflidHeading,
+				0, 0, 0, 0, true, true, false, VwScrollSelOpts.kssoDefault);
+
+			m_draftView.CallNextMissingBtFootnoteMarker();
+
+			SelectionHelper helper = m_draftView.EditingHelper.CurrentSelection;
+			Assert.AreEqual(0, helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor)[0].ihvo, "IP should not have moved.");
+			Assert.AreEqual(0, helper.IchAnchor);
+			Assert.AreEqual(0, m_draftView.TeEditingHelper.BookIndex);
+			Assert.AreEqual(0, m_draftView.TeEditingHelper.SectionIndex);
+			Assert.AreEqual(0, m_draftView.ParagraphIndex);
+			Assert.AreEqual(ScrSectionTags.kflidHeading, m_draftView.EditingHelper.CurrentSelection.LevelInfo[2].tag);
+			Assert.IsTrue(m_draftView.TeEditingHelper.IsBackTranslation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests trying to go to the next footnote that does not have a marker (ORC) in the
+		/// back translation when we are in a Scripture section head and the first footnote does
+		/// have an ORC in the BT, so we keep looking and find one in the next paragraph.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void FindNextMissingBtFootnoteMarker_BtSectionHeadToFootnoteInSecondParaAfterSkippingOne()
+		{
+			IScrSection section = m_exodus.SectionsOS[1];
+
+			ITsStrFactory strfact = TsStrFactoryClass.Create();
+			IStTxtPara contentPara = section.ContentOA[0];
+			ITsStrBldr strBldr = contentPara.Contents.GetBldr();
+			IStFootnote foot = m_exodus.InsertFootnoteAt(0, strBldr, 7);
+			contentPara.Contents = strBldr.GetString();
+			IScrTxtPara footPara = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
+				foot, ScrStyleNames.NormalFootnoteParagraph);
+			footPara.Contents = strfact.MakeString("This is footnote text for footnote 1", Cache.DefaultVernWs);
+
+			IMultiString trans = contentPara.SegmentsOS[1].FreeTranslation;
+			ITsStrBldr bldr = trans.get_String(Cache.DefaultAnalWs).GetBldr();
+			TsStringUtils.InsertOrcIntoPara(foot.Guid, FwObjDataTypes.kodtNameGuidHot, bldr, 0, 0, Cache.DefaultAnalWs);
+			trans.set_String(Cache.DefaultAnalWs, bldr.GetString());
+
+			contentPara = section.ContentOA[1];
+			strBldr = contentPara.Contents.GetBldr();
+			foot = m_exodus.InsertFootnoteAt(0, strBldr, 6);
+			contentPara.Contents = strBldr.GetString();
+			footPara = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(
+				foot, ScrStyleNames.NormalFootnoteParagraph);
+			footPara.Contents = strfact.MakeString("This is footnote text for footnote 2", Cache.DefaultVernWs);
+
+			m_draftView.TeEditingHelper.SelectRangeOfChars(0, 0, ScrSectionTags.kflidHeading,
+				0, 1, 0, 0, true, true, false, VwScrollSelOpts.kssoDefault);
+
+			m_draftView.CallNextMissingBtFootnoteMarker();
+
+			SelectionHelper helper = m_draftView.EditingHelper.CurrentSelection;
+			Assert.AreEqual(1, helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor)[0].ihvo, "IP should be in first non-label segment.");
+			Assert.AreEqual(0, helper.IchAnchor, "IP should be at start of segment.");
+			Assert.AreEqual(0, m_draftView.TeEditingHelper.BookIndex);
+			Assert.AreEqual(1, m_draftView.TeEditingHelper.SectionIndex);
+			Assert.AreEqual(1, m_draftView.ParagraphIndex);
+			Assert.AreEqual(ScrSectionTags.kflidContent, m_draftView.EditingHelper.CurrentSelection.LevelInfo[2].tag);
+			Assert.IsTrue(m_draftView.TeEditingHelper.IsBackTranslation);
 		}
 		#endregion
 	}

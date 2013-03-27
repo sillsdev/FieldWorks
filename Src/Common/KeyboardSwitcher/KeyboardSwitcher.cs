@@ -2,9 +2,10 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using SIL.FieldWorks.Common.COMInterfaces;
-using IBusDotNet;
 using System.Windows.Forms;
+using IBusDotNet;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Resources;
 
 namespace SIL.FieldWorks.Views
 {
@@ -74,7 +75,7 @@ namespace SIL.FieldWorks.Views
 
 					InputContext context = GlobalCachedInputContext.InputContext;
 
-					if (String.IsNullOrEmpty(value) || value == "None")
+					if (String.IsNullOrEmpty(value) || value == ResourceHelper.GetResourceString("kstidKeyboardNone"))
 					{
 						context.Reset();
 						GlobalCachedInputContext.KeyboardName = value;
@@ -89,7 +90,10 @@ namespace SIL.FieldWorks.Views
 					{
 						IBusEngineDesc engineDesc = IBusEngineDesc.GetEngineDesc(engine);
 						if (value == FormatKeyboardIdentifier(engineDesc))
+						{
 							context.SetEngine(engineDesc.LongName);
+							break;
+						}
 					}
 
 					GlobalCachedInputContext.KeyboardName = value;
@@ -118,7 +122,9 @@ namespace SIL.FieldWorks.Views
 		/// </summary>
 		internal string FormatKeyboardIdentifier(IBusEngineDesc engineDesc)
 		{
-			return String.Format("{0} - {1}", engineDesc.Language, engineDesc.Name);
+			string id = engineDesc.Language;
+			string languageName = string.IsNullOrEmpty(id) ? ResourceHelper.GetResourceString("kstidOtherLanguage") : Icu.GetDisplayName(id);
+			return String.Format("{0} - {1}", languageName, engineDesc.Name);
 		}
 
 		/// <summary>number of ibus keyboards</summary>

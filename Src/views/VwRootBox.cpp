@@ -36,9 +36,7 @@ DEFINE_THIS_FILE
 //#define Tracing_KeybdSelection
 
 #ifndef WIN32
-static const GUID ViewInputManager_guid("830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E");
-
-#define CLSID_ViewInputManager ViewInputManager_guid
+const CLSID CLSID_ViewInputManager = {0x830BAF1F, 0x6F84, 0x46EF, {0xB6, 0x3E, 0x3C, 0x1B, 0xFD, 0xF9, 0xE8, 0x3E}};
 #endif
 
 //:>********************************************************************************************
@@ -4209,7 +4207,15 @@ enchant::Dict * VwRootBox::GetDictionary(const OLECHAR * pszId)
 		else
 			return NULL;
 	}
-	pdicResult = enchant::Broker::instance()->request_dict(wsId);
+	try
+	{
+		pdicResult = enchant::Broker::instance()->request_dict(wsId);
+	}
+	catch(...)
+	{
+		// If enchant throws a fit, then there's no dictionary!
+		return NULL;
+	}
 	if (!pdicResult)
 		return NULL;
 	std::string langName = pdicResult->get_lang ();

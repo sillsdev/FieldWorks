@@ -16,18 +16,18 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Test.TestUtils;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.Infrastructure;
-using System.IO;
-using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FDO.Infrastructure.Impl;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -48,6 +48,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[SetUp]
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ThreadHelper is disposed in DestroyTestCache()")]
 		public void CreateTestCache()
 		{
 			m_now = DateTime.Now;
@@ -773,7 +775,17 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"</Entries>" + Environment.NewLine +
 				"</LexDb>" + Environment.NewLine +
 				"</LexDb>" + Environment.NewLine +
-				"<Texts>" + Environment.NewLine +
+				"<AnalyzingAgents>" + Environment.NewLine +
+				"<CmAgent id=\"I18601E1246B081E\">" + Environment.NewLine +
+				"<Name><AUni ws=\"en\">default user</AUni></Name>" + Environment.NewLine +
+				"<Human><Boolean val=\"true\" /></Human>" + Environment.NewLine +
+				"<Approves>" + Environment.NewLine +
+				"<CmAgentEvaluation id=\"I18601F5246B081F\">" + Environment.NewLine +
+				"</CmAgentEvaluation>" + Environment.NewLine +
+				"</Approves>" + Environment.NewLine +
+				"</CmAgent>" + Environment.NewLine +
+				"</AnalyzingAgents>" + Environment.NewLine +
+				"</LangProject>" + Environment.NewLine +
 				"<Text id=\"I1D500E90D2FB820\">" + Environment.NewLine +
 				"<Name><AUni ws=\"qaa-x-ame\">Life begins each morning!: Praise the Lord!</AUni></Name>" + Environment.NewLine +
 				"<Contents>" + Environment.NewLine +
@@ -801,18 +813,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 				"</StText>" + Environment.NewLine +
 				"</Contents>" + Environment.NewLine +
 				"</Text>" + Environment.NewLine +
-				"</Texts>" + Environment.NewLine +
-				"<AnalyzingAgents>" + Environment.NewLine +
-				"<CmAgent id=\"I18601E1246B081E\">" + Environment.NewLine +
-				"<Name><AUni ws=\"en\">default user</AUni></Name>" + Environment.NewLine +
-				"<Human><Boolean val=\"true\" /></Human>" + Environment.NewLine +
-				"<Approves>" + Environment.NewLine +
-				"<CmAgentEvaluation id=\"I18601F5246B081F\">" + Environment.NewLine +
-				"</CmAgentEvaluation>" + Environment.NewLine +
-				"</Approves>" + Environment.NewLine +
-				"</CmAgent>" + Environment.NewLine +
-				"</AnalyzingAgents>" + Environment.NewLine +
-				"</LangProject>" + Environment.NewLine +
 				"<WfiWordform id=\"I18607CF1FBCF598\">" + Environment.NewLine +
 				"<Form><AUni ws=\"qaa-x-ame\">an</AUni></Form>" + Environment.NewLine +
 				"<Analyses>" + Environment.NewLine +
@@ -884,8 +884,8 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			CheckFirstEntry(rgle[0], wsEn, wsAme);
 			CheckSecondEntry(rgle[1], wsEn, wsAme, rgle[2]);
 			CheckThirdEntry(rgle[2], wsEn, wsAme);
-			Assert.AreEqual(1, m_cache.LangProject.TextsOC.Count);
-			CheckTheText(m_cache.LangProject.TextsOC.ToArray()[0]);
+			Assert.AreEqual(1, m_cache.LangProject.Texts.Count);
+			CheckTheText(m_cache.LangProject.Texts.ToArray()[0]);
 			Assert.AreEqual(4, m_cache.LangProject.AnalyzingAgentsOC.Count);	// There are 3 standard agents.
 			CheckTheAgent(m_cache.LangProject.AnalyzingAgentsOC.ToArray()[3], wsAme);
 			CheckWfiWordforms(wsEn, wsAme);
@@ -912,7 +912,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		private void CheckAnnotations(int wsEn, int wsAme)
 		{
-			IStTxtPara para = m_cache.LangProject.TextsOC.ToArray()[0].ContentsOA.ParagraphsOS[1] as IStTxtPara;
+			IStTxtPara para = m_cache.LangProject.Texts.ToArray()[0].ContentsOA.ParagraphsOS[1] as IStTxtPara;
 			IWfiWordformRepository repoWfi = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			Assert.AreEqual(2, repoWfi.Count);
 			IWfiWordform wfiAn = repoWfi.GetMatchingWordform(wsAme, "an");

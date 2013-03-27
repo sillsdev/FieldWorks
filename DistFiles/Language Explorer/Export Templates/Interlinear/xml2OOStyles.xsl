@@ -157,8 +157,11 @@ version="1.0">
 
 			<!--Used to mark the homograph number, which is output as an addendum to the citation form
 				if it is present (morph/item[@type='hn']) -->
-			- <style:style style:name="Interlin_Homograph" style:display-name="Interlin Homograph" style:family="text">
+			<style:style style:name="Interlin_Homograph" style:display-name="Interlin Homograph" style:family="text">
 				<style:text-properties style:text-position="sub 58%" />
+			</style:style>
+	  <style:style style:name="Interlin_VariantTypes" style:display-name="Interlin Variant Types" style:family="text">
+				<style:text-properties fo:font-variant="small-caps" />
 			</style:style>
 			<!--Base style for things typically in the main analysis language -->
 			<style:style style:name="Interlin_Analysis" style:display-name="Interlin Analysis" style:family="paragraph" style:parent-style-name="Interlin_Base" style:class="text">

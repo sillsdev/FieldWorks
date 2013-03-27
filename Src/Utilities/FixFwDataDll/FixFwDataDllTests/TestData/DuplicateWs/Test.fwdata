@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000051">
+
+<rt class="CmSemanticDomain" guid="00041516-72d1-4e56-9ed8-fe235a9b1a68" >
+<Description>
+<AStr ws="en">
+<Run ws="en">First file occurence of the ws-en run.</Run>
+</AStr>
+<AStr ws="en">
+<Run ws="en">Second file occurence of the ws-en run</Run> <!-- duplicate -->
+</AStr>
+</Description>
+</rt>
+
+<rt class="CmSemanticDomain" guid="11041516-72d1-4e56-9ed8-fe235a9b1a68" >
+<Description>
+<AStr ws="en">
+<Run ws="en">First file occurence of the ws-en run.</Run>
+</AStr>
+<AStr ws="fr">
+<Run ws="fr">A valid occurrence of a different ws</Run>
+</AStr>
+</Description>
+</rt>
+
+</languageproject>

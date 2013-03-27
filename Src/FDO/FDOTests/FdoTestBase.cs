@@ -103,6 +103,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// </summary>
 		protected void SetupEverythingButBase()
 		{
+			if (m_cache != null)
+				DisposeEverythingButBase();
+			// We need FieldWorks here to get the correct registry key HKLM\Software\SIL\FieldWorks.
+			// The default without this would be HKLM\Software\SIL\SIL FieldWorks, which breaks some tests.
+			SIL.Utils.RegistryHelper.ProductName = "FieldWorks";
 			m_cache = CreateCache();
 			m_actionHandler = m_cache.ServiceLocator.GetInstance<IActionHandler>();
 		}
@@ -559,7 +564,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		{
 			IFdoServiceLocator servloc = Cache.ServiceLocator;
 			IText text = servloc.GetInstance<ITextFactory>().Create();
-			Cache.LangProject.TextsOC.Add(text);
+			//Cache.LangProject.TextsOC.Add(text);
 			int wsEn = servloc.GetInstance<ILgWritingSystemFactory>().GetWsFromStr("en");
 			text.Name.set_String(wsEn, name);
 
@@ -669,4 +674,29 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		#endregion
 	}
 	#endregion
+
+	///<summary>
+	/// In contrast to MemoryOnlyBackendProviderRestoredForEachTestTestBase, this class doesn't rely on Undo mechanism for
+	/// restoring each tests, instead it tries to recreate the FDO Cache.
+	///</summary>
+	public abstract class MemoryOnlyBackendProviderReallyRestoredForEachTestTestBase : MemoryOnlyBackendProviderBasicTestBase
+	{
+		/// <summary>
+		/// Setup the FDO Cache and Action Handler
+		/// </summary>
+		public override void TestSetup()
+		{
+			base.TestSetup();
+			SetupEverythingButBase();
+		}
+
+		/// <summary>
+		/// Dispose the FDO Cache and Action Handler
+		/// </summary>
+		public override void TestTearDown()
+		{
+			DisposeEverythingButBase();
+			base.TestTearDown();
+		}
+	}
 }

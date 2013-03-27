@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<include xmlns="http://fieldworks.sil.org/nant/fwnant.xsd">
-	<post-build>
-		<copy file="Keyboarding.dll.config" todir="${dir.outputBase}" if="${platform::is-unix()}"/>
-	</post-build>
-</include>

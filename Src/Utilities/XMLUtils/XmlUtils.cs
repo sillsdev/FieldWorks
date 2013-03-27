@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2003' company='SIL International'>
-//		Copyright (c) 2003, SIL International. All Rights Reserved.
+#region // Copyright (c) 2003, 2012, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2012' company='SIL International'>
+//		Copyright (c) 2003, 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -16,16 +16,18 @@
 // This makes available some utilities for handling XML Nodes
 // </remarks>
 // --------------------------------------------------------------------------------------------
-#if __MonoCS__
-#define UsingDotNetTransforms
-#endif
+//We're changing to using libxslt (wrapped in the LibXslt class) on Linux/Mono.
+//#if __MonoCS__
+//#define UsingDotNetTransforms
+//#endif
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Xml;
-using System.Diagnostics;
 using System.Globalization;
 using System.Xml.Serialization;
 using System.Windows.Forms;
@@ -502,6 +504,8 @@ namespace SIL.Utils
 			return sOutput;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="Replacing new line characters")]
 		public static string ConvertMultiparagraphToSafeXml(string sInput)
 		{
 			string sOutput = sInput;
@@ -700,8 +704,12 @@ namespace SIL.Utils
 		/// <param name="xml"></param>
 		/// <param name="targetType"></param>
 		/// <returns>null if we didn't deserialize the object</returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		static public object DeserializeXmlString(string xml, Type targetType)
 		{
+			// TODO-Linux: System.Boolean System.Type::op_{Ine,E}quality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (String.IsNullOrEmpty(xml) || targetType == null)
 				return null;
 			using (MemoryStream stream = new MemoryStream())
@@ -758,6 +766,8 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="methodName"></param>
 		/// <returns></returns>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public static System.Reflection.MethodInfo GetStaticMethod(string sAssemblyName, string sClassName,
 			string sMethodName, string sContext, out System.Type typeFound)
 		{
@@ -788,6 +798,8 @@ namespace SIL.Utils
 				string sMsg = MakeGetStaticMethodErrorMessage(sMainMsg, sContext);
 				throw new RuntimeConfigurationException(sMsg, error);
 			}
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			Debug.Assert(typeFound != null);
 			System.Reflection.MethodInfo mi = null;
 			try
@@ -839,7 +851,7 @@ namespace SIL.Utils
 				// load input file
 				using (var reader = new XmlTextReader(sInputPath))
 				{
-#if NET_4_0 && !__MonoCS__
+#if !__MonoCS__
 					reader.DtdProcessing = DtdProcessing.Parse;
 #else
 					reader.ProhibitDtd = false;
@@ -851,6 +863,20 @@ namespace SIL.Utils
 				}
 			}
 #else // not UsingDotNetTransforms
+#if __MonoCS__
+			if (parameterList != null)
+			{
+				foreach(XSLParameter rParam in parameterList)
+				{
+					// Following is a specially recognized parameter name
+					if (rParam.Name == "prmSDateTime")
+					{
+						rParam.Value = GetCurrentDateTime();
+					}
+				}
+			}
+			SIL.Utils.LibXslt.TransformFileToFile(sTransformName, parameterList, sInputPath, sOutputName);
+#else
 			//.Net framework XML transform is still slower than something like MSXML2
 			// (this is so especially for transforms using xsl:key).
 			MSXML2.XSLTemplate60Class xslt = new MSXML2.XSLTemplate60Class();
@@ -877,9 +903,12 @@ namespace SIL.Utils
 			xslProc.input = xmlDoc;
 			AddParameters(parameterList, xslProc);
 			xslProc.transform();
-			StreamWriter sr = File.CreateText(sOutputName);
-			sr.Write(xslProc.output);
-			sr.Close();
+			using (StreamWriter sr = File.CreateText(sOutputName))
+			{
+				sr.Write(xslProc.output);
+				sr.Close();
+			}
+#endif // __MonoCS__
 #endif // UsingDotNetTransforms
 #if DEBUG
 			DateTime end = DateTime.Now;
@@ -908,6 +937,7 @@ namespace SIL.Utils
 			}
 		}
 #else
+#if !__MonoCS__
 		/// <summary>
 		/// Add parameters to a transform
 		/// </summary>
@@ -930,11 +960,12 @@ namespace SIL.Utils
 			}
 		}
 #endif
+#endif // UsingDotNetTransforms
 		/// <summary>
 		/// Are we using the .Net XSLT transforms?
 		/// </summary>
 		/// <returns>true if we're using .Net XSLT transforms
-		/// false if we're using MSXML2</returns>
+		/// false if we're using MSXML2 or LibXslt</returns>
 		public static bool UsingDotNetTransforms()
 		{
 #if UsingDotNetTransforms
@@ -943,7 +974,44 @@ namespace SIL.Utils
 			return false;
 #endif
 		}
-			private static string GetCurrentDateTime()
+
+		/// <summary>
+		/// Are we using the Microsoft's MSXML2 XSLT transforms?
+		/// </summary>
+		/// <returns>true if we're using MSXML2 XSLT transforms
+		/// false if we're using .Net or LibXslt</returns>
+		public static bool UsingMSXML2Transforms()
+		{
+#if UsingDotNetTransforms
+			return false;
+#else
+#if __MonoCS__
+			return false;
+#else
+			return true;
+#endif
+#endif
+		}
+
+		/// <summary>
+		/// Are we using the libxslt.so XSLT transforms?
+		/// </summary>
+		/// <returns>true if we're using libxslt.so transforms
+		/// false if we're using MSXML2 or .Net</returns>
+		public static bool UsingLibXsltTransforms()
+		{
+#if UsingDotNetTransforms
+			return false;
+#else
+#if __MonoCS__
+			return true;
+#else
+			return false;
+#endif
+#endif
+		}
+
+		private static string GetCurrentDateTime()
 		{
 			DateTime now;
 			now = DateTime.Now;

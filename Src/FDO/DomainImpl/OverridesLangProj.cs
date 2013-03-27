@@ -120,6 +120,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Virtual list of texts. Replaces TextsOC now that Text objects are unowned.
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceCollection, "Text")]
+		public IList<IText> Texts
+		{
+			get
+			{
+				// Get regular texts.
+				var txtRepo = Cache.ServiceLocator.GetInstance<ITextRepository>();
+				return txtRepo.AllInstances().ToList();
+			}
+		}
+
+		/// <summary>
 		/// Virtual list of texts that can be interlinearized.
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.ReferenceCollection, "StText")]
@@ -128,14 +142,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				// TODO: Move to some Repository
-				var stTextIds = new List<IStText>();
+				var stTextIds = (from txt in Texts where txt.ContentsOA != null select txt.ContentsOA).ToList();
 
 				// Get regular texts.
-				foreach (var txt in TextsOC)
-				{
-					if (txt.ContentsOA != null)
-						stTextIds.Add(txt.ContentsOA);
-				}
 
 				if (m_teInstalled && TranslatedScriptureOA != null)
 				{
@@ -621,6 +630,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_currentAnalysisWritingSystems = new WritingSystemList(this, LangProjectTags.kflidCurAnalysisWss);
 			m_currentVernacularWritingSystems = new WritingSystemList(this, LangProjectTags.kflidCurVernWss);
 			m_currentPronunciationWritingSystems = new WritingSystemList(this, LangProjectTags.kflidCurPronunWss);
+			m_currentAnalysisWritingSystems.Changed += WritingSystemListChanged;
+			m_currentVernacularWritingSystems.Changed += WritingSystemListChanged;
+			m_currentPronunciationWritingSystems.Changed += WritingSystemListChanged;
+			// Just in the unlikely event...except perhaps in tests...that this gets called when we have an existing cache.
+			WritingSystemListChanged(this, new EventArgs());
+		}
+
+		void WritingSystemListChanged(object obj, EventArgs args)
+		{
+			if (m_cache != null)
+				m_cache.ResetDefaultWritingSystems();
 		}
 
 		/// <summary>
@@ -721,6 +741,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			m_currentVernacularWritingSystems.Add(ws);
 		}
 
+
+		/// <summary>
+		/// Another way the current analysis writing systems get changed is by directly setting the string.
+		/// This defeats the change monitoring built into the WritingSystemsList collection, because it
+		/// changes the sequence of values read from the collection, without invoking any method of the collection.
+		/// </summary>
+		/// <param name="originalValue"></param>
+		/// <param name="newValue"></param>
+		partial void CurAnalysisWssSideEffects(string originalValue, string newValue)
+		{
+			m_currentAnalysisWritingSystems.RaiseChanged();
+			m_cache.ActionHandlerAccessor.AddAction(new UndoWsChangeAction() { Cache = m_cache });
+		}
+
 		/// <summary>
 		/// Gets the default analysis writing system.
 		/// </summary>
@@ -743,6 +777,38 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Another way the current vernacular writing systems get changed is by directly setting the string.
+		/// This defeats the change monitoring built into the WritingSystemsList collection, because it
+		/// changes the sequence of values read from the collection, without invoking any method of the collection.
+		/// </summary>
+		/// <param name="originalValue"></param>
+		/// <param name="newValue"></param>
+		partial void CurVernWssSideEffects(string originalValue, string newValue)
+		{
+			m_currentVernacularWritingSystems.RaiseChanged();
+			m_cache.ActionHandlerAccessor.AddAction(new UndoWsChangeAction() {Cache = m_cache});
+		}
+
+		/// <summary>
+		/// Class that allows us to clear the WS caches when an action that (might have) changed them is undone or redone.
+		/// </summary>
+		class UndoWsChangeAction : UndoActionBase
+		{
+			public FdoCache Cache { get; set; }
+			public override bool Undo()
+			{
+				Cache.ResetDefaultWritingSystems();
+				return true;
+			}
+
+			public override bool Redo()
+			{
+				Cache.ResetDefaultWritingSystems();
+				return true;
+			}
+		}
+
+		/// <summary>
 		/// Gets the default vernacular writing system.
 		/// </summary>
 		/// <value>The default vernacular writing system.</value>
@@ -760,7 +826,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					m_vernacularWritingSystems.Add(value);
 				m_currentVernacularWritingSystems.Remove(value);
 				m_currentVernacularWritingSystems.Insert(0, value);
+				// For the sake of unit tests, check if HomographWs is defined.
+				if (string.IsNullOrEmpty(HomographWs))
+					HomographWs = value.Id;
 			}
+		}
+
+		/// <summary>
+		/// Another way the current analysis writing systems get changed is by directly setting the string.
+		/// This defeats the change monitoring built into the WritingSystemsList collection, because it
+		/// changes the sequence of values read from the collection, without invoking any method of the collection.
+		/// </summary>
+		/// <param name="originalValue"></param>
+		/// <param name="newValue"></param>
+		partial void CurPronunWssSideEffects(string originalValue, string newValue)
+		{
+			m_currentPronunciationWritingSystems.RaiseChanged();
+			m_cache.ActionHandlerAccessor.AddAction(new UndoWsChangeAction() { Cache = m_cache });
 		}
 
 		/// <summary>

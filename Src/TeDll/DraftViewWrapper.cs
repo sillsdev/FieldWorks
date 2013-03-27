@@ -19,6 +19,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -297,6 +298,8 @@ namespace SIL.FieldWorks.TE
 		/// Hides the footnote view.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="GetControl() returns a reference")]
 		public override void HideFootnoteView()
 		{
 			CheckDisposed();

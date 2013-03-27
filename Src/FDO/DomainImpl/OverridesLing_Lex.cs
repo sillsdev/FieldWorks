@@ -18,6 +18,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -27,6 +28,7 @@ using System.Xml; // XMLWriter
 using System.Drawing;
 
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
@@ -237,37 +239,89 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 
 		/// <summary>
-		/// Resets the homograph numbers for all entries.
+		/// Allows user to convert LexEntryType to LexEntryInflType.
+		/// </summary>
+		public void ConvertLexEntryInflTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
+		{
+			progressBar.Minimum = 0;
+			progressBar.Maximum = list.Count();
+			progressBar.Step = 1;
+			foreach (var lexEntryType in list)
+			{
+				var leitFactory = m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeFactory>();
+				var leit = leitFactory.Create();
+				leit.ConvertLexEntryType(lexEntryType);
+				lexEntryType.Delete();
+				progressBar.PerformStep();
+			}
+		}
+
+		/// <summary>
+		/// Allows user to convert LexEntryInflType to LexEntryType.
+		/// </summary>
+		public void ConvertLexEntryTypes(ProgressBar progressBar, IEnumerable<ILexEntryType> list)
+		{
+			progressBar.Minimum = 0;
+			progressBar.Maximum = list.Count();
+			progressBar.Step = 1;
+			foreach (var lexEntryInflType in list)
+			{
+				var leit = lexEntryInflType as ILexEntryInflType;
+				if (leit != null)
+				{
+					var letFactory = m_cache.ServiceLocator.GetInstance<ILexEntryTypeFactory>();
+					var lexEntryType = letFactory.Create();
+					lexEntryType.ConvertLexEntryType(leit);
+					leit.Delete();
+				}
+				progressBar.PerformStep();
+			}
+		}
+
+		/// <summary>
+		/// Resets the homograph numbers for all entries but can take a null progress bar.
 		/// </summary>
 		public void ResetHomographNumbers(ProgressBar progressBar)
 		{
+			if (progressBar != null)
+			{
+				progressBar.Minimum = 0;
+				progressBar.Maximum = Entries.Count();
+				progressBar.Step = 1;
+			}
 			var processedEntryIds = new List<int>();
-			progressBar.Minimum = 0;
-			progressBar.Maximum = Entries.Count();
-			progressBar.Step = 1;
-			UndoableUnitOfWorkHelper.Do(Strings.ksUndoResetHomographs, Strings.ksRedoResetHomographs, Cache.ActionHandlerAccessor,
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Strings.ksUndoResetHomographs, Strings.ksRedoResetHomographs, Cache.ActionHandlerAccessor,
 				() =>
 				{
 					foreach (var le in Entries)
 					{
 						if (processedEntryIds.Contains(le.Hvo))
 						{
-							progressBar.PerformStep();
+							if (progressBar != null)
+								progressBar.PerformStep();
 							continue;
 						}
 
 						var homographs = Services.GetInstance<ILexEntryRepository>().CollectHomographs(
-							le.HomographForm,
+							le.HomographFormKey,
 							le.PrimaryMorphType);
-						CorrectHomographNumbers(homographs);
+						if (le.HomographFormKey == Strings.ksQuestions)
+						{
+							homographs.ForEach(lex => lex.HomographNumber = 0);
+							le.HomographNumber = 0; // just to be sure if homographs is empty
+						}
+						else
+							CorrectHomographNumbers(homographs);
 						foreach (var homograph in homographs)
 						{
 							processedEntryIds.Add(homograph.Hvo);
-							progressBar.PerformStep();
+							if (progressBar != null)
+								progressBar.PerformStep();
 						}
 					}
 				});
 		}
+
 		///// <summary>
 		///// Answer true if the input set of homographs is ordered correctly.
 		///// </summary>
@@ -760,6 +814,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// <summary>
+		/// Returns ALL ComplexForms referring to this entry as one of its ComponentLexemes.
+		/// ComponentLexemes is a superset of PrimaryLexemes, so the ComplexForms data entry field
+		/// needs to show references to all ComponentLexemes that are ComplexForms.
+		/// </summary>
+		internal IEnumerable<ILexEntryRef> ComplexFormRefsWithThisComponentEntry
+		{
+			get
+			{
+				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexEntryRefTags.kflidComponentLexemes);
+				foreach (var item in m_incomingRefs)
+				{
+					var sequence = item as FdoReferenceSequence<ICmObject>;
+					if (sequence == null)
+						continue;
+					if (sequence.Flid == LexEntryRefTags.kflidComponentLexemes &&
+						(sequence.MainObject as ILexEntryRef).RefType == LexEntryRefTags.krtComplexForm)
+					{
+						yield return sequence.MainObject as ILexEntryRef;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Returns all ComplexForms that will be listed as subentries for this entry.
+		/// </summary>
 		internal IEnumerable<ILexEntryRef> ComplexFormRefsWithThisPrimaryEntry
 		{
 			get
@@ -969,29 +1050,30 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			switch (e.Flid)
 			{
 				case LexEntryTags.kflidSenses:
-			{
-				// The virtual property LexSenseOutline may be changed for the senses after the deleted one
-				// and their subsenses.
-				if (!Cache.ObjectsBeingDeleted.Contains(this))
-				{
-					SensesChangedPosition(e.Index);
-					NumberOfSensesChanged(false);
-					UpdateMorphoSyntaxAnalysesOfLexEntryRefs();
-				}
-			}
+					{
+						// The virtual property LexSenseOutline may be changed for the senses after the deleted one
+						// and their subsenses.
+						if (!Cache.ObjectsBeingDeleted.Contains(this))
+						{
+							SensesChangedPosition(e.Index);
+							NumberOfSensesChanged(false);
+							UpdateMorphoSyntaxAnalysesOfLexEntryRefs();
+						}
+					}
 					break;
 				case LexEntryTags.kflidAlternateForms:
 					if (e.Index == 0)
-			{
-				if (!Cache.ObjectsBeingDeleted.Contains(this))
-				{
-					string newVal = AlternateFormsOS.Count > 0
+					{
+						if (!Cache.ObjectsBeingDeleted.Contains(this))
+						{
+							var newVal = AlternateFormsOS.Count > 0
 										? AlternateFormsOS[0].Form.VernacularDefaultWritingSystem.Text
 										: "";
-					FirstAlternateFormChanged(((IMoForm) e.ObjectRemoved).Form.VernacularDefaultWritingSystem.Text,
-						newVal);
-				}
-			}
+							FirstAlternateFormChanged(
+								((IMoForm)e.ObjectRemoved).Form.VernacularDefaultWritingSystem.Text,
+								newVal);
+						}
+					}
 					break;
 				case LexEntryTags.kflidDoNotPublishIn:
 					{
@@ -1627,7 +1709,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <returns></returns>
 		public List<ILexEntry> CollectHomographs()
 		{
-			return CollectHomographs(HomographForm, Hvo);
+			return CollectHomographs(HomographFormKey, Hvo);
 		}
 
 		/// <summary>
@@ -1737,7 +1819,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			base.ITsStringAltChangedSideEffectsInternal(multiAltFlid, alternativeWs, originalValue, newValue);
 			if (multiAltFlid == LexEntryTags.kflidCitationForm && alternativeWs.Handle == Cache.DefaultVernWs)
 			{
-				// WILL affect HomographForm.
+				// WILL affect HomographFormKey.
 				string oldHf = originalValue == null ? "" : originalValue.Text;
 				// If the old CF was empty, the old Hf is whatever we would normally compute as the HF from the LF etc.
 				if (string.IsNullOrEmpty(oldHf))
@@ -1761,12 +1843,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			if (Cache.ObjectsBeingDeleted.Contains(this))
 				return; // if something is being changed as part of the process of deleting it, ignore; we already removed it.
-			UpdateHomographs(oldHf, HomographForm, PrimaryMorphType, PrimaryMorphType);
+			UpdateHomographs(oldHf, HomographFormKey, PrimaryMorphType, PrimaryMorphType);
 		}
 
 		internal void UpdateHomographs (IMoMorphType oldType)
 		{
-			var form = HomographForm;
+			var form = HomographFormKey;
 			UpdateHomographs(form, form, oldType, PrimaryMorphType);
 		}
 
@@ -1786,14 +1868,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				.Where(le => repo.HomographMorphType(Cache, le.PrimaryMorphType) == newType).ToList();
 			newHomographs.Sort((first, second) => first.HomographNumber.CompareTo(second.HomographNumber));
 
+			// When the homograph form is not set: it is empty, or entirely non-word forming characters
+			// if not, set the homograph number to 0.
+			if (newHf == Strings.ksQuestions)
+				HomographNumber = 0;
+
+			// When the old and new homograph form was not set, the homograph numbers should remain 0
+			if (newHf == Strings.ksQuestions && oldHf == Strings.ksQuestions)
+				return;
+
 			// This test used to be at the top of this method, but LT-13152 showed
 			// that we still need to do some processing if our condition is true
 			// when we merge one homograph into another of the same form:
 			if (oldHf == newHf && oldType1 == newType1)
 			{
-				// Just make sure the new homograph numbers are correct:
+				// Just make sure the new homograph numbers are correct; 'this' should be part of the set.
 				for (int i = 0; i < newHomographs.Count; i++)
-					newHomographs[i].HomographNumber = i + 1;
+					newHomographs[i].HomographNumber = (newHomographs.Count == 1 ? 0 : i + 1);
 				return;
 			}
 
@@ -1801,6 +1892,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// However, if we just now built the cache, the entry is already in the right case.
 			if (!newHomographs.Remove(this))
 				((ILexEntryRepositoryInternal)repo).UpdateHomographCache(this, oldHf);
+
 			// OldHomographs should not include this, since something changed.
 			var oldType = repo.HomographMorphType(Cache, oldType1);
 			var oldHomographs = repo.GetHomographs(oldHf)
@@ -1813,9 +1905,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				// down to one item, the survivor will not be a homograph.
 				oldHomographs[0].HomographNumber = 0;
 			}
-			else
-			{
-				// Adjust the homograph numbers.
+			else if (oldHf != Strings.ksQuestions)
+			{   // When the old homograph form is set, adjust the homograph numbers.
 				for (int i = 0; i < oldHomographs.Count; i++)
 					oldHomographs[i].HomographNumber = i + 1;
 			}
@@ -1834,7 +1925,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// </summary>
 		protected override void OnBeforeObjectDeleted()
 		{
-			UpdateHomographs(HomographForm, "", PrimaryMorphType, null);
+			UpdateHomographs(HomographFormKey, "", PrimaryMorphType, null);
 			RegisterVirtualsModifiedForObjectDeletion(((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService);
 			base.OnBeforeObjectDeleted();
 		}
@@ -1850,7 +1941,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
-		/// Get the homograph form from the citation form,
+		/// Get the homograph form in the default vernacular ws from the citation form,
 		/// or the lexeme form (no citation form), in that order. In the unlikely event that the lexeme form has
 		/// no value in the specified writing system, tries the alternative forms.
 		/// Note that various other routines know this logic, since they need to figure the old HF after something
@@ -1861,6 +1952,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			get
 			{
 				return StringServices.ShortName1Static(this);
+			}
+		}
+
+		/// <summary>
+		/// Get the homograph form in the homograph ws from the citation form,
+		/// or the lexeme form (no citation form), in that order. In the unlikely event that the lexeme form has
+		/// no value in the specified writing system, tries the alternative forms.
+		/// This key is used in a dictionary to group homographs for numbering in the homograph writing system.
+		/// </summary>
+		public string HomographFormKey
+		{
+			get
+			{
+				var homographWs = Cache.WritingSystemFactory.GetWsFromStr(Cache.LanguageProject.HomographWs);
+				return StringServices.ShortName1StaticForWs(this, homographWs);
 			}
 		}
 
@@ -2273,7 +2379,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// in the complex forms list for this entry in data entry view.
 		/// This is a backreference (virtual) property.  It returns the list of ids for all the
 		/// LexEntry objects that own a LexEntryRef that refers to this LexEntry in its
-		/// ComponentLexemes field and that is a complex entry type.
+		/// ComponentLexemes field and that has a RefType=1 (ComplexForm).
 		/// </summary>
 		[VirtualProperty(CellarPropertyType.ReferenceCollection, "LexEntry")]
 		public IEnumerable<ILexEntry> ComplexFormEntries
@@ -2877,9 +2983,11 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		[VirtualProperty(CellarPropertyType.ReferenceSequence, "CmObject")]
 		public IEnumerable<ICmObject> PrimaryComponentLexemes
 		{
-			get { var ler = ComplexFormEntryRefs.FirstOrDefault();
-			if (ler == null)
-				return new ICmObject[0];
+			get
+			{
+				var ler = ComplexFormEntryRefs.FirstOrDefault();
+				if (ler == null)
+					return new ICmObject[0];
 				return ler.PrimaryLexemesRS;
 			}
 		}
@@ -2924,22 +3032,25 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// <summary>
 		/// Overrides the method, so we can also merge similar MSAs and allomorphs, after the main merge.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public override void MergeObject(ICmObject objSrc, bool fLoseNoStringData)
 		{
 			if (!(objSrc is ILexEntry))
 				return;
 
-			var homoForm = HomographForm;
-			ILexEntry le = objSrc as ILexEntry;
-			// If the lexeme forms don't match, make the other LF an allomorph.
+			var homoForm = HomographFormKey;
+			var le = objSrc as ILexEntry;
+			// If the lexeme forms don't match, and they both have content in the vernacular, make the other LF an allomorph.
 			if (LexemeFormOA != null && le.LexemeFormOA != null &&
 				LexemeFormOA.Form.VernacularDefaultWritingSystem != null && le.LexemeFormOA.Form.VernacularDefaultWritingSystem != null
-				&& LexemeFormOA.Form.VernacularDefaultWritingSystem.Text != le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text)
+				&& LexemeFormOA.Form.VernacularDefaultWritingSystem.Text != le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text
+				&& LexemeFormOA.Form.VernacularDefaultWritingSystem.Text != null && le.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text != null)
 			{
 				// Order here is important. We must update any homographs of the entry that is going away.
 				// We must do that AFTER we remove its lexeme form so that it is no longer a homograph.
 				// We must record what form we need to adjust the homographs of BEFORE we change it.
-				var otherHomoForm = le.HomographForm;
+				var otherHomoForm = le.HomographFormKey;
 				AlternateFormsOS.Add(le.LexemeFormOA);
 				if (le.HomographNumber != 0)
 					((LexEntry)le).UpdateHomographs(otherHomoForm);
@@ -2947,9 +3058,9 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			//  merge the LexemeForm objects first, if this is possible.  This is important, because otherwise the
 			// LexemeForm objects would not get merged, and that is needed for proper handling
 			// of references and back references.
-			if (this.LexemeFormOA != null && le.LexemeFormOA != null && LexemeFormOA.ClassID == le.LexemeFormOA.ClassID)
+			if (LexemeFormOA != null && le.LexemeFormOA != null && LexemeFormOA.ClassID == le.LexemeFormOA.ClassID)
 			{
-				this.LexemeFormOA.MergeObject(le.LexemeFormOA, fLoseNoStringData);
+				LexemeFormOA.MergeObject(le.LexemeFormOA, fLoseNoStringData);
 				le.LexemeFormOA = null;
 			}
 
@@ -3006,6 +3117,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				for (i = formList.Count - 1; i >= 0; --i)
 				{
 					IMoForm formToConsider = formList[i];
+					// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
+					// is marked with [MonoTODO] and might not work as expected in 4.0.
 					if (formToProcess.GetType() == formToConsider.GetType()
 						&& formToProcess.Form.VernacularDefaultWritingSystem.Text == formToConsider.Form.VernacularDefaultWritingSystem.Text
 						&& formToProcess.MorphTypeRA == formToConsider.MorphTypeRA)
@@ -3149,6 +3262,24 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					var owner = Owner as IPartOfSpeech;
 					slots.UnionWith(owner.AllAffixSlots);
+				}
+				return slots;
+			}
+		}
+
+		/// <summary>
+		/// Get all affix slots owned by this part of speech,
+		/// and by any part of speech that owns this one,
+		/// up to the owning list.
+		/// </summary>
+		public IEnumerable<IMoInflAffixSlot> AllAffixSlotsIncludingSubPartsOfSpeech
+		{
+			get
+			{
+				var slots = new SortedSet<IMoInflAffixSlot>(AffixSlotsOC);
+				foreach (var subPos in SubPossibilitiesOS.Cast<PartOfSpeech>())
+				{
+					slots.UnionWith(subPos.AllAffixSlotsIncludingSubPartsOfSpeech);
 				}
 				return slots;
 			}
@@ -3341,6 +3472,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// Collect the referring FsFeatureSpecification objects (already done), plus any of
+		/// their owners which would then be empty.  Then delete them.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void RemoveObjectSideEffectsInternal(RemoveObjectEventArgs e)
+		{
+			base.RemoveObjectSideEffectsInternal(e);
+			if (e.Flid == PartOfSpeechTags.kflidInflectionClasses)
+			{
+				Cache.LangProject.PhonologicalDataOA.RemovePhonRuleFeat(e.ObjectRemoved);
+			}
+		}
+
+		/// <summary>
 		/// Determine if the POS or any of its super POSes require inflection (i.e. have an inflectional template)
 		/// </summary>
 		/// <returns>true if so; false otherwise</returns>
@@ -3471,6 +3616,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 		}
 
+		/// <summary>
+		/// Returns ALL ComplexForms referring to this sense as one of its ComponentLexemes.
+		/// ComponentLexemes is a superset of PrimaryLexemes, so the ComplexForms data entry field
+		/// needs to show references to all ComponentLexemes that are ComplexForms.
+		/// </summary>
+		internal IEnumerable<ILexEntryRef> ComplexFormRefsWithThisComponentSense
+		{
+			get
+			{
+				((ICmObjectRepositoryInternal)Services.ObjectRepository).EnsureCompleteIncomingRefsFrom(LexEntryRefTags.kflidComponentLexemes);
+				foreach (var item in m_incomingRefs)
+				{
+					var sequence = item as FdoReferenceSequence<ICmObject>;
+					if (sequence == null)
+						continue;
+					if (sequence.Flid == LexEntryRefTags.kflidComponentLexemes &&
+						(sequence.MainObject as ILexEntryRef).RefType == LexEntryRefTags.krtComplexForm)
+					{
+						yield return sequence.MainObject as ILexEntryRef;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Returns all ComplexForms that will be listed as subentries for this sense.
+		/// </summary>
 		internal IEnumerable<ILexEntryRef> ComplexFormRefsWithThisPrimarySense
 		{
 			get
@@ -3543,6 +3715,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		/// that has the same LF, we want to merge the two. In this case we expect to be called
 		/// in turn for all of these senses, so to simplify, the one with the smallest HVO
 		/// is kept and the others merged.
+		///
+		/// If Entries or senses are merged, non-key string fields are concatenated.
 		/// </summary>
 		/// <param name="hvoDomain"></param>
 		/// <param name="columns">List of XmlNode objects</param>
@@ -3554,173 +3728,432 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			bool result = false;
 			// The goal is to find a lex entry with the same lexeme form.form as our LexEntry.
-			ILexSense ls = cache.ServiceLocator.GetObject(Hvo) as ILexSense;
-			ILexEntry leTarget = ls.OwnerOfClass<ILexEntry>();
-			string homographForm = leTarget.HomographForm;
-			string sDefnTarget = ls.Definition.AnalysisDefaultWritingSystem.Text;
+			var leTarget = OwningEntry;
+			string homographForm = leTarget.HomographFormKey;
 
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 				"Undo adding sense or entry in Categorized Edit",
 				"Redo adding sense or entry in Categorized Edit",
 				m_cache.ActionHandlerAccessor, () =>
-				{
+					{
 
-					// Check for pre-existing LexEntry which has the same homograph form
-					bool fGotExactMatch;
-					ILexEntry leSaved = FindBestLexEntryAmongstHomographs(cache, homographForm, sDefnTarget, leTarget, newHvos, hvoDomain, out fGotExactMatch);
-					if (fGotExactMatch)
-					{
-						// delete the entry AND sense
-						leTarget.Delete(); // careful! This just got deleted.
-						result = true; // deleted sense altogether
-					}
-					else if (leSaved != null)
-					{
-						// move the one and only sense of leTarget to leSaved...provided it has a compatible MSA
-						// of the expected type.
-						if (MorphoSyntaxAnalysisRA is MoStemMsa)
+						// Check for pre-existing LexEntry which has the same homograph form
+						bool fGotExactMatch;
+						ILexEntry leSaved = FindBestLexEntryAmongstHomographs(cache, homographForm, newHvos, hvoDomain, out fGotExactMatch);
+						if (fGotExactMatch)
 						{
-							IMoMorphSynAnalysis newMsa = null;
-							foreach (IMoMorphSynAnalysis msa in leSaved.MorphoSyntaxAnalysesOC)
+							// delete the entry AND sense
+							leTarget.Delete(); // careful! This just got deleted.
+							result = true; // deleted sense altogether
+						}
+						else if (leSaved != null)
+						{
+							// move this to leSaved...provided it has a compatible MSA
+							// of the expected type.
+							if (MorphoSyntaxAnalysisRA is MoStemMsa)
 							{
-								if (msa is IMoStemMsa)
-									newMsa = msa;
-							}
-							if (newMsa != null)
-							{
-								// Fix the MSA of the sense to point at one of the MSAs of the new owner.
-								MorphoSyntaxAnalysisRA = newMsa;
-								// Move it to the new owner.
-								leSaved.SensesOS.Add(this);
-								// delete the entry.
-								leTarget.Delete();
-								// But NOT the sense from the domain...it just moved to another entry.
-								//DeleteSense(cache, hvoDomain, tagList, hvoSense);
+								IMoMorphSynAnalysis newMsa = null;
+								foreach (IMoMorphSynAnalysis msa in leSaved.MorphoSyntaxAnalysesOC)
+								{
+									if (msa is IMoStemMsa)
+										newMsa = msa;
+								}
+								if (newMsa != null)
+								{
+									// Fix the MSA of the sense to point at one of the MSAs of the new owner.
+									MorphoSyntaxAnalysisRA = newMsa;
+									// Copy any extra fields the user filled in here that the target doesn't have.
+									// Do this BEFORE we move it and lose track of the source!
+									CopyExtraFieldsToEntry(leSaved);
+									// Move it to the new owner.
+									leSaved.SensesOS.Add(this);
+									// delete the entry.
+									leTarget.Delete();
+								}
 							}
 						}
-					}
-				});
+					});
 			// else do nothing (no useful match, let the LE survive)
 			return result;
 		}
 
 		/// <summary>
-		/// find the best existing LexEntry option matching 'homographform' (and possibly 'sDefnTarget')
-		/// in order to determine if we should merge leTarget into that entry.
+		/// find the most promising entry we could merge this sense into among the homographs of our entry.
+		/// Ideally find an exact match: either the same entry or a homograph, and a sense where all non-empty
+		/// glosses and definitions match.
+		/// Failing this return the best homograph to merge with, and fGotExactMatch false.
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="homographForm"></param>
-		/// <param name="sDefnTarget"></param>
-		/// <param name="leTarget">a LexEntry that you want to consider merging into a more appropriate LexEntry,
-		/// if null, we ignore 'newHvos' and 'hvoDomain'</param>
 		/// <param name="newHvos"></param>
 		/// <param name="hvoDomain"></param>
 		/// <param name="fGotExactMatch"></param>
 		/// <returns></returns>
-		private static ILexEntry FindBestLexEntryAmongstHomographs(FdoCache cache,
-			string homographForm, string sDefnTarget, ILexEntry leTarget, Set<int> newHvos,
+		private ILexEntry FindBestLexEntryAmongstHomographs(FdoCache cache,
+			string homographForm, Set<int> newHvos,
 			int hvoDomain, out bool fGotExactMatch)
 		{
 			ILexEntry leSaved = null;
 			var entryRepo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-			List<ILexEntry> rgEntries = ((ILexEntryRepositoryInternal)entryRepo).CollectHomographs(homographForm, 0,
+			List<ILexEntry> rgEntries = ((ILexEntryRepositoryInternal) entryRepo).CollectHomographs(homographForm, 0,
 				entryRepo.GetHomographs(homographForm),
 				cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphStem), true);
 			leSaved = null; // saved entry to merge into (from previous iteration)
 			bool fSavedIsOld = false; // true if leSaved is old (and non-null).
 			fGotExactMatch = false; // true if we find a match for cf AND defn.
 			bool fCurrentIsNew = false;
+			var ourEntry = OwningEntry;
 			foreach (ILexEntry leCurrent in rgEntries)
 			{
-				if (leTarget != null)
-				{
-					if (leCurrent.Hvo == leTarget.Hvo)
-						continue; // not interested in merging with ourself.
-					// See if this is one of the newly added entries. If it is, it has exactly one sense,
-					// and that sense is in our list.
-					fCurrentIsNew = leCurrent.SensesOS.Count == 1 && newHvos.Contains(leCurrent.SensesOS.ToHvoArray()[0]);
-					if (fCurrentIsNew && leCurrent.Hvo > leTarget.Hvo)
-						continue;  // won't consider ANY kind of merge with a new object of greater HVO.
-				}
-				// Decide whether lexE should be noted as the entry that we will merge with if
-				// we don't find an exact match.
-				if (!fGotExactMatch) // leMerge is irrelevant if we already got an exact match.
-				{
-					if (leSaved == null)
-					{
-						leSaved = leCurrent;
-						fSavedIsOld = !fCurrentIsNew;
-					}
-					else // we have already found a candidate
-					{
-						if (fSavedIsOld)
-						{
-							// We will only consider the new one if it is also old, and
-							// (rather arbitrarily) if it has a smaller HVO
-							if ((!fCurrentIsNew) && leCurrent.Hvo < leSaved.Hvo)
-							{
-								leSaved = leCurrent; // fSavedIsOld stays true.
-							}
-						}
-						else // we already have a candidate, but it is another of the new entries
-						{
-							// if current is old, we'll use it for sure
-							if (!fCurrentIsNew)
-							{
-								leSaved = leCurrent;
-								fSavedIsOld = false; // since fCurrentIsNew is false.
-							}
-							else
-							{
-								// we already have a new candidate (which must have a smaller hvo than target)
-								// and now we have another new entry which matches!
-								// We'll prefer it only if its hvo is smaller still.
-								if (leCurrent.Hvo < leSaved.Hvo)
-								{
-									leSaved = leCurrent; // fSavedIsOld stays false.
-								}
-							}
-						}
-					}
-				}
+				if (leCurrent == ourEntry)
+					continue; // not interested in merging with ourself.
+				if (!IsMatchingEntry(leCurrent))
+					continue; // a homograph, but does not match all the entry-level data that has been entered, so not eligible.
+				if (PickPreferredMergeEntry(newHvos, fGotExactMatch, ourEntry, leCurrent, ref fSavedIsOld, ref leSaved))
+					continue; // won't consider ANY kind of merge with a new object of greater HVO.
 
-				// see if we want to try to find a matching existing sense.
-				if (sDefnTarget == null)
-					continue;
-				// This deals with all senses in the entry,
-				// whether owned directly by the entry or by its senses
-				// at whatever level.
-				// If the new definition matches an existing defintion (or if both
-				// are missing) add the current domain to the existing sense.
-				// Note: if more than one sense has the same definition (maybe missing) we should
-				// add the domain to all senses--not just the first one encountered.
-				foreach (ILexSense lexS in leCurrent.AllSenses)
-				{
-					if (lexS.Definition != null
-						&& lexS.Definition.AnalysisDefaultWritingSystem != null)
-					{
-						string sDefnCurrent = lexS.Definition.AnalysisDefaultWritingSystem.Text;
-						if ((sDefnCurrent == null && sDefnTarget == null) ||
-							(sDefnCurrent != null && sDefnTarget != null && sDefnCurrent.Trim() == sDefnTarget.Trim()))
-						{
-							// We found a sense that has the same citation form and definition as the one
-							// we're trying to merge.
-							// Add the new domain to that sense (if not already present), delete the temporary one,
-							// and return. (We're not displaying this sense, so don't bother trying to update the display)
-							if (hvoDomain > 0)
-							{
-								var domain = cache.ServiceLocator.GetObject(hvoDomain) as ICmSemanticDomain;
-								if (!lexS.SemanticDomainsRC.Contains(domain))
-									lexS.SemanticDomainsRC.Add(domain);
-								fGotExactMatch = true;
-							}
-						}
-					}
-				}
+				fGotExactMatch = FindMatchingSense(hvoDomain, leCurrent);
 			} // loop over matching entries
+			if (fGotExactMatch)
+				return leSaved; // got all we want.
+
+			// Otherwise, it's just possible we missed an interesting match that is NOT a homograph.
+			// There can be non-homographs that match in all non-empty writing systems of CF and LF
+			// under the following conditions:
+			// (a) our citation form in the HWS is blank...there could be an entry with the same LF
+			// that is not a homograph because it has a non-empty CF. (This would not work if we had a CF, because
+			// either it would be a homograph, and we would already have found it, or it would have a different CF
+			// and would not be a match.)
+			// (b) our CF in the HWS is different from our LF...there could be an entry with the same LF as ours
+			// and no CF that matches. It is not a homograph because of our different CF, but there is no conflict
+			// because it has no CF.
+
+			// Of course, if we don't have an LF with at least one non-blank alternative, none of this is relevant.
+			if (!WeHaveAnInterestingLf())
+				return leSaved;
+
+			var homographWs = Cache.WritingSystemFactory.GetWsFromStr(Cache.LanguageProject.HomographWs);
+
+			var hf = ourEntry.CitationForm.get_String(homographWs);
+			if (hf.Length == 0 || !hf.Equals(ourEntry.LexemeFormOA.Form.get_String(homographWs)))
+			{
+				// There might be another match. Try them all.
+				foreach (var entry in Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances())
+				{
+					if (entry == ourEntry || !IsMatchingEntry(entry))
+						continue; // not interesting
+					if (PickPreferredMergeEntry(newHvos, fGotExactMatch, ourEntry, entry, ref fSavedIsOld, ref leSaved))
+						continue;
+					fGotExactMatch = FindMatchingSense(hvoDomain, entry);
+					if (fGotExactMatch)
+						return entry;
+				}
+			}
 
 			return leSaved;
 		}
+
+		// Updates the entry that we will use if we don't find a perfect match.
+		// Returns true if this one should be ignored altogether (don't call FindMatchingSense).
+		private static bool PickPreferredMergeEntry(Set<int> newHvos, bool fGotExactMatch, ILexEntry ourEntry, ILexEntry leCurrent,
+			ref bool fSavedIsOld, ref ILexEntry leSaved)
+		{
+			bool fCurrentIsNew;
+			// See if this is one of the newly added entries. If it is, it has exactly one sense,
+			// and that sense is in our list.
+			fCurrentIsNew = leCurrent.SensesOS.Count == 1 && newHvos.Contains(leCurrent.SensesOS.ToHvoArray()[0]);
+			if (fCurrentIsNew && leCurrent.Hvo > ourEntry.Hvo)
+				return true;
+			// Decide whether lexE should be noted as the entry that we will merge with if
+			// we don't find an exact match.
+			if (!fGotExactMatch) // leMerge is irrelevant if we already got an exact match.
+			{
+				if (leSaved == null)
+				{
+					leSaved = leCurrent;
+					fSavedIsOld = !fCurrentIsNew;
+				}
+				else // we have already found a candidate
+				{
+					if (fSavedIsOld)
+					{
+						// We will only consider the new one if it is also old, and
+						// (rather arbitrarily) if it has a smaller HVO
+						if ((!fCurrentIsNew) && leCurrent.Hvo < leSaved.Hvo)
+						{
+							leSaved = leCurrent; // fSavedIsOld stays true.
+						}
+					}
+					else // we already have a candidate, but it is another of the new entries
+					{
+						// if current is old, we'll use it for sure
+						if (!fCurrentIsNew)
+						{
+							leSaved = leCurrent;
+							fSavedIsOld = false; // since fCurrentIsNew is false.
+						}
+						else
+						{
+							// we already have a new candidate (which must have a smaller hvo than target)
+							// and now we have another new entry which matches!
+							// We'll prefer it only if its hvo is smaller still.
+							if (leCurrent.Hvo < leSaved.Hvo)
+							{
+								leSaved = leCurrent; // fSavedIsOld stays false.
+							}
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// This deals with all senses in the entry,
+		/// whether owned directly by the entry or by its senses
+		/// at whatever level.
+		/// If the new gloss and definition matches an existing sense add the current domain to the existing sense.
+		/// Note: if more than one sense has the same non-missing definition or gloss we should
+		/// add the domain to all senses--not just the first one encountered.
+		/// </summary>
+		/// <param name="hvoDomain"></param>
+		/// <param name="leCurrent"></param>
+		/// <returns></returns>
+		private bool FindMatchingSense(int hvoDomain, ILexEntry leCurrent)
+		{
+			bool fGotExactMatch = false;
+			foreach (ILexSense lexS in leCurrent.AllSenses)
+			{
+				if (IsMatchingSense(lexS))
+				{
+					// We found a sense that has the same citation form and definition as the one
+					// we're trying to merge.
+					// Add the new domain (if not already present) and any other missing information to that sense and its parent entry.
+					// The caller will delete the unwanted sense.
+					if (hvoDomain > 0)
+					{
+						var domain = Cache.ServiceLocator.GetObject(hvoDomain) as ICmSemanticDomain;
+						if (!lexS.SemanticDomainsRC.Contains(domain))
+							lexS.SemanticDomainsRC.Add(domain);
+					}
+					foreach (var ws in Definition.AvailableWritingSystemIds)
+					{
+						if (lexS.Definition.get_String(ws).Length == 0)
+							lexS.Definition.set_String(ws, Definition.get_String(ws));
+					}
+					foreach (var ws in Gloss.AvailableWritingSystemIds)
+					{
+						if (lexS.Gloss.get_String(ws).Length == 0)
+							lexS.Gloss.set_String(ws, Gloss.get_String(ws));
+					}
+					TransferExtraFieldsToSense(lexS);
+					var entry = ((LexSense) lexS).OwningEntry;
+					CopyExtraFieldsToEntry(entry);
+					fGotExactMatch = true;
+				}
+			}
+			return fGotExactMatch;
+		}
+
+		/// <summary>
+		/// Copy to sense any multistring or string fields other than gloss and definition; or append if already non-empty.
+		/// Move any examples from this to sense.
+		/// </summary>
+		/// <param name="sense"></param>
+		private void TransferExtraFieldsToSense(ILexSense sense)
+		{
+			var sda = Cache.DomainDataByFlid as ISilDataAccessManaged;
+			var flids = (Cache.MetaDataCacheAccessor as FdoMetaDataCache).GetFields(LexSenseTags.kClassId, true, (int)CellarPropertyTypeFilter.AllMulti)
+					.Except(new int[] { LexSenseTags.kflidGloss, LexSenseTags.kflidDefinition });
+			CopyMergeMultiStringFields(sense.Hvo, flids, Hvo, sda);
+			foreach (var flid in ((FdoMetaDataCache)Cache.MetaDataCacheAccessor).GetFields(LexSenseTags.kClassId, true, (int)CellarPropertyTypeFilter.String))
+			{
+				var src = sda.get_StringProp(Hvo, flid);
+				if (src.Length == 0)
+					continue;
+				sda.SetString(sense.Hvo, flid, CombineStrings(src, sda.get_StringProp(sense.Hvo, flid)));
+			}
+			foreach (var example in ExamplesOS.ToArray()) // ToArray in case modifying messes up foreach
+				sense.ExamplesOS.Add(example);
+		}
+
+		/// <summary>
+		/// Copy to entry any alternatives of our own owning entry's citation form or LexemeForm.Form
+		/// which are empty on the destination entry. For any other multistring fields of the entry, copy or append.
+		/// </summary>
+		/// <param name="entry"></param>
+		private void CopyExtraFieldsToEntry(ILexEntry entry)
+		{
+			foreach (var ws in OwningEntry.CitationForm.AvailableWritingSystemIds)
+			{
+				if (entry.CitationForm.get_String(ws).Length == 0)
+					entry.CitationForm.set_String(ws, OwningEntry.CitationForm.get_String(ws));
+			}
+			if (OwningEntry.LexemeFormOA != null && entry.LexemeFormOA != null)
+			{
+				foreach (var ws in OwningEntry.LexemeFormOA.Form.AvailableWritingSystemIds)
+				{
+					if (entry.LexemeFormOA.Form.get_String(ws).Length == 0)
+						entry.LexemeFormOA.Form.set_String(ws,
+							OwningEntry.LexemeFormOA.Form.get_String(ws));
+				}
+			}
+			var sda = Cache.DomainDataByFlid as ISilDataAccessManaged;
+			var flids = (Cache.MetaDataCacheAccessor as FdoMetaDataCache).GetFields(LexEntryTags.kClassId, true, (int) CellarPropertyTypeFilter.AllMulti)
+					.Except(new int[] {LexEntryTags.kflidCitationForm});
+			CopyMergeMultiStringFields(entry.Hvo, flids, OwningEntry.Hvo, sda);
+		}
+
+		/// <summary>
+		/// For each non-empty WS alternative of each specified multistring field of srcHvo,
+		/// if the corresponding field of destHvo is empty, copy it there;
+		/// otherwise, append them, with an intervening "; ".
+		/// </summary>
+		/// <param name="destHvo"></param>
+		/// <param name="fields"></param>
+		/// <param name="srcHvo"></param>
+		/// <param name="sda"></param>
+		private static void CopyMergeMultiStringFields(int destHvo, IEnumerable<int> fields, int srcHvo, ISilDataAccessManaged sda)
+		{
+			foreach (var flid in fields)
+			{
+				var msSrc = sda.get_MultiStringProp(srcHvo, flid) as MultiAccessor;
+				var msDest = sda.get_MultiStringProp(destHvo, flid) as MultiAccessor;
+				if (msSrc == null || msDest == null)
+					continue; // Don't expect this ever to happen; should we just crash?
+
+				foreach (var ws in msSrc.AvailableWritingSystemIds)
+				{
+					var src = msSrc.get_String(ws);
+					if (src.Length == 0)
+						continue;
+					var newVal = CombineStrings(src, msDest.get_String(ws));
+					msDest.set_String(ws, newVal);
+				}
+			}
+		}
+
+		// Combine a (non-empty) source with an existing value. If the oldVal is empty, the result is the source,
+		// otherwise, oldval; source.
+		private static ITsString CombineStrings(ITsString src, ITsString oldVal)
+		{
+			var newVal = src;
+			if (oldVal.Length != 0)
+			{
+				var bldr = oldVal.GetBldr();
+				bldr.Append("; ", null);
+				bldr.Append(src);
+				newVal = bldr.GetString();
+			}
+			return newVal;
+		}
+
+		bool WeHaveAnInterestingLf()
+		{
+			var entry = OwningEntry;
+			if (entry.LexemeFormOA == null)
+				return false;
+			foreach (var ws in entry.LexemeFormOA.Form.AvailableWritingSystemIds)
+			{
+				if (entry.LexemeFormOA.Form.get_String(ws).Length > 0)
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Return whether the other sense matches this one in all non-empty gloss and definition fields.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		bool IsMatchingSense(ILexSense other)
+		{
+			// Note that it doesn't matter if the other sense has other AvailableWritingSystemIds, because those must all
+			// be empty for us, and a ws that is empty for us cannot influence the result.
+			bool gotActualMatch = false;
+			foreach (var ws in Definition.AvailableWritingSystemIds)
+			{
+				var otherDefn = other.Definition.get_String(ws);
+				var myDefn = Definition.get_String(ws);
+				if (myDefn.Length != 0)
+				{
+					if (otherDefn.Length != 0)
+					{
+						if (!otherDefn.Equals(myDefn))
+							return false;
+						gotActualMatch = true;
+						continue;
+					}
+					// Special case: treat my definition matching their gloss as a match.
+					if (other.Gloss.get_String(ws).Equals(myDefn))
+						gotActualMatch = true;
+				}
+			}
+			foreach (var ws in Gloss.AvailableWritingSystemIds)
+			{
+				var otherGloss = other.Gloss.get_String(ws);
+				var myGloss = Gloss.get_String(ws);
+				if (myGloss.Length != 0)
+				{
+					if (otherGloss.Length != 0)
+					{
+						if (!otherGloss.Equals(myGloss))
+							return false;
+						gotActualMatch = true;
+						continue;
+					}
+					// Special case: treat my gloss matching their defn as a match.
+					if (other.Definition.get_String(ws).Equals(myGloss))
+						gotActualMatch = true;
+				}
+			}
+			if (!gotActualMatch)
+			{
+				// As a special case, see if one of our glosses matches one of their definitions.
+			}
+			return gotActualMatch;
+		}
+
+		/// <summary>
+		/// Return whether the other entry matches ours in the fields that are required for our sense to merge into it.
+		/// Currently: all non-empty alternatives of citation form must match;
+		/// all non-empty alternatives of Lexeme Form must match.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		bool IsMatchingEntry(ILexEntry other)
+		{
+			var ours = OwningEntry;
+			bool gotRealMatch = false;
+			// Note that it doesn't matter if the other sense has other AvailableWritingSystemIds, because those must all
+			// be empty for us, and a ws that is empty for us cannot influence the result.
+			foreach (var ws in ours.CitationForm.AvailableWritingSystemIds)
+			{
+				var otherCf = other.CitationForm.get_String(ws);
+				var myCf = ours.CitationForm.get_String(ws);
+				if (otherCf.Length != 0 && myCf.Length != 0)
+				{
+					if (!otherCf.Equals(myCf))
+						return false;
+					gotRealMatch = true;
+				}
+			}
+			if (ours.LexemeFormOA == null || other.LexemeFormOA == null)
+				return gotRealMatch; // can't have a conflicting form
+			foreach (var ws in ours.LexemeFormOA.Form.AvailableWritingSystemIds)
+			{
+				var otherGloss = other.LexemeFormOA.Form.get_String(ws);
+				var myGloss = ours.LexemeFormOA.Form.get_String(ws);
+				if (otherGloss.Length != 0 && myGloss.Length != 0)
+				{
+					if (!otherGloss.Equals(myGloss))
+						return false;
+					gotRealMatch = true;
+				}
+			}
+			return gotRealMatch;
+		}
+
 		/// <summary>
 		/// Return your own pictures followed by those of any subsenses.
 		/// </summary>
@@ -5658,6 +6091,95 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			}
 			return clAbbrs;
 		}
+
+		/// <summary>
+		/// Get (create if necessary, in a non-undoable UOW if necessary) PublicationTypesOA in the default state.
+		/// </summary>
+/*
+		[ModelProperty(CellarPropertyType.OwningAtomic, PhPhonDataTags.kflidPhonRuleFeats, "CmPossibilityList")]
+		public ICmPossibilityList PhonRuleFeatsOA
+		{
+			get
+			{
+				if (PhonRuleFeatsOA_Generated != null)
+					return PhonRuleFeatsOA_Generated;
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor,
+					() =>
+					{
+						m_PhonRuleFeatsOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+						var prf = m_PhonRuleFeatsOA as ICmPossibilityList;
+						var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+						// Note: we don't need to localize here because we are deliberately creating a minimal English
+						// version of the list.
+						prf.Name.set_String(wsEn, "Phonological Rule Features");
+
+						// The following are not explicitly tested.
+						prf.ItemClsid = CmPossibilityTags.kClassId;
+						prf.Depth = 1;
+						prf.IsSorted = true;
+						prf.PreventChoiceAboveLevel = 0;
+					}
+					);
+				return PhonRuleFeatsOA_Generated;
+			}
+			set { PhonRuleFeatsOA_Generated = value; }
+		}
+*/
+
+		public void RebuildPhonRuleFeats(IEnumerable<ICmObject> members)
+		{
+			var phonRuleFeats = Cache.LangProject.PhonologicalDataOA.PhonRuleFeatsOA;
+			var currentItems = new List<ICmObject>();
+			if (phonRuleFeats.PossibilitiesOS.Count > 0)
+			{
+				foreach (var phonRuleFeat in phonRuleFeats.PossibilitiesOS)
+				{
+					var prf = phonRuleFeat as IPhPhonRuleFeat;
+					if (prf.ItemRA == null)
+						phonRuleFeats.PossibilitiesOS.Remove(prf);
+					else
+					{
+						currentItems.Add(prf.ItemRA);
+						// need to set name in case user changed it
+						var wsBestAnalysis = WritingSystemServices.InterpretWsLabel(Cache, "best analysis", null, 0, 0, null);
+						prf.Name.set_String(wsBestAnalysis, prf.ItemRA.ShortNameTSS);
+						prf.Abbreviation.set_String(wsBestAnalysis, prf.ItemRA.ShortNameTSS);
+					}
+				}
+			}
+			foreach (var member in members)
+			{
+				IPhPhonRuleFeat prf;
+				if (!currentItems.Any() || !currentItems.Contains(member))
+				{
+					prf = Cache.ServiceLocator.GetInstance<IPhPhonRuleFeatFactory>().Create();
+					phonRuleFeats.PossibilitiesOS.Add(prf);
+					prf.ItemRA = member;
+					var wsBestAnalysis = WritingSystemServices.InterpretWsLabel(Cache, "best analysis", null, 0, 0, null);
+					prf.Name.set_String(wsBestAnalysis, member.ShortNameTSS);
+					prf.Abbreviation.set_String(wsBestAnalysis, member.ShortNameTSS);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Remove any matching items from the PhonRuleFeats list
+		/// </summary>
+		/// <param name="obj">Object being removed</param>
+		public void RemovePhonRuleFeat(ICmObject obj)
+		{
+			var phonRuleFeatList = PhonRuleFeatsOA;
+			if (phonRuleFeatList != null)
+			{
+				var phonRuleFeats = phonRuleFeatList.PossibilitiesOS.Cast<IPhPhonRuleFeat>();
+				if (phonRuleFeats != null && phonRuleFeats.Count() > 0)
+				{
+					var phonRuleFeat = phonRuleFeats.First(prf => prf.ItemRA == obj);
+					phonRuleFeatList.PossibilitiesOS.Remove(phonRuleFeat);
+				}
+			}
+
+		}
 	}
 
 	/// <summary>
@@ -5763,7 +6285,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			foreach (var segCtxt in Services.GetInstance<IPhSimpleContextSegRepository>().InstancesWithPhoneme(this))
 			{
 				segCtxt.PreRemovalSideEffects();
-				m_cache.DomainDataByFlid.DeleteObj(segCtxt.Hvo);
+				if(segCtxt.IsValidObject)
+					m_cache.DomainDataByFlid.DeleteObj(segCtxt.Hvo);
 			}
 		}
 	}
@@ -6162,6 +6685,56 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public IPhRegularRule OwningRule
 		{
 			get { return OwnerOfClass<IPhRegularRule>(); }
+		}
+		/// <summary>
+		/// Get a set of hvos that are suitable for targets to a reference property.
+		/// Subclasses should override this method to return a sensible list of IDs.
+		/// </summary>
+		/// <param name="flid">The reference property that can store the IDs.</param>
+		/// <returns>A set of hvos.</returns>
+		public override IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
+		{
+			switch (flid)
+			{
+				case PhSegRuleRHSTags.kflidInputPOSes:
+					return Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Cast<ICmObject>();
+				case PhSegRuleRHSTags.kflidReqRuleFeats: // fall through
+				case PhSegRuleRHSTags.kflidExclRuleFeats:
+					// need to get inflection classes and exception "features"
+					var result = new List<ICmObject>();
+					var poses = Cache.LangProject.PartsOfSpeechOA.ReallyReallyAllPossibilities;
+					foreach (var possibility in poses)
+					{
+						var pos = possibility as IPartOfSpeech;
+						CollectInflectionClassesAndSubclasses(result, pos.AllInflectionClasses);
+					}
+					var prodRestricts = Cache.LangProject.MorphologicalDataOA.ProdRestrictOA.PossibilitiesOS.Cast<ICmObject>();
+					result.AddRange(prodRestricts);
+					// in an effort to save the user from having to define these items redunantly, we maintain it dynamically here
+					NonUndoableUnitOfWorkHelper.
+						Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(),
+						   () =>
+							{
+								Cache.LangProject.PhonologicalDataOA.RebuildPhonRuleFeats(result);
+							});
+					var newresult = Cache.LangProject.PhonologicalDataOA.PhonRuleFeatsOA.PossibilitiesOS.Cast<ICmObject>();
+					return newresult;
+				default:
+					return base.ReferenceTargetCandidates(flid);
+			}
+		}
+
+		private void CollectInflectionClassesAndSubclasses(List<ICmObject> result, IEnumerable<IMoInflClass> classes)
+		{
+			foreach (var ic in classes)
+			{
+				if (!result.Contains(ic))
+					result.Add(ic);
+				if (ic.SubclassesOC != null && ic.SubclassesOC.Count > 0)
+				{
+					CollectInflectionClassesAndSubclasses(result, ic.SubclassesOC);
+				}
+			}
 		}
 	}
 
@@ -6684,7 +7257,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public override void PreRemovalSideEffects()
 		{
 			base.PreRemovalSideEffects();
-			if (Owner.ClassID == PhMetathesisRuleTags.kClassId)
+			if (Owner != null && Owner.ClassID == PhMetathesisRuleTags.kClassId)
 			{
 				var rule = Owner as IPhMetathesisRule;
 				var ctxtToRemove = rule.UpdateStrucChange(rule.GetStrucChangeIndex(this), IndexInOwner, false);
@@ -6754,6 +7327,13 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				}
 				if (entry != null)
 					entry.DateModified = DateTime.Now;
+
+				if (TargetsRS.Count == 1)
+				//in this situation there is only 1 or 0 items left in this lexical Relation so
+				//we need to delete the relation in the other Lexicon entries.
+				{
+					m_cache.DomainDataByFlid.DeleteObj(Hvo);
+				}
 			}
 
 			base.RemoveObjectSideEffectsInternal(e);
@@ -7343,7 +7923,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					if (entry == null)
 						entry = ((ILexSense)e.ObjectAdded).Entry;
 					if (entry.IsComponent((ILexEntry)Owner))
-						throw new ArgumentException("components can't be circular");
+					{
+						string exceptionStr;
+						if (entry.ShortName == "???")
+						{
+							exceptionStr = String.Format("components can't have circular references. \n See entry in lift file with LIFTId:     {0}\n",
+							entry.LIFTid);
+						}
+						else
+						{
+							exceptionStr = String.Format("components can't have circular references. \n See entry in lift file with LIFTId:     {0}\nand Form:     {1}",
+							entry.LIFTid, entry.ShortName);
+						}
+						throw new ArgumentException(exceptionStr);
+					}
 					break;
 			}
 			base.ValidateAddObjectInternal(e);
@@ -7529,6 +8122,21 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						where sense.MorphoSyntaxAnalysisRA != null
 						select sense.MorphoSyntaxAnalysisRA)
 						.Distinct();
+			}
+		}
+
+		/// <summary>
+		/// This is virtual property.  It returns the list of all LexEntryInflType objects in this LexEntryRef
+		/// </summary>
+		[VirtualProperty(CellarPropertyType.ReferenceSequence, "LexEntryInflType")]
+		public IEnumerable<ILexEntryInflType> VariantEntryInflTypesRS
+		{
+			get
+			{
+				return (from lexEntryType in m_VariantEntryTypesRS
+				where lexEntryType.ClassID == LexEntryInflTypeTags.kClassId
+				select lexEntryType as ILexEntryInflType);
+
 			}
 		}
 
@@ -7881,7 +8489,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 
 	/// <summary>
-	/// Additional methods needed to support the LexEntryRef class.
+	/// Additional methods needed to support the LexEntryType class.
 	/// </summary>
 	internal partial class LexEntryType : IComparable
 	{
@@ -7911,6 +8519,130 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Convert a LexEntryType to another LexEntryType
+		/// </summary>
+		/// <param name="lexEntryType">Source LexEntryType </param>
+		public void ConvertLexEntryType(ILexEntryType lexEntryType)
+		{
+			// get right owner and insert this into the same spot as lexEntryInflType
+			int iPossibility;
+			IFdoOwningSequence<ICmPossibility> possibilities;
+			var owner = lexEntryType.OwningPossibility;
+			if (owner != null)
+			{
+				possibilities = owner.SubPossibilitiesOS;
+				iPossibility = possibilities.IndexOf(lexEntryType);
+			}
+			else
+			{
+				var owner2 = lexEntryType.OwningList;
+				possibilities = owner2.PossibilitiesOS;
+				iPossibility = possibilities.IndexOf(lexEntryType);
+			}
+			possibilities.Insert(iPossibility, this);
+
+			// Copy basic attributes
+			BackColor = lexEntryType.BackColor;
+			DateCreated = lexEntryType.DateCreated;
+			DateModified = DateTime.Now;
+			ForeColor = lexEntryType.ForeColor;
+			Hidden = lexEntryType.Hidden;
+			IsProtected = lexEntryType.IsProtected;
+			SortSpec = lexEntryType.SortSpec;
+			UnderColor = lexEntryType.UnderColor;
+			UnderStyle = lexEntryType.UnderStyle;
+			foreach (IWritingSystem ws in lexEntryType.Services.WritingSystems.AnalysisWritingSystems)
+			{
+				int iWs = ws.Handle;
+				var tsAbbreviation = lexEntryType.Abbreviation.get_String(iWs);
+				Abbreviation.set_String(iWs, tsAbbreviation);
+				var tsDescription = lexEntryType.Description.get_String(iWs);
+				Description.set_String(iWs, tsDescription);
+				var tsName = lexEntryType.Name.get_String(iWs);
+				Name.set_String(iWs, tsName);
+				var tsReversAbbr = ReverseAbbr.get_String(ws.Handle);
+				ReverseAbbr.set_String(iWs, tsReversAbbr);
+			}
+
+			// Copy reference attributes
+			ConfidenceRA = lexEntryType.ConfidenceRA;
+			StatusRA = lexEntryType.StatusRA;
+			if (lexEntryType.ResearchersRC.Any())
+			{
+				lexEntryType.ResearchersRC.AddTo(ResearchersRC);
+			}
+			if (lexEntryType.RestrictionsRC.Any())
+			{
+				lexEntryType.RestrictionsRC.AddTo(RestrictionsRC);
+			}
+
+			// Move owning attributes
+			if (lexEntryType.SubPossibilitiesOS.Any())
+			{
+				int iMax = lexEntryType.SubPossibilitiesOS.Count - 1;
+				lexEntryType.SubPossibilitiesOS.MoveTo(0, iMax, SubPossibilitiesOS, 0);
+			}
+			var discussion = lexEntryType.DiscussionOA;
+			if (discussion != null && discussion.ParagraphsOS.Any())
+			{
+				int iMax = lexEntryType.DiscussionOA.ParagraphsOS.Count - 1;
+				var stFactory = m_cache.ServiceLocator.GetInstance<IStTextFactory>();
+				DiscussionOA = stFactory.Create();
+				lexEntryType.DiscussionOA.ParagraphsOS.MoveTo(0, iMax, DiscussionOA.ParagraphsOS, 0);
+			}
+
+			// Move referring objects to this
+			var refs = lexEntryType.ReferringObjects;
+			foreach (var obj in refs)
+			{
+				if (obj.ClassID == WfiMorphBundleTags.kClassId)
+				{
+					var wfiMB = obj as IWfiMorphBundle;
+					wfiMB.InflTypeRA = null;
+				}
+				else
+				{
+					var lexEntryRef = obj as ILexEntryRef;
+					int i = lexEntryRef.VariantEntryTypesRS.IndexOf(lexEntryType);
+					lexEntryRef.VariantEntryTypesRS.RemoveAt(i);
+					lexEntryRef.VariantEntryTypesRS.Insert(i, this);
+				}
+
+			}
+
+			//possibilities.RemoveAt(iPossibility);
+/*			IFwMetaDataCacheManaged mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCache;
+			var flidList = from flid in mdc.GetFields(LexEntryTypeTags.kClassId, true, (int)CellarPropertyTypeFilter.All)
+						   where !m_cache.MetaDataCache.get_IsVirtual(flid)
+						   select flid;
+			// Process all the fields in the source.
+			MergeSelectedPropertiesOfObject(lexEntryInflType, true, flidList.ToArray());*/
+		}
+	}
+
+	/// <summary>
+	/// Additional methods needed to support the LexEntryInflType class.
+	/// </summary>
+	internal partial class LexEntryInflType
+	{
+		/// <summary>
+		/// Get a set of hvos that are suitable for targets to a reference property.
+		/// Subclasses should override this method to return a sensible list of IDs.
+		/// </summary>
+		/// <param name="flid">The reference property that can store the IDs.</param>
+		/// <returns>A set of hvos.</returns>
+		public override IEnumerable<ICmObject> ReferenceTargetCandidates(int flid)
+		{
+			switch (flid)
+			{
+				case LexEntryInflTypeTags.kflidSlots:
+					return DomainObjectServices.GetAllSlots(Cache).Cast<ICmObject>();
+				default:
+					return base.ReferenceTargetCandidates(flid);
+			}
+		}
 	}
 
 	internal partial class LexEtymology

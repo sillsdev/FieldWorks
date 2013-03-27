@@ -19,9 +19,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using System.Diagnostics;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.RootSites;
@@ -50,6 +52,16 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion Data members
 
 		#region Construction, initialization, and disposal.
+
+		/// <summary>
+		/// see XmlBrowseViewBase OnGotFocus
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnGotFocus(EventArgs e)
+		{
+			base.OnGotFocus(e);
+			SetSelection();
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -262,6 +274,11 @@ namespace SIL.FieldWorks.Common.Controls
 			if (m_rootb == null)
 				MakeRoot();
 
+			SetSelection();
+		}
+
+		private void SetSelection()
+		{
 			// if we haven't already made a selection, make one in the new row.
 			if (m_rootb.Selection == null)
 			{
@@ -272,6 +289,7 @@ namespace SIL.FieldWorks.Common.Controls
 				ScrollToCurrentSelection();
 			}
 		}
+
 		#endregion XCore message handlers
 
 		#region Other methods
@@ -287,9 +305,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (CanGotoNextRow(out rgtss))
 			{
 				// JohnT: if we pass false here, then the following sequence fails (See LT-7140)
-				// Use categorized entry to add a sense where the form (but not definition) matches an existing entry.
+				// Use Collect Words to add a sense where the form (but not definition) matches an existing entry.
 				// Without hitting enter, click on another view (e.g., main data entry view).
-				// Then return to the categorized entry view. The last item added does not appear.
+				// Then return to the Collect Words view. The last item added does not appear.
 				// However, if we pass true, we get another LT-7140 problem: if we add a row but don't press enter,
 				// then switch to another Category, the new item shows up there! That is because a call-back
 				// to the record list happens during adding the item, but the record list has already changed its
@@ -900,7 +918,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="rcSrcRoot"></param>
 		/// <param name="rcDstRoot"></param>
 		/// <returns></returns>
-		protected override bool OnRightMouseUp(System.Drawing.Point pt, System.Drawing.Rectangle rcSrcRoot, System.Drawing.Rectangle rcDstRoot)
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Context menu - can't dispose right away")]
+		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot, Rectangle rcDstRoot)
 		{
 			var sel = MakeSelectionAt(new MouseEventArgs(MouseButtons.Right, 1, pt.X, pt.Y, 0));
 			if (sel == null)

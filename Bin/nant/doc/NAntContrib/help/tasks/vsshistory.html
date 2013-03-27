@@ -20,7 +20,7 @@
 		  <a href="../tasks/index.html">Task Reference</a>
 		  <img alt="-&gt;" src="../images/arrow.gif" /> &lt;vsshistory&gt;</td>
 		<td class="NavBar-Cell" align="right">
-						v0.85</td>
+						v0.91</td>
 	  </tr>
 	</table>
 	<h1>&lt;vsshistory&gt;</h1>
@@ -131,30 +131,30 @@
 	  <li>
 		<p> Write all changes between "Release1" and "Release2" to XML file "changelog.xml". </p>
 		<pre class="code">
-&lt;vsshistory
-	dbpath="C:\VSS\srcsafe.ini"
-	path="$/My Project"
-	fromlabel="Release1"
-	tolabel="Release2"
-	output="changelog.xml" /&gt;
-	</pre>
+			&lt;vsshistory
+				dbpath="C:\VSS\srcsafe.ini"
+				path="$/My Project"
+				fromlabel="Release1"
+				tolabel="Release2"
+				output="changelog.xml" /&gt;
+				</pre>
 	  </li>
 	  <li>
 		<p> Write all changes between January 1st 2004 and March 31st 2004 to XML file "history.xml". </p>
 		<pre class="code">
-&lt;vsshistory
-	dbpath="C:\VSS\srcsafe.ini"
-	path="$/My Project"
-	fromdate="01/01/2004"
-	todate="03/31/2004"
-	output="history.xml"
-	/&gt;
-	</pre>
+			&lt;vsshistory
+				dbpath="C:\VSS\srcsafe.ini"
+				path="$/My Project"
+				fromdate="01/01/2004"
+				todate="03/31/2004"
+				output="history.xml"
+				/&gt;
+				</pre>
 	  </li>
 	</ul>
 	<h3>Requirements</h3>
 	<div style="margin-left: 20px;">
-	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.85.2479.0)
+	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.91.4312.0)
 			</div>
   </body>
 </html>

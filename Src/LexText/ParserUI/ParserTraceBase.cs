@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Xml;
@@ -10,6 +11,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Utils;
 using XCore;
 
@@ -159,7 +161,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			CreateFeatureStructureNodes(doc, inflMsaNode, inflMsa.InflFeatsOA, inflMsa.Hvo);
 			CreateProductivityRestrictionNodes(doc, inflMsaNode, inflMsa.FromProdRestrictRC, "fromProductivityRestriction");
 		}
-		protected void CreateMorphAffixAlloFeatsXmlElement(XmlNode node, XmlNode morphNode)
+		protected virtual void CreateMorphAffixAlloFeatsXmlElement(XmlNode node, XmlNode morphNode)
 		{
 			XmlNode affixAlloFeatsNode = node.SelectSingleNode("affixAlloFeats");
 			if (affixAlloFeatsNode != null)
@@ -211,7 +213,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected abstract void CreateMorphNodes(XmlDocument doc, XmlNode seqNode, string sNodeId);
 
-		protected void CreateMorphShortNameXmlElement(XmlNode node, XmlNode morphNode)
+		protected virtual void CreateMorphShortNameXmlElement(XmlNode node, XmlNode morphNode)
 		{
 			XmlNode formNode = node.SelectSingleNode("shortName");
 			if (formNode != null)
@@ -259,7 +261,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			attr = node.SelectSingleNode(sHvo);
 			if (attr != null)
 			{
-				ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Convert.ToInt32(attr.Value));
+				string sObjHvo = attr.Value;
+				// Irregulary inflected forms can have a combination MSA hvo: the LexEntry hvo, a period, and an index to the LexEntryRef
+				var indexOfPeriod = ParseFiler.IndexOfPeriodInMsaHvo(ref sObjHvo);
+				ICmObject obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(Convert.ToInt32(sObjHvo));
 				switch (obj.GetType().Name)
 				{
 					default:
@@ -281,9 +286,62 @@ namespace SIL.FieldWorks.LexText.Controls
 						IMoUnclassifiedAffixMsa unclassMsa = obj as IMoUnclassifiedAffixMsa;
 						CreateUnclassifedMsaXmlElement(doc, morphNode, unclassMsa);
 						break;
+					case "LexEntry":
+						// is an irregularly inflected form
+						// get the MoStemMsa of its variant
+						var entry = obj as ILexEntry;
+						if (entry.EntryRefsOS.Count > 0)
+						{
+							var index = ParseFiler.IndexOfLexEntryRef(attr.Value, indexOfPeriod);
+							var lexEntryRef = entry.EntryRefsOS[index];
+							var sense = FDO.DomainServices.MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+							stemMsa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
+							CreateStemMsaXmlElement(doc, morphNode, stemMsa);
+						}
+						break;
+					case "LexEntryInflType":
+						// This is one of the null allomorphs we create when building the
+						// input for the parser in order to still get the Word Grammar to have something in any
+						// required slots in affix templates.
+						CreateInflMsaForLexEntryInflType(doc, morphNode, obj as ILexEntryInflType);
+						break;
 				}
 			}
 		}
+
+		protected void CreateInflMsaForLexEntryInflType(XmlDocument doc, XmlNode node, ILexEntryInflType lexEntryInflType)
+		{
+			/*var slots = lexEntryInflType.SlotsRC;
+			IMoInflAffixSlot firstSlot = null;
+			foreach (var slot in slots)
+			{
+				if (firstSlot == null)
+					firstSlot = slot;
+			}*/
+			IMoInflAffixSlot slot;
+			var slotId = node.SelectSingleNode("MoForm/@wordType");
+			if (slotId != null)
+				slot = m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().GetObject(Convert.ToInt32(slotId.InnerText));
+			else
+			{
+				var slots = lexEntryInflType.SlotsRC;
+				IMoInflAffixSlot firstSlot = null;
+				foreach (var slot1 in slots)  // there's got to be a better way to do this...
+				{
+					firstSlot = slot1;
+					break;
+				}
+				slot = firstSlot;
+			}
+			XmlNode nullInflMsaNode;
+			nullInflMsaNode = CreateXmlElement(doc, "inflMsa", node);
+			CreatePOSXmlAttribute(doc, nullInflMsaNode, slot.Owner as IPartOfSpeech, "cat");
+			CreateXmlAttribute(doc, "slot", slot.Hvo.ToString(), nullInflMsaNode);
+			CreateXmlAttribute(doc, "slotAbbr", slot.Name.BestAnalysisAlternative.Text, nullInflMsaNode);
+			CreateXmlAttribute(doc, "slotOptional", "false", nullInflMsaNode);
+			CreateFeatureStructureNodes(doc, nullInflMsaNode, lexEntryInflType.InflFeatsOA, lexEntryInflType.Hvo);
+		}
+
 		protected void CreatePOSXmlAttribute(XmlDocument doc, XmlNode msaNode, IPartOfSpeech pos, string sCat)
 		{
 			if (pos != null)
@@ -439,41 +497,35 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get { return DirectoryFinder.GetFWCodeSubDirectory(@"Language Explorer/Configuration/Words/Analyses/TraceParse"); }
 		}
-		protected string TransformToHtml(XPathDocument doc, string sTempFileBase, string sTransformFile, XsltArgumentList args)
+		protected string TransformToHtml(string sInputFile, string sTempFileBase, string sTransformFile, List<XmlUtils.XSLParameter> args)
 		{
-			string sOutput = null;
-			XslCompiledTransform transformer = new XslCompiledTransform();
-			sOutput = CreateTempFile(sTempFileBase, "htm");
-			transformer.Load(Path.Combine(TransformPath, sTransformFile));
-			using (TextWriter writer = File.CreateText(sOutput))
-			{
-				SetWritingSystemBasedArguments(args);
-				transformer.Transform(doc, args, writer);
-				writer.Close();
-				return sOutput;
-			}
+			string sOutput = CreateTempFile(sTempFileBase, "htm");
+			string sTransform = Path.Combine(TransformPath, sTransformFile);
+			SetWritingSystemBasedArguments(args);
+			XmlUtils.TransformFileToFile(sTransform, args.ToArray(), sInputFile, sOutput);
+			return sOutput;
 		}
 
-		private void SetWritingSystemBasedArguments(XsltArgumentList args)
+		private void SetWritingSystemBasedArguments(List<XmlUtils.XSLParameter> args)
 		{
 			ILgWritingSystemFactory wsf = m_cache.WritingSystemFactory;
 			IWritingSystemContainer wsContainer = m_cache.ServiceLocator.WritingSystems;
 			IWritingSystem defAnalWs = wsContainer.DefaultAnalysisWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defAnalWs.Handle, m_mediator, wsf))
 			{
-				args.AddParam("prmAnalysisFont", "", myFont.FontFamily.Name);
-				args.AddParam("prmAnalysisFontSize", "", myFont.Size + "pt");
+				args.Add(new XmlUtils.XSLParameter("prmAnalysisFont", myFont.FontFamily.Name));
+				args.Add(new XmlUtils.XSLParameter("prmAnalysisFontSize", myFont.Size + "pt"));
 			}
 
 			IWritingSystem defVernWs = wsContainer.DefaultVernacularWritingSystem;
 			using (var myFont = FontHeightAdjuster.GetFontForNormalStyle(defVernWs.Handle, m_mediator, wsf))
 			{
-				args.AddParam("prmVernacularFont", "", myFont.FontFamily.Name);
-				args.AddParam("prmVernacularFontSize", "", myFont.Size + "pt");
+				args.Add(new XmlUtils.XSLParameter("prmVernacularFont", myFont.FontFamily.Name));
+				args.Add(new XmlUtils.XSLParameter("prmVernacularFontSize", myFont.Size + "pt"));
 			}
 
 			string sRTL = defVernWs.RightToLeftScript ? "Y" : "N";
-			args.AddParam("prmVernacularRTL", "", sRTL);
+			args.Add(new XmlUtils.XSLParameter("prmVernacularRTL", sRTL));
 		}
 	}
 }

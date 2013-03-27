@@ -888,7 +888,6 @@ namespace SIL.FieldWorks.TE
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Category("LongRunning")]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void VerifyStylesComboBoxAfterImport()
 		{
 			Unpacker.UnpackTEVTitusWithUnmappedStyle();

@@ -1,0 +1,8 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# added to control and disposed there
+M: System.Void SIL.FieldWorks.Common.Controls.FilterScriptureDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.Common.Controls.ScrPassageControl::DisplayDropDown()

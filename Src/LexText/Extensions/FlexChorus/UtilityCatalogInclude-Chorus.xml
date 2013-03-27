@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- This file should be placed in {FW Install}/Language Explorer/Configuration. -->
-<!-- A file named UtilityCatalogInclude.xml should already exist in that folder. -->
-<utilityCatalog>
-	<utility assemblyPath="FlexChorus.dll" class="SIL.FieldWorks.LexText.FlexChorus.FlexChorusUtility"/>
-</utilityCatalog>

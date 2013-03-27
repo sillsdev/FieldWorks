@@ -1,0 +1,13 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.BadPractice.OnlyUseDisposeForIDisposableTypesRule
+
+# interface exposes Dispose() for COM objects
+T: SIL.FieldWorks.Common.COMInterfaces.IComDisposable
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Factory method. Caller need to dispose
+M: SIL.Utils.ComTypes.IPicture SIL.FieldWorks.Common.COMInterfaces.ManagedPictureFactory::ImageFromBytes(System.Byte[],System.Int32)

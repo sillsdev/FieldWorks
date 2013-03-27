@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(String.Format(LexTextControls.ksErrorAcessingEncodingConverters, ex.Message));
+				MessageBox.Show(String.Format(LexTextControls.ksErrorAccessingEncodingConverters, ex.Message));
 				return;
 			}
 		}

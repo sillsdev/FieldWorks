@@ -705,13 +705,13 @@ namespace SIL.FieldWorks.Common.RootSites
 					OnKeyPress(new KeyPressEventArgs((char)(int)VwSpecialChars.kscDelForward), e.Modifiers);
 					break;
 
-			case Keys.Space:
-				if (CanEdit() && (e.Modifiers & Keys.Control) == Keys.Control)
-				{
-					e.Handled = true;
-					RemoveCharFormatting();
-				}
-				break;
+				case Keys.Space:
+					if (CanEdit() && (e.Modifiers & Keys.Control) == Keys.Control)
+					{
+						e.Handled = true;
+						RemoveCharFormatting();
+					}
+					break;
 
 				case Keys.F10:
 					if (GetShiftStatus(e.Modifiers) == VwShiftStatus.kfssShift)
@@ -3465,9 +3465,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			CellarPropertyType cpt = (CellarPropertyType)mdc.GetFieldType(tag);
 			// These four types can store embedded formatting.
 			return cpt == CellarPropertyType.String ||
-				cpt == CellarPropertyType.BigString ||
-				cpt == CellarPropertyType.MultiString ||
-				cpt == CellarPropertyType.MultiBigString;
+				cpt == CellarPropertyType.MultiString;
 		}
 
 		/// <summary>

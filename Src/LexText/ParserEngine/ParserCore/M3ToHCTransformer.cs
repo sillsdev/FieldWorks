@@ -58,19 +58,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			using (var task = new TaskReport(ParserCoreStrings.ksMakingHCFiles, m_taskUpdateHandler))
 			{
-					DateTime startTime = DateTime.Now;
+				var startTime = DateTime.Now;
 				TransformDomToFile("FxtM3ParserToHCInput.xsl", model, m_database + "HCInput.xml", task);
 				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Lex XSLT took : " + (DateTime.Now.Ticks - startTime.Ticks));
 
 				startTime = DateTime.Now;
 				TransformDomToFile("FxtM3ParserToToXAmpleGrammar.xsl", model, m_database + "gram.txt", task);
 				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "Grammar XSLTs took : " + (DateTime.Now.Ticks - startTime.Ticks));
-					// TODO: Putting this here is not necessarily efficient because it happens every time
-					//       the parser is run.  It would be more efficient to run this only when the user
-					//       is trying a word.  But we need the "model" to apply this transform an it is
-					//       available here, so we're doing this for now.
-					startTime = DateTime.Now;
-					string sName = m_database + "XAmpleWordGrammarDebugger.xsl";
+
+				// TODO: Putting this here is not necessarily efficient because it happens every time
+				//       the parser is run.  It would be more efficient to run this only when the user
+				//       is trying a word.  But we need the "model" to apply this transform and it is
+				//       available here, so we're doing this for now.
+				startTime = DateTime.Now;
+				string sName = m_database + "XAmpleWordGrammarDebugger.xsl";
 				TransformDomToFile("FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl", model, sName, task);
 				Trace.WriteLineIf(m_tracingSwitch.TraceInfo, "WordGrammarDebugger XSLT took : " + (DateTime.Now.Ticks - startTime.Ticks));
 			}

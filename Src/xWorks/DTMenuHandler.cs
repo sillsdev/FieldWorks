@@ -34,6 +34,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
 using SIL.CoreImpl;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 using SIL.FieldWorks.Common.Widgets;
 
@@ -275,14 +276,14 @@ namespace SIL.FieldWorks.XWorks
 				obj = le.PronunciationsOS[0];
 				flid = LexPronunciationTags.kflidMediaFiles;
 			}
-			using (OpenFileDialog dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.InitialDirectory = Cache.LangProject.LinkedFilesRootDir;
 				dlg.Filter = filter;
 				dlg.FilterIndex = 1;
 				if (m_mediator != null && m_mediator.HasStringTable)
 					dlg.Title = m_mediator.StringTbl.GetString(keyCaption);
-				if (dlg.Title == null || dlg.Title.Length == 0 || dlg.Title == "*" + keyCaption + "*")
+				if (string.IsNullOrEmpty(dlg.Title) || dlg.Title == "*" + keyCaption + "*")
 					dlg.Title = defaultCaption;
 				dlg.RestoreDirectory = true;
 				dlg.CheckFileExists = true;
@@ -344,7 +345,11 @@ namespace SIL.FieldWorks.XWorks
 					xWorksStrings.ksUndoDeleteMediaLink,
 					xWorksStrings.ksRedoDeleteMediaLink,
 					Cache.ActionHandlerAccessor,
-					() => Cache.DomainDataByFlid.DeleteObj(media.Hvo));
+					() =>
+					{
+						CmObjectUi.ConsiderDeletingRelatedFile(media.MediaFileRA, m_mediator);
+						Cache.DomainDataByFlid.DeleteObj(media.Hvo);
+					});
 			}
 			return true;
 		}
@@ -833,7 +838,6 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OnDataTreeMerge(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice current = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
@@ -859,7 +863,6 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OnDataTreeSplit(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice current = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
@@ -889,7 +892,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDataTreeEdit(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice current = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
@@ -906,7 +908,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDataTreeAddReference(object cmd)
 		{
-			// Command command = (Command)cmd; // CS0219
 			Slice current = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
 			if (current != null)
@@ -952,7 +953,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true to indicate the message was handled</returns>
 		public bool OnMoveUpObjectInSequence(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
@@ -1040,7 +1040,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true to indicate the message was handled</returns>
 		public virtual bool OnMoveDownObjectInSequence(object cmd)
 		{
-			// Command command = (Command) cmd; // CS0219
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");

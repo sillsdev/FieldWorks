@@ -1,0 +1,58 @@
+<html dir="LTR">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+	<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+	<title>ManagedExecution Enumeration</title>
+	<xml>
+	</xml>
+	<link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+	<div id="nsbanner">
+	  <div id="bannerrow1">
+		<table class="bannerparthead" cellspacing="0">
+		  <tr id="hdr">
+			<td class="runninghead">NAnt SDK Documentation - v0.91</td>
+			<td class="product">
+			</td>
+		  </tr>
+		</table>
+	  </div>
+	  <div id="TitleRow">
+		<h1 class="dtH1">ManagedExecution Enumeration</h1>
+	  </div>
+	</div>
+	<div id="nstext">
+	  <p> Specifies the execution mode for managed applications. </p>
+	  <div class="syntax">
+		<span class="lang">[Visual Basic]</span>
+		<br />
+		<div class="attribute">&lt;Serializable, _
+ TypeConverter(ConverterTypeName:="NAnt.Core.Types.ManagedExecutionConverter, NAnt.Core, Version=0.91.4312.0, Culture=neutral, PublicKeyToken=null")&gt;</div>Public Enum ManagedExecution</div>
+	  <div class="syntax">
+		<span class="lang">[C#]</span>
+		<div class="attribute">[Serializable]</div>
+		<div class="attribute">[TypeConverter(ConverterTypeName="NAnt.Core.Types.ManagedExecutionConverter, NAnt.Core, Version=0.91.4312.0, Culture=neutral, PublicKeyToken=null")]</div>
+		<div>public enum ManagedExecution</div>
+	  </div>
+	  <h4 class="dtH4">Remarks</h4>
+			  <p> For backward compatibility, the following string values can also be used in build files: </p>
+			  <div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top">
+				  <th width="50%">Value</th>
+				  <th width="50%">Corresponding field</th>
+				</tr><tr valign="top">
+				  <td>"true"</td>
+				  <td><a href="NAnt.Core.Types.ManagedExecution.html">Auto</a></td>
+				</tr><tr valign="top">
+				  <td>"false"</td>
+				  <td><a href="NAnt.Core.Types.ManagedExecution.html">Default</a></td>
+				</tr></table></div>
+			  <p> Even if set to <b>Default</b>, the operating system can still run the program as a managed application. </p>
+			  <p>On Linux this can be done through <b>binfmt_misc</b>, while on Windows installing the .NET Framework redistributable caused managed applications to run on the MS CLR by default. </p>
+			<h4 class="dtH4">Members</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Member Name</th><th width="50%">Description</th></tr>
+<tr valign="top"><td><b>Default</b></td><td> Do not threat the program as a managed application. </td></tr>
+<tr valign="top"><td><b>Auto</b></td><td> Leave it up to the CLR to determine which specific version of the CLR will be used to run the application. </td></tr>
+<tr valign="top"><td><b>Strict</b></td><td> Forces an application to run against the currently targeted version of a given CLR. </td></tr></table></div><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="NAnt.Core.Types.html">NAnt.Core.Types</a></p><p><b>Assembly: </b>NAnt.Core (in NAnt.Core.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="NAnt.Core.Types.html">NAnt.Core.Types Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="ManagedExecution enumeration"></param><param name="Keyword" value="NAnt.Core.Types.ManagedExecution enumeration"></param><param name="Keyword" value="Default enumeration member"></param><param name="Keyword" value="ManagedExecution.Default enumeration member"></param><param name="Keyword" value="Auto enumeration member"></param><param name="Keyword" value="ManagedExecution.Auto enumeration member"></param><param name="Keyword" value="Strict enumeration member"></param><param name="Keyword" value="ManagedExecution.Strict enumeration member"></param></object><hr /><div id="footer"><p><a href="http://nant.sourceforge.net">Copyright (C) 2001-2011 Gerry Shaw</a></p><p></p></div></div>
+  </body>
+</html>

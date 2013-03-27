@@ -1,3 +1,4 @@
+#if USE_THIS
 using System;
 using System.Diagnostics;
 using System.Collections;
@@ -118,3 +119,4 @@ namespace SidebarLibrary.Collections
 
 
 }
+#endif

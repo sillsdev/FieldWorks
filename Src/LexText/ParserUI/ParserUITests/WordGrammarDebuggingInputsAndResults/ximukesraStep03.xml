@@ -2,57 +2,57 @@
 <word>
   <form>ximukesra</form>
   <seq step="Try to build a Word analysis node on a Full analysis node.">
-	<word syncat="73" syncatAbbr="adv">
-	  <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-">
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </full>
-	</word>
-	<morph wordType="suffix">
-	  <shortName>-kes (???): kes</shortName>
-	  <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="179">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="179" slotAbbr="Tense" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <word syncat="73" syncatAbbr="adv">
+      <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-">
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </full>
+    </word>
+    <morph wordType="suffix">
+      <shortName>-kes (???): kes</shortName>
+      <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="179">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="179" slotAbbr="Tense" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a Full analysis node with sequences of affixes not labeled as either derivational or inflectional (the sequence may also include derivational affixes).">
-	<partial inflected="-" syncat="73" syncatAbbr="adv">
-	  <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-">
-		<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </full>
-	  <morph wordType="suffix">
-		<shortName>-kes (???): kes</shortName>
-		<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	  </morph>
-	</partial>
-	<morph wordType="179">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="179" slotAbbr="Tense" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <partial inflected="-" syncat="73" syncatAbbr="adv">
+      <full syncat="73" syncatAbbr="adv" requiresInfl="-" inflected="-">
+        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </full>
+      <morph wordType="suffix">
+        <shortName>-kes (???): kes</shortName>
+        <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+      </morph>
+    </partial>
+    <morph wordType="179">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="179" slotAbbr="Tense" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
 </word>

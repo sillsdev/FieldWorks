@@ -131,6 +131,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = btnCancel;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
 			this.Controls.Add(lbl_ChangeName);
 			this.Controls.Add(lbl_openExisting);
@@ -143,6 +144,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.Name = "DuplicateProjectFoundDlg";
 			this.ResumeLayout(false);
 			this.PerformLayout();
+
 		}
 		#endregion
 

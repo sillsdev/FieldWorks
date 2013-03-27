@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Bounds|Win32">
+	  <Configuration>Bounds</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+	  <Configuration>Release</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+	<ProjectGuid>{4EA3EFBD-B4D5-4BFA-B8BE-51453AB5DE39}</ProjectGuid>
+	<RootNamespace>GrCompiler</RootNamespace>
+	<SccProjectName></SccProjectName>
+	<SccLocalPath></SccLocalPath>
+	<SccProvider></SccProvider>
+	<Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="Configuration">
+	<ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="PropertySheets">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+	<Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+	<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">.\Bounds\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">.\Bounds\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\..\bin\mkgrc.bat b</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\..\bin\mkgrc.bat b cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\..\output\Bounds\grcompiler.exe</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\mkgrc.bat</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\bin\mkgrc.bat cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\output\debug\grcompiler.exe</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</OutDir>
+	<IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</IntDir>
+	<NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\bin\mkgrc.bat</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\bin\mkgrc.bat cc</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+	<NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\output\release\grcompiler.exe</NMakeOutput>
+	<NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+	<NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+	<NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+	<NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+	<NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+	<ClCompile Include="Compiler.cpp" />
+	<ClCompile Include="ErrorCheckClasses.cpp" />
+	<ClCompile Include="ErrorCheckFeatures.cpp" />
+	<ClCompile Include="ErrorCheckRules.cpp" />
+	<ClCompile Include="explicit_instantiations.cpp" />
+	<ClCompile Include="Fsm.cpp" />
+	<ClCompile Include="GdlExpression.cpp" />
+	<ClCompile Include="GdlFeatures.cpp" />
+	<ClCompile Include="GdlGlyphClassDefn.cpp" />
+	<ClCompile Include="GdlRenderer.cpp" />
+	<ClCompile Include="GdlRule.cpp" />
+	<ClCompile Include="GdlTablePass.cpp" />
+	<ClCompile Include="GrcErrorList.cpp" />
+	<ClCompile Include="GrcFont.cpp" />
+	<ClCompile Include="GrcGlyphAttrMatrix.cpp" />
+	<ClCompile Include="GrcManager.cpp" />
+	<ClCompile Include="GrcMasterTable.cpp" />
+	<ClCompile Include="GrcSymTable.cpp" />
+	<ClCompile Include="GrpExtensions.cpp" />
+	<ClCompile Include="GrpLexer.cpp" />
+	<ClCompile Include="GrpParser.cpp" />
+	<ClCompile Include="GrpParserDebug.cpp" />
+	<ClCompile Include="main.cpp" />
+	<ClCompile Include="OutputToFont.cpp" />
+	<ClCompile Include="ParserTreeWalker.cpp" />
+	<ClCompile Include="PostParser.cpp" />
+	<ClCompile Include="Grammar\ANTLRException.cpp" />
+	<ClCompile Include="Grammar\AST.cpp" />
+	<ClCompile Include="Grammar\ASTFactory.cpp" />
+	<ClCompile Include="Grammar\BitSet.cpp" />
+	<ClCompile Include="Grammar\CharBuffer.cpp" />
+	<ClCompile Include="Grammar\CharScanner.cpp" />
+	<ClCompile Include="Grammar\CommonASTNode.cpp" />
+	<ClCompile Include="Grammar\CommonToken.cpp" />
+	<ClCompile Include="Grammar\InputBuffer.cpp" />
+	<ClCompile Include="Grammar\LexerSharedInputState.cpp" />
+	<ClCompile Include="Grammar\LLkParser.cpp" />
+	<ClCompile Include="Grammar\MismatchedTokenException.cpp" />
+	<ClCompile Include="Grammar\NoViableAltException.cpp" />
+	<ClCompile Include="Grammar\Parser.cpp" />
+	<ClCompile Include="Grammar\ParserException.cpp" />
+	<ClCompile Include="Grammar\ParserSharedInputState.cpp" />
+	<ClCompile Include="Grammar\ScannerException.cpp" />
+	<ClCompile Include="Grammar\String.cpp" />
+	<ClCompile Include="Grammar\Token.cpp" />
+	<ClCompile Include="Grammar\TokenBuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClInclude Include="constants.h" />
+	<ClInclude Include="Fsm.h" />
+	<ClInclude Include="GdlExpression.h" />
+	<ClInclude Include="GdlFeatures.h" />
+	<ClInclude Include="GdlGlyphClassDefn.h" />
+	<ClInclude Include="GdlGlyphDefn.h" />
+	<ClInclude Include="GdlNameDefn.h" />
+	<ClInclude Include="GdlObject.h" />
+	<ClInclude Include="GdlRenderer.h" />
+	<ClInclude Include="GdlRule.h" />
+	<ClInclude Include="GdlTablePass.h" />
+	<ClInclude Include="GrcBinaryStream.h" />
+	<ClInclude Include="GrcEnv.h" />
+	<ClInclude Include="GrcErrorList.h" />
+	<ClInclude Include="GrcFont.h" />
+	<ClInclude Include="GrcGlyphAttrMatrix.h" />
+	<ClInclude Include="GrcManager.h" />
+	<ClInclude Include="GrcMasterTable.h" />
+	<ClInclude Include="GrcSymTable.h" />
+	<ClInclude Include="Grp.h" />
+	<ClInclude Include="GrpASTNode.hpp" />
+	<ClInclude Include="GrpLexer.hpp" />
+	<ClInclude Include="GrpLineAndFile.hpp" />
+	<ClInclude Include="GrpParser.hpp" />
+	<ClInclude Include="GrpParserTokenTypes.hpp" />
+	<ClInclude Include="GrpToken.hpp" />
+	<ClInclude Include="GrpTokenStreamFilter.hpp" />
+	<ClInclude Include="main.h" />
+	<ClInclude Include="StrAnsiHash.h" />
+	<ClInclude Include="Grammar\ASTDebug.hpp" />
+	<ClInclude Include="Grammar\Antlr\ANTLRException.hpp" />
+	<ClInclude Include="Grammar\Antlr\AST.hpp" />
+	<ClInclude Include="Grammar\Antlr\ASTArray.hpp" />
+	<ClInclude Include="Grammar\Antlr\ASTFactory.hpp" />
+	<ClInclude Include="Grammar\Antlr\ASTNode.hpp" />
+	<ClInclude Include="Grammar\Antlr\ASTNULLType.hpp" />
+	<ClInclude Include="Grammar\Antlr\ASTPair.hpp" />
+	<ClInclude Include="Grammar\Antlr\BitSet.hpp" />
+	<ClInclude Include="Grammar\Antlr\CharBuffer.hpp" />
+	<ClInclude Include="Grammar\Antlr\CharScanner.hpp" />
+	<ClInclude Include="Grammar\Antlr\CircularQueue.hpp" />
+	<ClInclude Include="Grammar\Antlr\CommonASTNode.hpp" />
+	<ClInclude Include="Grammar\Antlr\CommonToken.hpp" />
+	<ClInclude Include="Grammar\Antlr\config.hpp" />
+	<ClInclude Include="Grammar\Antlr\InputBuffer.hpp" />
+	<ClInclude Include="Grammar\Antlr\LexerSharedInputState.hpp" />
+	<ClInclude Include="Grammar\Antlr\LLkParser.hpp" />
+	<ClInclude Include="Grammar\Antlr\MismatchedTokenException.hpp" />
+	<ClInclude Include="Grammar\Antlr\NoViableAltException.hpp" />
+	<ClInclude Include="Grammar\Antlr\Parser.hpp" />
+	<ClInclude Include="Grammar\Antlr\ParserException.hpp" />
+	<ClInclude Include="Grammar\Antlr\ParserSharedInputState.hpp" />
+	<ClInclude Include="Grammar\Antlr\RefCount.hpp" />
+	<ClInclude Include="Grammar\Antlr\ScannerException.hpp" />
+	<ClInclude Include="Grammar\Antlr\SemanticException.hpp" />
+	<ClInclude Include="Grammar\Antlr\String.hpp" />
+	<ClInclude Include="Grammar\Antlr\Token.hpp" />
+	<ClInclude Include="Grammar\Antlr\TokenBuffer.hpp" />
+	<ClInclude Include="Grammar\Antlr\TokenStream.hpp" />
+	<ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="..\..\..\output\Bounds\grcompiler.bsc" />
+	<None Include="..\..\..\output\release\grcompiler.bsc" />
+	<None Include="..\..\..\output\debug\grcompiler.bsc" />
+	<None Include="GrCompiler.mak" />
+	<None Include="GrpParser.g" />
+	<None Include="GrpParserTokenTypes.txt" />
+	<None Include="stddef.gdh" />
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="GrCompiler.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

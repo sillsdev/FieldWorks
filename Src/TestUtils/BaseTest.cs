@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2009, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2009' company='SIL International'>
-//		Copyright (c) 2009, SIL International. All Rights Reserved.
+#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2012' company='SIL International'>
+//		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -14,7 +14,6 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -22,9 +21,6 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.Utils;
 
-#if !NET_4_0
-[assembly:SecurityPermissionAttribute(SecurityAction.RequestMinimum, UnmanagedCode=true)]
-#endif
 namespace SIL.FieldWorks.Test.TestUtils
 {
 	/// ----------------------------------------------------------------------------------------
@@ -40,21 +36,10 @@ namespace SIL.FieldWorks.Test.TestUtils
 	/// Setup and TearDown, and than call the base methods.
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class BaseTest : SIL.FieldWorks.Common.COMInterfaces.FwCOMTestBase
+	public class BaseTest
 	{
 		/// <summary></summary>
 		protected DebugProcs m_debugProcs;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Static constructor
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static BaseTest()
-		{
-			RegistryHelper.CompanyName = "SIL";
-			RegistryHelper.ProductName = "FieldWorks";
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -65,15 +50,6 @@ namespace SIL.FieldWorks.Test.TestUtils
 		{
 			Application.ThreadException += new ThreadExceptionEventHandler(OnThreadException);
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets a value indicating whether the SingletonsContainer will be released in
-		/// the teardown method of a setup fixture class, or if it should be released in our
-		/// fixture teardown method.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool SingletonReleasedInFixtureClass { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -131,23 +107,21 @@ namespace SIL.FieldWorks.Test.TestUtils
 #if __MonoCS__
 			try
 			{
-				// try to change PTRACE option so that unmanaged call stacks show more useful
-				// information. Since Ubuntu 10.10 a normal user is no longer allowed to use
-				// PTRACE. This prevents call stacks and assertions from working properly.
-				// However, we can set a flag on the currently running process to allow
-				// it. See also the similar code in Generic/ModuleEntry.cpp
-				prctl(PR_SET_PTRACER, (IntPtr)System.Diagnostics.Process.GetCurrentProcess().Id,
-					IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+				using (var process = System.Diagnostics.Process.GetCurrentProcess())
+				{
+					// try to change PTRACE option so that unmanaged call stacks show more useful
+					// information. Since Ubuntu 10.10 a normal user is no longer allowed to use
+					// PTRACE. This prevents call stacks and assertions from working properly.
+					// However, we can set a flag on the currently running process to allow
+					// it. See also the similar code in Generic/ModuleEntry.cpp
+					prctl(PR_SET_PTRACER, (IntPtr)process.Id, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+				}
 			}
 			catch (Exception e)
 			{
 				// just ignore any errors we get
 			}
 #endif
-
-			// Set stub for messagebox so that we don't pop up a message box when running tests.
-			// If we don't want to do this always we should do it at least for !Environment.UserInteractive.
-			MessageBoxUtils.Manager.SetMessageBoxAdapter(new MessageBoxStub());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -158,9 +132,6 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[TestFixtureTearDown]
 		public virtual void FixtureTeardown()
 		{
-			if (!SingletonReleasedInFixtureClass)
-				SingletonsContainer.Release();
-
 			KeyboardHelper.Release();
 
 			// FWC-16: we have to call CoFreeUnusedLibraries. This causes sqlnclir.dll to get

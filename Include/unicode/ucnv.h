@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1999-2008, International Business Machines
+*   Copyright (C) 1999-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
  *  ucnv.h:
@@ -49,6 +49,7 @@
 
 #include "unicode/ucnv_err.h"
 #include "unicode/uenum.h"
+#include "unicode/localpointer.h"
 
 #ifndef __USET_H__
 
@@ -87,46 +88,82 @@ U_CDECL_BEGIN
  * @stable ICU 2.0
  */
 typedef enum {
+	/** @stable ICU 2.0 */
 	UCNV_UNSUPPORTED_CONVERTER = -1,
+	/** @stable ICU 2.0 */
 	UCNV_SBCS = 0,
+	/** @stable ICU 2.0 */
 	UCNV_DBCS = 1,
+	/** @stable ICU 2.0 */
 	UCNV_MBCS = 2,
+	/** @stable ICU 2.0 */
 	UCNV_LATIN_1 = 3,
+	/** @stable ICU 2.0 */
 	UCNV_UTF8 = 4,
+	/** @stable ICU 2.0 */
 	UCNV_UTF16_BigEndian = 5,
+	/** @stable ICU 2.0 */
 	UCNV_UTF16_LittleEndian = 6,
+	/** @stable ICU 2.0 */
 	UCNV_UTF32_BigEndian = 7,
+	/** @stable ICU 2.0 */
 	UCNV_UTF32_LittleEndian = 8,
+	/** @stable ICU 2.0 */
 	UCNV_EBCDIC_STATEFUL = 9,
+	/** @stable ICU 2.0 */
 	UCNV_ISO_2022 = 10,
 
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_1 = 11,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_2,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_3,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_4,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_5,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_6,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_8,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_11,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_16,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_17,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_18,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_19,
+	/** @stable ICU 2.0 */
 	UCNV_LMBCS_LAST = UCNV_LMBCS_19,
+	/** @stable ICU 2.0 */
 	UCNV_HZ,
+	/** @stable ICU 2.0 */
 	UCNV_SCSU,
+	/** @stable ICU 2.0 */
 	UCNV_ISCII,
+	/** @stable ICU 2.0 */
 	UCNV_US_ASCII,
+	/** @stable ICU 2.0 */
 	UCNV_UTF7,
+	/** @stable ICU 2.2 */
 	UCNV_BOCU1,
+	/** @stable ICU 2.2 */
 	UCNV_UTF16,
+	/** @stable ICU 2.2 */
 	UCNV_UTF32,
+	/** @stable ICU 2.2 */
 	UCNV_CESU8,
+	/** @stable ICU 2.4 */
 	UCNV_IMAP_MAILBOX,
+	/** @stable ICU 4.8 */
+	UCNV_COMPOUND_TEXT,
 
 	/* Number of converter types for which we have conversion routines. */
 	UCNV_NUMBER_OF_SUPPORTED_CONVERTER_TYPES
-
 } UConverterType;
 
 /**
@@ -232,7 +269,10 @@ U_CDECL_END
 
 /**
  * Converter option for specifying a version selector (0..9) for some converters.
- * For example, ucnv_open("UTF-7,version=1", &errorCode);
+ * For example,
+ * \code
+ *   ucnv_open("UTF-7,version=1", &errorCode);
+ * \endcode
  * See convrtrs.txt.
  *
  * @see ucnv_open
@@ -300,6 +340,8 @@ ucnv_compareNames(const char *name1, const char *name2);
  * Guide</a>. Aliases starting with a "cp" prefix have no specific meaning
  * other than its an alias starting with the letters "cp". Please do not
  * associate any meaning to these aliases.</p>
+ *
+ * \snippet samples/ucnv/convsamp.cpp ucnv_open
  *
  * @param converterName Name of the coded character set table.
  *          This may have options appended to the string.
@@ -519,6 +561,25 @@ ucnv_safeClone(const UConverter *cnv,
  */
 U_STABLE void  U_EXPORT2
 ucnv_close(UConverter * converter);
+
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUConverterPointer
+ * "Smart pointer" class, closes a UConverter via ucnv_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUConverterPointer, UConverter, ucnv_close);
+
+U_NAMESPACE_END
+
+#endif
 
 /**
  * Fills in the output parameter, subChars, with the substitution characters
@@ -870,7 +931,7 @@ ucnv_getStarters(const UConverter* converter,
 typedef enum UConverterUnicodeSet {
 	/** Select the set of roundtrippable Unicode code points. @stable ICU 2.6 */
 	UCNV_ROUNDTRIP_SET,
-	/** Select the set of Unicode code points with roundtrip or fallback mappings. @draft ICU 4.0 */
+	/** Select the set of Unicode code points with roundtrip or fallback mappings. @stable ICU 4.0 */
 	UCNV_ROUNDTRIP_AND_FALLBACK_SET,
 	/** Number of UConverterUnicodeSet selectors. @stable ICU 2.6 */
 	UCNV_SET_COUNT
@@ -1363,7 +1424,7 @@ ucnv_getNextUChar(UConverter * converter,
  *         length=strlen(s);
  *     }
  *     target=u8;
- *     ucnv_convertEx(cnv, utf8Cnv,
+ *     ucnv_convertEx(utf8Cnv, cnv,
  *                    &target, u8+capacity,
  *                    &s, s+length,
  *                    NULL, NULL, NULL, NULL,
@@ -1787,6 +1848,9 @@ ucnv_getCanonicalName(const char *alias, const char *standard, UErrorCode *pErro
  * It is faster if you pass a NULL argument to ucnv_open the
  * default converter.
  *
+ * If U_CHARSET_IS_UTF8 is defined to 1 in utypes.h then this function
+ * always returns "UTF-8".
+ *
  * @return returns the current default converter name.
  *         Storage owned by the library
  * @see ucnv_setDefaultName
@@ -1795,6 +1859,7 @@ ucnv_getCanonicalName(const char *alias, const char *standard, UErrorCode *pErro
 U_STABLE const char * U_EXPORT2
 ucnv_getDefaultName(void);
 
+#ifndef U_HIDE_SYSTEM_API
 /**
  * This function is not thread safe. DO NOT call this function when ANY ICU
  * function is being used from more than one thread! This function sets the
@@ -1802,6 +1867,10 @@ ucnv_getDefaultName(void);
  * should be called during application initialization. Most of the time, the
  * results from ucnv_getDefaultName() or ucnv_open with a NULL string argument
  * is sufficient for your application.
+ *
+ * If U_CHARSET_IS_UTF8 is defined to 1 in utypes.h then this function
+ * does nothing.
+ *
  * @param name the converter name to be the default (must be known by ICU).
  * @see ucnv_getDefaultName
  * @system
@@ -1809,6 +1878,7 @@ ucnv_getDefaultName(void);
  */
 U_STABLE void U_EXPORT2
 ucnv_setDefaultName(const char *name);
+#endif  /* U_HIDE_SYSTEM_API */
 
 /**
  * Fixes the backslash character mismapping.  For example, in SJIS, the backslash
@@ -1888,34 +1958,7 @@ ucnv_usesFallback(const UConverter *cnv);
  * instead of the input signature bytes.
  * <p>
  * Usage:
- * @code
- *      UErrorCode err = U_ZERO_ERROR;
- *      char input[] = { '\xEF','\xBB', '\xBF','\x41','\x42','\x43' };
- *      int32_t signatureLength = 0;
- *      char *encoding = ucnv_detectUnicodeSignature(input,sizeof(input),&signatureLength,&err);
- *      UConverter *conv = NULL;
- *      UChar output[100];
- *      UChar *target = output, *out;
- *      char *source = input;
- *      if(encoding!=NULL && U_SUCCESS(err)){
- *          // should signature be discarded ?
- *          conv = ucnv_open(encoding, &err);
- *          // do the conversion
- *          ucnv_toUnicode(conv,
- *                         target, output + sizeof(output)/U_SIZEOF_UCHAR,
- *                         source, input + sizeof(input),
- *                         NULL, TRUE, &err);
- *          out = output;
- *          if (discardSignature){
- *              ++out; // ignore initial U+FEFF
- *          }
- *          while(out != target) {
- *              printf("%04x ", *out++);
- *          }
- *          puts("");
- *      }
- *
- * @endcode
+ * \snippet samples/ucnv/convsamp.cpp ucnv_detectUnicodeSignature
  *
  * @param source            The source string in which the signature should be detected.
  * @param sourceLength      Length of the input string, or -1 if terminated with a NUL byte.
@@ -1960,6 +2003,24 @@ ucnv_fromUCountPending(const UConverter* cnv, UErrorCode* status);
  */
 U_STABLE int32_t U_EXPORT2
 ucnv_toUCountPending(const UConverter* cnv, UErrorCode* status);
+
+/**
+ * Returns whether or not the charset of the converter has a fixed number of bytes
+ * per charset character.
+ * An example of this are converters that are of the type UCNV_SBCS or UCNV_DBCS.
+ * Another example is UTF-32 which is always 4 bytes per character.
+ * A Unicode code point may be represented by more than one UTF-8 or UTF-16 code unit
+ * but a UTF-32 converter encodes each code point with 4 bytes.
+ * Note: This method is not intended to be used to determine whether the charset has a
+ * fixed ratio of bytes to Unicode codes <i>units</i> for any particular Unicode encoding form.
+ * FALSE is returned with the UErrorCode if error occurs or cnv is NULL.
+ * @param cnv       The converter to be tested
+ * @param status    ICU error code in/out paramter
+ * @return TRUE if the converter is fixed-width
+ * @stable ICU 4.8
+ */
+U_STABLE UBool U_EXPORT2
+ucnv_isFixedWidth(UConverter *cnv, UErrorCode *status);
 
 #endif
 

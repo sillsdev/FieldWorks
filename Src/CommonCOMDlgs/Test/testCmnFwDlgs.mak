@@ -97,4 +97,4 @@ $(INT_DIR)\genpch\Collection.obj: $(COMDLGSTEST_SRC)\Collection.cpp
 $(COMDLGSTEST_SRC)\Collection.cpp: $(COMDLGSTEST_SRC)\testCmnFwDlgs.h\
  $(COMDLGSTEST_SRC)\TestFwStylesDlg.h
 	$(DISPLAY) Collecting tests for $(BUILD_PRODUCT).$(BUILD_EXTENSION)
-	$(COLLECT) $** >$(COMDLGSTEST_SRC)\Collection.cpp
+	$(COLLECT) $** $(COMDLGSTEST_SRC)\Collection.cpp

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Randy Regnier (SIL International) -->
 <window label="FieldWorks Language Explorer" settingsId="Language Explorer">
 
@@ -30,7 +30,10 @@
 	<commands>
 		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O"/>
 		<command id="CmdSave" label="_Save" message="SaveLangProject" icon="SaveProject" shortcut="Ctrl+S"/>
-		<command id="CmdLiftBridge" label="Send/Receive LIFT" message="LiftBridge" />
+		<command id="CmdLiftBridge" label="_Lexicon (with programs that use LIFT)..." message="LiftBridge" />
+		<command id="CmdFLExBridge" label="_Project (with other FLEx users)..." message="FLExBridge" />
+		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" />
+		<command id="CmdShowConflictReport" label="Conflict Report" message="ShowConflictReport" />
 		<command id="CmdClose" label="_Close" message="CloseWindow"/>
 		<command id="CmdFirstRecord" label="_First" icon="firstRecord" message="FirstRecord"/>
 		<command id="CmdDeleteRecord" label="_Delete {0}..." message="DeleteRecord" icon="Delete" shortcut="Ctrl+Del"/>
@@ -53,11 +56,7 @@
 			<parameters title="FieldWorks Project Utilities" filename="Language Explorer/Configuration/UtilityCatalogInclude.xml"/>
 		</command>
 		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
-		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="LaunchConnectedDialog">
-			<parameters>
-				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LexImportWizard"/>
-			</parameters>
-		</command>
+		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
 		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
 			<parameters>
 				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.DataNotebook.NotebookImportWiz"/>
@@ -73,6 +72,11 @@
 				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearSfmImportWizard"/>
 			</parameters>
 		</command>
+	<command id="CmdImportWordsAndGlossesSfm" label="Standard Format W_ords and Glosses..." message="LaunchConnectedDialog">
+	  <parameters>
+		<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.WordsSfmImportWizard"/>
+	  </parameters>
+	</command>
 		<command id="CmdImportInterlinearData" label="FLExText Interl_inear..." message="LaunchConnectedDialog">
 			<parameters>
 				<dynamicloaderinfo assemblyPath="ITextDll.dll" class="SIL.FieldWorks.IText.InterlinearImportDlg"/>
@@ -121,6 +125,7 @@
 		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
 		<command id="CmdHelpAbout" label="_About Language Explorer..." message="HelpAbout"/>
+		<command id="CmdHelpAboutFLEXBridge" label="About FLEx Bridge..." icon="syncSendReceive" message="AboutFlexBridge"/>
 		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
 		<command id="CmdHelpDemoMovies" label="_Demo Movies..." message="HelpDemoMovies"/>
 		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem"/>
@@ -274,7 +279,7 @@
 		<command id="CmdHelpDemoMinor" label="_Minor entry (variant)" message="HelpDemoMovies">
 			<parameters file="12-minor"/>
 		</command>
-		<command id="CmdHelpDemoCategorized" label="_Categorized entry" message="HelpDemoMovies">
+		<command id="CmdHelpDemoCategorized" label="_Collect Words" message="HelpDemoMovies">
 			<parameters file="13-categorized"/>
 		</command>
 		<command id="CmdHelpDemoBulkList" label="_Bulk Edit (list choice)" message="HelpDemoMovies">
@@ -299,7 +304,39 @@
 			<parameters file="Play_all"/>
 		</command>
 		<command id="CmdAddToLexicon" label="Add to Dictionary..." message="AddToLexicon" icon="majorEntry"/>
-	</commands>
+		<!-- F1 is omitted because used for Help-->
+		<command id="CmdMacroF2" label="F2" message="Macro" shortcut="F2">
+			<parameters key="2"/>
+		</command>
+		<command id="CmdMacroF3" label="F3" message="Macro" shortcut="F3">
+			<parameters key="3"/>
+		</command>
+		<command id="CmdMacroF4" label="F4" message="Macro" shortcut="F4">
+			<parameters key="4"/>
+		</command>
+		<!-- F5 is omitted because used for Refresh-->
+		<command id="CmdMacroF6" label="F6" message="Macro" shortcut="F6">
+			<parameters key="6"/>
+		</command>
+		<command id="CmdMacroF7" label="F7" message="Macro" shortcut="F7">
+			<parameters key="7"/>
+		</command>
+		<command id="CmdMacroF8" label="F8" message="Macro" shortcut="F8">
+			<parameters key="8"/>
+		</command>
+		<command id="CmdMacroF9" label="F9" message="Macro" shortcut="F9">
+			<parameters key="9"/>
+		</command>
+		<command id="CmdMacroF10" label="F10" message="Macro" shortcut="F10">
+			<parameters key="10"/>
+		</command>
+		<command id="CmdMacroF11" label="F11" message="Macro" shortcut="F11">
+			<parameters key="11"/>
+		</command>
+		<command id="CmdMacroF12" label="F12" message="Macro" shortcut="F12">
+			<parameters key="12"/>
+		</command>
+  </commands>
 	<!-- ********************************************************** -->
 	<!-- ************************ lists *********************** -->
 	<!-- ********************************************************** -->
@@ -422,14 +459,18 @@
 				<item command="CmdImportLinguaLinksData"/>
 				<item command="CmdImportLiftData"/>
 				<item command="CmdImportInterlinearSfm"/>
+				<item command="CmdImportWordsAndGlossesSfm"/>
 				<item command="CmdImportInterlinearData"/>
 				<item command="CmdImportSFMNotebook"/>
 				<item command="CmdImportTranslatedLists"/>
 				<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Import']/*"/>
 			</menu>
 			<item command="CmdExport"/>
-			<item command="CmdLiftBridge" />
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>
+			<menu id="SendReceive" icon="syncSendReceive" label="_Send/Receive">
+				<item command="CmdFLExBridge" />
+				<item command="CmdLiftBridge" />
+			</menu>
 			<!--item command="CmdSynch"/-->
 			<!-- needs more work to implement. -->
 			<item label="-" translate="do not translate"/>
@@ -474,19 +515,15 @@
 			<menu label="_Notebook" list="NotebookToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 			<menu label="Li_sts" list="ListsToolsList" behavior="singlePropertyAtomicValue" property="currentContentControl"/>
 			<item label="Invisible Spaces" boolProperty="ShowInvisibleSpaces" defaultVisible="false" settingsGroup="local"/>
+			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<item label="-" translate="do not translate"/>
 			<menu id="FilterChoices" label="_Filters" list="FiltersList" behavior="singlePropertyAtomicValue" property="currentFilterForRecordClerk_THISCHANGES" settingsGroup="local"/>
-			<!-- WANTPORT JohnT: these did little useful even in 6.0, apparently place-holders for unimplemented features. See FWR-657.
-			<menu id="ViewChoices" list="ListViews" b4InsertMenu="true" inline="true"/>
-WANTPORT -->
-			<!-- Too many bug possibilities, so put this off: <item label="_Sidebar" boolProperty="ShowSidebar"/>  -->
-			<!-- <item label="_Record List" boolProperty="ShowTreeBar" /> -->
-			<include path="Lexicon/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Notebook/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Lists/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
 			<include path="Grammar/areaConfiguration.xml" query="root/menuAddOn/menu[@id='View']/*"/>
-			<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='View']/*"/>
+			<item label="-" translate="do not translate"/>
+			<item command="CmdShowConflictReport" defaultVisible="false"/>
 		</menu>
 
 		<!--<menu id="Areas" label="_Areas" list="AreasList" behavior="singlePropertyAtomicValue"
@@ -563,6 +600,16 @@ WANTPORT -->
 			<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Tools']/*"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdToolsOptions"/>
+			<item command="CmdMacroF2" defaultVisible="false"/>
+			<item command="CmdMacroF3" defaultVisible="false"/>
+			<item command="CmdMacroF4" defaultVisible="false"/>
+			<item command="CmdMacroF6" defaultVisible="false"/>
+			<item command="CmdMacroF7" defaultVisible="false"/>
+			<item command="CmdMacroF8" defaultVisible="false"/>
+			<item command="CmdMacroF9" defaultVisible="false"/>
+			<item command="CmdMacroF10" defaultVisible="false"/>
+			<item command="CmdMacroF11" defaultVisible="false"/>
+			<item command="CmdMacroF12" defaultVisible="false"/>
 		</menu>
 
 		<include path="Lexicon/areaConfiguration.xml" query="root/menubar/*"/>
@@ -599,6 +646,7 @@ WANTPORT -->
 			<item command="CmdHelpMakeSuggestion"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdHelpAbout"/>
+			<item command="CmdHelpAboutFLEXBridge"/>
 		</menu>
 	</menubar>
 	<!-- ********************************************************** -->
@@ -820,6 +868,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			<item command="CmdPreviousRecord"/>
 			<item command="CmdNextRecord"/>
 			<item command="CmdLastRecord"/>
+			<item command="CmdFLExLiftBridge"/>
 		</toolbar>
 	</toolbars>
 	<!-- ********************************************************** -->
@@ -847,7 +896,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallImages" size="small" labels="BrowseView, EditView, DocumentView, NoFilter, SimpleFilter, DefaultSort, GenericTool, Delete, SpecialCharacter, ExternalLink, SideBySideView"/>
 		<imageList assemblyPath="xWorks.dll" class=" SIL.FieldWorks.XWorks.ImageHolder" field="smallCommandImages" size="small" labels="NewProject, OpenProject, SaveProject, historyBack, historyForward, Refresh, MenuWidget, Undo, Redo, Cut, Copy, Paste, MoveUp, MoveRight, MoveDown, MoveLeft, columnChooser"/>
 		<imageList assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LexEntryImages" field="buttonImages" size="small" labels="majorEntry, minorEntry, subentry, goToEntry, reversalEntry, gotoReversalEntry"/>
-		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord"/>
+		<imageList assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.RecordClerkImages" field="buttonImages" size="small" labels="firstRecord, lastRecord, previousRecord, nextRecord, syncSendReceive"/>
 		<imageList assemblyPath="DetailControls.dll" class="SIL.FieldWorks.Common.Framework.DetailControls.DataTreeImages" field="nodeImages" size="small" labels="sequence, collection, atomic"/>
 		<imageList assemblyPath="LexTextDll.dll" class=" SIL.FieldWorks.XWorks.LexText.ImageHolder" field="smallImages" size="small" labels="Pie, Circle, TwoHalfs, Help, Delete, Remove, Left, Right"/>
 		<imageList assemblyPath="LexTextDll.dll" class=" SIL.FieldWorks.XWorks.LexText.ImageHolder" field="smallCommandImages" size="small" labels="findWordform, addNewAnalysis"/>
@@ -875,7 +924,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<!-- this guy watches what the 'areas' list puts in the 'areaChoice' property and
 			populates the "tools" list appropriately. -->
 		<listener assemblyPath="LexTextDll.dll" class="SIL.FieldWorks.XWorks.LexText.AreaListener"/>
-		<listener assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.LiftBridgeListener"/>
+		<listener assemblyPath="LexEdDll.dll" class="SIL.FieldWorks.XWorks.LexEd.FLExBridgeListener"/>
 		<!-- take care of the writing system combo box -->
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.WritingSystemListHandler"/>
 		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.CombinedStylesListHandler"/>
@@ -883,6 +932,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<listener assemblyPath="FlexUIAdapter.dll" class="XCore.ContextHelper">
 			<parameters contextHelpPath="ContextHelp.xml"/>
 		</listener>
+		<listener assemblyPath="xWorks.dll" class="SIL.FieldWorks.XWorks.MacroListener"/>
 		<!--<listener assemblyPath="xCore.dll" class="XCore.ProgressListener" />-->
 	</listeners>
 	<!-- ********************************************************** -->

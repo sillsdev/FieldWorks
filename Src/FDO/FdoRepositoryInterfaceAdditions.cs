@@ -14,9 +14,8 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Xml;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.Utils;
 using SIL.FieldWorks.FDO.DomainServices;
 
 namespace SIL.FieldWorks.FDO
@@ -99,6 +98,67 @@ namespace SIL.FieldWorks.FDO
 	/// </summary>
 	public interface IAnalysisRepository : IRepository<IAnalysis>
 	{
+	}
+
+	/// <summary>
+	/// Additions to the Semantic Domain Repository to handle searches
+	/// </summary>
+	public partial interface ICmSemanticDomainRepository
+	{
+		/// <summary>
+		/// Finds all the semantic domains that contain 'searchString' in their text fields.
+		/// Semantic Domains typically have:
+		///   Abbreviation (a hierarchical number, e.g. "8.3.3")
+		///   Name (e.g. "Light")
+		///   Description (e.g. "Use this domain for words related to light.")
+		///   OCM codes and Louw and Nida codes
+		///   Questions (e.g. "(1) What words refer to light?")
+		///   Example Words (e.g. "light, sunshine, gleam (n), glare (n), glow (n), radiance,")
+		/// Search strings beginning with numbers will search Abbreviation only and only match at the beginning.
+		///   (so searching for "3.3" won't return "8.3.3")
+		/// Search strings beginning with alphabetic chars will search Name and Example Words.
+		/// For alphabetic searches, hits will be returned in the following order:
+		///   1) Name begins with search string
+		///   2) Name or Example Words contain words (bounded by whitespace) that match the search string
+		///   3) Name or Example Words contain words that begin with the search string
+		///
+		/// N.B.: This method looks for matches in the BestAnalysisAlternative.
+		/// This ought to match what is displayed in the UI, so if the UI doesn't use
+		/// BestAnalysisAlternative one of them needs to be changed.
+		/// </summary>
+		/// <param name="searchString"></param>
+		/// <returns></returns>
+		IEnumerable<ICmSemanticDomain> FindDomainsThatMatch(string searchString);
+
+		/// <summary>
+		/// Takes the gloss, a short definition (if only one or two words), and reversal from a LexSense
+		/// and uses those words as search keys to find Semantic Domains that have one of those words in
+		/// their Name or ExampleWords fields.
+		///
+		/// N.B.: This method looks for matches in the BestAnalysisAlternative writing system.
+		/// This ought to match what is displayed in the UI, so if the UI doesn't use
+		/// BestAnalysisAlternative one of them needs to be changed.
+		/// </summary>
+		/// <param name="sense"></param>
+		/// <returns></returns>
+		IEnumerable<ICmSemanticDomain> FindDomainsThatMatchWordsIn(ILexSense sense);
+
+		/// <summary>
+		/// Takes the gloss, a short definition (if only one or two words), and reversal from a LexSense
+		/// and uses those words as search keys to find Semantic Domains that have one of those words in
+		/// their Name or Example Words fields.
+		/// In addition, this method returns additional partial matches in the 'out' parameter where one
+		/// of the search keys matches the beginning of one of the words in the domain's Name or Example
+		/// Words fields.
+		///
+		/// N.B.: This method looks for matches in the BestAnalysisAlternative writing system.
+		/// This ought to match what is displayed in the UI, so if the UI doesn't use
+		/// BestAnalysisAlternative one of them needs to be changed.
+		/// </summary>
+		/// <param name="sense">A LexSense</param>
+		/// <param name="partialMatches">extra partial matches</param>
+		/// <returns></returns>
+		IEnumerable<ICmSemanticDomain> FindDomainsThatMatchWordsIn(ILexSense sense, out IEnumerable<ICmSemanticDomain> partialMatches);
 	}
 
 	public partial interface IConstChartMovedTextMarkerRepository
@@ -334,6 +394,11 @@ namespace SIL.FieldWorks.FDO
 		IEnumerable<ILexEntry> GetVariantFormEntries(ICmObject mainEntryOrSense);
 
 		/// <summary>
+		/// Clear the list of homograph information
+		/// </summary>
+		void ResetHomographs(ProgressBar progressBar);
+
+		/// <summary>
 		/// Return a list of all the homographs of the specified form.
 		/// </summary>
 		List<ILexEntry> GetHomographs(string sForm);
@@ -361,7 +426,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Collect all the homographs of the given form from the given list of entries.  If fMatchLexForms
 		/// is true, then match against lexeme forms even if citation forms exist.  (This behavior is needed
-		/// to fix LT-6024 for categorized entry.)
+		/// to fix LT-6024 for categorized entry [now called Collect Words].)
 		/// </summary>
 		List<ILexEntry> CollectHomographs(string sForm, int hvo, List<ILexEntry> entries,
 			IMoMorphType morphType, bool fMatchLexForms);

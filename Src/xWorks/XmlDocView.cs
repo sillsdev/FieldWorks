@@ -14,10 +14,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -239,16 +241,28 @@ namespace SIL.FieldWorks.XWorks
 			return sda as DictionaryPublicationDecorator;
 		}
 
-		// Return CmPossibility if any alternative matches SelectedPublication or first one.
+		// Return CmPossibility if any alternative matches SelectedPublication.
+		// If we don't have any record of what publication is selected (typically, first-time startup),
+		// pick the first one as a default.
+		// If the selected one is not found (typically it is $$all_entries$$), or there are none (pathological), return null.
 		ICmPossibility Publication
 		{
 			get
 			{
-				var pubName = GetSelectedPublication();
+				// We don't want to use GetSelectedPublication here because it supplies a default,
+				// and we want to treat that case specially.
+				var pubName = m_mediator.PropertyTable.GetStringProperty("SelectedPublication", null);
+				if (pubName == null)
+				{
+					if (Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Count > 0)
+						return Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
+					else
+						return null;
+				}
 				var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
 					where IsDesiredPublication(item, pubName)
 						   select item).FirstOrDefault();
-				return pub != null ? pub : Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
+				return pub;
 			}
 		}
 
@@ -391,6 +405,31 @@ namespace SIL.FieldWorks.XWorks
 			if (sFmt != null)
 			{
 				titleStr = String.Format(sFmt, titleStr);
+			}
+
+			// If we find that the title is something like ClassifiedDictionary ({SelectedPublication})
+			// replace the {} with the name of the selected publication.
+			// Enhance: by removing the Debug.Fail, this could be made to insert the value of any
+			// property in the mediator's property table.
+			var propertyFinder = new Regex(@"\{([^\}]+)\}");
+			var match = propertyFinder.Match(titleStr);
+			if (match.Success)
+			{
+				string replacement;
+				if (match.Groups[1].Value == "SelectedPublication")
+				{
+					replacement = GetSelectedPublication();
+					if (replacement == kallEntriesSelectedPublicationValue)
+						replacement = xWorksStrings.ksAllEntries;
+				}
+				else
+				{
+					Debug.Fail(@"Unexpected <> value in title string: " + match.Groups[0].Value);
+					// This might be useful one day?
+					replacement = m_mediator.PropertyTable.GetStringProperty(match.Groups[0].Value, null);
+				}
+				if (replacement != null)
+					titleStr = propertyFinder.Replace(titleStr, replacement);
 			}
 
 			// if we haven't already set the text through the base,
@@ -589,6 +628,8 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="ToolStripMenuItem gets added to m_contextMenu.Items; ContextMenuStrip is disposed in DisposeContextMenu()")]
 		protected override void OnMouseClick(MouseEventArgs e)
 		{
 			if ((ModifierKeys & Keys.Control) == Keys.Control)
@@ -922,6 +963,8 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void GiveSimpleWarning(ExclusionReasonCode xrc)
 		{
 			// Tell the user why we aren't jumping to his record
@@ -950,6 +993,7 @@ namespace SIL.FieldWorks.XWorks
 					throw new ArgumentException("Unknown ExclusionReasonCode");
 			}
 			msg = String.Format(msg, reason);
+			// TODO-Linux: Help is not implemented on Mono
 			MessageBox.Show(FindForm(), msg, caption, MessageBoxButtons.OK,
 							MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, 0,
 							m_mediator.HelpTopicProvider.HelpFile,

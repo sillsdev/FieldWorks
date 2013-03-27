@@ -11,6 +11,7 @@
 // File: StringUtilsTests.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 
 namespace SIL.Utils
@@ -44,6 +45,8 @@ namespace SIL.Utils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification="Unit test")]
 		public void TestFilterForFileName()
 		{
 			Assert.AreEqual("My__File__Dude_____.'[];funny()___",

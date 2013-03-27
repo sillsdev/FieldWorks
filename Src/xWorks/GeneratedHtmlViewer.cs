@@ -17,6 +17,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using XCore;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Widgets;
@@ -164,17 +166,21 @@ namespace SIL.FieldWorks.XWorks
 			get { return Path.Combine(UtilityHtmlPath, "InitialDocument.htm"); }
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		private RegistryKey RegistryKey
 		{
 			get
 			{
 				Debug.Assert(Cache != null);
 				Debug.Assert(m_sRegKeyName != null);
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("GeneratedHtmlViewer\\" +
-					Cache.ProjectId.Name + "\\" + m_sRegKeyName);
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					return regKey.CreateSubKey("GeneratedHtmlViewer\\" +
+						Cache.ProjectId.Name + "\\" + m_sRegKeyName);
+				}
 			}
 		}
-
 
 		/// <summary>
 		/// FDO cache.
@@ -342,11 +348,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public bool OnSaveAsWebpage(object parameterObj)
 		{
-			var param = parameterObj as Tuple<string, string>;
+			var param = parameterObj as Tuple<string, string, string>;
 			if (param == null)
 				return false; // we sure can't handle it; should we throw?
 			string whatToSave = param.Item1;
 			string outPath = param.Item2;
+			string sXsltFiles = param.Item3;
 			string directory = Path.GetDirectoryName(outPath);
 			if (!Directory.Exists(directory))
 			{
@@ -358,7 +365,23 @@ namespace SIL.FieldWorks.XWorks
 					case "GrammarSketchXLingPaper":
 							if (File.Exists(m_sAlsoSaveFileName))
 							{
-								CopyFile(m_sAlsoSaveFileName, outPath);
+								string sInputFile = m_sAlsoSaveFileName;
+								if (!string.IsNullOrEmpty(sXsltFiles))
+								{
+									string sNewFileName = Path.GetFileNameWithoutExtension(outPath);
+									string sTempFileName = Path.Combine(Path.GetTempPath(), sNewFileName);
+									string sOutputFile = sTempFileName;
+									XmlUtils.XSLParameter[] parameterList = null;
+									string[] rgsXslts = sXsltFiles.Split(new[] { ';' });
+									int cXslts = rgsXslts.GetLength(0);
+									for (int ix = 0; ix < cXslts; ++ix)
+									{
+											sOutputFile = sOutputFile + (ix + 1);
+											XmlUtils.TransformFileToFile(Path.Combine(TransformPath, rgsXslts[ix]), parameterList, sInputFile, sOutputFile + ".xml");
+											sInputFile = sOutputFile + ".xml";
+									}
+								}
+								CopyFile(sInputFile, outPath);
 								return true;
 							}
 						break;
@@ -392,7 +415,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (File.Exists(m_sHtmlFileName))
 			{
-				using (var dlg = new SaveFileDialog())
+				using (var dlg = new SaveFileDialogAdapter())
 				{
 					InitSaveAsWebpageDialog(dlg);
 					if (dlg.ShowDialog() == DialogResult.OK)
@@ -428,7 +451,7 @@ namespace SIL.FieldWorks.XWorks
 				File.SetAttributes(dlgFileName, FileAttributes.Normal);
 		}
 
-		private void DoAlsoSaveAs(SaveFileDialog dlg)
+		private void DoAlsoSaveAs(ISaveFileDialog dlg)
 		{
 			string sAlsoSaveFile = Path.ChangeExtension(dlg.FileName, "xml");
 			RemoveWriteProtection(sAlsoSaveFile);
@@ -465,7 +488,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void InitAlsoSaveDialog(SaveFileDialog dlg)
+		private void InitAlsoSaveDialog(ISaveFileDialog dlg)
 		{
 			dlg.InitialDirectory = Path.GetDirectoryName(dlg.FileName);
 			dlg.Filter = ResourceHelper.FileFilter(FileFilterType.XML);
@@ -473,7 +496,7 @@ namespace SIL.FieldWorks.XWorks
 			dlg.FileName = Path.GetFileNameWithoutExtension(dlg.FileName);
 		}
 
-		private void InitSaveAsWebpageDialog(SaveFileDialog dlg)
+		private void InitSaveAsWebpageDialog(ISaveFileDialog dlg)
 		{
 			dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 			dlg.FileName =  m_mediator.StringTbl.GetString(m_sFileNameKey, m_sStringsPath);

@@ -11,6 +11,7 @@ Last reviewed:
 	Global initialization/cleanup for unit testing the FwKernel DLL classes.
 -------------------------------------------------------------------------------*//*:End Ignore*/
 #include "testFwKernel.h"
+#include "RedirectHKCU.h"
 
 // NOTE: namespace has to be unitpp, otherwise unit++ won't recognize setup/teardown
 // methods
@@ -18,13 +19,18 @@ namespace unitpp
 {
 	void GlobalSetup(bool verbose)
 	{
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_ATTACH);
+#endif
 		CoInitialize(NULL);
+		RedirectRegistry();
 		StrUtil::InitIcuDataDir();
 	}
 	void GlobalTeardown()
 	{
+#ifdef WIN32
 		ModuleEntry::DllMain(0, DLL_PROCESS_DETACH);
+#endif
 		CoUninitialize();
 	}
 }

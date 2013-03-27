@@ -2,243 +2,243 @@
 <word>
   <form>nihinlikximura</form>
   <seq step="Try to build a Stem node on a root.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </stem>
+    <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<partial syncat="73" syncatAbbr="adv">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'adv'.</failure>
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </stem>
+    <partial syncat="73" syncatAbbr="adv">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'adv'.</failure>
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to build a Stem node on a root.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<partial syncat="167" syncatAbbr="trans">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'trans'.</failure>
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</partial>
-	<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <partial syncat="167" syncatAbbr="trans">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'trans'.</failure>
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </partial>
+    <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<partial syncat="167" syncatAbbr="trans">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'trans'.</failure>
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</partial>
-	<partial syncat="73" syncatAbbr="adv">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'adv'.</failure>
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <partial syncat="167" syncatAbbr="trans">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'trans'.</failure>
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </partial>
+    <partial syncat="73" syncatAbbr="adv">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'adv'.</failure>
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to build a Stem node on a root.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </stem>
+    <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<partial syncat="167" syncatAbbr="trans">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'trans'.</failure>
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</partial>
-	<stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</stem>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <partial syncat="167" syncatAbbr="trans">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'trans'.</failure>
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </partial>
+    <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </stem>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to build a Stem node on a root.">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<partial syncat="73" syncatAbbr="adv">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'adv'.</failure>
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </stem>
+    <partial syncat="73" syncatAbbr="adv">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'adv'.</failure>
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
-	<morph wordType="180">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <inflMsa slot="180" slotAbbr="Subject" />
-	</morph>
-	<morph wordType="181">
-	  <shortName>hin- (3SgObj): hiN</shortName>
-	  <inflMsa slot="181" slotAbbr="Object" />
-	</morph>
-	<partial syncat="167" syncatAbbr="trans">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'trans'.</failure>
-	  <morph wordType="root">
-		<shortName>lik (to.eat): hinliksa</shortName>
-		<stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</partial>
-	<partial syncat="73" syncatAbbr="adv">
-	  <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'adv'.</failure>
-	  <morph wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
+    <morph wordType="180">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <inflMsa slot="180" slotAbbr="Subject" />
+    </morph>
+    <morph wordType="181">
+      <shortName>hin- (3SgObj): hiN</shortName>
+      <inflMsa slot="181" slotAbbr="Object" />
+    </morph>
+    <partial syncat="167" syncatAbbr="trans">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'trans'.</failure>
+      <morph wordType="root">
+        <shortName>lik (to.eat): hinliksa</shortName>
+        <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </partial>
+    <partial syncat="73" syncatAbbr="adv">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'adv'.</failure>
+      <morph wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
   </seq>
 </word>

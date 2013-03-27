@@ -16,25 +16,23 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics;
-using System.Xml;
-using System.Windows.Forms;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
+using System.Xml;
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.FDO.Infrastructure;
-using XCore;
-using SIL.Utils;
-using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
-using SIL.FieldWorks.LexText.Controls;
-using SIL.FieldWorks.Common.Framework.DetailControls;
-using SIL.FieldWorks.IText;
-using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FdoUi;
+using SIL.FieldWorks.IText;
+using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -214,10 +212,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
 			m_wordformRepos = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			m_cache.DomainDataByFlid.AddNotification(this);
-			if (IsVernacularSpellingEnabled() && !EnchantHelper.DictionaryExists(m_cache.DefaultVernWs, m_cache.WritingSystemFactory))
-			{
-				OnAddWordsToSpellDict(null);
-			}
+			if (IsVernacularSpellingEnabled())
+				OnEnableVernacularSpelling();
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -303,6 +299,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;
 		}
 
+		// currently duplicated in FLExBridgeListener, to avoid an assembly dependency.
 		private bool IsVernacularSpellingEnabled()
 		{
 			return m_mediator.PropertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
@@ -351,10 +348,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			foreach (IWritingSystem wsObj in cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems)
 			{
 				// This allows it to try to find a dictionary, but doesn't force one to exist.
-				if (wsObj.SpellCheckingId == "<None>")
+				if (wsObj.SpellCheckingId == null || wsObj.SpellCheckingId == "<None>") // LT-13556 new langs were null here
 					wsObj.SpellCheckingId = wsObj.Id.Replace('-', '_');
 			}
-			// This forces the default verancular WS spelling dictionary to exist, and updates
+			// This forces the default vernacular WS spelling dictionary to exist, and updates
 			// all existing ones.
 			OnAddWordsToSpellDict(null);
 		}
@@ -532,6 +529,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Returns the object of the current slice, or (if no slice is marked current)
 		/// the object of the first slice, or (if there are no slices, or no data entry form) null.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldAt() returns a reference")]
 		private ICmObject CurrentSliceObject
 		{
 			get

@@ -16,19 +16,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Resources;
-using System.Reflection;
 using System.ComponentModel;
-
 using SIL.CoreImpl;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
-using SIL.FieldWorks.FwCoreDlgs;
 using XCore;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.Common.RootSites;
@@ -299,6 +294,21 @@ namespace SIL.FieldWorks.XWorks.LexText
 			get { return FwSubKey.LexText; }
 		}
 
+		public bool OnDisplaySFMImport(object parameters, ref UIItemDisplayProperties display)
+		{
+			return true;
+		}
+
+		public bool OnSFMImport(object parameters)
+		{
+			Form formActive = ActiveForm;
+			FwXWindow wndActive = formActive as FwXWindow;
+			var importWizard = new LexImportWizard();
+			((IFwExtension)importWizard).Init(Cache, wndActive.Mediator);
+			importWizard.ShowDialog(formActive);
+			return true;
+		}
+
 		/// <summary>
 		/// Display the import commands only while in the appropriate area.
 		/// </summary>
@@ -330,6 +340,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 					fEnabled = area == "lexicon";
 					break;
 				case "CmdImportInterlinearSfm":
+				case "CmdImportWordsAndGlossesSfm":
 				case "CmdImportInterlinearData":
 					if (mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance" || mediator.PropertyTable.GetStringProperty("currentContentControl", null) == "concordance")
 
@@ -533,7 +544,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}Flex Student Manual.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Flex Student Manual.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -548,7 +559,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}FLEx Instructor Guide.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}FLEx Instructor Guide.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -563,7 +574,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}Technical Notes on LinguaLinks Database Import.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on LinguaLinks Database Import.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -578,7 +589,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on Interlinear Import.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -593,7 +604,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.doc",
+				"{0}Helps{0}Language Explorer{0}Training{0}Technical Notes on SFM Database Import.doc",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
@@ -616,7 +627,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
+				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
 				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotShowX, path),
@@ -639,7 +650,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			string fileName = SIL.Utils.XmlUtils.GetManditoryAttributeValue(command.Parameters[0], "file");
 			fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
 			string path = String.Format(DirectoryFinder.FWCodeDirectory +
-				"{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
+				"{0}Helps{0}Language Explorer{0}Training{0}" + fileName, Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
 				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotShowX, path),
@@ -685,7 +696,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 					{
 						// The user has the movie files, but does not have a file association for .html files.
 						// Try to launch Internet Explorer directly:
-						Process.Start("IExplore.exe", pathMovies);
+						using (Process.Start("IExplore.exe", pathMovies))
+						{
+						}
 					}
 					else
 					{
@@ -699,7 +712,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 							{
 								// The user does not have a file association for .html files.
 								// Try to launch Internet Explorer directly:
-								Process.Start("IExplore.exe", pathNoMovies);
+								using (Process.Start("IExplore.exe", pathNoMovies))
+								{
+								}
 							}
 							else
 								throw win32err2;
@@ -936,9 +951,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 			try
 			{
 				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
-					Process.Start(webBrowserProgramLinux, Enquote(path));
+				{
+					using (Process.Start(webBrowserProgramLinux, Enquote(path)))
+					{
+					}
+				}
 				else
-					Process.Start(path);
+				{
+					using (Process.Start(path))
+					{
+					}
+				}
 			}
 			catch (T e)
 			{

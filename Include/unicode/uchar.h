@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1997-2008, International Business Machines
+*   Copyright (C) 1997-2012, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -39,7 +39,7 @@ U_CDECL_BEGIN
  * @see u_getUnicodeVersion
  * @stable ICU 2.0
  */
-#define U_UNICODE_VERSION "5.1"
+#define U_UNICODE_VERSION "6.2"
 
 /**
  * \file
@@ -139,19 +139,6 @@ U_CDECL_BEGIN
  */
 #define U_MASK(x) ((uint32_t)1<<(x))
 
-/*
- * !! Note: Several comments in this file are machine-read by the
- * genpname tool.  These comments describe the correspondence between
- * icu enum constants and UCD entities.  Do not delete them.  Update
- * these comments as needed.
- *
- * Any comment of the form "/ *[name]* /" (spaces added) is such
- * a comment.
- *
- * The U_JG_* and U_GC_*_MASK constants are matched by their symbolic
- * name, which must match PropertyValueAliases.txt.
- */
-
 /**
  * Selection constants for Unicode properties.
  * These constants are used in functions like u_hasBinaryProperty to select
@@ -172,9 +159,11 @@ U_CDECL_BEGIN
  * @stable ICU 2.1
  */
 typedef enum UProperty {
-	/*  See note !!.  Comments of the form "Binary property Dash",
-		"Enumerated property Script", "Double property Numeric_Value",
-		and "String property Age" are read by genpname. */
+	/*
+	 * Note: UProperty constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     UCHAR_<Unicode property name>=<integer>,
+	 */
 
 	/*  Note: Place UCHAR_ALPHABETIC before UCHAR_BINARY_START so that
 	debuggers display UCHAR_ALPHABETIC as the symbolic name for 0,
@@ -321,51 +310,29 @@ typedef enum UProperty {
 	/** Binary property NFD_Inert.
 		ICU-specific property for characters that are inert under NFD,
 		i.e., they do not interact with adjacent characters.
-		Used for example in normalizing transforms in incremental mode
-		to find the boundary of safely normalizable text despite possible
-		text additions.
-
-		There is one such property per normalization form.
-		These properties are computed as follows - an inert character is:
-		a) unassigned, or ALL of the following:
-		b) of combining class 0.
-		c) not decomposed by this normalization form.
-		AND if NFC or NFKC,
-		d) can never compose with a previous character.
-		e) can never compose with a following character.
-		f) can never change if another character is added.
-		   Example: a-breve might satisfy all but f, but if you
-		   add an ogonek it changes to a-ogonek + breve
-
-		See also com.ibm.text.UCD.NFSkippable in the ICU4J repository,
-		and icu/source/common/unormimp.h .
+		See the documentation for the Normalizer2 class and the
+		Normalizer2::isInert() method.
 		@stable ICU 3.0 */
 	UCHAR_NFD_INERT=37,
 	/** Binary property NFKD_Inert.
 		ICU-specific property for characters that are inert under NFKD,
 		i.e., they do not interact with adjacent characters.
-		Used for example in normalizing transforms in incremental mode
-		to find the boundary of safely normalizable text despite possible
-		text additions.
-		@see UCHAR_NFD_INERT
+		See the documentation for the Normalizer2 class and the
+		Normalizer2::isInert() method.
 		@stable ICU 3.0 */
 	UCHAR_NFKD_INERT=38,
 	/** Binary property NFC_Inert.
 		ICU-specific property for characters that are inert under NFC,
 		i.e., they do not interact with adjacent characters.
-		Used for example in normalizing transforms in incremental mode
-		to find the boundary of safely normalizable text despite possible
-		text additions.
-		@see UCHAR_NFD_INERT
+		See the documentation for the Normalizer2 class and the
+		Normalizer2::isInert() method.
 		@stable ICU 3.0 */
 	UCHAR_NFC_INERT=39,
 	/** Binary property NFKC_Inert.
 		ICU-specific property for characters that are inert under NFKC,
 		i.e., they do not interact with adjacent characters.
-		Used for example in normalizing transforms in incremental mode
-		to find the boundary of safely normalizable text despite possible
-		text additions.
-		@see UCHAR_NFD_INERT
+		See the documentation for the Normalizer2 class and the
+		Normalizer2::isInert() method.
 		@stable ICU 3.0 */
 	UCHAR_NFKC_INERT=40,
 	/** Binary Property Segment_Starter.
@@ -373,7 +340,7 @@ typedef enum UProperty {
 		Unicode normalization and combining character sequences.
 		They have ccc=0 and do not occur in non-initial position of the
 		canonical decomposition of any character
-		(like " in NFD(a-umlaut) and a Jamo T in an NFD(Hangul LVT)).
+		(like a-umlaut in NFD and a Jamo T in an NFD(Hangul LVT)).
 		ICU uses this property for segmenting a string for generating a set of
 		canonically equivalent strings, e.g. for canonical closure while
 		processing collation tailoring rules.
@@ -414,8 +381,24 @@ typedef enum UProperty {
 		See the uchar.h file documentation.
 		@stable ICU 3.4 */
 	UCHAR_POSIX_XDIGIT=48,
+	/** Binary property Cased. For Lowercase, Uppercase and Titlecase characters. @stable ICU 4.4 */
+	UCHAR_CASED=49,
+	/** Binary property Case_Ignorable. Used in context-sensitive case mappings. @stable ICU 4.4 */
+	UCHAR_CASE_IGNORABLE=50,
+	/** Binary property Changes_When_Lowercased. @stable ICU 4.4 */
+	UCHAR_CHANGES_WHEN_LOWERCASED=51,
+	/** Binary property Changes_When_Uppercased. @stable ICU 4.4 */
+	UCHAR_CHANGES_WHEN_UPPERCASED=52,
+	/** Binary property Changes_When_Titlecased. @stable ICU 4.4 */
+	UCHAR_CHANGES_WHEN_TITLECASED=53,
+	/** Binary property Changes_When_Casefolded. @stable ICU 4.4 */
+	UCHAR_CHANGES_WHEN_CASEFOLDED=54,
+	/** Binary property Changes_When_Casemapped. @stable ICU 4.4 */
+	UCHAR_CHANGES_WHEN_CASEMAPPED=55,
+	/** Binary property Changes_When_NFKC_Casefolded. @stable ICU 4.4 */
+	UCHAR_CHANGES_WHEN_NFKC_CASEFOLDED=56,
 	/** One more than the last constant for binary Unicode properties. @stable ICU 2.1 */
-	UCHAR_BINARY_LIMIT=49,
+	UCHAR_BINARY_LIMIT=57,
 
 	/** Enumerated property Bidi_Class.
 		Same as u_charDirection, returns UCharDirection values. @stable ICU 2.2 */
@@ -533,8 +516,8 @@ typedef enum UProperty {
 	/** String property Case_Folding.
 		Corresponds to u_strFoldCase in ustring.h. @stable ICU 2.4 */
 	UCHAR_CASE_FOLDING=0x4002,
-	/** String property ISO_Comment.
-		Corresponds to u_getISOComment. @stable ICU 2.4 */
+	/** Deprecated string property ISO_Comment.
+		Corresponds to u_getISOComment. @deprecated ICU 49 */
 	UCHAR_ISO_COMMENT=0x4003,
 	/** String property Lowercase_Mapping.
 		Corresponds to u_strToLower in ustring.h. @stable ICU 2.4 */
@@ -558,14 +541,28 @@ typedef enum UProperty {
 		Corresponds to u_strToTitle in ustring.h. @stable ICU 2.4 */
 	UCHAR_TITLECASE_MAPPING=0x400A,
 	/** String property Unicode_1_Name.
-		Corresponds to u_charName. @stable ICU 2.4 */
+		This property is of little practical value.
+		Beginning with ICU 49, ICU APIs return an empty string for this property.
+		Corresponds to u_charName(U_UNICODE_10_CHAR_NAME). @deprecated ICU 49 */
 	UCHAR_UNICODE_1_NAME=0x400B,
 	/** String property Uppercase_Mapping.
 		Corresponds to u_strToUpper in ustring.h. @stable ICU 2.4 */
 	UCHAR_UPPERCASE_MAPPING=0x400C,
 	/** One more than the last constant for string Unicode properties. @stable ICU 2.4 */
 	UCHAR_STRING_LIMIT=0x400D,
-
+	/** Provisional property Script_Extensions (new in Unicode 6.0).
+		As a provisional property, it may be modified or removed
+		in future versions of the Unicode Standard, and thus in ICU.
+		Some characters are commonly used in multiple scripts.
+		For more information, see UAX #24: http://www.unicode.org/reports/tr24/.
+		Corresponds to uscript_hasScript and uscript_getScriptExtensions in uscript.h.
+		@stable ICU 4.6 */
+	UCHAR_SCRIPT_EXTENSIONS=0x7000,
+	/** First constant for Unicode properties with unusual value types. @stable ICU 4.6 */
+	UCHAR_OTHER_PROPERTY_START=UCHAR_SCRIPT_EXTENSIONS,
+	/** One more than the last constant for Unicode properties with unusual value types.
+	 * @stable ICU 4.6 */
+	UCHAR_OTHER_PROPERTY_LIMIT=0x7001,
 	/** Represents a nonexistent or invalid property or property value. @stable ICU 2.4 */
 	UCHAR_INVALID_CODE = -1
 } UProperty;
@@ -577,7 +574,12 @@ typedef enum UProperty {
  */
 typedef enum UCharCategory
 {
-	/** See note !!.  Comments of the form "Cn" are read by genpname. */
+	/*
+	 * Note: UCharCategory constants and their API comments are parsed by preparseucd.py.
+	 * It matches pairs of lines like
+	 *     / ** <Unicode 2-letter General_Category value> comment... * /
+	 *     U_<[A-Z_]+> = <integer>,
+	 */
 
 	/** Non-category for unassigned and non-character code points. @stable ICU 2.0 */
 	U_UNASSIGNED              = 0,
@@ -762,7 +764,12 @@ typedef enum UCharCategory
  * @stable ICU 2.0
  */
 typedef enum UCharDirection {
-	/** See note !!.  Comments of the form "EN" are read by genpname. */
+	/*
+	 * Note: UCharDirection constants and their API comments are parsed by preparseucd.py.
+	 * It matches pairs of lines like
+	 *     / ** <Unicode 1..3-letter Bidi_Class value> comment... * /
+	 *     U_<[A-Z_]+> = <integer>,
+	 */
 
 	/** L @stable ICU 2.0 */
 	U_LEFT_TO_RIGHT               = 0,
@@ -811,12 +818,17 @@ typedef enum UCharDirection {
  * @stable ICU 2.0
  */
 enum UBlockCode {
+	/*
+	 * Note: UBlockCode constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     UBLOCK_<Unicode Block value name> = <integer>,
+	 */
 
 	/** New No_Block value in Unicode 4. @stable ICU 2.6 */
 	UBLOCK_NO_BLOCK = 0, /*[none]*/ /* Special range indicating No_Block */
 
 	/** @stable ICU 2.0 */
-	UBLOCK_BASIC_LATIN = 1, /*[0000]*/ /*See note !!*/
+	UBLOCK_BASIC_LATIN = 1, /*[0000]*/
 
 	/** @stable ICU 2.0 */
 	UBLOCK_LATIN_1_SUPPLEMENT=2, /*[0080]*/
@@ -1053,16 +1065,6 @@ enum UBlockCode {
 	UBLOCK_LOW_SURROGATES =77, /*[DC00]*/
 
 	/**
-	 * Same as UBLOCK_PRIVATE_USE_AREA.
-	 * Until Unicode 3.1.1, the corresponding block name was "Private Use",
-	 * and multiple code point ranges had this block.
-	 * Unicode 3.2 renames the block for the BMP PUA to "Private Use Area" and
-	 * adds separate blocks for the supplementary PUAs.
-	 *
-	 * @stable ICU 2.0
-	 */
-	UBLOCK_PRIVATE_USE = 78,
-	/**
 	 * Same as UBLOCK_PRIVATE_USE.
 	 * Until Unicode 3.1.1, the corresponding block name was "Private Use",
 	 * and multiple code point ranges had this block.
@@ -1071,7 +1073,17 @@ enum UBlockCode {
 	 *
 	 * @stable ICU 2.0
 	 */
-	UBLOCK_PRIVATE_USE_AREA =UBLOCK_PRIVATE_USE, /*[E000]*/
+	UBLOCK_PRIVATE_USE_AREA =78, /*[E000]*/
+	/**
+	 * Same as UBLOCK_PRIVATE_USE_AREA.
+	 * Until Unicode 3.1.1, the corresponding block name was "Private Use",
+	 * and multiple code point ranges had this block.
+	 * Unicode 3.2 renames the block for the BMP PUA to "Private Use Area" and
+	 * adds separate blocks for the supplementary PUAs.
+	 *
+	 * @stable ICU 2.0
+	 */
+	UBLOCK_PRIVATE_USE = UBLOCK_PRIVATE_USE_AREA,
 
 	/** @stable ICU 2.0 */
 	UBLOCK_CJK_COMPATIBILITY_IDEOGRAPHS =79, /*[F900]*/
@@ -1103,33 +1115,33 @@ enum UBlockCode {
 	/* New blocks in Unicode 3.1 */
 
 	/** @stable ICU 2.0 */
-	UBLOCK_OLD_ITALIC = 88  , /*[10300]*/
+	UBLOCK_OLD_ITALIC = 88, /*[10300]*/
 	/** @stable ICU 2.0 */
-	UBLOCK_GOTHIC = 89 , /*[10330]*/
+	UBLOCK_GOTHIC = 89, /*[10330]*/
 	/** @stable ICU 2.0 */
-	UBLOCK_DESERET = 90 , /*[10400]*/
+	UBLOCK_DESERET = 90, /*[10400]*/
 	/** @stable ICU 2.0 */
-	UBLOCK_BYZANTINE_MUSICAL_SYMBOLS = 91 , /*[1D000]*/
+	UBLOCK_BYZANTINE_MUSICAL_SYMBOLS = 91, /*[1D000]*/
 	/** @stable ICU 2.0 */
-	UBLOCK_MUSICAL_SYMBOLS = 92 , /*[1D100]*/
+	UBLOCK_MUSICAL_SYMBOLS = 92, /*[1D100]*/
 	/** @stable ICU 2.0 */
-	UBLOCK_MATHEMATICAL_ALPHANUMERIC_SYMBOLS = 93  , /*[1D400]*/
+	UBLOCK_MATHEMATICAL_ALPHANUMERIC_SYMBOLS = 93, /*[1D400]*/
 	/** @stable ICU 2.0 */
-	UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B  = 94 , /*[20000]*/
+	UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B  = 94, /*[20000]*/
 	/** @stable ICU 2.0 */
-	UBLOCK_CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT = 95 , /*[2F800]*/
+	UBLOCK_CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT = 95, /*[2F800]*/
 	/** @stable ICU 2.0 */
 	UBLOCK_TAGS = 96, /*[E0000]*/
 
 	/* New blocks in Unicode 3.2 */
 
+	/** @stable ICU 3.0  */
+	UBLOCK_CYRILLIC_SUPPLEMENT = 97, /*[0500]*/
 	/**
 	 * Unicode 4.0.1 renames the "Cyrillic Supplementary" block to "Cyrillic Supplement".
 	 * @stable ICU 2.2
 	 */
-	UBLOCK_CYRILLIC_SUPPLEMENTARY = 97,
-	/** @stable ICU 3.0  */
-	UBLOCK_CYRILLIC_SUPPLEMENT = UBLOCK_CYRILLIC_SUPPLEMENTARY, /*[0500]*/
+	UBLOCK_CYRILLIC_SUPPLEMENTARY = UBLOCK_CYRILLIC_SUPPLEMENT,
 	/** @stable ICU 2.2 */
 	UBLOCK_TAGALOG = 98, /*[1700]*/
 	/** @stable ICU 2.2 */
@@ -1256,43 +1268,150 @@ enum UBlockCode {
 
 	/* New blocks in Unicode 5.1 */
 
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_SUNDANESE = 155, /*[1B80]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_LEPCHA = 156, /*[1C00]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_OL_CHIKI = 157, /*[1C50]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_CYRILLIC_EXTENDED_A = 158, /*[2DE0]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_VAI = 159, /*[A500]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_CYRILLIC_EXTENDED_B = 160, /*[A640]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_SAURASHTRA = 161, /*[A880]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_KAYAH_LI = 162, /*[A900]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_REJANG = 163, /*[A930]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_CHAM = 164, /*[AA00]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_ANCIENT_SYMBOLS = 165, /*[10190]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_PHAISTOS_DISC = 166, /*[101D0]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_LYCIAN = 167, /*[10280]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_CARIAN = 168, /*[102A0]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_LYDIAN = 169, /*[10920]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_MAHJONG_TILES = 170, /*[1F000]*/
-	/** @draft ICU 4.0 */
+	/** @stable ICU 4.0 */
 	UBLOCK_DOMINO_TILES = 171, /*[1F030]*/
 
+	/* New blocks in Unicode 5.2 */
+
+	/** @stable ICU 4.4 */
+	UBLOCK_SAMARITAN = 172, /*[0800]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_UNIFIED_CANADIAN_ABORIGINAL_SYLLABICS_EXTENDED = 173, /*[18B0]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_TAI_THAM = 174, /*[1A20]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_VEDIC_EXTENSIONS = 175, /*[1CD0]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_LISU = 176, /*[A4D0]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_BAMUM = 177, /*[A6A0]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_COMMON_INDIC_NUMBER_FORMS = 178, /*[A830]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_DEVANAGARI_EXTENDED = 179, /*[A8E0]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_HANGUL_JAMO_EXTENDED_A = 180, /*[A960]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_JAVANESE = 181, /*[A980]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_MYANMAR_EXTENDED_A = 182, /*[AA60]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_TAI_VIET = 183, /*[AA80]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_MEETEI_MAYEK = 184, /*[ABC0]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_HANGUL_JAMO_EXTENDED_B = 185, /*[D7B0]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_IMPERIAL_ARAMAIC = 186, /*[10840]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_OLD_SOUTH_ARABIAN = 187, /*[10A60]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_AVESTAN = 188, /*[10B00]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_INSCRIPTIONAL_PARTHIAN = 189, /*[10B40]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_INSCRIPTIONAL_PAHLAVI = 190, /*[10B60]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_OLD_TURKIC = 191, /*[10C00]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_RUMI_NUMERAL_SYMBOLS = 192, /*[10E60]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_KAITHI = 193, /*[11080]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_EGYPTIAN_HIEROGLYPHS = 194, /*[13000]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_ENCLOSED_ALPHANUMERIC_SUPPLEMENT = 195, /*[1F100]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_ENCLOSED_IDEOGRAPHIC_SUPPLEMENT = 196, /*[1F200]*/
+	/** @stable ICU 4.4 */
+	UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C = 197, /*[2A700]*/
+
+	/* New blocks in Unicode 6.0 */
+
+	/** @stable ICU 4.6 */
+	UBLOCK_MANDAIC = 198, /*[0840]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_BATAK = 199, /*[1BC0]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_ETHIOPIC_EXTENDED_A = 200, /*[AB00]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_BRAHMI = 201, /*[11000]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_BAMUM_SUPPLEMENT = 202, /*[16800]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_KANA_SUPPLEMENT = 203, /*[1B000]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_PLAYING_CARDS = 204, /*[1F0A0]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_MISCELLANEOUS_SYMBOLS_AND_PICTOGRAPHS = 205, /*[1F300]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_EMOTICONS = 206, /*[1F600]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_TRANSPORT_AND_MAP_SYMBOLS = 207, /*[1F680]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_ALCHEMICAL_SYMBOLS = 208, /*[1F700]*/
+	/** @stable ICU 4.6 */
+	UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D = 209, /*[2B740]*/
+
+	/* New blocks in Unicode 6.1 */
+
+	/** @stable ICU 49 */
+	UBLOCK_ARABIC_EXTENDED_A = 210, /*[08A0]*/
+	/** @stable ICU 49 */
+	UBLOCK_ARABIC_MATHEMATICAL_ALPHABETIC_SYMBOLS = 211, /*[1EE00]*/
+	/** @stable ICU 49 */
+	UBLOCK_CHAKMA = 212, /*[11100]*/
+	/** @stable ICU 49 */
+	UBLOCK_MEETEI_MAYEK_EXTENSIONS = 213, /*[AAE0]*/
+	/** @stable ICU 49 */
+	UBLOCK_MEROITIC_CURSIVE = 214, /*[109A0]*/
+	/** @stable ICU 49 */
+	UBLOCK_MEROITIC_HIEROGLYPHS = 215, /*[10980]*/
+	/** @stable ICU 49 */
+	UBLOCK_MIAO = 216, /*[16F00]*/
+	/** @stable ICU 49 */
+	UBLOCK_SHARADA = 217, /*[11180]*/
+	/** @stable ICU 49 */
+	UBLOCK_SORA_SOMPENG = 218, /*[110D0]*/
+	/** @stable ICU 49 */
+	UBLOCK_SUNDANESE_SUPPLEMENT = 219, /*[1CC0]*/
+	/** @stable ICU 49 */
+	UBLOCK_TAKRI = 220, /*[11680]*/
+
 	/** @stable ICU 2.0 */
-	UBLOCK_COUNT = 172,
+	UBLOCK_COUNT = 221,
 
 	/** @stable ICU 2.0 */
 	UBLOCK_INVALID_CODE=-1
@@ -1309,7 +1428,13 @@ typedef enum UBlockCode UBlockCode;
  * @stable ICU 2.2
  */
 typedef enum UEastAsianWidth {
-	U_EA_NEUTRAL,   /*[N]*/ /*See note !!*/
+	/*
+	 * Note: UEastAsianWidth constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_EA_<Unicode East_Asian_Width value name>
+	 */
+
+	U_EA_NEUTRAL,   /*[N]*/
 	U_EA_AMBIGUOUS, /*[A]*/
 	U_EA_HALFWIDTH, /*[H]*/
 	U_EA_FULLWIDTH, /*[F]*/
@@ -1317,10 +1442,6 @@ typedef enum UEastAsianWidth {
 	U_EA_WIDE,      /*[W]*/
 	U_EA_COUNT
 } UEastAsianWidth;
-/*
- * Implementation note:
- * Keep UEastAsianWidth constant values in sync with names list in genprops/props2.c.
- */
 
 /**
  * Selector constants for u_charName().
@@ -1334,9 +1455,19 @@ typedef enum UEastAsianWidth {
  * @stable ICU 2.0
  */
 typedef enum UCharNameChoice {
+	/** Unicode character name (Name property). @stable ICU 2.0 */
 	U_UNICODE_CHAR_NAME,
+	/**
+	 * The Unicode_1_Name property value which is of little practical value.
+	 * Beginning with ICU 49, ICU APIs return an empty string for this name choice.
+	 * @deprecated ICU 49
+	 */
 	U_UNICODE_10_CHAR_NAME,
+	/** Standard or synthetic character name. @stable ICU 2.0 */
 	U_EXTENDED_CHAR_NAME,
+	/** Corrected name from NameAliases.txt. @stable ICU 4.4 */
+	U_CHAR_NAME_ALIAS,
+	/** @stable ICU 2.0 */
 	U_CHAR_NAME_CHOICE_COUNT
 } UCharNameChoice;
 
@@ -1366,7 +1497,13 @@ typedef enum UPropertyNameChoice {
  * @stable ICU 2.2
  */
 typedef enum UDecompositionType {
-	U_DT_NONE,              /*[none]*/ /*See note !!*/
+	/*
+	 * Note: UDecompositionType constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_DT_<Unicode Decomposition_Type value name>
+	 */
+
+	U_DT_NONE,              /*[none]*/
 	U_DT_CANONICAL,         /*[can]*/
 	U_DT_COMPAT,            /*[com]*/
 	U_DT_CIRCLE,            /*[enc]*/
@@ -1394,7 +1531,13 @@ typedef enum UDecompositionType {
  * @stable ICU 2.2
  */
 typedef enum UJoiningType {
-	U_JT_NON_JOINING,       /*[U]*/ /*See note !!*/
+	/*
+	 * Note: UJoiningType constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_JT_<Unicode Joining_Type value name>
+	 */
+
+	U_JT_NON_JOINING,       /*[U]*/
 	U_JT_JOIN_CAUSING,      /*[C]*/
 	U_JT_DUAL_JOINING,      /*[D]*/
 	U_JT_LEFT_JOINING,      /*[L]*/
@@ -1410,6 +1553,12 @@ typedef enum UJoiningType {
  * @stable ICU 2.2
  */
 typedef enum UJoiningGroup {
+	/*
+	 * Note: UJoiningGroup constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_JG_<Unicode Joining_Group value name>
+	 */
+
 	U_JG_NO_JOINING_GROUP,
 	U_JG_AIN,
 	U_JG_ALAPH,
@@ -1424,7 +1573,8 @@ typedef enum UJoiningGroup {
 	U_JG_GAF,
 	U_JG_GAMAL,
 	U_JG_HAH,
-	U_JG_HAMZA_ON_HEH_GOAL,
+	U_JG_TEH_MARBUTA_GOAL,  /**< @stable ICU 4.6 */
+	U_JG_HAMZA_ON_HEH_GOAL=U_JG_TEH_MARBUTA_GOAL,
 	U_JG_HE,
 	U_JG_HEH,
 	U_JG_HEH_GOAL,
@@ -1464,7 +1614,10 @@ typedef enum UJoiningGroup {
 	U_JG_FE,        /**< @stable ICU 2.6 */
 	U_JG_KHAPH,     /**< @stable ICU 2.6 */
 	U_JG_ZHAIN,     /**< @stable ICU 2.6 */
-	U_JG_BURUSHASKI_YEH_BARREE, /**< @draft ICU 4.0 */
+	U_JG_BURUSHASKI_YEH_BARREE, /**< @stable ICU 4.0 */
+	U_JG_FARSI_YEH, /**< @stable ICU 4.4 */
+	U_JG_NYA,       /**< @stable ICU 4.4 */
+	U_JG_ROHINGYA_YEH,  /**< @stable ICU 49 */
 	U_JG_COUNT
 } UJoiningGroup;
 
@@ -1475,7 +1628,13 @@ typedef enum UJoiningGroup {
  * @stable ICU 3.4
  */
 typedef enum UGraphemeClusterBreak {
-	U_GCB_OTHER = 0,            /*[XX]*/ /*See note !!*/
+	/*
+	 * Note: UGraphemeClusterBreak constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_GCB_<Unicode Grapheme_Cluster_Break value name>
+	 */
+
+	U_GCB_OTHER = 0,            /*[XX]*/
 	U_GCB_CONTROL = 1,          /*[CN]*/
 	U_GCB_CR = 2,               /*[CR]*/
 	U_GCB_EXTEND = 3,           /*[EX]*/
@@ -1487,7 +1646,8 @@ typedef enum UGraphemeClusterBreak {
 	U_GCB_V = 9,                /*[V]*/
 	U_GCB_SPACING_MARK = 10,    /*[SM]*/ /* from here on: new in Unicode 5.1/ICU 4.0 */
 	U_GCB_PREPEND = 11,         /*[PP]*/
-	U_GCB_COUNT = 12
+	U_GCB_REGIONAL_INDICATOR = 12,  /*[RI]*/ /* new in Unicode 6.2/ICU 50 */
+	U_GCB_COUNT = 13
 } UGraphemeClusterBreak;
 
 /**
@@ -1498,7 +1658,13 @@ typedef enum UGraphemeClusterBreak {
  * @stable ICU 3.4
  */
 typedef enum UWordBreakValues {
-	U_WB_OTHER = 0,             /*[XX]*/ /*See note !!*/
+	/*
+	 * Note: UWordBreakValues constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_WB_<Unicode Word_Break value name>
+	 */
+
+	U_WB_OTHER = 0,             /*[XX]*/
 	U_WB_ALETTER = 1,           /*[LE]*/
 	U_WB_FORMAT = 2,            /*[FO]*/
 	U_WB_KATAKANA = 3,          /*[KA]*/
@@ -1511,7 +1677,8 @@ typedef enum UWordBreakValues {
 	U_WB_LF = 10,               /*[LF]*/
 	U_WB_MIDNUMLET =11,         /*[MB]*/
 	U_WB_NEWLINE =12,           /*[NL]*/
-	U_WB_COUNT = 13
+	U_WB_REGIONAL_INDICATOR = 13,   /*[RI]*/ /* new in Unicode 6.2/ICU 50 */
+	U_WB_COUNT = 14
 } UWordBreakValues;
 
 /**
@@ -1521,7 +1688,13 @@ typedef enum UWordBreakValues {
  * @stable ICU 3.4
  */
 typedef enum USentenceBreak {
-	U_SB_OTHER = 0,             /*[XX]*/ /*See note !!*/
+	/*
+	 * Note: USentenceBreak constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_SB_<Unicode Sentence_Break value name>
+	 */
+
+	U_SB_OTHER = 0,             /*[XX]*/
 	U_SB_ATERM = 1,             /*[AT]*/
 	U_SB_CLOSE = 2,             /*[CL]*/
 	U_SB_FORMAT = 3,            /*[FO]*/
@@ -1546,7 +1719,13 @@ typedef enum USentenceBreak {
  * @stable ICU 2.2
  */
 typedef enum ULineBreak {
-	U_LB_UNKNOWN = 0,           /*[XX]*/ /*See note !!*/
+	/*
+	 * Note: ULineBreak constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_LB_<Unicode Line_Break value name>
+	 */
+
+	U_LB_UNKNOWN = 0,           /*[XX]*/
 	U_LB_AMBIGUOUS = 1,         /*[AI]*/
 	U_LB_ALPHABETIC = 2,        /*[AL]*/
 	U_LB_BREAK_BOTH = 3,        /*[B2]*/
@@ -1561,9 +1740,9 @@ typedef enum ULineBreak {
 	U_LB_GLUE = 12,              /*[GL]*/
 	U_LB_HYPHEN = 13,            /*[HY]*/
 	U_LB_IDEOGRAPHIC = 14,       /*[ID]*/
-	U_LB_INSEPERABLE = 15,
 	/** Renamed from the misspelled "inseperable" in Unicode 4.0.1/ICU 3.0 @stable ICU 3.0 */
-	U_LB_INSEPARABLE=U_LB_INSEPERABLE,/*[IN]*/
+	U_LB_INSEPARABLE = 15,       /*[IN]*/
+	U_LB_INSEPERABLE = U_LB_INSEPARABLE,
 	U_LB_INFIX_NUMERIC = 16,     /*[IS]*/
 	U_LB_LINE_FEED = 17,         /*[LF]*/
 	U_LB_NONSTARTER = 18,        /*[NS]*/
@@ -1584,7 +1763,11 @@ typedef enum ULineBreak {
 	U_LB_JL = 33,                /*[JL]*/
 	U_LB_JT = 34,                /*[JT]*/
 	U_LB_JV = 35,                /*[JV]*/
-	U_LB_COUNT = 36
+	U_LB_CLOSE_PARENTHESIS = 36, /*[CP]*/ /* new in Unicode 5.2/ICU 4.4 */
+	U_LB_CONDITIONAL_JAPANESE_STARTER = 37,/*[CJ]*/ /* new in Unicode 6.1/ICU 49 */
+	U_LB_HEBREW_LETTER = 38,     /*[HL]*/ /* new in Unicode 6.1/ICU 49 */
+	U_LB_REGIONAL_INDICATOR = 39,/*[RI]*/ /* new in Unicode 6.2/ICU 50 */
+	U_LB_COUNT = 40
 } ULineBreak;
 
 /**
@@ -1594,7 +1777,13 @@ typedef enum ULineBreak {
  * @stable ICU 2.2
  */
 typedef enum UNumericType {
-	U_NT_NONE,              /*[None]*/ /*See note !!*/
+	/*
+	 * Note: UNumericType constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_NT_<Unicode Numeric_Type value name>
+	 */
+
+	U_NT_NONE,              /*[None]*/
 	U_NT_DECIMAL,           /*[de]*/
 	U_NT_DIGIT,             /*[di]*/
 	U_NT_NUMERIC,           /*[nu]*/
@@ -1608,7 +1797,13 @@ typedef enum UNumericType {
  * @stable ICU 2.6
  */
 typedef enum UHangulSyllableType {
-	U_HST_NOT_APPLICABLE,   /*[NA]*/ /*See note !!*/
+	/*
+	 * Note: UHangulSyllableType constants are parsed by preparseucd.py.
+	 * It matches lines like
+	 *     U_HST_<Unicode Hangul_Syllable_Type value name>
+	 */
+
+	U_HST_NOT_APPLICABLE,   /*[NA]*/
 	U_HST_LEADING_JAMO,     /*[L]*/
 	U_HST_VOWEL_JAMO,       /*[V]*/
 	U_HST_TRAILING_JAMO,    /*[T]*/
@@ -1811,6 +2006,8 @@ u_getIntPropertyMaxValue(UProperty which);
  *
  * For characters without any numeric values in the Unicode Character Database,
  * this function will return U_NO_NUMERIC_VALUE.
+ * Note: This is different from the Unicode Standard which specifies NaN as the default value.
+ * (NaN is not available on all platforms.)
  *
  * Similar to java.lang.Character.getNumericValue(), but u_getNumericValue()
  * also supports negative values, large values, and fractions,
@@ -2126,8 +2323,8 @@ u_isJavaSpaceChar(UChar32 c);
  * A character is considered to be a Java whitespace character if and only
  * if it satisfies one of the following criteria:
  *
- * - It is a Unicode separator (categories "Z"), but is not
- *      a no-break space (U+00A0 NBSP or U+2007 Figure Space or U+202F Narrow NBSP).
+ * - It is a Unicode Separator character (categories "Z" = "Zs" or "Zl" or "Zp"), but is not
+ *      also a non-breaking space (U+00A0 NBSP or U+2007 Figure Space or U+202F Narrow NBSP).
  * - It is U+0009 HORIZONTAL TABULATION.
  * - It is U+000A LINE FEED.
  * - It is U+000B VERTICAL TABULATION.
@@ -2137,9 +2334,15 @@ u_isJavaSpaceChar(UChar32 c);
  * - It is U+001D GROUP SEPARATOR.
  * - It is U+001E RECORD SEPARATOR.
  * - It is U+001F UNIT SEPARATOR.
- * - It is U+0085 NEXT LINE.
  *
- * Same as java.lang.Character.isWhitespace() except that Java omits U+0085.
+ * This API tries to sync with the semantics of Java's
+ * java.lang.Character.isWhitespace(), but it may not return
+ * the exact same results because of the Unicode version
+ * difference.
+ *
+ * Note: Unicode 4.0.1 changed U+200B ZERO WIDTH SPACE from a Space Separator (Zs)
+ * to a Format Control (Cf). Since then, isWhitespace(0x200b) returns false.
+ * See http://www.unicode.org/versions/Unicode4.0.1/
  *
  * Note: There are several ICU whitespace functions; please see the uchar.h
  * file documentation for a detailed comparison.
@@ -2453,9 +2656,9 @@ u_charName(UChar32 code, UCharNameChoice nameChoice,
 		   UErrorCode *pErrorCode);
 
 /**
- * Get the ISO 10646 comment for a character.
- * The ISO 10646 comment is an informative field in the Unicode Character
- * Database (UnicodeData.txt field 11) and is from the ISO 10646 names list.
+ * Returns an empty string.
+ * Used to return the ISO 10646 comment for a character.
+ * The Unicode ISO_Comment property is deprecated and has no values.
  *
  * @param c The character (code point) for which to get the ISO comment.
  *             It must be <code>0<=c<=0x10ffff</code>.
@@ -2466,13 +2669,9 @@ u_charName(UChar32 code, UCharNameChoice nameChoice,
  * @param pErrorCode Pointer to a UErrorCode variable;
  *        check for <code>U_SUCCESS()</code> after <code>u_getISOComment()</code>
  *        returns.
- * @return The length of the comment, or 0 if there is no comment for this character.
- *         If the destCapacity is less than or equal to the length, then the buffer
- *         contains the truncated name and the returned length indicates the full
- *         length of the name.
- *         The length does not include the zero-termination.
+ * @return 0
  *
- * @stable ICU 2.2
+ * @deprecated ICU 49
  */
 U_STABLE int32_t U_EXPORT2
 u_getISOComment(UChar32 c,
@@ -2687,7 +2886,7 @@ u_getPropertyValueName(UProperty property,
  *
  * @return a value integer or UCHAR_INVALID_CODE if the given name
  *         does not match any value of the given property, or if the
- *         property is invalid.  Note: U CHAR_GENERAL_CATEGORY values
+ *         property is invalid.  Note: UCHAR_GENERAL_CATEGORY_MASK values
  *         are not values of UCharCategory, but rather mask values
  *         produced by U_GET_GC_MASK().  This allows grouped
  *         categories such as [:L:] to be represented.
@@ -2749,11 +2948,9 @@ u_isIDPart(UChar32 c);
  * according to Java.
  * True for characters with general category "Cf" (format controls) as well as
  * non-whitespace ISO controls
- * (U+0000..U+0008, U+000E..U+001B, U+007F..U+0084, U+0086..U+009F).
+ * (U+0000..U+0008, U+000E..U+001B, U+007F..U+009F).
  *
- * Same as java.lang.Character.isIdentifierIgnorable()
- * except that Java also returns TRUE for U+0085 Next Line
- * (it omits U+0085 from whitespace ISO controls).
+ * Same as java.lang.Character.isIdentifierIgnorable().
  *
  * Note that Unicode just recommends to ignore Cf (format controls).
  *
@@ -3032,6 +3229,7 @@ u_charAge(UChar32 c, UVersionInfo versionArray);
 U_STABLE void U_EXPORT2
 u_getUnicodeVersion(UVersionInfo versionArray);
 
+#if !UCONFIG_NO_NORMALIZATION
 /**
  * Get the FC_NFKC_Closure property string for a character.
  * See Unicode Standard Annex #15 for details, search for "FC_NFKC_Closure"
@@ -3055,6 +3253,9 @@ u_getUnicodeVersion(UVersionInfo versionArray);
  */
 U_STABLE int32_t U_EXPORT2
 u_getFC_NFKC_Closure(UChar32 c, UChar *dest, int32_t destCapacity, UErrorCode *pErrorCode);
+
+#endif
+
 
 U_CDECL_END
 

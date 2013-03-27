@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000051">
+
+<rt class="LangProject" guid="8904029e-c1f6-403f-a261-fb7241c09944">
+<DiscourseData>
+<objsur guid="c3fe8c1e-ea5e-11de-9e45-0013722f8dec" t="o" />
+</DiscourseData>
+<PhonologicalData>
+<objsur guid="be765e3e-ea5e-11de-9d42-0013722f8dec" t="o" />
+</PhonologicalData>
+</rt>
+<rt class="ConstChartRow" guid="6d9fe079-df9c-40c6-9cec-8e1dc1bbda92" ownerguid="8fa53cdf-9950-4a23-ba1c-844723c2342d">
+<Cells>
+<objsur guid="c4e487c6-bbbe-4b8f-8137-7d5fa7d2dc09" t="o" />
+</Cells>
+</rt>
+
+<rt class="ConstChartClauseMarker" guid="c4e487c6-bbbe-4b8f-8137-7d5fa7d2dc09" ownerguid="6d9fe079-df9c-40c6-9cec-8e1dc1bbda92">
+</rt>
+
+<rt class="DsConstChart" guid="8fa53cdf-9950-4a23-ba1c-844723c2342d" ownerguid="c3fe8c1e-ea5e-11de-9e45-0013722f8dec">
+<Rows>
+<objsur guid="6d9fe079-df9c-40c6-9cec-8e1dc1bbda92" t="o" />
+</Rows>
+</rt>
+
+<rt class="PhSequenceContext" guid="09acafc4-33fd-4c12-a96d-af0d87c343d0" ownerguid="bd72b1c5-3067-433d-980d-5aae9271556d">
+</rt>
+
+<rt class="PhSegRuleRHS" guid="bd72b1c5-3067-433d-980d-5aae9271556d" ownerguid="fa43c2ac-dd50-48fd-9450-64964d3b2872">
+<RightContext>
+<objsur guid="09acafc4-33fd-4c12-a96d-af0d87c343d0" t="o" />
+</RightContext>
+</rt>
+
+<rt class="PhPhonData" guid="be765e3e-ea5e-11de-9d42-0013722f8dec" ownerguid="8904029e-c1f6-403f-a261-fb7241c09944">
+<PhonRules>
+<objsur guid="fa43c2ac-dd50-48fd-9450-64964d3b2872" t="o" />
+</PhonRules>
+</rt>
+
+<rt class="DsDiscourseData" guid="c3fe8c1e-ea5e-11de-9e45-0013722f8dec" ownerguid="8904029e-c1f6-403f-a261-fb7241c09944">
+<Charts>
+<objsur guid="8fa53cdf-9950-4a23-ba1c-844723c2342d" t="o" />
+</Charts>
+</rt>
+
+<rt class="PhRegularRule" guid="fa43c2ac-dd50-48fd-9450-64964d3b2872" ownerguid="be765e3e-ea5e-11de-9d42-0013722f8dec">
+<RightHandSides>
+<objsur guid="bd72b1c5-3067-433d-980d-5aae9271556d" t="o" />
+</RightHandSides>
+</rt>
+
+</languageproject>

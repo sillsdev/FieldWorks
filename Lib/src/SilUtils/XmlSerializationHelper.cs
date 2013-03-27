@@ -183,10 +183,12 @@ namespace SIL.Utils
 		{
 			string xmlData = SerializeToString(data);
 
-			using (XmlReader reader = XmlReader.Create(new StringReader(xmlData)))
+			using (var stringReader = new StringReader(xmlData))
+			using (XmlReader reader = XmlReader.Create(stringReader))
 			{
 				// Read past declaration and whitespace.
-				while (reader.NodeType != XmlNodeType.Element && reader.Read()) ;
+				while (reader.NodeType != XmlNodeType.Element && reader.Read())
+					;
 
 				if (!reader.EOF)
 				{

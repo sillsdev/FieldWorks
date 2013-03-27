@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,7 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -27,7 +29,7 @@ namespace SIL.FieldWorks.IText
 	public partial class InterlinearSfmImportWizard : WizardDialog, IFwExtension
 	{
 //		private const string kSfmImportSettingsRegistryKeyName = "SFM import settings";
-		private FdoCache m_cache;
+		protected FdoCache m_cache;
 		private Mediator m_mediator;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private List<InterlinearMapping> m_mappings = new List<InterlinearMapping>();
@@ -45,6 +47,12 @@ namespace SIL.FieldWorks.IText
 			tabSteps.KeyUp += OnKeyUp;
 			LexImportWizard.EnsureWindows1252ConverterExists();
 		}
+
+		protected virtual void SetDialogTitle()
+		{
+			Text = String.Format(Text, ITextStrings.ksInterlinearTexts);
+		}
+
 		public void Init(FdoCache cache, Mediator mediator)
 		{
 			m_cache = cache;
@@ -55,6 +63,7 @@ namespace SIL.FieldWorks.IText
 			//if (string.IsNullOrEmpty(settingsPath) || !File.Exists(settingsPath))
 			//    settingsPath = GetDefaultInputSettingsPath();
 			//m_loadSettingsFileBox.Text = settingsPath;
+			SetDialogTitle();
 		}
 
 		private void m_browseInputFilesButton_Click(object sender, EventArgs e)
@@ -131,113 +140,120 @@ namespace SIL.FieldWorks.IText
 
 		private string GetFiles(string currentFiles)
 		{
-			var openFileDialog = new OpenFileDialog();
-			openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm,
-				FileFilterType.AllFiles);
-			openFileDialog.CheckFileExists = true;
-			openFileDialog.Multiselect = true; // can import multiple files
-
-			var files = currentFiles.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			string dir = string.Empty;
-			string initialFileName = string.Empty;
-			openFileDialog.FileName = "";
-			if (files.Length > 0)
+			using (var openFileDialog = new OpenFileDialogAdapter())
 			{
-				var firstFilePath = files[0].Trim();
-				// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
-				// Now we make sure parts are valid before setting the values in the openfile dialog.
-				try
-				{
-					dir = Path.GetDirectoryName(firstFilePath);
-					if (File.Exists(firstFilePath))
-						initialFileName = Path.GetFileName(firstFilePath);
-				}
-				catch
-				{
-				}
-			}
-			if (Directory.Exists(dir))
-				openFileDialog.InitialDirectory = dir;
-			// It doesn't seem to be possible to open the dialog with more than one file selected.
-			// However there will often be only one so that's at least somewhat helpful.
-			openFileDialog.FileName = initialFileName;
-			openFileDialog.Title = ITextStrings.ksSelectInterlinFile;
-			while (true) // loop until approved set of files or cancel
-			{
-				if (openFileDialog.ShowDialog() != DialogResult.OK)
-					return currentFiles;
-				var badFiles = new List<string>();
-				foreach (var fileName in openFileDialog.FileNames)
-				{
-					if (!new Sfm2Xml.IsSfmFile(fileName).IsValid)
-						badFiles.Add(fileName);
-				}
-				if (badFiles.Count > 0)
-				{
-					string msg = String.Format(ITextStrings.ksInvalidInterlinearFiles,
-						string.Join(", ", badFiles.ToArray()));
-					DialogResult dr = MessageBox.Show(this, msg,
-						ITextStrings.ksPossibleInvalidFile,
-						MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-					if (dr == DialogResult.Yes)
-						return string.Join(", ", openFileDialog.FileNames);
-					if (dr == DialogResult.No)
-						continue; // loop and show dialog again...hopefully same files selected.
-					break; // user must have chosen cancel, break out of loop
-				}
-				return string.Join(", ", openFileDialog.FileNames);
-			}
-			return currentFiles; // leave things unchanged.
-		}
+				openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm,
+					FileFilterType.AllFiles);
+				openFileDialog.CheckFileExists = true;
+				openFileDialog.Multiselect = true; // can import multiple files
 
-		private string GetFile(string currentFile, string pathForInitialDirectory, FileFilterType[] types, bool checkFileExists, string title, Func<string, bool> isValidFile)
-		{
-			var openFileDialog = new OpenFileDialog();
-			openFileDialog.Filter = ResourceHelper.BuildFileFilter(types);
-			openFileDialog.CheckFileExists = checkFileExists;
-			openFileDialog.Multiselect = false;
-
-			bool done = false;
-			while (!done)
-			{
-				// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
-				// Now we make sure parts are valid before setting the values in the openfile dialog.
+				var files = currentFiles.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 				string dir = string.Empty;
-				try
+				string initialFileName = string.Empty;
+				openFileDialog.FileName = "";
+				if (files.Length > 0)
 				{
-					dir = Path.GetDirectoryName(pathForInitialDirectory);
+					var firstFilePath = files[0].Trim();
+					// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
+					// Now we make sure parts are valid before setting the values in the openfile dialog.
+					try
+					{
+						dir = Path.GetDirectoryName(firstFilePath);
+						if (File.Exists(firstFilePath))
+							initialFileName = Path.GetFileName(firstFilePath);
+					}
+					catch
+					{
+					}
 				}
-				catch { }
 				if (Directory.Exists(dir))
 					openFileDialog.InitialDirectory = dir;
-				if (File.Exists(currentFile))
-					openFileDialog.FileName = currentFile;
-				else
-					openFileDialog.FileName = "";
-
-				openFileDialog.Title = title;
-				if (openFileDialog.ShowDialog() == DialogResult.OK)
+				// It doesn't seem to be possible to open the dialog with more than one file selected.
+				// However there will often be only one so that's at least somewhat helpful.
+				openFileDialog.FileName = initialFileName;
+				openFileDialog.Title = ITextStrings.ksSelectInterlinFile;
+				while (true) // loop until approved set of files or cancel
 				{
-					if (!(isValidFile(openFileDialog.FileName)))
+					if (openFileDialog.ShowDialog() != DialogResult.OK)
+						return currentFiles;
+					var badFiles = new List<string>();
+					foreach (var fileName in openFileDialog.FileNames)
 					{
-						string msg = String.Format(ITextStrings.ksInvalidFileAreYouSure,
-							openFileDialog.FileName);
+						if (!new Sfm2Xml.IsSfmFile(fileName).IsValid)
+							badFiles.Add(fileName);
+					}
+					if (badFiles.Count > 0)
+					{
+						string msg = String.Format(ITextStrings.ksInvalidInterlinearFiles,
+							string.Join(", ", badFiles.ToArray()));
 						DialogResult dr = MessageBox.Show(this, msg,
 							ITextStrings.ksPossibleInvalidFile,
 							MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 						if (dr == DialogResult.Yes)
-							return openFileDialog.FileName;
-						else if (dr == DialogResult.No)
-							continue;
-						else
-							break;	// exit with current still
+							return string.Join(", ", openFileDialog.FileNames);
+						if (dr == DialogResult.No)
+							continue; // loop and show dialog again...hopefully same files selected.
+						break; // user must have chosen cancel, break out of loop
 					}
-					return openFileDialog.FileName;
+					return string.Join(", ", openFileDialog.FileNames);
 				}
-				else
-					done = true;
+				return currentFiles; // leave things unchanged.
 			}
-			return currentFile;
+		}
+
+		private string GetFile(string currentFile, string pathForInitialDirectory,
+			FileFilterType[] types, bool checkFileExists, string title, Func<string, bool> isValidFile)
+		{
+			using (var openFileDialog = new OpenFileDialogAdapter())
+			{
+				openFileDialog.Filter = ResourceHelper.BuildFileFilter(types);
+				openFileDialog.CheckFileExists = checkFileExists;
+				openFileDialog.Multiselect = false;
+
+				bool done = false;
+				while (!done)
+				{
+					// LT-6620 : putting in an invalid path was causing an exception in the openFileDialog.ShowDialog()
+					// Now we make sure parts are valid before setting the values in the openfile dialog.
+					string dir = string.Empty;
+					try
+					{
+						dir = Path.GetDirectoryName(pathForInitialDirectory);
+					}
+					catch
+					{
+					}
+					if (Directory.Exists(dir))
+						openFileDialog.InitialDirectory = dir;
+					if (File.Exists(currentFile))
+						openFileDialog.FileName = currentFile;
+					else
+						openFileDialog.FileName = "";
+
+					openFileDialog.Title = title;
+					if (openFileDialog.ShowDialog() == DialogResult.OK)
+					{
+						if (!(isValidFile(openFileDialog.FileName)))
+						{
+							string msg = String.Format(ITextStrings.ksInvalidFileAreYouSure,
+								openFileDialog.FileName);
+							DialogResult dr = MessageBox.Show(this, msg,
+								ITextStrings.ksPossibleInvalidFile,
+								MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+							if (dr == DialogResult.Yes)
+								return openFileDialog.FileName;
+							else if (dr == DialogResult.No)
+									continue;
+								else
+									break;	// exit with current still
+						}
+						return openFileDialog.FileName;
+					}
+					else
+						done = true;
+				}
+				return currentFile;
+			}
 		}
 
 		protected override void OnNextButton()
@@ -282,8 +298,9 @@ namespace SIL.FieldWorks.IText
 						mapping = new InterlinearMapping(mapping);
 						if (string.IsNullOrEmpty(mapping.WritingSystem))
 						{
-							var ws = mapping.Destination == InterlinDestination.Baseline ? m_cache.DefaultVernWs : m_cache.DefaultAnalWs;
-							mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(ws);
+							var ws = GetDefaultWs(mapping);
+							if (ws != 0)
+								mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(ws);
 						}
 						else if (mapping.WritingSystem == "{vern}")
 							mapping.WritingSystem = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultVernWs);
@@ -321,7 +338,7 @@ namespace SIL.FieldWorks.IText
 						continue; // may well have no WS, in any case, we don't care whether it's in our list.
 					bool creationCancelled = false;
 					var ws = (IWritingSystem)m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
-					if(mapping.Destination == InterlinDestination.Baseline)
+					if (mapping.Destination == InterlinDestination.Baseline || mapping.Destination == InterlinDestination.Wordform)
 					{
 						if(!currentVernacWSs.Contains(ws) && !vernToAdd.Contains(ws))
 						{
@@ -379,6 +396,25 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			base.OnNextButton();
+		}
+
+		protected int GetDefaultWs(InterlinearMapping mapping)
+		{
+			int ws;
+			switch (mapping.Destination)
+			{
+				default:
+					ws = m_cache.DefaultAnalWs;
+					break;
+				case InterlinDestination.Ignored:
+					ws = 0;
+					break;
+				case InterlinDestination.Baseline:
+				case InterlinDestination.Wordform:
+					ws = m_cache.DefaultVernWs;
+					break;
+			}
+			return ws;
 		}
 
 		/// <summary>
@@ -441,7 +477,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		// Return true if all is well to proceed with the import. Otherwise display a message box and return false.
-		private bool ValidateReadyToImport()
+		protected virtual bool ValidateReadyToImport()
 		{
 			bool gotBaseline = false;
 			foreach (var mapping in m_mappings)
@@ -476,6 +512,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="RecordClerk.FindClerk() returns a reference")]
 		protected override void OnFinishButton()
 		{
 			base.OnFinishButton();
@@ -505,6 +543,7 @@ namespace SIL.FieldWorks.IText
 					Close();
 				}
 			}
+			m_mediator.SendMessage("MasterRefresh", ActiveForm);
 			if (m_firstNewText != null)
 			{
 				// try to select it.
@@ -529,12 +568,20 @@ namespace SIL.FieldWorks.IText
 				if (!File.Exists(path))
 					continue; // report?
 				var input = new ByteReader(path);
-				var converter = new Sfm2FlexText();
-				var stage1 = converter.Convert(input, m_mappings, m_cache.WritingSystemFactory);
+				var converterStage1 = GetSfmConverter();
+				var stage1 = converterStage1.Convert(input, m_mappings, m_cache.WritingSystemFactory);
 				// Skip actual import if SHIFT was held down.
 				if (secretShiftText.Visible == true)
 					continue;
-				var stage2Input = new MemoryStream(stage1);
+				DoStage2Conversion(stage1, dlg);
+			}
+			return null;
+		}
+
+		protected virtual void DoStage2Conversion(byte[] stage1, IThreadedProgress dlg)
+		{
+			using (var stage2Input = new MemoryStream(stage1))
+			{
 				var stage2Converter = new LinguaLinksImport(m_cache, null, null);
 				// Until we have a better idea, assume we're half done with the import when we've produced the intermediate.
 				// Allocate 5 progress units to the ImportInterlinear, in case it can do better resolution.
@@ -545,7 +592,11 @@ namespace SIL.FieldWorks.IText
 				dlg.Position += 50;
 				stage2Converter.ImportInterlinear(dlg, stage2Input, 50, ref m_firstNewText);
 			}
-			return null;
+		}
+
+		protected virtual Sfm2FlexTextBase<InterlinearMapping> GetSfmConverter()
+		{
+			return new Sfm2FlexText();
 		}
 
 		private void SaveSettings()
@@ -570,9 +621,11 @@ namespace SIL.FieldWorks.IText
 			try
 			{
 				XmlSerializer serializer = new XmlSerializer(mappingsToSave.GetType());
-				var writer = new StreamWriter(path);
-				serializer.Serialize(writer, mappingsToSave);
-				writer.Close();
+				using (var writer = new StreamWriter(path))
+				{
+					serializer.Serialize(writer, mappingsToSave);
+					writer.Close();
+				}
 			}
 			catch (IOException ex)
 			{
@@ -592,10 +645,12 @@ namespace SIL.FieldWorks.IText
 			try
 			{
 				XmlSerializer serializer = new XmlSerializer(typeof(List<InterlinearMapping>));
-				var reader = new StreamReader(path);
-				var result = (List<InterlinearMapping>)serializer.Deserialize(reader);
-				reader.Close();
-				return result;
+				using (var reader = new StreamReader(path))
+				{
+					var result = (List<InterlinearMapping>)serializer.Deserialize(reader);
+					reader.Close();
+					return result;
+				}
 			}
 			catch (IOException ex)
 			{
@@ -605,7 +660,8 @@ namespace SIL.FieldWorks.IText
 			}
 			catch (InvalidOperationException ex)
 			{
-				var msg = string.Format(ITextStrings.ksErrorReadingSettings, path, ex.Message);
+				var msg = string.Format(ITextStrings.ksErrorReadingSettings, path, ex.Message + ". " +
+					(ex.InnerException != null ? ex.InnerException.Message : ""));
 				MessageBox.Show(this, msg, ITextStrings.ksError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return new List<InterlinearMapping>();
 			}
@@ -619,8 +675,16 @@ namespace SIL.FieldWorks.IText
 			if (!sRootDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
 				sRootDir += Path.DirectorySeparatorChar;
 			sTransformDir = sRootDir + String.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar);
-			path = Path.Combine(sTransformDir, "InterlinearSfmImport.map");
+			path = Path.Combine(sTransformDir, SfmImportSettingsFileName);
 			return path;
+		}
+
+		protected virtual string SfmImportSettingsFileName
+		{
+			get
+			{
+				return "InterlinearSfmImport.map";
+			}
 		}
 
 		internal static string GetDestinationName(InterlinDestination dest)
@@ -633,18 +697,30 @@ namespace SIL.FieldWorks.IText
 		{
 			if (m_mappingsList.SelectedIndices.Count == 0)
 				return;
-			using (var dlg = new SfmInterlinearMappingDlg())
+			using (var dlg = new SfmToTextsAndWordsMappingDlg())
 			{
 				var index = m_mappingsList.SelectedIndices[0];
 				var mapping = m_mappings[index];
+				var destinationsFilter = GetDestinationsFilter();
 				dlg.SetupDlg(m_helpTopicProvider, (IApp)m_mediator.PropertyTable.GetValue("App"), m_cache,
-					mapping);
+					mapping, destinationsFilter);
 				dlg.ShowDialog(this);
 				var item = m_mappingsList.Items[index];
 				item.SubItems[2].Text = GetDestinationName(mapping.Destination);
 				item.SubItems[3].Text = mapping.WritingSystem != null ? GetWritingSystemName(mapping.WritingSystem) : "";
 				item.SubItems[4].Text = mapping.Converter;
 			}
+		}
+
+		/// <summary>
+		/// Provides the InterlinearDestinations that should be available in Modify Mapping dlg
+		/// </summary>
+		/// <returns></returns>
+		protected virtual IEnumerable<InterlinDestination> GetDestinationsFilter()
+		{
+			return new[] {InterlinDestination.Abbreviation, InterlinDestination.Baseline, InterlinDestination.Comment,
+						  InterlinDestination.FreeTranslation,InterlinDestination.Id, InterlinDestination.Ignored, InterlinDestination.LiteralTranslation,
+						  InterlinDestination.Note, InterlinDestination.ParagraphBreak, InterlinDestination.Reference, InterlinDestination.Source, InterlinDestination.Title };
 		}
 
 		private void m_btnCancel_Click(object sender, EventArgs e)
@@ -683,52 +759,5 @@ namespace SIL.FieldWorks.IText
 			m_loadSettingsFileBox.Text = GetDefaultInputSettingsPath();
 
 		}
-	}
-
-	/// <summary>
-	/// These are the destinations we currently care about in SFM interlinear import.
-	/// For each of these there should be a ksFldX that is its localizable name (see
-	/// InterlinearSfmImportWizard.GetDestinationName()).
-	/// It is public only because XmlSerializer requires everything to be.
-	/// </summary>
-	public enum InterlinDestination
-	{
-		Ignored, // pay no attention to this field (except it terminates the previous one).
-		Id, // marks start of new text (has no data)
-		Abbreviation, // maps to Text.Abbreviation (and may start new text)
-		Title, // maps to Text.Name (inherited from CmMajorObject) (and may start new text)
-		Source, // Text.Source (and may start new text)
-		Comment, // Text.Description (and may start new text)
-		ParagraphBreak, // causes us to start a new paragraph
-		Reference, // forcees segment break and sets Segment.Reference
-		Baseline, // Becomes part of the StTxtPara.Contents
-		FreeTranslation, // Segment.FreeTranslation
-		LiteralTranslation, // Segment.LiteralTranslation
-		Note // each generats a Segment.Note and is its content.
-	}
-
-	/// <summary>
-	/// Simple class to record the bits of information we want about how one marker maps onto FieldWorks.
-	/// This is serialized to form the .map file, so change with care.
-	/// It is public only because XmlSerializer requires everything to be.
-	/// </summary>
-	public class InterlinearMapping
-	{
-		public InterlinearMapping()
-		{
-		}
-		public InterlinearMapping(InterlinearMapping copyFrom)
-		{
-			Marker = copyFrom.Marker;
-			Destination = copyFrom.Destination;
-			Converter = copyFrom.Converter;
-			WritingSystem = copyFrom.WritingSystem;
-			Count = copyFrom.Count;
-		}
-		public string Marker;
-		public InterlinDestination Destination;
-		public string WritingSystem;
-		public string Converter;
-		internal string Count;
 	}
 }

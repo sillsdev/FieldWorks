@@ -24,9 +24,9 @@ Description:
 // bin\mkverrsc.exe from within the bin\mk*.bat file. The major and minor version
 // numbers are hard-coded in mk*.bat.
 #if WIN32
-#include "..\..\..\Output\Common\bldinc.h"
-#include "..\..\..\Src\AppCore\Res\AfApp.rc"
-#include "..\..\Generic\Generic.rc"
+#include "..\..\Output\Common\bldinc.h"
+#include "..\..\Src\AppCore\Res\AfApp.rc"
+#include "..\Generic\Generic.rc"
 #else
 #include "Generic.rc"
 #endif

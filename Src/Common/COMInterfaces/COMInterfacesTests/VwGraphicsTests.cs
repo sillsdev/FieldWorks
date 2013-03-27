@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 {
 	/// <summary/>
 	[TestFixture]
-	public class VwGraphicsTests: FwCOMTestBase
+	public class VwGraphicsTests
 	{
 		internal class GraphicsObjectFromImage : IDisposable
 		{
@@ -112,6 +112,22 @@ namespace SIL.FieldWorks.Common.COMInterfaces
 				vwGraphics.Initialize(gr.Graphics.GetHdc());
 				vwGraphics.ReleaseDC();
 			}
+		}
+
+		/// <summary>
+		/// Make sure our initialization of the character property engine works.
+		/// (This test doesn't really belong here but it didn't seem worth creating a whole new test
+		/// class which would have to register all the DLLs just for one test. And this one
+		/// is important...it's the only one that verifies that our ICU overrides are working
+		/// when the ICU directory is initialized from C#.)
+		/// </summary>
+		[Test]
+		public void CharacterPropertyOverrides()
+		{
+			Icu.InitIcuDataDir();
+			var cpe = LgIcuCharPropEngineClass.Create();
+			var result = cpe.get_GeneralCategory('\xF171');
+			Assert.That(result, Is.EqualTo(LgGeneralCharCategory.kccMn));
 		}
 
 		/// <summary>

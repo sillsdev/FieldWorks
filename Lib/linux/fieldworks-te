@@ -1,4 +1,4 @@
 #!/bin/sh
 
 script_location=$(dirname "$0")
-exec "${script_location}/../lib/fieldworks/run-app" TE
+exec "${script_location}/../lib/fieldworks/run-app" FieldWorks.exe -app TE "$@"

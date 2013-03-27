@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfInterlinearMapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <InterlinearMapping>
+	<Marker>lx</Marker>
+	<Destination>Wordform</Destination>
+	<WritingSystem>{vern}</WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+  <InterlinearMapping>
+	<Marker>ge</Marker>
+	<Destination>WordGloss</Destination>
+	<WritingSystem></WritingSystem>
+	<Converter />
+  </InterlinearMapping>
+</ArrayOfInterlinearMapping>

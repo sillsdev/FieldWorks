@@ -22,16 +22,19 @@ using System.Diagnostics;
 using System.Reflection;
 
 using SIL.CoreImpl;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using System.IO;
 using XCore;
+using SIL.FieldWorks.FDO.Application.ApplicationServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -79,7 +82,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ContextMenuStrip m_cmnuAddWs;
 		private ToolStripMenuItem menuItem2;
 		private TextBox txtExtLnkEdit;
-		private FolderBrowserDialog folderBrowserDlg;
 		private IContainer components;
 		/// <summary></summary>
 		protected IVwStylesheet m_stylesheet;
@@ -126,6 +128,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Button btnLinkedFilesBrowse;
 		/// <summary>The project name when we entered the dialog.</summary>
 		protected string m_sOrigProjName;
+		/// <summary>Used to check if the vern ws at the top of the list changed</summary>
+		private IWritingSystem m_topVernWs;
 		#endregion
 
 		#region Construction and initialization
@@ -178,7 +182,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				btnLinkedFilesBrowse.Visible = false;
 				txtExtLnkEdit.Width = txtExtLnkEdit.Width + deltaX;
 				txtExtLnkEdit.Enabled = false;
-		}
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -229,7 +233,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				// Select the first item in the vernacular writing system list.
 				if (m_lstVernWs.Items.Count > 0)
+				{
 					m_lstVernWs.SelectedIndex = 0;
+					m_topVernWs = (IWritingSystem) m_lstVernWs.CheckedItems[0];
+				}
 
 				// Select the first item in the analysis writing system list.
 				if (m_lstAnalWs.Items.Count > 0)
@@ -358,7 +365,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.m_cmnuAddWs = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.menuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-			this.folderBrowserDlg = new System.Windows.Forms.FolderBrowserDialog();
 			this.helpProvider1 = new System.Windows.Forms.HelpProvider();
 			this.m_wsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.m_modifyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -771,10 +777,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.menuItem2.Name = "menuItem2";
 			resources.ApplyResources(this.menuItem2, "menuItem2");
 			//
-			// folderBrowserDlg
-			//
-			resources.ApplyResources(this.folderBrowserDlg, "folderBrowserDlg");
-			//
 			// m_wsMenuStrip
 			//
 			this.m_wsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -813,6 +815,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.m_btnOK;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = m_btnCancel;
 			this.Controls.Add(this.m_tabControl);
 			this.Controls.Add(m_btnCancel);
@@ -957,6 +960,20 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
+			// if needed put up "should the homograph ws change?" dialog
+			var changeHgWs = DialogResult.No;
+			var topVernWs = (IWritingSystem)m_lstVernWs.CheckedItems[0];
+			Debug.Assert(m_topVernWs != null, "There was no checked top vernacular ws when this dialog loaded");
+			// if the top vern ws changed and it is not the current hg ws, ask
+			if (m_topVernWs.Id != topVernWs.Id && topVernWs.Id != m_cache.LanguageProject.HomographWs)
+			{
+				var msg = ResourceHelper.GetResourceString("kstidChangeHomographNumberWs");
+				changeHgWs = MessageBox.Show(
+					String.Format(msg, topVernWs.DisplayLabel),
+					ResourceHelper.GetResourceString("kstidChangeHomographNumberWsTitle"),
+					MessageBoxButtons.YesNo);
+			}
+
 			using (new WaitCursor(this))
 			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
@@ -964,6 +981,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					DeleteWritingSystems();
 					MergeWritingSystems();
 					SaveInternal();
+					// if dialog indicates it's needed, change homograph ws and renumber
+					if (changeHgWs == DialogResult.No)
+						return;
+					m_cache.LanguageProject.HomographWs = topVernWs.Id;
+					m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().ResetHomographs(null);
 				});
 				m_cache.ServiceLocator.WritingSystemManager.Save();
 				if (m_fWsChanged || m_fProjNameChanged || m_fLinkedFilesChanged)
@@ -1318,21 +1340,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void btnLinkedFilesBrowse_Click(object sender, EventArgs e)
 		{
-			folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-			if (!Directory.Exists(txtExtLnkEdit.Text))
+			using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
 			{
-				string msg = String.Format(FwCoreDlgs.ksLinkedFilesFolderIsUnavailable, txtExtLnkEdit.Text);
-				MessageBox.Show(msg, FwCoreDlgs.ksLinkedFilesFolderUnavailable);
-				folderBrowserDlg.SelectedPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
-			}
-			else
-			{
-				folderBrowserDlg.SelectedPath = txtExtLnkEdit.Text;
-			}
+				folderBrowserDlg.Description = FwCoreDlgs.folderBrowserDlgDescription;
+				folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
+				if (!Directory.Exists(txtExtLnkEdit.Text))
+				{
+					string msg = String.Format(FwCoreDlgs.ksLinkedFilesFolderIsUnavailable, txtExtLnkEdit.Text);
+					MessageBox.Show(msg, FwCoreDlgs.ksLinkedFilesFolderUnavailable);
+					folderBrowserDlg.SelectedPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+				}
+				else
+				{
+					folderBrowserDlg.SelectedPath = txtExtLnkEdit.Text;
+				}
 
-
-			if(folderBrowserDlg.ShowDialog() == DialogResult.OK)
-				txtExtLnkEdit.Text = folderBrowserDlg.SelectedPath;
+				if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+					txtExtLnkEdit.Text = folderBrowserDlg.SelectedPath;
+			}
 		}
 
 		/// <summary>
@@ -1754,6 +1779,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (allSet.Count != lstBox.Items.Count || allSet.Intersect(lstBox.Items.Cast<IWritingSystem>()).Count() != allSet.Count)
 			{
+				var newWsIds = new List<string>();
+				foreach (IWritingSystem ws in lstBox.Items)
+				{
+					string id = ws.IcuLocale;
+					if (allSet.FirstOrDefault(existing => existing.IcuLocale == id) == null)
+						newWsIds.Add(id);
+				}
 				allSet.Clear();
 				foreach (IWritingSystem ws in lstBox.Items)
 				{
@@ -1762,6 +1794,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					allSet.Add(ws);
 				}
 				m_fWsChanged = true;
+				foreach (var newWs in newWsIds)
+				{
+					ProgressDialogWithTask.ImportTranslatedListsForWs(this, m_cache, newWs);
+				}
 			}
 
 			if (!currList.SequenceEqual(lstBox.CheckedItems.Cast<IWritingSystem>()))

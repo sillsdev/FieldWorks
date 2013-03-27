@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
@@ -9,9 +11,9 @@ using System.Reflection;
 using ECInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SilEncConverters40;
-using System.Diagnostics;
 
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Resources;
@@ -40,7 +42,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public FwOverrideComboBox cboConverter;
 		/// <summary></summary>
 		public FwOverrideComboBox cboSpec;
-		private OpenFileDialog ofDlg = new OpenFileDialog();
+		private OpenFileDialogAdapter ofDlg = new OpenFileDialogAdapter();
 
 		/// <summary>Event handler when settings for a converter change.</summary>
 		public event EventHandler ConverterFileChanged;
@@ -203,18 +205,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			// Must not be run more than once.
-			if (IsDisposed)
-				return;
 
-			if( disposing )
+			if (disposing && !IsDisposed)
 			{
-				if(components != null)
-				{
+				if (components != null)
 					components.Dispose();
-				}
+
+				if (ofDlg != null)
+					ofDlg.Dispose();
 			}
-			base.Dispose( disposing );
+			ofDlg = null;
+			components = null;
+			base.Dispose(disposing);
 		}
 
 		#region Component Designer generated code
@@ -352,6 +354,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 		#endregion
 
+		/// <summary>
+		/// This provides a reasonable sort order for Code Pages supported as encodings.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See comment below")]
+		private int CompareEncInfo(System.Text.EncodingInfo x, System.Text.EncodingInfo y)
+		{
+			// EncodingInfo.DisplayName is marked with MonoTODO since it simply returns Name,
+			// but this doesn't matter in this case.
+			int c = x.DisplayName.ToLowerInvariant().CompareTo(y.DisplayName.ToLowerInvariant());
+			if (c == 0)
+				c = x.CodePage - y.CodePage;
+			return c;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the SelectedIndexChanged event of the cboConverter control.
@@ -360,6 +377,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		private void cboConverter_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			txtMapFile.Text = "";
@@ -434,17 +453,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						// once and save it.
 						cboSpec.BeginUpdate();
 						cboSpec.Items.Clear();
-						ILgCodePageEnumerator lcpe = LgCodePageEnumeratorClass.Create();
-						lcpe.Init();
-						int codePage = 0;
-						string codePageName = "";
-						for (; ; )
+						// we'll cheat and take advantage of our knowledge that CodePage converters
+						// are built using C# System.Text.Encoding related classes.
+						var encodings = new List<System.Text.EncodingInfo>();
+						encodings.AddRange(System.Text.Encoding.GetEncodings());
+						encodings.Sort(CompareEncInfo);
+						foreach (var enc in encodings)
 						{
-							lcpe.Next(out codePage, out codePageName);
-							if (codePage == 0)
-								break;
+							// TODO-Linux: EncodingInfo.DisplayName simply returns Name on Mono.
+							// Need to review if this is sufficient here.
 							cboSpec.Items.Add(new CnvtrSpecComboItem(String.Format(FwCoreDlgs.ksCodePageDisplay,
-								codePageName, codePage), codePage.ToString()));
+								enc.DisplayName, enc.CodePage), enc.CodePage.ToString()));
 						}
 						cboSpec.EndUpdate();
 						break;

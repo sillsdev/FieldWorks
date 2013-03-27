@@ -10,6 +10,8 @@
 //
 // File: PhrasesToIgnoreDlg.cs
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
+
 namespace SILUBS.PhraseTranslationHelper
 {
 	partial class PhraseSubstitutionsDlg
@@ -25,9 +27,17 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+
+				// REVIEW: it might be better to add the two drop downs to the Controls collection
+				if (m_regexMatchDropDown != null)
+					m_regexMatchDropDown.Dispose();
+				if (m_regexReplaceDropDown != null)
+					m_regexReplaceDropDown.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -38,6 +48,11 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Controls get added to Controls collection and disposed there")]
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
+		// TODO-Linux: AutoCompletion is not implemented in Mono
 		private void InitializeComponent()
 		{
 			System.Windows.Forms.Label label1;

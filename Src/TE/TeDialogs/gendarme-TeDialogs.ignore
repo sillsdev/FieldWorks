@@ -1,0 +1,29 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# variable added to Controls and disposed there
+M: System.Void SIL.FieldWorks.TE.SaveVersionDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.SavedVersionsDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.BackTransLanguageDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.BookPropertiesDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.EmptyScripture::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.FilesOverwriteDialog::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.ScriptureProperties::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.SequenceOptionsDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.SymbolChooserDlg::InitializeComponent()
+M: System.Void SIL.FieldWorks.TE.ToolsOptionsDialog::InitializeComponent()
+
+# REVIEW: how does menu get disposed?
+M: System.Void SIL.FieldWorks.TE.SavedVersionsDialog::m_treeArchives_NodeMouseClick(System.Object,System.Windows.Forms.TreeNodeMouseClickEventArgs)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+# m_app is passed in and so we shouldn't dispose it
+T: SIL.FieldWorks.TE.ReplaceInFilterFixer
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.MonoCompatibilityReviewRule
+# Generated code. I don't think we really rely on VirtualMode
+M: System.Void SIL.FieldWorks.TE.SymbolChooserDlg::InitializeComponent()

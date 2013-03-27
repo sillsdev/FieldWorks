@@ -370,34 +370,34 @@ namespace SIL.FieldWorks.FDO.FDOTests.BackupRestore
 		private void VerifyConfigurationSettingsFiles(IEnumerable<String> filesToBackup)
 		{
 			//1-5
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("CmPicture_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("CmPicture.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("CmPossibility_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("CmPossibility.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("CmSemanticDomain_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("CmSemanticDomain.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexEntryRef_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexEntryRef.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexEntryType_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexEntryType.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
 
 			//6-10
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexEntry_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexEntry.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexEtymology_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexEtymology.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexReference_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexReference.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexSense_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("LexSense.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("MoForm_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("MoForm.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
 			//11-14
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("MoInflAffixSlot_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("MoInflAffixSlot.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("MoMorphSynAnalysis_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("MoMorphSynAnalysis.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
-			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("MoMorphType_Layouts.xml")),
+			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("MoMorphType.fwlayout")),
 						"A configuration settings file is missing in the list of files to backup.");
 			Assert.True(filesToBackup.Contains(FlexConfigSettingFile("Settings.xml")),
 						"A configuration settings file is missing in the list of files to backup.");

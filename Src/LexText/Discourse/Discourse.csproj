@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,16 +10,28 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>SIL.FieldWorks.Discourse</RootNamespace>
 	<AssemblyName>Discourse</AssemblyName>
-	<SccProjectName>SAK</SccProjectName>
-	<SccLocalPath>SAK</SccLocalPath>
-	<SccAuxPath>SAK</SccAuxPath>
-	<SccProvider>SAK</SccProvider>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
-	<OldToolsVersion>2.0</OldToolsVersion>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<OldToolsVersion>3.5</OldToolsVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
+	<TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<DebugSymbols>true</DebugSymbols>
@@ -33,6 +45,8 @@
 	<DocumentationFile>
 	</DocumentationFile>
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<DebugType>pdbonly</DebugType>
@@ -42,6 +56,8 @@
 	<DefineConstants>TRACE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="BasicUtils, Version=5.1.0.19828, Culture=neutral, processorArchitecture=MSIL">
@@ -99,9 +115,7 @@
 	  <HintPath>..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
 	</Reference>
 	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
+	<Reference Include="System.Core" />
 	<Reference Include="System.Data" />
 	<Reference Include="System.Drawing" />
 	<Reference Include="System.Windows.Forms" />
@@ -124,6 +138,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\..\CommonAssemblyInfo.cs">
+	  <Link>Properties\CommonAssemblyInfo.cs</Link>
+	</Compile>
 	<Compile Include="AdvancedMTDialog.cs">
 	  <SubType>Form</SubType>
 	</Compile>
@@ -131,12 +148,10 @@
 	  <DependentUpon>AdvancedMTDialog.cs</DependentUpon>
 	</Compile>
 	<Compile Include="ChartLocation.cs" />
-	<Compile Include="ConstChartBody.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="ConstChartBody.cs" />
 	<Compile Include="ConstChartRowDecorator.cs" />
 	<Compile Include="ConstituentChart.cs">
-	  <SubType>UserControl</SubType>
+	  <SubType>Component</SubType>
 	</Compile>
 	<Compile Include="ConstituentChart.Designer.cs">
 	  <DependentUpon>ConstituentChart.cs</DependentUpon>
@@ -144,16 +159,12 @@
 	<Compile Include="ConstituentChartLogic.cs">
 	  <SubType>Component</SubType>
 	</Compile>
-	<Compile Include="DiscourseExportDialog.cs">
-	</Compile>
+	<Compile Include="DiscourseExportDialog.cs" />
 	<Compile Include="DiscourseExporter.cs" />
-	<Compile Include="InterlinRibbon.cs">
-	  <SubType>UserControl</SubType>
-	</Compile>
+	<Compile Include="InterlinRibbon.cs" />
 	<Compile Include="InterlinRibbonDecorator.cs" />
 	<Compile Include="MaxStringWidthForChartColumn.cs" />
-	<None Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Properties\GeneratedAssemblyInfo.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
 	<Compile Include="DiscourseStrings.Designer.cs">
 	  <DependentUpon>DiscourseStrings.resx</DependentUpon>
 	  <AutoGen>True</AutoGen>
@@ -188,6 +199,23 @@
 	  <DependentUpon>SelectClausesDialog.cs</DependentUpon>
 	  <SubType>Designer</SubType>
 	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+	  <Visible>False</Visible>
+	  <ProductName>Windows Installer 3.1</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Permissions;
 using System.Text;
 using System.IO;
@@ -299,9 +300,13 @@ namespace SIL.Utils
 		/// Returns <c>true</c> if we're running on Mono , otherwise <c>false</c>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="See TODO-Linux comment")]
 		public static bool IsMono
 		{
-			get { return  (Type.GetType ("Mono.Runtime") != null); }
+			// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type) is
+			// marked with a [MonoTODO] attribute and might not work as expected in 4.0
+			get { return (Type.GetType("Mono.Runtime") != null); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -482,11 +487,13 @@ namespace SIL.Utils
 		public static ulong GetPhysicalMemoryBytes()
 		{
 #if !__MonoCS__
-			EventWaitHandle waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
-			ManagementObjectHelper helper = new ManagementObjectHelper(waitHandle);
-			ThreadPool.QueueUserWorkItem(helper.GetPhysicalMemoryBytes);
-			waitHandle.WaitOne();
-			return helper.Memory;
+			using (var waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset))
+			{
+				var helper = new ManagementObjectHelper(waitHandle);
+				ThreadPool.QueueUserWorkItem(helper.GetPhysicalMemoryBytes);
+				waitHandle.WaitOne();
+				return helper.Memory;
+			}
 #else
 			using (var pc = new PerformanceCounter("Mono Memory", "Total Physical Memory"))
 			{
@@ -564,19 +571,21 @@ namespace SIL.Utils
 		/// thread.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+			Justification="m_waitHandle is a reference")]
 		private class ManagementObjectHelper
 		{
-			private ulong m_Memory = 0;
-			private ulong m_DiskFree = 0;
-			private ulong m_DiskSize = 0;
-			private int m_DriveCount = 0;
+			private ulong m_Memory;
+			private ulong m_DiskFree;
+			private ulong m_DiskSize;
+			private int m_DriveCount;
 #if !__MonoCS__
 			private EventWaitHandle m_waitHandle;
 #endif
 
 			/// --------------------------------------------------------------------------------
 			/// <summary>
-			/// Initializes a new instance of the <see cref="T:Temp"/> class.
+			/// Initializes a new instance of the ManagementObjectHelper class.
 			/// </summary>
 			/// <param name="waitHandle">The wait handle.</param>
 			/// --------------------------------------------------------------------------------
@@ -608,13 +617,16 @@ namespace SIL.Utils
 			public void GetPhysicalMemoryBytes(object stateInfo)
 			{
 				m_Memory = 0;
-				using (ManagementObjectSearcher searcher =
+				using (var searcher =
 					new ManagementObjectSearcher("select * from Win32_PhysicalMemory"))
 				{
-					foreach (ManagementObject mem in searcher.Get())
+					using (var objColl = searcher.Get())
 					{
-						m_Memory += (ulong)mem.GetPropertyValue("Capacity");
-						mem.Dispose();
+						foreach (ManagementObject mem in objColl)
+						{
+							m_Memory += (ulong)mem.GetPropertyValue("Capacity");
+							mem.Dispose();
+						}
 					}
 				}
 
@@ -1019,7 +1031,7 @@ namespace SIL.Utils
 		/// <summary>
 		/// Allow special case unittests to pretend they are not unit tests.
 		/// </summary>
-		private static bool? runningTests = null;
+		private static bool? runningTests;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1030,14 +1042,15 @@ namespace SIL.Utils
 		{
 			get
 			{
-				if (runningTests != null)
-					return (bool)runningTests;
-
-				// If the real application is ever installed in a path that includes nunit or
-				// jetbrains, then this will return true and the app. won't run properly. But
-				// what are the chances of that?...
-				string appPath = Application.ExecutablePath.ToLowerInvariant();
-				return (appPath.IndexOf("nunit") != -1 || appPath.IndexOf("jetbrains") != -1);
+				if (!runningTests.HasValue)
+				{
+					// If the real application is ever installed in a path that includes nunit or
+					// jetbrains, then this will return true and the app. won't run properly. But
+					// what are the chances of that?...
+					string appPath = Application.ExecutablePath.ToLowerInvariant();
+					runningTests = (appPath.IndexOf("nunit") != -1 || appPath.IndexOf("jetbrains") != -1);
+				}
+				return (bool)runningTests;
 			}
 			set
 			{

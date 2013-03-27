@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes"/>
+	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" media-type="text/html; charset=utf-8"/>
 	<!--
 ================================================================
 Format the xml returned from XAmple parse for user display.
@@ -49,8 +49,14 @@ Main template
 	<xsl:template match="Wordform">
 		<html>
 			<head>
-				<style type="text/css"> .interblock { display: -moz-inline-box; display:
-					inline-block; vertical-align: top; } </style>
+				<style type="text/css">
+					.interblock {
+						display: -moz-inline-box;
+						display:
+						inline-block;
+						vertical-align: top;
+
+					}</style>
 				<xsl:call-template name="Script"/>
 			</head>
 			<body style="font-family:Times New Roman">
@@ -63,7 +69,7 @@ Main template
 							<xsl:text>; font-family:</xsl:text>
 							<xsl:value-of select="$prmVernacularFont"/>
 						</xsl:attribute>
-					   <xsl:value-of select="translate(@Form,'.',' ')"/>
+						<xsl:value-of select="translate(@Form,'.',' ')"/>
 					</span>
 					<xsl:text>.</xsl:text>
 				</h1>
@@ -141,7 +147,7 @@ ResultSection
 							</xsl:attribute>
 							<xsl:text>An error was detected!  </xsl:text>
 							<xsl:value-of select="//Error"/>
-							</span>
+						</span>
 					</p>
 				</xsl:if>
 			</xsl:otherwise>
@@ -314,7 +320,7 @@ ShowMsaInfo
 			</xsl:text>
 		</script>
 	</xsl:template>
-		<!--
+	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ShowMorph
 	Show the morpheme information
@@ -369,7 +375,15 @@ ShowMorph
 							</xsl:if>
 							<xsl:call-template name="GetAnalysisFont"/>
 						</xsl:attribute>
-						<xsl:value-of select="gloss"/>
+						<xsl:variable name="sGloss" select="gloss"/>
+						<xsl:choose>
+							<xsl:when test="string-length($sGloss) &gt; 0">
+								<xsl:value-of select="$sGloss"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>&#xa0;</xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
 					</td>
 				</tr>
 				<tr>
@@ -413,9 +427,14 @@ ShowSuccessfulAnalysis
 					<tr>
 						<!-- Note: do not need to do any re-ordering for RTL; the browser does it. -->
 						<xsl:for-each select="Morph">
-							<td valign="top">
-								<xsl:call-template name="ShowMorph"/>
-							</td>
+							<xsl:if test="not(lexEntryInflType)">
+								<!-- when we have only two child nodes, it is a case of being one of the null allomorphs we create when building the
+									   input for the parser in order to still get the Word Grammar to have something in any
+									   required slots in affix templates. -->
+								<td valign="top">
+									<xsl:call-template name="ShowMorph"/>
+								</td>
+							</xsl:if>
 						</xsl:for-each>
 					</tr>
 				</table>
@@ -423,10 +442,3 @@ ShowSuccessfulAnalysis
 		</tr>
 	</xsl:template>
 </xsl:stylesheet>
-<!--
-================================================================
-Revision History
-- - - - - - - - - - - - - - - - - - -
-07-Sep-2007	Andy Black	Initial Draft
-================================================================
--->

@@ -20,7 +20,7 @@
 		  <a href="../tasks/index.html">Task Reference</a>
 		  <img alt="-&gt;" src="../images/arrow.gif" /> &lt;slingshot&gt;</td>
 		<td class="NavBar-Cell" align="right">
-						v0.85</td>
+						v0.91</td>
 	  </tr>
 	</table>
 	<h1>&lt;slingshot&gt;</h1>
@@ -103,31 +103,31 @@
 	  <li>
 		<p> Convert the solution <code>MySolution.sln</code> to the NAnt build file <code>MySolution.build</code> and call the new build file. </p>
 		<pre class="code">
-&lt;slingshot solution="MySolution.sln" format="nant" output="MySolution.build"&gt;
-	&lt;parameters&gt;
-		&lt;option name="build.basedir" value="..\bin"/&gt;
-	&lt;/parameters&gt;
-&lt;/slingshot&gt;
-&lt;nant buildfile="MySolution.build"/&gt;
-</pre>
+			&lt;slingshot solution="MySolution.sln" format="nant" output="MySolution.build"&gt;
+				&lt;parameters&gt;
+					&lt;option name="build.basedir" value="..\bin"/&gt;
+				&lt;/parameters&gt;
+			&lt;/slingshot&gt;
+			&lt;nant buildfile="MySolution.build"/&gt;
+			</pre>
 	  </li>
 	  <li>
 		<p> Convert the solution <code>MySolution.sln</code> to the NAnt build file <code>MySolution.build</code>. As the solution contains one or more web projects, one or more maps needs to be specified. </p>
 		<pre class="code">
-&lt;slingshot solution="MySolution.sln" format="nant" output="MySolution.build"&gt;
-	&lt;parameters&gt;
-		&lt;option name="build.basedir" value="..\bin"/&gt;
-	&lt;/parameters&gt;
-	&lt;maps&gt;
-		&lt;option name="http://localhost" value="C:\Inetpub\wwwroot"/&gt;
-	&lt;/maps&gt;
-&lt;/slingshot&gt;
-</pre>
+			&lt;slingshot solution="MySolution.sln" format="nant" output="MySolution.build"&gt;
+				&lt;parameters&gt;
+					&lt;option name="build.basedir" value="..\bin"/&gt;
+				&lt;/parameters&gt;
+				&lt;maps&gt;
+					&lt;option name="http://localhost" value="C:\Inetpub\wwwroot"/&gt;
+				&lt;/maps&gt;
+			&lt;/slingshot&gt;
+			</pre>
 	  </li>
 	</ul>
 	<h3>Requirements</h3>
 	<div style="margin-left: 20px;">
-	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.85.2479.0)
+	  <b>Assembly:</b> NAnt.Contrib.Tasks (0.91.4312.0)
 			</div>
   </body>
 </html>

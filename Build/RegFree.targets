@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
+
+	<!-- This file is included in BuildInclude.targets for each of our EXEs which use our COM components.
+	It runs a custom task to create a manifest, then EXEC's a program to embed it in the EXE itself.
+	This allows our programs to run without registering our COM DLLs, which in turn allows different
+	versions of FieldWorks to coexist on the same computer. This is only relevant for Windows.-->
+	<ItemGroup>
+		<Dlls Include="$(OutDir)FwKernel.dll"/>
+		<Dlls Include="$(OutDir)Views.dll"/>
+		<Dlls Include="$(OutDir)Language.dll"/>
+		<Dlls Include="$(OutDir)Graphite.dll"/>
+	</ItemGroup>
+	<ItemGroup>
+		<Fragments Include="$(OutDir)/../../DistFiles/*.fragment.manifest"/>
+	</ItemGroup>
+	<Target Name="RegFree" Condition="'$(OS)'=='Windows_NT'" Inputs="$(Executable)" Outputs="$(Executable).manifest">
+		<RegFree Executable="$(Executable)" Dlls="@(Dlls)" Fragments="@(Fragments)"
+			NoTypeLib="$(OutDir)Graphite.dll" />
+		<Exec Command="mt.exe -outputresource:$(Executable) -manifest $(Executable).manifest"/>
+	</Target>
+</Project>

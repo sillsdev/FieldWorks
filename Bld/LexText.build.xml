@@ -19,7 +19,7 @@
 	<!-- FlexDePlugin,MorphologyEditorDll,ParserUI,Discourse -->
 	<target name="LexTextExe" description="Build LexText EXE project."
 		depends="LexTextDll,FieldWorks,xWorks,xCore,FDO,Framework,BasicUtils,FwControls,COMInterfaces,FwCoreDlgs,xCoreInterfaces,RootSite,
-		FlexDePlugin,SilSidePane,FlexUIAdapter,xCoreOpenSourceAdapter,ITextDll,LexEdDll,Discourse,RBRExtensions,FwRemoteDatabaseConnectorService">
+		FlexDePlugin,SilSidePane,FlexUIAdapter,xCoreOpenSourceAdapter,ITextDll,LexEdDll,Discourse,FwRemoteDatabaseConnectorService">
 		<call target="LexTextExe-nodep" cascade="false"/>
 	</target>
 	<target name="LexTextExe-nodep" description="Build LexTextExe project.">
@@ -38,7 +38,7 @@
 	<target name="LexTextDll" description="Build LexText DLL project."
 		depends="RootSite,xCoreInterfaces,xWorks,xCore,FDO,Framework,FwUtils,BasicUtils,FwControls,COMInterfaces,
 		FwCoreDlgs,ParserCore,DetailControls,XMLViews,XMLUtils,LexTextControls,ITextDll,
-		MessageBoxExLib,Reporting,ParserUI">
+		MessageBoxExLib,Reporting,ParserUI,FixFwDataDll">
 		<call target="LexTextDll-nodep" cascade="false"/>
 	</target>
 	<target name="LexTextDll-nodep" description="Build LexTextDll project.">

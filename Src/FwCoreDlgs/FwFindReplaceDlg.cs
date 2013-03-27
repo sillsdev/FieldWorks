@@ -964,27 +964,29 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// fweditReplaceText
 			//
+			this.fweditReplaceText.AcceptsReturn = false;
 			this.fweditReplaceText.AdjustStringHeight = true;
 			resources.ApplyResources(this.fweditReplaceText, "fweditReplaceText");
 			this.fweditReplaceText.BackColor = System.Drawing.SystemColors.Window;
 			this.fweditReplaceText.controlID = null;
 			this.fweditReplaceText.HasBorder = true;
 			this.fweditReplaceText.Name = "fweditReplaceText";
-			this.fweditReplaceText.SelectionLength = 0;
-			this.fweditReplaceText.SelectionStart = 0;
+			this.fweditReplaceText.SuppressEnter = false;
+			this.fweditReplaceText.WordWrap = false;
 			this.fweditReplaceText.Leave += new System.EventHandler(this.FwTextBox_Leave);
 			this.fweditReplaceText.Enter += new System.EventHandler(this.FwTextBox_Enter);
 			//
 			// fweditFindText
 			//
+			this.fweditFindText.AcceptsReturn = false;
 			this.fweditFindText.AdjustStringHeight = true;
 			resources.ApplyResources(this.fweditFindText, "fweditFindText");
 			this.fweditFindText.BackColor = System.Drawing.SystemColors.Window;
 			this.fweditFindText.controlID = null;
 			this.fweditFindText.HasBorder = true;
 			this.fweditFindText.Name = "fweditFindText";
-			this.fweditFindText.SelectionLength = 0;
-			this.fweditFindText.SelectionStart = 0;
+			this.fweditFindText.SuppressEnter = false;
+			this.fweditFindText.WordWrap = false;
 			this.fweditFindText.Leave += new System.EventHandler(this.FwTextBox_Leave);
 			this.fweditFindText.Enter += new System.EventHandler(this.FwTextBox_Enter);
 			//
@@ -1008,6 +1010,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = this.btnFindNext;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnClose;
 			this.Controls.Add(this.tabControls);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -1136,7 +1139,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// After a find next, focus the find box and select the text in it.
 			fweditFindText.Select();
 			fweditFindText.SelectAll();
+#if __MonoCS__
+			RemoveWaitCursor(this);
+#endif
 		}
+
+#if __MonoCS__
+		/// <summary>
+		/// Remove the wait cursor, which is left behind on several controls when the
+		/// DataUpdateMonitor object is disposed.  This is a patch over a bug in Mono
+		/// as far as I can tell. It fixes FWNX-659.
+		/// </summary>
+		/// <remarks>
+		/// The strange thing is that the cursor on all these controls seems to already
+		/// be set to Cursors.Default, but this fix works.
+		/// </remarks>
+		private void RemoveWaitCursor(Control ctl)
+		{
+			foreach (var c in ctl.Controls)
+			{
+				var control = c as Control;
+				if (control != null)
+					RemoveWaitCursor(control);
+			}
+			ctl.Cursor = Cursors.Default;
+		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

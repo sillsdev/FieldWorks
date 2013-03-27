@@ -18,12 +18,13 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Xml;
 using Microsoft.Win32;
 
@@ -142,12 +143,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Registry key for settings for this Dialog.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "We're returning an object")]
 		public RegistryKey SettingsKey
 		{
 			get
 			{
 				CheckDisposed();
-				return FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("LingCmnDlgs");
+				using (var regKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					return regKey.CreateSubKey("LingCmnDlgs");
+				}
 			}
 		}
 
@@ -458,17 +464,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			AccessibleName = GetType().Name;
 
 			// Figure out where to locate the dlg.
-			object obj = SettingsKey.GetValue("InsertX");
-			if (obj != null)
+			using (var regKey = SettingsKey)
 			{
-				var x = (int)obj;
-				var y = (int)SettingsKey.GetValue("InsertY");
-				var width = (int)SettingsKey.GetValue("InsertWidth", Width);
-				var height = (int)SettingsKey.GetValue("InsertHeight", Height);
-				var rect = new Rectangle(x, y, width, height);
-				ScreenUtils.EnsureVisibleRect(ref rect);
-				DesktopBounds = rect;
-				StartPosition = FormStartPosition.Manual;
+				object obj = regKey.GetValue("InsertX");
+				if (obj != null)
+				{
+					var x = (int)obj;
+					var y = (int)regKey.GetValue("InsertY");
+					var width = (int)regKey.GetValue("InsertWidth", Width);
+					var height = (int)regKey.GetValue("InsertHeight", Height);
+					var rect = new Rectangle(x, y, width, height);
+					ScreenUtils.EnsureVisibleRect(ref rect);
+					DesktopBounds = rect;
+					StartPosition = FormStartPosition.Manual;
+				}
 			}
 
 			m_helpProvider = new HelpProvider();
@@ -507,22 +516,22 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override void OnLoad(EventArgs e)
 		{
 			Size size = Size;
-			base.OnLoad (e);
+			base.OnLoad(e);
 			if (Size != size)
 				Size = size;
+#if __MonoCS__
+			// Mono doesn't seem to fire the Activated event, so call the method here.
+			// This fixes FWNX-783, setting the focus in the gloss textbox.
+			SetInitialFocus();
+#endif
 		}
-
 
 		bool m_fInitialized;
 		/// <summary>
-		/// This shouldn't be needed, but without it, the dialog can start up with the focus
-		/// in the lexical form text box, but the keyboard set to the analysis writing system
-		/// instead of the vernacular writing system.  See LT-4719.
+		/// Set the initial focus to either the lexical form or the gloss.
 		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnActivated(EventArgs e)
+		void SetInitialFocus()
 		{
-			base.OnActivated(e);
 			if (!m_fInitialized)
 			{
 				if (m_fLexicalFormInitialFocus)
@@ -541,6 +550,18 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				m_fInitialized = true;
 			}
+		}
+
+		/// <summary>
+		/// This shouldn't be needed, but without it, the dialog can start up with the focus
+		/// in the lexical form text box, but the keyboard set to the analysis writing system
+		/// instead of the vernacular writing system.  See LT-4719.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+			SetInitialFocus();
 		}
 
 #if __MonoCS__
@@ -1471,7 +1492,7 @@ catch(Exception e)
 					ITsString tss = msLexicalForm.ValueAndWs(i, out ws);
 					if (tss != null && tss.Text != null)
 					{
-						// In the case of copied text, sometimes the string had the wrong ws attached. (LT-11950)
+						// In the case of copied text, sometimes the string had the wrong ws attached to it. (LT-11950)
 						entryComponents.LexemeFormAlternatives.Add(bldr.MakeString(tss.Text, ws));
 					}
 				}
@@ -1483,7 +1504,7 @@ catch(Exception e)
 				{
 					int ws;
 					ITsString tss = msGloss.ValueAndWs(i, out ws);
-						// In the case of copied text, sometimes the string had the wrong ws attached. (LT-11950)
+					// In the case of copied text, sometimes the string had the wrong ws attached to it. (LT-11950)
 					entryComponents.GlossAlternatives.Add(bldr.MakeString(tss.Text, ws));
 				}
 			}
@@ -1501,13 +1522,16 @@ catch(Exception e)
 				return; // Prevent interaction w/ Paratext from causing crash here (LT-13582)
 
 			// Save location.
-			SettingsKey.SetValue("InsertX", Location.X);
-			SettingsKey.SetValue("InsertY", Location.Y);
-			SettingsKey.SetValue("InsertWidth", Width);
-			// We want to save the default height, without the growing we did
-			// to make room for multiple gloss writing systems or a large font
-			// in the lexical form box.
-			SettingsKey.SetValue("InsertHeight", Height - m_delta);
+			using (var regKey = SettingsKey)
+			{
+				regKey.SetValue("InsertX", Location.X);
+				regKey.SetValue("InsertY", Location.Y);
+				regKey.SetValue("InsertWidth", Width);
+				// We want to save the default height, without the growing we did
+				// to make room for multiple gloss writing systems or a large font
+				// in the lexical form box.
+				regKey.SetValue("InsertHeight", Height - m_delta);
+			}
 		}
 
 		/// <summary>
@@ -1713,9 +1737,7 @@ catch(Exception e)
 				// Get a wait cursor by setting the LinkLabel to use a wait cursor. See FWNX-700.
 				// Need to use a wait cursor while creating dialog, but not when showing it.
 				using (new WaitCursor(m_lnkAssistant))
-					dlg = MiscUtils.IsUnix ?
-						new MGADialog(m_cache, m_mediator, m_tbLexicalForm.Text) :
-						new MGAHtmlHelpDialog(m_cache, m_mediator, m_tbLexicalForm.Text);
+					dlg = new MGAHtmlHelpDialog(m_cache, m_mediator, m_tbLexicalForm.Text);
 
 				using (dlg)
 				{

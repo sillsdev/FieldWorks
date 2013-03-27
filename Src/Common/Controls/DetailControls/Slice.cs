@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -92,8 +93,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		// By default a slice is just considered to be a field (of the same object as the one before).
 		protected ObjectWeight m_weight = ObjectWeight.field;
 		protected bool m_widthHasBeenSetByDataTree = false;
-		// trace switch used to limit Dispose traces when obj is dispos(ed/ing) and still getting msgs
-		// private TraceSwitch disposeSwitch = new TraceSwitch("SIL.DisposeTrace", "Dispose tracking", "Off"); // CS0414
 		protected IPersistenceProvider m_persistenceProvider;
 
 		protected Slice m_parentSlice;
@@ -475,6 +474,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#region Construction and initialization
 
 		/// <summary></summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="TabStop is not implemented in Mono, but we set TabStop to false so it's not a problem.")]
 		public Slice()
 		{
 #if SLICE_IS_SPLITCONTAINER
@@ -910,7 +911,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal void SetSplitPosition()
 		{
 			SplitContainer sc = SplitCont;
-			if (sc.IsSplitterFixed)
+			Debug.Assert(sc != null, "LT-13912 -- Need to determine why the SplitContainer is null here.");
+			if (sc == null || sc.IsSplitterFixed) // LT-13912 apparently sc comes out null sometimes.
 				return;
 
 			int valueSansLabelindent = ContainingDataTree.SliceSplitPositionBase;
@@ -1632,6 +1634,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Collapse this node, which is at position iSlice in its parent.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() returns a reference")]
 		public virtual void Collapse(int iSlice)
 		{
 			CheckDisposed();
@@ -2365,6 +2369,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// starting with the slice itself. An arbitrary maximum distance (currently 40) is imposed,
 		/// to minimize the time spent getting and using these; usually one of the first few is used.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FieldOrDummyAt() returns a reference")]
 		internal List<Slice> GetCloseSlices()
 		{
 			int index = IndexInContainer;

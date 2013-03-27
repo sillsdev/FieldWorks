@@ -375,12 +375,6 @@
   <data name="&gt;&gt;pnlScan.ZOrder" xml:space="preserve">
 	<value>2</value>
   </data>
-  <metadata name="m_openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-	<value>275, 17</value>
-  </metadata>
-  <data name="m_openFileDialog.Title" xml:space="preserve">
-	<value>Browse for Language File</value>
-  </data>
   <metadata name="m_cmnuScan.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 	<value>415, 17</value>
   </metadata>
@@ -437,12 +431,6 @@
   </data>
   <data name="&gt;&gt;colContextAfter.Type" xml:space="preserve">
 	<value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_openFileDialog.Name" xml:space="preserve">
-	<value>m_openFileDialog</value>
-  </data>
-  <data name="&gt;&gt;m_openFileDialog.Type" xml:space="preserve">
-	<value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;cmnuScanScripture.Name" xml:space="preserve">
 	<value>cmnuScanScripture</value>

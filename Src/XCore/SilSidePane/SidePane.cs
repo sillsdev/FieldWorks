@@ -218,11 +218,11 @@ namespace SIL.SilSidePane
 
 			var tabButton = new OutlookBarButton
 				{
-					Name = tab.Name,
-					Text = tab.Text,
-					Image = tab.Icon,
-					Enabled = tab.Enabled,
-					Tag = tab
+			Name = tab.Name,
+			Text = tab.Text,
+			Image = tab.Icon,
+			Enabled = tab.Enabled,
+			Tag = tab
 				};
 			_tabArea.Buttons.Add(tabButton);
 			tab.UnderlyingWidget = tabButton;

@@ -122,7 +122,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		/// -------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude="Linux", Reason="FWNX-192")]
 		public void TestGetAdjustedTsString()
 		{
 			ITsStrBldr strBldr = TsStrBldrClass.Create();

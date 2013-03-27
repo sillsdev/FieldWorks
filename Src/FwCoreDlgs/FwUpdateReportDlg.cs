@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -45,7 +46,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private int m_currentPage;
 		private bool m_repeatTitleOnEveryPage = false;
 		private bool m_repeatColumnHeaderOnEveryPage = true;
-
+		/// <summary></summary>
+		protected SaveFileDialogAdapter saveFileDialog;
 		#endregion
 
 		#region Constructors
@@ -57,7 +59,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public FwUpdateReportDlg()
 		{
 			InitializeComponent();
-			saveFileDialog.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(saveFileDialog.Filter);
+			saveFileDialog = new SaveFileDialogAdapter();
+			saveFileDialog.DefaultExt = "txt";
+			saveFileDialog.SupportMultiDottedExtensions = true;
+			saveFileDialog.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(FwCoreDlgs.TextFileFilter);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -69,13 +74,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="helpTopicProvider">context sensitive help</param>
 		/// ------------------------------------------------------------------------------------
 		public FwUpdateReportDlg(List<string> itemsToReport, string projectName,
-			IHelpTopicProvider helpTopicProvider)
+			IHelpTopicProvider helpTopicProvider) : this()
 		{
-			CheckDisposed();
-
-			InitializeComponent();
-
-			saveFileDialog.Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(saveFileDialog.Filter);
 			lblProjectName.Text = String.Format(lblProjectName.Text, projectName);
 
 			m_helpTopicProvider = helpTopicProvider;
@@ -355,18 +355,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (!String.IsNullOrEmpty(m_warningText))
 				{
 					// print the warning label
-					SizeF stringSize = e.Graphics.MeasureString(m_warningText, m_SansSerifFont, layoutSize,
-					new StringFormat(), out charactersFitted, out linesFilled);
+					using (var stringFormat = new StringFormat())
+					{
+						SizeF stringSize = e.Graphics.MeasureString(m_warningText, m_SansSerifFont, layoutSize,
+						stringFormat, out charactersFitted, out linesFilled);
 
-					RectangleF drawRect = new RectangleF(currentX, currentY, layoutSize.Width, layoutSize.Height);
-					e.Graphics.DrawString(m_warningText, m_SansSerifFont, Brushes.Black, drawRect,
-					new StringFormat());
+						RectangleF drawRect = new RectangleF(currentX, currentY, layoutSize.Width, layoutSize.Height);
+						e.Graphics.DrawString(m_warningText, m_SansSerifFont, Brushes.Black, drawRect,
+						stringFormat);
 
-					m_warningText = m_warningText.Substring(charactersFitted);
+						m_warningText = m_warningText.Substring(charactersFitted);
 
-					// Skip a line
-					layoutSize.Height -= stringSize.Height + m_SansSerifFont.Height;
-					currentY += stringSize.Height + m_SansSerifFont.Height;
+						// Skip a line
+						layoutSize.Height -= stringSize.Height + m_SansSerifFont.Height;
+						currentY += stringSize.Height + m_SansSerifFont.Height;
+					}
 				}
 
 				if (layoutSize.Height > (sanSerifBoldFont.Height * 2))

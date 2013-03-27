@@ -109,9 +109,9 @@ public:
 
 	static int GlyfContourCount(const void * pSimpleGlyf);
 	static bool GlyfContourEndPoints(const void * pSimpleGlyf, int * prgnContourEndPoint,
-		int cnPointsTotal, int & cnPoints);
+		int cnPointsTotal, size_t & cnPoints);
 	static bool GlyfPoints(const void * pSimpleGlyf, int * prgnX, int * prgnY,
-		char * prgbFlag, int cnPointsTotal, int & cnPoints);
+		char * prgbFlag, int cnPointsTotal, size_t & cnPoints);
 
 	// primitive to find the glyph ids in a composite glyph
 	static bool GetComponentGlyphIds(const void * pSimpleGlyf, int * prgnCompId,
@@ -137,10 +137,10 @@ public:
 	static bool GlyfContourCount(int nGlyphId, const void * pGlyf, const void * pLoca,
 		size_t lLocaSize, const void *pHead, size_t & cnContours);
 	static bool GlyfContourEndPoints(int nGlyphId, const void * pGlyf, const void * pLoca,
-		long lLocaSize,	const void * pHead, int * prgnContourEndPoint, int cnPoints);
+		long lLocaSize,	const void * pHead, int * prgnContourEndPoint, size_t & cnPoints);
 	static bool GlyfPoints(int nGlyphId, const void * pGlyf, const void * pLoca,
 		long lLocaSize, const void * pHead, const int * prgnContourEndPoint, int cnEndPoints,
-		int * prgnX, int * prgnY, bool * prgfOnCurve, int cnPoints);
+		int * prgnX, int * prgnY, bool * prgfOnCurve, size_t & cnPoints);
 
 	// utitily method used by high-level GlyfPoints
 	static bool SimplifyFlags(char * prgbFlags, int cnPoints);

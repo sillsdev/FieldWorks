@@ -249,47 +249,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		// <summary>
-		// If hvoOldAnalysis is 'unattested', get rid of it.
-		// It is 'unattested' if
-		//		- No CmBaseAnnotation of type 'Wordform in context' has it as its InstanceOf
-		//		- It is not the target of a CmAgentEvaluation owned by the parser with accepted = true.
-		//		- It's owner is not parser-approved (this is relevant for WfiGlosses)
-		//		- It doesn't own any WfiGlosses (relevant for WfiAnalyses)
-		//		- It doesn't own any WfiAnalyses (relevant for WfiWordform)
-		// </summary>
-		// <param name="hvoOldAnalyis"></param>
-		//void DeleteIfUnattested(int hvoOldAnalysis)
-		//{
-		//	// (LT-7457) Make sure this data wasn't deleted in another screen. If it
-		//	// was, trying to delete it here will crash.
-		//	if (m_fdoCache.IsValidObject(hvoOldAnalysis))
-		//	{
-		//		int hvoParserAgent = m_fdoCache.LangProject.DefaultParserAgent.Hvo;
-		//		int hvoAnnDefnTwfic = CmAnnotationDefn.Twfic(m_fdoCache).Hvo;
-		//		int hvoOwner = m_fdoCache.GetOwnerOfObject(hvoOldAnalysis);
-		//		// This query counts the number of times any of the things that make it 'attested' occur.
-		//		string sql = string.Format("select " +
-		//		   "	(select count(*) from CmBaseAnnotation_ cba where cba.AnnotationType={0} and cba.InstanceOf={1})" +
-		//		   " + (select count(*) from CmAgentEvaluation_ where owner$={2} and target={1} and Accepted=1)" +
-		//		   " + (select count(*) from CmAgentEvaluation_ where owner$={2} and target={3} and Accepted=1)" +
-		//		   " + (select count(*) from WfiGloss_ where owner$={1})" +
-		//		   " + (select count(*) from WfiAnalysis_ where owner$={1})",
-		//		   hvoAnnDefnTwfic, hvoOldAnalysis, hvoParserAgent, hvoOwner);
-		//		int cAttestation;
-		//		DbOps.ReadOneIntFromCommand(m_fdoCache, sql, null, out cAttestation);
-		//		if (cAttestation != 0)
-		//			return; // attested!
-		//		ICmObject obj = CmObject.CreateFromDBObject(m_fdoCache, hvoOldAnalysis, false);
-		//		bool fShouldTryOwner = obj is WfiAnalysis || obj is WfiGloss;
-		//		obj.DeleteUnderlyingObject();
-		//		// If we deleted this object, we may have made its owner unattested, unless the thing
-		//		// we're deleting is s wordform...the lexical database is always attested!
-		//		if (fShouldTryOwner)
-		//			DeleteIfUnattested(hvoOwner);
-		//	}
-		//}
-
 		internal class UndoRedoApproveAndMoveHelper : FwDisposableBase
 		{
 			internal UndoRedoApproveAndMoveHelper(FocusBoxController focusBox,

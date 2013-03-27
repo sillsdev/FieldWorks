@@ -66,6 +66,13 @@ namespace SIL.FieldWorks.IText
 				return;
 			var activeClerk = m_mediator.PropertyTable.GetValue("ActiveClerk") as RecordClerk;
 			var toolChoice = m_mediator.PropertyTable.GetStringProperty("currentContentControl", null);
+			if(m_xrev != null)
+			{
+				//when re-using the infoview we want to remove and dispose of the old recordeditview and
+				//associated datatree. (LT-13216)
+				Controls.Remove(m_xrev);
+				m_xrev.Dispose();
+			}
 			m_xrev = new InterlinearTextsRecordEditView(this);
 			if (clerk.GetType().Name == "InterlinearTextsRecordClerk")
 			{
@@ -128,7 +135,6 @@ namespace SIL.FieldWorks.IText
 					components.Dispose();
 				}
 			}
-			// m_cache = null; // CS0169
 
 			base.Dispose( disposing );
 		}

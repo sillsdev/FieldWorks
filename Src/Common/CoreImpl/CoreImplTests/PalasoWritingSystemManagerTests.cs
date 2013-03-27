@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -13,7 +14,9 @@ namespace SIL.CoreImpl
 {
 	[TestFixture]
 	[SetCulture("en-US")]
-	public class PalasoWritingSystemManagerTests : FwCOMTestBase // can't derive from BaseTest, but instantiate DebugProcs instead
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "Unit tests, gets disposed in FixtureTearDown()")]
+	public class PalasoWritingSystemManagerTests // can't derive from BaseTest, but instantiate DebugProcs instead
 	{
 		private DebugProcs m_DebugProcs;
 

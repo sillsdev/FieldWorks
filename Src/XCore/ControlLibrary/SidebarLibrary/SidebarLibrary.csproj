@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>8.0.50727</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{EF17DE45-C757-48BF-BE3B-FD8E1D72E154}</ProjectGuid>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>.</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<AssemblyKeyContainerName>
@@ -26,7 +23,24 @@
 	</FileUpgradeFlags>
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+	<OldToolsVersion>2.0</OldToolsVersion>
+	<TargetFrameworkProfile />
+	<PublishUrl>publish\</PublishUrl>
+	<Install>true</Install>
+	<InstallFrom>Disk</InstallFrom>
+	<UpdateEnabled>false</UpdateEnabled>
+	<UpdateMode>Foreground</UpdateMode>
+	<UpdateInterval>7</UpdateInterval>
+	<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+	<UpdatePeriodically>false</UpdatePeriodically>
+	<UpdateRequired>false</UpdateRequired>
+	<MapFileExtensions>true</MapFileExtensions>
+	<ApplicationRevision>0</ApplicationRevision>
+	<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+	<IsWebBootstrapper>false</IsWebBootstrapper>
+	<UseApplicationTrust>false</UseApplicationTrust>
+	<BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Debug\</OutputPath>
@@ -46,6 +60,8 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 	<OutputPath>..\..\..\..\Output\Release\</OutputPath>
@@ -65,6 +81,8 @@
 	<WarningLevel>4</WarningLevel>
 	<DebugType>full</DebugType>
 	<ErrorReport>prompt</ErrorReport>
+	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
 	<Reference Include="System" />
@@ -75,8 +93,10 @@
 	<Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="AssemblyInfo.cs" />
-	<Compile Include="GeneratedAssemblyInfo.cs" />
+	<Compile Include="..\..\..\CommonAssemblyInfo.cs">
+	  <Link>CommonAssemblyInfo.cs</Link>
+	</Compile>
+	<Compile Include="AssemblyInfo.cs" />
 	<Compile Include="Collections\CollectionWithEvents.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -97,9 +117,6 @@
 	</Compile>
 	<Compile Include="CommandBarUnused\ChevronMenu.cs">
 	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="CommandBarUnused\CommandBarMenu.cs">
-	  <SubType>Component</SubType>
 	</Compile>
 	<Compile Include="CommandBarUnused\Rebar.cs">
 	  <SubType>Component</SubType>
@@ -128,9 +145,6 @@
 	<Compile Include="General\TextUtil.cs">
 	  <SubType>Code</SubType>
 	</Compile>
-	<Compile Include="MenuUnused\ColorGroup.cs">
-	  <SubType>Code</SubType>
-	</Compile>
 	<Compile Include="MenuUnused\DrawCommand.cs">
 	  <SubType>Code</SubType>
 	</Compile>
@@ -142,9 +156,6 @@
 	</Compile>
 	<Compile Include="MenuUnused\MenuControlDesigner.cs">
 	  <SubType>Code</SubType>
-	</Compile>
-	<Compile Include="MenuUnused\MenuItemEx.cs">
-	  <SubType>Component</SubType>
 	</Compile>
 	<Compile Include="MenuUnused\PopupMenu.cs">
 	  <SubType>Code</SubType>
@@ -219,9 +230,6 @@
 	<EmbeddedResource Include="CommandBarUnused\ChevronMenu.resx">
 	  <DependentUpon>ChevronMenu.cs</DependentUpon>
 	</EmbeddedResource>
-	<EmbeddedResource Include="CommandBarUnused\CommandBarMenu.resx">
-	  <DependentUpon>CommandBarMenu.cs</DependentUpon>
-	</EmbeddedResource>
 	<EmbeddedResource Include="CommandBarUnused\Rebar.resx">
 	  <DependentUpon>Rebar.cs</DependentUpon>
 	</EmbeddedResource>
@@ -233,9 +241,6 @@
 	</EmbeddedResource>
 	<EmbeddedResource Include="MenuUnused\MenuControl.resx">
 	  <DependentUpon>MenuControl.cs</DependentUpon>
-	</EmbeddedResource>
-	<EmbeddedResource Include="MenuUnused\MenuItemEx.resx">
-	  <DependentUpon>MenuItemEx.cs</DependentUpon>
 	</EmbeddedResource>
 	<EmbeddedResource Include="Resources\Controls.resX" />
 	<EmbeddedResource Include="Resources\DragCursor.cur" />
@@ -295,6 +300,38 @@
 	<EmbeddedResource Include="WinControls\TreeViewEx.resx">
 	  <DependentUpon>TreeViewEx.cs</DependentUpon>
 	</EmbeddedResource>
+	<Compile Include="Menu\MenuItemEx.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<EmbeddedResource Include="Menu\MenuItemEx.resx">
+	  <DependentUpon>MenuItemEx.cs</DependentUpon>
+	</EmbeddedResource>
+	<Compile Include="Menu\ColorGroup.cs">
+	  <SubType>Code</SubType>
+	</Compile>
+	<Compile Include="CommandBar\CommandBarMenu.cs">
+	  <SubType>Component</SubType>
+	</Compile>
+	<EmbeddedResource Include="CommandBar\CommandBarMenu.resx">
+	  <DependentUpon>CommandBarMenu.cs</DependentUpon>
+	</EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+	<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+	  <Install>false</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+	  <Visible>False</Visible>
+	  <ProductName>.NET Framework 3.5 SP1</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
+	<BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+	  <Visible>False</Visible>
+	  <ProductName>Windows Installer 3.1</ProductName>
+	  <Install>true</Install>
+	</BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -303,4 +340,5 @@
 	<PostBuildEvent>
 	</PostBuildEvent>
   </PropertyGroup>
+  <ItemGroup />
 </Project>

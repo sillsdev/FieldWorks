@@ -306,7 +306,6 @@ namespace SIL.FieldWorks.IText
 			{
 				var newText =
 					Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-				Cache.LangProject.TextsOC.Add(newText);
 				NewStText =
 					Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 				newText.ContentsOA = NewStText;
@@ -393,6 +392,27 @@ namespace SIL.FieldWorks.IText
 			return wsText;
 		}
 
+		/// <summary>
+		/// This class creates text, it must delete it here when UNDO is commanded
+		/// so it can update InterestingTexts.
+		/// </summary>
+/*		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
+		{
+			if (cvDel != 1)
+				return;
+			SaveOnChangeRecord();
+			SuppressSaveOnChangeRecord = true;
+			try
+			{
+				m_list.DeleteCurrentObject();
+			}
+			finally
+			{
+				SuppressSaveOnChangeRecord = false;
+			}
+			GetInterestingTextList().UpdateInterestingTexts();
+		} */
+
 		#region IBookImporter Members
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -411,35 +431,35 @@ namespace SIL.FieldWorks.IText
 		{
 			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
 			bool haveSomethingToImport = NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-																										{
-																											IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
-																											ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
-																											importSettings.ParatextScrProj = paratextProj.Name;
-																											importSettings.IncludeBooks(bookNum, bookNum, paratextProj.Versification);
-																											if (!importBt)
-																											{
-																												importSettings.ImportTranslation = true;
-																												importSettings.ImportBackTranslation = false;
-																											}
-																											else
-																											{
-																												List<ScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
-																												if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
-																																			 !btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
-																												{
-																													importSettings.ParatextBTProj = btProjects[0].Name;
-																												}
-																												if (string.IsNullOrEmpty(importSettings.ParatextBTProj))
-																													return false;
-																												importSettings.ImportTranslation = false;
-																												importSettings.ImportBackTranslation = true;
-																											}
-																											return true;
-																										});
+				{
+					IScrImportSet importSettings = scr.FindOrCreateDefaultImportSettings(TypeOfImport.Paratext6);
+					ScrText paratextProj = ParatextHelper.GetAssociatedProject(Cache.ProjectId);
+					importSettings.ParatextScrProj = paratextProj.Name;
+					importSettings.IncludeBooks(bookNum, bookNum, paratextProj.Versification);
+					if (!importBt)
+					{
+						importSettings.ImportTranslation = true;
+						importSettings.ImportBackTranslation = false;
+					}
+					else
+					{
+						List<ScrText> btProjects = ParatextHelper.GetBtsForProject(paratextProj).ToList();
+						if (btProjects.Count > 0 && (string.IsNullOrEmpty(importSettings.ParatextBTProj) ||
+													 !btProjects.Any(st => st.Name == importSettings.ParatextBTProj)))
+						{
+							importSettings.ParatextBTProj = btProjects[0].Name;
+						}
+						if (string.IsNullOrEmpty(importSettings.ParatextBTProj))
+							return false;
+						importSettings.ImportTranslation = false;
+						importSettings.ImportBackTranslation = true;
+					}
+					return true;
+				});
 
 			if (haveSomethingToImport && ReflectionHelper.GetBoolResult(ReflectionHelper.GetType("TeImportExport.dll",
-																								 "SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, ScriptureStylesheet,
-																		(FwApp)m_mediator.PropertyTable.GetValue("App")))
+				"SIL.FieldWorks.TE.TeImportManager"), "ImportParatext", owningForm, ScriptureStylesheet,
+				(FwApp)m_mediator.PropertyTable.GetValue("App")))
 			{
 				return scr.FindBook(bookNum);
 			}

@@ -2,727 +2,727 @@
 <word>
   <form>niyuyiyximuwusa</form>
   <resultSoFar>
-	<morph type="pfx" wordType="181">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <alloform>ni-</alloform>
-	  <gloss>1SgSubj</gloss>
-	  <citationForm>ni</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
-	</morph>
-	<morph type="pfx" wordType="182">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <alloform>yu-</alloform>
-	  <gloss>2SgObj</gloss>
-	  <citationForm>yu</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
-	</morph>
-	<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-	  <morph type="root" wordType="root">
-		<shortName>yiy (testing): wow</shortName>
-		<alloform>yiy</alloform>
-		<stemName id="45382">Present tense or 2nd Person</stemName>
-		<gloss>testing</gloss>
-		<citationForm>wow</citationForm>
-		<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-	  <morph type="root" wordType="root">
-		<shortName>ximu (slowly): ximu</shortName>
-		<alloform>ximu</alloform>
-		<gloss>slowly</gloss>
-		<citationForm>ximu</citationForm>
-		<stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-	  </morph>
-	</stem>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-wu (???): wu</shortName>
-	  <alloform>-wu</alloform>
-	  <gloss>???</gloss>
-	  <citationForm>wu</citationForm>
-	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<morph type="sfx" wordType="180">
-	  <shortName>-sa (Pres): ra</shortName>
-	  <alloform>-sa</alloform>
-	  <gloss>Pres</gloss>
-	  <citationForm>ra</citationForm>
-	  <inflClasses>
-		<inflClass hvo="179" abbr="2" />
-	  </inflClasses>
-	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
-		<fs id="6069">
-		  <feature>
-			<name>absolute tense</name>
-			<value>present tense</value>
-		  </feature>
-		</fs>
-	  </inflMsa>
-	</morph>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>Adverbializer2</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph type="pfx" wordType="181">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <alloform>ni-</alloform>
+      <gloss>1SgSubj</gloss>
+      <citationForm>ni</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+    </morph>
+    <morph type="pfx" wordType="182">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <alloform>yu-</alloform>
+      <gloss>2SgObj</gloss>
+      <citationForm>yu</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+    </morph>
+    <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+      <morph type="root" wordType="root">
+        <shortName>yiy (testing): wow</shortName>
+        <alloform>yiy</alloform>
+        <stemName id="45382">Present tense or 2nd Person</stemName>
+        <gloss>testing</gloss>
+        <citationForm>wow</citationForm>
+        <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+      </morph>
+    </stem>
+    <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph type="root" wordType="root">
+        <shortName>ximu (slowly): ximu</shortName>
+        <alloform>ximu</alloform>
+        <gloss>slowly</gloss>
+        <citationForm>ximu</citationForm>
+        <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+      </morph>
+    </stem>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-wu (???): wu</shortName>
+      <alloform>-wu</alloform>
+      <gloss>???</gloss>
+      <citationForm>wu</citationForm>
+      <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <morph type="sfx" wordType="180">
+      <shortName>-sa (Pres): ra</shortName>
+      <alloform>-sa</alloform>
+      <gloss>Pres</gloss>
+      <citationForm>ra</citationForm>
+      <inflClasses>
+        <inflClass hvo="179" abbr="2" />
+      </inflClasses>
+      <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+        <fs id="6069">
+          <feature>
+            <name>absolute tense</name>
+            <value>present tense</value>
+          </feature>
+        </fs>
+      </inflMsa>
+    </morph>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>Adverbializer2</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </resultSoFar>
   <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<morph type="pfx" wordType="181">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <alloform>ni-</alloform>
-	  <gloss>1SgSubj</gloss>
-	  <citationForm>ni</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
-	</morph>
-	<morph type="pfx" wordType="182">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <alloform>yu-</alloform>
-	  <gloss>2SgObj</gloss>
-	  <citationForm>yu</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
-	</morph>
-	<stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
-	  <stemName id="45382">Present tense or 2nd Person</stemName>
-	  <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		<morph type="root" wordType="root">
-		  <shortName>yiy (testing): wow</shortName>
-		  <alloform>yiy</alloform>
-		  <stemName id="45382">Present tense or 2nd Person</stemName>
-		  <gloss>testing</gloss>
-		  <citationForm>wow</citationForm>
-		  <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <morph type="sfx" wordType="derivSfx">
-		<shortName>-wu (???): wu</shortName>
-		<alloform>-wu</alloform>
-		<gloss>???</gloss>
-		<citationForm>wu</citationForm>
-		<derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-wu (???): wu</shortName>
-	  <alloform>-wu</alloform>
-	  <gloss>???</gloss>
-	  <citationForm>wu</citationForm>
-	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<morph type="sfx" wordType="180">
-	  <shortName>-sa (Pres): ra</shortName>
-	  <alloform>-sa</alloform>
-	  <gloss>Pres</gloss>
-	  <citationForm>ra</citationForm>
-	  <inflClasses>
-		<inflClass hvo="179" abbr="2" />
-	  </inflClasses>
-	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
-		<fs id="6069">
-		  <feature>
-			<name>absolute tense</name>
-			<value>present tense</value>
-		  </feature>
-		</fs>
-	  </inflMsa>
-	</morph>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>Adverbializer2</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph type="pfx" wordType="181">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <alloform>ni-</alloform>
+      <gloss>1SgSubj</gloss>
+      <citationForm>ni</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+    </morph>
+    <morph type="pfx" wordType="182">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <alloform>yu-</alloform>
+      <gloss>2SgObj</gloss>
+      <citationForm>yu</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+    </morph>
+    <stem syncat="168" syncatAbbr="trans" inflClass="179" inflClassAbbr="2" requiresInfl="+" blocksInfl="-">
+      <stemName id="45382">Present tense or 2nd Person</stemName>
+      <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+        <morph type="root" wordType="root">
+          <shortName>yiy (testing): wow</shortName>
+          <alloform>yiy</alloform>
+          <stemName id="45382">Present tense or 2nd Person</stemName>
+          <gloss>testing</gloss>
+          <citationForm>wow</citationForm>
+          <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+        </morph>
+      </stem>
+      <morph type="sfx" wordType="derivSfx">
+        <shortName>-wu (???): wu</shortName>
+        <alloform>-wu</alloform>
+        <gloss>???</gloss>
+        <citationForm>wu</citationForm>
+        <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </stem>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-wu (???): wu</shortName>
+      <alloform>-wu</alloform>
+      <gloss>???</gloss>
+      <citationForm>wu</citationForm>
+      <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <morph type="sfx" wordType="180">
+      <shortName>-sa (Pres): ra</shortName>
+      <alloform>-sa</alloform>
+      <gloss>Pres</gloss>
+      <citationForm>ra</citationForm>
+      <inflClasses>
+        <inflClass hvo="179" abbr="2" />
+      </inflClasses>
+      <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+        <fs id="6069">
+          <feature>
+            <name>absolute tense</name>
+            <value>present tense</value>
+          </feature>
+        </fs>
+      </inflMsa>
+    </morph>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>Adverbializer2</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'noun-adverb -&gt; intransitive verb, ic:2'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<morph type="pfx" wordType="181">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <alloform>ni-</alloform>
-	  <gloss>1SgSubj</gloss>
-	  <citationForm>ni</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
-	</morph>
-	<morph type="pfx" wordType="182">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <alloform>yu-</alloform>
-	  <gloss>2SgObj</gloss>
-	  <citationForm>yu</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "noun-adverb -&gt; intransitive verb, ic:2": The category (N) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		  <morph type="root" wordType="root">
-			<shortName>yiy (testing): wow</shortName>
-			<alloform>yiy</alloform>
-			<stemName id="45382">Present tense or 2nd Person</stemName>
-			<gloss>testing</gloss>
-			<citationForm>wow</citationForm>
-			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		<morph type="root" wordType="root">
-		  <shortName>yiy (testing): wow</shortName>
-		  <alloform>yiy</alloform>
-		  <stemName id="45382">Present tense or 2nd Person</stemName>
-		  <gloss>testing</gloss>
-		  <citationForm>wow</citationForm>
-		  <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph type="root" wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <alloform>ximu</alloform>
-		  <gloss>slowly</gloss>
-		  <citationForm>ximu</citationForm>
-		  <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-wu (???): wu</shortName>
-	  <alloform>-wu</alloform>
-	  <gloss>???</gloss>
-	  <citationForm>wu</citationForm>
-	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<morph type="sfx" wordType="180">
-	  <shortName>-sa (Pres): ra</shortName>
-	  <alloform>-sa</alloform>
-	  <gloss>Pres</gloss>
-	  <citationForm>ra</citationForm>
-	  <inflClasses>
-		<inflClass hvo="179" abbr="2" />
-	  </inflClasses>
-	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
-		<fs id="6069">
-		  <feature>
-			<name>absolute tense</name>
-			<value>present tense</value>
-		  </feature>
-		</fs>
-	  </inflMsa>
-	</morph>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>Adverbializer2</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph type="pfx" wordType="181">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <alloform>ni-</alloform>
+      <gloss>1SgSubj</gloss>
+      <citationForm>ni</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+    </morph>
+    <morph type="pfx" wordType="182">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <alloform>yu-</alloform>
+      <gloss>2SgObj</gloss>
+      <citationForm>yu</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "noun-adverb -&gt; intransitive verb, ic:2": The category (N) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+          <morph type="root" wordType="root">
+            <shortName>yiy (testing): wow</shortName>
+            <alloform>yiy</alloform>
+            <stemName id="45382">Present tense or 2nd Person</stemName>
+            <gloss>testing</gloss>
+            <citationForm>wow</citationForm>
+            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+        <morph type="root" wordType="root">
+          <shortName>yiy (testing): wow</shortName>
+          <alloform>yiy</alloform>
+          <stemName id="45382">Present tense or 2nd Person</stemName>
+          <gloss>testing</gloss>
+          <citationForm>wow</citationForm>
+          <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph type="root" wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <alloform>ximu</alloform>
+          <gloss>slowly</gloss>
+          <citationForm>ximu</citationForm>
+          <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-wu (???): wu</shortName>
+      <alloform>-wu</alloform>
+      <gloss>???</gloss>
+      <citationForm>wu</citationForm>
+      <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <morph type="sfx" wordType="180">
+      <shortName>-sa (Pres): ra</shortName>
+      <alloform>-sa</alloform>
+      <gloss>Pres</gloss>
+      <citationForm>ra</citationForm>
+      <inflClasses>
+        <inflClass hvo="179" abbr="2" />
+      </inflClasses>
+      <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+        <fs id="6069">
+          <feature>
+            <name>absolute tense</name>
+            <value>present tense</value>
+          </feature>
+        </fs>
+      </inflMsa>
+    </morph>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>Adverbializer2</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'adverb-noun --&gt; intransitive verb, ic:2'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<morph type="pfx" wordType="181">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <alloform>ni-</alloform>
-	  <gloss>1SgSubj</gloss>
-	  <citationForm>ni</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
-	</morph>
-	<morph type="pfx" wordType="182">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <alloform>yu-</alloform>
-	  <gloss>2SgObj</gloss>
-	  <citationForm>yu</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (Adv) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		  <morph type="root" wordType="root">
-			<shortName>yiy (testing): wow</shortName>
-			<alloform>yiy</alloform>
-			<stemName id="45382">Present tense or 2nd Person</stemName>
-			<gloss>testing</gloss>
-			<citationForm>wow</citationForm>
-			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (N) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph type="root" wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<alloform>ximu</alloform>
-			<gloss>slowly</gloss>
-			<citationForm>ximu</citationForm>
-			<stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		<morph type="root" wordType="root">
-		  <shortName>yiy (testing): wow</shortName>
-		  <alloform>yiy</alloform>
-		  <stemName id="45382">Present tense or 2nd Person</stemName>
-		  <gloss>testing</gloss>
-		  <citationForm>wow</citationForm>
-		  <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph type="root" wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <alloform>ximu</alloform>
-		  <gloss>slowly</gloss>
-		  <citationForm>ximu</citationForm>
-		  <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-wu (???): wu</shortName>
-	  <alloform>-wu</alloform>
-	  <gloss>???</gloss>
-	  <citationForm>wu</citationForm>
-	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<morph type="sfx" wordType="180">
-	  <shortName>-sa (Pres): ra</shortName>
-	  <alloform>-sa</alloform>
-	  <gloss>Pres</gloss>
-	  <citationForm>ra</citationForm>
-	  <inflClasses>
-		<inflClass hvo="179" abbr="2" />
-	  </inflClasses>
-	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
-		<fs id="6069">
-		  <feature>
-			<name>absolute tense</name>
-			<value>present tense</value>
-		  </feature>
-		</fs>
-	  </inflMsa>
-	</morph>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>Adverbializer2</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph type="pfx" wordType="181">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <alloform>ni-</alloform>
+      <gloss>1SgSubj</gloss>
+      <citationForm>ni</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+    </morph>
+    <morph type="pfx" wordType="182">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <alloform>yu-</alloform>
+      <gloss>2SgObj</gloss>
+      <citationForm>yu</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (Adv) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+          <morph type="root" wordType="root">
+            <shortName>yiy (testing): wow</shortName>
+            <alloform>yiy</alloform>
+            <stemName id="45382">Present tense or 2nd Person</stemName>
+            <gloss>testing</gloss>
+            <citationForm>wow</citationForm>
+            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (N) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph type="root" wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <alloform>ximu</alloform>
+            <gloss>slowly</gloss>
+            <citationForm>ximu</citationForm>
+            <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+        <morph type="root" wordType="root">
+          <shortName>yiy (testing): wow</shortName>
+          <alloform>yiy</alloform>
+          <stemName id="45382">Present tense or 2nd Person</stemName>
+          <gloss>testing</gloss>
+          <citationForm>wow</citationForm>
+          <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph type="root" wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <alloform>ximu</alloform>
+          <gloss>slowly</gloss>
+          <citationForm>ximu</citationForm>
+          <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-wu (???): wu</shortName>
+      <alloform>-wu</alloform>
+      <gloss>???</gloss>
+      <citationForm>wu</citationForm>
+      <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <morph type="sfx" wordType="180">
+      <shortName>-sa (Pres): ra</shortName>
+      <alloform>-sa</alloform>
+      <gloss>Pres</gloss>
+      <citationForm>ra</citationForm>
+      <inflClasses>
+        <inflClass hvo="179" abbr="2" />
+      </inflClasses>
+      <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+        <fs id="6069">
+          <feature>
+            <name>absolute tense</name>
+            <value>present tense</value>
+          </feature>
+        </fs>
+      </inflMsa>
+    </morph>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>Adverbializer2</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'adj-noun with linker'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<morph type="pfx" wordType="181">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <alloform>ni-</alloform>
-	  <gloss>1SgSubj</gloss>
-	  <citationForm>ni</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
-	</morph>
-	<morph type="pfx" wordType="182">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <alloform>yu-</alloform>
-	  <gloss>2SgObj</gloss>
-	  <citationForm>yu</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		  <morph type="root" wordType="root">
-			<shortName>yiy (testing): wow</shortName>
-			<alloform>yiy</alloform>
-			<stemName id="45382">Present tense or 2nd Person</stemName>
-			<gloss>testing</gloss>
-			<citationForm>wow</citationForm>
-			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "adj-noun with linker ": The category (N) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph type="root" wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<alloform>ximu</alloform>
-			<gloss>slowly</gloss>
-			<citationForm>ximu</citationForm>
-			<stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		<morph type="root" wordType="root">
-		  <shortName>yiy (testing): wow</shortName>
-		  <alloform>yiy</alloform>
-		  <stemName id="45382">Present tense or 2nd Person</stemName>
-		  <gloss>testing</gloss>
-		  <citationForm>wow</citationForm>
-		  <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph type="root" wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <alloform>ximu</alloform>
-		  <gloss>slowly</gloss>
-		  <citationForm>ximu</citationForm>
-		  <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-wu (???): wu</shortName>
-	  <alloform>-wu</alloform>
-	  <gloss>???</gloss>
-	  <citationForm>wu</citationForm>
-	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<morph type="sfx" wordType="180">
-	  <shortName>-sa (Pres): ra</shortName>
-	  <alloform>-sa</alloform>
-	  <gloss>Pres</gloss>
-	  <citationForm>ra</citationForm>
-	  <inflClasses>
-		<inflClass hvo="179" abbr="2" />
-	  </inflClasses>
-	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
-		<fs id="6069">
-		  <feature>
-			<name>absolute tense</name>
-			<value>present tense</value>
-		  </feature>
-		</fs>
-	  </inflMsa>
-	</morph>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>Adverbializer2</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph type="pfx" wordType="181">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <alloform>ni-</alloform>
+      <gloss>1SgSubj</gloss>
+      <citationForm>ni</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+    </morph>
+    <morph type="pfx" wordType="182">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <alloform>yu-</alloform>
+      <gloss>2SgObj</gloss>
+      <citationForm>yu</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+          <morph type="root" wordType="root">
+            <shortName>yiy (testing): wow</shortName>
+            <alloform>yiy</alloform>
+            <stemName id="45382">Present tense or 2nd Person</stemName>
+            <gloss>testing</gloss>
+            <citationForm>wow</citationForm>
+            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "adj-noun with linker ": The category (N) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph type="root" wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <alloform>ximu</alloform>
+            <gloss>slowly</gloss>
+            <citationForm>ximu</citationForm>
+            <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+        <morph type="root" wordType="root">
+          <shortName>yiy (testing): wow</shortName>
+          <alloform>yiy</alloform>
+          <stemName id="45382">Present tense or 2nd Person</stemName>
+          <gloss>testing</gloss>
+          <citationForm>wow</citationForm>
+          <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph type="root" wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <alloform>ximu</alloform>
+          <gloss>slowly</gloss>
+          <citationForm>ximu</citationForm>
+          <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-wu (???): wu</shortName>
+      <alloform>-wu</alloform>
+      <gloss>???</gloss>
+      <citationForm>wu</citationForm>
+      <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <morph type="sfx" wordType="180">
+      <shortName>-sa (Pres): ra</shortName>
+      <alloform>-sa</alloform>
+      <gloss>Pres</gloss>
+      <citationForm>ra</citationForm>
+      <inflClasses>
+        <inflClass hvo="179" abbr="2" />
+      </inflClasses>
+      <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+        <fs id="6069">
+          <feature>
+            <name>absolute tense</name>
+            <value>present tense</value>
+          </feature>
+        </fs>
+      </inflMsa>
+    </morph>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>Adverbializer2</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'verb-adverb'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<morph type="pfx" wordType="181">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <alloform>ni-</alloform>
-	  <gloss>1SgSubj</gloss>
-	  <citationForm>ni</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
-	</morph>
-	<morph type="pfx" wordType="182">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <alloform>yu-</alloform>
-	  <gloss>2SgObj</gloss>
-	  <citationForm>yu</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
-	</morph>
-	<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" blocksInfl="-">
-	  <stemName id="45382">Present tense or 2nd Person</stemName>
-	  <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		<morph type="root" wordType="root">
-		  <shortName>yiy (testing): wow</shortName>
-		  <alloform>yiy</alloform>
-		  <stemName id="45382">Present tense or 2nd Person</stemName>
-		  <gloss>testing</gloss>
-		  <citationForm>wow</citationForm>
-		  <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph type="root" wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <alloform>ximu</alloform>
-		  <gloss>slowly</gloss>
-		  <citationForm>ximu</citationForm>
-		  <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-wu (???): wu</shortName>
-	  <alloform>-wu</alloform>
-	  <gloss>???</gloss>
-	  <citationForm>wu</citationForm>
-	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<morph type="sfx" wordType="180">
-	  <shortName>-sa (Pres): ra</shortName>
-	  <alloform>-sa</alloform>
-	  <gloss>Pres</gloss>
-	  <citationForm>ra</citationForm>
-	  <inflClasses>
-		<inflClass hvo="179" abbr="2" />
-	  </inflClasses>
-	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
-		<fs id="6069">
-		  <feature>
-			<name>absolute tense</name>
-			<value>present tense</value>
-		  </feature>
-		</fs>
-	  </inflMsa>
-	</morph>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>Adverbializer2</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph type="pfx" wordType="181">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <alloform>ni-</alloform>
+      <gloss>1SgSubj</gloss>
+      <citationForm>ni</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+    </morph>
+    <morph type="pfx" wordType="182">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <alloform>yu-</alloform>
+      <gloss>2SgObj</gloss>
+      <citationForm>yu</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+    </morph>
+    <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" blocksInfl="-">
+      <stemName id="45382">Present tense or 2nd Person</stemName>
+      <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+        <morph type="root" wordType="root">
+          <shortName>yiy (testing): wow</shortName>
+          <alloform>yiy</alloform>
+          <stemName id="45382">Present tense or 2nd Person</stemName>
+          <gloss>testing</gloss>
+          <citationForm>wow</citationForm>
+          <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph type="root" wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <alloform>ximu</alloform>
+          <gloss>slowly</gloss>
+          <citationForm>ximu</citationForm>
+          <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-wu (???): wu</shortName>
+      <alloform>-wu</alloform>
+      <gloss>???</gloss>
+      <citationForm>wu</citationForm>
+      <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <morph type="sfx" wordType="180">
+      <shortName>-sa (Pres): ra</shortName>
+      <alloform>-sa</alloform>
+      <gloss>Pres</gloss>
+      <citationForm>ra</citationForm>
+      <inflClasses>
+        <inflClass hvo="179" abbr="2" />
+      </inflClasses>
+      <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+        <fs id="6069">
+          <feature>
+            <name>absolute tense</name>
+            <value>present tense</value>
+          </feature>
+        </fs>
+      </inflMsa>
+    </morph>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>Adverbializer2</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'noun-transitive verb'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<morph type="pfx" wordType="181">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <alloform>ni-</alloform>
-	  <gloss>1SgSubj</gloss>
-	  <citationForm>ni</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
-	</morph>
-	<morph type="pfx" wordType="182">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <alloform>yu-</alloform>
-	  <gloss>2SgObj</gloss>
-	  <citationForm>yu</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "noun-transitive verb ": The category (N) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		  <morph type="root" wordType="root">
-			<shortName>yiy (testing): wow</shortName>
-			<alloform>yiy</alloform>
-			<stemName id="45382">Present tense or 2nd Person</stemName>
-			<gloss>testing</gloss>
-			<citationForm>wow</citationForm>
-			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph type="root" wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<alloform>ximu</alloform>
-			<gloss>slowly</gloss>
-			<citationForm>ximu</citationForm>
-			<stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		<morph type="root" wordType="root">
-		  <shortName>yiy (testing): wow</shortName>
-		  <alloform>yiy</alloform>
-		  <stemName id="45382">Present tense or 2nd Person</stemName>
-		  <gloss>testing</gloss>
-		  <citationForm>wow</citationForm>
-		  <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph type="root" wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <alloform>ximu</alloform>
-		  <gloss>slowly</gloss>
-		  <citationForm>ximu</citationForm>
-		  <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-wu (???): wu</shortName>
-	  <alloform>-wu</alloform>
-	  <gloss>???</gloss>
-	  <citationForm>wu</citationForm>
-	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<morph type="sfx" wordType="180">
-	  <shortName>-sa (Pres): ra</shortName>
-	  <alloform>-sa</alloform>
-	  <gloss>Pres</gloss>
-	  <citationForm>ra</citationForm>
-	  <inflClasses>
-		<inflClass hvo="179" abbr="2" />
-	  </inflClasses>
-	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
-		<fs id="6069">
-		  <feature>
-			<name>absolute tense</name>
-			<value>present tense</value>
-		  </feature>
-		</fs>
-	  </inflMsa>
-	</morph>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>Adverbializer2</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph type="pfx" wordType="181">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <alloform>ni-</alloform>
+      <gloss>1SgSubj</gloss>
+      <citationForm>ni</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+    </morph>
+    <morph type="pfx" wordType="182">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <alloform>yu-</alloform>
+      <gloss>2SgObj</gloss>
+      <citationForm>yu</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "noun-transitive verb ": The category (N) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+          <morph type="root" wordType="root">
+            <shortName>yiy (testing): wow</shortName>
+            <alloform>yiy</alloform>
+            <stemName id="45382">Present tense or 2nd Person</stemName>
+            <gloss>testing</gloss>
+            <citationForm>wow</citationForm>
+            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph type="root" wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <alloform>ximu</alloform>
+            <gloss>slowly</gloss>
+            <citationForm>ximu</citationForm>
+            <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+        <morph type="root" wordType="root">
+          <shortName>yiy (testing): wow</shortName>
+          <alloform>yiy</alloform>
+          <stemName id="45382">Present tense or 2nd Person</stemName>
+          <gloss>testing</gloss>
+          <citationForm>wow</citationForm>
+          <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph type="root" wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <alloform>ximu</alloform>
+          <gloss>slowly</gloss>
+          <citationForm>ximu</citationForm>
+          <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-wu (???): wu</shortName>
+      <alloform>-wu</alloform>
+      <gloss>???</gloss>
+      <citationForm>wu</citationForm>
+      <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <morph type="sfx" wordType="180">
+      <shortName>-sa (Pres): ra</shortName>
+      <alloform>-sa</alloform>
+      <gloss>Pres</gloss>
+      <citationForm>ra</citationForm>
+      <inflClasses>
+        <inflClass hvo="179" abbr="2" />
+      </inflClasses>
+      <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+        <fs id="6069">
+          <feature>
+            <name>absolute tense</name>
+            <value>present tense</value>
+          </feature>
+        </fs>
+      </inflMsa>
+    </morph>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>Adverbializer2</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to apply the Compound rule 'noun-Intransitive verb'.  The result will be a new Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<morph type="pfx" wordType="181">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <alloform>ni-</alloform>
-	  <gloss>1SgSubj</gloss>
-	  <citationForm>ni</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
-	</morph>
-	<morph type="pfx" wordType="182">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <alloform>yu-</alloform>
-	  <gloss>2SgObj</gloss>
-	  <citationForm>yu</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
-	</morph>
-	<stem>
-	  <failure>
-		<content>In applying the compound rule "noun-Intransitive verb ": The category (N) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-		<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		  <morph type="root" wordType="root">
-			<shortName>yiy (testing): wow</shortName>
-			<alloform>yiy</alloform>
-			<stemName id="45382">Present tense or 2nd Person</stemName>
-			<gloss>testing</gloss>
-			<citationForm>wow</citationForm>
-			<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <failure>
-		<content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
-		<stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		  <morph type="root" wordType="root">
-			<shortName>ximu (slowly): ximu</shortName>
-			<alloform>ximu</alloform>
-			<gloss>slowly</gloss>
-			<citationForm>ximu</citationForm>
-			<stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		  </morph>
-		</stem>
-	  </failure>
-	  <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-		<morph type="root" wordType="root">
-		  <shortName>yiy (testing): wow</shortName>
-		  <alloform>yiy</alloform>
-		  <stemName id="45382">Present tense or 2nd Person</stemName>
-		  <gloss>testing</gloss>
-		  <citationForm>wow</citationForm>
-		  <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-		</morph>
-	  </stem>
-	  <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph type="root" wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <alloform>ximu</alloform>
-		  <gloss>slowly</gloss>
-		  <citationForm>ximu</citationForm>
-		  <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	</stem>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-wu (???): wu</shortName>
-	  <alloform>-wu</alloform>
-	  <gloss>???</gloss>
-	  <citationForm>wu</citationForm>
-	  <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<morph type="sfx" wordType="180">
-	  <shortName>-sa (Pres): ra</shortName>
-	  <alloform>-sa</alloform>
-	  <gloss>Pres</gloss>
-	  <citationForm>ra</citationForm>
-	  <inflClasses>
-		<inflClass hvo="179" abbr="2" />
-	  </inflClasses>
-	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
-		<fs id="6069">
-		  <feature>
-			<name>absolute tense</name>
-			<value>present tense</value>
-		  </feature>
-		</fs>
-	  </inflMsa>
-	</morph>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>Adverbializer2</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph type="pfx" wordType="181">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <alloform>ni-</alloform>
+      <gloss>1SgSubj</gloss>
+      <citationForm>ni</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+    </morph>
+    <morph type="pfx" wordType="182">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <alloform>yu-</alloform>
+      <gloss>2SgObj</gloss>
+      <citationForm>yu</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+    </morph>
+    <stem>
+      <failure>
+        <content>In applying the compound rule "noun-Intransitive verb ": The category (N) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
+        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+          <morph type="root" wordType="root">
+            <shortName>yiy (testing): wow</shortName>
+            <alloform>yiy</alloform>
+            <stemName id="45382">Present tense or 2nd Person</stemName>
+            <gloss>testing</gloss>
+            <citationForm>wow</citationForm>
+            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+          </morph>
+        </stem>
+      </failure>
+      <failure>
+        <content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
+        <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+          <morph type="root" wordType="root">
+            <shortName>ximu (slowly): ximu</shortName>
+            <alloform>ximu</alloform>
+            <gloss>slowly</gloss>
+            <citationForm>ximu</citationForm>
+            <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+          </morph>
+        </stem>
+      </failure>
+      <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+        <morph type="root" wordType="root">
+          <shortName>yiy (testing): wow</shortName>
+          <alloform>yiy</alloform>
+          <stemName id="45382">Present tense or 2nd Person</stemName>
+          <gloss>testing</gloss>
+          <citationForm>wow</citationForm>
+          <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+        </morph>
+      </stem>
+      <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph type="root" wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <alloform>ximu</alloform>
+          <gloss>slowly</gloss>
+          <citationForm>ximu</citationForm>
+          <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+    </stem>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-wu (???): wu</shortName>
+      <alloform>-wu</alloform>
+      <gloss>???</gloss>
+      <citationForm>wu</citationForm>
+      <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <morph type="sfx" wordType="180">
+      <shortName>-sa (Pres): ra</shortName>
+      <alloform>-sa</alloform>
+      <gloss>Pres</gloss>
+      <citationForm>ra</citationForm>
+      <inflClasses>
+        <inflClass hvo="179" abbr="2" />
+      </inflClasses>
+      <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+        <fs id="6069">
+          <feature>
+            <name>absolute tense</name>
+            <value>present tense</value>
+          </feature>
+        </fs>
+      </inflMsa>
+    </morph>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>Adverbializer2</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to build a Stem node by appending a derivational suffix to another Stem node." xmlns:auto-ns1="urn:schemas-microsoft-com:xslt">
-	<morph type="pfx" wordType="181">
-	  <shortName>ni- (1SgSubj): ni</shortName>
-	  <alloform>ni-</alloform>
-	  <gloss>1SgSubj</gloss>
-	  <citationForm>ni</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
-	</morph>
-	<morph type="pfx" wordType="182">
-	  <shortName>yu- (2SgObj): yu</shortName>
-	  <alloform>yu-</alloform>
-	  <gloss>2SgObj</gloss>
-	  <citationForm>yu</citationForm>
-	  <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
-	</morph>
-	<stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-	  <morph type="root" wordType="root">
-		<shortName>yiy (testing): wow</shortName>
-		<alloform>yiy</alloform>
-		<stemName id="45382">Present tense or 2nd Person</stemName>
-		<gloss>testing</gloss>
-		<citationForm>wow</citationForm>
-		<stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<stem>
-	  <failure>In attaching a derivational suffix: The from category (trans) of the derivational suffix "-wu (???): wu" is incompatible with the category (Adv) of the stem.</failure>
-	  <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-		<morph type="root" wordType="root">
-		  <shortName>ximu (slowly): ximu</shortName>
-		  <alloform>ximu</alloform>
-		  <gloss>slowly</gloss>
-		  <citationForm>ximu</citationForm>
-		  <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </stem>
-	  <morph type="sfx" wordType="derivSfx">
-		<shortName>-wu (???): wu</shortName>
-		<alloform>-wu</alloform>
-		<gloss>???</gloss>
-		<citationForm>wu</citationForm>
-		<derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	</stem>
-	<morph type="sfx" wordType="180">
-	  <shortName>-sa (Pres): ra</shortName>
-	  <alloform>-sa</alloform>
-	  <gloss>Pres</gloss>
-	  <citationForm>ra</citationForm>
-	  <inflClasses>
-		<inflClass hvo="179" abbr="2" />
-	  </inflClasses>
-	  <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
-		<fs id="6069">
-		  <feature>
-			<name>absolute tense</name>
-			<value>present tense</value>
-		  </feature>
-		</fs>
-	  </inflMsa>
-	</morph>
-	<morph type="sfx" wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <alloform>-*0</alloform>
-	  <gloss>Adverbializer2</gloss>
-	  <citationForm>o</citationForm>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph type="pfx" wordType="181">
+      <shortName>ni- (1SgSubj): ni</shortName>
+      <alloform>ni-</alloform>
+      <gloss>1SgSubj</gloss>
+      <citationForm>ni</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="181" slotAbbr="Subject" slotOptional="true" />
+    </morph>
+    <morph type="pfx" wordType="182">
+      <shortName>yu- (2SgObj): yu</shortName>
+      <alloform>yu-</alloform>
+      <gloss>2SgObj</gloss>
+      <citationForm>yu</citationForm>
+      <inflMsa cat="146" catAbbr="V" slot="182" slotAbbr="Object" slotOptional="false" />
+    </morph>
+    <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
+      <morph type="root" wordType="root">
+        <shortName>yiy (testing): wow</shortName>
+        <alloform>yiy</alloform>
+        <stemName id="45382">Present tense or 2nd Person</stemName>
+        <gloss>testing</gloss>
+        <citationForm>wow</citationForm>
+        <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
+      </morph>
+    </stem>
+    <stem>
+      <failure>In attaching a derivational suffix: The from category (trans) of the derivational suffix "-wu (???): wu" is incompatible with the category (Adv) of the stem.</failure>
+      <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
+        <morph type="root" wordType="root">
+          <shortName>ximu (slowly): ximu</shortName>
+          <alloform>ximu</alloform>
+          <gloss>slowly</gloss>
+          <citationForm>ximu</citationForm>
+          <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
+        </morph>
+      </stem>
+      <morph type="sfx" wordType="derivSfx">
+        <shortName>-wu (???): wu</shortName>
+        <alloform>-wu</alloform>
+        <gloss>???</gloss>
+        <citationForm>wu</citationForm>
+        <derivMsa fromCat="168" fromCatAbbr="trans" toCat="168" toCatAbbr="trans" fromInflClass="0" toInflClass="179" toInflClassAbbr="2" requiresInfl="+" />
+      </morph>
+    </stem>
+    <morph type="sfx" wordType="180">
+      <shortName>-sa (Pres): ra</shortName>
+      <alloform>-sa</alloform>
+      <gloss>Pres</gloss>
+      <citationForm>ra</citationForm>
+      <inflClasses>
+        <inflClass hvo="179" abbr="2" />
+      </inflClasses>
+      <inflMsa cat="146" catAbbr="V" slot="180" slotAbbr="Tense" slotOptional="false">
+        <fs id="6069">
+          <feature>
+            <name>absolute tense</name>
+            <value>present tense</value>
+          </feature>
+        </fs>
+      </inflMsa>
+    </morph>
+    <morph type="sfx" wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <alloform>-*0</alloform>
+      <gloss>Adverbializer2</gloss>
+      <citationForm>o</citationForm>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="Adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
 </word>

@@ -48,19 +48,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 	/// CellarPropertyType.Guid: Done
 	/// CellarPropertyType.GenDate: Done
 	/// CellarPropertyType.Binary: Done
-	///
 	/// CellarPropertyType.Unicode: Done
-	/// CellarPropertyType.BigUnicode: Done
-	///
 	/// CellarPropertyType.String: Done
-	/// CellarPropertyType.BigString: Done
-	///
 	/// CellarPropertyType.MultiString: Done
-	/// CellarPropertyType.MultiBigString: Done
-	///
 	/// CellarPropertyType.MultiUnicode: Done
-	/// CellarPropertyType.MultiBigUnicode: Done
-	///
 	/// CellarPropertyType.Numeric: (Not used in model.)
 	/// CellarPropertyType.Float: (Not used in model.)
 	/// CellarPropertyType.Image: (Not used in model.)
@@ -187,10 +178,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var acctGuid = acct.Guid;
 			var byteArrayValue = new byte[] { 1, 2, 3 };
 			acct.Sid = byteArrayValue;
-			// CellarPropertyType.Unicode & CellarPropertyType.BigUnicode:
+			// CellarPropertyType.Unicode:
 			const string newEthCode = "ZPI";
 			lp.EthnologueCode = newEthCode;
-			// CellarPropertyType.String & CellarPropertyType.BigString:
+			// CellarPropertyType.String:
 			var le = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
 			var irOriginalValue = Cache.TsStrFactory.MakeString("<import & residue>",
 																Cache.WritingSystemFactory.UserWs);
@@ -217,9 +208,7 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			// all use the same mechanism (on MultiAccessor) to read/write
 			// the data.
 			// CellarPropertyType.MultiString:
-			// CellarPropertyType.MultiBigString:
 			// CellarPropertyType.MultiUnicode:
-			// CellarPropertyType.MultiBigUnicode:
 			var tsf = Cache.TsStrFactory;
 			var englishWsHvo = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var nameEnValue = tsf.MakeString("Stateful FDO Test Project", englishWsHvo);
@@ -632,14 +621,18 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "CorruptedXMLFileTest.fwdata");
 
-			var xmlBep = new MockXMLBackendProvider(Cache, projName);
-			// Should throw an XMLException, but this will be caught and because there's
-			// no .bak file, an FwStartupException will be thrown instead.
-			xmlBep.Startup();
+			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
+			// Otherwise the build agent might complain, and in the worst case the test might hang.
+			using (var xmlBep = new MockXMLBackendProvider(Cache, projName))
+			{
+				// Should throw an XMLException, but this will be caught and because there's
+				// no .bak file, an FwStartupException will be thrown instead.
+				xmlBep.Startup();
+			}
 		}
 
 		/// <summary>
-		/// Tests that a fwdata file that was edited and has an extra CR/LF at the end will not
+		/// Tests that a fwdata file that was edited and has an extra newline at the end will not
 		/// throw an Exception.
 		/// </summary>
 		[Test]
@@ -648,10 +641,14 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/TestData");
 			var projName = Path.Combine(testDataPath, "SlightlyCorruptedXMLFile.fwdata");
 
-			var xmlBep = new MockXMLBackendProvider(Cache, projName);
-			// Should not throw an XMLException. The code that detects a corrupt file shouldn't
-			// care about an extra character or two at the end of the file after the last tag.
-			xmlBep.Startup();
+			// MockXMLBackendProvider implements IDisposable therefore we need the "using".
+			// Otherwise the build agent might complain, and in the worst case the test might hang.
+			using (var xmlBep = new MockXMLBackendProvider(Cache, projName))
+			{
+				// Should not throw an XMLException. The code that detects a corrupt file shouldn't
+				// care about an extra character or two at the end of the file after the last tag.
+				xmlBep.Startup();
+			}
 		}
 	}
 
@@ -678,10 +675,22 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			Cache = cache;
 		}
 
+		/// <summary/>
 		public void Startup()
 		{
 			ProjectId = new TestProjectId(FDOBackendProviderType.kXML, Project);
 			StartupInternal(ModelVersion);
+		}
+
+		/// <summary/>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (m_identityMap != null)
+					m_identityMap.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 	}
 
@@ -790,9 +799,16 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		private static void CompareResults(ICollection<Guid> sourceGuids, FdoCache targetCache)
 		{
 			var allTargetObjects = GetAllCmObjects(targetCache);
-			Assert.AreEqual(sourceGuids.Count, allTargetObjects.Length, "Wrong number of objects in target DB.");
 			foreach (var obj in allTargetObjects)
-				Assert.IsTrue(sourceGuids.Contains(obj.Guid), "Missing guid in target DB.");
+				Assert.IsTrue(sourceGuids.Contains(obj.Guid), "Missing guid in target DB.: " + obj.Guid);
+			var targetGuids = new List<Guid>();
+			foreach (var obj in allTargetObjects)
+				targetGuids.Add(obj.Guid);
+			foreach (var guid in sourceGuids)
+			{
+				Assert.IsTrue(targetGuids.Contains(guid), "Missing guid in source DB.: " + guid);
+			}
+			Assert.AreEqual(sourceGuids.Count, allTargetObjects.Length, "Wrong number of objects in target DB.");
 		}
 
 		/// <summary>
@@ -879,9 +895,10 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 						DeleteDatabase(targetBackendStartupParameters);
 
 						// Migrate source data to new BEP.
+						using (var otherThreadHelper = new ThreadHelper())
 						using (var targetCache = FdoCache.CreateCacheCopy(
 							new TestProjectId(targetBackendStartupParameters.ProjectId.Type,
-								targetBackendStartupParameters.ProjectId.Path), "en", sourceCache, new ThreadHelper()))
+								targetBackendStartupParameters.ProjectId.Path), "en", sourceCache, otherThreadHelper))
 						{
 							// BEP is a singleton, so we shouldn't call Dispose on it. This will be done
 							// by service locator.

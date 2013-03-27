@@ -1,6 +1,6 @@
 /*
 *******************************************************************************
-*   Copyright (C) 1997-2005, International Business Machines
+*   Copyright (C) 1997-2011, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *******************************************************************************
 *   Date        Name        Description
@@ -15,6 +15,7 @@
 
 #if !UCONFIG_NO_TRANSLITERATION
 
+#include "unicode/localpointer.h"
 #include "unicode/urep.h"
 #include "unicode/parseerr.h"
 #include "unicode/uenum.h"
@@ -234,6 +235,25 @@ utrans_clone(const UTransliterator* trans,
  */
 U_STABLE void U_EXPORT2
 utrans_close(UTransliterator* trans);
+
+#if U_SHOW_CPLUSPLUS_API
+
+U_NAMESPACE_BEGIN
+
+/**
+ * \class LocalUTransliteratorPointer
+ * "Smart pointer" class, closes a UTransliterator via utrans_close().
+ * For most methods see the LocalPointerBase base class.
+ *
+ * @see LocalPointerBase
+ * @see LocalPointer
+ * @stable ICU 4.4
+ */
+U_DEFINE_LOCAL_OPEN_POINTER(LocalUTransliteratorPointer, UTransliterator, utrans_close);
+
+U_NAMESPACE_END
+
+#endif
 
 /**
  * Return the programmatic identifier for this transliterator.
@@ -490,6 +510,8 @@ utrans_transIncrementalUChars(const UTransliterator* trans,
 
 /* deprecated API ----------------------------------------------------------- */
 
+#ifndef U_HIDE_DEPRECATED_API
+
 /* see utrans.h documentation for why these functions are deprecated */
 
 /**
@@ -577,6 +599,8 @@ U_DEPRECATED int32_t U_EXPORT2
 utrans_getAvailableID(int32_t index,
 					  char* buf,
 					  int32_t bufCapacity);
+
+#endif  /* U_HIDE_DEPRECATED_API */
 
 #endif /* #if !UCONFIG_NO_TRANSLITERATION */
 

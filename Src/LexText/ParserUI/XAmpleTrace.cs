@@ -22,7 +22,7 @@
 using System;
 using System.Text;
 using System.Xml;
-
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using XCore;
 using System.Xml.XPath;
@@ -91,10 +91,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			string sInput = CreateTempFile(m_ksXAmpleTrace, "xml");
 			m_parseResult.Save(sInput);
-			XPathDocument xpath = new XPathDocument(sInput);
-
 			TransformKind kind = (fIsTrace ? TransformKind.kcptTrace : TransformKind.kcptParse);
-			string sOutput = TransformToHtml(xpath, kind);
+			string sOutput = TransformToHtml(sInput, kind);
 			return sOutput;
 		}
 
@@ -291,7 +289,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void ConvertAdHocFailures(XmlDocument doc, bool fTesting, AdhocTraceTest tt)
 		{
-			string sXPath = "//failure[contains(@test,'" + tt.Name + "') and not(contains(@test,'ExcpFeat')) and not(contains(@test,'StemName'))]";
+			string sXPath = "//failure[contains(@test,'" + tt.Name +
+				"') and not(contains(@test,'ExcpFeat')) and not(contains(@test,'StemName')) and not(contains(@test,'IrregInflForm'))]";
 			XmlNodeList nl = doc.SelectNodes(sXPath);
 			if (nl != null)
 			{

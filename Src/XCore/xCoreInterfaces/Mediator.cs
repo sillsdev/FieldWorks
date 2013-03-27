@@ -13,6 +13,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,7 +34,28 @@ namespace XCore
 	{
 	}
 
+	/// <summary>
+	/// A comparer for the tuples used - the default comparer for tuples requires
+	/// all items to implement IComparable.
+	/// </summary>
+	internal class TupleComparer : IComparer<Tuple<int, IxCoreColleague>>
+	{
+		#region IComparer<Tuple<int,IxCoreColleague>> Members
+
+		public int Compare(Tuple<int, IxCoreColleague> x, Tuple<int, IxCoreColleague> y)
+		{
+			int c = x.Item1 - y.Item1;
+			if (c != 0)
+				return c;
+			return x.Item2.GetHashCode() - y.Item2.GetHashCode();
+		}
+
+		#endregion
+	}
+
 	/// <summary></summary>
+	[SuppressMessage("Gendarme.Rules.Design", "UseCorrectDisposeSignaturesRule",
+		Justification = "We derive from Component and therefore can't modify the signature of Dispose(bool)")]
 	public sealed class Mediator : Component, IFWDisposable
 	{
 		#region PendingMessageItem
@@ -76,6 +98,8 @@ namespace XCore
 				m_justCheckingForReceivers = justCheckingForReceivers;
 			}
 
+			[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+				Justification="See TODO-Linux comment")]
 			public override bool Equals(object obj)
 			{
 				if (obj == null)
@@ -96,6 +120,8 @@ namespace XCore
 				{
 					Type parmType = m_parameterTypes[i];
 					object parmValue = m_parameterList[i];
+					// TODO-Linux: System.Boolean System.Type::op_Inequality(System.Type,System.Type)
+					// is marked with [MonoTODO] and might not work as expected in 4.0.
 					if (asItem.m_parameterTypes[i] != parmType || asItem.m_parameterList[i] != parmValue)
 						return false;
 				}
@@ -145,7 +171,7 @@ namespace XCore
 		private PropertyTable m_propertyTable;
 		private CommandSet m_commandSet;
 //		private bool m_allowCommandsToExecute;
-		private SortedDictionary<Tuple<int, IxCoreColleague>, bool> m_colleagues = new SortedDictionary<Tuple<int, IxCoreColleague>, bool>();
+		private SortedDictionary<Tuple<int, IxCoreColleague>, bool> m_colleagues = new SortedDictionary<Tuple<int, IxCoreColleague>, bool>(new TupleComparer());
 		private IxCoreColleague m_temporaryColleague;
 		private Dictionary<string, string> m_pathVariables = new Dictionary<string, string>();
 		private Dictionary<Type, Dictionary<string, MethodInfo>> m_TypeMethodInfo = new Dictionary<Type, Dictionary<string, MethodInfo>>();
@@ -157,9 +183,6 @@ namespace XCore
 		#region Data members for Queueing
 		/// <summary>This is the message value that is used to communicate the need to process the defered mediator queue</summary>
 		public const int WM_BROADCAST_ITEM_INQUEUE = 0x8000+0x77;	// wm_app + 0x77
-		/// <summary>Included here so as to not add another common utils dependancy</summary>
-		[System.Runtime.InteropServices.DllImport("User32.dll", CharSet=System.Runtime.InteropServices.CharSet.Auto)]
-		public static extern bool PostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam);
 		private Queue<QueueItem> m_jobs = new Queue<QueueItem>();	// queue to contain the defered broadcasts
 		private Queue<QueueItem> m_pendingjobs = new Queue<QueueItem>(); // queue to contain the broadcasts until we have a main window
 		private int m_queueLastProcessed;	// size of queue the last time it was processed
@@ -474,6 +497,8 @@ namespace XCore
 		private IntPtr m_mainWndPtr = IntPtr.Zero;
 
 		/// <summary>This posts a WM_BROADCAST... msg to the main app window</summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "Add TODO-Linux comment")]
 		private void AddWindowMessage()
 		{
 			if (!ProcessMessages)
@@ -490,27 +515,14 @@ namespace XCore
 			if (m_specificToOneMainWindow)
 				mainWndPtr = m_mainWndPtr;
 			else
-				mainWndPtr = Process.GetCurrentProcess().MainWindowHandle;
-#if !__MonoCS__
-			PostMessage(mainWndPtr, Mediator.WM_BROADCAST_ITEM_INQUEUE, 0, 0);
-#else
-			SimulatePostMessage(mainWndPtr, Mediator.WM_BROADCAST_ITEM_INQUEUE, 0, 0);
-#endif
-		}
-
-#if __MonoCS__
-		internal static void SimulatePostMessage(IntPtr hWnd, int Msg, uint wParam, uint lParam)
-		{
-			if (hWnd != IntPtr.Zero)
 			{
-				Control c = Control.FromChildHandle(hWnd);
-				Message m = new Message();
-				m.HWnd = c.Handle;
-				m.Msg = Mediator.WM_BROADCAST_ITEM_INQUEUE;
-				(c as IRaiseASyncMessages).SimulatePostMessage(ref m);
+				// TODO-Linux: process.MainWindowHandle is not yet implemented in Mono
+				using (var process = Process.GetCurrentProcess())
+					mainWndPtr = process.MainWindowHandle;
 			}
+			if (mainWndPtr != IntPtr.Zero)
+				Win32.PostMessage(mainWndPtr, Mediator.WM_BROADCAST_ITEM_INQUEUE, 0, 0);
 		}
-#endif
 
 		/// <summary>Add an item to the queue and let the app know an item is present to be processed.</summary>
 		/// <param name="item"></param>

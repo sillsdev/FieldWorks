@@ -12,19 +12,20 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using SIL.CoreImpl;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
-using System.Xml.Serialization;
+using System.Diagnostics;
 using System.IO;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.Framework;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.Xml.Serialization;
+using SIL.CoreImpl;
+using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.Utils;
 
@@ -40,7 +41,7 @@ namespace SIL.FieldWorks.TE
 		#region Member variables
 		/// <summary>The FDO Scripture object which will own the new styles</summary>
 		protected IScripture m_scr;
-		private FwApp m_app;
+		private IApp m_app;
 		private IFdoServiceLocator m_servLoc;
 		private ILgWritingSystemFactory m_wsf;
 		private ITsStrFactory m_strFactory = TsStrFactoryClass.Create();
@@ -56,7 +57,7 @@ namespace SIL.FieldWorks.TE
 		/// Initializes a new instance of the <see cref="TeKeyTermsInit"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected TeKeyTermsInit(IScripture scr, FwApp app)
+		protected TeKeyTermsInit(IScripture scr, IApp app)
 		{
 			m_scr = scr;
 			m_app = app;

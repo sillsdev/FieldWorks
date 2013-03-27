@@ -238,8 +238,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 							throw new ArgumentException(LexTextControls.ksInvalidField);
 					}
 					break;
-				case CellarPropertyType.MultiBigString:
-				case CellarPropertyType.MultiBigUnicode:
 				case CellarPropertyType.MultiString:
 				case CellarPropertyType.MultiUnicode:
 					m_groupOptions.Text = LexTextControls.ksMultiStringImportOptions;
@@ -248,7 +246,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					m_stringOpt.Initialize(m_cache, m_helpTopicProvider, m_app, m_stylesheet, m_rsfm);
 					break;
 				case CellarPropertyType.String:
-				case CellarPropertyType.BigString:
 					m_groupOptions.Text = LexTextControls.ksStringImportOptions;
 					m_groupOptions.Controls.Add(m_stringOpt);
 					m_stringOpt.Location = m_locSubCtrl;
@@ -267,7 +264,6 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					m_dateOpt.Initialize(m_cache, m_helpTopicProvider, m_rsfm, false);
 					break;
 				case CellarPropertyType.Unicode:
-				case CellarPropertyType.BigUnicode:
 				case CellarPropertyType.Binary:
 				case CellarPropertyType.Image:
 				case CellarPropertyType.Boolean:

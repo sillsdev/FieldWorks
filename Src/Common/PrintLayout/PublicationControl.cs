@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
@@ -766,6 +767,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// </summary>
 		/// <param name="e">Info needed to paint</param>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint (e);
@@ -1664,6 +1667,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// the middle of the page, and we do a refresh we end up with the second section
 		/// starting at the top of the page.</remarks>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="Page gets added to m_pages collection and disposed there.")]
 		protected int CreatePagesForDiv(DivisionLayoutMgr div, int iDiv,
 			int spaceLeftFromPrevDiv)
 		{
@@ -1684,7 +1689,9 @@ namespace SIL.FieldWorks.Common.PrintLayout
 
 				int dypLayoutHeight = div.AvailablePageHeightInPrinterPixels;
 				int numberOfPages = PagesPerDiv(dypHeightOfDiv - spaceLeftFromPrevDiv, dypLayoutHeight);
-				Debug.WriteLine(string.Format("dxpLayoutWidth={0}, dypHeightOfDiv={1},\nspaceLeftFromPrevDiv={2}, dypLayoutHeight={3},\nnumberOfPages={4}", dxpLayoutWidth, dypHeightOfDiv, spaceLeftFromPrevDiv, dypLayoutHeight, numberOfPages));
+				Debug.WriteLine(string.Format("dxpLayoutWidth={0}, dypHeightOfDiv={1}", dxpLayoutWidth, dypHeightOfDiv));
+				Debug.WriteLine(string.Format("spaceLeftFromPrevDiv={0}, dypLayoutHeight={1}", spaceLeftFromPrevDiv, dypLayoutHeight));
+				Debug.WriteLine(string.Format("numberOfPages={0}", numberOfPages));
 				Debug.WriteLine(string.Format("div.TopMargin={0}, div.BottomMargin={1}", div.TopMarginInPrinterPixels, div.BottomMarginInPrinterPixels));
 				for (int i = 0; i < numberOfPages; i++)
 					m_pages.Add(CreatePage(this, iDiv, spaceLeftFromPrevDiv + i * dypLayoutHeight,
@@ -3114,6 +3121,8 @@ namespace SIL.FieldWorks.Common.PrintLayout
 		/// Handle Print command
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public virtual bool OnFilePrint()
 		{
 			CheckDisposed();

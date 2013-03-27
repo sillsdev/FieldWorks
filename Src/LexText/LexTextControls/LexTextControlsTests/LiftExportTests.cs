@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -39,6 +40,8 @@ namespace LexTextControlsTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - Cache gets disposed in TearDown method")]
 	public class LiftExportTests : BaseTest
 	{
 		private const string kbasePictureOfTestFileName = "Picture of Test";
@@ -433,6 +436,7 @@ namespace LexTextControlsTests
 			"</LexDb>" + Environment.NewLine;
 
 		private FdoCache m_cache;
+		private ThreadHelper m_ThreadHelper;
 		private readonly Dictionary<string, ICmSemanticDomain> m_mapSemanticDomains =
 			new Dictionary<string, ICmSemanticDomain>();
 		private readonly Dictionary<string, IPartOfSpeech> m_mapPartsOfSpeech =
@@ -460,8 +464,9 @@ namespace LexTextControlsTests
 			var mockProjectName = "xxyyzProjectFolderForLIFTTest";
 			MockProjectFolder = Path.Combine(Path.GetTempPath(), mockProjectName);
 			var mockProjectPath = Path.Combine(MockProjectFolder, mockProjectName + ".fwdata");
+			m_ThreadHelper = new ThreadHelper();
 			m_cache = FdoCache.CreateCacheWithNewBlankLangProj(
-				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", new ThreadHelper());
+				new TestProjectId(FDOBackendProviderType.kMemoryOnly, mockProjectPath), "en", "fr", "en", m_ThreadHelper);
 			MockLinkedFilesFolder = Path.Combine(MockProjectFolder, DirectoryFinder.ksLinkedFilesDir);
 			Directory.CreateDirectory(MockLinkedFilesFolder);
 			//m_cache.LangProject.LinkedFilesRootDir = MockLinkedFilesFolder; this is already the default.
@@ -471,7 +476,7 @@ namespace LexTextControlsTests
 			//var voiceTag = RFC5646Tag.RFC5646TagForVoiceWritingSystem(languageSubtag.Name, "");
 			var audioWs = writingSystemManager.Create(languageSubtag,
 				LangTagUtils.GetScriptSubtag("Zxxx"), null, LangTagUtils.GetVariantSubtag("audio"));
-			((WritingSystemDefinition) audioWs).IsVoice = true; // should already be so? Make sure.
+			((WritingSystemDefinition)audioWs).IsVoice = true; // should already be so? Make sure.
 			writingSystemManager.Set(audioWs); // gives it a handle
 			m_audioWsCode = audioWs.Handle;
 
@@ -970,6 +975,8 @@ namespace LexTextControlsTests
 			Directory.Delete(MockLinkedFilesFolder, true);
 			m_cache.Dispose();
 			m_cache = null;
+			m_ThreadHelper.Dispose();
+			m_ThreadHelper = null;
 		}
 
 		#endregion
@@ -1871,6 +1878,8 @@ namespace LexTextControlsTests
 		}
 	}
 
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - Cache isn't used here")]
 	class MockStyle : IStStyle
 	{
 		public ICmObjectId Id { get; private set; }
@@ -1918,7 +1927,7 @@ namespace LexTextControlsTests
 			throw new NotImplementedException();
 		}
 
-		public bool IsFieldRelevant(int flid)
+		public bool IsFieldRelevant(int flid, HashSet<Tuple<int, int>> propsToMonitor)
 		{
 			throw new NotImplementedException();
 		}

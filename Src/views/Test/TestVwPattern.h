@@ -42,9 +42,15 @@ namespace TestViews
 #define BREVE L"\x02D8" // compatibility decomposition to 0020 0306
 #define a_WITH_DIAERESIS L"\x00E4" // decomposes to 0061 0308.
 #define a_WITH_DIAERESIS_AND_MACRON L"\x01DF"
+#ifdef WIN32
 #define MUSICAL_SYMBOL_MINIMA L"\xD834\xDDBB" // 1D1BB decomposes to 1D1B9 1D165
 #define MUSICAL_SYMBOL_SEMIBREVIS_WHITE L"\xD834\xDDB9" // 1D1B9
 #define MUSICAL_SYMBOL_COMBINING_STEM L"\xD834\xDD65" // 1D165
+#else
+#define MUSICAL_SYMBOL_MINIMA L"\x1D1BB" // 1D1BB decomposes to 1D1B9 1D165
+#define MUSICAL_SYMBOL_SEMIBREVIS_WHITE L"\x1D1B9" // 1D1B9
+#define MUSICAL_SYMBOL_COMBINING_STEM L"\x1D165" // 1D165
+#endif
 
 	class DummySimpleParaVc : public DummyBaseVc
 	{
@@ -638,16 +644,18 @@ namespace TestViews
 
 			// First match should be from 0 to 3
 			int ichMin, ichLim;
+			CheckHr(m_qpat->put_MatchDiacritics(false));	// This is set true by default.
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
-			unitpp::assert_eq("Found 'Änd' at start", 0, ichMin);
-			unitpp::assert_eq("End of 'Änd' at start", 3, ichLim);
+			unitpp::assert_eq("Found 'Änd' at start (ignoring diacritics)", 0, ichMin);
+			unitpp::assert_eq("End of 'Änd' at start (ignoring diacritics)", 3, ichLim);
 
 			// ...but not match requiring diacritics to match
 			CheckHr(m_qpat->put_MatchDiacritics(true));
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
-			unitpp::assert_eq("Found 'Änd' at start, match diacritics", kichoffsetofAnd, ichMin);
+			unitpp::assert_eq("Skipped 'Änd' at start (match diacritics)", kichoffsetofAnd, ichMin);
 
 			// ...still not if we have to match case
+			CheckHr(m_qpat->put_MatchDiacritics(false));
 			CheckHr(m_qpat->put_MatchCase(true));
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
 			unitpp::assert_eq("Skipped 'Änd' at start, match case", kichoffsetofAnd, ichMin);
@@ -764,6 +772,7 @@ namespace TestViews
 			unitpp::assert_eq("2nd canonical find end", 12, ichLim);
 
 			// Matching writing systems we still succeed, because we're ignoring diacritics.
+			CheckHr(m_qpat->put_MatchDiacritics(false));	// This is set true by default.
 			CheckHr(m_qpat->put_MatchOldWritingSystem(true));
 			CheckHr(m_qpat->FindIn(m_qts, 0, stuSearch.Length(), true, &ichMin, &ichLim, NULL));
 			unitpp::assert_eq("First canonical find start, ws", 2, ichMin);
@@ -1231,6 +1240,7 @@ namespace TestViews
 			//unitpp::assert_eq("End of A-diaresis equals AE", 6, ichLim);
 #endif
 
+			CheckHr(m_qpat->put_MatchDiacritics(false));	// This is set true by default.
 			// Should also work with pattern normalized.
 			stuPattern = StrUni(L"A" COMBINING_DIAERESIS);
 			CheckHr(m_qtsf->MakeString(stuPattern.Bstr(), g_wsEng, &qtssPattern));
@@ -1366,7 +1376,7 @@ namespace TestViews
 			try
 			{
 				qvg32.CreateInstance(CLSID_VwGraphicsWin32);
-				hdc = ::GetDC(NULL);
+				hdc = GetTestDC();
 				qvg32->Initialize(hdc);
 
 				IVwViewConstructorPtr qvc;
@@ -1386,6 +1396,7 @@ namespace TestViews
 				CheckHr(m_qtsf->MakeString(stuPattern.Bstr(), g_wsEng, &qtssPattern));
 				CheckHr(m_qpat->putref_Pattern(qtssPattern));
 
+				CheckHr(m_qpat->put_MatchDiacritics(false));	// This is set true by default.
 				// OK, test data set up. Now try some tests...
 				CheckHr(m_qpat->Find(qrootb, true, NULL));
 				ComBool fFound;
@@ -1558,14 +1569,14 @@ namespace TestViews
 				if (qvg32)
 					qvg32->ReleaseDC();
 				if (hdc != 0)
-					::ReleaseDC(NULL, hdc);
+					ReleaseTestDC(hdc);
 				qrootb->Close();
 				throw;
 			}
 
 			// Cleanup
 			qvg32->ReleaseDC();
-			::ReleaseDC(NULL, hdc);
+			ReleaseTestDC(hdc);
 			qrootb->Close();
 		}
 

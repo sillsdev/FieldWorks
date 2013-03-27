@@ -17,6 +17,7 @@
 // </remarks>
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
@@ -113,6 +114,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string FlexFolder
 		{
 			get { return GetFWCodeSubDirectory(ksFlexFolderName); }
+		}
+
+		/// <summary>
+		/// Return the folder in which FlexBridge resides, or empty string if it is not installed.
+		/// </summary>
+		public static string FlexBridgeFolder
+		{
+			get { return GetFLExBridgeFolderPath(); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -272,7 +281,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string RemotingTcpServerConfigFile
 		{
-			get { return ExeOrDllPath("remoting_tcp_server.config"); }
+			get
+			{
+				if (MiscUtils.RunningTests)
+					return ExeOrDllPath("remoting_tcp_server_tests.config");
+				return ExeOrDllPath("remoting_tcp_server.config");
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -352,6 +366,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string GetFWCodeSubDirectory(string subDirectory)
 		{
 			return GetSubDirectory(FWCodeDirectory, subDirectory);
+		}
+
+		private static string GetFLExBridgeFolderPath()
+		{
+			var key = FwRegistryHelper.FieldWorksBridgeRegistryKeyLocalMachine;
+			if(key != null)
+				return GetDirectory(key, "InstallationDir", "");
+			return "";
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -499,8 +521,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{
-			using (RegistryKey registryKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			using (RegistryKey userKey = FwRegistryHelper.FieldWorksRegistryKey)
+			using (RegistryKey machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
+				var registryKey = userKey;
+				if (userKey == null || userKey.GetValue(registryValue) == null)
+				{
+					registryKey = machineKey;
+				}
+
 				return GetDirectory(registryKey, registryValue, defaultDir);
 			}
 		}
@@ -572,6 +601,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return GetDirectory("RootDataDir", CommonAppDataFolder(string.Format("FieldWorks {0}", FwUtils.SuiteVersion))); }
 		}
 
+		private static string m_srcdir;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the src dir (for running tests)
@@ -581,20 +612,46 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				string rootDir = null;
-				if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
-					rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
-				if (string.IsNullOrEmpty(rootDir))
+				if (!String.IsNullOrEmpty(m_srcdir))
+					return m_srcdir;
+				if (MiscUtils.IsUnix)
 				{
-					throw new ApplicationException(
-						string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
-						FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
+					// Linux doesn't have the registry setting, at least while running tests,
+					// so we'll assume the executing assembly is $FW/Output/Debug/FwUtils.dll,
+					// and the source dir is $FW/Src.
+					Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+					var dir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
+					dir = Path.GetDirectoryName(dir);		// strip the parent directory name (Debug)
+					dir = Path.GetDirectoryName(dir);		// strip the parent directory again (Output)
+					dir = Path.Combine(dir, "Src");
+					if (!Directory.Exists(dir))
+						throw new ApplicationException("Could not find the Src directory.  Was expecting it at: " + dir);
+					m_srcdir = dir;
 				}
-				string fw = Directory.GetParent(rootDir).FullName;
-				string src = Path.Combine(fw, "Src");
-				if (!Directory.Exists(src))
-					throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
-				return src;
+				else
+				{
+					string rootDir = null;
+					if (FwRegistryHelper.FieldWorksRegistryKey != null)
+					{
+						rootDir = FwRegistryHelper.FieldWorksRegistryKey.GetValue("RootCodeDir") as string;
+					}
+					else if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
+					{
+						rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
+					}
+					if (string.IsNullOrEmpty(rootDir))
+					{
+						throw new ApplicationException(
+							string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
+							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.Name));
+					}
+					string fw = Directory.GetParent(rootDir).FullName;
+					string src = Path.Combine(fw, "Src");
+					if (!Directory.Exists(src))
+						throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
+						m_srcdir = src;
+				}
+				return m_srcdir;
 			}
 		}
 
@@ -677,18 +734,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (ProjectsDirectory == value)
 					return; // no change.
 
-				// On Vista or later OS's Writing HLKM registry keys can, by processes not running with eleverated privileges,
-				// silently redirect to a virtual location and not the intended HKLM location, rather than throwing a security
-				// exception. The SetValueAsAdmin method writes the registry key in a processes with hopfully elevated
-				// privileges.
-
-				using (var registryKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachineForWriting)
+				using (var registryKey = FwRegistryHelper.FieldWorksRegistryKey)
 				{
-					// We don't want unittests showing the UAC on Vista or later OS's.
-					if (!MiscUtils.RunningTests && !MiscUtils.IsUnix)
-						registryKey.SetValueAsAdmin("ProjectsDir", value);
-					else
-						registryKey.SetValue("ProjectsDir", value);
+					registryKey.SetValue("ProjectsDir", value);
 				}
 			}
 		}
@@ -716,8 +764,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
+				// NOTE: SpecialFolder.MyDocuments returns $HOME on Linux
 				string myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-				string defaultDir = Path.Combine(Path.Combine(myDocs, "My FieldWorks"), "Backups");
+				// FWNX-501: use slightly different default path on Linux
+				string defaultDir = MiscUtils.IsUnix ?
+					Path.Combine(myDocs, "Documents/fieldworks/backups") :
+					Path.Combine(Path.Combine(myDocs, "My FieldWorks"), "Backups");
 
 				using (RegistryKey registryKey = FwRegistryHelper.FieldWorksRegistryKey.OpenSubKey("ProjectBackup"))
 					return GetDirectory(registryKey, "DefaultBackupDirectory", defaultDir);
@@ -737,6 +789,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the global writing system store directory. The directory is guaranteed to exist.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification="Offending code is not executed on Linux")]
 		public static string GlobalWritingSystemStoreDirectory
 		{
 			get
@@ -752,6 +806,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						// correct permissions are set when installing the package or by the
 						// system administrator.
 
+						// NOTE: GetAccessControl/ModifyAccessRule/SetAccessControl is not implemented in Mono
 						DirectorySecurity ds = di.GetAccessControl();
 						var sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
 						AccessRule rule = new FileSystemAccessRule(sid, FileSystemRights.Write | FileSystemRights.ReadAndExecute
@@ -934,7 +989,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			if (String.IsNullOrEmpty(fullfilePath))
 				return null;
-			return fullfilePath;
+			return FixPathSlashesIfNeeded(fullfilePath);
 		}
 
 		/// <summary>
@@ -947,11 +1002,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static String GetFullPathFromRelativeLFPath(string relativeLFPath, string linkedFilesRootDir)
 		{
 			if (Path.IsPathRooted(relativeLFPath))
-				return relativeLFPath;
+				return FixPathSlashesIfNeeded(relativeLFPath);
 			else
-				return Path.Combine(linkedFilesRootDir, relativeLFPath);
+				return FixPathSlashesIfNeeded(Path.Combine(linkedFilesRootDir, relativeLFPath));
 		}
 
+		/// <summary>
+		/// If a path gets stored with embedded \, fix it to work away from Windows.  (FWNX-882)
+		/// </summary>
+		internal static string FixPathSlashesIfNeeded(string path)
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+			{
+				if (path.Contains("\\"))
+					return path.Replace('\\', '/');
+			}
+			return path;
+		}
 
 		/// <summary>
 		/// If the path is relative to the project's linkedFiles path then substitute %lf%
@@ -971,10 +1038,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var relativePath = GetRelativePathIfExists(ksLFrelPath, linkedFilesPathLowercaseRoot,
 				projectLinkedFilesPath);
 			if (!string.IsNullOrEmpty(relativePath))
-				return relativePath;
-
-
-			//Just return the complete path if we cannot find a relative path.
+				return FixPathSlashesIfNeeded(relativePath);
+			//Just return an empty path if we cannot find a relative path.
 			return string.Empty;
 		}
 
@@ -1010,7 +1075,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (relativePath[0] == Path.DirectorySeparatorChar)
 					relativePath = relativePath.Substring(1);
 			}
-			return relativePath;
+			return FixPathSlashesIfNeeded(relativePath);
 		}
 
 
@@ -1037,8 +1102,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				fullPath = GetFullPathForRelativePath(relativePath, ksMyDocsRelPath,
 					DirectoryFinder.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 			if (String.IsNullOrEmpty(fullPath))
-				return relativePath;
-			return fullPath;
+				return FixPathSlashesIfNeeded(relativePath);
+			return FixPathSlashesIfNeeded(fullPath);
 		}
 
 		private static String GetFullPathForRelativePath(String relativePath, String relativePart, String fullPathReplacement)
@@ -1072,7 +1137,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var relativePath = GetRelativePathIfExists(ksProjectRelPath, linkedFilesPathLowercaseRoot,
 				projectPath);
 			if (!string.IsNullOrEmpty(relativePath))
-				return relativePath;
+				return FixPathSlashesIfNeeded(relativePath);
 			// GetRelativePathIfExists may miss a case where, say, projectPath is
 			// \\ls-thomson-0910.dallas.sil.org\Projects\MyProj, and linkedFilesFullPath is
 			// C:\Documents and settings\All Users\SIL\FieldWorks\Projects\MyProj\LinkedFiles
@@ -1092,7 +1157,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					// They ARE the same directory! (I suppose we could miss if someone wrote to it at the
 					// exact wrong moment, but we shouldn't be changing this setting while shared, anyway.)
-					return ksProjectRelPath + linkedFilesFullPath.Substring(index + match.Length);
+					return FixPathSlashesIfNeeded(ksProjectRelPath + linkedFilesFullPath.Substring(index + match.Length));
 				}
 			}
 
@@ -1104,23 +1169,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			relativePath = GetRelativePathIfExists(ksProjectsRelPath, linkedFilesPathLowercaseRoot,
 				DirectoryFinder.ProjectsDirectory);
 			if (!String.IsNullOrEmpty(relativePath))
-				return relativePath;
+				return FixPathSlashesIfNeeded(relativePath);
 
 			// Case where the user has the LinkedFiles folder in a shared folder.
 			relativePath = GetRelativePathIfExists(ksCommonAppDataRelPath,
 				linkedFilesPathLowercaseRoot, DirectoryFinder.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 			if (!string.IsNullOrEmpty(relativePath))
-				return relativePath;
+				return FixPathSlashesIfNeeded(relativePath);
 
 			// Case where the user has the LinkedFiles folder in their MyDocuments folder
 			relativePath = GetRelativePathIfExists(ksMyDocsRelPath,
 				linkedFilesPathLowercaseRoot,
 				DirectoryFinder.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 			if (!string.IsNullOrEmpty(relativePath))
-				return relativePath;
+				return FixPathSlashesIfNeeded(relativePath);
 
 			//Just return the complete path if we cannot find a relative path.
-			return linkedFilesFullPath;
+			return FixPathSlashesIfNeeded(linkedFilesFullPath);
 		}
 
 		private static string GetRelativePathIfExists(string relativePart, string fullPath,

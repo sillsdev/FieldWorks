@@ -26,6 +26,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
+using SIL.Utils.FileDialog;
 using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -528,6 +529,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			this.AcceptButton = m_btnOK;
 			resources.ApplyResources(this, "$this");
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = btnCancel;
 			this.Controls.Add(this.panelBottom);
 			this.Controls.Add(this.m_grpFileLocOptions);
@@ -633,7 +635,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_btnBrowseDest_Click(object sender, EventArgs e)
 		{
 			Logger.WriteEvent("Browsing for destination folder in 'Picture Properties' dialog");
-			using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+			using (var dlg = new FolderBrowserDialogAdapter())
 			{
 				dlg.SelectedPath = m_txtDestination.Text;
 				dlg.Description = String.Format(FwCoreDlgs.kstidSelectLinkedFilesSubFolder,
@@ -822,7 +824,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private DialogResult ShowChoosePictureDlg()
 		{
 			DialogResult dialogResult = DialogResult.None;
-			using (OpenFileDialog dlg = new OpenFileDialog())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.InitialDirectory = (m_grpFileLocOptions.Visible) ? m_txtDestination.Text :
 					s_defaultPicturesFolder;
@@ -835,7 +837,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
 				{
-					dialogResult = dlg.ShowDialog();
+					dialogResult = dlg.ShowDialog(m_app == null ? null : m_app.ActiveMainWindow);
 					if (dialogResult == DialogResult.OK)
 					{
 						string file = dlg.FileName;
@@ -883,23 +885,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void UpdatePicInformation()
 		{
-			// update the image
-			int newWidth;
-			int newHeight;
-			float ratio = (float)m_currentImage.Height / m_currentImage.Width;
-
-			if ((int)(m_picPreview.Width * ratio) < m_picPreview.Height)
+			if (m_currentImage != null)
 			{
-				newWidth = m_picPreview.Width;
-				newHeight = (int)(newWidth * ratio);
-			}
-			else
-			{
-				newHeight = m_picPreview.Height;
-				newWidth = (int)(newHeight * (1f / ratio));
-			}
+				// update the image
+				int newWidth;
+				int newHeight;
+				float ratio = (float)m_currentImage.Height / m_currentImage.Width;
 
-			m_picPreview.Image = new Bitmap(m_currentImage, newWidth, newHeight);
+				if ((int)(m_picPreview.Width * ratio) < m_picPreview.Height)
+				{
+					newWidth = m_picPreview.Width;
+					newHeight = (int)(newWidth * ratio);
+				}
+				else
+				{
+					newHeight = m_picPreview.Height;
+					newWidth = (int)(newHeight * (1f / ratio));
+				}
+
+				m_picPreview.Image = new Bitmap(m_currentImage, newWidth, newHeight);
+			}
 
 			// Add "(not found)" if the original file isn't available
 			string tmpOriginalPath = m_filePath;

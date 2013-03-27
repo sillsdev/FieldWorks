@@ -19,6 +19,7 @@
 		<property name="config" value="Bounds"/>
 		<property name="dir.outputBase" value="${path::combine(dir.fwoutput, config)}"/>
 		<property name="dir.fwoutputlibBase" value="${path::combine(dir.fwoutputlib, config)}"/>
+		<property name="dir.fwoutputlibPlatformBase" value="${path::combine(dir.fwoutputlibPlatform, config)}"/>
 		<property name="bld-debug" value="false"/>
 		<property name="bld-bounds" value="true"/>
 		<property name="bld-release" value="false"/>
@@ -35,15 +36,18 @@
 		<property name="config" value="Release"/>
 		<property name="dir.outputBase" value="${path::combine(dir.fwoutput, config)}"/>
 		<property name="dir.fwoutputlibBase" value="${path::combine(dir.fwoutputlib, config)}"/>
+		<property name="dir.fwoutputlibPlatformBase" value="${path::combine(dir.fwoutputlibPlatform, config)}"/>
 		<property name="bld-debug" value="false"/>
 		<property name="bld-bounds" value="false"/>
 		<property name="bld-release" value="true"/>
+		<property name="verifyset" value="dispose-release"/>
 		<call target="setenvLinux"/>
 	</target>
 
 	<target name="extraInstallerBuild"
 		description="Building a TE-only or Flex-only build via GenerateFilesSource.exe.">
 		<property name="buildingInstallers" value="true"/>
+		<property name="deleteOutput" value="false"/>"
 	</target>
 
 	<target name="ContinuousBuildTests" description="Prepare to run acceptance tests on Dallas continuous build machine.">
@@ -136,6 +140,12 @@
 	</target>
 	<target name="buildtlb" description="Build TLB files if they are out of date">
 		<property name="buildtlb" value="true"/>
+	</target>
+	<target name="noverifyfail" description="Don't abort build if verify step fails">
+		<property name="verifyfail" value="false"/>
+	</target>
+	<target name="autoUpdateIgnores" description="Comment all ignored gendarme rules that no longer produce a defect">
+		<property name="autoUpdateIgnores" value="true"/>
 	</target>
 	<target name="nunitreport-init">
 		<patternset id="TestResultsPattern">

@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -395,9 +396,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					return false; // some sort of special field; if it ought to be formattable, make a decorator MDC that recognizes it.
 				CellarPropertyType type = (CellarPropertyType)mdc.GetFieldType((int)flid);
 				return !(type == CellarPropertyType.Unicode
-					|| type == CellarPropertyType.BigUnicode
-					|| type == CellarPropertyType.MultiUnicode
-					|| type == CellarPropertyType.MultiBigUnicode);
+					|| type == CellarPropertyType.MultiUnicode);
 			}
 		}
 
@@ -482,9 +481,7 @@ namespace SIL.FieldWorks.Common.RootSites
 									CellarPropertyType type = (CellarPropertyType)
 										m_rootb.DataAccess.MetaDataCache.GetFieldType((int)flidAnchor);
 									if (type != CellarPropertyType.String &&
-										type != CellarPropertyType.BigString &&
-										type != CellarPropertyType.MultiString &&
-										type != CellarPropertyType.MultiBigString)
+										type != CellarPropertyType.MultiString)
 									{
 										bestStyle = String.Empty;
 									}
@@ -1808,6 +1805,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification="FindForm() returns a reference")]
 		public virtual IVwRootSite CastAsIVwRootSite()
 		{
 			CheckDisposed();

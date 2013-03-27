@@ -18,7 +18,7 @@ namespace SILUBS.ScriptureChecks
 		private const string kInvalidItemsParameter = "UnmatchedPairingCharacters";
 
 		private IChecksDataSource m_checksDataSource;
-		private CharacterCategorizer m_characterCategorizer;
+//		private CharacterCategorizer m_characterCategorizer;
 		private List<TextTokenSubstring> m_unmatchedPairs;
 		private string m_validItems;
 		private string m_invalidItems;
@@ -175,8 +175,12 @@ namespace SILUBS.ScriptureChecks
 		{
 #if DEBUG
 			List<ITextToken> AllTokens = new List<ITextToken>(tokens);
+			if (AllTokens.Count == 0)
+			{
+				// Keep the compiler from complaining about assigning to a variable, but not using it.
+			}
 #endif
-			m_characterCategorizer = m_checksDataSource.CharacterCategorizer;
+//			m_characterCategorizer = m_checksDataSource.CharacterCategorizer;
 			ValidItems = m_checksDataSource.GetParameterValue(kValidItemsParameter);
 			InvalidItems = m_checksDataSource.GetParameterValue(kInvalidItemsParameter);
 

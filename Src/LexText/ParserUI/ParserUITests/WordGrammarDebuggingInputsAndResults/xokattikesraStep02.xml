@@ -2,69 +2,69 @@
 <word>
   <form>xokattikesra</form>
   <seq step="Try to build a Word analysis node on a Partial analysis node.">
-	<morph wordType="derivPfx">
-	  <shortName>xo- (Pass): xo</shortName>
-	  <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
-	</morph>
-	<word syncat="0" syncatAbbr="">
-	  <partial syncat="0" syncatAbbr="">
-		<morph wordType="root">
-		  <shortName>kat (feline): kat</shortName>
-		  <stemMsa cat="0" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </partial>
-	</word>
-	<morph wordType="derivSfx">
-	  <shortName>-ti (Caus): ti</shortName>
-	  <derivMsa fromCat="152" fromCatAbbr="intrans" toCat="167" toCatAbbr="trans" fromInflClass="0" toInflClass="177" toInflClassAbbr="1" requiresInfl="+" />
-	</morph>
-	<morph wordType="suffix">
-	  <shortName>-kes (???): kes</shortName>
-	  <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <morph wordType="derivPfx">
+      <shortName>xo- (Pass): xo</shortName>
+      <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+    </morph>
+    <word syncat="0" syncatAbbr="">
+      <partial syncat="0" syncatAbbr="">
+        <morph wordType="root">
+          <shortName>kat (feline): kat</shortName>
+          <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+        </morph>
+      </partial>
+    </word>
+    <morph wordType="derivSfx">
+      <shortName>-ti (Caus): ti</shortName>
+      <derivMsa fromCat="152" fromCatAbbr="intrans" toCat="167" toCatAbbr="trans" fromInflClass="0" toInflClass="177" toInflClassAbbr="1" requiresInfl="+" />
+    </morph>
+    <morph wordType="suffix">
+      <shortName>-kes (???): kes</shortName>
+      <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
   <seq step="Try to build a Partial analysis node on a Full analysis node with sequences of affixes not labeled as either derivational or inflectional (the sequence may also include derivational affixes).">
-	<partial inflected="" syncat="0" syncatAbbr="">
-	  <morph wordType="derivPfx">
-		<shortName>xo- (Pass): xo</shortName>
-		<derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
-	  </morph>
-	  <partial syncat="0" syncatAbbr="">
-		<morph wordType="root">
-		  <shortName>kat (feline): kat</shortName>
-		  <stemMsa cat="0" inflClass="0" requiresInfl="-" />
-		</morph>
-	  </partial>
-	  <morph wordType="derivSfx">
-		<shortName>-ti (Caus): ti</shortName>
-		<derivMsa fromCat="152" fromCatAbbr="intrans" toCat="167" toCatAbbr="trans" fromInflClass="0" toInflClass="177" toInflClassAbbr="1" requiresInfl="+" />
-	  </morph>
-	  <morph wordType="suffix">
-		<shortName>-kes (???): kes</shortName>
-		<derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	  </morph>
-	</partial>
-	<morph wordType="166">
-	  <shortName>-ra (Pres): ra</shortName>
-	  <inflClasses>
-		<inflClass hvo="177" abbr="1" />
-	  </inflClasses>
-	  <inflMsa slot="166" slotAbbr="Tense" />
-	</morph>
-	<morph wordType="derivSfx">
-	  <shortName>-*0 (Adverbializer2): o</shortName>
-	  <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
-	</morph>
+    <partial inflected="" syncat="0" syncatAbbr="">
+      <morph wordType="derivPfx">
+        <shortName>xo- (Pass): xo</shortName>
+        <derivMsa fromCat="167" fromCatAbbr="trans" toCat="152" toCatAbbr="intrans" fromInflClass="0" toInflClass="178" toInflClassAbbr="2" requiresInfl="+" />
+      </morph>
+      <partial syncat="0" syncatAbbr="">
+        <morph wordType="root">
+          <shortName>kat (feline): kat</shortName>
+          <stemMsa cat="0" inflClass="0" requiresInfl="-" />
+        </morph>
+      </partial>
+      <morph wordType="derivSfx">
+        <shortName>-ti (Caus): ti</shortName>
+        <derivMsa fromCat="152" fromCatAbbr="intrans" toCat="167" toCatAbbr="trans" fromInflClass="0" toInflClass="177" toInflClassAbbr="1" requiresInfl="+" />
+      </morph>
+      <morph wordType="suffix">
+        <shortName>-kes (???): kes</shortName>
+        <derivMsa fromCat="0" toCat="0" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+      </morph>
+    </partial>
+    <morph wordType="166">
+      <shortName>-ra (Pres): ra</shortName>
+      <inflClasses>
+        <inflClass hvo="177" abbr="1" />
+      </inflClasses>
+      <inflMsa slot="166" slotAbbr="Tense" />
+    </morph>
+    <morph wordType="derivSfx">
+      <shortName>-*0 (Adverbializer2): o</shortName>
+      <derivMsa fromCat="70" fromCatAbbr="adj" toCat="73" toCatAbbr="adv" fromInflClass="0" toInflClass="0" requiresInfl="-" />
+    </morph>
   </seq>
 </word>

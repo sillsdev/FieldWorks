@@ -15,20 +15,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 
 using NUnit.Framework;
-
-using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.Test.TestUtils;
-using SIL.FieldWorks.Common.COMInterfaces;
-using SILUBS.SharedScrUtils;
-using SIL.Utils;
-using SIL.FieldWorks.FDO.DomainServices;
 using Rhino.Mocks;
+
+using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.Test.TestUtils;
+using SIL.Utils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -127,10 +128,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test - m_ptHelper gets disposed in FixtureTeardown()")]
 	public class ScrImportSetTests : ScrInMemoryFdoTestBase
 	{
 		#region data members
-		private readonly MockParatextHelper m_ptHelper = new MockParatextHelper();
+		private MockParatextHelper m_ptHelper;
 		private IScrImportSet m_importSettings;
 		private ICmAnnotationDefn m_translatorNoteDefn;
 		private ICmAnnotationDefn m_consultantNoteDefn;
@@ -147,6 +150,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
+			m_ptHelper = new MockParatextHelper();
 			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
 		}
 
@@ -158,6 +162,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
+			m_ptHelper.Dispose();
 			ParatextHelper.Manager.Reset();
 		}
 

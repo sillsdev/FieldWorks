@@ -697,7 +697,7 @@ namespace TestViews
 			// Initialize the graphics to use the display m_hdc...with the methods we call
 			// it shouldn't do any actual drawing.
 			m_qvg32.CreateInstance(CLSID_VwGraphicsWin32);
-			m_hdc = ::GetDC(NULL);
+			m_hdc = GetTestDC();
 			m_qvg32->Initialize(m_hdc);
 
 			// Set the clip rectangle so that we have a defined one that the tests expects. This
@@ -738,7 +738,7 @@ namespace TestViews
 			if (m_qvg32)
 				m_qvg32->ReleaseDC();
 			if (m_hdc != 0)
-				::ReleaseDC(NULL, m_hdc);
+				ReleaseTestDC(m_hdc);
 			m_qrootb1->Close();
 			m_qrootb2->Close();
 

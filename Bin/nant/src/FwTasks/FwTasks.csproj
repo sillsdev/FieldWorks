@@ -1,20 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
 	<ProjectType>Local</ProjectType>
 	<ProductVersion>9.0.30729</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<ProjectGuid>{1C027178-008E-48AB-B588-01F59B1C5406}</ProjectGuid>
-	<SccProjectName>Perforce Project</SccProjectName>
-	<SccLocalPath>..\..\..\..</SccLocalPath>
-	<SccProvider>MSSCCI:Perforce SCM</SccProvider>
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<AssemblyKeyContainerName>
 	</AssemblyKeyContainerName>
 	<AssemblyName>FwTasks</AssemblyName>
-	<AssemblyOriginatorKeyFile>
-	</AssemblyOriginatorKeyFile>
 	<DefaultClientScript>JScript</DefaultClientScript>
 	<DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
 	<DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -97,44 +92,32 @@
 	<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="IDLImporter, Version=1.0.3259.32663, Culture=neutral, PublicKeyToken=null">
+	<Reference Include="IDLImporter">
 	  <HintPath>..\..\..\IDLImporter.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="NAnt.Contrib.Tasks, Version=0.85.2479.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
+	<Reference Include="NAnt.Contrib.Tasks">
 	  <HintPath>..\..\bin\extensions\common\neutral\NAntContrib\NAnt.Contrib.Tasks.dll</HintPath>
 	</Reference>
-	<Reference Include="NAnt.Core, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
+	<Reference Include="NAnt.Core">
 	  <HintPath>..\..\bin\NAnt.Core.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="NAnt.DotNetTasks, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
+	<Reference Include="NAnt.DotNetTasks">
 	  <HintPath>..\..\bin\NAnt.DotNetTasks.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="NAnt.NUnit, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
+	<Reference Include="NAnt.NUnit">
 	  <HintPath>..\..\bin\NAnt.NUnit.dll</HintPath>
 	</Reference>
-	<Reference Include="NAnt.NUnit2Tasks, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
-	  <SpecificVersion>False</SpecificVersion>
+	<Reference Include="NAnt.NUnit2Tasks">
 	  <HintPath>..\..\bin\NAnt.NUnit2Tasks.dll</HintPath>
 	</Reference>
-	<Reference Include="NAnt.VisualCppTasks, Version=0.85.2478.0, Culture=neutral, PublicKeyToken=null">
+	<Reference Include="NAnt.VisualCppTasks">
 	  <HintPath>..\..\bin\NAnt.VisualCppTasks.dll</HintPath>
-	  <SpecificVersion>False</SpecificVersion>
 	</Reference>
-	<Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-	  <SpecificVersion>False</SpecificVersion>
+	<Reference Include="nunit.framework">
 	  <HintPath>..\..\..\NUnit\bin\nunit.framework.dll</HintPath>
 	</Reference>
-	<Reference Include="System" />
-	<Reference Include="System.Core">
-	  <RequiredTargetFramework>3.5</RequiredTargetFramework>
-	</Reference>
-	<Reference Include="System.Data" />
 	<Reference Include="System.Xml" />
+	<Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Include="AssemblyInfo.cs">

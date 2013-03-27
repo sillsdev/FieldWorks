@@ -15,7 +15,6 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Windows.Forms;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.DomainServices
@@ -28,10 +27,9 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	internal class Db4OServerFinder
 	{
 		#region Data members
-		// TODO: get port from some external source
-		public const int ServiceDiscoveryPort = 3333;
-		private const int HostDiscoveryBroadcastPort = 3333;
-		private const int HostDiscoveryBroadcastReplyPort = 3334;
+		public static readonly int ServiceDiscoveryPort = Db4OPorts.ServerPort;
+		private readonly int HostDiscoveryBroadcastPort = Db4OPorts.ServerPort;
+		private readonly int HostDiscoveryBroadcastReplyPort = Db4OPorts.ReplyPort;
 
 		private readonly Thread m_hostListenerThread;
 		private volatile Socket m_hostListenerSocket;

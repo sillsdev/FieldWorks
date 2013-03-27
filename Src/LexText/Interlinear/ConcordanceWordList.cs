@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.IText
 				where IsInterestingScripture(aText)
 				select aText;
 			// Enhance JohnT: might eventually want to be more selective here, perhaps a genre filter.
-			IEnumerable<IStText> vernacularTexts = from st in Cache.LangProject.TextsOC select st.ContentsOA;
+			IEnumerable<IStText> vernacularTexts = from st in Cache.LangProject.Texts select st.ContentsOA;
 			// Filtered list that excludes IScrBookAnnotations.
 			var texts = vernacularTexts.Concat(scriptureTexts).Where(x => x != null).ToList();
 			int count = (from text in texts from para in text.ParagraphsOS select para).Count();

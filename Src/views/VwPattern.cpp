@@ -36,6 +36,7 @@ VwPattern::VwPattern()
 	ModuleEntry::ModuleAddRef();
 	Assert(m_fStoppedAtLimit == 0);
 	m_sbstrDefaultCharStyle = L"<!default chars!>";
+	m_fMatchDiacritics = true;
 }
 
 
@@ -619,7 +620,7 @@ STDMETHODIMP VwPattern::Find(IVwRootBox * prootb, ComBool fForward, IVwSearchKil
 	CheckHr(hr);
 	m_pboxStart = qrootb;
 	m_qselFound.Clear();
-	m_plzbFound = false;
+	m_plzbFound = 0;
 	return FindNext(fForward, pxserkl);
 
 	END_COM_METHOD(g_fact, IID_IVwPattern);
@@ -668,7 +669,7 @@ STDMETHODIMP VwPattern::FindFrom(IVwSelection * psel, ComBool fForward,
 	int ichDummy;
 	m_qselFound->GetLimit(fForward, &pvpbox, &ichDummy);
 	m_pboxStart = pvpbox;
-	m_plzbFound = false;
+	m_plzbFound = 0;
 	return FindNext(fForward, pxserkl);
 
 	END_COM_METHOD(g_fact, IID_IVwPattern);

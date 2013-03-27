@@ -106,9 +106,9 @@ namespace SIL.Utils
 			string sExpected;
 			if (SIL.Utils.XmlUtils.UsingDotNetTransforms())
 				sExpected = "ResultNoParams.xml";
-			else
+			else if (SIL.Utils.XmlUtils.UsingMSXML2Transforms())
 				sExpected = "ResultNoParamsMSXML2.xml";
-			if (Environment.OSVersion.Platform == PlatformID.Unix) // Mono puts a newline in a different place
+			else
 				sExpected = "ResultNoParams-Linux.xml";
 			CheckXmlEquals(Path.Combine(m_sTestPath, sExpected), sResult);
 			if (File.Exists(sResult))

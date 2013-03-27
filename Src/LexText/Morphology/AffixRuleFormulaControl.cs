@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.Utils;
-using SIL.FieldWorks.Common.Framework.DetailControls;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -744,7 +740,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						Rule.InputOS.Remove(m_removeCol);
 						m_removeCol = null;
 					});
-					//m_view.RootBox.Reconstruct();
 					sel.RestoreSelectionAndScrollPos();
 					return;
 				}

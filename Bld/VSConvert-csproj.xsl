@@ -134,7 +134,7 @@
 					<include name="${{filename.srcProject}}"/>
 					<include name="${{fwroot}}/Bld/VSConvert-csproj.xsl"/>
 					<include name="${{dir.nantbuild}}/${{project_name}}.build"/>
-					<include name="GeneratedAssemblyInfo.cs"/>
+					<include name="${{fwroot}}/Src/CommonAssemblyInfoTemplate.cs"/>
 					<patternset refid="Compile"/>
 					<patternset refid="Resource"/>
 					<patternset refid="Reference"/>
@@ -207,6 +207,7 @@
 						<patternset refid="Resource"/>
 					</resources>
 					<references refid="refs"/>
+					<xsl:copy-of select="$LocalInclude/fw:include/fw:pkg-references"/>
 				</xsl:element>
 				<copyrefs todir="${{dir.buildOutput}}" failonerror="false" verbose="${{verbose}}">
 					<fileset refid="refs"/>
@@ -216,6 +217,7 @@
 				</if>
 				<call target="register-internal"/>
 				<xsl:apply-templates select="ms:ItemGroup/ms:None[@Include='App.config']" mode="compile"/>
+				<xsl:apply-templates select="ms:ItemGroup/ms:None[contains(@Include, 'AppForTests.config')]" mode="compile"/>
 
 				<xsl:call-template name="IncludePostTarget">
 					<xsl:with-param name="GlobalNodes" select="$GlobalInclude/fw:include/fw:post-build"/>
@@ -274,7 +276,22 @@
 				<property name="target" value="${{targetTmp}}"/>
 			</xsl:if>
 		</target>
-		<target name="test" depends="build" description="run the tests">
+		<target name="verify" depends="build" description="Verify code"
+				unless="${{done and not file::exists(dir.buildOutput + '/' + project.FormalName + '-gendarme.failed')}}">
+			<delete file="${{dir.buildOutput}}/${{project.FormalName}}-gendarme.html" failonerror="false"/>
+			<!-- add token-file -->
+			<echo file="${{dir.buildOutput}}/${{project.FormalName}}-gendarme.failed"/>
+			<gendarme configuration="${{fwroot}}/Bin/nant/bin/extensions/common/neutral/Gendarme.NAnt/fw-gendarme-rules.xml"
+				set="${{verifyset}}" assembly="${{dir.buildOutput}}/${{project.output}}"
+				log="Html" file="${{dir.buildOutput}}/${{project.FormalName}}-gendarme.html"
+				ignore="${{dir.srcProj}}/gendarme-${{project.FormalName}}.ignore"
+				updateIgnores="${{autoUpdateIgnores}}"
+				verbose="${{verbose}}" failonerror="${{verifyfail}}"/>
+			<!-- remove token file -->
+			<delete file="${{dir.buildOutput}}/${{project.FormalName}}-gendarme.failed"
+				unless="${{file::exists(dir.buildOutput + '/' + project.FormalName + '-gendarme.html')}}"/>
+		</target>
+		<target name="test" depends="verify" description="run the tests">
 			<xsl:comment>Rename old asserts.log file</xsl:comment>
 			<if test="${{file::exists(path::combine(path::get-temp-path(), 'asserts.log'))}}">
 				<delete file="${{path::combine(path::get-temp-path(), 'asserts_old.log')}}" failonerror="false"/>
@@ -542,31 +559,27 @@
 	</xsl:template>
 	<!--
 -->
+	<xsl:template match="ms:PropertyGroup[contains(@Condition, 'Debug')][1]" mode="general">
+		<xsl:call-template name="configuration">
+			<xsl:with-param name="kind">Debug</xsl:with-param>
+			<xsl:with-param name="outputDir">Debug</xsl:with-param>
+		</xsl:call-template>
+		<xsl:call-template name="configuration">
+			<xsl:with-param name="kind">Bounds</xsl:with-param>
+			<xsl:with-param name="outputDir">Debug</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+	<xsl:template match="ms:PropertyGroup[contains(@Condition, 'Release')][1]" mode="general">
+		<xsl:call-template name="configuration">
+			<xsl:with-param name="kind">Release</xsl:with-param>
+			<xsl:with-param name="outputDir">Release</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
 	<xsl:template match="ms:PropertyGroup" mode="general">
-		<xsl:choose>
-			<xsl:when test="contains(@Condition, 'Debug')">
-				<xsl:call-template name="configuration">
-					<xsl:with-param name="kind">Debug</xsl:with-param>
-					<xsl:with-param name="outputDir">Debug</xsl:with-param>
-				</xsl:call-template>
-				<xsl:call-template name="configuration">
-					<xsl:with-param name="kind">Bounds</xsl:with-param>
-					<xsl:with-param name="outputDir">Debug</xsl:with-param>
-				</xsl:call-template>
-			</xsl:when>
-			<xsl:when test="contains(@Condition, 'Release')">
-				<xsl:call-template name="configuration">
-					<xsl:with-param name="kind">Release</xsl:with-param>
-					<xsl:with-param name="outputDir">Release</xsl:with-param>
-				</xsl:call-template>
-			</xsl:when>
-			<xsl:otherwise>
-				<!--
-			Do nothing for any other kind of config, such as the old Bounds config.
-			The old Bounds stuff is handled another way now.
-			-->
-			</xsl:otherwise>
-		</xsl:choose>
+		<!--
+		Do nothing for any other kind of config, such as the old Bounds config.
+		The old Bounds stuff is handled another way now.
+		-->
 	</xsl:template>
 	<!--
 -->
@@ -617,7 +630,9 @@
 						<xsl:otherwise>
 							<xsl:value-of select="ms:DefineConstants"/>
 						</xsl:otherwise>
-					</xsl:choose>;NANT_BUILD;${platform}</xsl:attribute>
+					</xsl:choose><xsl:if test="$kind = 'Debug'">
+						<xsl:text>;CODE_ANALYSIS</xsl:text>
+					</xsl:if>;NANT_BUILD;${platform}</xsl:attribute>
 			</property>
 			<property name="nowarn" value="{translate(ms:NoWarn, ';', ',')}"/>
 			<property name="optimize" value="{ms:Optimize}"/>
@@ -711,7 +726,7 @@
 			</sources>
 		</versionex>
 	</xsl:template>
-	<xsl:template match="ms:None[@Include='App.config']" mode="compile">
+	<xsl:template match="ms:None[@Include='App.config' or contains(@Include, 'AppForTests.config')]" mode="compile">
 		<copy file="${{dir.srcProj}}/{translate(@Include,'\','/')}"
 			tofile="${{dir.buildOutput}}/${{project.output}}.config" failonerror="false"/>
 	</xsl:template>

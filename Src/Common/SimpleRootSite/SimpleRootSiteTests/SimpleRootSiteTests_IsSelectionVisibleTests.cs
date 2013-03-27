@@ -12,6 +12,7 @@
 // Responsibility:
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -101,6 +102,8 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 	/// Base class for tests testing scroll changes
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification="Unit test. Variable disposed in Teardown method")]
 	public class ScrollTestsBase
 	{
 		private readonly string[] kLocationArgs = new string[]{typeof(IVwGraphics).FullName,

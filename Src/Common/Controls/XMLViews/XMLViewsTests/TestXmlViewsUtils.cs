@@ -59,7 +59,7 @@ namespace XMLViewsTests
 			docSrc.LoadXml(
 				"<column label=\"Gloss\"> "
 					+"<seq field=\"Senses\" sep=\"$delimiter=commaSpace\"> "
-						+"<string field=\"Gloss\" ws=\"$ws=analysis\"/> "
+					+"<string field=\"Gloss\" ws=\"$ws=analysis\"/> "
 					+"</seq> "
 				+"</column>");
 

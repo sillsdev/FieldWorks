@@ -1,0 +1,28 @@
+# Gendarme filter file to suppress reporting of defects
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.DisposableFieldsShouldBeDisposedRule
+
+# reference only
+T: SIL.FieldWorks.Common.Framework.FwApp
+T: SIL.FieldWorks.Common.Framework.StatusBarProgressHandler
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# reference only
+M: System.Boolean SIL.FieldWorks.Common.Framework.FwApp::PreFilterMessage(System.Windows.Forms.Message&)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Portability.NewLineLiteralRule
+
+# replacing characters
+M: System.String SIL.FieldWorks.Common.Framework.XhtmlHelper::EscapeCharsForCss(System.String)
+
+#-----------------------------------------------------------------------------------------------
+R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
+
+# reference only
+T: SIL.FieldWorks.Common.Framework.StylesXmlAccessor
+T: SIL.FieldWorks.Common.Framework.XhtmlHelper
+T: SIL.FieldWorks.Common.Framework.MainWindowDelegate

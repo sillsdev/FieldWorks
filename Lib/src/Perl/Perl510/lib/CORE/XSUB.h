@@ -1,7 +1,7 @@
 /*    XSUB.h
  *
  *    Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
- *    2003, 2004, 2005, 2006, 2007 by Larry Wall and others
+ *    2003, 2004, 2005, 2006, 2007, 2008 by Larry Wall and others
  *
  *    You may distribute under the terms of either the GNU General Public
  *    License or the Artistic License, as specified in the README file.
@@ -269,7 +269,7 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #define XST_mUV(i,v)  (ST(i) = sv_2mortal(newSVuv(v))  )
 #define XST_mNV(i,v)  (ST(i) = sv_2mortal(newSVnv(v))  )
 #define XST_mPV(i,v)  (ST(i) = sv_2mortal(newSVpv(v,0)))
-#define XST_mPVN(i,v,n)  (ST(i) = sv_2mortal(newSVpvn(v,n)))
+#define XST_mPVN(i,v,n)  (ST(i) = newSVpvn_flags(v,n, SVs_TEMP))
 #define XST_mNO(i)    (ST(i) = &PL_sv_no   )
 #define XST_mYES(i)   (ST(i) = &PL_sv_yes  )
 #define XST_mUNDEF(i) (ST(i) = &PL_sv_undef)
@@ -294,7 +294,7 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #define newXSproto(a,b,c,d)	newXS_flags(a,b,c,d,0)
 
 #ifdef XS_VERSION
-#  define XS_VERSION_BOOTCHECK \
+#  define XS_VERSION_BOOTCHECK						\
 	STMT_START {							\
 	SV *_sv;							\
 	const char *vn = NULL, *module = SvPV_nolen_const(ST(0));	\
@@ -305,19 +305,31 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 		_sv = get_sv(Perl_form(aTHX_ "%s::%s", module,		\
 				vn = "XS_VERSION"), FALSE);		\
 		if (!_sv || !SvOK(_sv))					\
-		_sv = get_sv(Perl_form(aTHX_ "%s::%s", module,	\
+		_sv = get_sv(Perl_form(aTHX_ "%s::%s", module,		\
 					vn = "VERSION"), FALSE);		\
 	}								\
 	if (_sv) {							\
-		SV *xssv = Perl_newSVpv(aTHX_ XS_VERSION, 0);		\
-		xssv = new_version(xssv);					\
-		if ( !sv_derived_from(_sv, "version") )			\
-		_sv = new_version(_sv);				\
-		if ( vcmp(_sv,xssv) )					\
-		Perl_croak(aTHX_ "%s object version %"SVf" does not match %s%s%s%s %"SVf,\
-			  module, SVfARG(vstringify(xssv)),			\
-			  vn ? "$" : "", vn ? module : "", vn ? "::" : "",	\
-			  vn ? vn : "bootstrap parameter", SVfARG(vstringify(_sv)));\
+		SV *xpt = NULL;						\
+		SV *xssv = Perl_newSVpvn(aTHX_ STR_WITH_LEN(XS_VERSION));	\
+		SV *pmsv = sv_derived_from(_sv, "version")			\
+		? SvREFCNT_inc_simple_NN(_sv)				\
+		: new_version(_sv);					\
+		xssv = upg_version(xssv, 0);				\
+		if ( vcmp(pmsv,xssv) ) {	 				\
+		xpt = Perl_newSVpvf(aTHX_ "%s object version %"SVf	\
+					" does not match %s%s%s%s %"SVf,	\
+					module,				\
+					SVfARG(Perl_sv_2mortal(aTHX_ vstringify(xssv))), \
+					vn ? "$" : "", vn ? module : "",	\
+					vn ? "::" : "",			\
+					vn ? vn : "bootstrap parameter",	\
+					SVfARG(Perl_sv_2mortal(aTHX_ vstringify(pmsv)))); \
+		Perl_sv_2mortal(aTHX_ xpt);				\
+		}								\
+		SvREFCNT_dec(xssv);						\
+		SvREFCNT_dec(pmsv);						\
+		if (xpt)							\
+		Perl_croak(aTHX_ "%s", SvPVX(xpt));			\
 	}                                                               \
 	} STMT_END
 #else
@@ -364,10 +376,10 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 		SAVETMPS ;						\
 		SAVEINT(db->filtering) ;				\
 		db->filtering = TRUE ;				\
-		SAVESPTR(DEFSV) ;					\
+		SAVE_DEFSV ;					\
 			if (name[7] == 's')                                 \
 				arg = newSVsv(arg);                             \
-		DEFSV = arg ;					\
+		DEFSV_set(arg) ;					\
 		SvTEMP_off(arg) ;					\
 		PUSHMARK(SP) ;					\
 		PUTBACK ;						\
@@ -415,12 +427,6 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #endif
 
 #include "perlapi.h"
-#ifndef PERL_MAD
-#  undef PL_madskills
-#  undef PL_xmlfp
-#  define PL_madskills 0
-#  define PL_xmlfp 0
-#endif
 
 #if defined(PERL_IMPLICIT_CONTEXT) && !defined(PERL_NO_GET_CONTEXT) && !defined(PERL_CORE)
 #  undef aTHX
@@ -484,6 +490,12 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #	undef setservent
 #endif	/* NETWARE */
 
+/* to avoid warnings: "xyz" redefined */
+#ifdef WIN32
+#    undef  popen
+#    undef  pclose
+#endif /* WIN32 */
+
 #    undef  socketpair
 
 #    define mkdir		PerlDir_mkdir
@@ -507,6 +519,7 @@ Rethrows a previously caught exception.  See L<perlguts/"Exception Handling">.
 #    define ferror		PerlSIO_ferror
 #    define clearerr		PerlSIO_clearerr
 #    define getc		PerlSIO_getc
+#    define fgets		PerlSIO_fgets
 #    define fputc		PerlSIO_fputc
 #    define fputs		PerlSIO_fputs
 #    define fflush		PerlSIO_fflush
