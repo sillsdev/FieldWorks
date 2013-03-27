@@ -65,7 +65,8 @@ namespace SIL.Utils.Attributes
 		{
 			base.BeforeTest(testDetails);
 
-			if (!MiscUtils.IsUnix && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
+			if (Environment.OSVersion.Platform != PlatformID.Unix &&
+				!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
 			{
 				UIntPtr hKey;
 				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKey, out hKey);

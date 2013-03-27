@@ -1054,6 +1054,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				foreach (IMoInflAffixSlot slot in pos.AffixSlotsOC)
 				{
 					if (slot.Name.AnalysisDefaultWritingSystem == null ||
+						slot.Name.BestAnalysisAlternative.Text == null ||
 						slot.Name.BestAnalysisAlternative.Text.StartsWith(m_sUnnamedSlotName))
 					{
 						string sValue = m_sUnnamedSlotName;

@@ -97,6 +97,10 @@ namespace SIL.FieldWorks
 			helpProvider.HelpNamespace = DirectoryFinder.FWCodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+
+			// Disable button for unimplemented feature. FWNX-991.
+			if (MiscUtils.IsUnix)
+				receiveButton.Enabled = false;
 		}
 
 		public bool AppIsFlex

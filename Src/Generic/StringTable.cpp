@@ -66,7 +66,22 @@ void StringTable::BuildMap()
 
 	try
 	{
-		input.open("strings-en.txt");
+		const char * fw_root = getenv("FW_ROOTCODE");
+		if (!fw_root || *fw_root==0)
+			fw_root = ".";
+		std::string filename = fw_root;
+		filename.append("/strings-en.txt");
+		input.open(filename.c_str());
+		if (input.fail())
+		{
+			// See FWNX-938 and FWNX-939 for what can happen if the resource strings can't be
+			// loaded and retrieved!  With the code above now using FW_ROOTCODE to locate the
+			// file, this code may not accomplish anything except leaving a message behind to
+			// possibly alert the world that something wierd is happening.
+			fprintf(stderr,
+				"Could not open %s.  Trying /usr/share/fieldworks/strings-en.txt.\n", filename.c_str());
+			input.open("/usr/share/fieldworks/strings-en.txt");
+		}
 
 		while (!getline(input, line).fail())
 		{

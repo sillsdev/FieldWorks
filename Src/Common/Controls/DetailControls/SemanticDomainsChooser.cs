@@ -360,11 +360,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="displayUsage"></param>
 		public static void UpdateDomainListLabels(IEnumerable<ObjectLabel> createObjectLabels, ListView domainList, bool displayUsage)
 		{
+			domainList.BeginUpdate();	// Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
 			domainList.Items.Clear();
 			foreach (var selectedItem in createObjectLabels)
 			{
 				domainList.Items.Add(CreateLabelListItem(selectedItem.Object, false, displayUsage));
 			}
+			domainList.EndUpdate();
 		}
 
 		/// <summary>
@@ -379,12 +381,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public static void UpdateDomainTreeLabels(IEnumerable<ObjectLabel> labels, bool displayUsage, TreeView domainTree,
 			IVwStylesheet stylesheet, HashSet<ICmObject> selectedItems)
 		{
+			domainTree.BeginUpdate();	// Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
 			domainTree.Nodes.Clear();
 			foreach (var label in labels)
 			{
 				var x = CreateLabelNode(label, stylesheet, selectedItems, displayUsage);
 				domainTree.Nodes.Add(x);
 			}
+			domainTree.EndUpdate();
 		}
 
 		/// <summary>

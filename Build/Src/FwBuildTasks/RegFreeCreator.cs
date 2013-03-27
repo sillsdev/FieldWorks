@@ -161,7 +161,8 @@ namespace SIL.FieldWorks.Build.Tasks
 			try
 			{
 				XmlNode oldChild;
-				ITypeLib typeLib = Tasks.RegHelper.LoadTypeLib(_fileName);
+				ITypeLib typeLib;
+				RegHelper.LoadTypeLib(_fileName, out typeLib);
 				IntPtr pLibAttr;
 				typeLib.GetLibAttr(out pLibAttr);
 				var libAttr = (TYPELIBATTR)
@@ -255,7 +256,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void ProcessClasses(XmlElement parent)
 		{
-			using (var regKeyClsid = Registry.CurrentUser.OpenSubKey(Tasks.RegHelper.TmpRegistryKey + @"\CLSID"))
+			using (var regKeyClsid = Registry.CurrentUser.OpenSubKey(Tasks.RegHelper.TmpRegistryKeyHKCR + @"\CLSID"))
 			{
 				if (regKeyClsid == null)
 				{
@@ -298,7 +299,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void ProcessInterfaces(XmlElement root)
 		{
-			using (var regKeyBase = Registry.CurrentUser.OpenSubKey(Tasks.RegHelper.TmpRegistryKey))
+			using (var regKeyBase = Registry.CurrentUser.OpenSubKey(Tasks.RegHelper.TmpRegistryKeyHKCR))
 			using (var regKeyInterfaces = regKeyBase.OpenSubKey("Interface"))
 			{
 				if (regKeyInterfaces == null)

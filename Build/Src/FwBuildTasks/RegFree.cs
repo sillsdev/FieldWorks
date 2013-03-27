@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.Build.Tasks
 				// Register all DLLs temporarily
 				using (var regHelper = new RegHelper(Log))
 				{
-					regHelper.RedirectRegistry();
+					regHelper.RedirectRegistry(!UserIsAdmin);
 					var creator = new RegFreeCreator(doc, Log);
 					var dllPaths = IdlImp.GetFilesFrom(Dlls);
 					var filesToRemove = dllPaths.Cast<string>().Where(fileName => !File.Exists(fileName)).ToList();
@@ -155,9 +155,9 @@ namespace SIL.FieldWorks.Build.Tasks
 						Log.LogMessage(MessageImportance.Low, "\tRegistering library {0}", Path.GetFileName(fileName));
 						try
 						{
-							regHelper.Register(fileName, UserIsAdmin, NoTypeLib.Count(f => f.ItemSpec == fileName) == 0);
+							regHelper.Register(fileName, true, false);
 						}
-						catch(Exception e)
+						catch (Exception e)
 						{
 							Log.LogMessage(MessageImportance.High, "Failed to register library {0}", fileName);
 							Log.LogMessage(MessageImportance.High, e.StackTrace);
@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.Build.Tasks
 						{
 							Log.LogMessage(MessageImportance.Low, "\tUnregistering library {0}",
 								Path.GetFileName(fileName));
-							regHelper.Unregister(fileName, UserIsAdmin);
+							regHelper.Unregister(fileName, true);
 						}
 					}
 				}

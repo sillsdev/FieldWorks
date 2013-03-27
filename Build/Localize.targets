@@ -6,8 +6,7 @@
 	<!-- Localize all resx files -->
 	<Target Name="localize" DependsOnTargets="zipLocalizedLists;processLanguages"/>
 
-
-	<!-- Copy LocalizedList-*.xml files from Localizations to distfiles -->
+	<!-- Zip LocalizedList-*.xml files from Localizations to DistFiles/Templates -->
 	<ItemGroup>
 		<LocalizedListFiles Include="$(fwrt)/Localizations/LocalizedLists-*.xml"/>
 	</ItemGroup>

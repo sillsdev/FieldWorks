@@ -2,30 +2,48 @@ Index: fieldworks-enchant-1.6.1/src/pwl.c
 ===================================================================
 --- enchant-1.6.1/src/pwl.c
 +++ fieldworks-enchant-1.6.1/src/pwl.c
-@@ -284,7 +284,7 @@
-	char* line;
-	size_t line_number = 1;
-	FILE *f;
+@@ -251,6 +251,17 @@
+ #define BUFSIZ 1024
+ #endif
+
++/* The GStatBuf typedef was introduced in glib version 2.26.
++   FieldWorks on Linux needs it even earlier (for Lucid).
++*/
++#if !GLIB_CHECK_VERSION(2,26,0)
++#if defined (_MSC_VER) && !defined(_WIN64)
++typedef struct _stat32 GStatBuf;
++#else
++typedef struct stat GStatBuf;
++#endif
++#endif
++
+ /**
+  * enchant_pwl_init_with_file
+  *
+@@ -284,7 +295,7 @@
+ 	char* line;
+ 	size_t line_number = 1;
+ 	FILE *f;
 -	struct stat stats;
 +	GStatBuf stats;
 
-	if(!pwl->filename)
-		return;
-@@ -397,7 +397,7 @@
-		f = enchant_fopen(pwl->filename, "a");
-		if (f)
-			{
+ 	if(!pwl->filename)
+ 		return;
+@@ -397,7 +408,7 @@
+ 		f = enchant_fopen(pwl->filename, "a");
+ 		if (f)
+ 			{
 -				struct stat stats;
 +				GStatBuf stats;
 
-				enchant_lock_file (f);
-				if(g_stat(pwl->filename, &stats)==0)
-@@ -440,7 +440,7 @@
-					const gunichar BOM = 0xfeff;
-					char * filestart, *searchstart, *needle;
-					char * key;
+ 				enchant_lock_file (f);
+ 				if(g_stat(pwl->filename, &stats)==0)
+@@ -440,7 +451,7 @@
+ 					const gunichar BOM = 0xfeff;
+ 					char * filestart, *searchstart, *needle;
+ 					char * key;
 -					struct stat stats;
 +					GStatBuf stats;
 
-					enchant_lock_file (f);
-					key = g_strndup(word, len);
+ 					enchant_lock_file (f);
+ 					key = g_strndup(word, len);

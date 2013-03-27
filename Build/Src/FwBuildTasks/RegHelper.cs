@@ -16,8 +16,11 @@ namespace SIL.FieldWorks.Build.Tasks
 		private bool RedirectRegistryFailed { get; set; }
 		private bool IsRedirected { get; set; }
 		private bool IsDisposed { get; set; }
+		public static string TmpRegistryKeyHKCR { get; private set; }
+		public static string TmpRegistryKeyHKLM { get; private set; }
 		private static readonly UIntPtr HKEY_CLASSES_ROOT = new UIntPtr(0x80000000);
 		private static readonly UIntPtr HKEY_CURRENT_USER = new UIntPtr(0x80000001);
+		private static readonly UIntPtr HKEY_LOCAL_MACHINE = new UIntPtr(0x80000002);
 
 		/// <summary/>
 		public RegHelper(TaskLoggingHelper log)
@@ -32,7 +35,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// each other.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string TmpRegistryKey
+		private static string TmpRegistryKey
 		{
 			get
 			{
@@ -76,8 +79,8 @@ namespace SIL.FieldWorks.Build.Tasks
 			IsDisposed = true;
 		}
 
-		[DllImport("oleaut32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
-		public static extern ITypeLib LoadTypeLib(string szFile);
+		[DllImport("oleaut32.dll", CharSet = CharSet.Unicode)]
+		public static extern int LoadTypeLib(string szFile, out ITypeLib typeLib);
 
 		[DllImport("oleaut32.dll")]
 		private static extern int RegisterTypeLib(ITypeLib typeLib, string fullPath, string helpDir);
@@ -97,21 +100,40 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Temporarily redirects access to HKCR to a subkey under HKCU.
+		/// Temporarily redirects access to HKCR (and optionally HKLM) to a subkey under HKCU.
 		/// </summary>
+		/// <param name="redirectLocalMachine"><c>true</c> to redirect HKLM in addition to
+		/// HKCR, otherwise <c>false</c>.</param>
 		/// ------------------------------------------------------------------------------------
-		public void RedirectRegistry()
+		public void RedirectRegistry(bool redirectLocalMachine)
 		{
 			try
 			{
 				IsRedirected = true;
+				if (redirectLocalMachine)
+				{
+					TmpRegistryKeyHKCR = TmpRegistryKey + @"\HKCR";
+					TmpRegistryKeyHKLM = TmpRegistryKey + @"\HKLM";
+				}
+				else
+				{
+					TmpRegistryKeyHKCR = TmpRegistryKey;
+					TmpRegistryKeyHKLM = TmpRegistryKey;
+				}
 				UIntPtr hKey;
-				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKey, out hKey);
+				RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKeyHKCR, out hKey);
 				RegOverridePredefKey(HKEY_CLASSES_ROOT, hKey);
 				RegCloseKey(hKey);
 
 				// We also have to create a CLSID subkey - some DLLs expect that it exists
-				Registry.CurrentUser.CreateSubKey(TmpRegistryKey + @"\CLSID");
+				Registry.CurrentUser.CreateSubKey(TmpRegistryKeyHKCR + @"\CLSID");
+
+				if (redirectLocalMachine)
+				{
+					RegCreateKey(HKEY_CURRENT_USER, TmpRegistryKeyHKLM, out hKey);
+					RegOverridePredefKey(HKEY_LOCAL_MACHINE, hKey);
+					RegCloseKey(hKey);
+				}
 			}
 			catch
 			{
@@ -129,6 +151,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		{
 			SetDllDirectory(null);
 			RegOverridePredefKey(HKEY_CLASSES_ROOT, UIntPtr.Zero);
+			RegOverridePredefKey(HKEY_LOCAL_MACHINE, UIntPtr.Zero);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -282,17 +305,26 @@ namespace SIL.FieldWorks.Build.Tasks
 			{
 				if (registerInHklm && registerTypeLib)
 				{
-					ITypeLib typeLib = LoadTypeLib(fileName);
-					var registerResult = RegisterTypeLib(typeLib, fileName, null);
-					if (registerResult == 0)
+					ITypeLib typeLib;
+					var loadResult = LoadTypeLib(fileName, out typeLib);
+					if (loadResult == 0)
 					{
-						m_Log.LogMessage(MessageImportance.Low, "Registered {0} with result {1}",
-							fileName, registerResult);
+						var registerResult = RegisterTypeLib(typeLib, fileName, null);
+						if (registerResult == 0)
+						{
+							m_Log.LogMessage(MessageImportance.Low, "Registered type library {0} with result {1}",
+								fileName, registerResult);
+						}
+						else
+						{
+							m_Log.LogWarning("Registering type library {0} failed with result {1} (RegisterTypeLib)", fileName,
+								registerResult);
+						}
 					}
 					else
 					{
-						m_Log.LogWarning("Registering {0} failed with result {1}", fileName,
-							registerResult);
+						m_Log.LogWarning("Registering type library {0} failed with result {1} (LoadTypeLib)", fileName,
+							loadResult);
 					}
 				}
 				else

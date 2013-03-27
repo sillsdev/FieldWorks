@@ -81,6 +81,7 @@
     </Compile>
     <Compile Include="XkbKeyboardAdapterTests.cs" />
     <Compile Include="FakeKeyboardController.cs" />
+    <Compile Include="XklEngineTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

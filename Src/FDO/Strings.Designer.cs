@@ -2302,5 +2302,24 @@ namespace SIL.FieldWorks.FDO {
                 return ResourceManager.GetString("ksZipNotFieldWorksBackup", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked Files Folder.
+        /// </summary>
+        internal static string ksLinkedFilesFolder {
+            get {
+                return ResourceManager.GetString("ksLinkedFilesFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is not a valid directory for linked files..
+        /// </summary>
+        internal static string ksInvalidLinkedFilesFolder {
+            get {
+                return ResourceManager.GetString("ksInvalidLinkedFilesFolder", resourceCulture);
+            }
+        }
     }
 }
+

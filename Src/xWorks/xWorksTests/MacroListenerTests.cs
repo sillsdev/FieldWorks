@@ -21,7 +21,20 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class MacroListenerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		[Test] public void InitMacro_PutsItemAtProperPosition()
+		private Mediator m_Mediator;
+
+		public override void TestTearDown()
+		{
+			if (m_Mediator != null)
+			{
+				m_Mediator.Dispose();
+				m_Mediator = null;
+			}
+			base.TestTearDown();
+		}
+
+		[Test]
+		public void InitMacro_PutsItemAtProperPosition()
 		{
 			var ml = new MacroListener();
 			var macroImplementors = new List<IFlexMacro>(new IFlexMacro[] {new MacroF4()});
@@ -71,14 +84,15 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(entry.Restrictions.AnalysisDefaultWritingSystem.Text, Is.EqualTo("test succeeded"));
 			Assert.That(m_actionHandler.GetUndoText(), Is.EqualTo("Undo F4test"));
+			command.Dispose();
 		}
 
 		private MacroListener MakeMacroListenerWithCache()
 		{
-			var mediator = new Mediator();
-			mediator.PropertyTable.SetProperty("cache", Cache);
+			m_Mediator = new Mediator();
+			m_Mediator.PropertyTable.SetProperty("cache", Cache);
 			var ml = new MacroListener();
-			ml.Init(mediator, null);
+			ml.Init(m_Mediator, null);
 			return ml;
 		}
 
@@ -159,6 +173,7 @@ namespace SIL.FieldWorks.XWorks
 			var command = GetF4CommandObject();
 			ml.DoDisplayMacro(command, props, null);
 			Assert.That(props.Visible, Is.False); // no implementation of F4, hide it altogether.
+			command.Dispose();
 		}
 
 		[Test]
@@ -172,6 +187,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(props.Visible, Is.True);
 			Assert.That(props.Enabled, Is.False); // can't do it without a selection
 			Assert.That(props.Text, Is.EqualTo("F4test"));
+			command.Dispose();
 		}
 
 		[Test]
@@ -195,6 +211,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(props.Visible, Is.True);
 			Assert.That(props.Enabled, Is.False); // can't do it if the macro says no good.
 			Assert.That(props.Text, Is.EqualTo("F4test"));
+			command.Dispose();
 		}
 	}
 

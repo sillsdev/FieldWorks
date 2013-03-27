@@ -16,3 +16,14 @@ Force-case-sensitive.patch changes the behavior of the library in a way
 that we consider desirable in FieldWorks, but which might not be accepted
 by Abisource.  (I don't think it's been submitted to Abisource to find out,
 however.)
+
+Many of the debian packaging files were adapted from those used in creating
+the original enchant packages.  The following notice occurred in the
+original copyright file:
+
+This package was debianized by Masayuki Hatta <mhatta@debian.org> on
+Tue, 30 Sep 2003 16:46:51 +0900.
+
+Any errors or problems in the packaging should be blamed on Stephen McConnel
+<stephen_mcconnel@sil.org>, but Masayuki Hatta deserves credit for what
+works properly.

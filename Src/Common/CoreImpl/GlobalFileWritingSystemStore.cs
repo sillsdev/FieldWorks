@@ -419,5 +419,17 @@ namespace SIL.CoreImpl
 			get { return WritingSystemCompatibility.Strict; }
 		}
 
+		/// <summary>
+		/// Notifies a consuming class of a conflated writing system
+		/// </summary>
+		public event WritingSystemConflatedEventHandler WritingSystemConflated;
+
+		/// <summary>
+		/// Merges two writing systems into one.
+		/// </summary>
+		public void Conflate(string wsToConflate, string wsToConflateWith)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
