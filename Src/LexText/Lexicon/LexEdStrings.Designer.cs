@@ -61,6 +61,24 @@ namespace SIL.FieldWorks.XWorks.LexEd {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error exporting LIFT data could not complete Send/Receive.
+        /// </summary>
+        internal static string FLExBridgeListener_UndoExport_Error_exporting_LIFT {
+            get {
+                return ResourceManager.GetString("FLExBridgeListener_UndoExport_Error_exporting_LIFT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LIFT Export failed.
+        /// </summary>
+        internal static string FLExBridgeListener_UndoExport_LIFT_Export_failed_Title {
+            get {
+                return ResourceManager.GetString("FLExBridgeListener_UndoExport_LIFT_Export_failed_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to basic.
         /// </summary>
         internal static string kBasicFailureFileContents {

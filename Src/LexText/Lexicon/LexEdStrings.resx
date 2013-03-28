@@ -587,4 +587,14 @@ Click 'Cancel' to cancel Send/Receive.</value>
     <value>Warning</value>
     <comment>used for dialog caption when project name has non-Ascii characters</comment>
   </data>
+  <data name="FLExBridgeListener_UndoExport_Error_exporting_LIFT" xml:space="preserve">
+    <value>Error exporting LIFT data could not complete Send/Receive</value>
+    <comment>Message displayed if an error occurred unexpectedly during the Send/Receive lift while the export of the LIFT data was going on.
+</comment>
+  </data>
+  <data name="FLExBridgeListener_UndoExport_LIFT_Export_failed_Title" xml:space="preserve">
+    <value>LIFT Export failed</value>
+    <comment>Title of message box displayed if an error occurred unexpectedly during the Send/Receive lift while the export of the LIFT data was going on.
+</comment>
+  </data>
 </root>

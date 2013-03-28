@@ -1143,6 +1143,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
 													FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13",
 													out dataChanged, out dummy);
+			MessageBox.Show(_parentForm, LexEdStrings.FLExBridgeListener_UndoExport_Error_exporting_LIFT, LexEdStrings.FLExBridgeListener_UndoExport_LIFT_Export_failed_Title,
+							MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		#endregion
