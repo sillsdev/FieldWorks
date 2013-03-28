@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <param name="commandObject">Includes the XML command element of the OnFLExBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "newApp is a reference")]
+			Justification = "newAppWindow is a reference")]
 		public bool OnFLExBridge(object commandObject)
 		{
 			StopParser();
@@ -236,14 +236,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (dataChanged)
 			{
-				// Now done within FlexBridge
-				//var fixer = new FwDataFixer(Cache.ProjectId.Path, new StatusBarProgressHandler(null, null), logger);
-				//fixer.FixErrorsAndSave();
-
 				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
-
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
@@ -277,6 +272,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="argument">Includes the XML command element of the OnLiftBridge message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody should also try to handle the message.</returns>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "newAppWindow is a reference")]
 		public bool OnLiftBridge(object argument)
 		{
 			SaveAllDataToDisk();
@@ -296,6 +293,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 
 			// Step 3. Have Flex Bridge do the S/R.
+			// after saving the state enough to detect if conflicts are created.
+			var projectFolder = Cache.ProjectId.ProjectFolder;
+			var savedState = PrepareToDetectMainConflicts(projectFolder);
+			var fullProjectFileName = IsDb4oProject ?
+				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataDb4oFileExtension) :
+				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			if (!DoSendReceiveForLift(out dataChanged))
 				return true; // Bail out, since the S/R failed for some reason.
@@ -305,7 +308,17 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return true;
 
 			if (dataChanged)
-				_mediator.BroadcastMessage("MasterRefresh", null);
+			{
+				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
+				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+				if (conflictOccurred)
+				{
+					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
+					// we have been disposed by now
+					newAppWindow.Mediator.SendMessage("ViewLiftMessages", null);
+				}
+			}
 
 			return true; // We dealt with it.
 		}
