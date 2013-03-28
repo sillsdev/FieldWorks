@@ -980,7 +980,7 @@ namespace SIL.HermitCrab
 
 				foreach (WordSynthesis ws in outSynthesis)
 				{
-					if (ws.IsValid && SurfaceStratum.CharacterDefinitionTable.IsMatch(word, ws.Shape))
+					if (ws.IsValid)
 						allValidSyntheses.Add(ws);
 				}
 			}
@@ -992,6 +992,7 @@ namespace SIL.HermitCrab
 			sortedSyntheses.Sort();
 
 			WordSynthesis prevValidSynthesis = null;
+			bool allFreeFluctuation = true;
 			foreach (WordSynthesis cur in sortedSyntheses)
 			{
 				// enforce the disjunctive property of allomorphs by ensuring that this word synthesis
@@ -999,27 +1000,44 @@ namespace SIL.HermitCrab
 				// fluctuation
 				if (prevValidSynthesis == null || AreAllomorphsNondisjunctive(cur, prevValidSynthesis))
 				{
-					if (m_traceSuccess)
-						// create the report a success output trace record for the output analysis
-						cur.CurrentTrace.AddChild(new ReportSuccessTrace(cur));
-					// do not add to the result if it has the same root, shape, and morphemes as another result
-					bool duplicate = false;
-					foreach (WordSynthesis ws in results)
-					{
-						if (cur.Duplicates(ws))
-						{
-							duplicate = true;
-							break;
-						}
-					}
-					if (!duplicate)
-					{
-						results.Add(cur);
-					}
+					AddResult(word, results, cur);
+					allFreeFluctuation = true;
+				}
+				else if (allFreeFluctuation && CheckFreeFluctuation(cur, prevValidSynthesis))
+				{
+					AddResult(word, results, cur);
+				}
+				else
+				{
+					allFreeFluctuation = false;
 				}
 				prevValidSynthesis = cur;
 			}
 			return results;
+		}
+
+		private void AddResult(string word, Set<WordSynthesis> results, WordSynthesis cur)
+		{
+			if (SurfaceStratum.CharacterDefinitionTable.IsMatch(word, cur.Shape))
+			{
+				if (m_traceSuccess)
+					// create the report a success output trace record for the output analysis
+					cur.CurrentTrace.AddChild(new ReportSuccessTrace(cur));
+				// do not add to the result if it has the same root, shape, and morphemes as another result
+				bool duplicate = false;
+				foreach (WordSynthesis ws in results)
+				{
+					if (cur.Duplicates(ws))
+					{
+						duplicate = true;
+						break;
+					}
+				}
+				if (!duplicate)
+				{
+					results.Add(cur);
+				}
+			}
 		}
 
 		/// <summary>
@@ -1040,13 +1058,20 @@ namespace SIL.HermitCrab
 				// if they have different morphemes then these allomorphs are not disjunctive
 				if (enum1.Current.Allomorph.Morpheme != enum2.Current.Allomorph.Morpheme)
 					return true;
-
-				// morphemes are the same, so check if they have the same constraints,
-				// if they do then these allomorphs are not disjunctive
-				if (enum1.Current.Allomorph.ConstraintsEqual(enum2.Current.Allomorph))
-					return true;
 			}
 			return false;
+		}
+
+		private bool CheckFreeFluctuation(WordSynthesis synthesis1, WordSynthesis synthesis2)
+		{
+			IEnumerator<Morph> enum1 = synthesis1.Morphs.GetEnumerator();
+			IEnumerator<Morph> enum2 = synthesis2.Morphs.GetEnumerator();
+			while (enum1.MoveNext() && enum2.MoveNext())
+			{
+				if (enum1.Current.Allomorph != enum2.Current.Allomorph && !enum1.Current.Allomorph.ConstraintsEqual(enum2.Current.Allomorph))
+					return false;
+			}
+			return true;
 		}
 	}
 }

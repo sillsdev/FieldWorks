@@ -391,7 +391,7 @@ namespace SIL.HermitCrab
 						ApplyInsertion(dir, match, instantiatedVars);
 						// remove matching segments
 						foreach (PhoneticShapeNode node in match)
-							node.Remove();
+							node.IsDeleted = true;
 						break;
 
 					case ChangeType.EPENTHESIS:

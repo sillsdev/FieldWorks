@@ -342,6 +342,9 @@ namespace SIL.HermitCrab
 			StringBuilder sb = new StringBuilder();
 			foreach (PhoneticShapeNode node in shape)
 			{
+				if (node.IsDeleted)
+					continue;
+
 				switch (node.Type)
 				{
 					case PhoneticShapeNode.NodeType.SEGMENT:
@@ -414,6 +417,9 @@ namespace SIL.HermitCrab
 			StringBuilder sb = new StringBuilder();
 			foreach (PhoneticShapeNode node in shape)
 			{
+				if (node.IsDeleted)
+					continue;
+
 				switch (node.Type)
 				{
 					case PhoneticShapeNode.NodeType.SEGMENT:

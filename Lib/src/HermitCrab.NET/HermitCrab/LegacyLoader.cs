@@ -993,7 +993,7 @@ namespace SIL.HermitCrab
 				throw CreateUndefinedObjectException(string.Format(HCStrings.kstidUnknownLexEntryStratum, id, stratumName), stratumName);
 			entry.Stratum = stratum;
 			PhoneticShape pshape = stratum.CharacterDefinitionTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
-			if (pshape == null)
+			if (pshape == null || pshape.IsAllBoundaries)
 			{
 				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_ENTRY_SHAPE, this,
 					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, id, stratum.CharacterDefinitionTable.ID));

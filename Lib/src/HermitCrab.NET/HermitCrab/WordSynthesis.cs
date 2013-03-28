@@ -519,11 +519,15 @@ namespace SIL.HermitCrab
 
 		public int CompareTo(WordSynthesis other)
 		{
+			int compare = Morphs.Count.CompareTo(other.Morphs.Count);
+			if (compare != 0)
+				return compare;
+
 			IEnumerator<Morph> enum1 = Morphs.GetEnumerator();
 			IEnumerator<Morph> enum2 = other.Morphs.GetEnumerator();
 			while (enum1.MoveNext() && enum2.MoveNext())
 			{
-				int compare = enum1.Current.Allomorph.Morpheme.ID.CompareTo(enum2.Current.Allomorph.Morpheme.ID);
+				compare = String.Compare(enum1.Current.Allomorph.Morpheme.ID, enum2.Current.Allomorph.Morpheme.ID, StringComparison.Ordinal);
 				if (compare != 0)
 					return compare;
 

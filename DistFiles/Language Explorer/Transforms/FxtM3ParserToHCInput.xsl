@@ -1097,14 +1097,14 @@
 					<HeadRecordStructure>
 						<RequiredPhoneticInput>
 							<PhoneticSequence id="pseqLeftHead">
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</HeadRecordStructure>
 					<NonHeadRecordStructure>
 						<RequiredPhoneticInput>
 							<PhoneticSequence id="pseqRightNonHead">
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</NonHeadRecordStructure>
@@ -1131,14 +1131,14 @@
 					<HeadRecordStructure>
 						<RequiredPhoneticInput>
 							<PhoneticSequence id="pseqRightHead">
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</HeadRecordStructure>
 					<NonHeadRecordStructure>
 						<RequiredPhoneticInput>
 							<PhoneticSequence id="pseqLeftNonHead">
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</NonHeadRecordStructure>
@@ -1212,7 +1212,7 @@
 									<xsl:value-of select="@Id"/>
 									<xsl:text>_R_R</xsl:text>
 								</xsl:attribute>
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</HeadRecordStructure>
@@ -1224,7 +1224,7 @@
 									<xsl:value-of select="@Id"/>
 									<xsl:text>_R_L</xsl:text>
 								</xsl:attribute>
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</NonHeadRecordStructure>
@@ -1315,7 +1315,7 @@
 									<xsl:value-of select="@Id"/>
 									<xsl:text>_L_L</xsl:text>
 								</xsl:attribute>
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</HeadRecordStructure>
@@ -1327,7 +1327,7 @@
 									<xsl:value-of select="@Id"/>
 									<xsl:text>_L_R</xsl:text>
 								</xsl:attribute>
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</NonHeadRecordStructure>
@@ -1452,7 +1452,7 @@
 									<xsl:value-of select="@Id"/>
 									<xsl:text>_H</xsl:text>
 								</xsl:attribute>
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</HeadRecordStructure>
@@ -1464,7 +1464,7 @@
 									<xsl:value-of select="@Id"/>
 									<xsl:text>_NH</xsl:text>
 								</xsl:attribute>
-								<xsl:call-template name="AnySeq"/>
+								<xsl:call-template name="AnyPlus"/>
 							</PhoneticSequence>
 						</RequiredPhoneticInput>
 					</NonHeadRecordStructure>
@@ -2920,19 +2920,28 @@
 				<xsl:text>pseq</xsl:text>
 				<xsl:value-of select="$id"/>
 			</xsl:attribute>
-			<xsl:if test="boolean($preEnv)">
-				<xsl:variable name="preEnvStr" select="normalize-space(substring-after($preEnv/@StringRepresentation, '/'))"/>
-				<xsl:call-template name="ProcessEnv">
-					<xsl:with-param name="env" select="normalize-space(substring-after($preEnvStr, '_'))"/>
-				</xsl:call-template>
-			</xsl:if>
-			<xsl:call-template name="AnySeq"/>
-			<xsl:if test="boolean($sufEnv)">
-				<xsl:variable name="sufEnvStr" select="normalize-space(substring-after($sufEnv/@StringRepresentation, '/'))"/>
-				<xsl:call-template name="ProcessEnv">
-					<xsl:with-param name="env" select="normalize-space(substring-before($sufEnvStr, '_'))"/>
-				</xsl:call-template>
-			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="boolean($preEnv) or boolean($sufEnv)">
+					<xsl:if test="boolean($preEnv)">
+						<xsl:call-template name="PrefixNull" />
+						<xsl:variable name="preEnvStr" select="normalize-space(substring-after($preEnv/@StringRepresentation, '/'))"/>
+						<xsl:call-template name="ProcessEnv">
+							<xsl:with-param name="env" select="normalize-space(substring-after($preEnvStr, '_'))"/>
+						</xsl:call-template>
+					</xsl:if>
+					<xsl:call-template name="AnyStar"/>
+					<xsl:if test="boolean($sufEnv)">
+						<xsl:variable name="sufEnvStr" select="normalize-space(substring-after($sufEnv/@StringRepresentation, '/'))"/>
+						<xsl:call-template name="ProcessEnv">
+							<xsl:with-param name="env" select="normalize-space(substring-before($sufEnvStr, '_'))"/>
+						</xsl:call-template>
+						<xsl:call-template name="SuffixNull" />
+					</xsl:if>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:call-template name="AnyPlus"/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</PhoneticSequence>
 	</xsl:template>
 
@@ -2947,9 +2956,14 @@
 				<xsl:text>_L</xsl:text>
 			</xsl:attribute>
 			<xsl:variable name="left" select="normalize-space(substring-before($envStr, '_'))"/>
-			<xsl:if test="not(starts-with($left, '#'))">
-				<xsl:call-template name="AnySeq"/>
-			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="not(starts-with($left, '#'))">
+					<xsl:call-template name="AnyStar"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:call-template name="PrefixNull" />
+				</xsl:otherwise>
+			</xsl:choose>
 			<xsl:call-template name="ProcessEnv">
 				<xsl:with-param name="env" select="$left"/>
 			</xsl:call-template>
@@ -2964,9 +2978,14 @@
 			<xsl:call-template name="ProcessEnv">
 				<xsl:with-param name="env" select="$right"/>
 			</xsl:call-template>
-			<xsl:if test="substring($right, string-length($right)) != '#'">
-				<xsl:call-template name="AnySeq"/>
-			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="substring($right, string-length($right)) != '#'">
+					<xsl:call-template name="AnyStar"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:call-template name="SuffixNull" />
+				</xsl:otherwise>
+			</xsl:choose>
 		</PhoneticSequence>
 	</xsl:template>
 
@@ -2982,7 +3001,7 @@
 						<xsl:text>pseq</xsl:text>
 						<xsl:value-of select="$id"/>
 					</xsl:attribute>
-					<xsl:call-template name="AnySeq"/>
+					<xsl:call-template name="AnyPlus"/>
 				</PhoneticSequence>
 			</xsl:when>
 			<xsl:otherwise>
@@ -2995,7 +3014,7 @@
 								<xsl:text>pseq</xsl:text>
 								<xsl:value-of select="$id"/>
 							</xsl:attribute>
-							<xsl:call-template name="AnySeq"/>
+							<xsl:call-template name="AnyPlus"/>
 						</PhoneticSequence>
 						<xsl:call-template name="ProcessRedupEnv">
 							<xsl:with-param name="envStr" select="$left"/>
@@ -3013,7 +3032,7 @@
 								<xsl:text>pseq</xsl:text>
 								<xsl:value-of select="$id"/>
 							</xsl:attribute>
-							<xsl:call-template name="AnySeq"/>
+							<xsl:call-template name="AnyPlus"/>
 						</PhoneticSequence>
 					</xsl:when>
 				</xsl:choose>
@@ -3069,30 +3088,42 @@
 					<xsl:choose>
 						<xsl:when test="$morphType = $sSuffix or $morphType = $sSuffixingInterfix or $morphType = $sEnclitic">
 							<xsl:variable name="left" select="normalize-space(substring-before($envStr, '_'))"/>
-							<xsl:if test="not(starts-with($left, '#'))">
-								<xsl:call-template name="AnySeq"/>
-							</xsl:if>
-							<xsl:if test="string-length($left) != 0">
-								<xsl:call-template name="ProcessEnv">
-									<xsl:with-param name="env" select="$left"/>
-								</xsl:call-template>
-							</xsl:if>
+							<xsl:choose>
+								<xsl:when test="string-length($left) != 0">
+									<xsl:if test="not(starts-with($left, '#'))">
+										<xsl:call-template name="AnyStar"/>
+									</xsl:if>
+									<xsl:call-template name="ProcessEnv">
+										<xsl:with-param name="env" select="$left"/>
+									</xsl:call-template>
+									<xsl:call-template name="SuffixNull" />
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:call-template name="AnyPlus"/>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:when>
 						<xsl:when test="$morphType = $sPrefix or $morphType = $sPrefixingInterfix or $morphType = $sProclitic">
 							<xsl:variable name="right" select="normalize-space(substring-after($envStr, '_'))"/>
-							<xsl:if test="string-length($right) != 0">
-								<xsl:call-template name="ProcessEnv">
-									<xsl:with-param name="env" select="$right"/>
-								</xsl:call-template>
-							</xsl:if>
-							<xsl:if test="substring($right, string-length($right)) != '#'">
-								<xsl:call-template name="AnySeq"/>
-							</xsl:if>
+							<xsl:choose>
+								<xsl:when test="string-length($right) != 0">
+									<xsl:call-template name="PrefixNull" />
+									<xsl:call-template name="ProcessEnv">
+										<xsl:with-param name="env" select="$right"/>
+									</xsl:call-template>
+									<xsl:if test="substring($right, string-length($right)) != '#'">
+										<xsl:call-template name="AnyStar"/>
+									</xsl:if>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:call-template name="AnyPlus"/>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:when>
 					</xsl:choose>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:call-template name="AnySeq"/>
+					<xsl:call-template name="AnyPlus"/>
 				</xsl:otherwise>
 			</xsl:choose>
 		</PhoneticSequence>
@@ -3187,7 +3218,23 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<xsl:template name="AnySeq">
+	<xsl:template name="AnyStar">
+		<xsl:call-template name="PrefixNull" />
+		<OptionalSegmentSequence min="0" max="-1">
+			<SimpleContext naturalClass="ncAny"/>
+		</OptionalSegmentSequence>
+		<xsl:call-template name="SuffixNull" />
+	</xsl:template>
+
+	<xsl:template name="AnyPlus">
+		<xsl:call-template name="PrefixNull" />
+		<OptionalSegmentSequence min="1" max="-1">
+			<SimpleContext naturalClass="ncAny"/>
+		</OptionalSegmentSequence>
+		<xsl:call-template name="SuffixNull" />
+	</xsl:template>
+
+	<xsl:template name="PrefixNull">
 		<OptionalSegmentSequence min="0" max="-1">
 			<BoundaryMarker representation="repNull">
 				<xsl:attribute name="characterTable">
@@ -3206,9 +3253,9 @@
 				</xsl:attribute>
 			</BoundaryMarker>
 		</OptionalSegmentSequence>
-		<OptionalSegmentSequence min="0" max="-1">
-			<SimpleContext naturalClass="ncAny"/>
-		</OptionalSegmentSequence>
+	</xsl:template>
+
+	<xsl:template name="SuffixNull">
 		<OptionalSegmentSequence min="0" max="-1">
 			<BoundaryMarker>
 				<xsl:attribute name="characterTable">
@@ -4379,7 +4426,7 @@
 	</xsl:template>
 
 	<xsl:template match="PhVariable">
-		<xsl:call-template name="AnySeq"/>
+		<xsl:call-template name="AnyStar"/>
 	</xsl:template>
 
 	<xsl:template name="IsWordInitial">

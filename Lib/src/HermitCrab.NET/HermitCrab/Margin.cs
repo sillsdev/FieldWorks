@@ -167,7 +167,7 @@ namespace SIL.HermitCrab
 					return MatchNext(node, dir, mode, instantiatedVars);
 
 				case PhoneticShapeNode.NodeType.BOUNDARY:
-					return Match(node.GetNext(dir), dir, mode, instantiatedVars);
+					return Match(GetNextShapeNode(node, dir), dir, mode, instantiatedVars);
 			}
 
 			return new List<Match>();

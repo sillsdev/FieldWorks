@@ -195,7 +195,7 @@ namespace SIL.HermitCrab
 							// we are at the end of the phonetic shape, so it does not match
 							return new List<Match>();
 						else
-							return Match(node.GetNext(dir), dir, mode, instantiatedVars);
+							return Match(GetNextShapeNode(node, dir), dir, mode, instantiatedVars);
 				}
 
 				return new List<Match>();

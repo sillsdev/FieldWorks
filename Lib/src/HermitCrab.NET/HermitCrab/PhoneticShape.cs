@@ -30,6 +30,7 @@ namespace SIL.HermitCrab
 		public PhoneticShapeNode(PhoneticShapeNode node)
 			: base(node)
 		{
+			IsDeleted = node.IsDeleted;
 			m_isOptional = node.m_isOptional;
 		}
 
@@ -60,6 +61,14 @@ namespace SIL.HermitCrab
 				m_isOptional = value;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this node has been deleted.
+		/// </summary>
+		/// <value>
+		/// 	<c>true</c> if this node has been deleted, otherwise, <c>false</c>.
+		/// </value>
+		public bool IsDeleted { get; set; }
 	}
 
 	/// <summary>
@@ -89,13 +98,13 @@ namespace SIL.HermitCrab
 		{
 		}
 
-		public bool IsAllOptional
+		public bool IsAllBoundaries
 		{
 			get
 			{
 				for (PhoneticShapeNode node = Begin; node != Last; node = node.Next)
 				{
-					if (!node.IsOptional)
+					if (node.Type != PhoneticShapeNode.NodeType.BOUNDARY)
 						return false;
 				}
 				return true;
@@ -248,6 +257,9 @@ namespace SIL.HermitCrab
 			bool duplicate = false;
 			while (longNode != longShape.Last || shortNode != shortShape.Last)
 			{
+				longNode = GetNotRemoved(longNode);
+				shortNode = GetNotRemoved(shortNode);
+
 				if (longNode.Equals(shortNode))
 				{
 					longNode = longNode.Next;
@@ -269,6 +281,13 @@ namespace SIL.HermitCrab
 				}
 			}
 			return duplicate;
+		}
+
+		private PhoneticShapeNode GetNotRemoved(PhoneticShapeNode node)
+		{
+			while (node != null && node.IsDeleted)
+				node = node.Next;
+			return node;
 		}
 
 		object ICloneable.Clone()

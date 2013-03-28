@@ -134,7 +134,7 @@ namespace SIL.HermitCrab
 						}
 						else
 						{
-							IList<Match> bdryMatches = Match(node.GetNext(dir), dir, mode, instantiatedVars);
+							IList<Match> bdryMatches = Match(GetNextShapeNode(node, dir), dir, mode, instantiatedVars);
 							foreach (Match match in bdryMatches)
 								match.Add(node, m_partition);
 							return bdryMatches;
@@ -142,7 +142,7 @@ namespace SIL.HermitCrab
 					}
 					else
 					{
-						return Match(node.GetNext(dir), dir, mode, instantiatedVars);
+						return Match(GetNextShapeNode(node, dir), dir, mode, instantiatedVars);
 					}
 
 				case PhoneticShapeNode.NodeType.MARGIN:
@@ -151,7 +151,7 @@ namespace SIL.HermitCrab
 						// we are at the end of the shape, so no match
 						return new List<Match>();
 					else
-						return Match(node.GetNext(dir), dir, mode, instantiatedVars);
+						return Match(GetNextShapeNode(node, dir), dir, mode, instantiatedVars);
 
 				case PhoneticShapeNode.NodeType.SEGMENT:
 					Segment seg = node as Segment;

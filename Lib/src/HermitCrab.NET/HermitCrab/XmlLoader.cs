@@ -615,7 +615,7 @@ namespace SIL.HermitCrab
 			string alloId = alloNode.GetAttribute("id");
 			string shapeStr = alloNode.SelectSingleNode("PhoneticShape").InnerText;
 			PhoneticShape shape = stratum.CharacterDefinitionTable.ToPhoneticShape(shapeStr, ModeType.SYNTHESIS);
-			if (shape == null)
+			if (shape == null || shape.IsAllBoundaries)
 			{
 				LoadException le = new LoadException(LoadException.LoadErrorType.INVALID_ENTRY_SHAPE, this,
 					string.Format(HCStrings.kstidInvalidLexEntryShape, shapeStr, entry.ID, stratum.CharacterDefinitionTable.ID));

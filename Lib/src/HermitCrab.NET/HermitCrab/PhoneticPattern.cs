@@ -216,7 +216,6 @@ namespace SIL.HermitCrab
 		/// <param name="node">The phonetic shape node.</param>
 		/// <param name="dir">The direction.</param>
 		/// <param name="mode">The mode.</param>
-		/// <param name="isTarget">if <c>true</c> the phonetic pattern is a target.</param>
 		/// <param name="instantiatedVars">The instantiated variables.</param>
 		/// <returns>All matches.</returns>
 		internal abstract IList<Match> Match(PhoneticShapeNode node, Direction dir, ModeType mode,
@@ -245,13 +244,23 @@ namespace SIL.HermitCrab
 				do
 				{
 					// try the next node in the pattern
-					node = node.GetNext(dir);
+					node = GetNextShapeNode(node, dir);
 					matches.AddRange(n.Match(node, dir, mode, instantiatedVars));
 				}
 				while (node != null && node.IsOptional);
 			}
 
 			return matches;
+		}
+
+		protected PhoneticShapeNode GetNextShapeNode(PhoneticShapeNode node, Direction dir)
+		{
+			do
+			{
+				node = node.GetNext(dir);
+			}
+			while (node != null && node.IsDeleted);
+			return node;
 		}
 	}
 
@@ -402,20 +411,27 @@ namespace SIL.HermitCrab
 			}
 			else
 			{
-				PhoneticShapeNode cur = node;
+				PhoneticShapeNode cur = GetNotDeleted(node, dir);
 				PhoneticShapeNode prev = null;
 				do
 				{
 					matchesList.AddRange(n.Match(cur, dir, mode, instantiatedVars));
 					prev = cur;
 					if (cur != null)
-						cur = cur.GetNext(dir);
+						cur = GetNotDeleted(cur.GetNext(dir), dir);
 				}
 				while (cur != null && prev.IsOptional);
 			}
 
 			//matchesList.Sort();
 			return matchesList.Count > 0;
+		}
+
+		private PhoneticShapeNode GetNotDeleted(PhoneticShapeNode node, Direction dir)
+		{
+			while (node != null && node.IsDeleted)
+				node = node.GetNext(dir);
+			return node;
 		}
 
 		/// <summary>
