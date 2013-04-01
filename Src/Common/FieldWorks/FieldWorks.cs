@@ -264,6 +264,9 @@ namespace SIL.FieldWorks
 						false
 #endif
 						);
+					// Init updates various things in the ReportingSettings, such as the number of times
+					// the application has been launched and the 'previous' version.
+					Settings.Default.Save();
 				}
 
 				if (appArgs.ShowHelp)
