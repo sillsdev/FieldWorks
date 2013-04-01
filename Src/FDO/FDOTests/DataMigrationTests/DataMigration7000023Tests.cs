@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 		/// Test the migration from version 7000022 to 7000023.
 		/// Shift case on all guids to lowwercase, so Chorus' diff/merge code doesn't get tripped
 		/// up by one file using lowercase and another using uppercase.
-		/// This happens because FW 6.0 used uppercase for guids, but FW 7.0 uses lower.
+		/// This happens because FW 6.0 used uppercase for guids, but FW 7.0+ uses lower.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]

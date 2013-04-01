@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
 			}
 
 			/// <summary>
-			/// Flag whether a 7.0 project of this name already exists.
+			/// Flag whether a 7.0+ project of this name already exists.
 			/// </summary>
 			internal bool Exists
 			{

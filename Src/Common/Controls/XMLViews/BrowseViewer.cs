@@ -3770,7 +3770,7 @@ namespace SIL.FieldWorks.Common.Controls
 		// In your AllItems list, the specified objects have been replaced (typically dummy to real).
 		internal void FixReplacedItems(Dictionary<int, int> replacedObjects)
 		{
-			// As far as I can tell, this never happens in 7.0; probably it was ONLY used for replacing dummy with real objects,
+			// As far as I can tell, this never happens in 7.0+; probably it was ONLY used for replacing dummy with real objects,
 			// which no longer happens. The necessary action is possibly to update the list of items shown in the browse view
 			// by replacing the keys in replacedObjects with the corresponding values (but this might happen anyway as a
 			// result of some automatic PropChanged), and also to set the selected status of the replacement to match

@@ -598,7 +598,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string FWDataDirectory
 		{
-			get { return GetDirectory("RootDataDir", CommonAppDataFolder(string.Format("FieldWorks {0}", FwUtils.SuiteVersion))); }
+			get { return GetDirectory("RootDataDir", CommonAppDataFolder("FieldWorks")); }
 		}
 
 		private static string m_srcdir;

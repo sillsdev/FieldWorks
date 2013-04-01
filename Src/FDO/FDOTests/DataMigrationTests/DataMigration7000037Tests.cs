@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.FDO.FDOTests.DataMigrationTests
 	/// <summary>
 	/// Test framework for migration from version 7000036 to 7000037.  This migration fixes a
 	/// data conversion problem for externalLink attributes in Run elements coming from
-	/// FieldWorks 6.0 into FieldWorks 7.0.
+	/// FieldWorks 6.0 into FieldWorks 7.0+.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]

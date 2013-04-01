@@ -2165,7 +2165,7 @@ namespace SIL.FieldWorks
 		#region Project Migration Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Migrates the user's databases to FieldWorks 7.0 if they haven't yet migrated
+		/// Migrates the user's databases to FieldWorks 7.0+ if they haven't yet migrated
 		/// successfully (and the user actually wants to migrate).
 		/// </summary>
 		/// <returns><c>True</c> if a migration was needed (i.e. the registry value is still
@@ -2505,7 +2505,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Checks if this is the ninth time for the program to be run and then ask the user
-		/// if they want to move their old external link files to the FW 7.0 location
+		/// if they want to move their old external link files to the FW 7.0 or later location
 		/// </summary>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
@@ -2583,7 +2583,7 @@ namespace SIL.FieldWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Moves the external link directory and files to the new FW 7.0 location.
+		/// Moves the external link directory and files to the new FW 7.0 or later location.
 		/// </summary>
 		/// <param name="app">The application.</param>
 		/// ------------------------------------------------------------------------------------
@@ -3346,7 +3346,7 @@ namespace SIL.FieldWorks
 		{
 			try
 			{
-				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\7.0", true))
+				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\SIL\FieldWorks\8", true))
 				{
 					key.SetValue("FwExeDir", Path.GetDirectoryName(Application.ExecutablePath));
 				}

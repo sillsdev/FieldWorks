@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// The current version of FieldWorks. This is also known in COMInterfaces/IcuWrappers.cs, InitIcuDataDir.
 		/// </summary>
-		public const int SuiteVersion = 7;
+		public const int SuiteVersion = 8;
 
 		/// <summary>Used in tests to fake TE being installed (Set by using reflection)</summary>
 		private static bool? s_fIsTEInstalled;

@@ -2564,8 +2564,8 @@ StrUni DirectoryFinder::FwRootDataDir()
 #ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
-	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\7.0")) ||
-		rk.InitLm(_T("Software\\SIL\\FieldWorks\\7.0")))
+	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\8")) ||
+		rk.InitLm(_T("Software\\SIL\\FieldWorks\\8")))
 	{
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);
@@ -2587,7 +2587,7 @@ StrUni DirectoryFinder::FwRootDataDir()
 			stuResult += kchDirSep;
 			stuResult += "SIL";
 			stuResult += kchDirSep;
-			stuResult += "FieldWorks 7";
+			stuResult += "FieldWorks";
 		}
 		else
 		{
@@ -2609,8 +2609,8 @@ StrUni DirectoryFinder::FwRootCodeDir()
 #ifdef WIN32
 	RegKey rk;
 	StrUni stuResult;
-	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\7.0")) ||
-		rk.InitLm(_T("Software\\SIL\\FieldWorks\\7.0")))
+	if (rk.InitCu(_T("Software\\SIL\\FieldWorks\\8")) ||
+		rk.InitLm(_T("Software\\SIL\\FieldWorks\\8")))
 	{
 		achar rgch[MAX_PATH];
 		DWORD cb = isizeof(rgch);

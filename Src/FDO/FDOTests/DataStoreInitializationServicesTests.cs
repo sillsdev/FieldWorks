@@ -1498,7 +1498,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This case tests a paragraph which was given 7.0-appropriate segments, probably as
+		/// This case tests a paragraph which was given post-7.0-appropriate segments, probably as
 		/// part of fluffing up, and then we try to migrate it. (We need at least four segments,
 		/// so the merge will not reduce it to one, which triggers another repair process.)
 		/// Need test where ORC occurs in a segment with punctuation but no word-forming chars.
@@ -1530,7 +1530,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This case tests a paragraph which was given 7.0-appropriate segments, probably as
+		/// This case tests a paragraph which was given post-7.0-appropriate segments, probably as
 		/// part of fluffing up, and then we try to migrate it. This test covers the case
 		/// where the ORC+wordforming data is the first segment. (We need at least three
 		/// segments, so the merge will not reduce it to one, which triggers another repair
@@ -1563,7 +1563,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This case tests a paragraph which was given 7.0-appropriate segments, probably as
+		/// This case tests a paragraph which was given post-7.0-appropriate segments, probably as
 		/// part of fluffing up, and then we try to migrate it. This test covers the case
 		/// where the ORC+wordforming data is the Last segment. (We need at least three
 		/// segments, so the merge will not reduce it to one, which triggers another repair
@@ -1596,7 +1596,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// This case tests a paragraph which was given 7.0-appropriate segments, probably as
+		/// This case tests a paragraph which was given post-7.0-appropriate segments, probably as
 		/// part of fluffing up, and then we try to migrate it. (We need at least four segments,
 		/// so the merge will not reduce it to one, which triggers another repair process.)
 		/// This is a bizarre edge-case where the ORC occurs in a segment with punctuation but

@@ -359,7 +359,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						RedirectStandardError = true
 					};
 
-				// For some reason Hidden worked on FW6.0, but not on FW7.0. NoWindow works!?!
+				// For some reason Hidden worked on FW6.0, but not on FW7.0+. NoWindow works!?!
 
 				// Allows us to re-direct the std. output for logging.
 

@@ -2994,17 +2994,17 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			tapb.ValidateAnnotations();
 
 			// JohnT: in 6.0, making the larger phrase would apparently get rid of the guessed phrase.
-			// in 7.0 there's no distinction between a guess and user-made phrase, so once it exists it doesn't go away.
+			// in 7.0+ there's no distinction between a guess and user-made phrase, so once it exists it doesn't go away.
 			// [xxxpus xxxyalola xxxnihimbilira]. [xxxpus xxxyalola] xxxhesyla xxxnihimbilira. {xxxpus xxxyalola xxxnihimbilira}.
 			secondaryPathsToJoinWords.Clear();
 			secondaryPathsToBreakPhrases.Clear();
-			// 7.0 secondaryPathsToBreakPhrases.Add(new int[2] { 1, 0 }); // \xxxpus\ \xxxyalola\ xxxhesyla
+			// 7.0+ secondaryPathsToBreakPhrases.Add(new int[2] { 1, 0 }); // \xxxpus\ \xxxyalola\ xxxhesyla
 			secondaryPathsToJoinWords.Add(new int[2] { 2, 0 }); // {{xxxpus xxxyalola} xxxnihimbilira}
 			tapb.MergeAdjacentAnnotations(0, 0, secondaryPathsToJoinWords, secondaryPathsToBreakPhrases);
 			tapb.ValidateAnnotations();
 
 			// [xxxpus xxxyalola xxxnihimbilira]. [xxxpus xxxyalola] xxxhesyla xxxnihimbilira. {xxxpus xxxyalola xxxnihimbilira}
-			// 7.0 nothing to do here; it's in this state after the previous change.
+			// 7.0+ nothing to do here; it's in this state after the previous change.
 			//secondaryPathsToJoinWords.Clear();
 			//secondaryPathsToBreakPhrases.Clear();
 			//tapb.MergeAdjacentAnnotations(1, 0, secondaryPathsToJoinWords, secondaryPathsToBreakPhrases);
@@ -3019,11 +3019,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// [\xxxpus\ \xxxyalola\ \xxxnihimbilira\]. xxxpus xxxyalola xxxhesyla xxxnihimbilira. {\xxxpus\ \xxxyalola\ \xxxnihimbilira\}
 			secondaryPathsToBreakPhrases.Clear();
-			// 7.0 secondaryPathsToBreakPhrases.Add(new int[2] { 2, 0 }); // {\xxxpus\ \xxxyalola\ \xxxnihimbilira\}
+			// 7.0+ secondaryPathsToBreakPhrases.Add(new int[2] { 2, 0 }); // {\xxxpus\ \xxxyalola\ \xxxnihimbilira\}
 			tapb.BreakPhrase(0, 0, secondaryPathsToBreakPhrases, secondaryPathsToJoinWords, null);
 			tapb.ValidateAnnotations();
 
-			// 7.0 breaking the guessed phrase has to be an extra step.
+			// 7.0+ breaking the guessed phrase has to be an extra step.
 			tapb.BreakPhrase(2, 0, secondaryPathsToBreakPhrases, secondaryPathsToJoinWords, null);
 			tapb.ValidateAnnotations();
 
@@ -3054,11 +3054,11 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			secondaryPathsToJoinWords.Clear();
 			secondaryPathsToBreakPhrases.Clear();
 			// [xxxpus xxxyalola] xxxnihimbilira. xxxpus [xxxyalola] xxxhesyla xxxnihimbilira. {\xxxpus\ \xxxyalola\} \xxxnihimbilira\
-			// In 6.0, apparently we would re-guess the shorter pus yalola phrase. In 7.0, breaking a phrase does not
+			// In 6.0, apparently we would re-guess the shorter pus yalola phrase. In 7.0+, breaking a phrase does not
 			// produce a new parse and new phrase guesses. Otherwise, if the longer phrase still existed somewhere else,
 			// it would be guessed again! Don't see how this ever worked right, except that after breaking the phrase the
 			// user would usually annotate the parts before there was occasion to re-parse.
-			// 7.0secondaryPathsToJoinWords.Add(new int[2] { 2, 0 }); // {xxxpus xxxyalola} xxxnihimbilira
+			// 7.0+ secondaryPathsToJoinWords.Add(new int[2] { 2, 0 }); // {xxxpus xxxyalola} xxxnihimbilira
 			tapb.BreakPhrase(2, 0, secondaryPathsToBreakPhrases, secondaryPathsToJoinWords, "xxxpus xxxyalola");
 			tapb.ValidateAnnotations();
 		}
@@ -3089,7 +3089,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		}
 
 		/// <summary>
-		/// This tests some stuff that was dubious in 6.0 but pretty much automatic in 7.0. We may want to drop it.
+		/// This tests some stuff that was dubious in 6.0 but pretty much automatic in 7.0+. We may want to drop it.
 		/// </summary>
 		[Test]
 		public void SparseSegmentAnalyses_FreeformAnnotations_LT7318()

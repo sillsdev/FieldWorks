@@ -17,7 +17,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Reflection;
 using Microsoft.Win32;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;

@@ -363,7 +363,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.DataMigration
 					if (!File.Exists(m_dbPath))
 					{
 						if (m_fVerboseDebug)
-							MessageBoxUtils.Show("Cannot find MSSQLMigration\\db.exe in the FieldWorks 7.0 installation.", "DEBUG!");
+							MessageBoxUtils.Show("Cannot find MSSQLMigration\\db.exe in the FieldWorks 7.0 or later installation.", "DEBUG!");
 						return false;
 					}
 					return true;

@@ -521,7 +521,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 				}
 
 				// Determine if there is a difference between what we have in our 6.0 segment division versus what
-				// we know we need for the 7.0 segment division. Fix any mismatched segments by removing segments
+				// we know we need for the 7.0+ segment division. Fix any mismatched segments by removing segments
 				// or adding segments depending on the type of mismatch.
 				if (segCurr != null && segExpected != null && segCurr.BeginOffset == segExpected.IchMin)
 				{

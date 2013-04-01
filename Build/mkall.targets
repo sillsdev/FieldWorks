@@ -402,13 +402,13 @@
 	<Target Name="setKeysInHKCU">
 		<Message Text="Setting registry values for $(fwrt)."/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootCodeDir"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\RootCodeDir"
 			Value="$(dir-fwdistfiles)"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\RootDataDir"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\RootDataDir"
 			Value="$(dir-fwdistfiles)"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR).0\ProjectsDir"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\ProjectsDir"
 			Value="$(dir-fwdistfiles)\Projects"/>
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\Icu50DataDir"

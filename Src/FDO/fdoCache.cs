@@ -725,7 +725,7 @@ namespace SIL.FieldWorks.FDO
 		/// <summary>
 		/// Create the subfolders for a newly created project.
 		/// </summary>
-		/// <remarks>This is not private because migrating a project from FieldWorks 6.0 to 7.0 also needs this function.</remarks>
+		/// <remarks>This is not private because migrating a project from FieldWorks 6.0 to 7.0+ also needs this function.</remarks>
 		internal static void CreateProjectSubfolders(string dbDirName)
 		{
 			try
