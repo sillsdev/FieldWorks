@@ -76,7 +76,7 @@ namespace FwBuildTasks
 				outputThread.Join(2000);
 				errorThread.Join(2000);
 
-				bool fTimedOut = !process.HasExited;
+				bool fTimedOut = !process.WaitForExit(0);	// returns false immediately if still running.
 				if (fTimedOut)
 				{
 					try
@@ -103,16 +103,18 @@ namespace FwBuildTasks
 					//Console.WriteLine("STACK: {0}", e.StackTrace);
 				}
 
-				if (process.ExitCode != 0)
-				{
-					Log.LogError("{0} returned with exit code {1}", TestProgramName,
-						process.ExitCode);
-					FailedSuites = FailedSuiteNames;
-				}
-				else if (fTimedOut)
+				// If the test timed out, it was killed and its ExitCode is not available.
+				// So check for a timeout first.
+				if (fTimedOut)
 				{
 					Log.LogWarning("The tests in {0} did not finish in {1} milliseconds.",
 						TestProgramName, Timeout);
+					FailedSuites = FailedSuiteNames;
+				}
+				else if (process.ExitCode != 0)
+				{
+					Log.LogError("{0} returned with exit code {1}", TestProgramName,
+						process.ExitCode);
 					FailedSuites = FailedSuiteNames;
 				}
 			}
