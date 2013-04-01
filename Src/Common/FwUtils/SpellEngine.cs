@@ -239,15 +239,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return ManagedStringArray;
 		}
 
-		private const string klibHunspell = "libhunspell";
-
 #if __MonoCS__
+		private const string klibHunspell = "libhunspell-1.3.so.0";		// this is the standard installed version on Precise and Quantal.
 		// Hunspell on Linux uses methods that start with uppercase Hunspell and has
 		// different methods for (un-)initializing.
 		private const string klibHunspellCtor = "Hunspell_create";
 		private const string klibHunspellDtor = "Hunspell_destroy";
 		private const string klibHunspellPrefix = "Hunspell_";
 #else
+		private const string klibHunspell = "libhunspell";
 		// Hunspell on Windows uses different methods that start with lowercase hunspell!
 		private const string klibHunspellCtor = "hunspell_initialize";
 		private const string klibHunspellDtor = "hunspell_uninitialize";
