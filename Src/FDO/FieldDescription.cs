@@ -412,6 +412,13 @@ tinyint - Integer data from 0 through 255. Storage size is 1 byte.
 					}
 					m_id = mdc.AddCustomField(sClass, m_name, ft, m_dstCls, m_helpString, m_wsSelector, m_listRootId);
 					mdc.UpdateCustomField(m_id, m_helpString, m_wsSelector, m_userlabel);
+					if (mdc.IsValueType(ft))
+					{
+						// Basic data properties must be written out on all objects. Mark them dirty to ensure this.
+						var uowService = ((IServiceLocatorInternal)m_cache.ServiceLocator).UnitOfWorkService;
+						foreach (var obj in Objects)
+							uowService.RegisterObjectAsModified(obj);
+					}
 				}
 			}
 		}

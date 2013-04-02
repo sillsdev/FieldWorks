@@ -492,11 +492,16 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets whether this unit of work has any actual data changes.
+		/// In unusual cases it is possible that there are no 'changes' that register
+		/// as data changes but there are are dirty objects. For example, adding a value-type
+		/// custom field makes all instances of the class dirty, but none of them may have
+		/// changes made. I don't know whether it is possible to have new or deleted objects
+		/// without m_changes containing a data change but it seemed safest to check them all.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public bool HasDataChange
 		{
-			get { return m_changes.Exists(x => x.IsDataChange); }
+			get { return m_changes.Exists(x => x.IsDataChange) || m_dirtyObjects.Any() || m_newObjects.Any() || m_deletedObjects.Any(); }
 		}
 
 		/// ------------------------------------------------------------------------------------

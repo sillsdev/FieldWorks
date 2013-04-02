@@ -112,6 +112,7 @@ namespace SIL.FieldWorks.XWorks
 			switch (locationType)
 			{
 				case LocationType.Lexicon:
+					// If you add classes here which have subclasses,  a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
 					m_locationComboBox.Items.Add(new IdAndString<int>(LexEntryTags.kClassId, xWorksStrings.Entry));
 					m_locationComboBox.Items.Add(new IdAndString<int>(LexSenseTags.kClassId, xWorksStrings.Sense));
 					m_locationComboBox.Items.Add(new IdAndString<int>(LexExampleSentenceTags.kClassId, xWorksStrings.ExampleSentence));
@@ -119,6 +120,7 @@ namespace SIL.FieldWorks.XWorks
 					break;
 
 				case LocationType.Notebook:
+					// If you add classes here which have subclasses,  a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
 					m_locationComboBox.Items.Add(new IdAndString<int>(RnGenericRecTags.kClassId, xWorksStrings.ksRecord));
 					break;
 			}
@@ -136,6 +138,7 @@ namespace SIL.FieldWorks.XWorks
 			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.MultiparagraphText, xWorksStrings.kMultiparagraphText));
 			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefCollection, xWorksStrings.ksListRefCollection));
 			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.ListRefAtomic, xWorksStrings.ksListRefAtomic));
+			// If you add additional value types here, a change is also needed in BasicCustomPropertyFixer (FixFwDataDll).
 			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Date, xWorksStrings.ksDate));
 			m_typeComboBox.Items.Add(new IdAndString<CustomFieldType>(CustomFieldType.Number, xWorksStrings.ksNumber));
 			m_typeComboBox.SelectedIndex = 0;

@@ -67,6 +67,7 @@ namespace SIL.FieldWorks.FixData
 			// N.B.: Order is important here!!!!!!!
 			m_rtLevelFixers.Add(new OriginalFixer());
 			m_rtLevelFixers.Add(new CustomPropertyFixer());
+			m_rtLevelFixers.Add(new BasicCustomPropertyFixer());
 			var senseFixer = new GrammaticalSenseFixer();
 			m_rtLevelFixers.Add(senseFixer);
 			m_rtLevelFixers.Add(new MorphBundleFixer(senseFixer)); // after we've possibly removed MSAs in GrammaticalSenseFixer
