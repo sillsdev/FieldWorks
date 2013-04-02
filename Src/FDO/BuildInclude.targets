@@ -12,9 +12,6 @@
 		<platformSource>Windows</platformSource>
 	</PropertyGroup>
 	<PropertyGroup>
-		<DistFiles>../../DistFiles</DistFiles>
-	</PropertyGroup>
-	<PropertyGroup>
 		<LinuxDistFiles>$(DistFiles)/$(LinuxDlls)</LinuxDistFiles>
 	</PropertyGroup>
 	<ItemGroup>
@@ -72,7 +69,7 @@
 		<OutputFiles Include="@(LinuxFilesDist -> '$(OutDir)/%(Identity)')"/>
 	</ItemGroup>
 
-	<Target Name="AfterClean">
+	<Target Name="AfterClean" DependsOnTargets="DeleteCopiedPalasoDlls">
 		<Delete Files="@(OutputFiles)" ContinueOnError="true"/>
 	</Target>
 
@@ -83,7 +80,7 @@
 					TemplateFile="FDOGenerate/main.vm.cs"/>
 	</Target>
 
-	<Target Name="BeforeBuild" DependsOnTargets="GenerateModel">
+	<Target Name="BeforeBuild" DependsOnTargets="GenerateModel;CopyPalasoDlls">
 		<!-- generate C# files used in FDO -->
 		<Copy SourceFiles="@(Db4oFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
 		<Copy SourceFiles="@(StructureMapSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
