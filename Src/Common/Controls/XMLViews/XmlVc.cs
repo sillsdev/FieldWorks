@@ -24,6 +24,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.Application.ApplicationServices;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
@@ -2469,6 +2470,19 @@ namespace SIL.FieldWorks.Common.Controls
 				string flowType = XmlUtils.GetOptionalAttributeValue(frag, "flowType", null);
 				if (flowType == "para")
 					GetParagraphStyleIfPara(hvo, ref style);
+				// The literal string for a sequence should go before the place where we may pull out
+				// a common part of speech within a single entry paragraph.
+				InsertLiteralString(frag, vwenv, "before", flowType);
+				// If we pull out a common part of speech for several senses, we want it as part of the main paragraph,
+				// not part of (say) the paragraph that belongs to the first sense. So we must insert this
+				// before we process the flowType.
+				if (fSingleGramInfoFirst)
+				{
+					// Will we really do gram info first? Only if we are numbering senses and either there is more than one,
+					// or we are numbering even single senses.
+					// For this to work, node must have just one child, a seq.
+					SetupSingleGramInfoFirst(frag, node, hvo, vwenv);
+				}
 				if (style != null || flowType != null)
 				{
 					if (style != null && flowType != "divInPara")
@@ -2492,7 +2506,6 @@ namespace SIL.FieldWorks.Common.Controls
 							vwenv.OpenDiv();
 							break;
 					}
-					InsertLiteralString(frag, vwenv, "before", flowType);
 					ProcessChildren(node, vwenv, hvo, frag);
 					InsertLiteralString(frag, vwenv, "after", flowType);
 
@@ -2539,6 +2552,118 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				m_stackPartRef.RemoveAt(0);
 			}
+		}
+
+		private void SetupSingleGramInfoFirst(XmlNode frag, XmlNode node, int hvo, IVwEnv vwenv)
+		{
+			var seq = XmlUtils.GetFirstNonCommentChild(node);
+			if (seq == null || seq.Name != "seq")
+				return;
+			int flid = GetFlid(seq, hvo);
+			var rghvo = ((ISilDataAccessManaged)vwenv.DataAccess).VecProp(hvo, flid);
+
+			XmlAttribute xaNum;
+			var fNumber = XmlVcDisplayVec.SetNumberFlagIncludingSingleOption(frag, rghvo.Length, out xaNum);
+			if (!fNumber)
+				return;
+			var fAllMsaSame = SetAllMsaSameFlag(rghvo.Length, rghvo);
+			int childFrag = GetSubFragIdSeq(seq, frag);
+			if (fAllMsaSame)
+				DisplayFirstChildPOS(rghvo[0], childFrag, vwenv);
+
+			// Exactly if we put out the grammatical info at the start, we need to NOT put it out
+			// as part of each item. Note that we must not set this flag before we put out the one-and-only
+			// gram info, or that will be suppressed too!
+			ShouldIgnoreGramInfo = fAllMsaSame;
+		}
+
+		// Display the first child (item in the vector) in a special mode which suppresses everything except the child
+		// marked singlegraminfofirst, to show the POS.
+		private void DisplayFirstChildPOS(int firstChildHvo, int childFrag, IVwEnv vwenv)
+		{
+			var dispCommand = (MainCallerDisplayCommand)m_idToDisplayCommand[childFrag];
+			string layoutName;
+			var parent = dispCommand.GetNodeForChild(out layoutName, childFrag, this, firstChildHvo);
+			if (DisplayFirstChildPos(firstChildHvo, parent, vwenv))
+				return;
+			// If we didn't find one, we are most likely in the publishRoot_AsPara wrapper layout.
+			// See if we can drill down to the one that actually has the POS.
+			var sublayout = XmlUtils.GetFirstNonCommentChild(parent);
+			if (sublayout.Name != "sublayout")
+				return;
+			var sublayoutName = XmlUtils.GetAttributeValue(sublayout, "name");
+			if (string.IsNullOrEmpty(sublayoutName))
+				return;
+			parent = GetNodeForPart(firstChildHvo, sublayoutName, true);
+			if (parent == null || parent.Name != "layout")
+				return;
+			DisplayFirstChildPos(firstChildHvo, parent, vwenv);
+		}
+
+		// Display the first child (item in the vector) in a special mode which suppresses everything except the child
+		// marked singlegraminfofirst, to show the POS.
+		private bool DisplayFirstChildPos(int firstChildHvo, XmlNode parent, IVwEnv vwenv)
+		{
+			foreach (XmlNode gramInfoPartRef in parent.ChildNodes)
+			{
+				if (XmlUtils.GetOptionalBooleanAttributeValue(gramInfoPartRef, "singlegraminfofirst", false))
+				{
+					// It really is the gram info part ref we want.
+					//m_viewConstructor.ProcessPartRef(gramInfoPartRef, firstChildHvo, m_vwEnv); no! the sense is not on the stack.
+					var sVisibility = XmlUtils.GetOptionalAttributeValue(gramInfoPartRef, "visibility", "always");
+					if (sVisibility == "never")
+						return true; // user has configured gram info first, but turned off gram info.
+					string morphLayoutName = XmlUtils.GetManditoryAttributeValue(gramInfoPartRef, "ref");
+					var part = GetNodeForPart(firstChildHvo, morphLayoutName, false);
+					if (part == null)
+						throw new ArgumentException("Attempt to display gram info of first child, but part for " + morphLayoutName +
+													" does not exist");
+					var objNode = XmlUtils.GetFirstNonCommentChild(part);
+					if (objNode == null || objNode.Name != "obj")
+						throw new ArgumentException("Attempt to display gram info of first child, but part for " + morphLayoutName +
+													" does not hav a single <obj> child");
+					int flid = XmlVc.GetFlid(objNode, firstChildHvo, DataAccess);
+					int hvoTarget = DataAccess.get_ObjectProp(firstChildHvo, flid);
+					if (hvoTarget == 0)
+						return true; // first sense has no category.
+					int fragId = GetSubFragId(objNode, gramInfoPartRef);
+					if (vwenv is ConfiguredExport)
+						(vwenv as ConfiguredExport).BeginCssClassIfNeeded(gramInfoPartRef);
+					vwenv.AddObj(hvoTarget, this, fragId);
+					if (vwenv is ConfiguredExport)
+						(vwenv as ConfiguredExport).EndCssClassIfNeeded(gramInfoPartRef);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private bool SetAllMsaSameFlag(int chvo, int[] rghvo)
+		{
+			int hvoMsa = m_sda.get_ObjectProp(rghvo[0], LexSenseTags.kflidMorphoSyntaxAnalysis);
+			var fAllMsaSame = SubsenseMsasMatch(rghvo[0], hvoMsa);
+			for (var i = 1; fAllMsaSame && i < chvo; ++i)
+			{
+				int hvoMsa2 = m_sda.get_ObjectProp(rghvo[i], LexSenseTags.kflidMorphoSyntaxAnalysis);
+				fAllMsaSame = hvoMsa == hvoMsa2 && SubsenseMsasMatch(rghvo[i], hvoMsa);
+			}
+			return fAllMsaSame;
+		}
+
+		/// <summary>
+		/// Check whether all the subsenses (if any) use the given MSA.
+		/// </summary>
+		private bool SubsenseMsasMatch(int hvoSense, int hvoMsa)
+		{
+			int[] rghvoSubsense = ((ISilDataAccessManaged)m_sda).VecProp(hvoSense, LexSenseTags.kflidSenses);
+			for (var i = 0; i < rghvoSubsense.Length; ++i)
+			{
+				int hvoMsa2 = m_sda.get_ObjectProp(rghvoSubsense[i],
+					LexSenseTags.kflidMorphoSyntaxAnalysis);
+				if (hvoMsa != hvoMsa2 || !SubsenseMsasMatch(rghvoSubsense[i], hvoMsa))
+					return false;
+			}
+			return true;
 		}
 
 		private void HandleNestedIndentation(XmlNode frag, IVwEnv vwenv)
