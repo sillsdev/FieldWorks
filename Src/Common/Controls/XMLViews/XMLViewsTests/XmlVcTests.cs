@@ -157,7 +157,8 @@ namespace XMLViewsTests
 				vc.Display(testEnv, m_hvoLexDb, XmlVc.kRootFragId);
 				VerifySourceIdentified(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, "Entry:basic:Headword:HeadwordL");
 				VerifyLabel(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, 1, ")", "Entry:basic:Headword:HeadwordL");
-				VerifyLabel(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, -2, "head(", "Entry:basic:Headword:HeadwordL");
+
+				VerifyLabel(testEnv.EventHistory, m_hvoKick, kflidEntry_Form, m_wsVern, -3, "head(", "Entry:basic:Headword:HeadwordL");
 				VerifySourceIdentified(testEnv.EventHistory, m_hvoKick, kflidEntry_Summary, "Entry:basic:Summary:Sum.");
 			}
 		}

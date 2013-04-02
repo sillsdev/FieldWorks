@@ -117,6 +117,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// to get the separator information.
 			if (XmlUtils.GetOptionalBooleanAttributeValue(listDelimitNode, "inheritSeps", false))
 				listDelimitNode = dispInfo.Caller;
+
 			//
 			// 1. get number of items in vector
 			//
@@ -243,20 +244,6 @@ namespace SIL.FieldWorks.Common.Controls
 				if (fShowAsParagraphsInInnerPile || fShowAsParagraphsInDivInPara)
 					SetupParagraph(sParaStyle, (fFirst ? tssBefore : null), listDelimitNode);
 
-				// This needs to happen AFTER we wet up the paragraph that we want it to be part of
-				// and any 'before' stuff that goes ahead of the whole sequence, but BEFORE we add any other stuff to the para.
-				if (fFirst && fNumber && fSingleGramInfoFirst)
-				{
-					var fAllMsaSame = SetAllMsaSameFlag(chvo, rghvo);
-					if (fAllMsaSame)
-						DisplayFirstChildPOS(rghvo[0], childFrag);
-
-					// Exactly if we put out the grammatical info at the start, we need to NOT put it out
-					// as part of each item. Note that we must not set this flag before we put out the one-and-only
-					// gram info, or that will be suppressed too!
-					m_viewConstructor.ShouldIgnoreGramInfo = fAllMsaSame;
-				}
-
 				if (!fShowAsParagraphsInInnerPile && !fShowAsParagraphsInDivInPara)
 					AddSeparatorIfNeeded(fFirst, xattrSeparator, listDelimitNode, wsEng);
 
@@ -304,56 +291,6 @@ namespace SIL.FieldWorks.Common.Controls
 			// end of Display method
 		}
 
-		private bool SetAllMsaSameFlag(int chvo, int[] rghvo)
-		{
-			int hvoMsa = m_sda.get_ObjectProp(rghvo[0], kflidSenseMsa);
-			var fAllMsaSame = SubsenseMsasMatch(rghvo[0], hvoMsa);
-			for (var i = 1; fAllMsaSame && i < chvo; ++i)
-			{
-				int hvoMsa2 = m_sda.get_ObjectProp(rghvo[i], kflidSenseMsa);
-				fAllMsaSame = hvoMsa == hvoMsa2 && SubsenseMsasMatch(rghvo[i], hvoMsa);
-			}
-			return fAllMsaSame;
-		}
-
-		// Display the first child (item in the vector) in a special mode which suppresses everything except the child
-		// marked singlegraminfofirst, to show the POS.
-		private void DisplayFirstChildPOS(int firstChildHvo, int childFrag)
-		{
-			var dispCommand = (MainCallerDisplayCommand)m_viewConstructor.m_idToDisplayCommand[childFrag];
-			string layoutName;
-			var parent = dispCommand.GetNodeForChild(out layoutName, childFrag, m_viewConstructor, firstChildHvo);
-			foreach(XmlNode gramInfoPartRef in parent.ChildNodes)
-			{
-				if (XmlUtils.GetOptionalBooleanAttributeValue(gramInfoPartRef, "singlegraminfofirst", false))
-				{
-					// It really is the gram info part ref we want.
-					//m_viewConstructor.ProcessPartRef(gramInfoPartRef, firstChildHvo, m_vwEnv); no! the sense is not on the stack.
-					var sVisibility = XmlUtils.GetOptionalAttributeValue(gramInfoPartRef, "visibility", "always");
-					if (sVisibility == "never")
-						return; // user has configured gram info first, but turned off gram info.
-					string morphLayoutName = XmlUtils.GetManditoryAttributeValue(gramInfoPartRef, "ref");
-					var part = m_viewConstructor.GetNodeForPart(firstChildHvo, morphLayoutName, false);
-					if (part == null)
-						throw new ArgumentException("Attempt to display gram info of first child, but part for " + morphLayoutName + " does not exist");
-					var objNode = XmlUtils.GetFirstNonCommentChild(part);
-					if (objNode == null || objNode.Name != "obj")
-						throw new ArgumentException("Attempt to display gram info of first child, but part for " + morphLayoutName + " does not hav a single <obj> child");
-					int flid = XmlVc.GetFlid(objNode, firstChildHvo, m_viewConstructor.DataAccess);
-					int hvoTarget = m_viewConstructor.DataAccess.get_ObjectProp(firstChildHvo, flid);
-					if (hvoTarget == 0)
-						return; // first sense has no category.
-					int fragId = m_viewConstructor.GetSubFragId(objNode, gramInfoPartRef);
-					if (m_vwEnv is ConfiguredExport)
-						(m_vwEnv as ConfiguredExport).BeginCssClassIfNeeded(gramInfoPartRef);
-					m_vwEnv.AddObj(hvoTarget, m_viewConstructor, fragId);
-					if (m_vwEnv is ConfiguredExport)
-						(m_vwEnv as ConfiguredExport).EndCssClassIfNeeded(gramInfoPartRef);
-					return;
-				}
-			}
-			throw new ArgumentException("Attempt to display gram info of first child, but template has no singlegraminfofirst");
-		}
 
 		private ITsString SetBeforeString(XmlNode specialAttrsNode, XmlNode listDelimitNode)
 		{
@@ -411,7 +348,7 @@ namespace SIL.FieldWorks.Common.Controls
 			return ttpNum;
 		}
 
-		private static bool SetNumberFlagIncludingSingleOption(XmlNode listDelimitNode, int chvo, out XmlAttribute xaNum)
+		internal static bool SetNumberFlagIncludingSingleOption(XmlNode listDelimitNode, int chvo, out XmlAttribute xaNum)
 		{
 			Debug.Assert(listDelimitNode != null, "Node can not be null!");
 			xaNum = listDelimitNode.Attributes["number"];
@@ -642,22 +579,6 @@ namespace SIL.FieldWorks.Common.Controls
 					break;
 			}
 			return sNum;
-		}
-
-		/// <summary>
-		/// Check whether all the subsenses (if any) use the given MSA.
-		/// </summary>
-		private bool SubsenseMsasMatch(int hvoSense, int hvoMsa)
-		{
-			int[] rghvoSubsense = GetVector(m_sda, hvoSense, LexSenseTags.kflidSenses);
-			for (var i = 0; i < rghvoSubsense.Length; ++i)
-			{
-				int hvoMsa2 = m_sda.get_ObjectProp(rghvoSubsense[i],
-					LexSenseTags.kflidMorphoSyntaxAnalysis);
-				if (hvoMsa != hvoMsa2 || !SubsenseMsasMatch(rghvoSubsense[i], hvoMsa))
-					return false;
-			}
-			return true;
 		}
 
 		/// <summary>
