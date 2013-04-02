@@ -12,7 +12,10 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 
+using System;
 using NUnit.Framework;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.FDO.FDOTests;
 
 namespace SIL.FieldWorks.FdoUi
@@ -23,38 +26,8 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
-	public class FdoUiTests : MemoryOnlyBackendProviderTestBase
+	public class FdoUiTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-#if WANTTESTPORT // (FLEx) Some code isnt happy with an empty form for a wordform.
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the DisplayOrCreateEntry method with an empty string (TE-5916)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void DisplayOrCreateEntry_EmptyString()
-		{
-			// Create a WfiWordform with some string.
-			// We need this wordform to get a real hvo, flid, and ws.
-			// Make Spanish be the vern ws.
-			LgWritingSystem spanish = Cache.GetObject(Cache.WritingSystemFactory.GetWsFromStr("es")) as LgWritingSystem;
-			Cache.LanguageProject.VernWssRC.Add(spanish);
-			Cache.LanguageProject.CurVernWssRS.Add(spanish);
-			Cache.LanguageProject.CurAnalysisWssRS.Remove(spanish);
-			Cache.LanguageProject.AnalysisWssRC.Remove(spanish);
-			int defVernWs = spanish.Hvo;
-			ITsString form = Cache.TsStrFactory.MakeString(String.Empty, defVernWs);
-			WfiWordform wf = new WfiWordform();
-			Cache.LanguageProject.WordformInventoryOA.WordformsOC.Add(wf);
-			wf.FormAccessor.set_String(defVernWs, form);
-
-			// We shouldn't get an exception if we call DisplayOrCreateEntry with an empty string
-			LexEntryUi.DisplayOrCreateEntry(Cache, wf.Hvo,
-				(int)WfiWordform.WfiWordformTags.kflidForm, defVernWs, 0, 0,
-				null, null, null, null);
-		}
-#endif
-
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests FindEntryForWordform with empty string (related to TE-5916)
@@ -67,6 +40,60 @@ namespace SIL.FieldWorks.FdoUi
 				Cache.TsStrFactory.MakeString(string.Empty, Cache.DefaultVernWs)))
 			{
 				Assert.IsNull(lexEntryUi);
+			}
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests FindEntryForWordform to make sure it finds matches regardless of case.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void FindEntryNotMatchingCase()
+		{
+			// Setup
+			var servLoc = Cache.ServiceLocator;
+			var langProj = Cache.LangProject;
+			var lexDb = langProj.LexDbOA;
+			// Create a WfiWordform with some string.
+			// We need this wordform to get a real hvo, flid, and ws.
+			// Make Spanish be the vern ws.
+			var spanish = servLoc.WritingSystemManager.Get("es");
+			langProj.AddToCurrentVernacularWritingSystems(spanish);
+			langProj.CurAnalysisWss = "en";
+			langProj.DefaultVernacularWritingSystem = spanish;
+			var defVernWs = spanish.Handle;
+			var entry1 = servLoc.GetInstance<ILexEntryFactory>().Create(
+				"Uppercaseword", "Uppercasegloss", new SandboxGenericMSA());
+			var entry2 = servLoc.GetInstance<ILexEntryFactory>().Create(
+				"lowercaseword", "lowercasegloss", new SandboxGenericMSA());
+
+			// SUT
+			// First make sure it works with the same case
+			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
+				Cache.TsStrFactory.MakeString("Uppercaseword", Cache.DefaultVernWs)))
+			{
+				Assert.IsNotNull(lexEntryUi);
+				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+			}
+			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
+				Cache.TsStrFactory.MakeString("lowercaseword", Cache.DefaultVernWs)))
+			{
+				Assert.IsNotNull(lexEntryUi);
+				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+			}
+			// Now make sure it works with the wrong case
+			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
+				Cache.TsStrFactory.MakeString("uppercaseword", Cache.DefaultVernWs)))
+			{
+				Assert.IsNotNull(lexEntryUi);
+				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
+			}
+			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
+				Cache.TsStrFactory.MakeString("LowerCASEword", Cache.DefaultVernWs)))
+			{
+				Assert.IsNotNull(lexEntryUi);
+				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
 			}
 		}
 	}

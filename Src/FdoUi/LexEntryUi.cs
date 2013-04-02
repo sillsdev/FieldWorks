@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -100,42 +101,18 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <param name="tssWf"></param>
+		/// <param name="wfa"></param>
 		/// <returns></returns>
 		public static List<ILexEntry> FindEntriesForWordform(FdoCache cache, ITsString tssWf, IWfiAnalysis wfa)
 		{
 			if (tssWf == null)
 				return new List<ILexEntry>();
 
-			string wf = tssWf.Text;
+			var wf = tssWf.Text;
 			if (string.IsNullOrEmpty(wf))
 				return new List<ILexEntry>();
 
-			int wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
-			//// Adjust the wf string to escape any single quotes that may be present,
-			//// else the SQL query will cause a crash (TE-7033):
-			//string wfSqlSafe = wf.Replace("'", "''");
-			//// Check for Wordform, Lexeme Form, Alternate Form, and Citation Form.
-			//string sql = String.Format("SELECT le.Id, le.HomographNumber" +
-			//	" FROM WfiWordform_Form wwf" +
-			//	" JOIN WfiWordform_Analyses wwa ON wwa.Src=wwf.Obj" +
-			//	" JOIN WfiAnalysis_MorphBundles wamb ON wamb.Src=wwa.Dst" +
-			//	" JOIN WfiMorphBundle wmb ON wmb.Id=wamb.Dst" +
-			//	" JOIN MoStemMsa msm ON msm.Id=wmb.Msa" +
-			//	" JOIN CmObject co ON co.Id=msm.Id" +
-			//	" JOIN LexEntry le ON le.Id=co.Owner$" +
-			//	" WHERE wwf.Ws={0} AND wwf.Txt=N'{1}'" +
-			//	" UNION" +
-			//	" SELECT le.Id, le.HomographNumber" +
-			//	" FROM MoForm_Form mff" +
-			//	" JOIN CmObject co ON co.Id=mff.Obj" +
-			//	" JOIN LexEntry le ON le.Id=co.Owner$" +
-			//	" WHERE mff.Ws={0} AND mff.Txt=N'{1}'" +
-			//	" UNION" +
-			//	" SELECT le.Id, le.HomographNumber" +
-			//	" FROM LexEntry le" +
-			//	" JOIN LexEntry_CitationForm lcf ON lcf.Obj=le.Id AND lcf.Ws={0} AND lcf.Txt=N'{1}'" +
-			//	" ORDER BY le.HomographNumber", wsVern, wfSqlSafe);
-			//return DbOps.ReadIntsFromCommand(cache, sql, null);
+			var wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
 
 			var entries = new Set<ILexEntry>();
 
@@ -186,6 +163,18 @@ namespace SIL.FieldWorks.FdoUi
 			return retval;
 		}
 
+		private static string GetLowercaseStringFromMultiUnicodeSafely(ILgCharacterPropertyEngine icuEngine, IMultiUnicode form, int ws)
+		{
+			if (form == null)
+				return string.Empty;
+
+			var formTsstring = form.get_String(ws);
+			if (formTsstring == null || formTsstring.Length == 0)
+				return string.Empty;
+
+			return icuEngine.ToLower(formTsstring.Text);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Find wordform given a cache and the string.
@@ -199,14 +188,15 @@ namespace SIL.FieldWorks.FdoUi
 			if (tssWf == null || tssWf.Length == 0)
 				return null;
 
-			string wf = tssWf.Text;
-			int wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
+			var wsVern = TsStringUtils.GetWsAtOffset(tssWf, 0);
+			var icuEngine = cache.LanguageWritingSystemFactoryAccessor.get_CharPropEngine(wsVern);
+			var wf = icuEngine.ToLower(tssWf.Text);
 			ILexEntry matchingEntry = null;
 
 			// Check for Lexeme form.
 			matchingEntry = (
 				from e in cache.LanguageProject.LexDbOA.Entries
-				where e.LexemeFormOA != null && e.LexemeFormOA.Form.get_String(wsVern).Text == wf
+				where e.LexemeFormOA != null && GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.LexemeFormOA.Form, wsVern) == wf
 				orderby e.HomographNumber
 				select e
 				).FirstOrDefault();
@@ -215,7 +205,7 @@ namespace SIL.FieldWorks.FdoUi
 			if (matchingEntry == null)
 				matchingEntry = (
 					from e in cache.LanguageProject.LexDbOA.Entries
-					where e.CitationForm.get_String(wsVern).Text == wf
+					where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, e.CitationForm, wsVern) == wf
 					orderby e.HomographNumber
 					select e
 					).FirstOrDefault();
@@ -226,7 +216,7 @@ namespace SIL.FieldWorks.FdoUi
 					from e in cache.LanguageProject.LexDbOA.Entries
 					where (
 						from af in e.AlternateFormsOS
-						where af.Form.get_String(wsVern).Text == wf
+						where GetLowercaseStringFromMultiUnicodeSafely(icuEngine, af.Form, wsVern) == wf
 						select af
 						).FirstOrDefault() != null
 					orderby e.HomographNumber
