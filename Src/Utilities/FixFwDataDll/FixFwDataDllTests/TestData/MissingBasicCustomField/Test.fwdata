@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000061">
+	<AdditionalFields>
+		<CustomField class="MoForm" name="MyNumber" type="Integer" wsSelector="-1" />
+		<CustomField class="MoForm" name="MyDate" type="GenDate" wsSelector="-1" />
+	</AdditionalFields>
+
+	<rt class="LexEntry" guid="44a3ad8f-c4f1-4bb2-9ca2-f68983ff9ef7">
+		<LexemeForm>
+			<objsur guid="47ff8685-502a-4617-8ab7-9d27889b3b3f" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="LexEntry" guid="501cd289-67b2-4b9f-9174-27656088379b">
+		<LexemeForm>
+			<objsur guid="6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="47ff8685-502a-4617-8ab7-9d27889b3b3f" ownerguid="44a3ad8f-c4f1-4bb2-9ca2-f68983ff9ef7">
+		<Form>
+			<AUni ws="fr">nonsense</AUni>
+		</Form>
+		<IsAbstract val="False" />
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5" ownerguid="501cd289-67b2-4b9f-9174-27656088379b">
+		<Form>
+			<AUni ws="fr">sillz</AUni>
+		</Form>
+		<IsAbstract val="False" />
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+		<Custom name="MyDate" val="2" />
+		<Custom name="MyNumber" val="1" />
+	</rt>
+
+</languageproject>

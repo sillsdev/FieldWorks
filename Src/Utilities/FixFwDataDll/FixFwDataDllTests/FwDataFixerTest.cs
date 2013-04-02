@@ -44,7 +44,7 @@ namespace FixFwDataDllTests
 			{
 				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
 				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "TagAndCellRefs", "GenericDates",
-				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems"
+				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems", "MissingBasicCustomField"
 			};
 
 		[TestFixtureSetUp]
@@ -171,6 +171,39 @@ namespace FixFwDataDllTests
 		{
 			AssertThatXmlIn.File(testPath).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"" + className + "\" and @guid=\"" + guid + "\"]", expectedCount, false);
+		}
+
+		[Test]
+		public void MissingBasicCustomField()
+		{
+			var testPath = Path.Combine(basePath, "MissingBasicCustomField");
+
+			var fixedDataPath = Path.Combine(testPath, "BasicFixup.fwdata");
+			var data = new FwDataFixer(fixedDataPath, new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+
+			// Verify initial state: no custom field element on one input, the other already has them.
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='47ff8685-502a-4617-8ab7-9d27889b3b3f']/Custom", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='1']", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='2']", 1, false);
+
+			// Verify Results: the allomorph has had the expected basic custom fields added.
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='47ff8685-502a-4617-8ab7-9d27889b3b3f']/Custom[@name='MyNumber' and @val='0']", 1, false);
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='47ff8685-502a-4617-8ab7-9d27889b3b3f']/Custom[@name='MyDate' and @val='0']", 1, false);
+			// The one that already had them should still only have one of each.
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='1']", 1, false);
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='2']", 1, false);
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='0']", 0, false);
+			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='0']", 0, false);
 		}
 
 		[Test]

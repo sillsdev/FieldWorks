@@ -16,6 +16,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.CoreImpl;
 using SIL.FieldWorks.FDO.Infrastructure;
+using SIL.FieldWorks.FDO.Infrastructure.Impl;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FDO.FDOTests
@@ -198,6 +199,30 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(fieldname, fd.Name, "Internal field name must not change!");
 			Assert.AreEqual(fd.Userlabel, ultimateUserLabel, "Field User label should have changed.");
 			return fd;
+		}
+
+		/// <summary></summary>
+		[Test]
+		public void CreatingNumberCustomField_MakesInstancesDirty()
+		{
+			var fd = new FieldDescription(Cache)
+			{
+				Class = MoStemAllomorphTags.kClassId,
+				Name = "MyNumber",
+				Type = CellarPropertyType.Integer
+			};
+
+			var le = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			le.LexemeFormOA = morph;
+			m_actionHandler.EndUndoTask();
+
+			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler,
+				() =>
+					{
+						fd.UpdateCustomField();
+						Assert.That(((UndoStack) m_actionHandler).m_currentBundle.DirtyObjects, Has.Member(morph));
+					});
 		}
 	}
 }
