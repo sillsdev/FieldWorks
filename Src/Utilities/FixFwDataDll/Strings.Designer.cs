@@ -70,6 +70,15 @@ namespace SIL.FieldWorks.FixData {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing default value type added to {0}.
+        /// </summary>
+        internal static string ksAddingMissingDefaultForValueType {
+            get {
+                return ResourceManager.GetString("ksAddingMissingDefaultForValueType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Adjusted homograph number.
         /// </summary>
         internal static string ksAdjustedHomograph {

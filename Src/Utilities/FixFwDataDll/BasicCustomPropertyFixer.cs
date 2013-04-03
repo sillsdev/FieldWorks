@@ -89,6 +89,13 @@ namespace SIL.FieldWorks.FixData
 				rt.Add(new XElement("Custom",
 					new XAttribute("name", fieldName),
 					new XAttribute("val", "0")));
+				var guid = rt.Attribute("guid").Value;
+				// This is such an insignificant fix from the user's point of view that we might prefer not
+				// even to report it. But don't remove the logging without adding another mechanism for
+				// the system to know that a problem has been fixed...this controls the important behavior
+				// of re-splitting the file before we commit.
+				logger(guid, DateTime.Now.ToShortDateString(),
+					String.Format(Strings.ksAddingMissingDefaultForValueType, guid));
 			}
 			return true;
 		}

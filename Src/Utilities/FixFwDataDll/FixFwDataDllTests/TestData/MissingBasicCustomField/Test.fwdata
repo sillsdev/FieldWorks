@@ -22,9 +22,6 @@
 			<AUni ws="fr">nonsense</AUni>
 		</Form>
 		<IsAbstract val="False" />
-		<MorphType>
-			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
-		</MorphType>
 	</rt>
 
 	<rt class="MoStemAllomorph" guid="6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5" ownerguid="501cd289-67b2-4b9f-9174-27656088379b">
@@ -32,9 +29,6 @@
 			<AUni ws="fr">sillz</AUni>
 		</Form>
 		<IsAbstract val="False" />
-		<MorphType>
-			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
-		</MorphType>
 		<Custom name="MyDate" val="2" />
 		<Custom name="MyNumber" val="1" />
 	</rt>
