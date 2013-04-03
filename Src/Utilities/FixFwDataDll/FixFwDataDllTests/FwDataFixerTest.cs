@@ -204,6 +204,7 @@ namespace FixFwDataDllTests
 				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyNumber' and @val='0']", 0, false);
 			AssertThatXmlIn.File(fixedDataPath).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class='MoStemAllomorph' and @guid='6c8f0104-dffb-43f3-9d1d-4c2ec2a4afa5']/Custom[@name='MyDate' and @val='0']", 0, false);
+			Assert.That(errors[0], Is.StringStarting("Missing default value type added to "));
 		}
 
 		[Test]

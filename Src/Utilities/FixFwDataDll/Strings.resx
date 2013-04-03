@@ -210,4 +210,8 @@
   <data name="ksUnusedRtElement" xml:space="preserve">
     <value>Removing unused rt element. (class='{0}', guid='{1}').</value>
   </data>
+  <data name="ksAddingMissingDefaultForValueType" xml:space="preserve">
+    <value>Missing default value type added to {0}</value>
+    <comment>{0} will be a guid.</comment>
+  </data>
 </root>
