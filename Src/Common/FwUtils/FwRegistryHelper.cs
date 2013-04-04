@@ -18,6 +18,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Security;
 using Microsoft.Win32;
 using SIL.Utils;
 
@@ -89,11 +90,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 			}
 
-			private static string FieldWorksRegistryKeyName
-			{
-				get { return FwUtils.SuiteVersion.ToString(CultureInfo.InvariantCulture); }
-			}
-
 			/// ------------------------------------------------------------------------------------
 			/// <summary>
 			/// Gets the local machine Registry key for FieldWorks.
@@ -120,6 +116,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			public RegistryKey FieldWorksRegistryKey
 			{
 				get { return RegistryHelper.SettingsKey(FieldWorksRegistryKeyName); }
+			}
+
+			/// ------------------------------------------------------------------------------------
+			/// <summary>
+			/// Gets the default (current user) Registry key for FieldWorks without the version number.
+			/// </summary>
+			/// ------------------------------------------------------------------------------------
+			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+				Justification = "We're returning an object")]
+			public RegistryKey FieldWorksVersionlessRegistryKey
+			{
+				get { return RegistryHelper.SettingsKey(); }
 			}
 
 			/// <summary>
@@ -265,6 +273,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return RegistryHelperImpl.FieldWorksRegistryKey; }
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the default (current user) Registry key for FieldWorks without the version number.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static RegistryKey FieldWorksVersionlessRegistryKey
+		{
+			get { return RegistryHelperImpl.FieldWorksVersionlessRegistryKey; }
+		}
+
+		/// <summary>
+		/// Gets the current SuiteVersion as a string
+		/// </summary>
+		internal static string FieldWorksRegistryKeyName
+		{
+			get { return FwUtils.SuiteVersion.ToString(CultureInfo.InvariantCulture); }
+		}
+
+		/// <summary>
+		/// It's probably a good idea to keep around the name of the old versions' keys
+		/// for upgrading purposes. See UpgradeUserSettingsIfNeeded().
+		/// </summary>
+		internal const string OldFieldWorksRegistryKeyNameVersion7 = "7.0";
+
 		/// <summary>
 		/// The value we look up in the FieldWorksRegistryKey to get(or set) the persisted user locale.
 		/// </summary>
@@ -287,6 +319,77 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool Paratext7orLaterInstalled()
 		{
 			return RegistryHelperImpl.Paratext7orLaterInstalled();
+		}
+
+		/// <summary>
+		/// E.g. the first time the user runs FW8, we need to copy a bunch of registry keys
+		/// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
+		/// </summary>
+		public static void UpgradeUserSettingsIfNeeded()
+		{
+			try
+			{
+				var v7exists = RegistryHelper.KeyExists(FieldWorksVersionlessRegistryKey,
+					OldFieldWorksRegistryKeyNameVersion7);
+				if (!v7exists)
+				{
+					return; // We'll assume this already got done!
+				}
+				var v8exists = RegistryHelper.KeyExists(FieldWorksVersionlessRegistryKey,
+					FieldWorksRegistryKeyName);
+				if (v8exists)
+				{
+					return; // We don't want to overwrite version 8 if it's there for some reason
+				}
+				using(var version7Key = FieldWorksVersionlessRegistryKey.CreateSubKey(OldFieldWorksRegistryKeyNameVersion7))
+				using(var version8Key = FieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
+				{
+					// Copy over almost everything from 7.0 to 8
+					// Don't copy the "launches" key or keys starting with "NumberOf"
+					CopySubKeyTree(version7Key, version8Key);
+				}
+
+				// After copying everything delete the old key
+				FieldWorksVersionlessRegistryKey.DeleteSubKeyTree(OldFieldWorksRegistryKeyNameVersion7);
+			}
+			catch (SecurityException se)
+			{
+				// What to do here? Punt!
+			}
+		}
+
+		private static void CopySubKeyTree(RegistryKey srcSubKey, RegistryKey destSubKey)
+		{
+			// Copies all keys and values from src to dest subKey recursively
+			// except 'launches' value (whereever found) and values with names starting with "NumberOf"
+			CopyAllValuesToNewSubKey(srcSubKey, destSubKey);
+			foreach (var subKeyName in srcSubKey.GetSubKeyNames())
+			{
+				using(var newDestKey = destSubKey.CreateSubKey(subKeyName))
+				{
+					CopySubKeyTree(srcSubKey.CreateSubKey(subKeyName), newDestKey);
+				}
+			}
+		}
+
+		private static void CopyAllValuesToNewSubKey(RegistryKey srcSubKey, RegistryKey destSubKey)
+		{
+			const string NumberPrefix = "NumberOf";
+			const string LaunchesString = "launches";
+			foreach (var valueName in srcSubKey.GetValueNames())
+			{
+				if (valueName.StartsWith(NumberPrefix) || valueName == LaunchesString)
+				{
+					continue;
+				}
+				CopyValueToNewKey(valueName, srcSubKey, destSubKey);
+			}
+		}
+
+		private static void CopyValueToNewKey(string valueName, RegistryKey oldSubKey, RegistryKey newSubKey)
+		{
+			var valueObject = oldSubKey.GetValue(valueName);
+			newSubKey.SetValue(valueName, valueObject);
 		}
 	}
 

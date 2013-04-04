@@ -269,6 +269,10 @@ namespace SIL.FieldWorks
 					Settings.Default.Save();
 				}
 
+				// e.g. the first time the user runs FW8, we need to copy a bunch of registry keys
+				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/8.
+				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
+
 				if (appArgs.ShowHelp)
 				{
 					ShowCommandLineHelp();

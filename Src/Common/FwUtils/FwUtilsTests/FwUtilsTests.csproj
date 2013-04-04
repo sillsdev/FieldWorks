@@ -148,6 +148,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UpgradeUserSettingsTests.cs" />
     <None Include="App.config" />
     <Compile Include="..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
@@ -155,6 +156,7 @@
     <Compile Include="CaseFunctionsTest.cs" />
     <Compile Include="DirectoryFinderTests.cs" />
     <Compile Include="DummyCharPropEngine.cs" />
+    <Compile Include="DummyFwRegistryHelper.cs" />
     <Compile Include="DummyICU.cs" />
     <Compile Include="ExemplarCharactersHelperTests.cs" />
     <Compile Include="FwLinkArgsTests.cs" />
