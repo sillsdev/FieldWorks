@@ -1574,6 +1574,7 @@ namespace SIL.FieldWorks
 							var projectLaunched = LaunchProject(args, ref projectToTry);
 							if(projectLaunched)
 							{
+								s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
 								var mainWindow = Form.ActiveForm;
 								if(mainWindow is IxWindow)
 								{
