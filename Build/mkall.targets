@@ -359,8 +359,7 @@
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="$(fwrt)/DistFiles/Patr100.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<!-- Needed for at least one set of unit tests. Since the installer combines distfiles with output/release, probably not necessary otherwise.
-		Possibly could be moved into a buildInclude for projects that need it. Old version did not copy for remakele-->
+		<!-- Needed for Flex to access projects from Paratext in the text chooser dialog. -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/Utilities.dll" DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- ICU50 dlls -->
