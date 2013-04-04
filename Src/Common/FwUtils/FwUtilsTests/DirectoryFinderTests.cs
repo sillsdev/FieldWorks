@@ -33,62 +33,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[TestFixture]
 	public class DirectoryFinderTests : BaseTest
 	{
-		#region DummyFwRegistryHelper class
-		private class DummyFwRegistryHelper: IFwRegistryHelper
-		{
-			#region IFwRegistryHelper implementation
-
-			public bool Paratext7orLaterInstalled()
-			{
-				throw new NotImplementedException();
-			}
-
-			public RegistryKey FieldWorksRegistryKeyLocalMachine
-			{
-				get
-				{
-					throw new NotImplementedException();
-				}
-			}
-
-			public RegistryKey FieldWorksBridgeRegistryKeyLocalMachine
-			{
-				get
-				{
-					throw new NotImplementedException();
-				}
-			}
-
-			public RegistryKey FieldWorksRegistryKeyLocalMachineForWriting
-			{
-				get
-				{
-					throw new NotImplementedException();
-				}
-			}
-
-			[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-				Justification="We're returning a reference")]
-			public RegistryKey FieldWorksRegistryKey
-			{
-				get
-				{
-					return Registry.CurrentUser.CreateSubKey(
-						@"Software\SIL\FieldWorks\UnitTests\DirectoryFinderTests");
-				}
-			}
-
-			public string UserLocaleValueName
-			{
-				get
-				{
-					throw new NotImplementedException();
-				}
-			}
-			#endregion
-		}
-		#endregion
-
 		/// <summary>
 		/// Resets the registry helper
 		/// </summary>

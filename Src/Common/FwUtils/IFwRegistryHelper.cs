@@ -50,6 +50,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		RegistryKey FieldWorksRegistryKey { get; }
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the default (current user) Registry key for FieldWorks without the version number.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		RegistryKey FieldWorksVersionlessRegistryKey { get; }
+
 		/// <summary>
 		/// The value we look up in the FieldWorksRegistryKey to get(or set) the persisted user locale.
 		/// </summary>
