@@ -400,10 +400,8 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			try
 			{
 				var commitData = new CommitData { Source = m_mySourceTag };
-				commitData.ObjectsAdded = new long[newbies.Count];
 				int objectAddedIndex = 0;
 				commitData.ObjectsDeleted = (from item in goners select item.Guid).ToArray();
-				commitData.ObjectsUpdated = (from item in dirtballs select item.Id.Guid).ToArray();
 
 				//m_dbStore.Ext().Purge();
 				var generation = commitData.WriteGeneration = NextWriteGeneration;
@@ -433,6 +431,30 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					}
 				}
 
+				// The ToArray() is so we can safely modify the collection. (Note: even before we added the
+				// code to convert dirtballs to newbies, there was some mysterious case where .Net thinks we have modified the
+				// collection. Maybe sometimes the dirtball is present as a surrogate and modifying it by Refreshing
+				// somehow changes the hashset? Anyway, be cautious about removing the ToArray(), even if you find
+				// a better way to handle the spurious dirtballs).
+				foreach (var dirtball in dirtballs.ToArray())
+				{
+					long id;
+					if (!m_idMap.TryGetValue(dirtball.Id, out id))
+					{
+						// pathologically, SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork may pass newbies as dirtballs.
+						newbies.Add(dirtball);
+						dirtballs.Remove(dirtball);
+						continue;
+					}
+					var realDbObj = (CmObjectSurrogate)m_dbStore.Ext().GetByID(id);
+					m_dbStore.Ext().Refresh(realDbObj, Int32.MaxValue);
+					realDbObj.Update(dirtball.Classname, dirtball.XMLBytes);
+					m_dbStore.Store(realDbObj);
+				}
+
+				commitData.ObjectsAdded = new long[newbies.Count]; // after possibly adjusting newbies above
+				commitData.ObjectsUpdated = (from item in dirtballs select item.Id.Guid).ToArray();
+
 				// Enhance JohnT: possibly this could be sped up by taking advantage of the case where
 				// newby is already a CmObjectSurrogate. This is probably only the case where we are
 				// doing data migration or switching backends, however.
@@ -443,19 +465,6 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					m_dbStore.Store(newSurrogate);
 					commitData.ObjectsAdded[objectAddedIndex++] = m_dbStore.Ext().GetID(newSurrogate);
 					MapId(newSurrogate);
-				}
-
-				// The ToArray() is to guard against some mysterious case where .Net thinks we have modified the
-				// collection. Maybe sometimes the dirtball is present as a surrogate and modifying it by Refreshing
-				// somehow changes the hashset? Anyway making a copy should prevent any problems.
-				foreach (var dirtball in dirtballs.ToArray())
-				{
-					var id = m_idMap[dirtball.Id];
-					var realDbObj = (CmObjectSurrogate)m_dbStore.Ext().GetByID(id);
-					m_dbStore.Ext().Refresh(realDbObj, Int32.MaxValue);
-					realDbObj.RawXmlBytes = dirtball.XMLBytes;
-					m_dbStore.Store(realDbObj);
-
 				}
 
 				foreach (var goner in goners)
