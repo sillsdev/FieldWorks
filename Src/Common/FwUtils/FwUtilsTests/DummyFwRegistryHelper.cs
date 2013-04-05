@@ -100,7 +100,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public RegistryKey SetupVersion7Settings()
 		{
-			var version7Key = FieldWorksVersionlessRegistryKey.CreateSubKey("7.0");
+			var version7Key = FieldWorksVersionlessRegistryKey.CreateSubKey(
+				FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7);
 			// add some test keys and values here
 			const string flexKeyName = "LanguageExplorer";
 			const string teKeyName = "TE";
@@ -109,16 +110,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const string valueName3 = "FlexTestValue1";
 			const string valueName4 = "FlexTestValue2";
 			const string launches = "launches";
+			const string userWs = "UserWs";
 			var flexKey = version7Key.CreateSubKey(flexKeyName);
 			var teKey = version7Key.CreateSubKey(teKeyName);
 			version7Key.SetValue(dirName, "Z:\\somedirectory\\subdir\\subdir\\DontUseThis");
 			version7Key.SetValue(crashes, 200);
+			version7Key.SetValue(userWs, "pt");
 			flexKey.SetValue(valueName3, 20);
 			flexKey.SetValue(valueName4, "somestring");
 			flexKey.SetValue(launches, 44);
 			teKey.SetValue(crashes, 10);
 			teKey.SetValue(dirName, "Z:\\somedirectory");
 			return version7Key;
+		}
+
+		/// <summary>
+		/// For testing upgrade of user settings where some version 8 keys already exist.
+		/// </summary>
+		/// <returns></returns>
+		public RegistryKey SetupVersion8Settings()
+		{
+			var version8Key = FieldWorksVersionlessRegistryKey.CreateSubKey(FwRegistryHelper.FieldWorksRegistryKeyName);
+			const string userWs = "UserWs";
+			version8Key.SetValue(userWs, "fr");
+
+			return version8Key;
 		}
 	}
 	#endregion
