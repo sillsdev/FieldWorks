@@ -291,11 +291,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!ExportLiftLexicon())
 				return true;
 
-
 			// Step 3. Have Flex Bridge do the S/R.
 			// after saving the state enough to detect if conflicts are created.
 			var projectFolder = Cache.ProjectId.ProjectFolder;
-			var savedState = PrepareToDetectMainConflicts(projectFolder);
+			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(projectFolder);
+			var savedState = PrepareToDetectLiftConflicts(liftFolder);
 			var fullProjectFileName = IsDb4oProject ?
 				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataDb4oFileExtension) :
 				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension);
@@ -309,7 +309,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (dataChanged)
 			{
-				bool conflictOccurred = DetectConflicts(projectFolder, savedState);
+				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
 				var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
 				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
@@ -712,6 +712,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				Directory.CreateDirectory(liftProjectDir);
 			}
+			_liftPathname = GetLiftPathname(liftProjectDir);
 			var savedState = PrepareToDetectLiftConflicts(liftProjectDir);
 			string dummy;
 			// flexbridge -p <path to fwdata file> -u <username> -v send_receive_lift
@@ -742,6 +743,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string GetLiftRepositoryFolderFromFwProjectFolder(string projectFolder)
 		{
+			var otherDir = Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories);
+			if (Directory.Exists(otherDir))
+			{
+				var extantOtherFolders = Directory.GetDirectories(otherDir);
+				var extantLiftFolder = extantOtherFolders.FirstOrDefault(folder => folder.EndsWith("_LIFT"));
+				if (extantLiftFolder != null)
+					return extantLiftFolder; // Reuse the old one, no matter what the new project dir name is.
+			}
+
 			var flexProjName = Path.GetFileName(projectFolder);
 			return Path.Combine(projectFolder, FLExBridgeHelper.OtherRepositories, flexProjName + '_' + FLExBridgeHelper.LIFT);
 		}
@@ -1276,6 +1286,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			get { return Cache.ProjectId.Type == FDOBackendProviderType.kDb4oClientServer; }
 		}
 
+		private static bool DetectLiftConflicts(string path, Dictionary<string, long> savedState)
+		{
+			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
+			{
+				long oldLength;
+				savedState.TryGetValue(file, out oldLength);
+				if (new FileInfo(file).Length == oldLength)
+					continue; // no new notes in this file.
+				return true; // Review JohnT: do we need to look in the file to see if what was added is a conflict?
+			}
+			return false; // no conflicts added.
+		}
+
 		private static bool DetectConflicts(string path, Dictionary<string, long> savedState)
 		{
 			foreach (var file in Directory.GetFiles(path, "*.ChorusNotes", SearchOption.AllDirectories))
@@ -1319,6 +1342,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private static Dictionary<string, long> PrepareToDetectLiftConflicts(string liftPath)
 		{
 			var result = new Dictionary<string, long>();
+			if (!Directory.Exists(liftPath))
+				return result;
 			foreach (var file in Directory.GetFiles(liftPath, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				result[file] = new FileInfo(file).Length;
