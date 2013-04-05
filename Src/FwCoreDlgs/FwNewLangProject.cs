@@ -671,7 +671,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 							m_dbFile = (string) progressDlg.RunTask(DisplayUi, FdoCache.CreateNewLangProj,
 																	ProjectName, threadHelper, m_cbAnalWrtSys.SelectedItem,
 																	m_cbVernWrtSys.SelectedItem,
-																	m_wsManager.UserWritingSystem.IcuLocale, m_newAnalysisWss, m_newVernWss,
+																	((PalasoWritingSystem)m_wsManager.UserWritingSystem).RFC5646, m_newAnalysisWss, m_newVernWss,
 																	anthroFile, FwCoreDlgs.ksAnthropologyCategories, FwCoreDlgs.ksAnth);
 						}
 					}
