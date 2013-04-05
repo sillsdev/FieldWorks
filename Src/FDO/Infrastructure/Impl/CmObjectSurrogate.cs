@@ -641,6 +641,27 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			m_xml = xmlBytes;
 		}
 
+		/// <summary>
+		/// Update the surrogate, in order to write it out (to the DB4O backend).
+		/// This may only change the class name if the object does not exist.
+		/// This is very similar to Reset(), but I needed a method which can be used with
+		/// fluffed-up surrogates (in normal saves) and which can also change the class
+		/// (in data migration cases). I didn't want to modify Reset() because I don't know all
+		/// the ways it is used and whether relaxing the constraint there might be dangerous.
+		/// </summary>
+		/// <param name="className"></param>
+		/// <param name="xmlBytes"></param>
+		public void Update(string className, byte[] xmlBytes)
+		{
+			if (String.IsNullOrEmpty(className)) throw new ArgumentException("className");
+			if (xmlBytes == null || xmlBytes.Length == 0) throw new ArgumentException("xmlBytes");
+			if (m_object != null && className != m_object.ClassName)
+				throw new InvalidOperationException("Cannot change class after reconstitution has taken place.");
+
+			if (m_classname != className)
+				SetClassName(className);
+			m_xml = xmlBytes;
+		}
 
 		#region Object overrides
 
