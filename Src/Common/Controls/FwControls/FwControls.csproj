@@ -514,10 +514,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
+  <Import Project="../../../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>

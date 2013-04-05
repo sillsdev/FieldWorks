@@ -237,6 +237,7 @@ install-tree:
 	install -m 644 environ{,-xulrunner} $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/*.so $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 DistFiles/*.{dll,so,dll.config} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 DistFiles/Linux/*.{dll,so,dll.config} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/EC/Plugins/*.xml $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	# Install read-only configuration files

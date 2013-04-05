@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		<Bin>../../../Bin</Bin>
@@ -10,12 +10,14 @@
 	<ItemGroup>
 		<WriteKeyFilesSource Include="@(WriteKeyFiles -&gt; '$(Bin)/%(Identity)')" />
 	</ItemGroup>
-	<Target Name="AfterClean">
+	<Target Name="AfterClean" DependsOnTargets="DeleteCopiedPalasoDlls">
+		<Delete Files="@(OutputFiles)" ContinueOnError="true"/>
 		<Message Importance="high" Text="Delete: %(WriteKeyFilesSource.FullPath)" />
 		<Delete Files="@(WriteKeyFiles -&gt; '$(OutDir)/%(Identity)')" ContinueOnError="true" />
 	</Target>
-	<Target Name="BeforeBuild">
+	<Target Name="BeforeBuild" DependsOnTargets="CopyPalasoDlls">
 		<!-- whatever commands we need to run before the rest of the build-->
+		<Copy SourceFiles="@(PalasoFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
 		<Message Importance="high" Text="Copying %(WriteKeyFilesSource.FullPath) to $(OutDir)" />
 		<Copy SourceFiles="@(WriteKeyFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" />
 	</Target>

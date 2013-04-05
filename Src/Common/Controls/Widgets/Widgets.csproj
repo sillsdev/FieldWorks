@@ -122,11 +122,11 @@
     </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\Palaso.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="Palaso.Media, Version=1.7.38.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\Palaso.Media.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\Palaso.Media.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.3244.30943, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -305,10 +305,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
+  <Import Project="../../../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>

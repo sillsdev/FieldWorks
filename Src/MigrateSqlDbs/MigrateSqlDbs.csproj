@@ -87,7 +87,7 @@
     </Reference>
     <Reference Include="Palaso, Version=1.9.116.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\Palaso.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -179,11 +179,9 @@
     <None Include="Resources\BookOnCube.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-	   Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <PropertyGroup>
+    <DistFiles>../../DistFiles</DistFiles>
+  </PropertyGroup>
+  <Import Project="../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>
