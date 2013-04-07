@@ -530,9 +530,9 @@ namespace FixFwDataDllTests
 
 			// check that the clause marker was there originally
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 3, false);
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 4, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"MoStemMsa\"]", 3, false);
+				"//rt[@class=\"MoStemMsa\"]", 5, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"FsFeatStruc\"]", 2, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
@@ -541,9 +541,9 @@ namespace FixFwDataDllTests
 				"//rt[@class=\"FsClosedValue\"]", 1, false);
 
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 1, false);
+				"//rt[@class=\"LexEntry\"]/MorphoSyntaxAnalyses/objsur", 2, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
-				"//rt[@class=\"MoStemMsa\"]", 1, false);
+				"//rt[@class=\"MoStemMsa\"]", 3, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"FsFeatStruc\"]", 0, false);
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(

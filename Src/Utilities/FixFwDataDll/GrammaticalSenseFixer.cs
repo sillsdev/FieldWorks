@@ -27,8 +27,8 @@ namespace SIL.FieldWorks.FixData
 		private Dictionary<string, string> senseToMSA = new Dictionary<string, string>();
 		private Dictionary<string, HashSet<string>> entryToMSA = new Dictionary<string, HashSet<string>>();
 		private Dictionary<string, HashSet<string>> entryToSense = new Dictionary<string, HashSet<string>>();
+		private HashSet<string> subSenses = new HashSet<string>();
 		private HashSet<string> goodMsas = new HashSet<string>();
-		private HashSet<string> allMsas = new HashSet<string>();
 
 		internal override void InspectElement(XElement rt)
 		{
@@ -72,15 +72,13 @@ namespace SIL.FieldWorks.FixData
 							break;
 						senseToMSA[rtGuid] = objsur.Attribute("guid").Value;
 					}
-					break;
-				case "MoStemMsa":
-				case "MoDerivAffMsa":
-				case "MoInflAffMsa":
-				case "MoUnclassifiedAffixMsa":
-				case "MoDerivStepMsa":
-					if (!allMsas.Contains(rtGuid))
+					var subSenseElement = rt.Element("Senses");
+					if (subSenseElement != null)
 					{
-						allMsas.Add(rtGuid);
+						foreach (var surrogate in subSenseElement.Elements("objsur"))
+						{
+							subSenses.Add(surrogate.Attribute("guid").Value);
+						}
 					}
 					break;
 				default:
@@ -92,6 +90,18 @@ namespace SIL.FieldWorks.FixData
 			Dictionary<string, HashSet<string>> parentToOwnedObjsur, HashSet<string> rtElementsToDelete)
 		{
 			base.FinalFixerInitialization(owners, guids, parentToOwnedObjsur, rtElementsToDelete);
+			foreach (var subSense in subSenses)
+			{
+				var owner = new Guid(subSense);
+				while (owners.TryGetValue(owner, out owner))
+				{
+					if (entryToSense.ContainsKey(owner.ToString()))
+					{
+						entryToSense[owner.ToString()].Add(subSense);
+						break;
+					}
+				}
+			}
 			//Go through the maps and find out if any references to MSAs ought to be dropped by the entry
 			foreach (var entry in entryToSense)
 			{
@@ -108,11 +118,14 @@ namespace SIL.FieldWorks.FixData
 				goodMsas.UnionWith(keepMSAs);
 			}
 
-			foreach (var msa in allMsas)
+			foreach (var msaset in entryToMSA.Values)
 			{
-				if (IsRejectedMsa(msa))
+				foreach (var msa in msaset)
 				{
-					MarkObjForDeletionAndDecendants(msa);
+					if (IsRejectedMsa(msa))
+					{
+						MarkObjForDeletionAndDecendants(msa);
+					}
 				}
 			}
 		}

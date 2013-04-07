@@ -5,6 +5,18 @@
 <MorphoSyntaxAnalysis>
 <objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="r" />
 </MorphoSyntaxAnalysis>
+<Senses>
+<objsur guid="0f025d44-7074-4e04-868e-cc0a74db6931" t="o" />
+</Senses>
+</rt>
+
+<rt class="LexSense" guid="0f025d44-7074-4e04-868e-cc0a74db6931" ownerguid="155c0e55-2428-49a1-8957-57df676886cd">
+<MorphoSyntaxAnalysis>
+<objsur guid="a07cdfc9-bdff-4e88-b17d-13d40cbd2bc6" t="r" />
+</MorphoSyntaxAnalysis>
+<Senses>
+<objsur guid="0f025d44-7074-4e04-868e-cc0a74db6931" t="o" />
+</Senses>
 </rt>
 
 <rt class="MoStemMsa" guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
@@ -16,11 +28,15 @@
 <rt class="MoStemMsa" guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" ownerguid="5206535c-d93d-4129-8fce-9e93d8970aec">
 </rt>
 
+<rt class="MoStemMsa" guid="a07cdfc9-bdff-4e88-b17d-13d40cbd2bc6" ownerguid="0f025d44-7074-4e04-868e-cc0a74db6931">
+</rt>
+
 <rt class="LexEntry" guid="5206535c-d93d-4129-8fce-9e93d8970aec">
 <MorphoSyntaxAnalyses>
 	<objsur guid="bc8c6aa8-8698-4a1d-a1d0-6fd325f780d6" t="o" />
 	<objsur guid="4860a07e-b11a-47c1-8680-b5d6317b26f6" t="o" />
 	<objsur guid="007cdfc9-bdff-4e88-b17d-13d40cbd2bc6" t="o" />
+	<objsur guid="a07cdfc9-bdff-4e88-b17d-13d40cbd2bc6" t="o" />
 </MorphoSyntaxAnalyses>
 <Senses>
 <objsur guid="155c0e55-2428-49a1-8957-57df676886cd" t="o" />
@@ -75,5 +91,25 @@
 			<objsur guid="76d9640d-f5f8-4a54-b169-238bcc0ad3a5" t="r" />
 		</Value>
 	</rt>
-
+<!-- The following section makes sure we aren't too aggressive -->
+<rt class="MoStemMsa" guid="0c2ff91e-41c2-463b-9ad9-038718718a07" ownerguid="63621e4b-9d6f-468b-9864-e4eb3a6667d3">
+<PartOfSpeech>
+<objsur guid="78f35fe9-e85c-441c-a162-230d785efddc" t="r" />
+</PartOfSpeech>
+</rt>
+<rt class="MoExoCompound" guid="63621e4b-9d6f-468b-9864-e4eb3a6667d3" ownerguid="5b77ae71-d127-4638-87a5-d8c72d108b9f">
+<RightMsa>
+<objsur guid="0c2ff91e-41c2-463b-9ad9-038718718a07" t="o" />
+</RightMsa>
+</rt>
+<rt class="MoMorphData" guid="5b77ae71-d127-4638-87a5-d8c72d108b9f" ownerguid="c1ed6dba-e382-11de-8a39-0800200c9a66">
+<CompoundRules>
+<objsur guid="63621e4b-9d6f-468b-9864-e4eb3a6667d3" t="o" />
+</CompoundRules>
+</rt>
+<rt class="LangProject" guid="c1ed6dba-e382-11de-8a39-0800200c9a66">
+<MorphologicalData>
+<objsur guid="5b77ae71-d127-4638-87a5-d8c72d108b9f" t="o" />
+</MorphologicalData>
+</rt>
 </languageproject>
