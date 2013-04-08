@@ -705,7 +705,7 @@
 
   <Class name="Example" partOf="Sense">
 	<Field MDF="\xv" id="sent" multi="yes" property="Example"
-		   signature="MultiString" type="string" uiname="Example" unique="yes">
+		   signature="MultiString" type="string" uiname="Example">
 	  <Help>
 		<Usage>When you have a marker that has the vernacular example
 		sentence.</Usage>
