@@ -1,7 +1,1 @@
 # Gendarme filter file to suppress reporting of defects
-
-#-----------------------------------------------------------------------------------------------
-R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
-
-# object is added to collection and disposed there
-##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Common.Widgets.FwMultilingualPropViewTests/DummyFwMultilingualPropViewDataSource::AddColumn(System.String,System.Int32)

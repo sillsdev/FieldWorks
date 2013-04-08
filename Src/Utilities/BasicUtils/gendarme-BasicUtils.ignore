@@ -21,11 +21,11 @@ M: System.Void SIL.Utils.Logger::InitializeTextWriter()
 
 # Reference
 M: System.Boolean SIL.Utils.ScriptMaker::PreFilterMessage(System.Windows.Forms.Message&)
-M: System.Collections.IEnumerator SIL.Utils.LinuxPackageUtils/<FindInstalledPackages>d__5::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRange>d__4::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeAbove>d__c::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeBelow>d__17::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<InOrderTraversal>d__29::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.Utils.LinuxPackageUtils/<FindInstalledPackages>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRange>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeAbove>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<GetRangeBelow>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.Utils.TreeDictionary`2/<InOrderTraversal>*::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule

@@ -12,7 +12,6 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 # Reference only
 M: System.Void SIL.FieldWorks.LexText.Controls.InflectionFeaturePopupTreeManager::m_treeCombo_AfterSelect(System.Object,System.Windows.Forms.TreeViewEventArgs)
 M: System.Windows.Forms.TreeNode SIL.FieldWorks.LexText.Controls.MSAPopupTreeManager::MakeTargetMenuItem()
-##Commented by AutoUpdateIgnore## M: System.Boolean SIL.FieldWorks.LexText.Controls.MSAPopupTreeManager::ChooseFromMasterCategoryList()
 M: System.Boolean SIL.FieldWorks.LexText.Controls.MSAPopupTreeManager::AddNewMsa()
 M: System.Boolean SIL.FieldWorks.LexText.Controls.MSAPopupTreeManager::EditExistingMsa()
 M: System.Void SIL.FieldWorks.LexText.Controls.PopupTreeManager::LoadPopupTree(System.Int32)
@@ -25,7 +24,6 @@ M: System.String SIL.FieldWorks.LexText.Controls.PopupTreeManager::get_TimberLin
 M: System.Void SIL.FieldWorks.LexText.Controls.PopupTreeManager::popupTree_PopupTreeClosed(System.Object,System.Windows.Forms.TreeViewEventArgs)
 
 # added to control and disposed there
-##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.LexText.Controls.LexOptionsDlg::InitializeComponent()
 M: System.Void SIL.FieldWorks.LexText.Controls.MasterCategoryListDlg/MasterCategory::ResetDescription(System.Windows.Forms.RichTextBox)
 M: System.Void SIL.FieldWorks.LexText.Controls.AddWritingSystemButton::OnClick(System.EventArgs)
 
@@ -36,8 +34,8 @@ M: System.Void SIL.FieldWorks.LexText.Controls.LexImport::ProcessPhase4Log(Syste
 M: System.Void SIL.FieldWorks.LexText.Controls.InsertEntryDlg::lnkAssistant_LinkClicked(System.Object,System.Windows.Forms.LinkLabelLinkClickedEventArgs)
 
 # Returns an object
-M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.EntryGoDlg/EntrySearchFieldGetter/<GetEntrySearchFields>d__8::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.RecordGoDlg/<GetRecordSearchFields>d__0::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.EntryGoDlg/EntrySearchFieldGetter/<GetEntrySearchFields>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.LexText.Controls.RecordGoDlg/<GetRecordSearchFields>*::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

@@ -18,12 +18,6 @@ M: System.Void SIL.FieldWorks.Discourse.ConstituentChartLogic::AddDependentClaus
 M: System.Void SIL.FieldWorks.Discourse.ConstituentChartLogic::MakeMoveItems(SIL.FieldWorks.Discourse.ChartLocation,System.Windows.Forms.ContextMenuStrip,System.EventHandler,System.EventHandler,System.String)
 M: System.Void SIL.FieldWorks.Discourse.ConstituentChartLogic::MakePreposedOrPostPosedMenuItem(System.Windows.Forms.ContextMenuStrip,SIL.FieldWorks.Discourse.ChartLocation,System.Int32,System.Int32,System.String,System.Boolean)
 
-# variable ch added to Columns and disposed there
-##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Discourse.ConstituentChartLogic::MakeMainHeaderCols(System.Windows.Forms.ListView)
-
-# TODO: I'm not sure if/how this gets properly disposed
-#M: System.Void SIL.FieldWorks.Discourse.ConstituentChart::btnContextMenu_Click(System.Object,System.EventArgs)
-
 #-------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 # variable is passed in, so we shouldn't dispose it

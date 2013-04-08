@@ -14,4 +14,3 @@ T: SIL.FieldWorks.TE.LocationTrackerImpl
 T: SIL.FieldWorks.TE.InsertVerseMessageFilter
 T: SIL.FieldWorks.TE.ChangeSpellingInfo
 T: SIL.FieldWorks.TE.TeParaCounter
-##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.TE.UndoImportManager

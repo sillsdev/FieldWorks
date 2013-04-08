@@ -10,10 +10,10 @@ M: System.Void SIL.FieldWorks.Common.RootSites.SimpleRootSiteDataProviderTestsBa
 M: System.Void SIL.FieldWorks.Common.RootSites.RootsiteDummyViewTestsBase::TestSetup()
 
 # Object is disposed in Dispose()
-M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<PictureCollectorEnv_OnePicture>b__8()
-M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<ImageControl_OnePicture>b__a()
-M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<ImageAndEditControls>b__10()
-M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<ButtonUIA_OnePicture>b__16()
+M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<PictureCollectorEnv_OnePicture>*()
+M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<ImageControl_OnePicture>*()
+M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<ImageAndEditControls>*()
+M: SIL.FieldWorks.Common.RootSites.VwBaseVc SIL.FieldWorks.Common.RootSites.RootSiteDataProviderTests::<ButtonUIA_OnePicture>*()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

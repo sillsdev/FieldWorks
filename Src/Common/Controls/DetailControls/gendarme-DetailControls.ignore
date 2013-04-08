@@ -31,7 +31,7 @@ M: System.Int32 SIL.FieldWorks.Common.Framework.DetailControls.Slice::InsertObje
 M: System.Windows.Forms.ToolTip SIL.FieldWorks.Common.Framework.DetailControls.DataTree::get_ToolTip()
 
 # Returns object
-M: System.Collections.IEnumerator SIL.FieldWorks.Common.Framework.DetailControls.ObjSeqHashMap/<get_Values>d__0::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Framework.DetailControls.ObjSeqHashMap/<get_Values>*::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
