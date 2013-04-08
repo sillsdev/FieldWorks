@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -3830,34 +3831,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void OnJumpToToolAndFilterAnthroItem(string linkSetupInfo, string toolToJumpTo)
 		{
-			var rootBx
-				= ((CurrentSlice.Control as VectorReferenceLauncher).MainControl as VectorReferenceView).RootBox;
-			var selection = rootBx.Selection;
-
-			// Enhance GJM: I don't like the way this matches the Abbreviation-Name string. We should be getting the
-			// hvos of the objects (at least partially) selected from views. (See LT-12240)
-			ITsString TsStr;
-			selection.GetSelectionString(out TsStr, "");
-			var sMatchText = TsStr.Text;
-
-			var repoAnthroCats = m_cache.ServiceLocator.GetInstance<ICmAnthroItemRepository>();
-			var hvoList = (from item in repoAnthroCats.AllInstances()
-						   where sMatchText.Contains(item.AbbrAndName)
-						   select item.Hvo).ToList();
-			if (hvoList.Count == 0)
-			{
-				// For now just don't do anything if we didn't get an exact match.
-				// This can happen, for instance, if we try to select more than one Anthro category to filter on.
+			var obj = ((CurrentSlice.Control as VectorReferenceLauncher).MainControl as VectorReferenceView).SelectedObject;
+			if (obj == null)
 				return;
-			}
-			var shvos = ConvertHvoListToString(hvoList);
+			var hvo = obj.Hvo;
 
 			FwLinkArgs link = new FwAppArgs(FwUtils.FwUtils.ksFlexAppName, Cache.ProjectId.Handle,
 											Cache.ProjectId.ServerName, toolToJumpTo, Guid.Empty);
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));
-			additionalProps.Add(new Property("HvoOfAnthroItem", shvos));
+			additionalProps.Add(new Property("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
 			m_mediator.PostMessage("FollowLink", link);
 		}
 
