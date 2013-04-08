@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private static string GetNoticePathname(string baseLiftFolderDirectoryName)
 		{
-			return Path.Combine(Path.GetDirectoryName(baseLiftFolderDirectoryName), FailureFilename);
+			return Path.Combine(baseLiftFolderDirectoryName, FailureFilename);
 		}
 	}
 
