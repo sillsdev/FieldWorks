@@ -98,7 +98,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected override bool OnRightMouseUp(Point pt, Rectangle rcSrcRoot,
 			Rectangle rcDstRoot)
 		{
-			IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, false);
+			// if we don't install the selection here, a previous selection may give us
+			// spurious results later on when handling the UI this right click brings up;
+			// see LT-12154.
+			IVwSelection sel = RootBox.MakeSelAt(pt.X, pt.Y, rcSrcRoot, rcDstRoot, true);
 			TextSelInfo tsi = new TextSelInfo(sel);
 			return HandleRightClickOnObject(tsi.Hvo(false));
 		}
