@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2012, SIL International. All Rights Reserved.
-// <copyright from='2012' to='2012' company='SIL International'>
-//		Copyright (c) 2012, SIL International. All Rights Reserved.
+// <copyright from='2012' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -9,14 +9,12 @@
 #endregion
 //
 // File: HomographFixer.cs
-// Responsibility: RickM
 //
 // <remarks>
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -32,10 +30,11 @@ namespace SIL.FieldWorks.FixData
 	/// </summary>
 	internal class HomographFixer : RtFixer
 	{
-		Dictionary<Guid, XElement> m_MoStemAllomorph = new Dictionary<Guid, XElement>();
+		Dictionary<Guid, XElement> m_MoAllomorphs = new Dictionary<Guid, XElement>();
 		Dictionary<Guid, string> m_oldHomographNumbers = new Dictionary<Guid, string>();
 		HashSet<Guid> m_firstAllomorphs = new HashSet<Guid>();
-			Dictionary<String, List<Guid>> m_Homographs = new Dictionary<String, List<Guid>>();
+		Dictionary<String, List<Guid>> m_Homographs = new Dictionary<String, List<Guid>>();
+		Dictionary<Guid, XElement> entriesWithCitationForm = new Dictionary<Guid, XElement>();
 		Dictionary<Guid, String> m_LexEntryHomographNumbers = new Dictionary<Guid, String>();
 		const string kUnknown = "<unknown>";
 		private string m_homographWs = null;
@@ -50,9 +49,9 @@ namespace SIL.FieldWorks.FixData
 				return;
 			switch (className)
 			{
-					// Enhance JohnT: can't affixes have homographs??
+				case "MoAffixAllomorph":
 				case "MoStemAllomorph":
-					m_MoStemAllomorph.Add(guid, rt);
+					m_MoAllomorphs.Add(guid, rt);
 					break;
 				case "LexEntry":
 					var homographElement = rt.Element("HomographNumber");
@@ -75,6 +74,11 @@ namespace SIL.FieldWorks.FixData
 							m_firstAllomorphs.Add(lfGuid);
 						}
 					}
+					var citationForm = rt.Element("CitationForm");
+					if (citationForm != null)
+					{
+						entriesWithCitationForm.Add(guid, citationForm);
+					}
 					// Enhance JohnT: possibly we should consider AlternateForms, if no LexemeForm?
 					break;
 				case "LangProject":
@@ -96,26 +100,43 @@ namespace SIL.FieldWorks.FixData
 		{
 			base.FinalFixerInitialization(owners, guids, parentToOwnedObjsur, rtElementsToDelete); // Sets base class member variables
 
-			List<Guid> guidsForHomograph = new List<Guid>();
+			foreach (var cfElement in entriesWithCitationForm)
+			{
+				var cfString = GetStringInHomographWritingSystem(cfElement.Value);
+				if (!string.IsNullOrWhiteSpace(cfString))
+				{
+					cfString = cfString.Trim();
+					if (m_Homographs.ContainsKey(cfString))
+					{
+						m_Homographs[cfString].Add(cfElement.Key);
+					}
+					else
+					{
+						m_Homographs.Add(cfString, new List<Guid> { cfElement.Key });
+					}
+				}
+			}
 
 			// Create a dictionary with the Form and MorphType guid as the key and a list of ownerguid's as the value.  This
 			// will show us which LexEntries should have homograph numbers.  If the list of ownerguids has only one entry then
 			// it's homograph number should be zero. If the list of owerguids has more than one guid then the LexEntries
 			// associated with those guids are homographs and will require unique homograph numbers.
-			foreach (var morphKvp in m_MoStemAllomorph)
+			foreach (var morphKvp in m_MoAllomorphs)
 			{
+				List<Guid> guidsForHomograph;
 				var rtElem = morphKvp.Value;
 				var morphGuid = new Guid(rtElem.Attribute("guid").Value);
+				if (entriesWithCitationForm.Keys.Contains(owners[morphGuid]))
+				{
+					continue; // If an entry has a citation form the rest of this information isn't relevant
+				}
 				// We don't assign homographs based on allomorphs.
 				if (!m_firstAllomorphs.Contains(morphGuid))
 					continue;
 				var rtForm = rtElem.Element("Form");
 				if (rtForm == null)
 					continue;
-				var rtFormAlt = rtForm.Elements("AUni").FirstOrDefault(form => form.Attribute("ws") != null && form.Attribute("ws").Value == m_homographWs);
-				if (rtFormAlt == null)
-					continue; // no data in relevant ws for homographs.
-				var rtFormText = rtFormAlt.Value;
+				var rtFormText = GetStringInHomographWritingSystem(rtForm);
 				if (rtFormText == null || rtFormText.Trim().Length == 0)
 					continue; // entries with no lexeme form are not considered homographs.
 
@@ -127,19 +148,18 @@ namespace SIL.FieldWorks.FixData
 					continue;
 				var guid = rtObjsur.Attribute("guid").Value;
 
-				var key = rtFormText + guid;
+				// if there was a citation form which matches the form of this MoStemAllomorph the MorphType
+				// is not important to the homograph determination.
+				var key = m_Homographs.ContainsKey(rtFormText) ? rtFormText : rtFormText + guid;
 
 				var ownerguid = new Guid(rtElem.Attribute("ownerguid").Value);
 				if (m_Homographs.TryGetValue(key, out guidsForHomograph))
 				{
 					guidsForHomograph.Add(ownerguid);
-					m_Homographs.Remove(key);
-					m_Homographs.Add(key, guidsForHomograph);
 				}
 				else
 				{
-					guidsForHomograph = new List<Guid>();
-					guidsForHomograph.Add(ownerguid);
+					guidsForHomograph = new List<Guid> { ownerguid };
 					m_Homographs.Add(key, guidsForHomograph);
 				}
 			}
@@ -193,6 +213,12 @@ namespace SIL.FieldWorks.FixData
 
 		}
 
+		private string GetStringInHomographWritingSystem(XElement rtForm)
+		{
+			var alternateFormElement =  rtForm.Elements("AUni").FirstOrDefault(form => form.Attribute("ws") != null && form.Attribute("ws").Value == m_homographWs);
+			return alternateFormElement == null ? null : alternateFormElement.Value;
+		}
+
 		//For each LexEntry element, set the homograph number as determined in the FinalFixerInitialization method.
 		internal override bool FixElement(XElement rt, FwDataFixer.ErrorLogger logger)
 		{
@@ -212,14 +238,16 @@ namespace SIL.FieldWorks.FixData
 						if (homographNum != "0") // no need to make a change if already implicitly zero.
 						{
 							rt.Add(new XElement("HomographNumber", new XAttribute("val", homographNum)));
-							logger(guidString, DateTime.Now.ToShortDateString(), Strings.ksAdjustedHomograph);
+							logger(guidString, DateTime.Now.ToShortDateString(),
+								   String.Format(Strings.ksAdjustedHomograph, guidString, m_oldHomographNumbers[guid], homographNum));
 						}
 						break;
 					}
 					if (homographElement.Attribute("val") == null || homographElement.Attribute("val").Value != homographNum)
 					{
 						homographElement.SetAttributeValue("val", homographNum);
-						logger(guidString, DateTime.Now.ToShortDateString(), Strings.ksAdjustedHomograph);
+						logger(guidString, DateTime.Now.ToShortDateString(),
+							   String.Format(Strings.ksAdjustedHomograph, guidString, m_oldHomographNumbers[guid], homographNum));
 					}
 					break;
 				default:

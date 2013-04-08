@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.FixData {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adjusted homograph number.
+        ///   Looks up a localized string similar to Adjusted homograph number in {0} from {1} to {2}.
         /// </summary>
         internal static string ksAdjustedHomograph {
             get {

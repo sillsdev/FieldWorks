@@ -676,6 +676,10 @@ namespace FixFwDataDllTests
 			const string homoSomethingGuid = "972EAFEA-49D6-40D7-A848-6E658C1A2A79"; // homo in de, something in fr
 			const string homoElseGuid = "9BE4E7C0-BDF2-40A5-98E3-70E42D955C49"; // homo in de, else in fr
 			const string irrelevantElseGuid = "A42984AA-EEA0-4204-AC81-9B9B115E9785"; // irrelevant in de, else in fr
+			const string citationDiffGuid1 = "21122112-bad1-46ba-9f69-6b46e45efff4";
+			const string citationDiffGuid2 = "21122112-bad2-46ba-9f69-6b46e45efff4";
+			const string citationSameGuid1 = "33333333-bad1-46ba-9f69-6b46e45efff4";
+			const string citationSameGuid2 = "33333333-bad2-46ba-9f69-6b46e45efff4";
 
 			// Verification of input.
 			var testFile = Path.Combine(testPath, "BasicFixup.fwdata");
@@ -708,6 +712,16 @@ namespace FixFwDataDllTests
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class='LexEntry' and @guid='" + emptyEntry4Guid + "']/HomographNumber", 0, false);
 
+			// Two LexEntries have different citation forms but are otherwise identical starting with 0's should end with 0's
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + citationDiffGuid1 + "']/HomographNumber[@val='0']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + citationDiffGuid2 + "']/HomographNumber[@val='0']", 1, false);
+			// Two LexEntries with the same citation forms but otherwise different starting with 0's should end with '1', '2'
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + citationSameGuid1 + "']/HomographNumber[@val='0']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + citationSameGuid2 + "']/HomographNumber[@val='0']", 1, false);
 			// stems for multilingual ones:
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class='MoStemAllomorph' and @guid='" + "F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" + "']/Form/AUni[@ws='de' and text()='irrelevant']", 1, false);
@@ -765,6 +779,11 @@ namespace FixFwDataDllTests
 			VerifyHn(xmlDoc, "bb4042c7-47b2-422f-ae66-a09293d16ed8", "1"); // homo that was previously 1 should still be
 			VerifyHn(xmlDoc, "bb3d3349-5cea-4920-a2bc-672d5d927875", "3"); // homo that was previously 0 should take next value
 			VerifyHn(xmlDoc, "bb3be3bc-e4e6-4e72-9b1b-d81c0298b4e7", "4"); // homo that was previously the second 2 should be changed
+			//Two entries with different citation forms previously 0, should still be.
+			VerifyHn(xmlDoc, citationSameGuid1, "1"); // former 0 should be 1
+			VerifyHn(xmlDoc, citationSameGuid2, "2"); // former 0 should be 2
+			VerifyHn(xmlDoc, citationDiffGuid1, "0"); // homograph# should be unchanged
+			VerifyHn(xmlDoc, citationDiffGuid2, "0"); // homograph# should be unchanged
 			VerifyHn(xmlDoc, emptyEntry1Guid, "0"); // entry with empty LF should have no HN
 			VerifyHn(xmlDoc, emptyEntry2Guid, "0"); // entry with empty LF should have no HN
 			VerifyHn(xmlDoc, emptyEntry3Guid, "0"); // entry with no LF should have no HN
@@ -793,7 +812,7 @@ namespace FixFwDataDllTests
 			Assert.IsNotNull(homographEl);
 			homographAttribute = homographEl.Attributes[0];
 			Assert.That(homographAttribute.Name, Is.EqualTo("val"));
-			Assert.That(homographAttribute.Value, Is.EqualTo(expectedHn));
+			Assert.That(homographAttribute.Value, Is.EqualTo(expectedHn), "Homograph# is unexpectedly different.");
 		}
 	}
 }

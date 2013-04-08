@@ -187,7 +187,7 @@
     <value>Removing undefined custom property '{0}' from class='{1}', guid='{2}'.</value>
   </data>
   <data name="ksAdjustedHomograph" xml:space="preserve">
-    <value>Adjusted homograph number</value>
+    <value>Adjusted homograph number in {0} from {1} to {2}</value>
   </data>
   <data name="ksRemovedUnusedMsa" xml:space="preserve">
     <value>Removing unused MorphoSyntaxAnalysis</value>
