@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Rick MacLean <rick_maclean@sil.org>
+Submitted-by: Gordon Martin <gordon-soft_martin@sil.org>
+Submitted-at: Mon, 08 Apr 2013 21:22:51 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/944
+Project: FieldWorks
+Branch: refs/heads/develop
