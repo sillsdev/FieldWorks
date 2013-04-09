@@ -1,0 +1,9 @@
+Code-Review+2: Eberhard Beilharz <eb1@sil.org>
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Jason Naylor <jason.naylor@gmail.com>
+Submitted-by: Brent McCarthy <brent_mccarthy@sil.org>
+Submitted-at: Tue, 09 Apr 2013 16:47:55 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/942
+Project: FieldWorks
+Branch: refs/heads/support/7.3-gial-Linux
