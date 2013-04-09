@@ -27,17 +27,22 @@ namespace SIL.Utils
 	/// ----------------------------------------------------------------------------------------
 	public class FileModeOverride : IFWDisposable
 	{
+#if __MonoCS__
 		private FilePermissions m_prevMask;
-
+#endif
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Overrides the system File permissions with the default permissions of "002"
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public FileModeOverride() : this(FilePermissions.S_IWOTH)
+		public FileModeOverride()
+#if __MonoCS__
+			: this(FilePermissions.S_IWOTH)
+#endif
 		{
 		}
 
+#if __MonoCS__
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Overrides the system File permissions with the value passed in FilePermissions
@@ -48,7 +53,7 @@ namespace SIL.Utils
 		{
 			SetFileCreationMask(fp);
 		}
-
+#endif
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// </summary>
@@ -59,6 +64,7 @@ namespace SIL.Utils
 			// The base class finalizer is called automatically.
 		}
 
+#if __MonoCS__
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Set the File creation mode passed in by filePermissions.
@@ -69,10 +75,9 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		private void SetFileCreationMask(FilePermissions filePermissions)
 		{
-				#if __MonoCS__
-				m_prevMask = Mono.Unix.Native.Syscall.umask(filePermissions);
-				#endif
+			m_prevMask = Mono.Unix.Native.Syscall.umask(filePermissions);
 		}
+#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -122,7 +127,9 @@ namespace SIL.Utils
 
 			if (disposing)
 			{
+#if __MonoCS__
 				SetFileCreationMask(m_prevMask);
+#endif
 			}
 			IsDisposed = true;
 		}
