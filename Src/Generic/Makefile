@@ -82,8 +82,7 @@ OBJS = \
 NOT_NEEDED = \
 	DataStream.o \
 	ResourceStrm.o \
-	StrUtil.o \
-	Zipper.o
+	StrUtil.o
 
 # === Targets ===
 

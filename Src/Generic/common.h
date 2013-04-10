@@ -417,9 +417,6 @@ template<typename T> inline T * GetPtr(void *pv, int ib)
 
 #include "CSupportErrorInfo.h"
 #include "MakeDir.h"
-#if WIN32
-#include "Zipper.h"
-#endif
 #include "UtilSil.h"
 #include "FwSettings.h"
 
