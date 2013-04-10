@@ -21,6 +21,10 @@ Description:
 #include "../../../Output/Common/bldinc.h"
 #endif
 
+#ifndef IDC_STATIC
+#define IDC_STATIC (-1)
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Cursor

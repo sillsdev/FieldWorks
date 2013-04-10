@@ -14,7 +14,7 @@ Description:
 #include "AfExportRes.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
-#include "afxres.h"
+#include "winresrc.h"
 #include "..\..\AppCore\AfDef.h"
 #include "..\..\AppCore\Res\AfAppRes.h"
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -34,7 +34,7 @@ BEGIN
 END
 2 TEXTINCLUDE DISCARDABLE
 BEGIN
-	"#include ""afxres.h""\r\n"
+	"#include ""winresrc.h""\r\n"
 	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
 	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
 	"\0"

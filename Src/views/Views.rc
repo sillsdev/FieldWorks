@@ -15,7 +15,7 @@ Description:
 1 TYPELIB ViewsTlb.tlb
 
 #if WIN32
-#include "afxres.h"
+#include "winresrc.h"
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

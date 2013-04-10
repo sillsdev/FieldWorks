@@ -13,7 +13,7 @@ Description:
 -------------------------------------------------------------------------------*//*:End Ignore*/
 1 TYPELIB LanguageTlb.tlb
 #if WIN32
-#include "afxres.h"
+#include "winresrc.h"
 #endif
 #include "LangResource.h"
 

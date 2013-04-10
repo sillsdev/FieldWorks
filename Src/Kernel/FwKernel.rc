@@ -16,7 +16,7 @@ Description:
 
 #include "GenericResource.h"
 #if WIN32
-#include "afxres.h"
+#include "winresrc.h"
 #endif
 
 #include "Generic.rc"

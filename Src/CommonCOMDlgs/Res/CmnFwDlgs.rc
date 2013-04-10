@@ -9,7 +9,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "winresrc.h"
 #include "..\..\AppCore\AfDef.h"
 #include "..\..\AppCore\Res\AfAppRes.h"
 #include "TeStylesDlg.rc"
@@ -58,7 +58,7 @@ END
 
 2 TEXTINCLUDE
 BEGIN
-	"#include ""afxres.h""\r\n"
+	"#include ""winresrc.h""\r\n"
 	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
 	"#include ""..\\..\\AppCore\\Res\\AfAppRes.h""\r\n"
 	"#include ""TeStylesDlgRes.h""\r\n"

@@ -7,7 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "winresrc.h"
 #include "..\..\AppCore\AfDef.h"
 #include "..\..\AppCore\Res\FmtGenDlgRes.h"
 
@@ -36,7 +36,7 @@ END
 
 2 TEXTINCLUDE
 BEGIN
-	"#include ""afxres.h""\r\n"
+	"#include ""winresrc.h""\r\n"
 	"#include ""..\\..\\AppCore\\AfDef.h""\r\n"
 	"#include ""..\\..\\AppCore\\Res\\FmtGenDlgRes.h""\r\n"
 	"\0"
