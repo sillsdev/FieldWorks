@@ -1822,7 +1822,7 @@ protected:
 		bool fMatch = true; // did we get a match this iteration?
 		if (m_fForward)
 		{
-			for (fMatch = m_pmatcher->find(m_ichMinSearch, m_error); true; fMatch = m_pmatcher->find() )
+			for (fMatch = m_pmatcher->find(m_ichMinSearch, m_error); ; fMatch = m_pmatcher->find() )
 			{
 				if (!fMatch)
 					return Fail(); // no more matches.
@@ -1846,7 +1846,7 @@ protected:
 		{
 			// Simulate searching backwards by searching forwards and keeping the last match in range.
 			bool fGotPrevMatch = false; // true if we found previous good match.
-			for (fMatch = m_pmatcher->find(m_ichMinSearch, m_error); true; fMatch = m_pmatcher->find() )
+			for (fMatch = m_pmatcher->find(m_ichMinSearch, m_error); ; fMatch = m_pmatcher->find() )
 			{
 				int ichMin = 0;
 				int ichLim = 0;

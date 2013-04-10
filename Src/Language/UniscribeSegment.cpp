@@ -308,7 +308,7 @@ void UniscribeSegment::ShapePlaceRun(UniscribeRunInfo& uri, bool fCreatingSeg)
 #endif
 
 	// loop to try ScriptShape multiple times
-	while (true)
+	for (;;)
 	{
 		DISABLE_MULTISCRIBE
 		{
@@ -2551,7 +2551,7 @@ typedef struct tag_SCRIPT_STATE {
 	{
 		DISABLE_MULTISCRIBE
 		{
-			while (true)
+			for (;;)
 			{
 				HRESULT hr;
 				IgnoreHr(hr = ::ScriptItemize(*pprgchBuf, cch, citemMax,
