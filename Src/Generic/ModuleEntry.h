@@ -103,40 +103,6 @@ Description:
 #ifndef ModuleEntry_H
 #define ModuleEntry_H 1
 
-#if WIN32
-#define _ATL_APARTMENT_THREADED
-#undef _ATL_FREE_THREADED
-#include <atlbase.h>
-
-// Using ATL container classes requires this class even though it does us no good otherwise.
-extern const GUID LIBID_ATLConModule;
-#ifdef EXE_MODULE
-class ATLConModule : public CAtlExeModuleT< ATLConModule >
-#else
-class ATLConModule : public CAtlDllModuleT< ATLConModule >
-#endif
-{
-public :
-	DECLARE_LIBID(LIBID_ATLConModule);
-	ATLConModule()
-	{
-	}
-	~ATLConModule()
-	{
-	}
-#ifdef EXE_MODULE
-	HRESULT PreMessageLoop(int nShowCmd) throw()
-	{
-		HRESULT hr = __super::PreMessageLoop(nShowCmd);
-		if (FAILED(hr))
-			return hr;
-		::InitCommonControls();
-		return S_OK;
-	}
-#endif
-};
-#endif // WIN32
-
 /*----------------------------------------------------------------------------------------------
 	The constructor of LLBase (defined in Src\Generic\LinkedList.h) adds this ModuleEntry to
 		the head of a static linked list of ModuleEntries in this module. The server level
@@ -174,10 +140,6 @@ protected:
 	// generic code which otherwise would need conditional compilation.
 	static bool s_fIsExe;
 
-#if WIN32
-	// This is to support containing ActiveX controls using ATL container classes.
-	static ATLConModule s_AtlModule;
-#endif
 
 	// true to register classes under HKCU instead of HKCR
 	static bool s_fPerUserRegistration;

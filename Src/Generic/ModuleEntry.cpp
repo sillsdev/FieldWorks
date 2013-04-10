@@ -54,9 +54,6 @@ TCHAR ModuleEntry::s_strbpPath[MAX_PATH];
 ulong ModuleEntry::s_tid;			// Stays zero for non-EXE modules.
 
 #if WIN32 // TODO-Linux
-// The following instantiates the ATLConModule class so that we can use ATL to host ActiveX
-// controls.
-ATLConModule ModuleEntry::s_AtlModule;
 bool ModuleEntry::s_fPerUserRegistration = false;
 #endif // WIN32
 
@@ -64,21 +61,9 @@ bool ModuleEntry::s_fPerUserRegistration = false;
 IDataObjectPtr ModuleEntry::s_qdobjClipboard;	// data stored in clipboard by this app.
 bool ModuleEntry::s_fIsExe = true;
 
-#if WIN32
-// The following GUID is used by the ATLConModule class in ModuleEntry.h.
-// {52117230-1096-4d37-990F-A70C793D60BA}
-const GUID LIBID_ATLConModule = { 0x52117230, 0x1096, 0x4d37,
-								  { 0x99, 0xf, 0xa7, 0xc, 0x79, 0x3d, 0x60, 0xba } };
-#endif
 #else // EXE_MODULE
 bool ModuleEntry::s_fIsExe = false;
 
-#if WIN32
-// The following GUID is used by the ATLConModule class in ModuleEntry.h.
-// {FC20CBD9-9D85-4432-949F-51F690DF47C5}
-const GUID LIBID_ATLConModule = { 0xfc20cbd9, 0x9d85, 0x4432,
-								  { 0x94, 0x9f, 0x51, 0xf6, 0x90, 0xdf, 0x47, 0xc5 } };
-#endif
 #endif // EXE_MODULE
 
 
