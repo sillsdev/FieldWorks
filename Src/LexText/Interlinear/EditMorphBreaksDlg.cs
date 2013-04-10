@@ -150,6 +150,7 @@ namespace SIL.FieldWorks.IText
 
 			m_morphBreakContextMenu = new MorphBreakHelperMenu(m_txtMorphs, m_helpTopicProvider, cache, stringTable);
 			m_txtMorphs.AdjustForStyleSheet(this, null, stylesheet);
+			m_morphBreakHelper.Height = m_txtMorphs.Height;
 		}
 
 		/// <summary>
