@@ -56,6 +56,7 @@
 	<item id="CmdHelpChorus">Help for using Chorus-enabled features</item>
 	<item id="CmdCheckForFlexBridgeUpdates">Check for FLEx Bridge updates</item>
 	<item id="CmdHelpAboutFLEXBridge">Display information about FLEx Bridge</item>
+	<item id="CmdFLExLiftBridge">Send/Receive data in this project</item>	<!--This is for Toolbar icon-->
 	<!--
 		  Edit menu
 		  -->
