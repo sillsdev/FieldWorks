@@ -2972,11 +2972,18 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var dataType = (CellarPropertyType)mdc.GetFieldType(flid);
 				var key = new Tuple<ICmObject, int>(this, flid);
 				object data;
-				if (!m_cache.CustomProperties.TryGetValue(key, out data) && !mdc.IsValueType(dataType))
+				var isValueType = mdc.IsValueType(dataType);
+				if (!m_cache.CustomProperties.TryGetValue(key, out data) && !isValueType)
 					continue; // could have this property, but don't.
 				if (data == null)
-					data = GetDefaultValueData(dataType);
-
+					if (isValueType)
+					{
+						data = GetDefaultValueData(dataType);
+					}
+					else
+					{
+						continue; // a pre-existing reference or string property is now null; don't write it out
+					}
 				// Write the custom field.
 				writer.WriteStartElement("Custom");
 
@@ -3090,6 +3097,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Reconstitute the data for each <Custom> element.
 			// Attrs: 'name' (required), 'val' (required for basic data types, absent for others)
 			// Non-basic data types will have nested content appropriate for each data type.
+			// If non-basic data types do NOT have nested content, this should not crash.
 			//var servLoc = Cache.ServiceLocator;
 			var mdc = loadingServices.m_mdcManaged;
 			var wsf = loadingServices.m_wsf;
@@ -3105,6 +3113,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var flid = mdc.GetFieldId2(ClassID, fieldName, true);
 				var dataType = (CellarPropertyType)mdc.GetFieldType(flid);
 				object data = null;
+				XElement myElement = null;
 				switch (dataType)
 				{
 					default:
@@ -3146,29 +3155,40 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 									Int32.Parse(dtParts[6]));
 						break;
 					case CellarPropertyType.Unicode:
-						data = Icu.Normalize(customPropertyElement.Element("Uni").Value, Icu.UNormalizationMode.UNORM_NFD);
+						myElement = customPropertyElement.Element("Uni");
+						if (myElement != null)
+							data = Icu.Normalize(myElement.Value, Icu.UNormalizationMode.UNORM_NFD);
 						break;
 					case CellarPropertyType.String:
-						data = TsStringSerializer.DeserializeTsStringFromXml((XElement)customPropertyElement.FirstNode, wsf);
+						if (customPropertyElement.HasElements)
+							data = TsStringSerializer.DeserializeTsStringFromXml(
+								(XElement)customPropertyElement.FirstNode, wsf);
 						break;
 					case CellarPropertyType.Binary:
-						var byteArray = customPropertyElement.Element("Binary").Value;
-						if (byteArray.Length > 0)
+						myElement = customPropertyElement.Element("Binary");
+						if (myElement != null)
 						{
-							var tokens = byteArray.Split('.');
-							var bytes = new byte[tokens.Length];
-							for (var i = 0; i < tokens.Length; ++i)
+							var byteArray = myElement.Value;
+							if (byteArray.Length > 0)
 							{
-								byte b;
-								Byte.TryParse(tokens[i], out b);
-								bytes[i] = b;
+								var tokens = byteArray.Split('.');
+								var bytes = new byte[tokens.Length];
+								for (var i = 0; i < tokens.Length; ++i)
+								{
+									byte b;
+									Byte.TryParse(tokens[i], out b);
+									bytes[i] = b;
+								}
+								data = bytes;
 							}
-							data = bytes;
+
 						}
 						break;
-					case CellarPropertyType.OwningAtomic: // Fall through.
+					case CellarPropertyType.OwningAtomic: // Fall through
 					case CellarPropertyType.ReferenceAtomic:
-						data = surrRepos.GetId(customPropertyElement.Element("objsur"));
+						myElement = customPropertyElement.Element("objsur");
+						if (myElement != null)
+							data = surrRepos.GetId(myElement);
 						break;
 					case CellarPropertyType.MultiString:
 						data = new MultiStringAccessor(this, flid);
