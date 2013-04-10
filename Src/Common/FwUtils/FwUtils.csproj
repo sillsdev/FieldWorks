@@ -243,9 +243,11 @@
   <ItemGroup>
     <None Include="BuildInclude.targets" />
     <None Include="gendarme-FwUtils.ignore" />
+    <None Include="FwUtils.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
