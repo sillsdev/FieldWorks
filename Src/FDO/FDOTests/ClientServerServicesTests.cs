@@ -108,7 +108,12 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			ClientServerServices.Current.Local.SetProjectSharing(false, m_progress);
 
 			Assert.IsTrue(ClientServerServices.Current.Local.SetProjectSharing(true, m_progress));
+			Assert.IsTrue(Db4OLocalClientServerServices.LocalDb4OServerInfoConnection.AreProjectShared());
+			Assert.IsFalse(ClientServerServices.Current.Local.ShareMyProjects, "ShareMyProjects should not be true unless HKCU projects dir same as HKLM");
+			var temp = DirectoryFinder.ProjectsDirectory;
+			DirectoryFinder.ProjectsDirectory = DirectoryFinder.ProjectsDirectoryLocalMachine;
 			Assert.IsTrue(ClientServerServices.Current.Local.ShareMyProjects);
+			DirectoryFinder.ProjectsDirectory = temp;
 		}
 
 		/// <summary></summary>

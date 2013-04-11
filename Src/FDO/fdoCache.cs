@@ -622,21 +622,22 @@ namespace SIL.FieldWorks.FDO
 
 		/// <summary>
 		/// Rewrites the given collection of ICmObjects to get the new xml for each.
+		/// Make sure you do a normal Save first, so that the UndoStack knows all changes are saved.
 		/// </summary>
 		/// <param name="progressDlg"></param>
 		/// <param name="parameters"></param>
 		/// <remarks>
 		/// This method does not use a UOW, so think about not using it.
 		/// </remarks>
-		public object SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork(IProgress progressDlg, params object[] parameters)
+		private object SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork(IProgress progressDlg, params object[] parameters)
 		{
-			var dirtballs = new HashSet<ICmObjectOrSurrogate>();
+			var dirtballs = new HashSet<ICmObjectOrSurrogate>(new ObjectSurrogateEquater());
 			foreach (var dirtball in (List<ICmObject>)parameters[0])
 			{
 				dirtballs.Add((ICmObjectOrSurrogate)dirtball);
 			}
 			var bep = (IDataStorer)m_serviceLocator.DataSetup;
-			bep.Commit(new HashSet<ICmObjectOrSurrogate>(),
+			bep.Commit(new HashSet<ICmObjectOrSurrogate>(new ObjectSurrogateEquater()),
 					   dirtballs,
 					   new HashSet<ICmObjectId>());
 			bep.CompleteAllCommits();

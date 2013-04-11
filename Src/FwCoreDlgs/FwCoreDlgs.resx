@@ -958,4 +958,12 @@ The error was:
     <value>The Project name you have entered contains one or more non-ASCII characters. If you use this name for your project, you will be unable to use the Send/Receive project function. Click 'OK' to continue with this project name or 'Cancel' to enter a different name.</value>
     <comment>Used to warn the user of a project name that will make Send/Receive not work for this project.</comment>
   </data>
+  <data name="ksCantShare" xml:space="preserve">
+    <value>Cannot Share Projects</value>
+    <comment>caption for ksCantShareDiffProjectFolders</comment>
+  </data>
+  <data name="ksCantShareDiffProjectFolders" xml:space="preserve">
+    <value>Project sharing is not currently possible, because your projects folder ({0}) is different from the projects folder used by the sharing service ({1}). To share your projects, you must make these folders the same, then use this dialog again to turn on sharing.</value>
+    <comment>Displayed after a click on the "Share my projects" button in the project Location and Sharing dialog, typically if the user has changed the projects directory.</comment>
+  </data>
 </root>

@@ -589,7 +589,16 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			{
 				try
 				{
-					return LocalDb4OServerInfoConnection != null && LocalDb4OServerInfoConnection.AreProjectShared();
+					return LocalDb4OServerInfoConnection != null && LocalDb4OServerInfoConnection.AreProjectShared()
+						// Sharing can only be turned on if this is true, because of complications when the ProjectsDirectory
+						// seen by FieldWorks is different from the one seen by the FwRemoteDatabaseConnectorService.
+						// However, I think it is conceivable that sharing is apparently turned on though the directories
+						// are different. For one thing, it may have been turned on before this patch was released.
+						// Also, while one user on the machine turned it on, another user may already have changed
+						// their personal projects directory. I'm not sure whether such a user will even see that the
+						// first user has turned on sharing. But in any case, the second user (who did not turn sharing on,
+						// and has their own projects folder) will just go on seeing their own unshared projects.
+						&& DirectoryFinder.ProjectsDirectory == DirectoryFinder.ProjectsDirectoryLocalMachine;
 				}
 				catch (SocketException)
 				{

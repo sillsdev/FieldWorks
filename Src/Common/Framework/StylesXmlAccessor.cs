@@ -231,8 +231,6 @@ namespace SIL.FieldWorks.Common.Framework
 
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, CreateStyles);
 
-			m_cache.SaveAndForceNewestXmlForCmObjectWithoutUnitOfWork(m_progressDlg, m_databaseStyles.Objects.ToList());
-
 			return null;
 		}
 
