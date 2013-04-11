@@ -276,6 +276,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// revert any changes that have been made to that.
 			if (m_cbShareMyProjects.Checked && ClientServerServices.Current.Local.ShareMyProjects)
 				m_tbProjectsFolder.Text = DirectoryFinder.ProjectsDirectory;
+			// Sharing can only be turned on if these directories are the same, because of complications when the ProjectsDirectory
+			// seen by FieldWorks is different from the one seen by the FwRemoteDatabaseConnectorService.
+			if (m_cbShareMyProjects.Checked && DirectoryFinder.ProjectsDirectory != DirectoryFinder.ProjectsDirectoryLocalMachine)
+			{
+				MessageBox.Show(this,
+					string.Format(FwCoreDlgs.ksCantShareDiffProjectFolders, DirectoryFinder.ProjectsDirectory,
+						DirectoryFinder.ProjectsDirectoryLocalMachine),
+						FwCoreDlgs.ksCantShare);
+				m_cbShareMyProjects.Checked = false;
+			}
 		}
 	}
 }

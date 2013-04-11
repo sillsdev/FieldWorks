@@ -77,6 +77,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private const string ksBiblicaltermsLocFilePrefix = "BiblicalTerms-";
 		private const string ksBiblicaltermsLocFileExtension = ".xml";
+		private const string ksProjectsDir = "ProjectsDir";
 
 		/// <summary>
 		/// Resets the static variables. Used for unit tests.
@@ -534,6 +535,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// <summary>
+		/// Get a directory for a particular key ignoring current user settings.
+		/// </summary>
+		/// <param name="registryValue"></param>
+		/// <param name="defaultDir"></param>
+		/// <returns></returns>
+		private static string GetDirectoryLocalMachine(string registryValue, string defaultDir)
+		{
+			using (RegistryKey machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			{
+				return GetDirectory(machineKey, registryValue, defaultDir);
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a subdirectory of FieldWorks either by reading the
@@ -589,6 +604,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		private const string ksRootDataDir = "RootDataDir";
+		private const string ksFieldWorks = "FieldWorks";
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the directory where FieldWorks data was installed (i.e. under AppData).
@@ -598,7 +615,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string FWDataDirectory
 		{
-			get { return GetDirectory("RootDataDir", CommonAppDataFolder("FieldWorks")); }
+			get { return GetDirectory(ksRootDataDir, CommonAppDataFolder(ksFieldWorks)); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the directory where FieldWorks data was installed (i.e. under AppData),
+		/// as it would be determined ignoring current user registry settings.
+		/// </summary>
+		/// <exception cref="ApplicationException">If an installation directory could not be
+		/// found.</exception>
+		/// ------------------------------------------------------------------------------------
+		public static string FWDataDirectoryLocalMachine
+		{
+			get { return GetDirectoryLocalMachine(ksRootDataDir, CommonAppDataFolder(ksFieldWorks)); }
 		}
 
 		private static string m_srcdir;
@@ -719,6 +749,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get { return GetFWCodeSubDirectory("Templates"); }
 		}
 
+		private const string ksProjects = "Projects";
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the dir where projects are stored
@@ -728,7 +760,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string ProjectsDirectory
 		{
-			get { return GetDirectory("ProjectsDir", Path.Combine(FWDataDirectory, "Projects")); }
+			get { return GetDirectory(ksProjectsDir, Path.Combine(FWDataDirectory, ksProjects)); }
 			set
 			{
 				if (ProjectsDirectory == value)
@@ -736,9 +768,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				using (var registryKey = FwRegistryHelper.FieldWorksRegistryKey)
 				{
-					registryKey.SetValue("ProjectsDir", value);
+					registryKey.SetValue(ksProjectsDir, value);
 				}
 			}
+		}
+
+		/// <summary>
+		/// The project directory that would be identified if we didn't have any current user registry settings.
+		/// </summary>
+		public static string ProjectsDirectoryLocalMachine
+		{
+			get { return GetDirectoryLocalMachine(ksProjectsDir, Path.Combine(FWDataDirectoryLocalMachine, ksProjects)); }
 		}
 
 		/// ------------------------------------------------------------------------------------

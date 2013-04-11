@@ -245,6 +245,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot Share Projects.
+        /// </summary>
+        public static string ksCantShare {
+            get {
+                return ResourceManager.GetString("ksCantShare", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Project sharing is not currently possible, because your projects folder ({0}) is different from the projects folder used by the sharing service ({1}). To share your projects, you must make these folders the same, then use this dialog again to turn on sharing..
+        /// </summary>
+        public static string ksCantShareDiffProjectFolders {
+            get {
+                return ResourceManager.GetString("ksCantShareDiffProjectFolders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cautions:.
         /// </summary>
         public static string ksCautions {

@@ -221,6 +221,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 		///<summary></summary>
 		[Test]
+		[Ignore("Cannot make this test work without writing file in real project directory or changing HKLM ProjectsFolder, since ShareMyProjects returns false")]
 		public void CreateServerFile_ServerFileDoesNotExist_ReturnsFullNameOfServerFileAndCreatesServerFile()
 		{
 			using (var db4OServerFile = new TemporaryDb4OServerFile(m_db4OServerInfo))
