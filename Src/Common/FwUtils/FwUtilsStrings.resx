@@ -171,7 +171,7 @@
 	<comment>Displays in the Help/About box and the splash screen</comment>
   </data>
   <data name="kstidFwVersionFmt" xml:space="preserve">
-	<value>Version: {0}</value>
+	<value>Version: {0} Beta</value>
 	<comment>Displays in the Help/About box and the splash screen</comment>
   </data>
   <data name="ksChangeFailed" xml:space="preserve">

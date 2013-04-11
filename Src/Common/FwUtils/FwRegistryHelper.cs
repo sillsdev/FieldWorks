@@ -18,6 +18,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Security;
 using Microsoft.Win32;
 using SIL.Utils;
@@ -332,15 +333,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var v7exists = RegistryHelper.KeyExists(FieldWorksVersionlessRegistryKey,
 					OldFieldWorksRegistryKeyNameVersion7);
 				if (!v7exists)
-				{
 					return; // We'll assume this already got done!
-				}
-				var v8exists = RegistryHelper.KeyExists(FieldWorksVersionlessRegistryKey,
-					FieldWorksRegistryKeyName);
-				if (v8exists)
-				{
-					return; // We don't want to overwrite version 8 if it's there for some reason
-				}
+
+				// If v8 key exists, we will go ahead and do the copy, but not overwrite any existing values.
 				using(var version7Key = FieldWorksVersionlessRegistryKey.CreateSubKey(OldFieldWorksRegistryKeyNameVersion7))
 				using(var version8Key = FieldWorksVersionlessRegistryKey.CreateSubKey(FieldWorksRegistryKeyName))
 				{
@@ -376,18 +371,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			const string NumberPrefix = "NumberOf";
 			const string LaunchesString = "launches";
-			foreach (var valueName in srcSubKey.GetValueNames())
+			foreach (var valueName in srcSubKey.GetValueNames().Where(
+				valueName => !valueName.StartsWith(NumberPrefix) && valueName != LaunchesString))
 			{
-				if (valueName.StartsWith(NumberPrefix) || valueName == LaunchesString)
-				{
-					continue;
-				}
 				CopyValueToNewKey(valueName, srcSubKey, destSubKey);
 			}
 		}
 
 		private static void CopyValueToNewKey(string valueName, RegistryKey oldSubKey, RegistryKey newSubKey)
 		{
+			// Just don't overwrite the value if it exists already!
+			object dummyValue;
+			if (RegistryHelper.RegEntryExists(newSubKey, string.Empty, valueName, out dummyValue))
+				return;
 			var valueObject = oldSubKey.GetValue(valueName);
 			newSubKey.SetValue(valueName, valueObject);
 		}

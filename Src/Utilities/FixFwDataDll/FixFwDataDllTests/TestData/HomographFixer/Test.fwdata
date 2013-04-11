@@ -1,17 +1,81 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <languageproject version="7000051">
-
-	<rt class="LangProject" guid="7b3a3472-7730-474e-b3d2-06779fd751e8">
-		<HomographWs>
-			<Uni>fr</Uni>
-		</HomographWs>
-	</rt>
 <rt class="LexEntry" guid="a39f2112-b82c-46ba-9f69-6b46e45efff4">
 <LexemeForm>
 <objsur guid="4cf67a75-0ed2-4e15-bff2-c950bfc961d4" t="o" />
 </LexemeForm>
 </rt>
-
+<!-- Data for checking that different Citation forms are not mistaken for homographs -->
+<rt class="LexEntry" guid="21122112-bad1-46ba-9f69-6b46e45efff4">
+<HomographNumber val="0" />
+<CitationForm>
+<AUni ws="fr">same</AUni>
+</CitationForm>
+<LexemeForm>
+<objsur guid="44467a75-bad1-4e15-bff2-c950bfc961d4" t="o" />
+</LexemeForm>
+</rt>
+<rt class="LexEntry" guid="21122112-bad2-46ba-9f69-6b46e45efff4">
+<HomographNumber val="0" />
+<CitationForm>
+<AUni ws="fr">different</AUni>
+</CitationForm>
+<LexemeForm>
+<objsur guid="44467a75-bad2-4e15-bff2-c950bfc961d4" t="o" />
+</LexemeForm>
+</rt>
+<rt class="MoStemAllomorph" guid="44467a75-bad1-4e15-bff2-c950bfc961d4" ownerguid="21122112-bad1-46ba-9f69-6b46e45efff4">
+<Form>
+<AUni ws="fr">wingding</AUni>
+</Form>
+<MorphType>
+<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+</MorphType>
+</rt>
+<rt class="MoStemAllomorph" guid="44467a75-bad2-4e15-bff2-c950bfc961d4" ownerguid="21122112-bad2-46ba-9f69-6b46e45efff4">
+<Form>
+<AUni ws="fr">wingding</AUni>
+</Form>
+<MorphType>
+<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+</MorphType>
+</rt>
+<!-- data to make sure that citation forms which are the same are homographs even if everything else is different -->
+<rt class="LexEntry" guid="33333333-bad1-46ba-9f69-6b46e45efff4">
+<HomographNumber val="0" />
+<CitationForm>
+<AUni ws="fr">exactduplicate</AUni>
+</CitationForm>
+<LexemeForm>
+<objsur guid="44444444-bad1-4e15-bff2-c950bfc961d4" t="o" />
+</LexemeForm>
+</rt>
+<rt class="LexEntry" guid="33333333-bad2-46ba-9f69-6b46e45efff4">
+<HomographNumber val="0" />
+<CitationForm>
+<AUni ws="fr">exactduplicate</AUni>
+</CitationForm>
+<LexemeForm>
+<objsur guid="44444444-bad2-4e15-bff2-c950bfc961d4" t="o" />
+</LexemeForm>
+</rt>
+<rt class="MoStemAllomorph" guid="44444444-bad1-4e15-bff2-c950bfc961d4" ownerguid="33333333-bad1-46ba-9f69-6b46e45efff4">
+<Form>
+<AUni ws="fr">totallydifferent</AUni>
+</Form>
+<MorphType>
+<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+</MorphType>
+</rt>
+<rt class="MoStemAllomorph" guid="44444444-bad2-4e15-bff2-c950bfc961d4" ownerguid="33333333-bad2-46ba-9f69-6b46e45efff4">
+<Form>
+<AUni ws="fr">completelydifferent</AUni>
+</Form>
+<MorphType>
+<objsur guid="88888888-eeee-11d3-9764-00c04f186933" t="r" />
+</MorphType>
+</rt>
+<!-- end of citation form data -->
 <rt class="MoStemAllomorph" guid="4cf67a75-0ed2-4e15-bff2-c950bfc961d4" ownerguid="a39f2112-b82c-46ba-9f69-6b46e45efff4">
 <Form>
 <AUni ws="fr">dinding</AUni>
@@ -32,7 +96,7 @@
 	</AlternateForms>
 </rt>
 
-<rt class="MoStemAllomorph" guid="36488d03-d35e-4def-b01a-ba507768211b" ownerguid="b35e8d52-e74d-47b4-b300-82e8c45cdfb7">
+<rt class="MoAffixAllomorph" guid="36488d03-d35e-4def-b01a-ba507768211b" ownerguid="b35e8d52-e74d-47b4-b300-82e8c45cdfb7">
 <Form>
 <AUni ws="fr">dinding</AUni>
 </Form>
@@ -236,5 +300,14 @@
 <SecondaryOrder val="0" />
 <SortSpec val="0" />
 </rt>
-
+<rt class="MoMorphType" guid="88888888-eeee-11d3-9764-00c04f186933" >
+<SecondaryOrder val="0" />
+<SortSpec val="0" />
+</rt>
+<!-- Pathologically this could be the last rt element, so let's make sure we handle worst case -->
+<rt class="LangProject" guid="7b3a3472-7730-474e-b3d2-06779fd751e8">
+	<HomographWs>
+		<Uni>fr</Uni>
+	</HomographWs>
+</rt>
 </languageproject>

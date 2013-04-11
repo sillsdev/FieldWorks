@@ -1360,7 +1360,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				w.WriteLine("<{0} lang=\"{1}\"><text>{2}</text></{0}>", elementName,
 					MakeSafeAndNormalizedAttribute(sLang),
-					MakeSafeAndNormalizedXml(sForm.Replace("\x2028", Environment.NewLine)));
+					sForm != null ? MakeSafeAndNormalizedXml(sForm.Replace("\x2028", Environment.NewLine)) : string.Empty);
 			}
 			if (!String.IsNullOrEmpty(wrappingElementName))
 				w.WriteLine("</{0}>", wrappingElementName);
@@ -1521,7 +1521,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					bldr.Append(">");
 				}
 				var sRun = tssVal.get_RunText(irun);
-				bldr.Append(MakeSafeAndNormalizedXml(sRun.Replace("\x2028", Environment.NewLine)));
+				if (sRun != null)
+				{
+					bldr.Append(MakeSafeAndNormalizedXml(sRun.Replace("\x2028", Environment.NewLine)));
+				}
 				if (fSpan)
 					bldr.Append("</span>");
 			}

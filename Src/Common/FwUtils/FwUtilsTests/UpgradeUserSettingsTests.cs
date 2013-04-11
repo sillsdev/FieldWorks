@@ -89,7 +89,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void UpgradeUserSettingsIfNeeded_NotNeeded()
 		{
-			// If we don't create a version 7.0 key, it's not needed
+			// If there's no version 7.0 key, the upgrade shouldn't happen
+
 			// SUT
 			FwRegistryHelper.UpgradeUserSettingsIfNeeded();
 
@@ -125,7 +126,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Verification
 				// first and foremost, is the version 7 key gone?
 				Assert.IsFalse(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
-					FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7));
+					FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7),
+					"Old version 7.0 subkey tree didn't get wiped out.");
 
 				// Check for version 8 key
 				using(var version8Key = AssertIfRegistrySubkeyNotPresent(
@@ -147,6 +149,48 @@ namespace SIL.FieldWorks.Common.FwUtils
 						}
 					}
 				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the UpgradeUserSettingsIfNeeded method on FieldWorks with an upgrade where
+		/// there already exists a Version8 key and a value we don't want to overwrite.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void UpgradeUserSettingsIfNeeded_ExistingV8Key_DontOverwrite()
+		{
+			// Setup
+			const string flexKeyName = "LanguageExplorer";
+			const string teKeyName = "TE";
+			const string dirName = "TestDir";
+			const string crashes = "NumberOfHorrendousCrashes";
+			const string valueName3 = "FlexTestValue1";
+			const string valueName4 = "FlexTestValue2";
+			const string launches = "launches";
+			const string userWs = "UserWs";
+			using (var version7Key = m_helper.SetupVersion7Settings())
+			using (var version8Key = m_helper.SetupVersion8Settings())
+			{
+
+				// SUT
+				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
+
+				// Verification
+				// first and foremost, is the version 7 key gone?
+				Assert.IsFalse(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
+					FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7),
+					"Old version 7.0 subkey tree didn't get wiped out.");
+
+				// Check for version 8 key
+				using(AssertIfRegistrySubkeyNotPresent(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
+					FwRegistryHelper.FieldWorksRegistryKeyName))
+					{} // dispose of local RegistryKey for Gendarme
+				// Check that UserWs didn't get overwritten
+				// Version 7 had 'pt', pre-existing Version 8 had 'fr', which we should have kept.
+				CheckForRegistryStringValue(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
+					FwRegistryHelper.FieldWorksRegistryKeyName, userWs, "fr");
 			}
 		}
 

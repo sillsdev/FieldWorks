@@ -502,14 +502,34 @@ namespace ConvertLib
 			}
 		}
 
+		/// <summary>
+		/// Gets the RootCodeDir from registry, either from HKCU if it exists there, or
+		/// otherwise from HKLM.
+		/// </summary>
+		private static string RootCodeDir
+		{
+			get
+			{
+				return GetCodeDirFromRegistryKey(Registry.CurrentUser) ??
+					GetCodeDirFromRegistryKey(Registry.LocalMachine);
+			}
+		}
+
+		private static string GetCodeDirFromRegistryKey(RegistryKey key)
+		{
+			// Avoiding DirectoryFinder so this isn't dependent on lots of FW dlls.
+			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\8"))
+			{
+				return (regKey == null) ? null : regKey.GetValue("RootCodeDir") as string;
+			}
+		}
+
 		private string GetModelName() //Locate the Model File
 		{
-			string rootPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\SIL\\FieldWorks\\7.0";
-			string stringValue = "RootCodeDir";
-			string dataKey = Registry.GetValue(rootPath, stringValue, null).ToString();
+			string rootDir = RootCodeDir;
 
-			if (dataKey != null)
-				return dataKey + String.Format("{0}Templates{0}MasterFieldWorksModel7.0.xml", Path.DirectorySeparatorChar);
+			if (rootDir != null)
+				return rootDir + String.Format("{0}Templates{0}MasterFieldWorksModel7.0.xml", Path.DirectorySeparatorChar);
 			else
 				return null;
 		}

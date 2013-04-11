@@ -164,7 +164,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				_liftPathname = null;
 				return true;
 			}
-			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepNew); // Do merciful import.
+			if (!ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth)) // Do merciful import.
+			{
+				LiftImportFailureServices.RegisterBasicImportFailure(_parentForm, Path.GetDirectoryName(_liftPathname));
+			}
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings);
 			_mediator.BroadcastMessage("MasterRefresh", null);
 
@@ -620,7 +623,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				case ImportFailureStatus.BasicImportNeeded:
 					if (ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth))
-						LiftImportFailureServices.ClearImportFailure(_liftPathname);
+					{
+						LiftImportFailureServices.ClearImportFailure(liftProjectDir);
+					}
 					else
 					{
 						LiftImportFailureServices.RegisterBasicImportFailure(_parentForm, liftProjectDir);
@@ -629,7 +634,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					break;
 				case ImportFailureStatus.StandardImportNeeded:
 					if (ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepOnlyNew))
-						LiftImportFailureServices.ClearImportFailure(_liftPathname);
+					{
+						LiftImportFailureServices.ClearImportFailure(liftProjectDir);
+					}
 					else
 					{
 						LiftImportFailureServices.RegisterStandardImportFailure(_parentForm, liftProjectDir);
@@ -814,7 +821,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				importer.Cache = cache;
 				importer._liftPathname = liftPath;
 				importer._parentForm = parentForm;
-				return importer.ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepNew); // should be a new project
+				var importedCorrectly = importer.ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth); // should be a new project
+				if (!importedCorrectly)
+				{
+					LiftImportFailureServices.RegisterBasicImportFailure(parentForm, Path.GetDirectoryName(liftPath));
+				}
+				return importedCorrectly;
 			}
 		}
 

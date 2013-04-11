@@ -887,7 +887,8 @@ namespace SIL.Ethnologue
 			// TODO: Change this when Ethnologue has its own install location.
 			// Note. We don't want to use CreateSubKey here because it will fail on
 			// non-administrator logins. The user doesn't need to modify this setting.
-			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\7.0"))
+			// Trying to use DirectoryFinder for this causes circular dependencies.
+			using (var regKey = key.OpenSubKey(@"Software\SIL\FieldWorks\8"))
 			{
 				return (regKey == null) ? null : regKey.GetValue("RootCodeDir") as string;
 			}
