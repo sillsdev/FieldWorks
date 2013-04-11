@@ -2943,7 +2943,7 @@
     <value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_semantic_domains.htm</value>
   </data>
   <data name="khtpBulkEditBarPhonemes" xml:space="preserve">
-    <value>Using_Tools/Grammar_tools/Assign_Features_to_Phonemes/Assign_Features_to_Phonemes_overview.htm</value>
+    <value>Using_Tools/Grammar_tools/Bulk_Edit_Phoneme_Features/Bulk_Edit_Phoneme_Features_overview.htm</value>
   </data>
   <data name="khtpChoose-naturalClassedit-PhNCSegments-Phonemes" xml:space="preserve">
     <value>Using_Tools/Grammar_tools/Natural_Classes/Choose_Phonemes_for_Natural_Class.htm</value>
