@@ -478,23 +478,23 @@ namespace FwBuildTasks
 		{
 			switch (project)
 			{
+				case "xWorksTests":			// ~244 sec (Mono 2/8/2013)
+				case "FDOTests":			// ~143 sec
+					return 420000;
 				case "FwCoreDlgsTests":		// ~122 sec
 				case "TeDllTests":			// ~122 sec (Mono 2/8/2013)
 					return 240000;
-				case "xWorksTests":			// ~244 sec (Mono 2/8/2013)
-				case "FDOTests":			// ~143 sec
-					return 360000;
 				case "DiffViewTests":		// ~55 sec
 				case "MGATests":			// ~72 sec
 				case "TeImportExportTests":	// ~90 sec
-					return 120000;
+					return 150000;
 				case "PrintLayoutTests":	// ~22 sec
 				case "ITextDllTests":		// ~26 sec
 				case "DiscourseTests":		// ~36 sec
 				case "TeEditingTests":		// ~30 sec (Mono 2/8/2013)
 				case "SimpleRootSiteTests":	// ~30 sec (Mono 2/8/2013)
 				case "FwCoreDlgControlsTests": // ~34 sec (overnight build machine 4/1/2013)
-					return 60000;
+					return 75000;
 				case "RootSiteTests":					// ~11 sec
 				case "TeDialogsTests":					// ~11 sec
 				case "TePrintLayoutTests":				// ~12 sec
@@ -504,14 +504,14 @@ namespace FwBuildTasks
 				case "FwControlsTests":					// ~19 sec
 				case "XMLViewsTests":					// ~15 sec (Mono 2/8/2013)\
 				case "ParserUITests":					// ~11 sec (overnight 4/10/13)
-					return 30000;
+					return 40000;
 				case "PhraseTranslationHelperTests":	// ~8 sec
 				case "CoreImplTests":					// ~9 sec
 				case "TeScrInitializerTests":			// ~9 sec
 				case "DetailControlsTests":				// ~10 sec (Mono 2/8/2013)
-					return 15000;
+					return 25000;
 				default:
-					return 10000;
+					return 20000;
 			}
 		}
 
