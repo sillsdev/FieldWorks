@@ -34,8 +34,7 @@ FW_SAMPLES=${FW_SAMPLES:-$FW_SHARE-examples}
 			for db in "${FW_SAMPLES}"/ReleaseData/*; do
 				dbname=$(basename "$db")
 				echo "# Copying sample database $dbname"
-				cp -a "$db" "${FW_DATA}/Projects/"
-				chmod -R gu+w "${FW_DATA}/Projects/$dbname"
+				cp -R "$db" "${FW_DATA}/Projects/"
 			done
 		fi
 	fi

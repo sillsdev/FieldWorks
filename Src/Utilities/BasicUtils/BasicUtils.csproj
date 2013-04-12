@@ -141,6 +141,7 @@
     <Compile Include="LinuxPackageUtils.cs" />
     <Compile Include="DirectoryUtils.cs" />
     <Compile Include="StopClock.cs" />
+    <Compile Include="FileModeOverride.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ColorStrings.resx">
