@@ -21,6 +21,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO.DomainServices;
 using System.Collections.Generic;
 using SIL.FieldWorks.FDO.DomainImpl;
+using SIL.FieldWorks.FDO.Infrastructure;
 
 namespace SIL.FieldWorks.FDO.FDOTests
 {
@@ -57,16 +58,28 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(0, os.Count(), "Wrong starting count of annotations.");
 
 			env.StringRepresentation = Cache.TsStrFactory.MakeString(@"/ [BADCLASS] _", Cache.DefaultAnalWs);
+
+			m_actionHandler.EndUndoTask(); // so we can verify it makes its own as needed, and doesn't do unnecessary ones.
+
 			Assert.IsFalse(env.CheckConstraints(strRepFlid, true, out failure, true));
 			Assert.IsNotNull(failure, "Didn't get an object back from the CheckConstraints method.");
 			os = GetAnnotationsForObject(env);
 			Assert.AreEqual(1, os.Count(), "Wrong invalid count of annotations.");
 
-			env.StringRepresentation = Cache.TsStrFactory.MakeString(@"/ d _", Cache.DefaultAnalWs);
+			int cUndoTasks = m_actionHandler.UndoableActionCount;
+			Assert.IsFalse(env.CheckConstraints(strRepFlid, true, out failure, true));
+			Assert.That(m_actionHandler.UndoableActionCount, Is.EqualTo(cUndoTasks), "should not make database changes when situation is unchanged");
+
+			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+				env.StringRepresentation = Cache.TsStrFactory.MakeString(@"/ d _", Cache.DefaultAnalWs));
 			Assert.IsTrue(env.CheckConstraints(strRepFlid, true, out failure, true));
 			Assert.IsNull(failure, "Got an object back from the CheckConstraints method.");
 			os = GetAnnotationsForObject(env);
 			Assert.AreEqual(0, os.Count(), "Wrong valid count of annotations.");
+
+			cUndoTasks = m_actionHandler.UndoableActionCount;
+			Assert.IsTrue(env.CheckConstraints(strRepFlid, true, out failure, true));
+			Assert.That(m_actionHandler.UndoableActionCount, Is.EqualTo(cUndoTasks), "should not make database changes when situation is unchanged");
 		}
 
 		private void AddPhone(IPhPhonemeSet phset, string sCode)

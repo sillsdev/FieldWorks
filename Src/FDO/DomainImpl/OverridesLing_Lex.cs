@@ -7840,7 +7840,12 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 		/// <summary>
 		/// Check the validity of the environemtn string, create a problem report, and
-		/// if asked, adjust the string itself to show the validity
+		/// if asked, adjust the string itself to show the validity.
+		/// WARNING: it is very important that if nothing has changed since the last time CheckConstraints was called,
+		/// it should NOT update the database at all. One reason: CheckConstraints is called once just before Send/Receive;
+		/// it is called AGAIN if we need to close down the main window in order to reload a project modified by another
+		/// user's changes. If the second call changes anything, we will be unable to save the changes, because the fwdata
+		/// has been modified by another process (the S/R).
 		/// </summary>
 		/// <param name="flidToCheck">flid to check, or zero, for don't care about the flid.</param>
 		/// <param name="createAnnotation">if set to <c>true</c>, an annotation will be created.</param>
@@ -7852,65 +7857,74 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		public bool CheckConstraints(int flidToCheck, bool createAnnotation, out ConstraintFailure failure,
 			bool fAdjustSquiggly)
 		{
+			failure = null;
+			if (flidToCheck != 0 && flidToCheck != PhEnvironmentTags.kflidStringRepresentation)
+				return true;
 			ConstraintFailure failureT = null;
 			var isValid = true;
-			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
+
+			PhonEnvRecognizer rec = CreatePhonEnvRecognizer(m_cache);
+			var tss = StringRepresentation;
+			var bldr = tss.GetBldr();
+			var strRep = tss.Text;
+			if (rec.Recognize(strRep))
+			{
+				if (fAdjustSquiggly)
 				{
-					if (flidToCheck == 0 || flidToCheck == PhEnvironmentTags.kflidStringRepresentation)
+					// ClearSquigglyLine
+					bldr.SetIntPropValues(0, tss.Length, (int)FwTextPropType.ktptUnderline,
+										  (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntNone);
+				}
+			}
+			else
+			{
+				int pos;
+				string sMessage;
+				StringServices.CreateErrorMessageFromXml(strRep, rec.ErrorMessage, out pos, out sMessage);
+
+				failureT = new ConstraintFailure(this, PhEnvironmentTags.kflidStringRepresentation, sMessage);
+				failureT.XmlDescription = rec.ErrorMessage;
+				if (fAdjustSquiggly)
+				{
+					// MakeSquigglyLine
+
+					var col = Color.Red;
+					var len = tss.Length;
+					bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderline,
+										  (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntSquiggle);
+					bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderColor,
+										  (int)FwTextPropVar.ktpvDefault, col.R + (col.B * 256 + col.G) * 256);
+				}
+				isValid = false;
+			}
+
+			var newStringRep = bldr.GetString();
+			bool haveChanges = !StringRepresentation.Equals(newStringRep);
+			if (createAnnotation)
+			{
+				if (failureT == null)
+					haveChanges |= ConstraintFailure.AreThereObsoleteAnnotations(this); // need to delete obsolete ones
+				else
+				{
+					haveChanges |= !failureT.IsAnnotationCorrect(); // failure knows how to tell whether any change is needed.
+				}
+			}
+
+			if (haveChanges)
+			{
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
 					{
-						//CmBaseAnnotation.RemoveErrorAnnotationsForObject(m_cache, Hvo);
 						if (createAnnotation)
 						{
-							var agt = Cache.LanguageProject.ConstraintCheckerAgent;
-							var anns = Cache.LanguageProject.AnnotationsOC;
-							var errors = from error in Cache.ServiceLocator.GetInstance<ICmBaseAnnotationRepository>().AllInstances()
-										 where error.BeginObjectRA == this
-										 select error;
-							foreach (var errReport in errors)
-							{
-								if (errReport.SourceRA == agt)
-									anns.Remove(errReport);
-							}
+							ConstraintFailure.RemoveObsoleteAnnotations(this);
+							if (failureT != null)
+								failureT.MakeAnnotation();
 						}
-						PhonEnvRecognizer rec = CreatePhonEnvRecognizer(m_cache);
-						var tss = StringRepresentation;
-						var bldr = tss.GetBldr();
-						var strRep = tss.Text;
-						if (rec.Recognize(strRep))
-						{
-							if (fAdjustSquiggly)
-							{
-								// ClearSquigglyLine
-								bldr.SetIntPropValues(0, tss.Length, (int)FwTextPropType.ktptUnderline,
-													  (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntNone);
-							}
-						}
-						else
-						{
-							int pos;
-							string sMessage;
-							StringServices.CreateErrorMessageFromXml(strRep, rec.ErrorMessage, out pos, out sMessage);
 
-							failureT = new ConstraintFailure(this, PhEnvironmentTags.kflidStringRepresentation,
-															sMessage, createAnnotation);
-							failureT.XmlDescription = rec.ErrorMessage;
-							if (fAdjustSquiggly)
-							{
-								// MakeSquigglyLine
-
-								var col = Color.Red;
-								var len = tss.Length;
-								bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderline,
-													  (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntSquiggle);
-								bldr.SetIntPropValues(pos, len, (int)FwTextPropType.ktptUnderColor,
-													  (int)FwTextPropVar.ktpvDefault, col.R + (col.B * 256 + col.G) * 256);
-							}
-							isValid = false;
-						}
 						if (fAdjustSquiggly)
-							StringRepresentation = bldr.GetString();
-					}
-				});
+							StringRepresentation = newStringRep;
+					});
+			}
 			failure = failureT;
 			return isValid;
 		}
