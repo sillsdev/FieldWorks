@@ -1499,6 +1499,9 @@ namespace SIL.FieldWorks.FDO
 			var linkedFilesFolder = this.LangProject.LinkedFilesRootDir;
 			if (!Directory.Exists(linkedFilesFolder))
 			{
+				var defaultFolder = DirectoryFinder.GetDefaultLinkedFilesDir(this.ProjectId.ProjectFolder);
+				if (!Directory.Exists(defaultFolder))
+					defaultFolder = this.ProjectId.ProjectFolder;
 				System.Windows.Forms.MessageBox.Show(String.Format(Strings.ksInvalidLinkedFilesFolder, linkedFilesFolder), Strings.ksErrorCaption);
 				while (!Directory.Exists(linkedFilesFolder))
 				{
@@ -1506,7 +1509,7 @@ namespace SIL.FieldWorks.FDO
 					{
 						folderBrowserDlg.Description = Strings.ksLinkedFilesFolder;
 						folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
-						folderBrowserDlg.SelectedPath = DirectoryFinder.GetDefaultLinkedFilesDir(this.ProjectId.ProjectFolder);
+						folderBrowserDlg.SelectedPath = defaultFolder;
 						if (folderBrowserDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 							linkedFilesFolder = folderBrowserDlg.SelectedPath;
 					}
