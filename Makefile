@@ -255,7 +255,7 @@ install-tree:
 	install -m 644 Lib/linux/ShareFwProjects.desktop $(DESTDIR)/usr/share/fieldworks
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
-	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters,lib} $(DESTDIR)/usr/share/fieldworks
+	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)/usr/share/fieldworks
 	cp -pdr DistFiles/{Ethnologue,Fonts,Graphite,Helps,Icu50,Keyboards,"Language Explorer",Parts,ReleaseData,SIL,Templates,"Translation Editor"} $(DESTDIR)/usr/share/fieldworks
 	# Relocate items that are in separate packages
 	rm -rf $(DESTDIR)/usr/share/fieldworks-movies/"Language Explorer"
