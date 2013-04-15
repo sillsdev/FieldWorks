@@ -7455,21 +7455,26 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 			if (cch >= 50)
 				cch = 49;
 
-			wcsncpy_s(buf, cch, pch, cch);
-
-			buf[49] = 0; // in case there really were 50 + chars
-#ifdef WIN32
-			nVal = _wtoi(buf);
-#else
+			if (cch == 0)
+				nVal = 0; // wcsncpy doesn't like 0 characters, and _wtoi probably can't parse it.
+			else
 			{
-				UErrorCode status = U_ZERO_ERROR;
-				// value should be 0 if we encounter an error
-				Formattable result(0);
-				NumberFormat* nf = NumberFormat::createInstance(status);
-				nf->parse(buf, result, status);
-				nVal = result.getLong();
-			}
+				wcsncpy_s(buf, 50, pch, cch);
+
+				buf[49] = 0; // in case there really were 50 + chars
+#ifdef WIN32
+				nVal = _wtoi(buf);
+#else
+				{
+					UErrorCode status = U_ZERO_ERROR;
+					// value should be 0 if we encounter an error
+					Formattable result(0);
+					NumberFormat* nf = NumberFormat::createInstance(status);
+					nf->parse(buf, result, status);
+					nVal = result.getLong();
+				}
 #endif
+			}
 			CheckHr(qtssNewSub->UnlockText(pch));
 			int nValOld;
 			CheckHr(qsda->get_IntProp(hvo, tag, &nValOld));
