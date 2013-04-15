@@ -2488,6 +2488,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				progress.Position = 0;
 				progress.Minimum = 0;
 				progress.Maximum = m_rgPendingLexEntryRefs.Count;
+				var missingRefs = new List<Tuple<string, string>>();
 				for (int i = 0; i < m_rgPendingLexEntryRefs.Count; )
 				{
 					List<PendingLexEntryRef> rgRefs = CollectLexEntryRefMembers(i);
@@ -2497,10 +2498,31 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 					else
 					{
-						ProcessLexEntryRefs(rgRefs);
+						ProcessLexEntryRefs(rgRefs, missingRefs);
 						i += rgRefs.Count;
 					}
 					progress.Position = i;
+				}
+				if (missingRefs.Count > 0)
+				{
+					var bldr = new StringBuilder();
+					bldr.Append("The LIFT file you are importing has entries with 'Component' or 'Variant' references to lexical entries that ");
+					bldr.Append("were not exported to the LIFT file. ");
+					bldr.Append("Therefore, these references (components or variants) will being excluded from this import.  ");
+					bldr.AppendLine();
+					bldr.AppendLine();
+					bldr.Append("This is probably a result of doing a Filtered Lexicon LIFT export. Instead, a Full Lexicon LIFT export should been done ");
+					bldr.Append("to correct this problem, followed by another LIFT import.  ");
+					bldr.AppendLine();
+					bldr.AppendLine();
+					bldr.AppendLine("Form\t\t:\tReference ID");
+					foreach (var missingRefPair in missingRefs)
+					{
+						bldr.AppendFormat("{0}\t\t:\t{1}{2}", missingRefPair.Item1, missingRefPair.Item2, Environment.NewLine);
+					}
+					bldr.AppendLine();
+					MessageBox.Show(bldr.ToString(), LexTextControls.ksProblemImporting,
+									MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 		}
@@ -2658,7 +2680,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;
 		}
 
-		private void ProcessLexEntryRefs(List<PendingLexEntryRef> rgRefs)
+		private void ProcessLexEntryRefs(List<PendingLexEntryRef> rgRefs, List<Tuple<string, string>> missingRefs)
 		{
 			if (rgRefs.Count == 0)
 				return;
@@ -2732,25 +2754,12 @@ namespace SIL.FieldWorks.LexText.Controls
 					//We should however warn the user that this data is not being imported and that they should do a FULL export to ensure this data
 					//is imported correctly.
 				{
-					var bldr = new StringBuilder();
-					bldr.Append("The LIFT file you are importing has entries with 'Component' or 'Variant' references to lexical entries that ");
-					bldr.Append("were not exported to the LIFT file. ");
-					bldr.Append("Therefore, these references (components or variants) will being excluded from this import.  ");
-					bldr.AppendLine();
-					bldr.AppendLine();
-					bldr.Append("This is probably a result of doing a Filtered Lexicon LIFT export. Instead, a Full Lexicon LIFT export should been done ");
-					bldr.Append("to correct this problem, followed by another LIFT import.  ");
-					bldr.AppendLine();
-					bldr.AppendLine();
-					bldr.AppendFormat("The LIFT reference has TargetId: {0}", pend.TargetId);
-					bldr.AppendLine();
+					var form = "<empty form>";
 					if (rgRefs[0].LexemeForm != null)
 					{
-						bldr.AppendFormat("The entry CmLiftEntry.LexicalForm is:    {0}", XmlUtils.DecodeXml(rgRefs[0].LexemeForm.FirstValue.Value.Text));
-						bldr.AppendLine();
+						form = XmlUtils.DecodeXml(rgRefs[0].LexemeForm.FirstValue.Value.Text);
 					}
-					MessageBox.Show(bldr.ToString(), LexTextControls.ksProblemImporting,
-									MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					missingRefs.Add(new Tuple<string, string>(form, pend.TargetId ?? "<empty target>"));
 				}
 			}
 			if (complexEntryTypes.Count == 0 && variantEntryTypes.Count == 0 && rgRefs[0].RelationType == "BaseForm" && componentLexemes.Count == 1
