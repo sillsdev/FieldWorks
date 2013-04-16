@@ -232,14 +232,12 @@ install-tree:
 	install -d $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
 	install -d $(DESTDIR)/var/lib/fieldworks
 	# Install libraries and their support files
-	install -m 644 $(OUT_DIR)/*.so $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 $(OUT_DIR)/*.{dll,dll.config,mdb} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 environ{,-xulrunner} $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 DistFiles/*.so $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 DistFiles/*.{dll,so,dll.config} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 DistFiles/Linux/*.{dll,so,dll.config} $(DESTDIR)/usr/lib/fieldworks
-	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 DistFiles/Linux/*.{dll*,so} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/*.{dll*,mdb,so} $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 $(OUT_DIR)/{*.compmap,components.map} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 $(OUT_DIR)/EC/Plugins/*.xml $(DESTDIR)/usr/lib/fieldworks/EC/Plugins
+	install -m 644 Lib/src/icu/install$(ARCH)/lib/lib* $(DESTDIR)/usr/lib/fieldworks
 	# Install read-only configuration files
 	install -m 644 $(OUT_DIR)/remoting_tcp_server.config $(DESTDIR)/usr/lib/fieldworks
 	# Install executables and scripts
@@ -252,6 +250,7 @@ install-tree:
 	install Lib/linux/{cpol-action,run-app,extract-userws.xsl} $(DESTDIR)/usr/lib/fieldworks
 	install Lib/linux/setup-user $(DESTDIR)/usr/share/fieldworks/
 	install Lib/linux/ShareFwProjects $(DESTDIR)/usr/lib/fieldworks
+	install -m 644 environ{,-xulrunner} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/linux/ShareFwProjects.desktop $(DESTDIR)/usr/share/fieldworks
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{pdf,txt,xml,map,tec,reg,dtd} $(DESTDIR)/usr/share/fieldworks
