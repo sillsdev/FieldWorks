@@ -2464,51 +2464,80 @@ namespace SIL.FieldWorks.Common.Controls
 				//	}
 				//}
 				// We are going to display the contents of the part.
-				string style = XmlUtils.GetOptionalAttributeValue(frag, "style", null);
-				if (vwenv is ConfiguredExport)
-					(vwenv as ConfiguredExport).BeginCssClassIfNeeded(frag);
-				string flowType = XmlUtils.GetOptionalAttributeValue(frag, "flowType", null);
-				if (flowType == "para")
-					GetParagraphStyleIfPara(hvo, ref style);
-				// The literal string for a sequence should go before the place where we may pull out
-				// a common part of speech within a single entry paragraph.
-				InsertLiteralString(frag, vwenv, "before", flowType);
-				// If we pull out a common part of speech for several senses, we want it as part of the main paragraph,
-				// not part of (say) the paragraph that belongs to the first sense. So we must insert this
-				// before we process the flowType.
-				if (fSingleGramInfoFirst)
-				{
-					// Will we really do gram info first? Only if we are numbering senses and either there is more than one,
-					// or we are numbering even single senses.
-					// For this to work, node must have just one child, a seq.
-					SetupSingleGramInfoFirst(frag, node, hvo, vwenv);
-				}
-				if (style != null || flowType != null)
-				{
-					if (style != null && flowType != "divInPara")
-						vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, style);
-					switch (flowType)
-					{
-						default:
-							vwenv.OpenSpan();
-							break;
-						case "para":
-							vwenv.OpenParagraph();
-							break;
-						case "div":
-							HandleNestedIndentation(frag, vwenv);
-							vwenv.OpenDiv();
-							break;
-						case "none":
-							break;
-						case "divInPara":
-							vwenv.CloseParagraph();
-							vwenv.OpenDiv();
-							break;
-					}
-					ProcessChildren(node, vwenv, hvo, frag);
-					InsertLiteralString(frag, vwenv, "after", flowType);
+				string flowType;
+				var style = PartRefSetupToProcessChildren(frag, node, hvo, vwenv, fSingleGramInfoFirst, out flowType);
+				ProcessChildren(node, vwenv, hvo, frag);
+				PartRefWrapupAfterProcessChildren(frag, vwenv, flowType, style);
+				// This groups senses by placing graminfo before the number, and omitting it if the same as the
+				// previous sense in the entry.  This isn't yet supported by the UI, but may well be requested in
+				// the future.  (See LT-9663.)
+				//if (fGramInfoBeforeNumber && m_tssDelayedNumber != null)
+				//{
+				//	vwenv.AddString(m_tssDelayedNumber);
+				//	m_tssDelayedNumber = null;
+				//}
+			}
+			finally
+			{
+				m_stackPartRef.RemoveAt(0);
+			}
+		}
 
+		internal string PartRefSetupToProcessChildren(XmlNode frag, XmlNode node, int hvo, IVwEnv vwenv,
+			bool fSingleGramInfoFirst, out string flowType)
+		{
+			string style = XmlUtils.GetOptionalAttributeValue(frag, "style", null);
+			if (vwenv is ConfiguredExport)
+				(vwenv as ConfiguredExport).BeginCssClassIfNeeded(frag);
+			flowType = XmlUtils.GetOptionalAttributeValue(frag, "flowType", null);
+			if (flowType == "para")
+				GetParagraphStyleIfPara(hvo, ref style);
+			// The literal string for a sequence should go before the place where we may pull out
+			// a common part of speech within a single entry paragraph.
+			// By default, though, (unless there is a beforeStyle) we do want it to have the style of this property.
+			InsertLiteralString(frag, vwenv, "before", flowType, style);
+			// If we pull out a common part of speech for several senses, we want it as part of the main paragraph,
+			// not part of (say) the paragraph that belongs to the first sense. So we must insert this
+			// before we process the flowType.
+			if (fSingleGramInfoFirst)
+			{
+				// Will we really do gram info first? Only if we are numbering senses and either there is more than one,
+				// or we are numbering even single senses.
+				// For this to work, node must have just one child, a seq.
+				SetupSingleGramInfoFirst(frag, node, hvo, vwenv);
+			}
+			if (style != null || flowType != null)
+			{
+				if (style != null && flowType != "divInPara")
+					vwenv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, style);
+				switch (flowType)
+				{
+					default:
+						vwenv.OpenSpan();
+						break;
+					case "para":
+						vwenv.OpenParagraph();
+						break;
+					case "div":
+						HandleNestedIndentation(frag, vwenv);
+						vwenv.OpenDiv();
+						break;
+					case "none":
+						break;
+					case "divInPara":
+						vwenv.CloseParagraph();
+						vwenv.OpenDiv();
+						break;
+				}
+			}
+			return style;
+		}
+
+		internal void PartRefWrapupAfterProcessChildren(XmlNode frag, IVwEnv vwenv, string flowType, string style)
+		{
+			InsertLiteralString(frag, vwenv, "after", flowType, null); // don't need default style here, we're inside the main span for the property.
+			if (style != null || flowType != null)
+			{
 					switch (flowType)
 					{
 						default:
@@ -2530,28 +2559,8 @@ namespace SIL.FieldWorks.Common.Controls
 							break;
 					}
 				}
-				else
-				{
-					// no style, just process the children.
-					InsertLiteralString(frag, vwenv, "before", flowType);
-					ProcessChildren(node, vwenv, hvo, frag);
-					InsertLiteralString(frag, vwenv, "after", flowType);
-				}
 				if (vwenv is ConfiguredExport)
 					(vwenv as ConfiguredExport).EndCssClassIfNeeded(frag);
-				// This groups senses by placing graminfo before the number, and omitting it if the same as the
-				// previous sense in the entry.  This isn't yet supported by the UI, but may well be requested in
-				// the future.  (See LT-9663.)
-				//if (fGramInfoBeforeNumber && m_tssDelayedNumber != null)
-				//{
-				//	vwenv.AddString(m_tssDelayedNumber);
-				//	m_tssDelayedNumber = null;
-				//}
-			}
-			finally
-			{
-				m_stackPartRef.RemoveAt(0);
-			}
 		}
 
 		private void SetupSingleGramInfoFirst(XmlNode frag, XmlNode node, int hvo, IVwEnv vwenv)
@@ -2627,11 +2636,22 @@ namespace SIL.FieldWorks.Common.Controls
 					if (hvoTarget == 0)
 						return true; // first sense has no category.
 					int fragId = GetSubFragId(objNode, gramInfoPartRef);
-					if (vwenv is ConfiguredExport)
-						(vwenv as ConfiguredExport).BeginCssClassIfNeeded(gramInfoPartRef);
-					vwenv.AddObj(hvoTarget, this, fragId);
-					if (vwenv is ConfiguredExport)
-						(vwenv as ConfiguredExport).EndCssClassIfNeeded(gramInfoPartRef);
+					string flowType;
+					try
+					{
+						m_stackPartRef.Insert(0, gramInfoPartRef);
+						// This is the setup that invoking the part ref would normally do: wrap it in a flow and set a style if need be,
+						// insert before labels, etc.
+						var style = PartRefSetupToProcessChildren(gramInfoPartRef, objNode, hvoTarget, vwenv, true, out flowType);
+						vwenv.AddObj(hvoTarget, this, fragId);
+						// This is the cleanup that invoking the part ref would normally do after displaying the effect of the part referred to.
+						// Closing any opened flow, adding following labels, etc.
+						PartRefWrapupAfterProcessChildren(gramInfoPartRef, vwenv, flowType, style);
+					}
+					finally
+					{
+						m_stackPartRef.RemoveAt(0);
+					}
 					return true;
 				}
 			}
@@ -2706,7 +2726,7 @@ namespace SIL.FieldWorks.Common.Controls
 			DetermineNeededFieldsForChildren(node, frag, info);
 		}
 
-		private void InsertLiteralString(XmlNode frag, IVwEnv vwenv, string attrName, string flowType)
+		private void InsertLiteralString(XmlNode frag, IVwEnv vwenv, string attrName, string flowType, string defaultStyle)
 		{
 			// When showasindentedpara is set true, the before string is displayed elsewhere, and the after
 			// string is not displayed at all.  (Those are the only literal strings that use this method.)
@@ -2726,20 +2746,30 @@ namespace SIL.FieldWorks.Common.Controls
 			var tssNumber = GetDelayedNumber(frag, vwenv is TestCollectorEnv);
 			var sStyle = XmlUtils.GetAttributeValue(frag, attrName + "Style");
 			var fMadePara = false;
-			if (!String.IsNullOrEmpty(sStyle))
+			var fMadeDefaultStyleSpan = false;
+			if (String.IsNullOrEmpty(sStyle))
+			{
+				if (!string.IsNullOrEmpty(defaultStyle))
+				{
+					vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, defaultStyle);
+					vwenv.OpenSpan();
+					fMadeDefaultStyleSpan = true;
+				}
+			}
+			else // got a beforeStyle or afterStyle (sStyle != null)
 			{
 				if (flowType == "div")
 				{
 					fMadePara = true;
-					vwenv.set_StringProperty((int)FwTextPropType.ktptNamedStyle, sStyle);
+					vwenv.set_StringProperty((int) FwTextPropType.ktptNamedStyle, sStyle);
 					vwenv.OpenParagraph();
 				}
 				else
 				{
-				ITsStrBldr bldr = tss.GetBldr();
-				bldr.SetStrPropValue(0, bldr.Length, (int)FwTextPropType.ktptNamedStyle, sStyle);
-				tss = bldr.GetString();
-			}
+					ITsStrBldr bldr = tss.GetBldr();
+					bldr.SetStrPropValue(0, bldr.Length, (int) FwTextPropType.ktptNamedStyle, sStyle);
+					tss = bldr.GetString();
+				}
 			}
 			if (tssNumber != null)
 			{
@@ -2758,6 +2788,8 @@ namespace SIL.FieldWorks.Common.Controls
 			AddMarkedString(vwenv, frag, tss);
 			if (fMadePara)
 				vwenv.CloseParagraph();
+			if (fMadeDefaultStyleSpan)
+				vwenv.CloseSpan();
 		}
 
 		/// <summary>
