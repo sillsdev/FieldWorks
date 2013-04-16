@@ -236,6 +236,9 @@ display/printout!
   <xsl:template match="LexSense_VisibleComplexFormBackRefs|LexEntryLink_ComplexFormEntryRefs|LexEntryLink_VariantFormEntryBackRefs">
 	<xsl:apply-templates/>
   </xsl:template>
+	<xsl:template match="div[@class='minorentries']">
+		<xsl:apply-templates/>
+	</xsl:template>
 
   <!-- skip into _VisibleComplexFormBackRefs, but handle embedded paragraphs if there are any -->
 

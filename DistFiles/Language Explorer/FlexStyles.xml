@@ -6,7 +6,7 @@
 	*********************************************************************************************
 -->
 <Styles date="2011-04-01" DTDver="B44B0AE3-416D-4616-B4CA-C1DA9A56DD7F" label="Flex Dictionary">
-	<markup version="8ED469CF-B961-46E6-A05C-F223FA4F998D">
+	<markup version="59D5D68E-8509-4E6D-854A-7480DAFD2A27">
 		<!--
 		The 'Normal' entry is here mainly as a placeholder, so the DTD will allow things to be based on it.
 		Logically Normal should probably be internal, but it's 'general' in existing projects, and the
@@ -117,7 +117,7 @@
 			<usage wsId="en">Each paragraph of Minor entry information that is added to the entry if there are minor entries.</usage>
 			<help category="Flex_Dictionary_Styles"/>
 			<font/>
-			<paragraph basedOn="Dictionary-Normal" indentLeft="9 pt" hanging="0 pt" spaceBefore="0 pt"/>
+			<paragraph basedOn="Dictionary-Normal" spaceBefore="0 pt"/>
 		</tag>
 		<tag id="Dictionary-Headword" guid="3F844794-09D1-45FA-9D75-05C62E2B836D" userlevel="1" context="internalConfigureView" type="character">
 			<usage wsId="en">The main headword at the very start of the entry.</usage>
