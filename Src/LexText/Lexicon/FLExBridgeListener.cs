@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -122,9 +123,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnObtainAnyFlexBridgeProject(object commandObject)
 		{
-			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm);
+			ObtainedProjectType obtainedProjectType;
+			var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(_parentForm, out obtainedProjectType);
 			if (string.IsNullOrEmpty(newprojectPathname))
 				return true;
+			_mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
 
 			FieldWorks.OpenNewProject(new ProjectId(FDOBackendProviderType.kXML, newprojectPathname, null), FwUtils.ksFlexAppName);
 
@@ -1377,7 +1380,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		private static void CheckForFlexBridgeInstalled(UIItemDisplayProperties display)
 		{
 			var fullName = FLExBridgeHelper.FullFieldWorksBridgePath();
-			display.Enabled = FileUtils.FileExists(fullName);
+			display.Enabled = FileUtils.FileExists(fullName); // Flex Bridge exe has to exist
 			display.Visible = true; // Always visible. Cf. LT-13885
 		}
 

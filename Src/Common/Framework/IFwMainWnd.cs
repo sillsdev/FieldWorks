@@ -15,6 +15,7 @@
 using System.Drawing;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
+using XCore;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -42,10 +43,17 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the application to which this main winodw belongs.
+		/// Gets the application to which this main window belongs.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		FwApp App { get; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the Mediater for the window.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		Mediator Mediator { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

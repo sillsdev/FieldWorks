@@ -1557,10 +1557,16 @@ namespace SIL.FieldWorks
 						case WelcomeToFieldWorksDlg.ButtonPress.Exit:
 							return null; // Should cause the FW process to exit later
 						case WelcomeToFieldWorksDlg.ButtonPress.Receive:
-							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm); // Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
+							ObtainedProjectType obtainedProjectType;
+							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, out obtainedProjectType); // Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
 								projectToTry = new ProjectId(FDOBackendProviderType.kXML, projectDataPathname, null);
+								var activeWindow = startingApp.ActiveMainWindow;
+								if (activeWindow != null)
+								{
+									((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed", obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+								}
 							}
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Import:
@@ -1621,6 +1627,15 @@ namespace SIL.FieldWorks
 			using (var dlg = new ChooseLangProjectDialog(helpTopicProvider, false))
 			{
 				dlg.ShowDialog(dialogOwner);
+				var app = helpTopicProvider as IApp;
+				if (app != null)
+				{
+					var activeWindow = app.ActiveMainWindow;
+					if (activeWindow != null && dlg.ObtainedProjectType != ObtainedProjectType.None)
+					{
+						((IFwMainWnd)activeWindow).Mediator.PropertyTable.SetProperty("LastBridgeUsed", dlg.ObtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
+					}
+				}
 				return dlg.DialogResult != DialogResult.OK ? null : new ProjectId(dlg.Project, dlg.Server);
 			}
 		}
