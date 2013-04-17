@@ -53,7 +53,7 @@ namespace FwBuildTasks
 		{
 			var writer = new StreamWriter(m_sut.AssemblyInfoPath, false, Encoding.UTF8);
 			writer.WriteLine("[assembly: AssemblyFileVersion(\"8.4.2.1234\")]");
-			writer.WriteLine("[assembly: AssemblyInformationalVersionAttribute(\"8.4.2\")]");
+			writer.WriteLine("[assembly: AssemblyInformationalVersionAttribute(\"8.4.2 beta 2\")]");
 			writer.WriteLine("[assembly: AssemblyVersion(\"8.4.2.*\")]");
 			writer.Close();
 		}
@@ -276,8 +276,9 @@ namespace FwBuildTasks
 			Assert.That(index >= 0);
 			Assert.That(m_sut.LinkerCulture[index], Is.EqualTo(locale));
 			Assert.That(m_sut.LinkerFileVersion[index], Is.EqualTo("8.4.2.1234"));
-			Assert.That(m_sut.LinkerProductVersion[index], Is.EqualTo("8.4.2"));
+			Assert.That(m_sut.LinkerProductVersion[index], Is.EqualTo("8.4.2 beta 2"));
 			Assert.That(m_sut.LinkerVersion[index], Is.EqualTo("8.4.2.*"));
+			Assert.That(m_sut.LinkerAlArgs[index], Is.StringContaining("\"8.4.2 beta 2\""));
 			var embeddedResources = m_sut.LinkerResources[index];
 			Assert.That(embeddedResources.Count, Is.EqualTo(expectedResources.Length));
 			foreach (var resource in expectedResources)
@@ -655,6 +656,7 @@ namespace FwBuildTasks
 		public List<string> LinkerProductVersion = new List<string>();
 		public List<string> LinkerVersion = new List<string>();
 		public List<List<EmbedInfo>> LinkerResources = new List<List<EmbedInfo>>();
+		public List<string> LinkerAlArgs = new List<string>();
 		internal override bool RunAssemblyLinker(string outputDllPath, string culture, string fileversion, string productVersion, string version, List<EmbedInfo> resources)
 		{
 			LinkerPath.Add(outputDllPath);
@@ -663,6 +665,7 @@ namespace FwBuildTasks
 			LinkerProductVersion.Add(productVersion);
 			LinkerVersion.Add(version);
 			LinkerResources.Add(resources);
+			LinkerAlArgs.Add(BuildLinkerArgs(outputDllPath, culture, fileversion, productVersion, version, resources));
 			return true;
 		}
 
