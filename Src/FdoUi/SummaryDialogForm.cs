@@ -47,8 +47,12 @@ namespace SIL.FieldWorks.FdoUi
 	/// TE will jump back in front of Flex even before Flex has finished jumping to the entry.
 	/// See LT-3461.
 	/// </summary>
+	/// <remarks>
+	/// Clients should also test the OtherButtonClicked property to see if a "find entry" dialog
+	/// should pop up to find a different entry to display with a new SummaryDialogForm.
+	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
-	public class SummaryDialogForm : Form, IFWDisposable
+	internal class SummaryDialogForm : Form, IFWDisposable
 	{
 		#region Member variables
 		private List<int> m_rghvo;
@@ -70,6 +74,7 @@ namespace SIL.FieldWorks.FdoUi
 		private const string s_helpTopicKey = "khtpFindInDictionary";
 		private System.Windows.Forms.HelpProvider helpProvider;
 		private bool m_fShouldLink; // set true by btnLexicon_Click, caller should call LinkToLexicon after dialog closes.
+		private bool m_fOtherClicked;	// set true by btnOther_Click, caller should call OtherButtonClicked after dialog closes.
 		#endregion
 
 		#region Constructor/destructor
@@ -83,7 +88,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="helpFileKey">string key to get the help file name</param>
 		/// <param name="styleSheet">The stylesheet.</param>
 		/// ------------------------------------------------------------------------------------
-		public SummaryDialogForm(LexEntryUi leui, ITsString tssForm, IHelpTopicProvider helpProvider,
+		internal SummaryDialogForm(LexEntryUi leui, ITsString tssForm, IHelpTopicProvider helpProvider,
 			string helpFileKey, IVwStylesheet styleSheet)
 		{
 			InitializeComponent();
@@ -108,7 +113,7 @@ namespace SIL.FieldWorks.FdoUi
 		/// <param name="cache">The cache.</param>
 		/// <param name="mediator">The mediator.</param>
 		/// ------------------------------------------------------------------------------------
-		public SummaryDialogForm(List<int> rghvo, ITsString tssForm, IHelpTopicProvider helpProvider,
+		internal SummaryDialogForm(List<int> rghvo, ITsString tssForm, IHelpTopicProvider helpProvider,
 			string helpFileKey, IVwStylesheet styleSheet, FdoCache cache, Mediator mediator)
 		{
 			InitializeComponent();
@@ -390,33 +395,36 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		#region Event handlers
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		///
+		/// NOTE: after calling ShowDialog, clients should test the OtherButtonClicked property,
+		/// and if it is true, invoke a "find entry" dialog and loop back to display another
+		/// SummaryDialogForm.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		/// ------------------------------------------------------------------------------------
 		private void btnOther_Click(object sender, System.EventArgs e)
 		{
-			var entry = LexEntryUi.ShowFindEntryDialog(m_cache, m_mediator, m_tssWf, Owner);
-			if (entry != null && m_rghvo != null && !m_rghvo.Contains(entry.Hvo))
-			{
-				m_rghvo.Clear();
-				m_rghvo.Add(entry.Hvo);
-				var sda = (ObjectListPublisher)m_xv.DecoratedDataAccess;
-				sda.CacheVecProp(RootHvo, m_rghvo.ToArray());
-			}
-			if (entry != null)
-				OtherResult = entry;
+			m_fOtherClicked = true;
+			Close();
 		}
 
 		/// <summary>
-		/// Gives the entries resulting from the dialog shown by clicking the Other button.
-		/// N.B. Don't make this a non-Auto property and add a CheckDisposed(), because it
-		/// will almost certainly be disposed when we use it! It works!
+		/// Gets or sets a value indicating whether the <see cref="SIL.FieldWorks.FdoUi.SummaryDialogForm"/> Other button was clicked.
 		/// </summary>
-		public ILexEntry OtherResult { get; set; }
+		/// <value>
+		/// <c>true</c> if Other button clicked; otherwise, <c>false</c>.
+		/// </value>
+		internal bool OtherButtonClicked
+		{
+			get
+			{
+				CheckDisposed();
+				return m_fOtherClicked;
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

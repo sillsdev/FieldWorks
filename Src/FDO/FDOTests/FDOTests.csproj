@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -167,7 +167,7 @@
     </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Palaso.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.2.8.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -555,11 +555,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
+  <Import Project="../../../Build/BeforeBuildCopyPalasoDlls.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>

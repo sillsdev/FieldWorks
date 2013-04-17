@@ -487,61 +487,51 @@ namespace SIL.FieldWorks.FdoUi
 			IHelpTopicProvider helpProvider, string helpFileKey,
 			List<ILexEntry> entries, ITsString tssWf)
 		{
-			DisposeCurrentModalForm();
-			ILexEntry otherBtnResult;
-			using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), tssWf,
-										 helpProvider, helpFileKey,
-										 stylesheet, cache, mediator))
+			// Loop showing the SummaryDialogForm as long as the user clicks the Other button
+			// in that dialog.
+			bool otherButtonClicked = false;
+			do
 			{
-				SetCurrentModalForm(sdform);
-				if (owner == null)
-					sdform.StartPosition = FormStartPosition.CenterScreen;
-				sdform.ShowDialog(owner);
-				if (!sdform.IsDisposed && sdform.ShouldLink)
-					sdform.LinkToLexicon();
-				otherBtnResult = sdform.OtherResult;
-			}
-			if (otherBtnResult == null)
-				return;
-			// SummaryDialogForm will be disposed by now, but we need to show it again.
-			DisplayEntriesRecursive(cache, owner, mediator, stylesheet,
-									helpProvider, helpFileKey,
-									new List<ILexEntry> { otherBtnResult },
-									otherBtnResult.HeadWord);
+				using (var sdform = new SummaryDialogForm(new List<int>(entries.Select(le => le.Hvo)), tssWf,
+														helpProvider, helpFileKey,
+														stylesheet, cache, mediator))
+				{
+					SetCurrentModalForm(sdform);
+					if (owner == null)
+						sdform.StartPosition = FormStartPosition.CenterScreen;
+					sdform.ShowDialog(owner);
+					if (sdform.ShouldLink)
+						sdform.LinkToLexicon();
+					otherButtonClicked = sdform.OtherButtonClicked;
+				}
+				if (otherButtonClicked)
+				{
+					// Look for another entry to display.  (If the user doesn't select another
+					// entry, loop back and redisplay the current entry.)
+					var entry = ShowFindEntryDialog(cache, mediator, tssWf, owner);
+					if (entry != null)
+					{
+						// We need a list that contains the entry we found to display on the
+						// next go around of this loop.
+						entries = new List<ILexEntry>();
+						entries.Add(entry);
+						tssWf = entry.HeadWord;
+					}
+				}
+			} while (otherButtonClicked);
 		}
-
-		/// <summary>
-		/// s_activeModalForm helps to manage the situation where multiple dialogs
-		/// can possibly get launched by WCF calls (e.g. from Paratext).
-		/// To prevent this, we use this variable to track the last modal dialog
-		/// (by calling SetCurrentModalForm()) so we can dispose of it before opening the next one
-		/// (by calling DisposeCurrentModalForm()).
-		/// See http://support.ubs-icap.org/default.asp?11269
-		/// </summary>
-		private static Form s_activeModalForm = null;
 
 		/// <summary>
 		/// Set a Modal Form to temporarily show on top of all applications
 		/// and have an icon that is accessible for the user after it goes behind other users.
 		/// See http://support.ubs-icap.org/default.asp?11269
-		/// See also summary for s_activeModalForm
 		/// </summary>
 		/// <param name="newActiveModalForm"></param>
 		private static void SetCurrentModalForm(Form newActiveModalForm)
 		{
-			s_activeModalForm = newActiveModalForm;
-			s_activeModalForm.TopMost = true;
-			s_activeModalForm.Activated += s_activeModalForm_Activated;
-			s_activeModalForm.ShowInTaskbar = true;
-		}
-
-		/// <summary>
-		/// see summary for s_activeModalForm
-		/// </summary>
-		private static void DisposeCurrentModalForm()
-		{
-			if (s_activeModalForm != null && !s_activeModalForm.IsDisposed)
-				s_activeModalForm.Dispose();
+			newActiveModalForm.TopMost = true;
+			newActiveModalForm.Activated += s_activeModalForm_Activated;
+			newActiveModalForm.ShowInTaskbar = true;
 		}
 
 		/// <summary>
@@ -763,7 +753,6 @@ namespace SIL.FieldWorks.FdoUi
 			bool fRestore = false;
 			StringTable stOrig = null;
 			mediator = EnsureValidMediator(mediator, out fRestore, out stOrig);
-			DisposeCurrentModalForm();
 			try
 			{
 				using (EntryGoDlg entryGoDlg = new EntryGoDlg())
@@ -813,12 +802,30 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
+			bool otherButtonClicked = false;
 			using (SummaryDialogForm form =
 				new SummaryDialogForm(this, tssWf, helpProvider, helpFileKey, styleSheet))
 			{
 				form.ShowDialog(owner);
 				if (form.ShouldLink)
 					form.LinkToLexicon();
+				otherButtonClicked = form.OtherButtonClicked;
+			}
+			if (otherButtonClicked)
+			{
+				var entry = ShowFindEntryDialog(this.Object.Cache, this.Mediator, tssWf, owner);
+				if (entry != null)
+				{
+					using (LexEntryUi leuiNew = new LexEntryUi(entry))
+					{
+						leuiNew.ShowSummaryDialog(owner, entry.HeadWord, helpProvider, helpFileKey, styleSheet);
+					}
+				}
+				else
+				{
+					// redisplay the original entry (recursively)
+					ShowSummaryDialog(owner, tssWf, helpProvider, helpFileKey, styleSheet);
+				}
 			}
 		}
 

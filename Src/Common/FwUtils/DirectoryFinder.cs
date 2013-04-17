@@ -838,14 +838,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string path = CommonAppDataFolder(ksWritingSystemsDir);
 				if (!Directory.Exists(path))
 				{
-					DirectoryInfo di = Directory.CreateDirectory(path);
+					DirectoryInfo di;
+
+					// Provides FW on Linux multi-user access. Overrides the system
+					// umask and creates the directory with the permissions "775".
+					// The "fieldworks" group was created outside the app during
+					// configuration of the package which allows group access.
+					using(new FileModeOverride())
+					{
+						di = Directory.CreateDirectory(path);
+					}
+
 					if (!MiscUtils.IsUnix)
 					{
-						// We don't set the permission on Linux. That is done outside of this app.
-						// On Linux the run-app script checks the permissions on startup; the
-						// correct permissions are set when installing the package or by the
-						// system administrator.
-
 						// NOTE: GetAccessControl/ModifyAccessRule/SetAccessControl is not implemented in Mono
 						DirectorySecurity ds = di.GetAccessControl();
 						var sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);

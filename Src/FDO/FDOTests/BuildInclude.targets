@@ -1,15 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<UsingTask TaskName="FileUpdate" AssemblyFile="../../../Build/MSBuild.Community.Tasks.dll"/>
 	<ItemGroup>
 		<remotingTcpServerConfig Include="../../Common/FwRemoteDatabaseConnectorService/remoting_tcp_server.config" />
 	</ItemGroup>
-	<Target Name="AfterClean">
+
+	<Target Name="AfterClean" DependsOnTargets="DeleteCopiedPalasoDlls">
 		<Message Importance="high" Text="Delete: %(remotingTcpServerConfig.FullPath)" />
 		<Delete Files="@(remotingTcpServerConfig -&gt; '$(OutDir)/%(Identity)')" ContinueOnError="true" />
 		<Delete Files="$(OutDir)remoting_tcp_server_tests.config" ContinueOnError="true" />
 	</Target>
-	<Target Name="BeforeBuild">
+	<Target Name="BeforeBuild" DependsOnTargets="CopyPalasoDlls">
 		<!-- whatever commands we need to run before the rest of the build-->
 		<Message Importance="high" Text="Copying %(remotingTcpServerConfig.FullPath) to $(OutDir)remoting_tcp_server_tests.config" />
 		<Copy SourceFiles="@(remotingTcpServerConfig)" DestinationFiles="$(OutDir)remoting_tcp_server_tests.config"

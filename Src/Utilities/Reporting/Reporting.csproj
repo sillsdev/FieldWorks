@@ -105,7 +105,7 @@
 	</Reference>
 	<Reference Include="Palaso, Version=1.9.146.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\DistFiles\Palaso.dll</HintPath>
+	  <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="System.Core" />
 	<Reference Include="System">
@@ -179,10 +179,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-	<PreBuildEvent>
-	</PreBuildEvent>
-	<PostBuildEvent>
-	</PostBuildEvent>
+    <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
+  <Import Project="../../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>

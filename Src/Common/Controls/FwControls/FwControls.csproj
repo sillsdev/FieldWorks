@@ -111,16 +111,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <Reference Include="xCore, Version=7.2.0.17521, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="xCoreInterfaces, Version=7.2.0.40833, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="XMLUtils">
-      <Name>XMLUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
     <Reference Include="BasicUtils">
       <HintPath>..\..\..\..\Output\Debug\BasicUtils.dll</HintPath>
     </Reference>
@@ -136,8 +126,11 @@
     <Reference Include="FwUtils">
       <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="SilUtils">
+      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    </Reference>
     <Reference Include="Palaso">
-      <HintPath>..\..\..\..\DistFiles\Palaso.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared">
       <HintPath>..\..\..\..\DistFiles\ParatextShared.dll</HintPath>
@@ -148,8 +141,15 @@
     <Reference Include="SharedScrUtils">
       <HintPath>..\..\..\..\Output\Debug\SharedScrUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SilUtils">
-      <HintPath>..\..\..\..\Output\Debug\SilUtils.dll</HintPath>
+    <Reference Include="xCore, Version=7.2.0.17521, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="xCoreInterfaces, Version=7.2.0.40833, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="XMLUtils">
+      <Name>XMLUtils</Name>
+      <HintPath>..\..\..\..\Output\Debug\XMLUtils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -514,10 +514,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
+  <Import Project="../../../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -158,11 +158,11 @@
     </Reference>
     <Reference Include="Palaso, Version=1.7.43.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Palaso.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="Palaso.Lift, Version=1.9.16.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Palaso.Lift.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\Palaso.Lift.dll</HintPath>
     </Reference>
     <Reference Include="ParserCore">
       <Name>ParserCore</Name>
@@ -682,12 +682,11 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
+  <Import Project="../../../Build/BeforeBuildCopyPalasoDlls.targets" />
   <ItemGroup>
     <None Include="gendarme-LexTextControls.ignore" />
   </ItemGroup>

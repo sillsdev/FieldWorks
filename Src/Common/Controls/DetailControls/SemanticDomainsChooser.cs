@@ -384,6 +384,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="displayUsage"></param>
 		public static void UpdateDomainListLabels(IEnumerable<ObjectLabel> createObjectLabels, IVwStylesheet stylesheet, ListView domainList, bool displayUsage)
 		{
+			domainList.BeginUpdate();	// Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
 			domainList.Items.Clear();
 			if (createObjectLabels.Any())
 				domainList.Font = GetFontForFormFromObjectLabels(createObjectLabels, stylesheet);
@@ -392,6 +393,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				domainList.Items.Add(CreateLabelListItem(selectedItem.Object, stylesheet, false, displayUsage));
 			}
+			domainList.EndUpdate();
 		}
 
 		private static Font GetFontForFormFromObjectLabels(IEnumerable<ObjectLabel> labelList, IVwStylesheet stylesheet)
@@ -412,6 +414,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public static void UpdateDomainTreeLabels(IEnumerable<ObjectLabel> labels, bool displayUsage, TreeView domainTree,
 			IVwStylesheet stylesheet, HashSet<ICmObject> selectedItems)
 		{
+			domainTree.BeginUpdate();	// Mono is extremely bad about redundant redrawing.  See FWNX-973 and FWNX-1043.
 			domainTree.Nodes.Clear();
 			if (labels.Any())
 				domainTree.Font = GetFontForFormFromObjectLabels(labels, stylesheet);
@@ -421,6 +424,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				var x = CreateLabelNode(label, stylesheet, selectedItems, displayUsage);
 				domainTree.Nodes.Add(x);
 			}
+			domainTree.EndUpdate();
 		}
 
 		/// <summary>
