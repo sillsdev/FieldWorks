@@ -871,6 +871,11 @@ namespace SIL.FieldWorks.Common.Framework
 				WriteCssXSenseNumber();
 				m_dictClassData.Remove("xsensenumber");
 			}
+			if (m_dictClassData.ContainsKey("xsensexrefnumber"))
+			{
+				WriteCssXSenseXrefNumber();
+				m_dictClassData.Remove("xsensexrefnumber");
+			}
 			if (m_dictClassData.ContainsKey("xsensenumber-sub"))
 			{
 				WriteCssXSenseNumberSub();
@@ -1166,6 +1171,13 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			m_writer.WriteLine(".xsensenumber {");
 			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "xsensenumber");
+			m_writer.WriteLine("}");
+		}
+
+		private void WriteCssXSenseXrefNumber()
+		{
+			m_writer.WriteLine(".xsensexrefnumber {");
+			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "xsensexrefnumber");
 			m_writer.WriteLine("}");
 		}
 

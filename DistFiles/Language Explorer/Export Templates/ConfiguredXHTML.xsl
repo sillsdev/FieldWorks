@@ -805,7 +805,7 @@ display/printout!
 		  <xsl:when test="@namedStyle='' or not(@namedStyle)"><xsl:value-of select="."/></xsl:when>
 		  <xsl:when test="@namedStyle='Homograph-Number'"><span class="xhomographnumber"><xsl:value-of select="."/></span></xsl:when>
 		  <!-- won't appear in LexEntryLink_MLHeadWord -->
-		  <xsl:when test="@namedStyle='Sense-Reference-Number'"><span class="xsensenumber"><xsl:value-of select="."/></span></xsl:when>
+		  <xsl:when test="@namedStyle='Sense-Reference-Number'"><span class="xsensexrefnumber"><xsl:value-of select="."/></span></xsl:when>
 		</xsl:choose>
 	  </xsl:for-each>
   </xsl:template>

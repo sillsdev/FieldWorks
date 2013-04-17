@@ -323,9 +323,21 @@ namespace SIL.FieldWorks.Common.Controls
 			CurrentContext ccOld = WriteFieldStartTag(tag);
 
 			ITsString tss = DataAccess.get_MultiStringAlt(CurrentObject(), tag, ws);
-				int cchIndent = TabsToIndent() * 4;
-				tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent,
-					ws, false, false);
+			int cchIndent = TabsToIndent()*4;
+			tss.WriteAsXmlExtended(m_strm, m_cache.WritingSystemFactory, cchIndent,
+				ws, false, false);
+			// See if the string uses any styles that require us to export some more data.
+			for (int irun = 0; irun < tss.RunCount; irun++)
+			{
+				var style = tss.get_StringProperty(irun, (int) FwTextPropType.ktptNamedStyle);
+				int wsRun = tss.get_WritingSystem(irun);
+				switch (style)
+				{
+					case "Sense-Reference-Number":
+						m_xhtml.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
+						break;
+				}
+			}
 
 			WriteFieldEndTag(tag, ccOld);
 		}
