@@ -641,6 +641,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 	public static class SegmentServices
 	{
 		/// <summary>
+		/// Given a starting segment in a paragraph, return the next segment
+		/// in the paragraph, or null if there isn't one.
+		/// </summary>
+		/// <param name="startSegment"></param>
+		/// <returns></returns>
+		public static ISegment GetNextSegmentOrNull(ISegment startSegment)
+		{
+			var para = startSegment.Paragraph;
+			var maxIndex = para.SegmentsOS.Count - 1;
+			var istartSeg = startSegment.IndexInOwner;
+			return (istartSeg < maxIndex) ? para.SegmentsOS[istartSeg + 1] : null;
+		}
+
+		/// <summary>
 		/// Find the closest segment to the given range of characters.
 		/// </summary>
 		public static ISegment FindClosestSegment(IEnumerable<ISegment> segments, int ichMin, int ichLim, out bool fExactMatch)

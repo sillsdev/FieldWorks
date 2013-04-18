@@ -6,7 +6,6 @@ using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FDO.DomainImpl;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.CoreImpl;
 
@@ -2484,7 +2483,6 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// different indices).
 		/// </summary>
 		[Test]
-		[Ignore("This needs to be fixed soon after Stable release 7.0.1")]
 		public virtual void WithChart_InsertWordsAndSegmentPunctuation()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
@@ -2506,13 +2504,10 @@ namespace SIL.FieldWorks.FDO.FDOTests
 
 			// New chart cells
 
-			// 1st cell is expanded to include new text.
-			adjuster.m_newCellSkels.Add(new CellSkeleton(0, 1, 0, 0, i1stRow, i1stCol));
-			// GJM: The above is the best option, but it is feasible to leave the new text uncharted too.
+			// We don't want to try to guess where to chart text; leave the new stuff uncharted.
 			// Then it gets dealt with by the ChOrph routines and presented uncharted to the user
 			// with green highlights to show possible insertion cells
-			// In that case, the test should use this next line instead:
-			//adjuster.m_newCellSkels.Add(new CellSkeleton(0, 0, 0, i1stRow, i1stCol));
+			adjuster.m_newCellSkels.Add(new CellSkeleton(0, 0, 0, i1stRow, i1stCol));
 
 			// 2nd cell is unaffected (pus yalola) (Seg's index changes, as well as some analysis indices)
 			adjuster.m_newCellSkels.Add(new CellSkeleton(1,	1, 2, i1stRow, i2ndCol));
