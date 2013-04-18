@@ -175,7 +175,6 @@ struct OverriddenCharProps
 // Engines
 #include "LgIcuCharPropEngine.h"
 #include "LgUnicodeCollater.h"
-#include "LgIcuCollator.h"
 class RomRenderEngine;
 DEFINE_COM_PTR(RomRenderEngine);
 class UniscribeEngine;

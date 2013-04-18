@@ -117,7 +117,6 @@ OBJ_LANG = \
 	$(INT_DIR)/LgIcuCharPropEngine.o \
 	$(INT_DIR)/LgFontManager.o \
 	$(INT_DIR)/LgUnicodeCollater.o \
-	$(INT_DIR)/LgIcuCollator.o \
 	$(INT_DIR)/LgInputMethodEditor.o \
 	$(INT_DIR)/LocaleIndex.o \
 	$(INT_DIR)/LgCodePageEnumerator.o \

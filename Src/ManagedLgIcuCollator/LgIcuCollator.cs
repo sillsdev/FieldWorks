@@ -8,8 +8,6 @@ namespace SIL.FieldWorks.Language
 {
 	/// <summary>
 	/// Direct port of the C++ class LgIcuCollator
-	///
-	/// NOTE: Not currently enabled in Windows (FWNX-296).
 	/// </summary>
 	[Serializable()]
 	[ClassInterface(ClassInterfaceType.None)]

@@ -363,7 +363,6 @@ namespace FwBuildTasks
 						writer.Write(" Condition=\"'$(OS)'=='Windows_NT'\"");
 					}
 					if (project.StartsWith("LinuxSmoke") ||
-						project.StartsWith("ManagedLgIcuCollator") ||
 						project.StartsWith("ManagedVwWindow"))
 					{
 						writer.Write(" Condition=\"'$(OS)'=='Unix'\"");
