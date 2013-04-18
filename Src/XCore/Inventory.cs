@@ -1026,7 +1026,12 @@ namespace XCore
 			{
 				//get the parent of the nodes in the path
 				XmlElement root = oldAndBusted[0].ParentNode as XmlElement;
-				foreach (XmlNode match in oldAndBusted)
+				// In Mono, changing the root element invalidates the XmlNodeList iterator
+				// so that it quits the loop immediately after the first node is removed.
+				// See FWNX-1057.  This results in evergrowing fwlayout files stored with
+				// the project!  So we copy the list first into a form that won't be
+				// invalidated.
+				foreach (XmlNode match in new List<XmlNode>(oldAndBusted.Cast<XmlNode>()))
 				{
 					root.RemoveChild(match);
 				}
@@ -1155,6 +1160,25 @@ namespace XCore
 		}
 
 		/// <summary>
+		/// This comparison class allows us to simplify getting only unique elements
+		/// in the MergeAndUpdateNodes method below.
+		/// </summary>
+		class XmlNodeCompare : IEqualityComparer<XmlNode>
+		{
+			/// <summary></summary>
+			public bool Equals(XmlNode first, XmlNode second)
+			{
+				return first.OuterXml == second.OuterXml;
+			}
+
+			/// <summary></summary>
+			public int GetHashCode(XmlNode x)
+			{
+				return x.OuterXml.GetHashCode();
+			}
+		}
+
+		/// <summary>
 		/// This method will return a list of merged and unchanged nodes from the given list.
 		/// </summary>
 		/// <param name="nodeList"></param>
@@ -1165,7 +1189,10 @@ namespace XCore
 		private List<XmlNode> MergeAndUpdateNodes(XmlNodeList nodeList, int version, out bool wasMerged, bool loadUserOverRides)
 		{
 			wasMerged = false;
-			List<XmlNode> survivors = new List<XmlNode>();
+			// Past bugs may have left duplication in the layout file.  (See FWNX-1057.)  Use a simple
+			// check to weed out any duplicates, which will be exactly identical.
+			var comparer = new XmlNodeCompare();
+			HashSet<XmlNode> survivors = new HashSet<XmlNode>(comparer);
 			foreach(XmlNode node in nodeList)
 			{
 				// Load only nodes that either have matching version number or none.
@@ -1243,7 +1270,7 @@ namespace XCore
 				// Otherwise it's an old-version node and we can't merge it, so ignore it.
 				// we should remove obsolete nodes to indicate the merge so don't add it to survivors
 			}
-			return survivors;
+			return survivors.ToList();
 		}
 
 		private void NoteIfNodeWsTagged(XmlNode node)
