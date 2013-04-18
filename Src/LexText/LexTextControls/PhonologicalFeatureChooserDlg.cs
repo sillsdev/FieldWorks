@@ -850,6 +850,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_bnHelp_Click(object sender, EventArgs e)
 		{
+			if (m_mediator.PropertyTable.GetStringProperty("currentContentControl", null).Substring(0,7) == "natural")
+				m_helpTopic = "khtpChoose-Phonemes";
 			ShowHelp.ShowHelpTopic(m_mediator.HelpTopicProvider, m_helpTopic);
 		}
 
