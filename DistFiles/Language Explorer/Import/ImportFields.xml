@@ -751,37 +751,45 @@
 		</Examples>
 	  </Help>
 	</Field>
-
-	<Field MDF="\xe \xn \xr" id="trans" multi="yes" property="Translation"
-		   signature="MultiString" type="string" uiname="Translation">
-	  <Help>
-		<Usage>When you have a marker that has a translation for an example
-		sentence.</Usage>
-
-		<Settings>Set the Language Descriptor to the language of this
-		field.</Settings>
-
-		<Mapping>Yes</Mapping>
-
-		<Appends>Yes, appends field contents into a single field.</Appends>
-
-		<List>No</List>
-
-		<Multilingual>Yes</Multilingual>
-
-		<Examples>
-		  <Example>\xe My name is Sally.</Example>
-
-		  <Example>\xn Yo me llamo Sally.</Example>
-		</Examples>
-
-		<RelatedFields>These should normally follow an \xv
-		field.</RelatedFields>
-	  </Help>
-	</Field>
   </Class>
 
-  <Class name="Function" partOf="Entry Subentry Sense">
+	<Class name="Translation" partOf="Example">
+		<Field MDF="\xe \xn \xr" id="trans" multi="yes" property="Translation"
+			   signature="MultiString" type="string" uiname="Translation">
+			<Help>
+				<Usage>
+					When you have a marker that has a translation for an example
+					sentence.
+				</Usage>
+
+				<Settings>
+					Set the Language Descriptor to the language of this
+					field.
+				</Settings>
+
+				<Mapping>Yes</Mapping>
+
+				<Appends>Yes, appends field contents into a single field.</Appends>
+
+				<List>No</List>
+
+				<Multilingual>Yes</Multilingual>
+
+				<Examples>
+					<Example>\xe My name is Sally.</Example>
+
+					<Example>\xn Yo me llamo Sally.</Example>
+				</Examples>
+
+				<RelatedFields>
+					These should normally follow an \xv
+					field.
+				</RelatedFields>
+			</Help>
+		</Field>
+	</Class>
+
+			<Class name="Function" partOf="Entry Subentry Sense">
 	<Field MDF="\lf" id="func" list="yes" multi="no"
 		   property="LexicalRelation" signature="LexRefType"
 		   type="string" uiname="Lexical Function">

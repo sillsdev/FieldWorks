@@ -798,14 +798,7 @@ DoExamples
 			  <xsl:with-param name="eNameOut">Example</xsl:with-param> <!-- eNameOut: element name to output -->
 			  </xsl:call-template>
 			</xsl:if>
-			<Translations>        <!-- CmTranslation -->
-				<xsl:if test="trans">
-				  <xsl:call-template name="JoinOnWS">
-				  <xsl:with-param name="abbr" select="trans"/>								  <!-- Abbr: element name to look for -->
-				  <xsl:with-param name="eNameOut">CmTranslation</xsl:with-param><!-- eNameOut: element name to output -->
-				  </xsl:call-template>
-				</xsl:if>
-			</Translations>
+			<xsl:call-template name="DoTranslations"/>
 			<xsl:if test="./ref">
 			  <Reference ws="{./ref/@ws}"><xsl:apply-templates select="./ref/*|./ref/text()" mode="IncludeIFMs"/></Reference>
 			</xsl:if>
@@ -816,6 +809,26 @@ DoExamples
 	  </Examples>
 	</xsl:if>
 </xsl:template>
+
+	<xsl:template name="DoTranslations">
+		<xsl:if test="Translation">
+			<Translations>
+				<xsl:for-each select="Translation">
+					<!-- Translation -->
+					<Translation>
+						<xsl:if test="trans">
+							<xsl:call-template name="JoinOnWS">
+								<xsl:with-param name="abbr" select="trans"/>
+								<!-- Abbr: element name to look for -->
+								<xsl:with-param name="eNameOut">CmTranslation</xsl:with-param>
+								<!-- eNameOut: element name to output -->
+							</xsl:call-template>
+						</xsl:if>
+					</Translation>
+				</xsl:for-each>
+			</Translations>
+		</xsl:if>
+	</xsl:template>
 
 <xsl:template match="*" mode="IncludeIFMs">
 	<xsl:copy-of select="."/>

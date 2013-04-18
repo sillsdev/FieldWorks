@@ -732,6 +732,9 @@ Main template
 					<xsl:apply-templates/>
 				</Translations>
 			</xsl:when>
+			<xsl:when test="name(.)='Translation'"> <!-- Just groups the CmTranslations-->
+				<xsl:apply-templates/>
+			</xsl:when>
 			<!-- vern -->
 			<xsl:when test="name(.)='vern'">
 				<Run>
