@@ -130,6 +130,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected string m_sOrigProjName;
 		/// <summary>Used to check if the vern ws at the top of the list changed</summary>
 		private IWritingSystem m_topVernWs;
+		private LinkLabel linkLbl_useDefaultFolder;
+		private String m_defaultLinkedFilesFolder;
 		#endregion
 
 		#region Construction and initialization
@@ -183,6 +185,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				txtExtLnkEdit.Width = txtExtLnkEdit.Width + deltaX;
 				txtExtLnkEdit.Enabled = false;
 			}
+
+			m_defaultLinkedFilesFolder = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -371,6 +375,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_hideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_mergeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_deleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.linkLbl_useDefaultFolder = new System.Windows.Forms.LinkLabel();
 			m_btnHelp = new System.Windows.Forms.Button();
 			m_btnCancel = new System.Windows.Forms.Button();
 			m_tpGeneral = new System.Windows.Forms.TabPage();
@@ -661,8 +666,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_lstAnalWs.Name = "m_lstAnalWs";
 			this.helpProvider1.SetShowHelp(this.m_lstAnalWs, ((bool)(resources.GetObject("m_lstAnalWs.ShowHelp"))));
 			this.m_lstAnalWs.ThreeDCheckBoxes = true;
-			this.m_lstAnalWs.SelectedIndexChanged += new System.EventHandler(this.m_lstAnalWs_SelectedIndexChanged);
 			this.m_lstAnalWs.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.m_lstAnalWs_ItemCheck);
+			this.m_lstAnalWs.SelectedIndexChanged += new System.EventHandler(this.m_lstAnalWs_SelectedIndexChanged);
 			this.m_lstAnalWs.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WritingSystemListBox_MouseDown);
 			//
 			// m_lstVernWs
@@ -672,8 +677,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.m_lstVernWs.Name = "m_lstVernWs";
 			this.helpProvider1.SetShowHelp(this.m_lstVernWs, ((bool)(resources.GetObject("m_lstVernWs.ShowHelp"))));
 			this.m_lstVernWs.ThreeDCheckBoxes = true;
-			this.m_lstVernWs.SelectedIndexChanged += new System.EventHandler(this.m_lstVernWs_SelectedIndexChanged);
 			this.m_lstVernWs.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.m_lstVernWs_ItemCheck);
+			this.m_lstVernWs.SelectedIndexChanged += new System.EventHandler(this.m_lstVernWs_SelectedIndexChanged);
 			this.m_lstVernWs.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WritingSystemListBox_MouseDown);
 			//
 			// label9
@@ -696,6 +701,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_tpExternalLinks
 			//
+			m_tpExternalLinks.Controls.Add(this.linkLbl_useDefaultFolder);
 			m_tpExternalLinks.Controls.Add(label13);
 			m_tpExternalLinks.Controls.Add(this.btnLinkedFilesBrowse);
 			m_tpExternalLinks.Controls.Add(this.txtExtLnkEdit);
@@ -749,7 +755,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// m_btnOK
 			//
 			resources.ApplyResources(this.m_btnOK, "m_btnOK");
-			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.helpProvider1.SetHelpString(this.m_btnOK, resources.GetString("m_btnOK.HelpString"));
 			this.m_btnOK.Name = "m_btnOK";
 			this.helpProvider1.SetShowHelp(this.m_btnOK, ((bool)(resources.GetObject("m_btnOK.ShowHelp"))));
@@ -767,8 +772,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_cmnuAddWs
 			//
-			this.m_cmnuAddWs.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.menuItem2});
+			this.m_cmnuAddWs.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.menuItem2});
 			this.m_cmnuAddWs.Name = "m_cmnuAddWs";
 			resources.ApplyResources(this.m_cmnuAddWs, "m_cmnuAddWs");
 			//
@@ -779,11 +783,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			// m_wsMenuStrip
 			//
-			this.m_wsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.m_modifyMenuItem,
-			this.m_hideMenuItem,
-			this.m_mergeMenuItem,
-			this.m_deleteMenuItem});
+			this.m_wsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+				{
+					this.m_modifyMenuItem,
+					this.m_hideMenuItem,
+					this.m_mergeMenuItem,
+					this.m_deleteMenuItem
+				});
 			this.m_wsMenuStrip.Name = "m_wsMenuStrip";
 			resources.ApplyResources(this.m_wsMenuStrip, "m_wsMenuStrip");
 			//
@@ -811,9 +817,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.m_deleteMenuItem, "m_deleteMenuItem");
 			this.m_deleteMenuItem.Click += new System.EventHandler(this.m_deleteMenuItem_Click);
 			//
+			// linkLbl_useDefaultFolder
+			//
+			resources.ApplyResources(this.linkLbl_useDefaultFolder, "linkLbl_useDefaultFolder");
+			this.linkLbl_useDefaultFolder.Name = "linkLbl_useDefaultFolder";
+			this.linkLbl_useDefaultFolder.TabStop = true;
+			this.linkLbl_useDefaultFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLbl_useDefaultFolder_LinkClicked);
+			//
 			// FwProjPropertiesDlg
 			//
-			this.AcceptButton = this.m_btnOK;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = m_btnCancel;
@@ -955,9 +967,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected void m_btnOK_Click(object sender, EventArgs e)
 		{
+			if (!UserWantsDefaultLinkedFilesLocation())
+				return;
+			DialogResult = DialogResult.OK;
 			if ((DidProjectTabChange() || DidWsTabChange() || DidLinkedFilesTabChange())
 				&& !ClientServerServices.Current.WarnOnConfirmingSingleUserChanges(m_cache))
 			{
+				Close();
 				return;
 			}
 			// if needed put up "should the homograph ws change?" dialog
@@ -994,6 +1010,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						ProjectPropertiesChanged(this, new EventArgs());
 				}
 			}
+			Close();
 		}
 
 		private bool DidProjectTabChange()
@@ -1359,7 +1376,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					string msg = String.Format(FwCoreDlgs.ksLinkedFilesFolderIsUnavailable, txtExtLnkEdit.Text);
 					MessageBox.Show(msg, FwCoreDlgs.ksLinkedFilesFolderUnavailable);
-					folderBrowserDlg.SelectedPath = DirectoryFinder.GetDefaultLinkedFilesDir(m_cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+					folderBrowserDlg.SelectedPath = m_defaultLinkedFilesFolder;
 				}
 				else
 				{
@@ -1367,8 +1384,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 
 				if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
+				{
 					txtExtLnkEdit.Text = folderBrowserDlg.SelectedPath;
+				}
 			}
+		}
+
+		private bool UserWantsDefaultLinkedFilesLocation()
+		{
+			CheckDisposed();
+			if (!m_defaultLinkedFilesFolder.Equals(txtExtLnkEdit.Text))
+			{
+				using (var dlg = new WarningNotUsingDefaultLinkedFilesLocation())
+				{
+					var result = dlg.ShowDialog();
+					if (result == DialogResult.Cancel)
+						return false;
+				}
+			}
+			return true;
 		}
 
 		/// <summary>
@@ -1889,6 +1923,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 		#endregion
+
+		private void linkLbl_useDefaultFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			txtExtLnkEdit.Text = m_defaultLinkedFilesFolder;
+			if (!Directory.Exists(m_defaultLinkedFilesFolder))
+				Directory.CreateDirectory(m_defaultLinkedFilesFolder);
+		}
 	}
 	#endregion //FwProjPropertiesDlg dialog
 }

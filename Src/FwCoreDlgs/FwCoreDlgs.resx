@@ -966,4 +966,10 @@ The error was:
     <value>Project sharing is not currently possible, because your projects folder ({0}) is different from the projects folder used by the sharing service ({1}). To share your projects, you must make these folders the same, then use this dialog again to turn on sharing.</value>
     <comment>Displayed after a click on the "Share my projects" button in the project Location and Sharing dialog, typically if the user has changed the projects directory.</comment>
   </data>
+  <data name="ksWarningForSendReceiveLinkedFileslesPathCaption" xml:space="preserve">
+    <value>How to change to default Linked files location</value>
+  </data>
+  <data name="ksWarningForSendReceiveLinkedFileslesPathHelp" xml:space="preserve">
+    <value>To change the location of Linked files to the default location, launch the FieldWorks Project Properties dialog. This can be found under the File menu, then Project Management.</value>
+  </data>
 </root>
