@@ -47,6 +47,7 @@ namespace FwBuildTasks
 
 		public override bool Execute()
 		{
+			bool retVal = true;
 			if (Timeout == Int32.MaxValue)
 				Log.LogMessage(MessageImportance.Normal, "Running {0}", TestProgramName);
 			else
@@ -107,20 +108,24 @@ namespace FwBuildTasks
 				// So check for a timeout first.
 				if (fTimedOut)
 				{
-					Log.LogWarning("The tests in {0} did not finish in {1} milliseconds.",
+					Log.LogError("The tests in {0} did not finish in {1} milliseconds.",
 						TestProgramName, Timeout);
 					FailedSuites = FailedSuiteNames;
+					retVal = false;
 				}
 				else if (process.ExitCode != 0)
 				{
-					Log.LogError("{0} returned with exit code {1}", TestProgramName,
+					Log.LogWarning("{0} returned with exit code {1}", TestProgramName,
 						process.ExitCode);
 					FailedSuites = FailedSuiteNames;
+					// Return true in this case - at least NUnit returns non-zero exit code when
+					// a test fails, but we don't want to stop the build.
 				}
 			}
 			catch (Exception e)
 			{
 				Log.LogErrorFromException(e, true);
+				retVal = false;
 			}
 			finally
 			{
@@ -135,7 +140,10 @@ namespace FwBuildTasks
 					errorThread.Abort();
 				}
 			}
-			return !Log.HasLoggedErrors;
+			// Return retVal instead of !Log.HasLoggedErrors - if we get test failures we log
+			// those but don't want the build to fail. However, if we get an exception from the
+			// test or if we get a timeout we want to fail the build.
+			return retVal;
 		}
 
 		/// <summary>
