@@ -4,4 +4,4 @@
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 
 # GetEnumerator() returns an object
-M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.MorphologyEditor.RespellingTests/<GetParaFragmentsInSegmentForWord>d__12::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.MorphologyEditor.RespellingTests/<GetParaFragmentsInSegmentForWord>*::System.Collections.IEnumerable.GetEnumerator()

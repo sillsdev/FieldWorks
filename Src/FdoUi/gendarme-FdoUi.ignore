@@ -20,4 +20,3 @@ R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # Reference only
 T: SIL.FieldWorks.FdoUi.FdoRefSeq
-##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.FdoUi.TsStringBox/InnerTsStringBox/TsStringBoxVc

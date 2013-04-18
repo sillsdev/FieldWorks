@@ -8,9 +8,6 @@ T: SIL.FieldWorks.LexText.Controls.ImportWordSetListener
 T: SIL.FieldWorks.LexText.Controls.ParserParametersListener
 T: SIL.FieldWorks.LexText.Controls.ParserListener
 
-# REVIEW: TryAWordDlg is a singleton which doesn't get disposed!
-##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.LexText.Controls.TryAWordDialogLauncher
-
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 

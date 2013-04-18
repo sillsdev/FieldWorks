@@ -1,7 +1,1 @@
 # Gendarme filter file to suppress reporting of defects
-
-#-----------------------------------------------------------------------------------------------
-R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
-
-# Unit test. Objects disposed in tear down method
-##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.Common.Controls.FwControls.ScrPassageControlTest

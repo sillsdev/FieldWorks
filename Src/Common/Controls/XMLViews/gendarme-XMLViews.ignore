@@ -15,7 +15,6 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 # added to control and disposed there
 M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::ContructorSurrogate(System.Xml.XmlNode,System.Int32,System.Int32,SIL.FieldWorks.FDO.FdoCache,XCore.Mediator,SIL.FieldWorks.Common.Controls.ISortItemProvider,SIL.FieldWorks.FDO.Application.ISilDataAccessManaged)
 M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::HandleConfigIconClick(SIL.FieldWorks.Common.Controls.ConfigIconClickEventArgs)
-##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::RebuildHeaderColumns(System.Collections.Generic.List`1<System.Xml.XmlNode>)
 M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::InsertColumn(System.Xml.XmlNode,System.Int32)
 M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::MakeItems()
 M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeCombo(SIL.FieldWorks.Common.Controls.FilterSortItem)
@@ -38,8 +37,8 @@ M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::InitDeleteTab()
 M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::InitStringCombo(SIL.FieldWorks.Common.Controls.FwOverrideComboBox,System.Boolean)
 
 # Returns object
-M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ObjectLabel/<get_SubItems>d__6::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ObjectLabel/<CreateObjectLabels>d__0::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ObjectLabel/<get_SubItems>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ObjectLabel/<CreateObjectLabels>*::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule

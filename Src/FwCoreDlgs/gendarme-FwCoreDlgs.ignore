@@ -39,7 +39,6 @@ M: System.Void SIL.FieldWorks.FwCoreDlgs.FwUserProperties::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.LanguageSelectionDlg::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.MissingOldFieldWorksDlg::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.PicturePropertiesDialog::InitializeComponent()
-##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.FwCoreDlgs.RealSplashScreen::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.BackupRestore.RestoreProjectDlg::InitializeComponent()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.BackupRestore.RestoreProjectDlg::PopulateProjectList(System.String)
 M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog::btnAdd_Click(System.Object,System.EventArgs)
@@ -49,12 +48,9 @@ M: System.Void SIL.FieldWorks.FwCoreDlgs.FwProjPropertiesDlg::ShowAddWsContextMe
 M: System.Windows.Forms.DialogResult SIL.FieldWorks.FwCoreDlgs.PicturePropertiesDialog::ShowChoosePictureDlg()
 M: System.Void SIL.FieldWorks.FwCoreDlgs.ValidCharactersDlg::HandleTreatAsClick(System.Object,System.EventArgs)
 
-# Objects are disposed in Dispose() method
-##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.FwCoreDlgs.WritingSystemPropertiesDialog::m_fwTextBoxTestWs_Enter(System.Object,System.EventArgs)
-
 # GetEnumerator() returns a reference
-M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ChooserTreeView/<get_SelectedPossibilities>d__0::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ChooserTreeView/<GetSelectedPossibilites>d__a::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ChooserTreeView/<get_SelectedPossibilities>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.Common.Controls.ChooserTreeView/<GetSelectedPossibilites>*::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule

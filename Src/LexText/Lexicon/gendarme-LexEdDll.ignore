@@ -35,12 +35,10 @@ M: System.Void SIL.FieldWorks.XWorks.LexEd.LexReferenceTreeBranchesLauncher::Han
 M: System.Void SIL.FieldWorks.XWorks.LexEd.LexReferenceTreeRootLauncher::HandleChooser()
 
 # GetEnumerator() returns an object
-M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.LexEd.ReversalEntryGoDlg/<GetReversalEntrySearchFields>d__0::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.XWorks.LexEd.ReversalEntryGoDlg/<GetReversalEntrySearchFields>*::System.Collections.IEnumerable.GetEnumerator()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Design.TypesWithDisposableFieldsShouldBeDisposableRule
 
 # Reference only
-##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.XWorks.LexEd.AddComponentChooserCommand
 T: SIL.FieldWorks.XWorks.LexEd.HomographResetter
-##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.XWorks.LexEd.LiftBridgeListener

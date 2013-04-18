@@ -25,11 +25,9 @@ R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
 M: System.Boolean SIL.FieldWorks.FDO.Application.ApplicationServices.XmlImportData::ImportData(System.IO.TextReader,System.IO.TextWriter,SIL.FieldWorks.Common.FwUtils.IProgress)
 
 # Disposed in finally block
-##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.FDO.DomainServices.DataMigration.DataMigration7000019::PerformMigration(SIL.FieldWorks.FDO.DomainServices.DataMigration.IDomainObjectDTORepository)
 M: System.Void SIL.FieldWorks.FDO.DomainServices.BackupRestore.ProjectRestoreService::UnzipFileToRestoreFolder(ICSharpCode.SharpZipLib.Zip.ZipInputStream,System.String,System.Int64,System.String,System.DateTime)
 
 # Disposed by StructureMap
-##Commented by AutoUpdateIgnore## M: System.Void SIL.FieldWorks.FDO.Infrastructure.Impl.FDOBackendProvider::InitializeWritingSystemManager()
 M: Microsoft.Practices.ServiceLocation.IServiceLocator SIL.FieldWorks.FDO.IOC.FdoServiceLocatorFactory::CreateServiceLocator()
 
 # Disposed in StopServer()
@@ -37,62 +35,56 @@ M: Microsoft.Practices.ServiceLocation.IServiceLocator SIL.FieldWorks.FDO.IOC.Fd
 M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::StartServer(System.String,System.Int32&,System.Exception&)
 
 # Ext() returns a reference.
-# Linux:
-M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>m__211(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
-# Windows:
-M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>b__9(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
+M: System.Boolean FwRemoteDatabaseConnector.Db4oServerInfo::<ListConnectedClients>*(System.Collections.Generic.KeyValuePair`2<System.String,FwRemoteDatabaseConnector.Db4oServerInfo/RunningServerInfo>)
 
 # GetEnumerator() returns a reference
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.FdoVectorUtils/<ConvertCmObjectsToHvos>d__0`1::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.Scripture/<get_StTexts>d__18::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.FdoVectorUtils/<ConvertCmObjectsToHvos>*`1::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.Scripture/<get_StTexts>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.ScrTxtPara/OwningSequenceWrapper`2::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_EntryRefsWithThisMainEntry>d__3::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisPrimaryEntry>d__53::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsVisibleInThisEntry>d__5a::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsVisibleInThisSense>d__61::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ReferringLexReferences>d__68::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ReferringLexReferences>d__61::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_EntryRefsWithThisMainSense>d__0::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisPrimarySense>d__5a::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisComponentEntry>d__4c::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisComponentSense>d__53::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ReferringLexReferences>d__e::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetAllSlots>d__0::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetSomeSlots>d__7::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_EntryRefsWithThisMainEntry>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisPrimaryEntry>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsVisibleInThisEntry>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsVisibleInThisSense>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ReferringLexReferences>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ReferringLexReferences>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_EntryRefsWithThisMainSense>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisPrimarySense>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisComponentEntry>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisComponentSense>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ReferringLexReferences>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetAllSlots>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetSomeSlots>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.FdoSet`1::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.FdoList`1::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.ScrBookTokenEnumerable::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetAnalysisOccurrencesAdvancingInStText>d__a::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetWordformOccurrencesAdvancingInPara>d__17::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetAnalysisOccurrencesAdvancingInPara>d__1f::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetAnalysisOccurrencesBackwardsInStText>d__26::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetAnalysisOccurrencesBackwardsInPara>d__2f::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.BackupRestore.ProjectBackupService/<CreateListOfFilesToZip>d__8::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllObjectsOrSurrogates>d__2::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllSubclasses>d__10::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoUnitOfWork/<get_DirtyObjects>d__0::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoUnitOfWork/<GetPropChangeInformation>d__d::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoMetaDataCache/<GetIncomingFields>d__1::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.Scripture/<get_StTexts>d__2e::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_AllComponents>d__33::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_EntryRefsWithThisMainEntry>d__45::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisPrimaryEntry>d__4c::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsVisibleInThisEntry>d__53::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ReferringLexReferences>d__5a::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_EntryRefsWithThisMainSense>d__4c::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisPrimarySense>d__53::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsVisibleInThisSense>d__5a::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ReferringLexReferences>d__61::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetAllSlots>d__1f::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetSomeSlots>d__26::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.ChkTerm/<get_BcvOccurences>d__d::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntryRef/<get_PrimaryEntryRoots>d__1a::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllObjectsOrSurrogates>d__4::System.Collections.IEnumerable.GetEnumerator()
-M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllSubclasses>d__12::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetAnalysisOccurrencesAdvancingInStText>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetWordformOccurrencesAdvancingInPara>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetAnalysisOccurrencesAdvancingInPara>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetAnalysisOccurrencesBackwardsInStText>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.SegmentServices/StTextAnnotationNavigator/<GetAnalysisOccurrencesBackwardsInPara>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainServices.BackupRestore.ProjectBackupService/<CreateListOfFilesToZip>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllObjectsOrSurrogates>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllSubclasses>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoUnitOfWork/<get_DirtyObjects>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoUnitOfWork/<GetPropChangeInformation>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoMetaDataCache/<GetIncomingFields>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.Scripture/<get_StTexts>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_AllComponents>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_EntryRefsWithThisMainEntry>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsWithThisPrimaryEntry>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ComplexFormRefsVisibleInThisEntry>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntry/<get_ReferringLexReferences>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_EntryRefsWithThisMainSense>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsWithThisPrimarySense>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ComplexFormRefsVisibleInThisSense>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexSense/<get_ReferringLexReferences>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetAllSlots>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.MoInflAffixTemplate/<GetSomeSlots>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.ChkTerm/<get_BcvOccurences>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.DomainImpl.LexEntryRef/<get_PrimaryEntryRoots>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllObjectsOrSurrogates>*::System.Collections.IEnumerable.GetEnumerator()
+M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllSubclasses>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoInvertSet`1::System.Collections.IEnumerable.GetEnumerator()
-
-# The Registry will dispose the PalasoWritingSystemManager (singleton).
-##Commented by AutoUpdateIgnore## M: SIL.CoreImpl.IWritingSystemManager SIL.FieldWorks.FDO.IOC.FdoServiceLocatorFactory::<CreateServiceLocator>b__a()
 
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule
@@ -149,5 +141,4 @@ T: SIL.FieldWorks.FDO.Infrastructure.Impl.ChangeReconciler
 T: SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectSurrogateTypeHandler
 T: SIL.FieldWorks.FDO.DomainServices.StTxtParaBldr
 T: SIL.FieldWorks.FDO.SaveEventArgs
-##Commented by AutoUpdateIgnore## T: SIL.FieldWorks.FDO.DomainServices.Paratext6Proxy
 T: SIL.FieldWorks.FDO.DomainServices.DataMigration.ImportFrom6_0
