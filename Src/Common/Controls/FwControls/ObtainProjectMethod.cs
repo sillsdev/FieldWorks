@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// The repo may be a lift or full FW repo, but it can be from any source source, as long as the code can create an FW project from it.
 		/// </summary>
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
-		public static string ObtainProjectFromAnySource(Form parent)
+		public static string ObtainProjectFromAnySource(Form parent, out ObtainedProjectType obtainedProjectType)
 		{
 			bool dummy;
 			string fwdataFileFullPathname;
@@ -32,14 +32,20 @@ namespace SIL.FieldWorks.Common.Controls
 			if (!success)
 			{
 				ReportDuplicateBridge();
+				obtainedProjectType = ObtainedProjectType.None;
 				return null;
 			}
 			if (string.IsNullOrWhiteSpace(fwdataFileFullPathname))
+			{
+				obtainedProjectType = ObtainedProjectType.None;
 				return null; // user canceled.
+			}
+			obtainedProjectType = ObtainedProjectType.FieldWorks;
 
 			if (fwdataFileFullPathname.EndsWith("lift"))
 			{
 				fwdataFileFullPathname = CreateProjectFromLift(parent, fwdataFileFullPathname);
+				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
 			return fwdataFileFullPathname;
@@ -189,5 +195,18 @@ namespace SIL.FieldWorks.Common.Controls
 			MessageBox.Show(FwControls.kBridgeAlreadyRunning, FwControls.kFlexBridge,
 				MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 		}
+	}
+
+	/// <summary>
+	/// Enumeration of possible sources of a new FW project.
+	/// </summary>
+	public enum ObtainedProjectType
+	{
+		/// <summary>Default value for no source</summary>
+		None,
+		/// <summary>Lift repository was the source</summary>
+		Lift,
+		/// <summary>FW repository was the source</summary>
+		FieldWorks
 	}
 }

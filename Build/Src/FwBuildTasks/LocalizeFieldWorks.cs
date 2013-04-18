@@ -302,32 +302,7 @@ namespace FwBuildTasks
 					alProc.StartInfo.FileName = "al";
 				else
 					alProc.StartInfo.FileName = "al.exe";
-				StringBuilder builder = new StringBuilder();
-				builder.Append(" /out:");
-				builder.Append(Quote(outputDllPath));
-				foreach (var info in resources)
-				{
-					builder.Append(" /embed:");
-					builder.Append(info.Resource);
-					builder.Append(",");
-					builder.Append(info.Name);
-				}
-				if (!String.IsNullOrEmpty(culture))
-				{
-					builder.Append(" /culture:");
-					builder.Append(culture);
-				}
-				builder.Append(" /fileversion:");
-				builder.Append(fileversion);
-				builder.Append(" /productversion:");
-				builder.Append(productVersion);
-				builder.Append(" /version:");
-				builder.Append(version);
-				// Note: the old build process also set \target, but we want the default lib so don't need to be explicit.
-				// the old version also had support for controlling verbosity; we can add that if needed.
-				// May also want to set /config? The old version did not so I haven't.
-
-				alProc.StartInfo.Arguments = builder.ToString();
+				alProc.StartInfo.Arguments = BuildLinkerArgs(outputDllPath, culture, fileversion, productVersion, version, resources);
 				alProc.Start();
 
 				//log += resgenProc.StandardOutput.ReadToEnd() + Environment.NewLine;
@@ -343,6 +318,37 @@ namespace FwBuildTasks
 				}
 			}
 			return true;
+		}
+
+		internal string BuildLinkerArgs(string outputDllPath, string culture, string fileversion, string productVersion,
+			string version, List<EmbedInfo> resources)
+		{
+			StringBuilder builder = new StringBuilder();
+			builder.Append(" /out:");
+			builder.Append(Quote(outputDllPath));
+			foreach (var info in resources)
+			{
+				builder.Append(" /embed:");
+				builder.Append(info.Resource);
+				builder.Append(",");
+				builder.Append(info.Name);
+			}
+			if (!String.IsNullOrEmpty(culture))
+			{
+				builder.Append(" /culture:");
+				builder.Append(culture);
+			}
+			builder.Append(" /fileversion:");
+			builder.Append(fileversion);
+			builder.Append(" /productversion:");
+			builder.Append(Quote(productVersion));
+				// may be something like "8.4.2 beta 2" (see LT-14436). Test does not really cover this.
+			builder.Append(" /version:");
+			builder.Append(version);
+			// Note: the old build process also set \target, but we want the default lib so don't need to be explicit.
+			// the old version also had support for controlling verbosity; we can add that if needed.
+			// May also want to set /config? The old version did not so I haven't.
+			return builder.ToString();
 		}
 	}
 

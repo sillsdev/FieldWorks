@@ -115,10 +115,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string fwVersion = (attributes != null && attributes.Length > 0) ?
 					((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion :
 					Application.ProductVersion;
-				// Omit the revision number from the suite version string if it's zero.
-				int ich = fwVersion.LastIndexOf(".0");
-				if (ich == fwVersion.Length - 2 && ich > fwVersion.IndexOf('.'))
-					fwVersion = fwVersion.Substring(0, ich);
 				return string.Format(FwUtilsStrings.kstidFwVersionFmt, fwVersion);
 			}
 		}

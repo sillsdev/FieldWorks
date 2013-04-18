@@ -164,7 +164,7 @@
     </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Palaso.dll</HintPath>
+	  <HintPath>..\..\Output\Debug\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.2327.30181, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

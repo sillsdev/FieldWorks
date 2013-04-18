@@ -3947,16 +3947,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			//CmBaseAnnotation.RemoveErrorAnnotationsForObject(m_cache, Hvo);
 			if (createAnnotation)
 			{
-				var agt = Cache.LanguageProject.ConstraintCheckerAgent;
-				var anns = Cache.LanguageProject.AnnotationsOC;
-				var errReports =
-					Cache.ServiceLocator.GetInstance<ICmBaseAnnotationRepository>().AllInstances().Where(
-						error => error.BeginObjectRA == this);
-				foreach (var errReport in errReports)
-				{
-					if (errReport.SourceRA == agt)
-						anns.Remove(errReport);
-				}
+				ConstraintFailure.RemoveObsoleteAnnotations(this);
 			}
 
 			failure = null;
@@ -3965,7 +3956,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				failure = new ConstraintFailure(this,
 												MoMorphAdhocProhibTags.kflidMorphemes,
-												Strings.ksMorphConstraintFailure, createAnnotation);
+												Strings.ksMorphConstraintFailure);
+				failure.MakeAnnotation();
 				return false;
 
 				//				CmBaseAnnotation ann = (CmBaseAnnotation)m_cache.LangProject.AnnotationsOC.Add(new CmBaseAnnotation());
@@ -4117,23 +4109,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			//CmBaseAnnotation.RemoveErrorAnnotationsForObject(m_cache, Hvo);
 			if (createAnnotation)
 			{
-				var agt = Cache.LanguageProject.ConstraintCheckerAgent;
-				var anns = Cache.LanguageProject.AnnotationsOC;
-				var errReports =
-					Cache.ServiceLocator.GetInstance<ICmBaseAnnotationRepository>().AllInstances().Where(
-						error => error.BeginObjectRA == this);
-				foreach (var errReport in errReports)
-				{
-					if (errReport.SourceRA == agt)
-						anns.Remove(errReport);
-				}
+				ConstraintFailure.RemoveObsoleteAnnotations(this);
 			}
 
 			var isValid = (FirstAllomorphRA != null) && (RestOfAllosRS.Count >= 1);
 			if (!isValid)
 			{
 				failure = new ConstraintFailure(this, MoAlloAdhocProhibTags.kflidAllomorphs,
-												Strings.ksAlloConstraintFailure, createAnnotation);
+												Strings.ksAlloConstraintFailure);
+				failure.MakeAnnotation();
 				//
 				//				CmBaseAnnotation ann = (CmBaseAnnotation)m_cache.LangProject.AnnotationsOC.Add(new CmBaseAnnotation());
 				//				ann.CompDetails = "Need to have at least two allomorphs selected";

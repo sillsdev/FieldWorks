@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -146,9 +147,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private const string FLExBridgeName = @"FLExBridge.exe";
 
-		private static object waitObject = new object();
+		private static object _waitObject = new object();
 		private static bool flexBridgeTerminated;
-		private static object conflictHost;
+		private static object _noBlockerHost;
 		private static bool _receivedChanges; // true if changes merged via FLExBridgeService.BridgeWorkComplete()
 		private static string _projectName; // fw proj path via FLExBridgeService.InformFwProjectName()
 		private static string _pipeID;
@@ -213,7 +214,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
 			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
 
-			if (conflictHost != null)
+			if (_noBlockerHost != null)
 			{
 				return false;
 			}
@@ -224,50 +225,67 @@ namespace SIL.FieldWorks.Common.FwUtils
 			try
 			{
 				var hostPipeBinding = new NetNamedPipeBinding { ReceiveTimeout = TimeSpan.MaxValue };
-				host = new ServiceHost(typeof (FLExBridgeService),
-										new[] { new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _pipeID) });
+				host = new ServiceHost(typeof(FLExBridgeService), new[] { new Uri("net.pipe://localhost/FLExBridgeEndpoint" + _pipeID) });
 
 				//open host ready for business
 				host.AddServiceEndpoint(typeof(IFLExBridgeService), hostPipeBinding, "FLExPipe");
 				host.Open();
 			}
-			catch (InvalidOperationException) // Can happen if Conflict Report is open and we try to run FLExBridge again.
+			catch (InvalidOperationException)
+				// Can happen if Conflict Report is open and we try to run FLExBridge again.
 			{
 				if (host != null)
-					((IDisposable) host).Dispose();
+					((IDisposable)host).Dispose();
 				return false; // Unsuccessful startup. Caller should report duplicate bridge launch.
 			}
-			catch (AddressAlreadyInUseException) // Can happen if FLExBridge has been launched and we try to launch FLExBridge again.
+			catch (AddressAlreadyInUseException)
+				// Can happen if FLExBridge has been launched and we try to launch FLExBridge again.
 			{
 				// host is normally not null for this exception, but there is no pipe to dispose
 				return false; // Unsuccessful startup. Caller should report duplicate bridge launch.
 			}
-			//Launch the bridge process.
-			if (command == ConflictViewer)
+
+			LaunchFlexBridge(host, command, args, ref changesReceived, ref projectName);
+
+			return true;
+		}
+
+		private static void LaunchFlexBridge(ServiceHost host, string command, string args, ref bool changesReceived, ref string projectName)
+		{
+			// Launch the bridge process.
+			using (Process.Start(FullFieldWorksBridgePath(), args))
 			{
-				LaunchConflictViewer(args); // launching separately here avoids blocking FLEx while viewer is open.
-				conflictHost = host; // so we can kill the host when the bridge quits
+			}
+
+			var nonFlexblockers = new HashSet<string>
+				{
+					ConflictViewer,
+					LiftConflictViewer,
+					AboutFLExBridge,
+					CheckForUpdates
+				};
+			if (nonFlexblockers.Contains(command))
+			{
+				// This skips the piping and doesn't pause the Flex UI thread for the
+				// two 'view' options and for the 'About Flex Bridge' and 'Check for Updates'.
+				_noBlockerHost = host; // so we can kill the host when the bridge quits
 			}
 			else
 			{
-				//Launch the bridge process.
-				using (Process.Start(FullFieldWorksBridgePath(), args))
-				{
-				}
+				// This uses all the piping and also blocks the Flex UI thread, while Flex Bridge is running.
 				Cursor.Current = Cursors.WaitCursor;
 
 				// Pause UI thread until FLEx Bridge terminates:
-				Monitor.Enter(waitObject);
+				Monitor.Enter(_waitObject);
 				if (flexBridgeTerminated == false)
-					Monitor.Wait(waitObject, -1);
-				Monitor.Exit(waitObject);
+					Monitor.Wait(_waitObject, -1);
+				Monitor.Exit(_waitObject);
 
 				projectName = _projectName;
 				changesReceived = _receivedChanges;
 				Cursor.Current = Cursors.Default;
 				KillTheHost(host);
 			}
-			return true;
 		}
 
 		private static void KillTheHost(ServiceHost host)
@@ -286,13 +304,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 													}
 												});
 			letTheHostDie.Start();
-		}
-
-		private static void LaunchConflictViewer(string args)
-		{
-			using (Process.Start(FullFieldWorksBridgePath(), args))
-			{   // don't bother with all the pipes for the Conflict Report
-			}
 		}
 
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
@@ -392,10 +403,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				_receivedChanges = changesReceived;
 				AlertFlex();
-				if (conflictHost != null)
+				if (_noBlockerHost != null)
 				{
-					KillTheHost((ServiceHost) conflictHost);
-					conflictHost = null;
+					KillTheHost((ServiceHost) _noBlockerHost);
+					_noBlockerHost = null;
 				}
 			}
 
@@ -424,10 +435,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/// </summary>
 			private static void AlertFlex()
 			{
-				Monitor.Enter(waitObject); //acquire the lock on the waitObject
+				Monitor.Enter(_waitObject); //acquire the lock on the _waitObject
 				flexBridgeTerminated = true;
-				Monitor.Pulse(waitObject); //notify a thread waiting on waitObject that it may continue.
-				Monitor.Exit(waitObject); //release the lock on the waitObject so they actually can continue.
+				Monitor.Pulse(_waitObject); //notify a thread waiting on _waitObject that it may continue.
+				Monitor.Exit(_waitObject); //release the lock on the _waitObject so they actually can continue.
 			}
 			#endregion
 		}
@@ -479,17 +490,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="iar"></param>
 		private static void WorkDoneCallback(IAsyncResult iar)
 		{
-			Monitor.Enter(waitObject);
+			Monitor.Enter(_waitObject);
 			flexBridgeTerminated = true;
 			try
 			{
-				Monitor.Pulse(waitObject);
+				Monitor.Pulse(_waitObject);
 				((IFLExServiceChannel)iar.AsyncState).EndBridgeWorkOngoing(iar);
 			}
 			catch(CommunicationException)
 			{
 				//Something went wrong with the communication to the Bridge. Possibly it died unexpectedly, wake up FLEx
-				Monitor.Pulse(waitObject);
+				Monitor.Pulse(_waitObject);
 			}
 			catch (Exception e)
 			{
@@ -497,12 +508,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			finally
 			{
-				if (conflictHost != null)
+				if (_noBlockerHost != null)
 				{
-					KillTheHost((ServiceHost) conflictHost);
-					conflictHost = null;
+					KillTheHost((ServiceHost) _noBlockerHost);
+					_noBlockerHost = null;
 				}
-				Monitor.Exit(waitObject);
+				Monitor.Exit(_waitObject);
 			}
 		}
 

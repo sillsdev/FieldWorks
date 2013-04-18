@@ -773,8 +773,20 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// style.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BaseStyleInfo(IStStyle style) : this(style, null)
+		public BaseStyleInfo(IStStyle style) : this(style, (IWritingSystem)null)
 		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance based on an FW style and a text props, typically the net effect
+		/// of this style and those it is based on determined by a VwStyleSheet.
+		/// </summary>
+		/// <param name="style"></param>
+		/// <param name="props"></param>
+		public BaseStyleInfo(IStStyle style, ITsTextProps props)
+			:this()
+		{
+			SetPropertiesBasedOnStyleAndEffects(style, props);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -810,6 +822,44 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// ------------------------------------------------------------------------------------
 		public virtual void SetPropertiesBasedOnStyle(IStStyle style, IWritingSystem forceStyleInfo)
 		{
+			SetInfoProperties(style, forceStyleInfo);
+
+			// process the rules if they exist
+			ITsTextProps styleProps = style.Rules;
+			SetPropertiesFromRules(styleProps);
+			}
+
+		private void SetPropertiesFromRules(ITsTextProps styleProps)
+		{
+			List<FontOverrideInfo> fontOverrides;
+			ProcessStyleRules(styleProps, out fontOverrides);
+
+			// If there were any WS font overrides, then create font info entries
+			// for each one.
+			if (fontOverrides != null)
+				MakeFontWsOverrides(fontOverrides);
+		}
+
+		/// <summary>
+		/// Initialize an instance based on properties other than those of the IStStyle,
+		/// typically the properties that a stylesheet determines are the net effect of this style
+		/// and those it is based on.
+		/// </summary>
+		/// <param name="style"></param>
+		/// <param name="props"></param>
+		void SetPropertiesBasedOnStyleAndEffects(IStStyle style, ITsTextProps props)
+		{
+			SetInfoProperties(style, null);
+			SetPropertiesFromRules(props);
+		}
+
+		/// <summary>
+		/// Basic setup, everything except the actual behavior.
+		/// </summary>
+		/// <param name="style"></param>
+		/// <param name="forceStyleInfo"></param>
+		private void SetInfoProperties(IStStyle style, IWritingSystem forceStyleInfo)
+		{
 			CreateFontInfoOverrides(style.Cache);
 			// Ensure this one exists (before we process style rules and possibly miss loading data for it).
 			if (forceStyleInfo != null)
@@ -835,16 +885,6 @@ namespace SIL.FieldWorks.FDO.DomainServices
 			// Get the "next" style name
 			if (style.NextRA != null)
 				m_nextStyleName = style.NextRA.Name;
-
-			// process the rules if they exist
-			ITsTextProps styleProps = style.Rules;
-			List<FontOverrideInfo> fontOverrides;
-			ProcessStyleRules(styleProps, out fontOverrides);
-
-			// If there were any WS font overrides, then create font info entries
-			// for each one.
-			if (fontOverrides != null)
-				MakeFontWsOverrides(fontOverrides);
 		}
 
 		/// ------------------------------------------------------------------------------------

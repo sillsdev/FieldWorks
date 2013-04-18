@@ -34,8 +34,8 @@ namespace SIL.FieldWorks.Common.Framework
 		};
 		class ExportStyleInfo : BaseStyleInfo
 		{
-			public ExportStyleInfo(IStStyle style)
-				: base(style)
+			public ExportStyleInfo(IStStyle style, ITsTextProps props)
+				: base(style, props)
 			{
 			}
 
@@ -871,6 +871,11 @@ namespace SIL.FieldWorks.Common.Framework
 				WriteCssXSenseNumber();
 				m_dictClassData.Remove("xsensenumber");
 			}
+			if (m_dictClassData.ContainsKey("xsensexrefnumber"))
+			{
+				WriteCssXSenseXrefNumber();
+				m_dictClassData.Remove("xsensexrefnumber");
+			}
 			if (m_dictClassData.ContainsKey("xsensenumber-sub"))
 			{
 				WriteCssXSenseNumberSub();
@@ -1169,6 +1174,13 @@ namespace SIL.FieldWorks.Common.Framework
 			m_writer.WriteLine("}");
 		}
 
+		private void WriteCssXSenseXrefNumber()
+		{
+			m_writer.WriteLine(".xsensexrefnumber {");
+			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "xsensexrefnumber");
+			m_writer.WriteLine("}");
+		}
+
 		private void WriteCssXSenseNumberSub()
 		{
 			m_writer.WriteLine(".xsensenumber-sub {");
@@ -1281,7 +1293,13 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				int hvo = vss.get_NthStyle(i);
 				var sty = m_cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvo);
-				m_styleTable.Add(sty.Name, new ExportStyleInfo(sty));
+				// CSS does not implement the kind of inheritance our styles use. To get the style
+				// definitions we want in the CSS, we must create these styles using the 'net effect' of
+				// each style and all the ones it is based on. Happily the VwStyleSheet knows exactly
+				// how to do this.
+				var props = vss.GetStyleRgch(sty.Name.Length, sty.Name);
+				var exportStyleInfo = new ExportStyleInfo(sty, props);
+				m_styleTable.Add(sty.Name, exportStyleInfo);
 			}
 		}
 
@@ -1768,17 +1786,22 @@ namespace SIL.FieldWorks.Common.Framework
 			if (esi.HasBorderColor)
 				m_writer.WriteLine("    border-color: rgb({0},{1},{2});",
 					esi.BorderColor.R, esi.BorderColor.G, esi.BorderColor.B);
-			if (esi.HasFirstLineIndent && hangingIndent)  // LT-12658 suppress indentation inside paragraphs (entries).
+			if (hangingIndent)
 			{
-				m_writer.WriteLine("    text-indent: {0}pt;", ConvertMptToPt(esi.FirstLineIndent));
-				m_writer.Write("    margin-{0}: ", sLeading);
-				if (esi.FirstLineIndent < 0)
-					m_writer.WriteLine("{0}pt;", ConvertMptToPt(-esi.FirstLineIndent));
-				else
-					m_writer.WriteLine("0pt;");
+				// Indent is allowed, write it out if specified; otherwise, allow it to be inherited.
+				if (esi.HasFirstLineIndent)
+				{
+					m_writer.WriteLine("    text-indent: {0}pt;", ConvertMptToPt(esi.FirstLineIndent));
+					m_writer.Write("    margin-{0}: ", sLeading);
+					if (esi.FirstLineIndent < 0)
+						m_writer.WriteLine("{0}pt;", ConvertMptToPt(-esi.FirstLineIndent));
+					else
+						m_writer.WriteLine("0pt;");
+				}
 			}
 			else
 			{
+				// LT-12658 suppress indentation (even inherited) inside paragraphs (entries).
 				m_writer.WriteLine("    text-indent: 0pt;");
 				m_writer.WriteLine("    margin-{0}: 0pt;", sLeading);
 			}

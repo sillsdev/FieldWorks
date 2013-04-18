@@ -236,6 +236,9 @@ display/printout!
   <xsl:template match="LexSense_VisibleComplexFormBackRefs|LexEntryLink_ComplexFormEntryRefs|LexEntryLink_VariantFormEntryBackRefs">
 	<xsl:apply-templates/>
   </xsl:template>
+	<xsl:template match="div[@class='minorentries']">
+		<xsl:apply-templates/>
+	</xsl:template>
 
   <!-- skip into _VisibleComplexFormBackRefs, but handle embedded paragraphs if there are any -->
 
@@ -802,7 +805,7 @@ display/printout!
 		  <xsl:when test="@namedStyle='' or not(@namedStyle)"><xsl:value-of select="."/></xsl:when>
 		  <xsl:when test="@namedStyle='Homograph-Number'"><span class="xhomographnumber"><xsl:value-of select="."/></span></xsl:when>
 		  <!-- won't appear in LexEntryLink_MLHeadWord -->
-		  <xsl:when test="@namedStyle='Sense-Reference-Number'"><span class="xsensenumber"><xsl:value-of select="."/></span></xsl:when>
+		  <xsl:when test="@namedStyle='Sense-Reference-Number'"><span class="xsensexrefnumber"><xsl:value-of select="."/></span></xsl:when>
 		</xsl:choose>
 	  </xsl:for-each>
   </xsl:template>

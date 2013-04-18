@@ -44,6 +44,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private TreeNode m_localhostNode;
 		private readonly Rectangle m_initialBounds = Rectangle.Empty;
 		private readonly int m_initialSplitterPosition = -1;
+		private ObtainedProjectType m_obtainedProjectType = ObtainedProjectType.None;
 		#endregion
 
 		#region LanguageProjectInfo class
@@ -152,6 +153,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string Project { get; private set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Project type chosen, if OpenBridgeProjectLinkClicked used.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public ObtainedProjectType ObtainedProjectType
+		{
+			get { return m_obtainedProjectType; }
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -551,7 +562,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void OpenBridgeProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			Project = ObtainProjectMethod.ObtainProjectFromAnySource(this); // May return null, empty string, or the full pathname to an fwdata file.
+			Project = ObtainProjectMethod.ObtainProjectFromAnySource(this, out m_obtainedProjectType); // May return null, empty string, or the full pathname to an fwdata file.
 			Server = null;
 			if (String.IsNullOrEmpty(Project))
 				return; // Don't close the Open project dialog yet (LT-13187)

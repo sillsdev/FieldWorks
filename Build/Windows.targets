@@ -5,7 +5,17 @@
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;EncConvertersDlls">
+			DependsOnTargets="Initialize;EncConvertersDlls;CopyOtherDlls">
+	</Target>
+
+	<ItemGroup>
+		<OtherDllsToCopy Include="../DistFiles/irrKlang.NET4.dll"/>
+	</ItemGroup>
+	<Target Name="CopyOtherDlls" Condition="'$(OS)'=='Windows_NT'">
+		<Copy SourceFiles="@(OtherDllsToCopy)"
+			  DestinationFolder="$(dir-outputBase)"
+			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
+			  Condition="'$(action)'!='clean'"/>
 	</Target>
 
 	<!-- Copy the EncodingConverters files, registering them on Windows -->
