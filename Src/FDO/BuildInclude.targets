@@ -24,7 +24,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<StructureMapFiles Include="StructureMap.dll"/>
-		<StructureMapFiles Include="StructureMapAdapter.dll"/>
 	</ItemGroup>
 	<ItemGroup>
 		<!--StructureMapSource Include="$(DistFiles -> '/%(Identity)')"/ THIS IS WRONG!!-->

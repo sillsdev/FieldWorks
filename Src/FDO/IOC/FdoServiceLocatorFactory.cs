@@ -25,7 +25,6 @@ using SIL.FieldWorks.FDO.DomainServices.DataMigration;
 using StructureMap;
 using StructureMap.Configuration.DSL;
 using StructureMap.Pipeline;
-using StructureMap.ServiceLocatorAdapter;
 
 namespace SIL.FieldWorks.FDO.IOC
 {
@@ -256,37 +255,37 @@ namespace SIL.FieldWorks.FDO.IOC
 			// and let SM create them 'on demand'.
 			//container.AssertConfigurationIsValid();
 
-			return new StructureMapServiceLocatorWrapper(new StructureMapServiceLocator(container), container);
+			return new StructureMapServiceLocator(container);
 		}
 
 		#endregion
 	}
 
 	/// <summary>
-	/// Wrapper for StructureMapServiceLocator,
-	/// which adds the extra methods of IFdoServiceLocator.
+	/// Implementation of StructureMapServiceLocator, with extra methods of IFdoServiceLocator.
 	/// </summary>
-	internal sealed class StructureMapServiceLocatorWrapper : IFdoServiceLocator, IServiceLocatorInternal, IDisposable
+	/// <remarks>This class used to be named StructureMapServiceLocatorWrapper, wrapping a class
+	/// StructureMapServiceLocator implemented in StructureMapAdapter.dll. However, no one
+	/// could remember where that originally came from, and it implements only two simple methods
+	/// so that it seemed worth to remove the dll and implement the methods in here.</remarks>
+	internal sealed class StructureMapServiceLocator : ServiceLocatorImplBase,
+		IFdoServiceLocator, IServiceLocatorInternal, IDisposable
 	{
-		private StructureMapServiceLocator m_baseServiceLocator;
 		private Container m_container;
 		private ILgCharacterPropertyEngine m_lgpe = LgIcuCharPropEngineClass.Create();
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		internal StructureMapServiceLocatorWrapper(StructureMapServiceLocator baseServiceLocator, Container container)
+		internal StructureMapServiceLocator(Container container)
 		{
-			if (baseServiceLocator == null) throw new ArgumentNullException("baseServiceLocator");
-
-			m_baseServiceLocator = baseServiceLocator;
 			m_container = container;
 		}
 
 		#region Disposable stuff
 		#if DEBUG
 		/// <summary/>
-		~StructureMapServiceLocatorWrapper()
+		~StructureMapServiceLocator()
 		{
 			Dispose(false);
 		}
@@ -320,73 +319,50 @@ namespace SIL.FieldWorks.FDO.IOC
 				if (m_container != null)
 					m_container.Dispose();
 			}
-			m_baseServiceLocator = null;
 			m_container = null;
 			m_lgpe = null;
 			IsDisposed = true;
 		}
 		#endregion
 
-		#region Implementation of IServiceProvider
+		#region Implementation of abstract methods
+		/// <summary>
+		///             When implemented by inheriting classes, this method will do the actual work of resolving
+		///             the requested service instance.
+		/// </summary>
+		/// <param name="serviceType">Type of instance requested.</param>B
+		/// <param name="key">Name of registered service you want. May be null.</param>
+		/// <returns>
+		/// The requested service instance.
+		/// </returns>
+		protected override object DoGetInstance(Type serviceType, string key)
+		{
+			if (string.IsNullOrEmpty(key))
+			{
+				return m_container.GetInstance(serviceType);
+			}
+			return m_container.GetInstance(serviceType, key);
+		}
 
 		/// <summary>
-		/// Gets the service object of the specified type.
+		///             When implemented by inheriting classes, this method will do the actual work of
+		///             resolving all the requested service instances.
 		/// </summary>
+		/// <param name="serviceType">Type of service requested.</param>
 		/// <returns>
-		/// A service object of type <paramref name="serviceType"/>.
-		///					 -or-
-		///				 null if there is no service object of type <paramref name="serviceType"/>.
+		/// Sequence of service instance objects.
 		/// </returns>
-		/// <param name="serviceType">An object that specifies the type of service object to get.
-		///				 </param><filterpriority>2</filterpriority>
-		public object GetService(Type serviceType)
+		protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
 		{
-			return m_baseServiceLocator.GetService(serviceType);
+			foreach (object obj in m_container.GetAllInstances(serviceType))
+			{
+				yield return obj;
+			}
 		}
 
 		#endregion
 
-		#region Implementation of IServiceLocator
-
-		/// <summary>
-		/// Get an instance of the given <paramref name="serviceType"/>.
-		/// </summary>
-		/// <param name="serviceType">Type of object requested.</param><exception cref="T:Microsoft.Practices.ServiceLocation.ActivationException">if there is an error resolving
-		///			 the service instance.</exception>
-		/// <returns>
-		/// The requested service instance.
-		/// </returns>
-		public object GetInstance(Type serviceType)
-		{
-			return m_baseServiceLocator.GetInstance(serviceType);
-		}
-
-		/// <summary>
-		/// Get an instance of the given named <paramref name="serviceType"/>.
-		/// </summary>
-		/// <param name="serviceType">Type of object requested.</param><param name="key">Name the object was registered with.</param><exception cref="T:Microsoft.Practices.ServiceLocation.ActivationException">if there is an error resolving
-		///			 the service instance.</exception>
-		/// <returns>
-		/// The requested service instance.
-		/// </returns>
-		public object GetInstance(Type serviceType, string key)
-		{
-			return m_baseServiceLocator.GetInstance(serviceType, key);
-		}
-
-		/// <summary>
-		/// Get all instances of the given <paramref name="serviceType"/> currently
-		///			 registered in the container.
-		/// </summary>
-		/// <param name="serviceType">Type of object requested.</param><exception cref="T:Microsoft.Practices.ServiceLocation.ActivationException">if there is are errors resolving
-		///			 the service instance.</exception>
-		/// <returns>
-		/// A sequence of instances of the requested <paramref name="serviceType"/>.
-		/// </returns>
-		public IEnumerable<object> GetAllInstances(Type serviceType)
-		{
-			return m_baseServiceLocator.GetAllInstances(serviceType);
-		}
+		#region Overrides of IServiceLocator implementation
 
 		/// <summary>
 		/// Get an instance of the given <typeparamref name="TService"/>.
@@ -398,41 +374,12 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// </returns>
 		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
 			Justification="See TODO-Linux comment")]
-		public TService GetInstance<TService>()
+		public override TService GetInstance<TService>()
 		{
 			// IActionHandler is special - want to return the current one in use.
-			// TODO-Linux: System.Boolean System.Type::op_Equality(System.Type,System.Type)
-			// is marked with [MonoTODO] and might not work as expected in 4.0.
 			if (typeof(TService) == typeof(IActionHandler))
 				return (TService)ActionHandler;
-			return m_baseServiceLocator.GetInstance<TService>();
-		}
-
-		/// <summary>
-		/// Get an instance of the given named <typeparamref name="TService"/>.
-		/// </summary>
-		/// <typeparam name="TService">Type of object requested.</typeparam><param name="key">Name the object was registered with.</param><exception cref="T:Microsoft.Practices.ServiceLocation.ActivationException">if there is are errors resolving
-		///			 the service instance.</exception>
-		/// <returns>
-		/// The requested service instance.
-		/// </returns>
-		public TService GetInstance<TService>(string key)
-		{
-			return m_baseServiceLocator.GetInstance<TService>(key);
-		}
-
-		/// <summary>
-		/// Get all instances of the given <typeparamref name="TService"/> currently
-		///			 registered in the container.
-		/// </summary>
-		/// <typeparam name="TService">Type of object requested.</typeparam><exception cref="T:Microsoft.Practices.ServiceLocation.ActivationException">if there is are errors resolving
-		///			 the service instance.</exception>
-		/// <returns>
-		/// A sequence of instances of the requested <typeparamref name="TService"/>.
-		/// </returns>
-		public IEnumerable<TService> GetAllInstances<TService>()
-		{
-			return m_baseServiceLocator.GetAllInstances<TService>();
+			return base.GetInstance<TService>();
 		}
 
 		#endregion
@@ -454,7 +401,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<IUnitOfWorkService>();
+				return GetInstance<IUnitOfWorkService>();
 			}
 		}
 
@@ -465,7 +412,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<ICmObjectIdFactory>();
+				return GetInstance<ICmObjectIdFactory>();
 			}
 		}
 
@@ -476,7 +423,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<IDataSetup>();
+				return GetInstance<IDataSetup>();
 			}
 		}
 
@@ -485,7 +432,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// </summary>
 		public ICmObject GetObject(int hvo)
 		{
-			return m_baseServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			return GetInstance<ICmObjectRepository>().GetObject(hvo);
 		}
 
 		/// <summary>
@@ -494,7 +441,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// </summary>
 		public bool IsValidObjectId(int hvo)
 		{
-			return m_baseServiceLocator.GetInstance<ICmObjectRepository>().IsValidObjectId(hvo);
+			return GetInstance<ICmObjectRepository>().IsValidObjectId(hvo);
 
 		}
 
@@ -504,7 +451,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// </summary>
 		public ICmObject GetObject(Guid guid)
 		{
-			return m_baseServiceLocator.GetInstance<ICmObjectRepository>().GetObject(guid);
+			return GetInstance<ICmObjectRepository>().GetObject(guid);
 		}
 
 		/// <summary>
@@ -512,7 +459,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		/// </summary>
 		public ICmObject GetObject(ICmObjectId id)
 		{
-			return m_baseServiceLocator.GetInstance<ICmObjectRepository>().GetObject(id);
+			return GetInstance<ICmObjectRepository>().GetObject(id);
 		}
 
 		/// <summary>
@@ -522,7 +469,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<IWritingSystemManager>();
+				return GetInstance<IWritingSystemManager>();
 			}
 		}
 
@@ -533,7 +480,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<IWritingSystemContainer>();
+				return GetInstance<IWritingSystemContainer>();
 			}
 		}
 
@@ -544,7 +491,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<ICmObjectRepository>();
+				return GetInstance<ICmObjectRepository>();
 			}
 		}
 
@@ -555,7 +502,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<ICmObjectIdFactory>();
+				return GetInstance<ICmObjectIdFactory>();
 			}
 		}
 
@@ -566,7 +513,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
+				return GetInstance<IFwMetaDataCacheManaged>();
 			}
 		}
 
@@ -577,7 +524,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<ILgWritingSystemFactory>();
+				return GetInstance<ILgWritingSystemFactory>();
 			}
 		}
 
@@ -588,7 +535,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<LoadingServices>();
+				return GetInstance<LoadingServices>();
 			}
 		}
 
@@ -599,7 +546,7 @@ namespace SIL.FieldWorks.FDO.IOC
 		{
 			get
 			{
-				return m_baseServiceLocator.GetInstance<IdentityMap>();
+				return GetInstance<IdentityMap>();
 			}
 		}
 

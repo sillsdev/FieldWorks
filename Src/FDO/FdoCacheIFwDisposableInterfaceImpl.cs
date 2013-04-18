@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.FDO
 				// NOTE: this needs to be last since it calls FdoCache.Dispose() which
 				// sets all member variables to null.
 				// This will also dispose all Singletons which includes m_serviceLocator.GetInstance<IDataSetup>()
-				var serviceLocatorWrapper = m_serviceLocator as StructureMapServiceLocatorWrapper;
+				var serviceLocatorWrapper = m_serviceLocator as StructureMapServiceLocator;
 				if (serviceLocatorWrapper != null)
 					serviceLocatorWrapper.Dispose();
 			}
