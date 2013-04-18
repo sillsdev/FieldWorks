@@ -126,10 +126,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// Adjust helpFile path to use only forward slashes
 			helpFile = helpFile.Replace(@"\", "/");
 
+
 			string helpViewer = "chmsee";
 			string arguments = helpFile;
 			if (!String.IsNullOrEmpty(helpTopic))
-				arguments = String.Format("'{0}::{1}'", helpFile, helpTopic);
+			{
+				string ref_ht = helpTopic;
+				if (!ref_ht.StartsWith("/"))
+				{
+					ref_ht = String.Format("'/'{0}", helpTopic);
+				}
+				ref_ht = ref_ht.TrimEnd(' ');
+				arguments = String.Format("'{0}::{1}'", helpFile, ref_ht);
+			}
 
 			if (!RunNonblockingProcess(helpViewer, arguments))
 				MessageBox.Show(String.Format(FwUtilsStrings.ksLinuxHelpViewerCouldNotLoad, helpViewer));

@@ -58,8 +58,8 @@ FW_SAMPLES=${FW_SAMPLES:-$FW_SHARE-examples}
 	if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil" ]; then
 		echo "# Setting configuration"
 
-		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootDataDir" "${FW_CONFIG}/"
-		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "RootCodeDir" "${FW_SHARE}"
+		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/8" "RootDataDir" "${FW_CONFIG}/"
+		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/8" "RootCodeDir" "${FW_SHARE}"
 
 		# REVIEW these were taken from nant setup registry may not be correct for an install.
 		mono "${WRITEKEY}" LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
@@ -67,7 +67,7 @@ FW_SAMPLES=${FW_SAMPLES:-$FW_SHARE-examples}
 		mono "${WRITEKEY}" LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "$FW_LIB"
 		mono "${WRITEKEY}" LM "Software/SIL" "InitIcu" "1"
 		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
-		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" "${FW_DATA}/Projects"
+		mono "${WRITEKEY}" LM "Software/SIL/FieldWorks/8" "ProjectsDir" "${FW_DATA}/Projects"
 	fi
 
 	# Set values unconditionally, to take care of upgrades

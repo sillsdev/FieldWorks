@@ -220,7 +220,10 @@ namespace SIL.Utils
 		/// ----------------------------------------------------------------------------------------
 		public static RegistryKey SettingsKeyLocalMachine(params string[] subKeys)
 		{
-			return CompanyKeyLocalMachine.OpenSubKey(GetLocalMachineKeyName(subKeys));
+			RegistryKey key = CompanyKeyLocalMachine;
+			if (key != null )
+				key = key.OpenSubKey(GetLocalMachineKeyName(subKeys));
+			return key;
 		}
 		/// ----------------------------------------------------------------------------------------
 		/// <summary>
