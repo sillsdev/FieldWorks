@@ -119,7 +119,7 @@
 		<IdhFiles Include="$(fwrt)/Src/SharpViews/FwComponents/FwComponents.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/views/Views.idh"/>
 		<IdhFiles Include="$(fwrt)/Src/views/ViewsTlb.idl"/>
-		<FilesToDeleteInOutputCommon Include="$(dir-fwoutputcommon)/*.*" Exclude="$(dir-fwoutputcommon)/bldinc.h"/>
+		<FilesToDeleteInOutputCommon Include="$(dir-fwoutputCommon)/*.*" Exclude="$(dir-fwoutputCommon)/bldinc.h" Condition="Exists('$(dir-fwoutputCommon)')"/>
 	</ItemGroup>
 	<PropertyGroup>
 		<ContinueIfOutOfDate Condition="!$(buildtlb)">false</ContinueIfOutOfDate>
@@ -141,7 +141,7 @@
 	<Target Name="generateLinuxIdlFiles" DependsOnTargets="generateLinuxIdlFiles-Linux;generateLinuxIdlFiles-Windows">
 		<!-- It would be nice to use <ItemGroup> in here directly (which is supported in
 			.NET >= 3.5), but unfortunately it isn't implemented in Mono's xbuild yet. -->
-		<CreateItem Include="$(dir-fwoutputcommon)/*Tlb.h;$(dir-fwoutputcommon)/*Tlb.idl;$(dir-fwoutputcommon)/*Tlb.tlb">
+		<CreateItem Include="$(dir-fwoutputCommon)/*Tlb.h;$(dir-fwoutputCommon)/*Tlb.idl;$(dir-fwoutputCommon)/*Tlb.tlb">
 			<Output TaskParameter="Include" ItemName="TlbFiles"/>
 		</CreateItem>
 
@@ -152,9 +152,9 @@
 
 		<!--We also need to extract the interface GUIDs for Linux -->
 		<Message Text="Extracting iids for use on Linux..."/>
-		<ExtractIIDs Input="$(dir-fwoutputcommon)/FwKernelTlb.h" Output="$(fwrt)/Src/Kernel/FwKernel_GUIDs.cpp"/>
-		<ExtractIIDs Input="$(dir-fwoutputcommon)/LanguageTlb.h" Output="$(fwrt)/Src/Language/Language_GUIDs.cpp"/>
-		<ExtractIIDs Input="$(dir-fwoutputcommon)/ViewsTlb.h" Output="$(fwrt)/Src/views/Views_GUIDs.cpp"
+		<ExtractIIDs Input="$(dir-fwoutputCommon)/FwKernelTlb.h" Output="$(fwrt)/Src/Kernel/FwKernel_GUIDs.cpp"/>
+		<ExtractIIDs Input="$(dir-fwoutputCommon)/LanguageTlb.h" Output="$(fwrt)/Src/Language/Language_GUIDs.cpp"/>
+		<ExtractIIDs Input="$(dir-fwoutputCommon)/ViewsTlb.h" Output="$(fwrt)/Src/views/Views_GUIDs.cpp"
 			LinesToInsertAtTop='#include "FwKernelTlb.h"'/>
 		<Copy SourceFiles="$(dir-fwoutput)/idhfiles.MD5" DestinationFolder="$(fwrt)/Lib/linux/Common"/>
 
