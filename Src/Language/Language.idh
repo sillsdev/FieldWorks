@@ -2046,12 +2046,6 @@ DeclareInterface(RegexMatcher, Unknown, 6C62CCF0-4EE1-493C-8092-319B6CFBEEBC)
 		interface ILgCollatingEngine;
 	};
 
-	// A collating engine that wraps the ICU collator.
-	DeclareCoClass(LgIcuCollator, E771361C-FF54-4120-9525-98A0B7A9ACCF)
-	{
-		interface ILgCollatingEngine;
-	};
-
 	// The *new* standrad character property engine, which gives answers based purely on
 	// Unicode (thanks to ICU).
 	DeclareCoClass(LgIcuCharPropEngine, 30D75676-A10F-48FE-9627-EBF4061EA49D)

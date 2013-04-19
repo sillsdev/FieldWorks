@@ -1,4 +1,4 @@
-// Automatically generated from ViewsTlb.h by ExtractIIDs task on 3/5/2013 12:52:36 PM
+// Automatically generated from ViewsTlb.h by ExtractIIDs task
 #include "FwKernelTlb.h"
 #include "ViewsTlb.h"
 

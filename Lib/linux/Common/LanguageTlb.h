@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Tue Mar 05 12:52:34 2013
+/* at Fri Apr 19 17:38:15 2013
  */
 /* Compiler settings for d:\fwrepo\fw\Output\Common\LanguageTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -543,18 +543,6 @@ typedef struct LgUnicodeCollater LgUnicodeCollater;
 #endif /* __cplusplus */
 
 #endif 	/* __LgUnicodeCollater_FWD_DEFINED__ */
-
-
-#ifndef __LgIcuCollator_FWD_DEFINED__
-#define __LgIcuCollator_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class LgIcuCollator LgIcuCollator;
-#else
-typedef struct LgIcuCollator LgIcuCollator;
-#endif /* __cplusplus */
-
-#endif 	/* __LgIcuCollator_FWD_DEFINED__ */
 
 
 #ifndef __LgIcuCharPropEngine_FWD_DEFINED__
@@ -1687,11 +1675,6 @@ ATTACH_GUID_TO_CLASS(class,
 0D9900D2-1693-481F-AA70-7EA64F264EC4
 ,
 LgUnicodeCollater
-);
-ATTACH_GUID_TO_CLASS(class,
-E771361C-FF54-4120-9525-98A0B7A9ACCF
-,
-LgIcuCollator
 );
 ATTACH_GUID_TO_CLASS(class,
 30D75676-A10F-48FE-9627-EBF4061EA49D
@@ -11958,14 +11941,6 @@ LgSystemCollater;
 
 class DECLSPEC_UUID("0D9900D2-1693-481F-AA70-7EA64F264EC4")
 LgUnicodeCollater;
-#endif
-
-#define CLSID_LgIcuCollator __uuidof(LgIcuCollator)
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("E771361C-FF54-4120-9525-98A0B7A9ACCF")
-LgIcuCollator;
 #endif
 
 #define CLSID_LgIcuCharPropEngine __uuidof(LgIcuCharPropEngine)
