@@ -295,13 +295,60 @@
 			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
 		</MorphType>
 	</rt>
-
+<!-- entries to test that SecondaryOrder is accounted for -->
+<rt class="LexEntry" guid="ABABABAA-EEA0-4204-AC81-9B9B115E9785">
+	<HomographNumber val="0" />
+	<LexemeForm>
+		<objsur guid="FABAEEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" t="o" />
+	</LexemeForm>
+</rt>
+<rt class="MoStemAllomorph" guid="FABAEEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" ownerguid="ABABABAA-EEA0-4204-AC81-9B9B115E9785">
+	<Form>
+		<AUni ws="fr">a</AUni>
+	</Form>
+	<MorphType>
+		<objsur guid="88888888-eeee-11d3-9764-00c04f186933" t="r" />
+	</MorphType>
+</rt>
+<rt class="LexEntry" guid="EBEAEBEA-EEA0-4204-AC81-9B9B115E9785">
+	<HomographNumber val="0" />
+	<LexemeForm>
+		<objsur guid="EBEAEBEA-8B30-4ED5-BF5A-BBD3A3FFB4C2" t="o" />
+	</LexemeForm>
+</rt>
+<rt class="MoStemAllomorph" guid="EBEAEBEA-8B30-4ED5-BF5A-BBD3A3FFB4C2" ownerguid="EBEAEBEA-EEA0-4204-AC81-9B9B115E9785">
+	<Form>
+		<AUni ws="fr">a</AUni>
+	</Form>
+	<MorphType>
+		<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+	</MorphType>
+</rt>
+<rt class="LexEntry" guid="FABFABFA-EEA0-4204-AC81-9B9B115E9785">
+	<HomographNumber val="0" />
+	<LexemeForm>
+		<objsur guid="FABFABFA-8B30-4ED5-BF5A-BBD3A3FFB4C2" t="o" />
+	</LexemeForm>
+</rt>
+<rt class="MoStemAllomorph" guid="FABFABFA-8B30-4ED5-BF5A-BBD3A3FFB4C2" ownerguid="FABFABFA-EEA0-4204-AC81-9B9B115E9785">
+	<Form>
+		<AUni ws="fr">a</AUni>
+	</Form>
+	<MorphType>
+		<objsur guid="55555555-aaaa-11d3-9764-00c04f186933" t="r" />
+	</MorphType>
+</rt>
+<!-- MoMorphTypes (used in various tests) -->
 <rt class="MoMorphType" guid="d7f713e8-e8cf-11d3-9764-00c04f186933" >
 <SecondaryOrder val="0" />
 <SortSpec val="0" />
 </rt>
 <rt class="MoMorphType" guid="88888888-eeee-11d3-9764-00c04f186933" >
 <SecondaryOrder val="0" />
+<SortSpec val="0" />
+</rt>
+<rt class="MoMorphType" guid="55555555-aaaa-11d3-9764-00c04f186933" >
+<SecondaryOrder val="1" />
 <SortSpec val="0" />
 </rt>
 <!-- Pathologically this could be the last rt element, so let's make sure we handle worst case -->

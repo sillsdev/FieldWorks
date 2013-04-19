@@ -38,6 +38,7 @@ namespace SIL.FieldWorks.FixData
 		Dictionary<Guid, String> m_LexEntryHomographNumbers = new Dictionary<Guid, String>();
 		const string kUnknown = "<unknown>";
 		private string m_homographWs = null;
+		private Dictionary<Guid, string> m_MorphTypeSort = new Dictionary<Guid, string>();
 
 		internal override void InspectElement(XElement rt)
 		{
@@ -52,6 +53,17 @@ namespace SIL.FieldWorks.FixData
 				case "MoAffixAllomorph":
 				case "MoStemAllomorph":
 					m_MoAllomorphs.Add(guid, rt);
+					break;
+				case "MoMorphType":
+					var sortelement = rt.Element("SecondaryOrder");
+					if (sortelement != null)
+					{
+						var order = sortelement.Attribute("val");
+						if (order != null)
+						{
+							m_MorphTypeSort.Add(guid, order.Value);
+						}
+					}
 					break;
 				case "LexEntry":
 					var homographElement = rt.Element("HomographNumber");
@@ -100,23 +112,6 @@ namespace SIL.FieldWorks.FixData
 		{
 			base.FinalFixerInitialization(owners, guids, parentToOwnedObjsur, rtElementsToDelete); // Sets base class member variables
 
-			foreach (var cfElement in entriesWithCitationForm)
-			{
-				var cfString = GetStringInHomographWritingSystem(cfElement.Value);
-				if (!string.IsNullOrWhiteSpace(cfString))
-				{
-					cfString = cfString.Trim();
-					if (m_Homographs.ContainsKey(cfString))
-					{
-						m_Homographs[cfString].Add(cfElement.Key);
-					}
-					else
-					{
-						m_Homographs.Add(cfString, new List<Guid> { cfElement.Key });
-					}
-				}
-			}
-
 			// Create a dictionary with the Form and MorphType guid as the key and a list of ownerguid's as the value.  This
 			// will show us which LexEntries should have homograph numbers.  If the list of ownerguids has only one entry then
 			// it's homograph number should be zero. If the list of owerguids has more than one guid then the LexEntries
@@ -126,19 +121,29 @@ namespace SIL.FieldWorks.FixData
 				List<Guid> guidsForHomograph;
 				var rtElem = morphKvp.Value;
 				var morphGuid = new Guid(rtElem.Attribute("guid").Value);
+				string rtFormText;
 				if (entriesWithCitationForm.Keys.Contains(owners[morphGuid]))
 				{
-					continue; // If an entry has a citation form the rest of this information isn't relevant
+					var entryGuid = owners[morphGuid];
+					var cfElement = entriesWithCitationForm[entryGuid];
+					rtFormText = GetStringInHomographWritingSystem(cfElement);
+					if (!string.IsNullOrWhiteSpace(rtFormText))
+					{
+						rtFormText = rtFormText.Trim();
+					}
 				}
-				// We don't assign homographs based on allomorphs.
-				if (!m_firstAllomorphs.Contains(morphGuid))
-					continue;
-				var rtForm = rtElem.Element("Form");
-				if (rtForm == null)
-					continue;
-				var rtFormText = GetStringInHomographWritingSystem(rtForm);
-				if (rtFormText == null || rtFormText.Trim().Length == 0)
-					continue; // entries with no lexeme form are not considered homographs.
+				else
+				{
+					// We don't assign homographs based on allomorphs.
+					if (!m_firstAllomorphs.Contains(morphGuid))
+						continue;
+					var rtForm = rtElem.Element("Form");
+					if (rtForm == null)
+						continue;
+					rtFormText = GetStringInHomographWritingSystem(rtForm);
+					if (rtFormText == null || rtFormText.Trim().Length == 0)
+						continue; // entries with no lexeme form are not considered homographs.
+				}
 
 				var rtMorphType = rtElem.Element("MorphType");
 				if (rtMorphType == null)
@@ -150,7 +155,7 @@ namespace SIL.FieldWorks.FixData
 
 				// if there was a citation form which matches the form of this MoStemAllomorph the MorphType
 				// is not important to the homograph determination.
-				var key = m_Homographs.ContainsKey(rtFormText) ? rtFormText : rtFormText + guid;
+				var key = m_Homographs.ContainsKey(rtFormText) ? rtFormText : rtFormText + m_MorphTypeSort[new Guid(guid)];
 
 				var ownerguid = new Guid(rtElem.Attribute("ownerguid").Value);
 				if (m_Homographs.TryGetValue(key, out guidsForHomograph))
