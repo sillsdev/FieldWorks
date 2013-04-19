@@ -75,6 +75,21 @@ namespace SIL.Utils.Attributes
 			}
 		}
 
+		/// <summary>
+		/// Method gets called once at the end of running the tests
+		/// </summary>
+		public override void AfterTest(NUnit.Framework.TestDetails testDetails)
+		{
+			if (Environment.OSVersion.Platform != PlatformID.Unix &&
+				!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
+			{
+				// End redirection. Otherwise test might fail when we run them multiple
+				// times in NUnit.
+				RegOverridePredefKey(HKEY_CURRENT_USER, UIntPtr.Zero);
+			}
+			base.AfterTest(testDetails);
+		}
+
 		public override NUnit.Framework.ActionTargets Targets
 		{
 			get { return NUnit.Framework.ActionTargets.Suite; }
