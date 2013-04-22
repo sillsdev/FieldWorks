@@ -29,6 +29,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		{
 			private int m_ServerPort = -1;
 			private int m_ReplyPort = -1;
+			private int m_StartingPort = -1;
 			private bool? m_AppSettingsExists;
 			private AppSettingsSection AppSettings { get; set; }
 
@@ -115,6 +116,22 @@ namespace SIL.FieldWorks.FDO.DomainServices
 					return m_ReplyPort;
 				}
 			}
+
+			/// <summary>
+			/// Gets the port that we start our search for a free port to use for the next Db4o server
+			/// </summary>
+			public int StartingPort
+			{
+				get
+				{
+					if (m_StartingPort < 0)
+					{
+						var value = GetValue("StartingPort");
+						m_StartingPort = !string.IsNullOrEmpty(value) ? Int32.Parse(value) : 4488;
+					}
+					return m_StartingPort;
+				}
+			}
 		}
 
 		/// <summary>
@@ -131,6 +148,14 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static int ReplyPort
 		{
 			get { return SingletonsContainer.Get<Db4OPortsImpl>().ReplyPort; }
+		}
+
+		/// <summary>
+		/// Gets the port that we start our search for a free port to use for the next Db4o server
+		/// </summary>
+		public static int StartingPort
+		{
+			get { return SingletonsContainer.Get<Db4OPortsImpl>().StartingPort; }
 		}
 	}
 }

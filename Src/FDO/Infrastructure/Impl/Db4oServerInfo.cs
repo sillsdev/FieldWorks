@@ -57,8 +57,7 @@ namespace FwRemoteDatabaseConnector
 			get
 			{
 				// Search for the lowest avalible port that is 4488 or above.
-				const int startingPort = 4488;
-				int possiblePort = startingPort;
+				int possiblePort = Db4OPorts.StartingPort;
 				while (m_runningServers.Where(x => x.Value.m_port == possiblePort).Count() > 0)
 					possiblePort++;
 
