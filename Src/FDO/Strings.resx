@@ -956,7 +956,7 @@ If you need to make changes, tell the other users to close this project before y
     <comment>Caption for folder dialog, when setting a new LangProject.LinkedFilesRootDir value</comment>
   </data>
   <data name="ksInvalidLinkedFilesFolder" xml:space="preserve">
-    <value>{0} is not a valid directory for linked files.</value>
+    <value>{0} is not a valid directory for linked files. Please select a valid directory.</value>
     <comment>Error message for accessing an invalid LangProject.LinkedFilesRootDir value</comment>
   </data>
   <data name="ksReversalIndexPOSListName" xml:space="preserve">

@@ -279,6 +279,7 @@ namespace SIL.FieldWorks.FDO
 				servLoc.WritingSystemManager.UserWritingSystem = wsUser;
 			}
 
+			createdCache.EnsureValidLinkedFilesFolder();
 			return createdCache;
 		}
 
@@ -1494,30 +1495,32 @@ namespace SIL.FieldWorks.FDO
 		/// between systems, the stored value may become hopelessly invalid.  See FWNX-1005
 		/// for an example of the havoc than can ensue.
 		/// </summary>
-		public string GetValidLinkedFilesFolder()
+		/// <remarks>This method gets called when we open the FDO cache.</remarks>
+		private void EnsureValidLinkedFilesFolder()
 		{
+			if (MiscUtils.RunningTests)
+				return;
 			var linkedFilesFolder = this.LangProject.LinkedFilesRootDir;
 			if (!Directory.Exists(linkedFilesFolder))
 			{
 				var defaultFolder = DirectoryFinder.GetDefaultLinkedFilesDir(this.ProjectId.ProjectFolder);
 				if (!Directory.Exists(defaultFolder))
 					defaultFolder = this.ProjectId.ProjectFolder;
-				System.Windows.Forms.MessageBox.Show(String.Format(Strings.ksInvalidLinkedFilesFolder, linkedFilesFolder), Strings.ksErrorCaption);
+				MessageBox.Show(String.Format(Strings.ksInvalidLinkedFilesFolder, linkedFilesFolder), Strings.ksErrorCaption);
 				while (!Directory.Exists(linkedFilesFolder))
 				{
-					using (var folderBrowserDlg = new SIL.Utils.FileDialog.FolderBrowserDialogAdapter())
+					using (var folderBrowserDlg = new FolderBrowserDialogAdapter())
 					{
 						folderBrowserDlg.Description = Strings.ksLinkedFilesFolder;
 						folderBrowserDlg.RootFolder = Environment.SpecialFolder.Desktop;
 						folderBrowserDlg.SelectedPath = defaultFolder;
-						if (folderBrowserDlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+						if (folderBrowserDlg.ShowDialog() == DialogResult.OK)
 							linkedFilesFolder = folderBrowserDlg.SelectedPath;
 					}
 				}
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(this.ActionHandlerAccessor, () =>
 					{ this.LangProject.LinkedFilesRootDir = linkedFilesFolder; });
 			}
-			return linkedFilesFolder;
 		}
 		#endregion Public methods
 

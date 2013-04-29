@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 				else
 				{
-					var mediaDir = DirectoryFinder.GetMediaDir(m_fdoCache.GetValidLinkedFilesFolder());
+					var mediaDir = DirectoryFinder.GetMediaDir(m_fdoCache.LangProject.LinkedFilesRootDir);
 					Directory.CreateDirectory(mediaDir); // Palaso media library does not cope if it does not exist.
 					path = Path.Combine(mediaDir, filename.Normalize(NormalizationForm.FormC));
 
@@ -326,7 +326,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		private string CreateNewSoundFilename(out string path)
 		{
 			var obj = m_fdoCache.ServiceLocator.GetObject(m_hvoObj);
-			var mediaDir = DirectoryFinder.GetMediaDir(m_fdoCache.GetValidLinkedFilesFolder());
+			var mediaDir = DirectoryFinder.GetMediaDir(m_fdoCache.LangProject.LinkedFilesRootDir);
 			Directory.CreateDirectory(mediaDir); // Palaso media library does not cope if it does not exist.
 			// Make up a unique file name for the new recording. It starts with the shortname of the object
 			// so as to somewhat link them together, then adds a unique timestamp, then if by any chance
