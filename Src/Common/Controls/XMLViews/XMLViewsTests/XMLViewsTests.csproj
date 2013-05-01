@@ -145,7 +145,7 @@
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\..\Bin\NUnit\bin\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\..\Output\Debug\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="RootSite, Version=6.1.1.18764, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -236,6 +236,9 @@
     <Compile Include="XmlBrowseViewBaseVcTests.cs" />
     <Compile Include="XmlVcTests.cs" />
     <Compile Include="XmlBrowseViewBaseTests.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DhListViewTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>

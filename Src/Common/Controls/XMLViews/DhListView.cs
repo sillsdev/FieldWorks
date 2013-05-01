@@ -14,7 +14,6 @@ using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
-
 	/// <summary>
 	/// Derived from ListView, this class supports notifying the browse view
 	/// when resizing the columns.
@@ -113,6 +112,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 			ColumnClick += HandleColumnClick;
 #endif
+
+			ColumnWidthChanging += ListView_ColumnWidthChanging;
 		}
 
 #if __MonoCS__ // FWNX-224
@@ -186,6 +187,17 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bv = null;
 
 			base.Dispose (disposing);
+		}
+
+		/// <summary>
+		/// If there is a checkbox column
+		/// </summary>
+		public virtual bool HasCheckBoxColumn
+		{
+			get
+			{
+				return m_bv.m_xbv.Vc.HasSelectColumn;
+			}
 		}
 
 		/// <summary>
@@ -384,6 +396,7 @@ namespace SIL.FieldWorks.Common.Controls
 				do
 				{
 					len = len - 1;
+					Debug.Assert(len >= 0, "length should not be negative");
 					drawText = drawText.Substring(0, len) + "\x2026"; // ellipsis
 					realSize = e.Graphics.MeasureString(drawText, e.Font);
 				} while (len > 0 && realSize.Width > drawRect.Width);
@@ -484,6 +497,38 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 #endif
+
+		/// <summary>
+		/// Reject inappropriate column width changes.
+		/// Helps to fix FWNX-1018.
+		/// No column should be so small that compensating for ascending/descending icon size
+		/// (m_imgList.ImageSize.Width) in DhListView_DrawColumnHeader
+		/// would result in a negative width.
+		/// </summary>
+		private void ListView_ColumnWidthChanging(Object sender, ColumnWidthChangingEventArgs e)
+		{
+			if (!IsThisColumnChangeAllowable(e.ColumnIndex, Columns[e.ColumnIndex].Width, e.NewWidth))
+				e.Cancel = true;
+		}
+
+		/// <summary>
+		/// Determine if a column width change is acceptable.
+		/// </summary>
+		private bool IsThisColumnChangeAllowable(int columnIndex, int currentWidth, int newWidth)
+		{
+			// Don't allow resizing the checkbox column, if present.
+			if (HasCheckBoxColumn && columnIndex == 0)
+				return false;
+			// Don't allow resizing if the new width is less than it should be.
+			// But it's okay if the new width is less than the minimum if it's at least
+			// bigger than the current width. Otherwise if a column were somehow
+			// smaller than the minimum, a user couldn't ever make it bigger.
+			if (newWidth >= currentWidth)
+				return true;
+			if (newWidth < kMinColWidth)
+				return false;
+			return true;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -790,7 +835,11 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		internal const int kgapForScrollBar = 23;
+		/// <summary>
+		/// Minimum width a normal column can be (other than the checkbox column)
+		/// </summary>
 		internal const int kMinColWidth = 25;
+
 		/// <summary>
 		/// This attempts to prevent the header turning into a scroll bar by adjusting the widths
 		/// of columns as necessary so they fit.
