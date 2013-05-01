@@ -87,7 +87,7 @@
     </Reference>
     <Reference Include="Palaso, Version=1.9.116.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\Output\Debug\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -102,6 +102,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="MigrateProjects.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -179,7 +182,6 @@
     <None Include="Resources\BookOnCube.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>
   </PropertyGroup>
