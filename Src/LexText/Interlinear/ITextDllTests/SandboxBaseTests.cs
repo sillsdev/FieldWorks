@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
@@ -295,6 +294,63 @@ namespace SIL.FieldWorks.IText
 					var variantEntry = initialAnalysisStack.WfiAnalysis.MorphBundlesOS[0].MorphRA.Owner as ILexEntry;
 					var variantType = variantEntry.VariantEntryRefs.First().VariantEntryTypesRS.First();
 					 */
+				}
+			}
+		}
+
+		[Test]
+		public void LexEntriesComboHandler_ItemsInComboForInflVariant()
+		{
+			using (var sandbox = SetupSandbox(() =>
+			{
+				const string wff = "blonde";
+				var mockText = MakeText(wff);
+				var wf = MakeWordform(wff);
+				var wa = MakeAnalysis(wf);
+				var options = new MakeBundleOptions();
+				options.LexEntryForm = wff;
+				options.MakeMorph = (mff) =>
+				{
+					Guid slotType = GetSlotType(mff);
+					IMoMorphSynAnalysis msa1;
+					var mainEntry = MakeEntry("blondEntry", "", slotType, out msa1);
+					var mainSense = MakeSense(mainEntry, "fair haired", msa1);
+
+					IMoMorphSynAnalysis msa2;
+					var variantEntry = MakeEntry("blondeEntry", "", slotType, out msa2);
+					ILexEntryType letDialectalVariantType = Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypDialectalVar);
+					letDialectalVariantType.Abbreviation.set_String(Cache.DefaultAnalWs, "dial.var. of");
+					letDialectalVariantType.Name.set_String(Cache.DefaultAnalWs, "Dialectal Variant");
+					letDialectalVariantType.ReverseAbbr.set_String(Cache.DefaultAnalWs, "dial.var.");
+
+					variantEntry.MakeVariantOf(mainSense, letDialectalVariantType);
+					return variantEntry.LexemeFormOA;
+				};
+				options.MakeSense = (entry) =>
+				{
+					var entryRef = entry.EntryRefsOS.First();
+					return entryRef.ComponentLexemesRS.First() as ILexSense;
+				};
+				options.MakeMsa = (sense) => { return sense.MorphoSyntaxAnalysisRA; };
+				var wmb = MakeBundle(wa, options);
+				var para = (IStTxtPara)mockText.ContentsOA.ParagraphsOS[0];
+				var seg = para.SegmentsOS[0];
+				seg.AnalysesRS.Add(wa);
+				return new AnalysisOccurrence(seg, 0);
+			}))
+			{
+				var initialAnalysisStack = sandbox.CurrentAnalysisTree;
+				using (var handler = GetComboHandler(sandbox, InterlinLineChoices.kflidLexEntries, 0) as SandboxBase.IhMissingEntry)
+				{
+					var imorphItemCurrentSandboxState = handler.IndexOfCurrentItem;
+
+					Assert.That(imorphItemCurrentSandboxState, Is.EqualTo(1));
+
+					var handlerList =  handler.ComboList.Items;
+
+					Assert.That(handlerList[0].ToString(), Is.EqualTo("Add New Sense for blondeEntry ..."));
+					Assert.That(handlerList[1].ToString(), Is.EqualTo("  fair haired, ??? , blondEntry+dial.var."));
+					Assert.That(handlerList[2].ToString(), Is.EqualTo("    Add New Sense..."));
 				}
 			}
 		}
