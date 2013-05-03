@@ -1455,13 +1455,28 @@ namespace SIL.FieldWorks.IText
 				/// <returns></returns>
 				public int Compare(object x, object y)
 				{
-					MorphItem miX = (MorphItem)x;
-					MorphItem miY = (MorphItem)y;
+					var miX = (MorphItem)x;
+					var miY = (MorphItem)y;
 
 					// first compare the lex and sense names.
-					int compareLexNames = String.Compare(miX.m_name.Text, miY.m_name.Text);
-					if (compareLexNames != 0)
-						return compareLexNames;
+					if (miX.m_name == null || miY.m_name == null) //handle sort under null conditions
+					{
+						if (miY.m_name != null)
+						{
+							return -1;
+						}
+						if (miX.m_name != null)
+						{
+							return 1;
+						}
+					}
+					else
+					{
+						var compareLexNames = String.Compare(miX.m_name.Text, miY.m_name.Text);
+						if (compareLexNames != 0)
+							return compareLexNames;
+					}
+
 					// otherwise if the hvo's are the same, then we want the ones with senses to be higher.
 					// when m_hvoSense equals '0' we want to insert "Add New Sense" for that lexEntry,
 					// following all the other senses for that lexEntry.
@@ -1483,12 +1498,26 @@ namespace SIL.FieldWorks.IText
 								miX.m_entryRef.Hvo == miY.m_entryRef.Hvo)
 							{
 								var commonVariantEntryTypesRs = miX.m_entryRef.VariantEntryTypesRS;
-								int iX = commonVariantEntryTypesRs.IndexOf(miX.m_inflType);
-								int iY = commonVariantEntryTypesRs.IndexOf(miY.m_inflType);
-								if (iX > iY)
-									return 1;
-								if (iX < iY)
-									return -1;
+								if (miX.m_inflType == null || miY.m_inflType == null) //handle sort under null conditions
+								{
+									if (miY.m_inflType != null)
+									{
+										return -1;
+									}
+									if (miX.m_inflType != null)
+									{
+										return 1;
+									}
+								}
+								else
+								{
+									var iX = commonVariantEntryTypesRs.IndexOf(miX.m_inflType);
+									var iY = commonVariantEntryTypesRs.IndexOf(miY.m_inflType);
+									if (iX > iY)
+										return 1;
+									if (iX < iY)
+										return -1;
+								}
 							}
 							return compareSenseNames;
 						}
@@ -1734,29 +1763,30 @@ namespace SIL.FieldWorks.IText
 							}
 							else
 							{
-								if (tssSense.Length == 0)
-								{
-									// If it doesn't have a gloss (e.g., from Categorised Entry), use the definition.
-									tssSense = sense.Definition.get_String(wsAnalysis.Handle);
-								}
-								mi = GetMorphItem(mf, tssName, sense, tssSense, ler, hvoLexEntry, null);
-								m_morphItems.Add(mi);
+								AddMorphItemToList(mf, ler, tssSense, sense, wsAnalysis, tssName, hvoLexEntry);
 							}
 						}
 						else
 						{
-							if (tssSense.Length == 0)
-							{
-								// If it doesn't have a gloss (e.g., from Categorised Entry), use the definition.
-								tssSense = sense.Definition.get_String(wsAnalysis.Handle);
-							}
-							var mi = GetMorphItem(mf, tssName, sense, tssSense, ler, hvoLexEntry, null);
-							m_morphItems.Add(mi);
+							AddMorphItemToList(mf, null, tssSense, sense, wsAnalysis, tssName, hvoLexEntry);
 						}
 					}
 				}
 				// Make a LexEntry level item
 				m_morphItems.Add(new MorphItem(mf.Hvo, ler != null ? hvoLexEntry : 0, tssName));
+			}
+
+			private void AddMorphItemToList(IMoForm mf, ILexEntryRef ler, ITsString tssSense, ILexSense sense,
+											IWritingSystem wsAnalysis, ITsString tssName, int hvoLexEntry)
+			{
+				MorphItem mi;
+				if (tssSense.Length == 0)
+				{
+					// If it doesn't have a gloss (e.g., from Categorised Entry), use the definition.
+					tssSense = sense.Definition.get_String(wsAnalysis.Handle);
+				}
+				mi = GetMorphItem(mf, tssName, sense, tssSense, ler, hvoLexEntry, null);
+				m_morphItems.Add(mi);
 			}
 
 			private static MorphItem GetMorphItem(IMoForm mf, ITsString tssName, ILexSense sense, ITsString tssSense,
