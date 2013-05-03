@@ -142,6 +142,7 @@
     <Compile Include="DirectoryUtils.cs" />
     <Compile Include="StopClock.cs" />
     <Compile Include="FileModeOverride.cs" />
+    <Compile Include="IFileOS.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ColorStrings.resx">
