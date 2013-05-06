@@ -874,7 +874,7 @@
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishSummaryDefForStemMinorVariantRef">
-		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="entry-variant-summary-minor"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishSummaryDefForStemMinorSenseVariantRef">
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary-minor"/>
@@ -886,16 +886,16 @@
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootMinorVariantRef">
-		<part ref="SummaryDefinitionPub" label="Summary Definition" before="" after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before="" after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="entry-variant-summary-minor"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootMinorSubVariantRef">
-		<part ref="SummaryDefinitionPub" label="Summary Definition" before="" after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before="" after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary-minor-sub"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootMinorSenseVariantRef">
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary-minor"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootMinorSubSenseVariantRef">
-		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary-minor"/>
+		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after=" " ws="analysis" wsType="analysis" visibility="ifdata" css="sense-variant-summary-minor-sub"/>
 	</layout>
 	<layout class="LexEntry" type="jtview" name="publishSummaryDefForRootSubVariantRef">
 		<part ref="SummaryDefinitionPub" label="Summary Definition" before=" " after="" ws="analysis" wsType="analysis" visibility="ifdata" css="variant-summary-sub"/>
