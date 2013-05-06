@@ -3232,7 +3232,10 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					var key = new Tuple<ICmObject, int>(this, flid);
 					// Usually Add would work, but this routine is also used to restore things on Undo,
 					// when the key may already have a value, which Add does not allow.
-					m_cache.CustomProperties[key] = data;
+					lock (m_cache)
+					{
+						m_cache.CustomProperties[key] = data;
+					}
 				}
 			}
 			customElements.Remove();
