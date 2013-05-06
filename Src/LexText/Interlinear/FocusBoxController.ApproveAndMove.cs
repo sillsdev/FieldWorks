@@ -64,6 +64,13 @@ namespace SIL.FieldWorks.IText
 		/// <returns>true if IP moved on, false otherwise</returns>
 		internal virtual bool ApproveAndMoveNextRecursive(ICommandUndoRedoText undoRedoText)
 		{
+			if (!SelectedOccurrence.IsValid)
+			{
+				// Can happen (at least) when the text we're analyzing got deleted in another window
+				SelectedOccurrence = null;
+				InterlinDoc.TryHideFocusBoxAndUninstall();
+				return false;
+			}
 			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
 			var nextWordform = navigator.GetNextWordformOrDefault(SelectedOccurrence);
 			if (nextWordform == null || nextWordform.Segment != SelectedOccurrence.Segment ||
@@ -128,6 +135,8 @@ namespace SIL.FieldWorks.IText
 				return;
 
 			var origWordform = SelectedOccurrence;
+			if (!origWordform.IsValid)
+				return; // something (editing elsewhere?) has put things in a bad state; cf LTB-1665.
 			var origWag = new AnalysisTree(origWordform.Analysis);
 			var undoText = undoRedoText != null ? undoRedoText.UndoText : ITextStrings.ksUndoApproveAnalysis;
 			var redoText = undoRedoText != null ? undoRedoText.RedoText : ITextStrings.ksRedoApproveAnalysis;

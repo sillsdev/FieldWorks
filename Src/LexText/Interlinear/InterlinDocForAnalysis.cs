@@ -103,7 +103,13 @@ namespace SIL.FieldWorks.IText
 		protected override void UpdateWordforms(HashSet<IWfiWordform> wordforms)
 		{
 			base.UpdateWordforms(wordforms);
-			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null && wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform)
+			// It's fairly pathological for the Analysis of an occurrence to be null, and while the Wordform of an analyis can
+			// be null (if it's punctuation), the focus box shouldn't be pointing at punctuation. However, we've had reported
+			// null ref exceptions in the absence of testing for this (LT-13702), and we certainly don't need to update the focus box
+			// because its wordform has been updated if we can't find an actual wordform associated with the focus box.
+			if (IsFocusBoxInstalled && FocusBox.SelectedOccurrence != null && FocusBox.SelectedOccurrence.Analysis != null
+				&& FocusBox.SelectedOccurrence.Analysis.Wordform != null
+				&& wordforms.Contains(FocusBox.SelectedOccurrence.Analysis.Wordform)
 				&& !FocusBox.IsDirty)
 			{
 				// update focus box to display new guess

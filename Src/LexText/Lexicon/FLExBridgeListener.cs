@@ -11,6 +11,7 @@ using Palaso.Lift;
 using Palaso.Lift.Migration;
 using Palaso.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
@@ -206,6 +207,24 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			Justification = "newAppWindow is a reference")]
 		public bool OnFLExBridge(object commandObject)
 		{
+			if (!LinkedFilesLocationIsDefault())
+			{
+				using (var dlg = new FwCoreDlgs.WarningForSendReceiveLinkedFiles())
+				{
+					var result = dlg.ShowDialog();
+					if (result == DialogResult.Yes)
+					{
+						var app = (LexTextApp)_mediator.PropertyTable.GetValue("App");
+						var sLinkedFilesRootDir = app.Cache.LangProject.LinkedFilesRootDir;
+						NonUndoableUnitOfWorkHelper.Do(app.Cache.ActionHandlerAccessor, () =>
+						{
+							app.Cache.LangProject.LinkedFilesRootDir = DirectoryFinder.GetDefaultLinkedFilesDir(
+								app.Cache.ProjectId.ProjectFolder);
+						});
+						app.UpdateExternalLinks(sLinkedFilesRootDir);
+					}
+				}
+			}
 			StopParser();
 			SaveAllDataToDisk();
 			_mediator.PropertyTable.SetProperty("LastBridgeUsed", "FLExBridge", PropertyTable.SettingsGroup.LocalSettings);
@@ -259,6 +278,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true;
 		}
 
+		private bool LinkedFilesLocationIsDefault()
+		{
+			var defaultLinkedFilesFolder = DirectoryFinder.GetDefaultLinkedFilesDir(Cache.ServiceLocator.DataSetup.ProjectId.ProjectFolder);
+			if (!defaultLinkedFilesFolder.Equals(Cache.LanguageProject.LinkedFilesRootDir))
+				return false;
+			else
+				return true;
+		}
 		#endregion FLExBridge S/R messages
 
 		#region LiftBridge S/R messages

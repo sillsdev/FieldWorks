@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.IText
 			// int for all classes, except IhMissingEntry, which studds MorphItem data into it.
 			// So, that ill-behaved class has to make its own m_items data member.
 			protected List<int> m_items = new List<int>();
-			protected IComboList m_comboList;
+			private IComboList m_comboList;
 			// More parallel data for the comboList items.
 			protected IVwRootBox m_rootb;
 			protected int m_wsVern;  // HVO of default vernacular writing system.
@@ -737,6 +737,15 @@ namespace SIL.FieldWorks.IText
 				}
 
 			}
+
+			/// <summary>
+			/// Items that appear in the dropdown control for each interlinear line in the sandbox
+			/// </summary>
+			internal IComboList ComboList
+			{
+				get { return m_comboList; }
+			}
+
 			internal int MorphHvo(int i)
 			{
 				CheckDisposed();
@@ -889,9 +898,9 @@ namespace SIL.FieldWorks.IText
 				CheckDisposed();
 
 				base.SetupCombo();
-				m_comboList.Items.Add(ITextStrings.ksAcceptEntireAnalysis);
-				m_comboList.Items.Add(ITextStrings.ksEditThisWordform);
-				m_comboList.Items.Add(ITextStrings.ksDeleteThisWordform);
+				ComboList.Items.Add(ITextStrings.ksAcceptEntireAnalysis);
+				ComboList.Items.Add(ITextStrings.ksEditThisWordform);
+				ComboList.Items.Add(ITextStrings.ksDeleteThisWordform);
 				// These aren't likely to get implemented soon.
 				//m_comboList.Items.Add("Change spelling of occurrences");
 				//m_comboList.Items.Add("Concordance");
@@ -899,7 +908,7 @@ namespace SIL.FieldWorks.IText
 				//m_comboList.Items.AddSeparator();
 				//m_comboList.Add("Interlinear help");
 
-				m_comboList.DropDownStyle = ComboBoxStyle.DropDownList; // Prevents direct editing.
+				ComboList.DropDownStyle = ComboBoxStyle.DropDownList; // Prevents direct editing.
 			}
 
 			public override void HandleSelect(int index)
@@ -913,7 +922,7 @@ namespace SIL.FieldWorks.IText
 						break;
 					case 1: // Edit this wordform.
 						// Allows direct editing.
-						m_comboList.DropDownStyle = ComboBoxStyle.DropDown;
+						ComboList.DropDownStyle = ComboBoxStyle.DropDown;
 						// restore the combo to visibility so we can do the editing.
 						m_sandbox.ShowCombo();
 						break;
@@ -936,7 +945,7 @@ namespace SIL.FieldWorks.IText
 				CheckDisposed();
 
 				// If it hasn't changed don't do anything.
-				string newval = m_comboList.Text;
+				string newval = ComboList.Text;
 				if (newval == StrFromTss(m_caches.DataAccess.get_MultiStringAlt(m_hvoSbWord, ktagSbWordForm, m_sandbox.RawWordformWs)))
 				{
 					return true;
@@ -998,30 +1007,30 @@ namespace SIL.FieldWorks.IText
 				string currentBreakdown = m_sandbox.SandboxEditMonitor.BuildCurrentMorphsString();
 				if (currentBreakdown != string.Empty)
 				{
-					m_comboList.Text = currentBreakdown;
+					ComboList.Text = currentBreakdown;
 					// The above and every other distinct morpheme breakdown from owned
 					// WfiAnalyses are possible choices.
 					ITsString tssText = TsStrFactoryClass.Create().
 						MakeString(currentBreakdown, m_wsVern);
-					m_comboList.Items.Add(tssText);
+					ComboList.Items.Add(tssText);
 				}
 				else
 				{
-					m_comboList.Text = form;
-					m_comboList.Items.Add(tssForm);
+					ComboList.Text = form;
+					ComboList.Items.Add(tssForm);
 				}
 				// if we added the fullWordform (or the current breakdown is somehow empty although we may have an analysis), then add the
 				// wordform HVO; otherwise, add the analysis HVO.
-				if (currentBreakdown == string.Empty || (wa == null && tssForm != null && tssForm.Equals(m_comboList.Items[0] as ITsString)))
+				if (currentBreakdown == string.Empty || (wa == null && tssForm != null && tssForm.Equals(ComboList.Items[0] as ITsString)))
 					m_items.Add(wordform != null ? wordform.Hvo : 0);
 				else
 					m_items.Add(wa != null ? wa.Hvo : 0);	// [wfi] hvoAnalysis may equal '0' (for annotations that are instances of Wordform).
-				Debug.Assert(m_items.Count == m_comboList.Items.Count,
+				Debug.Assert(m_items.Count == ComboList.Items.Count,
 					"combo list (m_comboList) should contain the same count as the m_items list (hvos)");
 				AddAnalysesOf(wordform, fBaseWordIsPhrase);
 				// Add the original wordform, if not already present.
 				AddIfNotPresent(tssForm, wordform);
-				m_comboList.SelectedIndex = this.IndexOfCurrentItem;
+				ComboList.SelectedIndex = this.IndexOfCurrentItem;
 
 				// Add any relevant 'other case' forms.
 				int wsVern = m_sandbox.RawWordformWs;
@@ -1052,9 +1061,9 @@ namespace SIL.FieldWorks.IText
 						}
 						break;
 				}
-				Debug.Assert(m_items.Count == m_comboList.Items.Count,
+				Debug.Assert(m_items.Count == ComboList.Items.Count,
 					"combo list (m_comboList) should contain the same count as the m_items list (hvos)");
-				m_comboList.Items.Add(ITextStrings.ksEditMorphBreaks_);
+				ComboList.Items.Add(ITextStrings.ksEditMorphBreaks_);
 			}
 
 			/// <summary>
@@ -1131,7 +1140,7 @@ namespace SIL.FieldWorks.IText
 				// Can't use m_comboList.Items.Contains() because it doesn't use our Equals
 				// function and just notes that all the TsStrings are different objects.
 				bool fFound = false;
-				foreach (ITsString tss in m_comboList.Items)
+				foreach (ITsString tss in ComboList.Items)
 				{
 					if (tss.Equals(tssAnal))
 					{
@@ -1141,7 +1150,7 @@ namespace SIL.FieldWorks.IText
 				}
 				if (!fFound)
 				{
-					m_comboList.Items.Add(tssAnal);
+					ComboList.Items.Add(tssAnal);
 					m_items.Add(analysisObj != null ? analysisObj.Hvo : 0);
 				}
 
@@ -1186,7 +1195,7 @@ namespace SIL.FieldWorks.IText
 				sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll,
 					m_hvoSbWord, ktagSbWordMorphs, 0, 0, 1);
 
-				MorphemeBreaker mb = new MorphemeBreaker(m_caches, m_comboList.Text,
+				MorphemeBreaker mb = new MorphemeBreaker(m_caches, ComboList.Text,
 					m_hvoSbWord, m_wsVern, m_sandbox);
 				mb.Run();
 				m_rootb.Reconstruct(); // Everything changed, more or less.
@@ -1209,7 +1218,7 @@ namespace SIL.FieldWorks.IText
 				else
 				{
 					// user selected an existing set of morph breaks.
-					ITsString menuItemForm = (m_comboList.Items[index]) as ITsString;
+					ITsString menuItemForm = (ComboList.Items[index]) as ITsString;
 					Debug.Assert(menuItemForm != null, "menu item should be TsString");
 					int hvoAnal = m_items[index];
 					if (hvoAnal == 0)
@@ -1310,9 +1319,9 @@ namespace SIL.FieldWorks.IText
 				CheckDisposed();
 
 				InitCombo();
-				m_comboList.Text = StrFromTss(m_caches.DataAccess.get_MultiStringAlt(m_hvoSbWord,
+				ComboList.Text = StrFromTss(m_caches.DataAccess.get_MultiStringAlt(m_hvoSbWord,
 					ktagSbWordForm, m_sandbox.RawWordformWs));
-				m_comboList.Items.Add(ITextStrings.ksEditMorphBreaks_);
+				ComboList.Items.Add(ITextStrings.ksEditMorphBreaks_);
 			}
 		}
 
@@ -1446,13 +1455,28 @@ namespace SIL.FieldWorks.IText
 				/// <returns></returns>
 				public int Compare(object x, object y)
 				{
-					MorphItem miX = (MorphItem)x;
-					MorphItem miY = (MorphItem)y;
+					var miX = (MorphItem)x;
+					var miY = (MorphItem)y;
 
 					// first compare the lex and sense names.
-					int compareLexNames = String.Compare(miX.m_name.Text, miY.m_name.Text);
-					if (compareLexNames != 0)
-						return compareLexNames;
+					if (miX.m_name == null || miY.m_name == null) //handle sort under null conditions
+					{
+						if (miY.m_name != null)
+						{
+							return -1;
+						}
+						if (miX.m_name != null)
+						{
+							return 1;
+						}
+					}
+					else
+					{
+						var compareLexNames = String.Compare(miX.m_name.Text, miY.m_name.Text);
+						if (compareLexNames != 0)
+							return compareLexNames;
+					}
+
 					// otherwise if the hvo's are the same, then we want the ones with senses to be higher.
 					// when m_hvoSense equals '0' we want to insert "Add New Sense" for that lexEntry,
 					// following all the other senses for that lexEntry.
@@ -1474,12 +1498,26 @@ namespace SIL.FieldWorks.IText
 								miX.m_entryRef.Hvo == miY.m_entryRef.Hvo)
 							{
 								var commonVariantEntryTypesRs = miX.m_entryRef.VariantEntryTypesRS;
-								int iX = commonVariantEntryTypesRs.IndexOf(miX.m_inflType);
-								int iY = commonVariantEntryTypesRs.IndexOf(miY.m_inflType);
-								if (iX > iY)
-									return 1;
-								if (iX < iY)
-									return -1;
+								if (miX.m_inflType == null || miY.m_inflType == null) //handle sort under null conditions
+								{
+									if (miY.m_inflType != null)
+									{
+										return -1;
+									}
+									if (miX.m_inflType != null)
+									{
+										return 1;
+									}
+								}
+								else
+								{
+									var iX = commonVariantEntryTypesRs.IndexOf(miX.m_inflType);
+									var iY = commonVariantEntryTypesRs.IndexOf(miY.m_inflType);
+									if (iX > iY)
+										return 1;
+									if (iX < iY)
+										return -1;
+								}
 							}
 							return compareSenseNames;
 						}
@@ -1702,32 +1740,53 @@ namespace SIL.FieldWorks.IText
 				}
 				var wsAnalysis = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_caches.MainCache.DefaultAnalWs);
 
-					// Populate morphItems with Sense/Msa level specifics
+				// Populate morphItems with Sense/Msa level specifics
 				if (le != null)
-				foreach (ILexSense sense in le.AllSenses)
 				{
-					var tssSense = sense.Gloss.get_String(wsAnalysis.Handle);
-					if (ler != null)
-					foreach (var inflType in ler.VariantEntryTypesRS.Where(let => let is ILexEntryInflType).Select(let => let as ILexEntryInflType))
+					foreach (ILexSense sense in le.AllSenses)
 					{
-						var glossAccessor = (tssSense.Length == 0 ? (IMultiStringAccessor) sense.Definition : sense.Gloss);
-						tssSense = MorphServices.MakeGlossOptionWithInflVariantTypes(inflType, glossAccessor, wsAnalysis);
-						var mi = GetMorphItem(mf, tssName, sense, tssSense, ler, hvoLexEntry, inflType);
-						m_morphItems.Add(mi);
-					}
-					else
-					{
-						if (tssSense.Length == 0)
+						var tssSense = sense.Gloss.get_String(wsAnalysis.Handle);
+						if (ler != null)
 						{
-							// If it doesn't have a gloss (e.g., from Categorised Entry), use the definition.
-							tssSense = sense.Definition.get_String(wsAnalysis.Handle);
+							MorphItem mi;
+							var lexEntryInflTypes =
+									ler.VariantEntryTypesRS.Where(let => let is ILexEntryInflType).Select(let => let as ILexEntryInflType);
+							if (lexEntryInflTypes.Count() > 0)
+							{
+								foreach (var inflType in lexEntryInflTypes)
+								{
+									var glossAccessor = (tssSense.Length == 0 ? (IMultiStringAccessor) sense.Definition : sense.Gloss);
+									tssSense = MorphServices.MakeGlossOptionWithInflVariantTypes(inflType, glossAccessor, wsAnalysis);
+									mi = GetMorphItem(mf, tssName, sense, tssSense, ler, hvoLexEntry, inflType);
+									m_morphItems.Add(mi);
+								}
+							}
+							else
+							{
+								AddMorphItemToList(mf, ler, tssSense, sense, wsAnalysis, tssName, hvoLexEntry);
+							}
 						}
-						var mi = GetMorphItem(mf, tssName, sense, tssSense, ler, hvoLexEntry, null);
-						m_morphItems.Add(mi);
+						else
+						{
+							AddMorphItemToList(mf, null, tssSense, sense, wsAnalysis, tssName, hvoLexEntry);
+						}
 					}
 				}
 				// Make a LexEntry level item
 				m_morphItems.Add(new MorphItem(mf.Hvo, ler != null ? hvoLexEntry : 0, tssName));
+			}
+
+			private void AddMorphItemToList(IMoForm mf, ILexEntryRef ler, ITsString tssSense, ILexSense sense,
+											IWritingSystem wsAnalysis, ITsString tssName, int hvoLexEntry)
+			{
+				MorphItem mi;
+				if (tssSense.Length == 0)
+				{
+					// If it doesn't have a gloss (e.g., from Categorised Entry), use the definition.
+					tssSense = sense.Definition.get_String(wsAnalysis.Handle);
+				}
+				mi = GetMorphItem(mf, tssName, sense, tssSense, ler, hvoLexEntry, null);
+				m_morphItems.Add(mi);
 			}
 
 			private static MorphItem GetMorphItem(IMoForm mf, ITsString tssName, ILexSense sense, ITsString tssSense,
@@ -1828,7 +1887,7 @@ namespace SIL.FieldWorks.IText
 				}
 
 				// Set combo selection to current selection.
-				m_comboList.SelectedIndex = this.IndexOfCurrentItem;
+				ComboList.SelectedIndex = this.IndexOfCurrentItem;
 			}
 
 			private void AddMorphItemsToComboList()
@@ -1842,6 +1901,7 @@ namespace SIL.FieldWorks.IText
 					ITsString tssToDisplay = null;
 					int hvoPrimary = 0; // the key hvo associated with the combo item.
 					tisb.Clear();
+
 					var morph = coRepository.GetObject(mi.m_hvoMorph);
 					var le = morph.Owner as ILexEntry;
 					if (mi.m_hvoSense > 0)
@@ -1930,7 +1990,7 @@ namespace SIL.FieldWorks.IText
 						}
 					}
 					// keep track of the previous MorphItem to track context.
-					m_comboList.Items.Add(new MorphComboItem(mi, tssToDisplay,
+					ComboList.Items.Add(new MorphComboItem(mi, tssToDisplay,
 						new EventHandler(HandleSelectMorphComboItem), hvoPrimary));
 					miPrev = mi;
 				}
@@ -1947,7 +2007,7 @@ namespace SIL.FieldWorks.IText
 					(int)FwSuperscriptVal.kssvOff);
 				tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, m_wsUser);
 				tisb.Append(ITextStrings.ksUnknown);
-				m_comboList.Items.Add(new InterlinComboHandlerActionComboItem(
+				ComboList.Items.Add(new InterlinComboHandlerActionComboItem(
 					tisb.GetString(), new EventHandler(SetLexEntryToUnknown)));
 			}
 
@@ -1956,7 +2016,7 @@ namespace SIL.FieldWorks.IText
 				ITsStrBldr tsb = TsStrBldrClass.Create();
 				tsb.Replace(tsb.Length, tsb.Length, itemName, itemProperties);
 				tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptWs, 0, m_wsUser);
-				m_comboList.Items.Add(new InterlinComboHandlerActionComboItem(
+				ComboList.Items.Add(new InterlinComboHandlerActionComboItem(
 					tsb.GetString(),
 					enableItem ? onSelect : null));
 			}
@@ -2455,7 +2515,7 @@ namespace SIL.FieldWorks.IText
 
 				if (m_fUnderConstruction)
 					return;
-				this.HandleSelect(m_comboList.SelectedIndex);
+				this.HandleSelect(ComboList.SelectedIndex);
 				if (m_fHideCombo)
 				{
 					this.HideCombo();
@@ -2474,7 +2534,7 @@ namespace SIL.FieldWorks.IText
 			/// <returns></returns>
 			bool NeedSelectSame()
 			{
-				if (m_comboList.SelectedIndex >= m_morphItems.Count || m_comboList.SelectedIndex < 0)
+				if (ComboList.SelectedIndex >= m_morphItems.Count || ComboList.SelectedIndex < 0)
 				{
 					// This happens, for a reason I (JohnT) don't understand, when we launch a dialog from
 					// one of these menu options using Enter, and then the dialog is also closed using enter.
@@ -2486,7 +2546,7 @@ namespace SIL.FieldWorks.IText
 				if (realObject == null)
 					return true; // nothing currently set, set whatever is current.
 				int classid = realObject.ClassID;
-				MorphItem mi = m_morphItems[m_comboList.SelectedIndex];
+				MorphItem mi = m_morphItems[ComboList.SelectedIndex];
 				if (classid != LexSenseTags.kClassId && mi.m_hvoSense != 0)
 					return true; // item is a sense, and current value is not!
 				// Review JohnT: are there any other cases where we should do it anyway?
@@ -2500,20 +2560,20 @@ namespace SIL.FieldWorks.IText
 				// Just close the ComboBox, since nothing changed...unless we selected a sense item and all we
 				// had was an entry or msa, or some similar special case.
 				if (NeedSelectSame())
-					this.HandleSelect(m_comboList.SelectedIndex);
+					this.HandleSelect(ComboList.SelectedIndex);
 				this.HideCombo();
 			}
 
 			public override void HandleSelect(int index)
 			{
 				CheckDisposed();
-				if (index < 0 || index >= m_comboList.Items.Count)
+				if (index < 0 || index >= ComboList.Items.Count)
 					return;
 
 				int morphIndex = GetMorphIndex();
 				// NOTE: m_comboList.SelectedItem does not get automatically set in (some) tests.
 				// so we use index here.
-				InterlinComboHandlerActionComboItem comboItem = m_comboList.Items[index] as InterlinComboHandlerActionComboItem;
+				InterlinComboHandlerActionComboItem comboItem = ComboList.Items[index] as InterlinComboHandlerActionComboItem;
 				if (comboItem != null)
 				{
 					if (!comboItem.IsEnabled)
@@ -2990,7 +3050,7 @@ namespace SIL.FieldWorks.IText
 				int fGuessingOld = m_caches.DataAccess.get_IntProp(m_hvoSbWord,
 					ktagSbWordGlossGuess);
 
-				HvoTssComboItem item = m_comboList.SelectedItem as HvoTssComboItem;
+				HvoTssComboItem item = ComboList.SelectedItem as HvoTssComboItem;
 				if (item == null)
 					return;
 				m_sandbox.WordGlossHvo = item.Hvo;
@@ -3037,7 +3097,7 @@ namespace SIL.FieldWorks.IText
 				int hvoEmptyGloss = 0;
 				ITsStrBldr tsb = TsStrBldrClass.Create();
 
-				m_comboList.WritingSystemFactory =
+				ComboList.WritingSystemFactory =
 					m_caches.MainCache.LanguageWritingSystemFactoryAccessor;
 				// Find the WfiAnalysis (from existing analysis or guess) to provide its word glosses as options (cf. LT-1428)
 				IWfiAnalysis wa = m_sandbox.GetWfiAnalysisInUse();
@@ -3064,10 +3124,10 @@ namespace SIL.FieldWorks.IText
 					//	analMethod.ObsoleteAnalysis.Delete();
 					//}
 				}
-				m_comboList.Items.Add(new HvoTssComboItem(hvoEmptyGloss,
+				ComboList.Items.Add(new HvoTssComboItem(hvoEmptyGloss,
 					TsStringUtils.MakeTss(ITextStrings.ksNewWordGloss2, m_caches.MainCache.DefaultUserWs)));
 				// Set combo selection to current selection.
-				m_comboList.SelectedIndex = this.IndexOfCurrentItem;
+				ComboList.SelectedIndex = this.IndexOfCurrentItem;
 
 				// Enhance JohnT: if the analysts decide so, here we add all the other glosses from other analyses.
 
@@ -3112,7 +3172,7 @@ namespace SIL.FieldWorks.IText
 						tsb.Replace(tsb.Length, tsb.Length, ITextStrings.ksEmpty, tpbUserWs.GetTextProps());
 					}
 
-					m_comboList.Items.Add(new HvoTssComboItem(gloss.Hvo, tsb.GetString()));
+					ComboList.Items.Add(new HvoTssComboItem(gloss.Hvo, tsb.GetString()));
 					tsb.Clear();
 				}
 			}
@@ -3124,9 +3184,9 @@ namespace SIL.FieldWorks.IText
 			{
 				get
 				{
-					for (int i = 0; i < m_comboList.Items.Count; ++i)
+					for (int i = 0; i < ComboList.Items.Count; ++i)
 					{
-						HvoTssComboItem item = m_comboList.Items[i] as HvoTssComboItem;
+						HvoTssComboItem item = ComboList.Items[i] as HvoTssComboItem;
 						if (item.Hvo == m_sandbox.WordGlossHvo)
 							return i;
 					}

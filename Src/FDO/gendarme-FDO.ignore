@@ -86,7 +86,6 @@ M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.Identit
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.IdentityMap/<AllSubclasses>*::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.Infrastructure.Impl.FdoInvertSet`1::System.Collections.IEnumerable.GetEnumerator()
 M: System.Collections.IEnumerator SIL.FieldWorks.FDO.IOC.StructureMapServiceLocator/<DoGetAllInstances>*::System.Collections.IEnumerable.GetEnumerator()
-
 #-----------------------------------------------------------------------------------------------
 R: Gendarme.Rules.Portability.NewLineLiteralRule
 

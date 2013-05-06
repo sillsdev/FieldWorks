@@ -5680,12 +5680,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	};
 
 	
-	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("E771361C-FF54-4120-9525-98A0B7A9ACCF") cpp_quote(",") cpp_quote("LgIcuCollator") cpp_quote(");") [ uuid(E771361C-FF54-4120-9525-98A0B7A9ACCF) ] coclass LgIcuCollator
-	{
-		interface ILgCollatingEngine;
-	};
-
-	
 	
 	cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("30D75676-A10F-48FE-9627-EBF4061EA49D") cpp_quote(",") cpp_quote("LgIcuCharPropEngine") cpp_quote(");") [ uuid(30D75676-A10F-48FE-9627-EBF4061EA49D) ] coclass LgIcuCharPropEngine
 	{
@@ -5753,7 +5747,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IRegexMatcher") cpp
 	{
 		interface ILgIcuLocaleEnumerator;
 	};
-#line 2124 "d:\\fwrepo\\fw\\src\\Language\\Language.idh"
+#line 2118 "d:\\fwrepo\\fw\\src\\Language\\Language.idh"
 
 #line 25 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 };

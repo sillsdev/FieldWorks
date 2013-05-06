@@ -2658,14 +2658,19 @@ namespace SIL.FieldWorks.Common.Controls
 			return false;
 		}
 
-		private bool SetAllMsaSameFlag(int chvo, int[] rghvo)
+		private bool SetAllMsaSameFlag(int hvoCount, int[] msaHvoArray)
 		{
-			int hvoMsa = m_sda.get_ObjectProp(rghvo[0], LexSenseTags.kflidMorphoSyntaxAnalysis);
-			var fAllMsaSame = SubsenseMsasMatch(rghvo[0], hvoMsa);
-			for (var i = 1; fAllMsaSame && i < chvo; ++i)
+			// if there are no Msa's then we can't display any, so we may as well say they aren't the same.
+			if (hvoCount == 0)
 			{
-				int hvoMsa2 = m_sda.get_ObjectProp(rghvo[i], LexSenseTags.kflidMorphoSyntaxAnalysis);
-				fAllMsaSame = hvoMsa == hvoMsa2 && SubsenseMsasMatch(rghvo[i], hvoMsa);
+				return false;
+			}
+			var hvoMsa = m_sda.get_ObjectProp(msaHvoArray[0], LexSenseTags.kflidMorphoSyntaxAnalysis);
+			var fAllMsaSame = SubsenseMsasMatch(msaHvoArray[0], hvoMsa);
+			for (var i = 1; fAllMsaSame && i < hvoCount; ++i)
+			{
+				var hvoMsa2 = m_sda.get_ObjectProp(msaHvoArray[i], LexSenseTags.kflidMorphoSyntaxAnalysis);
+				fAllMsaSame = hvoMsa == hvoMsa2 && SubsenseMsasMatch(msaHvoArray[i], hvoMsa);
 			}
 			return fAllMsaSame;
 		}

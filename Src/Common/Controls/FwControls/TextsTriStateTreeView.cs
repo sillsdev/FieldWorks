@@ -20,6 +20,7 @@ using Paratext;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Language;
 using SIL.FieldWorks.Resources;
 using SILUBS.SharedScrUtils;
 
@@ -160,7 +161,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// before actually adding them to the tree:
 			var foundFirstText = false;
 			// Create a collator ready for sorting:
-			var collator = LgIcuCollatorClass.Create();
+			var collator = new ManagedLgIcuCollator();
 
 			foreach (var tex in allTexts)
 			{
@@ -224,7 +225,7 @@ namespace SIL.FieldWorks.Common.Controls
 				var sortedNodes = new List<TreeNode>();
 				var foundFirstText = false;
 				// Create a collator ready for sorting:
-				var collator = LgIcuCollatorClass.Create();
+				var collator = new ManagedLgIcuCollator();
 
 				foreach (IText tex in allTexts)
 				{   // This tex may not have a genre or it may claim to be in more than one

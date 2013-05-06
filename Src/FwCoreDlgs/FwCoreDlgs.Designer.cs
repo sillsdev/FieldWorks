@@ -1998,6 +1998,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to How to change to default Linked files location.
+        /// </summary>
+        public static string ksWarningForSendReceiveLinkedFileslesPathCaption {
+            get {
+                return ResourceManager.GetString("ksWarningForSendReceiveLinkedFileslesPathCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To change the location of Linked files to the default location, launch the FieldWorks Project Properties dialog. This can be found under the File menu, then Project Management..
+        /// </summary>
+        public static string ksWarningForSendReceiveLinkedFileslesPathHelp {
+            get {
+                return ResourceManager.GetString("ksWarningForSendReceiveLinkedFileslesPathHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to What it does:.
         /// </summary>
         public static string ksWhatItDoes {

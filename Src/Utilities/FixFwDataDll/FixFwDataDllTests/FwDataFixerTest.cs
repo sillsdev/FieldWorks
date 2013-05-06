@@ -680,6 +680,9 @@ namespace FixFwDataDllTests
 			const string citationDiffGuid2 = "21122112-bad2-46ba-9f69-6b46e45efff4";
 			const string citationSameGuid1 = "33333333-bad1-46ba-9f69-6b46e45efff4";
 			const string citationSameGuid2 = "33333333-bad2-46ba-9f69-6b46e45efff4";
+			const string sameSecondaryOrder1 = "ABABABAA-EEA0-4204-AC81-9B9B115E9785";
+			const string sameSecondaryOrder2 = "EBEAEBEA-EEA0-4204-AC81-9B9B115E9785";
+			const string diffSecondaryOrder = "FABFABFA-EEA0-4204-AC81-9B9B115E9785";
 
 			// Verification of input.
 			var testFile = Path.Combine(testPath, "BasicFixup.fwdata");
@@ -722,6 +725,15 @@ namespace FixFwDataDllTests
 				"//rt[@class='LexEntry' and @guid='" + citationSameGuid1 + "']/HomographNumber[@val='0']", 1, false);
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class='LexEntry' and @guid='" + citationSameGuid2 + "']/HomographNumber[@val='0']", 1, false);
+			// Two LexEntries have different SecondaryOrder in the MoMorphType but are otherwise identical
+			// starting with 0's should end with a 0 and a the different should get a 1
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + sameSecondaryOrder1 + "']/HomographNumber[@val='0']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + sameSecondaryOrder2 + "']/HomographNumber[@val='0']", 1, false);
+			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class='LexEntry' and @guid='" + diffSecondaryOrder + "']/HomographNumber[@val='0']", 1, false);
+
 			// stems for multilingual ones:
 			AssertThatXmlIn.File(testFile).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class='MoStemAllomorph' and @guid='" + "F417EEF7-8B30-4ED5-BF5A-BBD3A3FFB4C2" + "']/Form/AUni[@ws='de' and text()='irrelevant']", 1, false);
@@ -784,6 +796,9 @@ namespace FixFwDataDllTests
 			VerifyHn(xmlDoc, citationSameGuid2, "2"); // former 0 should be 2
 			VerifyHn(xmlDoc, citationDiffGuid1, "0"); // homograph# should be unchanged
 			VerifyHn(xmlDoc, citationDiffGuid2, "0"); // homograph# should be unchanged
+			VerifyHn(xmlDoc, sameSecondaryOrder1, "1"); // former 0 should be 1
+			VerifyHn(xmlDoc, diffSecondaryOrder, "0"); // homograph# should be unchanged
+			VerifyHn(xmlDoc, sameSecondaryOrder2, "2"); // former 0 should be 2
 			VerifyHn(xmlDoc, emptyEntry1Guid, "0"); // entry with empty LF should have no HN
 			VerifyHn(xmlDoc, emptyEntry2Guid, "0"); // entry with empty LF should have no HN
 			VerifyHn(xmlDoc, emptyEntry3Guid, "0"); // entry with no LF should have no HN
