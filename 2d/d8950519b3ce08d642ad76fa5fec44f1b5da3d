@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Alistair Imrie <alistair_imrie@sil.org>
+Submitted-by: Automatic Submission <gerrit@sil.org>
+Submitted-at: Tue, 07 May 2013 15:59:38 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1054
+Project: FieldWorks
+Branch: refs/heads/release/8.0
