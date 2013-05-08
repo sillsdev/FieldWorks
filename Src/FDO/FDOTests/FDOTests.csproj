@@ -291,6 +291,7 @@
     <Compile Include="DataMigrationTests\DataMigration7000063Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000065Tests.cs" />
     <Compile Include="DataMigrationTests\DataMigration7000066Tests.cs" />
+    <Compile Include="DataMigrationTests\DataMigration7000067Tests.cs" />
     <Compile Include="DataSortingServiceTests.cs" />
     <Compile Include="DataStoreInitializationServicesTests.cs" />
     <Compile Include="Db4oServerInfoTests.cs" />
@@ -406,6 +407,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestData\DataMigration7000067TestData.xml" />
     <Content Include="TestData\DataMigration7000058_NonEmptyGlossAppend.xml" />
     <Content Include="TestData\DataMigration7000058_EmptyGlossAppend.xml" />
     <Content Include="TestData\DataMigration7000057_Normal.xml" />
@@ -555,7 +557,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000066">
+	<rt class="ClassWithUnicodeProperties" guid="c1ee311a-e382-11de-8a39-0800200c9a66">
+		<UnicodePropWithAttrs>
+			<Uni ws="en" val="True" >With Attrs</Uni>
+		</UnicodePropWithAttrs>
+		<UnicodePropWithoutAttrs>
+			<Uni>Without Attrs</Uni>
+		</UnicodePropWithoutAttrs>
+	</rt>
+	<rt class="ClassWithInheritedUnicodeProperties" guid="c1ee5816-e382-11de-8a39-0800200c9a66">
+		<UnicodePropWithAttrs>
+			<Uni ws="en" val="True" >Inherited With Attrs</Uni>
+		</UnicodePropWithAttrs>
+		<UnicodePropWithoutAttrs >
+			<Uni>Inherited Without Attrs</Uni>
+		</UnicodePropWithoutAttrs>
+	</rt>
+</languageproject>
