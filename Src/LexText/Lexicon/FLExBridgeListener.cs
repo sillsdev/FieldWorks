@@ -26,6 +26,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
+	[MediatorDispose]
 	[SuppressMessage("Gendarme.Rules.Correctness", "DisposableFieldsShouldBeDisposedRule",
 		Justification="_mediator is a reference")]
 	sealed class FLExBridgeListener : IxCoreColleague, IFWDisposable

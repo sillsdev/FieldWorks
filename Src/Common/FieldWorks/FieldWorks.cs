@@ -734,12 +734,15 @@ namespace SIL.FieldWorks
 
 			WriteSplashScreen(string.Format(Properties.Resources.kstidLoadingProject, projectId.UiName));
 			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
-			FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, new ProgressDialogWithTask(owner, s_threadHelper));
-			cache.ProjectNameChanged += ProjectNameChanged;
-			cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
+			using (var progressDlg = new ProgressDialogWithTask(owner, s_threadHelper))
+			{
+				FdoCache cache = FdoCache.CreateCacheFromExistingData(projectId, s_sWsUser, progressDlg);
+				cache.ProjectNameChanged += ProjectNameChanged;
+				cache.ServiceLocator.GetInstance<IUndoStackManager>().OnSave += FieldWorks_OnSave;
 
-			SetupErrorPropertiesNeedingCache(cache);
-			return cache;
+				SetupErrorPropertiesNeedingCache(cache);
+				return cache;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
