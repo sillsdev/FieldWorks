@@ -22,6 +22,23 @@
   <xsl:apply-templates/>
 </xsl:template>
 
+<!-- Remove any residue from minor entries that aren't displayed -->
+				<!-- Prevent empty LexEntry/LexEntry_Self nodes LT-13589
+				These LexEntries are compound forms with "Show Subentry under" a component
+				and "Show Minor Entry" checked. No main entry should be generated for these.
+				Details: The LexEntry node is generated in ConfiguredExport.AddObjVecItems()
+				while CollectorEnv.AddObjProp() emits tags for LexEntry_Self and
+				/LexEntry_Self via ConfiguredExport.WriteFieldStartTag() and
+				WriteFieldEndTag(). CollectorEnv.AddObjProp() calls XmlVc.Display() which
+				rejects the content in ProcessPartRef() where sVisibility == never. -->
+<xsl:template match="LexEntry">
+	<xsl:choose>
+	<xsl:when test="count(*) = 1 and LexEntry_Self[not(*)]"></xsl:when>
+<!-- sometimes we get completely empty nodes for derived forms...omit them-->
+	<xsl:when test="not(LexEntry_Self)"></xsl:when>
+	<xsl:otherwise><xsl:copy><xsl:copy-of select="@*"/><xsl:apply-templates/></xsl:copy></xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
 
 <!-- Merge child $NameNode/AStr and $AbbrNode/AStr elements into a single Link element with
 	 embedded Alt elements handling possible multilingual references. -->
@@ -321,9 +338,7 @@
 
 <xsl:template match="LexSense">
   <xsl:copy>
-	<xsl:attribute name="number">
-	  <xsl:number format="1.1.1" level="multiple" count="LexSense"/>
-	</xsl:attribute>
+	<xsl:attribute name="number"><xsl:number format="1.1.1" level="multiple" count="LexSense"/></xsl:attribute>
 	<xsl:copy-of select="@*"/>
 	<xsl:apply-templates/>
   </xsl:copy>
@@ -574,10 +589,9 @@
   </LexEntry_HeadWord>
 </xsl:template>
 
-<!-- Throw away empty LexEntryRefLink_OwningEntry, _ComplexFormEntryBackRefs, and
-	 LexEntry elements. -->
+<!-- Throw away empty LexEntryRefLink_OwningEntry and _ComplexFormEntryBackRefs elements. -->
 
-<xsl:template match="LexEntryRefLink_OwningEntry|_ComplexFormEntryBackRefs|LexEntry">
+<xsl:template match="LexEntryRefLink_OwningEntry|_ComplexFormEntryBackRefs">
   <xsl:if test="child::*">
 	<xsl:copy>
 	  <xsl:copy-of select="@*"/>

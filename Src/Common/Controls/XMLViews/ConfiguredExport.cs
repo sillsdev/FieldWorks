@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.Controls
 		#region construction and initialization
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ConfiguredExport"/> class.
+		/// Initializes a new instance of the <see cref="ConfiguredExport"/> class.
 		/// </summary>
 		/// <param name="baseEnv">The base env.</param>
 		/// <param name="sda">Data access to get prop values etc.</param>
@@ -334,7 +334,10 @@ namespace SIL.FieldWorks.Common.Controls
 				switch (style)
 				{
 					case "Sense-Reference-Number":
-						m_xhtml.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
+						if (m_xhtml != null)
+						{
+							m_xhtml.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
+						}
 						break;
 				}
 			}
