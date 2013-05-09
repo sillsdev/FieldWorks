@@ -407,6 +407,33 @@ namespace SIL.FieldWorks.Common.Controls
 				m_fInSelectionChanged = false;
 			}
 		}
+
+		/// <summary>
+		/// In Mono, the window is created after the index has already been set, so restore
+		/// the index if it gets reset.  This code is safe on Windows, where the index is set
+		/// after the window is created, and having it active protects against the .Net
+		/// runtime changing its order of events.
+		/// </summary>
+		/// <remarks>
+		/// See FWNX-1076.
+		/// </remarks>
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			CheckDisposed();
+
+			var oldIndex = m_selectedIndex;
+			var oldHvoRoot = m_hvoRoot;
+
+			base.OnHandleCreated(e);	// SimpleRootSite.OnHandleCreated(e);
+
+			if (oldIndex >= 0 && oldIndex != m_selectedIndex &&
+				m_hvoRoot > 0 && oldHvoRoot == m_hvoRoot)
+			{
+				var newCount = m_sda.get_VecSize(m_hvoRoot, m_fakeFlid);
+				if (oldIndex < newCount)
+					SelectedIndex = oldIndex;
+			}
+		}
 	}
 
 	/// <summary>
