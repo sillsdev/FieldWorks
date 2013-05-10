@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.LexText.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -46,5 +48,38 @@ namespace SIL.FieldWorks.FdoUi
 			helpTopic = "khtpMergeReversalEntry";
 			return new DummyCmObject(m_hvo, rie.ShortName, wsIndex);
 		}
+
+		/// <summary>
+		/// Fetches the GUID value of the given property, having checked it is a valid object.
+		/// If it is not a valid object, the property is removed.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="key">Property name</param>
+		/// <returns>The ReversalIndexGuid, or empty GUID if there is a problem</returns>
+		public static Guid GetObjectGuidIfValid(Mediator mediator, string key)
+		{
+			var sGuid = mediator.PropertyTable.GetStringProperty(key, "");
+			if (string.IsNullOrEmpty(sGuid))
+				return Guid.Empty;
+
+			Guid guid;
+			try
+			{
+				guid = new Guid(sGuid);
+			}
+			catch
+			{
+				return Guid.Empty;
+			}
+
+			var cache = (FdoCache)mediator.PropertyTable.GetValue("cache");
+			if (!cache.ServiceLocator.ObjectRepository.IsValidObjectId(guid))
+			{
+				mediator.PropertyTable.RemoveProperty(key);
+				return Guid.Empty;
+			}
+			return guid;
+		}
+
 	}
 }

@@ -1404,8 +1404,15 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		public static void UpdateWritingSystemFields(FdoCache cache, string origWsId, string newWsId)
 		{
 			IFdoServiceLocator servLocator = cache.ServiceLocator;
-			UpdateWritingSystemField(cache, servLocator.GetInstance<IReversalIndexRepository>().AllInstances().Cast<ICmObject>(),
-				ReversalIndexTags.kflidWritingSystem, origWsId, newWsId);
+
+			// Where a reversal index is linked to the origWsId, remove the entire reversal index,
+			// not just its references to the origWsId. (See LT-14482.)
+			var condemnedReversals = servLocator.GetInstance<IReversalIndexRepository>().AllInstances().Where(reversalIndex =>
+				reversalIndex.WritingSystem == origWsId).ToList();
+			foreach (var condemnedReversal in condemnedReversals)
+			{
+				((ILexDb) condemnedReversal.Owner).ReversalIndexesOC.Remove(condemnedReversal);
+			}
 
 			UpdateWritingSystemField(cache, servLocator.GetInstance<IWordformLookupListRepository>().AllInstances().Cast<ICmObject>(),
 				WordformLookupListTags.kflidWritingSystem, origWsId, newWsId);

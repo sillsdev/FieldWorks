@@ -29,7 +29,7 @@ using Microsoft.Win32;
 
 using Palaso.Lift;
 using Palaso.Lift.Validation;
-using SIL.CoreImpl;
+using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
 using SIL.FieldWorks.FDO;
@@ -1567,12 +1567,11 @@ namespace SIL.FieldWorks.XWorks
 			if (fContentsExists)
 			{
 				// Inform Pathway if the reversal index is empty (or doesn't exist).  See FWR-3283.
-				string sGuid = m_mediator.PropertyTable.GetValue("ReversalIndexGuid", null) as string;
-				if (sGuid != null)
+				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+				if (!riGuid.Equals(Guid.Empty))
 				{
 					try
 					{
-						Guid riGuid = new Guid(sGuid);
 						IReversalIndex ri = m_cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
 						fContentsExists = ri.EntriesOC.Count > 0;
 					}

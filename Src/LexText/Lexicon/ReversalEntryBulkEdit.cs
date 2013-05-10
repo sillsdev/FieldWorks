@@ -1,20 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml;
-using System.IO;
-
 using SIL.FieldWorks.FDO;
-using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.FDO.Application;
-using SIL.FieldWorks.XWorks;
 using XCore;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Controls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -81,21 +74,21 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		internal static Guid GetReversalIndexGuid(Mediator mediator)
 		{
-			string sGuid = (string)mediator.PropertyTable.GetValue("ReversalIndexGuid", null);
-			if (sGuid == null)
+			var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+
+			if (riGuid.Equals(Guid.Empty))
 			{
-				mediator.SendMessage("InsertReversalIndex_FORCE", null);
-				sGuid = (string)mediator.PropertyTable.GetValue("ReversalIndexGuid");
+				try
+				{
+					mediator.SendMessage("InsertReversalIndex_FORCE", null);
+					riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+				}
+				catch
+				{
+					return Guid.Empty;
+				}
 			}
-			try
-			{
-				Guid riGuid = new Guid(sGuid);
-				return riGuid;
-			}
-			catch
-			{
-				return Guid.Empty; // Something went wrong.
-			}
+			return riGuid;
 		}
 
 		protected override IEnumerable<int> GetObjectSet()
@@ -135,12 +128,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			get
 			{
 				ICmPossibilityList list = null;
-				string sGuid = (string)m_mediator.PropertyTable.GetValue("ReversalIndexGuid", null);
-				if (sGuid != null)
+				var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+				if (!riGuid.Equals(Guid.Empty))
 				{
 					try
 					{
-						Guid riGuid = new Guid(sGuid);
 						IReversalIndex ri = m_cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
 						list = ri.PartsOfSpeechOA;
 					}
