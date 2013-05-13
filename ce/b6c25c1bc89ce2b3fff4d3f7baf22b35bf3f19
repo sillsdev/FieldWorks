@@ -1,0 +1,9 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Gordon Martin <gordon-soft_martin@sil.org>
+Code-Review-1: John Thomson <john.thomson7540@gmail.com>
+Submitted-by: Automatic Submission <gerrit@sil.org>
+Submitted-at: Mon, 13 May 2013 16:09:06 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1000
+Project: FieldWorks
+Branch: refs/heads/release/8.0
