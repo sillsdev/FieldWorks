@@ -568,5 +568,12 @@ namespace SIL.Utils
 			});
 		}
 		#endregion // RunProcess tests
+
+		/// <summary/>
+		[Test]
+		public void RunningTests_IsTrue()
+		{
+			Assert.That(MiscUtils.RunningTests, Is.True);
+		}
 	}
 }
