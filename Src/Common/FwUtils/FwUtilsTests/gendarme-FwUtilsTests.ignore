@@ -1,3 +1,7 @@
 # Gendarme filter file to suppress reporting of defects
+R: Gendarme.Rules.Correctness.EnsureLocalDisposalRule
+
+# Unit test. All RegistryKeys returned by this class are references, and expected to be dealt with elsewhere.
+M: Microsoft.Win32.RegistryKey SIL.FieldWorks.Common.FwUtils.DummyFwRegistryHelper::*
 
 #-----------------------------------------------------------------------------------------------

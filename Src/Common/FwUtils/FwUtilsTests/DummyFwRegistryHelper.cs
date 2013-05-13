@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using Microsoft.Win32;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -11,6 +10,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public class DummyFwRegistryHelper : IFwRegistryHelper
 	{
+		private Dictionary<string, RegistryKey> FakeKeyMap = new Dictionary<string, RegistryKey>();
+
 		#region IFwRegistryHelper implementation
 
 		/// <summary>
@@ -27,10 +28,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public RegistryKey FieldWorksRegistryKeyLocalMachine
 		{
-			get
-			{
-				throw new NotImplementedException();
-			}
+			get { return GetTestKey("FieldWorksRegistryKLM"); }
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		private RegistryKey GetTestKey(string keyName)
+		{
+			return Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests\HelperFW\" + keyName);
 		}
 
 		/// <summary>
@@ -58,22 +64,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		///
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning a reference")]
 		public RegistryKey FieldWorksRegistryKey
 		{
 			get
 			{
-				return Registry.CurrentUser.CreateSubKey(
-					@"Software\SIL\FieldWorks\UnitTests\DirectoryFinderTests");
+				return Registry.CurrentUser.CreateSubKey(@"Software\SIL\FieldWorks\UnitTests\DirectoryFinderTests");
 			}
 		}
 
 		/// <summary>
 		///
 		/// </summary>
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification = "We're returning a reference")]
 		public RegistryKey FieldWorksVersionlessRegistryKey
 		{
 			get

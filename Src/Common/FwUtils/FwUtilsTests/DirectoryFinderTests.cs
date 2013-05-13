@@ -15,9 +15,7 @@
 //--------------------------------------------------------------------------------------------
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Microsoft.Win32;
 using NUnit.Framework;
 using SIL.FieldWorks.Test.TestUtils;
 using SIL.Utils;
@@ -36,10 +34,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Resets the registry helper
 		/// </summary>
-		[TearDown]
+		[TestFixtureTearDown]
 		public void TearDown()
 		{
 			FwRegistryHelper.Manager.Reset();
+		}
+
+		/// <summary>
+		/// Fixture setup
+		/// </summary>
+		[TestFixtureSetUp]
+		public void TestFixtureSetup()
+		{
+			DirectoryFinder.CompanyName = "SIL";
+			FwRegistryHelper.Manager.SetRegistryHelper(new DummyFwRegistryHelper());
+			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootDataDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles")));
+			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootCodeDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles")));
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -64,8 +74,55 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FWCodeDirectory()
 		{
-			string currentDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
+			var currentDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
 			Assert.That(DirectoryFinder.FWCodeDirectory, Is.SamePath(currentDir));
+		}
+
+		/// <summary>
+		/// Verify that the user project key falls back to the local machine.
+		/// </summary>
+		[Test]
+		public void GettingProjectDirWithEmptyUserKeyReturnsLocalMachineKey()
+		{
+			using (var fwHKCU = FwRegistryHelper.FieldWorksRegistryKey)
+			using (var fwHKLM = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			{
+				if (fwHKCU.GetValue("ProjectsDir") != null)
+				{
+					fwHKCU.DeleteValue("ProjectsDir");
+				}
+				fwHKLM.SetValue("ProjectsDir", "HKLM_TEST");
+				Assert.That(DirectoryFinder.ProjectsDirectory, Is.EqualTo(DirectoryFinder.ProjectsDirectoryLocalMachine));
+				Assert.That(DirectoryFinder.ProjectsDirectory, Is.EqualTo("HKLM_TEST"));
+			}
+		}
+
+		/// <summary>
+		/// Verify that the user project key overrides the local machine.
+		/// </summary>
+		[Test]
+		public void GettingProjectDirWithUserDifferentFromLMReturnsUser()
+		{
+			DirectoryFinder.ProjectsDirectory = "NewHKCU_TEST_Value";
+			Assert.That(DirectoryFinder.ProjectsDirectory, Is.Not.EqualTo(DirectoryFinder.ProjectsDirectoryLocalMachine));
+			Assert.That(DirectoryFinder.ProjectsDirectory, Is.EqualTo("NewHKCU_TEST_Value"));
+		}
+
+		/// <summary>
+		/// Verify that setting the user key to null deletes the user setting and falls back to local machine.
+		/// </summary>
+		[Test]
+		public void SettingProjectDirToNullDeletesUserKey()
+		{
+			DirectoryFinder.ProjectsDirectory = null;
+			Assert.That(DirectoryFinder.ProjectsDirectory, Is.EqualTo(DirectoryFinder.ProjectsDirectoryLocalMachine));
+
+			using (var fwHKCU = FwRegistryHelper.FieldWorksRegistryKey)
+			using (var fwHKLM = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			{
+				Assert.Null(fwHKCU.GetValue("ProjectsDir"));
+				Assert.NotNull(fwHKLM.GetValue("ProjectsDir"));
+			}
 		}
 
 		///-------------------------------------------------------------------------------------
@@ -76,7 +133,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FWDataDirectory()
 		{
-			string currentDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
+			var currentDir = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"));
 			Assert.That(DirectoryFinder.FWDataDirectory, Is.SamePath(currentDir));
 		}
 
@@ -296,8 +353,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Platform(Include="Linux", Reason="Test is Linux specific")]
 		public void DefaultBackupDirectory_Linux()
 		{
-			FwRegistryHelper.Manager.SetRegistryHelper(new DummyFwRegistryHelper());
-
 			// SpecialFolder.MyDocuments returns $HOME on Linux!
 			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
 				"Documents/fieldworks/backups"), DirectoryFinder.DefaultBackupDirectory);
