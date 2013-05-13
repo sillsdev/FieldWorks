@@ -1046,6 +1046,10 @@ namespace SIL.Utils
 			{
 				if (!runningTests.HasValue)
 				{
+					var commandLine = Environment.CommandLine;
+					if (commandLine.Contains("MonoDevelop.NUnit.External.ExternalTestRunner"))
+						return true;
+
 					// If the real application is ever installed in a path that includes nunit or
 					// jetbrains, then this will return true and the app. won't run properly. But
 					// what are the chances of that?...
