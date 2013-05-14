@@ -112,6 +112,8 @@
     <Compile Include="MyFoldersTest.cs" />
     <Compile Include="MyProcess.cs" />
     <None Include="App.config" />
+    <None Include="Input\T1-bad.xhtml" />
+    <None Include="Input\T1.xhtml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -138,4 +140,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Input\" />
+  </ItemGroup>
 </Project>

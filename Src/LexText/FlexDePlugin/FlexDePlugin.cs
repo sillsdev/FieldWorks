@@ -242,8 +242,11 @@ namespace SIL.PublishingSolution
 			if (!File.Exists(xml))
 				throw new FileNotFoundException();
 			XmlDocument xDoc = new XmlDocument();
-			xDoc.XmlResolver = null;
-			xDoc.Load(xml);
+			using (var stream = new FileStream(xml, FileMode.Open))
+			{
+				xDoc.XmlResolver = null;
+				xDoc.Load(stream);
+			}
 		}
 		#endregion Process
 		#endregion IUtility implementation
