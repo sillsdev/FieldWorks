@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- $GENERATEDFILECOMMENT -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	<PropertyGroup>
+		<FWMAJOR>$!{FWMAJOR:0}</FWMAJOR>
+		<FWMINOR>$!{FWMINOR:0}</FWMINOR>
+		<FWREVISION>$!{FWREVISION:0}</FWREVISION>
+	</PropertyGroup>
+</Project>

@@ -21,7 +21,7 @@
   <UsingTask TaskName="WriteRegistry" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Gendarme" AssemblyFile="Gendarme.MsBuild/Gendarme.MsBuild.dll"/>
 
-  <Import Project="GlobalInclude.properties"/>
+  <Import Project="GlobalInclude.properties" Condition="Exists('GlobalInclude.properties')"/>
   <Import Project="SetupInclude.targets"/>
 
   <!-- ********************************************************************************** -->
@@ -29,8 +29,8 @@
 
   <Target Name="all" DependsOnTargets="mkall"/>
 
-  <!-- do nothing target that merely recreates the FieldWorks.targets file -->
-  <Target Name="refreshTargets" />
+  <!-- do nothing target that merely recreates the FieldWorks.targets and some generated files -->
+  <Target Name="refreshTargets" DependsOnTargets="GenerateVersionFiles"/>
 
   <!-- dummy target to perform platform specific initialization -->
   <Target Name="init" DependsOnTargets="initLinux;initWindows"/>

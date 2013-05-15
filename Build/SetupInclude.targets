@@ -150,16 +150,8 @@
 	  <Output TaskParameter="Value" PropertyName="dir-buildarchive"/>
 	</PathCombine>
 
-	<PathCombine BasePath="$(fwrt)" SubPath="Bld/VSConvert.build.xml">
-	  <Output TaskParameter="Value" PropertyName="VSConvertBuildFile"/>
-	</PathCombine>
-
 	<PathCombine BasePath="$(dir-fwobj)" SubPath="NAntBuild">
 	  <Output TaskParameter="Value" PropertyName="dir-nantbuild"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(fwrt)" SubPath="Bld/GlobalInclude.xml">
-	  <Output TaskParameter="Value" PropertyName="XmlInclude"/>
 	</PathCombine>
 
 	<PathCombine BasePath="$(dir-fwoutput)" SubPath="XMI">
@@ -225,32 +217,6 @@
 	  <Output TaskParameter="Value" PropertyName="dir-nunitreport"/>
 	</CreateProperty>
 
-<!--	<if test="${not platform::is-unix()}">-->
-		<!-- replace c:\fw\DistFiles in the current path with the right fwrt directory -->
-		<!-- We have to use the original value from the registry, so that we get the path that
-		was not modified in a batch file that calls this build, and it also doesn't include
-		the user part of the path -->
-<!--		<readregistry property="environment-path" key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment\Path"-->
-<!--			hive="LocalMachine"/>-->
-<!--		<regex pattern="(?'start'.*;|^)(?'fwpath'.*)\\[Dd][Ii][Ss][Tt][Ff][Ii][Ll][Ee][Ss](?'end'.*)" -->
-<!--			input="${environment-path}" failonerror="false"/>-->
-<!--		<if test="${not property::exists('fwpath')}">-->
-<!--			<property name="start" value="${environment-path};"/>-->
-<!--			<property name="end" value=""/>-->
-<!--		</if>-->
-<!--		<property name="newpath" value="${start}${fwrt}\DistFiles${end}"/>-->
-<!--		<setenv name="Path" value="${newpath}" global="true" -->
-<!--				unless="${environment-path == newpath}"/>-->
-<!--	</if>-->
-	<!-- Add path for right version of Visual Studio if environment variable VSVERSION is set.
-	The path can be set in the include file pathinclude.(VSVERSION).xml -->
-<!--	<if test="${property::exists('sys.env.VSVERSION')}">-->
-<!--		<include buildfile="${fwrt}/Bld/pathinclude.${sys.env.VSVERSION}.xml"/>-->
-<!--	</if>-->
-	<!-- Determine if we are in the same Perforce branch or if we have changed branches -->
-<!--	<property name="samebranch" -->
-<!--		value="${property::get-value('fwrt') == property::get-value('fwpath')}"-->
-<!--		if="${property::exists('fwpath')}"/>-->
 	<CreateProperty Value="Configuration=$(config-capital);ReferencePath=$(dir-outputBase)">
 	  <Output TaskParameter="Value" PropertyName="msbuild-props"/>
 	</CreateProperty>
@@ -327,6 +293,8 @@
 	  <VersionOutput Include="../Src/CommonAssemblyInfo.cs"/>
 	  <BldIncTemplate Include="../Src/bldinc.h"/>
 	  <BldIncOutput Include="../Output/Common/bldinc.h"/>
+	  <GlobalIncludeTemplate Include="GlobalInclude.properties.template"/>
+	  <GlobalIncludeOutput Include="GlobalInclude.properties"/>
   </ItemGroup>
   <!--
 	  Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
@@ -335,36 +303,21 @@
   -->
   <Target Name="GenerateVersionFiles">
 	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
-	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean'"/>
-	  <Message Text="Updated CommonAssemblyInfo.cs and bldinc.h (if needed)."/>
+	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
+	  <Substitute Template="@(GlobalIncludeTemplate)" Symbols="@(VersionSymbols)" Output="@(GlobalIncludeOutput)" Condition="'$(action)'!='clean'"/>
+	  <Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)."/>
   </Target>
 
   <PropertyGroup>
 	<fwrt>$(MSBuildProjectDirectory)/..</fwrt>
 	<BUILD_LEVEL Condition="'$(BUILD_LEVEL)'==''">9</BUILD_LEVEL>
-	<fwversion Condition="'$(fwversion)'==''">7</fwversion>
 	<!-- action is one of the following: build test clean register unregister -->
 	<action Condition="'$(action)'==''">build</action>
 	<!-- target is one of the targets in the build system. -->
 	<target Condition="'$(target)'==''">all</target>
 	<platform Condition="'$(platform)'=='' And '$(OS)'!='Windows_NT'">UNIX</platform>
 	<platform Condition="'$(platform)'=='' And '$(OS)'=='Windows_NT'">WIN32</platform>
-	<UseVsPath Condition="'$(UseVsPath)'==''"></UseVsPath>
-	<forcetests Condition="'$(forcetests)'==''">false</forcetests>
-	<clean Condition="'$(clean)'==''">false</clean>
-	<deleteOutput Condition="'$(deleteOutput)'==''">true</deleteOutput>
-	<nobuild Condition="'$(nobuild)'==''">false</nobuild>
-	<registerCom Condition="'$(registerCom)'==''">false</registerCom>
-	<cpp-extra-params Condition="'$(cpp-extra-params)'==''"></cpp-extra-params>
-	<output-is-lib Condition="'$(output-is-lib)'==''">false</output-is-lib>
 	<verbose Condition="'$(verbose)'==''">false</verbose>
-	<cl-compiler Condition="'$(cl-compiler)'==''">cl</cl-compiler>
-	<link-linker Condition="'$(link-linker)'==''">link</link-linker>
-	<cl-xtraopts Condition="'$(cl-xtraopts)'==''"></cl-xtraopts>
-	<link-xtraopts Condition="'$(link-xtraopts)'==''"></link-xtraopts>
-	<doLelaDBs Condition="'$(doLelaDBs)'==''">true</doLelaDBs>
-	<doTest Condition="'$(doTest)'==''">true</doTest>
-	<remake-failonerror Condition="'$(remake-failonerror)'==''">true</remake-failonerror>
 	<buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
 	<!-- Gendarme rule set. See Build/Gendarme.MsBuild/fw-gendarme-rules.xml for possible values. -->
 	<verifyset Condition="'$(verifyset)'==''">dispose</verifyset>

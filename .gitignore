@@ -2,6 +2,7 @@
 GeneratedAssemblyInfo.cs
 Collection.cpp
 Build/FieldWorks.targets
+Build/GlobalInclude.properties
 Src/Common/COMInterfaces/FwKernel.cs
 Src/Common/COMInterfaces/Views.cs
 Src/Common/CoreImpl/CellarPropertyType.cs
@@ -16,10 +17,8 @@ DistFiles/ReleaseData/
 DistFiles/SIL/Repository/
 Installer/
 Localizations/
-Bld/GlobalInclude.build.xml
 Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
-Bld/pathinclude.*.xml
 Lib/debug/DebugProcs.lib
 Lib/debug/Generic.lib
 Lib/release/DebugProcs.lib
@@ -48,6 +47,7 @@ _user.mak.lnx
 *.vshost.exe*
 *.sdf
 *.opensdf
+.project
 app.config
 
 .dotest/
