@@ -13,7 +13,11 @@ namespace FwBuildTasks
 	/// Implements the MSBuild task Substitute. This task copies a template file to an output file,
 	/// replacing a few well-known symbols with computed values and optionally replacing others
 	/// with ones specified in a Symbol file.
-	/// The well-known symbols are $YEAR, $MONTH, $DAY, and $NUMBEROFDAY
+	/// The well-known symbols are $YEAR, $MONTH, $DAY, $NUMBEROFDAY, $GENERATEDFILECOMMENT.
+	/// $GENERATEDFILECOMMENT will be replaced with the text "This file is generated from {0}. Do
+	/// NOT modify!" and can be used to add the text to a different type of comment, e.g. an
+	/// XML comment, or at a different place in the file. If $GENERATEDFILECOMMENT is not
+	/// specified a C-style comment with the same text will be added at the top of the file.
 	/// </summary>
 	public class Substitute : Task
 	{
@@ -75,6 +79,7 @@ namespace FwBuildTasks
 			}
 
 			string template = Template;
+			bool addedComment = false;
 			try
 			{
 				StreamReader stream = new StreamReader(template);
@@ -94,6 +99,15 @@ namespace FwBuildTasks
 				fileContents = regex.Replace(fileContents,
 					Convert.ToInt32(Math.Truncate(DateTime.Now.ToOADate())).ToString());
 
+				regex = new Regex("\\$GENERATEDFILECOMMENT");
+				if (regex.IsMatch(fileContents))
+				{
+					fileContents = regex.Replace(fileContents,
+						string.Format("This file is generated from {0}. Do NOT modify!",
+						Path.GetFileName(template)));
+					addedComment = true;
+				}
+
 				regex = new Regex("\\$!((?<env>\\w+)|\\{(?<env>\\w+):(?<default>\\w+)\\})");
 				Match match = regex.Match(fileContents);
 				while (match.Success)
@@ -110,8 +124,11 @@ namespace FwBuildTasks
 					match = regex.Match(fileContents);
 				}
 
-				fileContents = string.Format("// This file is generated from {0}. Do NOT modify!\n{1}",
-					Path.GetFileName(template), fileContents);
+				if (!addedComment)
+				{
+					fileContents = string.Format("// This file is generated from {0}. Do NOT modify!\n{1}",
+						Path.GetFileName(template), fileContents);
+				}
 
 				// Don't write the output file if it hasn't changed from a previous run.
 				if (File.Exists(Output))
