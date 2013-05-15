@@ -18,6 +18,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			{
 				components.Dispose();
 			}
+#if __MonoCS__
+			if (disposing && (m_foreColorBrush != null))
+			{
+				m_foreColorBrush.Dispose();
+				m_foreColorBrush = null;
+			}
+#endif
 			base.Dispose(disposing);
 		}
 

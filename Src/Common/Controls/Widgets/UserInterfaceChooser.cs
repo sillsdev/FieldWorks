@@ -20,6 +20,7 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -49,6 +50,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		public UserInterfaceChooser()
 		{
 			InitializeComponent();
+#if __MonoCS__
+			// On Windows, finding fonts for strings appears to work fine.  On Linux, fonts
+			// are found based purely on the current locale setting.  So displaying Chinese
+			// text when the locale is set to Hindi just doesn't work.  Thus, to get our
+			// fancy display of language choices to work on Linux, we have to draw the list
+			// ourselves.  (See FWNX-1069.)
+			this.DrawMode = DrawMode.OwnerDrawVariable;
+#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -223,6 +232,82 @@ namespace SIL.FieldWorks.Common.Widgets
 			var ldi = (LanguageDisplayItem) SelectedItem;
 			m_sNewUserWs = ldi.Locale;
 		}
+
+#if __MonoCS__
+		// See the comment above about FWNX-1069.
+
+		/// <summary>
+		/// Handles the measure item event.
+		/// </summary>
+		protected override void OnMeasureItem(MeasureItemEventArgs e)
+		{
+			base.OnMeasureItem(e);
+			var lang = ((LanguageDisplayItem)Items[e.Index]).Locale;
+			using (Font font = GetFontForLanguage(lang))
+			{
+				var name = ((LanguageDisplayItem)Items[e.Index]).Name;
+				SizeF stringSize = e.Graphics.MeasureString(name, font);
+				// Set the height and width of the item
+				e.ItemHeight = (int)stringSize.Height;
+				e.ItemWidth = (int)stringSize.Width;
+			}
+		}
+
+		// For efficiency, cache the brush to use for drawing.
+		private SolidBrush m_foreColorBrush;
+
+		/// <summary>
+		/// Handles the draw item event.
+		/// </summary>
+		protected override void OnDrawItem(DrawItemEventArgs e)
+		{
+			base.OnDrawItem(e);
+			Brush brush;
+
+			// Create the brush using the ForeColor specified by the DrawItemEventArgs
+			if (m_foreColorBrush == null)
+			{
+				m_foreColorBrush = new SolidBrush(e.ForeColor);
+			}
+			else if (m_foreColorBrush.Color != e.ForeColor)
+			{
+				// The control's ForeColor has changed, so dispose of the cached brush and
+				// create a new one.
+				m_foreColorBrush.Dispose();
+				m_foreColorBrush = new SolidBrush(e.ForeColor);
+			}
+
+			// Select the appropriate brush depending on if the item is selected.
+			// Since State can be a combinateion (bit-flag) of enum values, you can't use
+			// "==" to compare them.
+			if ( (e.State & DrawItemState.Selected) == DrawItemState.Selected )
+				brush = SystemBrushes.HighlightText;
+			else
+				brush = m_foreColorBrush;
+
+			// Perform the painting.
+			var lang = ((LanguageDisplayItem)Items[e.Index]).Locale;
+			using (Font font = GetFontForLanguage(lang))
+			{
+				var name = ((LanguageDisplayItem)Items[e.Index]).Name;
+				e.DrawBackground();
+				e.Graphics.DrawString(name, font, brush, e.Bounds);
+			}
+		}
+
+		/// <summary>
+		/// Gets the font for the language tag.  This is the essential part of the owner draw.
+		/// </summary>
+		private Font GetFontForLanguage(string lang)
+		{
+			// For some reason, Mono requires both FwUtils in the next line.
+			string fontName = FwUtils.FwUtils.GetFontNameForLanguage(lang);
+			if (String.IsNullOrEmpty(fontName))
+				return new Font(FontFamily.GenericSansSerif, 8.25F);
+			else
+				return new Font(fontName, 8.25F);
+		}
+#endif
 
 		#region LanguageDisplayItem class
 		/// ------------------------------------------------------------------------------------

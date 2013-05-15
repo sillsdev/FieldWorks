@@ -13,6 +13,10 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
+#if __MonoCS__
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+#endif
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -105,5 +109,96 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return (handle.StartsWith(ksSuiteIdPrefix) ? string.Empty : ksSuiteIdPrefix) +
 				handle.Replace('/', ':').Replace('\\', ':');
 		}
+
+#if __MonoCS__
+		// On Linux, the default string output does not choose a font based on the characters in
+		// the string, but on the current user interface locale.  At times, we want to display,
+		// for example, Korean when the user interface locale is English.  By default, this
+		// nicely displays boxes instead of characters.  Thus, we need some way to obtain the
+		// correct font in such situations.  See FWNX-1069 for the obvious place this is needed.
+
+		// These constants and enums are borrowed from fontconfig.h
+		const string FC_FAMILY = "family";			/* String */
+		const string FC_LANG = "lang";				/* String - RFC 3066 langs */
+		enum FcMatchKind
+		{
+			FcMatchPattern,
+			FcMatchFont,
+			FcMatchScan
+		};
+		enum FcResult
+		{
+			FcResultMatch,
+			FcResultNoMatch,
+			FcResultTypeMismatch,
+			FcResultNoId,
+			FcResultOutOfMemory
+		}
+		[DllImport ("libfontconfig.so.1")]
+		static extern IntPtr FcPatternCreate();
+		[DllImport ("libfontconfig.so.1")]
+		static extern int FcPatternAddString(IntPtr pattern, string fcObject, string stringValue);
+		[DllImport ("libfontconfig.so.1")]
+		static extern void FcDefaultSubstitute(IntPtr pattern);
+		[DllImport ("libfontconfig.so.1")]
+		static extern void FcPatternDestroy(IntPtr pattern);
+		[DllImport ("libfontconfig.so.1")]
+		static extern int FcConfigSubstitute(IntPtr config, IntPtr pattern, FcMatchKind kind);
+		[DllImport ("libfontconfig.so.1")]
+		static extern IntPtr FcFontMatch(IntPtr config, IntPtr pattern, out FcResult result);
+		// Note that the output string from this method must NOT be freed, so we have to play games
+		// with deferred marshalling.
+		[DllImport ("libfontconfig.so.1")]
+		static extern FcResult FcPatternGetString(IntPtr pattern, string fcObject, int index, out IntPtr stringValue);
+
+		/// <summary>
+		/// Store the mapping from language to font to save future computation.
+		/// </summary>
+		static Dictionary<string, string> m_mapLangToFont = new Dictionary<string, string>();
+
+		/// <summary>
+		/// Get the name of the default font for the given language tag.
+		/// </summary>
+		/// <param name="lang">ISO 3066 tag for the language (e.g., "en", "es", "zh-CN", etc.)</param>
+		/// <returns>Name of the font, or <c>null</c> if not found.</returns>
+		public static string GetFontNameForLanguage(string lang)
+		{
+			string fontName = null;
+			if (m_mapLangToFont.TryGetValue(lang, out fontName))
+				return fontName;
+			IntPtr pattern = FcPatternCreate();
+			int isOk = FcPatternAddString(pattern, FC_LANG, lang);
+			if (isOk == 0)
+			{
+				FcPatternDestroy(pattern);
+				return null;
+			}
+			isOk = FcConfigSubstitute(IntPtr.Zero, pattern, FcMatchKind.FcMatchPattern);
+			if (isOk == 0)
+			{
+				FcPatternDestroy(pattern);
+				return null;
+			}
+			FcDefaultSubstitute(pattern);
+			FcResult result;
+			IntPtr fullPattern = FcFontMatch(IntPtr.Zero, pattern, out result);
+			if (result != FcResult.FcResultMatch)
+			{
+				FcPatternDestroy(pattern);
+				FcPatternDestroy(fullPattern);
+				return null;
+			}
+			FcPatternDestroy(pattern);
+			IntPtr res;
+			FcResult fcRes = FcPatternGetString(fullPattern, FC_FAMILY, 0, out res);
+			if (fcRes == FcResult.FcResultMatch)
+			{
+				fontName = Marshal.PtrToStringAuto(res);
+				m_mapLangToFont.Add(lang, fontName);
+			}
+			FcPatternDestroy(fullPattern);
+			return fontName;
+		}
+#endif
 	}
 }
