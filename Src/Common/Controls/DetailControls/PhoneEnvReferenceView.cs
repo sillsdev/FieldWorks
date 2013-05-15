@@ -277,6 +277,22 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		#endregion // RootSite required methods
 
+		// for testing only.
+		internal void SetSda(PhoneEnvReferenceSda sda)
+		{
+			m_sda = sda;
+		}
+
+		internal void SetRoot(IMoForm form)
+		{
+			m_rootObj = form;
+		}
+
+		internal void SetCache(FdoCache cache)
+		{
+			m_fdoCache = cache;
+		}
+
 		#region UndoRedo
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -496,7 +512,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_realEnvs.Remove(m_hvoOldSelection);
 			m_sda.CacheReplace(m_rootObj.Hvo, kMainObjEnvironments, index, index + 1,
 				new int[0], 0);
-			m_rootb.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, index, 0, 1);
+			if (m_rootb != null) // should only be in testing
+				m_rootb.PropChanged(m_rootObj.Hvo, kMainObjEnvironments, index, 0, 1);
 		}
 
 
@@ -694,37 +711,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				IFdoOwningSequence<IPhEnvironment> allAvailablePhoneEnvironmentsInProject =
 					m_fdoCache.LanguageProject.PhonologicalDataOA.EnvironmentsOS;
 
-				// Build list of local dummy hvos of environments in the entry
-				// (including any changes).
-				var envsBeingRequestedForThisEntry = new List<int>();
-				// Last env in local m_sda is a dummy that lets the user type a
-				// new environment
-				const int countOfDummyEnvsForTypingNewEnvs = 1;
-				int countOfThisEntrysEnvironments =
-					m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments) -
-					countOfDummyEnvsForTypingNewEnvs;
-				for (int i = 0; i < countOfThisEntrysEnvironments; i++)
-				{
-					int localDummyHvoOfAnEnvironmentInEntry =
-						m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
-
-					// Remove and exclude blank entries
-					string envStringRep = GetStringOfEnvironment(
-						localDummyHvoOfAnEnvironmentInEntry);
-					if (envStringRep == null || envStringRep.Trim().Length == 0)
-					{
-						m_realEnvs.Remove(localDummyHvoOfAnEnvironmentInEntry);
-						// Remove it from the dummy cache.
-						int oldSelId = m_hvoOldSelection;
-						m_hvoOldSelection = localDummyHvoOfAnEnvironmentInEntry;
-						RemoveFromDummyCache(i);
-						m_hvoOldSelection = oldSelId;
-						continue;
-					}
-
-					envsBeingRequestedForThisEntry.Add(
-						localDummyHvoOfAnEnvironmentInEntry);
-				}
+				var envsBeingRequestedForThisEntry = EnvsBeingRequestedForThisEntry();
 
 				// Environments just typed into slice that are not already used for
 				// this entry or known about in the project.
@@ -815,6 +802,43 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					wc = null;
 				}
 			}
+		}
+
+		// internal for testing.
+		internal List<int> EnvsBeingRequestedForThisEntry()
+		{
+// Build list of local dummy hvos of environments in the entry
+			// (including any changes).
+			var envsBeingRequestedForThisEntry = new List<int>();
+			// Last env in local m_sda is a dummy that lets the user type a
+			// new environment
+			const int countOfDummyEnvsForTypingNewEnvs = 1;
+			int countOfThisEntrysEnvironments =
+				m_sda.get_VecSize(m_rootObj.Hvo, kMainObjEnvironments) -
+					countOfDummyEnvsForTypingNewEnvs;
+			for (int i = countOfThisEntrysEnvironments - 1; i >= 0; i--) // count down so deletions don't mess things up
+			{
+				int localDummyHvoOfAnEnvironmentInEntry =
+					m_sda.get_VecItem(m_rootObj.Hvo, kMainObjEnvironments, i);
+
+				// Remove and exclude blank entries
+				string envStringRep = GetStringOfEnvironment(
+					localDummyHvoOfAnEnvironmentInEntry);
+				if (envStringRep == null || envStringRep.Trim().Length == 0)
+				{
+					m_realEnvs.Remove(localDummyHvoOfAnEnvironmentInEntry);
+					// Remove it from the dummy cache.
+					int oldSelId = m_hvoOldSelection;
+					m_hvoOldSelection = localDummyHvoOfAnEnvironmentInEntry;
+					RemoveFromDummyCache(i);
+					m_hvoOldSelection = oldSelId;
+					continue;
+				}
+
+				envsBeingRequestedForThisEntry.Add(
+					localDummyHvoOfAnEnvironmentInEntry);
+			}
+			return envsBeingRequestedForThisEntry;
 		}
 
 		private static string RemoveSpaces(string s)
@@ -1171,7 +1195,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#endregion // PhoneEnvReferenceVc class
 
 		#region PhoneEnvReferenceSda class
-		class PhoneEnvReferenceSda : DomainDataByFlidDecoratorBase
+		internal class PhoneEnvReferenceSda : DomainDataByFlidDecoratorBase
 		{
 			Dictionary<int, List<int>> m_MainObjEnvs = new Dictionary<int, List<int>>();
 			Dictionary<int, ITsString> m_EnvStringReps = new Dictionary<int, ITsString>();
