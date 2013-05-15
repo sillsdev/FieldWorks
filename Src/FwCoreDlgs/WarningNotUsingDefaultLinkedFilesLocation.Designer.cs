@@ -35,9 +35,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.btn_help = new System.Windows.Forms.Button();
 			this.btn_cancel = new System.Windows.Forms.Button();
 			this.btn_OK = new System.Windows.Forms.Button();
-			this.btn_help = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -58,10 +58,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.TabStop = false;
 			// 
+			// btn_help
+			// 
+			resources.ApplyResources(this.btn_help, "btn_help");
+			this.btn_help.Name = "btn_help";
+			this.btn_help.UseVisualStyleBackColor = true;
+			// 
 			// btn_cancel
 			// 
 			resources.ApplyResources(this.btn_cancel, "btn_cancel");
-			this.btn_cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.btn_cancel.DialogResult = System.Windows.Forms.DialogResult.No;
 			this.btn_cancel.Name = "btn_cancel";
 			this.btn_cancel.UseVisualStyleBackColor = true;
 			// 
@@ -69,30 +75,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			this.btn_OK.AllowDrop = true;
 			resources.ApplyResources(this.btn_OK, "btn_OK");
-			this.btn_OK.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.btn_OK.DialogResult = System.Windows.Forms.DialogResult.Yes;
 			this.btn_OK.Name = "btn_OK";
 			this.btn_OK.UseVisualStyleBackColor = true;
 			// 
-			// btn_help
-			// 
-			resources.ApplyResources(this.btn_help, "btn_help");
-			this.btn_help.Name = "btn_help";
-			this.btn_help.UseVisualStyleBackColor = true;
-			this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
-			// 
 			// WarningNotUsingDefaultLinkedFilesLocation
 			// 
-			this.AcceptButton = this.btn_OK;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.CancelButton = this.btn_cancel;
 			this.ControlBox = false;
 			this.Controls.Add(this.btn_help);
+			this.Controls.Add(this.btn_cancel);
+			this.Controls.Add(this.btn_OK);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.pictureBox1);
-			this.Controls.Add(this.btn_cancel);
-			this.Controls.Add(this.btn_OK);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -108,8 +105,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.PictureBox pictureBox1;
+		private System.Windows.Forms.Button btn_help;
 		private System.Windows.Forms.Button btn_cancel;
 		private System.Windows.Forms.Button btn_OK;
-		private System.Windows.Forms.Button btn_help;
 	}
 }

@@ -34,7 +34,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using System.IO;
 using XCore;
-using SIL.FieldWorks.FDO.Application.ApplicationServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -967,14 +966,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected void m_btnOK_Click(object sender, EventArgs e)
 		{
-			if (!UserWantsDefaultLinkedFilesLocation())
-				return;
 			DialogResult = DialogResult.OK;
-			if ((DidProjectTabChange() || DidWsTabChange() || DidLinkedFilesTabChange())
-				&& !ClientServerServices.Current.WarnOnConfirmingSingleUserChanges(m_cache))
+			if (!DidProjectTabChange() && !DidWsTabChange() && !DidLinkedFilesTabChange())
 			{
-				Close();
+				Close(); //Ok, but nothing changed. Nothing to see here, carry on.
 				return;
+			}
+
+			if (!ClientServerServices.Current.WarnOnConfirmingSingleUserChanges(m_cache)) //if Anything changed, check and warn about DB4o
+			{
+				Close(); //The user changed something, but when warned decided against it, so do not save just quit
+				return;
+			}
+			if (DidLinkedFilesTabChange())
+			{
+				WarnOnNonDefaultLinkedFilesChange();
 			}
 			// if needed put up "should the homograph ws change?" dialog
 			var changeHgWs = DialogResult.No;
@@ -1031,13 +1037,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// save Analysis Ws
 			SaveWs(m_lstAnalWs, wsContainer.CurrentAnalysisWritingSystems, wsContainer.AnalysisWritingSystems);
 
-			int userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
+			var userWs = m_cache.ServiceLocator.WritingSystemManager.UserWs;
 			m_fProjNameChanged = (m_txtProjName.Text != m_sOrigProjName);
 			if (m_langProj.Description.get_String(userWs).Text != m_txtProjDescription.Text)
 				m_langProj.Description.set_String(userWs, m_cache.TsStrFactory.MakeString(m_txtProjDescription.Text, userWs));
 
-			string sOldLinkedFilesRootDir = m_langProj.LinkedFilesRootDir;
-			string sNewLinkedFilesRootDir = txtExtLnkEdit.Text;
+			var sNewLinkedFilesRootDir = txtExtLnkEdit.Text;
+			SaveLinkedFilesChanges(sNewLinkedFilesRootDir);
+		}
+
+		private void SaveLinkedFilesChanges(string sNewLinkedFilesRootDir)
+		{
 			if (DidLinkedFilesTabChange())
 			{
 				m_langProj.LinkedFilesRootDir = sNewLinkedFilesRootDir;
@@ -1390,7 +1400,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private bool UserWantsDefaultLinkedFilesLocation()
+		private void WarnOnNonDefaultLinkedFilesChange()
 		{
 			CheckDisposed();
 			if (!m_defaultLinkedFilesFolder.Equals(txtExtLnkEdit.Text))
@@ -1398,11 +1408,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				using (var dlg = new WarningNotUsingDefaultLinkedFilesLocation())
 				{
 					var result = dlg.ShowDialog();
-					if (result == DialogResult.Cancel)
-						return false;
+					if (result == DialogResult.Yes) //Yes, please move back to defaults
+					{
+						SetLinkedFilesToDefault();
+					}
 				}
 			}
-			return true;
 		}
 
 		/// <summary>
@@ -1925,6 +1936,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		private void linkLbl_useDefaultFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			SetLinkedFilesToDefault();
+		}
+
+		private void SetLinkedFilesToDefault()
 		{
 			txtExtLnkEdit.Text = m_defaultLinkedFilesFolder;
 			if (!Directory.Exists(m_defaultLinkedFilesFolder))
