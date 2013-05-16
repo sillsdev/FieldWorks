@@ -252,6 +252,12 @@ namespace SIL.Utils
 			{
 				File.Copy(source, destination);
 			}
+
+			/// <summary/>
+			public void CreateDirectory(string directory)
+			{
+				Directory.CreateDirectory(directory);
+			}
 		}
 		#endregion
 
@@ -680,10 +686,10 @@ namespace SIL.Utils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Verify that the backup directory exists. If it doesn't exist, attempt to create it.
+		/// Verify that the directory exists. If it doesn't exist, attempt to create it.
 		/// </summary>
 		/// <param name="directory">directory to check</param>
-		/// <returns>true if the current backup directory exists or could be created;
+		/// <returns>true if the directory exists or was created;
 		/// false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
 		public static bool EnsureDirectoryExists(string directory)
@@ -694,7 +700,7 @@ namespace SIL.Utils
 			// Attempt to create the directoy if it doesn't exist yet.
 			try
 			{
-				Directory.CreateDirectory(directory); // Review Mono (JohnT): do we need this in s_fileos?
+				s_fileos.CreateDirectory(directory);
 				return true;
 			}
 			catch

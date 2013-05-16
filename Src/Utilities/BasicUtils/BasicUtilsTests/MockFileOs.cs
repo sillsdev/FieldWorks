@@ -599,6 +599,12 @@ namespace SIL.Utils
 			m_existingFiles[destination] = GetFileInfo(source, FileLockType.Read);
 		}
 
+		/// <summary/>
+		void IFileOS.CreateDirectory(string directory)
+		{
+			ExistingDirectories.Add(directory);
+		}
+
 		#endregion
 
 		#region Private helper methods
