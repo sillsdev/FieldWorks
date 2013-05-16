@@ -222,16 +222,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return result;
 		}
 
+		private static string m_SpellingDirectoryPath;
+
 		/// <summary>
 		/// Locates the directory in which we look for and create hunspell dictionaries.
 		/// </summary>
 		internal static string GetSpellingDirectoryPath()
 		{
-			var appdataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			var spellingDirectoryPath = Path.Combine(appdataFolder, "hunspell");
-			if (!Directory.Exists(spellingDirectoryPath))
-				Directory.CreateDirectory(spellingDirectoryPath);
-			return spellingDirectoryPath;
+			if (m_SpellingDirectoryPath == null)
+			{
+				var appdataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+				// When running multiple builds in parallel we have to use separate directories for
+				// each build, otherwise some unit tests might fail.
+				var buildagentSubdir = Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY");
+				if (!string.IsNullOrEmpty(buildagentSubdir))
+					appdataFolder = Path.Combine(appdataFolder, buildagentSubdir);
+
+				m_SpellingDirectoryPath = Path.Combine(appdataFolder, "hunspell");
+				if (!Directory.Exists(m_SpellingDirectoryPath))
+					Directory.CreateDirectory(m_SpellingDirectoryPath);
+			}
+			return m_SpellingDirectoryPath;
 		}
 
 		/// <summary>
