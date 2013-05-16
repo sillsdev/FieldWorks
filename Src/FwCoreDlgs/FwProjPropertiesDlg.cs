@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -319,6 +320,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Portability", "MonoCompatibilityReviewRule",
+			Justification = "LinkLabel::set_TabStop is missing from Mono.")]
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
