@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 	[TestFixture]
 	public class AnalysisAdjusterTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		// TODO GJM: Add named arguments to all CellSkeleton ctor calls to reduce ambiguity to the reader.
 		/// <summary>
 		/// Test that segment level analysis are left alone when the entire sentence is replaced with identical text in a different writing system.
 		/// We want to make sure word level analyses are lost but verifying this has proved untestable in this framework .
@@ -2437,7 +2438,7 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		/// This test covers the case where the first part of the cell is in the deleted segment and needs adjusting.
 		/// </summary>
 		[Test]
-		public virtual void WithChart_DeleteSegment_1stPartOfTag()
+		public virtual void WithChart_DeleteSegment_1stPartOfCell()
 		{
 			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
 			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira pus yalola. hesyla nihimbilira.";
@@ -2448,6 +2449,75 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			adjuster.m_oldCellSkels.Add(new CellSkeleton(1, 2, 0, 0, i2ndRow, i1stCol));
 			// cell is now on one word in new 2nd seg (hesyla)
 			adjuster.m_newCellSkels.Add(new CellSkeleton(1, 0, 0, i2ndRow, i1stCol));
+			adjuster.RunTest();
+		}
+
+		/// <summary>
+		/// Tests deleting a segment break, causing a merger of segment analyses.
+		/// This test covers the case where the end reference of the cell is in the deleted text
+		/// of the second segment and the reference should be adjusted.
+		/// </summary>
+		[Test]
+		public virtual void WithChart_DeleteSegmentBreak_CellEndsInDeletedSection()
+		{
+			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
+			adjuster.OldContents = "nihimbilira yalola. hesyla pus nihimbilira.";
+			adjuster.NewContents = "nihimbilira pus nihimbilira.";
+			const int i2ndRow = 1;
+			const int iCol = 4;
+			// cell spans 1st and 2nd seg (nihimbilira yalola. hesyla)
+			adjuster.m_oldCellSkels.Add(new CellSkeleton(
+				ibegSeg: 0, iendSeg: 1, ibegIndex: 0, iendIndex: 0, iRow: i2ndRow, iColumn: iCol));
+			// deleted text = "yalola. hesyla" = 3 analyses
+			// cell is now only on the first word in the one remaining seg (nihimbilira)
+			adjuster.m_newCellSkels.Add(new CellSkeleton(
+				iSeg: 0, ibegIndex: 0, iendIndex: 0, iRow: i2ndRow, iColumn: iCol));
+			adjuster.RunTest();
+		}
+
+		/// <summary>
+		/// Tests deleting a segment break, causing a merger of segment analyses.
+		/// This test covers the case where the begin reference of the cell is in the deleted text
+		/// of the first segment and the end reference should be adjusted.
+		/// </summary>
+		[Test]
+		public virtual void WithChart_DeleteSegmentBreak_CellBeginInDeletedSection()
+		{
+			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
+			adjuster.OldContents = "nihimbilira yalola. hesyla pus nihimbilira.";
+			adjuster.NewContents = "nihimbilira pus nihimbilira.";
+			const int i2ndRow = 1;
+			const int iCol = 4;
+			// cell spans 1st and 2nd seg (yalola. hesyla pus nihimbilira)
+			adjuster.m_oldCellSkels.Add(new CellSkeleton(
+				ibegSeg: 0, iendSeg: 1, ibegIndex: 1, iendIndex: 2, iRow: i2ndRow, iColumn: iCol));
+			// deleted text = "yalola. hesyla" = 3 analyses
+			// cell is now on two words in the one remaining seg (pus nihimbilira)
+			adjuster.m_newCellSkels.Add(new CellSkeleton(
+				iSeg: 0, ibegIndex: 1, iendIndex: 2, iRow: i2ndRow, iColumn: iCol));
+			adjuster.RunTest();
+		}
+
+		/// <summary>
+		/// Tests deleting a segment break, causing a merger of segment analyses.
+		/// This test covers the case where the end reference of the cell is in the second segment
+		/// that gets merged and needs adjusting.
+		/// </summary>
+		[Test]
+		public virtual void WithChart_DeleteSegmentBreakInsideOfCell()
+		{
+			var adjuster = new AdjustmentVerifierPlusChartCells(Cache);
+			adjuster.OldContents = "pus yalola nihimbilira. nihimbilira yalola. hesyla pus nihimbilira.";
+			adjuster.NewContents = "pus yalola nihimbilira. nihimbilira pus nihimbilira.";
+			const int i2ndRow = 1;
+			const int iCol = 4;
+			// cell spans 2nd and 3rd seg (nihimbilira yalola. hesyla pus)
+			adjuster.m_oldCellSkels.Add(new CellSkeleton(
+				ibegSeg: 1, iendSeg: 2, ibegIndex: 0, iendIndex: 1, iRow: i2ndRow, iColumn: iCol));
+			// Deleted text = "yalola. hesyla" = 3 analyses
+			// cell is now on two words in new 2nd seg (nihimbilira pus)
+			adjuster.m_newCellSkels.Add(new CellSkeleton(
+				iSeg: 1, ibegIndex: 0, iendIndex: 1, iRow: i2ndRow, iColumn: iCol));
 			adjuster.RunTest();
 		}
 

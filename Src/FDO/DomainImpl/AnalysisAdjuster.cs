@@ -100,6 +100,20 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		private Set<IAnalysisReference> m_oldParaRefs;
 		private int m_cRemovedAnalyses; // The number of Analyses removed from the current paragraph.
 		private int m_cAddedAnalyses; // The number of Analyses added to the current paragraph.
+		/// <summary>
+		/// One stage of adjustment corrects the end of an IAnalysisReference for analyses
+		/// inserted and deleted before it.
+		/// Another (earlier) stage handles merging segments, which also changes the end index
+		/// of any IAnalysisReference in the second segment.
+		/// To make the second stage work right, the first stage would ideally leave the end index
+		/// where it would belong, if we merged the segments without inserting or deleting any analyses
+		/// (i.e., the old index plus the number of anlyses in the first segment).
+		/// However, because we really MAY have deleted some analyses, that may not be a valid index
+		/// in the merged segment. When this happens, the merge-segment stage will set the end index
+		/// to something less than the second stage wants. This dictionary stores the amount that had
+		/// to be subtracted from the merge-segment stage for the benefit of the adjust-index stage.
+		/// </summary>
+		private Dictionary<IAnalysisReference, int> m_finalEndIndexAdjustments;
 
 		private List<ISegment> m_segsToMove; // In HandleMoveDest, the segments to move entirely to the destination.
 		// In HandleMoveDest, the analyses to move to the destination (from the incompletely moved seg).
@@ -404,31 +418,33 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Since segments after the old last-modified variables must not change, and their new positions
 			// must start at the new last-modified position, the number we need is the difference between the two,
 			var newOldSegDifference = m_iNewSegLastModified - m_iOldSegLastModified;
-			// The position to insert is trickier. We typically want to keep, if possible, the first and last
-			// of the old modified segments as the first and last of the new ones, so as to keep their TN material
-			// in the right place. Inserting after the first modified one usually achieves this.
-			var iInsertAt = m_iSegFirstModified + 1;
-
-			// However, suppose we inserted one or more complete segments, without actually changing any existing ones.
-			// In that case, we want to insert before the first 'modified' segment. Also, if the first 'modified'
-			// segment started at or after the change, it isn't really modified, so we want to insert before it.
-			int oldIndexOfFirstModifiedSegment = (m_iSegFirstModified >= m_iFirstDeletedSegment) ?
-				m_iSegFirstModified + m_cSegsDeleted : m_iSegFirstModified;
-			if (oldIndexOfFirstModifiedSegment < m_oldBeginOffsets.Length && m_oldBeginOffsets[oldIndexOfFirstModifiedSegment] >=
-				m_paraDiffInfo.IchFirstDiff + m_paraDiffInfo.CchDeleteFromOld)
+			if (newOldSegDifference > 0) // Will insert at least one segment
 			{
-				iInsertAt--;
-			}
-			else if (ChangedToLabelAtBeginSegment())
-				iInsertAt--;
+				// The position to insert is trickier. We typically want to keep, if possible, the first and last
+				// of the old modified segments as the first and last of the new ones, so as to keep their TN material
+				// in the right place. Inserting after the first modified one usually achieves this.
+				var iInsertAt = m_iSegFirstModified + 1;
 
-			iInsertAt = Math.Min(iInsertAt, m_para.SegmentsOS.Count);
-			// Make new segments (zero iterations if new number is <= old number)
-			for (var i = iInsertAt; i < iInsertAt + newOldSegDifference; i++)
-			{
-				m_para.SegmentsOS.Insert(i, m_para.Services.GetInstance<ISegmentFactory>().Create());
-			}
+				// However, suppose we inserted one or more complete segments, without actually changing any existing ones.
+				// In that case, we want to insert before the first 'modified' segment. Also, if the first 'modified'
+				// segment started at or after the change, it isn't really modified, so we want to insert before it.
+				var oldIndexOfFirstModifiedSegment = (m_iSegFirstModified >= m_iFirstDeletedSegment)
+					? m_iSegFirstModified + m_cSegsDeleted : m_iSegFirstModified;
+				if (oldIndexOfFirstModifiedSegment < m_oldBeginOffsets.Length &&
+					m_oldBeginOffsets[oldIndexOfFirstModifiedSegment] >= m_paraDiffInfo.IchFirstDiff + m_paraDiffInfo.CchDeleteFromOld)
+				{
+					iInsertAt--;
+				}
+				else if (ChangedToLabelAtBeginSegment())
+					iInsertAt--;
 
+				iInsertAt = Math.Min(iInsertAt, m_para.SegmentsOS.Count);
+				// Make new segments (zero iterations if new number is <= old number)
+				for (var i = iInsertAt; i < iInsertAt + newOldSegDifference; i++)
+				{
+					m_para.SegmentsOS.Insert(i, m_para.Services.GetInstance<ISegmentFactory>().Create());
+				}
+			}
 			// Since we already deleted any segments that are entirely within the deleted range,
 			// if we still have too many segments to match the new text, we need to merge
 			// the two that at least partly survive, keeping their TN material.
@@ -438,8 +454,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			{
 				Debug.Assert(m_newBeginOffsets.Length + 1 == m_oldBeginOffsets.Length - m_cSegsDeleted,
 					"When we are merging segments we should have already deleted any segments between these two.");
-				ConcatenateTranslationsAndNotes(m_para.SegmentsOS[m_iSegFirstModified],
-												m_para.SegmentsOS[m_iSegFirstModified + 1]);
+				var segToDelete = m_para.SegmentsOS[m_iSegFirstModified + 1];
+				ConcatenateTranslationsAndNotes(m_para.SegmentsOS[m_iSegFirstModified], segToDelete);
 				m_para.SegmentsOS.Replace(m_iSegFirstModified + 1, 1, new ISegment[0]);
 			}
 
@@ -456,6 +472,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			// Assign analysis groups previously figured to the segments
 			var ianalysis = 0; // index into m_newAnalyses
 			var igroup = 0; // index into m_newAnalysisGroups
+			m_finalEndIndexAdjustments = new Dictionary<IAnalysisReference, int>();
 			for (var i = m_iSegFirstModified; i <= m_iNewSegLastModified; i++)
 			{
 				var seg = m_para.SegmentsOS[i];
@@ -513,7 +530,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				var ibegSeg = begSeg.IndexInOwner;
 				if (ibegSeg > m_iNewSegLastModified)
 					continue; // The whole IAnalysisReference is in a later segment that wasn't changed.
-				if (ibegSeg == m_iSegFirstModified || iendSeg == m_iOldSegLastModified)
+				if (ibegSeg == m_iSegFirstModified || iendSeg == m_iSegFirstModified)
 					ifirstAnalysisInSegToFix = m_iFirstAnalysisToFix;
 
 				// Reset flags
@@ -552,8 +569,15 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 					// EndRef section
 					if (iendSeg <= m_iOldSegLastModified)
 					{
+						// If FixHangingReferences adjusted the endRef index back too much,
+						// we need to take that into account here by adding it back in.
+						int adjustment;
+						m_finalEndIndexAdjustments.TryGetValue(iar, out adjustment);
+						iend += adjustment;
+						// Check to see if end ref is after the deleted analyses or not.
 						if (iend >= ifirstAnalysisInSegToFix + m_cRemovedAnalyses)
 						{
+							// endref is past the deleted analyses, just adjust it by the number deleted.
 							iend -= m_cRemovedAnalyses;
 							iar.ChangeToDifferentIndex(iend, false, true);
 						}
@@ -562,6 +586,8 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 							fendExact = false;
 							if (iend > ifirstAnalysisInSegToFix)
 							{
+								// endref is after the first change, but inside the range of deleted items
+								// pull it back to the first changed analysis.
 								iend = ifirstAnalysisInSegToFix;
 								iar.ChangeToDifferentIndex(iend, false, true);
 							}
@@ -613,8 +639,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 						refsToDelete.Add(iar); // There IS no previous wordform in this text!
 						continue;
 					}
-					iend = actualPoint.Index;
-					iar.ChangeToDifferentIndex(iend, false, true);
+					iar.ChangeToDifferentIndex(actualPoint.Index, false, true);
 					if (actualPoint.Segment != endSeg)
 						iar.ChangeToDifferentSegment(actualPoint.Segment, false, true);
 				}
@@ -673,7 +698,14 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			var imax = ifirstAnalysisInSegToFix + cRemovedAnalyses - 1;
 			var imin = ifirstAnalysisInSegToFix + cAddedAnalyses;
 			var ibeg = iar.BegRef().Index;
-			var iend = iar.EndRef().Index;
+			// If FixHangingReferences adjusted the endRef index back already,
+			// we need to take that into account here. Perhaps the BegRef IS within deleted
+			// range, and the EndRef appears to be within the deleted range because of FHR 'adjustment'.
+			// In this case, we need to not delete an 'iar' whose EndRef will be re-adjusted out
+			// of the deleted range later.
+			int adjustment;
+			m_finalEndIndexAdjustments.TryGetValue(iar, out adjustment);
+			var iend = iar.EndRef().Index + adjustment;
 			if (ibeg < imin || ibeg > imax || iend < imin || iend > imax)
 				return false;
 			return true; // Delete this feller!
@@ -900,11 +932,23 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 				{
 					newSeg = m_para.SegmentsOS[iFirstSegmentSurviving - 1]; // Get segment before deleted one
 					cNewAnalyses = newSeg.AnalysesRS.Count;
-					iar.ChangeToDifferentSegment(m_para.SegmentsOS[iFirstSegmentSurviving - 1], false, true);
+					iar.ChangeToDifferentSegment(newSeg, false, true);
 					if(cOldAnalyses > 0 && cNewAnalyses > cOldAnalyses)
 					{
-						// segment break deleted, try to preserve position in new segment
-						iar.ChangeToDifferentIndex(iar.EndRef().Index + cOldAnalyses, false, true);
+						// A segment break was deleted (i.e. two segments merged); we will try to preserve
+						// the index position in the new (combined) segment.
+						// N.B. We aren't figuring out the final index now, only what the index WOULD have been
+						// if we'd just merged the two segments w/o inserting or deleting. A later step
+						// (UpdateAffectedReferences) will adjust the index for those changes.
+						var desiredMergedIndex = iar.EndRef().Index + cOldAnalyses;
+						iar.ChangeToDifferentIndex(desiredMergedIndex, false, true);
+						// ChangeToDifferentIndex won't allow setting Index too high for current Analysis count,
+						// so we need to record by how much it 'fudged' the index to fit the current count.
+						// This 'adjustment' amount will get taken into account when the EndRef is adjusted
+						// for the numbers of analyses deleted and inserted in UpdateAffectedReferences.
+						var adjustment = desiredMergedIndex - iar.EndRef().Index;
+						if (adjustment != 0)
+							m_finalEndIndexAdjustments.Add(iar, adjustment);
 					}
 					else
 					{

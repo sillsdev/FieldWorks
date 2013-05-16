@@ -30,6 +30,7 @@ Src/LangInst/InstallLanguageTests/timing.txt
 
 # other files
 *.user
+*.ncrunchsolution
 *.ncb
 *.sln
 *.suo
