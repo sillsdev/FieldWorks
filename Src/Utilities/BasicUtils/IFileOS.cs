@@ -145,5 +145,8 @@ namespace SIL.Utils
 		/// <param name="destination">The destination.</param>
 		/// ------------------------------------------------------------------------------------
 		void Copy(string source, string destination);
-		}
+
+		/// <summary/>
+		void CreateDirectory(string directory);
+	}
 }

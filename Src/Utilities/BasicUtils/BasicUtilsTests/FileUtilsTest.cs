@@ -181,6 +181,35 @@ namespace SIL.Utils
 			m_fileOs.ExistingDirectories.Add(dirName);
 		}
 
+		/// <summary/>
+		[Test]
+		public void EnsureDirectoryExists_CreatesNonExistentDirectory()
+		{
+			var directory = "dir";
+			Assert.That(m_fileOs.ExistingDirectories.Contains(directory), Is.False, "Test set up wrong");
+			Assert.That(FileUtils.DirectoryExists(directory), Is.False);
+			FileUtils.EnsureDirectoryExists(directory);
+			Assert.That(FileUtils.DirectoryExists(directory), Is.True);
+			Assert.That(m_fileOs.ExistingDirectories.Contains(directory), Is.True, "Should have added directory to mock filesystem");
+
+			// So should also be able to add files into the directory that was created.
+			var file = Path.Combine(directory, "file.txt");
+			Assert.That(FileUtils.FileExists(file), Is.False, "Not testing what is intended");
+			m_fileOs.AddExistingFile(file);
+			Assert.That(FileUtils.FileExists(file), Is.True);
+		}
+
+		/// <summary/>
+		[Test]
+		public void EnsureDirectoryExists_NoProblemForExistentDirectory()
+		{
+			var directory = "dir";
+			FileUtils.EnsureDirectoryExists(directory);
+			Assert.That(m_fileOs.ExistingDirectories.Contains(directory), Is.True);
+			FileUtils.EnsureDirectoryExists(directory);
+			Assert.That(m_fileOs.ExistingDirectories.Contains(directory), Is.True);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests FileUtils.ActualFilePath with an existing directory containing a file with
