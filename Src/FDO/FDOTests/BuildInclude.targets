@@ -16,8 +16,8 @@
 		<Copy SourceFiles="@(remotingTcpServerConfig)" DestinationFiles="$(OutDir)remoting_tcp_server_tests.config"
 			OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" />
 		<!--EXECUTOR_NUMBER is defined in Jenkins builds (see https://jenkins.lsdev.sil.org/env-vars.html).
-			On Jenkins builds we use ports 33330 - 33339 instead of 3333 and 33340 - 33349 instead of
-			3334 to allow to run multiple builds in parallel. -->
+			On Jenkins builds we use ports 33330 - 33339 instead of 3333, 33340 - 33349 instead of
+			3334, and 44880 - 44880 instead of 4488 to allow to run multiple builds in parallel. -->
 		<!-- TODO-Mono: xbuild doesn't support relational operator Greater. -->
 		<Error Text="This code can't deal with more than 10 executors."
 			Condition="'$(OS)' != 'Unix' And $(EXECUTOR_NUMBER) != '' And $(EXECUTOR_NUMBER) &gt; 9"/>
@@ -29,5 +29,7 @@
 			ReplacementText='value="3333$(EXECUTOR_NUMBER)"' />
 		<FileUpdate Files="$(OutDir)FDO.dll.config" Regex='value="3334"'
 			ReplacementText='value="3334$(EXECUTOR_NUMBER)"' />
+		<FileUpdate Files="$(OutDir)FDO.dll.config" Regex='value="4488"'
+			ReplacementText='value="4488$(EXECUTOR_NUMBER)"' />
 	</Target>
 </Project>
