@@ -44,7 +44,7 @@ namespace FixFwDataDllTests
 			{
 				"DuplicateGuid", "DanglingCustomListReference", "DanglingCustomProperty", "DanglingReference",
 				"DuplicateWs", "SequenceFixer", "EntryWithExtraMSA", "EntryWithMsaAndNoSenses", "TagAndCellRefs", "GenericDates",
-				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems", "MissingBasicCustomField"
+				"HomographFixer", WordformswithsameformTestDir, "MorphBundleProblems", "MissingBasicCustomField", "DeletedMsaRefBySenseAndBundle"
 			};
 
 		[TestFixtureSetUp]
@@ -358,6 +358,41 @@ namespace FixFwDataDllTests
 			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
 				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + danglingMorphNoRepairAfGuid + "\"]/Morph/objsur", 0, false);
 		}
+
+		/// <summary>
+		/// This test deals with a special case (LT-14493) where an MSA is deleted that is referenced by both a sense and
+		/// a bundle (that also references the sense). In particular we should not restore the broken link based on what the Sense
+		/// used to have as its msa before it was fixed.
+		/// </summary>
+		[Test]
+		public void TestDanglingSenseAndBundleLink()
+		{
+			var testPath = Path.Combine(basePath, "DeletedMsaRefBySenseAndBundle");
+			var data = new FwDataFixer(Path.Combine(testPath, "BasicFixup.fwdata"), new DummyProgressDlg(), LogErrors);
+			data.FixErrorsAndSave();
+			var danglingMsaGuid = "aaaaaaaa-e15a-448e-a618-3855f93bd3c2"; // nonexistent 'msa'
+			var bundleGuid = "10f3db1e-33db-4d9d-9a06-e0a8e1ed8a92";
+			var senseGuid = "3110cf83-ad6c-47fe-91f8-8bf789473792";
+
+			// Verify initial state.
+			// We start out with a morph bundles and a sense that have broken links to the same missing MSA.
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + bundleGuid + "\"]/Msa/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.bak")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\" and @guid=\"" + senseGuid + "\"]/MorphoSyntaxAnalysis/objsur[@guid=\"" + danglingMsaGuid + "\"]", 1, false);
+
+			// Check errors
+			Assert.AreEqual(2, errors.Count, "Unexpected number of errors found.");
+			Assert.True(errors[0].StartsWith("Removing dangling link to '" + danglingMsaGuid + "' (class='LexSense'"),
+				"Error message is incorrect.");
+			Assert.That(errors[1], Is.EqualTo("Removing dangling link to MSA '" + danglingMsaGuid + "' for WfiMorphBundle '" + bundleGuid + "'."),
+				"Error message is incorrect."); // MorphBundleFixer--ksRemovingDanglingMsa
+
+			// Check file repair
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"WfiMorphBundle\" and @guid=\"" + bundleGuid + "\"]/Msa", 0, false);
+			AssertThatXmlIn.File(Path.Combine(testPath, "BasicFixup.fwdata")).HasSpecifiedNumberOfMatchesForXpath(
+				"//rt[@class=\"LexSense\" and @guid=\"" + senseGuid + "\"]/MorphoSyntaxAnalysis", 0, false);		}
 
 		[Test]
 		public void TestDanglingCustomListReferences()
