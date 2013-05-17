@@ -3732,6 +3732,86 @@ namespace LexTextControlsTests
 			Assert.IsTrue(examplePublications.Contains("Main Dictionary"));
 			Assert.IsTrue(examplePublications.Contains("Pocket"));
 		}
+
+		static private readonly string[] s_BadMorphTypeTestData = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+			"<header>",
+			"<ranges>",
+			"</ranges>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_$guid1\" guid=\"$guid1\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>baba baba</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"phrase\"/>",
+			"<variant>",
+				"<form lang=\"fr\"><text>baba baba</text></form>",
+				"<trait name=\"nonsence\" value=\"look for this\" />",
+				"<trait name=\"morph-type\" value=\"phrase\" />",
+			"</variant>",
+			"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+			"<gloss lang=\"en\"><text>dad</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  test importing data where a phrase has a variant that is also a phrase,
+		/// but where there is existing data claiming the allomorph is an affix phrase.
+		/// To produce the crash that led to this test, the problem variant must also have
+		/// a trait that produces residue and comes before the trait that changes the morph type.
+		/// (LT-14372)
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImportChangingAffixToStem()
+		{
+			SetWritingSystems("fr");
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(0, repoSense.Count);
+
+			// The entry should already be present.
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			sense.Gloss.SetAnalysisDefaultWritingSystem("dad");
+			var lf = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+			entry.LexemeFormOA = lf;
+			lf.Form.SetVernacularDefaultWritingSystem("baba baba");
+			var allo = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			entry.AlternateFormsOS.Add(allo);
+			allo.Form.SetVernacularDefaultWritingSystem("baba baba");
+			var phrase = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphPhrase);
+			lf.MorphTypeRA = phrase;
+			allo.MorphTypeRA = phrase;
+
+			//Creat the LIFT data file
+			s_BadMorphTypeTestData[7] = s_BadMorphTypeTestData[7].Replace("$guid1", entry.Guid.ToString());
+			s_BadMorphTypeTestData[16] = s_BadMorphTypeTestData[16].Replace("$guid2", sense.Guid.ToString());
+			var sOrigFile = CreateInputFile(s_BadMorphTypeTestData);
+
+			// SUT
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 1);
+			File.Delete(sOrigFile);
+
+			// Verification
+			Assert.IsNotNull(logFile);
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+
+			Assert.That(entry.AlternateFormsOS, Has.Count.EqualTo(1), "should still have exactly one allomorph");
+			Assert.That(entry.AlternateFormsOS.First(), Is.InstanceOf(typeof(IMoStemAllomorph)), "affix should be changed to stem");
+			Assert.That(entry.AlternateFormsOS.First().LiftResidue, Is.StringContaining("look for this"));
+		}
 	}
 
 	class CustomFieldData

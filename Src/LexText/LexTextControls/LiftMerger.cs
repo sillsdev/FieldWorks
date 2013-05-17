@@ -1997,6 +1997,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			foreach (int hvo in m_dictResidue.Keys)
 			{
+				if (!m_cache.ServiceLocator.ObjectRepository.IsValidObjectId(hvo))
+					continue; // somehow the object got deleted, discard the residue
 				LiftResidue res = m_dictResidue[hvo];
 				string sLiftResidue = res.Document.OuterXml;
 				int flid = res.Flid;
@@ -2379,15 +2381,31 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (mmt.IsAffixType)
 				{
 					if (le.LexemeFormOA is IMoStemAllomorph)
-						le.ReplaceMoForm(le.LexemeFormOA, CreateNewMoAffixAllomorph());
+						ReplaceMoForm(le.LexemeFormOA, CreateNewMoAffixAllomorph());
 				}
 				else
 				{
 					if (!(le.LexemeFormOA is IMoStemAllomorph))
-						le.ReplaceMoForm(le.LexemeFormOA, CreateNewMoStemAllomorph());
+						ReplaceMoForm(le.LexemeFormOA, CreateNewMoStemAllomorph());
 				}
 				le.LexemeFormOA.MorphTypeRA = mmt;
 			}
+		}
+
+		/// <summary>
+		/// Replace a form (typically changing it from stem to affix or v.v.),
+		/// and if we had created residue for the old form, transfer it to the new one.
+		/// </summary>
+		/// <param name="oldForm"></param>
+		/// <param name="newForm"></param>
+		private void ReplaceMoForm(IMoForm oldForm, IMoForm newForm)
+		{
+			LiftResidue residue;
+			if (m_dictResidue.TryGetValue(oldForm.Hvo, out residue))
+				m_dictResidue.Remove(oldForm.Hvo);
+			((ILexEntry)oldForm.Owner).ReplaceMoForm(oldForm, newForm);
+			if (residue != null)
+				m_dictResidue[newForm.Hvo] = residue;
 		}
 
 		private bool EntryTraitsConflict(ILexEntry le, List<LiftTrait> list)
@@ -3198,7 +3216,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							IMoAffixAllomorph affix = CreateNewMoAffixAllomorph();
 							ILexEntry entry = form.Owner as ILexEntry;
 							Debug.Assert(entry != null);
-							entry.ReplaceMoForm(stem, affix);
+							ReplaceMoForm(stem, affix);
 							form = affix;
 						}
 						else if (!fAffix && form is IMoAffixAllomorph)
@@ -3207,7 +3225,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							IMoStemAllomorph stem = CreateNewMoStemAllomorph();
 							ILexEntry entry = form.Owner as ILexEntry;
 							Debug.Assert(entry != null);
-							entry.ReplaceMoForm(affix, stem);
+							ReplaceMoForm(affix, stem);
 							form = stem;
 						}
 						if (mmt != form.MorphTypeRA)
