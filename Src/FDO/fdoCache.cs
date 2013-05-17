@@ -1015,6 +1015,8 @@ namespace SIL.FieldWorks.FDO
 			get
 			{
 				CheckDisposed();
+				if (m_serviceLocator == null)
+					return null;
 				return m_serviceLocator.GetInstance<ITsStrFactory>();
 			}
 		}
@@ -1500,10 +1502,13 @@ namespace SIL.FieldWorks.FDO
 		{
 			if (MiscUtils.RunningTests)
 				return;
+
 			var linkedFilesFolder = this.LangProject.LinkedFilesRootDir;
+			var defaultFolder = DirectoryFinder.GetDefaultLinkedFilesDir(this.ProjectId.ProjectFolder);
+			EnsureValidLinkedFilesFolderCore(linkedFilesFolder, defaultFolder);
+
 			if (!Directory.Exists(linkedFilesFolder))
 			{
-				var defaultFolder = DirectoryFinder.GetDefaultLinkedFilesDir(this.ProjectId.ProjectFolder);
 				if (!Directory.Exists(defaultFolder))
 					defaultFolder = this.ProjectId.ProjectFolder;
 				MessageBox.Show(String.Format(Strings.ksInvalidLinkedFilesFolder, linkedFilesFolder), Strings.ksErrorCaption);
@@ -1521,6 +1526,16 @@ namespace SIL.FieldWorks.FDO
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(this.ActionHandlerAccessor, () =>
 					{ this.LangProject.LinkedFilesRootDir = linkedFilesFolder; });
 			}
+		}
+
+		/// <summary>
+		/// Just make the directory if it's the default.
+		/// See FWNX-1092, LT-14491.
+		/// </summary>
+		internal void EnsureValidLinkedFilesFolderCore(string linkedFilesFolder, string defaultLinkedFilesFolder)
+		{
+			if (linkedFilesFolder == defaultLinkedFilesFolder)
+				FileUtils.EnsureDirectoryExists(defaultLinkedFilesFolder);
 		}
 		#endregion Public methods
 
