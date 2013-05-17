@@ -1372,8 +1372,15 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 				var desiredLargeChange = ClientHeight - MeanRowHeight;
-				if (desiredLargeChange < 0)
-					desiredLargeChange = 0;
+				// Two reasons to make this 1 rather than 0:
+				// 1. Don't want a click in the large change area to produce no change at all.
+				// 2. scroll range gets set to ScrollPositionMaxUserReachable + (our return value) - 1.
+				// Scroll range should never be LESS than ScrollPositionMaxUserReachable
+				// (See asserts in ScrollPosition setter.)
+				// This typically only happens during premature window layout while ClientHeight is very small.
+				// But a zero here can trigger asserts and possibly crashes (LT-14544)
+				if (desiredLargeChange <= 0)
+					desiredLargeChange = 1;
 				return desiredLargeChange;
 			}
 		}
