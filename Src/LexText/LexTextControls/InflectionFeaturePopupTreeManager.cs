@@ -91,6 +91,14 @@ namespace SIL.FieldWorks.LexText.Controls
 								if (dlg.FS != null)
 									hvoFs = dlg.FS.Hvo;
 								LoadPopupTree(hvoFs);
+								// In the course of loading the popup tree, we will have selected the hvoFs item, and triggered an AfterSelect.
+								// But, it will have had an Unknown action, and thus will not trigger some effects we want.
+								// That one will work like arrowing over items: they are 'selected', but the system will not
+								// behave as if the user actually chose this item.
+								// But, we want clicking OK in the dialog to produce the same result as clicking an item in the list.
+								// So, we need to trigger an AfterSelect with our own event args, which (since we're acting on it)
+								// must have a ByMouse TreeViewAction.
+								base.m_treeCombo_AfterSelect(sender, e);
 								// everything should be setup with new node selected, so return.
 								return;
 							}
