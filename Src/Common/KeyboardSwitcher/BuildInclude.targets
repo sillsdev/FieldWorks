@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup Condition="'$(OS)'=='Unix'">
 	<PlatformLibDir>../../../Lib/linux/$(Configuration)</PlatformLibDir>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <Target Name="BeforeBuild" Condition="'$(OS)'=='Unix'">
-	<Copy SourceFiles="@(Files-for-KeyboardSwitcher-Build)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+	<Copy SourceFiles="@(Files-for-KeyboardSwitcher-Build)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true"/>
   </Target>
 
 </Project>
