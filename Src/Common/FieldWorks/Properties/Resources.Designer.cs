@@ -161,6 +161,26 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FieldWorks can&apos;t run.
+        /// </summary>
+        internal static string ksHklmCaption {
+            get {
+                return ResourceManager.GetString("ksHklmCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks is unable to start because some necessary Registry keys are missing or inaccessible. There should be a registry entry {0}.
+        ///
+        ///We have sometimes seen cases where installing other software leaves the machine in a state where non-administrators cannot access these registry entries. If this is your problem, there is a possible workaround. Try a right click on the icon that you use to start FieldWorks and choose the option &apos;Run as Administrator&apos; from the context menu. See whether that helps. It may be [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ksHklmProblem {
+            get {
+                return ResourceManager.GetString("ksHklmProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to modify project locations..
         /// </summary>
         internal static string ksInsufficientPrivilegesToUpdateProjectLocationCaption {

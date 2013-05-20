@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets the current SuiteVersion as a string
 		/// </summary>
-		internal static string FieldWorksRegistryKeyName
+		public static string FieldWorksRegistryKeyName
 		{
 			get { return FwUtils.SuiteVersion.ToString(CultureInfo.InvariantCulture); }
 		}
