@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using Palaso.Lift.Parsing;
@@ -258,6 +259,9 @@ namespace LexTextControlsTests
 			"<form lang=\"es\"><text>niña</text></form>",
 			"</lexical-unit>",
 			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<relation type=\"_component-lexeme\" ref=\"\">",
+			"<trait  name=\"complex-form-type\" value=\"Derivative\"/>",
+			"</relation>",
 			"<sense id=\"niña_db9d3790-2f5c-4d99-b9fc-3b21b47fa505\">",
 			"<grammatical-info value=\"Noun\">",
 			"</grammatical-info>",
@@ -275,11 +279,15 @@ namespace LexTextControlsTests
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// First test of LIFT import: four simple entries.
+		/// (This was also a convenient point to check handling of a lexical relation with
+		/// an empty ref attr.)
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
 		public void TestLiftImport1()
 		{
+			var messageCapture = new MessageCapture();
+			MessageBoxUtils.Manager.SetMessageBoxAdapter(messageCapture);
 			SetWritingSystems("es");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -302,6 +310,8 @@ namespace LexTextControlsTests
 			File.Delete(logFile);
 			Assert.AreEqual(4, repoEntry.Count);
 			Assert.AreEqual(4, repoSense.Count);
+
+			Assert.That(messageCapture.Messages, Has.Count.EqualTo(0), "we should not message about an empty-string ref in <relation>");
 
 			ILexEntry entry;
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out entry));
@@ -516,6 +526,24 @@ namespace LexTextControlsTests
 			"</entry>",
 			"</lift>"
 		};
+
+		class MessageCapture : IMessageBox
+		{
+			public List<string> Messages = new List<string>();
+			public DialogResult Show(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
+			{
+				Messages.Add(text);
+				return DialogResult.OK;
+			}
+
+			public DialogResult Show(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+				MessageBoxDefaultButton defaultButton, MessageBoxOptions options, string helpFilePath, HelpNavigator navigator,
+				object param)
+			{
+				Messages.Add(text);
+				return DialogResult.OK;
+			}
+		}
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
@@ -924,6 +952,9 @@ namespace LexTextControlsTests
 			"<form lang=\"es\"><text>hombre</text></form>",
 			"</lexical-unit>",
 			"<trait name=\"morph-type\" value=\"root\"></trait>",
+			"<relation type=\"_component-lexeme\" ref=\"nonsence_object_ID\">",
+			"<trait  name=\"complex-form-type\" value=\"Derivative\"/>",
+			"</relation>",
 			"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
 			"<grammatical-info value=\"Noun\">",
 			"</grammatical-info>",
@@ -945,6 +976,8 @@ namespace LexTextControlsTests
 		/// <summary>
 		/// Fourth test of LIFT import: test importing multi-paragraph text with various CR/LF
 		/// combinations.
+		/// (This was also a convenient point to test that we get a warning when creating
+		/// a LER with a missing component.)
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
@@ -953,7 +986,9 @@ namespace LexTextControlsTests
 		public void TestLiftImport4()
 		{
 			// Setup
-// ReSharper disable InconsistentNaming
+			var messageCapture = new MessageCapture();
+			MessageBoxUtils.Manager.SetMessageBoxAdapter(messageCapture);
+			// ReSharper disable InconsistentNaming
 			const string LINE_SEPARATOR = "\u2028";
 			var s_newLine = Environment.NewLine;
 			var ccharsNL = s_newLine.Length;
@@ -969,7 +1004,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoSense.Count);
 
 			// Put data in LIFT string
-			const int idxModifiedLine = 16;
+			const int idxModifiedLine = 19;
 			// "<form lang=\"en\"><text>male{0}adult{1}human</text></form>",
 			var fmtString = s_LiftData4[idxModifiedLine];
 			s_LiftData4[idxModifiedLine] = String.Format(fmtString, s_newLine, s_cr, s_lf);
@@ -981,6 +1016,8 @@ namespace LexTextControlsTests
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
+
+			Assert.That(messageCapture.Messages[0], Is.StringContaining("nonsence_object_ID"), "inability to link up bad ref should be reported in message box");
 
 			ILexEntry entry;
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out entry));
