@@ -1012,10 +1012,11 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (m_xbv.Vc.HasSelectColumn)
 			{
-				// Don't enable DisplayCheckMarkHeader here, since it doesn't display reliably (LT-4473).
-				// Do our own setup for this button.
-				//m_lvHeader.DisplayCheckMarkHeader = true;
-				//m_lvHeader.CheckIconClick += new ConfigIconClickHandler(m_lvHeader_CheckIconClick);
+				// Do our own setup for checkmark header, since it doesn't display reliably when implemented in DhListView (LT-4473).
+				// In DhListView, an implementation of  checkmark header was not reliably receiving system Paint messages after
+				// an Invalidate(), Refresh(), or Update(). Until we find a solution to that problem, the parent of DhListView (e.g. BrowseViewer)
+				// will have to be responsible for setting up this button.
+
 				m_checkMarkButton = new Button();
 				m_checkMarkButton.Click += m_checkMarkButton_Click;
 				m_checkMarkButton.Image = ResourceHelper.CheckMarkHeader;
@@ -1276,7 +1277,6 @@ namespace SIL.FieldWorks.Common.Controls
 			CheckDisposed();
 
 			Controls.Remove(m_bulkEditBar);
-			m_lvHeader.DisplayCheckMarkHeader = false;
 		}
 
 		/// <summary>
@@ -1534,7 +1534,6 @@ namespace SIL.FieldWorks.Common.Controls
 #endif
 						m_lvHeader.ColumnRightClick -= m_lvHeader_ColumnRightClick;
 						m_lvHeader.ColumnDragDropReordered -= m_lvHeader_ColumnDragDropReordered;
-						m_lvHeader.CheckIconClick -= m_lvHeader_CheckIconClick;
 						if (!m_scrollContainer.Controls.Contains(m_lvHeader))
 							m_lvHeader.Dispose();
 					}
@@ -1560,6 +1559,7 @@ namespace SIL.FieldWorks.Common.Controls
 				} // m_scrollContainer != null
 				if (m_tooltip != null)
 					m_tooltip.Dispose();
+
 				if(components != null)
 				{
 					components.Dispose();
@@ -1804,7 +1804,6 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					int selColWidth = m_xbv.Vc.SelectColumnWidth * dpiX / 72000;
 					m_lvHeader.Columns[0].Width = selColWidth;
-					m_lvHeader.RecordCheckWidth(selColWidth);
 					widthAvail -= selColWidth;
 					widthExtra += selColWidth;
 				}
@@ -2114,7 +2113,6 @@ namespace SIL.FieldWorks.Common.Controls
 				SaveColumnWidths();
 			}
 			FireColumnsChangedEvent(true);
-			// m_lvHeader.UpdateConfigureButton();
 		}
 
 		private void FireColumnsChangedEvent(bool isWidthChange)
@@ -2669,7 +2667,6 @@ namespace SIL.FieldWorks.Common.Controls
 				index++;
 			}
 		}
-
 
 		private void m_lvHeader_ColumnDragDropReordered(object sender,
 			ColumnDragDropReorderedEventArgs e)
@@ -3311,11 +3308,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void m_checkMarkButton_Click(object sender, EventArgs e)
 		{
-			m_lvHeader_CheckIconClick(this, new ConfigIconClickEventArgs(
+			CheckIconClick(this, new ConfigIconClickEventArgs(
 					RectangleToClient(m_checkMarkButton.RectangleToScreen(m_checkMarkButton.ClientRectangle))));
 		}
 
-		private void m_lvHeader_CheckIconClick(object sender, ConfigIconClickEventArgs e)
+		private void CheckIconClick(object sender, ConfigIconClickEventArgs e)
 		{
 			var menu = components.ContextMenu("CheckIconClickContextMenuStrip", false);
 			if (menu.MenuItems.Count == 0)
@@ -3324,9 +3321,8 @@ namespace SIL.FieldWorks.Common.Controls
 				menu.MenuItems.Add(XMLViewsStrings.ksUncheckAll, OnUncheckAll);
 				menu.MenuItems.Add(XMLViewsStrings.ksToggle, OnToggleAll);
 			}
-				menu.Show(this, new Point(e.Location.Left, e.Location.Bottom));
-			}
-
+			menu.Show(this, new Point(e.Location.Left, e.Location.Bottom));
+		}
 
 		/// <summary>
 		/// Get all the main items in this browse view.

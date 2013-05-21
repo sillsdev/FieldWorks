@@ -27,7 +27,7 @@ M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontFo
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::ReplaceTreeView(System.String)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::SetFontFromWritingSystem(System.Int32,XCore.Mediator)
 M: System.Void SIL.FieldWorks.Common.Controls.ReallySimpleListChooser::AddChooserCommand(SIL.FieldWorks.Common.Controls.ChooserCommand)
-M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::m_lvHeader_CheckIconClick(System.Object,SIL.FieldWorks.Common.Controls.ConfigIconClickEventArgs)
+M: System.Void SIL.FieldWorks.Common.Controls.BrowseViewer::CheckIconClick(System.Object,SIL.FieldWorks.Common.Controls.ConfigIconClickEventArgs)
 M: System.Void SIL.FieldWorks.Common.Controls.BulkEditBar::populateListChoiceTargetCombo()
 M: System.Void SIL.FieldWorks.Common.Controls.FilterBar::MakeOrReuseItems()
 M: System.Collections.Generic.List`1<SIL.FieldWorks.Common.Controls.ListClassTargetFieldItem> SIL.FieldWorks.Common.Controls.BulkEditBar::ListItemsClassesInfo(SIL.Utils.Set`1<System.Int32>)

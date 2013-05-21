@@ -23,13 +23,9 @@ namespace SIL.FieldWorks.Common.Controls
 		private BrowseViewer m_bv;
 		private ImageList m_imgList;
 		private bool m_fInAdjustWidth = false; // used to ignore recursive calls to AdjustWidth.
-		private Button m_checkMarkButton; // button shown over check mark column if any.
-		Timer m_configDisplayTimer = null; // See comment on UpdateConfigureButton
 		private bool m_fColumnDropped = false;	// set this after we've drag and dropped a column
 		bool m_suppressColumnWidthChanges;
 		private ToolTip m_tooltip;
-
-//		int m_checkColWidth;
 
 #if __MonoCS__	// FWNX-224
 			// on Mono, when a right click is pressed, this class emits a RightClick event
@@ -46,8 +42,6 @@ namespace SIL.FieldWorks.Common.Controls
 		public event ColumnClickEventHandler ColumnLeftClick;
 #endif
 
-		/// <summary></summary>
-		public event ConfigIconClickHandler CheckIconClick;
 		/// <summary></summary>
 		public event ColumnDragDropReorderedHandler ColumnDragDropReordered;
 
@@ -96,16 +90,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Large));		// Add descending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Medium));		// Add descending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Small));		// Add descending arrow
-
-			m_checkMarkButton = new Button();
-			m_checkMarkButton.Click += new EventHandler(m_checkMarkButton_Click);
-			m_checkMarkButton.Image = ResourceHelper.CheckMarkHeader;
-			m_checkMarkButton.Width = m_checkMarkButton.Image.Width + 4;
-			m_checkMarkButton.FlatStyle = FlatStyle.Flat;
-			m_checkMarkButton.BackColor = Color.FromKnownColor(KnownColor.ControlLight);
-			m_checkMarkButton.ForeColor = Color.FromKnownColor(KnownColor.ControlLight);
-			m_checkMarkButton.Top = 0;
-			m_checkMarkButton.Left = -1;
 
 #if __MonoCS__ // FWNX-224
 			ColumnWidthChanged += ListView_ColumnWidthChanged;
@@ -156,18 +140,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (disposing)
 			{
-				if (m_configDisplayTimer != null)
-				{
-					m_configDisplayTimer.Stop();
-					m_configDisplayTimer.Tick -= new EventHandler(m_configDisplayTimer_Tick);
-					m_configDisplayTimer.Dispose();
-				}
-				if (m_checkMarkButton != null)
-				{
-					m_checkMarkButton.Click -= new EventHandler(m_checkMarkButton_Click);
-					if (!Controls.Contains(m_checkMarkButton))
-						m_checkMarkButton.Dispose();
-				}
 				if (m_imgList != null)
 					m_imgList.Dispose();
 				if (m_timer != null)
@@ -181,9 +153,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_tooltip = null;
 				}
 			}
-			m_configDisplayTimer = null;
 			m_imgList = null;
-			m_checkMarkButton = null;
 			m_bv = null;
 
 			base.Dispose (disposing);
@@ -198,59 +168,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				return m_bv.m_xbv.Vc.HasSelectColumn;
 			}
-		}
-
-		/// <summary>
-		/// Disabled property: We have disabled the CheckMarkHeader in DhListView because
-		/// it is not reliably receiving system Paint messages after an Invalidate(), Refresh(), or Update().
-		/// Until we find a solution to that problem, the parent of DhListView (e.g. BrowseViewer)
-		/// will have to be responsible for setting up this button.(cf. LT-4473)
-		/// </summary>
-		public bool DisplayCheckMarkHeader
-		{
-			get
-			{
-				CheckDisposed();
-				return Controls.Contains(m_checkMarkButton);
-			}
-			set
-			{
-				CheckDisposed();
-
-				Debug.Assert(value != true, "CheckMarkButton currently disabled. See comment for DisplayCheckMarkHeader");
-				//if (value == DisplayCheckMarkHeader)
-				//	return;
-				//if (value)
-				//    Controls.Add(m_checkMarkButton);
-				//else
-				//    Controls.Remove(m_checkMarkButton);
-			}
-		}
-
-		// no use because it never gets called
-		//		protected override void OnPaint(PaintEventArgs e)
-		//		{
-		//			base.OnPaint (e);
-		//			Image blueArrow = ResourceHelper.BlueCircleDownArrow;
-		//			int xPos = this.Width - blueArrow.Width - 4;
-		//			e.Graphics.DrawImage(blueArrow, new Rectangle(xPos, 0, blueArrow.Width, blueArrow.Height));
-		//		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.Layout"/> event.
-		/// </summary>
-		/// <param name="levent">A <see cref="T:System.Windows.Forms.LayoutEventArgs"/> that contains the event data.</param>
-		/// ------------------------------------------------------------------------------------
-		protected override void OnLayout(LayoutEventArgs levent)
-		{
-			base.OnLayout (levent);
-			// -6 seems to be about right to allow for various borders and prevent the button from
-			// overwriting the bottom border of the header bar.
-
-			// disposing and ListView Constructor can call OnLayout on mono
-			if (m_checkMarkButton != null)
-				m_checkMarkButton.Height = this.Height - 6;
 		}
 
 		/// <summary>
@@ -323,8 +240,6 @@ namespace SIL.FieldWorks.Common.Controls
 				m_tooltip.Show(m_tooltipText, this, cursorLocation.X, cursorLocation.Y, 2000);
 			}
 		}
-
-		private bool flip;
 
 		void DhListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
 		{
@@ -432,32 +347,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal void RecordCheckWidth(int val)
-		{
-			CheckDisposed();
-
-//			m_checkColWidth = val;
-		}
-
-		// Certain events seem to hide the configuration button. Invalidating it is enough to get
-		// it repainted, but invalidating immediately doesn't work. My (JohnT's) desperate solution
-		// is to invalidate it 1/100 second after the situations that make it disappear.
-		// If you don't believe me, comment out the body of this method and watch the blue circle
-		// icon disappear when you drag a column separator!
-		internal void UpdateConfigureButton()
-		{
-			CheckDisposed();
-
-			if (m_configDisplayTimer != null)
-				m_configDisplayTimer.Stop(); // abort any previous notification
-			else
-			{
-				m_configDisplayTimer = new Timer();
-				m_configDisplayTimer.Interval = 10;
-				m_configDisplayTimer.Tick += new EventHandler(m_configDisplayTimer_Tick);
-			}
-			m_configDisplayTimer.Start();
-		}
 		const int WM_NOTIFY = 0x004E;
 		const int HDN_FIRST = -300;
 		const int HDN_BEGINTRACKA = (HDN_FIRST - 6);
@@ -1103,20 +992,6 @@ namespace SIL.FieldWorks.Common.Controls
 		const Int32 HDM_SETIMAGELIST	= HDM_FIRST + 8;
 		const Int32 HDM_GETITEM			= HDM_FIRST + 11;
 		const Int32 HDM_SETITEM			= HDM_FIRST + 12;
-
-		private void m_configDisplayTimer_Tick(object sender, EventArgs e)
-		{
-			m_configDisplayTimer.Stop();
-			m_checkMarkButton.Invalidate();
-		}
-
-		private void m_checkMarkButton_Click(object sender, EventArgs e)
-		{
-			if (CheckIconClick != null)
-				CheckIconClick(this, new ConfigIconClickEventArgs(
-					this.RectangleToClient(m_checkMarkButton.RectangleToScreen(m_checkMarkButton.ClientRectangle))));
-
-		}
 	}
 
 	/// <summary>
