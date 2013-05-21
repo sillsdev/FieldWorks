@@ -1117,7 +1117,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (m_delayedItemNumberValue == null)
 				return;
-			WriteStringBody("ItemNumber", " class=\"" + m_delayedItemNumberClass + "\"", m_delayedItemNumberValue);
+			WriteStringBody("ItemNumber", " class=\"" + m_xhtml.GetValidCssClassName(m_delayedItemNumberClass) + "\"", m_delayedItemNumberValue);
 			m_delayedItemNumberValue = null;
 			m_delayedItemNumberClass = null;
 
@@ -1199,9 +1199,9 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					var flowType = GetFlowType(frag);
 					if (flowType == "div" || flowType == "para")
-						m_writer.WriteLine("<div class=\"{0}\">", cssClass);
+						m_writer.WriteLine("<div class=\"{0}\">", m_xhtml.GetValidCssClassName(cssClass));
 					else if (flowType != "divInPara")
-						m_writer.WriteLine("<span class=\"{0}\">", cssClass);
+						m_writer.WriteLine("<span class=\"{0}\">", m_xhtml.GetValidCssClassName(cssClass));
 				}
 			}
 		}
