@@ -3859,17 +3859,22 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Common logic shared between OnDisplayJumpToTool and OnJumpToTool.
 		/// forEnableOnly is true when called from OnDisplayJumpToTool.
 		/// </summary>
-		private Guid GetGuidForJumpToTool(Command cmd, bool forEnableOnly, out string tool)
+		internal Guid GetGuidForJumpToTool(Command cmd, bool forEnableOnly, out string tool)
 		{
 			tool = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "tool");
 			string className = XmlUtils.GetManditoryAttributeValue(cmd.Parameters[0], "className");
-			if (CurrentSlice != null && CurrentSlice.Object != null)
+			ICmObject targetObject;
+			if (CurrentSlice == null)
+				targetObject = Root;
+			else
+				targetObject = CurrentSlice.Object;
+			if (targetObject != null)
 			{
-				var owner = CurrentSlice.Object.Owner;
+				var owner = targetObject.Owner;
 				if (tool == "concordance")
 				{
 					int flidSlice = 0;
-					if (!CurrentSlice.IsHeaderNode)
+					if (CurrentSlice != null && !CurrentSlice.IsHeaderNode)
 					{
 						flidSlice = CurrentSlice.Flid;
 						if (flidSlice == 0 || m_mdc.get_IsVirtual(flidSlice))
@@ -3885,28 +3890,28 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 									return m_root.Guid;
 								}
 
-								if (CurrentSlice.Object.ClassID == LexEntryRefTags.kClassId)
+								if (targetObject.ClassID == LexEntryRefTags.kClassId)
 									return cmd.TargetId;
 
-								if (CurrentSlice.Object.ClassID == LexEntryTags.kClassId)
-									return CurrentSlice.Object.Guid;
+								if (targetObject.ClassID == LexEntryTags.kClassId)
+									return targetObject.Guid;
 
-								var lexEntry = CurrentSlice.Object.OwnerOfClass<ILexEntry>();
+								var lexEntry = targetObject.OwnerOfClass<ILexEntry>();
 								return lexEntry == null ? cmd.TargetId : lexEntry.Guid;
 							}
 							break;
 						case "LexSense":
-							if (CurrentSlice.Object.ClassID == LexSenseTags.kClassId)
+							if (targetObject.ClassID == LexSenseTags.kClassId)
 							{
-								if (((ILexSense)CurrentSlice.Object).Entry == m_root)
-									return CurrentSlice.Object.Guid;
+								if (((ILexSense)targetObject).Entry == m_root)
+									return targetObject.Guid;
 							}
 							break;
 						case "MoForm":
-							if (m_cache.ClassIsOrInheritsFrom(CurrentSlice.Object.ClassID, MoFormTags.kClassId))
+							if (m_cache.ClassIsOrInheritsFrom(targetObject.ClassID, MoFormTags.kClassId))
 							{
 								if (flidSlice == MoFormTags.kflidForm)
-									return CurrentSlice.Object.Guid;
+									return targetObject.Guid;
 							}
 							break;
 					}
@@ -3923,10 +3928,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (owner != null &&
 						owner.ClassID == RnGenericRecTags.kClassId)
 						return owner.Guid;
-					if (CurrentSlice.Object is IText)
+					if (targetObject is IText)
 					{
 						IRnGenericRec referringRecord;
-						if (NotebookRecordRefersToThisText(CurrentSlice.Object as IText, out referringRecord))
+						if (NotebookRecordRefersToThisText(targetObject as IText, out referringRecord))
 							return referringRecord.Guid;
 
 						// Text is not already associated with a notebook record. So there's nothing yet to jump to.
@@ -3934,7 +3939,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						// Otherwise we just need to return something non-null to indicate the jump
 						// is possible (though this is not currently used).
 						if (forEnableOnly)
-							return CurrentSlice.Object.Guid;
+							return targetObject.Guid;
 						// User is really making the jump. Create a notebook record, associate it, and jump.
 						var newNotebookRec = CreateAndAssociateNotebookRecord();
 						return newNotebookRec.Guid;
@@ -3943,9 +3948,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else if (tool == "interlinearEdit")
 				{
-					if (CurrentSlice.Object.ClassID == TextTags.kClassId)
+					if (targetObject.ClassID == TextTags.kClassId)
 					{
-						return CurrentSlice.Object.Guid;
+						return targetObject.Guid;
 					}
 				}
 			}
