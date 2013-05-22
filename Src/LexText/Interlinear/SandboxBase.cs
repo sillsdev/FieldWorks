@@ -4503,8 +4503,9 @@ namespace SIL.FieldWorks.IText
 					m_rootb.MakeSelAt(point.X, point.Y, rcSrcRoot, rcDstRoot, true);
 					m_fSuppressShowCombo = true;
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
+					Debug.WriteLine(e.Message);
 					// Ignore not being able to make a selection.
 				}
 				EditingHelper.HandleMouseDown();
