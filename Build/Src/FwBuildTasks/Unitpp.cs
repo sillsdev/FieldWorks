@@ -18,14 +18,6 @@ namespace FwBuildTasks
 		private StringBuilder m_MsgBldr;
 
 		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public Unitpp()
-		{
-			Timeout = Int32.MaxValue;
-		}
-
-		/// <summary>
 		/// Gets or sets the full path to the unit++ executable (test program).
 		/// </summary>
 		[Required]

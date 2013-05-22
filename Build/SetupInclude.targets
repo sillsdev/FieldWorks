@@ -325,6 +325,7 @@
 	<verifyfail Condition="'$(verifyfail)'==''">true</verifyfail>
 	<autoUpdateIgnores Condition="'$(autoUpdateIgnores)'==''">false</autoUpdateIgnores>
 	<warningsAsErrors Condition="'$(warningsAsErrors)'==''">TreatWarningsAsErrors=true</warningsAsErrors>
+	<timeoutFudgeFactor Condition="'$(timeoutFudgeFactor)'==''">1</timeoutFudgeFactor>
   </PropertyGroup>
 
   <Choose>

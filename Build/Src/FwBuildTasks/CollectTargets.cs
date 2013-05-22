@@ -1,5 +1,4 @@
-﻿#define TEMPFIX
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -118,26 +117,13 @@ namespace FwBuildTasks
 			var project = Path.GetFileNameWithoutExtension(filename);
 			if (project == "ICSharpCode.SharpZLib")
 				return;
-#if TEMPFIX
-			// These projects are obsolete, but still exist in the Linux branches.
-			if (project == "MenuExtender" ||			// independent target in nant build files
-				project == "MenuExtenderTests" ||		// implied target in nant build files
-				project == "ParserWatcher" ||			// independent target in nant build files
-				project == "RunAddConverter" ||			// independent target in nant build files
-				project == "ProgressBarTest" ||
-				project == "P4Helper" ||
-				project == "FixUp" ||
-				project == "RemoteReport" ||
-				project == "VwGraphicsReplayer" ||
-				project == "XCoreSample" ||
+			if (project == "VwGraphicsReplayer" ||
 				project == "SilSidePaneTestApp" ||
 				project == "SfmStats" ||
-				project == "ConvertSFM" ||
-				project == "XSLTTester")
+				project == "ConvertSFM")
 			{
-				return;
+				return; // Skip these apps - they are are sample or support apps
 			}
-#endif
 			if (m_mapProjFile.ContainsKey(project) || m_mapProjDepends.ContainsKey(project))
 			{
 				Log.LogWarning("Project '{0}' has already been found elsewhere!", project);
@@ -398,11 +384,12 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t\tOutputXmlFile=\"$(dir-outputBase)/{0}.dll-nunit-output.xml\"", project);
 						writer.WriteLine("\t\t\tForce32Bit=\"$(useNUnit-x86)\"");
 						writer.WriteLine("\t\t\tExcludeCategory=\"$(excludedCategories)\"");
-						writer.WriteLine("\t\t\tTimeout=\"{0}\">", TimeoutForProject(project));
 						// Don't continue on error. NUnit returns 0 even if there are failed tests.
 						// A non-zero return code means a configuration error or that NUnit crashed
 						// - we shouldn't ignore those.
-						//writer.WriteLine("\t\t\tContinueOnError=\"true\" />");
+						//writer.WriteLine("\t\t\tContinueOnError=\"true\"");
+						writer.WriteLine("\t\t\tFudgeFactor=\"$(timeoutFudgeFactor)\"");
+						writer.WriteLine("\t\t\tTimeout=\"{0}\">", TimeoutForProject(project));
 						writer.WriteLine("\t\t\t<Output TaskParameter=\"FailedSuites\" ItemName=\"FailedSuites\"/>");
 						writer.WriteLine("\t\t</NUnit>");
 						writer.WriteLine("\t\t<Message Text=\"Finished building {0}.\" Condition=\"'$(action)'!='test'\"/>", project);

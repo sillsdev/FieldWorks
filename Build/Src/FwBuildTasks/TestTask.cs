@@ -23,6 +23,16 @@ namespace FwBuildTasks
 		protected List<string> m_TestLog = new List<string>();
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		public TestTask()
+		{
+			// more than 24 days should be a high enough value as default :-)
+			Timeout = Int32.MaxValue;
+			FudgeFactor = 1;
+		}
+
+		/// <summary>
 		/// Used to ensure thread-safe operations.
 		/// </summary>
 		private static readonly object LockObject = new object();
@@ -32,6 +42,11 @@ namespace FwBuildTasks
 		/// expressed in milliseconds.  The default is essentially no time-out.
 		/// </summary>
 		public int Timeout { get; set; }
+
+		/// <summary>
+		/// Factor the timeout will be multiplied by.
+		/// </summary>
+		public int FudgeFactor { get; set; }
 
 		/// <summary>
 		/// Contains the names of failed test suites
@@ -47,6 +62,9 @@ namespace FwBuildTasks
 
 		public override bool Execute()
 		{
+			if (FudgeFactor >= 0 && Timeout < Int32.MaxValue)
+				Timeout *= FudgeFactor;
+
 			bool retVal = true;
 			if (Timeout == Int32.MaxValue)
 				Log.LogMessage(MessageImportance.Normal, "Running {0}", TestProgramName);

@@ -15,14 +15,6 @@ namespace FwBuildTasks
 	public class NUnit : TestTask
 	{
 		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public NUnit()
-		{
-			Timeout = Int32.MaxValue;
-		}
-
-		/// <summary>
 		/// Gets or sets the full path to the NUnit assemblies (test DLLs).
 		/// </summary>
 		[Required]
