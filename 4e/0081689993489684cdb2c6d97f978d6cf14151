@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: MarkS <marksvc@gmail.com>
+Submitted-by: Eberhard Beilharz <eb1@sil.org>
+Submitted-at: Wed, 22 May 2013 19:26:53 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1095
+Project: FieldWorks
+Branch: refs/heads/develop
