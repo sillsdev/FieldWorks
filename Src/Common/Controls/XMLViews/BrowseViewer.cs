@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.Common.Controls
 	#region BrowseViewer class
 	/// <summary>
 	/// BrowseViewer is a container for various windows related to browsing. At a minimum it contains
-	/// a DnListView which provides the column headers and an XmlBrowseView that contains the
+	/// a DhListView which provides the column headers and an XmlBrowseView that contains the
 	/// actual browse view. It may also have a FilterBar, and eventually other controls, e.g.,
 	/// for filling in columns of data.
 	/// </summary>
@@ -2434,8 +2434,6 @@ namespace SIL.FieldWorks.Common.Controls
 			if (fsi == null)
 				return;			// Can't sort by this column.
 			m_icolCurrent = e.Column;
-
-			//Debug.WriteLine("Right click in header of column " + e.Column);
 
 			XWindow window = (XWindow)m_xbv.Mediator.PropertyTable.GetValue("window");
 			window.ShowContextMenu("mnuBrowseHeader",

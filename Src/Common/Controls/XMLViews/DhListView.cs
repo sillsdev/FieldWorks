@@ -11,12 +11,14 @@ using System.Runtime.InteropServices;
 using SIL.FieldWorks.Resources;
 
 using SIL.Utils;
+using System.Linq;
 
 namespace SIL.FieldWorks.Common.Controls
 {
 	/// <summary>
 	/// Derived from ListView, this class supports notifying the browse view
 	/// when resizing the columns.
+	/// This class holds the headers that show above columns of data that BrowseViewer knows about.
 	/// </summary>
 	public class DhListView : ListView, IFWDisposable
 	{
@@ -96,8 +98,31 @@ namespace SIL.FieldWorks.Common.Controls
 
 			ColumnClick += HandleColumnClick;
 #endif
-
 			ColumnWidthChanging += ListView_ColumnWidthChanging;
+			ColumnReordered += HandleColumnReordered;
+		}
+
+		void HandleColumnReordered(object sender, ColumnReorderedEventArgs e)
+		{
+			// Disallow reordering the checkbox column, either by moving it or moving something into its place
+			if (HasCheckBoxColumn && (e.OldDisplayIndex == 0 || e.NewDisplayIndex == 0))
+			{
+				e.Cancel = true;
+				return;
+			}
+
+			var columnDisplayOrder = Enumerable.Range(0, Columns.Count).ToList<int>();
+
+			var reorderedColumnHeader = columnDisplayOrder[e.OldDisplayIndex];
+			columnDisplayOrder.Remove(reorderedColumnHeader);
+			columnDisplayOrder.Insert(e.NewDisplayIndex, reorderedColumnHeader);
+
+			// Nudge columns so headers and data line up.
+			this.SyncColumnOrder(columnDisplayOrder);
+
+			// Let affected browse view update its columns of data
+			if (ColumnDragDropReordered != null)
+				ColumnDragDropReordered(this, new ColumnDragDropReorderedEventArgs(columnDisplayOrder));
 		}
 
 #if __MonoCS__ // FWNX-224
@@ -377,13 +402,7 @@ namespace SIL.FieldWorks.Common.Controls
 		private void ListView_ColumnWidthChanged(Object sender, ColumnWidthChangedEventArgs e)
 		{
 			if (m_MouseOverListHeader)
-			{
 				m_bv.AdjustColumnWidths(true);
-				if (this.ColumnOrdersOutOfSync)
-				{
-					this.MaintainSelectColumnPosition();
-				}
-			}
 		}
 #endif
 
@@ -430,7 +449,7 @@ namespace SIL.FieldWorks.Common.Controls
 			switch (m.Msg)
 			{
 #if __MonoCS__	// FWNX-224 : We don't GET WM_NOTIFY on mono (r152577)
-			case WM_MOUSE_ENTER: //
+			case WM_MOUSE_ENTER:
 				m_MouseOverListHeader = true;
 				break;
 			case WM_MOUSE_LEAVE:
@@ -446,7 +465,6 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				break;
 #else // FWNX-224 : We don't GET WM_NOTIFY on mono (r152577)
-
 				case WM_NOTIFY:
 					Win32.NMHEADER nmhdr = (Win32.NMHEADER)m.GetLParam(typeof(Win32.NMHEADER));
 					switch (nmhdr.hdr.code)
@@ -502,92 +520,24 @@ namespace SIL.FieldWorks.Common.Controls
 							return;
 						}
 						break;
-					case HDN_ENDDRAG:
-						// We don't have a new display order until AFTER the HDN_ENDDRAG event.
-						// so flag for further handling (on NM_CLICKUP).
-						m_fColumnDropped = true;  // flag for further handling during NM_LCLICKUP.
-						return;
-					case NM_LCLICKUP:
-						// first handle the special case where the user may have dragged and dropped
-						// something into the location of the "select column".
-						if (m_bv.m_xbv.Vc.HasSelectColumn &&
-							m_fColumnDropped && this.ColumnOrdersOutOfSync)
-						{
-							this.MaintainSelectColumnPosition();
-						}
-						// if displayed columns are (still) out of sync with Columns collection,
-						// then we re-sync with that reordering and let the browse view know the new order.
-						if (m_fColumnDropped && this.ColumnOrdersOutOfSync)
-						{
-							this.OnColumnDisplayReordered();
-							// reset our drag-n-drop event flag.
-							m_fColumnDropped = false;
-						}
-						return;
 					default:
 						break;
 				}
 					break;
 #endif // FWNX-224 : We don't GET WM_NOTIFY on mono (r152577)
-
 				default:
 					base.WndProc(ref m);
 					break;
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// If user has changed the position of the SelectColumn through drag &amp; drop,
-		/// move it back in its place, bumping everything else to the right to fill its gap.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void MaintainSelectColumnPosition()
-		{
-			if (m_bv.m_xbv.Vc.HasSelectColumn == false || (int)this.ColumnDisplayOrder[0] == 0)
-				return;
-
-			List<int> displayOrder = this.ColumnDisplayOrder;
-			List<int> newOrder = new List<int>(displayOrder.ToArray());
-			// start shifting the indices to the right until we replace '0'
-			for (int i = 0; i < displayOrder.Count && displayOrder[i] != 0; ++i)
-			{
-				newOrder[i + 1] = displayOrder[i];
-			}
-			// now put the SelectColumn back where it belongs.
-			newOrder[0] = 0;
-
-			this.ColumnDisplayOrder = newOrder;
-		}
-
-		/// <summary>
-		/// True if Column collection and the displayed order is out of sync.
-		/// This can occur when our AllowColumnReorder is set to true, and
-		/// the user re-orders the columns by dragging and dropping.
-		/// </summary>
-		private bool ColumnOrdersOutOfSync
-		{
-			get
-			{
-				List<int> displayColumns = this.ColumnDisplayOrder;
-				for (int i = 0; i < this.Columns.Count; ++i)
-				{
-					if (displayColumns[i] != i)
-						return true;
-				}
-				return false;
-			}
-		}
-
 		/// <summary>
 		/// Reorder the Column collection according to our display order.
+		/// In mono this results in data column widths being aligned properly with header column widths.
 		/// </summary>
-		private void SyncColumnOrder()
+		private void SyncColumnOrder(List<int> headerColumnOrder)
 		{
-			// return if we're already sync'd
-			if (this.ColumnOrdersOutOfSync == false)
-				return;
-			List<int> displayOrder = this.ColumnDisplayOrder;
+			List<int> displayOrder = headerColumnOrder;
 			ColumnHeader[] columnsReordered = new ColumnHeader[this.Columns.Count];
 			int originalNumberOfColumns = this.Columns.Count;
 			// save the original columns in the new order
@@ -606,22 +556,6 @@ namespace SIL.FieldWorks.Common.Controls
 				Columns.Insert(i, columnsReordered[i]);
 			}
 			this.EndUpdate();
-			Debug.Assert(this.ColumnOrdersOutOfSync == false);
-		}
-
-		private void OnColumnDisplayReordered()
-		{
-			Debug.Assert(this.ColumnOrdersOutOfSync == true);
-
-			// Save our displayed column order
-			List<int> newColumnOrder = this.ColumnDisplayOrder;
-
-			// Sync our Columns collection items with the ColumnDisplayOrder
-			this.SyncColumnOrder();
-
-			// Let affected browse view update their stuff
-			if (ColumnDragDropReordered != null)
-				ColumnDragDropReordered(this, new ColumnDragDropReorderedEventArgs(newColumnOrder));
 		}
 
 #if !__MonoCS__
@@ -642,50 +576,6 @@ namespace SIL.FieldWorks.Common.Controls
 			public Int32 iSubItem;
 			public Int32 iImage;
 			public Int32 iOrder;
-		}
-
-		/// <summary>
-		/// Set or Get the current display order for column headers.
-		/// The "get" accessor returns a list of indices for the ListView column order, as it is currently displayed.
-		/// Needed when AllowColumnReorder == true, since Columns collection will not be ordered
-		/// the same as the display order after the user reorders the columns by drag and drop.
-		/// The "set" accessor changes the display order for our column headers using an ArrayList of indices
-		/// for the Column collection.
-		/// </summary>
-		private List<int> ColumnDisplayOrder
-		{
-			set
-			{
-				if (AllowColumnReorder == true && (value != null))
-				{
-					Debug.Assert(value.Count == this.Columns.Count, "List count must match Columns.Count");
-#if !__MonoCS__
-					SendMessage(this.Handle, LVM_SETCOLUMNORDERARRAY, value.Count, value.ToArray());
-#endif
-				}
-			}
-			get
-			{
-				List<int> result = new List<int>();
-				// If AllowColumnReorder property is false, return current order.
-				if (this.AllowColumnReorder == false)
-				{
-					for (int i = 0; i < this.Columns.Count; ++i)
-						result.Add(i);
-				}
-				else
-				{
-
-					// Return the actual display order
-					int columnCount = this.Columns.Count;
-					int[] columnOrders = new int[columnCount];
-#if !__MonoCS__
-					SendMessage(this.Handle, LVM_GETCOLUMNORDERARRAY, columnCount, columnOrders);
-#endif
-					result.AddRange(columnOrders);
-				}
-				return result;
-			}
 		}
 
 		private int GetColumnIndexFromMousePosition(Point pt)
@@ -1116,5 +1006,4 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 	}
-
 }
