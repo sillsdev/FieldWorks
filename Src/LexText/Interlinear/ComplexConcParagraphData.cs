@@ -159,12 +159,18 @@ namespace SIL.FieldWorks.IText
 			foreach (ITextTag tag in m_para.OwnerOfClass<IStText>().TagsOC)
 			{
 				List<Annotation<ShapeNode>> beginSegment, endSegment;
-				if (segments.TryGetValue(tag.BeginSegmentRA, out beginSegment) && segments.TryGetValue(tag.EndSegmentRA, out endSegment))
-				{
-					var tagAnn = new Annotation<ShapeNode>(spanFactory.Create(beginSegment[tag.BeginAnalysisIndex].Span.Start, endSegment[tag.EndAnalysisIndex].Span.End),
-						FeatureStruct.New(featSys).Symbol("ttag").Symbol(tag.TagRA.Hvo.ToString(CultureInfo.InvariantCulture)).Value) {Data = tag};
-					m_shape.Annotations.Add(tagAnn, false);
-				}
+				if (!segments.TryGetValue(tag.BeginSegmentRA, out beginSegment) ||
+					!segments.TryGetValue(tag.EndSegmentRA, out endSegment))
+						continue;
+				var beginAnnotation = beginSegment[tag.BeginAnalysisIndex];
+				var endAnnotation = endSegment[tag.EndAnalysisIndex];
+				var tagType = tag.TagRA;
+				if (tagType == null || beginAnnotation == null || endAnnotation == null)
+					continue; // guard against LT-14549 crash
+				var tagAnn = new Annotation<ShapeNode>(spanFactory.Create(beginAnnotation.Span.Start, endAnnotation.Span.End),
+					FeatureStruct.New(featSys).Symbol("ttag").Symbol(tagType.Hvo.ToString(CultureInfo.InvariantCulture)).Value)
+						{ Data = tag };
+				m_shape.Annotations.Add(tagAnn, false);
 			}
 		}
 
