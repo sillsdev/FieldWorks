@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.Common.Controls
 		#region construction and initialization
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ConfiguredExport"/> class.
+		/// Initializes a new instance of the <see cref="ConfiguredExport"/> class.
 		/// </summary>
 		/// <param name="baseEnv">The base env.</param>
 		/// <param name="sda">Data access to get prop values etc.</param>
@@ -334,7 +334,10 @@ namespace SIL.FieldWorks.Common.Controls
 				switch (style)
 				{
 					case "Sense-Reference-Number":
-						m_xhtml.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
+						if (m_xhtml != null)
+						{
+							m_xhtml.MapCssToLang("xsensexrefnumber", m_cache.ServiceLocator.WritingSystemManager.Get(wsRun).Id);
+						}
 						break;
 				}
 			}
@@ -1114,7 +1117,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			if (m_delayedItemNumberValue == null)
 				return;
-			WriteStringBody("ItemNumber", " class=\"" + m_delayedItemNumberClass + "\"", m_delayedItemNumberValue);
+			WriteStringBody("ItemNumber", " class=\"" + m_xhtml.GetValidCssClassName(m_delayedItemNumberClass) + "\"", m_delayedItemNumberValue);
 			m_delayedItemNumberValue = null;
 			m_delayedItemNumberClass = null;
 
@@ -1196,9 +1199,9 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					var flowType = GetFlowType(frag);
 					if (flowType == "div" || flowType == "para")
-						m_writer.WriteLine("<div class=\"{0}\">", cssClass);
+						m_writer.WriteLine("<div class=\"{0}\">", m_xhtml.GetValidCssClassName(cssClass));
 					else if (flowType != "divInPara")
-						m_writer.WriteLine("<span class=\"{0}\">", cssClass);
+						m_writer.WriteLine("<span class=\"{0}\">", m_xhtml.GetValidCssClassName(cssClass));
 				}
 			}
 		}

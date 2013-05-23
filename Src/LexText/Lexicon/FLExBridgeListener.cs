@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (!LinkedFilesLocationIsDefault())
 			{
-				using (var dlg = new FwCoreDlgs.WarningForSendReceiveLinkedFiles())
+				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation())
 				{
 					var result = dlg.ShowDialog();
 					if (result == DialogResult.Yes)

@@ -785,7 +785,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					if (dlg.ShowDialog(f) != DialogResult.OK)
 						return false; // can't go on.
-					DirectoryFinder.ProjectsDirectory = dlg.ProjectsFolder;
+					if (DirectoryFinder.ProjectsDirectoryLocalMachine == dlg.ProjectsFolder)
+					{
+						//Remove the user override since they reset to the default.
+						DirectoryFinder.ProjectsDirectory = null;
+					}
+					else
+					{
+						DirectoryFinder.ProjectsDirectory = dlg.ProjectsFolder;
+					}
 				}
 				dataDirectory = DirectoryFinder.ProjectsDirectory;
 				dir = new DirectoryInfo(dataDirectory);

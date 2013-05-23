@@ -522,8 +522,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{
-			using (RegistryKey userKey = FwRegistryHelper.FieldWorksRegistryKey)
-			using (RegistryKey machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
+			using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+			using (var machineKey = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
 				var registryKey = userKey;
 				if (userKey == null || userKey.GetValue(registryValue) == null)
@@ -753,7 +753,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the dir where projects are stored
+		/// Gets or sets the dir where projects are stored. Setting to null will delete the HKCU
+		/// key, so that the HKLM key (system default) will be used for this user.
 		/// </summary>
 		/// <exception cref="SecurityException">If user does not have permission to write to HKLM
 		/// </exception>
@@ -768,7 +769,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				using (var registryKey = FwRegistryHelper.FieldWorksRegistryKey)
 				{
-					registryKey.SetValue(ksProjectsDir, value);
+					if (value == null)
+					{
+						registryKey.DeleteValue(ksProjectsDir);
+					}
+					else
+					{
+						registryKey.SetValue(ksProjectsDir, value);
+					}
 				}
 			}
 		}

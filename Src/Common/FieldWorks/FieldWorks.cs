@@ -299,6 +299,15 @@ namespace SIL.FieldWorks
 
 				if (!SetUICulture(appArgs))
 					return 0; // Error occurred and user chose not to continue.
+				if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine == null)
+				{
+					// See LT-14461. Some users have managed to get their computers into a state where
+					// HKML registry entries can't even be read. We don't know how this is possible.
+					// This is so far the best we can do.
+					var expected = "HKEY_LOCAL_MACHINE/Software/SIL/FieldWorks/" + FwRegistryHelper.FieldWorksRegistryKeyName;
+					MessageBoxUtils.Show(string.Format(Properties.Resources.ksHklmProblem, expected), Properties.Resources.ksHklmCaption);
+					return 0;
+				}
 
 				s_fwManager = new FieldWorksManager();
 

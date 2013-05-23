@@ -190,7 +190,7 @@ display/printout!
 	<xsl:apply-templates/>
   </xsl:template>
 
-  <xsl:template match="LexEntryRefLink|LexEntryRefLink_OwningEntry|LexSense_ComplexFormEntryBackRefs|LexEntryRef_OwningEntry|LexEntryRefLink_NonTrivialEntryRoots">
+  <xsl:template match="LexEntryRefLink|LexEntryRefLink_OwningEntry|LexSense_ComplexFormEntryBackRefs|LexEntryRef_OwningEntry|LexEntryRefLink_NonTrivialEntryRoots|LexEntryInflTypeLink">
 	  <xsl:apply-templates/>
   </xsl:template>
 

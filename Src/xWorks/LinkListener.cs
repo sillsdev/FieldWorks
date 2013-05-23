@@ -8,9 +8,9 @@ using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using XCore;
-using SIL.FieldWorks.Common.Framework;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -530,8 +530,8 @@ namespace SIL.FieldWorks.XWorks
 					{
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)
-						string sGuid = (string)m_mediator.PropertyTable.GetValue("ReversalIndexGuid");
-						if (!sGuid.Equals(obj.Owner.Guid.ToString()))
+						var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+						if (!guid.Equals(obj.Owner.Guid))
 							m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", obj.Owner.Guid.ToString());
 					}
 					// Allow this to happen after the processing of the tool change above by using the Broadcast

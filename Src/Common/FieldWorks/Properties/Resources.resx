@@ -316,4 +316,15 @@ Continue using English as the user interface language?</value>
   <data name="Info" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ksHklmCaption" xml:space="preserve">
+    <value>FieldWorks can't run</value>
+  </data>
+  <data name="ksHklmProblem" xml:space="preserve">
+    <value>FieldWorks is unable to start because some necessary Registry keys are missing or inaccessible. There should be a registry entry {0}.
+
+We have sometimes seen cases where installing other software leaves the machine in a state where non-administrators cannot access these registry entries. If this is your problem, there is a possible workaround. Try a right click on the icon that you use to start FieldWorks and choose the option 'Run as Administrator' from the context menu. See whether that helps. It may be that it is now necessary for you to use that option every time you start FLEx.
+
+We don't know why this happens. If you have any idea what recently changed on your computer to cause it, please pass this on to the developers.</value>
+    <comment>This message should never be seen. Some users however have gotten into a weird state we don't understand where they have to run-as-administrator in order to access required local-machine keys.</comment>
+  </data>
 </root>

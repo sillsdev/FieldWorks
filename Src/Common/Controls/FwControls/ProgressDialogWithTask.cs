@@ -99,7 +99,6 @@ namespace SIL.FieldWorks.Common.Controls
 			m_synchInvoke = synchInvoke;
 			m_progressDialog = progress;
 			InitOnOwnerThread(owner);
-			m_progressDialog.Form.Shown += m_progressDialog_Shown;
 			m_progressDialog.Canceling += m_progressDialog_Canceling;
 			m_progressDialog.Form.FormClosing += m_progressDialog_FormClosing;
 			m_worker.DoWork += RunBackgroundTask;
@@ -118,7 +117,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 			m_worker = new BackgroundWorker { WorkerSupportsCancellation = true };
 			if (m_progressDialog == null)
-				m_progressDialog = new ProgressDialogImpl(owner);
+			{
+				m_progressDialog = new ProgressDialogWithTaskDlgImpl(owner);
+			}
 
 			// This is the only way to force handle creation for a form that is not yet visible.
 			IntPtr handle = m_progressDialog.Form.Handle;
@@ -193,9 +194,9 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (m_progressDialog != null)
 				{
-					m_progressDialog.Form.Shown -= m_progressDialog_Shown;
 					m_progressDialog.Canceling -= m_progressDialog_Canceling;
 					m_progressDialog.Form.FormClosing -= m_progressDialog_FormClosing;
+					RemoveStartListener();
 					if (m_fCreatedProgressDlg)
 						m_progressDialog.Form.DisposeOnGuiThread();
 				}
@@ -622,10 +623,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_progressDialog.Form.TopMost = true;
 			}
 
-			if (m_synchInvoke.InvokeRequired)
-				m_synchInvoke.Invoke((Func<IWin32Window, DialogResult>)m_progressDialog.Form.ShowDialog, new object[] {owner});
-			else
-				m_progressDialog.Form.ShowDialog(owner);
+			LaunchDialogAndTask(owner);
 
 			if (m_Exception != null)
 			{
@@ -634,6 +632,74 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return m_RetValue;
 		}
+
+		private void LaunchDialogAndTask(IWin32Window owner)
+		{
+			AddStartListener();
+			var progressDlg = m_progressDialog as ProgressDialogWithTaskDlgImpl;
+			if (progressDlg != null)
+			{
+				if (m_synchInvoke.InvokeRequired)
+				{
+					m_synchInvoke.Invoke((Func<IWin32Window, DialogResult>)progressDlg.LaunchDialogAndStartTask,
+						new object[] { owner });
+				}
+				else
+				{
+					progressDlg.LaunchDialogAndStartTask(owner);
+				}
+			}
+			else
+			{
+				if (m_synchInvoke.InvokeRequired)
+				{
+					m_synchInvoke.Invoke((Func<IWin32Window, DialogResult>)m_progressDialog.Form.ShowDialog,
+						new object[] { owner });
+				}
+				else
+				{
+					m_progressDialog.Form.ShowDialog(owner);
+				}
+			}
+		}
+
+		private void AddStartListener()
+		{
+			var progressDlg = m_progressDialog as ProgressDialogWithTaskDlgImpl;
+			if (progressDlg != null)
+			{
+				((ProgressDialogWithTaskDlgImpl)m_progressDialog).Start += DialogShown;
+			}
+			else
+			{
+				m_progressDialog.Form.Shown += DialogShown;
+			}
+		}
+
+		private void RemoveStartListener()
+		{
+			var progressDlg = m_progressDialog as ProgressDialogWithTaskDlgImpl;
+			if (progressDlg != null)
+			{
+				((ProgressDialogWithTaskDlgImpl)m_progressDialog).Start -= DialogShown;
+			}
+			else
+			{
+				m_progressDialog.Form.Shown -= DialogShown;
+			}
+		}
+
+		private void DialogShown(object sender, EventArgs e)
+		{
+			DialogShown();
+		}
+
+		private void DialogShown()
+		{
+			m_worker.RunWorkerAsync();
+			RemoveStartListener();
+		}
+
 		#endregion
 
 		// I made this region to hold methods that perform particular tasks involving wrapping this dialog around
@@ -681,18 +747,6 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion
 
 		#region Misc protected/private methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when progress dialog starts to show. We can now start our background task.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the
-		/// event data.</param>
-		/// ------------------------------------------------------------------------------------
-		private void m_progressDialog_Shown(object sender, EventArgs e)
-		{
-			m_worker.RunWorkerAsync();
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -764,6 +818,57 @@ namespace SIL.FieldWorks.Common.Controls
 				m_progressDialog.Form.Close();
 		}
 		#endregion
+	}
+
+	internal class ProgressDialogWithTaskDlgImpl : ProgressDialogImpl
+	{
+		internal delegate void StartTask();
+		/// <summary>
+		/// This event will be triggered either by the showing of the dialog or a timer.
+		/// </summary>
+		public event StartTask Start = delegate {  };
+		private System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer();
+		public ProgressDialogWithTaskDlgImpl(Form owner) : base(owner)
+		{
+			_timer.Interval = 50;
+			_timer.Tick += timer_Tick;
+		}
+
+		/// <summary>
+		/// It used to be that the Shown event of ProgressDialogImpl was used to trigger the start of the task.
+		/// This proved unreliable. This timer is a backup for cases where OnShown doesn't happen due to exceptions
+		/// being thrown during the dialogs inital message pumping.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void timer_Tick(object sender, EventArgs e)
+		{
+			Start(); //Alert any listeners that we have started.
+			_timer.Stop();
+		}
+
+		/// <summary>
+		/// Kicks off a timer to send the Start event to any listeners and show the progress dialog
+		/// </summary>
+		/// <param name="owner"></param>
+		/// <returns></returns>
+		public DialogResult LaunchDialogAndStartTask(IWin32Window owner)
+		{
+			_timer.Start();
+			return ShowDialog(owner);
+		}
+
+		/// <summary>
+		/// Override to remove timer in the normal case where it is unnecessary.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnShown(EventArgs e)
+		{
+			base.OnShown(e);
+			_timer.Tick -= timer_Tick;
+			_timer.Stop();
+			Start();
+		}
 	}
 
 	#region CancelException Class

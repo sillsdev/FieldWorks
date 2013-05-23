@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languageproject version="7000051">
+
+	<rt class="LexEntry" guid="64cf9708-a7d4-4e1e-a403-deec87c34455">
+		<Senses>
+			<objsur guid="3110cf83-ad6c-47fe-91f8-8bf789473792" t="o" />
+		</Senses>
+		<LexemeForm>
+			<objsur guid="088acc75-a0ef-4020-be47-2cbef3bccca8" t="o" />
+		</LexemeForm>
+	</rt>
+
+	<rt class="LexSense" guid="3110cf83-ad6c-47fe-91f8-8bf789473792" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455">
+		<MorphoSyntaxAnalysis>
+			<objsur guid="aaaaaaaa-e15a-448e-a618-3855f93bd3c2" t="r" /> <!-- dangler -->
+		</MorphoSyntaxAnalysis>
+	</rt>
+
+	<rt class="MoStemAllomorph" guid="088acc75-a0ef-4020-be47-2cbef3bccca8" ownerguid="64cf9708-a7d4-4e1e-a403-deec87c34455" />
+
+	<rt class="WfiWordform" guid ="31c5a1c0-270e-4edf-9406-4ed445bd27c4">
+		<Analyses>
+			<objsur guid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d" type="o"/>
+		</Analyses>
+	</rt>
+	<rt class="WfiAnalysis" guid ="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d" ownerguid="31c5a1c0-270e-4edf-9406-4ed445bd27c4">
+		<MorphBundles>
+			<objsur guid="10f3db1e-33db-4d9d-9a06-e0a8e1ed8a92" type="o"/>
+		</MorphBundles>
+	</rt>
+	<rt class="WfiMorphBundle" guid ="10f3db1e-33db-4d9d-9a06-e0a8e1ed8a92" ownerguid="16827d7a-cf4e-45f8-aaa1-66cef5c2cc4d">
+		<Msa>
+			<objsur guid="aaaaaaaa-e15a-448e-a618-3855f93bd3c2" t="r" /> <!-- dangler, not repairable by msa of sense, since it has the same dangler -->
+		</Msa>
+		<Sense>
+			<objsur guid="3110cf83-ad6c-47fe-91f8-8bf789473792" t="r" />
+		</Sense>
+	</rt>
+
+</languageproject>

@@ -29,8 +29,6 @@
 	<!-- ********************************************************** -->
 	<commands>
 		<command id="CmdChooseLangProject" label="_Open..." message="ChooseLangProject" icon="OpenProject" shortcut="Ctrl+O"/>
-		<command id="CmdSave" label="_Save" message="SaveLangProject" icon="SaveProject" shortcut="Ctrl+S"/>
-
 		<!-- Send/Receive commands. See "ContextHelp.xml" file for corresponding tooltips. -->
 		<command id="CmdFLExBridge" label="_Project (with other FLEx users)..." icon="syncSendReceive" message="FLExBridge" />
 		<command id="CmdViewMessages" label="_View Project Messages..." message="ViewMessages" />
@@ -448,7 +446,6 @@
 			<item command="CmdNewLangProject"/>
 			<item command="CmdChooseLangProject"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdSave"/>
 			<menu id="ProjectManagement" label="Project _Management">
 				<item command="CmdProjectProperties"/>
 				<item command="CmdBackup"/>
@@ -871,7 +868,6 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 			<item command="CmdHistoryBack"/>
 			<item command="CmdHistoryForward"/>
 			<item label="-" translate="do not translate"/>
-			<item command="CmdSave"/>
 			<item command="CmdDeleteRecord"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdUndo"/>

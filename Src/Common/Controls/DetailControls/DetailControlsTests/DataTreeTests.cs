@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-
+using System.Xml;
 using NUnit.Framework;
 
 using SIL.CoreImpl;
@@ -220,6 +220,25 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_dtree.ShowObject(m_entry, "Nested-Collapsed", null, m_entry, false);
 			Assert.AreEqual(1, m_dtree.Controls.Count);
 			Assert.AreEqual("Header", (m_dtree.Controls[0] as Slice).Label);
+		}
+
+		[Test]
+		public void GetGuidForJumpToTool_UsesRootObject_WhenNoCurrentSlice()
+		{
+			m_dtree.Initialize(Cache, false, m_layouts, m_parts);
+			m_dtree.ShowObject(m_entry, "OptSensesEty", null, m_entry, false);
+			Assert.That(m_dtree.CurrentSlice == null, "may be OK to automatically select a slice...but this test will need rewriting");
+			var doc = new XmlDocument();
+			doc.LoadXml(
+			@"<command id='CmdRootEntryJumpToConcordance' label='Show Entry in Concordance' message='JumpToTool'>
+				<parameters tool='concordance' className='LexEntry'/>
+			</command>");
+			using (var cmd = new Command(null, doc.DocumentElement))
+			{
+				string tool;
+				var guid = m_dtree.GetGuidForJumpToTool(cmd, true, out tool);
+				Assert.That(guid, Is.EqualTo(m_dtree.Root.Guid));
+			}
 		}
 
 		/// <summary></summary>

@@ -124,9 +124,9 @@ namespace SIL.FieldWorks.FixData
 				return; // msa is not dangling.
 			var senseGuid = ChildSurrogateGuid(rt, "Sense");
 			string senseMsaGuid;
-			if (senseGuid != null && m_senseToMsa.TryGetValue(senseGuid, out senseMsaGuid))
+			if (senseGuid != null && m_senseToMsa.TryGetValue(senseGuid, out senseMsaGuid) && m_guids.Contains(new Guid(senseMsaGuid)))
 			{
-				// We can repair it to match the sense's msa, an ideal repair.
+				// We can repair it to match the sense's msa, an ideal repair, since we checked the sense's msa IS valid.
 				objsur.SetAttributeValue("guid", senseMsaGuid);
 				logger(guidString, DateTime.Now.ToShortDateString(),
 					String.Format(Strings.ksRepairingMorphBundleFromSense, guidString));

@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
+using Utils.MessageBoxExLib;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -2521,7 +2522,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						bldr.AppendFormat("{0}\t\t:\t{1}{2}", missingRefPair.Item1, missingRefPair.Item2, Environment.NewLine);
 					}
 					bldr.AppendLine();
-					MessageBox.Show(bldr.ToString(), LexTextControls.ksProblemImporting,
+					MessageBoxUtils.Show(bldr.ToString(), LexTextControls.ksProblemImporting,
 									MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
@@ -2743,7 +2744,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (pend.IsPrimary || pend.RelationType == "main")
 						primaryLexemes.Add(pend.Target);
 				}
-				else
+				else if (!string.IsNullOrEmpty(pend.TargetId))
 					// pend.Target == null
 					//If there is a partial LIFT export "Filtered Lexicon LIFT 0.13 XML" we can encounter a LexEntryRef that has a null target.
 					//For example if the word 'unbelieving' has Components un- believe -ing then these three components will be included
@@ -2753,13 +2754,15 @@ namespace SIL.FieldWorks.LexText.Controls
 					//Therefore they are removed from this lexEntry on importing the LIFT file.
 					//We should however warn the user that this data is not being imported and that they should do a FULL export to ensure this data
 					//is imported correctly.
+					// One exception: a LexEntryRef with NO components is exported as a relation with an EMPTY ref attribute.
+					// This is not a problem, it just represents incomplete original data.
 				{
 					var form = "<empty form>";
 					if (rgRefs[0].LexemeForm != null)
 					{
 						form = XmlUtils.DecodeXml(rgRefs[0].LexemeForm.FirstValue.Value.Text);
 					}
-					missingRefs.Add(new Tuple<string, string>(form, pend.TargetId ?? "<empty target>"));
+					missingRefs.Add(new Tuple<string, string>(form, pend.TargetId));
 				}
 			}
 			if (complexEntryTypes.Count == 0 && variantEntryTypes.Count == 0 && rgRefs[0].RelationType == "BaseForm" && componentLexemes.Count == 1

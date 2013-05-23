@@ -86,8 +86,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				DialogResult result = dlg.ShowDialog(parentSlice.FindForm());
 				if (result == DialogResult.OK)
 				{
-					if (dlg.FS != null)
-						m_obj = dlg.FS;
+					// Note that this may set m_obj to null. dlg.FS will be null if all inflection features have been
+					// removed. That is a valid state for this slice; m_obj deleted is not.
+					m_obj = dlg.FS;
 					m_msaInflectionFeatureListDlgLauncherView.Init(m_mediator, dlg.FS);
 				}
 				else if (result == DialogResult.Yes)

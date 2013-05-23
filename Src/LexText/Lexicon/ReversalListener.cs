@@ -404,43 +404,43 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void ChangeOwningObjectIfPossible()
 		{
-			string stringGuid = m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
-			if (stringGuid != null)
+			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+			try
 			{
-				try
-				{
-					Guid newGuid = new Guid(stringGuid);
-					ChangeOwningObject(newGuid);
-				}
-				catch
-				{
-					// Can't change an owner if we have a bad guid.
-				}
+				ChangeOwningObject(newGuid);
+			}
+			catch
+			{
+				// Can't change an owner if we have a bad guid.
 			}
 		}
 
 		private void ChangeOwningObject(Guid newGuid)
 		{
-			if (newGuid != Guid.Empty )
+			if (newGuid.Equals(Guid.Empty))
 			{
-				var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
-				if (ri == null)
-				{
-					return;
-				}
-				ResetListSorter(ri);
+				// We need to find another reversal index. Any will do.
+				newGuid = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
+				m_mediator.PropertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString());
+			}
 
-				var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
-				m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName);
+			var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
+			if (ri == null)
+			{
+				return;
+			}
+			ResetListSorter(ri);
 
-				ICmObject newOwningObj = NewOwningObject(ri);
-				if (newOwningObj != OwningObject)
-				{
-					OwningObject = newOwningObj;
-					m_mediator.PropertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
-					m_mediator.PropertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
-					m_mediator.SendMessage("ClerkOwningObjChanged", this);
-				}
+			var layoutName = String.Format("publishReversal-{0}", ri.WritingSystem);
+			m_mediator.PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName);
+
+			ICmObject newOwningObj = NewOwningObject(ri);
+			if (newOwningObj != OwningObject)
+			{
+				OwningObject = newOwningObj;
+				m_mediator.PropertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
+				m_mediator.PropertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
+				m_mediator.SendMessage("ClerkOwningObjChanged", this);
 			}
 		}
 
@@ -617,8 +617,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (newGuid != Guid.Empty)
 			{
 				ChangeOwningObject(newGuid);
-				string sGuid = m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
-				if (sGuid == null || !sGuid.Equals(newGuid.ToString()))
+				var guid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+				if (guid.Equals(Guid.Empty) || !guid.Equals(newGuid))
 					SetReversalIndexGuid(newGuid);
 			}
 		}
@@ -678,18 +678,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			CheckDisposed();
 
-			string sGuid = m_mediator.PropertyTable.GetStringProperty("ReversalIndexGuid", null);
-			if (sGuid == null)
+			var oldGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_mediator, "ReversalIndexGuid");
+			if (oldGuid.Equals(Guid.Empty))
 				return;
-			Guid oldGuid;
-			try
-			{
-				oldGuid = new Guid(sGuid);
-			}
-			catch
-			{
-				return; // Can't delete an index if we have a bad guid.
-			}
+
 			if (Cache == null)
 				return;
 			IReversalIndex ri = (IReversalIndex)Cache.ServiceLocator.GetObject(oldGuid);

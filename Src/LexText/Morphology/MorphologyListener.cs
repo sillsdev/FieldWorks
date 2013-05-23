@@ -279,11 +279,22 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CheckDisposed();
 
 			display.Enabled = display.Visible = Cache != null;
-			bool checking = SpellingHelper.DictionaryExists(Cache.DefaultVernWs, Cache.LanguageWritingSystemFactoryAccessor);
-			// Make sure the property value is consistent. It can get off, e.g., if the value FLEx remembers from its
-			// last run is not consistent with what TE stored in the database.
-			m_mediator.PropertyTable.SetProperty("UseVernSpellingDictionary", checking);
-			display.Checked = checking;
+			if (Cache == null)
+				return true;
+			var dictionaryExists = SpellingHelper.DictionaryExists(Cache.DefaultVernWs, Cache.LanguageWritingSystemFactoryAccessor);
+			if (!dictionaryExists)
+			{
+				//If the dictionary does not exist then do not display the menu item and also set
+				//the value appropriately in the property table
+				m_mediator.PropertyTable.SetProperty("UseVernSpellingDictionary", false);
+				m_mediator.PropertyTable.SetPropertyPersistence("UseVernSpellingDictionary", true);
+				display.Enabled = display.Visible = false;
+				display.Checked = false;
+			}
+			else
+			{
+				display.Checked = IsVernacularSpellingEnabled();
+			}
 			return true; //we've handled this
 		}
 
@@ -295,6 +306,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
 			m_mediator.PropertyTable.SetProperty("UseVernSpellingDictionary", checking);
+			m_mediator.PropertyTable.SetPropertyPersistence("UseVernSpellingDictionary", true);
 			RestartSpellChecking();
 			return true;
 		}

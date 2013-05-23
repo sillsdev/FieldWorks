@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -127,6 +128,9 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		StyleInfoTable m_styleTable;
+		// The keys in these three dictionaries are VALID CSS class names, that is, typically the output
+		// of calling GetValidCssClassName. (This is not necessary with fixed strings known not to contain
+		// illegal characters).
 		SortedDictionary<string, List<string>> m_dictClassData = new SortedDictionary<string, List<string>>();
 		SortedDictionary<string, XmlNode> m_mapCssClassToXnode = new SortedDictionary<string, XmlNode>();
 		SortedDictionary<string, List<string>> m_mapCssToStyleEnv = new SortedDictionary<string, List<string>>();
@@ -160,6 +164,11 @@ namespace SIL.FieldWorks.Common.Framework
 			m_fRTL = ws.RightToLeftScript;
 		}
 
+		// Test-only
+		internal XhtmlHelper()
+		{
+		}
+
 		/// <summary>
 		///
 		/// </summary>
@@ -167,7 +176,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="node"></param>
 		public void MapCssClassToXmlNode(string cssClass, XmlNode node)
 		{
-			m_mapCssClassToXnode.Add(cssClass, node);
+			m_mapCssClassToXnode.Add(GetValidCssClassName(cssClass), node);
 		}
 
 		/// <summary>
@@ -178,7 +187,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <returns></returns>
 		public bool TryGetNodeFromCssClass(string cssClass, out XmlNode node)
 		{
-			return m_mapCssClassToXnode.TryGetValue(cssClass, out node);
+			return m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(cssClass), out node);
 		}
 
 		/// <summary>
@@ -210,7 +219,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="rgsLangs"></param>
 		public void MapCssToLangs(string cssClass, List<string> rgsLangs)
 		{
-			m_dictClassData.Add(cssClass, rgsLangs);
+			m_dictClassData.Add(GetValidCssClassName(cssClass), rgsLangs);
 		}
 
 		/// <summary>
@@ -222,11 +231,13 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="sLang"></param>
 		public void MapCssToLang(string cssClass, string sLang)
 		{
+			var key = GetValidCssClassName(cssClass);
+
 			List<string> rgsLangs;
-			if (!m_dictClassData.TryGetValue(cssClass, out rgsLangs))
+			if (!m_dictClassData.TryGetValue(key, out rgsLangs))
 			{
 				rgsLangs = new List<string>();
-				m_dictClassData.Add(cssClass, rgsLangs);
+				m_dictClassData.Add(key, rgsLangs);
 			}
 			if (!rgsLangs.Contains(sLang))
 				rgsLangs.Add(sLang);
@@ -240,7 +251,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <returns>true if value was found, false otherwise</returns>
 		public bool TryGetLangsFromCss(string cssClass, out List<string> rgsLangs)
 		{
-			return m_dictClassData.TryGetValue(cssClass, out rgsLangs);
+			return m_dictClassData.TryGetValue(GetValidCssClassName(cssClass), out rgsLangs);
 		}
 
 		/// <summary>
@@ -697,6 +708,11 @@ namespace SIL.FieldWorks.Common.Framework
 		private Dictionary<string, string> m_mapCssClassToFwStyle = new Dictionary<string, string>();
 		/// <summary>
 		/// Convert a FieldWorks Style name into a valid CSS class name.
+		/// This is also used for other names that need to be valid CSS classes, such as internal names that might
+		/// be modified by adding #ClassN, since # is an invalid character that breaks browser behavior.
+		/// When in doubt, if you want a safe class name, call it. It never modifies a class name that it outputs, so
+		/// repeated applications are harmless. They are also fairly fast, because previously-seen inputs
+		/// are remembered.
 		/// </summary>
 		public string GetValidCssClassName(string sFwStyle)
 		{
@@ -728,23 +744,19 @@ namespace SIL.FieldWorks.Common.Framework
 					ch32 = ch1;
 					sChar = ch1.ToString();
 				}
-				if (ch32 != '_' && !Icu.IsAlphabetic(ch32) && !Icu.IsNumeric(ch32) && !Icu.IsDiacritic(ch32))
+				if (ch32 != '_'  && ch32 != '-' && !Icu.IsAlphabetic(ch32) && !Icu.IsNumeric(ch32) && !Icu.IsDiacritic(ch32))
 				{
 					string sCharName;
-					if (ch32 == '-')
-					{
-						sCssClassName = sCssClassName.Replace(sChar, "HYPHEN");
-					}
-					else
-					{
-						Icu.UErrorCode error = Icu.UErrorCode.U_ZERO_ERROR;
-						Icu.u_CharName(ch32, Icu.UCharNameChoice.U_UNICODE_CHAR_NAME, out sCharName, out error);
-						sCharName = sCharName.Replace('-', '_');
-						sCharName = sCharName.Replace(' ', '_');
-						sCssClassName = sCssClassName.Replace(sChar, sCharName);
-					}
+					Icu.UErrorCode error = Icu.UErrorCode.U_ZERO_ERROR;
+					Icu.u_CharName(ch32, Icu.UCharNameChoice.U_UNICODE_CHAR_NAME, out sCharName, out error);
+					sCharName = sCharName.Replace('-', '_');
+					sCharName = sCharName.Replace(' ', '_');
+					sCssClassName = sCssClassName.Replace(sChar, sCharName);
 				}
 			}
+			var validStarts = new Regex("^[a-zA-Z]"); // standard allows _, -, but these are reserved for browser specials and have other conditions.
+			if (!validStarts.IsMatch(sCssClassName))
+				sCssClassName = 'X' + sCssClassName;
 			m_mapFwStyleToCssClass.Add(sFwStyle, sCssClassName);
 			string sOldStyle;
 			if (!m_mapCssClassToFwStyle.TryGetValue(sCssClassName, out sOldStyle))
@@ -1299,7 +1311,7 @@ namespace SIL.FieldWorks.Common.Framework
 				// how to do this.
 				var props = vss.GetStyleRgch(sty.Name.Length, sty.Name);
 				var exportStyleInfo = new ExportStyleInfo(sty, props);
-				m_styleTable.Add(sty.Name, exportStyleInfo);
+				m_styleTable.Add(GetValidCssClassName(sty.Name), exportStyleInfo);
 			}
 		}
 
@@ -1307,13 +1319,13 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			XmlNode xn;
 			string sBaseClass;
-			if (!m_mapCssClassToXnode.TryGetValue(sClass, out xn))
+			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out xn))
 			{
 				int idx = sClass.IndexOf("_L", StringComparison.Ordinal);
 				if (idx <= 0)
 					return;
 				sBaseClass = sClass.Substring(0, idx);
-				if (!m_mapCssClassToXnode.TryGetValue(sBaseClass, out xn))
+				if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sBaseClass), out xn))
 					return;
 			}
 			else
@@ -1329,7 +1341,7 @@ namespace SIL.FieldWorks.Common.Framework
 			int ws = 0;
 			List<string> rgsLangs;
 			string sLang = null;
-			if (m_dictClassData.TryGetValue(sClass, out rgsLangs) && rgsLangs.Count > 0)
+			if (m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs) && rgsLangs.Count > 0)
 			{
 				sLang = rgsLangs[0];
 				ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sLang);
@@ -1419,7 +1431,7 @@ namespace SIL.FieldWorks.Common.Framework
 				if (!String.IsNullOrEmpty(parastyle))
 				{
 					BaseStyleInfo bsi;
-					if (m_styleTable.TryGetValue(parastyle, out bsi))
+					if (m_styleTable.TryGetValue(GetValidCssClassName(parastyle), out bsi))
 					{
 						var esi = bsi as ExportStyleInfo;
 						if (esi != null)
@@ -1479,7 +1491,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private void WriteParaBulletInfoToCss(string sStyle, string sClass, string sCounter)
 		{
 			BaseStyleInfo bsi;
-			if (!m_styleTable.TryGetValue(sStyle, out bsi))
+			if (!m_styleTable.TryGetValue(GetValidCssClassName(sStyle), out bsi))
 				return;
 			if (bsi.IsCharacterStyle)
 				return;
@@ -1541,7 +1553,7 @@ namespace SIL.FieldWorks.Common.Framework
 		private ExportStyleInfo WriteFontInfoToCss(int ws, string sStyle, string sCss)
 		{
 			BaseStyleInfo bsi = null;
-			if (m_styleTable.TryGetValue(sStyle, out bsi))
+			if (m_styleTable.TryGetValue(GetValidCssClassName(sStyle), out bsi))
 			{
 				ExportStyleInfo esi = bsi as ExportStyleInfo;
 				if (!WriteFontAttr(ws, "font-family", esi, sCss, true) && ws != -1)
@@ -1712,7 +1724,7 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				string sBaseStyle = esi.InheritsFrom;
 				BaseStyleInfo bsiBase;
-				if (!String.IsNullOrEmpty(sBaseStyle) && m_styleTable.TryGetValue(sBaseStyle, out bsiBase))
+				if (!String.IsNullOrEmpty(sBaseStyle) && m_styleTable.TryGetValue(GetValidCssClassName(sBaseStyle), out bsiBase))
 				{
 					if (WriteFontAttr(ws, sAttr, bsiBase as ExportStyleInfo, sCss, false))
 						return true;
@@ -1725,7 +1737,7 @@ namespace SIL.FieldWorks.Common.Framework
 						foreach (string sParaStyle in rgsStyles)
 						{
 							BaseStyleInfo bsiPara;
-							if (m_styleTable.TryGetValue(sParaStyle, out bsiPara) &&
+							if (m_styleTable.TryGetValue(GetValidCssClassName(sParaStyle), out bsiPara) &&
 								WriteFontAttr(ws, sAttr, bsiPara as ExportStyleInfo, null, false))
 							{
 								return true;
@@ -1944,13 +1956,13 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			XmlNode xn;
 			string sBaseClass;
-			if (!m_mapCssClassToXnode.TryGetValue(sClass, out xn))
+			if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sClass), out xn))
 			{
 				int idx = sClass.IndexOf("_L", StringComparison.Ordinal);
 				if (idx <= 0)
 					return;
 				sBaseClass = sClass.Substring(0, idx);
-				if (!m_mapCssClassToXnode.TryGetValue(sBaseClass, out xn))
+				if (!m_mapCssClassToXnode.TryGetValue(GetValidCssClassName(sBaseClass), out xn))
 					return;
 			}
 			else
@@ -1964,7 +1976,7 @@ namespace SIL.FieldWorks.Common.Framework
 			int ws = 0;
 			List<string> rgsLangs;
 			string sLang = null;
-			if (m_dictClassData.TryGetValue(sClass, out rgsLangs) && rgsLangs.Count > 0)
+			if (m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs) && rgsLangs.Count > 0)
 			{
 				sLang = rgsLangs[0];
 				ws = m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(sLang);
@@ -2157,7 +2169,7 @@ namespace SIL.FieldWorks.Common.Framework
 									}
 								}
 								List<string> rgsLangs;
-								if (!m_dictClassData.TryGetValue(sClass, out rgsLangs))
+								if (!m_dictClassData.TryGetValue(GetValidCssClassName(sClass), out rgsLangs))
 								{
 									// Many TE styles have spaces in their names, which are
 									// replaced by underscores.  Try finding the original name
@@ -2165,7 +2177,7 @@ namespace SIL.FieldWorks.Common.Framework
 									string sFwStyle;
 									if (!m_mapCssClassToFwStyle.TryGetValue(sClass, out sFwStyle))
 										sFwStyle = sClass.Replace('_', ' ');		// just in case...
-									if (!m_dictClassData.TryGetValue(sFwStyle, out rgsLangs))
+									if (!m_dictClassData.TryGetValue(GetValidCssClassName(sFwStyle), out rgsLangs))
 									{
 										string before = ExtractText(sLine, idxLim, " before", "\"");
 										string after = ExtractText(sLine, idxLim, " after", "\"");
@@ -2175,19 +2187,19 @@ namespace SIL.FieldWorks.Common.Framework
 											{
 												List<string> rgsBefores = new List<string>();
 												rgsBefores.Add(before); // sorry, literal text not a language
-												m_dictClassData.Add(sClass, rgsBefores);
+												MapCssToLangs(sClass, rgsBefores);
 											}
 											if (!String.IsNullOrEmpty(after))
 											{
 												List<string> rgsAfters = new List<string>();
 												rgsAfters.Add(after); // sorry, literal text not a language
-												m_dictClassData.Add(sClass, rgsAfters);
+												MapCssToLangs(sClass, rgsAfters);
 											}
 										}
 										else
 										{
 											rgsLangs = new List<string>();
-											m_dictClassData.Add(sClass, rgsLangs);
+											MapCssToLangs(sClass, rgsLangs);
 										}
 									}
 								}

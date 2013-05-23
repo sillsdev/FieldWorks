@@ -435,12 +435,6 @@
     <Compile Include="RegexHelperMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="WarningForSendReceiveLinkedFiles.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WarningForSendReceiveLinkedFiles.designer.cs">
-      <DependentUpon>WarningForSendReceiveLinkedFiles.cs</DependentUpon>
-    </Compile>
     <Compile Include="UtilityDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -610,9 +604,6 @@
     <EmbeddedResource Include="RealSplashScreen.resx">
       <DependentUpon>RealSplashScreen.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WarningForSendReceiveLinkedFiles.resx">
-      <DependentUpon>WarningForSendReceiveLinkedFiles.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UtilityDlg.resx">
       <DependentUpon>UtilityDlg.cs</DependentUpon>

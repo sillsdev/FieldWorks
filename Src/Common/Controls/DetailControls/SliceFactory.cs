@@ -23,6 +23,7 @@ using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
+using SIL.FieldWorks.FdoUi;
 using SIL.Utils;
 using SIL.FieldWorks.Common.Controls;
 using XCore;
@@ -62,12 +63,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						ws = wsContainer.DefaultPronunciationWritingSystem.Handle;
 						break;
 					case "reversal":
-						string sGuid = (string)mediator.PropertyTable.GetValue("ReversalIndexGuid", null);
-						if (sGuid != null)
+						var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(mediator, "ReversalIndexGuid");
+						if (!riGuid.Equals(Guid.Empty))
 						{
 							try
 							{
-								Guid riGuid = new Guid(sGuid);
 								IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
 								ws = cache.ServiceLocator.WritingSystemManager.GetWsFromStr(ri.WritingSystem);
 							}
