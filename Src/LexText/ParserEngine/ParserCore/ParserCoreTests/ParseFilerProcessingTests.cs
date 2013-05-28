@@ -52,11 +52,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		#region Non-test methods
 
-		protected ICmAgent AnalyzingAgent
+		protected ICmAgent ParserAgent
 		{
 			get
 			{
 				return Cache.LanguageProject.DefaultParserAgent;
+			}
+		}
+
+		protected ICmAgent HumanAgent
+		{
+			get
+			{
+				return Cache.LanguageProject.DefaultUserAgent;
 			}
 		}
 
@@ -333,7 +341,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void DuplicateAnalysesApproval()
 		{
 			var pigsTEST = CheckAnalysisSize("pigsTEST", 0, true);
-			var ldb = Cache.LanguageProject.LexDbOA;
 
 			string xmlFragment = null;
 			IWfiAnalysis anal1 = null, anal2 = null, anal3 = null;
@@ -398,6 +405,108 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckEvaluationSize(anal1, 1, false, "anal1Hvo");
 			Assert.IsFalse(anal2.IsValidObject, "analysis 2 should end up with no evaluations and so be deleted");
 			CheckEvaluationSize(anal3, 1, false, "anal3Hvo");
+		}
+
+		[Test]
+		public void HumanApprovedParserPreviouslyApprovedButNowRejectedAnalysisSurvives()
+		{
+			var theThreeLittlePigsTEST = CheckAnalysisSize("theThreeLittlePigsTEST", 0, true);
+
+			string xmlFragment = null;
+			IWfiAnalysis anal = null;
+			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
+			{
+				// Pig entry
+				var pigN = m_entryFactory.Create();
+				var pigNForm = m_stemAlloFactory.Create();
+				pigN.AlternateFormsOS.Add(pigNForm);
+				pigNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("pigNTEST", m_vernacularWS.Handle);
+				var pigNMSA = m_stemMsaFactory.Create();
+				pigN.MorphoSyntaxAnalysesOC.Add(pigNMSA);
+				var pigNLS = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				pigN.SensesOS.Add(pigNLS);
+
+				// Human approved anal. Start with parser approved, but then it failed.
+				var analFactory = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
+				var mbFactory = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
+				// Only analysis: human approved, previously parser approved but no longer produced.
+				anal = analFactory.Create();
+				theThreeLittlePigsTEST.AnalysesOC.Add(anal);
+				var mb = mbFactory.Create();
+				anal.MorphBundlesOS.Add(mb);
+				mb.MorphRA = pigNForm;
+				mb.MsaRA = pigNMSA;
+				HumanAgent.SetEvaluation(anal, Opinions.approves);
+				ParserAgent.SetEvaluation(anal, Opinions.approves);
+				CheckEvaluationSize(anal, 2, true, "anal");
+				CheckAnalysisSize("theThreeLittlePigsTEST", 1, true);
+
+				xmlFragment = "<Wordform DbRef='" + theThreeLittlePigsTEST.Hvo + "' Form='theThreeLittlePigsTEST'>" + Environment.NewLine
+									 + "</Wordform>" + Environment.NewLine;
+			});
+
+			using (var idleQueue = new IdleQueue())
+			using (var filer = new ParseFiler(Cache, task => { }, idleQueue, ParserAgent))
+			{
+				idleQueue.IsPaused = true;
+				filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+				foreach (var task in idleQueue)
+					task.Delegate(task.Parameter);
+				idleQueue.Clear();
+			}
+			CheckEvaluationSize(anal, 1, false, "analHvo");
+			Assert.IsTrue(anal.IsValidObject, "analysis should end up with one evaluation and not be deleted");
+		}
+
+		[Test]
+		public void HumanHasNoopinionParserHadApprovedButNoLongerApprovesRemovesAnalisys()
+		{
+			var threeLittlePigsTEST = CheckAnalysisSize("threeLittlePigsTEST", 0, true);
+
+			string xmlFragment = null;
+			IWfiAnalysis anal = null;
+			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
+			{
+				// Pig entry
+				var pigN = m_entryFactory.Create();
+				var pigNForm = m_stemAlloFactory.Create();
+				pigN.AlternateFormsOS.Add(pigNForm);
+				pigNForm.Form.VernacularDefaultWritingSystem = Cache.TsStrFactory.MakeString("pigNTEST", m_vernacularWS.Handle);
+				var pigNMSA = m_stemMsaFactory.Create();
+				pigN.MorphoSyntaxAnalysesOC.Add(pigNMSA);
+				var pigNLS = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				pigN.SensesOS.Add(pigNLS);
+
+				// Human no-opinion anal. Parser had approved, but then it failed to produce it.
+				var analFactory = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>();
+				var mbFactory = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
+				// Human no-opinion anal. Parser had approved, but then it failed to produce it.
+				anal = analFactory.Create();
+				threeLittlePigsTEST.AnalysesOC.Add(anal);
+				var mb = mbFactory.Create();
+				anal.MorphBundlesOS.Add(mb);
+				mb.MorphRA = pigNForm;
+				mb.MsaRA = pigNMSA;
+				HumanAgent.SetEvaluation(anal, Opinions.noopinion);
+				ParserAgent.SetEvaluation(anal, Opinions.approves);
+				CheckEvaluationSize(anal, 1, true, "anal");
+				CheckAnalysisSize("threeLittlePigsTEST", 1, true);
+
+				xmlFragment = "<Wordform DbRef='" + threeLittlePigsTEST.Hvo + "' Form='pthreeLittlePigsTEST'>" + Environment.NewLine
+									 + "</Wordform>" + Environment.NewLine;
+			});
+
+			using (var idleQueue = new IdleQueue())
+			using (var filer = new ParseFiler(Cache, task => { }, idleQueue, ParserAgent))
+			{
+				idleQueue.IsPaused = true;
+				filer.ProcessParse(ParserPriority.Low, xmlFragment, 0);
+				foreach (var task in idleQueue)
+					task.Delegate(task.Parameter);
+				idleQueue.Clear();
+			}
+			//CheckEvaluationSize(anal, 0, false, "analHvo");
+			Assert.IsFalse(anal.IsValidObject, "analysis should end up with no evaluations and be deleted.");
 		}
 
 		[Test]
