@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 #if __MonoCS__
 					new XkbKeyboardAdaptor(), new IbusKeyboardAdaptor()
 #else
-					new WinKeyboardAdaptor()
+					new WinKeyboardAdaptor(), new KeymanKeyboardAdapter()
 #endif
 				});
 			}

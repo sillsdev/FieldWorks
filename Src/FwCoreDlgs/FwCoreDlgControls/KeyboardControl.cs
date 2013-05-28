@@ -185,70 +185,31 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			CheckDisposed();
 
 			m_keyboardComboBox.Items.Clear(); // Clear out any old items from combobox list
-			string strKbdName = m_ws.Keyboard ?? FwCoreDlgControls.kstid_None;
+			var strKbdName = string.IsNullOrEmpty(m_ws.Keyboard) ? FwCoreDlgControls.kstid_None :
+				m_ws.Keyboard;
 			m_keyboardComboBox.Items.Add(FwCoreDlgControls.kstid_None);
 
-			var keyboards = GetAvailableKeyboards(exception => {
-				if (!m_fKeymanInitErrorReported)
-				{
-					m_fKeymanInitErrorReported = true;
-					string caption = FwCoreDlgControls.kstidKeymanInitFailed;
-					string message = exception.Message;
-					if (string.IsNullOrEmpty(message))
-						message = caption;
-					MessageBoxUtils.Show(ParentForm, message, caption,
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
-				});
+			var badLocales = KeyboardController.ErrorKeyboards.Where(
+				keyboard => keyboard.Type == KeyboardType.OtherIm).ToList();
+			if (badLocales.Count > 0 && !m_fKeymanInitErrorReported)
+			{
+				m_fKeymanInitErrorReported = true;
+				string caption = FwCoreDlgControls.kstidKeymanInitFailed;
+				var exception = badLocales[0].Details as Exception;
+				string message = exception != null ? exception.Message : null;
+				if (string.IsNullOrEmpty(message))
+					message = caption;
+				MessageBoxUtils.Show(ParentForm, message, caption,
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
 
-			foreach (var keyboard in keyboards)
-				m_keyboardComboBox.Items.Add(keyboard);
+			foreach (var item in KeyboardController.InstalledKeyboards.Where(
+				keyboard => keyboard.Type == KeyboardType.OtherIm))
+			{
+				m_keyboardComboBox.Items.Add(item.Name);
+			}
 
 			m_keyboardComboBox.SelectedItem = strKbdName;
-			}
-
-		/// <summary>
-		/// Get available Keyman (Windows) keyboards.
-		/// </summary>
-		/// <param name="doIfError">
-		/// Delegate to run if KeymanHandler.Init throws an exception. Takes the exception
-		/// as an argument.
-		/// </param>
-		private static IEnumerable<string> GetAvailableKeyboards(Action<Exception> doIfError)
-		{
-			ILgKeymanHandler keymanHandler = LgKeymanHandlerClass.Create();
-			try
-			{
-			var keyboards = new List<string>();
-
-			try
-			{
-				// Update handler with any new/removed keyman keyboards
-				keymanHandler.Init(true);
-			}
-			catch (Exception e)
-			{
-				if (doIfError != null)
-					doIfError(e);
-				return keyboards;
-			}
-			int clayout = keymanHandler.NLayout;
-
-			for (int i = 0; i < clayout; ++i)
-			{
-				var item = keymanHandler.get_Name(i);
-				// JohnT: haven't been able to reproduce FWR-1935, but apparently there's some bizarre
-				// circumstance where one of the names comes back null. If so, leave it out.
-				if (item != null)
-					keyboards.Add(item);
-			}
-				return keyboards;
-			}
-			finally
-			{
-				keymanHandler.Close();
-				Marshal.ReleaseComObject(keymanHandler);
-			}
 		}
 
 		// Since InitLanguageCombo gets called from an OnGetFocus, and the message box causes a

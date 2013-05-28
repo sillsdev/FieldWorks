@@ -30,11 +30,14 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <SccProjectName></SccProjectName>
-    <SccLocalPath></SccLocalPath>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
     <SccAuxPath>
     </SccAuxPath>
-    <SccProvider></SccProvider>
+    <SccProvider>
+    </SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -77,9 +80,11 @@
     <Reference Include="SilUtils">
       <HintPath>..\..\..\Output\Debug\SilUtils.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">
@@ -104,6 +109,7 @@
     <Compile Include="Linux\XklEngine.cs" />
     <Compile Include="Linux\XkbKeyboardAdaptor.cs" />
     <Compile Include="Linux\XkbKeyboardDescription.cs" />
+    <Compile Include="Windows\KeymanKeyboardAdapter.cs" />
     <Compile Include="Windows\WinKeyboardAdaptor.cs" />
     <Compile Include="Interfaces\MouseEvent.cs" />
     <Compile Include="Interfaces\IKeyboardController.cs" />

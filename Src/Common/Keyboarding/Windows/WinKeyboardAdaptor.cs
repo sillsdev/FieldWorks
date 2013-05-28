@@ -15,26 +15,17 @@ using SIL.FieldWorks.Common.COMInterfaces;
 
 namespace SIL.FieldWorks.Common.Keyboarding.Windows
 {
+	/// <summary>
+	/// Class for handling Windows system keyboards
+	/// </summary>
 	internal class WinKeyboardAdaptor: IKeyboardAdaptor
 	{
 		private List<IKeyboardErrorDescription> m_BadLocales;
+		private ILgTextServices m_lts;
 
 		public WinKeyboardAdaptor()
 		{
-		}
-
-		public void Initialize()
-		{
-			GetLocales();
-		}
-
-		public void Close()
-		{
-		}
-
-		public List<IKeyboardErrorDescription> ErrorKeyboards
-		{
-			get { return m_BadLocales; }
+			m_lts = LgTextServicesClass.Create();
 		}
 
 		private void GetLocales()
@@ -47,7 +38,7 @@ namespace SIL.FieldWorks.Common.Keyboarding.Windows
 			try
 			{
 				lenum.Init();
-				for (; ;)
+				for (; ; )
 				{
 					string name;
 					try
@@ -81,15 +72,38 @@ namespace SIL.FieldWorks.Common.Keyboarding.Windows
 			}
 		}
 
-		public void ActivateKeyboard(IKeyboardDescription keyboard, IKeyboardDescription systemKeyboard)
+		#region IKeyboardAdaptor Members
+		public void Initialize()
 		{
-			// TODO
-			throw new NotImplementedException();
+			GetLocales();
+		}
+
+		public void Close()
+		{
+			if (m_lts != null && Marshal.IsComObject(m_lts))
+				Marshal.ReleaseComObject(m_lts);
+			m_lts = null;
+		}
+
+		public List<IKeyboardErrorDescription> ErrorKeyboards
+		{
+			get { return m_BadLocales; }
+		}
+
+		public void ActivateKeyboard(IKeyboardDescription keyboard, IKeyboardDescription ignored)
+		{
+			var fSelectLangPending = false;
+			var activeLangId = 0;
+			var notUsed = string.Empty;
+
+			m_lts.SetKeyboard(keyboard.Id, null, ref activeLangId, ref notUsed,
+				ref fSelectLangPending);
 		}
 
 		public void DeactivateKeyboard(IKeyboardDescription keyboard)
 		{
 		}
+		#endregion
 	}
 }
 #endif
