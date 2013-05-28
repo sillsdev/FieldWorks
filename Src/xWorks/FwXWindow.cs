@@ -2058,9 +2058,9 @@ namespace SIL.FieldWorks.XWorks
 				object loc = m_mediator.PropertyTable.GetValue("windowLocation");
 				Debug.Assert(loc != null);
 
-				object size = m_mediator.PropertyTable.GetValue("windowSize", /*hack*/new System.Drawing.Size(400,400));
+				object size = m_mediator.PropertyTable.GetValue("windowSize", /*hack*/new Size(400,400));
 				Debug.Assert(size != null);
-				return new Rectangle((Point)loc, (System.Drawing.Size)size);
+				return new Rectangle((Point)loc, (Size)size);
 			}
 		}
 

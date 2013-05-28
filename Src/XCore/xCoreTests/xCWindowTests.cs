@@ -18,8 +18,6 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections;
-using System.IO;
 using System.Reflection;
 using NUnit.Framework;
 
@@ -41,14 +39,14 @@ namespace XCore
 			get { return "basicTest.xml"; }
 		}
 
-		[Test]//[Ignore("Temporary for the sake of NUnit 2.2")]
+		[Test]
 		public void ItemCountOfListMenu()
 		{
 			ITestableUIAdapter adapter = (ITestableUIAdapter) m_window.MenuAdapter;
 			Assert.AreEqual( adapter.GetItemCountOfGroup("Vowels"), 5);
 			//CheckMenuCount("Vowels", 5);
 		}
-		[Test]//[Ignore("Temporary for the sake of NUnit 2.2")]
+		[Test]
 		public void ItemCountOfListSubMenu()
 		{
 			ITestableUIAdapter adapter = (ITestableUIAdapter) m_window.MenuAdapter;
@@ -56,7 +54,7 @@ namespace XCore
 			//CheckSubMenuCount("Type", "Vowels",5);
 		}
 
-		[Test]//[Ignore("Temporary for the sake of NUnit 2.2")]
+		[Test]
 		public void ToggleBoolMenuItem ()
 		{
 			ClearTesterFields ();
@@ -80,7 +78,7 @@ namespace XCore
 			// Assert.IsFalse(CurrentOutputValue== "");
 		}
 
-		[Test]//[Ignore("Temporary for the sake of NUnit 2.2")]
+		[Test]
 		public void SimpleMenuCommand ()
 		{
 			CurrentOutputValue = "hello there";
@@ -88,7 +86,7 @@ namespace XCore
 			Assert.AreEqual(CurrentOutputValue , "","The output pane should have cleared");
 		}
 
-		[Test]//[Ignore("Temporary for the sake of NUnit 2.2")]
+		[Test]
 		public void CommandWithParameter()
 		{
 			ClearTesterFields();
@@ -96,7 +94,7 @@ namespace XCore
 			Assert.AreEqual("A", TesterControl.letters.Text, "The letters field should now show 'A'");
 		}
 
-		[Test]//[Ignore("Temporary for the sake of NUnit 2.2")]
+		[Test]
 		public void EnableDisableCommandMenuItem()
 		{
 			ITestableUIAdapter adapter = (ITestableUIAdapter) m_window.MenuAdapter;
@@ -119,6 +117,25 @@ namespace XCore
 			//			Assert.IsTrue (item.Enabled,"The 'enable test' item should have been enabled");
 
 			Assert.IsTrue(adapter.IsItemEnabled("Misc", "enableTest")	,"The 'enable test' item should have been emabled");
+		}
+
+		/// <summary>
+		/// This tests the persistence of the windowSize property in the PropertyTable.
+		/// </summary>
+		[Test]
+		[Platform(Exclude = "Linux", Reason = "TODO-Linux: Depends on native control in comctl32.dll")]
+		public void WindowSizePersistence()
+		{
+			// This is one of only two tests that really has to show a window.
+			m_window.WindowState = FormWindowState.Normal;
+			var windSize = m_window.Size;
+			m_window.Show();
+			var newWindSize = new Size(windSize.Width + 20, windSize.Height + 30);
+			m_window.Size = newWindSize;
+			var persistedWinSize = m_window.PropertyTable.GetValue("windowSize");
+			ReopenWindow();
+			var newWinSize = m_window.PropertyTable.GetValue("windowSize");
+			Assert.AreEqual(persistedWinSize, newWinSize);
 		}
 
 		/// <remarks>This test has a letter to make it run at the end, since it changes the interface but other tests rely on.
@@ -149,7 +166,7 @@ namespace XCore
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: Depends on native control in comctl32.dll")]
 		public void ZPropertyPersistence ()
 		{
-			// This is the only test that really has to show a window.
+			// This is one of only two tests that really has to show a window.
 			m_window.Show();
 			Random r = new Random();
 			int x =r.Next();
