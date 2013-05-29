@@ -16,7 +16,8 @@ using SIL.Utils;
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
-	/// Connects a view (rootbox) with keyboards. This class gets created by the VwRootBox.
+	/// Connects a view (rootbox) with keyboards. This class gets created on Linux by the
+	/// VwRootBox. On Windows we use VwTextStore instead.
 	/// </summary>
 	[Guid("830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E")]
 	public class ViewInputManager: ILgTextServices, IKeyboardCallback, IViewInputMgr
@@ -167,11 +168,6 @@ namespace SIL.FieldWorks.Common.RootSites
 				return KeyboardController.GetKeyboard(langId, keyboardName);
 			}
 		}
-
-		/// <summary>
-		/// Gets or sets the active keyboard.
-		/// </summary>
-		public IKeyboardDescription ActiveKeyboard { get; set; }
 		#endregion
 
 		#region ILgTextServices implementation

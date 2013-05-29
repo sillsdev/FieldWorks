@@ -17,6 +17,8 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 	/// </summary>
 	public class LinuxKeyboardHelper: IKeyboardEventHandler, IKeyboardMethods
 	{
+		private IKeyboardDescription m_ActiveKeyboard = new KeyboardDescriptionNull();
+
 		#region IKeyboardEventHandler implementation
 		/// <summary>
 		/// Called before a property gets updated.
@@ -74,24 +76,22 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		/// <summary>
 		/// Activate the input method
 		/// </summary>
-		/// <remarks>Corresponding C++ method is VwTextStore::SetFocus.</remarks>
 		public void SetFocus(IKeyboardCallback callback)
 		{
 			var keyboard = callback.Keyboard;
 			keyboard.Activate();
-			callback.ActiveKeyboard = keyboard;
+			m_ActiveKeyboard = keyboard;
 		}
 
 		/// <summary>
 		/// Deactivate the input method
 		/// </summary>
-		/// <remarks>Corresponding C++ method is VwTextStore::OnLoseFocus.</remarks>
 		public void KillFocus(IKeyboardCallback callback)
 		{
-			if (callback.ActiveKeyboard != null)
+			if (m_ActiveKeyboard != null)
 			{
-				callback.ActiveKeyboard.Deactivate();
-				callback.ActiveKeyboard = null;
+				m_ActiveKeyboard.Deactivate();
+				m_ActiveKeyboard = new KeyboardDescriptionNull();
 			}
 		}
 
@@ -127,6 +127,14 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		public bool IsEndingComposition(IKeyboardCallback callback)
 		{
 			return false;
+		}
+
+		/// <summary>
+		/// Gets the active keyboard.
+		/// </summary>
+		public IKeyboardDescription ActiveKeyboard
+		{
+			get { return m_ActiveKeyboard; }
 		}
 		#endregion
 	}

@@ -110,6 +110,7 @@
     <Compile Include="Linux\XkbKeyboardAdaptor.cs" />
     <Compile Include="Linux\XkbKeyboardDescription.cs" />
     <Compile Include="Windows\KeymanKeyboardAdapter.cs" />
+    <Compile Include="Windows\WindowsKeyboardHelper.cs" />
     <Compile Include="Windows\WinKeyboardAdaptor.cs" />
     <Compile Include="Types\MouseEvent.cs" />
     <Compile Include="Interfaces\IKeyboardController.cs" />

@@ -55,5 +55,10 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// </summary>
 		/// <remarks>Corresponding C++ method is VwTextStore::OnLoseFocus.</remarks>
 		void DisableInput(IKeyboardCallback callback);
+
+		/// <summary>
+		/// Gets the active keyboard.
+		/// </summary>
+		IKeyboardDescription ActiveKeyboard { get; }
 	}
 }

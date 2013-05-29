@@ -15,10 +15,6 @@ namespace SIL.FieldWorks.Common.Keyboarding
 	/// </summary>
 	internal class KeyboardDescriptionNull: IKeyboardDescription
 	{
-		public KeyboardDescriptionNull()
-		{
-		}
-
 		#region IKeyboardDescription implementation
 		public void Activate()
 		{

@@ -240,11 +240,11 @@ namespace SIL.FieldWorks.Common.Keyboarding
 
 #if __MonoCS__
 			var keyboardHelper = new LinuxKeyboardHelper();
+#else
+			var keyboardHelper = new WindowsKeyboardHelper();
+#endif
 			controller.InternalEventHandler = keyboardHelper;
 			controller.InternalMethods = keyboardHelper;
-#else
-			// TODO: No keyboard event handler class implemented on Windows
-#endif
 
 			return controller;
 		}
@@ -341,6 +341,21 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// <param name='lcid'>Keyboard identifier of system keyboard</param>
 		/// <param name='otherImKeyboard'>Identifier for other input method keyboard (Keyman/ibus)
 		/// </param>
+		public static void SetKeyboard(int lcid, string otherImKeyboard)
+		{
+			int nActiveLangId = 0;
+			string activeOtherImKeyboard = string.Empty;
+			bool fSelectLangPending = false;
+			Instance.SetKeyboard(lcid, otherImKeyboard, ref nActiveLangId,
+				ref activeOtherImKeyboard, ref fSelectLangPending);
+		}
+
+		/// <summary>
+		/// Sets the keyboard.
+		/// </summary>
+		/// <param name='lcid'>Keyboard identifier of system keyboard</param>
+		/// <param name='otherImKeyboard'>Identifier for other input method keyboard (Keyman/ibus)
+		/// </param>
 		/// <param name='nActiveLangId'>The active keyboard lcid.</param>
 		/// <param name='activeOtherImKeyboard'>Active other input method keyboard.</param>
 		/// <param name='fSelectLangPending'></param>
@@ -354,7 +369,15 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// <summary>
 		/// Gets or sets the available keyboard adaptors.
 		/// </summary>
-		private static IKeyboardAdaptor[] Adaptors { get; set; }
+		internal static IKeyboardAdaptor[] Adaptors { get; private set; }
+
+		/// <summary>
+		/// Gets the active keyboard
+		/// </summary>
+		public static IKeyboardDescription ActiveKeyboard
+		{
+			get { return Instance.InternalMethods.ActiveKeyboard; }
+		}
 		#endregion
 
 	}

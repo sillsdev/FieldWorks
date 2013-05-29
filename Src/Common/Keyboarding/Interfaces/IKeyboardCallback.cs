@@ -21,10 +21,5 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		/// Gets the keyboard associated with the current selection.
 		/// </summary>
 		IKeyboardDescription Keyboard { get; }
-
-		/// <summary>
-		/// Gets or sets the active keyboard.
-		/// </summary>
-		IKeyboardDescription ActiveKeyboard { get; set; }
 	}
 }

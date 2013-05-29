@@ -149,6 +149,12 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		public void DisableInput(IKeyboardCallback callback)
 		{
 		}
+
+		public IKeyboardDescription ActiveKeyboard
+		{
+			get { return new KeyboardDescriptionNull(); }
+		}
+
 		#endregion
 	}
 }

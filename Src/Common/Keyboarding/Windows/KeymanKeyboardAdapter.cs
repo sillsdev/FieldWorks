@@ -52,14 +52,13 @@ namespace SIL.FieldWorks.Common.Keyboarding.Windows
 			for (int i = 0; i < m_keymanHandler.NLayout; i++)
 			{
 				var name = m_keymanHandler.get_Name(i);
-				var id = name.GetHashCode();
 
 				// JohnT: haven't been able to reproduce FWR-1935, but apparently there's some bizarre
 				// circumstance where one of the names comes back null. If so, leave it out.
 				if (!string.IsNullOrEmpty(name))
 				{
-					KeyboardController.Manager.RegisterKeyboard(id,
-						new KeyboardDescription(id, name, this, KeyboardType.OtherIm));
+					var desc = GetKeyboardDescription(name);
+					KeyboardController.Manager.RegisterKeyboard(desc.Id, desc);
 				}
 			}
 		}
@@ -100,6 +99,21 @@ namespace SIL.FieldWorks.Common.Keyboarding.Windows
 		}
 
 		#endregion
+
+		private IKeyboardDescription GetKeyboardDescription(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+				return null;
+
+			var id = name.GetHashCode();
+
+			return new KeyboardDescription(id, name, this, KeyboardType.OtherIm);
+		}
+
+		public IKeyboardDescription ActiveKeyboard
+		{
+			get { return GetKeyboardDescription(m_keymanHandler.ActiveKeyboardName); }
+		}
 	}
 }
 #endif
