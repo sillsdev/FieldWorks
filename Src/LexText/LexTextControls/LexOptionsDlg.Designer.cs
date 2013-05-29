@@ -44,16 +44,21 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_lvPlugins = new System.Windows.Forms.ListView();
 			this.m_chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.m_chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.m_tabUpdates = new System.Windows.Forms.TabPage();
+			this.includeBetasBox = new System.Windows.Forms.CheckBox();
+			this.checkForUpdatesBox = new System.Windows.Forms.CheckBox();
 			this.m_tabPrivacy = new System.Windows.Forms.TabPage();
+			this.PrivacyText = new System.Windows.Forms.TextBox();
 			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_btnOK = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
-			this.PrivacyText = new System.Windows.Forms.TextBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.m_tabInterface.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.m_tabPlugins.SuspendLayout();
+			this.m_tabUpdates.SuspendLayout();
 			this.m_tabPrivacy.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -63,6 +68,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tabControl1.Controls.Add(this.m_tabInterface);
 			this.tabControl1.Controls.Add(this.m_tabPlugins);
 			this.tabControl1.Controls.Add(this.m_tabPrivacy);
+			this.tabControl1.Controls.Add(this.m_tabUpdates);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			// 
@@ -156,6 +162,30 @@ namespace SIL.FieldWorks.LexText.Controls
 			// 
 			resources.ApplyResources(this.m_chDescription, "m_chDescription");
 			// 
+			// m_tabUpdates
+			// 
+			this.m_tabUpdates.Controls.Add(this.label1);
+			this.m_tabUpdates.Controls.Add(this.includeBetasBox);
+			this.m_tabUpdates.Controls.Add(this.checkForUpdatesBox);
+			resources.ApplyResources(this.m_tabUpdates, "m_tabUpdates");
+			this.m_tabUpdates.Name = "m_tabUpdates";
+			this.m_tabUpdates.UseVisualStyleBackColor = true;
+			// 
+			// includeBetasBox
+			// 
+			resources.ApplyResources(this.includeBetasBox, "includeBetasBox");
+			this.includeBetasBox.Name = "includeBetasBox";
+			this.includeBetasBox.UseVisualStyleBackColor = true;
+			// 
+			// checkForUpdatesBox
+			// 
+			resources.ApplyResources(this.checkForUpdatesBox, "checkForUpdatesBox");
+			this.checkForUpdatesBox.Checked = true;
+			this.checkForUpdatesBox.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkForUpdatesBox.Name = "checkForUpdatesBox";
+			this.checkForUpdatesBox.UseVisualStyleBackColor = true;
+			this.checkForUpdatesBox.CheckedChanged += new System.EventHandler(this.checkForUpdatesBox_CheckedChanged);
+			// 
 			// m_tabPrivacy
 			// 
 			this.m_tabPrivacy.Controls.Add(this.PrivacyText);
@@ -163,6 +193,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.m_tabPrivacy, "m_tabPrivacy");
 			this.m_tabPrivacy.Name = "m_tabPrivacy";
 			this.m_tabPrivacy.UseVisualStyleBackColor = true;
+			// 
+			// PrivacyText
+			// 
+			this.PrivacyText.BackColor = System.Drawing.SystemColors.Window;
+			this.PrivacyText.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this.PrivacyText, "PrivacyText");
+			this.PrivacyText.Name = "PrivacyText";
+			this.PrivacyText.ReadOnly = true;
 			// 
 			// m_okToPingCheckBox
 			// 
@@ -192,13 +230,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_btnHelp.UseVisualStyleBackColor = true;
 			this.m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
 			// 
-			// PrivacyText
+			// label1
 			// 
-			this.PrivacyText.BackColor = System.Drawing.SystemColors.Window;
-			this.PrivacyText.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			resources.ApplyResources(this.PrivacyText, "PrivacyText");
-			this.PrivacyText.Name = "PrivacyText";
-			this.PrivacyText.ReadOnly = true;
+			resources.ApplyResources(this.label1, "label1");
+			this.label1.Name = "label1";
 			// 
 			// LexOptionsDlg
 			// 
@@ -221,6 +256,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.groupBox1.ResumeLayout(false);
 			this.m_tabPlugins.ResumeLayout(false);
 			this.m_tabPlugins.PerformLayout();
+			this.m_tabUpdates.ResumeLayout(false);
+			this.m_tabUpdates.PerformLayout();
 			this.m_tabPrivacy.ResumeLayout(false);
 			this.m_tabPrivacy.PerformLayout();
 			this.ResumeLayout(false);
@@ -249,5 +286,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.TabPage m_tabPrivacy;
 		private System.Windows.Forms.CheckBox m_okToPingCheckBox;
 		private System.Windows.Forms.TextBox PrivacyText;
+		private System.Windows.Forms.TabPage m_tabUpdates;
+		private System.Windows.Forms.CheckBox includeBetasBox;
+		private System.Windows.Forms.CheckBox checkForUpdatesBox;
+		private System.Windows.Forms.Label label1;
 	}
 }

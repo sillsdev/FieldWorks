@@ -16,7 +16,7 @@ namespace SIL.CoreImpl.Properties {
     public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
+        
         public static Settings Default {
             get {
                 return defaultInstance;
@@ -60,5 +60,29 @@ namespace SIL.CoreImpl.Properties {
 				this["CallUpgrade"] = value;
 			}
 	    }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoCheckForUpdates {
+            get {
+                return ((bool)(this["AutoCheckForUpdates"]));
+            }
+            set {
+                this["AutoCheckForUpdates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CheckForBetaUpdates {
+            get {
+                return ((bool)(this["CheckForBetaUpdates"]));
+            }
+            set {
+                this["CheckForBetaUpdates"] = value;
+            }
+        }
     }
 }
