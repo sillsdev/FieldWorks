@@ -120,7 +120,6 @@ OBJ_LANG = \
 	$(INT_DIR)/LgInputMethodEditor.o \
 	$(INT_DIR)/LocaleIndex.o \
 	$(INT_DIR)/LgCodePageEnumerator.o \
-	$(INT_DIR)/LgKeymanHandler.o \
 	$(INT_DIR)/FwXml.o \
 	$(INT_DIR)/WriteXml.o \
 	$(INT_DIR)/FwStyledText.o \

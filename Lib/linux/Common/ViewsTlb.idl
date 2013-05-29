@@ -5777,30 +5777,6 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwLayoutManager") 
 		[out, retval] int * pdxpHeight);
 };
 
-
-
-
-
-cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IIMEKeyboardSwitcher") cpp_quote(",") cpp_quote("4D2BC310-DADF-11DE-9E3A-0019DBF4566E") cpp_quote(");") [ uuid("4D2BC310-DADF-11DE-9E3A-0019DBF4566E"), object, pointer_default(unique) ] interface IIMEKeyboardSwitcher : IUnknown
-{
-	
-	[propget] HRESULT IMEKeyboard(
-		[out, retval] BSTR * pbstr);
-
-	
-	[propput] HRESULT IMEKeyboard(
-		[in] BSTR pbstr);
-
-	[propget] HRESULT IMEKeyboardsCount(
-			[out, retval] int * pdCount);
-
-	HRESULT GetKeyboardName(
-			[in] int index,
-			[out, retval] BSTR * pbstr);
-
-	HRESULT Close();
-}
-
 	
 
 
@@ -5818,7 +5794,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IIMEKeyboardSwitche
 	{
 		interface IPictureFactory;
 	};
-#line 5689 "d:\\fwrepo\\fw\\src\\views\\Views.idh"
+#line 5665 "d:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 	
 
@@ -6052,7 +6028,7 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IIMEKeyboardSwitche
 	{
 		interface IVwWindow;
 	};
-	#line 5923 "d:\\fwrepo\\fw\\src\\views\\Views.idh"
+	#line 5899 "d:\\fwrepo\\fw\\src\\views\\Views.idh"
 
 
 typedef [v1_enum] enum VwMouseEvent

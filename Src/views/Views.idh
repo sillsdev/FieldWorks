@@ -5644,30 +5644,6 @@ DeclareInterface(VwLayoutManager, Unknown, 13F3A421-4915-455b-B57F-AFD4073CFFA0)
 		[out, retval] int * pdxpHeight);
 };
 
-/*******************************************************************************************
-	Interface IIMEKeyboardSwitcher
-	This interface is designed to allow changing the current IME keyboard in Linux from C++ code.
-*******************************************************************************************/
-DeclareInterface(IMEKeyboardSwitcher, Unknown, 4D2BC310-DADF-11DE-9E3A-0019DBF4566E)
-{
-	// Gets the name of the IMEKeyboard for the focued input context
-	[propget] HRESULT IMEKeyboard(
-		[out, retval] BSTR * pbstr);
-
-	// Sets IMEKeyboard for the focused input context
-	[propput] HRESULT IMEKeyboard(
-		[in] BSTR pbstr);
-
-	[propget] HRESULT IMEKeyboardsCount(
-			[out, retval] int * pdCount);
-
-	HRESULT GetKeyboardName(
-			[in] int index,
-			[out, retval] BSTR * pbstr);
-
-	HRESULT Close();
-}
-
 	/*******************************************************************************************
 		Interface IPictureFactory
 		Allows creating a IPicture.

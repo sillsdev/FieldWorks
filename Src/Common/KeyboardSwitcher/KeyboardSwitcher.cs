@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Views
 	/// This class allows COM clients to switch IME keyboards
 	/// </summary>
 	[Guid("4ED1E8bC-DAdE-11DE-B350-0019DBf4566E")]
-	public class KeyboardSwitcher : IIMEKeyboardSwitcher, IDisposable
+	public class KeyboardSwitcher : IDisposable
 	{
 		private IBusConnection Connection = IBusConnectionFactory.Create();
 

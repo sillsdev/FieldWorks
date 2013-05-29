@@ -15,13 +15,7 @@ Description:
 #ifndef LgKeymanHandler_INCLUDED
 #define LgKeymanHandler_INCLUDED
 
-
-#if !WIN32
-#include "ViewsTlb.h"
-DEFINE_COM_PTR(IIMEKeyboardSwitcher);
-class KeyboardSwitcher;
-#define CLSID_KeyboardSwitcher __uuidof(KeyboardSwitcher)
-#endif
+#if WIN32
 
 /*----------------------------------------------------------------------------------------------
 Class: LgKeymanHandler
@@ -74,9 +68,6 @@ protected:
 	bool InitInternal();
 	void ThrowErrorWithInfo(HRESULT hrErr, int stidDescription);
 
-#if !WIN32
-	// C# COM object that switches keyboards.
-	IIMEKeyboardSwitcherPtr m_qkbs;
-#endif
 };
+#endif  // WIN32
 #endif  //LgKeymanHandler_INCLUDED

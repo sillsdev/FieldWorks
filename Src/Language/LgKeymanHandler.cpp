@@ -10,6 +10,7 @@ Last reviewed: Not yet.
 
 Description:  A wrapper for the keyman program.
 -------------------------------------------------------------------------------*//*:End Ignore*/
+#if WIN32
 
 //:>********************************************************************************************
 //:>	   Include files
@@ -98,7 +99,6 @@ bool KeymanOn()
 {
 	// Finding a window called Keyman50 is the recommended technique for detecting Keyman 5
 	// AND ALSO Keyman 6.
-#if WIN32
 	if (::FindWindowA(NULL, "Keyman50") != 0)
 		return true;
 	// Keyman 7 can typically be found by this code:
@@ -111,9 +111,6 @@ bool KeymanOn()
 		::CloseHandle(hMutex);
 		return true;
 	}
-#else // !WIN32
-	// TODO-Linux: - need to intergate with Keyman
-#endif // !WIN32
 	return false; // Keyman is not running.
 }
 
@@ -125,11 +122,6 @@ LgKeymanHandler::LgKeymanHandler()
 {
 	m_cref = 1;
 	ModuleEntry::ModuleAddRef();
-
-#if !WIN32
-	// Create C# Keyboard Switcher which does most of the work on Linux.
-	m_qkbs.CreateInstance(CLSID_KeyboardSwitcher);
-#endif
 }
 
 LgKeymanHandler::~LgKeymanHandler()
@@ -244,8 +236,6 @@ STDMETHODIMP LgKeymanHandler::Init(ComBool fForce)
 	// Get rid of any info from previous Init calls.
 	s_vkiKeyboards.Clear();
 
-
-#if WIN32
 	// Keyman must be running - but don't start it here to avoid possible conflicts
 	if (!KeymanOn())
 		return S_OK;
@@ -349,21 +339,6 @@ STDMETHODIMP LgKeymanHandler::Init(ComBool fForce)
 	}
 
 	s_fKeymanInitialized = true;
-#else // !WIN32
-	// Use C# Keyboard Switcher to build up a list of avaliable keyboards.
-	int nKeyboards;
-	m_qkbs->get_IMEKeyboardsCount(&nKeyboards);
-	for(int i = 0; i < nKeyboards; ++i)
-	{
-		SmartBstr bstrKeyboardName;
-		m_qkbs->GetKeyboardName(i, &bstrKeyboardName);
-		KbdInfo ki;
-		ki.m_stuName = bstrKeyboardName.Chars();
-		ki.m_id = 0; // what todo about this?
-		s_vkiKeyboards.Push(ki);
-	}
-	s_fKeymanInitialized = true;
-#endif // !WIN32
 	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
 }
 
@@ -374,14 +349,6 @@ STDMETHODIMP LgKeymanHandler::Init(ComBool fForce)
 STDMETHODIMP LgKeymanHandler::Close()
 {
 	BEGIN_COM_METHOD
-
-#if !WIN32
-	if (m_qkbs)
-	{
-		m_qkbs->Close();
-		m_qkbs = NULL;
-	}
-#endif
 
 	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
 }
@@ -421,11 +388,8 @@ bool LgKeymanHandler::InitInternal()
 		stuMsg.Load(kstidKeymanInitUnexpectedFailMsg);
 	}
 	s_fKeymanFailed = true;
-#if WIN32
 	::MessageBox(NULL, stuMsg.Chars(), stuCaption.Chars(), MB_OK | MB_ICONINFORMATION);
-#else // !WIN32
-	// TODO-Linux: port
-#endif // !WIN32
+
 	return s_fKeymanInitialized;
 }
 
@@ -469,7 +433,7 @@ STDMETHODIMP LgKeymanHandler::get_ActiveKeyboardName(BSTR * pbstrName)
 	ChkComOutPtr(pbstrName);
 	if (!InitInternal())
 		return S_OK;
-#if WIN32
+
 	//int nActiveKeymanId = (*pGetActiveKeymanID)();
 	HMODULE hKeyman = GetModuleHandleA("keyman32.dll");
 	if(hKeyman == 0)
@@ -505,13 +469,6 @@ STDMETHODIMP LgKeymanHandler::get_ActiveKeyboardName(BSTR * pbstrName)
 			return S_OK;
 		}
 	}
-#else
-	// Use C# Keyboard Switcher get the current active keyboard.
-	SmartBstr bstrKeyboardName;
-	m_qkbs->get_IMEKeyboard(&bstrKeyboardName);
-	*pbstrName = bstrKeyboardName.Detach();
-	return S_OK;
-#endif
 	Assert(false); // Keyman gave us an ID, but it didn't match!
 	return E_UNEXPECTED;
 	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
@@ -526,7 +483,7 @@ STDMETHODIMP LgKeymanHandler::put_ActiveKeyboardName(BSTR bstrName)
 	ChkComBstrArgN(bstrName);
 	if (!InitInternal() || !s_wm_kmselectlang)
 		return S_OK;
-#if WIN32
+
 	if (BstrLen(bstrName) != 0)
 	{
 		for (int iki = 0; iki < s_vkiKeyboards.Size(); ++iki)
@@ -566,10 +523,6 @@ STDMETHODIMP LgKeymanHandler::put_ActiveKeyboardName(BSTR bstrName)
 #endif
 		::PostMessage(::GetFocus(), s_wm_kmselectlang, knKeymanID, KEYMANID_NONKEYMAN);
 	}
-#else
-	// Use C# Keyboard Switcher set the current active keyboard.
-	m_qkbs->put_IMEKeyboard(bstrName);
-#endif
 	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
 }
 
@@ -580,13 +533,11 @@ STDMETHODIMP LgKeymanHandler::get_KeymanWindowsMessage(int * pwm)
 {
 	BEGIN_COM_METHOD
 	ChkComOutPtr(pwm);
-#if WIN32
+
 	if (!s_wm_kmkbchange)
 		s_wm_kmkbchange = ::RegisterWindowMessageW(L"WM_KMKBCHANGE");
 	*pwm = s_wm_kmkbchange;
-#else
-	// TODO-Linux: port
-#endif
+
 	END_COM_METHOD(g_fact, IID_ILgKeymanHandler);
 }
 
@@ -595,3 +546,4 @@ STDMETHODIMP LgKeymanHandler::get_KeymanWindowsMessage(int * pwm)
 #include "Vector_i.cpp"
 template class Vector<KEYBOARDINFO>;
 template class Vector<KbdInfo>; // VecKbdInfo;
+#endif

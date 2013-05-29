@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Tue May 28 09:54:40 2013
+/* at Wed May 29 18:54:41 2013
  */
 /* Compiler settings for d:\fwrepo\fw\Output\Common\ViewsTlb.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -369,12 +369,6 @@ typedef struct VwLayoutStream VwLayoutStream;
 #endif /* __cplusplus */
 
 #endif 	/* __VwLayoutStream_FWD_DEFINED__ */
-
-
-#ifndef __IIMEKeyboardSwitcher_FWD_DEFINED__
-#define __IIMEKeyboardSwitcher_FWD_DEFINED__
-typedef interface IIMEKeyboardSwitcher IIMEKeyboardSwitcher;
-#endif 	/* __IIMEKeyboardSwitcher_FWD_DEFINED__ */
 
 
 #ifndef __IPictureFactory_FWD_DEFINED__
@@ -1088,11 +1082,6 @@ GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IVwLayoutManager
 ,
 13F3A421-4915-455b-B57F-AFD4073CFFA0
-);
-GENERIC_DECLARE_SMART_INTERFACE_PTR(
-IIMEKeyboardSwitcher
-,
-4D2BC310-DADF-11DE-9E3A-0019DBF4566E
 );
 GENERIC_DECLARE_SMART_INTERFACE_PTR(
 IPictureFactory
@@ -9225,125 +9214,6 @@ VwSynchronizer;
 class DECLSPEC_UUID("1CD09E06-6978-4969-A1FC-462723587C32")
 VwLayoutStream;
 #endif
-
-#ifndef __IIMEKeyboardSwitcher_INTERFACE_DEFINED__
-#define __IIMEKeyboardSwitcher_INTERFACE_DEFINED__
-
-/* interface IIMEKeyboardSwitcher */
-/* [unique][object][uuid] */ 
-
-
-#define IID_IIMEKeyboardSwitcher __uuidof(IIMEKeyboardSwitcher)
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("4D2BC310-DADF-11DE-9E3A-0019DBF4566E")
-    IIMEKeyboardSwitcher : public IUnknown
-    {
-    public:
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IMEKeyboard( 
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_IMEKeyboard( 
-            /* [in] */ BSTR pbstr) = 0;
-        
-        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IMEKeyboardsCount( 
-            /* [retval][out] */ int *pdCount) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetKeyboardName( 
-            /* [in] */ int index,
-            /* [retval][out] */ BSTR *pbstr) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE Close( void) = 0;
-        
-    };
-    
-#else 	/* C style interface */
-
-    typedef struct IIMEKeyboardSwitcherVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IIMEKeyboardSwitcher * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IIMEKeyboardSwitcher * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IIMEKeyboardSwitcher * This);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IMEKeyboard )( 
-            IIMEKeyboardSwitcher * This,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_IMEKeyboard )( 
-            IIMEKeyboardSwitcher * This,
-            /* [in] */ BSTR pbstr);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_IMEKeyboardsCount )( 
-            IIMEKeyboardSwitcher * This,
-            /* [retval][out] */ int *pdCount);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetKeyboardName )( 
-            IIMEKeyboardSwitcher * This,
-            /* [in] */ int index,
-            /* [retval][out] */ BSTR *pbstr);
-        
-        HRESULT ( STDMETHODCALLTYPE *Close )( 
-            IIMEKeyboardSwitcher * This);
-        
-        END_INTERFACE
-    } IIMEKeyboardSwitcherVtbl;
-
-    interface IIMEKeyboardSwitcher
-    {
-        CONST_VTBL struct IIMEKeyboardSwitcherVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IIMEKeyboardSwitcher_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IIMEKeyboardSwitcher_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IIMEKeyboardSwitcher_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IIMEKeyboardSwitcher_get_IMEKeyboard(This,pbstr)	\
-    ( (This)->lpVtbl -> get_IMEKeyboard(This,pbstr) ) 
-
-#define IIMEKeyboardSwitcher_put_IMEKeyboard(This,pbstr)	\
-    ( (This)->lpVtbl -> put_IMEKeyboard(This,pbstr) ) 
-
-#define IIMEKeyboardSwitcher_get_IMEKeyboardsCount(This,pdCount)	\
-    ( (This)->lpVtbl -> get_IMEKeyboardsCount(This,pdCount) ) 
-
-#define IIMEKeyboardSwitcher_GetKeyboardName(This,index,pbstr)	\
-    ( (This)->lpVtbl -> GetKeyboardName(This,index,pbstr) ) 
-
-#define IIMEKeyboardSwitcher_Close(This)	\
-    ( (This)->lpVtbl -> Close(This) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IIMEKeyboardSwitcher_INTERFACE_DEFINED__ */
-
 
 #ifndef __IPictureFactory_INTERFACE_DEFINED__
 #define __IPictureFactory_INTERFACE_DEFINED__
