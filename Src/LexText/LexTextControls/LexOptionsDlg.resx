@@ -230,7 +230,7 @@ always open the last edited project automatically</value>
     <value>m_userInterfaceChooser</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=7.3.2.25461, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=8.0.2.26264, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_userInterfaceChooser.Parent" xml:space="preserve">
     <value>groupBox1</value>
@@ -517,6 +517,111 @@ Usage details will not be made available to third parties (except in the unlikel
   <data name="&gt;&gt;m_tabPrivacy.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>17, 18</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>331, 34</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>These options control whether the program checks online for updates.</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>m_tabUpdates</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="includeBetasBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="includeBetasBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>20, 83</value>
+  </data>
+  <data name="includeBetasBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>249, 17</value>
+  </data>
+  <data name="includeBetasBox.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="includeBetasBox.Text" xml:space="preserve">
+    <value>Also notify me when a Beta release is available.</value>
+  </data>
+  <data name="&gt;&gt;includeBetasBox.Name" xml:space="preserve">
+    <value>includeBetasBox</value>
+  </data>
+  <data name="&gt;&gt;includeBetasBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;includeBetasBox.Parent" xml:space="preserve">
+    <value>m_tabUpdates</value>
+  </data>
+  <data name="&gt;&gt;includeBetasBox.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="checkForUpdatesBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkForUpdatesBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>20, 55</value>
+  </data>
+  <data name="checkForUpdatesBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>208, 17</value>
+  </data>
+  <data name="checkForUpdatesBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="checkForUpdatesBox.Text" xml:space="preserve">
+    <value>Notify me when an update is available.</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesBox.Name" xml:space="preserve">
+    <value>checkForUpdatesBox</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesBox.Parent" xml:space="preserve">
+    <value>m_tabUpdates</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_tabUpdates.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tabUpdates.Size" type="System.Drawing.Size, System.Drawing">
+    <value>351, 195</value>
+  </data>
+  <data name="m_tabUpdates.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="m_tabUpdates.Text" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="&gt;&gt;m_tabUpdates.Name" xml:space="preserve">
+    <value>m_tabUpdates</value>
+  </data>
+  <data name="&gt;&gt;m_tabUpdates.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabUpdates.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;m_tabUpdates.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 13</value>
   </data>
@@ -645,6 +750,9 @@ Usage details will not be made available to third parties (except in the unlikel
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>384, 284</value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>400, 300</value>

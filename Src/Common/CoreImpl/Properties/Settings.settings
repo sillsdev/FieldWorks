@@ -8,5 +8,11 @@
     <Setting Name="Reporting" Type="Palaso.Reporting.ReportingSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="AutoCheckForUpdates" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CheckForBetaUpdates" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
