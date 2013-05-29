@@ -18,6 +18,7 @@ using System.Text;
 using System.Windows.Forms;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Keyboarding;
 using SIL.FieldWorks.Common.RootSites.Properties;
 using SIL.Utils;
 
@@ -917,19 +918,19 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// The first character goes into the buffer
 			buffer.Append(chsFirst);
+#if !__MonoCS__
+			// Note: When/if porting to MONO, the following block of code can be removed
+			// and still work.
 			if (chsFirst < ' ' || chsFirst == (char)VwSpecialChars.kscDelForward)
 				return;
 
 			// We need to disable type-ahead when using a Keyman keyboard since it can
 			// mess with the keyboard functionality. (FWR-2205)
-			if (Control == null || KeyboardHelper.ActiveKeymanKeyboard != string.Empty)
+			var keyboard = KeyboardController.ActiveKeyboard;
+			if (Control == null || (keyboard != null && keyboard.Type == KeyboardType.OtherIm))
 				return;
 
-#if !__MonoCS__
 			// Collect any characters that are currently in the message queue
-			// Note: When/if porting to MONO, the following block of code can be removed
-			// and still work. However, make sure the final line in the method still remains
-			// (i.e. the line where stuBuffer is being set).
 			Win32.MSG msg = new Win32.MSG();
 			while (true)
 			{
@@ -3076,11 +3077,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			//	inputLng.ToString() +
 			//	" [" + (int)inputLng.Handle + "],  m_hklActive = " + (int)m_hklActive);
 
-			if (KeyboardHelper.ActivateKeyboard(inputLng.Culture.LCID, ref m_nActiveLangId,
-				ref m_sActiveKeymanKbd))
-			{
+			bool fSelectLangPending = m_cSelectLangPending > 0;
+			KeyboardController.SetKeyboard(inputLng.Culture.LCID, null, ref m_nActiveLangId,
+				ref m_sActiveKeymanKbd, ref fSelectLangPending);
+			if (fSelectLangPending)
 				m_cSelectLangPending++;
-			}
 
 			m_hklActive = inputLng.Handle;
 			m_sActiveKeymanKbd = null;

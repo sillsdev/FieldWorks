@@ -51,13 +51,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			return new DummyBasicView(m_hvoRoot, m_flidContainingTexts);
 		}
 
-		/// <summary/>
-		public override void FixtureTeardown()
-		{
-			KeyboardHelper.Release();
-			base.FixtureTeardown();
-		}
-
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Create a new basic view

@@ -3367,7 +3367,6 @@ namespace SIL.FieldWorks
 			s_threadHelper = null;
 
 			FwRegistrySettings.Release();
-			KeyboardHelper.Release();
 		}
 
 #if DEBUG

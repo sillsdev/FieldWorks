@@ -446,13 +446,6 @@ namespace SIL.FieldWorks.TE
 			Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.DefaultFontName = "Times New Roman";
 		}
 
-		/// <summary/>
-		public override void FixtureTeardown()
-		{
-			KeyboardHelper.Release();
-			base.FixtureTeardown();
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Override to start an undoable UOW.

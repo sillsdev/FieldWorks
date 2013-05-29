@@ -30,6 +30,7 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Keyboarding;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
@@ -1394,10 +1395,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				case kiTabUnicode:
 					break;
 			}
-			if (fUseWsKeyboard)
-				KeyboardHelper.ActivateKeyboard(m_ws.LCID);
-			else
-				KeyboardHelper.ActivateDefaultKeyboard();
+			KeyboardController.SetKeyboard(
+				fUseWsKeyboard ? m_ws.LCID : InputLanguage.DefaultInputLanguage.Culture.LCID,
+				fUseWsKeyboard ? m_ws.Keyboard : null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1734,7 +1734,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void OnClosed(EventArgs e)
 		{
 			base.OnClosed(e);
-			KeyboardHelper.ActivateDefaultKeyboard();
+			KeyboardController.SetKeyboard(InputLanguage.DefaultInputLanguage.Culture.LCID, null);
 		}
 		#endregion
 

@@ -25,6 +25,7 @@ using Accessibility;
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
+using SIL.FieldWorks.Common.Keyboarding;
 using SIL.Utils;
 using XCore;
 
@@ -3170,20 +3171,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (vws == null)
 				return; // not enough valid writing systems to make it worth changing.
 
-			string sKeymanKbd = KeyboardHelper.ActiveKeymanKeyboard;
+			var keyboard = KeyboardController.ActiveKeyboard;
+			string sKeymanKbd = keyboard.Type == KeyboardType.OtherIm ? keyboard.Name : string.Empty;
 
 			int wsMatch = -1;
 			int countNoKeymanKeyboard = 0;
-			foreach (int ws in vws)
-			{
-				if (ws == 0)
-					continue;
-				ILgWritingSystem lgws = wsf.get_EngineOrNull(ws);
-				if (lgws == null)
-					continue;
-				if (string.IsNullOrEmpty(lgws.Keyboard))
-					countNoKeymanKeyboard++;
-			}
 			foreach (int ws in vws)
 			{
 				// Don't consider switching to the default, dummy writing system.
@@ -3194,13 +3186,17 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (lgws == null)
 					continue;
 
-				string sWsKbd = lgws.Keyboard;
-				if (sKeymanKbd == sWsKbd)
+				if (string.IsNullOrEmpty(lgws.Keyboard))
+					countNoKeymanKeyboard++;
+				else
 				{
-					wsMatch = ws;
-					if (wsMatch == vws[0])
-						return; // no change from current.
-					break;
+					string sWsKbd = lgws.Keyboard;
+					if (sKeymanKbd == sWsKbd)
+					{
+						wsMatch = ws;
+						if (wsMatch == vws[0])
+							return; // no change from current.
+					}
 				}
 			}
 

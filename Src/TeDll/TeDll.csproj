@@ -158,6 +158,10 @@
       <Name>FwUtils</Name>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Keyboarding, Version=8.1.0.18038, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\Keyboarding.dll</HintPath>
+    </Reference>
     <Reference Include="LibronixLinker, Version=3.0.0.24795, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\Common\LibronixLinker.dll</HintPath>

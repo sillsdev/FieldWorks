@@ -574,8 +574,7 @@ STDMETHODIMP LgKeymanHandler::put_ActiveKeyboardName(BSTR bstrName)
 }
 
 /*----------------------------------------------------------------------------------------------
-	Return the windows message (obtained from RegisterWindowsMessage("WM_KMSELECTLANG").
-	Review JohnT: Or should it be WM_KMKBCHANGE?
+	Return the windows message (obtained from RegisterWindowsMessage("WM_KMKBCHANGE").
 ----------------------------------------------------------------------------------------------*/
 STDMETHODIMP LgKeymanHandler::get_KeymanWindowsMessage(int * pwm)
 {

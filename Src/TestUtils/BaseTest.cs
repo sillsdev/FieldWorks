@@ -132,8 +132,6 @@ namespace SIL.FieldWorks.Test.TestUtils
 		[TestFixtureTearDown]
 		public virtual void FixtureTeardown()
 		{
-			KeyboardHelper.Release();
-
 			// FWC-16: we have to call CoFreeUnusedLibraries. This causes sqlnclir.dll to get
 			// unloaded. If we don't do this we get a deadlock after the fixture teardown
 			// because we're running STA.
