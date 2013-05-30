@@ -22,6 +22,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Xml;
 using System.Xml.Xsl;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
@@ -1635,7 +1637,22 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				System.Diagnostics.Debug.WriteLine(e.Message);
 			}
-			System.IO.File.Move(sOutputFile, sIntermediateFile);
+			for (int tries = 0; tries < 5; tries++)
+			{
+				try
+				{
+					File.Move(sOutputFile, sIntermediateFile);
+					return sIntermediateFile;
+				}
+				catch (IOException)
+				{
+					// Sometimes the system seems to think the file we just wrote is still locked.
+					// A short pause may save the day.
+					Thread.Sleep(200);
+				}
+			}
+			// If five tries didn't do it, try one more time and let it die if we still can't.
+			File.Move(sOutputFile, sIntermediateFile);
 			return sIntermediateFile;
 		}
 

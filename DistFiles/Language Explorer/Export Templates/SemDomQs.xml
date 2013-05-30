@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="html" type="semanticDomains" datatype="html" xslt="SemDomQs.xsl">
+	<FxtDocumentDescription dataLabel="Semantic Domain Worksheets" formatLabel="DOC" defaultExtension="doc" filter="DOC files (*.doc)|*.doc|All files (*.*)|*.*">
+Export Semantic domains in a form suitable for use in Rapid Word Collection workshops. (Note: internally, this document is html. However, we give it a .doc extension so that Word will be the default program to open it. By default, each topic is a separate page. You can configure the H1 and H2 styles to adjust this. By default, example words are not shown. Configure the style 'words' to be not hidden if you want to see them.)
+	</FxtDocumentDescription>
+</template>

@@ -2207,14 +2207,26 @@ namespace SIL.FieldWorks.Common.Framework
 									rgsLangs.Add(sLang);
 							}
 						}
-						int idxHtml = sLine.IndexOf("<html ", StringComparison.Ordinal);
-						if (idxHtml >= 0)
-							sLine = sLine.Insert(idxHtml + 5, " xmlns=\"http://www.w3.org/1999/xhtml\"");
+						sLine = InsertHtmlNamespace(sLine);
 						wtr.WriteLine(sLine);
 						sLine = rdr.ReadLine();
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// If this line contains the opening html attribute, add the required namespace info.
+		/// XSLT processors do too much with xmlns attributes, so we generally add it after the final xslt.
+		/// </summary>
+		/// <param name="sLine"></param>
+		/// <returns></returns>
+		public static string InsertHtmlNamespace(string sLine)
+		{
+			int idxHtml = sLine.IndexOf("<html ", StringComparison.Ordinal);
+			if (idxHtml >= 0)
+				sLine = sLine.Insert(idxHtml + 5, " xmlns=\"http://www.w3.org/1999/xhtml\"");
+			return sLine;
 		}
 
 		/// <summary>
