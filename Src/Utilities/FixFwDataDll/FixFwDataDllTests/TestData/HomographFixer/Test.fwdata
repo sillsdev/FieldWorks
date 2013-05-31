@@ -8,6 +8,10 @@
 <!-- Data for checking that different Citation forms are not mistaken for homographs -->
 <rt class="LexEntry" guid="21122112-bad1-46ba-9f69-6b46e45efff4">
 <HomographNumber val="0" />
+<AlternateForms>
+<!-- Alternate Form on Citation form, should not be used, should not crash-->
+<objsur guid="21122112-bad1-afaf-afaf-6b46e45efff4" t="o" />
+</AlternateForms>
 <CitationForm>
 <AUni ws="fr">same</AUni>
 </CitationForm>
@@ -27,6 +31,14 @@
 <rt class="MoStemAllomorph" guid="44467a75-bad1-4e15-bff2-c950bfc961d4" ownerguid="21122112-bad1-46ba-9f69-6b46e45efff4">
 <Form>
 <AUni ws="fr">wingding</AUni>
+</Form>
+<MorphType>
+<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+</MorphType>
+</rt>
+<rt class="MoStemAllomorph" guid="21122112-bad1-afaf-afaf-6b46e45efff4" ownerguid="21122112-bad1-46ba-9f69-6b46e45efff4">
+<Form>
+<AUni ws="fr">alternateformthrowaway</AUni>
 </Form>
 <MorphType>
 <objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
