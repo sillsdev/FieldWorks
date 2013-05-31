@@ -657,6 +657,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					m_pos.CatalogSourceId = m_id;
 				});
 			}
+
 			private void SetContentFromNode(FdoCache cache, string sNodeName, bool fFixName, ITsMultiString item)
 			{
 				ILgWritingSystemFactory wsf = cache.WritingSystemFactory;
@@ -693,7 +694,16 @@ namespace SIL.FieldWorks.LexText.Controls
 				// The XML node is from a file shipped with FieldWorks. It is quite likely multiple users
 				// of a project could independently add the same items, so we create them with fixed guids
 				// so merge will recognize them as the same objects.
-				var guid = new Guid(XmlUtils.GetAttributeValue(m_node, "guid"));
+				//// LT-14511 However, if the partOfSpeech is being added to a reversal index, a different guid needs to be used
+				//// than the ones in the file shipped with FieldWorks. In this case if two users add the same POS to the
+				//// reversal index at the same time and then do a Send/Receive operation, then a merge conflict report
+				//// will probably be created for this. This scenario is not likely to occur very often at all so having
+				//// a conflict report created for when this happens is something we can live with.
+				Guid guid;
+				if (posList.Owner is IReversalIndex)
+					guid = new Guid();
+				else
+					guid = new Guid(XmlUtils.GetAttributeValue(m_node, "guid"));
 				var posFactory = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
 				if (subItemOwner != null)
 				{
