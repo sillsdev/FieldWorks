@@ -84,6 +84,7 @@
 			  Condition="'$(OS)'=='Windows_NT'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testGenericLib"
+				FudgeFactor="$(timeoutFudgeFactor)"
 				Timeout="60000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
@@ -143,6 +144,7 @@
 		<CatenateFiles SourceFiles="@(KernelCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testFwKernel"
+				FudgeFactor="$(timeoutFudgeFactor)"
 				Timeout="60000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
@@ -197,6 +199,7 @@
 		<CatenateFiles SourceFiles="@(LanguageCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testLanguage"
+				FudgeFactor="$(timeoutFudgeFactor)"
 				Timeout="60000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
@@ -241,6 +244,7 @@
 		<CatenateFiles SourceFiles="@(ViewsCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
+				FudgeFactor="$(timeoutFudgeFactor)"
 				Timeout="60000">
 			<Output TaskParameter="FailedSuites" ItemName="FailedSuites"/>
 		</Unitpp>
