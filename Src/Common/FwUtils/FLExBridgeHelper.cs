@@ -213,6 +213,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// Tell Flex Bridge which model version of data are expected by FLEx.
 			AddArg(ref args, "-fwmodel", fwmodelVersionNumber.ToString());
 			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
+			// current culture may have country etc info after a hyphen. FlexBridge just needs the main language ID.
+			// It probably can't ever be null or empty, but let's be as robust as possible.
+			if (!string.IsNullOrWhiteSpace(Thread.CurrentThread.CurrentUICulture.Name))
+				AddArg(ref args, "-locale", Thread.CurrentThread.CurrentUICulture.Name.Split('-')[0]);
 
 			if (_noBlockerHost != null)
 			{
