@@ -659,6 +659,18 @@ namespace SIL.FieldWorks.IText
 			ApproveAndMoveNext(cmd as ICommandUndoRedoText);
 			return true;
 		}
+
+		/// <summary>
+		/// handle the message to see if the menu item should be enabled
+		/// LT-14588: this one was missing! Ctrl+Left doesn't work without it!
+		/// </summary>
+		public virtual bool OnDisplayMoveFocusBoxLeft(object commandObject, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = CanNavigateBundles;
+			display.Visible = display.Enabled;
+			return true; //we've handled this
+		}
+
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled
 		/// </summary>
@@ -668,6 +680,7 @@ namespace SIL.FieldWorks.IText
 			display.Visible = display.Enabled;
 			return true; //we've handled this
 		}
+
 		/// <summary>
 		/// Enable the "Disregard Analysis And" submenu, if we can.
 		/// </summary>
