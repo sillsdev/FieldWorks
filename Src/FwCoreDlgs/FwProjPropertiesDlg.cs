@@ -1405,7 +1405,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			CheckDisposed();
 			if (!m_defaultLinkedFilesFolder.Equals(txtExtLnkEdit.Text))
 			{
-				using (var dlg = new WarningNotUsingDefaultLinkedFilesLocation())
+				using (var dlg = new WarningNotUsingDefaultLinkedFilesLocation(m_helpTopicProvider))
 				{
 					var result = dlg.ShowDialog();
 					if (result == DialogResult.Yes) //Yes, please move back to defaults

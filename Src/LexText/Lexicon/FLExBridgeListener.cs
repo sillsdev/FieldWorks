@@ -209,7 +209,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (!LinkedFilesLocationIsDefault())
 			{
-				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation())
+				using (var dlg = new FwCoreDlgs.WarningNotUsingDefaultLinkedFilesLocation(_mediator.HelpTopicProvider))
 				{
 					var result = dlg.ShowDialog();
 					if (result == DialogResult.Yes)
