@@ -63,6 +63,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this.btn_help, "btn_help");
 			this.btn_help.Name = "btn_help";
 			this.btn_help.UseVisualStyleBackColor = true;
+			this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
 			// 
 			// btn_cancel
 			// 

@@ -2978,4 +2978,7 @@
   <data name="khtpCtxtOccurComplexConcordance" xml:space="preserve">
     <value>Using_Tools/Texts_&amp;_Words_tools/Complex_Concordance/Set_Occurrence_(Complex_Concordance).htm</value>
   </data>
+  <data name="khtpLinkedFilesWarningDialog" xml:space="preserve">
+    <value>User_Interface/Menus/File/Project_Properties/Project_Properties_External_Links_tab.htm</value>
+  </data>
 </root>
