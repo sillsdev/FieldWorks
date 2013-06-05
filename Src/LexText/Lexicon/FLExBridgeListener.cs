@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			StopParser();
 			bool dummy;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null, FDOBackendProvider.ModelVersion, "0.13",
-				out dummy, out _liftPathname);
+				null, out dummy, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
 			{
@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			bool dataChanged;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser,
 																  FLExBridgeHelper.SendReceive,
-																  null, FDOBackendProvider.ModelVersion, "0.13",
+																  null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
 																  out dataChanged, out dummy);
 			if (!success)
 			{
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 				SendReceiveUser,
 				FLExBridgeHelper.CheckForUpdates,
-				null, FDOBackendProvider.ModelVersion, "0.13",
+				null, FDOBackendProvider.ModelVersion, "0.13", null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -429,7 +429,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
-				null, FDOBackendProvider.ModelVersion, "0.13",
+				null, FDOBackendProvider.ModelVersion, "0.13", null,
 				out dummy1, out dummy2);
 
 			return true;
@@ -480,7 +480,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13",
+								   null, FDOBackendProvider.ModelVersion, "0.13", null,
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -522,7 +522,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.LiftConflictViewer,
-								   null, FDOBackendProvider.ModelVersion, "0.13",
+								   null, FDOBackendProvider.ModelVersion, "0.13", null,
 								   out dummy1, out dummy2);
 			if (!success)
 			{
@@ -621,7 +621,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13",
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), FDOBackendProvider.ModelVersion, "0.13", null,
 				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
@@ -757,7 +757,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				Path.Combine(projectFolder, Cache.ProjectId.Name + FwFileExtensions.ksFwDataXmlFileExtension),
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, FDOBackendProvider.ModelVersion, "0.13",
+				null, FDOBackendProvider.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id,
 				out dataChanged, out dummy);
 			if (!success)
 			{
@@ -1193,7 +1193,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-													FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13",
+													FLExBridgeHelper.UndoExportLift, null, FDOBackendProvider.ModelVersion, "0.13", null,
 													out dataChanged, out dummy);
 			MessageBox.Show(_parentForm, LexEdStrings.FLExBridgeListener_UndoExport_Error_exporting_LIFT, LexEdStrings.FLExBridgeListener_UndoExport_LIFT_Export_failed_Title,
 							MessageBoxButtons.OK, MessageBoxIcon.Error);

@@ -165,14 +165,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="command">obtain, start, send_receive, view_notes</param>
 		/// <param name="projectGuid">Optional Lang Project guid, that is only used with the 'move_lift' command</param>
 		/// <param name="liftModelVersionNumber">Version of LIFT schema that is supported by FLEx.</param>
+		/// <param name="writingSystemId">The id of the first vernacular writing system</param>
 		/// <param name="changesReceived">true if S/R made changes to the project.</param>
 		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
 		/// <param name="fwmodelVersionNumber">Current FDO model version number</param>
 		/// <returns>true if successful, false otherwise</returns>
 		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
 			Justification="ServiceHost gets disposed in KillTheHost()")]
-		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid, int fwmodelVersionNumber, string liftModelVersionNumber,
-			out bool changesReceived, out string projectName)
+		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
+												  int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId,
+												  out bool changesReceived, out string projectName)
 		{
 			_pipeID = string.Format(@"SendReceive{0}{1}", projectFolder, command);
 			flexBridgeTerminated = false;
@@ -223,6 +225,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return false;
 			}
 			AddArg(ref args, "-pipeID", _pipeID);
+			if (!String.IsNullOrEmpty(writingSystemId))
+			{
+				AddArg(ref args, "-ws", writingSystemId);
+			}
 
 			// make a new FLExBridge
 			ServiceHost host = null;

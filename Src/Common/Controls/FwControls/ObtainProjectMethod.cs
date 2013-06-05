@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.Controls
 			bool dummy;
 			string fwdataFileFullPathname;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null, FDOBackendProvider.ModelVersion, "0.13",
-				out dummy, out fwdataFileFullPathname);
+				null, out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{
 				ReportDuplicateBridge();
