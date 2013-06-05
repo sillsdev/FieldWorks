@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -245,6 +245,7 @@
     <Compile Include="BackupRestore\ProjectBackupServiceTestForLinkedFiles.cs" />
     <Compile Include="BackupRestore\ProjectBackupServiceTests.cs" />
     <Compile Include="BackupRestore\ProjectRestoreServiceTests.cs" />
+    <Compile Include="BackupRestore\ProjectRestoreTestService.cs" />
     <Compile Include="BaseStyleInfoTests.cs" />
     <Compile Include="BtConverterTests.cs" />
     <Compile Include="BulletInfoTests.cs" />
