@@ -112,6 +112,24 @@ namespace SIL.FieldWorks.IText
 				m_rootb = sandbox.RootBox;
 			}
 
+			// only for testing
+			internal void SetSandboxForTesting(SandboxBase sandbox)
+			{
+				m_sandbox = sandbox;
+				m_caches = sandbox.Caches;
+				m_wsVern = m_caches.MainCache.DefaultVernWs;
+			}
+
+			internal void SetComboListForTesting(IComboList list)
+			{
+				m_comboList = list;
+			}
+
+			internal void SetMorphForTesting(int imorph)
+			{
+				m_hvoMorph = m_sandbox.Caches.DataAccess.get_VecItem(kSbWord, ktagSbWordMorphs, imorph);
+			}
+
 			#region FwDisposableBase for IDisposable
 
 			protected override void DisposeManagedResources()
@@ -1675,7 +1693,7 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			void LoadMorphItems()
+			internal void LoadMorphItems()
 			{
 				ISilDataAccess sda = m_caches.DataAccess;
 				int hvoForm = sda.get_ObjectProp(m_hvoMorph, ktagSbMorphForm);
@@ -2536,7 +2554,7 @@ namespace SIL.FieldWorks.IText
 			/// current item.
 			/// </summary>
 			/// <returns></returns>
-			bool NeedSelectSame()
+			internal bool NeedSelectSame()
 			{
 				if (ComboList.SelectedIndex >= m_morphItems.Count || ComboList.SelectedIndex < 0)
 				{
@@ -2551,10 +2569,12 @@ namespace SIL.FieldWorks.IText
 					return true; // nothing currently set, set whatever is current.
 				var classid = realObject.ClassID;
 				var mi = m_morphItems[ComboList.SelectedIndex];
-				if (classid == LexSenseTags.kClassId && mi.m_hvoSense != 0)
+				if (classid != LexSenseTags.kClassId && mi.m_hvoSense != 0)
 					return true; // item is a sense, and current value is not!
 				if (mi.m_hvoSense == 0)
 					return true; // Add New Sense...
+				if (m_sandbox.CurrentPos(m_hvoMorph) == 0)
+					return true; // sense MSA has been set since analysis created, need to update it (LT-14574)
 				// Review JohnT: are there any other cases where we should do it anyway?
 				return false;
 			}

@@ -3655,6 +3655,11 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		internal int CurrentPos(int hvoMorph)
+		{
+			return m_caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphPos);
+		}
+
 		/// <summary>
 		/// Return the hvo best describing the state of the secondary cache for LexEntry fields
 		/// (by MSA, LexSense, or LexEntry).

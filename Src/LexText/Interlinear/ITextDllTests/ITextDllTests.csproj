@@ -240,6 +240,7 @@
     </Compile>
     <Compile Include="AddWordsToLexiconTests.cs">
     </Compile>
+    <Compile Include="ComboHandlerTests.cs" />
     <Compile Include="ComplexConcPatternModelTests.cs" />
     <Compile Include="ImportInterlinearAnalysesTests.cs" />
     <Compile Include="InterlinearExporterTests.cs" />
@@ -255,7 +256,9 @@
     <Compile Include="MorphemeBreakerTests.cs" />
     <Compile Include="SandboxBaseTests.cs" />
     <Compile Include="ShowSpaceDecoratorTests.cs" />
-    <Compile Include="TestTaggingChild.cs" />
+    <Compile Include="TestTaggingChild.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="WordBreakGuesserTests.cs" />
   </ItemGroup>
   <ItemGroup>
