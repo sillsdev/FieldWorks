@@ -899,7 +899,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_wsManager == null)
 				{
 					Debug.Assert(m_ws != null);
-					m_wsManager = new PalasoWritingSystemManager();
+					m_wsManager = FwUtils.CreateWritingSystemManager();
 					m_fDisposeWsManager = true;
 					m_wsManager.Set(m_ws);
 				}

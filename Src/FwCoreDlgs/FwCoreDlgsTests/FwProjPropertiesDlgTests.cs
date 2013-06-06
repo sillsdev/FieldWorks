@@ -895,14 +895,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SimulateAnalAddingWs(ws);
 
 			VerifyWritingSystemOrder(m_dlg.AnalWsList,
-				new[] { "English", "English (Phonetic)", "French", "Spanish", "Mandarin Chinese (China)" });
+				new[] { "English", "English (Phonetic)", "French", "Spanish", "Chinese (CN)" });
 
 			// Verify that the new writing system is the selected one.
 			Assert.AreEqual(ws, m_dlg.AnalWsList.SelectedItem, "New writing system is not selected.");
 
 			// Verify that the correct items are checked.
 			VerifyCheckedWritingSystems(m_dlg.AnalWsList,
-				new[] { "English (Phonetic)", "Mandarin Chinese (China)", "English" }, true);
+				new[] { "English (Phonetic)", "Chinese (CN)", "English" }, true);
 
 			// Verify that the correct items are not checked.
 			VerifyCheckedWritingSystems(m_dlg.AnalWsList,

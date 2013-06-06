@@ -76,18 +76,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ReplaceTextRange_Append_WithNWFC()
 		{
 			IStTxtPara para1 = AddParaToMockedText(m_stText, "Monkey");
-			AddRunToMockedPara(para1, "'This is text.'", null);
+			AddRunToMockedPara(para1, "\"This is text.\"", null);
 			AddSegmentTrans(para1, 0, "Hello");
 			para1.ParseIsCurrent = true;
 
 			IStTxtPara para2 = AddParaToMockedText(m_stText, "Monkey");
-			AddRunToMockedPara(para2, "'So what?'", null);
+			AddRunToMockedPara(para2, "\"So what?\"", null);
 			AddSegmentTrans(para2, 0, "there");
 			para2.ParseIsCurrent = true;
 
 			para1.ReplaceTextRange(para1.Contents.Length, para1.Contents.Length, para2, 0, para2.Contents.Length);
 
-			VerifyPara(para1, "'This is text.''So what?'");
+			VerifyPara(para1, "\"This is text.\"\"So what?\"");
 			VerifyParaSegments(para1, "Hello", "there");
 		}
 
@@ -125,18 +125,18 @@ namespace SIL.FieldWorks.FDO.FDOTests
 		public void ReplaceTextRange_InsertAtBeginning_WithNWFC()
 		{
 			IStTxtPara para1 = AddParaToMockedText(m_stText, "Monkey");
-			AddRunToMockedPara(para1, "'This is text.'", null);
+			AddRunToMockedPara(para1, "\"This is text.\"", null);
 			AddSegmentTrans(para1, 0, "Hello");
 			para1.ParseIsCurrent = true;
 
 			IStTxtPara para2 = AddParaToMockedText(m_stText, "Monkey");
-			AddRunToMockedPara(para2, "'So what?'", null);
+			AddRunToMockedPara(para2, "\"So what?\"", null);
 			AddSegmentTrans(para2, 0, "there");
 			para2.ParseIsCurrent = true;
 
 			para1.ReplaceTextRange(0, 0, para2, 0, para2.Contents.Length);
 
-			VerifyPara(para1, "'So what?''This is text.'");
+			VerifyPara(para1, "\"So what?\"\"This is text.\"");
 			VerifyParaSegments(para1, "there", "Hello");
 		}
 

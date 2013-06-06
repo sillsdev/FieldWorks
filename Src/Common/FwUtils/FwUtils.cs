@@ -13,6 +13,8 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
+using SIL.CoreImpl;
+
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -105,5 +107,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return (handle.StartsWith(ksSuiteIdPrefix) ? string.Empty : ksSuiteIdPrefix) +
 				handle.Replace('/', ':').Replace('\\', ':');
 		}
+
+		/// <summary>
+		/// Whenever possible use this in place of new PalasoWritingSystemManager.
+		/// It sets the TemplateFolder, which unfortunately the constructor cannot do because
+		/// the direction of our dependencies does not allow it to reference FwUtils and access DirectoryFinder.
+		/// </summary>
+		/// <returns></returns>
+		public static PalasoWritingSystemManager CreateWritingSystemManager()
+		{
+			var result = new PalasoWritingSystemManager();
+			result.TemplateFolder = DirectoryFinder.TemplateDirectory;
+			return result;
+		}
+
 	}
 }
