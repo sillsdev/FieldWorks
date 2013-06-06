@@ -403,6 +403,7 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/L10NSharp.dll" LocalFilename="$(fwrt)/Downloads/L10NSharp.dll"/>
 		<!-- This ItemGroup is necessary, for the copy to work on Windows which evaluates itemgroups when it encounters them -->
 		<ItemGroup>
 			<DownloadFiles Include="$(fwrt)/Downloads/*.dll"/>
