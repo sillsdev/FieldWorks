@@ -344,7 +344,7 @@
 
 		<Message Text="Finished deleting the output directories!"/>
 	</Target>
-	<!-- item group for downloads, to allow easy copying (on Linux with its incomplete xbuild) -->
+	<!-- item group for downloads, to allow easy copying -->
 	<!-- wildcards don't work unless the files have already been downloaded once -->
 	<ItemGroup>
 		<DownloadFiles Include="$(fwrt)/Downloads/Autofac.dll"/>
