@@ -1792,10 +1792,14 @@ namespace SIL.FieldWorks.IText
 			private static MorphItem GetMorphItem(IMoForm mf, ITsString tssName, ILexSense sense, ITsString tssSense,
 				ILexEntryRef ler, int hvoLexEntry, ILexEntryInflType inflType)
 			{
-				IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+				IMoMorphSynAnalysis msa = null;
 				string msaText = null;
-				if (msa != null)
-					msaText = msa.InterlinearName;
+				if (sense != null)
+				{
+					msa = sense.MorphoSyntaxAnalysisRA;
+					if (msa != null)
+						msaText = msa.InterlinearName;
+				}
 
 				var options = new MorphItemOptions
 				{
@@ -2541,14 +2545,16 @@ namespace SIL.FieldWorks.IText
 					// If we return true the dialog can be launched twice.
 					return false;
 				}
-				int sbHvo = m_sandbox.CurrentLexEntriesAnalysis(m_hvoMorph);
+				var sbHvo = m_sandbox.CurrentLexEntriesAnalysis(m_hvoMorph);
 				var realObject = m_sandbox.Caches.RealObject(sbHvo);
 				if (realObject == null)
 					return true; // nothing currently set, set whatever is current.
-				int classid = realObject.ClassID;
-				MorphItem mi = m_morphItems[ComboList.SelectedIndex];
-				if (classid != LexSenseTags.kClassId && mi.m_hvoSense != 0)
+				var classid = realObject.ClassID;
+				var mi = m_morphItems[ComboList.SelectedIndex];
+				if (classid == LexSenseTags.kClassId && mi.m_hvoSense != 0)
 					return true; // item is a sense, and current value is not!
+				if (mi.m_hvoSense == 0)
+					return true; // Add New Sense...
 				// Review JohnT: are there any other cases where we should do it anyway?
 				return false;
 			}
@@ -2585,7 +2591,6 @@ namespace SIL.FieldWorks.IText
 					if (!(comboItem is MorphComboItem))
 						CopyLexEntryInfoToMonomorphemicWordGlossAndPos();
 					SelectEntryIcon(morphIndex);
-					return;
 				}
 			}
 

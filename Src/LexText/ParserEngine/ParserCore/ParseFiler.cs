@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							foreach (var analysis in result.Analyses)
 								ProcessAnalysis(result.Wordform, analysis);
 							FinishWordForm(result.Wordform);
-							MarkAnalysisParseFailures(result.Wordform);
+							RemoveUnlovedParses(result.Wordform);
 						}
 						result.Wordform.Checksum = (int)result.Crc;
 					}
@@ -642,26 +642,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		///
 		/// </summary>
-		/// <remarks>
-		/// This is the port of the SetParseFailureEvals SP.
-		/// </remarks>
-		private void MarkAnalysisParseFailures(IWfiWordform wordform)
+		private void RemoveUnlovedParses(IWfiWordform wordform)
 		{
 			// Solves LT-1842.
 			/*
 				Get all the IDs for Analyses that belong to the wordform, but which don't have an
 				evaluation belonging to the given agent.  These will all be set to FAILED.
 			*/
-
-			var failures = from anal in wordform.AnalysesOC
-						   where anal.GetAgentOpinion(m_parserAgent) == Opinions.noopinion
-						   select anal;
-
-			foreach (var failure in failures)
+			foreach (var nobodyCareAboutMeAnalysis in wordform.AnalysesOC.Where(anal =>
+							anal.GetAgentOpinion(m_parserAgent) != Opinions.approves // Parser doesn't like it
+							&& anal.GetAgentOpinion(m_userAgent) == Opinions.noopinion)) // And, Human doesn't care
 			{
-				m_parserAgent.SetEvaluation(failure,
-					Opinions.disapproves);
-				m_analysesWithOldEvaluation.Remove(failure);
+				// A parser never has 'Opinions.disapproves'
+				//m_parserAgent.SetEvaluation(failure, Opinions.disapproves);
+				m_analysesWithOldEvaluation.Remove(nobodyCareAboutMeAnalysis);
+				nobodyCareAboutMeAnalysis.Delete();
 			}
 		}
 

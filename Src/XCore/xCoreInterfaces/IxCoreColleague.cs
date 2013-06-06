@@ -138,5 +138,17 @@ namespace XCore
 		{
 			get;
 		}
+
+		/// <summary>
+		/// Call this for the duration of a block of code outside of xWindow that might update
+		/// the size of the window (OnCreateHandle, for instance) without regard to the Mediator
+		/// PropertyTable. Call ResumeWindowSizing when done.
+		/// </summary>
+		void SuspendWindowSizePersistence();
+
+		/// <summary>
+		/// See SuspendWindowSizing.
+		/// </summary>
+		void ResumeWindowSizePersistence();
 	}
 }

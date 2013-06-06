@@ -682,6 +682,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return m_mediator; }
 		}
 
+		public void SuspendWindowSizePersistence()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ResumeWindowSizePersistence()
+		{
+			throw new NotImplementedException();
+		}
+
 		public void ResumeIdleProcessing()
 		{
 			throw new NotImplementedException();

@@ -410,52 +410,58 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 
 			using (var zipIn = new ZipInputStream(FileUtils.OpenStreamForRead(m_sZipFileName)))
 			{
-			try
-			{
-				ZipEntry entry;
-				bool foundBackupSettingsFile = false;
-				bool foundWritingSystemFiles = false;
-				string dataFileName = null;
-
-				while ((entry = zipIn.GetNextEntry()) != null)
+				try
 				{
-					string fileName = Path.GetFileName(entry.Name);
+					ZipEntry entry;
+					bool foundBackupSettingsFile = false;
+					bool foundWritingSystemFiles = false;
+					string dataFileName = null;
 
-					if (String.IsNullOrEmpty(fileName))
-						continue;
-					if (fileName.Equals(DirectoryFinder.kBackupSettingsFilename))
+					while ((entry = zipIn.GetNextEntry()) != null)
 					{
-						if (foundBackupSettingsFile)
-							throw new InvalidOperationException("Zip file " + m_sZipFileName + " contained multiple " + DirectoryFinder.kBackupSettingsFilename + " files.");
-						foundBackupSettingsFile = true;
-						InitializeFromStream(zipIn);
+						string fileName = Path.GetFileName(entry.Name);
+
+						if (String.IsNullOrEmpty(fileName))
+							continue;
+						if (fileName.Equals(DirectoryFinder.kBackupSettingsFilename))
+						{
+							if (foundBackupSettingsFile)
+								throw new InvalidOperationException("Zip file " + m_sZipFileName + " contained multiple " +
+									DirectoryFinder.kBackupSettingsFilename + " files.");
+							foundBackupSettingsFile = true;
+							InitializeFromStream(zipIn);
+						}
+						else if (Path.GetExtension(fileName) == FwFileExtensions.ksFwDataXmlFileExtension)
+						{
+							if (dataFileName != null)
+								throw new InvalidOperationException("Zip file " + m_sZipFileName +
+									" contained multiple project data files.");
+							dataFileName = fileName;
+						}
+						else if (!entry.Name.EndsWith("/") && entry.Name.Contains(DirectoryFinder.ksWritingSystemsDir + "/"))
+							foundWritingSystemFiles = true;
 					}
-					else if (Path.GetExtension(fileName) == FwFileExtensions.ksFwDataXmlFileExtension)
-					{
-						if (dataFileName != null)
-							throw new InvalidOperationException("Zip file " + m_sZipFileName + " contained multiple project data files.");
-						dataFileName = fileName;
-					}
-					else if (!entry.Name.EndsWith("/") && entry.Name.Contains(DirectoryFinder.ksWritingSystemsDir + "/"))
-						foundWritingSystemFiles = true;
+
+					if (!foundBackupSettingsFile)
+						throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain the " +
+							DirectoryFinder.kBackupSettingsFilename + " file.");
+					if (m_projectName == null)
+						throw new InvalidOperationException(DirectoryFinder.kBackupSettingsFilename + " in " +
+							m_sZipFileName + " did not contain a project name.");
+					string expectedProjectFile = DirectoryFinder.GetXmlDataFileName(m_projectName);
+					if (dataFileName == null || dataFileName != expectedProjectFile)
+						throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain the " +
+							expectedProjectFile + " file.");
+					if (!foundWritingSystemFiles)
+						throw new InvalidOperationException("Zip file " + m_sZipFileName +
+							" did not contain any writing system files.");
 				}
-
-				if (!foundBackupSettingsFile)
-					throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain the " + DirectoryFinder.kBackupSettingsFilename + " file.");
-				if (m_projectName == null)
-					throw new InvalidOperationException(DirectoryFinder.kBackupSettingsFilename + " in " + m_sZipFileName + " did not contain a project name.");
-				string expectedProjectFile = DirectoryFinder.GetXmlDataFileName(m_projectName);
-				if (dataFileName == null || dataFileName != expectedProjectFile)
-					throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain the " + expectedProjectFile + " file.");
-				if (!foundWritingSystemFiles)
-					throw new InvalidOperationException("Zip file " + m_sZipFileName + " did not contain any writing system files.");
-			}
-			catch (Exception e)
-			{
-				if (e is SharpZipBaseException || e is InvalidOperationException || e is SerializationException)
-					throw new InvalidBackupFileException(m_sZipFileName, e);
-				throw;
-			}
+				catch (Exception e)
+				{
+					if (e is SharpZipBaseException || e is InvalidOperationException || e is SerializationException)
+						throw new InvalidBackupFileException(m_sZipFileName, e);
+					throw;
+				}
 			}
 		}
 
@@ -539,17 +545,18 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			m_backupTime = settings.BackupTime;
 			m_comment = settings.Comment;
 			m_projectName = settings.ProjectName;
-			m_projectPathPersisted = settings.ProjectPathPersisted;
+			m_linkedFilesPathRelative = DirectoryFinderRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathRelativePersisted);
+			m_linkedFilesPathActual = DirectoryFinderRelativePaths.FixPathSlashesIfNeeded(settings.LinkedFilesPathActualPersisted);
+			m_projectPathPersisted = DirectoryFinderRelativePaths.FixPathSlashesIfNeeded(settings.ProjectPathPersisted);
 			m_configurationSettings = settings.IncludeConfigurationSettings;
 			m_linkedFiles = settings.IncludeLinkedFiles;
 			m_supportingFiles = settings.IncludeSupportingFiles;
 			m_spellCheckAdditions = settings.IncludeSpellCheckAdditions;
 			m_dbVersion = settings.DbVersion;
 			m_fwVersion = settings.FwVersion;
-			m_linkedFilesPathRelative = settings.LinkedFilesPathRelativePersisted;
-			m_linkedFilesPathActual = settings.LinkedFilesPathActualPersisted;
 			m_appAbbrev = settings.AppAbbrev;
 		}
+
 		#endregion
 	}
 

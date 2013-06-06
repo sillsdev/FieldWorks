@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Windows.Forms;
 using SIL.Utils;
 
 namespace XCore
@@ -38,14 +39,14 @@ namespace XCore
 			m_propertyTable = propertyTable;
 		}
 
-		public void RestoreWindowSettings(string id,System.Windows.Forms.Form form)
+		public void RestoreWindowSettings(string id,Form form)
 		{
 			object state = Get(id,"windowState");
 			//don't bother restoring the program to the minimized state.
-			if (state != null && ((System.Windows.Forms.FormWindowState)state) !=
-				System.Windows.Forms.FormWindowState.Minimized)
+			if (state != null && ((FormWindowState)state) !=
+				FormWindowState.Minimized)
 			{
-				form.WindowState = (System.Windows.Forms.FormWindowState)state;
+				form.WindowState = (FormWindowState)state;
 			}
 
 			object location = Get(id,"windowLocation");
@@ -53,14 +54,14 @@ namespace XCore
 
 			if (location != null)
 			{
-				form.Location = (System.Drawing.Point)location;
+				form.Location = (Point)location;
 				// The location restoration only works if the window startposition is set to
 				// "manual" because the window is not visible yet, and the location will be
 				// changed when it is Show()n.
-				form.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+				form.StartPosition = FormStartPosition.Manual;
 			}
 			if (size != null)
-				form.Size = (System.Drawing.Size)size;
+				form.Size = (Size)size;
 
 			// Fix the stored position in case it is off the screen.  This can happen if the
 			// user has removed a second monitor, or changed the screen resolution downward,
@@ -86,17 +87,17 @@ namespace XCore
 			m_propertyTable.SetProperty(GetPrefix(id)+"-"+label, value);
 		}
 
-		public void PersistWindowSettings(string id,System.Windows.Forms.Form form)
+		public void PersistWindowSettings(string id,Form form)
 		{
 			Set(id,"windowState", form.WindowState);
 
-			if (form.WindowState == System.Windows.Forms.FormWindowState.Normal)
+			if (form.WindowState == FormWindowState.Normal)
 				Set(id,"windowSize", form.Size);
 
 			//don't bother storing the location if we are maximized or minimized.
 			//if we did, then when the user exits the application and then runs it again,
 			//	then switches to the normal state, we would be switching to 0,0 or something.
-			if (form.WindowState == System.Windows.Forms.FormWindowState.Normal)
+			if (form.WindowState == FormWindowState.Normal)
 				Set(id, "windowLocation", form.Location);
 		}
 

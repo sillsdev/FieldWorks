@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-	<PropertyGroup Condition="'$(OS)'=='Unix'">
-		<platformSource>Linux</platformSource>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(OS)'=='Windows_NT'">
-		<platformSource>Windows</platformSource>
-	</PropertyGroup>
 	<!-- this list may be overkill for any one project, but let's keep things simple -->
 	<ItemGroup>
-		<PalasoDllFiles Include="Palaso.dll"/>
-		<PalasoDllFiles Include="Palaso.Lift.dll"/>
-		<PalasoDllFiles Include="Palaso.Media.dll"/>
+		<PalasoDllFiles Include="Palaso*.dll"/>
 	</ItemGroup>
 	<ItemGroup>
-		<PalasoFilesSource Include="@(PalasoDllFiles -> '$(DistFiles)/$(platformSource)/%(Identity)')"/>
+		<PalasoFilesSource Include="@(PalasoDllFiles -> '$(OutDir)../../Downloads')"/>
 	</ItemGroup>
 
 	<Target Name="CopyPalasoDlls">
@@ -30,5 +22,4 @@
 	<!-- These targets can be overridden by a BuildIncludes.targets -->
 	<Target Name="BeforeBuild" DependsOnTargets="CopyPalasoDlls"/>
 	<Target Name="AfterClean" DependsOnTargets="DeleteCopiedPalasoDlls"/>
-
 </Project>

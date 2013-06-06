@@ -239,7 +239,9 @@
     <Compile Include="AddCustomFieldDialogTests.cs" />
     <Compile Include="BulkEditBarTests.cs">
     </Compile>
-    <Compile Include="CustomListDlgTests.cs" />
+    <Compile Include="CustomListDlgTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
     <Compile Include="DictionaryConfigViewerStub.cs" />
@@ -255,7 +257,9 @@
     <Compile Include="MacroListenerTests.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilterTests.cs" />
     <Compile Include="XmlDocConfigureDlgTests.cs" />
-    <Compile Include="XWorksAppTestBase.cs" />
+    <Compile Include="XWorksAppTestBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>

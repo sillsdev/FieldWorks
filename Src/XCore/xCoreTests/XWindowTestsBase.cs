@@ -31,7 +31,7 @@ namespace XCore
 	public abstract class XWindowTestsBase : BaseTest
 	{
 		//protected XCoreApp m_testXCoreApp;
-		protected XCore.XWindow m_window;
+		protected XWindow m_window;
 		abstract protected string TestFile{	get;}
 		protected string m_settingsPath;
 
@@ -65,8 +65,8 @@ namespace XCore
 			m_window.PropertyTable.UserSettingDirectory = m_settingsPath;
 			// delete any existing property table settings.
 			m_window.PropertyTable.RemoveLocalAndGlobalSettings();
+			//m_window.PropertyTable.SetProperty("PreferredUILibrary", "FlexUIAdapter.dll");
 			m_window.LoadUI(ConfigurationFilePath);
-			//m_window.Show();
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -110,28 +110,9 @@ namespace XCore
 				string asmPathname = Assembly.GetExecutingAssembly().CodeBase;
 				asmPathname = FileUtils.StripFilePrefix(asmPathname);
 				string asmPath = asmPathname.Substring(0, asmPathname.LastIndexOf("/"));
-				return System.IO.Path.Combine(asmPath, TestFile);
+				return Path.Combine(asmPath, TestFile);
 			}
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Counts the tree nodes in the far left pane.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-
-		//		public void search(AccessibleObject o)
-		//		{
-		//			System.Diagnostics.Debug.WriteLine(o.Name + ";"+ o.Role);
-		//			int i = o.GetChildCount();
-		//			for(;i>0; i--)
-		//			{
-		//				AccessibleObject c = o.GetChild(i);
-		//				search(c);
-		//			}
-		//
-		//		}
-		//
 
 		protected void ReopenWindow()
 		{
@@ -139,34 +120,13 @@ namespace XCore
 			m_window.Dispose();
 			m_window = new XWindow();
 			m_window.PropertyTable.UserSettingDirectory = m_settingsPath;
+			//m_window.PropertyTable.SetProperty("PreferredUILibrary", "FlexUIAdapter.dll");
 			m_window.LoadUI(ConfigurationFilePath);
+			m_window.SuspendWindowSizePersistence();
 			m_window.Show();
-
+			m_window.ResumeWindowSizePersistence();
 		}
-		protected void CheckSubMenuCount(string menuId, string subMenuId, int expectedCount)
-		{
-			Application.DoEvents();
-			ChoiceGroup menuGroup =FindControlGroupById("menu",menuId);
-			MenuItem menu = (MenuItem)menuGroup.ReferenceWidget;
 
-			//this is needed to populate the menu
-			menu.PerformClick();
-
-			ChoiceGroup group = (ChoiceGroup)menuGroup.FindById(subMenuId);
-			MenuItem submenu = (MenuItem)group.ReferenceWidget;
-
-			//this is needed to populate the menu
-			submenu.PerformClick();
-			Assert.AreEqual(expectedCount, submenu.MenuItems.Count);
-		}
-		protected void CheckMenuCount(string menuId, int expectedCount)
-		{
-			using (MenuItem menu = FindMenu(menuId))
-			{
-				menu.PerformClick();
-				Assert.AreEqual(expectedCount, menu.MenuItems.Count);
-			}
-		}
 		protected ChoiceGroup FindControlGroupById(string type,string id)
 		{
 			Assert.AreEqual("menu", type, "only looking up menus has been implemented");
@@ -175,6 +135,7 @@ namespace XCore
 			//will throw an exception if it is not found.
 			return groupCollection.FindById(id);
 		}
+
 		protected ChoiceBase FindControlById(string type, string id)
 		{
 			ChoiceGroup group = FindControlGroupById(type,id);
@@ -182,16 +143,7 @@ namespace XCore
 			// note that this could either be what we think of as a menu, or as an item.  They have the same class in windows.forms
 			return (ChoiceBase)group.FindById(id);
 		}
-		protected MenuItem FindMenuItem(string id)
-		{
-			Object mi = FindWidgetForItem(id);
-			if(mi!=null)
-				return (MenuItem)mi;
-				//don't want to fail because sometimes we are making sure the item is *not* there
-				//Assert.Fail( "Could not find a MenuItem with ID='"+id + "'.");
-			else
-				return null;
-		}
+
 		protected object FindWidgetForItem(string id)
 		{
 			foreach(ChoiceGroup group in m_window.MenusChoiceGroupCollection)
@@ -200,14 +152,9 @@ namespace XCore
 				if (info != null)
 					return info.ReferenceWidget;
 			}
-			//don't want to fail because sometimes we are making sure the item is *not* there
-			//Assert.Fail( "Could not find a MenuItem with ID='"+id + "'.");
 			return null;
 		}
-		protected MenuItem FindMenu(string id)
-		{
-			return (MenuItem)FindControlGroupById("menu",id).ReferenceWidget;
-		}
+
 		/// <summary>
 		/// perform a click on the first MenuItem with this id (or label).
 		/// </summary>
@@ -216,48 +163,17 @@ namespace XCore
 		/// <param name="id"></param>
 		protected void ClickMenuItem (string groupId, string itemId)
 		{
-			//FindMenuItem(id).PerformClick();
-			//object widget = FindWidgetForItem(id);
-
 			ITestableUIAdapter adapter = (ITestableUIAdapter) m_window.MenuAdapter;
 			adapter.ClickItem(groupId, itemId);
 		}
-		[Test]//[Ignore("Temporary for the sake of NUnit 2.2")]
+
+		[Test]
 		public void VisitAllMenus()
 		{
 			if (m_window.Mediator == null)
 				ReopenWindow(); // A previously run test had closed it, so the mediator was gone.
 			ITestableUIAdapter adapter = (ITestableUIAdapter) m_window.MenuAdapter;
 			adapter.ClickOnEverything();
-
-			//			foreach(MenuItem menu in m_window.Menu.MenuItems)
-			//			{
-			//				VisitMenu(menu);
-			//			}
 		}
 	}
-
-
-	#region TestXCoreMainWnd (currently unused)
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Derive our own TeMainWnd for testing purposes.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	/*	public class TestXCoreMainWnd : XCoreMainWnd
-		{
-			/// ------------------------------------------------------------------------------------
-			/// <summary>
-			/// Constructor
-			/// </summary>
-			/// <param name="cache"></param>
-			/// <param name="wndCopyFrom"></param>
-			/// ------------------------------------------------------------------------------------
-			public TestXCoreMainWnd()
-			{
-			}
-
-
-		}*/
-	#endregion // TestXCoreMainWnd
 }

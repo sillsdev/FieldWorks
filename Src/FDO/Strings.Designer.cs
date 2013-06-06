@@ -389,6 +389,15 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The directory {0} could not be created to receive this project&apos;s linked media files..
+        /// </summary>
+        internal static string ksCannotRestoreLinkedFilesToDir {
+            get {
+                return ResourceManager.GetString("ksCannotRestoreLinkedFilesToDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FieldWorks cannot save your changes to {0}. It may be marked Read-only, or you may not have permission to write to the output directory. The file system reports
         ///{1}.
         /// </summary>
@@ -1133,7 +1142,7 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} is not a valid directory for linked files..
+        ///   Looks up a localized string similar to {0} is not a valid directory for linked files. Please select a valid directory..
         /// </summary>
         internal static string ksInvalidLinkedFilesFolder {
             get {

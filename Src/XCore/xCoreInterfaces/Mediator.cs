@@ -1560,6 +1560,26 @@ namespace XCore
 		}
 
 		/// <summary>
+		/// This property can be used to see if the String Table has been set
+		/// without triggering an exception.
+		/// </summary>
+		public bool IsStringTableSet
+		{
+			get
+			{
+				try
+				{
+					var table = this.StringTbl;
+					return true;
+				}
+				catch (ConfigurationException)
+				{
+					return false;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Check whether we have a string table stored and available for use.
 		/// </summary>
 		public bool HasStringTable

@@ -258,6 +258,16 @@ namespace SIL.Utils
 			get { return Environment.OSVersion.Platform == PlatformID.Unix; }
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Returns <c>true</c> if we're running on MacOSX, otherwise <c>false</c>.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static bool IsMac
+		{
+			get { return Environment.OSVersion.Platform == PlatformID.MacOSX; }
+		}
+
 		/// <summary>
 		/// Returns <c>true</c> if we're running on XP, otherwise <c>false</c>.
 		/// </summary>

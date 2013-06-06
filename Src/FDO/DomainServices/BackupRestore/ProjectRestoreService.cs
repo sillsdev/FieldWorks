@@ -103,10 +103,10 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			try
 			{
 			//Import from FW version 6.0 based on the file extension.
-			string extension = Path.GetExtension(fileSettings.File).ToLowerInvariant();
+			var extension = Path.GetExtension(fileSettings.File).ToLowerInvariant();
 			if (extension == FwFileExtensions.ksFw60BackupFileExtension || extension == ".xml")
 				ImportFrom6_0Backup(fileSettings, progressDlg);
-				else     //Restore from FW version 7.0 and newer backup.
+			else     //Restore from FW version 7.0 and newer backup.
 				RestoreFrom7_0AndNewerBackup(fileSettings);
 			}
 			catch(Exception error)
@@ -170,8 +170,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				Debug.Assert(fileSettings.IncludeSupportingFiles,
 				"The option to include supporting files should not be allowed if they aren't available in the backup settings");
 				var zipEntryStartsWith = DirectoryFinder.ksSupportingFilesDir;
-					UncompressFilesContainedInFolderandSubFolders(DirectoryFinder.GetZipfileFormatedPath(zipEntryStartsWith),
-																  m_restoreSettings.ProjectSupportingFilesPath);
+					UncompressFilesContainedInFolderandSubFolders(DirectoryFinder.GetZipfileFormattedPath(zipEntryStartsWith),
+						m_restoreSettings.ProjectSupportingFilesPath);
 			}
 
 			if (m_restoreSettings.IncludeConfigurationSettings)
@@ -202,20 +202,20 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					Directory.Delete(m_restoreSettings.ProjectPath, true);
 				using (ZipInputStream zipIn = OpenFWBackupZipfile())
 				{
-				ZipEntry entry;
-				while ((entry = zipIn.GetNextEntry()) != null)
-				{
-					var fileName = Path.GetFileName(entry.Name);
-					if (!String.IsNullOrEmpty(fileName))
+					ZipEntry entry;
+					while ((entry = zipIn.GetNextEntry()) != null)
 					{
-						string filePath = Path.Combine(DirectoryFinder.ProjectsDirectory, fileName);
-						if (FileUtils.TrySimilarFileExists(filePath, out filePath))
-							FileUtils.Delete(filePath);
+						var fileName = Path.GetFileName(entry.Name);
+						if (!String.IsNullOrEmpty(fileName))
+						{
+							string filePath = Path.Combine(DirectoryFinder.ProjectsDirectory, fileName);
+							if (FileUtils.TrySimilarFileExists(filePath, out filePath))
+								FileUtils.Delete(filePath);
+						}
 					}
+					zipIn.Close();
 				}
-				zipIn.Close();
 			}
-		}
 		}
 
 		//Copy all the files and folders contained in  projectPath to a backup folder location.
@@ -244,9 +244,9 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					Directory.Move(m_tempBackupFolder, m_restoreSettings.ProjectPath);
 			}
 			else if (m_fRestoreOverProject && Directory.Exists(m_tempBackupFolder))
-				{
-					Directory.Delete(m_tempBackupFolder, true);
-				}
+			{
+				Directory.Delete(m_tempBackupFolder, true);
+			}
 		}
 
 		#endregion
@@ -338,8 +338,8 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				"The option to include linked files should not be allowed if they aren't available in the backup settings");
 
 			var proposedDestinationLinkedFilesPath =
-				DirectoryFinderRelativePaths.GetLinkedFilesFullPathFromRelativePath(fileSettings.LinkedFilesPathRelativePersisted,
-																	m_restoreSettings.ProjectPath);
+				DirectoryFinderRelativePaths.GetLinkedFilesFullPathFromRelativePath(
+					fileSettings.LinkedFilesPathRelativePersisted, m_restoreSettings.ProjectPath);
 
 			var linkedFilesPathInZip = fileSettings.LinkedFilesPathActualPersisted;
 			if (fileSettings.LinkedFilesPathRelativePersisted.StartsWith(DirectoryFinderRelativePaths.ksProjectRelPath))
@@ -350,7 +350,6 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					DirectoryFinderRelativePaths.ksProjectRelPath.Length + 1);
 			}
 			var filesContainedInLinkdFilesFolder = GetAllFilesUnderFolderInZipFileAndDateTimes(linkedFilesPathInZip);
-
 
 			//If the proposed location is not in the default location under the project, then ask the user if they want
 			//to restore the files to the default location instead. Otherwise just go ahead and restore the files.
@@ -365,37 +364,58 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			{
 				//LinkedFiles folder does not exist which means it was not in the default location when the backup was made.
 				//Therefore, ask the user if we can restore these files to the default location in the project's folder.
-				using (var dlg = new RestoreLinkedFilesToProjectsFolder(m_helpTopicProvider))
-				{
-					if (dlg.ShowDialog() == DialogResult.OK)
-					{
-						if (dlg.fRestoreLinkedFilesToProjectFolder)
-						{
-							m_sLinkDirChangedTo = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
-							//Restore the files to the project folder.
-							UncompressLinkedFiles(filesContainedInLinkdFilesFolder, m_sLinkDirChangedTo,
-																	   linkedFilesPathInZip);
-						}
-						else
-						{
-							if (!Directory.Exists(proposedDestinationLinkedFilesPath))
-							{
-								try
-								{
-									Directory.CreateDirectory(proposedDestinationLinkedFilesPath);
-								}
-								catch (Exception error)
-								{
-									CouldNotRestoreLinkedFilesToOriginalLocation(linkedFilesPathInZip, filesContainedInLinkdFilesFolder);
-									return;
-								}
-							}
-							UncompressLinkedFiles(filesContainedInLinkdFilesFolder, proposedDestinationLinkedFilesPath,
-																	   linkedFilesPathInZip);
-					}
-				}
+				RestoreLinkedFiles(CanRestoreLinkedFilesToProjectsFolder(), filesContainedInLinkdFilesFolder, linkedFilesPathInZip,
+					proposedDestinationLinkedFilesPath);
 			}
 		}
+
+		/// <summary>
+		/// Ask user whether to move LinkedFiles to the default location or leave them
+		/// in the (current) non-standard location.
+		/// </summary>
+		/// <remarks>Protected so we can subclass in tests.</remarks>
+		protected virtual bool CanRestoreLinkedFilesToProjectsFolder()
+		{
+			using (var dlg = new RestoreLinkedFilesToProjectsFolder(m_helpTopicProvider))
+			{
+				// Let a Cancel result mean "Keep my old non-standard location"
+				return dlg.ShowDialog() == DialogResult.OK && dlg.fRestoreLinkedFilesToProjectFolder;
+			}
+		}
+
+		/// <summary>
+		/// Restore LinkedFiles to the project or a non-standard location depending on the
+		/// fPutFilesInProject parameter.
+		/// </summary>
+		/// <param name="fPutFilesInProject"></param>
+		/// <param name="filesContainedInLinkdFilesFolder"></param>
+		/// <param name="linkedFilesPathInZip"></param>
+		/// <param name="proposedDestinationLinkedFilesPath"></param>
+		protected void RestoreLinkedFiles(bool fPutFilesInProject, Dictionary<string, DateTime> filesContainedInLinkdFilesFolder,
+						string linkedFilesPathInZip, string proposedDestinationLinkedFilesPath)
+		{
+			if (fPutFilesInProject)
+			{
+				m_sLinkDirChangedTo = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
+				//Restore the files to the project folder.
+				UncompressLinkedFiles(filesContainedInLinkdFilesFolder, m_sLinkDirChangedTo, linkedFilesPathInZip);
+			}
+			else
+			{
+				if (!Directory.Exists(proposedDestinationLinkedFilesPath))
+				{
+					try
+					{
+						Directory.CreateDirectory(proposedDestinationLinkedFilesPath);
+					}
+					catch (Exception error)
+					{
+						CouldNotRestoreLinkedFilesToOriginalLocation(linkedFilesPathInZip, filesContainedInLinkdFilesFolder);
+						return;
+					}
+				}
+				UncompressLinkedFiles(filesContainedInLinkdFilesFolder, proposedDestinationLinkedFilesPath, linkedFilesPathInZip);
+			}
 		}
 
 		/// <summary>
@@ -412,8 +432,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			// Need to see if any of the files which are to be restored already exist and if they are newer than any of the ones
 			//from the backp. If there are any like this then ask the user if they want any of the files restored.
 			bool someFilesInZipfileAreOlder = AreSomeFilesToBeRestoredOlderThanThoseOnDisk(filesContainedInLinkdFilesFolder,
-																						   proposedDestinationLinkedFilesPath,
-																						   linkedFilesPathPersisted);
+												proposedDestinationLinkedFilesPath, linkedFilesPathPersisted);
 			try
 			{
 				if (someFilesInZipfileAreOlder)
@@ -427,22 +446,20 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 							if (dlg.fKeepFilesThatAreNewer)
 							{
 								var newList = RemoveFilesThatAreOlderThanThoseOnDisk(filesContainedInLinkdFilesFolder,
-																					 proposedDestinationLinkedFilesPath,
-																					 linkedFilesPathPersisted);
-								UncompressLinkedFiles(newList, proposedDestinationLinkedFilesPath,
-																		   linkedFilesPathPersisted);
+												proposedDestinationLinkedFilesPath, linkedFilesPathPersisted);
+								UncompressLinkedFiles(newList, proposedDestinationLinkedFilesPath, linkedFilesPathPersisted);
 							}
 							if (dlg.fOverWriteThatAreNewer)
 							{
 								UncompressLinkedFiles(filesContainedInLinkdFilesFolder, proposedDestinationLinkedFilesPath,
-																		   linkedFilesPathPersisted);
+									linkedFilesPathPersisted);
 							}
 						}
 					}
 				}
 				else  //no files to be restored are older than those on disk so restore them all.
 					UncompressLinkedFiles(filesContainedInLinkdFilesFolder, proposedDestinationLinkedFilesPath,
-																			   linkedFilesPathPersisted);
+						linkedFilesPathPersisted);
 			}
 			catch (Exception e)
 			{
@@ -450,7 +467,13 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			}
 		}
 
-		private void CouldNotRestoreLinkedFilesToOriginalLocation(string linkedFilesPathPersisted, Dictionary<string, DateTime> filesContainedInLinkdFilesFolder)
+		/// <summary>
+		/// Displays a dialog that asks the user how to handle a situation where non-standard location linked files
+		/// cannot be restored to their previous position.
+		/// </summary>
+		/// <param name="linkedFilesPathPersisted"></param>
+		/// <param name="filesContainedInLinkdFilesFolder"></param>
+		protected virtual void CouldNotRestoreLinkedFilesToOriginalLocation(string linkedFilesPathPersisted, Dictionary<string, DateTime> filesContainedInLinkdFilesFolder)
 		{
 			using (var dlgCantWriteFiles = new CantRestoreLinkedFilesToOriginalLocation(m_helpTopicProvider))
 			{
@@ -460,8 +483,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					{
 						m_sLinkDirChangedTo = DirectoryFinder.GetDefaultLinkedFilesDir(m_restoreSettings.ProjectPath);
 						//Restore the files to the project folder.
-						UncompressLinkedFiles(filesContainedInLinkdFilesFolder, m_sLinkDirChangedTo,
-																   linkedFilesPathPersisted);
+						UncompressLinkedFiles(filesContainedInLinkdFilesFolder, m_sLinkDirChangedTo, linkedFilesPathPersisted);
 					}
 					if (dlgCantWriteFiles.fDoNotRestoreLinkedFiles)
 					{
@@ -474,7 +496,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		private Dictionary<String, DateTime> GetAllFilesUnderFolderInZipFileAndDateTimes(string dir)
 		{
 			var filesAndDateTime = new Dictionary<String, DateTime>();
-			var dirZipFileFormat = DirectoryFinder.GetZipfileFormatedPath(dir);
+			var dirZipFileFormat = DirectoryFinder.GetZipfileFormattedPath(dir);
 			using (var zipIn = OpenFWBackupZipfile())
 			{
 				ZipEntry entry;
@@ -564,23 +586,34 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 				while ((entry = zipIn.GetNextEntry()) != null)
 				{
 					//Code to use for restoring files with new file structure.
-					if (fileList.ContainsKey(entry.Name))
-					{
-						var fileName = Path.GetFileName(entry.Name);
-						Debug.Assert(!String.IsNullOrEmpty(fileName));
+					if (!fileList.ContainsKey(entry.Name))
+						continue;
+					var fileName = Path.GetFileName(entry.Name);
+					Debug.Assert(!String.IsNullOrEmpty(fileName));
 
-						//Contruct the path where the file will be unzipped too.
-						var zipFileLinkFilesPath = DirectoryFinder.GetZipfileFormatedPath(linkedFilesPathPersisted);
-						var filenameWithSubFolders = entry.Name.Substring(zipFileLinkFilesPath.Length);
-						var pathForFileSubFolders = filenameWithSubFolders.Substring(1, filenameWithSubFolders.Length - fileName.Length - 1);
-						var destFolderZipFileFormat = DirectoryFinder.GetZipfileFormatedPath(destinationLinkedFilesPath);
-						string pathRoot = Path.GetPathRoot(destinationLinkedFilesPath);
-						Debug.Assert(!String.IsNullOrEmpty(pathRoot));
-						var pathforfileunzip = Path.Combine(pathRoot, Path.Combine(destFolderZipFileFormat, pathForFileSubFolders));
-						UnzipFileToRestoreFolder(zipIn, fileName, entry.Size, pathforfileunzip, entry.DateTime);
+					//Contruct the path where the file will be unzipped too.
+					var zipFileLinkFilesPath = DirectoryFinder.GetZipfileFormattedPath(linkedFilesPathPersisted);
+					var filenameWithSubFolders = entry.Name.Substring(zipFileLinkFilesPath.Length);
+					String pathForFileSubFolders = "";
+					if (!fileName.Equals(filenameWithSubFolders)) //if they are equal the file is in the root of LinkedFiles
+					{
+						pathForFileSubFolders = GetPathForSubFolders(filenameWithSubFolders, fileName.Length);
 					}
+					var destFolderZipFileFormat = DirectoryFinder.GetZipfileFormattedPath(destinationLinkedFilesPath);
+					var pathRoot = Path.GetPathRoot(destinationLinkedFilesPath);
+					Debug.Assert(!String.IsNullOrEmpty(pathRoot));
+					var pathforfileunzip = Path.Combine(pathRoot, destFolderZipFileFormat, pathForFileSubFolders);
+					UnzipFileToRestoreFolder(zipIn, fileName, entry.Size, pathforfileunzip, entry.DateTime);
 				}
 			}
+		}
+
+		private static string GetPathForSubFolders(string filenameWithSubFolders, int filenameLength)
+		{
+			//There seems to be some inconsistancy between some .fwbackup files so there is a need to check
+			//for both of these cases, with and without the AltDirectorySeparatorChar
+			var trimmedPathString = filenameWithSubFolders.TrimStart(Path.AltDirectorySeparatorChar);
+			return trimmedPathString.Substring(0, trimmedPathString.Length - filenameLength - 1);
 		}
 
 		private void UncompressFilesContainedInFolderandSubFolders(String zipEntryStartsWith, String destinationDirectory)
@@ -659,7 +692,19 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 		{
 			var newFileName = Path.Combine(restoreDirectory, fileName);
 			//Make sure the directory exists where we are going to create the file.
-			Directory.CreateDirectory(Directory.GetParent(newFileName).ToString());
+			var dir = string.Empty;
+			try
+			{
+				dir = Directory.GetParent(newFileName).ToString();
+				Directory.CreateDirectory(dir);
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine("Failed to create directory {0}; {1}", dir, e.Message);
+				var msg = string.Format(Strings.ksCannotRestoreLinkedFilesToDir, dir);
+				MessageBoxUtils.Show(msg, Strings.ksCannotRestore);
+				return;
+			}
 			if (FileUtils.TrySimilarFileExists(newFileName, out newFileName))
 			{
 				if ((File.GetAttributes(newFileName) & FileAttributes.ReadOnly) != 0)
@@ -675,7 +720,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 			try
 			{
 				try
-			{
+				{
 					streamWriter = File.Create(newFileName);
 				}
 				catch (Exception)
@@ -688,13 +733,14 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 #endif
 				}
 				if (streamWriter == null)
-			{
+				{
 					try
 					{
 						streamWriter = File.Create(newFileName);
 					}
-					catch (Exception)
-			{
+					catch (Exception e)
+					{
+						Debug.WriteLine("Failed to restore file {0}; {1}", newFileName, e.Message);
 						var msg = string.Format(Strings.ksCannotRestoreBackup, newFileName);
 						MessageBoxUtils.Show(msg, Strings.ksCannotRestore);
 						return;
@@ -708,7 +754,7 @@ namespace SIL.FieldWorks.FDO.DomainServices.BackupRestore
 					else break;
 				}
 				streamWriter.Close();
-				}
+			}
 			finally
 			{
 				if (streamWriter != null)

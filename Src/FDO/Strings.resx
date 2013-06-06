@@ -962,4 +962,7 @@ If you need to make changes, tell the other users to close this project before y
   <data name="ksReversalIndexPOSListName" xml:space="preserve">
     <value>Parts of Speech for {0} Reversal Index</value>
   </data>
+  <data name="ksCannotRestoreLinkedFilesToDir" xml:space="preserve">
+    <value>The directory {0} could not be created to receive this project's linked media files.</value>
+  </data>
 </root>

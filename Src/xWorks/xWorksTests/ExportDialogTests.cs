@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
+using System.Text;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Test.TestUtils;
@@ -76,6 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			"            <CmDomainQ>" + Environment.NewLine +
 			"              <Question>" + Environment.NewLine +
 			"                <AUni ws=\"en\">(1) What words refer to everything we can see?</AUni>" + Environment.NewLine +
+			"                <AUni ws=\"fr\">(1) Quels mots se réfèrent à tout ce que nous pouvons voir?</AUni>" + Environment.NewLine +
 			"              </Question>" + Environment.NewLine +
 			"              <ExampleWords>" + Environment.NewLine +
 			"                <AUni ws=\"en\">universe, creation, cosmos, heaven and earth, macrocosm, everything that exists</AUni>" + Environment.NewLine +
@@ -492,6 +494,63 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
+		/// <summary>
+		/// Test the main options of ExportSemanticDomains.
+		/// Note: this test is in some ways too precise. For example, it would really be better to produce the red
+		/// effect with different styles, which would change the result here. Also, order of attributes is not significant.
+		/// There are many other things about the export we could verify.
+		/// </summary>
+		[Test]
+		public void ExportSemanticDomains()
+		{
+			using (var exportDlg = new ExportDialog())
+			{
+				exportDlg.SetCache(m_cache);
+				var tempPath = Path.GetTempFileName();
+				var fxt = new ExportDialog.FxtType();
+				fxt.m_sXsltFiles = "SemDomQs.xsl";
+				var fxtPath = Path.Combine(exportDlg.FxtDirectory, "SemDomQs.xml");
+				var wss = new List<int>();
+				wss.Add(m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en"));
+				exportDlg.SetTranslationWritingSystems(wss);
+
+				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, false});
+
+				string result;
+				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
+					result = reader.ReadToEnd();
+				File.Delete(tempPath);
+				Assert.That(result, Is.StringContaining("What words refer to the sun?"));
+				Assert.That(result, Is.Not.StringContaining("1.1.1.11.1.1.1"), "should not output double abbr for en");
+				Assert.That(result, Is.Not.StringContaining("class: english"),
+					"English should not give anything the missing translation style");
+
+				wss.Clear();
+				wss.Add(m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("fr"));
+
+				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, false});
+
+				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
+					result = reader.ReadToEnd();
+				File.Delete(tempPath);
+				Assert.That(result, Is.Not.StringContaining("What words refer to the sun?"),
+					"french export should not have english questions");
+				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
+					"French export should have the French question (not english class)");
+
+				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, true});
+				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
+					result = reader.ReadToEnd();
+				File.Delete(tempPath);
+				Assert.That(result, Is.StringContaining("<span class=\"english\" lang=\"en\">(1) What words refer to the sun?"),
+					"french export with all questions should have english where french is missing (in red)");
+				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
+					"French export should have the French question (not red)");
+				Assert.That(result, Is.Not.StringContaining("What words refer to everything we can see"),
+					"French export should not have English alternative where French is present");
+			}
+		}
+
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the method ExportTranslatedLists.
@@ -551,7 +610,7 @@ namespace SIL.FieldWorks.XWorks
 					Assert.AreEqual("<CmDomainQ>", r.ReadLine());
 					Assert.AreEqual("<Question>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">(1) What words refer to everything we can see?</AUni>", r.ReadLine());
-					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
+					Assert.AreEqual("<AUni ws=\"fr\">(1) Quels mots se réfèrent à tout ce que nous pouvons voir?</AUni>", r.ReadLine());
 					Assert.AreEqual("</Question>", r.ReadLine());
 					Assert.AreEqual("<ExampleWords>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">universe, creation, cosmos, heaven and earth, macrocosm, everything that exists</AUni>", r.ReadLine());

@@ -464,13 +464,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// stores them in.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string GetZipfileFormatedPath(string path)
+		public static string GetZipfileFormattedPath(string path)
 		{
 			StringBuilder strBldr = new StringBuilder(path);
 			string pathRoot = Path.GetPathRoot(path);
 			strBldr.Remove(0, pathRoot.Length);
 			// replace back slashes with forward slashes (for Windows)
-			strBldr.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			if (!MiscUtils.IsUnix && !MiscUtils.IsMac)
+				strBldr.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 			return strBldr.ToString();
 		}
 
@@ -1063,9 +1064,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// If a path gets stored with embedded \, fix it to work away from Windows.  (FWNX-882)
 		/// </summary>
-		internal static string FixPathSlashesIfNeeded(string path)
+		public static string FixPathSlashesIfNeeded(string path)
 		{
-			if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+			if (string.IsNullOrEmpty(path))
+				return string.Empty;
+			if (MiscUtils.IsUnix || MiscUtils.IsMac)
 			{
 				if (path.Contains("\\"))
 					return path.Replace('\\', '/');
