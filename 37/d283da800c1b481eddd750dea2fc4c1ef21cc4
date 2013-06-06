@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Ann Bush <ann_bush@wycliffe.org>
+Submitted-by: Ken Zook <ken_zook@sil.org>
+Submitted-at: Thu, 06 Jun 2013 20:01:07 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1153
+Project: FieldWorks
+Branch: refs/heads/release/8.0
