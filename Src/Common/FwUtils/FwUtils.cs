@@ -82,6 +82,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// <summary>
+		/// Many of the previous calls to IsTeInstalled were changed to call this instead,
+		/// when we made the SE edition able to work with Paratext Scripture if present.
+		/// Currently it always returns true, but if we someday want to hide every trace of Scripture
+		/// from the UI, we can make this configurable.
+		/// </summary>
+		public static bool IsOkToDisplayScriptureIfPresent
+		{
+			get { return true; }
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether FLEx is installed.

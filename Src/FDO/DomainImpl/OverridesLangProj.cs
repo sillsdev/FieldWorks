@@ -38,7 +38,6 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	internal partial class LangProject
 	{
 		private int m_srsFlid;
-		private readonly bool m_teInstalled = FwUtils.IsTEInstalled;
 		private WritingSystemCollection m_analysisWritingSystems;
 		private WritingSystemCollection m_vernacularWritingSystems;
 		private WritingSystemList m_currentAnalysisWritingSystems;
@@ -147,7 +146,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 
 				// Get regular texts.
 
-				if (m_teInstalled && TranslatedScriptureOA != null)
+				if (FwUtils.IsOkToDisplayScriptureIfPresent && TranslatedScriptureOA != null)
 				{
 					// TE installed, so also get them from Sripture.
 					foreach (var book in TranslatedScriptureOA.ScriptureBooksOS)

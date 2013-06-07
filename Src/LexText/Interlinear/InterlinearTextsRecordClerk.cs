@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext;
@@ -142,6 +143,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Gendarme is just too dumb to understand the try...finally pattern to ensure disposal of dlg")]
 		protected internal bool OnAddTexts(object args)
 		{
 			CheckDisposed();
@@ -152,16 +155,10 @@ namespace SIL.FieldWorks.IText
 			IFilterTextsDialog<IStText> dlg = null;
 			try
 			{
-				if (FwUtils.IsTEInstalled)
-				{
-					dlg = (IFilterTextsDialog<IStText>)DynamicLoader.CreateObject(
-						"ScrControls.dll", "SIL.FieldWorks.Common.Controls.FilterTextsDialogTE",
-						Cache, interestingTexts, m_mediator.HelpTopicProvider, (IBookImporter)this);
-				}
+				if (FwUtils.IsOkToDisplayScriptureIfPresent)
+					dlg = new FilterTextsDialogTE(Cache, interestingTexts, m_mediator.HelpTopicProvider, this);
 				else
-				{
 					dlg = new FilterTextsDialog(Cache, interestingTexts, m_mediator.HelpTopicProvider);
-				}
 				if (dlg.ShowDialog(((IApp)m_mediator.PropertyTable.GetValue("App")).ActiveMainWindow) == DialogResult.OK)
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());

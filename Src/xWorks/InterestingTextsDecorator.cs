@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 			if (interestingTextList == null)
 			{
 				interestingTextList = new InterestingTextList(mediator.PropertyTable, services.GetInstance<ITextRepository>(),
-					services.GetInstance<IStTextRepository>(), FwUtils.IsTEInstalled);
+					services.GetInstance<IStTextRepository>(), FwUtils.IsOkToDisplayScriptureIfPresent);
 				// Make this list available for other tools in this window, but don't try to persist it.
 				mediator.PropertyTable.SetProperty(InterestingTextKey, interestingTextList, false);
 				mediator.PropertyTable.SetPropertyPersistence(InterestingTextKey, false);

@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		private void ParseInterestingTexts()
 		{
-			// Also it should be forced to be empty if FwUtils.IsTEInstalled returns false.
+			// Also it should be forced to be empty if FwUtils.IsOkToDisplayScriptureIfPresent returns false.
 			IEnumerable<IStText> scriptureTexts = Cache.LangProject.TranslatedScriptureOA == null ? new IStText[0] :
 				from aText in Cache.LangProject.TranslatedScriptureOA.StTexts
 				where IsInterestingScripture(aText)

@@ -15,6 +15,7 @@ using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
+using SILUBS.ScriptureChecks;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -69,7 +70,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private IApp m_app;
 		private IWritingSystem m_ws;
 		private int m_gridRowHeight;
-		private string m_checkToRun;
+		private CheckType m_checkToRun;
 		private string m_sListName;
 		private readonly string m_sInitialScanMsgLabel;
 		private Dictionary<string, string> m_chkParams = new Dictionary<string, string>();
@@ -136,7 +137,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ContextFont = contextFont;
 			TokenGrid = tokenGrid;
 
-			if (FwUtils.IsTEInstalled)
+			if (FwUtils.IsOkToDisplayScriptureIfPresent)
 				m_scrChecksDllFile = DirectoryFinder.BasicEditorialChecksDll;
 
 			if (m_ws != null)
@@ -145,10 +146,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_ws.Id == m_wsContainer.DefaultVernacularWritingSystem.Id);
 
 				// If TE isn't installed, we can't support creating an inventory
-				// based on Scripture data.
-				cmnuScanScripture.Visible = (FwUtils.IsTEInstalled &&
+				// based on Scripture data. Likewise if we don't yet have any books (which also guards
+				// against showing the option in the SE edition, unless it has been paired with Paratext).
+				cmnuScanScripture.Visible = (FwUtils.IsOkToDisplayScriptureIfPresent &&
 					File.Exists(m_scrChecksDllFile) &&
-					m_cache != null && m_cache.LanguageProject.TranslatedScriptureOA != null && modifyingVernWs);
+					m_cache != null && m_cache.LanguageProject.TranslatedScriptureOA != null
+					&& m_cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS.Count > 0
+					&& modifyingVernWs);
 
 				if (m_ws.RightToLeftScript)
 				{
@@ -250,13 +254,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		/// <summary>
+		/// Kinds of checks this control might run if activated.
+		/// </summary>
+		public enum CheckType
+		{
+			/// <summary>
+			/// Use PunctuationCheck
+			/// </summary>
+			Punctuation,
+			/// <summary>
+			/// Use CharactersCheck
+			/// </summary>
+			Characters
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		///
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public string CheckToRun
+		public CheckType CheckToRun
 		{
 			get { return m_checkToRun; }
 			set { m_checkToRun = value; }
@@ -623,15 +642,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			scrDataSource.LoadException += scrDataSource_LoadException;
 
-			Assembly asm = Assembly.LoadFile(m_scrChecksDllFile);
-			if (asm == null)
-				return null;
-			Type type = asm.GetType("SILUBS.ScriptureChecks." + m_checkToRun);
-
-			var scrCharInventoryBldr = Activator.CreateInstance(type, scrDataSource) as IScrCheckInventory;
-
-			if (scrCharInventoryBldr == null)
-				return null;
+			IScrCheckInventory scrCharInventoryBldr;
+			if (m_checkToRun == CheckType.Punctuation)
+				scrCharInventoryBldr = new PunctuationCheck(scrDataSource);
+			else // CheckType.Characters
+				scrCharInventoryBldr = new CharactersCheck(scrDataSource);
 
 			var tokens = new List<ITextToken>();
 			var scr = m_cache.LangProject.TranslatedScriptureOA;
@@ -702,7 +717,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_fileData = File.ReadAllLines(fileName);
 				NormalizeFileData();
 
-				var data = new TextFileDataSource(m_scrChecksDllFile, m_checkToRun, m_fileData,
+				var data = new TextFileDataSource(m_scrChecksDllFile,
+					m_checkToRun == CheckType.Punctuation ? "PunctuationCheck" : "CharactersCheck",
+					m_fileData,
 					ResourceHelper.GetResourceString("kstidFileLineRef"), m_chkParams, CharacterCategorizer);
 
 				tokens = data.GetReferences();
