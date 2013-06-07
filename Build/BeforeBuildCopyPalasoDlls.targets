@@ -2,18 +2,23 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<!-- this list may be overkill for any one project, but let's keep things simple -->
 	<ItemGroup>
-		<PalasoDllFiles Include="Palaso*.dll"/>
+		<!-- Don't try to replace with Palaso*.dll. We don't specify a path here, so the wildcard
+			matches nothing, resulting in an empty string! -->
+		<PalasoDllFiles Include="Palaso.dll"/>
+		<PalasoDllFiles Include="Palaso.Lift.dll"/>
+		<PalasoDllFiles Include="Palaso.Media.dll"/>
+		<PalasoDllFiles Include="PalasoUIWindowsForms.dll"/>
 	</ItemGroup>
 	<ItemGroup>
-		<PalasoFilesSource Include="@(PalasoDllFiles -> '$(OutDir)../../Downloads')"/>
+		<PalasoFilesSource Include="@(PalasoDllFiles -> '$(OutDir)../../Downloads/%(Identity)')"/>
 	</ItemGroup>
 
 	<Target Name="CopyPalasoDlls">
-		<Copy SourceFiles="@(PalasoFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
+		<Copy SourceFiles="@(PalasoFilesSource)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true"/>
 	</Target>
 
 	<ItemGroup>
-		<PalasoOutputFiles Include="@(PalasoDllFiles -> '$(OutDir)/%(Identity)')"/>
+		<PalasoOutputFiles Include="@(PalasoDllFiles -> '$(OutDir)%(Identity)')"/>
 	</ItemGroup>
 	<Target Name="DeleteCopiedPalasoDlls">
 		<Delete Files="@(PalasoOutputFiles)" ContinueOnError="true"/>
