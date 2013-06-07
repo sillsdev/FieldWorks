@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 		private FileStream m_lockFile;
 		private bool m_needConversion; // communicates to MakeSurrogate that we're reading an old version.
 		private int m_startupVersionNumber;
-
+		private IList<string> m_listOfDuplicateGuids = new List<string>();
 		#endregion
 
 		/// <summary>
@@ -128,6 +128,11 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 			IDataMigrationManager dataMigrationManager) :
 			base(cache, identityMap, surrogateFactory, mdc, dataMigrationManager)
 		{
+		}
+
+		public IList<string> ListOfDuplicateGuids
+		{
+			get { return m_listOfDuplicateGuids; }
 		}
 
 		protected override void Dispose(bool disposing)
@@ -279,7 +284,28 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 					OfferToRestore(e.Message);
 					continue; // backup restored, if previous call returns.
 				}
+				ReportDuplicateGuidsIfTheyExist();
 				return m_startupVersionNumber;
+			}
+		}
+
+		internal virtual void ReportDuplicateGuidsIfTheyExist()
+		{
+			//report if duplicate guids are found on different Flex objects.
+			if (ListOfDuplicateGuids.Count > 0)
+			{
+				var sb = new StringBuilder(Strings.ksDuplicateGuidsMsg1);
+				sb.AppendLine();
+				sb.AppendLine(Strings.ksDuplicateGuidsMsg3);
+				sb.AppendLine();
+				sb.AppendLine(Strings.ksDuplicateGuidsMsg4);
+				sb.AppendLine();
+				foreach (var guid in ListOfDuplicateGuids)
+				{
+					sb.AppendLine(String.Format(Strings.ksDuplicateGuidsMsg2, guid));
+					sb.AppendLine();
+				}
+				ErrorReporter.ReportDuplicateGuids(FwRegistryHelper.FieldWorksRegistryKey, "FLExErrors@sil.org", null, sb.ToString());
 			}
 		}
 
@@ -765,6 +791,13 @@ namespace SIL.FieldWorks.FDO.Infrastructure.Impl
 				new Guid(GetAttribute(s_guid, xmlBytes)),
 				GetAttribute(s_class, xmlBytes),
 				xmlBytes);
+
+			if (m_identityMap.HasObject(surrogate.Guid))
+			{
+				var sb = new StringBuilder();
+				sb.Append(string.Format("{0}, classname: {1}", surrogate.Guid.ToString(), surrogate.Classname));
+				ListOfDuplicateGuids.Add(sb.ToString());
+			}
 			if (m_needConversion)
 				RegisterSurrogateForConversion(surrogate);
 			else

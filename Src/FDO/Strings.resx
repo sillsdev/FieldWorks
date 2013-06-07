@@ -965,4 +965,16 @@ If you need to make changes, tell the other users to close this project before y
   <data name="ksCannotRestoreLinkedFilesToDir" xml:space="preserve">
     <value>The directory {0} could not be created to receive this project's linked media files.</value>
   </data>
+  <data name="ksDuplicateGuidsMsg1" xml:space="preserve">
+    <value>There are duplicate guids in this project.</value>
+  </data>
+  <data name="ksDuplicateGuidsMsg2" xml:space="preserve">
+    <value>This guid is used more than once: {0}</value>
+  </data>
+  <data name="ksDuplicateGuidsMsg3" xml:space="preserve">
+    <value>Please send a copy of of this report to the FLEX team as soon as possible to have this problem corrected.</value>
+  </data>
+  <data name="ksDuplicateGuidsMsg4" xml:space="preserve">
+    <value>Email the error report to FLExErrors@sil.org&lt;</value>
+  </data>
 </root>

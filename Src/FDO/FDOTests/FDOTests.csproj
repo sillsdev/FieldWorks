@@ -525,6 +525,7 @@
     <Content Include="TestData\DataMigration7000042A.xml" />
     <Content Include="TestData\DataMigration7000042B.xml" />
     <Content Include="TestData\DataMigration7000044.xml" />
+    <None Include="TestData\DuplicateGuids.fwdata" />
     <None Include="TestData\SlightlyCorruptedXMLFile.fwdata" />
     <None Include="TestData\FeatureSystem2.xml" />
     <None Include="TestData\FeatureSystem3.xml" />

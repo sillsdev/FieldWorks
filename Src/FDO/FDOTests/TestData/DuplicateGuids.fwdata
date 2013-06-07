@@ -1,0 +1,494 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<languageproject version="7000067">
+
+	<rt class="LangProject" guid="52052207-25a2-4923-907d-db912867915f">
+		<AnalysisWss>
+			<Uni>en de</Uni>
+		</AnalysisWss>
+		<LexDb>
+			<objsur guid="af26d792-ea5e-11de-8f7e-0013722f8dec" t="o" />
+		</LexDb>
+		<PartsOfSpeech>
+			<objsur guid="13d3d643-980a-4183-9fad-337bf4e36a0b" t="o" />
+		</PartsOfSpeech>
+		<VernWss>
+			<Uni>fr</Uni>
+		</VernWss>
+	</rt>
+	<rt class="LexDb" guid="af26d792-ea5e-11de-8f7e-0013722f8dec" ownerguid="52052207-25a2-4923-907d-db912867915f">
+		<ReversalIndexes>
+			<objsur guid="d6d38234-82b6-4187-80a1-05844ee0cdce" t="o" />
+			<objsur guid="eb03fcb2-dcca-4293-addf-543a09c58267" t="o" />
+		</ReversalIndexes>
+	</rt>
+
+	<!--   ****************************************************ReversalIndex *************************************************-->
+	<rt class="ReversalIndex" guid="d6d38234-82b6-4187-80a1-05844ee0cdce" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+		<Entries>
+			<objsur guid="359253fd-2115-42b8-8121-f76b04617cac" t="o" />
+			<objsur guid="6dc87d55-7c65-4ac0-81ef-5c5edd3992ae" t="o" />
+			<objsur guid="c79fba81-5444-4dd0-9b9f-22483188ba84" t="o" />
+			<objsur guid="f0f7884a-87ad-45b1-a62f-17445026d856" t="o" />
+			<objsur guid="7B539A17-58EF-4613-9F4F-3240FF14DF2E" t="o" />
+		</Entries>
+		<Name>
+			<AUni ws="en">English</AUni>
+		</Name>
+		<PartsOfSpeech>
+			<objsur guid="7bfdc84b-313d-47de-8684-eab28424c59e" t="o" />
+		</PartsOfSpeech>
+		<WritingSystem>
+			<Uni>en</Uni>
+		</WritingSystem>
+	</rt>
+	<rt class="ReversalIndexEntry" guid="c79fba81-5444-4dd0-9b9f-22483188ba84" ownerguid="d6d38234-82b6-4187-80a1-05844ee0cdce">
+		<PartOfSpeech>
+			<objsur guid="30d07580-5052-4d91-bc24-469b8b2d7df9" t="r" />
+		</PartOfSpeech>
+		<ReversalForm>
+			<AUni ws="en">blueeng</AUni>
+		</ReversalForm>
+	</rt>
+	<rt class="ReversalIndexEntry" guid="f0f7884a-87ad-45b1-a62f-17445026d856" ownerguid="d6d38234-82b6-4187-80a1-05844ee0cdce">
+		<PartOfSpeech>
+			<objsur guid="30d07580-5052-4d91-bc24-469b8b2d7df9" t="r" />
+		</PartOfSpeech>
+		<ReversalForm>
+			<AUni ws="en">red</AUni>
+		</ReversalForm>
+	</rt>
+	<!--There is no Prenoun partOfSpeech in the main lexicon-->
+	<rt class="ReversalIndexEntry" guid="6dc87d55-7c65-4ac0-81ef-5c5edd3992ae" ownerguid="d6d38234-82b6-4187-80a1-05844ee0cdce">
+		<PartOfSpeech>
+			<objsur guid="f1ac9eab-5f8c-41cf-b234-e53405aaaac5" t="r" />
+		</PartOfSpeech>
+		<ReversalForm>
+			<AUni ws="en">prenounReversalEntry</AUni>
+		</ReversalForm>
+	</rt>
+	<!--This ReversalIndexEntry references a PartOfSpeech which is a subpossibility. Therefore the migration needs to change the objsur guid
+		to the new guid assigned to the subpossibility.-->
+	<rt class="ReversalIndexEntry" guid="359253fd-2115-42b8-8121-f76b04617cac" ownerguid="d6d38234-82b6-4187-80a1-05844ee0cdce">
+		<PartOfSpeech>
+			<objsur guid="a5311f3b-ff98-47d2-8ece-b1aca03a8bbd" t="r" />
+		</PartOfSpeech>
+		<ReversalForm>
+			<AUni ws="en">PopenRefersalDefenceCardinal</AUni>
+		</ReversalForm>
+	</rt>
+	<!--This ReversalIndexEntry references a PartOfSpeech which is a subpossibility. Therefore the migration needs to change the objsur guid
+		to the new guid assigned to the subpossibility.-->
+	<rt class="ReversalIndexEntry" guid="7B539A17-58EF-4613-9F4F-3240FF14DF2E" ownerguid="d6d38234-82b6-4187-80a1-05844ee0cdce">
+		<PartOfSpeech>
+			<objsur guid="1c030229-affa-4729-9773-878100c1fd28" t="r" />
+		</PartOfSpeech>
+		<ReversalForm>
+			<AUni ws="en">MultiplicativeNumeralRevesalEntry</AUni>
+		</ReversalForm>
+	</rt>
+
+	<!--   **************************************************** END ReversalIndex *************************************************-->
+	<!--   **************************************************** <PartsOfSpeech> *************************************************-->
+	<rt class="CmPossibilityList" guid="7bfdc84b-313d-47de-8684-eab28424c59e" ownerguid="d6d38234-82b6-4187-80a1-05844ee0cdce">
+		<Name>
+			<AUni ws="en">Parts of Speech for English Reversal Index</AUni>
+		</Name>
+		<Possibilities>
+			<objsur guid="cc60cb18-5067-442b-a740-d3b913b2610a" t="o" />
+			<objsur guid="30d07580-5052-4d91-bc24-469b8b2d7df9" t="o" />
+			<objsur guid="f1ac9eab-5f8c-41cf-b234-e53405aaaac5" t="o" />
+			<objsur guid="25b2ef8c-d87e-4868-898c-8f5375afeeb3" t="o" />
+			<objsur guid="6df1c8ee-5530-4180-99e8-be2afab0f60d" t="o" />
+		</Possibilities>
+	</rt>
+
+	<!--Owned in English reversal list-->
+	<!--NOTE this is the same guid as the PartOfSpeech in the German partsOfSpeech the owernguid is different in each one-->
+	<!-- This trumps other content with the same guid in the DTO repository HashSet -->
+	<rt class="PartOfSpeech" guid="cc60cb18-5067-442b-a740-d3b913b2610a" ownerguid="7bfdc84b-313d-47de-8684-eab28424c59e">
+		<Abbreviation>
+			<AUni ws="en">explEngRev</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Expletive</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Expletive EnglishRev</AUni>
+		</Name>
+	</rt>
+	<!-- This trumps other content with the same guid in the DTO repository HashSet -->
+	<rt class="PartOfSpeech" guid="30d07580-5052-4d91-bc24-469b8b2d7df9" ownerguid="7bfdc84b-313d-47de-8684-eab28424c59e">
+		<Abbreviation>
+			<AUni ws="en">adjEngRev</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Adjective</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Adjective EnglishRev</AUni>
+		</Name>
+	</rt>
+
+	<!-- Here we have the data for a reversal index entry and partOfSpeech that is not in the main lexicon partOfSpeechList-->
+	<!-- This trumps other content with the same guid in the DTO repository HashSet -->
+	<rt class="PartOfSpeech" guid="f1ac9eab-5f8c-41cf-b234-e53405aaaac5" ownerguid="7bfdc84b-313d-47de-8684-eab28424c59e">
+		<Abbreviation>
+			<AUni ws="en">prenounEngRev</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Prenoun</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Prenoun EnglishRev</AUni>
+		</Name>
+	</rt>
+	<!-- This partOfSpeech only appears in this reversal index and not in the main lexicon list. Also there are no reversal entries using this.-->
+	<rt class="PartOfSpeech" guid="25b2ef8c-d87e-4868-898c-8f5375afeeb3" ownerguid="7bfdc84b-313d-47de-8684-eab28424c59e">
+		<Abbreviation>
+			<AUni ws="en">existmrkrEngRev</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>ExistentialMarker</Uni>
+		</CatalogSourceId>
+
+		<Name>
+			<AUni ws="en">Existential marker EnglishRev</AUni>
+		</Name>
+	</rt>
+
+		<!--PartOfSpeech element with a subpossibility-->
+	<rt class="PartOfSpeech" guid="6df1c8ee-5530-4180-99e8-be2afab0f60d" ownerguid="7bfdc84b-313d-47de-8684-eab28424c59e">
+		<Abbreviation>
+			<AUni ws="en">detEngRev</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Determiner</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Determiner EnglishRev</AUni>
+		</Name>
+		<SubPossibilities>
+			<objsur guid="a4a759b4-5a10-4d7a-80a3-accf5bd840b1" t="o" />
+		</SubPossibilities>
+	</rt>
+	<!--TAKE NOTE OF THIS COMMENT PLEASE
+		This is a PartOfSpeech element with a subpossibility from the Main LEXICON, this will cause the following one to not show up leaving
+		MultiplicativeNumeral PartOfSpeech dangling without an owner when the data it loaded into the DTOrepository.-->
+	<rt class="PartOfSpeech" guid="a4a759b4-5a10-4d7a-80a3-accf5bd840b1" ownerguid="6df1c8ee-5530-4180-99e8-be2afab0f60d">
+		<Abbreviation>
+			<AUni ws="en">quantLEXICON</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Quantifier</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Quantifier LEXICON</AUni>
+		</Name>
+		<SubPossibilities>
+			<objsur guid="a5311f3b-ff98-47d2-8ece-b1aca03a8bbd" t="o" />
+		</SubPossibilities>
+	</rt>
+	<!--PartOfSpeech element with a subpossibility  the same as the one above but which belongs to the English Reversal index.-->
+	<rt class="PartOfSpeech" guid="a4a759b4-5a10-4d7a-80a3-accf5bd840b1" ownerguid="6df1c8ee-5530-4180-99e8-be2afab0f60d">
+		<Abbreviation>
+			<AUni ws="en">quantEngRev</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Quantifier</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Quantifier EnglishRev</AUni>
+		</Name>
+		<SubPossibilities>
+			<objsur guid="a5311f3b-ff98-47d2-8ece-b1aca03a8bbd" t="o" />
+			<objsur guid="1c030229-affa-4729-9773-878100c1fd28" t="o" />
+		</SubPossibilities>
+	</rt>
+	<!--Note this subpossibility has the same guid and ownerguid as the one in the main lexicon partofspeech list-->
+	<rt class="PartOfSpeech" guid="a5311f3b-ff98-47d2-8ece-b1aca03a8bbd" ownerguid="a4a759b4-5a10-4d7a-80a3-accf5bd840b1">
+		<Abbreviation>
+			<AUni ws="en">cardnumEngRev</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>CardinalNumeral</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Cardinal numeral EnglishRev</AUni>
+		</Name>
+	</rt>
+	<rt class="PartOfSpeech" guid="1c030229-affa-4729-9773-878100c1fd28" ownerguid="a4a759b4-5a10-4d7a-80a3-accf5bd840b1">
+		<Abbreviation>
+			<AUni ws="en">multipnumEngRev</AUni>
+		</Abbreviation>
+				<CatalogSourceId>
+			<Uni>MultiplicativeNumeral</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Multiplicative numeral EnglishRev</AUni>
+		</Name>
+	</rt>
+
+	<!--   ****************************************************END  <PartsOfSpeech> *************************************************-->
+
+
+	<!--   ****************************************************ReversalIndex *************************************************-->
+	<rt class="ReversalIndex" guid="eb03fcb2-dcca-4293-addf-543a09c58267" ownerguid="af26d792-ea5e-11de-8f7e-0013722f8dec">
+		<Entries>
+			<objsur guid="de4c0da0-ab52-40f0-a938-980246239af1" t="o" />
+			<objsur guid="7ed87d55-7c65-4ac0-81ef-5c5edd3992ae" t="o" />
+		</Entries>
+		<Name>
+			<AUni ws="en">German</AUni>
+		</Name>
+		<PartsOfSpeech>
+			<objsur guid="dcba7b90-d0b5-452d-b818-b74de7745f90" t="o" />
+		</PartsOfSpeech>
+		<WritingSystem>
+			<Uni>de</Uni>
+		</WritingSystem>
+	</rt>
+	<rt class="ReversalIndexEntry" guid="de4c0da0-ab52-40f0-a938-980246239af1" ownerguid="eb03fcb2-dcca-4293-addf-543a09c58267" />
+	<!--There is no Prenoun partOfSpeech in the main lexicon-->
+	<rt class="ReversalIndexEntry" guid="7ed87d55-7c65-4ac0-81ef-5c5edd3992ae" ownerguid="eb03fcb2-dcca-4293-addf-543a09c58267">
+		<PartOfSpeech>
+			<objsur guid="f1ac9eab-5f8c-41cf-b234-e53405aaaac5" t="r" />
+		</PartOfSpeech>
+		<ReversalForm>
+			<AUni ws="en">prenounGerman flour+eggs is prenoun to cake.</AUni>
+		</ReversalForm>
+	</rt>
+	<!--   **************************************************** END ReversalIndex *************************************************-->
+
+	<!--   **************************************************** <PartsOfSpeech> *************************************************-->
+	<rt class="CmPossibilityList" guid="dcba7b90-d0b5-452d-b818-b74de7745f90" ownerguid="eb03fcb2-dcca-4293-addf-543a09c58267">
+		<Name>
+			<AUni ws="de">Parts of Speech for German Reversal Index</AUni>
+		</Name>
+		<Possibilities>
+			<objsur guid="cc60cb18-5067-442b-a740-d3b913b2610a" t="o" />
+			<objsur guid="30d07580-5052-4d91-bc24-469b8b2d7df9" t="o" />
+			<objsur guid="f1ac9eab-5f8c-41cf-b234-e53405aaaac5" t="o" />
+		</Possibilities>
+	</rt>
+	<!--Owned in German reversal list-->
+	<!-- This is masked in the DTO repository HashSet -->
+	<rt class="PartOfSpeech" guid="cc60cb18-5067-442b-a740-d3b913b2610a" ownerguid="dcba7b90-d0b5-452d-b818-b74de7745f90">
+		<Abbreviation>
+			<AUni ws="en">explGerRev (content should be replaced by GOLDEtic)</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Expletive (content should be replaced by GOLDEtic)</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Expletive GermanRev (content should be replaced by GOLDEtic)</AUni>
+		</Name>
+	</rt>
+	<!-- This is masked in the DTO repository HashSet -->
+	<rt class="PartOfSpeech" guid="30d07580-5052-4d91-bc24-469b8b2d7df9" ownerguid="dcba7b90-d0b5-452d-b818-b74de7745f90">
+		<Abbreviation>
+			<AUni ws="en">adjGerRev (content should be replaced by GOLDEtic)</AUni>
+		</Abbreviation>
+				<CatalogSourceId>
+			<Uni>Adjective (content should be replaced by GOLDEtic)</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Adjective GermanRev (content should be replaced by GOLDEtic)</AUni>
+		</Name>
+	</rt>
+	<!-- Here we have the data for a reversal index entry and partOfSpeech that is not in the main lexicon partOfSpeechList-->
+	<!-- This is masked in the DTO repository HashSet -->
+	<rt class="PartOfSpeech" guid="f1ac9eab-5f8c-41cf-b234-e53405aaaac5" ownerguid="dcba7b90-d0b5-452d-b818-b74de7745f90">
+		<Abbreviation>
+			<AUni ws="en">prenounGerRev (content should be replaced by GOLDEtic)</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Prenoun (content should be replaced by GOLDEtic)</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Prenoun GermanRev (content should be replaced by GOLDEtic)</AUni>
+		</Name>
+	</rt>
+
+	<!--   ****************************************************END  <PartsOfSpeech> *************************************************-->
+
+
+	<!--  **************************************** PartsOfSpeech for Lexical Entries  ************************************   -->
+	<rt class="CmPossibilityList" guid="13d3d643-980a-4183-9fad-337bf4e36a0b" ownerguid="52052207-25a2-4923-907d-db912867915f">
+		<Abbreviation>
+			<AUni ws="en">Pos</AUni>
+		</Abbreviation>
+		<Name>
+			<AUni ws="en">Parts Of Speech</AUni>
+		</Name>
+		<Possibilities>
+			<objsur guid="5b6b3bc0-bf83-4e91-a5d7-9c4290f94dfd" t="o" />
+			<objsur guid="cc60cb18-5067-442b-a740-d3b913b2610a" t="o" />
+			<objsur guid="30d07580-5052-4d91-bc24-469b8b2d7df9" t="o" />
+			<objsur guid="6df1c8ee-5530-4180-99e8-be2afab0f60d" t="o" />
+		</Possibilities>
+	</rt>
+	<!--This one is owned in the main lexicon partOfSpeechList-->
+	<rt class="PartOfSpeech" guid="5b6b3bc0-bf83-4e91-a5d7-9c4290f94dfd" ownerguid="13d3d643-980a-4183-9fad-337bf4e36a0b">
+		<Abbreviation>
+			<AUni ws="en">nLEXICON</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Noun</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Noun Lexicon</AUni>
+		</Name>
+	</rt>
+	<!-- This is masked in the DTO repository HashSet -->
+	<rt class="PartOfSpeech" guid="cc60cb18-5067-442b-a740-d3b913b2610a" ownerguid="13d3d643-980a-4183-9fad-337bf4e36a0b">
+		<Abbreviation>
+			<AUni ws="en">explLEXICON</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Expletive LEXICON</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Expletive LEXICON</AUni>
+		</Name>
+	</rt>
+	<!-- This is masked in the DTO repository HashSet -->
+	<rt class="PartOfSpeech" guid="30d07580-5052-4d91-bc24-469b8b2d7df9" ownerguid="13d3d643-980a-4183-9fad-337bf4e36a0b">
+		<Abbreviation>
+			<AUni ws="en">adjLEXICON</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Adjective LEXICON</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Adjective Lexicon LEXICON</AUni>
+		</Name>
+	</rt>
+	<!--PartOfSpeech element with a subpossibility-->
+	<!--Note this subpossibility has the same guid and ownerguid as the one in the English reversal index partofspeech list-->
+	<rt class="PartOfSpeech" guid="6df1c8ee-5530-4180-99e8-be2afab0f60d" ownerguid="13d3d643-980a-4183-9fad-337bf4e36a0b">
+		<Abbreviation>
+			<AUni ws="en">detLEXICON</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Determiner</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Determiner LEXICON</AUni>
+		</Name>
+		<SubPossibilities>
+			<objsur guid="a4a759b4-5a10-4d7a-80a3-accf5bd840b1" t="o" />
+		</SubPossibilities>
+	</rt>
+	<!--Note this PartOfSpeech was moved up in the file to create a problem situation that the code needs to correct
+	<rt class="PartOfSpeech" guid="a4a759b4-5a10-4d7a-80a3-accf5bd840b1" ownerguid="6df1c8ee-5530-4180-99e8-be2afab0f60d">
+		<Abbreviation>
+			<AUni ws="en">quantLEXICON</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>Quantifier</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Quantifier LEXICON</AUni>
+		</Name>
+		<SubPossibilities>
+			<objsur guid="a5311f3b-ff98-47d2-8ece-b1aca03a8bbd" t="o" />
+		</SubPossibilities>
+	</rt>
+	-->
+	<rt class="PartOfSpeech" guid="a5311f3b-ff98-47d2-8ece-b1aca03a8bbd" ownerguid="a4a759b4-5a10-4d7a-80a3-accf5bd840b1">
+		<Abbreviation>
+			<AUni ws="en">cardnumLEXICON</AUni>
+		</Abbreviation>
+		<CatalogSourceId>
+			<Uni>CardinalNumeral</Uni>
+		</CatalogSourceId>
+		<Name>
+			<AUni ws="en">Cardinal numeral LEXICON</AUni>
+		</Name>
+	</rt>
+
+	<!--Stuff we do not need to change below here............................ -->
+	<rt class="MoStemMsa" guid="1359a856-27ae-43b7-a3ad-095bc030652b" ownerguid="91dc3d75-a439-4b9e-bd40-59c6870a500a">
+		<PartOfSpeech>
+			<objsur guid="30d07580-5052-4d91-bc24-469b8b2d7df9" t="r" />
+		</PartOfSpeech>
+	</rt>
+
+	<!-- This is a entry from the Lexicon and does not need to be changed in any way-->
+	<rt class="LexEntry" guid="bb2f690d-54ca-4526-a232-471176c75eef">
+		<LexemeForm>
+			<objsur guid="d1d5cea3-d283-450b-8733-9ac50ae47706" t="o" />
+		</LexemeForm>
+		<MorphoSyntaxAnalyses>
+			<objsur guid="c57707b8-7dd4-4541-a8c3-e1b4a39f4ee6" t="o" />
+		</MorphoSyntaxAnalyses>
+		<Senses>
+			<objsur guid="8d46bdb7-1717-42fa-b22e-f9685386f2d4" t="o" />
+		</Senses>
+	</rt>
+	<rt class="MoStemAllomorph" guid="d1d5cea3-d283-450b-8733-9ac50ae47706" ownerguid="bb2f690d-54ca-4526-a232-471176c75eef">
+		<Form>
+			<AUni ws="fr">rouge</AUni>
+		</Form>
+		<IsAbstract val="False" />
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+	<rt class="LexSense" guid="8d46bdb7-1717-42fa-b22e-f9685386f2d4" ownerguid="bb2f690d-54ca-4526-a232-471176c75eef">
+		<Gloss>
+			<AUni ws="en">red</AUni>
+		</Gloss>
+		<MorphoSyntaxAnalysis>
+			<objsur guid="c57707b8-7dd4-4541-a8c3-e1b4a39f4ee6" t="r" />
+		</MorphoSyntaxAnalysis>
+		<ReversalEntries>
+			<objsur guid="f0f7884a-87ad-45b1-a62f-17445026d856" t="r" />
+		</ReversalEntries>
+	</rt>
+	<rt class="MoStemMsa" guid="c57707b8-7dd4-4541-a8c3-e1b4a39f4ee6" ownerguid="bb2f690d-54ca-4526-a232-471176c75eef">
+		<PartOfSpeech>
+			<objsur guid="30d07580-5052-4d91-bc24-469b8b2d7df9" t="r" />
+		</PartOfSpeech>
+	</rt>
+
+	<!-- This is a entry from the Lexicon and does not need to be changed in any way-->
+	<!--Entry/Sense for PartOfSpeech which is a subpossibility-->
+	<rt class="LexEntry" guid="980d0665-4f05-4685-b599-bf37cb995c4b">
+		<LexemeForm>
+			<objsur guid="3828b350-4dd1-48dc-8712-42bd4b873ddb" t="o" />
+		</LexemeForm>
+		<MorphoSyntaxAnalyses>
+			<objsur guid="18995fb1-62d7-4527-98fc-29049e3d8ce9" t="o" />
+		</MorphoSyntaxAnalyses>
+		<Senses>
+			<objsur guid="14c61c6a-cb54-44b8-9b0d-9f0add174754" t="o" />
+		</Senses>
+	</rt>
+	<rt class="MoStemAllomorph" guid="3828b350-4dd1-48dc-8712-42bd4b873ddb" ownerguid="980d0665-4f05-4685-b599-bf37cb995c4b">
+		<Form>
+			<AUni ws="fr">PopesDefenceCardinal</AUni>
+		</Form>
+		<IsAbstract val="False" />
+		<MorphType>
+			<objsur guid="d7f713e8-e8cf-11d3-9764-00c04f186933" t="r" />
+		</MorphType>
+	</rt>
+	<rt class="LexSense" guid="14c61c6a-cb54-44b8-9b0d-9f0add174754" ownerguid="980d0665-4f05-4685-b599-bf37cb995c4b">
+		<Gloss>
+			<AUni ws="en">PopengutinDefenceCardinal</AUni>
+		</Gloss>
+		<MorphoSyntaxAnalysis>
+			<objsur guid="18995fb1-62d7-4527-98fc-29049e3d8ce9" t="r" />
+		</MorphoSyntaxAnalysis>
+		<ReversalEntries>
+			<objsur guid="359253fd-2115-42b8-8121-f76b04617cac" t="r" />
+		</ReversalEntries>
+	</rt>
+	<rt class="MoStemMsa" guid="18995fb1-62d7-4527-98fc-29049e3d8ce9" ownerguid="980d0665-4f05-4685-b599-bf37cb995c4b">
+		<PartOfSpeech>
+			<objsur guid="a5311f3b-ff98-47d2-8ece-b1aca03a8bbd" t="r" />
+		</PartOfSpeech>
+	</rt>
+
+</languageproject>

@@ -56,6 +56,8 @@ namespace SIL.Utils
 		protected static readonly string s_emailSubject = "Automated Error Report";
 
 		private readonly bool m_isLethal;
+		private readonly bool m_fReportDuplicateGuidsASAP;
+		private readonly string m_errorText;
 		private readonly string m_emailAddress;
 		private bool m_userChoseToExit;
 		private bool m_showChips;
@@ -80,11 +82,13 @@ namespace SIL.Utils
 		/// this is protected so that we can have a Singleton
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected ErrorReporter(bool isLethal, string emailAddress)
+		protected ErrorReporter(bool isLethal, string emailAddress, bool fReportDuplicateGuidsASAP = false, string errorText = "")
 		{
 			m_isLethal = isLethal;
 			m_emailAddress = emailAddress;
 			AccessibleName = GetType().Name;
+			m_fReportDuplicateGuidsASAP = fReportDuplicateGuidsASAP;
+			m_errorText = errorText;
 		}
 
 		#region IDisposable override
@@ -276,7 +280,6 @@ namespace SIL.Utils
 			this.MinimizeBox = false;
 			this.Name = "ErrorReporter";
 			this.ShowIcon = false;
-			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -387,6 +390,19 @@ namespace SIL.Utils
 		}
 
 		/// <summary>
+		/// This is called when FLEx discovers duplicate GUIDs in the fwdata file.
+		/// </summary>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "ErrorReporter dialog gets disposed in ModelessClosed method")]
+		public static void ReportDuplicateGuids(RegistryKey applicationKey, string emailAddress, Form parent, string errorText)
+		{
+			ErrorReporter e = new ErrorReporter(false, emailAddress, true, errorText);
+			e.m_fUserReport = true;
+			e.ShowDialog(applicationKey, null, parent);
+			e.Closed += ModelessClosed;
+		}
+
+		/// <summary>
 		/// Invoked by a menu command, allows the user to make a suggestion,
 		/// complete with all the context information we attach to crashes (except a stack dump).
 		/// </summary>
@@ -462,6 +478,7 @@ namespace SIL.Utils
 			//
 			// Required for Windows Form Designer support
 			//
+			this.AutoScaleMode = AutoScaleMode.Font; //put this here so Visual Studio designer works.
 			InitializeComponent();
 
 			SetDialogStringsSoLocatilizationWorks();
@@ -494,6 +511,10 @@ namespace SIL.Utils
 				// Do this AFTER filling in the sample...it is disabled until they change something.
 				btnClose.Enabled = false;
 			}
+			if (m_fReportDuplicateGuidsASAP)
+			{
+				SetDialogStringsForDuplicateGUIDsError();
+			}
 
 			s_showDetails = true; // the resource-file state of the dialog is showing.
 
@@ -514,6 +535,10 @@ namespace SIL.Utils
 				BackColor = m_fSuggestion
 					? Color.FromKnownColor(KnownColor.Control) // standard dialog background
 					: Color.FromArgb(255, 255, 192);//yellow
+				if (m_fReportDuplicateGuidsASAP)
+				{
+					BackColor = Color.FromArgb(200, 191, 231);
+				}
 				m_notification.BackColor = BackColor;
 				UpdateCrashCount(applicationKey, "NumberOfAnnoyingCrashes");
 			}
@@ -522,6 +547,33 @@ namespace SIL.Utils
 				UpdateCrashCount(applicationKey, "NumberOfSeriousCrashes");
 			}
 			UpdateAppRuntime(applicationKey);
+
+			FillInDetailsTextBox(error);
+
+			if (m_fUserReport)
+			{
+				// show modeless, so they can use the program while filling in details.
+				// Don't set the Ignore flag, a real crash might happen while trying to report a lesser problem.
+				Show(parent);
+				return;
+			}
+			if (s_isOkToInteractWithUser)
+			{
+				s_fIgnoreReport = true;
+				ShowDialog((parent != null && !parent.IsDisposed) ? parent : null);
+				s_fIgnoreReport = false;
+			}
+			else	//the test environment already prohibits dialogs but will save the contents of assertions in some log.
+				Debug.Fail(m_details.Text);
+		}
+
+		private void FillInDetailsTextBox(Exception error)
+		{
+			if (m_fReportDuplicateGuidsASAP)
+			{
+				m_details.Text = m_errorText;
+				return;
+			}
 
 			StringBuilder detailsText = new StringBuilder();
 			Exception innerMostException = null;
@@ -554,22 +606,6 @@ namespace SIL.Utils
 			detailsText.AppendLine(Logger.LogText);
 			Debug.WriteLine(detailsText.ToString());
 			m_details.Text = detailsText.ToString();
-
-			if (m_fUserReport)
-			{
-				// show modeless, so they can use the program while filling in details.
-				// Don't set the Ignore flag, a real crash might happen while trying to report a lesser problem.
-				Show(parent);
-				return;
-			}
-			if (s_isOkToInteractWithUser)
-			{
-				s_fIgnoreReport = true;
-				ShowDialog((parent != null && !parent.IsDisposed) ? parent : null);
-				s_fIgnoreReport = false;
-			}
-			else	//the test environment already prohibits dialogs but will save the contents of assertions in some log.
-				Debug.Fail(m_details.Text);
 		}
 
 		private void SetDialogStringsSoLocatilizationWorks()
@@ -583,6 +619,21 @@ namespace SIL.Utils
 			lbl_EmailReport.Text = ReportingStrings.kstidEmailReport;
 			radEmail.Text = ReportingStrings.kstidradEmail;
 			radSelf.Text = ReportingStrings.kstidradSelf;
+		}
+
+		private void SetDialogStringsForDuplicateGUIDsError()
+		{
+			ControlBox = true;
+			cancelButton.Visible = true;
+			btnClose.Size = cancelButton.Size;
+			btnClose.Left = cancelButton.Left - btnClose.Width - 15;
+
+			Text = ReportingStrings.kstidSeriousProblemCaption;
+			m_notification.Text = ReportingStrings.kstidReportSeriousProblemNotification;
+			m_stepsLabel.Text = ReportingStrings.kstidReportSeriousProblemSteps;
+			m_reproduce.Text = ReportingStrings.kstidReportSeriousProblemDearFlex;
+			m_reproduce.Select(0, 0);
+			lbl_AdditionInfo.Text = "";
 		}
 
 		private static void UpdateCrashCount(RegistryKey applicationKey, string sPropName)
@@ -654,7 +705,9 @@ namespace SIL.Utils
 				var emailMessage = emailProvider.CreateMessage();
 				emailMessage.To.Add(m_emailAddress);
 				var emailSubject = s_emailSubject;
-				if (m_fSuggestion)
+				if (m_fReportDuplicateGuidsASAP)
+					emailSubject = "Duplicate GUIDs Error Report:";
+				else if (m_fSuggestion)
 					emailSubject = "Suggested Improvement to FLEx:";
 				else if (m_fUserReport)
 					emailSubject = "Manual Error Report:";
