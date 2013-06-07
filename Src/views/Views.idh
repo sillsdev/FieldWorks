@@ -5986,8 +5986,4 @@ DeclareInterface(ViewInputMgr, Unknown, e41668f7-d506-4c8a-a5d7-feae5630797e)
 
 	// Called when the text of a document changes.
 	HRESULT OnTextChange();
-
-	// VwRootBox will need to do these
-	// HRESULT AddToKeepList(li)
-	// HRESULT ClearPointersTo(VwParagraphBox)
 }

@@ -20,13 +20,8 @@ Description:
 class VwTextStore;
 DEFINE_COM_PTR(VwTextStore);
 
-#ifdef WIN32
 #undef ENABLE_TSF
 #define ENABLE_TSF
-#else /* ! WIN32 */
-#undef MANAGED_KEYBOARDING
-#define MANAGED_KEYBOARDING
-#endif
 
 /*----------------------------------------------------------------------------------------------
 These are values that may be passed to VwRootBox::OnExtendedChar.
@@ -331,10 +326,14 @@ public:
 	void HandleActivate(VwSelectionState vss, bool fSetFocus = false);
 
 #ifdef ENABLE_TSF
-	VwTextStore * TextStore() {return m_qtxs;}
-#elif defined(MANAGED_KEYBOARDING)
 	IViewInputMgr * InputManager() { return m_qvim; }
 
+	VwParagraphBox * GetLastSelectedAnchorBox() { return m_pvpboxLastSelectedAnchor; }
+
+	// The specified box is being deleted. If somehow m_pvpboxLastSelectedAnchor still
+	// points at it (this can happen, for one example, during a replace all where
+	// NoteDependencies cause large-scale regeneration), clear the pointers to a safe,
+	// neutral state.
 	void ClearSelectedAnchorPointerTo(VwParagraphBox * pvpbox)
 	{
 		if (m_pvpboxLastSelectedAnchor == pvpbox)
@@ -420,8 +419,6 @@ protected:
 
 	VwSynchronizerPtr m_qsync; // If not null use this to synchronize object display heights.
 #ifdef ENABLE_TSF
-	VwTextStorePtr m_qtxs;
-#elif defined(MANAGED_KEYBOARDING)
 	// last selected paragraph box. See comment in VwRootBox::NotifySelChange.
 	VwParagraphBox * m_pvpboxLastSelectedAnchor;
 
@@ -461,6 +458,7 @@ protected:
 	// Protected default constructor does nothing.
 	// After creating with CreateCom, must set everything up from Init
 	VwRootBox();
+	void Init();
 	HRESULT MakeSimpleSelAt(VwBox * pboxStart, int itssStart,
 		ComBool fInitial, ComBool fEdit, ComBool fRange,
 		ComBool fInstall, IVwSelection ** ppsel, bool fContinueToParents = true);

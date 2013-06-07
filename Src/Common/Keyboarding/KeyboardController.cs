@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.Common.Keyboarding
 		#region Static methods and properties
 		/// <summary>
 		/// Create an instance of IKeyboardController. This gets called if SingletonsContainer
-		/// doesn't contain already one.
+		/// doesn't already contain one.
 		/// </summary>
 		private static IKeyboardController Create()
 		{

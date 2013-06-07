@@ -35,10 +35,7 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 			Rectangle rcDst, MouseEvent mouseEvent)
 		{
 			if (mouseEvent == MouseEvent.kmeDown)
-			{
 				SetFocus(callback);
-				return true;
-			}
 			return false;
 		}
 
@@ -64,7 +61,7 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		public void OnTextChange(IKeyboardCallback callback)
 		{
 		}
-		#endregion
+		#endregion // IKeyboardEventHandler
 
 		#region IKeyboardMethods implementation
 		/// <summary>
@@ -77,6 +74,7 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		/// <summary>
 		/// Activate the input method
 		/// </summary>
+		/// <remarks>Corresponding C++ method is VwTextStore::SetFocus.</remarks>
 		public void SetFocus(IKeyboardCallback callback)
 		{
 			var keyboard = callback.Keyboard;
@@ -101,7 +99,6 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		/// Enables the input method. This gets called as part of VwRootBox::HandleActivate when
 		/// enabling a selection.
 		/// </summary>
-		/// <remarks>Corresponding C++ method is VwTextStore::SetFocus.</remarks>
 		public void EnableInput(IKeyboardCallback callback)
 		{
 		}
@@ -110,7 +107,6 @@ namespace SIL.FieldWorks.Common.Keyboarding.Linux
 		/// Disables the input method. This gets called as part of VwRootBox::HandleActivate when
 		/// disabling a selection.
 		/// </summary>
-		/// <remarks>Corresponding C++ method is VwTextStore::OnLoseFocus.</remarks>
 		public void DisableInput(IKeyboardCallback callback)
 		{
 		}

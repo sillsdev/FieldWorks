@@ -5238,13 +5238,6 @@ void VwTextSelection::CommitAndContinue(bool * pfOk, VwChangeInfo * pci)
 	if (!m_qtsbProp)
 	{
 #ifdef ENABLE_TSF
-		if (m_pvpbox->Root()->TextStore()->IsDoingRecommit())
-		{
-			// We need to do a real update!!
-			StartEditing();
-		}
-		else
-#elif defined(MANAGED_KEYBOARDING)
 		ComBool fDoingRecommit;
 		CheckHr(m_pvpbox->Root()->InputManager()->get_IsEndingComposition(&fDoingRecommit));
 		if (fDoingRecommit)
@@ -7286,8 +7279,6 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 	*pfOk = false; // only set true if we make it all the way (though failures throw exceptions)
 
 #ifdef ENABLE_TSF
-	VwTextStore * ptxs = prootb->TextStore();
-#elif defined(MANAGED_KEYBOARDING)
 	IViewInputMgr * pvim = prootb->InputManager();
 #endif
 
@@ -7310,12 +7301,6 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 		int ichOffset = m_ichAnchor - m_ichMinEditProp;
 		int * poffset = &ichOffset;
 #ifdef ENABLE_TSF
-		if (ptxs->IsCompositionActive())
-		{
-			ptxs->NoteCommitDuringComposition();
-		}
-		else
-#elif defined(MANAGED_KEYBOARDING)
 		ComBool fProcessed;
 		CheckHr(pvim->OnUpdateProp(&fProcessed));
 		if (!fProcessed)
@@ -7406,15 +7391,13 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 				CheckHr(qsda->get_StringProp(hvo, tag, &qtssOld));
 				int ichMinDiff, ichLimDiff; // in qtssNewSub
 				CompareStrings(qtssOld, qtssNewSub, &ichMinDiff, &ichLimDiff);
-#ifdef MANAGED_KEYBOARDING
+#ifdef ENABLE_TSF
 				ComBool fDoingRecommit;
 				CheckHr(pvim->get_IsEndingComposition(&fDoingRecommit));
 #endif
 
 				if (ichMinDiff >= 0
 #ifdef ENABLE_TSF
-					 || ptxs->IsDoingRecommit() // there's some difference
-#elif defined(MANAGED_KEYBOARDING)
 					 || fDoingRecommit // there's some difference
 #endif
 					)
@@ -7495,15 +7478,13 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 				CheckHr(qsda->get_MultiStringAlt(hvo, tag, fragEdit, &qtssOld));
 				ComBool fEqual;
 				CheckHr(qtssOld->Equals(qtssNewSub, &fEqual));
-#ifdef MANAGED_KEYBOARDING
+#ifdef ENABLE_TSF
 				ComBool fDoingRecommit;
 				CheckHr(pvim->get_IsEndingComposition(&fDoingRecommit));
 #endif
 
 				if (!fEqual
 #ifdef ENABLE_TSF
-					 || ptxs->IsDoingRecommit()
-#elif defined(MANAGED_KEYBOARDING)
 					 || fDoingRecommit
 #endif
 					)

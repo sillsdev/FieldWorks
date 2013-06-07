@@ -16,6 +16,11 @@ Description:
 #ifndef VwTextStore_INCLUDED
 #define VwTextStore_INCLUDED
 
+namespace TestViews
+{
+	class TestVwTextStore;
+};
+
 DEFINE_COM_PTR(ITextStoreACP);
 DEFINE_COM_PTR(ITextStoreACPSink);
 DEFINE_COM_PTR(ITextStoreACPServices);
@@ -38,8 +43,10 @@ DEFINE_COM_PTR(ITfMouseSink);
 	Hungarian: txs
 ----------------------------------------------------------------------------------------------*/
 class VwTextStore : public ITextStoreACP, public ITfContextOwnerCompositionSink,
-	public ITfMouseTrackerACP
+	public ITfMouseTrackerACP, public IViewInputMgr
 {
+	friend class TestViews::TestVwTextStore;
+
 public:
 	VwTextStore(VwRootBox * prootb);
 	~VwTextStore();
@@ -116,16 +123,20 @@ public:
 		DWORD* pdwCookie);
 	STDMETHOD(UnadviseMouseSink)(DWORD dwCookie);
 
-	// Other Public Methods.
+	// IViewInputMgr
+	STDMETHOD(Init)(IVwRootBox * prootb);
+	STDMETHOD(Close)();
+	STDMETHOD(OnTextChange)();
+	STDMETHOD(OnSelectionChange)(int nHow);
+	STDMETHOD(OnLayoutChange)();
+	STDMETHOD(SetFocus)();
+	STDMETHOD(OnMouseEvent)(int xd, int yd, RECT rcSrc1, RECT rcDst1, VwMouseEvent me, ComBool * pfProcessed);
+	STDMETHOD(KillFocus)();
+	STDMETHOD(OnUpdateProp)(ComBool * pSuppressNormalization);
+	STDMETHOD(get_IsCompositionActive)(ComBool * pfCompositionActive);
+	STDMETHOD(get_IsEndingComposition)(ComBool * pfDoingRecommit);
+	STDMETHOD(TerminateAllCompositions)();
 
-	void OnDocChange();
-	void OnSelChange(VwSelChangeType nHow);
-	void OnLayoutChange();
-	void SetFocus();
-	void Init();
-	void Close();
-	void AddToKeepList(LazinessIncreaser *pli);
-	bool MouseEvent(int xd, int yd, RECT rcSrc1, RECT rcDst1, VwMouseEvent me);
 
 protected:
 	// Member variables
@@ -174,7 +185,7 @@ protected:
 	bool IsNfdIMEActive();
 	void GetCurrentWritingSystem();
 
-	VwParagraphBox * m_pvpboxCurrent;
+	VwRootBox * m_prootb;
 
 public:
 	static ITfThreadMgrPtr s_qttmThreadMgr;
@@ -185,8 +196,8 @@ public:
 	ITfContextPtr m_qtcContext;
 	TfEditCookie m_tfEditCookie;
 
+private:
 	// Internal methods.
-
 	bool _LockDocument(DWORD dwLockFlags)
 	{
 		if (m_fLocked)
@@ -228,7 +239,6 @@ public:
 		VwTextSelection ** pptsel);
 	void ClearPointersTo(VwParagraphBox * pvpbox);
 	void DoDisplayAttrs();
-	void TerminateAllCompositions(void);
 	// Conditionally terminate all compositions and return false.  Used mostly in MouseEvent().
 	bool EndAllCompositions(bool fStop)
 	{
@@ -236,21 +246,11 @@ public:
 			TerminateAllCompositions();
 		return false;
 	}
-	void OnLoseFocus();
 	DWORD SuspendAdvise(IUnknown ** ppunk);
-	bool IsCompositionActive()
-	{
-		return m_compositions.Size() > 0;
-	}
 
 	void NoteCommitDuringComposition()
 	{
 		m_fCommitDuringComposition = true;
-	}
-
-	bool IsDoingRecommit()
-	{
-		return m_fDoingRecommit;
 	}
 
 private:

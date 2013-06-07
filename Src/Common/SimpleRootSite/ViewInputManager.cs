@@ -23,13 +23,6 @@ namespace SIL.FieldWorks.Common.RootSites
 	{
 		private IVwRootBox m_rootb;
 
-		/// <summary>
-		/// Initializes a new instance of the ViewInputManager class.
-		/// </summary>
-		public ViewInputManager()
-		{
-		}
-
 		#region IViewInputMgr methods
 		/// <summary>
 		/// Inititialize the input manager
@@ -42,7 +35,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary/>
 		public void Close()
 		{
-
 		}
 
 		/// <summary>
@@ -100,12 +92,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Called when a mouse event happened.
 		/// </summary>
-		/// <returns>Always <c>false</c> - if at all we can handle only part of what's necessary.
-		/// </returns>
 		public bool OnMouseEvent(int xd, int yd, Rect rcSrc, Rect rcDst, VwMouseEvent me)
 		{
-			KeyboardController.EventHandler.OnMouseEvent(this, xd, yd, rcSrc, rcDst, (MouseEvent)me);
-			return false;
+			return KeyboardController.EventHandler.OnMouseEvent(this, xd, yd, rcSrc, rcDst,
+				(MouseEvent)me);
 		}
 
 		/// <summary>

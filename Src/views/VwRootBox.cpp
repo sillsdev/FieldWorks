@@ -24,13 +24,8 @@ DEFINE_THIS_FILE
 
 
 
-#ifdef WIN32
 #undef ENABLE_TSF
 #define ENABLE_TSF
-#else /* ! WIN32 */
-#undef MANAGED_KEYBOARDING
-#define MANAGED_KEYBOARDING
-#endif /* ! WIN32 */
 
 #undef Tracing_KeybdSelection
 //#define Tracing_KeybdSelection
@@ -54,6 +49,17 @@ const CLSID CLSID_ViewInputManager = {0x830BAF1F, 0x6F84, 0x46EF, {0xB6, 0x3E, 0
 VwRootBox::VwRootBox(VwPropertyStore * pzvps)
 	:VwDivBox(pzvps)
 {
+	Init();
+}
+
+// Protected default constructor used for CreateCom
+VwRootBox::VwRootBox()
+{
+	Init();
+}
+
+void VwRootBox::Init()
+{
 	m_cref = 1;
 	ModuleEntry::ModuleAddRef();
 	m_fDirty = false;
@@ -67,29 +73,13 @@ VwRootBox::VwRootBox(VwPropertyStore * pzvps)
 	m_ptDpiSrc.y = 96;
 
 #ifdef ENABLE_TSF
-	m_qtxs.Attach(NewObj VwTextStore(this));
-#elif defined(MANAGED_KEYBOARDING)
+#ifdef WIN32
+	VwTextStorePtr qtxs;
+	qtxs.Attach(NewObj VwTextStore(this));
+	CheckHr(qtxs->QueryInterface(IID_IViewInputMgr, (void**)&m_qvim));
+#else
 	m_qvim.CreateInstance(CLSID_ViewInputManager);
-#endif /*ENABLE_TSF*/
-}
-
-// Protected default constructor used for CreateCom
-VwRootBox::VwRootBox()
-{
-	m_cref = 1;
-	ModuleEntry::ModuleAddRef();
-	m_fDirty = false;
-	m_fNewSelection = false;
-	m_fInDrag = false;
-	m_hrSegmentError = S_OK;
-	m_cMaxParasToScan = 4;
-	m_ptDpiSrc.x = 96;
-	m_ptDpiSrc.y = 96;
-
-#ifdef ENABLE_TSF
-	m_qtxs.Attach(NewObj VwTextStore(this));
-#elif defined(MANAGED_KEYBOARDING)
-	m_qvim.CreateInstance(CLSID_ViewInputManager);
+#endif
 #endif /*ENABLE_TSF*/
 }
 
@@ -97,8 +87,6 @@ VwRootBox::VwRootBox()
 VwRootBox::~VwRootBox()
 {
 #ifdef ENABLE_TSF
-	Assert(!m_qtxs); // Make sure the Close method was called before it gets destroyed.
-#elif defined(MANAGED_KEYBOARDING)
 	Assert(!m_qvim); // Make sure the Close method was called before it gets destroyed.
 #endif /*ENABLE_TSF*/
 	Assert(!m_qsda); // Make sure the Close method was called before it gets destroyed.
@@ -277,10 +265,6 @@ STDMETHODIMP VwRootBox::SetSite(IVwRootSite * pvrs)
 	m_qvrs = pvrs;
 
 #ifdef ENABLE_TSF
-	// Initialize for interaction with Text Services.
-	if (m_qtxs)
-		m_qtxs->Init();
-#elif defined(MANAGED_KEYBOARDING)
 	if (m_qvim)
 		CheckHr(m_qvim->Init(this));
 #endif /*ENABLE_TSF*/
@@ -686,11 +670,6 @@ STDMETHODIMP VwRootBox::DestroySelection()
 	if (!m_qvwsel)
 		return S_OK; // nothing to destroy
 #ifdef ENABLE_TSF
-	// If we don't do this the text service keeps trying to do things
-	// and we get errors because our VwTextStore doesn't work right when there's no selection.
-	if (m_qtxs)
-		m_qtxs->TerminateAllCompositions();
-#elif defined(MANAGED_KEYBOARDING)
 	// If we don't do this the text service keeps trying to do things
 	// and we get errors because our VwTextStore doesn't work right when there's no selection.
 	if (m_qvim)
@@ -2531,9 +2510,6 @@ void VwRootBox::HandleActivate(VwSelectionState vss, bool fSetFocus)
 	// This is critical to be called whenever Activate() is called, so that TSF has the
 	// right focus.  Missing this call to SetFocus() caused LT-5345 and LT-7488!
 #ifdef ENABLE_TSF
-	if (vss == vssEnabled && fSetFocus && m_qtxs)
-		m_qtxs->SetFocus();
-#elif defined(MANAGED_KEYBOARDING)
 	if (vss == vssEnabled && fSetFocus && m_qvim)
 		CheckHr(m_qvim->SetFocus());
 #endif /*ENABLE_TSF*/
@@ -2541,9 +2517,6 @@ void VwRootBox::HandleActivate(VwSelectionState vss, bool fSetFocus)
 	if (m_vss == vss)
 		return;
 #ifdef ENABLE_TSF
-	if (vss != vssEnabled && m_qtxs)
-		m_qtxs->OnLoseFocus();
-#elif defined(MANAGED_KEYBOARDING)
 	if (vss != vssEnabled && m_qvim)
 		CheckHr(m_qvim->KillFocus());
 #endif /*ENABLE_TSF*/
@@ -2590,8 +2563,6 @@ STDMETHODIMP VwRootBox::get_IsCompositionInProgress(ComBool * pfInProgress)
 	ChkComArgPtr(pfInProgress);
 
 #ifdef ENABLE_TSF
-	*pfInProgress = m_qtxs->IsCompositionActive();
-#elif defined(MANAGED_KEYBOARDING)
 	CheckHr(m_qvim->get_IsCompositionActive(pfInProgress));
 #else
 	*pfInProgress = FALSE;
@@ -3028,9 +2999,6 @@ STDMETHODIMP VwRootBox::Layout(IVwGraphics * pvg, int dxAvailWidth)
 		Construct(pvg, dxAvailWidth);
 	VwDivBox::DoLayout(pvg, dxAvailWidth, -1, true);
 #ifdef ENABLE_TSF
-	if (m_qtxs)
-		m_qtxs->OnLayoutChange();
-#elif defined(MANAGED_KEYBOARDING)
 	if (m_qvim)
 		CheckHr(m_qvim->OnLayoutChange());
 #endif /*ENABLE_TSF*/
@@ -3713,20 +3681,11 @@ STDMETHODIMP VwRootBox::Close()
 	m_qsync.Clear();
 
 #ifdef ENABLE_TSF
-	if (m_qtxs)		// In case this method is called twice (which can happen).
-	{
-		// m_qtxs gets created in the c'tor, so one could think of destroying it in the d'tor.
-		// However, because VwTextStore holds a smart pointer to us (VwRootBox) this would
-		// result in the RootBox not being deleted because the reference count is one off.
-		m_qtxs->Close();	// Clear out any internal smart pointers.
-		m_qtxs.Clear();
-	}
-#elif defined(MANAGED_KEYBOARDING)
+	// m_qvim gets created in the c'tor, so one could think of destroying it in the
+	// d'tor. However, because the view manager holds a smart pointer to us (VwRootBox) this
+	// would result in the RootBox not being deleted because the reference count is one off.
 	if (m_qvim)		// In case this method is called twice (which can happen).
 	{
-		// m_qvim gets created in the c'tor, so one could think of destroying it in the d'tor.
-		// However, because the view manager holds a smart pointer to us (VwRootBox) this would
-		// result in the RootBox not being deleted because the reference count is one off.
 		CheckHr(m_qvim->Close());	// Clear out any internal smart pointers.
 		m_qvim.Clear();
 	}
@@ -4018,9 +3977,6 @@ void VwRootBox::NotifySelChange(VwSelChangeType nHow, bool fUpdateRootSite)
 		CheckHr(m_qvrs->SelectionChanged(this, m_qvwsel));
 
 #ifdef ENABLE_TSF
-	if (m_qtxs)
-		m_qtxs->OnSelChange(nHow);
-#elif defined(MANAGED_KEYBOARDING)
 	if (m_qvim)
 	{
 		// I'm not sure if it is really necessary to store m_pvpboxLastSelectedAnchor or if we
@@ -4065,9 +4021,6 @@ void VwRootBox::LayoutFull()
 	if (dyOld != FieldHeight() || dxOld != Width() || dyOld2 != Height())
 		CheckHr(m_qvrs->RootBoxSizeChanged(this));
 #ifdef ENABLE_TSF
-	if (m_qtxs)
-		m_qtxs->OnLayoutChange();
-#elif defined(MANAGED_KEYBOARDING)
 	if (m_qvim)
 		CheckHr(m_qvim->OnLayoutChange());
 #endif /*ENABLE_TSF*/
@@ -4289,9 +4242,6 @@ bool VwRootBox::RelayoutCore(IVwGraphics * pvg, int dxpAvailWidth, VwRootBox * p
 	bool result = SuperClass::Relayout(pvg, dxpAvailWidth, prootb, pfixmap,
 		dxpAvailOnLine, pmmbi);
 #ifdef ENABLE_TSF
-	if (m_qtxs)
-		m_qtxs->OnLayoutChange();
-#elif defined(MANAGED_KEYBOARDING)
 	if (m_qvim)
 		CheckHr(m_qvim->OnLayoutChange());
 #endif /*ENABLE_TSF*/
@@ -4875,9 +4825,6 @@ void VwRootBox::MaximizeLaziness(VwBox * pboxMinKeep, VwBox * pboxLimKeep)
 	for (int i = 0; i < m_vselInUse.Size(); i++)
 		m_vselInUse[i]->AddToKeepList(&li);
 #ifdef ENABLE_TSF
-	if (m_qtxs)
-		m_qtxs->AddToKeepList(&li);
-#elif defined(MANAGED_KEYBOARDING)
 	if (m_pvpboxLastSelectedAnchor)
 		li.KeepSequence(m_pvpboxLastSelectedAnchor, m_pvpboxLastSelectedAnchor->NextOrLazy());
 #endif /*ENABLE_TSF*/
@@ -5434,9 +5381,6 @@ STDMETHODIMP VwRootBox::get_Synchronizer(IVwSynchronizer ** ppsync)
 inline bool VwRootBox::OnMouseEvent(int xd, int yd, RECT rcSrc, RECT rcDst, VwMouseEvent me)
 {
 #ifdef ENABLE_TSF
-	if (m_qtxs)
-		return m_qtxs->MouseEvent(xd, yd, rcSrc, rcDst, me);
-#elif defined(MANAGED_KEYBOARDING)
 	if (m_qvim)
 	{
 		ComBool fHandled;

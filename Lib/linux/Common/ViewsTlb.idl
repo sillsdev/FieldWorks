@@ -6119,17 +6119,8 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IViewInputMgr") cpp
 
 	
 	HRESULT OnTextChange();
-
-	
-	
-	
 }
 
 #line 29 "d:\\fwrepo\\fw\\Src\\Views\\ViewsTlb.idl"
-
-
-
-
-
 
 };
