@@ -1526,13 +1526,19 @@ namespace SIL.FieldWorks
 						else
 							dlg.ShowErrorLabelHideLink();
 					}
-					dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
+					bool gotAutoOpenSetting = false;
+					if (startingApp.RegistrySettings != null) // may be null if disposed after canceled restore.
+					{
+						dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
+						gotAutoOpenSetting = true;
+					}
 					dlg.StartPosition = FormStartPosition.CenterScreen;
 					dlg.ShowDialog();
 					exception = null;
 					// We get the app each time through the loop because a failed Restore operation can dispose it.
 					var app = GetOrCreateApplication(args);
-					app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
+					if (gotAutoOpenSetting)
+						app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
 					switch (dlg.DlgResult)
 					{
 						case WelcomeToFieldWorksDlg.ButtonPress.New:
