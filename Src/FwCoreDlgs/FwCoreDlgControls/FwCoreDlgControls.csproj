@@ -138,7 +138,7 @@
 	</Reference>
 	<Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
-	  <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
+	  <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
 	</Reference>
 	<Reference Include="RootSite, Version=3.2.0.9, Culture=neutral, processorArchitecture=MSIL">
 	  <SpecificVersion>False</SpecificVersion>
@@ -361,5 +361,4 @@
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="../../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>

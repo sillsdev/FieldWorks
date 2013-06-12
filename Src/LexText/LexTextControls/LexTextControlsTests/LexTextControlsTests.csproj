@@ -133,11 +133,11 @@
     </Reference>
     <Reference Include="Palaso, Version=1.7.43.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="Palaso.Lift, Version=1.9.16.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\Palaso.Lift.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\Palaso.Lift.dll</HintPath>
     </Reference>
     <Reference Include="Sfm2Xml, Version=1.0.2496.16215, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -190,5 +190,4 @@
   <PropertyGroup>
     <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="../../../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>

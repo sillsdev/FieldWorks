@@ -182,7 +182,7 @@
       <HintPath>..\..\DistFiles\StructureMapAdapter.dll</HintPath>
     </Reference>
     <Reference Include="Palaso">
-      <HintPath>..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="SilUtils">
       <HintPath>..\..\Output\Debug\SilUtils.dll</HintPath>
@@ -654,6 +654,5 @@
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="../../Build/BeforeBuildCopyPalasoDlls.targets" />
   <Import Project="BuildInclude.targets" />
 </Project>
