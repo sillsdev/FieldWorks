@@ -55,7 +55,7 @@ using Logger = SIL.Utils.Logger;
 using SIL.CoreImpl.Properties;
 
 #if __MonoCS__
-using Skybound.Gecko;
+using Gecko;
 #endif
 
 [assembly:SuppressMessage("Gendarme.Rules.Portability", "ExitCodeIsLimitedOnUnixRule",
@@ -155,13 +155,18 @@ namespace SIL.FieldWorks
 			{
 #if __MonoCS__
 				// Initialize XULRunner - required to use the geckofx WebBrowser Control (GeckoWebBrowser).
-				string xulRunnerLocation = Skybound.Gecko.XULRunnerLocator.GetXULRunnerLocation();
-				string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
-				if (xulRunnerLocation == null)
+				string xulRunnerLocation = XULRunnerLocator.GetXULRunnerLocation();
+				if (String.IsNullOrEmpty(xulRunnerLocation))
 					throw new ApplicationException("The XULRunner library is missing or has the wrong version");
+				string librarySearchPath = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH") ?? String.Empty;
 				if (!librarySearchPath.Contains(xulRunnerLocation))
 					throw new ApplicationException("LD_LIBRARY_PATH must contain " + xulRunnerLocation);
 				Xpcom.Initialize(xulRunnerLocation);
+				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+				Application.ApplicationExit += (sender, e) =>
+				{
+					Xpcom.Shutdown();
+				};
 #endif
 
 				Logger.WriteEvent("Starting app");

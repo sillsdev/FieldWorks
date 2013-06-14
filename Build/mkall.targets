@@ -349,6 +349,7 @@
 	<ItemGroup>
 		<DownloadFiles Include="$(fwrt)/Downloads/Autofac.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Chorus.exe"/>
+		<DownloadFiles Condition="'$(OS)'=='Unix'" Include="$(fwrt)/Downloads/ChorusHub.exe"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/LibChorus.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
 		<DownloadFiles Include="$(fwrt)/Downloads/Palaso.dll"/>
@@ -414,22 +415,18 @@
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/Palaso.Media.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Media.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt247/.lastSuccessful/PalasoUIWindowsForms.dll" LocalFilename="$(fwrt)/Downloads/PalasoUIWindowsForms.dll"/>
-		<!-- This ItemGroup is necessary, for the copy to work on Windows which evaluates itemgroups when it encounters them -->
-		<ItemGroup>
-			<DownloadFiles Include="$(fwrt)/Downloads/*.dll"/>
-			<DownloadFiles Include="$(fwrt)/Downloads/*.exe"/>
-		</ItemGroup>
 	</Target>
 
 	<Target Name="downloadLinuxDlls" Condition="'$(OS)'=='Unix'">
-		<!-- Chorus dlls. bt266 specifies the chorus-lucid32-WeSay1.4Mono build. Update when appropriate. -->
+		<!-- Chorus dlls. bt267 specifies the chorus-precise64-WeSay1.4Mono build. Update when appropriate. -->
 		<Message Text="Downloading latest successful artifacts from Chorus WeSay1.4Mono build."/>
 		<MakeDir Directories="$(fwrt)/Downloads"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt266/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt266/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt266/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
-		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt266/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
-		<!-- Palaso dlls. bt33 is the DefaultMono branch for Palaso. Update when appropriate. -->
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Autofac.dll" LocalFilename="$(fwrt)/Downloads/Autofac.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Chorus.exe" LocalFilename="$(fwrt)/Downloads/Chorus.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/ChorusHub.exe" LocalFilename="$(fwrt)/Downloads/ChorusHub.exe"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/LibChorus.dll" LocalFilename="$(fwrt)/Downloads/LibChorus.dll"/>
+		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt267/.lastSuccessful/Vulcan.Uczniowie.HelpProvider.dll" LocalFilename="$(fwrt)/Downloads/Vulcan.Uczniowie.HelpProvider.dll"/>
+		<!-- Palaso dlls. bt33 is the palaso-lucid32-DefaultMono branch for Palaso. Update when appropriate. -->
 		<Message Text="Downloading latest successful artifacts from Palaso DefaultMono build."/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.dll" LocalFilename="$(fwrt)/Downloads/Palaso.dll"/>
 		<DownloadFile Address="http://build.palaso.org/guestAuth/repository/download/bt33/.lastSuccessful/Palaso.Lift.dll" LocalFilename="$(fwrt)/Downloads/Palaso.Lift.dll"/>

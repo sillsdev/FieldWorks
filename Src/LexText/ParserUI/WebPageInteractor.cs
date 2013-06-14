@@ -6,7 +6,7 @@ using XCore;
 #if __MonoCS__
 using System;
 using System.Windows.Forms;
-using Skybound.Gecko;
+using Gecko;
 #endif
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected GeckoElement GetParentTable(GeckoElement element)
 		{
 			while (element != null && element.TagName.ToLowerInvariant() != "table".ToLowerInvariant())
-				element = element.Parent;
+				element = element.ParentElement as GeckoElement;
 
 			return element;
 		}
