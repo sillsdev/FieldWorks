@@ -26,6 +26,24 @@ namespace StrUtil
 	// even though u_setDataDirectory() may have already been called.
 	static bool s_fSilIcuInitCalled = false;
 
+#if WIN32
+bool GetIcuDir(HKEY hkRoot, char* dir, DWORD size)
+{
+	bool fRes = false;
+	HKEY hk;
+	long lRet = ::RegOpenKeyExA(hkRoot, "Software\\SIL", 0, KEY_QUERY_VALUE, &hk);
+	if (lRet == ERROR_SUCCESS)
+	{
+		DWORD dwType;
+		long lRet = ::RegQueryValueExA(hk, "Icu50DataDir", NULL, &dwType, (BYTE*) dir, &size);
+		if (lRet == ERROR_SUCCESS && dwType == REG_SZ)
+			fRes = true;
+		::RegCloseKey(hk);
+	}
+	return fRes;
+}
+#endif
+
 /*----------------------------------------------------------------------------------------------
 	Initialize the ICU Data directory based on the registry setting (or UNIX environment).  It is safe to
 	call this static method more than once, but necessary only to call it at least once.
@@ -39,28 +57,19 @@ void InitIcuDataDir()
 	{
 		// The ICU Data Directory is not yet set.  Get the root directory from the registry
 		// and set the ICU data directory based on that value.
-		HKEY hk;
-		long lRet = ::RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\SIL", 0, KEY_QUERY_VALUE,
-			&hk);
-		if (lRet == ERROR_SUCCESS)
+		DWORD dwSize = sizeof(rgchDataDirectory);
+		bool fRetrievedDir = GetIcuDir(HKEY_CURRENT_USER, rgchDataDirectory, dwSize);
+		if (!fRetrievedDir)
+			fRetrievedDir = GetIcuDir(HKEY_LOCAL_MACHINE, rgchDataDirectory, dwSize);
+
+		if (fRetrievedDir)
 		{
-			DWORD cb = sizeof(rgchDataDirectory);
-			DWORD dwT;
-			// Note: trying to refactor this using
-			// StrAnsi staIcuDir(DirectoryFinder::IcuDir());
-			// u_setDataDirectory(staIcuDir.Chars());
-			// broke Ecobj/Teso. At some point we might want to figure out how to solve the build problems.
-			lRet = ::RegQueryValueExA(hk, "Icu50DataDir", NULL, &dwT, (BYTE *)rgchDataDirectory, &cb);
-			if (lRet == ERROR_SUCCESS && dwT == REG_SZ)
-			{
-				// Remove any trailing \ from the registry value.
-				int cch = strlen(rgchDataDirectory);
-				if (rgchDataDirectory[cch - 1] == '\\')
-					rgchDataDirectory[cch - 1] = 0;
-				u_setDataDirectory(rgchDataDirectory);
-				s_fSilIcuInitCalled = false;	// probably redundant, but to be safe ...
-			}
-			::RegCloseKey(hk);
+			// Remove any trailing \ from the registry value.
+			int cch = strlen(rgchDataDirectory);
+			if (rgchDataDirectory[cch - 1] == '\\')
+				rgchDataDirectory[cch - 1] = 0;
+			u_setDataDirectory(rgchDataDirectory);
+			s_fSilIcuInitCalled = false;	// probably redundant, but to be safe ...
 		}
 	}
 #else //not WIN32
