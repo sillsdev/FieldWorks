@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Stephen McConnel <stephen_mcconnel@sil.org>
+Submitted-by: Automatic Submission <gerrit@sil.org>
+Submitted-at: Mon, 17 Jun 2013 23:11:41 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1173
+Project: FieldWorks
+Branch: refs/heads/release/8.0
