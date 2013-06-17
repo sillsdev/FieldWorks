@@ -167,52 +167,56 @@ namespace LexTextControlsTests
 		/// <param name="expectedCreations"></param>
 		private void DoImport(string input, List<FieldHierarchyInfo> sfmInfo, int expectedCreations)
 		{
-			var tempDir = Path.Combine(Path.GetTempPath(), "Language Explorer") + Path.DirectorySeparatorChar;
+			var tempLocation = Path.GetTempFileName();
+			File.Delete(tempLocation);
+			var tempDir = Path.ChangeExtension(tempLocation, "") + Path.DirectorySeparatorChar;
 			Directory.CreateDirectory(tempDir);
-			string sTransformDir = Path.Combine(DirectoryFinder.FWCodeDirectory,
-				String.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar));
-			var sut = new LexImport(Cache, tempDir, sTransformDir);
+			try
+			{
+				string sTransformDir = Path.Combine(DirectoryFinder.FWCodeDirectory,
+					String.Format("Language Explorer{0}Import{0}", Path.DirectorySeparatorChar));
+				var sut = new LexImport(Cache, tempDir, sTransformDir);
 
-			string databaseFileName = Path.GetTempFileName();
-			File.WriteAllText(databaseFileName, input, Encoding.UTF8);
+				string databaseFileName = Path.GetTempFileName();
+				File.WriteAllText(databaseFileName, input, Encoding.UTF8);
 
-			var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-			// JohnT: I don't know why this is needed, the base class is supposed to Undo anything we create.
-			// But somehow things are getting left over from one test and messing up another.
-			foreach (var entry in entryRepo.AllInstances())
-				entry.Delete();
-			Assert.That(entryRepo.AllInstances().Count(), Is.EqualTo(0));
+				var entryRepo = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+				// JohnT: I don't know why this is needed, the base class is supposed to Undo anything we create.
+				// But somehow things are getting left over from one test and messing up another.
+				foreach (var entry in entryRepo.AllInstances())
+					entry.Delete();
+				Assert.That(entryRepo.AllInstances().Count(), Is.EqualTo(0));
 
-			// Create the map file that controls the import
+				// Create the map file that controls the import
 
-			var uiLangsNew = new Hashtable();
-			var infoEn = new LanguageInfoUI("English", "English", "", "en");
-			var vernId = Cache.LangProject.DefaultVernacularWritingSystem.Id;
-			var infoV = new LanguageInfoUI("Vernacular", "Vern", "", vernId);
-			uiLangsNew[infoEn.Key] = infoEn;
-			uiLangsNew["Vernacular"] = infoV;
+				var uiLangsNew = new Hashtable();
+				var infoEn = new LanguageInfoUI("English", "English", "", "en");
+				var vernId = Cache.LangProject.DefaultVernacularWritingSystem.Id;
+				var infoV = new LanguageInfoUI("Vernacular", "Vern", "", vernId);
+				uiLangsNew[infoEn.Key] = infoEn;
+				uiLangsNew["Vernacular"] = infoV;
 
-			var lexFields = new LexImportFields();
-			lexFields.ReadLexImportFields(sTransformDir + "ImportFields.xml");
-			var customFields = new LexImportFields();
+				var lexFields = new LexImportFields();
+				lexFields.ReadLexImportFields(sTransformDir + "ImportFields.xml");
+				var customFields = new LexImportFields();
 
-			var ifMarker = new List<ClsInFieldMarker>();
-			string mapFile = Path.GetTempFileName();
+				var ifMarker = new List<ClsInFieldMarker>();
+				string mapFile = Path.GetTempFileName();
 
-			STATICS.NewMapFileBuilder(uiLangsNew, lexFields, customFields, sfmInfo, ifMarker, mapFile);
+				STATICS.NewMapFileBuilder(uiLangsNew, lexFields, customFields, sfmInfo, ifMarker, mapFile);
 
-			var phase1Output = Path.Combine(tempDir, LexImport.s_sPhase1FileName);
+				var phase1Output = Path.Combine(tempDir, LexImport.s_sPhase1FileName);
 
-			var converter = new LexImportWizard.FlexConverter(Cache);
-			converter.AddPossibleAutoField("Entry", "eires"); // found these by running an example.
-			converter.AddPossibleAutoField("Sense", "sires");
-			converter.AddPossibleAutoField("Subentry", "seires");
-			converter.AddPossibleAutoField("Variant", "veires");
-			converter.Convert(databaseFileName, mapFile, phase1Output);
+				var converter = new LexImportWizard.FlexConverter(Cache);
+				converter.AddPossibleAutoField("Entry", "eires"); // found these by running an example.
+				converter.AddPossibleAutoField("Sense", "sires");
+				converter.AddPossibleAutoField("Subentry", "seires");
+				converter.AddPossibleAutoField("Variant", "veires");
+				converter.Convert(databaseFileName, mapFile, phase1Output);
 
-			m_actionHandler.EndUndoTask(); // import starts its own.
+				m_actionHandler.EndUndoTask(); // import starts its own.
 
-			sut.Import(new DummyProgressDlg(), new object[]
+				sut.Import(new DummyProgressDlg(), new object[]
 				{
 					true, // run to completion
 					5, // last step to execute => all of them
@@ -223,7 +227,13 @@ namespace LexTextControlsTests
 					"", // phase 1 html report, only used in generating messages, I think.
 					LexImport.s_sPhase1FileName // required always
 				});
-			Assert.That(entryRepo.AllInstances().Count(), Is.EqualTo(expectedCreations), "wrong number of entries created");
+				Assert.That(entryRepo.AllInstances().Count(), Is.EqualTo(expectedCreations), "wrong number of entries created");
+
+			}
+			finally
+			{
+				Directory.Delete(tempDir, true);
+			}
 		}
 
 		/// <summary>

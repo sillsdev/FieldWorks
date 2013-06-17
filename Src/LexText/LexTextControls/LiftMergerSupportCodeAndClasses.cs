@@ -1862,6 +1862,61 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="dict"></param>
 		/// <param name="rgNew"></param>
 		/// <param name="list"></param>
+		private void ProcessLocation(string id, string guidAttr, string parent,
+			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev)
+		{
+			var dict = m_dictLocation;
+			var list = m_cache.LangProject.LocationsOA;
+			var poss = (ICmLocation)FindExistingPossibility(id, guidAttr, label, abbrev, dict, list);
+			if (poss == null)
+			{
+				var cmLocationFactory = m_cache.ServiceLocator.GetInstance<ICmLocationFactory>();
+				ICmObject possParent = null;
+				if (!String.IsNullOrEmpty(parent) && dict.ContainsKey(parent))
+				{
+					var parentLocation = (ICmLocation)dict[parent];
+					if (!String.IsNullOrEmpty(guidAttr))
+					{
+						Guid guid = (Guid)m_gconv.ConvertFrom(guidAttr);
+						poss = cmLocationFactory.Create(guid, parentLocation);
+					}
+					else
+					{
+						poss = cmLocationFactory.Create();
+						parentLocation.SubPossibilitiesOS.Add(poss);
+					}
+				}
+				else
+				{
+					if (!String.IsNullOrEmpty(guidAttr))
+					{
+						Guid guid = (Guid)m_gconv.ConvertFrom(guidAttr);
+						poss = cmLocationFactory.Create(guid, list);
+					}
+					else
+					{
+						poss = cmLocationFactory.Create();
+						list.PossibilitiesOS.Add(poss);
+					}
+				}
+				SetNewPossibilityAttributes(id, description, label, abbrev, poss);
+				dict[id] = poss;
+				m_rgnewLocation.Add(poss);
+			}
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="guidAttr"></param>
+		/// <param name="parent"></param>
+		/// <param name="description">safe-XML</param>
+		/// <param name="label">safe-XML</param>
+		/// <param name="abbrev">safe-XML</param>
+		/// <param name="dict"></param>
+		/// <param name="rgNew"></param>
+		/// <param name="list"></param>
 		private void ProcessPerson(string id, string guidAttr, string parent,
 			LiftMultiText description, LiftMultiText label, LiftMultiText abbrev,
 			Dictionary<string, ICmPossibility> dict, List<ICmPossibility> rgNew, ICmPossibilityList list)

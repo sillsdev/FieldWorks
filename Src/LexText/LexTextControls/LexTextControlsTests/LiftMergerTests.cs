@@ -2089,6 +2089,170 @@ namespace LexTextControlsTests
 			return XmlUtils.MakeSafeXmlAttribute(tss.Text);
 		}
 
+		private static readonly string[] s_LiftDataLocations = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+				"<ranges>",
+				"<range id=\"semantic-domain-ddp4\" href=\"file://C:/Users/maclean.DALLAS/Documents/My FieldWorks/LIFT-CustomFlds New/LIFT-CustomFlds New.lift-ranges\"/>",
+				"</ranges>",
+			"<fields>",
+			"<field tag=\"cv-pattern\">",
+			"<form lang=\"en\"><text>This records the syllable pattern for a LexPronunciation in FieldWorks.</text></form>",
+			"</field>",
+			"<field tag=\"tone\">",
+			"<form lang=\"en\"><text>This records the tone information for a LexPronunciation in FieldWorks.</text></form>",
+			"</field>",
+			"<field tag=\"comment\">",
+			"<form lang=\"en\"><text>This records a comment (note) in a LexEtymology in FieldWorks.</text></form>",
+			"</field>",
+			"<field tag=\"import-residue\">",
+			"<form lang=\"en\"><text>This records residue left over from importing a standard format file into FieldWorks (or LinguaLinks).</text></form>",
+			"</field>",
+			"<field tag=\"literal-meaning\">",
+			"<form lang=\"en\"><text>This field is used to store a literal meaning of the entry.  Typically, this field is necessary only for a compound or an idiom where the meaning of the whole is different from the sum of its parts.</text></form>",
+			"</field>",
+			"<field tag=\"summary-definition\">",
+			"<form lang=\"en\"><text>A summary definition (located at the entry level in the Entry pane) is a general definition summarizing all the senses of a primary entry. It has no theoretical value; its use is solely pragmatic.</text></form>",
+			"</field>",
+			"<field tag=\"scientific-name\">",
+			"<form lang=\"en\"><text>This field stores the scientific name pertinent to the current sense.</text></form>",
+			"</field>",
+			"</fields>",
+			"</header>",
+			"<entry dateCreated=\"2011-05-24T00:06:07Z\" dateModified=\"2011-05-24T00:18:02Z\" id=\"Baba_c78f68b9-79d0-4ce9-8b76-baa68a5c8444\" guid=\"c78f68b9-79d0-4ce9-8b76-baa68a5c8444\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>Baba</text></form>",
+			"</lexical-unit>",
+				"<trait  name=\"morph-type\" value=\"stem\"/>",
+					"<variant>",
+					"<form lang=\"fr\"><text>BabaAlo</text></form>",
+					"<trait  name=\"morph-type\" value=\"stem\"/>",
+					"</variant>",
+			"<pronunciation>",
+				"<form lang=\"qaa-fonipa-x-kal\"><text>pronunciation</text></form>",
+				"<field type=\"cv-pattern\">",
+				"<form lang=\"en\"><text>CVCV</text></form>",
+				"</field>",
+				"<field type=\"tone\">",
+				"<form lang=\"en\"><text>HLH</text></form>",
+				"</field>",
+				"<trait name=\"location\" value=\"Village\"/>",
+			"</pronunciation>",
+			"<sense id=\"9d6c600b-192a-4eec-980b-a605173ba5e3\">",
+			"<gloss lang=\"en\"><text>Pops</text></gloss>",
+				"<example>",
+				"<form lang=\"fr\"><text>Example Sentence</text></form>",
+				"</example>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		private static readonly string[] s_LiftRangeDataLocations = new[]
+		{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
+				"<lift-ranges>",
+
+				"<range id=\"location\">",
+					"<range-element id=\"Village\" guid=\"63403699-07c1-43f3-a47c-069d6e4316e5\">",
+					"<label>",
+					"<form lang=\"en\"><text>village</text></form>",
+					"</label>",
+					"<abbrev>",
+					"<form lang=\"en\"><text>VIL</text></form>",
+					"</abbrev>",
+					"<description>",
+					"<form lang=\"en\"><text>Located 135 deg east, 3 deg south</text></form>",
+					"</description>",
+					"</range-element>",
+
+					"<range-element id=\"river\">",
+					"<label>",
+					"<form lang=\"en\"><text>river</text></form>",
+					"</label>",
+					"<abbrev>",
+					"<form lang=\"en\"><text>RIV</text></form>",
+					"</abbrev>",
+					"<description>",
+					"<form lang=\"en\"><text>large river, somewhat silty</text></form>",
+					"</description>",
+					"</range-element>",
+
+					"<range-element id=\"House\" guid=\"5893e40e-e7bb-4c44-ac06-b6cec06b8470\" parent=\"Village\">",
+					"<label>",
+					"<form lang=\"en\"><text>House</text></form>",
+					"</label>",
+					"</range-element>",
+					"<range-element id=\"Square\" parent=\"Village\">",
+					"<label>",
+					"<form lang=\"en\"><text>Square</text></form>",
+					"</label>",
+					"</range-element>",
+				"</range>",
+			"</lift-ranges>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  test import of Location List from the Ranges file (and that we can link to one).
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImportLocationList()
+		{
+			SetWritingSystems("fr");
+
+			// One should exist already, to show that we can detect duplicates.
+			var originalRiver = Cache.ServiceLocator.GetInstance<ICmLocationFactory>().Create();
+			Cache.LangProject.LocationsOA.PossibilitiesOS.Add(originalRiver);
+			originalRiver.Name.SetAnalysisDefaultWritingSystem("river");
+			originalRiver.Abbreviation.SetAnalysisDefaultWritingSystem("RIV");
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
+			Assert.AreEqual(0, repoEntry.Count);
+			Assert.AreEqual(0, repoSense.Count);
+
+			//Creat the LIFT data file
+			var sOrigFile = CreateInputFile(s_LiftDataLocations);
+			//Create the LIFT ranges file
+			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeDataLocations);
+
+			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
+			File.Delete(sOrigFile);
+			File.Delete(sOrigRangesFile);
+			Assert.IsNotNull(logFile);
+			File.Delete(logFile);
+			Assert.AreEqual(1, repoEntry.Count);
+			Assert.AreEqual(1, repoSense.Count);
+
+			var locations = Cache.LangProject.LocationsOA;
+			Assert.That(locations.PossibilitiesOS.Count, Is.EqualTo(2), "should have imported one locations and matched another");
+			var village = locations.PossibilitiesOS[1];
+			Assert.That(village.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("village"));
+			Assert.That(village.Guid, Is.EqualTo(new Guid("63403699-07c1-43f3-a47c-069d6e4316e5")));
+			Assert.That(village.SubPossibilitiesOS.Count, Is.EqualTo(2));
+			Assert.That(village.Abbreviation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("VIL"));
+			Assert.That(village.Description.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Located 135 deg east, 3 deg south"));
+
+			Assert.That(locations.PossibilitiesOS[0], Is.EqualTo(originalRiver));
+			Assert.That(locations.PossibilitiesOS[0].Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("river"));
+
+			var house = village.SubPossibilitiesOS[0];
+			Assert.That(house.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("House"));
+			Assert.That(house.Guid, Is.EqualTo(new Guid("5893e40e-e7bb-4c44-ac06-b6cec06b8470")));
+
+			Assert.That(village.SubPossibilitiesOS[1].Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Square"));
+
+			var entry = repoEntry.AllInstances().First();
+			var pronunciation = entry.PronunciationsOS[0];
+			var location = pronunciation.LocationRA;
+			Assert.That(location, Is.EqualTo(village));
+		}
+
 		private static readonly string[] s_LiftData8 = new[]
 		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",

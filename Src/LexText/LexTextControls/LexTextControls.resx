@@ -1343,4 +1343,7 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksPublicationTypesAdded" xml:space="preserve">
     <value>The following Publication Types were added to the language project:</value>
   </data>
+  <data name="ksLocationsAdded" xml:space="preserve">
+    <value>The following Locations were added to the language project:</value>
+  </data>
 </root>

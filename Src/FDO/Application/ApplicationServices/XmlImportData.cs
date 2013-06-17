@@ -222,9 +222,10 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 				sLogFile = sLogFile.Substring(0, idx);
 			sLogFile = sLogFile + "-Import.log";
 			bool fRetVal = false;
+			var streamReader = new StreamReader(sFilename, Encoding.UTF8);
 			try
 			{
-				fRetVal = ImportData(new StreamReader(sFilename, Encoding.UTF8),
+				fRetVal = ImportData(streamReader,
 					new StreamWriter(sLogFile, false, Encoding.UTF8),
 					progress);
 				DateTime dtEnd = DateTime.Now;
@@ -238,6 +239,7 @@ namespace SIL.FieldWorks.FDO.Application.ApplicationServices
 					m_wrtrLog.Close();
 					m_wrtrLog = null;
 				}
+				streamReader.Dispose();
 			}
 			return fRetVal;
 		}
