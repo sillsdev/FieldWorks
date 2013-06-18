@@ -2000,6 +2000,17 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		}
 
 		/// <summary>
+		/// Replace all references in the system to 'from' with a reference to 'to'.
+		/// Caller is responsible to set up UOW.
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		public static void ReplaceReferences(ICmObject from, ICmObject to)
+		{
+			CmObject.ReplaceReferences(from.Cache, from, to);
+		}
+
+		/// <summary>
 		///
 		/// </summary>
 		/// <typeparam name="TObj"></typeparam>
