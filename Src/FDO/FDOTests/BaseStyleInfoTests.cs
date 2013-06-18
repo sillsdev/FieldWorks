@@ -282,6 +282,19 @@ namespace SIL.FieldWorks.FDO.FDOTests
 			Assert.AreEqual(false, newInfo.IsBuiltIn, "Copies of styles should not be considered built in");
 		}
 
+		/// <summary>
+		/// Minimal test of an alternate constructor to verify that it records the cache from the style.
+		/// </summary>
+		[Test]
+		public void ConstructBasedOnStyleAndEffects()
+		{
+			IStStyle mainTitleStyle = AddTestStyle("Title Main", ContextValues.Title,
+				StructureValues.Body, FunctionValues.Prose, false, Cache.LangProject.StylesOC);
+			var props = TsPropsFactoryClass.Create().MakeProps("rubbish", Cache.DefaultAnalWs, 0);
+			var sut = new BaseStyleInfo(mainTitleStyle, props);
+			Assert.That(sut.Cache, Is.EqualTo(Cache));
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the ability to construct a style info object based on an StStyle.

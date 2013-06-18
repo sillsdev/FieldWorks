@@ -719,7 +719,7 @@
 	<layout class="LexEntryRef" type="jtview" name="publishStemMinorComplexFormRef">
 		<part ref="EntryTypesConfig" label="Complex Form Type" param="publishStemMinorComplexFormType" before="" after=" " visibility="ifdata" css="complexform-type-minor"/>
 		<part ref="ComplexFormHeadwordConfig" param="publishStemMinorComplexFormHeadword" hideConfig="true"/>
-		<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before=" " after=" " sep=", " param="publishStemMinorComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform"/>
+		<part ref="ComplexFormGramInfoConfig" label="Grammatical Info." before=" " after=" " sep=", " param="publishStemMinorComplexFormGramInfo" visibility="never" style="Dictionary-Contrasting" css="grammatical-info-complexform-minor"/>
 		<part ref="ComplexFormMinorSmartDefinitionConfig" param="publishStemMinorComplexFormDefinition" hideConfig="true"/>
 		<part ref="SummaryPub" label="Comment" before=" " after="" ws="analysis" wsType="analysis" visibility="never" css="complexform-summary-minor"/>
 		<part ref="ComplexFormSummaryDefinitionConfig" param="publishStemMinorComplexFormSummaryDef" hideConfig="true"/>
