@@ -137,7 +137,7 @@ namespace SIL.FieldWorks.Common.Controls
 				layouts.ExpandWsTaggedNodes(sWsTag);
 		}
 
-		static char[] ktagMarkers = new [] {'-', Inventory.kcMarkLayoutCopy, Inventory.kcMarkNodeCopy};
+		static char[] ktagMarkers = new[] { '-', LayoutKeyUtils.kcMarkLayoutCopy, LayoutKeyUtils.kcMarkNodeCopy };
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

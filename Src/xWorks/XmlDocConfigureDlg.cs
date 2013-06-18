@@ -1432,7 +1432,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var sDupKey = String.Format("{0:D2}", iDup);
 
-			var suffixCode = String.Format("{0}{1}", Inventory.kcMarkNodeCopy, sDupKey);
+			var suffixCode = String.Format("{0}{1}", LayoutKeyUtils.kcMarkNodeCopy, sDupKey);
 			var sRef = XmlUtils.GetOptionalAttributeValue(m_current.Configuration, "ref");
 			var xnPart = m_parts.GetElement("part", new[] { String.Format("{0}-Jt-{1}", m_current.ClassName, sRef) });
 			if (xnPart == null)
@@ -1664,9 +1664,9 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(!String.IsNullOrEmpty(sName));
 			var cTag = suffixCode[0];
 			int idx;
-			if (cTag == Inventory.kcMarkNodeCopy)
+			if (cTag == LayoutKeyUtils.kcMarkNodeCopy)
 			{
-				var idx0 = suffixCode.IndexOf(Inventory.kcMarkLayoutCopy);
+				var idx0 = suffixCode.IndexOf(LayoutKeyUtils.kcMarkLayoutCopy);
 				if (idx0 < 0)
 					idx0 = 0;
 				idx = sName.IndexOf(cTag, idx0);

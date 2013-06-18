@@ -194,6 +194,7 @@
     <Compile Include="IProgress.cs" />
     <Compile Include="IProjectSpecificSettingsKeyProvider.cs" />
     <Compile Include="IServiceLocatorBootstrapper.cs" />
+    <Compile Include="LayoutKeyUtils.cs" />
     <Compile Include="MeasurementUtils.cs" />
     <Compile Include="Folders.cs" />
     <Compile Include="ParagraphCorrelation.cs" />
