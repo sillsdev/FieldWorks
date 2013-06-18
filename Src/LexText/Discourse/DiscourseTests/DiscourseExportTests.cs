@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SIL.FieldWorks.FDO;
 using System.IO;
 using System.Xml;
+using SIL.Utils;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -72,8 +73,12 @@ namespace SIL.FieldWorks.Discourse
 			using (var stream = new MemoryStream())
 			{
 				//Set up some cells.
-				var allParaOccurrences = m_helper.MakeAnalysesUsedN(5);
+				var allParaOccurrences = m_helper.MakeAnalysesUsedN(6);
 
+				// Make last analysis point to WfiWordform instead of WfiGloss
+				var lastOccurrence = allParaOccurrences[5];
+				var wordform = (lastOccurrence.Analysis as IWfiGloss).Wordform;
+				lastOccurrence.Segment.AnalysesRS.Replace(1, 0, new List<ICmObject> { wordform });
 				// This block makes the first row, puts WordGroups in cells 1 and 2, and list refs in cells 1 and 2
 				var row0 = m_helper.MakeFirstRow();
 				var movedItem = allParaOccurrences[1];
@@ -84,6 +89,7 @@ namespace SIL.FieldWorks.Discourse
 				var marker2 = m_helper.GetAnotherMarker();
 				var cellPart0_2b = m_helper.MakeChartMarker(row0, 2, marker2);
 				var cellPart0_2c = m_helper.MakeChartMarker(row0, 2, marker);
+				var cellPart0_3 = m_helper.MakeWordGroup(row0, 3, lastOccurrence, lastOccurrence);
 
 				// Now another row, and cell 4 on the first has a ref to it. The new row has a WordGroup with two
 				// wordforms in cell 1. The cell is two columns wide, being merged with the previous cell.
@@ -248,7 +254,7 @@ namespace SIL.FieldWorks.Discourse
 			//            <lit noSpaceBefore="true" lang="en">)</lit>
 			//        </main>
 			//        <glosses>
-			//            <gloss>thisGloss5</gloss>
+			//            <gloss lang="en">thisGloss5</gloss>
 			//        </glosses>
 			//    </cell>
 			var cell2 = AssertCellMainChild(row, 2, 1, new [] { "thisGloss5" }, 4, "word", "this", "fr");
@@ -266,14 +272,19 @@ namespace SIL.FieldWorks.Discourse
 			//            <lit noSpaceBefore="true" lang="en">)</lit>
 			//        </main>
 			//        <glosses>
-			//            <gloss>isGloss8</gloss>
+			//            <gloss lang="en">isGloss8</gloss>
 			//        </glosses>
 			//    </cell>
 			AssertCellMainChild(row, 3, 1, new [] { "isGloss8" }, 7, "word", "is", "fr");
 			//    <cell cols="1">
-			//        <main />
+			//        <main>
+			//            <word lang="fr">is</word>
+			//        </main>
+			//        <glosses>
+			//            <gloss lang="en">***</gloss>
+			//        </glosses>
 			//    </cell>
-
+			AssertCellMainChild(row, 4, 1, new[] { "***" }, 1, "word", "is", "fr");
 			//    <cell cols="1">
 			//        <main>
 			//            <lit noSpaceAfter="true" lang="en">[</lit>
