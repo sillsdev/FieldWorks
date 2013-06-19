@@ -67,14 +67,21 @@ namespace SIL.FieldWorks.IText
 					{
 						var fSuccess = (bool) dlg.RunTask(true, import.ImportInterlinear, m_tbFilename.Text);
 						if (fSuccess)
-							DialogResult = DialogResult.OK;	// only 'OK' if not exception
+						{
+							DialogResult = DialogResult.OK; // only 'OK' if not exception
+							var firstNewText = import.FirstNewText;
+							if (firstNewText != null && m_mediator != null)
+							{
+								m_mediator.SendMessage("JumpToRecord", firstNewText.Hvo);
+							}
+						}
 						else
 						{
 							DialogResult = DialogResult.Abort; // unsuccessful import
 							string message = ITextStrings.ksInterlinImportFailed + Environment.NewLine + Environment.NewLine;
 							message += m_messages.ToString();
 							MessageBox.Show(this, message, ITextStrings.ksImportFailed, MessageBoxButtons.OK,
-											MessageBoxIcon.Warning);
+								MessageBoxIcon.Warning);
 						}
 						Close();
 					}
