@@ -217,8 +217,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			AddArg(ref args, "-liftmodel", liftModelVersionNumber);
 			// current culture may have country etc info after a hyphen. FlexBridge just needs the main language ID.
 			// It probably can't ever be null or empty, but let's be as robust as possible.
-			if (!string.IsNullOrWhiteSpace(Thread.CurrentThread.CurrentUICulture.Name))
-				AddArg(ref args, "-locale", Thread.CurrentThread.CurrentUICulture.Name.Split('-')[0]);
+			var locale = Thread.CurrentThread.CurrentUICulture.Name;
+			locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
+			AddArg(ref args, "-locale", locale);
+
 
 			if (_noBlockerHost != null)
 			{

@@ -1263,6 +1263,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				// Switch to look for note files in the Lift repo.
 				folderToSearchIn = liftFolder;
 			}
+
+			if (!Directory.Exists(Path.Combine(folderToSearchIn, ".hg")))
+				return false; // No repo, so there can be no notes files.
+
 			foreach (string notesPathname in Directory.GetFiles(folderToSearchIn, "*.ChorusNotes", SearchOption.AllDirectories))
 			{
 				if (checkForLiftNotes)
