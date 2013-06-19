@@ -1302,6 +1302,17 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		}
 
 		/// <summary>
+		/// A very special case, an ownerless object created with a constructor that predetermines the
+		/// guid (and also sets the cache, hvo, and calls RegisterObjectAsCreated).
+		/// However, since the object will be unowned, SetDefaultValuesAfterInit will not be
+		/// called when setting the owner, so we need to do it here.
+		/// </summary>
+		void ICmObjectInternal.InitializeNewOwnerlessCmObjectWithPresetGuid()
+		{
+			SetDefaultValuesAfterInit();
+		}
+
+		/// <summary>
 		/// Initialize a CmObject that was created using the default Constructor.
 		/// </summary>
 		/// <param name="cache"></param>
