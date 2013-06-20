@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Code-Review+2: Rick MacLean <rick_maclean@sil.org>
+Submitted-by: Rick MacLean <rick_maclean@sil.org>
+Submitted-at: Thu, 20 Jun 2013 16:09:56 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1188
+Project: FieldWorks
+Branch: refs/heads/release/8.0
