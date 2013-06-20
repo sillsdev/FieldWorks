@@ -25,7 +25,6 @@ using System.Drawing;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
-
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.Framework;
@@ -43,6 +42,9 @@ using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.FDO.Infrastructure;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
+#if !__MonoCS__
+using NetSparkle;
+#endif
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1082,6 +1084,25 @@ namespace SIL.FieldWorks.XWorks
 		protected bool OnHelpReportProblem(object args)
 		{
 			ErrorReporter.ReportProblem(FwRegistryHelper.FieldWorksRegistryKey, m_app.SupportEmailAddress, this);
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Check if any updates to FW are available
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnHelpCheckForUpdates(object args)
+		{
+#if !__MonoCS__
+			var sparkle = SingletonsContainer.Item("Sparkle") as Sparkle;
+			if (sparkle == null)
+				MessageBox.Show("Updates do not work unless FieldWorks was installed via the installer.");
+			else
+				sparkle.CheckForUpdatesAtUserRequest();
+#endif
 			return true;
 		}
 
