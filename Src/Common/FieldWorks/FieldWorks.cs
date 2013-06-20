@@ -1574,6 +1574,7 @@ namespace SIL.FieldWorks
 							return null; // Should cause the FW process to exit later
 						case WelcomeToFieldWorksDlg.ButtonPress.Receive:
 							ObtainedProjectType obtainedProjectType;
+							projectToTry = null; //If the user cancel's the send/receive this null will result in a return to the welcome dialog.
 							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, out obtainedProjectType); // Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
 							if (!string.IsNullOrEmpty(projectDataPathname))
 							{
@@ -1587,23 +1588,26 @@ namespace SIL.FieldWorks
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Import:
 							projectToTry = CreateNewProject(dlg, app, helpTopicProvider);
-							var projectLaunched = LaunchProject(args, ref projectToTry);
-							if(projectLaunched)
+							if (projectToTry != null)
 							{
-								s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
-								var mainWindow = Form.ActiveForm;
-								if(mainWindow is IxWindow)
+								var projectLaunched = LaunchProject(args, ref projectToTry);
+								if (projectLaunched)
 								{
-									((IxWindow)mainWindow).Mediator.SendMessage("SFMImport", null);
+									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
+									var mainWindow = Form.ActiveForm;
+									if (mainWindow is IxWindow)
+									{
+										((IxWindow) mainWindow).Mediator.SendMessage("SFMImport", null);
+									}
+									else
+									{
+										return null;
+									}
 								}
 								else
 								{
 									return null;
 								}
-							}
-							else
-							{
-								return null;
 							}
 							break;
 					}
