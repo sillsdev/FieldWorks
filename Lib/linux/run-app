@@ -35,8 +35,8 @@ cd "$lib"; RUNMODE="INSTALLED" . environ; cd $OLDPWD
 # set the LANG enviroment variable according to the value of UserWs in the registry.
 # unfortunately, there doesn't seem to be a Mono registry access utility, so we'll
 # use XSLT.  This is needed for localizations to work with fontconfig.
-if [ -f $HOME/.mono/registry/CurrentUser/software/sil/fieldworks/7.0/values.xml ]; then
-	USERWS=$(xsltproc ${lib}/extract-userws.xsl $HOME/.mono/registry/CurrentUser/software/sil/fieldworks/7.0/values.xml)
+if [ -f $HOME/.mono/registry/CurrentUser/software/sil/fieldworks/8/values.xml ]; then
+	USERWS=$(xsltproc ${lib}/extract-userws.xsl $HOME/.mono/registry/CurrentUser/software/sil/fieldworks/8/values.xml)
 	if [ -n "$USERWS" ]; then export LANG=$USERWS; fi
 fi
 cd "$share" # Temporary
