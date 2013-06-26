@@ -3440,6 +3440,19 @@ namespace SIL.Utils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Releases the input context and unlocks the memory associated in the input context.
+		/// An application must call this function for each call to the ImmGetContext function.
+		/// </summary>
+		/// <param name="hWnd">Handle to the window for which the input context was previously
+		/// retrieved.</param>
+		/// <param name="hIMC">Handle to the input context.</param>
+		/// <returns>Returns <c>true</c> if successful, otherwise <c>false</c>.</returns>
+		/// ------------------------------------------------------------------------------------
+		[DllImport("imm32.dll", CharSet = CharSet.Auto)]
+		public static extern bool ImmReleaseContext(HandleRef hWnd, HandleRef hIMC);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Retrieves the current conversion status.
 		/// </summary>
 		/// <param name="context">Handle to the input context for which to retrieve information.

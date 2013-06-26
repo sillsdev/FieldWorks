@@ -3666,6 +3666,8 @@ namespace SIL.FieldWorks.Common.RootSites
 					out conversionMode, out sentenceMode);
 				int lcid = LcidHelper.LangIdFromLCID(InputLanguage.CurrentInputLanguage.Culture.LCID);
 				s_KeyboardModes[lcid] = new LcidKeyboardMode(conversionMode, sentenceMode);
+				Win32.ImmReleaseContext(new HandleRef(this, Handle),
+					new HandleRef(this, context));
 			}
 #else
 			// TODO-Linux: May have to do something with keyboard here
@@ -3692,6 +3694,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					Win32.ImmSetConversionStatus(new HandleRef(this, context),
 						keyboardMode.ConversionMode, keyboardMode.SentenceMode);
+					Win32.ImmReleaseContext(new HandleRef(this, Handle),
+						new HandleRef(this, context));
 				}
 			}
 #else
