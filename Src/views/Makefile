@@ -134,7 +134,7 @@ $(INT_DIR)/libVwGraphics: $(VWG_OBJS) $(OBJS_OTHER) $(GENERIC_OBJ)/main.o $(LINK
 	$(LINK.cc) -o $@ $^ $(LDLIBS)
 
 ComponentsMap: $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so
-	(export PATH=$(PATH):$(COM_DIR)/bin$(ARCH) && cd $(OUT_DIR) && generate-map.sh libViews.so > $(OUT_DIR)/libViews.compmap)
+	(export PATH=$(PATH):$(COM_DIR)/build$(ARCH)/bin && cd $(OUT_DIR) && generate-map.sh libViews.so > $(OUT_DIR)/libViews.compmap)
 
 # === Rules ===
 
