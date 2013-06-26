@@ -76,6 +76,9 @@ namespace SIL.FieldWorks.LexicalProvider
 			Justification="See TODO-Linux comment")]
 		internal static void StartProvider(Uri providerLocation, object provider, Type providerType)
 		{
+#if __MonoCS__
+			Logger.WriteEvent("Cannot start provider " + providerLocation + " for type " + providerType + " in Mono because WCF is not sufficiently implemented!");
+#else
 			if (s_runningProviders.ContainsKey(providerType))
 				return;
 
@@ -114,9 +117,9 @@ namespace SIL.FieldWorks.LexicalProvider
 				}
 				return;
 			}
-
 			Logger.WriteEvent("Started provider " + providerLocation + " for type " + providerType + ".");
 			s_runningProviders.Add(providerType, providerHost);
+#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
