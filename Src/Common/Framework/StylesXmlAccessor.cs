@@ -555,7 +555,10 @@ namespace SIL.FieldWorks.Common.Framework
 					// (Also, oldNextRA might be oldStyle itself.)
 					// It must be done AFTER the new style has an owner, but BEFORE the old one is deleted (and all refs
 					// to it go away).
-					DomainObjectServices.ReplaceReferences(oldStyle, style);
+					// In pathological cases this might not be valid (e.g., the old stylesheet may somehow have invalid
+					// arrangements of NextStyle). If so, just let those references stay for now (and be cleared when the old style
+					// is deleted).
+					DomainObjectServices.ReplaceReferencesWhereValid(oldStyle, style);
 					if (scriptureOwner != null)
 						scriptureOwner.StylesOC.Remove(oldStyle);
 					else

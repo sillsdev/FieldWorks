@@ -2011,6 +2011,18 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		}
 
 		/// <summary>
+		/// Replace all references in the system to 'from' with a reference to 'to', provided the new reference is valid.
+		/// If the new one is not valid in some instance, go ahead and replace the others.
+		/// Caller is responsible to set up UOW.
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		public static void ReplaceReferencesWhereValid(ICmObject from, ICmObject to)
+		{
+			CmObject.ReplaceReferencesWhereValid(from.Cache, from, to);
+		}
+
+		/// <summary>
 		///
 		/// </summary>
 		/// <typeparam name="TObj"></typeparam>
