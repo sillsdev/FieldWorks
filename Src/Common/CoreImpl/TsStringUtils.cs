@@ -1759,24 +1759,6 @@ namespace SIL.CoreImpl
 			return new TsStringDiffInfo(ichMin, cvIns, cvDel);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Checks the length of the string and shortens it if it is over the maximum length.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static ITsString CheckAndFixStringLength(ITsString tssValue, int cchMax)
-		{
-			if (cchMax < Int32.MaxValue && tssValue != null && tssValue.Length > cchMax)
-			{
-				string sMsg = String.Format(CoreImplStrings.ksTruncatedToXXXCharacters, cchMax);
-				System.Windows.Forms.MessageBox.Show(sMsg, CoreImplStrings.ksWarning, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
-				ITsStrBldr bldr = tssValue.GetBldr();
-				bldr.ReplaceTsString(cchMax, tssValue.Length, null);
-				tssValue = bldr.GetString();
-			}
-			return tssValue;
-		}
-
 		/// <summary>
 		/// Remove characters that are illegal in XML files. Returns the input string if nothing is wrong with it.
 		/// </summary>

@@ -3120,21 +3120,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 			else
 				entry.AlternateFormsOS.Add(allomorph);
 			allomorph.MorphTypeRA = morphType; // Has to be done before the next call.
-			ITsString tssAllomorphForm;
-			var maxLength = entry.Cache.MaxFieldLength(FDO.MoFormTags.kflidForm);
-			if (tssform.Length > maxLength)
-			{
-				var sMessage = String.Format(Strings.ksTruncatedXXXToYYYChars,
-											 fLexemeForm ? Strings.ksLexemeForm : Strings.ksAllomorph, maxLength);
-				MessageBoxUtils.Show(sMessage, Strings.ksWarning,
-													 System.Windows.Forms.MessageBoxButtons.OK,
-													 System.Windows.Forms.MessageBoxIcon.Warning);
-				tssAllomorphForm = tssform.GetSubstring(0, maxLength);
-			}
-			else
-			{
-				tssAllomorphForm = tssform;
-			}
+			ITsString tssAllomorphForm = tssform;
 
 			allomorph.FormMinusReservedMarkers = tssAllomorphForm;
 			if ((morphType.Guid == MoMorphTypeTags.kguidMorphInfix) ||

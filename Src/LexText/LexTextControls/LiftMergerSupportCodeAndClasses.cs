@@ -309,7 +309,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				multi = new Dictionary<int, ITsString>();
 			if (forms != null && forms.Keys != null)
 			{
-				int cchMax = m_cache.MaxFieldLength(flid);
 				foreach (string key in forms.Keys)
 				{
 					int wsHvo = GetWsFromLiftLang(key);
@@ -324,8 +323,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							if (tssOld != null && tssOld.Length != 0)
 								continue;
 						}
-						ITsString tss = CreateTsStringFromLiftString(forms[key], wsHvo,
-							flid, guidObj, cchMax);
+						ITsString tss = CreateTsStringFromLiftString(forms[key], wsHvo);
 						tsm.set_String(wsHvo, tss);
 						if (tss.RunCount == 1 && IsVoiceWritingSystem(wsHvo))
 						{
@@ -338,34 +336,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			foreach (int ws in multi.Keys)
 				tsm.set_String(ws, null);
-		}
-
-		/// <summary>
-		/// Create TsString from (safe-XML) LiftString etc.
-		/// </summary>
-		/// <param name="form"></param>
-		/// <param name="wsHvo"></param>
-		/// <param name="flid"></param>
-		/// <param name="guidObj"></param>
-		/// <param name="cchMax"></param>
-		/// <returns></returns>
-		private ITsString CreateTsStringFromLiftString(LiftString form, int wsHvo, int flid,
-			Guid guidObj, int cchMax)
-		{
-			ITsString tss = CreateTsStringFromLiftString(form, wsHvo);
-			if (tss.Length > cchMax)
-			{
-				StoreTruncatedDataInfo(tss.Text, cchMax, guidObj, flid, wsHvo);
-				ITsStrBldr tsb = tss.GetBldr();
-				tsb.Replace(cchMax, tss.Length, null, null);
-				tss = tsb.GetString();
-			}
-			return tss;
-		}
-
-		private void StoreTruncatedDataInfo(string sText, int cchMax, Guid guid, int flid, int ws)
-		{
-			m_rgTruncated.Add(new TruncatedData(sText, cchMax, guid, flid, ws, m_cache, this));
 		}
 
 		/// <summary>
@@ -432,7 +402,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				multi = new Dictionary<int, string>();
 			if (forms != null && forms.Keys != null)
 			{
-				int cchMax = m_cache.MaxFieldLength(flid);
 				foreach (string key in forms.Keys)
 				{
 					int wsHvo = GetWsFromLiftLang(key);
@@ -442,11 +411,6 @@ namespace SIL.FieldWorks.LexText.Controls
 						// LiftMultiText parameter may have come in with escaped characters which need to be
 						// converted to plain text before merging with existing entries
 						string sText = XmlUtils.DecodeXml(forms[key].Text);
-						if (sText.Length > cchMax)
-						{
-							StoreTruncatedDataInfo(sText, cchMax, guidObj, flid, wsHvo);
-							sText = sText.Substring(0, cchMax);
-						}
 						if (!m_fCreatingNewEntry && !m_fCreatingNewSense && m_msImport == MergeStyle.MsKeepOld)
 						{
 							ITsString tss = tsm.get_String(wsHvo);
@@ -4940,34 +4904,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 		readonly Dictionary<int, LiftResidue> m_dictResidue = new Dictionary<int, LiftResidue>();
-
-		/// <summary>
-		/// This class stores the data needed to construct a warning message to the user
-		/// that data has been truncated (lost) on import.
-		/// </summary>
-		class TruncatedData : PendingErrorReport
-		{
-			string m_sText;
-			int m_cchMax;
-
-			public TruncatedData(string sText, int cchMax, Guid guid, int flid, int ws, FdoCache cache, FlexLiftMerger merger)
-				: base(guid, flid, ws, cache, merger)
-			{
-				m_sText = sText;
-				m_cchMax = cchMax;
-			}
-
-			internal int StoredLength
-			{
-				get { return m_cchMax; }
-			}
-
-			internal string OriginalText
-			{
-				get { return m_sText; }
-			}
-		}
-		List<TruncatedData> m_rgTruncated = new List<TruncatedData>();
 
 		#endregion //internal classes
 	}
