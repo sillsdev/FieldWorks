@@ -29,9 +29,6 @@ using System.Text;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-#if __MonoCS__
-using Skybound.Gecko;
-#endif
 
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.Widgets;
@@ -133,7 +130,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected IVwStylesheet m_stylesheet;
 
 #if __MonoCS__
-		private GeckoWebBrowser m_webBrowser;
+		private Gecko.GeckoWebBrowser m_webBrowser;
 #else
 		private WebBrowser m_webBrowser;
 #endif
@@ -1074,7 +1071,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// only create the web browser if we needed, because this control is pretty resource intensive
 #if __MonoCS__
-			m_webBrowser = new GeckoWebBrowser
+			m_webBrowser = new Gecko.GeckoWebBrowser
 			{
 				Dock = DockStyle.Fill,
 				TabIndex = 1,
