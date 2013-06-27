@@ -3770,10 +3770,12 @@ namespace SIL.FieldWorks
 				}
 			}
 
+			// This has to be done to zap anything in it weven during a restart triggered by S/R.
+			SingletonsContainer.Release();
+
 			if (s_allowFinalShutdown)
 			{
 				Logger.ShutDown();
-				SingletonsContainer.Release();
 				Application.Exit();
 			}
 		}
