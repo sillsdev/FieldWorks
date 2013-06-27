@@ -1153,7 +1153,6 @@ namespace SIL.FieldWorks.Common.Controls
 			int flid = tsi.TagAnchor;
 			if (flid == 0)
 				return;
-			TruncatePasteIfNecessary(e, flid);
 		}
 
 		/// <summary>

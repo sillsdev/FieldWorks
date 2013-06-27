@@ -2024,24 +2024,6 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The value is too long to store, so it has been truncated to the first {0} characters..
-        /// </summary>
-        internal static string ksTruncatedToXXXChars {
-            get {
-                return ResourceManager.GetString("ksTruncatedToXXXChars", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The {0} is too long to store, so it has been truncated to the first {1} characters..
-        /// </summary>
-        internal static string ksTruncatedXXXToYYYChars {
-            get {
-                return ResourceManager.GetString("ksTruncatedXXXToYYYChars", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Truncating the gloss to the first 256 characters..
         /// </summary>
         internal static string ksTruncatingGloss {

@@ -1436,25 +1436,6 @@ namespace SIL.FieldWorks.FDO
 		}
 
 		/// <summary>
-		/// Use this variant if you are sure the property is known to your own metadatacache.
-		/// If it might be defined in a decorator use the overload that lets you pass the right MDC.
-		/// </summary>
-		/// <returns></returns>
-		public int MaxFieldLength(int flidProperty)
-		{
-			return MaxFieldLength(flidProperty, MetaDataCache);
-		}
-		/// <summary>
-		/// This is the definitive method for setting limits on how long strings can be, based on the FLID.
-		/// Since we no longer use SQL tables, however, there is no longer any known reasons why truncating
-		/// strings of fields are necessary (LT-14684).
-		/// </summary>
-		public int MaxFieldLength(int flidProperty, IFwMetaDataCache mdc)
-		{
-			return Int32.MaxValue;
-		}
-
-		/// <summary>
 		/// Ensure a valid folder for LangProject.LinkedFilesRootDir.  When moving projects
 		/// between systems, the stored value may become hopelessly invalid.  See FWNX-1005
 		/// for an example of the havoc than can ensue.

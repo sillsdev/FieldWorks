@@ -301,7 +301,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_cbMaintainCase.Checked = m_mediator.PropertyTable.GetBoolProperty("MaintainCaseOnChangeSpelling", true);
 				m_cbMaintainCase.Click += m_cbMaintainCase_Click;
 				m_cache = (FdoCache)m_mediator.PropertyTable.GetValue("cache");
-				m_cbNewSpelling.TextBox.MaxLength = m_cache.MaxFieldLength(WfiWordformTags.kflidForm);
 
 				// We need to use the 'best vern' ws,
 				// since that is what is showing in the Words-Analyses detail edit control.

@@ -580,13 +580,6 @@ on the baseline text, or insert word breaks into the text manually.</value>
   <data name="ksTruncatingGloss" xml:space="preserve">
     <value>Truncating the gloss to the first 256 characters.</value>
   </data>
-  <data name="ksTruncatedToXXXChars" xml:space="preserve">
-    <value>The value is too long to store, so it has been truncated to the first {0} characters.</value>
-    <comment>{0} is the maximum number of characters allowed</comment>
-  </data>
-  <data name="ksTruncatedXXXToYYYChars" xml:space="preserve">
-    <value>The {0} is too long to store, so it has been truncated to the first {1} characters.</value>
-  </data>
   <data name="ksLexemeForm" xml:space="preserve">
     <value>lexeme form</value>
   </data>

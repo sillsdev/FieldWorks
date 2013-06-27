@@ -383,7 +383,6 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// </summary>
 		void OnPasteFixTssEvent(EditingHelper sender, FwPasteFixTssEventArgs e)
 		{
-			TruncatePasteIfNecessary(e, m_flid);
 			EliminateExtraStyleAndWsInfo(e, m_flid);
 		}
 
