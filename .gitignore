@@ -102,6 +102,7 @@ Src/Generic/libGeneric
 Src/Language/libLanguage
 Lib/src/HermitCrab.NET/HermitCrabExe/bin
 Lib/src/HermitCrab.NET/HermitCrab/bin
+Downloads/*
 
 DistFiles/ReleaseData/
 # Locally configurable project to run FieldWorks
