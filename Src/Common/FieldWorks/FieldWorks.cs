@@ -1578,6 +1578,8 @@ namespace SIL.FieldWorks
 						case WelcomeToFieldWorksDlg.ButtonPress.Exit:
 							return null; // Should cause the FW process to exit later
 						case WelcomeToFieldWorksDlg.ButtonPress.Receive:
+							if (!FwNewLangProject.CheckProjectDirectory(null, helpTopicProvider))
+								break;
 							ObtainedProjectType obtainedProjectType;
 							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, out obtainedProjectType); // Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
 							if (!string.IsNullOrEmpty(projectDataPathname))
