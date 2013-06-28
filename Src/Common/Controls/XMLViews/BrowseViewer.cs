@@ -767,7 +767,7 @@ namespace SIL.FieldWorks.Common.Controls
 					SetSortArrowColumn(iHeaderColumn, order, DhListView.ArrowSize.Small);
 
 				Logger.WriteEvent(String.Format("Sort on {0} {1} ({2})",
-						m_lvHeader.Columns[iHeaderColumn].Text, order, i));
+						m_lvHeader.ColumnsInDisplayOrder[iHeaderColumn].Text, order, i));
 			}
 			m_lvHeader.Refresh();
 		}
@@ -1803,7 +1803,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (ColumnIndexOffset() > 0)
 				{
 					int selColWidth = m_xbv.Vc.SelectColumnWidth * dpiX / 72000;
-					m_lvHeader.Columns[0].Width = selColWidth;
+					m_lvHeader.ColumnsInDisplayOrder[0].Width = selColWidth;
 					widthAvail -= selColWidth;
 					widthExtra += selColWidth;
 				}
@@ -1820,7 +1820,7 @@ namespace SIL.FieldWorks.Common.Controls
 					widthTotal += width;
 					if (widthTotal + widthExtra + 1 > m_lvHeader.Width)
 						m_lvHeader.Width = widthTotal + widthExtra + 1; // otherwise it may truncate the width we set.
-					ColumnHeader ch = m_lvHeader.Columns[ColumnHeaderIndex(i)];
+					ColumnHeader ch = m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(i)];
 					ch.Width = width;
 					// If the header isn't wide enough for the column to be the width we're setting, fix it.
 					while (ch.Width != width)
@@ -2075,7 +2075,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				// update the column according to the maxStringWidth.
 				// add in a little margin to prevent wrapping in some cases.
-				m_lvHeader.Columns[icolLvHeaderToAdjust].Width = maxStringWidth + 10;
+				m_lvHeader.ColumnsInDisplayOrder[icolLvHeaderToAdjust].Width = maxStringWidth + 10;
 
 				// force browse view to match header columns.
 				AdjustColumnWidths(true);
@@ -2143,7 +2143,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			for (int iCol = 0; iCol < m_lvHeader.Columns.Count - ColumnIndexOffset(); ++iCol)
 			{
-				int nNewWidth = m_lvHeader.Columns[ColumnHeaderIndex(iCol)].Width;
+				int nNewWidth = m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(iCol)].Width;
 				string PropName = FormatColumnWidthPropertyName(iCol);
 				m_xbv.Mediator.PropertyTable.SetProperty(PropName, nNewWidth, PropertyTable.SettingsGroup.LocalSettings);
 			}
@@ -2175,14 +2175,13 @@ namespace SIL.FieldWorks.Common.Controls
 			int count = m_lvHeader.Columns.Count;
 			rglength = new VwLength[count];
 			widths = new int[count];
-			int widthTotal = 0;
 
+			var columns = m_lvHeader.ColumnsInDisplayOrder;
 			for (int i = 0; i < count; i++)
 			{
 				rglength[i].unit = VwUnit.kunPoint1000;
-				int width = m_lvHeader.Columns[i].Width;
+				int width = columns[i].Width;
 				rglength[i].nVal = width * 72000 / dpiX;
-				widthTotal += width;
 				widths[i] = width;
 			}
 		}
@@ -2203,8 +2202,9 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (wSum + 40 < wTotal)
 			{
+				var columns = m_lvHeader.ColumnsInDisplayOrder;
 				for (int i = 0; i < count; ++i)
-					m_lvHeader.Columns[i].Width = (rgw[i] * wTotal) / wSum;
+					columns[i].Width = (rgw[i] * wTotal) / wSum;
 				AdjustColumnWidths(false);
 			}
 		}
@@ -2624,6 +2624,7 @@ namespace SIL.FieldWorks.Common.Controls
 			bool fSave = m_lvHeader.AdjustingWidth;
 			m_lvHeader.AdjustingWidth = true;	// Don't call AdjustColumnWidths() for each column.
 			// Remove all columns (except the 'select' column if any).
+			// We don't need to use ColumnsInDisplayOrder here because we don't allow the select column to be re-ordered.
 			while (m_lvHeader.Columns.Count > ColumnIndexOffset())
 				m_lvHeader.Columns.RemoveAt(m_lvHeader.Columns.Count - 1);
 			// Build the list of column headers.
@@ -2661,7 +2662,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int index = 0;
 			foreach(XmlNode node in colSpecs)
 			{
-				widths.Add(node, m_lvHeader.Columns[ColumnHeaderIndex(index)].Width);
+				widths.Add(node, m_lvHeader.ColumnsInDisplayOrder[ColumnHeaderIndex(index)].Width);
 				index++;
 			}
 		}
@@ -2963,20 +2964,21 @@ namespace SIL.FieldWorks.Common.Controls
 				// That doesn't fix columns added at the end, which the .NET code helpfully adjusts to
 				// one pixel wide each if the earlier columns use all available space!
 				int ccols = m_lvHeader.Columns.Count;
+				var columns = m_lvHeader.ColumnsInDisplayOrder;
 				for (int iAdjustCol = ccols - 1; iAdjustCol > 0; iAdjustCol--)
 				{
-					int adjust = DhListView.kMinColWidth - m_lvHeader.Columns[ccols - 1].Width;
+					int adjust = DhListView.kMinColWidth - columns[ccols - 1].Width;
 					if (adjust <= 0)
 						break; // only narrow columns at the end are a problem
 					for (int icol = iAdjustCol - 1; icol >= 0 && adjust > 0; icol--)
 					{
 						// See if we can narrow column icol by enough to fix things.
-						int avail = m_lvHeader.Columns[icol].Width - DhListView.kMinColWidth;
+						int avail = columns[icol].Width - DhListView.kMinColWidth;
 						if (avail > 0)
 						{
 							int delta = Math.Min(avail, adjust);
 							adjust -= delta;
-							m_lvHeader.Columns[icol].Width -= delta;
+							columns[icol].Width -= delta;
 						}
 					}
 				}
@@ -3635,7 +3637,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (m_lvHeader == null || m_lvHeader.Columns.Count < 1)
 				return false;
-			int snapPos = m_lvHeader.Columns[0].Width + m_scrollBar.Width;
+			int snapPos = m_lvHeader.ColumnsInDisplayOrder[0].Width + m_scrollBar.Width;
 			// This guards against snapping when we have just one column that is stretching.
 			// When that happens, 'snapping' just prevents other behaviors, like
 			if (m_lvHeader.Columns.Count == 1 && snapPos >= width - 2)

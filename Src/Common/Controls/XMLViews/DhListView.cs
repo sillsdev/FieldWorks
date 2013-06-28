@@ -93,13 +93,37 @@ namespace SIL.FieldWorks.Common.Controls
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Medium));		// Add descending arrow
 			m_imgList.Images.Add(GetArrowBitmap(ArrowType.Descending, ArrowSize.Small));		// Add descending arrow
 
-#if __MonoCS__ // FWNX-224
 			ColumnWidthChanged += ListView_ColumnWidthChanged;
-
+#if __MonoCS__ // FWNX-224
 			ColumnClick += HandleColumnClick;
 #endif
 			ColumnWidthChanging += ListView_ColumnWidthChanging;
 			ColumnReordered += HandleColumnReordered;
+		}
+
+		private List<ColumnHeader> m_overrideDisplayOrder;
+		/// <summary>
+		/// Get the columns in the order they display. This is USUALLY the same as the order of items in Columns,
+		/// but when the user drags a column to re-order it, the system does not re-order the Columns
+		/// collection, but just changes the DisplayOrder of the affected items. So we must sort by that to get
+		/// them in the order they are actually seen, which is the order we wish to have the View data columns.
+		///
+		/// Still more pathologically, in HandleColumnReordered, the event handler for the end of the drag,
+		/// the system passes us an argument telling us which column was dragged and what its new DisplayIndex
+		/// is, but it has NOT yet updated them. So during this method, a sort by DisplayIndex produces the OLD
+		/// order. But we want to update the rest of the display to match the NEW order. So for the durarion of
+		/// that method, we override the results of this property to reflect the modified order that is about to happen.
+		/// </summary>
+		public List<ColumnHeader> ColumnsInDisplayOrder
+		{
+			get
+			{
+				if (m_overrideDisplayOrder != null)
+					return m_overrideDisplayOrder;
+				var result = new List<ColumnHeader>(Columns.Cast<ColumnHeader>());
+				result.Sort((x, y) => x.DisplayIndex.CompareTo(y.DisplayIndex));
+				return result;
+			}
 		}
 
 		void HandleColumnReordered(object sender, ColumnReorderedEventArgs e)
@@ -111,20 +135,36 @@ namespace SIL.FieldWorks.Common.Controls
 				return;
 			}
 
-			var columnDisplayOrder = Enumerable.Range(0, Columns.Count).ToList<int>();
+			// At this point, we want to re-arrange the dependent parts of the display (the filter bar and the main data area)
+			// to reflect the re-ordering of the columns.
+			// However, the system has not actually re-ordered them yet. So we must simulate the order it is going to change
+			// them to.
+			var columnsInDisplayOrder = ColumnsInDisplayOrder;
+			columnsInDisplayOrder.Remove(e.Header);
+			columnsInDisplayOrder.Insert(e.NewDisplayIndex, e.Header);
+			m_overrideDisplayOrder = columnsInDisplayOrder;
+			try
+			{
+				// Now we want an array of integers showing how they are re-ordered.
+				// columnDisplayOrder[i] is the position that element i in the old (previous, not original) order will have in the new order.
+				// Note that we cannot depend on e.OldDisplayIndex. In Windows, this is the position in the
+				// most recent previous display order; in Mono, it is the position in the original sequence.
+				// However, both systems seem to pass us the columns with each header having its pre-change
+				// DisplayIndex intact.
+				var columnDisplayOrder = Enumerable.Range(0, Columns.Count).ToList();
+				var reorderedColumnHeader = columnDisplayOrder[e.Header.DisplayIndex];
+				columnDisplayOrder.Remove(reorderedColumnHeader);
+				columnDisplayOrder.Insert(e.NewDisplayIndex, reorderedColumnHeader);
 
-			var reorderedColumnHeader = columnDisplayOrder[e.OldDisplayIndex];
-			columnDisplayOrder.Remove(reorderedColumnHeader);
-			columnDisplayOrder.Insert(e.NewDisplayIndex, reorderedColumnHeader);
-
-			// Nudge columns so headers and data line up.
-			this.SyncColumnOrder(columnDisplayOrder);
-
-			// Let affected browse view update its columns of data
-			if (ColumnDragDropReordered != null)
-				ColumnDragDropReordered(this, new ColumnDragDropReorderedEventArgs(columnDisplayOrder));
+				// Let affected browse view update its columns of data
+				if (ColumnDragDropReordered != null)
+					ColumnDragDropReordered(this, new ColumnDragDropReorderedEventArgs(columnDisplayOrder));
+			}
+			finally
+			{
+				m_overrideDisplayOrder = null;
+			}
 		}
-
 #if __MonoCS__ // FWNX-224
 		internal void HandleColumnClick (object sender, ColumnClickEventArgs e)
 		{
@@ -372,39 +412,14 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		const int WM_NOTIFY = 0x004E;
-		const int HDN_FIRST = -300;
-		const int HDN_BEGINTRACKA = (HDN_FIRST - 6);
-		const int HDN_BEGINTRACKW = (HDN_FIRST - 26);
-		const int HDN_ENDTRACK = HDN_FIRST - 27; // strictly HDN_ENDTRACKW
-		const int HDN_TRACK = HDN_FIRST - 28; // strictly HDN_TRACKW (does not seem to occur)
-		const int HDN_ITEMCHANGED = HDN_FIRST - 21;		// HDN_ITEMCHANGEDW
-		const int HDN_BEGINDRAG = HDN_FIRST - 10;	// Drag
-		const int HDN_ENDDRAG = HDN_FIRST - 11;	// Drop
-		const int HDN_ITEMDBLCLICKW = (HDN_FIRST - 23);
-		const int HDN_DIVIDERDBLCLICKW = (HDN_FIRST - 25);
-
-		const int NM_FIRST = 0;
-#if !__MonoCS__
-		const int NM_RCLICK = NM_FIRST - 5;
-#else // FWNX-224
-		const int WM_CONTEXTMENU = 0x007B; // replaces NM_RCLICK
-		const int WM_MOUSE_ENTER = 0x0401;
-		const int WM_MOUSE_LEAVE = 0x0402;
-#endif
-		const int NM_LCLICK = NM_FIRST - 12;	// Left Click Mouse Down
-		const int NM_LCLICKUP = NM_FIRST - 16;	// Left Click Mouse Up
-
-#if __MonoCS__ // FWNX-224
-		// Key track if mouse is over the list header
-		private bool m_MouseOverListHeader = false;
-
 		private void ListView_ColumnWidthChanged(Object sender, ColumnWidthChangedEventArgs e)
 		{
-			if (m_MouseOverListHeader)
+			// These two tests seem to suppress all the cases where we are changing the width during setup
+			// and while making secondary adjustments, and allow us only to make a new call to AdjustColumns
+			// when the user has actually dragged to change a column width.
+			if (!AdjustingWidth && !SuppressColumnWidthChanges)
 				m_bv.AdjustColumnWidths(true);
 		}
-#endif
 
 		/// <summary>
 		/// Reject inappropriate column width changes.
@@ -436,163 +451,6 @@ namespace SIL.FieldWorks.Common.Controls
 			if (newWidth < kMinColWidth)
 				return false;
 			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Overrides <see cref="M:System.Windows.Forms.Control.WndProc(System.Windows.Forms.Message@)"/>.
-		/// </summary>
-		/// <param name="m">The Windows <see cref="T:System.Windows.Forms.Message"/> to process.</param>
-		/// ------------------------------------------------------------------------------------
-		protected override void WndProc(ref Message m)
-		{
-			switch (m.Msg)
-			{
-#if __MonoCS__	// FWNX-224 : We don't GET WM_NOTIFY on mono (r152577)
-			case WM_MOUSE_ENTER:
-				m_MouseOverListHeader = true;
-				break;
-			case WM_MOUSE_LEAVE:
-				m_MouseOverListHeader = false;
-				break;
-			case WM_CONTEXTMENU: // replaces WM_NOTIFY -> NM_RCLICK
-				Point pt_rclick = this.PointToClient(Control.MousePosition);
-				int icol_rclick = GetColumnIndexFromMousePosition(pt_rclick);
-				if (icol_rclick >= 0)
-				{
-					OnColumnRightClick(icol_rclick, pt_rclick);
-					return;
-				}
-				break;
-#else // FWNX-224 : We don't GET WM_NOTIFY on mono (r152577)
-				case WM_NOTIFY:
-					Win32.NMHEADER nmhdr = (Win32.NMHEADER)m.GetLParam(typeof(Win32.NMHEADER));
-					switch (nmhdr.hdr.code)
-					{
-						case HDN_DIVIDERDBLCLICKW: // double-click on line between column headers.
-							// adjust width of column to match item of greatest length.
-							m_bv.AdjustColumnWidthToMatchContents(nmhdr.iItem);
-							break;
-						default:
-							base.WndProc(ref m);
-							break;
-					}
-					//Debug.WriteLine("DhListView.WndProc: WM_NOTIFY code = " + nmhdr.hdr.code);
-				switch(nmhdr.hdr.code)
-				{
-					case HDN_BEGINTRACKA:
-					case HDN_BEGINTRACKW:
-						if (m_bv.m_xbv.Vc.HasSelectColumn)
-						{
-							int iCol = nmhdr.iItem;
-							// We want to prevent the user from resizing the checkbox column (LT-3938)
-							if (iCol == 0)
-								m.Result = (IntPtr)1;	// Disable tracking.
-						}
-						m_suppressColumnWidthChanges = true;
-						break;
-					case HDN_ITEMDBLCLICKW: // double-click on line between items collapses it.
-						// However, we never get this notification, because we're not treating the
-						// column headers as buttons. Sigh.
-						break;
-					case HDN_ENDTRACK:
-						m_bv.AdjustColumnWidths(true);
-						m_suppressColumnWidthChanges = false;
-						break;
-					case HDN_ITEMCHANGED:
-						// No longer needed. HDN_DIVIDERDBLCLICKW above helps to
-						// avoid the the problem of someone double-clicking the
-						// separator and messing up the check mark column irretrievably.
-						if (!m_suppressColumnWidthChanges && !m_fInAdjustWidth)
-							m_bv.AdjustColumnWidths(true);
-						break;
-					case NM_RCLICK:
-						// HDN_ITEMCLICK never shows up for a right click, although it does for a
-						// left click.
-						// NM_RCLICK shows up okay, but gives no useful information for where the
-						// right click occurred!  We have to get the current mouse position, and
-						// compare it to the column boundaries across the window.
-						Point pt_rclick = this.PointToClient(Control.MousePosition);
-						int icol_rclick = GetColumnIndexFromMousePosition(pt_rclick);
-						if (icol_rclick >= 0)
-						{
-							OnColumnRightClick(icol_rclick, pt_rclick);
-							return;
-						}
-						break;
-					default:
-						break;
-				}
-					break;
-#endif // FWNX-224 : We don't GET WM_NOTIFY on mono (r152577)
-				default:
-					base.WndProc(ref m);
-					break;
-			}
-		}
-
-		/// <summary>
-		/// Reorder the Column collection according to our display order.
-		/// In mono this results in data column widths being aligned properly with header column widths.
-		/// </summary>
-		private void SyncColumnOrder(List<int> headerColumnOrder)
-		{
-			List<int> displayOrder = headerColumnOrder;
-			ColumnHeader[] columnsReordered = new ColumnHeader[this.Columns.Count];
-			int originalNumberOfColumns = this.Columns.Count;
-			// save the original columns in the new order
-			for (int i = 0; i < originalNumberOfColumns; ++i)
-			{
-				columnsReordered[i] = this.Columns[displayOrder[i]];
-			}
-			// delete the old columns
-			this.Columns.Clear();
-			//// Restore the columns in their new order
-			//// Note: we do not want to use AddRange because when we have the checkbox column as in
-			// BulkEdit we can end up having the column headers aligned improperly.
-			this.BeginUpdate();
-			for (int i = 0; i < originalNumberOfColumns; ++i)
-			{
-				Columns.Insert(i, columnsReordered[i]);
-			}
-			this.EndUpdate();
-		}
-
-#if !__MonoCS__
-		// Courtesy of Kevin Tao from http://dotnet247.com/247reference/msgs/12/60008.aspx
-		// Thread "Column indexes do not change when reordered in ListView"
-		[DllImport("user32", CharSet=CharSet.Auto)]
-		private static extern IntPtr SendMessage(IntPtr hWnd, Int32 msg, Int32 wParam, Int32[] lParam);
-#endif
-
-		[StructLayoutAttribute(LayoutKind.Sequential)]
-			struct LV_COLUMN
-		{
-			public UInt32 mask;
-			public Int32 fmt;
-			public Int32 cx;
-			public String pszText;
-			public Int32 cchTextMax;
-			public Int32 iSubItem;
-			public Int32 iImage;
-			public Int32 iOrder;
-		}
-
-		private int GetColumnIndexFromMousePosition(Point pt)
-		{
-			int nWidth = 0;
-			for (int icol = 0; icol < this.Columns.Count; ++icol)
-			{
-				nWidth += Columns[icol].Width;
-				// Review: is there some way we can check for a valid pt.Y value?
-				// It's probably okay as is, since the body of the list view intercepts
-				// mouse clicks before they get here.
-				if (pt.X <= nWidth)
-				{
-					return icol;
-				}
-			}
-			return -1;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -717,17 +575,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.SizeChanged"/> event.
-		/// </summary>
-		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data.</param>
-		/// ------------------------------------------------------------------------------------
-		protected override void OnSizeChanged(EventArgs e)
-		{
-			base.OnSizeChanged (e);
-		}
-
 		enum ArrowType { Ascending, Descending }
 		/// <summary></summary>
 		public enum ArrowSize {
@@ -806,16 +653,6 @@ namespace SIL.FieldWorks.Common.Controls
 			return bmp;
 		}
 
-#if !__MonoCS__
-		// Todo JohnT: this could be added to the many overloads of SendMessage in Win32Wrappers.
-		[DllImport("user32", EntryPoint="SendMessage")]
-		static extern IntPtr SendMessage2(IntPtr Handle, Int32 msg, IntPtr wParam, ref HDITEM lParam);
-
-		// This possibly could also...though the current version of this overload is specified to return bool.
-		[DllImport("user32")]
-		static extern IntPtr SendMessage(IntPtr Handle, Int32 msg, IntPtr wParam, IntPtr lParam);
-#endif
-
 		Dictionary<int, int> m_columnIconIndexes = new Dictionary<int, int>();
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -843,45 +680,6 @@ namespace SIL.FieldWorks.Common.Controls
 				m_columnIconIndexes[columnIndex] = (int)size + (3 * ((int)sortOrder - 1));
 			}
 		}
-
-		// Todo JohnT: These could possibly move to Win32Wrappers.
-		[StructLayout(LayoutKind.Sequential)]
-			private struct HDITEM
-		{
-			public Int32     mask;
-			public Int32     cxy;
-			[MarshalAs(UnmanagedType.LPTStr)]
-			public String    pszText;
-			public IntPtr	 hbm;
-			public Int32     cchTextMax;
-			public Int32     fmt;
-			public Int32     lParam;
-			public Int32     iImage;
-			public Int32     iOrder;
-		};
-
-		const Int32 LVM_FIRST           = 0x1000;		// List messages
-		const Int32 LVM_GETHEADER		= LVM_FIRST + 31;
-		const Int32 LVM_GETCOLUMN		= LVM_FIRST + 95;
-		const Int32 LVM_SETCOLUMNORDERARRAY = LVM_FIRST + 58;
-		const Int32 LVM_GETCOLUMNORDERARRAY = LVM_FIRST + 59;
-
-		const Int32 HDI_FORMAT			= 0x0004;
-		const Int32 HDI_IMAGE			= 0x0020;
-
-		const Int32 HDF_LEFT			= 0x0000;
-		const Int32 HDF_RIGHT			= 0x0001;
-		const Int32 HDF_CENTER			= 0x0002;
-		const Int32 HDF_SORTDOWN		= 0x0200;
-		const Int32 HDF_SORTUP			= 0x0400;
-		const Int32 HDF_IMAGE			= 0x0800;
-		const Int32 HDF_BITMAP_ON_RIGHT = 0x1000;
-		const Int32 HDF_STRING			= 0x4000;
-
-		const Int32 HDM_FIRST           = 0x1200;		// Header messages
-		const Int32 HDM_SETIMAGELIST	= HDM_FIRST + 8;
-		const Int32 HDM_GETITEM			= HDM_FIRST + 11;
-		const Int32 HDM_SETITEM			= HDM_FIRST + 12;
 	}
 
 	/// <summary>
