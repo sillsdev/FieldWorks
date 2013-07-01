@@ -239,6 +239,9 @@ namespace SIL.FieldWorks.XWorks
 
 			// Only allow copying a configuration that existed before opening this dialog.
 			m_btnCopy.Enabled = !Presenter.IsConfigNew(newSelection.Code);
+
+			// The selected view should be selected if the user clicks OK.
+			Presenter.FinalConfigurationView = newSelection.Code;
 		}
 	}
 

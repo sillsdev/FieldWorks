@@ -71,6 +71,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="code"></param>
 		/// <returns></returns>
 		bool IsConfigNew(string code);
+
+		/// <summary>
+		/// The currently selected view (which shoud become the view of the main dialog if OK is clicked)
+		/// </summary>
+		string FinalConfigurationView { set; }
 	}
 
 	/// ----------------------------------------------------------------------------------------
