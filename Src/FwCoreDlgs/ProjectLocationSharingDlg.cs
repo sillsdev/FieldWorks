@@ -15,6 +15,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.FDO.DomainServices;
 using SIL.Utils;
 using SIL.Utils.FileDialog;
@@ -49,10 +50,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Initializes a new instance of the <see cref="ProjectLocationSharingDlg"/> class.
 		/// </summary>
 		/// <param name="helpTopicProvider">The help topic provider.</param>
+		/// <param name="cache"></param>
 		/// ------------------------------------------------------------------------------------
-		public ProjectLocationSharingDlg(IHelpTopicProvider helpTopicProvider) : this()
+		public ProjectLocationSharingDlg(IHelpTopicProvider helpTopicProvider, FdoCache cache = null)
+			: this()
 		{
 			m_cbShareMyProjects.Checked = ClientServerServices.Current.Local.ShareMyProjects;
+			if (cache == null)
+			{
+				m_tbCurrentProjectPath.Visible = false;
+				m_lbCurrentProject.Visible = false;
+			}
+			else
+			{
+				m_tbCurrentProjectPath.Text = cache.ProjectId.Path;
+			}
 			m_tbProjectsFolder.Text = DirectoryFinder.ProjectsDirectory;
 			// We can only change the folder if sharing is INITIALLY turned off.
 			m_tbProjectsFolder.Enabled = !m_cbShareMyProjects.Checked;

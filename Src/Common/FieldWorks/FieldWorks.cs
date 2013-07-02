@@ -1828,7 +1828,7 @@ namespace SIL.FieldWorks
 		{
 			Debug.Assert(fwApp.Cache.ProjectId.IsLocal);
 
-			using (ProjectLocationSharingDlg dlg = new ProjectLocationSharingDlg(fwApp))
+			using (ProjectLocationSharingDlg dlg = new ProjectLocationSharingDlg(fwApp, fwApp.Cache))
 			{
 			if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
 				return;
