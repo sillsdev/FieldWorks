@@ -967,6 +967,9 @@ display/printout!
 		</xsl:for-each>
 	  </div>
 	</xsl:if>
+	<xsl:if test="CmPossibilityLink">
+		<xsl:apply-templates/>
+	</xsl:if>
 	<!-- LT-12612: If the custom field is a possibility list, no previous mechanism
 	appeared to deal with it, so here goes... -->
 	<xsl:if test="CmLocationLink/CmPossibility_Name">
