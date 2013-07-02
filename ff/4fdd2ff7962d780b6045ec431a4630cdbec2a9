@@ -1,0 +1,8 @@
+Code-Review+2: Eberhard Beilharz <eb1@sil.org>
+Verified+1: Jenkins CI
+Verified-Linux+1: Jenkins CI
+Submitted-by: Brent McCarthy <brent_mccarthy@sil.org>
+Submitted-at: Tue, 02 Jul 2013 16:49:37 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/1209
+Project: FieldWorks
+Branch: refs/heads/develop
