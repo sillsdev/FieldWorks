@@ -115,9 +115,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="NetSparkle.Net40, Version=1.0.22.0, Culture=neutral, processorArchitecture=MSIL" Condition="'$(OS)'!='Unix'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\DistFiles\NetSparkle.Net40.dll</HintPath>
+    </Reference>
     <Reference Include="Palaso, Version=2.0.33.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
     <Reference Include="PaToFdoInterfaces, Version=1.0.4031.20876, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

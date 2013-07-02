@@ -52,12 +52,11 @@
 		</IdlImp>
 	</Target>
 
-	<Target Name="AfterClean" DependsOnTargets="DeleteCopiedPalasoDlls">
+	<Target Name="AfterClean">
 		<Delete Files="@(OutputFiles)" ContinueOnError="true"/>
 		<Delete Files="FwKernel.cs;Views.cs;$(OutDir)/../Common/FwKernelTlb.iip;$(OutDir)/../Common/ViewsTlb.iip" ContinueOnError="true"/>
 	</Target>
-	<Target Name="BeforeBuild" DependsOnTargets="FwKernelCs;ViewsCs;CopyPalasoDlls">
-		<Copy SourceFiles="@(PalasoFilesSource)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true"/>
+	<Target Name="BeforeBuild" DependsOnTargets="FwKernelCs;ViewsCs">
 	</Target>
 	<Target Name="AfterBuild">
 	</Target>

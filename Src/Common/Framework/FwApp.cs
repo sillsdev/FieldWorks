@@ -1003,7 +1003,8 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		public virtual void RemoveWindow(IFwMainWnd fwMainWindow)
 		{
-			CheckDisposed();
+			if (IsDisposed || BeingDisposed)
+				return;
 
 			if (!m_rgMainWindows.Contains(fwMainWindow))
 				return; // It isn't our window.

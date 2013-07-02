@@ -133,15 +133,12 @@
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
 		<command id="CmdHelpAbout" label="_About Language Explorer..." message="HelpAbout"/>
 		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
+		<command id="CmdHelpTraining" label="_Training" message="HelpTraining" />
 		<command id="CmdHelpDemoMovies" label="_Demo Movies..." message="HelpDemoMovies"/>
+		<command id="CmdHelpCheckForUpdates" label="Check for _Updates..." message="HelpCheckForUpdates"/>
 		<command id="CmdHelpReportBug" label="_Report a Problem..." message="HelpReportProblem"/>
 		<command id="CmdHelpMakeSuggestion" label="_Make a Suggestion..." message="HelpMakeSuggestion"/>
 		<command id="CmdHelpMorphologyInto" label="Introduction to _Parsing..." message="HelpMorphologyIntro"/>
-		<command id="CmdHelpUserManual" label="_Student Manual..." message="HelpUserManual"/>
-		<command id="CmdHelpInstructorGuide" label="_Instructor Guide..." message="HelpInstructorGuide"/>
-		<command id="CmdHelpExercises" label="_Exercises..." message="HelpTrainingFile">
-			<parameters file="FLEx Exercises.doc"/>
-		</command>
 		<command id="CmdHelpXLingPap" label="Editing Linguistics Papers Using _XLingPaper ..." message="HelpHelpsFile">
 			<parameters file="XLingPap/UserDoc.htm"/>
 		</command>
@@ -154,7 +151,7 @@
 		<command id="CmdHelpNotesInterlinearImport" label="Technical Notes on _Interlinear Import..." message="HelpNotesInterlinearImport"/>
 		<!-- Help/Resources/Technical Notes on Interlinear Import... -->
 		<command id="CmdHelpNotesWritingSystems" label="Technical Notes on _Writing Systems..." message="HelpTrainingFile">
-			<parameters file="Technical Notes on Writing Systems.doc"/>
+			<parameters file="Technical Notes on Writing Systems.pdf"/>
 		</command>
 		<command id="CmdTestFollowLink" label="Test Follow Link" message="TestFollowLink" shortcut="F12"/>
 		<command id="CmdHistoryBack" label="Go Back" message="HistoryBack" icon="historyBack" shortcut="Alt+Left"/>
@@ -638,11 +635,7 @@
 			<!--  <item label="Show Help Balloons" boolProperty="ShowBalloonHelp" />
 			<separator />-->
 			<item command="CmdHelpLanguageExplorer"/>
-			<menu id="Training" label="_Training">
-				<item command="CmdHelpUserManual"/>
-				<item command="CmdHelpInstructorGuide"/>
-				<item command="CmdHelpExercises"/>
-			</menu>
+			<item command="CmdHelpTraining"/>
 			<item command="CmdHelpDemoMovies"/>
 			<menu id="Resources" label="_Resources">
 				<item command="CmdHelpLexicographyIntro"/>
@@ -654,6 +647,7 @@
 				<item command="CmdHelpXLingPap"/>
 			</menu>
 			<item label="-" translate="do not translate"/>
+			<item command="CmdHelpCheckForUpdates"/>
 			<item command="CmdHelpReportBug"/>
 			<item command="CmdHelpMakeSuggestion"/>
 			<item label="-" translate="do not translate"/>

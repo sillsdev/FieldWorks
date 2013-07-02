@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 using NUnit.Framework;
@@ -106,6 +107,42 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Mediator mediator = MockRepository.GenerateStub<Mediator>();
 			respellUndoaction.DoIt(mediator);
 
+			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
+			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
+			Assert.IsTrue(m_actionHandler.CanUndo());
+		}
+
+		[Test]
+		public void CanRespellMultiMorphemicWordAndKeepUsages()
+		{
+			IStTxtPara para;
+			const string ksParaText = "somelongwords must be multimorphemic. somelongwords multimorphemic are.";
+			const string ksWordToReplace = "multimorphemic";
+			const string ksNewWord = "massivemorphemic";
+			var morphs = new [] { "multi", "morphemic" };
+
+			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction_MultiMorphemic(ksParaText,
+				ksWordToReplace, ksNewWord, morphs, out para);
+
+			Assert.AreEqual(2, para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count,
+				"Should have 2 morph bundles before spelling change.");
+
+			respellUndoaction.AllChanged = true;
+			respellUndoaction.KeepAnalyses = true;
+			respellUndoaction.CopyAnalyses = true; // in the dialog this is always true?
+			respellUndoaction.UpdateLexicalEntries = true;
+
+			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			respellUndoaction.DoIt(mediator);
+
+			Assert.AreEqual(0, para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
+				"Unexpected morph bundle contents for 'be'");
+			Assert.AreEqual(2, para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count,
+				"Wrong morph bundle count for 'multimorphemic'");
+			Assert.AreEqual(0, para.SegmentsOS[1].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
+				"Unexpected morph bundle contents for 'are'");
+			Assert.AreEqual(2, para.SegmentsOS[1].AnalysesRS[1].Analysis.MorphBundlesOS.Count,
+				"Wrong morph bundle count for 'multimorphemic'");
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
 			Assert.AreEqual(2, m_actionHandler.UndoableSequenceCount);
 			Assert.IsTrue(m_actionHandler.CanUndo());
@@ -304,9 +341,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 				else
 				{
-					ILangProject proj = Cache.LangProject;
-					FDO.IText text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-					//proj.TextsOC.Add(text);
+					var proj = Cache.LangProject;
+					var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 					stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
 					text.ContentsOA = stText;
 					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
@@ -320,7 +356,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			});
 
-			RespellingSda rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
+			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
 			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(null, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
@@ -339,12 +375,116 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
 			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
 
-			RespellUndoAction respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
+			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
 				respellUndoaction.AddOccurrence(hvoFake);
 
 			para = paraT;
 			return respellUndoaction;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets up para and respell undo action.
+		/// </summary>
+		/// <param name="sParaText">The paragraph text.</param>
+		/// <param name="sWordToReplace">The word to replace.</param>
+		/// <param name="sNewWord">The new word.</param>
+		/// <param name="morphs">Array of substrings from sNewWord to build WfiMorphBundles for</param>
+		/// <param name="para">The para.</param>
+		/// <returns>The RespellUndoAction that is actually the workhorse for changing multiple
+		/// occurrences of a word</returns>
+		/// ------------------------------------------------------------------------------------
+		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText,
+			string sWordToReplace, string sNewWord, string[] morphs, out IStTxtPara para)
+		{
+			return SetUpParaAndRespellUndoAction_MultiMorphemic(sParaText, sWordToReplace, sNewWord,
+				morphs, ScrTxtParaTags.kClassId, out para);
+		}
+
+		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText,
+			string sWordToReplace, string sNewWord, string[] morphsToCreate, int clidPara,
+			out IStTxtPara para)
+		{
+			List<IParaFragment> paraFrags = new List<IParaFragment>();
+			IStTxtPara paraT = null;
+			IStText stText = null;
+			UndoableUnitOfWorkHelper.Do("Undo create book", "Redo create book", m_actionHandler, () =>
+			{
+				var lp = Cache.LanguageProject;
+				if (clidPara == ScrTxtParaTags.kClassId)
+				{
+					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
+					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
+					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+					object owner = ReflectionHelper.CreateObject("FDO.dll", "SIL.FieldWorks.FDO.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
+						new object[] { book.Guid });
+					ReflectionHelper.SetField(stText, "m_owner", owner);
+				}
+				else
+				{
+					var proj = Cache.LangProject;
+					var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+					stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+					text.ContentsOA = stText;
+					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+					stText.ParagraphsOS.Add(paraT);
+					paraT.Contents = TsStringUtils.MakeTss(sParaText, Cache.DefaultVernWs);
+				}
+				foreach (ISegment seg in paraT.SegmentsOS)
+				{
+					FdoTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
+					var thisSegParaFrags = GetParaFragmentsInSegmentForWord(seg, sWordToReplace);
+					SetMultimorphemicAnalyses(thisSegParaFrags, morphsToCreate);
+					paraFrags.AddRange(thisSegParaFrags);
+				}
+			});
+
+			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(null, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			Cache.ServiceLocator.GetInstance<IStTextRepository>());
+			if (clidPara == ScrTxtParaTags.kClassId)
+				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
+			else
+				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
+			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
+			rsda.SetCache(Cache);
+			rsda.SetOccurrences(0, paraFrags);
+			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
+			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
+
+			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
+			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
+			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
+			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
+
+			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
+			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
+				respellUndoaction.AddOccurrence(hvoFake);
+
+			para = paraT;
+			return respellUndoaction;
+		}
+
+		private void SetMultimorphemicAnalyses(IEnumerable<IParaFragment> thisSegParaFrags, string[] morphsToCreate)
+		{
+			var morphFact = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
+			var tssFact = Cache.TsStrFactory;
+			// IWfiWordform, IWfiAnalysis, and IWfiGloss objects will have already been created.
+			// Still need to add WfiMorphBundles as per morphsToCreate.
+			foreach (IWfiWordform wordform in thisSegParaFrags.Select(x => x.Analysis))
+			{
+				var analysis = wordform.AnalysesOC.First();
+				if (analysis.MorphBundlesOS.Count != 0)
+					continue;
+				foreach (var morpheme in morphsToCreate)
+				{
+					var bundle = morphFact.Create();
+					analysis.MorphBundlesOS.Add(bundle);
+					bundle.Form.VernacularDefaultWritingSystem = tssFact.MakeString(morpheme, Cache.DefaultVernWs);
+				}
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

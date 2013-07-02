@@ -769,7 +769,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			contextCtrl.Initialize(cache, wsContainer, m_ws, m_app, fnt, gridCharInventory);
 			contextCtrl.Dock = DockStyle.Fill;
-			contextCtrl.CheckToRun = "CharactersCheck";
+			contextCtrl.CheckToRun = CharContextCtrl.CheckType.Characters;
 			contextCtrl.ListValidator = RemoveInvalidCharacters;
 
 			colChar.HeaderCell.SortGlyphDirection = SortOrder.Ascending;
@@ -899,7 +899,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_wsManager == null)
 				{
 					Debug.Assert(m_ws != null);
-					m_wsManager = new PalasoWritingSystemManager();
+					m_wsManager = FwUtils.CreateWritingSystemManager();
 					m_fDisposeWsManager = true;
 					m_wsManager.Set(m_ws);
 				}

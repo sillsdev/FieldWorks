@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					if (m_regionName.SelectedItem == null)
 					{
 						m_regionName.Items.Add(value);
-						m_regionName.SelectedIndex = m_scriptName.Items.IndexOf(value);
+						m_regionName.SelectedIndex = m_regionName.Items.IndexOf(value);
 
 					}
 					m_regionAbbrev.Enabled = value.IsPrivateUse;

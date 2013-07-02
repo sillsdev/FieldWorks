@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -28,7 +27,7 @@ namespace SIL.FieldWorks.Common.Controls
 			bool dummy;
 			string fwdataFileFullPathname;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(DirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null, FDOBackendProvider.ModelVersion, "0.13",
-				out dummy, out fwdataFileFullPathname);
+				null, out dummy, out fwdataFileFullPathname);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -56,11 +55,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private static string CreateProjectFromLift(Form parent, string liftPath)
 		{
-			var projectName = Path.GetFileNameWithoutExtension(liftPath);
-			var parentFolder = Path.GetDirectoryName(liftPath);
-			string flexFolderName = Path.Combine(DirectoryFinder.ProjectsDirectory, projectName);
-			if (!Directory.Exists(flexFolderName))
-				throw new ArgumentException("The lift file is not in a folder within the corresponding Project folder");
 			string projectPath;
 			FdoCache cache;
 			using (var helper = new ThreadHelper())
@@ -69,7 +63,7 @@ namespace SIL.FieldWorks.Common.Controls
 				progressDlg.ProgressBarStyle = ProgressBarStyle.Continuous;
 				progressDlg.Title = FwControls.ksCreatingLiftProject;
 				var cacheReceiver = new FdoCache[1]; // a clumsy way of handling an out parameter, consistent with RunTask
-				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask, new object[] { liftPath, projectName, helper, cacheReceiver });
+				projectPath = (string)progressDlg.RunTask(true, CreateProjectTask, new object[] { liftPath, helper, cacheReceiver });
 				cache = cacheReceiver[0];
 			}
 
@@ -97,15 +91,18 @@ namespace SIL.FieldWorks.Common.Controls
 		private static object CreateProjectTask(IThreadedProgress progress, object[] parameters)
 		{
 			// Get required parameters. Ideally these would just be the signature of the method, but RunTask requires object[].
-			var liftPath = (string)parameters[0];
-			var projectName = (string)parameters[1];
-			var helper = (ThreadHelper)parameters[2];
-			var cacheReceiver = (FdoCache[])parameters[3];
+			var liftPathname = (string)parameters[0];
+			var helper = (ThreadHelper)parameters[1];
+			var cacheReceiver = (FdoCache[])parameters[2];
 
 			IWritingSystem wsVern, wsAnalysis;
-			RetrieveDefaultWritingSystemsFromLift(liftPath, out wsVern, out wsAnalysis);
+			RetrieveDefaultWritingSystemsFromLift(liftPathname, out wsVern, out wsAnalysis);
 
-			string projectPath = FdoCache.CreateNewLangProj(progress, projectName, helper, wsAnalysis, wsVern);
+			string projectPath = FdoCache.CreateNewLangProj(progress,
+				Directory.GetParent(Path.GetDirectoryName(liftPathname)).Parent.Name, // Get the new Flex project name from the Lift pathname.
+				helper,
+				wsAnalysis,
+				wsVern);
 
 			// This is a temporary cache, just to do the import, and AFAIK we have no access to the current
 			// user WS. So create it as "English". Put it in the array to return to the caller.

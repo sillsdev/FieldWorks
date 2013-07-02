@@ -11,6 +11,7 @@
 // File: MissingOldFieldWorksDlg.cs
 // Responsibility: mcconnel
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SIL.FieldWorks.FDO.DomainServices.BackupRestore;
@@ -56,6 +57,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_lnkSqlSvr.Visible = false;
 			}
 			m_lblBackupFile.Text = settings.Backup.File;
+
+			if (!IsWindows7OrEarlier())
+			{
+				// No point in downloading SqlServer 2005 and dependencies; hide the relevant links
+				m_labelSqlDownload.Visible = false;
+				m_labelFwDownload.Visible = false;
+				m_lnkSqlSvr.Visible = false;
+				m_lnkFw60.Visible = false;
+				m_labelAfterDownload.Visible = false;
+				m_clickDownloadPicture.Visible = false;
+				m_label6OrEarlier.Text = Properties.Resources.kstidCantMigrateWrongOS;
+				m_label6OrEarlier.Height *= 4;
+				m_btnOK.Enabled = false;
+			}
+		}
+
+		bool IsWindows7OrEarlier()
+		{
+			var os = Environment.OSVersion;
+			if (os.Platform != PlatformID.Win32NT)
+				return false;
+			// Windows 7 is 6.1; Windows 8 is 6.2
+			if (os.Version.Major > 6)
+				return false;
+			if (os.Version.Major == 6 && os.Version.Minor > 1)
+				return false;
+			return true;
 		}
 
 		/// <summary>
@@ -64,7 +92,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected override void OnLoad(System.EventArgs e)
 		{
 			base.OnLoad(e);
-			int kDiff = 2 * (m_lnkSqlSvr.Location.Y - m_labelSqlDownload.Location.Y);
+			int kDiff;
+			if (m_labelAfterDownload.Visible)
+				kDiff = 2 * (m_lnkSqlSvr.Location.Y - m_labelSqlDownload.Location.Y);
+			else
+			{
+				kDiff = m_labelAfterDownload.Bottom - m_label6OrEarlier.Bottom;
+				this.MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - kDiff);
+				this.Height = this.Height - kDiff;
+				this.MaximumSize = new Size(MaximumSize.Width, MaximumSize.Height - kDiff);
+				return;
+			}
 			if (!m_lnkFw60.Visible)
 			{
 				this.MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height - kDiff);

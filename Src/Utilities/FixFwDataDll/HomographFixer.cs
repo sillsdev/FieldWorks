@@ -129,10 +129,9 @@ namespace SIL.FieldWorks.FixData
 					var entryGuid = owners[morphGuid];
 					var cfElement = entriesWithCitationForm[entryGuid];
 					rtFormText = GetStringInHomographWritingSystem(cfElement);
-					if (!string.IsNullOrWhiteSpace(rtFormText))
-					{
-						rtFormText = rtFormText.Trim();
-					}
+					if (string.IsNullOrWhiteSpace(rtFormText))
+						continue;
+					rtFormText = rtFormText.Trim();
 				}
 				else
 				{
@@ -140,7 +139,7 @@ namespace SIL.FieldWorks.FixData
 					if (rtForm == null)
 						continue;
 					rtFormText = GetStringInHomographWritingSystem(rtForm);
-					if (rtFormText == null || rtFormText.Trim().Length == 0)
+					if (string.IsNullOrWhiteSpace(rtFormText))
 						continue; // entries with no lexeme form are not considered homographs.
 				}
 

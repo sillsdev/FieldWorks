@@ -10,6 +10,8 @@ using SIL.CoreImpl;
 using SIL.FieldWorks.CacheLight;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.FDO;
+using SIL.FieldWorks.FDO.Application;
 using SIL.FieldWorks.FDO.FDOTests;
 using SIL.Utils;
 using SIL.Utils.ComTypes;
@@ -207,6 +209,43 @@ namespace XMLViewsTests
 				Assert.That(ttp.GetStrPropValue((int)FwTextPropType.ktptBulNumTxtBef), Is.EqualTo(expectSource));
 				break;
 			}
+		}
+
+		[Test]
+		public void SenseOutlineIsObtainedUsingVirtual()
+		{
+			// For this test we need a real entry and sense.
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(sense);
+			var sda = new MockDecorator(Cache);
+			var vc = new XmlVc(null, "root", true, null, null, sda);
+			vc.SetCache(Cache);
+			var sut = new XmlVcDisplayVec(vc, new MockEnv(), entry.Hvo, LexEntryTags.kflidSenses, 1);
+
+			Assert.That(sut.CalculateAndFormatSenseLabel(new int[] {sense.Hvo}, 0, "%O)"), Is.EqualTo("77)"),
+				"CalculateAndFormatSenseLabel should have used the decorator method");
+			Assert.That(sda.Tag, Is.EqualTo(Cache.MetaDataCacheAccessor.GetFieldId2(LexSenseTags.kClassId, "LexSenseOutline", false)),
+				"CalculateAndFormatSenseLabel should have used the right property");
+		}
+	}
+
+	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
+		Justification = "Cache is a reference and will be disposed in parent class")]
+	class MockDecorator : DomainDataByFlidDecoratorBase
+	{
+		private FdoCache m_cache;
+		public MockDecorator(FdoCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
+		{
+			m_cache = cache;
+		}
+
+		public int Tag;
+
+		public override ITsString get_StringProp(int hvo, int tag)
+		{
+			Tag = tag;
+			return m_cache.TsStrFactory.MakeString("77", m_cache.DefaultUserWs);
 		}
 	}
 

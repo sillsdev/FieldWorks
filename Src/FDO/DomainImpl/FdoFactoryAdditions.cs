@@ -1230,6 +1230,38 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 	}
 	#endregion
 
+	#region CmLocationFactory class
+	/// <summary>
+	/// Add methods added to ICmLocationFactory.
+	/// </summary>
+	internal partial class CmLocationFactory
+	{
+		ICmLocation ICmLocationFactory.Create(Guid guid, ICmPossibilityList owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int flid = m_cache.MetaDataCache.GetFieldId("CmPossibilityList", "Possibilities", false);
+
+			var retval = new CmLocation(m_cache, hvo, guid);
+			owner.PossibilitiesOS.Add(retval);
+			return retval;
+		}
+
+		ICmLocation ICmLocationFactory.Create(Guid guid, ICmLocation owner)
+		{
+			if (owner == null) throw new ArgumentNullException("owner");
+
+			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
+			int flid = m_cache.MetaDataCache.GetFieldId("CmPossibility", "SubPossibilities", false);
+
+			var retval = new CmLocation(m_cache, hvo, guid);
+			owner.SubPossibilitiesOS.Add(retval);
+			return retval;
+		}
+	}
+	#endregion
+
 	#region CmSemanticDomainFactory class
 	/// <summary>
 	/// Add methods added to ICmSemanticDomainFactory.
@@ -2570,9 +2602,7 @@ namespace SIL.FieldWorks.FDO.DomainImpl
 		{
 			int hvo = ((IDataReader)m_cache.ServiceLocator.GetInstance<IDataSetup>()).GetNextRealHvo();
 			var newby = new Text(cache, hvo, guid);
-			// If it gets here the new unowned Text will already be initialized!
-			//if (newby.OwnershipStatus != ClassOwnershipStatus.kOwnerRequired)
-			//    ((ICmObjectInternal)newby).InitializeNewOwnerlessCmObject(m_cache);
+			((ICmObjectInternal) newby).InitializeNewOwnerlessCmObjectWithPresetGuid();
 			return newby;
 		}
 	}

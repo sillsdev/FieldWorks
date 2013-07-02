@@ -250,6 +250,10 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
+		/// The first text created by ImportInterlinear.
+		/// </summary>
+		public FDO.IText FirstNewText { get; set; }
+		/// <summary>
 		/// Import a file which looks like a FieldWorks interlinear XML export.
 		/// </summary>
 		/// <param name="dlg"></param>
@@ -263,6 +267,7 @@ namespace SIL.FieldWorks.IText
 			{
 				FDO.IText firstNewText = null;
 				retValue = ImportInterlinear(dlg, stream, 100, ref firstNewText);
+				FirstNewText = firstNewText;
 			}
 			return retValue;
 		}

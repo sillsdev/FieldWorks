@@ -31,6 +31,9 @@ using SIL.Utils;
 using SIL.FieldWorks.FDO;
 using SIL.FieldWorks.Common.FwUtils;
 using XCore;
+#if !__MonoCS__
+using NetSparkle;
+#endif
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -83,6 +86,26 @@ namespace SIL.FieldWorks.LexText.Controls
 			reportingSettings.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
 			Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
 			Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
+
+			Settings.Default.AutoCheckForUpdates = checkForUpdatesBox.Checked;
+			Settings.Default.CheckForBetaUpdates = includeBetasBox.Checked;
+
+#if !__MonoCS__
+			var sparkle = SingletonsContainer.Item("Sparkle") as Sparkle;
+			if (sparkle != null)
+			{
+				var appCastUrl = Settings.Default.IsBTE
+									? (Settings.Default.CheckForBetaUpdates
+										? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteBetasUrl")
+										: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastBteUrl"))
+									: (Settings.Default.CheckForBetaUpdates
+										? CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeBetasUrl")
+										: CoreImpl.Properties.Resources.ResourceManager.GetString("kstidAppcastSeUrl"));
+				sparkle.AppcastUrl = appCastUrl;
+			}
+#endif
+
+
 			Settings.Default.Save();
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != m_sNewUserWs)

@@ -542,7 +542,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_userChangedSortUsing = true;
 
 			m_userChangedSortRules = false;
-			var wsManager = new PalasoWritingSystemManager();
+			var wsManager = FwUtils.CreateWritingSystemManager();
 			var palasoWs = (PalasoWritingSystem)ws;
 			var oldStoreId = palasoWs.StoreID;
 			wsManager.Set(ws);
@@ -2348,7 +2348,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			IWritingSystem origWs = m_tempWritingSystems[tempWs];
 			int height = m_stylesheet == null ? 10000 : FontHeightAdjuster.GetFontHeightForStyle("Normal", m_stylesheet,
 				origWs == null ? 0 : origWs.Handle, m_wsManager);
-			IWritingSystemManager wsManager = new PalasoWritingSystemManager();
+			IWritingSystemManager wsManager = FwUtils.CreateWritingSystemManager();
 			wsManager.Set(tempWs);
 			m_fwTextBoxTestWs.WritingSystemFactory = wsManager;
 			m_fwTextBoxTestWs.WritingSystemCode = tempWs.Handle;

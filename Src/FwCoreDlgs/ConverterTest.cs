@@ -13,6 +13,7 @@ using ECInterfaces;
 using SIL.CoreImpl;
 using SIL.FieldWorks.Common.COMInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FDO;
 using SIL.Utils;
@@ -110,7 +111,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Set view properties.
 			m_fHasOutput = false;
 			m_svOutput = new SampleView();
-			m_svOutput.WritingSystemFactory = new PalasoWritingSystemManager();
+			m_svOutput.WritingSystemFactory = FwUtils.CreateWritingSystemManager();
 			m_svOutput.Dock = DockStyle.Fill;
 			m_svOutput.Visible = true;
 			m_svOutput.Enabled = false;

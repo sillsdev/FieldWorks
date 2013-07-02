@@ -56,6 +56,7 @@ namespace SIL.FieldWorks.Common.Framework
 		protected List<string> m_userModifiedStyles = new List<string>();
 		/// <summary>Collection of styles in the DB</summary>
 		protected IFdoOwningCollection<IStStyle> m_databaseStyles;
+		Dictionary<IStStyle, IStStyle> m_replacedStyles = new Dictionary<IStStyle, IStStyle>();
 
 		/// <summary>Dictionary of style names to StStyle objects representing the initial
 		/// collection of styles in the DB</summary>
@@ -510,7 +511,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <param name="factoryGuid">The guid for this factory style</param>
 		/// <returns>A new or existing style</returns>
 		/// ------------------------------------------------------------------------------------
-		private IStStyle FindOrCreateStyle(string styleName, StyleType styleType,
+		internal IStStyle FindOrCreateStyle(string styleName, StyleType styleType,
 			ContextValues context, StructureValues structure, FunctionValues function,
 			Guid factoryGuid)
 		{
@@ -525,25 +526,49 @@ namespace SIL.FieldWorks.Common.Framework
 				{   // create a new style with the correct guid.
 					IStStyle oldStyle = style; // is there a copy constructor?
 					style = m_cache.ServiceLocator.GetInstance<IStStyleFactory>().Create(m_cache, factoryGuid);
-					// set properties from oldStyle
-					// Set properties not passed in as parameters
-					style.IsBuiltIn = oldStyle.IsBuiltIn;
-					style.IsModified = true;
 
-					// Set the style name, owner, type, context, structure, and function
+					// Before we set any data on the new style we should give it an owner.
+					// Don't delete the old one yet, though, because we want to copy things from it (and references to it).
+					var owner = oldStyle.Owner;
+					var scriptureOwner = owner as IScripture;
+					if (scriptureOwner != null)
+						scriptureOwner.StylesOC.Add(style);
+					else
+						((ILangProject)owner).StylesOC.Add(style); // currently the only other option
+
+					style.IsBuiltIn = oldStyle.IsBuiltIn;
+					style.IsModified = oldStyle.IsModified;
 					style.Name = oldStyle.Name;
-					ReplaceStyleInOwner(style, oldStyle);
 					style.Type = oldStyle.Type;
 					style.Context = oldStyle.Context;
 					style.Structure = oldStyle.Structure;
 					style.Function = oldStyle.Function;
-					// any more?
+					style.Rules = oldStyle.Rules;
+					style.BasedOnRA = oldStyle.BasedOnRA;
+					style.IsPublishedTextStyle = oldStyle.IsPublishedTextStyle;
+					style.NextRA = oldStyle.NextRA;
+					style.UserLevel = oldStyle.UserLevel;
+
+					// Anywhere the obsolete style object is used (e.g., in BasedOn or Next of other styles),
+					// switch to refer to the new one. It's important to do this AFTER setting all the properties,
+					// because validation of setting various references to this style depends on some of these properties.
+					// (Also, oldNextRA might be oldStyle itself.)
+					// It must be done AFTER the new style has an owner, but BEFORE the old one is deleted (and all refs
+					// to it go away).
+					// In pathological cases this might not be valid (e.g., the old stylesheet may somehow have invalid
+					// arrangements of NextStyle). If so, just let those references stay for now (and be cleared when the old style
+					// is deleted).
+					DomainObjectServices.ReplaceReferencesWhereValid(oldStyle, style);
+					if (scriptureOwner != null)
+						scriptureOwner.StylesOC.Remove(oldStyle);
+					else
+						((ILangProject)owner).StylesOC.Remove(oldStyle);
 				}
 				// Make sure existing style has compatible context, structure, and function.
 				// If not, get a new StStyle object that we can define.
 				style = EnsureCompatibleFactoryStyle(style, styleType, context, structure,
 					function);
-				fUsingExistingStyle = (hvo == style.Hvo);  // how could this be false??
+				fUsingExistingStyle = true; // We found a version of this in the current database.
 			}
 			else
 			{
@@ -561,7 +586,7 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				// Set properties not passed in as parameters
 				style.IsBuiltIn = true;
-				style.IsModified = false;
+				style.IsModified = false; // not found in our database, so use everything from the XML
 
 				// Set the style name, type, context, structure, and function
 				style.Name = styleName;
@@ -571,24 +596,6 @@ namespace SIL.FieldWorks.Common.Framework
 				style.Function = function;
 			}
 			return style;
-		}
-
-		private void ReplaceStyleInOwner(IStStyle newStyle, IStStyle oldStyle)
-		{
-			var owner = oldStyle.Owner;
-			switch (owner.ClassID)
-			{
-				case ScriptureTags.kClassId:
-					((IScripture)owner).StylesOC.Remove(oldStyle);
-					((IScripture)owner).StylesOC.Add(newStyle);
-					break;
-				case LangProjectTags.kClassId:
-					((ILangProject)owner).StylesOC.Remove(oldStyle);
-					((ILangProject)owner).StylesOC.Add(newStyle);
-					break;
-				default:
-					throw new ApplicationException("StStyle should be owned!");
-			}
 		}
 
 		#region BasedOn Context, Structure, Function, and type interpreters

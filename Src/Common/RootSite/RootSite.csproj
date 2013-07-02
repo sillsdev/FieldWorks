@@ -277,5 +277,4 @@
   <PropertyGroup>
     <DistFiles>../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="../../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>

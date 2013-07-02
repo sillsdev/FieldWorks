@@ -776,6 +776,12 @@ namespace SIL.FieldWorks.FDO
 		void InitializeNewOwnerlessCmObject(FdoCache cache);
 
 		/// <summary>
+		/// A very special case, an ownerless object created with a constructor that predetermines the
+		/// guid (and also sets the cache, hvo, and calls RegisterObjectAsCreated).
+		/// </summary>
+		void InitializeNewOwnerlessCmObjectWithPresetGuid();
+
+		/// <summary>
 		/// Initialize a CmObject that was created using the default Constructor.
 		/// </summary>
 		/// <param name="cache"></param>

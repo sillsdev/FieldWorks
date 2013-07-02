@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.FDO.IOC
 			registry
 				.For<IWritingSystemManager>()
 				.LifecycleIs(new SingletonLifecycle())
-				.Use(() => new PalasoWritingSystemManager());
+				.Use(() => FwUtils.CreateWritingSystemManager());
 			registry
 				.For<ILgWritingSystemFactory>()
 				.Use(c => (ILgWritingSystemFactory)c.GetInstance<IWritingSystemManager>());

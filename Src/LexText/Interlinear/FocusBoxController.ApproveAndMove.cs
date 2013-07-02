@@ -779,6 +779,21 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
+		/// The NextIncompleteBundle (without confirming current--Nc) command is not visible by default.
+		/// Therefore this method, which is called by the mediator using reflection, must be implemented
+		/// if the command is ever to be enabled and visible. It must have this exact name and signature,
+		/// which are determined by the 'message' in its command element. This command is enabled and visible
+		/// exactly when the version that DOES confirm the current choice is, so delegate to that.
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public virtual bool OnDisplayNextIncompleteBundleNc(object commandObject, ref UIItemDisplayProperties display)
+		{
+			return OnDisplayNextIncompleteBundle(commandObject, ref display);
+		}
+
+		/// <summary>
 		/// Move to next bundle needing analysis (and confirm current).
 		/// </summary>
 		/// <param name="argument"></param>
@@ -790,7 +805,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Move to next bundle needing analysis (and confirm current).
+		/// Move to next bundle needing analysis (without confirm current).
 		/// </summary>
 		/// <param name="argument"></param>
 		/// <returns></returns>

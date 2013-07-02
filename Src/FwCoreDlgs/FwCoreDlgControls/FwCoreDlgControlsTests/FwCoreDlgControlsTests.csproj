@@ -193,7 +193,7 @@
     </Reference>
     <Reference Include="Palaso, Version=1.5.162.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\Palaso.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\Palaso.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -237,5 +237,4 @@
   <PropertyGroup>
     <DistFiles>../../../../DistFiles</DistFiles>
   </PropertyGroup>
-  <Import Project="../../../../Build/BeforeBuildCopyPalasoDlls.targets" />
 </Project>

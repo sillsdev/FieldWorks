@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Xsl; // Bizarre location for TempFileCollection
 using System.IO;
@@ -85,13 +86,15 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// In SE Fieldworks we can't depend upon ScrControls.dll We need some decoupling to
-		/// prevent the linker from trying to load ScrControls.dll and crashing.
-		/// This seems to work. (Although I wonder if we could get away with just calling this method
-		/// if IsTEInstalled?)
+		/// Launch the appropriate dialog, depending on IsOkToDisplayScriptureIfPresent (currently always true).
+		/// Note that this means even the SE edition of FW requires ScrControls.dll. This is the price of making
+		/// even the SE edition able to work with Paratext, which we want to do because it was not obvious to
+		/// users that they needed the BTE edition if using Paratext rather than TE.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
+		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
+			Justification = "Gendarme is just too dumb to understand the try...finally pattern to ensure disposal of dlg")]
 		private void LaunchFilterTextsDialog(object sender, EventArgs args)
 		{
 			IFilterTextsDialog<IStText> dlg = null;
@@ -99,21 +102,15 @@ namespace SIL.FieldWorks.IText
 			{
 				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_cache.ServiceLocator);
 				var textsToChooseFrom = new List<IStText>(interestingTextsList.InterestingTexts);
-				if (!FwUtils.IsTEInstalled)
-				{   // TE is not installed, so remove scripture from the list
+				if (!FwUtils.IsOkToDisplayScriptureIfPresent)
+				{   // Mustn't show any Scripture, so remove scripture from the list
 					textsToChooseFrom = textsToChooseFrom.Where(text => !ScriptureServices.ScriptureIsResponsibleFor(text)).ToList();
 				}
 				var interestingTexts = textsToChooseFrom.ToArray();
-				if (FwUtils.IsTEInstalled)
-				{
-					dlg = (IFilterTextsDialog<IStText>)DynamicLoader.CreateObject(
-					"ScrControls.dll", "SIL.FieldWorks.Common.Controls.FilterTextsDialogTE",
-					m_cache, interestingTexts, m_mediator.HelpTopicProvider, m_bookImporter);
-				}
+				if (FwUtils.IsOkToDisplayScriptureIfPresent)
+					dlg = new FilterTextsDialogTE(m_cache, interestingTexts, m_mediator.HelpTopicProvider, m_bookImporter);
 				else
-				{
 					dlg = new FilterTextsDialog(m_cache, interestingTexts, m_mediator.HelpTopicProvider);
-				}
 				// LT-12181: Was 'PruneToSelectedTexts(text) and most others were deleted.
 				// We want 'PruneToInterestingTextsAndSelect(interestingTexts, selectedText)'
 				dlg.PruneToInterestingTextsAndSelect(interestingTexts, (IStText)m_objRoot);

@@ -354,7 +354,7 @@ namespace SIL.FieldWorks.XWorks
 		public override void DoApplicationInitialization(IProgress progressDlg)
 		{
 			base.DoApplicationInitialization(progressDlg);
-			if (FwUtils.IsTEInstalled)
+			if (FwUtils.IsOkToDisplayScriptureIfPresent)
 				ScrReference.InitializeVersification(DirectoryFinder.TeFolder, false);
 
 			//usage report - Unnecessary now that we are doing Google Analytics reporting

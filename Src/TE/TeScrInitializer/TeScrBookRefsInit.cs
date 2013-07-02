@@ -201,12 +201,14 @@ namespace SIL.FieldWorks.TE
 		/// <summary>
 		/// Required implementation of abstract property to get the relative path to
 		/// configuration file from the FieldWorks install folder.
+		/// Note that this is NOT in the Translation Editor subfolder, because it is needed
+		/// for 'minimal scripture initialization' when FLEx wants to load Paratext Scripture,
+		/// and the Translation Editor folder might not be installed.
 		/// </summary>
 		/// -------------------------------------------------------------------------------------
 		protected override string ResourceFilePathFromFwInstall
 		{
-			get { return Path.DirectorySeparatorChar + DirectoryFinder.ksTeFolderName +
-				Path.DirectorySeparatorChar + ResourceFileName; }
+			get { return Path.DirectorySeparatorChar + ResourceFileName; }
 		}
 
 		/// -------------------------------------------------------------------------------------

@@ -16,7 +16,7 @@ namespace SIL.CoreImpl.Properties {
     public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-        
+
         public static Settings Default {
             get {
                 return defaultInstance;
@@ -82,6 +82,18 @@ namespace SIL.CoreImpl.Properties {
             }
             set {
                 this["CheckForBetaUpdates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsBTE {
+            get {
+                return ((bool)(this["IsBTE"]));
+            }
+            set {
+                this["IsBTE"] = value;
             }
         }
     }

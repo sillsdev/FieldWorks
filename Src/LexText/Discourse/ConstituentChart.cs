@@ -1242,8 +1242,9 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		#endregion
-	}
-	// End Constituent Chart class
+
+	} // End Constituent Chart class
+
 	/// <summary>
 	/// This subclass of ListView is used to make the column headers for a Constituent Chart.
 	/// It's main function is to handle double-clicks on column boundaries so the chart (which is neither

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Styles SYSTEM "../Styles.dtd">
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Styles SYSTEM "Styles.dtd">
 <!-- IMPORTANT NOTE TO MAINTAINERS
 	*********************************************************************************************
 	ANY change to this Stylesheet must be accompanied by the generation of a new version using
-	guidgen. Be sure to validate any changes against ../Styles.dtd.
+	guidgen. Be sure to validate any changes against Styles.dtd.
 	*********************************************************************************************
 -->
 <Styles date="2011-07-14" DTDver="B44B0AE3-416D-4616-B4CA-C1DA9A56DD7F" label="Scripture">

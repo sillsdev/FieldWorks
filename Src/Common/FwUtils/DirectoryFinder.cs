@@ -90,11 +90,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the full path of the Scripture-specific stylesheet.
+		/// This should NOT be in the TE folder, because it is used by the SE edition, when
+		/// doing minimal scripture initialization in order to include Paratext texts.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public static string TeStylesPath
 		{
-			get { return Path.Combine(TeFolder, kTeStylesFilename); }
+			get { return Path.Combine(FWCodeDirectory, kTeStylesFilename); }
 		}
 
 		/// ------------------------------------------------------------------------------------

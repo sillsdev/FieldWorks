@@ -849,6 +849,7 @@ namespace SIL.FieldWorks.FDO.DomainServices
 		/// <param name="props"></param>
 		void SetPropertiesBasedOnStyleAndEffects(IStStyle style, ITsTextProps props)
 		{
+			m_cache = style.Cache;
 			SetInfoProperties(style, null);
 			SetPropertiesFromRules(props);
 		}

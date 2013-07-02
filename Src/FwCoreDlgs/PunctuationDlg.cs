@@ -937,7 +937,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void contextCtrl_BeforeTextTokenSubStringsLoaded(string filename)
 		{
-			contextCtrl.CheckToRun = "PunctuationCheck";
+			contextCtrl.CheckToRun = CharContextCtrl.CheckType.Punctuation;
 			contextCtrl.CheckParameters["PunctCheckLevel"] = "Intermediate";
 			contextCtrl.CheckParameters["PunctWhitespaceChar"] =
 				ResourceHelper.GetResourceString("kstidPunctCheckWhitespaceChar").Substring(0, 1);

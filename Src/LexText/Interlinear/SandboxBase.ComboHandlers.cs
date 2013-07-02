@@ -1593,19 +1593,25 @@ namespace SIL.FieldWorks.IText
 					inflType = m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(m_caches.RealHvo(hvoInflType));
 				int hvoMSA = m_caches.DataAccess.get_ObjectProp(hvoWmb, ktagSbMorphPos);
 				int hvoMorphEntry = m_caches.DataAccess.get_ObjectProp(hvoWmb, ktagSbMorphEntry);
-				var realEntry = m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_caches.RealHvo(hvoMorphEntry));
-
-				var mf = realEntry.LexemeFormOA;
+				ILexEntry realEntry = null;
+				IMoForm mf = null;
+				if (hvoMorphEntry != 0)
+				{
+					realEntry =
+						m_caches.MainCache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(m_caches.RealHvo(hvoMorphEntry));
+					mf = realEntry.LexemeFormOA;
+				}
 				ILexSense realSense = null;
 				ILexEntryRef ler = null;
 				if (hvoMorphSense != 0)
 				{
 					realSense = m_caches.MainCache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(m_caches.RealHvo(hvoMorphSense));
-					realEntry.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
+					if (realEntry != null)
+						realEntry.IsVariantOfSenseOrOwnerEntry(realSense, out ler);
 				}
 
 				//var mi = new MorphItem(options);
-				var mi = GetMorphItem(mf, null, realSense, null, ler, realEntry.Hvo, inflType);
+				var mi = GetMorphItem(mf, null, realSense, null, ler, HvoOrZero(realEntry), inflType);
 				return mi;
 			}
 
