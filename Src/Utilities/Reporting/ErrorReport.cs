@@ -282,7 +282,6 @@ namespace SIL.Utils
 			this.ShowIcon = false;
 			this.ResumeLayout(false);
 			this.PerformLayout();
-
 		}
 		#endregion
 
@@ -795,7 +794,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.ShiftKey && Visible && !labelAttemptToContinue.Visible)
+			if (e.KeyCode == Keys.ShiftKey && m_isLethal && Visible && !labelAttemptToContinue.Visible)
 			{
 				labelAttemptToContinue.Visible = true;
 				m_showChips = true;
