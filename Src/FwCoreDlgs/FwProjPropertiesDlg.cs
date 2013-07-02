@@ -1784,6 +1784,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void MergeListItem(CheckedListBox list)
 		{
 			IWritingSystem ws = GetCurrentSelectedWs(list);
+			if (DialogResult.No == MessageBox.Show(FwCoreDlgs.ksWSWarnWhenMergingWritingSystems, FwCoreDlgs.ksWarning, MessageBoxButtons.YesNo))
+				return;
 			using (var dlg = new MergeWritingSystemDlg(m_cache, ws, m_lstVernWs.Items.Cast<IWritingSystem>().Union(m_lstAnalWs.Items.Cast<IWritingSystem>()),
 				m_helpTopicProvider))
 			{
