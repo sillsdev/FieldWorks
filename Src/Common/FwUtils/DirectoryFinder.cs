@@ -1057,6 +1057,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns></returns>
 		public static String GetFullPathFromRelativeLFPath(string relativeLFPath, string linkedFilesRootDir)
 		{
+			// We could just catch the exception that IsPathRooted throws if there are invalid characters,
+			// or use Path.GetInvalidPathChars(). But that would pass things on Linux that will fail on Windows,
+			// which both makes unit testing difficult, and also may hide from Linux users the fact that their
+			// paths will cause problems on Windows.
+			var invalidChars = MiscUtils.GetInvalidProjectNameChars(MiscUtils.FilenameFilterStrength.kFilterProjName);
+			// relativeLFPath is allowed to include directories. And it MAY be rooted, meaning on Windows it could start X:
+			invalidChars = invalidChars.Replace(@"\", "").Replace("/", "").Replace(":", "");
+			// colon is allowed only as second character--such a path is probably no good on Linux, but will just be not found, not cause a crash
+			int indexOfColon = relativeLFPath.IndexOf(':');
+			if (relativeLFPath.IndexOfAny(invalidChars.ToCharArray()) != -1
+				|| (indexOfColon != -1 && indexOfColon != 1))
+			{
+				// This is a fairly clumsy solution, designed as a last-resort way to avoid crashing the program.
+				// Hopefully most paths for entering path names into the relevant fields do something nicer to
+				// avoid getting illegal characters there.
+				return FixPathSlashesIfNeeded(Path.Combine(linkedFilesRootDir, "__ILLEGALCHARS__"));
+			}
 			if (Path.IsPathRooted(relativeLFPath))
 				return FixPathSlashesIfNeeded(relativeLFPath);
 			else

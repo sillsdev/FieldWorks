@@ -335,6 +335,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(fullLFPath, fileUnderProjectRootDir);
 		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetFullPathFromRelativeLFPath method with illegal characters
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetFullPathFromRelativeLFPath_WithIllegalCharacters_ReturnsSpecialPath()
+		{
+			var linkedFilesRootDir = Path.Combine(Path.Combine(DirectoryFinder.ProjectsDirectory, "TestProject"), "LinkedFiles");
+			var fullLFPath = DirectoryFinderRelativePaths.GetFullPathFromRelativeLFPath("1\";1\"", linkedFilesRootDir);
+			Assert.That(fullLFPath, Is.EqualTo(Path.Combine(linkedFilesRootDir,"__ILLEGALCHARS__")));
+		}
+
 		/// <summary>
 		/// Tests the DefaultBackupDirectory property for use on Windows.
 		/// </summary>
