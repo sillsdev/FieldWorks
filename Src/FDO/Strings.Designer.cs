@@ -1574,6 +1574,15 @@ namespace SIL.FieldWorks.FDO {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FieldWorks has encountered a problem setting up the writing systems...
+        /// </summary>
+        internal static string ksNeedToJoinFwGroup {
+            get {
+                return ResourceManager.GetString("ksNeedToJoinFwGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No ({0}) Underline.
         /// </summary>
         internal static string ksNoColorUnderline {

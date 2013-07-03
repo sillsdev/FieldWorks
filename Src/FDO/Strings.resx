@@ -373,6 +373,10 @@
     <value> - </value>
     <comment>separate name and abbreviation (space dash space)</comment>
   </data>
+  <data name="ksNeedToJoinFwGroup" xml:space="preserve">
+    <value>FieldWorks has encountered a problem setting up the writing systems. It may be that you need to first log out and then back in. If that doesn't fix it, you can also try asking an administrator to add you to the fieldworks group by using the command: $ sudo adduser 'yourusername' fieldworks</value>
+    <comment>Used in Linux version if the user forgets to logout and back in after New Install.</comment>
+  </data>
   <data name="ksNoColorUnderline" xml:space="preserve">
     <value>No ({0}) Underline</value>
     <comment>nonsense, but a possibility</comment>

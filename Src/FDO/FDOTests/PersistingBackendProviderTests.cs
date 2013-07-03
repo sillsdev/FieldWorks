@@ -650,6 +650,42 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		}
 
 		/// <summary>
+		/// Tests that the right thing happens when StartupExtantLanguageProject() throws
+		/// an UnauthorizedAccessException in Linux.
+		/// In "real life" this happens if the user forgets to logout and back in
+		/// after the initial install of FieldWorks.
+		/// </summary>
+		[Test]
+		[Platform(Include = "Linux", Reason = "Linux specific")]
+		[ExpectedException(typeof(UnauthorizedAccessException))]
+		public void StartupExtantTest()
+		{
+			string testFileName = String.Empty;
+			try
+			{
+				var testDataPath = Path.Combine(DirectoryFinder.FwSourceDirectory, "FDO/FDOTests/BackupRestore/BackupTestProject");
+				var projName = Path.Combine(testDataPath, "BackupTestProject.fwdata");
+				testFileName = Path.GetTempFileName();
+				// If we leave the extension as .tmp, we get a sharing violation when the
+				// MockXMLBackendProvider ctor tries to write to the same name with .tmp extension
+				testFileName = Path.ChangeExtension(testFileName, "fwdata");
+				File.Copy(projName, testFileName, true);
+
+				// MockXMLBackendProvider implements IDisposable therefore we need the "using".
+				// Otherwise the build agent might complain, and in the worst case the test might hang.
+				using (var xmlBep = new MockXMLBackendProvider(Cache, testFileName))
+				{
+					// Should throw an UnauthorizedAccessException.
+					xmlBep.StartupExtant();
+				}
+			}
+			finally
+			{
+				File.Delete(testFileName);
+			}
+		}
+
+		/// <summary>
 		/// Tests that a fwdata file that was edited and has an extra newline at the end will not
 		/// throw an Exception.
 		/// </summary>
@@ -727,6 +763,15 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 			StartupInternal(ModelVersion);
 		}
 
+		/// <summary />
+		public void StartupExtant()
+		{
+			ProjectId = new TestProjectId(FDOBackendProviderType.kXML, Project);
+			// This will throw an UnauthorizedAccessException because of the
+			// StartupInternalWithDataMigrationIfNeeded() override below
+			StartupExtantLanguageProject(ProjectId, false, new DummyProgressDlg());
+		}
+
 		/// <summary/>
 		protected override void Dispose(bool disposing)
 		{
@@ -743,6 +788,11 @@ namespace SIL.FieldWorks.FDO.CoreTests.PersistingLayerTests
 		/// </summary>
 		internal override void ReportDuplicateGuidsIfTheyExist()
 		{
+		}
+
+		protected override void StartupInternalWithDataMigrationIfNeeded(IThreadedProgress progressDlg)
+		{
+			throw new UnauthorizedAccessException();
 		}
 	}
 }
