@@ -5,9 +5,6 @@ call %0\..\_EnsureRoot.bat
 
 set BUILD_MAKEFILE=%BUILD_ROOT%\Src\Language\Language.mak
 
-rem ***** Create the version include file *****
-%BUILD_ROOT%\bin\nant\bin\nant.exe -buildfile:"%BUILD_ROOT%\bld\Version.build.xml" -D:BUILD_ROOT="%BUILD_ROOT%" -D:BUILD_LEVEL=%BUILD_LEVEL%
-
 call %BUILD_ROOT%\bld\_mkcore.bat dirs %BUILD_OUTPUT%\Common\LanguageTlb.tlb
 
 set BUILD_MAKEFILE=%BUILD_ROOT%\Src\Kernel\FwKernel.mak
