@@ -883,6 +883,19 @@ namespace SIL.FieldWorks.Common.Framework
 				WriteCssXSenseNumber();
 				m_dictClassData.Remove("xsensenumber");
 			}
+			/*
+			 * This is a kludgy yet simple fix for LT-14606.
+			 * We are actually writing class="xsensenumber bold" to the XHTML
+			 * which are two distinct Css classes: ".xsensenumber" and ".bold".
+			 * However, GetValidCssClassName() joins these together in m_dictClassData dictionary
+			 * as "xsensenumber_bold". Oh well, we know this means two classes.
+			 */
+			if (m_dictClassData.ContainsKey("xsensenumber_bold"))
+			{
+				WriteCssXSenseNumber();
+				WriteCssBold();
+				m_dictClassData.Remove("xsensenumber_bold");
+			}
 			if (m_dictClassData.ContainsKey("xsensexrefnumber"))
 			{
 				WriteCssXSenseXrefNumber();
@@ -1184,6 +1197,11 @@ namespace SIL.FieldWorks.Common.Framework
 			m_writer.WriteLine(".xsensenumber {");
 			WriteFontInfoToCss(m_cache.DefaultAnalWs, "Sense-Reference-Number", "xsensenumber");
 			m_writer.WriteLine("}");
+		}
+
+		private void WriteCssBold()
+		{
+			m_writer.WriteLine(".bold { font-weight:bold; }");
 		}
 
 		private void WriteCssXSenseXrefNumber()
